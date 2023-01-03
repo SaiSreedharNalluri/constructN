@@ -5,6 +5,7 @@ import { getjobsInfo } from '../../../../services/jobs';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
 import Header from '../../../../components/container/header';
+import ProjectDetails from '../../../../components/container/projectDetails';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const jobResp: any = await getjobsInfo(
@@ -28,6 +29,7 @@ const Index: React.FC<IProps> = ({ jobs }) => {
       <div className="h-screen">
         <div>
           <Header headerName={router.query.name as string} />
+          <ProjectDetails></ProjectDetails>
         </div>
       </div>
     </React.Fragment>
