@@ -8,6 +8,7 @@ const nextConfig = {
       'techmoran.com',
       'constructn-projects.s3.ap-south-1.amazonaws.com',
       'dl.airtable.com',
+      'images.unsplash.com',
     ],
   },
   redirects: async () => {

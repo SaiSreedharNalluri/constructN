@@ -28,7 +28,7 @@ const Index: React.FC<IProps> = ({ jobs }) => {
     <React.Fragment>
       <div className="h-screen">
         <div>
-          <Header headerName={router.query.name as string} />
+          <Header />
           <ProjectDetails></ProjectDetails>
         </div>
       </div>
