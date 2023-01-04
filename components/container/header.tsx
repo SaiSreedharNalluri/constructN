@@ -2,23 +2,29 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+import { useRouter, Router } from 'next/router';
 import { getCookie, removeCookies } from 'cookies-next';
+import { IProjects } from '../../models/IProjects';
 interface IProps {}
-const Header: React.FC<IProps> = ({}) => {
+const Header: React.FC<IProps> = () => {
+  const router = useRouter();
   let [name, setName] = useState<string>('');
-
+  let [projects, setProjects] = useState<IProjects[]>([]);
+  const [selectedValue, setSelection] = useState('');
   useEffect(() => {
     const userObj: any = getCookie('user');
-    console.log('fdhjkndf', getCookie('projects'));
+    setProjects(JSON.parse(localStorage.getItem('projects') as string));
+    if (router.query.projectId) {
+      setSelection(router.query.projectId as string);
+    }
     let user = null;
     if (userObj) user = JSON.parse(userObj);
     if (user.fullName) {
       setName(user.fullName);
     }
-  }, []);
+  }, [router.query.projectId]);
   const [loading, setLoading] = useState<boolean>(false);
-  const router = useRouter();
+
   const userLogOut = () => {
     removeCookies('user');
     router.push('/login');
@@ -26,6 +32,16 @@ const Header: React.FC<IProps> = ({}) => {
   const goToProjectsList = () => {
     router.push('/projects');
   };
+  const navigateToProject = (projectId: string) => {
+    //window.localStorage.href = `projects/${projectId}/project`;
+    router.push({
+      pathname: `${projectId}/project`,
+      query: { projectId: projectId },
+    });
+    //router.push(`projects/${projectId}/project`);
+    // router.replace(`projects/${projectId}/project`);
+  };
+  console.log('dklsd', selectedValue);
   return (
     <React.Fragment>
       <header className="h-11 bg-custom-yellow ">
@@ -42,7 +58,25 @@ const Header: React.FC<IProps> = ({}) => {
           </div>
           {router.pathname != '/projects' && (
             <div>
-              <p className="text-xl font-bold mt-4">{}</p>
+              <select
+                className="focus:outline-none"
+                defaultValue={selectedValue}
+                onChange={(e) => {
+                  console.log('e.target.value', e.target.value);
+                  //setSelection(e.target.value);
+
+                  navigateToProject(e.target.value);
+                }}
+              >
+                {projects &&
+                  projects.map((pData: IProjects) => {
+                    return (
+                      <option key={pData._id} value={pData._id}>
+                        {pData.name}
+                      </option>
+                    );
+                  })}
+              </select>
             </div>
           )}
           <div>
