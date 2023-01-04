@@ -1,106 +1,61 @@
 import React from 'react';
 import { IProjects } from '../../models/IProjects';
-import Moment from 'moment';
 import { useRouter } from 'next/router';
 import NextImage from '../core/Image';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPen } from "@fortawesome/free-solid-svg-icons";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faListUl } from "@fortawesome/free-solid-svg-icons";
 interface IProps {
   projects: IProjects[];
 }
 let ProjectsList: React.FC<IProps> = ({ projects }) => {
+  console.log(projects);
+
   const router = useRouter();
-  const goToJobsPage = (projectId: string, pName: string) => {
+  const goToProject = (projectId: string, pName: string) => {
     router.push(`projects/${projectId}/project?name=${pName}`);
   };
-
   return (
-    <div>
-      <div className="h-91 overflow-y-scroll px-2 py-2 ">
-        {projects.map((pData) => {
-          return (
-            <div
-              className="flex  even:bg-white odd:bg-white mb-3"
-              key={pData._id}
-            >
-              <div className="flex items-center flex-col w-1/12 h-1/6">
-                <h4 className="text-gray-500">{pData._id} </h4>
-                <NextImage src={pData.coverPhoto} className="w-20" />
+    <div className="h-91 overflow-y-scroll grid grid-cols-4 bg-grey-500  p-2 ">
+      {projects.map((pData) => {
+        return (
+          <div key={pData._id}>
+            <div className=" border p-2 border-gray-900 border-solid h-75 mt-6 rounded-2xl m-4 text-center  bg-white">
+              <div onClick={() => goToProject(pData._id, pData.name)}>
+                <NextImage className="h-16 mt-8 cursor-pointer w-11/12 m-auto hover:border border-gray-500 border-solid" src={pData.coverPhoto} />
               </div>
-              <div className="flex items-center flex-col w-3/12  ">
-                <div>
-                  <h3 className="text-gray-500 ">Project Name</h3>
+
+              <div>
+                <div className="font-bold mt-4">
+                  <p className='inline' >{pData.name}</p>
                 </div>
-                <div>
-                  <h4 className="mt-2">{pData.name}</h4>
-                </div>
-              </div>
-              <div className="flex items-center   flex-col w-2/12">
-                <div>
-                  <h3 className="text-gray-500">Updated Date</h3>
-                </div>
-                <div className="flex flex-col ">
-                  {pData.LastUpdatedOn ? (
-                    <h4 className="mt-2">
-                      {Moment(pData.LastUpdatedOn).format('MMM Do YYYY, h:mma')}
-                    </h4>
-                  ) : (
-                    'N/A'
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center  flex-col w-2/12">
-                <div>
-                  <h5 className="text-gray-500">Jobs</h5>
-                </div>
-                <div className="flex  items-start flex-col">
-                  <h2>Jobs Open:{pData.jobsOpened}</h2>
-                  <h2>Jobs in Progress:0</h2>
-                  <h2>Jobs Completed:0</h2>
-                </div>
-              </div>
-              <div className="flex items-center  flex-col w-2/12">
-                <h6 className="text-gray-500">Job Management</h6>
-                <div className="mt-2">
-                  {pData.LastUpdatedOn ? (
-                    <button
-                      className="bg-custom-yellow hover:bg-border-yellow shadow shadow-gray-800 p-0.5 rounded border border-solid border-gray-500 "
-                      onClick={() => {
-                        goToJobsPage(pData._id, pData.name);
-                      }}
-                    >
-                      Job Management
-                    </button>
-                  ) : (
-                    <button
-                      className="bg-custom-yellow  shadow-gray-800 p-0.5 border border-solid border-gray-500 rounded opacity-50 cursor-not-allowed"
-                      disabled
-                    >
-                      Job Management
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center flex-col w-2/12">
-                <h6 className="text-gray-500">Snapshot Details</h6>
-                <div className="mt-2">
-                  {pData.LastUpdatedOn ? (
-                    <button className="bg-custom-yellow hover:bg-border-yellow shadow shadow-gray-800 p-0.5 rounded border border-solid border-gray-500 ">
-                      Snapshot Details
-                    </button>
-                  ) : (
-                    <button
-                      className="bg-custom-yellow  shadow-gray-800 p-0.5 border border-solid border-gray-500 rounded opacity-50 cursor-not-allowed"
-                      disabled
-                    >
-                      Snapshot Details
-                    </button>
-                  )}
+                <p className="mt-4">last capture:</p>
+                <div className="mt-4 text-gray-400">
+                  <FontAwesomeIcon size="2x" icon={faPen}></FontAwesomeIcon>
+                  <FontAwesomeIcon
+                    style={{ marginLeft: "20px" }}
+                    size="2x"
+                    icon={faUserPlus}
+                  ></FontAwesomeIcon>
+                  <FontAwesomeIcon
+                    style={{ marginLeft: "20px" }}
+                    size="2x"
+                    icon={faListUl}
+                  ></FontAwesomeIcon>
+                  <FontAwesomeIcon
+                    style={{ marginLeft: "20px" }}
+                    size="2x"
+                    icon={faTrash}
+                  ></FontAwesomeIcon>
                 </div>
               </div>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
     </div>
-  );
+  );;
 };
 export default ProjectsList;
