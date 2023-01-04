@@ -38,7 +38,6 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
       </div>
       <div className=" w-1/2 bg-gray-200">
         <div className="ml-32 ">
-          <h1 className="text-2xl mt-16">Capture Management</h1>
           <div className="border border-solid border-gray-500 w-1/2 rounded-3xl mt-12 h-82 bg-gray-300">
             <h2 className="text-center mt-4">User Login</h2>
             <Formik
