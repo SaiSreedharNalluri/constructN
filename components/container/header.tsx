@@ -48,7 +48,6 @@ const Header: React.FC<IProps> = () => {
             <div>
               <select
                 className="focus:outline-none"
-                defaultValue={selectedValue}
                 onChange={(e) => {
                   router.push(`/projects/${e.target.value}/project`);
                 }}
