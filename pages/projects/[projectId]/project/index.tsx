@@ -1,10 +1,11 @@
 import { GetServerSideProps } from 'next';
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
 import ProjectDetails from '../../../../components/container/projectDetails';
 import { getStructure } from '../../../../services/structure';
-import { IStrature } from '../../../../models/IStrature';
+import { ChildrenEntity, IStrature } from '../../../../models/IStrature';
+import Structure from '../../../../components/container/structure';
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const stractureResp: any = await getStructure(
     context.query.projectId as string,
@@ -23,6 +24,9 @@ const Index: React.FC<IProps> = ({ structures }) => {
   const router = useRouter();
   const getStractureHierarchy = (e: any) => {
     //console.log('vjhdkvnds', e.target.value);
+  };
+  const getStructureData = (strature: ChildrenEntity) => {
+    console.log('stracture', strature);
   };
   return (
     <React.Fragment>
@@ -49,6 +53,9 @@ const Index: React.FC<IProps> = ({ structures }) => {
                   );
                 })}
             </select>
+          </div>
+          <div className="w-1/5">
+            <Structure getStructureData={getStructureData}></Structure>
           </div>
           <ProjectDetails />
         </div>
