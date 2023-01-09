@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCookie, removeCookies } from 'cookies-next';
 import { IProjects } from '../../models/IProjects';
-interface IProps {}
+interface IProps { }
 const Header: React.FC<IProps> = () => {
   const router = useRouter();
   let [name, setName] = useState<string>('');
@@ -94,7 +94,7 @@ const Header: React.FC<IProps> = () => {
               </div>
             </div>
             {loading && (
-              <div className="absolute w-60 px-5 py-3 dark:bg-gray-800 bg-white rounded-lg shadow border dark:border-transparent mt-5">
+              <div className="absolute z-10 px-5 py-3 dark:bg-gray-800 bg-white rounded-lg shadow border dark:border-transparent mt-5">
                 <ul className="space-y-3 dark:text-white">
                   <li className="font-medium">
                     <div className="flex items-center transform transition-colors duration-200 border-r-4 border-transparent hover:border-indigo-700">
