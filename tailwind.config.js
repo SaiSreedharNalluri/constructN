@@ -8,9 +8,18 @@ module.exports = {
   ],
   theme: {
     extend: {
+      display: ["group-focus"],
+
       margin: {
         68: "272px",
       },
+      spacing: {
+        5: "3%",
+        7: "13%",
+        27: "27%",
+        35: "35%",
+      },
+
       colors: {
         // Configure your color palette here
         "custom-yellow": "#F2CA52",

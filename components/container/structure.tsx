@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { ChildrenEntity } from '../../models/IStrature';
-import { getStructure } from '../../services/structure';
+import { getStructureHierarchy } from '../../services/structure';
 import Treelist from './treeList';
 import { useRouter } from 'next/router';
 interface IProps {
@@ -13,7 +13,7 @@ const Structure: React.FC<IProps> = ({ getStructureData }) => {
   let [state, setState] = useState<ChildrenEntity[]>([]);
   useEffect(() => {
     if (router.isReady) {
-      getStructure(router.query.projectId as string)
+      getStructureHierarchy(router.query.projectId as string)
         .then((response: AxiosResponse<any>) => {
           setState([...response.data.result]);
         })
