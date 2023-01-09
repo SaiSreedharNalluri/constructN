@@ -17,11 +17,11 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
     router.push(`projects/${projectId}/project`);
   };
   return (
-    <div className="h-91 overflow-y-scroll grid grid-cols-4 bg-grey-500  p-2 ">
+    <div className="h-91 overflow-y-scroll grid grid-cols-4 bg-grey-500 p-2 ">
       {projects.map((pData) => {
         return (
           <div key={pData._id}>
-            <div className=" border p-2 border-gray-900 border-solid h-75 mt-6 rounded-2xl m-4 text-center  bg-white">
+            <div className=" border p-2 border-gray-900 border-solid h-72  mt-6 rounded-2xl m-4 text-center  bg-white">
               <div onClick={() => goToProject(pData._id)}>
                 <NextImage
                   className="h-16 mt-8 cursor-pointer w-11/12 m-auto hover:border border-gray-500 border-solid"
