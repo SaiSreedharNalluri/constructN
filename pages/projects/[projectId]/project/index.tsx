@@ -2,10 +2,11 @@ import { GetServerSideProps } from 'next';
 import React from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
-import ProjectDetails from '../../../../components/container/projectDetails';
+
 import { getStructure } from '../../../../services/structure';
 import { ChildrenEntity, IStrature } from '../../../../models/IStrature';
 import Structure from '../../../../components/container/structure';
+import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const stractureResp: any = await getStructure(
     context.query.projectId as string,
@@ -33,31 +34,11 @@ const Index: React.FC<IProps> = ({ structures }) => {
       <div className="h-screen">
         <div>
           <Header />
-          <div>
-            <select
-              className="focus:outline-none"
-              onChange={(e) => {
-                getStractureHierarchy(e.target.value);
-              }}
-            >
-              {structures &&
-                structures.map((stractureData: any) => {
-                  return (
-                    <option
-                      key={stractureData._id}
-                      value={stractureData._id}
-                      selected={stractureData.parent === null}
-                    >
-                      {stractureData.name}
-                    </option>
-                  );
-                })}
-            </select>
-          </div>
-          <div className="w-1/5">
-            <Structure getStructureData={getStructureData}></Structure>
-          </div>
-          <ProjectDetails />
+
+
+
+          <CollapsableMenu getStractureHierarchy={getStractureHierarchy} getStructureData={getStructureData} structures={structures}></CollapsableMenu>
+
         </div>
       </div>
     </React.Fragment>
