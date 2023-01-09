@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { setCookies } from 'cookies-next';
+import { setCookie } from 'cookies-next';
 export const login = (email: string, password: string) => {
   return axios
     .post(`${process.env.NEXT_PUBLIC_HOST}/users/signin`, {
@@ -8,7 +8,7 @@ export const login = (email: string, password: string) => {
     })
     .then((response) => {
       if (response.data.result) {
-        setCookies('user', JSON.stringify(response.data.result));
+        setCookie('user', JSON.stringify(response.data.result));
       }
       return response.data;
     })
