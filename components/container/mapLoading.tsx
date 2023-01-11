@@ -4,12 +4,8 @@ import { useRouter } from 'next/router'
 function MapLoading() {
     const [latlng, setLatLng] = React.useState<any>();
     const router = useRouter();
-    const [selectedValue, setSelection] = useState(
-        router.query.projectId as string
-    );
-    console.log(selectedValue);
     const bearer =
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJVU1IwMDg5NzYiLCJmaXJzdE5hbWUiOiJWaW5lZXRoIiwibGFzdE5hbWUiOiJQYXJ1Y2h1cmkiLCJlbWFpbCI6InZpbmVldGhAY29uc3RydWN0bi5haSIsInZlcmlmaWVkIjp0cnVlLCJjcmVhdGVkQXQiOiIyMDIyLTA1LTE2VDE3OjQzOjI4Ljk3NloiLCJ1cGRhdGVkQXQiOiIyMDIyLTExLTAyVDA5OjMwOjIzLjA3MFoiLCJfX3YiOjAsImF2YXRhciI6Imh0dHBzOi8vY29uc3RydWN0bi1hdHRhY2htZW50cy5zMy5hcC1zb3V0aC0xLmFtYXpvbmF3cy5jb20vYXZhdGFycy9VU1IwMDg5NzYucG5nIiwiZnVsbE5hbWUiOiJWaW5lZXRoIFBhcnVjaHVyaSIsImlhdCI6MTY3MzM1MzM1MSwiZXhwIjoxNjczNDM2MTUxfQ.jACk7RRf3zB-D3FYE2i65SSQy1mOjOWLlsWe33Yn5hU";
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJVU1IwMDg5NzYiLCJmaXJzdE5hbWUiOiJWaW5lZXRoIiwibGFzdE5hbWUiOiJQYXJ1Y2h1cmkiLCJlbWFpbCI6InZpbmVldGhAY29uc3RydWN0bi5haSIsInZlcmlmaWVkIjp0cnVlLCJjcmVhdGVkQXQiOiIyMDIyLTA1LTE2VDE3OjQzOjI4Ljk3NloiLCJ1cGRhdGVkQXQiOiIyMDIyLTExLTAyVDA5OjMwOjIzLjA3MFoiLCJfX3YiOjAsImF2YXRhciI6Imh0dHBzOi8vY29uc3RydWN0bi1hdHRhY2htZW50cy5zMy5hcC1zb3V0aC0xLmFtYXpvbmF3cy5jb20vYXZhdGFycy9VU1IwMDg5NzYucG5nIiwiZnVsbE5hbWUiOiJWaW5lZXRoIFBhcnVjaHVyaSIsImlhdCI6MTY3MzQzOTMyMCwiZXhwIjoxNjczNTIyMTIwfQ.iP1wWAd7mHFCL5hM8vHHt1_Qjl4nAFJR565af4oQ9Cw ";
     React.useEffect(() => {
         const fetchData = async () => {
             var requestOptions: any = {
@@ -33,7 +29,6 @@ function MapLoading() {
         fetchData();
     }, []);
     console.log(latlng);
-
     return (
         <div>
             <Map initialViewState={{

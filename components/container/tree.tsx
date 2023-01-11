@@ -10,6 +10,7 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData }) => {
   const Treenode = (structure: ChildrenEntity) => {
     const [visible, setVisible] = useState(false);
     const hasChild = structure.children ? true : false;
+    const [click, setClick] = useState(false);
     return (
       <div key={structure._id} >
         <li className=' flex-col bg-white p-1'>
@@ -21,7 +22,7 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData }) => {
             }}
           >
             <div>
-              <div className="flex">
+              <div className={`flex ${click ? "bg-black" : ""}`} onClick={() => setClick(!click)}>
                 <div >
                   <p>
                     {visible ? (

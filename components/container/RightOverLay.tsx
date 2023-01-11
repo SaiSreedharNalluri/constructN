@@ -4,7 +4,6 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { faSearchMinus } from "@fortawesome/free-solid-svg-icons";
 import { faSearchPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { faGreaterThan, faAngleDown } from "@fortawesome/free-solid-svg-icons";
 const RightOverLay: React.FC = () => {
     return (

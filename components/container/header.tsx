@@ -34,10 +34,10 @@ const Header: React.FC<IProps> = () => {
     <React.Fragment>
       <header className="h-11 border-b border-solid border-gray-400 ">
         <div className="flex justify-between">
-          <div >
+          <div>
             <Image
               onClick={goToProjectsList}
-              className=" mt-2  cursor-pointer w-2/4 h-1/2"
+              className=" cursor-pointer scale-50 relative -ml-12 -mt-1"
               src="https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2Fs3.amazonaws.com%2Fappforest_uf%2Ff1628494605280x954459828257958600%2FArtboard%25201%2520copy%25202%25404x.png?w=512&h=115&auto=compress&fit=crop&dpr=1.25"
               alt=""
               height={240}
@@ -47,7 +47,7 @@ const Header: React.FC<IProps> = () => {
           {router.pathname != '/projects' && (
             <div className='mt-1' >
               <select
-                className="focus:outline-none  rounded border border-solid border-black  font-b"
+                className="focus:outline-none  rounded text-right "
                 onChange={(e) => {
                   router.push(`/projects/${e.target.value}/project`);
                 }}

@@ -1,6 +1,4 @@
 import React from 'react'
-import { faAngleDown, faSearch } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 const SearchInput: React.FC = () => {
     return (
         <div className=" relative  text-gray-600">
