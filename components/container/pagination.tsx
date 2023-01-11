@@ -1,97 +1,77 @@
-import React from 'react'
+import React, { useState, useRef } from 'react'
 import { Form } from "react-bootstrap";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 const Pagination: React.FC = () => {
-    return (
-        < div className="flex justify-between">
-            <div>
-                <ul className="flex">
-                    <li >
-                        <a
-                            className=" relative block py-2   border-0 bg-transparent  hover:bg-gray-200 outline-none transition-all duration-300 rounded focus:shadow-none text-gray-800 hover:text-gray-800  "
-                        >
-                            <span>&laquo;</span>
-                        </a></li>
-                    <p className=" relative block py-2  px-2">{"06Jan'22"}</p>
-                    <li >
-                        <a
-                            className=" relative block py-2  px-2  border-0 bg-transparent  hover:bg-gray-200 outline-none transition-all duration-300 rounded focus:shadow-none text-gray-800 hover:text-gray-800  "
-                        >
-                            <span>1</span>
-                        </a></li>
-                    <li >
-                        <a
-                            className=" relative block py-2  px-2  border-0 bg-transparent  hover:bg-gray-200 outline-none transition-all duration-300 rounded focus:shadow-none text-gray-800 hover:text-gray-800  "
-                        >
-                            <span>2</span>
-                        </a></li>
+    const [snDetails, setSnDetails] = useState(false);
+    const snBoxRef: any = useRef();
+    const openSearch = () => {
+        if (!snDetails) {
+            snBoxRef.current.style.width = '25%';
+            snBoxRef.current.style.height = '100%';
+        }
+    };
+    const closeSearch = () => {
+        snBoxRef.current.style.width = '0';
+    };
 
-                    <li >
-                        <a
-                            className=" relative block py-2  px-2  border-0 bg-transparent  hover:bg-gray-200 outline-none transition-all duration-300 rounded focus:shadow-none text-gray-800 hover:text-gray-800  "
-                        >
-                            <span>3</span>
-                        </a></li>
-                    <li >
-                        <a
-                            className=" relative block py-2  px-2  border-0 bg-transparent  hover:bg-gray-200 outline-none transition-all duration-300 rounded focus:shadow-none text-gray-800 hover:text-gray-800  "
-                        >
-                            <span>4</span>
-                        </a></li>
-                    <li >
-                        <a
-                            className=" relative block py-2  px-2  border-0 bg-transparent  hover:bg-gray-200 outline-none transition-all duration-300 rounded focus:shadow-none text-gray-800 hover:text-gray-800  "
-                        >
-                            <span>5</span>
-                        </a></li>
-                    <li >
-                        <a
-                            className=" relative block py-2  px-2  border-0 bg-transparent  hover:bg-gray-200 outline-none transition-all duration-300 rounded focus:shadow-none text-gray-800 hover:text-gray-800  "
-                        >
-                            <span>6</span>
-                        </a></li>
-                    <li >
-                        <a
-                            className=" relative block py-2  px-2  border-0 bg-transparent  hover:bg-gray-200 outline-none transition-all duration-300 rounded focus:shadow-none text-gray-800 hover:text-gray-800  "
-                        >
-                            <span>7</span>
-                        </a></li>
-                    <li >
-                        <a
-                            className=" relative block py-2  px-2  border-0 bg-transparent  hover:bg-gray-200 outline-none transition-all duration-300 rounded focus:shadow-none text-gray-800 hover:text-gray-800  "
-                        >
-                            <span>8</span>
-                        </a></li>
-                    <li >
-                        <a
-                            className=" relative block py-2  px-2  border-0 bg-transparent  hover:bg-gray-200 outline-none transition-all duration-300 rounded focus:shadow-none text-gray-800 hover:text-gray-800  "
-                        >
-                            <span>9</span>
-                        </a></li>
-                    <li >
-                        <a
-                            className=" relative block py-2  px-2  border-0 bg-transparent  hover:bg-gray-200 outline-none transition-all duration-300 rounded focus:shadow-none text-gray-800 hover:text-gray-800  "
-                        >
-                            <span>10</span>
-                        </a></li>
-                    <p className=" relative block py-2  px-2">{"06Jan'22"}</p>
-                    <li >
-                        <a
-                            className=" relative block py-2    border-0 bg-transparent  hover:bg-gray-200 outline-none transition-all duration-300 rounded focus:shadow-none text-gray-800 hover:text-gray-800  "
-                        >
-                            <span>&raquo;</span>
-                        </a></li>
-                </ul>
+    return (
+        <>
+            < div className="flex justify-between">
+                <div className='flex' onClick={openSearch} >
+                    <div className='  py-2 px-1  ' >
+                        <span>&laquo;</span>
+                    </div>
+                    <div className=' flex items-center mr-1'>
+                        <p>{"10 - 1 - 2023"}</p>
+                    </div>
+                    <div className="flex items-center rounded  ">
+                        <input type="radio" name="bordered-radio" className="w-3 h-4 cursor-pointer text-blue-600" />
+                    </div>
+                    <div className="flex items-center rounded pl-1 ">
+                        <input type="radio" name="bordered-radio" className="w-3 h-4 cursor-pointer" />
+                    </div>
+                    <div className="flex items-center  rounded pl-1 ">
+                        <input type="radio" name="bordered-radio" className="w-3 h-4 cursor-pointer" />
+                    </div>
+                    <div className="flex items-center rounded pl-1 cursor-pointer">
+                        <input type="radio" name="bordered-radio" className="w-3 h-4 cursor-pointer" />
+                    </div>
+                    <div className="flex items-center rounded pl-1 cursor-pointer">
+                        <input type="radio" name="bordered-radio" className="w-3 h-4 cursor-pointer" />
+                    </div>
+                    <div className="flex items-center rounded pl-1 cursor-pointer">
+                        <input type="radio" name="bordered-radio" className="w-3 h-4 cursor-pointer" />
+                    </div>
+                    <div className="flex items-center rounded pl-1 cursor-pointer">
+                        <input type="radio" name="bordered-radio" className="w-3 h-4 cursor-pointer" />
+                    </div>
+                    <div className="flex items-center rounded pl-1 cursor-pointer">
+                        <input type="radio" name="bordered-radio" className="w-3 h-4 cursor-pointer" />
+                    </div>
+
+                    <div className="flex items-center rounded pl-1 cursor-pointer">
+                        <input type="radio" name="bordered-radio" className="w-3 h-4 cursor-pointer" />
+                    </div>
+                    <div className="flex items-center rounded pl-1 cursor-pointer">
+                        <input type="radio" name="bordered-radio" className="w-3 h-4 cursor-pointer" />
+                    </div>
+
+                    <div className='flex items-center ml-1 '>
+                        <p>{"11 - 1 - 2023"}  </p>
+                    </div>
+                    <div className=' flex items-center ml-1 ' >
+                        <span>&raquo;</span>
+                    </div>
+                </div>
             </div>
-            <div className='ml-4 rounded-sm bg-gray-300'>
-                <Form.Group controlId="dob">
-                    <Form.Control
-                        type="date"
-                        name="dob"
-                    />
-                </Form.Group>
+            <div ref={snBoxRef} className={`fixed w-0  bg-white  top-8  right-0 z-10 overflow-x-hidden`}>
+                <div className='h-6 border-y border-solid border-gray-400'>
+                    <FontAwesomeIcon icon={faTimes} onClick={closeSearch} className="hover:white cursor-pointer ml-2 " ></FontAwesomeIcon>
+                </div>
+
             </div>
-        </div>
+        </>
     )
 }
 

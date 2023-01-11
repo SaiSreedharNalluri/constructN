@@ -11,9 +11,9 @@ interface IProps {
 const LeftOverLay: React.FC<IProps> = ({ structures, getStructureData, getStractureHierarchy }) => {
     return (
         <React.Fragment>
-            <div>
+            <div className=''>
                 <select
-                    className="focus:outline-none"
+                    className="focus:outline-none w-full bg-gray-100 p-2"
                     onChange={(e) => {
                         getStractureHierarchy(e.target.value);
                     }}

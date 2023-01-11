@@ -5,53 +5,74 @@ import Pagination from '../container/pagination';
 import RightOverLay from '../container/RightOverLay';
 import LeftOverLay from '../container/leftOverLay';
 import { IStrature, ChildrenEntity } from '../../models/IStrature';
+import MapLoading from '../container/mapLoading';
+import DatePicker from '../container/datePicker';
 interface IProps {
     structures: IStrature[];
     getStructureData: (strature: ChildrenEntity) => void;
     getStractureHierarchy: (e: string) => void
 }
 const CollapsableMenu: React.FC<IProps> = ({ structures, getStructureData, getStractureHierarchy }) => {
-    const [openNav, setOpenNav] = useState(false);
-    const [oNav, setONav] = useState(false);
-    console.log(openNav);
-    const overlayRef: any = useRef();
-    const overlayRefs: any = useRef();
-    const openSearch = () => {
-        if (!openNav) {
-            overlayRef.current.style.width = '25%';
+    const [leftNav, setLeftNav] = useState(false);
+    const [rightNav, setRightNav] = useState(false);
+    const [bottomNav, setBottomNav] = useState(false);
+
+    const leftOverlayRef: any = useRef();
+    const rightOverlayRef: any = useRef();
+    const BottomOverlayRef: any = useRef();
+    const leftNavCollapse = () => {
+        if (!leftNav) {
+            leftOverlayRef.current.style.width = '25%';
         } else {
-            overlayRef.current.style.width = '0%';
+            leftOverlayRef.current.style.width = '0%';
         }
-        setOpenNav(!openNav)
+        setLeftNav(!leftNav)
     };
     const rightNavCollapse = () => {
-        if (!oNav) {
-            overlayRefs.current.style.width = '3%';
-            overlayRefs.current.style.height = '65%';
+        if (!rightNav) {
+            rightOverlayRef.current.style.width = '3%';
+            rightOverlayRef.current.style.height = '65%';
         } else {
-            overlayRefs.current.style.width = '0%';
-            overlayRefs.current.style.height = '0%';
+            rightOverlayRef.current.style.width = '0%';
+            rightOverlayRef.current.style.height = '0%';
         }
-        setONav(!oNav)
+        setRightNav(!rightNav)
+    }
+    const bottomOverLay = () => {
+        if (!bottomNav) {
+            BottomOverlayRef.current.style.width = '45%';
+
+        } else {
+            BottomOverlayRef.current.style.width = '0%';
+        }
+        setBottomNav(!bottomNav)
     }
     return (
-        <div className="h-full relative">
+        <div className="h-full relative ">
             <div className={` w-full relative`}>
-                <img src="https://wallpaperaccess.com/full/4723253.jpg" className="h-91 w-screen" />
-                <FontAwesomeIcon className={`absolute  ${!openNav && "rotate-180"} text-2xl text-blue-300 top-2/4  ${openNav ? "left-1/4" : ""} cursor-pointer border-none rounded ml-2 p-2 bg-gray-600 text-white`} onClick={openSearch} icon={faGreaterThan}></FontAwesomeIcon>
-                <FontAwesomeIcon className={`absolute  ${oNav && "rotate-180"} text-2xl text-blue-300 top-2/4 ${oNav ? "right-5" : "right-0"}  cursor-pointer border-none rounded ml-2 p-2 bg-gray-600 text-white`} onClick={rightNavCollapse} icon={faGreaterThan}></FontAwesomeIcon>
-                <div ref={overlayRef} className={`h-full bg-black bg-opacity-60 w-0 absolute  z-10 top-0 -left-0 duration-300 overflow-x-hidden`}>
+                {/* <img src="https://wallpaperaccess.com/full/4723253.jpg" className="h-91 w-screen" /> */}
+                <MapLoading></MapLoading>
+                <FontAwesomeIcon className={`absolute  ${!leftNav && "rotate-180"} text-2xl text-blue-300 top-2/4  ${leftNav ? "left-1/4" : ""} cursor-pointer border-none rounded ml-2 p-2 bg-gray-600 text-white`} onClick={leftNavCollapse} icon={faGreaterThan}></FontAwesomeIcon>
+                <FontAwesomeIcon className={`absolute  ${rightNav && "rotate-180"} text-2xl text-blue-300 top-2/4 ${rightNav ? "right-5" : "right-0"}  cursor-pointer border-none rounded ml-2 p-2 bg-gray-600 text-white`} onClick={rightNavCollapse} icon={faGreaterThan}></FontAwesomeIcon>
+                <p className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${bottomNav ? "bottom-11" : "bottom-0"} `} onClick={bottomOverLay}>10-01-2022</p>
+                <div ref={leftOverlayRef} className={`h-full bg-white  w-0 absolute  z-10 top-0 -left-0 duration-300 overflow-x-hidden`}>
                     <LeftOverLay getStractureHierarchy={getStractureHierarchy} getStructureData={getStructureData} structures={structures}></LeftOverLay>
                 </div>
-                <div className="left-35 bottom-4 w-1/3 bg-gray-300 rounded absolute ">
-                    <Pagination></Pagination>
+                <div ref={BottomOverlayRef} className="w-0  rounded absolute left-35 bottom-1  overflow-x-hidden z-10">
+                    <div className='flex '>
+                        <div className=' bg-white'>
+                            <Pagination></Pagination>
+                        </div>
+                        <div>
+                            <DatePicker></DatePicker>
+                        </div>
+                    </div>
                 </div>
-                <div ref={overlayRefs} id="bg-color" className={`absolute w-0  bg-black bg-opacity-60 top-1/4 rounded z-10 right-0 duration-300 overflow-x-hidden`}>
+                <div ref={rightOverlayRef} id="bg-color" className={`absolute w-0  bg-white top-1/4 rounded z-10 right-0 duration-300 overflow-x-hidden`}>
                     <RightOverLay></RightOverLay>
                 </div>
             </div>
         </div>
-
     )
 }
 

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 const Layer: React.FC = () => {
     return (
-        <div className='bg-gray-400 mt-4'>
+        <div className='bg-gray-400'>
             <div className='ml-2  py-2 '>
                 <h5 className='text-gray-900'>media</h5>
                 <button className='pl-2 mt-2 w-1/4 group flex justify-between items-baseline bg-gray-300 focus:outline-none shadow text-black rounded focus:ring ring-gray-200'>

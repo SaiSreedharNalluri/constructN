@@ -35,8 +35,9 @@ const Projects: React.FC<IProps> = ({ projects }) => {
   }
   return (
     <React.Fragment>
+      <Header />
       <div className="bg-gray-100">
-        <Header />
+
         <ProjectsList projects={projects} />
       </div>
     </React.Fragment>
