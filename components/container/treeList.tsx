@@ -6,6 +6,7 @@ interface IProps {
   getStructureData: (strature: ChildrenEntity) => void;
 }
 const TreeList: React.FC<IProps> = ({ treeList, getStructureData }) => {
+  console.log(treeList)
   return (
     <div>
       <Tree tree={treeList} getStructureData={getStructureData} />

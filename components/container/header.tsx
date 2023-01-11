@@ -32,12 +32,12 @@ const Header: React.FC<IProps> = () => {
   };
   return (
     <React.Fragment>
-      <header className="h-11 bg-custom-yellow ">
+      <header className="h-11 border-b border-solid border-gray-400 ">
         <div className="flex justify-between">
           <div >
             <Image
               onClick={goToProjectsList}
-              className=" mt-2  cursor-pointer"
+              className=" mt-2  cursor-pointer w-2/4 h-1/2"
               src="https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2Fs3.amazonaws.com%2Fappforest_uf%2Ff1628494605280x954459828257958600%2FArtboard%25201%2520copy%25202%25404x.png?w=512&h=115&auto=compress&fit=crop&dpr=1.25"
               alt=""
               height={240}
@@ -45,9 +45,9 @@ const Header: React.FC<IProps> = () => {
             ></Image>
           </div>
           {router.pathname != '/projects' && (
-            <div className='m-auto'>
+            <div className='mt-1' >
               <select
-                className="focus:outline-none p-1 rounded"
+                className="focus:outline-none  rounded border border-solid border-black  font-b"
                 onChange={(e) => {
                   router.push(`/projects/${e.target.value}/project`);
                 }}
@@ -67,9 +67,9 @@ const Header: React.FC<IProps> = () => {
               </select>
             </div>
           )}
-          <div className='flex items-center'>
-            <div className='mr-4'>
-              <FontAwesomeIcon icon={faBell} size="2x" />
+          <div className='flex '>
+            <div className='mt-1 mr-2'>
+              <FontAwesomeIcon icon={faBell} />
             </div>
             <div
               onClick={() => {
@@ -81,7 +81,7 @@ const Header: React.FC<IProps> = () => {
               }}
             >
 
-              <div className="w-12 h-12 mr-2 rounded-full overflow-hidden border-1 dark:border-white border-gray-900">
+              <div className="w-6 h-6 mt-1 mr-2 rounded-full overflow-hidden border-1 dark:border-white border-gray-900">
                 <Image
                   src="https://images.unsplash.com/photo-1610397095767-84a5b4736cbd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
                   alt=""
@@ -92,12 +92,12 @@ const Header: React.FC<IProps> = () => {
 
               </div>
             </div>
-            <div className="font-semibold mr-2 dark:text-white text-gray-900 text-lg">
+            <div className="font-semibold mr-2 dark:text-white text-gray-900 mt-1">
               <div >{name}</div>
             </div>
 
             {loading && (
-              <div className="absolute top-16 z-10 dark:bg-gray-800 bg-white rounded-lg shadow border dark:border-transparent ">
+              <div className="absolute top-10 z-10 dark:bg-gray-800 bg-white rounded-lg shadow border dark:border-transparent ">
                 <ul className=" dark:text-white p-4 ">
                   <li className="font-medium cursor-pointer">
                     <div className="flex items-center justify-center transform transition-colors duration-200">
