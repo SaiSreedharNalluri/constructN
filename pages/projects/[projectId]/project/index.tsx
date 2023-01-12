@@ -48,9 +48,7 @@ const Index: React.FC<IProps> = ({ structures }) => {
     getSnapshots(router.query.projectId as string, strature._id);
     setLoadSnap(false);
   }
-  const getsnapShortDetails = (snapShotId: string) => {
-    console.log('e', snapShotId);
-  };
+
   const bottomOverLay = () => {
     if (!bottomNav) {
       BottomOverlayRef.current.style.width = '45%';
@@ -85,10 +83,7 @@ const Index: React.FC<IProps> = ({ structures }) => {
         >
           <div className="flex ">
             <div className=" bg-white">
-              <Pagination
-                getsnapShortDetails={getsnapShortDetails}
-                snapShots={snapShots}
-              />
+              <Pagination snapShots={snapShots} />
             </div>
             <div>
               <DatePicker></DatePicker>

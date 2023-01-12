@@ -1,16 +1,18 @@
-import { ISnapShort } from '../../models/ISnapShort';
+import { ISnapShort, ISnapShotDeatils } from '../../models/ISnapShort';
 import React, { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { getSnapshotDetails } from '../../services/snapshot';
+import Moment from 'moment';
 interface IProps {
   snapShots: ISnapShort[];
-  getsnapShortDetails: (snapShotId: string) => void;
 }
-const Pagination: React.FC<IProps> = ({ snapShots, getsnapShortDetails }) => {
-  const [snDetails, setSnDetails] = useState(false);
+const Pagination: React.FC<IProps> = ({ snapShots }) => {
+  const [showDetails, setShowDetails] = useState(false);
+  const [snapDeatails, setSnapDetails] = useState<ISnapShotDeatils>();
   const snBoxRef: any = useRef();
   const openSearch = () => {
-    if (!snDetails) {
+    if (!showDetails) {
       snBoxRef.current.style.width = '25%';
       snBoxRef.current.style.height = '100%';
     }
@@ -18,7 +20,18 @@ const Pagination: React.FC<IProps> = ({ snapShots, getsnapShortDetails }) => {
   const closeSearch = () => {
     snBoxRef.current.style.width = '0';
   };
-
+  const getsnapShortDetails = (snapShotData: ISnapShort) => {
+    console.log('e', snapShotData);
+    getSnapshotDetails(
+      snapShotData.project,
+      snapShotData.structure,
+      snapShotData._id
+    )
+      .then((response) => {
+        setSnapDetails(response.data.result);
+      })
+      .catch();
+  };
   return (
     <React.Fragment>
       <div className="flex justify-between">
@@ -32,7 +45,7 @@ const Pagination: React.FC<IProps> = ({ snapShots, getsnapShortDetails }) => {
                     <li
                       key={snapData._id}
                       onClick={() => {
-                        getsnapShortDetails(snapData._id);
+                        getsnapShortDetails(snapData);
                       }}
                     >
                       <div className="flex items-center rounded ">
@@ -57,7 +70,34 @@ const Pagination: React.FC<IProps> = ({ snapShots, getsnapShortDetails }) => {
               icon={faTimes}
               onClick={closeSearch}
               className="hover:white cursor-pointer ml-2 "
-            ></FontAwesomeIcon>
+            />
+            <div>
+              <div>
+                <span>SnapShotId :</span>
+                {snapDeatails?._id}
+              </div>
+
+              <div>
+                <span>Project :</span>
+                {snapDeatails?.project?.name}
+              </div>
+              <div>
+                <span>Structure :</span>
+                {snapDeatails?.structure?.name}
+              </div>
+              <div>
+                <span>CreatedAt :</span>
+                {Moment(snapDeatails?.createdAt).format('MMM Do YYYY')}
+              </div>
+              <div>
+                <span>UpdatedAt :</span>
+                {Moment(snapDeatails?.updatedAt).format('MMM Do YYYY')}
+              </div>
+              <div>
+                <span>status :</span>
+                {snapDeatails?.status}
+              </div>
+            </div>
           </div>
         </div>
       </div>
