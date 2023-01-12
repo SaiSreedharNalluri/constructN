@@ -10,20 +10,33 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData }) => {
   const Treenode = (structure: ChildrenEntity) => {
     const [visible, setVisible] = useState(false);
     const hasChild = structure.children ? true : false;
+    const [data, setData] = useState<ChildrenEntity>();
     const [click, setClick] = useState(false);
+
     return (
-      <div key={structure._id} >
-        <li className=' flex-col bg-white p-1'>
+      <div key={structure._id}>
+        <li className=" flex-col bg-white p-1">
           <div
-            className=""
             onClick={() => {
               getStructureData(structure);
               setVisible((vis) => !vis);
+              setData(structure);
             }}
           >
-            <div>
-              <div className={`flex ${click ? "bg-black" : ""}`} onClick={() => setClick(!click)}>
-                <div >
+            <div
+              className={`flex p-2 ${
+                click ? ' bg-green-300' : 'bg-gray-300'
+              } hover:bg-gray-400`}
+              onClick={() => {
+                if (click) {
+                  setClick(false);
+                } else {
+                  setClick(true);
+                }
+              }}
+            >
+              <div className="flex ">
+                <div className="">
                   <p>
                     {visible ? (
                       <FontAwesomeIcon size="1x" icon={faAngleDown} />
@@ -40,7 +53,7 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData }) => {
           </div>
           {hasChild && visible && (
             <div className="flex-col">
-              <ul className='pl-4'>
+              <ul className="pl-2">
                 <Tree
                   tree={structure.children as Array<ChildrenEntity>}
                   getStructureData={getStructureData}
