@@ -53,7 +53,7 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData }) => {
           </div>
           {hasChild && visible && (
             <div className="flex-col">
-              <ul className="pl-4">
+              <ul className="pl-2">
                 <Tree
                   tree={structure.children as Array<ChildrenEntity>}
                   getStructureData={getStructureData}

@@ -33,7 +33,7 @@ const LeftOverLay: React.FC<IProps> = ({
     <React.Fragment>
       <div>
         <select
-          className="focus:outline-none"
+          className="focus:outline-none w-full bg-gray-100 p-2"
           onChange={(e) => {
             getStractureHierarchy(e.target.value);
           }}
@@ -54,7 +54,7 @@ const LeftOverLay: React.FC<IProps> = ({
       </div>
       <Layer></Layer>
       <SearchInput></SearchInput>
-      <div>
+      <div className="w-full">
         {state.length === 0 ? (
           'no structures found for this project'
         ) : (
