@@ -15,7 +15,7 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData }) => {
 
     return (
       <div key={structure._id}>
-        <li>
+        <li className=" flex-col bg-white p-1">
           <div
             onClick={() => {
               getStructureData(structure);
@@ -45,15 +45,15 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData }) => {
                     )}
                   </p>
                 </div>
-                <button className="ml-2">
+                <button className="">
                   <p className=" text-gray-700  text-sm ">{structure.name}</p>
                 </button>
               </div>
             </div>
           </div>
           {hasChild && visible && (
-            <div className="ml-4">
-              <ul>
+            <div className="flex-col">
+              <ul className="pl-4">
                 <Tree
                   tree={structure.children as Array<ChildrenEntity>}
                   getStructureData={getStructureData}

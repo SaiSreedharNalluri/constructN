@@ -68,7 +68,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                     <Image
                       height={1080}
                       width={1920}
-                      className="h-7 w-8 ml-auto -mt-10 mr-5 "
+                      className="h-7 w-8 ml-auto -mt-10  relative right-6 "
                       alt=""
                       title={isRevealPwd ? 'Hide password' : 'Show password'}
                       src={isRevealPwd ? hidePwdImg : showPwdImg}
