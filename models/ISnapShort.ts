@@ -10,3 +10,19 @@ export interface ISnapShort {
   status: string;
   visualization: [];
 }
+
+export interface ISnapShotDeatils {
+  _id: string;
+  progress: number;
+  status: string;
+  visualizations?: null[] | null;
+  structure: StructureOrProject;
+  date: string;
+  project: StructureOrProject;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface StructureOrProject {
+  _id: string;
+  name: string;
+}

@@ -1,8 +1,6 @@
-import { GetServerSideProps } from 'next';
 import React, { useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
-import { getStructure } from '../../../../services/structure';
 import { ChildrenEntity, IStrature } from '../../../../models/IStrature';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 import { getSnapshotsList } from '../../../../services/snapshot';
@@ -10,24 +8,14 @@ import { ISnapShort } from '../../../../models/ISnapShort';
 import Pagination from '../../../../components/container/pagination';
 import _ from 'lodash';
 import DatePicker from '../../../../components/container/datePicker';
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const stractureResp: any = await getStructure(
-    context.query.projectId as string,
-    context
-  );
-  return {
-    props: { structures: stractureResp.data.result },
-  };
-};
 
 interface IProps {
   structures: IStrature[];
 }
 
-const Index: React.FC<IProps> = ({ structures }) => {
+const Index: React.FC<IProps> = ({}) => {
   const router = useRouter();
   const [snapShots, setSnapShots] = useState<ISnapShort[]>([]);
-  const [loadsnap, setLoadSnap] = useState(true);
   const [bottomNav, setBottomNav] = useState(false);
   const BottomOverlayRef: any = useRef();
   const getStractureHierarchy = (e: any) => {};
@@ -43,14 +31,7 @@ const Index: React.FC<IProps> = ({ structures }) => {
         console.log('error', error);
       });
   };
-  if (loadsnap) {
-    let strature: any = _.find(structures, { parent: null });
-    getSnapshots(router.query.projectId as string, strature._id);
-    setLoadSnap(false);
-  }
-  const getsnapShortDetails = (snapShotId: string) => {
-    console.log('e', snapShotId);
-  };
+
   const bottomOverLay = () => {
     if (!bottomNav) {
       BottomOverlayRef.current.style.width = '45%';
@@ -67,7 +48,6 @@ const Index: React.FC<IProps> = ({ structures }) => {
           <CollapsableMenu
             getStractureHierarchy={getStractureHierarchy}
             getStructureData={getStructureData}
-            structures={structures}
           />
         </div>
         <p
@@ -85,10 +65,7 @@ const Index: React.FC<IProps> = ({ structures }) => {
         >
           <div className="flex ">
             <div className=" bg-white">
-              <Pagination
-                getsnapShortDetails={getsnapShortDetails}
-                snapShots={snapShots}
-              />
+              <Pagination snapShots={snapShots} />
             </div>
             <div>
               <DatePicker></DatePicker>
