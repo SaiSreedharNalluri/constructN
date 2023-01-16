@@ -4,7 +4,6 @@ import { faCircleInfo, faGreaterThan, faGripHorizontal, faUsers } from '@fortawe
 import RightOverLay from '../container/rightOverLay';
 import LeftOverLay from '../container/leftOverLay';
 import { IStrature, ChildrenEntity } from '../../models/IStrature';
-import MapLoading from '../container/mapLoading';
 import DatePicker from '../container/datePicker';
 import Pagination from '../container/pagination';
 interface IProps {
@@ -36,6 +35,7 @@ const CollapsableMenu: React.FC<IProps> = ({
             leftOverlayRef.current.style.width = '0%';
         }
     }, [leftNav]);
+
     const rightNavCollapse = () => {
         if (!rightNav) {
             rightOverlayRef.current.style.width = '3%';
@@ -57,22 +57,8 @@ const CollapsableMenu: React.FC<IProps> = ({
         }
         setBottomNav(!bottomNav);
     };
-    const closeStructurePage = (e: any) => {
-        console.log(leftOverlayRef.current.contains(e.target));
-        console.log(!leftIconsContainerRef.current.contains(e.target));
-        if (!leftOverlayRef.current.contains(e.target) && !leftIconsContainerRef.current.contains(e.target)) {
-            setLeftNav(false);
-        }
-    }
-    useEffect(() => {
-        const handler = document.addEventListener("click", closeStructurePage);
-        console.log(handler);
-        return () => {
-            document.removeEventListener("click", closeStructurePage)
-        }
-    }, [])
     return (
-        <div>
+        <div >
             <div className='absolute left-0 z-10 w-10 h-91 text-center bg-gray-300' ref={leftIconsContainerRef}>
                 <div>
                     <FontAwesomeIcon id='icon1' className={` w-full py-2  cursor-pointer ${active === "icon1" ? "selectedClass" : "unSelectedClass"}`} onClick={leftClickHandler} icon={faGripHorizontal}></FontAwesomeIcon>
@@ -114,7 +100,6 @@ const CollapsableMenu: React.FC<IProps> = ({
                     <FontAwesomeIcon id="icon9" className={` cursor-pointer w-full py-2  ${active === "icon9" ? "selectedClass" : "unSelectedClass"} `} icon={faGreaterThan} onClick={leftClickHandler}></FontAwesomeIcon>
                 </div>
             </div>
-            <MapLoading></MapLoading>
             <FontAwesomeIcon
                 className={`absolute  ${rightNav && 'rotate-180'
                     } text-2xl text-blue-300 top-2/4 ${rightNav ? 'right-5' : 'right-0'
