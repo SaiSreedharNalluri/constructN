@@ -14,7 +14,7 @@ interface IProps {
 let ProjectsList: React.FC<IProps> = ({ projects }) => {
   const router = useRouter();
   const goToProject = (projectId: string) => {
-    router.push(`projects/${projectId}/project`);
+    router.push(`projects/${projectId}/structure`);
   };
   return (
     <div className="h-91 overflow-y-scroll grid grid-cols-4  p-2 ">
