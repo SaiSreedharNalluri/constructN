@@ -8,7 +8,7 @@ interface IProps {
 const TreeList: React.FC<IProps> = ({ treeList, getStructureData }) => {
   return (
     <div>
-      <Tree tree={treeList} getStructureData={getStructureData} />
+      <Tree tree={treeList} getStructureData={getStructureData} depth={1} />
     </div>
   );
 };

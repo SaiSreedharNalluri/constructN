@@ -30,7 +30,7 @@ const Index: React.FC<IProps> = ({ structures }) => {
   const [loadsnap, setLoadSnap] = useState(true);
   const [bottomNav, setBottomNav] = useState(false);
   const BottomOverlayRef: any = useRef();
-  const getStractureHierarchy = (e: any) => {};
+  const getStractureHierarchy = (e: any) => { };
   const getStructureData = (strature: ChildrenEntity) => {
     getSnapshots(router.query.projectId as string, strature._id);
   };
@@ -70,10 +70,9 @@ const Index: React.FC<IProps> = ({ structures }) => {
             structures={structures}
           />
         </div>
-        <p
-          className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
-            bottomNav ? 'bottom-11' : 'bottom-0'
-          } `}
+        {/* <p
+          className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${bottomNav ? 'bottom-11' : 'bottom-0'
+            } `}
           onClick={bottomOverLay}
         >
           10-01-2022
@@ -84,7 +83,7 @@ const Index: React.FC<IProps> = ({ structures }) => {
           className="w-0  rounded absolute left-35 bottom-1  overflow-x-hidden z-10"
         >
           <div className="flex ">
-            <div className=" bg-white">
+            <div className="w-3/4 bg-white">
               <Pagination
                 getsnapShortDetails={getsnapShortDetails}
                 snapShots={snapShots}
@@ -94,7 +93,7 @@ const Index: React.FC<IProps> = ({ structures }) => {
               <DatePicker></DatePicker>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </React.Fragment>
   );

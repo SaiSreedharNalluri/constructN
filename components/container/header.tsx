@@ -44,29 +44,7 @@ const Header: React.FC<IProps> = () => {
               width={240}
             ></Image>
           </div>
-          {router.pathname != '/projects' && (
-            <div className='mt-1' >
-              <select
-                className="focus:outline-none  rounded text-right "
-                onChange={(e) => {
-                  router.push(`/projects/${e.target.value}/project`);
-                }}
-              >
-                {projects &&
-                  projects.map((pData: IProjects) => {
-                    return (
-                      <option
-                        key={pData._id}
-                        value={pData._id}
-                        selected={pData._id === selectedValue}
-                      >
-                        {pData.name}
-                      </option>
-                    );
-                  })}
-              </select>
-            </div>
-          )}
+
           <div className='flex '>
             <div className='mt-1 mr-2'>
               <FontAwesomeIcon icon={faBell} />
@@ -127,11 +105,6 @@ const Header: React.FC<IProps> = () => {
                 </ul>
               </div>
             )}
-
-
-
-
-
           </div>
 
         </div>
