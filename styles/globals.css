@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.selectedClass {
+  background: white;
+}
+.unselectedClass {
+  background-color: gray;
+}
+
+.margin1 {
+  margin-left: 10px;
+}
+
+.margin2 {
+  margin-left: 20px;
+}
+
+.margin3 {
+  margin-left: 40px;
+}

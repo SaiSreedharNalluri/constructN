@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCookie, removeCookies } from 'cookies-next';
 import { IProjects } from '../../models/IProjects';
-interface IProps {}
+interface IProps { }
 const Header: React.FC<IProps> = () => {
   const router = useRouter();
   let [name, setName] = useState<string>('');
@@ -44,8 +44,8 @@ const Header: React.FC<IProps> = () => {
               width={240}
             ></Image>
           </div>
-          <div className="flex ">
-            <div className="mt-1 mr-2">
+          <div className='flex '>
+            <div className='mt-1 mr-2'>
               <FontAwesomeIcon icon={faBell} />
             </div>
             <div

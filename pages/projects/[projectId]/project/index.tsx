@@ -8,17 +8,16 @@ import { ISnapShort } from '../../../../models/ISnapShort';
 import Pagination from '../../../../components/container/pagination';
 import _ from 'lodash';
 import DatePicker from '../../../../components/container/datePicker';
-
 interface IProps {
   structures: IStrature[];
 }
 
-const Index: React.FC<IProps> = ({}) => {
+const Index: React.FC<IProps> = ({ structures }) => {
   const router = useRouter();
   const [snapShots, setSnapShots] = useState<ISnapShort[]>([]);
   const [bottomNav, setBottomNav] = useState(false);
   const BottomOverlayRef: any = useRef();
-  const getStractureHierarchy = (e: any) => {};
+  const getStractureHierarchy = (e: any) => { };
   const getStructureData = (strature: ChildrenEntity) => {
     getSnapshots(router.query.projectId as string, strature._id);
   };
@@ -48,12 +47,12 @@ const Index: React.FC<IProps> = ({}) => {
           <CollapsableMenu
             getStractureHierarchy={getStractureHierarchy}
             getStructureData={getStructureData}
+            structures={structures}
           />
         </div>
-        <p
-          className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
-            bottomNav ? 'bottom-11' : 'bottom-0'
-          } `}
+        {/* <p
+          className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${bottomNav ? 'bottom-11' : 'bottom-0'
+            } `}
           onClick={bottomOverLay}
         >
           10-01-2022
@@ -65,13 +64,16 @@ const Index: React.FC<IProps> = ({}) => {
         >
           <div className="flex ">
             <div className=" bg-white">
-              <Pagination snapShots={snapShots} />
+              <Pagination
+                getsnapShortDetails={getsnapShortDetails}
+                snapShots={snapShots}
+              />
             </div>
             <div>
               <DatePicker></DatePicker>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </React.Fragment>
   );

@@ -1,21 +1,33 @@
 import React, { useState } from 'react';
 import { ChildrenEntity } from '../../models/IStrature';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown, faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleRight, faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 interface IProps {
   tree: ChildrenEntity[];
   getStructureData: (strature: ChildrenEntity) => void;
+  depth: any;
 }
-const Tree: React.FC<IProps> = ({ tree, getStructureData }) => {
+const Tree: React.FC<IProps> = ({ tree, getStructureData, depth }) => {
   const Treenode = (structure: ChildrenEntity) => {
     const [visible, setVisible] = useState(false);
-    const hasChild = structure.children ? true : false;
+    const hasChild = structure.children?.length ? true : false;
     const [data, setData] = useState<ChildrenEntity>();
     const [click, setClick] = useState(false);
+    const getICon = () => {
+      if (!hasChild) {
+        return;
+      } else {
+        return visible ? (
+          <FontAwesomeIcon size="1x" icon={faCaretDown} />
+        ) : (
+          <FontAwesomeIcon size="1x" icon={faCaretRight} />
+        )
+      }
 
+    }
     return (
-      <div key={structure._id}>
-        <li className=" flex-col bg-white p-1">
+      < >
+        <li key={structure._id} className=" flex-col  relative ">
           <div
             onClick={() => {
               getStructureData(structure);
@@ -24,9 +36,7 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData }) => {
             }}
           >
             <div
-              className={`flex p-2 ${
-                click ? ' bg-green-300' : 'bg-gray-300'
-              } hover:bg-gray-400`}
+              className={`flex justify-between border-b border-solid border-gray-400 p-1`}
               onClick={() => {
                 if (click) {
                   setClick(false);
@@ -35,34 +45,32 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData }) => {
                 }
               }}
             >
-              <div className="flex ">
-                <div className="">
-                  <p>
-                    {visible ? (
-                      <FontAwesomeIcon size="1x" icon={faAngleDown} />
-                    ) : (
-                      <FontAwesomeIcon size="1x" icon={faAngleRight} />
-                    )}
-                  </p>
-                </div>
-                <button className="">
-                  <p className=" text-gray-700  text-sm ">{structure.name}</p>
-                </button>
+
+              <div >
+                <p className={`margin${depth}  text-sm cursor-pointer `}>{structure.name} </p>
               </div>
+              <div >
+                {getICon()}
+
+              </div>
+
             </div>
           </div>
           {hasChild && visible && (
-            <div className="flex-col">
-              <ul className="pl-2">
-                <Tree
-                  tree={structure.children as Array<ChildrenEntity>}
-                  getStructureData={getStructureData}
-                />
-              </ul>
+            <div className="flex-col  ">
+              <div className="xyz">
+                <li className="">
+                  <Tree
+                    tree={structure.children as Array<ChildrenEntity>}
+                    getStructureData={getStructureData}
+                    depth={depth + 1}
+                  />
+                </li>
+              </div>
             </div>
           )}
         </li>
-      </div>
+      </>
     );
   };
   return (

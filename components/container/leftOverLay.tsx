@@ -6,10 +6,11 @@ import { useRouter } from 'next/router';
 import { AxiosResponse } from 'axios';
 import { getStructureHierarchy } from '../../services/structure';
 interface IProps {
+  structures: IStrature[];
   getStructureData: (strature: ChildrenEntity) => void;
   getStractureHierarchy: (e: string) => void;
 }
-const LeftOverLay: React.FC<IProps> = ({ getStructureData }) => {
+const LeftOverLay: React.FC<IProps> = ({ getStructureData, }) => {
   let router = useRouter();
   let [state, setState] = useState<ChildrenEntity[]>([]);
   useEffect(() => {
@@ -26,7 +27,7 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData }) => {
   return (
     <React.Fragment>
       <SearchInput></SearchInput>
-      <div className="w-full">
+      <div className="w-full ">
         {state.length === 0 ? (
           'no structures found for this project'
         ) : (
@@ -36,5 +37,4 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData }) => {
     </React.Fragment>
   );
 };
-
 export default LeftOverLay;
