@@ -1,76 +1,65 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faBug, faCircleInfo, faEyeSlash, faGripHorizontal, faTasks, faTimes, faUsers } from '@fortawesome/free-solid-svg-icons';
-import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
-import { faSearchMinus } from '@fortawesome/free-solid-svg-icons';
-import { faSearchPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
-import { faGreaterThan, faAngleDown } from '@fortawesome/free-solid-svg-icons';
-// import RightOverlayPanel from './rightOverlayPanel';
+import { faBug, faBullseye, faDatabase, faExclamationCircle, faEyeSlash, faSitemap, faTasks } from '@fortawesome/free-solid-svg-icons';
 const RightOverLay: React.FC = () => {
   const [rightNav, setRighttNav] = useState(false);
   const rightOverlayRef: any = useRef();
+  const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
   const rightNavCollapse = (e: any) => {
     if (!rightNav) {
-      rightOverlayRef.current.style.width = '8%';
+      rightOverlayRef.current.style.width = '3%';
     } else {
       rightOverlayRef.current.style.width = '0%';
     }
     setRighttNav(!rightNav);
     rightClickHandler(e);
   };
+  const closeStructurePages = (e: any) => {
+    if (!rightOverlayRefs.current.contains(e.target) && !rightOverlayRef.current.contains(e.target)) {
+      setRighttNav(false)
+
+    }
+  }
+  useEffect(() => {
+    const handler = document.addEventListener("click", closeStructurePages)
+    return () => {
+      document.removeEventListener("click", closeStructurePages)
+    }
+  }, [])
   const rightClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
   }
+
+
   return (
-    <div className="flex-col m-auto relative ">
+    <div className="flex-col m-auto relative " ref={rightOverlayRefs}>
       <div className="mt-3 ">
-        <FontAwesomeIcon id='a' className={` w-full py-2  cursor-pointer ${active === "a" ? "selectedClass" : "unSelectedClass"}`} onClick={rightClickHandler} icon={faTasks} ></FontAwesomeIcon>
+        <FontAwesomeIcon id='a' className={` w-full py-2  cursor-pointer ${active === "a" ? "selectedClass" : "unSelectedClass"}`} onClick={rightClickHandler} icon={faSitemap} ></FontAwesomeIcon>
       </div>
       <div className=" cursor-pointer">
-        <FontAwesomeIcon icon={faBug} id='b' className={` w-full py-2  cursor-pointer ${active === "b" ? "selectedClass" : "unSelectedClass"}`} onClick={rightClickHandler} ></FontAwesomeIcon>
+        <FontAwesomeIcon icon={faDatabase} id='b' className={` w-full py-2  cursor-pointer ${active === "b" ? "selectedClass" : "unSelectedClass"}`} onClick={rightClickHandler} ></FontAwesomeIcon>
       </div>
       <div className=" cursor-pointer">
-        <FontAwesomeIcon icon={faCircleUser} id='c' className={` w-full py-2  cursor-pointer ${active === "c" ? "selectedClass" : "unSelectedClass"}`} onClick={rightClickHandler}></FontAwesomeIcon>
+        <FontAwesomeIcon icon={faExclamationCircle} id='c' className={` w-full py-2  cursor-pointer ${active === "c" ? "selectedClass" : "unSelectedClass"}`} onClick={rightClickHandler}></FontAwesomeIcon>
       </div>
       <div className=" cursor-pointer">
-        <FontAwesomeIcon icon={faGreaterThan} id='d' className={` w-full py-2  cursor-pointer ${active === "d" ? "selectedClass" : "unSelectedClass"}`} onClick={rightClickHandler}></FontAwesomeIcon>
+        <FontAwesomeIcon icon={faBullseye} id='d' className={` w-full py-2  cursor-pointer ${active === "d" ? "selectedClass" : "unSelectedClass"}`} onClick={rightClickHandler}></FontAwesomeIcon>
       </div>
       <div className=" cursor-pointer">
-        <FontAwesomeIcon icon={faSearchMinus} id='e' className={` w-full py-2  cursor-pointer ${active === "e" ? "selectedClass" : "unSelectedClass"}`} onClick={rightClickHandler}></FontAwesomeIcon>
-      </div>
-      <div className=" cursor-pointer">
-        <FontAwesomeIcon id='f' className={` w-full py-2  cursor-pointer ${active === "f" ? "selectedClass" : "unSelectedClass"}`} onClick={rightNavCollapse} icon={faSearchPlus} ></FontAwesomeIcon>
-      </div>
-      <div className=" cursor-pointer">
-        <FontAwesomeIcon icon={faSearch} id='g' className={` w-full py-2  cursor-pointer ${active === "g" ? "selectedClass" : "unSelectedClass"}`} onClick={rightClickHandler}></FontAwesomeIcon>
-      </div>
-      <div className=" cursor-pointer">
-        <FontAwesomeIcon icon={faGreaterThan} id='h' className={` w-full py-2  cursor-pointer ${active === "h" ? "selectedClass" : "unSelectedClass"}`} onClick={rightClickHandler}></FontAwesomeIcon>
-      </div>
-      <div className="cursor-pointer">
-        <FontAwesomeIcon icon={faCircleUser} id='i' className={` w-full py-2  cursor-pointer ${active === "i" ? "selectedClass" : "unSelectedClass"}`} onClick={rightClickHandler}></FontAwesomeIcon>
+        <FontAwesomeIcon icon={faTasks} id='e' className={` w-full py-2  cursor-pointer ${active === "e" ? "selectedClass" : "unSelectedClass"}`} onClick={rightNavCollapse}></FontAwesomeIcon>
       </div>
       <div
         ref={rightOverlayRef}
-        className={`fixed w-0  bottom-1/4 right-10 z-10 mb-16 overflow-x-hidden`}
+        className={`fixed w-0  bottom-1/4 ${rightNav ? "right-10" : "hidden"} z-10 mb-10 overflow-x-hidden`}
       >
-        <div className={`border-y border-solid bg-slate-500 p-2 rounded `}>
-          <div className='flex justify-between  '>
-            <FontAwesomeIcon
-              icon={faTasks}
-              className="hover:white cursor-pointer ml-2 "
-            ></FontAwesomeIcon>
-            <FontAwesomeIcon
-              icon={faBug}
-              className="hover:white cursor-pointer ml-2 "
-            ></FontAwesomeIcon>
+        <div className={`border border-solid bg-slate-500 p-1.5 rounded `}>
+          <div className='ml-1'>
             <FontAwesomeIcon
               icon={faEyeSlash}
-              className="hover:white cursor-pointer ml-2 "
+              className="hover:white text-center cursor-pointer"
             ></FontAwesomeIcon>
           </div>
-
         </div>
       </div>
     </div>
