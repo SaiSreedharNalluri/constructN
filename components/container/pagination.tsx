@@ -6,7 +6,6 @@ interface IProps {
 }
 const Pagination: React.FC<IProps> = ({ snapShots }) => {
   const getsnapShortDetails = (snapShotData: ISnapShort) => {
-    console.log('e', snapShotData);
     getSnapshotDetails(
       snapShotData.project,
       snapShotData.structure,
