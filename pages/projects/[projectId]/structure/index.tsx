@@ -1,22 +1,28 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
-import { ChildrenEntity, IStrature } from '../../../../models/IStrature';
+import { ChildrenEntity } from '../../../../models/IStrature';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 import { getSnapshotsList } from '../../../../services/snapshot';
 import { ISnapShort } from '../../../../models/ISnapShort';
 import _ from 'lodash';
 import DatePicker from '../../../../components/container/datePicker';
 import Pagination from '../../../../components/container/pagination';
-interface IProps {
-  structures: IStrature[];
-}
+import { faGreaterThan } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import RightOverLay from '../../../../components/container/rightOverLay';
+import LeftOverLay from '../../../../components/container/leftOverLay';
+interface IProps {}
 
-const Index: React.FC<IProps> = ({ structures }) => {
+const Index: React.FC<IProps> = () => {
   const router = useRouter();
+  const leftOverlayRef: any = useRef();
+  const [leftNav, setLeftNav] = useState(true);
   const [snapShots, setSnapShots] = useState<ISnapShort[]>([]);
   const [bottomNav, setBottomNav] = useState(false);
   const BottomOverlayRef: any = useRef();
+  const rightOverlayRef: any = useRef();
+  const [rightNav, setRightNav] = useState(false);
   const getStractureHierarchy = (e: any) => {};
   const getStructureData = (strature: ChildrenEntity) => {
     getSnapshots(router.query.projectId as string, strature._id);
@@ -39,15 +45,41 @@ const Index: React.FC<IProps> = ({ structures }) => {
     }
     setBottomNav(!bottomNav);
   };
+  const rightNavCollapse = () => {
+    if (!rightNav) {
+      rightOverlayRef.current.style.width = '3%';
+      rightOverlayRef.current.style.height = '40%';
+    } else {
+      rightOverlayRef.current.style.width = '0%';
+      rightOverlayRef.current.style.height = '0%';
+    }
+    setRightNav(!rightNav);
+  };
+  useEffect(() => {
+    if (leftNav) {
+      leftOverlayRef.current.style.width = '18vw';
+    } else {
+      leftOverlayRef.current.style.width = '0%';
+    }
+  }, [leftNav]);
+
   return (
     <React.Fragment>
       <div className="h-screen">
         <div>
           <Header />
-          <CollapsableMenu
-            getStractureHierarchy={getStractureHierarchy}
-            getStructureData={getStructureData}
-          />
+          <CollapsableMenu />
+          <div
+            ref={leftOverlayRef}
+            className={`h-full bg-gray-200 w-0 absolute   ${
+              leftNav ? 'left-10' : 'left-10  '
+            }   top-9   duration-300 overflow-x-hidden`}
+          >
+            <LeftOverLay
+              getStractureHierarchy={getStractureHierarchy}
+              getStructureData={getStructureData}
+            ></LeftOverLay>
+          </div>
         </div>
         <p
           className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
@@ -70,6 +102,24 @@ const Index: React.FC<IProps> = ({ structures }) => {
               <DatePicker></DatePicker>
             </div>
           </div>
+        </div>
+        <FontAwesomeIcon
+          className={`absolute  ${
+            rightNav && 'rotate-180'
+          } text-2xl text-blue-300 top-2/4 ${
+            rightNav ? 'right-5' : 'right-0'
+          }  cursor-pointer border-none rounded ml-2 p-2 bg-gray-600 text-white`}
+          onClick={rightNavCollapse}
+          icon={faGreaterThan}
+        ></FontAwesomeIcon>
+        <div
+          ref={rightOverlayRef}
+          id="bg-color"
+          className={`absolute w-0  ${
+            rightNav ? 'visible' : 'hidden'
+          }  bg-gray-400 top-35 rounded z-10 right-0 duration-300 overflow-x-hidden`}
+        >
+          <RightOverLay></RightOverLay>
         </div>
       </div>
     </React.Fragment>
