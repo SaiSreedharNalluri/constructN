@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ChildrenEntity } from '../../models/IStrature';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown, faAngleRight, faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 interface IProps {
   tree: ChildrenEntity[];
   getStructureData: (strature: ChildrenEntity) => void;
@@ -11,7 +11,6 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData, depth }) => {
   const Treenode = (structure: ChildrenEntity) => {
     const [visible, setVisible] = useState(false);
     const hasChild = structure.children?.length ? true : false;
-    const [data, setData] = useState<ChildrenEntity>();
     const [click, setClick] = useState(false);
     const getICon = () => {
       if (!hasChild) {
@@ -21,18 +20,16 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData, depth }) => {
           <FontAwesomeIcon size="1x" icon={faCaretDown} />
         ) : (
           <FontAwesomeIcon size="1x" icon={faCaretRight} />
-        )
+        );
       }
-
-    }
+    };
     return (
-      < >
+      <React.Fragment>
         <li key={structure._id} className=" flex-col  relative ">
           <div
             onClick={() => {
               getStructureData(structure);
               setVisible((vis) => !vis);
-              setData(structure);
             }}
           >
             <div
@@ -45,15 +42,12 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData, depth }) => {
                 }
               }}
             >
-
-              <div >
-                <p className={`margin${depth}  text-sm cursor-pointer `}>{structure.name} </p>
+              <div>
+                <p className={`margin${depth}  text-sm cursor-pointer `}>
+                  {structure.name}{' '}
+                </p>
               </div>
-              <div >
-                {getICon()}
-
-              </div>
-
+              <div>{getICon()}</div>
             </div>
           </div>
           {hasChild && visible && (
@@ -70,7 +64,7 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData, depth }) => {
             </div>
           )}
         </li>
-      </>
+      </React.Fragment>
     );
   };
   return (
