@@ -62,13 +62,19 @@ const Index: React.FC<IProps> = () => {
       leftOverlayRef.current.style.width = '0%';
     }
   }, [leftNav]);
-
+  const onChangeData = () => {
+    if (leftNav) {
+      setLeftNav(false);
+    } else {
+      setLeftNav(true);
+    }
+  };
   return (
     <React.Fragment>
       <div className="h-screen">
         <div>
           <Header />
-          <CollapsableMenu />
+          <CollapsableMenu onChangeData={onChangeData} />
           <div
             ref={leftOverlayRef}
             className={`h-full bg-gray-200 w-0 absolute   ${

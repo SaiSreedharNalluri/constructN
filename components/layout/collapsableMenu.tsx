@@ -12,8 +12,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
 
-interface IProps {}
-const CollapsableMenu: React.FC<IProps> = ({}) => {
+interface IProps {
+  onChangeData: () => void;
+}
+const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
   const router = useRouter();
   const [active, setActive] = useState('');
   const leftClickHandler = (e: any) => {
@@ -45,9 +47,8 @@ const CollapsableMenu: React.FC<IProps> = ({}) => {
       default:
         router.push(`/projects/${router.query.projectId as string}/structure`);
     }
-    if (e.currentTarget.id === 'dashboard') setActive(e.currentTarget.id);
+    setActive(e.currentTarget.id);
   };
-
   return (
     <div className="absolute left-0 z-10 w-10 h-91 text-center bg-gray-300">
       <div>
@@ -66,7 +67,10 @@ const CollapsableMenu: React.FC<IProps> = ({}) => {
           className={`w-full py-2 cursor-pointer ${
             active === 'views' ? 'selectedClass' : 'unSelectedClass'
           }`}
-          onClick={leftClickHandler}
+          onClick={(e: any) => {
+            leftClickHandler(e);
+            onChangeData();
+          }}
           icon={faMap}
         ></FontAwesomeIcon>
       </div>
