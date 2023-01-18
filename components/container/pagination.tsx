@@ -4,8 +4,9 @@ import { getSnapshotDetails } from '../../services/snapshot';
 import Moment from 'moment';
 interface IProps {
   snapshots: ISnapshot[];
+  getSnapshotInfo: (snapshotData: ISnapshot) => void;
 }
-const Pagination: React.FC<IProps> = ({ snapshots }) => {
+const Pagination: React.FC<IProps> = ({ snapshots, getSnapshotInfo }) => {
   const [oldDate, setOldDate] = useState('');
   const [newDate, setNewDate] = useState('');
   useEffect(() => {
@@ -18,15 +19,7 @@ const Pagination: React.FC<IProps> = ({ snapshots }) => {
       setOldDate(snapResult.reverse()[0].createdAt);
     }
   }, [snapshots]);
-  const getSnapshotInfo = (snapshotData: ISnapshot) => {
-    getSnapshotDetails(
-      snapshotData.project,
-      snapshotData.structure,
-      snapshotData._id
-    )
-      .then((response) => {})
-      .catch();
-  };
+
   return (
     <React.Fragment>
       <div className="flex justify-between">
