@@ -1,20 +1,21 @@
-import { ISnapShort } from '../../models/ISnapShort';
+import { ISnapshot } from '../../models/ISnapshot';
 import React from 'react';
 import { getSnapshotDetails } from '../../services/snapshot';
 interface IProps {
-  snapShots: ISnapShort[];
+  snapshots: ISnapshot[];
 }
-const Pagination: React.FC<IProps> = ({ snapShots }) => {
-  const getsnapShortDetails = (snapShotData: ISnapShort) => {
+const Pagination: React.FC<IProps> = ({ snapshots }) => {
+  const getSnapshotInfo = (snapshotData: ISnapshot) => {
+    console.log('snapShotData', snapshotData);
     getSnapshotDetails(
-      snapShotData.project,
-      snapShotData.structure,
-      snapShotData._id
+      snapshotData.project,
+      snapshotData.structure,
+      snapshotData._id
     )
       .then((response) => {})
       .catch();
   };
-  console.log('snapShots', snapShots);
+  console.log('snapshots', snapshots);
   return (
     <React.Fragment>
       <div className="flex justify-between">
@@ -25,16 +26,16 @@ const Pagination: React.FC<IProps> = ({ snapShots }) => {
           <div className=" flex items-center mr-1">
             <p>{'10 - 1 - 2023'}</p>
           </div>
-          {snapShots &&
-            snapShots.length > 0 &&
-            snapShots.map((snapData: ISnapShort) => {
+          {snapshots &&
+            snapshots.length > 0 &&
+            snapshots.map((snapData: ISnapshot) => {
               return (
                 <div key={snapData._id} className="py-3 px-1">
                   <ul>
                     <li
                       key={snapData._id}
                       onClick={() => {
-                        getsnapShortDetails(snapData);
+                        getSnapshotInfo(snapData);
                       }}
                     >
                       <div className="flex items-center justify-evenly rounded pl-2 ">

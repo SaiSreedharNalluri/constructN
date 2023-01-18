@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { ChildrenEntity } from '../../models/IStrature';
+import { ChildrenEntity } from '../../models/IStructure';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 interface IProps {
   tree: ChildrenEntity[];
-  getStructureData: (strature: ChildrenEntity) => void;
+  getStructureData: (structure: ChildrenEntity) => void;
   depth: any;
 }
 const Tree: React.FC<IProps> = ({ tree, getStructureData, depth }) => {
@@ -70,8 +70,8 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData, depth }) => {
   return (
     <React.Fragment>
       <ul className="list-none   ">
-        {tree.map((strature) => {
-          return Treenode(strature);
+        {tree.map((structure) => {
+          return Treenode(structure);
         })}
       </ul>
     </React.Fragment>

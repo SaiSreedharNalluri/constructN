@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
-import { ChildrenEntity } from '../../../../models/IStrature';
+import { ChildrenEntity } from '../../../../models/IStructure';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 import { getSnapshotsList } from '../../../../services/snapshot';
-import { ISnapShort } from '../../../../models/ISnapShort';
+import { ISnapshot } from '../../../../models/ISnapshot';
 import _ from 'lodash';
 import DatePicker from '../../../../components/container/datePicker';
 import Pagination from '../../../../components/container/pagination';
@@ -18,19 +18,19 @@ const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(true);
-  const [snapShots, setSnapShots] = useState<ISnapShort[]>([]);
+  const [snapshots, setSnapshots] = useState<ISnapshot[]>([]);
   const [bottomNav, setBottomNav] = useState(false);
   const BottomOverlayRef: any = useRef();
   const rightOverlayRef: any = useRef();
   const [rightNav, setRightNav] = useState(false);
-  const getStractureHierarchy = (e: any) => {};
-  const getStructureData = (strature: ChildrenEntity) => {
-    getSnapshots(router.query.projectId as string, strature._id);
+  const getStructureHierarchy = (e: any) => {};
+  const getStructureData = (structure: ChildrenEntity) => {
+    getSnapshots(router.query.projectId as string, structure._id);
   };
   const getSnapshots = (projectId: string, structurId: string) => {
     getSnapshotsList(projectId, structurId)
       .then((response) => {
-        setSnapShots(response?.data?.result?.mSnapshots);
+        setSnapshots(response?.data?.result?.mSnapshots);
       })
       .catch((error) => {
         console.log('error', error);
@@ -82,7 +82,7 @@ const Index: React.FC<IProps> = () => {
             }   top-9   duration-300 overflow-x-hidden`}
           >
             <LeftOverLay
-              getStractureHierarchy={getStractureHierarchy}
+              getStructureHierarchy={getStructureHierarchy}
               getStructureData={getStructureData}
             ></LeftOverLay>
           </div>
@@ -102,7 +102,7 @@ const Index: React.FC<IProps> = () => {
         >
           <div className="flex ">
             <div className=" bg-white">
-              <Pagination snapShots={snapShots} />
+              <Pagination snapshots={snapshots} />
             </div>
             <div>
               <DatePicker></DatePicker>

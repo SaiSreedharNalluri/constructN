@@ -1,9 +1,9 @@
 import React from 'react';
-import { ChildrenEntity } from '../../models/IStrature';
+import { ChildrenEntity } from '../../models/IStructure';
 import Tree from './tree';
 interface IProps {
   treeList: ChildrenEntity[];
-  getStructureData: (strature: ChildrenEntity) => void;
+  getStructureData: (structure: ChildrenEntity) => void;
 }
 const TreeList: React.FC<IProps> = ({ treeList, getStructureData }) => {
   return (
