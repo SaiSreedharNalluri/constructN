@@ -34,15 +34,13 @@ const Header: React.FC<IProps> = () => {
     <React.Fragment>
       <header className="h-11 border-b border-solid border-gray-400 ">
         <div className="flex justify-between">
-          <div>
-            <Image
+          <div className='mt-auto '>
+            <img
               onClick={goToProjectsList}
-              className=" cursor-pointer scale-50 relative -ml-12 -mt-1"
+              className=" cursor-pointer w-full h-6"
               src="https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2Fs3.amazonaws.com%2Fappforest_uf%2Ff1628494605280x954459828257958600%2FArtboard%25201%2520copy%25202%25404x.png?w=512&h=115&auto=compress&fit=crop&dpr=1.25"
               alt=""
-              height={240}
-              width={240}
-            ></Image>
+            ></img>
           </div>
           <div className='flex '>
             <div className='mt-1 mr-2'>
