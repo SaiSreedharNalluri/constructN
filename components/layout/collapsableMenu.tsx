@@ -50,7 +50,7 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
     setActive(e.currentTarget.id);
   };
   return (
-    <div className="absolute left-0 z-10 w-10 h-91 text-center bg-gray-300">
+    <div className="  z-10 w-10 h-91 text-center bg-gray-300">
       <div>
         <FontAwesomeIcon
           id="dashboard"

@@ -14,6 +14,7 @@ const Pagination: React.FC<IProps> = ({ snapShots }) => {
       .then((response) => {})
       .catch();
   };
+  console.log('snapShots', snapShots);
   return (
     <React.Fragment>
       <div className="flex justify-between">
