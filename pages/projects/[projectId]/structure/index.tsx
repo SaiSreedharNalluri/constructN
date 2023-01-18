@@ -112,7 +112,7 @@ const Index: React.FC<IProps> = () => {
   const getSnapshotInfo = (snapshotData: ISnapshot) => {
     setSnapShotId(snapshotData._id);
   };
-  console.log('str', structurId, snapshotId);
+
   return (
     <React.Fragment>
       <div className="h-screen ">
