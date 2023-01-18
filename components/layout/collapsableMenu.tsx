@@ -50,13 +50,12 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
     setActive(e.currentTarget.id);
   };
   return (
-    <div className="  z-10 w-10 h-91 text-center bg-gray-300">
+    <div className=" z-10 w-10 h-91 text-center bg-gray-300">
       <div>
         <FontAwesomeIcon
           id="dashboard"
-          className={` w-full py-2  cursor-pointer ${
-            active === 'dashboard' ? 'selectedClass' : 'unSelectedClass'
-          }`}
+          className={` w-full py-2  cursor-pointer ${active === 'dashboard' ? 'selectedClass' : 'unSelectedClass'
+            }`}
           onClick={leftClickHandler}
           icon={faTachometer}
         ></FontAwesomeIcon>
@@ -64,9 +63,8 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div>
         <FontAwesomeIcon
           id="views"
-          className={`w-full py-2 cursor-pointer ${
-            active === 'views' ? 'selectedClass' : 'unSelectedClass'
-          }`}
+          className={` w-full py-2 cursor-pointer ${active === 'views' ? 'selectedClass' : 'unSelectedClass'
+            }`}
           onClick={(e: any) => {
             leftClickHandler(e);
             onChangeData();
@@ -77,9 +75,8 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div>
         <FontAwesomeIcon
           id="issues"
-          className={` ${
-            active === 'issues' ? 'selectedClass' : 'unSelectedClass'
-          }`}
+          className={`w-full py-2 cursor-pointer ${active === 'issues' ? 'selectedClass' : 'unSelectedClass'
+            }`}
           onClick={leftClickHandler}
           icon={faExclamationCircle}
         ></FontAwesomeIcon>
@@ -88,9 +85,8 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div>
         <FontAwesomeIcon
           id="reports"
-          className={` cursor-pointer w-full py-2  ${
-            active === 'reports' ? 'selectedClass' : 'unSelectedClass'
-          }`}
+          className={` cursor-pointer w-full py-2  ${active === 'reports' ? 'selectedClass' : 'unSelectedClass'
+            }`}
           onClick={leftClickHandler}
           icon={faAreaChart}
         ></FontAwesomeIcon>
@@ -98,19 +94,17 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div>
         <FontAwesomeIcon
           id="schedule"
-          className={` cursor-pointer w-full py-2  ${
-            active === 'schedule' ? 'selectedClass' : 'unSelectedClass'
-          }`}
+          className={` cursor-pointer w-full py-2  ${active === 'schedule' ? 'selectedClass' : 'unSelectedClass'
+            }`}
           icon={faCalendar}
           onClick={leftClickHandler}
         ></FontAwesomeIcon>
       </div>
       <div>
         <FontAwesomeIcon
-          id="lineChart"
-          className={` cursor-pointer w-full py-2  ${
-            active === 'linechart' ? 'selectedClass' : 'unSelectedClass'
-          }`}
+          id="linechart"
+          className={` cursor-pointer w-full py-2  ${active === 'linechart' ? 'selectedClass' : 'unSelectedClass'
+            }`}
           icon={faLineChart}
           onClick={leftClickHandler}
         ></FontAwesomeIcon>
@@ -118,9 +112,8 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div>
         <FontAwesomeIcon
           id="users"
-          className={`cursor-pointer w-full py-2  ${
-            active === 'users' ? 'selectedClass' : 'unSelectedClass'
-          } `}
+          className={`cursor-pointer w-full py-2  ${active === 'users' ? 'selectedClass' : 'unSelectedClass'
+            } `}
           icon={faUsers}
           onClick={leftClickHandler}
         ></FontAwesomeIcon>
@@ -128,9 +121,8 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div className="mt-2 border-t border-solid border-gray-400">
         <FontAwesomeIcon
           id="expand"
-          className={` cursor-pointer w-full py-2  ${
-            active === 'expand' ? 'selectedClass' : 'unSelectedClass'
-          } `}
+          className={` cursor-pointer w-full py-2  ${active === 'expand' ? 'selectedClass' : 'unSelectedClass'
+            } `}
           icon={faGreaterThan}
           onClick={leftClickHandler}
         ></FontAwesomeIcon>
