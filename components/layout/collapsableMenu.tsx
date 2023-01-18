@@ -3,11 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAreaChart,
   faCalendar,
+  faCalendarDays,
   faExclamationCircle,
   faGreaterThan,
   faLineChart,
   faMap,
   faTachometer,
+  faTachometerAlt,
+  faTachometerAltAverage,
   faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
@@ -51,13 +54,14 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
   };
   return (
     <div className=" z-10 w-10 h-91 text-center bg-gray-300">
+      <div className='flex'></div>
       <div>
         <FontAwesomeIcon
           id="dashboard"
           className={` w-full py-2  cursor-pointer ${active === 'dashboard' ? 'selectedClass' : 'unSelectedClass'
             }`}
           onClick={leftClickHandler}
-          icon={faTachometer}
+          icon={faTachometerAltAverage}
         ></FontAwesomeIcon>
       </div>
       <div>
@@ -96,7 +100,7 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
           id="schedule"
           className={` cursor-pointer w-full py-2  ${active === 'schedule' ? 'selectedClass' : 'unSelectedClass'
             }`}
-          icon={faCalendar}
+          icon={faCalendarDays}
           onClick={leftClickHandler}
         ></FontAwesomeIcon>
       </div>

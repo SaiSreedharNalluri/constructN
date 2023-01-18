@@ -1,5 +1,4 @@
 
-
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
@@ -14,6 +13,7 @@ import { faGreaterThan } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RightOverLay from '../../../../components/container/RightOverLay';
 import LeftOverLay from '../../../../components/container/leftOverLay';
+import MapLoading from '../../../../components/container/mapLoading';
 interface IProps { }
 
 const Index: React.FC<IProps> = () => {
@@ -27,6 +27,7 @@ const Index: React.FC<IProps> = () => {
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
   const bottomRefContainer: any = useRef();
+  const [viewerTypeState, setViewType] = useState("map");
   const [rightNav, setRightNav] = useState(false);
   const getStructureHierarchy = (e: any) => { };
   const getStructureData = (structure: ChildrenEntity) => {
@@ -41,7 +42,9 @@ const Index: React.FC<IProps> = () => {
         console.log('error', error);
       });
   };
-
+  const activeClass = (e: any) => {
+    setViewType(e.currentTarget.id);
+  }
   const bottomOverLay = () => {
     if (!bottomNav) {
       BottomOverlayRef.current.style.width = '45%';
@@ -101,7 +104,16 @@ const Index: React.FC<IProps> = () => {
       <div className='h-screen ' >
         <Header />
         <div className='absolute' ref={leftRefContainer}>
-          <CollapsableMenu onChangeData={onChangeData} />
+          <div className='flex'>
+            <div>
+              <CollapsableMenu onChangeData={onChangeData} />
+            </div>
+            <div className='flex' id='viewer'>
+              <div id='map' > {viewerTypeState === "map" ? <MapLoading></MapLoading> : ""}</div>
+              <div id='forge'> {viewerTypeState === "forge" ? <p>Forge</p> : ""}</div>
+              <div id='potree'>{viewerTypeState === "potree" ? <p>potree</p> : ""}</div>
+            </div>
+          </div>
           <div
             ref={leftOverlayRef}
             className={`h-91 bg-gray-200 w-0 absolute   ${leftNav ? 'left-10' : 'left-10  '
