@@ -1,4 +1,4 @@
-export interface ISnapShort {
+export interface ISnapshot {
   _id: string;
   date: string;
   progress: number;
