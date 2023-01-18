@@ -1,12 +1,24 @@
 import { ISnapshot } from '../../models/ISnapshot';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { getSnapshotDetails } from '../../services/snapshot';
+import Moment from 'moment';
 interface IProps {
   snapshots: ISnapshot[];
 }
 const Pagination: React.FC<IProps> = ({ snapshots }) => {
+  const [oldDate, setOldDate] = useState('');
+  const [newDate, setNewDate] = useState('');
+  useEffect(() => {
+    if (snapshots.length > 0) {
+      let snapResult = snapshots.sort(
+        (a: ISnapshot, b: ISnapshot) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setNewDate(snapResult[0].createdAt);
+      setOldDate(snapResult.reverse()[0].createdAt);
+    }
+  }, [snapshots]);
   const getSnapshotInfo = (snapshotData: ISnapshot) => {
-    console.log('snapShotData', snapshotData);
     getSnapshotDetails(
       snapshotData.project,
       snapshotData.structure,
@@ -15,7 +27,6 @@ const Pagination: React.FC<IProps> = ({ snapshots }) => {
       .then((response) => {})
       .catch();
   };
-  console.log('snapshots', snapshots);
   return (
     <React.Fragment>
       <div className="flex justify-between">
@@ -24,7 +35,7 @@ const Pagination: React.FC<IProps> = ({ snapshots }) => {
             <span>&laquo;</span>
           </div>
           <div className=" flex items-center mr-1">
-            <p>{'10 - 1 - 2023'}</p>
+            <p>{oldDate && Moment(oldDate).format('Do MMM YY')}</p>
           </div>
           {snapshots &&
             snapshots.length > 0 &&
@@ -52,7 +63,7 @@ const Pagination: React.FC<IProps> = ({ snapshots }) => {
             })}
 
           <div className="flex items-center ml-1 ">
-            <p>{'11 - 1 - 2023'} </p>
+            <p>{newDate && Moment(newDate).format('Do MMM YY')} </p>
           </div>
           <div className=" flex items-center ml-1 ">
             <span>&raquo;</span>
