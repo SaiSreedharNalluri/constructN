@@ -30,13 +30,10 @@ interface IProps {
   projects: IProjects[];
 }
 const Projects: React.FC<IProps> = ({ projects }) => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('projects', JSON.stringify(projects));
-  }
   return (
     <React.Fragment>
+      <Header />
       <div className="bg-gray-100">
-        <Header />
         <ProjectsList projects={projects} />
       </div>
     </React.Fragment>

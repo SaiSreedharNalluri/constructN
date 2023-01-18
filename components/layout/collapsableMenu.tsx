@@ -1,58 +1,142 @@
-import React, { useState, useRef } from 'react'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGreaterThan } from "@fortawesome/free-solid-svg-icons";
-import Pagination from '../container/pagination';
-import RightOverLay from '../container/RightOverLay';
-import LeftOverLay from '../container/leftOverLay';
-import { IStrature, ChildrenEntity } from '../../models/IStrature';
+import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faAreaChart,
+  faCalendar,
+  faExclamationCircle,
+  faGreaterThan,
+  faLineChart,
+  faMap,
+  faTachometer,
+  faUsers,
+} from '@fortawesome/free-solid-svg-icons';
+import { useRouter } from 'next/router';
+
 interface IProps {
-    structures: IStrature[];
-    getStructureData: (strature: ChildrenEntity) => void;
-    getStractureHierarchy: (e: string) => void
+  onChangeData: () => void;
 }
-const CollapsableMenu: React.FC<IProps> = ({ structures, getStructureData, getStractureHierarchy }) => {
-    const [openNav, setOpenNav] = useState(false);
-    const [oNav, setONav] = useState(false);
-    console.log(openNav);
-    const overlayRef: any = useRef();
-    const overlayRefs: any = useRef();
-    const openSearch = () => {
-        if (!openNav) {
-            overlayRef.current.style.width = '25%';
-        } else {
-            overlayRef.current.style.width = '0%';
-        }
-        setOpenNav(!openNav)
-    };
-    const rightNavCollapse = () => {
-        if (!oNav) {
-            overlayRefs.current.style.width = '3%';
-            overlayRefs.current.style.height = '65%';
-        } else {
-            overlayRefs.current.style.width = '0%';
-            overlayRefs.current.style.height = '0%';
-        }
-        setONav(!oNav)
+const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
+  const router = useRouter();
+  const [active, setActive] = useState('');
+  const leftClickHandler = (e: any) => {
+    switch (e.currentTarget.id) {
+      case 'dashboard':
+        router.push(`/projects/${router.query.projectId as string}/dashboard`);
+        break;
+      case 'views':
+        router.push(`/projects/${router.query.projectId as string}/structure`);
+        break;
+      case 'issues':
+        router.push(`/projects/${router.query.projectId as string}/issue`);
+        break;
+      case 'reports':
+        router.push(`/projects/${router.query.projectId as string}/report`);
+        break;
+      case 'schedule':
+        router.push(`/projects/${router.query.projectId as string}/schedule`);
+        break;
+      case 'lineChart':
+        router.push(`/projects/${router.query.projectId as string}/lineChart`);
+        break;
+      case 'users':
+        router.push(`/projects/${router.query.projectId as string}/users`);
+        break;
+      case 'tasks':
+        router.push(`/projects/${router.query.projectId as string}/tasks`);
+        break;
+      default:
+        router.push(`/projects/${router.query.projectId as string}/structure`);
     }
-    return (
-        <div className="h-full relative">
-            <div className={` w-full relative`}>
-                <img src="https://wallpaperaccess.com/full/4723253.jpg" className="h-91 w-screen" />
-                <FontAwesomeIcon className={`absolute  ${!openNav && "rotate-180"} text-2xl text-blue-300 top-2/4  ${openNav ? "left-1/4" : ""} cursor-pointer border-none rounded ml-2 p-2 bg-gray-600 text-white`} onClick={openSearch} icon={faGreaterThan}></FontAwesomeIcon>
-                <FontAwesomeIcon className={`absolute  ${oNav && "rotate-180"} text-2xl text-blue-300 top-2/4 ${oNav ? "right-5" : "right-0"}  cursor-pointer border-none rounded ml-2 p-2 bg-gray-600 text-white`} onClick={rightNavCollapse} icon={faGreaterThan}></FontAwesomeIcon>
-                <div ref={overlayRef} className={`h-full bg-black bg-opacity-60 w-0 absolute  z-10 top-0 -left-0 duration-300 overflow-x-hidden`}>
-                    <LeftOverLay getStractureHierarchy={getStractureHierarchy} getStructureData={getStructureData} structures={structures}></LeftOverLay>
-                </div>
-                <div className="left-35 bottom-4 w-1/3 bg-gray-300 rounded absolute ">
-                    <Pagination></Pagination>
-                </div>
-                <div ref={overlayRefs} id="bg-color" className={`absolute w-0  bg-black bg-opacity-60 top-1/4 rounded z-10 right-0 duration-300 overflow-x-hidden`}>
-                    <RightOverLay></RightOverLay>
-                </div>
-            </div>
-        </div>
+    setActive(e.currentTarget.id);
+  };
+  return (
+    <div className="  z-10 w-10 h-91 text-center bg-gray-300">
+      <div>
+        <FontAwesomeIcon
+          id="dashboard"
+          className={` w-full py-2  cursor-pointer ${
+            active === 'dashboard' ? 'selectedClass' : 'unSelectedClass'
+          }`}
+          onClick={leftClickHandler}
+          icon={faTachometer}
+        ></FontAwesomeIcon>
+      </div>
+      <div>
+        <FontAwesomeIcon
+          id="views"
+          className={`w-full py-2 cursor-pointer ${
+            active === 'views' ? 'selectedClass' : 'unSelectedClass'
+          }`}
+          onClick={(e: any) => {
+            leftClickHandler(e);
+            onChangeData();
+          }}
+          icon={faMap}
+        ></FontAwesomeIcon>
+      </div>
+      <div>
+        <FontAwesomeIcon
+          id="issues"
+          className={` ${
+            active === 'issues' ? 'selectedClass' : 'unSelectedClass'
+          }`}
+          onClick={leftClickHandler}
+          icon={faExclamationCircle}
+        ></FontAwesomeIcon>
+      </div>
 
-    )
-}
+      <div>
+        <FontAwesomeIcon
+          id="reports"
+          className={` cursor-pointer w-full py-2  ${
+            active === 'reports' ? 'selectedClass' : 'unSelectedClass'
+          }`}
+          onClick={leftClickHandler}
+          icon={faAreaChart}
+        ></FontAwesomeIcon>
+      </div>
+      <div>
+        <FontAwesomeIcon
+          id="schedule"
+          className={` cursor-pointer w-full py-2  ${
+            active === 'schedule' ? 'selectedClass' : 'unSelectedClass'
+          }`}
+          icon={faCalendar}
+          onClick={leftClickHandler}
+        ></FontAwesomeIcon>
+      </div>
+      <div>
+        <FontAwesomeIcon
+          id="lineChart"
+          className={` cursor-pointer w-full py-2  ${
+            active === 'linechart' ? 'selectedClass' : 'unSelectedClass'
+          }`}
+          icon={faLineChart}
+          onClick={leftClickHandler}
+        ></FontAwesomeIcon>
+      </div>
+      <div>
+        <FontAwesomeIcon
+          id="users"
+          className={`cursor-pointer w-full py-2  ${
+            active === 'users' ? 'selectedClass' : 'unSelectedClass'
+          } `}
+          icon={faUsers}
+          onClick={leftClickHandler}
+        ></FontAwesomeIcon>
+      </div>
+      <div className="mt-2 border-t border-solid border-gray-400">
+        <FontAwesomeIcon
+          id="expand"
+          className={` cursor-pointer w-full py-2  ${
+            active === 'expand' ? 'selectedClass' : 'unSelectedClass'
+          } `}
+          icon={faGreaterThan}
+          onClick={leftClickHandler}
+        ></FontAwesomeIcon>
+      </div>
+    </div>
+  );
+};
 
-export default CollapsableMenu
+export default CollapsableMenu;

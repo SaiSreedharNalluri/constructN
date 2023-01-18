@@ -1,8 +1,8 @@
-export interface IStrature {
+export interface IStructure {
   success: boolean;
-  result?: IStratureEntity[] | null;
+  result?: IStructureEntity[] | null;
 }
-export interface IStratureEntity {
+export interface IStructureEntity {
   _id: string;
   name: string;
   type: string;
