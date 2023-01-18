@@ -32,9 +32,9 @@ const Header: React.FC<IProps> = () => {
   };
   return (
     <React.Fragment>
-      <header className="h-11 border-b border-solid border-gray-400 ">
+      <header className="border-b border-solid border-gray-400">
         <div className="flex justify-between">
-          <div className='mt-auto '>
+          <div className='ml-2 mt-2 mb-2 '>
             <img
               onClick={goToProjectsList}
               className=" cursor-pointer w-full h-6"
@@ -43,7 +43,7 @@ const Header: React.FC<IProps> = () => {
             ></img>
           </div>
           <div className='flex '>
-            <div className='mt-1 mr-2'>
+            <div className='mt-2 mr-2 mb-2 w-6 h-6'>
               <FontAwesomeIcon icon={faBell} />
             </div>
             <div
@@ -55,7 +55,7 @@ const Header: React.FC<IProps> = () => {
                 }
               }}
             >
-              <div className="w-6 h-6 mt-1 mr-2 rounded-full overflow-hidden border-1 dark:border-white border-gray-900">
+              <div className="w-6 h-6 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 dark:border-white border-gray-900">
                 <Image
                   src="https://images.unsplash.com/photo-1610397095767-84a5b4736cbd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
                   alt=""
@@ -65,7 +65,7 @@ const Header: React.FC<IProps> = () => {
                 />
               </div>
             </div>
-            <div className="font-semibold mr-2 dark:text-white text-gray-900 mt-1">
+            <div className="font-semibold mr-2 mb-2 mt-2 text-gray-900">
               <div>{name}</div>
             </div>
 
