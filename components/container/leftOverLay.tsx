@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { ChildrenEntity, IStrature } from '../../models/IStrature';
+import { ChildrenEntity, IStructure } from '../../models/IStructure';
 import SearchInput from '../container/searchInput';
 import Treelist from './treeList';
 import { useRouter } from 'next/router';
 import { AxiosResponse } from 'axios';
 import { getStructureHierarchy } from '../../services/structure';
 interface IProps {
-  getStructureData: (strature: ChildrenEntity) => void;
-  getStractureHierarchy: (e: string) => void;
+  getStructureData: (structure: ChildrenEntity) => void;
+  getStructureHierarchy: (e: string) => void;
 }
 const LeftOverLay: React.FC<IProps> = ({ getStructureData }) => {
   let router = useRouter();

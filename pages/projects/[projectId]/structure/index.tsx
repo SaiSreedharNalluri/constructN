@@ -1,10 +1,12 @@
+
+
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
-import { ChildrenEntity } from '../../../../models/IStrature';
+import { ChildrenEntity } from '../../../../models/IStructure';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 import { getSnapshotsList } from '../../../../services/snapshot';
-import { ISnapShort } from '../../../../models/ISnapShort';
+import { ISnapshot } from '../../../../models/ISnapshot';
 import _ from 'lodash';
 import DatePicker from '../../../../components/container/datePicker';
 import Pagination from '../../../../components/container/pagination';
@@ -18,22 +20,22 @@ const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
-  const [snapShots, setSnapShots] = useState<ISnapShort[]>([]);
+  const [snapshots, setSnapshots] = useState<ISnapshot[]>([]);
   const [bottomNav, setBottomNav] = useState(false);
   const BottomOverlayRef: any = useRef();
   const rightOverlayRef: any = useRef();
-  const bottomRefContainer: any = useRef();
-  const rightrefContainer: any = useRef();
   const leftRefContainer: any = useRef();
+  const rightrefContainer: any = useRef();
+  const bottomRefContainer: any = useRef();
   const [rightNav, setRightNav] = useState(false);
-  const getStractureHierarchy = (e: any) => { };
-  const getStructureData = (strature: ChildrenEntity) => {
-    getSnapshots(router.query.projectId as string, strature._id);
+  const getStructureHierarchy = (e: any) => { };
+  const getStructureData = (structure: ChildrenEntity) => {
+    getSnapshots(router.query.projectId as string, structure._id);
   };
   const getSnapshots = (projectId: string, structurId: string) => {
     getSnapshotsList(projectId, structurId)
       .then((response) => {
-        setSnapShots(response?.data?.result?.mSnapshots);
+        setSnapshots(response?.data?.result?.mSnapshots);
       })
       .catch((error) => {
         console.log('error', error);
@@ -48,7 +50,7 @@ const Index: React.FC<IProps> = () => {
     }
     setBottomNav(!bottomNav);
   };
-  const rightNavCollapse = (e: any) => {
+  const rightNavCollapse = () => {
     if (!rightNav) {
       rightOverlayRef.current.style.width = '3%';
       rightOverlayRef.current.style.height = '40%';
@@ -73,15 +75,11 @@ const Index: React.FC<IProps> = () => {
     }
   };
   const closeStructurePage = (e: any) => {
-    console.log(leftOverlayRef.current.contains(e.target));
-    console.log(e.target);
     if (!leftRefContainer.current.contains(e.target) && !bottomRefContainer.current.contains(e.target) && !rightrefContainer.current.contains(e.target)) {
       setLeftNav(false);
     }
   }
   const closeStructurePages = (e: any) => {
-    console.log(leftOverlayRef.current.contains(e.target));
-    console.log(e.target);
     if (!leftRefContainer.current.contains(e.target) && !bottomRefContainer.current.contains(e.target) && !rightrefContainer.current.contains(e.target)) {
       setRightNav(false);
     }
@@ -98,20 +96,19 @@ const Index: React.FC<IProps> = () => {
       document.removeEventListener("click", closeStructurePage)
     }
   }, [])
-
   return (
     <React.Fragment>
-      <div className="h-screen">
+      <div className='h-screen ' >
         <Header />
-        <div ref={leftRefContainer}>
+        <div className='absolute' ref={leftRefContainer}>
           <CollapsableMenu onChangeData={onChangeData} />
           <div
             ref={leftOverlayRef}
             className={`h-91 bg-gray-200 w-0 absolute   ${leftNav ? 'left-10' : 'left-10  '
-              }  duration-300 overflow-x-hidden`}
+              }   top-0  duration-300 overflow-x-hidden`}
           >
             <LeftOverLay
-              getStractureHierarchy={getStractureHierarchy}
+              getStructureHierarchy={getStructureHierarchy}
               getStructureData={getStructureData}
             ></LeftOverLay>
           </div>
@@ -127,11 +124,11 @@ const Index: React.FC<IProps> = () => {
 
           <div
             ref={BottomOverlayRef}
-            className="w-0  rounded absolute left-35 bottom-1  overflow-x-hidden z-10"
+            className="w-0  absolute left-35 bottom-1  overflow-x-hidden z-10"
           >
             <div className="flex ">
-              <div className=" bg-gray-300 rounded-xl">
-                <Pagination snapShots={snapShots} />
+              <div className=" bg-gray-200 rounded">
+                <Pagination snapshots={snapshots} />
               </div>
               <div>
                 <DatePicker></DatePicker>
@@ -141,9 +138,9 @@ const Index: React.FC<IProps> = () => {
         </div>
         <div ref={rightrefContainer}>
           <FontAwesomeIcon
-            className={`absolute  text-2xl text-blue-300 top-2/4 ${rightNav ? 'right-5' : 'right-0'
-              }  ${rightNav && 'rotate-180'
-              }  cursor-pointer border-none rounded ml-2 p-1 bg-gray-600 text-white`}
+            className={`absolute  ${rightNav && 'rotate-180'
+              } text-2xl text-blue-300 top-2/4 ${rightNav ? 'right-5' : 'right-0'
+              }  cursor-pointer border-none rounded ml-2 p-2 bg-gray-600 text-white`}
             onClick={rightNavCollapse}
             icon={faGreaterThan}
           ></FontAwesomeIcon>
@@ -154,11 +151,13 @@ const Index: React.FC<IProps> = () => {
               }  bg-gray-400 top-35 rounded z-10 right-0 duration-300 overflow-x-hidden`}
           >
             <RightOverLay></RightOverLay>
-          </div>
-        </div>
+          </div></div>
+
 
       </div>
     </React.Fragment>
   );
 };
 export default Index;
+
+

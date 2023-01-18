@@ -26,4 +26,18 @@ const authCookieHeader = (context: any) => {
     throw error;
   }
 };
-export default { authHeader, authCookieHeader };
+const getAuthToken = () => {
+  try {
+    const userObj: any = getCookie('user');
+    let user = null;
+    if (userObj) user = JSON.parse(userObj);
+    if (user && user.token) {
+      return user.token;
+    } else {
+      return { Authorization: '' };
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+export default { authHeader, authCookieHeader, getAuthToken };
