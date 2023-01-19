@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
@@ -20,6 +19,8 @@ const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
+  console.log(leftNav);
+
   const [snapshots, setSnapshots] = useState<ISnapshot[]>([]);
   const [bottomNav, setBottomNav] = useState(false);
   const BottomOverlayRef: any = useRef();
@@ -27,7 +28,7 @@ const Index: React.FC<IProps> = () => {
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
   const bottomRefContainer: any = useRef();
-  const [viewerTypeState, setViewType] = useState("map");
+  const [viewerTypeState, setViewType] = useState("forge");
   const [rightNav, setRightNav] = useState(false);
   const getStructureHierarchy = (e: any) => { };
   const getStructureData = (structure: ChildrenEntity) => {
@@ -104,13 +105,13 @@ const Index: React.FC<IProps> = () => {
       <div className='h-screen ' >
         <Header />
         <div className='absolute' ref={leftRefContainer}>
-          <div className='flex'>
+          <div className='flex' >
             <div>
               <CollapsableMenu onChangeData={onChangeData} />
             </div>
-            <div className='flex' id='viewer'>
+            <div className='flex' id='viewer' >
               <div id='map' > {viewerTypeState === "map" ? <MapLoading></MapLoading> : ""}</div>
-              <div id='forge'> {viewerTypeState === "forge" ? <p>Forge</p> : ""}</div>
+              <div id='forge' > {viewerTypeState === "forge" ? <img src="https://wallpaperaccess.com/full/4723253.jpg" className="h-91 w-screen " /> : ""}</div>
               <div id='potree'>{viewerTypeState === "potree" ? <p>potree</p> : ""}</div>
             </div>
           </div>
