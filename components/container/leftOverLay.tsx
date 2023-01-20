@@ -7,7 +7,6 @@ import { AxiosResponse } from 'axios';
 import { getStructureHierarchy } from '../../services/structure';
 interface IProps {
   getStructureData: (structure: ChildrenEntity) => void;
-  getStructureHierarchy: (e: string) => void;
 }
 const LeftOverLay: React.FC<IProps> = ({ getStructureData }) => {
   let router = useRouter();

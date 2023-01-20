@@ -30,9 +30,9 @@ function HotSpots() {
     //     overLayPanelRef.current.style.width = '0';
     // };
     return (
-        <div className='ml-1  '>
+        <div className='ml-1.5  '>
             <FontAwesomeIcon
-                className={`fixed  bg-gray-400 p-1.5 `}
+                className={`fixed  bg-gray-300 p-1.5 `}
                 // onClick={openSearch}
                 icon={faEyeSlash}
             ></FontAwesomeIcon>

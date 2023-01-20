@@ -11,7 +11,7 @@ function MapLoading() {
           latitude: 16,
           zoom: 4,
         }}
-        style={{ width: '96.6vw', height: '94vh' }}
+        style={{ width: '95.9vw', height: '93vh' }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
         mapboxAccessToken={`${process.env.NEXT_PUBLIC_Map_Token}`}
       ></Map>

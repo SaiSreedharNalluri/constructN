@@ -9,6 +9,11 @@
   background-color: gray;
 }
 
+.margin1,
+.margin2,
+.margin3 :active {
+  background-color: aqua;
+}
 .margin1 {
   margin-left: 10px;
 }

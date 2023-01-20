@@ -53,12 +53,12 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
     setActive(e.currentTarget.id);
   };
   return (
-    <div className=" z-10 w-10 h-91 text-center bg-gray-300">
+    <div className=" z-10 w-4 h-93 text-center bg-gray-200">
       <div className='flex'></div>
       <div>
         <FontAwesomeIcon
           id="dashboard"
-          className={` w-full py-2  cursor-pointer ${active === 'dashboard' ? 'selectedClass' : 'unSelectedClass'
+          className={` w-full text-xl  py-2 cursor-pointer ${active === 'dashboard' ? 'selectedClass' : 'unSelectedClass'
             }`}
           onClick={leftClickHandler}
           icon={faTachometerAltAverage}
@@ -67,7 +67,7 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div>
         <FontAwesomeIcon
           id="views"
-          className={` w-full py-2 cursor-pointer ${active === 'views' ? 'selectedClass' : 'unSelectedClass'
+          className={` w-full text-xl py-2 cursor-pointer ${active === 'views' ? 'selectedClass' : 'unSelectedClass'
             }`}
           onClick={(e: any) => {
             leftClickHandler(e);
@@ -79,7 +79,7 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div>
         <FontAwesomeIcon
           id="issues"
-          className={`w-full py-2 cursor-pointer ${active === 'issues' ? 'selectedClass' : 'unSelectedClass'
+          className={`w-full text-xl py-2 cursor-pointer ${active === 'issues' ? 'selectedClass' : 'unSelectedClass'
             }`}
           onClick={leftClickHandler}
           icon={faExclamationCircle}
@@ -89,7 +89,7 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div>
         <FontAwesomeIcon
           id="reports"
-          className={` cursor-pointer w-full py-2  ${active === 'reports' ? 'selectedClass' : 'unSelectedClass'
+          className={` cursor-pointer text-xl w-full py-2  ${active === 'reports' ? 'selectedClass' : 'unSelectedClass'
             }`}
           onClick={leftClickHandler}
           icon={faAreaChart}
@@ -98,7 +98,7 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div>
         <FontAwesomeIcon
           id="schedule"
-          className={` cursor-pointer w-full py-2  ${active === 'schedule' ? 'selectedClass' : 'unSelectedClass'
+          className={` cursor-pointer text-xl w-full py-2  ${active === 'schedule' ? 'selectedClass' : 'unSelectedClass'
             }`}
           icon={faCalendarDays}
           onClick={leftClickHandler}
@@ -107,7 +107,7 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div>
         <FontAwesomeIcon
           id="linechart"
-          className={` cursor-pointer w-full py-2  ${active === 'linechart' ? 'selectedClass' : 'unSelectedClass'
+          className={` cursor-pointer text-xl w-full py-2  ${active === 'linechart' ? 'selectedClass' : 'unSelectedClass'
             }`}
           icon={faLineChart}
           onClick={leftClickHandler}
@@ -116,7 +116,7 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div>
         <FontAwesomeIcon
           id="users"
-          className={`cursor-pointer w-full py-2  ${active === 'users' ? 'selectedClass' : 'unSelectedClass'
+          className={`cursor-pointer text-xl w-full py-2  ${active === 'users' ? 'selectedClass' : 'unSelectedClass'
             } `}
           icon={faUsers}
           onClick={leftClickHandler}
@@ -125,7 +125,7 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div className="mt-2 border-t border-solid border-gray-400">
         <FontAwesomeIcon
           id="expand"
-          className={` cursor-pointer w-full py-2  ${active === 'expand' ? 'selectedClass' : 'unSelectedClass'
+          className={` cursor-pointer text-xl w-full py-2  ${active === 'expand' ? 'selectedClass' : 'unSelectedClass'
             } `}
           icon={faGreaterThan}
           onClick={leftClickHandler}
