@@ -36,9 +36,9 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
           className="h-screen w-screen"
         />
       </div>
-      <div className=" w-1/2 bg-gray-200">
+      <div className=" w-1/2 bg-gray-100 ">
         <div className="ml-32 ">
-          <div className="border border-solid border-gray-500 w-1/2 rounded-3xl mt-12 h-82 bg-gray-300">
+          <div className="border border-solid border-gray-500 w-1/2 rounded-3xl mt-12 h-82 ">
             <h2 className="text-center mt-4">User Login</h2>
             <Formik
               initialValues={initialValues}
@@ -58,22 +58,23 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                     className="alert alert-danger"
                   />
                 </div>
-                <div className="mt-4 flex flex-col">
+                <div className=" mt-4">
                   <div>
                     <InputPassword
                       name="password"
                       type={isRevealPwd}
                       placeholderName="password"
                     />
-                    <Image
-                      height={1080}
-                      width={1920}
-                      className="h-7 w-8 ml-auto -mt-10  relative right-6 "
-                      alt=""
-                      title={isRevealPwd ? 'Hide password' : 'Show password'}
-                      src={isRevealPwd ? hidePwdImg : showPwdImg}
-                      onClick={() => setIsRevealPwd((prevState) => !prevState)}
-                    />
+                    <div className='w-11/12 justify-end flex  relative'>
+                      <Image
+                        className="h-7 w-8  absolute bottom-1 "
+                        alt=""
+                        title={isRevealPwd ? 'Hide password' : 'Show password'}
+                        src={isRevealPwd ? hidePwdImg : showPwdImg}
+                        onClick={() => setIsRevealPwd((prevState) => !prevState)}
+                      />
+                    </div>
+
                   </div>
                   <div>
                     <ErrorMessage

@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Map from 'react-map-gl';
-import authHeader from '../../services/auth-header';
-function MapLoading() {
-  const [latlng, setLatLng] = React.useState<any>();
+const MapLoading: React.FC = () => {
   return (
     <div>
       <Map
@@ -11,7 +9,7 @@ function MapLoading() {
           latitude: 16,
           zoom: 4,
         }}
-        style={{ width: '96.6vw', height: '94vh' }}
+        style={{ width: '95.9vw', height: '93vh' }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
         mapboxAccessToken={`${process.env.NEXT_PUBLIC_Map_Token}`}
       ></Map>

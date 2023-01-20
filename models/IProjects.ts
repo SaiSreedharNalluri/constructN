@@ -12,7 +12,6 @@ export interface IProjects {
   jobsOpened?: number;
   LastUpdatedOn?: string;
   coverPhoto: string;
-  utm?:string;
 }
 export interface Contact {
   code: string;

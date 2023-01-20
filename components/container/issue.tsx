@@ -6,9 +6,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef, useState } from 'react';
-
 import DatePicker from './datePicker';
-function Issue() {
+const Issue: React.FC = () => {
   const [overLayPanel, setOverLayPanel] = useState(false);
   const overLayPanelRef: any = useRef();
   const openSearch = () => {
@@ -17,7 +16,6 @@ function Issue() {
       overLayPanelRef.current.style.height = '85%';
     } else {
       overLayPanelRef.current.style.width = '0%';
-      // overLayPanelRef.current.style.height = '100%';
     }
     setOverLayPanel(!overLayPanel);
   };
@@ -34,7 +32,7 @@ function Issue() {
   };
   return (
     <div>
-      <div className={`border border-solid bg-slate-500 p-1.5 rounded -mt-8 `}>
+      <div className={`border border-solid bg-slate-300 p-1.5 rounded -mt-8 `}>
         <div className="ml-1 flex justify-between">
           <FontAwesomeIcon
             onClick={openSearch}

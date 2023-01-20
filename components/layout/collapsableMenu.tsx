@@ -2,14 +2,9 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAreaChart,
-  faCalendar,
   faCalendarDays,
-  faExclamationCircle,
   faGreaterThan,
-  faLineChart,
   faMap,
-  faTachometer,
-  faTachometerAlt,
   faTachometerAltAverage,
   faUsers,
 } from '@fortawesome/free-solid-svg-icons';
@@ -50,12 +45,10 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       default:
         router.push(`/projects/${router.query.projectId as string}/structure`);
     }
-    //setActive(e.currentTarget.id);
     setActive(router.pathname.split("/").pop());
   };
   return (
-    <div className=" z-10 w-11 h-96 text-center bg-gray-200">
-     
+    <div className="w-11 h-96 text-center bg-gray-200">
       <div>
         <FontAwesomeIcon
           id="dashboard"
