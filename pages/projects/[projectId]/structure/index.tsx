@@ -15,29 +15,12 @@ import RightOverLay from '../../../../components/container/RightOverLay';
 import LeftOverLay from '../../../../components/container/leftOverLay';
 import MapLoading from '../../../../components/container/mapLoading';
 import authHeader from '../../../../services/auth-header';
-import { IProjects } from '../../../../models/IProjects';
-import { promises } from 'stream';
-import { GetServerSideProps } from 'next';
-
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   const resp: any = await getProjectDetails(context,context.query.projectId as string);
-//   let tempData: IProjects;
-//   await Promise.all(
-//     resp.data.result.map(async (pData: IProjects) => {
-      
-//       tempData=pData;
-//     })
-//   );
-//   return {
-//     props: {  },
-//   };
-// };
 interface IProps {}
-
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const [structurId, setStructurId] = useState('');
   const [snapshotId, setSnapShotId] = useState('');
+  const [projectutm, setProjectUtm] = useState('');
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
   const [snapshots, setSnapshots] = useState<ISnapshot[]>([]);
@@ -47,21 +30,21 @@ const Index: React.FC<IProps> = () => {
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
   const bottomRefContainer: any = useRef();
-  const [viewerTypeState, setViewType] = useState('forge');
+  const [viewerTypeState, setViewType] = useState('map');
   const [rightNav, setRightNav] = useState(false);
-  //const projectDetailsResponse :any=  getProjectDetails(authHeader.getAuthToken(),router.query.projectId as string);
+  useEffect(() => {
+    if (router.isReady) {
+      getProjectDetails(router.query.projectId as string).then((response) => {
+        setProjectUtm(response?.data?.result?.utm);
+      });
+    }
+  }, [router.isReady, router.query.projectId]);
 
   const getStructureData = (structure: ChildrenEntity) => {
     getSnapshots(router.query.projectId as string, structure._id);
     setStructurId(structure._id);
   };
-  
-  // let projectDetails :IProjects;
-  // projectDetailsResponse?.data?.result?.map(async (pData: IProjects) => {
-  //   console.log(pData);
-  // projectDetails=pData;
-  // });
-  //console.log(projectDetails._id);
+
   const getSnapshots = (projectId: string, structurId: string) => {
     getSnapshotsList(projectId, structurId)
       .then((response) => {
@@ -82,24 +65,34 @@ const Index: React.FC<IProps> = () => {
     }
     setBottomNav(!bottomNav);
   };
-  const renderSwitch=(param: string)=>{
-    switch(param) {
+  const renderSwitch = (param: string) => {
+    switch (param) {
       case 'potree':
-    return (<MapLoading></MapLoading>)
-    
-  case 'forge':
-    return(<div className=' w-screen bg-black overflow-x-hidden overflow-y-hidden'>forge</div>)
-    
-  case 'map':
-    //console.log(projectDetailsResponse);
-    return(<div className='overflow-x-hidden overflow-y-hidden'><iframe className="overflow-x-hidden h-96 w-screen"
-    src={`https://dev.internal.constructn.ai/2d?structure=${structurId}&snapshot1=${snapshotId}&zone_utm=${"44N"}&projectId=${router.query.projectId as string
-      }&token=${authHeader.getAuthToken()}`}/></div>)
-    
-    default:
-      break;
-  }
-}
+        return <MapLoading></MapLoading>;
+
+      case 'forge':
+        return (
+          <div className=" w-screen bg-black overflow-x-hidden overflow-y-hidden">
+            forge
+          </div>
+        );
+
+      case 'map':
+        return (
+          <div className="overflow-x-hidden overflow-y-hidden">
+            <iframe
+              className="overflow-x-hidden h-96 w-screen"
+              src={`https://dev.internal.constructn.ai/2d?structure=${structurId}&snapshot1=${snapshotId}&zone_utm=${projectutm} &projectId=${
+                router.query.projectId as string
+              }&token=${authHeader.getAuthToken()}`}
+            />
+          </div>
+        );
+
+      default:
+        break;
+    }
+  };
   const rightNavCollapse = () => {
     if (!rightNav) {
       rightOverlayRef.current.style.width = '3%';
@@ -158,19 +151,17 @@ const Index: React.FC<IProps> = () => {
     setSnapShotId(snapshotData._id);
   };
 
-
-
   return (
     <React.Fragment>
       <div className="h-screen ">
         <Header />
         <div className="absolute" ref={leftRefContainer}>
           <div className="flex">
-            <div className='flex'>
+            <div className="flex">
               <CollapsableMenu onChangeData={onChangeData} />
             </div>
             <div className="flex w-97" id="viewer">
-            {renderSwitch(viewerTypeState)} 
+              {renderSwitch(viewerTypeState)}
             </div>
           </div>
           <div
@@ -183,22 +174,23 @@ const Index: React.FC<IProps> = () => {
           </div>
         </div>
         <div ref={bottomRefContainer}>
-        {viewerTypeState!='map'?
-          <p
-            className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
-              bottomNav ? 'bottom-11' : 'bottom-0'
-            } `}
-            onClick={bottomOverLay}
-          >
-            10-01-2022
-          </p>
-          :''}
+          {viewerTypeState != 'map' ? (
+            <p
+              className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
+                bottomNav ? 'bottom-11' : 'bottom-0'
+              } `}
+              onClick={bottomOverLay}
+            >
+              10-01-2022
+            </p>
+          ) : (
+            ''
+          )}
           <div
             ref={BottomOverlayRef}
             className="w-0  absolute left-35 bottom-1  overflow-x-hidden z-10"
           >
             <div className="flex ">
-             
               <div className=" bg-gray-200 rounded">
                 <Pagination
                   snapshots={snapshots}
@@ -207,12 +199,11 @@ const Index: React.FC<IProps> = () => {
               </div>
               <div>
                 <DatePicker></DatePicker>
-              </div> 
-            </div> 
-          </div> 
-          
+              </div>
+            </div>
+          </div>
         </div>
-        
+
         <div ref={rightrefContainer}>
           <FontAwesomeIcon
             className={`absolute  ${
