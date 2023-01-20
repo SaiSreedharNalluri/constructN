@@ -47,7 +47,7 @@ const Index: React.FC<IProps> = () => {
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
   const bottomRefContainer: any = useRef();
-  const [viewerTypeState, setViewType] = useState('map');
+  const [viewerTypeState, setViewType] = useState('forge');
   const [rightNav, setRightNav] = useState(false);
   //const projectDetailsResponse :any=  getProjectDetails(authHeader.getAuthToken(),router.query.projectId as string);
 
