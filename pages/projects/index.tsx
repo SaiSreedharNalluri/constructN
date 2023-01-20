@@ -32,10 +32,16 @@ interface IProps {
 const Projects: React.FC<IProps> = ({ projects }) => {
   return (
     <React.Fragment>
-      <Header />
-      <div className="bg-gray-100">
-        <ProjectsList projects={projects} />
+      <div className='flex-col'>
+        <div>
+          <Header />
+        </div>
+        <div className="bg-gray-100 fixed">
+          <ProjectsList projects={projects} />
+        </div>
       </div>
+
+
     </React.Fragment>
   );
 };

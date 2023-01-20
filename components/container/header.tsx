@@ -9,7 +9,6 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCookie, removeCookies } from 'cookies-next';
-import { IProjects } from '../../models/IProjects';
 interface IProps { }
 const Header: React.FC<IProps> = () => {
   const router = useRouter();

@@ -7,7 +7,10 @@ const Index: React.FC = () => {
       <div className="h-screen">
         <div>
           <Header />
-          <CollapsableMenu onChangeData={() => {}} />
+          <div className='fixed'>
+            <CollapsableMenu onChangeData={() => { }} />
+          </div>
+
         </div>
       </div>
     </React.Fragment>

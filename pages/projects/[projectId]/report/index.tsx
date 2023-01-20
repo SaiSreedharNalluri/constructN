@@ -10,13 +10,13 @@ const Index: React.FC = () => {
       <div>
         <div >
           <Header />
-          <div className="flex w-screen h-91">
+          <div className="flex fixed ">
             <div>
               <CollapsableMenu onChangeData={() => { }} />
             </div>
             <div>
               <iframe
-                className="w-95 h-91 overflow-x-hidden"
+                className="w-95 h-93  "
                 src={`https://dev.internal.constructn.ai/reports?projectId=${router.query.projectId as string
                   }&token=${authHeader.getAuthToken()}`}
               />
