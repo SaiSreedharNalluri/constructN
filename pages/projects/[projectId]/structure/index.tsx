@@ -48,6 +48,9 @@ const Index: React.FC<IProps> = () => {
   const getSnapshots = (projectId: string, structurId: string) => {
     getSnapshotsList(projectId, structurId)
       .then((response) => {
+        if (snapshotId === '') {
+          setSnapShotId(response?.data?.result?.mSnapshots[0]._id);
+        }
         setSnapshots(response?.data?.result?.mSnapshots);
       })
       .catch((error) => {
@@ -150,7 +153,6 @@ const Index: React.FC<IProps> = () => {
   const getSnapshotInfo = (snapshotData: ISnapshot) => {
     setSnapShotId(snapshotData._id);
   };
-
   return (
     <React.Fragment>
       <div className="h-screen ">
@@ -170,7 +172,14 @@ const Index: React.FC<IProps> = () => {
               leftNav ? 'left-10' : 'left-10  '
             }   top-0  duration-300 overflow-x-hidden`}
           >
-            <LeftOverLay getStructureData={getStructureData}></LeftOverLay>
+            <LeftOverLay
+              getStructureData={getStructureData}
+              getStructure={(strId) => {
+                if (structurId === '') {
+                  setStructurId(strId);
+                }
+              }}
+            ></LeftOverLay>
           </div>
         </div>
         <div ref={bottomRefContainer}>
