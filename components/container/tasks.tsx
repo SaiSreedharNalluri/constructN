@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useRef, useState } from 'react'
 import DatePicker from './datePicker';
 
-function Tasks() {
+const Tasks: React.FC = () => {
     const [overLayPanel, setOverLayPanel] = useState(false);
     const overLayPanelRef: any = useRef();
     const openSearch = () => {
@@ -12,17 +12,8 @@ function Tasks() {
             overLayPanelRef.current.style.height = '85%';
         } else {
             overLayPanelRef.current.style.width = '0%';
-            // overLayPanelRef.current.style.height = '100%';
         }
         setOverLayPanel(!overLayPanel);
-    };
-
-    const onChangeData = () => {
-        if (overLayPanel) {
-            setOverLayPanel(false);
-        } else {
-            setOverLayPanel(true);
-        }
     };
     const closeSearch = () => {
         overLayPanelRef.current.style.width = '0';

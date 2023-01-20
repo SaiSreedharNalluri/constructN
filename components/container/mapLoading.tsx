@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Map from 'react-map-gl';
-import authHeader from '../../services/auth-header';
-function MapLoading() {
-  const [latlng, setLatLng] = React.useState<any>();
+const MapLoading: React.FC = () => {
   return (
     <div>
       <Map

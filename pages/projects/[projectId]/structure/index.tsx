@@ -4,6 +4,7 @@ import Header from '../../../../components/container/header';
 import { ChildrenEntity } from '../../../../models/IStructure';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 import { getSnapshotsList } from '../../../../services/snapshot';
+import { getProjectDetails } from '../../../../services/project';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import _ from 'lodash';
 import DatePicker from '../../../../components/container/datePicker';
@@ -13,6 +14,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RightOverLay from '../../../../components/container/RightOverLay';
 import LeftOverLay from '../../../../components/container/leftOverLay';
 import MapLoading from '../../../../components/container/mapLoading';
+import authHeader from '../../../../services/auth-header';
+import { IProjects } from '../../../../models/IProjects';
+import { promises } from 'stream';
+import { GetServerSideProps } from 'next';
+
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//   const resp: any = await getProjectDetails(context,context.query.projectId as string);
+//   let tempData: IProjects;
+//   await Promise.all(
+//     resp.data.result.map(async (pData: IProjects) => {
+
+//       tempData=pData;
+//     })
+//   );
+//   return {
+//     props: {  },
+//   };
+// };
 interface IProps { }
 
 const Index: React.FC<IProps> = () => {
@@ -21,8 +40,6 @@ const Index: React.FC<IProps> = () => {
   const [snapshotId, setSnapShotId] = useState('');
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
-  console.log(leftNav);
-
   const [snapshots, setSnapshots] = useState<ISnapshot[]>([]);
   const [bottomNav, setBottomNav] = useState(false);
   const BottomOverlayRef: any = useRef();
@@ -30,13 +47,21 @@ const Index: React.FC<IProps> = () => {
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
   const bottomRefContainer: any = useRef();
-  const [viewerTypeState, setViewType] = useState('map');
+  const [viewerTypeState, setViewType] = useState('forge');
   const [rightNav, setRightNav] = useState(false);
+  //const projectDetailsResponse :any=  getProjectDetails(authHeader.getAuthToken(),router.query.projectId as string);
 
   const getStructureData = (structure: ChildrenEntity) => {
     getSnapshots(router.query.projectId as string, structure._id);
     setStructurId(structure._id);
   };
+
+  // let projectDetails :IProjects;
+  // projectDetailsResponse?.data?.result?.map(async (pData: IProjects) => {
+  //   console.log(pData);
+  // projectDetails=pData;
+  // });
+  //console.log(projectDetails._id);
   const getSnapshots = (projectId: string, structurId: string) => {
     getSnapshotsList(projectId, structurId)
       .then((response) => {
@@ -57,6 +82,23 @@ const Index: React.FC<IProps> = () => {
     }
     setBottomNav(!bottomNav);
   };
+  const renderSwitch = (param: string) => {
+    switch (param) {
+      case 'potree':
+        return (<MapLoading></MapLoading>)
+
+      case 'forge':
+        return (<div className='w-screen bg-black overflow-x-hidden overflow-y-hidden'>forge</div>)
+
+      case 'map':
+        return (<div className='overflow-x-hidden overflow-y-hidden'><iframe className="overflow-x-hidden h-96 w-screen"
+          src={`https://dev.internal.constructn.ai/2d?structure=${structurId}&snapshot1=${snapshotId}&zone_utm=${"44N"}&projectId=${router.query.projectId as string
+            }&token=${authHeader.getAuthToken()}`} /></div>)
+
+      default:
+        break;
+    }
+  }
   const rightNavCollapse = () => {
     if (!rightNav) {
       rightOverlayRef.current.style.width = '3%';
@@ -81,110 +123,74 @@ const Index: React.FC<IProps> = () => {
       setLeftNav(true);
     }
   };
-  const closeStructurePage = (e: any) => {
-    if (
-      !leftRefContainer.current.contains(e.target) &&
-      !bottomRefContainer.current.contains(e.target) &&
-      !rightrefContainer.current.contains(e.target)
-    ) {
-      setLeftNav(false);
-    }
-  };
-  const closeStructurePages = (e: any) => {
-    if (
-      !leftRefContainer.current.contains(e.target) &&
-      !bottomRefContainer.current.contains(e.target) &&
-      !rightrefContainer.current.contains(e.target)
-    ) {
-      setRightNav(false);
-    }
-  };
-  useEffect(() => {
-    const handler = document.addEventListener('click', closeStructurePages);
-    return () => {
-      document.removeEventListener('click', closeStructurePages);
-    };
-  }, []);
-  useEffect(() => {
-    const handler = document.addEventListener('click', closeStructurePage);
-    return () => {
-      document.removeEventListener('click', closeStructurePage);
-    };
-  }, []);
+
   const getSnapshotInfo = (snapshotData: ISnapshot) => {
     setSnapShotId(snapshotData._id);
   };
-
   return (
     <React.Fragment>
-      <div className="h-screen ">
+      <div className="">
         <Header />
-        <div className="absolute" ref={leftRefContainer}>
+        <div className="fixed" ref={leftRefContainer}>
           <div className="flex">
-            <div>
+            <div className='flex'>
               <CollapsableMenu onChangeData={onChangeData} />
             </div>
-            <div className="flex" id="viewer">
-              <div id="map">
-                {' '}
-                {viewerTypeState === 'map' ? <MapLoading></MapLoading> : ''}
-              </div>
-              <div id="forge">
-                {' '}
-                {viewerTypeState === 'forge' ? <p>Forge</p> : ''}
-              </div>
-              <div id="potree">
-                {viewerTypeState === 'potree' ? <p>potree</p> : ''}
-              </div>
+            <div className="flex w-97" id="viewer">
+              {renderSwitch(viewerTypeState)}
             </div>
           </div>
           <div
             ref={leftOverlayRef}
-            className={`h-93 z-10 bg-gray-200 w-0 absolute   ${leftNav ? 'left-12' : 'left-12  '
+            className={`h-96 bg-gray-200 w-0 absolute   ${leftNav ? 'left-10' : 'left-10  '
               }   top-0  duration-300 overflow-x-hidden`}
           >
             <LeftOverLay getStructureData={getStructureData}></LeftOverLay>
           </div>
         </div>
         <div ref={bottomRefContainer}>
-          <p
-            className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${bottomNav ? 'bottom-11' : 'bottom-0'
-              } `}
-            onClick={bottomOverLay}
-          >
-            10-01-2022
-          </p>
-
+          {viewerTypeState != 'map' ?
+            <p
+              className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${bottomNav ? 'bottom-11' : 'bottom-0'
+                } `}
+              onClick={bottomOverLay}
+            >
+              10-01-2022
+            </p>
+            : ''}
           <div
             ref={BottomOverlayRef}
-            className="w-0 absolute left-35 bottom-1  overflow-x-hidden z-10"
+            className="w-0  absolute left-35 bottom-1  overflow-x-hidden z-10"
           >
             <div className="flex ">
-              <div className=" bg-gray-200 rounded w-4/5">
+
+              <div className=" bg-gray-200 w-2/3 rounded">
                 <Pagination
                   snapshots={snapshots}
                   getSnapshotInfo={getSnapshotInfo}
                 />
               </div>
-              <div className='text-3xl'>
+              <div>
                 <DatePicker></DatePicker>
               </div>
             </div>
           </div>
+
         </div>
+
         <div ref={rightrefContainer}>
           <FontAwesomeIcon
             className={`absolute  ${rightNav && 'rotate-180'
-              } top-2/4 ${rightNav ? 'right-5' : 'right-0'
-              }  cursor-pointer border-none rounded ml-2 p-2 bg-gray-400 text-white`}
+              } text-2xl text-blue-300 top-2/4 ${rightNav ? 'right-5' : 'right-0'
+              }  cursor-pointer border-none rounded ml-2 p-1 bg-gray-400 text-white`}
             onClick={rightNavCollapse}
             icon={faGreaterThan}
           ></FontAwesomeIcon>
           <div
             ref={rightOverlayRef}
             id="bg-color"
-            className={`absolute  ${rightNav ? 'visible' : 'hidden'
-              }  bg-gray-300 top-1/3 float-left rounded z-10 right-0 duration-300 overflow-x-hidden`}
+            className={`fixed w-0  ${rightNav ? 'visible' : 'hidden'
+              }  bg-gray-300 top-35 rounded z-10 right-0 duration-300 overflow-x-hidden`}
           >
             <RightOverLay></RightOverLay>
           </div>

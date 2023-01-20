@@ -36,7 +36,7 @@ const Projects: React.FC<IProps> = ({ projects }) => {
         <div>
           <Header />
         </div>
-        <div className="bg-gray-100">
+        <div className="bg-gray-100 fixed">
           <ProjectsList projects={projects} />
         </div>
       </div>

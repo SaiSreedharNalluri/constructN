@@ -9,7 +9,6 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCookie, removeCookies } from 'cookies-next';
-import { IProjects } from '../../models/IProjects';
 interface IProps { }
 const Header: React.FC<IProps> = () => {
   const router = useRouter();
@@ -32,7 +31,7 @@ const Header: React.FC<IProps> = () => {
   };
   return (
     <React.Fragment>
-      <header className="border-b border-solid border-gray-400 h-7">
+      <header className="border-b border-solid border-gray-400">
         <div className="flex justify-between">
           <div className='ml-2 mt-2 mb-2 '>
             <img

@@ -1,6 +1,3 @@
-
-
-
 import { ISnapshot } from '../../models/ISnapshot';
 import React, { useEffect, useState } from 'react';
 import { getSnapshotDetails } from '../../services/snapshot';

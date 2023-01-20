@@ -3,13 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Issue from './issue';
 import Tasks from './tasks';
 import {
-  faBug,
   faBullseye,
-  faCirclePlus,
   faDatabase,
   faExclamationCircle,
-  faEyeSlash,
-  faList,
   faSitemap,
   faTasks,
 } from '@fortawesome/free-solid-svg-icons';
@@ -20,35 +16,18 @@ const RightOverLay: React.FC = () => {
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
-  // const rightNavCollapse = (e: any) => {
-  //   if (!rightNav) {
-  //     rightOverlayRef.current.style.width = '8%';
-  //   } else {
-  //     rightOverlayRef.current.style.width = '0%';
-  //   }
-  //   setRighttNav(!rightNav);
-  //   rightClickHandler(e);
-  // };
   const closeStructurePages = (e: any) => {
-    // console.log(leftOverlayRef.current.contains(e.target));
-
     if (!rightOverlayRefs.current.contains(e.target)) {
       setRighttNav(false);
     }
   };
   useEffect(() => {
-    const handler = document.addEventListener('click', closeStructurePages);
+    document.addEventListener('click', closeStructurePages);
     return () => {
       document.removeEventListener('click', closeStructurePages);
     };
   }, []);
 
-  useEffect(() => {
-    const handler = document.addEventListener('click', closeStructurePages);
-    return () => {
-      document.removeEventListener('click', closeStructurePages);
-    };
-  }, []);
   const rightClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
     setRighttNav(!rightNav);
@@ -95,7 +74,7 @@ const RightOverLay: React.FC = () => {
           ></FontAwesomeIcon>
           {active === 'c' ? (
             <div
-              className={`fixed w-24 right-16 ${rightNav ? 'right-10' : 'hidden'
+              className={`fixed w-24 right-16 ${rightNav ? 'right-16' : 'hidden'
                 }`}
             >
               <Issue></Issue>
@@ -108,13 +87,13 @@ const RightOverLay: React.FC = () => {
           <FontAwesomeIcon
             icon={faBullseye}
             id="d"
-            className={` w-full py-2  cursor-pointer ${active === 'd' ? 'selectedClass' : 'unSelectedClass'
+            className={` w-full py-2  z-10 cursor-pointer ${active === 'd' ? 'selectedClass' : 'unSelectedClass'
               }`}
             onClick={rightClickHandler}
           ></FontAwesomeIcon>
           {active === 'd' ? (
             <div
-              className={`fixed w-24 top-55 ml-1.5  ${rightNav ? 'right-10' : 'hidden'
+              className={`fixed w-24 bottom-37 ml-1.5  ${rightNav ? 'right-9' : 'hidden'
                 }`}
             >
               <Tasks></Tasks>
@@ -133,10 +112,10 @@ const RightOverLay: React.FC = () => {
           ></FontAwesomeIcon>
           {active === 'e' ? (
             <div
-              className={`fixed w-10 top-60 ${rightNav ? 'right-9' : 'hidden'
+              className={`fixed w-10 bottom-31 ${rightNav ? 'right-9' : 'hidden'
                 }`}
             >
-              <div className={`  rounded  `}>
+              <div className={`  rounded `}>
                 <div>
                   <HotSpots></HotSpots>
                 </div>
@@ -147,20 +126,6 @@ const RightOverLay: React.FC = () => {
           )}
         </div>
       </div>
-
-      {/* <div
-      
-        className={`fixed w-0  bottom-1/4 ${rightNav ? "right-10" : "hidden"} z-10 mb-10 overflow-x-hidden`}
-      >
-        <div className={`border border-solid bg-slate-500 p-1.5 rounded `}>
-          <div className='ml-1'>
-            <FontAwesomeIcon
-              icon={faEyeSlash}
-              className="hover:white text-center cursor-pointer"
-            ></FontAwesomeIcon>
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 };

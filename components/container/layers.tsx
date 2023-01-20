@@ -1,7 +1,7 @@
 import { faCirclePlus, faList, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-function Layers() {
+const Layers: React.FC = () => {
     return (
         <div className='ml-1 flex justify-between'>
             <FontAwesomeIcon

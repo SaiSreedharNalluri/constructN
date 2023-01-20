@@ -17,7 +17,7 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
     router.push(`projects/${projectId}/structure`);
   };
   return (
-    <div className=" grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
+    <div className="h-93 overflow-y-scroll grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
       {projects.map((pData) => {
         return (
           <div key={pData._id}>
