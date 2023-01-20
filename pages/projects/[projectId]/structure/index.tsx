@@ -18,6 +18,7 @@ import authHeader from '../../../../services/auth-header';
 interface IProps { }
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
+  const [currentProjectId, setActiveProjectId] = useState('');
   const [structurId, setStructurId] = useState('');
   const [snapshotId, setSnapShotId] = useState('');
   const [projectutm, setProjectUtm] = useState('');
@@ -36,6 +37,7 @@ const Index: React.FC<IProps> = () => {
     if (router.isReady) {
       getProjectDetails(router.query.projectId as string).then((response) => {
         setProjectUtm(response?.data?.result?.utm);
+        setActiveProjectId(router.query.projectId as string);
       });
     }
   }, [router.isReady, router.query.projectId]);
@@ -85,7 +87,7 @@ const Index: React.FC<IProps> = () => {
           <div className="overflow-x-hidden overflow-y-hidden">
             <iframe
               className="overflow-x-hidden h-96 w-screen"
-              src={`https://dev.internal.constructn.ai/2d?structure=${structurId}&snapshot1=${snapshotId}&zone_utm=${projectutm} &projectId=${router.query.projectId as string
+              src={`https://dev.internal.constructn.ai/2d?structure=${structurId}&snapshot1=${snapshotId}&zone_utm=${projectutm}&project=${currentProjectId as string
                 }&token=${authHeader.getAuthToken()}`}
             />
           </div>
