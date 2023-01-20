@@ -23,11 +23,11 @@ const Pagination: React.FC<IProps> = ({ snapshots, getSnapshotInfo }) => {
   return (
     <React.Fragment>
       <div className="flex justify-between">
-        <div className="flex ">
-          <div className="  py-2 px-1  ">
-            <span>&laquo;</span>
-          </div>
-          <div className=" flex items-center mr-1">
+        <div className="  py-2 px-1  ">
+          <span>&laquo;</span>
+        </div>
+        <div className='flex items-center '>
+          <div className=" flex  mr-1">
             <p>{oldDate && Moment(oldDate).format('Do MMM YY')}</p>
           </div>
           {snapshots &&
@@ -58,11 +58,13 @@ const Pagination: React.FC<IProps> = ({ snapshots, getSnapshotInfo }) => {
           <div className="flex items-center ml-1 ">
             <p>{newDate && Moment(newDate).format('Do MMM YY')} </p>
           </div>
-          <div className=" flex items-center ml-1 ">
-            <span>&raquo;</span>
-          </div>
+        </div>
+
+        <div className="  py-2 px-1  ">
+          <span>&raquo;</span>
         </div>
       </div>
+
     </React.Fragment>
   );
 };
