@@ -15,12 +15,12 @@ import RightOverLay from '../../../../components/container/RightOverLay';
 import LeftOverLay from '../../../../components/container/leftOverLay';
 import MapLoading from '../../../../components/container/mapLoading';
 import authHeader from '../../../../services/auth-header';
-interface IProps { }
+interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const [currentProjectId, setActiveProjectId] = useState('');
-  const [structurId, setStructurId] = useState('');
-  const [snapshotId, setSnapShotId] = useState('');
+  const [structureObj, setStructureObj] = useState<ChildrenEntity>();
+  const [snapshotObj, setSnapShotObj] = useState<ISnapshot>();
   const [projectutm, setProjectUtm] = useState('');
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
@@ -44,16 +44,18 @@ const Index: React.FC<IProps> = () => {
 
   const getStructureData = (structure: ChildrenEntity) => {
     getSnapshots(router.query.projectId as string, structure._id);
-    setStructurId(structure._id);
+    setStructureObj(structure);
   };
 
   const getSnapshots = (projectId: string, structurId: string) => {
     getSnapshotsList(projectId, structurId)
       .then((response) => {
-        if (snapshotId === '') {
-          setSnapShotId(response?.data?.result?.mSnapshots[0]._id);
-        }
-        setSnapshots(response?.data?.result?.mSnapshots);
+        let snapResult: ISnapshot[] = response?.data?.result?.mSnapshots?.sort(
+          (a: ISnapshot, b: ISnapshot) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        setSnapShotObj(snapResult[0]);
+        setSnapshots(snapResult);
       })
       .catch((error) => {
         console.log('error', error);
@@ -87,8 +89,11 @@ const Index: React.FC<IProps> = () => {
           <div className="overflow-x-hidden overflow-y-hidden">
             <iframe
               className="overflow-x-hidden h-96 w-screen"
-              src={`https://dev.internal.constructn.ai/2d?structure=${structurId}&snapshot1=${snapshotId}&zone_utm=${projectutm}&project=${currentProjectId as string
-                }&token=${authHeader.getAuthToken()}`}
+              src={`https://dev.internal.constructn.ai/2d?structure=${
+                structureObj?._id
+              }&snapshot1=${snapshotObj?._id}&zone_utm=${projectutm}&project=${
+                currentProjectId as string
+              }&token=${authHeader.getAuthToken()}`}
             />
           </div>
         );
@@ -123,7 +128,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const getSnapshotInfo = (snapshotData: ISnapshot) => {
-    setSnapShotId(snapshotData._id);
+    setSnapShotObj(snapshotData);
   };
   return (
     <React.Fragment>
@@ -140,14 +145,19 @@ const Index: React.FC<IProps> = () => {
           </div>
           <div
             ref={leftOverlayRef}
-            className={`h-96 bg-gray-200 w-0 absolute   ${leftNav ? 'left-10' : 'left-10  '
-              }   top-0  duration-300 overflow-x-hidden`}
+            className={`h-96 bg-gray-200 w-0 absolute   ${
+              leftNav ? 'left-10' : 'left-10  '
+            }   top-0  duration-300 overflow-x-hidden`}
           >
             <LeftOverLay
               getStructureData={getStructureData}
-              getStructure={(strId) => {
-                if (structurId === '') {
-                  setStructurId(strId);
+              getStructure={(structureData) => {
+                if (structureObj === undefined) {
+                  getSnapshots(
+                    router.query.projectId as string,
+                    structureData._id
+                  );
+                  setStructureObj(structureData);
                 }
               }}
             ></LeftOverLay>
@@ -156,8 +166,9 @@ const Index: React.FC<IProps> = () => {
         <div ref={bottomRefContainer}>
           {viewerTypeState != 'map' ? (
             <p
-              className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${bottomNav ? 'bottom-11' : 'bottom-0'
-                } `}
+              className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
+                bottomNav ? 'bottom-11' : 'bottom-0'
+              } `}
               onClick={bottomOverLay}
             >
               10-01-2022
@@ -185,17 +196,20 @@ const Index: React.FC<IProps> = () => {
 
         <div ref={rightrefContainer}>
           <FontAwesomeIcon
-            className={`absolute  ${rightNav && 'rotate-180'
-              } text-2xl text-blue-300 top-2/4 ${rightNav ? 'right-5' : 'right-0'
-              }  cursor-pointer border-none rounded ml-2 p-1 bg-gray-400 text-white`}
+            className={`absolute  ${
+              rightNav && 'rotate-180'
+            } text-2xl text-blue-300 top-2/4 ${
+              rightNav ? 'right-5' : 'right-0'
+            }  cursor-pointer border-none rounded ml-2 p-1 bg-gray-400 text-white`}
             onClick={rightNavCollapse}
             icon={faGreaterThan}
           ></FontAwesomeIcon>
           <div
             ref={rightOverlayRef}
             id="bg-color"
-            className={`fixed w-0  ${rightNav ? 'visible' : 'hidden'
-              }  bg-gray-300 top-35 rounded z-10 right-0 duration-300 overflow-x-hidden`}
+            className={`fixed w-0  ${
+              rightNav ? 'visible' : 'hidden'
+            }  bg-gray-300 top-35 rounded z-10 right-0 duration-300 overflow-x-hidden`}
           >
             <RightOverLay></RightOverLay>
           </div>

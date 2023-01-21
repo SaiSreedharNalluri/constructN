@@ -7,7 +7,7 @@ import { AxiosResponse } from 'axios';
 import { getStructureHierarchy } from '../../services/structure';
 interface IProps {
   getStructureData: (structure: ChildrenEntity) => void;
-  getStructure: (StructurId: string) => void;
+  getStructure: (Structure: ChildrenEntity) => void;
 }
 const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
   let router = useRouter();
@@ -24,7 +24,7 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
     }
   }, [router.isReady, router.query.projectId]);
   if (state.length > 0) {
-    getStructure(state[0]._id);
+    getStructure(state[0]);
   }
   return (
     <React.Fragment>
