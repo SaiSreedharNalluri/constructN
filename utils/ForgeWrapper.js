@@ -1,10 +1,42 @@
 // import { Path2D } from '@adsk/solid-definition';
 
 export class ForgeViewerUtils {
-  constructor(viewerId, modelURN) {
+
+  constructor(viewerId) {
     this.viewerId = viewerId;
-    this.modelURN = modelURN;
-    console.log(`ViewerID: ${this.viewerId}`);
+    this.documentURNs = [];
+    this.forgeViewer = undefined;
+    this.isViewerInitialized = false;
+    this.tm_json = {
+      "tm": [
+    -0.136552, 0.992896 ,0.000000 ,385382.750000,
+    -0.992896, -0.136552, 0.000000, 2049802.000000,
+    0.000000, 0.000000, 1.002242, 95.249374,
+    0.000000, 0.000000 ,0.000000, 1.000000
+      ],
+      "offset": [
+        385383.538,
+        2049820.99,
+        100
+      ]
+    }
+    
+  }
+
+  static getInstance(viewerId) {
+    if(!this.instance) {
+      this.instance = new ForgeViewerUtils(viewerId)
+      delete this.instance.constructor;
+    }
+    return this.instance;
+  }
+
+
+  updateModels(documentURNs) {
+    this.documentURNs = documentURNs;
+    if(this.isViewerInitialized) {
+      this.loadModel()
+    }
   }
 
   registerCustomExtension() {
@@ -14,15 +46,14 @@ export class ForgeViewerUtils {
     );
   }
 
-  initialize() {
+  initialize(callback) {
     console.log(`Inside Initializer ViewerID: ${this.viewerId}`);
     var options = {
       env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
       api: "streamingV2", // for models uploaded to EMEA change this option to 'derivativeV2_EU'
       getAccessToken: async function (onSuccess) {
         // const res = autodeskAuth()
-        const accesToken =
-        "eyJhbGciOiJSUzI1NiIsImtpZCI6IlU3c0dGRldUTzlBekNhSzBqZURRM2dQZXBURVdWN2VhIn0.eyJzY29wZSI6WyJjb2RlOmFsbCIsImRhdGE6d3JpdGUiLCJkYXRhOnJlYWQiLCJidWNrZXQ6Y3JlYXRlIiwiYnVja2V0OmRlbGV0ZSIsImJ1Y2tldDpyZWFkIl0sImNsaWVudF9pZCI6ImFHNENYQTRHWjVFTUJtZkVPRGtubEhGTW40WG9Bd1I1IiwiYXVkIjoiaHR0cHM6Ly9hdXRvZGVzay5jb20vYXVkL2Fqd3RleHA2MCIsImp0aSI6IjFQR1IyT0RFN3ZNRXVLUVl1VFhmYlNjUU93OU8wbGRCeW1ST29qNzE0cWZYZWMza3ZuMUlSZ08xNlB5a0Y2eDMiLCJleHAiOjE2NzQwMzIwMTB9.JVGuM5AOFQIYjaABRFtxL6wuICGP6xSUWMpCl0RKSF_yMhdQa98kTLbP76ZWXaiia3oql43MZqaOWYi8L7lXLekHdfa914svpOsQapbDHTkHh-765B3xXT0Ks02Q9OWvvkbOmcCFJTW43t4tSAq62B0ZnpZMqWdU_V9B9eymcNaotf8schLV8jyOFQHSWrRz3peygxyB6eYEZ2C53D8TnsA4A96O_R2DkPswI5YaFnYqqj87TdhDQPCM3Ii20Ri6bjaac2HH6gxluaWNRjxLSit5PAbNmmj4BmiiNQ9EMuT_qwLhLzSjL3Pg4SdKsKmvq2W85OI9YSnPPL_ekFYzhQ"
+        const accesToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6IlU3c0dGRldUTzlBekNhSzBqZURRM2dQZXBURVdWN2VhIn0.eyJzY29wZSI6WyJjb2RlOmFsbCIsImRhdGE6d3JpdGUiLCJkYXRhOnJlYWQiLCJidWNrZXQ6Y3JlYXRlIiwiYnVja2V0OmRlbGV0ZSIsImJ1Y2tldDpyZWFkIl0sImNsaWVudF9pZCI6ImFHNENYQTRHWjVFTUJtZkVPRGtubEhGTW40WG9Bd1I1IiwiYXVkIjoiaHR0cHM6Ly9hdXRvZGVzay5jb20vYXVkL2Fqd3RleHA2MCIsImp0aSI6IktGZ1BoUE9mSWZxSFZQQ2xzQ0QwaUNUQjUyWm9vUkNUTzV5emdmejJ3QzFCcnFuWmlVZ3BhSWZZSENsckpQWUEiLCJleHAiOjE2NzQzMDE4Nzd9.Jzbv4AgmsEPNbEdYChfPIAy9Ds4dv4CeN5ej-WW0Ksd9R0uo1HxDp55x02uCiuR53_3ZVOinq-lTgtsHogt4Hd_KjVfpXFwigW8FNDgQevElZ8jv430r_iSSWoAd4kfdbUYWtiFKZb300sPwX3ZUMRb7Bc9JXzoNRM3nkRuhEh1Hw2n1t_5ukjL-LUpJUDeTENHzFVJAe-So0LLE07YdPqT0nnVaqsixdgtJf94_-YZbjvAzSdKn66uCydJb9fbmrJI70cpe0-wd32TSY55eliMwpMWOqEc_qVq7EZ7x-cSDTUXinRgOMQNPQ1oJyE5VyCRbb0vmkYJrI4nhiWmklQ"
         const expires = "3599";
         onSuccess(accesToken, expires);
       },
@@ -42,9 +73,10 @@ export class ForgeViewerUtils {
         // 'Autodesk.Edit2D',
         // 'Autodesk.Viewing.MarkupsCore',
         // 'Autodesk.Measure'
+        'Autodesk.PDF',
         'Autodesk.Geolocation',
         "Autodesk.DataVisualization",
-        "ConstructNTools",
+        // "ConstructNTools",
       ],
     };
     this.forgeViewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv, config3d);
@@ -61,30 +93,95 @@ export class ForgeViewerUtils {
 
   onViewerInitialized() {
     console.log(`Viewer Initialized: Loading Model now`);
+    this.isViewerInitialized = true;
     this.loadModel();
+    // this.forgeViewer.loadModel("PDFs/A3_from_bim.pdf", this.generateModelOptions());
+  }
+
+  isViewerLoaded() {
+    return this.isViewerInitialized;
   }
 
   loadModel() {
-    console.log(`Inside loadModel: ${this.modelURN}`);
-    const modelOptions = {applyScaling: 'm'};
-			modelOptions.globalOffset = { x: 0, y: 0, z: 0 };
-    Autodesk.Viewing.Document.load(
-      this.modelURN,
-      async function (viewerDocument) {
-        var defaultModel = viewerDocument.getRoot().getDefaultGeometry();
-        
-        this.forgeViewer.loadDocumentNode(viewerDocument, defaultModel);
-      }.bind(this),
-      function () {
-        console.error("Failed fetching Forge manifest");
+    console.log(`Inside loadModel: ${this.documentURNs}`);
+    const modelOptions = {applyScaling: 'm'}; //Akshith test options
+		modelOptions.globalOffset = { x: 0, y: 0, z: 0 };
+    this.documentURNs.map((urn) => {
+      console.log("Test URN", urn.urn)
+      Autodesk.Viewing.Document.load(
+        urn.urn,
+        function (viewerDocument) {
+          console.log("Test TM:", urn.tm)
+          var defaultModel = viewerDocument.getRoot().getDefaultGeometry();
+          console.log("is3D: ", defaultModel.is3D())
+          this.forgeViewer.loadDocumentNode(
+            viewerDocument, 
+            defaultModel,
+            this.generateModelOptions(urn.tm)
+          );
+        }.bind(this),
+        function () {
+          console.error("Failed fetching Forge manifest");
+        }
+      );
+    })
+  }
+
+  generateModelOptions(tm) {
+
+    console.log("Inside modeloptions:", tm)
+    var mx = new THREE.Matrix4();
+    // mx.fromArray([10,0,0,10,0,10,0,10,0,0,10,10,0,0,0,1]).transpose()
+    mx.fromArray([10.709603309631, 1.489653229713, 0.000000000000, 385315.343750000000,
+      -1.489653229713, 10.709603309631, 0.000000000000, 2049716.750000000000,
+      0.000000000000, 0.000000000000, 10.812708854675, 0.000000000000,
+      0.000000000000, 0.000000000000, 0.000000000000, 1.000000000000]).transpose()
+    
+  // mx.makeRotationZ(90 * Math.PI / 180);
+  // mx.setPosition({x:10,y:10,z:10}) 
+  // mx.makeTranslation({x:10,y:10})
+  // mx.makeScale(
+  //   10, // 201.84
+  //   10, // 285.6
+  //   10)
+    console.log("matrix: ", mx)
+    const modelOptions = {
+      applyScaling: 'm',
+      page: 1,
+      // preserveView: true,
+      // modelSpace: true,
+      keepCurrentModels: true,
+      leafletOptions: {
+        fitPaperSize: true,
+        // paperWidth: 841,
+        // paperHeight: 1190
       },
-      modelOptions
-    );
-    // await loadExtension(viewer);
+      placementTransform: new THREE.Matrix4().fromArray(tm).transpose()
+    };
+
+    modelOptions.globalOffset = { x: 0, y: 0, z: 0 };
+    let globalOff = [0, 0, 0];
+
+    // if (this.tm_json.tm) {
+    //   modelOptions.placementTransform = new THREE.Matrix4().fromArray(this.tm_json.tm).transpose();
+    //   // modelOptions.placementTransform = (new THREE.Matrix4()).setPosition({x:50,y:0,z:-50})
+    //   // modelOptions.placementTransform = new THREE.Matrix4().fromArray([0.216,1.022,-0.007,367033.477,-1.022,0.216,-0.001,2053135.281,-0.000,0.007,1.045,-57.5,0.000,0.000,0.000,1.000]).transpose()
+    //   console.log('BIM TM Loaded');
+    // }
+
+    // if (this.tm_json.offset) {
+    //   globalOff = this.tm_json.offset;
+    //   // modelOptions.globalOffset = { x: globalOff[0], y: globalOff[1], z: globalOff[2] };
+    //   // modelOptions.globalOffset = { x: 0, y: 0, z: 0 };
+    //   console.log('Offset Loaded');
+    // }
+
+    return modelOptions;
   }
 
   onLoadFileEvent(parameter) {
     console.log(`Inside Load File Event: ${parameter.loader}`);
+    console.log("Inside Load File Event: ", parameter.loader)
   }
 
   onLoadErrorEvent(parameter) {
@@ -156,8 +253,15 @@ export class ForgeViewerUtils {
 
   onToolChangeEvent(parameter) {
     console.log(
-      `Inside Tool change event: name: ${parameter.toolName} tool: ${parameter.tool} isActive: ${parameter.active}`
+      `Inside Tool change event: name: ${parameter.toolName} isActive: ${parameter.active} tool: `, parameter.tool
     );
+  }
+
+  onClickEventOnContainer(ev) {
+    const result = this.forgeViewer.clientToWorld(ev.clientX, ev.clientY);
+    if (result) {
+      console.log('Click Point', result.point);
+    }
   }
 
   setUpEventListeners() {
@@ -225,6 +329,8 @@ export class ForgeViewerUtils {
       Autodesk.Viewing.TOOL_CHANGE_EVENT,
       this.onToolChangeEvent.bind(this)
     );
+
+    this.forgeViewer.container.addEventListener('click', this.onClickEventOnContainer.bind(this));
   }
 
   async loadExtension() {
@@ -235,17 +341,12 @@ export class ForgeViewerUtils {
     const dataVizExtn = await this.forgeViewer.getExtensionAsync(
       "Autodesk.DataVisualization"
     );
-    const constructnExt = await this.forgeViewer.getExtensionAsync(
-      "ConstructNTools"
-    );
-    // console.log(`Load Async geoExtension: ${geoExtension}`);
-    console.log(`Load Async constructnExtension: ${constructnExt}`);
-    console.log(`Load Async dataVizExtension: ${dataVizExtn}`);
-    // const markupCore = await this.forgeViewer.loadExtension('Autodesk.Viewing.MarkupsCore');
-    // const measure = await this.forgeViewer.loadExtension('Autodesk.Measure');
-    // await this.forgeViewer.getExtension('Autodesk.Measure', function(extension) {
-    //   extension.activate();
-    // })
+    // const constructnExt = await this.forgeViewer.getExtensionAsync(
+    //   "ConstructNTools"
+    // );
+    // console.log(`Load Async constructnExtension: ${constructnExt}`);
+    // console.log(`Load Async dataVizExtension: ${dataVizExtn}`);
+
 
     // Register all standard tools in default configuration
     edit2d.registerDefaultTools();
@@ -269,14 +370,22 @@ export class ForgeViewerUtils {
     var box = this.forgeViewer.model.getBoundingBox();
     console.log(`min:${box.min.x},${box.min.x} ,max:${box.max.x},${box.max.y}`);
     this.startTool(tools.polygonEditTool);
+
+    console.log(`Display Unit: ${this.forgeViewer.model.getDisplayUnit()}`)
+    console.log(`Unit String: ${this.forgeViewer.model.getUnitString()}`)
+    console.log(`Unit Scale: ${this.forgeViewer.model.getUnitScale()}`)
+    console.log("", this.forgeViewer.model.isLeaflet());
+    console.log("Model transform: ", this.forgeViewer.model.getModelTransform());
+    console.log(`isPageCoordinates: ${this.forgeViewer.model.isPageCoordinates()}`)
+
     // let poly = this.getPolyLineShape();
     // let circleShapes = this.getCircleShapes();
     // let path = this.getPathShapes();
-    let path = this.getSVGShape();
+    // let path = this.getSVGShape();
     // let path2d = this.getPath2DShapes();
     // layer.addShape(poly);
     // layer.addShapes(circleShapes);
-    layer.addShape(path);
+    // layer.addShape(path);
     // var style = path.style;
     // style.fillColor = "rgb(255,0,0)";
     // style.fillAlpha = 0.3;
@@ -289,11 +398,11 @@ export class ForgeViewerUtils {
     // selection.setSelection([poly]);
     // selection.modified();
     this.getActiveTool();
-    // this.loadSprite(dataVizExtn);
+    this.loadSprite(dataVizExtn);
     // edit2d.unregisterDefaultTools();
     // constructnExt.activate();
-    geoExtension.activate();
-    console.log(`Has geolocation: ${geoExtension.hasGeolocationData()}`);
+    // geoExtension.activate();
+    // console.log(`Has geolocation: ${geoExtension.hasGeolocationData()}`);
     // this.getActiveTool();
   }
 
@@ -324,8 +433,10 @@ export class ForgeViewerUtils {
     viewableData.spriteSize = 24; // Sprites as points of size 24 x 24 pixels
 
     const myDataList = [
-      { position: { x: .2, y: .2, z: 0 } },
-      { position: { x: .4, y: .6, z: 0 } },
+      { position: {x: 385387.48781699024, y:2049811.5040732909, z:95.79301855560584}}, // "DT_VID_20221222_125011_00_160IMG_636.JPG"
+      { position: { x:385388.0634398281, y:2049810.764701934, z:95.80095614319397} }, // "DT_VID_20221222_125011_00_160IMG_634.JPG"
+      { position: { x:385383.07042181026, y:2049778.5836000163, z:95.86333169023112}} //"DT_VID_20221222_125011_00_160IMG_930.JPG"
+  
     ];
 
     myDataList.forEach((myData, index) => {
@@ -424,6 +535,11 @@ export class ForgeViewerUtils {
     }
 
     controller.activateTool(tool.getName());
+  }
+
+  shutdown() {
+    this.isViewerInitialized = false;
+    Autodesk.Viewing.shutdown();
   }
 }
 

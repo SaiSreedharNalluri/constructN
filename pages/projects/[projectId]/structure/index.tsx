@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
-import { ChildrenEntity } from '../../../../models/IStructure';
+import { ChildrenEntity, IStructure } from '../../../../models/IStructure';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 import { getSnapshotsList } from '../../../../services/snapshot';
 import { getProjectDetails } from '../../../../services/project';
@@ -15,6 +15,9 @@ import RightOverLay from '../../../../components/container/RightOverLay';
 import LeftOverLay from '../../../../components/container/leftOverLay';
 import MapLoading from '../../../../components/container/mapLoading';
 import authHeader from '../../../../services/auth-header';
+import Head from 'next/head';
+import Script from 'next/script';
+import GenericViewer from '../../../../components/container/GenericViewer';
 interface IProps { }
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
@@ -31,8 +34,11 @@ const Index: React.FC<IProps> = () => {
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
   const bottomRefContainer: any = useRef();
-  const [viewerTypeState, setViewType] = useState('map');
+  const [viewerTypeState, setViewType] = useState('forge');
   const [rightNav, setRightNav] = useState(false);
+  const [scriptsLoaded, setScriptsLoaded] = useState(false);
+  const [structureDetails, setStructureDetails] = useState<IStructure>()
+  const [snapshotDetails, setSnapshotDetails] = useState<ISnapshot>()
   useEffect(() => {
     if (router.isReady) {
       getProjectDetails(router.query.projectId as string).then((response) => {
@@ -76,11 +82,7 @@ const Index: React.FC<IProps> = () => {
         return <MapLoading></MapLoading>;
 
       case 'forge':
-        return (
-          <div className=" w-screen bg-black overflow-x-hidden overflow-y-hidden">
-            forge
-          </div>
-        );
+        return <GenericViewer scriptsLoaded={scriptsLoaded} structureId={structurId} snapshotDetails={snapshotDetails}></GenericViewer>;
 
       case 'map':
         return (
@@ -123,8 +125,18 @@ const Index: React.FC<IProps> = () => {
   };
 
   const getSnapshotInfo = (snapshotData: ISnapshot) => {
+    setSnapshotDetails(snapshotData);
     setSnapShotId(snapshotData._id);
   };
+
+  const onLoadScript = () => {
+    console.log("Third Party scripts loaded:")
+    setScriptsLoaded(true);
+  }
+//   <Head>
+//   <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.min.css" type="text/css"/>
+// </Head>
+// <Script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js" onLoad={onLoadScript}/>
   return (
     <React.Fragment>
       <div className="">
