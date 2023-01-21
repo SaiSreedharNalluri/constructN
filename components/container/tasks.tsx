@@ -20,7 +20,7 @@ const Tasks: React.FC = () => {
     };
     return (
         <div className=''>
-            <div className={`border border-solid bg-slate-300 p-1.5 rounded  `}>
+            <div className={`border border-solid bg-slate-300 p-1.5 rounded -mt-8 `}>
                 <div className=" flex justify-between">
                     <FontAwesomeIcon
                         onClick={openSearch}

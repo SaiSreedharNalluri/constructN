@@ -9,6 +9,8 @@ import InputText from '../core/Input/inputText';
 import InputCheckBox from '../core/Input/inputCheckBox';
 import NextImage from '../core/Image';
 import Image from 'next/image';
+import { faGreaterThan } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 interface IProps {
   loading: boolean;
   buttonName: string;
@@ -29,23 +31,157 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
   });
   const [isRevealPwd, setIsRevealPwd] = useState(false);
   return (
-    <div className="flex  w-full   ">
-      <div className="w-1/2   ">
-        <NextImage
-          src="https://techmoran.com/wp-content/uploads/2020/05/construction.jpg"
-          className="h-screen w-screen"
-        />
-      </div>
-      <div className=" w-1/2 bg-gray-100 ">
-        <div className="ml-32 ">
-          <div className="border border-solid border-gray-500 w-1/2 rounded-3xl mt-12 h-82 ">
-            <h2 className="text-center mt-4">User Login</h2>
+
+    // <div className="h-screen relative">
+    //   <div className={` w-full relative `}>
+    //     <img src="https://constructn-attachments.s3.ap-south-1.amazonaws.com/Login/login02.png" className="h-screen w-screen" />
+    //     <div className={`absolute  right-0  inset-y-1/2 w-1/4  `} >
+    //       <div className="border border-solid border-gray-500  rounded-3xl  h-82 ">
+    //         <h2 className="text-center mt-4">User Login</h2>
+    //         <Formik
+    //           initialValues={initialValues}
+    //           validationSchema={validationSchema}
+    //           onSubmit={handleLogin}
+    //         >
+    //           <Form className=" mt-4 ml-4 ">
+    //             <div>
+    //               <InputText
+    //                 type="email"
+    //                 placeholderName="Email"
+    //                 name="email"
+    //               />
+    //               <ErrorMessage
+    //                 name="email"
+    //                 component="div"
+    //                 className="alert alert-danger"
+    //               />
+    //             </div>
+    //             <div className=" mt-4">
+    //               <div>
+    //                 <InputPassword
+    //                   name="password"
+    //                   type={isRevealPwd}
+    //                   placeholderName="password"
+    //                 />
+    //                 <div className='w-11/12 justify-end flex  relative'>
+    //                   <Image
+    //                     className="h-7 w-8  absolute bottom-1 "
+    //                     alt=""
+    //                     title={isRevealPwd ? 'Hide password' : 'Show password'}
+    //                     src={isRevealPwd ? hidePwdImg : showPwdImg}
+    //                     onClick={() => setIsRevealPwd((prevState) => !prevState)}
+    //                   />
+    //                 </div>
+
+    //               </div>
+    //               <div>
+    //                 <ErrorMessage
+    //                   name="password"
+    //                   component="div"
+    //                   className="alert alert-danger mt-3"
+    //                 />
+    //               </div>
+    //             </div>
+    //             <div className=" ">
+    //               <InputCheckBox checkBoxName="Remember me"></InputCheckBox>
+    //             </div>
+    //             <div className="">
+    //               <SubmitButtons buttonName="Log In" disabled={loading} />
+    //             </div>
+    //             {message && (
+    //               <div className="form-group">
+    //                 <div className="alert alert-danger" role="alert">
+    //                   {message}
+    //                 </div>
+    //               </div>
+    //             )}
+    //           </Form>
+    //         </Formik>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
+    // <div className='w-full h-screen flex ' >
+    //   <div className='bg-constructn-image flex-1 bg-center bg-no-repeat bg-cover'>
+
+    //     <div className="  border border-solid bg-gray-300 border-gray-500    rounded-2xl   ">
+    //       {/* <h2 className="text-center mt-4">User Login</h2>
+    //       <Formik
+    //         initialValues={initialValues}
+    //         validationSchema={validationSchema}
+    //         onSubmit={handleLogin}
+    //       >
+    //         <Form className=" mt-4 ml-4 ">
+    //           <div>
+    //             <InputText
+    //               type="email"
+    //               placeholderName="Email"
+    //               name="email"
+    //             />
+    //             <ErrorMessage
+    //               name="email"
+    //               component="div"
+    //               className="alert alert-danger"
+    //             />
+    //           </div>
+    //           <div className=" mt-4">
+    //             <div>
+    //               <InputPassword
+    //                 name="password"
+    //                 type={isRevealPwd}
+    //                 placeholderName="password"
+    //               />
+    //               <div className='w-11/12 justify-end flex  relative'>
+    //                 <Image
+    //                   className="h-7 w-8  absolute bottom-1 "
+    //                   alt=""
+    //                   title={isRevealPwd ? 'Hide password' : 'Show password'}
+    //                   src={isRevealPwd ? hidePwdImg : showPwdImg}
+    //                   onClick={() => setIsRevealPwd((prevState) => !prevState)}
+    //                 />
+    //               </div>
+
+    //             </div>
+    //             <div>
+    //               <ErrorMessage
+    //                 name="password"
+    //                 component="div"
+    //                 className="alert alert-danger mt-3"
+    //               />
+    //             </div>
+    //           </div>
+    //           <div className=" ">
+    //             <InputCheckBox checkBoxName="Remember me"></InputCheckBox>
+    //           </div>
+    //           <div className="">
+    //             <SubmitButtons buttonName="Log In" disabled={loading} />
+    //           </div>
+    //           {message && (
+    //             <div className="form-group">
+    //               <div className="alert alert-danger" role="alert">
+    //                 {message}
+    //               </div>
+    //             </div>
+    //           )}
+    //         </Form>
+    //       </Formik> */}
+    //       {/* <div className='h-full w-screen bg-black'> */}
+
+    //       {/* </div> */}
+    //     </div>
+    //   </div>
+    // </div >
+    <div className=' h-screen  bg-cover bg-center flex justify-end items-center   w-screen  bg-no-repeat  bg-constructn-image '>
+      <div className='mr-10   h-11/12 w-1/4 '>
+        <div className=" ">
+          <div className='border border-solid  py-10 bg-gray-500 '>
+            <h2 className="text-center">User Login</h2>
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={handleLogin}
             >
-              <Form className=" mt-4 ml-4 ">
+              <Form className=" ml-4 ">
                 <div>
                   <InputText
                     type="email"
@@ -100,8 +236,10 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
               </Form>
             </Formik>
           </div>
+
         </div>
       </div>
+
     </div>
   );
 };

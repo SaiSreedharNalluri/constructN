@@ -33,9 +33,9 @@ const RightOverLay: React.FC = () => {
     setRighttNav(!rightNav);
   };
   return (
-    <div className="flex-col m-auto relative " ref={rightOverlayRefs}>
-      <div ref={rightOverlayRef}>
-        <div className="mt-3 ">
+    <div ref={rightOverlayRefs}>
+      <div ref={rightOverlayRef} className="flex-col ">
+        <div className="justify-around">
           <FontAwesomeIcon
             id="a"
             className={` w-full py-2  cursor-pointer ${active === 'a' ? 'selectedClass' : 'unSelectedClass'
@@ -55,7 +55,7 @@ const RightOverLay: React.FC = () => {
           {active === 'b' ? (
             <div className={`fixed w-24   ${rightNav ? 'right-9' : 'hidden'}`}>
               <div
-                className={`border ml-1 border-solid bg-slate-300 p-1.5 rounded -mt-8 `}
+                className={`border  border-solid bg-slate-300 p-1.5 rounded -mt-8 `}
               >
                 <Layers></Layers>
               </div>
@@ -74,7 +74,7 @@ const RightOverLay: React.FC = () => {
           ></FontAwesomeIcon>
           {active === 'c' ? (
             <div
-              className={`fixed w-24 right-16 ${rightNav ? 'right-16' : 'hidden'
+              className={`fixed w-24  ${rightNav ? 'right-9' : 'hidden'
                 }`}
             >
               <Issue></Issue>
@@ -93,7 +93,7 @@ const RightOverLay: React.FC = () => {
           ></FontAwesomeIcon>
           {active === 'd' ? (
             <div
-              className={`fixed w-24 bottom-37 ml-1.5  ${rightNav ? 'right-9' : 'hidden'
+              className={`fixed w-24 ml-1.5  ${rightNav ? 'right-9' : 'hidden'
                 }`}
             >
               <Tasks></Tasks>
@@ -102,7 +102,7 @@ const RightOverLay: React.FC = () => {
             ''
           )}
         </div>
-        <div className=" cursor-pointer">
+        <div className="  cursor-pointer">
           <FontAwesomeIcon
             icon={faTasks}
             id="e"
@@ -112,21 +112,22 @@ const RightOverLay: React.FC = () => {
           ></FontAwesomeIcon>
           {active === 'e' ? (
             <div
-              className={`fixed w-10 bottom-31 ${rightNav ? 'right-9' : 'hidden'
+              className={`fixed w-22  ${rightNav ? 'right-9' : 'hidden'
                 }`}
             >
-              <div className={`  rounded `}>
-                <div>
-                  <HotSpots></HotSpots>
-                </div>
+              <div
+                className={`border  border-solid bg-slate-300 p-1 rounded -mt-8 `}
+              >
+                <HotSpots></HotSpots>
               </div>
+
             </div>
           ) : (
             ''
           )}
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

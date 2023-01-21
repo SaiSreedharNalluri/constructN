@@ -77,7 +77,7 @@ const Index: React.FC<IProps> = () => {
 
       case 'forge':
         return (
-          <div className=" w-screen bg-black overflow-x-hidden overflow-y-hidden">
+          <div className=" w-screen h-screen bg-blue-500 overflow-x-hidden overflow-y-hidden">
             forge
           </div>
         );
@@ -98,13 +98,6 @@ const Index: React.FC<IProps> = () => {
     }
   };
   const rightNavCollapse = () => {
-    if (!rightNav) {
-      rightOverlayRef.current.style.width = '3%';
-      rightOverlayRef.current.style.height = '35%';
-    } else {
-      rightOverlayRef.current.style.width = '0%';
-      rightOverlayRef.current.style.height = '0%';
-    }
     setRightNav(!rightNav);
   };
   useEffect(() => {
@@ -134,7 +127,7 @@ const Index: React.FC<IProps> = () => {
             <div className="flex">
               <CollapsableMenu onChangeData={onChangeData} />
             </div>
-            <div className="flex w-97" id="viewer">
+            <div className="flex w-screen" id="viewer">
               {renderSwitch(viewerTypeState)}
             </div>
           </div>
@@ -183,19 +176,19 @@ const Index: React.FC<IProps> = () => {
           </div>
         </div>
 
-        <div ref={rightrefContainer}>
+        <div ref={rightrefContainer} className="relative  ">
           <FontAwesomeIcon
-            className={`absolute  ${rightNav && 'rotate-180'
-              } text-2xl text-blue-300 top-2/4 ${rightNav ? 'right-5' : 'right-0'
-              }  cursor-pointer border-none rounded ml-2 p-1 bg-gray-400 text-white`}
+            className={`fixed  ${rightNav && 'rotate-180'
+              } text-2xl text-blue-300  ${rightNav ? 'right-34' : 'right-0'
+              }  top-46  cursor-pointer border-none rounded  p-1 bg-gray-400 text-white`}
             onClick={rightNavCollapse}
             icon={faGreaterThan}
           ></FontAwesomeIcon>
           <div
             ref={rightOverlayRef}
             id="bg-color"
-            className={`fixed w-0  ${rightNav ? 'visible' : 'hidden'
-              }  bg-gray-300 top-35 rounded z-10 right-0 duration-300 overflow-x-hidden`}
+            className={`fixed  lg:w-3 2xl:w-1   ${rightNav ? 'visible' : 'hidden'
+              }  bg-gray-200 top-40   rounded  lg:right-0  duration-300 overflow-x-hidden`}
           >
             <RightOverLay></RightOverLay>
           </div>

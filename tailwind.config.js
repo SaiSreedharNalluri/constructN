@@ -14,6 +14,7 @@ module.exports = {
         68: "272px",
       },
       spacing: {
+        10: "10%",
         5: "3%",
         7: "13%",
         27: "27%",
@@ -21,9 +22,24 @@ module.exports = {
         48: "48%",
         21: "15%",
         31: "32%",
-        37: "38%",
+        37: "37%",
+        20: "20%",
+        50: "50%",
+        38: "38%",
+        47: "47%",
+        45: "45%",
+        43: "43%",
+        1.9: "1.9%",
+        2.1: "2.4%",
+        34: "34px",
+        46: "46%",
+        44: "44%",
+        40: "40%",
       },
-
+      backgroundImage: {
+        "constructn-image":
+          "url('https://constructn-attachments.s3.ap-south-1.amazonaws.com/Login/login02.png')",
+      },
       colors: {
         // Configure your color palette here
         "custom-yellow": "#F2CA52",
@@ -48,6 +64,11 @@ module.exports = {
         97: "97vw",
         100: "100vw",
         4: "4vw",
+        4.1: "4px",
+        3: "2.5vw",
+        2: "2.7vw",
+        1: "1vw",
+        16: "16px",
       },
       height: {
         7: "7vh",

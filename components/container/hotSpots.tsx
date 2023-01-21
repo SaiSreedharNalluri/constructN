@@ -4,9 +4,9 @@ import React from 'react';
 
 const HotSpots: React.FC = () => {
     return (
-        <div className='ml-1.5  '>
+        <div className='  '>
             <FontAwesomeIcon
-                className={`  bg-gray-300 p-1.5 `}
+                className={`   `}
                 icon={faEyeSlash}
             ></FontAwesomeIcon>
         </div>
