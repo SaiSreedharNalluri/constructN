@@ -31,10 +31,11 @@ const RightOverLay: React.FC = () => {
   const rightClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
     setRighttNav(!rightNav);
+
   };
   return (
-    <div ref={rightOverlayRefs}>
-      <div ref={rightOverlayRef} className="flex-col ">
+    <div ref={rightOverlayRefs} className="relative">
+      <div ref={rightOverlayRef} >
         <div className="justify-around">
           <FontAwesomeIcon
             id="a"
@@ -44,7 +45,7 @@ const RightOverLay: React.FC = () => {
             icon={faSitemap}
           ></FontAwesomeIcon>
         </div>
-        <div className=" cursor-pointer">
+        <div className="relative cursor-pointer">
           <FontAwesomeIcon
             icon={faDatabase}
             id="b"
@@ -52,16 +53,15 @@ const RightOverLay: React.FC = () => {
               }`}
             onClick={rightClickHandler}
           ></FontAwesomeIcon>
-          {active === 'b' ? (
-            <div className={`fixed w-24   ${rightNav ? 'right-9' : 'hidden'}`}>
-              <div
-                className={`border  border-solid bg-slate-300 p-1.5 rounded -mt-8 `}
-              >
-                <Layers></Layers>
-              </div>
+          {active === 'b' && (
+
+            <div
+              className={`border absolute  border-solid bg-slate-300 p-1.5 rounded -mt-8 ${rightNav ? 'right-9' : 'hidden'
+                }`}
+            >
+              <Layers></Layers>
             </div>
-          ) : (
-            ''
+
           )}
         </div>
         <div className=" cursor-pointer">
@@ -72,34 +72,27 @@ const RightOverLay: React.FC = () => {
               }`}
             onClick={rightClickHandler}
           ></FontAwesomeIcon>
-          {active === 'c' ? (
-            <div
-              className={`fixed w-24  ${rightNav ? 'right-9' : 'hidden'
-                }`}
-            >
-              <Issue></Issue>
-            </div>
-          ) : (
-            ''
-          )}
+          <div className={`absolute  ${rightNav ? 'right-9' : 'hidden'
+            }`}>
+            {active === "c" && <Issue></Issue>}
+          </div>
+
         </div>
         <div className=" cursor-pointer">
           <FontAwesomeIcon
             icon={faBullseye}
             id="d"
-            className={` w-full py-2  z-10 cursor-pointer ${active === 'd' ? 'selectedClass' : 'unSelectedClass'
+            className={` w-full py-2   cursor-pointer ${active === 'd' ? 'selectedClass' : 'unSelectedClass'
               }`}
             onClick={rightClickHandler}
           ></FontAwesomeIcon>
-          {active === 'd' ? (
+          {active === 'd' && (
             <div
-              className={`fixed w-24 ml-1.5  ${rightNav ? 'right-9' : 'hidden'
+              className={`absolute   ${rightNav ? 'right-9' : 'hidden'
                 }`}
             >
               <Tasks></Tasks>
             </div>
-          ) : (
-            ''
           )}
         </div>
         <div className="  cursor-pointer">
@@ -112,13 +105,13 @@ const RightOverLay: React.FC = () => {
           ></FontAwesomeIcon>
           {active === 'e' ? (
             <div
-              className={`fixed w-22  ${rightNav ? 'right-9' : 'hidden'
+              className={`absolute  w-22  ${rightNav ? 'right-9' : 'hidden'
                 }`}
             >
               <div
                 className={`border  border-solid bg-slate-300 p-1 rounded -mt-8 `}
               >
-                <HotSpots></HotSpots>
+                {active === "e" && <HotSpots></HotSpots>}
               </div>
 
             </div>

@@ -24,7 +24,7 @@ const Tasks: React.FC = () => {
                     <FontAwesomeIcon
                         onClick={openSearch}
                         icon={faCirclePlus}
-                        className=" text-center cursor-pointer"
+                        className="cursor-pointer mr-2"
                     ></FontAwesomeIcon>
                     <div
                         ref={overLayPanelRef}
@@ -115,11 +115,11 @@ const Tasks: React.FC = () => {
                     </div>
                     <FontAwesomeIcon
                         icon={faList}
-                        className="hover:white text-center cursor-pointer"
+                        className="mr-2 cursor-pointer"
                     ></FontAwesomeIcon>
                     <FontAwesomeIcon
                         icon={faEyeSlash}
-                        className="hover:white text-center cursor-pointer"
+                        className="cursor-pointer"
                     ></FontAwesomeIcon>
                 </div>
             </div>

@@ -3,6 +3,12 @@ import {
   faList,
   faEyeSlash,
   faTimes,
+  faSearch,
+  faDownload,
+  faFilter,
+  faShieldAlt,
+  faUser,
+  faCalendar,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef, useState } from 'react';
@@ -11,36 +17,41 @@ import React, { useRef, useState } from 'react';
 import DatePicker from './datePicker';
 const Issue: React.FC = () => {
   const [overLayPanel, setOverLayPanel] = useState(false);
+  const [listOverLay, setLsitOverLay] = useState(false);
   const overLayPanelRef: any = useRef();
+  const listOverLayRef: any = useRef();
   const openSearch = () => {
     if (!overLayPanel) {
       overLayPanelRef.current.style.width = '25%';
-      overLayPanelRef.current.style.height = '100%';
+      overLayPanelRef.current.style.height = '100vh';
     } else {
       overLayPanelRef.current.style.width = '0%';
-      // overLayPanelRef.current.style.height = '100%';
     }
     setOverLayPanel(!overLayPanel);
-  };
-
-  const onChangeData = () => {
-    if (overLayPanel) {
-      setOverLayPanel(false);
-    } else {
-      setOverLayPanel(true);
-    }
   };
   const closeSearch = () => {
     overLayPanelRef.current.style.width = '0';
   };
+  const openList = () => {
+    if (!listOverLay) {
+      listOverLayRef.current.style.width = '30%';
+      listOverLayRef.current.style.height = '100vh';
+    } else {
+      listOverLayRef.current.style.width = '0%';
+    }
+    setOverLayPanel(!listOverLay);
+  };
+  const closeList = () => {
+    listOverLayRef.current.style.width = '0';
+  };
   return (
     <div>
       <div className={`border border-solid bg-slate-300 p-1.5 rounded -mt-8 `}>
-        <div className="ml-1 flex justify-between">
+        <div className="flex justify-between">
           <FontAwesomeIcon
             onClick={openSearch}
             icon={faCirclePlus}
-            className="hover:white text-center cursor-pointer"
+            className=" mr-2 cursor-pointer"
           ></FontAwesomeIcon>
           <div
             ref={overLayPanelRef}
@@ -131,8 +142,238 @@ const Issue: React.FC = () => {
           </div>
           <FontAwesomeIcon
             icon={faList}
-            className="hover:white text-center cursor-pointer"
+            onClick={openList}
+            className="mr-2"
           ></FontAwesomeIcon>
+          <div
+            ref={listOverLayRef}
+            className={`fixed w-0 top-10     bg-gray-200 right-0 z-10 overflow-x-hidden`}
+          >
+            <div >
+              <div className="flex justify-between border-b border-black border-solid">
+                <div>
+                  <h1>Issue List</h1>
+                </div>
+                <div>
+                  <FontAwesomeIcon
+                    icon={faTimes}
+                    onClick={closeList}
+                    className=" mr-2  rounded-full border border-black"
+                  ></FontAwesomeIcon>
+                </div>
+              </div>
+              <div className='flex justify-between' >
+                <div>
+                  <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
+                </div>
+                <div className='flex justify-between text-gray-800'>
+                  <div className='mr-2'>  <FontAwesomeIcon icon={faFilter}></FontAwesomeIcon></div>
+                  <div className='mr-2'>  <FontAwesomeIcon icon={faFilter}></FontAwesomeIcon></div>
+                  <div className='mr-2'>  <FontAwesomeIcon icon={faDownload}></FontAwesomeIcon>  </div>
+                </div>
+              </div>
+              <div>
+                <div className='w-11/12 m-auto '>
+                  <div className=' mt-2  bg-white border border-solid border-gray-400 rounded'>
+                    <div className='flex mt-2'>
+                      <div>
+                        <FontAwesomeIcon className='text-3xl text-gray-400' icon={faShieldAlt}></FontAwesomeIcon>
+                      </div>
+                      <div className='flex-col ml-2 text-gray-600'>
+                        <div>
+                          <h5>Safety (#407)</h5>
+                        </div>
+                        <div className='flex'>
+                          <p className='mr-1'>In-progress</p>|
+                          <p className='ml-1'>Medium</p>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div className='flex mt-2'>
+                      <div className='flex'>
+                        <FontAwesomeIcon icon={faUser} className="text-gray-500 "></FontAwesomeIcon>
+                        <p className="text-gray-500 -mt-1 ml-1">shiva krishna</p>
+                        <FontAwesomeIcon icon={faCalendar} className="text-gray-500 ml-1" />
+                        <p className="text-gray-500 -mt-1 ml-1">{"Due by 03 Jan'23"}</p>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <div className='w-11/12 m-auto '>
+                  <div className=' mt-2  bg-white border border-solid border-gray-400 rounded'>
+                    <div className='flex mt-2'>
+                      <div>
+                        <FontAwesomeIcon className='text-3xl text-gray-400' icon={faShieldAlt}></FontAwesomeIcon>
+                      </div>
+                      <div className='flex-col ml-2 text-gray-600'>
+                        <div>
+                          <h5>Safety (#407)</h5>
+                        </div>
+                        <div className='flex'>
+                          <p className='mr-1'>In-progress</p>|
+                          <p className='ml-1'>Medium</p>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div className='flex mt-2'>
+                      <div className='flex'>
+                        <FontAwesomeIcon icon={faUser} className="text-gray-500 "></FontAwesomeIcon>
+                        <p className="text-gray-500 -mt-1 ml-1">shiva krishna</p>
+                        <FontAwesomeIcon icon={faCalendar} className="text-gray-500 ml-1" />
+                        <p className="text-gray-500 -mt-1 ml-1">{"Due by 03 Jan'23"}</p>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <div className='w-11/12 m-auto '>
+                  <div className=' mt-2  bg-white border border-solid border-gray-400 rounded'>
+                    <div className='flex mt-2'>
+                      <div>
+                        <FontAwesomeIcon className='text-3xl text-gray-400' icon={faShieldAlt}></FontAwesomeIcon>
+                      </div>
+                      <div className='flex-col ml-2 text-gray-600'>
+                        <div>
+                          <h5>Safety (#407)</h5>
+                        </div>
+                        <div className='flex'>
+                          <p className='mr-1'>In-progress</p>|
+                          <p className='ml-1'>Medium</p>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div className='flex mt-2'>
+                      <div className='flex'>
+                        <FontAwesomeIcon icon={faUser} className="text-gray-500 "></FontAwesomeIcon>
+                        <p className="text-gray-500 -mt-1 ml-1">shiva krishna</p>
+                        <FontAwesomeIcon icon={faCalendar} className="text-gray-500 ml-1" />
+                        <p className="text-gray-500 -mt-1 ml-1">{"Due by 03 Jan'23"}</p>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <div className='w-11/12 m-auto '>
+                  <div className=' mt-2  bg-white border border-solid border-gray-400 rounded'>
+                    <div className='flex mt-2'>
+                      <div>
+                        <FontAwesomeIcon className='text-3xl text-gray-400' icon={faShieldAlt}></FontAwesomeIcon>
+                      </div>
+                      <div className='flex-col ml-2 text-gray-600'>
+                        <div>
+                          <h5>Safety (#407)</h5>
+                        </div>
+                        <div className='flex'>
+                          <p className='mr-1'>In-progress</p>|
+                          <p className='ml-1'>Medium</p>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div className='flex mt-2'>
+                      <div className='flex'>
+                        <FontAwesomeIcon icon={faUser} className="text-gray-500 "></FontAwesomeIcon>
+                        <p className="text-gray-500 -mt-1 ml-1">shiva krishna</p>
+                        <FontAwesomeIcon icon={faCalendar} className="text-gray-500 ml-1" />
+                        <p className="text-gray-500 -mt-1 ml-1">{"Due by 03 Jan'23"}</p>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <div className='w-11/12 m-auto '>
+                  <div className=' mt-2  bg-white border border-solid border-gray-400 rounded'>
+                    <div className='flex mt-2'>
+                      <div>
+                        <FontAwesomeIcon className='text-3xl text-gray-400' icon={faShieldAlt}></FontAwesomeIcon>
+                      </div>
+                      <div className='flex-col ml-2 text-gray-600'>
+                        <div>
+                          <h5>Safety (#407)</h5>
+                        </div>
+                        <div className='flex'>
+                          <p className='mr-1'>In-progress</p>|
+                          <p className='ml-1'>Medium</p>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div className='flex mt-2'>
+                      <div className='flex'>
+                        <FontAwesomeIcon icon={faUser} className="text-gray-500 "></FontAwesomeIcon>
+                        <p className="text-gray-500 -mt-1 ml-1">shiva krishna</p>
+                        <FontAwesomeIcon icon={faCalendar} className="text-gray-500 ml-1" />
+                        <p className="text-gray-500 -mt-1 ml-1">{"Due by 03 Jan'23"}</p>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <div className='w-11/12 m-auto '>
+                  <div className=' mt-2  bg-white border border-solid border-gray-400 rounded'>
+                    <div className='flex mt-2'>
+                      <div>
+                        <FontAwesomeIcon className='text-3xl text-gray-400' icon={faShieldAlt}></FontAwesomeIcon>
+                      </div>
+                      <div className='flex-col ml-2 text-gray-600'>
+                        <div>
+                          <h5>Safety (#407)</h5>
+                        </div>
+                        <div className='flex'>
+                          <p className='mr-1'>In-progress</p>|
+                          <p className='ml-1'>Medium</p>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div className='flex mt-2'>
+                      <div className='flex'>
+                        <FontAwesomeIcon icon={faUser} className="text-gray-500 "></FontAwesomeIcon>
+                        <p className="text-gray-500 -mt-1 ml-1">shiva krishna</p>
+                        <FontAwesomeIcon icon={faCalendar} className="text-gray-500 ml-1" />
+                        <p className="text-gray-500 -mt-1 ml-1">{"Due by 03 Jan'23"}</p>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <div className='w-11/12 m-auto '>
+                  <div className=' mt-2  bg-white border border-solid border-gray-400 rounded'>
+                    <div className='flex mt-2'>
+                      <div>
+                        <FontAwesomeIcon className='text-3xl text-gray-400' icon={faShieldAlt}></FontAwesomeIcon>
+                      </div>
+                      <div className='flex-col ml-2 text-gray-600'>
+                        <div>
+                          <h5>Safety (#407)</h5>
+                        </div>
+                        <div className='flex'>
+                          <p className='mr-1'>In-progress</p>|
+                          <p className='ml-1'>Medium</p>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div className='flex mt-2'>
+                      <div className='flex'>
+                        <FontAwesomeIcon icon={faUser} className="text-gray-500 "></FontAwesomeIcon>
+                        <p className="text-gray-500 -mt-1 ml-1">shiva krishna</p>
+                        <FontAwesomeIcon icon={faCalendar} className="text-gray-500 ml-1" />
+                        <p className="text-gray-500 -mt-1 ml-1">{"Due by 03 Jan'23"}</p>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
           <FontAwesomeIcon
             icon={faEyeSlash}
             className="hover:white text-center cursor-pointer"
