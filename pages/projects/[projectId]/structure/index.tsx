@@ -86,16 +86,21 @@ const Index: React.FC<IProps> = () => {
 
       case 'map':
         return (
-          <div className="overflow-x-hidden overflow-y-hidden">
-            <iframe
-              className="overflow-x-hidden h-96 w-screen"
-              src={`https://dev.internal.constructn.ai/2d?structure=${
-                structureObj?._id
-              }&snapshot1=${snapshotObj?._id}&zone_utm=${projectutm}&project=${
-                currentProjectId as string
-              }&token=${authHeader.getAuthToken()}`}
-            />
-          </div>
+          snapshotObj &&
+          structureObj && (
+            <div className="overflow-x-hidden overflow-y-hidden">
+              <iframe
+                className="overflow-x-hidden h-96 w-screen"
+                src={`https://dev.internal.constructn.ai/2d?structure=${
+                  structureObj?._id
+                }&snapshot1=${
+                  snapshotObj?._id
+                }&zone_utm=${projectutm}&project=${
+                  currentProjectId as string
+                }&token=${authHeader.getAuthToken()}`}
+              />
+            </div>
+          )
         );
 
       default:

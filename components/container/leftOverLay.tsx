@@ -17,15 +17,13 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
       getStructureHierarchy(router.query.projectId as string)
         .then((response: AxiosResponse<any>) => {
           setState([...response.data.result]);
+          getStructure(response.data.result[0]);
         })
         .catch((error) => {
           console.log('error', error);
         });
     }
-  }, [router.isReady, router.query.projectId]);
-  if (state.length > 0) {
-    getStructure(state[0]);
-  }
+  }, [getStructure, router.isReady, router.query.projectId]);
   return (
     <React.Fragment>
       <SearchInput></SearchInput>
