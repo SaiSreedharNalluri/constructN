@@ -65,7 +65,6 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                   />
                   <div className='absolute inset-y-0 right-0'>
                     <Image
-                      className=" "
                       alt=""
                       title={isRevealPwd ? 'Hide password' : 'Show password'}
                       src={isRevealPwd ? hidePwdImg : showPwdImg}
