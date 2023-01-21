@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
-import { ChildrenEntity } from '../../../../models/IStructure';
+import { ChildrenEntity, IStructure } from '../../../../models/IStructure';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 import { getSnapshotsList } from '../../../../services/snapshot';
 import { getProjectDetails } from '../../../../services/project';
@@ -15,12 +15,15 @@ import RightOverLay from '../../../../components/container/RightOverLay';
 import LeftOverLay from '../../../../components/container/leftOverLay';
 import MapLoading from '../../../../components/container/mapLoading';
 import authHeader from '../../../../services/auth-header';
-interface IProps {}
+import Head from 'next/head';
+import Script from 'next/script';
+import GenericViewer from '../../../../components/container/GenericViewer';
+interface IProps { }
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const [currentProjectId, setActiveProjectId] = useState('');
-  const [structureObj, setStructureObj] = useState<ChildrenEntity>();
-  const [snapshotObj, setSnapShotObj] = useState<ISnapshot>();
+  const [structure, setStructure] = useState<ChildrenEntity>();
+  const [snapshot, setSnapshot] = useState<ISnapshot>();
   const [projectutm, setProjectUtm] = useState('');
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
@@ -33,6 +36,7 @@ const Index: React.FC<IProps> = () => {
   const bottomRefContainer: any = useRef();
   const [viewerTypeState, setViewType] = useState('map');
   const [rightNav, setRightNav] = useState(false);
+  const [scriptsLoaded, setScriptsLoaded] = useState(false);
   useEffect(() => {
     if (router.isReady) {
       getProjectDetails(router.query.projectId as string).then((response) => {
@@ -44,7 +48,7 @@ const Index: React.FC<IProps> = () => {
 
   const getStructureData = (structure: ChildrenEntity) => {
     getSnapshots(router.query.projectId as string, structure._id);
-    setStructureObj(structure);
+    setStructure(structure);
   };
 
   const getSnapshots = (projectId: string, structurId: string) => {
@@ -54,7 +58,7 @@ const Index: React.FC<IProps> = () => {
           (a: ISnapshot, b: ISnapshot) =>
             new Date(b.date).getTime() - new Date(a.date).getTime()
         );
-        setSnapShotObj(snapResult[0]);
+        setSnapshot(snapResult[0]);
         setSnapshots(snapResult);
       })
       .catch((error) => {
@@ -78,23 +82,19 @@ const Index: React.FC<IProps> = () => {
         return <MapLoading></MapLoading>;
 
       case 'forge':
-        return (
-          <div className="w-screen h-screen bg-blue-500 overflow-x-hidden overflow-y-hidden">
-            forge
-          </div>
-        );
+        return <GenericViewer structure={structure} snapshot={snapshot}></GenericViewer>;
 
       case 'map':
         return (
-          snapshotObj &&
-          structureObj && (
+          snapshot &&
+          structure && (
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
                 src={`https://dev.internal.constructn.ai/2d?structure=${
-                  structureObj?._id
+                  structure?._id
                 }&snapshot1=${
-                  snapshotObj?._id
+                  snapshot?._id
                 }&zone_utm=${projectutm}&project=${
                   currentProjectId as string
                 }&token=${authHeader.getAuthToken()}`}
@@ -126,8 +126,9 @@ const Index: React.FC<IProps> = () => {
   };
 
   const getSnapshotInfo = (snapshotData: ISnapshot) => {
-    setSnapShotObj(snapshotData);
+    setSnapshot(snapshotData);
   };
+
   return (
     <React.Fragment>
       <div className="">
@@ -150,12 +151,12 @@ const Index: React.FC<IProps> = () => {
             <LeftOverLay
               getStructureData={getStructureData}
               getStructure={(structureData) => {
-                if (structureObj === undefined) {
+                if (structure === undefined) {
                   getSnapshots(
                     router.query.projectId as string,
                     structureData._id
                   );
-                  setStructureObj(structureData);
+                  setStructure(structureData);
                 }
               }}
             ></LeftOverLay>
@@ -169,7 +170,7 @@ const Index: React.FC<IProps> = () => {
               } `}
               onClick={bottomOverLay}
             >
-              10-01-2022
+              {snapshot?.date}
             </p>
           ) : (
             ''
