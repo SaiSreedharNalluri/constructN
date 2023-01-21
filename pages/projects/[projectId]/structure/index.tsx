@@ -79,7 +79,7 @@ const Index: React.FC<IProps> = () => {
 
       case 'forge':
         return (
-          <div className=" w-screen h-screen bg-blue-500 overflow-x-hidden overflow-y-hidden">
+          <div className="w-screen h-screen bg-blue-500 overflow-x-hidden overflow-y-hidden">
             forge
           </div>
         );
@@ -137,7 +137,7 @@ const Index: React.FC<IProps> = () => {
             <div className="flex">
               <CollapsableMenu onChangeData={onChangeData} />
             </div>
-            <div className="flex w-screen" id="viewer">
+            <div className="flex " id="viewer">
               {renderSwitch(viewerTypeState)}
             </div>
           </div>
@@ -176,7 +176,7 @@ const Index: React.FC<IProps> = () => {
           )}
           <div
             ref={BottomOverlayRef}
-            className="w-0  absolute left-35 bottom-1  overflow-x-hidden z-10"
+            className="w-0  absolute left-1/2 bottom-1  overflow-x-hidden z-10"
           >
             <div className="flex ">
               <div className=" bg-gray-200 rounded">

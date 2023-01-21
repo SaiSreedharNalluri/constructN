@@ -65,7 +65,6 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                   />
                   <div className='absolute inset-y-0 right-0'>
                     <Image
-                      className=" "
                       alt=""
                       title={isRevealPwd ? 'Hide password' : 'Show password'}
                       src={isRevealPwd ? hidePwdImg : showPwdImg}
@@ -85,7 +84,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
               <div className=" ">
                 <InputCheckBox checkBoxName="Remember me"></InputCheckBox>
               </div>
-              <div className="">
+              <div className="py-5">
                 <SubmitButtons buttonName="Log In" disabled={loading} />
               </div>
               {message && (

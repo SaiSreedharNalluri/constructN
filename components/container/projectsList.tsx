@@ -43,20 +43,17 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
                   </div>
                 )}
                 <div className="mt-4 text-gray-400">
-                  <FontAwesomeIcon size="2x" icon={faPen}></FontAwesomeIcon>
+                  <FontAwesomeIcon icon={faPen} className="text-2xl"></FontAwesomeIcon>
                   <FontAwesomeIcon
-                    style={{ marginLeft: '20px' }}
-                    size="2x"
+                    className='ml-4 text-2xl'
                     icon={faUserPlus}
                   ></FontAwesomeIcon>
                   <FontAwesomeIcon
-                    style={{ marginLeft: '20px' }}
-                    size="2x"
+                    className='ml-4 text-2xl'
                     icon={faListUl}
                   ></FontAwesomeIcon>
                   <FontAwesomeIcon
-                    style={{ marginLeft: '20px' }}
-                    size="2x"
+                    className='ml-4 text-2xl'
                     icon={faTrash}
                   ></FontAwesomeIcon>
                 </div>

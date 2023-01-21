@@ -9,7 +9,7 @@ const SubmitButton: React.FC<IProps> = ({ disabled, buttonName }) => {
     <button
       type="submit"
       disabled={disabled}
-      className="p-2 w-11/12 mt-4 bg-gray-300 hover:bg-gray-500  rounded-md "
+      className="p-2 w-11/12 mt-4 bg-gray-500 hover:bg-gray-300  rounded-md "
     >
       {disabled && <span className="spinner-border spinner-border-sm"></span>}
       {buttonName}
