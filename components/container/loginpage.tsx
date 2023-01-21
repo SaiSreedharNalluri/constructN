@@ -29,77 +29,74 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
   });
   const [isRevealPwd, setIsRevealPwd] = useState(false);
   return (
-    <div className="flex  w-full   ">
-      <div className="w-1/2   ">
-        <NextImage
-          src="https://techmoran.com/wp-content/uploads/2020/05/construction.jpg"
-          className="h-screen w-screen"
-        />
-      </div>
-      <div className=" w-1/2 bg-gray-100 ">
-        <div className="ml-32 ">
-          <div className="border border-solid border-gray-500 w-1/2 rounded-3xl mt-12 h-82 ">
-            <h2 className="text-center mt-4">User Login</h2>
-            <Formik
-              initialValues={initialValues}
-              validationSchema={validationSchema}
-              onSubmit={handleLogin}
-            >
-              <Form className=" mt-4 ml-4 ">
-                <div>
-                  <InputText
-                    type="email"
-                    placeholderName="Email"
-                    name="email"
-                  />
-                  <ErrorMessage
-                    name="email"
-                    component="div"
-                    className="alert alert-danger"
-                  />
-                </div>
-                <div className=" mt-4">
-                  <div>
-                    <InputPassword
-                      name="password"
-                      type={isRevealPwd}
-                      placeholderName="password"
-                    />
-                    <div className='w-11/12 justify-end flex  relative'>
-                      <Image
-                        className="h-7 w-8  absolute bottom-1 "
-                        alt=""
-                        title={isRevealPwd ? 'Hide password' : 'Show password'}
-                        src={isRevealPwd ? hidePwdImg : showPwdImg}
-                        onClick={() => setIsRevealPwd((prevState) => !prevState)}
-                      />
-                    </div>
+    <div className=" w-full   ">
+      <NextImage
+        src="https://constructn-attachments.s3.ap-south-1.amazonaws.com/Login/login02.png"
+        className="h-screen w-screen"
+      />
 
-                  </div>
-                  <div>
-                    <ErrorMessage
-                      name="password"
-                      component="div"
-                      className="alert alert-danger mt-3"
+      <div className=" absolute w-1/3 top-0 bg-opacity-50 px-5 h-full right-0 place-items-center bg-gray-300 ">
+        <div className="border my-48 border-solid border-gray-500 rounded-3xl ">
+          <h2 className="text-center mt-4">User Login</h2>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleLogin}
+          >
+            <Form className=" mt-4 ml-4 ">
+              <div>
+                <InputText
+                  type="email"
+                  placeholderName="Email"
+                  name="email"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="alert alert-danger"
+                />
+              </div>
+              <div className=" mt-4">
+                <div className='relative'>
+                  <InputPassword
+                    name="password"
+                    type={isRevealPwd}
+                    placeholderName="password"
+                  />
+                  <div className='absolute inset-y-0 right-0'>
+                    <Image
+                      className=" "
+                      alt=""
+                      title={isRevealPwd ? 'Hide password' : 'Show password'}
+                      src={isRevealPwd ? hidePwdImg : showPwdImg}
+                      onClick={() => setIsRevealPwd((prevState) => !prevState)}
                     />
                   </div>
+
                 </div>
-                <div className=" ">
-                  <InputCheckBox checkBoxName="Remember me"></InputCheckBox>
+                <div>
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="alert alert-danger mt-3"
+                  />
                 </div>
-                <div className="">
-                  <SubmitButtons buttonName="Log In" disabled={loading} />
-                </div>
-                {message && (
-                  <div className="form-group">
-                    <div className="alert alert-danger" role="alert">
-                      {message}
-                    </div>
+              </div>
+              <div className=" ">
+                <InputCheckBox checkBoxName="Remember me"></InputCheckBox>
+              </div>
+              <div className="">
+                <SubmitButtons buttonName="Log In" disabled={loading} />
+              </div>
+              {message && (
+                <div className="form-group">
+                  <div className="alert alert-danger" role="alert">
+                    {message}
                   </div>
-                )}
-              </Form>
-            </Formik>
-          </div>
+                </div>
+              )}
+            </Form>
+          </Formik>
         </div>
       </div>
     </div>
@@ -107,3 +104,4 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
 };
 
 export default Loginpage;
+
