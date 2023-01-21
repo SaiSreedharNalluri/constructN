@@ -84,7 +84,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
               <div className=" ">
                 <InputCheckBox checkBoxName="Remember me"></InputCheckBox>
               </div>
-              <div className="">
+              <div className="py-5">
                 <SubmitButtons buttonName="Log In" disabled={loading} />
               </div>
               {message && (

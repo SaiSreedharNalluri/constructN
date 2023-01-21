@@ -11,7 +11,7 @@ const InputPassword: React.FC<IProps> = ({ type, placeholderName, name }) => {
     <Field
       name={name}
       type={type ? 'text' : 'password'}
-      className=" border border-border-yellow border-solid   w-11/12 p-3 rounded hover:border-yellow-500"
+      className="   w-11/12 p-3 rounded"
       placeholder={placeholderName}
     ></Field>
   );
