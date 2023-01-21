@@ -22,8 +22,8 @@ interface IProps { }
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const [currentProjectId, setActiveProjectId] = useState('');
-  const [structurId, setStructurId] = useState('');
-  const [snapshotId, setSnapShotId] = useState('');
+  const [structure, setStructure] = useState<ChildrenEntity>();
+  const [snapshot, setSnapshot] = useState<ISnapshot>();
   const [projectutm, setProjectUtm] = useState('');
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
@@ -34,11 +34,9 @@ const Index: React.FC<IProps> = () => {
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
   const bottomRefContainer: any = useRef();
-  const [viewerTypeState, setViewType] = useState('forge');
+  const [viewerTypeState, setViewType] = useState('map');
   const [rightNav, setRightNav] = useState(false);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
-  const [structureDetails, setStructureDetails] = useState<IStructure>()
-  const [snapshotDetails, setSnapshotDetails] = useState<ISnapshot>()
   useEffect(() => {
     if (router.isReady) {
       getProjectDetails(router.query.projectId as string).then((response) => {
@@ -50,16 +48,18 @@ const Index: React.FC<IProps> = () => {
 
   const getStructureData = (structure: ChildrenEntity) => {
     getSnapshots(router.query.projectId as string, structure._id);
-    setStructurId(structure._id);
+    setStructure(structure);
   };
 
   const getSnapshots = (projectId: string, structurId: string) => {
     getSnapshotsList(projectId, structurId)
       .then((response) => {
-        if (snapshotId === '') {
-          setSnapShotId(response?.data?.result?.mSnapshots[0]._id);
-        }
-        setSnapshots(response?.data?.result?.mSnapshots);
+        let snapResult: ISnapshot[] = response?.data?.result?.mSnapshots?.sort(
+          (a: ISnapshot, b: ISnapshot) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        setSnapshot(snapResult[0]);
+        setSnapshots(snapResult);
       })
       .catch((error) => {
         console.log('error', error);
@@ -82,17 +82,25 @@ const Index: React.FC<IProps> = () => {
         return <MapLoading></MapLoading>;
 
       case 'forge':
-        return <GenericViewer scriptsLoaded={scriptsLoaded} structureId={structurId} snapshotDetails={snapshotDetails}></GenericViewer>;
+        return <GenericViewer structure={structure} snapshot={snapshot}></GenericViewer>;
 
       case 'map':
         return (
-          <div className="overflow-x-hidden overflow-y-hidden">
-            <iframe
-              className="overflow-x-hidden h-96 w-screen"
-              src={`https://dev.internal.constructn.ai/2d?structure=${structurId}&snapshot1=${snapshotId}&zone_utm=${projectutm}&project=${currentProjectId as string
+          snapshot &&
+          structure && (
+            <div className="overflow-x-hidden overflow-y-hidden">
+              <iframe
+                className="overflow-x-hidden h-96 w-screen"
+                src={`https://dev.internal.constructn.ai/2d?structure=${
+                  structure?._id
+                }&snapshot1=${
+                  snapshot?._id
+                }&zone_utm=${projectutm}&project=${
+                  currentProjectId as string
                 }&token=${authHeader.getAuthToken()}`}
-            />
-          </div>
+              />
+            </div>
+          )
         );
 
       default:
@@ -100,13 +108,6 @@ const Index: React.FC<IProps> = () => {
     }
   };
   const rightNavCollapse = () => {
-    if (!rightNav) {
-      rightOverlayRef.current.style.width = '3%';
-      rightOverlayRef.current.style.height = '35%';
-    } else {
-      rightOverlayRef.current.style.width = '0%';
-      rightOverlayRef.current.style.height = '0%';
-    }
     setRightNav(!rightNav);
   };
   useEffect(() => {
@@ -125,18 +126,9 @@ const Index: React.FC<IProps> = () => {
   };
 
   const getSnapshotInfo = (snapshotData: ISnapshot) => {
-    setSnapshotDetails(snapshotData);
-    setSnapShotId(snapshotData._id);
+    setSnapshot(snapshotData);
   };
 
-  const onLoadScript = () => {
-    console.log("Third Party scripts loaded:")
-    setScriptsLoaded(true);
-  }
-//   <Head>
-//   <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.min.css" type="text/css"/>
-// </Head>
-// <Script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js" onLoad={onLoadScript}/>
   return (
     <React.Fragment>
       <div className="">
@@ -146,20 +138,25 @@ const Index: React.FC<IProps> = () => {
             <div className="flex">
               <CollapsableMenu onChangeData={onChangeData} />
             </div>
-            <div className="flex w-97" id="viewer">
+            <div className="flex " id="viewer">
               {renderSwitch(viewerTypeState)}
             </div>
           </div>
           <div
             ref={leftOverlayRef}
-            className={`h-96 bg-gray-200 w-0 absolute   ${leftNav ? 'left-10' : 'left-10  '
-              }   top-0  duration-300 overflow-x-hidden`}
+            className={`h-96 bg-gray-200 w-0 absolute   ${
+              leftNav ? 'left-10' : 'left-10  '
+            }   top-0  duration-300 overflow-x-hidden`}
           >
             <LeftOverLay
               getStructureData={getStructureData}
-              getStructure={(strId) => {
-                if (structurId === '') {
-                  setStructurId(strId);
+              getStructure={(structureData) => {
+                if (structure === undefined) {
+                  getSnapshots(
+                    router.query.projectId as string,
+                    structureData._id
+                  );
+                  setStructure(structureData);
                 }
               }}
             ></LeftOverLay>
@@ -168,18 +165,19 @@ const Index: React.FC<IProps> = () => {
         <div ref={bottomRefContainer}>
           {viewerTypeState != 'map' ? (
             <p
-              className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${bottomNav ? 'bottom-11' : 'bottom-0'
-                } `}
+              className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
+                bottomNav ? 'bottom-11' : 'bottom-0'
+              } `}
               onClick={bottomOverLay}
             >
-              10-01-2022
+              {snapshot?.date}
             </p>
           ) : (
             ''
           )}
           <div
             ref={BottomOverlayRef}
-            className="w-0  absolute left-35 bottom-1  overflow-x-hidden z-10"
+            className="w-0  absolute left-1/2 bottom-1  overflow-x-hidden z-10"
           >
             <div className="flex ">
               <div className=" bg-gray-200 rounded">
@@ -195,19 +193,22 @@ const Index: React.FC<IProps> = () => {
           </div>
         </div>
 
-        <div ref={rightrefContainer}>
+        <div ref={rightrefContainer} className="relative  ">
           <FontAwesomeIcon
-            className={`absolute  ${rightNav && 'rotate-180'
-              } text-2xl text-blue-300 top-2/4 ${rightNav ? 'right-5' : 'right-0'
-              }  cursor-pointer border-none rounded ml-2 p-1 bg-gray-400 text-white`}
+            className={`fixed  ${
+              rightNav && 'rotate-180'
+            } text-2xl text-blue-300  ${
+              rightNav ? 'right-34' : 'right-0'
+            }  top-46  cursor-pointer border-none rounded  p-1 bg-gray-400 text-white`}
             onClick={rightNavCollapse}
             icon={faGreaterThan}
           ></FontAwesomeIcon>
           <div
             ref={rightOverlayRef}
             id="bg-color"
-            className={`fixed w-0  ${rightNav ? 'visible' : 'hidden'
-              }  bg-gray-300 top-35 rounded z-10 right-0 duration-300 overflow-x-hidden`}
+            className={`fixed  lg:w-3 2xl:w-1   ${
+              rightNav ? 'visible' : 'hidden'
+            }  bg-gray-200 top-40   rounded  lg:right-0  duration-300 overflow-x-hidden`}
           >
             <RightOverLay></RightOverLay>
           </div>

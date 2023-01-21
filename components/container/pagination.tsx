@@ -1,6 +1,5 @@
 import { ISnapshot } from '../../models/ISnapshot';
 import React, { useEffect, useState } from 'react';
-import { getSnapshotDetails } from '../../services/snapshot';
 import Moment from 'moment';
 interface IProps {
   snapshots: ISnapshot[];
@@ -11,12 +10,8 @@ const Pagination: React.FC<IProps> = ({ snapshots, getSnapshotInfo }) => {
   const [newDate, setNewDate] = useState('');
   useEffect(() => {
     if (snapshots.length > 0) {
-      let snapResult = snapshots.sort(
-        (a: ISnapshot, b: ISnapshot) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-      setNewDate(snapResult[0].createdAt);
-      setOldDate(snapResult.reverse()[0].createdAt);
+      setNewDate(snapshots[0].createdAt);
+      setOldDate(snapshots.reverse()[0].createdAt);
     }
   }, [snapshots]);
 
@@ -26,7 +21,7 @@ const Pagination: React.FC<IProps> = ({ snapshots, getSnapshotInfo }) => {
         <div className="  py-2 px-1  ">
           <span>&laquo;</span>
         </div>
-        <div className='flex items-center '>
+        <div className="flex items-center ">
           <div className=" flex  mr-1">
             <p>{oldDate && Moment(oldDate).format('Do MMM YY')}</p>
           </div>
@@ -64,7 +59,6 @@ const Pagination: React.FC<IProps> = ({ snapshots, getSnapshotInfo }) => {
           <span>&raquo;</span>
         </div>
       </div>
-
     </React.Fragment>
   );
 };

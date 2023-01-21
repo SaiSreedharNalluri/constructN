@@ -75,7 +75,7 @@ function GenericViewer(props) {
 
     return (
       <React.Fragment>
-        <div >
+        <div className="w-screen h-screen">
           <div id={genericViewer}>
           
           </div>
