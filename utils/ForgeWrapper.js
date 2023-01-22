@@ -1,49 +1,33 @@
 // import { Path2D } from '@adsk/solid-definition';
+import { autodeskAuth } from "../services/forgeService";
 
 export class ForgeViewerUtils {
-
   constructor(viewerId) {
     this.viewerId = viewerId;
     this.documentURNs = [];
     this.forgeViewer = undefined;
     this.isViewerInitialized = false;
-    this.tm_json = {
-      "tm": [
-    -0.136552, 0.992896 ,0.000000 ,385382.750000,
-    -0.992896, -0.136552, 0.000000, 2049802.000000,
-    0.000000, 0.000000, 1.002242, 95.249374,
-    0.000000, 0.000000 ,0.000000, 1.000000
-      ],
-      "offset": [
-        385383.538,
-        2049820.99,
-        100
-      ]
-    }
-    
+    this.model = undefined;
+    this.progressData = undefined;
   }
 
   static getInstance(viewerId) {
-    if(!this.instance) {
-      this.instance = new ForgeViewerUtils(viewerId)
+    if (!this.instance) {
+      this.instance = new ForgeViewerUtils(viewerId);
       delete this.instance.constructor;
     }
     return this.instance;
   }
 
-
   updateModels(documentURNs) {
     this.documentURNs = documentURNs;
-    if(this.isViewerInitialized) {
-      this.loadModel()
+    if (this.isViewerInitialized) {
+      this.loadModel();
     }
   }
 
-  registerCustomExtension() {
-    Autodesk.Viewing.theExtensionManager.registerExtension(
-      "ConstructNTools",
-      ConstructNTools
-    );
+  updateProgressData(progress) {
+    this.progressData = progress
   }
 
   initialize(callback) {
@@ -52,15 +36,15 @@ export class ForgeViewerUtils {
       env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
       api: "streamingV2", // for models uploaded to EMEA change this option to 'derivativeV2_EU'
       getAccessToken: async function (onSuccess) {
-        // const res = autodeskAuth()
-        const accesToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6IlU3c0dGRldUTzlBekNhSzBqZURRM2dQZXBURVdWN2VhIn0.eyJzY29wZSI6WyJjb2RlOmFsbCIsImRhdGE6d3JpdGUiLCJkYXRhOnJlYWQiLCJidWNrZXQ6Y3JlYXRlIiwiYnVja2V0OmRlbGV0ZSIsImJ1Y2tldDpyZWFkIl0sImNsaWVudF9pZCI6ImFHNENYQTRHWjVFTUJtZkVPRGtubEhGTW40WG9Bd1I1IiwiYXVkIjoiaHR0cHM6Ly9hdXRvZGVzay5jb20vYXVkL2Fqd3RleHA2MCIsImp0aSI6IlBPWkJkWWhjekNXTmI4NjJ4MUlTR1NUeGc2VEF3MW8wUjJqcERqN2Y2SjVnTE1vdVBsQ2tia2hwdHRwdXM2WWMiLCJleHAiOjE2NzQzMDYxNDZ9.FKtREeaFnz24yEzrPpkoIlNjNh_6QdyKJK9bVkMc9I739gfGU_i5m50DuevQati6-nji-ou_ALrQEUKNXDRQcWZ9kRSgJ0y4Vrurq99fTS1YzmtVBCEwaXgc-csrpHiCHdw8UxhVTVLC97vM0QswMIJEYkHqSMeHcEIluXoV_5GYCnKMPI_JjpbJCf8vemfyuzlu929lI9gQjeRV1L_fSoGlPHfh2Bk8HVfMbDSzHuCHz6tbiIrc8DMoUDVfZh16UdA1AnPeoIdiMK6nzig-RQjgWivxW0C5cWQBQwu5JlpzdVKIYgpwsU1HFR6H30q4R0n48aW2g68RZB8NgWbd2A"
-        const expires = "3599";
-        onSuccess(accesToken, expires);
+        const response = await autodeskAuth();
+        console.log("Autodesk auth token:", response.data.result);
+        const res = response.data.result;
+        
+        onSuccess(res.access_token, res.expires_in);
       },
     };
 
     Autodesk.Viewing.Initializer(options, this.initializerCallBack.bind(this));
-    // this.registerCustomExtension()
   }
 
   initializerCallBack() {
@@ -73,8 +57,8 @@ export class ForgeViewerUtils {
         // 'Autodesk.Edit2D',
         // 'Autodesk.Viewing.MarkupsCore',
         // 'Autodesk.Measure'
-        'Autodesk.PDF',
-        'Autodesk.Geolocation',
+        "Autodesk.PDF",
+        "Autodesk.Geolocation",
         "Autodesk.DataVisualization",
         // "ConstructNTools",
       ],
@@ -104,18 +88,13 @@ export class ForgeViewerUtils {
 
   loadModel() {
     console.log(`Inside loadModel: ${this.documentURNs}`);
-    const modelOptions = {applyScaling: 'm'}; //Akshith test options
-		modelOptions.globalOffset = { x: 0, y: 0, z: 0 };
     this.documentURNs.map((urn) => {
-      console.log("Test URN", urn.urn)
       Autodesk.Viewing.Document.load(
         urn.urn,
-        function (viewerDocument) {
-          console.log("Test TM:", urn.tm)
+        async function (viewerDocument) {
           var defaultModel = viewerDocument.getRoot().getDefaultGeometry();
-          console.log("is3D: ", defaultModel.is3D())
-          this.forgeViewer.loadDocumentNode(
-            viewerDocument, 
+          this.model = await this.forgeViewer.loadDocumentNode(
+            viewerDocument,
             defaultModel,
             this.generateModelOptions(urn.tm)
           );
@@ -124,39 +103,29 @@ export class ForgeViewerUtils {
           console.error("Failed fetching Forge manifest");
         }
       );
-    })
+    });
   }
 
   generateModelOptions(tm) {
+    console.log("Inside modeloptions:", tm);
 
-    console.log("Inside modeloptions:", tm)
     var mx = new THREE.Matrix4();
-    // mx.fromArray([10,0,0,10,0,10,0,10,0,0,10,10,0,0,0,1]).transpose()
-    mx.fromArray([10.709603309631, 1.489653229713, 0.000000000000, 385315.343750000000,
-      -1.489653229713, 10.709603309631, 0.000000000000, 2049716.750000000000,
-      0.000000000000, 0.000000000000, 10.812708854675, 0.000000000000,
-      0.000000000000, 0.000000000000, 0.000000000000, 1.000000000000]).transpose()
-    
-  // mx.makeRotationZ(90 * Math.PI / 180);
-  // mx.setPosition({x:10,y:10,z:10}) 
-  // mx.makeTranslation({x:10,y:10})
-  // mx.makeScale(
-  //   10, // 201.84
-  //   10, // 285.6
-  //   10)
-    console.log("matrix: ", mx)
+    mx.fromArray([
+      10.709603309631, 1.489653229713, 0.0, 385315.34375, -1.489653229713,
+      10.709603309631, 0.0, 2049716.75, 0.0, 0.0, 10.812708854675, 0.0, 0.0,
+      0.0, 0.0, 1.0,
+    ]).transpose();
+
     const modelOptions = {
-      applyScaling: 'm',
+      applyScaling: "m",
       page: 1,
       // preserveView: true,
       // modelSpace: true,
       keepCurrentModels: true,
       leafletOptions: {
         fitPaperSize: true,
-        // paperWidth: 841,
-        // paperHeight: 1190
       },
-      placementTransform: new THREE.Matrix4().fromArray(tm).transpose()
+      placementTransform: new THREE.Matrix4().fromArray(tm).transpose(),
     };
 
     modelOptions.globalOffset = { x: 0, y: 0, z: 0 };
@@ -169,168 +138,108 @@ export class ForgeViewerUtils {
     //   console.log('BIM TM Loaded');
     // }
 
-    // if (this.tm_json.offset) {
-    //   globalOff = this.tm_json.offset;
-    //   // modelOptions.globalOffset = { x: globalOff[0], y: globalOff[1], z: globalOff[2] };
-    //   // modelOptions.globalOffset = { x: 0, y: 0, z: 0 };
-    //   console.log('Offset Loaded');
-    // }
+    if (tm.offset) {
+      globalOff = this.tm_json.offset;
+      modelOptions.globalOffset = {
+        x: globalOff[0],
+        y: globalOff[1],
+        z: globalOff[2],
+      };
+      console.log("Offset Loaded");
+    }
 
     return modelOptions;
   }
 
-  onLoadFileEvent(parameter) {
-    console.log(`Inside Load File Event: ${parameter.loader}`);
-    console.log("Inside Load File Event: ", parameter.loader)
-  }
+  async loadProgressView() {
+    if (this.progressData != undefined) {
+      let guidDetails = await getguidTodbidMapping(viewer, projectID, tilesetID);
+      let guidMapping = guidDetails.guidMapping;
+      let guids = Object.keys(guidDetails.guidMapping)
 
-  onLoadErrorEvent(parameter) {
-    console.log(
-      `Inside Load Error Event: ${parameter.loader} error: ${parameter.error} `
-    );
-  }
+      bimProgressData[viewer.canvasId] = {
+        'mapping': guidDetails.guidMapping,
+        'dbtoguid': guidDetails.dbIdToGuid,
+        'guids': guids
+      }
 
-  onModelRootLoadedEvent(parameter) {
-    console.log(
-      `Inside Model Root Loaded Event: SVF: ${parameter.svf} model: ${parameter.model}`
-    );
-  }
+      console.log('GUID - DBID mapping done')
+      const progress_data = JSON.parse(await progress_data_raw.text());
+      console.log('BIM progress json loaded');
 
-  onModelAddedEvent(parameter) {
-    console.log(`Inside Model added Event: model: ${parameter.model}`);
-  }
+      bimProgressData[viewer.canvasId]['progress'] = progress_data;
 
-  onModelLayersLoadedEvent(parameter) {
-    console.log(
-      `Inside Model Layers loaded Event: model: ${parameter.model} root: ${parameter.root} `
-    );
-    this.loadExtension();
-  }
+      // let guids = bimProgressData[viewer.canvasId]['guids']
+      // let guidMapping = bimProgressData[viewer.canvasId]['mapping']
 
-  onGeometryLoadedEvent(parameter) {
-    console.log(`Inside Geometry Loaded Event: model: ${parameter.model}`);
-  }
+      let redArr = guids.filter(key => progress_data[key] == 0);
+      let greenArr = guids.filter(key => progress_data[key] == 100);
+      let blueArr =  guids.filter( key => (!redArr.includes(key) && !greenArr.includes(key)));
+      let redDbArr = []
+      let greenDbArr = []
+      let blueDbArr = []
+      if (inProjectID != '161' && inProjectID != '165' && inProjectID != '166') {
+        redArr.map(id => redDbArr = redDbArr.concat(guidMapping[id]))
+      }
+      blueArr.map(id => blueDbArr = blueDbArr.concat(guidMapping[id]))
+      greenArr.map(id => greenDbArr = greenDbArr.concat(guidMapping[id]))
+      
+      bimProgressData[viewer.canvasId]['red'] = redDbArr
+      bimProgressData[viewer.canvasId]['green'] = greenDbArr
+      bimProgressData[viewer.canvasId]['blue'] = blueDbArr
 
-  onExtensionPreLoadedEvent(parameter) {
-    console.log(`Inside Extension Pre Loaded Event: ${parameter.extensionId}`);
-  }
+      this.addProgressButton(viewer);
 
-  onExtensionLoadedEvent(parameter) {
-    console.log(`Inside Extension Loaded Event: ${parameter.extensionId}`);
-  }
-
-  onExtensionPreUnLoadedEvent(parameter) {
-    console.log(
-      `Inside Extension Pre UnLoaded Event: ${parameter.extensionId}`
-    );
-  }
-
-  onExtensionUnLoadedEvent(parameter) {
-    console.log(`Inside Extension UnLoaded Event: ${parameter.extensionId}`);
-  }
-
-  onExtensionPreActivatedEvent(parameter) {
-    console.log(
-      `Inside Extension Pre Activated Event: ${parameter.extensionId} mode: ${parameter.mode}`
-    );
-  }
-
-  onExtensionActivatedEvent(parameter) {
-    console.log(
-      `Inside Extension Activated Event: ${parameter.extensionId} mode: ${parameter.mode}`
-    );
-  }
-
-  onExtensionPreDeActivatedEvent(parameter) {
-    console.log(
-      `Inside Extension Pre DeActivated Event: ${parameter.extensionId}`
-    );
-  }
-
-  onExtensionDeActivatedEvent(parameter) {
-    console.log(`Inside Extension DeActivated Event: ${parameter.extensionId}`);
-  }
-
-  onToolChangeEvent(parameter) {
-    console.log(
-      `Inside Tool change event: name: ${parameter.toolName} isActive: ${parameter.active} tool: `, parameter.tool
-    );
-  }
-
-  onClickEventOnContainer(ev) {
-    const result = this.forgeViewer.clientToWorld(ev.clientX, ev.clientY);
-    if (result) {
-      console.log('Click Point', result.point);
+      loadProgressWalk(viewer, projectID, tilesetID);
     }
   }
 
-  setUpEventListeners() {
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.VIEWER_INITIALIZED,
-      this.onViewerInitialized.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.LOADER_LOAD_FILE_EVENT,
-      this.onLoadFileEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.LOADER_LOAD_ERROR_EVENT,
-      this.onLoadErrorEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
-      this.onModelRootLoadedEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.MODEL_ADDED_EVENT,
-      this.onModelAddedEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.MODEL_LAYERS_LOADED_EVENT,
-      this.onModelLayersLoadedEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-      this.onGeometryLoadedEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.EXTENSION_PRE_LOADED_EVENT,
-      this.onExtensionPreLoadedEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.EXTENSION_LOADED_EVENT,
-      this.onExtensionLoadedEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.EXTENSION_PRE_UNLOADED_EVENT,
-      this.onExtensionPreUnLoadedEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.EXTENSION_UNLOADED_EVENT,
-      this.onExtensionUnLoadedEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.EXTENSION_PRE_ACTIVATED_EVENT,
-      this.onExtensionPreActivatedEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.EXTENSION_ACTIVATED_EVENT,
-      this.onExtensionActivatedEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.EXTENSION_PRE_DEACTIVATED_EVENT,
-      this.onExtensionPreDeActivatedEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.EXTENSION_DEACTIVATED_EVENT,
-      this.onExtensionDeActivatedEvent.bind(this)
-    );
-    this.forgeViewer.addEventListener(
-      Autodesk.Viewing.TOOL_CHANGE_EVENT,
-      this.onToolChangeEvent.bind(this)
-    );
+  addProgressButton(viewer) {
+    let group = new Autodesk.Viewing.UI.ControlGroup('BimProgress');
+    this.forgeViewer.toolbar.addControl(group);
 
-    this.forgeViewer.container.addEventListener('click', this.onClickEventOnContainer.bind(this));
+    // Add a new button to the toolbar group
+    let button = new Autodesk.Viewing.UI.Button('progress');
+    // instead of using bootstrap classes e.g.
+    // button.icon.classList.add("fas", "fa-arrows-alt");
+    // you can do this
+    // let iconPath = 'https://dtwin-viewers.s3.ap-south-1.amazonaws.com/icons/progress.png'
+    let iconPath = '../../public/icons/show-password.svg' // for testing only
+    button.icon.style = `background-image: url(${iconPath}); background-size: 24px 24px;`
+
+    button.setToolTip('Progress View');
+
+
+    button.onClick = function(e) {
+      toggleBimProgressView(viewer)
+
+      // button.icon.classList.add('adsk-viewing-viewer', 'dark-theme', 'adsk-button.active', 'adsk-button')
+      // button.icon.classList.add("fas", "fa-arrows-alt");
+    };
+
+    group.addControl(button);
+
+    toggleBimProgressView(viewer);
+    
+    // let elems = document.querySelectorAll('[id=bim_not_started]');
+
+    // if (viewer.canvasId == 'viewer_1') {
+
+    // 	elems[0].click()
+    // } else {
+    // 	elems[1].click()
+    // }
+  }
+
+  toggleBimProgressView(viewer) {
+    console.log('Go to Progress View')
+      bimProgressMode ? bimDefaultView(viewer) : bimProgressView(viewer)
+      if (viewer.canvasId == 'viewer_1') {
+        bimProgressMode ? document.getElementById('bim_legend_1').style.display = 'none' : document.getElementById('bim_legend_1').style.display = 'block'
+      } else {
+        bimProgressMode ? document.getElementById('bim_legend_2').style.display = 'none' : document.getElementById('bim_legend_2').style.display = 'block'
+      }
+      bimProgressMode = !bimProgressMode
   }
 
   async loadExtension() {
@@ -346,7 +255,6 @@ export class ForgeViewerUtils {
     // );
     // console.log(`Load Async constructnExtension: ${constructnExt}`);
     // console.log(`Load Async dataVizExtension: ${dataVizExtn}`);
-
 
     // Register all standard tools in default configuration
     edit2d.registerDefaultTools();
@@ -371,12 +279,17 @@ export class ForgeViewerUtils {
     console.log(`min:${box.min.x},${box.min.x} ,max:${box.max.x},${box.max.y}`);
     this.startTool(tools.polygonEditTool);
 
-    console.log(`Display Unit: ${this.forgeViewer.model.getDisplayUnit()}`)
-    console.log(`Unit String: ${this.forgeViewer.model.getUnitString()}`)
-    console.log(`Unit Scale: ${this.forgeViewer.model.getUnitScale()}`)
+    console.log(`Display Unit: ${this.forgeViewer.model.getDisplayUnit()}`);
+    console.log(`Unit String: ${this.forgeViewer.model.getUnitString()}`);
+    console.log(`Unit Scale: ${this.forgeViewer.model.getUnitScale()}`);
     console.log("", this.forgeViewer.model.isLeaflet());
-    console.log("Model transform: ", this.forgeViewer.model.getModelTransform());
-    console.log(`isPageCoordinates: ${this.forgeViewer.model.isPageCoordinates()}`)
+    console.log(
+      "Model transform: ",
+      this.forgeViewer.model.getModelTransform()
+    );
+    console.log(
+      `isPageCoordinates: ${this.forgeViewer.model.isPageCoordinates()}`
+    );
 
     // let poly = this.getPolyLineShape();
     // let circleShapes = this.getCircleShapes();
@@ -433,10 +346,27 @@ export class ForgeViewerUtils {
     viewableData.spriteSize = 24; // Sprites as points of size 24 x 24 pixels
 
     const myDataList = [
-      { position: {x: 385387.48781699024, y:2049811.5040732909, z:95.79301855560584}}, // "DT_VID_20221222_125011_00_160IMG_636.JPG"
-      { position: { x:385388.0634398281, y:2049810.764701934, z:95.80095614319397} }, // "DT_VID_20221222_125011_00_160IMG_634.JPG"
-      { position: { x:385383.07042181026, y:2049778.5836000163, z:95.86333169023112}} //"DT_VID_20221222_125011_00_160IMG_930.JPG"
-  
+      {
+        position: {
+          x: 385387.48781699024,
+          y: 2049811.5040732909,
+          z: 95.79301855560584,
+        },
+      }, // "DT_VID_20221222_125011_00_160IMG_636.JPG"
+      {
+        position: {
+          x: 385388.0634398281,
+          y: 2049810.764701934,
+          z: 95.80095614319397,
+        },
+      }, // "DT_VID_20221222_125011_00_160IMG_634.JPG"
+      {
+        position: {
+          x: 385383.07042181026,
+          y: 2049778.5836000163,
+          z: 95.86333169023112,
+        },
+      }, //"DT_VID_20221222_125011_00_160IMG_930.JPG"
     ];
 
     myDataList.forEach((myData, index) => {
@@ -450,8 +380,7 @@ export class ForgeViewerUtils {
     // viewableData.finish().then(() => {
     //   dataVizExtn.addViewables(viewableData);
     // });
-    await this.addViewableData(viewableData, dataVizExtn)
-
+    await this.addViewableData(viewableData, dataVizExtn);
   }
 
   async addViewableData(viewableData, dataVizExtn) {
@@ -540,6 +469,224 @@ export class ForgeViewerUtils {
   shutdown() {
     this.isViewerInitialized = false;
     Autodesk.Viewing.shutdown();
+  }
+
+  onLoadFileEvent(parameter) {
+    console.log(`Inside Load File Event: ${parameter.loader}`);
+    console.log("Inside Load File Event: ", parameter.loader);
+  }
+
+  onLoadErrorEvent(parameter) {
+    console.log(
+      `Inside Load Error Event: ${parameter.loader} error: ${parameter.error} `
+    );
+  }
+
+  onModelRootLoadedEvent(parameter) {
+    console.log(
+      `Inside Model Root Loaded Event: SVF: ${parameter.svf} model: ${parameter.model}`
+    );
+  }
+
+  onModelAddedEvent(parameter) {
+    console.log(`Inside Model added Event: model: ${parameter.model}`);
+  }
+
+  onModelLayersLoadedEvent(parameter) {
+    console.log(
+      `Inside Model Layers loaded Event: model: ${parameter.model} root: ${parameter.root} `
+    );
+    this.loadExtension();
+  }
+
+  onGeometryLoadedEvent(parameter) {
+    console.log(`Inside Geometry Loaded Event: model: ${parameter.model}`);
+  }
+
+  onExtensionPreLoadedEvent(parameter) {
+    console.log(`Inside Extension Pre Loaded Event: ${parameter.extensionId}`);
+  }
+
+  onExtensionLoadedEvent(parameter) {
+    console.log(`Inside Extension Loaded Event: ${parameter.extensionId}`);
+  }
+
+  onExtensionPreUnLoadedEvent(parameter) {
+    console.log(
+      `Inside Extension Pre UnLoaded Event: ${parameter.extensionId}`
+    );
+  }
+
+  onExtensionUnLoadedEvent(parameter) {
+    console.log(`Inside Extension UnLoaded Event: ${parameter.extensionId}`);
+  }
+
+  onExtensionPreActivatedEvent(parameter) {
+    console.log(
+      `Inside Extension Pre Activated Event: ${parameter.extensionId} mode: ${parameter.mode}`
+    );
+  }
+
+  onExtensionActivatedEvent(parameter) {
+    console.log(
+      `Inside Extension Activated Event: ${parameter.extensionId} mode: ${parameter.mode}`
+    );
+  }
+
+  onExtensionPreDeActivatedEvent(parameter) {
+    console.log(
+      `Inside Extension Pre DeActivated Event: ${parameter.extensionId}`
+    );
+  }
+
+  onExtensionDeActivatedEvent(parameter) {
+    console.log(`Inside Extension DeActivated Event: ${parameter.extensionId}`);
+  }
+
+  onToolChangeEvent(parameter) {
+    console.log(
+      `Inside Tool change event: name: ${parameter.toolName} isActive: ${parameter.active} tool: `,
+      parameter.tool
+    );
+  }
+
+  onClickEventOnContainer(ev) {
+    const result = this.forgeViewer.clientToWorld(ev.clientX, ev.clientY);
+    if (result) {
+      console.log("Click Point", result.point);
+    }
+  }
+
+  onCameraChangeEvent(ev) {
+    // syncForgeEvent = true;
+  }
+
+  onSelectionChangeEvent(ev) {
+    // var currSelection = viewer.getSelection();
+    // console.log("Selection: ");
+    // if (currSelection.length && bimProgressData[viewer.canvasId]) {
+    //   let guid = bimProgressData[viewer.canvasId]["dbtoguid"][currSelection[0]];
+    //   let progress = bimProgressData[viewer.canvasId]["progress"][guid];
+    //   console.log(
+    //     "dbid: ",
+    //     currSelection[0],
+    //     "guid: ",
+    //     guid,
+    //     "progress: ",
+    //     progress
+    //   );
+    //   // let card_container_id = divId == 'viewer_1' ? 'bim_details_card_container_1' : 'bim_details_card_container_2'
+    //   // let card_id = divId == 'viewer_1' ? 'bim_details_card_1' : 'bim_details_card_2'
+    //   // let card_container = document.getElementById(card_container_id);
+    //   // let card = document.getElementById(card_id);
+    //   // let card_details = '<table>'
+    //   // card_details += `<tr> <td>    </td> <td>    </td> </tr>`
+    //   // card_details += `<tr> <td> GUID </td> <td> ${guid} </td> </tr>`
+    //   // card_details += `<tr> <td> Progress </td> <td> ${progress} </td> </tr>`
+    //   // card_details += '</table>'
+    //   // card.innerHTML = card_details;
+    //   // card_container.style.display = 'block';
+    //   let bim_element_details = { guid: guid, progress: progress };
+    //   window.top.postMessage(
+    //     { type: "bim-click", data: JSON.stringify(bim_element_details) },
+    //     "*"
+    //   );
+    //   console.log("Sending ", bim_element_details);
+    //   // const pointer = event.pointers ? event.pointers[0] : event;
+    //   // const rayCaster = pointerToRaycasterForge(viewer.canvas, viewer.navigation.getCamera(), pointer);
+    //   // const forgeClickObject = viewer.model.rayIntersect(rayCaster, true, this.getAllDbIds(viewer));
+    //   // console.log('Click point')
+    //   // console.log(forgeClickObject)
+    //   // const result = viewer.clientToWorld(event.clientX, event.clientY);
+    //   // if (result) {
+    //   // 	console.log(result.point);
+    //   // }
+    // } else {
+    //   window.top.postMessage(
+    //     { type: "bim-click", data: JSON.stringify({}) },
+    //     "*"
+    //   );
+    //   // closeBimDetailsCard(divId);
+    // }
+  }
+
+  setUpEventListeners() {
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.VIEWER_INITIALIZED,
+      this.onViewerInitialized.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.LOADER_LOAD_FILE_EVENT,
+      this.onLoadFileEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.LOADER_LOAD_ERROR_EVENT,
+      this.onLoadErrorEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
+      this.onModelRootLoadedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.MODEL_ADDED_EVENT,
+      this.onModelAddedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.MODEL_LAYERS_LOADED_EVENT,
+      this.onModelLayersLoadedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+      this.onGeometryLoadedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.EXTENSION_PRE_LOADED_EVENT,
+      this.onExtensionPreLoadedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.EXTENSION_LOADED_EVENT,
+      this.onExtensionLoadedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.EXTENSION_PRE_UNLOADED_EVENT,
+      this.onExtensionPreUnLoadedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.EXTENSION_UNLOADED_EVENT,
+      this.onExtensionUnLoadedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.EXTENSION_PRE_ACTIVATED_EVENT,
+      this.onExtensionPreActivatedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.EXTENSION_ACTIVATED_EVENT,
+      this.onExtensionActivatedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.EXTENSION_PRE_DEACTIVATED_EVENT,
+      this.onExtensionPreDeActivatedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.EXTENSION_DEACTIVATED_EVENT,
+      this.onExtensionDeActivatedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.TOOL_CHANGE_EVENT,
+      this.onToolChangeEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+      this.onCameraChangeEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.SELECTION_CHANGE_EVENT,
+      this.onSelectionChangeEvent.bind(this)
+    );
+    this.forgeViewer.container.addEventListener(
+      "click",
+      this.onClickEventOnContainer.bind(this)
+    );
   }
 }
 
