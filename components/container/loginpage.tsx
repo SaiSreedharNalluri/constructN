@@ -10,6 +10,7 @@ import InputCheckBox from '../core/Input/inputCheckBox';
 import NextImage from '../core/Image';
 import Image from 'next/image';
 import OkButton from '../core/buttons/okButton';
+import { useRouter } from 'next/router';
 interface IProps {
   loading: boolean;
   buttonName: string;
@@ -17,6 +18,7 @@ interface IProps {
   handleLogin: (e: { email: string; password: string }) => void;
 }
 const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
+  const router = useRouter();
   const initialValues: {
     email: string;
     password: string;
@@ -45,45 +47,43 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
             onSubmit={handleLogin}
           >
             <Form className=" grid grid-cols-1 gap-y-4 px-4">
-              <div >
-                <InputText
-                  type="email"
-                  placeholderName="Email"
-                  name="email"
-                />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className=""
-                />
+              <div>
+                <InputText type="email" placeholderName="Email" name="email" />
+                <ErrorMessage name="email" component="div" className="" />
               </div>
-               <div className='relative'>
-                  <InputPassword
-                    name="password"
-                    type={isRevealPwd}
-                    placeholderName="password"
-                  />
-                  <div className='absolute p-3 inset-y-0 right-0'>
-                    <Image
-                      alt=""
-                      title={isRevealPwd ? 'Hide password' : 'Show password'}
-                      src={isRevealPwd ? hidePwdImg : showPwdImg}
-                      onClick={() => setIsRevealPwd((prevState) => !prevState)}
-                    />
-                  </div>
-                  <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="alert alert-danger"
+              <div className="relative">
+                <InputPassword
+                  name="password"
+                  type={isRevealPwd}
+                  placeholderName="password"
+                />
+                <div className="absolute p-3 inset-y-0 right-0">
+                  <Image
+                    alt=""
+                    title={isRevealPwd ? 'Hide password' : 'Show password'}
+                    src={isRevealPwd ? hidePwdImg : showPwdImg}
+                    onClick={() => setIsRevealPwd((prevState) => !prevState)}
                   />
                 </div>
-              
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="alert alert-danger"
+                />
+              </div>
+
               <div className=" ">
                 <InputCheckBox checkBoxName="Remember me"></InputCheckBox>
               </div>
               <div className="py-5 grid grid-cols-1 gap-2">
                 <SubmitButtons buttonName="Log In" disabled={loading} />
-                <OkButton buttonName='Register' disabled={false}/>
+                <OkButton
+                  buttonName="Register"
+                  disabled={false}
+                  clickTheOkButton={() => {
+                    router.push('/register');
+                  }}
+                />
               </div>
               {message && (
                 <div className="form-group">
@@ -101,4 +101,3 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
 };
 
 export default Loginpage;
-
