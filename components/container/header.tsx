@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCookie, removeCookies } from 'cookies-next';
 import DesignRealitySwitch from './designRealitySwitch';
-interface IProps { }
+interface IProps {}
 const Header: React.FC<IProps> = () => {
   const router = useRouter();
   let [name, setName] = useState<string>('');
@@ -18,7 +18,7 @@ const Header: React.FC<IProps> = () => {
     const userObj: any = getCookie('user');
     let user = null;
     if (userObj) user = JSON.parse(userObj);
-    if (user.fullName) {
+    if (user?.fullName) {
       setName(user.fullName);
     }
   }, [router.query.projectId]);
@@ -34,7 +34,7 @@ const Header: React.FC<IProps> = () => {
     <React.Fragment>
       <header className="border-b border-solid border-gray-400">
         <div className="flex justify-between">
-          <div className='ml-2 mt-2 mb-2 '>
+          <div className="ml-2 mt-2 mb-2 ">
             <img
               onClick={goToProjectsList}
               className=" cursor-pointer w-full h-6"
@@ -42,11 +42,11 @@ const Header: React.FC<IProps> = () => {
               alt=""
             ></img>
           </div>
-          <div className='flex '>
-            <div className='mt-2 mr-2 mb-2'>
+          <div className="flex ">
+            <div className="mt-2 mr-2 mb-2">
               <DesignRealitySwitch></DesignRealitySwitch>
             </div>
-            <div className='mt-2 mr-2 mb-2 w-6 h-6'>
+            <div className="mt-2 mr-2 mb-2 w-6 h-6">
               <FontAwesomeIcon icon={faBell} />
             </div>
             <div
@@ -69,7 +69,6 @@ const Header: React.FC<IProps> = () => {
                 />
               </div>
             </div>
-
 
             {loading && (
               <div className="absolute top-10 right-0 z-10 dark:bg-gray-800 bg-white rounded-lg shadow border">

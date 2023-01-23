@@ -17,15 +17,19 @@ const authHeader = () => {
 };
 const authCookieHeader = (context: any) => {
   try {
-    const userObj = JSON.parse(context.req.cookies.user);
-    if (userObj.token) {
-      return { Authorization: 'Bearer ' + userObj.token };
-    } else {
-      return { Authorization: '' };
+    if (
+      context?.req?.cookies?.user != undefined &&
+      context.req.cookies.user != ''
+    ) {
+      const userObj = JSON.parse(context.req.cookies.user);
+      if (userObj.token) {
+        return { Authorization: 'Bearer ' + userObj.token };
+      } else {
+        return { Authorization: '' };
+      }
     }
   } catch (error) {
     throw error;
-
   }
 };
 const getAuthToken = () => {
@@ -43,11 +47,9 @@ const getAuthToken = () => {
   }
 };
 const isLoggedin = () => {
-  try{
-
-
-  }catch(error){
+  try {
+  } catch (error) {
     throw error;
   }
-}
+};
 export default { authHeader, authCookieHeader, getAuthToken };
