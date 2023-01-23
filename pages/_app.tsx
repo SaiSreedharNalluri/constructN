@@ -10,16 +10,10 @@ config.autoAddCss = false;
 
 
 
+
 export default function App({ Component, pageProps }: AppProps) {
-  function onScriptLoad(){
-    console.log("Script Loaded From App Component: ")
-  }
   return (
     <>
-    <Head>
-            <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.min.css" type="text/css"/>
-      </Head>
-      <Script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js" onLoad={onScriptLoad}/>
       <Component {...pageProps} />
     </>
   )
