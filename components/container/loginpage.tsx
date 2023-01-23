@@ -9,6 +9,7 @@ import InputText from '../core/Input/inputText';
 import InputCheckBox from '../core/Input/inputCheckBox';
 import NextImage from '../core/Image';
 import Image from 'next/image';
+import OkButton from '../core/buttons/okButton';
 interface IProps {
   loading: boolean;
   buttonName: string;
@@ -36,15 +37,15 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
       />
 
       <div className=" absolute w-1/3 top-0 bg-opacity-50 px-5 h-full right-0 place-items-center bg-gray-300 ">
-        <div className="border my-48 border-solid border-gray-500 rounded-3xl ">
-          <h2 className="text-center mt-4">User Login</h2>
+        <div className="grid grid-cols-1 gap-4 border my-48 border-solid place-content-center border-gray-500 rounded-3xl ">
+          <h2 className="text-center text-xl">User Login</h2>
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={handleLogin}
           >
-            <Form className=" mt-4 ml-4 ">
-              <div>
+            <Form className=" grid grid-cols-1 gap-y-4 px-4">
+              <div >
                 <InputText
                   type="email"
                   placeholderName="Email"
@@ -53,17 +54,16 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                 <ErrorMessage
                   name="email"
                   component="div"
-                  className="alert alert-danger"
+                  className=""
                 />
               </div>
-              <div className=" mt-4">
-                <div className='relative'>
+               <div className='relative'>
                   <InputPassword
                     name="password"
                     type={isRevealPwd}
                     placeholderName="password"
                   />
-                  <div className='absolute inset-y-0 right-0'>
+                  <div className='absolute p-3 inset-y-0 right-0'>
                     <Image
                       alt=""
                       title={isRevealPwd ? 'Hide password' : 'Show password'}
@@ -71,21 +71,19 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                       onClick={() => setIsRevealPwd((prevState) => !prevState)}
                     />
                   </div>
-
-                </div>
-                <div>
                   <ErrorMessage
                     name="password"
                     component="div"
-                    className="alert alert-danger mt-3"
+                    className="alert alert-danger"
                   />
                 </div>
-              </div>
+              
               <div className=" ">
                 <InputCheckBox checkBoxName="Remember me"></InputCheckBox>
               </div>
-              <div className="py-5">
+              <div className="py-5 grid grid-cols-1 gap-2">
                 <SubmitButtons buttonName="Log In" disabled={loading} />
+                <OkButton buttonName='Register' disabled={false}/>
               </div>
               {message && (
                 <div className="form-group">

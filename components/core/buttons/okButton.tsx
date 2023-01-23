@@ -9,7 +9,7 @@ const OkButton: React.FC<IProps> = ({ disabled, buttonName }) => {
     <button
       type="button"
       disabled={disabled}
-      className="p-2 w-11/12 mt-4 bg-custom-yellow hover:bg-yellow-500  rounded-md "
+      className="p-2 w-full bg-gray-500 hover:bg-gray-400  rounded-md "
     >
       {buttonName}
     </button>
