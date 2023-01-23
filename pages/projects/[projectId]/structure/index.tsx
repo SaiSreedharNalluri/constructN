@@ -37,7 +37,7 @@ const Index: React.FC<IProps> = () => {
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
   const bottomRefContainer: any = useRef();
-  const [viewerTypeState, setViewerType] = useState('forge');
+  const [viewerTypeState, setViewerType] = useState('map');
   const [rightNav, setRightNav] = useState(false);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [currentDesignType,setDesignType]= useState('');//plan,elevational,xsectional,bim
