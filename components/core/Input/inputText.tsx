@@ -11,7 +11,7 @@ const InputText: React.FC<IProps> = ({ type, placeholderName, name }) => {
     <Field
       name={name}
       type={type}
-      className=" w-11/12 p-3 rounded"
+      className=" w-full p-3 rounded"
       placeholder={placeholderName}
     ></Field>
   );

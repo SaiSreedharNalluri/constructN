@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCookie, removeCookies } from 'cookies-next';
+import DesignRealitySwitch from './designRealitySwitch';
 interface IProps { }
 const Header: React.FC<IProps> = () => {
   const router = useRouter();
@@ -42,6 +43,9 @@ const Header: React.FC<IProps> = () => {
             ></img>
           </div>
           <div className='flex '>
+            <div className='mt-2 mr-2 mb-2'>
+              <DesignRealitySwitch></DesignRealitySwitch>
+            </div>
             <div className='mt-2 mr-2 mb-2 w-6 h-6'>
               <FontAwesomeIcon icon={faBell} />
             </div>
@@ -58,19 +62,18 @@ const Header: React.FC<IProps> = () => {
                 <Image
                   src="https://images.unsplash.com/photo-1610397095767-84a5b4736cbd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
                   alt=""
-                  className="w-full h-full cursor-pointer object-cover"
+                  className={`w-full h-full cursor-pointer object-cover `}
+                  title={name}
                   height={1920}
                   width={1080}
                 />
               </div>
             </div>
-            <div className="font-semibold mr-2 mb-2 mt-2 text-gray-900">
-              <div>{name}</div>
-            </div>
+
 
             {loading && (
-              <div className="absolute top-10 z-10 dark:bg-gray-800 bg-white rounded-lg shadow border dark:border-transparent ">
-                <ul className=" dark:text-white p-4 ">
+              <div className="absolute top-10 right-0 z-10 dark:bg-gray-800 bg-white rounded-lg shadow border">
+                <ul className="text-white p-4 ">
                   <li className="font-medium cursor-pointer">
                     <div className="flex items-center justify-center transform transition-colors duration-200">
                       <div className="mr-3">
@@ -87,7 +90,7 @@ const Header: React.FC<IProps> = () => {
                       Settings
                     </div>
                   </li>
-                  <hr className="dark:border-gray-700" />
+                  <hr className="border-gray-700" />
                   <li
                     className="font-medium cursor-pointer"
                     onClick={() => userLogOut()}
