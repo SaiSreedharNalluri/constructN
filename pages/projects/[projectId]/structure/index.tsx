@@ -18,9 +18,12 @@ import authHeader from '../../../../services/auth-header';
 import Head from 'next/head';
 import Script from 'next/script';
 import GenericViewer from '../../../../components/container/GenericViewer';
+import RightFloatingMenu from '../../../../components/container/rightFloatingMenu';
 interface IProps { }
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
+  const [currentViewType,setViewType]= useState('Design'); //Design/ Reality
+
   const [currentProjectId, setActiveProjectId] = useState('');
   const [structure, setStructure] = useState<ChildrenEntity>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
@@ -34,9 +37,12 @@ const Index: React.FC<IProps> = () => {
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
   const bottomRefContainer: any = useRef();
-  const [viewerTypeState, setViewType] = useState('map');
+  const [viewerTypeState, setViewerType] = useState('map');
   const [rightNav, setRightNav] = useState(false);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
+  const [currentDesignType,setDesignType]= useState('');//plan,elevational,xsectional,bim
+  const [currentRealityType,setRealityType] = useState('360Image'); //360Image, 360Video, phoneImage, droneImage
+  const [clickedTool,setClickedTool] = useState('')
   useEffect(() => {
     if (router.isReady) {
       getProjectDetails(router.query.projectId as string).then((response) => {
@@ -66,7 +72,7 @@ const Index: React.FC<IProps> = () => {
       });
   };
   const activeClass = (e: any) => {
-    setViewType(e.currentTarget.id);
+    setViewerType(e.currentTarget.id);
   };
   const bottomOverLay = () => {
     if (!bottomNav) {
@@ -82,7 +88,7 @@ const Index: React.FC<IProps> = () => {
         return <MapLoading></MapLoading>;
 
       case 'forge':
-        return <GenericViewer structure={structure} snapshot={snapshot}></GenericViewer>;
+        return <GenericViewer toolRes={toolResponse} tools={clickedTool} structure={structure} snapshot={snapshot} viewType={currentViewType} designType={currentDesignType} realityType={currentRealityType}></GenericViewer>;
 
       case 'map':
         return (
@@ -128,6 +134,16 @@ const Index: React.FC<IProps> = () => {
   const getSnapshotInfo = (snapshotData: ISnapshot) => {
     setSnapshot(snapshotData);
   };
+
+  const toolClicked = (toolName:string)=>{
+  
+    setClickedTool(toolName);
+
+  }
+
+  const toolResponse = (data:string)=>{
+    console.log('Data->',data);
+  }
 
   return (
     <React.Fragment>
@@ -210,7 +226,7 @@ const Index: React.FC<IProps> = () => {
               rightNav ? 'visible' : 'hidden'
             }  bg-gray-200 top-40   rounded  lg:right-0  duration-300 overflow-x-hidden`}
           >
-            <RightOverLay></RightOverLay>
+            <RightFloatingMenu toolClicked={toolClicked} ></RightFloatingMenu>
           </div>
         </div>
       </div>

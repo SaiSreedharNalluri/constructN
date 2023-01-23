@@ -51,6 +51,8 @@ function GenericViewer(props) {
   let viewType = props.viewType;
   let [camera, setCamera] = useState({});
   let scriptsLoaded = props.scriptsLoaded;
+  let toolclk = props.tools;
+  let respData = props.toolRes;
 
   let forgeUtils = useRef();
   
@@ -69,10 +71,19 @@ function GenericViewer(props) {
     }
   }, [scriptsLoaded, structureId]);
 
+  useEffect(()=>{
+
+    console.log(toolclk,"tool clicked");
+    respData(toolclk);
+
+  },[toolclk]);
+
   useEffect(() => {
     console.log("Generic Viewer load: Snapshot Changed")
 
   }, [snapshot]);
+
+  
 
     return (
       <React.Fragment>
