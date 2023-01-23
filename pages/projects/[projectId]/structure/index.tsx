@@ -91,13 +91,11 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${
-                  structure?._id
-                }&snapshot1=${
-                  snapshot?._id
-                }&zone_utm=${projectutm}&project=${
-                  currentProjectId as string
-                }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
+                  }&snapshot1=${snapshot?._id
+                  }&zone_utm=${projectutm}&project=${currentProjectId as string
+                  }&token=${authHeader.getAuthToken()}`}
+
               />
             </div>
           )
@@ -128,25 +126,23 @@ const Index: React.FC<IProps> = () => {
   const getSnapshotInfo = (snapshotData: ISnapshot) => {
     setSnapshot(snapshotData);
   };
-
   return (
     <React.Fragment>
       <div className="">
         <Header />
-        <div className="fixed" ref={leftRefContainer}>
-          <div className="flex">
-            <div className="flex">
+        <div className="" ref={leftRefContainer}>
+          <div className="flex ">
+            <div className="flex absolute">
               <CollapsableMenu onChangeData={onChangeData} />
             </div>
-            <div className="flex " id="viewer">
+            <div className="flex w-screen  " id="viewer">
               {renderSwitch(viewerTypeState)}
             </div>
           </div>
           <div
             ref={leftOverlayRef}
-            className={`h-96 bg-gray-200 w-0 absolute   ${
-              leftNav ? 'left-10' : 'left-10  '
-            }   top-0  duration-300 overflow-x-hidden`}
+            className={`h-screen bg-gray-200 w-0 absolute   ${leftNav ? 'left-10' : 'left-10  '
+              }   top-0  duration-300 overflow-x-hidden`}
           >
             <LeftOverLay
               getStructureData={getStructureData}
@@ -161,16 +157,32 @@ const Index: React.FC<IProps> = () => {
               }}
             ></LeftOverLay>
           </div>
+          <div  >
+            <FontAwesomeIcon
+              className={`absolute  ${rightNav && 'rotate-180'
+                } text-2xl text-blue-300  ${rightNav ? 'right-9' : 'right-0'
+                }  top-1/2 cursor-pointer border-none rounded  p-1 bg-gray-400 text-white`}
+              onClick={rightNavCollapse}
+              icon={faGreaterThan}
+            ></FontAwesomeIcon>
+            <div
+              ref={rightOverlayRef}
+              id="bg-color"
+              className={`absolute  lg:w-3 2xl:w-1   ${rightNav ? 'visible' : 'hidden'
+                }  bg-gray-200  top-45  rounded  lg:right-0  duration-300 `}
+            >
+              <RightOverLay></RightOverLay>
+            </div>
+          </div>
         </div>
         <div ref={bottomRefContainer}>
           {viewerTypeState != 'map' ? (
             <p
-              className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
-                bottomNav ? 'bottom-11' : 'bottom-0'
-              } `}
+              className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${bottomNav ? 'bottom-11' : 'bottom-2'
+                } `}
               onClick={bottomOverLay}
             >
-              {snapshot?.date}
+              10-01-2022
             </p>
           ) : (
             ''
@@ -190,27 +202,6 @@ const Index: React.FC<IProps> = () => {
                 <DatePicker></DatePicker>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div ref={rightrefContainer} className="relative  ">
-          <FontAwesomeIcon
-            className={`fixed  ${
-              rightNav && 'rotate-180'
-            } text-2xl text-blue-300  ${
-              rightNav ? 'right-34' : 'right-0'
-            }  top-46  cursor-pointer border-none rounded  p-1 bg-gray-400 text-white`}
-            onClick={rightNavCollapse}
-            icon={faGreaterThan}
-          ></FontAwesomeIcon>
-          <div
-            ref={rightOverlayRef}
-            id="bg-color"
-            className={`fixed  lg:w-3 2xl:w-1   ${
-              rightNav ? 'visible' : 'hidden'
-            }  bg-gray-200 top-40   rounded  lg:right-0  duration-300 overflow-x-hidden`}
-          >
-            <RightOverLay></RightOverLay>
           </div>
         </div>
       </div>
