@@ -3,18 +3,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const Layers: React.FC = () => {
     return (
-        <div className='ml-1 flex justify-between'>
+        <div className=' flex justify-between'>
             <FontAwesomeIcon
                 icon={faCirclePlus}
-                className="hover:white text-center cursor-pointer"
+                className="mr-2 cursor-pointer"
             ></FontAwesomeIcon>
             <FontAwesomeIcon
                 icon={faList}
-                className="hover:white text-center cursor-pointer"
+                className="mr-2 cursor-pointer"
             ></FontAwesomeIcon>
             <FontAwesomeIcon
                 icon={faEyeSlash}
-                className="hover:white text-center cursor-pointer"
+                className=" cursor-pointer"
             ></FontAwesomeIcon>
         </div >
     )

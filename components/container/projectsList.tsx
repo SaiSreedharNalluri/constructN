@@ -16,6 +16,9 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
   const goToProject = (projectId: string) => {
     router.push(`projects/${projectId}/structure`);
   };
+  const editProject = () => {
+    router.push("/editProject")
+  }
   return (
     <div className="h-full grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
       {projects.map((pData) => {
@@ -43,7 +46,7 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
                   </div>
                 )}
                 <div className="mt-4 text-gray-400">
-                  <FontAwesomeIcon icon={faPen} className="text-2xl"></FontAwesomeIcon>
+                  <FontAwesomeIcon icon={faPen} className="text-2xl" onClick={editProject}></FontAwesomeIcon>
                   <FontAwesomeIcon
                     className='ml-4 text-2xl'
                     icon={faUserPlus}
