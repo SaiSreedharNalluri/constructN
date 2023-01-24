@@ -17,13 +17,10 @@ export const login = (email: string, password: string) => {
       throw error;
     });
 };
-export const registerUser = (registerUserObj: any) => {
+export const registerUser = (registerUserObj: Object) => {
   return instance
     .post(`${process.env.NEXT_PUBLIC_HOST}/users/register`, registerUserObj)
     .then((response) => {
-      if (response.data.result) {
-        setCookie('user', JSON.stringify(response.data.result));
-      }
       return response.data;
     })
     .catch((error) => {
