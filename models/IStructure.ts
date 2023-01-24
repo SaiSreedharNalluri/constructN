@@ -4,6 +4,7 @@ export interface IStructure {
 }
 export interface IStructureEntity {
   _id: string;
+  project:string;
   name: string;
   type: string;
   parent?: null;
@@ -12,6 +13,7 @@ export interface IStructureEntity {
 export interface ChildrenEntity {
   _id: string;
   name: string;
+  project:string;
   type: string;
   parent: string;
   children?: ChildrenEntity1[] | null;

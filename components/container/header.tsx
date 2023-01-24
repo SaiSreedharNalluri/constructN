@@ -10,8 +10,19 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCookie, removeCookies } from 'cookies-next';
 import DesignRealitySwitch from './designRealitySwitch';
-interface IProps {}
+interface IProps {
+  // showDesignRealitySwitch?:boolean;
+  // isDesignView?:boolean;
+ }
 const Header: React.FC<IProps> = () => {
+  // if (showDesignRealitySwitch===undefined)
+  // {
+  //   showDesignRealitySwitch=false
+  // }
+  // if (isDesignView===undefined)
+  // {
+  //   showDesignRealitySwitch=false
+  // }
   const router = useRouter();
   let [name, setName] = useState<string>('');
   useEffect(() => {
@@ -30,6 +41,10 @@ const Header: React.FC<IProps> = () => {
   const goToProjectsList = () => {
     router.push('/projects');
   };
+//   const toggleDesignType = ()=>{
+//  isDesignView=!isDesignView;
+//  console.log(isDesignView);
+//   }
   return (
     <React.Fragment>
       <header className="border-b border-solid border-gray-400">
@@ -42,11 +57,11 @@ const Header: React.FC<IProps> = () => {
               alt=""
             ></img>
           </div>
-          <div className="flex ">
-            <div className="mt-2 mr-2 mb-2">
-              <DesignRealitySwitch></DesignRealitySwitch>
-            </div>
-            <div className="mt-2 mr-2 mb-2 w-6 h-6">
+          <div className='flex '>
+            {/* <div className={`mt-2 mr-2 mb-2 ${showDesignRealitySwitch?'visible':'hidden'}`}>
+              <DesignRealitySwitch toggleDesignType={toggleDesignType} designState={isDesignView?true:false}></DesignRealitySwitch>
+            </div> */}
+            <div className='mt-2 mr-2 mb-2 w-6 h-6'>
               <FontAwesomeIcon icon={faBell} />
             </div>
             <div

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
-import { ChildrenEntity, IStructure } from '../../../../models/IStructure';
+import { ChildrenEntity, IStructure, IStructureEntity } from '../../../../models/IStructure';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 import { getSnapshotsList } from '../../../../services/snapshot';
 import { getProjectDetails } from '../../../../services/project';
@@ -19,10 +19,12 @@ import Head from 'next/head';
 import Script from 'next/script';
 import GenericViewer from '../../../../components/container/GenericViewer';
 import RightFloatingMenu from '../../../../components/container/rightFloatingMenu';
+import { string } from 'yup';
+import { ITools } from '../../../../models/ITools';
 interface IProps { }
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
-  const [currentViewType, setViewType] = useState('Design'); //Design/ Reality
+  const [currentViewMode,setViewMode]= useState('Design'); //Design/ Reality
 
   const [currentProjectId, setActiveProjectId] = useState('');
   const [structure, setStructure] = useState<ChildrenEntity>();
@@ -37,12 +39,12 @@ const Index: React.FC<IProps> = () => {
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
   const bottomRefContainer: any = useRef();
-  const [viewerTypeState, setViewerType] = useState('map');
+  const [viewerTypeState, setViewerType] = useState('forge');
   const [rightNav, setRightNav] = useState(false);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
-  const [currentDesignType, setDesignType] = useState('');//plan,elevational,xsectional,bim
-  const [currentRealityType, setRealityType] = useState('360Image'); //360Image, 360Video, phoneImage, droneImage
-  const [clickedTool, setClickedTool] = useState('')
+  const [currentViewType,setViewType]= useState('');//plan,elevational,xsectional,bim
+  const [currentViewLayers,setViewLayers] = useState <string[]>([]); //360Image, 360Video, phoneImage, droneImage
+  const [clickedTool,setClickedTool] = useState<ITools>();
   useEffect(() => {
     if (router.isReady) {
       getProjectDetails(router.query.projectId as string).then((response) => {
@@ -88,7 +90,7 @@ const Index: React.FC<IProps> = () => {
         return <MapLoading></MapLoading>;
 
       case 'forge':
-        return <GenericViewer toolRes={toolResponse} tools={clickedTool} structure={structure} snapshot={snapshot} viewType={currentViewType} designType={currentDesignType} realityType={currentRealityType}></GenericViewer>;
+        return <GenericViewer toolRes={toolResponse} tools={clickedTool} structure={structure} snapshot={snapshot} viewMode={currentViewMode} viewType={currentViewType} viewLayers={currentViewLayers}></GenericViewer>;
 
       case 'map':
         return (
@@ -133,23 +135,86 @@ const Index: React.FC<IProps> = () => {
     setSnapshot(snapshotData);
   };
 
-  const toolClicked = (toolName: string) => {
-
-    setClickedTool(toolName);
+  const toolClicked = (toolInstance: ITools) => {
+    let newLayers = currentViewLayers;
+    
+    switch (toolInstance.toolName){
+      case 'viewType':
+        setViewType(toolInstance.toolAction)
+        break;
+      case  'viewMode':
+        setViewMode(toolInstance.toolAction);
+        break;
+      case 'issue':
+        switch(toolInstance.toolAction)
+        {
+          case 'issueView':
+            //todo
+            break;
+          case 'issueCreate':
+          case 'issueShow':
+          case 'issueHide':
+            setClickedTool(toolInstance);
+            break;
+        }
+        
+        break;
+      case 'progress':
+        switch(toolInstance.toolAction)
+        {
+          case 'progressView':
+            //todo
+            break;
+          case 'progressCreate':
+          case 'progressShow':
+          case 'progressHide':
+            setClickedTool(toolInstance);
+            break;
+        }
+        break;
+      case 'task':
+        switch(toolInstance.toolAction)
+        {
+          case 'taskView':
+            //todo
+            break;
+          case 'taskCreate':
+          case 'taskShow':
+          case 'taskHide':
+            setClickedTool(toolInstance);
+            break;
+        }
+        
+        break;
+      case 'addViewLayer':
+        
+        newLayers.push(toolInstance.toolAction);
+        setViewLayers(newLayers);
+        console.log(currentViewLayers);
+        break;
+      case 'removeViewLayer':
+        newLayers.splice(newLayers.indexOf(toolInstance.toolAction),1);
+        setViewLayers(newLayers);
+        console.log(currentViewLayers);
+        break;
+      default:
+        break;
+    }
 
   }
 
-  const toolResponse = (data: string) => {
-    console.log('Data->', data);
+  const toolResponse = (data:string)=>{
+    console.log('Data->',data);
+    
   }
 
   return (
     <React.Fragment>
       <div className="">
-        <Header />
-        <div className="" ref={leftRefContainer}>
-          <div className="flex ">
-            <div className="flex absolute">
+        <Header/>
+        <div className="fixed" ref={leftRefContainer}>
+          <div className="flex">
+            <div className="flex">
               <CollapsableMenu onChangeData={onChangeData} />
             </div>
             <div className="flex w-screen  " id="viewer">
@@ -158,7 +223,7 @@ const Index: React.FC<IProps> = () => {
           </div>
           <div
             ref={leftOverlayRef}
-            className={`h-screen bg-gray-200 w-0 absolute   ${leftNav ? 'left-10' : 'left-10  '
+            className={`h-screen bg-gray-200 w-0 absolute z-10  ${leftNav ? 'left-10' : 'left-10  '
               }   top-0  duration-300 overflow-x-hidden`}
           >
             <LeftOverLay
@@ -236,7 +301,7 @@ const Index: React.FC<IProps> = () => {
             className={`fixed  lg:w-3 2xl:w-1   ${rightNav ? 'visible' : 'hidden'
               }  bg-gray-200 top-40   rounded  lg:right-0  duration-300 overflow-x-hidden`}
           >
-            <RightFloatingMenu toolClicked={toolClicked} ></RightFloatingMenu>
+            <RightFloatingMenu toolClicked={toolClicked} viewMode={currentViewMode}></RightFloatingMenu>
           </div>
         </div>
       </div>
