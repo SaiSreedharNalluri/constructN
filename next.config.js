@@ -11,6 +11,7 @@ const nextConfig = {
       "constructn-attachments.s3.ap-south-1.amazonaws.com",
       "dl.airtable.com",
       "images.unsplash.com",
+      "constructn-projects.s3.ap-south-1.amazonaws.com",
     ],
   },
   redirects: async () => {
