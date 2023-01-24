@@ -1,7 +1,7 @@
-import axios from 'axios';
+import instance from './axiosInstance';
 import authHeader from './auth-header';
 export const createIssue = (projectId: string) => {
-  return axios
+  return instance
     .post(
       `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues`,
       {},
@@ -11,12 +11,11 @@ export const createIssue = (projectId: string) => {
     )
     .then((response) => {})
     .catch((error) => {
-      console.log('error', error);
       throw error;
     });
 };
 export const getIssuesList = async (projectId: string) => {
-  return await axios.get(
+  return await instance.get(
     `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues`,
     {
       headers: authHeader.authHeader(),
