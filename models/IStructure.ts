@@ -1,11 +1,12 @@
-export interface IStructure {
+export interface IStructures {
   success: boolean;
-  result?: IStructureEntity[] | null;
+  result?: IStructure[] | null;
 }
-export interface IStructureEntity {
+export interface IStructure {
   _id: string;
   name: string;
   type: string;
+  isExterior: boolean;
   parent?: null;
   children?: ChildrenEntity[] | null;
 }

@@ -19,10 +19,10 @@ export class ForgeViewerUtils {
     return this.instance;
   }
 
-  updateModels(documentURNs) {
+  updateData(documentURNs) {
     this.documentURNs = documentURNs;
     if (this.isViewerInitialized) {
-      this.loadModel();
+      this.loadData();
     }
   }
 
@@ -30,7 +30,7 @@ export class ForgeViewerUtils {
     this.progressData = progress
   }
 
-  initialize(callback) {
+  initialize() {
     console.log(`Inside Initializer ViewerID: ${this.viewerId}`);
     var options = {
       env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
@@ -78,7 +78,7 @@ export class ForgeViewerUtils {
   onViewerInitialized() {
     console.log(`Viewer Initialized: Loading Model now`);
     this.isViewerInitialized = true;
-    this.loadModel();
+    this.loadData();
     // this.forgeViewer.loadModel("PDFs/A3_from_bim.pdf", this.generateModelOptions());
   }
 
@@ -86,7 +86,7 @@ export class ForgeViewerUtils {
     return this.isViewerInitialized;
   }
 
-  loadModel() {
+  loadData() {
     console.log(`Inside loadModel: ${this.documentURNs}`);
     this.documentURNs.map((urn) => {
       Autodesk.Viewing.Document.load(

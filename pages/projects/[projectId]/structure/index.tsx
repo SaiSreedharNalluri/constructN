@@ -19,13 +19,16 @@ import Head from 'next/head';
 import Script from 'next/script';
 import GenericViewer from '../../../../components/container/GenericViewer';
 import RightFloatingMenu from '../../../../components/container/rightFloatingMenu';
+import { getStructure } from '../../../../services/structure';
+
 interface IProps { }
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
-  const [currentViewType,setViewType]= useState('Design'); //Design/ Reality
+  const [currentViewType,setViewType]= useState(1); //Design - 0/ Reality - 1
 
   const [currentProjectId, setActiveProjectId] = useState('');
-  const [structure, setStructure] = useState<ChildrenEntity>();
+  const [flatStructures, setFlatStructures] = useState<IStructure[]>([]);
+  const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
   const [projectutm, setProjectUtm] = useState('');
   const leftOverlayRef: any = useRef();
@@ -37,7 +40,7 @@ const Index: React.FC<IProps> = () => {
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
   const bottomRefContainer: any = useRef();
-  const [viewerTypeState, setViewerType] = useState('map');
+  const [viewerTypeState, setViewerType] = useState('forge');
   const [rightNav, setRightNav] = useState(false);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [currentDesignType,setDesignType]= useState('');//plan,elevational,xsectional,bim
@@ -49,12 +52,15 @@ const Index: React.FC<IProps> = () => {
         setProjectUtm(response?.data?.result?.utm);
         setActiveProjectId(router.query.projectId as string);
       });
+      getStructure(router.query.projectId as string).then((response) => {
+        setFlatStructures(response.data.result)
+      })
     }
   }, [router.isReady, router.query.projectId]);
 
   const getStructureData = (structure: ChildrenEntity) => {
     getSnapshots(router.query.projectId as string, structure._id);
-    setStructure(structure);
+    setStructure(flatStructures.find(e => e._id === structure._id));
   };
 
   const getSnapshots = (projectId: string, structurId: string) => {
@@ -88,8 +94,12 @@ const Index: React.FC<IProps> = () => {
         return <MapLoading></MapLoading>;
 
       case 'forge':
-        return <GenericViewer toolRes={toolResponse} tools={clickedTool} structure={structure} snapshot={snapshot} viewType={currentViewType} designType={currentDesignType} realityType={currentRealityType}></GenericViewer>;
-
+        return (
+          snapshot &&
+          structure && (
+          <GenericViewer toolRes={toolResponse} tools={clickedTool} structure={structure} snapshot={snapshot} viewType={currentViewType} designType={currentDesignType} realityType={currentRealityType}></GenericViewer>
+            )
+        );
       case 'map':
         return (
           snapshot &&
@@ -160,7 +170,7 @@ const Index: React.FC<IProps> = () => {
           </div>
           <div
             ref={leftOverlayRef}
-            className={`h-96 bg-gray-200 w-0 absolute   ${
+            className={`h-96 bg-gray-200 w-0 absolute z-10  ${
               leftNav ? 'left-10' : 'left-10  '
             }   top-0  duration-300 overflow-x-hidden`}
           >
@@ -172,7 +182,7 @@ const Index: React.FC<IProps> = () => {
                     router.query.projectId as string,
                     structureData._id
                   );
-                  setStructure(structureData);
+                  setStructure(flatStructures.find(e => e._id === structureData._id));
                 }
               }}
             ></LeftOverLay>
