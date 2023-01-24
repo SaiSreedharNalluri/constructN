@@ -30,7 +30,7 @@ const RightFloatingMenu: React.FC <IProps>= ({toolClicked,viewLayers,viewMode,vi
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
-  let toolInstance:ITools;
+  let toolInstance:ITools = {toolName:'',toolAction:''};
   const closeStructurePages = (e: any) => {
     if (!rightOverlayRefs.current.contains(e.target)) {
       setRighttNav(false);
@@ -50,11 +50,14 @@ setIViewMode(viewMode);
     
     setActive(e.currentTarget.id);
     setRighttNav(!rightNav);
-
-   
+    if(e.currentTarget.id==='Reality'){
+    toolInstance.toolName='viewMode';
+    toolInstance.toolAction='Design';
+    }
+    else if(e.currentTarget.id==='Design'){
       toolInstance.toolName='viewMode';
-      toolInstance.toolAction=e.currentTarget.id;
-
+      toolInstance.toolAction='Reality';
+    }
 
     toolClicked(toolInstance);
     

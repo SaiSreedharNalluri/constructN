@@ -43,8 +43,8 @@ const Index: React.FC<IProps> = () => {
   const [rightNav, setRightNav] = useState(false);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [currentViewType,setViewType]= useState('');//plan,elevational,xsectional,bim
-  const [currentViewLayers,setViewLayers] = useState <string[]>(['360Image']); //360Image, 360Video, phoneImage, droneImage
-  const [clickedTool,setClickedTool] = useState('')
+  const [currentViewLayers,setViewLayers] = useState <string[]>([]); //360Image, 360Video, phoneImage, droneImage
+  const [clickedTool,setClickedTool] = useState<ITools>();
   useEffect(() => {
     if (router.isReady) {
       getProjectDetails(router.query.projectId as string).then((response) => {
@@ -137,35 +137,65 @@ const Index: React.FC<IProps> = () => {
 
   const toolClicked = (toolInstance: ITools) => {
     let newLayers = currentViewLayers;
-    setClickedTool(toolInstance.toolName);
+    
     switch (toolInstance.toolName){
       case 'viewType':
-        console.log(toolInstance.toolAction);
         setViewType(toolInstance.toolAction)
         break;
-      case  'Design':
-        setViewMode('Reality');
-        break;
-      case  'Reality':
-        setViewMode('Design');
+      case  'viewMode':
+        setViewMode(toolInstance.toolAction);
         break;
       case 'issue':
-        console.log(toolInstance.toolAction);
+        switch(toolInstance.toolAction)
+        {
+          case 'issueView':
+            //todo
+            break;
+          case 'issueCreate':
+          case 'issueShow':
+          case 'issueHide':
+            setClickedTool(toolInstance);
+            break;
+        }
+        
         break;
       case 'progress':
-        console.log(toolInstance.toolAction);
+        switch(toolInstance.toolAction)
+        {
+          case 'progressView':
+            //todo
+            break;
+          case 'progressCreate':
+          case 'progressShow':
+          case 'progressHide':
+            setClickedTool(toolInstance);
+            break;
+        }
         break;
       case 'task':
-        console.log(toolInstance.toolAction);
+        switch(toolInstance.toolAction)
+        {
+          case 'taskView':
+            //todo
+            break;
+          case 'taskCreate':
+          case 'taskShow':
+          case 'taskHide':
+            setClickedTool(toolInstance);
+            break;
+        }
+        
         break;
       case 'addViewLayer':
         
         newLayers.push(toolInstance.toolAction);
         setViewLayers(newLayers);
+        console.log(currentViewLayers);
         break;
       case 'removeViewLayer':
-        newLayers=newLayers.splice(newLayers.indexOf(toolInstance.toolAction),1);
+        newLayers.splice(newLayers.indexOf(toolInstance.toolAction),1);
         setViewLayers(newLayers);
+        console.log(currentViewLayers);
         break;
       default:
         break;
