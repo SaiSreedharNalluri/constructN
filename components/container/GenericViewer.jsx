@@ -5,7 +5,7 @@ import Header from './header';
 import { ForgeViewerUtils } from '../../utils/ForgeWrapper';
 
 function initViewer(genericViewer, compareViewer, onForgeViewerLoaded) {
-  let forgeUtils = ForgeViewerUtils.getAxiosInstance(genericViewer);
+  let forgeUtils = ForgeViewerUtils.getInstance(genericViewer);
   console.log('isForgeViewer Loaded: ', forgeUtils.isViewerLoaded());
   if (!forgeUtils.isViewerLoaded()) {
     forgeUtils.initialize(onForgeViewerLoaded);
