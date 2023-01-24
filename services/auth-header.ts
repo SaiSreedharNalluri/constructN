@@ -1,5 +1,4 @@
 import { getCookie } from 'cookies-next';
-import { useRouter } from 'next/router';
 
 const authHeader = () => {
   try {
@@ -42,12 +41,6 @@ const getAuthToken = () => {
     } else {
       return { Authorization: '' };
     }
-  } catch (error) {
-    throw error;
-  }
-};
-const isLoggedin = () => {
-  try {
   } catch (error) {
     throw error;
   }

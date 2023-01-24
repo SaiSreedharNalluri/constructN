@@ -71,7 +71,7 @@ const Header: React.FC<IProps> = () => {
             </div>
 
             {loading && (
-              <div className="absolute top-10 right-0 z-10 dark:bg-gray-800 bg-white rounded-lg shadow border">
+              <div className="absolute top-10 right-0 z-10 bg-gray-800 rounded-lg shadow border">
                 <ul className="text-white p-4 ">
                   <li className="font-medium cursor-pointer">
                     <div className="flex items-center justify-center transform transition-colors duration-200">
