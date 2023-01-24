@@ -1,15 +1,120 @@
-import React from 'react';
+import React, { useState } from 'react';
+import * as Yup from 'yup';
+import { Formik, Form, ErrorMessage } from 'formik';
+import showPwdImg from '../../public/icons/show-password.svg';
+import hidePwdImg from '../../public/icons/hide-password.svg';
+import SubmitButtons from '../core/buttons/submitButton';
+import InputPassword from '../core/Input/inputPassword';
+import InputText from '../core/Input/inputText';
+import InputCheckBox from '../core/Input/inputCheckBox';
 import NextImage from '../core/Image';
-const RegisterPage: React.FC = () => {
+import Image from 'next/image';
+import OkButton from '../core/buttons/okButton';
+import { useRouter } from 'next/router';
+interface IProps {
+  loading: boolean;
+  buttonName: string;
+  message: string;
+  handleLogin: (e: { email: string; password: string }) => void;
+}
+const Loginpage: React.FC<IProps> = ({ message, handleLogin }) => {
+  const router = useRouter();
+  const initialValues: {
+    email: string;
+    password: string;
+  } = {
+    email: '',
+    password: '',
+  };
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().required('Please Enter The Email !'),
+    password: Yup.string().required('Please Enter The Password!'),
+  });
+  const [isRevealPwd, setIsRevealPwd] = useState(false);
+  const [isCRevealPwd, setIsCRevealPwd] = useState(false);
+  const [active, setActive] = useState("");
+  const h = (e: any) => {
+    setIsRevealPwd(!isRevealPwd)
+    setActive(e.target.id);
+  }
   return (
-    <React.Fragment>
-      <div className=" w-full   ">
-        <NextImage
-          src="https://constructn-attachments.s3.ap-south-1.amazonaws.com/Login/login02.png"
-          className="h-screen w-screen"
-        />
+    <div className=" w-full   ">
+      <NextImage
+        src="https://constructn-attachments.s3.ap-south-1.amazonaws.com/Login/login02.png"
+        className="h-screen w-screen"
+      />
+
+      <div className=" absolute w-1/3 top-0 bg-opacity-50 px-5 h-full right-0 place-items-center bg-gray-300 ">
+        <div className="grid grid-cols-1 gap-4 border my-20 border-solid place-content-center border-gray-500 rounded-3xl ">
+          <h2 className="text-center text-xl font-bold">Register</h2>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleLogin}
+          >
+            <Form className=" grid grid-cols-1 gap-y-4 px-4">
+              <div>
+                <InputText type='text' placeholderName='First Name' name='Name'></InputText>
+              </div>
+              <div>
+                <InputText type='text' placeholderName='Last Name' name='lastname'></InputText>
+              </div>
+              <div>
+                <InputText type="email" placeholderName="Email" name="email" />
+              </div>
+              <div className="relative">
+                <InputPassword
+                  name="password"
+                  type={isRevealPwd}
+                  placeholderName="Password"
+                />
+                <div className="absolute p-3 inset-y-0 right-0">
+                  <Image
+                    alt=""
+                    title={isRevealPwd ? 'Hide password' : 'Show password'}
+                    src={isRevealPwd ? hidePwdImg : showPwdImg}
+                    onClick={() => setIsRevealPwd((prevState) => !prevState)}
+                  />
+                </div>
+              </div>
+
+              <div className="relative">
+                <InputPassword
+                  name="confirm password"
+                  type={isCRevealPwd}
+                  placeholderName="Confirm Password"
+                />
+                <div className={`${active === "confirm password"} absolute p-3 inset-y-0 right-0`} id='confirm password'>
+                  <Image
+                    alt=""
+                    title={isCRevealPwd ? 'Hide password' : 'Show password'}
+                    src={isCRevealPwd ? hidePwdImg : showPwdImg}
+                    onClick={() => setIsCRevealPwd((prevState) => !prevState)}
+                  />
+                </div>
+              </div>
+              <div className="py-5 grid grid-cols-1 gap-2">
+                <OkButton
+                  buttonName="Register"
+                  disabled={false}
+                  clickTheOkButton={() => {
+                    router.push('/register');
+                  }}
+                />
+              </div>
+              {message && (
+                <div className="form-group">
+                  <div className="alert alert-danger" role="alert">
+                    {message}
+                  </div>
+                </div>
+              )}
+            </Form>
+          </Formik>
+        </div>
       </div>
-    </React.Fragment>
+    </div>
   );
 };
-export default RegisterPage;
+
+export default Loginpage;

@@ -74,7 +74,7 @@ const RightOverLay: React.FC = () => {
           ></FontAwesomeIcon>
           <div className={`absolute  ${rightNav ? 'right-9' : 'hidden'
             }`}>
-            {active === "c" && <Issue></Issue>}
+            {active === "c" && <Tasks></Tasks>}
           </div>
 
         </div>
@@ -86,14 +86,17 @@ const RightOverLay: React.FC = () => {
               }`}
             onClick={rightClickHandler}
           ></FontAwesomeIcon>
-          {active === 'd' && (
-            <div
-              className={`absolute   ${rightNav ? 'right-9' : 'hidden'
-                }`}
-            >
-              <Tasks></Tasks>
-            </div>
-          )}
+
+          <div
+            className={`absolute   ${rightNav ? 'right-9' : 'hidden'
+              }`}
+          >
+            {
+              active === "d" && <Issue></Issue>
+            }
+
+          </div>
+
         </div>
         <div className="  cursor-pointer">
           <FontAwesomeIcon
