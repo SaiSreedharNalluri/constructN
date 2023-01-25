@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
-import { ChildrenEntity } from '../../../../models/IStructure';
+import { ChildrenEntity, IStructure } from '../../../../models/IStructure';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 import { getSnapshotsList } from '../../../../services/snapshot';
 import { getProjectDetails } from '../../../../services/project';
@@ -17,13 +17,16 @@ import authHeader from '../../../../services/auth-header';
 import GenericViewer from '../../../../components/container/GenericViewer';
 import RightFloatingMenu from '../../../../components/container/rightFloatingMenu/rightFloatingMenu';
 import { ITools } from '../../../../models/ITools';
-interface IProps {}
+import { getStructureList } from '../../../../services/structure';
+
+interface IProps { }
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const [currentViewMode, setViewMode] = useState('Design'); //Design/ Reality
 
   const [currentProjectId, setActiveProjectId] = useState('');
-  const [structure, setStructure] = useState<ChildrenEntity>();
+  const [structuresList, setStructuresList] = useState<IStructure[]>([]);
+  const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
   const [projectutm, setProjectUtm] = useState('');
   const leftOverlayRef: any = useRef();
@@ -47,12 +50,19 @@ const Index: React.FC<IProps> = () => {
         setProjectUtm(response?.data?.result?.utm);
         setActiveProjectId(router.query.projectId as string);
       });
+      getStructureList(router.query.projectId as string).then((response) => {
+        setStructuresList(response.data.result)
+      })
     }
   }, [router.isReady, router.query.projectId]);
 
   const getStructureData = (structure: ChildrenEntity) => {
-    getSnapshots(router.query.projectId as string, structure._id);
-    setStructure(structure);
+    let temp = structuresList.find((e) =>{ if (e._id === structure._id) {
+      return e;
+    }})
+    console.log("Selected structure: ", temp?.name);
+    setStructure(temp);
+    // getSnapshots(router.query.projectId as string, structure._id);
   };
 
   const getSnapshots = (projectId: string, structurId: string) => {
@@ -87,17 +97,10 @@ const Index: React.FC<IProps> = () => {
 
       case 'forge':
         return (
-          <GenericViewer
-            toolRes={toolResponse}
-            tools={clickedTool}
-            structure={structure}
-            snapshot={snapshot}
-            viewMode={currentViewMode}
-            viewType={currentViewType}
-            viewLayers={currentViewLayers}
-          ></GenericViewer>
+          structure && (
+          <GenericViewer toolRes={toolResponse} tools={clickedTool} structure={structure} snapshot={snapshot} viewMode={currentViewMode} viewType={currentViewType} viewLayers={currentViewLayers}></GenericViewer>
+            )
         );
-
       case 'map':
         return (
           snapshot &&
@@ -235,7 +238,7 @@ const Index: React.FC<IProps> = () => {
                     router.query.projectId as string,
                     structureData._id
                   );
-                  setStructure(structureData);
+                  setStructure(structuresList.find(e => e._id === structureData._id));
                 }
               }}
             ></LeftOverLay>

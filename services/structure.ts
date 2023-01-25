@@ -1,10 +1,10 @@
 import instance from './axiosInstance';
 import authHeader from './auth-header';
-export const getStructure = async (projectId: string, context: any) => {
+export const getStructureList = async (projectId: string) => {
   return await instance.get(
     `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/structures`,
     {
-      headers: authHeader.authCookieHeader(context),
+      headers: authHeader.authHeader(),
     }
   );
 };

@@ -1,3 +1,5 @@
+import { IReality } from "./IReality";
+
 export interface ISnapshot {
   _id: string;
   date: string;
@@ -9,6 +11,7 @@ export interface ISnapshot {
   structure: string;
   status: string;
   visualization: [];
+  reality?: [IReality];
 }
 
 export interface ISnapShotDeatils {
