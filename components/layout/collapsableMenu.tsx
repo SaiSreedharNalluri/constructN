@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faAreaChart,
   faCalendarDays,
+  faCog,
   faGreaterThan,
   faMap,
   faTachometerAltAverage,
-  faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
 
@@ -15,7 +14,7 @@ interface IProps {
 }
 const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
   const router = useRouter();
-  const [active, setActive] = useState(router.pathname.split("/").pop());
+  const [active, setActive] = useState(router.pathname.split('/').pop());
   const leftClickHandler = (e: any) => {
     switch (e.currentTarget.id) {
       case 'dashboard':
@@ -27,17 +26,14 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       case 'issues':
         router.push(`/projects/${router.query.projectId as string}/issue`);
         break;
-      case 'reports':
-        router.push(`/projects/${router.query.projectId as string}/report`);
-        break;
       case 'schedule':
         router.push(`/projects/${router.query.projectId as string}/schedule`);
         break;
       case 'lineChart':
         router.push(`/projects/${router.query.projectId as string}/lineChart`);
         break;
-      case 'users':
-        router.push(`/projects/${router.query.projectId as string}/users`);
+      case 'settings':
+        router.push(`/projects/${router.query.projectId as string}/settings`);
         break;
       case 'tasks':
         router.push(`/projects/${router.query.projectId as string}/tasks`);
@@ -45,15 +41,16 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       default:
         router.push(`/projects/${router.query.projectId as string}/structure`);
     }
-    setActive(router.pathname.split("/").pop());
+    setActive(router.pathname.split('/').pop());
   };
   return (
     <div className="w-11 h-screen text-center bg-gray-200">
       <div>
         <FontAwesomeIcon
           id="dashboard"
-          className={` w-full text-xl  py-2 cursor-pointer ${active === 'dashboard' ? 'selectedClass' : 'unSelectedClass'
-            }`}
+          className={` w-full text-xl  py-2 cursor-pointer ${
+            active === 'dashboard' ? 'selectedClass' : 'unSelectedClass'
+          }`}
           onClick={leftClickHandler}
           icon={faTachometerAltAverage}
         ></FontAwesomeIcon>
@@ -61,8 +58,9 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       <div>
         <FontAwesomeIcon
           id="views"
-          className={` w-full text-xl py-2 cursor-pointer ${active === 'structure' ? 'selectedClass' : 'unSelectedClass'
-            }`}
+          className={` w-full text-xl py-2 cursor-pointer ${
+            active === 'structure' ? 'selectedClass' : 'unSelectedClass'
+          }`}
           onClick={(e: any) => {
             leftClickHandler(e);
             onChangeData();
@@ -82,18 +80,10 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
 
       <div>
         <FontAwesomeIcon
-          id="reports"
-          className={` cursor-pointer text-xl w-full py-2  ${active === 'report' ? 'selectedClass' : 'unSelectedClass'
-            }`}
-          onClick={leftClickHandler}
-          icon={faAreaChart}
-        ></FontAwesomeIcon>
-      </div>
-      <div>
-        <FontAwesomeIcon
           id="schedule"
-          className={` cursor-pointer text-xl w-full py-2  ${active === 'schedule' ? 'selectedClass' : 'unSelectedClass'
-            }`}
+          className={` cursor-pointer text-xl w-full py-2  ${
+            active === 'schedule' ? 'selectedClass' : 'unSelectedClass'
+          }`}
           icon={faCalendarDays}
           onClick={leftClickHandler}
         ></FontAwesomeIcon>
@@ -109,18 +99,20 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       </div> */}
       <div>
         <FontAwesomeIcon
-          id="users"
-          className={`cursor-pointer text-xl w-full py-2  ${active === 'users' ? 'selectedClass' : 'unSelectedClass'
-            } `}
-          icon={faUsers}
+          id="settings"
+          className={`cursor-pointer text-xl w-full py-2  ${
+            active === 'settings' ? 'selectedClass' : 'unSelectedClass'
+          } `}
+          icon={faCog}
           onClick={leftClickHandler}
         ></FontAwesomeIcon>
       </div>
       <div className="mt-2 border-t border-solid border-gray-400">
         <FontAwesomeIcon
           id="expand"
-          className={` cursor-pointer text-xl w-full py-2  ${active === 'expand' ? 'selectedClass' : 'unSelectedClass'
-            } `}
+          className={` cursor-pointer text-xl w-full py-2  ${
+            active === 'expand' ? 'selectedClass' : 'unSelectedClass'
+          } `}
           icon={faGreaterThan}
           onClick={leftClickHandler}
         ></FontAwesomeIcon>

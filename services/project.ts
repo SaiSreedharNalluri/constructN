@@ -41,3 +41,96 @@ export const getProjectUsers = async (projectId: string) => {
       throw error;
     });
 };
+export const updateProjectInfo = async (
+  projectInfo: Object,
+  projectId: string
+) => {
+  return await instance
+    .put(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}`, projectInfo, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error', error);
+      throw error;
+    });
+};
+export const addProjectUser = async (
+  newProjectUser: Object,
+  projectId: string
+) => {
+  return await instance
+    .put(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/assign-user`,
+      newProjectUser,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error', error);
+      throw error;
+    });
+};
+export const removeProjectUser = async (
+  ProjectUser: Object,
+  projectId: string
+) => {
+  return await instance
+    .put(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/deassign-user`,
+      ProjectUser,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error', error);
+      throw error;
+    });
+};
+export const updateProjectUserRole = async (
+  ProjectUser: Object,
+  projectId: string
+) => {
+  return await instance
+    .put(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/change-user-role`,
+      ProjectUser,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error', error);
+      throw error;
+    });
+};
+export const updateProjectCover = async (file: string, projectId: string) => {
+  return await instance
+    .put(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/cover-photo`,
+      file,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error', error);
+      throw error;
+    });
+};

@@ -13,12 +13,6 @@ interface IProps {
 }
 let ProjectsList: React.FC<IProps> = ({ projects }) => {
   const router = useRouter();
-  const goToProject = (projectId: string) => {
-    router.push(`projects/${projectId}/structure`);
-  };
-  const editProject = (projectId: string) => {
-    router.push(`projects/${projectId}/editProject`);
-  };
   return (
     <div className="h-full grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
       {projects &&
@@ -26,7 +20,11 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
           return (
             <div key={pData._id}>
               <div className="m-auto  border p-2 border-gray-900 border-solid h-11/12 w-11/12 mt-6 rounded-2xl  text-center  bg-white">
-                <div onClick={() => goToProject(pData._id)}>
+                <div
+                  onClick={() => {
+                    router.push(`projects/${pData._id}/structure`);
+                  }}
+                >
                   <NextImage
                     className="h-7 mt-8 cursor-pointer w-1/2 m-auto hover:border border-gray-500 border-solid"
                     src={pData.coverPhoto}
@@ -51,7 +49,7 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
                       icon={faPen}
                       className="text-2xl"
                       onClick={() => {
-                        editProject(pData._id);
+                        router.push(`projects/${pData._id}/settings`);
                       }}
                     ></FontAwesomeIcon>
                     <FontAwesomeIcon
