@@ -6,39 +6,50 @@ import hidePwdImg from '../../public/icons/hide-password.svg';
 import SubmitButtons from '../core/buttons/submitButton';
 import InputPassword from '../core/Input/inputPassword';
 import InputText from '../core/Input/inputText';
-import InputCheckBox from '../core/Input/inputCheckBox';
 import NextImage from '../core/Image';
 import Image from 'next/image';
-import OkButton from '../core/buttons/okButton';
 import { useRouter } from 'next/router';
 interface IProps {
   loading: boolean;
-  buttonName: string;
   message: string;
-  handleLogin: (e: { email: string; password: string }) => void;
+  handleRegister: (e: object) => void;
 }
-const Loginpage: React.FC<IProps> = ({ message, handleLogin }) => {
+const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
   const router = useRouter();
   const initialValues: {
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
+    confirmPassword: string;
   } = {
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
+    confirmPassword: '',
   };
   const validationSchema = Yup.object().shape({
-    email: Yup.string().required('Please Enter The Email !'),
-    password: Yup.string().required('Please Enter The Password!'),
+    firstName: Yup.string().required('First name is required'),
+    lastName: Yup.string().required('Last name is required'),
+    email: Yup.string().email('Invalid email').required('Email is required'),
+    password: Yup.string()
+      .required('Password is required')
+      .min(5, 'Minimum 8 characters required'),
+    confirmPassword: Yup.string()
+      .required('Confirm password is required')
+      .oneOf([Yup.ref('password'), null], 'Passwords must match'),
   });
   const [isRevealPwd, setIsRevealPwd] = useState(false);
   const [isCRevealPwd, setIsCRevealPwd] = useState(false);
-  const [active, setActive] = useState("");
+  const [active, setActive] = useState('');
   const h = (e: any) => {
-    setIsRevealPwd(!isRevealPwd)
+    setIsRevealPwd(!isRevealPwd);
     setActive(e.target.id);
-  }
+  };
+
   return (
-    <div className=" w-full   ">
+    <div className=" w-full  ">
       <NextImage
         src="https://constructn-attachments.s3.ap-south-1.amazonaws.com/Login/login02.png"
         className="h-screen w-screen"
@@ -50,17 +61,40 @@ const Loginpage: React.FC<IProps> = ({ message, handleLogin }) => {
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={handleLogin}
+            onSubmit={handleRegister}
           >
-            <Form className=" grid grid-cols-1 gap-y-4 px-4">
-              <div>
-                <InputText type='text' placeholderName='First Name' name='Name'></InputText>
+            <Form className=" grid grid-cols-1 gap-y-2 px-4">
+              <div >
+                <InputText
+                  type="text"
+                  placeholderName="First Name"
+                  name="firstName"
+                />
+                <ErrorMessage
+                  name="firstName"
+                  component="div"
+                  className="alert alert-danger"
+                />
               </div>
               <div>
-                <InputText type='text' placeholderName='Last Name' name='lastname'></InputText>
+                <InputText
+                  type="text"
+                  placeholderName="Last Name"
+                  name="lastName"
+                />
+                <ErrorMessage
+                  name="lastName"
+                  component="div"
+                  className="alert alert-danger"
+                />
               </div>
               <div>
                 <InputText type="email" placeholderName="Email" name="email" />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="alert alert-danger"
+                />
               </div>
               <div className="relative">
                 <InputPassword
@@ -76,15 +110,24 @@ const Loginpage: React.FC<IProps> = ({ message, handleLogin }) => {
                     onClick={() => setIsRevealPwd((prevState) => !prevState)}
                   />
                 </div>
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="alert alert-danger"
+                />
               </div>
 
               <div className="relative">
                 <InputPassword
-                  name="confirm password"
+                  name="confirmPassword"
                   type={isCRevealPwd}
                   placeholderName="Confirm Password"
                 />
-                <div className={`${active === "confirm password"} absolute p-3 inset-y-0 right-0`} id='confirm password'>
+                <div
+                  className={`${active === 'confirm password'
+                    } absolute p-3 inset-y-0 right-0`}
+                  id="confirm password"
+                >
                   <Image
                     alt=""
                     title={isCRevealPwd ? 'Hide password' : 'Show password'}
@@ -92,15 +135,14 @@ const Loginpage: React.FC<IProps> = ({ message, handleLogin }) => {
                     onClick={() => setIsCRevealPwd((prevState) => !prevState)}
                   />
                 </div>
-              </div>
-              <div className="py-5 grid grid-cols-1 gap-2">
-                <OkButton
-                  buttonName="Register"
-                  disabled={false}
-                  clickTheOkButton={() => {
-                    router.push('/register');
-                  }}
+                <ErrorMessage
+                  name="confirmPassword"
+                  component="div"
+                  className="alert alert-danger"
                 />
+              </div>
+              <div className="py-2 grid grid-cols-1 gap-2">
+                <SubmitButtons buttonName="Register" disabled={loading} />
               </div>
               {message && (
                 <div className="form-group">
