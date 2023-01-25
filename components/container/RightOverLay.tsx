@@ -11,6 +11,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import HotSpots from './hotSpots';
 import Layers from './layers';
+import IssueMenu from './issueMenu';
 const RightOverLay: React.FC = () => {
   const [rightNav, setRighttNav] = useState(false);
   const rightOverlayRef: any = useRef();
@@ -92,7 +93,7 @@ const RightOverLay: React.FC = () => {
               }`}
           >
             {
-              active === "d" && <Issue></Issue>
+              active === "d" && <IssueMenu></IssueMenu>
             }
 
           </div>
