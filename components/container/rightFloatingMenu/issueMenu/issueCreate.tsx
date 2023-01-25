@@ -1,16 +1,22 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
-import DatePicker from './datePicker'
+import React, { useEffect, useState } from 'react'
+import DatePicker from '../../datePicker'
 interface IProps {
-    closeSearch: () => void;
-    overLayPanelRef: any;
+    closeOverlay: () => void;
+
+    visibility:boolean;
 }
-const IssueCreate: React.FC<IProps> = ({ overLayPanelRef, closeSearch }) => {
+const IssueCreate: React.FC<IProps> = ({closeOverlay ,visibility}) => {
+
+    const closeIssueCreate=()=>{
+       
+        closeOverlay();
+    }
     return (
         <div
-            ref={overLayPanelRef}
-            className={`fixed w-0 top-10     bg-gray-200 right-0 border border-solid border-black z-10 overflow-x-hidden`}
+            
+            className={`fixed top-10 ${visibility?'w-/14 h-screen':'w-0'}  bg-gray-200 right-0 border border-solid border-black z-10 overflow-x-hidden`}
         >
             <div >
                 <div className="flex  h-8 justify-between border-b border-black border-solid">
@@ -20,7 +26,7 @@ const IssueCreate: React.FC<IProps> = ({ overLayPanelRef, closeSearch }) => {
                     <div>
                         <FontAwesomeIcon
                             icon={faTimes}
-                            onClick={closeSearch}
+                            onClick={closeIssueCreate}
                             className="hover:white cursor-pointer mr-2 "
                         ></FontAwesomeIcon>
                     </div>
@@ -28,12 +34,12 @@ const IssueCreate: React.FC<IProps> = ({ overLayPanelRef, closeSearch }) => {
                 <div className="mt-2 ml-6 ">
                     <h1 className="text-gray-500">Select the Type of Issue</h1>
                     <select className="border border-solid border-gray-600  rounded w-10/12 p-1 ">
-                        <option></option>
-                        <option className="border-b">Saftey</option>
-                        <option>Building Code</option>
-                        <option>Clash</option>
-                        <option>Comissioning</option>
-                        <option>Design</option>
+                        
+                        <option value={'safety'}>Saftey</option>
+                        <option value={'buildingCode'}>Building Code</option>
+                        <option value={'clash'}>Clash</option>
+                        <option value={'comissioning'}>Comissioning</option>
+                        <option value={'design'}>Design</option>
                     </select>
                 </div>
                 <div className="ml-6 mt-1">
@@ -49,9 +55,9 @@ const IssueCreate: React.FC<IProps> = ({ overLayPanelRef, closeSearch }) => {
                 <div className="mt-1 ml-6 ">
                     <h1 className="text-gray-500">Select the Type of Issue</h1>
                     <select className="border border-solid border-gray-600 rounded w-10/12 p-1 ">
-                        <option selected>Low</option>
-                        <option>High</option>
-                        <option>Medium</option>
+                        <option value={"Low"}>Low</option>
+                        <option value={"High"}>High</option>
+                        <option value={'Medium'}>Medium</option>
                     </select>
                 </div>
                 <div className="ml-6 mt-1">

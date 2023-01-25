@@ -3,14 +3,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AnyARecord } from 'dns'
 import React from 'react'
 interface IProps {
-    closeList: () => void;
-    listOverLayRef: any;
+    closeOverlay: () => void;
+
+    visibility:boolean;
 }
-const IssueList: React.FC<IProps> = ({ listOverLayRef, closeList }) => {
+const IssueList: React.FC<IProps> = ({ visibility, closeOverlay }) => {
+
+    const closeIssueView=()=>{
+       
+        closeOverlay();
+    }
     return (
         <div
-            ref={listOverLayRef}
-            className={`fixed w-0 top-10     bg-gray-200 right-0 z-10 overflow-x-hidden`}
+            
+            className={`fixed ${visibility?'w-/14 h-screen':'w-0'}  top-10     bg-gray-200 right-0 z-10 overflow-x-hidden`}
         >
 
             <div className='h-93 overflow-y-auto '>
@@ -21,7 +27,7 @@ const IssueList: React.FC<IProps> = ({ listOverLayRef, closeList }) => {
                     <div>
                         <FontAwesomeIcon
                             icon={faTimes}
-                            onClick={closeList}
+                            onClick={closeIssueView}
                             className=" mr-2  rounded-full border border-black"
                         ></FontAwesomeIcon>
                     </div>
