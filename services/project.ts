@@ -28,3 +28,16 @@ export const getProjectDetails = async (projectId: string) => {
     throw error;
   }
 };
+export const getProjectUsers = async (projectId: string) => {
+  return await instance
+    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/users`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error', error);
+      throw error;
+    });
+};
