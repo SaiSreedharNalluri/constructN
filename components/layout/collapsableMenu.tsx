@@ -32,8 +32,8 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       case 'lineChart':
         router.push(`/projects/${router.query.projectId as string}/lineChart`);
         break;
-      case 'users':
-        router.push(`/projects/${router.query.projectId as string}/users`);
+      case 'settings':
+        router.push(`/projects/${router.query.projectId as string}/settings`);
         break;
       case 'tasks':
         router.push(`/projects/${router.query.projectId as string}/tasks`);
@@ -99,9 +99,9 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
       </div> */}
       <div>
         <FontAwesomeIcon
-          id="users"
+          id="settings"
           className={`cursor-pointer text-xl w-full py-2  ${
-            active === 'users' ? 'selectedClass' : 'unSelectedClass'
+            active === 'settings' ? 'selectedClass' : 'unSelectedClass'
           } `}
           icon={faCog}
           onClick={leftClickHandler}

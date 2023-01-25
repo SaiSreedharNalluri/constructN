@@ -49,7 +49,7 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
                       icon={faPen}
                       className="text-2xl"
                       onClick={() => {
-                        router.push(`projects/${pData._id}/users`);
+                        router.push(`projects/${pData._id}/settings`);
                       }}
                     ></FontAwesomeIcon>
                     <FontAwesomeIcon
