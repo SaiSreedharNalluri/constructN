@@ -23,3 +23,20 @@ export interface Address {
   state: string;
   country: string;
 }
+
+export interface IProjectUsers {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  contact: Contact;
+  dob: string;
+  createdAt: string;
+  updatedAt: string;
+  fullName: string;
+  age: number;
+}
+export interface Contact {
+  code: string;
+  number: number;
+}
