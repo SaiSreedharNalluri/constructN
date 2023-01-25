@@ -1,7 +1,7 @@
-import axios from 'axios';
+import instance from './axiosInstance';
 import authHeader from './auth-header';
 export const getStructure = async (projectId: string) => {
-  return await axios.get(
+  return await instance.get(
     `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/structures`,
     {
       headers: authHeader.authHeader(),
@@ -9,7 +9,7 @@ export const getStructure = async (projectId: string) => {
   );
 };
 export const getStructureHierarchy = async (projectId: string) => {
-  return await axios.get(
+  return await instance.get(
     `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/structures/hierarchy`,
     {
       headers: authHeader.authHeader(),

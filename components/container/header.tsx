@@ -10,15 +10,26 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCookie, removeCookies } from 'cookies-next';
 import DesignRealitySwitch from './designRealitySwitch';
-interface IProps { }
+interface IProps {
+  // showDesignRealitySwitch?:boolean;
+  // isDesignView?:boolean;
+ }
 const Header: React.FC<IProps> = () => {
+  // if (showDesignRealitySwitch===undefined)
+  // {
+  //   showDesignRealitySwitch=false
+  // }
+  // if (isDesignView===undefined)
+  // {
+  //   showDesignRealitySwitch=false
+  // }
   const router = useRouter();
   let [name, setName] = useState<string>('');
   useEffect(() => {
     const userObj: any = getCookie('user');
     let user = null;
     if (userObj) user = JSON.parse(userObj);
-    if (user.fullName) {
+    if (user?.fullName) {
       setName(user.fullName);
     }
   }, [router.query.projectId]);
@@ -30,11 +41,15 @@ const Header: React.FC<IProps> = () => {
   const goToProjectsList = () => {
     router.push('/projects');
   };
+//   const toggleDesignType = ()=>{
+//  isDesignView=!isDesignView;
+//  console.log(isDesignView);
+//   }
   return (
     <React.Fragment>
       <header className="border-b border-solid border-gray-400">
         <div className="flex justify-between">
-          <div className='ml-2 mt-2 mb-2 '>
+          <div className="ml-2 mt-2 mb-2 ">
             <img
               onClick={goToProjectsList}
               className=" cursor-pointer w-full h-6"
@@ -43,9 +58,9 @@ const Header: React.FC<IProps> = () => {
             ></img>
           </div>
           <div className='flex '>
-            <div className='mt-2 mr-2 mb-2'>
-              <DesignRealitySwitch></DesignRealitySwitch>
-            </div>
+            {/* <div className={`mt-2 mr-2 mb-2 ${showDesignRealitySwitch?'visible':'hidden'}`}>
+              <DesignRealitySwitch toggleDesignType={toggleDesignType} designState={isDesignView?true:false}></DesignRealitySwitch>
+            </div> */}
             <div className='mt-2 mr-2 mb-2 w-6 h-6'>
               <FontAwesomeIcon icon={faBell} />
             </div>
@@ -70,9 +85,8 @@ const Header: React.FC<IProps> = () => {
               </div>
             </div>
 
-
             {loading && (
-              <div className="absolute top-10 right-0 z-10 dark:bg-gray-800 bg-white rounded-lg shadow border">
+              <div className="absolute top-10 right-0 z-10 bg-gray-800 rounded-lg shadow border">
                 <ul className="text-white p-4 ">
                   <li className="font-medium cursor-pointer">
                     <div className="flex items-center justify-center transform transition-colors duration-200">

@@ -93,6 +93,7 @@ export class ForgeViewerUtils {
         urn.urn,
         async function (viewerDocument) {
           var defaultModel = viewerDocument.getRoot().getDefaultGeometry();
+          console.log("Is model svf2: ", defaultModel.isSVF2())
           this.model = await this.forgeViewer.loadDocumentNode(
             viewerDocument,
             defaultModel,

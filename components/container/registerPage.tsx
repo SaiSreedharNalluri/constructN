@@ -17,7 +17,7 @@ interface IProps {
   message: string;
   handleLogin: (e: { email: string; password: string }) => void;
 }
-const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
+const Loginpage: React.FC<IProps> = ({ message, handleLogin }) => {
   const router = useRouter();
   const initialValues: {
     email: string;
@@ -31,6 +31,12 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
     password: Yup.string().required('Please Enter The Password!'),
   });
   const [isRevealPwd, setIsRevealPwd] = useState(false);
+  const [isCRevealPwd, setIsCRevealPwd] = useState(false);
+  const [active, setActive] = useState("");
+  const h = (e: any) => {
+    setIsRevealPwd(!isRevealPwd)
+    setActive(e.target.id);
+  }
   return (
     <div className=" w-full   ">
       <NextImage
@@ -39,8 +45,8 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
       />
 
       <div className=" absolute w-1/3 top-0 bg-opacity-50 px-5 h-full right-0 place-items-center bg-gray-300 ">
-        <div className="grid grid-cols-1 gap-4 border my-48 border-solid place-content-center border-gray-500 rounded-3xl ">
-          <h2 className="text-center text-xl">User Login</h2>
+        <div className="grid grid-cols-1 gap-4 border my-20 border-solid place-content-center border-gray-500 rounded-3xl ">
+          <h2 className="text-center text-xl font-bold">Register</h2>
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -48,14 +54,19 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
           >
             <Form className=" grid grid-cols-1 gap-y-4 px-4">
               <div>
+                <InputText type='text' placeholderName='First Name' name='Name'></InputText>
+              </div>
+              <div>
+                <InputText type='text' placeholderName='Last Name' name='lastname'></InputText>
+              </div>
+              <div>
                 <InputText type="email" placeholderName="Email" name="email" />
-                <ErrorMessage name="email" component="div" className="" />
               </div>
               <div className="relative">
                 <InputPassword
                   name="password"
                   type={isRevealPwd}
-                  placeholderName="password"
+                  placeholderName="Password"
                 />
                 <div className="absolute p-3 inset-y-0 right-0">
                   <Image
@@ -65,18 +76,24 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                     onClick={() => setIsRevealPwd((prevState) => !prevState)}
                   />
                 </div>
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="alert alert-danger"
-                />
               </div>
 
-              <div className=" ">
-                <InputCheckBox checkBoxName="Remember me"></InputCheckBox>
+              <div className="relative">
+                <InputPassword
+                  name="confirm password"
+                  type={isCRevealPwd}
+                  placeholderName="Confirm Password"
+                />
+                <div className={`${active === "confirm password"} absolute p-3 inset-y-0 right-0`} id='confirm password'>
+                  <Image
+                    alt=""
+                    title={isCRevealPwd ? 'Hide password' : 'Show password'}
+                    src={isCRevealPwd ? hidePwdImg : showPwdImg}
+                    onClick={() => setIsCRevealPwd((prevState) => !prevState)}
+                  />
+                </div>
               </div>
               <div className="py-5 grid grid-cols-1 gap-2">
-                <SubmitButtons buttonName="Log In" disabled={loading} />
                 <OkButton
                   buttonName="Register"
                   disabled={false}

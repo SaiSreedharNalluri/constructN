@@ -1,24 +1,30 @@
-import axios from "axios";
-import authHeader from "./auth-header";
+import instance from './axiosInstance';
+import authHeader from './auth-header';
 export const getProjects = async (context: any) => {
   try {
-    return await axios.get(`${process.env.NEXT_PUBLIC_HOST}/projects`, {
+    return await instance.get(`${process.env.NEXT_PUBLIC_HOST}/projects`, {
       headers: authHeader.authCookieHeader(context),
     });
-  } catch (error) {
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      context.res.writeHead(302, {
+        Location: '/login',
+      });
+      context.res.end();
+    }
     throw error;
   }
 };
 export const getProjectDetails = async (projectId: string) => {
   try {
-    return await axios.get(
+    return await instance.get(
       `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}`,
       {
         headers: authHeader.authHeader(),
       }
     );
   } catch (error) {
-    console.log("error", error);
+    console.log('error', error);
     throw error;
   }
 };

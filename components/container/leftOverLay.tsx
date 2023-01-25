@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ChildrenEntity, IStructure } from '../../models/IStructure';
+import { ChildrenEntity, IStructure, IStructures } from '../../models/IStructure';
 import SearchInput from '../container/searchInput';
 import Treelist from './treeList';
 import { useRouter } from 'next/router';
