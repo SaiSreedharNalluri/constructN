@@ -49,7 +49,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
   };
 
   return (
-    <div className=" w-full   ">
+    <div className=" w-full  ">
       <NextImage
         src="https://constructn-attachments.s3.ap-south-1.amazonaws.com/Login/login02.png"
         className="h-screen w-screen"
@@ -63,8 +63,8 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
             validationSchema={validationSchema}
             onSubmit={handleRegister}
           >
-            <Form className=" grid grid-cols-1 gap-y-4 px-4">
-              <div>
+            <Form className=" grid grid-cols-1 gap-y-2 px-4">
+              <div >
                 <InputText
                   type="text"
                   placeholderName="First Name"
@@ -124,9 +124,8 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                   placeholderName="Confirm Password"
                 />
                 <div
-                  className={`${
-                    active === 'confirm password'
-                  } absolute p-3 inset-y-0 right-0`}
+                  className={`${active === 'confirm password'
+                    } absolute p-3 inset-y-0 right-0`}
                   id="confirm password"
                 >
                   <Image
@@ -142,7 +141,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                   className="alert alert-danger"
                 />
               </div>
-              <div className="py-5 grid grid-cols-1 gap-2">
+              <div className="py-2 grid grid-cols-1 gap-2">
                 <SubmitButtons buttonName="Register" disabled={loading} />
               </div>
               {message && (
