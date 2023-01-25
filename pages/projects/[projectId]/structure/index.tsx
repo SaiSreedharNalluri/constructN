@@ -11,19 +11,18 @@ import DatePicker from '../../../../components/container/datePicker';
 import Pagination from '../../../../components/container/pagination';
 import { faGreaterThan } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import RightOverLay from '../../../../components/container/RightOverLay';
 import LeftOverLay from '../../../../components/container/leftOverLay';
 import MapLoading from '../../../../components/container/mapLoading';
 import authHeader from '../../../../services/auth-header';
 import GenericViewer from '../../../../components/container/GenericViewer';
-import RightFloatingMenu from '../../../../components/container/rightFloatingMenu';
+import RightFloatingMenu from '../../../../components/container/rightFloatingMenu/rightFloatingMenu';
 import { ITools } from '../../../../models/ITools';
 import { getStructureList } from '../../../../services/structure';
 
 interface IProps { }
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
-  const [currentViewMode,setViewMode]= useState('Design'); //Design/ Reality
+  const [currentViewMode, setViewMode] = useState('Design'); //Design/ Reality
 
   const [currentProjectId, setActiveProjectId] = useState('');
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
@@ -42,9 +41,9 @@ const Index: React.FC<IProps> = () => {
   const [viewerTypeState, setViewerType] = useState('forge');
   const [rightNav, setRightNav] = useState(false);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
-  const [currentViewType,setViewType]= useState('');//plan,elevational,xsectional,bim
-  const [currentViewLayers,setViewLayers] = useState <string[]>([]); //360Image, 360Video, phoneImage, droneImage
-  const [clickedTool,setClickedTool] = useState<ITools>();
+  const [currentViewType, setViewType] = useState(''); //plan,elevational,xsectional,bim
+  const [currentViewLayers, setViewLayers] = useState<string[]>([]); //360Image, 360Video, phoneImage, droneImage
+  const [clickedTool, setClickedTool] = useState<ITools>();
   useEffect(() => {
     if (router.isReady) {
       getProjectDetails(router.query.projectId as string).then((response) => {
@@ -109,11 +108,11 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
-                  }&snapshot1=${snapshot?._id
-                  }&zone_utm=${projectutm}&project=${currentProjectId as string
-                  }&token=${authHeader.getAuthToken()}`}
-
+                src={`https://dev.internal.constructn.ai/2d?structure=${
+                  structure?._id
+                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
+                  currentProjectId as string
+                }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -147,17 +146,16 @@ const Index: React.FC<IProps> = () => {
 
   const toolClicked = (toolInstance: ITools) => {
     let newLayers = currentViewLayers;
-    
-    switch (toolInstance.toolName){
+
+    switch (toolInstance.toolName) {
       case 'viewType':
-        setViewType(toolInstance.toolAction)
+        setViewType(toolInstance.toolAction);
         break;
-      case  'viewMode':
+      case 'viewMode':
         setViewMode(toolInstance.toolAction);
         break;
       case 'issue':
-        switch(toolInstance.toolAction)
-        {
+        switch (toolInstance.toolAction) {
           case 'issueView':
             //todo
             break;
@@ -167,11 +165,10 @@ const Index: React.FC<IProps> = () => {
             setClickedTool(toolInstance);
             break;
         }
-        
+
         break;
       case 'progress':
-        switch(toolInstance.toolAction)
-        {
+        switch (toolInstance.toolAction) {
           case 'progressView':
             //todo
             break;
@@ -183,8 +180,7 @@ const Index: React.FC<IProps> = () => {
         }
         break;
       case 'task':
-        switch(toolInstance.toolAction)
-        {
+        switch (toolInstance.toolAction) {
           case 'taskView':
             //todo
             break;
@@ -194,34 +190,31 @@ const Index: React.FC<IProps> = () => {
             setClickedTool(toolInstance);
             break;
         }
-        
+
         break;
       case 'addViewLayer':
-        
         newLayers.push(toolInstance.toolAction);
         setViewLayers(newLayers);
         console.log(currentViewLayers);
         break;
       case 'removeViewLayer':
-        newLayers.splice(newLayers.indexOf(toolInstance.toolAction),1);
+        newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
         setViewLayers(newLayers);
         console.log(currentViewLayers);
         break;
       default:
         break;
     }
+  };
 
-  }
-
-  const toolResponse = (data:string)=>{
-    console.log('Data->',data);
-    
-  }
+  const toolResponse = (data: string) => {
+    console.log('Data->', data);
+  };
 
   return (
     <React.Fragment>
       <div className="">
-        <Header/>
+        <Header />
         <div className="fixed" ref={leftRefContainer}>
           <div className="flex">
             <div className="flex">
@@ -233,8 +226,9 @@ const Index: React.FC<IProps> = () => {
           </div>
           <div
             ref={leftOverlayRef}
-            className={`h-screen bg-gray-200 w-0 absolute z-10  ${leftNav ? 'left-10' : 'left-10  '
-              }   top-0  duration-300 overflow-x-hidden`}
+            className={`h-screen bg-gray-200 w-0 absolute z-10  ${
+              leftNav ? 'left-10' : 'left-10  '
+            }   top-0  duration-300 overflow-x-hidden`}
           >
             <LeftOverLay
               getStructureData={getStructureData}
@@ -249,29 +243,25 @@ const Index: React.FC<IProps> = () => {
               }}
             ></LeftOverLay>
           </div>
-          <div  >
+          <div>
             <FontAwesomeIcon
-              className={`absolute  ${rightNav && 'rotate-180'
-                } text-2xl text-blue-300  ${rightNav ? 'right-9' : 'right-0'
-                }  top-1/2 cursor-pointer border-none rounded  p-1 bg-gray-400 text-white`}
+              className={`absolute  ${
+                rightNav && 'rotate-180'
+              } text-2xl text-blue-300  ${
+                rightNav ? 'right-9' : 'right-0'
+              }  top-1/2 cursor-pointer border-none rounded  p-1 bg-gray-400 text-white`}
               onClick={rightNavCollapse}
               icon={faGreaterThan}
             ></FontAwesomeIcon>
-            <div
-              ref={rightOverlayRef}
-              id="bg-color"
-              className={`absolute  lg:w-3 2xl:w-1   ${rightNav ? 'visible' : 'hidden'
-                }  bg-gray-200  top-45  rounded  lg:right-0  duration-300 `}
-            >
-              <RightOverLay></RightOverLay>
-            </div>
+          
           </div>
         </div>
         <div ref={bottomRefContainer}>
           {viewerTypeState != 'map' ? (
             <p
-              className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${bottomNav ? 'bottom-11' : 'bottom-2'
-                } `}
+              className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
+                bottomNav ? 'bottom-11' : 'bottom-2'
+              } `}
               onClick={bottomOverLay}
             >
               10-01-2022
@@ -299,19 +289,25 @@ const Index: React.FC<IProps> = () => {
 
         <div ref={rightrefContainer} className="relative  ">
           <FontAwesomeIcon
-            className={`fixed  ${rightNav && 'rotate-180'
-              } text-2xl text-blue-300  ${rightNav ? 'right-34' : 'right-0'
-              }  top-46  cursor-pointer border-none rounded  p-1 bg-gray-400 text-white`}
+            className={`fixed  ${
+              rightNav && 'rotate-180'
+            } text-2xl text-blue-300  ${
+              rightNav ? 'right-34' : 'right-0'
+            }  top-46  cursor-pointer border-none rounded  p-1 bg-gray-400 text-white`}
             onClick={rightNavCollapse}
             icon={faGreaterThan}
           ></FontAwesomeIcon>
           <div
             ref={rightOverlayRef}
             id="bg-color"
-            className={`fixed  lg:w-3 2xl:w-1   ${rightNav ? 'visible' : 'hidden'
-              }  bg-gray-200 top-40   rounded  lg:right-0  duration-300 overflow-x-hidden`}
+            className={`fixed  lg:w-3 2xl:w-1   ${
+              rightNav ? 'visible' : 'hidden'
+            }  bg-gray-200 top-40   rounded  lg:right-0  duration-300 overflow-x-hidden`}
           >
-            <RightFloatingMenu toolClicked={toolClicked} viewMode={currentViewMode}></RightFloatingMenu>
+            <RightFloatingMenu
+              toolClicked={toolClicked}
+              viewMode={currentViewMode}
+            ></RightFloatingMenu>
           </div>
         </div>
       </div>

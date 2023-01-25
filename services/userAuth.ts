@@ -24,7 +24,16 @@ export const registerUser = (registerUserObj: Object) => {
       return response.data;
     })
     .catch((error) => {
-      console.log('error', error);
       throw error;
+    });
+};
+export const verifyEmail = (token: string) => {
+  return instance
+    .get(`${process.env.NEXT_PUBLIC_HOST}/users/verify/${token}`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
     });
 };
