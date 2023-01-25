@@ -15,7 +15,10 @@ import {
   faTasks,
 
 } from '@fortawesome/free-solid-svg-icons';
-import { ITools } from '../../models/ITools';
+import { ITools } from '../../../models/ITools';
+import IssueMenu from './issueMenu/issueMenu';
+import TaskMenu from './taskMenu/taskMenu';
+import ProgressMenu from './progressMenu/progressMenu';
 
 interface IProps {
   toolClicked:(a:ITools)=>void;
@@ -86,29 +89,28 @@ setIViewMode(viewMode);
     toolClicked(toolInstance);
 
   }
-  const issueChange =(changeOb:any)=>{
+  // const issueChange =(changeOb:any)=>{
 
-    toolInstance.toolName='issue';
-    toolInstance.toolAction=changeOb.currentTarget.id;
-    toolClicked(toolInstance);
+  //   toolInstance.toolName='issue';
+  //   toolInstance.toolAction=changeOb.currentTarget.id;
+  //   toolClicked(toolInstance);
+  //   setRighttNav(!rightNav);
+  // }
+  const issueMenuClicked =(localTool:ITools)=>{
+    toolClicked(localTool);
+    if(localTool.toolAction==='issueCreateClose' || localTool.toolAction==='issueViewClose')
     setRighttNav(!rightNav);
+
   }
-
-  const taskChange =(changeOb:any)=>{
-
-
-    toolInstance.toolName='task';
-    toolInstance.toolAction=changeOb.currentTarget.id;
-    toolClicked(toolInstance);
+  const taskMenuClicked =(localTool:ITools)=>{
+    toolClicked(localTool);
+    if(localTool.toolAction==='taskCreateClose' || localTool.toolAction==='taskViewClose')
     setRighttNav(!rightNav);
+
   }
-
-  const progressChange =(changeOb:any)=>{
-
-    toolInstance.toolName='progress';
-    toolInstance.toolAction=changeOb.currentTarget.id;
-    toolClicked(toolInstance);
-    setRighttNav(!rightNav);
+  
+  const progressMenuClicked =(localTool:ITools)=>{
+    toolClicked(localTool);
   }
  
   return (
@@ -203,18 +205,17 @@ setIViewMode(viewMode);
           ></FontAwesomeIcon>
           {active === "issue" ? (
             <div
-              className={`fixed -mt-9 ${rightNav ? 'right-9' : 'hidden'
+              className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'
                 }`}>
-                  <div className='bg-gray-400'>
-                    
+                  <IssueMenu issueMenuClicked ={issueMenuClicked}></IssueMenu>
+                  {/* <div className='bg-gray-400'>
                   <div className=" h-full text-xs"  id="issueItems">
-    <div onClick={issueChange} id={"issueCreate"}><p>Create</p> </div>
-    <div onClick={issueChange} id={"issueView"}><p>View</p> </div>
-    <div onClick={issueChange} id={"issueShow"} ><p>Show</p> </div>
-    <div onClick={issueChange} id={"issueHide"} ><p>Hide</p> </div>
-    </div>
+                  <div onClick={issueChange} id={"issueCreate"}><p>Create</p> </div>
+                  <div onClick={issueChange} id={"issueView"}><p>View</p> </div>
+                  <div onClick={issueChange} id={"issueShow"} ><p>Show</p> </div>
+                  <div onClick={issueChange} id={"issueHide"} ><p>Hide</p> </div>
                   </div>
-                  
+                 </div> */}
             </div>
           ) : (
             ''
@@ -232,18 +233,9 @@ setIViewMode(viewMode);
           ></FontAwesomeIcon>
           {active === "task" ? (
             <div
-              className={`fixed -mt-9 ${rightNav ? 'right-9' : 'hidden'
+              className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'
                 }`}>
-                  <div className='bg-gray-400'>
-                    
-                  <div className=" h-full text-xs"  id="taskItems">
-    <div onClick={taskChange} id={"taskCreate"}><p>Create</p> </div>
-    <div onClick={taskChange} id={"taskView"}><p>View</p> </div>
-    <div onClick={taskChange} id={"taskShow"} ><p>Show</p> </div>
-    <div onClick={taskChange} id={"taskHide"} ><p>Hide</p> </div>
-    </div>
-                  </div>
-                  
+                  <TaskMenu taskMenuClicked ={taskMenuClicked}></TaskMenu>
             </div>
           ) : (
             ''
@@ -259,18 +251,9 @@ setIViewMode(viewMode);
           ></FontAwesomeIcon>
           {active === "progress" ? (
           <div
-              className={`fixed -mt-9 ${rightNav ? 'right-9' : 'hidden'
+              className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'
                 }`}>
-                  <div className='bg-gray-400'>
-                    
-                  <div className=" h-full text-xs"  id="progressItems">
-    <div onClick={progressChange} id={"progressCreate"}><p>Create</p> </div>
-    <div onClick={progressChange} id={"progressView"}><p>View</p> </div>
-    <div onClick={progressChange} id={"progressShow"} ><p>Show</p> </div>
-    <div onClick={progressChange} id={"progressHide"} ><p>Hide</p> </div>
-    </div>
-                  </div>
-                  
+                  <ProgressMenu progressMenuClicked ={progressMenuClicked}></ProgressMenu>       
             </div>
           ) : (
             ''

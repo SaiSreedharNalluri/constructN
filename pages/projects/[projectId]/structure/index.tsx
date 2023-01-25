@@ -11,12 +11,11 @@ import DatePicker from '../../../../components/container/datePicker';
 import Pagination from '../../../../components/container/pagination';
 import { faGreaterThan } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import RightOverLay from '../../../../components/container/RightOverLay';
 import LeftOverLay from '../../../../components/container/leftOverLay';
 import MapLoading from '../../../../components/container/mapLoading';
 import authHeader from '../../../../services/auth-header';
 import GenericViewer from '../../../../components/container/GenericViewer';
-import RightFloatingMenu from '../../../../components/container/rightFloatingMenu';
+import RightFloatingMenu from '../../../../components/container/rightFloatingMenu/rightFloatingMenu';
 import { ITools } from '../../../../models/ITools';
 interface IProps {}
 const Index: React.FC<IProps> = () => {
@@ -251,15 +250,7 @@ const Index: React.FC<IProps> = () => {
               onClick={rightNavCollapse}
               icon={faGreaterThan}
             ></FontAwesomeIcon>
-            <div
-              ref={rightOverlayRef}
-              id="bg-color"
-              className={`absolute  lg:w-3 2xl:w-1   ${
-                rightNav ? 'visible' : 'hidden'
-              }  bg-gray-200  top-45  rounded  lg:right-0  duration-300 `}
-            >
-              <RightOverLay></RightOverLay>
-            </div>
+          
           </div>
         </div>
         <div ref={bottomRefContainer}>
