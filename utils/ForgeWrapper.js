@@ -8,21 +8,27 @@ export class ForgeViewerUtils {
     this.forgeViewer = undefined;
     this.isViewerInitialized = false;
     this.model = undefined;
+    this.manifestNode = undefined;
     this.progressData = undefined;
+    this.inProgress = false;
+    this.isPendingDataToLoad = false;
   }
 
-  static getInstance(viewerId) {
-    if (!this.instance) {
-      this.instance = new ForgeViewerUtils(viewerId);
-      delete this.instance.constructor;
-    }
-    return this.instance;
-  }
+  // static getInstance(viewerId) {
+  //   if (!this.instance) {
+  //     this.instance = new ForgeViewerUtils(viewerId);
+  //     delete this.instance.constructor;
+  //   }
+  //   return this.instance;
+  // }
 
   updateData(documentURNs) {
     this.documentURNs = documentURNs;
+    this.isPendingDataToLoad = true;
     if (this.isViewerInitialized) {
       this.loadData();
+    } else {
+      this.initialize();
     }
   }
 
@@ -44,10 +50,12 @@ export class ForgeViewerUtils {
       },
     };
 
+    this.inProgress = true;
     Autodesk.Viewing.Initializer(options, this.initializerCallBack.bind(this));
   }
 
   initializerCallBack() {
+    this.inProgress = false;
     console.log("Inside Initializer call back");
 
     console.log(`ViewerID: ${this.viewerId}`);
@@ -76,28 +84,39 @@ export class ForgeViewerUtils {
   }
 
   onViewerInitialized() {
-    console.log(`Viewer Initialized: Loading Model now`);
+    console.log("Viewer Initialized: Loading Model now");
     this.isViewerInitialized = true;
-    this.loadData();
-    // this.forgeViewer.loadModel("PDFs/A3_from_bim.pdf", this.generateModelOptions());
+    // if(this.isPendingDataToLoad) {
+          this.loadData();
+    // }
+  }
+
+  onViewerUnInitialized() {
+    console.log("Viewer Uninitialized:")
   }
 
   isViewerLoaded() {
     return this.isViewerInitialized;
   }
 
-  loadData() {
-    console.log(`Inside loadModel: ${this.documentURNs}`);
-    this.documentURNs.map((urn) => {
+  async loadData() {
+    console.log("Inside loadModel: ",this.documentURNs);
+    console.log("Loading new Model: ", this.documentURNs);
+    if(this.isModelLoaded) {
+    //  await this.forgeViewer.tearDown();
+     await this.forgeViewer.unloadDocumentNode(this.manifestNode);
+    }
+    this.documentURNs.map((document) => {
+      // let temp = 'urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YWRoYW5pX2tvcmVnYW9uX3BhcmtfcHVuZS8lMkZQUkoyMDE4OTclMkZzdHJ1Y3R1cmVzJTJGU1RSNTM2MTM4JTJGZGVzaWducyUyRkRTRzIzNDI5MyUyRmFkaGFuaV9hM19ibG9jay5ydnQ';
       Autodesk.Viewing.Document.load(
-        urn.urn,
+        document.urn,
         async function (viewerDocument) {
-          var defaultModel = viewerDocument.getRoot().getDefaultGeometry();
-          console.log("Is model svf2: ", defaultModel.isSVF2())
+          this.manifestNode = viewerDocument.getRoot().getDefaultGeometry();
+          console.log("Is model svf2: ", this.manifestNode.isSVF2())
           this.model = await this.forgeViewer.loadDocumentNode(
             viewerDocument,
-            defaultModel,
-            this.generateModelOptions(urn.tm)
+            this.manifestNode,
+            this.generateModelOptions(document.tm)
           );
         }.bind(this),
         function () {
@@ -109,7 +128,6 @@ export class ForgeViewerUtils {
 
   generateModelOptions(tm) {
     console.log("Inside modeloptions:", tm);
-
     var mx = new THREE.Matrix4();
     mx.fromArray([
       10.709603309631, 1.489653229713, 0.0, 385315.34375, -1.489653229713,
@@ -122,24 +140,24 @@ export class ForgeViewerUtils {
       page: 1,
       // preserveView: true,
       // modelSpace: true,
-      keepCurrentModels: true,
+      // keepCurrentModels: true,
       leafletOptions: {
         fitPaperSize: true,
+        isPdf: true
       },
-      placementTransform: new THREE.Matrix4().fromArray(tm).transpose(),
     };
 
     modelOptions.globalOffset = { x: 0, y: 0, z: 0 };
     let globalOff = [0, 0, 0];
 
-    // if (this.tm_json.tm) {
-    //   modelOptions.placementTransform = new THREE.Matrix4().fromArray(this.tm_json.tm).transpose();
-    //   // modelOptions.placementTransform = (new THREE.Matrix4()).setPosition({x:50,y:0,z:-50})
-    //   // modelOptions.placementTransform = new THREE.Matrix4().fromArray([0.216,1.022,-0.007,367033.477,-1.022,0.216,-0.001,2053135.281,-0.000,0.007,1.045,-57.5,0.000,0.000,0.000,1.000]).transpose()
-    //   console.log('BIM TM Loaded');
-    // }
+    if (tm && tm.tm) {
+      modelOptions.placementTransform = new THREE.Matrix4().fromArray(this.tm.tm).transpose();
+      // modelOptions.placementTransform = (new THREE.Matrix4()).setPosition({x:50,y:0,z:-50})
+      // modelOptions.placementTransform = new THREE.Matrix4().fromArray([0.216,1.022,-0.007,367033.477,-1.022,0.216,-0.001,2053135.281,-0.000,0.007,1.045,-57.5,0.000,0.000,0.000,1.000]).transpose()
+      console.log('BIM TM Loaded');
+    }
 
-    if (tm.offset) {
+    if (tm && tm.offset) {
       globalOff = this.tm_json.offset;
       modelOptions.globalOffset = {
         x: globalOff[0],
@@ -312,7 +330,7 @@ export class ForgeViewerUtils {
     // selection.setSelection([poly]);
     // selection.modified();
     this.getActiveTool();
-    this.loadSprite(dataVizExtn);
+    // this.loadSprite(dataVizExtn);
     // edit2d.unregisterDefaultTools();
     // constructnExt.activate();
     // geoExtension.activate();
@@ -467,13 +485,25 @@ export class ForgeViewerUtils {
     controller.activateTool(tool.getName());
   }
 
-  shutdown() {
-    this.isViewerInitialized = false;
-    Autodesk.Viewing.shutdown();
+  removeData() {
+    console.log("Model Before Removed: ", this.model);
+    this.forgeViewer.unloadDocumentNode(this.model.getDocumentNode());
+    this.model = undefined;
+    this.manifestNode = undefined
+    console.log("Model Removed: ", this.model);
+    if (this.isPendingDataToLoad) {
+      this.loadData();
+    }
   }
 
+  // shutdown() {
+  //   this.isViewerInitialized = false;
+  //   this.forgeViewer.tearDown();
+  //   // this.forgeViewer.uninitialize();
+  //   // Autodesk.Viewing.shutdown();
+  // }
+
   onLoadFileEvent(parameter) {
-    console.log(`Inside Load File Event: ${parameter.loader}`);
     console.log("Inside Load File Event: ", parameter.loader);
   }
 
@@ -497,11 +527,22 @@ export class ForgeViewerUtils {
     console.log(
       `Inside Model Layers loaded Event: model: ${parameter.model} root: ${parameter.root} `
     );
-    this.loadExtension();
   }
 
   onGeometryLoadedEvent(parameter) {
-    console.log(`Inside Geometry Loaded Event: model: ${parameter.model}`);
+    console.log("Inside Geometry Loaded Event: model: ", parameter.model);
+    this.loadExtension();
+    this.isPendingDataToLoad = false;
+    this.isModelLoaded = true;
+  }
+
+  onBeforeModelUnLoadedEvent(model) {
+    console.log("Inside Before Model Unload event", model);
+  }
+
+  onModelUnLoadedEvent(model) {
+    console.log("Inside Model Unload event", model);
+    this.isModelLoaded = false;
   }
 
   onExtensionPreLoadedEvent(parameter) {
@@ -617,6 +658,10 @@ export class ForgeViewerUtils {
       this.onViewerInitialized.bind(this)
     );
     this.forgeViewer.addEventListener(
+      Autodesk.Viewing.VIEWER_UNINITIALIZED,
+      this.onViewerUnInitialized.bind(this)
+    );
+    this.forgeViewer.addEventListener(
       Autodesk.Viewing.LOADER_LOAD_FILE_EVENT,
       this.onLoadFileEvent.bind(this)
     );
@@ -639,6 +684,14 @@ export class ForgeViewerUtils {
     this.forgeViewer.addEventListener(
       Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
       this.onGeometryLoadedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.BEFORE_MODEL_UNLOADED_EVENT,
+      this.onBeforeModelUnLoadedEvent.bind(this)
+    );
+    this.forgeViewer.addEventListener(
+      Autodesk.Viewing.MODEL_UNLOADED_EVENT,
+      this.onModelUnLoadedEvent.bind(this)
     );
     this.forgeViewer.addEventListener(
       Autodesk.Viewing.EXTENSION_PRE_LOADED_EVENT,

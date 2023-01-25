@@ -6,33 +6,20 @@ import { ForgeViewerUtils } from '../../utils/ForgeWrapper';
 import { PotreeViewerUtils } from "../../utils/PotreeWrapper";
 import { getPointCloudTM } from "../../services/reality";
 import { getSnapshotPath, getStructurePath } from "../../utils/s3Utils";
+import { getStructureDesigns } from '../../services/design';
 
-function getForgeModels(structure, snapshot) {
-  var documentIds = [
-    {
-      // urn: 'urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmL0EzX2Zyb21fYmltLnBkZg==',
-      urn: 'urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YWRoYW5pX2tvcmVnYW9uX3BhcmtfcHVuZS8lMkZQUkoyMDE4OTclMkZzdHJ1Y3R1cmVzJTJGU1RSNTM2MTM4JTJGZGVzaWducyUyRkRTRzIzNDI5MyUyRmFkaGFuaV9hM19ibG9jay5ydnQ',
-      tm: [
-        10.709603309631, 1.489653229713, 0.0, 385315.34375, -1.489653229713,
-        10.709603309631, 0.0, 2049716.75, 0.0, 0.0, 10.812708854675, 95.249374,
-        0.0, 0.0, 0.0, 1.0,
-      ],
-    }, // pdf
-    // 'urn:' + 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmL2J0cnNfZ2xvYmFsLmR3Zw==', // scaled dwg
-    // { urn: 'urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmL0FHUC1BREEtQTMtWFgtQVItU1QtTTMtVE9XRVJfZGV0YWNoZWQucnZ0', tm: [
-    //   -0.136552, 0.992896 ,0.000000 ,385382.750000,
-    //   -0.992896, -0.136552, 0.000000, 2049802.000000,
-    //   0.000000, 0.000000, 1.002242, 95.249374,
-    //   0.000000, 0.000000 ,0.000000, 1.000000
-    //     ]}, // revit a3 adani 3D
-    // 'urn:' + 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmL0EzXzJEX0Zsb29ycGxhbl9leHBvcnRlZF9mcm9tX3Jldml0LmR3Zw==', // revit generated dwg a3 shared
-    // 'urn:' + 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmL0EzXzJEX0Zsb29ycGxhbl9leHBvcnRlZF9mcm9tX3Jldml0X2ludGVybmFsX2V4cG9ydC5kd2c=', // revit generated dwg a3 internal
-    // 'urn:' + 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmL0EzJTIwQ2FkJTIwd2l0aCUyMGdsb2JhbCUyMHNjYWxlZC5kd2c=', // scaled dwg adani
-    // 'urn:' + 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmLzIxLTMwMUFfQlRSUy1UUEEtQUQtUjIwX2RldGFjaGVkJTIwLSUyMEZsb29yJTIwUGxhbiUyMC0lMjBGTE9PUiUyMFBMQU4lMjAtJTIwQ0VOVEVSTElORSUyMFBMQU4uZHdn', // scaled dwg tata revit
-    // 'urn:' + 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmLzIxLTMwMUFfQlRSUy1UUEEtQUQtUjIwX2RldGFjaGVkLnJ2dA' // scaled rvt tata 3D
-  ];
-
-  return documentIds;
+async function getForgeModels(structure) {
+  let designs = await (await getStructureDesigns(structure.project, structure._id)).data.result;
+  let documentList = designs.map((design) => {
+    let document = {};
+    let storage = design.storage.find(storage => storage.provider === "autodesk-oss");
+    if (storage) {
+    document.urn = `urn:${storage.pathId}`;
+    document.tm = design.tm
+    }
+    return document
+  })
+  return documentList;
 }
 
 async function getPointCloud(structure, snapshot) {
@@ -54,11 +41,13 @@ function GenericViewer(props) {
   const genericViewerRef = useRef();
   const compareViewer = 'compareViewer';
   const compareViewerRef = useRef();
-  let structure = props.structure;
+  var structure = Object.assign(props.structure);
+  let currentStructure = useRef();
   let snapshot = props.snapshot;
-  let viewType = props.viewMode;
-  let designType = props.viewType;
-  let realityType = props.realityType;
+  let viewMode = props.viewMode;
+  let viewType = props.viewType;
+  let viewLayers = props.viewLayers;
+
 
   let [compareView, setCompareView] = useState(false);
   let [compareMode, setCompareMode] = useState(0);
@@ -88,17 +77,19 @@ function GenericViewer(props) {
 
   }
 
-  function initViewer(viewer) {
-    switch (viewType) {
+  async function initViewer(viewer) {
+    switch (viewMode) {
       case 'Design':
         console.log("Inside ViewType Design");
-        let forge = ForgeViewerUtils.getInstance(genericViewer);
-        console.log("Inside load viewer: ", viewer);
-        console.log("isForgeViewer Loaded: ", forge.isViewerLoaded());
-        if(!forge.isViewerLoaded()) {
-          forge.initialize();
+        if (!forgeUtils.current) {
+          let forge = new ForgeViewerUtils(genericViewer);
+          console.log("Inside load viewer: ", viewer);
+          console.log("isForgeViewer Loaded: ", forge.isViewerLoaded());
+          forgeUtils.current = forge;
         }
-        forgeUtils.current = forge;
+
+        forgeUtils.current.updateData(await getForgeModels(structure));
+
         break;
       case 'Reality':
         console.log("Inside ViewType Reality");
@@ -116,9 +107,9 @@ function GenericViewer(props) {
 
 
   async function loadViewerData() {
-    switch (viewType) {
+    switch (viewMode) {
       case 'Design':
-        forgeUtils.current.updateData(getForgeModels());
+        // forgeUtils.current.updateData(await getForgeModels(structure));
         // forgeUtils.current.updateLayers(getRealityData());
         break;
       case 'Reality':
@@ -148,25 +139,14 @@ function GenericViewer(props) {
   //   }
   // }
 
-  function cleanUpViewer() {
-    switch (viewType) {
-      case 0:
-        // delete forgeUtils.current.shutdown();
-        if (compareView) {
-          // delete forgeUtils2.current.shutdown();
-        }
-      case 1:
-
-    }
-  }
-  
   useEffect(() => {
-    console.log("Generic Viewer load: Structure Changed", structure)
-    initViewer()
-    return () => {
-      cleanUpViewer();
+    console.log("Structure prop clicked:");
+    if(currentStructure.current != structure) {
+      console.log("Generic Viewer load: Structure Changed", structure)
+      currentStructure.current = structure
+      initViewer();
     }
-  }, [structure]);
+  },[structure]);
 
   useEffect(() => {
     console.log("Generic Viewer load: Snapshot Changed", snapshot)
@@ -179,20 +159,20 @@ function GenericViewer(props) {
   },[tool]);
 
   useEffect(() => {
-    console.log("View Type Changes", viewType)
+    console.log("View Type Changes", viewMode)
     handleViewChange();
+  }, [viewMode]);
+
+
+  useEffect(() => {
+    console.log("View Type Changes", viewType)
+    handleDesignTypeChange();
   }, [viewType]);
 
-
   useEffect(() => {
-    console.log("View Type Changes", designType)
-    handleDesignTypeChange();
-  }, [designType]);
-
-  useEffect(() => {
-    console.log("View Type Changes", realityType)
+    console.log("View Type Changes", viewLayers)
     handleRealityTypeChange();
-  }, [realityType]);
+  }, [viewLayers]);
 
   useEffect(() => {
 
@@ -214,4 +194,4 @@ function GenericViewer(props) {
     );
   };
   // export default GenericViewer;
-  export default memo(GenericViewer);
+  export default GenericViewer;

@@ -1,14 +1,21 @@
+import { IDesign } from "./IDesign";
+
 export interface IStructures {
   success: boolean;
   result?: IStructure[] | null;
 }
 export interface IStructure {
   _id: string;
-  project:string;
   name: string;
+  // progress: ProgressSnapshot;
   type: string;
   isExterior: boolean;
-  parent?: null;
+  // fm: number;
+  project: string;
+  parent?: string;
+  location?: [number];
+  utm?: string;
+  designs?: [IDesign];
   children?: ChildrenEntity[] | null;
 }
 export interface ChildrenEntity {

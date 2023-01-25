@@ -18,7 +18,7 @@ import authHeader from '../../../../services/auth-header';
 import GenericViewer from '../../../../components/container/GenericViewer';
 import RightFloatingMenu from '../../../../components/container/rightFloatingMenu';
 import { ITools } from '../../../../models/ITools';
-import { getStructure } from '../../../../services/structure';
+import { getStructureList } from '../../../../services/structure';
 
 interface IProps { }
 const Index: React.FC<IProps> = () => {
@@ -26,7 +26,7 @@ const Index: React.FC<IProps> = () => {
   const [currentViewMode,setViewMode]= useState('Design'); //Design/ Reality
 
   const [currentProjectId, setActiveProjectId] = useState('');
-  const [flatStructures, setFlatStructures] = useState<IStructure[]>([]);
+  const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
   const [projectutm, setProjectUtm] = useState('');
@@ -51,15 +51,19 @@ const Index: React.FC<IProps> = () => {
         setProjectUtm(response?.data?.result?.utm);
         setActiveProjectId(router.query.projectId as string);
       });
-      getStructure(router.query.projectId as string).then((response) => {
-        setFlatStructures(response.data.result)
+      getStructureList(router.query.projectId as string).then((response) => {
+        setStructuresList(response.data.result)
       })
     }
   }, [router.isReady, router.query.projectId]);
 
   const getStructureData = (structure: ChildrenEntity) => {
-    getSnapshots(router.query.projectId as string, structure._id);
-    setStructure(flatStructures.find(e => e._id === structure._id));
+    let temp = structuresList.find((e) =>{ if (e._id === structure._id) {
+      return e;
+    }})
+    console.log("Selected structure: ", temp?.name);
+    setStructure(temp);
+    // getSnapshots(router.query.projectId as string, structure._id);
   };
 
   const getSnapshots = (projectId: string, structurId: string) => {
@@ -94,7 +98,6 @@ const Index: React.FC<IProps> = () => {
 
       case 'forge':
         return (
-          snapshot &&
           structure && (
           <GenericViewer toolRes={toolResponse} tools={clickedTool} structure={structure} snapshot={snapshot} viewMode={currentViewMode} viewType={currentViewType} viewLayers={currentViewLayers}></GenericViewer>
             )
@@ -241,7 +244,7 @@ const Index: React.FC<IProps> = () => {
                     router.query.projectId as string,
                     structureData._id
                   );
-                  setStructure(flatStructures.find(e => e._id === structureData._id));
+                  setStructure(structuresList.find(e => e._id === structureData._id));
                 }
               }}
             ></LeftOverLay>
