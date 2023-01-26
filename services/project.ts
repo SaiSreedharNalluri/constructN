@@ -57,7 +57,7 @@ export const updateProjectInfo = async (
       throw error;
     });
 };
-export const addProjectUser = async (
+export const assignProjectUser = async (
   newProjectUser: Object,
   projectId: string
 ) => {
@@ -73,8 +73,7 @@ export const addProjectUser = async (
       return response.data;
     })
     .catch((error) => {
-      console.log('error', error);
-      throw error;
+      throw error.response.data;
     });
 };
 export const removeProjectUser = async (
