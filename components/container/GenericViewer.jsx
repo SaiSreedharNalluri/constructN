@@ -5,8 +5,11 @@ import Header from './header';
 import { ForgeViewerUtils } from '../../utils/ForgeWrapper';
 import { PotreeViewerUtils } from "../../utils/PotreeWrapper";
 import { getPointCloudTM } from "../../services/reality";
-import { getSnapshotPath, getStructurePath } from "../../utils/s3Utils";
+import { getSnapshotsList } from '../../services/snapshot';
+import { getSnapshotPath, getStructurePath } from "../../utils/S3Utils";
 import { getStructureDesigns } from '../../services/design';
+import DatePicker from './datePicker';
+import Pagination from './pagination';
 
 async function getForgeModels(structure) {
   let designs = await (await getStructureDesigns(structure.project, structure._id)).data.result;
@@ -43,10 +46,18 @@ function GenericViewer(props) {
   const compareViewerRef = useRef();
   var structure = Object.assign(props.structure);
   let currentStructure = useRef();
-  let snapshot = props.snapshot;
+
+  let [snapshotList, setSnapshotList] = useState([]);
+  let [snapshot, setSnapshot] = useState({}); 
+  let updateSnapshot = props.updateSnapshot;
+
   let viewMode = props.viewMode;
   let viewType = props.viewType;
   let viewLayers = props.viewLayers;
+
+  const [bottomNav, setBottomNav] = useState(false);
+  let BottomOverlayRef = useRef();
+  let bottomRefContainer = useRef();
 
 
   let [compareView, setCompareView] = useState(false);
@@ -139,9 +150,47 @@ function GenericViewer(props) {
   //   }
   // }
 
+  const bottomOverLay = () => {
+    if (!bottomNav) {
+      BottomOverlayRef.current.style.width = '45%';
+    } else {
+      BottomOverlayRef.current.style.width = '0%';
+    }
+    setBottomNav(!bottomNav);
+  };
+
+  const updateSnapshotList = (projectId, structurId) => {
+    getSnapshotsList(projectId, structurId)
+      .then((response) => {
+        let snapshotList= response?.data?.result?.mSnapshots?.sort(
+          (a, b) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        setSnapshotList(snapshotList);
+        setCurrentSnapshot(snapshotList[0]);
+      })
+      .catch((error) => {
+        console.log('error', error);
+      });
+  };
+
+  const setCurrentSnapshot = (snapshot) => {
+    setSnapshot(snapshot);
+    updateSnapshot(snapshot);
+  }
+
+  const getSnapshotDate = () => {
+    if (snapshot) {
+      return snapshot.date;
+    } else {
+      return "No Reality"
+    }
+  }
+
   useEffect(() => {
     console.log("Structure prop clicked:");
     if(currentStructure.current != structure) {
+      updateSnapshotList(structure.project, structure._id);
       console.log("Generic Viewer load: Structure Changed", structure)
       currentStructure.current = structure
       initViewer();
@@ -182,12 +231,41 @@ function GenericViewer(props) {
 
     return (
       <React.Fragment>
-        <div className="w-screen h-screen">
-          <div id={genericViewer} ref={genericViewerRef} className="w-screen h-screen">
-          
-          </div>
-          <div id={compareViewer} ref = {compareViewerRef}>
-
+        <div className="relative w-screen h-screen">
+          <div
+            id={genericViewer}
+            ref={genericViewerRef}
+            className="w-screen h-screen z-5"
+          ></div>
+          <div id={compareViewer} ref={compareViewerRef}></div>
+          <div
+            ref={bottomRefContainer}
+            className="flex-wrap items-center absolute inset-x-0 top-0 z-10"
+          >
+            <p
+              className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
+                bottomNav ? "top-11" : "top-2"
+              } `}
+              onClick={bottomOverLay}
+            >
+              {getSnapshotDate()}
+            </p>
+            <div
+              ref={BottomOverlayRef}
+              className="w-0 left-1/2 top-1 absolute overflow-x-hidden "
+            >
+              <div className="flex ">
+                <div className=" bg-gray-200 rounded">
+                  <Pagination
+                    snapshots={snapshotList}
+                    getSnapshotInfo={setCurrentSnapshot}
+                  />
+                </div>
+                <div>
+                  <DatePicker></DatePicker>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </React.Fragment>
