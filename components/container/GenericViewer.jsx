@@ -3,88 +3,195 @@ import React, { useEffect, useState, memo, useRef } from 'react';
 import Head from 'next/head';
 import Header from './header';
 import { ForgeViewerUtils } from '../../utils/ForgeWrapper';
+import { PotreeViewerUtils } from "../../utils/PotreeWrapper";
+import { getPointCloudTM } from "../../services/reality";
+import { getSnapshotPath, getStructurePath } from "../../utils/s3Utils";
+import { getStructureDesigns } from '../../services/design';
 
-function initViewer(genericViewer, compareViewer, onForgeViewerLoaded) {
-  let forgeUtils = ForgeViewerUtils.getInstance(genericViewer);
-  console.log('isForgeViewer Loaded: ', forgeUtils.isViewerLoaded());
-  if (!forgeUtils.isViewerLoaded()) {
-    forgeUtils.initialize(onForgeViewerLoaded);
+async function getForgeModels(structure) {
+  let designs = await (await getStructureDesigns(structure.project, structure._id)).data.result;
+  let documentList = designs.map((design) => {
+    let document = {};
+    let storage = design.storage.find(storage => storage.provider === "autodesk-oss");
+    if (storage) {
+    document.urn = `urn:${storage.pathId}`;
+    document.tm = design.tm
+    }
+    return document
+  })
+  return documentList;
+}
+
+async function getPointCloud(structure, snapshot) {
+  const tmResponse = await getPointCloudTM(snapshot.project, structure._id, snapshot._id);
+  const pointCloudData = {
+    path: `${getSnapshotPath(snapshot.project, structure._id, snapshot._id)}/pointcloud/cloud.json`,
+    tm: tmResponse.data.tm,
+    offset: tmResponse.data.offset
   }
-  return forgeUtils;
+  return pointCloudData;
 }
 
-function getForgeModels(structureId) {
-  var documentIds = [
-    {
-      urn: 'urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmL0EzX2Zyb21fYmltLnBkZg==',
-      tm: [
-        10.709603309631, 1.489653229713, 0.0, 385315.34375, -1.489653229713,
-        10.709603309631, 0.0, 2049716.75, 0.0, 0.0, 10.812708854675, 95.249374,
-        0.0, 0.0, 0.0, 1.0,
-      ],
-    }, // pdf
-    // 'urn:' + 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmL2J0cnNfZ2xvYmFsLmR3Zw==', // scaled dwg
-    // { urn: 'urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmL0FHUC1BREEtQTMtWFgtQVItU1QtTTMtVE9XRVJfZGV0YWNoZWQucnZ0', tm: [
-    //   -0.136552, 0.992896 ,0.000000 ,385382.750000,
-    //   -0.992896, -0.136552, 0.000000, 2049802.000000,
-    //   0.000000, 0.000000, 1.002242, 95.249374,
-    //   0.000000, 0.000000 ,0.000000, 1.000000
-    //     ]}, // revit a3 adani 3D
-    // 'urn:' + 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmL0EzXzJEX0Zsb29ycGxhbl9leHBvcnRlZF9mcm9tX3Jldml0LmR3Zw==', // revit generated dwg a3 shared
-    // 'urn:' + 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmL0EzXzJEX0Zsb29ycGxhbl9leHBvcnRlZF9mcm9tX3Jldml0X2ludGVybmFsX2V4cG9ydC5kd2c=', // revit generated dwg a3 internal
-    // 'urn:' + 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmL0EzJTIwQ2FkJTIwd2l0aCUyMGdsb2JhbCUyMHNjYWxlZC5kd2c=', // scaled dwg adani
-    // 'urn:' + 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmLzIxLTMwMUFfQlRSUy1UUEEtQUQtUjIwX2RldGFjaGVkJTIwLSUyMEZsb29yJTIwUGxhbiUyMC0lMjBGTE9PUiUyMFBMQU4lMjAtJTIwQ0VOVEVSTElORSUyMFBMQU4uZHdn', // scaled dwg tata revit
-    // 'urn:' + 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dGVzdDJkcGRmLzIxLTMwMUFfQlRSUy1UUEEtQUQtUjIwX2RldGFjaGVkLnJ2dA' // scaled rvt tata 3D
-  ];
+function getRealityData(snapshot) {
 
-  return documentIds;
 }
-
-function getForgeLayers(snapshotDetails) {}
 
 function GenericViewer(props) {
   const genericViewer = 'genericViewer';
+  const genericViewerRef = useRef();
   const compareViewer = 'compareViewer';
-  let structureId = props.structureId;
-  let snapshot = props.snapshotDetails;
+  const compareViewerRef = useRef();
+  var structure = Object.assign(props.structure);
+  let currentStructure = useRef();
+  let snapshot = props.snapshot;
+  let viewMode = props.viewMode;
   let viewType = props.viewType;
+  let viewLayers = props.viewLayers;
+
+
+  let [compareView, setCompareView] = useState(false);
+  let [compareMode, setCompareMode] = useState(0);
+  
+  let tool = props.tools;
+  let activeTool = tool;
+  let toolHandler = props.toolRes;
   let [camera, setCamera] = useState({});
-  let scriptsLoaded = props.scriptsLoaded;
-  let toolclk = props.tools;
-  let respData = props.toolRes;
-
   let forgeUtils = useRef();
+  let potreeUtils = useRef();
+  let forgeUtils2 = useRef();
+  
+
+  function handleViewChange() {
+
+  }
+
+  function handleDesignTypeChange() {
+
+  }
+
+  function handleRealityTypeChange() {
+
+  }
+  
+  function handleToolChange() {
+
+  }
+
+  async function initViewer(viewer) {
+    switch (viewMode) {
+      case 'Design':
+        console.log("Inside ViewType Design");
+        if (!forgeUtils.current) {
+          let forge = new ForgeViewerUtils(genericViewer);
+          console.log("Inside load viewer: ", viewer);
+          console.log("isForgeViewer Loaded: ", forge.isViewerLoaded());
+          forgeUtils.current = forge;
+        }
+
+        forgeUtils.current.updateData(await getForgeModels(structure));
+
+        break;
+      case 'Reality':
+        console.log("Inside ViewType Reality");
+        let potree = new PotreeViewerUtils(genericViewer);
+        if(!potree.isViewerLoaded()) {
+          potree.initialize();
+        }
+        potreeUtils.current = potree;
+        break;
+    }
+
+    loadViewerData();
+  }
+
+
+
+  async function loadViewerData() {
+    switch (viewMode) {
+      case 'Design':
+        // forgeUtils.current.updateData(await getForgeModels(structure));
+        // forgeUtils.current.updateLayers(getRealityData());
+        break;
+      case 'Reality':
+        potreeUtils.current.updateData(await getPointCloud(structure, snapshot));
+        potreeUtils.current.updateLayers(getRealityData());
+        break;
+    }
+  }
+  
+  // function updateCompareView() {
+  //   if(compareView) {
+  //     genericViewerRef.current.style.width = '50%'
+  //     compareViewerRef.current.style.display = 'block'
+  //   } else {
+  //     genericViewerRef.current.style.width = '100%'
+  //     compareViewerRef.current.style.display = 'none'
+  //   }
+  // }
+
+  // function updateViewer() {
+  //   updateCompareView();
+  //   // forgeUtils.current = initViewer(genericViewer);
+  //   // forgeUtils.current.updateModels(getForgeModels());
+  //   if (compareView) {
+  //     forgeUtils2.current = initViewer(compareViewer);
+  //     // forgeUtils2.current.updateModels(getForgeModels());
+  //   }
+  // }
 
   useEffect(() => {
-    console.log('Generic Viewer load: Structure Changed', scriptsLoaded);
-    console.log('Is ForgeUtils Initialized: ', forgeUtils.current);
-    // if (scriptsLoaded) {
-    console.log('Is Scripts Loaded: ', scriptsLoaded);
-    forgeUtils.current = initViewer(genericViewer, compareViewer);
-    forgeUtils.current.updateModels(getForgeModels());
-    // }
-    return () => {
-      delete forgeUtils.current.shutdown();
-    };
-  }, [scriptsLoaded, structureId]);
+    console.log("Structure prop clicked:");
+    if(currentStructure.current != structure) {
+      console.log("Generic Viewer load: Structure Changed", structure)
+      currentStructure.current = structure
+      initViewer();
+    }
+  },[structure]);
 
   useEffect(() => {
-    console.log(toolclk, 'tool clicked');
-    respData(toolclk);
-  }, [toolclk]);
+    console.log("Generic Viewer load: Snapshot Changed", snapshot)
 
-  useEffect(() => {
-    console.log('Generic Viewer load: Snapshot Changed');
   }, [snapshot]);
 
-  return (
-    <React.Fragment>
-      <div className="w-screen h-screen">
-        <div id={genericViewer}></div>
-        <div id={compareViewer}></div>
-      </div>
-    </React.Fragment>
-  );
-}
-// export default GenericViewer;
-export default memo(GenericViewer);
+  useEffect(()=>{
+    console.log("tool clicked", tool);
+    handleToolChange(tool);
+  },[tool]);
+
+  useEffect(() => {
+    console.log("View Type Changes", viewMode)
+    handleViewChange();
+  }, [viewMode]);
+
+
+  useEffect(() => {
+    console.log("View Type Changes", viewType)
+    handleDesignTypeChange();
+  }, [viewType]);
+
+  useEffect(() => {
+    console.log("View Type Changes", viewLayers)
+    handleRealityTypeChange();
+  }, [viewLayers]);
+
+  useEffect(() => {
+
+  }, [compareView])
+
+  
+
+    return (
+      <React.Fragment>
+        <div className="w-screen h-screen">
+          <div id={genericViewer} ref={genericViewerRef} className="w-screen h-screen">
+          
+          </div>
+          <div id={compareViewer} ref = {compareViewerRef}>
+
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  };
+  // export default GenericViewer;
+  export default GenericViewer;

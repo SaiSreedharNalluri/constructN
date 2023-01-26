@@ -2,7 +2,7 @@ import instance from './axiosInstance';
 import authHeader from './auth-header';
 export const getProjects = async (context: any) => {
   try {
-    return await instance.get(`${process.env.API_BASE_URL}/projects`, {
+    return await instance.get(`${process.env.NEXT_PUBLIC_HOST}/projects`, {
       headers: authHeader.authCookieHeader(context),
     });
   } catch (error: any) {
