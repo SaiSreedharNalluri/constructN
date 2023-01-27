@@ -6,6 +6,7 @@ import {
   assignProjectUser,
   getProjectDetails,
   getProjectUsers,
+  removeProjectUser,
   updateProjectInfo,
 } from '../../../../services/project';
 import { IProjectUsers } from '../../../../models/IProjects';
@@ -89,7 +90,20 @@ const Editproject: React.FC = () => {
         }
       });
   };
-  const deassignProjectUser = () => {};
+  const deassignProjectUser = (userInfo: string) => {
+    removeProjectUser(userInfo, router.query.projectId as string)
+      .then((response) => {
+        if (response?.success === true) {
+          toast.success(response?.message);
+          window.location.reload();
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
   return (
     <div className="w-full h-screen">
       <div className="">

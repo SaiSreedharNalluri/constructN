@@ -78,7 +78,7 @@ const ProjectInfo: React.FC<IProps> = ({ projectData, updateProjectData }) => {
                 className="border border-solid border-gray-500 w-full p-2  rounded"
               >
                 {ProjectTypes.map((option: any) => (
-                  <option key={option._id as string} value={option.name}>
+                  <option key={option.id} value={option.id}>
                     {option.name}
                   </option>
                 ))}
