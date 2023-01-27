@@ -6,6 +6,7 @@ import {
   assignProjectUser,
   getProjectDetails,
   getProjectUsers,
+  updateProjectInfo,
 } from '../../../../services/project';
 import { IProjectUsers } from '../../../../models/IProjects';
 import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
@@ -55,7 +56,7 @@ const Editproject: React.FC = () => {
     assignProjectUser(userInfo, router.query.projectId as string)
       .then((response) => {
         if (response?.success === true) {
-          toast.error(response?.message);
+          toast.success(response?.message);
         }
       })
       .catch((error) => {
@@ -64,6 +65,31 @@ const Editproject: React.FC = () => {
         }
       });
   };
+  const updateProjectData = (projectInfo: any) => {
+    if (
+      projectInfo.latitude != undefined &&
+      projectInfo.longitude != undefined
+    ) {
+      delete projectInfo.location;
+      projectInfo.location = [projectInfo.latitude, projectInfo.longitude];
+      delete projectInfo.latitude;
+      delete projectInfo.longitude;
+    }
+
+    updateProjectInfo(projectInfo, router.query.projectId as string)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success('Project details updated sucessfully');
+          window.location.reload();
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
+  const deassignProjectUser = () => {};
   return (
     <div className="w-full h-screen">
       <div className="">
@@ -86,10 +112,16 @@ const Editproject: React.FC = () => {
                 <Tab>Type Configration</Tab>
               </TabList>
               <TabPanel>
-                <ProjectInfo projectData={projectData} />
+                {projectData && (
+                  <ProjectInfo
+                    projectData={projectData}
+                    updateProjectData={updateProjectData}
+                  />
+                )}
               </TabPanel>
               <TabPanel>
                 <ProjectUserAdd
+                  deassignProjectUser={deassignProjectUser}
                   projectUsers={projectUsers}
                   addProjectUser={addProjectUser}
                 />

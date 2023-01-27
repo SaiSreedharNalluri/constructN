@@ -13,7 +13,7 @@ export interface IProjects {
   jobsOpened?: number;
   LastUpdatedOn?: string;
   coverPhoto: string;
-  zone: string;
+  utm: string;
 }
 export interface Contact {
   code: string;
