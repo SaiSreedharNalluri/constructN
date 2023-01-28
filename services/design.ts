@@ -16,3 +16,17 @@ export const getStructureDesigns = async (
       throw error;
     }
   };
+
+export const getDesignTM = async (
+    path: string
+) => {
+  try {
+      return await instance.get(
+      `${path}/tm.json`
+    ); 
+  } catch (error) {
+    console.log("Error TmJson:", error);
+    return {}
+
+  }
+};

@@ -31,8 +31,11 @@ export class PotreeViewerUtils {
 
     updateData(pointCloudData) {
         console.log("PointCloud data update: ", pointCloudData);
-        this.tmMatrix = new THREE.Matrix4().fromArray(pointCloudData.tm).transpose();
-        this.globalOffset = pointCloudData.offset
+        if(pointCloudData.tm) {
+            this.tmMatrix = new THREE.Matrix4().fromArray(pointCloudData.tm).transpose();
+            this.globalOffset = pointCloudData.offset
+        }
+        
         this.pointCloudPath = pointCloudData.path
 
         if (this.isViewerInitialized) {
@@ -40,13 +43,13 @@ export class PotreeViewerUtils {
         }
     }
 
-    updateLayers(){
+    updateLayersData(){
 
     }
 
     loadData(viewers, pid, tid, secondary=false, inCamera = null) {
-        this.removeAssets(viewer);
-        this.loadPointCloud(viewer, pid, tid, secondary, inCamera);
+        this.removeAssets(this.viewer);
+        this.loadPointCloud(this.viewer, pid, tid, secondary, inCamera);
         // isFloorMap && loadFloormap(viewer.fpContainerId, viewer.fpCanvasId, viewer, pid, tid);
     }
 
