@@ -53,8 +53,7 @@ export const updateProjectInfo = async (
       return response.data;
     })
     .catch((error) => {
-      console.log('error', error);
-      throw error;
+      throw error.response.data;
     });
 };
 export const assignProjectUser = async (
@@ -76,14 +75,11 @@ export const assignProjectUser = async (
       throw error.response.data;
     });
 };
-export const removeProjectUser = async (
-  ProjectUser: Object,
-  projectId: string
-) => {
+export const removeProjectUser = async (email: string, projectId: string) => {
   return await instance
     .put(
       `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/deassign-user`,
-      ProjectUser,
+      { email },
       {
         headers: authHeader.authHeader(),
       }
@@ -92,8 +88,7 @@ export const removeProjectUser = async (
       return response.data;
     })
     .catch((error) => {
-      console.log('error', error);
-      throw error;
+      throw error.response.data;
     });
 };
 export const updateProjectUserRole = async (

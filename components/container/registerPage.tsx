@@ -8,14 +8,12 @@ import InputPassword from '../core/Input/inputPassword';
 import InputText from '../core/Input/inputText';
 import NextImage from '../core/Image';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 interface IProps {
   loading: boolean;
   message: string;
   handleRegister: (e: object) => void;
 }
 const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
-  const router = useRouter();
   const initialValues: {
     firstName: string;
     lastName: string;
@@ -64,7 +62,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
             onSubmit={handleRegister}
           >
             <Form className=" grid grid-cols-1 gap-y-2 px-4">
-              <div >
+              <div>
                 <InputText
                   type="text"
                   placeholderName="First Name"
@@ -124,8 +122,9 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                   placeholderName="Confirm Password"
                 />
                 <div
-                  className={`${active === 'confirm password'
-                    } absolute p-3 inset-y-0 right-0`}
+                  className={`${
+                    active === 'confirm password'
+                  } absolute p-3 inset-y-0 right-0`}
                   id="confirm password"
                 >
                   <Image
