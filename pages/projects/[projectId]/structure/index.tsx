@@ -18,6 +18,8 @@ import GenericViewer from '../../../../components/container/GenericViewer';
 import RightFloatingMenu from '../../../../components/container/rightFloatingMenu/rightFloatingMenu';
 import { ITools } from '../../../../models/ITools';
 import { getStructureList } from '../../../../services/structure';
+import { IActiveRealityMap } from '../../../../models/IReality';
+import { IDesignMap } from '../../../../models/IDesign';
 
 interface IProps { }
 const Index: React.FC<IProps> = () => {
@@ -28,6 +30,8 @@ const Index: React.FC<IProps> = () => {
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
+  const [designMap, setDesignMap] = useState<IDesignMap>();
+  const [activeRealityMap, setActiveRealityMap] = useState<IActiveRealityMap>();
   const [projectutm, setProjectUtm] = useState('');
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
@@ -63,9 +67,18 @@ const Index: React.FC<IProps> = () => {
     return currentStructure;
   }
 
+  const updateRealityMap = (realityMap: IActiveRealityMap) => {
+    setActiveRealityMap(realityMap);
+  }
+
   const updatedSnapshot = (snapshot: ISnapshot) => {
     setSnapshot(snapshot);
   };
+
+  const updateDesignMap = (designMap: IDesignMap) => {
+    setDesignMap(designMap);
+  }
+
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
   };
@@ -77,7 +90,16 @@ const Index: React.FC<IProps> = () => {
       case 'forge':
         return (
           structure && (
-          <GenericViewer toolRes={toolResponse} tools={clickedTool} structure={structure} updateSnapshot={updatedSnapshot} viewMode={currentViewMode} viewType={currentViewType} viewLayers={currentViewLayers}></GenericViewer>
+          <GenericViewer 
+          toolRes={toolResponse} 
+          tools={clickedTool} 
+          structure={structure} 
+          updateSnapshot={updatedSnapshot} 
+          updateRealityMap={updateRealityMap} 
+          updateDesignMap={updateDesignMap}
+          viewMode={currentViewMode} 
+          viewType={currentViewType} 
+          viewLayers={currentViewLayers}></GenericViewer>
             )
         );
       case 'map':

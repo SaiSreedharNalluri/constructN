@@ -1,16 +1,44 @@
 import axios from "axios";
+import { IReality } from "../models/IReality";
+import instance from './axiosInstance';
 import authHeader from "./auth-header";
 
 export const getPointCloudTM = async (
-    projectId: string,
-    structureId: string,
-    snapshotId: string
+    path: string
 ) => {
   try {
-      return await axios.get(
-      `${process.env.NEXT_PUBLIC_CONSTRUCTN_PROJECTS_S3}/${projectId}/structures/${structureId}/snapshots/${snapshotId}/pointcloud/tm.json`
+      return await instance.get(
+      `${path}/pointcloud/tm.json`
     ); 
   } catch (error) {
-    throw error;
+    console.log("Error TmJson:", error);
+
   }
 };
+
+export const getPointCloud = async (
+  path: string
+) => {
+try {
+    return await instance.get(
+    `${path}/pointcloud/cloud.json`
+  ); 
+} catch (error) {
+  console.log("Error Cloud.json:", error);
+
+}
+};
+
+export const getRealityPositions = async (
+  path: string
+  ) => {
+  try {
+    return await instance.get(
+      `${path}/images.json`
+    );
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}
+

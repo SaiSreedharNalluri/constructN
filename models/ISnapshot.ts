@@ -1,4 +1,4 @@
-import { IReality } from "./IReality";
+import { IActiveReality, IReality } from "./IReality";
 
 export interface ISnapshot {
   _id: string;
@@ -11,20 +11,20 @@ export interface ISnapshot {
   structure: string;
   status: string;
   visualization: [];
-  reality?: [IReality];
+  reality?: [IActiveReality];
 }
 
-export interface ISnapShotDeatils {
-  _id: string;
-  progress: number;
-  status: string;
-  visualizations?: null[] | null;
-  structure: StructureOrProject;
-  date: string;
-  project: StructureOrProject;
-  createdAt: string;
-  updatedAt: string;
-}
+// export interface ISnapShotDeatils {
+//   _id: string;
+//   progress: number;
+//   status: string;
+//   visualizations?: null[] | null;
+//   structure: StructureOrProject;
+//   date: string;
+//   project: StructureOrProject;
+//   createdAt: string;
+//   updatedAt: string;
+// }
 export interface StructureOrProject {
   _id: string;
   name: string;

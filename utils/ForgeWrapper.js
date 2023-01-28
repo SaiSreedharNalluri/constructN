@@ -1,10 +1,12 @@
 // import { Path2D } from '@adsk/solid-definition';
 import { autodeskAuth } from "../services/forgeService";
+import { ForgeDataVisualization } from './ForgeDataVisualizationUtils';
 
 export class ForgeViewerUtils {
   constructor(viewerId) {
     this.viewerId = viewerId;
     this.documentURNs = [];
+    this.realityPositionMap = {};
     this.forgeViewer = undefined;
     this.isViewerInitialized = false;
     this.model = undefined;
@@ -12,6 +14,8 @@ export class ForgeViewerUtils {
     this.progressData = undefined;
     this.inProgress = false;
     this.isPendingDataToLoad = false;
+    this.isPendingLayersToLoad = false;
+    this.dataVizExtn = undefined;
   }
 
   // static getInstance(viewerId) {
@@ -30,6 +34,16 @@ export class ForgeViewerUtils {
     } else {
       this.initialize();
     }
+  }
+
+  updateLayersData(realityPositionMap) {
+    console.log("Inside update layers data: ", realityPositionMap, this.dataVizExtn);
+    this.realityPositionMap = realityPositionMap;
+    this.isPendingLayersToLoad = true;
+    if (this.dataVizUtils) {
+      this.loadLayers();
+    }
+
   }
 
   updateProgressData(progress) {
@@ -103,11 +117,10 @@ export class ForgeViewerUtils {
     console.log("Inside loadModel: ",this.documentURNs);
     console.log("Loading new Model: ", this.documentURNs);
     if(this.isModelLoaded) {
-    //  await this.forgeViewer.tearDown();
-     await this.forgeViewer.unloadDocumentNode(this.manifestNode);
+     await this.forgeViewer.tearDown();
+    //  await this.forgeViewer.unloadDocumentNode(this.manifestNode);
     }
     this.documentURNs.map((document) => {
-      // let temp = 'urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YWRoYW5pX2tvcmVnYW9uX3BhcmtfcHVuZS8lMkZQUkoyMDE4OTclMkZzdHJ1Y3R1cmVzJTJGU1RSNTM2MTM4JTJGZGVzaWducyUyRkRTRzIzNDI5MyUyRmFkaGFuaV9hM19ibG9jay5ydnQ';
       Autodesk.Viewing.Document.load(
         document.urn,
         async function (viewerDocument) {
@@ -116,7 +129,7 @@ export class ForgeViewerUtils {
           this.model = await this.forgeViewer.loadDocumentNode(
             viewerDocument,
             this.manifestNode,
-            this.generateModelOptions(document.tm)
+            this.generateModelOptions(document.tm, this.manifestNode)
           );
         }.bind(this),
         function () {
@@ -126,48 +139,61 @@ export class ForgeViewerUtils {
     });
   }
 
-  generateModelOptions(tm) {
+  generateModelOptions(tm, manifestNode) {
     console.log("Inside modeloptions:", tm);
-    var mx = new THREE.Matrix4();
-    mx.fromArray([
-      10.709603309631, 1.489653229713, 0.0, 385315.34375, -1.489653229713,
-      10.709603309631, 0.0, 2049716.75, 0.0, 0.0, 10.812708854675, 0.0, 0.0,
-      0.0, 0.0, 1.0,
-    ]).transpose();
+    console.log("Inside modeloptions, isModel 2D: ", manifestNode.is2D());
+    // var mx = new THREE.Matrix4();
+    // mx.fromArray([
+    //   10.709603309631, 1.489653229713, 0.0, 385315.34375, -1.489653229713,
+    //   10.709603309631, 0.0, 2049716.75, 0.0, 0.0, 10.812708854675, 0.0, 0.0,
+    //   0.0, 0.0, 1.0,
+    // ]).transpose();
 
     const modelOptions = {
       applyScaling: "m",
-      page: 1,
       // preserveView: true,
       // modelSpace: true,
       // keepCurrentModels: true,
-      leafletOptions: {
+    };
+
+    if (manifestNode.is2D()) {
+      let leafletOptions = {
         fitPaperSize: true,
         isPdf: true
-      },
-    };
+      }
+
+      modelOptions.page = 1;
+      modelOptions.leafletOptions = leafletOptions
+    }
 
     modelOptions.globalOffset = { x: 0, y: 0, z: 0 };
     let globalOff = [0, 0, 0];
 
     if (tm && tm.tm) {
-      modelOptions.placementTransform = new THREE.Matrix4().fromArray(this.tm.tm).transpose();
+      modelOptions.placementTransform = new THREE.Matrix4().fromArray(tm.tm).transpose();
       // modelOptions.placementTransform = (new THREE.Matrix4()).setPosition({x:50,y:0,z:-50})
       // modelOptions.placementTransform = new THREE.Matrix4().fromArray([0.216,1.022,-0.007,367033.477,-1.022,0.216,-0.001,2053135.281,-0.000,0.007,1.045,-57.5,0.000,0.000,0.000,1.000]).transpose()
       console.log('BIM TM Loaded');
     }
 
-    if (tm && tm.offset) {
-      globalOff = this.tm_json.offset;
-      modelOptions.globalOffset = {
-        x: globalOff[0],
-        y: globalOff[1],
-        z: globalOff[2],
-      };
-      console.log("Offset Loaded");
-    }
+    // if (tm && tm.offset) {
+    //   globalOff = this.tm_json.offset;
+    //   modelOptions.globalOffset = {
+    //     x: globalOff[0],
+    //     y: globalOff[1],
+    //     z: globalOff[2],
+    //   };
+    //   console.log("Offset Loaded");
+    // }
 
     return modelOptions;
+  }
+
+  loadLayers() {
+    console.log("Passing data to dataViz extension: ", this.dataVizUtils);
+    this.dataVizUtils.removeExistingVisualizationData();
+    this.dataVizUtils.addVisualizationData(this.realityPositionMap);
+    this.isPendingLayersToLoad = false;
   }
 
   async loadProgressView() {
@@ -269,6 +295,8 @@ export class ForgeViewerUtils {
     const dataVizExtn = await this.forgeViewer.getExtensionAsync(
       "Autodesk.DataVisualization"
     );
+    console.log("Load Async dataVizExtension: ",dataVizExtn);
+    this.dataVizUtils = ForgeDataVisualization.getInstance(dataVizExtn);
     // const constructnExt = await this.forgeViewer.getExtensionAsync(
     //   "ConstructNTools"
     // );
@@ -330,6 +358,10 @@ export class ForgeViewerUtils {
     // selection.setSelection([poly]);
     // selection.modified();
     this.getActiveTool();
+
+    if (this.isPendingLayersToLoad) {
+      this.loadLayers();
+    }
     // this.loadSprite(dataVizExtn);
     // edit2d.unregisterDefaultTools();
     // constructnExt.activate();
@@ -342,74 +374,6 @@ export class ForgeViewerUtils {
   //   var path = new Path2D();
 
   // }
-
-  loadSprite(dataVizExtn) {
-    const DataVizCore = Autodesk.DataVisualization.Core;
-    const viewableType = DataVizCore.ViewableType.SPRITE;
-    const spriteColor = new THREE.Color(0xffffff);
-    // const baseURL = "http://localhost:9081/images/";
-    const spriteIconUrl =
-      "https://img.icons8.com/color/48/000000/electrical-sensor.png";
-
-    const style = new DataVizCore.ViewableStyle(
-      viewableType,
-      spriteColor,
-      spriteIconUrl
-    );
-
-    this.loadViewableData(DataVizCore, dataVizExtn, style);
-  }
-
-  async loadViewableData(DataVizCore, dataVizExtn, style) {
-    const viewableData = new DataVizCore.ViewableData();
-    viewableData.spriteSize = 24; // Sprites as points of size 24 x 24 pixels
-
-    const myDataList = [
-      {
-        position: {
-          x: 385387.48781699024,
-          y: 2049811.5040732909,
-          z: 95.79301855560584,
-        },
-      }, // "DT_VID_20221222_125011_00_160IMG_636.JPG"
-      {
-        position: {
-          x: 385388.0634398281,
-          y: 2049810.764701934,
-          z: 95.80095614319397,
-        },
-      }, // "DT_VID_20221222_125011_00_160IMG_634.JPG"
-      {
-        position: {
-          x: 385383.07042181026,
-          y: 2049778.5836000163,
-          z: 95.86333169023112,
-        },
-      }, //"DT_VID_20221222_125011_00_160IMG_930.JPG"
-    ];
-
-    myDataList.forEach((myData, index) => {
-      const dbId = 10 + index;
-      const position = myData.position;
-      const viewable = new DataVizCore.SpriteViewable(position, style, dbId);
-
-      viewableData.addViewable(viewable);
-    });
-
-    // viewableData.finish().then(() => {
-    //   dataVizExtn.addViewables(viewableData);
-    // });
-    await this.addViewableData(viewableData, dataVizExtn);
-  }
-
-  async addViewableData(viewableData, dataVizExtn) {
-    await viewableData.finish();
-    dataVizExtn.addViewables(viewableData);
-  }
-
-  removeViewableData() {
-    dataVizExtn.removeAllViewables();
-  }
 
   getSVGShape() {
     const svgString =
@@ -496,12 +460,12 @@ export class ForgeViewerUtils {
     }
   }
 
-  // shutdown() {
-  //   this.isViewerInitialized = false;
-  //   this.forgeViewer.tearDown();
-  //   // this.forgeViewer.uninitialize();
-  //   // Autodesk.Viewing.shutdown();
-  // }
+  shutdown() {
+    this.isViewerInitialized = false;
+    // this.forgeViewer.finish();
+    // this.forgeViewer.uninitialize();
+    // Autodesk.Viewing.shutdown();
+  }
 
   onLoadFileEvent(parameter) {
     console.log("Inside Load File Event: ", parameter.loader);
@@ -524,16 +488,14 @@ export class ForgeViewerUtils {
   }
 
   onModelLayersLoadedEvent(parameter) {
-    console.log(
-      `Inside Model Layers loaded Event: model: ${parameter.model} root: ${parameter.root} `
-    );
+    console.log("Inside Model Layers loaded Event: model: ",parameter);
+    this.loadExtension();
+    this.isPendingDataToLoad = false;
+    this.isModelLoaded = true;
   }
 
   onGeometryLoadedEvent(parameter) {
     console.log("Inside Geometry Loaded Event: model: ", parameter.model);
-    this.loadExtension();
-    this.isPendingDataToLoad = false;
-    this.isModelLoaded = true;
   }
 
   onBeforeModelUnLoadedEvent(model) {
@@ -550,7 +512,10 @@ export class ForgeViewerUtils {
   }
 
   onExtensionLoadedEvent(parameter) {
-    console.log(`Inside Extension Loaded Event: ${parameter.extensionId}`);
+    // console.log("Inside Extension Loaded Event:", parameter);
+    if(parameter.extensionId === ForgeDataVisualization.EXTENSION_ID) {
+      console.log("Inside Extension Loaded Event: Data Visualization", parameter);
+    }
   }
 
   onExtensionPreUnLoadedEvent(parameter) {
@@ -570,9 +535,12 @@ export class ForgeViewerUtils {
   }
 
   onExtensionActivatedEvent(parameter) {
-    console.log(
-      `Inside Extension Activated Event: ${parameter.extensionId} mode: ${parameter.mode}`
-    );
+    if(parameter.extensionId === ForgeDataVisualization.EXTENSION_ID) {
+      console.log("Inside Extension Loaded Event: Data Visualization", parameter);
+      if (this.isPendingLayersToLoad) {
+
+      }
+    }
   }
 
   onExtensionPreDeActivatedEvent(parameter) {

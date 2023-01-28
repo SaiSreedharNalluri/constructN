@@ -25,59 +25,59 @@ export default function Document() {
         <NextScript />
         <Script
           src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js" 
-          onLoad={onScriptLoad} 
+          onReady={onScriptLoad} 
           strategy="beforeInteractive"/>
         <Script
-          src="potree/libs/jquery/jquery-3.1.1.min.js"
+          src="/potree/libs/jquery/jquery-3.1.1.min.js"
           strategy="beforeInteractive"
         />
         <Script
-          src="potree/libs/spectrum/spectrum.js"
+          src="/potree/libs/spectrum/spectrum.js"
           strategy="beforeInteractive"
         />
         <Script
-          src="potree/libs/jquery-ui/jquery-ui.min.js"
+          src="/potree/libs/jquery-ui/jquery-ui.min.js"
           strategy="beforeInteractive"
         />
         <Script
-          src="potree/libs/other/BinaryHeap.js"
+          src="/potree/libs/other/BinaryHeap.js"
           strategy="beforeInteractive"
         />
         <Script
-          src="potree/libs/tween/tween.min.js"
+          src="/potree/libs/tween/tween.min.js"
           strategy="beforeInteractive"
         />
         <Script
-          src="potree/libs/d3/d3.js"
+          src="/potree/libs/d3/d3.js"
           strategy="beforeInteractive"
         />
         <Script
-          src="potree/libs/jquery/jquery-3.1.1.min.js"
+          src="/potree/libs/jquery/jquery-3.1.1.min.js"
           strategy="beforeInteractive"
         />
         <Script
-          src="potree/libs/proj4/proj4.js"
+          src="/potree/libs/proj4/proj4.js"
           strategy="beforeInteractive"
         />
         <Script
-          src="potree/libs/openlayers3/ol.js"
+          src="/potree/libs/openlayers3/ol.js"
           strategy="beforeInteractive"
         />
         <Script
-          src="potree/libs/i18next/i18next.js"
+          src="/potree/libs/i18next/i18next.js"
           strategy="beforeInteractive"
         />
         <Script
-          src="potree/libs/jstree/jstree.js"
+          src="/potree/libs/jstree/jstree.js"
           strategy="beforeInteractive"
         />
         <Script
-          src="potree/build/potree/potree.js"
-          onLoad={onPotreeScriptLoaded}
+          src="/potree/build/potree/potree.js"
+          onReady={onPotreeScriptLoaded}
           strategy="beforeInteractive"
         />
         <Script
-          src="potree/libs/plasio/js/laslaz.js"
+          src="/potree/libs/plasio/js/laslaz.js"
           strategy="beforeInteractive"
         />
       </body>
