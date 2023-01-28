@@ -7,7 +7,6 @@ import { getSnapshotsList } from '../../../../services/snapshot';
 import { getProjectDetails } from '../../../../services/project';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import _ from 'lodash';
-import DatePicker from '../../../../components/container/datePicker';
 import Pagination from '../../../../components/container/pagination';
 import { faGreaterThan } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,12 +19,17 @@ import { ITools } from '../../../../models/ITools';
 import { getStructureList } from '../../../../services/structure';
 import { IActiveRealityMap } from '../../../../models/IReality';
 import { IDesignMap } from '../../../../models/IDesign';
+import { createIssue, getIssuesList } from '../../../../services/issue';
+import { getCookie } from 'cookies-next';
+import { toast } from 'react-toastify';
+import { createTask, getTasksList } from '../../../../services/task';
+import { Issue } from '../../../../models/Issue';
+import { ITasks } from '../../../../models/Itask';
 
-interface IProps { }
+interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const [currentViewMode, setViewMode] = useState('Design'); //Design/ Reality
-
   const [currentProjectId, setActiveProjectId] = useState('');
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [structure, setStructure] = useState<IStructure>();
@@ -43,33 +47,54 @@ const Index: React.FC<IProps> = () => {
   const [currentViewType, setViewType] = useState(''); //plan,elevational,xsectional,bim
   const [currentViewLayers, setViewLayers] = useState<string[]>([]); //360Image, 360Video, phoneImage, droneImage
   const [clickedTool, setClickedTool] = useState<ITools>();
+  const [loggedInUserId, SetLoggedInUserId] = useState('');
+  const [issuesList, setIssueList] = useState<Issue[]>([]);
+  const [tasksList, setTasksList] = useState<ITasks[]>([]);
   useEffect(() => {
     if (router.isReady) {
-      getProjectDetails(router.query.projectId as string).then((response) => {
-        setProjectUtm(response?.data?.result?.utm);
-        setActiveProjectId(router.query.projectId as string);
-      });
-      getStructureList(router.query.projectId as string).then((response) => {
-        setStructuresList(response.data.result)
-      })
+      getProjectDetails(router.query.projectId as string)
+        .then((response) => {
+          setProjectUtm(response?.data?.result?.utm);
+          setActiveProjectId(router.query.projectId as string);
+        })
+        .catch((error) => {
+          toast.error('failed to load data');
+        });
+      getStructureList(router.query.projectId as string)
+        .then((response) => {
+          setStructuresList(response.data.result);
+        })
+        .catch((error) => {
+          toast.error('failed to load data');
+        });
+    }
+    const userObj: any = getCookie('user');
+    let user = null;
+    if (userObj) user = JSON.parse(userObj);
+    if (user?._id) {
+      SetLoggedInUserId(user._id);
     }
   }, [router.isReady, router.query.projectId]);
 
   const getStructureData = (structure: ChildrenEntity) => {
     setStructure(getCurrentStructureFromStructureList(structure));
+    getIssues(structure._id);
+    getTasks(structure._id);
   };
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
-    let currentStructure = structuresList.find((e) =>{ if (e._id === structure._id) {
-      return e;
-    }})
-    console.log("Selected structure: ", currentStructure?.name);
+    let currentStructure = structuresList.find((e) => {
+      if (e._id === structure._id) {
+        return e;
+      }
+    });
+    console.log('Selected structure: ', currentStructure?.name);
     return currentStructure;
-  }
+  };
 
   const updateRealityMap = (realityMap: IActiveRealityMap) => {
     setActiveRealityMap(realityMap);
-  }
+  };
 
   const updatedSnapshot = (snapshot: ISnapshot) => {
     setSnapshot(snapshot);
@@ -77,7 +102,7 @@ const Index: React.FC<IProps> = () => {
 
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
-  }
+  };
 
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
@@ -90,17 +115,18 @@ const Index: React.FC<IProps> = () => {
       case 'forge':
         return (
           structure && (
-          <GenericViewer 
-          toolRes={toolResponse} 
-          tools={clickedTool} 
-          structure={structure} 
-          updateSnapshot={updatedSnapshot} 
-          updateRealityMap={updateRealityMap} 
-          updateDesignMap={updateDesignMap}
-          viewMode={currentViewMode} 
-          viewType={currentViewType} 
-          viewLayers={currentViewLayers}></GenericViewer>
-            )
+            <GenericViewer
+              toolRes={toolResponse}
+              tools={clickedTool}
+              structure={structure}
+              updateSnapshot={updatedSnapshot}
+              updateRealityMap={updateRealityMap}
+              updateDesignMap={updateDesignMap}
+              viewMode={currentViewMode}
+              viewType={currentViewType}
+              viewLayers={currentViewLayers}
+            ></GenericViewer>
+          )
         );
       case 'map':
         return (
@@ -207,7 +233,66 @@ const Index: React.FC<IProps> = () => {
   const toolResponse = (data: string) => {
     console.log('Data->', data);
   };
-
+  const handleIssueSubmit = (formData: any) => {
+    formData.structure = structure?._id;
+    formData.title = `${structure?.name}_${formData.date} `;
+    formData.snapshot = snapshot?._id;
+    formData.owner = loggedInUserId;
+    formData.status = 'To Do';
+    createIssue(router.query.projectId as string, formData)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success('Issue is added sucessfully');
+          window.location.reload();
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
+  const handleTaskSubmit = (formData: any) => {
+    formData.structure = structure?._id;
+    formData.title = `${structure?.name}_${formData.date} `;
+    formData.snapshot = snapshot?._id;
+    formData.owner = loggedInUserId;
+    formData.status = 'To Do';
+    createTask(router.query.projectId as string, formData)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success('Task is added sucessfully');
+          window.location.reload();
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
+  const getIssues = (structureId: string) => {
+    getIssuesList(router.query.projectId as string, structureId)
+      .then((response) => {
+        setTasksList(response.result);
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
+  const getTasks = (structureId: string) => {
+    getTasksList(router.query.projectId as string, structureId)
+      .then((response) => {
+        setIssueList(response.result);
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
   return (
     <React.Fragment>
       <div className="">
@@ -231,7 +316,11 @@ const Index: React.FC<IProps> = () => {
               getStructureData={getStructureData}
               getStructure={(structureData) => {
                 if (structure === undefined) {
-                  setStructure(getCurrentStructureFromStructureList(structureData));
+                  setStructure(
+                    getCurrentStructureFromStructureList(structureData)
+                  );
+                  getIssues(structureData._id);
+                  getTasks(structureData._id);
                 }
               }}
             ></LeftOverLay>
@@ -246,7 +335,6 @@ const Index: React.FC<IProps> = () => {
               onClick={rightNavCollapse}
               icon={faGreaterThan}
             ></FontAwesomeIcon>
-          
           </div>
         </div>
         {/* <div ref={bottomRefContainer}>
@@ -273,10 +361,7 @@ const Index: React.FC<IProps> = () => {
                   getSnapshotInfo={getSnapshotInfo}
                 />
               </div>
-              <div>
-                <DatePicker></DatePicker>
-              </div>
-            </div>
+             </div>
           </div>
         </div> */}
 
@@ -298,6 +383,10 @@ const Index: React.FC<IProps> = () => {
             }  bg-gray-200 top-40   rounded  lg:right-0  duration-300 overflow-x-hidden`}
           >
             <RightFloatingMenu
+              issuesList={issuesList}
+              tasksList={tasksList}
+              handleIssueSubmit={handleIssueSubmit}
+              handleTaskSubmit={handleTaskSubmit}
               toolClicked={toolClicked}
               viewMode={currentViewMode}
             ></RightFloatingMenu>
