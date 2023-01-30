@@ -28,7 +28,7 @@ const TaskList: React.FC<IProps> = ({
   return (
     <div
       className={`fixed ${
-        visibility ? 'w-/14 h-screen' : 'w-0'
+        visibility ? 'w-1/4 calc-h' : 'w-0'
       } top-10     bg-gray-200 right-0 z-10 overflow-x-hidden`}
     >
       <div className="h-93 overflow-y-auto ">
@@ -66,7 +66,7 @@ const TaskList: React.FC<IProps> = ({
         {tasksList &&
           tasksList.map((taskInfo: ITasks) => {
             return (
-              <div className="h-full w-full" key={taskInfo._id}>
+              <div className="h-full mt-2 w-full" key={taskInfo._id}>
                 <div className=" h-1/12 w-11/12  m-auto ">
                   <div className=" m-auto ">
                     <div className=" bg-white border border-solid border-gray-400 rounded">

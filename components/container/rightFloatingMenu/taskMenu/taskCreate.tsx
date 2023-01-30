@@ -18,6 +18,7 @@ const TaskCreate: React.FC<IProps> = ({
   const router = useRouter();
   const [taskType, setTaskType] = useState<[string]>();
   const [taskPriority, setTaskPriority] = useState<[string]>();
+  const [tast, setTask] = useState<[string]>();
   useEffect(() => {
     if (router.isReady) {
       getTasksTypes(router.query.projectId as string).then((response) => {
@@ -64,11 +65,11 @@ const TaskCreate: React.FC<IProps> = ({
   return (
     <div
       className={`fixed ${
-        visibility ? 'w-/14 h-screen' : 'w-0'
-      } top-10     bg-gray-200 right-0 border border-solid border-black z-10 overflow-x-hidden`}
+        visibility ? ' calc-h' : 'w-0'
+      } top-10  bg-gray-200 right-0 z-10 overflow-x-hidden`}
     >
       <div>
-        <div className="flex  h-8 justify-between border-b border-black border-solid">
+        <div className="flex h-8 justify-between border-b border-black border-solid">
           <div>
             <h1>Create Task</h1>
           </div>
@@ -87,122 +88,118 @@ const TaskCreate: React.FC<IProps> = ({
         >
           {({ errors, touched }) => (
             <Form className=" grid grid-cols-1 gap-y-2 px-4">
-              <div className="flex flex-col ">
-                <div className="mt-1 ml-6 ">
-                  <h1 className="text-gray-500">Select the Type of Task</h1>
+              <div>
+                <h1 className="text-gray-500">Select the Type of Task</h1>
+                <Field
+                  as="select"
+                  name="type"
+                  id="type"
+                  className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
+                >
+                  {taskType &&
+                    taskType.map((option: any) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                </Field>
+                {errors.type && touched.type ? <div>{errors.type}</div> : null}
+              </div>
+              <div>
+                <div>
+                  <h5 className="text-gray-500">
+                    Tell us more about this Task.
+                  </h5>
+                </div>
+                <div>
                   <Field
-                    as="select"
-                    name="type"
-                    id="type"
-                    className="border border-solid border-gray-500 w-8/12 px-2 py-1.5 rounded"
-                  >
-                    {taskType &&
-                      taskType.map((option: any) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                  </Field>
-                  {errors.type && touched.type ? (
-                    <div>{errors.type}</div>
-                  ) : null}
+                    component="textarea"
+                    className="block w-full text-sm border border-solid border-gray-600 rounded"
+                    name="description"
+                  />
+                  <ErrorMessage
+                    name="name"
+                    component="div"
+                    className="alert alert-danger"
+                  />
                 </div>
-                <div className="ml-6 mt-1">
-                  <div>
-                    <h5 className="text-gray-500">
-                      Tell us more about this Task.
-                    </h5>
-                  </div>
-                  <div>
-                    <Field
-                      component="textarea"
-                      className="block w-10/12 text-sm border border-solid border-gray-600 rounded-lg"
-                      name="description"
-                    />
-                    <ErrorMessage
-                      name="name"
-                      component="div"
-                      className="alert alert-danger"
-                    />
-                  </div>
+              </div>
+              <div>
+                <h1 className="text-gray-500">Select Issue Priority</h1>
+                <Field
+                  as="select"
+                  name="priority"
+                  id="priority"
+                  className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
+                >
+                  {taskPriority &&
+                    taskPriority.map((option: any) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                </Field>
+                {errors.priority && touched.priority ? (
+                  <div>{errors.priority}</div>
+                ) : null}
+              </div>
+              <div>
+                <div>
+                  <h5 className="text-gray-500">Assigned To</h5>
                 </div>
-                <div className="mt-1 ml-6 ">
-                  <h1 className="text-gray-500">Select Issue Priority</h1>
+                <div>
                   <Field
-                    as="select"
-                    name="priority"
-                    id="priority"
-                    className="border border-solid border-gray-500 w-8/12 px-2 py-1.5 rounded"
-                  >
-                    {taskPriority &&
-                      taskPriority.map((option: any) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                  </Field>
-                  {errors.priority && touched.priority ? (
-                    <div>{errors.priority}</div>
-                  ) : null}
+                    className="rounded p-0.5 border border-solid border-gray-600 w-full"
+                    type="text"
+                    placeholder="Assigned To"
+                    name="assignees"
+                  />
+                  <ErrorMessage
+                    name="name"
+                    component="div"
+                    className="alert alert-danger"
+                  />
                 </div>
-                <div className="ml-6 mt-1">
-                  <div>
-                    <h5 className="text-gray-500">Assigned To</h5>
-                  </div>
-                  <div>
-                    <Field
-                      className="rounded p-0.5 border border-solid border-gray-600 w-10/12"
-                      type="text"
-                      placeholder="Assigned To"
-                      name="assignees"
-                    />
-                    <ErrorMessage
-                      name="name"
-                      component="div"
-                      className="alert alert-danger"
-                    />
-                  </div>
+              </div>
+              <div>
+                <div>
+                  <div className=" text-gray-500 ">Date</div>
+                  <Field
+                    type="date"
+                    name="date"
+                    className=" w-full text-sm border border-solid border-gray-600 rounded p-2"
+                  />
+                  <ErrorMessage
+                    name="name"
+                    component="div"
+                    className="alert alert-danger"
+                  />
                 </div>
-                <div className=" mt-1 ml-6">
-                  <div className="flex w-10/12">
-                    <div className="w-1/2 text-gray-500 ">Date</div>
-                    <Field
-                      type="date"
-                      name="date"
-                      className="block w-11/12 text-sm border border-solid border-gray-600 rounded-lg"
-                    />
-                    <ErrorMessage
-                      name="name"
-                      component="div"
-                      className="alert alert-danger"
-                    />
-                  </div>
+              </div>
+              <div>
+                <div>
+                  <h5 className="text-gray-500">Tags</h5>
                 </div>
-                <div className="ml-6 mt-1">
-                  <div>
-                    <h5 className="text-gray-500">Tags</h5>
-                  </div>
-                  <div>
-                    <Field
-                      component="textarea"
-                      className="block w-10/12 border border-solid border-gray-600 text-sm  rounded-lg  "
-                      name="tags"
-                    />
-                    <ErrorMessage
-                      name="name"
-                      component="div"
-                      className="alert alert-danger"
-                    />
-                  </div>
+                <div>
+                  <Field
+                    component="textarea"
+                    className="block w-full border border-solid border-gray-600 text-sm  rounded  "
+                    name="tags"
+                  />
+                  <ErrorMessage
+                    name="name"
+                    component="div"
+                    className="alert alert-danger"
+                  />
                 </div>
-                <div className="w-10/12 ml-6">
-                  <button
-                    type="submit"
-                    className="p-2 w-11/12 mt-2 bg-gray-500  rounded-md "
-                  >
-                    Add Task
-                  </button>
-                </div>
+              </div>
+              <div className="flex justify-center">
+                <button
+                  type="submit"
+                  className="p-1.5 mt-2 bg-gray-500  rounded-md "
+                >
+                  Add Task
+                </button>
               </div>
             </Form>
           )}

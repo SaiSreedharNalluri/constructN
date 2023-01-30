@@ -4,12 +4,19 @@ import Image from 'next/image';
 import { IProjects } from '../../models/IProjects';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { ProjectTypes } from '../../utils/constants';
+import ChangeIcon from './changeIcon';
 interface IProps {
   projectData: IProjects;
   updateProjectData: (updateInfo: object) => void;
+  handleImageUPload: (e: object) => void;
 }
+
 let latitude = 0;
-const ProjectInfo: React.FC<IProps> = ({ projectData, updateProjectData }) => {
+const ProjectInfo: React.FC<IProps> = ({
+  projectData,
+  updateProjectData,
+  handleImageUPload,
+}) => {
   const initialValues: {
     name: string;
     type: string;
@@ -35,17 +42,19 @@ const ProjectInfo: React.FC<IProps> = ({ projectData, updateProjectData }) => {
     Location: Yup.array(),
     utm: Yup.string(),
   });
+  console.log('project', projectData);
   return (
     <React.Fragment>
       <div className="inset-x-1/2 grid grid-cols-2 place-content-center gap-8 px-4">
         <div className="col-span-2">
           <Image
             alt=""
-            className=" w-11/12    border border-solid border-black  cursor-pointer"
+            className=" w-8/12 h-20 border border-solid border-black  cursor-pointer"
             width={1080}
             height={1080}
-            src="https://constructn-projects.s3.ap-south-1.amazonaws.com/PRJ257057/coverPhoto.png"
+            src={projectData.coverPhoto ? projectData.coverPhoto : ''}
           />
+          <ChangeIcon handleImageUPload={handleImageUPload} />
         </div>
         <Formik
           initialValues={initialValues}

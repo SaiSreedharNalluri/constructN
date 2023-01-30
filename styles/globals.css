@@ -18,3 +18,10 @@
 .margin3 {
   margin-left: 40px;
 }
+.calc-h {
+  height: calc(100vh - 40px);
+}
+
+.calc-h50 {
+  height: calc(100vh - 82px);
+}
