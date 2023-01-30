@@ -30,6 +30,7 @@ interface IProps {
   handleTaskSubmit: (formObj: object) => void;
   issuesList: Issue[];
   tasksList: ITasks[];
+  loading: boolean;
 }
 
 const RightFloatingMenu: React.FC<IProps> = ({
@@ -41,6 +42,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
   handleTaskSubmit,
   issuesList,
   tasksList,
+  loading,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [iViewMode, setIViewMode] = useState(viewMode);
@@ -380,6 +382,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 issuesList={issuesList}
                 handleIssueSubmit={handleIssueSubmit}
                 issueMenuClicked={issueMenuClicked}
+                loading={loading}
               ></IssueMenu>
               {/* <div className='bg-gray-400'>
                   <div className=" h-full text-xs"  id="issueItems">

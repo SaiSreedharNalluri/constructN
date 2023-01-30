@@ -25,6 +25,7 @@ interface IProps {
   issueLayer?: boolean;
   handleIssueSubmit: (FormData: object) => void;
   issuesList: Issue[];
+  loading: boolean;
 }
 
 const IssueMenu: React.FC<IProps> = ({
@@ -32,6 +33,7 @@ const IssueMenu: React.FC<IProps> = ({
   issueLayer,
   handleIssueSubmit,
   issuesList,
+  loading,
 }) => {
   const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
@@ -78,6 +80,7 @@ const IssueMenu: React.FC<IProps> = ({
             handleIssueSubmit={handleIssueSubmit}
             visibility={createOverlay}
             closeOverlay={closeIssueCreate}
+            loading={loading}
           ></IssueCreate>
           <FontAwesomeIcon
             icon={faList}

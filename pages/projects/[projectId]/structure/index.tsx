@@ -50,6 +50,7 @@ const Index: React.FC<IProps> = () => {
   const [loggedInUserId, SetLoggedInUserId] = useState('');
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     if (router.isReady) {
       getProjectDetails(router.query.projectId as string)
@@ -244,6 +245,7 @@ const Index: React.FC<IProps> = () => {
         if (response.success === true) {
           toast.success('Issue is added sucessfully');
           issuesList.push(response.result);
+          setLoading(true);
         }
       })
       .catch((error) => {
@@ -390,6 +392,7 @@ const Index: React.FC<IProps> = () => {
               handleTaskSubmit={handleTaskSubmit}
               toolClicked={toolClicked}
               viewMode={currentViewMode}
+              loading={loading}
             ></RightFloatingMenu>
           </div>
         </div>

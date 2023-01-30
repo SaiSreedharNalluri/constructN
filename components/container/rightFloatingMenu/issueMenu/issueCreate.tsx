@@ -5,20 +5,29 @@ import * as Yup from 'yup';
 import React, { useEffect, useState } from 'react';
 import { getIssuesPriority, getIssuesTypes } from '../../../../services/issue';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { getProjectUsers } from '../../../../services/project';
+import { IProjectUsers } from '../../../../models/IProjects';
+import { userAgent } from 'next/server';
 interface IProps {
   closeOverlay: () => void;
   visibility: boolean;
   handleIssueSubmit: (formData: object) => void;
+  loading: boolean;
 }
 
 const IssueCreate: React.FC<IProps> = ({
   closeOverlay,
   visibility,
   handleIssueSubmit,
+  loading,
 }) => {
   const router = useRouter();
   const [issueType, setIssueType] = useState<[string]>();
   const [issuePriority, setIssuePriority] = useState<[string]>();
+  const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
+  let usersList = [
+    { _id: '', name: 'please select the assignee for the issue' },
+  ];
   useEffect(() => {
     if (router.isReady) {
       getIssuesTypes(router.query.projectId as string).then((response) => {
@@ -33,11 +42,18 @@ const IssueCreate: React.FC<IProps> = ({
           setIssuePriority(response.result);
         }
       });
+      getProjectUsers(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+          }
+        })
+        .catch();
     }
   }, [router.isReady, router.query.projectId]);
-  const closeIssueCreate = () => {
+  if (loading) {
     closeOverlay();
-  };
+  }
   const initialValues: {
     type: string;
     priority: string;
@@ -49,7 +65,7 @@ const IssueCreate: React.FC<IProps> = ({
     type: 'Please select the issue type',
     priority: 'Please select the issue priority',
     description: '',
-    assignees: '',
+    assignees: 'Please select the issue assignee',
     tags: '',
     date: '',
   };
@@ -61,6 +77,14 @@ const IssueCreate: React.FC<IProps> = ({
     tags: Yup.string(),
     date: Yup.string(),
   });
+  if (projectUsers?.length > 0) {
+    projectUsers.map((projectUser: any) => {
+      usersList.push({
+        _id: projectUser?.user?._id,
+        name: projectUser?.user?.fullName,
+      });
+    });
+  }
   return (
     <div
       className={`fixed top-10 ${
@@ -75,7 +99,7 @@ const IssueCreate: React.FC<IProps> = ({
           <div>
             <FontAwesomeIcon
               icon={faTimes}
-              onClick={closeIssueCreate}
+              onClick={closeOverlay}
               className="hover:white cursor-pointer mr-2 "
             ></FontAwesomeIcon>
           </div>
@@ -146,16 +170,21 @@ const IssueCreate: React.FC<IProps> = ({
                 </div>
                 <div>
                   <Field
-                    className="rounded p-0.5 border border-solid border-gray-600 w-full"
-                    type="text"
-                    placeholder="Assigned To"
+                    as="select"
                     name="assignees"
-                  />
-                  <ErrorMessage
-                    name="name"
-                    component="div"
-                    className="alert alert-danger"
-                  />
+                    id="assignees"
+                    className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
+                  >
+                    {usersList &&
+                      usersList.map((option: any) => (
+                        <option key={option?._id} value={option?._id}>
+                          {option?.name}
+                        </option>
+                      ))}
+                  </Field>
+                  {errors.priority && touched.priority ? (
+                    <div>{errors.priority}</div>
+                  ) : null}
                 </div>
               </div>
               <div>
