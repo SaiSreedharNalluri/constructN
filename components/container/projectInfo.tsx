@@ -49,7 +49,7 @@ const ProjectInfo: React.FC<IProps> = ({
         <div className="col-span-2">
           <Image
             alt=""
-            className=" w-11/12    border border-solid border-black  cursor-pointer"
+            className=" w-8/12 h-20 border border-solid border-black  cursor-pointer"
             width={1080}
             height={1080}
             src={projectData.coverPhoto ? projectData.coverPhoto : ''}

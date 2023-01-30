@@ -64,11 +64,11 @@ const IssueCreate: React.FC<IProps> = ({
   return (
     <div
       className={`fixed top-10 ${
-        visibility ? 'w-/14 h-screen' : 'w-0'
-      }  bg-gray-200 right-0 border border-solid border-black z-10 overflow-x-hidden`}
+        visibility ? ' calc-h' : 'w-0'
+      }  bg-gray-200 right-0 z-10 overflow-x-hidden`}
     >
       <div>
-        <div className="flex  h-8 justify-between border-b border-black border-solid">
+        <div className="flex h-8 justify-between border-b border-black border-solid">
           <div>
             <h1>Create Issue</h1>
           </div>
@@ -87,13 +87,13 @@ const IssueCreate: React.FC<IProps> = ({
         >
           {({ errors, touched }) => (
             <Form className=" grid grid-cols-1 gap-y-2 px-4">
-              <div className="mt-2 ml-6 ">
+              <div className="mt-2 ">
                 <h1 className="text-gray-500">Select the Type of Issue</h1>
                 <Field
                   as="select"
                   name="type"
                   id="type"
-                  className="border border-solid border-gray-500 w-8/12 px-2 py-1.5 rounded"
+                  className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                 >
                   {issueType &&
                     issueType.map((option: any) => (
@@ -104,14 +104,14 @@ const IssueCreate: React.FC<IProps> = ({
                 </Field>
                 {errors.type && touched.type ? <div>{errors.type}</div> : null}
               </div>
-              <div className="ml-6 mt-1">
+              <div>
                 <div>
                   <h5 className="text-gray-500">Issue description.</h5>
                 </div>
                 <div>
                   <Field
                     component="textarea"
-                    className="block w-10/12 text-sm border border-solid border-gray-600 rounded-lg"
+                    className="block w-full text-sm border border-solid border-gray-600 rounded-lg"
                     name="description"
                   />
                   <ErrorMessage
@@ -121,13 +121,13 @@ const IssueCreate: React.FC<IProps> = ({
                   />
                 </div>
               </div>
-              <div className="mt-1 ml-6 ">
+              <div>
                 <h1 className="text-gray-500">Select Priority of the Issue</h1>
                 <Field
                   as="select"
                   name="priority"
                   id="priority"
-                  className="border border-solid border-gray-500 w-8/12 px-2 py-1.5 rounded"
+                  className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                 >
                   {issuePriority &&
                     issuePriority.map((option: any) => (
@@ -140,13 +140,13 @@ const IssueCreate: React.FC<IProps> = ({
                   <div>{errors.priority}</div>
                 ) : null}
               </div>
-              <div className="ml-6 mt-1">
+              <div>
                 <div>
                   <h5 className="text-gray-500">Assigned To</h5>
                 </div>
                 <div>
                   <Field
-                    className="rounded p-0.5 border border-solid border-gray-600 w-10/12"
+                    className="rounded p-0.5 border border-solid border-gray-600 w-full"
                     type="text"
                     placeholder="Assigned To"
                     name="assignees"
@@ -158,13 +158,13 @@ const IssueCreate: React.FC<IProps> = ({
                   />
                 </div>
               </div>
-              <div className=" mt-1 ml-6">
-                <div className="flex w-10/12">
-                  <div className="w-1/2 text-gray-500 ">Date</div>
+              <div>
+                <div>
+                  <div className=" text-gray-500 ">Date</div>
                   <Field
                     type="date"
                     name="date"
-                    className="block w-11/12 text-sm border border-solid border-gray-600 rounded-lg"
+                    className="block w-full text-sm border border-solid border-gray-600 rounded p-2"
                   />
                   <ErrorMessage
                     name="name"
@@ -173,14 +173,14 @@ const IssueCreate: React.FC<IProps> = ({
                   />
                 </div>
               </div>
-              <div className="ml-6 mt-1">
+              <div>
                 <div>
                   <h5 className="text-gray-500">Tags</h5>
                 </div>
                 <div>
                   <Field
                     component="textarea"
-                    className="block w-10/12 border border-solid border-gray-600 text-sm  rounded-lg  "
+                    className="block w-full border border-solid border-gray-600 text-sm  rounded  "
                     name="tags"
                   />
                   <ErrorMessage
@@ -190,10 +190,10 @@ const IssueCreate: React.FC<IProps> = ({
                   />
                 </div>
               </div>
-              <div className="w-10/12 ml-6">
+              <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="p-2 w-11/12 mt-2 bg-gray-500  rounded-md "
+                  className="p-1.5 mt-2 bg-gray-500  rounded-md "
                 >
                   Add Issue
                 </button>
