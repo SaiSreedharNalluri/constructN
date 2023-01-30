@@ -243,7 +243,7 @@ const Index: React.FC<IProps> = () => {
       .then((response) => {
         if (response.success === true) {
           toast.success('Issue is added sucessfully');
-          window.location.reload();
+          // window.location.reload();
         }
       })
       .catch((error) => {
@@ -274,7 +274,7 @@ const Index: React.FC<IProps> = () => {
   const getIssues = (structureId: string) => {
     getIssuesList(router.query.projectId as string, structureId)
       .then((response) => {
-        setTasksList(response.result);
+        setIssueList(response.result);
       })
       .catch((error) => {
         if (error.success === false) {
@@ -285,7 +285,7 @@ const Index: React.FC<IProps> = () => {
   const getTasks = (structureId: string) => {
     getTasksList(router.query.projectId as string, structureId)
       .then((response) => {
-        setIssueList(response.result);
+        setTasksList(response.result);
       })
       .catch((error) => {
         if (error.success === false) {
@@ -293,6 +293,7 @@ const Index: React.FC<IProps> = () => {
         }
       });
   };
+  console.log('issueList', issuesList);
   return (
     <React.Fragment>
       <div className="">
