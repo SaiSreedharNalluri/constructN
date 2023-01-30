@@ -243,7 +243,7 @@ const Index: React.FC<IProps> = () => {
       .then((response) => {
         if (response.success === true) {
           toast.success('Issue is added sucessfully');
-          // window.location.reload();
+          issuesList.push(response.result);
         }
       })
       .catch((error) => {
@@ -262,7 +262,7 @@ const Index: React.FC<IProps> = () => {
       .then((response) => {
         if (response.success === true) {
           toast.success('Task is added sucessfully');
-          window.location.reload();
+          tasksList.push(response.result);
         }
       })
       .catch((error) => {
