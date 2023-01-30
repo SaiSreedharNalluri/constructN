@@ -22,7 +22,7 @@ const TaskCreate: React.FC<IProps> = ({
   const [taskPriority, setTaskPriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   let usersList = [
-    { _id: '', name: 'please select the assignee for the issue' },
+    { _id: '', name: 'please select the assignee for the task' },
   ];
   useEffect(() => {
     if (router.isReady) {
