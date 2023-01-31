@@ -186,7 +186,6 @@ const Index: React.FC<IProps> = () => {
           case 'issueCreate':
           case 'issueShow':
           case 'issueHide':
-            console.log('toolInstance', toolInstance);
             setClickedTool(toolInstance);
             break;
         }
@@ -295,6 +294,13 @@ const Index: React.FC<IProps> = () => {
         }
       });
   };
+  const handleOnIssueFilter = (formData: any) => {
+    const result = _.filter(
+      issuesList,
+      (issueObj) => issueObj.type === formData.issueType
+    );
+    setIssueList(result);
+  };
   return (
     <React.Fragment>
       <div className="">
@@ -391,7 +397,8 @@ const Index: React.FC<IProps> = () => {
               handleTaskSubmit={handleTaskSubmit}
               toolClicked={toolClicked}
               viewMode={currentViewMode}
-            ></RightFloatingMenu>
+              handleOnFilter={handleOnIssueFilter}
+            />
           </div>
         </div>
       </div>

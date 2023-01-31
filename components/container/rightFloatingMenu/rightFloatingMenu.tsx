@@ -30,6 +30,7 @@ interface IProps {
   handleTaskSubmit: (formObj: object) => void;
   issuesList: Issue[];
   tasksList: ITasks[];
+  handleOnFilter: (formData: object) => void;
 }
 const RightFloatingMenu: React.FC<IProps> = ({
   toolClicked,
@@ -40,6 +41,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
   handleTaskSubmit,
   issuesList,
   tasksList,
+  handleOnFilter,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [iViewMode, setIViewMode] = useState(viewMode);
@@ -100,14 +102,12 @@ const RightFloatingMenu: React.FC<IProps> = ({
   //   setRighttNav(!rightNav);
   // }
   const issueMenuClicked = (localTool: ITools) => {
-    console.log('localTool', localTool);
     toolClicked(localTool);
     if (
       localTool.toolAction === 'issueCreateClose' ||
       localTool.toolAction === 'issueViewClose'
     )
-      console.log('dsbjkds', rightNav);
-    setRighttNav(!rightNav);
+      setRighttNav(!rightNav);
   };
   const taskMenuClicked = (localTool: ITools) => {
     toolClicked(localTool);
@@ -379,7 +379,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 issuesList={issuesList}
                 handleIssueSubmit={handleIssueSubmit}
                 issueMenuClicked={issueMenuClicked}
-              ></IssueMenu>
+                handleOnFilter={handleOnFilter}
+              />
               {/* <div className='bg-gray-400'>
                   <div className=" h-full text-xs"  id="issueItems">
                   <div onClick={issueChange} id={"issueCreate"}><p>Create</p> </div>

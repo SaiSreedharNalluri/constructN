@@ -80,6 +80,9 @@ const IssueCreate: React.FC<IProps> = ({
       });
     });
   }
+  const closeIssueCreate = () => {
+    closeOverlay();
+  };
   return (
     <div
       className={`fixed top-10 ${
@@ -94,7 +97,7 @@ const IssueCreate: React.FC<IProps> = ({
           <div>
             <FontAwesomeIcon
               icon={faTimes}
-              onClick={closeOverlay}
+              onClick={closeIssueCreate}
               className="hover:white cursor-pointer mr-2 "
             ></FontAwesomeIcon>
           </div>
