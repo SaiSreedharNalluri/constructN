@@ -133,7 +133,6 @@ const IssueCreate: React.FC<IProps> = ({
       });
     });
   }
-
   return (
     <div
       className={`fixed top-10 ${
