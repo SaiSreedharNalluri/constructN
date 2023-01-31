@@ -62,8 +62,12 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
             active === 'structure' ? 'selectedClass' : 'unSelectedClass'
           }`}
           onClick={(e: any) => {
-            leftClickHandler(e);
-            onChangeData();
+            if (active === 'structure') {
+              onChangeData();
+            } else {
+              leftClickHandler(e);
+            }
+            
           }}
           icon={faMap}
         ></FontAwesomeIcon>

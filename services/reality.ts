@@ -42,3 +42,16 @@ export const getRealityPositions = async (
   }
 }
 
+export const getRealityPositionsPath = (
+  path: string
+  ) => {
+    return `${path}/images.json`
+}
+
+export const getRealityImagesPath = (
+  path: string
+  ) => {
+    return `${path}/images`
+}
+
+

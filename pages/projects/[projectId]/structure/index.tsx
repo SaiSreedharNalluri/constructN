@@ -35,6 +35,7 @@ const Index: React.FC<IProps> = () => {
   const [projectutm, setProjectUtm] = useState('');
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
+  let structureView = false;
   const rightOverlayRef: any = useRef();
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
@@ -134,11 +135,17 @@ const Index: React.FC<IProps> = () => {
     }
   }, [leftNav]);
   const onChangeData = () => {
-    if (leftNav) {
-      setLeftNav(false);
+    // if (leftNav) {
+    //   setLeftNav(false);
+    // } else {
+    //   setLeftNav(true);
+    // }
+    if (!structureView) {
+      leftOverlayRef.current.style.width = '18vw';
     } else {
-      setLeftNav(true);
+      leftOverlayRef.current.style.width = '0%';
     }
+    structureView = !structureView
   };
 
   const toolClicked = (toolInstance: ITools) => {
@@ -217,7 +224,7 @@ const Index: React.FC<IProps> = () => {
             <div className="flex">
               <CollapsableMenu onChangeData={onChangeData} />
             </div>
-            <div className="flex w-screen  " id="viewer">
+            <div className="flex" id="viewer">
               {renderSwitch(viewerTypeState)}
             </div>
           </div>

@@ -23,7 +23,7 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
           console.log('error', error);
         });
     }
-  }, [getStructure, router.isReady, router.query.projectId]);
+  }, [router.isReady, router.query.projectId]);
   return (
     <React.Fragment>
       <SearchInput></SearchInput>

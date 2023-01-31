@@ -7,10 +7,10 @@ function ForgeViewer(props) {
     const setForgeViewerUtils = props.setForgeViewer;
 
     const initViewer = function() {
-        let forge = new ForgeViewerUtils(viewerId);
-        console.log("Inside load viewer: ", viewer);
-        console.log("isForgeViewer Loaded: ", forge.isViewerLoaded());
-        setForgeViewerUtils(forge);
+        // let forge = new ForgeViewerUtils(viewerId);
+        // console.log("Inside load viewer: ", viewer);
+        // console.log("isForgeViewer Loaded: ", forge.isViewerLoaded());
+        setForgeViewerUtils(viewerId);
     }
 
     useEffect(() => {

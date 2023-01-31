@@ -11,7 +11,7 @@ export interface ISnapshot {
   structure: string;
   status: string;
   visualization: [];
-  reality?: [IActiveReality];
+  reality?: [IReality];
 }
 
 // export interface ISnapShotDeatils {
