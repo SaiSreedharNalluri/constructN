@@ -57,7 +57,6 @@ const IssueMenu: React.FC<IProps> = ({
     taskMenuClicked(taskMenuInstance);
   };
   const closeTaskCreate = () => {
-    console.log('calling', createOverlay);
     taskMenuInstance.toolAction = 'taskCreateClose';
     setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);
