@@ -6,30 +6,58 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import DatePicker from '../../datePicker';
 import TaskCreate from './taskCreate';
 import TaskList from './taskList';
 import { ITools } from '../../../../models/ITools';
 import { ITasks } from '../../../../models/Itask';
+import { ISnapshot } from '../../../../models/ISnapshot';
+import { IStructure } from '../../../../models/IStructure';
 
 interface IProps {
   taskMenuClicked: (a: ITools) => void;
   taskLayer?: boolean;
-  handleTaskSubmit: (formObj: object) => void;
   tasksList: ITasks[];
+  currentStructure:IStructure;
+  currentSnapshot:ISnapshot;
+  currentProject:string;
 }
 
 const IssueMenu: React.FC<IProps> = ({
   taskMenuClicked,
   taskLayer,
-  handleTaskSubmit,
   tasksList,
+  currentProject,
+  currentSnapshot,
+  currentStructure
 }) => {
   const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
   const [taskVisbility, setTaskVisibility] = useState(
     taskLayer === undefined ? false : taskLayer
   );
+  const [myProject,setMyProject] = useState(currentProject);
+  const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
+  const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   let taskMenuInstance: ITools = { toolName: 'task', toolAction: '' };
+
+  useEffect(
+    ()=>{
+
+      setMyProject(currentProject);
+      setMyStructure(currentStructure);
+      setMySnapshot(currentSnapshot);
+   
+    },
+    [currentProject,currentSnapshot,currentStructure]
+  );
+  const taskSubmit=(formdata: any)=>{
+    tasksList.push(formdata);
+    taskMenuInstance.toolAction = 'taskCreated';
+    setCreateOverlay(false);
+    taskMenuClicked(taskMenuInstance);
+  }
   const openTaskCreate = () => {
     setCreateOverlay(true);
     taskMenuInstance.toolAction = 'taskCreate';
@@ -67,9 +95,12 @@ const IssueMenu: React.FC<IProps> = ({
             className="cursor-pointer"
           ></FontAwesomeIcon>
           <TaskCreate
-            handleTaskSubmit={handleTaskSubmit}
+            handleTaskSubmit={taskSubmit}
             visibility={createOverlay}
             closeOverlay={closeTaskCreate}
+            currentProject={myProject}
+            currentStructure={myStructure}
+            currentSnapshot={mySnapshot}
           ></TaskCreate>
           <FontAwesomeIcon
             icon={faList}

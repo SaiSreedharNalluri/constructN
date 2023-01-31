@@ -3,20 +3,31 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
 import React, { useEffect, useState } from 'react';
-import { getIssuesPriority, getIssuesTypes } from '../../../../services/issue';
+import { createIssue, getIssuesPriority, getIssuesTypes } from '../../../../services/issue';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { getProjectUsers } from '../../../../services/project';
 import { IProjectUsers } from '../../../../models/IProjects';
+import { toast } from 'react-toastify';
+import { ISnapshot } from '../../../../models/ISnapshot';
+import { IStructure } from '../../../../models/IStructure';
+import structure from '../../../../pages/projects/[projectId]/structure';
+import { getCookie } from 'cookies-next';
 interface IProps {
   closeOverlay: () => void;
   visibility: boolean;
   handleIssueSubmit: (formData: object) => void;
+  currentStructure:IStructure;
+  currentSnapshot:ISnapshot;
+  currentProject:string;
 }
 
 const IssueCreate: React.FC<IProps> = ({
   closeOverlay,
   visibility,
   handleIssueSubmit,
+  currentProject,
+  currentSnapshot,
+  currentStructure
 }) => {
   const router = useRouter();
   const [issueType, setIssueType] = useState<[string]>();
@@ -25,6 +36,11 @@ const IssueCreate: React.FC<IProps> = ({
   let usersList = [
     { _id: '', name: 'please select the assignee for the issue' },
   ];
+  const [myProject,setMyProject] = useState(currentProject);
+  const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
+  const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
+  const [loggedInUserId,SetLoggedInUserId] = useState('');
+
   useEffect(() => {
     if (router.isReady) {
       getIssuesTypes(router.query.projectId as string).then((response) => {
@@ -47,7 +63,46 @@ const IssueCreate: React.FC<IProps> = ({
         })
         .catch();
     }
+  const userObj: any = getCookie('user');
+  let user = null;
+  if (userObj) user = JSON.parse(userObj);
+  if (user?._id) {
+    SetLoggedInUserId(user._id);
+  }
   }, [router.isReady, router.query.projectId]);
+
+  useEffect(
+    ()=>{
+
+      setMyProject(currentProject);
+      setMyStructure(currentStructure);
+      setMySnapshot(currentSnapshot);
+   
+    },
+    [currentProject,currentSnapshot,currentStructure]
+  );
+  const closeIssueCreate = () => {
+    closeOverlay();
+  };
+  const clickIssueSubmit = (formData: any) => {
+    formData.structure = myStructure?._id;
+    formData.title = `${myStructure?.name}_${formData.date} `;
+    formData.snapshot = mySnapshot?._id;
+    formData.owner = loggedInUserId;
+    formData.status = 'To Do';
+    createIssue(router.query.projectId as string, formData)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success('Issue is added sucessfully');
+          handleIssueSubmit(formData);
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
 
   const initialValues: {
     type: string;
@@ -105,7 +160,7 @@ const IssueCreate: React.FC<IProps> = ({
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={handleIssueSubmit}
+          onSubmit={clickIssueSubmit}
         >
           {({ errors, touched }) => (
             <Form className=" grid grid-cols-1 gap-y-2 px-4">
