@@ -11,10 +11,11 @@ import {
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { getProjectUsers } from '../../../../services/project';
 import { IProjectUsers } from '../../../../models/IProjects';
+import { toast } from 'react-toastify';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import { IStructure } from '../../../../models/IStructure';
+import structure from '../../../../pages/projects/[projectId]/structure';
 import { getCookie } from 'cookies-next';
-import { toast } from 'react-toastify';
 interface IProps {
   closeOverlay: () => void;
   visibility: boolean;
