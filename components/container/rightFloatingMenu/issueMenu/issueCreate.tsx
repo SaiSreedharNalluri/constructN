@@ -135,9 +135,6 @@ const IssueCreate: React.FC<IProps> = ({
       });
     });
   }
-  const closeIssueCreate = () => {
-    closeOverlay();
-  };
   return (
     <div
       className={`fixed top-10 ${
