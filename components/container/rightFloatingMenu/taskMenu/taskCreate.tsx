@@ -3,19 +3,33 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
 import React, { useEffect, useState } from 'react';
-import { getTasksTypes, getTasksPriority } from '../../../../services/task';
+import {
+  getTasksTypes,
+  getTasksPriority,
+  createTask,
+} from '../../../../services/task';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { IProjectUsers } from '../../../../models/IProjects';
 import { getProjectUsers } from '../../../../services/project';
+import { IStructure } from '../../../../models/IStructure';
+import { ISnapshot } from '../../../../models/ISnapshot';
+import { getCookie } from 'cookies-next';
+import { toast } from 'react-toastify';
 interface IProps {
   closeOverlay: () => void;
   visibility: boolean;
   handleTaskSubmit: (formObj: object) => void;
+  currentStructure: IStructure;
+  currentSnapshot: ISnapshot;
+  currentProject: string;
 }
 const TaskCreate: React.FC<IProps> = ({
   closeOverlay,
   visibility,
   handleTaskSubmit,
+  currentProject,
+  currentSnapshot,
+  currentStructure,
 }) => {
   const router = useRouter();
   const [taskType, setTaskType] = useState<[string]>();
@@ -24,6 +38,11 @@ const TaskCreate: React.FC<IProps> = ({
   let usersList = [
     { _id: '', name: 'please select the assignee for the task' },
   ];
+  const [tast, setTask] = useState<[string]>();
+  const [myProject, setMyProject] = useState(currentProject);
+  const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
+  const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
+  const [loggedInUserId, SetLoggedInUserId] = useState('');
   useEffect(() => {
     if (router.isReady) {
       getTasksTypes(router.query.projectId as string).then((response) => {
@@ -46,10 +65,41 @@ const TaskCreate: React.FC<IProps> = ({
         })
         .catch();
     }
+    const userObj: any = getCookie('user');
+    let user = null;
+    if (userObj) user = JSON.parse(userObj);
+    if (user?._id) {
+      SetLoggedInUserId(user._id);
+    }
   }, [router.isReady, router.query.projectId]);
+
+  useEffect(() => {
+    setMyProject(currentProject);
+    setMyStructure(currentStructure);
+    setMySnapshot(currentSnapshot);
+  }, [currentProject, currentSnapshot, currentStructure]);
 
   const closeTaskCreate = () => {
     closeOverlay();
+  };
+  const clickTaskSubmit = (formData: any) => {
+    formData.structure = myStructure?._id;
+    formData.title = `${myStructure?.name}_${formData.date} `;
+    formData.snapshot = mySnapshot?._id;
+    formData.owner = loggedInUserId;
+    formData.status = 'To Do';
+    createTask(router.query.projectId as string, formData)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success('Task added sucessfully');
+          handleTaskSubmit(formData);
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
   };
   const initialValues: {
     type: string;
@@ -104,7 +154,7 @@ const TaskCreate: React.FC<IProps> = ({
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={handleTaskSubmit}
+          onSubmit={clickTaskSubmit}
         >
           {({ errors, touched }) => (
             <Form className=" grid grid-cols-1 gap-y-2 px-4">
