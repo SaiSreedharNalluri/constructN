@@ -7,19 +7,16 @@ import { getIssuesPriority, getIssuesTypes } from '../../../../services/issue';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { getProjectUsers } from '../../../../services/project';
 import { IProjectUsers } from '../../../../models/IProjects';
-import { userAgent } from 'next/server';
 interface IProps {
   closeOverlay: () => void;
   visibility: boolean;
   handleIssueSubmit: (formData: object) => void;
-  loading: boolean;
 }
 
 const IssueCreate: React.FC<IProps> = ({
   closeOverlay,
   visibility,
   handleIssueSubmit,
-  loading,
 }) => {
   const router = useRouter();
   const [issueType, setIssueType] = useState<[string]>();
@@ -51,9 +48,7 @@ const IssueCreate: React.FC<IProps> = ({
         .catch();
     }
   }, [router.isReady, router.query.projectId]);
-  if (loading) {
-    closeOverlay();
-  }
+
   const initialValues: {
     type: string;
     priority: string;

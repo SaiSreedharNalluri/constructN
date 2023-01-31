@@ -49,16 +49,13 @@ const IssueList: React.FC<IProps> = ({
           </div>
           <div className="flex justify-between text-gray-800">
             <div className="mr-2">
-              {' '}
               <FontAwesomeIcon icon={faFilter}></FontAwesomeIcon>
             </div>
             <div className="mr-2">
-              {' '}
               <FontAwesomeIcon icon={faFilter}></FontAwesomeIcon>
             </div>
             <div className="mr-2">
-              {' '}
-              <FontAwesomeIcon icon={faDownload}></FontAwesomeIcon>{' '}
+              <FontAwesomeIcon icon={faDownload}></FontAwesomeIcon>
             </div>
           </div>
         </div>

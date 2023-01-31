@@ -2,19 +2,10 @@ import {
   faCirclePlus,
   faList,
   faEyeSlash,
-  faTimes,
-  faCalendar,
-  faDownload,
-  faFileWaveform,
-  faFilter,
-  faSearch,
-  faShieldAlt,
-  faUser,
   faEye,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useRef, useState } from 'react';
-import DatePicker from '../../datePicker';
+import React, { useState } from 'react';
 import IssueCreate from './issueCreate';
 import IssueList from './issueList';
 import { ITools } from '../../../../models/ITools';
@@ -25,7 +16,6 @@ interface IProps {
   issueLayer?: boolean;
   handleIssueSubmit: (FormData: object) => void;
   issuesList: Issue[];
-  loading: boolean;
 }
 
 const IssueMenu: React.FC<IProps> = ({
@@ -33,7 +23,6 @@ const IssueMenu: React.FC<IProps> = ({
   issueLayer,
   handleIssueSubmit,
   issuesList,
-  loading,
 }) => {
   const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
@@ -80,7 +69,6 @@ const IssueMenu: React.FC<IProps> = ({
             handleIssueSubmit={handleIssueSubmit}
             visibility={createOverlay}
             closeOverlay={closeIssueCreate}
-            loading={loading}
           ></IssueCreate>
           <FontAwesomeIcon
             icon={faList}

@@ -30,9 +30,7 @@ interface IProps {
   handleTaskSubmit: (formObj: object) => void;
   issuesList: Issue[];
   tasksList: ITasks[];
-  loading: boolean;
 }
-
 const RightFloatingMenu: React.FC<IProps> = ({
   toolClicked,
   viewLayers,
@@ -42,7 +40,6 @@ const RightFloatingMenu: React.FC<IProps> = ({
   handleTaskSubmit,
   issuesList,
   tasksList,
-  loading,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [iViewMode, setIViewMode] = useState(viewMode);
@@ -56,13 +53,11 @@ const RightFloatingMenu: React.FC<IProps> = ({
     }
   };
   useEffect(() => {
+    setIViewMode(viewMode);
     document.addEventListener('click', closeStructurePages);
     return () => {
       document.removeEventListener('click', closeStructurePages);
     };
-  }, []);
-  useEffect(() => {
-    setIViewMode(viewMode);
   }, [viewMode]);
 
   const rightMenuClickHandler = (e: any) => {
@@ -105,12 +100,14 @@ const RightFloatingMenu: React.FC<IProps> = ({
   //   setRighttNav(!rightNav);
   // }
   const issueMenuClicked = (localTool: ITools) => {
+    console.log('localTool', localTool);
     toolClicked(localTool);
     if (
       localTool.toolAction === 'issueCreateClose' ||
       localTool.toolAction === 'issueViewClose'
     )
-      setRighttNav(!rightNav);
+      console.log('dsbjkds', rightNav);
+    setRighttNav(!rightNav);
   };
   const taskMenuClicked = (localTool: ITools) => {
     toolClicked(localTool);
@@ -382,7 +379,6 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 issuesList={issuesList}
                 handleIssueSubmit={handleIssueSubmit}
                 issueMenuClicked={issueMenuClicked}
-                loading={loading}
               ></IssueMenu>
               {/* <div className='bg-gray-400'>
                   <div className=" h-full text-xs"  id="issueItems">
