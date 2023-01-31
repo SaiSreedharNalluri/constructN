@@ -20,16 +20,19 @@ import TaskMenu from './taskMenu/taskMenu';
 import ProgressMenu from './progressMenu/progressMenu';
 import { ITasks } from '../../../models/Itask';
 import { Issue } from '../../../models/Issue';
+import { ISnapshot } from '../../../models/ISnapshot';
+import { IStructure } from '../../../models/IStructure';
 
 interface IProps {
   toolClicked: (a: ITools) => void;
   viewMode: string;
   viewTypes?: string[];
   viewLayers?: string[];
-  handleIssueSubmit: (formData: object) => void;
-  handleTaskSubmit: (formObj: object) => void;
   issuesList: Issue[];
   tasksList: ITasks[];
+  currentStructure:IStructure;
+  currentSnapshot:ISnapshot;
+  currentProject:string;
 }
 
 const RightFloatingMenu: React.FC<IProps> = ({
@@ -37,16 +40,20 @@ const RightFloatingMenu: React.FC<IProps> = ({
   viewLayers,
   viewMode,
   viewTypes,
-  handleIssueSubmit,
-  handleTaskSubmit,
   issuesList,
   tasksList,
+  currentProject,
+  currentSnapshot,
+  currentStructure
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [iViewMode, setIViewMode] = useState(viewMode);
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
+  const [myProject,setMyProject] = useState(currentProject);
+  const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
+  const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   let toolInstance: ITools = { toolName: '', toolAction: '' };
   const closeStructurePages = (e: any) => {
     if (!rightOverlayRefs.current.contains(e.target)) {
@@ -62,6 +69,16 @@ const RightFloatingMenu: React.FC<IProps> = ({
   useEffect(() => {
     setIViewMode(viewMode);
   }, [viewMode]);
+
+  useEffect(
+    ()=>{
+
+      setMyProject(currentProject);
+      setMyStructure(currentStructure);
+      setMySnapshot(currentSnapshot);
+    },
+    [currentProject,currentSnapshot,currentStructure]
+  );
 
   const rightMenuClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
@@ -378,8 +395,10 @@ const RightFloatingMenu: React.FC<IProps> = ({
             <div className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'}`}>
               <IssueMenu
                 issuesList={issuesList}
-                handleIssueSubmit={handleIssueSubmit}
                 issueMenuClicked={issueMenuClicked}
+                currentProject={myProject}
+                currentStructure={myStructure}
+                currentSnapshot={mySnapshot}
               ></IssueMenu>
               {/* <div className='bg-gray-400'>
                   <div className=" h-full text-xs"  id="issueItems">
@@ -408,8 +427,10 @@ const RightFloatingMenu: React.FC<IProps> = ({
             <div className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'}`}>
               <TaskMenu
                 tasksList={tasksList}
-                handleTaskSubmit={handleTaskSubmit}
                 taskMenuClicked={taskMenuClicked}
+                currentProject={myProject}
+                currentStructure={myStructure}
+                currentSnapshot={mySnapshot}
               ></TaskMenu>
             </div>
           ) : (
