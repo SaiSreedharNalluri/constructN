@@ -236,44 +236,6 @@ const Index: React.FC<IProps> = () => {
   const toolResponse = (data: string) => {
     console.log('Data->', data);
   };
-  const handleIssueSubmit = (formData: any) => {
-    formData.structure = structure?._id;
-    formData.title = `${structure?.name}_${formData.date} `;
-    formData.snapshot = snapshot?._id;
-    formData.owner = loggedInUserId;
-    formData.status = 'To Do';
-    createIssue(router.query.projectId as string, formData)
-      .then((response) => {
-        if (response.success === true) {
-          toast.success('Issue is added sucessfully');
-          issuesList.push(response.result);
-        }
-      })
-      .catch((error) => {
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
-  };
-  const handleTaskSubmit = (formData: any) => {
-    formData.structure = structure?._id;
-    formData.title = `${structure?.name}_${formData.date} `;
-    formData.snapshot = snapshot?._id;
-    formData.owner = loggedInUserId;
-    formData.status = 'To Do';
-    createTask(router.query.projectId as string, formData)
-      .then((response) => {
-        if (response.success === true) {
-          toast.success('Task is added sucessfully');
-          tasksList.push(response.result);
-        }
-      })
-      .catch((error) => {
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
-  };
   const getIssues = (structureId: string) => {
     getIssuesList(router.query.projectId as string, structureId)
       .then((response) => {
