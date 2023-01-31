@@ -69,7 +69,7 @@ const IssueList: React.FC<IProps> = ({
   const closeIssueView = () => {
     closeOverlay();
   };
-  console.log('dsvhjbksd', issuesList);
+
   return (
     <div
       className={`fixed ${
