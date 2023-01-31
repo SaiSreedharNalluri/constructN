@@ -7,7 +7,6 @@ import { getSnapshotsList } from '../../../../services/snapshot';
 import { getProjectDetails } from '../../../../services/project';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import _ from 'lodash';
-import DatePicker from '../../../../components/container/datePicker';
 import Pagination from '../../../../components/container/pagination';
 import { faGreaterThan } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,12 +19,17 @@ import { ITools } from '../../../../models/ITools';
 import { getStructureList } from '../../../../services/structure';
 import { IActiveRealityMap } from '../../../../models/IReality';
 import { IDesignMap } from '../../../../models/IDesign';
+import { createIssue, getIssuesList } from '../../../../services/issue';
+import { getCookie } from 'cookies-next';
+import { toast } from 'react-toastify';
+import { createTask, getTasksList } from '../../../../services/task';
+import { Issue } from '../../../../models/Issue';
+import { ITasks } from '../../../../models/Itask';
 
-interface IProps { }
+interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const [currentViewMode, setViewMode] = useState('Design'); //Design/ Reality
-
   const [currentProjectId, setActiveProjectId] = useState('');
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [structure, setStructure] = useState<IStructure>();
@@ -44,33 +48,55 @@ const Index: React.FC<IProps> = () => {
   const [currentViewType, setViewType] = useState(''); //plan,elevational,xsectional,bim
   const [currentViewLayers, setViewLayers] = useState<string[]>([]); //360Image, 360Video, phoneImage, droneImage
   const [clickedTool, setClickedTool] = useState<ITools>();
+  const [loggedInUserId, SetLoggedInUserId] = useState('');
+  const [issuesList, setIssueList] = useState<Issue[]>([]);
+  const [tasksList, setTasksList] = useState<ITasks[]>([]);
+
   useEffect(() => {
     if (router.isReady) {
-      getProjectDetails(router.query.projectId as string).then((response) => {
-        setProjectUtm(response?.data?.result?.utm);
-        setActiveProjectId(router.query.projectId as string);
-      });
-      getStructureList(router.query.projectId as string).then((response) => {
-        setStructuresList(response.data.result)
-      })
+      getProjectDetails(router.query.projectId as string)
+        .then((response) => {
+          setProjectUtm(response?.data?.result?.utm);
+          setActiveProjectId(router.query.projectId as string);
+        })
+        .catch((error) => {
+          toast.error('failed to load data');
+        });
+      getStructureList(router.query.projectId as string)
+        .then((response) => {
+          setStructuresList(response.data.result);
+        })
+        .catch((error) => {
+          toast.error('failed to load data');
+        });
+    }
+    const userObj: any = getCookie('user');
+    let user = null;
+    if (userObj) user = JSON.parse(userObj);
+    if (user?._id) {
+      SetLoggedInUserId(user._id);
     }
   }, [router.isReady, router.query.projectId]);
 
   const getStructureData = (structure: ChildrenEntity) => {
     setStructure(getCurrentStructureFromStructureList(structure));
+    getIssues(structure._id);
+    getTasks(structure._id);
   };
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
-    let currentStructure = structuresList.find((e) =>{ if (e._id === structure._id) {
-      return e;
-    }})
-    console.log("Selected structure: ", currentStructure?.name);
+    let currentStructure = structuresList.find((e) => {
+      if (e._id === structure._id) {
+        return e;
+      }
+    });
+    console.log('Selected structure: ', currentStructure?.name);
     return currentStructure;
-  }
+  };
 
   const updateRealityMap = (realityMap: IActiveRealityMap) => {
     setActiveRealityMap(realityMap);
-  }
+  };
 
   const updatedSnapshot = (snapshot: ISnapshot) => {
     setSnapshot(snapshot);
@@ -78,7 +104,7 @@ const Index: React.FC<IProps> = () => {
 
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
-  }
+  };
 
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
@@ -91,17 +117,18 @@ const Index: React.FC<IProps> = () => {
       case 'forge':
         return (
           structure && (
-          <GenericViewer 
-          toolRes={toolResponse} 
-          tools={clickedTool} 
-          structure={structure} 
-          updateSnapshot={updatedSnapshot} 
-          updateRealityMap={updateRealityMap} 
-          updateDesignMap={updateDesignMap}
-          viewMode={currentViewMode} 
-          viewType={currentViewType} 
-          viewLayers={currentViewLayers}></GenericViewer>
-            )
+            <GenericViewer
+              toolRes={toolResponse}
+              tools={clickedTool}
+              structure={structure}
+              updateSnapshot={updatedSnapshot}
+              updateRealityMap={updateRealityMap}
+              updateDesignMap={updateDesignMap}
+              viewMode={currentViewMode}
+              viewType={currentViewType}
+              viewLayers={currentViewLayers}
+            ></GenericViewer>
+          )
         );
       case 'map':
         return (
@@ -164,6 +191,7 @@ const Index: React.FC<IProps> = () => {
             //todo
             break;
           case 'issueCreate':
+          case 'issueCreated':
           case 'issueShow':
           case 'issueHide':
             setClickedTool(toolInstance);
@@ -189,6 +217,7 @@ const Index: React.FC<IProps> = () => {
             //todo
             break;
           case 'taskCreate':
+          case 'taskCreated':
           case 'taskShow':
           case 'taskHide':
             setClickedTool(toolInstance);
@@ -214,48 +243,81 @@ const Index: React.FC<IProps> = () => {
   const toolResponse = (data: string) => {
     console.log('Data->', data);
   };
-
+  const getIssues = (structureId: string) => {
+    getIssuesList(router.query.projectId as string, structureId)
+      .then((response) => {
+        setIssueList(response.result);
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
+  const getTasks = (structureId: string) => {
+    getTasksList(router.query.projectId as string, structureId)
+      .then((response) => {
+        setTasksList(response.result);
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
+  const handleOnIssueFilter = (formData: any) => {
+    const result = _.filter(
+      issuesList,
+      (issueObj) => issueObj.type === formData.issueType
+    );
+    setIssueList(result);
+  };
   return (
     <React.Fragment>
-      <div className="">
+      <div className="relative">
+        <div>
         <Header />
-        <div className="fixed" ref={leftRefContainer}>
-          <div className="flex">
-            <div className="flex">
-              <CollapsableMenu onChangeData={onChangeData} />
-            </div>
-            <div className="flex" id="viewer">
-              {renderSwitch(viewerTypeState)}
-            </div>
-          </div>
-          <div
-            ref={leftOverlayRef}
-            className={`h-screen bg-gray-200 w-0 absolute z-10  ${
+        </div>
+        <div className="relative flex flex-row" ref={leftRefContainer}>
+          <div className="grow-0">
+            <CollapsableMenu onChangeData={onChangeData} />
+            <div
+              ref={leftOverlayRef}
+              className={`h-screen bg-gray-200 w-0 absolute z-10  ${
               leftNav ? 'left-10' : 'left-10  '
-            }   top-0  duration-300 overflow-x-hidden`}
-          >
-            <LeftOverLay
-              getStructureData={getStructureData}
-              getStructure={(structureData) => {
+              }  top-0   duration-300 overflow-x-hidden`}
+              >
+              <LeftOverLay
+                getStructureData={getStructureData}
+                getStructure={(structureData) => {
                 if (structure === undefined) {
-                  setStructure(getCurrentStructureFromStructureList(structureData));
+                  setStructure(
+                    getCurrentStructureFromStructureList(structureData)
+                  );
+                  getIssues(structureData._id);
+                  getTasks(structureData._id);
                 }
-              }}
-            ></LeftOverLay>
+                }}
+                ></LeftOverLay>
+              </div>
+            </div>
+            <div className="  grow w-full" id="viewer">
+              {renderSwitch(viewerTypeState)}
+
+            </div>
           </div>
-          <div>
+          {/* <div>
             <FontAwesomeIcon
               className={`absolute  ${
                 rightNav && 'rotate-180'
               } text-2xl text-blue-300  ${
                 rightNav ? 'right-9' : 'right-0'
-              }  top-1/2 cursor-pointer border-none rounded  p-1 bg-gray-400 text-white`}
+              }  top-1/2 cursor-pointer border-none rounded z-10 p-1 bg-gray-400 text-white`}
               onClick={rightNavCollapse}
               icon={faGreaterThan}
             ></FontAwesomeIcon>
-          
-          </div>
-        </div>
+          </div> */}
+
         {/* <div ref={bottomRefContainer}>
           {viewerTypeState != 'map' ? (
             <p
@@ -280,14 +342,11 @@ const Index: React.FC<IProps> = () => {
                   getSnapshotInfo={getSnapshotInfo}
                 />
               </div>
-              <div>
-                <DatePicker></DatePicker>
-              </div>
-            </div>
+             </div>
           </div>
         </div> */}
 
-        <div ref={rightrefContainer} className="relative  ">
+        <div ref={rightrefContainer} className="relative z-10 ">
           <FontAwesomeIcon
             className={`fixed  ${
               rightNav && 'rotate-180'
@@ -304,10 +363,18 @@ const Index: React.FC<IProps> = () => {
               rightNav ? 'visible' : 'hidden'
             }  bg-gray-200 top-40   rounded  lg:right-0  duration-300 overflow-x-hidden`}
           >
+            {structure && snapshot &&(
             <RightFloatingMenu
+              issuesList={issuesList}
+              tasksList={tasksList}
               toolClicked={toolClicked}
               viewMode={currentViewMode}
+              handleOnFilter={handleOnIssueFilter}
+              currentProject={currentProjectId}
+              currentStructure={structure}
+              currentSnapshot={snapshot}
             ></RightFloatingMenu>
+            )}
           </div>
         </div>
       </div>

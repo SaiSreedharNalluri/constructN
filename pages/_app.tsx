@@ -3,6 +3,7 @@ import type { AppProps } from 'next/app';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
+import 'react-datepicker/dist/react-datepicker.css';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-responsive-modal/styles.css';
 import 'public/potree/build/potree/potree.css';

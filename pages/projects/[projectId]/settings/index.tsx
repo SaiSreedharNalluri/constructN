@@ -7,6 +7,7 @@ import {
   getProjectDetails,
   getProjectUsers,
   removeProjectUser,
+  updateProjectCover,
   updateProjectInfo,
 } from '../../../../services/project';
 import { IProjectUsers } from '../../../../models/IProjects';
@@ -104,6 +105,23 @@ const Editproject: React.FC = () => {
         }
       });
   };
+  const handleImageUPload = (e: any) => {
+    const formData = new FormData();
+    formData.append('file', e.file);
+    updateProjectCover(formData, router.query.projectId as string)
+      .then((response) => {
+        console.log('response', response);
+        if (response?.success === true) {
+          toast.success('Project cover photo updated sucessfully');
+          setProjectData(response.result);
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
   return (
     <div className="w-full h-screen">
       <div className="">
@@ -128,6 +146,7 @@ const Editproject: React.FC = () => {
               <TabPanel>
                 {projectData && (
                   <ProjectInfo
+                    handleImageUPload={handleImageUPload}
                     projectData={projectData}
                     updateProjectData={updateProjectData}
                   />
