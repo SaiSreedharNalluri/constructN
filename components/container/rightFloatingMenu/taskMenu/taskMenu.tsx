@@ -5,7 +5,6 @@ import {
   faEye,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
 import React, { useEffect, useRef, useState } from 'react';
 import DatePicker from '../../datePicker';
 import TaskCreate from './taskCreate';
