@@ -183,6 +183,7 @@ const Index: React.FC<IProps> = () => {
             //todo
             break;
           case 'issueCreate':
+          case 'issueCreated':
           case 'issueShow':
           case 'issueHide':
             setClickedTool(toolInstance);
@@ -208,6 +209,7 @@ const Index: React.FC<IProps> = () => {
             //todo
             break;
           case 'taskCreate':
+          case 'taskCreated':
           case 'taskShow':
           case 'taskHide':
             setClickedTool(toolInstance);
@@ -296,26 +298,22 @@ const Index: React.FC<IProps> = () => {
   console.log('issueList', issuesList);
   return (
     <React.Fragment>
-      <div className="">
+      <div className="relative">
+        <div>
         <Header />
-        <div className="fixed" ref={leftRefContainer}>
-          <div className="flex">
-            <div className="flex">
-              <CollapsableMenu onChangeData={onChangeData} />
-            </div>
-            <div className="flex w-screen  " id="viewer">
-              {renderSwitch(viewerTypeState)}
-            </div>
-          </div>
-          <div
-            ref={leftOverlayRef}
-            className={`h-screen bg-gray-200 w-0 absolute z-10  ${
+        </div>
+        <div className="relative flex flex-row" ref={leftRefContainer}>
+          <div className="grow-0">
+            <CollapsableMenu onChangeData={onChangeData} />
+            <div
+              ref={leftOverlayRef}
+              className={`h-screen bg-gray-200 w-0 absolute z-10  ${
               leftNav ? 'left-10' : 'left-10  '
-            }   top-0  duration-300 overflow-x-hidden`}
-          >
-            <LeftOverLay
-              getStructureData={getStructureData}
-              getStructure={(structureData) => {
+              }  top-0   duration-300 overflow-x-hidden`}
+              >
+              <LeftOverLay
+                getStructureData={getStructureData}
+                getStructure={(structureData) => {
                 if (structure === undefined) {
                   setStructure(
                     getCurrentStructureFromStructureList(structureData)
@@ -323,21 +321,27 @@ const Index: React.FC<IProps> = () => {
                   getIssues(structureData._id);
                   getTasks(structureData._id);
                 }
-              }}
-            ></LeftOverLay>
+                }}
+                ></LeftOverLay>
+              </div>
+            </div>
+            <div className="  grow w-full" id="viewer">
+              {renderSwitch(viewerTypeState)}
+
+            </div>
           </div>
-          <div>
+          {/* <div>
             <FontAwesomeIcon
               className={`absolute  ${
                 rightNav && 'rotate-180'
               } text-2xl text-blue-300  ${
                 rightNav ? 'right-9' : 'right-0'
-              }  top-1/2 cursor-pointer border-none rounded  p-1 bg-gray-400 text-white`}
+              }  top-1/2 cursor-pointer border-none rounded z-10 p-1 bg-gray-400 text-white`}
               onClick={rightNavCollapse}
               icon={faGreaterThan}
             ></FontAwesomeIcon>
-          </div>
-        </div>
+          </div> */}
+
         {/* <div ref={bottomRefContainer}>
           {viewerTypeState != 'map' ? (
             <p
@@ -366,7 +370,7 @@ const Index: React.FC<IProps> = () => {
           </div>
         </div> */}
 
-        <div ref={rightrefContainer} className="relative  ">
+        <div ref={rightrefContainer} className="relative z-10 ">
           <FontAwesomeIcon
             className={`fixed  ${
               rightNav && 'rotate-180'
@@ -383,14 +387,19 @@ const Index: React.FC<IProps> = () => {
               rightNav ? 'visible' : 'hidden'
             }  bg-gray-200 top-40   rounded  lg:right-0  duration-300 overflow-x-hidden`}
           >
+            {structure && snapshot &&(
             <RightFloatingMenu
               issuesList={issuesList}
               tasksList={tasksList}
-              handleIssueSubmit={handleIssueSubmit}
-              handleTaskSubmit={handleTaskSubmit}
+             
+            
               toolClicked={toolClicked}
               viewMode={currentViewMode}
+              currentProject={currentProjectId}
+              currentStructure={structure}
+              currentSnapshot={snapshot}
             ></RightFloatingMenu>
+            )}
           </div>
         </div>
       </div>
