@@ -5,6 +5,8 @@ import * as Yup from 'yup';
 import React, { useEffect, useState } from 'react';
 import { getTasksTypes, getTasksPriority, createTask } from '../../../../services/task';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { IProjectUsers } from '../../../../models/IProjects';
+import { getProjectUsers } from '../../../../services/project';
 import { IStructure } from '../../../../models/IStructure';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import { getCookie } from 'cookies-next';
@@ -28,6 +30,10 @@ const TaskCreate: React.FC<IProps> = ({
   const router = useRouter();
   const [taskType, setTaskType] = useState<[string]>();
   const [taskPriority, setTaskPriority] = useState<[string]>();
+  const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
+  let usersList = [
+    { _id: '', name: 'please select the assignee for the task' },
+  ];
   const [tast, setTask] = useState<[string]>();
   const [myProject,setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
@@ -48,6 +54,13 @@ const TaskCreate: React.FC<IProps> = ({
         }
 
       });
+      getProjectUsers(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+          }
+        })
+        .catch();
     }
     const userObj: any = getCookie('user');
   let user = null;
@@ -113,6 +126,14 @@ const TaskCreate: React.FC<IProps> = ({
     tags: Yup.string(),
     date: Yup.string(),
   });
+  if (projectUsers?.length > 0) {
+    projectUsers.map((projectUser: any) => {
+      usersList.push({
+        _id: projectUser?.user?._id,
+        name: projectUser?.user?.fullName,
+      });
+    });
+  }
   return (
     <div
       className={`fixed ${
@@ -200,16 +221,21 @@ const TaskCreate: React.FC<IProps> = ({
                 </div>
                 <div>
                   <Field
-                    className="rounded p-0.5 border border-solid border-gray-600 w-full"
-                    type="text"
-                    placeholder="Assigned To"
+                    as="select"
                     name="assignees"
-                  />
-                  <ErrorMessage
-                    name="name"
-                    component="div"
-                    className="alert alert-danger"
-                  />
+                    id="assignees"
+                    className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
+                  >
+                    {usersList &&
+                      usersList.map((option: any) => (
+                        <option key={option?._id} value={option?._id}>
+                          {option?.name}
+                        </option>
+                      ))}
+                  </Field>
+                  {errors.priority && touched.priority ? (
+                    <div>{errors.priority}</div>
+                  ) : null}
                 </div>
               </div>
               <div>

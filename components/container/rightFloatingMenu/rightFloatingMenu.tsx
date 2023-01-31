@@ -30,11 +30,11 @@ interface IProps {
   viewLayers?: string[];
   issuesList: Issue[];
   tasksList: ITasks[];
+  handleOnFilter: (formData: object) => void;
   currentStructure:IStructure;
   currentSnapshot:ISnapshot;
   currentProject:string;
 }
-
 const RightFloatingMenu: React.FC<IProps> = ({
   toolClicked,
   viewLayers,
@@ -42,6 +42,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
   viewTypes,
   issuesList,
   tasksList,
+  handleOnFilter,
   currentProject,
   currentSnapshot,
   currentStructure
@@ -61,13 +62,11 @@ const RightFloatingMenu: React.FC<IProps> = ({
     }
   };
   useEffect(() => {
+    setIViewMode(viewMode);
     document.addEventListener('click', closeStructurePages);
     return () => {
       document.removeEventListener('click', closeStructurePages);
     };
-  }, []);
-  useEffect(() => {
-    setIViewMode(viewMode);
   }, [viewMode]);
 
   useEffect(
@@ -396,6 +395,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
               <IssueMenu
                 issuesList={issuesList}
                 issueMenuClicked={issueMenuClicked}
+                handleOnFilter={handleOnFilter}
                 currentProject={myProject}
                 currentStructure={myStructure}
                 currentSnapshot={mySnapshot}

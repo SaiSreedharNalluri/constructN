@@ -2,17 +2,10 @@ import {
   faCirclePlus,
   faList,
   faEyeSlash,
-  faTimes,
-  faCalendar,
-  faDownload,
-  faFileWaveform,
-  faFilter,
-  faSearch,
-  faShieldAlt,
-  faUser,
   faEye,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState } from 'react';
 import React, { useEffect, useRef, useState } from 'react';
 import DatePicker from '../../datePicker';
 import TaskCreate from './taskCreate';
@@ -71,6 +64,7 @@ const IssueMenu: React.FC<IProps> = ({
     taskMenuClicked(taskMenuInstance);
   };
   const closeTaskCreate = () => {
+    console.log('calling', createOverlay);
     taskMenuInstance.toolAction = 'taskCreateClose';
     setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);

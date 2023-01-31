@@ -50,6 +50,7 @@ const Index: React.FC<IProps> = () => {
   const [loggedInUserId, SetLoggedInUserId] = useState('');
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
+
   useEffect(() => {
     if (router.isReady) {
       getProjectDetails(router.query.projectId as string)
@@ -295,7 +296,13 @@ const Index: React.FC<IProps> = () => {
         }
       });
   };
-  console.log('issueList', issuesList);
+  const handleOnIssueFilter = (formData: any) => {
+    const result = _.filter(
+      issuesList,
+      (issueObj) => issueObj.type === formData.issueType
+    );
+    setIssueList(result);
+  };
   return (
     <React.Fragment>
       <div className="relative">
@@ -391,10 +398,9 @@ const Index: React.FC<IProps> = () => {
             <RightFloatingMenu
               issuesList={issuesList}
               tasksList={tasksList}
-             
-            
               toolClicked={toolClicked}
               viewMode={currentViewMode}
+              handleOnFilter={handleOnIssueFilter}
               currentProject={currentProjectId}
               currentStructure={structure}
               currentSnapshot={snapshot}
