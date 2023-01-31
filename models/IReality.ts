@@ -18,5 +18,5 @@ export interface IActiveReality {
 
 type RealityMode = "360 Video" | "360 Image" | "Phone Image" | "Drone Image";
 export type IActiveRealityMap = {
-    [key in RealityMode]: [IActiveReality];
+    [key in RealityMode]: [IReality];
 };

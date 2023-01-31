@@ -25,3 +25,24 @@
 .calc-h50 {
   height: calc(100vh - 82px);
 }
+
+.panoIcon {
+  background: greenyellow;
+  border-radius: 100%;
+  position: absolute;
+  z-index: 101;
+  opacity: 0.7;
+}
+
+.panoIcon:hover {
+  background: rgb(0, 217, 255);
+  cursor: pointer;
+  opacity: 1;
+}
+
+.userIcon {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  z-index: 1000;
+}
