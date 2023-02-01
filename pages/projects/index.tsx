@@ -34,7 +34,7 @@ const Projects: React.FC<IProps> = ({ projects }) => {
     <React.Fragment>
       <div className='flex-col'>
         <div>
-          <Header />
+          <Header></Header>
         </div>
         <div className="bg-gray-100 w-screen ">
           <ProjectsList projects={projects} />

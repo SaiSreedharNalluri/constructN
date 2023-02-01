@@ -14,7 +14,7 @@ interface IProps {
 let ProjectsList: React.FC<IProps> = ({ projects }) => {
   const router = useRouter();
   return (
-    <div className="h-full grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
+    <div className="h-full calc-h overflow-y-auto grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
       {projects &&
         projects.map((pData) => {
           return (
@@ -44,7 +44,7 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
                       <p> N/A</p>
                     </div>
                   )}
-                  <div className="mt-4 text-gray-400">
+                  {/* <div className="mt-4 text-gray-400">
                     <FontAwesomeIcon
                       icon={faPen}
                       className="text-2xl"
@@ -64,7 +64,7 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
                       className="ml-4 text-2xl"
                       icon={faTrash}
                     ></FontAwesomeIcon>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

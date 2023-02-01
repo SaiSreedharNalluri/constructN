@@ -8,7 +8,7 @@ import { getProjectDetails } from '../../../../services/project';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import _ from 'lodash';
 import Pagination from '../../../../components/container/pagination';
-import { faGreaterThan } from '@fortawesome/free-solid-svg-icons';
+import { faGreaterThan, faLessThan } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LeftOverLay from '../../../../components/container/leftOverLay';
 import MapLoading from '../../../../components/container/mapLoading';
@@ -292,7 +292,7 @@ const Index: React.FC<IProps> = () => {
           {leftNav && (
             <div
               ref={leftRefContainer}
-              className={`calc-h absolute z-10 top-10 bg-green-700  overflow-y-auto`}
+              className={`calc-h absolute z-10 top-10 bg-gray-200 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay
@@ -351,24 +351,24 @@ const Index: React.FC<IProps> = () => {
              </div>
           </div>
         </div> */}
-        <div ref={rightrefContainer}>
-          <FontAwesomeIcon
-            className={`fixed  ${
-              rightNav && 'rotate-180'
-            } text-2xl text-blue-300  ${
-              rightNav ? 'right-9' : 'right-0'
-            }  top-46  cursor-pointer border-none rounded  p-1 bg-gray-400 z-10 text-white`}
-            onClick={rightNavCollapse}
-            icon={faGreaterThan}
-          ></FontAwesomeIcon>
-          <div
-            ref={rightOverlayRef}
-            id="bg-color"
-            className={`fixed  w-9    ${
-              rightNav ? 'visible' : 'hidden'
-            }  bg-gray-200 top-40  rounded  right-0  duration-300 z-10 overflow-y-hidden`}
-          >
-            {structure && snapshot && (
+        {structure && snapshot && (
+          <div ref={rightrefContainer}>
+            <FontAwesomeIcon
+              className={`fixed  ${
+                rightNav && 'rotate-180'
+              } text-lg text-blue-300  ${
+                rightNav ? 'right-9' : 'right-0'
+              }  top-46  cursor-pointer border rounded  p-1 bg-gray-400 z-10 text-white`}
+              onClick={rightNavCollapse}
+              icon={faLessThan}
+            ></FontAwesomeIcon>
+            <div
+              ref={rightOverlayRef}
+              id="bg-color"
+              className={`fixed  w-9 border border-gray-300   ${
+                rightNav ? 'visible' : 'hidden'
+              }  bg-gray-200 top-40  rounded  right-0  duration-300 z-10 overflow-y-hidden`}
+            >
               <RightFloatingMenu
                 issuesList={issuesList}
                 tasksList={tasksList}
@@ -379,9 +379,9 @@ const Index: React.FC<IProps> = () => {
                 currentStructure={structure}
                 currentSnapshot={snapshot}
               ></RightFloatingMenu>
-            )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

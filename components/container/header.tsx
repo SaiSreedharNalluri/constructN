@@ -67,7 +67,7 @@ const Header: React.FC<IProps> = () => {
             <div className="ml-2 mt-2 mb-2 ">
               <img
                 onClick={goToProjectsList}
-                className=" cursor-pointer w-full h-6"
+                className=" cursor-pointer h-6"
                 src="https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2Fs3.amazonaws.com%2Fappforest_uf%2Ff1628494605280x954459828257958600%2FArtboard%25201%2520copy%25202%25404x.png?w=512&h=115&auto=compress&fit=crop&dpr=1.25"
                 alt=""
               ></img>
