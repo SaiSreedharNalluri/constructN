@@ -1,23 +1,10 @@
 
 import { getPointCloudTM, getRealityImagesPath, getRealityPositions, getRealityPositionsPath } from "../services/reality";
-import { getRealityPath, getDesignPath } from "./S3Utils";
+import { getRealityPath, getDesignPath, getFloormapPath, getFloormapTmPath } from "./S3Utils";
 
-export const getForgeModels = (designs) => {
-    console.log("Generic Viewer Design List in get forge models: ", designs);
-    let documentList = designs.map((design) => {
-        let document = {};
-        let storage = design.storage.find(storage => storage.provider === "autodesk-oss");
-        if (storage) {
-        document.urn = `urn:${storage.pathId}`;
-        document.tm = design.tm;
-        }
-        return document
-    })
-    console.log("Generic Viewer Design models: ", documentList);
-    return documentList;
-    }
 
-    export const getPointCloudReality = (snapshot) => {
+
+export const getPointCloudReality = (snapshot) => {
     return snapshot.reality.find((reality) => {
         console.log("Generic Viewer Inside find reality function:");
         if (reality.mode === "360 Video" || reality.mode === "Drone Image") {
@@ -27,7 +14,7 @@ export const getForgeModels = (designs) => {
     });
 }
 
-export const getForgeModels2 = (designMap) => {
+export const getForgeModels = (designMap) => {
     let forgeDocumentMap = {}
     for (const type in designMap) {
         switch (type) {
@@ -61,6 +48,29 @@ export const getForgeModels2 = (designMap) => {
         }
     }
     return forgeDocumentMap;
+}
+
+export const getFloorPlanData = (designMap) => {
+    let floormapDataMap = {}
+    for (const type in designMap) {
+        switch (type) {
+            case "Plan Drawings":
+                let planDrawingsArray = [];
+                for (let design of designMap[type]) {
+                    let floormap = {};
+                    let storage = design.storage.find(storage => storage.provider === "constructn-oss");
+                    if (storage) {
+                    floormap.floormapPath = getFloormapPath(design.project, design.structure, design._id);
+                    floormap.tmPath = getFloormapTmPath(design.project, design.structure, design._id);
+                    planDrawingsArray.push(floormap);
+                    }
+                }
+                floormapDataMap[type] = planDrawingsArray;
+                break;
+
+        }
+    }
+    return floormapDataMap;
 }
 
 export const getPointCloud = async(structure, snapshot) =>{

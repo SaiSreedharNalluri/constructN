@@ -19,13 +19,13 @@ import Pagination from "./pagination";
 import ForgeViewer from "./forgeViewer";
 import PotreeViewer from "./potreeViewer";
 import {
-  getForgeModels2,
+  getForgeModels,
   getPointCloud,
   getPointCloudReality,
   getRealityLayers,
   getRealityLayersPath,
   getDesignMap,
-  getRealityMap,
+  getRealityMap, getFloorPlanData,
 } from "../../utils/ViewerDataUtils";
 
 function GenericViewer(props) {
@@ -63,7 +63,7 @@ function GenericViewer(props) {
   let [compareMode, setCompareMode] = useState(0);
 
   let tool = props.tools;
-  let activeTool = tool;
+  let activeTool = useRef(tool);
   let pushToolResponse = props.toolRes;
 
   let forgeUtils = useRef();
@@ -102,18 +102,19 @@ function GenericViewer(props) {
 
   function handleRealityTypeChange() {}
   
-  function handleToolChange(newTool) {
-    console.log("My new tool=",newTool);
-    switch(newTool===undefined?'':newTool.toolAction){
+  function handleToolChange() {
+    console.log("My new tool=",activeTool);
+    switch(activeTool.current===undefined?'':activeTool.current.toolAction){
       case 'issueCreate':
     //set to Marker Mode
       console.log("set Marker Mode for issue")
-      setMarkerMode(true);
+      // setMarkerMode(true);
+      addTag("Issue")
     //forgeUtils.current.startTool(newTool);
       break;
       case 'taskCreate':
       //set to Marker Mode
-      console.log("set Marker Mode for task")
+      addTag("Task");
       setMarkerMode(true);
       break;
       default:
@@ -123,23 +124,40 @@ function GenericViewer(props) {
 
   }
 
-  const viewerEventHandler = (type, event) => {
-    console.log("Inside generic viewer: ", type, event);
-    currentImageContext.current = event;
-    switch (type) {
-      case "Design":
-        if (event.type == "360 Video") {
+  const addTag = (type) => {
+    switch (viewMode) {
+      case "Design" :
+        if (forgeUtils.current) {
+          forgeUtils.current.initiateAddTag(type);
+        }
+        break;
+      case "Reality":
+        if (potreeUtils.current) {
+          potreeUtils.current.initiateAddTag(type);
+        }
+        break;
+    }
+  }
+
+  const viewerEventHandler = (event) => {
+    console.log("Inside generic viewer: ", event.type);
+    switch (event.type) {
+      case "360 Video":
+        currentImageContext.current = event;
+        if (viewMode == "Design") {
           setViewMode("Reality");
         } else {
-          console.log("Task Clicked", event);
+          setViewMode("Design");
         }
         break;
       case "Reality":
         break;
-      case "issue":
-        if(isMarkerMode){setMarkerMode(false)}
-          console.log("Marked Point========",event.point);
-          break;
+      case "Issue":
+        setMarkerMode(false)
+        activeTool.current.response = event;
+        pushToolResponse(activeTool.current);
+        console.log("Marked Point========",event);
+        break;
     }
   };
 
@@ -199,10 +217,10 @@ function GenericViewer(props) {
   async function loadViewerData() {
     console.log("Generic Viewer Inside load view data: ");
     switch (viewMode) {
-      case "Design":
-        forgeUtils.current.updateData(getForgeModels2(designMap));
+      case 'Design':
+        forgeUtils.current.updateData(getForgeModels(designMap));
         if (isCompare) {
-          forgeCompareUtils.current.updateData(getForgeModels2(designMap));
+          forgeCompareUtils.current.updateData(getForgeModels(designMap));
         }
         // let data = await getRealityLayers(structure, snapshot, realityMap, realityList);
         // forgeUtils.current.updateLayersData(data, currentCamera.current);
@@ -235,25 +253,18 @@ function GenericViewer(props) {
           forgeCompareUtils.current.updateLayersData(data, context);
         }
         break;
-      case "Reality":
-        potreeUtils.current.updateData(
-          await getPointCloud(structure, snapshot)
-        );
+      case 'Reality':
+        potreeUtils.current.updateData(await getPointCloud(structure, snapshot), getFloorPlanData(designMap));
         // potreeUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), currentCamera.current);
         potreeUtils.current.updateLayersData(
           getRealityLayersPath(structure, snapshot, realityMap),
           context
         );
 
-        if (isCompare) {
-          potreeCompareUtils.current.updateData(
-            await getPointCloud(structure, snapshot)
-          );
-          // potreeUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), currentCamera.current);
-          potreeCompareUtils.current.updateLayersData(
-            getRealityLayersPath(structure, snapshot, realityMap),
-            context
-          );
+        if(isCompare) {
+          potreeCompareUtils.current.updateData(await getPointCloud(structure, snapshot), getFloorPlanData(designMap));
+        // potreeUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), currentCamera.current);
+          potreeCompareUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), context);
         }
         break;
     }
@@ -477,7 +488,11 @@ function GenericViewer(props) {
 
   useEffect(() => {
     console.log("Generic Viewer tool clicked", tool);
-    handleToolChange(tool);
+    if (activeTool.current != tool) {
+      activeTool.current = tool
+      handleToolChange();
+    }
+    
   }, [tool]);
 
   useEffect(() => {
