@@ -14,7 +14,6 @@ import { IProjectUsers } from '../../../../models/IProjects';
 import { toast } from 'react-toastify';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import { IStructure } from '../../../../models/IStructure';
-import structure from '../../../../pages/projects/[projectId]/structure';
 import { getCookie } from 'cookies-next';
 interface IProps {
   closeOverlay: () => void;

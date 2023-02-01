@@ -39,6 +39,7 @@ const Index: React.FC<IProps> = () => {
   const [projectutm, setProjectUtm] = useState('');
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
+  let structureView = false;
   const rightOverlayRef: any = useRef();
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
@@ -150,16 +151,29 @@ const Index: React.FC<IProps> = () => {
         break;
     }
   };
+  const closeStructurePage = (e: any) => {
+    if (
+      rightrefContainer.current &&
+      !rightrefContainer.current.contains(e.target) &&
+      leftOverlayRef.current &&
+      !leftOverlayRef.current.contains(e.target) &&
+      leftRefContainer.current &&
+      !leftRefContainer.current.contains(e.target)
+    ) {
+      setLeftNav(false);
+    }
+  };
+  useEffect(() => {
+    const handler = document.addEventListener('click', closeStructurePage);
+    return () => {
+      document.removeEventListener('click', closeStructurePage);
+    };
+  }, []);
+
   const rightNavCollapse = () => {
     setRightNav(!rightNav);
   };
-  useEffect(() => {
-    if (leftNav) {
-      leftOverlayRef.current.style.width = '18vw';
-    } else {
-      leftOverlayRef.current.style.width = '0%';
-    }
-  }, [leftNav]);
+
   const onChangeData = () => {
     if (leftNav) {
       setLeftNav(false);
@@ -266,38 +280,38 @@ const Index: React.FC<IProps> = () => {
     setIssueList(result);
   };
   return (
-    <React.Fragment>
-      <div className="relative">
+    <div className=" w-full  h-full">
+      <div className="w-full">
+        <Header></Header>
+      </div>
+      <div className="flex ">
+        <div ref={leftOverlayRef}>
+          <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu>
+        </div>
         <div>
-          <Header />
-        </div>
-        <div className="relative flex flex-row" ref={leftRefContainer}>
-          <div className="grow-0">
-            <CollapsableMenu onChangeData={onChangeData} />
+          {leftNav && (
             <div
-              ref={leftOverlayRef}
-              className={`h-screen bg-gray-200 w-0 absolute z-10  ${
-                leftNav ? 'left-10' : 'left-10  '
-              }  top-0   duration-300 overflow-x-hidden`}
+              ref={leftRefContainer}
+              className={`calc-h absolute z-10 top-10 bg-green-700  overflow-y-auto`}
             >
-              <LeftOverLay
-                getStructureData={getStructureData}
-                getStructure={(structureData) => {
-                  if (structure === undefined) {
-                    setStructure(
-                      getCurrentStructureFromStructureList(structureData)
-                    );
-                    getIssues(structureData._id);
-                    getTasks(structureData._id);
-                  }
-                }}
-              ></LeftOverLay>
+              <div>
+                <LeftOverLay
+                  getStructureData={getStructureData}
+                  getStructure={(structureData) => {
+                    if (structure === undefined) {
+                      setStructure(
+                        getCurrentStructureFromStructureList(structureData)
+                      );
+                      getIssues(structureData._id);
+                      getTasks(structureData._id);
+                    }
+                  }}
+                ></LeftOverLay>
+              </div>
             </div>
-          </div>
-          <div className="  grow w-full" id="viewer">
-            {renderSwitch(viewerTypeState)}
-          </div>
+          )}
         </div>
+        <div id="viewer">{renderSwitch(viewerTypeState)}</div>
         {/* <div>
             <FontAwesomeIcon
               className={`absolute  ${
@@ -337,23 +351,22 @@ const Index: React.FC<IProps> = () => {
              </div>
           </div>
         </div> */}
-
-        <div ref={rightrefContainer} className="relative z-10 ">
+        <div ref={rightrefContainer}>
           <FontAwesomeIcon
             className={`fixed  ${
               rightNav && 'rotate-180'
             } text-2xl text-blue-300  ${
-              rightNav ? 'right-34' : 'right-0'
-            }  top-46  cursor-pointer border-none rounded  p-1 bg-gray-400 text-white`}
+              rightNav ? 'right-9' : 'right-0'
+            }  top-46  cursor-pointer border-none rounded  p-1 bg-gray-400 z-10 text-white`}
             onClick={rightNavCollapse}
             icon={faGreaterThan}
           ></FontAwesomeIcon>
           <div
             ref={rightOverlayRef}
             id="bg-color"
-            className={`fixed  lg:w-3 2xl:w-1   ${
+            className={`fixed  w-9    ${
               rightNav ? 'visible' : 'hidden'
-            }  bg-gray-200 top-40   rounded  lg:right-0  duration-300 overflow-x-hidden`}
+            }  bg-gray-200 top-40  rounded  right-0  duration-300 z-10 overflow-y-hidden`}
           >
             {structure && snapshot && (
               <RightFloatingMenu
@@ -370,7 +383,7 @@ const Index: React.FC<IProps> = () => {
           </div>
         </div>
       </div>
-    </React.Fragment>
+    </div>
   );
 };
 export default Index;

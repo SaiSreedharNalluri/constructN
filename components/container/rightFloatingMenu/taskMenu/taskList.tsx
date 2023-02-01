@@ -27,11 +27,10 @@ const TaskList: React.FC<IProps> = ({
   };
   return (
     <div
-      className={`fixed ${
-        visibility ? 'w-1/4 calc-h' : 'w-0'
-      } top-10     bg-gray-200 right-0 z-10 overflow-x-hidden`}
+      className={`fixed ${visibility ? 'w-1/4 calc-h' : 'w-0'
+        } top-10     bg-gray-200 right-0 z-10 overflow-x-hidden`}
     >
-      <div className="h-93 overflow-y-auto ">
+      <div className=" overflow-y-auto ">
         <div className="flex justify-between border-b border-black border-solid">
           <div>
             <h1>Task List</h1>
