@@ -8,6 +8,7 @@ export class ForgeDataVisualization {
         this.viewableDataMap = {};
         this.dbIdMap = [];
         this.createTagTool = false;
+        this.tagType = "Issue";
         this.viewableLength = 0;
 
         // window.dbIdMap = this.dbIdMap;
@@ -29,8 +30,9 @@ export class ForgeDataVisualization {
         this.handlerFunction = handlerFunction;
     }
 
-    activateCreateTagTool() {
+    activateCreateTagTool(type) {
         this.createTagTool = true;
+        this.tagType = type;
     }
 
     deactivateCreateTagTool() {
@@ -64,8 +66,7 @@ export class ForgeDataVisualization {
                             type: viewableType,
                             name: positionData,
                             position: {x: positionArray[0], y: positionArray[1], z: positionArray[2]},
-                            pitch: null,
-				            yaw: null
+                            rotation: {yaw: rotationArray[0], pitch: rotationArray[1], roll:rotationArray[2]}
                         }
                         this.dbIdMap[dbIdObject.dbId] = dbIdObject;
                         const viewable = new this.dataVizCore.SpriteViewable(dbIdObject.position, viewableStyle, dbIdObject.dbId);
@@ -103,10 +104,10 @@ export class ForgeDataVisualization {
                 // iconUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
                 iconUrl = "/icons/forge360Image.png";
             break;
-            case 'Issues':
+            case 'Issue':
                 iconUrl = "/icons/forgeIssue.png";
             break;
-            case 'Tasks':
+            case 'Task':
                 iconUrl = "/icons/forgeTask.png";
             break
 
@@ -147,11 +148,11 @@ export class ForgeDataVisualization {
 
         if (result) {
             let viewableData = this.getViewableData();
-            let viewableStyle = this.getViewableStyle("Issues");
+            let viewableStyle = this.getViewableStyle(type);
             let dbIdObject = {
                 dbId: ++this.viewableLength,
-                name: "Temp Issue",
-                type: "Issue",
+                name: `Temp ${type}`,
+                type: type,
                 position: result.point,
                 pitch: null,
                 yaw: null
@@ -164,6 +165,8 @@ export class ForgeDataVisualization {
 
             await viewableData.finish();
             this.dataVizExtn.addViewables(viewableData);
+
+            this.handlerFunction(event, dbIdObject);
         }
     }
 
@@ -189,12 +192,12 @@ export class ForgeDataVisualization {
     
     onSpriteClicked(event) {
         const targetDbId = event.dbId;
-        // console.log("Inside data viz utils: selected dbId: ", targetDbId);
+        console.log("Inside data viz utils: selected dbId: ", targetDbId);
         // console.log(`Sprite clicked: ${this.dbIdMap[targetDbId].name}`);
         if (targetDbId > 0) {
             this.passToViewerHandler(event);
         } else if (this.createTagTool) {
-            this.createTempViewable("issues", event);
+            this.createTempViewable(this.tagType, event);
         }
 
     }

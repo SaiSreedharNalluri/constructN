@@ -54,7 +54,7 @@ export class PotreeViewerUtils {
         
         this.pointCloudPath = pointCloudData.path
 
-        if(floormapData["Plan Drawings"][0].floormapPath) {
+        if(floormapData["Plan Drawings"] && floormapData["Plan Drawings"][0].floormapPath) {
             // this.floorMapTmMatrix = new THREE.Matrix4().fromArray(floorMapData["Plan Drawings"][0].tm).transpose();
             // this.floormapOffset = floorMapData["Plan Drawings"][0].tm.offset
             this.floormapTmPath = floormapData["Plan Drawings"][0].tmPath;
@@ -185,7 +185,7 @@ export class PotreeViewerUtils {
 
     loadPanoImages(imagePositionsPath, imagesPath, context) {
         // viewerMode = 'panorama'
-        let tmData = { tm: this.tmMatrix, offset: this.globalOffset};
+        let tmData = { tm: new THREE.Matrix4(), offset: this.globalOffset};
         Potree.Images360Loader.load(imagePositionsPath, imagesPath, this.viewer, tmData).then(images => {
             console.log("Inside load Pano images: ", this.viewer);
             this.viewer.scene.add360Images(images);
@@ -303,17 +303,17 @@ export class PotreeViewerUtils {
     }
 
     goToImageContext(info) {
-        console.log("Inside potree utils, going to task: ", info);
+        console.log("Inside potree utils, going to image task: ", info);
         let offset = this.globalOffset
         let targetValue = info.target ? info.target : info.position;
         let inCamera_withOffset = {
-            position: new THREE.Vector3().fromArray([info.position[0]-offset[0], info.position[1]-offset[1], info.position[2]-offset[2]]),
-            target: new THREE.Vector3().fromArray([targetValue[0]-offset[0], targetValue[1]-offset[1], targetValue[2]-offset[2]]),
-            pitch: info.pitch ? info.pitch : null,
-            yaw: info.yaw ? info.yaw : null
+            position: new THREE.Vector3().fromArray([info.position.x-offset[0], info.position.y-offset[1], info.position.z-offset[2]]),
+            target: new THREE.Vector3().fromArray([targetValue.x-offset[0], targetValue.y-offset[1], targetValue.z-offset[2]]),
+            // pitch: info.rotation ? info.rotation.pitch : null,
+            // yaw: info.rotation ? info.rotation.yaw : null
         }
 
-        this.goToImage(info.name, inCamera_withOffset);
+        this.goToImage(info.image, inCamera_withOffset);
     }
 
     goToTask(info) {
@@ -321,19 +321,19 @@ export class PotreeViewerUtils {
         let offset = this.globalOffset
         let targetValue = info.target ? info.target : info.position;
         let inCamera_withOffset = {
-            position: new THREE.Vector3().fromArray([info.position[0]-offset[0], info.position[1]-offset[1], info.position[2]-offset[2]]),
-            target: new THREE.Vector3().fromArray([targetValue[0]-offset[0], targetValue[1]-offset[1], targetValue[2]-offset[2]]),
-            pitch: info.pitch ? info.pitch : null,
-            yaw: info.yaw ? info.yaw : null
+            position: new THREE.Vector3().fromArray([info.position.x-offset[0], info.position.y-offset[1], info.position.z-offset[2]]),
+            target: new THREE.Vector3().fromArray([targetValue.x-offset[0], targetValue.y-offset[1], targetValue.z-offset[2]]),
+            // pitch: info.rotation ? info.rotation.pitch : null,
+            // yaw: info.rotation ? info.rotation.yaw : null
         }
-        if (info.imageName) {
+        if (info.image) {
             // isMouseOnV1 = true;
             this.tagToAddOnImageLoad = {
                 'info': info,
                 'viewer': this.viewer
             }
 
-            this.goToImage(info.imageName, inCamera_withOffset);
+            this.goToImage(info.image, inCamera_withOffset);
         } else if (isExterior) {
             console.log('Load 3d tags')
             // viewer_1.controls.elExit.click();
@@ -343,8 +343,8 @@ export class PotreeViewerUtils {
             setTimeout((() => {
                 if (this.viewer.tileset == info.tileset) {
                     // isMouseOnV1 = true;
-                    goToContext(info.camera)
-                    addTag(info, viewer_1)
+                    this.goToContext(info.camera)
+                    this.addTag(info, viewer_1)
                 }
             }).bind(this), 1000)
         }
@@ -357,10 +357,12 @@ export class PotreeViewerUtils {
             let tar = this.viewer.scene.view.getPivot().toArray()
             let offset = this.globalOffset
             camObject = {
-                position: [pos[0]+offset[0], pos[1]+offset[1], pos[2]+offset[2]],
-                target: [tar[0]+offset[0], tar[1]+offset[1], tar[2]+offset[2]],
-                pitch: this.viewer.scene.view.pitch,
-                yaw: this.viewer.scene.view.yaw
+                position: {x:pos[0]+offset[0], y:pos[1]+offset[1], z:pos[2]+offset[2]},
+                target: {x:tar[0]+offset[0], y:tar[1]+offset[1], z:tar[2]+offset[2]},
+                rotation: {
+                    pitch: this.viewer.scene.view.pitch,
+                    yaw: this.viewer.scene.view.yaw
+                }
             }
         }
         return camObject;
@@ -890,11 +892,18 @@ export class PotreeViewerUtils {
         setTimeout((() => {
             this.viewer.renderArea.addEventListener('click',  this.measureClickHandler)
         }).bind(this), 1)
+        return true;
     }
 
     deactivateCreateTagTool() {
         this.createTagTool = false;
+        return false;
     }  
+
+    initiateAddTag(type) {
+        this.tagType = type;
+        this.isAddTagActive = this.activateCreateTagTool();
+    }
 
     clickHandler = (event) => {
         const raycaster = new THREE.Raycaster();
@@ -905,6 +914,7 @@ export class PotreeViewerUtils {
             x: event.clientX - rect.left,
             y: event.clientY - rect.top,
         };
+        
 
         // const pos = this.getCanvasRelativePosition(event);
         let pickPosition = { x: 0, y: 0 };
@@ -924,8 +934,28 @@ export class PotreeViewerUtils {
             measure.name = 'Point';
             measure.addMarker(click_point);
             this.viewer.scene.addMeasurement(measure);
+            this.processTag(click_point);
+            console.log("Event clicked : ", pos, event, click_point, intersectedObjects);
         }
         this.viewer.renderArea.removeEventListener('click',  this.measureClickHandler);
+    }
+
+    processTag(click_point) {
+        let date_time = new Date();
+        // let screenShotPath = `${mainProjectID}/structures/${inProjectID}/snapshots/${viewer.tileset}/${date_time.getTime()}.png`
+        // let latest_measure = viewer.scene.measurements.slice(-1)[0]
+        this.isAddTagActive = this.deactivateCreateTagTool();
+        let save_obj = {
+            type: this.tagType,
+            position: click_point,
+            image: this.viewer.cur_loaded_image,
+            camera: this.getCamera(),
+            // screenShot: `https://${s3_bucket}.s3.ap-south-1.amazonaws.com/${screenShotPath}`
+        }
+        console.log('Saving Annotation: ', save_obj)
+        this.eventHandler(save_obj)
+        // window.top.postMessage({type: 'save-tag', data: JSON.stringify(save_obj)}, "*");
+        // takeScreenshot(screenShotPath, viewer);
     }
 
     clearTempMeasurements() {
