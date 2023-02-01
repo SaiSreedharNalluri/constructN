@@ -18,6 +18,8 @@ export class ForgeViewerUtils {
     this.dataVizExtn = undefined;
     this.eventHandler = eventHandler;
     this.selectedType = "Plan Drawings";
+
+    this.isAddTagActive = false;
   }
 
   // static getInstance(viewerId) {
@@ -53,6 +55,57 @@ export class ForgeViewerUtils {
       this.loadData();
     } else {
       this.initialize();
+    }
+  }
+
+  activateTool(type) {
+    if (this.dataVizUtils) {
+      this.dataVizUtils.activateCreateTagTool(type);
+      return true;
+    }
+    return false;
+  }
+
+  deactivateTool() {
+    if (this.dataVizUtils) {
+      this.dataVizUtils.deactivateCreateTagTool();
+      return true;
+    }
+    return false;
+  }
+
+  initiateAddTag(type) {
+    this.isAddTagActive = this.activateTool(type);
+  }
+
+  onDataVizHandler(event, targetObject) {
+    // console.log("Inside viewer Daya viz handler: ", event);
+    const result = this.viewer.clientToWorld(event.originalEvent.clientX, event.originalEvent.clientY);
+    switch(event.type) {
+      case "DATAVIZ_OBJECT_HOVERING":
+        // console.log("Hover Image at ", result.point, targetObject.getName);
+        break;
+      case "DATAVIZ_OBJECT_CLICK":
+        console.log("Selected Image at ", result ? result.point : "Outside canvas", targetObject.name);
+        if (this.isAddTagActive) {
+          this.isAddTagActive = this.deactivateTool();
+          let tagObject = {
+            type: targetObject.type,
+            position: targetObject.position,
+            camera: this.getCamera(),
+          }
+          this.eventHandler(tagObject);
+        } else {
+          let clickObject = {
+            type: targetObject.type,
+            position: targetObject.position,
+            rotation: targetObject.rotation,
+            image: targetObject.name
+          }
+          this.eventHandler(clickObject);
+        }
+        
+        break;
     }
   }
 
@@ -229,8 +282,8 @@ export class ForgeViewerUtils {
       const state = this.viewer.getState({ viewport: true }).viewport;
       let offset = this.globalOffset
       camObject = {
-        position: [state.eye[0]+offset[0], state.eye[1]+offset[1], state.eye[2]+offset[2]],
-        target: [state.target[0]+offset[0], state.target[1]+offset[1], state.target[2]+offset[2]]
+        position: {x:state.eye[0]+offset[0], y:state.eye[1]+offset[1], z:state.eye[2]+offset[2]},
+        target: {x:state.target[0]+offset[0], y:state.target[1]+offset[1], z:state.target[2]+offset[2]}
       }
     }
     return camObject;
@@ -423,23 +476,9 @@ export class ForgeViewerUtils {
     const result = this.viewer.clientToWorld(ev.clientX, ev.clientY);
     if (result) {
       console.log("Click Point", result.point);
-      this.eventHandler('issue',result);
+      // this.eventHandler('issue',result);
     }
     return false;
-  }
-
-  onDataVizHandler(event, targetObject) {
-    // console.log("Inside viewer Daya viz handler: ", event);
-    const result = this.viewer.clientToWorld(event.originalEvent.clientX, event.originalEvent.clientY);
-    switch(event.type) {
-      case "DATAVIZ_OBJECT_HOVERING":
-        // console.log("Hover Image at ", result.point, targetObject.getName);
-        break;
-      case "DATAVIZ_OBJECT_CLICK":
-        console.log("Selected Image at ", result ? result.point : "Outside canvas", targetObject.name);
-        this.eventHandler("Design", targetObject);
-        break;
-    }
   }
 
   setUpEventListeners() {

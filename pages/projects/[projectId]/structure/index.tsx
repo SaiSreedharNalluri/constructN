@@ -244,8 +244,8 @@ const Index: React.FC<IProps> = () => {
     }
   };
 
-  const toolResponse = (data: string) => {
-    console.log('Data->', data);
+  const toolResponse = (data: ITools) => {
+    console.log('Data->', data.response);
   };
   const getIssues = (structureId: string) => {
     getIssuesList(router.query.projectId as string, structureId)
