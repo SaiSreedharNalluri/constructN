@@ -22,7 +22,7 @@ const Pagination: React.FC<IProps> = ({ snapshots, getSnapshotInfo }) => {
           <span>&laquo;</span>
         </div>
         <div className="flex items-center ">
-          <div className=" flex  mr-1">
+          <div className=" flex text-sm">
             <p>{oldDate && Moment(oldDate).format('Do MMM YY')}</p>
           </div>
           {snapshots &&
@@ -41,7 +41,7 @@ const Pagination: React.FC<IProps> = ({ snapshots, getSnapshotInfo }) => {
                         <input
                           type="radio"
                           name="bordered-radio"
-                          className="w-2 h-4 mt-auto cursor-pointer"
+                          className="w-2 h-2 mt-auto cursor-pointer"
                         />
                       </div>
                     </li>
@@ -50,7 +50,7 @@ const Pagination: React.FC<IProps> = ({ snapshots, getSnapshotInfo }) => {
               );
             })}
 
-          <div className="flex items-center ml-1 ">
+          <div className="flex text-sm items-center ml-1 ">
             <p>{newDate && Moment(newDate).format('Do MMM YY')} </p>
           </div>
         </div>

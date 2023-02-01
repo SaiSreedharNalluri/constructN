@@ -44,7 +44,7 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
     setActive(router.pathname.split('/').pop());
   };
   return (
-    <div className=" w-11 h-screen text-center bg-gray-200">
+    <div className=" w-11 h-screen text-center bg-gray-200 border border-gray-300">
       <div>
         <FontAwesomeIcon
           id="dashboard"

@@ -8,7 +8,7 @@ import { getProjectDetails } from '../../../../services/project';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import _ from 'lodash';
 import Pagination from '../../../../components/container/pagination';
-import { faGreaterThan } from '@fortawesome/free-solid-svg-icons';
+import { faGreaterThan, faLessThan } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LeftOverLay from '../../../../components/container/leftOverLay';
 import MapLoading from '../../../../components/container/mapLoading';
@@ -26,7 +26,7 @@ import { createTask, getTasksList } from '../../../../services/task';
 import { Issue } from '../../../../models/Issue';
 import { ITasks } from '../../../../models/Itask';
 
-interface IProps {}
+interface IProps { }
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const [currentViewMode, setViewMode] = useState('Design'); //Design/ Reality
@@ -137,11 +137,9 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${
-                  structure?._id
-                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
-                  currentProjectId as string
-                }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
+                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
+                  }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -151,28 +149,33 @@ const Index: React.FC<IProps> = () => {
         break;
     }
   };
+  const closeStructurePage = (e: any) => {
+    if (
+      rightrefContainer.current && !rightrefContainer.current.contains(e.target) &&
+      leftOverlayRef.current && !leftOverlayRef.current.contains(e.target) &&
+      (leftRefContainer.current && !leftRefContainer.current.contains(e.target))
+    ) {
+      setLeftNav(false);
+    }
+  };
+  useEffect(() => {
+    const handler = document.addEventListener('click', closeStructurePage);
+    return () => {
+      document.removeEventListener("click", closeStructurePage)
+    }
+  }, []);
+
   const rightNavCollapse = () => {
     setRightNav(!rightNav);
   };
-  useEffect(() => {
-    if (leftNav) {
-      leftOverlayRef.current.style.width = '18vw';
-    } else {
-      leftOverlayRef.current.style.width = '0%';
-    }
-  }, [leftNav]);
+
   const onChangeData = () => {
-    // if (leftNav) {
-    //   setLeftNav(false);
-    // } else {
-    //   setLeftNav(true);
-    // }
-    if (!structureView) {
-      leftOverlayRef.current.style.width = '18vw';
+    if (leftNav) {
+      setLeftNav(false);
     } else {
-      leftOverlayRef.current.style.width = '0%';
+      setLeftNav(true);
     }
-    structureView = !structureView
+
   };
 
   const toolClicked = (toolInstance: ITools) => {
@@ -273,40 +276,38 @@ const Index: React.FC<IProps> = () => {
     setIssueList(result);
   };
   return (
-    <React.Fragment>
-      <div className="relative">
-        <div>
-        <Header />
+    <div className=' w-full  h-full'>
+      <div className='w-full'>
+        <Header></Header>
+      </div>
+      <div className='flex ' >
+        <div ref={leftOverlayRef}>
+          <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu>
         </div>
-        <div className="relative flex flex-row" ref={leftRefContainer}>
-          <div className="grow-0">
-            <CollapsableMenu onChangeData={onChangeData} />
-            <div
-              ref={leftOverlayRef}
-              className={`h-screen bg-gray-200 w-0 absolute z-10  ${
-              leftNav ? 'left-10' : 'left-10  '
-              }  top-0   duration-300 overflow-x-hidden`}
-              >
-              <LeftOverLay
-                getStructureData={getStructureData}
-                getStructure={(structureData) => {
-                if (structure === undefined) {
-                  setStructure(
-                    getCurrentStructureFromStructureList(structureData)
-                  );
-                  getIssues(structureData._id);
-                  getTasks(structureData._id);
-                }
-                }}
+        <div >
+          {leftNav &&
+            <div ref={leftRefContainer} className={`calc-h absolute z-10 top-10 bg-gray-200 border border-gray-300 overflow-y-auto`}>
+              <div>
+                <LeftOverLay
+                  getStructureData={getStructureData}
+                  getStructure={(structureData) => {
+                    if (structure === undefined) {
+                      setStructure(
+                        getCurrentStructureFromStructureList(structureData)
+                      );
+                      getIssues(structureData._id);
+                      getTasks(structureData._id);
+                    }
+                  }}
                 ></LeftOverLay>
               </div>
             </div>
-            <div className="  grow w-full" id="viewer">
-              {renderSwitch(viewerTypeState)}
-
-            </div>
-          </div>
-          {/* <div>
+          }
+        </div>
+        <div id="viewer" >
+          {renderSwitch(viewerTypeState)}
+        </div>
+        {/* <div>
             <FontAwesomeIcon
               className={`absolute  ${
                 rightNav && 'rotate-180'
@@ -345,40 +346,38 @@ const Index: React.FC<IProps> = () => {
              </div>
           </div>
         </div> */}
-
-        <div ref={rightrefContainer} className="relative z-10 ">
+        {structure && snapshot && (
+        <div ref={rightrefContainer}>
           <FontAwesomeIcon
-            className={`fixed  ${
-              rightNav && 'rotate-180'
-            } text-2xl text-blue-300  ${
-              rightNav ? 'right-34' : 'right-0'
-            }  top-46  cursor-pointer border-none rounded  p-1 bg-gray-400 text-white`}
+            className={`fixed  ${rightNav && 'rotate-180'
+              } text-lg text-blue-300  ${rightNav ? 'right-9' : 'right-0'
+              }  top-46  cursor-pointer border rounded  p-1 bg-gray-400 z-10 text-white`}
             onClick={rightNavCollapse}
-            icon={faGreaterThan}
+            icon={faLessThan}
           ></FontAwesomeIcon>
           <div
             ref={rightOverlayRef}
             id="bg-color"
-            className={`fixed  lg:w-3 2xl:w-1   ${
-              rightNav ? 'visible' : 'hidden'
-            }  bg-gray-200 top-40   rounded  lg:right-0  duration-300 overflow-x-hidden`}
+            className={`fixed  w-9 border border-gray-300   ${rightNav ? 'visible' : 'hidden'
+              }  bg-gray-200 top-40  rounded  right-0  duration-300 z-10 overflow-y-hidden`}
           >
-            {structure && snapshot &&(
-            <RightFloatingMenu
-              issuesList={issuesList}
-              tasksList={tasksList}
-              toolClicked={toolClicked}
-              viewMode={currentViewMode}
-              handleOnFilter={handleOnIssueFilter}
-              currentProject={currentProjectId}
-              currentStructure={structure}
-              currentSnapshot={snapshot}
-            ></RightFloatingMenu>
-            )}
+              <RightFloatingMenu
+                toolClicked={toolClicked}
+                viewMode={currentViewMode}
+                issuesList={issuesList}
+                tasksList={tasksList}
+                handleOnFilter={handleOnIssueFilter}
+                currentProject={currentProjectId}
+                currentStructure={structure}
+                currentSnapshot={snapshot}
+              ></RightFloatingMenu>
           </div>
         </div>
+      )}
       </div>
-    </React.Fragment>
+
+    </div>
+
   );
 };
 export default Index;

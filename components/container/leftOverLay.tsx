@@ -26,8 +26,8 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
   }, [router.isReady, router.query.projectId]);
   return (
     <React.Fragment>
-      <SearchInput></SearchInput>
-      <div className="w-full ">
+      <div>
+        <SearchInput></SearchInput>
         {state.length === 0 ? (
           'no structures found for this project'
         ) : (
