@@ -29,3 +29,19 @@ export const getRealityPath = (
 ) => {
     return `${getSnapshotPath(projectId, structureId, snapshotId)}/reality/${realityId}`;
 }
+
+export const getFloormapPath = (
+    projectId: string,
+    structureId: string,
+    designId: string
+) => {
+    return `${getDesignPath(projectId, structureId, designId)}/floormap/floormap.png`;
+}
+
+export const getFloormapTmPath = (
+    projectId: string,
+    structureId: string,
+    designId: string
+) => {
+    return `${getDesignPath(projectId, structureId, designId)}/floormap/tm.json`;
+}

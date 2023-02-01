@@ -45,14 +45,21 @@ export class PotreeViewerUtils {
         return this.isViewerInitialized;
     }
 
-    updateData(pointCloudData) {
-        console.log("PointCloud data update: ", pointCloudData);
+    updateData(pointCloudData, floormapData) {
+        console.log("PointCloud data update: ", pointCloudData, floormapData);
         if(pointCloudData.tm) {
             this.tmMatrix = new THREE.Matrix4().fromArray(pointCloudData.tm).transpose();
             this.globalOffset = pointCloudData.offset
         }
         
         this.pointCloudPath = pointCloudData.path
+
+        if(floormapData["Plan Drawings"][0].floormapPath) {
+            // this.floorMapTmMatrix = new THREE.Matrix4().fromArray(floorMapData["Plan Drawings"][0].tm).transpose();
+            // this.floormapOffset = floorMapData["Plan Drawings"][0].tm.offset
+            this.floormapTmPath = floormapData["Plan Drawings"][0].tmPath;
+            this.floormapPath = floormapData["Plan Drawings"][0].floormapPath;
+        }
 
         if (this.isViewerInitialized) {
             this.loadData();
@@ -668,9 +675,13 @@ export class PotreeViewerUtils {
     }
 
     loadFloormap(imagePositionsPath) {
+        if (!this.floormapPath) {
+            console.log("No floormap available:");
+            return;
+        }
 
         let base_image = new Image();
-        base_image.src = `https://constructn-projects.s3.ap-south-1.amazonaws.com/PRJ912666/structures/STR414838/floormap/floormap.png`;
+        base_image.src = this.floormapPath;
         // return new Promise((resolve, reject) => {
         let fpCanvas = document.getElementById(this.fpCanvasId);
         let fpContainer = document.getElementById(this.fpContainerId);
@@ -690,7 +701,7 @@ export class PotreeViewerUtils {
 
             let fpMarix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
             let fpOffset = [0, 0, 0];
-            const tm_json_raw = await fetch(`https://constructn-projects.s3.ap-south-1.amazonaws.com/PRJ912666/structures/STR414838/floormap/tm.json`);
+            const tm_json_raw = await fetch(this.floormapTmPath);
             if (tm_json_raw.status == 200) {
                 const tm_json = JSON.parse(await tm_json_raw.text());
                 if (tm_json.tm) {

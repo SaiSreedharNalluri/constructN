@@ -202,7 +202,7 @@ export class ForgeDataVisualization {
     passToViewerHandler(event) {
         
         let dbObject = this.dbIdMap[event.dbId];
-        console.log("Inside selected dbId object: ", this.dbIdMap, dbObject);
+        // console.log("Inside selected dbId object: ", this.dbIdMap, dbObject);
 
         this.handlerFunction(event, dbObject);
     }

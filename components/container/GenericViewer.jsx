@@ -12,7 +12,7 @@ import DatePicker from './datePicker';
 import Pagination from './pagination';
 import ForgeViewer from './forgeViewer';
 import PotreeViewer from './potreeViewer';
-import { getForgeModels2, getPointCloud, getPointCloudReality, getRealityLayers, getRealityLayersPath, getDesignMap, getRealityMap } from '../../utils/ViewerDataUtils';
+import { getForgeModels, getPointCloud, getPointCloudReality, getRealityLayers, getRealityLayersPath, getDesignMap, getRealityMap, getFloorPlanData } from '../../utils/ViewerDataUtils';
 
 function GenericViewer(props) {
 
@@ -154,9 +154,9 @@ function GenericViewer(props) {
     console.log("Generic Viewer Inside load view data: ");
     switch (viewMode) {
       case 'Design':
-        forgeUtils.current.updateData(getForgeModels2(designMap));
+        forgeUtils.current.updateData(getForgeModels(designMap));
         if (isCompare) {
-          forgeCompareUtils.current.updateData(getForgeModels2(designMap));
+          forgeCompareUtils.current.updateData(getForgeModels(designMap));
         }
         // let data = await getRealityLayers(structure, snapshot, realityMap, realityList);
         // forgeUtils.current.updateLayersData(data, currentCamera.current);
@@ -191,12 +191,12 @@ function GenericViewer(props) {
         }
         break;
       case 'Reality':
-        potreeUtils.current.updateData(await getPointCloud(structure, snapshot));
+        potreeUtils.current.updateData(await getPointCloud(structure, snapshot), getFloorPlanData(designMap));
         // potreeUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), currentCamera.current);
         potreeUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), context);
 
         if(isCompare) {
-          potreeCompareUtils.current.updateData(await getPointCloud(structure, snapshot));
+          potreeCompareUtils.current.updateData(await getPointCloud(structure, snapshot), getFloorPlanData(designMap));
         // potreeUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), currentCamera.current);
           potreeCompareUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), context);
         }
