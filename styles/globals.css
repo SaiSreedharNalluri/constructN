@@ -25,6 +25,12 @@
 .calc-h50 {
   height: calc(100vh - 82px);
 }
+.calc-w {
+  width: calc(100% - 44px);
+}
+.calc-w-compare {
+  width: calc(50% - 44px);
+}
 
 .panoIcon {
   background: greenyellow;
