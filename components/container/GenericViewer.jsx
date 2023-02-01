@@ -1,4 +1,5 @@
 import Script from "next/script";
+import Moment from 'moment';
 import React, { useEffect, useState, memo, useRef, useCallback } from "react";
 import Head from "next/head";
 import Header from "./header";
@@ -63,7 +64,7 @@ function GenericViewer(props) {
 
   let tool = props.tools;
   let activeTool = tool;
-  let toolHandler = props.toolRes;
+  let pushToolResponse = props.toolRes;
 
   let forgeUtils = useRef();
   let potreeUtils = useRef();
@@ -78,7 +79,10 @@ function GenericViewer(props) {
   let [imageContext, setImageContext] = useState({});
   let currentImageContext = useRef();
 
-  let [currentViewer, setCurrentViewer] = useState("Forge");
+
+  let [currentViewer, setCurrentViewer] = useState('Forge');
+
+  let [isMarkerMode, setMarkerMode] = useState(false);
 
   function handleViewModeChange() {
     console.log(
@@ -97,8 +101,27 @@ function GenericViewer(props) {
   function handleDesignTypeChange() {}
 
   function handleRealityTypeChange() {}
+  
+  function handleToolChange(newTool) {
+    console.log("My new tool=",newTool);
+    switch(newTool===undefined?'':newTool.toolAction){
+      case 'issueCreate':
+    //set to Marker Mode
+      console.log("set Marker Mode for issue")
+      setMarkerMode(true);
+    //forgeUtils.current.startTool(newTool);
+      break;
+      case 'taskCreate':
+      //set to Marker Mode
+      console.log("set Marker Mode for task")
+      setMarkerMode(true);
+      break;
+      default:
+      break;
 
-  function handleToolChange() {}
+    }
+
+  }
 
   const viewerEventHandler = (type, event) => {
     console.log("Inside generic viewer: ", type, event);
@@ -113,6 +136,10 @@ function GenericViewer(props) {
         break;
       case "Reality":
         break;
+      case "issue":
+        if(isMarkerMode){setMarkerMode(false)}
+          console.log("Marked Point========",event.point);
+          break;
     }
   };
 
@@ -556,30 +583,32 @@ function GenericViewer(props) {
         ref={bottomRefContainer}
         className="flex-wrap items-center absolute inset-x-0 top-0 z-10"
       >
-        <p
-          className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
-            bottomNav ? "top-11" : "top-2"
-          } `}
-          onClick={bottomOverLay}
-        >
-          {getSnapshotDate()}
-        </p>
+        
+
         <div
           ref={BottomOverlayRef}
-          className="w-0 left-1/2 top-1 absolute overflow-x-hidden "
+          className="w-0 left-48 top-0 absolute overflow-x-hidden "
         >
           <div className="flex ">
-            <div className=" bg-gray-200 rounded">
+            <div className=" bg-gray-200 border border-gray-300 rounded">
               <Pagination
                 snapshots={snapshotList}
                 getSnapshotInfo={setCurrentSnapshot}
               />
             </div>
-            <div>
+            <div className="">
               <DatePicker></DatePicker>
             </div>
           </div>
         </div>
+        <p
+          className={`left-1/2  bg-gray-300 border border-gray-700 rounded absolute duration-300 cursor-pointer ${
+            bottomNav ? "top-11" : "top-0"
+          } `}
+          onClick={bottomOverLay}
+        >
+          {Moment(getSnapshotDate()).format('Do MMM YYYY')}
+        </p>
       </div>
     </div>
   );

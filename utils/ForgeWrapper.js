@@ -423,6 +423,7 @@ export class ForgeViewerUtils {
     const result = this.viewer.clientToWorld(ev.clientX, ev.clientY);
     if (result) {
       console.log("Click Point", result.point);
+      this.eventHandler('issue',result);
     }
     return false;
   }
