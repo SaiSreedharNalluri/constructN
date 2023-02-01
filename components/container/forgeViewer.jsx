@@ -22,7 +22,7 @@ function ForgeViewer(props) {
         <React.Fragment>
             <div
             id={viewerId}
-            className="w-screen h-screen z-5"
+            className="relative w-full h-full z-5"
           ></div>
         </React.Fragment>
     );
