@@ -34,6 +34,7 @@ interface IProps {
   currentStructure: IStructure;
   currentSnapshot: ISnapshot;
   currentProject: string;
+  closeFilterOverlay: () => void;
 }
 const RightFloatingMenu: React.FC<IProps> = ({
   toolClicked,
@@ -46,6 +47,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
   currentProject,
   currentSnapshot,
   currentStructure,
+  closeFilterOverlay,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [iViewMode, setIViewMode] = useState(viewMode);
@@ -395,6 +397,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 currentProject={myProject}
                 currentStructure={myStructure}
                 currentSnapshot={mySnapshot}
+                closeFilterOverlay={closeFilterOverlay}
               ></IssueMenu>
               {/* <div className='bg-gray-400'>
                   <div className=" h-full text-xs"  id="issueItems">

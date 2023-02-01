@@ -3,12 +3,10 @@ import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
 import { ChildrenEntity, IStructure } from '../../../../models/IStructure';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
-import { getSnapshotsList } from '../../../../services/snapshot';
 import { getProjectDetails } from '../../../../services/project';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import _ from 'lodash';
-import Pagination from '../../../../components/container/pagination';
-import { faGreaterThan, faLessThan } from '@fortawesome/free-solid-svg-icons';
+import { faLessThan } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LeftOverLay from '../../../../components/container/leftOverLay';
 import MapLoading from '../../../../components/container/mapLoading';
@@ -19,10 +17,10 @@ import { ITools } from '../../../../models/ITools';
 import { getStructureList } from '../../../../services/structure';
 import { IActiveRealityMap } from '../../../../models/IReality';
 import { IDesignMap } from '../../../../models/IDesign';
-import { createIssue, getIssuesList } from '../../../../services/issue';
+import { getIssuesList } from '../../../../services/issue';
 import { getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
-import { createTask, getTasksList } from '../../../../services/task';
+import { getTasksList } from '../../../../services/task';
 import { Issue } from '../../../../models/Issue';
 import { ITasks } from '../../../../models/Itask';
 
@@ -39,7 +37,6 @@ const Index: React.FC<IProps> = () => {
   const [projectutm, setProjectUtm] = useState('');
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
-  let structureView = false;
   const rightOverlayRef: any = useRef();
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
@@ -51,6 +48,8 @@ const Index: React.FC<IProps> = () => {
   const [loggedInUserId, SetLoggedInUserId] = useState('');
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
+  const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
+  const [loadData, setLoadData] = useState(false);
 
   useEffect(() => {
     if (router.isReady) {
@@ -69,12 +68,16 @@ const Index: React.FC<IProps> = () => {
         .catch((error) => {
           toast.error('failed to load data');
         });
-    }
-    const userObj: any = getCookie('user');
-    let user = null;
-    if (userObj) user = JSON.parse(userObj);
-    if (user?._id) {
-      SetLoggedInUserId(user._id);
+      const userObj: any = getCookie('user');
+      let user = null;
+      if (userObj) user = JSON.parse(userObj);
+      if (user?._id) {
+        SetLoggedInUserId(user._id);
+      }
+      const handler = document.addEventListener('click', closeStructurePage);
+      return () => {
+        document.removeEventListener('click', closeStructurePage);
+      };
     }
   }, [router.isReady, router.query.projectId]);
 
@@ -163,12 +166,6 @@ const Index: React.FC<IProps> = () => {
       setLeftNav(false);
     }
   };
-  useEffect(() => {
-    const handler = document.addEventListener('click', closeStructurePage);
-    return () => {
-      document.removeEventListener('click', closeStructurePage);
-    };
-  }, []);
 
   const rightNavCollapse = () => {
     setRightNav(!rightNav);
@@ -254,6 +251,7 @@ const Index: React.FC<IProps> = () => {
     getIssuesList(router.query.projectId as string, structureId)
       .then((response) => {
         setIssueList(response.result);
+        setIssueFilterList(response.result);
       })
       .catch((error) => {
         if (error.success === false) {
@@ -273,11 +271,16 @@ const Index: React.FC<IProps> = () => {
       });
   };
   const handleOnIssueFilter = (formData: any) => {
-    const result = _.filter(
-      issuesList,
-      (issueObj) => issueObj.type === formData.issueType
+    const result = issueFilterList.filter(
+      (item: Issue) =>
+        formData.issueType.includes(item.type) &&
+        formData?.issuePriority?.includes(item.priority) &&
+        formData?.issueStatus?.includes(item.status)
     );
     setIssueList(result);
+  };
+  const closeFilterOverlay = () => {
+    setIssueList(issueFilterList);
   };
   return (
     <div className=" w-full  h-full">
@@ -378,6 +381,7 @@ const Index: React.FC<IProps> = () => {
                 currentProject={currentProjectId}
                 currentStructure={structure}
                 currentSnapshot={snapshot}
+                closeFilterOverlay={closeFilterOverlay}
               ></RightFloatingMenu>
             </div>
           </div>

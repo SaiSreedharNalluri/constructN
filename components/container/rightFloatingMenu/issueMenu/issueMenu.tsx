@@ -21,6 +21,7 @@ interface IProps {
   currentStructure: IStructure;
   currentSnapshot: ISnapshot;
   currentProject: string;
+  closeFilterOverlay: () => void;
 }
 
 const IssueMenu: React.FC<IProps> = ({
@@ -31,6 +32,7 @@ const IssueMenu: React.FC<IProps> = ({
   currentProject,
   currentSnapshot,
   currentStructure,
+  closeFilterOverlay,
 }) => {
   const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
@@ -102,6 +104,7 @@ const IssueMenu: React.FC<IProps> = ({
             onClick={openIssueList}
           ></FontAwesomeIcon>
           <IssueList
+            closeFilterOverlay={closeFilterOverlay}
             issuesList={issuesList}
             visibility={listOverlay}
             closeOverlay={closeIssueList}
