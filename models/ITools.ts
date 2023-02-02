@@ -4,8 +4,8 @@ export interface ITools{
     response?:IToolResponse;
 }
 
-type IToolResponse = IContext
-type IContextType = "Issue" | "Task" | "Progress";
+export type IToolResponse = IContext
+export type IContextType = "Issue" | "Task" | "Progress";
 
 export interface IContext {
     type: IContextType,
