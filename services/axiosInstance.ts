@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { removeCookies } from 'cookies-next';
 // eslint-disable-next-line react-hooks/rules-of-hooks
 
 const instance = axios.create();
@@ -27,6 +28,7 @@ instance.interceptors.response.use(
 
     if (status === 401) {
       if (typeof window !== 'undefined') {
+        removeCookies('user');
         window.location.href = '/login';
       }
     }
