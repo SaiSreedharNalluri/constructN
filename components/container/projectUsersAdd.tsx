@@ -47,20 +47,21 @@ const ProjectUserAdd: React.FC<IProps> = ({
   return (
     <React.Fragment>
       <div className="w-full  grid grid-cols-1  gap-y-4 px-4 py-4">
+        <h1 className='font-bold px-4'>Add Users</h1>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={addProjectUser}
         >
           {({ errors, touched }) => (
-            <Form className=" grid grid-cols-1 gap-y-2 px-4">
-              <h1>Add Users</h1>
+            <Form className=" grid grid-cols-3 gap-2 px-4">
+
               <div>
                 <Field
                   type="email"
                   name="email"
                   placeholder="email "
-                  className="w-8/12 rounded border px-2 py-1.5 border-solid border-gray-500"
+                  className="w-full rounded border px-2 py-1.5 border-solid border-gray-500"
                 />
                 <ErrorMessage
                   name="email"
@@ -73,7 +74,7 @@ const ProjectUserAdd: React.FC<IProps> = ({
                   as="select"
                   name="role"
                   id="role"
-                  className="border border-solid border-gray-500 w-8/12 px-2 py-1.5 rounded"
+                  className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                 >
                   {role.map((option: any) => (
                     <option key={option.id} value={option.id}>
@@ -83,9 +84,9 @@ const ProjectUserAdd: React.FC<IProps> = ({
                 </Field>
                 {errors.role && touched.role ? <div>{errors.role}</div> : null}
               </div>
-              <div className="flex  justify-center w-8/12 ">
+              <div className='ml-2' >
                 <button
-                  className="bg-gray-500 rounded hover:bg-gray-300 text-white  py-1 px-2 "
+                  className="bg-gray-500 rounded hover:bg-gray-300 text-white  py-1.5 px-2 "
                   type="submit"
                 >
                   Add User
@@ -94,7 +95,7 @@ const ProjectUserAdd: React.FC<IProps> = ({
             </Form>
           )}
         </Formik>
-        <div className="h-20 overflow-y-auto w-8/12 ">
+        <div className="h-20 overflow-y-auto w-8/12 px-4 ">
           {projectUsers &&
             projectUsers.map((pUserData: any) => {
               return (

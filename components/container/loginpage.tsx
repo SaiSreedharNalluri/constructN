@@ -38,8 +38,8 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
         className="h-screen w-screen"
       />
 
-      <div className=" absolute w-1/3 top-0 bg-opacity-50 px-5 h-full right-0 place-items-center bg-gray-300 ">
-        <div className="grid grid-cols-1 gap-4 border my-48 border-solid place-content-center border-gray-500 rounded-3xl ">
+      <div className=" absolute  2xl:w-1/5 xl:w-1/4 lg:w-1/4    md:w-2/4 px-4 sm:w-1/2   top-0 bg-opacity-50  h-full right-0 place-items-center  bg-gray-300 ">
+        <div className="grid grid-cols-1 gap-2 border   my-50 border-solid place-content-center border-gray-500 rounded-3xl ">
           <h2 className="text-center text-xl">User Login</h2>
           <Formik
             initialValues={initialValues}
