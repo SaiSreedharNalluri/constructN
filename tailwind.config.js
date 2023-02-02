@@ -12,6 +12,7 @@ module.exports = {
 
       margin: {
         68: "272px",
+        50: "28vh",
       },
       spacing: {
         5: "3%",

@@ -123,15 +123,15 @@ const Editproject: React.FC = () => {
       });
   };
   return (
-    <div className="w-full h-screen">
-      <div className="">
+    <div className="w-full h-screen  ">
+      <div>
         <Header />
       </div>
       <div className="flex w-screen fixed">
         <div>
-          <CollapsableMenu onChangeData={() => {}} />
+          <CollapsableMenu onChangeData={() => { }} />
         </div>
-        <div className="w-screen">
+        <div className="w-full ">
           <Tabs
             selectedIndex={tabIndex}
             onSelect={(index) => setTabIndex(index)}
@@ -143,7 +143,7 @@ const Editproject: React.FC = () => {
                 <Tab>Project Structure</Tab>
                 <Tab>Type Configration</Tab>
               </TabList>
-              <TabPanel>
+              <TabPanel className="">
                 {projectData && (
                   <ProjectInfo
                     handleImageUPload={handleImageUPload}
@@ -160,8 +160,8 @@ const Editproject: React.FC = () => {
                 />
               </TabPanel>
               <TabPanel>
-                <div className="flex">
-                  <div className="w-2/5  bg-gray-200">
+                <div className="flex ">
+                  <div className="w-full lg:w-1/4 sm:w-1/3 2xl:w-1/5 calc-h50 overflow-y-auto  overflow-x-hidden bg-gray-200">
                     {state.length === 0 ? (
                       'no structures found for this project'
                     ) : (
@@ -189,14 +189,75 @@ const Editproject: React.FC = () => {
                       {structureData?.parent}
                     </div>
                   </div>
+                  {/* <div className='ml-6  '>
+                      <h1 className="">Project Details</h1>
+                      <div className='flex flex-col'>
+                        <div className='flex'>
+                          <p>Id:</p>
+                          {structureData?._id}
+                        </div>
+                        <div className='flex'>
+                          <p>Name:</p>
+                          <p> {structureData?.name}</p>
+                        </div>
+
+
+                        <span>Type:</span>
+                        {structureData?.type}
+                        <br />
+                        <span>parent :</span>
+                        {structureData?.parent}
+                      </div>
+                    </div> */}
+
                 </div>
+                {/* <table className='table-auto border-collapse border mt-4 border-slate-300 '>
+                      <thead className="border border-solid border-gray-500">
+                        <tr >
+                          <th className="p-1 border border-solid border-gray-500">Structure Id </th>
+                          <th className="p-1 border border-solid border-gray-500">Name</th>
+                          <th className="p-1 border border-solid border-gray-500">Type</th>
+                          <th className="p-1 border border-solid border-gray-500">Parent</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="even:bg-gray-300 odd:bg-white-100 border border-solid border-gray-500">
+                          <td className="p-1 border border-solid border-gray-500">{structureData?._id}</td>
+                          <td className="p-1 border border-solid border-gray-500">{structureData?.name}</td>
+                          <td className="p-1 border border-solid border-gray-500">{structureData?.type}</td>
+                          <td className="p-1 border border-solid border-gray-500">{structureData?.parent}</td>
+
+
+                        </tr>
+                      </tbody>
+                    </table> */}
+                {/* <div className='ml-6'>
+                      <h1 className="">Project Details</h1>
+                      <div className='flex flex-col'>
+                        <div className='flex'>
+                          <p>Id:</p>
+                          {structureData?._id}
+                        </div>
+                        <div className='flex'>
+                          <p>Name:</p>
+                          <p> {structureData?.name}</p>
+                        </div>
+
+
+                        <span>Type:</span>
+                        {structureData?.type}
+                        <br />
+                        <span>parent :</span>
+                        {structureData?.parent}
+                      </div>
+                    </div> */}
+
               </TabPanel>
               <TabPanel>
                 <iframe
                   className="w-95 h-93  "
-                  src={`https://dev.internal.constructn.ai/reports?projectId=${
-                    router.query.projectId as string
-                  }&token=${authHeader.getAuthToken()}`}
+                  src={`https://dev.internal.constructn.ai/reports?projectId=${router.query.projectId as string
+                    }&token=${authHeader.getAuthToken()}`}
                 />
               </TabPanel>
             </Tabs>

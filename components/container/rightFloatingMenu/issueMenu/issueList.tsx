@@ -9,6 +9,14 @@ import {
   faShieldAlt,
   faUser,
   faCalendar,
+  faArrowLeftLong,
+  faFlag,
+  faPaperclip,
+  faPaperPlane,
+  faPen,
+  faSmile,
+  faSpinner,
+  faTrashCan,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -24,6 +32,7 @@ import {
 } from '../../../../services/issue';
 import { getProjectUsers } from '../../../../services/project';
 import * as Yup from 'yup';
+import Image from 'next/image';
 interface IProps {
   closeOverlay: () => void;
   issuesList: Issue[];
@@ -115,9 +124,8 @@ const IssueList: React.FC<IProps> = ({
     <div>
       {!detailView ? (
         <div
-          className={`fixed ${
-            visibility ? 'w-1/4 calc-h' : 'w-0'
-          }  top-10     bg-gray-200 right-0 z-10 overflow-x-hidden`}
+          className={`fixed ${visibility ? 'w-1/4 calc-h' : 'w-0'
+            }  top-10     bg-gray-200 right-0 z-10 overflow-x-hidden`}
         >
           <div className="overflow-y-auto ">
             <div className="flex justify-between border-b border-black border-solid">
@@ -164,64 +172,64 @@ const IssueList: React.FC<IProps> = ({
               <div>
                 {issuesList.length >= 1
                   ? issuesList.map((issueInfo: Issue) => {
-                      return (
-                        <div
-                          className="h-full mt-2 w-full"
-                          key={issueInfo._id}
-                          onClick={() => {
-                            setDetailView(true);
-                            setIssueObj(issueInfo);
-                          }}
-                        >
-                          <div className=" h-1/12 w-11/12  m-auto ">
-                            <div className=" m-auto ">
-                              <div className=" bg-white border border-solid border-gray-400 rounded">
-                                <div className="flex mt-2">
+                    return (
+                      <div
+                        className="h-full mt-2 w-full"
+                        key={issueInfo._id}
+                        onClick={() => {
+                          setDetailView(true);
+                          setIssueObj(issueInfo);
+                        }}
+                      >
+                        <div className=" h-1/12 w-11/12  m-auto ">
+                          <div className=" m-auto ">
+                            <div className=" bg-white border border-solid border-gray-400 rounded">
+                              <div className="flex mt-2">
+                                <div>
+                                  <FontAwesomeIcon
+                                    className="text-3xl text-gray-400"
+                                    icon={faShieldAlt}
+                                  ></FontAwesomeIcon>
+                                </div>
+                                <div className="flex-col ml-2 text-gray-600">
                                   <div>
-                                    <FontAwesomeIcon
-                                      className="text-3xl text-gray-400"
-                                      icon={faShieldAlt}
-                                    ></FontAwesomeIcon>
+                                    <h5>{issueInfo.title}</h5>
                                   </div>
-                                  <div className="flex-col ml-2 text-gray-600">
-                                    <div>
-                                      <h5>{issueInfo.title}</h5>
-                                    </div>
-                                    <div className="flex">
-                                      <p className="mr-1">{issueInfo.status}</p>
-                                      |
-                                      <p className="ml-1">
-                                        {issueInfo.priority}
-                                      </p>
-                                    </div>
+                                  <div className="flex">
+                                    <p className="mr-1">{issueInfo.status}</p>
+                                    |
+                                    <p className="ml-1">
+                                      {issueInfo.priority}
+                                    </p>
                                   </div>
                                 </div>
-                                <div className="flex mt-2 ml-3">
-                                  <div className="flex">
-                                    <FontAwesomeIcon
-                                      icon={faUser}
-                                      className="text-gray-500 "
-                                    ></FontAwesomeIcon>
-                                    <p className="text-gray-500 -mt-1 ml-1">
-                                      {issueInfo.assignees[0].firstName}
-                                    </p>
-                                    <FontAwesomeIcon
-                                      icon={faCalendar}
-                                      className="text-gray-500 ml-2"
-                                    />
-                                    <p className="text-gray-500 -mt-1 ml-1">
-                                      {Moment(issueInfo.createdAt).format(
-                                        'MMM Do YYYY'
-                                      )}
-                                    </p>
-                                  </div>
+                              </div>
+                              <div className="flex mt-2 ml-3">
+                                <div className="flex">
+                                  <FontAwesomeIcon
+                                    icon={faUser}
+                                    className="text-gray-500 "
+                                  ></FontAwesomeIcon>
+                                  <p className="text-gray-500 -mt-1 ml-1">
+                                    {issueInfo.assignees[0].firstName}
+                                  </p>
+                                  <FontAwesomeIcon
+                                    icon={faCalendar}
+                                    className="text-gray-500 ml-2"
+                                  />
+                                  <p className="text-gray-500 -mt-1 ml-1">
+                                    {Moment(issueInfo.createdAt).format(
+                                      'MMM Do YYYY'
+                                    )}
+                                  </p>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      );
-                    })
+                      </div>
+                    );
+                  })
                   : 'there is no data avaliable'}
               </div>
             ) : (
@@ -346,34 +354,86 @@ const IssueList: React.FC<IProps> = ({
       ) : (
         <div>
           <div
-            className={`fixed ${
-              visibility ? 'w-1/4 calc-h' : 'w-0'
-            } top-10     bg-gray-200 right-0 z-10 overflow-x-hidden`}
+            className={`fixed ${visibility ? 'w-1/4 calc-h' : 'w-0'
+              } top-10     bg-gray-200 right-0 z-10 overflow-x-hidden`}
           >
-            <div className=" overflow-y-auto ">
-              <div className="flex justify-between border-b border-black border-solid">
-                <div>
-                  <FontAwesomeIcon
-                    icon={faArrowLeft}
-                    onClick={() => {
-                      setDetailView(false);
-                    }}
-                    className=" mr-2 border-black"
-                  />
-                </div>
-                <div>
-                  <h1>{issueObj?.title}</h1>
-                </div>
-                <FontAwesomeIcon
-                  icon={faEdit}
-                  className=" mr-2  mt-2 border-black"
-                />
-                <FontAwesomeIcon
-                  icon={faTrash}
-                  className=" mr-2  mt-2 border-black"
-                />
+            <div className='h-8 bg-gray-100 w-full  flex justify-between px-2'>
+              <div className=' flex '>
+                <FontAwesomeIcon icon={faArrowLeftLong} className="mt-2" onClick={() => setDetailView(false)}></FontAwesomeIcon>
+                <p className='ml-2 mt-1  font-semibold'>Safety (#407)</p>
               </div>
-              <div className="flex justify-between"></div>
+              <div className='flex'>
+                <div>
+                  <FontAwesomeIcon icon={faPen} className="mt-2 pr-2" />
+                </div>
+                <div>
+                  <FontAwesomeIcon icon={faTrashCan} className="mt-2"></FontAwesomeIcon>
+                </div>
+              </div>
+            </div>
+            <div className='overflow-y-auto px-4 '>
+              <div className=''>
+                <p>Details</p>
+                <Image alt='' width={1080} height={1080} className="w-10/12 h-24" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8QEBAPDw0NDw8QDxASEA8NDQ8NDQ8QFRIWFhUSFRUYHSggGBolGxUVITEhJSk3Li4uFx8zODMtNyg5OisBCgoKBQUFDgUFDisZExkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIALcBEwMBIgACEQEDEQH/xAAYAAEBAQEBAAAAAAAAAAAAAAAAAQIHA//EACQQAQEAAAYBBQEBAQAAAAAAAAABAhExQVHRwSFhgbHhcfGR/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AO2KyoKUiAVMQmIEuhCpL9AS6mXoF8ANM1QWEKbfILhWeE5AVYi0E2BADdC0CItNwQhSgQE6BSJsoKIUFTNWQUQBvtZogBwW+palASrUxARnP6arO0BZqi0lAIQwgsE3UFWszRrMCX1WoArOKLUAtIlXMElOyJQCqkBUIQDYpQCrukLuCosQAAGoABsJVgIkJqUC6psqAHsAKF6AKACqnC5gpUKBUxKyCwhdQBKAFpDJYCXyAAUAJ0ACoUoEGbagPRcSQAOkpegPJCgJDgu39W7AgAEUiAQigLCIsoKRF5BFRAIqFBZEWJAF4SqCZHakBBUAFQAqpAZzFyAaSbrUAL5LoAZ+vwnJACKEAuyTwsSQBcQAUIAFAFKRAWpVpACJwALUigUCAFIQBCryCUgAFPwBMwyAaSrUgCRUAz8E7IAqZgAFAWJV6AOxFvpQTPVYiwBUAWT1qFAFiKCLSAByUA2KACQoAQpkCoAEozQG0ugYgQ5W7IBhSLEm4KAAKAIQBdwhAAqQGkMygU8ByBkpACRLuQm4KFL5AEKAh+GwKkCAqBAayEAVOl90/AKzPDU7ZAVD3BSkhhBaJVoIACkTCTX4AKTUBf1Ck1BZUwzQaAEACmFAUIgLunQlBUWpQKqVQC6CgmQoBS7QIBkzKpQSk0CAv+KigipCAQmnwAJVhQCAUEUl9P8AhNgMKooEBOAWboFAzJ4TFsUDY/CEAiUAVUpAWESqBn7CgJapUxAbCsgELosAzIcLAOSa0wm4JkXlYngCnaphAmvwcC3QEk+yKQE6XysTPUEupQyAySrnokBakKAbpRb5ASHJNQO1CfYKU3+FBqDIAZEAEWICUui8pAXD2QUCz6ilAEWlBOCL+EgJycNGQIQqgkST0/tWmLgEot8ICZBSglUupQTJLy0mQIpwe4C8JWr0BCQyUGc6LkAQoAXYAEEAWNACRVASL5AE5/uTVAAwgCZLdgAsRQESgBUyACnPuAJkdAAUAW7gAoALQAf/2Q=="></Image>
+              </div>
+              <div className='mt-2'>
+                <FontAwesomeIcon icon={faSpinner}></FontAwesomeIcon>
+                <select className="bg-gray-100 ml-2 border border-gray-300 border-solid p-0.5 rounded">
+                  <option>In-Progress</option>
+                  <option >Progress</option>
+                  <option>Completed</option>
+                </select>
+              </div>
+              <div className='grid grid-cols-2 gap-x-4 gap-y-2   grid-rows-2 w-10/12 mt-2'>
+
+                <div className='flex'>
+                  <FontAwesomeIcon className='mt-1' icon={faFlag}></FontAwesomeIcon>
+                  <p className='ml-1'>P1 (High)</p>
+                </div>
+                <div className='flex'>
+                  <FontAwesomeIcon className='mt-1' icon={faCalendar}></FontAwesomeIcon>
+                  <p className='ml-1'>{"2 Feb'2023"}</p>
+                </div>
+
+                <div className='flex'>
+                  <FontAwesomeIcon className='mt-1' icon={faUser}></FontAwesomeIcon>
+                  <p className='ml-1'>shiva krisha</p>
+                </div>
+                <div className='flex'>
+                  <FontAwesomeIcon className='mt-1' icon={faUser}></FontAwesomeIcon>
+                  <p className='ml-1'>shiva krisha</p>
+                </div>
+              </div>
+              <div className=' mt-2 '>
+                <h6 className='underline '>Issue Description</h6>
+                <p className=' break-words  whitespace-pre-wrap'>Issue Description Paragraph</p>
+              </div>
+              <div>
+                <h6 className='underline mt-3'>Attachments</h6>
+                <input className='border border-solid border-gray-400 rounded p-1 w-10/12'></input>
+              </div>
+              <div className=' mt-2 '>
+                <h6 className='underline '>Related Tags</h6>
+                <div className='grid grid-cols-3 gap-2  mt-2'>
+                  <div className='bg-gray-500 rounded-xl w-full px-0.5 py-1'> Interior issue</div>
+                  <div className='bg-gray-500 rounded-xl w-full px-0.5 py-1 text-center'> Pipeline</div>
+                  <div className='bg-gray-500 rounded-xl w-full px-0.5 py-1 text-center'>Future  Damage</div>
+                </div>
+              </div>
+            </div>
+            <div className="absolute bottom-0  border-t border-solid border-black w-full">
+              <input
+                type="text"
+                className="flex w-full  rounded focus:outline-none focus:border-indigo-300 pl-4  h-10"
+                placeholder='Add Comment'
+              />
+              <div
+                className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400"
+              >
+                <FontAwesomeIcon icon={faPaperclip} className="mr-2" ></FontAwesomeIcon>
+                <FontAwesomeIcon icon={faSmile} className="mr-2"></FontAwesomeIcon>
+                <FontAwesomeIcon icon={faPaperPlane} className="mr-6"></FontAwesomeIcon>
+              </div>
             </div>
           </div>
         </div>
