@@ -11,6 +11,7 @@ import { IStructure } from '../../../../models/IStructure';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import { getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
+import { IContext, IToolResponse } from '../../../../models/ITools';
 interface IProps {
   closeOverlay: () => void;
   visibility: boolean;
@@ -18,6 +19,7 @@ interface IProps {
   currentStructure:IStructure;
   currentSnapshot:ISnapshot;
   currentProject:string;
+  contextInfo:IToolResponse;
 }
 const TaskCreate: React.FC<IProps> = ({
   closeOverlay,
@@ -25,9 +27,12 @@ const TaskCreate: React.FC<IProps> = ({
   handleTaskSubmit,
   currentProject,
   currentSnapshot,
-  currentStructure
+  currentStructure,
+  contextInfo,
 }) => {
   const router = useRouter();
+  const [myVisbility,setMyVisibility]=useState(visibility);
+  const [myContext,setMyContext] = useState<IToolResponse>(contextInfo);
   const [taskType, setTaskType] = useState<[string]>();
   const [taskPriority, setTaskPriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
@@ -69,7 +74,15 @@ const TaskCreate: React.FC<IProps> = ({
     SetLoggedInUserId(user._id);
   }
   }, [router.isReady, router.query.projectId]);
-
+  useEffect(()=>{
+    setMyVisibility(visibility);
+    console.log("finally My Visibility is ",visibility);
+  },[visibility]);
+  
+  useEffect(()=>{
+    setMyContext(contextInfo);
+    console.log("Updated Context ",contextInfo);
+  },[contextInfo]);
   useEffect(
     ()=>{
 
@@ -90,11 +103,13 @@ const TaskCreate: React.FC<IProps> = ({
     formData.snapshot = mySnapshot?._id;
     formData.owner = loggedInUserId;
     formData.status = 'To Do';
+    formData.context = myContext;
     createTask(router.query.projectId as string, formData)
       .then((response) => {
         if (response.success === true) {
           toast.success('Task added sucessfully');
           handleTaskSubmit(formData);
+          console.log(formData);
         }
       })
       .catch((error) => {
@@ -110,6 +125,7 @@ const TaskCreate: React.FC<IProps> = ({
     assignees: string;
     tags: string;
     date: string;
+    context: IToolResponse;
   } = {
     type: 'Please select the task type',
     priority: 'Please select the task priority',
@@ -117,6 +133,8 @@ const TaskCreate: React.FC<IProps> = ({
     assignees: '',
     tags: '',
     date: '',
+    context:myContext,
+    
   };
   const validationSchema = Yup.object().shape({
     type: Yup.string(),
@@ -125,6 +143,7 @@ const TaskCreate: React.FC<IProps> = ({
     assignees: Yup.string(),
     tags: Yup.string(),
     date: Yup.string(),
+    //context:{type:Yup.lazy<string>(),position:{x:Yup.number(),y:Yup.number(),z:Yup.number()}}
   });
   if (projectUsers?.length > 0) {
     projectUsers.map((projectUser: any) => {
@@ -136,8 +155,8 @@ const TaskCreate: React.FC<IProps> = ({
   }
   return (
     <div
-      className={`fixed ${
-        visibility ? ' calc-h' : 'w-0'
+      className={`fixed  calc-h ${
+        myVisbility ? ' w-1/4' : 'w-0'
       } top-10  bg-gray-200 right-0 z-10 overflow-x-hidden`}
     >
       <div>

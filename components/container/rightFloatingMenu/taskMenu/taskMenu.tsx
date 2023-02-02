@@ -29,7 +29,7 @@ const IssueMenu: React.FC<IProps> = ({
   tasksList,
   currentProject,
   currentSnapshot,
-  currentStructure
+  currentStructure,
 }) => {
   const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
@@ -58,7 +58,7 @@ const IssueMenu: React.FC<IProps> = ({
     taskMenuClicked(taskMenuInstance);
   }
   const openTaskCreate = () => {
-    setCreateOverlay(true);
+    //setCreateOverlay(true);
     taskMenuInstance.toolAction = 'taskCreate';
     taskMenuClicked(taskMenuInstance);
   };
@@ -92,14 +92,14 @@ const IssueMenu: React.FC<IProps> = ({
             icon={faCirclePlus}
             className="cursor-pointer"
           ></FontAwesomeIcon>
-          <TaskCreate
+          {/* <TaskCreate
             handleTaskSubmit={taskSubmit}
             visibility={createOverlay}
             closeOverlay={closeTaskCreate}
             currentProject={myProject}
             currentStructure={myStructure}
             currentSnapshot={mySnapshot}
-          ></TaskCreate>
+          ></TaskCreate> */}
           <FontAwesomeIcon
             icon={faList}
             className="mx-2 cursor-pointer"

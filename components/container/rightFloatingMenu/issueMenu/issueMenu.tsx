@@ -31,7 +31,8 @@ const IssueMenu: React.FC<IProps> = ({
   handleOnFilter,
   currentProject,
   currentSnapshot,
-  currentStructure
+  currentStructure,
+  
 }) => {
   const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
@@ -51,6 +52,7 @@ const IssueMenu: React.FC<IProps> = ({
     },
     [currentProject,currentSnapshot,currentStructure]
   );
+
   const issueSubmit=(formdata: any)=>{
     issuesList.push(formdata);
     issueMenuInstance.toolAction = 'issueCreated';
@@ -58,7 +60,7 @@ const IssueMenu: React.FC<IProps> = ({
     issueMenuClicked(issueMenuInstance);
   }
   const openIssueCreate = () => {
-    setCreateOverlay(true);
+    //setCreateOverlay(true);
     issueMenuInstance.toolAction = 'issueCreate';
     issueMenuClicked(issueMenuInstance);
   };
@@ -93,14 +95,14 @@ const IssueMenu: React.FC<IProps> = ({
             icon={faCirclePlus}
             className="cursor-pointer"
           ></FontAwesomeIcon>
-          <IssueCreate
+          {/* <IssueCreate
             handleIssueSubmit={issueSubmit}
             visibility={createOverlay}
             closeOverlay={closeIssueCreate}
             currentProject={myProject}
             currentStructure={myStructure}
             currentSnapshot={mySnapshot}
-          ></IssueCreate>
+          ></IssueCreate> */}
           <FontAwesomeIcon
             icon={faList}
             className="mx-2 cursor-pointer"

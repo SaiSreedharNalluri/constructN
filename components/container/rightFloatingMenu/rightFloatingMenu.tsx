@@ -45,9 +45,11 @@ const RightFloatingMenu: React.FC<IProps> = ({
   handleOnFilter,
   currentProject,
   currentSnapshot,
-  currentStructure
+  currentStructure,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
+  const [isCompareDesign, setIsCompareDesign] = useState(false);
+  const [isCompareReality, setIsCompareReality] = useState(false);
   const [iViewMode, setIViewMode] = useState(viewMode);
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
@@ -89,6 +91,22 @@ const RightFloatingMenu: React.FC<IProps> = ({
       toolInstance.toolName = 'viewMode';
       toolInstance.toolAction = 'Reality';
     }
+    else if(e.currentTarget.id==='compareDesign'){
+      //console.log("CAptured....");
+      toolInstance.toolName = 'compareDesign';
+      toolInstance.toolAction =(isCompareDesign?'false':'true');
+      setIsCompareDesign(isCompareDesign?false:true);
+      setIsCompareReality(isCompareReality?false:true);
+    }
+    else if(e.currentTarget.id==='compareReality'){
+      //console.log("CAptured....");
+      toolInstance.toolName = 'compareReality';
+      toolInstance.toolAction =(isCompareReality?'false':'true');
+      setIsCompareReality(isCompareReality?false:true);
+      setIsCompareDesign(isCompareDesign?false:true);
+
+    }
+    
 
     toolClicked(toolInstance);
   };
@@ -399,6 +417,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 currentProject={myProject}
                 currentStructure={myStructure}
                 currentSnapshot={mySnapshot}
+
               ></IssueMenu>
               {/* <div className='bg-gray-400'>
                   <div className=" h-full text-xs"  id="issueItems">
@@ -461,9 +480,9 @@ const RightFloatingMenu: React.FC<IProps> = ({
             <div className="justify-center cursor-pointer">
               <FontAwesomeIcon
                 icon={faCodeBranch}
-                id="designCompare"
+                id="compareDesign"
                 className={` w-full  cursor-pointer ${
-                  active === 'designCompare'
+                  active === 'compareDesign'
                     ? 'selectedClass'
                     : 'unSelectedClass'
                 }`}
@@ -474,9 +493,9 @@ const RightFloatingMenu: React.FC<IProps> = ({
             <div className="justify-center cursor-pointer">
               <FontAwesomeIcon
                 icon={faArrowsSplitUpAndLeft}
-                id="realityCompare"
+                id="compareReality"
                 className={` w-full  cursor-pointer ${
-                  active === 'realityCompare'
+                  active === 'compareReality'
                     ? 'selectedClass'
                     : 'unSelectedClass'
                 }`}
