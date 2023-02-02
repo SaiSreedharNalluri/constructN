@@ -27,6 +27,8 @@ import {
   getDesignMap,
   getRealityMap, getFloorPlanData,
 } from "../../utils/ViewerDataUtils";
+import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
+import TimelineContainer from "./timelineContainer";
 
 function GenericViewer(props) {
   const genericViewer = "genericViewer";
@@ -48,16 +50,16 @@ function GenericViewer(props) {
   let [realityMap, setRealityMap] = useState({});
   let updateRealityMap = props.updateRealityMap;
 
+  let [compareSnapshot, setCompareSnapshot] = useState({});
+  let [compareRealityList, setCompareRealityList] = useState([]);
+  let [compareRealityMap, setCompareRealityMap] = useState({});
+
   let viewModeParent = props.viewMode;
   let [viewMode, setViewMode] = useState(props.viewMode);
   let currentViewMode = useRef(viewMode);
 
   let viewType = props.viewType;
   let viewLayers = props.viewLayers;
-
-  const [bottomNav, setBottomNav] = useState(false);
-  let BottomOverlayRef = useRef();
-  let bottomRefContainer = useRef();
 
   let [compareView, setCompareView] = useState(false);
   let [compareMode, setCompareMode] = useState(0);
@@ -79,6 +81,10 @@ function GenericViewer(props) {
   let [imageContext, setImageContext] = useState({});
   let currentImageContext = useRef();
 
+  const [bottomNav, setBottomNav] = useState(false);
+  const toggleTimeline = () => {
+    setBottomNav(!bottomNav);
+  }
 
   let [currentViewer, setCurrentViewer] = useState('Forge');
 
@@ -247,9 +253,10 @@ function GenericViewer(props) {
     switch (viewMode) {
       case "Design":
         // forgeUtils.current.updateData(getForgeModels(designList));
-        let data = await getRealityLayers(structure, snapshot, realityMap);
+        let data = await getRealityLayers(structure, realityMap);
         forgeUtils.current.updateLayersData(data, context);
         if (isCompare) {
+          let data = await getRealityLayers(structure, compareRealityMap);
           forgeCompareUtils.current.updateLayersData(data, context);
         }
         break;
@@ -257,14 +264,14 @@ function GenericViewer(props) {
         potreeUtils.current.updateData(await getPointCloud(structure, snapshot), getFloorPlanData(designMap));
         // potreeUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), currentCamera.current);
         potreeUtils.current.updateLayersData(
-          getRealityLayersPath(structure, snapshot, realityMap),
+          getRealityLayersPath(structure, realityMap),
           context
         );
 
         if(isCompare) {
-          potreeCompareUtils.current.updateData(await getPointCloud(structure, snapshot), getFloorPlanData(designMap));
+          potreeCompareUtils.current.updateData(await getPointCloud(structure, compareSnapshot), getFloorPlanData(designMap));
         // potreeUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), currentCamera.current);
-          potreeCompareUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), context);
+          potreeCompareUtils.current.updateLayersData(getRealityLayersPath(structure, compareRealityMap), context);
         }
         break;
     }
@@ -324,14 +331,7 @@ function GenericViewer(props) {
     }
   }
 
-  const bottomOverLay = () => {
-    if (!bottomNav) {
-      BottomOverlayRef.current.style.width = "45%";
-    } else {
-      BottomOverlayRef.current.style.width = "0%";
-    }
-    setBottomNav(!bottomNav);
-  };
+
 
   const modifyDesignList = async (designList) => {
     console.log("Generic Viewer Inside Modified design List: ", designList);
@@ -359,6 +359,7 @@ function GenericViewer(props) {
     if (snapshotList.length > 0) {
       setSnapshotList(snapshotList);
       setCurrentSnapshot(snapshotList[0]);
+      setCurrentCompareSnapshot(snapshotList[0]);
     }
   };
 
@@ -368,6 +369,14 @@ function GenericViewer(props) {
     setRealityList(snapshot.reality);
     setRealityMap(getRealityMap(snapshot));
     updateRealityMap(getRealityMap(snapshot));
+  };
+
+  const setCurrentCompareSnapshot = (snapshot) => {
+    setCompareSnapshot(snapshot);
+    // updateSnapshot(snapshot);
+    setCompareRealityList(snapshot.reality);
+    setCompareRealityMap(getRealityMap(snapshot));
+    // updateRealityMap(getRealityMap(snapshot));
   };
 
   const getSnapshotDate = () => {
@@ -522,110 +531,16 @@ function GenericViewer(props) {
   useEffect(() => {}, [compareView]);
 
   return (
-    // <div className='flex flex-row flex-wrap'>
-    //   <div className="basis-1/2">
-    //     {renderViewer(1)}
-    //     <div id={compareViewer} ref={compareViewerRef}></div>
-    //     <div
-    //       ref={bottomRefContainer}
-    //       className="flex-wrap items-center absolute inset-x-0 top-0 z-10"
-    //     >
-    //       <p
-    //         className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
-    //           bottomNav ? "top-11" : "top-2"
-    //         } `}
-    //         onClick={bottomOverLay}
-    //       >
-    //         {getSnapshotDate()}
-    //       </p>
-    //       <div
-    //         ref={BottomOverlayRef}
-    //         className="w-0 left-1/2 top-1 absolute overflow-x-hidden "
-    //       >
-    //         <div className="flex ">
-    //           <div className=" bg-gray-200 rounded">
-    //             <Pagination
-    //               snapshots={snapshotList}
-    //               getSnapshotInfo={setCurrentSnapshot}
-    //             />
-    //           </div>
-    //           <div>
-    //             <DatePicker></DatePicker>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    //   {/* <div className={`basis-1/2 w-1/2 ${isCompare ? "" : "hidden"} `}>
-    //     {renderViewer(2)}
-    //     <div id={compareViewer} ref={compareViewerRef}></div>
-    //     <div
-    //       ref={bottomRefContainer}
-    //       className="flex-wrap items-center absolute inset-x-0 top-0 z-10"
-    //     >
-    //       <p
-    //         className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
-    //           bottomNav ? "top-11" : "top-2"
-    //         } `}
-    //         onClick={bottomOverLay}
-    //       >
-    //         {getSnapshotDate()}
-    //       </p>
-    //       <div
-    //         ref={BottomOverlayRef}
-    //         className="w-0 left-1/2 top-1 absolute overflow-x-hidden "
-    //       >
-    //         <div className="flex ">
-    //           <div className=" bg-gray-200 rounded">
-    //             <Pagination
-    //               snapshots={snapshotList}
-    //               getSnapshotInfo={setCurrentSnapshot}
-    //             />
-    //           </div>
-    //           <div>
-    //             <DatePicker></DatePicker>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div> */}
-    // </div>
-
-    <div className="fixed calc-w calc-h">
-      {renderViewer(1)}
-      <div id={compareViewer} ref={compareViewerRef}></div>
-      <div
-        ref={bottomRefContainer}
-        className="flex-wrap items-center absolute inset-x-0 top-0 z-10"
-      >
-        
-
-        <div
-          ref={BottomOverlayRef}
-          className="w-0 left-48 top-0 absolute overflow-x-hidden "
-        >
-          <div className="flex ">
-            <div className=" bg-gray-200 border border-gray-300 rounded">
-              <Pagination
-                snapshots={snapshotList}
-                getSnapshotInfo={setCurrentSnapshot}
-              />
-            </div>
-            <div className="">
-              <DatePicker></DatePicker>
-            </div>
-          </div>
+      <div className="fixed calc-w calc-h flex flex-row">
+        <div className="relative basis-1/2 flex grow shrink">
+          {renderViewer(1)}
+          <TimelineContainer currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimelineContainer>
         </div>
-        <p
-          className={`left-1/2  bg-gray-300 border border-gray-700 rounded absolute duration-300 cursor-pointer ${
-            bottomNav ? "top-11" : "top-0"
-          } `}
-          onClick={bottomOverLay}
-        >
-          {Moment(getSnapshotDate()).format('Do MMM YYYY')}
-        </p>
+        <div className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
+          {renderViewer(2)}
+          <TimelineContainer currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimelineContainer>
+        </div>
       </div>
-    </div>
   );
 }
 // export default GenericViewer;

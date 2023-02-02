@@ -15,6 +15,7 @@ import { toast } from 'react-toastify';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import { IStructure } from '../../../../models/IStructure';
 import { getCookie } from 'cookies-next';
+import { IToolResponse } from '../../../../models/ITools';
 interface IProps {
   closeOverlay: () => void;
   visibility: boolean;
@@ -22,6 +23,7 @@ interface IProps {
   currentStructure: IStructure;
   currentSnapshot: ISnapshot;
   currentProject: string;
+  contextInfo: IToolResponse;
 }
 
 const IssueCreate: React.FC<IProps> = ({
@@ -31,8 +33,11 @@ const IssueCreate: React.FC<IProps> = ({
   currentProject,
   currentSnapshot,
   currentStructure,
+  contextInfo,
 }) => {
   const router = useRouter();
+  const [myVisbility, setMyVisibility] = useState(visibility);
+  const [myContext, setMyContext] = useState<IToolResponse>(contextInfo);
   const [issueType, setIssueType] = useState<[string]>();
   const [issuePriority, setIssuePriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
@@ -79,6 +84,16 @@ const IssueCreate: React.FC<IProps> = ({
     setMyStructure(currentStructure);
     setMySnapshot(currentSnapshot);
   }, [currentProject, currentSnapshot, currentStructure]);
+  useEffect(() => {
+    setMyVisibility(visibility);
+    console.log('finally My Visibility is ', visibility);
+  }, [visibility]);
+
+  useEffect(() => {
+    setMyContext(contextInfo);
+    console.log('Updated Context ', contextInfo);
+  }, [contextInfo]);
+
   const closeIssueCreate = () => {
     closeOverlay();
   };
@@ -88,11 +103,13 @@ const IssueCreate: React.FC<IProps> = ({
     formData.snapshot = mySnapshot?._id;
     formData.owner = loggedInUserId;
     formData.status = 'To Do';
+    formData.context = myContext;
     createIssue(router.query.projectId as string, formData)
       .then((response) => {
         if (response.success === true) {
           toast.success('Issue is added sucessfully');
           handleIssueSubmit(formData);
+          console.log(formData);
         }
       })
       .catch((error) => {
@@ -108,6 +125,7 @@ const IssueCreate: React.FC<IProps> = ({
     assignees: string;
     tags: string;
     date: string;
+    context: IToolResponse;
   } = {
     type: 'Please select the issue type',
     priority: 'Please select the issue priority',
@@ -115,6 +133,7 @@ const IssueCreate: React.FC<IProps> = ({
     assignees: 'Please select the issue assignee',
     tags: '',
     date: '',
+    context: myContext,
   };
   const validationSchema = Yup.object().shape({
     type: Yup.string(),
@@ -134,8 +153,8 @@ const IssueCreate: React.FC<IProps> = ({
   }
   return (
     <div
-      className={`fixed top-10 ${
-        visibility ? ' calc-h' : 'w-0'
+      className={`fixed calc-h top-10 ${
+        myVisbility ? 'w-1/4 ' : ' w-0'
       }  bg-gray-200 right-0 z-10 overflow-x-hidden`}
     >
       <div>

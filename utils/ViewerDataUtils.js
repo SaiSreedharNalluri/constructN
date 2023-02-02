@@ -83,7 +83,7 @@ export const getPointCloud = async(structure, snapshot) =>{
     return pointCloudData;
 }
 
-export const getRealityLayers = async (structure, snapshot, realityMap) => {
+export const getRealityLayers = async (structure, realityMap) => {
     console.log("Generic Viewer Inside get Reality layers: ", realityMap)
     let realityPositionMap = {}
     for (const mode in realityMap) {
@@ -94,7 +94,7 @@ export const getRealityLayers = async (structure, snapshot, realityMap) => {
             let position360Video = {};
             for (let reality of realityMap[mode]) {
             console.log("Inside reality list: ", reality);
-            let response = await getRealityPositions(getRealityPath(snapshot.project, structure._id, snapshot._id, reality._id));
+            let response = await getRealityPositions(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
             position360Video = {...position360Video, ...response.data};
             console.log("Main for: ", position360Video);
             }
@@ -108,7 +108,7 @@ export const getRealityLayers = async (structure, snapshot, realityMap) => {
             let positionDroneImage = {};
             for (let reality of realityMap[mode]) {
             console.log("Inside reality list: ", reality);
-            let response = await getRealityPositions(getRealityPath(snapshot.project, structure._id, snapshot._id, reality._id));
+            let response = await getRealityPositions(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
             positionDroneImage = {...positionDroneImage, ...response.data};
             console.log("Main for: ", positionDroneImage);
             }
@@ -119,7 +119,7 @@ export const getRealityLayers = async (structure, snapshot, realityMap) => {
     return realityPositionMap;
 }
 
-export const getRealityLayersPath = (structure, snapshot, realityMap) => {
+export const getRealityLayersPath = (structure, realityMap) => {
     let realityPositionMap = {}
     for (const mode in realityMap) {
         switch (mode) {
@@ -127,8 +127,8 @@ export const getRealityLayersPath = (structure, snapshot, realityMap) => {
             let position360VideoPath = [];
             for (let reality of realityMap[mode]) {
             let paths = {
-                images: getRealityImagesPath(getRealityPath(snapshot.project, structure._id, snapshot._id, reality._id)),
-                position: getRealityPositionsPath(getRealityPath(snapshot.project, structure._id, snapshot._id, reality._id))
+                images: getRealityImagesPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
+                position: getRealityPositionsPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id))
             }
             position360VideoPath.push(paths)
             }
@@ -142,8 +142,8 @@ export const getRealityLayersPath = (structure, snapshot, realityMap) => {
             let positionDroneImagePath = [];
             for (let reality of realityMap[mode]) {
             let paths = {
-                images: getRealityImagesPath(getRealityPath(snapshot.project, structure._id, snapshot._id, reality._id)),
-                position: getRealityPositionsPath(getRealityPath(snapshot.project, structure._id, snapshot._id, reality._id))
+                images: getRealityImagesPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
+                position: getRealityPositionsPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id))
             }
             positionDroneImagePath.push(paths)
             }

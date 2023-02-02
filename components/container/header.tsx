@@ -37,7 +37,7 @@ const Header: React.FC<IProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     const closePopup = (e: any) => {
-      console.log(headerRef.current.contains(e.target));
+      //console.log(headerRef.current.contains(e.target));
       if (!headerRef.current.contains(e.target)) {
         setLoading(false)
       }

@@ -13,7 +13,7 @@ import MapLoading from '../../../../components/container/mapLoading';
 import authHeader from '../../../../services/auth-header';
 import GenericViewer from '../../../../components/container/GenericViewer';
 import RightFloatingMenu from '../../../../components/container/rightFloatingMenu/rightFloatingMenu';
-import { ITools } from '../../../../models/ITools';
+import { IToolResponse, ITools } from '../../../../models/ITools';
 import { getStructureList } from '../../../../services/structure';
 import { IActiveRealityMap } from '../../../../models/IReality';
 import { IDesignMap } from '../../../../models/IDesign';
@@ -23,6 +23,8 @@ import { toast } from 'react-toastify';
 import { getTasksList } from '../../../../services/task';
 import { Issue } from '../../../../models/Issue';
 import { ITasks } from '../../../../models/Itask';
+import IssueCreate from '../../../../components/container/rightFloatingMenu/issueMenu/issueCreate';
+import TaskCreate from '../../../../components/container/rightFloatingMenu/taskMenu/taskCreate';
 
 interface IProps {}
 const Index: React.FC<IProps> = () => {
@@ -50,6 +52,31 @@ const Index: React.FC<IProps> = () => {
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
   const [loadData, setLoadData] = useState(false);
+  //const [createOverlay, setCreateOverlay] = useState(false);
+  const [openCreateIssue, setOpenCreateIssue] = useState(false);
+  const [openCreateTask, setOpenCreateTask] = useState(false);
+  const [currentContext, setCurrentContext] = useState<IToolResponse>({
+    type: 'Task',
+    position: { x: 0, y: 0, z: 0 },
+  });
+
+  const closeIssueCreate = () => {
+    setOpenCreateIssue(false);
+  };
+  const issueSubmit = (formdata: any) => {
+    issuesList.push(formdata);
+
+    setOpenCreateIssue(false);
+  };
+
+  const closeTaskCreate = () => {
+    setOpenCreateTask(false);
+  };
+  const taskSubmit = (formdata: any) => {
+    tasksList.push(formdata);
+
+    setOpenCreateTask(false);
+  };
 
   useEffect(() => {
     if (router.isReady) {
@@ -239,13 +266,36 @@ const Index: React.FC<IProps> = () => {
         setViewLayers(newLayers);
         console.log(currentViewLayers);
         break;
+      case 'compareReality':
+      case 'compareDesign':
+        setClickedTool(toolInstance);
+        //console.log(toolInstance);
+        break;
       default:
         break;
     }
   };
 
   const toolResponse = (data: ITools) => {
-    console.log('Data->', data.response);
+    console.log('Got tool REsponse->', data);
+    switch (data.toolName) {
+      case 'issue':
+        if (data.toolAction === 'issueCreate') {
+          console.log('Open issue Menu');
+          if (data.response != undefined) setCurrentContext(data.response);
+          setOpenCreateIssue(true);
+        }
+        break;
+      case 'task':
+        if (data.toolAction === 'taskCreate') {
+          console.log('Open task Menu');
+          if (data.response != undefined) setCurrentContext(data.response);
+          setOpenCreateTask(true);
+        }
+        break;
+      default:
+        break;
+    }
   };
   const getIssues = (structureId: string) => {
     getIssuesList(router.query.projectId as string, structureId)
@@ -383,6 +433,25 @@ const Index: React.FC<IProps> = () => {
                 currentSnapshot={snapshot}
                 closeFilterOverlay={closeFilterOverlay}
               ></RightFloatingMenu>
+              <IssueCreate
+                handleIssueSubmit={issueSubmit}
+                visibility={openCreateIssue}
+                closeOverlay={closeIssueCreate}
+                currentProject={currentProjectId}
+                currentStructure={structure}
+                currentSnapshot={snapshot}
+                contextInfo={currentContext}
+              ></IssueCreate>
+
+              <TaskCreate
+                handleTaskSubmit={taskSubmit}
+                visibility={openCreateTask}
+                closeOverlay={closeTaskCreate}
+                currentProject={currentProjectId}
+                currentStructure={structure}
+                currentSnapshot={snapshot}
+                contextInfo={currentContext}
+              ></TaskCreate>
             </div>
           </div>
         )}
