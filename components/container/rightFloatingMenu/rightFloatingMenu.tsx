@@ -31,9 +31,12 @@ interface IProps {
   issuesList: Issue[];
   tasksList: ITasks[];
   handleOnFilter: (formData: object) => void;
-  currentStructure:IStructure;
-  currentSnapshot:ISnapshot;
-  currentProject:string;
+  currentStructure: IStructure;
+  currentSnapshot: ISnapshot;
+  currentProject: string;
+  closeFilterOverlay: () => void;
+  handleOnTaskFilter: (formData: object) => void;
+  closeTaskFilterOverlay: () => void;
 }
 const RightFloatingMenu: React.FC<IProps> = ({
   toolClicked,
@@ -46,6 +49,9 @@ const RightFloatingMenu: React.FC<IProps> = ({
   currentProject,
   currentSnapshot,
   currentStructure,
+  closeFilterOverlay,
+  closeTaskFilterOverlay,
+  handleOnTaskFilter,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -54,7 +60,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
-  const [myProject,setMyProject] = useState(currentProject);
+  const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   let toolInstance: ITools = { toolName: '', toolAction: '' };
@@ -71,15 +77,11 @@ const RightFloatingMenu: React.FC<IProps> = ({
     };
   }, [viewMode]);
 
-  useEffect(
-    ()=>{
-
-      setMyProject(currentProject);
-      setMyStructure(currentStructure);
-      setMySnapshot(currentSnapshot);
-    },
-    [currentProject,currentSnapshot,currentStructure]
-  );
+  useEffect(() => {
+    setMyProject(currentProject);
+    setMyStructure(currentStructure);
+    setMySnapshot(currentSnapshot);
+  }, [currentProject, currentSnapshot, currentStructure]);
 
   const rightMenuClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
@@ -90,23 +92,19 @@ const RightFloatingMenu: React.FC<IProps> = ({
     } else if (e.currentTarget.id === 'Design') {
       toolInstance.toolName = 'viewMode';
       toolInstance.toolAction = 'Reality';
-    }
-    else if(e.currentTarget.id==='compareDesign'){
+    } else if (e.currentTarget.id === 'compareDesign') {
       //console.log("CAptured....");
       toolInstance.toolName = 'compareDesign';
-      toolInstance.toolAction =(isCompareDesign?'false':'true');
-      setIsCompareDesign(isCompareDesign?false:true);
-      setIsCompareReality(isCompareReality?false:true);
-    }
-    else if(e.currentTarget.id==='compareReality'){
+      toolInstance.toolAction = isCompareDesign ? 'false' : 'true';
+      setIsCompareDesign(isCompareDesign ? false : true);
+      setIsCompareReality(false);
+    } else if (e.currentTarget.id === 'compareReality') {
       //console.log("CAptured....");
       toolInstance.toolName = 'compareReality';
-      toolInstance.toolAction =(isCompareReality?'false':'true');
-      setIsCompareReality(isCompareReality?false:true);
-      setIsCompareDesign(isCompareDesign?false:true);
-
+      toolInstance.toolAction = isCompareReality ? 'false' : 'true';
+      setIsCompareReality(isCompareReality ? false : true);
+      setIsCompareDesign(false);
     }
-    
 
     toolClicked(toolInstance);
   };
@@ -417,7 +415,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 currentProject={myProject}
                 currentStructure={myStructure}
                 currentSnapshot={mySnapshot}
-
+                closeFilterOverlay={closeFilterOverlay}
               ></IssueMenu>
               {/* <div className='bg-gray-400'>
                   <div className=" h-full text-xs"  id="issueItems">
@@ -450,6 +448,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 currentProject={myProject}
                 currentStructure={myStructure}
                 currentSnapshot={mySnapshot}
+                closeTaskFilterOverlay={closeTaskFilterOverlay}
+                handleOnTaskFilter={handleOnTaskFilter}
               ></TaskMenu>
             </div>
           ) : (

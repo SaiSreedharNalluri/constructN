@@ -58,3 +58,15 @@ export const getTasksPriority = async (projectId: string) => {
       throw error.response.data;
     });
 };
+export const getTaskStatus = async (projectId: string) => {
+  return await instance
+    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tasks/status`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};

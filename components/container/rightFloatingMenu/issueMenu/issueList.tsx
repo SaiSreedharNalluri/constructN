@@ -12,9 +12,13 @@ import React, { useEffect, useState } from 'react';
 import { Issue } from '../../../../models/Issue';
 import Moment from 'moment';
 import { IProjectUsers } from '../../../../models/IProjects';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useRouter } from 'next/router';
-import { getIssuesTypes, getIssuesPriority } from '../../../../services/issue';
+import {
+  getIssuesTypes,
+  getIssuesPriority,
+  getIssuesStatus,
+} from '../../../../services/issue';
 import { getProjectUsers } from '../../../../services/project';
 import * as Yup from 'yup';
 interface IProps {
@@ -22,28 +26,40 @@ interface IProps {
   issuesList: Issue[];
   visibility: boolean;
   handleOnFilter: (formData: object) => void;
+  closeFilterOverlay: () => void;
 }
 const IssueList: React.FC<IProps> = ({
   visibility,
   closeOverlay,
   issuesList,
   handleOnFilter,
+  closeFilterOverlay,
 }) => {
   const router = useRouter();
   const [issueType, setIssueType] = useState<[string]>();
   const [issuePriority, setIssuePriority] = useState<[string]>();
+  const [issueStatus, setIssueStatus] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [fileterView, setFileterView] = useState(false);
+  let usersList = [
+    { _id: '', name: 'please select the assignee for the issue' },
+  ];
   const initialValues: {
-    issueType: string;
-    issuePriority: string;
+    issueType: Array<string>;
+    issuePriority: Array<string>;
+    issueStatus: Array<string>;
+    assignees: string;
   } = {
-    issueType: '',
-    issuePriority: '',
+    issueType: [],
+    issuePriority: [],
+    issueStatus: [],
+    assignees: '',
   };
   const validationSchema = Yup.object().shape({
-    issueType: Yup.string(),
-    issuePriority: Yup.string(),
+    issueType: Yup.array().min(1),
+    issuePriority: Yup.array().min(1),
+    issueStatus: Yup.array().min(1),
+    assignees: Yup.string().required('please select the issue assignee'),
   });
   useEffect(() => {
     if (router.isReady) {
@@ -65,11 +81,31 @@ const IssueList: React.FC<IProps> = ({
         })
         .catch();
     }
+    getIssuesStatus(router.query.projectId as string).then((response) => {
+      if (response.success === true) {
+        setIssueStatus(response.result);
+      }
+    });
   }, [router.isReady, router.query.projectId]);
   const closeIssueView = () => {
     closeOverlay();
   };
-
+  const handleOnFilterEvent = (formData: object) => {
+    handleOnFilter(formData);
+    setFileterView(false);
+  };
+  const closeFilterView = () => {
+    closeFilterOverlay();
+    setFileterView(false);
+  };
+  if (projectUsers?.length > 0) {
+    projectUsers.map((projectUser: any) => {
+      usersList.push({
+        _id: projectUser?.user?._id,
+        name: projectUser?.user?.fullName,
+      });
+    });
+  }
   return (
     <div
       className={`fixed ${
@@ -79,12 +115,18 @@ const IssueList: React.FC<IProps> = ({
       <div className="overflow-y-auto ">
         <div className="flex justify-between border-b border-black border-solid">
           <div>
-            <h1>{!fileterView ? 'Issue List' : 'Filters'}</h1>
+            <h1>{!fileterView ? 'Issue List' : 'Issue Filters'}</h1>
           </div>
           <div>
             <FontAwesomeIcon
               icon={faTimes}
-              onClick={closeIssueView}
+              onClick={() => {
+                if (fileterView === false) {
+                  closeIssueView();
+                } else {
+                  closeFilterView();
+                }
+              }}
               className=" mr-2  rounded-full border border-black"
             ></FontAwesomeIcon>
           </div>
@@ -167,11 +209,11 @@ const IssueList: React.FC<IProps> = ({
           </div>
         ) : (
           <div>
-            {IssueList.length > 1 ? (
+            {IssueList.length >= 1 ? (
               <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
-                onSubmit={handleOnFilter}
+                onSubmit={handleOnFilterEvent}
               >
                 {({ errors, touched }) => (
                   <Form className=" grid grid-cols-1 gap-y-2 px-4">
@@ -182,14 +224,20 @@ const IssueList: React.FC<IProps> = ({
                       issueType.map((option) => (
                         <div key={option}>
                           <Field
-                            type="radio"
+                            type="checkbox"
                             name="issueType"
                             id={option}
                             value={option}
                           />
+
                           <label htmlFor={option}>{option}</label>
                         </div>
                       ))}
+                    <ErrorMessage
+                      name="issueType"
+                      component="div"
+                      className="alert alert-danger"
+                    />
                     <div>
                       <h5 className="text-gray-500">Issue Priority</h5>
                     </div>
@@ -197,7 +245,7 @@ const IssueList: React.FC<IProps> = ({
                       issuePriority.map((option) => (
                         <div key={option}>
                           <Field
-                            type="radio"
+                            type="checkbox"
                             name="issuePriority"
                             id={option}
                             value={option}
@@ -205,15 +253,66 @@ const IssueList: React.FC<IProps> = ({
                           <label htmlFor={option}>{option}</label>
                         </div>
                       ))}
+                    <ErrorMessage
+                      name="issuePriority"
+                      component="div"
+                      className="alert alert-danger"
+                    />
+                    <div>
+                      <h5 className="text-gray-500">Issue Status</h5>
+                    </div>
+                    {issueStatus &&
+                      issueStatus.map((option) => (
+                        <div key={option}>
+                          <Field
+                            type="checkbox"
+                            name="issueStatus"
+                            id={option}
+                            value={option}
+                          />
+                          <label htmlFor={option}>{option}</label>
+                        </div>
+                      ))}
+                    <ErrorMessage
+                      name="issueStatus"
+                      component="div"
+                      className="alert alert-danger"
+                    />
+                    <div>
+                      <div>
+                        <h5 className="text-gray-500">Assigned To</h5>
+                      </div>
+                      <div>
+                        <Field
+                          as="select"
+                          name="assignees"
+                          id="assignees"
+                          className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
+                        >
+                          {usersList &&
+                            usersList.map((option: any) => (
+                              <option key={option?._id} value={option?._id}>
+                                {option?.name}
+                              </option>
+                            ))}
+                        </Field>
+                        <ErrorMessage
+                          name="assignees"
+                          component="div"
+                          className="alert alert-danger"
+                        />
+                      </div>
+                    </div>
                     <button
                       type="submit"
-                      className="p-1.5 mt-2 bg-gray-500  rounded-md "
+                      className="p-1.5 mt-2 bg-gray-500  rounded-md"
                     >
                       Apply
                     </button>
                     <button
                       type="reset"
-                      className="p-1.5 mt-2 bg-gray-500  rounded-md "
+                      className="p-1.5 mt-2 bg-gray-500  rounded-md"
+                      onClick={closeFilterView}
                     >
                       Cancel
                     </button>

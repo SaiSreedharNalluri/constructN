@@ -3,12 +3,10 @@ import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
 import { ChildrenEntity, IStructure } from '../../../../models/IStructure';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
-import { getSnapshotsList } from '../../../../services/snapshot';
 import { getProjectDetails } from '../../../../services/project';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import _ from 'lodash';
-import Pagination from '../../../../components/container/pagination';
-import { faGreaterThan, faLessThan } from '@fortawesome/free-solid-svg-icons';
+import { faLessThan } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LeftOverLay from '../../../../components/container/leftOverLay';
 import MapLoading from '../../../../components/container/mapLoading';
@@ -19,16 +17,16 @@ import { IToolResponse, ITools } from '../../../../models/ITools';
 import { getStructureList } from '../../../../services/structure';
 import { IActiveRealityMap } from '../../../../models/IReality';
 import { IDesignMap } from '../../../../models/IDesign';
-import { createIssue, getIssuesList } from '../../../../services/issue';
+import { getIssuesList } from '../../../../services/issue';
 import { getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
-import { createTask, getTasksList } from '../../../../services/task';
+import { getTasksList } from '../../../../services/task';
 import { Issue } from '../../../../models/Issue';
 import { ITasks } from '../../../../models/Itask';
 import IssueCreate from '../../../../components/container/rightFloatingMenu/issueMenu/issueCreate';
 import TaskCreate from '../../../../components/container/rightFloatingMenu/taskMenu/taskCreate';
 
-interface IProps { }
+interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const [currentViewMode, setViewMode] = useState('Design'); //Design/ Reality
@@ -41,7 +39,6 @@ const Index: React.FC<IProps> = () => {
   const [projectutm, setProjectUtm] = useState('');
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
-  let structureView = false;
   const rightOverlayRef: any = useRef();
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
@@ -53,31 +50,35 @@ const Index: React.FC<IProps> = () => {
   const [loggedInUserId, SetLoggedInUserId] = useState('');
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
+  const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
+  const [taskFilterList, setTaskFilterList] = useState<ITasks[]>([]);
+  const [loadData, setLoadData] = useState(false);
   //const [createOverlay, setCreateOverlay] = useState(false);
-  const [openCreateIssue,setOpenCreateIssue]=useState(false);
-  const [openCreateTask,setOpenCreateTask]=useState(false);
-  const [currentContext,setCurrentContext] = useState<IToolResponse>({type:'Task',position:{x:0,y:0,z:0}});
+  const [openCreateIssue, setOpenCreateIssue] = useState(false);
+  const [openCreateTask, setOpenCreateTask] = useState(false);
+  const [currentContext, setCurrentContext] = useState<IToolResponse>({
+    type: 'Task',
+    position: { x: 0, y: 0, z: 0 },
+  });
 
   const closeIssueCreate = () => {
-    
     setOpenCreateIssue(false);
-  }
-  const issueSubmit=(formdata: any)=>{
+  };
+  const issueSubmit = (formdata: any) => {
     issuesList.push(formdata);
-    
+
     setOpenCreateIssue(false);
-  }
+  };
 
   const closeTaskCreate = () => {
-    
     setOpenCreateTask(false);
-  }
-  const taskSubmit=(formdata: any)=>{
+  };
+  const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
-    
+
     setOpenCreateTask(false);
-  }
-    
+  };
+
   useEffect(() => {
     if (router.isReady) {
       getProjectDetails(router.query.projectId as string)
@@ -95,12 +96,16 @@ const Index: React.FC<IProps> = () => {
         .catch((error) => {
           toast.error('failed to load data');
         });
-    }
-    const userObj: any = getCookie('user');
-    let user = null;
-    if (userObj) user = JSON.parse(userObj);
-    if (user?._id) {
-      SetLoggedInUserId(user._id);
+      const userObj: any = getCookie('user');
+      let user = null;
+      if (userObj) user = JSON.parse(userObj);
+      if (user?._id) {
+        SetLoggedInUserId(user._id);
+      }
+      const handler = document.addEventListener('click', closeStructurePage);
+      return () => {
+        document.removeEventListener('click', closeStructurePage);
+      };
     }
   }, [router.isReady, router.query.projectId]);
 
@@ -163,9 +168,11 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
-                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
-                  }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${
+                  structure?._id
+                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
+                  currentProjectId as string
+                }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -177,19 +184,16 @@ const Index: React.FC<IProps> = () => {
   };
   const closeStructurePage = (e: any) => {
     if (
-      rightrefContainer.current && !rightrefContainer.current.contains(e.target) &&
-      leftOverlayRef.current && !leftOverlayRef.current.contains(e.target) &&
-      (leftRefContainer.current && !leftRefContainer.current.contains(e.target))
+      rightrefContainer.current &&
+      !rightrefContainer.current.contains(e.target) &&
+      leftOverlayRef.current &&
+      !leftOverlayRef.current.contains(e.target) &&
+      leftRefContainer.current &&
+      !leftRefContainer.current.contains(e.target)
     ) {
       setLeftNav(false);
     }
   };
-  useEffect(() => {
-    const handler = document.addEventListener('click', closeStructurePage);
-    return () => {
-      document.removeEventListener("click", closeStructurePage)
-    }
-  }, []);
 
   const rightNavCollapse = () => {
     setRightNav(!rightNav);
@@ -201,7 +205,6 @@ const Index: React.FC<IProps> = () => {
     } else {
       setLeftNav(true);
     }
-
   };
 
   const toolClicked = (toolInstance: ITools) => {
@@ -265,7 +268,7 @@ const Index: React.FC<IProps> = () => {
         console.log(currentViewLayers);
         break;
       case 'compareReality':
-      case 'compareDesign' :
+      case 'compareDesign':
         setClickedTool(toolInstance);
         //console.log(toolInstance);
         break;
@@ -276,23 +279,18 @@ const Index: React.FC<IProps> = () => {
 
   const toolResponse = (data: ITools) => {
     console.log('Got tool REsponse->', data);
-    switch(data.toolName)
-    {
+    switch (data.toolName) {
       case 'issue':
-        if(data.toolAction==='issueCreate')
-        {
+        if (data.toolAction === 'issueCreate') {
           console.log('Open issue Menu');
-          if(data.response!=undefined)setCurrentContext(data.response);
+          if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateIssue(true);
-          
-          
         }
         break;
       case 'task':
-        if(data.toolAction==='taskCreate')
-        {
+        if (data.toolAction === 'taskCreate') {
           console.log('Open task Menu');
-          if(data.response!=undefined)setCurrentContext(data.response);
+          if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateTask(true);
         }
         break;
@@ -304,6 +302,7 @@ const Index: React.FC<IProps> = () => {
     getIssuesList(router.query.projectId as string, structureId)
       .then((response) => {
         setIssueList(response.result);
+        setIssueFilterList(response.result);
       })
       .catch((error) => {
         if (error.success === false) {
@@ -315,6 +314,7 @@ const Index: React.FC<IProps> = () => {
     getTasksList(router.query.projectId as string, structureId)
       .then((response) => {
         setTasksList(response.result);
+        setTaskFilterList(response.result);
       })
       .catch((error) => {
         if (error.success === false) {
@@ -323,24 +323,50 @@ const Index: React.FC<IProps> = () => {
       });
   };
   const handleOnIssueFilter = (formData: any) => {
-    const result = _.filter(
-      issuesList,
-      (issueObj) => issueObj.type === formData.issueType
+    const result = issueFilterList.filter(
+      (item: Issue) =>
+        formData.issueType.includes(item.type) &&
+        formData?.issuePriority?.includes(item.priority) &&
+        formData?.issueStatus?.includes(item.status) &&
+        item.assignees.filter(
+          (userInfo: any) => userInfo._id === formData.assignees
+        )
     );
     setIssueList(result);
   };
+  const closeFilterOverlay = () => {
+    setIssueList(issueFilterList);
+  };
+  const handleOnTaskFilter = (formData: any) => {
+    const result = taskFilterList.filter(
+      (item: ITasks) =>
+        formData.taskType.includes(item.type) &&
+        formData?.taskPriority?.includes(item.priority) &&
+        formData?.taskStatus?.includes(item.status) &&
+        item.assignees.filter(
+          (userInfo: any) => userInfo._id === formData.assignees
+        )
+    );
+    setTasksList(result);
+  };
+  const closeTaskFilterOverlay = () => {
+    setTasksList(taskFilterList);
+  };
   return (
-    <div className=' w-full  h-full'>
-      <div className='w-full'>
+    <div className=" w-full  h-full">
+      <div className="w-full">
         <Header></Header>
       </div>
-      <div className='flex ' >
+      <div className="flex ">
         <div ref={leftOverlayRef}>
           <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu>
         </div>
-        <div >
-          {leftNav &&
-            <div ref={leftRefContainer} className={`calc-h absolute z-10 top-10 bg-gray-200 border border-gray-300 overflow-y-auto`}>
+        <div>
+          {leftNav && (
+            <div
+              ref={leftRefContainer}
+              className={`calc-h absolute z-10 top-10 bg-gray-200 border border-gray-300 overflow-y-auto`}
+            >
               <div>
                 <LeftOverLay
                   getStructureData={getStructureData}
@@ -356,11 +382,9 @@ const Index: React.FC<IProps> = () => {
                 ></LeftOverLay>
               </div>
             </div>
-          }
+          )}
         </div>
-        <div id="viewer" >
-          {renderSwitch(viewerTypeState)}
-        </div>
+        <div id="viewer">{renderSwitch(viewerTypeState)}</div>
         {/* <div>
             <FontAwesomeIcon
               className={`absolute  ${
@@ -401,56 +425,60 @@ const Index: React.FC<IProps> = () => {
           </div>
         </div> */}
         {structure && snapshot && (
-        <div ref={rightrefContainer}>
-          <FontAwesomeIcon
-            className={`fixed  ${rightNav && 'rotate-180'
-              } text-lg text-blue-300  ${rightNav ? 'right-9' : 'right-0'
+          <div ref={rightrefContainer}>
+            <FontAwesomeIcon
+              className={`fixed  ${
+                rightNav && 'rotate-180'
+              } text-lg text-blue-300  ${
+                rightNav ? 'right-9' : 'right-0'
               }  top-46  cursor-pointer border rounded  p-1 bg-gray-400 z-10 text-white`}
-            onClick={rightNavCollapse}
-            icon={faLessThan}
-          ></FontAwesomeIcon>
-          <div
-            ref={rightOverlayRef}
-            id="bg-color"
-            className={`fixed  w-9 border border-gray-300   ${rightNav ? 'visible' : 'hidden'
+              onClick={rightNavCollapse}
+              icon={faLessThan}
+            ></FontAwesomeIcon>
+            <div
+              ref={rightOverlayRef}
+              id="bg-color"
+              className={`fixed  w-9 border border-gray-300   ${
+                rightNav ? 'visible' : 'hidden'
               }  bg-gray-200 top-40  rounded  right-0  duration-300 z-10 overflow-y-hidden`}
             >
               <RightFloatingMenu
-                toolClicked={toolClicked}
-                viewMode={currentViewMode}
                 issuesList={issuesList}
                 tasksList={tasksList}
+                toolClicked={toolClicked}
+                viewMode={currentViewMode}
                 handleOnFilter={handleOnIssueFilter}
                 currentProject={currentProjectId}
                 currentStructure={structure}
                 currentSnapshot={snapshot}
+                closeFilterOverlay={closeFilterOverlay}
+                closeTaskFilterOverlay={closeTaskFilterOverlay}
+                handleOnTaskFilter={handleOnTaskFilter}
               ></RightFloatingMenu>
               <IssueCreate
-            handleIssueSubmit={issueSubmit}
-            visibility={openCreateIssue}
-            closeOverlay={closeIssueCreate}
-            currentProject={currentProjectId}
-            currentStructure={structure}
-            currentSnapshot={snapshot}
-            contextInfo={currentContext}
-            ></IssueCreate>
+                handleIssueSubmit={issueSubmit}
+                visibility={openCreateIssue}
+                closeOverlay={closeIssueCreate}
+                currentProject={currentProjectId}
+                currentStructure={structure}
+                currentSnapshot={snapshot}
+                contextInfo={currentContext}
+              ></IssueCreate>
 
-            <TaskCreate
-            handleTaskSubmit={taskSubmit}
-            visibility={openCreateTask}
-            closeOverlay={closeTaskCreate}
-            currentProject={currentProjectId}
-            currentStructure={structure}
-            currentSnapshot={snapshot}
-            contextInfo={currentContext}
-          ></TaskCreate>
+              <TaskCreate
+                handleTaskSubmit={taskSubmit}
+                visibility={openCreateTask}
+                closeOverlay={closeTaskCreate}
+                currentProject={currentProjectId}
+                currentStructure={structure}
+                currentSnapshot={snapshot}
+                contextInfo={currentContext}
+              ></TaskCreate>
             </div>
           </div>
-      )}
+        )}
       </div>
-
     </div>
-
   );
 };
 export default Index;

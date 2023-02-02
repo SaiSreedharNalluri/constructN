@@ -3,7 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
 import React, { useEffect, useState } from 'react';
-import { createIssue, getIssuesPriority, getIssuesTypes } from '../../../../services/issue';
+import {
+  createIssue,
+  getIssuesPriority,
+  getIssuesTypes,
+} from '../../../../services/issue';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { getProjectUsers } from '../../../../services/project';
 import { IProjectUsers } from '../../../../models/IProjects';
@@ -16,10 +20,10 @@ interface IProps {
   closeOverlay: () => void;
   visibility: boolean;
   handleIssueSubmit: (formData: object) => void;
-  currentStructure:IStructure;
-  currentSnapshot:ISnapshot;
-  currentProject:string;
-  contextInfo:IToolResponse;
+  currentStructure: IStructure;
+  currentSnapshot: ISnapshot;
+  currentProject: string;
+  contextInfo: IToolResponse;
 }
 
 const IssueCreate: React.FC<IProps> = ({
@@ -32,18 +36,18 @@ const IssueCreate: React.FC<IProps> = ({
   contextInfo,
 }) => {
   const router = useRouter();
-  const [myVisbility,setMyVisibility]=useState(visibility);
-  const [myContext,setMyContext] = useState<IToolResponse>(contextInfo);
+  const [myVisbility, setMyVisibility] = useState(visibility);
+  const [myContext, setMyContext] = useState<IToolResponse>(contextInfo);
   const [issueType, setIssueType] = useState<[string]>();
   const [issuePriority, setIssuePriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   let usersList = [
     { _id: '', name: 'please select the assignee for the issue' },
   ];
-  const [myProject,setMyProject] = useState(currentProject);
+  const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
-  const [loggedInUserId,SetLoggedInUserId] = useState('');
+  const [loggedInUserId, SetLoggedInUserId] = useState('');
 
   useEffect(() => {
     if (router.isReady) {
@@ -67,33 +71,28 @@ const IssueCreate: React.FC<IProps> = ({
         })
         .catch();
     }
-  const userObj: any = getCookie('user');
-  let user = null;
-  if (userObj) user = JSON.parse(userObj);
-  if (user?._id) {
-    SetLoggedInUserId(user._id);
-  }
+    const userObj: any = getCookie('user');
+    let user = null;
+    if (userObj) user = JSON.parse(userObj);
+    if (user?._id) {
+      SetLoggedInUserId(user._id);
+    }
   }, [router.isReady, router.query.projectId]);
 
-  useEffect(
-    ()=>{
-
-      setMyProject(currentProject);
-      setMyStructure(currentStructure);
-      setMySnapshot(currentSnapshot);
-   
-    },
-    [currentProject,currentSnapshot,currentStructure]
-  );
-  useEffect(()=>{
+  useEffect(() => {
+    setMyProject(currentProject);
+    setMyStructure(currentStructure);
+    setMySnapshot(currentSnapshot);
+  }, [currentProject, currentSnapshot, currentStructure]);
+  useEffect(() => {
     setMyVisibility(visibility);
-    console.log("finally My Visibility is ",visibility);
-  },[visibility]);
+    console.log('finally My Visibility is ', visibility);
+  }, [visibility]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setMyContext(contextInfo);
-    console.log("Updated Context ",contextInfo);
-  },[contextInfo]);
+    console.log('Updated Context ', contextInfo);
+  }, [contextInfo]);
 
   const closeIssueCreate = () => {
     closeOverlay();
@@ -119,7 +118,6 @@ const IssueCreate: React.FC<IProps> = ({
         }
       });
   };
-
   const initialValues: {
     type: string;
     priority: string;
@@ -135,7 +133,7 @@ const IssueCreate: React.FC<IProps> = ({
     assignees: 'Please select the issue assignee',
     tags: '',
     date: '',
-    context:myContext,
+    context: myContext,
   };
   const validationSchema = Yup.object().shape({
     type: Yup.string(),
@@ -250,8 +248,8 @@ const IssueCreate: React.FC<IProps> = ({
                         </option>
                       ))}
                   </Field>
-                  {errors.priority && touched.priority ? (
-                    <div>{errors.priority}</div>
+                  {errors.assignees && touched.assignees ? (
+                    <div>{errors.assignees}</div>
                   ) : null}
                 </div>
               </div>
