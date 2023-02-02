@@ -35,6 +35,8 @@ interface IProps {
   currentSnapshot: ISnapshot;
   currentProject: string;
   closeFilterOverlay: () => void;
+  handleOnTaskFilter: (formData: object) => void;
+  closeTaskFilterOverlay: () => void;
 }
 const RightFloatingMenu: React.FC<IProps> = ({
   toolClicked,
@@ -48,6 +50,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
   currentSnapshot,
   currentStructure,
   closeFilterOverlay,
+  closeTaskFilterOverlay,
+  handleOnTaskFilter,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -444,6 +448,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 currentProject={myProject}
                 currentStructure={myStructure}
                 currentSnapshot={mySnapshot}
+                closeTaskFilterOverlay={closeTaskFilterOverlay}
+                handleOnTaskFilter={handleOnTaskFilter}
               ></TaskMenu>
             </div>
           ) : (

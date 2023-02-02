@@ -20,6 +20,8 @@ interface IProps {
   currentStructure: IStructure;
   currentSnapshot: ISnapshot;
   currentProject: string;
+  handleOnTaskFilter: (formData: object) => void;
+  closeTaskFilterOverlay: () => void;
 }
 
 const IssueMenu: React.FC<IProps> = ({
@@ -29,6 +31,8 @@ const IssueMenu: React.FC<IProps> = ({
   currentProject,
   currentSnapshot,
   currentStructure,
+  closeTaskFilterOverlay,
+  handleOnTaskFilter,
 }) => {
   const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
@@ -103,6 +107,8 @@ const IssueMenu: React.FC<IProps> = ({
             tasksList={tasksList}
             visibility={listOverlay}
             closeOverlay={closeTaskList}
+            closeFilterOverlay={closeTaskFilterOverlay}
+            handleOnFilter={handleOnTaskFilter}
           ></TaskList>
           <FontAwesomeIcon
             icon={taskVisbility ? faEye : faEyeSlash}

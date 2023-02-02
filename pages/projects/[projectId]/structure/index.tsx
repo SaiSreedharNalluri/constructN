@@ -51,6 +51,7 @@ const Index: React.FC<IProps> = () => {
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
+  const [taskFilterList, setTaskFilterList] = useState<ITasks[]>([]);
   const [loadData, setLoadData] = useState(false);
   //const [createOverlay, setCreateOverlay] = useState(false);
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
@@ -313,6 +314,7 @@ const Index: React.FC<IProps> = () => {
     getTasksList(router.query.projectId as string, structureId)
       .then((response) => {
         setTasksList(response.result);
+        setTaskFilterList(response.result);
       })
       .catch((error) => {
         if (error.success === false) {
@@ -325,12 +327,30 @@ const Index: React.FC<IProps> = () => {
       (item: Issue) =>
         formData.issueType.includes(item.type) &&
         formData?.issuePriority?.includes(item.priority) &&
-        formData?.issueStatus?.includes(item.status)
+        formData?.issueStatus?.includes(item.status) &&
+        item.assignees.filter(
+          (userInfo: any) => userInfo._id === formData.assignees
+        )
     );
     setIssueList(result);
   };
   const closeFilterOverlay = () => {
     setIssueList(issueFilterList);
+  };
+  const handleOnTaskFilter = (formData: any) => {
+    const result = taskFilterList.filter(
+      (item: ITasks) =>
+        formData.taskType.includes(item.type) &&
+        formData?.taskPriority?.includes(item.priority) &&
+        formData?.taskStatus?.includes(item.status) &&
+        item.assignees.filter(
+          (userInfo: any) => userInfo._id === formData.assignees
+        )
+    );
+    setTasksList(result);
+  };
+  const closeTaskFilterOverlay = () => {
+    setTasksList(taskFilterList);
   };
   return (
     <div className=" w-full  h-full">
@@ -432,6 +452,8 @@ const Index: React.FC<IProps> = () => {
                 currentStructure={structure}
                 currentSnapshot={snapshot}
                 closeFilterOverlay={closeFilterOverlay}
+                closeTaskFilterOverlay={closeTaskFilterOverlay}
+                handleOnTaskFilter={handleOnTaskFilter}
               ></RightFloatingMenu>
               <IssueCreate
                 handleIssueSubmit={issueSubmit}

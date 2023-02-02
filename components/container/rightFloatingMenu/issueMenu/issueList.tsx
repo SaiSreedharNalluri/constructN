@@ -41,19 +41,25 @@ const IssueList: React.FC<IProps> = ({
   const [issueStatus, setIssueStatus] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [fileterView, setFileterView] = useState(false);
+  let usersList = [
+    { _id: '', name: 'please select the assignee for the issue' },
+  ];
   const initialValues: {
     issueType: Array<string>;
     issuePriority: Array<string>;
     issueStatus: Array<string>;
+    assignees: string;
   } = {
     issueType: [],
     issuePriority: [],
     issueStatus: [],
+    assignees: '',
   };
   const validationSchema = Yup.object().shape({
     issueType: Yup.array(),
     issuePriority: Yup.array(),
     issueStatus: Yup.array(),
+    assignees: Yup.string(),
   });
   useEffect(() => {
     if (router.isReady) {
@@ -92,6 +98,14 @@ const IssueList: React.FC<IProps> = ({
     closeFilterOverlay();
     setFileterView(false);
   };
+  if (projectUsers?.length > 0) {
+    projectUsers.map((projectUser: any) => {
+      usersList.push({
+        _id: projectUser?.user?._id,
+        name: projectUser?.user?.fullName,
+      });
+    });
+  }
   return (
     <div
       className={`fixed ${
@@ -101,7 +115,7 @@ const IssueList: React.FC<IProps> = ({
       <div className="overflow-y-auto ">
         <div className="flex justify-between border-b border-black border-solid">
           <div>
-            <h1>{!fileterView ? 'Issue List' : 'Filters'}</h1>
+            <h1>{!fileterView ? 'Issue List' : 'Issue Filters'}</h1>
           </div>
           <div>
             <FontAwesomeIcon
@@ -248,6 +262,29 @@ const IssueList: React.FC<IProps> = ({
                           <label htmlFor={option}>{option}</label>
                         </div>
                       ))}
+                    <div>
+                      <div>
+                        <h5 className="text-gray-500">Assigned To</h5>
+                      </div>
+                      <div>
+                        <Field
+                          as="select"
+                          name="assignees"
+                          id="assignees"
+                          className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
+                        >
+                          {usersList &&
+                            usersList.map((option: any) => (
+                              <option key={option?._id} value={option?._id}>
+                                {option?.name}
+                              </option>
+                            ))}
+                        </Field>
+                        {errors.assignees && touched.assignees ? (
+                          <div>{errors.assignees}</div>
+                        ) : null}
+                      </div>
+                    </div>
                     <button
                       type="submit"
                       className="p-1.5 mt-2 bg-gray-500  rounded-md"

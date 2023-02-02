@@ -248,8 +248,8 @@ const IssueCreate: React.FC<IProps> = ({
                         </option>
                       ))}
                   </Field>
-                  {errors.priority && touched.priority ? (
-                    <div>{errors.priority}</div>
+                  {errors.assignees && touched.assignees ? (
+                    <div>{errors.assignees}</div>
                   ) : null}
                 </div>
               </div>
