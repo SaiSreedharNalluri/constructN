@@ -12,7 +12,7 @@ import React, { useEffect, useState } from 'react';
 import { Issue } from '../../../../models/Issue';
 import Moment from 'moment';
 import { IProjectUsers } from '../../../../models/IProjects';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useRouter } from 'next/router';
 import {
   getIssuesTypes,
@@ -56,10 +56,10 @@ const IssueList: React.FC<IProps> = ({
     assignees: '',
   };
   const validationSchema = Yup.object().shape({
-    issueType: Yup.array(),
-    issuePriority: Yup.array(),
-    issueStatus: Yup.array(),
-    assignees: Yup.string(),
+    issueType: Yup.array().min(1),
+    issuePriority: Yup.array().min(1),
+    issueStatus: Yup.array().min(1),
+    assignees: Yup.string().required('please select the issue assignee'),
   });
   useEffect(() => {
     if (router.isReady) {
@@ -229,9 +229,15 @@ const IssueList: React.FC<IProps> = ({
                             id={option}
                             value={option}
                           />
+
                           <label htmlFor={option}>{option}</label>
                         </div>
                       ))}
+                    <ErrorMessage
+                      name="issueType"
+                      component="div"
+                      className="alert alert-danger"
+                    />
                     <div>
                       <h5 className="text-gray-500">Issue Priority</h5>
                     </div>
@@ -247,6 +253,11 @@ const IssueList: React.FC<IProps> = ({
                           <label htmlFor={option}>{option}</label>
                         </div>
                       ))}
+                    <ErrorMessage
+                      name="issuePriority"
+                      component="div"
+                      className="alert alert-danger"
+                    />
                     <div>
                       <h5 className="text-gray-500">Issue Status</h5>
                     </div>
@@ -262,6 +273,11 @@ const IssueList: React.FC<IProps> = ({
                           <label htmlFor={option}>{option}</label>
                         </div>
                       ))}
+                    <ErrorMessage
+                      name="issueStatus"
+                      component="div"
+                      className="alert alert-danger"
+                    />
                     <div>
                       <div>
                         <h5 className="text-gray-500">Assigned To</h5>
@@ -280,9 +296,11 @@ const IssueList: React.FC<IProps> = ({
                               </option>
                             ))}
                         </Field>
-                        {errors.assignees && touched.assignees ? (
-                          <div>{errors.assignees}</div>
-                        ) : null}
+                        <ErrorMessage
+                          name="assignees"
+                          component="div"
+                          className="alert alert-danger"
+                        />
                       </div>
                     </div>
                     <button

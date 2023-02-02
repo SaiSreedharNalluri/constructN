@@ -97,13 +97,13 @@ const RightFloatingMenu: React.FC<IProps> = ({
       toolInstance.toolName = 'compareDesign';
       toolInstance.toolAction = isCompareDesign ? 'false' : 'true';
       setIsCompareDesign(isCompareDesign ? false : true);
-      setIsCompareReality(isCompareReality ? false : true);
+      setIsCompareReality(false);
     } else if (e.currentTarget.id === 'compareReality') {
       //console.log("CAptured....");
       toolInstance.toolName = 'compareReality';
       toolInstance.toolAction = isCompareReality ? 'false' : 'true';
       setIsCompareReality(isCompareReality ? false : true);
-      setIsCompareDesign(isCompareDesign ? false : true);
+      setIsCompareDesign(false);
     }
 
     toolClicked(toolInstance);

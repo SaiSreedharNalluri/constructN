@@ -20,7 +20,7 @@ import {
   getTaskStatus,
 } from '../../../../services/task';
 import * as Yup from 'yup';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import IssueList from '../issueMenu/issueList';
 interface IProps {
   closeOverlay: () => void;
@@ -53,10 +53,10 @@ const TaskList: React.FC<IProps> = ({
     assignees: '',
   };
   const validationSchema = Yup.object().shape({
-    taskType: Yup.array(),
-    taskPriority: Yup.array(),
-    taskStatus: Yup.array(),
-    assignees: Yup.string(),
+    taskType: Yup.array().min(1),
+    taskPriority: Yup.array().min(1),
+    taskStatus: Yup.array().min(1),
+    assignees: Yup.string().required('please select the issue assignee'),
   });
   const closeTaskView = () => {
     closeOverlay();
@@ -233,6 +233,11 @@ const TaskList: React.FC<IProps> = ({
                           <label htmlFor={option}>{option}</label>
                         </div>
                       ))}
+                    <ErrorMessage
+                      name="taskType"
+                      component="div"
+                      className="alert alert-danger"
+                    />
                     <div>
                       <h5 className="text-gray-500">Task Priority</h5>
                     </div>
@@ -248,6 +253,11 @@ const TaskList: React.FC<IProps> = ({
                           <label htmlFor={option}>{option}</label>
                         </div>
                       ))}
+                    <ErrorMessage
+                      name="taskPriority"
+                      component="div"
+                      className="alert alert-danger"
+                    />
                     <div>
                       <h5 className="text-gray-500">Task Status</h5>
                     </div>
@@ -263,6 +273,11 @@ const TaskList: React.FC<IProps> = ({
                           <label htmlFor={option}>{option}</label>
                         </div>
                       ))}
+                    <ErrorMessage
+                      name="taskStatus"
+                      component="div"
+                      className="alert alert-danger"
+                    />
                     <div>
                       <div>
                         <h5 className="text-gray-500">Assigned To</h5>
@@ -281,9 +296,11 @@ const TaskList: React.FC<IProps> = ({
                               </option>
                             ))}
                         </Field>
-                        {errors.assignees && touched.assignees ? (
-                          <div>{errors.assignees}</div>
-                        ) : null}
+                        <ErrorMessage
+                          name="assignees"
+                          component="div"
+                          className="alert alert-danger"
+                        />
                       </div>
                     </div>
                     <button
