@@ -17,7 +17,7 @@ import { IToolResponse, ITools } from '../../../../models/ITools';
 import { getStructureList } from '../../../../services/structure';
 import { IActiveRealityMap } from '../../../../models/IReality';
 import { IDesignMap } from '../../../../models/IDesign';
-import { getIssuesList } from '../../../../services/issue';
+import { deleteIssue, getIssuesList } from '../../../../services/issue';
 import { getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
 import { getTasksList } from '../../../../services/task';
@@ -75,9 +75,9 @@ const Index: React.FC<IProps> = () => {
   const closeTaskCreate = () => {
     setOpenCreateTask(false);
   };
-  const closeIssueList=()=>{
+  const closeIssueList = () => {
     setOpenIssueView(false);
-  }
+  };
 
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
@@ -359,6 +359,19 @@ const Index: React.FC<IProps> = () => {
   const closeTaskFilterOverlay = () => {
     setTasksList(taskFilterList);
   };
+  const deleteTheIssue = (issueObj: any) => {
+    deleteIssue(router.query.projectId as string, issueObj._id)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success(response.message);
+          _.remove(issueFilterList, { _id: issueObj._id });
+          setIssueList(issueFilterList);
+        }
+      })
+      .catch((error) => {
+        console.log('error', error);
+      });
+  };
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -482,12 +495,13 @@ const Index: React.FC<IProps> = () => {
                 contextInfo={currentContext}
               ></TaskCreate>
               <IssueList
-            closeFilterOverlay={closeFilterOverlay}
-            issuesList={issuesList}
-            visibility={openIssueView}
-            closeOverlay={closeIssueList}
-            handleOnFilter={handleOnIssueFilter}
-          ></IssueList>
+                closeFilterOverlay={closeFilterOverlay}
+                issuesList={issuesList}
+                visibility={openIssueView}
+                closeOverlay={closeIssueList}
+                handleOnFilter={handleOnIssueFilter}
+                deleteTheIssue={deleteTheIssue}
+              ></IssueList>
             </div>
           </div>
         )}
