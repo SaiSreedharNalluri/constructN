@@ -25,6 +25,7 @@ import { Issue } from '../../../../models/Issue';
 import { ITasks } from '../../../../models/Itask';
 import IssueCreate from '../../../../components/container/rightFloatingMenu/issueMenu/issueCreate';
 import TaskCreate from '../../../../components/container/rightFloatingMenu/taskMenu/taskCreate';
+import IssueList from '../../../../components/container/rightFloatingMenu/issueMenu/issueList';
 
 interface IProps {}
 const Index: React.FC<IProps> = () => {
@@ -56,6 +57,7 @@ const Index: React.FC<IProps> = () => {
   //const [createOverlay, setCreateOverlay] = useState(false);
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
   const [openCreateTask, setOpenCreateTask] = useState(false);
+  const [openIssueView, setOpenIssueView] = useState(false);
   const [currentContext, setCurrentContext] = useState<IToolResponse>({
     type: 'Task',
     position: { x: 0, y: 0, z: 0 },
@@ -73,6 +75,10 @@ const Index: React.FC<IProps> = () => {
   const closeTaskCreate = () => {
     setOpenCreateTask(false);
   };
+  const closeIssueList=()=>{
+    setOpenIssueView(false);
+  }
+
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
 
@@ -220,7 +226,8 @@ const Index: React.FC<IProps> = () => {
       case 'issue':
         switch (toolInstance.toolAction) {
           case 'issueView':
-            //todo
+            console.log('trying to open issue View');
+            setOpenIssueView(true);
             break;
           case 'issueCreate':
           case 'issueCreated':
@@ -474,6 +481,13 @@ const Index: React.FC<IProps> = () => {
                 currentSnapshot={snapshot}
                 contextInfo={currentContext}
               ></TaskCreate>
+              <IssueList
+            closeFilterOverlay={closeFilterOverlay}
+            issuesList={issuesList}
+            visibility={openIssueView}
+            closeOverlay={closeIssueList}
+            handleOnFilter={handleOnIssueFilter}
+          ></IssueList>
             </div>
           </div>
         )}

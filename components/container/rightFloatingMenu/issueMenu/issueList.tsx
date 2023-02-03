@@ -49,11 +49,14 @@ const IssueList: React.FC<IProps> = ({
 }) => {
   const router = useRouter();
   const [issueType, setIssueType] = useState<[string]>();
+  const [myVisibility,setMyVisibility]=useState(visibility);
+  const [myIssueList,setMyIssueList] = useState<Issue[]>(issuesList);
+  const [myFilteredIsssueList,setMyFilteredIssueList]=useState<Issue[]>(issuesList);
   const [issuePriority, setIssuePriority] = useState<[string]>();
   const [issueStatus, setIssueStatus] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
-  const [fileterView, setFileterView] = useState(false);
-  const [detailView, setDetailView] = useState(false);
+  const [issueViewMode,setIssueViewMode] = useState('list');//list, filter, detail
+
   const [issueObj, setIssueObj] = useState<Issue>();
   let usersList = [
     { _id: '', name: 'please select the assignee for the issue' },
@@ -69,172 +72,35 @@ const IssueList: React.FC<IProps> = ({
     issueStatus: [],
     assignees: '',
   };
-  const validationSchema = Yup.object().shape({
-    issueType: Yup.array().min(1),
-    issuePriority: Yup.array().min(1),
-    issueStatus: Yup.array().min(1),
-    assignees: Yup.string().required('please select the issue assignee'),
-  });
-  useEffect(() => {
-    if (router.isReady) {
-      getIssuesTypes(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setIssueType(response.result);
-        }
-      });
-      getIssuesPriority(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setIssuePriority(response.result);
-        }
-      });
-      getProjectUsers(router.query.projectId as string)
-        .then((response) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
-    }
-    getIssuesStatus(router.query.projectId as string).then((response) => {
-      if (response.success === true) {
-        setIssueStatus(response.result);
-      }
-    });
-  }, [router.isReady, router.query.projectId]);
-  const closeIssueView = () => {
-    closeOverlay();
-  };
-  const handleOnFilterEvent = (formData: object) => {
-    handleOnFilter(formData);
-    setFileterView(false);
-  };
-  const closeFilterView = () => {
-    closeFilterOverlay();
-    setFileterView(false);
-  };
-  if (projectUsers?.length > 0) {
-    projectUsers.map((projectUser: any) => {
-      usersList.push({
-        _id: projectUser?.user?._id,
-        name: projectUser?.user?.fullName,
-      });
-    });
-  }
-  return (
-    <div>
-      {!detailView ? (
-        <div
-          className={`fixed ${visibility ? 'w-1/4 calc-h' : 'w-0'
-            }  top-10     bg-gray-200 right-0 z-10 overflow-x-hidden`}
-        >
-          <div className="overflow-y-auto ">
-            <div className="flex justify-between border-b border-black border-solid">
-              <div>
-                <h1>{!fileterView ? 'Issue List' : 'Issue Filters'}</h1>
-              </div>
-              <div>
-                <FontAwesomeIcon
-                  icon={faTimes}
-                  onClick={() => {
-                    if (fileterView === false) {
-                      closeIssueView();
-                    } else {
-                      closeFilterView();
-                    }
-                  }}
-                  className=" mr-2  rounded-full border border-black"
-                ></FontAwesomeIcon>
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <div>
+  useEffect(()=>{
+    setMyVisibility(visibility);
+    console.log('re setting list view',visibility);
+  },[visibility]);
+
+
+  const renderIssueView=(viewParam:string)=>{
+
+    switch(viewParam)
+    {
+      case 'filter':
+        return((
+          <div>
+            <div className="flex justify-between border-b border-black border-solid"></div>
+          <div>
+          <FontAwesomeIcon icon={faArrowLeftLong} className="mt-2" onClick={() => setIssueViewMode('list')}></FontAwesomeIcon>
+          <h1>Issue Filters</h1>
+        </div>
+        <div>
+        <FontAwesomeIcon
+          icon={faTimes}
+          onClick={closeFilterView}
+          className=" mr-2  rounded-full border border-black"
+        ></FontAwesomeIcon>
+        <div>
                 <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
               </div>
-              <div className="flex justify-between text-gray-800">
-                <div className="mr-2">
-                  <FontAwesomeIcon
-                    icon={faFilter}
-                    onClick={() => {
-                      if (!fileterView) {
-                        setFileterView(true);
-                      } else {
-                        setFileterView(false);
-                      }
-                    }}
-                  />
-                </div>
-                <div className="mr-2">
-                  <FontAwesomeIcon icon={faDownload}></FontAwesomeIcon>
-                </div>
-              </div>
-            </div>
-            {!fileterView ? (
-              <div>
-                {issuesList.length >= 1
-                  ? issuesList.map((issueInfo: Issue) => {
-                    return (
-                      <div
-                        className="h-full mt-2 w-full"
-                        key={issueInfo._id}
-                        onClick={() => {
-                          setDetailView(true);
-                          setIssueObj(issueInfo);
-                        }}
-                      >
-                        <div className=" h-1/12 w-11/12  m-auto ">
-                          <div className=" m-auto ">
-                            <div className=" bg-white border border-solid border-gray-400 rounded">
-                              <div className="flex mt-2">
-                                <div>
-                                  <FontAwesomeIcon
-                                    className="text-3xl text-gray-400"
-                                    icon={faShieldAlt}
-                                  ></FontAwesomeIcon>
-                                </div>
-                                <div className="flex-col ml-2 text-gray-600">
-                                  <div>
-                                    <h5>{issueInfo.title}</h5>
-                                  </div>
-                                  <div className="flex">
-                                    <p className="mr-1">{issueInfo.status}</p>
-                                    |
-                                    <p className="ml-1">
-                                      {issueInfo.priority}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex mt-2 ml-3">
-                                <div className="flex">
-                                  <FontAwesomeIcon
-                                    icon={faUser}
-                                    className="text-gray-500 "
-                                  ></FontAwesomeIcon>
-                                  <p className="text-gray-500 -mt-1 ml-1">
-                                    {issueInfo.assignees[0].firstName}
-                                  </p>
-                                  <FontAwesomeIcon
-                                    icon={faCalendar}
-                                    className="text-gray-500 ml-2"
-                                  />
-                                  <p className="text-gray-500 -mt-1 ml-1">
-                                    {Moment(issueInfo.createdAt).format(
-                                      'MMM Do YYYY'
-                                    )}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                  : 'there is no data avaliable'}
-              </div>
-            ) : (
-              <div>
-                {IssueList.length >= 1 ? (
+        </div>
+        {IssueList.length >= 1 ? (
                   <Formik
                     initialValues={initialValues}
                     validationSchema={validationSchema}
@@ -337,7 +203,9 @@ const IssueList: React.FC<IProps> = ({
                         <button
                           type="reset"
                           className="p-1.5 mt-2 bg-gray-500  rounded-md"
-                          onClick={closeFilterView}
+                          onClick={()=>{
+                            setIssueViewMode('list');
+                          }}
                         >
                           Cancel
                         </button>
@@ -347,20 +215,25 @@ const IssueList: React.FC<IProps> = ({
                 ) : (
                   'There is no data available to filter the issue list'
                 )}
-              </div>
-            )}
-          </div>
+              
+        
         </div>
-      ) : (
-        <div>
-          <div
-            className={`fixed ${visibility ? 'w-1/4 calc-h' : 'w-0'
-              } top-10     bg-gray-200 right-0 z-10 overflow-x-hidden`}
-          >
+        
+
+        
+      
+        ));
+        break;
+      case 'detail':
+        return((
+          <div>
+        
             <div className='h-8 bg-gray-100 w-full  flex justify-between px-2'>
               <div className=' flex '>
-                <FontAwesomeIcon icon={faArrowLeftLong} className="mt-2" onClick={() => setDetailView(false)}></FontAwesomeIcon>
+                <FontAwesomeIcon icon={faArrowLeftLong} className="mt-2" onClick={() => setIssueViewMode('list')}></FontAwesomeIcon>
                 <p className='ml-2 mt-1  font-semibold'>Safety (#407)</p>
+                <div className="flex justify-between border-b border-black border-solid"></div>
+
               </div>
               <div className='flex'>
                 <div>
@@ -436,8 +309,180 @@ const IssueList: React.FC<IProps> = ({
               </div>
             </div>
           </div>
+        ));
+        break;
+
+      case 'list':
+      default:
+        return((
+          <div className='grid grid-cols-1'>
+          <div className='flex'>
+          <h1>Issue List</h1>
+          <FontAwesomeIcon
+          icon={faTimes}
+          onClick={() => {
+            setMyVisibility(false);
+            closeOverlay();
+
+            }
+          }
+          className=" mr-2 right-0 rounded-full border border-black"
+        ></FontAwesomeIcon>
+        <div>
+        
+          <div className="flex justify-between">
+              
+              <div className="flex justify-between text-gray-800">
+                <div className="mr-2">
+                  <FontAwesomeIcon
+                    icon={faFilter}
+                    onClick={()=>{setIssueViewMode('filter')}}
+                  />
+                </div>
+                <div className="mr-2">
+                  <FontAwesomeIcon icon={faDownload}></FontAwesomeIcon>
+                </div>
+
+              </div >
+              </div>
+              <div className='grid grid-cols-1'>
+              {issuesList.length >= 1
+                  ? issuesList.map((issueInfo: Issue) => {
+                    return (
+                      <div
+                        className="h-full mt-2 w-full"
+                        key={issueInfo._id}
+                        onClick={() => {
+                          setIssueViewMode('detail')
+                          setIssueObj(issueInfo);
+                        }}
+                      >
+                        <div className=" h-1/12 w-11/12  m-auto ">
+                          <div className=" m-auto ">
+                            <div className=" bg-white border border-solid border-gray-400 rounded">
+                              <div className="flex mt-2">
+                                <div>
+                                  <FontAwesomeIcon
+                                    className="text-3xl text-gray-400"
+                                    icon={faShieldAlt}
+                                  ></FontAwesomeIcon>
+                                </div>
+                                <div className="flex-col ml-2 text-gray-600">
+                                  <div>
+                                    <h5>{issueInfo.title}</h5>
+                                  </div>
+                                  <div className="flex">
+                                    <p className="mr-1">{issueInfo.status}</p>
+                                    |
+                                    <p className="ml-1">
+                                      {issueInfo.priority}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex mt-2 ml-3">
+                                <div className="flex">
+                                  <FontAwesomeIcon
+                                    icon={faUser}
+                                    className="text-gray-500 "
+                                  ></FontAwesomeIcon>
+                                  <p className="text-gray-500 -mt-1 ml-1">
+                                    {issueInfo.assignees[0].firstName}
+                                  </p>
+                                  <FontAwesomeIcon
+                                    icon={faCalendar}
+                                    className="text-gray-500 ml-2"
+                                  />
+                                  <p className="text-gray-500 -mt-1 ml-1">
+                                    {Moment(issueInfo.createdAt).format(
+                                      'MMM Do YYYY'
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                  : 'there is no data avaliable'}
+                  </div>
+            </div>
         </div>
-      )}
+        </div>
+        ));
+        break;
+    }
+
+  };
+  const validationSchema = Yup.object().shape({
+    issueType: Yup.array().min(1),
+    issuePriority: Yup.array().min(1),
+    issueStatus: Yup.array().min(1),
+    assignees: Yup.string().required('please select the issue assignee'),
+  });
+  useEffect(() => {
+    if (router.isReady) {
+      getIssuesTypes(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setIssueType(response.result);
+        }
+      });
+      getIssuesPriority(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setIssuePriority(response.result);
+        }
+      });
+      getProjectUsers(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+          }
+        })
+        .catch();
+    }
+    getIssuesStatus(router.query.projectId as string).then((response) => {
+      if (response.success === true) {
+        setIssueStatus(response.result);
+      }
+    });
+  }, [router.isReady, router.query.projectId]);
+  const closeIssueView = () => {
+    closeOverlay();
+  };
+  const handleOnFilterEvent = (formData: object) => {
+    handleOnFilter(formData);
+   setIssueViewMode('list');
+  };
+  const closeFilterView = () => {
+    closeOverlay();
+    setIssueViewMode('list');
+  };
+  if (projectUsers?.length > 0) {
+    projectUsers.map((projectUser: any) => {
+      usersList.push({
+        _id: projectUser?.user?._id,
+        name: projectUser?.user?.fullName,
+      });
+    });
+  }
+  return (
+    <div>
+        <div
+          className={`fixed calc-h ${myVisibility ? 'w-1/4' : 'w-0'}  
+          top-10  bg-gray-200 right-0 z-10 overflow-x-hidden`}
+        >
+          <div className="">
+            
+              {renderIssueView(issueViewMode)}
+              
+              
+        
+            
+          </div>
+        </div>
+      
     </div>
   );
 };

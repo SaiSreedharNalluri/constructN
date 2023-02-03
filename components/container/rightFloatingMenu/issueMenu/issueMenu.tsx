@@ -66,12 +66,13 @@ const IssueMenu: React.FC<IProps> = ({
     issueMenuClicked(issueMenuInstance);
   };
   const openIssueList = () => {
-    setListOverlay(true);
+    //setListOverlay(true);
+    console.log("coming herer");
     issueMenuInstance.toolAction = 'issueView';
     issueMenuClicked(issueMenuInstance);
   };
   const closeIssueList = () => {
-    setListOverlay(false);
+    //setListOverlay(false);
     issueMenuInstance.toolAction = 'issueViewClose';
     issueMenuClicked(issueMenuInstance);
   };
@@ -104,13 +105,13 @@ const IssueMenu: React.FC<IProps> = ({
             className="mx-2 cursor-pointer"
             onClick={openIssueList}
           ></FontAwesomeIcon>
-          <IssueList
+          {/* <IssueList
             closeFilterOverlay={closeFilterOverlay}
             issuesList={issuesList}
             visibility={listOverlay}
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
-          ></IssueList>
+          ></IssueList> */}
           <FontAwesomeIcon
             icon={issueVisbility ? faEye : faEyeSlash}
             className="cursor-pointer"
