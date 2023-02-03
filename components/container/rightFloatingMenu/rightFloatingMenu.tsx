@@ -64,17 +64,19 @@ const RightFloatingMenu: React.FC<IProps> = ({
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   let toolInstance: ITools = { toolName: '', toolAction: '' };
-  const closeStructurePages = (e: any) => {
-    if (!rightOverlayRefs.current.contains(e.target)) {
-      setRighttNav(false);
-    }
-  };
+  // const closeStructurePages = (e: any) => {
+  //   if (!rightOverlayRefs.current.contains(e.target)) {
+  //     setRighttNav(false);
+  //     setActive(e.target.id);
+  //     console.log('This is triggered!!!!!!!!!!!!!!!!!!!!!!!!',e);
+  //   }
+  // };
   useEffect(() => {
-    setIViewMode(viewMode);
-    document.addEventListener('click', closeStructurePages);
-    return () => {
-      document.removeEventListener('click', closeStructurePages);
-    };
+     setIViewMode(viewMode);
+  //   document.addEventListener('click', closeStructurePages);
+  //   return () => {
+  //     document.removeEventListener('click', closeStructurePages);
+  //   };
   }, [viewMode]);
 
   useEffect(() => {
@@ -138,7 +140,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
     toolClicked(localTool);
     if (
       localTool.toolAction === 'issueCreateClose' ||
-      localTool.toolAction === 'issueViewClose'
+      localTool.toolAction === 'issueViewClose' ||
+      localTool.toolAction === 'issueView'
     )
       setRighttNav(!rightNav);
   };
