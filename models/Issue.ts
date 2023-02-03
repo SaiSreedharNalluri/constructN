@@ -1,6 +1,7 @@
 export interface Issue {
   title: 'string';
   type: 'string';
+  description: string;
   status: 'string';
   priority: 'string';
   screenshot: 'string';

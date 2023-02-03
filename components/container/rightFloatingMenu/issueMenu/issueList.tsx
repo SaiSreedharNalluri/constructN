@@ -33,12 +33,14 @@ import {
 import { getProjectUsers } from '../../../../services/project';
 import * as Yup from 'yup';
 import Image from 'next/image';
+import { Modal } from 'react-responsive-modal';
 interface IProps {
   closeOverlay: () => void;
   issuesList: Issue[];
   visibility: boolean;
   handleOnFilter: (formData: object) => void;
   closeFilterOverlay: () => void;
+  deleteTheIssue: (issueObj: object) => void;
 }
 const IssueList: React.FC<IProps> = ({
   visibility,
@@ -46,19 +48,17 @@ const IssueList: React.FC<IProps> = ({
   issuesList,
   handleOnFilter,
   closeFilterOverlay,
+  deleteTheIssue,
 }) => {
   const router = useRouter();
   const [issueType, setIssueType] = useState<[string]>();
   const [myVisibility, setMyVisibility] = useState(visibility);
-  const [myIssueList, setMyIssueList] = useState<Issue[]>(issuesList);
-  const [myFilteredIsssueList, setMyFilteredIssueList] =
-    useState<Issue[]>(issuesList);
   const [issuePriority, setIssuePriority] = useState<[string]>();
   const [issueStatus, setIssueStatus] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [issueViewMode, setIssueViewMode] = useState('list'); //list, filter, detail
-
   const [issueObj, setIssueObj] = useState<Issue>();
+  const [open, setOpen] = useState(false);
   let usersList = [
     { _id: '', name: 'please select the assignee for the issue' },
   ];
@@ -73,11 +73,15 @@ const IssueList: React.FC<IProps> = ({
     issueStatus: [],
     assignees: '',
   };
+  const getOwnerName = (userId: string) => {
+    const user: any = projectUsers.find(
+      (userObj: any) => userObj.user._id === userId
+    );
+    return user?.user.firstName ? user?.user.firstName : '';
+  };
   useEffect(() => {
     setMyVisibility(visibility);
-    console.log('re setting list view', visibility);
   }, [visibility]);
-
   const renderIssueView = (viewParam: string) => {
     switch (viewParam) {
       case 'filter':
@@ -88,7 +92,9 @@ const IssueList: React.FC<IProps> = ({
                 <FontAwesomeIcon
                   icon={faArrowLeftLong}
                   className="mt-2"
-                  onClick={() => setIssueViewMode('list')}
+                  onClick={() => {
+                    setIssueViewMode('list'), closeFilterOverlay();
+                  }}
                 ></FontAwesomeIcon>
                 <h1>Issue Filters</h1>
               </div>
@@ -205,6 +211,7 @@ const IssueList: React.FC<IProps> = ({
                       className="p-1.5 mt-2 bg-gray-500  rounded-md"
                       onClick={() => {
                         setIssueViewMode('list');
+                        closeFilterOverlay();
                       }}
                     >
                       Cancel
@@ -228,8 +235,7 @@ const IssueList: React.FC<IProps> = ({
                   className="mt-2"
                   onClick={() => setIssueViewMode('list')}
                 ></FontAwesomeIcon>
-                <p className="ml-2 mt-1  font-semibold">Safety (#407)</p>
-                <div className="flex justify-between border-b border-black border-solid"></div>
+                <p className="ml-2 mt-1  font-semibold">{issueObj?.title}</p>
               </div>
               <div className="flex">
                 <div>
@@ -239,7 +245,10 @@ const IssueList: React.FC<IProps> = ({
                   <FontAwesomeIcon
                     icon={faTrashCan}
                     className="mt-2"
-                  ></FontAwesomeIcon>
+                    onClick={() => {
+                      setOpen(true);
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -254,13 +263,12 @@ const IssueList: React.FC<IProps> = ({
                   src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8QEBAPDw0NDw8QDxASEA8NDQ8NDQ8QFRIWFhUSFRUYHSggGBolGxUVITEhJSk3Li4uFx8zODMtNyg5OisBCgoKBQUFDgUFDisZExkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIALcBEwMBIgACEQEDEQH/xAAYAAEBAQEBAAAAAAAAAAAAAAAAAQIHA//EACQQAQEAAAYBBQEBAQAAAAAAAAABAhExQVHRwSFhgbHhcfGR/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AO2KyoKUiAVMQmIEuhCpL9AS6mXoF8ANM1QWEKbfILhWeE5AVYi0E2BADdC0CItNwQhSgQE6BSJsoKIUFTNWQUQBvtZogBwW+palASrUxARnP6arO0BZqi0lAIQwgsE3UFWszRrMCX1WoArOKLUAtIlXMElOyJQCqkBUIQDYpQCrukLuCosQAAGoABsJVgIkJqUC6psqAHsAKF6AKACqnC5gpUKBUxKyCwhdQBKAFpDJYCXyAAUAJ0ACoUoEGbagPRcSQAOkpegPJCgJDgu39W7AgAEUiAQigLCIsoKRF5BFRAIqFBZEWJAF4SqCZHakBBUAFQAqpAZzFyAaSbrUAL5LoAZ+vwnJACKEAuyTwsSQBcQAUIAFAFKRAWpVpACJwALUigUCAFIQBCryCUgAFPwBMwyAaSrUgCRUAz8E7IAqZgAFAWJV6AOxFvpQTPVYiwBUAWT1qFAFiKCLSAByUA2KACQoAQpkCoAEozQG0ugYgQ5W7IBhSLEm4KAAKAIQBdwhAAqQGkMygU8ByBkpACRLuQm4KFL5AEKAh+GwKkCAqBAayEAVOl90/AKzPDU7ZAVD3BSkhhBaJVoIACkTCTX4AKTUBf1Ck1BZUwzQaAEACmFAUIgLunQlBUWpQKqVQC6CgmQoBS7QIBkzKpQSk0CAv+KigipCAQmnwAJVhQCAUEUl9P8AhNgMKooEBOAWboFAzJ4TFsUDY/CEAiUAVUpAWESqBn7CgJapUxAbCsgELosAzIcLAOSa0wm4JkXlYngCnaphAmvwcC3QEk+yKQE6XysTPUEupQyAySrnokBakKAbpRb5ASHJNQO1CfYKU3+FBqDIAZEAEWICUui8pAXD2QUCz6ilAEWlBOCL+EgJycNGQIQqgkST0/tWmLgEot8ICZBSglUupQTJLy0mQIpwe4C8JWr0BCQyUGc6LkAQoAXYAEEAWNACRVASL5AE5/uTVAAwgCZLdgAsRQESgBUyACnPuAJkdAAUAW7gAoALQAf/2Q=="
                 ></Image>
               </div>
-              <div className="mt-2">
-                <FontAwesomeIcon icon={faSpinner}></FontAwesomeIcon>
-                <select className="bg-gray-100 ml-2 border border-gray-300 border-solid p-0.5 rounded">
-                  <option>In-Progress</option>
-                  <option>Progress</option>
-                  <option>Completed</option>
-                </select>
+              <div className="flex">
+                <FontAwesomeIcon
+                  icon={faSpinner}
+                  className="mt-2"
+                ></FontAwesomeIcon>
+                <p className="ml-2">{issueObj?.status}</p>
               </div>
               <div className="grid grid-cols-2 gap-x-4 gap-y-2   grid-rows-2 w-10/12 mt-2">
                 <div className="flex">
@@ -268,14 +276,16 @@ const IssueList: React.FC<IProps> = ({
                     className="mt-1"
                     icon={faFlag}
                   ></FontAwesomeIcon>
-                  <p className="ml-1">P1 (High)</p>
+                  <p className="ml-1">{issueObj?.priority}</p>
                 </div>
                 <div className="flex">
                   <FontAwesomeIcon
                     className="mt-1"
                     icon={faCalendar}
                   ></FontAwesomeIcon>
-                  <p className="ml-1">{"2 Feb'2023"}</p>
+                  <p className="ml-1">
+                    {Moment(issueObj?.createdAt).format('MMM Do YYYY')}
+                  </p>
                 </div>
 
                 <div className="flex">
@@ -283,20 +293,23 @@ const IssueList: React.FC<IProps> = ({
                     className="mt-1"
                     icon={faUser}
                   ></FontAwesomeIcon>
-                  <p className="ml-1">shiva krisha</p>
+                  <p className="ml-1"></p>
+                  {issueObj?.assignees[0].firstName}
                 </div>
                 <div className="flex">
                   <FontAwesomeIcon
                     className="mt-1"
                     icon={faUser}
                   ></FontAwesomeIcon>
-                  <p className="ml-1">shiva krisha</p>
+                  <p className="ml-1">
+                    {getOwnerName(issueObj?.owner as string)}
+                  </p>
                 </div>
               </div>
               <div className=" mt-2 ">
                 <h6 className="underline ">Issue Description</h6>
                 <p className=" break-words  whitespace-pre-wrap">
-                  Issue Description Paragraph
+                  {issueObj?.description}
                 </p>
               </div>
               <div>
@@ -306,15 +319,16 @@ const IssueList: React.FC<IProps> = ({
               <div className=" mt-2 ">
                 <h6 className="underline ">Related Tags</h6>
                 <div className="grid grid-cols-3 gap-2  mt-2">
-                  <div className="bg-gray-500 rounded-xl w-full px-0.5 py-1">
-                    Interior issue
-                  </div>
-                  <div className="bg-gray-500 rounded-xl w-full px-0.5 py-1 text-center">
-                    Pipeline
-                  </div>
-                  <div className="bg-gray-500 rounded-xl w-full px-0.5 py-1 text-center">
-                    Future Damage
-                  </div>
+                  {issueObj?.tags.map((tagData) => {
+                    return (
+                      <div
+                        className="bg-gray-500 rounded-xl w-full px-0.5 py-1"
+                        key={tagData}
+                      >
+                        {tagData}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -496,6 +510,13 @@ const IssueList: React.FC<IProps> = ({
       });
     });
   }
+  const handleDeleteItem = () => {
+    deleteTheIssue(issueObj as Issue);
+    setOpen(false);
+    setTimeout(() => {
+      setIssueViewMode('list');
+    }, 2000);
+  };
   return (
     <div>
       <div
@@ -503,6 +524,25 @@ const IssueList: React.FC<IProps> = ({
           top-10  bg-gray-200 right-0 z-10 overflow-x-hidden`}
       >
         <div className="">{renderIssueView(issueViewMode)}</div>
+      </div>
+      <div>
+        <Modal
+          open={open}
+          onClose={() => {
+            setOpen(false);
+          }}
+        >
+          <h1>Delete conformation for issue</h1>
+          <p>Are you sure you want to delete this item?</p>
+          <button onClick={handleDeleteItem}>Confirm</button>
+          <button
+            onClick={() => {
+              setOpen(false);
+            }}
+          >
+            Cancel
+          </button>
+        </Modal>
       </div>
     </div>
   );
