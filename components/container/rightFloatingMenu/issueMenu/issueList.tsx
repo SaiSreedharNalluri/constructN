@@ -80,9 +80,9 @@ const IssueList: React.FC<IProps> = ({
     issueStatusData: Array<string>;
     assigneesData: object[];
   } = {
-    issueTypeData: (issueType ===undefined)?[]:issueType ,
-    issuePriorityData: (issuePriority ===undefined)?[]:issuePriority ,
-    issueStatusData: (issueStatus ===undefined)?[]:issueStatus ,
+    issueTypeData: [],//(issueType ===undefined)?[]:issueType ,
+    issuePriorityData: [],// (issuePriority ===undefined)?[]:issuePriority ,
+    issueStatusData: [],//(issueStatus ===undefined)?[]:issueStatus ,
     assigneesData: [],
   };
   const getOwnerName = (userId: string) => {
@@ -483,7 +483,7 @@ const IssueList: React.FC<IProps> = ({
                       type="submit"
                       className="p-1.5 mt-2 bg-gray-500  rounded-md "
                     >
-                      Edit Issue
+                      Update Issue
                     </button>
                   </div>
                 </Form>
@@ -502,7 +502,7 @@ const IssueList: React.FC<IProps> = ({
                   className="mt-2"
                   onClick={() => setIssueViewMode('list')}
                 ></FontAwesomeIcon>
-                <p className="ml-2 mt-1  font-semibold">{issueObj?.title}</p>
+                <p className="ml-2 mt-1  font-semibold">{issueObj?.type} Issue</p>
               </div>
               <div className="flex">
                 <div>
@@ -533,16 +533,17 @@ const IssueList: React.FC<IProps> = ({
                   className="w-10/12 h-24"
                   src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8QEBAPDw0NDw8QDxASEA8NDQ8NDQ8QFRIWFhUSFRUYHSggGBolGxUVITEhJSk3Li4uFx8zODMtNyg5OisBCgoKBQUFDgUFDisZExkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIALcBEwMBIgACEQEDEQH/xAAYAAEBAQEBAAAAAAAAAAAAAAAAAQIHA//EACQQAQEAAAYBBQEBAQAAAAAAAAABAhExQVHRwSFhgbHhcfGR/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AO2KyoKUiAVMQmIEuhCpL9AS6mXoF8ANM1QWEKbfILhWeE5AVYi0E2BADdC0CItNwQhSgQE6BSJsoKIUFTNWQUQBvtZogBwW+palASrUxARnP6arO0BZqi0lAIQwgsE3UFWszRrMCX1WoArOKLUAtIlXMElOyJQCqkBUIQDYpQCrukLuCosQAAGoABsJVgIkJqUC6psqAHsAKF6AKACqnC5gpUKBUxKyCwhdQBKAFpDJYCXyAAUAJ0ACoUoEGbagPRcSQAOkpegPJCgJDgu39W7AgAEUiAQigLCIsoKRF5BFRAIqFBZEWJAF4SqCZHakBBUAFQAqpAZzFyAaSbrUAL5LoAZ+vwnJACKEAuyTwsSQBcQAUIAFAFKRAWpVpACJwALUigUCAFIQBCryCUgAFPwBMwyAaSrUgCRUAz8E7IAqZgAFAWJV6AOxFvpQTPVYiwBUAWT1qFAFiKCLSAByUA2KACQoAQpkCoAEozQG0ugYgQ5W7IBhSLEm4KAAKAIQBdwhAAqQGkMygU8ByBkpACRLuQm4KFL5AEKAh+GwKkCAqBAayEAVOl90/AKzPDU7ZAVD3BSkhhBaJVoIACkTCTX4AKTUBf1Ck1BZUwzQaAEACmFAUIgLunQlBUWpQKqVQC6CgmQoBS7QIBkzKpQSk0CAv+KigipCAQmnwAJVhQCAUEUl9P8AhNgMKooEBOAWboFAzJ4TFsUDY/CEAiUAVUpAWESqBn7CgJapUxAbCsgELosAzIcLAOSa0wm4JkXlYngCnaphAmvwcC3QEk+yKQE6XysTPUEupQyAySrnokBakKAbpRb5ASHJNQO1CfYKU3+FBqDIAZEAEWICUui8pAXD2QUCz6ilAEWlBOCL+EgJycNGQIQqgkST0/tWmLgEot8ICZBSglUupQTJLy0mQIpwe4C8JWr0BCQyUGc6LkAQoAXYAEEAWNACRVASL5AE5/uTVAAwgCZLdgAsRQESgBUyACnPuAJkdAAUAW7gAoALQAf/2Q=="
                 ></Image>
+                <p className="ml-2">{issueObj?.title}</p>
               </div>
-              <div className="flex">
+              <div className="grid grid-cols-2 gap-2">
+                <div className='flex'>
                 <FontAwesomeIcon
                   icon={faSpinner}
                   className="mt-2"
                 ></FontAwesomeIcon>
                 <p className="ml-2">{issueObj?.status}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2   grid-rows-2  mt-2">
-                <div className="flex">
+                </div>
+                <div className='flex'>
                   <FontAwesomeIcon
                     className="mt-1"
                     icon={faFlag}
@@ -558,15 +559,6 @@ const IssueList: React.FC<IProps> = ({
                     {Moment(issueObj?.createdAt).format('MMM Do YYYY')}
                   </p>
                 </div>
-
-                <div className="flex">
-                  <FontAwesomeIcon
-                    className="mt-1"
-                    icon={faUser}
-                  ></FontAwesomeIcon>
-                  <p className="ml-1"></p>
-                  {issueObj?.assignees[0].firstName}
-                </div>
                 <div className="flex">
                   <FontAwesomeIcon
                     className="mt-1"
@@ -576,6 +568,20 @@ const IssueList: React.FC<IProps> = ({
                     {getOwnerName(issueObj?.owner as string)}
                   </p>
                 </div>
+              </div>
+              <div className="grid grid-cols-1 gap-x-4 gap-y-2   grid-rows-2  mt-2">
+                
+                
+
+                <div className="flex">
+                  <FontAwesomeIcon
+                    className="mt-1"
+                    icon={faUser}
+                  ></FontAwesomeIcon>
+                  <p className="ml-1"></p>
+                  {issueObj?.assignees.map((a:any)=>a.firstName).join(',')}
+                </div>
+                
               </div>
               <div className=" mt-2 ">
                 <h6 className="underline ">Issue Description</h6>
