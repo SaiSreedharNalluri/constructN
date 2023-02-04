@@ -16,6 +16,8 @@ import { ISnapshot } from '../../../../models/ISnapshot';
 import { IStructure } from '../../../../models/IStructure';
 import { getCookie } from 'cookies-next';
 import { IToolResponse } from '../../../../models/ITools';
+import ReactSelect from 'react-select';
+import TagsInput from 'react-tagsinput';
 interface IProps {
   closeOverlay: () => void;
   visibility: boolean;
@@ -41,9 +43,6 @@ const IssueCreate: React.FC<IProps> = ({
   const [issueType, setIssueType] = useState<[string]>();
   const [issuePriority, setIssuePriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
-  let usersList = [
-    { _id: '', name: 'please select the assignee for the issue' },
-  ];
   const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
@@ -98,6 +97,13 @@ const IssueCreate: React.FC<IProps> = ({
     closeOverlay();
   };
   const clickIssueSubmit = (formData: any) => {
+    let userIdList: any[] = [];
+    if (formData.assignees.length > 0) {
+      formData.assignees.map((user: any) => {
+        userIdList.push(user.value);
+      });
+      formData.assignees = userIdList;
+    }
     formData.structure = myStructure?._id;
     formData.title = `${myStructure?.name}_${formData.date} `;
     formData.snapshot = mySnapshot?._id;
@@ -122,16 +128,16 @@ const IssueCreate: React.FC<IProps> = ({
     type: string;
     priority: string;
     description: string;
-    assignees: string;
-    tags: string;
+    assignees: object[];
+    tags: string[];
     date: string;
     context: IToolResponse;
   } = {
     type: 'Please select the issue type',
     priority: 'Please select the issue priority',
     description: '',
-    assignees: 'Please select the issue assignee',
-    tags: '',
+    assignees: [],
+    tags: [],
     date: '',
     context: myContext,
   };
@@ -139,15 +145,25 @@ const IssueCreate: React.FC<IProps> = ({
     type: Yup.string(),
     priority: Yup.string(),
     description: Yup.string(),
-    assignees: Yup.string(),
-    tags: Yup.string(),
+    assignees: Yup.array().of(
+      Yup.object().shape({
+        label: Yup.string().required(),
+        value: Yup.string().required(),
+      })
+    ),
+    tags: Yup.array().of(Yup.string()),
     date: Yup.string(),
   });
-  if (projectUsers?.length > 0) {
+  interface user {
+    label: string;
+    value: string;
+  }
+  let usersList: user[] = [];
+  if (projectUsers.length > 0) {
     projectUsers.map((projectUser: any) => {
       usersList.push({
-        _id: projectUser?.user?._id,
-        name: projectUser?.user?.fullName,
+        label: projectUser?.user?.fullName,
+        value: projectUser?.user?._id,
       });
     });
   }
@@ -175,7 +191,7 @@ const IssueCreate: React.FC<IProps> = ({
           validationSchema={validationSchema}
           onSubmit={clickIssueSubmit}
         >
-          {({ errors, touched }) => (
+          {({ values, setFieldValue }) => (
             <Form className=" grid grid-cols-1 gap-y-2 px-4">
               <div className="mt-2 ">
                 <h1 className="text-gray-500">Select the Type of Issue</h1>
@@ -192,7 +208,11 @@ const IssueCreate: React.FC<IProps> = ({
                       </option>
                     ))}
                 </Field>
-                {errors.type && touched.type ? <div>{errors.type}</div> : null}
+                <ErrorMessage
+                  name="type"
+                  component="div"
+                  className="alert alert-danger"
+                />
               </div>
               <div>
                 <div>
@@ -205,7 +225,7 @@ const IssueCreate: React.FC<IProps> = ({
                     name="description"
                   />
                   <ErrorMessage
-                    name="name"
+                    name="description"
                     component="div"
                     className="alert alert-danger"
                   />
@@ -226,31 +246,31 @@ const IssueCreate: React.FC<IProps> = ({
                       </option>
                     ))}
                 </Field>
-                {errors.priority && touched.priority ? (
-                  <div>{errors.priority}</div>
-                ) : null}
+                <ErrorMessage
+                  name="priority"
+                  component="div"
+                  className="alert alert-danger"
+                />
               </div>
               <div>
                 <div>
                   <h5 className="text-gray-500">Assigned To</h5>
                 </div>
                 <div>
-                  <Field
-                    as="select"
+                  <ReactSelect
                     name="assignees"
-                    id="assignees"
+                    options={usersList}
+                    value={values.assignees}
+                    onChange={(value) => setFieldValue('assignees', value)}
+                    isMulti
+                    placeholder="Select the assignees "
                     className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
-                  >
-                    {usersList &&
-                      usersList.map((option: any) => (
-                        <option key={option?._id} value={option?._id}>
-                          {option?.name}
-                        </option>
-                      ))}
-                  </Field>
-                  {errors.assignees && touched.assignees ? (
-                    <div>{errors.assignees}</div>
-                  ) : null}
+                  />
+                  <ErrorMessage
+                    name="assignees"
+                    component="div"
+                    className="alert alert-danger"
+                  />
                 </div>
               </div>
               <div>
@@ -262,7 +282,7 @@ const IssueCreate: React.FC<IProps> = ({
                     className="block w-full text-sm border border-solid border-gray-600 rounded p-2"
                   />
                   <ErrorMessage
-                    name="name"
+                    name="date"
                     component="div"
                     className="alert alert-danger"
                   />
@@ -273,13 +293,12 @@ const IssueCreate: React.FC<IProps> = ({
                   <h5 className="text-gray-500">Tags</h5>
                 </div>
                 <div>
-                  <Field
-                    component="textarea"
-                    className="block w-full border border-solid border-gray-600 text-sm  rounded  "
-                    name="tags"
+                  <TagsInput
+                    value={values.tags}
+                    onChange={(tags: any) => setFieldValue('tags', tags)}
                   />
                   <ErrorMessage
-                    name="name"
+                    name="tags"
                     component="div"
                     className="alert alert-danger"
                   />

@@ -17,7 +17,11 @@ import { IToolResponse, ITools } from '../../../../models/ITools';
 import { getStructureList } from '../../../../services/structure';
 import { IActiveRealityMap } from '../../../../models/IReality';
 import { IDesignMap } from '../../../../models/IDesign';
-import { deleteIssue, getIssuesList } from '../../../../services/issue';
+import {
+  deleteIssue,
+  editIssue,
+  getIssuesList,
+} from '../../../../services/issue';
 import { getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
 import { getTasksList } from '../../../../services/task';
@@ -53,8 +57,6 @@ const Index: React.FC<IProps> = () => {
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
   const [taskFilterList, setTaskFilterList] = useState<ITasks[]>([]);
-  const [loadData, setLoadData] = useState(false);
-  //const [createOverlay, setCreateOverlay] = useState(false);
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openIssueView, setOpenIssueView] = useState(false);
@@ -372,6 +374,21 @@ const Index: React.FC<IProps> = () => {
         console.log('error', error);
       });
   };
+  const clickIssueEditSubmit = (editObj: any, issueObj: any) => {
+    editIssue(
+      router.query.projectId as string,
+      editObj,
+      issueObj?._id as string
+    )
+      .then((response) => {
+        if (response.success === true) {
+          toast.success('issue information updated successfully');
+        }
+      })
+      .catch((error) => {
+        console.log('error', error);
+      });
+  };
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -501,6 +518,7 @@ const Index: React.FC<IProps> = () => {
                 closeOverlay={closeIssueList}
                 handleOnFilter={handleOnIssueFilter}
                 deleteTheIssue={deleteTheIssue}
+                clickIssueEditSubmit={clickIssueEditSubmit}
               ></IssueList>
             </div>
           </div>
