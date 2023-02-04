@@ -1,7 +1,4 @@
 import {
-  faArrowLeft,
-  faEdit,
-  faTrash,
   faTimes,
   faSearch,
   faFilter,
@@ -34,6 +31,8 @@ import { getProjectUsers } from '../../../../services/project';
 import * as Yup from 'yup';
 import Image from 'next/image';
 import { Modal } from 'react-responsive-modal';
+import ReactSelect from 'react-select';
+import TagsInput from 'react-tagsinput';
 interface IProps {
   closeOverlay: () => void;
   issuesList: Issue[];
@@ -41,6 +40,7 @@ interface IProps {
   handleOnFilter: (formData: object) => void;
   closeFilterOverlay: () => void;
   deleteTheIssue: (issueObj: object) => void;
+  clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
 }
 const IssueList: React.FC<IProps> = ({
   visibility,
@@ -49,6 +49,7 @@ const IssueList: React.FC<IProps> = ({
   handleOnFilter,
   closeFilterOverlay,
   deleteTheIssue,
+  clickIssueEditSubmit,
 }) => {
   const router = useRouter();
   const [issueType, setIssueType] = useState<[string]>();
@@ -59,19 +60,30 @@ const IssueList: React.FC<IProps> = ({
   const [issueViewMode, setIssueViewMode] = useState('list'); //list, filter, detail
   const [issueObj, setIssueObj] = useState<Issue>();
   const [open, setOpen] = useState(false);
-  let usersList = [
-    { _id: '', name: 'please select the assignee for the issue' },
-  ];
+  interface user {
+    label: string;
+    value: string;
+  }
+  let usersList: user[] = [];
+  let defaultList: user[] = [];
+  if (issueObj) {
+    issueObj.assignees.map((user) => {
+      defaultList.push({
+        label: user.firstName,
+        value: user._id,
+      });
+    });
+  }
   const initialValues: {
     issueType: Array<string>;
     issuePriority: Array<string>;
     issueStatus: Array<string>;
-    assignees: string;
+    assignees: object[];
   } = {
     issueType: [],
     issuePriority: [],
     issueStatus: [],
-    assignees: '',
+    assignees: [],
   };
   const getOwnerName = (userId: string) => {
     const user: any = projectUsers.find(
@@ -79,9 +91,86 @@ const IssueList: React.FC<IProps> = ({
     );
     return user?.user.firstName ? user?.user.firstName : '';
   };
+  const initialEditValues: {
+    type: string;
+    status: string;
+    priority: string;
+    description: string;
+    assignees: object[];
+    tags: [string];
+    date: string;
+  } = {
+    type: issueObj?.type ? issueObj.type : '',
+    status: issueObj?.status ? issueObj.status : '',
+    priority: issueObj?.priority
+      ? issueObj.priority
+      : 'Please select the issue priority',
+    description: issueObj?.description ? issueObj?.description : '',
+    assignees: defaultList,
+    tags: issueObj?.tags ? issueObj.tags : [''],
+    date: Moment(issueObj?.createdAt).format('YYYY-MM-DD'),
+  };
+  const validationEditSchema = Yup.object().shape({
+    type: Yup.string(),
+    priority: Yup.string(),
+    description: Yup.string(),
+    assignees: Yup.array().of(
+      Yup.object().shape({
+        label: Yup.string().required(),
+        value: Yup.string().required(),
+      })
+    ),
+    tags: Yup.array().of(Yup.string()),
+    date: Yup.string(),
+  });
   useEffect(() => {
-    setMyVisibility(visibility);
-  }, [visibility]);
+    if (router.isReady) {
+      getIssuesTypes(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setIssueType(response.result);
+        }
+      });
+      getIssuesPriority(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setIssuePriority(response.result);
+        }
+      });
+      getProjectUsers(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+          }
+        })
+        .catch();
+    }
+    getIssuesStatus(router.query.projectId as string).then((response) => {
+      if (response.success === true) {
+        setIssueStatus(response.result);
+      }
+      setMyVisibility(visibility);
+    });
+  }, [router.isReady, router.query.projectId, visibility]);
+  if (projectUsers.length > 0) {
+    projectUsers.map((projectUser: any) => {
+      usersList.push({
+        label: projectUser?.user?.fullName,
+        value: projectUser?.user?._id,
+      });
+    });
+  }
+  const clickIssueHandleEditSubmit = (editObj: any) => {
+    let userIdList: any[] = [];
+    if (editObj.assignees.length > 0) {
+      editObj.assignees.map((user: any) => {
+        userIdList.push(user.value);
+      });
+      editObj.assignees = userIdList;
+    }
+    clickIssueEditSubmit(editObj, issueObj as Issue);
+    setTimeout(() => {
+      setIssueViewMode('list');
+    }, 2000);
+  };
   const renderIssueView = (viewParam: string) => {
     switch (viewParam) {
       case 'filter':
@@ -112,7 +201,7 @@ const IssueList: React.FC<IProps> = ({
                 validationSchema={validationSchema}
                 onSubmit={handleOnFilterEvent}
               >
-                {({ errors, touched }) => (
+                {({ values, setFieldValue }) => (
                   <Form className=" grid grid-cols-1 gap-y-2 px-4">
                     <div>
                       <h5 className="text-gray-500">Issue Type</h5>
@@ -180,19 +269,17 @@ const IssueList: React.FC<IProps> = ({
                         <h5 className="text-gray-500">Assigned To</h5>
                       </div>
                       <div>
-                        <Field
-                          as="select"
+                        <ReactSelect
                           name="assignees"
-                          id="assignees"
+                          options={usersList}
+                          isMulti
+                          placeholder="Select the assignees "
+                          value={values.assignees}
+                          onChange={(value) =>
+                            setFieldValue('assignees', value)
+                          }
                           className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
-                        >
-                          {usersList &&
-                            usersList.map((option: any) => (
-                              <option key={option?._id} value={option?._id}>
-                                {option?.name}
-                              </option>
-                            ))}
-                        </Field>
+                        />
                         <ErrorMessage
                           name="assignees"
                           component="div"
@@ -225,6 +312,178 @@ const IssueList: React.FC<IProps> = ({
           </div>
         );
         break;
+      case 'edit':
+        return (
+          <div>
+            <div className="flex h-8 justify-between border-b border-black border-solid">
+              <div>
+                <h1>Edit Issue</h1>
+              </div>
+              <div>
+                <FontAwesomeIcon
+                  icon={faTimes}
+                  onClick={() => {
+                    setIssueViewMode('detail');
+                  }}
+                  className="hover:white cursor-pointer mr-2 "
+                ></FontAwesomeIcon>
+              </div>
+            </div>
+            <Formik
+              initialValues={initialEditValues}
+              validationSchema={validationEditSchema}
+              onSubmit={clickIssueHandleEditSubmit}
+            >
+              {({ values, setFieldValue }) => (
+                <Form className=" grid grid-cols-1 gap-y-2 px-4">
+                  <div className="mt-2 ">
+                    <h1 className="text-gray-500">Select the Type of Issue</h1>
+                    <Field
+                      as="select"
+                      name="type"
+                      id="type"
+                      className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
+                    >
+                      {issueType &&
+                        issueType.map((option: any) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                    </Field>
+                    <ErrorMessage
+                      name="type"
+                      component="div"
+                      className="alert alert-danger"
+                    />
+                  </div>
+                  <div className="mt-2 ">
+                    <h1 className="text-gray-500">Select the Issue Status</h1>
+                    <Field
+                      as="select"
+                      name="status"
+                      id="status"
+                      className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
+                    >
+                      {issueStatus &&
+                        issueStatus.map((option: any) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                    </Field>
+                    <ErrorMessage
+                      name="status"
+                      component="div"
+                      className="alert alert-danger"
+                    />
+                  </div>
+                  <div>
+                    <div>
+                      <h5 className="text-gray-500">Issue description.</h5>
+                    </div>
+                    <div>
+                      <Field
+                        component="textarea"
+                        className="block w-full text-sm border border-solid border-gray-600 rounded-lg"
+                        name="description"
+                      />
+                      <ErrorMessage
+                        name="description"
+                        component="div"
+                        className="alert alert-danger"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <h1 className="text-gray-500">
+                      Select Priority of the Issue
+                    </h1>
+                    <Field
+                      as="select"
+                      name="priority"
+                      id="priority"
+                      className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
+                    >
+                      {issuePriority &&
+                        issuePriority.map((option: any) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                    </Field>
+                    <ErrorMessage
+                      name="priority"
+                      component="div"
+                      className="alert alert-danger"
+                    />
+                  </div>
+                  <div>
+                    <div>
+                      <h5 className="text-gray-500">Assigned To</h5>
+                    </div>
+                    <div>
+                      <ReactSelect
+                        name="assignees"
+                        options={usersList}
+                        isMulti
+                        placeholder="Select the assignees "
+                        value={values.assignees}
+                        onChange={(value) => setFieldValue('assignees', value)}
+                        className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
+                      />
+                      <ErrorMessage
+                        name="assignees"
+                        component="div"
+                        className="alert alert-danger"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div>
+                      <div className=" text-gray-500 ">Date</div>
+                      <Field
+                        type="date"
+                        name="date"
+                        className="block w-full text-sm border border-solid border-gray-600 rounded p-2"
+                      />
+                      <ErrorMessage
+                        name="date"
+                        component="div"
+                        className="alert alert-danger"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div>
+                      <h5 className="text-gray-500">Tags</h5>
+                    </div>
+                    <div>
+                      <TagsInput
+                        value={values.tags}
+                        onChange={(tags: any) => setFieldValue('tags', tags)}
+                      />
+                      <ErrorMessage
+                        name="tags"
+                        component="div"
+                        className="alert alert-danger"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-center">
+                    <button
+                      type="submit"
+                      className="p-1.5 mt-2 bg-gray-500  rounded-md "
+                    >
+                      Edit Issue
+                    </button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
+          </div>
+        );
+        break;
       case 'detail':
         return (
           <div>
@@ -239,7 +498,11 @@ const IssueList: React.FC<IProps> = ({
               </div>
               <div className="flex">
                 <div>
-                  <FontAwesomeIcon icon={faPen} className="mt-2 pr-2" />
+                  <FontAwesomeIcon
+                    icon={faPen}
+                    className="mt-2 pr-2"
+                    onClick={() => setIssueViewMode('edit')}
+                  />
                 </div>
                 <div>
                   <FontAwesomeIcon
@@ -463,37 +726,14 @@ const IssueList: React.FC<IProps> = ({
     issueType: Yup.array().min(1),
     issuePriority: Yup.array().min(1),
     issueStatus: Yup.array().min(1),
-    assignees: Yup.string().required('please select the issue assignee'),
+    assignees: Yup.array().of(
+      Yup.object().shape({
+        label: Yup.string().required(),
+        value: Yup.string().required(),
+      })
+    ),
   });
-  useEffect(() => {
-    if (router.isReady) {
-      getIssuesTypes(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setIssueType(response.result);
-        }
-      });
-      getIssuesPriority(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setIssuePriority(response.result);
-        }
-      });
-      getProjectUsers(router.query.projectId as string)
-        .then((response) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
-    }
-    getIssuesStatus(router.query.projectId as string).then((response) => {
-      if (response.success === true) {
-        setIssueStatus(response.result);
-      }
-    });
-  }, [router.isReady, router.query.projectId]);
-  const closeIssueView = () => {
-    closeOverlay();
-  };
+
   const handleOnFilterEvent = (formData: object) => {
     handleOnFilter(formData);
     setIssueViewMode('list');
@@ -502,14 +742,6 @@ const IssueList: React.FC<IProps> = ({
     closeOverlay();
     setIssueViewMode('list');
   };
-  if (projectUsers?.length > 0) {
-    projectUsers.map((projectUser: any) => {
-      usersList.push({
-        _id: projectUser?.user?._id,
-        name: projectUser?.user?.fullName,
-      });
-    });
-  }
   const handleDeleteItem = () => {
     deleteTheIssue(issueObj as Issue);
     setOpen(false);

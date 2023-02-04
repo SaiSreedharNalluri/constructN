@@ -88,3 +88,23 @@ export const deleteIssue = async (projectId: string, IssueId: string) => {
       throw error.response.data;
     });
 };
+export const editIssue = (
+  projectId: string,
+  issueObj: object,
+  issueId: string
+) => {
+  return instance
+    .put(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/${issueId}`,
+      issueObj,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
