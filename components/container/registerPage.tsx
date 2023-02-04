@@ -53,8 +53,8 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
         className="h-screen w-screen"
       />
 
-      <div className=" absolute w-1/3 top-0 bg-opacity-50 px-5 h-full right-0 place-items-center bg-gray-300 ">
-        <div className="grid grid-cols-1 gap-4 border my-20 border-solid place-content-center border-gray-500 rounded-3xl ">
+      <div className=" absolute w-3/4 top-0 bg-opacity-50 px-5 h-full 2xl:w-1/4 xl:w-1/3 lg:w-2/5 md:w-1/2 sm:w-1/2 right-0   place-items-center bg-gray-300 ">
+        <div className="grid grid-cols-1 gap-4 border my-20   border-solid place-content-center border-gray-500 rounded-3xl ">
           <h2 className="text-center text-xl font-bold">Register</h2>
           <Formik
             initialValues={initialValues}
@@ -122,9 +122,8 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                   placeholderName="Confirm Password"
                 />
                 <div
-                  className={`${
-                    active === 'confirm password'
-                  } absolute p-3 inset-y-0 right-0`}
+                  className={`${active === 'confirm password'
+                    } absolute p-3 inset-y-0 right-0`}
                   id="confirm password"
                 >
                   <Image
