@@ -63,8 +63,7 @@ const Index: React.FC<IProps> = () => {
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openIssueView, setOpenIssueView] = useState(false);
   const [currentContext, setCurrentContext] = useState<IToolResponse>({
-    type: 'Task',
-    position: { x: 0, y: 0, z: 0 },
+    type: 'Task'
   });
 
   const closeIssueCreate = () => {
