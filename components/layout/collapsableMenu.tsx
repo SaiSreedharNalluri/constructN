@@ -49,27 +49,26 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
   };
   return (
     <div className=" w-11 h-screen text-center bg-gray-200 border border-gray-300">
-      <div>
-        <Image src={dashboard} alt="" id="dashboard" onClick={leftClickHandler} className={`w-1/2  text-4xl m-auto py-2 cursor-pointer  ${active === 'dashboard' ? 'selectedClass' : 'unSelectedClass'
-          } `}></Image>
+      <div className={`${active === 'dashboard' ? 'selectedClass' : 'unSelectedClass'
+          } `}>
+        <Image src={dashboard} alt="" id="dashboard" onClick={leftClickHandler} className={`  text-4xl m-auto py-2 cursor-pointer`}></Image>
       </div>
-      <div>
+      <div className={`${active === 'structure' ? 'selectedClass' : 'unSelectedClass'}`}>
         <Image src={viewer} alt="" id="views" onClick={(e: any) => {
           if (active === 'structure') {
             onChangeData();
           } else {
             leftClickHandler(e);
           }
-        }} className={`w-1/2  text-4xl m-auto py-2 cursor-pointer  ${active === 'views' ? 'selectedClass' : 'unSelectedClass'
-          } `}></Image>
+        }} className={` text-4xl m-auto py-2 cursor-pointer  `}></Image>
       </div>
-      <div>
-        <Image src={schedule} alt="" id="schedule" onClick={leftClickHandler} className={`w-1/2  text-4xl m-auto py-2 cursor-pointer  ${active === 'schedule' ? 'selectedClass' : 'unSelectedClass'
-          } `}></Image>
+      <div className={`${active === 'schedule' ? 'selectedClass' : 'unSelectedClass'
+          } `}>
+        <Image src={schedule} alt="" id="schedule" onClick={leftClickHandler} className={` text-4xl py-2 m-auto  cursor-pointer  `}></Image>
       </div>
-      <div>
-        <Image src={settings} alt="" id="settings" onClick={leftClickHandler} className={`w-1/2  text-4xl m-auto py-2 cursor-pointer  ${active === 'settings' ? 'selectedClass' : 'unSelectedClass'
-          } `}></Image>
+      <div className={`${active === 'settings' ? 'selectedClass' : 'unSelectedClass'
+          } `}>
+        <Image src={settings} alt="" id="settings" onClick={leftClickHandler} className={`w-2/3 text-4xl m-auto py-2 cursor-pointer `}></Image>
       </div>
       {/* <div className="mt-2 border-t border-solid border-gray-400">
         <FontAwesomeIcon

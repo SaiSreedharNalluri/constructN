@@ -55,6 +55,8 @@ const Index: React.FC<IProps> = () => {
   const [loggedInUserId, SetLoggedInUserId] = useState('');
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
+  const [isIssueFilter,setIsIssueFilter] = useState(false);
+  const [isTaslFilter,setIsTaskFilter] = useState(false);
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
   const [taskFilterList, setTaskFilterList] = useState<ITasks[]>([]);
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
@@ -334,12 +336,13 @@ const Index: React.FC<IProps> = () => {
   const handleOnIssueFilter = (formData: any) => {
     const result = issueFilterList.filter(
       (item: Issue) =>
-        formData.issueType.includes(item.type) &&
-        formData?.issuePriority?.includes(item.priority) &&
-        formData?.issueStatus?.includes(item.status) &&
-        item.assignees.filter(
-          (userInfo: any) => userInfo._id === formData.assignees
-        )
+        formData.issueTypeData.includes(item.type) &&
+        formData?.issuePriorityData?.includes(item.priority) &&
+        formData?.issueStatusData?.includes(item.status) &&
+        formData?.assigneesData?.includes(item.assignees)
+        // item.assignees.filter(
+        //   (userInfo: any) => userInfo._id === formData.assigneesData
+        // )
     );
     setIssueList(result);
   };
