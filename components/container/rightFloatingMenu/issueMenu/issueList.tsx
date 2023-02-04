@@ -533,7 +533,7 @@ const IssueList: React.FC<IProps> = ({
                 ></FontAwesomeIcon>
                 <p className="ml-2">{issueObj?.status}</p>
               </div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2   grid-rows-2 w-10/12 mt-2">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2   grid-rows-2  mt-2">
                 <div className="flex">
                   <FontAwesomeIcon
                     className="mt-1"
@@ -581,7 +581,7 @@ const IssueList: React.FC<IProps> = ({
               </div>
               <div className=" mt-2 ">
                 <h6 className="underline ">Related Tags</h6>
-                <div className="grid grid-cols-3 gap-2  mt-2">
+                <div className="grid grid-cols-3 gap-2 text-center  mt-2">
                   {issueObj?.tags.map((tagData) => {
                     return (
                       <div
@@ -656,64 +656,64 @@ const IssueList: React.FC<IProps> = ({
               <div className="grid grid-cols-1">
                 {issuesList.length >= 1
                   ? issuesList.map((issueInfo: Issue) => {
-                      return (
-                        <div
-                          className="h-full mt-2 w-full"
-                          key={issueInfo._id}
-                          onClick={() => {
-                            setIssueViewMode('detail');
-                            setIssueObj(issueInfo);
-                          }}
-                        >
-                          <div className=" h-1/12 w-11/12  m-auto ">
-                            <div className=" m-auto ">
-                              <div className=" bg-white border border-solid border-gray-400 rounded">
-                                <div className="flex mt-2">
+                    return (
+                      <div
+                        className="h-full mt-2 w-full"
+                        key={issueInfo._id}
+                        onClick={() => {
+                          setIssueViewMode('detail');
+                          setIssueObj(issueInfo);
+                        }}
+                      >
+                        <div className=" h-1/12 w-11/12  m-auto ">
+                          <div className=" m-auto ">
+                            <div className=" bg-white border border-solid border-gray-400 rounded">
+                              <div className="flex mt-2">
+                                <div>
+                                  <FontAwesomeIcon
+                                    className="text-3xl text-gray-400"
+                                    icon={faShieldAlt}
+                                  ></FontAwesomeIcon>
+                                </div>
+                                <div className="flex-col ml-2 text-gray-600">
                                   <div>
-                                    <FontAwesomeIcon
-                                      className="text-3xl text-gray-400"
-                                      icon={faShieldAlt}
-                                    ></FontAwesomeIcon>
+                                    <h5>{issueInfo.title}</h5>
                                   </div>
-                                  <div className="flex-col ml-2 text-gray-600">
-                                    <div>
-                                      <h5>{issueInfo.title}</h5>
-                                    </div>
-                                    <div className="flex">
-                                      <p className="mr-1">{issueInfo.status}</p>
-                                      |
-                                      <p className="ml-1">
-                                        {issueInfo.priority}
-                                      </p>
-                                    </div>
+                                  <div className="flex">
+                                    <p className="mr-1">{issueInfo.status}</p>
+                                    |
+                                    <p className="ml-1">
+                                      {issueInfo.priority}
+                                    </p>
                                   </div>
                                 </div>
-                                <div className="flex mt-2 ml-3">
-                                  <div className="flex">
-                                    <FontAwesomeIcon
-                                      icon={faUser}
-                                      className="text-gray-500 "
-                                    ></FontAwesomeIcon>
-                                    <p className="text-gray-500 -mt-1 ml-1">
-                                      {issueInfo.assignees[0].firstName}
-                                    </p>
-                                    <FontAwesomeIcon
-                                      icon={faCalendar}
-                                      className="text-gray-500 ml-2"
-                                    />
-                                    <p className="text-gray-500 -mt-1 ml-1">
-                                      {Moment(issueInfo.createdAt).format(
-                                        'MMM Do YYYY'
-                                      )}
-                                    </p>
-                                  </div>
+                              </div>
+                              <div className="flex mt-2 ml-3">
+                                <div className="flex">
+                                  <FontAwesomeIcon
+                                    icon={faUser}
+                                    className="text-gray-500 "
+                                  ></FontAwesomeIcon>
+                                  <p className="text-gray-500 -mt-1 ml-1">
+                                    {issueInfo.assignees[0].firstName}
+                                  </p>
+                                  <FontAwesomeIcon
+                                    icon={faCalendar}
+                                    className="text-gray-500 ml-2"
+                                  />
+                                  <p className="text-gray-500 -mt-1 ml-1">
+                                    {Moment(issueInfo.createdAt).format(
+                                      'MMM Do YYYY'
+                                    )}
+                                  </p>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      );
-                    })
+                      </div>
+                    );
+                  })
                   : 'there is no data avaliable'}
               </div>
             </div>
@@ -779,5 +779,4 @@ const IssueList: React.FC<IProps> = ({
     </div>
   );
 };
-
 export default IssueList;
