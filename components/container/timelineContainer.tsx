@@ -34,17 +34,18 @@ const TimelineContainer: React.FC<IProps> = ({ currentSnapshot, snapshotList, sn
         <div className="bg-gray-300 border border-gray-700 rounded duration-300 cursor-pointer">
           <p onClick={toggleTimeline}>{getSnapshotDate()}</p>
         </div>
-        <div className={`flex flex-row ${bottomNav ? "visible" : "collapse"}`}>
+        { snapshotList && currentSnapshot && (<div className={`flex flex-row ${bottomNav ? "visible" : "collapse"}`}>
             <div className=" bg-gray-200 border border-gray-300 rounded">
               <Pagination
-                snapshots={snapshotList}
+                currentSnapshot={currentSnapshot}
+                snapshotList={snapshotList}
                 getSnapshotInfo={setCurrentSnapshot}
               />
             </div>
-            <div className="">
+            {/* <div className="">
               <DatePicker></DatePicker>
-            </div>
-          </div>
+            </div> */}
+          </div>)}
       </div>
     )
 }

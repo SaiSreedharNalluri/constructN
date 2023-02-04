@@ -9,14 +9,22 @@ export type IContextType = "Issue" | "Task" | "Progress";
 
 export interface IContext {
     type: IContextType,
-    position: IPosition,
-    camera?: {
+    cameraObject?: {
         position: IPosition,
         target: IPosition,
+        pitch?: Number,
+        yaw?: Number,
+        fov?: Number
+    },
+    image?: {
+        imageName: string,
+        position: IPosition,
         rotation?: IRotation
     },
-    image?: string,
-    screenshot?: string
+    tag?: {
+        position: IPosition,
+        screenShot?: string
+    }
 }
 
 export interface IPosition {

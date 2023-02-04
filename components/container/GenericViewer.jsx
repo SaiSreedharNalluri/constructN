@@ -61,8 +61,10 @@ function GenericViewer(props) {
   let viewType = props.viewType;
   let viewLayers = props.viewLayers;
 
-  let [compareView, setCompareView] = useState(false);
-  let [compareMode, setCompareMode] = useState(0);
+  let [isCompare, setIsCompare] = useState(false);
+  let currentIsCompare = useRef(isCompare);
+  let [compareViewMode, setCompareViewMode] = useState("Reality");
+  let currentCompareViewMode = useRef(compareViewMode);
 
   let tool = props.tools;
   let activeTool = useRef(tool);
@@ -71,15 +73,15 @@ function GenericViewer(props) {
   let forgeUtils = useRef();
   let potreeUtils = useRef();
 
-  let isCompare = false;
   let potreeCompareUtils = useRef();
   let forgeCompareUtils = useRef();
 
-  let [cameraContext, setCameraContext] = useState({});
-  let currentCameraContext = useRef();
+  let [context, setContext] = useState({});
+  let currentContext = useRef();
 
-  let [imageContext, setImageContext] = useState({});
-  let currentImageContext = useRef();
+  let animationRequestId;
+  let isMouseOnMainViewer = useRef(true);
+
 
   const [bottomNav, setBottomNav] = useState(false);
   const toggleTimeline = () => {
@@ -93,11 +95,11 @@ function GenericViewer(props) {
   function handleViewModeChange() {
     console.log(
       "Generic Viewer After change in viewmode, clean: ",
-      currentCameraContext.current
+      currentContext.current
     );
     console.log(
       "Generic Viewer After change in viewmode, clean: ",
-      currentCameraContext.current
+      currentContext.current
     );
 
     loadViewerData();
@@ -112,19 +114,23 @@ function GenericViewer(props) {
     console.log("My new tool=",activeTool);
     switch(activeTool.current===undefined?'':activeTool.current.toolAction){
       case 'issueCreate':
-    //set to Marker Mode
-      console.log("set Marker Mode for issue")
-      // setMarkerMode(true);
-      addTag("Issue")
-    //forgeUtils.current.startTool(newTool);
-      break;
+        addTag("Issue")
+        break;
       case 'taskCreate':
-      //set to Marker Mode
-      addTag("Task");
-      setMarkerMode(true);
-      break;
+        addTag("Task");
+        break;
+      case 'showCompare':
+        let currentMode = activeTool.current.toolName.endsWith("Design") ? "Design" : "Reality";
+        getContext();
+        setCompareViewMode(currentMode);
+        currentCompareViewMode.current = currentMode
+        setIsCompare(true);
+        break;
+      case 'closeCompare':
+        setIsCompare(false);
+        break;
       default:
-      break;
+        break;
 
     }
 
@@ -145,11 +151,56 @@ function GenericViewer(props) {
     }
   }
 
-  const viewerEventHandler = (event) => {
-    console.log("Inside generic viewer: ", event.type);
+  const animationNow = () => {
+    // console.log("Inside Animate now: ")
+    syncViewer();
+    animationRequestId = requestAnimationFrame(animationNow);
+    if (potreeUtils.current) {
+      potreeUtils.current.updateFloormapAnimation();
+    }
+
+    if (currentIsCompare.current == true && potreeCompareUtils.current) {
+      potreeCompareUtils.current.updateFloormapAnimation();
+    }
+  }
+
+  const syncViewer = () => {
+    // console.log("Inside sync viewer: ", isMouseOnMainViewer.current)
+    if(currentIsCompare.current == true) {
+      if(isMouseOnMainViewer.current == true) {
+        if(currentCompareViewMode.current === "Reality") {
+          // get from potree utils
+          //give to potree compare utile
+          let viewerState = potreeUtils.current.getViewerState();
+          potreeCompareUtils.current.updateViewerState(viewerState);
+        } else {
+          // get from potree utils
+          //give to forge compare utile
+          let viewerState = potreeUtils.current.getViewerState();
+          forgeCompareUtils.current.updateViewerState(viewerState);
+        }
+      } else {
+        if(currentCompareViewMode.current === "Reality") {
+          //get from potree compare utils
+          // give to potree utils
+          let viewerState = potreeCompareUtils.current.getViewerState();
+          potreeUtils.current.updateViewerState(viewerState);
+
+        } else {
+          // get from forge compare utils
+          // give to potree utils
+          let viewerState = forgeCompareUtils.current.getViewerState();
+          potreeUtils.current.updateViewerState(viewerState);
+        }
+      }
+    }
+  }
+
+  const viewerEventHandler = (viewerId, event) => {
+    console.log("Inside generic viewer: ", event);
     switch (event.type) {
       case "360 Video":
-        currentImageContext.current = event;
+        currentContext.current = event;
         if (viewMode == "Design") {
           setViewMode("Reality");
         } else {
@@ -158,11 +209,37 @@ function GenericViewer(props) {
         break;
       case "Reality":
         break;
+      case "Task":
       case "Issue":
         setMarkerMode(false)
         activeTool.current.response = event;
         pushToolResponse(activeTool.current);
         console.log("Marked Point========",event);
+        break;
+      case "panorama":
+      case "image":
+        if (currentIsCompare.current == true) {
+          if(isCompareViewer(viewerId)) {
+            potreeUtils.current.updateContext(event);
+          } else {
+            potreeCompareUtils.current.updateContext(event);
+          }
+        }
+        break;
+      case "sync":
+        // console.log("Sync event handler: ", viewerId);
+        if (currentIsCompare.current == true) {
+          syncViewer(viewerId);
+        }
+        break;
+      case "mouse":
+        if (currentIsCompare.current == true) {
+          if(isCompareViewer(viewerId)) {
+            isMouseOnMainViewer.current = false;
+          } else {
+            isMouseOnMainViewer.current = true;
+          }
+        }
         break;
     }
   };
@@ -170,23 +247,14 @@ function GenericViewer(props) {
   const initViewer = (viewerId) => {
     switch (viewMode) {
       case "Design":
-        console.log(
-          "Generic viewer checking existing view: ",
-          forgeUtils.current
-        );
-        if (!forgeUtils.current) {
-          console.log("Generic viewer creating new view: ", forgeUtils.current);
-          let forge = new ForgeViewerUtils(viewerId, viewerEventHandler);
-          console.log(
-            "iGeneric Viewer sForgeViewer Loaded: ",
-            forge.isViewerLoaded()
-          );
+        if (forgeUtils.current == undefined) {
+          let forge = new ForgeViewerUtils(viewerId, viewerEventHandler.bind(this));
           forgeUtils.current = forge;
         }
         break;
       case "Reality":
-        if (!potreeUtils.current) {
-          let potree = new PotreeViewerUtils(viewerId, viewerEventHandler);
+        if (potreeUtils.current == undefined) {
+          let potree = new PotreeViewerUtils(viewerId, viewerEventHandler.bind(this));
           if (!potree.isViewerLoaded()) {
             potree.initialize();
           }
@@ -197,20 +265,16 @@ function GenericViewer(props) {
   };
 
   const initCompareViewer = (viewerId) => {
-    switch (viewMode) {
+    switch (compareViewMode) {
       case "Design":
         if (forgeCompareUtils.current == undefined) {
-          let forge = new ForgeViewerUtils(viewerId, viewerEventHandler);
-          console.log(
-            "Generic Viewer isForgeViewer Loaded: ",
-            forge.isViewerLoaded()
-          );
+          let forge = new ForgeViewerUtils(viewerId, viewerEventHandler.bind(this));
           forgeCompareUtils.current = forge;
         }
         break;
       case "Reality":
         if (potreeCompareUtils.current == undefined) {
-          let potree = new PotreeViewerUtils(viewerId, viewerEventHandler);
+          let potree = new PotreeViewerUtils(viewerId, viewerEventHandler.bind(this));
           if (!potree.isViewerLoaded()) {
             potree.initialize();
           }
@@ -221,99 +285,84 @@ function GenericViewer(props) {
   };
 
   async function loadViewerData() {
-    console.log("Generic Viewer Inside load view data: ");
     switch (viewMode) {
       case 'Design':
         forgeUtils.current.updateData(getForgeModels(designMap));
         if (isCompare) {
           forgeCompareUtils.current.updateData(getForgeModels(designMap));
         }
-        // let data = await getRealityLayers(structure, snapshot, realityMap, realityList);
-        // forgeUtils.current.updateLayersData(data, currentCamera.current);
         break;
       case "Reality":
-        // potreeUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), currentCamera.current);
         break;
     }
   }
 
   async function loadLayerData() {
-    console.log("Generic Viewer Inside load layer data: ");
-    let context = {};
-    if (currentImageContext.current) {
-      context.type = "image";
-      context.image = currentImageContext.current;
-    } else if (currentCameraContext.current) {
-      context.type = "camera";
-      context.camera = currentCameraContext.current;
-    } else {
-      context = undefined;
-    }
-
     switch (viewMode) {
       case "Design":
-        // forgeUtils.current.updateData(getForgeModels(designList));
         let data = await getRealityLayers(structure, realityMap);
-        forgeUtils.current.updateLayersData(data, context);
-        if (isCompare) {
-          let data = await getRealityLayers(structure, compareRealityMap);
-          forgeCompareUtils.current.updateLayersData(data, context);
-        }
+        forgeUtils.current.updateLayersData(data, currentContext.current);
         break;
       case 'Reality':
         potreeUtils.current.updateData(await getPointCloud(structure, snapshot), getFloorPlanData(designMap));
-        // potreeUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), currentCamera.current);
         potreeUtils.current.updateLayersData(
           getRealityLayersPath(structure, realityMap),
-          context
+          currentContext.current
         );
-
-        if(isCompare) {
-          potreeCompareUtils.current.updateData(await getPointCloud(structure, compareSnapshot), getFloorPlanData(designMap));
-        // potreeUtils.current.updateLayersData(getRealityLayersPath(structure, snapshot, realityMap), currentCamera.current);
-          potreeCompareUtils.current.updateLayersData(getRealityLayersPath(structure, compareRealityMap), context);
-        }
         break;
     }
 
-    currentCameraContext.current = undefined;
-    currentImageContext.current = undefined;
+    currentContext.current = undefined;
+  }
+
+
+  async function loadCompareViewerData() {
+    switch (compareViewMode) {
+      case 'Design':
+        forgeCompareUtils.current.updateData(getForgeModels(designMap));
+        break;
+      case "Reality":
+        break;
+    }
+  }
+
+  async function loadCompareLayerData() {
+    switch (compareViewMode) {
+      case "Design":
+         let data = await getRealityLayers(structure, compareRealityMap);
+          forgeCompareUtils.current.updateLayersData(data, currentContext.current);
+        break;
+      case 'Reality':
+          potreeCompareUtils.current.updateData(await getPointCloud(structure, compareSnapshot), getFloorPlanData(designMap));
+          potreeCompareUtils.current.updateLayersData(getRealityLayersPath(structure, compareRealityMap), currentContext.current);
+        break;
+    }
   }
 
   const setForgeViewerUtils = function (viewerId) {
-    // forgeUtils.current = forge;
-    if (viewerId.split("_")[1] == 1) {
-      console.log(
-        "Generic viewer inside main viewer: ",
-        viewerId,
-        viewerId.split("_")[1]
-      );
+    if (!isCompareViewer(viewerId)) {
       initViewer(viewerId);
     } else {
-      console.log(
-        "Generic viewer inside compare viewer: ",
-        viewerId,
-        viewerId.split("_")[1]
-      );
       initCompareViewer(viewerId);
     }
-
-    // loadViewerData();
   };
 
   const setpotreeViewerUtils = function (viewerId) {
-    // potreeUtils.current = potree;
-    if (viewerId.split("_")[1] == 1) {
+    if (!isCompareViewer(viewerId)) {
       initViewer(viewerId);
     } else {
       initCompareViewer(viewerId);
     }
-    // loadViewerData();
   };
 
   function renderViewer(count) {
-    console.log("Generic Viewer Inside render View: ", viewMode);
-    switch (viewMode) {
+    console.log("Generic Viewer Inside render View: ", viewMode, count);
+    if (count != 1 && !isCompare) {
+      return;
+    }
+    let mode = count == 1 ? viewMode : compareViewMode;
+    console.log("Checking render mode", mode);
+    switch (mode) {
       case "Design":
         return (
           <ForgeViewer
@@ -359,7 +408,12 @@ function GenericViewer(props) {
     if (snapshotList.length > 0) {
       setSnapshotList(snapshotList);
       setCurrentSnapshot(snapshotList[0]);
-      setCurrentCompareSnapshot(snapshotList[0]);
+      if (snapshotList.length > 1) {
+        setCurrentCompareSnapshot(snapshotList[1]);
+      } else {
+        setCurrentCompareSnapshot(snapshotList[0]);
+      }
+      
     }
   };
 
@@ -379,71 +433,42 @@ function GenericViewer(props) {
     // updateRealityMap(getRealityMap(snapshot));
   };
 
-  const getSnapshotDate = () => {
-    if (snapshot) {
-      return snapshot.date;
+
+  const isCompareViewer = (viewerId) => {
+    let split = viewerId.split("_")[1]
+    if (viewerId.split("_")[1] === "1") {
+      return false;
     } else {
-      return "No Reality";
+      return true;
     }
-  };
+  }
 
-  const cleanUpOnViewModeChange = () => {
-    console.log(
-      "Generic Viewer Inside cleanup: viewmode dependencies",
-      viewMode
-    );
-    let camObject;
-    switch (viewMode) {
-      case "Design":
-        if (forgeUtils.current) {
-          camObject = forgeUtils.current.getCamera();
-          console.log(
-            "Generic Viewer Inside clean camObject from forge: ",
-            camObject
-          );
-          delete forgeUtils.current;
-        }
-        if (isCompare && forgeCompareUtils.current)
-          delete forgeCompareUtils.current;
-        break;
-      case "Reality":
-        if (potreeUtils.current) {
-          camObject = potreeUtils.current.getCamera();
-          console.log(
-            "Generic Viewer Inside clean camObject from potree: ",
-            camObject
-          );
-          delete potreeUtils.current;
-        }
-        if (isCompare && potreeCompareUtils.current)
-          delete potreeCompareUtils.current;
-        break;
-    }
-    setCameraContext(camObject);
-    currentCameraContext.current = camObject;
-  };
+  const removeContext = () => {
+    setContext(undefined);
+    currentContext.current = undefined;
+  }
 
-  const cleanUpOnSnapshotChange = () => {
-    console.log(
-      "Generic Viewer Inside cleanup: snapshot dependencies",
-      snapshot
-    );
+  const getContext = () => {
+    let context;
+    console.log("Getting context from existing viewmode: ", currentViewMode.current, forgeUtils, potreeUtils);
     switch (currentViewMode.current) {
       case "Design":
         if (forgeUtils.current) {
-          forgeUtils.current.removeLayers();
+          context = forgeUtils.current.getContext();
         }
         break;
       case "Reality":
+        if (potreeUtils.current) {
+          context = potreeUtils.current.getContext();
+        }
         break;
     }
-  };
+    console.log("Generic Viewer getContext: camera ", context);
+    // setContext(context);
+    currentContext.current = context;
+  }
 
-  const cleanUpOnStructureChange = () => {
-    console.log(
-      "Generic Viewer Inside cleanup structure dependencies:",
-      currentStructure.current
-    );
+  const removeData = () => {
     switch (currentViewMode.current) {
       case "Design":
         if (forgeUtils.current) {
@@ -451,20 +476,84 @@ function GenericViewer(props) {
         }
         break;
       case "Reality":
+        if (potreeUtils.current) {
+          potreeUtils.current.removeData();
+        }
         break;
     }
-  };
+  }
+
+  const removeLayers = () => {
+    switch (currentViewMode.current) {
+      case "Design":
+        if (forgeUtils.current) {
+          forgeUtils.current.removeLayers();
+        }
+        break;
+      case "Reality":
+        if (potreeUtils.current) {
+          potreeUtils.current.removeData();
+        }
+        break;
+    }
+  }
+
+
+  const removeCompareLayers = () => {
+    switch (currentViewMode.current) {
+      case "Design":
+        if (forgeCompareUtils.current) {
+          forgeCompareUtils.current.removeLayers();
+        }
+        break;
+      case "Reality":
+        if (potreeCompareUtils.current) {
+          potreeCompareUtils.current.removeData();
+        }
+        break;
+    }
+  }
+
+  const destroyViewer = () => {
+    switch (viewMode) {
+      case "Design":
+        if (forgeUtils.current) {
+          delete forgeUtils.current;
+        }
+        break;
+      case "Reality":
+        if (potreeUtils.current) {
+          delete potreeUtils.current;
+        }
+        break;
+    }
+  }
+
+  const destroyCompareViewer = () => {
+    switch (compareViewMode) {
+      case "Design":
+        if (forgeCompareUtils.current) {
+          delete forgeCompareUtils.current;
+        }
+        break;
+      case "Reality":
+        if (potreeCompareUtils.current) {
+          delete potreeCompareUtils.current;
+        }
+        break;
+    }
+  }
+
+  useEffect(() => {
+    return cleanUpOnPageChange;
+  }, []);
 
   const cleanUpOnPageChange = () => {
     // console.log("Inside cleanup no dependencies: ");
   };
 
   useEffect(() => {
-    return cleanUpOnPageChange;
-  }, []);
-
-  useEffect(() => {
-    console.log("Generic Viewer Structure prop clicked:");
+    console.log("Generic Viewer Structure UseEffect:");
     if (currentStructure.current != structure) {
       currentStructure.current = structure;
       if (structure.designs.length > 0) {
@@ -473,30 +562,72 @@ function GenericViewer(props) {
       getSnapshotList(structure.project, structure._id);
       console.log("Generic Viewer load: Structure Changed", structure);
     }
+    animationRequestId = requestAnimationFrame(animationNow);
     return cleanUpOnStructureChange;
   }, [structure]);
 
+  const cleanUpOnStructureChange = () => {
+    console.log(
+      "Generic Viewer Inside cleanup structure cleanup:",
+      currentStructure.current
+    );
+    removeData();
+    removeContext();
+    setIsCompare(false);
+    cancelAnimationFrame(animationRequestId)
+  };
+
   useEffect(() => {
-    console.log("Generic Viewer load: Snapshot Changed", snapshot);
+    console.log("Generic Viewer load: Snapshot UseEffect", snapshot);
     return cleanUpOnSnapshotChange;
   }, [snapshot]);
 
+  const cleanUpOnSnapshotChange = () => {
+    console.log(
+      "Generic Viewer Inside cleanup: snapshot cleanup",
+      snapshot
+    );
+    getContext();
+    removeLayers();
+  };
+
   useEffect(() => {
-    console.log("Generic Viewer load: Design List Changed", designList);
+    console.log("Generic Viewer load: Compare Snapshot UseEffect", snapshot);
+    return cleanUpOnCompareSnapshotChange;
+  }, [compareSnapshot]);
+
+  const cleanUpOnCompareSnapshotChange = () => {
+    console.log(
+      "Generic Viewer Inside cleanup: snapshot cleanup",
+      compareSnapshot
+    );
+    getContext();
+    removeCompareLayers();
+  };
+
+  useEffect(() => {
+    console.log("Generic Viewer load: Design List UseEffect", designList);
     if (designList.length > 0) {
       loadViewerData();
     }
   }, [designList]);
 
   useEffect(() => {
-    console.log("Generic Viewer load: Reality Changed", realityList);
+    console.log("Generic Viewer load: Reality UseEffect", realityList);
     if (realityList.length > 0) {
       loadLayerData();
     }
   }, [realityList]);
 
   useEffect(() => {
-    console.log("Generic Viewer tool clicked", tool);
+    console.log("Generic Viewer load: Reality UseEffect", compareRealityList);
+    if (realityList.length > 0 && isCompare) {
+      loadCompareLayerData();
+    }
+  }, [compareRealityList]);
+
+  useEffect(() => {
+    console.log("Generic Viewer tool UseEffect", tool);
     if (activeTool.current != tool) {
       activeTool.current = tool
       handleToolChange();
@@ -505,7 +636,7 @@ function GenericViewer(props) {
   }, [tool]);
 
   useEffect(() => {
-    console.log("Generic Viewer View Mode Changes", viewMode);
+    console.log("Generic Viewer View Mode UseEffect", viewMode);
     if (currentViewMode.current != viewMode) {
       currentViewMode.current = viewMode;
       handleViewModeChange();
@@ -513,22 +644,61 @@ function GenericViewer(props) {
     return cleanUpOnViewModeChange;
   }, [viewMode]);
 
-  useEffect(() => {
-    console.log("Generic Viewer View Mode Parent Changes", viewModeParent);
-    setViewMode(viewModeParent);
-  }, [viewModeParent]);
+  const cleanUpOnViewModeChange = () => {
+    console.log(
+      "Generic Viewer Inside cleanup: viewmode dependencies",
+      viewMode
+    );
+    setIsCompare(false);
+    // getContext();
+    destroyViewer();
+  };
 
   useEffect(() => {
-    console.log("Generic Viewer View Type Changes", viewType);
+    console.log("Generic Viewer View Mode Parent UseEffect", viewModeParent);
+    setViewMode(viewModeParent);
+    return cleanUpOnParentViewModeChange;
+  }, [viewModeParent]);
+
+  const cleanUpOnParentViewModeChange = () => {
+    console.log(
+      "Generic Viewer Inside cleanup: parent viewmode dependencies",
+      viewMode
+    );
+    setIsCompare(false);
+    getContext();
+    destroyViewer();
+  }
+
+  useEffect(() => {
+    console.log("Generic Viewer View Type UseEffect", viewType);
     handleDesignTypeChange();
   }, [viewType]);
 
   useEffect(() => {
-    console.log("Generic Viewer View Layers Changes", viewLayers);
+    console.log("Generic Viewer View Layers UseEffect", viewLayers);
     handleRealityTypeChange();
   }, [viewLayers]);
 
-  useEffect(() => {}, [compareView]);
+
+  // Triggered when compareViewMode changed
+  useEffect(() => {
+    console.log("Inside isCompareMode and isCompare state UseEffect", isCompare, compareViewMode);
+    if (currentIsCompare.current != isCompare) {
+      currentIsCompare.current = isCompare;
+    }
+    if (isCompare) {
+      loadCompareViewerData();
+      loadCompareLayerData();
+    }
+    return cleanUpOnCompareViewModeChange;
+  }, [isCompare, compareViewMode])
+
+  const cleanUpOnCompareViewModeChange = () => {
+    console.log("Inside compare viewMode chnage cleanip", potreeUtils.current, forgeUtils.current);
+    // getContext();
+    destroyCompareViewer();
+  }
 
   return (
       <div className="fixed calc-w calc-h flex flex-row">
