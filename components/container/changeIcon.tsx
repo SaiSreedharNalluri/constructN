@@ -32,13 +32,19 @@ const ChangeIcon: React.FC<IProps> = ({ handleImageUPload }) => {
       >
         {({ values, setFieldValue }) => (
           <Form>
-            <input
-              type="file"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setFieldValue('file', e.target.files![0]);
-              }}
-            />
-            <button type="submit">Upload</button>
+            <div className='flex w-full'>
+              <div className='w-1/2'>
+                <input
+                  type="file"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setFieldValue('file', e.target.files![0]);
+                  }}
+                />
+                <button type="submit" className='mt-2'>Upload</button>
+              </div>
+
+            </div>
+
           </Form>
         )}
       </Formik>

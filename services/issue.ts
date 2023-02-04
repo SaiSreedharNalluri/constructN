@@ -58,3 +58,53 @@ export const getIssuesPriority = async (projectId: string) => {
       throw error.response.data;
     });
 };
+export const getIssuesStatus = async (projectId: string) => {
+  return await instance
+    .get(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/status`,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
+export const deleteIssue = async (projectId: string, IssueId: string) => {
+  return await instance
+    .delete(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/${IssueId}`,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
+export const editIssue = (
+  projectId: string,
+  issueObj: object,
+  issueId: string
+) => {
+  return instance
+    .put(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/${issueId}`,
+      issueObj,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};

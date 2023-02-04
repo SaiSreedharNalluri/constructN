@@ -5,8 +5,7 @@ import {
   faEye,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useRef, useState } from 'react';
-import DatePicker from '../../datePicker';
+import React, { useEffect, useState } from 'react';
 import TaskCreate from './taskCreate';
 import TaskList from './taskList';
 import { ITools } from '../../../../models/ITools';
@@ -18,9 +17,11 @@ interface IProps {
   taskMenuClicked: (a: ITools) => void;
   taskLayer?: boolean;
   tasksList: ITasks[];
-  currentStructure:IStructure;
-  currentSnapshot:ISnapshot;
-  currentProject:string;
+  currentStructure: IStructure;
+  currentSnapshot: ISnapshot;
+  currentProject: string;
+  handleOnTaskFilter: (formData: object) => void;
+  closeTaskFilterOverlay: () => void;
 }
 
 const IssueMenu: React.FC<IProps> = ({
@@ -30,33 +31,30 @@ const IssueMenu: React.FC<IProps> = ({
   currentProject,
   currentSnapshot,
   currentStructure,
+  closeTaskFilterOverlay,
+  handleOnTaskFilter,
 }) => {
   const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
   const [taskVisbility, setTaskVisibility] = useState(
     taskLayer === undefined ? false : taskLayer
   );
-  const [myProject,setMyProject] = useState(currentProject);
+  const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   let taskMenuInstance: ITools = { toolName: 'task', toolAction: '' };
 
-  useEffect(
-    ()=>{
-
-      setMyProject(currentProject);
-      setMyStructure(currentStructure);
-      setMySnapshot(currentSnapshot);
-   
-    },
-    [currentProject,currentSnapshot,currentStructure]
-  );
-  const taskSubmit=(formdata: any)=>{
+  useEffect(() => {
+    setMyProject(currentProject);
+    setMyStructure(currentStructure);
+    setMySnapshot(currentSnapshot);
+  }, [currentProject, currentSnapshot, currentStructure]);
+  const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
     taskMenuInstance.toolAction = 'taskCreated';
     setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);
-  }
+  };
   const openTaskCreate = () => {
     //setCreateOverlay(true);
     taskMenuInstance.toolAction = 'taskCreate';
@@ -109,6 +107,8 @@ const IssueMenu: React.FC<IProps> = ({
             tasksList={tasksList}
             visibility={listOverlay}
             closeOverlay={closeTaskList}
+            closeFilterOverlay={closeTaskFilterOverlay}
+            handleOnFilter={handleOnTaskFilter}
           ></TaskList>
           <FontAwesomeIcon
             icon={taskVisbility ? faEye : faEyeSlash}

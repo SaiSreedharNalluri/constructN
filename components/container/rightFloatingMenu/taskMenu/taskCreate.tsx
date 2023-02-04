@@ -3,7 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
 import React, { useEffect, useState } from 'react';
-import { getTasksTypes, getTasksPriority, createTask } from '../../../../services/task';
+import {
+  getTasksTypes,
+  getTasksPriority,
+  createTask,
+} from '../../../../services/task';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { IProjectUsers } from '../../../../models/IProjects';
 import { getProjectUsers } from '../../../../services/project';
@@ -16,10 +20,10 @@ interface IProps {
   closeOverlay: () => void;
   visibility: boolean;
   handleTaskSubmit: (formObj: object) => void;
-  currentStructure:IStructure;
-  currentSnapshot:ISnapshot;
-  currentProject:string;
-  contextInfo:IToolResponse;
+  currentStructure: IStructure;
+  currentSnapshot: ISnapshot;
+  currentProject: string;
+  contextInfo: IToolResponse;
 }
 const TaskCreate: React.FC<IProps> = ({
   closeOverlay,
@@ -31,8 +35,8 @@ const TaskCreate: React.FC<IProps> = ({
   contextInfo,
 }) => {
   const router = useRouter();
-  const [myVisbility,setMyVisibility]=useState(visibility);
-  const [myContext,setMyContext] = useState<IToolResponse>(contextInfo);
+  const [myVisbility, setMyVisibility] = useState(visibility);
+  const [myContext, setMyContext] = useState<IToolResponse>(contextInfo);
   const [taskType, setTaskType] = useState<[string]>();
   const [taskPriority, setTaskPriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
@@ -40,10 +44,10 @@ const TaskCreate: React.FC<IProps> = ({
     { _id: '', name: 'please select the assignee for the task' },
   ];
   const [tast, setTask] = useState<[string]>();
-  const [myProject,setMyProject] = useState(currentProject);
+  const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
-  const [loggedInUserId,SetLoggedInUserId] = useState('');
+  const [loggedInUserId, SetLoggedInUserId] = useState('');
   useEffect(() => {
     if (router.isReady) {
       getTasksTypes(router.query.projectId as string).then((response) => {
@@ -57,7 +61,6 @@ const TaskCreate: React.FC<IProps> = ({
           response.result.push('Please select the task priority');
           setTaskPriority(response.result);
         }
-
       });
       getProjectUsers(router.query.projectId as string)
         .then((response) => {
@@ -68,31 +71,26 @@ const TaskCreate: React.FC<IProps> = ({
         .catch();
     }
     const userObj: any = getCookie('user');
-  let user = null;
-  if (userObj) user = JSON.parse(userObj);
-  if (user?._id) {
-    SetLoggedInUserId(user._id);
-  }
+    let user = null;
+    if (userObj) user = JSON.parse(userObj);
+    if (user?._id) {
+      SetLoggedInUserId(user._id);
+    }
   }, [router.isReady, router.query.projectId]);
-  useEffect(()=>{
+  useEffect(() => {
     setMyVisibility(visibility);
-    console.log("finally My Visibility is ",visibility);
-  },[visibility]);
-  
-  useEffect(()=>{
-    setMyContext(contextInfo);
-    console.log("Updated Context ",contextInfo);
-  },[contextInfo]);
-  useEffect(
-    ()=>{
+    console.log('finally My Visibility is ', visibility);
+  }, [visibility]);
 
-      setMyProject(currentProject);
-      setMyStructure(currentStructure);
-      setMySnapshot(currentSnapshot);
-   
-    },
-    [currentProject,currentSnapshot,currentStructure]
-  );
+  useEffect(() => {
+    setMyContext(contextInfo);
+    console.log('Updated Context ', contextInfo);
+  }, [contextInfo]);
+  useEffect(() => {
+    setMyProject(currentProject);
+    setMyStructure(currentStructure);
+    setMySnapshot(currentSnapshot);
+  }, [currentProject, currentSnapshot, currentStructure]);
 
   const closeTaskCreate = () => {
     closeOverlay();
@@ -133,8 +131,7 @@ const TaskCreate: React.FC<IProps> = ({
     assignees: '',
     tags: '',
     date: '',
-    context:myContext,
-    
+    context: myContext,
   };
   const validationSchema = Yup.object().shape({
     type: Yup.string(),

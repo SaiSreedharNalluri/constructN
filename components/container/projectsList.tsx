@@ -3,11 +3,6 @@ import { IProjects } from '../../models/IProjects';
 import Moment from 'moment';
 import { useRouter } from 'next/router';
 import NextImage from '../core/Image';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
-import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { faListUl } from '@fortawesome/free-solid-svg-icons';
 interface IProps {
   projects: IProjects[];
 }
@@ -44,27 +39,6 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
                       <p> N/A</p>
                     </div>
                   )}
-                  {/* <div className="mt-4 text-gray-400">
-                    <FontAwesomeIcon
-                      icon={faPen}
-                      className="text-2xl"
-                      onClick={() => {
-                        router.push(`projects/${pData._id}/settings`);
-                      }}
-                    ></FontAwesomeIcon>
-                    <FontAwesomeIcon
-                      className="ml-4 text-2xl"
-                      icon={faUserPlus}
-                    ></FontAwesomeIcon>
-                    <FontAwesomeIcon
-                      className="ml-4 text-2xl"
-                      icon={faListUl}
-                    ></FontAwesomeIcon>
-                    <FontAwesomeIcon
-                      className="ml-4 text-2xl"
-                      icon={faTrash}
-                    ></FontAwesomeIcon>
-                  </div> */}
                 </div>
               </div>
             </div>

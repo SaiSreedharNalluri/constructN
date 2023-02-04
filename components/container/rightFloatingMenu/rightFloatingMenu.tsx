@@ -31,9 +31,12 @@ interface IProps {
   issuesList: Issue[];
   tasksList: ITasks[];
   handleOnFilter: (formData: object) => void;
-  currentStructure:IStructure;
-  currentSnapshot:ISnapshot;
-  currentProject:string;
+  currentStructure: IStructure;
+  currentSnapshot: ISnapshot;
+  currentProject: string;
+  closeFilterOverlay: () => void;
+  handleOnTaskFilter: (formData: object) => void;
+  closeTaskFilterOverlay: () => void;
 }
 const RightFloatingMenu: React.FC<IProps> = ({
   toolClicked,
@@ -46,6 +49,9 @@ const RightFloatingMenu: React.FC<IProps> = ({
   currentProject,
   currentSnapshot,
   currentStructure,
+  closeFilterOverlay,
+  closeTaskFilterOverlay,
+  handleOnTaskFilter,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -54,32 +60,30 @@ const RightFloatingMenu: React.FC<IProps> = ({
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
-  const [myProject,setMyProject] = useState(currentProject);
+  const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   let toolInstance: ITools = { toolName: '', toolAction: '' };
-  const closeStructurePages = (e: any) => {
-    if (!rightOverlayRefs.current.contains(e.target)) {
-      setRighttNav(false);
-    }
-  };
+  // const closeStructurePages = (e: any) => {
+  //   if (!rightOverlayRefs.current.contains(e.target)) {
+  //     setRighttNav(false);
+  //     setActive(e.target.id);
+  //     console.log('This is triggered!!!!!!!!!!!!!!!!!!!!!!!!',e);
+  //   }
+  // };
   useEffect(() => {
-    setIViewMode(viewMode);
-    document.addEventListener('click', closeStructurePages);
-    return () => {
-      document.removeEventListener('click', closeStructurePages);
-    };
+     setIViewMode(viewMode);
+  //   document.addEventListener('click', closeStructurePages);
+  //   return () => {
+  //     document.removeEventListener('click', closeStructurePages);
+  //   };
   }, [viewMode]);
 
-  useEffect(
-    ()=>{
-
-      setMyProject(currentProject);
-      setMyStructure(currentStructure);
-      setMySnapshot(currentSnapshot);
-    },
-    [currentProject,currentSnapshot,currentStructure]
-  );
+  useEffect(() => {
+    setMyProject(currentProject);
+    setMyStructure(currentStructure);
+    setMySnapshot(currentSnapshot);
+  }, [currentProject, currentSnapshot, currentStructure]);
 
   const rightMenuClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
@@ -90,8 +94,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
     } else if (e.currentTarget.id === 'Design') {
       toolInstance.toolName = 'viewMode';
       toolInstance.toolAction = 'Reality';
-    }
-    else if(e.currentTarget.id==='compareDesign'){
+    } else if (e.currentTarget.id === 'compareDesign') {
       //console.log("CAptured....");
       toolInstance.toolName = 'compareDesign';
       toolInstance.toolAction =(isCompareDesign?'closeCompare':'showCompare');
@@ -106,7 +109,6 @@ const RightFloatingMenu: React.FC<IProps> = ({
       setIsCompareDesign(false);
 
     }
-    
 
     toolClicked(toolInstance);
   };
@@ -140,7 +142,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
     toolClicked(localTool);
     if (
       localTool.toolAction === 'issueCreateClose' ||
-      localTool.toolAction === 'issueViewClose'
+      localTool.toolAction === 'issueViewClose' ||
+      localTool.toolAction === 'issueView'
     )
       setRighttNav(!rightNav);
   };
@@ -417,7 +420,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 currentProject={myProject}
                 currentStructure={myStructure}
                 currentSnapshot={mySnapshot}
-
+                closeFilterOverlay={closeFilterOverlay}
               ></IssueMenu>
               {/* <div className='bg-gray-400'>
                   <div className=" h-full text-xs"  id="issueItems">
@@ -450,6 +453,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 currentProject={myProject}
                 currentStructure={myStructure}
                 currentSnapshot={mySnapshot}
+                closeTaskFilterOverlay={closeTaskFilterOverlay}
+                handleOnTaskFilter={handleOnTaskFilter}
               ></TaskMenu>
             </div>
           ) : (
