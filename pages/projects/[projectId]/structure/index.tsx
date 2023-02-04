@@ -30,6 +30,7 @@ import { ITasks } from '../../../../models/Itask';
 import IssueCreate from '../../../../components/container/rightFloatingMenu/issueMenu/issueCreate';
 import TaskCreate from '../../../../components/container/rightFloatingMenu/taskMenu/taskCreate';
 import IssueList from '../../../../components/container/rightFloatingMenu/issueMenu/issueList';
+import { it } from 'node:test';
 
 interface IProps {}
 const Index: React.FC<IProps> = () => {
@@ -333,16 +334,24 @@ const Index: React.FC<IProps> = () => {
       });
   };
   const handleOnIssueFilter = (formData: any) => {
+    console.log("over here",formData.issueTypeData,formData?.issuePriorityData,formData?.issueStatusData,formData.assigneesData);
     const result = issueFilterList.filter(
       (item: Issue) =>
-        formData.issueTypeData.includes(item.type) &&
-        formData?.issuePriorityData?.includes(item.priority) &&
-        formData?.issueStatusData?.includes(item.status) &&
-        formData?.assigneesData?.includes(item.assignees)
-        // item.assignees.filter(
-        //   (userInfo: any) => userInfo._id === formData.assigneesData
-        // )
-    );
+      (formData.issueTypeData.includes(item.type) || (formData.issueTypeData.length==0)) &&
+      (formData?.issuePriorityData?.includes(item.priority) || (formData?.issuePriorityData?.length==0)) &&
+      (formData?.issueStatusData?.includes(item.status) || (formData?.issueStatusData.length==0)) &&
+      (formData?.assigneesData?.some((ass:any)=>item.assignees.some((it:any)=>ass.value===it._id)) || (formData?.assigneesData?.length==0))
+
+      // {
+      // //console.log("current item is", item)
+      // if((formData.issueTypeData.includes(item.type) || (formData.issueTypeData.length==0))){//console.log("has type");
+      //   if((formData?.issuePriorityData?.includes(item.priority) || (formData?.issuePriorityData?.length==0))){//console.log("has priority");
+      //     if((formData?.issueStatusData?.includes(item.status) || (formData?.issueStatusData.length==0)) ){//console.log("has status"); 
+      //     return true} } }
+      // return false
+      // }
+      );
+    console.log('hereeeeeeeeeeeeeeeeeeeeeeee',result);
     setIssueList(result);
   };
   const closeFilterOverlay = () => {
@@ -401,10 +410,10 @@ const Index: React.FC<IProps> = () => {
           <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu>
         </div>
         <div>
-          {leftNav && (
+          {(
             <div
               ref={leftRefContainer}
-              className={`calc-h absolute z-10 top-10 bg-gray-200 border border-gray-300 overflow-y-auto`}
+              className={` ${leftNav?'visible':'hidden'} calc-h absolute z-10 top-10 bg-gray-200 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faBars,
+  faBarsStaggered,
+  faBreadSlice,
   faCalendarDays,
   faCog,
   faGreaterThan,
@@ -48,19 +51,14 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
     setActive(router.pathname.split('/').pop());
   };
   return (
-    <div className=" w-11 h-screen text-center bg-gray-200 border border-gray-300">
-      <div className={`${active === 'dashboard' ? 'selectedClass' : 'unSelectedClass'
+    <div className=" w-11 h-screen text-center bg-gray-200 border  border-gray-300">
+      <div className={` ${active === 'dashboard' ? 'selectedClass' : 'unSelectedClass'
           } `}>
         <Image src={dashboard} alt="" id="dashboard" onClick={leftClickHandler} className={`  text-4xl m-auto py-2 cursor-pointer`}></Image>
       </div>
       <div className={`${active === 'structure' ? 'selectedClass' : 'unSelectedClass'}`}>
-        <Image src={viewer} alt="" id="views" onClick={(e: any) => {
-          if (active === 'structure') {
-            onChangeData();
-          } else {
-            leftClickHandler(e);
-          }
-        }} className={` text-4xl m-auto py-2 cursor-pointer  `}></Image>
+        <Image src={viewer} alt="" id="views" onClick={leftClickHandler}
+         className={` text-4xl m-auto py-2 cursor-pointer  `}></Image>
       </div>
       <div className={`${active === 'schedule' ? 'selectedClass' : 'unSelectedClass'
           } `}>
@@ -70,15 +68,16 @@ const CollapsableMenu: React.FC<IProps> = ({ onChangeData }) => {
           } `}>
         <Image src={settings} alt="" id="settings" onClick={leftClickHandler} className={`w-2/3 text-4xl m-auto py-2 cursor-pointer `}></Image>
       </div>
-      {/* <div className="mt-2 border-t border-solid border-gray-400">
+      <div className={`mt-2 border-t border-solid border-gray-400 ${active==='structure'?'visible': 'hidden'} `}>
         <FontAwesomeIcon
           id="expand"
           className={` cursor-pointer text-xl w-full py-2  ${active === 'expand' ? 'selectedClass' : 'unSelectedClass'
             } `}
-          icon={faGreaterThan}
-          onClick={leftClickHandler}
+         
+          icon={faBarsStaggered}
+          onClick={onChangeData}
         ></FontAwesomeIcon>
-      </div> */}
+      </div>
     </div>
   );
 };
