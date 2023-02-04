@@ -102,13 +102,13 @@ export class ForgeDataVisualization {
             case '360 Video':
                 // iconUrl = "https://img.icons8.com/ios-glyphs/90/null/360-view.png";
                 // iconUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
-                iconUrl = "/icons/forge360Image.png";
+                iconUrl = "/icons/360VideoWalkInViewer.svg";
             break;
             case 'Issue':
-                iconUrl = "/icons/forgeIssue.png";
+                iconUrl = "/icons/issuesInViewer.svg";
             break;
             case 'Task':
-                iconUrl = "/icons/forgeTask.png";
+                iconUrl = "/icons/tasksInViewer.svg";
             break
 
         }
@@ -122,7 +122,7 @@ export class ForgeDataVisualization {
 
     getViewableData() {
         const viewableData = new this.dataVizCore.ViewableData();
-        viewableData.spriteSize = 24; // Sprites as points of size 24 x 24 pixels
+        viewableData.spriteSize = 12; // Sprites as points of size 24 x 24 pixels
         
         return viewableData;
     }
@@ -153,7 +153,7 @@ export class ForgeDataVisualization {
                 dbId: ++this.viewableLength,
                 name: `Temp ${type}`,
                 type: type,
-                position: result.point,
+                position: {x:result.point.x, y:result.point.y, z:result.point.z},
                 pitch: null,
                 yaw: null
             }

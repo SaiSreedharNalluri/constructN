@@ -1,4 +1,3 @@
-// import { Path2D } from '@adsk/solid-definition';
 import { autodeskAuth } from "../services/forgeService";
 import { ForgeDataVisualization } from './ForgeDataVisualizationUtils';
 
@@ -86,33 +85,64 @@ export class ForgeViewerUtils {
         // console.log("Hover Image at ", result.point, targetObject.getName);
         break;
       case "DATAVIZ_OBJECT_CLICK":
-        console.log("Selected Image at ", result ? result.point : "Outside canvas", targetObject.name);
+        console.log("Selected Image at ", result ? result.point : "Outside canvas", targetObject);
         if (this.isAddTagActive) {
+          // const tagPosition = {
+          //   targetObject.position.x,
+          //   targetObject.position.y,
+          //   targetObject.position.z
+          // }
           this.isAddTagActive = this.deactivateTool();
           let tagObject = {
-            type: targetObject.type,
-            position: targetObject.position,
-            camera: this.getCamera(),
+            tagPosition: targetObject.position,
           }
-          this.eventHandler(tagObject);
+          let contextObject = {
+            id: new Date().getTime(),
+            type: targetObject.type,
+            cameraObject: this.getCamera(),
+            tag: tagObject
+          }
+          this.eventHandler(this.viewerId, Object.freeze(contextObject));
         } else {
-          let clickObject = {
-            type: targetObject.type,
-            position: targetObject.position,
-            rotation: targetObject.rotation,
-            image: targetObject.name
+          console.log(`Inside 360 image click: ${targetObject.position.x}`);
+          let imageObject = {
+            imagePosition: targetObject.position,
+            imageRotation: targetObject.rotation,
+            imageName: targetObject.name
           }
-          this.eventHandler(clickObject);
+          let contextObject = {
+            id: new Date().getTime(),
+            type: targetObject.type,
+            cameraObject: this.getCamera(),
+            image: imageObject
+          }
+          this.eventHandler(this.viewerId, Object.freeze(contextObject));
         }
         
         break;
     }
   }
 
-  updateLayersData(realityPositionMap, camera, imageContext) {
+  updateContext() {
+    if (this.context) {
+      let camera= {};
+        if(this.context.cameraObject) {
+            let pos = this.context.cameraObject.cameraPosition;
+            let tar = this.context.cameraObject.cameraTarget;
+            let offset = this.globalOffset;
+            camera.cameraPosition = new THREE.Vector3(pos.x-offset[0], pos.y-offset[1], pos.z-offset[2])
+            camera.cameraTarget = new THREE.Vector3(tar.x-offset[0], tar.y-offset[1], tar.z-offset[2])
+            camera.fov = this.context.cameraObject.fov;
+        }
+        return camera;
+    } else {
+        return null;
+    }
+}
+
+  updateLayersData(realityPositionMap, context) {
     console.log("Inside update layers data: ", realityPositionMap, this.dataVizExtn);
-    this.camera = camera;
-    this.imageContext = imageContext;
+    this.context = context;
     this.realityPositionMap = realityPositionMap;
     this.isPendingLayersToLoad = true;
     if (this.dataVizExtn) {
@@ -150,13 +180,8 @@ export class ForgeViewerUtils {
     var htmlDiv = document.getElementById(this.viewerId);
     const config3d = {
       extensions: [
-        // 'Autodesk.Edit2D',
-        // 'Autodesk.Viewing.MarkupsCore',
-        // 'Autodesk.Measure'
-        "Autodesk.PDF",
-        "Autodesk.Geolocation",
+        "Autodesk.BimWalk",
         "Autodesk.DataVisualization",
-        // "ConstructNTools",
       ],
     };
     this.viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv, config3d);
@@ -169,6 +194,9 @@ export class ForgeViewerUtils {
     }
     console.log("Initialization complete, loading a model next...");
     // await loadModel(forgeViewer);
+
+    this.viewer.navigation.setWorldUpVector(new THREE.Vector3().fromArray([0, 0, 1]), false);
+    this.viewer.navigation.setReverseZoomDirection(true);
   }
 
   onViewerInitialized() {
@@ -253,16 +281,16 @@ export class ForgeViewerUtils {
       console.log('BIM TM Loaded');
     }
 
-    // if (tm && tm.offset) {
-    //   globalOff = this.tm_json.offset;
-    //   modelOptions.globalOffset = {
-    //     x: globalOff[0],
-    //     y: globalOff[1],
-    //     z: globalOff[2],
-    //   };
-    //   this.globalOffset = tm.offset;
-    //   console.log("Offset Loaded");
-    // }
+    if (tm && tm.offset && !this.manifestNode.is2D()) {
+      globalOff = tm.offset;
+      modelOptions.globalOffset = {
+        x: globalOff[0],
+        y: globalOff[1],
+        z: globalOff[2],
+      };
+      this.globalOffset = tm.offset;
+      console.log("Offset Loaded");
+    }
 
     return modelOptions;
 
@@ -275,50 +303,117 @@ export class ForgeViewerUtils {
     this.isPendingLayersToLoad = false;
   }
 
-  getCamera(){
-    console.log("Inside forge get Camera: ", this.viewer);
-    let camObject = undefined;
-    if(this.isViewerInitialized) {
-      const state = this.viewer.getState({ viewport: true }).viewport;
-      let offset = this.globalOffset
-      camObject = {
-        position: {x:state.eye[0]+offset[0], y:state.eye[1]+offset[1], z:state.eye[2]+offset[2]},
-        target: {x:state.target[0]+offset[0], y:state.target[1]+offset[1], z:state.target[2]+offset[2]}
-      }
+  getCamera() {
+    console.log("Inside forge get camera: ", this.globalOffset);
+    let camera = undefined;
+    const state = this.viewer.getState({ viewport: true }).viewport;
+    let offset = this.globalOffset;
+    const cameraPosition = {
+      x: state.eye[0] + offset[0],
+      y: state.eye[1] + offset[1],
+      z: state.eye[2] + offset[2]
+    };
+
+    const cameraTarget = {
+      x: state.target[0] + offset[0],
+      y: state.target[1] + offset[1], 
+      z: state.target[2] + offset[2],
     }
-    return camObject;
+    // const target = [x, y, z];
+    return {cameraPosition, cameraTarget};
   }
 
-  // ((extension) => {
-  //   console.log("Load Async dataVizExtension: ",extension);
-  //   this.dataVizUtils = new ForgeDataVisualization(this.viewer, extension);
-  //   this.dataVizUtils.setHandler(this.onDataVizHandler.bind(this));
-  // }).bind(this)
+  getContext(){
+    console.log("Inside forge get context: ", this.globalOffset);
+    let contextObject;
+    if(this.isViewerInitialized) {
+      
+
+      contextObject = {
+        id: new Date().getTime(),
+        type: this.manifestNode.is2D() ? "2d" : "3d",
+        cameraObject: this.getCamera(),
+      }
+
+      console.log("Inside final get context forge", contextObject);
+    }
+    return contextObject;
+  }
+
+  getViewerState() {
+    this.viewer.navigation.setCameraUpVector(new THREE.Vector3().fromArray([0, 0, 1]));
+    const state = this.viewer.getState({ viewport: true }).viewport;
+    return {
+      position: [state.eye[0], state.eye[1], state.eye[2]],
+      target: new THREE.Vector3().fromArray(state.target),
+      fov: state.fieldOfView
+    }
+
+  }
+
+  updateViewerState(viewerState) {
+    // console.log("Inside update viewer state: ", this.viewerId, viewerState);
+    this.viewer.navigation.setPosition(viewerState.position.clone());
+    this.viewer.navigation.setTarget(viewerState.target);
+    this.viewer.navigation.setVerticalFov(viewerState.fov, false);
+  }
+
+  onMouseEnter() {
+    // console.log("Inside mouse eneter event forge: ");
+    this.eventHandler(this.viewerId, {type: "mouse"});
+  }
+
+  onCameraChangeEvent(event) {
+    // console.log("On Camera change event: ", event);
+  }
+
+  setNavigation() {
+    let camera = this.updateContext();
+    if(camera && !this.manifestNode.is2D()) {
+      console.log("Inside navigation: ", camera)
+      this.viewer.navigation.setPosition(camera.cameraPosition);
+      this.viewer.navigation.setTarget(camera.cameraTarget);
+      this.viewer.navigation.setVerticalFov(camera.fov, false);
+    }
+  }
+
+  setPivotPoint() {
+    if (!this.manifestNode.is2D()) {
+      let fuzzy_box = this.viewer.model.getFuzzyBox()
+      let fuzzy_min = fuzzy_box['min']
+      let fuzzy_max = fuzzy_box['max']
+      let fuzzy_center = new THREE.Vector3((fuzzy_min['x']+fuzzy_max['x'])/2, (fuzzy_min['y']+fuzzy_max['y'])/2, (fuzzy_min['z']+fuzzy_max['z'])/2)
+      this.viewer.navigation.setPivotPoint(fuzzy_center)
+    }
+  }
+
+  setForgeControls(type) {
+    if (type == 'orbit') {
+      viewer_2.navigation.setIsLocked(false);
+      if (viewer_2.getExtension('Autodesk.BimWalk')){
+        viewer_2.getExtension('Autodesk.BimWalk').deactivate()
+      }
+    } else {
+      viewer_2.navigation.setLockSettings({
+        'orbit': false,
+        'pan': false,
+        'zoom': false,
+        'roll': false,
+        'fov': true
+      })
+      viewer_2.navigation.setIsLocked(true);
+
+      if (viewer_2.getExtension('Autodesk.BimWalk')){
+        viewer_2.getExtension('Autodesk.BimWalk').activate()
+      }
+    }
+  }
+
 
   async loadExtension() {
     this.dataVizExtn = await this.viewer.loadExtension(
       "Autodesk.DataVisualization",
     );
-
-    // var box = this.viewer.model.getBoundingBox();
-    // console.log(`min:${box.min.x},${box.min.x} ,max:${box.max.x},${box.max.y}`);
-
-    // console.log(`Display Unit: ${this.viewer.model.getDisplayUnit()}`);
-    // console.log(`Unit String: ${this.viewer.model.getUnitString()}`);
-    // console.log(`Unit Scale: ${this.viewer.model.getUnitScale()}`);
-    // console.log("", this.viewer.model.isLeaflet());
-    // console.log(
-    //   "Model transform: ",
-    //   this.viewer.model.getModelTransform()
-    // );
-    // console.log(
-    //   `isPageCoordinates: ${this.viewer.model.isPageCoordinates()}`
-    // );
-    this.getActiveTool();
-
-    if (this.isPendingLayersToLoad) {
-      
-    }
   }
 
   getActiveTool() {
@@ -397,6 +492,8 @@ export class ForgeViewerUtils {
 
   onModelLayersLoadedEvent(parameter) {
     console.log("Inside Model Layers loaded Event: model: ",parameter);
+    this.setNavigation();
+    this.setPivotPoint();
     this.loadExtension();
     this.isPendingDataToLoad = false;
     this.isModelLoaded = true;
@@ -558,6 +655,13 @@ export class ForgeViewerUtils {
       Autodesk.Viewing.TOOL_CHANGE_EVENT,
       this.onToolChangeEvent.bind(this)
     );
+    this.viewer.addEventListener(
+      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+      this.onCameraChangeEvent.bind(this)
+      );
+    document.getElementById(this.viewerId).addEventListener(
+      'mouseenter', 
+      this.onMouseEnter.bind(this));
     // this.viewer.addEventListener(
     //   Autodesk.Viewing.CAMERA_CHANGE_EVENT,
     //   this.onCameraChangeEvent.bind(this)
