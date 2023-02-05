@@ -12,7 +12,11 @@ import { ITools } from '../../../../models/ITools';
 import { ITasks } from '../../../../models/Itask';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import { IStructure } from '../../../../models/IStructure';
-
+import list from "../../../../public/icons/listIconInToolbar.svg";
+import taskVisible from "../../../../public/icons/taskVisibleInToolbar.svg";
+import taskHidden from "../../../../public/icons/taskHiddenInToolbar.svg";
+import Image from 'next/image';
+import createTask from "../../../../public/icons/plus-circle.svg";
 interface IProps {
   taskMenuClicked: (a: ITools) => void;
   taskLayer?: boolean;
@@ -85,11 +89,7 @@ const IssueMenu: React.FC<IProps> = ({
     <div className="">
       <div className={` border border-solid bg-slate-300 p-1.5 rounded`}>
         <div className="flex justify-between">
-          <FontAwesomeIcon
-            onClick={openTaskCreate}
-            icon={faCirclePlus}
-            className="cursor-pointer"
-          ></FontAwesomeIcon>
+          <Image className='cursor-pointer ' src={createTask} alt="" onClick={openTaskCreate}></Image>
           {/* <TaskCreate
             handleTaskSubmit={taskSubmit}
             visibility={createOverlay}
@@ -98,11 +98,7 @@ const IssueMenu: React.FC<IProps> = ({
             currentStructure={myStructure}
             currentSnapshot={mySnapshot}
           ></TaskCreate> */}
-          <FontAwesomeIcon
-            icon={faList}
-            className="mx-2 cursor-pointer"
-            onClick={openTaskList}
-          ></FontAwesomeIcon>
+          <Image alt='' src={list} onClick={openTaskList} className="mx-2 cursor-pointer"></Image>
           <TaskList
             tasksList={tasksList}
             visibility={listOverlay}
@@ -110,11 +106,8 @@ const IssueMenu: React.FC<IProps> = ({
             closeFilterOverlay={closeTaskFilterOverlay}
             handleOnFilter={handleOnTaskFilter}
           ></TaskList>
-          <FontAwesomeIcon
-            icon={taskVisbility ? faEye : faEyeSlash}
-            className="cursor-pointer"
-            onClick={toggleTaskVisibility}
-          ></FontAwesomeIcon>
+
+          {taskVisbility ? <Image alt='' className="cursor-pointer " src={taskVisible} onClick={toggleTaskVisibility} ></Image> : <Image alt='' src={taskHidden} onClick={toggleTaskVisibility} className="cursor-pointer "></Image>}
         </div>
       </div>
     </div>
