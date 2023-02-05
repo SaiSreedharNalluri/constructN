@@ -110,6 +110,7 @@ const IssueCreate: React.FC<IProps> = ({
     formData.owner = loggedInUserId;
     formData.status = 'To Do';
     formData.context = myContext;
+    formData.dueDate = formData.date;
     createIssue(router.query.projectId as string, formData)
       .then((response) => {
         if (response.success === true) {
