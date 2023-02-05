@@ -403,7 +403,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
             ''
           )}
         </div>
-        <div >
+        <div className={`${active === 'issue' ? 'selectedClass' : 'unSelectedClass'
+          }`} >
           {/* <FontAwesomeIcon
             icon={faExclamationCircle}
             id="issue"
@@ -413,7 +414,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
             onClick={rightMenuClickHandler}
           ></FontAwesomeIcon> */}
           <Image alt='' src={issues} id="issue"
-            className={` m-auto   w-full cursor-pointer `}
+            className={` m-auto  p-1.5  w-full cursor-pointer `}
             onClick={rightMenuClickHandler} ></Image>
           {active === 'issue' ? (
             <div className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'}`}>
@@ -441,7 +442,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
         </div>
         <div className={` ${active === 'task' ? 'selectedClass' : 'unSelectedClass'
           }`}>
-          <Image alt='' src={tasks} id="task" className={` m-auto  w-full   text-4xl cursor-pointer `}
+          <Image alt='' src={tasks} id="task" className={` m-auto  w-full  p-1  text-4xl cursor-pointer `}
             onClick={rightMenuClickHandler}></Image>
           {active === 'task' ? (
             <div className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'}`}>
@@ -462,7 +463,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
         <div className={` justify-center cursor-pointer ${active === 'progress' ? 'selectedClass' : 'unSelectedClass'
           }`}>
           <Image alt='' src={hotspot} id="progress"
-            className={` w-full  cursor-pointer `}
+            className={` w-full  cursor-pointer p-1 `}
             onClick={rightMenuClickHandler}></Image>
           {active === 'progress' ? (
             <div className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'}`}>

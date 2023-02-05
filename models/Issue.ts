@@ -3,7 +3,7 @@ export interface Issue {
   type: 'string';
   description: string;
   status: 'string';
-  priority: 'string';
+  priority: string;
   screenshot: 'string';
   assignees: [
     { _id: string; firstName: string; lastName: string; email: string }

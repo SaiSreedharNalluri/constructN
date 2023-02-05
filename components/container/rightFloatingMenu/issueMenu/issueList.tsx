@@ -14,6 +14,11 @@ import {
   faSmile,
   faSpinner,
   faTrashCan,
+  faSort,
+  faArrowDown,
+  faArrowDownAZ,
+  faArrowUpAZ,
+  faArrowDown19,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -33,11 +38,13 @@ import Image from 'next/image';
 import { Modal } from 'react-responsive-modal';
 import ReactSelect from 'react-select';
 import TagsInput from 'react-tagsinput';
+import {CSVLink} from 'react-csv'
 interface IProps {
   closeOverlay: () => void;
   issuesList: Issue[];
   visibility: boolean;
   handleOnFilter: (formData: object) => void;
+  handleOnSort: (sortMethod:string)=>void;
   closeFilterOverlay: () => void;
   deleteTheIssue: (issueObj: object) => void;
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
@@ -47,11 +54,13 @@ const IssueList: React.FC<IProps> = ({
   closeOverlay,
   issuesList,
   handleOnFilter,
+  handleOnSort,
   closeFilterOverlay,
   deleteTheIssue,
   clickIssueEditSubmit,
 }) => {
   const router = useRouter();
+  const [isOpenSort,setIsOpenSort] = useState(false);
   const [issueType, setIssueType] = useState<[string]>();
   const [myVisibility, setMyVisibility] = useState(visibility);
   const [issuePriority, setIssuePriority] = useState<[string]>();
@@ -171,13 +180,14 @@ const IssueList: React.FC<IProps> = ({
       setIssueViewMode('list');
     }, 2000);
   };
+  const clickDownloadIssues=()=>{};
   const renderIssueView = (viewParam: string) => {
     switch (viewParam) {
       case 'filter':
         return (
           <div>
             <div className="flex justify-between border-b border-black border-solid">
-              <div>
+              <div className='flex gap-2'>
                 <FontAwesomeIcon
                   icon={faArrowLeftLong}
                   className="mt-2"
@@ -185,6 +195,7 @@ const IssueList: React.FC<IProps> = ({
                     setIssueViewMode('list'), closeFilterOverlay();
                   }}
                 ></FontAwesomeIcon>
+
                 <h1>Issue Filters</h1>
               </div>
               <div>
@@ -656,14 +667,74 @@ const IssueList: React.FC<IProps> = ({
                     <FontAwesomeIcon icon={faSearch} />
                   </div>
 
-                  <div className="mr-3">
+                  <div className="grid grid-cols-3 p-1 gap-1">
+                    <div>
                     <FontAwesomeIcon
                       icon={faFilter}
                       onClick={() => {
                         setIssueViewMode('filter');
                       }}
                     />
-                    <FontAwesomeIcon icon={faDownload}></FontAwesomeIcon>
+                    </div>
+                    <div>
+                    <FontAwesomeIcon
+                      icon={faSort}
+                      onClick={() => {
+                  
+                        isOpenSort?setIsOpenSort(false):setIsOpenSort(true);
+                        
+                        //setIssueViewMode('filter');
+                      }}
+                    />
+                    {isOpenSort && (
+                <div className="absolute  right-0 z-10 bg-gray-100 rounded-lg shadow border">
+                  <ul className="text-black p-4 ">
+                    <li className="font-medium cursor-pointer"
+                    onClick={() => {setIsOpenSort(false);handleOnSort('Last Updated');}}>
+                      <div className="flex items-center justify-center transform transition-colors duration-200">
+                        <div className="mr-3">
+                          <FontAwesomeIcon icon={faArrowUpAZ}></FontAwesomeIcon>
+                        </div>
+                        Last Updated
+                      </div>
+                    </li>
+                    <li className="font-medium cursor-pointer"
+                    onClick={() => {setIsOpenSort(false);handleOnSort('First Updated');}}>
+                      <div className="flex items-center justify-center transform transition-colors duration-200 ">
+                        <div className="mr-3">
+                          <FontAwesomeIcon icon={faArrowDownAZ}></FontAwesomeIcon>
+                        </div>
+                        First Updated
+                      </div>
+                    </li>
+                    <hr className="border-gray-700" />
+                    {/* <li
+                      className="font-medium cursor-pointer"
+                      onClick={() => {setIsOpenSort(false);handleOnSort('High Priority')}}
+                    >
+                      <div className="flex items-center justify-center transform transition-colors duration-200 ">
+                        <div className="mr-3 ">
+                          <FontAwesomeIcon
+                            icon={faArrowDown19}
+                          ></FontAwesomeIcon>
+                        </div>
+                        Priority
+                      </div>
+                    </li> */}
+                  </ul>
+                </div>
+              )}
+                    </div>
+                    <div>
+                    <CSVLink
+                    data={issuesList}
+                    filename={"my-issues.csv"}
+                    className='text-black btn btn-primary fill-black fa fa-Download '
+                    target="_blank"
+                    ><FontAwesomeIcon className=' fill-black text-black' icon={faDownload}></FontAwesomeIcon>
+                    </CSVLink>
+                    
+                    </div>
                   </div>
                 </div>
               </div>
@@ -691,7 +762,7 @@ const IssueList: React.FC<IProps> = ({
                                   </div>
                                   <div className="col-span-3 p-1 text-gray-600">
                                     <div>
-                                      <p className='text-base'>{issueInfo.title}</p>
+                                      <p className='text-base'>{issueInfo.type} (#{issueInfo?._id?.substring(3)})</p>
                                     </div>
                                     <div className="flex gap-3">
                                       <p className="text-sm">{issueInfo.status}</p>

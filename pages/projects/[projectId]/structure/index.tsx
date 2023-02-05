@@ -21,6 +21,7 @@ import {
   deleteIssue,
   editIssue,
   getIssuesList,
+  getIssuesTypes,
 } from '../../../../services/issue';
 import { getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
@@ -333,6 +334,40 @@ const Index: React.FC<IProps> = () => {
         }
       });
   };
+  const handleOnIssueSort = (sortMethod: string)=>{
+    switch(sortMethod){
+      case 'Last Updated':
+        setIssueFilterList(issuesList);
+        setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.updatedAt>b.updatedAt){return 1}else if(b.updatedAt>a.updatedAt){return -1}return 0}));
+        setIssueList(issueFilterList);
+        break;
+      case 'First Updated':
+        setIssueFilterList(issuesList);
+        setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.updatedAt>b.updatedAt){return -1}else if(b.updatedAt>a.updatedAt){return 1}return 0}));
+        setIssueList(issueFilterList);
+        break;
+      case 'First DueDate':
+        setIssueFilterList(issuesList);
+        //setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.updatedAt>b.updatedAt){return -1}else if(b.updatedAt>a.updatedAt){return 1}return 0}));
+        setIssueList(issueFilterList);
+        break;
+      case 'Last DueDate':
+        setIssueFilterList(issuesList);
+        //setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.updatedAt>b.updatedAt){return 1}else if(b.updatedAt>a.updatedAt){return -1}return 0}));
+        setIssueList(issueFilterList);
+        break;
+      case 'Asc Priority':
+        setIssueFilterList(issuesList);
+        //setIssueFilterList(issueFilterList.sort((a,b)=>{if(getIssuesTypes(currentProjectId) && b.priority==='Low' || b.priority==='Medium'){return 1}else if(b.updatedAt>a.updatedAt){return -1}return 0}));
+        setIssueList(issueFilterList);
+        break;
+      case 'Dsc Proprity':
+        break;
+      default:
+        console.log('Not Sorted');
+        break;
+    }
+  };
   const handleOnIssueFilter = (formData: any) => {
     console.log("over here",formData.issueTypeData,formData?.issuePriorityData,formData?.issueStatusData,formData.assigneesData);
     const result = issueFilterList.filter(
@@ -528,6 +563,7 @@ const Index: React.FC<IProps> = () => {
                 visibility={openIssueView}
                 closeOverlay={closeIssueList}
                 handleOnFilter={handleOnIssueFilter}
+                handleOnSort={handleOnIssueSort}
                 deleteTheIssue={deleteTheIssue}
                 clickIssueEditSubmit={clickIssueEditSubmit}
               ></IssueList>
