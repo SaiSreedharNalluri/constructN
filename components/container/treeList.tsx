@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ChildrenEntity } from '../../models/IStructure';
 import Tree from './tree';
 interface IProps {
@@ -6,9 +6,15 @@ interface IProps {
   getStructureData: (structure: ChildrenEntity) => void;
 }
 const TreeList: React.FC<IProps> = ({ treeList, getStructureData }) => {
+  const [currentClickedStruct,setCurrentClickedStruct]=useState('');
+  const getStructData=(structure:ChildrenEntity)=>{
+    setCurrentClickedStruct(structure._id);
+    getStructureData(structure);
+
+  };
   return (
     <div>
-      <Tree tree={treeList} getStructureData={getStructureData} depth={1} />
+      <Tree currentClickedStruct={currentClickedStruct} tree={treeList} getStructureData={getStructData} depth={1} />
     </div>
   );
 };

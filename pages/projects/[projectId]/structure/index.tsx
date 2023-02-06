@@ -138,6 +138,7 @@ const Index: React.FC<IProps> = () => {
 
   const updateRealityMap = (realityMap: IActiveRealityMap) => {
     setActiveRealityMap(realityMap);
+    console.log("change triggered",realityMap);
   };
 
   const updatedSnapshot = (snapshot: ISnapshot) => {
@@ -146,6 +147,7 @@ const Index: React.FC<IProps> = () => {
 
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
+    console.log("change triggered",designMap);
   };
 
   const activeClass = (e: any) => {
@@ -224,6 +226,7 @@ const Index: React.FC<IProps> = () => {
     switch (toolInstance.toolName) {
       case 'viewType':
         setViewType(toolInstance.toolAction);
+        //setClickedTool(toolInstance);
         break;
       case 'viewMode':
         setViewMode(toolInstance.toolAction);
@@ -507,7 +510,7 @@ const Index: React.FC<IProps> = () => {
              </div>
           </div>
         </div> */}
-        {structure && snapshot && (
+        {structure && snapshot && designMap && activeRealityMap &&(
           <div ref={rightrefContainer}>
             <FontAwesomeIcon
               className={`fixed  ${
@@ -534,6 +537,8 @@ const Index: React.FC<IProps> = () => {
                 currentProject={currentProjectId}
                 currentStructure={structure}
                 currentSnapshot={snapshot}
+                currentTypesList={designMap}
+                currentLayersList={activeRealityMap}
                 closeFilterOverlay={closeFilterOverlay}
                 closeTaskFilterOverlay={closeTaskFilterOverlay}
                 handleOnTaskFilter={handleOnTaskFilter}

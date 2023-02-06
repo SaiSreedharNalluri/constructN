@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChildrenEntity } from '../../models/IStructure';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
@@ -6,12 +6,16 @@ interface IProps {
   tree: ChildrenEntity[];
   getStructureData: (structure: ChildrenEntity) => void;
   depth: any;
+  currentClickedStruct:string;
 }
-const Tree: React.FC<IProps> = ({ tree, getStructureData, depth }) => {
+const Tree: React.FC<IProps> = ({ tree, getStructureData, depth,currentClickedStruct }) => {
   const Treenode = (structure: ChildrenEntity) => {
     const [visible, setVisible] = useState(false);
+    const [clickedStruct,setClickedStruct]=useState(currentClickedStruct);
     const hasChild = structure.children?.length ? true : false;
-    const [click, setClick] = useState(false);
+    useEffect(()=>{
+      setClickedStruct(currentClickedStruct);
+    },[currentClickedStruct]);
     const getICon = () => {
       if (!hasChild) {
         return;
@@ -25,29 +29,33 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData, depth }) => {
     };
     return (
       <React.Fragment>
-        <li key={structure._id} className=" flex-col  relative ">
+        <li key={structure._id} className=" flex-col relative ">
           <div
-            onClick={() => {
-              getStructureData(structure);
-              setVisible((vis) => !vis);
-            }}
+            
           >
             <div
-              className={`flex justify-between border-b border-solid border-gray-400 p-1`}
-              onClick={() => {
-                if (click) {
-                  setClick(false);
-                } else {
-                  setClick(true);
-                }
-              }}
+              className={`flex ${structure._id===clickedStruct?'bg-white':''} justify-between border-b border-solid border-gray-400 p-1`}
+            
             >
-              <div>
-                <p className={`margin${depth}  text-sm cursor-pointer `}>
+               
+              <div
+              className={`flex margin${depth}`}
+              onClick={() => {
+                getStructureData(structure);
+                //setCurrentClickedStruct(structure._id);
+                
+              }}>
+                <div
+              className='hover:bg-gray-300 px-2 hover:rounded-full'
+               onClick={() => {
+                //getStructureData(structure);
+                setVisible((vis) => !vis);
+              }}>{getICon()}</div>
+                <p className={`text-sm cursor-pointer `}>
                   {structure.name}{' '}
                 </p>
               </div>
-              <div>{getICon()}</div>
+              
             </div>
           </div>
           {hasChild && visible && (
@@ -55,6 +63,7 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData, depth }) => {
               <div className="xyz">
                 <li className="">
                   <Tree
+                    currentClickedStruct={clickedStruct}
                     tree={structure.children as Array<ChildrenEntity>}
                     getStructureData={getStructureData}
                     depth={depth + 1}
