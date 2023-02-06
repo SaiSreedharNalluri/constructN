@@ -26,6 +26,8 @@ import Image from 'next/image';
 import issues from "../../../public/icons/issues.svg";
 import tasks from "../../../public/icons/taskVisibleInToolbar.svg";
 import hotspot from "../../../public/icons/Hotspot.svg";
+import { IActiveReality, IActiveRealityMap } from '../../../models/IReality';
+import { IDesignMap } from '../../../models/IDesign';
 interface IProps {
   toolClicked: (a: ITools) => void;
   viewMode: string;
@@ -37,6 +39,8 @@ interface IProps {
   currentStructure: IStructure;
   currentSnapshot: ISnapshot;
   currentProject: string;
+  currentLayersList : IActiveRealityMap;
+  currentTypesList :IDesignMap;
   closeFilterOverlay: () => void;
   handleOnTaskFilter: (formData: object) => void;
   closeTaskFilterOverlay: () => void;
@@ -52,6 +56,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
   currentProject,
   currentSnapshot,
   currentStructure,
+  currentLayersList,
+  currentTypesList,
   closeFilterOverlay,
   closeTaskFilterOverlay,
   handleOnTaskFilter,
@@ -66,6 +72,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
   const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
+  const [myTypesList,setMyTypesList]= useState<IDesignMap>(currentTypesList);
+  const [myLayersList, setMyLayersList]=useState<IActiveRealityMap>(currentLayersList);
   let toolInstance: ITools = { toolName: '', toolAction: '' };
   // const closeStructurePages = (e: any) => {
   //   if (!rightOverlayRefs.current.contains(e.target)) {
@@ -86,7 +94,9 @@ const RightFloatingMenu: React.FC<IProps> = ({
     setMyProject(currentProject);
     setMyStructure(currentStructure);
     setMySnapshot(currentSnapshot);
-  }, [currentProject, currentSnapshot, currentStructure]);
+    setMyTypesList(currentTypesList);
+    setMyLayersList(currentLayersList);
+  }, [currentProject, currentSnapshot, currentStructure,currentLayersList,currentTypesList]);
 
   const rightMenuClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
@@ -179,7 +189,10 @@ const RightFloatingMenu: React.FC<IProps> = ({
             <div className={`fixed  ${rightNav ? 'right-9' : 'hidden'}`}>
               <div className="bg-gray-400">
                 <select onChange={typeChange} id="typeList">
-                  {viewMode === 'Design' ? (
+                  {myTypesList&& Object.keys(myTypesList).map((key)=>(
+                    <option value={key}>{key}</option>
+                  ))}
+                  {/* {viewMode === 'Design' ? (
                     <option value="plan">Plan</option>
                   ) : (
                     ''
@@ -213,7 +226,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
                     <option value="orthoPhoto">OrthoPhoto</option>
                   ) : (
                     ''
-                  )}
+                  )} */}
                 </select>
               </div>
             </div>
@@ -244,7 +257,17 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 className={`border  -mt-8 border-solid bg-slate-300 p-1.5 rounded `}
               >
                 <ul className=" h-full text-xs" id="items">
-                  <li>
+                  {myLayersList&& Object.keys(myLayersList).map((key)=>(
+                    <li>
+                      <input
+                      onClick={LayerChange}
+                      value={key}
+                      type="checkbox"
+                      />
+                      {key}
+                    </li>
+                  ))}
+                  {/* <li>
                     <input
                       onClick={LayerChange}
                       value={'360Image'}
@@ -395,7 +418,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
                     </li>
                   ) : (
                     ''
-                  )}
+                  )} */}
                 </ul>
               </div>
             </div>
