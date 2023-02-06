@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import { IStructure } from '../../../../models/IStructure';
 import { getCookie } from 'cookies-next';
-import { IToolResponse } from '../../../../models/ITools';
+import { IContext, IToolResponse } from '../../../../models/ITools';
 import ReactSelect from 'react-select';
 import TagsInput from 'react-tagsinput';
 interface IProps {
@@ -96,7 +96,24 @@ const IssueCreate: React.FC<IProps> = ({
   const closeIssueCreate = () => {
     closeOverlay();
   };
-  const clickIssueSubmit = (formData: any) => {
+  interface FormValues {
+    type: string;
+    priority: string;
+    description: string;
+    assignees: object[];
+    tags: string[];
+    dueDate: string;
+    structure: string;
+    context: IToolResponse;
+    title: string;
+    snapshot: string;
+    owner: string;
+    status: string;
+  }
+  const clickIssueSubmit = (
+    formData: FormValues,
+    { resetForm }: { resetForm: (nextValues?: Partial<FormValues>) => void }
+  ) => {
     let userIdList: any[] = [];
     if (formData.assignees.length > 0) {
       formData.assignees.map((user: any) => {
@@ -105,18 +122,17 @@ const IssueCreate: React.FC<IProps> = ({
       formData.assignees = userIdList;
     }
     formData.structure = myStructure?._id;
-    formData.title = `${myStructure?.name}_${formData.date} `;
+    formData.title = `${myStructure?.name}_${formData.dueDate} `;
     formData.snapshot = mySnapshot?._id;
     formData.owner = loggedInUserId;
     formData.status = 'To Do';
     formData.context = myContext;
-    formData.dueDate = formData.date;
     createIssue(router.query.projectId as string, formData)
       .then((response) => {
         if (response.success === true) {
           toast.success('Issue is added sucessfully');
           handleIssueSubmit(formData);
-          console.log(formData);
+          resetForm();
         }
       })
       .catch((error) => {
@@ -131,17 +147,28 @@ const IssueCreate: React.FC<IProps> = ({
     description: string;
     assignees: object[];
     tags: string[];
-    date: string;
+    dueDate: string;
     context: IToolResponse;
+    structure: string;
+    title: string;
+    snapshot: string;
+    owner: string;
+    status: string;
   } = {
     type: 'Please select the issue type',
     priority: 'Please select the issue priority',
     description: '',
     assignees: [],
     tags: [],
-    date: '',
+    dueDate: '',
     context: myContext,
+    structure: '',
+    title: '',
+    status: '',
+    owner: '',
+    snapshot: '',
   };
+
   const validationSchema = Yup.object().shape({
     type: Yup.string(),
     priority: Yup.string(),
@@ -153,7 +180,7 @@ const IssueCreate: React.FC<IProps> = ({
       })
     ),
     tags: Yup.array().of(Yup.string()),
-    date: Yup.string(),
+    dueDate: Yup.string(),
   });
   interface user {
     label: string;
@@ -279,11 +306,11 @@ const IssueCreate: React.FC<IProps> = ({
                   <div className=" text-gray-500 ">Date</div>
                   <Field
                     type="date"
-                    name="date"
+                    name="dueDate"
                     className="block w-full text-sm border border-solid border-gray-600 rounded p-2"
                   />
                   <ErrorMessage
-                    name="date"
+                    name="dueDate"
                     component="div"
                     className="alert alert-danger"
                   />

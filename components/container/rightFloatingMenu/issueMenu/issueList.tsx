@@ -38,13 +38,13 @@ import Image from 'next/image';
 import { Modal } from 'react-responsive-modal';
 import ReactSelect from 'react-select';
 import TagsInput from 'react-tagsinput';
-import {CSVLink} from 'react-csv'
+import { CSVLink } from 'react-csv';
 interface IProps {
   closeOverlay: () => void;
   issuesList: Issue[];
   visibility: boolean;
   handleOnFilter: (formData: object) => void;
-  handleOnSort: (sortMethod:string)=>void;
+  handleOnSort: (sortMethod: string) => void;
   closeFilterOverlay: () => void;
   deleteTheIssue: (issueObj: object) => void;
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
@@ -60,7 +60,7 @@ const IssueList: React.FC<IProps> = ({
   clickIssueEditSubmit,
 }) => {
   const router = useRouter();
-  const [isOpenSort,setIsOpenSort] = useState(false);
+  const [isOpenSort, setIsOpenSort] = useState(false);
   const [issueType, setIssueType] = useState<[string]>();
   const [myVisibility, setMyVisibility] = useState(visibility);
   const [issuePriority, setIssuePriority] = useState<[string]>();
@@ -89,9 +89,9 @@ const IssueList: React.FC<IProps> = ({
     issueStatusData: Array<string>;
     assigneesData: object[];
   } = {
-    issueTypeData: [],//(issueType ===undefined)?[]:issueType ,
-    issuePriorityData: [],// (issuePriority ===undefined)?[]:issuePriority ,
-    issueStatusData: [],//(issueStatus ===undefined)?[]:issueStatus ,
+    issueTypeData: [], //(issueType ===undefined)?[]:issueType ,
+    issuePriorityData: [], // (issuePriority ===undefined)?[]:issuePriority ,
+    issueStatusData: [], //(issueStatus ===undefined)?[]:issueStatus ,
     assigneesData: [],
   };
   const getOwnerName = (userId: string) => {
@@ -180,14 +180,14 @@ const IssueList: React.FC<IProps> = ({
       setIssueViewMode('list');
     }, 2000);
   };
-  const clickDownloadIssues=()=>{};
+  const clickDownloadIssues = () => {};
   const renderIssueView = (viewParam: string) => {
     switch (viewParam) {
       case 'filter':
         return (
           <div>
             <div className="flex justify-between border-b border-black border-solid">
-              <div className='flex gap-2'>
+              <div className="flex gap-2">
                 <FontAwesomeIcon
                   icon={faArrowLeftLong}
                   className="mt-2"
@@ -217,23 +217,20 @@ const IssueList: React.FC<IProps> = ({
                     <div>
                       <h5 className="text-gray-500">Issue Type</h5>
                     </div>
-                    <div className='grid grid-cols-2'>
-                    {issueType &&
-                      issueType.map((option) => (
-                    
-                        <div key={option}>
-                         
-                          <Field
-                            type="checkbox"
-                            name="issueTypeData"
-                            id={option}
-                            value={option}
-                          />
-                          <label htmlFor={option}>{option}</label>
-                        
-                        </div>
-                      ))}
-                      </div>
+                    <div className="grid grid-cols-2">
+                      {issueType &&
+                        issueType.map((option) => (
+                          <div key={option}>
+                            <Field
+                              type="checkbox"
+                              name="issueTypeData"
+                              id={option}
+                              value={option}
+                            />
+                            <label htmlFor={option}>{option}</label>
+                          </div>
+                        ))}
+                    </div>
                     <ErrorMessage
                       name="issueTypeData"
                       component="div"
@@ -242,20 +239,20 @@ const IssueList: React.FC<IProps> = ({
                     <div>
                       <h5 className="text-gray-500">Issue Priority</h5>
                     </div>
-                    <div className='grid grid-cols-3'>
-                    {issuePriority &&
-                      issuePriority.map((option) => (
-                        <div className='' key={option}>
-                          <Field
-                            type="checkbox"
-                            name="issuePriorityData"
-                            id={option}
-                            value={option}
-                          />
-                          <label htmlFor={option}>{option}</label>
-                        </div>
-                      ))}
-                      </div>
+                    <div className="grid grid-cols-3">
+                      {issuePriority &&
+                        issuePriority.map((option) => (
+                          <div className="" key={option}>
+                            <Field
+                              type="checkbox"
+                              name="issuePriorityData"
+                              id={option}
+                              value={option}
+                            />
+                            <label htmlFor={option}>{option}</label>
+                          </div>
+                        ))}
+                    </div>
                     <ErrorMessage
                       name="issuePriorityData"
                       component="div"
@@ -264,20 +261,20 @@ const IssueList: React.FC<IProps> = ({
                     <div>
                       <h5 className="text-gray-500">Issue Status</h5>
                     </div>
-                    <div className='grid grid-cols-2'>
-                    {issueStatus &&
-                      issueStatus.map((option) => (
-                        <div key={option}>
-                          <Field
-                            type="checkbox"
-                            name="issueStatusData"
-                            id={option}
-                            value={option}
-                          />
-                          <label htmlFor={option}>{option}</label>
-                        </div>
-                      ))}
-                      </div>
+                    <div className="grid grid-cols-2">
+                      {issueStatus &&
+                        issueStatus.map((option) => (
+                          <div key={option}>
+                            <Field
+                              type="checkbox"
+                              name="issueStatusData"
+                              id={option}
+                              value={option}
+                            />
+                            <label htmlFor={option}>{option}</label>
+                          </div>
+                        ))}
+                    </div>
                     <ErrorMessage
                       name="issueStatusData"
                       component="div"
@@ -513,7 +510,9 @@ const IssueList: React.FC<IProps> = ({
                   className="mt-2"
                   onClick={() => setIssueViewMode('list')}
                 ></FontAwesomeIcon>
-                <p className="ml-2 mt-1  font-semibold">{issueObj?.type} Issue</p>
+                <p className="ml-2 mt-1  font-semibold">
+                  {issueObj?.type} Issue
+                </p>
               </div>
               <div className="flex">
                 <div>
@@ -542,19 +541,19 @@ const IssueList: React.FC<IProps> = ({
                   width={1080}
                   height={1080}
                   className="w-10/12 h-24"
-                  src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8QEBAPDw0NDw8QDxASEA8NDQ8NDQ8QFRIWFhUSFRUYHSggGBolGxUVITEhJSk3Li4uFx8zODMtNyg5OisBCgoKBQUFDgUFDisZExkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIALcBEwMBIgACEQEDEQH/xAAYAAEBAQEBAAAAAAAAAAAAAAAAAQIHA//EACQQAQEAAAYBBQEBAQAAAAAAAAABAhExQVHRwSFhgbHhcfGR/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AO2KyoKUiAVMQmIEuhCpL9AS6mXoF8ANM1QWEKbfILhWeE5AVYi0E2BADdC0CItNwQhSgQE6BSJsoKIUFTNWQUQBvtZogBwW+palASrUxARnP6arO0BZqi0lAIQwgsE3UFWszRrMCX1WoArOKLUAtIlXMElOyJQCqkBUIQDYpQCrukLuCosQAAGoABsJVgIkJqUC6psqAHsAKF6AKACqnC5gpUKBUxKyCwhdQBKAFpDJYCXyAAUAJ0ACoUoEGbagPRcSQAOkpegPJCgJDgu39W7AgAEUiAQigLCIsoKRF5BFRAIqFBZEWJAF4SqCZHakBBUAFQAqpAZzFyAaSbrUAL5LoAZ+vwnJACKEAuyTwsSQBcQAUIAFAFKRAWpVpACJwALUigUCAFIQBCryCUgAFPwBMwyAaSrUgCRUAz8E7IAqZgAFAWJV6AOxFvpQTPVYiwBUAWT1qFAFiKCLSAByUA2KACQoAQpkCoAEozQG0ugYgQ5W7IBhSLEm4KAAKAIQBdwhAAqQGkMygU8ByBkpACRLuQm4KFL5AEKAh+GwKkCAqBAayEAVOl90/AKzPDU7ZAVD3BSkhhBaJVoIACkTCTX4AKTUBf1Ck1BZUwzQaAEACmFAUIgLunQlBUWpQKqVQC6CgmQoBS7QIBkzKpQSk0CAv+KigipCAQmnwAJVhQCAUEUl9P8AhNgMKooEBOAWboFAzJ4TFsUDY/CEAiUAVUpAWESqBn7CgJapUxAbCsgELosAzIcLAOSa0wm4JkXlYngCnaphAmvwcC3QEk+yKQE6XysTPUEupQyAySrnokBakKAbpRb5ASHJNQO1CfYKU3+FBqDIAZEAEWICUui8pAXD2QUCz6ilAEWlBOCL+EgJycNGQIQqgkST0/tWmLgEot8ICZBSglUupQTJLy0mQIpwe4C8JWr0BCQyUGc6LkAQoAXYAEEAWNACRVASL5AE5/uTVAAwgCZLdgAsRQESgBUyACnPuAJkdAAUAW7gAoALQAf/2Q=="
-                ></Image>
+                  src={issueObj?.screenshot as string}
+                />
                 <p className="ml-2">{issueObj?.title}</p>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <div className='flex'>
-                <FontAwesomeIcon
-                  icon={faSpinner}
-                  className="mt-2"
-                ></FontAwesomeIcon>
-                <p className="ml-2">{issueObj?.status}</p>
+                <div className="flex">
+                  <FontAwesomeIcon
+                    icon={faSpinner}
+                    className="mt-2"
+                  ></FontAwesomeIcon>
+                  <p className="ml-2">{issueObj?.status}</p>
                 </div>
-                <div className='flex'>
+                <div className="flex">
                   <FontAwesomeIcon
                     className="mt-1"
                     icon={faFlag}
@@ -581,18 +580,14 @@ const IssueList: React.FC<IProps> = ({
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-x-4 gap-y-2   grid-rows-2  mt-2">
-                
-                
-
                 <div className="flex">
                   <FontAwesomeIcon
                     className="mt-1"
                     icon={faUser}
                   ></FontAwesomeIcon>
                   <p className="ml-1"></p>
-                  {issueObj?.assignees.map((a:any)=>a.firstName).join(',')}
+                  {issueObj?.assignees.map((a: any) => a.firstName).join(',')}
                 </div>
-                
               </div>
               <div className=" mt-2 ">
                 <h6 className="underline ">Issue Description</h6>
@@ -669,46 +664,61 @@ const IssueList: React.FC<IProps> = ({
 
                   <div className="grid grid-cols-3 p-1 gap-1">
                     <div>
-                    <FontAwesomeIcon
-                      icon={faFilter}
-                      onClick={() => {
-                        setIssueViewMode('filter');
-                      }}
-                    />
+                      <FontAwesomeIcon
+                        icon={faFilter}
+                        onClick={() => {
+                          setIssueViewMode('filter');
+                        }}
+                      />
                     </div>
                     <div>
-                    <FontAwesomeIcon
-                      icon={faSort}
-                      onClick={() => {
-                  
-                        isOpenSort?setIsOpenSort(false):setIsOpenSort(true);
-                        
-                        //setIssueViewMode('filter');
-                      }}
-                    />
-                    {isOpenSort && (
-                <div className="absolute  right-0 z-10 bg-gray-100 rounded-lg shadow border">
-                  <ul className="text-black p-4 ">
-                    <li className="font-medium cursor-pointer"
-                    onClick={() => {setIsOpenSort(false);handleOnSort('Last Updated');}}>
-                      <div className="flex items-center justify-center transform transition-colors duration-200">
-                        <div className="mr-3">
-                          <FontAwesomeIcon icon={faArrowUpAZ}></FontAwesomeIcon>
-                        </div>
-                        Last Updated
-                      </div>
-                    </li>
-                    <li className="font-medium cursor-pointer"
-                    onClick={() => {setIsOpenSort(false);handleOnSort('First Updated');}}>
-                      <div className="flex items-center justify-center transform transition-colors duration-200 ">
-                        <div className="mr-3">
-                          <FontAwesomeIcon icon={faArrowDownAZ}></FontAwesomeIcon>
-                        </div>
-                        First Updated
-                      </div>
-                    </li>
-                    <hr className="border-gray-700" />
-                    {/* <li
+                      <FontAwesomeIcon
+                        icon={faSort}
+                        onClick={() => {
+                          isOpenSort
+                            ? setIsOpenSort(false)
+                            : setIsOpenSort(true);
+
+                          //setIssueViewMode('filter');
+                        }}
+                      />
+                      {isOpenSort && (
+                        <div className="absolute  right-0 z-10 bg-gray-100 rounded-lg shadow border">
+                          <ul className="text-black p-4 ">
+                            <li
+                              className="font-medium cursor-pointer"
+                              onClick={() => {
+                                setIsOpenSort(false);
+                                handleOnSort('Last Updated');
+                              }}
+                            >
+                              <div className="flex items-center justify-center transform transition-colors duration-200">
+                                <div className="mr-3">
+                                  <FontAwesomeIcon
+                                    icon={faArrowUpAZ}
+                                  ></FontAwesomeIcon>
+                                </div>
+                                Last Updated
+                              </div>
+                            </li>
+                            <li
+                              className="font-medium cursor-pointer"
+                              onClick={() => {
+                                setIsOpenSort(false);
+                                handleOnSort('First Updated');
+                              }}
+                            >
+                              <div className="flex items-center justify-center transform transition-colors duration-200 ">
+                                <div className="mr-3">
+                                  <FontAwesomeIcon
+                                    icon={faArrowDownAZ}
+                                  ></FontAwesomeIcon>
+                                </div>
+                                First Updated
+                              </div>
+                            </li>
+                            <hr className="border-gray-700" />
+                            {/* <li
                       className="font-medium cursor-pointer"
                       onClick={() => {setIsOpenSort(false);handleOnSort('High Priority')}}
                     >
@@ -721,19 +731,22 @@ const IssueList: React.FC<IProps> = ({
                         Priority
                       </div>
                     </li> */}
-                  </ul>
-                </div>
-              )}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                     <div>
-                    <CSVLink
-                    data={issuesList}
-                    filename={"my-issues.csv"}
-                    className='text-black btn btn-primary fill-black fa fa-Download '
-                    target="_blank"
-                    ><FontAwesomeIcon className=' fill-black text-black' icon={faDownload}></FontAwesomeIcon>
-                    </CSVLink>
-                    
+                      <CSVLink
+                        data={issuesList}
+                        filename={'my-issues.csv'}
+                        className="text-black btn btn-primary fill-black fa fa-Download "
+                        target="_blank"
+                      >
+                        <FontAwesomeIcon
+                          className=" fill-black text-black"
+                          icon={faDownload}
+                        ></FontAwesomeIcon>
+                      </CSVLink>
                     </div>
                   </div>
                 </div>
@@ -754,7 +767,7 @@ const IssueList: React.FC<IProps> = ({
                             <div className="m-auto ">
                               <div className=" bg-white border border-solid border-gray-500 rounded">
                                 <div className="grid grid-cols-4 grid-flow-row-dense gap-x-0">
-                                  <div className='justify-center'>
+                                  <div className="justify-center">
                                     <FontAwesomeIcon
                                       className="fa-3x p-1 text-gray-500"
                                       icon={faShieldAlt}
@@ -762,10 +775,15 @@ const IssueList: React.FC<IProps> = ({
                                   </div>
                                   <div className="col-span-3 p-1 text-gray-600">
                                     <div>
-                                      <p className='text-base'>{issueInfo.type} (#{issueInfo?._id?.substring(3)})</p>
+                                      <p className="text-base">
+                                        {issueInfo.type} (#
+                                        {issueInfo?._id?.substring(3)})
+                                      </p>
                                     </div>
                                     <div className="flex gap-3">
-                                      <p className="text-sm">{issueInfo.status}</p>
+                                      <p className="text-sm">
+                                        {issueInfo.status}
+                                      </p>
                                       |
                                       <p className="text-sm">
                                         {issueInfo.priority}
