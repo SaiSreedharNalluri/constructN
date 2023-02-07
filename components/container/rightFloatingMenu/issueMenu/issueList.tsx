@@ -541,8 +541,8 @@ const IssueList: React.FC<IProps> = ({
                   width={1080}
                   height={1080}
                   className="w-10/12 h-24"
-                  src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8QEBAPDw0NDw8QDxASEA8NDQ8NDQ8QFRIWFhUSFRUYHSggGBolGxUVITEhJSk3Li4uFx8zODMtNyg5OisBCgoKBQUFDgUFDisZExkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIALcBEwMBIgACEQEDEQH/xAAYAAEBAQEBAAAAAAAAAAAAAAAAAQIHA//EACQQAQEAAAYBBQEBAQAAAAAAAAABAhExQVHRwSFhgbHhcfGR/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AO2KyoKUiAVMQmIEuhCpL9AS6mXoF8ANM1QWEKbfILhWeE5AVYi0E2BADdC0CItNwQhSgQE6BSJsoKIUFTNWQUQBvtZogBwW+palASrUxARnP6arO0BZqi0lAIQwgsE3UFWszRrMCX1WoArOKLUAtIlXMElOyJQCqkBUIQDYpQCrukLuCosQAAGoABsJVgIkJqUC6psqAHsAKF6AKACqnC5gpUKBUxKyCwhdQBKAFpDJYCXyAAUAJ0ACoUoEGbagPRcSQAOkpegPJCgJDgu39W7AgAEUiAQigLCIsoKRF5BFRAIqFBZEWJAF4SqCZHakBBUAFQAqpAZzFyAaSbrUAL5LoAZ+vwnJACKEAuyTwsSQBcQAUIAFAFKRAWpVpACJwALUigUCAFIQBCryCUgAFPwBMwyAaSrUgCRUAz8E7IAqZgAFAWJV6AOxFvpQTPVYiwBUAWT1qFAFiKCLSAByUA2KACQoAQpkCoAEozQG0ugYgQ5W7IBhSLEm4KAAKAIQBdwhAAqQGkMygU8ByBkpACRLuQm4KFL5AEKAh+GwKkCAqBAayEAVOl90/AKzPDU7ZAVD3BSkhhBaJVoIACkTCTX4AKTUBf1Ck1BZUwzQaAEACmFAUIgLunQlBUWpQKqVQC6CgmQoBS7QIBkzKpQSk0CAv+KigipCAQmnwAJVhQCAUEUl9P8AhNgMKooEBOAWboFAzJ4TFsUDY/CEAiUAVUpAWESqBn7CgJapUxAbCsgELosAzIcLAOSa0wm4JkXlYngCnaphAmvwcC3QEk+yKQE6XysTPUEupQyAySrnokBakKAbpRb5ASHJNQO1CfYKU3+FBqDIAZEAEWICUui8pAXD2QUCz6ilAEWlBOCL+EgJycNGQIQqgkST0/tWmLgEot8ICZBSglUupQTJLy0mQIpwe4C8JWr0BCQyUGc6LkAQoAXYAEEAWNACRVASL5AE5/uTVAAwgCZLdgAsRQESgBUyACnPuAJkdAAUAW7gAoALQAf/2Q=="
-                ></Image>
+                  src={issueObj?.screenshot as string}
+                />
                 <p className="mt-2">{issueObj?.title}</p>
               </div>
               <div >
@@ -655,7 +655,7 @@ const IssueList: React.FC<IProps> = ({
                 className=" mr-2  cursor-pointer rounded-full border border-black"
               ></FontAwesomeIcon>
             </div>
-            <div>
+            <div className='overflow-y-auto calc-h64'>
               <div>
                 <div className="flex justify-between text-gray-800">
                   <div>
@@ -736,12 +736,12 @@ const IssueList: React.FC<IProps> = ({
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-1 overflow-y-auto calc-h96">
+              <div className="grid grid-cols-1 ">
                 {issuesList.length >= 1
                   ? issuesList.map((issueInfo: Issue) => {
                     return (
                       <div
-                        className="h-full mt-2 w-full"
+                        className="h-full mt-2 w-full "
                         key={issueInfo._id}
                         onClick={() => {
                           setIssueViewMode('detail');
@@ -790,6 +790,7 @@ const IssueList: React.FC<IProps> = ({
                                     )}
                                   </p>
                                 </div>
+
                               </div>
                             </div>
                           </div>
@@ -799,6 +800,7 @@ const IssueList: React.FC<IProps> = ({
                   })
                   : 'there is no data avaliable'}
               </div>
+
             </div>
           </div>
         );
