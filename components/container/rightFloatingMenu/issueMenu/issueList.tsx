@@ -88,11 +88,15 @@ const IssueList: React.FC<IProps> = ({
     issuePriorityData: Array<string>;
     issueStatusData: Array<string>;
     assigneesData: object[];
+    startDate: string;
+    dueDate: string;
   } = {
     issueTypeData: [], //(issueType ===undefined)?[]:issueType ,
     issuePriorityData: [], // (issuePriority ===undefined)?[]:issuePriority ,
     issueStatusData: [], //(issueStatus ===undefined)?[]:issueStatus ,
     assigneesData: [],
+    startDate: '',
+    dueDate: '',
   };
   const getOwnerName = (userId: string) => {
     const user: any = projectUsers.find(
@@ -180,7 +184,7 @@ const IssueList: React.FC<IProps> = ({
       setIssueViewMode('list');
     }, 2000);
   };
-  const clickDownloadIssues = () => {};
+
   const renderIssueView = (viewParam: string) => {
     switch (viewParam) {
       case 'filter':
@@ -301,6 +305,38 @@ const IssueList: React.FC<IProps> = ({
                           component="div"
                           className="alert alert-danger"
                         />
+                      </div>
+                      <div className="p-2">
+                        <div className="flex">
+                          <div className="w-1/2 text-gray-500 ">Start Date</div>
+                          <div className="w-1/2 text-gray-500 ">Due Date</div>
+                        </div>
+                        <div className="flex bg-white p-1 rounded   border border-solid border-gray-600">
+                          <div className="w-1/2 text-gray-500 border-r border-solid border-gray-300">
+                            <Field
+                              type="date"
+                              name="startDate"
+                              className="block w-full text-sm border border-solid border-gray-600 rounded p-2"
+                            />
+                            <ErrorMessage
+                              name="startDate"
+                              component="div"
+                              className="alert alert-danger"
+                            />
+                          </div>
+                          <div className="w-1/2 text-gray-500 ml-2">
+                            <Field
+                              type="date"
+                              name="dueDate"
+                              className="block w-full text-sm border border-solid border-gray-600 rounded p-2"
+                            />
+                            <ErrorMessage
+                              name="dueDate"
+                              component="div"
+                              className="alert alert-danger"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <button
@@ -835,6 +871,8 @@ const IssueList: React.FC<IProps> = ({
         value: Yup.string().required(),
       })
     ),
+    startDate: Yup.string(),
+    dueDate: Yup.string(),
   });
 
   const handleOnFilterEvent = (formData: object) => {
