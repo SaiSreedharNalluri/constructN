@@ -184,7 +184,6 @@ const IssueList: React.FC<IProps> = ({
       setIssueViewMode('list');
     }, 2000);
   };
-
   const renderIssueView = (viewParam: string) => {
     switch (viewParam) {
       case 'filter':
@@ -387,7 +386,7 @@ const IssueList: React.FC<IProps> = ({
               onSubmit={clickIssueHandleEditSubmit}
             >
               {({ values, setFieldValue }) => (
-                <Form className=" grid grid-cols-1 gap-y-2 px-4">
+                <Form className=" grid grid-cols-1 gap-y-2 px-4 overflow-y-auto calc-h72">
                   <div className="mt-2 ">
                     <h1 className="text-gray-500">Select the Type of Issue</h1>
                     <Field
@@ -539,29 +538,29 @@ const IssueList: React.FC<IProps> = ({
       case 'detail':
         return (
           <div>
-            <div className="h-8 bg-gray-100 w-full  flex justify-between px-2">
+            <div className="h-8 bg-gray-100 w-full   flex justify-between px-2">
               <div className=" flex ">
                 <FontAwesomeIcon
                   icon={faArrowLeftLong}
-                  className="mt-2"
+                  className="mt-2 cursor-pointer"
                   onClick={() => setIssueViewMode('list')}
                 ></FontAwesomeIcon>
                 <p className="ml-2 mt-1  font-semibold">
                   {issueObj?.type} Issue
                 </p>
               </div>
-              <div className="flex">
+              <div className="flex ">
                 <div>
                   <FontAwesomeIcon
                     icon={faPen}
-                    className="mt-2 pr-2"
+                    className="mt-2 cursor-pointer pr-2"
                     onClick={() => setIssueViewMode('edit')}
                   />
                 </div>
                 <div>
                   <FontAwesomeIcon
                     icon={faTrashCan}
-                    className="mt-2"
+                    className="mt-2 cursor-pointer"
                     onClick={() => {
                       setOpen(true);
                     }}
@@ -569,7 +568,7 @@ const IssueList: React.FC<IProps> = ({
                 </div>
               </div>
             </div>
-            <div className="overflow-y-auto px-4 ">
+            <div className="overflow-y-auto calc-h112 px-4 ">
               <div className="">
                 <p>Details</p>
                 <Image
@@ -579,13 +578,13 @@ const IssueList: React.FC<IProps> = ({
                   className="w-10/12 h-24"
                   src={issueObj?.screenshot as string}
                 />
-                <p className="ml-2">{issueObj?.title}</p>
+                <p className="mt-2">{issueObj?.title}</p>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="flex">
+              <div>
+                <div className="flex mt-2">
                   <FontAwesomeIcon
                     icon={faSpinner}
-                    className="mt-2"
+                    className="mt-1 "
                   ></FontAwesomeIcon>
                   <p className="ml-2">{issueObj?.status}</p>
                 </div>
@@ -688,14 +687,17 @@ const IssueList: React.FC<IProps> = ({
                   setMyVisibility(false);
                   closeOverlay();
                 }}
-                className=" mr-2 right-0 rounded-full border border-black"
+                className=" mr-2  cursor-pointer rounded-full border border-black"
               ></FontAwesomeIcon>
             </div>
-            <div>
+            <div className="overflow-y-auto calc-h64">
               <div>
                 <div className="flex justify-between text-gray-800">
                   <div>
-                    <FontAwesomeIcon icon={faSearch} />
+                    <FontAwesomeIcon
+                      icon={faSearch}
+                      className="cursor-pointer"
+                    />
                   </div>
 
                   <div className="grid grid-cols-3 p-1 gap-1">
@@ -705,6 +707,7 @@ const IssueList: React.FC<IProps> = ({
                         onClick={() => {
                           setIssueViewMode('filter');
                         }}
+                        className="cursor-pointer"
                       />
                     </div>
                     <div>
@@ -714,9 +717,8 @@ const IssueList: React.FC<IProps> = ({
                           isOpenSort
                             ? setIsOpenSort(false)
                             : setIsOpenSort(true);
-
-                          //setIssueViewMode('filter');
                         }}
+                        className="cursor-pointer"
                       />
                       {isOpenSort && (
                         <div className="absolute  right-0 z-10 bg-gray-100 rounded-lg shadow border">
@@ -754,19 +756,6 @@ const IssueList: React.FC<IProps> = ({
                               </div>
                             </li>
                             <hr className="border-gray-700" />
-                            {/* <li
-                      className="font-medium cursor-pointer"
-                      onClick={() => {setIsOpenSort(false);handleOnSort('High Priority')}}
-                    >
-                      <div className="flex items-center justify-center transform transition-colors duration-200 ">
-                        <div className="mr-3 ">
-                          <FontAwesomeIcon
-                            icon={faArrowDown19}
-                          ></FontAwesomeIcon>
-                        </div>
-                        Priority
-                      </div>
-                    </li> */}
                           </ul>
                         </div>
                       )}
@@ -787,12 +776,12 @@ const IssueList: React.FC<IProps> = ({
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-1">
+              <div className="grid grid-cols-1 ">
                 {issuesList.length >= 1
                   ? issuesList.map((issueInfo: Issue) => {
                       return (
                         <div
-                          className="h-full mt-2 w-full"
+                          className="h-full mt-2 w-full "
                           key={issueInfo._id}
                           onClick={() => {
                             setIssueViewMode('detail');
@@ -801,9 +790,9 @@ const IssueList: React.FC<IProps> = ({
                         >
                           <div className="h-1/3 w-11/12  m-auto ">
                             <div className="m-auto ">
-                              <div className=" bg-white border border-solid border-gray-500 rounded">
+                              <div className=" bg-white cursor-pointer border border-solid border-gray-500 rounded">
                                 <div className="grid grid-cols-4 grid-flow-row-dense gap-x-0">
-                                  <div className="justify-center">
+                                  <div>
                                     <FontAwesomeIcon
                                       className="fa-3x p-1 text-gray-500"
                                       icon={faShieldAlt}
@@ -893,8 +882,8 @@ const IssueList: React.FC<IProps> = ({
   return (
     <div>
       <div
-        className={`fixed calc-h ${myVisibility ? 'w-1/4' : 'w-0'}  
-          top-10  bg-gray-200 right-0 z-10 overflow-x-hidden`}
+        className={`fixed calc-h ${myVisibility ? '  lg:w-1/4' : 'w-0'}  
+          top-10  bg-gray-200 right-0 z-10 overflow-x-hidden overflow-y-hidden`}
       >
         <div className="">{renderIssueView(issueViewMode)}</div>
       </div>
@@ -905,16 +894,24 @@ const IssueList: React.FC<IProps> = ({
             setOpen(false);
           }}
         >
-          <h1>Delete conformation for issue</h1>
-          <p>Are you sure you want to delete this item?</p>
-          <button onClick={handleDeleteItem}>Confirm</button>
-          <button
-            onClick={() => {
-              setOpen(false);
-            }}
-          >
-            Cancel
-          </button>
+          <h1 className=" font-bold">Delete confirmation</h1>
+          <p className="mt-2">Are you sure you want to delete this item?</p>
+          <div className="grid grid-cols-2 gap-x-4 mt-4">
+            <button
+              onClick={() => {
+                setOpen(false);
+              }}
+              className="px-2 py-1  focus:outline-none bg-gray-500 hover:bg-gray-800 rounded text-gray-200 font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              className="px-2 py-1 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold "
+              onClick={handleDeleteItem}
+            >
+              Confirm
+            </button>
+          </div>
         </Modal>
       </div>
     </div>
