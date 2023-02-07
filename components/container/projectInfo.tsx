@@ -35,8 +35,6 @@ const ProjectInfo: React.FC<IProps> = ({
       projectData?.location != undefined ? projectData?.location[1] : latitude,
     utm: projectData?.utm ? projectData?.utm : '',
   };
-  console.log(initialValues.longitude);
-
   const validationSchema = Yup.object().shape({
     name: Yup.string(),
     type: Yup.string(),
@@ -44,28 +42,29 @@ const ProjectInfo: React.FC<IProps> = ({
     Location: Yup.array(),
     utm: Yup.string(),
   });
-  console.log('project', projectData);
   return (
     <React.Fragment>
+      <div className="w-full row-span-2 overflow">
+        <Image
+          alt=""
+          className=" w-3/4 h-25 border border-solid border-black  cursor-pointer"
+          width={1080}
+          height={1080}
+          src={projectData.coverPhoto ? projectData.coverPhoto : ''}
+        />
+      </div>
+      <div className="pl-6">
+        <ChangeIcon handleImageUPload={handleImageUPload} />
+      </div>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={updateProjectData}
       >
         {({ isSubmitting }) => (
-
-          <Form >
-            <div className='grid grid-cols-2 gap-4 px-6' >
-              <div className='w-full row-span-2 overflow'>
-                <Image
-                  alt=""
-                  className=" w-full h-25 border border-solid border-black  cursor-pointer"
-                  width={1080}
-                  height={1080}
-                  src={projectData.coverPhoto ? projectData.coverPhoto : ''}
-                />
-              </div>
-              <div >
+          <Form>
+            <div className="grid grid-cols-2 gap-4 px-6">
+              <div>
                 <label className=" text-sm font-bold ">Project Name</label>
                 <Field
                   className=" border border-solid border-gray-500 rounded w-full py-2 px-2"
@@ -97,12 +96,9 @@ const ProjectInfo: React.FC<IProps> = ({
                 </Field>
               </div>
             </div>
-            <div className='pl-6'>
-              <ChangeIcon handleImageUPload={handleImageUPload} />
-            </div>
 
-            <div className='grid grid-cols-2  gap-1 px-6 mt-2 '>
-              <div className='col-span-2'>
+            <div className="grid grid-cols-2  gap-1 px-6 mt-2 ">
+              <div className="col-span-2">
                 <label className="text-sm  font-bold mb-2">
                   Project Description
                 </label>
@@ -120,7 +116,7 @@ const ProjectInfo: React.FC<IProps> = ({
                 />
               </div>
 
-              <div className='w-full row-span-2 overflow-y-auto'>
+              <div className="w-full row-span-2 overflow-y-auto">
                 <Map
                   initialViewState={{
                     longitude: initialValues.longitude,
@@ -128,12 +124,16 @@ const ProjectInfo: React.FC<IProps> = ({
                     zoom: 10,
                   }}
                   style={{
-                    width: "100%",
-                    height: "100%",
+                    width: '100%',
+                    height: '100%',
                   }}
                   mapStyle="mapbox://styles/mapbox/streets-v9"
-                  mapboxAccessToken={process.env.NEXT_PUBLIC_Map_Token}>
-                  <Marker longitude={initialValues.longitude} latitude={initialValues.latitude}></Marker>
+                  mapboxAccessToken={process.env.NEXT_PUBLIC_Map_Token}
+                >
+                  <Marker
+                    longitude={initialValues.longitude}
+                    latitude={initialValues.latitude}
+                  ></Marker>
                 </Map>
               </div>
               <div>
@@ -149,7 +149,7 @@ const ProjectInfo: React.FC<IProps> = ({
                   className="alert alert-danger"
                 />
               </div>
-              <div className='grid grid-cols-2  gap-2'>
+              <div className="grid grid-cols-2  gap-2">
                 <div>
                   <label className="text-sm font-bold mb-2">Latitude</label>
                   <Field
@@ -181,7 +181,6 @@ const ProjectInfo: React.FC<IProps> = ({
               </div>
             </div>
 
-
             <div className="flex  justify-center py-4  mt-4">
               <button
                 className="bg-gray-500 rounded hover:bg-gray-300 text-white font-bold py-1 px-2 w-2/12 "
@@ -191,13 +190,10 @@ const ProjectInfo: React.FC<IProps> = ({
                 Submit
               </button>
             </div>
-
-
           </Form>
-        )
-        }
-      </Formik >
-    </React.Fragment >
+        )}
+      </Formik>
+    </React.Fragment>
   );
 };
 export default ProjectInfo;

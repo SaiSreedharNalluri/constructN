@@ -403,9 +403,10 @@ const Index: React.FC<IProps> = () => {
           item.assignees.some((it: any) => ass.value === it._id)
         ) ||
           formData?.assigneesData?.length == 0) &&
-        ((Moment(item.dueDate).format('YYYY-MM-DD') >= formData.fromDate &&
-          Moment(item.dueDate).format('YYYY-MM-DD') <= formData.toDate) ||
-          (formData.fromDate == '' && formData.toDate == ''))
+        (Moment(item.dueDate).format('YYYY-MM-DD') >= formData.fromDate ||
+          formData.fromDate == '') &&
+        (Moment(item.dueDate).format('YYYY-MM-DD') <= formData.toDate ||
+          formData.toDate == '')
     );
     setIssueList(result);
   };

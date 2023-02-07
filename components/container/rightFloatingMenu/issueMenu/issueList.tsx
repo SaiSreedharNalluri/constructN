@@ -121,7 +121,7 @@ const IssueList: React.FC<IProps> = ({
     description: issueObj?.description ? issueObj?.description : '',
     assignees: defaultList,
     tags: issueObj?.tags ? issueObj.tags : [''],
-    date: Moment(issueObj?.createdAt).format('YYYY-MM-DD'),
+    date: Moment(issueObj?.dueDate).format('YYYY-MM-DD'),
   };
   const validationEditSchema = Yup.object().shape({
     type: Yup.string(),
@@ -602,7 +602,7 @@ const IssueList: React.FC<IProps> = ({
                     icon={faCalendar}
                   ></FontAwesomeIcon>
                   <p className="ml-1">
-                    {Moment(issueObj?.createdAt).format('MMM Do YYYY')}
+                    {Moment(issueObj?.dueDate).format('MMM Do YYYY')}
                   </p>
                 </div>
                 <div className="flex">
@@ -841,7 +841,7 @@ const IssueList: React.FC<IProps> = ({
                                       className="text-gray-500 ml-2"
                                     />
                                     <p className="text-gray-500 -mt-1 ml-1">
-                                      {Moment(issueInfo.createdAt).format(
+                                      {Moment(issueInfo.dueDate).format(
                                         'MMM Do YYYY'
                                       )}
                                     </p>
@@ -872,13 +872,7 @@ const IssueList: React.FC<IProps> = ({
       })
     ),
     fromDate: Yup.string(),
-    toDate: Yup.string().when('fromDate', (fromDate, schema) => {
-      return fromDate
-        ? schema
-            .min(fromDate, 'To date should be after the from date')
-            .required('To date is required')
-        : schema;
-    }),
+    toDate: Yup.string(),
   });
 
   const handleOnFilterEvent = (formData: object) => {
