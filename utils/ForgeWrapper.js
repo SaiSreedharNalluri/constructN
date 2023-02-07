@@ -21,6 +21,14 @@ export class ForgeViewerUtils {
     this.isAddTagActive = false;
   }
 
+  isCompareView() {
+    if (this.viewerId.split("_")[1] === "1") {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   // static getInstance(viewerId) {
   //   if (!this.instance) {
   //     this.instance = new ForgeViewerUtils(viewerId);
@@ -35,6 +43,10 @@ export class ForgeViewerUtils {
   }
 
   getAvailableType() {
+
+    if(this.isCompareView()) {
+      this.selectedType = "BIM";
+    }
 
     if (this.selectedType in this.documentURNs) {
       return this.selectedType;
@@ -123,31 +135,43 @@ export class ForgeViewerUtils {
     }
   }
 
-  updateContext() {
-    if (this.context) {
-      let camera= {};
-        if(this.context.cameraObject) {
-            let pos = this.context.cameraObject.cameraPosition;
-            let tar = this.context.cameraObject.cameraTarget;
-            let offset = this.globalOffset;
-            camera.cameraPosition = new THREE.Vector3(pos.x-offset[0], pos.y-offset[1], pos.z-offset[2])
-            camera.cameraTarget = new THREE.Vector3(tar.x-offset[0], tar.y-offset[1], tar.z-offset[2])
-            camera.fov = this.context.cameraObject.fov;
-        }
-        return camera;
-    } else {
-        return null;
-    }
-}
+  // updateContext() {
+  //   if (this.context) {
+  //     let camera= {};
+  //       if(this.context.cameraObject) {
+  //           let pos = this.context.cameraObject.cameraPosition;
+  //           let tar = this.context.cameraObject.cameraTarget;
+  //           let offset = this.globalOffset;
+  //           camera.cameraPosition = new THREE.Vector3(pos.x-offset[0], pos.y-offset[1], pos.z-offset[2])
+  //           camera.cameraTarget = new THREE.Vector3(tar.x-offset[0], tar.y-offset[1], tar.z-offset[2])
+  //           camera.fov = this.context.cameraObject.fov;
+  //       }
+  //       return camera;
+  //   } else {
+  //       return null;
+  //   }
+  // }
 
   updateLayersData(realityPositionMap, context) {
-    console.log("Inside update layers data: ", realityPositionMap, this.dataVizExtn);
-    this.context = context;
+    console.log("Inside update layers data: ", realityPositionMap, context);
+    if (context) {
+      this.context = context;
+    } else {
+      this.context = null;
+    }
     this.realityPositionMap = realityPositionMap;
     this.isPendingLayersToLoad = true;
     if (this.dataVizExtn) {
       this.loadLayers();
     }
+  }
+
+  updateIssuesData(list) {
+    this.issuesList = list;
+  }
+
+  updateTasksData(list) {
+    this.tasksList = list;
   }
 
   updateProgressData(progress) {
@@ -278,7 +302,7 @@ export class ForgeViewerUtils {
       modelOptions.placementTransform = new THREE.Matrix4().fromArray(tm.tm).transpose();
       // modelOptions.placementTransform = (new THREE.Matrix4()).setPosition({x:50,y:0,z:-50})
       // modelOptions.placementTransform = new THREE.Matrix4().fromArray([0.216,1.022,-0.007,367033.477,-1.022,0.216,-0.001,2053135.281,-0.000,0.007,1.045,-57.5,0.000,0.000,0.000,1.000]).transpose()
-      console.log('BIM TM Loaded');
+      console.log('BIM TM Loaded', this.tm);
     }
 
     if (tm && tm.offset && !this.manifestNode.is2D()) {
@@ -289,7 +313,7 @@ export class ForgeViewerUtils {
         z: globalOff[2],
       };
       this.globalOffset = tm.offset;
-      console.log("Offset Loaded");
+      console.log("Offset Loaded", this.offset);
     }
 
     return modelOptions;
@@ -302,6 +326,50 @@ export class ForgeViewerUtils {
     this.dataVizUtils.addVisualizationData(this.realityPositionMap);
     this.isPendingLayersToLoad = false;
   }
+
+
+
+  getContextLocalFromGlobal(context) {
+    console.log("Global offset: ", context);
+    let offset = this.globalOffset;
+    if(context.image && context.image.imagePosition) {
+        console.log("Context has image: ", context.image);
+        let pos = context.image.imagePosition;
+        context.image.imagePosition = {
+            x: pos.x - offset[0], 
+            y: pos.y - offset[1], 
+            z: pos.z - offset[2]
+        }
+    }
+
+    if (context.cameraObject && context.cameraObject.cameraPosition) {
+        console.log("Context has camera: ", context.cameraObject);
+        let pos = context.cameraObject.cameraPosition;
+        let tar = context.cameraObject.cameraTarget ? context.cameraObject.cameraTarget : context.cameraObject.cameraPosition;
+        context.cameraObject.cameraPosition = {
+            x: pos.x - offset[0], 
+            y: pos.y - offset[1], 
+            z: pos.z - offset[2]
+        }
+        context.cameraObject.cameraTarget = {
+            x: tar.x - offset[0], 
+            y: tar.y - offset[1], 
+            z: tar.z - offset[2]
+        }
+    }
+
+    if (context.tag && context.tag.tagPosition) {
+        console.log("Context has tag: ", context.tag);
+        let pos = context.tag.tagPosition;
+        context.tag.tagPosition = {
+            x: pos.x - offset[0], 
+            y: pos.y - offset[1], 
+            z: pos.z - offset[2]
+        }
+    }
+
+    return context;
+}
 
   getCamera() {
     console.log("Inside forge get camera: ", this.globalOffset);
@@ -326,7 +394,7 @@ export class ForgeViewerUtils {
   getContext(){
     console.log("Inside forge get context: ", this.globalOffset);
     let contextObject;
-    if(this.isViewerInitialized) {
+    if(this.isViewerInitialized && this.isModelLoaded) {
       
 
       contextObject = {
@@ -340,22 +408,71 @@ export class ForgeViewerUtils {
     return contextObject;
   }
 
-  getViewerState() {
-    this.viewer.navigation.setCameraUpVector(new THREE.Vector3().fromArray([0, 0, 1]));
-    const state = this.viewer.getState({ viewport: true }).viewport;
-    return {
-      position: [state.eye[0], state.eye[1], state.eye[2]],
-      target: new THREE.Vector3().fromArray(state.target),
-      fov: state.fieldOfView
+  updateContext(context) {
+    console.log("Updating context for forge: ", context);
+    if (context) {
+      this.context = this.getContextLocalFromGlobal(context);
+    } else {
+        this.context = null;
+        return;
     }
+    this.handleContext(this.context);
+  }
 
+  // maintainContext(context) {
+  //   if (context) {
+  //     this.context = this.getContextLocalFromGlobal(context);
+  //   } else {
+  //     this.context = null;
+  //     return
+  //   }
+
+  //   this.setForgeControls(this.context.type);
+  // }
+
+  handleContext(context) {
+    switch (context.type) {
+        case "3d":
+          this.setNavigation(this.context);
+          break;
+        case "image":
+        case "panorama":
+          this.setNavigation(this.context);
+          this.setForgeControls(this.context.type);
+            break;
+        case "360 Video":
+            // this.goToImageContext(context);
+            break;
+        case "tag":
+            // this.goToTagContext(context.tag);
+            break;
+    }
+  }
+
+  getViewerState() {
+    if (this.isModelLoaded){    
+      this.viewer.navigation.setCameraUpVector(new THREE.Vector3().fromArray([0, 0, 1]));
+      const state = this.viewer.getState({ viewport: true }).viewport;
+      let viewerState = {
+        position: [state.eye[0], state.eye[1], state.eye[2]],
+        target: new THREE.Vector3().fromArray(state.target),
+        fov: state.fieldOfView
+      }
+      console.log("Inside Forge get ViewerState: ", viewerState, state)
+      return viewerState;
+    }
   }
 
   updateViewerState(viewerState) {
     // console.log("Inside update viewer state: ", this.viewerId, viewerState);
-    this.viewer.navigation.setPosition(viewerState.position.clone());
-    this.viewer.navigation.setTarget(viewerState.target);
-    this.viewer.navigation.setVerticalFov(viewerState.fov, false);
+    if(this.isModelLoaded && viewerState) {
+      this.viewer.navigation.setPosition(viewerState.position[0], viewerState.position[1],viewerState.position[2]);
+      this.viewer.navigation.setTarget(viewerState.target);
+      if (viewerState.fov) {
+        this.viewer.navigation.setVerticalFov(viewerState.fov, false);
+      }
+
+    }
   }
 
   onMouseEnter() {
@@ -365,10 +482,11 @@ export class ForgeViewerUtils {
 
   onCameraChangeEvent(event) {
     // console.log("On Camera change event: ", event);
+    this.eventHandler(this.viewerId, {type: "sync"})
   }
 
-  setNavigation() {
-    let camera = this.updateContext();
+  setNavigation(context) {
+    let camera = context.cameraObject;
     if(camera && !this.manifestNode.is2D()) {
       console.log("Inside navigation: ", camera)
       this.viewer.navigation.setPosition(camera.cameraPosition);
@@ -378,7 +496,7 @@ export class ForgeViewerUtils {
   }
 
   setPivotPoint() {
-    if (!this.manifestNode.is2D()) {
+    if (!this.manifestNode.is2D() && this.isModelLoaded) {
       let fuzzy_box = this.viewer.model.getFuzzyBox()
       let fuzzy_min = fuzzy_box['min']
       let fuzzy_max = fuzzy_box['max']
@@ -388,29 +506,40 @@ export class ForgeViewerUtils {
   }
 
   setForgeControls(type) {
-    if (type == 'orbit') {
-      viewer_2.navigation.setIsLocked(false);
-      if (viewer_2.getExtension('Autodesk.BimWalk')){
-        viewer_2.getExtension('Autodesk.BimWalk').deactivate()
-      }
-    } else {
-      viewer_2.navigation.setLockSettings({
-        'orbit': false,
-        'pan': false,
-        'zoom': false,
-        'roll': false,
-        'fov': true
-      })
-      viewer_2.navigation.setIsLocked(true);
+    if (this.bimWalkExtn) {
+			if (type == 'orbit') {
+				this.viewer.navigation.setIsLocked(false);
+				if (this.viewer.getExtension('Autodesk.BimWalk')){
+					this.viewer.getExtension('Autodesk.BimWalk').deactivate()
+				}
+			} else if (type == 'FPV') {
+				this.viewer.navigation.setIsLocked(false);
+				if (this.viewer.getExtension('Autodesk.BimWalk')){
+					this.viewer.getExtension('Autodesk.BimWalk').activate()
+				}
+			} else {
+				this.viewer.navigation.setLockSettings({
+					'orbit': false,
+					'pan': false,
+					'zoom': false,
+					'roll': false,
+					'fov': true
+				})
+				this.viewer.navigation.setIsLocked(true);
 
-      if (viewer_2.getExtension('Autodesk.BimWalk')){
-        viewer_2.getExtension('Autodesk.BimWalk').activate()
-      }
+				if (this.viewer.getExtension('Autodesk.BimWalk')){
+					this.viewer.getExtension('Autodesk.BimWalk').activate()
+				}
+			}
     }
   }
 
 
   async loadExtension() {
+    this.bimWalkExtn = await this.viewer.loadExtension(
+      "Autodesk.BimWalk",
+    );
+
     this.dataVizExtn = await this.viewer.loadExtension(
       "Autodesk.DataVisualization",
     );
@@ -492,8 +621,14 @@ export class ForgeViewerUtils {
 
   onModelLayersLoadedEvent(parameter) {
     console.log("Inside Model Layers loaded Event: model: ",parameter);
-    this.setNavigation();
-    this.setPivotPoint();
+    if (this.context) {
+      this.updateContext(this.context);
+    }
+    if (!this.manifestNode.is2D()) {
+      // this.viewer.settingsTools.fullscreenbutton.setVisible(false)
+    }
+    // this.setPivotPoint();
+
     this.loadExtension();
     this.isPendingDataToLoad = false;
     this.isModelLoaded = true;
@@ -527,6 +662,9 @@ export class ForgeViewerUtils {
       if (this.isPendingLayersToLoad) {
         this.loadLayers();
       }
+    } else if (parameter.extensionId === 'Autodesk.BimWalk') {
+      console.log("Inside Forge Viewer, Bim Walk loaded:");
+      this.bimWalkExtn = this.viewer.getExtension(parameter.extensionId);
     }
   }
 

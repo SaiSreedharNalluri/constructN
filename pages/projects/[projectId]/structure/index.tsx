@@ -165,6 +165,8 @@ const Index: React.FC<IProps> = () => {
               updateSnapshot={updatedSnapshot}
               updateRealityMap={updateRealityMap}
               updateDesignMap={updateDesignMap}
+              tasksList={tasksList}
+              issuesList={issuesList}
               viewMode={currentViewMode}
               viewType={currentViewType}
               viewLayers={currentViewLayers}
@@ -291,6 +293,9 @@ const Index: React.FC<IProps> = () => {
   const toolResponse = (data: ITools) => {
     console.log('Got tool REsponse->', data);
     switch (data.toolName) {
+      case 'viewMode':
+        setViewMode(data.toolAction);
+        break;
       case 'issue':
         if (data.toolAction === 'issueCreate') {
           console.log('Open issue Menu');

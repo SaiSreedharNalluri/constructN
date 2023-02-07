@@ -52,11 +52,13 @@ export class ForgeDataVisualization {
     }
 
     addVisualizationData(visualizationData) {
-        let dbId = 1;
+        let dbId = this.viewableLength + 1;
         for (const viewableType in visualizationData) {
-            let viewableData = this.getViewableData();
+            let viewableData = this.getViewableData(viewableType);
             let viewableStyle = this.getViewableStyle(viewableType);
             switch (viewableType) {
+                case "360 Image":
+                case "Phone Image":
                 case "360 Video":
                     for (const positionData in visualizationData[viewableType]) {
                         let positionArray = visualizationData[viewableType][positionData].position;
@@ -89,6 +91,10 @@ export class ForgeDataVisualization {
         this.loadViewableData();
     }
 
+    addTrackersData( ) {
+
+    }
+
     getViewableStyle(iconType) {
         const viewableType = this.dataVizCore.ViewableType.SPRITE;
         const spriteColor = new THREE.Color(0xffffff);
@@ -104,6 +110,12 @@ export class ForgeDataVisualization {
                 // iconUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
                 iconUrl = "/icons/360VideoWalkInViewer.svg";
             break;
+            case '360 Image':
+                iconUrl = "/icons/360ImageInViewer.svg";
+                break;
+            case 'Phone Image':
+                iconUrl = "/icons/phoneImageInViewer.svg";
+                break;
             case 'Issue':
                 iconUrl = "/icons/issuesInViewer.svg";
             break;
@@ -120,9 +132,20 @@ export class ForgeDataVisualization {
           );
     }
 
-    getViewableData() {
+    getViewableData(type) {
         const viewableData = new this.dataVizCore.ViewableData();
-        viewableData.spriteSize = 12; // Sprites as points of size 24 x 24 pixels
+        switch (type) {
+            case '360 Image':
+                viewableData.spriteSize = 100;
+                break;
+            case '360 Video':
+                viewableData.spriteSize = 6;
+                break;
+            case 'Phone Image':
+                viewableData.spriteSize = 100;
+                break;
+        }
+         // Sprites as points of size 24 x 24 pixels
         
         return viewableData;
     }
