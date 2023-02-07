@@ -21,7 +21,9 @@
 .calc-h {
   height: calc(100vh - 40px);
 }
-
+.calc-h64 {
+  height: calc(100vh - 64px);
+}
 .calc-h50 {
   height: calc(100vh - 87px);
 }
@@ -36,9 +38,17 @@
   width: calc(50% - 44px);
 }
 .calc-h40 {
-  height: calc(100vh - 40px);
+  height: calc(100vh - 96px);
 }
-
+.calc-h96 {
+  height: calc(100vh - 96px);
+}
+.calc-h72 {
+  height: calc(100vh - 72px);
+}
+.calc-h112 {
+  height: calc(100vh - 112px);
+}
 .panoIcon {
   background: greenyellow;
   border-radius: 100%;
@@ -58,4 +68,34 @@
   height: 20px;
   position: absolute;
   z-index: 1000;
+}
+
+.spinner {
+  font-size: 20px;
+  width: 16px;
+  height: 16px;
+  stroke: #101010;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 125;
+  animation: spinner 4s linear infinite;
+}
+
+@keyframes spinner {
+  0% {
+    stroke-dashoffset: 25;
+    transform: rotate(0deg);
+  }
+  50% {
+    stroke-dashoffset: 125;
+    transform: rotate(720deg);
+  }
+  100% {
+    stroke-dashoffset: 25;
+    transform: rotate(1080deg);
+  }
+}
+
+.spinner > circle {
+  fill: transparent;
 }
