@@ -21,6 +21,8 @@ import {
   deleteIssue,
   editIssue,
   getIssuesList,
+  getIssuesPriority,
+  getIssuesStatus,
   getIssuesTypes,
 } from '../../../../services/issue';
 import { getCookie } from 'cookies-next';
@@ -60,6 +62,8 @@ const Index: React.FC<IProps> = () => {
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
   const [isIssueFilter, setIsIssueFilter] = useState(false);
   const [isTaslFilter, setIsTaskFilter] = useState(false);
+  const [issuePriorityList, setIssuePriorityList] = useState<[string]>(['']);
+  const [issueStatusList, setIssueStatusList] = useState<[string]>(['']);
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
   const [taskFilterList, setTaskFilterList] = useState<ITasks[]>([]);
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
@@ -93,6 +97,21 @@ const Index: React.FC<IProps> = () => {
 
   useEffect(() => {
     if (router.isReady) {
+      getIssuesPriority(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setIssuePriorityList(response.result);
+        }
+      }).catch((error) => {
+        toast.error('failed to load data');
+      });
+      getIssuesStatus(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setIssueStatusList(response.result);
+        }
+        
+      }).catch((error) => {
+        toast.error('failed to load data');
+      });
       getProjectDetails(router.query.projectId as string)
         .then((response) => {
           setProjectUtm(response?.data?.result?.utm);
@@ -326,6 +345,16 @@ const Index: React.FC<IProps> = () => {
         }
       });
   };
+  const getIssuesPriorityList =(projId:string)=>{
+    return getIssuesPriority(router.query.projectId as string)
+    .then((response)=>{
+      return response.result;
+    }).catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
   const getTasks = (structureId: string) => {
     getTasksList(router.query.projectId as string, structureId)
       .then((response) => {
@@ -368,22 +397,25 @@ const Index: React.FC<IProps> = () => {
         );
         setIssueList(issueFilterList);
         break;
-      case 'First DueDate':
+      case 'Asc DueDate':
         setIssueFilterList(issuesList);
-        //setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.updatedAt>b.updatedAt){return -1}else if(b.updatedAt>a.updatedAt){return 1}return 0}));
+        setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.dueDate>b.dueDate){return 1}else if(b.dueDate>a.dueDate){return -1}return 0}));
         setIssueList(issueFilterList);
         break;
-      case 'Last DueDate':
+      case 'Dsc DueDate':
         setIssueFilterList(issuesList);
-        //setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.updatedAt>b.updatedAt){return 1}else if(b.updatedAt>a.updatedAt){return -1}return 0}));
+        setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.dueDate>b.dueDate){return -1}else if(b.dueDate>a.dueDate){return 1}return 0}));
         setIssueList(issueFilterList);
         break;
       case 'Asc Priority':
         setIssueFilterList(issuesList);
-        //setIssueFilterList(issueFilterList.sort((a,b)=>{if(getIssuesTypes(currentProjectId) && b.priority==='Low' || b.priority==='Medium'){return 1}else if(b.updatedAt>a.updatedAt){return -1}return 0}));
+        setIssueFilterList(issueFilterList.sort((a,b)=>{if(issuePriorityList?.indexOf(a.priority)>issuePriorityList?.indexOf(b.priority)){return 1}else if(issuePriorityList?.indexOf(b.priority)>issuePriorityList?.indexOf(a.priority)){return -1}return 0}));
         setIssueList(issueFilterList);
         break;
-      case 'Dsc Proprity':
+      case 'Dsc Priority':
+        setIssueFilterList(issuesList);
+        setIssueFilterList(issueFilterList.sort((a,b)=>{if(issuePriorityList?.indexOf(a.priority)>issuePriorityList?.indexOf(b.priority)){return -1}else if(issuePriorityList?.indexOf(b.priority)>issuePriorityList?.indexOf(a.priority)){return 1}return 0}));
+        setIssueList(issueFilterList);
         break;
       default:
         console.log('Not Sorted');
