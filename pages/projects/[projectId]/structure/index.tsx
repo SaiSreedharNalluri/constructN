@@ -32,6 +32,7 @@ import IssueCreate from '../../../../components/container/rightFloatingMenu/issu
 import TaskCreate from '../../../../components/container/rightFloatingMenu/taskMenu/taskCreate';
 import IssueList from '../../../../components/container/rightFloatingMenu/issueMenu/issueList';
 import { it } from 'node:test';
+import Moment from 'moment';
 
 interface IProps {}
 const Index: React.FC<IProps> = () => {
@@ -57,15 +58,15 @@ const Index: React.FC<IProps> = () => {
   const [loggedInUserId, SetLoggedInUserId] = useState('');
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
-  const [isIssueFilter,setIsIssueFilter] = useState(false);
-  const [isTaslFilter,setIsTaskFilter] = useState(false);
+  const [isIssueFilter, setIsIssueFilter] = useState(false);
+  const [isTaslFilter, setIsTaskFilter] = useState(false);
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
   const [taskFilterList, setTaskFilterList] = useState<ITasks[]>([]);
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openIssueView, setOpenIssueView] = useState(false);
   const [currentContext, setCurrentContext] = useState<IToolResponse>({
-    type: 'Task'
+    type: 'Task',
   });
 
   const closeIssueCreate = () => {
@@ -138,7 +139,7 @@ const Index: React.FC<IProps> = () => {
 
   const updateRealityMap = (realityMap: IActiveRealityMap) => {
     setActiveRealityMap(realityMap);
-    console.log("change triggered",realityMap);
+    console.log('change triggered', realityMap);
   };
 
   const updatedSnapshot = (snapshot: ISnapshot) => {
@@ -147,7 +148,7 @@ const Index: React.FC<IProps> = () => {
 
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
-    console.log("change triggered",designMap);
+    console.log('change triggered', designMap);
   };
 
   const activeClass = (e: any) => {
@@ -337,16 +338,34 @@ const Index: React.FC<IProps> = () => {
         }
       });
   };
-  const handleOnIssueSort = (sortMethod: string)=>{
-    switch(sortMethod){
+  const handleOnIssueSort = (sortMethod: string) => {
+    switch (sortMethod) {
       case 'Last Updated':
         setIssueFilterList(issuesList);
-        setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.updatedAt>b.updatedAt){return 1}else if(b.updatedAt>a.updatedAt){return -1}return 0}));
+        setIssueFilterList(
+          issueFilterList.sort((a, b) => {
+            if (a.updatedAt > b.updatedAt) {
+              return 1;
+            } else if (b.updatedAt > a.updatedAt) {
+              return -1;
+            }
+            return 0;
+          })
+        );
         setIssueList(issueFilterList);
         break;
       case 'First Updated':
         setIssueFilterList(issuesList);
-        setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.updatedAt>b.updatedAt){return -1}else if(b.updatedAt>a.updatedAt){return 1}return 0}));
+        setIssueFilterList(
+          issueFilterList.sort((a, b) => {
+            if (a.updatedAt > b.updatedAt) {
+              return -1;
+            } else if (b.updatedAt > a.updatedAt) {
+              return 1;
+            }
+            return 0;
+          })
+        );
         setIssueList(issueFilterList);
         break;
       case 'First DueDate':
@@ -372,24 +391,23 @@ const Index: React.FC<IProps> = () => {
     }
   };
   const handleOnIssueFilter = (formData: any) => {
-    console.log("over here",formData.issueTypeData,formData?.issuePriorityData,formData?.issueStatusData,formData.assigneesData);
     const result = issueFilterList.filter(
       (item: Issue) =>
-      (formData.issueTypeData.includes(item.type) || (formData.issueTypeData.length==0)) &&
-      (formData?.issuePriorityData?.includes(item.priority) || (formData?.issuePriorityData?.length==0)) &&
-      (formData?.issueStatusData?.includes(item.status) || (formData?.issueStatusData.length==0)) &&
-      (formData?.assigneesData?.some((ass:any)=>item.assignees.some((it:any)=>ass.value===it._id)) || (formData?.assigneesData?.length==0))
-
-      // {
-      // //console.log("current item is", item)
-      // if((formData.issueTypeData.includes(item.type) || (formData.issueTypeData.length==0))){//console.log("has type");
-      //   if((formData?.issuePriorityData?.includes(item.priority) || (formData?.issuePriorityData?.length==0))){//console.log("has priority");
-      //     if((formData?.issueStatusData?.includes(item.status) || (formData?.issueStatusData.length==0)) ){//console.log("has status"); 
-      //     return true} } }
-      // return false
-      // }
-      );
-    console.log('hereeeeeeeeeeeeeeeeeeeeeeee',result);
+        (formData.issueTypeData.includes(item.type) ||
+          formData.issueTypeData.length == 0) &&
+        (formData?.issuePriorityData?.includes(item.priority) ||
+          formData?.issuePriorityData?.length == 0) &&
+        (formData?.issueStatusData?.includes(item.status) ||
+          formData?.issueStatusData.length == 0) &&
+        (formData?.assigneesData?.some((ass: any) =>
+          item.assignees.some((it: any) => ass.value === it._id)
+        ) ||
+          formData?.assigneesData?.length == 0) &&
+        (Moment(item.dueDate).format('YYYY-MM-DD') >= formData.fromDate ||
+          formData.fromDate == '') &&
+        (Moment(item.dueDate).format('YYYY-MM-DD') <= formData.toDate ||
+          formData.toDate == '')
+    );
     setIssueList(result);
   };
   const closeFilterOverlay = () => {
@@ -448,10 +466,12 @@ const Index: React.FC<IProps> = () => {
           <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu>
         </div>
         <div>
-          {(
+          {
             <div
               ref={leftRefContainer}
-              className={` ${leftNav?'visible':'hidden'} calc-h absolute z-10 top-10 bg-gray-200 border border-gray-300 overflow-y-auto`}
+              className={` ${
+                leftNav ? 'visible' : 'hidden'
+              } calc-h absolute z-10 top-10 bg-gray-200 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay
@@ -468,7 +488,7 @@ const Index: React.FC<IProps> = () => {
                 ></LeftOverLay>
               </div>
             </div>
-          )}
+          }
         </div>
         <div id="viewer">{renderSwitch(viewerTypeState)}</div>
         {/* <div>
@@ -510,7 +530,7 @@ const Index: React.FC<IProps> = () => {
              </div>
           </div>
         </div> */}
-        {structure && snapshot && designMap && activeRealityMap &&(
+        {structure && snapshot && designMap && activeRealityMap && (
           <div ref={rightrefContainer}>
             <FontAwesomeIcon
               className={`fixed  ${
