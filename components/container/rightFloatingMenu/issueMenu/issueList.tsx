@@ -19,6 +19,9 @@ import {
   faArrowDownAZ,
   faArrowUpAZ,
   faArrowDown19,
+  faArrowUp19,
+  faArrowDown91,
+  faArrowUp91,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -39,6 +42,7 @@ import { Modal } from 'react-responsive-modal';
 import ReactSelect from 'react-select';
 import TagsInput from 'react-tagsinput';
 import { CSVLink } from 'react-csv';
+import _ from 'lodash';
 interface IProps {
   closeOverlay: () => void;
   issuesList: Issue[];
@@ -82,6 +86,15 @@ const IssueList: React.FC<IProps> = ({
         value: user._id,
       });
     });
+  }
+  const getDownladableIssueList=( issL=issuesList)=> {
+    let myL=issL.map((iss)=>{
+      let a=iss.assignees.map((a)=>{return a.firstName});
+      let x = _.omit(iss,'progress','context');
+      let y = _.update(x,'assignees',(ass)=>{let n= ass.map((o: { firstName: any; })=>{return o.firstName});return n})
+      return y;
+    });
+    return myL;
   }
   const initialValues: {
     issueTypeData: Array<string>;
@@ -756,13 +769,78 @@ const IssueList: React.FC<IProps> = ({
                               </div>
                             </li>
                             <hr className="border-gray-700" />
+                            <li
+                              className="font-medium cursor-pointer"
+                              onClick={() => {
+                                setIsOpenSort(false);
+                                handleOnSort('Asc DueDate');
+                              }}
+                            >
+                              <div className="flex items-center justify-center transform transition-colors duration-200 ">
+                                <div className="mr-3">
+                                  <FontAwesomeIcon
+                                    icon={faArrowDown19}
+                                  ></FontAwesomeIcon>
+                                </div>
+                                First DueDate
+                              </div>
+                            </li>
+                            <li
+                              className="font-medium cursor-pointer"
+                              onClick={() => {
+                                setIsOpenSort(false);
+                                handleOnSort('Dsc DueDate');
+                              }}
+                            >
+                              <div className="flex items-center justify-center transform transition-colors duration-200 ">
+                                <div className="mr-3">
+                                  <FontAwesomeIcon
+                                    icon={faArrowUp91}
+                                  ></FontAwesomeIcon>
+                                </div>
+                                Last DueDate
+                              </div>
+                            </li>
+                            <hr className="border-gray-700" />
+                            <li
+                              className="font-medium cursor-pointer"
+                              onClick={() => {
+                                setIsOpenSort(false);
+                                handleOnSort('Asc Priority');
+                              }}
+                            >
+                              <div className="flex items-center justify-center transform transition-colors duration-200 ">
+                                <div className="mr-3">
+                                  <FontAwesomeIcon
+                                    icon={faArrowDown19}
+                                  ></FontAwesomeIcon>
+                                </div>
+                                Asc Priority
+                              </div>
+                            </li>
+                            <li
+                              className="font-medium cursor-pointer"
+                              onClick={() => {
+                                setIsOpenSort(false);
+                                handleOnSort('Dsc Priority');
+                              }}
+                            >
+                              <div className="flex items-center justify-center transform transition-colors duration-200 ">
+                                <div className="mr-3">
+                                  <FontAwesomeIcon
+                                    icon={faArrowUp91}
+                                  ></FontAwesomeIcon>
+                                </div>
+                                Dsc Priority
+                              </div>
+                            </li>
                           </ul>
                         </div>
                       )}
                     </div>
                     <div>
                       <CSVLink
-                        data={issuesList}
+                        data={getDownladableIssueList(issuesList)}
                         filename={'my-issues.csv'}
                         className="text-black btn btn-primary fill-black fa fa-Download "
                         target="_blank"
