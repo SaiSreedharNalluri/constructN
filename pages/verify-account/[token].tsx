@@ -29,8 +29,20 @@ const VerifyEmail: React.FC = () => {
       <div className=" w-full  ">
         <NextImage
           src="https://constructn-attachments.s3.ap-south-1.amazonaws.com/Login/login02.png"
-          className="h-screen w-screen"
-        />
+          className="h-screen w-screen" />
+        <div className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300 ">
+          <div className='flex'>
+            <div>
+              <p>Failed to verify user. Invalid token</p>
+            </div>
+            <div className="mt-1 ml-2">
+              <svg className="spinner" viewBox="0 0 40 40">
+                <circle cx="20" cy="20" r="18" ></circle>
+              </svg>
+            </div>
+          </div>
+
+        </div>
       </div>
     </React.Fragment>
   );

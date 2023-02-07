@@ -38,7 +38,7 @@ import Image from 'next/image';
 import { Modal } from 'react-responsive-modal';
 import ReactSelect from 'react-select';
 import TagsInput from 'react-tagsinput';
-import { CSVLink } from 'react-csv';
+import { CSVLink } from 'react-csv'
 interface IProps {
   closeOverlay: () => void;
   issuesList: Issue[];
@@ -89,9 +89,9 @@ const IssueList: React.FC<IProps> = ({
     issueStatusData: Array<string>;
     assigneesData: object[];
   } = {
-    issueTypeData: [], //(issueType ===undefined)?[]:issueType ,
-    issuePriorityData: [], // (issuePriority ===undefined)?[]:issuePriority ,
-    issueStatusData: [], //(issueStatus ===undefined)?[]:issueStatus ,
+    issueTypeData: [],//(issueType ===undefined)?[]:issueType ,
+    issuePriorityData: [],// (issuePriority ===undefined)?[]:issuePriority ,
+    issueStatusData: [],//(issueStatus ===undefined)?[]:issueStatus ,
     assigneesData: [],
   };
   const getOwnerName = (userId: string) => {
@@ -180,14 +180,14 @@ const IssueList: React.FC<IProps> = ({
       setIssueViewMode('list');
     }, 2000);
   };
-  const clickDownloadIssues = () => {};
+  const clickDownloadIssues = () => { };
   const renderIssueView = (viewParam: string) => {
     switch (viewParam) {
       case 'filter':
         return (
           <div>
             <div className="flex justify-between border-b border-black border-solid">
-              <div className="flex gap-2">
+              <div className='flex gap-2'>
                 <FontAwesomeIcon
                   icon={faArrowLeftLong}
                   className="mt-2"
@@ -217,7 +217,7 @@ const IssueList: React.FC<IProps> = ({
                     <div>
                       <h5 className="text-gray-500">Issue Type</h5>
                     </div>
-                    <div className="grid grid-cols-2">
+                    <div className='grid grid-cols-2'>
                       {issueType &&
                         issueType.map((option) => (
                           <div key={option}>
@@ -239,10 +239,10 @@ const IssueList: React.FC<IProps> = ({
                     <div>
                       <h5 className="text-gray-500">Issue Priority</h5>
                     </div>
-                    <div className="grid grid-cols-3">
+                    <div className='grid grid-cols-3'>
                       {issuePriority &&
                         issuePriority.map((option) => (
-                          <div className="" key={option}>
+                          <div className='' key={option}>
                             <Field
                               type="checkbox"
                               name="issuePriorityData"
@@ -261,7 +261,7 @@ const IssueList: React.FC<IProps> = ({
                     <div>
                       <h5 className="text-gray-500">Issue Status</h5>
                     </div>
-                    <div className="grid grid-cols-2">
+                    <div className='grid grid-cols-2'>
                       {issueStatus &&
                         issueStatus.map((option) => (
                           <div key={option}>
@@ -330,7 +330,7 @@ const IssueList: React.FC<IProps> = ({
         break;
       case 'edit':
         return (
-          <div>
+          <div >
             <div className="flex h-8 justify-between border-b border-black border-solid">
               <div>
                 <h1>Edit Issue</h1>
@@ -351,7 +351,7 @@ const IssueList: React.FC<IProps> = ({
               onSubmit={clickIssueHandleEditSubmit}
             >
               {({ values, setFieldValue }) => (
-                <Form className=" grid grid-cols-1 gap-y-2 px-4">
+                <Form className=" grid grid-cols-1 gap-y-2 px-4 overflow-y-auto calc-h72">
                   <div className="mt-2 ">
                     <h1 className="text-gray-500">Select the Type of Issue</h1>
                     <Field
@@ -503,29 +503,29 @@ const IssueList: React.FC<IProps> = ({
       case 'detail':
         return (
           <div>
-            <div className="h-8 bg-gray-100 w-full  flex justify-between px-2">
+            <div className="h-8 bg-gray-100 w-full   flex justify-between px-2">
               <div className=" flex ">
                 <FontAwesomeIcon
                   icon={faArrowLeftLong}
-                  className="mt-2"
+                  className="mt-2 cursor-pointer"
                   onClick={() => setIssueViewMode('list')}
                 ></FontAwesomeIcon>
                 <p className="ml-2 mt-1  font-semibold">
                   {issueObj?.type} Issue
                 </p>
               </div>
-              <div className="flex">
+              <div className="flex ">
                 <div>
                   <FontAwesomeIcon
                     icon={faPen}
-                    className="mt-2 pr-2"
+                    className="mt-2 cursor-pointer pr-2"
                     onClick={() => setIssueViewMode('edit')}
                   />
                 </div>
                 <div>
                   <FontAwesomeIcon
                     icon={faTrashCan}
-                    className="mt-2"
+                    className="mt-2 cursor-pointer"
                     onClick={() => {
                       setOpen(true);
                     }}
@@ -533,7 +533,7 @@ const IssueList: React.FC<IProps> = ({
                 </div>
               </div>
             </div>
-            <div className="overflow-y-auto px-4 ">
+            <div className="overflow-y-auto calc-h112 px-4 ">
               <div className="">
                 <p>Details</p>
                 <Image
@@ -541,52 +541,52 @@ const IssueList: React.FC<IProps> = ({
                   width={1080}
                   height={1080}
                   className="w-10/12 h-24"
-                  src={issueObj?.screenshot as string}
-                />
-                <p className="ml-2">{issueObj?.title}</p>
+                  src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8QEBAPDw0NDw8QDxASEA8NDQ8NDQ8QFRIWFhUSFRUYHSggGBolGxUVITEhJSk3Li4uFx8zODMtNyg5OisBCgoKBQUFDgUFDisZExkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIALcBEwMBIgACEQEDEQH/xAAYAAEBAQEBAAAAAAAAAAAAAAAAAQIHA//EACQQAQEAAAYBBQEBAQAAAAAAAAABAhExQVHRwSFhgbHhcfGR/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AO2KyoKUiAVMQmIEuhCpL9AS6mXoF8ANM1QWEKbfILhWeE5AVYi0E2BADdC0CItNwQhSgQE6BSJsoKIUFTNWQUQBvtZogBwW+palASrUxARnP6arO0BZqi0lAIQwgsE3UFWszRrMCX1WoArOKLUAtIlXMElOyJQCqkBUIQDYpQCrukLuCosQAAGoABsJVgIkJqUC6psqAHsAKF6AKACqnC5gpUKBUxKyCwhdQBKAFpDJYCXyAAUAJ0ACoUoEGbagPRcSQAOkpegPJCgJDgu39W7AgAEUiAQigLCIsoKRF5BFRAIqFBZEWJAF4SqCZHakBBUAFQAqpAZzFyAaSbrUAL5LoAZ+vwnJACKEAuyTwsSQBcQAUIAFAFKRAWpVpACJwALUigUCAFIQBCryCUgAFPwBMwyAaSrUgCRUAz8E7IAqZgAFAWJV6AOxFvpQTPVYiwBUAWT1qFAFiKCLSAByUA2KACQoAQpkCoAEozQG0ugYgQ5W7IBhSLEm4KAAKAIQBdwhAAqQGkMygU8ByBkpACRLuQm4KFL5AEKAh+GwKkCAqBAayEAVOl90/AKzPDU7ZAVD3BSkhhBaJVoIACkTCTX4AKTUBf1Ck1BZUwzQaAEACmFAUIgLunQlBUWpQKqVQC6CgmQoBS7QIBkzKpQSk0CAv+KigipCAQmnwAJVhQCAUEUl9P8AhNgMKooEBOAWboFAzJ4TFsUDY/CEAiUAVUpAWESqBn7CgJapUxAbCsgELosAzIcLAOSa0wm4JkXlYngCnaphAmvwcC3QEk+yKQE6XysTPUEupQyAySrnokBakKAbpRb5ASHJNQO1CfYKU3+FBqDIAZEAEWICUui8pAXD2QUCz6ilAEWlBOCL+EgJycNGQIQqgkST0/tWmLgEot8ICZBSglUupQTJLy0mQIpwe4C8JWr0BCQyUGc6LkAQoAXYAEEAWNACRVASL5AE5/uTVAAwgCZLdgAsRQESgBUyACnPuAJkdAAUAW7gAoALQAf/2Q=="
+                ></Image>
+                <p className="mt-2">{issueObj?.title}</p>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="flex">
+              <div >
+                <div className='flex mt-2'>
                   <FontAwesomeIcon
                     icon={faSpinner}
-                    className="mt-2"
+                    className="mt-1 "
                   ></FontAwesomeIcon>
                   <p className="ml-2">{issueObj?.status}</p>
                 </div>
-                <div className="flex">
-                  <FontAwesomeIcon
-                    className="mt-1"
-                    icon={faFlag}
-                  ></FontAwesomeIcon>
-                  <p className="ml-1">{issueObj?.priority}</p>
-                </div>
-                <div className="flex">
-                  <FontAwesomeIcon
-                    className="mt-1"
-                    icon={faCalendar}
-                  ></FontAwesomeIcon>
-                  <p className="ml-1">
-                    {Moment(issueObj?.createdAt).format('MMM Do YYYY')}
-                  </p>
-                </div>
-                <div className="flex">
-                  <FontAwesomeIcon
-                    className="mt-1"
-                    icon={faUser}
-                  ></FontAwesomeIcon>
-                  <p className="ml-1">
-                    {getOwnerName(issueObj?.owner as string)}
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-x-4 gap-y-2   grid-rows-2  mt-2">
-                <div className="flex">
-                  <FontAwesomeIcon
-                    className="mt-1"
-                    icon={faUser}
-                  ></FontAwesomeIcon>
-                  <p className="ml-1"></p>
-                  {issueObj?.assignees.map((a: any) => a.firstName).join(',')}
+                <div className='grid grid-cols-2 gap-y-2 mt-2'>
+                  <div className='flex'>
+                    <FontAwesomeIcon
+                      className="mt-1"
+                      icon={faFlag}
+                    ></FontAwesomeIcon>
+                    <p className="ml-1">{issueObj?.priority}</p>
+                  </div>
+                  <div className="flex">
+                    <FontAwesomeIcon
+                      className="mt-1"
+                      icon={faCalendar}
+                    ></FontAwesomeIcon>
+                    <p className="ml-1">
+                      {Moment(issueObj?.createdAt).format('MMM Do YYYY')}
+                    </p>
+                  </div>
+                  <div className="flex">
+                    <FontAwesomeIcon
+                      className="mt-1"
+                      icon={faUser}
+                    ></FontAwesomeIcon>
+                    <p className="ml-1">
+                      {getOwnerName(issueObj?.owner as string)}
+                    </p>
+                  </div>
+                  <div className="flex">
+                    <FontAwesomeIcon
+                      className="mt-1"
+                      icon={faUser}
+                    ></FontAwesomeIcon>
+                    <p className="ml-1"></p>
+                    {issueObj?.assignees.map((a: any) => a.firstName).join(',')}
+                  </div>
                 </div>
               </div>
               <div className=" mt-2 ">
@@ -652,14 +652,14 @@ const IssueList: React.FC<IProps> = ({
                   setMyVisibility(false);
                   closeOverlay();
                 }}
-                className=" mr-2 right-0 rounded-full border border-black"
+                className=" mr-2  cursor-pointer rounded-full border border-black"
               ></FontAwesomeIcon>
             </div>
             <div>
               <div>
                 <div className="flex justify-between text-gray-800">
                   <div>
-                    <FontAwesomeIcon icon={faSearch} />
+                    <FontAwesomeIcon icon={faSearch} className="cursor-pointer" />
                   </div>
 
                   <div className="grid grid-cols-3 p-1 gap-1">
@@ -669,50 +669,38 @@ const IssueList: React.FC<IProps> = ({
                         onClick={() => {
                           setIssueViewMode('filter');
                         }}
+                        className="cursor-pointer"
                       />
                     </div>
                     <div>
                       <FontAwesomeIcon
                         icon={faSort}
                         onClick={() => {
-                          isOpenSort
-                            ? setIsOpenSort(false)
+                          isOpenSort ? setIsOpenSort(false)
                             : setIsOpenSort(true);
 
                           //setIssueViewMode('filter');
                         }}
+                        className="cursor-pointer"
                       />
                       {isOpenSort && (
                         <div className="absolute  right-0 z-10 bg-gray-100 rounded-lg shadow border">
                           <ul className="text-black p-4 ">
-                            <li
-                              className="font-medium cursor-pointer"
-                              onClick={() => {
-                                setIsOpenSort(false);
-                                handleOnSort('Last Updated');
-                              }}
-                            >
+                            <li className="font-medium cursor-pointer"
+                              onClick={() => { setIsOpenSort(false); handleOnSort('Last Updated'); }}>
                               <div className="flex items-center justify-center transform transition-colors duration-200">
                                 <div className="mr-3">
                                   <FontAwesomeIcon
-                                    icon={faArrowUpAZ}
-                                  ></FontAwesomeIcon>
+                                    icon={faArrowUpAZ}></FontAwesomeIcon>
                                 </div>
                                 Last Updated
                               </div>
                             </li>
-                            <li
-                              className="font-medium cursor-pointer"
-                              onClick={() => {
-                                setIsOpenSort(false);
-                                handleOnSort('First Updated');
-                              }}
-                            >
+                            <li className="font-medium cursor-pointer"
+                              onClick={() => { setIsOpenSort(false); handleOnSort('First Updated'); }}>
                               <div className="flex items-center justify-center transform transition-colors duration-200 ">
                                 <div className="mr-3">
-                                  <FontAwesomeIcon
-                                    icon={faArrowDownAZ}
-                                  ></FontAwesomeIcon>
+                                  <FontAwesomeIcon icon={faArrowDownAZ}></FontAwesomeIcon>
                                 </div>
                                 First Updated
                               </div>
@@ -738,85 +726,77 @@ const IssueList: React.FC<IProps> = ({
                     <div>
                       <CSVLink
                         data={issuesList}
-                        filename={'my-issues.csv'}
-                        className="text-black btn btn-primary fill-black fa fa-Download "
+                        filename={"my-issues.csv"}
+                        className='text-black btn btn-primary fill-black fa fa-Download '
                         target="_blank"
-                      >
-                        <FontAwesomeIcon
-                          className=" fill-black text-black"
-                          icon={faDownload}
-                        ></FontAwesomeIcon>
+                      ><FontAwesomeIcon className=' fill-black text-black' icon={faDownload}></FontAwesomeIcon>
                       </CSVLink>
+
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-1">
+              <div className="grid grid-cols-1 overflow-y-auto calc-h96">
                 {issuesList.length >= 1
                   ? issuesList.map((issueInfo: Issue) => {
-                      return (
-                        <div
-                          className="h-full mt-2 w-full"
-                          key={issueInfo._id}
-                          onClick={() => {
-                            setIssueViewMode('detail');
-                            setIssueObj(issueInfo);
-                          }}
-                        >
-                          <div className="h-1/3 w-11/12  m-auto ">
-                            <div className="m-auto ">
-                              <div className=" bg-white border border-solid border-gray-500 rounded">
-                                <div className="grid grid-cols-4 grid-flow-row-dense gap-x-0">
-                                  <div className="justify-center">
-                                    <FontAwesomeIcon
-                                      className="fa-3x p-1 text-gray-500"
-                                      icon={faShieldAlt}
-                                    ></FontAwesomeIcon>
+                    return (
+                      <div
+                        className="h-full mt-2 w-full"
+                        key={issueInfo._id}
+                        onClick={() => {
+                          setIssueViewMode('detail');
+                          setIssueObj(issueInfo);
+                        }}
+                      >
+                        <div className="h-1/3 w-11/12  m-auto ">
+                          <div className="m-auto ">
+                            <div className=" bg-white cursor-pointer border border-solid border-gray-500 rounded">
+                              <div className="grid grid-cols-4 grid-flow-row-dense gap-x-0">
+                                <div>
+                                  <FontAwesomeIcon
+                                    className="fa-3x p-1 text-gray-500"
+                                    icon={faShieldAlt}
+                                  ></FontAwesomeIcon>
+                                </div>
+                                <div className="col-span-3 p-1 text-gray-600">
+                                  <div>
+                                    <p className='text-base'>{issueInfo.type} (#{issueInfo?._id?.substring(3)})</p>
                                   </div>
-                                  <div className="col-span-3 p-1 text-gray-600">
-                                    <div>
-                                      <p className="text-base">
-                                        {issueInfo.type} (#
-                                        {issueInfo?._id?.substring(3)})
-                                      </p>
-                                    </div>
-                                    <div className="flex gap-3">
-                                      <p className="text-sm">
-                                        {issueInfo.status}
-                                      </p>
-                                      |
-                                      <p className="text-sm">
-                                        {issueInfo.priority}
-                                      </p>
-                                    </div>
+                                  <div className="flex gap-3">
+                                    <p className="text-sm">{issueInfo.status}</p>
+                                    |
+                                    <p className="text-sm">
+                                      {issueInfo.priority}
+                                    </p>
                                   </div>
                                 </div>
-                                <div className="flex mt-2 ml-3">
-                                  <div className="flex">
-                                    <FontAwesomeIcon
-                                      icon={faUser}
-                                      className="text-gray-500 "
-                                    ></FontAwesomeIcon>
-                                    <p className="text-gray-500 -mt-1 ml-1">
-                                      {issueInfo.assignees[0].firstName}
-                                    </p>
-                                    <FontAwesomeIcon
-                                      icon={faCalendar}
-                                      className="text-gray-500 ml-2"
-                                    />
-                                    <p className="text-gray-500 -mt-1 ml-1">
-                                      {Moment(issueInfo.createdAt).format(
-                                        'MMM Do YYYY'
-                                      )}
-                                    </p>
-                                  </div>
+                              </div>
+                              <div className="flex mt-2 ml-3">
+                                <div className="flex">
+                                  <FontAwesomeIcon
+                                    icon={faUser}
+                                    className="text-gray-500 "
+                                  ></FontAwesomeIcon>
+                                  <p className="text-gray-500 -mt-1 ml-1">
+                                    {issueInfo.assignees[0].firstName}
+                                  </p>
+                                  <FontAwesomeIcon
+                                    icon={faCalendar}
+                                    className="text-gray-500 ml-2"
+                                  />
+                                  <p className="text-gray-500 -mt-1 ml-1">
+                                    {Moment(issueInfo.createdAt).format(
+                                      'MMM Do YYYY'
+                                    )}
+                                  </p>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      );
-                    })
+                      </div>
+                    );
+                  })
                   : 'there is no data avaliable'}
               </div>
             </div>
@@ -855,8 +835,8 @@ const IssueList: React.FC<IProps> = ({
   return (
     <div>
       <div
-        className={`fixed calc-h ${myVisibility ? 'w-1/4' : 'w-0'}  
-          top-10  bg-gray-200 right-0 z-10 overflow-x-hidden`}
+        className={`fixed calc-h ${myVisibility ? '  lg:w-1/4' : 'w-0'}  
+          top-10  bg-gray-200 right-0 z-10 overflow-x-hidden overflow-y-hidden`}
       >
         <div className="">{renderIssueView(issueViewMode)}</div>
       </div>
@@ -867,16 +847,19 @@ const IssueList: React.FC<IProps> = ({
             setOpen(false);
           }}
         >
-          <h1>Delete conformation for issue</h1>
-          <p>Are you sure you want to delete this item?</p>
-          <button onClick={handleDeleteItem}>Confirm</button>
-          <button
-            onClick={() => {
-              setOpen(false);
-            }}
-          >
-            Cancel
-          </button>
+          <h1 className=' font-bold'>Delete confirmation</h1>
+          <p className='mt-2'>Are you sure you want to delete this item?</p>
+          <div className='grid grid-cols-2 gap-x-4 mt-4'>
+            <button
+              onClick={() => {
+                setOpen(false);
+              }}
+              className="px-2 py-1  focus:outline-none bg-gray-500 hover:bg-gray-800 rounded text-gray-200 font-semibold"
+            >
+              Cancel
+            </button>
+            <button className='px-2 py-1 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ' onClick={handleDeleteItem}>Confirm</button>
+          </div>
         </Modal>
       </div>
     </div>
