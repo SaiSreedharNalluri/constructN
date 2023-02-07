@@ -12,7 +12,11 @@ import { ITools } from '../../../../models/ITools';
 import { Issue } from '../../../../models/Issue';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import { IStructure } from '../../../../models/IStructure';
-
+import createIssue from "../../../../public/icons/plus-circle.svg";
+import list from "../../../../public/icons/listIconInToolbar.svg";
+import issuesVisible from "../../../../public/icons/issuesInToolbar.svg";
+import issuesHidden from "../../../../public/icons/issuesHiddenInToolbar.svg";
+import Image from 'next/image';
 interface IProps {
   issueMenuClicked: (a: ITools) => void;
   issueLayer?: boolean;
@@ -87,11 +91,7 @@ const IssueMenu: React.FC<IProps> = ({
     <div className="">
       <div className={` border border-solid bg-slate-300 p-1.5 rounded`}>
         <div className="flex justify-between">
-          <FontAwesomeIcon
-            onClick={openIssueCreate}
-            icon={faCirclePlus}
-            className="cursor-pointer"
-          ></FontAwesomeIcon>
+          <Image alt='' onClick={openIssueCreate} className="cursor-pointer " src={createIssue}></Image>
           {/* <IssueCreate
             handleIssueSubmit={issueSubmit}
             visibility={createOverlay}
@@ -100,11 +100,7 @@ const IssueMenu: React.FC<IProps> = ({
             currentStructure={myStructure}
             currentSnapshot={mySnapshot}
           ></IssueCreate> */}
-          <FontAwesomeIcon
-            icon={faList}
-            className="mx-2 cursor-pointer"
-            onClick={openIssueList}
-          ></FontAwesomeIcon>
+          <Image alt='' onClick={openIssueList} className="cursor-pointer mx-2 " src={list}></Image>
           {/* <IssueList
             closeFilterOverlay={closeFilterOverlay}
             issuesList={issuesList}
@@ -112,11 +108,7 @@ const IssueMenu: React.FC<IProps> = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
           ></IssueList> */}
-          <FontAwesomeIcon
-            icon={issueVisbility ? faEye : faEyeSlash}
-            className="cursor-pointer"
-            onClick={toggleIssueVisibility}
-          ></FontAwesomeIcon>
+          {issueVisbility ? <Image alt='' className="cursor-pointer " src={issuesVisible} onClick={toggleIssueVisibility} ></Image> : <Image alt='' src={issuesHidden} onClick={toggleIssueVisibility} ></Image>}
         </div>
       </div>
     </div>

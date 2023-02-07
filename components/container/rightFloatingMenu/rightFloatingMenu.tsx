@@ -22,7 +22,12 @@ import { ITasks } from '../../../models/Itask';
 import { Issue } from '../../../models/Issue';
 import { ISnapshot } from '../../../models/ISnapshot';
 import { IStructure } from '../../../models/IStructure';
-
+import Image from 'next/image';
+import issues from "../../../public/icons/issues.svg";
+import tasks from "../../../public/icons/taskVisibleInToolbar.svg";
+import hotspot from "../../../public/icons/Hotspot.svg";
+import { IActiveReality, IActiveRealityMap } from '../../../models/IReality';
+import { IDesignMap } from '../../../models/IDesign';
 interface IProps {
   toolClicked: (a: ITools) => void;
   viewMode: string;
@@ -34,6 +39,8 @@ interface IProps {
   currentStructure: IStructure;
   currentSnapshot: ISnapshot;
   currentProject: string;
+  currentLayersList : IActiveRealityMap;
+  currentTypesList :IDesignMap;
   closeFilterOverlay: () => void;
   handleOnTaskFilter: (formData: object) => void;
   closeTaskFilterOverlay: () => void;
@@ -49,6 +56,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
   currentProject,
   currentSnapshot,
   currentStructure,
+  currentLayersList,
+  currentTypesList,
   closeFilterOverlay,
   closeTaskFilterOverlay,
   handleOnTaskFilter,
@@ -63,6 +72,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
   const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
+  const [myTypesList,setMyTypesList]= useState<IDesignMap>(currentTypesList);
+  const [myLayersList, setMyLayersList]=useState<IActiveRealityMap>(currentLayersList);
   let toolInstance: ITools = { toolName: '', toolAction: '' };
   // const closeStructurePages = (e: any) => {
   //   if (!rightOverlayRefs.current.contains(e.target)) {
@@ -72,18 +83,20 @@ const RightFloatingMenu: React.FC<IProps> = ({
   //   }
   // };
   useEffect(() => {
-     setIViewMode(viewMode);
-  //   document.addEventListener('click', closeStructurePages);
-  //   return () => {
-  //     document.removeEventListener('click', closeStructurePages);
-  //   };
+    setIViewMode(viewMode);
+    //   document.addEventListener('click', closeStructurePages);
+    //   return () => {
+    //     document.removeEventListener('click', closeStructurePages);
+    //   };
   }, [viewMode]);
 
   useEffect(() => {
     setMyProject(currentProject);
     setMyStructure(currentStructure);
     setMySnapshot(currentSnapshot);
-  }, [currentProject, currentSnapshot, currentStructure]);
+    setMyTypesList(currentTypesList);
+    setMyLayersList(currentLayersList);
+  }, [currentProject, currentSnapshot, currentStructure,currentLayersList,currentTypesList]);
 
   const rightMenuClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
@@ -97,15 +110,15 @@ const RightFloatingMenu: React.FC<IProps> = ({
     } else if (e.currentTarget.id === 'compareDesign') {
       //console.log("CAptured....");
       toolInstance.toolName = 'compareDesign';
-      toolInstance.toolAction =(isCompareDesign?'closeCompare':'showCompare');
-      setIsCompareDesign(isCompareDesign?false:true);
+      toolInstance.toolAction = (isCompareDesign ? 'closeCompare' : 'showCompare');
+      setIsCompareDesign(isCompareDesign ? false : true);
       setIsCompareReality(false);
     }
-    else if(e.currentTarget.id==='compareReality'){
+    else if (e.currentTarget.id === 'compareReality') {
       //console.log("CAptured....");
       toolInstance.toolName = 'compareReality';
-      toolInstance.toolAction =(isCompareReality?'closeCompare':'showCompare');
-      setIsCompareReality(isCompareReality?false:true);
+      toolInstance.toolAction = (isCompareReality ? 'closeCompare' : 'showCompare');
+      setIsCompareReality(isCompareReality ? false : true);
       setIsCompareDesign(false);
 
     }
@@ -176,7 +189,10 @@ const RightFloatingMenu: React.FC<IProps> = ({
             <div className={`fixed  ${rightNav ? 'right-9' : 'hidden'}`}>
               <div className="bg-gray-400">
                 <select onChange={typeChange} id="typeList">
-                  {viewMode === 'Design' ? (
+                  {myTypesList&& Object.keys(myTypesList).map((key)=>(
+                    <option value={key}>{key}</option>
+                  ))}
+                  {/* {viewMode === 'Design' ? (
                     <option value="plan">Plan</option>
                   ) : (
                     ''
@@ -210,7 +226,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
                     <option value="orthoPhoto">OrthoPhoto</option>
                   ) : (
                     ''
-                  )}
+                  )} */}
                 </select>
               </div>
             </div>
@@ -219,9 +235,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
           <FontAwesomeIcon
             id="type"
-            className={` flex w-full py-2  cursor-pointer ${
-              active === 'type' ? 'selectedClass' : 'unSelectedClass'
-            }`}
+            className={` flex w-full py-2  cursor-pointer ${active === 'type' ? 'selectedClass' : 'unSelectedClass'
+              }`}
             onClick={rightMenuClickHandler}
             icon={faSitemap}
           ></FontAwesomeIcon>
@@ -232,9 +247,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
           <FontAwesomeIcon
             icon={faDatabase}
             id="layer"
-            className={` w-full py-2  cursor-pointer ${
-              active === 'layer' ? 'selectedClass' : 'unSelectedClass'
-            }`}
+            className={` w-full py-2  cursor-pointer ${active === 'layer' ? 'selectedClass' : 'unSelectedClass'
+              }`}
             onClick={rightMenuClickHandler}
           ></FontAwesomeIcon>
           {active === 'layer' ? (
@@ -243,7 +257,17 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 className={`border  -mt-8 border-solid bg-slate-300 p-1.5 rounded `}
               >
                 <ul className=" h-full text-xs" id="items">
-                  <li>
+                  {myLayersList&& Object.keys(myLayersList).map((key)=>(
+                    <li>
+                      <input
+                      onClick={LayerChange}
+                      value={key}
+                      type="checkbox"
+                      />
+                      {key}
+                    </li>
+                  ))}
+                  {/* <li>
                     <input
                       onClick={LayerChange}
                       value={'360Image'}
@@ -394,7 +418,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
                     </li>
                   ) : (
                     ''
-                  )}
+                  )} */}
                 </ul>
               </div>
             </div>
@@ -402,15 +426,19 @@ const RightFloatingMenu: React.FC<IProps> = ({
             ''
           )}
         </div>
-        <div className=" cursor-pointer">
-          <FontAwesomeIcon
+        <div className={`${active === 'issue' ? 'selectedClass' : 'unSelectedClass'
+          }`} >
+          {/* <FontAwesomeIcon
             icon={faExclamationCircle}
             id="issue"
             className={` w-full py-2  cursor-pointer ${
               active === 'issue' ? 'selectedClass' : 'unSelectedClass'
             }`}
             onClick={rightMenuClickHandler}
-          ></FontAwesomeIcon>
+          ></FontAwesomeIcon> */}
+          <Image alt='' src={issues} id="issue"
+            className={` m-auto  p-1.5  w-full cursor-pointer `}
+            onClick={rightMenuClickHandler} ></Image>
           {active === 'issue' ? (
             <div className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'}`}>
               <IssueMenu
@@ -435,16 +463,10 @@ const RightFloatingMenu: React.FC<IProps> = ({
             ''
           )}
         </div>
-
-        <div className=" cursor-pointer">
-          <FontAwesomeIcon
-            icon={faBullseye}
-            id="task"
-            className={` w-full py-2  z-10 cursor-pointer ${
-              active === 'task' ? 'selectedClass' : 'unSelectedClass'
-            }`}
-            onClick={rightMenuClickHandler}
-          ></FontAwesomeIcon>
+        <div className={` ${active === 'task' ? 'selectedClass' : 'unSelectedClass'
+          }`}>
+          <Image alt='' src={tasks} id="task" className={` m-auto  w-full  p-1  text-4xl cursor-pointer `}
+            onClick={rightMenuClickHandler}></Image>
           {active === 'task' ? (
             <div className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'}`}>
               <TaskMenu
@@ -461,15 +483,11 @@ const RightFloatingMenu: React.FC<IProps> = ({
             ''
           )}
         </div>
-        <div className=" justify-center cursor-pointer">
-          <FontAwesomeIcon
-            icon={faTasks}
-            id="progress"
-            className={` w-full py-2  cursor-pointer ${
-              active === 'progress' ? 'selectedClass' : 'unSelectedClass'
-            } `}
-            onClick={rightMenuClickHandler}
-          ></FontAwesomeIcon>
+        <div className={` justify-center cursor-pointer ${active === 'progress' ? 'selectedClass' : 'unSelectedClass'
+          }`}>
+          <Image alt='' src={hotspot} id="progress"
+            className={` w-full  cursor-pointer p-1 `}
+            onClick={rightMenuClickHandler}></Image>
           {active === 'progress' ? (
             <div className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'}`}>
               <ProgressMenu
@@ -486,11 +504,10 @@ const RightFloatingMenu: React.FC<IProps> = ({
               <FontAwesomeIcon
                 icon={faCodeBranch}
                 id="compareDesign"
-                className={` w-full  cursor-pointer ${
-                  active === 'compareDesign'
-                    ? 'selectedClass'
-                    : 'unSelectedClass'
-                }`}
+                className={` w-full  cursor-pointer ${active === 'compareDesign'
+                  ? 'selectedClass'
+                  : 'unSelectedClass'
+                  }`}
                 onClick={rightMenuClickHandler}
               ></FontAwesomeIcon>
             </div>
@@ -499,11 +516,10 @@ const RightFloatingMenu: React.FC<IProps> = ({
               <FontAwesomeIcon
                 icon={faArrowsSplitUpAndLeft}
                 id="compareReality"
-                className={` w-full  cursor-pointer ${
-                  active === 'compareReality'
-                    ? 'selectedClass'
-                    : 'unSelectedClass'
-                }`}
+                className={` w-full  cursor-pointer ${active === 'compareReality'
+                  ? 'selectedClass'
+                  : 'unSelectedClass'
+                  }`}
                 onClick={rightMenuClickHandler}
               ></FontAwesomeIcon>
             </div>
