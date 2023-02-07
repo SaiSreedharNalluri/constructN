@@ -32,6 +32,7 @@ import IssueCreate from '../../../../components/container/rightFloatingMenu/issu
 import TaskCreate from '../../../../components/container/rightFloatingMenu/taskMenu/taskCreate';
 import IssueList from '../../../../components/container/rightFloatingMenu/issueMenu/issueList';
 import { it } from 'node:test';
+import Moment from 'moment';
 
 interface IProps {}
 const Index: React.FC<IProps> = () => {
@@ -402,12 +403,9 @@ const Index: React.FC<IProps> = () => {
           item.assignees.some((it: any) => ass.value === it._id)
         ) ||
           formData?.assigneesData?.length == 0) &&
-        (new Date(formData?.startDate).getTime() ===
-          new Date(item?.startDate).getTime() ||
-          formData.startDate === '') &&
-        (new Date(formData?.dueDate).getTime() ===
-          new Date(item?.dueDate).getTime() ||
-          formData.dueDate === '')
+        ((Moment(item.dueDate).format('YYYY-MM-DD') >= formData.fromDate &&
+          Moment(item.dueDate).format('YYYY-MM-DD') <= formData.toDate) ||
+          (formData.fromDate == '' && formData.toDate == ''))
     );
     setIssueList(result);
   };

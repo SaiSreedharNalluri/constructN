@@ -88,15 +88,15 @@ const IssueList: React.FC<IProps> = ({
     issuePriorityData: Array<string>;
     issueStatusData: Array<string>;
     assigneesData: object[];
-    startDate: string;
-    dueDate: string;
+    fromDate: string;
+    toDate: string;
   } = {
     issueTypeData: [], //(issueType ===undefined)?[]:issueType ,
     issuePriorityData: [], // (issuePriority ===undefined)?[]:issuePriority ,
     issueStatusData: [], //(issueStatus ===undefined)?[]:issueStatus ,
     assigneesData: [],
-    startDate: '',
-    dueDate: '',
+    fromDate: '',
+    toDate: '',
   };
   const getOwnerName = (userId: string) => {
     const user: any = projectUsers.find(
@@ -308,18 +308,18 @@ const IssueList: React.FC<IProps> = ({
                       </div>
                       <div className="p-2">
                         <div className="flex">
-                          <div className="w-1/2 text-gray-500 ">Start Date</div>
-                          <div className="w-1/2 text-gray-500 ">Due Date</div>
+                          <div className="w-1/2 text-gray-500 ">From Date</div>
+                          <div className="w-1/2 text-gray-500 ">To Date</div>
                         </div>
                         <div className="flex bg-white p-1 rounded   border border-solid border-gray-600">
                           <div className="w-1/2 text-gray-500 border-r border-solid border-gray-300">
                             <Field
                               type="date"
-                              name="startDate"
+                              name="fromDate"
                               className="block w-full text-sm border border-solid border-gray-600 rounded p-2"
                             />
                             <ErrorMessage
-                              name="startDate"
+                              name="fromDate"
                               component="div"
                               className="alert alert-danger"
                             />
@@ -327,11 +327,11 @@ const IssueList: React.FC<IProps> = ({
                           <div className="w-1/2 text-gray-500 ml-2">
                             <Field
                               type="date"
-                              name="dueDate"
+                              name="toDate"
                               className="block w-full text-sm border border-solid border-gray-600 rounded p-2"
                             />
                             <ErrorMessage
-                              name="dueDate"
+                              name="toDate"
                               component="div"
                               className="alert alert-danger"
                             />
@@ -871,8 +871,14 @@ const IssueList: React.FC<IProps> = ({
         value: Yup.string().required(),
       })
     ),
-    startDate: Yup.string(),
-    dueDate: Yup.string(),
+    fromDate: Yup.string(),
+    toDate: Yup.string().when('fromDate', (fromDate, schema) => {
+      return fromDate
+        ? schema
+            .min(fromDate, 'To date should be after the from date')
+            .required('To date is required')
+        : schema;
+    }),
   });
 
   const handleOnFilterEvent = (formData: object) => {
