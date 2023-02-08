@@ -28,7 +28,7 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData, depth,currentClickedSt
       }
     };
     return (
-      <React.Fragment>
+      
         <li key={structure._id} className=" flex-col relative ">
           <div
             
@@ -61,24 +61,23 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData, depth,currentClickedSt
           {hasChild && visible && (
             <div className="flex-col  ">
               <div className="xyz">
-                <li className="">
                   <Tree
                     currentClickedStruct={clickedStruct}
                     tree={structure.children as Array<ChildrenEntity>}
                     getStructureData={getStructureData}
                     depth={depth + 1}
                   />
-                </li>
               </div>
             </div>
           )}
         </li>
-      </React.Fragment>
+      
     );
   };
   return (
     <React.Fragment>
       <ul className="list-none   ">
+        
         {tree.map((structure) => {
           return Treenode(structure);
         })}
