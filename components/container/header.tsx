@@ -1,15 +1,24 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
   faCog,
   faRightFromBracket,
   faUser,
-} from '@fortawesome/free-solid-svg-icons';
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { getCookie, removeCookies } from 'cookies-next';
-import DesignRealitySwitch from './designRealitySwitch';
+} from "@fortawesome/free-solid-svg-icons";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { getCookie, removeCookies } from "cookies-next";
+import DesignRealitySwitch from "./designRealitySwitch";
+import { styled, createTheme, ThemeProvider } from "@mui/system";
+
+const MyThemeComponent = styled("div")(({ theme }) => ({
+  // color: theme.palette.primary.contrastText,
+  // backgroundColor: theme.palette.primary.main,
+  // padding: theme.spacing(1),
+  // borderRadius: theme.shape.borderRadius,
+}));
+
 interface IProps {
   // showDesignRealitySwitch?:boolean;
   // isDesignView?:boolean;
@@ -25,9 +34,9 @@ const Header: React.FC<IProps> = () => {
   // }
   const router = useRouter();
   const headerRef: any = React.useRef();
-  let [name, setName] = useState<string>('');
+  let [name, setName] = useState<string>("");
   useEffect(() => {
-    const userObj: any = getCookie('user');
+    const userObj: any = getCookie("user");
     let user = null;
     if (userObj) user = JSON.parse(userObj);
     if (user?.fullName) {
@@ -39,21 +48,20 @@ const Header: React.FC<IProps> = () => {
     const closePopup = (e: any) => {
       //console.log(headerRef.current.contains(e.target));
       if (!headerRef.current.contains(e.target)) {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
     document.addEventListener("click", closePopup);
     return () => {
       document.removeEventListener("click", closePopup);
-    }
-
-  }, [])
+    };
+  }, []);
   const userLogOut = () => {
-    removeCookies('user');
-    router.push('/login');
+    removeCookies("user");
+    router.push("/login");
   };
   const goToProjectsList = () => {
-    router.push('/projects');
+    router.push("/projects");
   };
   //   const toggleDesignType = ()=>{
   //  isDesignView=!isDesignView;
@@ -61,7 +69,7 @@ const Header: React.FC<IProps> = () => {
   //   }
   return (
     <React.Fragment>
-      <div ref={headerRef}>
+      <MyThemeComponent ref={headerRef}>
         <header className="border-b border-solid border-gray-400">
           <div className="flex justify-between">
             <div className="ml-2 mt-2 mb-2 ">
@@ -72,11 +80,11 @@ const Header: React.FC<IProps> = () => {
                 alt=""
               ></img>
             </div>
-            <div className='flex '>
+            <div className="flex ">
               {/* <div className={`mt-2 mr-2 mb-2 ${showDesignRealitySwitch?'visible':'hidden'}`}>
               <DesignRealitySwitch toggleDesignType={toggleDesignType} designState={isDesignView?true:false}></DesignRealitySwitch>
             </div> */}
-              <div className='mt-2 mr-2 mb-2 w-6 h-6'>
+              <div className="mt-2 mr-2 mb-2 w-6 h-6">
                 <FontAwesomeIcon icon={faBell} />
               </div>
               <div
@@ -139,8 +147,7 @@ const Header: React.FC<IProps> = () => {
             </div>
           </div>
         </header>
-      </div>
-
+      </MyThemeComponent>
     </React.Fragment>
   );
 };
