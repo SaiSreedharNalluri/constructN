@@ -108,3 +108,23 @@ export const editIssue = (
       throw error.response.data;
     });
 };
+export const createIssueWithAttachments = (
+  projectId: string,
+  issueObj: object
+) => {
+  console.log('dshjkbdns', projectId, issueObj);
+  return instance
+    .post(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/addissueWithAttachment`,
+      issueObj,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
