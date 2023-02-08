@@ -11,7 +11,6 @@ import 'public/potree/libs/jquery-ui/jquery-ui.min.css';
 import 'public/potree/libs/openlayers3/ol.css';
 import 'public/potree/libs/spectrum/spectrum.css';
 import 'public/potree/libs/jstree/themes/mixed/style.css';
-import 'react-tagsinput/react-tagsinput.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
 config.autoAddCss = false;
