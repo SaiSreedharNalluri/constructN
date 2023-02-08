@@ -1073,9 +1073,15 @@ export class PotreeViewerUtils {
         document.removeEventListener('imageUnload',this.onOrientedImageUnload.bind(this));
         document.removeEventListener('panoLoad',this.onPanoImageLoad.bind(this));
         document.removeEventListener('panoUnload',this.onPanoImageUnload.bind(this));
-        document.getElementById(this.viewerId).removeEventListener('keydown', this.onKeyDown.bind(this));
-        document.getElementById(this.viewerId).removeEventListener('camerachange', this.onCameraChange.bind(this));
-        // document.getElementById(this.viewerId).removeEventListener('mouseenter', this.onMouseEnter.bind(this));
+
+        let viewerElement = document.getElementById(this.viewerId);
+        if (viewerElement) {
+            viewerElement.removeEventListener('keydown', this.onKeyDown.bind(this));
+            viewerElement.removeEventListener('camerachange', this.onCameraChange.bind(this));
+            // viewerElement.removeEventListener('mouseenter', this.onMouseEnter.bind(this));
+        }
+        
+       
     }   
 
     loadFloormap(imagePositionsPath) {
@@ -1378,8 +1384,13 @@ export class PotreeViewerUtils {
 
     removeData() {
         // console.log("Inside remove data potree");
-        this.removeEventListeners();
-        this.removeAssets();
+        try {
+            this.removeEventListeners();
+            this.removeAssets();
+        } catch {
+            console.log("Error while removing data from potree viewer: ");
+        }
+       
     }
 
     removeAssets() {

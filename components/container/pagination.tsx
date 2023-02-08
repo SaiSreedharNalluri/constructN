@@ -12,8 +12,8 @@ const Pagination: React.FC<IProps> = ({ currentSnapshot, snapshotList, getSnapsh
 
   useEffect(() => {
     if (snapshotList.length > 0) {
-      setNewDate(snapshotList[0].date);
-      setOldDate(snapshotList.reverse()[0].date);
+      setOldDate(snapshotList[0].date);
+      setNewDate(snapshotList[snapshotList.length - 1].date);
     }
   }, [snapshotList]);
 
