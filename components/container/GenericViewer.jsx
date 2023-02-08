@@ -468,18 +468,18 @@ function GenericViewer(props) {
   };
 
   const getSnapshotList = async (projectId, structurId) => {
-    let snapshotList = await getSnapshotsList(projectId, structurId);
+    let list = await getSnapshotsList(projectId, structurId);
 
-    snapshotList = snapshotList.data.result.mSnapshots.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    list = list.data.result.mSnapshots.sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
-    if (snapshotList.length > 0) {
-      setSnapshotList(snapshotList);
-      setCurrentSnapshot(snapshotList[0]);
-      if (snapshotList.length > 1) {
-        setCurrentCompareSnapshot(snapshotList[1]);
+    if (list.length > 0) {
+      setSnapshotList(list);
+      setCurrentSnapshot(list[list.length - 1]);
+      if (list.length > 1) {
+        setCurrentCompareSnapshot(list[list.length - 2]);
       } else {
-        setCurrentCompareSnapshot(snapshotList[0]);
+        setCurrentCompareSnapshot(list[list.length - 1]);
       }
       
     }
