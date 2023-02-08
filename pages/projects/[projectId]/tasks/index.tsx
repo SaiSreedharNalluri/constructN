@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '../../../../components/container/header';
+import Header from '../../../../components/divami_components/header/Header';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 const Index: React.FC = () => {
   return (
