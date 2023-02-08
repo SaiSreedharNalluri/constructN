@@ -21,8 +21,9 @@ config.autoAddCss = false;
 const customTheme = createTheme({
   palette: {
     primary: {
-      main: "#1976d2",
-      contrastText: "white",
+      main: "#F1742E",
+      default: "#FFFFFF",
+      fontColor: "#36415D",
     },
   },
 });

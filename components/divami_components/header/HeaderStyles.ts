@@ -1,4 +1,4 @@
-import { styled, createTheme, ThemeProvider } from "@mui/system";
+import { styled } from "@mui/system";
 
 export const HeaderContainer = styled("div")({
   minHeight: "60px",
@@ -31,55 +31,43 @@ export const HeaderToggle = styled("div")({
   borderRadius: "4px",
 });
 
-export const HeaderToggleButtonTwo = styled("button")({
-  // background: ${(props) =>
-  //     props?.toggleStatus
-  //       ? props?.theme?.colors?.default
-  //       : props?.theme?.colors?.white};
-  //   border: ${(props) =>
-  //     props?.toggleStatus
-  //       ? "none"
-  //       : `1px solid ${props?.theme?.colors?.default}`};
-  //   padding: ${(props) => (props?.toggleStatus ? "0" : "")};
-  //   cursor: pointer;
-  //   outline: inherit;
-  //   color: ${(props) =>
-  //     props?.toggleStatus
-  //       ? props?.theme?.colors?.white
-  //       : props?.theme?.colors?.textColor};
-  //   padding: 6px 10px;
-  //   height: 30px;
-  //   display: flex;
-  //   align-items: center;
-  //   width: 64px;
-  //   border-top-right-radius: 4px;
-  //   border-bottom-right-radius: 4px;
-});
+export const HeaderToggleButtonOne = styled("button")((props: any) => ({
+  background: props.toggleStatus
+    ? props.theme.palette.primary.default
+    : props.theme.palette.primary.main,
+  border: props.toggleStatus
+    ? `1px solid ${props?.theme?.palette.primary?.default}`
+    : "none",
+  cursor: "pointer",
+  color: props.toggleStatus
+    ? props.theme.palette.primary.fontColor
+    : props.theme.palette.primary.default,
+  padding: "6px 10px",
+  height: "30px",
+  display: "flex",
+  alignItems: "center",
+  borderTopLeftRadius: "4px",
+  borderBottomLeftRadius: "4px",
+})) as any;
 
-export const HeaderToggleButtonOne = styled("button")({
-  // background: ${(props) =>
-  //     props?.toggleStatus
-  //       ? props?.theme?.colors?.default
-  //       : props?.theme?.colors?.white};
-  //   border: ${(props) =>
-  //     props?.toggleStatus
-  //       ? "none"
-  //       : `1px solid ${props?.theme?.colors?.default}`};
-  //   padding: ${(props) => (props?.toggleStatus ? "0" : "")};
-  //   cursor: pointer;
-  //   outline: inherit;
-  //   color: ${(props) =>
-  //     props?.toggleStatus
-  //       ? props?.theme?.colors?.white
-  //       : props?.theme?.colors?.textColor};
-  //   padding: 6px 10px;
-  //   height: 30px;
-  //   display: flex;
-  //   align-items: center;
-  //   width: 64px;
-  //   border-top-left-radius: 4px;
-  //   border-bottom-left-radius: 4px;
-});
+export const HeaderToggleButtonTwo = styled("button")((props: any) => ({
+  background: props.toggleStatus
+    ? props.theme.palette.primary.default
+    : props.theme.palette.primary.main,
+  border: props.toggleStatus
+    ? `1px solid ${props?.theme?.palette.primary?.default}`
+    : "none",
+  cursor: "pointer",
+  color: props.toggleStatus
+    ? props.theme.palette.primary.fontColor
+    : props.theme.palette.primary.default,
+  padding: "6px 10px",
+  height: "30px",
+  display: "flex",
+  alignItems: "center",
+  borderTopRightRadius: "4px",
+  borderBottomRightRadius: "4px",
+})) as any;
 
 export const HeaderProfileImageContainer = styled("div")({
   marginRight: "15px",

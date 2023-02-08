@@ -1,10 +1,10 @@
 import Box from "@mui/material/Box";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import constructnLogo from "../../../public/images/constructnLogo.svg";
-import hamburgerMenu from "../../../public/images/hamburgerMenu.svg";
-import profileImageHeader from "../../../public/images/profileImageHeader.svg";
-import Notification from "../.././../public/images/notification.svg";
+import constructnLogo from "../../../public/divami_icons/constructnLogo.svg";
+import hamburgerMenu from "../../../public/divami_icons/hamburgerMenu.svg";
+import profileImageHeader from "../../../public/divami_icons/profileImageHeader.svg";
+import Notification from "../../../public/divami_icons/notification.svg";
 import { useRouter } from "next/router";
 import { getCookie, removeCookies } from "cookies-next";
 import DesignRealitySwitch from "../../container/designRealitySwitch";
@@ -28,10 +28,6 @@ import {
   HeaderMenuImageContainer,
   HeaderNotificationImageContainer,
 } from "./HeaderStyles";
-
-interface toggleProps {
-  toggleStatus: boolean;
-}
 
 interface IProps {
   // showDesignRealitySwitch?:boolean;
@@ -87,14 +83,14 @@ const Header: React.FC<IProps> = () => {
       <HeaderRightPart>
         <HeaderToggle>
           <HeaderToggleButtonOne
-            onClick={() => setIsDesignSelected((prev) => !prev)}
-            // toggleStatus={isDesignSelected}
+            onClick={() => setIsDesignSelected((prev: any) => !prev)}
+            toggleStatus={isDesignSelected}
           >
             Design
           </HeaderToggleButtonOne>
           <HeaderToggleButtonTwo
-            onClick={() => setIsDesignSelected((prev) => !prev)}
-            // toggleStatus={!isDesignSelected}
+            onClick={() => setIsDesignSelected((prev: any) => !prev)}
+            toggleStatus={!isDesignSelected}
           >
             Reality
           </HeaderToggleButtonTwo>
@@ -119,7 +115,7 @@ const Header: React.FC<IProps> = () => {
           <Image src={hamburgerMenu} alt="Menu" />
         </HeaderMenuImageContainer>
       </HeaderRightPart>
-      //! This is Open Profile Options
+      {/* //! This is Open Profile Options */}
       {loading && (
         <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
           <ul className="text-white p-4 ">

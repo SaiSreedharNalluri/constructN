@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { GetServerSideProps } from "next";
 import React from "react";
-import Header from "../../components/container/header";
+import Header from "../../components/divami_components/header/Header";
 import ProjectsList from "../../components/container/projectsList";
 import { IJobs } from "../../models/IJobs";
 import { IProjects } from "../../models/IProjects";
