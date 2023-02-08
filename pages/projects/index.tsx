@@ -1,12 +1,12 @@
-import _ from 'lodash';
-import { GetServerSideProps } from 'next';
-import React from 'react';
-import Header from '../../components/container/header';
-import ProjectsList from '../../components/container/projectsList';
-import { IJobs } from '../../models/IJobs';
-import { IProjects } from '../../models/IProjects';
-import { getjobsInfo } from '../../services/jobs';
-import { getProjects } from '../../services/project';
+import _ from "lodash";
+import { GetServerSideProps } from "next";
+import React from "react";
+import Header from "../../components/divami_components/header/Header";
+import ProjectsList from "../../components/container/projectsList";
+import { IJobs } from "../../models/IJobs";
+import { IProjects } from "../../models/IProjects";
+import { getjobsInfo } from "../../services/jobs";
+import { getProjects } from "../../services/project";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const resp: any = await getProjects(context);
   let tempData: IProjects[] = [];
@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     })
   );
   return {
-    props: { projects: _.sortBy(tempData, 'LastUpdatedOn') },
+    props: { projects: _.sortBy(tempData, "LastUpdatedOn") },
   };
 };
 interface IProps {
@@ -32,7 +32,7 @@ interface IProps {
 const Projects: React.FC<IProps> = ({ projects }) => {
   return (
     <React.Fragment>
-      <div className='flex-col'>
+      <div className="flex-col">
         <div>
           <Header></Header>
         </div>
@@ -40,8 +40,6 @@ const Projects: React.FC<IProps> = ({ projects }) => {
           <ProjectsList projects={projects} />
         </div>
       </div>
-
-
     </React.Fragment>
   );
 };
