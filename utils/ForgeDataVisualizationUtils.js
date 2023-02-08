@@ -51,7 +51,27 @@ export class ForgeDataVisualization {
         this.viewer.removeEventListener(this.dataVizCore.MOUSE_CLICK, this.viewableClickHandler);
     }
 
-    addVisualizationData(visualizationData) {
+    addMediaData(visualizationData) {
+        this.mediaMap = visualizationData;
+        this.formatDataMap(this.mediaMap);
+    }
+
+    addTrackersData(issueData, taskData) {
+        let trackerMap = {};
+        if (issueData && issueData.length > 0) {
+            trackerMap["Issue"] = issueData;
+        }
+
+        if (taskData && taskData.length > 0) {
+            trackerMap["Task"] = taskData;
+        }
+
+        this.trackerMap = trackerMap;
+        this.formatDataMap(this.trackerMap);
+    }
+
+
+    formatDataMap(visualizationData) {
         let dbId = this.viewableLength + 1;
         for (const viewableType in visualizationData) {
             let viewableData = this.getViewableData(viewableType);
@@ -66,9 +86,8 @@ export class ForgeDataVisualization {
                         let dbIdObject = {
                             dbId: dbId++,
                             type: viewableType,
-                            name: positionData,
+                            id: positionData,
                             position: {x: positionArray[0], y: positionArray[1], z: positionArray[2]},
-                            rotation: {yaw: rotationArray[0], pitch: rotationArray[1], roll:rotationArray[2]}
                         }
                         this.dbIdMap[dbIdObject.dbId] = dbIdObject;
                         const viewable = new this.dataVizCore.SpriteViewable(dbIdObject.position, viewableStyle, dbIdObject.dbId);
@@ -76,24 +95,38 @@ export class ForgeDataVisualization {
                     }
                     break;
                 case "Drone Image":
-                    
                     break;
-
-
+                case "Issue":
+                case "Task":
+                    
+                    for (const trackerData of visualizationData[viewableType]) {
+                        console.log("Inside data visualization: ", trackerData);
+                        let tag = trackerData.context.tag;
+                        let dbIdObject = {
+                            dbId: dbId++,
+                            type: viewableType,
+                            id: tag.title,
+                            position: tag.tagPosition,
+                        }
+                        this.dbIdMap[dbIdObject.dbId] = dbIdObject;
+                        const viewable = new this.dataVizCore.SpriteViewable(dbIdObject.position, viewableStyle, dbIdObject.dbId);
+                        viewableData.addViewable(viewable);
+                    }
+                    break;
             }   
             this.viewableLength = dbId - 1;
             this.viewableDataMap[viewableType] = viewableData;
         }
         console.log("Viewable data map: ", this.viewableLength);
         console.log("Viewable data map: ", this.viewableDataMap);
-        
-        this.addListeners();
+    }
+
+    
+    updateData() {
         this.loadViewableData();
+        this.addListeners();
     }
 
-    addTrackersData( ) {
-
-    }
 
     getViewableStyle(iconType) {
         const viewableType = this.dataVizCore.ViewableType.SPRITE;
@@ -144,9 +177,13 @@ export class ForgeDataVisualization {
             case 'Phone Image':
                 viewableData.spriteSize = 100;
                 break;
+            case 'Issue':
+                viewableData.spriteSize = 100;
+                break;
+            case 'Task':
+                viewableData.spriteSize = 100;
+                break;
         }
-         // Sprites as points of size 24 x 24 pixels
-        
         return viewableData;
     }
 
@@ -174,11 +211,9 @@ export class ForgeDataVisualization {
             let viewableStyle = this.getViewableStyle(type);
             let dbIdObject = {
                 dbId: ++this.viewableLength,
-                name: `Temp ${type}`,
+                id: `Temp ${type}`,
                 type: type,
                 position: {x:result.point.x, y:result.point.y, z:result.point.z},
-                pitch: null,
-                yaw: null
             }
             this.dbIdMap[dbIdObject.dbId] = dbIdObject;
 

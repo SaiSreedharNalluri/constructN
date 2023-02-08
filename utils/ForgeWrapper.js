@@ -113,10 +113,9 @@ export class ForgeViewerUtils {
           let imageObject = {
             imagePosition: targetObject.position,
             imageRotation: targetObject.rotation,
-            imageName: targetObject.name
+            imageName: targetObject.id
           }
           let contextObject = {
-            id: new Date().getTime(),
             type: targetObject.type,
             cameraObject: this.getCamera(),
             image: imageObject
@@ -289,7 +288,9 @@ export class ForgeViewerUtils {
   loadLayers() {
     // console.log("Passing data to dataViz extension: ", this.dataVizUtils);
     this.dataVizUtils.removeExistingVisualizationData();
-    this.dataVizUtils.addVisualizationData(this.realityPositionMap);
+    this.dataVizUtils.addMediaData(this.realityPositionMap);
+    this.dataVizUtils.addTrackersData(this.issuesList, this.tasksList);
+    this.dataVizUtils.updateData();
     this.isPendingLayersToLoad = false;
   }
 
