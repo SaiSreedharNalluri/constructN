@@ -43,6 +43,7 @@ import ReactSelect from 'react-select';
 import TagsInput from 'react-tagsinput';
 import { CSVLink } from 'react-csv';
 import _ from 'lodash';
+import { getTagsList } from '../../../../services/tags';
 interface IProps {
   closeOverlay: () => void;
   issuesList: Issue[];
@@ -73,12 +74,14 @@ const IssueList: React.FC<IProps> = ({
   const [issueViewMode, setIssueViewMode] = useState('list'); //list, filter, detail
   const [issueObj, setIssueObj] = useState<Issue>();
   const [open, setOpen] = useState(false);
+  const [tagList, setTagList] = useState<[string]>(['']);
   interface user {
     label: string;
     value: string;
   }
   let usersList: user[] = [];
   let defaultList: user[] = [];
+  let defaultTagList: user[] = [];
   if (issueObj) {
     issueObj.assignees.map((user) => {
       defaultList.push({
@@ -86,16 +89,38 @@ const IssueList: React.FC<IProps> = ({
         value: user._id,
       });
     });
+    issueObj.tags.map((tag) => {
+      defaultTagList.push({
+        label: tag,
+        value: tag,
+      });
+    });
   }
-  const getDownladableIssueList=( issL=issuesList)=> {
-    let myL=issL.map((iss)=>{
-      let a=iss.assignees.map((a)=>{return a.firstName});
-      let x = _.omit(iss,'progress','context');
-      let y = _.update(x,'assignees',(ass)=>{let n= ass.map((o: { firstName: any; })=>{return o.firstName});return n})
+  let tagsList: user[] = [];
+  if (tagList?.length > 0) {
+    tagList.map((tag) => {
+      tagsList.push({
+        label: tag,
+        value: tag,
+      });
+    });
+  }
+  const getDownladableIssueList = (issL = issuesList) => {
+    let myL = issL.map((iss) => {
+      let a = iss.assignees.map((a) => {
+        return a.firstName;
+      });
+      let x = _.omit(iss, 'progress', 'context');
+      let y = _.update(x, 'assignees', (ass) => {
+        let n = ass.map((o: { firstName: any }) => {
+          return o.firstName;
+        });
+        return n;
+      });
       return y;
     });
     return myL;
-  }
+  };
   const initialValues: {
     issueTypeData: Array<string>;
     issuePriorityData: Array<string>;
@@ -123,7 +148,7 @@ const IssueList: React.FC<IProps> = ({
     priority: string;
     description: string;
     assignees: object[];
-    tags: [string];
+    tags: object[];
     date: string;
   } = {
     type: issueObj?.type ? issueObj.type : '',
@@ -133,7 +158,7 @@ const IssueList: React.FC<IProps> = ({
       : 'Please select the issue priority',
     description: issueObj?.description ? issueObj?.description : '',
     assignees: defaultList,
-    tags: issueObj?.tags ? issueObj.tags : [''],
+    tags: defaultTagList,
     date: Moment(issueObj?.dueDate).format('YYYY-MM-DD'),
   };
   const validationEditSchema = Yup.object().shape({
@@ -146,7 +171,12 @@ const IssueList: React.FC<IProps> = ({
         value: Yup.string().required(),
       })
     ),
-    tags: Yup.array().of(Yup.string()),
+    tags: Yup.array().of(
+      Yup.object().shape({
+        label: Yup.string().required(),
+        value: Yup.string().required(),
+      })
+    ),
     date: Yup.string(),
   });
   useEffect(() => {
@@ -175,6 +205,13 @@ const IssueList: React.FC<IProps> = ({
       }
       setMyVisibility(visibility);
     });
+    getTagsList(router.query.projectId as string)
+      .then((response) => {
+        if (response.success === true) {
+          setTagList(response.result[0]?.tagList);
+        }
+      })
+      .catch();
   }, [router.isReady, router.query.projectId, visibility]);
   if (projectUsers.length > 0) {
     projectUsers.map((projectUser: any) => {
@@ -186,11 +223,18 @@ const IssueList: React.FC<IProps> = ({
   }
   const clickIssueHandleEditSubmit = (editObj: any) => {
     let userIdList: any[] = [];
+    let editTagList: any[] = [];
     if (editObj.assignees.length > 0) {
       editObj.assignees.map((user: any) => {
         userIdList.push(user.value);
       });
       editObj.assignees = userIdList;
+    }
+    if (editObj.tags.length > 0) {
+      editObj.tags.map((tag: any) => {
+        editTagList.push(tag.value);
+      });
+      editObj.tags = editTagList;
     }
     clickIssueEditSubmit(editObj, issueObj as Issue);
     setTimeout(() => {
@@ -399,7 +443,14 @@ const IssueList: React.FC<IProps> = ({
               onSubmit={clickIssueHandleEditSubmit}
             >
               {({ values, setFieldValue }) => (
-                <Form className=" grid grid-cols-1 gap-y-2 px-4 overflow-y-auto calc-h72">
+                <Form
+                  className=" grid grid-cols-1 gap-y-2 px-4 overflow-y-auto calc-h72"
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                    }
+                  }}
+                >
                   <div className="mt-2 ">
                     <h1 className="text-gray-500">Select the Type of Issue</h1>
                     <Field
@@ -523,9 +574,14 @@ const IssueList: React.FC<IProps> = ({
                       <h5 className="text-gray-500">Tags</h5>
                     </div>
                     <div>
-                      <TagsInput
+                      <ReactSelect
+                        name="tags"
+                        options={tagsList as object[]}
                         value={values.tags}
-                        onChange={(tags: any) => setFieldValue('tags', tags)}
+                        onChange={(value) => setFieldValue('tags', value)}
+                        isMulti
+                        placeholder="Select the assignees "
+                        className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                       />
                       <ErrorMessage
                         name="tags"
@@ -901,7 +957,7 @@ const IssueList: React.FC<IProps> = ({
                                       className="text-gray-500 "
                                     ></FontAwesomeIcon>
                                     <p className="text-gray-500 -mt-1 ml-1">
-                                      {issueInfo.assignees[0].firstName}
+                                      {issueInfo.assignees[0]?.firstName}
                                     </p>
                                     <FontAwesomeIcon
                                       icon={faCalendar}
