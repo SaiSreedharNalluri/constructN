@@ -98,14 +98,14 @@ function GenericViewer(props) {
   let [isMarkerMode, setMarkerMode] = useState(false);
 
   function handleViewModeChange() {
-    console.log(
-      "Generic Viewer After change in viewmode, clean: ",
-      currentContext.current
-    );
-    console.log(
-      "Generic Viewer After change in viewmode, clean: ",
-      currentContext.current
-    );
+    // console.log(
+    //   "Generic Viewer After change in viewmode, clean: ",
+    //   currentContext.current
+    // );
+    // console.log(
+    //   "Generic Viewer After change in viewmode, clean: ",
+    //   currentContext.current
+    // );
 
     loadViewerData();
     loadLayerData();
@@ -116,7 +116,7 @@ function GenericViewer(props) {
   function handleRealityTypeChange() {}
   
   function handleToolChange() {
-    console.log("My new tool=",activeTool);
+    // console.log("My new tool=",activeTool);
     switch(activeTool.current===undefined?'':activeTool.current.toolAction){
       case 'issueCreate':
         addTag("Issue")
@@ -126,6 +126,7 @@ function GenericViewer(props) {
         break;
       case 'showCompare':
         let currentMode = activeTool.current.toolName.endsWith("Design") ? "Design" : "Reality";
+        potreeUtils.current.readyForCompare(currentMode);
         getContext();
         setCompareViewMode(currentMode);
         currentCompareViewMode.current = currentMode
@@ -203,9 +204,12 @@ function GenericViewer(props) {
         // } else {
           // get from forge compare utils
           // give to potree utils
-          if (potreeUtils.current != undefined && forgeCompareUtils.current != undefined) {
+          if (potreeUtils.current != undefined && forgeCompareUtils.current != undefined && forgeCompareUtils.current) {
             let viewerState = forgeCompareUtils.current.getViewerState();
-            potreeUtils.current.updateViewerState(viewerState);
+            if (viewerState) {
+              potreeUtils.current.updateViewerState(viewerState);
+            }
+            
           }
           
         }
@@ -294,7 +298,7 @@ function GenericViewer(props) {
   };
 
   const initViewer = (viewerId) => {
-    console.log("Inside init viewer: ", potreeUtils.current, forgeUtils.current);
+    // console.log("Inside init viewer: ", potreeUtils.current, forgeUtils.current);
     switch (viewMode) {
       case "Design":
         if (forgeUtils.current == undefined) {
@@ -304,11 +308,10 @@ function GenericViewer(props) {
         break;
       case "Reality":
         if (potreeUtils.current == undefined) {
-          let potree = new PotreeViewerUtils(viewerId, viewerEventHandler.bind(this));
-          if (!potree.isViewerLoaded()) {
-            potree.initialize();
+          potreeUtils.current = new PotreeViewerUtils(viewerId, viewerEventHandler.bind(this));
+          if (!potreeUtils.current.isViewerLoaded()) {
+            potreeUtils.current.initialize();
           }
-          potreeUtils.current = potree;
         }
         break;
     }
@@ -324,11 +327,10 @@ function GenericViewer(props) {
         break;
       case "Reality":
         if (potreeCompareUtils.current == undefined) {
-          let potree = new PotreeViewerUtils(viewerId, viewerEventHandler.bind(this));
-          if (!potree.isViewerLoaded()) {
-            potree.initialize();
+          potreeCompareUtils.current = new PotreeViewerUtils(viewerId, viewerEventHandler.bind(this));
+          if (!potreeCompareUtils.current.isViewerLoaded()) {
+            potreeCompareUtils.current.initialize();
           }
-          potreeCompareUtils.current = potree;
         }
         break;
     }
@@ -421,12 +423,12 @@ function GenericViewer(props) {
   };
 
   function renderViewer(count) {
-    console.log("Generic Viewer Inside render View: ", viewMode, count);
+    // console.log("Generic Viewer Inside render View: ", viewMode, count);
     if (count != 1 && !isCompare) {
       return;
     }
     let mode = count == 1 ? viewMode : compareViewMode;
-    console.log("Checking render mode", mode);
+    // console.log("Checking render mode", mode);
     switch (mode) {
       case "Design":
         return (
@@ -522,7 +524,7 @@ function GenericViewer(props) {
 
   const getContext = () => {
     let context;
-    console.log("Getting context from existing viewmode: ", currentViewMode.current, forgeUtils.current, potreeUtils.current);
+    // console.log("Getting context from existing viewmode: ", currentViewMode.current, forgeUtils.current, potreeUtils.current);
     switch (currentViewMode.current) {
       case "Design":
         if (forgeUtils.current) {
@@ -595,7 +597,9 @@ function GenericViewer(props) {
         break;
       case "Reality":
         if (potreeUtils.current) {
-          delete potreeUtils.current;
+          potreeUtils.current.removeData();
+          // delete potreeUtils.current;
+          potreeUtils.current = null
         }
         break;
     }
@@ -610,7 +614,9 @@ function GenericViewer(props) {
         break;
       case "Reality":
         if (potreeCompareUtils.current) {
-          delete potreeCompareUtils.current;
+          potreeCompareUtils.current.removeData();
+          // delete potreeCompareUtils.current;
+          potreeCompareUtils.current = null
         }
         break;
     }
@@ -625,24 +631,24 @@ function GenericViewer(props) {
   };
 
   useEffect(() => {
-    console.log("Generic Viewer Structure UseEffect:");
+    // console.log("Generic Viewer Structure UseEffect:");
     if (currentStructure.current != structure) {
       currentStructure.current = structure;
       if (structure.designs.length > 0) {
         modifyDesignList(structure.designs);
       }
       getSnapshotList(structure.project, structure._id);
-      console.log("Generic Viewer load: Structure Changed", structure);
+      // console.log("Generic Viewer load: Structure Changed", structure);
     }
     animationRequestId = requestAnimationFrame(animationNow);
     return cleanUpOnStructureChange;
   }, [structure]);
 
   const cleanUpOnStructureChange = () => {
-    console.log(
-      "Generic Viewer Inside cleanup structure cleanup:",
-      currentStructure.current
-    );
+    // console.log(
+    //   "Generic Viewer Inside cleanup structure cleanup:",
+    //   currentStructure.current
+    // );
     removeData();
     removeContext();
     setIsCompare(false);
@@ -650,56 +656,56 @@ function GenericViewer(props) {
   };
 
   useEffect(() => {
-    console.log("Generic Viewer load: Snapshot UseEffect", snapshot);
+    // console.log("Generic Viewer load: Snapshot UseEffect", snapshot);
     return cleanUpOnSnapshotChange;
   }, [snapshot]);
 
   const cleanUpOnSnapshotChange = () => {
-    console.log(
-      "Generic Viewer Inside cleanup: snapshot cleanup",
-      snapshot
-    );
+    // console.log(
+    //   "Generic Viewer Inside cleanup: snapshot cleanup",
+    //   snapshot
+    // );
     getContext();
     removeLayers();
   };
 
   useEffect(() => {
-    console.log("Generic Viewer load: Compare Snapshot UseEffect", snapshot);
+    // console.log("Generic Viewer load: Compare Snapshot UseEffect", snapshot);
     return cleanUpOnCompareSnapshotChange;
   }, [compareSnapshot]);
 
   const cleanUpOnCompareSnapshotChange = () => {
-    console.log(
-      "Generic Viewer Inside cleanup: snapshot cleanup",
-      compareSnapshot
-    );
+    // console.log(
+    //   "Generic Viewer Inside cleanup: snapshot cleanup",
+    //   compareSnapshot
+    // );
     getContext();
     removeCompareLayers();
   };
 
   useEffect(() => {
-    console.log("Generic Viewer load: Design List UseEffect", designList);
+    // console.log("Generic Viewer load: Design List UseEffect", designList);
     if (designList.length > 0) {
       loadViewerData();
     }
   }, [designList]);
 
   useEffect(() => {
-    console.log("Generic Viewer load: Reality UseEffect", realityList);
+    // console.log("Generic Viewer load: Reality UseEffect", realityList);
     if (realityList.length > 0) {
       loadLayerData();
     }
   }, [realityList]);
 
   useEffect(() => {
-    console.log("Generic Viewer load: Reality UseEffect", compareRealityList);
+    // console.log("Generic Viewer load: Reality UseEffect", compareRealityList);
     if (realityList.length > 0 && isCompare) {
       loadCompareLayerData();
     }
   }, [compareRealityList]);
 
   useEffect(() => {
-    console.log("Generic Viewer tool UseEffect", tool);
+    // console.log("Generic Viewer tool UseEffect", tool);
     if (activeTool.current != tool) {
       activeTool.current = tool
       handleToolChange();
@@ -708,7 +714,7 @@ function GenericViewer(props) {
   }, [tool]);
 
   useEffect(() => {
-    console.log("Generic Viewer View Mode UseEffect", viewMode);
+    // console.log("Generic Viewer View Mode UseEffect", viewMode);
     if (currentViewMode.current != viewMode) {
       currentViewMode.current = viewMode;
       handleViewModeChange();
@@ -717,45 +723,45 @@ function GenericViewer(props) {
   }, [viewMode]);
 
   const cleanUpOnViewModeChange = () => {
-    console.log(
-      "Generic Viewer Inside cleanup: viewmode dependencies",
-      viewMode
-    );
+    // console.log(
+    //   "Generic Viewer Inside cleanup: viewmode dependencies",
+    //   viewMode
+    // );
     setIsCompare(false);
     // getContext();
     destroyViewer();
   };
 
   useEffect(() => {
-    console.log("Generic Viewer View Mode Parent UseEffect", viewModeParent);
+    // console.log("Generic Viewer View Mode Parent UseEffect", viewModeParent);
     setViewMode(viewModeParent);
     return cleanUpOnParentViewModeChange;
   }, [viewModeParent]);
 
   const cleanUpOnParentViewModeChange = () => {
-    console.log(
-      "Generic Viewer Inside cleanup: parent viewmode dependencies",
-      viewMode
-    );
+    // console.log(
+    //   "Generic Viewer Inside cleanup: parent viewmode dependencies",
+    //   viewMode
+    // );
     setIsCompare(false);
     getContext();
     destroyViewer();
   }
 
   useEffect(() => {
-    console.log("Generic Viewer View Type UseEffect", viewType);
+    // console.log("Generic Viewer View Type UseEffect", viewType);
     handleDesignTypeChange();
   }, [viewType]);
 
   useEffect(() => {
-    console.log("Generic Viewer View Layers UseEffect", viewLayers);
+    // console.log("Generic Viewer View Layers UseEffect", viewLayers);
     handleRealityTypeChange();
   }, [viewLayers]);
 
 
   // Triggered when compareViewMode changed
   useEffect(() => {
-    console.log("Inside isCompareMode and isCompare state UseEffect", isCompare, compareViewMode);
+    // console.log("Inside isCompareMode and isCompare state UseEffect", isCompare, compareViewMode);
     if (currentIsCompare.current != isCompare) {
       currentIsCompare.current = isCompare;
     }
@@ -767,7 +773,7 @@ function GenericViewer(props) {
   }, [isCompare, compareViewMode])
 
   const cleanUpOnCompareViewModeChange = () => {
-    console.log("Inside compare viewMode chnage cleanip", potreeUtils.current, forgeUtils.current);
+    // console.log("Inside compare viewMode chnage cleanip", potreeUtils.current, forgeUtils.current);
     // getContext();
     removeCompareLayers();
     destroyCompareViewer();

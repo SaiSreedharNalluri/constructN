@@ -90,20 +90,13 @@ export class ForgeViewerUtils {
   }
 
   onDataVizHandler(event, targetObject) {
-    // console.log("Inside viewer Daya viz handler: ", event);
     const result = this.viewer.clientToWorld(event.originalEvent.clientX, event.originalEvent.clientY);
     switch(event.type) {
       case "DATAVIZ_OBJECT_HOVERING":
-        // console.log("Hover Image at ", result.point, targetObject.getName);
         break;
       case "DATAVIZ_OBJECT_CLICK":
         console.log("Selected Image at ", result ? result.point : "Outside canvas", targetObject);
         if (this.isAddTagActive) {
-          // const tagPosition = {
-          //   targetObject.position.x,
-          //   targetObject.position.y,
-          //   targetObject.position.z
-          // }
           this.isAddTagActive = this.deactivateTool();
           let tagObject = {
             tagPosition: targetObject.position,
@@ -135,23 +128,6 @@ export class ForgeViewerUtils {
     }
   }
 
-  // updateContext() {
-  //   if (this.context) {
-  //     let camera= {};
-  //       if(this.context.cameraObject) {
-  //           let pos = this.context.cameraObject.cameraPosition;
-  //           let tar = this.context.cameraObject.cameraTarget;
-  //           let offset = this.globalOffset;
-  //           camera.cameraPosition = new THREE.Vector3(pos.x-offset[0], pos.y-offset[1], pos.z-offset[2])
-  //           camera.cameraTarget = new THREE.Vector3(tar.x-offset[0], tar.y-offset[1], tar.z-offset[2])
-  //           camera.fov = this.context.cameraObject.fov;
-  //       }
-  //       return camera;
-  //   } else {
-  //       return null;
-  //   }
-  // }
-
   updateLayersData(realityPositionMap, context) {
     console.log("Inside update layers data: ", realityPositionMap, context);
     if (context) {
@@ -179,7 +155,7 @@ export class ForgeViewerUtils {
   }
 
   initialize() {
-    console.log(`Inside Initializer ViewerID: ${this.viewerId}`);
+    // console.log(`Inside Initializer ViewerID: ${this.viewerId}`);
     var options = {
       env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
       api: "streamingV2", // for models uploaded to EMEA change this option to 'derivativeV2_EU'
@@ -198,9 +174,9 @@ export class ForgeViewerUtils {
 
   initializerCallBack() {
     this.inProgress = false;
-    console.log("Inside Initializer call back");
+    // console.log("Inside Initializer call back");
 
-    console.log(`ViewerID: ${this.viewerId}`);
+    // console.log(`ViewerID: ${this.viewerId}`);
     var htmlDiv = document.getElementById(this.viewerId);
     const config3d = {
       extensions: [
@@ -216,15 +192,14 @@ export class ForgeViewerUtils {
       console.error("Failed to create a Viewer: WebGL not supported.");
       return;
     }
-    console.log("Initialization complete, loading a model next...");
-    // await loadModel(forgeViewer);
+    // console.log("Initialization complete, loading a model next...");
 
     this.viewer.navigation.setWorldUpVector(new THREE.Vector3().fromArray([0, 0, 1]), false);
     this.viewer.navigation.setReverseZoomDirection(true);
   }
 
   onViewerInitialized() {
-    console.log("Viewer Initialized: Loading Model now");
+    // console.log("Viewer Initialized: Loading Model now");
     this.isViewerInitialized = true;
     // if(this.isPendingDataToLoad) {
           this.loadData();
@@ -232,7 +207,7 @@ export class ForgeViewerUtils {
   }
 
   onViewerUnInitialized() {
-    console.log("Viewer Uninitialized:")
+    // console.log("Viewer Uninitialized:")
   }
 
   isViewerLoaded() {
@@ -240,18 +215,17 @@ export class ForgeViewerUtils {
   }
 
   async loadData() {
-    console.log("Inside loadModel: ",this.documentURNs);
-    console.log("Loading new Model: ", this.documentURNs);
+    // console.log("Inside loadModel: ",this.documentURNs);
+    // console.log("Loading new Model: ", this.documentURNs);
     if(this.isModelLoaded) {
      this.removeData();
-    //  await this.viewer.unloadDocumentNode(this.manifestNode);
     }
     this.documentURNs[this.getAvailableType()].map((document) => {
       Autodesk.Viewing.Document.load(
         document.urn,
         async function (viewerDocument) {
           this.manifestNode = viewerDocument.getRoot().getDefaultGeometry();
-          console.log("Is model svf2: ", this.manifestNode.isSVF2())
+          // console.log("Is model svf2: ", this.manifestNode.isSVF2())
           this.model = await this.viewer.loadDocumentNode(
             viewerDocument,
             this.manifestNode,
@@ -266,14 +240,8 @@ export class ForgeViewerUtils {
   }
 
   generateModelOptions(tm, manifestNode) {
-    console.log("Inside modeloptions:", tm);
-    console.log("Inside modeloptions, isModel 2D: ", manifestNode.is2D());
-    // var mx = new THREE.Matrix4();
-    // mx.fromArray([
-    //   10.709603309631, 1.489653229713, 0.0, 385315.34375, -1.489653229713,
-    //   10.709603309631, 0.0, 2049716.75, 0.0, 0.0, 10.812708854675, 0.0, 0.0,
-    //   0.0, 0.0, 1.0,
-    // ]).transpose();
+    // console.log("Inside modeloptions:", tm);
+    // console.log("Inside modeloptions, isModel 2D: ", manifestNode.is2D());
 
     const modelOptions = {
       applyScaling: "m",
@@ -300,9 +268,7 @@ export class ForgeViewerUtils {
     if (tm && tm.tm) {
       this.tm = tm.tm;
       modelOptions.placementTransform = new THREE.Matrix4().fromArray(tm.tm).transpose();
-      // modelOptions.placementTransform = (new THREE.Matrix4()).setPosition({x:50,y:0,z:-50})
-      // modelOptions.placementTransform = new THREE.Matrix4().fromArray([0.216,1.022,-0.007,367033.477,-1.022,0.216,-0.001,2053135.281,-0.000,0.007,1.045,-57.5,0.000,0.000,0.000,1.000]).transpose()
-      console.log('BIM TM Loaded', this.tm);
+      // console.log('BIM TM Loaded', this.tm);
     }
 
     if (tm && tm.offset && !this.manifestNode.is2D()) {
@@ -313,7 +279,7 @@ export class ForgeViewerUtils {
         z: globalOff[2],
       };
       this.globalOffset = tm.offset;
-      console.log("Offset Loaded", this.offset);
+      // console.log("Offset Loaded", this.offset);
     }
 
     return modelOptions;
@@ -321,7 +287,7 @@ export class ForgeViewerUtils {
   }
 
   loadLayers() {
-    console.log("Passing data to dataViz extension: ", this.dataVizUtils);
+    // console.log("Passing data to dataViz extension: ", this.dataVizUtils);
     this.dataVizUtils.removeExistingVisualizationData();
     this.dataVizUtils.addVisualizationData(this.realityPositionMap);
     this.isPendingLayersToLoad = false;
@@ -330,10 +296,10 @@ export class ForgeViewerUtils {
 
 
   getContextLocalFromGlobal(context) {
-    console.log("Global offset: ", context);
+    // console.log("Global offset: ", context);
     let offset = this.globalOffset;
     if(context.image && context.image.imagePosition) {
-        console.log("Context has image: ", context.image);
+        // console.log("Context has image: ", context.image);
         let pos = context.image.imagePosition;
         context.image.imagePosition = {
             x: pos.x - offset[0], 
@@ -343,7 +309,7 @@ export class ForgeViewerUtils {
     }
 
     if (context.cameraObject && context.cameraObject.cameraPosition) {
-        console.log("Context has camera: ", context.cameraObject);
+        // console.log("Context has camera: ", context.cameraObject);
         let pos = context.cameraObject.cameraPosition;
         let tar = context.cameraObject.cameraTarget ? context.cameraObject.cameraTarget : context.cameraObject.cameraPosition;
         context.cameraObject.cameraPosition = {
@@ -359,7 +325,7 @@ export class ForgeViewerUtils {
     }
 
     if (context.tag && context.tag.tagPosition) {
-        console.log("Context has tag: ", context.tag);
+        // console.log("Context has tag: ", context.tag);
         let pos = context.tag.tagPosition;
         context.tag.tagPosition = {
             x: pos.x - offset[0], 
@@ -372,7 +338,7 @@ export class ForgeViewerUtils {
 }
 
   getCamera() {
-    console.log("Inside forge get camera: ", this.globalOffset);
+    // console.log("Inside forge get camera: ", this.globalOffset);
     let camera = undefined;
     const state = this.viewer.getState({ viewport: true }).viewport;
     let offset = this.globalOffset;
@@ -387,12 +353,11 @@ export class ForgeViewerUtils {
       y: state.target[1] + offset[1], 
       z: state.target[2] + offset[2],
     }
-    // const target = [x, y, z];
     return {cameraPosition, cameraTarget};
   }
 
   getContext(){
-    console.log("Inside forge get context: ", this.globalOffset);
+    // console.log("Inside forge get context: ", this.globalOffset);
     let contextObject;
     if(this.isViewerInitialized && this.isModelLoaded) {
       
@@ -403,13 +368,13 @@ export class ForgeViewerUtils {
         cameraObject: this.getCamera(),
       }
 
-      console.log("Inside final get context forge", contextObject);
+      // console.log("Inside final get context forge", contextObject);
     }
     return contextObject;
   }
 
   updateContext(context) {
-    console.log("Updating context for forge: ", context);
+    // console.log("Updating context for forge: ", context);
     if (context) {
       this.context = this.getContextLocalFromGlobal(context);
     } else {
@@ -433,12 +398,12 @@ export class ForgeViewerUtils {
   handleContext(context) {
     switch (context.type) {
         case "3d":
-          this.setNavigation(this.context);
+          this.setNavigation(context);
           break;
         case "image":
         case "panorama":
-          this.setNavigation(this.context);
-          this.setForgeControls(this.context.type);
+          this.setNavigation(context);
+          this.setForgeControls(context.type);
             break;
         case "360 Video":
             // this.goToImageContext(context);
@@ -458,15 +423,17 @@ export class ForgeViewerUtils {
         target: new THREE.Vector3().fromArray(state.target),
         fov: state.fieldOfView
       }
-      console.log("Inside Forge get ViewerState: ", viewerState, state)
+      // console.log("Inside Forge get ViewerState: ", viewerState, state)
       return viewerState;
     }
   }
 
   updateViewerState(viewerState) {
-    // console.log("Inside update viewer state: ", this.viewerId, viewerState);
+    
     if(this.isModelLoaded && viewerState) {
-      this.viewer.navigation.setPosition(viewerState.position[0], viewerState.position[1],viewerState.position[2]);
+      // console.log("Inside update viewer state: ", this.viewerId, viewerState);
+      let position = new THREE.Vector3().fromArray(viewerState.position)
+      this.viewer.navigation.setPosition(position);
       this.viewer.navigation.setTarget(viewerState.target);
       if (viewerState.fov) {
         this.viewer.navigation.setVerticalFov(viewerState.fov, false);
@@ -550,7 +517,7 @@ export class ForgeViewerUtils {
     var activeTool = controller.getActiveTool();
 
     if (activeTool) {
-      console.log(`Inside getActiveTool: ${activeTool.getName()}`);
+      // console.log(`Inside getActiveTool: ${activeTool.getName()}`);
     }
   }
 
@@ -576,7 +543,7 @@ export class ForgeViewerUtils {
   }
 
   removeData() {
-    console.log("Model Before Removed: ", this.model);
+    // console.log("Model Before Removed: ", this.model);
     if (this.isViewerInitialized) {
       this.removeLayers();
       this.viewer.tearDown();
@@ -605,7 +572,7 @@ export class ForgeViewerUtils {
 
   onLoadErrorEvent(parameter) {
     console.log(
-      `Inside Load Error Event: ${parameter.loader} error: ${parameter.error} `
+      // `Inside Load Error Event: ${parameter.loader} error: ${parameter.error} `
     );
   }
 
@@ -686,7 +653,7 @@ export class ForgeViewerUtils {
 
   onExtensionActivatedEvent(parameter) {
     if(parameter.extensionId === ForgeDataVisualization.EXTENSION_ID) {
-      console.log("Inside Extension Activated Event: Data Visualization", parameter);
+      // console.log("Inside Extension Activated Event: Data Visualization", parameter);
     }
   }
 

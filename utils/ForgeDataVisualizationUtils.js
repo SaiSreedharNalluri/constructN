@@ -1,7 +1,7 @@
 export class ForgeDataVisualization {
     static EXTENSION_ID = "Autodesk.DataVisualization";
     constructor(viewer, dataVisualizationExtension) {
-        console.log("Inside Data visualization class constructor: ")
+        // console.log("Inside Data visualization class constructor: ")
         this.viewer = viewer;
         this.dataVizExtn = dataVisualizationExtension; 
         this.dataVizCore = Autodesk.DataVisualization.Core;
@@ -40,13 +40,13 @@ export class ForgeDataVisualization {
     }   
 
     addListeners() {
-        console.log("Inside forge data visualization addListener: ", this);
+        // console.log("Inside forge data visualization addListener: ", this);
         this.viewer.addEventListener(this.dataVizCore.MOUSE_HOVERING, this.viewableHoveringHandler);
         this.viewer.addEventListener(this.dataVizCore.MOUSE_CLICK, this.viewableClickHandler);
     }
 
     removeListeners() {
-        console.log("Inside forge data visualization removeListeners: ", this.viewer);
+        // console.log("Inside forge data visualization removeListeners: ", this.viewer);
         this.viewer.removeEventListener(this.dataVizCore.MOUSE_HOVERING, this.viewableHoveringHandler);
         this.viewer.removeEventListener(this.dataVizCore.MOUSE_CLICK, this.viewableClickHandler);
     }
@@ -215,7 +215,7 @@ export class ForgeDataVisualization {
     
     onSpriteClicked(event) {
         const targetDbId = event.dbId;
-        console.log("Inside data viz utils: selected dbId: ", targetDbId);
+        // console.log("Inside data viz utils: selected dbId: ", targetDbId);
         // console.log(`Sprite clicked: ${this.dbIdMap[targetDbId].name}`);
         if (targetDbId > 0) {
             this.passToViewerHandler(event);
