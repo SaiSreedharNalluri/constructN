@@ -88,7 +88,7 @@ const Header: React.FC<IProps> = () => {
                   }
                 }}
               >
-                <div className="w-6 h-6 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 dark:border-white border-gray-900">
+                <div className="w-6 h-6 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 border-gray-900">
                   <Image
                     src="https://images.unsplash.com/photo-1610397095767-84a5b4736cbd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
                     alt=""
@@ -101,7 +101,7 @@ const Header: React.FC<IProps> = () => {
               </div>
 
               {loading && (
-                <div className="absolute top-10 right-0 z-10 bg-gray-800 rounded-lg shadow border">
+                <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
                   <ul className="text-white p-4 ">
                     <li className="font-medium cursor-pointer">
                       <div className="flex items-center justify-center transform transition-colors duration-200">

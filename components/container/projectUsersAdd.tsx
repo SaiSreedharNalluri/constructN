@@ -7,6 +7,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { role } from '../../utils/constants';
 import { getCookie } from 'cookies-next';
 import { Modal } from 'react-responsive-modal';
+import Image from 'next/image';
 interface IProps {
   projectUsers: IProjectUsers[];
   addProjectUser: (e: object) => void;
@@ -46,7 +47,7 @@ const ProjectUserAdd: React.FC<IProps> = ({
   };
   return (
     <React.Fragment>
-      <div className="w-full  grid grid-cols-1  gap-y-4 px-4 py-4">
+      <div >
         <h1 className='font-bold px-4'>Add Users</h1>
         <Formik
           initialValues={initialValues}
@@ -55,7 +56,6 @@ const ProjectUserAdd: React.FC<IProps> = ({
         >
           {({ errors, touched }) => (
             <Form className=" grid grid-cols-3 gap-2 px-4">
-
               <div>
                 <Field
                   type="email"
@@ -95,28 +95,80 @@ const ProjectUserAdd: React.FC<IProps> = ({
             </Form>
           )}
         </Formik>
-        <div className="h-20 overflow-y-auto w-8/12 px-4 ">
-          {projectUsers &&
-            projectUsers.map((pUserData: any) => {
-              return (
-                <div className="flex justify-between mr-2" key={pUserData._id}>
-                  <p>{pUserData.user.fullName} </p>
-                  <div>
-                    {projectUsers.length > 1 &&
-                      loggedInUserId != pUserData.user._id && (
-                        <FontAwesomeIcon
-                          className="ml-2 text-gray-600 cursor-pointer"
-                          icon={faTrash}
-                          onClick={() => {
-                            setEmail(pUserData.user.email);
-                            setOpen(true);
-                          }}
-                        />
-                      )}
-                  </div>
-                </div>
-              );
-            })}
+      </div>
+      <div className="w-full h-full">
+        <div className="  px-4 ">
+          <div>
+            <div className=" py-2 ">
+              <div className="w-full shadow overflow-x-auto  border-b border-gray-200">
+                <table className="min-w-full">
+                  <thead>
+                    <tr className="bg-gray-50 border-b border-gray-200  text-gray-500 uppercase ">
+                      <th className="px-6 py-3 text-left font-medium">
+                        Name
+                      </th>
+                      <th className="px-6 py-3 text-left font-medium">
+                        Role
+                      </th>
+                      <th className="px-6 py-3 text-left font-medium">
+                        Delete
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                    {projectUsers &&
+                      projectUsers.map((pUserData: any) => {
+                        return (
+                          <tr key={pUserData._id}>
+                            <td className="px-6  border-b border-gray-200">
+                              <div className='flex  text-gray-900'>
+                                <div className="w-6 h-6 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 dark:border-white border-gray-900">
+                                  <Image
+                                    src="https://images.unsplash.com/photo-1610397095767-84a5b4736cbd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
+                                    alt=""
+                                    className={`w-full h-full cursor-pointer object-cover `}
+                                    height={1920}
+                                    width={1080}
+                                  />
+                                </div>
+                                <div className='mt-2'>
+                                  {pUserData.user.fullName}
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6  border-b border-gray-200">
+                              <div className="flex items-center">
+                                <select className="bg-gray-50 border p-1 border-gray-300 text-gray-900 text-sm rounded ">
+                                  <option selected>Please select the role</option>
+                                  <option >Admin</option>
+                                  <option >Collaborator</option>
+                                  <option >Viewer</option>
+                                </select>
+                              </div>
+                            </td>
+                            <td className="px-6   border-b border-gray-200">
+                              <div className=" text-gray-900">
+                                {projectUsers.length > 1 &&
+                                  loggedInUserId != pUserData.user._id && (
+                                    <FontAwesomeIcon
+                                      className="ml-2 text-gray-600 cursor-pointer"
+                                      icon={faTrash}
+                                      onClick={() => {
+                                        setEmail(pUserData.user.email);
+                                        setOpen(true);
+                                      }}
+                                    />
+                                  )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div>
@@ -126,16 +178,19 @@ const ProjectUserAdd: React.FC<IProps> = ({
             setOpen(false);
           }}
         >
-          <h1>Delete Project User Conformation</h1>
-          <p>Are you sure you want to delete this item?</p>
-          <button onClick={handleDeleteItem}>Confirm</button>
-          <button
-            onClick={() => {
-              setOpen(false);
-            }}
-          >
-            Cancel
-          </button>
+          <h1 className=' font-bold'>Delete confirmation</h1>
+          <p className='mt-2'>Are you sure you want to delete this item?</p>
+          <div className='grid grid-cols-2 gap-x-4 mt-4'>
+            <button
+              onClick={() => {
+                setOpen(false);
+              }}
+              className="px-2 py-1  focus:outline-none bg-gray-500 hover:bg-gray-800 rounded text-gray-200 font-semibold"
+            >
+              Cancel
+            </button>
+            <button className='px-2 py-1 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ' onClick={handleDeleteItem}>Confirm</button>
+          </div>
         </Modal>
       </div>
     </React.Fragment>
