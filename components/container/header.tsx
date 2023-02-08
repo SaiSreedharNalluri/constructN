@@ -10,14 +10,6 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { getCookie, removeCookies } from "cookies-next";
 import DesignRealitySwitch from "./designRealitySwitch";
-import { styled, createTheme, ThemeProvider } from "@mui/system";
-
-const MyThemeComponent = styled("div")(({ theme }) => ({
-  // color: theme.palette.primary.contrastText,
-  // backgroundColor: theme.palette.primary.main,
-  // padding: theme.spacing(1),
-  // borderRadius: theme.shape.borderRadius,
-}));
 
 interface IProps {
   // showDesignRealitySwitch?:boolean;
@@ -69,7 +61,7 @@ const Header: React.FC<IProps> = () => {
   //   }
   return (
     <React.Fragment>
-      <MyThemeComponent ref={headerRef}>
+      <div ref={headerRef}>
         <header className="border-b border-solid border-gray-400">
           <div className="flex justify-between">
             <div className="ml-2 mt-2 mb-2 ">
@@ -147,7 +139,7 @@ const Header: React.FC<IProps> = () => {
             </div>
           </div>
         </header>
-      </MyThemeComponent>
+      </div>
     </React.Fragment>
   );
 };
