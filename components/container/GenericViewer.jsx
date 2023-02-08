@@ -354,9 +354,10 @@ function GenericViewer(props) {
       case "Design":
         if (forgeUtils.current != undefined) {
           let data = await getRealityLayers(structure, realityMap);
-          forgeUtils.current.updateLayersData(data, currentContext.current);
           // forgeUtils.current.updateTasksData(tasksList);
-          // forgeUtils.current.updateIssuesData(issuesList);
+          forgeUtils.current.updateIssuesData(issuesList);
+          forgeUtils.current.updateLayersData(data, currentContext.current);
+          
 
         }
         break;
@@ -589,7 +590,7 @@ function GenericViewer(props) {
   }
 
   const destroyViewer = () => {
-    switch (viewMode) {
+    switch (currentViewMode.current) {
       case "Design":
         if (forgeUtils.current) {
           delete forgeUtils.current;
@@ -598,15 +599,15 @@ function GenericViewer(props) {
       case "Reality":
         if (potreeUtils.current) {
           potreeUtils.current.removeData();
-          // delete potreeUtils.current;
-          potreeUtils.current = null
+          potreeCompareUtils.current = undefined
+          delete potreeUtils.current
         }
         break;
     }
   }
 
   const destroyCompareViewer = () => {
-    switch (compareViewMode) {
+    switch (currentCompareViewMode.current) {
       case "Design":
         if (forgeCompareUtils.current) {
           delete forgeCompareUtils.current;
@@ -615,8 +616,8 @@ function GenericViewer(props) {
       case "Reality":
         if (potreeCompareUtils.current) {
           potreeCompareUtils.current.removeData();
-          // delete potreeCompareUtils.current;
-          potreeCompareUtils.current = null
+          potreeCompareUtils.current = undefined
+          delete potreeCompareUtils.current
         }
         break;
     }
