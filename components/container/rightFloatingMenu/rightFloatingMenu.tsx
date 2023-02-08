@@ -190,7 +190,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
               <div className="bg-gray-400">
                 <select onChange={typeChange} id="typeList">
                   {myTypesList&& Object.keys(myTypesList).map((key)=>(
-                    <option value={key}>{key}</option>
+                    <option key={key} value={key}>{key}</option>
                   ))}
                   {/* {viewMode === 'Design' ? (
                     <option value="plan">Plan</option>
@@ -258,7 +258,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
               >
                 <ul className=" h-full text-xs" id="items">
                   {myLayersList&& Object.keys(myLayersList).map((key)=>(
-                    <li>
+                    <li key={key}>
                       <input
                       onClick={LayerChange}
                       value={key}
