@@ -108,6 +108,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   const handleClick = (item: any) => {
     setConfig((prev) =>
       prev.map((data) => {
+        onChangeData();
         if (data?.label === item?.label) {
           return {
             ...data,
@@ -135,7 +136,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       case "views":
       case "drawing":
         router.push(`/projects/${router.query.projectId as string}/structure`);
-        onChangeData();
+
         break;
       case "issues":
         router.push(`/projects/${router.query.projectId as string}/issue`);

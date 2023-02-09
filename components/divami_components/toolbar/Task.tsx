@@ -19,7 +19,7 @@ import {
 } from "./ToolBarStyles";
 import TaskList from "../task_list/TaskList";
 
-const Task = () => {
+const Task = ({ rightMenuClickHandler }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
 
   const handleViewTaskList = () => {
@@ -31,7 +31,13 @@ const Task = () => {
       <TaskTitleDiv>Task: </TaskTitleDiv>
 
       <IssuesSectionPlusImg>
-        <Image src={plusCircleIcon} width={12} height={12} alt="Arrow" />{" "}
+        <Image
+          src={plusCircleIcon}
+          onClick={rightMenuClickHandler}
+          width={12}
+          height={12}
+          alt="Arrow"
+        />{" "}
       </IssuesSectionPlusImg>
 
       <IssuesSectionFileImg>
@@ -47,7 +53,13 @@ const Task = () => {
       </IssuesSectionFileImg>
 
       <IssuesSectionClipImg>
-        <Image src={clipboardSecondIcon} width={12} height={12} alt="Arrow" />{" "}
+        <Image
+          src={clipboardSecondIcon}
+          width={12}
+          height={12}
+          onClick={rightMenuClickHandler}
+          alt="Arrow"
+        />{" "}
       </IssuesSectionClipImg>
       {openDrawer && (
         <Drawer
@@ -55,7 +67,7 @@ const Task = () => {
           open={openDrawer}
           onClose={() => setOpenDrawer((prev: any) => !prev)}
         >
-          <TaskList />
+          <TaskList onClose={() => setOpenDrawer((prev: any) => !prev)} />
         </Drawer>
       )}
     </TaskBox>

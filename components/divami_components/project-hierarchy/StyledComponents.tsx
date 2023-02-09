@@ -108,6 +108,7 @@ export const ProjectHierarchyContainer = styled(
   display: "null",
   width: "301px",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
+  backgroundColor: "#fff",
 });
 export const StyledTreeItem = styled(TreeItem)({
   padding: 0,

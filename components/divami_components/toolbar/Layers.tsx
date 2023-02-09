@@ -17,7 +17,7 @@ import {
   LayerSecondSectionArrImg,
 } from "./ToolBarStyles";
 
-const Layers = () => (
+const Layers = ({ rightMenuClickHandler }: any) => (
   <LayersWrapper>
     <LayerSecondSectionHexImg>
       <Image src={hexagonIcon} width={12} height={12} alt="Arrow" />{" "}

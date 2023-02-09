@@ -5,7 +5,7 @@ import { TypeParentCont, TypesTitle, TypeArrowIconDiv } from "./ToolBarStyles";
 
 // import styles from '../toolbar/toolbar.module.css'
 
-const Typebar = () => (
+const Typebar = ({ rightMenuClickHandler }: any) => (
   <TypeParentCont>
     <TypesTitle>OrthType</TypesTitle>
     <TypeArrowIconDiv>
