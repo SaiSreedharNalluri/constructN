@@ -35,6 +35,7 @@ import TaskCreate from '../../../../components/container/rightFloatingMenu/taskM
 import IssueList from '../../../../components/container/rightFloatingMenu/issueMenu/issueList';
 import { it } from 'node:test';
 import Moment from 'moment';
+import SidePanelMenu from '../../../../components/divami_components/side-panel/SidePanel';
 
 interface IProps {}
 const Index: React.FC<IProps> = () => {
@@ -495,7 +496,8 @@ const Index: React.FC<IProps> = () => {
       </div>
       <div className="flex ">
         <div ref={leftOverlayRef}>
-          <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu>
+          {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
+          <SidePanelMenu  onChangeData={onChangeData}/>
         </div>
         <div>
           {
