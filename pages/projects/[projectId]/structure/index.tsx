@@ -78,7 +78,8 @@ const Index: React.FC<IProps> = () => {
   };
   const issueSubmit = (formdata: any) => {
     issuesList.push(formdata);
-
+    // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
+    // toolClicked(myTool);
     setOpenCreateIssue(false);
   };
 
@@ -91,27 +92,31 @@ const Index: React.FC<IProps> = () => {
 
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
-
+    let myTool : ITools ={toolName:'task',toolAction:'taskCreated'};
+    toolClicked(myTool);
     setOpenCreateTask(false);
   };
 
   useEffect(() => {
     if (router.isReady) {
-      getIssuesPriority(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setIssuePriorityList(response.result);
-        }
-      }).catch((error) => {
-        toast.error('failed to load data');
-      });
-      getIssuesStatus(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setIssueStatusList(response.result);
-        }
-        
-      }).catch((error) => {
-        toast.error('failed to load data');
-      });
+      getIssuesPriority(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setIssuePriorityList(response.result);
+          }
+        })
+        .catch((error) => {
+          toast.error('failed to load data');
+        });
+      getIssuesStatus(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setIssueStatusList(response.result);
+          }
+        })
+        .catch((error) => {
+          toast.error('failed to load data');
+        });
       getProjectDetails(router.query.projectId as string)
         .then((response) => {
           setProjectUtm(response?.data?.result?.utm);
@@ -260,10 +265,14 @@ const Index: React.FC<IProps> = () => {
             setOpenIssueView(true);
             break;
           case 'issueCreate':
-          case 'issueCreated':
+          case 'issueCreateSuccess':
+          case 'issueCreateFail':
+          case 'issueSelect':
           case 'issueShow':
           case 'issueHide':
+            console.log("action chose",toolInstance.toolAction);
             setClickedTool(toolInstance);
+
             break;
         }
 
@@ -286,7 +295,7 @@ const Index: React.FC<IProps> = () => {
             //todo
             break;
           case 'taskCreate':
-          case 'taskCreated':
+          case 'taskCreateSuccess':
           case 'taskShow':
           case 'taskHide':
             setClickedTool(toolInstance);
@@ -350,11 +359,12 @@ const Index: React.FC<IProps> = () => {
         }
       });
   };
-  const getIssuesPriorityList =(projId:string)=>{
+  const getIssuesPriorityList = (projId: string) => {
     return getIssuesPriority(router.query.projectId as string)
-    .then((response)=>{
-      return response.result;
-    }).catch((error) => {
+      .then((response) => {
+        return response.result;
+      })
+      .catch((error) => {
         if (error.success === false) {
           toast.error(error?.message);
         }
@@ -404,22 +414,70 @@ const Index: React.FC<IProps> = () => {
         break;
       case 'Asc DueDate':
         setIssueFilterList(issuesList);
-        setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.dueDate>b.dueDate){return 1}else if(b.dueDate>a.dueDate){return -1}return 0}));
+        setIssueFilterList(
+          issueFilterList.sort((a, b) => {
+            if (a.dueDate > b.dueDate) {
+              return 1;
+            } else if (b.dueDate > a.dueDate) {
+              return -1;
+            }
+            return 0;
+          })
+        );
         setIssueList(issueFilterList);
         break;
       case 'Dsc DueDate':
         setIssueFilterList(issuesList);
-        setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.dueDate>b.dueDate){return -1}else if(b.dueDate>a.dueDate){return 1}return 0}));
+        setIssueFilterList(
+          issueFilterList.sort((a, b) => {
+            if (a.dueDate > b.dueDate) {
+              return -1;
+            } else if (b.dueDate > a.dueDate) {
+              return 1;
+            }
+            return 0;
+          })
+        );
         setIssueList(issueFilterList);
         break;
       case 'Asc Priority':
         setIssueFilterList(issuesList);
-        setIssueFilterList(issueFilterList.sort((a,b)=>{if(issuePriorityList?.indexOf(a.priority)>issuePriorityList?.indexOf(b.priority)){return 1}else if(issuePriorityList?.indexOf(b.priority)>issuePriorityList?.indexOf(a.priority)){return -1}return 0}));
+        setIssueFilterList(
+          issueFilterList.sort((a, b) => {
+            if (
+              issuePriorityList?.indexOf(a.priority) >
+              issuePriorityList?.indexOf(b.priority)
+            ) {
+              return 1;
+            } else if (
+              issuePriorityList?.indexOf(b.priority) >
+              issuePriorityList?.indexOf(a.priority)
+            ) {
+              return -1;
+            }
+            return 0;
+          })
+        );
         setIssueList(issueFilterList);
         break;
       case 'Dsc Priority':
         setIssueFilterList(issuesList);
-        setIssueFilterList(issueFilterList.sort((a,b)=>{if(issuePriorityList?.indexOf(a.priority)>issuePriorityList?.indexOf(b.priority)){return -1}else if(issuePriorityList?.indexOf(b.priority)>issuePriorityList?.indexOf(a.priority)){return 1}return 0}));
+        setIssueFilterList(
+          issueFilterList.sort((a, b) => {
+            if (
+              issuePriorityList?.indexOf(a.priority) >
+              issuePriorityList?.indexOf(b.priority)
+            ) {
+              return -1;
+            } else if (
+              issuePriorityList?.indexOf(b.priority) >
+              issuePriorityList?.indexOf(a.priority)
+            ) {
+              return 1;
+            }
+            return 0;
+          })
+        );
         setIssueList(issueFilterList);
         break;
       default:
@@ -487,6 +545,11 @@ const Index: React.FC<IProps> = () => {
       .then((response) => {
         if (response.success === true) {
           toast.success('issue information updated successfully');
+          const index = issueFilterList.findIndex(
+            (obj: Issue) => obj._id === response.result._id
+          );
+          issueFilterList.splice(index, 1, response.result);
+          setIssueList(issueFilterList);
         }
       })
       .catch((error) => {
@@ -601,6 +664,7 @@ const Index: React.FC<IProps> = () => {
                 handleOnTaskFilter={handleOnTaskFilter}
               ></RightFloatingMenu>
               <IssueCreate
+                issueToolClicked={toolClicked}
                 handleIssueSubmit={issueSubmit}
                 visibility={openCreateIssue}
                 closeOverlay={closeIssueCreate}
@@ -621,6 +685,7 @@ const Index: React.FC<IProps> = () => {
               ></TaskCreate>
               <IssueList
                 closeFilterOverlay={closeFilterOverlay}
+                issueToolClicked={toolClicked}
                 issuesList={issuesList}
                 visibility={openIssueView}
                 closeOverlay={closeIssueList}

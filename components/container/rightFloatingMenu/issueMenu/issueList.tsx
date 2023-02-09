@@ -15,12 +15,9 @@ import {
   faSpinner,
   faTrashCan,
   faSort,
-  faArrowDown,
   faArrowDownAZ,
   faArrowUpAZ,
   faArrowDown19,
-  faArrowUp19,
-  faArrowDown91,
   faArrowUp91,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -40,11 +37,12 @@ import * as Yup from 'yup';
 import Image from 'next/image';
 import { Modal } from 'react-responsive-modal';
 import ReactSelect from 'react-select';
-import TagsInput from 'react-tagsinput';
 import { CSVLink } from 'react-csv';
 import _ from 'lodash';
 import { getTagsList } from '../../../../services/tags';
+import { ITools } from '../../../../models/ITools';
 interface IProps {
+  issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
   issuesList: Issue[];
   visibility: boolean;
@@ -55,6 +53,7 @@ interface IProps {
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
 }
 const IssueList: React.FC<IProps> = ({
+  issueToolClicked,
   visibility,
   closeOverlay,
   issuesList,
@@ -75,6 +74,8 @@ const IssueList: React.FC<IProps> = ({
   const [issueObj, setIssueObj] = useState<Issue>();
   const [open, setOpen] = useState(false);
   const [tagList, setTagList] = useState<[string]>(['']);
+  let toolInstance :ITools ={toolName:'issue',toolAction:'issueSelect'};
+
   interface user {
     label: string;
     value: string;
@@ -919,6 +920,8 @@ const IssueList: React.FC<IProps> = ({
                           key={issueInfo._id}
                           onClick={() => {
                             setIssueViewMode('detail');
+                            toolInstance.response=issueInfo.context;
+                            issueToolClicked(toolInstance)
                             setIssueObj(issueInfo);
                           }}
                         >
@@ -999,6 +1002,7 @@ const IssueList: React.FC<IProps> = ({
   });
 
   const handleOnFilterEvent = (formData: object) => {
+    console.log('filter', formData);
     handleOnFilter(formData);
     setIssueViewMode('list');
   };

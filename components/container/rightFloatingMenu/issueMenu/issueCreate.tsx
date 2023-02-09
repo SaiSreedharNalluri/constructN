@@ -15,10 +15,11 @@ import { toast } from 'react-toastify';
 import { ISnapshot } from '../../../../models/ISnapshot';
 import { IStructure } from '../../../../models/IStructure';
 import { getCookie } from 'cookies-next';
-import { IToolResponse } from '../../../../models/ITools';
+import { IToolResponse, ITools } from '../../../../models/ITools';
 import ReactSelect from 'react-select';
 import { getTagsList } from '../../../../services/tags';
 interface IProps {
+  issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
   visibility: boolean;
   handleIssueSubmit: (formData: object) => void;
@@ -29,6 +30,7 @@ interface IProps {
 }
 
 const IssueCreate: React.FC<IProps> = ({
+  issueToolClicked,
   closeOverlay,
   visibility,
   handleIssueSubmit,
@@ -48,6 +50,7 @@ const IssueCreate: React.FC<IProps> = ({
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   const [loggedInUserId, SetLoggedInUserId] = useState('');
   const [tagList, setTagList] = useState<[string]>(['']);
+  let toolInstance :ITools ={toolName:'issue',toolAction:'issueCreate'};
 
   useEffect(() => {
     if (router.isReady) {
@@ -98,6 +101,8 @@ const IssueCreate: React.FC<IProps> = ({
   ]);
 
   const closeIssueCreate = () => {
+    toolInstance.toolAction='issueCreateFail';
+    issueToolClicked(toolInstance);
     closeOverlay();
   };
   interface FormValues {
@@ -139,15 +144,24 @@ const IssueCreate: React.FC<IProps> = ({
     formData.owner = loggedInUserId;
     formData.status = 'To Do';
     formData.context = myContext;
+    console.log('issue create button');
     createIssue(router.query.projectId as string, formData)
       .then((response) => {
         if (response.success === true) {
           toast.success('Issue is added sucessfully');
-          handleIssueSubmit(formData);
+          handleIssueSubmit(response.result);
+          toolInstance.toolAction='issueCreateSuccess';
+          issueToolClicked(toolInstance);
           resetForm();
+        }
+        else{
+          toolInstance.toolAction='issueCreateFail';
+          issueToolClicked(toolInstance);
         }
       })
       .catch((error) => {
+        toolInstance.toolAction='issueCreateFail';
+        issueToolClicked(toolInstance);
         if (error.success === false) {
           toast.error(error?.message);
         }
@@ -303,12 +317,15 @@ const IssueCreate: React.FC<IProps> = ({
                   id="type"
                   className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                 >
+                  <option value="" disabled selected>Select a Type</option>
+                  {/* <select name='type' id='type' className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"> */}
                   {issueType &&
-                    issueType.map((option: any) => (
-                      <option key={option} value={option}>
+                    issueType.map((option: any,i) => (
+                      <option key={option} value={option} selected={i==0?true:false}>
                         {option}
                       </option>
                     ))}
+                    {/* </select> */}
                 </Field>
                 <ErrorMessage
                   name="type"
@@ -341,9 +358,10 @@ const IssueCreate: React.FC<IProps> = ({
                   id="priority"
                   className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                 >
+                  <option value="" disabled selected>Select a Priority</option>
                   {issuePriority &&
-                    issuePriority.map((option: any) => (
-                      <option key={option} value={option}>
+                    issuePriority.map((option: any,i) => (
+                      <option key={option} value={option} selected={i==0?true:false}>
                         {option}
                       </option>
                     ))}
