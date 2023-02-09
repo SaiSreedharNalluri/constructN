@@ -67,7 +67,7 @@ const Task = ({ rightMenuClickHandler }: any) => {
           open={openDrawer}
           onClose={() => setOpenDrawer((prev: any) => !prev)}
         >
-          <TaskList />
+          <TaskList onClose={() => setOpenDrawer((prev: any) => !prev)} />
         </Drawer>
       )}
     </TaskBox>
