@@ -116,6 +116,7 @@ const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
     toolClicked(toolInstance);
   };
 
+  console.log(isDesignSelected, "isdesignsele");
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -129,7 +130,7 @@ const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
           </HeaderLogoImageContainer>
         </HeaderLeftPart>
         <HeaderRightPart>
-          {toolClicked && viewMode ? (
+          {toolClicked ? (
             <HeaderToggle>
               <HeaderToggleButtonOne
                 onClick={rightMenuClickHandler}
