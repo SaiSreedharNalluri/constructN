@@ -558,7 +558,7 @@ const Index: React.FC<IProps> = () => {
               ref={leftRefContainer}
               className={` ${
                 leftNav ? "visible" : "hidden"
-              } calc-h absolute z-10 bg-gray-200 border border-gray-300 overflow-y-auto`}
+              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay
