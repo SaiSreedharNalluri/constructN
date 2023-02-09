@@ -1,4 +1,5 @@
 import { styled } from "@mui/system";
+import { Theme } from "../../../styles/globalStyles";
 
 export const HeaderContainer = styled("div")({
   minHeight: "60px",
@@ -32,16 +33,10 @@ export const HeaderToggle = styled("div")({
 });
 
 export const HeaderToggleButtonOne = styled("button")((props: any) => ({
-  background: props.toggleStatus
-    ? props.theme.palette.primary.default
-    : props.theme.palette.primary.main,
-  border: props.toggleStatus
-    ? `1px solid ${props?.theme?.palette.primary?.default}`
-    : "none",
+  background: props?.toggleStatus ? Theme.palette.default : Theme.palette.main,
+  border: props?.toggleStatus ? `1px solid ${Theme.palette.default}` : "none",
   cursor: "pointer",
-  color: props.toggleStatus
-    ? props.theme.palette.primary.fontColor
-    : props.theme.palette.primary.default,
+  color: props?.toggleStatus ? Theme.palette.main : Theme.palette.default,
   padding: "6px 10px",
   height: "30px",
   display: "flex",
@@ -51,16 +46,10 @@ export const HeaderToggleButtonOne = styled("button")((props: any) => ({
 })) as any;
 
 export const HeaderToggleButtonTwo = styled("button")((props: any) => ({
-  background: props.toggleStatus
-    ? props.theme.palette.primary.default
-    : props.theme.palette.primary.main,
-  border: props.toggleStatus
-    ? `1px solid ${props?.theme?.palette.primary?.default}`
-    : "none",
+  background: props?.toggleStatus ? Theme.palette.default : Theme.palette.main,
+  border: props?.toggleStatus ? `1px solid ${Theme.palette.default}` : "none",
   cursor: "pointer",
-  color: props.toggleStatus
-    ? props.theme.palette.primary.fontColor
-    : props.theme.palette.primary.default,
+  color: props?.toggleStatus ? Theme.palette.main : Theme.palette.default,
   padding: "6px 10px",
   height: "30px",
   display: "flex",
@@ -74,7 +63,7 @@ export const HeaderProfileImageContainer = styled("div")({
   cursor: "pointer",
   border: "1.5px solid #36415D",
   borderRadius: "50%",
-  boxShadow: '0px 3px 8px rgba(0, 0, 0, 0.2)'
+  boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.2)",
 });
 
 export const HeaderMenuImageContainer = styled("div")({

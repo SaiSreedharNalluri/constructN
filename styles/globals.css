@@ -107,3 +107,21 @@
   width: 70%;
   margin: auto;
 }
+
+.MuiDrawer-paper {
+  top: auto;
+  bottom: 0;
+  height: calc(100% - 60px)
+}
+
+.MuiDrawer-paper:focus-visible {
+  outline: none;
+}
+
+.MuiBackdrop-root {
+  height: calc(100% - 60px);
+  top: auto;
+  width: calc(100% - 45px);
+  right: 0;
+  left: auto;
+}
