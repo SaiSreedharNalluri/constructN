@@ -429,9 +429,9 @@ export class PotreeViewerUtils {
 
         if (context.image) {
             this.getNearestImage(context);
-        } else if (context.type === "image" || context.type === "panorama" || context.type === "3d") {
+        } else if (context.type === "image" || context.type === "panorama") {
             this.getNearestImageToCamera(context.cameraObject, context.type)
-        } else {
+        } else if (context.type === "3d") {
             this.viewer.scene.view.setView(context.cameraObject.cameraPosition, context.cameraObject.cameraTarget)
         }
     }
@@ -1376,6 +1376,10 @@ export class PotreeViewerUtils {
         this.eventHandler(this.viewerId, save_obj)
         // window.top.postMessage({type: 'save-tag', data: JSON.stringify(save_obj)}, "*");
         // takeScreenshot(screenShotPath, viewer);
+    }
+
+    createSprite() {
+
     }
 
     clearTempMeasurements() {

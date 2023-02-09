@@ -58,7 +58,7 @@ function GenericViewer(props) {
   let [viewMode, setViewMode] = useState(props.viewMode);
   let currentViewMode = useRef(viewMode);
 
-  let viewType = props.viewType;
+  let viewType = useRef(props.viewType);
   let viewLayers = props.viewLayers;
 
   let [isCompare, setIsCompare] = useState(false);
@@ -111,7 +111,19 @@ function GenericViewer(props) {
     loadLayerData();
   }
 
-  function handleDesignTypeChange() {}
+  function handleDesignTypeChange() {
+    
+    switch(currentViewMode.current) {
+      case "Design":
+        if (forgeUtils.current) {
+          forgeUtils.current.setType(viewType.current);
+        }
+        break;
+      case "Reality":
+        break;
+    }
+
+  }
 
   function handleRealityTypeChange() {}
   
@@ -248,6 +260,8 @@ function GenericViewer(props) {
         case "Task":
         case "Issue":
           setMarkerMode(false)
+          activeTool.current.toolName = event.type
+          activeTool.current.toolAction = event.id.includes("Temp") ? "create": "selection";
           activeTool.current.response = event;
           pushToolResponse(activeTool.current);
           console.log("Marked Point========",event);
@@ -750,9 +764,20 @@ function GenericViewer(props) {
   }
 
   useEffect(() => {
-    // console.log("Generic Viewer View Type UseEffect", viewType);
-    handleDesignTypeChange();
-  }, [viewType]);
+    console.log("Generic Viewer View Type UseEffect", props.viewType);
+    if (viewType.current != props.viewType) {
+      viewType.current = props.viewType;
+      handleDesignTypeChange();
+    }
+    
+    return cleanUpOnViewTypeChange;
+  }, [props.viewType]);
+
+  const cleanUpOnViewTypeChange = () => {
+    console.log("Generic Viewer View Type Cleanup", props.viewType, viewType.current);
+    setIsCompare(false);
+    getContext();
+  }
 
   useEffect(() => {
     // console.log("Generic Viewer View Layers UseEffect", viewLayers);

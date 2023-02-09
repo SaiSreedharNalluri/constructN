@@ -13,6 +13,8 @@ export class ForgeDataVisualization {
 
         // window.dbIdMap = this.dbIdMap;
 
+    
+        this.setOcclusion(true);
         this.viewableHoveringHandler = this.onSpriteHovering.bind(this);
         this.viewableClickHandler = this.onSpriteClicked.bind(this);
     }
@@ -26,6 +28,14 @@ export class ForgeDataVisualization {
     //     }
     //     return this.instance;
     // }
+
+    setOcclusion(enable) {
+        this.dataVizExtn.changeOcclusion(enable);
+    }
+
+    setOffset(offset) {
+        this.offset = offset;
+    }
     setHandler(handlerFunction) {
         this.handlerFunction = handlerFunction;
     }
@@ -82,12 +92,11 @@ export class ForgeDataVisualization {
                 case "360 Video":
                     for (const positionData in visualizationData[viewableType]) {
                         let positionArray = visualizationData[viewableType][positionData].position;
-                        let rotationArray = visualizationData[viewableType][positionData].rotation;
                         let dbIdObject = {
                             dbId: dbId++,
                             type: viewableType,
                             id: positionData,
-                            position: {x: positionArray[0], y: positionArray[1], z: positionArray[2]},
+                            position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
                         }
                         this.dbIdMap[dbIdObject.dbId] = dbIdObject;
                         const viewable = new this.dataVizCore.SpriteViewable(dbIdObject.position, viewableStyle, dbIdObject.dbId);
@@ -105,8 +114,8 @@ export class ForgeDataVisualization {
                         let dbIdObject = {
                             dbId: dbId++,
                             type: viewableType,
-                            id: tag.title,
-                            position: tag.tagPosition,
+                            id: tag._id,
+                            position: this.applyOffset(tag.tagPosition, this.offset),
                         }
                         this.dbIdMap[dbIdObject.dbId] = dbIdObject;
                         const viewable = new this.dataVizCore.SpriteViewable(dbIdObject.position, viewableStyle, dbIdObject.dbId);
@@ -224,6 +233,8 @@ export class ForgeDataVisualization {
             await viewableData.finish();
             this.dataVizExtn.addViewables(viewableData);
 
+
+            dbIdObject.position = this.removeOffset(dbIdObject.position, this.offset);
             this.handlerFunction(event, dbIdObject);
         }
     }
@@ -265,7 +276,24 @@ export class ForgeDataVisualization {
         let dbObject = this.dbIdMap[event.dbId];
         // console.log("Inside selected dbId object: ", this.dbIdMap, dbObject);
 
+        dbObject.position = this.removeOffset(dbObject.position, this.offset);
         this.handlerFunction(event, dbObject);
+    }
+
+    applyOffset(position, offset) {
+        return {
+            x: position.x - offset[0],
+            y: position.y - offset[1],
+            z: position.z - offset[2],
+        }
+    }
+
+    removeOffset(position, offset) {
+        return {
+            x: position.x + offset[0],
+            y: position.y + offset[1],
+            z: position.z + offset[2],
+        }
     }
 
     removeExistingVisualizationData() {
