@@ -14,13 +14,25 @@ import "public/potree/libs/jstree/themes/mixed/style.css";
 import "react-tagsinput/react-tagsinput.css";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
+import { styled, createTheme, ThemeProvider } from "@mui/system";
+
 config.autoAddCss = false;
+
+const customTheme = createTheme({
+  palette: {
+    primary: {
+      main: "#F1742E",
+      default: "#FFFFFF",
+      fontColor: "#36415D",
+    },
+  },
+});
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <ThemeProvider theme={customTheme}>
       <Component {...pageProps} />
       <ToastContainer position="bottom-center" autoClose={5000} />
-    </>
+    </ThemeProvider>
   );
 }

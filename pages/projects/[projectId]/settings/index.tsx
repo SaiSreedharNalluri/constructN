@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import Header from '../../../../components/container/header';
+import Header from '../../../../components/divami_components/header/Header';
 import Treelist from '../../../../components/container/treeList';
 import {
   assignProjectUser,
@@ -21,6 +21,7 @@ import { getStructureHierarchy } from '../../../../services/structure';
 import ProjectInfo from '../../../../components/container/projectInfo';
 import ProjectUserAdd from '../../../../components/container/projectUsersAdd';
 import { toast } from 'react-toastify';
+import SidePanelMenu from '../../../../components/divami_components/side-panel/SidePanel';
 const Editproject: React.FC = () => {
   const router = useRouter();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
@@ -129,7 +130,12 @@ const Editproject: React.FC = () => {
       </div>
       <div className="flex w-screen fixed">
         <div>
-          <CollapsableMenu onChangeData={() => { }} />
+          {/* <CollapsableMenu onChangeData={() => { }} /> */}
+          {/* <CollapsableMenu onChangeData={() => { }} />
+          < */}
+                  <SidePanelMenu onChangeData={() => {}}/>
+
+          
         </div>
         <div className="w-full ">
           <Tabs
