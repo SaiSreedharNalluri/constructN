@@ -40,7 +40,9 @@ import ReactSelect from 'react-select';
 import { CSVLink } from 'react-csv';
 import _ from 'lodash';
 import { getTagsList } from '../../../../services/tags';
+import { ITools } from '../../../../models/ITools';
 interface IProps {
+  issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
   issuesList: Issue[];
   visibility: boolean;
@@ -51,6 +53,7 @@ interface IProps {
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
 }
 const IssueList: React.FC<IProps> = ({
+  issueToolClicked,
   visibility,
   closeOverlay,
   issuesList,
@@ -71,6 +74,8 @@ const IssueList: React.FC<IProps> = ({
   const [issueObj, setIssueObj] = useState<Issue>();
   const [open, setOpen] = useState(false);
   const [tagList, setTagList] = useState<[string]>(['']);
+  let toolInstance :ITools ={toolName:'issue',toolAction:'issueSelect'};
+
   interface user {
     label: string;
     value: string;
@@ -915,6 +920,8 @@ const IssueList: React.FC<IProps> = ({
                           key={issueInfo._id}
                           onClick={() => {
                             setIssueViewMode('detail');
+                            toolInstance.response=issueInfo.context;
+                            issueToolClicked(toolInstance)
                             setIssueObj(issueInfo);
                           }}
                         >
