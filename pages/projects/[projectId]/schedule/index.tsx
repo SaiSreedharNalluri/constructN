@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Header from '../../../../components/container/header';
+import Header from '../../../../components/divami_components/header/Header';
 import { useRouter } from 'next/router';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 import authHeader from '../../../../services/auth-header';

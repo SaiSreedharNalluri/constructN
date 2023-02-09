@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import Header from '../../../../components/container/header';
+import Header from '../../../../components/divami_components/header/Header';
 import { ChildrenEntity, IStructure } from '../../../../models/IStructure';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 import { getProjectDetails } from '../../../../services/project';
