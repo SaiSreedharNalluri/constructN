@@ -137,15 +137,13 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
   return (
     <SectionToolBar>
       <ToolbarContainer>
-        <Typebar
-        // onClick={rightMenuClickHandler}
-        />
+        <Typebar rightMenuClickHandler={rightMenuClickHandler} />
 
-        <Layers />
+        <Layers rightMenuClickHandler={rightMenuClickHandler} />
 
-        <Issues />
+        <Issues rightMenuClickHandler={rightMenuClickHandler} />
 
-        <Task />
+        <Task rightMenuClickHandler={rightMenuClickHandler} />
 
         <Hotspot />
       </ToolbarContainer>

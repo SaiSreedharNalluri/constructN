@@ -13,25 +13,48 @@ import {
   IssuesSectionClipImg,
 } from "./ToolBarStyles";
 
-const Issues = () => (
-  <IssueBox>
-    <div>Issues:</div>
+const Issues = ({ rightMenuClickHandler }: any) => {
+  return (
+    <IssueBox>
+      <div>Issues:</div>
 
-    <IssuesSectionPlusImg>
-      <Image src={plusCircleIcon} width={12} height={12} alt="Arrow" />{" "}
-    </IssuesSectionPlusImg>
+      <IssuesSectionPlusImg>
+        <Image
+          src={plusCircleIcon}
+          width={12}
+          height={12}
+          alt="Arrow"
+          id="issue"
+          onClick={rightMenuClickHandler}
+        />{" "}
+      </IssuesSectionPlusImg>
 
-    <IssuesSectionFileImg>
-      <Image src={fileTextIcon} width={12} height={12} alt="Arrow" />{" "}
-    </IssuesSectionFileImg>
+      <IssuesSectionFileImg>
+        <Image
+          src={fileTextIcon}
+          width={12}
+          height={12}
+          alt="Arrow"
+          id="issue"
+          onClick={rightMenuClickHandler}
+        />{" "}
+      </IssuesSectionFileImg>
 
-    <IssuesSectionClipImg>
-      <Image src={clipboardSecondIcon} width={12} height={12} alt="Arrow" />{" "}
-    </IssuesSectionClipImg>
-  </IssueBox>
+      <IssuesSectionClipImg>
+        <Image
+          src={clipboardSecondIcon}
+          width={12}
+          height={12}
+          alt="Arrow"
+          id="issue"
+          onClick={rightMenuClickHandler}
+        />{" "}
+      </IssuesSectionClipImg>
+    </IssueBox>
+  );
   // <div className={styles.thirdBox}>
 
   // </div>
-);
+};
 
 export default Issues;

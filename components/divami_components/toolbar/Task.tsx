@@ -17,20 +17,41 @@ import {
   IssuesSectionClipImg,
 } from "./ToolBarStyles";
 
-const Task = () => (
+const Task = ({ rightMenuClickHandler }: any) => (
   <TaskBox>
     <TaskTitleDiv>Task: </TaskTitleDiv>
 
     <IssuesSectionPlusImg>
-      <Image src={plusCircleIcon} width={12} height={12} alt="Arrow" />{" "}
+      <Image
+        src={plusCircleIcon}
+        width={12}
+        height={12}
+        alt="Arrow"
+        id="task"
+        onClick={rightMenuClickHandler}
+      />{" "}
     </IssuesSectionPlusImg>
 
     <IssuesSectionFileImg>
-      <Image src={fileTextIcon} width={12} height={12} alt="Arrow" />{" "}
+      <Image
+        src={fileTextIcon}
+        width={12}
+        height={12}
+        alt="Arrow"
+        id="task"
+        onClick={rightMenuClickHandler}
+      />{" "}
     </IssuesSectionFileImg>
 
     <IssuesSectionClipImg>
-      <Image src={clipboardSecondIcon} width={12} height={12} alt="Arrow" />{" "}
+      <Image
+        src={clipboardSecondIcon}
+        width={12}
+        height={12}
+        alt="Arrow"
+        id="task"
+        onClick={rightMenuClickHandler}
+      />{" "}
     </IssuesSectionClipImg>
   </TaskBox>
 );
