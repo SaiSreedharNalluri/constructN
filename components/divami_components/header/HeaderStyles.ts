@@ -33,6 +33,7 @@ export const HeaderToggle = styled("div")({
 });
 
 export const HeaderToggleButtonOne = styled("button")((props: any) => ({
+<<<<<<< Updated upstream
   background: props.toggleStatus
     ? props?.theme?.palette?.primary?.default
     : props?.theme?.palette?.primary?.main,
@@ -41,6 +42,16 @@ export const HeaderToggleButtonOne = styled("button")((props: any) => ({
     : "none",
   cursor: "pointer",
   color: props.toggleStatus
+=======
+  background: props?.toggleStatus
+    ? props?.theme?.palette?.primary?.default
+    : props?.theme?.palette?.primary?.main,
+  border: props?.toggleStatus
+    ? `1px solid ${props?.theme?.palette?.primary?.default}`
+    : "none",
+  cursor: "pointer",
+  color: props?.toggleStatus
+>>>>>>> Stashed changes
     ? props?.theme?.palette?.primary?.fontColor
     : props?.theme?.palette?.primary?.default,
   padding: "6px 10px",
@@ -55,11 +66,19 @@ export const HeaderToggleButtonTwo = styled("button")((props: any) => ({
   background: props?.toggleStatus
     ? props?.theme?.palette?.primary?.default
     : props?.theme?.palette?.primary?.main,
+<<<<<<< Updated upstream
   border: props.toggleStatus
     ? `1px solid ${props?.theme?.palette.primary?.default}`
     : "none",
   cursor: "pointer",
   color: props.toggleStatus
+=======
+  border: props?.toggleStatus
+    ? `1px solid ${props?.theme?.palette?.primary?.default}`
+    : "none",
+  cursor: "pointer",
+  color: props?.toggleStatus
+>>>>>>> Stashed changes
     ? props?.theme?.palette?.primary?.fontColor
     : props?.theme?.palette?.primary?.default,
   padding: "6px 10px",
