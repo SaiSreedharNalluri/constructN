@@ -40,7 +40,7 @@ export const HighlightedSytledImage = styled(Image)`
   margin-left:18px;
   width:54px;
   height:54px;
-  z-index:99;
+  z-index:99999999;
 `;
 
 // const SideMenuImageActive = styled(Image)({
