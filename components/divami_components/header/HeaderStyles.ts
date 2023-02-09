@@ -33,15 +33,15 @@ export const HeaderToggle = styled("div")({
 
 export const HeaderToggleButtonOne = styled("button")((props: any) => ({
   background: props.toggleStatus
-    ? props.theme.palette.primary.default
-    : props.theme.palette.primary.main,
+    ? props?.theme?.palette?.primary?.default
+    : props?.theme?.palette?.primary?.main,
   border: props.toggleStatus
     ? `1px solid ${props?.theme?.palette.primary?.default}`
     : "none",
   cursor: "pointer",
   color: props.toggleStatus
-    ? props.theme.palette.primary.fontColor
-    : props.theme.palette.primary.default,
+    ? props?.theme?.palette?.primary?.fontColor
+    : props?.theme?.palette?.primary?.default,
   padding: "6px 10px",
   height: "30px",
   display: "flex",
@@ -51,16 +51,16 @@ export const HeaderToggleButtonOne = styled("button")((props: any) => ({
 })) as any;
 
 export const HeaderToggleButtonTwo = styled("button")((props: any) => ({
-  background: props.toggleStatus
-    ? props.theme.palette.primary.default
-    : props.theme.palette.primary.main,
+  background: props?.toggleStatus
+    ? props?.theme?.palette?.primary?.default
+    : props?.theme?.palette?.primary?.main,
   border: props.toggleStatus
     ? `1px solid ${props?.theme?.palette.primary?.default}`
     : "none",
   cursor: "pointer",
   color: props.toggleStatus
-    ? props.theme.palette.primary.fontColor
-    : props.theme.palette.primary.default,
+    ? props?.theme?.palette?.primary?.fontColor
+    : props?.theme?.palette?.primary?.default,
   padding: "6px 10px",
   height: "30px",
   display: "flex",

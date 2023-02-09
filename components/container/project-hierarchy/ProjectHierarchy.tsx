@@ -1,5 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { TreeItem, TreeView } from "@mui/lab";
 import { useEffect, useState } from "react";
 import { ChildrenEntity } from "../../../models/IStructure";
 import closeIcon from "../../../public/images/closeIcon.svg";
@@ -14,8 +15,9 @@ import {
   ProjectHierarchyContainer,
   SearchContainer,
   StyledTreeItem,
-  StyledTreeView,
   TreeViewContainer,
+  StyledTreeView,
+  // useStyles,
 } from "./StyledComponents";
 import type { RenderTree, SelectLayerProps } from "./Type";
 import { getSelectedLayers } from "./Utils";
@@ -30,6 +32,7 @@ const ProjectHierarchy = ({
   const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>(treeData);
   const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
   console.log(treeData);
+  const classes = {};
   const renderTreeNode = (node: ChildrenEntity) => (
     <div>
       <span>{node.name}</span>
@@ -40,7 +43,7 @@ const ProjectHierarchy = ({
     console.log(e, value);
   };
   const renderTree = (nodes: ChildrenEntity) => (
-    <StyledTreeItem
+    <TreeItem
       key={nodes._id}
       nodeId={nodes._id}
       label={renderTreeNode(nodes)}
@@ -52,7 +55,7 @@ const ProjectHierarchy = ({
       {Array.isArray(nodes.children) && nodes.children.length
         ? nodes.children.map((node) => renderTree(node))
         : null}
-    </StyledTreeItem>
+    </TreeItem>
   );
 
   useEffect(() => {
