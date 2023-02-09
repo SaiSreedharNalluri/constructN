@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import Header from '../../../../components/container/header';
+import Header from '../../../../components/divami_components/header/Header';
 import Treelist from '../../../../components/container/treeList';
 import {
   assignProjectUser,

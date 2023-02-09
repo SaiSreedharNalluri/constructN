@@ -1,7 +1,6 @@
-import React from 'react';
-import Header from '../../../../components/container/header';
-import SidePanelMenu from '../../../../components/divami_components/side-panel/SidePanel';
-import CollapsableMenu from '../../../../components/layout/collapsableMenu';
+import React from "react";
+import Header from "../../../../components/divami_components/header/Header";
+import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 const Index: React.FC = () => {
   return (
     <React.Fragment>
@@ -9,9 +8,7 @@ const Index: React.FC = () => {
         <div>
           <Header />
           {/* <CollapsableMenu onChangeData={() => {}} /> */}
-                   <SidePanelMenu onChangeData={() => {}}/>
-
-
+          <SidePanelMenu onChangeData={() => {}} />
         </div>
       </div>
     </React.Fragment>
