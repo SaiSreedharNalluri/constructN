@@ -1,22 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
-import Header from '../../../../components/divami_components/header/Header';
-import { ChildrenEntity, IStructure } from '../../../../models/IStructure';
-import CollapsableMenu from '../../../../components/layout/collapsableMenu';
-import { getProjectDetails } from '../../../../services/project';
-import { ISnapshot } from '../../../../models/ISnapshot';
-import _ from 'lodash';
-import { faLessThan } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import LeftOverLay from '../../../../components/container/leftOverLay';
-import MapLoading from '../../../../components/container/mapLoading';
-import authHeader from '../../../../services/auth-header';
-import GenericViewer from '../../../../components/container/GenericViewer';
-import RightFloatingMenu from '../../../../components/container/rightFloatingMenu/rightFloatingMenu';
-import { IToolResponse, ITools } from '../../../../models/ITools';
-import { getStructureList } from '../../../../services/structure';
-import { IActiveRealityMap } from '../../../../models/IReality';
-import { IDesignMap } from '../../../../models/IDesign';
+import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import Header from "../../../../components/divami_components/header/Header";
+import { ChildrenEntity, IStructure } from "../../../../models/IStructure";
+import CollapsableMenu from "../../../../components/layout/collapsableMenu";
+import { getProjectDetails } from "../../../../services/project";
+import { ISnapshot } from "../../../../models/ISnapshot";
+import _ from "lodash";
+import { faLessThan } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import LeftOverLay from "../../../../components/container/leftOverLay";
+import MapLoading from "../../../../components/container/mapLoading";
+import authHeader from "../../../../services/auth-header";
+import GenericViewer from "../../../../components/container/GenericViewer";
+import RightFloatingMenu from "../../../../components/container/rightFloatingMenu/rightFloatingMenu";
+import { IToolResponse, ITools } from "../../../../models/ITools";
+import { getStructureList } from "../../../../services/structure";
+import { IActiveRealityMap } from "../../../../models/IReality";
+import { IDesignMap } from "../../../../models/IDesign";
 import {
   deleteIssue,
   editIssue,
@@ -24,54 +24,55 @@ import {
   getIssuesPriority,
   getIssuesStatus,
   getIssuesTypes,
-} from '../../../../services/issue';
-import { getCookie } from 'cookies-next';
-import { toast } from 'react-toastify';
-import { getTasksList } from '../../../../services/task';
-import { Issue } from '../../../../models/Issue';
-import { ITasks } from '../../../../models/Itask';
-import IssueCreate from '../../../../components/container/rightFloatingMenu/issueMenu/issueCreate';
-import TaskCreate from '../../../../components/container/rightFloatingMenu/taskMenu/taskCreate';
-import IssueList from '../../../../components/container/rightFloatingMenu/issueMenu/issueList';
-import { it } from 'node:test';
-import Moment from 'moment';
-import SidePanelMenu from '../../../../components/divami_components/side-panel/SidePanel';
+} from "../../../../services/issue";
+import { getCookie } from "cookies-next";
+import { toast } from "react-toastify";
+import { getTasksList } from "../../../../services/task";
+import { Issue } from "../../../../models/Issue";
+import { ITasks } from "../../../../models/Itask";
+import IssueCreate from "../../../../components/container/rightFloatingMenu/issueMenu/issueCreate";
+import TaskCreate from "../../../../components/container/rightFloatingMenu/taskMenu/taskCreate";
+import IssueList from "../../../../components/container/rightFloatingMenu/issueMenu/issueList";
+import { it } from "node:test";
+import Moment from "moment";
+import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
+import ToolBarMenuWrapper from "../../../../components/divami_components/toolbar/ToolBarMenuWrapper";
 
 interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
-  const [currentViewMode, setViewMode] = useState('Design'); //Design/ Reality
-  const [currentProjectId, setActiveProjectId] = useState('');
+  const [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
+  const [currentProjectId, setActiveProjectId] = useState("");
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
   const [designMap, setDesignMap] = useState<IDesignMap>();
   const [activeRealityMap, setActiveRealityMap] = useState<IActiveRealityMap>();
-  const [projectutm, setProjectUtm] = useState('');
+  const [projectutm, setProjectUtm] = useState("");
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
   const rightOverlayRef: any = useRef();
   const leftRefContainer: any = useRef();
   const rightrefContainer: any = useRef();
-  const [viewerTypeState, setViewerType] = useState('forge');
+  const [viewerTypeState, setViewerType] = useState("forge");
   const [rightNav, setRightNav] = useState(false);
-  const [currentViewType, setViewType] = useState(''); //plan,elevational,xsectional,bim
+  const [currentViewType, setViewType] = useState(""); //plan,elevational,xsectional,bim
   const [currentViewLayers, setViewLayers] = useState<string[]>([]); //360Image, 360Video, phoneImage, droneImage
   const [clickedTool, setClickedTool] = useState<ITools>();
-  const [loggedInUserId, SetLoggedInUserId] = useState('');
+  const [loggedInUserId, SetLoggedInUserId] = useState("");
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
   const [isIssueFilter, setIsIssueFilter] = useState(false);
   const [isTaslFilter, setIsTaskFilter] = useState(false);
-  const [issuePriorityList, setIssuePriorityList] = useState<[string]>(['']);
-  const [issueStatusList, setIssueStatusList] = useState<[string]>(['']);
+  const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
+  const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
   const [taskFilterList, setTaskFilterList] = useState<ITasks[]>([]);
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openIssueView, setOpenIssueView] = useState(false);
   const [currentContext, setCurrentContext] = useState<IToolResponse>({
-    type: 'Task',
+    type: "Task",
   });
 
   const closeIssueCreate = () => {
@@ -98,45 +99,48 @@ const Index: React.FC<IProps> = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      getIssuesPriority(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setIssuePriorityList(response.result);
-        }
-      }).catch((error) => {
-        toast.error('failed to load data');
-      });
-      getIssuesStatus(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setIssueStatusList(response.result);
-        }
-        
-      }).catch((error) => {
-        toast.error('failed to load data');
-      });
+      getIssuesPriority(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setIssuePriorityList(response.result);
+          }
+        })
+        .catch((error) => {
+          toast.error("failed to load data");
+        });
+      getIssuesStatus(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setIssueStatusList(response.result);
+          }
+        })
+        .catch((error) => {
+          toast.error("failed to load data");
+        });
       getProjectDetails(router.query.projectId as string)
         .then((response) => {
           setProjectUtm(response?.data?.result?.utm);
           setActiveProjectId(router.query.projectId as string);
         })
         .catch((error) => {
-          toast.error('failed to load data');
+          toast.error("failed to load data");
         });
       getStructureList(router.query.projectId as string)
         .then((response) => {
           setStructuresList(response.data.result);
         })
         .catch((error) => {
-          toast.error('failed to load data');
+          toast.error("failed to load data");
         });
-      const userObj: any = getCookie('user');
+      const userObj: any = getCookie("user");
       let user = null;
       if (userObj) user = JSON.parse(userObj);
       if (user?._id) {
         SetLoggedInUserId(user._id);
       }
-      const handler = document.addEventListener('click', closeStructurePage);
+      const handler = document.addEventListener("click", closeStructurePage);
       return () => {
-        document.removeEventListener('click', closeStructurePage);
+        document.removeEventListener("click", closeStructurePage);
       };
     }
   }, [router.isReady, router.query.projectId]);
@@ -153,13 +157,13 @@ const Index: React.FC<IProps> = () => {
         return e;
       }
     });
-    console.log('Selected structure: ', currentStructure?.name);
+    console.log("Selected structure: ", currentStructure?.name);
     return currentStructure;
   };
 
   const updateRealityMap = (realityMap: IActiveRealityMap) => {
     setActiveRealityMap(realityMap);
-    console.log('change triggered', realityMap);
+    console.log("change triggered", realityMap);
   };
 
   const updatedSnapshot = (snapshot: ISnapshot) => {
@@ -168,7 +172,7 @@ const Index: React.FC<IProps> = () => {
 
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
-    console.log('change triggered', designMap);
+    console.log("change triggered", designMap);
   };
 
   const activeClass = (e: any) => {
@@ -176,10 +180,10 @@ const Index: React.FC<IProps> = () => {
   };
   const renderSwitch = (param: string) => {
     switch (param) {
-      case 'potree':
+      case "potree":
         return <MapLoading></MapLoading>;
 
-      case 'forge':
+      case "forge":
         return (
           structure && (
             <GenericViewer
@@ -195,7 +199,7 @@ const Index: React.FC<IProps> = () => {
             ></GenericViewer>
           )
         );
-      case 'map':
+      case "map":
         return (
           snapshot &&
           structure && (
@@ -245,66 +249,66 @@ const Index: React.FC<IProps> = () => {
     let newLayers = currentViewLayers;
 
     switch (toolInstance.toolName) {
-      case 'viewType':
+      case "viewType":
         setViewType(toolInstance.toolAction);
         //setClickedTool(toolInstance);
         break;
-      case 'viewMode':
+      case "viewMode":
         setViewMode(toolInstance.toolAction);
         break;
-      case 'issue':
+      case "issue":
         switch (toolInstance.toolAction) {
-          case 'issueView':
-            console.log('trying to open issue View');
+          case "issueView":
+            console.log("trying to open issue View");
             setOpenIssueView(true);
             break;
-          case 'issueCreate':
-          case 'issueCreated':
-          case 'issueShow':
-          case 'issueHide':
+          case "issueCreate":
+          case "issueCreated":
+          case "issueShow":
+          case "issueHide":
             setClickedTool(toolInstance);
             break;
         }
 
         break;
-      case 'progress':
+      case "progress":
         switch (toolInstance.toolAction) {
-          case 'progressView':
+          case "progressView":
             //todo
             break;
-          case 'progressCreate':
-          case 'progressShow':
-          case 'progressHide':
+          case "progressCreate":
+          case "progressShow":
+          case "progressHide":
             setClickedTool(toolInstance);
             break;
         }
         break;
-      case 'task':
+      case "task":
         switch (toolInstance.toolAction) {
-          case 'taskView':
+          case "taskView":
             //todo
             break;
-          case 'taskCreate':
-          case 'taskCreated':
-          case 'taskShow':
-          case 'taskHide':
+          case "taskCreate":
+          case "taskCreated":
+          case "taskShow":
+          case "taskHide":
             setClickedTool(toolInstance);
             break;
         }
 
         break;
-      case 'addViewLayer':
+      case "addViewLayer":
         newLayers.push(toolInstance.toolAction);
         setViewLayers(newLayers);
         console.log(currentViewLayers);
         break;
-      case 'removeViewLayer':
+      case "removeViewLayer":
         newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
         setViewLayers(newLayers);
         console.log(currentViewLayers);
         break;
-      case 'compareReality':
-      case 'compareDesign':
+      case "compareReality":
+      case "compareDesign":
         setClickedTool(toolInstance);
         //console.log(toolInstance);
         break;
@@ -314,18 +318,18 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolResponse = (data: ITools) => {
-    console.log('Got tool REsponse->', data);
+    console.log("Got tool REsponse->", data);
     switch (data.toolName) {
-      case 'issue':
-        if (data.toolAction === 'issueCreate') {
-          console.log('Open issue Menu');
+      case "issue":
+        if (data.toolAction === "issueCreate") {
+          console.log("Open issue Menu");
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateIssue(true);
         }
         break;
-      case 'task':
-        if (data.toolAction === 'taskCreate') {
-          console.log('Open task Menu');
+      case "task":
+        if (data.toolAction === "taskCreate") {
+          console.log("Open task Menu");
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateTask(true);
         }
@@ -346,11 +350,12 @@ const Index: React.FC<IProps> = () => {
         }
       });
   };
-  const getIssuesPriorityList =(projId:string)=>{
+  const getIssuesPriorityList = (projId: string) => {
     return getIssuesPriority(router.query.projectId as string)
-    .then((response)=>{
-      return response.result;
-    }).catch((error) => {
+      .then((response) => {
+        return response.result;
+      })
+      .catch((error) => {
         if (error.success === false) {
           toast.error(error?.message);
         }
@@ -370,7 +375,7 @@ const Index: React.FC<IProps> = () => {
   };
   const handleOnIssueSort = (sortMethod: string) => {
     switch (sortMethod) {
-      case 'Last Updated':
+      case "Last Updated":
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a, b) => {
@@ -384,7 +389,7 @@ const Index: React.FC<IProps> = () => {
         );
         setIssueList(issueFilterList);
         break;
-      case 'First Updated':
+      case "First Updated":
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a, b) => {
@@ -398,28 +403,76 @@ const Index: React.FC<IProps> = () => {
         );
         setIssueList(issueFilterList);
         break;
-      case 'Asc DueDate':
+      case "Asc DueDate":
         setIssueFilterList(issuesList);
-        setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.dueDate>b.dueDate){return 1}else if(b.dueDate>a.dueDate){return -1}return 0}));
+        setIssueFilterList(
+          issueFilterList.sort((a, b) => {
+            if (a.dueDate > b.dueDate) {
+              return 1;
+            } else if (b.dueDate > a.dueDate) {
+              return -1;
+            }
+            return 0;
+          })
+        );
         setIssueList(issueFilterList);
         break;
-      case 'Dsc DueDate':
+      case "Dsc DueDate":
         setIssueFilterList(issuesList);
-        setIssueFilterList(issueFilterList.sort((a,b)=>{if(a.dueDate>b.dueDate){return -1}else if(b.dueDate>a.dueDate){return 1}return 0}));
+        setIssueFilterList(
+          issueFilterList.sort((a, b) => {
+            if (a.dueDate > b.dueDate) {
+              return -1;
+            } else if (b.dueDate > a.dueDate) {
+              return 1;
+            }
+            return 0;
+          })
+        );
         setIssueList(issueFilterList);
         break;
-      case 'Asc Priority':
+      case "Asc Priority":
         setIssueFilterList(issuesList);
-        setIssueFilterList(issueFilterList.sort((a,b)=>{if(issuePriorityList?.indexOf(a.priority)>issuePriorityList?.indexOf(b.priority)){return 1}else if(issuePriorityList?.indexOf(b.priority)>issuePriorityList?.indexOf(a.priority)){return -1}return 0}));
+        setIssueFilterList(
+          issueFilterList.sort((a, b) => {
+            if (
+              issuePriorityList?.indexOf(a.priority) >
+              issuePriorityList?.indexOf(b.priority)
+            ) {
+              return 1;
+            } else if (
+              issuePriorityList?.indexOf(b.priority) >
+              issuePriorityList?.indexOf(a.priority)
+            ) {
+              return -1;
+            }
+            return 0;
+          })
+        );
         setIssueList(issueFilterList);
         break;
-      case 'Dsc Priority':
+      case "Dsc Priority":
         setIssueFilterList(issuesList);
-        setIssueFilterList(issueFilterList.sort((a,b)=>{if(issuePriorityList?.indexOf(a.priority)>issuePriorityList?.indexOf(b.priority)){return -1}else if(issuePriorityList?.indexOf(b.priority)>issuePriorityList?.indexOf(a.priority)){return 1}return 0}));
+        setIssueFilterList(
+          issueFilterList.sort((a, b) => {
+            if (
+              issuePriorityList?.indexOf(a.priority) >
+              issuePriorityList?.indexOf(b.priority)
+            ) {
+              return -1;
+            } else if (
+              issuePriorityList?.indexOf(b.priority) >
+              issuePriorityList?.indexOf(a.priority)
+            ) {
+              return 1;
+            }
+            return 0;
+          })
+        );
         setIssueList(issueFilterList);
         break;
       default:
-        console.log('Not Sorted');
+        console.log("Not Sorted");
         break;
     }
   };
@@ -436,10 +489,10 @@ const Index: React.FC<IProps> = () => {
           item.assignees.some((it: any) => ass.value === it._id)
         ) ||
           formData?.assigneesData?.length == 0) &&
-        (Moment(item.dueDate).format('YYYY-MM-DD') >= formData.fromDate ||
-          formData.fromDate == '') &&
-        (Moment(item.dueDate).format('YYYY-MM-DD') <= formData.toDate ||
-          formData.toDate == '')
+        (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
+          formData.fromDate == "") &&
+        (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
+          formData.toDate == "")
     );
     setIssueList(result);
   };
@@ -471,7 +524,7 @@ const Index: React.FC<IProps> = () => {
         }
       })
       .catch((error) => {
-        console.log('error', error);
+        console.log("error", error);
       });
   };
   const clickIssueEditSubmit = (editObj: any, issueObj: any) => {
@@ -482,11 +535,11 @@ const Index: React.FC<IProps> = () => {
     )
       .then((response) => {
         if (response.success === true) {
-          toast.success('issue information updated successfully');
+          toast.success("issue information updated successfully");
         }
       })
       .catch((error) => {
-        console.log('error', error);
+        console.log("error", error);
       });
   };
   return (
@@ -497,14 +550,14 @@ const Index: React.FC<IProps> = () => {
       <div className="flex ">
         <div ref={leftOverlayRef}>
           {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
-          <SidePanelMenu  onChangeData={onChangeData}/>
+          <SidePanelMenu onChangeData={onChangeData} />
         </div>
         <div>
           {
             <div
               ref={leftRefContainer}
               className={` ${
-                leftNav ? 'visible' : 'hidden'
+                leftNav ? "visible" : "hidden"
               } calc-h absolute z-10 top-10 bg-gray-200 border border-gray-300 overflow-y-auto`}
             >
               <div>
@@ -568,21 +621,36 @@ const Index: React.FC<IProps> = () => {
           <div ref={rightrefContainer}>
             <FontAwesomeIcon
               className={`fixed  ${
-                rightNav && 'rotate-180'
+                rightNav && "rotate-180"
               } text-lg text-blue-300  ${
-                rightNav ? 'right-9' : 'right-0'
+                rightNav ? "right-9" : "right-0"
               }  top-46  cursor-pointer border rounded  p-1 bg-gray-400 z-10 text-white`}
               onClick={rightNavCollapse}
               icon={faLessThan}
             ></FontAwesomeIcon>
-            <div
-              ref={rightOverlayRef}
-              id="bg-color"
-              className={`fixed  w-9 border border-gray-300   ${
-                rightNav ? 'visible' : 'hidden'
-              }  bg-gray-200 top-40  rounded  right-0  duration-300 z-10 overflow-y-hidden`}
-            >
-              <RightFloatingMenu
+            <div className="toolbarcontainer">
+              <div
+                ref={rightOverlayRef}
+                id="bg-color"
+                className={`fixed  toolbarWidth border border-gray-300   ${"visible"} `}
+              >
+                <ToolBarMenuWrapper
+                  issuesList={issuesList}
+                  tasksList={tasksList}
+                  toolClicked={toolClicked}
+                  viewMode={currentViewMode}
+                  handleOnFilter={handleOnIssueFilter}
+                  currentProject={currentProjectId}
+                  currentStructure={structure}
+                  currentSnapshot={snapshot}
+                  currentTypesList={designMap}
+                  currentLayersList={activeRealityMap}
+                  closeFilterOverlay={closeFilterOverlay}
+                  closeTaskFilterOverlay={closeTaskFilterOverlay}
+                  handleOnTaskFilter={handleOnTaskFilter}
+                />
+              </div>
+              {/* <RightFloatingMenu
                 issuesList={issuesList}
                 tasksList={tasksList}
                 toolClicked={toolClicked}
@@ -596,8 +664,8 @@ const Index: React.FC<IProps> = () => {
                 closeFilterOverlay={closeFilterOverlay}
                 closeTaskFilterOverlay={closeTaskFilterOverlay}
                 handleOnTaskFilter={handleOnTaskFilter}
-              ></RightFloatingMenu>
-              <IssueCreate
+              ></RightFloatingMenu> */}
+              {/* <IssueCreate
                 handleIssueSubmit={issueSubmit}
                 visibility={openCreateIssue}
                 closeOverlay={closeIssueCreate}
@@ -625,7 +693,7 @@ const Index: React.FC<IProps> = () => {
                 handleOnSort={handleOnIssueSort}
                 deleteTheIssue={deleteTheIssue}
                 clickIssueEditSubmit={clickIssueEditSubmit}
-              ></IssueList>
+              ></IssueList> */}
             </div>
           </div>
         )}

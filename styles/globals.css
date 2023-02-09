@@ -99,3 +99,11 @@
 .spinner > circle {
   fill: transparent;
 }
+
+.toolbarWidth {
+  width: fit-content;
+}
+.toolbarcontainer {
+  width: 70%;
+  margin: auto;
+}
