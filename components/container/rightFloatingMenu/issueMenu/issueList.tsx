@@ -15,12 +15,9 @@ import {
   faSpinner,
   faTrashCan,
   faSort,
-  faArrowDown,
   faArrowDownAZ,
   faArrowUpAZ,
   faArrowDown19,
-  faArrowUp19,
-  faArrowDown91,
   faArrowUp91,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -40,7 +37,6 @@ import * as Yup from 'yup';
 import Image from 'next/image';
 import { Modal } from 'react-responsive-modal';
 import ReactSelect from 'react-select';
-import TagsInput from 'react-tagsinput';
 import { CSVLink } from 'react-csv';
 import _ from 'lodash';
 import { getTagsList } from '../../../../services/tags';
@@ -999,6 +995,7 @@ const IssueList: React.FC<IProps> = ({
   });
 
   const handleOnFilterEvent = (formData: object) => {
+    console.log('filter', formData);
     handleOnFilter(formData);
     setIssueViewMode('list');
   };

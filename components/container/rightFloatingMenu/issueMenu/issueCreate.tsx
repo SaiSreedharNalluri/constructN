@@ -143,7 +143,7 @@ const IssueCreate: React.FC<IProps> = ({
       .then((response) => {
         if (response.success === true) {
           toast.success('Issue is added sucessfully');
-          handleIssueSubmit(formData);
+          handleIssueSubmit(response.result);
           resetForm();
         }
       })
