@@ -9,7 +9,7 @@ import Treelist from "./treeList";
 import { useRouter } from "next/router";
 import { AxiosResponse } from "axios";
 import { getStructureHierarchy } from "../../services/structure";
-import ProjectHierarchy from "./project-hierarchy/ProjectHierarchy";
+import ProjectHierarchy from "../divami_components/project-hierarchy/ProjectHierarchy";
 interface IProps {
   getStructureData: (structure: ChildrenEntity) => void;
   getStructure: (Structure: ChildrenEntity) => void;
