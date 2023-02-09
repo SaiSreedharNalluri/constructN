@@ -21,10 +21,10 @@ export interface IStructure {
 export interface ChildrenEntity {
   _id: string;
   name: string;
-  project:string;
+  project: string;
   type: string;
   parent: string;
-  children?: ChildrenEntity1[] | null;
+  children?: ChildrenEntity[] | null;
 }
 export interface ChildrenEntity1 {
   _id: string;
