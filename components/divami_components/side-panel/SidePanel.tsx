@@ -34,7 +34,7 @@ import people from "../../../public/divami_icons/people.svg";
 import calendar from "../../../public/divami_icons/calendar.svg";
 
 import {
-    HighlightedSytledImage,
+  HighlightedSytledImage,
   SideMenuContainer,
   SideMenuOption,
   SideMenuOptionContainer,
@@ -42,7 +42,7 @@ import {
   StyledImage,
 } from "./SidePanelStyles";
 interface IProps {
-    onChangeData: () => void;
+  onChangeData: () => void;
 }
 const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   const [config, setConfig] = React.useState([
@@ -56,11 +56,10 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     },
     {
       id: "drawing",
-
       label: "drawing",
       icon: drawingInactive,
       activeIcon: drawing,
-      isActive: true,
+      isActive: false,
       nextPage: "",
     },
     {
@@ -134,7 +133,9 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         router.push(`/projects/${router.query.projectId as string}/dashboard`);
         break;
       case "views":
+      case "drawing":
         router.push(`/projects/${router.query.projectId as string}/structure`);
+        onChangeData();
         break;
       case "issues":
         router.push(`/projects/${router.query.projectId as string}/issue`);
