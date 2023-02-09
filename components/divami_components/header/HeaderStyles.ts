@@ -1,4 +1,5 @@
 import { styled } from "@mui/system";
+import { Theme } from "../../../styles/globalStyles";
 
 export const HeaderContainer = styled("div")({
   minHeight: "60px",
@@ -74,7 +75,7 @@ export const HeaderProfileImageContainer = styled("div")({
   cursor: "pointer",
   border: "1.5px solid #36415D",
   borderRadius: "50%",
-  boxShadow: '0px 3px 8px rgba(0, 0, 0, 0.2)'
+  boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.2)",
 });
 
 export const HeaderMenuImageContainer = styled("div")({
