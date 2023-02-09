@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 
+import Drawer from "@mui/material/Drawer";
 import Image from "next/image";
 
 import styles from "../toolbar/toolbar.module.css";
@@ -16,23 +17,49 @@ import {
   IssuesSectionFileImg,
   IssuesSectionClipImg,
 } from "./ToolBarStyles";
+import TaskList from "../task_list/TaskList";
 
-const Task = () => (
-  <TaskBox>
-    <TaskTitleDiv>Task: </TaskTitleDiv>
+const Task = () => {
+  const [openDrawer, setOpenDrawer] = useState(false);
 
-    <IssuesSectionPlusImg>
-      <Image src={plusCircleIcon} width={12} height={12} alt="Arrow" />{" "}
-    </IssuesSectionPlusImg>
+  const handleViewTaskList = () => {
+    console.log("teskssksk trigg");
+    setOpenDrawer(true);
+  };
+  return (
+    <TaskBox>
+      <TaskTitleDiv>Task: </TaskTitleDiv>
 
-    <IssuesSectionFileImg>
-      <Image src={fileTextIcon} width={12} height={12} alt="Arrow" />{" "}
-    </IssuesSectionFileImg>
+      <IssuesSectionPlusImg>
+        <Image src={plusCircleIcon} width={12} height={12} alt="Arrow" />{" "}
+      </IssuesSectionPlusImg>
 
-    <IssuesSectionClipImg>
-      <Image src={clipboardSecondIcon} width={12} height={12} alt="Arrow" />{" "}
-    </IssuesSectionClipImg>
-  </TaskBox>
-);
+      <IssuesSectionFileImg>
+        <Image
+          onClick={() => {
+            handleViewTaskList();
+          }}
+          src={fileTextIcon}
+          width={12}
+          height={12}
+          alt="Arrow"
+        />{" "}
+      </IssuesSectionFileImg>
+
+      <IssuesSectionClipImg>
+        <Image src={clipboardSecondIcon} width={12} height={12} alt="Arrow" />{" "}
+      </IssuesSectionClipImg>
+      {openDrawer && (
+        <Drawer
+          anchor={"right"}
+          open={openDrawer}
+          onClose={() => setOpenDrawer((prev: any) => !prev)}
+        >
+          <TaskList />
+        </Drawer>
+      )}
+    </TaskBox>
+  );
+};
 
 export default Task;
