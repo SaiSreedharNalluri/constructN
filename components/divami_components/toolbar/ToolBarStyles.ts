@@ -37,6 +37,9 @@ export const TaskBox = styled("div")({
   /* justify-content: space-between; */
   alignItems: "center",
   padding: "15px 20px",
+  "& .MuiDrawer-paper": {
+    height: "calc(100% - 60px)",
+  },
 });
 
 export const TaskTitleDiv = styled("div")({});

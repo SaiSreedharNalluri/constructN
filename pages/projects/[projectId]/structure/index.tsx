@@ -549,8 +549,8 @@ const Index: React.FC<IProps> = () => {
       </div>
       <div className="flex ">
         <div ref={leftOverlayRef}>
-          {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
-          <SidePanelMenu onChangeData={onChangeData} />
+          <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu>
+          {/* <SidePanelMenu onChangeData={onChangeData} /> */}
         </div>
         <div>
           {
