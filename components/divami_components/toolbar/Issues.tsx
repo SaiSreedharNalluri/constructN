@@ -41,9 +41,7 @@ const Issues = ({ rightMenuClickHandler }: any) => {
             width={12}
             height={12}
             alt="Arrow"
-            onClick={() => {
-              setOpenIssueList(true);
-            }}
+            onClick={rightMenuClickHandler}
           />{" "}
         </IssuesSectionPlusImg>
 
@@ -53,7 +51,9 @@ const Issues = ({ rightMenuClickHandler }: any) => {
             width={12}
             height={12}
             alt="Arrow"
-            onClick={rightMenuClickHandler}
+            onClick={() => {
+              setOpenIssueList(true);
+            }}
           />{" "}
         </IssuesSectionFileImg>
 

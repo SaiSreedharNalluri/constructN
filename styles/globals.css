@@ -126,3 +126,9 @@
   right: 0;
   left: auto;
 }
+@font-face {
+  font-family: "Open Sans";
+  src: local("Lato"),
+    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf")
+      format("opentype");
+}
