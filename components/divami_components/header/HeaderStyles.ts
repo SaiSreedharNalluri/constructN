@@ -33,14 +33,14 @@ export const HeaderToggle = styled("div")({
 });
 
 export const HeaderToggleButtonOne = styled("button")((props: any) => ({
-  background: props.toggleStatus
+  background: props?.toggleStatus
     ? props?.theme?.palette?.primary?.default
     : props?.theme?.palette?.primary?.main,
-  border: props.toggleStatus
-    ? `1px solid ${props?.theme?.palette.primary?.default}`
+  border: props?.toggleStatus
+    ? `1px solid ${props?.theme?.palette?.primary?.default}`
     : "none",
   cursor: "pointer",
-  color: props.toggleStatus
+  color: props?.toggleStatus
     ? props?.theme?.palette?.primary?.fontColor
     : props?.theme?.palette?.primary?.default,
   padding: "6px 10px",
@@ -55,11 +55,11 @@ export const HeaderToggleButtonTwo = styled("button")((props: any) => ({
   background: props?.toggleStatus
     ? props?.theme?.palette?.primary?.default
     : props?.theme?.palette?.primary?.main,
-  border: props.toggleStatus
-    ? `1px solid ${props?.theme?.palette.primary?.default}`
+  border: props?.toggleStatus
+    ? `1px solid ${props?.theme?.palette?.primary?.default}`
     : "none",
   cursor: "pointer",
-  color: props.toggleStatus
+  color: props?.toggleStatus
     ? props?.theme?.palette?.primary?.fontColor
     : props?.theme?.palette?.primary?.default,
   padding: "6px 10px",
