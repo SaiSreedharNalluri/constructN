@@ -103,6 +103,13 @@ export const LayersWrapper = styled("div")({
   display: "flex",
   alignItems: "center",
   padding: "15px 20px",
+  position: "relative",
+});
+export const SelectLayersWrapper = styled("div")({
+  top: "50px",
+  position: "absolute",
+  border: "1px solid #D9D9D9",
+  boxShadow: "5px 4px 8px rgb(0 0 0 / 24%)",
 });
 
 export const LayerSecondSectionHexImg = styled("div")({});
