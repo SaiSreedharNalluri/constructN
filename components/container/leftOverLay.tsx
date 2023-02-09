@@ -32,15 +32,14 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
   return (
     <React.Fragment>
       <div>
-        <SearchInput></SearchInput>
-        {/* {console.log(state)} */}
+        {/* <SearchInput></SearchInput> */}
         {state.length === 0 ? (
           "no structures found for this project"
         ) : (
           <>
-            <Treelist treeList={state} getStructureData={getStructureData} />
+            {/* <Treelist treeList={state} getStructureData={getStructureData} /> */}
             <ProjectHierarchy
-              openSelectLayer={true}
+              // openSelectLayer={true}
               title={""}
               onCloseHandler={() => {
                 // setOpenSelectLayer(false)

@@ -1,14 +1,14 @@
-import styled from '@emotion/styled'
-import { TreeItem, TreeView } from '@mui/lab'
-import { Typography } from '@mui/material'
-import { Box } from '@mui/system'
-import Image from 'next/image'
-import type { SelectLayerContainerProps } from './Type'
+import styled from "@emotion/styled";
+import { TreeItem, TreeView } from "@mui/lab";
+import { Typography } from "@mui/material";
+import { Box } from "@mui/system";
+import Image from "next/image";
+import type { SelectLayerContainerProps } from "./Type";
 
 export const TreeViewContainer = styled(Box)`
   width: 301px;
   margin-top: 28px;
-`
+`;
 
 export const StyledTreeView = styled(TreeView)`
   & .Mui-expanded{
@@ -57,36 +57,38 @@ export const StyledTreeView = styled(TreeView)`
   & .MuiTreeItem-content:hover{
     background: none
   },
-`
+`;
+
+// display: ${(props) => (props.openselectlayer ? null : "none")};
 
 export const ProjectHierarchyContainer = styled(Box)<SelectLayerContainerProps>`
-  display: ${(props) => (props.openSelectLayer ? null : 'none')};
+  display: ${(props) => null};
   width: 301px;
   box-shadow: 5px 4px 8px rgba(200, 200, 200, 0.1);
-`
+`;
 export const StyledTreeItem = styled(TreeItem)`
   padding: 0;
-`
+`;
 
 export const HeaderLabelContainer = styled(Box)`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 22px 15px 19px;
-`
+`;
 
 export const SearchContainer = styled(Box)`
   width: 261px;
   height: 40px;
   outline: none;
-  padding: 0 22px 0px 19px;
+  padding: 20px 0px 0px 20px;
   margin-bottom: 2px;
-`
+`;
 
 export const HeaderLabel = styled(Typography)`
   font-size: 16px;
   font-weight: 400;
-`
+`;
 export const CloseIcon = styled(Image)`
   cursor: pointer;
-`
+`;

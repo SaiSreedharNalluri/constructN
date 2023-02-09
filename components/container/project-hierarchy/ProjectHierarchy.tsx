@@ -62,7 +62,7 @@ const ProjectHierarchy = ({
   }, [treeViewData]);
 
   return (
-    <ProjectHierarchyContainer openSelectLayer={openSelectLayer}>
+    <ProjectHierarchyContainer>
       {/* <HeaderLabelContainer>
         <HeaderLabel>{title}</HeaderLabel>
         <CloseIcon

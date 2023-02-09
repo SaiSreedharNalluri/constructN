@@ -8,12 +8,12 @@ export interface RenderTree {
 }
 
 export interface SelectLayerContainerProps {
-  openSelectLayer: boolean;
+  openselectlayer?: boolean;
 }
 
 export interface SelectLayerProps {
   title: string;
-  openSelectLayer: boolean;
+  openSelectLayer?: boolean;
   onCloseHandler: () => void;
   treeData: any[];
   getStructureData?: (structure: ChildrenEntity) => void;
