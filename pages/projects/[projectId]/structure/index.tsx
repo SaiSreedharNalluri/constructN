@@ -78,7 +78,8 @@ const Index: React.FC<IProps> = () => {
   };
   const issueSubmit = (formdata: any) => {
     issuesList.push(formdata);
-
+    // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
+    // toolClicked(myTool);
     setOpenCreateIssue(false);
   };
 
@@ -91,7 +92,8 @@ const Index: React.FC<IProps> = () => {
 
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
-
+    let myTool : ITools ={toolName:'task',toolAction:'taskCreated'};
+    toolClicked(myTool);
     setOpenCreateTask(false);
   };
 
@@ -263,10 +265,14 @@ const Index: React.FC<IProps> = () => {
             setOpenIssueView(true);
             break;
           case 'issueCreate':
-          case 'issueCreated':
+          case 'issueCreateSuccess':
+          case 'issueCreateFail':
+          case 'issueSelect':
           case 'issueShow':
           case 'issueHide':
+            console.log("action chose",toolInstance.toolAction);
             setClickedTool(toolInstance);
+
             break;
         }
 
@@ -289,7 +295,7 @@ const Index: React.FC<IProps> = () => {
             //todo
             break;
           case 'taskCreate':
-          case 'taskCreated':
+          case 'taskCreateSuccess':
           case 'taskShow':
           case 'taskHide':
             setClickedTool(toolInstance);
@@ -658,6 +664,7 @@ const Index: React.FC<IProps> = () => {
                 handleOnTaskFilter={handleOnTaskFilter}
               ></RightFloatingMenu>
               <IssueCreate
+                issueToolClicked={toolClicked}
                 handleIssueSubmit={issueSubmit}
                 visibility={openCreateIssue}
                 closeOverlay={closeIssueCreate}
@@ -678,6 +685,7 @@ const Index: React.FC<IProps> = () => {
               ></TaskCreate>
               <IssueList
                 closeFilterOverlay={closeFilterOverlay}
+                issueToolClicked={toolClicked}
                 issuesList={issuesList}
                 visibility={openIssueView}
                 closeOverlay={closeIssueList}
