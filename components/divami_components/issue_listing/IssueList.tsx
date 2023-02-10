@@ -208,7 +208,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                                     'MMM Do YYYY'
                                   )} */}
                   <ThirdHeader>
-                    <div>{val.assignee}</div>
+                    <div>{val.assignees[0].firstName}</div>
                     <DueDateDiv>
                       Due by {Moment(val.dueDate).format("DD MMM 'YY")}
                     </DueDateDiv>
