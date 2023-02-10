@@ -1,5 +1,5 @@
-import instance from './axiosInstance';
-import authHeader from './auth-header';
+import instance from "./axiosInstance";
+import authHeader from "./auth-header";
 export const createTask = (projectId: string, taskObj: object) => {
   return instance
     .post(
@@ -17,6 +17,7 @@ export const createTask = (projectId: string, taskObj: object) => {
     });
 };
 export const getTasksList = async (projectId: string, structureId: string) => {
+  console.log("getTasksList", projectId, structureId);
   return await instance
     .get(
       `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tasks?structure=${structureId}`,
