@@ -192,10 +192,14 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
         />
 
         <Task
+          tasksList={tasksList}
+          // taskMenuClicked={taskMenuClicked}
           currentProject={currentProject}
           currentSnapshot={currentSnapshot}
           currentStructure={currentStructure}
           contextInfo={contextInfo}
+          closeTaskFilterOverlay={closeTaskFilterOverlay}
+          handleOnTaskFilter={handleOnTaskFilter}
           rightMenuClickHandler={rightMenuClickHandler}
         />
 
