@@ -657,6 +657,7 @@ const Index: React.FC<IProps> = () => {
               closeFilterOverlay={closeFilterOverlay}
               closeTaskFilterOverlay={closeTaskFilterOverlay}
               handleOnTaskFilter={handleOnTaskFilter}
+              contextInfo={currentContext}
             />
             {/* </div> */}
             {/* <RightFloatingMenu
