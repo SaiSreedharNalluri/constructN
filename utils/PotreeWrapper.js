@@ -19,13 +19,26 @@ export class PotreeInstance {
             this.instance = new PotreeInstance(viewerId);
             delete this.instance.constructor;
         } else {
-            // let child = document.getElementById(viewerId);
-            let parent = document.getElementById(viewerId).parentElement;
+            let child = document.getElementById(viewerId);
+            let parent = child.parentElement;
             parent.removeChild(document.getElementById(viewerId));
             parent.insertBefore(this.instance.viewer.renderArea, parent.firstChild);
         }
-    return this.instance;
-  }
+        return this.instance;
+    }
+
+    static getCompareInstance(viewerId) {
+        if (!this.compareInstance) {
+            this.compareInstance = new PotreeInstance(viewerId);
+            delete this.compareInstance.constructor;
+        } else {
+            let child = document.getElementById(viewerId);
+            let parent = child.parentElement;
+            parent.removeChild(document.getElementById(viewerId));
+            parent.insertBefore(this.compareInstance.viewer.renderArea, parent.firstChild);
+        }
+        return this.compareInstance;
+    }
 }
 
 export class PotreeViewerUtils {
@@ -83,7 +96,11 @@ export class PotreeViewerUtils {
         const loadGUICallback = () => {
             self.isViewerInitialized = true;
         }
-        this.viewer = PotreeInstance.getInstance(this.viewerId).viewer;
+        if (this.isCompareView()) {
+            this.viewer = PotreeInstance.getCompareInstance(this.viewerId).viewer;
+        } else {
+            this.viewer = PotreeInstance.getInstance(this.viewerId).viewer;
+        }
         this.viewer.canvasId = this.viewerId; //Used by potree
         this.viewer.loadGUI(loadGUICallback)
     }
