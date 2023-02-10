@@ -79,10 +79,12 @@ export const TypeParentCont = styled("div")({
   padding: "15px 20px",
 });
 
-export const TypesTitle = styled("div")({});
+export const TypesTitle = styled("div")({
+  width: "100px",
+});
 
 export const TypeArrowIconDiv = styled("div")({
-  marginLeft: "147px",
+  marginLeft: "110px",
 });
 
 export const TypesRightScroll = styled("div")({

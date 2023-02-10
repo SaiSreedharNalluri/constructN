@@ -70,26 +70,44 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
   const [myProject, setMyProject] = useState(currentProject);
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedLayer, setSelectedLayer] = useState("");
+  const [openSelectTypes, setOpenSelectTypes] = useState(false);
+  const [openSelectLayer, setOpenSelectLayer] = useState(false);
+
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   const [myTypesList, setMyTypesList] = useState<IDesignMap>(currentTypesList);
   const [myLayersList, setMyLayersList] =
     useState<IActiveRealityMap>(currentLayersList);
   let toolInstance: ITools = { toolName: "", toolAction: "" };
-  // const closeStructurePages = (e: any) => {
-  //   if (!rightOverlayRefs.current.contains(e.target)) {
-  //     setRighttNav(false);
-  //     setActive(e.target.id);
-  //     console.log('This is triggered!!!!!!!!!!!!!!!!!!!!!!!!',e);
-  //   }
-  // };
   useEffect(() => {
     setIViewMode(viewMode);
-    //   document.addEventListener('click', closeStructurePages);
-    //   return () => {
-    //     document.removeEventListener('click', closeStructurePages);
-    //   };
   }, [viewMode]);
+  useEffect(() => {
+    if (myTypesList && Object.keys(myTypesList)?.length) {
+      setSelectedType(Object.keys(myTypesList)[0]);
+    }
+  }, [myTypesList]);
+  const typeChange = (changeOb: any) => {
+    setRighttNav(false);
+    toolInstance.toolName = "viewType";
+    toolInstance.toolAction = changeOb.target.value;
+    toolClicked(toolInstance);
+    setSelectedType(changeOb.target.value);
+  };
+
+  const LayerChange = (changeOb: any) => {
+    if (changeOb.target.checked == true) {
+      toolInstance.toolName = "addViewLayer";
+      toolInstance.toolAction = changeOb.target.value;
+    } else {
+      toolInstance.toolName = "removeViewLayer";
+      toolInstance.toolAction = changeOb.target.value;
+    }
+
+    toolClicked(toolInstance);
+  };
 
   useEffect(() => {
     setMyProject(currentProject);
@@ -137,9 +155,31 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
   return (
     <SectionToolBar>
       <ToolbarContainer>
-        <Typebar rightMenuClickHandler={rightMenuClickHandler} />
+        <Typebar
+          rightMenuClickHandler={rightMenuClickHandler}
+          myTypesList={myTypesList}
+          typeChange={typeChange}
+          selectedValue={selectedType}
+          openList={openSelectTypes}
+          setOpenList={setOpenSelectTypes}
+          onListClick={() => {
+            setOpenSelectLayer(false);
+            setOpenSelectTypes(!openSelectTypes);
+          }}
+        />
 
-        <Layers rightMenuClickHandler={rightMenuClickHandler} />
+        <Layers
+          rightMenuClickHandler={rightMenuClickHandler}
+          myLayersList={myLayersList}
+          LayerChange={LayerChange}
+          selectedValue={selectedLayer}
+          openList={openSelectLayer}
+          setOpenList={setOpenSelectLayer}
+          onListClick={() => {
+            setOpenSelectTypes(false);
+            setOpenSelectLayer(!openSelectLayer);
+          }}
+        />
 
         <Issues rightMenuClickHandler={rightMenuClickHandler} />
 
@@ -147,13 +187,8 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
 
         <Hotspot />
       </ToolbarContainer>
-      {/* <div className={styles.toolBarContainer}></div> */}
     </SectionToolBar>
   );
-
-  // <div className={styles.sectionToolBar}>
-
-  // </div>
 };
 
 export default ToolBarMenuWrapper;

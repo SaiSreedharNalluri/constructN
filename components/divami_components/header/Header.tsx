@@ -139,13 +139,13 @@ const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
               >
                 Design
               </HeaderToggleButtonOne>
-              <HeaderToggleButtonTwo
+              <HeaderToggleButtonOne
                 onClick={rightMenuClickHandler}
                 toggleStatus={!isDesignSelected}
                 id="Reality"
               >
                 Reality
-              </HeaderToggleButtonTwo>
+              </HeaderToggleButtonOne>
             </HeaderToggle>
           ) : (
             <></>

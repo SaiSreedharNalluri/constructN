@@ -23,6 +23,8 @@ const SelectLayer = ({
   title,
   openselectlayer,
   onCloseHandler,
+  optionsList,
+  onSelect,
 }: SelectLayerProps) => {
   const [treeViewData, setTreeViewData] = useState<RenderTree[]>(mockData);
   const [selectedLayers, setSelectedLayers] = useState<any>(null);

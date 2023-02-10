@@ -13,4 +13,6 @@ export interface SelectLayerProps {
   title: string;
   openselectlayer: boolean;
   onCloseHandler: () => void;
+  optionsList: any;
+  onSelect: any;
 }

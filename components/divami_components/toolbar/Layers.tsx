@@ -19,12 +19,18 @@ import {
 } from "./ToolBarStyles";
 import SelectLayer from "../select-layers/SelectLayer";
 
-const Layers = ({ rightMenuClickHandler }: any) => {
-  const [openSelectLayer, setOpenSelectLayer] = useState(false);
-
+const Layers = ({
+  rightMenuClickHandler,
+  myLayersList,
+  LayerChange,
+  selectedValue,
+  onListClick,
+  openList,
+  setOpenList,
+}: any) => {
   return (
     <>
-      <LayersWrapper onClick={() => setOpenSelectLayer(!openSelectLayer)}>
+      <LayersWrapper onClick={onListClick}>
         <LayerSecondSectionHexImg>
           <Image src={hexagonIcon} width={12} height={12} alt="Arrow" />{" "}
         </LayerSecondSectionHexImg>
@@ -40,11 +46,13 @@ const Layers = ({ rightMenuClickHandler }: any) => {
       </LayersWrapper>
       <SelectLayersWrapper>
         <SelectLayer
-          openselectlayer={openSelectLayer}
+          openselectlayer={openList}
           title={"Select Layer"}
           onCloseHandler={() => {
-            setOpenSelectLayer(false);
+            setOpenList(false);
           }}
+          optionsList={myLayersList}
+          onSelect={LayerChange}
         />
       </SelectLayersWrapper>
     </>

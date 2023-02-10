@@ -30,32 +30,20 @@ export const HeaderToggle = styled("div")({
   boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.2)",
   marginRight: "15px",
   borderRadius: "4px",
+  border: "1px solid #F1742E",
 });
 
 export const HeaderToggleButtonOne = styled("button")((props: any) => ({
-  background: props?.toggleStatus ? "#FFFFFF" : "#F1742E",
-  border: props?.toggleStatus ? `1px solid #FFFFFF` : "none",
+  background: !props?.toggleStatus ? "#FFFFFF" : "#F1742E",
+  border: !props?.toggleStatus ? `1px solid #FFFFFF` : "none",
   cursor: "pointer",
-  color: props?.toggleStatus ? "#36415D" : "#FFFFFF",
+  color: !props?.toggleStatus ? "#36415D" : "#FFFFFF",
   padding: "6px 10px",
   height: "30px",
   display: "flex",
   alignItems: "center",
   borderTopLeftRadius: "4px",
   borderBottomLeftRadius: "4px",
-})) as any;
-
-export const HeaderToggleButtonTwo = styled("button")((props: any) => ({
-  background: props?.toggleStatus ? "#FFFFFF" : "#F1742E",
-  border: props?.toggleStatus ? `1px solid #FFFFFF` : "none",
-  cursor: "pointer",
-  color: props?.toggleStatus ? "#36415D" : "#FFFFFF",
-  padding: "6px 10px",
-  height: "30px",
-  display: "flex",
-  alignItems: "center",
-  borderTopRightRadius: "4px",
-  borderBottomRightRadius: "4px",
 })) as any;
 
 export const HeaderProfileImageContainer = styled("div")({
