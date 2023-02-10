@@ -29,6 +29,7 @@ const StyledDrawer = styled(Drawer)`
   }
 `;
 
+
 const Issues = ({
   rightMenuClickHandler,
   issuesList,
