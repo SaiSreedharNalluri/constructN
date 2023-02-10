@@ -6,16 +6,21 @@ interface IProps {
   tree: ChildrenEntity[];
   getStructureData: (structure: ChildrenEntity) => void;
   depth: any;
-  currentClickedStruct:string;
+  currentClickedStruct: string;
 }
-const Tree: React.FC<IProps> = ({ tree, getStructureData, depth,currentClickedStruct }) => {
+const Tree: React.FC<IProps> = ({
+  tree,
+  getStructureData,
+  depth,
+  currentClickedStruct,
+}) => {
   const Treenode = (structure: ChildrenEntity) => {
     const [visible, setVisible] = useState(false);
-    const [clickedStruct,setClickedStruct]=useState(currentClickedStruct);
+    const [clickedStruct, setClickedStruct] = useState(currentClickedStruct);
     const hasChild = structure.children?.length ? true : false;
-    useEffect(()=>{
+    useEffect(() => {
       setClickedStruct(currentClickedStruct);
-    },[currentClickedStruct]);
+    }, []);
     const getICon = () => {
       if (!hasChild) {
         return;
@@ -28,56 +33,49 @@ const Tree: React.FC<IProps> = ({ tree, getStructureData, depth,currentClickedSt
       }
     };
     return (
-      
-        <li key={structure._id} className=" flex-col relative ">
+      <li key={structure._id} className=" flex-col relative ">
+        <div>
           <div
-            
+            className={`flex ${
+              structure._id === clickedStruct ? 'bg-white' : ''
+            } justify-between border-b border-solid border-gray-400 p-1`}
           >
             <div
-              className={`flex ${structure._id===clickedStruct?'bg-white':''} justify-between border-b border-solid border-gray-400 p-1`}
-            
-            >
-               
-              <div
               className={`flex margin${depth}`}
               onClick={() => {
                 getStructureData(structure);
-                //setCurrentClickedStruct(structure._id);
-                
-              }}>
-                <div
-              className='hover:bg-gray-300 px-2 hover:rounded-full'
-               onClick={() => {
-                //getStructureData(structure);
-                setVisible((vis) => !vis);
-              }}>{getICon()}</div>
-                <p className={`text-sm cursor-pointer `}>
-                  {structure.name}{' '}
-                </p>
+              }}
+            >
+              <div
+                className="hover:bg-gray-300 px-2 hover:rounded-full"
+                onClick={() => {
+                  setVisible((vis) => !vis);
+                }}
+              >
+                {getICon()}
               </div>
-              
+              <p className={`text-sm cursor-pointer `}>{structure.name} </p>
             </div>
           </div>
-          {hasChild && visible && (
-            <div className="flex-col  ">
-              <div className="xyz">
-                  <Tree
-                    currentClickedStruct={clickedStruct}
-                    tree={structure.children as Array<ChildrenEntity>}
-                    getStructureData={getStructureData}
-                    depth={depth + 1}
-                  />
-              </div>
+        </div>
+        {hasChild && visible && (
+          <div className="flex-col  ">
+            <div className="xyz">
+              <Tree
+                currentClickedStruct={clickedStruct}
+                tree={structure.children as Array<ChildrenEntity>}
+                getStructureData={getStructureData}
+                depth={depth + 1}
+              />
             </div>
-          )}
-        </li>
-      
+          </div>
+        )}
+      </li>
     );
   };
   return (
     <React.Fragment>
       <ul className="list-none   ">
-        
         {tree.map((structure) => {
           return Treenode(structure);
         })}
