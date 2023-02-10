@@ -1,16 +1,18 @@
 export interface RenderTree {
-  id: string
-  name: string
-  children?: RenderTree[]
-  isSelected: boolean
+  id: string;
+  name: string;
+  children?: RenderTree[];
+  isSelected: boolean;
 }
 
 export interface SelectLayerContainerProps {
-  openSelectLayer: boolean
+  openSelectLayer: boolean;
 }
 
 export interface SelectLayerProps {
-  title: string
-  openSelectLayer: boolean
-  onCloseHandler: () => void
+  title: string;
+  openselectlayer: boolean;
+  onCloseHandler: () => void;
+  optionsList: any;
+  onSelect: any;
 }

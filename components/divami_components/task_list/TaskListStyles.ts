@@ -80,7 +80,6 @@ export const DueDate = styled(Box)({
 });
 
 export const BodyContainer = styled(Box)`
-  height: 71%;
   padding-left: 20px;
   padding-right: 20px;
   overflow: auto;

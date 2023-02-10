@@ -2,8 +2,8 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Checkbox from "@mui/material/Checkbox";
 import { useEffect, useState } from "react";
-import closeIcon from "../../public/images/closeIcon.svg";
-// import CustomSearch from "../common/custom-search/CustomSearch";
+import closeIcon from "../../../public/divami_icons/closeIcon.svg";
+import CustomSearch from "../customSearch";
 import { CheckBox, CheckBoxChecked } from "./IconStore";
 import { mockData } from "./mockData";
 import {
@@ -21,8 +21,10 @@ import { getSelectedLayers, handleSelection } from "./Utils";
 
 const SelectLayer = ({
   title,
-  openSelectLayer,
+  openselectlayer,
   onCloseHandler,
+  optionsList,
+  onSelect,
 }: SelectLayerProps) => {
   const [treeViewData, setTreeViewData] = useState<RenderTree[]>(mockData);
   const [selectedLayers, setSelectedLayers] = useState<any>(null);
@@ -62,7 +64,7 @@ const SelectLayer = ({
   }, [treeViewData]);
 
   return (
-    <SelectLayerContainer openSelectLayer={openSelectLayer}>
+    <SelectLayerContainer openSelectLayer={openselectlayer}>
       <HeaderLabelContainer>
         <HeaderLabel>{title}</HeaderLabel>
         <CloseIcon
@@ -72,7 +74,7 @@ const SelectLayer = ({
         />
       </HeaderLabelContainer>
       <SearchContainer>
-        {/* <CustomSearch data={mockData} setSearchResult={setTreeViewData} /> */}
+        <CustomSearch data={mockData} setSearchResult={setTreeViewData} />
       </SearchContainer>
       <TreeViewContainer>
         <StyledTreeView
