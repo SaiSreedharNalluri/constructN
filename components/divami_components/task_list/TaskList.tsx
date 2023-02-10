@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import React, { useState, useEffect } from "react";
 // ../styles/Home.module.css
 import Image from "next/image";
 // import dividerIcon from "../../../public/images/dividerIcon.svg";
@@ -9,6 +10,7 @@ import FilterInActive from "../../../public/divami_icons/filterInactive.svg";
 import Search from "../../../public/divami_icons/search.svg";
 import UpArrow from "../../../public/divami_icons/upArrow.svg";
 import Divider from "../../../public/divami_icons/divider.svg";
+import DownArrow from "../../../public/divami_icons/downArrow.svg";
 import {
   ArrowUpIcon,
   BodyContainer,
@@ -33,67 +35,137 @@ import {
   LoadMoreButton,
   ArrowUpContainer,
   DividerIcon,
+  ArrowDownIcon,
 } from "./TaskListStyles";
 import RFIList from "../../../public/divami_icons/rfilist.svg";
 import SubmittalList from "../../../public/divami_icons/submittalList.svg";
 import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
+import router from "next/router";
+import { getProjectUsers } from "../../../services/project";
+import {
+  getTasksTypes,
+  getTasksPriority,
+  getTaskStatus,
+} from "../../../services/task";
+import TaskList from "../../container/rightFloatingMenu/taskMenu/taskList";
+import Moment from "moment";
 
 const CustomTaskListDrawer = (props: any) => {
-  const { onClose } = props;
+  const {
+    onClose,
+    tasksList,
+    taskMenuClicked,
+    currentProject,
+    currentStructure,
+    currentSnapshot,
+    closeTaskFilterOverlay,
+    handleOnTaskFilter,
+  } = props;
+
   const taskListing = [
     {
       id: 107,
       title: "Submittals",
-      status: "In Progress",
       priority: "Medium",
       assignee: "Alex Brandon",
-      due_date: "03 Jan'23",
+      due_date: new Date("2022-02-10T12:00:00"),
     },
 
     {
       id: 320,
       title: "Transmittals",
-      status: "Completed",
       priority: "Medium",
       assignee: "Charles Sean",
-      due_date: "01 Jan'23",
+      due_date: new Date("2022-01-08T10:00:00"),
     },
     {
       id: 407,
       title: "Submittals",
-      status: "To-do",
       priority: "High",
       assignee: "Ben Fratz",
-      due_date: "31 Dec'23",
+      due_date: new Date("2022-11-11T14:00:00"),
     },
     {
       id: 407,
       title: "Submittals",
-      status: "To-do",
       priority: "High",
       assignee: "Ben Fratz",
-      due_date: "31 Dec'23",
+      due_date: new Date("2022-05-22T09:00:00"),
     },
     {
       id: 407,
       title: "Submittals",
-      status: "To-do",
       priority: "High",
       assignee: "Ben Fratz",
-      due_date: "31 Dec'23",
-    },
-    {
-      id: 407,
-      title: "Submittals",
-      status: "To-do",
-      priority: "High",
-      assignee: "Ben Fratz",
-      due_date: "31 Dec'23",
+      due_date: new Date("2022-01-01T11:00:00"),
     },
   ];
 
+  const [taskType, setTaskType] = useState<[string]>();
+  const [taskPriority, setTaskPriority] = useState<[string]>();
+  const [projectUsers, setProjectUsers] = useState([]);
+  const [taskStatus, setTaskStatus] = useState<[string]>();
+  const [dateSortState, setDateSortState] = useState("ascending");
+  const [taskListDataState, setTaskListDataState] = useState([]);
+
+  useEffect(() => {
+    handleDatesSort();
+    let tempTaskDataState: any = [];
+    tasksList?.map((task: any) => {
+      let tempTask = {
+        id: task._id,
+        type: task.type,
+        priority: task.priority,
+        assignee: task.assignees[0].firstName,
+        due_date: task.due_date,
+      };
+      tempTaskDataState.push(tempTask);
+    });
+    setTaskListDataState(tempTaskDataState);
+  }, []);
+
   const handleClose = () => {
     onClose(true);
+  };
+
+  useEffect(() => {
+    if (router.isReady) {
+      getTasksTypes(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setTaskType(response.result);
+        }
+      });
+      getTasksPriority(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setTaskPriority(response.result);
+        }
+      });
+      getProjectUsers(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+          }
+        })
+        .catch();
+      getTaskStatus(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setTaskStatus(response.result);
+        }
+      });
+    }
+  }, []);
+
+  const handleDatesSort = () => {
+    const sortedDatesData = [...taskListDataState].sort((a: any, b: any) => {
+      if (dateSortState === "ascending") {
+        setDateSortState("descending");
+        return a.due_date - b.due_date;
+      } else {
+        setDateSortState("ascending");
+        return b.due_date - a.due_date;
+      }
+    });
+    setTaskListDataState(sortedDatesData);
   };
 
   return (
@@ -115,7 +187,27 @@ const CustomTaskListDrawer = (props: any) => {
         <MiniSymbolsContainer>
           <SearchGlassIcon src={Search} alt={"close icon"} />
           <DividerIcon src={Divider} alt="" />
-          <ArrowUpIcon src={UpArrow} alt="Arrow" />
+          {dateSortState === "ascending" ? (
+            <>
+              <ArrowUpIcon
+                onClick={() => {
+                  handleDatesSort();
+                }}
+                src={UpArrow}
+                alt="Arrow"
+              />
+            </>
+          ) : (
+            <>
+              <ArrowDownIcon
+                onClick={() => {
+                  handleDatesSort();
+                }}
+                src={DownArrow}
+                alt="Arrow"
+              />
+            </>
+          )}
           <DueDate>Due Date</DueDate>
           <DownloadIcon src={Download} alt="Arrow" />
           <FunnelIcon src={FilterInActive} alt="Arrow" />
@@ -124,38 +216,35 @@ const CustomTaskListDrawer = (props: any) => {
 
       <BodyContainer>
         <Box sx={{ marginTop: "15px" }}>
-          {taskListing.map((val) => {
+          {taskListDataState.map((val: any) => {
             return (
               <div>
                 <BodyInfo>
                   <FirstHeader>
                     <Image
                       src={
-                        val.title === "RFI"
+                        val.type === "RFI"
                           ? RFIList
-                          : val.title === "Transmittals"
+                          : val.type === "Transmittals"
                           ? TransmittalList
-                          : val.title === "Submittals"
+                          : val.type === "Submittals"
                           ? SubmittalList
                           : ""
                       }
-                      alt="Arrow"
+                      alt="Arr"
                     />
                     <BodyContTitle>
-                      {val.title} (#{val.id})
+                      {val.type} (#{val.id})
                     </BodyContTitle>
                   </FirstHeader>
-
                   <SecondHeader>
                     <div>{val.priority} Priority</div>
                   </SecondHeader>
-
-                  {/* <div className={styles.second_header}>
-                  </div> */}
-
                   <ThirdHeader>
                     <div>{val.assignee}</div>
-                    <DueDateDiv>Due by {val.due_date}</DueDateDiv>
+                    <DueDateDiv>
+                      Due by {Moment(val.due_date).format("DD MMM 'YY")}
+                    </DueDateDiv>
                   </ThirdHeader>
                 </BodyInfo>
                 <HorizontalLine></HorizontalLine>

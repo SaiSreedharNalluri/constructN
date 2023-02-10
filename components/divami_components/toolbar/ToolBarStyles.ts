@@ -45,14 +45,20 @@ export const TaskBox = styled("div")({
 export const TaskTitleDiv = styled("div")({});
 
 export const IssuesSectionPlusImg = styled("div")({
+  width: "12px",
+  height: "12px",
   marginLeft: "8px",
 });
 
 export const IssuesSectionFileImg = styled("div")({
+  width: "12px",
+  height: "12px",
   marginLeft: "13px",
 });
 
 export const IssuesSectionClipImg = styled("div")({
+  width: "12px",
+  height: "12px",
   marginLeft: "13px",
 });
 
@@ -105,12 +111,19 @@ export const LayersWrapper = styled("div")({
   padding: "15px 20px",
 });
 
-export const LayerSecondSectionHexImg = styled("div")({});
+export const LayerSecondSectionHexImg = styled("div")({
+  width: "12px",
+  height: "12px",
+});
 
 export const LayerSecondSectionCamImg = styled("div")({
   marginLeft: "16px",
+  width: "12px",
+  height: "12px",
 });
 
 export const LayerSecondSectionArrImg = styled("div")({
   marginLeft: "14px",
+  width: "12px",
+  height: "12px",
 });

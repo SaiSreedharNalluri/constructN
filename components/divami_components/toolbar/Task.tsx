@@ -19,11 +19,35 @@ import {
 } from "./ToolBarStyles";
 import TaskList from "../task_list/TaskList";
 
-const Task = ({ rightMenuClickHandler }: any) => {
+const Task = ({
+  rightMenuClickHandler,
+  tasksList,
+  toolClicked,
+  currentProject,
+  currentSnapshot,
+  currentStructure,
+  currentLayersList,
+  currentTypesList,
+  closeTaskFilterOverlay,
+  handleOnTaskFilter,
+}: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [rightNav, setRighttNav] = useState(false);
+  const [myProject, setMyProject] = useState(currentProject);
+  const [myStructure, setMyStructure] = useState(currentStructure);
+  const [mySnapshot, setMySnapshot] = useState(currentSnapshot);
+  const [myTypesList, setMyTypesList] = useState(currentTypesList);
+
+  const taskMenuClicked = (localTool: any) => {
+    toolClicked(localTool);
+    if (
+      localTool.toolAction === "taskCreateClose" ||
+      localTool.toolAction === "taskViewClose"
+    )
+      setRighttNav(!rightNav);
+  };
 
   const handleViewTaskList = () => {
-    console.log("teskssksk trigg");
     setOpenDrawer(true);
   };
   return (
@@ -67,7 +91,16 @@ const Task = ({ rightMenuClickHandler }: any) => {
           open={openDrawer}
           onClose={() => setOpenDrawer((prev: any) => !prev)}
         >
-          <TaskList onClose={() => setOpenDrawer((prev: any) => !prev)} />
+          <TaskList
+            tasksList={tasksList}
+            taskMenuClicked={taskMenuClicked}
+            currentProject={myProject}
+            currentStructure={myStructure}
+            currentSnapshot={mySnapshot}
+            closeTaskFilterOverlay={closeTaskFilterOverlay}
+            handleOnTaskFilter={handleOnTaskFilter}
+            onClose={() => setOpenDrawer((prev: any) => !prev)}
+          />
         </Drawer>
       )}
     </TaskBox>

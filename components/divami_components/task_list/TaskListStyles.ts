@@ -83,7 +83,7 @@ export const BodyContainer = styled(Box)`
   height: 71%;
   padding-left: 20px;
   padding-right: 20px;
-  overflow: scroll;
+  overflow: auto;
 `;
 
 export const FirstHeader = styled("div")({
@@ -115,6 +115,11 @@ export const DueDateDiv = styled("div")({
   lineHeight: "19px",
 });
 
+export const ArrowDownIcon = styled(Image)({
+  cursor: "pointer",
+  marginLeft: "27px",
+});
+
 export const HorizontalLine = styled("div")({
   backgroundColor: "#d9d9d9",
   borderBottom: "1px solid #d9d9d9",
@@ -136,5 +141,3 @@ export const ArrowUpContainer = styled("div")({
   border: "1px solid red",
   marginLeft: "10px",
 });
-
-
