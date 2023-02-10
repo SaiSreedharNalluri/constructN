@@ -20,7 +20,7 @@ import { IDesignMap } from "../../../models/IDesign";
 import { IActiveRealityMap } from "../../../models/IReality";
 import { ISnapshot } from "../../../models/ISnapshot";
 import { IStructure } from "../../../models/IStructure";
-import { ITools } from "../../../models/ITools";
+import { IToolResponse, ITools } from "../../../models/ITools";
 import { SectionToolBar, ToolbarContainer } from "./ToolBarStyles";
 import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
@@ -43,6 +43,7 @@ interface IProps {
   closeFilterOverlay: () => void;
   handleOnTaskFilter: (formData: object) => void;
   closeTaskFilterOverlay: () => void;
+  contextInfo: IToolResponse;
 }
 
 const ToolBarMenuWrapper: React.FC<IProps> = ({
@@ -61,6 +62,7 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
   closeFilterOverlay,
   closeTaskFilterOverlay,
   handleOnTaskFilter,
+  contextInfo,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -143,9 +145,19 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
 
         <Layers />
 
-        <Issues />
+        <Issues
+          currentProject={currentProject}
+          currentSnapshot={currentSnapshot}
+          currentStructure={currentStructure}
+          contextInfo={contextInfo}
+        />
 
-        <Task />
+        <Task
+          currentProject={currentProject}
+          currentSnapshot={currentSnapshot}
+          currentStructure={currentStructure}
+          contextInfo={contextInfo}
+        />
 
         <Hotspot />
       </ToolbarContainer>
