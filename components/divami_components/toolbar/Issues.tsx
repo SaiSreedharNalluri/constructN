@@ -129,6 +129,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
+            handleOnSort={()=>{}}
+            deleteTheIssue={()=>{}}
+            clickIssueEditSubmit={()=>{}}
           />
         </Drawer>
       )}

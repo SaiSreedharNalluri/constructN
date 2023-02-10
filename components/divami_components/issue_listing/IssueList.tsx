@@ -1,8 +1,6 @@
 import { Box } from "@mui/material";
-// ../styles/Home.module.css
 import Image from "next/image";
-// import dividerIcon from "../../../public/images/dividerIcon.svg";
-// import filterFunnelIcon from "../../../public/images/filterFunnelIcon.svg";
+
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
 import Download from "../../../public/divami_icons/download.svg";
 import FilterInActive from "../../../public/divami_icons/filterInactive.svg";
@@ -69,8 +67,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   clickIssueEditSubmit,
   onClose,
 }) => {
-  // const { onClose } = props;
-  console.log("issuesList", issuesList);
+  // console.log("issuesList", issuesList);
   const issueListing = [
     {
       id: 107,
@@ -110,7 +107,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const handleClose = () => {
     onClose(true);
   };
-  // const [sortedDates, setSortedDates] = useState(issueListing);
   const [sortedDates, setSortedDates] = useState(issuesList);
   const [sortOrder, setSortOrder] = useState("asc");
 
@@ -130,23 +126,12 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setSortedDates(sorted);
   };
 
-  // const sortDueDate = () => {
-  //   const sorted = [...issueListing].sort((a:any, b:any) => {
-  //     return (a.due_date) - (b.due_date);
-  //   });
-
-  // <button onClick={sortDateOrdering}>
-  //           Sort {sortOrder === "asc" ? "▼" : "▲"}
-  //         </button>
-  //   setSortedDates(sorted);
-  // };
-
   return (
     <TaskListContainer>
       <HeaderContainer>
         <TitleContainer>
           <span>Issue List</span>
-          
+
           <CloseIcon
             onClick={() => {
               handleClose();
@@ -162,14 +147,17 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
           <SearchGlassIcon src={Search} alt={"close icon"} />
           <DividerIcon src={Divider} alt="" />
 
-          {/* <ArrowUpIcon src={UpArrow} alt="Arrow" /> */}
           {sortOrder === "asc" ? (
             <ArrowUpIcon onClick={sortDateOrdering} src={UpArrow} alt="Arrow" />
           ) : (
-            <ArrowDownIcon onClick={sortDateOrdering} src={downArrow} alt="Arrow" />
+            <ArrowDownIcon
+              onClick={sortDateOrdering}
+              src={downArrow}
+              alt="Arrow"
+            />
           )}
           <DueDate>Due Date</DueDate>
-          <DownloadIcon src={Download} alt="Arrow"  />
+          <DownloadIcon src={Download} alt="Arrow" />
           <FunnelIcon src={FilterInActive} alt="Arrow" />
         </MiniSymbolsContainer>
       </MiniHeaderContainer>
@@ -202,11 +190,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     <div>{val.priority} Priority</div>
                   </SecondHeader>
 
-                  {/* <div className={styles.second_header}>
-                  </div> */}
-                  {/*  {Moment(taskInfo.createdAt).format(
-                                    'MMM Do YYYY'
-                                  )} */}
                   <ThirdHeader>
                     <div>{val.assignees[0].firstName}</div>
                     <DueDateDiv>
