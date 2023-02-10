@@ -6,9 +6,11 @@ import plusCircleIcon from "../../../public/divami_icons/plusCircleIcon.svg";
 import fileTextIcon from "../../../public/divami_icons/fileTextIcon.svg";
 import triWarnIcon from "../../../public/divami_icons/triWarnIcon.svg";
 import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIcon.svg";
-import { IssueListing } from "../../divami_components/issue_list/IssueList";
+// import  IssueListing  from "../../divami_components/issue_listing/IssueList";
 import { styled } from "@mui/system";
-import IssueList from "../issue_listing/IssueList";
+// import IssueList from "../issue_listing/IssueList";
+
+
 
 import {
   IssueBox,
@@ -17,8 +19,9 @@ import {
   IssuesSectionClipImg,
 } from "./ToolBarStyles";
 import { Drawer } from "@mui/material";
-// import CustomIssueListDrawer from "../issue_listing/IssueList";
+import CustomIssueListDrawer from "../issue_listing/IssueList";
 import TaskList from "../task_list/TaskList";
+import { ITools } from "../../../models/ITools";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
@@ -26,9 +29,31 @@ const StyledDrawer = styled(Drawer)`
   }
 `;
 
-const Issues = ({ rightMenuClickHandler }: any) => {
+const Issues = ({
+  rightMenuClickHandler,
+  issuesList,
+  issueMenuClicked,
+  handleOnFilter,
+  myProject,
+  myStructure,
+  mySnapshot,
+  closeFilterOverlay,
+}: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
+   const [listOverlay, setListOverlay] = useState(false);
+  const [createOverlay, setCreateOverlay] = useState(false);
+  // const [issueVisbility, setIssueVisibility] = useState(
+  //   issueLayer === undefined ? false : issueLayer
+  // );
+  let issueMenuInstance: ITools = { toolName: 'issue', toolAction: '' };
+
+
+    const closeIssueList = () => {
+    //setListOverlay(false);
+    issueMenuInstance.toolAction = 'issueViewClose';
+    issueMenuClicked(issueMenuInstance);
+  };
   const handleViewTaskList = () => {
     console.log("teskssksk trigg");
     setOpenDrawer(true);
@@ -91,13 +116,20 @@ const Issues = ({ rightMenuClickHandler }: any) => {
         </StyledDrawer>
       )} */}
 
-     {openDrawer && (
+      {openDrawer && (
         <Drawer
           anchor={"right"}
           open={openDrawer}
           onClose={() => setOpenDrawer((prev: any) => !prev)}
         >
-          <IssueList onClose={() => setOpenDrawer((prev: any) => !prev)} />
+          <CustomIssueListDrawer
+            closeFilterOverlay={closeFilterOverlay}
+            issuesList={issuesList}
+            visibility={listOverlay}
+            closeOverlay={closeIssueList}
+            handleOnFilter={handleOnFilter}
+            onClose={() => setOpenDrawer((prev: any) => !prev)}
+          />
         </Drawer>
       )}
     </div>

@@ -65,6 +65,11 @@ export const ArrowUpIcon = styled(Image)({
   marginLeft: "27px",
 });
 
+export const ArrowDownIcon  = styled(Image)({
+  cursor: "pointer",
+  marginLeft: "27px",
+});
+
 export const DownloadIcon = styled(Image)({
   cursor: "pointer",
   marginLeft: "12px",
