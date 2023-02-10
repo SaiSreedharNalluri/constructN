@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import Image from 'next/image';
 import { IProjects } from '../../models/IProjects';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { ProjectTypes } from '../../utils/constants';
 import ChangeIcon from './changeIcon';
 import { Map, Marker } from 'react-map-gl';
+import { useRouter } from 'next/router';
+import { getProjectTypes } from '../../services/project';
 interface IProps {
   projectData: IProjects;
   updateProjectData: (updateInfo: object) => void;
@@ -18,6 +19,19 @@ const ProjectInfo: React.FC<IProps> = ({
   updateProjectData,
   handleImageUPload,
 }) => {
+  const router = useRouter();
+  const [projectTypes, setProjectTypes] = useState<[string]>();
+  useEffect(() => {
+    if (router.isReady) {
+      getProjectTypes()
+        .then((response) => {
+          if (response.success === true) {
+            setProjectTypes(response.result);
+          }
+        })
+        .catch();
+    }
+  }, [router.isReady]);
   const initialValues: {
     name: string;
     type: string;
@@ -42,6 +56,7 @@ const ProjectInfo: React.FC<IProps> = ({
     Location: Yup.array(),
     utm: Yup.string(),
   });
+
   return (
     <React.Fragment>
       <div className="w-full row-span-2 overflow">
@@ -88,11 +103,12 @@ const ProjectInfo: React.FC<IProps> = ({
                   id="type"
                   className="border border-solid border-gray-500 w-full p-2  rounded"
                 >
-                  {ProjectTypes.map((option: any) => (
-                    <option key={option.id} value={option.id}>
-                      {option.name}
-                    </option>
-                  ))}
+                  {projectTypes &&
+                    projectTypes.map((option: string) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
                 </Field>
               </div>
             </div>

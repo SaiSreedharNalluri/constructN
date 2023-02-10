@@ -92,7 +92,7 @@ const Index: React.FC<IProps> = () => {
 
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
-    let myTool : ITools ={toolName:'task',toolAction:'taskCreated'};
+    let myTool: ITools = { toolName: 'task', toolAction: 'taskCreated' };
     toolClicked(myTool);
     setOpenCreateTask(false);
   };
@@ -163,6 +163,12 @@ const Index: React.FC<IProps> = () => {
 
   const updateRealityMap = (realityMap: IActiveRealityMap) => {
     setActiveRealityMap(realityMap);
+    if (currentViewLayers.length > 0) {
+      currentViewLayers.length = 0;
+    }
+    Object.keys(realityMap).map((key) => {
+      currentViewLayers.push(key);
+    });
     console.log('change triggered', realityMap);
   };
 
@@ -249,7 +255,6 @@ const Index: React.FC<IProps> = () => {
 
   const toolClicked = (toolInstance: ITools) => {
     let newLayers = currentViewLayers;
-
     switch (toolInstance.toolName) {
       case 'viewType':
         setViewType(toolInstance.toolAction);
@@ -270,7 +275,6 @@ const Index: React.FC<IProps> = () => {
           case 'issueSelect':
           case 'issueShow':
           case 'issueHide':
-            console.log("action chose",toolInstance.toolAction);
             setClickedTool(toolInstance);
 
             break;
