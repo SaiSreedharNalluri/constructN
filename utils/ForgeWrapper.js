@@ -91,6 +91,12 @@ export class ForgeViewerUtils {
     this.isAddTagActive = this.activateTool(type);
   }
 
+  selectTag(tag) {
+    if (this.dataVizUtils) {
+      this.dataVizUtils.selectTag(tag);
+    }
+  }
+
   onDataVizHandler(event, targetObject) {
     const result = this.viewer.clientToWorld(event.originalEvent.clientX, event.originalEvent.clientY);
     switch(event.type) {
@@ -155,6 +161,7 @@ export class ForgeViewerUtils {
   }
 
   loadLayersOnDataLoadCompletion() {
+    console.log("Inside loadlayers On data load complete: ", this.isPendingLayersToLoad, this.isModelLoaded, this.dataVizUtils);
     if (this.isPendingLayersToLoad) {
       if (this.isModelLoaded && this.dataVizUtils) {
         this.loadLayers();
@@ -485,32 +492,27 @@ export class ForgeViewerUtils {
   }
 
   setForgeControls(type) {
-    // if (this.bimWalkExtn) {
-		// 	if (type == 'orbit') {
-		// 		this.viewer.navigation.setIsLocked(false);
-		// 		if (this.viewer.getExtension('Autodesk.BimWalk')){
-		// 			this.viewer.getExtension('Autodesk.BimWalk').deactivate()
-		// 		}
-		// 	} else if (type == 'FPV') {
-		// 		this.viewer.navigation.setIsLocked(false);
-		// 		if (this.viewer.getExtension('Autodesk.BimWalk')){
-		// 			this.viewer.getExtension('Autodesk.BimWalk').activate()
-		// 		}
-		// 	} else {
-		// 		this.viewer.navigation.setLockSettings({
-		// 			'orbit': false,
-		// 			'pan': false,
-		// 			'zoom': false,
-		// 			'roll': false,
-		// 			'fov': true
-		// 		})
-		// 		this.viewer.navigation.setIsLocked(true);
+    if (this.bimWalkExtn) {
+      if (this.isCompareView && type === "panorama") {
+        this.viewer.navigation.setLockSettings({
+					'orbit': false,
+					'pan': false,
+					'zoom': false,
+					'roll': false,
+					'fov': true
+				})
+				this.viewer.navigation.setIsLocked(true);
 
-		// 		if (this.viewer.getExtension('Autodesk.BimWalk')){
-		// 			this.viewer.getExtension('Autodesk.BimWalk').activate()
-		// 		}
-		// 	}
-    // }
+				if (this.viewer.getExtension('Autodesk.BimWalk')){
+					this.viewer.getExtension('Autodesk.BimWalk').activate()
+				}
+      } else {
+        this.viewer.navigation.setIsLocked(false);
+				if (this.viewer.getExtension('Autodesk.BimWalk')){
+					this.viewer.getExtension('Autodesk.BimWalk').deactivate()
+				}
+      }
+    }
   }
 
 
@@ -572,10 +574,13 @@ export class ForgeViewerUtils {
   }
 
   shutdown() {
+    
+    if(this.isViewerInitialized) {
+      this.removeData();
+      this.viewer.uninitialize();
+      Autodesk.Viewing.shutdown();
+    }
     this.isViewerInitialized = false;
-    // this.viewer.finish();
-    // this.viewer.uninitialize();
-    // Autodesk.Viewing.shutdown();
   }
 
   onLoadFileEvent(parameter) {

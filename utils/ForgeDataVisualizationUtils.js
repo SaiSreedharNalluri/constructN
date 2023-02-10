@@ -1,3 +1,5 @@
+import { faBreadSlice } from "@fortawesome/free-solid-svg-icons";
+
 export class ForgeDataVisualization {
     static EXTENSION_ID = "Autodesk.DataVisualization";
     constructor(viewer, dataVisualizationExtension) {
@@ -17,17 +19,8 @@ export class ForgeDataVisualization {
         this.setOcclusion(true);
         this.viewableHoveringHandler = this.onSpriteHovering.bind(this);
         this.viewableClickHandler = this.onSpriteClicked.bind(this);
+        this.viewableClickOutHandler = this.onSpriteClickedOut.bind(this);
     }
-
-    // static getInstance(viewer, extension) {
-    //     if (!this.instance) {
-    //     this.instance = new ForgeDataVisualization(viewer, extension);
-    //     delete this.instance.constructor;
-    //     } else {
-    //         this.dataVizExtn = extension;
-    //     }
-    //     return this.instance;
-    // }
 
     setOcclusion(enable) {
         this.dataVizExtn.changeOcclusion(enable);
@@ -47,12 +40,27 @@ export class ForgeDataVisualization {
 
     deactivateCreateTagTool() {
         this.createTagTool = false;
-    }   
+    }
+
+    selectTag(tag) {
+        let selectedViewable;
+        for(const viewable of this.dbIdMap) {
+            if(!viewable) {
+                continue;
+            }
+            if(viewable.id === tag.id) {
+                selectedViewable = viewable;
+                break;
+            }
+        }
+        this.handleSelection(selectedViewable.dbId);
+    }
 
     addListeners() {
         // console.log("Inside forge data visualization addListener: ", this);
         this.viewer.addEventListener(this.dataVizCore.MOUSE_HOVERING, this.viewableHoveringHandler);
         this.viewer.addEventListener(this.dataVizCore.MOUSE_CLICK, this.viewableClickHandler);
+        this.viewer.addEventListener(this.dataVizCore.MOUSE_CLICK_OUT, this.viewableClickOutHandler);
     }
 
     removeListeners() {
@@ -114,7 +122,7 @@ export class ForgeDataVisualization {
                         let dbIdObject = {
                             dbId: dbId++,
                             type: viewableType,
-                            id: tag._id,
+                            id: trackerData._id,
                             position: this.applyOffset(tag.tagPosition, this.offset),
                         }
                         this.dbIdMap[dbIdObject.dbId] = dbIdObject;
@@ -170,7 +178,10 @@ export class ForgeDataVisualization {
         return new this.dataVizCore.ViewableStyle(
             viewableType,
             spriteColor,
-            iconUrl
+            iconUrl,
+            spriteColor,
+            iconUrl,
+            []
           );
     }
 
@@ -178,19 +189,19 @@ export class ForgeDataVisualization {
         const viewableData = new this.dataVizCore.ViewableData();
         switch (type) {
             case '360 Image':
-                viewableData.spriteSize = 100;
+                viewableData.spriteSize = 48;
                 break;
             case '360 Video':
-                viewableData.spriteSize = 6;
+                viewableData.spriteSize = 12;
                 break;
             case 'Phone Image':
-                viewableData.spriteSize = 100;
+                viewableData.spriteSize = 48;
                 break;
             case 'Issue':
-                viewableData.spriteSize = 100;
+                viewableData.spriteSize = 48;
                 break;
             case 'Task':
-                viewableData.spriteSize = 100;
+                viewableData.spriteSize = 48;
                 break;
         }
         return viewableData;
@@ -261,14 +272,47 @@ export class ForgeDataVisualization {
     
     onSpriteClicked(event) {
         const targetDbId = event.dbId;
-        // console.log("Inside data viz utils: selected dbId: ", targetDbId);
+
+        // console.log("Inside data viz utils: selected dbId: ", event);
         // console.log(`Sprite clicked: ${this.dbIdMap[targetDbId].name}`);
         if (targetDbId > 0) {
+            event.hasStopped = true;
+            this.handleSelection(event.dbId);
             this.passToViewerHandler(event);
         } else if (this.createTagTool) {
             this.createTempViewable(this.tagType, event);
         }
 
+    }
+
+    onSpriteClickedOut(event) {
+        console.log("Inside sprite clicked out selection : ", event.dbId);
+        event.hasStopped = true;
+        this.handleSelectionOut(event.dbId);
+    
+    }
+
+    handleSelectionOut(tagId) {
+        const viewablesToUpdate = [tagId];
+        this.dataVizExtn.invalidateViewables(viewablesToUpdate, (viewable) => {
+            console.log("Inside invalidate for selection out : ", viewable);
+            return {
+                scale: 1.0, // Restore the viewable size
+                url: "/icons/issuesInViewer.svg",
+            };
+        });
+    }
+
+    handleSelection(tagId) {
+        console.log("Inside handle selection : ", tagId);
+        const viewablesToUpdate = [tagId];
+        this.dataVizExtn.invalidateViewables(viewablesToUpdate, (viewable) => {
+            console.log("Inside invalidate for selection : ", viewable);
+            return {
+                scale: 2.0, // Double the viewable size
+                url: "/icons/issuesInViewer.svg"
+            };
+        });
     }
 
     passToViewerHandler(event) {
