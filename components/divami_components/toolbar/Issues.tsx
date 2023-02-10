@@ -6,8 +6,9 @@ import plusCircleIcon from "../../../public/divami_icons/plusCircleIcon.svg";
 import fileTextIcon from "../../../public/divami_icons/fileTextIcon.svg";
 import triWarnIcon from "../../../public/divami_icons/triWarnIcon.svg";
 import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIcon.svg";
-import { IssueListing } from "../../divami_components/issue_list/IssueList";
+// import  IssueListing  from "../../divami_components/issue_listing/IssueList";
 import { styled } from "@mui/system";
+// import IssueList from "../issue_listing/IssueList";
 
 import {
   IssueBox,
@@ -20,6 +21,9 @@ import CreateIssue from "../create-issue/CreateIssue";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import { createIssue } from "../../../services/issue";
 import { toast } from "react-toastify";
+import CustomIssueListDrawer from "../issue_listing/IssueList";
+import TaskList from "../task_list/TaskList";
+import { ITools } from "../../../models/ITools";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
@@ -27,9 +31,37 @@ const StyledDrawer = styled(Drawer)`
   }
 `;
 
-const Issues = (props: any) => {
+const Issues = ({
+  rightMenuClickHandler,
+  issuesList,
+  issueMenuClicked,
+  handleOnFilter,
+  myProject,
+  myStructure,
+  mySnapshot,
+  closeFilterOverlay,
+  contextInfo,
+}: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [listOverlay, setListOverlay] = useState(false);
+  const [createOverlay, setCreateOverlay] = useState(false);
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
+  // const [issueVisbility, setIssueVisibility] = useState(
+  //   issueLayer === undefined ? false : issueLayer
+  // );
+  let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
+
+  const closeIssueList = () => {
+    //setListOverlay(false);
+    issueMenuInstance.toolAction = "issueViewClose";
+    issueMenuClicked(issueMenuInstance);
+  };
+  const handleViewTaskList = () => {
+    console.log("teskssksk trigg");
+    setOpenDrawer(true);
+  };
+
   // console.log(openIssueList, 'openIssueList')
 
   const handleCreateTask = (formData: any) => {
@@ -40,17 +72,17 @@ const Issues = (props: any) => {
     let userIdList: any[] = [];
     const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
       ?.selectedName;
-    if (assignes.length > 0) {
+    if (assignes && assignes.length > 0) {
       assignes.map((user: any) => {
         userIdList.push(user.value);
       });
     }
     let data: any = {};
-    data.structure = props.currentStructure?._id;
-    data.title = `${props.currentStructure?.name}_${data.date} `;
-    data.snapshot = props.currentSnapshot?._id;
+    data.structure = myStructure?._id;
+    data.title = `${myStructure?.name}_${data.date} `;
+    data.snapshot = mySnapshot?._id;
     data.status = "To Do";
-    data.context = props.contextInfo;
+    data.context = contextInfo;
     (data.type = formData.filter(
       (item: any) => item.id == "issueType"
     )[0]?.defaultValue),
@@ -114,8 +146,11 @@ const Issues = (props: any) => {
             width={12}
             height={12}
             alt="Arrow"
+            // onClick={() => {
+            //   setOpenIssueList(true);
+            // }}
             onClick={() => {
-              setOpenIssueList(true);
+              handleViewTaskList();
             }}
           />{" "}
         </IssuesSectionFileImg>
@@ -126,29 +161,50 @@ const Issues = (props: any) => {
             width={12}
             height={12}
             alt="Arrow"
-            onClick={props.rightMenuClickHandler}
+            onClick={rightMenuClickHandler}
           />{" "}
         </IssuesSectionClipImg>
       </IssueBox>
 
-      {openIssueList && (
+      {/* {openIssueList && (
         <StyledDrawer
           anchor={"right"}
           open={openIssueList}
           onClose={() => setOpenIssueList((prev: any) => !prev)}
         >
           <IssueListing />
+          
         </StyledDrawer>
+      )} */}
+
+      {openDrawer && (
+        <Drawer
+          anchor={"right"}
+          open={openDrawer}
+          onClose={() => setOpenDrawer((prev: any) => !prev)}
+        >
+          <CustomIssueListDrawer
+            closeFilterOverlay={closeFilterOverlay}
+            issuesList={issuesList}
+            visibility={listOverlay}
+            closeOverlay={closeIssueList}
+            handleOnFilter={handleOnFilter}
+            onClose={() => setOpenDrawer((prev: any) => !prev)}
+            handleOnSort={() => {}}
+            deleteTheIssue={() => {}}
+            clickIssueEditSubmit={() => {}}
+          />
+        </Drawer>
       )}
       {openCreateIssue && (
         <CustomDrawer open>
           <CreateIssue
             handleCreateTask={handleCreateTask}
             setOpenCreateTask={setOpenCreateIssue}
-            currentProject={props.currentProject}
-            currentSnapshot={props.currentSnapshot}
-            currentStructure={props.currentStructure}
-            contextInfo={props.contextInfo}
+            currentProject={myProject}
+            currentSnapshot={mySnapshot}
+            currentStructure={myStructure}
+            contextInfo={contextInfo}
           />
         </CustomDrawer>
       )}

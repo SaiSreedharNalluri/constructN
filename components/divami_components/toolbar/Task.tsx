@@ -23,12 +23,37 @@ import CustomDrawer from "../custom-drawer/custom-drawer";
 import { createTask } from "../../../services/task";
 import { toast } from "react-toastify";
 
-const Task = (props: any) => {
+const Task = ({
+  rightMenuClickHandler,
+  tasksList,
+  toolClicked,
+  currentProject,
+  currentSnapshot,
+  currentStructure,
+  currentLayersList,
+  currentTypesList,
+  closeTaskFilterOverlay,
+  handleOnTaskFilter,
+  contextInfo,
+}: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [rightNav, setRighttNav] = useState(false);
+  const [myProject, setMyProject] = useState(currentProject);
+  const [myStructure, setMyStructure] = useState(currentStructure);
+  const [mySnapshot, setMySnapshot] = useState(currentSnapshot);
+  const [myTypesList, setMyTypesList] = useState(currentTypesList);
   const [openCreateTask, setOpenCreateTask] = useState(false);
 
+  const taskMenuClicked = (localTool: any) => {
+    toolClicked(localTool);
+    if (
+      localTool.toolAction === "taskCreateClose" ||
+      localTool.toolAction === "taskViewClose"
+    )
+      setRighttNav(!rightNav);
+  };
+
   const handleViewTaskList = () => {
-    console.log("teskssksk trigg");
     setOpenDrawer(true);
   };
   const handleCreateTask = (formData: any) => {
@@ -37,11 +62,11 @@ const Task = (props: any) => {
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
-    data.structure = props.currentStructure?._id;
-    data.title = `${props.currentStructure?.name}_${data.date} `;
-    data.snapshot = props.currentSnapshot?._id;
+    data.structure = currentStructure?._id;
+    data.title = `${currentStructure?.name}_${data.date} `;
+    data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
-    data.context = props.contextInfo;
+    data.context = contextInfo;
     (data.type = formData.filter(
       (item: any) => item.id == "tasks"
     )[0]?.defaultValue),
@@ -115,7 +140,7 @@ const Task = (props: any) => {
           src={clipboardSecondIcon}
           width={12}
           height={12}
-          onClick={props.rightMenuClickHandler}
+          onClick={rightMenuClickHandler}
           alt="Arrow"
         />{" "}
       </IssuesSectionClipImg>
@@ -125,7 +150,16 @@ const Task = (props: any) => {
           open={openDrawer}
           onClose={() => setOpenDrawer((prev: any) => !prev)}
         >
-          <TaskList onClose={() => setOpenDrawer((prev: any) => !prev)} />
+          <TaskList
+            tasksList={tasksList}
+            taskMenuClicked={taskMenuClicked}
+            currentProject={myProject}
+            currentStructure={myStructure}
+            currentSnapshot={mySnapshot}
+            closeTaskFilterOverlay={closeTaskFilterOverlay}
+            handleOnTaskFilter={handleOnTaskFilter}
+            onClose={() => setOpenDrawer((prev: any) => !prev)}
+          />
         </Drawer>
       )}
       {openCreateTask && (
@@ -133,10 +167,10 @@ const Task = (props: any) => {
           <CreateTask
             handleCreateTask={handleCreateTask}
             setOpenCreateTask={setOpenCreateTask}
-            currentProject={props.currentProject}
-            currentSnapshot={props.currentSnapshot}
-            currentStructure={props.currentStructure}
-            contextInfo={props.contextInfo}
+            currentProject={currentProject}
+            currentSnapshot={currentSnapshot}
+            currentStructure={currentStructure}
+            contextInfo={contextInfo}
           />
         </CustomDrawer>
       )}

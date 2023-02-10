@@ -1,37 +1,14 @@
-import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faBarsStaggered,
-  faBreadSlice,
-  faCalendarDays,
-  faCog,
-  faGreaterThan,
-  faMap,
-  faTachometerAltAverage,
-} from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/router";
-import dashboard from "../../public/icons/dashboard.svg";
-import viewer from "../../public/icons/leftPanelIcon2.svg";
-import schedule from "../../public/icons/schedule.svg";
-import settings from "../../public/icons/settings.svg";
-import Image from "next/image";
+import React, { useState } from "react";
 import dashboardProgress from "../../../public/divami_icons/dashboardProgress.svg";
 import issuesIcon from "../../../public/divami_icons/issuesIcon.svg";
-import taskIcon from "../../../public/divami_icons/taskIcon.svg";
-
 import drawingInactive from "../../../public/divami_icons/drawingInactive.svg";
-
 import drawing from "../../../public/divami_icons/drawing.svg";
 // import task from "../../../public/divami_icons/task.svg";
-
-import issues from "../../../public/divami_icons/issues.svg";
-
 import tasks from "../../../public/divami_icons/tasks.svg";
-
 import branch from "../../../public/divami_icons/branch.svg";
-import people from "../../../public/divami_icons/people.svg";
 import calendar from "../../../public/divami_icons/calendar.svg";
+import people from "../../../public/divami_icons/people.svg";
 
 import {
   HighlightedSytledImage,
