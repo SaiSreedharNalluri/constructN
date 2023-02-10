@@ -110,6 +110,7 @@ export const SelectLayersWrapper = styled("div")({
   position: "absolute",
   border: "1px solid #D9D9D9",
   boxShadow: "5px 4px 8px rgb(0 0 0 / 24%)",
+  background: "white",
 });
 
 export const LayerSecondSectionHexImg = styled("div")({});
