@@ -62,45 +62,6 @@ const CustomTaskListDrawer = (props: any) => {
     handleOnTaskFilter,
   } = props;
 
-  const taskListing = [
-    {
-      id: 107,
-      title: "Submittals",
-      priority: "Medium",
-      assignee: "Alex Brandon",
-      due_date: new Date("2022-02-10T12:00:00"),
-    },
-
-    {
-      id: 320,
-      title: "Transmittals",
-      priority: "Medium",
-      assignee: "Charles Sean",
-      due_date: new Date("2022-01-08T10:00:00"),
-    },
-    {
-      id: 407,
-      title: "Submittals",
-      priority: "High",
-      assignee: "Ben Fratz",
-      due_date: new Date("2022-11-11T14:00:00"),
-    },
-    {
-      id: 407,
-      title: "Submittals",
-      priority: "High",
-      assignee: "Ben Fratz",
-      due_date: new Date("2022-05-22T09:00:00"),
-    },
-    {
-      id: 407,
-      title: "Submittals",
-      priority: "High",
-      assignee: "Ben Fratz",
-      due_date: new Date("2022-01-01T11:00:00"),
-    },
-  ];
-
   const [taskType, setTaskType] = useState<[string]>();
   const [taskPriority, setTaskPriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState([]);
