@@ -58,7 +58,7 @@ function GenericViewer(props) {
   let [viewMode, setViewMode] = useState(props.viewMode);
   let currentViewMode = useRef(viewMode);
 
-  let viewType = props.viewType;
+  let viewType = useRef(props.viewType);
   let viewLayers = props.viewLayers;
 
   let [isCompare, setIsCompare] = useState(false);
@@ -111,7 +111,19 @@ function GenericViewer(props) {
     loadLayerData();
   }
 
-  function handleDesignTypeChange() {}
+  function handleDesignTypeChange() {
+    
+    switch(currentViewMode.current) {
+      case "Design":
+        if (forgeUtils.current) {
+          forgeUtils.current.setType(viewType.current);
+        }
+        break;
+      case "Reality":
+        break;
+    }
+
+  }
 
   function handleRealityTypeChange() {}
   
@@ -123,6 +135,9 @@ function GenericViewer(props) {
         break;
       case 'taskCreate':
         addTag("Task");
+        break;
+      case 'issueSelect':
+        selectTag(activeTool.current.response);
         break;
       case 'showCompare':
         let currentMode = activeTool.current.toolName.endsWith("Design") ? "Design" : "Reality";
@@ -143,7 +158,7 @@ function GenericViewer(props) {
   }
 
   const addTag = (type) => {
-    switch (viewMode) {
+    switch (currentViewMode.current) {
       case "Design" :
         if (forgeUtils.current) {
           forgeUtils.current.initiateAddTag(type);
@@ -153,6 +168,19 @@ function GenericViewer(props) {
         if (potreeUtils.current) {
           potreeUtils.current.initiateAddTag(type);
         }
+        break;
+    }
+  }
+
+  const selectTag = (tag) => {
+    switch (currentViewMode.current) {
+      case "Design" :
+        if (forgeUtils.current) {
+          forgeUtils.current.selectTag(tag);
+        }
+        break;
+      case "Reality":
+
         break;
     }
   }
@@ -225,7 +253,7 @@ function GenericViewer(props) {
       switch (event.type) {
         case "360 Video":
           currentContext.current = event;
-          if (viewMode == "Design") {
+          if (currentViewMode.current == "Design") {
             pushToolResponse(
               {
                 toolName: "viewMode",
@@ -247,7 +275,11 @@ function GenericViewer(props) {
           break;
         case "Task":
         case "Issue":
-          setMarkerMode(false)
+          if (!activeTool.current) {
+            activeTool.current = {};
+          }
+          activeTool.current.toolName = event.type
+          activeTool.current.toolAction = event.id.includes("Temp") ? `create${event.type}`: `select${event.type}`;
           activeTool.current.response = event;
           pushToolResponse(activeTool.current);
           console.log("Marked Point========",event);
@@ -337,7 +369,7 @@ function GenericViewer(props) {
   };
 
   async function loadViewerData() {
-    switch (viewMode) {
+    switch (currentViewMode.current) {
       case 'Design':
         if (forgeUtils.current != undefined) {
           forgeUtils.current.updateData(getForgeModels(designMap));
@@ -350,15 +382,13 @@ function GenericViewer(props) {
   }
 
   async function loadLayerData() {
-    switch (viewMode) {
+    switch (currentViewMode.current) {
       case "Design":
         if (forgeUtils.current != undefined) {
           let data = await getRealityLayers(structure, realityMap);
           // forgeUtils.current.updateTasksData(tasksList);
           forgeUtils.current.updateIssuesData(issuesList);
           forgeUtils.current.updateLayersData(data, currentContext.current);
-          
-
         }
         break;
       case 'Reality':
@@ -526,6 +556,10 @@ function GenericViewer(props) {
   const getContext = () => {
     let context;
     // console.log("Getting context from existing viewmode: ", currentViewMode.current, forgeUtils.current, potreeUtils.current);
+    if (currentContext.current) {
+      console.log("Generic Viewer getContext: already available ", currentContext.current);
+      return;
+    }
     switch (currentViewMode.current) {
       case "Design":
         if (forgeUtils.current) {
@@ -593,12 +627,13 @@ function GenericViewer(props) {
     switch (currentViewMode.current) {
       case "Design":
         if (forgeUtils.current) {
+          forgeUtils.current.shutdown();
           delete forgeUtils.current;
         }
         break;
       case "Reality":
         if (potreeUtils.current) {
-          potreeUtils.current.removeData();
+          potreeUtils.current.shutdown();
           potreeCompareUtils.current = undefined
           delete potreeUtils.current
         }
@@ -610,12 +645,13 @@ function GenericViewer(props) {
     switch (currentCompareViewMode.current) {
       case "Design":
         if (forgeCompareUtils.current) {
+          forgeCompareUtils.current.shutdown();
           delete forgeCompareUtils.current;
         }
         break;
       case "Reality":
         if (potreeCompareUtils.current) {
-          potreeCompareUtils.current.removeData();
+          potreeCompareUtils.current.shutdown();
           potreeCompareUtils.current = undefined
           delete potreeCompareUtils.current
         }
@@ -750,9 +786,20 @@ function GenericViewer(props) {
   }
 
   useEffect(() => {
-    // console.log("Generic Viewer View Type UseEffect", viewType);
-    handleDesignTypeChange();
-  }, [viewType]);
+    console.log("Generic Viewer View Type UseEffect", props.viewType);
+    if (viewType.current != props.viewType) {
+      viewType.current = props.viewType;
+      handleDesignTypeChange();
+    }
+    
+    return cleanUpOnViewTypeChange;
+  }, [props.viewType]);
+
+  const cleanUpOnViewTypeChange = () => {
+    console.log("Generic Viewer View Type Cleanup", props.viewType, viewType.current);
+    setIsCompare(false);
+    getContext();
+  }
 
   useEffect(() => {
     // console.log("Generic Viewer View Layers UseEffect", viewLayers);

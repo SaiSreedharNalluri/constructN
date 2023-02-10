@@ -40,7 +40,7 @@ import ReactSelect from 'react-select';
 import { CSVLink } from 'react-csv';
 import _ from 'lodash';
 import { getTagsList } from '../../../../services/tags';
-import { ITools } from '../../../../models/ITools';
+import { IContext, ITools } from '../../../../models/ITools';
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
@@ -920,7 +920,9 @@ const IssueList: React.FC<IProps> = ({
                           key={issueInfo._id}
                           onClick={() => {
                             setIssueViewMode('detail');
-                            toolInstance.response=issueInfo.context;
+                            let issueContext: IContext = issueInfo.context ? issueInfo.context : {type: "Issue"};
+                            issueContext.id = issueInfo._id;
+                            toolInstance.response = issueContext;
                             issueToolClicked(toolInstance)
                             setIssueObj(issueInfo);
                           }}
