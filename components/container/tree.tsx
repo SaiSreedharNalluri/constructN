@@ -14,26 +14,29 @@ const Tree: React.FC<IProps> = ({
   depth,
   currentClickedStruct,
 }) => {
+  const [visibility, setVisibility] = useState<any>({});
+  const [clickedStruct, setClickedStruct] = useState(currentClickedStruct);
+
+  useEffect(() => {
+    setClickedStruct(currentClickedStruct);
+  }, [currentClickedStruct]);
+
   const Treenode = (structure: ChildrenEntity) => {
-    const [visible, setVisible] = useState(false);
-    const [clickedStruct, setClickedStruct] = useState(currentClickedStruct);
     const hasChild = structure.children?.length ? true : false;
-    useEffect(() => {
-      setClickedStruct(currentClickedStruct);
-    }, []);
     const getICon = () => {
       if (!hasChild) {
         return;
       } else {
-        return visible ? (
+        return visibility[structure._id] ? (
           <FontAwesomeIcon size="1x" icon={faCaretDown} />
         ) : (
           <FontAwesomeIcon size="1x" icon={faCaretRight} />
         );
       }
     };
+
     return (
-      <li key={structure._id} className=" flex-col relative ">
+      <li key={structure._id} className="flex-col relative">
         <div>
           <div
             className={`flex ${
@@ -49,7 +52,10 @@ const Tree: React.FC<IProps> = ({
               <div
                 className="hover:bg-gray-300 px-2 hover:rounded-full"
                 onClick={() => {
-                  setVisible((vis) => !vis);
+                  setVisibility({
+                    ...visibility,
+                    [structure._id]: !visibility[structure._id],
+                  });
                 }}
               >
                 {getICon()}
@@ -58,8 +64,8 @@ const Tree: React.FC<IProps> = ({
             </div>
           </div>
         </div>
-        {hasChild && visible && (
-          <div className="flex-col  ">
+        {hasChild && visibility[structure._id] && (
+          <div className="flex-col">
             <div className="xyz">
               <Tree
                 currentClickedStruct={clickedStruct}
@@ -73,9 +79,10 @@ const Tree: React.FC<IProps> = ({
       </li>
     );
   };
+
   return (
     <React.Fragment>
-      <ul className="list-none   ">
+      <ul className="list-none">
         {tree.map((structure) => {
           return Treenode(structure);
         })}

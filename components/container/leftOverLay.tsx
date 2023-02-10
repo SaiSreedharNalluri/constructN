@@ -66,7 +66,7 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
               placeholder="Search"
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setFieldValue('searchQuery', event.target.value);
-                //setState(filterBy(stateFilter, event.target.value));
+                setState(filterBy(stateFilter, event.target.value));
               }}
             />
           </Form>
