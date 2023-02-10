@@ -80,10 +80,8 @@ export const DueDate = styled(Box)({
 });
 
 export const BodyContainer = styled(Box)`
-  height: 71%;
   padding-left: 20px;
   padding-right: 20px;
-  overflow: scroll;
 `;
 
 export const FirstHeader = styled("div")({
@@ -136,5 +134,3 @@ export const ArrowUpContainer = styled("div")({
   border: "1px solid red",
   marginLeft: "10px",
 });
-
-

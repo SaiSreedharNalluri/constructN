@@ -1,12 +1,12 @@
-import styled from "@emotion/styled";
 import { TreeItem, TreeView } from "@mui/lab";
 import { Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import Image from "next/image";
 import type { SelectLayerContainerProps } from "./Type";
+import { styled } from "@mui/system";
 
 export const TreeViewContainer = styled("div")({
-  width: "301px",
+  width: "252px",
   marginTop: "28px",
 });
 
@@ -73,7 +73,7 @@ export const StyledTreeView = styled(TreeView)({
 
 export const SelectLayerContainer = styled(Box)((props: any) => ({
   display: props.openSelectLayer ? "" : "none",
-  width: "301px",
+  width: "252px",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
 })) as any;
 export const StyledTreeItem = styled(TreeItem)`
