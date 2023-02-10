@@ -8,6 +8,7 @@ import triWarnIcon from "../../../public/divami_icons/triWarnIcon.svg";
 import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIcon.svg";
 import { IssueListing } from "../../divami_components/issue_list/IssueList";
 import { styled } from "@mui/system";
+import IssueList from "../issue_listing/IssueList";
 
 import {
   IssueBox,
@@ -16,6 +17,8 @@ import {
   IssuesSectionClipImg,
 } from "./ToolBarStyles";
 import { Drawer } from "@mui/material";
+// import CustomIssueListDrawer from "../issue_listing/IssueList";
+import TaskList from "../task_list/TaskList";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
@@ -25,6 +28,12 @@ const StyledDrawer = styled(Drawer)`
 
 const Issues = ({ rightMenuClickHandler }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const handleViewTaskList = () => {
+    console.log("teskssksk trigg");
+    setOpenDrawer(true);
+  };
+
   // console.log(openIssueList, 'openIssueList')
 
   const handleViewList = () => {
@@ -51,8 +60,11 @@ const Issues = ({ rightMenuClickHandler }: any) => {
             width={12}
             height={12}
             alt="Arrow"
+            // onClick={() => {
+            //   setOpenIssueList(true);
+            // }}
             onClick={() => {
-              setOpenIssueList(true);
+              handleViewTaskList();
             }}
           />{" "}
         </IssuesSectionFileImg>
@@ -68,14 +80,25 @@ const Issues = ({ rightMenuClickHandler }: any) => {
         </IssuesSectionClipImg>
       </IssueBox>
 
-      {openIssueList && (
+      {/* {openIssueList && (
         <StyledDrawer
           anchor={"right"}
           open={openIssueList}
           onClose={() => setOpenIssueList((prev: any) => !prev)}
         >
           <IssueListing />
+          
         </StyledDrawer>
+      )} */}
+
+     {openDrawer && (
+        <Drawer
+          anchor={"right"}
+          open={openDrawer}
+          onClose={() => setOpenDrawer((prev: any) => !prev)}
+        >
+          <IssueList onClose={() => setOpenDrawer((prev: any) => !prev)} />
+        </Drawer>
       )}
     </div>
   );
