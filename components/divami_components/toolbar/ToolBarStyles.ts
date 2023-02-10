@@ -79,10 +79,12 @@ export const TypeParentCont = styled("div")({
   padding: "15px 20px",
 });
 
-export const TypesTitle = styled("div")({});
+export const TypesTitle = styled("div")({
+  width: "100px",
+});
 
 export const TypeArrowIconDiv = styled("div")({
-  marginLeft: "147px",
+  marginLeft: "110px",
 });
 
 export const TypesRightScroll = styled("div")({
@@ -103,6 +105,14 @@ export const LayersWrapper = styled("div")({
   display: "flex",
   alignItems: "center",
   padding: "15px 20px",
+  position: "relative",
+});
+export const SelectLayersWrapper = styled("div")({
+  top: "50px",
+  position: "absolute",
+  border: "1px solid #D9D9D9",
+  boxShadow: "5px 4px 8px rgb(0 0 0 / 24%)",
+  background: "white",
 });
 
 export const LayerSecondSectionHexImg = styled("div")({});

@@ -545,7 +545,7 @@ const Index: React.FC<IProps> = () => {
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
-        <Header></Header>
+        <Header toolClicked={toolClicked} viewMode={currentViewMode} />
       </div>
       <div className="flex ">
         <div ref={leftOverlayRef}>
@@ -617,41 +617,41 @@ const Index: React.FC<IProps> = () => {
              </div>
           </div>
         </div> */}
-        {structure && snapshot && designMap && activeRealityMap && (
-          <div ref={rightrefContainer}>
-            <FontAwesomeIcon
-              className={`fixed  ${
-                rightNav && "rotate-180"
-              } text-lg text-blue-300  ${
-                rightNav ? "right-9" : "right-0"
-              }  top-46  cursor-pointer border rounded  p-1 bg-gray-400 z-10 text-white`}
-              onClick={rightNavCollapse}
-              icon={faLessThan}
-            ></FontAwesomeIcon>
-            <div className="toolbarcontainer">
-              <div
-                ref={rightOverlayRef}
-                id="bg-color"
-                className={`fixed  toolbarWidth border border-gray-300   ${"visible"} `}
-              >
-                <ToolBarMenuWrapper
-                  issuesList={issuesList}
-                  tasksList={tasksList}
-                  toolClicked={toolClicked}
-                  viewMode={currentViewMode}
-                  handleOnFilter={handleOnIssueFilter}
-                  currentProject={currentProjectId}
-                  currentStructure={structure}
-                  currentSnapshot={snapshot}
-                  currentTypesList={designMap}
-                  currentLayersList={activeRealityMap}
-                  closeFilterOverlay={closeFilterOverlay}
-                  closeTaskFilterOverlay={closeTaskFilterOverlay}
-                  handleOnTaskFilter={handleOnTaskFilter}
-                  contextInfo={currentContext}
-                />
-              </div>
-              {/* <RightFloatingMenu
+        {/* {structure && snapshot && designMap && activeRealityMap && ( */}
+        <div ref={rightrefContainer}>
+          <FontAwesomeIcon
+            className={`fixed  ${
+              rightNav && "rotate-180"
+            } text-lg text-blue-300  ${
+              rightNav ? "right-9" : "right-0"
+            }  top-46  cursor-pointer border rounded  p-1 bg-gray-400 z-10 text-white`}
+            onClick={rightNavCollapse}
+            icon={faLessThan}
+          ></FontAwesomeIcon>
+          {/* <div className="toolbarcontainer"> */}
+          <div
+            ref={rightOverlayRef}
+            id="bg-color"
+            className={`fixed  toolbarWidth border border-gray-300   ${"visible"} `}
+          >
+            <ToolBarMenuWrapper
+              issuesList={issuesList}
+              tasksList={tasksList}
+              toolClicked={toolClicked}
+              viewMode={currentViewMode}
+              handleOnFilter={handleOnIssueFilter}
+              currentProject={currentProjectId}
+              currentStructure={structure}
+              currentSnapshot={snapshot}
+              currentTypesList={designMap}
+              currentLayersList={activeRealityMap}
+              closeFilterOverlay={closeFilterOverlay}
+              closeTaskFilterOverlay={closeTaskFilterOverlay}
+              handleOnTaskFilter={handleOnTaskFilter}
+              contextInfo={currentContext}
+            />
+            {/* </div> */}
+            {/* <RightFloatingMenu
                 issuesList={issuesList}
                 tasksList={tasksList}
                 toolClicked={toolClicked}
@@ -666,7 +666,7 @@ const Index: React.FC<IProps> = () => {
                 closeTaskFilterOverlay={closeTaskFilterOverlay}
                 handleOnTaskFilter={handleOnTaskFilter}
               ></RightFloatingMenu> */}
-              {/* <IssueCreate
+            {/* <IssueCreate
                 handleIssueSubmit={issueSubmit}
                 visibility={openCreateIssue}
                 closeOverlay={closeIssueCreate}
@@ -695,9 +695,9 @@ const Index: React.FC<IProps> = () => {
                 deleteTheIssue={deleteTheIssue}
                 clickIssueEditSubmit={clickIssueEditSubmit}
               ></IssueList> */}
-            </div>
           </div>
-        )}
+        </div>
+        {/* )} */}
       </div>
     </div>
   );

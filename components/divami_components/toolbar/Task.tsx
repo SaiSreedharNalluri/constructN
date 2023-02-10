@@ -91,6 +91,7 @@ const Task = (props: any) => {
             setOpenCreateTask(true);
           }}
           src={plusCircleIcon}
+          // onClick={props.rightMenuClickHandler}
           width={12}
           height={12}
           alt="Arrow"
@@ -110,7 +111,13 @@ const Task = (props: any) => {
       </IssuesSectionFileImg>
 
       <IssuesSectionClipImg>
-        <Image src={clipboardSecondIcon} width={12} height={12} alt="Arrow" />{" "}
+        <Image
+          src={clipboardSecondIcon}
+          width={12}
+          height={12}
+          onClick={props.rightMenuClickHandler}
+          alt="Arrow"
+        />{" "}
       </IssuesSectionClipImg>
       {openDrawer && (
         <Drawer
@@ -118,7 +125,7 @@ const Task = (props: any) => {
           open={openDrawer}
           onClose={() => setOpenDrawer((prev: any) => !prev)}
         >
-          <TaskList />
+          <TaskList onClose={() => setOpenDrawer((prev: any) => !prev)} />
         </Drawer>
       )}
       {openCreateTask && (

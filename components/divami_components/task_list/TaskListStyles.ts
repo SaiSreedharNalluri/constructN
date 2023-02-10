@@ -3,7 +3,10 @@ import { Theme } from "../../../styles/globalStyles";
 import Image from "next/image";
 import { Box } from "@mui/material";
 
-export const TaskListContainer = styled("div")({});
+export const TaskListContainer = styled("div")({
+  width: "438px",
+  height: "100%",
+});
 
 export const HeaderContainer = styled("div")({
   backgroundColor: "white",
@@ -77,10 +80,8 @@ export const DueDate = styled(Box)({
 });
 
 export const BodyContainer = styled(Box)`
-  height: calc(100vh - 134px);
   padding-left: 20px;
   padding-right: 20px;
-  overflow: scroll;
 `;
 
 export const FirstHeader = styled("div")({
@@ -89,10 +90,8 @@ export const FirstHeader = styled("div")({
 
 export const BodyInfo = styled("div")({});
 
-export const BodyContIcon = styled("div")({});
-
 export const BodyContTitle = styled("div")({
-  marginLeft: "2px",
+  marginLeft: "10px",
 });
 
 export const SecondHeader = styled("div")({
@@ -116,8 +115,22 @@ export const DueDateDiv = styled("div")({
 
 export const HorizontalLine = styled("div")({
   backgroundColor: "#d9d9d9",
-  border: "1px solid #d9d9d9",
+  borderBottom: "1px solid #d9d9d9",
   width: "398x",
-  marginTop: "20px",
+  marginTop: "18px",
   marginBottom: "20px",
+});
+
+export const LoadMoreContainer = styled("div")({
+  border: "1px solid #d9d9d9",
+  display: "flex",
+});
+
+export const LoadMoreButton = styled("div")({
+  border: "1px solid red",
+});
+
+export const ArrowUpContainer = styled("div")({
+  border: "1px solid red",
+  marginLeft: "10px",
 });

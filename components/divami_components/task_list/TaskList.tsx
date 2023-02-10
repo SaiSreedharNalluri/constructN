@@ -3,43 +3,47 @@ import { Box } from "@mui/material";
 import Image from "next/image";
 // import dividerIcon from "../../../public/images/dividerIcon.svg";
 // import filterFunnelIcon from "../../../public/images/filterFunnelIcon.svg";
-import FilterActive from "../../../public/divami_icons/filterActive.svg";
-import FilterInActive from "../../../public/divami_icons/filterInactive.svg";
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
-import DownArrow from "../../../public/divami_icons/downArrow.svg";
-import UpArrow from "../../../public/divami_icons/upArrow.svg";
-import Search from "../../../public/divami_icons/search.svg";
 import Download from "../../../public/divami_icons/download.svg";
+import FilterInActive from "../../../public/divami_icons/filterInactive.svg";
+import Search from "../../../public/divami_icons/search.svg";
+import UpArrow from "../../../public/divami_icons/upArrow.svg";
+import Divider from "../../../public/divami_icons/divider.svg";
 import {
-  HeaderContainer,
-  TaskListContainer,
-  TitleContainer,
+  ArrowUpIcon,
+  BodyContainer,
+  BodyContTitle,
+  BodyInfo,
   CloseIcon,
+  DownloadIcon,
+  DueDate,
+  DueDateDiv,
+  FirstHeader,
+  FunnelIcon,
+  HeaderContainer,
+  HorizontalLine,
   MiniHeaderContainer,
   MiniSymbolsContainer,
   SearchGlassIcon,
-  DividerIcon,
-  ArrowUpIcon,
-  DownloadIcon,
-  FunnelIcon,
-  DueDate,
-  BodyContainer,
-  FirstHeader,
-  BodyInfo,
-  BodyContIcon,
-  BodyContTitle,
   SecondHeader,
+  TaskListContainer,
   ThirdHeader,
-  DueDateDiv,
-  HorizontalLine,
+  TitleContainer,
+  LoadMoreContainer,
+  LoadMoreButton,
+  ArrowUpContainer,
+  DividerIcon,
 } from "./TaskListStyles";
+import RFIList from "../../../public/divami_icons/rfiList.svg";
+import SubmittalList from "../../../public/divami_icons/submittalList.svg";
+import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
 
-const CustomTaskListDrawer = () => {
+const CustomTaskListDrawer = (props: any) => {
+  const { onClose } = props;
   const taskListing = [
     {
       id: 107,
-      title: "RFI",
-      //   icon: hourGlassIcon,
+      title: "Submittals",
       status: "In Progress",
       priority: "Medium",
       assignee: "Alex Brandon",
@@ -49,7 +53,6 @@ const CustomTaskListDrawer = () => {
     {
       id: 320,
       title: "Transmittals",
-      //   icon: safetyIcon,
       status: "Completed",
       priority: "Medium",
       assignee: "Charles Sean",
@@ -58,7 +61,6 @@ const CustomTaskListDrawer = () => {
     {
       id: 407,
       title: "Submittals",
-      //   icon: circleTickMarkIcon,
       status: "To-do",
       priority: "High",
       assignee: "Ben Fratz",
@@ -67,7 +69,6 @@ const CustomTaskListDrawer = () => {
     {
       id: 407,
       title: "Submittals",
-      //   icon: circleTickMarkIcon,
       status: "To-do",
       priority: "High",
       assignee: "Ben Fratz",
@@ -76,7 +77,6 @@ const CustomTaskListDrawer = () => {
     {
       id: 407,
       title: "Submittals",
-      //   icon: circleTickMarkIcon,
       status: "To-do",
       priority: "High",
       assignee: "Ben Fratz",
@@ -85,26 +85,36 @@ const CustomTaskListDrawer = () => {
     {
       id: 407,
       title: "Submittals",
-      //   icon: circleTickMarkIcon,
       status: "To-do",
       priority: "High",
       assignee: "Ben Fratz",
       due_date: "31 Dec'23",
     },
   ];
+
+  const handleClose = () => {
+    onClose(true);
+  };
+
   return (
     <TaskListContainer>
       <HeaderContainer>
         <TitleContainer>
           <span>Task List</span>
-          <CloseIcon src={CrossIcon} alt={"close icon"} />
+          <CloseIcon
+            onClick={() => {
+              handleClose();
+            }}
+            src={CrossIcon}
+            alt={"close icon"}
+          />
         </TitleContainer>
       </HeaderContainer>
 
       <MiniHeaderContainer>
         <MiniSymbolsContainer>
-          {/* <Image src={searchGlassIcon} alt="Arrow" /> */}
           <SearchGlassIcon src={Search} alt={"close icon"} />
+          <DividerIcon src={Divider} alt="" />
           <ArrowUpIcon src={UpArrow} alt="Arrow" />
           <DueDate>Due Date</DueDate>
           <DownloadIcon src={Download} alt="Arrow" />
@@ -119,10 +129,18 @@ const CustomTaskListDrawer = () => {
               <div>
                 <BodyInfo>
                   <FirstHeader>
-                    <BodyContIcon>
-                      <Image src={""} alt="Arrow" />
-                    </BodyContIcon>
-
+                    <Image
+                      src={
+                        val.title === "RFI"
+                          ? RFIList
+                          : val.title === "Transmittals"
+                          ? TransmittalList
+                          : val.title === "Submittals"
+                          ? SubmittalList
+                          : ""
+                      }
+                      alt="Arrow"
+                    />
                     <BodyContTitle>
                       {val.title} (#{val.id})
                     </BodyContTitle>
@@ -140,13 +158,15 @@ const CustomTaskListDrawer = () => {
                     <DueDateDiv>Due by {val.due_date}</DueDateDiv>
                   </ThirdHeader>
                 </BodyInfo>
-
                 <HorizontalLine></HorizontalLine>
               </div>
             );
           })}
         </Box>
       </BodyContainer>
+      {/* <LoadMoreContainer>
+        <LoadMoreButton>Load More</LoadMoreButton>
+      </LoadMoreContainer> */}
     </TaskListContainer>
   );
 };
