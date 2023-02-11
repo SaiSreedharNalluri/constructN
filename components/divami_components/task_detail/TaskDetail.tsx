@@ -14,6 +14,7 @@ import Send from "../../../public/divami_icons/send.svg";
 import { red } from "@mui/material/colors";
 import CustomSelect from "../custom-select/CustomSelect";
 import ActivityLog from "../task_detail/activityLog";
+
 // import SelectVariants from "../select-dropdown";
 // import BasicSelect from "../temporary-select/TempSelect";
 // import SelectVariants2 from "../temporary-select/TemSelect";
@@ -85,9 +86,10 @@ const TabOneDiv = styled("div")`
 `;
 
 const FirstHeaderDiv = styled("div")`
-  border: 2px solid aqua;
+  border: 1px solid #d9d9d9;
   display: flex;
   height: 150px;
+  border-radius: 4px;
 `;
 
 const SecondBodyDiv = styled("div")`
@@ -489,7 +491,7 @@ function BasicTabs(props: any) {
       <CustomTabPanel value={value} index={0}>
         <TabOneDiv>
           <FirstHeaderDiv>
-            <Image src={""} alt="Aerial Image" />
+            <Image src={""} alt="" />
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
