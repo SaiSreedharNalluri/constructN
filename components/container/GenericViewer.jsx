@@ -125,19 +125,51 @@ function GenericViewer(props) {
 
   }
 
-  function handleRealityTypeChange() {}
+  function handleRealityTypeChange() {
+    switch(currentViewMode.current) {
+      case "Design":
+        if(forgeUtils.current) {
+          forgeUtils.current.showLayers(viewLayers);
+        }
+        break;
+      case "Reality":
+
+        break;
+    }
+  }
   
   function handleToolChange() {
     // console.log("My new tool=",activeTool);
     switch(activeTool.current===undefined?'':activeTool.current.toolAction){
       case 'issueCreate':
-        addTag("Issue")
+        addTag('Issue')
         break;
-      case 'taskCreate':
-        addTag("Task");
+      case 'issueCreateFail':
+        cancelAddTag('Issue');
         break;
       case 'issueSelect':
         selectTag(activeTool.current.response);
+        break;
+      case 'issueShow':
+        showTag('Issue', true);
+        break;
+      case 'issueHide':
+        showTag('Issue', false);
+        break;
+      case 'taskCreate':
+        addTag('Task');
+        break;
+      case 'taskCreateFail':
+        cancelAddTag('Task');
+        break;
+      case 'taskSelect':
+        selectTag(activeTool.current.response);
+        break;
+      case 'taskShow':
+        showTag('Task', true);
+        break;  
+      case 'taskHide':
+        showTag('Task', false);
         break;
       case 'showCompare':
         let currentMode = activeTool.current.toolName.endsWith("Design") ? "Design" : "Reality";
@@ -172,11 +204,40 @@ function GenericViewer(props) {
     }
   }
 
+  const cancelAddTag = (type) => {
+    switch (currentViewMode.current) {
+      case "Design" :
+        if (forgeUtils.current) {
+          forgeUtils.current.cancelAddTag();
+        }
+        break;
+      case "Reality":
+        // if (potreeUtils.current) {
+        //   potreeUtils.current.initiateAddTag(type);
+        // }
+        break;
+    }
+  }
+
+
   const selectTag = (tag) => {
     switch (currentViewMode.current) {
       case "Design" :
         if (forgeUtils.current) {
           forgeUtils.current.selectTag(tag);
+        }
+        break;
+      case "Reality":
+
+        break;
+    }
+  }
+
+  const showTag = (tag, show) => {
+    switch (currentViewMode.current) {
+      case "Design" :
+        if (forgeUtils.current) {
+          forgeUtils.current.showTag(tag, show);
         }
         break;
       case "Reality":
