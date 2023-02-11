@@ -24,9 +24,14 @@ interface PropTypes {
 const StyledTextArea = styled(TextareaAutosize)({
   height: '100px !important',
   width: '392px !important',
-  padding: '5',
+  padding: '5px 10px',
   border: '1px solid #36415d',
   borderRadius: '4px',
+  fontFamily: 'Open Sans',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  fontSize: 14,
+  color: '#101F4B'
 })
  
 

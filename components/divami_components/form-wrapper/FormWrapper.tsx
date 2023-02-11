@@ -12,6 +12,12 @@ const FormElementContainer = styled(Box)({
   marginTop: "30px",
 });
 
+const DoubleFieldContainer = styled("div")({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between'
+})
+
 const FormWrapper = (props: any) => {
   const { config, formState, setFormConfig } = props;
 
@@ -32,12 +38,23 @@ const FormWrapper = (props: any) => {
   const handleDateChange = (e: any, id: string) => {
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
-        if (id === item.id) {
-          return {
-            ...item,
-            defaultValue: e,
-          };
-        }
+        if(item.id === "dates"){
+        return {
+          ...item,
+          fields:item.fields.map((eachField:any)=>{
+            return {
+              ...eachField,
+              defaultValue: eachField.id == id? JSON.parse(JSON.stringify(e)) :eachField.defaultValue
+            }
+          })
+        };
+      }else if (id === item.id) {
+        return {
+          ...item,
+          defaultValue: JSON.parse(JSON.stringify(e)),
+        };
+      }
+
         return item;
       })
     );
@@ -61,9 +78,13 @@ const FormWrapper = (props: any) => {
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
+          let files: any = [];
+          Object.keys(e.target.files).forEach(eachkey => {
+            files.push(e.target.files[eachkey]);
+          });
           return {
             ...item,
-            selectedFile: e.target.files,
+            selectedFile: files,
           };
         }
         return item;
@@ -155,16 +176,30 @@ const FormWrapper = (props: any) => {
             }
           />
         );
+      case "doubleField":
+        return (
+          <DoubleFieldContainer>
+            {data.fields?.map((eachConfig: any, index: number) => {
+              return <Box key={eachConfig.id}>
+              {eachConfig.formLabel ?? (
+                <CustomLabel label={eachConfig.formLabel} />
+              )}
+              {renderHTML(eachConfig, false, index)}
+            </Box>
+            })}
+          </DoubleFieldContainer>
+        );
       default:
         return "";
     }
   };
 
+
   return (
     <div>
       {config.map((eachConfig: any, index: any) => {
         return (
-          <FormElementContainer>
+          <FormElementContainer key={eachConfig.id}>
             {eachConfig.formLabel ?? (
               <CustomLabel label={eachConfig.formLabel} />
             )}

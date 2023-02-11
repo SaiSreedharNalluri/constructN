@@ -37,8 +37,8 @@ const Issues = ({
   issueMenuClicked,
   handleOnFilter,
   myProject,
-  myStructure,
-  mySnapshot,
+  currentStructure,
+  currentSnapshot,
   closeFilterOverlay,
   contextInfo,
 }: any) => {
@@ -72,15 +72,16 @@ const Issues = ({
     let userIdList: any[] = [];
     const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
       ?.selectedName;
-    if (assignes && assignes.length > 0) {
-      assignes.map((user: any) => {
-        userIdList.push(user.value);
-      });
-    }
+    userIdList.push(assignes.value);
+    // if (assignes && assignes.length > 0) {
+    //   assignes.map((user: any) => {
+    //     userIdList.push(user.value);
+    //   });
+    // }
     let data: any = {};
-    data.structure = myStructure?._id;
-    data.title = `${myStructure?.name}_${data.date} `;
-    data.snapshot = mySnapshot?._id;
+    data.structure = currentStructure?._id;
+    data.title = `title_${Math.random()} `;
+    data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
     data.context = contextInfo;
     (data.type = formData.filter(
@@ -93,15 +94,32 @@ const Issues = ({
         (item: any) => item.id == "description"
       )[0]?.defaultValue),
       (data.assignees = userIdList),
-      (data.tags =
+      (data.tags = (formData.length ?
         formData.filter((item: any) => item.id == "tag-suggestions")[0]
-          ?.chipString || []),
-      (data.startDate = formData.filter(
+          ?.chipString?.join(';') : [] ) || []),
+      (data.startDate = formData.filter((item:any)=>item.id==="dates")[0]?.fields.filter(
         (item: any) => item.id == "start-date"
       )[0]?.defaultValue);
-    data.dueDate = formData.filter(
+    data.dueDate = formData.filter((item:any)=>item.id==="dates")[0]?.fields.filter(
       (item: any) => item.id == "due-date"
     )[0]?.defaultValue;
+    data.attachments = formData.filter((item:any)=>item.id==="file-upload")[0].selectedFile.map((eachSelectedFile: any) => {
+      // let reader = new FileReader();
+      // let fileUrl: any = '';
+      // reader.readAsDataURL(eachSelectedFile)
+      // reader.onload = () => {
+      //   console.log("CHECK RESULT FILE", reader.result);
+      //   fileUrl = reader.result ? reader.result : '';
+      // };
+      // reader.onerror = function (error) {
+      //   console.log('Error: ', error);
+      // }
+      return {
+        name: eachSelectedFile.name,
+        url: eachSelectedFile.name,
+        entity: 'image'
+      }
+    });
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     console.log("formData", data);
@@ -122,6 +140,7 @@ const Issues = ({
   const handleViewList = () => {
     // setOpenIssueList()
   };
+  
   return (
     <div>
       <IssueBox>
@@ -202,8 +221,8 @@ const Issues = ({
             handleCreateTask={handleCreateTask}
             setOpenCreateTask={setOpenCreateIssue}
             currentProject={myProject}
-            currentSnapshot={mySnapshot}
-            currentStructure={myStructure}
+            currentSnapshot={currentSnapshot}
+            currentStructure={currentStructure}
             contextInfo={contextInfo}
           />
         </CustomDrawer>
