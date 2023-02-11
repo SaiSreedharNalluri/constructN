@@ -5,10 +5,14 @@ import { styled } from "@mui/system";
 import { InputAdornment } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 
-const CustomAutoComplete = styled(Autocomplete)
-  ({
-    border: '1px solid #36415d',
+const CustomAutoComplete = styled(Autocomplete) ({
+  border: '1px solid #36415d',
   borderRadius: '6px',
+  fontFamily: 'Open Sans',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  fontSize: 14,
+  color: '#101F4B',
   "& .MuiAutocomplete-root" :{
     width: '398px',
     height: '40px'
@@ -23,7 +27,12 @@ const CustomAutoComplete = styled(Autocomplete)
   },
   "& .MuiOutlinedInput-root" :{
     borderRadius: '0',
-    padding: '0'
+    padding: '0',
+    fontFamily: 'Open Sans',
+    fontStyle: 'normal',
+    fontWeight: 400,
+    fontSize: 14,
+    color: '#101F4B',
   },
   "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
     border: 0,

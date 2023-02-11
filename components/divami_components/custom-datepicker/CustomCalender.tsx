@@ -14,6 +14,11 @@ const CustomDatePicker = styled(DatePicker)({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  fontFamily: 'Open Sans',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  fontSize: 14,
+  color: '#101F4B',
   "& .MuiOutlinedInput-notchedOutline ":{
     border: 'none'
   },
@@ -21,7 +26,23 @@ const CustomDatePicker = styled(DatePicker)({
     display: 'none',
     textTransform: 'uppercase'
   }
-})
+});
+
+const CustomDatePickerInputField = styled(TextField) ({
+  fontFamily: 'Open Sans',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  fontSize: 14,
+  color: '#101F4B',
+  '& .MuiInputBase-input': {
+    fontFamily: 'Open Sans',
+    fontStyle: 'normal',
+    fontWeight: 400,
+    fontSize: 14,
+    color: '#101F4B',
+    textTransform: 'uppercase'
+  }
+});
 
 
 const CustomCalender = (props: any) => {
@@ -38,7 +59,7 @@ const CustomCalender = (props: any) => {
             onChange(newValue)
           }}
           renderInput={(params: any) => (
-            <TextField
+            <CustomDatePickerInputField
               {...params}
               value={value}
               InputLabelProps={{ shrink: true }}
