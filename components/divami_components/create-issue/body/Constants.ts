@@ -1,6 +1,6 @@
 export const TASK_FORM_CONFIG = [
   {
-    id: 'tasks',
+    id: 'issueType',
     type: 'select',
     defaultValue: '',
     placeHolder: 'Select',
@@ -9,7 +9,7 @@ export const TASK_FORM_CONFIG = [
     isError: false,
     isReq: false,
     isflex: false,
-    formLabel: 'Select the Type of Task',
+    formLabel: 'Select the Type of Issue',
     options: [
       {
         label: 'Plastic',
@@ -27,11 +27,11 @@ export const TASK_FORM_CONFIG = [
     id: 'description',
     type: 'textfield',
     defaultValue: '',
-    formLabel: 'Tell more about the issue',
+    formLabel: 'Tell more about the Issue',
     placeholder: 'Tell more about the issue',
   },
   {
-    id: 'taskPriority',
+    id: 'issuePriority',
     type: 'select',
     defaultValue: '',
     placeHolder: 'Select',
@@ -40,7 +40,7 @@ export const TASK_FORM_CONFIG = [
     isError: false,
     isReq: false,
     isflex: false,
-    formLabel: 'Select Task Priority',
+    formLabel: 'Select Issue Priority',
     options: [
       {
         label: 'Plastic',
@@ -79,7 +79,7 @@ export const TASK_FORM_CONFIG = [
     isReq: true,
   },
   {
-    id: 'start-date',
+    id: 'due-date',
     type: 'datePicker',
     defaultValue: '',
     label: 'MM/DD/YYYY',

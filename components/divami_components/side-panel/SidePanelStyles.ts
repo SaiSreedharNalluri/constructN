@@ -34,11 +34,11 @@ export const StyledImage = styled(Image)`
 
 export const HighlightedSytledImage = styled(Image)`
   cursor: pointer;
-  position: absolute;
-  margin-left: 18px;
-  width: 54px;
-  height: 54px;
-  z-index: 9999;
+  position:absolute;
+  margin-left:18px;
+  width:54px;
+  height:54px;
+  z-index:999;
 `;
 
 // const SideMenuImageActive = styled(Image)({

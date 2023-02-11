@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import Header from "../../../../components/divami_components/header/Header";
 import { ChildrenEntity, IStructure } from "../../../../models/IStructure";
 import CollapsableMenu from "../../../../components/layout/collapsableMenu";
@@ -37,8 +38,37 @@ import { it } from "node:test";
 import Moment from "moment";
 import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 import ToolBarMenuWrapper from "../../../../components/divami_components/toolbar/ToolBarMenuWrapper";
+import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
+import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
+import { styled } from "@mui/system";
 
 interface IProps {}
+const OpenMenuButton = styled("div")({
+  position: "fixed",
+  border: "1px solid #C4C4C4",
+  height: "32px",
+  width: "107px",
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-evenly",
+  alignItems: "center",
+  transform: "rotate(270deg)",
+  left: "20px",
+  bottom: "38px",
+  cursor: "pointer",
+});
+const CloseMenuButton = styled("div")({
+  height: "38px",
+  width: "31px",
+  border: "1px solid #BDBDBD",
+  position: "fixed",
+  bottom: "0",
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center",
+  cursor: "pointer",
+});
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
@@ -74,13 +104,15 @@ const Index: React.FC<IProps> = () => {
   const [currentContext, setCurrentContext] = useState<IToolResponse>({
     type: "Task",
   });
+  const [hierarchy, setHierarchy] = useState(false);
 
   const closeIssueCreate = () => {
     setOpenCreateIssue(false);
   };
   const issueSubmit = (formdata: any) => {
     issuesList.push(formdata);
-
+    // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
+    // toolClicked(myTool);
     setOpenCreateIssue(false);
   };
 
@@ -93,7 +125,8 @@ const Index: React.FC<IProps> = () => {
 
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
-
+    let myTool: ITools = { toolName: "task", toolAction: "taskCreated" };
+    toolClicked(myTool);
     setOpenCreateTask(false);
   };
 
@@ -163,6 +196,12 @@ const Index: React.FC<IProps> = () => {
 
   const updateRealityMap = (realityMap: IActiveRealityMap) => {
     setActiveRealityMap(realityMap);
+    if (currentViewLayers.length > 0) {
+      currentViewLayers.length = 0;
+    }
+    Object.keys(realityMap).map((key) => {
+      currentViewLayers.push(key);
+    });
     console.log("change triggered", realityMap);
   };
 
@@ -193,6 +232,8 @@ const Index: React.FC<IProps> = () => {
               updateSnapshot={updatedSnapshot}
               updateRealityMap={updateRealityMap}
               updateDesignMap={updateDesignMap}
+              tasksList={tasksList}
+              issuesList={issuesList}
               viewMode={currentViewMode}
               viewType={currentViewType}
               viewLayers={currentViewLayers}
@@ -247,7 +288,6 @@ const Index: React.FC<IProps> = () => {
 
   const toolClicked = (toolInstance: ITools) => {
     let newLayers = currentViewLayers;
-
     switch (toolInstance.toolName) {
       case "viewType":
         setViewType(toolInstance.toolAction);
@@ -263,10 +303,13 @@ const Index: React.FC<IProps> = () => {
             setOpenIssueView(true);
             break;
           case "issueCreate":
-          case "issueCreated":
+          case "issueCreateSuccess":
+          case "issueCreateFail":
+          case "issueSelect":
           case "issueShow":
           case "issueHide":
             setClickedTool(toolInstance);
+
             break;
         }
 
@@ -289,7 +332,7 @@ const Index: React.FC<IProps> = () => {
             //todo
             break;
           case "taskCreate":
-          case "taskCreated":
+          case "taskCreateSuccess":
           case "taskShow":
           case "taskHide":
             setClickedTool(toolInstance);
@@ -320,6 +363,9 @@ const Index: React.FC<IProps> = () => {
   const toolResponse = (data: ITools) => {
     console.log("Got tool REsponse->", data);
     switch (data.toolName) {
+      case "viewMode":
+        setViewMode(data.toolAction);
+        break;
       case "issue":
         if (data.toolAction === "issueCreate") {
           console.log("Open issue Menu");
@@ -545,6 +591,11 @@ const Index: React.FC<IProps> = () => {
       .then((response) => {
         if (response.success === true) {
           toast.success("issue information updated successfully");
+          const index = issueFilterList.findIndex(
+            (obj: Issue) => obj._id === response.result._id
+          );
+          issueFilterList.splice(index, 1, response.result);
+          setIssueList(issueFilterList);
         }
       })
       .catch((error) => {
@@ -561,32 +612,62 @@ const Index: React.FC<IProps> = () => {
           {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
           <SidePanelMenu onChangeData={onChangeData} />
         </div>
-        <div>
-          {
-            <div
-              ref={leftRefContainer}
-              className={` ${
-                leftNav ? "visible" : "hidden"
-              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
-            >
-              <div>
-                <LeftOverLay
-                  getStructureData={getStructureData}
-                  getStructure={(structureData) => {
-                    if (structure === undefined) {
-                      setStructure(
-                        getCurrentStructureFromStructureList(structureData)
-                      );
-                      getIssues(structureData._id);
-                      getTasks(structureData._id);
-                    }
-                  }}
-                ></LeftOverLay>
-              </div>
-            </div>
-          }
-        </div>
         <div id="viewer">{renderSwitch(viewerTypeState)}</div>
+        {hierarchy ? (
+          <div
+            onClick={() => {
+              setHierarchy(false);
+            }}
+          >
+            <CloseMenuButton>
+              <Image src={ChevronLeftIcon} width={17} height={17} alt="Arrow" />
+            </CloseMenuButton>
+            <div>
+              {
+                <div
+                  ref={leftRefContainer}
+                  className={` ${
+                    hierarchy ? "visible" : "hidden"
+                  } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+                >
+                  <div>
+                    <LeftOverLay
+                      getStructureData={getStructureData}
+                      getStructure={(structureData) => {
+                        if (structure === undefined) {
+                          setStructure(
+                            getCurrentStructureFromStructureList(structureData)
+                          );
+                          getIssues(structureData._id);
+                          getTasks(structureData._id);
+                        }
+                      }}
+                    ></LeftOverLay>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        ) : (
+          <div
+            onClick={() => {
+              setHierarchy(true);
+            }}
+          >
+            {
+              <OpenMenuButton>
+                <Image
+                  src={ChevronRightIcon}
+                  alt="Arrow"
+                  width={17}
+                  height={17}
+                  style={{ transform: "rotate(90deg)" }}
+                />
+                <div>Hierarchy</div>
+              </OpenMenuButton>
+            }
+          </div>
+        )}
         {/* <div>
             <FontAwesomeIcon
               className={`absolute  ${
@@ -674,8 +755,9 @@ const Index: React.FC<IProps> = () => {
                 closeFilterOverlay={closeFilterOverlay}
                 closeTaskFilterOverlay={closeTaskFilterOverlay}
                 handleOnTaskFilter={handleOnTaskFilter}
-              ></RightFloatingMenu> */}
-            {/* <IssueCreate
+              ></RightFloatingMenu>
+              <IssueCreate
+                issueToolClicked={toolClicked}
                 handleIssueSubmit={issueSubmit}
                 visibility={openCreateIssue}
                 closeOverlay={closeIssueCreate}
@@ -696,6 +778,7 @@ const Index: React.FC<IProps> = () => {
               ></TaskCreate>
               <IssueList
                 closeFilterOverlay={closeFilterOverlay}
+                issueToolClicked={toolClicked}
                 issuesList={issuesList}
                 visibility={openIssueView}
                 closeOverlay={closeIssueList}
