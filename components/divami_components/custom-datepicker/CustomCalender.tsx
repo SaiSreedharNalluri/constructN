@@ -15,11 +15,32 @@ const CustomDatePicker = styled(DatePicker)({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: 14,
+  color: "#101F4B",
   "& .MuiOutlinedInput-notchedOutline ": {
     border: "none",
   },
   "& .MuiFormLabel-root.MuiInputLabel-root": {
     display: "none",
+    textTransform: "uppercase",
+  },
+});
+
+const CustomDatePickerInputField = styled(TextField)({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: 14,
+  color: "#101F4B",
+  "& .MuiInputBase-input": {
+    fontFamily: "Open Sans",
+    fontStyle: "normal",
+    fontWeight: 400,
+    fontSize: 14,
+    color: "#101F4B",
     textTransform: "uppercase",
   },
 });

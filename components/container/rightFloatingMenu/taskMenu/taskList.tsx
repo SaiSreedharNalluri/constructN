@@ -137,7 +137,7 @@ const TaskList: React.FC<IProps> = ({
           </div>
           <div className="flex justify-between text-gray-800">
             <div className="mr-2">
-              <FontAwesomeIcon
+              <FontAwesomeIcon 
                 icon={faFilter}
                 onClick={() => {
                   if (!fileterView) {

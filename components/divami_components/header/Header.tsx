@@ -4,7 +4,9 @@ import React, { useEffect, useRef, useState } from "react";
 import constructnLogo from "../../../public/divami_icons/constructnLogo.svg";
 import hamburgerMenu from "../../../public/divami_icons/hamburgerMenu.svg";
 import profileImageHeader from "../../../public/divami_icons/profileImageHeader.svg";
-import Notification from "../../../public/divami_icons/notification.svg";
+import Notification from "../../../public/divami_icons/Notification.svg";
+import clip from "../../../public/divami_icons/clip.svg";
+
 import { useRouter } from "next/router";
 import { getCookie, removeCookies } from "cookies-next";
 import DesignRealitySwitch from "../../container/designRealitySwitch";
@@ -165,6 +167,7 @@ const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
           </HeaderProfileImageContainer>
           <HeaderNotificationImageContainer>
             <Image src={Notification} alt="Profile Image" />
+
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
             <Image src={hamburgerMenu} alt="Menu" />

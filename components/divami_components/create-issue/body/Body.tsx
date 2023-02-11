@@ -54,7 +54,7 @@ const Body = ({ handleFormData }: any) => {
     if (router.isReady) {
       getIssuesTypes(router.query.projectId as string).then((response: any) => {
         if (response.success === true) {
-          response.result.push("Please select the issue type");
+          // response.result.push("Please select the issue type");
           setIssueTypes(response.result);
           console.log(issueTypes);
         }

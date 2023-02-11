@@ -2,22 +2,40 @@ import { MenuItem, Select } from '@mui/material'
 import React, { useState } from 'react'
 import { styled } from "@mui/system";
 
-const StyledSelect = styled(Select)
-  ({
-    width: '100%',
+const StyledSelect = styled(Select) ({
+  width: '100%',
   height: '40px',
   outline: '0px',
   border: '1px solid #36415d',
   borderRadius: '4px',
+  fontFamily: 'Open Sans',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  fontSize: 14,
+  color: '#101F4B',
   "& .MuiOutlinedInput-notchedOutline" :{
     border: 0,
     offset: 0,
   }
-})
+});
+
+const StyledMenuItem = styled(MenuItem) ({
+  fontFamily: 'Open Sans',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  fontSize: 14,
+  color: '#101F4B',
+});
 
 
-const CustomSelectContainer = styled("div")
-  ({width: '398px'})
+const CustomSelectContainer = styled("div") ({
+  width: '398px',
+  fontFamily: 'Open Sans',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  fontSize: 14,
+  color: '#101F4B'
+});
 
 const CustomSelect = (props: any) => {
   const { config, defaultValue, id, setFormConfig } = props
@@ -53,9 +71,9 @@ const CustomSelect = (props: any) => {
       <StyledSelect value={val} onChange={handlechange} id={id}>
         {config.options?.length &&
           config.options.map((item: any, index: any) => (
-            <MenuItem value={`${item.value}`} id={`select-dropdown${index}`}>
+            <StyledMenuItem key={item.value} value={`${item.value}`} id={`select-dropdown${index}`}>
               {item.label}
-            </MenuItem>
+            </StyledMenuItem>
           ))}
       </StyledSelect>
       {/* {isError && (

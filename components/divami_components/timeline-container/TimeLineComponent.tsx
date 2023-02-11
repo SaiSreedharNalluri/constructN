@@ -67,50 +67,52 @@ const TimeLineComponent: React.FC<IProps> = ({
   console.log(snapshotList, "snaphsot listt");
   return (
     <>
-      <TimeLineStyleContainer>
-        <SelectedTimeLine onClick={toggleTimeline}>
-          {Moment(currentSnapshot?.date).format("DD MMM YYYY")}
-        </SelectedTimeLine>
+      {snapshotList && snapshotList.length > 0 && (
+        <TimeLineStyleContainer>
+          <SelectedTimeLine onClick={toggleTimeline}>
+            {Moment(currentSnapshot?.date).format("DD MMM YYYY")}
+          </SelectedTimeLine>
 
-        <div
-        //  className="absolute flex flex-col items-center z-10 top-0 inset-x-0"
-        >
           <div
-          // className="bg-gray-300 border border-gray-700 rounded duration-300 cursor-pointer"
+          //  className="absolute flex flex-col items-center z-10 top-0 inset-x-0"
           >
-            {/* <p onClick={toggleTimeline}>{getSnapshotDate()}</p> */}
+            <div
+            // className="bg-gray-300 border border-gray-700 rounded duration-300 cursor-pointer"
+            >
+              {/* <p onClick={toggleTimeline}>{getSnapshotDate()}</p> */}
+            </div>
+            {snapshotList && currentSnapshot && (
+              <TimeLinePagination>
+                <div className=" flex text-sm">
+                  <p>{oldDate && Moment(oldDate).format("DD MMM YY")}</p>
+                </div>
+                <PaginationStyle
+                  count={snapshotList?.length}
+                  page={page}
+                  onChange={handleChange}
+                  renderItem={(item: any) => (
+                    <PaginationItem
+                      slots={{
+                        previous: KeyboardDoubleArrowLeftIcon,
+                        next: KeyboardDoubleArrowRightIcon,
+                      }}
+                      {...item}
+                    />
+                  )}
+                />
+                <div className="flex text-sm items-center ml-1 ">
+                  <p>{newDate && Moment(newDate).format("DD MMM YY")} </p>
+                </div>
+                <CustomCalender
+                  onChange={(e: any) => handleChange(e, 1)}
+                  shouldDisableDate={disableWeekends}
+                  hideTextField
+                />
+              </TimeLinePagination>
+            )}
           </div>
-          {snapshotList && currentSnapshot && (
-            <TimeLinePagination>
-              <div className=" flex text-sm">
-                <p>{oldDate && Moment(oldDate).format("DD MMM YY")}</p>
-              </div>
-              <PaginationStyle
-                count={snapshotList?.length}
-                page={page}
-                onChange={handleChange}
-                renderItem={(item: any) => (
-                  <PaginationItem
-                    slots={{
-                      previous: KeyboardDoubleArrowLeftIcon,
-                      next: KeyboardDoubleArrowRightIcon,
-                    }}
-                    {...item}
-                  />
-                )}
-              />
-              <div className="flex text-sm items-center ml-1 ">
-                <p>{newDate && Moment(newDate).format("DD MMM YY")} </p>
-              </div>
-              <CustomCalender
-                onChange={(e: any) => handleChange(e, 1)}
-                shouldDisableDate={disableWeekends}
-                hideTextField
-              />
-            </TimeLinePagination>
-          )}
-        </div>
-      </TimeLineStyleContainer>
+        </TimeLineStyleContainer>
+      )}
     </>
   );
 };

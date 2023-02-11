@@ -22,6 +22,7 @@ import CreateTask from "../create-task/CreateTask";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import { createTask } from "../../../services/task";
 import { toast } from "react-toastify";
+import CustomTaskDetailsDrawer from "../task_detail/taskDetail";
 
 const Task = ({
   rightMenuClickHandler,
@@ -43,6 +44,7 @@ const Task = ({
   const [mySnapshot, setMySnapshot] = useState(currentSnapshot);
   const [myTypesList, setMyTypesList] = useState(currentTypesList);
   const [openCreateTask, setOpenCreateTask] = useState(false);
+  const [openTaskDetail, setOpenTaskDetail] = useState(false);
 
   const taskMenuClicked = (localTool: any) => {
     toolClicked(localTool);
@@ -106,6 +108,12 @@ const Task = ({
         }
       });
   };
+
+  const handleViewTaskDetail = () => {
+    console.log("true");
+    setOpenTaskDetail(true);
+  };
+
   return (
     <TaskBox>
       <TaskTitleDiv>Task: </TaskTitleDiv>
@@ -137,10 +145,10 @@ const Task = ({
 
       <IssuesSectionClipImg>
         <Image
-          src={clipboardSecondIcon}
-          width={12}
-          height={12}
-          onClick={rightMenuClickHandler}
+          src={clipboardIcon}
+          onClick={() => {
+            handleViewTaskDetail();
+          }}
           alt="Arrow"
         />{" "}
       </IssuesSectionClipImg>
@@ -173,6 +181,24 @@ const Task = ({
             contextInfo={contextInfo}
           />
         </CustomDrawer>
+      )}
+      {openTaskDetail && (
+        <Drawer
+          anchor={"right"}
+          open={openTaskDetail}
+          onClose={() => setOpenTaskDetail((prev: any) => !prev)}
+        >
+          <CustomTaskDetailsDrawer
+            // tasksList={tasksList}
+            // taskMenuClicked={taskMenuClicked}
+            // currentProject={myProject}
+            // currentStructure={myStructure}
+            // currentSnapshot={mySnapshot}
+            // closeTaskFilterOverlay={closeTaskFilterOverlay}
+            // handleOnTaskFilter={handleOnTaskFilter}
+            onClose={() => setOpenDrawer((prev: any) => !prev)}
+          />
+        </Drawer>
       )}
     </TaskBox>
   );
