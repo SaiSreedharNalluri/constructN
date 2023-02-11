@@ -130,3 +130,16 @@ export const updateProjectCover = async (file: any, projectId: string) => {
       throw error.response.data;
     });
 };
+export const getProjectTypes = async () => {
+  return await instance
+    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/types`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error', error);
+      throw error;
+    });
+};

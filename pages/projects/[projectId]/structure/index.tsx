@@ -80,7 +80,8 @@ const Index: React.FC<IProps> = () => {
   };
   const issueSubmit = (formdata: any) => {
     issuesList.push(formdata);
-
+    // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
+    // toolClicked(myTool);
     setOpenCreateIssue(false);
   };
 
@@ -93,7 +94,8 @@ const Index: React.FC<IProps> = () => {
 
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
-
+    let myTool: ITools = { toolName: "task", toolAction: "taskCreated" };
+    toolClicked(myTool);
     setOpenCreateTask(false);
   };
 
@@ -163,6 +165,12 @@ const Index: React.FC<IProps> = () => {
 
   const updateRealityMap = (realityMap: IActiveRealityMap) => {
     setActiveRealityMap(realityMap);
+    if (currentViewLayers.length > 0) {
+      currentViewLayers.length = 0;
+    }
+    Object.keys(realityMap).map((key) => {
+      currentViewLayers.push(key);
+    });
     console.log("change triggered", realityMap);
   };
 
@@ -193,6 +201,8 @@ const Index: React.FC<IProps> = () => {
               updateSnapshot={updatedSnapshot}
               updateRealityMap={updateRealityMap}
               updateDesignMap={updateDesignMap}
+              tasksList={tasksList}
+              issuesList={issuesList}
               viewMode={currentViewMode}
               viewType={currentViewType}
               viewLayers={currentViewLayers}
@@ -247,7 +257,6 @@ const Index: React.FC<IProps> = () => {
 
   const toolClicked = (toolInstance: ITools) => {
     let newLayers = currentViewLayers;
-
     switch (toolInstance.toolName) {
       case "viewType":
         setViewType(toolInstance.toolAction);
@@ -263,10 +272,13 @@ const Index: React.FC<IProps> = () => {
             setOpenIssueView(true);
             break;
           case "issueCreate":
-          case "issueCreated":
+          case "issueCreateSuccess":
+          case "issueCreateFail":
+          case "issueSelect":
           case "issueShow":
           case "issueHide":
             setClickedTool(toolInstance);
+
             break;
         }
 
@@ -289,7 +301,7 @@ const Index: React.FC<IProps> = () => {
             //todo
             break;
           case "taskCreate":
-          case "taskCreated":
+          case "taskCreateSuccess":
           case "taskShow":
           case "taskHide":
             setClickedTool(toolInstance);
@@ -320,6 +332,9 @@ const Index: React.FC<IProps> = () => {
   const toolResponse = (data: ITools) => {
     console.log("Got tool REsponse->", data);
     switch (data.toolName) {
+      case "viewMode":
+        setViewMode(data.toolAction);
+        break;
       case "issue":
         if (data.toolAction === "issueCreate") {
           console.log("Open issue Menu");
@@ -545,6 +560,11 @@ const Index: React.FC<IProps> = () => {
       .then((response) => {
         if (response.success === true) {
           toast.success("issue information updated successfully");
+          const index = issueFilterList.findIndex(
+            (obj: Issue) => obj._id === response.result._id
+          );
+          issueFilterList.splice(index, 1, response.result);
+          setIssueList(issueFilterList);
         }
       })
       .catch((error) => {
@@ -674,8 +694,9 @@ const Index: React.FC<IProps> = () => {
                 closeFilterOverlay={closeFilterOverlay}
                 closeTaskFilterOverlay={closeTaskFilterOverlay}
                 handleOnTaskFilter={handleOnTaskFilter}
-              ></RightFloatingMenu> */}
-            {/* <IssueCreate
+              ></RightFloatingMenu>
+              <IssueCreate
+                issueToolClicked={toolClicked}
                 handleIssueSubmit={issueSubmit}
                 visibility={openCreateIssue}
                 closeOverlay={closeIssueCreate}
@@ -696,6 +717,7 @@ const Index: React.FC<IProps> = () => {
               ></TaskCreate>
               <IssueList
                 closeFilterOverlay={closeFilterOverlay}
+                issueToolClicked={toolClicked}
                 issuesList={issuesList}
                 visibility={openIssueView}
                 closeOverlay={closeIssueList}

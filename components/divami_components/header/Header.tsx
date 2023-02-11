@@ -89,10 +89,10 @@ const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
     setActive(e.currentTarget.id);
     setIsDesignSelected((prev: any) => !prev);
     setRighttNav(!rightNav);
-    if (e.currentTarget.id === "Reality") {
+    if (e.currentTarget.id === "Design") {
       toolInstance.toolName = "viewMode";
       toolInstance.toolAction = "Design";
-    } else if (e.currentTarget.id === "Design") {
+    } else if (e.currentTarget.id === "Reality") {
       toolInstance.toolName = "viewMode";
       toolInstance.toolAction = "Reality";
     } else if (e.currentTarget.id === "compareDesign") {

@@ -101,8 +101,20 @@ export const getRealityLayers = async (structure, realityMap) => {
             realityPositionMap[mode] = position360Video;
             break;
         case "360 Image":
+            let position360Image = {};
+            for (let reality of realityMap[mode]) {
+                let response = await getRealityPositions(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
+                position360Image = {...position360Image, ...response.data};
+            }
+            realityPositionMap[mode] = position360Image;
             break;
         case "Phone Image":
+            let positionPhoneImage = {};
+            for (let reality of realityMap[mode]) {
+                let response = await getRealityPositions(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
+                positionPhoneImage = {...positionPhoneImage, ...response.data};
+            }
+            realityPositionMap[mode] = positionPhoneImage;
             break;
         case "Drone Image":
             let positionDroneImage = {};
