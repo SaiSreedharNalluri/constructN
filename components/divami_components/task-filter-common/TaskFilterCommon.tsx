@@ -313,7 +313,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
         <HeaderContainer>
           <TitleContainer>
             <HeaderLeftSection>
-              <HeaderLeftSectionText>Filters Task</HeaderLeftSectionText>
+              <HeaderLeftSectionText>Filters</HeaderLeftSectionText>
             </HeaderLeftSection>
             <HeaderRightSection>
               <HeaderRightSectionResetIcon>
