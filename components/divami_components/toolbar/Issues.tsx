@@ -21,9 +21,9 @@ import CreateIssue from "../create-issue/CreateIssue";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import { createIssue } from "../../../services/issue";
 import { toast } from "react-toastify";
-import CustomIssueListDrawer from "../issue_listing/IssueList";
 import TaskList from "../task_list/TaskList";
 import { ITools } from "../../../models/ITools";
+import CustomIssueListDrawer from "../issue-listing/IssueList";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
@@ -58,7 +58,7 @@ const Issues = ({
     issueMenuClicked(issueMenuInstance);
   };
   const handleViewTaskList = () => {
-    console.log("teskssksk trigg");
+    // console.log("teskssksk trigg");
     setOpenDrawer(true);
   };
 
@@ -213,6 +213,7 @@ const Issues = ({
             deleteTheIssue={() => {}}
             clickIssueEditSubmit={() => {}}
           />
+          {/* <FilterCommon/> */}
         </Drawer>
       )}
       {openCreateIssue && (
