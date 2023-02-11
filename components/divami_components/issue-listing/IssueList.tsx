@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Drawer } from "@mui/material";
 import Image from "next/image";
 
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
@@ -43,6 +43,8 @@ import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
 import { Issue } from "../../../models/Issue";
 import { useState } from "react";
 import moment from "moment";
+import { ITools } from "../../../models/ITools";
+import FilterCommon from "../filter-common/FilterCommon";
 
 interface IProps {
   closeOverlay: () => void;
@@ -67,7 +69,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   clickIssueEditSubmit,
   onClose,
 }) => {
-  // console.log("issuesList", issuesList);
   const issueListing = [
     {
       id: 107,
@@ -77,7 +78,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       assignee: "Alex Brandon",
       due_date: "2023-02-09T05:04:01.012Z",
     },
-
+    
     {
       id: 320,
       title: "Transmittals",
@@ -109,6 +110,20 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   };
   const [sortedDates, setSortedDates] = useState(issuesList);
   const [sortOrder, setSortOrder] = useState("asc");
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [listOverlay, setListOverlay] = useState(false);
+  let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
+  
+  const closeIssueList = () => {
+    //setListOverlay(false);
+    issueMenuInstance.toolAction = "issueViewClose";
+    // issueMenuClicked(issueMenuInstance);
+  };
+  
+  const handleViewTaskList = () => {
+    // console.log("teskssksk trigg");
+    setOpenDrawer(true);
+  };
 
   const sortDateOrdering = () => {
     let sorted;
@@ -125,7 +140,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     }
     setSortedDates(sorted);
   };
-
+  
+  console.log("issuesListnot fott-2", issuesList,openDrawer);
   return (
     <TaskListContainer>
       <HeaderContainer>
@@ -138,7 +154,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             }}
             src={CrossIcon}
             alt={"close icon"}
-          />
+            />
         </TitleContainer>
       </HeaderContainer>
 
@@ -154,11 +170,17 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               onClick={sortDateOrdering}
               src={downArrow}
               alt="Arrow"
-            />
+              />
           )}
           <DueDate>Due Date</DueDate>
           <DownloadIcon src={Download} alt="Arrow" />
-          <FunnelIcon src={FilterInActive} alt="Arrow" />
+          <FunnelIcon
+            src={FilterInActive}
+            alt="Arrow"
+            onClick={() => {
+              handleViewTaskList();
+            }}
+          />
         </MiniSymbolsContainer>
       </MiniHeaderContainer>
 
@@ -172,13 +194,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     <Image
                       src={
                         val.type === "RFI"
-                          ? RFIList
+                        ? RFIList
                           : val.type === "Transmittals"
                           ? TransmittalList
                           : val.type === "Submittals"
                           ? SubmittalList
                           : ""
-                      }
+                        }
                       alt="Arrow"
                     />
                     <BodyContTitle>
@@ -206,6 +228,26 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       {/* <LoadMoreContainer>
         <LoadMoreButton>Load More</LoadMoreButton>
       </LoadMoreContainer> */}
+
+      {openDrawer && (
+        <Drawer
+          anchor={"right"}
+          open={openDrawer}
+          onClose={() => setOpenDrawer((prev: any) => !prev)}
+        >
+          <FilterCommon
+            closeFilterOverlay={closeFilterOverlay}
+            issuesList={issuesList}
+            visibility={listOverlay}
+            closeOverlay={closeIssueList}
+            handleOnFilter={handleOnFilter}
+            onClose={() => setOpenDrawer((prev: any) => !prev)}
+            handleOnSort={() => {}}
+            deleteTheIssue={() => {}}
+            clickIssueEditSubmit={() => {}}
+          />
+        </Drawer>
+      )}
     </TaskListContainer>
   );
 };

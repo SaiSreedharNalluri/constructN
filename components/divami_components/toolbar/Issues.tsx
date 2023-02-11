@@ -10,8 +10,6 @@ import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIco
 import { styled } from "@mui/system";
 // import IssueList from "../issue_listing/IssueList";
 
-
-
 import {
   IssueBox,
   IssuesSectionPlusImg,
@@ -19,16 +17,16 @@ import {
   IssuesSectionClipImg,
 } from "./ToolBarStyles";
 import { Drawer } from "@mui/material";
-import CustomIssueListDrawer from "../issue_listing/IssueList";
+import CustomIssueListDrawer from "../issue-listing/IssueList";
 import TaskList from "../task_list/TaskList";
 import { ITools } from "../../../models/ITools";
+import FilterCommon from "../filter-common/filterCommon";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
     width: 438px;
   }
 `;
-
 
 const Issues = ({
   rightMenuClickHandler,
@@ -42,21 +40,20 @@ const Issues = ({
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
-   const [listOverlay, setListOverlay] = useState(false);
+  const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
   // const [issueVisbility, setIssueVisibility] = useState(
   //   issueLayer === undefined ? false : issueLayer
   // );
-  let issueMenuInstance: ITools = { toolName: 'issue', toolAction: '' };
+  let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
 
-
-    const closeIssueList = () => {
+  const closeIssueList = () => {
     //setListOverlay(false);
-    issueMenuInstance.toolAction = 'issueViewClose';
+    issueMenuInstance.toolAction = "issueViewClose";
     issueMenuClicked(issueMenuInstance);
   };
   const handleViewTaskList = () => {
-    console.log("teskssksk trigg");
+    // console.log("teskssksk trigg");
     setOpenDrawer(true);
   };
 
@@ -130,10 +127,11 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={()=>{}}
-            deleteTheIssue={()=>{}}
-            clickIssueEditSubmit={()=>{}}
+            handleOnSort={() => {}}
+            deleteTheIssue={() => {}}
+            clickIssueEditSubmit={() => {}}
           />
+          {/* <FilterCommon/> */}
         </Drawer>
       )}
     </div>

@@ -7,7 +7,7 @@ const StyledLabel = styled(Typography)
     fontWeight: '400',
   lineHeight: '20px',
   fontSize: '14px',
-  marginBottom: '8px',
+  // marginBottom: '8px',
   fontFamily: 'Open Sans'
 })
 

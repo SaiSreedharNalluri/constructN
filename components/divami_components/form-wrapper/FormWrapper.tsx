@@ -9,7 +9,7 @@ import {styled} from '@mui/system'
 import { Box } from '@mui/material'
 
 const FormElementContainer = styled(Box)({
-  marginTop: '30px'
+  marginTop: '8px'
 })
 
 const FormWrapper = (props: any) => {
