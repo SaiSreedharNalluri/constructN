@@ -28,8 +28,7 @@ import {
   getRealityMap, getFloorPlanData,
 } from "../../utils/ViewerDataUtils";
 import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
-import TimelineContainer from "./timelineContainer";
-
+import TimeLineComponent from '../divami_components/timeline-container/TimeLineComponent'
 function GenericViewer(props) {
   const genericViewer = "genericViewer";
   const genericViewerRef = useRef();
@@ -516,19 +515,26 @@ function GenericViewer(props) {
   };
 
   const setCurrentSnapshot = (snapshot) => {
+    if(snapshot){
+
     setSnapshot(snapshot);
     updateSnapshot(snapshot);
     setRealityList(snapshot.reality);
     setRealityMap(getRealityMap(snapshot));
     updateRealityMap(getRealityMap(snapshot));
+  }
+
   };
 
   const setCurrentCompareSnapshot = (snapshot) => {
+    if(snapshot){
+
     setCompareSnapshot(snapshot);
     // updateSnapshot(snapshot);
     setCompareRealityList(snapshot.reality);
     setCompareRealityMap(getRealityMap(snapshot));
     // updateRealityMap(getRealityMap(snapshot));
+    }
   };
 
 
@@ -831,11 +837,11 @@ function GenericViewer(props) {
       <div className="fixed calc-w calc-h flex flex-row">
         <div className="relative basis-1/2 flex grow shrink">
           {renderViewer(1)}
-          <TimelineContainer currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimelineContainer>
+          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimeLineComponent>
         </div>
         <div className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
           {renderViewer(2)}
-          <TimelineContainer currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimelineContainer>
+          <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
         </div>
       </div>
   );
