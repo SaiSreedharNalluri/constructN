@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import Header from "../../../../components/divami_components/header/Header";
 import { ChildrenEntity, IStructure } from "../../../../models/IStructure";
 import CollapsableMenu from "../../../../components/layout/collapsableMenu";
@@ -37,8 +38,37 @@ import { it } from "node:test";
 import Moment from "moment";
 import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 import ToolBarMenuWrapper from "../../../../components/divami_components/toolbar/ToolBarMenuWrapper";
+import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
+import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
+import { styled } from "@mui/system";
 
 interface IProps {}
+const OpenMenuButton = styled("div")({
+  position: "fixed",
+  border: "1px solid #C4C4C4",
+  height: "32px",
+  width: "107px",
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-evenly",
+  alignItems: "center",
+  transform: "rotate(270deg)",
+  left: "20px",
+  bottom: "38px",
+  cursor: "pointer",
+});
+const CloseMenuButton = styled("div")({
+  height: "38px",
+  width: "31px",
+  border: "1px solid #BDBDBD",
+  position: "fixed",
+  bottom: "0",
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center",
+  cursor: "pointer",
+});
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
@@ -74,6 +104,7 @@ const Index: React.FC<IProps> = () => {
   const [currentContext, setCurrentContext] = useState<IToolResponse>({
     type: "Task",
   });
+  const [hierarchy, setHierarchy] = useState(false);
 
   const closeIssueCreate = () => {
     setOpenCreateIssue(false);
@@ -552,32 +583,62 @@ const Index: React.FC<IProps> = () => {
           {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
           <SidePanelMenu onChangeData={onChangeData} />
         </div>
-        <div>
-          {
-            <div
-              ref={leftRefContainer}
-              className={` ${
-                leftNav ? "visible" : "hidden"
-              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
-            >
-              <div>
-                <LeftOverLay
-                  getStructureData={getStructureData}
-                  getStructure={(structureData) => {
-                    if (structure === undefined) {
-                      setStructure(
-                        getCurrentStructureFromStructureList(structureData)
-                      );
-                      getIssues(structureData._id);
-                      getTasks(structureData._id);
-                    }
-                  }}
-                ></LeftOverLay>
-              </div>
-            </div>
-          }
-        </div>
         <div id="viewer">{renderSwitch(viewerTypeState)}</div>
+        {hierarchy ? (
+          <div
+            onClick={() => {
+              setHierarchy(false);
+            }}
+          >
+            <CloseMenuButton>
+              <Image src={ChevronLeftIcon} width={17} height={17} alt="Arrow" />
+            </CloseMenuButton>
+            <div>
+              {
+                <div
+                  ref={leftRefContainer}
+                  className={` ${
+                    hierarchy ? "visible" : "hidden"
+                  } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+                >
+                  <div>
+                    <LeftOverLay
+                      getStructureData={getStructureData}
+                      getStructure={(structureData) => {
+                        if (structure === undefined) {
+                          setStructure(
+                            getCurrentStructureFromStructureList(structureData)
+                          );
+                          getIssues(structureData._id);
+                          getTasks(structureData._id);
+                        }
+                      }}
+                    ></LeftOverLay>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        ) : (
+          <div
+            onClick={() => {
+              setHierarchy(true);
+            }}
+          >
+            {
+              <OpenMenuButton>
+                <Image
+                  src={ChevronRightIcon}
+                  alt="Arrow"
+                  width={17}
+                  height={17}
+                  style={{ transform: "rotate(90deg)" }}
+                />
+                <div>Hierarchy</div>
+              </OpenMenuButton>
+            }
+          </div>
+        )}
         {/* <div>
             <FontAwesomeIcon
               className={`absolute  ${
