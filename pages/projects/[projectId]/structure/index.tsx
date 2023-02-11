@@ -341,6 +341,7 @@ const Index: React.FC<IProps> = () => {
   const getIssues = (structureId: string) => {
     getIssuesList(router.query.projectId as string, structureId)
       .then((response) => {
+        console.log("IMPORTANT 4");
         setIssueList(response.result);
         setIssueFilterList(response.result);
       })
@@ -362,8 +363,16 @@ const Index: React.FC<IProps> = () => {
       });
   };
   const getTasks = (structureId: string) => {
+    console.log(
+      router.query.projectId,
+      "PROJECT ID",
+      structureId,
+      "STRUCTURE ID",
+      "IMPORTANT 5"
+    );
     getTasksList(router.query.projectId as string, structureId)
       .then((response) => {
+        console.log(response, "IMPORTANT 3");
         setTasksList(response.result);
         setTaskFilterList(response.result);
       })
