@@ -37,7 +37,7 @@ import {
   DividerIcon,
   ArrowDownIcon,
 } from "./IssueListStyles";
-import RFIList from "../../../public/divami_icons/rfilist.svg";
+import RFIList from "../../../public/divami_icons/rfiList.svg";
 import SubmittalList from "../../../public/divami_icons/submittalList.svg";
 import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
 import { Issue } from "../../../models/Issue";

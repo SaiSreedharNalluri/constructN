@@ -17,3 +17,15 @@ export const updateTags = async (tagObj: Object, projectId: string) => {
       throw error;
     });
 };
+export const getTagsList = async (projectId: string) => {
+  return await instance
+    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tags`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};

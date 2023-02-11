@@ -17,10 +17,13 @@ import {
   IssuesSectionClipImg,
 } from "./ToolBarStyles";
 import { Drawer } from "@mui/material";
-import CustomIssueListDrawer from "../issue-listing/IssueList";
+import CreateIssue from "../create-issue/CreateIssue";
+import CustomDrawer from "../custom-drawer/custom-drawer";
+import { createIssue } from "../../../services/issue";
+import { toast } from "react-toastify";
 import TaskList from "../task_list/TaskList";
 import { ITools } from "../../../models/ITools";
-import FilterCommon from "../filter-common/filterCommon";
+import CustomIssueListDrawer from "../issue-listing/IssueList";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
@@ -37,11 +40,13 @@ const Issues = ({
   myStructure,
   mySnapshot,
   closeFilterOverlay,
+  contextInfo,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
+  const [openCreateIssue, setOpenCreateIssue] = useState(false);
   // const [issueVisbility, setIssueVisibility] = useState(
   //   issueLayer === undefined ? false : issueLayer
   // );
@@ -59,6 +64,61 @@ const Issues = ({
 
   // console.log(openIssueList, 'openIssueList')
 
+  const handleCreateTask = (formData: any) => {
+    console.log(formData, "form data at home");
+    clickTaskSubmit(formData);
+  };
+  const clickTaskSubmit = (formData: any) => {
+    let userIdList: any[] = [];
+    const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
+      ?.selectedName;
+    if (assignes && assignes.length > 0) {
+      assignes.map((user: any) => {
+        userIdList.push(user.value);
+      });
+    }
+    let data: any = {};
+    data.structure = myStructure?._id;
+    data.title = `${myStructure?.name}_${data.date} `;
+    data.snapshot = mySnapshot?._id;
+    data.status = "To Do";
+    data.context = contextInfo;
+    (data.type = formData.filter(
+      (item: any) => item.id == "issueType"
+    )[0]?.defaultValue),
+      (data.priority = formData.filter(
+        (item: any) => item.id == "issuePriority"
+      )[0]?.defaultValue),
+      (data.description = formData.filter(
+        (item: any) => item.id == "description"
+      )[0]?.defaultValue),
+      (data.assignees = userIdList),
+      (data.tags =
+        formData.filter((item: any) => item.id == "tag-suggestions")[0]
+          ?.chipString || []),
+      (data.startDate = formData.filter(
+        (item: any) => item.id == "start-date"
+      )[0]?.defaultValue);
+    data.dueDate = formData.filter(
+      (item: any) => item.id == "due-date"
+    )[0]?.defaultValue;
+    const projectId = formData.filter((item: any) => item.projectId)[0]
+      .projectId;
+    console.log("formData", data);
+    createIssue(projectId as string, data)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success("Issue added sucessfully");
+          // handleTaskSubmit(formData);
+          console.log(formData);
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
   const handleViewList = () => {
     // setOpenIssueList()
   };
@@ -73,7 +133,10 @@ const Issues = ({
             width={12}
             height={12}
             alt="Arrow"
-            onClick={rightMenuClickHandler}
+            // onClick={rightMenuClickHandler}
+            onClick={() => {
+              setOpenCreateIssue(true);
+            }}
           />{" "}
         </IssuesSectionPlusImg>
 
@@ -133,6 +196,18 @@ const Issues = ({
           />
           {/* <FilterCommon/> */}
         </Drawer>
+      )}
+      {openCreateIssue && (
+        <CustomDrawer open>
+          <CreateIssue
+            handleCreateTask={handleCreateTask}
+            setOpenCreateTask={setOpenCreateIssue}
+            currentProject={myProject}
+            currentSnapshot={mySnapshot}
+            currentStructure={myStructure}
+            contextInfo={contextInfo}
+          />
+        </CustomDrawer>
       )}
     </div>
   );

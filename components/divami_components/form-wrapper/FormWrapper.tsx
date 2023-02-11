@@ -1,19 +1,19 @@
-import CustomCalender from '../custom-datepicker/CustomCalender'
-import CustomFileInput from '../custom-file-input/CustomFileInput'
-import CustomLabel from '../custom-label/CustomLabel'
-import CustomSearch from '../custom-search/CustomSearch'
-import CustomSelect from '../custom-select/CustomSelect'
-import CustomTagSuggestion from '../custom-tag-suggestion/CustomTagSuggestion'
-import { CustomTextField } from '../custom-textfield/CustomTextField'
-import {styled} from '@mui/system'
-import { Box } from '@mui/material'
+import CustomCalender from "../custom-datepicker/CustomCalender";
+import CustomFileInput from "../custom-file-input/CustomFileInput";
+import CustomLabel from "../custom-label/CustomLabel";
+import CustomSearch from "../custom-search/CustomSearch";
+import CustomSelect from "../custom-select/CustomSelect";
+import CustomTagSuggestion from "../custom-tag-suggestion/CustomTagSuggestion";
+import { CustomTextField } from "../custom-textfield/CustomTextField";
+import { styled } from "@mui/system";
+import { Box } from "@mui/material";
 
 const FormElementContainer = styled(Box)({
   marginTop: '8px'
 })
 
 const FormWrapper = (props: any) => {
-  const { config, formState, setFormConfig } = props
+  const { config, formState, setFormConfig } = props;
 
   const handleTextChange = (e: any, id: string, data?: any) => {
     setFormConfig((prev: any) =>
@@ -22,12 +22,12 @@ const FormWrapper = (props: any) => {
           return {
             ...item,
             defaultValue: e.target.value,
-          }
+          };
         }
-        return item
-      }),
-    )
-  }
+        return item;
+      })
+    );
+  };
 
   const handleDateChange = (e: any, id: string) => {
     setFormConfig((prev: any) =>
@@ -36,12 +36,12 @@ const FormWrapper = (props: any) => {
           return {
             ...item,
             defaultValue: e,
-          }
+          };
         }
-        return item
-      }),
-    )
-  }
+        return item;
+      })
+    );
+  };
 
   const handleSearchResult = (e: any, value: string, id: string) => {
     setFormConfig((prev: any) =>
@@ -50,44 +50,44 @@ const FormWrapper = (props: any) => {
           return {
             ...item,
             selectedName: value,
-          }
+          };
         }
-        return item
-      }),
-    )
-  }
+        return item;
+      })
+    );
+  };
 
-  const handleFileUpload = (e:any, id:any) => {
+  const handleFileUpload = (e: any, id: any) => {
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
           return {
             ...item,
             selectedFile: e.target.files,
-          }
+          };
         }
-        return item
-      }),
-    )
-  }
+        return item;
+      })
+    );
+  };
 
-  const handleChipMaking = (chipsString:any, id:any) => {
+  const handleChipMaking = (chipsString: any, id: any) => {
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
           return {
             ...item,
             chipString: [...chipsString],
-          }
+          };
         }
-        return item
-      }),
-    )
-  }
+        return item;
+      })
+    );
+  };
 
   const renderHTML = (data: any, isDisabled: boolean, index: number) => {
     switch (data.type) {
-      case 'select':
+      case "select":
         return (
           <CustomSelect
             config={data}
@@ -98,18 +98,18 @@ const FormWrapper = (props: any) => {
             isError={data.isError}
             label=""
           />
-        )
-      case 'textfield':
+        );
+      case "textfield":
         return (
           <CustomTextField
             id={data.id}
             variant="outlined"
             placeholder={data?.placeholder}
             onChange={(e: any) => {
-              handleTextChange(e, data.id, data)
+              handleTextChange(e, data.id, data);
             }}
             onBlur={(e: any) => {
-              handleTextChange(e, data.id, data)
+              handleTextChange(e, data.id, data);
             }}
             defaultValue={data.placeHolder}
             isError={data.isError}
@@ -122,43 +122,43 @@ const FormWrapper = (props: any) => {
             isDisabled={data.isDisabled}
             className={undefined}
           />
-        )
-      case 'datePicker':
+        );
+      case "datePicker":
         return (
           <CustomCalender
             data={data}
             onChange={(e: any) => {
-              handleDateChange(e, data.id)
+              handleDateChange(e, data.id);
             }}
           />
-        )
-      case 'search':
+        );
+      case "search":
         return (
           <CustomSearch
             data={data}
             handleSearchResult={(e: any, value: string) => {
-              handleSearchResult(e, value, data.id)
+              handleSearchResult(e, value, data.id);
             }}
           />
-        )
-      case 'file':
+        );
+      case "file":
         return (
           <CustomFileInput
-            handleFileUpload={(e:any) => handleFileUpload(e, data.id)}
+            handleFileUpload={(e: any) => handleFileUpload(e, data.id)}
           />
-        )
-      case 'chip':
+        );
+      case "chip":
         return (
           <CustomTagSuggestion
             handleChipMaking={(chipsString: any) =>
               handleChipMaking(chipsString, data.id)
             }
           />
-        )
+        );
       default:
-        return ''
+        return "";
     }
-  }
+  };
 
   return (
     <div>
@@ -170,10 +170,10 @@ const FormWrapper = (props: any) => {
             )}
             {renderHTML(eachConfig, false, index)}
           </FormElementContainer>
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};
 
-export default FormWrapper
+export default FormWrapper;

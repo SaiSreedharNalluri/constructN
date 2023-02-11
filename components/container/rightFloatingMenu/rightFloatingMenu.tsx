@@ -1,18 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import {
   faArrowsSplitUpAndLeft,
-  faBullseye,
   faCodeBranch,
-  faCodeCompare,
   faD,
   faDatabase,
-  faDisplay,
-  faExclamationCircle,
   faR,
   faSitemap,
-  faTasks,
 } from "@fortawesome/free-solid-svg-icons";
 import { ITools } from "../../../models/ITools";
 import IssueMenu from "./issueMenu/issueMenu";
@@ -26,7 +20,7 @@ import Image from "next/image";
 import issues from "../../../public/icons/issues.svg";
 import tasks from "../../../public/icons/taskVisibleInToolbar.svg";
 import hotspot from "../../../public/icons/Hotspot.svg";
-import { IActiveReality, IActiveRealityMap } from "../../../models/IReality";
+import { IActiveRealityMap } from "../../../models/IReality";
 import { IDesignMap } from "../../../models/IDesign";
 interface IProps {
   toolClicked: (a: ITools) => void;
@@ -85,10 +79,6 @@ const RightFloatingMenu: React.FC<IProps> = ({
   // };
   useEffect(() => {
     setIViewMode(viewMode);
-    //   document.addEventListener('click', closeStructurePages);
-    //   return () => {
-    //     document.removeEventListener('click', closeStructurePages);
-    //   };
   }, [viewMode]);
 
   useEffect(() => {
@@ -153,13 +143,6 @@ const RightFloatingMenu: React.FC<IProps> = ({
 
     toolClicked(toolInstance);
   };
-  // const issueChange =(changeOb:any)=>{
-
-  //   toolInstance.toolName='issue';
-  //   toolInstance.toolAction=changeOb.currentTarget.id;
-  //   toolClicked(toolInstance);
-  //   setRighttNav(!rightNav);
-  // }
   const issueMenuClicked = (localTool: ITools) => {
     toolClicked(localTool);
     if (
@@ -181,7 +164,6 @@ const RightFloatingMenu: React.FC<IProps> = ({
   const progressMenuClicked = (localTool: ITools) => {
     toolClicked(localTool);
   };
-
   return (
     <div ref={rightOverlayRefs}>
       <div ref={rightOverlayRef} className="flex-col ">
@@ -200,43 +182,10 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 <select onChange={typeChange} id="typeList">
                   {myTypesList &&
                     Object.keys(myTypesList).map((key) => (
-                      <option value={key}>{key}</option>
+                      <option key={key} value={key} defaultChecked={true}>
+                        {key}
+                      </option>
                     ))}
-                  {/* {viewMode === 'Design' ? (
-                    <option value="plan">Plan</option>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Design' ? (
-                    <option value="elevation">Elevation</option>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Design' ? (
-                    <option value="xSectional">CrossSectional</option>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Design' ? (
-                    <option value="layout">Layout</option>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Design' ? (
-                    <option value="bim">BIM</option>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Reality' ? (
-                    <option value="pointCloud">PointCloud</option>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Reality' ? (
-                    <option value="orthoPhoto">OrthoPhoto</option>
-                  ) : (
-                    ''
-                  )} */}
                 </select>
               </div>
             </div>
@@ -271,167 +220,16 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 <ul className=" h-full text-xs" id="items">
                   {myLayersList &&
                     Object.keys(myLayersList).map((key) => (
-                      <li>
+                      <li key={key}>
                         <input
                           onClick={LayerChange}
                           value={key}
                           type="checkbox"
+                          defaultChecked={true}
                         />
                         {key}
                       </li>
                     ))}
-                  {/* <li>
-                    <input
-                      onClick={LayerChange}
-                      value={'360Image'}
-                      type="checkbox"
-                    />
-                    360 Image{' '}
-                  </li>
-                  <li>
-                    <input
-                      onClick={LayerChange}
-                      value={'360Video'}
-                      type="checkbox"
-                    />
-                    360 Video Walk
-                  </li>
-                  <li>
-                    <input
-                      onClick={LayerChange}
-                      value={'phoneImage'}
-                      type="checkbox"
-                    />
-                    Phone Image
-                  </li>
-                  <li>
-                    <input
-                      onClick={LayerChange}
-                      value={'arielImage'}
-                      type="checkbox"
-                    />
-                    Aerial Image{' '}
-                  </li>
-                  <li>
-                    <input
-                      onClick={LayerChange}
-                      value={'issue'}
-                      type="checkbox"
-                    />
-                    Issue{' '}
-                  </li>
-                  <li>
-                    <input
-                      onClick={LayerChange}
-                      value={'rfi'}
-                      type="checkbox"
-                    />
-                    RFI{' '}
-                  </li>
-                  <li>
-                    <input
-                      onClick={LayerChange}
-                      value={'progress'}
-                      type="checkbox"
-                    />
-                    Progress
-                  </li>
-                  {viewMode === 'Reality' ? (
-                    <li>
-                      <input
-                        onClick={LayerChange}
-                        value={'baseLine'}
-                        type="checkbox"
-                      />
-                      Base Lines
-                    </li>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Reality' ? (
-                    <li>
-                      <input
-                        onClick={LayerChange}
-                        value={'cutFillAnalysis'}
-                        type="checkbox"
-                      />
-                      Cut-fill analysis
-                    </li>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Reality' ? (
-                    <li>
-                      <input
-                        onClick={LayerChange}
-                        value={'autocadOverlay'}
-                        type="checkbox"
-                      />
-                      Autocad overlay
-                    </li>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Reality' ? (
-                    <li>
-                      <input
-                        onClick={LayerChange}
-                        value={'boundries'}
-                        type="checkbox"
-                      />
-                      Boundaries
-                    </li>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Reality' ? (
-                    <li>
-                      <input
-                        onClick={LayerChange}
-                        value={'contours'}
-                        type="checkbox"
-                      />
-                      Contours
-                    </li>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Reality' ? (
-                    <li>
-                      <input
-                        onClick={LayerChange}
-                        value={'spotLevels'}
-                        type="checkbox"
-                      />
-                      Spot levels
-                    </li>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Reality' ? (
-                    <li>
-                      <input
-                        onClick={LayerChange}
-                        value={'vegetation'}
-                        type="checkbox"
-                      />
-                      Vegetation
-                    </li>
-                  ) : (
-                    ''
-                  )}
-                  {viewMode === 'Reality' ? (
-                    <li>
-                      <input
-                        onClick={LayerChange}
-                        value={'gcpPoints'}
-                        type="checkbox"
-                      />
-                      GCP Points
-                    </li>
-                  ) : (
-                    ''
-                  )} */}
                 </ul>
               </div>
             </div>
@@ -444,14 +242,6 @@ const RightFloatingMenu: React.FC<IProps> = ({
             active === "issue" ? "selectedClass" : "unSelectedClass"
           }`}
         >
-          {/* <FontAwesomeIcon
-            icon={faExclamationCircle}
-            id="issue"
-            className={` w-full py-2  cursor-pointer ${
-              active === 'issue' ? 'selectedClass' : 'unSelectedClass'
-            }`}
-            onClick={rightMenuClickHandler}
-          ></FontAwesomeIcon> */}
           <Image
             alt=""
             src={issues}
@@ -470,14 +260,6 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 currentSnapshot={mySnapshot}
                 closeFilterOverlay={closeFilterOverlay}
               ></IssueMenu>
-              {/* <div className='bg-gray-400'>
-                  <div className=" h-full text-xs"  id="issueItems">
-                  <div onClick={issueChange} id={"issueCreate"}><p>Create</p> </div>
-                  <div onClick={issueChange} id={"issueView"}><p>View</p> </div>
-                  <div onClick={issueChange} id={"issueShow"} ><p>Show</p> </div>
-                  <div onClick={issueChange} id={"issueHide"} ><p>Hide</p> </div>
-                  </div>
-                 </div> */}
             </div>
           ) : (
             ""

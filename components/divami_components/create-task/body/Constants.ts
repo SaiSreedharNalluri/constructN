@@ -79,7 +79,7 @@ export const TASK_FORM_CONFIG = [
     isReq: true,
   },
   {
-    id: 'due-date',
+    id: 'start-date',
     type: 'datePicker',
     defaultValue: '',
     label: 'MM/DD/YYYY',
