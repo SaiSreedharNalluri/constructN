@@ -110,9 +110,9 @@
 }
 
 .MuiDrawer-paper {
-  top: auto;
-  bottom: 0;
-  height: calc(100% - 60px);
+  top: auto !important;
+  bottom: 0 !important;
+  height: calc(100% - 60px) !important;
 }
 
 .MuiDrawer-paper:focus-visible {
@@ -121,11 +121,16 @@
 
 .MuiBackdrop-root {
   height: calc(100% - 60px);
-  top: auto;
-  width: calc(100% - 45px);
-  right: 0;
-  left: auto;
+  top: auto !important;
+  width: calc(100% - 59px);
+  right: 0 !important;
+  left: auto !important;
 }
+
+body {
+  font-size: 14px;
+}
+
 @font-face {
   font-family: "Open Sans";
   src: local("Lato"),

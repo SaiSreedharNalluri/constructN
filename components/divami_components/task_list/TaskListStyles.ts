@@ -82,6 +82,7 @@ export const DueDate = styled(Box)({
 export const BodyContainer = styled(Box)`
   padding-left: 20px;
   padding-right: 20px;
+  overflow: auto;
 `;
 
 export const FirstHeader = styled("div")({
@@ -111,6 +112,11 @@ export const DueDateDiv = styled("div")({
   fontWeight: "400",
   fontSize: "14px",
   lineHeight: "19px",
+});
+
+export const ArrowDownIcon = styled(Image)({
+  cursor: "pointer",
+  marginLeft: "27px",
 });
 
 export const HorizontalLine = styled("div")({

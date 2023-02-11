@@ -12,8 +12,8 @@ const Pagination: React.FC<IProps> = ({ currentSnapshot, snapshotList, getSnapsh
 
   useEffect(() => {
     if (snapshotList.length > 0) {
-      setNewDate(snapshotList[0].date);
-      setOldDate(snapshotList.reverse()[0].date);
+      setOldDate(snapshotList[0].date);
+      setNewDate(snapshotList[snapshotList.length - 1].date);
     }
   }, [snapshotList]);
 
@@ -32,27 +32,27 @@ const Pagination: React.FC<IProps> = ({ currentSnapshot, snapshotList, getSnapsh
             snapshotList.map((snapData: ISnapshot) => {
               return (
                 <div key={snapData._id} className="py-3 px-1">
-                  <ul>
+                  {/* <ul>
                     <li
-                      // key={snapData._id}
+                       //key={snapData._id}
                       // onClick={() => {
                       //   getSnapshotInfo(snapData);
                       // }}
-                    >
+                    > */}
                       <div className="flex items-center justify-evenly rounded pl-2 ">
                         <input
                           type="radio"
                           name="bordered-radio"
-                          className="w-2 h-2 mt-auto cursor-pointer"
+                          className="w-2 h-2 mt-auto  cursor-pointer"
                           key={snapData._id}
-                          checked = {(snapData._id == currentSnapshot._id) ? true : false}
+                          defaultChecked ={(snapData._id === currentSnapshot._id) ? true : false}
                           onClick={() => {
                             getSnapshotInfo(snapData);
                           }}
                         />
                       </div>
-                    </li>
-                  </ul>
+                    {/* </li>
+                  </ul> */}
                 </div>
               );
             })}

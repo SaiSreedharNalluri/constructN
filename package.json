@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p 3000",
-    "lint": "next lint"
+    "lint": "next lint",
+    "docker-image": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype .",
+    "docker-image-dev": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:dev ."
   },
   "dependencies": {
     "@emotion/styled": "^11.10.5",
@@ -35,9 +37,10 @@
     "react-responsive-modal": "^6.4.1",
     "react-select": "^5.7.0",
     "react-tabs": "^6.0.0",
-    "react-tagsinput": "^3.20.0",
     "react-toastify": "^9.1.1",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "@mui/x-date-pickers": "^5.0.16",
+    "dayjs": "^1.11.7"
   },
   "devDependencies": {
     "@types/react-csv": "^1.1.3",

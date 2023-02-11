@@ -9,17 +9,17 @@ const StyledDrawer = styled(Drawer)`
   }
 `
 
-const CustomDrawer = () => {
+const CustomDrawer = (props: any) => {
 
   return (
     <div>
       <StyledDrawer
         anchor={'right'}
-        // open={openDrawer}
+        open={true}
         // onClose={() => setOpenDrawer((prev) => !prev)}
       >
-        {/* {props.children} */}
-        listing of
+        {props.children}
+        {/* listing of */}
       </StyledDrawer>
     </div>
   )
