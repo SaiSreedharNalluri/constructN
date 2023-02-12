@@ -8,10 +8,14 @@ export class ForgeDataVisualization {
         this.dataVizExtn = dataVisualizationExtension; 
         this.dataVizCore = Autodesk.DataVisualization.Core;
         this.viewableDataMap = {};
-        this.dbIdMap = [];
+        this.dbIdArray = [];
+        this.tempDbIdArray = [];
         this.createTagTool = false;
         this.tagType = "Issue";
         this.viewableLength = 0;
+        this.tempViewableLength = 0;
+        this.viewableState = {};
+        this.trackerState = {};
 
         // window.dbIdMap = this.dbIdMap;
 
@@ -44,7 +48,7 @@ export class ForgeDataVisualization {
 
     selectTag(tag) {
         let selectedViewable;
-        for(const viewable of this.dbIdMap) {
+        for(const viewable of this.dbIdArray) {
             if(!viewable) {
                 continue;
             }
@@ -88,12 +92,32 @@ export class ForgeDataVisualization {
         this.formatDataMap(this.trackerMap);
     }
 
+    setViewableState(viewableList) {
+        console.log("Inside set Viewable state: ", viewableList)
+        if (!viewableList) {
+            return;
+        }
+        for(const viewableType in this.viewableState) {
+            let show = viewableList.find((e) => e === viewableType);
+            if (show) {
+                this.viewableState[viewableType] = true;
+            } else {
+                this.viewableState[viewableType] = false;
+            }
+        }
+    }
+
+    showTracker(type, show) {
+        if (type in this.trackerState) {
+            this.trackerState[type] = show;
+        }
+    }
 
     formatDataMap(visualizationData) {
         let dbId = this.viewableLength + 1;
         for (const viewableType in visualizationData) {
-            let viewableData = this.getViewableData(viewableType);
-            let viewableStyle = this.getViewableStyle(viewableType);
+            delete this.viewableDataMap[viewableType];
+            this.viewableDataMap[viewableType] = {};
             switch (viewableType) {
                 case "360 Image":
                 case "Phone Image":
@@ -106,16 +130,14 @@ export class ForgeDataVisualization {
                             id: positionData,
                             position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
                         }
-                        this.dbIdMap[dbIdObject.dbId] = dbIdObject;
-                        const viewable = new this.dataVizCore.SpriteViewable(dbIdObject.position, viewableStyle, dbIdObject.dbId);
-                        viewableData.addViewable(viewable);
+                        this.dbIdArray[dbIdObject.dbId] = dbIdObject;
+                        this.viewableState[viewableType] = true;
                     }
                     break;
                 case "Drone Image":
                     break;
                 case "Issue":
                 case "Task":
-                    
                     for (const trackerData of visualizationData[viewableType]) {
                         console.log("Inside data visualization: ", trackerData);
                         let tag = trackerData.context.tag;
@@ -125,21 +147,19 @@ export class ForgeDataVisualization {
                             id: trackerData._id,
                             position: this.applyOffset(tag.tagPosition, this.offset),
                         }
-                        this.dbIdMap[dbIdObject.dbId] = dbIdObject;
-                        const viewable = new this.dataVizCore.SpriteViewable(dbIdObject.position, viewableStyle, dbIdObject.dbId);
-                        viewableData.addViewable(viewable);
+                        this.dbIdArray[dbIdObject.dbId] = dbIdObject;;
+                        this.trackerState[viewableType] = true;
                     }
                     break;
             }   
             this.viewableLength = dbId - 1;
-            this.viewableDataMap[viewableType] = viewableData;
         }
         console.log("Viewable data map: ", this.viewableLength);
-        console.log("Viewable data map: ", this.viewableDataMap);
     }
 
     
     updateData() {
+        this.getNewViewableData();
         this.loadViewableData();
         this.addListeners();
     }
@@ -207,17 +227,49 @@ export class ForgeDataVisualization {
         return viewableData;
     }
 
+    getNewViewableData() {
+        delete this.viewableDataMap;
+        this.viewableDataMap = {}
+        for(let dbIdObject of this.dbIdArray) {
+            if (!dbIdObject) {
+                continue;
+            }
+            if (!(dbIdObject.type in this.viewableDataMap)) {
+                let viewableData = this.getViewableData(dbIdObject.type);
+                let viewableStyle = this.getViewableStyle(dbIdObject.type);
+                this.viewableDataMap[dbIdObject.type] = {
+                    viewableData: viewableData,
+                    viewableStyle: viewableStyle
+                }
+            }
+            const viewable = new this.dataVizCore.SpriteViewable(
+                dbIdObject.position, 
+                this.viewableDataMap[dbIdObject.type].viewableStyle, 
+                dbIdObject.dbId);
+
+            this.viewableDataMap[dbIdObject.type].viewableData.addViewable(viewable);
+        }
+        console.log("Viewable data map: ", this.viewableDataMap);
+    }
+
     async loadViewableData() {
-        for (let viewableData in this.viewableDataMap) {
-            console.log("Awaiting viewable data finish: ", viewableData);
-            await this.viewableDataMap[viewableData].finish(); 
-            this.dataVizExtn.addViewables(this.viewableDataMap[viewableData]);
+        let combinedState = {...this.viewableState, ...this.trackerState}
+        for (let viewableType in this.viewableDataMap) {
+            if(combinedState[viewableType]) {
+                console.log("Awaiting viewable data finish: ", viewableType);
+                await this.viewableDataMap[viewableType].viewableData.finish(); 
+                this.dataVizExtn.addViewables(this.viewableDataMap[viewableType].viewableData);
+            }
         }
     }
 
-    async loadTempViewableData() {
 
+    refreshViewableData() {
+        this.removeViewableData();
+        this.getNewViewableData();
+        this.loadViewableData();
     }
+
 
     async createTempViewable(type, event) {
 
@@ -230,12 +282,12 @@ export class ForgeDataVisualization {
             let viewableData = this.getViewableData();
             let viewableStyle = this.getViewableStyle(type);
             let dbIdObject = {
-                dbId: ++this.viewableLength,
+                dbId: ++this.tempViewableLength,
                 id: `Temp ${type}`,
                 type: type,
                 position: {x:result.point.x, y:result.point.y, z:result.point.z},
             }
-            this.dbIdMap[dbIdObject.dbId] = dbIdObject;
+            this.tempDbIdArray[dbIdObject.dbId] = dbIdObject;
 
 
             const viewable = new this.dataVizCore.SpriteViewable(dbIdObject.position, viewableStyle, dbIdObject.dbId);
@@ -252,6 +304,7 @@ export class ForgeDataVisualization {
 
     clearTempViewables() {
         this.removeViewableData();
+        this.getNewViewableData();
         this.loadViewableData();
     }
 
@@ -317,7 +370,7 @@ export class ForgeDataVisualization {
 
     passToViewerHandler(event) {
         
-        let dbObject = this.dbIdMap[event.dbId];
+        let dbObject = this.dbIdArray[event.dbId];
         // console.log("Inside selected dbId object: ", this.dbIdMap, dbObject);
 
         dbObject.position = this.removeOffset(dbObject.position, this.offset);
@@ -344,7 +397,7 @@ export class ForgeDataVisualization {
         if(this.viewableDataMap && Object.keys(this.viewableDataMap).length > 0) {
             this.removeViewableData();
             this.viewableDataMap = {};
-            this.dbIdMap = [];
+            this.dbIdArray = [];
         }
         this.removeListeners();
         
