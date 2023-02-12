@@ -173,7 +173,6 @@ function GenericViewer(props) {
         break;
       case 'showCompare':
         let currentMode = activeTool.current.toolName.endsWith("Design") ? "Design" : "Reality";
-        potreeUtils.current.readyForCompare(currentMode);
         getContext();
         setCompareViewMode(currentMode);
         currentCompareViewMode.current = currentMode
@@ -494,6 +493,20 @@ function GenericViewer(props) {
           potreeCompareUtils.current.updateLayersData(getRealityLayersPath(structure, compareRealityMap), currentContext.current);
         }
           
+        break;
+    }
+  }
+
+  function updateViewerChanges() {
+    switch(currentViewMode.current) {
+      case "Design":
+        if (forgeUtils.current) {
+        }
+        break;
+      case 'Reality':
+        if (potreeUtils.current) {
+          potreeUtils.current.readyForCompare(currentCompareViewMode.current);
+        }
         break;
     }
   }
@@ -875,8 +888,11 @@ function GenericViewer(props) {
       currentIsCompare.current = isCompare;
     }
     if (isCompare === true) {
+      updateViewerChanges();
       loadCompareViewerData();
       loadCompareLayerData();
+    } else {
+      updateViewerChanges();
     }
     return cleanUpOnCompareViewModeChange;
   }, [isCompare, compareViewMode])
