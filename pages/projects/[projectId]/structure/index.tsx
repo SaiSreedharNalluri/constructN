@@ -338,6 +338,9 @@ const Index: React.FC<IProps> = () => {
           console.log('Open issue Menu');
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateIssue(true);
+        } else if (data.toolAction === 'selectIssue') {
+          console.log('issue selected: ', data.response?.id);
+          // issue detail view open logic comes here
         }
         break;
       case 'Task':
@@ -345,6 +348,9 @@ const Index: React.FC<IProps> = () => {
           console.log('Open task Menu');
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateTask(true);
+        } else if (data.toolAction === 'selectTask') {
+          console.log('task selected: ', data.response?.id);
+          // task detail view open logic comes here
         }
         break;
       default:
