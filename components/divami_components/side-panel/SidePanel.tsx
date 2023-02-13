@@ -5,7 +5,7 @@ import dashboardProgressHighlight from "../../../public/divami_icons/dashboardPr
 
 import issuesIcon from "../../../public/divami_icons/issuesIcon.svg";
 import drawingInactive from "../../../public/divami_icons/drawingInactive.svg";
-import IssuesHighlightedIcon from "../../../public/divami_icons/issuesHighlightedIcon.svg";
+import IssuesHighlightedIcon from "../../../public/divami_icons/IssuesHighlightedIcon.svg";
 
 import drawing from "../../../public/divami_icons/drawing.svg";
 // import task from "../../../public/divami_icons/task.svg";
@@ -72,7 +72,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       isActive: false,
     },
     {
-      id: "branch",
+      id: "lineChart",
 
       icon: branch,
       activeIcon: branchHighlighted,
@@ -120,18 +120,19 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   const [active, setActive] = useState(router.pathname.split("/").pop());
 
   const leftClickHandler = (e: any) => {
-    // console.log("e", e.currentTarget.id);
+    console.log("e", e.currentTarget.id);
     switch (e.currentTarget.id) {
       case "dashboard":
         router.push(`/projects/${router.query.projectId as string}/dashboard`);
 
         break;
       case "views":
-      case "drawing":
+
+      case "structure":
         router.push(`/projects/${router.query.projectId as string}/structure`);
 
         break;
-      case "issues":
+      case "issue":
         router.push(`/projects/${router.query.projectId as string}/issue`);
         break;
       case "schedule":
@@ -166,14 +167,14 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
               {router.pathname.includes(item.id) ? (
                 <HighlightedSytledImage
                   src={item.activeIcon}
-                  alt={item.label}
+                  alt={item.id}
                   id={item.id}
                   onClick={leftClickHandler}
                 />
               ) : (
                 <StyledImage
                   src={item.icon}
-                  alt={item.label}
+                  alt={item.id}
                   id={item.id}
                   onClick={leftClickHandler}
                 />
