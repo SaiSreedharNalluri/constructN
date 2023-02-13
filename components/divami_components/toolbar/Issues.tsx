@@ -90,20 +90,29 @@ const Issues = ({
     // }
     let data: any = {};
     data.structure = currentStructure?._id;
-    data.title = `${currentStructure?.name}_${formData.dueDate} `;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
     data.owner = formData.owner;
-    data.context = contextInfo;
-    (data.type = formData.filter(
+    console.log(contextInfo, "contexxt");
+    Object.keys(contextInfo).forEach((key) => {
+      if (key !== "id") {
+        data.context = { ...data.context, [key]: contextInfo[key] };
+      }
+    });
+
+    console.log(data.context, "datraocmte", contextInfo);
+    data.title = formData.filter(
+      (item: any) => item.id == "title"
+    )[0]?.defaultValue;
+    data.type = formData.filter(
       (item: any) => item.id == "issueType"
+    )[0]?.defaultValue;
+    data.priority = formData.filter(
+      (item: any) => item.id == "issuePriority"
+    )[0]?.defaultValue;
+    (data.description = formData.filter(
+      (item: any) => item.id == "description"
     )[0]?.defaultValue),
-      (data.priority = formData.filter(
-        (item: any) => item.id == "issuePriority"
-      )[0]?.defaultValue),
-      (data.description = formData.filter(
-        (item: any) => item.id == "description"
-      )[0]?.defaultValue),
       (data.assignees = userIdList),
       (data.tags =
         (formData.length

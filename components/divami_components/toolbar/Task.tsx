@@ -82,49 +82,64 @@ const Task = ({
       assignes.map((user: any) => {
         userIdList.push(user.value);
       });
-    };
+    }
     userIdList.push(assignes.value);
     data.structure = currentStructure?._id;
-    data.title = `title_${Math.random()} `;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
     data.context = contextInfo;
-    (data.type = formData.filter(
+    Object.keys(contextInfo).forEach((key) => {
+      if (key !== "id") {
+        data.context = { ...data.context, [key]: contextInfo[key] };
+      }
+    });
+    data.title = formData.filter(
+      (item: any) => item.id == "title"
+    )[0]?.defaultValue;
+
+    data.type = formData.filter(
       (item: any) => item.id == "tasks"
+    )[0]?.defaultValue;
+    (data.priority = formData.filter(
+      (item: any) => item.id == "taskPriority"
     )[0]?.defaultValue),
-      (data.priority = formData.filter(
-        (item: any) => item.id == "taskPriority"
-      )[0]?.defaultValue),
       (data.description = formData.filter(
         (item: any) => item.id == "description"
       )[0]?.defaultValue),
       (data.assignees = userIdList),
-      (data.tags = (formData.length ?
-        formData.filter((item: any) => item.id == "tag-suggestions")[0]
-        ?.chipString?.join(';') : [] ) || []),
-      (data.startdate = formData.filter((item:any)=>item.id==="dates")[0]?.fields.filter(
-        (item: any) => item.id == "start-date"
-      )[0]?.defaultValue);
-    data.duedate = formData.filter((item:any)=>item.id==="dates")[0]?.fields.filter(
-      (item: any) => item.id == "due-date"
-    )[0]?.defaultValue;
-    data.attachments = formData.filter((item:any)=>item.id==="file-upload")[0].selectedFile.map((eachSelectedFile: any) => {
-      // let reader = new FileReader();
-      // let fileUrl: any = '';
-      // reader.readAsDataURL(eachSelectedFile)
-      // reader.onload = () => {
-      //   console.log("CHECK RESULT FILE", reader.result);
-      //   fileUrl = reader.result ? reader.result : '';
-      // };
-      // reader.onerror = function (error) {
-      //   console.log('Error: ', error);
-      // }
-      return {
-        name: eachSelectedFile.name,
-        url: eachSelectedFile.name,
-        entity: 'image'
-      }
-    });
+      (data.tags =
+        (formData.length
+          ? formData
+              .filter((item: any) => item.id == "tag-suggestions")[0]
+              ?.chipString?.join(";")
+          : []) || []),
+      (data.startdate = formData
+        .filter((item: any) => item.id === "dates")[0]
+        ?.fields.filter(
+          (item: any) => item.id == "start-date"
+        )[0]?.defaultValue);
+    data.duedate = formData
+      .filter((item: any) => item.id === "dates")[0]
+      ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
+    data.attachments = formData
+      .filter((item: any) => item.id === "file-upload")[0]
+      .selectedFile.map((eachSelectedFile: any) => {
+        // let reader = new FileReader();
+        // let fileUrl: any = '';
+        // reader.readAsDataURL(eachSelectedFile)
+        // reader.onload = () => {
+        //   console.log("CHECK RESULT FILE", reader.result);
+        //   fileUrl = reader.result ? reader.result : '';
+        // };
+        // reader.onerror = function (error) {
+        //   console.log('Error: ', error);
+        // }
+        return {
+          name: eachSelectedFile.name,
+          url: eachSelectedFile.name,
+          entity: "image",
+        };
+      });
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     console.log("formData", data);
