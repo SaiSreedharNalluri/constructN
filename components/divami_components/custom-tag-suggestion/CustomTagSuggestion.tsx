@@ -63,11 +63,11 @@ const CustomTagSuggestion = (props: any) => {
           variant="outlined"
           label="filterSelectedOptions"
           placeholder="Add tags separated by commas"
-          onKeyDown={(e) => {
+          onKeyDown={(e: any) => {
             if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
               setAutoCompleteValue(
                 // autoCompleteValue.concat((e.target as HTMLInputElement).value)
-                autoCompleteValue.concat((e.target as HTMLInputElement).value)
+                autoCompleteValue.concat(e.target.value)
               );
             }
           }}

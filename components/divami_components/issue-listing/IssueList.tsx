@@ -191,9 +191,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
       <BodyContainer>
         <Box sx={{ marginTop: "15px" }}>
-          {sortedDates.map((val) => {
+          {sortedDates.map((val, index: number) => {
             return (
-              <div>
+              <div key={index}>
                 <BodyInfo>
                   <FirstHeader>
                     <Image

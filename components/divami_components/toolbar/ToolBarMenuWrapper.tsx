@@ -45,10 +45,11 @@ interface IProps {
   closeTaskFilterOverlay: () => void;
   contextInfo: IToolResponse;
   openCreateIssue: boolean;
-  selectedLayersList: string[]
+  selectedLayersList: string[];
+  openCreateTask?: any;
 }
 
-const ToolBarMenuWrapper: React.FC<IProps> = ({
+const ToolBarMenuWrapper: React.FC<any> = ({
   toolClicked,
   viewLayers,
   viewMode,
@@ -67,7 +68,7 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
   contextInfo,
   openCreateIssue,
   openCreateTask,
-  selectedLayersList
+  selectedLayersList,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
