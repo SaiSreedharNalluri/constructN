@@ -64,8 +64,17 @@ const Task = ({
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
+    let userIdList: any[] = [];
+    const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
+      ?.selectedName;
+    if (assignes && assignes.length > 0) {
+      assignes.map((user: any) => {
+        userIdList.push(user.value);
+      });
+    };
+    userIdList.push(assignes.value);
     data.structure = currentStructure?._id;
-    data.title = `${currentStructure?.name}_${data.date} `;
+    data.title = `title_${Math.random()} `;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
     data.context = contextInfo;
@@ -78,19 +87,33 @@ const Task = ({
       (data.description = formData.filter(
         (item: any) => item.id == "description"
       )[0]?.defaultValue),
-      (data.assignees = formData.filter(
-        (item: any) => item.id == "assignedTo"
-      )[0]?.selectedName),
-      (data.tags = (
+      (data.assignees = userIdList),
+      (data.tags = (formData.length ?
         formData.filter((item: any) => item.id == "tag-suggestions")[0]
-          ?.chipString || []
-      ).toString()),
-      (data.startdate = formData.filter(
+        ?.chipString?.join(';') : [] ) || []),
+      (data.startdate = formData.filter((item:any)=>item.id==="dates")[0]?.fields.filter(
         (item: any) => item.id == "start-date"
       )[0]?.defaultValue);
-    data.duedate = formData.filter(
+    data.duedate = formData.filter((item:any)=>item.id==="dates")[0]?.fields.filter(
       (item: any) => item.id == "due-date"
     )[0]?.defaultValue;
+    data.attachments = formData.filter((item:any)=>item.id==="file-upload")[0].selectedFile.map((eachSelectedFile: any) => {
+      // let reader = new FileReader();
+      // let fileUrl: any = '';
+      // reader.readAsDataURL(eachSelectedFile)
+      // reader.onload = () => {
+      //   console.log("CHECK RESULT FILE", reader.result);
+      //   fileUrl = reader.result ? reader.result : '';
+      // };
+      // reader.onerror = function (error) {
+      //   console.log('Error: ', error);
+      // }
+      return {
+        name: eachSelectedFile.name,
+        url: eachSelectedFile.name,
+        entity: 'image'
+      }
+    });
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     console.log("formData", data);
