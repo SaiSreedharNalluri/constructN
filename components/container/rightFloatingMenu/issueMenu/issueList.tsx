@@ -74,7 +74,7 @@ const IssueList: React.FC<IProps> = ({
   const [issueObj, setIssueObj] = useState<Issue>();
   const [open, setOpen] = useState(false);
   const [tagList, setTagList] = useState<[string]>(['']);
-  let toolInstance :ITools ={toolName:'issue',toolAction:'issueSelect'};
+  let toolInstance: ITools = { toolName: 'issue', toolAction: 'issueSelect' };
 
   interface user {
     label: string;
@@ -581,7 +581,7 @@ const IssueList: React.FC<IProps> = ({
                         value={values.tags}
                         onChange={(value) => setFieldValue('tags', value)}
                         isMulti
-                        placeholder="Select the assignees "
+                        placeholder="Select the tags "
                         className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                       />
                       <ErrorMessage
@@ -920,10 +920,12 @@ const IssueList: React.FC<IProps> = ({
                           key={issueInfo._id}
                           onClick={() => {
                             setIssueViewMode('detail');
-                            let issueContext: IContext = issueInfo.context ? issueInfo.context : {type: "Issue"};
+                            let issueContext: IContext = issueInfo.context
+                              ? issueInfo.context
+                              : { type: 'Issue' };
                             issueContext.id = issueInfo._id;
                             toolInstance.response = issueContext;
-                            issueToolClicked(toolInstance)
+                            issueToolClicked(toolInstance);
                             setIssueObj(issueInfo);
                           }}
                         >
