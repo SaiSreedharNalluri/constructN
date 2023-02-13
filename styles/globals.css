@@ -99,3 +99,23 @@
 .spinner > circle {
   fill: transparent;
 }
+.adsk-viewing-viewer .adsk-toolbar {
+  bottom: calc(100% - 60px);
+  left: 10px;
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  width: calc(100% - 20px);
+  z-index: 15;
+}
+
+.adsk-viewing-viewer .adsk-toolbar .adsk-button .toolbar-vertical-group {
+  bottom: -60px;
+  left: -5px;
+  margin: 0;
+  position: absolute;
+  display: flex; 
+  flex-direction: row-reverse;
+  transition: all .2s ease;
+  z-index: 15;
+}

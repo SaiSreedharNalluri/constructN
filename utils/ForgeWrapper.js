@@ -524,7 +524,7 @@ export class ForgeViewerUtils {
 
   setForgeControls(type) {
     if (this.bimWalkExtn) {
-      if (this.isCompareView && type === "panorama") {
+      if (this.isCompareView() && type === "panorama") {
         this.viewer.navigation.setLockSettings({
 					'orbit': false,
 					'pan': false,
