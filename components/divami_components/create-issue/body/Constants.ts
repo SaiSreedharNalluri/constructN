@@ -70,6 +70,7 @@ export const TASK_FORM_CONFIG = [
     label: 'Select Name or Team',
   },
   {
+    form: 'createForm',
     id: 'start-date',
     type: 'datePicker',
     defaultValue: '',
@@ -79,6 +80,7 @@ export const TASK_FORM_CONFIG = [
     isReq: true,
   },
   {
+    form: 'createForm',
     id: 'due-date',
     type: 'datePicker',
     defaultValue: '',

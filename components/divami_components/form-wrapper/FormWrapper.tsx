@@ -12,6 +12,15 @@ const FormElementContainer = styled(Box)({
   marginTop: "30px",
 });
 
+const DatePickersContainer = styled(Box)({
+  display: "flex",
+  justifyContent: "space-between",
+});
+const DatePickerContainer = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+});
+
 const FormWrapper = (props: any) => {
   const { config, formState, setFormConfig } = props;
 
@@ -163,6 +172,31 @@ const FormWrapper = (props: any) => {
   return (
     <div>
       {config.map((eachConfig: any, index: any) => {
+        if (
+          eachConfig.form == "createForm" &&
+          eachConfig.type == "datePicker"
+        ) {
+          if (eachConfig.id == "start-date") {
+            return (
+              <FormElementContainer>
+                <DatePickersContainer>
+                  <DatePickerContainer>
+                    {eachConfig.formLabel ?? (
+                      <CustomLabel label={eachConfig.formLabel} />
+                    )}
+                    {renderHTML(eachConfig, false, index)}
+                  </DatePickerContainer>
+                  <div>
+                    {config[index + 1].formLabel ?? (
+                      <CustomLabel label={config[index + 1].formLabel} />
+                    )}
+                    {renderHTML(config[index + 1], false, index)}
+                  </div>
+                </DatePickersContainer>
+              </FormElementContainer>
+            );
+          } else return <></>;
+        }
         return (
           <FormElementContainer>
             {eachConfig.formLabel ?? (
