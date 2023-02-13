@@ -16,6 +16,7 @@ import {
   LayerSecondSectionCamImg,
   LayerSecondSectionArrImg,
   SelectLayersWrapper,
+
 } from "./ToolBarStyles";
 import SelectLayer from "../select-layers/SelectLayer";
 
@@ -27,6 +28,7 @@ const Layers = ({
   onListClick,
   openList,
   setOpenList,
+  selectedLayersList
 }: any) => {
   return (
     <>
@@ -53,6 +55,7 @@ const Layers = ({
           }}
           optionsList={myLayersList}
           onSelect={LayerChange}
+          selectedLayersList={selectedLayersList}
         />
       </SelectLayersWrapper>
     </>

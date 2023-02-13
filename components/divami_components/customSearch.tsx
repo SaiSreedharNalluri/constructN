@@ -47,7 +47,7 @@ const CustomSearch = (props: any) => {
     <CustomAutoComplete
       disablePortal
       id="combo-box-demo"
-      options={data.children ?? []}
+      options={data}
       getOptionLabel={(option: any) => option.name}
       renderInput={(params) => (
         <TextField

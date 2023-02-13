@@ -133,6 +133,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
   };
 
   const LayerChange = (changeOb: any) => {
+    console.log("LayerChange", changeOb.target.value);
     if (changeOb.target.checked == true) {
       toolInstance.toolName = "addViewLayer";
       toolInstance.toolAction = changeOb.target.value;
@@ -194,9 +195,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
           <FontAwesomeIcon
             id="type"
-            className={` flex w-full py-2  cursor-pointer ${
-              active === "type" ? "selectedClass" : "unSelectedClass"
-            }`}
+            className={` flex w-full py-2  cursor-pointer ${active === "type" ? "selectedClass" : "unSelectedClass"
+              }`}
             onClick={rightMenuClickHandler}
             icon={faSitemap}
           ></FontAwesomeIcon>
@@ -207,9 +207,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
           <FontAwesomeIcon
             icon={faDatabase}
             id="layer"
-            className={` w-full py-2  cursor-pointer ${
-              active === "layer" ? "selectedClass" : "unSelectedClass"
-            }`}
+            className={` w-full py-2  cursor-pointer ${active === "layer" ? "selectedClass" : "unSelectedClass"
+              }`}
             onClick={rightMenuClickHandler}
           ></FontAwesomeIcon>
           {active === "layer" ? (
@@ -238,9 +237,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
         </div>
         <div
-          className={`${
-            active === "issue" ? "selectedClass" : "unSelectedClass"
-          }`}
+          className={`${active === "issue" ? "selectedClass" : "unSelectedClass"
+            }`}
         >
           <Image
             alt=""
@@ -266,9 +264,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
         </div>
         <div
-          className={` ${
-            active === "task" ? "selectedClass" : "unSelectedClass"
-          }`}
+          className={` ${active === "task" ? "selectedClass" : "unSelectedClass"
+            }`}
         >
           <Image
             alt=""
@@ -294,9 +291,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
         </div>
         <div
-          className={` justify-center cursor-pointer ${
-            active === "progress" ? "selectedClass" : "unSelectedClass"
-          }`}
+          className={` justify-center cursor-pointer ${active === "progress" ? "selectedClass" : "unSelectedClass"
+            }`}
         >
           <Image
             alt=""
@@ -321,11 +317,10 @@ const RightFloatingMenu: React.FC<IProps> = ({
               <FontAwesomeIcon
                 icon={faCodeBranch}
                 id="compareDesign"
-                className={` w-full  cursor-pointer ${
-                  active === "compareDesign"
+                className={` w-full  cursor-pointer ${active === "compareDesign"
                     ? "selectedClass"
                     : "unSelectedClass"
-                }`}
+                  }`}
                 onClick={rightMenuClickHandler}
               ></FontAwesomeIcon>
             </div>
@@ -334,11 +329,10 @@ const RightFloatingMenu: React.FC<IProps> = ({
               <FontAwesomeIcon
                 icon={faArrowsSplitUpAndLeft}
                 id="compareReality"
-                className={` w-full  cursor-pointer ${
-                  active === "compareReality"
+                className={` w-full  cursor-pointer ${active === "compareReality"
                     ? "selectedClass"
                     : "unSelectedClass"
-                }`}
+                  }`}
                 onClick={rightMenuClickHandler}
               ></FontAwesomeIcon>
             </div>
