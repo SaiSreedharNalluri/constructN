@@ -50,7 +50,7 @@ const IssueCreate: React.FC<IProps> = ({
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   const [loggedInUserId, SetLoggedInUserId] = useState('');
   const [tagList, setTagList] = useState<[string]>(['']);
-  let toolInstance :ITools ={toolName:'issue',toolAction:'issueCreate'};
+  let toolInstance: ITools = { toolName: 'issue', toolAction: 'issueCreate' };
 
   useEffect(() => {
     if (router.isReady) {
@@ -101,7 +101,7 @@ const IssueCreate: React.FC<IProps> = ({
   ]);
 
   const closeIssueCreate = () => {
-    toolInstance.toolAction='issueCreateFail';
+    toolInstance.toolAction = 'issueCreateFail';
     issueToolClicked(toolInstance);
     closeOverlay();
   };
@@ -150,17 +150,16 @@ const IssueCreate: React.FC<IProps> = ({
         if (response.success === true) {
           toast.success('Issue is added sucessfully');
           handleIssueSubmit(response.result);
-          toolInstance.toolAction='issueCreateSuccess';
+          toolInstance.toolAction = 'issueCreateSuccess';
           issueToolClicked(toolInstance);
           resetForm();
-        }
-        else{
-          toolInstance.toolAction='issueCreateFail';
+        } else {
+          toolInstance.toolAction = 'issueCreateFail';
           issueToolClicked(toolInstance);
         }
       })
       .catch((error) => {
-        toolInstance.toolAction='issueCreateFail';
+        toolInstance.toolAction = 'issueCreateFail';
         issueToolClicked(toolInstance);
         if (error.success === false) {
           toast.error(error?.message);
@@ -317,15 +316,21 @@ const IssueCreate: React.FC<IProps> = ({
                   id="type"
                   className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                 >
-                  <option value="" disabled selected>Select a Type</option>
+                  <option value="" disabled selected>
+                    Select a Type
+                  </option>
                   {/* <select name='type' id='type' className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"> */}
                   {issueType &&
-                    issueType.map((option: any,i) => (
-                      <option key={option} value={option} selected={i==0?true:false}>
+                    issueType.map((option: any, i) => (
+                      <option
+                        key={option}
+                        value={option}
+                        selected={i == 0 ? true : false}
+                      >
                         {option}
                       </option>
                     ))}
-                    {/* </select> */}
+                  {/* </select> */}
                 </Field>
                 <ErrorMessage
                   name="type"
@@ -358,10 +363,16 @@ const IssueCreate: React.FC<IProps> = ({
                   id="priority"
                   className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                 >
-                  <option value="" disabled selected>Select a Priority</option>
+                  <option value="" disabled selected>
+                    Select a Priority
+                  </option>
                   {issuePriority &&
-                    issuePriority.map((option: any,i) => (
-                      <option key={option} value={option} selected={i==0?true:false}>
+                    issuePriority.map((option: any, i) => (
+                      <option
+                        key={option}
+                        value={option}
+                        selected={i == 0 ? true : false}
+                      >
                         {option}
                       </option>
                     ))}
@@ -419,7 +430,7 @@ const IssueCreate: React.FC<IProps> = ({
                     value={values.tags}
                     onChange={(value) => setFieldValue('tags', value)}
                     isMulti
-                    placeholder="Select the assignees "
+                    placeholder="Select the tags "
                     className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                   />
                   <ErrorMessage
