@@ -153,7 +153,6 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
 
     toolClicked(toolInstance);
   };
-
   return (
     <SectionToolBar>
       <ToolbarContainer>
@@ -192,6 +191,7 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
           currentProject={myProject}
           currentStructure={myStructure}
           currentSnapshot={mySnapshot}
+          contextInfo={contextInfo}
           closeFilterOverlay={closeFilterOverlay}
           rightMenuClickHandler={rightMenuClickHandler}
         />

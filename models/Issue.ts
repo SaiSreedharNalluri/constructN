@@ -1,3 +1,5 @@
+import { IContext } from "./ITools";
+
 export interface Issue {
   title: string;
   type: string;
@@ -24,6 +26,7 @@ export interface Issue {
   updatedAt: string;
   startDate: string;
   dueDate: string;
+  context?: IContext;
   _id: string;
   __v: 0;
 }

@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Drawer } from "@mui/material";
 import React, { useState, useEffect } from "react";
 // ../styles/Home.module.css
 import Image from "next/image";
@@ -49,6 +49,19 @@ import {
 } from "../../../services/task";
 import TaskList from "../../container/rightFloatingMenu/taskMenu/taskList";
 import Moment from "moment";
+import TaskFilterCommon from "../task-filter-common/TaskFilterCommon";
+import { ITasks } from "../../../models/Itask";
+interface IProps {
+  closeOverlay: () => void;
+  tasksList: ITasks[];
+  visibility: boolean;
+  handleOnFilter: (formData: object) => void;
+  handleOnSort: (sortMethod: string) => void;
+  closeFilterOverlay: () => void;
+  deleteTheIssue: (issueObj: object) => void;
+  clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
+  onClose: any;
+}
 
 const CustomTaskListDrawer = (props: any) => {
   const {
@@ -68,6 +81,13 @@ const CustomTaskListDrawer = (props: any) => {
   const [taskStatus, setTaskStatus] = useState<[string]>();
   const [dateSortState, setDateSortState] = useState("ascending");
   const [taskListDataState, setTaskListDataState] = useState([]);
+  const [openDrawer, setOpenDrawer] = useState(false);
+
+  const handleViewTaskList = () => {
+    // console.log("teskssksk trigg");
+    setOpenDrawer(true);
+  };
+
 
   useEffect(() => {
     handleDatesSort();
@@ -171,7 +191,9 @@ const CustomTaskListDrawer = (props: any) => {
           )}
           <DueDate>Due Date</DueDate>
           <DownloadIcon src={Download} alt="Arrow" />
-          <FunnelIcon src={FilterInActive} alt="Arrow" />
+          <FunnelIcon src={FilterInActive} alt="Arrow" onClick={() => {
+              handleViewTaskList();
+            }} />
         </MiniSymbolsContainer>
       </MiniHeaderContainer>
 
@@ -217,6 +239,25 @@ const CustomTaskListDrawer = (props: any) => {
       {/* <LoadMoreContainer>
         <LoadMoreButton>Load More</LoadMoreButton>
       </LoadMoreContainer> */}
+
+       {openDrawer && (
+        <Drawer
+          anchor={"right"}
+          open={openDrawer}
+          onClose={() => setOpenDrawer((prev: any) => !prev)}
+        >
+          <TaskFilterCommon
+           tasksList={tasksList}
+            // taskMenuClicked={taskMenuClicked}
+            // currentProject={myProject}
+            // currentStructure={myStructure}
+            // currentSnapshot={mySnapshot}
+            // closeTaskFilterOverlay={closeTaskFilterOverlay}
+            // handleOnTaskFilter={handleOnTaskFilter}
+           onClose={() => setOpenDrawer((prev: any) => !prev)}
+          />
+        </Drawer>
+      )}
     </TaskListContainer>
   );
 };

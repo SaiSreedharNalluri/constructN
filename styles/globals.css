@@ -50,7 +50,7 @@
   height: calc(100vh - 112px);
 }
 .panoIcon {
-  background: greenyellow;
+  background: #F1742E;
   border-radius: 100%;
   position: absolute;
   z-index: 101;
