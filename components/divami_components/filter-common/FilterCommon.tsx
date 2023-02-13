@@ -52,19 +52,14 @@ interface IProps {
   deleteTheIssue: (issueObj: object) => void;
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
   onClose: any;
-  
 }
-
-
-
-
 
 const Footer = () => {
   return <>Footer</>;
 };
 
 const FilterCommon: React.FC<IProps> = ({
- visibility,
+  visibility,
   closeOverlay,
   issuesList,
   handleOnFilter,
@@ -111,7 +106,6 @@ const FilterCommon: React.FC<IProps> = ({
   const [optionState, setOptionState] = useState<any>("clash");
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
   const [datePickerData, setDatePickerData] = useState(DATE_PICKER_DATA);
-
 
   // Select All Handling
   const handleAllSelection = (item: any, index: number) => {
@@ -254,15 +248,15 @@ const FilterCommon: React.FC<IProps> = ({
     });
     SetFilterState(temp);
   }, [optionState]);
-  
+
   const handleClose = () => {
     onClose(true);
   };
-   const CloseIcon = styled(Image)({
-  cursor: "pointer",
-});
-  
-  console.log("issuesListfooter",issuesList)
+  const CloseIcon = styled(Image)({
+    cursor: "pointer",
+  });
+
+  console.log("issuesListfooter", issuesList);
   return (
     <FilterCommonMain>
       <FilterCommonHeader>
@@ -279,13 +273,13 @@ const FilterCommon: React.FC<IProps> = ({
               {/* <Image src={closeIcon} alt="reset"   onClick={() => {
               handleClose();
               }} /> */}
-               <CloseIcon
-            onClick={() => {
-              handleClose();
-            }}
-            src={closeIcon}
-            alt={"close icon"}
-            />
+              <CloseIcon
+                onClick={() => {
+                  handleClose();
+                }}
+                src={closeIcon}
+                alt={"close icon"}
+              />
             </HeaderRightSection>
           </TitleContainer>
         </HeaderContainer>
@@ -386,13 +380,13 @@ const FilterCommon: React.FC<IProps> = ({
         <FormElementContainer>
           <DatePickersContainer>
             <DatePickerContainer>
-               <div>
-              <CustomLabel label={"Start Date"} />
-              <FormWrapper
-                config={datePickerData}
-                setFormConfig={setDatePickerData}
+              <div>
+                <CustomLabel label={"Start Date"} />
+                <FormWrapper
+                  config={datePickerData}
+                  setFormConfig={setDatePickerData}
                 />
-                </div>
+              </div>
             </DatePickerContainer>
             <div>
               <CustomLabel label={"Due Date"} />

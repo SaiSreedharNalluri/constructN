@@ -329,7 +329,7 @@ const CustomTaskListDrawer = (props: any) => {
             // currentStructure={myStructure}
             // currentSnapshot={mySnapshot}
             // closeTaskFilterOverlay={closeTaskFilterOverlay}
-            // handleOnTaskFilter={handleOnTaskFilter}
+            handleOnFilter={handleOnTaskFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
           />
         </Drawer>

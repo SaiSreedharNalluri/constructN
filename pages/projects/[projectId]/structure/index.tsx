@@ -562,11 +562,17 @@ const Index: React.FC<IProps> = () => {
     setIssueList(issueFilterList);
   };
   const handleOnTaskFilter = (formData: any) => {
+    console.log(formData);
+    console.log(taskFilterList);
     const result = taskFilterList.filter(
       (item: ITasks) =>
         formData.taskType.includes(item.type) &&
         formData?.taskPriority?.includes(item.priority) &&
         formData?.taskStatus?.includes(item.status) &&
+        // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
+        //   formData.fromDate == "") &&
+        // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
+        //   formData.toDate == "") &&
         item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assignees
         )
