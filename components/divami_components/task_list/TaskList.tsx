@@ -88,7 +88,6 @@ const CustomTaskListDrawer = (props: any) => {
     setOpenDrawer(true);
   };
 
-
   useEffect(() => {
     handleDatesSort();
     let tempTaskDataState: any = [];
@@ -191,9 +190,13 @@ const CustomTaskListDrawer = (props: any) => {
           )}
           <DueDate>Due Date</DueDate>
           <DownloadIcon src={Download} alt="Arrow" />
-          <FunnelIcon src={FilterInActive} alt="Arrow" onClick={() => {
+          <FunnelIcon
+            src={FilterInActive}
+            alt="Arrow"
+            onClick={() => {
               handleViewTaskList();
-            }} />
+            }}
+          />
         </MiniSymbolsContainer>
       </MiniHeaderContainer>
 
@@ -212,6 +215,10 @@ const CustomTaskListDrawer = (props: any) => {
                           ? TransmittalList
                           : val.type === "Submittals"
                           ? SubmittalList
+                          : val.type === "Transmittals"
+                          ? TransmittalList
+                          : val.type === "Transmittals"
+                          ? TransmittalList
                           : ""
                       }
                       alt="Arr"
@@ -240,21 +247,21 @@ const CustomTaskListDrawer = (props: any) => {
         <LoadMoreButton>Load More</LoadMoreButton>
       </LoadMoreContainer> */}
 
-       {openDrawer && (
+      {openDrawer && (
         <Drawer
           anchor={"right"}
           open={openDrawer}
           onClose={() => setOpenDrawer((prev: any) => !prev)}
         >
           <TaskFilterCommon
-           tasksList={tasksList}
+            tasksList={tasksList}
             // taskMenuClicked={taskMenuClicked}
             // currentProject={myProject}
             // currentStructure={myStructure}
             // currentSnapshot={mySnapshot}
             // closeTaskFilterOverlay={closeTaskFilterOverlay}
             // handleOnTaskFilter={handleOnTaskFilter}
-           onClose={() => setOpenDrawer((prev: any) => !prev)}
+            onClose={() => setOpenDrawer((prev: any) => !prev)}
           />
         </Drawer>
       )}

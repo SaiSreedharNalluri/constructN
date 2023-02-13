@@ -118,6 +118,7 @@ export const DueDateDiv = styled("div")({
   fontWeight: "400",
   fontSize: "14px",
   lineHeight: "19px",
+  color: "linear-gradient(90deg, rgba(49,53,58,1) 50%, rgba(27,36,46,1) 100%)",
 });
 
 export const HorizontalLine = styled("div")({

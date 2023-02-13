@@ -8,6 +8,8 @@ import Search from "../../../public/divami_icons/search.svg";
 import UpArrow from "../../../public/divami_icons/upArrow.svg";
 import Divider from "../../../public/divami_icons/divider.svg";
 import downArrow from "../../../public/divami_icons/downArrow.svg";
+import commission from "../../../public/divami_icons/commission.svg";
+import designIcon from "../../../public/divami_icons/designIcon.svg";
 
 import Moment from "moment";
 
@@ -42,7 +44,6 @@ import SubmittalList from "../../../public/divami_icons/submittalList.svg";
 import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
 import HourglassIcon from "../../../public/divami_icons/hourGlassIcon.svg";
 import IssuesHighlightedIcon from "../../../public/divami_icons/issuesHighlightedIcon.svg";
-
 
 import { Issue } from "../../../models/Issue";
 import { useState } from "react";
@@ -198,10 +199,19 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     <Image
                       src={
                         val.type === "RFI"
-                          ? RFIList : val.type === "Safety"
+                          ? RFIList
+                          : val.type === "Safety"
                           ? HourglassIcon
                           : val.type === "Transmittals"
                           ? TransmittalList
+                          : val.type === "Clash"
+                          ? SubmittalList
+                          : val.type === "Commissioning"
+                          ? commission
+                          : val.type === "Building Code"
+                          ? HourglassIcon
+                          : val.type === "Design"
+                          ? designIcon
                           : val.type === "Submittals"
                           ? SubmittalList
                           : ""
