@@ -45,7 +45,6 @@ const Issues = ({
   issueLayer,
   currentProject,
   issueOpenDrawer,
-  openIssueView,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);

@@ -333,6 +333,7 @@ const Index: React.FC<IProps> = () => {
             break;
           case "taskCreate":
           case "taskCreateSuccess":
+          case "taskCreateFail":
           case "taskShow":
           case "taskHide":
             setClickedTool(toolInstance);
@@ -773,7 +774,7 @@ const Index: React.FC<IProps> = () => {
               handleOnTaskFilter={handleOnTaskFilter}
               contextInfo={currentContext}
               openCreateIssue={openCreateIssue}
-              openIssueView={openIssueView}
+              openCreateTask={openCreateTask}
             />
             {/* </div> */}
             {/* <RightFloatingMenu
