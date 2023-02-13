@@ -1,25 +1,20 @@
-import { Box, Typography } from "@mui/material";
+import { Autocomplete, Box, TextField, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import React, { useEffect, useState } from "react";
-
 import { Select } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
+import Moment from "moment";
 import Image from "next/image";
 import BackArrow from "../../../public/divami_icons/backArrow.svg";
 import Clip from "../../../public/divami_icons/clip.svg";
-import Edit from "../../../public/divami_icons/edit.svg";
 import Delete from "../../../public/divami_icons/delete.svg";
+import Edit from "../../../public/divami_icons/edit.svg";
 import Send from "../../../public/divami_icons/send.svg";
-import { red } from "@mui/material/colors";
+import { TASK_FORM_CONFIG } from "../../divami_components/create-issue/body/Constants";
+import CustomButton from "../../divami_components/custom-button/CustomButton";
 import CustomSelect from "../custom-select/CustomSelect";
 import ActivityLog from "../task_detail/ActivityLog";
-import Moment from "moment";
-import CustomButton from "../../divami_components/custom-button/CustomButton";
-
-// import SelectVariants from "../select-dropdown";
-// import BasicSelect from "../temporary-select/TempSelect";
-// import SelectVariants2 from "../temporary-select/TemSelect";
 
 const HeaderContainer = styled(Box)`
   background-color: white;
@@ -314,6 +309,31 @@ const ProgressEditStateButtonsContainer = styled("div")`
   width: 90%;
 `;
 
+const AssignEditSearchContainer = styled("div")({
+  height: "40px",
+  marginTop: "20px",
+  "& .MuiAutocomplete-root": {
+    height: "100%",
+    width: "100%",
+  },
+  "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
+    {
+      height: "100%",
+      width: "100%",
+    },
+  "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
+    {
+      height: "100%",
+      width: "100%",
+    },
+  "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
+    marginTop: "-8px",
+  },
+  "& .MuiAutocomplete-root fieldset": {
+    borderColor: "#36415D !important",
+  },
+});
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -418,76 +438,57 @@ function a11yProps(index: number) {
 }
 
 function BasicTabs(props: any) {
-  const { taskState, formHandler } = props;
+  const {
+    taskState,
+    formHandler,
+    taskType,
+    taskPriority,
+    taskStatus,
+    projectUsers,
+  } = props;
+
   const [value, setValue] = React.useState(0);
   const [issueTypeConfig, setIssueTypeConfig] = useState("");
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [progressEditState, setProgressEditState] = useState(false);
   const [assigneeEditState, setAssigneeEditState] = useState(false);
+  const [progressOptionsState, setProgressOptionsState] = useState<any>({});
+  const [assigneeOptionsState, setAssigneeOptionsState] = useState([]);
+  const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [list, setList] = useState<any>();
+
+  useEffect(() => {
+    let temp = taskStatus?.map((task: any) => {
+      return {
+        label: task,
+        value: task,
+      };
+    });
+    setProgressOptionsState((prevState: any) => {
+      return {
+        ...prevState,
+        options: temp,
+      };
+    });
+    let tempUsers = projectUsers.map((each: any) => {
+      return {
+        ...each,
+        label: each.user.fullName,
+      };
+    });
+    setAssigneeOptionsState(tempUsers);
+  }, []);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
   const handleEditProgress = () => {
-    console.log("EDIT trigger");
     setProgressEditState(!progressEditState);
   };
 
-  const optionsConfig = {
-    options: [
-      {
-        label: "In Progress",
-        value: "inProgress",
-        selected: false,
-      },
-      {
-        label: "Blocked",
-        value: "blocked",
-        selected: false,
-      },
-      {
-        label: "To-do",
-        value: "todo",
-        selected: false,
-      },
-      {
-        label: "Completed",
-        value: "completed",
-        selected: false,
-      },
-    ],
-  };
-
-  const optionsConfigAssignees = {
-    options: [
-      {
-        label: "In",
-        value: "inProgress",
-        selected: false,
-      },
-      {
-        label: "Bcked",
-        value: "blocked",
-        selected: false,
-      },
-      {
-        label: "To",
-        value: "todo",
-        selected: false,
-      },
-      {
-        label: "Comp",
-        value: "completed",
-        selected: false,
-      },
-    ],
-  };
-
-  console.log(taskState?.TabOne.attachments, "IMPORTANT");
-
   const handleStateChange = () => {
-    console.log("Update trigger");
     if (progressEditState) {
       setProgressEditState(!progressEditState);
     }
@@ -594,7 +595,13 @@ function BasicTabs(props: any) {
                   <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType>
                     {taskState.TabOne.creator}{" "}
-                    <PenIconImage src={Edit} alt={"close icon"} />
+                    <PenIconImage
+                      onClick={() => {
+                        handleEditAssigne();
+                      }}
+                      src={Edit}
+                      alt={"close icon"}
+                    />
                   </FourthContProgType>
                 </FourthContLeft>
               </FourthBodyDiv>
@@ -628,11 +635,12 @@ function BasicTabs(props: any) {
           {progressEditState ? (
             <ProgressCustomSelect>
               <CustomSelect
-                config={optionsConfig}
-                defaultValue={optionsConfig.options[0].value}
+                onChange={(event: any, value: any) => console.log(value)}
+                config={progressOptionsState}
+                defaultValue={progressOptionsState?.options[0].value}
                 id={""}
                 sx={{ minWidth: 120 }}
-                setFormConfig={""}
+                setFormConfig={setFormConfig}
                 isError={""}
                 label=""
               />
@@ -658,19 +666,23 @@ function BasicTabs(props: any) {
             </>
           )}
           {assigneeEditState && (
-            <>
-              <AssigneeCustomSelect>
-                <CustomSelect
-                  config={optionsConfigAssignees}
-                  defaultValue={optionsConfigAssignees.options[0].value}
-                  id={""}
-                  sx={{ minWidth: 120 }}
-                  setFormConfig={""}
-                  isError={""}
-                  label=""
-                />
-              </AssigneeCustomSelect>
-            </>
+            <AssignEditSearchContainer>
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                options={assigneeOptionsState}
+                sx={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="" />}
+                onChange={(event, value) => console.log(value)}
+                // InputProps={{
+                //   startAdornment: (
+                //     <InputAdornment position="start">
+                //       <SearchIcon />
+                //     </InputAdornment>
+                //   ),
+                // }}
+              />
+            </AssignEditSearchContainer>
           )}
 
           <FormElementContainer>
@@ -765,9 +777,16 @@ function BasicTabs(props: any) {
 }
 
 const CustomTaskDetailsDrawer = (props: any) => {
-  const { onClose, task, taskList } = props;
+  const {
+    onClose,
+    task,
+    taskList,
+    taskType,
+    taskPriority,
+    taskStatus,
+    projectUsers,
+  } = props;
 
-  console.log(taskList, "TASKLIST");
   const DetailsObj = {
     TabOne: {
       options: [
@@ -820,120 +839,11 @@ const CustomTaskDetailsDrawer = (props: any) => {
         issueDescription: "Pipelines",
       },
     ],
-    // [
-    //   {
-    //     status: "Scan Updated",
-    //     timeStamp: "15 Nov 22",
-    //     profile: "Jake",
-    //     comment: "sefsefsfsefsef",
-    //     imageDetails: "",
-    //     currentProgress: "30%",
-    //   },
-    //   {
-    //     status: "Scan Updated",
-    //     timeStamp: "15 Nov 22",
-    //     profile: "Jake",
-    //     comment: "",
-    //     imageDetails: "",
-    //     currentProgress: "60%",
-    //   },
-    //   {
-    //     status: "Scan Updated",
-    //     timeStamp: "15 Nov 22",
-    //     profile: "Jake",
-    //     comment: "",
-    //     imageDetails: "efefsef",
-    //     issueType: "",
-    //     issueDescription: "",
-    //     currentProgress: "45%",
-    //   },
-    // ],
   };
-
-  // {
-  //   "_id": "TSK441013",
-  //   "title": "13_Floor_A3_Block_2023-02-22",
-  //   "description": "Testing",
-  //   "type": "Submittals",
-  //   "status": "To Do",
-  //   "priority": "High",
-  //   "assignees": [
-  //     {
-  //       "_id": "USR141774",
-  //       "firstName": "chaitanya",
-  //       "lastName": "nk",
-  //       "email": "chaitanya@constructn.ai",
-  //       "fullName": "chaitanya nk"
-  //     },
-  //     {
-  //       "_id": "USR370060",
-  //       "firstName": "swathi",
-  //       "lastName": "divami",
-  //       "email": "swathi@divami.com",
-  //       "fullName": "swathi divami"
-  //     }
-  //   ],
-  //   "owner": "USR141774",
-  //   "project": "PRJ201897",
-  //   "structure": "STR147148",
-  //   "snapshot": "SNP423738",
-  //   "context": {
-  //     "type": "Task",
-  //     "camera": {
-  //       "cameraPosition": {
-  //         "x": 385386.30109044677,
-  //         "y": 2049811.3252802067,
-  //         "z": 136.70305645457873
-  //       },
-  //       "cameraTarget": {
-  //         "x": 385386.3010910859,
-  //         "y": 2049811.325279438,
-  //         "z": 136.7030564753868
-  //       },
-  //       "pitch": 0.020809564434256474,
-  //       "yaw": 3.83516197406291,
-  //       "fov": 95
-  //     },
-  //     "tag": {
-  //       "position": {
-  //         "x": 962.8882860832214,
-  //         "y": -60.782279617597965,
-  //         "z": -273.1627955327798
-  //       }
-  //     },
-  //     "image": {
-  //       "position": [
-  //         2.763091085886117,
-  //         -9.664720562053844,
-  //         0.703056475386802
-  //       ]
-  //     }
-  //   },
-  //   "progress": -1,
-  //   "tags": [
-  //     ""
-  //   ],
-  //   "createdAt": "2023-02-05T05:04:01.012Z",
-  //   "updatedAt": "2023-02-10T07:31:19.167Z",
-  //   "dueDate": "2023-02-12T00:00:00.000Z",
-  //   "attachments": []
-  // }
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
 
-  console.log(task.assignees[0].fullName, "Task IMPORTANT");
-
-  // useEffect(() => {
-  //   let temp = taskState.map((each: any) => {
-  //     console.log(each, "EACH");
-  //   });
-  // }, []);
-
   useEffect(() => {
-    console.log(task, taskList, "Task IMPORTANT");
-    // task.forEach((each: any) => {
-    //   console.log(each, "Task IMPORTANTTWO");
-    // });
     let tempObj = {
       options: task.options,
       priority: task.priority,
@@ -945,14 +855,12 @@ const CustomTaskDetailsDrawer = (props: any) => {
       assignees: task.assignees[0].fullName,
       id: task._id,
     };
-    console.log(tempObj, "TEMP OBJ");
     setTaskState((prev: any) => {
       return {
         ...prev,
         TabOne: tempObj,
       };
     });
-    console.log(taskState, "IMPORTANT TEMP");
   }, []);
 
   return (
@@ -978,7 +886,13 @@ const CustomTaskDetailsDrawer = (props: any) => {
         </TitleContainer>
       </HeaderContainer>
       <BodyContainer>
-        <BasicTabs taskState={taskState} />
+        <BasicTabs
+          taskType={taskType}
+          taskPriority={taskPriority}
+          taskStatus={taskStatus}
+          projectUsers={projectUsers}
+          taskState={taskState}
+        />
       </BodyContainer>
     </CustomTaskDrawerContainer>
   );

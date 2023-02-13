@@ -93,7 +93,6 @@ const Body = ({ handleFormData }: any) => {
               ...item,
               options: issueTypes?.map((eachItem: any) => {
                 return {
-                  // ...eachItem,
                   label: eachItem,
                   value: eachItem,
                   selected: false,
@@ -106,7 +105,6 @@ const Body = ({ handleFormData }: any) => {
               ...item,
               options: issuePriorities?.map((eachItem: any) => {
                 return {
-                  // ...eachItem,
                   label: eachItem,
                   value: eachItem,
                   selected: false,

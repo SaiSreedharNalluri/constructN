@@ -96,6 +96,10 @@ interface IProps {
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
   onClose: any;
   tasksList: any;
+  taskType: any;
+  taskPriority: any;
+  taskStatus: any;
+  projectUsers: any;
 }
 
 // const Footer = () => {
@@ -107,6 +111,10 @@ const CloseIcon = styled(Image)({
 const TaskFilterCommon: React.FC<IProps> = ({
   tasksList,
   onClose,
+  taskType,
+  taskPriority,
+  taskStatus,
+  projectUsers,
   // taskMenuClicked,
   // currentProject,
   // currentStructure,
