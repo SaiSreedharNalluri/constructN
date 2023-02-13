@@ -287,7 +287,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: ITools) => {
-    let newLayers = currentViewLayers;
+    let newLayers = structuredClone(currentViewLayers);
     switch (toolInstance.toolName) {
       case "viewType":
         setViewType(toolInstance.toolAction);
@@ -366,18 +366,24 @@ const Index: React.FC<IProps> = () => {
       case "viewMode":
         setViewMode(data.toolAction);
         break;
-      case "issue":
-        if (data.toolAction === "issueCreate") {
+      case "Issue":
+        if (data.toolAction === "createIssue") {
           console.log("Open issue Menu");
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateIssue(true);
+        } else if (data.toolAction === "selectIssue") {
+          console.log("issue selected: ", data.response?.id);
+          // issue detail view open logic comes here
         }
         break;
-      case "task":
-        if (data.toolAction === "taskCreate") {
+      case "Task":
+        if (data.toolAction === "createTask") {
           console.log("Open task Menu");
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateTask(true);
+        } else if (data.toolAction === "selectTask") {
+          console.log("task selected: ", data.response?.id);
+          // task detail view open logic comes here
         }
         break;
       default:

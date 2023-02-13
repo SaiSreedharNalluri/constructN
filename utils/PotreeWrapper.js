@@ -87,7 +87,16 @@ export class PotreeViewerUtils {
                 this.unloadOrientedImage();
             }
         } else if (mode === "Reality") {
+        }
 
+        if(this.currentMode === "panorama" && this.floorMap) {
+            this.updateFPSize(this.viewer.floorMap);
+        }
+    }
+
+    finishForCompare() {
+        if(this.currentMode === "panorama" && this.floorMap) {
+            this.updateFPSize(this.viewer.floorMap);
         }
     }
 
@@ -151,7 +160,6 @@ export class PotreeViewerUtils {
     loadData() {
         this.removeData();
         this.loadPointCloud();
-        // isFloorMap && loadFloormap(viewer.fpContainerId, viewer.fpCanvasId, viewer, pid, tid);
     }
 
     loadPointCloud() {
@@ -1124,9 +1132,10 @@ export class PotreeViewerUtils {
             const screenCoords = this.imageToScreen(pixelCoords, fpImage, fpCanvas);
             let icon = document.createElement('span');
             icon.setAttribute('class', 'panoIcon');
-            // icon.setAttribute('class', 'absolute inline-block w-1 h-1 z-100 bg-lime-500 rounded-full opacity-70 hover:opacity-100 hover:cursor-pointer hover:bg-sky-600');
-            icon.setAttribute('data', JSON.stringify({name: imageName, id: id}));
-            // icon.style.display = "inline-block";
+            let iconImg = document.createElement('img');
+            iconImg.setAttribute('src', '/icons/360VideoWalkInViewer.svg');
+            icon.appendChild(iconImg);
+            iconImg.setAttribute('data', JSON.stringify({name: imageName, id: id}));
             icon.style.width = (fpCanvas.width * iconSize) + 'px';
             icon.style.height = (fpCanvas.width * iconSize) + 'px';
             icon.style.top = (screenCoords[1] - 5) + 'px';
@@ -1222,7 +1231,7 @@ export class PotreeViewerUtils {
     }
 
     updateFpIcons(fpInfo) {
-        let iconSize = 0.02
+        let iconSize = 0.05
         Object.keys(fpInfo.images).forEach((imageName, index) => {
             const cur_image_pos = fpInfo.images[imageName].position
             const pixelCoords = this.worldToimage(cur_image_pos, fpInfo.tm);
