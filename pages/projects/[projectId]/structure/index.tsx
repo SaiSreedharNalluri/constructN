@@ -68,6 +68,7 @@ const CloseMenuButton = styled("div")({
   justifyContent: "center",
   alignItems: "center",
   cursor: "pointer",
+  zIndex: "99",
 });
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
@@ -614,13 +615,17 @@ const Index: React.FC<IProps> = () => {
         </div>
         <div id="viewer">{renderSwitch(viewerTypeState)}</div>
         {hierarchy ? (
-          <div
-            onClick={() => {
-              setHierarchy(false);
-            }}
-          >
+          <div>
             <CloseMenuButton>
-              <Image src={ChevronLeftIcon} width={17} height={17} alt="Arrow" />
+              <Image
+                src={ChevronLeftIcon}
+                width={17}
+                height={17}
+                alt="Arrow"
+                onClick={() => {
+                  setHierarchy(false);
+                }}
+              />
             </CloseMenuButton>
             <div>
               {
@@ -649,13 +654,13 @@ const Index: React.FC<IProps> = () => {
             </div>
           </div>
         ) : (
-          <div
-            onClick={() => {
-              setHierarchy(true);
-            }}
-          >
+          <div>
             {
-              <OpenMenuButton>
+              <OpenMenuButton
+                onClick={() => {
+                  setHierarchy(!hierarchy);
+                }}
+              >
                 <Image
                   src={ChevronRightIcon}
                   alt="Arrow"
