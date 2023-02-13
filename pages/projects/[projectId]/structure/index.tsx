@@ -56,6 +56,7 @@ const OpenMenuButton = styled("div")({
   left: "20px",
   bottom: "38px",
   cursor: "pointer",
+  background: "#fff",
 });
 const CloseMenuButton = styled("div")({
   height: "38px",
@@ -632,6 +633,7 @@ const Index: React.FC<IProps> = () => {
               <div>
                 <LeftOverLay
                   getStructureData={getStructureData}
+                  setHierarchy={setHierarchy}
                   getStructure={(structureData) => {
                     if (structure === undefined) {
                       setStructure(
@@ -666,13 +668,13 @@ const Index: React.FC<IProps> = () => {
               {
                 <div
                   ref={leftRefContainer}
-                  className={` ${
-                    hierarchy ? "visible" : "hidden"
-                  } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+                  className={` ${hierarchy ? "visible" : "hidden"
+                    } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg`}
                 >
                   <div>
                     <LeftOverLay
                       getStructureData={getStructureData}
+                      setHierarchy={setHierarchy}
                       getStructure={(structureData) => {
                         if (structure === undefined) {
                           setStructure(
