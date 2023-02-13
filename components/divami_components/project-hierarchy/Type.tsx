@@ -17,4 +17,5 @@ export interface SelectLayerProps {
   onCloseHandler: () => void;
   treeData: any[];
   getStructureData?: (structure: ChildrenEntity) => void;
+  handleSearch: any;
 }

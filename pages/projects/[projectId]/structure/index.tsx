@@ -279,6 +279,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const onChangeData = () => {
+    console.log("leftnavclick");
     if (leftNav) {
       setLeftNav(false);
     } else {
@@ -625,7 +626,8 @@ const Index: React.FC<IProps> = () => {
               ref={leftRefContainer}
               className={` ${
                 leftNav ? "visible" : "hidden"
-              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+              } calc-h absolute z-10 border overflow-y-auto`}
+              style={{ top: "178px" }}
             >
               <div>
                 <LeftOverLay
