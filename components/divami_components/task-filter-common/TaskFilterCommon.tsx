@@ -384,18 +384,6 @@ const TaskFilterCommon: React.FC<IProps> = ({
     }
   };
 
-  const checkSelected = (item: any) => {
-    let selectedIssueTypes: any = [];
-    if (item.title == "Issue Type") {
-      const x = item.options.filter(
-        (option: any) => option.optionStatus == "T"
-      );
-      x.forEach((element: any) => {
-        selectedIssueTypes.push(element.optionTitle);
-      });
-    }
-    return selectedIssueTypes;
-  };
   const onFilterApply = () => {
     console.log(FilterState);
     let data: any = {};
