@@ -44,7 +44,7 @@ import { Issue } from "../../../models/Issue";
 import { useState } from "react";
 import moment from "moment";
 import { ITools } from "../../../models/ITools";
-import FilterCommon from "../filter-common/FilterCommon";
+import FilterCommon from "../issue-filter-common/IssueFilterCommon";
 
 interface IProps {
   closeOverlay: () => void;
