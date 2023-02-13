@@ -34,10 +34,11 @@ import {
   FormElementContainer,
   DatePickersContainer,
   DatePickerContainer,
-} from "./StyledComponent";
+} from "./IssueStyledComponent";
 import { Issue } from "../../../models/Issue";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
-import FormWrapper from "../form-wrapper/FormWrapper";
+// import Fil from "../form-wrapper/FormWrapper";
+import IssueFilterFormWrapper from "./IssueFilterWrapper";
 import CustomLabel from "../custom-label/CustomLabel";
 import { ButtonsContainer } from "../task-filter-common/StyledComponent";
 import CustomButton from "../custom-button/CustomButton";
@@ -262,7 +263,7 @@ const FilterCommon: React.FC<IProps> = ({
   cursor: "pointer",
 });
   
-  console.log("issuesListfooter",issuesList)
+  // console.log("issuesListfooter",issuesList)
   return (
     <FilterCommonMain>
       <FilterCommonHeader>
@@ -380,7 +381,7 @@ const FilterCommon: React.FC<IProps> = ({
 
         <FormElementContainer>
           <CustomLabel label={"Assigned To"} />
-          <FormWrapper config={SEARCH_CONFIG} setFormConfig={SEARCH_CONFIG} />
+          <IssueFilterFormWrapper config={SEARCH_CONFIG} setFormConfig={SEARCH_CONFIG} />
         </FormElementContainer>
 
         <FormElementContainer>
@@ -388,7 +389,7 @@ const FilterCommon: React.FC<IProps> = ({
             <DatePickerContainer>
                <div>
               <CustomLabel label={"Start Date"} />
-              <FormWrapper
+              <IssueFilterFormWrapper
                 config={datePickerData}
                 setFormConfig={setDatePickerData}
                 />
@@ -396,7 +397,7 @@ const FilterCommon: React.FC<IProps> = ({
             </DatePickerContainer>
             <div>
               <CustomLabel label={"Due Date"} />
-              <FormWrapper
+              <IssueFilterFormWrapper
                 config={datePickerData}
                 setFormConfig={setDatePickerData}
               />

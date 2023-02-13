@@ -8,6 +8,8 @@ import Search from "../../../public/divami_icons/search.svg";
 import UpArrow from "../../../public/divami_icons/upArrow.svg";
 import Divider from "../../../public/divami_icons/divider.svg";
 import downArrow from "../../../public/divami_icons/downArrow.svg";
+import commission from "../../../public/divami_icons/commission.svg";
+import designIcon from "../../../public/divami_icons/designIcon.svg";
 
 import Moment from "moment";
 
@@ -40,11 +42,14 @@ import {
 import RFIList from "../../../public/divami_icons/rfiList.svg";
 import SubmittalList from "../../../public/divami_icons/submittalList.svg";
 import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
+import HourglassIcon from "../../../public/divami_icons/hourGlassIcon.svg";
+import IssuesHighlightedIcon from "../../../public/divami_icons/issuesHighlightedIcon.svg";
+
 import { Issue } from "../../../models/Issue";
 import { useState } from "react";
 import moment from "moment";
 import { ITools } from "../../../models/ITools";
-import FilterCommon from "../filter-common/FilterCommon";
+import FilterCommon from "../issue-filter-common/IssueFilterCommon";
 
 interface IProps {
   closeOverlay: () => void;
@@ -78,7 +83,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       assignee: "Alex Brandon",
       due_date: "2023-02-09T05:04:01.012Z",
     },
-    
+
     {
       id: 320,
       title: "Transmittals",
@@ -113,13 +118,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
-  
+
   const closeIssueList = () => {
     //setListOverlay(false);
     issueMenuInstance.toolAction = "issueViewClose";
     // issueMenuClicked(issueMenuInstance);
   };
-  
+
   const handleViewTaskList = () => {
     // console.log("teskssksk trigg");
     setOpenDrawer(true);
@@ -140,8 +145,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     }
     setSortedDates(sorted);
   };
-  
-  console.log("issuesListnot fott-2", issuesList,openDrawer);
+
+  console.log("issuesListnot fott-2", issuesList, openDrawer);
   return (
     <TaskListContainer>
       <HeaderContainer>
@@ -154,7 +159,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             }}
             src={CrossIcon}
             alt={"close icon"}
-            />
+          />
         </TitleContainer>
       </HeaderContainer>
 
@@ -170,7 +175,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               onClick={sortDateOrdering}
               src={downArrow}
               alt="Arrow"
-              />
+            />
           )}
           <DueDate>Due Date</DueDate>
           <DownloadIcon src={Download} alt="Arrow" />
@@ -194,13 +199,23 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     <Image
                       src={
                         val.type === "RFI"
-                        ? RFIList
+                          ? RFIList
+                          : val.type === "Safety"
+                          ? HourglassIcon
                           : val.type === "Transmittals"
                           ? TransmittalList
+                          : val.type === "Clash"
+                          ? SubmittalList
+                          : val.type === "Commissioning"
+                          ? commission
+                          : val.type === "Building code"
+                          ? HourglassIcon
+                          : val.type === "Design"
+                          ? designIcon
                           : val.type === "Submittals"
                           ? SubmittalList
                           : ""
-                        }
+                      }
                       alt="Arrow"
                     />
                     <BodyContTitle>

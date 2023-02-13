@@ -85,6 +85,7 @@ import CustomLabel from "../custom-label/CustomLabel";
 import FormWrapper from "../form-wrapper/FormWrapper";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
 import CustomButton from "../custom-button/CustomButton";
+import TaskFilterFormWrapper from "./TaskFilterWrapper";
 
 interface IProps {
   closeOverlay: () => void;
@@ -151,7 +152,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
   ];
 
   const handleClose = () => {
-    onClose(true);
+    // onClose(true);
   };
 
   const [FilterState, SetFilterState] = useState<any>(Filters);
@@ -420,23 +421,23 @@ const TaskFilterCommon: React.FC<IProps> = ({
 
         <FormElementContainer>
           <CustomLabel label={"Assigned To"} />
-          <FormWrapper config={SEARCH_CONFIG} setFormConfig={SEARCH_CONFIG} />
+          <TaskFilterFormWrapper config={SEARCH_CONFIG} setFormConfig={SEARCH_CONFIG} />
         </FormElementContainer>
 
         <FormElementContainer>
           <DatePickersContainer>
             <DatePickerContainer>
-              <div>
-                <CustomLabel label={"Start Date"} />
-                <FormWrapper
-                  config={datePickerData}
-                  setFormConfig={setDatePickerData}
+               <div>
+              <CustomLabel label={"Start Date"} />
+              <TaskFilterFormWrapper
+                config={datePickerData}
+                setFormConfig={setDatePickerData}
                 />
               </div>
             </DatePickerContainer>
             <div>
               <CustomLabel label={"Due Date"} />
-              <FormWrapper
+              <TaskFilterFormWrapper
                 config={datePickerData}
                 setFormConfig={setDatePickerData}
               />

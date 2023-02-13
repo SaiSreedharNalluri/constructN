@@ -275,6 +275,10 @@ const CustomTaskListDrawer = (props: any) => {
                           ? TransmittalList
                           : val.type === "Submittals"
                           ? SubmittalList
+                          : val.type === "Transmittals"
+                          ? TransmittalList
+                          : val.type === "Transmittals"
+                          ? TransmittalList
                           : ""
                       }
                       alt="Arr"
