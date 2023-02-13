@@ -1,30 +1,16 @@
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Divider,
-  InputAdornment,
-  List,
-  ListItem,
-  ListItemText,
-  TextField,
+  InputAdornment, ListItemText
 } from "@mui/material";
-import { Box } from "@mui/system";
-import { SetStateAction, useEffect } from "react";
-import { useState } from "react";
-import type { ISideDrawerProps } from "./types";
-import CloseIcon from "@mui/icons-material/Close";
-import SearchIcon from "@mui/icons-material/Search";
-import styled from "@emotion/styled";
-import {
-  DrawerBox,
-  DrawerHeader,
-  DrawerHeaderTitle,
-  CloseIconStyled,
-  DrawerSearchBar,
-  CustomSearchField,
-  ListStyled,
-  ListItemStyled,
-} from "./StyledComponents";
-import { SelectLayerProps } from "../select-layers/Type";
+import { SetStateAction, useEffect, useState } from "react";
 import { SelectLayerContainer } from "../select-layers/StyledComponents";
+import { SelectLayerProps } from "../select-layers/Type";
+import {
+  CloseIconStyled, CustomSearchField, DrawerBox,
+  DrawerHeader,
+  DrawerHeaderTitle, DrawerSearchBar, ListItemStyled, ListStyled
+} from "./StyledComponents";
 
 const SelectTypesList = ({
   title,

@@ -1,23 +1,36 @@
-import { Box, Drawer } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import { Box, Drawer, InputAdornment } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 // ../styles/Home.module.css
 import Image from "next/image";
 // import dividerIcon from "../../../public/images/dividerIcon.svg";
 // import filterFunnelIcon from "../../../public/images/filterFunnelIcon.svg";
+import SearchIcon from "@mui/icons-material/Search";
+import Moment from "moment";
+import router from "next/router";
+import { ITasks } from "../../../models/Itask";
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
-import Download from "../../../public/divami_icons/download.svg";
-import FilterInActive from "../../../public/divami_icons/filterInactive.svg";
-import Search from "../../../public/divami_icons/search.svg";
-import UpArrow from "../../../public/divami_icons/upArrow.svg";
 import Divider from "../../../public/divami_icons/divider.svg";
 import DownArrow from "../../../public/divami_icons/downArrow.svg";
+import Download from "../../../public/divami_icons/download.svg";
+import FilterInActive from "../../../public/divami_icons/filterInactive.svg";
+import RFIList from "../../../public/divami_icons/rfiList.svg";
+import Search from "../../../public/divami_icons/search.svg";
+import SubmittalList from "../../../public/divami_icons/submittalList.svg";
+import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
+import UpArrow from "../../../public/divami_icons/upArrow.svg";
+import { getProjectUsers } from "../../../services/project";
 import {
-  ArrowUpIcon,
+  getTasksPriority,
+  getTaskStatus, getTasksTypes
+} from "../../../services/task";
+import TaskFilterCommon from "../task-filter-common/TaskFilterCommon";
+import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
+import {
+  ArrowDownIcon, ArrowUpIcon,
   BodyContainer,
   BodyContTitle,
   BodyInfo,
-  CloseIcon,
-  DownloadIcon,
+  CloseIcon, CustomSearchField, DividerIcon, DownloadIcon,
   DueDate,
   DueDateDiv,
   FirstHeader,
@@ -25,33 +38,12 @@ import {
   HeaderContainer,
   HorizontalLine,
   MiniHeaderContainer,
-  MiniSymbolsContainer,
-  SearchGlassIcon,
+  MiniSymbolsContainer, SearchAreaContainer, SearchGlassIcon,
   SecondHeader,
   TaskListContainer,
   ThirdHeader,
-  TitleContainer,
-  LoadMoreContainer,
-  LoadMoreButton,
-  ArrowUpContainer,
-  DividerIcon,
-  ArrowDownIcon,
+  TitleContainer
 } from "./TaskListStyles";
-import RFIList from "../../../public/divami_icons/rfiList.svg";
-import SubmittalList from "../../../public/divami_icons/submittalList.svg";
-import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
-import router from "next/router";
-import { getProjectUsers } from "../../../services/project";
-import {
-  getTasksTypes,
-  getTasksPriority,
-  getTaskStatus,
-} from "../../../services/task";
-import TaskList from "../../container/rightFloatingMenu/taskMenu/taskList";
-import Moment from "moment";
-import TaskFilterCommon from "../task-filter-common/TaskFilterCommon";
-import { ITasks } from "../../../models/Itask";
-import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
 
 interface IProps {
   closeOverlay: () => void;
@@ -86,6 +78,10 @@ const CustomTaskListDrawer = (props: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [viewTask, setViewTask] = useState({});
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
+  const [searchingOn, setSearchingOn] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredTaskList, setFilteredTaskList] = useState(taskListDataState);
+
 
   const handleViewTaskList = () => {
     // console.log("teskssksk trigg");
@@ -107,49 +103,6 @@ const CustomTaskListDrawer = (props: any) => {
     });
     setTaskListDataState(tempTaskDataState);
   }, []);
-
-  //   {
-  //     "success": true,
-  //     "result": {
-  //         "title": "13_Floor_A3_Block_2023-02-22",
-  //         "type": "Submittals",
-  //         "status": "To Do",
-  //         "priority": "High",
-  //         "assignees": [
-  //             {
-  //                 "_id": "USR370060",
-  //                 "firstName": "swathi",
-  //                 "lastName": "divami",
-  //                 "email": "swathi@divami.com",
-  //                 "fullName": "swathi divami"
-  //             }
-  //         ],
-  //         "addressedBy": "string",
-  //         "owner": "USR370060",
-  //         "project": "PRJ201897",
-  //         "structure": "STR147148",
-  //         "snapshot": "string",
-  //         "screenshot": "string",
-  //         "attachments": [
-  //             {
-  //                 "name": "string",
-  //                 "url": "string",
-  //                 "entity": "string",
-  //                 "createdAt": "2023-02-13T05:59:22.356Z",
-  //                 "updatedAt": "2023-02-13T05:59:22.356Z",
-  //                 "_id": "ATT962357"
-  //             }
-  //         ],
-  //         "progress": -1,
-  //         "startDate": "2023-02-11T05:04:01.012Z",
-  //         "dueDate": "2023-02-05T05:04:01.012Z",
-  //         "tags": [],
-  //         "createdAt": "2023-02-13T05:59:22.357Z",
-  //         "updatedAt": "2023-02-13T05:59:22.357Z",
-  //         "_id": "ISS962357",
-  //         "__v": 0
-  //     }
-  // }
 
   const handleClose = () => {
     onClose(true);
@@ -195,6 +148,8 @@ const CustomTaskListDrawer = (props: any) => {
     setTaskListDataState(sortedDatesData);
   };
 
+
+
   const handleViewTask = (task: any) => {
     tasksList.forEach((item: any) => {
       if (task.id === item._id) {
@@ -203,6 +158,31 @@ const CustomTaskListDrawer = (props: any) => {
     });
     setOpenTaskDetail(true);
   };
+
+  const handleSearchWindow = () => {
+    if (searchTerm === "") {
+      setSearchingOn(!searchingOn);
+    }
+    else {
+      setSearchTerm("");
+    }
+  };
+
+  const handleSearch = () => {
+    const filteredData = taskListDataState?.filter(eachTask => {
+      const taskName = eachTask.type.toLowerCase();
+      return taskName.includes(searchTerm.toLowerCase());
+    })
+    setFilteredTaskList([...filteredData])
+  }
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm]);
+
+  useEffect(() => {
+    setFilteredTaskList(taskListDataState);
+  }, [taskListDataState]);
 
   return (
     <TaskListContainer>
@@ -221,44 +201,79 @@ const CustomTaskListDrawer = (props: any) => {
 
       <MiniHeaderContainer>
         <MiniSymbolsContainer>
-          <SearchGlassIcon src={Search} alt={"close icon"} />
-          <DividerIcon src={Divider} alt="" />
-          {dateSortState === "ascending" ? (
-            <>
-              <ArrowUpIcon
-                onClick={() => {
-                  handleDatesSort();
+          {searchingOn ?
+            <SearchAreaContainer>
+              <CustomSearchField
+                placeholder="Search"
+                variant="outlined"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
                 }}
-                src={UpArrow}
+                InputLabelProps={{ shrink: false }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <CloseIcon
+                        onClick={() => {
+                          handleSearchWindow();
+                        }}
+                        src={CrossIcon}
+                        alt={"close icon"}
+                      />
+                    </InputAdornment>
+                  )
+                }}
+              />
+
+            </SearchAreaContainer> :
+            <>
+              <SearchGlassIcon src={Search} alt={"close icon"} onClick={() => setSearchingOn(prev => !prev)} />
+              <DividerIcon src={Divider} alt="" />
+              {dateSortState === "ascending" ? (
+                <>
+                  <ArrowUpIcon
+                    onClick={() => {
+                      handleDatesSort();
+                    }}
+                    src={UpArrow}
+                    alt="Arrow"
+                  />
+                </>
+              ) : (
+                <>
+                  <ArrowDownIcon
+                    onClick={() => {
+                      handleDatesSort();
+                    }}
+                    src={DownArrow}
+                    alt="Arrow"
+                  />
+                </>
+              )}
+              <DueDate>Due Date</DueDate>
+              <DownloadIcon src={Download} alt="Arrow" />
+              <FunnelIcon
+                src={FilterInActive}
                 alt="Arrow"
+                onClick={() => {
+                  handleViewTaskList();
+                }}
               />
             </>
-          ) : (
-            <>
-              <ArrowDownIcon
-                onClick={() => {
-                  handleDatesSort();
-                }}
-                src={DownArrow}
-                alt="Arrow"
-              />
-            </>
-          )}
-          <DueDate>Due Date</DueDate>
-          <DownloadIcon src={Download} alt="Arrow" />
-          <FunnelIcon
-            src={FilterInActive}
-            alt="Arrow"
-            onClick={() => {
-              handleViewTaskList();
-            }}
-          />
+          }
+
         </MiniSymbolsContainer>
       </MiniHeaderContainer>
 
       <BodyContainer>
         <Box sx={{ marginTop: "15px" }}>
-          {taskListDataState.map((val: any) => {
+          {filteredTaskList.map((val: any) => {
             return (
               <>
                 <BodyInfo
@@ -272,14 +287,14 @@ const CustomTaskListDrawer = (props: any) => {
                         val.type === "RFI"
                           ? RFIList
                           : val.type === "Transmittals"
-                          ? TransmittalList
-                          : val.type === "Submittals"
-                          ? SubmittalList
-                          : val.type === "Transmittals"
-                          ? TransmittalList
-                          : val.type === "Transmittals"
-                          ? TransmittalList
-                          : ""
+                            ? TransmittalList
+                            : val.type === "Submittals"
+                              ? SubmittalList
+                              : val.type === "Transmittals"
+                                ? TransmittalList
+                                : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : ""
                       }
                       alt="Arr"
                     />
@@ -306,39 +321,43 @@ const CustomTaskListDrawer = (props: any) => {
       {/* <LoadMoreContainer>
         <LoadMoreButton>Load More</LoadMoreButton>
       </LoadMoreContainer> */}
-      {openTaskDetail && (
-        <Drawer
-          anchor={"right"}
-          open={openTaskDetail}
-          onClose={() => setOpenTaskDetail((prev: any) => !prev)}
-        >
-          <CustomTaskDetailsDrawer
-            taskList={tasksList}
-            task={viewTask}
+      {
+        openTaskDetail && (
+          <Drawer
+            anchor={"right"}
+            open={openTaskDetail}
             onClose={() => setOpenTaskDetail((prev: any) => !prev)}
-          />
-        </Drawer>
-      )}
+          >
+            <CustomTaskDetailsDrawer
+              taskList={tasksList}
+              task={viewTask}
+              onClose={() => setOpenTaskDetail((prev: any) => !prev)}
+            />
+          </Drawer>
+        )
+      }
 
-      {openDrawer && (
-        <Drawer
-          anchor={"right"}
-          open={openDrawer}
-          onClose={() => setOpenDrawer((prev: any) => !prev)}
-        >
-          <TaskFilterCommon
-            tasksList={tasksList}
-            // taskMenuClicked={taskMenuClicked}
-            // currentProject={myProject}
-            // currentStructure={myStructure}
-            // currentSnapshot={mySnapshot}
-            // closeTaskFilterOverlay={closeTaskFilterOverlay}
-            // handleOnTaskFilter={handleOnTaskFilter}
+      {
+        openDrawer && (
+          <Drawer
+            anchor={"right"}
+            open={openDrawer}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-          />
-        </Drawer>
-      )}
-    </TaskListContainer>
+          >
+            <TaskFilterCommon
+              tasksList={tasksList}
+              // taskMenuClicked={taskMenuClicked}
+              // currentProject={myProject}
+              // currentStructure={myStructure}
+              // currentSnapshot={mySnapshot}
+              // closeTaskFilterOverlay={closeTaskFilterOverlay}
+              // handleOnTaskFilter={handleOnTaskFilter}
+              onClose={() => setOpenDrawer((prev: any) => !prev)}
+            />
+          </Drawer>
+        )
+      }
+    </TaskListContainer >
   );
 };
 
