@@ -749,13 +749,13 @@ const Index: React.FC<IProps> = () => {
         </div> */}
         {/* {structure && snapshot && designMap && activeRealityMap && ( */}
         <div ref={rightrefContainer}>
-          <FontAwesomeIcon
+          {/* <FontAwesomeIcon
             className={`fixed  ${rightNav && "rotate-180"
               } text-lg text-blue-300  ${rightNav ? "right-9" : "right-0"
               }  top-46  cursor-pointer border rounded  p-1 bg-gray-400 z-10 text-white`}
             onClick={rightNavCollapse}
             icon={faLessThan}
-          ></FontAwesomeIcon>
+          ></FontAwesomeIcon> */}
           {/* <div className="toolbarcontainer"> */}
           <div
             ref={rightOverlayRef}

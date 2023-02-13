@@ -110,8 +110,8 @@ const Task = ({
       (data.tags =
         (formData.length
           ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+            .filter((item: any) => item.id == "tag-suggestions")[0]
+            ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
