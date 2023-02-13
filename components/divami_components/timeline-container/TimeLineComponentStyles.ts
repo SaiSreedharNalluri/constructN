@@ -19,8 +19,8 @@ export const SelectedTimeLine = styled('div')({
   textAlign: 'center',
   borderRadius: '4px',
   position: 'absolute',
-  bottom: '48px',
-  left: '45%',
+  bottom: '58px',
+  left: '46%',
 });
 
 export const TimeLinePagination = styled('div')({
