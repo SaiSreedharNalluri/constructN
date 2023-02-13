@@ -91,6 +91,12 @@ export class ForgeViewerUtils {
     this.isAddTagActive = this.activateTool(type);
   }
 
+  cancelAddTag() {
+    if (this.dataVizUtils) {
+      this.dataVizUtils.refreshViewableData();
+    }
+  }
+
   selectTag(tag) {
     if (this.dataVizUtils) {
       this.dataVizUtils.selectTag(tag);
@@ -145,7 +151,9 @@ export class ForgeViewerUtils {
     }
     this.realityPositionMap = realityPositionMap;
     this.isPendingLayersToLoad = true;
-    this.loadLayersOnDataLoadCompletion();
+    if (this.loadLayersOnDataLoadCompletion()) {
+      this.loadLayers();
+    }
   }
 
   updateIssuesData(list) {
@@ -164,10 +172,11 @@ export class ForgeViewerUtils {
     console.log("Inside loadlayers On data load complete: ", this.isPendingLayersToLoad, this.isModelLoaded, this.dataVizUtils);
     if (this.isPendingLayersToLoad) {
       if (this.isModelLoaded && this.dataVizUtils) {
-        this.loadLayers();
+        return true;
       }
+      return false;
     }
-    
+    return false;
   }
 
   initialize() {
@@ -308,8 +317,30 @@ export class ForgeViewerUtils {
     this.dataVizUtils.setOffset(this.globalOffset);
     this.dataVizUtils.addMediaData(this.realityPositionMap);
     this.dataVizUtils.addTrackersData(this.issuesList, this.tasksList);
+    this.dataVizUtils.setViewableState(this.showLayersList);
     this.dataVizUtils.updateData();
     this.isPendingLayersToLoad = false;
+  }
+
+  showLayers(layersList){
+    this.isPendingLayersToLoad = true;
+    this.showLayersList = layersList;
+    if(this.loadLayersOnDataLoadCompletion()) {
+      this.dataVizUtils.setViewableState(this.showLayersList);
+      this.dataVizUtils.refreshViewableData();
+      this.isPendingDataToLoad = false;
+    }
+  }
+
+  showTag(tag, show) {
+    this.isPendingLayersToLoad = true;
+    if(this.dataVizUtils) {
+      if(this.loadLayersOnDataLoadCompletion()) {
+        this.dataVizUtils.showTracker(tag, show);
+        this.dataVizUtils.refreshViewableData();
+        this.isPendingDataToLoad = false;
+      }
+    }
   }
 
 
@@ -616,7 +647,9 @@ export class ForgeViewerUtils {
     this.loadExtension();
     this.isPendingDataToLoad = false;
     this.isModelLoaded = true;
-    this.loadLayersOnDataLoadCompletion();
+    if(this.loadLayersOnDataLoadCompletion()) {
+      this.loadLayers();
+    }
   }
 
   onGeometryLoadedEvent(parameter) {
@@ -644,7 +677,9 @@ export class ForgeViewerUtils {
 
       this.dataVizUtils = new ForgeDataVisualization(this.viewer, this.dataVizExtn);
       this.dataVizUtils.setHandler(this.onDataVizHandler.bind(this));
-      this.loadLayersOnDataLoadCompletion();
+      if(this.loadLayersOnDataLoadCompletion()) {
+        this.loadLayers();
+      }
     } else if (parameter.extensionId === 'Autodesk.BimWalk') {
       console.log("Inside Forge Viewer, Bim Walk loaded:");
       this.bimWalkExtn = this.viewer.getExtension(parameter.extensionId);
