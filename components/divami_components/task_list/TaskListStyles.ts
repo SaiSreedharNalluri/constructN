@@ -89,19 +89,21 @@ export const FirstHeader = styled("div")({
   display: "flex",
 });
 
-export const BodyInfo = styled("div")({});
+export const BodyInfo = styled("div")({
+  cursor: "pointer",
+});
 
 export const BodyContTitle = styled("div")({
   marginLeft: "10px",
 });
 
 export const SecondHeader = styled("div")({
-  marginLeft: "26px",
+  marginLeft: "35px",
 });
 
 export const ThirdHeader = styled("div")({
   display: "flex",
-  marginLeft: "26px",
+ marginLeft: "35px",
   marginTop: "6px",
   justifyContent: "space-between",
 });
@@ -112,6 +114,8 @@ export const DueDateDiv = styled("div")({
   fontWeight: "400",
   fontSize: "14px",
   lineHeight: "19px",
+  color:"#787878"
+
 });
 
 export const ArrowDownIcon = styled(Image)({

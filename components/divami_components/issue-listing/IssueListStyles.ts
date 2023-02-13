@@ -102,12 +102,12 @@ export const BodyContTitle = styled("div")({
 });
 
 export const SecondHeader = styled("div")({
-  marginLeft: "26px",
+  marginLeft: "35px",
 });
 
 export const ThirdHeader = styled("div")({
   display: "flex",
-  marginLeft: "26px",
+  marginLeft: "35px",
   marginTop: "6px",
   justifyContent: "space-between",
 });
@@ -118,7 +118,7 @@ export const DueDateDiv = styled("div")({
   fontWeight: "400",
   fontSize: "14px",
   lineHeight: "19px",
-  color: "linear-gradient(90deg, rgba(49,53,58,1) 50%, rgba(27,36,46,1) 100%)",
+   color:"#787878"
 });
 
 export const HorizontalLine = styled("div")({

@@ -51,6 +51,8 @@ import TaskList from "../../container/rightFloatingMenu/taskMenu/taskList";
 import Moment from "moment";
 import TaskFilterCommon from "../task-filter-common/TaskFilterCommon";
 import { ITasks } from "../../../models/Itask";
+import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
+
 interface IProps {
   closeOverlay: () => void;
   tasksList: ITasks[];
@@ -82,6 +84,8 @@ const CustomTaskListDrawer = (props: any) => {
   const [dateSortState, setDateSortState] = useState("ascending");
   const [taskListDataState, setTaskListDataState] = useState([]);
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [viewTask, setViewTask] = useState({});
+  const [openTaskDetail, setOpenTaskDetail] = useState(false);
 
   const handleViewTaskList = () => {
     // console.log("teskssksk trigg");
@@ -97,12 +101,55 @@ const CustomTaskListDrawer = (props: any) => {
         type: task.type,
         priority: task.priority,
         assignee: task.assignees[0].firstName,
-        due_date: task.due_date,
+        due_date: task.dueDate,
       };
       tempTaskDataState.push(tempTask);
     });
     setTaskListDataState(tempTaskDataState);
   }, []);
+
+  //   {
+  //     "success": true,
+  //     "result": {
+  //         "title": "13_Floor_A3_Block_2023-02-22",
+  //         "type": "Submittals",
+  //         "status": "To Do",
+  //         "priority": "High",
+  //         "assignees": [
+  //             {
+  //                 "_id": "USR370060",
+  //                 "firstName": "swathi",
+  //                 "lastName": "divami",
+  //                 "email": "swathi@divami.com",
+  //                 "fullName": "swathi divami"
+  //             }
+  //         ],
+  //         "addressedBy": "string",
+  //         "owner": "USR370060",
+  //         "project": "PRJ201897",
+  //         "structure": "STR147148",
+  //         "snapshot": "string",
+  //         "screenshot": "string",
+  //         "attachments": [
+  //             {
+  //                 "name": "string",
+  //                 "url": "string",
+  //                 "entity": "string",
+  //                 "createdAt": "2023-02-13T05:59:22.356Z",
+  //                 "updatedAt": "2023-02-13T05:59:22.356Z",
+  //                 "_id": "ATT962357"
+  //             }
+  //         ],
+  //         "progress": -1,
+  //         "startDate": "2023-02-11T05:04:01.012Z",
+  //         "dueDate": "2023-02-05T05:04:01.012Z",
+  //         "tags": [],
+  //         "createdAt": "2023-02-13T05:59:22.357Z",
+  //         "updatedAt": "2023-02-13T05:59:22.357Z",
+  //         "_id": "ISS962357",
+  //         "__v": 0
+  //     }
+  // }
 
   const handleClose = () => {
     onClose(true);
@@ -146,6 +193,15 @@ const CustomTaskListDrawer = (props: any) => {
       }
     });
     setTaskListDataState(sortedDatesData);
+  };
+
+  const handleViewTask = (task: any) => {
+    tasksList.forEach((item: any) => {
+      if (task.id === item._id) {
+        setViewTask(item);
+      }
+    });
+    setOpenTaskDetail(true);
   };
 
   return (
@@ -204,8 +260,12 @@ const CustomTaskListDrawer = (props: any) => {
         <Box sx={{ marginTop: "15px" }}>
           {taskListDataState.map((val: any) => {
             return (
-              <div>
-                <BodyInfo>
+              <>
+                <BodyInfo
+                  onClick={() => {
+                    handleViewTask(val);
+                  }}
+                >
                   <FirstHeader>
                     <Image
                       src={
@@ -238,7 +298,7 @@ const CustomTaskListDrawer = (props: any) => {
                   </ThirdHeader>
                 </BodyInfo>
                 <HorizontalLine></HorizontalLine>
-              </div>
+              </>
             );
           })}
         </Box>
@@ -246,6 +306,19 @@ const CustomTaskListDrawer = (props: any) => {
       {/* <LoadMoreContainer>
         <LoadMoreButton>Load More</LoadMoreButton>
       </LoadMoreContainer> */}
+      {openTaskDetail && (
+        <Drawer
+          anchor={"right"}
+          open={openTaskDetail}
+          onClose={() => setOpenTaskDetail((prev: any) => !prev)}
+        >
+          <CustomTaskDetailsDrawer
+            taskList={tasksList}
+            task={viewTask}
+            onClose={() => setOpenTaskDetail((prev: any) => !prev)}
+          />
+        </Drawer>
+      )}
 
       {openDrawer && (
         <Drawer

@@ -56,7 +56,7 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
   }
   return (
     <React.Fragment>
-      <Formik
+      {/* <Formik
         initialValues={{ searchQuery: "" }}
         validationSchema={schema}
         onSubmit={(values, actions) => {
@@ -77,18 +77,19 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
             />
           </Form>
         )}
-      </Formik>
+      </Formik> */}
 
       <div>
         {/* <SearchInput></SearchInput> */}
-        {state.length === 0 ? (
-          "no structures found for this project"
-        ) : (
+        {
           <>
             {/* <Treelist treeList={state} getStructureData={getStructureData} /> */}
             <ProjectHierarchy
-              // openSelectLayer={true}
-              title={""}
+              handleSearch={(event: React.ChangeEvent<HTMLInputElement>) => {
+                // setFieldValue("searchQuery", event.target.value);
+                setState(filterBy(stateFilter, event.target.value));
+              }}
+              title={"Project Hierarchy"}
               onCloseHandler={() => {
                 // setOpenSelectLayer(false)
               }}
@@ -96,7 +97,7 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
               getStructureData={getStructureData}
             />
           </>
-        )}
+        }
       </div>
     </React.Fragment>
   );

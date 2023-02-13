@@ -54,7 +54,7 @@ const Body = ({ handleFormData }: any) => {
     if (router.isReady) {
       getTasksTypes(router.query.projectId as string).then((response: any) => {
         if (response.success === true) {
-          response.result.push("Please select the task type");
+          // response.result.push('Please select the task type');
           setTaskTypes(response.result);
           console.log(taskTypes);
         }

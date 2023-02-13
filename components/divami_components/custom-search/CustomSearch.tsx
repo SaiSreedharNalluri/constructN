@@ -4,6 +4,8 @@ import Autocomplete from '@mui/material/Autocomplete'
 import { styled } from "@mui/system";
 import { InputAdornment } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
+import Search from "../../../public/divami_icons/search.svg";
+import Image from "next/image";
 
 const CustomAutoComplete = styled(Autocomplete) ({
   border: '1px solid #36415d',
@@ -67,7 +69,7 @@ const CustomSearch = (props: any) => {
             ...params.InputProps,
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon />
+                <Image width={15} height={15} src={Search} alt="Search" />
               </InputAdornment>
             ),
           }}
