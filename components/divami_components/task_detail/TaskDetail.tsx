@@ -13,7 +13,7 @@ import Delete from "../../../public/divami_icons/delete.svg";
 import Send from "../../../public/divami_icons/send.svg";
 import { red } from "@mui/material/colors";
 import CustomSelect from "../custom-select/CustomSelect";
-import ActivityLog from "../task_detail/activityLog";
+import ActivityLog from "../task_detail/ActivityLog";
 
 // import SelectVariants from "../select-dropdown";
 // import BasicSelect from "../temporary-select/TempSelect";
