@@ -1,14 +1,27 @@
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import dashboardProgress from "../../../public/divami_icons/dashboardProgress.svg";
+import dashboardProgressHighlight from "../../../public/divami_icons/dashboardProgressHighlight.svg";
+
 import issuesIcon from "../../../public/divami_icons/issuesIcon.svg";
 import drawingInactive from "../../../public/divami_icons/drawingInactive.svg";
+import IssuesHighlightedIcon from "../../../public/divami_icons/issuesHighlightedIcon.svg";
+
 import drawing from "../../../public/divami_icons/drawing.svg";
 // import task from "../../../public/divami_icons/task.svg";
 import tasks from "../../../public/divami_icons/tasks.svg";
+import tasksHighlighted from "../../../public/divami_icons/tasksHighlighted.svg";
+import branchHighlighted from "../../../public/divami_icons/branchHighlightedIcon.svg";
+
+
+// tasksHighlighted
 import branch from "../../../public/divami_icons/branch.svg";
-import calendar from "../../../public/divami_icons/calendar.svg";
+import calendar from "../../../public/divami_icons/calendarIcon.svg";
+import calendarHighlighted from "../../../public/divami_icons/calendarHighlightedIcon.svg";
+
 import people from "../../../public/divami_icons/people.svg";
+import peopleHighlighted from "../../../public/divami_icons/peopleHighlighted.svg";
+
 
 import {
   HighlightedSytledImage,
@@ -27,15 +40,16 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       id: "dashboard",
       label: "dashboardProgress",
       icon: dashboardProgress,
-      activeIcon: dashboardProgress,
+      activeIcon: dashboardProgressHighlight,
       isActive: false,
       nextPage: "",
     },
     {
       id: "drawing",
       label: "drawing",
-      icon: drawingInactive,
-      activeIcon: drawing,
+      
+      icon: drawing,
+      activeIcon: drawingInactive,
       isActive: false,
       nextPage: "",
     },
@@ -44,7 +58,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
 
       label: "issues",
       icon: issuesIcon,
-      activeIcon: issuesIcon,
+      activeIcon: IssuesHighlightedIcon,
       isActive: false,
       nextPage: "",
     },
@@ -52,7 +66,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       id: "structure",
       label: "tasks",
       icon: tasks,
-      activeIcon: tasks,
+      activeIcon: tasksHighlighted,
       isActive: false,
       nextPage: "",
     },
@@ -61,7 +75,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
 
       label: "calendar",
       icon: calendar,
-      activeIcon: calendar,
+      activeIcon: calendarHighlighted,
       isActive: false,
     },
     {
@@ -69,7 +83,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
 
       label: "branch",
       icon: branch,
-      activeIcon: branch,
+      activeIcon: branchHighlighted,
       isActive: false,
     },
     {
@@ -78,37 +92,48 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       label: "settings",
       icon: people,
       isActive: false,
-      activeIcon: people,
+      activeIcon: peopleHighlighted,
     },
   ]);
 
-  const handleClick = (item: any) => {
-    setConfig((prev) =>
-      prev.map((data) => {
-        onChangeData();
-        if (data?.label === item?.label) {
-          return {
-            ...data,
-            isActive: item?.isActive ? false : true,
-          };
-        } else {
-          return {
-            ...data,
-            isActive: false,
-          };
-        }
-      })
-    );
-  };
+  // const handleClick = (item: any) => {
+  //   setConfig((prev) =>
+  //     prev.map((data) => {
+  //       onChangeData();
+  //       if (data?.label === item?.label) {
+  //         return {
+  //           ...data,
+  //           isActive: item?.isActive ? false : true,
+  //         };
+  //       } else {
+  //         return {
+  //           ...data,
+  //           isActive: false,
+  //         };
+  //       }
+  //     })
+  //   );
+  // };
+
+const handleClick = (id:any) => {
+  setConfig((prevConfig) =>
+    prevConfig.map((item) =>
+      item.id === id
+        ? { ...item, isActive: true }
+        : { ...item, isActive: false }
+    )
+  );
+};
 
   const router = useRouter();
   const [active, setActive] = useState(router.pathname.split("/").pop());
 
   const leftClickHandler = (e: any) => {
-    console.log("e", e.currentTarget.id);
+    // console.log("e", e.currentTarget.id);
     switch (e.currentTarget.id) {
       case "dashboard":
         router.push(`/projects/${router.query.projectId as string}/dashboard`);
+        
         break;
       case "views":
       case "drawing":
@@ -141,9 +166,10 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       {config.map((item, index) => (
         <SideMenuOptionContainer key={index}>
           <SideMenuOption
-            onClick={() =>
-              item.label === "drawing" ? handleClick(item) : null
-            }
+            // onClick={() =>
+            //   item.label === "settings" ? handleClick(item) : null
+            // }
+            onClick={() => handleClick(item.id)}
           >
             <SideMenuOptionImageContainer>
               {item.isActive ? (
