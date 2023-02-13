@@ -22,7 +22,7 @@ import CreateTask from "../create-task/CreateTask";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import { createTask } from "../../../services/task";
 import { toast } from "react-toastify";
-import CustomTaskDetailsDrawer from "../task_detail/taskDetail";
+import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
 
 const Task = ({
   rightMenuClickHandler,
@@ -181,24 +181,6 @@ const Task = ({
             contextInfo={contextInfo}
           />
         </CustomDrawer>
-      )}
-      {openTaskDetail && (
-        <Drawer
-          anchor={"right"}
-          open={openTaskDetail}
-          onClose={() => setOpenTaskDetail((prev: any) => !prev)}
-        >
-          <CustomTaskDetailsDrawer
-            // tasksList={tasksList}
-            // taskMenuClicked={taskMenuClicked}
-            // currentProject={myProject}
-            // currentStructure={myStructure}
-            // currentSnapshot={mySnapshot}
-            // closeTaskFilterOverlay={closeTaskFilterOverlay}
-            // handleOnTaskFilter={handleOnTaskFilter}
-            onClose={() => setOpenDrawer((prev: any) => !prev)}
-          />
-        </Drawer>
       )}
     </TaskBox>
   );

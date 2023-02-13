@@ -88,7 +88,6 @@ import CustomButton from "../custom-button/CustomButton";
 
 interface IProps {
   closeOverlay: () => void;
-  tasksList: ITasks[];
   visibility: boolean;
   handleOnFilter: (formData: object) => void;
   handleOnSort: (sortMethod: string) => void;
@@ -96,17 +95,18 @@ interface IProps {
   deleteTheIssue: (issueObj: object) => void;
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
   onClose: any;
+  tasksList: any;
 }
 
 // const Footer = () => {
 //   return <>Footer</>;
 // };
-   const CloseIcon = styled(Image)({
+const CloseIcon = styled(Image)({
   cursor: "pointer",
 });
 const TaskFilterCommon: React.FC<IProps> = ({
   tasksList,
-   onClose: any
+  onClose,
   // taskMenuClicked,
   // currentProject,
   // currentStructure,
@@ -116,7 +116,6 @@ const TaskFilterCommon: React.FC<IProps> = ({
 }) => {
   // console.log("tasksListapi", tasksList);
   const [datePickerData, setDatePickerData] = useState(DATE_PICKER_DATA);
-  
 
   const Filters = [
     {
@@ -155,12 +154,11 @@ const TaskFilterCommon: React.FC<IProps> = ({
     onClose(true);
   };
 
-
   const [FilterState, SetFilterState] = useState<any>(Filters);
   const [optionState, setOptionState] = useState<any>("clash");
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [treeViewData, setTreeViewData] = useState<RenderTree[]>(mockData);
+  const [treeViewData, setTreeViewData] = useState<any>(mockData);
 
   // Select All Handling
   const handleAllSelection = (item: any, index: number) => {
@@ -304,8 +302,6 @@ const TaskFilterCommon: React.FC<IProps> = ({
     SetFilterState(temp);
   }, [optionState]);
 
-  
-
   // console.log("tasksList",tasksList)
   return (
     <FilterCommonMain>
@@ -323,13 +319,13 @@ const TaskFilterCommon: React.FC<IProps> = ({
               {/* <Image src={closeIcon} alt="reset" onClick={() => {
               handleClose();
             }}/> */}
-            <CloseIcon
-            onClick={() => {
-              handleClose();
-            }}
-            src={closeIcon}
-            alt={"close icon"}
-            />
+              <CloseIcon
+                onClick={() => {
+                  handleClose();
+                }}
+                src={closeIcon}
+                alt={"close icon"}
+              />
             </HeaderRightSection>
           </TitleContainer>
         </HeaderContainer>
@@ -430,13 +426,13 @@ const TaskFilterCommon: React.FC<IProps> = ({
         <FormElementContainer>
           <DatePickersContainer>
             <DatePickerContainer>
-               <div>
-              <CustomLabel label={"Start Date"} />
-              <FormWrapper
-                config={datePickerData}
-                setFormConfig={setDatePickerData}
+              <div>
+                <CustomLabel label={"Start Date"} />
+                <FormWrapper
+                  config={datePickerData}
+                  setFormConfig={setDatePickerData}
                 />
-                </div>
+              </div>
             </DatePickerContainer>
             <div>
               <CustomLabel label={"Due Date"} />
