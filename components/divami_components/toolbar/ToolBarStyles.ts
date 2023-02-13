@@ -46,20 +46,20 @@ export const TaskBox = styled('div')({
 export const TaskTitleDiv = styled('div')({});
 
 export const IssuesSectionPlusImg = styled('div')({
-  width: '12px',
-  height: '12px',
+  // width: '12px',
+  // height: '12px',
   marginLeft: '8px',
 });
 
 export const IssuesSectionFileImg = styled('div')({
-  width: '12px',
-  height: '12px',
+  // width: '12px',
+  // height: '12px',
   marginLeft: '13px',
 });
 
 export const IssuesSectionClipImg = styled('div')({
-  width: '12px',
-  height: '12px',
+  // width: '12px',
+  // height: '12px',
   marginLeft: '13px',
 });
 
@@ -106,6 +106,13 @@ export const IssueBox = styled('div')({
   padding: '15px 20px',
 });
 
+export const IssueTitle = styled('div')({
+  fontWeight: "400",
+  fontSize: "12px",
+  // lineHeight:"16px"
+
+})
+
 export const LayersWrapper = styled('div')({
   border: '1px solid #d9d9d9',
   borderRight: 'none',
@@ -123,18 +130,26 @@ export const SelectLayersWrapper = styled('div')({
 });
 
 export const LayerSecondSectionHexImg = styled('div')({
-  width: '12px',
-  height: '12px',
+  // width: '18px',
+  // height: '18px',
 });
 
 export const LayerSecondSectionCamImg = styled('div')({
-  marginLeft: '16px',
-  width: '12px',
-  height: '12px',
+  marginLeft: '18px',
+  // width: '15px',
+  // height: '15px',
 });
 
 export const LayerSecondSectionArrImg = styled('div')({
-  marginLeft: '14px',
-  width: '12px',
-  height: '12px',
+  marginLeft: '26px',
+  // width: '15px',
+  // height: '15px',
 });
+
+
+export const TaskTitle = styled('div')({
+  fontWeight: "400",
+  fontSize: "12px",
+  // lineHeight:"16px"
+
+})
