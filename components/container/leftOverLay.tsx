@@ -14,8 +14,10 @@ import { Formik, Form, Field } from "formik";
 interface IProps {
   getStructureData: (structure: ChildrenEntity) => void;
   getStructure: (Structure: ChildrenEntity) => void;
+  setHierarchy: any
 }
-const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
+const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure,
+  setHierarchy }) => {
   let router = useRouter();
   let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   let [stateFilter, setStateFilter] = useState<ChildrenEntity[]>([]);
@@ -41,17 +43,17 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
   function filterBy(arr: ChildrenEntity[], query: string) {
     return query
       ? arr.reduce((acc: any, item: any) => {
-          if (item.children?.length) {
-            const filtered: any = filterBy(item.children, query);
-            if (filtered.length)
-              return [...acc, { ...item, children: filtered }];
-          }
+        if (item.children?.length) {
+          const filtered: any = filterBy(item.children, query);
+          if (filtered.length)
+            return [...acc, { ...item, children: filtered }];
+        }
 
-          const { children, ...itemWithoutChildren } = item;
-          return item.name?.toLowerCase().includes(query.toLowerCase())
-            ? [...acc, itemWithoutChildren]
-            : acc;
-        }, [])
+        const { children, ...itemWithoutChildren } = item;
+        return item.name?.toLowerCase().includes(query.toLowerCase())
+          ? [...acc, itemWithoutChildren]
+          : acc;
+      }, [])
       : arr;
   }
   return (
@@ -92,6 +94,8 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
               title={"Project Hierarchy"}
               onCloseHandler={() => {
                 // setOpenSelectLayer(false)
+                setHierarchy(false);
+
               }}
               treeData={state}
               getStructureData={getStructureData}
