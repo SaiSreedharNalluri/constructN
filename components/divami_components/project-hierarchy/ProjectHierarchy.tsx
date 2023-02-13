@@ -4,10 +4,14 @@ import { TreeItem, TreeView } from "@mui/lab";
 import { useEffect, useState } from "react";
 import { ChildrenEntity } from "../../../models/IStructure";
 import closeIcon from "../../../public/images/closeIcon.svg";
+import { CustomTextField } from "../custom-textfield/CustomTextField";
+import TextField from "@mui/material/TextField";
 import CustomSearch from "../customSearch";
 // import CustomSearch from '../Common/custom-search/CustomSearch'
 // import CustomSearch from '../common/custom-search/CustomSearch'
 import { mockData } from "./mockData";
+import { InputAdornment } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   CloseIcon,
   HeaderLabel,
@@ -17,6 +21,7 @@ import {
   StyledTreeItem,
   TreeViewContainer,
   StyledTreeView,
+  CustomInputField,
   // useStyles,
 } from "./StyledComponents";
 import type { RenderTree, SelectLayerProps } from "./Type";
@@ -28,10 +33,16 @@ const ProjectHierarchy = ({
   onCloseHandler,
   treeData,
   getStructureData,
+  handleSearch,
 }: SelectLayerProps) => {
-  const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>(treeData);
+  const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>([]);
   const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
   console.log(treeData);
+  console.log(treeViewData);
+
+  useEffect(() => {
+    setTreeViewData(treeData);
+  }, [treeData]);
   const classes = {};
   const renderTreeNode = (node: ChildrenEntity) => (
     <div>
@@ -39,8 +50,9 @@ const ProjectHierarchy = ({
     </div>
   );
 
-  const handleSearchResult = (e: any, value: any) => {
-    console.log(e, value);
+  const handleSearchResult = (e: any) => {
+    console.log(e);
+    handleSearch(e);
   };
   const renderTree = (nodes: ChildrenEntity) => (
     <TreeItem
@@ -66,29 +78,44 @@ const ProjectHierarchy = ({
 
   return (
     <ProjectHierarchyContainer>
-      {/* <HeaderLabelContainer>
+      <HeaderLabelContainer>
         <HeaderLabel>{title}</HeaderLabel>
         <CloseIcon
           src={closeIcon}
           onClick={onCloseHandler}
           alt={"close Icon"}
         />
-      </HeaderLabelContainer> */}
+      </HeaderLabelContainer>
       <SearchContainer>
-        <CustomSearch
-          data={treeViewData ?? []}
-          handleSearchResult={handleSearchResult}
-          setSearchResult={setTreeViewData}
+        <CustomInputField
+          id={"search"}
+          variant="outlined"
+          placeholder={"Search"}
+          onChange={(e: any) => {
+            handleSearchResult(e);
+          }}
+          InputProps={{
+            // ...params.InputProps,
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
         />
       </SearchContainer>
       <TreeViewContainer>
-        <StyledTreeView
-          aria-label="rich object"
-          defaultCollapseIcon={<RemoveIcon />}
-          defaultExpandIcon={<AddIcon />}
-        >
-          {treeViewData.map((eachNode) => renderTree(eachNode))}
-        </StyledTreeView>
+        {treeViewData.length === 0 ? (
+          "no structures found for this project"
+        ) : (
+          <StyledTreeView
+            aria-label="rich object"
+            defaultCollapseIcon={<RemoveIcon />}
+            defaultExpandIcon={<AddIcon />}
+          >
+            {treeViewData.map((eachNode) => renderTree(eachNode))}
+          </StyledTreeView>
+        )}
       </TreeViewContainer>
     </ProjectHierarchyContainer>
   );

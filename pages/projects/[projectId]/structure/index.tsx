@@ -277,6 +277,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const onChangeData = () => {
+    console.log("leftnavclick");
     if (leftNav) {
       setLeftNav(false);
     } else {
@@ -331,6 +332,7 @@ const Index: React.FC<IProps> = () => {
             break;
           case "taskCreate":
           case "taskCreateSuccess":
+          case "taskCreateFail":
           case "taskShow":
           case "taskHide":
             setClickedTool(toolInstance);
@@ -770,6 +772,8 @@ const Index: React.FC<IProps> = () => {
               closeTaskFilterOverlay={closeTaskFilterOverlay}
               handleOnTaskFilter={handleOnTaskFilter}
               contextInfo={currentContext}
+              openCreateIssue={openCreateIssue}
+              openCreateTask={openCreateTask}
               selectedLayersList={currentViewLayers}
             />
             {/* </div> */}
