@@ -1,21 +1,21 @@
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRouter } from 'next/router';
-import * as Yup from 'yup';
-import React, { useEffect, useState } from 'react';
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/router";
+import * as Yup from "yup";
+import React, { useEffect, useState } from "react";
 import {
   getTasksTypes,
   getTasksPriority,
   createTask,
-} from '../../../../services/task';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { IProjectUsers } from '../../../../models/IProjects';
-import { getProjectUsers } from '../../../../services/project';
-import { IStructure } from '../../../../models/IStructure';
-import { ISnapshot } from '../../../../models/ISnapshot';
-import { getCookie } from 'cookies-next';
-import { toast } from 'react-toastify';
-import { IContext, IToolResponse } from '../../../../models/ITools';
+} from "../../../../services/task";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import { IProjectUsers } from "../../../../models/IProjects";
+import { getProjectUsers } from "../../../../services/project";
+import { IStructure } from "../../../../models/IStructure";
+import { ISnapshot } from "../../../../models/ISnapshot";
+import { getCookie } from "cookies-next";
+import { toast } from "react-toastify";
+import { IContext, IToolResponse } from "../../../../models/ITools";
 interface IProps {
   closeOverlay: () => void;
   visibility: boolean;
@@ -41,24 +41,24 @@ const TaskCreate: React.FC<IProps> = ({
   const [taskPriority, setTaskPriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   let usersList = [
-    { _id: '', name: 'please select the assignee for the task' },
+    { _id: "", name: "please select the assignee for the task" },
   ];
   const [tast, setTask] = useState<[string]>();
   const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
-  const [loggedInUserId, SetLoggedInUserId] = useState('');
+  const [loggedInUserId, SetLoggedInUserId] = useState("");
   useEffect(() => {
     if (router.isReady) {
       getTasksTypes(router.query.projectId as string).then((response) => {
         if (response.success === true) {
-          response.result.push('Please select the task type');
+          response.result.push("Please select the task type");
           setTaskType(response.result);
         }
       });
       getTasksPriority(router.query.projectId as string).then((response) => {
         if (response.success === true) {
-          response.result.push('Please select the task priority');
+          response.result.push("Please select the task priority");
           setTaskPriority(response.result);
         }
       });
@@ -70,7 +70,7 @@ const TaskCreate: React.FC<IProps> = ({
         })
         .catch();
     }
-    const userObj: any = getCookie('user');
+    const userObj: any = getCookie("user");
     let user = null;
     if (userObj) user = JSON.parse(userObj);
     if (user?._id) {
@@ -79,12 +79,12 @@ const TaskCreate: React.FC<IProps> = ({
   }, [router.isReady, router.query.projectId]);
   useEffect(() => {
     setMyVisibility(visibility);
-    console.log('finally My Visibility is ', visibility);
+    console.log("finally My Visibility is ", visibility);
   }, [visibility]);
 
   useEffect(() => {
     setMyContext(contextInfo);
-    console.log('Updated Context ', contextInfo);
+    console.log("Updated Context ", contextInfo);
   }, [contextInfo]);
   useEffect(() => {
     setMyProject(currentProject);
@@ -100,12 +100,12 @@ const TaskCreate: React.FC<IProps> = ({
     formData.title = `${myStructure?.name}_${formData.date} `;
     formData.snapshot = mySnapshot?._id;
     formData.owner = loggedInUserId;
-    formData.status = 'To Do';
+    formData.status = "To Do";
     formData.context = myContext;
     createTask(router.query.projectId as string, formData)
       .then((response) => {
         if (response.success === true) {
-          toast.success('Task added sucessfully');
+          toast.success("Task added sucessfully");
           handleTaskSubmit(formData);
           console.log(formData);
         }
@@ -125,12 +125,12 @@ const TaskCreate: React.FC<IProps> = ({
     date: string;
     context: IToolResponse;
   } = {
-    type: 'Please select the task type',
-    priority: 'Please select the task priority',
-    description: '',
-    assignees: '',
-    tags: '',
-    date: '',
+    type: "Please select the task type",
+    priority: "Please select the task priority",
+    description: "",
+    assignees: "",
+    tags: "",
+    date: "",
     context: myContext,
   };
   const validationSchema = Yup.object().shape({
@@ -153,7 +153,7 @@ const TaskCreate: React.FC<IProps> = ({
   return (
     <div
       className={`fixed  calc-h ${
-        myVisbility ? ' w-1/4' : 'w-0'
+        myVisbility ? " w-1/4" : "w-0"
       } top-10  bg-gray-200 right-0 z-10 overflow-x-hidden`}
     >
       <div>

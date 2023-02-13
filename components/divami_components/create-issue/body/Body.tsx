@@ -62,7 +62,7 @@ const Body = ({ handleFormData }: any) => {
       getIssuesPriority(router.query.projectId as string).then(
         (response: any) => {
           if (response.success === true) {
-            response.result.push("Please select the issue priority");
+            // response.result.push("Please select the issue priority");
             setIssuePriorities(response.result);
             console.log(issuePriorities);
           }

@@ -119,6 +119,11 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   const router = useRouter();
   const [active, setActive] = useState(router.pathname.split("/").pop());
 
+  // const currentUrl = window.location.href;
+  // const urlString = currentUrl.split("/")[5];
+  console.log("urlString", router);
+  // console.log(currentUrl);
+
   const leftClickHandler = (e: any) => {
     console.log("e", e.currentTarget.id);
     switch (e.currentTarget.id) {
@@ -179,12 +184,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
                   onClick={leftClickHandler}
                 />
               )}
-              {/* <StyledImage
-                onClick={leftClickHandler}
-                src={item.icon}
-                alt={item.label}
-                id={item.id}
-              /> */}
             </SideMenuOptionImageContainer>
           </SideMenuOption>
         </SideMenuOptionContainer>

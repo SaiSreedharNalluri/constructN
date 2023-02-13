@@ -208,7 +208,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                           ? SubmittalList
                           : val.type === "Commissioning"
                           ? commission
-                          : val.type === "Building Code"
+                          : val.type === "Building code"
                           ? HourglassIcon
                           : val.type === "Design"
                           ? designIcon
