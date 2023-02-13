@@ -657,7 +657,7 @@ function BasicTabs(props: any) {
 }
 
 const CustomTaskDetailsDrawer = (props: any) => {
-  const { onClose } = props;
+  const { onClose, task } = props;
   const DetailsObj = {
     TabOne: [
       {
@@ -742,12 +742,20 @@ const CustomTaskDetailsDrawer = (props: any) => {
     // ],
   };
 
+  console.log(task, "Task IMPORTANT");
+
   return (
     <CustomTaskDrawerContainer>
       <HeaderContainer>
         <TitleContainer>
           <LeftTitleCont>
-            <ArrowIcon onClick={onClose()} src={BackArrow} alt={"close icon"} />
+            <ArrowIcon
+              onClick={() => {
+                onClose(true);
+              }}
+              src={BackArrow}
+              alt={"close icon"}
+            />
             <SpanTile>RFI (#R011)</SpanTile>
           </LeftTitleCont>
           <RightTitleCont>
