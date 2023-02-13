@@ -170,27 +170,31 @@ export class ForgeDataVisualization {
         const spriteColor = new THREE.Color(0xffffff);
 
         let iconUrl = "";
+        let highlightUrl = ""
         switch (iconType) {
             case 'Drone Image':
-                // iconUrl = "https://img.icons8.com/external-kosonicon-solid-kosonicon/96/null/external-drone-drone-aircraft-and-aerial-kosonicon-solid-kosonicon-8.png";
                 iconUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
+                highlightUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
             break;
             case '360 Video':
-                // iconUrl = "https://img.icons8.com/ios-glyphs/90/null/360-view.png";
-                // iconUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
                 iconUrl = "/icons/360VideoWalkInViewer.svg";
+                highlightUrl = "/icons/360VideoWalkInViewer.svg";
             break;
             case '360 Image':
                 iconUrl = "/icons/360ImageInViewer.svg";
+                highlightUrl = "/icons/360ImageInViewer.svg";
                 break;
             case 'Phone Image':
                 iconUrl = "/icons/phoneImageInViewer.svg";
+                highlightUrl = "/icons/phoneImageInViewer.svg";
                 break;
             case 'Issue':
                 iconUrl = "/icons/issuesInViewer.svg";
+                highlightUrl = "/icons/issuesInViewer.svg";
             break;
             case 'Task':
                 iconUrl = "/icons/tasksInViewer.svg";
+                highlightUrl = "/icons/tasksInViewer.svg";
             break
 
         }
@@ -200,7 +204,7 @@ export class ForgeDataVisualization {
             spriteColor,
             iconUrl,
             spriteColor,
-            iconUrl,
+            highlightUrl,
             []
           );
     }
@@ -329,8 +333,8 @@ export class ForgeDataVisualization {
         // console.log("Inside data viz utils: selected dbId: ", event);
         // console.log(`Sprite clicked: ${this.dbIdMap[targetDbId].name}`);
         if (targetDbId > 0) {
-            event.hasStopped = true;
-            this.handleSelection(event.dbId);
+            // event.hasStopped = true;
+            // this.handleSelection(event.dbId);
             this.passToViewerHandler(event);
         } else if (this.createTagTool) {
             this.createTempViewable(this.tagType, event);
@@ -340,7 +344,7 @@ export class ForgeDataVisualization {
 
     onSpriteClickedOut(event) {
         console.log("Inside sprite clicked out selection : ", event.dbId);
-        event.hasStopped = true;
+        // event.hasStopped = true;
         this.handleSelectionOut(event.dbId);
     
     }
