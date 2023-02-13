@@ -44,6 +44,8 @@ interface IProps {
   handleOnTaskFilter: (formData: object) => void;
   closeTaskFilterOverlay: () => void;
   contextInfo: IToolResponse;
+  openCreateIssue: boolean;
+  openIssueView: boolean;
 }
 
 const ToolBarMenuWrapper: React.FC<IProps> = ({
@@ -63,6 +65,8 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
   closeTaskFilterOverlay,
   handleOnTaskFilter,
   contextInfo,
+  openCreateIssue,
+  openIssueView,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -76,7 +80,6 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
   const [selectedLayer, setSelectedLayer] = useState("");
   const [openSelectTypes, setOpenSelectTypes] = useState(false);
   const [openSelectLayer, setOpenSelectLayer] = useState(false);
-
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   const [myTypesList, setMyTypesList] = useState<IDesignMap>(currentTypesList);
@@ -153,6 +156,25 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
 
     toolClicked(toolInstance);
   };
+
+  const issueMenuClicked = (localTool: ITools) => {
+    toolClicked(localTool);
+    if (
+      localTool.toolAction === "issueCreateClose" ||
+      localTool.toolAction === "issueViewClose" ||
+      localTool.toolAction === "issueView"
+    )
+      setRighttNav(!rightNav);
+  };
+  const taskMenuClicked = (localTool: ITools) => {
+    toolClicked(localTool);
+    if (
+      localTool.toolAction === "taskCreateClose" ||
+      localTool.toolAction === "taskViewClose"
+    )
+      setRighttNav(!rightNav);
+  };
+
   return (
     <SectionToolBar>
       <ToolbarContainer>
@@ -182,11 +204,9 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
           }}
         />
 
-
-
         <Issues
           issuesList={issuesList}
-          // issueMenuClicked={issueMenuClicked}
+          issueMenuClicked={issueMenuClicked}
           handleOnFilter={handleOnFilter}
           currentProject={myProject}
           currentStructure={myStructure}
@@ -194,11 +214,13 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
           contextInfo={contextInfo}
           closeFilterOverlay={closeFilterOverlay}
           rightMenuClickHandler={rightMenuClickHandler}
+          issueOpenDrawer={openCreateIssue}
+          openIssueView={openIssueView}
         />
 
         <Task
           tasksList={tasksList}
-          // taskMenuClicked={taskMenuClicked}
+          taskMenuClicked={taskMenuClicked}
           currentProject={currentProject}
           currentSnapshot={currentSnapshot}
           currentStructure={currentStructure}
