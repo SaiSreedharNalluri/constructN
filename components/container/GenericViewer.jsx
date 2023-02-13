@@ -28,8 +28,7 @@ import {
   getRealityMap, getFloorPlanData,
 } from "../../utils/ViewerDataUtils";
 import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
-import TimelineContainer from "./timelineContainer";
-
+import TimeLineComponent from '../divami_components/timeline-container/TimeLineComponent'
 function GenericViewer(props) {
   const genericViewer = "genericViewer";
   const genericViewerRef = useRef();
@@ -125,23 +124,54 @@ function GenericViewer(props) {
 
   }
 
-  function handleRealityTypeChange() {}
+  function handleRealityTypeChange() {
+    switch(currentViewMode.current) {
+      case "Design":
+        if(forgeUtils.current) {
+          forgeUtils.current.showLayers(viewLayers);
+        }
+        break;
+      case "Reality":
+
+        break;
+    }
+  }
   
   function handleToolChange() {
     // console.log("My new tool=",activeTool);
     switch(activeTool.current===undefined?'':activeTool.current.toolAction){
       case 'issueCreate':
-        addTag("Issue")
+        addTag('Issue')
         break;
-      case 'taskCreate':
-        addTag("Task");
+      case 'issueCreateFail':
+        cancelAddTag('Issue');
         break;
       case 'issueSelect':
         selectTag(activeTool.current.response);
         break;
+      case 'issueShow':
+        showTag('Issue', true);
+        break;
+      case 'issueHide':
+        showTag('Issue', false);
+        break;
+      case 'taskCreate':
+        addTag('Task');
+        break;
+      case 'taskCreateFail':
+        cancelAddTag('Task');
+        break;
+      case 'taskSelect':
+        selectTag(activeTool.current.response);
+        break;
+      case 'taskShow':
+        showTag('Task', true);
+        break;  
+      case 'taskHide':
+        showTag('Task', false);
+        break;
       case 'showCompare':
         let currentMode = activeTool.current.toolName.endsWith("Design") ? "Design" : "Reality";
-        potreeUtils.current.readyForCompare(currentMode);
         getContext();
         setCompareViewMode(currentMode);
         currentCompareViewMode.current = currentMode
@@ -172,11 +202,40 @@ function GenericViewer(props) {
     }
   }
 
+  const cancelAddTag = (type) => {
+    switch (currentViewMode.current) {
+      case "Design" :
+        if (forgeUtils.current) {
+          forgeUtils.current.cancelAddTag();
+        }
+        break;
+      case "Reality":
+        // if (potreeUtils.current) {
+        //   potreeUtils.current.initiateAddTag(type);
+        // }
+        break;
+    }
+  }
+
+
   const selectTag = (tag) => {
     switch (currentViewMode.current) {
       case "Design" :
         if (forgeUtils.current) {
           forgeUtils.current.selectTag(tag);
+        }
+        break;
+      case "Reality":
+
+        break;
+    }
+  }
+
+  const showTag = (tag, show) => {
+    switch (currentViewMode.current) {
+      case "Design" :
+        if (forgeUtils.current) {
+          forgeUtils.current.showTag(tag, show);
         }
         break;
       case "Reality":
@@ -437,6 +496,20 @@ function GenericViewer(props) {
     }
   }
 
+  function updateViewerChanges() {
+    switch(currentViewMode.current) {
+      case "Design":
+        if (forgeUtils.current) {
+        }
+        break;
+      case 'Reality':
+        if (potreeUtils.current) {
+          potreeUtils.current.readyForCompare(currentCompareViewMode.current);
+        }
+        break;
+    }
+  }
+
   const setForgeViewerUtils = function (viewerId) {
     if (!isCompareViewer(viewerId)) {
       initViewer(viewerId);
@@ -516,19 +589,26 @@ function GenericViewer(props) {
   };
 
   const setCurrentSnapshot = (snapshot) => {
+    if(snapshot){
+
     setSnapshot(snapshot);
     updateSnapshot(snapshot);
     setRealityList(snapshot.reality);
     setRealityMap(getRealityMap(snapshot));
     updateRealityMap(getRealityMap(snapshot));
+  }
+
   };
 
   const setCurrentCompareSnapshot = (snapshot) => {
+    if(snapshot){
+
     setCompareSnapshot(snapshot);
     // updateSnapshot(snapshot);
     setCompareRealityList(snapshot.reality);
     setCompareRealityMap(getRealityMap(snapshot));
     // updateRealityMap(getRealityMap(snapshot));
+    }
   };
 
 
@@ -814,8 +894,11 @@ function GenericViewer(props) {
       currentIsCompare.current = isCompare;
     }
     if (isCompare === true) {
+      updateViewerChanges();
       loadCompareViewerData();
       loadCompareLayerData();
+    } else {
+      updateViewerChanges();
     }
     return cleanUpOnCompareViewModeChange;
   }, [isCompare, compareViewMode])
@@ -831,11 +914,11 @@ function GenericViewer(props) {
       <div className="fixed calc-w calc-h flex flex-row">
         <div className="relative basis-1/2 flex grow shrink">
           {renderViewer(1)}
-          <TimelineContainer currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimelineContainer>
+          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimeLineComponent>
         </div>
         <div className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
           {renderViewer(2)}
-          <TimelineContainer currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimelineContainer>
+          <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
         </div>
       </div>
   );
