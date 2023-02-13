@@ -16,13 +16,13 @@ import {
 const Hotspot = () => {
   return (
     <HotspotBox>
-      <HotspotTitleDiv>Hotspot:</HotspotTitleDiv>
+      {/* <HotspotTitleDiv>Hotspot:</HotspotTitleDiv>
       <HotspotSectionFileTextImg>
         <Image src={fileTextIcon} width={12} height={12} alt="Arrow" />{" "}
       </HotspotSectionFileTextImg>
       <HotspotCircleDiv>
         <Image src={hotspotCircleIcon} width={12} height={12} alt="Arrow" />{" "}
-      </HotspotCircleDiv>
+      </HotspotCircleDiv> */}
 
       <HotspotGroupIcon>
         <Image src={groupSpotIcon} width={12} height={12} alt="Arrow" />{" "}
