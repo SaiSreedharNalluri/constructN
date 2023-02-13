@@ -50,18 +50,32 @@ export const PaginationStyle = styled(Pagination)({
   //   color: 'white',
   //   minWidth: '7px',
   // },
-  '& .MuiPaginationItem-root.Mui-selected': {
-    background: 'black',
-    width: '7px !important',
-    height: '10px',
-    minWidth: '7px !important',
-    color: 'black',
-    borderRadius: '50%',
-  },
-  '&.MuiPagination-ul': {
-    '& li': {
+  // '& .MuiPaginationItem-root.Mui-selected': {
+  //   background: 'black',
+  //   width: '7px !important',
+  //   height: '10px',
+  //   minWidth: '7px !important',
+  //   color: 'black',
+  //   borderRadius: '50%',
+  // },
+  '& .MuiPagination-ul': {
+    '& li:not(:first-child):not(:last-child)': {
+      '& .MuiPaginationItem-root.Mui-selected': {
+        background: 'black',
+        width: '7px !important',
+        height: '10px',
+        minWidth: '7px !important',
+        color: 'black',
+        borderRadius: '50%',
+      },
       '& button': {
-        color: 'red',
+        width: '7px',
+        height: '10px',
+        border: '0.5px solid #36415D',
+        borderRadius: '50%',
+        background: 'white',
+        color: 'white',
+        minWidth: '7px',
       },
     },
   },
