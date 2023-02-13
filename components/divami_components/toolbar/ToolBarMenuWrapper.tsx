@@ -44,9 +44,12 @@ interface IProps {
   handleOnTaskFilter: (formData: object) => void;
   closeTaskFilterOverlay: () => void;
   contextInfo: IToolResponse;
+  openCreateIssue: boolean;
+  selectedLayersList: string[];
+  openCreateTask?: any;
 }
 
-const ToolBarMenuWrapper: React.FC<IProps> = ({
+const ToolBarMenuWrapper: React.FC<any> = ({
   toolClicked,
   viewLayers,
   viewMode,
@@ -63,6 +66,9 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
   closeTaskFilterOverlay,
   handleOnTaskFilter,
   contextInfo,
+  openCreateIssue,
+  openCreateTask,
+  selectedLayersList,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -76,7 +82,6 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
   const [selectedLayer, setSelectedLayer] = useState("");
   const [openSelectTypes, setOpenSelectTypes] = useState(false);
   const [openSelectLayer, setOpenSelectLayer] = useState(false);
-
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   const [myTypesList, setMyTypesList] = useState<IDesignMap>(currentTypesList);
@@ -99,13 +104,13 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
     setSelectedType(changeOb.target.value);
   };
 
-  const LayerChange = (changeOb: any) => {
+  const LayerChange = (changeOb: any, layerLabel: string) => {
     if (changeOb.target.checked == true) {
       toolInstance.toolName = "addViewLayer";
-      toolInstance.toolAction = changeOb.target.value;
+      toolInstance.toolAction = layerLabel;
     } else {
       toolInstance.toolName = "removeViewLayer";
-      toolInstance.toolAction = changeOb.target.value;
+      toolInstance.toolAction = layerLabel;
     }
 
     toolClicked(toolInstance);
@@ -153,6 +158,25 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
 
     toolClicked(toolInstance);
   };
+
+  const issueMenuClicked = (localTool: ITools) => {
+    toolClicked(localTool);
+    if (
+      localTool.toolAction === "issueCreateClose" ||
+      localTool.toolAction === "issueViewClose" ||
+      localTool.toolAction === "issueView"
+    )
+      setRighttNav(!rightNav);
+  };
+  const taskMenuClicked = (localTool: ITools) => {
+    toolClicked(localTool);
+    if (
+      localTool.toolAction === "taskCreateClose" ||
+      localTool.toolAction === "taskViewClose"
+    )
+      setRighttNav(!rightNav);
+  };
+
   return (
     <SectionToolBar>
       <ToolbarContainer>
@@ -180,13 +204,12 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
             setOpenSelectTypes(false);
             setOpenSelectLayer(!openSelectLayer);
           }}
+          selectedLayersList={selectedLayersList}
         />
-
-
 
         <Issues
           issuesList={issuesList}
-          // issueMenuClicked={issueMenuClicked}
+          issueMenuClicked={issueMenuClicked}
           handleOnFilter={handleOnFilter}
           currentProject={myProject}
           currentStructure={myStructure}
@@ -194,11 +217,12 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
           contextInfo={contextInfo}
           closeFilterOverlay={closeFilterOverlay}
           rightMenuClickHandler={rightMenuClickHandler}
+          issueOpenDrawer={openCreateIssue}
         />
 
         <Task
           tasksList={tasksList}
-          // taskMenuClicked={taskMenuClicked}
+          taskMenuClicked={taskMenuClicked}
           currentProject={currentProject}
           currentSnapshot={currentSnapshot}
           currentStructure={currentStructure}
@@ -206,6 +230,7 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
           closeTaskFilterOverlay={closeTaskFilterOverlay}
           handleOnTaskFilter={handleOnTaskFilter}
           rightMenuClickHandler={rightMenuClickHandler}
+          taskOpenDrawer={openCreateTask}
         />
 
         <Hotspot />

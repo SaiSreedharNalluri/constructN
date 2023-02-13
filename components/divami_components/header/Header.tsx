@@ -24,7 +24,6 @@ import {
   HeaderLogoImageContainer,
   HeaderRightPart,
   HeaderToggle,
-  HeaderToggleButtonTwo,
   HeaderToggleButtonOne,
   HeaderProfileImageContainer,
   HeaderMenuImageContainer,
@@ -167,7 +166,6 @@ const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
           </HeaderProfileImageContainer>
           <HeaderNotificationImageContainer>
             <Image src={Notification} alt="Profile Image" />
-
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
             <Image src={hamburgerMenu} alt="Menu" />

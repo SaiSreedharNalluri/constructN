@@ -34,7 +34,7 @@ export const StyledTreeView = styled(TreeView)({
   "& .MuiTreeItem-iconContainer": {
     height: "18px",
     padding: "10px 10px 10px 0px",
-    borderBottom: "1px solid #e7e7e7",
+    // borderBottom: "1px solid #e7e7e7",
   },
   "& .MuiTreeItem-content.MuiTreeItem-content.Mui-selected": {
     backgroundColor: "#f4f4f4",

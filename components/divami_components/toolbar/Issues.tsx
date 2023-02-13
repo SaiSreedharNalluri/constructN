@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import { styled } from '@mui/material/styles'
 import Image from "next/image";
 
@@ -24,6 +24,8 @@ import { toast } from "react-toastify";
 import TaskList from "../task_list/TaskList";
 import { ITools } from "../../../models/ITools";
 import CustomIssueListDrawer from "../issue-listing/IssueList";
+import { ISnapshot } from "../../../models/ISnapshot";
+import { IStructure } from "../../../models/IStructure";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
@@ -36,22 +38,32 @@ const Issues = ({
   issuesList,
   issueMenuClicked,
   handleOnFilter,
-  myProject,
   currentStructure,
   currentSnapshot,
   closeFilterOverlay,
   contextInfo,
+  issueLayer,
+  currentProject,
+  issueOpenDrawer,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
-  // const [issueVisbility, setIssueVisibility] = useState(
-  //   issueLayer === undefined ? false : issueLayer
-  // );
+  const [issueVisbility, setIssueVisibility] = useState(
+    issueLayer === undefined ? false : issueLayer
+  );
+  let toolInstance: ITools = { toolName: "issue", toolAction: "issueCreate" };
+  const [myProject, setMyProject] = useState(currentProject);
+  const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
+  const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
-
+  useEffect(() => {
+    setMyProject(currentProject);
+    setMyStructure(currentStructure);
+    setMySnapshot(currentSnapshot);
+  }, [currentProject, currentSnapshot, currentStructure]);
   const closeIssueList = () => {
     //setListOverlay(false);
     issueMenuInstance.toolAction = "issueViewClose";
@@ -61,8 +73,6 @@ const Issues = ({
     // console.log("teskssksk trigg");
     setOpenDrawer(true);
   };
-
-  // console.log(openIssueList, 'openIssueList')
 
   const handleCreateTask = (formData: any) => {
     console.log(formData, "form data at home");
@@ -80,46 +90,63 @@ const Issues = ({
     // }
     let data: any = {};
     data.structure = currentStructure?._id;
-    data.title = `title_${Math.random()} `;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
-    data.context = contextInfo;
-    (data.type = formData.filter(
-      (item: any) => item.id == "issueType"
-    )[0]?.defaultValue),
-      (data.priority = formData.filter(
-        (item: any) => item.id == "issuePriority"
-      )[0]?.defaultValue),
-      (data.description = formData.filter(
-        (item: any) => item.id == "description"
-      )[0]?.defaultValue),
-      (data.assignees = userIdList),
-      (data.tags = (formData.length ?
-        formData.filter((item: any) => item.id == "tag-suggestions")[0]
-          ?.chipString?.join(';') : [] ) || []),
-      (data.startDate = formData.filter((item:any)=>item.id==="dates")[0]?.fields.filter(
-        (item: any) => item.id == "start-date"
-      )[0]?.defaultValue);
-    data.dueDate = formData.filter((item:any)=>item.id==="dates")[0]?.fields.filter(
-      (item: any) => item.id == "due-date"
-    )[0]?.defaultValue;
-    data.attachments = formData.filter((item:any)=>item.id==="file-upload")[0].selectedFile.map((eachSelectedFile: any) => {
-      // let reader = new FileReader();
-      // let fileUrl: any = '';
-      // reader.readAsDataURL(eachSelectedFile)
-      // reader.onload = () => {
-      //   console.log("CHECK RESULT FILE", reader.result);
-      //   fileUrl = reader.result ? reader.result : '';
-      // };
-      // reader.onerror = function (error) {
-      //   console.log('Error: ', error);
-      // }
-      return {
-        name: eachSelectedFile.name,
-        url: eachSelectedFile.name,
-        entity: 'image'
+    data.owner = formData.owner;
+    console.log(contextInfo, "contexxt");
+    Object.keys(contextInfo).forEach((key) => {
+      if (key !== "id") {
+        data.context = { ...data.context, [key]: contextInfo[key] };
       }
     });
+
+    console.log(data.context, "datraocmte", contextInfo);
+    data.title = formData.filter(
+      (item: any) => item.id == "title"
+    )[0]?.defaultValue;
+    data.type = formData.filter(
+      (item: any) => item.id == "issueType"
+    )[0]?.defaultValue;
+    data.priority = formData.filter(
+      (item: any) => item.id == "issuePriority"
+    )[0]?.defaultValue;
+    (data.description = formData.filter(
+      (item: any) => item.id == "description"
+    )[0]?.defaultValue),
+      (data.assignees = userIdList),
+      (data.tags =
+        (formData.length
+          ? formData
+              .filter((item: any) => item.id == "tag-suggestions")[0]
+              ?.chipString?.join(";")
+          : []) || []),
+      (data.startDate = formData
+        .filter((item: any) => item.id === "dates")[0]
+        ?.fields.filter(
+          (item: any) => item.id == "start-date"
+        )[0]?.defaultValue);
+    data.dueDate = formData
+      .filter((item: any) => item.id === "dates")[0]
+      ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
+    data.attachments = formData
+      .filter((item: any) => item.id === "file-upload")[0]
+      .selectedFile.map((eachSelectedFile: any) => {
+        // let reader = new FileReader();
+        // let fileUrl: any = '';
+        // reader.readAsDataURL(eachSelectedFile)
+        // reader.onload = () => {
+        //   console.log("CHECK RESULT FILE", reader.result);
+        //   fileUrl = reader.result ? reader.result : '';
+        // };
+        // reader.onerror = function (error) {
+        //   console.log('Error: ', error);
+        // }
+        return {
+          name: eachSelectedFile.name,
+          url: eachSelectedFile.name,
+          entity: "image",
+        };
+      });
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     console.log("formData", data);
@@ -129,9 +156,18 @@ const Issues = ({
           toast.success("Issue added sucessfully");
           // handleTaskSubmit(formData);
           console.log(formData);
+          issueSubmit(response.result);
+          toolInstance.toolAction = "issueCreateSuccess";
+          // issueToolClicked(toolInstance);
+          // resetForm();
+        } else {
+          toolInstance.toolAction = "issueCreateFail";
+          // issueToolClicked(toolInstance);
         }
       })
       .catch((error) => {
+        toolInstance.toolAction = "issueCreateFail";
+        // issueToolClicked(toolInstance);
         if (error.success === false) {
           toast.error(error?.message);
         }
@@ -140,7 +176,44 @@ const Issues = ({
   const handleViewList = () => {
     // setOpenIssueList()
   };
-  
+
+  const issueSubmit = (formdata: any) => {
+    issuesList.push(formdata);
+    issueMenuInstance.toolAction = "issueCreated";
+    setCreateOverlay(false);
+    issueMenuClicked(issueMenuInstance);
+  };
+  const openIssueCreateFn = () => {
+    //setCreateOverlay(true);
+    issueMenuInstance.toolAction = "issueCreate";
+    issueMenuClicked(issueMenuInstance);
+  };
+  const closeIssueCreate = () => {
+    issueMenuInstance.toolAction = "issueCreateClose";
+    setCreateOverlay(false);
+    issueMenuClicked(issueMenuInstance);
+  };
+  const openIssueListFn = () => {
+    //setListOverlay(true);
+    console.log("coming herer");
+    issueMenuInstance.toolAction = "issueView";
+    issueMenuClicked(issueMenuInstance);
+  };
+  const closeIssueListFn = () => {
+    //setListOverlay(false);
+    issueMenuInstance.toolAction = "issueViewClose";
+    issueMenuClicked(issueMenuInstance);
+  };
+  const toggleIssueVisibility = () => {
+    setIssueVisibility(!issueVisbility);
+    if (issueVisbility) issueMenuInstance.toolAction = "issueHide";
+    else issueMenuInstance.toolAction = "issueShow";
+    issueMenuClicked(issueMenuInstance);
+  };
+
+  useEffect(() => {
+    setOpenCreateIssue(issueOpenDrawer);
+  }, [issueOpenDrawer]);
   return (
     <div>
       <IssueBox>
@@ -154,7 +227,8 @@ const Issues = ({
             alt="Arrow"
             // onClick={rightMenuClickHandler}
             onClick={() => {
-              setOpenCreateIssue(true);
+              openIssueCreateFn();
+              // setOpenCreateIssue(true);
             }}
           />{" "}
         </IssuesSectionPlusImg>
@@ -169,6 +243,7 @@ const Issues = ({
             //   setOpenIssueList(true);
             // }}
             onClick={() => {
+              openIssueListFn();
               handleViewTaskList();
             }}
           />{" "}
@@ -180,7 +255,8 @@ const Issues = ({
             width={12}
             height={12}
             alt="Arrow"
-            onClick={rightMenuClickHandler}
+            // onClick={rightMenuClickHandler}
+            onClick={toggleIssueVisibility}
           />{" "}
         </IssuesSectionClipImg>
       </IssueBox>

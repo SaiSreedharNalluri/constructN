@@ -9,7 +9,7 @@ import "public/potree/libs/openlayers3/ol.css";
 import "public/potree/libs/spectrum/spectrum.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-responsive-modal/styles.css";
-import "react-tagsinput/react-tagsinput.css";
+// import "react-tagsinput/react-tagsinput.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/globals.css";

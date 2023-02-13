@@ -14,8 +14,10 @@ import { Formik, Form, Field } from "formik";
 interface IProps {
   getStructureData: (structure: ChildrenEntity) => void;
   getStructure: (Structure: ChildrenEntity) => void;
+  setHierarchy: any
 }
-const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
+const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure,
+  setHierarchy }) => {
   let router = useRouter();
   let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   let [stateFilter, setStateFilter] = useState<ChildrenEntity[]>([]);
@@ -41,22 +43,22 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
   function filterBy(arr: ChildrenEntity[], query: string) {
     return query
       ? arr.reduce((acc: any, item: any) => {
-          if (item.children?.length) {
-            const filtered: any = filterBy(item.children, query);
-            if (filtered.length)
-              return [...acc, { ...item, children: filtered }];
-          }
+        if (item.children?.length) {
+          const filtered: any = filterBy(item.children, query);
+          if (filtered.length)
+            return [...acc, { ...item, children: filtered }];
+        }
 
-          const { children, ...itemWithoutChildren } = item;
-          return item.name?.toLowerCase().includes(query.toLowerCase())
-            ? [...acc, itemWithoutChildren]
-            : acc;
-        }, [])
+        const { children, ...itemWithoutChildren } = item;
+        return item.name?.toLowerCase().includes(query.toLowerCase())
+          ? [...acc, itemWithoutChildren]
+          : acc;
+      }, [])
       : arr;
   }
   return (
     <React.Fragment>
-      <Formik
+      {/* <Formik
         initialValues={{ searchQuery: "" }}
         validationSchema={schema}
         onSubmit={(values, actions) => {
@@ -77,26 +79,29 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
             />
           </Form>
         )}
-      </Formik>
+      </Formik> */}
 
       <div>
         {/* <SearchInput></SearchInput> */}
-        {state.length === 0 ? (
-          "no structures found for this project"
-        ) : (
+        {
           <>
             {/* <Treelist treeList={state} getStructureData={getStructureData} /> */}
             <ProjectHierarchy
-              // openSelectLayer={true}
-              title={""}
+              handleSearch={(event: React.ChangeEvent<HTMLInputElement>) => {
+                // setFieldValue("searchQuery", event.target.value);
+                setState(filterBy(stateFilter, event.target.value));
+              }}
+              title={"Project Hierarchy"}
               onCloseHandler={() => {
                 // setOpenSelectLayer(false)
+                setHierarchy(false);
+
               }}
               treeData={state}
               getStructureData={getStructureData}
             />
           </>
-        )}
+        }
       </div>
     </React.Fragment>
   );

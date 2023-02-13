@@ -64,8 +64,7 @@ const CustomCalender = (props: any) => {
                   <Box ref={inputRef}>{InputProps?.endAdornment}</Box>
                 )
               : (params) => (
-                  <TextField
-                    {...params}
+                  <CustomDatePickerInputField
                     {...params}
                     value={value}
                     InputLabelProps={{ shrink: true }}

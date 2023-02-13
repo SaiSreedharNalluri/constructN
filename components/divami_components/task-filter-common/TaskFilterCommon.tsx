@@ -85,6 +85,7 @@ import CustomLabel from "../custom-label/CustomLabel";
 import FormWrapper from "../form-wrapper/FormWrapper";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
 import CustomButton from "../custom-button/CustomButton";
+import TaskFilterFormWrapper from "./TaskFilterWrapper";
 
 interface IProps {
   closeOverlay: () => void;
@@ -108,7 +109,7 @@ interface IProps {
 const CloseIcon = styled(Image)({
   cursor: "pointer",
 });
-const TaskFilterCommon: React.FC<IProps> = ({
+const TaskFilterCommon: React.FC<any> = ({
   tasksList,
   onClose,
   taskType,
@@ -159,7 +160,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
   ];
 
   const handleClose = () => {
-    onClose(true);
+    // onClose(true);
   };
 
   const [FilterState, SetFilterState] = useState<any>(Filters);
@@ -341,7 +342,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
           return (
-            <FilterCardContainer>
+            <FilterCardContainer key={index}>
               <FilterCardTitle>
                 <FilterCardTitleText>{each?.title}</FilterCardTitleText>
               </FilterCardTitle>
@@ -390,9 +391,9 @@ const TaskFilterCommon: React.FC<IProps> = ({
                 )}
               </FilterCardSelectAll>
               <FilterCardOptions>
-                {each?.options?.map((item: any) => {
+                {each?.options?.map((item: any, index: number) => {
                   return (
-                    <FilterCardOptionContainer>
+                    <FilterCardOptionContainer key={index}>
                       <FilterCardOptionSpan>
                         {item?.optionStatus === "T" ? (
                           <Image
@@ -428,7 +429,10 @@ const TaskFilterCommon: React.FC<IProps> = ({
 
         <FormElementContainer>
           <CustomLabel label={"Assigned To"} />
-          <FormWrapper config={SEARCH_CONFIG} setFormConfig={SEARCH_CONFIG} />
+          <TaskFilterFormWrapper
+            config={SEARCH_CONFIG}
+            setFormConfig={SEARCH_CONFIG}
+          />
         </FormElementContainer>
 
         <FormElementContainer>
@@ -436,7 +440,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
             <DatePickerContainer>
               <div>
                 <CustomLabel label={"Start Date"} />
-                <FormWrapper
+                <TaskFilterFormWrapper
                   config={datePickerData}
                   setFormConfig={setDatePickerData}
                 />
@@ -444,7 +448,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
             </DatePickerContainer>
             <div>
               <CustomLabel label={"Due Date"} />
-              <FormWrapper
+              <TaskFilterFormWrapper
                 config={datePickerData}
                 setFormConfig={setDatePickerData}
               />

@@ -17,6 +17,10 @@ import { useRouter } from "next/router";
 import { getCookie } from "cookies-next";
 import { getProjectUsers } from "../../../../services/project";
 import { getIssuesPriority, getIssuesTypes } from "../../../../services/issue";
+import { IProjectUsers } from "../../../../models/IProjects";
+import { ISnapshot } from "../../../../models/ISnapshot";
+import { IStructure } from "../../../../models/IStructure";
+import { IToolResponse } from "../../../../models/ITools";
 
 const BodyContainer = styled(Box)({
   // height: 'calc(100vh - 134px)',
@@ -47,9 +51,10 @@ const Body = ({ handleFormData }: any) => {
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
   const [issueTypes, setIssueTypes] = useState([]);
   const [issuePriorities, setIssuePriorities] = useState([]);
-  const [projectUsers, setProjectUsers] = useState([]);
-  const [loggedInUserId, SetLoggedInUserId] = useState(null);
   const router = useRouter();
+
+  const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
+  const [loggedInUserId, SetLoggedInUserId] = useState("");
   useEffect(() => {
     if (router.isReady) {
       getIssuesTypes(router.query.projectId as string).then((response: any) => {
@@ -62,7 +67,7 @@ const Body = ({ handleFormData }: any) => {
       getIssuesPriority(router.query.projectId as string).then(
         (response: any) => {
           if (response.success === true) {
-            response.result.push("Please select the issue priority");
+            // response.result.push("Please select the issue priority");
             setIssuePriorities(response.result);
             console.log(issuePriorities);
           }
