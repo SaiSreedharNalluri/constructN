@@ -1,6 +1,8 @@
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import dashboardProgress from "../../../public/divami_icons/dashboardProgress.svg";
+import issueHighlighted from "../../../public/divami_icons/issueHighlighted.svg";
+
 import issuesIcon from "../../../public/divami_icons/issuesIcon.svg";
 import drawingInactive from "../../../public/divami_icons/drawingInactive.svg";
 import drawing from "../../../public/divami_icons/drawing.svg";
@@ -9,6 +11,7 @@ import tasks from "../../../public/divami_icons/tasks.svg";
 import branch from "../../../public/divami_icons/branch.svg";
 import calendar from "../../../public/divami_icons/calendar.svg";
 import people from "../../../public/divami_icons/people.svg";
+import { useLocation } from "react-router-dom";
 
 import {
   HighlightedSytledImage,
@@ -44,7 +47,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
 
       label: "issues",
       icon: issuesIcon,
-      activeIcon: issuesIcon,
+      activeIcon: issueHighlighted,
       isActive: false,
       nextPage: "",
     },
@@ -104,7 +107,13 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   const router = useRouter();
   const [active, setActive] = useState(router.pathname.split("/").pop());
 
+  // const currentUrl = window.location.href;
+  // const urlString = currentUrl.split("/")[5];
+  console.log("urlString",router);
+  // console.log(currentUrl);
+
   const leftClickHandler = (e: any) => {
+
     console.log("e", e.currentTarget.id);
     switch (e.currentTarget.id) {
       case "dashboard":
@@ -141,12 +150,12 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       {config.map((item, index) => (
         <SideMenuOptionContainer key={index}>
           <SideMenuOption
-            onClick={() =>
-              item.label === "drawing" ? handleClick(item) : null
-            }
+          // onClick={() =>
+          //   item.label === "drawing" ? handleClick(item) : null
+          // }
           >
             <SideMenuOptionImageContainer>
-              {item.isActive ? (
+               {router.pathname.includes(item.id) ? (
                 <HighlightedSytledImage
                   src={item.activeIcon}
                   alt={item.label}
@@ -161,12 +170,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
                   onClick={leftClickHandler}
                 />
               )}
-              {/* <StyledImage
-                onClick={leftClickHandler}
-                src={item.icon}
-                alt={item.label}
-                id={item.id}
-              /> */}
             </SideMenuOptionImageContainer>
           </SideMenuOption>
         </SideMenuOptionContainer>
