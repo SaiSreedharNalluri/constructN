@@ -13,7 +13,6 @@ import tasks from "../../../public/divami_icons/tasks.svg";
 import tasksHighlighted from "../../../public/divami_icons/tasksHighlighted.svg";
 import branchHighlighted from "../../../public/divami_icons/branchHighlightedIcon.svg";
 
-
 // tasksHighlighted
 import branch from "../../../public/divami_icons/branch.svg";
 import calendar from "../../../public/divami_icons/calendarIcon.svg";
@@ -21,7 +20,6 @@ import calendarHighlighted from "../../../public/divami_icons/calendarHighlighte
 
 import people from "../../../public/divami_icons/people.svg";
 import peopleHighlighted from "../../../public/divami_icons/peopleHighlighted.svg";
-
 
 import {
   HighlightedSytledImage,
@@ -38,33 +36,29 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   const [config, setConfig] = React.useState([
     {
       id: "dashboard",
-      label: "dashboardProgress",
       icon: dashboardProgress,
       activeIcon: dashboardProgressHighlight,
       isActive: false,
       nextPage: "",
     },
     {
-      id: "drawing",
-      label: "drawing",
-      
+      id: "structure",
+
       icon: drawing,
       activeIcon: drawingInactive,
       isActive: false,
       nextPage: "",
     },
     {
-      id: "issues",
+      id: "issue",
 
-      label: "issues",
       icon: issuesIcon,
       activeIcon: IssuesHighlightedIcon,
       isActive: false,
       nextPage: "",
     },
     {
-      id: "structure",
-      label: "tasks",
+      id: "tasks",
       icon: tasks,
       activeIcon: tasksHighlighted,
       isActive: false,
@@ -73,7 +67,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     {
       id: "schedule",
 
-      label: "calendar",
       icon: calendar,
       activeIcon: calendarHighlighted,
       isActive: false,
@@ -81,7 +74,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     {
       id: "branch",
 
-      label: "branch",
       icon: branch,
       activeIcon: branchHighlighted,
       isActive: false,
@@ -89,7 +81,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     {
       id: "settings",
 
-      label: "settings",
       icon: people,
       isActive: false,
       activeIcon: peopleHighlighted,
@@ -115,15 +106,15 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   //   );
   // };
 
-const handleClick = (id:any) => {
-  setConfig((prevConfig) =>
-    prevConfig.map((item) =>
-      item.id === id
-        ? { ...item, isActive: true }
-        : { ...item, isActive: false }
-    )
-  );
-};
+  const handleClick = (id: any) => {
+    setConfig((prevConfig) =>
+      prevConfig.map((item) =>
+        item.id === id
+          ? { ...item, isActive: true }
+          : { ...item, isActive: false }
+      )
+    );
+  };
 
   const router = useRouter();
   const [active, setActive] = useState(router.pathname.split("/").pop());
@@ -133,7 +124,7 @@ const handleClick = (id:any) => {
     switch (e.currentTarget.id) {
       case "dashboard":
         router.push(`/projects/${router.query.projectId as string}/dashboard`);
-        
+
         break;
       case "views":
       case "drawing":
@@ -166,13 +157,13 @@ const handleClick = (id:any) => {
       {config.map((item, index) => (
         <SideMenuOptionContainer key={index}>
           <SideMenuOption
-            // onClick={() =>
-            //   item.label === "settings" ? handleClick(item) : null
-            // }
-            onClick={() => handleClick(item.id)}
+          // onClick={() =>
+          //   item.label === "settings" ? handleClick(item) : null
+          // }
+          // onClick={() => handleClick(item.id)}
           >
             <SideMenuOptionImageContainer>
-              {item.isActive ? (
+              {router.pathname.includes(item.id) ? (
                 <HighlightedSytledImage
                   src={item.activeIcon}
                   alt={item.label}
