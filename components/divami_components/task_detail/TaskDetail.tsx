@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/system";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Select } from "@mui/material";
 import Tab from "@mui/material/Tab";
@@ -14,6 +14,8 @@ import Send from "../../../public/divami_icons/send.svg";
 import { red } from "@mui/material/colors";
 import CustomSelect from "../custom-select/CustomSelect";
 import ActivityLog from "../task_detail/ActivityLog";
+import Moment from "moment";
+import CustomButton from "../../divami_components/custom-button/CustomButton";
 
 // import SelectVariants from "../select-dropdown";
 // import BasicSelect from "../temporary-select/TempSelect";
@@ -116,11 +118,11 @@ const PriorityStatus = styled("div")`
 `;
 
 const SecondContPrior = styled("div")`
-  flex: 1;
+  width: 186px;
 `;
 
 const SecondContCapt = styled("div")`
-  flex: 1;
+  width: 186px;
 `;
 
 const CaptureTitle = styled("div")`
@@ -185,10 +187,10 @@ const PenIconImage = styled(Image)`
   cursor: pointer;
   margin-left: 9px;
 `;
-const FourthBodyDiv = styled("div")`
-  display: flex;
-  margin-top: 25px;
-`;
+const FourthBodyDiv = styled("div")((props: any) => ({
+  display: props.assigneeEditState ? "none" : "flex",
+  marginTop: "25px",
+})) as any;
 
 const FourthContLeft = styled("div")``;
 
@@ -302,6 +304,16 @@ const CustomTaskDrawerContainer = styled("div")`
   width: 438px;
 `;
 
+const ProgressEditStateButtonsContainer = styled("div")`
+  display: flex;
+  justify-content: space-between;
+  bottom: 0;
+  position: absolute;
+  bottom: 20px;
+  background: white;
+  width: 90%;
+`;
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -374,6 +386,10 @@ const ProgressCustomSelect = styled("div")({
   marginTop: "20px",
 });
 
+const AssigneeCustomSelect = styled("div")({
+  marginTop: "20px",
+});
+
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
@@ -402,34 +418,87 @@ function a11yProps(index: number) {
 }
 
 function BasicTabs(props: any) {
-  const { DetailsObj } = props;
+  const { taskState, formHandler } = props;
   const [value, setValue] = React.useState(0);
   const [issueTypeConfig, setIssueTypeConfig] = useState("");
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [progressEditState, setProgressEditState] = useState(false);
+  const [assigneeEditState, setAssigneeEditState] = useState(false);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
   const handleEditProgress = () => {
+    console.log("EDIT trigger");
     setProgressEditState(!progressEditState);
   };
 
-  const optionsConfig = [
-    {
-      label: "Plastic",
-      value: "plastic",
-      selected: false,
-    },
-    {
-      label: "Metalic",
-      value: "metalic",
-      selected: false,
-    },
-  ];
+  const optionsConfig = {
+    options: [
+      {
+        label: "In Progress",
+        value: "inProgress",
+        selected: false,
+      },
+      {
+        label: "Blocked",
+        value: "blocked",
+        selected: false,
+      },
+      {
+        label: "To-do",
+        value: "todo",
+        selected: false,
+      },
+      {
+        label: "Completed",
+        value: "completed",
+        selected: false,
+      },
+    ],
+  };
 
-  console.log(a11yProps);
+  const optionsConfigAssignees = {
+    options: [
+      {
+        label: "In",
+        value: "inProgress",
+        selected: false,
+      },
+      {
+        label: "Bcked",
+        value: "blocked",
+        selected: false,
+      },
+      {
+        label: "To",
+        value: "todo",
+        selected: false,
+      },
+      {
+        label: "Comp",
+        value: "completed",
+        selected: false,
+      },
+    ],
+  };
+
+  console.log(taskState?.TabOne.attachments, "IMPORTANT");
+
+  const handleStateChange = () => {
+    console.log("Update trigger");
+    if (progressEditState) {
+      setProgressEditState(!progressEditState);
+    }
+    if (assigneeEditState) {
+      setAssigneeEditState(!assigneeEditState);
+    }
+  };
+
+  const handleEditAssigne = () => {
+    setAssigneeEditState(!assigneeEditState);
+  };
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -496,12 +565,15 @@ function BasicTabs(props: any) {
           <SecondBodyDiv>
             <SecondContPrior>
               <PriorityTitle>Priority</PriorityTitle>
-              <PriorityStatus>{DetailsObj.TabOne[0].priority}</PriorityStatus>
+              <PriorityStatus>{taskState.TabOne.priority}</PriorityStatus>
             </SecondContPrior>
 
             <SecondContCapt>
               <CaptureTitle>Captured on</CaptureTitle>
-              <CaptureStatus>{DetailsObj.TabOne[0].date}</CaptureStatus>
+              <CaptureStatus>
+                {" "}
+                {Moment(taskState.TabOne.capturedOn).format("DD MMM YY")}
+              </CaptureStatus>
             </SecondContCapt>
           </SecondBodyDiv>
 
@@ -511,14 +583,17 @@ function BasicTabs(props: any) {
                 <ThirdContWatch>Watcher</ThirdContWatch>
                 <ThirdContWatchName>
                   {" "}
-                  {DetailsObj.TabOne[0].creator}
+                  {taskState.TabOne.creator}
                 </ThirdContWatchName>
               </ThirdContLeft>
-              <FourthBodyDiv style={{ marginTop: "0px" }}>
+              <FourthBodyDiv
+                assigneeEditState={assigneeEditState}
+                style={{ marginTop: "0px" }}
+              >
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType>
-                    {DetailsObj.TabOne[0].creator}{" "}
+                    {taskState.TabOne.creator}{" "}
                     <PenIconImage src={Edit} alt={"close icon"} />
                   </FourthContProgType>
                 </FourthContLeft>
@@ -530,7 +605,7 @@ function BasicTabs(props: any) {
                 <ThirdContWatch>Watcher</ThirdContWatch>
                 <ThirdContWatchName>
                   {" "}
-                  {DetailsObj.TabOne[0].creator}
+                  {taskState.TabOne.creator}
                 </ThirdContWatchName>
               </ThirdContLeft>
               <ThirdContRight>
@@ -554,7 +629,7 @@ function BasicTabs(props: any) {
             <ProgressCustomSelect>
               <CustomSelect
                 config={optionsConfig}
-                defaultValue={""}
+                defaultValue={optionsConfig.options[0].value}
                 id={""}
                 sx={{ minWidth: 120 }}
                 setFormConfig={""}
@@ -564,16 +639,37 @@ function BasicTabs(props: any) {
             </ProgressCustomSelect>
           ) : (
             <>
-              <FourthBodyDiv>
+              <FourthBodyDiv assigneeEditState={assigneeEditState}>
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
 
                   <FourthContProgType>
-                    {DetailsObj.TabOne[0].creator}{" "}
-                    <PenIconImage src={Edit} alt={"close icon"} />
+                    {taskState?.TabOne.assignees}{" "}
+                    <PenIconImage
+                      onClick={() => {
+                        handleEditAssigne();
+                      }}
+                      src={Edit}
+                      alt={"close icon"}
+                    />
                   </FourthContProgType>
                 </FourthContLeft>
               </FourthBodyDiv>
+            </>
+          )}
+          {assigneeEditState && (
+            <>
+              <AssigneeCustomSelect>
+                <CustomSelect
+                  config={optionsConfigAssignees}
+                  defaultValue={optionsConfigAssignees.options[0].value}
+                  id={""}
+                  sx={{ minWidth: 120 }}
+                  setFormConfig={""}
+                  isError={""}
+                  label=""
+                />
+              </AssigneeCustomSelect>
             </>
           )}
 
@@ -587,104 +683,116 @@ function BasicTabs(props: any) {
           <DescriptionDiv>
             <DescriptionTitle>RFI Question</DescriptionTitle>
 
-            <DescriptionPara>
-              Damage to facade glazing (Follow up to Issue #407 Pipeline Issue)
-            </DescriptionPara>
+            <DescriptionPara>{taskState.TabOne.description}</DescriptionPara>
           </DescriptionDiv>
 
-          <AttachmentDiv>
-            <AttachmentTitle>Attachments</AttachmentTitle>
-
-            <AttachmentDescription>
-              <AttachedImageDiv>
-                <AttachedImageTitle>Screenshot</AttachedImageTitle>
-
-                <AttachedImageIcon>
-                  <Image src={""} alt="" />
-                </AttachedImageIcon>
-              </AttachedImageDiv>
-
-              <AttachHorizontal></AttachHorizontal>
-
-              <AttachedImageDiv>
-                <AttachedImageTitle>Screenshot</AttachedImageTitle>
-
-                <AttachedImageIcon>
-                  <Image src={Delete} alt="" />
-                </AttachedImageIcon>
-              </AttachedImageDiv>
-              <AttachHorizontal></AttachHorizontal>
-
-              <AttachedImageDiv>
-                <AttachedImageTitle>Screenshot</AttachedImageTitle>
-
-                <AttachedImageIcon>
-                  <Image src={""} alt="" />
-                </AttachedImageIcon>
-              </AttachedImageDiv>
-              <AttachHorizontal></AttachHorizontal>
-            </AttachmentDescription>
-          </AttachmentDiv>
-
+          {taskState?.TabOne?.attachments?.length > 0 && (
+            <>
+              <AttachmentDiv>
+                <AttachmentTitle>Attachments</AttachmentTitle>
+                <AttachmentDescription>
+                  {taskState?.TabOne.attachments?.map(
+                    (a: any, index: number) => {
+                      return (
+                        <>
+                          <AttachedImageDiv>
+                            <AttachedImageTitle>{a?.name}</AttachedImageTitle>
+                            <AttachedImageIcon>
+                              <Image src={""} alt="" />
+                            </AttachedImageIcon>
+                          </AttachedImageDiv>
+                          <AttachHorizontal></AttachHorizontal>
+                        </>
+                      );
+                    }
+                  )}
+                </AttachmentDescription>
+              </AttachmentDiv>
+            </>
+          )}
           <RelatedDiv>
             <RelatedTagTitle>Related Tags</RelatedTagTitle>
 
             <RelatedTagsButton>
-              <RelatedSingleButton>Exterior Issue</RelatedSingleButton>
-              <RelatedSingleButton>Pipeline</RelatedSingleButton>
-
-              <RelatedSingleButton>Future Damage </RelatedSingleButton>
+              {taskState?.relatedTags?.map((item: any) => {
+                return (
+                  <>
+                    <RelatedSingleButton>{item?.tagName}</RelatedSingleButton>
+                  </>
+                );
+              })}
             </RelatedTagsButton>
           </RelatedDiv>
-          <AddCommentContainer>
-            <AddCommentInput placeholder="Add Comment"></AddCommentInput>
-            <AddCommentButtonContainer>
-              <AttachButton>
-                <Image src={Clip} alt="" />{" "}
-              </AttachButton>
-              <SendButton>
-                <Image src={Send} alt="" />{" "}
-              </SendButton>
-            </AddCommentButtonContainer>
-          </AddCommentContainer>
+          {progressEditState || assigneeEditState ? (
+            <>
+              <ProgressEditStateButtonsContainer>
+                <CustomButton
+                  type="outlined"
+                  label="Cancel"
+                  formHandler={formHandler}
+                />
+                <CustomButton
+                  type="contained"
+                  label="Update"
+                  formHandler={() => {
+                    handleStateChange();
+                  }}
+                />
+              </ProgressEditStateButtonsContainer>
+            </>
+          ) : (
+            <>
+              <AddCommentContainer>
+                <AddCommentInput placeholder="Add Comment"></AddCommentInput>
+                <AddCommentButtonContainer>
+                  <AttachButton>
+                    <Image src={Clip} alt="" />{" "}
+                  </AttachButton>
+                  <SendButton>
+                    <Image src={Send} alt="" />{" "}
+                  </SendButton>
+                </AddCommentButtonContainer>
+              </AddCommentContainer>
+            </>
+          )}
         </TabOneDiv>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <ActivityLog ActivityLog={DetailsObj.TabTwo} />
+        <ActivityLog ActivityLog={taskState.TabTwo} />
       </CustomTabPanel>
     </Box>
   );
 }
 
 const CustomTaskDetailsDrawer = (props: any) => {
-  const { onClose, task } = props;
+  const { onClose, task, taskList } = props;
+
+  console.log(taskList, "TASKLIST");
   const DetailsObj = {
-    TabOne: [
-      {
-        options: [
-          { value: "option1", label: "In-Progress", icon: "" },
-          { value: "option2", label: "Completed", icon: "" },
-        ],
+    TabOne: {
+      options: [
+        { value: "option1", label: "In-Progress", icon: "" },
+        { value: "option2", label: "Completed", icon: "" },
+      ],
 
-        priority: "High",
-        date: "15 Dec'22",
-        userName: [
-          { value: "option1", label: "Aron Schutte", icon: "" },
-          { value: "option2", label: "Alex Brandon", icon: "" },
-        ],
-        creator: "Aron Schutte",
+      priority: "High",
+      date: "15 Dec'22",
+      userName: [
+        { value: "option1", label: "Aron Schutte", icon: "" },
+        { value: "option2", label: "Alex Brandon", icon: "" },
+      ],
+      creator: "Aron Schutte",
 
-        issueDescription:
-          "The Pipe seems bent which can cause issues later once it will be used by the residents of the flat.",
+      issueDescription:
+        "The Pipe seems bent which can cause issues later once it will be used by the residents of the flat.",
 
-        attachedImages: [
-          { icon: "", alt: "Image 1" },
-          { icon: "", alt: "Image 2" },
-        ],
+      attachedImages: [
+        { icon: "", alt: "Image 1" },
+        { icon: "", alt: "Image 2" },
+      ],
 
-        relatedTags: ["Interior Issues", "Pipeline", "Future Damage"],
-      },
-    ],
+      relatedTags: ["Interior Issues", "Pipeline", "Future Damage"],
+    },
     TabTwo: [
       {
         status: "RFI Updated",
@@ -742,7 +850,110 @@ const CustomTaskDetailsDrawer = (props: any) => {
     // ],
   };
 
-  console.log(task, "Task IMPORTANT");
+  // {
+  //   "_id": "TSK441013",
+  //   "title": "13_Floor_A3_Block_2023-02-22",
+  //   "description": "Testing",
+  //   "type": "Submittals",
+  //   "status": "To Do",
+  //   "priority": "High",
+  //   "assignees": [
+  //     {
+  //       "_id": "USR141774",
+  //       "firstName": "chaitanya",
+  //       "lastName": "nk",
+  //       "email": "chaitanya@constructn.ai",
+  //       "fullName": "chaitanya nk"
+  //     },
+  //     {
+  //       "_id": "USR370060",
+  //       "firstName": "swathi",
+  //       "lastName": "divami",
+  //       "email": "swathi@divami.com",
+  //       "fullName": "swathi divami"
+  //     }
+  //   ],
+  //   "owner": "USR141774",
+  //   "project": "PRJ201897",
+  //   "structure": "STR147148",
+  //   "snapshot": "SNP423738",
+  //   "context": {
+  //     "type": "Task",
+  //     "camera": {
+  //       "cameraPosition": {
+  //         "x": 385386.30109044677,
+  //         "y": 2049811.3252802067,
+  //         "z": 136.70305645457873
+  //       },
+  //       "cameraTarget": {
+  //         "x": 385386.3010910859,
+  //         "y": 2049811.325279438,
+  //         "z": 136.7030564753868
+  //       },
+  //       "pitch": 0.020809564434256474,
+  //       "yaw": 3.83516197406291,
+  //       "fov": 95
+  //     },
+  //     "tag": {
+  //       "position": {
+  //         "x": 962.8882860832214,
+  //         "y": -60.782279617597965,
+  //         "z": -273.1627955327798
+  //       }
+  //     },
+  //     "image": {
+  //       "position": [
+  //         2.763091085886117,
+  //         -9.664720562053844,
+  //         0.703056475386802
+  //       ]
+  //     }
+  //   },
+  //   "progress": -1,
+  //   "tags": [
+  //     ""
+  //   ],
+  //   "createdAt": "2023-02-05T05:04:01.012Z",
+  //   "updatedAt": "2023-02-10T07:31:19.167Z",
+  //   "dueDate": "2023-02-12T00:00:00.000Z",
+  //   "attachments": []
+  // }
+
+  const [taskState, setTaskState] = useState<any>(DetailsObj);
+
+  console.log(task.assignees[0].fullName, "Task IMPORTANT");
+
+  // useEffect(() => {
+  //   let temp = taskState.map((each: any) => {
+  //     console.log(each, "EACH");
+  //   });
+  // }, []);
+
+  useEffect(() => {
+    console.log(task, taskList, "Task IMPORTANT");
+    // task.forEach((each: any) => {
+    //   console.log(each, "Task IMPORTANTTWO");
+    // });
+    let tempObj = {
+      options: task.options,
+      priority: task.priority,
+      capturedOn: task.createdAt,
+      creator: task.owner,
+      issueDescription: task.description,
+      attachments: task.attachments,
+      relatedTags: task.tags,
+      assignees: task.assignees[0].fullName,
+      id: task._id,
+    };
+    console.log(tempObj, "TEMP OBJ");
+    setTaskState((prev: any) => {
+      return {
+        ...prev,
+        TabOne: tempObj,
+      };
+    });
+    console.log(taskState, "IMPORTANT TEMP");
+  }, []);
 
   return (
     <CustomTaskDrawerContainer>
@@ -756,7 +967,9 @@ const CustomTaskDetailsDrawer = (props: any) => {
               src={BackArrow}
               alt={"close icon"}
             />
-            <SpanTile>RFI (#R011)</SpanTile>
+            <SpanTile>
+              {task.type} (#{task._id})
+            </SpanTile>
           </LeftTitleCont>
           <RightTitleCont>
             <EditIcon src={Edit} alt={"close icon"} />
@@ -765,7 +978,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
         </TitleContainer>
       </HeaderContainer>
       <BodyContainer>
-        <BasicTabs DetailsObj={DetailsObj} />
+        <BasicTabs taskState={taskState} />
       </BodyContainer>
     </CustomTaskDrawerContainer>
   );

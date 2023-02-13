@@ -42,7 +42,7 @@ import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
 import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
 import { styled } from "@mui/system";
 
-interface IProps {}
+interface IProps { }
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -248,11 +248,9 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${
-                  structure?._id
-                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
-                  currentProjectId as string
-                }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
+                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
+                  }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -335,6 +333,7 @@ const Index: React.FC<IProps> = () => {
             break;
           case "taskCreate":
           case "taskCreateSuccess":
+          case "taskCreateFail":
           case "taskShow":
           case "taskHide":
             setClickedTool(toolInstance);
@@ -610,6 +609,9 @@ const Index: React.FC<IProps> = () => {
         console.log("error", error);
       });
   };
+
+  console.log(activeRealityMap, "layers list");
+
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -624,10 +626,8 @@ const Index: React.FC<IProps> = () => {
           {
             <div
               ref={leftRefContainer}
-              className={` ${
-                leftNav ? "visible" : "hidden"
-              } calc-h absolute z-10 border overflow-y-auto`}
-              style={{ top: "178px" }}
+              className={` ${leftNav ? "visible" : "hidden"
+                } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay
@@ -750,11 +750,9 @@ const Index: React.FC<IProps> = () => {
         {/* {structure && snapshot && designMap && activeRealityMap && ( */}
         <div ref={rightrefContainer}>
           <FontAwesomeIcon
-            className={`fixed  ${
-              rightNav && "rotate-180"
-            } text-lg text-blue-300  ${
-              rightNav ? "right-9" : "right-0"
-            }  top-46  cursor-pointer border rounded  p-1 bg-gray-400 z-10 text-white`}
+            className={`fixed  ${rightNav && "rotate-180"
+              } text-lg text-blue-300  ${rightNav ? "right-9" : "right-0"
+              }  top-46  cursor-pointer border rounded  p-1 bg-gray-400 z-10 text-white`}
             onClick={rightNavCollapse}
             icon={faLessThan}
           ></FontAwesomeIcon>
@@ -780,7 +778,8 @@ const Index: React.FC<IProps> = () => {
               handleOnTaskFilter={handleOnTaskFilter}
               contextInfo={currentContext}
               openCreateIssue={openCreateIssue}
-              openIssueView={openIssueView}
+              openCreateTask={openCreateTask}
+              selectedLayersList={currentViewLayers}
             />
             {/* </div> */}
             {/* <RightFloatingMenu

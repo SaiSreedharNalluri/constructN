@@ -5,6 +5,8 @@ import CustomSearch from "../custom-search/CustomSearch";
 import CustomSelect from "../custom-select/CustomSelect";
 import CustomTagSuggestion from "../custom-tag-suggestion/CustomTagSuggestion";
 import { CustomTextField } from "../custom-textfield/CustomTextField";
+import { CustomTextArea } from "../custom-textarea/CustomTextArea";
+
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
 
@@ -121,6 +123,30 @@ const FormWrapper = (props: any) => {
             setFormConfig={setFormConfig}
             isError={data.isError}
             label=""
+          />
+        );
+      case "textarea":
+        return (
+          <CustomTextArea
+            id={data.id}
+            variant="outlined"
+            placeholder={data?.placeholder}
+            onChange={(e: any) => {
+              handleTextChange(e, data.id, data);
+            }}
+            onBlur={(e: any) => {
+              handleTextChange(e, data.id, data);
+            }}
+            defaultValue={data.placeHolder}
+            isError={data.isError}
+            dataTestId="inputTextField"
+            isRequired={data.isReq}
+            type={data.type}
+            minVal={data?.minVal}
+            maxVal={data?.maxVal}
+            showRangeError={data.showRangeError}
+            isDisabled={data.isDisabled}
+            className={undefined}
           />
         );
       case "textfield":

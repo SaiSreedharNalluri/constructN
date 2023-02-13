@@ -1,5 +1,12 @@
 export const TASK_FORM_CONFIG = [
   {
+    id: "title",
+    type: "textfield",
+    defaultValue: "",
+    formLabel: "Title",
+    placeholder: "Title",
+  },
+  {
     id: "tasks",
     type: "select",
     defaultValue: "",
@@ -25,7 +32,7 @@ export const TASK_FORM_CONFIG = [
   },
   {
     id: "description",
-    type: "textfield",
+    type: "textarea",
     defaultValue: "",
     formLabel: "Tell more about the issue",
     placeholder: "Tell more about the issue",
@@ -134,7 +141,7 @@ export const TYPES_OF_ISSUES = [
 export const MORE_ABOUT_ISSUE = [
   {
     id: "issueDescription",
-    type: "textfield",
+    type: "textarea",
     defaultValue: "",
     placeholder: "Tell more about the issue",
   },

@@ -21,7 +21,8 @@ interface PropTypes {
   onBlur?: any;
 }
 
-const StyledTextField = styled(TextareaAutosize)({
+const StyledTextArea = styled(TextareaAutosize)({
+  height: "100px !important",
   width: "392px !important",
   padding: "5px 10px",
   border: "1px solid #36415d",
@@ -33,7 +34,7 @@ const StyledTextField = styled(TextareaAutosize)({
   color: "#101F4B",
 });
 
-export const CustomTextField = (props: PropTypes) => {
+export const CustomTextArea = (props: PropTypes) => {
   const reff = useRef<any>(null);
   const {
     id,
@@ -48,7 +49,7 @@ export const CustomTextField = (props: PropTypes) => {
   } = props;
   return (
     <div>
-      <StyledTextField
+      <StyledTextArea
         id={id}
         // placeholder={placeholder}
         defaultValue={defaultValue}
@@ -70,7 +71,7 @@ export const CustomTextField = (props: PropTypes) => {
   );
 };
 
-CustomTextField.defaultProps = {
+CustomTextArea.defaultProps = {
   isDisabled: false,
   minVal: "",
   maxVal: "",
