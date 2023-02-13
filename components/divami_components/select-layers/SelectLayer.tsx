@@ -1,11 +1,12 @@
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import SearchIcon from "@mui/icons-material/Search";
+import { InputAdornment } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
-import CustomSearch from "../customSearch";
+import { CustomSearchField } from "../select-types/StyledComponents";
 import { CheckBox, CheckBoxChecked } from "./IconStore";
-import { mockData } from "./mockData";
 import {
   CloseIcon,
   HeaderLabel,
@@ -14,10 +15,10 @@ import {
   SelectLayerContainer,
   StyledTreeItem,
   StyledTreeView,
-  TreeViewContainer,
+  TreeViewContainer
 } from "./StyledComponents";
 import type { RenderTree, SelectLayerProps } from "./Type";
-import { getSelectedLayers, handleSelection } from "./Utils";
+import { getSelectedLayers, getTreeViewDataForLayers, handleSelection } from "./Utils";
 
 const SelectLayer = ({
   title,
@@ -25,9 +26,12 @@ const SelectLayer = ({
   onCloseHandler,
   optionsList,
   onSelect,
+  selectedLayersList
 }: SelectLayerProps) => {
-  const [treeViewData, setTreeViewData] = useState<RenderTree[]>(mockData);
+  const [treeViewData, setTreeViewData] = useState(getTreeViewDataForLayers(optionsList));
+  const [filtedTreeViewData, setFilteredTreeViewData] = useState(treeViewData);
   const [selectedLayers, setSelectedLayers] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const renderTreeNode = (node: RenderTree) => (
     <div>
@@ -35,11 +39,12 @@ const SelectLayer = ({
         icon={<CheckBoxChecked />}
         checkedIcon={<CheckBox />}
         size="small"
-        onChange={() => {
+        onChange={(e) => {
           const arr = handleSelection(treeViewData, node.id);
           setTreeViewData([...arr]);
+          onSelect(e, node.name)
         }}
-        checked={node.isSelected}
+        checked={selectedLayersList.includes(node.name)}
       />
       <span>{node.name}</span>
     </div>
@@ -58,10 +63,24 @@ const SelectLayer = ({
   );
 
   useEffect(() => {
-    const layersSelected = getSelectedLayers(treeViewData);
+    const layersSelected = treeViewData ? getSelectedLayers(treeViewData) : [];
     setSelectedLayers(layersSelected);
     console.log([...layersSelected], "selectedLayers");
   }, [treeViewData]);
+
+  useEffect(() => {
+    const layersListData = getTreeViewDataForLayers(optionsList);
+    setTreeViewData(layersListData)
+    setFilteredTreeViewData(layersListData)
+  }, [optionsList])
+
+  const handleSearch = (event: any) => {
+    setSearchTerm(event.target.value)
+    const searchResult = treeViewData?.filter((eachNode) =>
+      eachNode.name.toLowerCase().includes(event.target.value.toLowerCase()),
+    )
+    setFilteredTreeViewData(searchResult)
+  };
 
   return (
     <SelectLayerContainer openSelectLayer={openselectlayer}>
@@ -74,7 +93,21 @@ const SelectLayer = ({
         />
       </HeaderLabelContainer>
       <SearchContainer>
-        <CustomSearch data={mockData} setSearchResult={setTreeViewData} />
+        {/* <CustomSearch data={treeViewData} handleSearchResult={handleSearchResult} /> */}
+        <CustomSearchField
+          placeholder="Search"
+          variant="outlined"
+          value={searchTerm}
+          onChange={handleSearch}
+          InputLabelProps={{ shrink: false }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
       </SearchContainer>
       <TreeViewContainer>
         <StyledTreeView
@@ -82,7 +115,7 @@ const SelectLayer = ({
           defaultCollapseIcon={<RemoveIcon />}
           defaultExpandIcon={<AddIcon />}
         >
-          {treeViewData.map((eachNode) => renderTree(eachNode))}
+          {filtedTreeViewData?.map((eachNode) => renderTree(eachNode))}
         </StyledTreeView>
       </TreeViewContainer>
     </SelectLayerContainer>

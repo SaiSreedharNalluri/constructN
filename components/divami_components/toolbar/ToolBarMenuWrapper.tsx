@@ -45,6 +45,7 @@ interface IProps {
   closeTaskFilterOverlay: () => void;
   contextInfo: IToolResponse;
   openCreateIssue: boolean;
+  selectedLayersList: string[]
 }
 
 const ToolBarMenuWrapper: React.FC<IProps> = ({
@@ -66,6 +67,7 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
   contextInfo,
   openCreateIssue,
   openCreateTask,
+  selectedLayersList
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -101,13 +103,13 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
     setSelectedType(changeOb.target.value);
   };
 
-  const LayerChange = (changeOb: any) => {
+  const LayerChange = (changeOb: any, layerLabel: string) => {
     if (changeOb.target.checked == true) {
       toolInstance.toolName = "addViewLayer";
-      toolInstance.toolAction = changeOb.target.value;
+      toolInstance.toolAction = layerLabel;
     } else {
       toolInstance.toolName = "removeViewLayer";
-      toolInstance.toolAction = changeOb.target.value;
+      toolInstance.toolAction = layerLabel;
     }
 
     toolClicked(toolInstance);
@@ -201,6 +203,7 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
             setOpenSelectTypes(false);
             setOpenSelectLayer(!openSelectLayer);
           }}
+          selectedLayersList={selectedLayersList}
         />
 
         <Issues
