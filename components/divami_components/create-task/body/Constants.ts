@@ -77,15 +77,17 @@ export const TASK_FORM_CONFIG = [
     formLabel: 'Start Date',
     isError: false,
     isReq: true,
+    form: 'createForm'
   },
   {
-    id: 'start-date',
+    id: 'due-date',
     type: 'datePicker',
     defaultValue: '',
     label: 'MM/DD/YYYY',
     formLabel: 'Due Date',
     isError: false,
     isReq: true,
+    form: 'createForm'
   },
   {
     id: 'tag-suggestions',

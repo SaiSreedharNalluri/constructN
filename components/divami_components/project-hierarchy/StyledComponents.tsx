@@ -1,5 +1,6 @@
 // import styled from "@emotion/styled";
 import { TreeItem, TreeView } from "@mui/lab";
+import TextField from "@mui/material/TextField";
 // import { Typography } from "@mui/material/styles";
 import { styled } from "@mui/system";
 import Image from "next/image";
@@ -9,7 +10,52 @@ export const TreeViewContainer = styled("div")({
   width: "301px",
   marginTop: "28px",
 });
-
+export const CustomInputField = styled(TextField)({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: 14,
+  color: "#101F4B",
+  border: "1px solid #36415d",
+  borderRadius: "6px",
+  "& .MuiOutlinedInput-root ": {
+    width: "261px",
+    height: "40px",
+  },
+  "& .MuiTextField-endAdornment": {
+    display: "none",
+  },
+  "& .MuiFormLabel-root.MuiInputLabel-root.Mui-focused": {
+    border: "0",
+    display: "none",
+    offset: "none",
+  },
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "0",
+  },
+  " & .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+    border: "0",
+    ouline: "none",
+    offset: "0",
+  },
+  "& .MuiFormLabel-root.MuiInputLabel-root": {
+    display: "none",
+  },
+  "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+    ouline: "none",
+  },
+  "& .MuiInputAdornment-root": {
+    paddingLeft: "15px",
+  },
+  // "& .MuiInputBase-input": {
+  //   fontFamily: "Open Sans",
+  //   fontStyle: "normal",
+  //   fontWeight: 400,
+  //   fontSize: 14,
+  //   color: "#101F4B",
+  //   textTransform: "uppercase",
+  // },
+});
 // export const useStyles = makeStyles({
 //   root: {
 //     "& .Mui-expanded": {
@@ -122,8 +168,8 @@ export const HeaderLabelContainer = styled("div")({
 });
 
 export const SearchContainer = styled("div")({
-  width: "261px",
-  height: "40px",
+  // width: "261px",
+  // height: "40px",
   outline: "none",
   padding: "20px 0px 0px 20px",
   marginBottom: "2px",

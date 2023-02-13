@@ -72,7 +72,7 @@ export const TASK_FORM_CONFIG = [
   {
     id: 'dates',
     type: 'doubleField',
-    fields:[
+    fields: [
       {
         id: 'start-date',
         type: 'datePicker',
