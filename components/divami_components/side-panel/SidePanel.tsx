@@ -39,23 +39,23 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       isActive: false,
       nextPage: "",
     },
-    {
-      id: "issues",
+    // {
+    //   id: "issues",
 
-      label: "issues",
-      icon: issuesIcon,
-      activeIcon: issuesIcon,
-      isActive: false,
-      nextPage: "",
-    },
-    {
-      id: "structure",
-      label: "tasks",
-      icon: tasks,
-      activeIcon: tasks,
-      isActive: false,
-      nextPage: "",
-    },
+    //   label: "issues",
+    //   icon: issuesIcon,
+    //   activeIcon: issuesIcon,
+    //   isActive: false,
+    //   nextPage: "",
+    // },
+    // {
+    //   id: "structure",
+    //   label: "tasks",
+    //   icon: tasks,
+    //   activeIcon: tasks,
+    //   isActive: false,
+    //   nextPage: "",
+    // },
     {
       id: "schedule",
 
