@@ -316,7 +316,7 @@ const IssueCreate: React.FC<IProps> = ({
                   id="type"
                   className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                 >
-                  <option value="" disabled selected>
+                  <option value="" disabled>
                     Select a Type
                   </option>
                   {/* <select name='type' id='type' className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"> */}
@@ -325,7 +325,6 @@ const IssueCreate: React.FC<IProps> = ({
                       <option
                         key={option}
                         value={option}
-                        selected={i == 0 ? true : false}
                       >
                         {option}
                       </option>
@@ -363,7 +362,7 @@ const IssueCreate: React.FC<IProps> = ({
                   id="priority"
                   className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                 >
-                  <option value="" disabled selected>
+                  <option value="" disabled>
                     Select a Priority
                   </option>
                   {issuePriority &&
@@ -371,7 +370,6 @@ const IssueCreate: React.FC<IProps> = ({
                       <option
                         key={option}
                         value={option}
-                        selected={i == 0 ? true : false}
                       >
                         {option}
                       </option>
