@@ -27,7 +27,7 @@ const CreateIssue = ({
   currentStructure,
   contextInfo,
 }: any) => {
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState<any>(null);
 
   const formHandler = (event: any) => {
     if (event === "Cancel") {

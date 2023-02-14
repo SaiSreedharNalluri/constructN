@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { getCookie } from "cookies-next";
 import { getTasksPriority, getTasksTypes } from "../../../../services/task";
 import { getProjectUsers } from "../../../../services/project";
+import UploadedImagesList from "../../uploaded-images-list/UploadedImagesList";
 
 const BodyContainer = styled(Box)({
   // height: 'calc(100vh - 134px)',
@@ -50,6 +51,7 @@ const Body = ({ handleFormData, editData }: any) => {
   const [taskPriorities, setTaskPriorities] = useState([]);
   const [projectUsers, setProjectUsers] = useState([]);
   const [loggedInUserId, SetLoggedInUserId] = useState(null);
+  const [formData, setFormData] = useState<any>([]);
   const router = useRouter();
   useEffect(() => {
     if (router.isReady) {
@@ -228,11 +230,13 @@ const Body = ({ handleFormData, editData }: any) => {
     }
   }, [projectUsers, taskPriorities, taskTypes]);
   useEffect(() => {
-    handleFormData([
+    let updatedFormData = [
       ...formConfig,
       { owner: loggedInUserId },
       { projectId: router.query.projectId },
-    ]);
+    ];
+    setFormData(updatedFormData);
+    handleFormData(updatedFormData);
   }, [formConfig]);
   return (
     <BodyContainer>
@@ -243,6 +247,7 @@ const Body = ({ handleFormData, editData }: any) => {
           formState={formState}
           setFormState={setFormState}
         />
+        <UploadedImagesList formData={formData} />
       </FormElementContainer>
       {/* <Box sx={{ marginTop: '15px' }}>
         <CustomLabel label={'Select the Type of Task'} />
