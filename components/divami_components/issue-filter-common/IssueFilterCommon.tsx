@@ -42,6 +42,14 @@ import IssueFilterFormWrapper from "./IssueFilterWrapper";
 import CustomLabel from "../custom-label/CustomLabel";
 import { ButtonsContainer } from "../task-filter-common/StyledComponent";
 import CustomButton from "../custom-button/CustomButton";
+import router from "next/router";
+import { IProjectUsers } from "../../../models/IProjects";
+import {
+  getIssuesPriority,
+  getIssuesStatus,
+  getIssuesTypes,
+} from "../../../services/issue";
+import { getProjectUsers } from "../../../services/project";
 
 interface IProps {
   closeOverlay: () => void;
@@ -106,8 +114,165 @@ const FilterCommon: React.FC<IProps> = ({
   const [FilterState, SetFilterState] = useState<any>(Filters);
   const [optionState, setOptionState] = useState<any>("clash");
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
-  const [datePickerData, setDatePickerData] = useState(DATE_PICKER_DATA);
+  const [startDate, setStartData] = useState(DATE_PICKER_DATA);
+  const [dueDate, setDueData] = useState(DATE_PICKER_DATA);
+  const [taskType, setTaskType] = useState<[string]>();
+  const [taskPriority, setTaskPriority] = useState<[string]>();
+  const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
+  const [taskStatus, setTaskStatus] = useState<[string]>();
+  const assignees = {
+    id: "assignes",
+    type: "search",
+    listOfEntries: [
+      { label: "The Shawshank Redemption", year: 1994 },
+      { label: "The Godfather", year: 1972 },
+      { label: "The Godfather: Part II", year: 1974 },
+      { label: "The Dark Knight", year: 2008 },
+      { label: "12 Angry Men", year: 1957 },
+      { label: "Schindler's List", year: 1993 },
+    ],
+    selectedName: null,
+    label: "Select Name or Team",
+  };
+  const [assignee, setAssignees] = useState([assignees]);
+  // const handleClose = () => {
+  //   onClose(true);
+  // };
+  const onFilterApply = () => {
+    console.log(FilterState);
+    let data: any = {};
+    data.issueTypeData = [];
+    data.issuePriorityData = [];
+    data.issueStatusData = [];
 
+    data.assigneesData = assignee[0]?.selectedName;
+    FilterState.forEach((item: any) => {
+      if (item.title == "Issue Type") {
+        const x = item.options.filter(
+          (option: any) => option.optionStatus == "T"
+        );
+        x.forEach((element: any) => {
+          data.issueTypeData.push(element.optionTitle);
+        });
+      } else if (item.title == "Issue Priority") {
+        const z = item.options.filter(
+          (option: any) => option.optionStatus == "T"
+        );
+        z.forEach((element: any) => {
+          data.issuePriorityData.push(element.optionTitle);
+        });
+      } else if (item.title == "Issue Status") {
+        const y = item.options.filter(
+          (option: any) => option.optionStatus == "T"
+        );
+        y.forEach((element: any) => {
+          data.issueStatusData.push(element.optionTitle);
+        });
+      }
+    });
+    data.fromDate = startDate[0].defaultValue;
+    data.toDate = dueDate[0].defaultValue;
+    console.log(data);
+    handleOnFilter(data);
+  };
+  const formHandler = (event: any) => {
+    console.log("sdf");
+    if (event === "Cancel") {
+      handleClose();
+    } else {
+      onFilterApply();
+      handleClose();
+    }
+  };
+  useEffect(() => {
+    if (router.isReady) {
+      getIssuesTypes(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setTaskType(response.result);
+          console.log(taskType);
+        }
+      });
+      getIssuesPriority(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setTaskPriority(response.result);
+          console.log(taskPriority);
+        }
+      });
+      getProjectUsers(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+            console.log(projectUsers);
+          }
+        })
+        .catch();
+      getIssuesStatus(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setTaskStatus(response.result);
+          console.log(taskStatus);
+        }
+      });
+    }
+    // const filterArray =
+    // SetFilterState(filterArray)
+  }, []);
+  useEffect(() => {
+    SetFilterState((prev: any) => {
+      return prev.map((item: any) => {
+        if (item.title === "Issue Type") {
+          return {
+            ...item,
+            options: taskType?.map((eachItem: any) => {
+              return {
+                ...eachItem,
+                optionTitle: eachItem,
+                optionStatus: "F",
+              };
+            }),
+          };
+        }
+        if (item.title === "Issue Priority") {
+          return {
+            ...item,
+            options: taskPriority?.map((eachItem: any) => {
+              return {
+                ...eachItem,
+                optionTitle: eachItem,
+                optionStatus: "F",
+              };
+            }),
+          };
+        }
+        if (item.title === "Issue Status") {
+          return {
+            ...item,
+            options: taskStatus?.map((eachItem: any) => {
+              return {
+                ...eachItem,
+                optionTitle: eachItem,
+                optionStatus: "F",
+              };
+            }),
+          };
+        }
+        return item;
+      });
+    });
+    setAssignees((prev: any) => {
+      return prev.map((item: any) => {
+        return {
+          ...item,
+          listOfEntries: projectUsers?.map((eachUser: any) => {
+            return {
+              ...eachUser,
+              label: eachUser?.user?.fullName,
+              value: eachUser?.user?._id,
+            };
+          }),
+        };
+      });
+    });
+  }, [taskType, taskStatus, projectUsers, taskPriority]);
   // Select All Handling
   const handleAllSelection = (item: any, index: number) => {
     let temp = FilterState.map((item: any, serial: any) => {
@@ -376,8 +541,8 @@ const FilterCommon: React.FC<IProps> = ({
         <FormElementContainer>
           <CustomLabel label={"Assigned To"} />
           <IssueFilterFormWrapper
-            config={SEARCH_CONFIG}
-            setFormConfig={SEARCH_CONFIG}
+            config={assignee}
+            setFormConfig={setAssignees}
           />
         </FormElementContainer>
 
@@ -387,24 +552,32 @@ const FilterCommon: React.FC<IProps> = ({
               <div>
                 <CustomLabel label={"Start Date"} />
                 <IssueFilterFormWrapper
-                  config={datePickerData}
-                  setFormConfig={setDatePickerData}
+                  config={startDate}
+                  setFormConfig={setStartData}
                 />
               </div>
             </DatePickerContainer>
             <div>
               <CustomLabel label={"Due Date"} />
               <IssueFilterFormWrapper
-                config={datePickerData}
-                setFormConfig={setDatePickerData}
+                config={dueDate}
+                setFormConfig={setDueData}
               />
             </div>
           </DatePickersContainer>
         </FormElementContainer>
 
         <ButtonsContainer>
-          <CustomButton type="outlined" label="Cancel" />
-          <CustomButton type="contained" label="Apply" />
+          <CustomButton
+            type="outlined"
+            label="Cancel"
+            formHandler={formHandler}
+          />
+          <CustomButton
+            type="contained"
+            label="Apply"
+            formHandler={formHandler}
+          />
         </ButtonsContainer>
       </FilterCommonBody>
     </FilterCommonMain>
