@@ -22,6 +22,7 @@ import {
   TreeViewContainer,
   StyledTreeView,
   CustomInputField,
+  MessageContainer,
   // useStyles,
 } from "./StyledComponents";
 import type { RenderTree, SelectLayerProps } from "./Type";
@@ -106,7 +107,10 @@ const ProjectHierarchy = ({
       </SearchContainer>
       <TreeViewContainer>
         {treeViewData.length === 0 ? (
-          "no structures found for this project"
+          // "no structures found for this project"
+          <MessageContainer>
+            <div>No structures found for this project</div>
+          </MessageContainer>
         ) : (
           <StyledTreeView
             aria-label="rich object"

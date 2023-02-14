@@ -182,3 +182,12 @@ export const HeaderLabel = styled("div")({
 export const CloseIcon = styled(Image)({
   cursor: "pointer",
 });
+
+export const MessageContainer = styled("div")({
+  margin: "0 auto",
+  // width: "60%",
+  // border: "3px solid #73AD21",
+  padding: "10px",
+  display: "flex",
+  justifyContent: "center",
+});
