@@ -23,3 +23,7 @@ export interface SelectLayerProps {
   handleNodeExpand?: any;
   expandedNodes?: any;
 }
+
+export interface ProjectHierarchyProps extends SelectLayerProps {
+  setHierarchy: any;
+}
