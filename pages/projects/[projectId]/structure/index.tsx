@@ -109,6 +109,15 @@ const Index: React.FC<IProps> = () => {
     type: "Task",
   });
   const [hierarchy, setHierarchy] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [expanded, setExpanded] = useState<string[]>([]);
+  const handleNodeSelection = (nodeIds: any) => {
+    setSelected(nodeIds);
+  };
+  const handleNodeExpand = (data: any) => {
+    setExpanded(data);
+    // setExpanded(getAllIds(treeViewData));
+  };
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
     filterData: {},
@@ -299,7 +308,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: ITools) => {
-    let newLayers = structuredClone(currentViewLayers);
+    let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.toolName) {
       case "viewType":
         setViewType(toolInstance.toolAction);
@@ -667,6 +676,10 @@ const Index: React.FC<IProps> = () => {
               <div>
                 <LeftOverLay
                   getStructureData={getStructureData}
+                  handleNodeSelection={handleNodeSelection}
+                  handleNodeExpand={handleNodeExpand}
+                  selectedNodes={selected}
+                  expandedNodes={expanded}
                   setHierarchy={setHierarchy}
                   getStructure={(structureData) => {
                     if (structure === undefined) {
@@ -708,6 +721,10 @@ const Index: React.FC<IProps> = () => {
                 >
                   <div>
                     <LeftOverLay
+                      handleNodeSelection={handleNodeSelection}
+                      selectedNodes={selected}
+                      handleNodeExpand={handleNodeExpand}
+                      expandedNodes={expanded}
                       getStructureData={getStructureData}
                       setHierarchy={setHierarchy}
                       getStructure={(structureData) => {

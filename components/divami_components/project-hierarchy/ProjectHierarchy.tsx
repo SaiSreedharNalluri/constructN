@@ -34,15 +34,16 @@ const ProjectHierarchy = ({
   treeData,
   getStructureData,
   handleSearch,
+  handleNodeSelection,
+  selectedNodes,
+  handleNodeExpand,
+  expandedNodes,
 }: SelectLayerProps) => {
   const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>([]);
   const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
-  const [expanded, setExpanded] = useState<string[]>([]);
-  const [selected, setSelected] = useState<string[]>([]);
 
   const handleExpand = () => {
-    console.log(getAllIds(treeViewData));
-    setExpanded(getAllIds(treeViewData));
+    handleNodeExpand(getAllIds(treeViewData));
   };
   useEffect(() => {
     setTreeViewData(treeData);
@@ -80,15 +81,16 @@ const ProjectHierarchy = ({
     setSelectedLayers(layersSelected);
     console.log([...layersSelected], "selectedLayers");
     console.log(search);
+    console.log(selectedNodes);
     search ? handleExpand() : null;
   }, [treeViewData]);
 
   const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
-    setExpanded(nodeIds);
+    handleNodeExpand(nodeIds);
   };
 
   const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
-    setSelected(nodeIds);
+    handleNodeSelection(nodeIds);
   };
   return (
     <ProjectHierarchyContainer>
@@ -126,8 +128,8 @@ const ProjectHierarchy = ({
             aria-label="rich object"
             defaultCollapseIcon={<RemoveIcon />}
             defaultExpandIcon={<AddIcon />}
-            expanded={expanded}
-            selected={selected}
+            expanded={expandedNodes}
+            selected={selectedNodes}
             onNodeToggle={handleToggle}
             onNodeSelect={handleSelect}
           >

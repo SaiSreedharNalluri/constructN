@@ -309,6 +309,14 @@ const FilterCommon: React.FC<IProps> = ({
         };
       });
     });
+    if (issueFilterState.isFilterApplied) {
+    }
+    setStartData([
+      {
+        ...DATE_PICKER_DATA[0],
+        defaultValue: issueFilterState.filterData.fromDate,
+      },
+    ]);
   }, [taskType, taskStatus, projectUsers, taskPriority]);
   // Select All Handling
   const handleAllSelection = (item: any, index: number) => {
