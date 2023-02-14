@@ -260,6 +260,7 @@ const Task = ({
             currentProject={myProject}
             currentStructure={myStructure}
             currentSnapshot={mySnapshot}
+            contextInfo={contextInfo}
             closeTaskFilterOverlay={closeTaskFilterOverlay}
             handleOnTaskFilter={handleOnTaskFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}

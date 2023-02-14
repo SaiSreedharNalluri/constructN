@@ -72,6 +72,7 @@ const CustomTaskListDrawer = (props: any) => {
     currentProject,
     currentStructure,
     currentSnapshot,
+    contextInfo,
     closeTaskFilterOverlay,
     handleOnTaskFilter,
   } = props;
@@ -344,6 +345,10 @@ const CustomTaskListDrawer = (props: any) => {
             taskPriority={taskPriority}
             taskStatus={taskStatus}
             projectUsers={projectUsers}
+            currentProject={currentProject}
+            currentStructure={currentStructure}
+            currentSnapshot={currentSnapshot}
+            contextInfo={contextInfo}
           />
         </Drawer>
       )}

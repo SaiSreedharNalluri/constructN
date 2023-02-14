@@ -15,6 +15,10 @@ import { TASK_FORM_CONFIG } from "../../divami_components/create-issue/body/Cons
 import CustomButton from "../../divami_components/custom-button/CustomButton";
 import CustomSelect from "../custom-select/CustomSelect";
 import ActivityLog from "../task_detail/ActivityLog";
+import { toast } from "react-toastify";
+import { updateAttachments, updateTask } from "../../../services/task";
+import CreateTask from "../create-task/CreateTask";
+import CustomDrawer from "../custom-drawer/custom-drawer";
 
 const HeaderContainer = styled(Box)`
   background-color: white;
@@ -785,7 +789,12 @@ const CustomTaskDetailsDrawer = (props: any) => {
     taskPriority,
     taskStatus,
     projectUsers,
+    currentProject,
+    currentSnapshot,
+    currentStructure,
+    contextInfo,
   } = props;
+  const [openCreateTask, setOpenCreateTask] = useState(false);
 
   const DetailsObj = {
     TabOne: {
@@ -863,38 +872,163 @@ const CustomTaskDetailsDrawer = (props: any) => {
     });
   }, []);
 
+  const handleCreateTask = (formData: any) => {
+    console.log(formData, "form data at home");
+    clickTaskSubmit(formData);
+  };
+  const clickTaskSubmit = (formData: any) => {
+    let data: any = {};
+    let userIdList: any[] = [];
+    const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
+      ?.selectedName;
+    if (assignes && assignes.length > 0) {
+      assignes.map((user: any) => {
+        userIdList.push(user.value);
+      });
+    }
+    userIdList.push(assignes.value);
+    data.structure = currentStructure?._id;
+    data.snapshot = currentSnapshot?._id;
+    data.status = "To Do";
+    // data.context = contextInfo;
+    // Object.keys(contextInfo).forEach((key) => {
+    //   if (key !== "id") {
+    //     data.context = { ...data.context, [key]: contextInfo[key] };
+    //   }
+    // });
+    data.title = formData.filter(
+      (item: any) => item.id == "title"
+    )[0]?.defaultValue;
+
+    data.type = formData.filter(
+      (item: any) => item.id == "tasks"
+    )[0]?.defaultValue;
+    (data.priority = formData.filter(
+      (item: any) => item.id == "taskPriority"
+    )[0]?.defaultValue),
+      (data.description = formData.filter(
+        (item: any) => item.id == "description"
+      )[0]?.defaultValue),
+      (data.assignees = userIdList),
+      (data.tags =
+        (formData.length
+          ? formData
+              .filter((item: any) => item.id == "tag-suggestions")[0]
+              ?.chipString?.join(";")
+          : []) || []),
+      (data.startdate = formData
+        .filter((item: any) => item.id === "dates")[0]
+        ?.fields.filter(
+          (item: any) => item.id == "start-date"
+        )[0]?.defaultValue);
+    data.duedate = formData
+      .filter((item: any) => item.id === "dates")[0]
+      ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
+
+    const filesArr = (data.attachments = formData.filter(
+      (item: any) => item.id === "file-upload"
+    )[0].selectedFile);
+    const uploadUrl = URL.createObjectURL(filesArr[0]);
+    const projectId = formData.filter((item: any) => item.projectId)[0]
+      .projectId;
+    console.log("formData", data);
+    updateAttachments(uploadUrl, task._id)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success("Task added sucessfully");
+          // handleTaskSubmit(formData);
+          // taskSubmit(response.result);
+          // toolInstance.toolAction = "taskCreateSuccess";
+
+          // console.log(formData);
+        } else {
+          // toolInstance.toolAction = "taskCreateFail";
+          // issueToolClicked(toolInstance);
+        }
+      })
+      .catch((error) => {
+        // toolInstance.toolAction = "taskCreateFail";
+
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+    updateTask(projectId as string, data, task._id)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success("Task added sucessfully");
+          // handleTaskSubmit(formData);
+          // taskSubmit(response.result);
+          // toolInstance.toolAction = "taskCreateSuccess";
+
+          // console.log(formData);
+        } else {
+          // toolInstance.toolAction = "taskCreateFail";
+          // issueToolClicked(toolInstance);
+        }
+      })
+      .catch((error) => {
+        // toolInstance.toolAction = "taskCreateFail";
+
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
+
   return (
-    <CustomTaskDrawerContainer>
-      <HeaderContainer>
-        <TitleContainer>
-          <LeftTitleCont>
-            <ArrowIcon
-              onClick={() => {
-                onClose(true);
-              }}
-              src={BackArrow}
-              alt={"close icon"}
-            />
-            <SpanTile>
-              {task.type} (#{task._id})
-            </SpanTile>
-          </LeftTitleCont>
-          <RightTitleCont>
-            <EditIcon src={Edit} alt={"close icon"} />
-            <DeleteIcon src={Delete} alt={"close icon"} />
-          </RightTitleCont>
-        </TitleContainer>
-      </HeaderContainer>
-      <BodyContainer>
-        <BasicTabs
-          taskType={taskType}
-          taskPriority={taskPriority}
-          taskStatus={taskStatus}
-          projectUsers={projectUsers}
-          taskState={taskState}
-        />
-      </BodyContainer>
-    </CustomTaskDrawerContainer>
+    <>
+      <CustomTaskDrawerContainer>
+        <HeaderContainer>
+          <TitleContainer>
+            <LeftTitleCont>
+              <ArrowIcon
+                onClick={() => {
+                  onClose(true);
+                }}
+                src={BackArrow}
+                alt={"close icon"}
+              />
+              <SpanTile>
+                {task.type} (#{task._id})
+              </SpanTile>
+            </LeftTitleCont>
+            <RightTitleCont>
+              <EditIcon
+                src={Edit}
+                alt={"close icon"}
+                onClick={() => {
+                  setOpenCreateTask(true);
+                }}
+              />
+              <DeleteIcon src={Delete} alt={"close icon"} />
+            </RightTitleCont>
+          </TitleContainer>
+        </HeaderContainer>
+        <BodyContainer>
+          <BasicTabs
+            taskType={taskType}
+            taskPriority={taskPriority}
+            taskStatus={taskStatus}
+            projectUsers={projectUsers}
+            taskState={taskState}
+          />
+        </BodyContainer>
+      </CustomTaskDrawerContainer>
+      {openCreateTask && (
+        <CustomDrawer open>
+          <CreateTask
+            handleCreateTask={handleCreateTask}
+            setOpenCreateTask={setOpenCreateTask}
+            currentProject={currentProject}
+            currentSnapshot={currentSnapshot}
+            currentStructure={currentStructure}
+            contextInfo={contextInfo}
+            editData={task}
+          />
+        </CustomDrawer>
+      )}
+    </>
   );
 };
 

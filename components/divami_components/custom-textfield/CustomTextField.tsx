@@ -52,7 +52,6 @@ export const CustomTextField = (props: PropTypes) => {
         id={id}
         // placeholder={placeholder}
         defaultValue={defaultValue}
-        value={defaultValue}
         data-testid={dataTestId}
         required={false}
         disabled={isDisabled}
