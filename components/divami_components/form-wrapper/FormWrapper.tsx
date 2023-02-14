@@ -117,12 +117,13 @@ const FormWrapper = (props: any) => {
         return (
           <CustomSelect
             config={data}
-            defaultValue={formState[data.id]}
+            defaultValue={data.defaultValue}
             id={data.id}
             sx={{ minWidth: 120 }}
             setFormConfig={setFormConfig}
             isError={data.isError}
             label=""
+            data={data}
           />
         );
       case "textarea":
@@ -137,7 +138,7 @@ const FormWrapper = (props: any) => {
             onBlur={(e: any) => {
               handleTextChange(e, data.id, data);
             }}
-            defaultValue={data.placeHolder}
+            defaultValue={data.defaultValue}
             isError={data.isError}
             dataTestId="inputTextField"
             isRequired={data.isReq}
@@ -161,7 +162,7 @@ const FormWrapper = (props: any) => {
             onBlur={(e: any) => {
               handleTextChange(e, data.id, data);
             }}
-            defaultValue={data.placeHolder}
+            defaultValue={data.defaultValue}
             isError={data.isError}
             dataTestId="inputTextField"
             isRequired={data.isReq}
@@ -189,12 +190,14 @@ const FormWrapper = (props: any) => {
             handleSearchResult={(e: any, value: string) => {
               handleSearchResult(e, value, data.id);
             }}
+            selectedName={data.selectedName}
           />
         );
       case "file":
         return (
           <CustomFileInput
             handleFileUpload={(e: any) => handleFileUpload(e, data.id)}
+            data
           />
         );
       case "chip":
@@ -203,6 +206,7 @@ const FormWrapper = (props: any) => {
             handleChipMaking={(chipsString: any) =>
               handleChipMaking(chipsString, data.id)
             }
+            data={data}
           />
         );
       case "doubleField":

@@ -42,7 +42,8 @@ const DatePickerContainer = styled(Box)({
   flexDirection: "column",
 });
 
-const Body = ({ handleFormData }: any) => {
+const Body = ({ handleFormData, editData }: any) => {
+  console.log(editData, "editData");
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
   const [taskTypes, setTaskTypes] = useState([]);
@@ -85,50 +86,145 @@ const Body = ({ handleFormData }: any) => {
     }
   }, [router.isReady, router.query.projectId]);
   useEffect(() => {
+    console.log(editData, "editdata", taskPriorities, taskTypes);
     if (projectUsers.length && taskPriorities.length && taskTypes.length) {
-      setFormConfig((prev: any) => {
-        return prev.map((item: any) => {
-          if (item.id === "tasks") {
-            return {
-              ...item,
-              options: taskTypes?.map((eachItem: any) => {
-                return {
-                  // ...eachItem,
-                  label: eachItem,
-                  value: eachItem,
-                  selected: false,
-                };
-              }),
-            };
-          }
-          if (item.id === "taskPriority") {
-            return {
-              ...item,
-              options: taskPriorities?.map((eachItem: any) => {
-                return {
-                  // ...eachItem,
-                  label: eachItem,
-                  value: eachItem,
-                  selected: false,
-                };
-              }),
-            };
-          }
-          if (item.id === "assignedTo") {
-            return {
-              ...item,
-              listOfEntries: projectUsers?.map((eachUser: any) => {
-                return {
-                  ...eachUser,
-                  label: eachUser?.user?.fullName,
-                  value: eachUser?.user?._id,
-                };
-              }),
-            };
-          }
-          return item;
+      if (editData) {
+        const editFormData = editData?.TabOne;
+        setFormConfig((prev: any) => {
+          return prev.map((item: any) => {
+            if (item.id === "title") {
+              return {
+                ...item,
+                defaultValue: editData.title || "",
+              };
+            }
+            if (item.id === "tasks") {
+              return {
+                ...item,
+                options: taskTypes?.map((eachItem: any) => {
+                  return {
+                    // ...eachItem,
+                    label: eachItem,
+                    value: eachItem,
+                    selected: false,
+                  };
+                }),
+                defaultValue: editData.type,
+              };
+            }
+            if (item.id === "description") {
+              return {
+                ...item,
+                defaultValue: editData.description,
+              };
+            }
+            if (item.id === "taskPriority") {
+              return {
+                ...item,
+                options: taskPriorities?.map((eachItem: any) => {
+                  return {
+                    // ...eachItem,
+                    label: eachItem,
+                    value: eachItem,
+                    selected: false,
+                  };
+                }),
+                defaultValue: editData.priority,
+              };
+            }
+            if (item.id === "assignedTo") {
+              return {
+                ...item,
+                listOfEntries: projectUsers?.map((eachUser: any) => {
+                  return {
+                    ...eachUser,
+                    label: eachUser?.user?.fullName,
+                    value: eachUser?.user?._id,
+                  };
+                }),
+                selectedName: editData.assignees?.length
+                  ? editData.assignees[0]
+                  : undefined,
+              };
+            }
+            if (item.id === "dates") {
+              return {
+                ...item,
+                fields: item.fields.map((each: any) => {
+                  if (each.id == "start-date") {
+                    return {
+                      ...each,
+                      defaultValue: editData.createdAt,
+                    };
+                  } else {
+                    return {
+                      ...each,
+                      defaultValue: editData.updatedAt,
+                    };
+                  }
+                }),
+              };
+            }
+            if (item.id === "tag-suggestion") {
+              return {
+                ...item,
+                defaultValue: editData.tags,
+              };
+            }
+            if (item.id === "file-upload") {
+              return {
+                ...item,
+                defaultValue: editData.attachments,
+              };
+            }
+            return item;
+          });
         });
-      });
+      } else {
+        setFormConfig((prev: any) => {
+          return prev.map((item: any) => {
+            if (item.id === "tasks") {
+              return {
+                ...item,
+                options: taskTypes?.map((eachItem: any) => {
+                  return {
+                    // ...eachItem,
+                    label: eachItem,
+                    value: eachItem,
+                    selected: false,
+                  };
+                }),
+              };
+            }
+            if (item.id === "taskPriority") {
+              return {
+                ...item,
+                options: taskPriorities?.map((eachItem: any) => {
+                  return {
+                    // ...eachItem,
+                    label: eachItem,
+                    value: eachItem,
+                    selected: false,
+                  };
+                }),
+              };
+            }
+            if (item.id === "assignedTo") {
+              return {
+                ...item,
+                listOfEntries: projectUsers?.map((eachUser: any) => {
+                  return {
+                    ...eachUser,
+                    label: eachUser?.user?.fullName,
+                    value: eachUser?.user?._id,
+                  };
+                }),
+              };
+            }
+            return item;
+          });
+        });
+      }
     }
   }, [projectUsers, taskPriorities, taskTypes]);
   useEffect(() => {

@@ -18,4 +18,8 @@ export interface SelectLayerProps {
   treeData: any[];
   getStructureData?: (structure: ChildrenEntity) => void;
   handleSearch: any;
+  handleNodeSelection?: any;
+  selectedNodes?: any;
+  handleNodeExpand?: any;
+  expandedNodes?: any;
 }

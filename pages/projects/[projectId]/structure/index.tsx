@@ -28,7 +28,7 @@ import {
 } from "../../../../services/issue";
 import { getCookie } from "cookies-next";
 import { toast } from "react-toastify";
-import { getTasksList } from "../../../../services/task";
+import { deleteTask, getTasksList } from "../../../../services/task";
 import { Issue } from "../../../../models/Issue";
 import { ITasks } from "../../../../models/Itask";
 import IssueCreate from "../../../../components/container/rightFloatingMenu/issueMenu/issueCreate";
@@ -44,7 +44,7 @@ import { styled } from "@mui/system";
 import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 import { CustomToaster } from "../../../../components/divami_components/custom-toaster/CustomToaster";
 
-interface IProps {}
+interface IProps { }
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -101,6 +101,8 @@ const Index: React.FC<IProps> = () => {
   const [isTaslFilter, setIsTaskFilter] = useState(false);
   const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
   const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
+  const [issueTypesList, setIssueTypesList] = useState<[string]>([""]);
+
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
   const [taskFilterList, setTaskFilterList] = useState<ITasks[]>([]);
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
@@ -110,7 +112,23 @@ const Index: React.FC<IProps> = () => {
     type: "Task",
   });
   const [hierarchy, setHierarchy] = useState(false);
-
+  const [selected, setSelected] = useState<string[]>([]);
+  const [expanded, setExpanded] = useState<string[]>([]);
+  const handleNodeSelection = (nodeIds: any) => {
+    setSelected(nodeIds);
+  };
+  const handleNodeExpand = (data: any) => {
+    setExpanded(data);
+    // setExpanded(getAllIds(treeViewData));
+  };
+  const [taskFilterState, setTaskFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {},
+  });
+  const [issueFilterState, setIssueFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {},
+  });
   const closeIssueCreate = () => {
     setOpenCreateIssue(false);
   };
@@ -150,6 +168,15 @@ const Index: React.FC<IProps> = () => {
         .then((response) => {
           if (response.success === true) {
             setIssueStatusList(response.result);
+          }
+        })
+        .catch((error) => {
+          toast.error("failed to load data");
+        });
+      getIssuesTypes(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setIssueTypesList(response.result);
           }
         })
         .catch((error) => {
@@ -252,11 +279,9 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${
-                  structure?._id
-                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
-                  currentProjectId as string
-                }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
+                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
+                  }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -293,7 +318,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: ITools) => {
-    let newLayers = structuredClone(currentViewLayers);
+    let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.toolName) {
       case "viewType":
         setViewType(toolInstance.toolAction);
@@ -553,8 +578,8 @@ const Index: React.FC<IProps> = () => {
           formData?.issuePriorityData?.length == 0) &&
         (formData?.issueStatusData?.includes(item.status) ||
           formData?.issueStatusData.length == 0) &&
-        (formData?.assigneesData?.some((ass: any) =>
-          item.assignees.some((it: any) => ass.value === it._id)
+        (item.assignees.filter(
+          (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
         ) ||
           formData?.assigneesData?.length == 0) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
@@ -563,9 +588,17 @@ const Index: React.FC<IProps> = () => {
           formData.toDate == "")
     );
     setIssueList(result);
+    setIssueFilterState({
+      isFilterApplied: true,
+      filterData: formData,
+    });
   };
   const closeFilterOverlay = () => {
     setIssueList(issueFilterList);
+    setIssueFilterState({
+      isFilterApplied: false,
+      filterData: {},
+    });
   };
   const handleOnTaskFilter = (formData: any) => {
     console.log(formData);
@@ -584,9 +617,17 @@ const Index: React.FC<IProps> = () => {
         )
     );
     setTasksList(result);
+    setTaskFilterState({
+      isFilterApplied: true,
+      filterData: formData,
+    });
   };
   const closeTaskFilterOverlay = () => {
     setTasksList(taskFilterList);
+    setTaskFilterState({
+      isFilterApplied: false,
+      filterData: {},
+    });
   };
   const deleteTheIssue = (issueObj: any) => {
     deleteIssue(router.query.projectId as string, issueObj._id)
@@ -601,6 +642,22 @@ const Index: React.FC<IProps> = () => {
         console.log("error", error);
       });
   };
+
+  const deleteTheTask = (taskObj: any) => {
+    console.log("taskObj", taskObj, router.query.projectId)
+    deleteTask(router.query.projectId as string, taskObj._id)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success(response.message);
+          _.remove(issueFilterList, { _id: taskObj._id });
+          setIssueList(issueFilterList);
+        }
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
+  };
+
   const clickIssueEditSubmit = (editObj: any, issueObj: any) => {
     editIssue(
       router.query.projectId as string,
@@ -638,13 +695,16 @@ const Index: React.FC<IProps> = () => {
           {
             <div
               ref={leftRefContainer}
-              className={` ${
-                leftNav ? "visible" : "hidden"
-              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+              className={` ${leftNav ? "visible" : "hidden"
+                } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay
                   getStructureData={getStructureData}
+                  handleNodeSelection={handleNodeSelection}
+                  handleNodeExpand={handleNodeExpand}
+                  selectedNodes={selected}
+                  expandedNodes={expanded}
                   setHierarchy={setHierarchy}
                   getStructure={(structureData) => {
                     if (structure === undefined) {
@@ -686,6 +746,10 @@ const Index: React.FC<IProps> = () => {
                 >
                   <div>
                     <LeftOverLay
+                      handleNodeSelection={handleNodeSelection}
+                      selectedNodes={selected}
+                      handleNodeExpand={handleNodeExpand}
+                      expandedNodes={expanded}
                       getStructureData={getStructureData}
                       setHierarchy={setHierarchy}
                       getStructure={(structureData) => {
@@ -795,6 +859,12 @@ const Index: React.FC<IProps> = () => {
               openCreateIssue={openCreateIssue}
               openCreateTask={openCreateTask}
               selectedLayersList={currentViewLayers}
+              deleteTheTask={deleteTheTask}
+              issuePriorityList={issuePriorityList}
+              issueStatusList={issueStatusList}
+              issueTypesList={issueTypesList}
+              taskFilterState={taskFilterState}
+              issueFilterState={issueFilterState}
             />
 
             {/* <CustomToaster /> */}

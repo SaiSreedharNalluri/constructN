@@ -61,6 +61,7 @@ interface IProps {
   deleteTheIssue: (issueObj: object) => void;
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
   onClose: any;
+  issueFilterState: any;
 }
 
 const Footer = () => {
@@ -77,6 +78,7 @@ const FilterCommon: React.FC<IProps> = ({
   deleteTheIssue,
   clickIssueEditSubmit,
   onClose,
+  issueFilterState,
 }) => {
   const Filters = [
     {
@@ -223,6 +225,17 @@ const FilterCommon: React.FC<IProps> = ({
           return {
             ...item,
             options: taskType?.map((eachItem: any) => {
+              if (issueFilterState.isFilterApplied) {
+                if (
+                  issueFilterState.filterData.issueTypeData.includes(eachItem)
+                ) {
+                  return {
+                    ...eachItem,
+                    optionTitle: eachItem,
+                    optionStatus: "T",
+                  };
+                }
+              }
               return {
                 ...eachItem,
                 optionTitle: eachItem,
@@ -235,6 +248,19 @@ const FilterCommon: React.FC<IProps> = ({
           return {
             ...item,
             options: taskPriority?.map((eachItem: any) => {
+              if (issueFilterState.isFilterApplied) {
+                if (
+                  issueFilterState.filterData.issuePriorityData.includes(
+                    eachItem
+                  )
+                ) {
+                  return {
+                    ...eachItem,
+                    optionTitle: eachItem,
+                    optionStatus: "T",
+                  };
+                }
+              }
               return {
                 ...eachItem,
                 optionTitle: eachItem,
@@ -247,6 +273,17 @@ const FilterCommon: React.FC<IProps> = ({
           return {
             ...item,
             options: taskStatus?.map((eachItem: any) => {
+              if (issueFilterState.isFilterApplied) {
+                if (
+                  issueFilterState.filterData.issueStatusData.includes(eachItem)
+                ) {
+                  return {
+                    ...eachItem,
+                    optionTitle: eachItem,
+                    optionStatus: "T",
+                  };
+                }
+              }
               return {
                 ...eachItem,
                 optionTitle: eachItem,
@@ -272,6 +309,14 @@ const FilterCommon: React.FC<IProps> = ({
         };
       });
     });
+    if (issueFilterState.isFilterApplied) {
+    }
+    setStartData([
+      {
+        ...DATE_PICKER_DATA[0],
+        defaultValue: issueFilterState.filterData.fromDate,
+      },
+    ]);
   }, [taskType, taskStatus, projectUsers, taskPriority]);
   // Select All Handling
   const handleAllSelection = (item: any, index: number) => {
@@ -421,7 +466,22 @@ const FilterCommon: React.FC<IProps> = ({
   const CloseIcon = styled(Image)({
     cursor: "pointer",
   });
-
+  const onReset = () => {
+    let temp = FilterState?.map((each: any, serial: number) => {
+      return { ...each };
+    });
+    temp.forEach((element: any) => {
+      element?.options?.forEach((obj: any) => {
+        obj.optionStatus = "F";
+      });
+    });
+    setStartData(DATE_PICKER_DATA);
+    setDueData(DATE_PICKER_DATA);
+    setAssignees([assignees]);
+    SetFilterState(temp);
+    closeFilterOverlay();
+    handleClose();
+  };
   // console.log("issuesListfooter",issuesList)
   return (
     <FilterCommonMain>
@@ -433,7 +493,13 @@ const FilterCommon: React.FC<IProps> = ({
             </HeaderLeftSection>
             <HeaderRightSection>
               <HeaderRightSectionResetIcon>
-                <Image src={ResetIcon} alt="reset" />
+                <Image
+                  src={ResetIcon}
+                  alt="reset"
+                  onClick={() => {
+                    onReset();
+                  }}
+                />
               </HeaderRightSectionResetIcon>
               <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
               {/* <Image src={closeIcon} alt="reset"   onClick={() => {
@@ -502,9 +568,9 @@ const FilterCommon: React.FC<IProps> = ({
                 )}
               </FilterCardSelectAll>
               <FilterCardOptions>
-                {each?.options?.map((item: any) => {
+                {each?.options?.map((item: any, i: number) => {
                   return (
-                    <FilterCardOptionContainer key={index}>
+                    <FilterCardOptionContainer key={i}>
                       <FilterCardOptionSpan>
                         {item?.optionStatus === "T" ? (
                           <Image

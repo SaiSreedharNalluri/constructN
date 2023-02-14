@@ -26,7 +26,7 @@ import {
   // useStyles,
 } from "./StyledComponents";
 import type { RenderTree, SelectLayerProps } from "./Type";
-import { getSelectedLayers } from "./Utils";
+import { getAllIds, getSelectedLayers } from "./Utils";
 
 const ProjectHierarchy = ({
   title,
@@ -35,12 +35,17 @@ const ProjectHierarchy = ({
   treeData,
   getStructureData,
   handleSearch,
+  handleNodeSelection,
+  selectedNodes,
+  handleNodeExpand,
+  expandedNodes,
 }: SelectLayerProps) => {
   const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>([]);
   const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
-  console.log(treeData);
-  console.log(treeViewData);
 
+  const handleExpand = () => {
+    handleNodeExpand(getAllIds(treeViewData));
+  };
   useEffect(() => {
     setTreeViewData(treeData);
   }, [treeData]);
@@ -50,10 +55,11 @@ const ProjectHierarchy = ({
       <span>{node.name}</span>
     </div>
   );
-
+  const [search, setSearch] = useState(false);
   const handleSearchResult = (e: any) => {
     console.log(e);
     handleSearch(e);
+    setSearch(true);
   };
   const renderTree = (nodes: ChildrenEntity) => (
     <TreeItem
@@ -75,8 +81,18 @@ const ProjectHierarchy = ({
     const layersSelected = getSelectedLayers(treeViewData);
     setSelectedLayers(layersSelected);
     console.log([...layersSelected], "selectedLayers");
+    console.log(search);
+    console.log(selectedNodes);
+    search ? handleExpand() : null;
   }, [treeViewData]);
 
+  const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
+    handleNodeExpand(nodeIds);
+  };
+
+  const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
+    handleNodeSelection(nodeIds);
+  };
   return (
     <ProjectHierarchyContainer>
       <HeaderLabelContainer>
@@ -116,6 +132,10 @@ const ProjectHierarchy = ({
             aria-label="rich object"
             defaultCollapseIcon={<RemoveIcon />}
             defaultExpandIcon={<AddIcon />}
+            expanded={expandedNodes}
+            selected={selectedNodes}
+            onNodeToggle={handleToggle}
+            onNodeSelect={handleSelect}
           >
             {treeViewData.map((eachNode) => renderTree(eachNode))}
           </StyledTreeView>

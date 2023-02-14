@@ -20,14 +20,7 @@ const StyledDiv = styled("span")({
   //   paddingRight: '20px',
   // overflow: 'scroll'
 });
-const CreateTask = ({
-  handleCreateTask,
-  setOpenCreateTask,
-  currentProject,
-  currentSnapshot,
-  currentStructure,
-  contextInfo,
-}: any) => {
+const CreateTask = ({ handleCreateTask, setOpenCreateTask, editData }: any) => {
   const [formData, setFormData] = useState(null);
 
   const formHandler = (event: any) => {
@@ -46,7 +39,7 @@ const CreateTask = ({
   return (
     <StyledDiv>
       <Header setOpenCreateTask={setOpenCreateTask} />
-      <Body handleFormData={handleFormData} />
+      <Body handleFormData={handleFormData} editData={editData} />
       <Footer formHandler={formHandler} />
     </StyledDiv>
   );
