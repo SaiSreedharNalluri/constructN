@@ -29,7 +29,7 @@ export const HotspotCircleDiv = styled("div")({
 });
 
 export const HotspotGroupIcon = styled("div")({
-  marginLeft: "54px",
+  // marginLeft: "54px",
 });
 
 export const TaskBox = styled("div")({
@@ -71,7 +71,7 @@ export const SectionToolBar = styled("div")({
   fontWeight: "400",
   fontSize: "12px",
   lineHeight: "18px",
-  width: "770px",
+  width: "772px",
   display: "block",
   marginLeft: "auto",
   marginRight: "auto",
