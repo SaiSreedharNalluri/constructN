@@ -74,6 +74,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   openCreateIssue,
   openCreateTask,
   selectedLayersList,
+  deleteTheTask,
   issuePriorityList,
   issueStatusList,
   issueTypesList,
@@ -245,6 +246,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           handleOnTaskFilter={handleOnTaskFilter}
           rightMenuClickHandler={rightMenuClickHandler}
           taskOpenDrawer={openCreateTask}
+          deleteTheTask={deleteTheTask}
           taskFilterState={taskFilterState}
         />
 
