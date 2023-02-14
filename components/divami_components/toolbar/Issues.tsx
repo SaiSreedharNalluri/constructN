@@ -15,6 +15,7 @@ import {
   IssuesSectionPlusImg,
   IssuesSectionFileImg,
   IssuesSectionClipImg,
+  IssueTitle,
 } from "./ToolBarStyles";
 import { Drawer } from "@mui/material";
 import CreateIssue from "../create-issue/CreateIssue";
@@ -45,7 +46,6 @@ const Issues = ({
   issueLayer,
   currentProject,
   issueOpenDrawer,
-  openIssueView,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -91,20 +91,29 @@ const Issues = ({
     // }
     let data: any = {};
     data.structure = currentStructure?._id;
-    data.title = `${currentStructure?.name}_${formData.dueDate} `;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
     data.owner = formData.owner;
-    data.context = contextInfo;
-    (data.type = formData.filter(
+    console.log(contextInfo, "contexxt");
+    Object.keys(contextInfo).forEach((key) => {
+      if (key !== "id") {
+        data.context = { ...data.context, [key]: contextInfo[key] };
+      }
+    });
+
+    console.log(data.context, "datraocmte", contextInfo);
+    data.title = formData.filter(
+      (item: any) => item.id == "title"
+    )[0]?.defaultValue;
+    data.type = formData.filter(
       (item: any) => item.id == "issueType"
+    )[0]?.defaultValue;
+    data.priority = formData.filter(
+      (item: any) => item.id == "issuePriority"
+    )[0]?.defaultValue;
+    (data.description = formData.filter(
+      (item: any) => item.id == "description"
     )[0]?.defaultValue),
-      (data.priority = formData.filter(
-        (item: any) => item.id == "issuePriority"
-      )[0]?.defaultValue),
-      (data.description = formData.filter(
-        (item: any) => item.id == "description"
-      )[0]?.defaultValue),
       (data.assignees = userIdList),
       (data.tags =
         (formData.length
@@ -209,13 +218,11 @@ const Issues = ({
   return (
     <div>
       <IssueBox>
-        <div>Issues:</div>
+        <IssueTitle>Issues:</IssueTitle>
 
         <IssuesSectionPlusImg>
           <Image
             src={plusCircleIcon}
-            width={12}
-            height={12}
             alt="Arrow"
             // onClick={rightMenuClickHandler}
             onClick={() => {
@@ -228,8 +235,8 @@ const Issues = ({
         <IssuesSectionFileImg>
           <Image
             src={fileTextIcon}
-            width={12}
-            height={12}
+            // width={12}
+            // height={12}
             alt="Arrow"
             // onClick={() => {
             //   setOpenIssueList(true);
@@ -244,8 +251,8 @@ const Issues = ({
         <IssuesSectionClipImg>
           <Image
             src={clipboardSecondIcon}
-            width={12}
-            height={12}
+            // width={12}
+            // height={12}
             alt="Arrow"
             // onClick={rightMenuClickHandler}
             onClick={toggleIssueVisibility}

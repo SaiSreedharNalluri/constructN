@@ -182,16 +182,19 @@ const CustomTaskListDrawer = (props: any) => {
     }
   }, []);
 
+  console.log(taskType, taskPriority, taskStatus, projectUsers, "IMPORTANTT");
+
   const handleDatesSort = () => {
     const sortedDatesData = [...taskListDataState].sort((a: any, b: any) => {
       if (dateSortState === "ascending") {
         setDateSortState("descending");
-        return a.due_date - b.due_date;
+        return a.dueDate - b.dueDate;
       } else {
         setDateSortState("ascending");
-        return b.due_date - a.due_date;
+        return b.dueDate - a.dueDate;
       }
     });
+    console.log(sortedDatesData);
     setTaskListDataState(sortedDatesData);
   };
 
@@ -275,6 +278,10 @@ const CustomTaskListDrawer = (props: any) => {
                           ? TransmittalList
                           : val.type === "Submittals"
                           ? SubmittalList
+                          : val.type === "Transmittals"
+                          ? TransmittalList
+                          : val.type === "Transmittals"
+                          ? TransmittalList
                           : ""
                       }
                       alt="Arr"
@@ -312,6 +319,10 @@ const CustomTaskListDrawer = (props: any) => {
             taskList={tasksList}
             task={viewTask}
             onClose={() => setOpenTaskDetail((prev: any) => !prev)}
+            taskType={taskType}
+            taskPriority={taskPriority}
+            taskStatus={taskStatus}
+            projectUsers={projectUsers}
           />
         </Drawer>
       )}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Drawer from "@mui/material/Drawer";
 import Image from "next/image";
@@ -16,18 +16,19 @@ import {
   IssuesSectionPlusImg,
   IssuesSectionFileImg,
   IssuesSectionClipImg,
+  TaskTitle,
 } from "./ToolBarStyles";
 import TaskList from "../task_list/TaskList";
 import CreateTask from "../create-task/CreateTask";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import { createTask } from "../../../services/task";
 import { toast } from "react-toastify";
+import { ITools } from "../../../models/ITools";
 import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
 
 const Task = ({
   rightMenuClickHandler,
   tasksList,
-  toolClicked,
   currentProject,
   currentSnapshot,
   currentStructure,
@@ -36,6 +37,9 @@ const Task = ({
   closeTaskFilterOverlay,
   handleOnTaskFilter,
   contextInfo,
+  taskOpenDrawer,
+  taskLayer,
+  taskMenuClicked,
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -45,15 +49,23 @@ const Task = ({
   const [myTypesList, setMyTypesList] = useState(currentTypesList);
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
+  const [taskVisbility, setTaskVisibility] = useState(
+    taskLayer === undefined ? false : taskLayer
+  );
 
-  const taskMenuClicked = (localTool: any) => {
-    toolClicked(localTool);
-    if (
-      localTool.toolAction === "taskCreateClose" ||
-      localTool.toolAction === "taskViewClose"
-    )
-      setRighttNav(!rightNav);
-  };
+  let toolInstance: ITools = { toolName: "task", toolAction: "taskCreate" };
+  let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
+
+  useEffect(() => {
+    setMyProject(currentProject);
+    setMyStructure(currentStructure);
+    setMySnapshot(currentSnapshot);
+  }, [currentProject, currentSnapshot, currentStructure]);
+  // const closeIssueList = () => {
+  //   //setListOverlay(false);
+  //   issueMenuInstance.toolAction = "issueViewClose";
+  //   issueMenuClicked(issueMenuInstance);
+  // };
 
   const handleViewTaskList = () => {
     setOpenDrawer(true);
@@ -64,33 +76,71 @@ const Task = ({
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
+    let userIdList: any[] = [];
+    const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
+      ?.selectedName;
+    if (assignes && assignes.length > 0) {
+      assignes.map((user: any) => {
+        userIdList.push(user.value);
+      });
+    }
+    userIdList.push(assignes.value);
     data.structure = currentStructure?._id;
-    data.title = `${currentStructure?.name}_${data.date} `;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
     data.context = contextInfo;
-    (data.type = formData.filter(
+    Object.keys(contextInfo).forEach((key) => {
+      if (key !== "id") {
+        data.context = { ...data.context, [key]: contextInfo[key] };
+      }
+    });
+    data.title = formData.filter(
+      (item: any) => item.id == "title"
+    )[0]?.defaultValue;
+
+    data.type = formData.filter(
       (item: any) => item.id == "tasks"
+    )[0]?.defaultValue;
+    (data.priority = formData.filter(
+      (item: any) => item.id == "taskPriority"
     )[0]?.defaultValue),
-      (data.priority = formData.filter(
-        (item: any) => item.id == "taskPriority"
-      )[0]?.defaultValue),
       (data.description = formData.filter(
         (item: any) => item.id == "description"
       )[0]?.defaultValue),
-      (data.assignees = formData.filter(
-        (item: any) => item.id == "assignedTo"
-      )[0]?.selectedName),
-      (data.tags = (
-        formData.filter((item: any) => item.id == "tag-suggestions")[0]
-          ?.chipString || []
-      ).toString()),
-      (data.startdate = formData.filter(
-        (item: any) => item.id == "start-date"
-      )[0]?.defaultValue);
-    data.duedate = formData.filter(
-      (item: any) => item.id == "due-date"
-    )[0]?.defaultValue;
+      (data.assignees = userIdList),
+      (data.tags =
+        (formData.length
+          ? formData
+              .filter((item: any) => item.id == "tag-suggestions")[0]
+              ?.chipString?.join(";")
+          : []) || []),
+      (data.startdate = formData
+        .filter((item: any) => item.id === "dates")[0]
+        ?.fields.filter(
+          (item: any) => item.id == "start-date"
+        )[0]?.defaultValue);
+    data.duedate = formData
+      .filter((item: any) => item.id === "dates")[0]
+      ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
+    data.attachments = formData
+      .filter((item: any) => item.id === "file-upload")[0]
+      .selectedFile.map((eachSelectedFile: any) => {
+        // let reader = new FileReader();
+        // let fileUrl: any = '';
+        // reader.readAsDataURL(eachSelectedFile)
+        // reader.onload = () => {
+        //   console.log("CHECK RESULT FILE", reader.result);
+        //   fileUrl = reader.result ? reader.result : '';
+        // };
+        // reader.onerror = function (error) {
+        //   console.log('Error: ', error);
+        // }
+        return {
+          name: eachSelectedFile.name,
+          url: eachSelectedFile.name,
+          entity: "image",
+        };
+      });
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     console.log("formData", data);
@@ -99,10 +149,18 @@ const Task = ({
         if (response.success === true) {
           toast.success("Task added sucessfully");
           // handleTaskSubmit(formData);
+          taskSubmit(response.result);
+          toolInstance.toolAction = "taskCreateSuccess";
+
           console.log(formData);
+        } else {
+          toolInstance.toolAction = "taskCreateFail";
+          // issueToolClicked(toolInstance);
         }
       })
       .catch((error) => {
+        toolInstance.toolAction = "taskCreateFail";
+
         if (error.success === false) {
           toast.error(error?.message);
         }
@@ -114,19 +172,57 @@ const Task = ({
     setOpenTaskDetail(true);
   };
 
+  const taskSubmit = (formdata: any) => {
+    tasksList.push(formdata);
+    taskMenuInstance.toolAction = "taskCreated";
+    // setCreateOverlay(false);
+    taskMenuClicked(taskMenuInstance);
+  };
+  const openTaskCreateFn = () => {
+    //setCreateOverlay(true);
+    taskMenuInstance.toolAction = "taskCreate";
+    taskMenuClicked(taskMenuInstance);
+  };
+  const closeTaskCreateFn = () => {
+    taskMenuInstance.toolAction = "taskCreateClose";
+    // setCreateOverlay(false);
+    taskMenuClicked(taskMenuInstance);
+  };
+  const openTaskListFn = () => {
+    // setListOverlay(true);
+    taskMenuInstance.toolAction = "taskView";
+    taskMenuClicked(taskMenuInstance);
+  };
+  const closeTaskListFn = () => {
+    // setListOverlay(false);
+    taskMenuInstance.toolAction = "taskViewClose";
+    taskMenuClicked(taskMenuInstance);
+  };
+  const toggleTaskVisibility = () => {
+    setTaskVisibility(!taskVisbility);
+    if (taskVisbility) taskMenuInstance.toolAction = "taskHide";
+    else taskMenuInstance.toolAction = "taskShow";
+    taskMenuClicked(taskMenuInstance);
+  };
+
+  useEffect(() => {
+    setOpenCreateTask(taskOpenDrawer);
+  }, [taskOpenDrawer]);
   return (
     <TaskBox>
-      <TaskTitleDiv>Task: </TaskTitleDiv>
+      <TaskTitle>Task: </TaskTitle>
 
       <IssuesSectionPlusImg>
         <Image
           onClick={() => {
-            setOpenCreateTask(true);
+            openTaskCreateFn();
+
+            // setOpenCreateTask(true);
           }}
           src={plusCircleIcon}
           // onClick={props.rightMenuClickHandler}
-          width={12}
-          height={12}
+          // width={12}
+          // height={12}
           alt="Arrow"
         />{" "}
       </IssuesSectionPlusImg>
@@ -137,8 +233,8 @@ const Task = ({
             handleViewTaskList();
           }}
           src={fileTextIcon}
-          width={12}
-          height={12}
+          // width={12}
+          // height={12}
           alt="Arrow"
         />{" "}
       </IssuesSectionFileImg>

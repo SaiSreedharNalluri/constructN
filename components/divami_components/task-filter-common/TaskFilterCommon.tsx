@@ -91,6 +91,7 @@ import FormWrapper from "../form-wrapper/FormWrapper";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
 import CustomButton from "../custom-button/CustomButton";
 import router from "next/router";
+import TaskFilterFormWrapper from "./TaskFilterWrapper";
 
 import { IProjectUsers } from "../../../models/IProjects";
 import { getProjectUsers } from "../../../services/project";
@@ -104,6 +105,10 @@ interface IProps {
   clickIssueEditSubmit?: (editObj: object, issueObj: object) => void;
   onClose?: any;
   tasksList: any;
+  taskType: any;
+  taskPriority: any;
+  taskStatus: any;
+  projectUsers: any;
 }
 
 // const Footer = () => {
@@ -112,9 +117,13 @@ interface IProps {
 const CloseIcon = styled(Image)({
   cursor: "pointer",
 });
-const TaskFilterCommon: React.FC<IProps> = ({
+const TaskFilterCommon: React.FC<any> = ({
   tasksList,
   onClose,
+  taskType,
+  taskPriority,
+  taskStatus,
+  projectUsers,
   // taskMenuClicked,
   // currentProject,
   // currentStructure,
@@ -125,10 +134,10 @@ const TaskFilterCommon: React.FC<IProps> = ({
   // console.log("tasksListapi", tasksList);
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
   const [dueDate, setDueData] = useState(DATE_PICKER_DATA);
-  const [taskType, setTaskType] = useState<[string]>();
-  const [taskPriority, setTaskPriority] = useState<[string]>();
-  const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
-  const [taskStatus, setTaskStatus] = useState<[string]>();
+  const [taskTypes, setTaskType] = useState<[string]>();
+  const [taskPrioritys, setTaskPriority] = useState<[string]>();
+  const [projectUserss, setProjectUsers] = useState<IProjectUsers[]>([]);
+  const [taskStatuss, setTaskStatus] = useState<[string]>();
 
   const Filters = [
     {
@@ -179,7 +188,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
   };
   const [assignee, setAssignees] = useState([assignees]);
   const handleClose = () => {
-    onClose(true);
+    // onClose(true);
   };
 
   useEffect(() => {
@@ -187,27 +196,23 @@ const TaskFilterCommon: React.FC<IProps> = ({
       getTasksTypes(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskType(response.result);
-          console.log(taskType);
         }
       });
       getTasksPriority(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskPriority(response.result);
-          console.log(taskPriority);
         }
       });
       getProjectUsers(router.query.projectId as string)
         .then((response) => {
           if (response.success === true) {
             setProjectUsers(response.result);
-            console.log(projectUsers);
           }
         })
         .catch();
       getTaskStatus(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskStatus(response.result);
-          console.log(taskStatus);
         }
       });
     }
@@ -220,7 +225,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
         if (item.title === "Issue Type") {
           return {
             ...item,
-            options: taskType?.map((eachItem: any) => {
+            options: taskTypes?.map((eachItem: any) => {
               return {
                 ...eachItem,
                 optionTitle: eachItem,
@@ -232,7 +237,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
         if (item.title === "Issue Priority") {
           return {
             ...item,
-            options: taskPriority?.map((eachItem: any) => {
+            options: taskPrioritys?.map((eachItem: any) => {
               return {
                 ...eachItem,
                 optionTitle: eachItem,
@@ -244,7 +249,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
         if (item.title === "Issue Status") {
           return {
             ...item,
-            options: taskStatus?.map((eachItem: any) => {
+            options: taskStatuss?.map((eachItem: any) => {
               return {
                 ...eachItem,
                 optionTitle: eachItem,
@@ -260,7 +265,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
       return prev.map((item: any) => {
         return {
           ...item,
-          listOfEntries: projectUsers?.map((eachUser: any) => {
+          listOfEntries: projectUserss?.map((eachUser: any) => {
             return {
               ...eachUser,
               label: eachUser?.user?.fullName,
@@ -270,9 +275,9 @@ const TaskFilterCommon: React.FC<IProps> = ({
         };
       });
     });
-  }, [taskType, taskStatus, projectUsers, taskPriority]);
-  if (projectUsers?.length > 0) {
-    projectUsers.map((projectUser: any) => {
+  }, [taskTypes, taskStatuss, projectUserss, taskPrioritys]);
+  if (projectUserss?.length > 0) {
+    projectUserss?.map((projectUser: any) => {
       // usersList.push({
       //   _id: projectUser?.user?._id,
       //   name: projectUser?.user?.fullName,
@@ -390,7 +395,6 @@ const TaskFilterCommon: React.FC<IProps> = ({
     data.taskType = [];
     data.taskPriority = [];
     data.taskStatus = [];
-
     data.assigneesData = assignee[0]?.selectedName;
     FilterState.forEach((item: any) => {
       if (item.title == "Issue Type") {
@@ -507,7 +511,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
           return (
-            <FilterCardContainer>
+            <FilterCardContainer key={index}>
               <FilterCardTitle>
                 <FilterCardTitleText>{each?.title}</FilterCardTitleText>
               </FilterCardTitle>
@@ -556,9 +560,9 @@ const TaskFilterCommon: React.FC<IProps> = ({
                 )}
               </FilterCardSelectAll>
               <FilterCardOptions>
-                {each?.options?.map((item: any) => {
+                {each?.options?.map((item: any, index: number) => {
                   return (
-                    <FilterCardOptionContainer>
+                    <FilterCardOptionContainer key={index}>
                       <FilterCardOptionSpan>
                         {item?.optionStatus === "T" ? (
                           <Image
@@ -594,7 +598,10 @@ const TaskFilterCommon: React.FC<IProps> = ({
 
         <FormElementContainer>
           <CustomLabel label={"Assigned To"} />
-          <FormWrapper config={assignee} setFormConfig={setAssignees} />
+          <TaskFilterFormWrapper
+            config={assignee}
+            setFormConfig={setAssignees}
+          />
         </FormElementContainer>
 
         <FormElementContainer>
@@ -602,12 +609,18 @@ const TaskFilterCommon: React.FC<IProps> = ({
             <DatePickerContainer>
               <div>
                 <CustomLabel label={"Start Date"} />
-                <FormWrapper config={startDate} setFormConfig={setStartData} />
+                <TaskFilterFormWrapper
+                  config={startDate}
+                  setFormConfig={setStartData}
+                />
               </div>
             </DatePickerContainer>
             <div>
               <CustomLabel label={"Due Date"} />
-              <FormWrapper config={dueDate} setFormConfig={setDueData} />
+              <TaskFilterFormWrapper
+                config={dueDate}
+                setFormConfig={setDueData}
+              />
             </div>
           </DatePickersContainer>
         </FormElementContainer>

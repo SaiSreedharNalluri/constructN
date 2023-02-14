@@ -45,10 +45,11 @@ interface IProps {
   closeTaskFilterOverlay: () => void;
   contextInfo: IToolResponse;
   openCreateIssue: boolean;
-  openIssueView: boolean;
+  selectedLayersList: string[];
+  openCreateTask?: any;
 }
 
-const ToolBarMenuWrapper: React.FC<IProps> = ({
+const ToolBarMenuWrapper: React.FC<any> = ({
   toolClicked,
   viewLayers,
   viewMode,
@@ -66,7 +67,8 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
   handleOnTaskFilter,
   contextInfo,
   openCreateIssue,
-  openIssueView,
+  openCreateTask,
+  selectedLayersList,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -102,13 +104,13 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
     setSelectedType(changeOb.target.value);
   };
 
-  const LayerChange = (changeOb: any) => {
+  const LayerChange = (changeOb: any, layerLabel: string) => {
     if (changeOb.target.checked == true) {
       toolInstance.toolName = "addViewLayer";
-      toolInstance.toolAction = changeOb.target.value;
+      toolInstance.toolAction = layerLabel;
     } else {
       toolInstance.toolName = "removeViewLayer";
-      toolInstance.toolAction = changeOb.target.value;
+      toolInstance.toolAction = layerLabel;
     }
 
     toolClicked(toolInstance);
@@ -202,6 +204,7 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
             setOpenSelectTypes(false);
             setOpenSelectLayer(!openSelectLayer);
           }}
+          selectedLayersList={selectedLayersList}
         />
 
         <Issues
@@ -215,7 +218,6 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
           closeFilterOverlay={closeFilterOverlay}
           rightMenuClickHandler={rightMenuClickHandler}
           issueOpenDrawer={openCreateIssue}
-          openIssueView={openIssueView}
         />
 
         <Task
@@ -228,6 +230,7 @@ const ToolBarMenuWrapper: React.FC<IProps> = ({
           closeTaskFilterOverlay={closeTaskFilterOverlay}
           handleOnTaskFilter={handleOnTaskFilter}
           rightMenuClickHandler={rightMenuClickHandler}
+          taskOpenDrawer={openCreateTask}
         />
 
         <Hotspot />

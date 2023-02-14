@@ -1,5 +1,5 @@
-import styled from '@emotion/styled'
-import React, { useRef } from 'react'
+import styled from "@emotion/styled";
+import React, { useRef } from "react";
 
 const UploadImage = () => (
   <svg
@@ -21,7 +21,7 @@ const UploadImage = () => (
       stroke-linecap="round"
     />
   </svg>
-)
+);
 
 const FileUploadContainer = styled.div`
   width: 398px;
@@ -34,39 +34,41 @@ const FileUploadContainer = styled.div`
   border: 1px dotted #f1742e;
   border-radius: 6px;
   gap: 10px;
-`
+`;
 
 const UploadLabelContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
 }
-`
+`;
 
 const HiddenInputField = styled.input`
   display: none;
-`
+`;
 
 const LabelArea = styled.div`
   width: 160px;
-`
+`;
 
 const RedLabel = styled.span`
   color: red;
-`
+`;
 
 const GreyLabel = styled.span`
   color: grey;
-`
-const CustomFileInput = ({ handleFileUpload }) => {
-  const inputRef = useRef(null)
-  const handleFileChange = (event) => {
-    handleFileUpload(event)
-  }
+`;
+const CustomFileInput = ({ handleFileUpload }: any) => {
+  const inputRef = useRef<any>(null);
+  const handleFileChange = (event: any) => {
+    handleFileUpload(event);
+  };
 
   const handleClick = () => {
-    inputRef.current.click()
-  }
+    if (inputRef?.current) {
+      inputRef.current?.click();
+    }
+  };
 
   return (
     <>
@@ -86,7 +88,7 @@ const CustomFileInput = ({ handleFileUpload }) => {
         </UploadLabelContainer>
       </FileUploadContainer>
     </>
-  )
-}
+  );
+};
 
-export default CustomFileInput
+export default CustomFileInput;

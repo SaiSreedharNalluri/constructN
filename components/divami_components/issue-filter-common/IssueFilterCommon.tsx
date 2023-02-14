@@ -34,10 +34,11 @@ import {
   FormElementContainer,
   DatePickersContainer,
   DatePickerContainer,
-} from "./StyledComponent";
+} from "./IssueStyledComponent";
 import { Issue } from "../../../models/Issue";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
-import FormWrapper from "../form-wrapper/FormWrapper";
+// import Fil from "../form-wrapper/FormWrapper";
+import IssueFilterFormWrapper from "./IssueFilterWrapper";
 import CustomLabel from "../custom-label/CustomLabel";
 import { ButtonsContainer } from "../task-filter-common/StyledComponent";
 import CustomButton from "../custom-button/CustomButton";
@@ -421,7 +422,7 @@ const FilterCommon: React.FC<IProps> = ({
     cursor: "pointer",
   });
 
-  console.log("issuesListfooter", issuesList);
+  // console.log("issuesListfooter",issuesList)
   return (
     <FilterCommonMain>
       <FilterCommonHeader>
@@ -452,7 +453,7 @@ const FilterCommon: React.FC<IProps> = ({
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
           return (
-            <FilterCardContainer>
+            <FilterCardContainer key={index}>
               <FilterCardTitle>
                 <FilterCardTitleText>{each?.title}</FilterCardTitleText>
               </FilterCardTitle>
@@ -503,7 +504,7 @@ const FilterCommon: React.FC<IProps> = ({
               <FilterCardOptions>
                 {each?.options?.map((item: any) => {
                   return (
-                    <FilterCardOptionContainer>
+                    <FilterCardOptionContainer key={index}>
                       <FilterCardOptionSpan>
                         {item?.optionStatus === "T" ? (
                           <Image
@@ -539,7 +540,10 @@ const FilterCommon: React.FC<IProps> = ({
 
         <FormElementContainer>
           <CustomLabel label={"Assigned To"} />
-          <FormWrapper config={assignee} setFormConfig={setAssignees} />
+          <IssueFilterFormWrapper
+            config={assignee}
+            setFormConfig={setAssignees}
+          />
         </FormElementContainer>
 
         <FormElementContainer>
@@ -547,12 +551,18 @@ const FilterCommon: React.FC<IProps> = ({
             <DatePickerContainer>
               <div>
                 <CustomLabel label={"Start Date"} />
-                <FormWrapper config={startDate} setFormConfig={setStartData} />
+                <IssueFilterFormWrapper
+                  config={startDate}
+                  setFormConfig={setStartData}
+                />
               </div>
             </DatePickerContainer>
             <div>
               <CustomLabel label={"Due Date"} />
-              <FormWrapper config={dueDate} setFormConfig={setDueData} />
+              <IssueFilterFormWrapper
+                config={dueDate}
+                setFormConfig={setDueData}
+              />
             </div>
           </DatePickersContainer>
         </FormElementContainer>

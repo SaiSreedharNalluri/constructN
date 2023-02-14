@@ -25,7 +25,8 @@ const Typebar = ({
       <TypeParentCont onClick={onListClick}>
         <TypesTitle>{selectedValue}</TypesTitle>
         <TypeArrowIconDiv>
-          <Image src={downArrowIcon} width={12} height={12} alt="Arrow" />
+          {/* <Image src={downArrowIcon} width={12} height={12} alt="Arrow" /> */}
+          <Image src={downArrowIcon} alt="Arrow" />
         </TypeArrowIconDiv>
       </TypeParentCont>
       <SelectLayersWrapper>

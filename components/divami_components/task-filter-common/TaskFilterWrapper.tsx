@@ -5,22 +5,20 @@ import CustomSearch from "../custom-search/CustomSearch";
 import CustomSelect from "../custom-select/CustomSelect";
 import CustomTagSuggestion from "../custom-tag-suggestion/CustomTagSuggestion";
 import { CustomTextField } from "../custom-textfield/CustomTextField";
-import { CustomTextArea } from "../custom-textarea/CustomTextArea";
-
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
 
 const FormElementContainer = styled(Box)({
-  marginTop: "30px",
-});
+  marginTop: '8px'
+})
 
 const DoubleFieldContainer = styled("div")({
-  display: "flex",
-  flexDirection: "row",
-  justifyContent: "space-between",
-});
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between'
+})
 
-const FormWrapper = (props: any) => {
+const TaskFilterFormWrapper = (props: any) => {
   const { config, formState, setFormConfig } = props;
 
   const handleTextChange = (e: any, id: string, data?: any) => {
@@ -40,25 +38,22 @@ const FormWrapper = (props: any) => {
   const handleDateChange = (e: any, id: string) => {
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
-        if (item.id === "dates") {
-          return {
-            ...item,
-            fields: item.fields.map((eachField: any) => {
-              return {
-                ...eachField,
-                defaultValue:
-                  eachField.id == id
-                    ? JSON.parse(JSON.stringify(e))
-                    : eachField.defaultValue,
-              };
-            }),
-          };
-        } else if (id === item.id) {
-          return {
-            ...item,
-            defaultValue: JSON.parse(JSON.stringify(e)),
-          };
-        }
+        if(item.id === "dates"){
+        return {
+          ...item,
+          fields:item.fields.map((eachField:any)=>{
+            return {
+              ...eachField,
+              defaultValue: eachField.id == id? JSON.parse(JSON.stringify(e)) :eachField.defaultValue
+            }
+          })
+        };
+      }else if (id === item.id) {
+        return {
+          ...item,
+          defaultValue: JSON.parse(JSON.stringify(e)),
+        };
+      }
 
         return item;
       })
@@ -84,7 +79,7 @@ const FormWrapper = (props: any) => {
       prev.map((item: any) => {
         if (id === item.id) {
           let files: any = [];
-          Object.keys(e.target.files).forEach((eachkey) => {
+          Object.keys(e.target.files).forEach(eachkey => {
             files.push(e.target.files[eachkey]);
           });
           return {
@@ -123,30 +118,6 @@ const FormWrapper = (props: any) => {
             setFormConfig={setFormConfig}
             isError={data.isError}
             label=""
-          />
-        );
-      case "textarea":
-        return (
-          <CustomTextArea
-            id={data.id}
-            variant="outlined"
-            placeholder={data?.placeholder}
-            onChange={(e: any) => {
-              handleTextChange(e, data.id, data);
-            }}
-            onBlur={(e: any) => {
-              handleTextChange(e, data.id, data);
-            }}
-            defaultValue={data.placeHolder}
-            isError={data.isError}
-            dataTestId="inputTextField"
-            isRequired={data.isReq}
-            type={data.type}
-            minVal={data?.minVal}
-            maxVal={data?.maxVal}
-            showRangeError={data.showRangeError}
-            isDisabled={data.isDisabled}
-            className={undefined}
           />
         );
       case "textfield":
@@ -209,14 +180,12 @@ const FormWrapper = (props: any) => {
         return (
           <DoubleFieldContainer>
             {data.fields?.map((eachConfig: any, index: number) => {
-              return (
-                <Box key={eachConfig.id}>
-                  {eachConfig.formLabel ?? (
-                    <CustomLabel label={eachConfig.formLabel} />
-                  )}
-                  {renderHTML(eachConfig, false, index)}
-                </Box>
-              );
+              return <Box key={eachConfig.id}>
+              {eachConfig.formLabel ?? (
+                <CustomLabel label={eachConfig.formLabel} />
+              )}
+              {renderHTML(eachConfig, false, index)}
+            </Box>
             })}
           </DoubleFieldContainer>
         );
@@ -224,6 +193,7 @@ const FormWrapper = (props: any) => {
         return "";
     }
   };
+
 
   return (
     <div>
@@ -241,4 +211,4 @@ const FormWrapper = (props: any) => {
   );
 };
 
-export default FormWrapper;
+export default TaskFilterFormWrapper;

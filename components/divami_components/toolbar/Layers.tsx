@@ -27,21 +27,23 @@ const Layers = ({
   onListClick,
   openList,
   setOpenList,
+  selectedLayersList,
 }: any) => {
   return (
     <>
       <LayersWrapper onClick={onListClick}>
         <LayerSecondSectionHexImg>
-          <Image src={hexagonIcon} width={12} height={12} alt="Arrow" />{" "}
+          <Image src={hexagonIcon} alt="Arrow" />{" "}
         </LayerSecondSectionHexImg>
         <LayerSecondSectionCamImg>
-          <Image src={cameraIcon} width={12} height={12} alt="Arrow" />{" "}
+          <Image src={cameraIcon} alt="Arrow" />{" "}
+          {/* <Image src={cameraIcon} width={18} height={18} alt="Arrow" />{" "} */}
         </LayerSecondSectionCamImg>
         <LayerSecondSectionCamImg>
-          <Image src={videoRecorderIcon} width={12} height={12} alt="Arrow" />{" "}
+          <Image src={videoRecorderIcon} alt="Arrow" />{" "}
         </LayerSecondSectionCamImg>
         <LayerSecondSectionArrImg>
-          <Image src={downArrowIcon} width={12} height={12} alt="Arrow" />{" "}
+          <Image src={downArrowIcon} alt="Arrow" />{" "}
         </LayerSecondSectionArrImg>
       </LayersWrapper>
       <SelectLayersWrapper>
@@ -53,6 +55,7 @@ const Layers = ({
           }}
           optionsList={myLayersList}
           onSelect={LayerChange}
+          selectedLayersList={selectedLayersList}
         />
       </SelectLayersWrapper>
     </>
