@@ -7,8 +7,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Typography from "@mui/material/Typography";
 import { IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import { fontSize } from "@mui/system";
+import CrossIcon from "../../public/divami_icons/crossIcon.svg";
+import Image from 'next/image';
+
+export const CloseIcon = styled(Image)({
+  cursor: 'pointer',
+});
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -17,6 +22,9 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogActions-root": {
     padding: theme.spacing(1),
   },
+  "& .MuiPaper-root.MuiDialog-paper": {
+    width: "493px",
+  }
 }));
 const ButtonDiv = styled("div")({});
 
@@ -43,7 +51,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
       {...other}
       style={{
         fontSize: "16px",
-        padding: "14px",
+        padding: "16px",
       }}
     >
       {children}
@@ -54,11 +62,14 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
           sx={{
             position: "absolute",
             right: 8,
-            top: 8,
+            top: 15,
             color: (theme) => theme.palette.grey[500],
           }}
         >
-          <CloseIcon />
+          <CloseIcon
+            src={CrossIcon}
+            alt={"close icon"}
+          />
         </IconButton>
       ) : null}
     </DialogTitle>
@@ -105,6 +116,8 @@ const PopupComponent = (props: PopupComponentProps) => {
                 color: "#F1742E",
                 width: "180px",
                 height: "40px",
+                textTransform: "none",
+                marginBottom: "30px",
               }}
             >
               {SecondaryButtonlabel}
@@ -117,6 +130,9 @@ const PopupComponent = (props: PopupComponentProps) => {
                 backgroundColor: "#F1742E",
                 width: "180px",
                 height: "40px",
+                marginBottom: "30px",
+                marginRight: "30px",
+                textTransform: "none",
               }}
             >
               {primaryButtonLabel}

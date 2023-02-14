@@ -916,8 +916,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
         <PopupComponent
           open={showPopUp}
           setShowPopUp={setshowPopUp}
-          modalTitle={'Are you sure you want to delete this Task?'}
-          modalmessage={task._id}
+          modalTitle={'Delete Task'}
+          modalmessage={`Are you sure you want to delete this Task "${task.type}(#${task._id})"?`}
           primaryButtonLabel={'Delete'}
           SecondaryButtonlabel={'Cancel'}
           callBackvalue={onDeleteTask}
