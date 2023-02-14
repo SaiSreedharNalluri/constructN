@@ -188,7 +188,7 @@ const TaskFilterCommon: React.FC<any> = ({
   };
   const [assignee, setAssignees] = useState([assignees]);
   const handleClose = () => {
-    // onClose(true);
+    onClose(true);
   };
 
   useEffect(() => {
