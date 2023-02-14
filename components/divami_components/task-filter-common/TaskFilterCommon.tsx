@@ -97,6 +97,10 @@ interface IProps {
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
   onClose: any;
   tasksList: any;
+  taskType: any;
+  taskPriority: any;
+  taskStatus: any;
+  projectUsers: any;
 }
 
 // const Footer = () => {
@@ -105,9 +109,13 @@ interface IProps {
 const CloseIcon = styled(Image)({
   cursor: "pointer",
 });
-const TaskFilterCommon: React.FC<IProps> = ({
+const TaskFilterCommon: React.FC<any> = ({
   tasksList,
   onClose,
+  taskType,
+  taskPriority,
+  taskStatus,
+  projectUsers,
   // taskMenuClicked,
   // currentProject,
   // currentStructure,
@@ -334,7 +342,7 @@ const TaskFilterCommon: React.FC<IProps> = ({
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
           return (
-            <FilterCardContainer>
+            <FilterCardContainer key={index}>
               <FilterCardTitle>
                 <FilterCardTitleText>{each?.title}</FilterCardTitleText>
               </FilterCardTitle>
@@ -383,9 +391,9 @@ const TaskFilterCommon: React.FC<IProps> = ({
                 )}
               </FilterCardSelectAll>
               <FilterCardOptions>
-                {each?.options?.map((item: any) => {
+                {each?.options?.map((item: any, index: number) => {
                   return (
-                    <FilterCardOptionContainer>
+                    <FilterCardOptionContainer key={index}>
                       <FilterCardOptionSpan>
                         {item?.optionStatus === "T" ? (
                           <Image
@@ -421,17 +429,20 @@ const TaskFilterCommon: React.FC<IProps> = ({
 
         <FormElementContainer>
           <CustomLabel label={"Assigned To"} />
-          <TaskFilterFormWrapper config={SEARCH_CONFIG} setFormConfig={SEARCH_CONFIG} />
+          <TaskFilterFormWrapper
+            config={SEARCH_CONFIG}
+            setFormConfig={SEARCH_CONFIG}
+          />
         </FormElementContainer>
 
         <FormElementContainer>
           <DatePickersContainer>
             <DatePickerContainer>
-               <div>
-              <CustomLabel label={"Start Date"} />
-              <TaskFilterFormWrapper
-                config={datePickerData}
-                setFormConfig={setDatePickerData}
+              <div>
+                <CustomLabel label={"Start Date"} />
+                <TaskFilterFormWrapper
+                  config={datePickerData}
+                  setFormConfig={setDatePickerData}
                 />
               </div>
             </DatePickerContainer>

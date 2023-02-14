@@ -15,10 +15,14 @@ import {
   SelectLayerContainer,
   StyledTreeItem,
   StyledTreeView,
-  TreeViewContainer
+  TreeViewContainer,
 } from "./StyledComponents";
 import type { RenderTree, SelectLayerProps } from "./Type";
-import { getSelectedLayers, getTreeViewDataForLayers, handleSelection } from "./Utils";
+import {
+  getSelectedLayers,
+  getTreeViewDataForLayers,
+  handleSelection,
+} from "./Utils";
 
 const SelectLayer = ({
   title,
@@ -26,9 +30,11 @@ const SelectLayer = ({
   onCloseHandler,
   optionsList,
   onSelect,
-  selectedLayersList
+  selectedLayersList,
 }: SelectLayerProps) => {
-  const [treeViewData, setTreeViewData] = useState(getTreeViewDataForLayers(optionsList));
+  const [treeViewData, setTreeViewData] = useState(
+    getTreeViewDataForLayers(optionsList)
+  );
   const [filtedTreeViewData, setFilteredTreeViewData] = useState(treeViewData);
   const [selectedLayers, setSelectedLayers] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -42,9 +48,13 @@ const SelectLayer = ({
         onChange={(e) => {
           const arr = handleSelection(treeViewData, node.id);
           setTreeViewData([...arr]);
-          onSelect(e, node.name)
+          onSelect(e, node.name);
         }}
-        checked={selectedLayersList.includes(node.name)}
+        checked={
+          selectedLayersList?.length && selectedLayersList.includes(node.name)
+            ? true
+            : false
+        }
       />
       <span>{node.name}</span>
     </div>
@@ -70,16 +80,16 @@ const SelectLayer = ({
 
   useEffect(() => {
     const layersListData = getTreeViewDataForLayers(optionsList);
-    setTreeViewData(layersListData)
-    setFilteredTreeViewData(layersListData)
-  }, [optionsList])
+    setTreeViewData(layersListData);
+    setFilteredTreeViewData(layersListData);
+  }, [optionsList]);
 
   const handleSearch = (event: any) => {
-    setSearchTerm(event.target.value)
+    setSearchTerm(event.target.value);
     const searchResult = treeViewData?.filter((eachNode) =>
-      eachNode.name.toLowerCase().includes(event.target.value.toLowerCase()),
-    )
-    setFilteredTreeViewData(searchResult)
+      eachNode.name.toLowerCase().includes(event.target.value.toLowerCase())
+    );
+    setFilteredTreeViewData(searchResult);
   };
 
   return (

@@ -40,6 +40,7 @@ const SelectTypesList = ({
       const searchedList = Object.keys(optionsList).filter((item: any) =>
         item.toLowerCase().includes(String(event.target.value)?.toLowerCase())
       );
+      console.log(searchedList);
       setList(searchedList);
     } else {
       setList(Object.keys(optionsList));

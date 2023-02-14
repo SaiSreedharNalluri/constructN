@@ -15,5 +15,5 @@ export interface SelectLayerProps {
   onCloseHandler: () => void;
   optionsList: any;
   onSelect: any;
-  selectedLayersList: string[]
+  selectedLayersList?: string[];
 }
