@@ -56,6 +56,7 @@ const CustomTagSuggestion = (props: any) => {
       id="tags-outlined"
       options={[]}
       value={autoCompleteValue}
+      freeSolo
       onChange={(e, newval, reason) => {
         setAutoCompleteValue(newval as any);
       }}
