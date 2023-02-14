@@ -574,7 +574,7 @@ const Index: React.FC<IProps> = () => {
         // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
         //   formData.toDate == "") &&
         item.assignees.filter(
-          (userInfo: any) => userInfo._id === formData.assignees
+          (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
         )
     );
     setTasksList(result);
