@@ -63,7 +63,7 @@
 }
 
 .panoIcon {
-  background: #F1742E;
+  background: #f1742e;
   border-radius: 100%;
   position: absolute;
   z-index: 101;
@@ -111,18 +111,15 @@
   }
 }
 
-.spinner>circle {
+.spinner > circle {
   fill: transparent;
 }
 
 .toolbarWidth {
-  width: fit-content;
-  left: 22%;
-}
-
-.toolbarcontainer {
-  width: 70%;
-  margin: auto;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
 .MuiDrawer-paper {
@@ -150,7 +147,8 @@ body {
 @font-face {
   font-family: "Open Sans";
   src: local("Lato"),
-    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf") format("opentype");
+    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf")
+      format("opentype");
 }
 
 .white-bg {
