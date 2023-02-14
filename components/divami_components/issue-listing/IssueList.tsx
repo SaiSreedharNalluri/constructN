@@ -1,4 +1,4 @@
-import { Box, Drawer } from "@mui/material";
+import { Box, Drawer, InputAdornment } from "@mui/material";
 import Image from "next/image";
 
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
@@ -10,7 +10,7 @@ import Divider from "../../../public/divami_icons/divider.svg";
 import downArrow from "../../../public/divami_icons/downArrow.svg";
 import commission from "../../../public/divami_icons/commission.svg";
 import designIcon from "../../../public/divami_icons/designIcon.svg";
-
+import SearchIcon from "@mui/icons-material/Search";
 import Moment from "moment";
 
 import {
@@ -46,10 +46,11 @@ import HourglassIcon from "../../../public/divami_icons/hourGlassIcon.svg";
 import IssuesHighlightedIcon from "../../../public/divami_icons/issuesHighlightedIcon.svg";
 
 import { Issue } from "../../../models/Issue";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import moment from "moment";
 import { ITools } from "../../../models/ITools";
 import FilterCommon from "../issue-filter-common/IssueFilterCommon";
+import { CustomSearchField, SearchAreaContainer } from "../task_list/TaskListStyles";
 
 interface IProps {
   closeOverlay: () => void;
@@ -74,49 +75,17 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   clickIssueEditSubmit,
   onClose,
 }) => {
-  const issueListing = [
-    {
-      id: 107,
-      title: "Submittals",
-      status: "In Progress",
-      priority: "Medium",
-      assignee: "Alex Brandon",
-      due_date: "2023-02-09T05:04:01.012Z",
-    },
-
-    {
-      id: 320,
-      title: "Transmittals",
-      status: "Completed",
-      priority: "Medium",
-      assignee: "Charles Sean",
-      due_date: "2023-02-18T05:04:01.012Z",
-    },
-    {
-      id: 407,
-      title: "Submittals",
-      status: "To-do",
-      priority: "High",
-      assignee: "Ben Fratz",
-      due_date: "2023-02-14T05:04:01.012Z",
-    },
-    {
-      id: 407,
-      title: "Submittals",
-      status: "To-do",
-      priority: "High",
-      assignee: "Ben Fratz",
-      due_date: "2023-02-11T05:04:01.012Z",
-    },
-  ];
 
   const handleClose = () => {
     onClose(true);
   };
-  const [sortedDates, setSortedDates] = useState(issuesList);
+  const [issuesListData, setIssuesListData] = useState(issuesList);
   const [sortOrder, setSortOrder] = useState("asc");
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
+  const [searchingOn, setSearchingOn] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredIssuesList, setFilteredTaskList] = useState(issuesList);
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
 
   const closeIssueList = () => {
@@ -143,8 +112,37 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       });
       setSortOrder("asc");
     }
-    setSortedDates(sorted);
+    setIssuesListData(sorted);
   };
+
+  const handleSearchWindow = () => {
+    if (searchTerm === "") {
+      setSearchingOn(!searchingOn);
+    }
+    else {
+      setSearchTerm("");
+    }
+  };
+
+  const handleSearch = () => {
+    const filteredData = issuesList?.filter(eachTask => {
+      const taskName = eachTask.type.toLowerCase();
+      return taskName.includes(searchTerm.toLowerCase());
+    })
+    setFilteredTaskList([...filteredData])
+  }
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm]);
+
+  useEffect(() => {
+    setFilteredTaskList(issuesList);
+  }, [issuesList]);
+
+  useEffect(() => {
+    setIssuesListData(filteredIssuesList);
+  }, [filteredIssuesList])
 
   console.log("issuesListnot fott-2", issuesList, openDrawer);
   return (
@@ -165,33 +163,67 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
       <MiniHeaderContainer>
         <MiniSymbolsContainer>
-          <SearchGlassIcon src={Search} alt={"close icon"} />
-          <DividerIcon src={Divider} alt="" />
+          {searchingOn ?
+            <SearchAreaContainer>
+              <CustomSearchField
+                placeholder="Search"
+                variant="outlined"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                }}
+                InputLabelProps={{ shrink: false }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <CloseIcon
+                        onClick={() => {
+                          handleSearchWindow();
+                        }}
+                        src={CrossIcon}
+                        alt={"close icon"}
+                      />
+                    </InputAdornment>
+                  )
+                }}
+              />
 
-          {sortOrder === "asc" ? (
-            <ArrowUpIcon onClick={sortDateOrdering} src={UpArrow} alt="Arrow" />
-          ) : (
-            <ArrowDownIcon
-              onClick={sortDateOrdering}
-              src={downArrow}
-              alt="Arrow"
-            />
-          )}
-          <DueDate>Due Date</DueDate>
-          <DownloadIcon src={Download} alt="Arrow" />
-          <FunnelIcon
-            src={FilterInActive}
-            alt="Arrow"
-            onClick={() => {
-              handleViewTaskList();
-            }}
-          />
+            </SearchAreaContainer> : <>
+              <SearchGlassIcon src={Search} alt={"close icon"} onClick={() => setSearchingOn(prev => !prev)} />
+              <DividerIcon src={Divider} alt="" />
+
+              {sortOrder === "asc" ? (
+                <ArrowUpIcon onClick={sortDateOrdering} src={UpArrow} alt="Arrow" />
+              ) : (
+                <ArrowDownIcon
+                  onClick={sortDateOrdering}
+                  src={downArrow}
+                  alt="Arrow"
+                />
+              )}
+              <DueDate>Due Date</DueDate>
+              <DownloadIcon src={Download} alt="Arrow" />
+              <FunnelIcon
+                src={FilterInActive}
+                alt="Arrow"
+                onClick={() => {
+                  handleViewTaskList();
+                }}
+              />
+            </>
+          }
+
         </MiniSymbolsContainer>
       </MiniHeaderContainer>
 
       <BodyContainer>
         <Box sx={{ marginTop: "15px" }}>
-          {sortedDates.map((val, index: number) => {
+          {issuesListData.map((val, index: number) => {
             return (
               <div key={index}>
                 <BodyInfo>
@@ -201,20 +233,20 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         val.type === "RFI"
                           ? RFIList
                           : val.type === "Safety"
-                          ? HourglassIcon
-                          : val.type === "Transmittals"
-                          ? TransmittalList
-                          : val.type === "Clash"
-                          ? SubmittalList
-                          : val.type === "Commissioning"
-                          ? commission
-                          : val.type === "Building code"
-                          ? HourglassIcon
-                          : val.type === "Design"
-                          ? designIcon
-                          : val.type === "Submittals"
-                          ? SubmittalList
-                          : ""
+                            ? HourglassIcon
+                            : val.type === "Transmittals"
+                              ? TransmittalList
+                              : val.type === "Clash"
+                                ? SubmittalList
+                                : val.type === "Commissioning"
+                                  ? commission
+                                  : val.type === "Building code"
+                                    ? HourglassIcon
+                                    : val.type === "Design"
+                                      ? designIcon
+                                      : val.type === "Submittals"
+                                        ? SubmittalList
+                                        : ""
                       }
                       alt="Arrow"
                     />
@@ -257,9 +289,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => {}}
-            deleteTheIssue={() => {}}
-            clickIssueEditSubmit={() => {}}
+            handleOnSort={() => { }}
+            deleteTheIssue={() => { }}
+            clickIssueEditSubmit={() => { }}
           />
         </Drawer>
       )}
