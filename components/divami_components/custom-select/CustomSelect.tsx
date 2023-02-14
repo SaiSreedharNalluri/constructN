@@ -1,5 +1,5 @@
 import { MenuItem, Select } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/system";
 
 const StyledSelect = styled(Select)({
@@ -37,9 +37,9 @@ const CustomSelectContainer = styled("div")({
 });
 
 const CustomSelect = (props: any) => {
-  const { config, defaultValue, id, setFormConfig } = props;
+  const { config, data, defaultValue, id, setFormConfig } = props;
 
-  const [val, setVal] = useState(defaultValue);
+  const [val, setVal] = useState(data?.defaultValue);
 
   const handlechange = (e: any) => {
     setVal(e.target.value);
@@ -65,6 +65,10 @@ const CustomSelect = (props: any) => {
     );
   };
 
+  useEffect(() => {
+    setVal(data.defaultValue);
+  }, [data?.defaultValue]);
+  console.log(val, "val");
   return (
     <CustomSelectContainer>
       <StyledSelect value={val} onChange={handlechange} id={id}>

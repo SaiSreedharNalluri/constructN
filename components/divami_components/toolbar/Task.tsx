@@ -40,7 +40,8 @@ const Task = ({
   taskOpenDrawer,
   taskLayer,
   taskMenuClicked,
-  deleteTheTask
+  deleteTheTask,
+  taskFilterState,
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -50,6 +51,7 @@ const Task = ({
   const [myTypesList, setMyTypesList] = useState(currentTypesList);
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
+
   const [taskVisbility, setTaskVisibility] = useState(
     taskLayer === undefined ? false : taskLayer
   );
@@ -261,10 +263,12 @@ const Task = ({
             currentProject={myProject}
             currentStructure={myStructure}
             currentSnapshot={mySnapshot}
+            contextInfo={contextInfo}
             closeTaskFilterOverlay={closeTaskFilterOverlay}
             handleOnTaskFilter={handleOnTaskFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
             deleteTheTask={deleteTheTask}
+            taskFilterState={taskFilterState}
           />
         </Drawer>
       )}

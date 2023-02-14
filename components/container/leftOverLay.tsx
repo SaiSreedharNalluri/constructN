@@ -14,10 +14,21 @@ import { Formik, Form, Field } from "formik";
 interface IProps {
   getStructureData: (structure: ChildrenEntity) => void;
   getStructure: (Structure: ChildrenEntity) => void;
-  setHierarchy: any
+  setHierarchy: any;
+  handleNodeSelection: any;
+  selectedNodes: any;
+  handleNodeExpand: any;
+  expandedNodes: any;
 }
-const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure,
-  setHierarchy }) => {
+const LeftOverLay: React.FC<IProps> = ({
+  getStructureData,
+  getStructure,
+  setHierarchy,
+  handleNodeSelection,
+  selectedNodes,
+  handleNodeExpand,
+  expandedNodes,
+}) => {
   let router = useRouter();
   let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   let [stateFilter, setStateFilter] = useState<ChildrenEntity[]>([]);
@@ -43,19 +54,24 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure,
   function filterBy(arr: ChildrenEntity[], query: string) {
     return query
       ? arr.reduce((acc: any, item: any) => {
-        if (item.children?.length) {
-          const filtered: any = filterBy(item.children, query);
-          if (filtered.length)
-            return [...acc, { ...item, children: filtered }];
-        }
+          if (item.children?.length) {
+            const filtered: any = filterBy(item.children, query);
+            if (filtered.length)
+              return [...acc, { ...item, children: filtered }];
+          }
 
-        const { children, ...itemWithoutChildren } = item;
-        return item.name?.toLowerCase().includes(query.toLowerCase())
-          ? [...acc, itemWithoutChildren]
-          : acc;
-      }, [])
+          const { children, ...itemWithoutChildren } = item;
+          return item.name?.toLowerCase().includes(query.toLowerCase())
+            ? [...acc, itemWithoutChildren]
+            : acc;
+        }, [])
       : arr;
   }
+
+  // const [selected, setSelected] = useState<string[]>([]);
+  // const handleNodeSelection = (nodeIds: any) => {
+  //   setSelected(nodeIds);
+  // };
   return (
     <React.Fragment>
       {/* <Formik
@@ -95,10 +111,13 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure,
               onCloseHandler={() => {
                 // setOpenSelectLayer(false)
                 setHierarchy(false);
-
               }}
               treeData={state}
               getStructureData={getStructureData}
+              handleNodeSelection={handleNodeSelection}
+              selectedNodes={selectedNodes}
+              handleNodeExpand={handleNodeExpand}
+              expandedNodes={expandedNodes}
             />
           </>
         }

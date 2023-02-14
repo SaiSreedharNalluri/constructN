@@ -6,6 +6,7 @@ import type { Dayjs } from "dayjs";
 import * as React from "react";
 import { styled } from "@mui/system";
 import Box from "@mui/material/Box";
+import { useEffect } from "react";
 
 const CustomDatePicker = styled(DatePicker)({
   border: "1px solid #36415d",
@@ -47,7 +48,12 @@ const CustomDatePickerInputField = styled(TextField)({
 
 const CustomCalender = (props: any) => {
   const { data, onChange, hideTextField = false } = props;
-  const [value, setValue] = React.useState<Dayjs | null>(null);
+  const [value, setValue] = React.useState<Dayjs | null>(
+    data?.defaultValue || null
+  );
+  useEffect(() => {
+    setValue(data?.defaultValue);
+  }, [data?.defaultValue]);
   return (
     <div data-testid="custom-calender-parent">
       <LocalizationProvider dateAdapter={AdapterDayjs}>

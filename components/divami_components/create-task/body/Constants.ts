@@ -75,6 +75,7 @@ export const TASK_FORM_CONFIG = [
     ],
     selectedName: null,
     label: "Select Name or Team",
+    defaultValue: [],
   },
   {
     id: "dates",
@@ -105,11 +106,13 @@ export const TASK_FORM_CONFIG = [
     type: "chip",
     chipString: [],
     formLabel: "Enter Some Suggested Tags",
+    defaultValue: [],
   },
   {
     id: "file-upload",
     type: "file",
     selectedFiles: null,
+    defaultValue: [],
   },
 ];
 export const TYPES_OF_ISSUES = [
