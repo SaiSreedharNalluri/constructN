@@ -23,6 +23,7 @@ const Index: React.FC = () => {
               <Tabs
                 selectedIndex={tabIndex}
                 onSelect={(index) => setTabIndex(index)}
+                style={{ marginLeft: "1px" }}
               >
                 <Tabs>
                   <TabList>

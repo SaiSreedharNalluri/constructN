@@ -21,8 +21,26 @@ export const SideMenuOption = styled("div")({
   display: "flex",
 });
 
+
+export const OvershowImg = styled("div")({
+  
+  width: "62px",
+  height: "62px",
+  // width: "100%",
+  // height:"100%",
+  borderRadius: "100%",
+  position: "absolute",
+  left:"10px",
+  zIndex:"20",
+  backgroundColor: "white",
+  // border:"2px solid green"
+  // boxShadow: "3px 0px 4px rgba(0, 0, 0, 0.25)",
+
+});
+
 export const SideMenuOptionImageContainer = styled("div")({
   display: "flex",
+  
   justifyContent: "center",
   alignItems: "center",
   width: "59px",
@@ -36,10 +54,13 @@ export const StyledImage = styled(Image)`
 export const HighlightedSytledImage = styled(Image)`
   cursor: pointer;
   position:absolute;
-  margin-left:18px;
+  margin-left:6px;
+   margin-top:6px;
   width:54px;
   height:54px;
   z-index:999;
+  // box-shadow:3px 0px 4px rgba(0, 0, 0, 0.25);
+
 `;
 
 // const SideMenuImageActive = styled(Image)({

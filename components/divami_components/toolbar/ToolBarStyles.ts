@@ -75,6 +75,7 @@ export const SectionToolBar = styled("div")({
   display: "block",
   marginLeft: "auto",
   marginRight: "auto",
+  marginTop:"14px",
 });
 
 export const ToolbarContainer = styled("div")({

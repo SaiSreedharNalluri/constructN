@@ -680,9 +680,9 @@ const Index: React.FC<IProps> = () => {
               {
                 <div
                   ref={leftRefContainer}
-                  className={` ${
+                  className={`${
                     hierarchy ? "visible" : "hidden"
-                  } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg`}
+                  } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg projHier `}
                 >
                   <div>
                     <LeftOverLay

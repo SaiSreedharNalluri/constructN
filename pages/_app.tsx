@@ -52,11 +52,8 @@ export default function App({ Component, pageProps }: AppProps) {
 
       <StyledToastContainer
         position="bottom-right"
-        autoClose={false}
+        autoClose={5000}
         hideProgressBar={true}
-        closeOnClick
-        rtl={false}
-        pauseOnHover={true}
       />
     </>
   );

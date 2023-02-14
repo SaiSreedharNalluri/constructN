@@ -23,6 +23,7 @@ import peopleHighlighted from "../../../public/divami_icons/peopleHighlighted.sv
 
 import {
   HighlightedSytledImage,
+  OvershowImg,
   SideMenuContainer,
   SideMenuOption,
   SideMenuOptionContainer,
@@ -170,12 +171,14 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           >
             <SideMenuOptionImageContainer>
               {router.pathname.includes(item.id) ? (
-                <HighlightedSytledImage
-                  src={item.activeIcon}
-                  alt={item.id}
-                  id={item.id}
-                  onClick={leftClickHandler}
-                />
+                <OvershowImg>
+                  <HighlightedSytledImage
+                    src={item.activeIcon}
+                    alt={item.id}
+                    id={item.id}
+                    onClick={leftClickHandler}
+                  />
+                </OvershowImg>
               ) : (
                 <StyledImage
                   src={item.icon}

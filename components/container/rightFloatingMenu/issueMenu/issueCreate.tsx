@@ -476,8 +476,6 @@ const IssueCreate: React.FC<IProps> = ({
           )}
         </Formik>
       </div>
-
-      <CustomToaster successMessage={successMessage} />
     </div>
   );
 };
