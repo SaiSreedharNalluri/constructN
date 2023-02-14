@@ -47,6 +47,8 @@ interface IProps {
   openCreateIssue: boolean;
   selectedLayersList: string[];
   openCreateTask?: any;
+  taskFilterState?: any;
+  issueFilterState?: any;
 }
 
 const ToolBarMenuWrapper: React.FC<any> = ({
@@ -69,6 +71,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   openCreateIssue,
   openCreateTask,
   selectedLayersList,
+  taskFilterState,
+  issueFilterState,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -218,6 +222,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           closeFilterOverlay={closeFilterOverlay}
           rightMenuClickHandler={rightMenuClickHandler}
           issueOpenDrawer={openCreateIssue}
+          issueFilterState={issueFilterState}
         />
 
         <Task
@@ -231,6 +236,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           handleOnTaskFilter={handleOnTaskFilter}
           rightMenuClickHandler={rightMenuClickHandler}
           taskOpenDrawer={openCreateTask}
+          taskFilterState={taskFilterState}
         />
 
         <Hotspot />

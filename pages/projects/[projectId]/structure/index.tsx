@@ -109,7 +109,23 @@ const Index: React.FC<IProps> = () => {
     type: "Task",
   });
   const [hierarchy, setHierarchy] = useState(false);
-
+  const [selected, setSelected] = useState<string[]>([]);
+  const [expanded, setExpanded] = useState<string[]>([]);
+  const handleNodeSelection = (nodeIds: any) => {
+    setSelected(nodeIds);
+  };
+  const handleNodeExpand = (data: any) => {
+    setExpanded(data);
+    // setExpanded(getAllIds(treeViewData));
+  };
+  const [taskFilterState, setTaskFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {},
+  });
+  const [issueFilterState, setIssueFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {},
+  });
   const closeIssueCreate = () => {
     setOpenCreateIssue(false);
   };
@@ -292,7 +308,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: ITools) => {
-    let newLayers = structuredClone(currentViewLayers);
+    let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.toolName) {
       case "viewType":
         setViewType(toolInstance.toolAction);
@@ -552,8 +568,8 @@ const Index: React.FC<IProps> = () => {
           formData?.issuePriorityData?.length == 0) &&
         (formData?.issueStatusData?.includes(item.status) ||
           formData?.issueStatusData.length == 0) &&
-        (formData?.assigneesData?.some((ass: any) =>
-          item.assignees.some((it: any) => ass.value === it._id)
+        (item.assignees.filter(
+          (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
         ) ||
           formData?.assigneesData?.length == 0) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
@@ -562,9 +578,17 @@ const Index: React.FC<IProps> = () => {
           formData.toDate == "")
     );
     setIssueList(result);
+    setIssueFilterState({
+      isFilterApplied: true,
+      filterData: formData,
+    });
   };
   const closeFilterOverlay = () => {
     setIssueList(issueFilterList);
+    setIssueFilterState({
+      isFilterApplied: false,
+      filterData: {},
+    });
   };
   const handleOnTaskFilter = (formData: any) => {
     console.log(formData);
@@ -583,9 +607,17 @@ const Index: React.FC<IProps> = () => {
         )
     );
     setTasksList(result);
+    setTaskFilterState({
+      isFilterApplied: true,
+      filterData: formData,
+    });
   };
   const closeTaskFilterOverlay = () => {
     setTasksList(taskFilterList);
+    setTaskFilterState({
+      isFilterApplied: false,
+      filterData: {},
+    });
   };
   const deleteTheIssue = (issueObj: any) => {
     deleteIssue(router.query.projectId as string, issueObj._id)
@@ -644,6 +676,10 @@ const Index: React.FC<IProps> = () => {
               <div>
                 <LeftOverLay
                   getStructureData={getStructureData}
+                  handleNodeSelection={handleNodeSelection}
+                  handleNodeExpand={handleNodeExpand}
+                  selectedNodes={selected}
+                  expandedNodes={expanded}
                   setHierarchy={setHierarchy}
                   getStructure={(structureData) => {
                     if (structure === undefined) {
@@ -685,6 +721,10 @@ const Index: React.FC<IProps> = () => {
                 >
                   <div>
                     <LeftOverLay
+                      handleNodeSelection={handleNodeSelection}
+                      selectedNodes={selected}
+                      handleNodeExpand={handleNodeExpand}
+                      expandedNodes={expanded}
                       getStructureData={getStructureData}
                       setHierarchy={setHierarchy}
                       getStructure={(structureData) => {
@@ -794,6 +834,8 @@ const Index: React.FC<IProps> = () => {
               openCreateIssue={openCreateIssue}
               openCreateTask={openCreateTask}
               selectedLayersList={currentViewLayers}
+              taskFilterState={taskFilterState}
+              issueFilterState={issueFilterState}
             />
             {/* </div> */}
             {/* <RightFloatingMenu

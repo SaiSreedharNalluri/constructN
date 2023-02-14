@@ -62,6 +62,7 @@ interface IProps {
   deleteTheIssue: (issueObj: object) => void;
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
   onClose: any;
+  taskFilterState: any;
 }
 
 const CustomTaskListDrawer = (props: any) => {
@@ -74,6 +75,7 @@ const CustomTaskListDrawer = (props: any) => {
     currentSnapshot,
     closeTaskFilterOverlay,
     handleOnTaskFilter,
+    taskFilterState,
   } = props;
 
   const [taskType, setTaskType] = useState<[string]>();
@@ -88,7 +90,11 @@ const CustomTaskListDrawer = (props: any) => {
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredTaskList, setFilteredTaskList] = useState(taskListDataState);
+  const [taskList, setTaskList] = useState([]);
 
+  useEffect(() => {
+    setTaskList(tasksList);
+  }, []);
   const handleViewTaskList = () => {
     // console.log("teskssksk trigg");
     setOpenDrawer(true);
@@ -97,7 +103,7 @@ const CustomTaskListDrawer = (props: any) => {
   useEffect(() => {
     handleDatesSort();
     let tempTaskDataState: any = [];
-    tasksList?.map((task: any) => {
+    taskList?.map((task: any) => {
       let tempTask = {
         id: task._id,
         type: task.type,
@@ -158,7 +164,7 @@ const CustomTaskListDrawer = (props: any) => {
   };
 
   const handleViewTask = (task: any) => {
-    tasksList.forEach((item: any) => {
+    taskList.forEach((item: any) => {
       if (task.id === item._id) {
         setViewTask(item);
       }
@@ -176,7 +182,7 @@ const CustomTaskListDrawer = (props: any) => {
 
   const handleSearch = () => {
     const filteredData = taskListDataState?.filter((eachTask) => {
-      const taskName = eachTask?.type.toLowerCase();
+      const taskName = eachTask.type.toLowerCase();
       return taskName.includes(searchTerm.toLowerCase());
     });
     setFilteredTaskList([...filteredData]);
@@ -337,7 +343,7 @@ const CustomTaskListDrawer = (props: any) => {
           onClose={() => setOpenTaskDetail((prev: any) => !prev)}
         >
           <CustomTaskDetailsDrawer
-            taskList={tasksList}
+            taskList={taskList}
             task={viewTask}
             onClose={() => setOpenTaskDetail((prev: any) => !prev)}
             taskType={taskType}
@@ -355,14 +361,15 @@ const CustomTaskListDrawer = (props: any) => {
           onClose={() => setOpenDrawer((prev: any) => !prev)}
         >
           <TaskFilterCommon
-            tasksList={tasksList}
+            tasksList={taskList}
             // taskMenuClicked={taskMenuClicked}
             // currentProject={myProject}
             // currentStructure={myStructure}
             // currentSnapshot={mySnapshot}
-            // closeTaskFilterOverlay={closeTaskFilterOverlay}
+            closeTaskFilterOverlay={closeTaskFilterOverlay}
             handleOnFilter={handleOnTaskFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
+            taskFilterState={taskFilterState}
           />
         </Drawer>
       )}
