@@ -128,8 +128,9 @@ const TaskFilterCommon: React.FC<any> = ({
   // currentProject,
   // currentStructure,
   // currentSnapshot,
-  // closeTaskFilterOverlay,
+  closeTaskFilterOverlay,
   handleOnFilter,
+  taskFilterState,
 }) => {
   // console.log("tasksListapi", tasksList);
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
@@ -216,8 +217,6 @@ const TaskFilterCommon: React.FC<any> = ({
         }
       });
     }
-    // const filterArray =
-    // SetFilterState(filterArray)
   }, []);
   useEffect(() => {
     SetFilterState((prev: any) => {
@@ -226,6 +225,15 @@ const TaskFilterCommon: React.FC<any> = ({
           return {
             ...item,
             options: taskTypes?.map((eachItem: any) => {
+              if (taskFilterState.isFilterApplied) {
+                if (taskFilterState.filterData.taskType.includes(eachItem)) {
+                  return {
+                    ...eachItem,
+                    optionTitle: eachItem,
+                    optionStatus: "T",
+                  };
+                }
+              }
               return {
                 ...eachItem,
                 optionTitle: eachItem,
@@ -238,6 +246,17 @@ const TaskFilterCommon: React.FC<any> = ({
           return {
             ...item,
             options: taskPrioritys?.map((eachItem: any) => {
+              if (taskFilterState.isFilterApplied) {
+                if (
+                  taskFilterState.filterData.taskPriority.includes(eachItem)
+                ) {
+                  return {
+                    ...eachItem,
+                    optionTitle: eachItem,
+                    optionStatus: "T",
+                  };
+                }
+              }
               return {
                 ...eachItem,
                 optionTitle: eachItem,
@@ -250,6 +269,15 @@ const TaskFilterCommon: React.FC<any> = ({
           return {
             ...item,
             options: taskStatuss?.map((eachItem: any) => {
+              if (taskFilterState.isFilterApplied) {
+                if (taskFilterState.filterData.taskStatus.includes(eachItem)) {
+                  return {
+                    ...eachItem,
+                    optionTitle: eachItem,
+                    optionStatus: "T",
+                  };
+                }
+              }
               return {
                 ...eachItem,
                 optionTitle: eachItem,
@@ -284,6 +312,7 @@ const TaskFilterCommon: React.FC<any> = ({
       // });
     });
   }
+
   const [FilterState, SetFilterState] = useState<any>(Filters);
   const [optionState, setOptionState] = useState<any>("clash");
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
@@ -471,13 +500,30 @@ const TaskFilterCommon: React.FC<any> = ({
     SetFilterState(temp);
   }, [optionState]);
 
+  const onReset = () => {
+    let temp = FilterState?.map((each: any, serial: number) => {
+      return { ...each };
+    });
+    temp.forEach((element: any) => {
+      element?.options?.forEach((obj: any) => {
+        obj.optionStatus = "F";
+      });
+    });
+    setStartData(DATE_PICKER_DATA);
+    setDueData(DATE_PICKER_DATA);
+    setAssignees([assignees]);
+    SetFilterState(temp);
+    closeTaskFilterOverlay();
+    handleClose();
+  };
+
   const formHandler = (event: any) => {
     console.log("sdf");
     if (event === "Cancel") {
       handleClose();
     } else {
-      onFilterApply();
       handleClose();
+      onFilterApply();
     }
   };
   // console.log("tasksList",tasksList)
@@ -491,7 +537,13 @@ const TaskFilterCommon: React.FC<any> = ({
             </HeaderLeftSection>
             <HeaderRightSection>
               <HeaderRightSectionResetIcon>
-                <Image src={ResetIcon} alt="reset" />
+                <Image
+                  src={ResetIcon}
+                  alt="reset"
+                  onClick={() => {
+                    onReset();
+                  }}
+                />
               </HeaderRightSectionResetIcon>
               <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
               {/* <Image src={closeIcon} alt="reset" onClick={() => {
@@ -560,9 +612,9 @@ const TaskFilterCommon: React.FC<any> = ({
                 )}
               </FilterCardSelectAll>
               <FilterCardOptions>
-                {each?.options?.map((item: any, index: number) => {
+                {each?.options?.map((item: any, i: number) => {
                   return (
-                    <FilterCardOptionContainer key={index}>
+                    <FilterCardOptionContainer key={i}>
                       <FilterCardOptionSpan>
                         {item?.optionStatus === "T" ? (
                           <Image

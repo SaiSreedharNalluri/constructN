@@ -46,7 +46,7 @@ import HourglassIcon from "../../../public/divami_icons/hourGlassIcon.svg";
 import IssuesHighlightedIcon from "../../../public/divami_icons/issuesHighlightedIcon.svg";
 
 import { Issue } from "../../../models/Issue";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import moment from "moment";
 import { ITools } from "../../../models/ITools";
 import FilterCommon from "../issue-filter-common/IssueFilterCommon";
@@ -61,6 +61,7 @@ interface IProps {
   deleteTheIssue: (issueObj: object) => void;
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
   onClose: any;
+  issueFilterState?: any;
 }
 
 const CustomIssueListDrawer: React.FC<IProps> = ({
@@ -73,6 +74,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   deleteTheIssue,
   clickIssueEditSubmit,
   onClose,
+  issueFilterState,
 }) => {
   const issueListing = [
     {
@@ -118,7 +120,11 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
+  const [issueList, setIssueList] = useState<Issue[]>([]);
 
+  useEffect(() => {
+    setIssueList(issuesList);
+  }, []);
   const closeIssueList = () => {
     //setListOverlay(false);
     issueMenuInstance.toolAction = "issueViewClose";
@@ -133,12 +139,12 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const sortDateOrdering = () => {
     let sorted;
     if (sortOrder === "asc") {
-      sorted = [...issuesList].sort((a: any, b: any) => {
+      sorted = [...issueList].sort((a: any, b: any) => {
         return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
       });
       setSortOrder("desc");
     } else {
-      sorted = [...issuesList].sort((a: any, b: any) => {
+      sorted = [...issueList].sort((a: any, b: any) => {
         return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
       });
       setSortOrder("asc");
@@ -252,7 +258,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
         >
           <FilterCommon
             closeFilterOverlay={closeFilterOverlay}
-            issuesList={issuesList}
+            issuesList={issueList}
             visibility={listOverlay}
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
@@ -260,6 +266,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             handleOnSort={() => {}}
             deleteTheIssue={() => {}}
             clickIssueEditSubmit={() => {}}
+            issueFilterState={issueFilterState}
           />
         </Drawer>
       )}

@@ -42,7 +42,7 @@ import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
 import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
 import { styled } from "@mui/system";
 
-interface IProps { }
+interface IProps {}
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -107,7 +107,14 @@ const Index: React.FC<IProps> = () => {
     type: "Task",
   });
   const [hierarchy, setHierarchy] = useState(false);
-
+  const [taskFilterState, setTaskFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {},
+  });
+  const [issueFilterState, setIssueFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {},
+  });
   const closeIssueCreate = () => {
     setOpenCreateIssue(false);
   };
@@ -249,9 +256,11 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
-                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
-                  }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${
+                  structure?._id
+                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
+                  currentProjectId as string
+                }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -558,9 +567,17 @@ const Index: React.FC<IProps> = () => {
           formData.toDate == "")
     );
     setIssueList(result);
+    setIssueFilterState({
+      isFilterApplied: true,
+      filterData: formData,
+    });
   };
   const closeFilterOverlay = () => {
     setIssueList(issueFilterList);
+    setIssueFilterState({
+      isFilterApplied: false,
+      filterData: {},
+    });
   };
   const handleOnTaskFilter = (formData: any) => {
     console.log(formData);
@@ -579,9 +596,17 @@ const Index: React.FC<IProps> = () => {
         )
     );
     setTasksList(result);
+    setTaskFilterState({
+      isFilterApplied: true,
+      filterData: formData,
+    });
   };
   const closeTaskFilterOverlay = () => {
     setTasksList(taskFilterList);
+    setTaskFilterState({
+      isFilterApplied: false,
+      filterData: {},
+    });
   };
   const deleteTheIssue = (issueObj: any) => {
     deleteIssue(router.query.projectId as string, issueObj._id)
@@ -633,8 +658,9 @@ const Index: React.FC<IProps> = () => {
           {
             <div
               ref={leftRefContainer}
-              className={` ${leftNav ? "visible" : "hidden"
-                } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+              className={` ${
+                leftNav ? "visible" : "hidden"
+              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay
@@ -674,8 +700,9 @@ const Index: React.FC<IProps> = () => {
               {
                 <div
                   ref={leftRefContainer}
-                  className={` ${hierarchy ? "visible" : "hidden"
-                    } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg`}
+                  className={` ${
+                    hierarchy ? "visible" : "hidden"
+                  } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg`}
                 >
                   <div>
                     <LeftOverLay
@@ -788,6 +815,8 @@ const Index: React.FC<IProps> = () => {
               openCreateIssue={openCreateIssue}
               openCreateTask={openCreateTask}
               selectedLayersList={currentViewLayers}
+              taskFilterState={taskFilterState}
+              issueFilterState={issueFilterState}
             />
             {/* </div> */}
             {/* <RightFloatingMenu

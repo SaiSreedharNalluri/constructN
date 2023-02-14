@@ -46,6 +46,7 @@ const Issues = ({
   issueLayer,
   currentProject,
   issueOpenDrawer,
+  issueFilterState,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -287,6 +288,7 @@ const Issues = ({
             handleOnSort={() => {}}
             deleteTheIssue={() => {}}
             clickIssueEditSubmit={() => {}}
+            issueFilterState={issueFilterState}
           />
           {/* <FilterCommon/> */}
         </Drawer>
