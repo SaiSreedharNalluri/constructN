@@ -42,7 +42,7 @@ import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
 import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
 import { styled } from "@mui/system";
 
-interface IProps { }
+interface IProps {}
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -249,9 +249,11 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
-                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
-                  }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${
+                  structure?._id
+                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
+                  currentProjectId as string
+                }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -633,8 +635,9 @@ const Index: React.FC<IProps> = () => {
           {
             <div
               ref={leftRefContainer}
-              className={` ${leftNav ? "visible" : "hidden"
-                } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+              className={` ${
+                leftNav ? "visible" : "hidden"
+              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay
@@ -674,8 +677,9 @@ const Index: React.FC<IProps> = () => {
               {
                 <div
                   ref={leftRefContainer}
-                  className={` ${hierarchy ? "visible" : "hidden"
-                    } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg`}
+                  className={` ${
+                    hierarchy ? "visible" : "hidden"
+                  } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg`}
                 >
                   <div>
                     <LeftOverLay
@@ -768,7 +772,7 @@ const Index: React.FC<IProps> = () => {
           <div
             ref={rightOverlayRef}
             id="bg-color"
-            className={`fixed  toolbarWidth border border-gray-300   ${"visible"} `}
+            className={`fixed  toolbarWidth  ${"visible"} `}
           >
             <ToolBarMenuWrapper
               issuesList={issuesList}
