@@ -16,6 +16,7 @@ import {
   IssuesSectionPlusImg,
   IssuesSectionFileImg,
   IssuesSectionClipImg,
+  TaskTitle,
 } from "./ToolBarStyles";
 import TaskList from "../task_list/TaskList";
 import CreateTask from "../create-task/CreateTask";
@@ -110,8 +111,8 @@ const Task = ({
       (data.tags =
         (formData.length
           ? formData
-            .filter((item: any) => item.id == "tag-suggestions")[0]
-            ?.chipString?.join(";")
+              .filter((item: any) => item.id == "tag-suggestions")[0]
+              ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -209,7 +210,7 @@ const Task = ({
   }, [taskOpenDrawer]);
   return (
     <TaskBox>
-      <TaskTitleDiv>Task: </TaskTitleDiv>
+      <TaskTitle>Task: </TaskTitle>
 
       <IssuesSectionPlusImg>
         <Image
@@ -220,8 +221,8 @@ const Task = ({
           }}
           src={plusCircleIcon}
           // onClick={props.rightMenuClickHandler}
-          width={12}
-          height={12}
+          // width={12}
+          // height={12}
           alt="Arrow"
         />{" "}
       </IssuesSectionPlusImg>
@@ -232,8 +233,8 @@ const Task = ({
             handleViewTaskList();
           }}
           src={fileTextIcon}
-          width={12}
-          height={12}
+          // width={12}
+          // height={12}
           alt="Arrow"
         />{" "}
       </IssuesSectionFileImg>

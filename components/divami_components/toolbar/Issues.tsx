@@ -15,6 +15,7 @@ import {
   IssuesSectionPlusImg,
   IssuesSectionFileImg,
   IssuesSectionClipImg,
+  IssueTitle,
 } from "./ToolBarStyles";
 import { Drawer } from "@mui/material";
 import CreateIssue from "../create-issue/CreateIssue";
@@ -217,13 +218,11 @@ const Issues = ({
   return (
     <div>
       <IssueBox>
-        <div>Issues:</div>
+        <IssueTitle>Issues:</IssueTitle>
 
         <IssuesSectionPlusImg>
           <Image
             src={plusCircleIcon}
-            width={12}
-            height={12}
             alt="Arrow"
             // onClick={rightMenuClickHandler}
             onClick={() => {
@@ -236,8 +235,8 @@ const Issues = ({
         <IssuesSectionFileImg>
           <Image
             src={fileTextIcon}
-            width={12}
-            height={12}
+            // width={12}
+            // height={12}
             alt="Arrow"
             // onClick={() => {
             //   setOpenIssueList(true);
@@ -252,8 +251,8 @@ const Issues = ({
         <IssuesSectionClipImg>
           <Image
             src={clipboardSecondIcon}
-            width={12}
-            height={12}
+            // width={12}
+            // height={12}
             alt="Arrow"
             // onClick={rightMenuClickHandler}
             onClick={toggleIssueVisibility}
