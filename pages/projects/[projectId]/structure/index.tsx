@@ -41,6 +41,7 @@ import ToolBarMenuWrapper from "../../../../components/divami_components/toolbar
 import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
 import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
 import { styled } from "@mui/system";
+import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 
 interface IProps {}
 const OpenMenuButton = styled("div")({
@@ -53,10 +54,10 @@ const OpenMenuButton = styled("div")({
   justifyContent: "space-evenly",
   alignItems: "center",
   transform: "rotate(270deg)",
-  left: "20px",
+  left: "22px",
   bottom: "38px",
   cursor: "pointer",
-  background: "#fff",
+  backgroundColour: "#fffff",
 });
 const CloseMenuButton = styled("div")({
   height: "38px",
@@ -70,6 +71,7 @@ const CloseMenuButton = styled("div")({
   alignItems: "center",
   cursor: "pointer",
   zIndex: "99",
+  backgroundColour: "#fffff",
 });
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
@@ -795,7 +797,7 @@ const Index: React.FC<IProps> = () => {
           <div
             ref={rightOverlayRef}
             id="bg-color"
-            className={`fixed  toolbarWidth border border-gray-300   ${"visible"} `}
+            className={`fixed  toolbarWidth  ${"visible"} `}
           >
             <ToolBarMenuWrapper
               issuesList={issuesList}
