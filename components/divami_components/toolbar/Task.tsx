@@ -10,6 +10,8 @@ import fileTextIcon from "../../../public/divami_icons/fileTextIcon.svg";
 import triWarnIcon from "../../../public/divami_icons/triWarnIcon.svg";
 import clipboardIcon from "../../../public/divami_icons/clipboardIcon.svg";
 import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIcon.svg";
+import clipboardTask from "../../../public/divami_icons/clipboardTask.svg";
+
 import {
   TaskBox,
   TaskTitleDiv,
@@ -17,6 +19,7 @@ import {
   IssuesSectionFileImg,
   IssuesSectionClipImg,
   TaskTitle,
+  CameraIcon,
 } from "./ToolBarStyles";
 import TaskList from "../task_list/TaskList";
 import CreateTask from "../create-task/CreateTask";
@@ -213,7 +216,7 @@ const Task = ({
       <TaskTitle>Task: </TaskTitle>
 
       <IssuesSectionPlusImg>
-        <Image
+        <CameraIcon
           onClick={() => {
             openTaskCreateFn();
 
@@ -224,11 +227,11 @@ const Task = ({
           // width={12}
           // height={12}
           alt="Arrow"
-        />{" "}
+        />
       </IssuesSectionPlusImg>
 
       <IssuesSectionFileImg>
-        <Image
+        <CameraIcon
           onClick={() => {
             handleViewTaskList();
           }}
@@ -236,17 +239,17 @@ const Task = ({
           // width={12}
           // height={12}
           alt="Arrow"
-        />{" "}
+        />
       </IssuesSectionFileImg>
 
       <IssuesSectionClipImg>
-        <Image
-          src={clipboardIcon}
+        <CameraIcon
+          src={clipboardTask}
           onClick={() => {
             handleViewTaskDetail();
           }}
           alt="Arrow"
-        />{" "}
+        />
       </IssuesSectionClipImg>
       {openDrawer && (
         <Drawer

@@ -1,4 +1,5 @@
 import { styled } from '@mui/system';
+import Image from 'next/image';
 
 export const HotspotBox = styled('div')({
   border: '1px solid #d9d9d9',
@@ -153,3 +154,14 @@ export const TaskTitle = styled('div')({
   // lineHeight:"16px"
 
 })
+
+
+export const CameraIcon = styled(Image)`
+width:18px;
+height:18px
+`;
+
+export const DownIcon = styled(Image)`
+// width:5px;
+// height:7px
+`;

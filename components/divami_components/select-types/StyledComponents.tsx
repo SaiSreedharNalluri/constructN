@@ -24,7 +24,8 @@ export const DrawerHeader = styled("div")({
   padding: "20px 22px 15px 19px",
 });
 export const DrawerBox = styled(Box)({
-  width: "253px",
+  // width: "253px",
+  width: "258px",
   border: "1px solid #b5b5b5",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
 });
@@ -53,7 +54,9 @@ export const ListItemStyled = styled(ListItem)({
   },
 });
 export const ListStyled = styled(List)({
-  fontWeight: 400,
+  fontWeight: "400",
+  fontSize: "14px",
+  fontFamily: "Open Sans",
   "& .MuiListItem-root": {
     height: "38px",
   },

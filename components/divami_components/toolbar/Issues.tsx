@@ -16,6 +16,7 @@ import {
   IssuesSectionFileImg,
   IssuesSectionClipImg,
   IssueTitle,
+  CameraIcon,
 } from "./ToolBarStyles";
 import { Drawer } from "@mui/material";
 import CreateIssue from "../create-issue/CreateIssue";
@@ -221,7 +222,7 @@ const Issues = ({
         <IssueTitle>Issues:</IssueTitle>
 
         <IssuesSectionPlusImg>
-          <Image
+          <CameraIcon
             src={plusCircleIcon}
             alt="Arrow"
             // onClick={rightMenuClickHandler}
@@ -229,11 +230,11 @@ const Issues = ({
               openIssueCreateFn();
               // setOpenCreateIssue(true);
             }}
-          />{" "}
+          />
         </IssuesSectionPlusImg>
 
         <IssuesSectionFileImg>
-          <Image
+          <CameraIcon
             src={fileTextIcon}
             // width={12}
             // height={12}
@@ -245,18 +246,18 @@ const Issues = ({
               openIssueListFn();
               handleViewTaskList();
             }}
-          />{" "}
+          />
         </IssuesSectionFileImg>
 
         <IssuesSectionClipImg>
-          <Image
+          <CameraIcon
             src={clipboardSecondIcon}
             // width={12}
             // height={12}
             alt="Arrow"
             // onClick={rightMenuClickHandler}
             onClick={toggleIssueVisibility}
-          />{" "}
+          />
         </IssuesSectionClipImg>
       </IssueBox>
 

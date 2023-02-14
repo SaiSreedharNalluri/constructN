@@ -5,13 +5,14 @@ export const SideMenuContainer = styled("div")({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  borderRight: "1px solid black",
+  // borderRight: "1px solid black",
   width: "59px",
   // height:"auto",
   height: "98.5vh",
   transition: "0.3s",
   overflow: "hidden",
   paddingTop: "35px",
+  boxShadow:"0px 2px 3px rgba(0, 0, 0, 0.3)"
 });
 
 export const SideMenuOptionContainer = styled("div")();
