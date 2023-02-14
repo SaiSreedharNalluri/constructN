@@ -11,14 +11,15 @@ import Clip from "../../../public/divami_icons/clip.svg";
 import Delete from "../../../public/divami_icons/delete.svg";
 import Edit from "../../../public/divami_icons/edit.svg";
 import Send from "../../../public/divami_icons/send.svg";
-import CustomButton from "../../divami_components/custom-button/CustomButton";
+import CustomButton from "../custom-button/CustomButton";
 import CustomSelect from "../custom-select/CustomSelect";
 import ActivityLog from "../task_detail/ActivityLog";
 import { toast } from "react-toastify";
 import { updateAttachments, updateTask } from "../../../services/task";
 import CreateTask from "../create-task/CreateTask";
 import CustomDrawer from "../custom-drawer/custom-drawer";
-import { TASK_FORM_CONFIG } from "../create-task/body/Constants";
+import CreateIssue from "../create-issue/CreateIssue";
+import { ISSUE_FORM_CONFIG } from "../create-issue/body/Constants";
 
 const HeaderContainer = styled(Box)`
   background-color: white;
@@ -458,7 +459,7 @@ function BasicTabs(props: any) {
   const [assigneeEditState, setAssigneeEditState] = useState(false);
   const [progressOptionsState, setProgressOptionsState] = useState<any>({});
   const [assigneeOptionsState, setAssigneeOptionsState] = useState([]);
-  const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
+  const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
   const [searchTerm, setSearchTerm] = useState("");
   const [list, setList] = useState<any>();
 
@@ -780,14 +781,14 @@ function BasicTabs(props: any) {
   );
 }
 
-const CustomTaskDetailsDrawer = (props: any) => {
+const CustomIssueDetailsDrawer = (props: any) => {
   const {
     onClose,
-    task,
-    taskList,
-    taskType,
-    taskPriority,
-    taskStatus,
+    issue,
+    issuesList,
+    issueType,
+    issuePriority,
+    issueStatus,
     projectUsers,
     currentProject,
     currentSnapshot,
@@ -854,15 +855,15 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
   useEffect(() => {
     let tempObj = {
-      options: task.options,
-      priority: task.priority,
-      capturedOn: task.createdAt,
-      creator: task.owner,
-      issueDescription: task.description,
-      attachments: task.attachments,
-      relatedTags: task.tags,
-      assignees: task.assignees?.length ? task.assignees[0].fullName : "",
-      id: task._id,
+      options: issue.options,
+      priority: issue.priority,
+      capturedOn: issue.createdAt,
+      creator: issue.owner,
+      issueDescription: issue.description,
+      attachments: issue.attachments,
+      relatedTags: issue.tags,
+      assignees: issue.assignees?.length ? issue.assignees[0].fullName : "",
+      id: issue._id,
     };
     setTaskState((prev: any) => {
       return {
@@ -924,10 +925,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
     data.duedate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
-
     const fileformdata = new FormData();
     const filesArr = formData.filter(
       (item: any) => item.id === "file-upload"
@@ -936,21 +935,18 @@ const CustomTaskDetailsDrawer = (props: any) => {
       (item: any) => item.id === "file-upload"
     )[0].selectedFile;
     console.log("dfsdfsdokkkk", fileformdata, filesArr);
-    // const uploadUrl = filesArr[0];
-    // const obj = {
-    //   file: [uploadUrl],
-    // };
+
     // const uploadUrl = URL.createObjectURL(filesArr[0]);
     const arr = filesArr.map((each: any) => {
-      // fileformdata.append("file", each.name);
       fileformdata.append("file", each);
+
       return {
         ...each,
       };
     });
     console.log("formData", fileformdata);
 
-    updateAttachments(fileformdata, task._id)
+    updateAttachments(fileformdata, issue._id)
       .then((response) => {
         if (response.success === true) {
           toast.success("Task added sucessfully");
@@ -971,7 +967,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
           toast.error(error?.message);
         }
       });
-    updateTask(projectId as string, data, task._id)
+    updateTask(projectId as string, data, issue._id)
       .then((response) => {
         if (response.success === true) {
           toast.success("Task added sucessfully");
@@ -1008,7 +1004,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 alt={"close icon"}
               />
               <SpanTile>
-                {task.type} (#{task._id})
+                {issue.type} (#{issue._id})
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
@@ -1025,9 +1021,9 @@ const CustomTaskDetailsDrawer = (props: any) => {
         </HeaderContainer>
         <BodyContainer>
           <BasicTabs
-            taskType={taskType}
-            taskPriority={taskPriority}
-            taskStatus={taskStatus}
+            taskType={issueType}
+            taskPriority={issuePriority}
+            taskStatus={issueStatus}
             projectUsers={projectUsers}
             taskState={taskState}
           />
@@ -1035,14 +1031,14 @@ const CustomTaskDetailsDrawer = (props: any) => {
       </CustomTaskDrawerContainer>
       {openCreateTask && (
         <CustomDrawer open>
-          <CreateTask
+          <CreateIssue
             handleCreateTask={handleCreateTask}
             setOpenCreateTask={setOpenCreateTask}
             currentProject={currentProject}
             currentSnapshot={currentSnapshot}
             currentStructure={currentStructure}
             contextInfo={contextInfo}
-            editData={task}
+            editData={issue}
           />
         </CustomDrawer>
       )}
@@ -1050,4 +1046,4 @@ const CustomTaskDetailsDrawer = (props: any) => {
   );
 };
 
-export default CustomTaskDetailsDrawer;
+export default CustomIssueDetailsDrawer;

@@ -32,7 +32,7 @@ export const updateTask = (projectId: string, taskObj: object, taskId: any) => {
       throw error?.response?.data;
     });
 };
-export const updateAttachments = (file: string, id: any) => {
+export const updateAttachments = (file: any, id: any) => {
   return instance
     .post(`${process.env.NEXT_PUBLIC_HOST}/attachments?entity=${id}`, file, {
       headers: authHeader.authHeader(),

@@ -9,7 +9,7 @@ import {
   MORE_ABOUT_ISSUE,
   SEARCH_CONFIG,
   TAG_CONFIG,
-  TASK_FORM_CONFIG,
+  ISSUE_FORM_CONFIG,
   TYPES_OF_ISSUES,
 } from "./Constants";
 import FormWrapper from "../../form-wrapper/FormWrapper";
@@ -48,7 +48,7 @@ const DatePickerContainer = styled(Box)({
 
 const Body = ({ handleFormData }: any) => {
   const [formState, setFormState] = useState({ selectedValue: "" });
-  const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
+  const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
   const [issueTypes, setIssueTypes] = useState([]);
   const [issuePriorities, setIssuePriorities] = useState([]);
   const router = useRouter();

@@ -98,6 +98,8 @@ const Index: React.FC<IProps> = () => {
   const [isTaslFilter, setIsTaskFilter] = useState(false);
   const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
   const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
+  const [issueTypesList, setIssueTypesList] = useState<[string]>([""]);
+
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
   const [taskFilterList, setTaskFilterList] = useState<ITasks[]>([]);
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
@@ -147,6 +149,15 @@ const Index: React.FC<IProps> = () => {
         .then((response) => {
           if (response.success === true) {
             setIssueStatusList(response.result);
+          }
+        })
+        .catch((error) => {
+          toast.error("failed to load data");
+        });
+      getIssuesTypes(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setIssueTypesList(response.result);
           }
         })
         .catch((error) => {
@@ -792,6 +803,9 @@ const Index: React.FC<IProps> = () => {
               openCreateIssue={openCreateIssue}
               openCreateTask={openCreateTask}
               selectedLayersList={currentViewLayers}
+              issuePriorityList={issuePriorityList}
+              issueStatusList={issueStatusList}
+              issueTypesList={issueTypesList}
             />
             {/* </div> */}
             {/* <RightFloatingMenu

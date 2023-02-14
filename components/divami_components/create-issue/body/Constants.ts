@@ -1,4 +1,4 @@
-export const TASK_FORM_CONFIG = [
+export const ISSUE_FORM_CONFIG = [
   {
     id: "title",
     type: "textfield",
