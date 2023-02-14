@@ -22,7 +22,7 @@ interface PropTypes {
 }
 
 const StyledTextArea = styled(TextareaAutosize)({
-  height: "100px !important",
+  minHeight: "100px !important",
   width: "392px !important",
   padding: "5px 10px",
   border: "1px solid #36415d",
