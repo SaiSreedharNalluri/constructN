@@ -25,7 +25,7 @@ import {
   // useStyles,
 } from "./StyledComponents";
 import type { RenderTree, SelectLayerProps } from "./Type";
-import { getSelectedLayers } from "./Utils";
+import { getAllIds, getSelectedLayers } from "./Utils";
 
 const ProjectHierarchy = ({
   title,
@@ -37,9 +37,13 @@ const ProjectHierarchy = ({
 }: SelectLayerProps) => {
   const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>([]);
   const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
-  console.log(treeData);
-  console.log(treeViewData);
+  const [expanded, setExpanded] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
 
+  const handleExpand = () => {
+    console.log(getAllIds(treeViewData));
+    setExpanded(getAllIds(treeViewData));
+  };
   useEffect(() => {
     setTreeViewData(treeData);
   }, [treeData]);
@@ -49,10 +53,11 @@ const ProjectHierarchy = ({
       <span>{node.name}</span>
     </div>
   );
-
+  const [search, setSearch] = useState(false);
   const handleSearchResult = (e: any) => {
     console.log(e);
     handleSearch(e);
+    setSearch(true);
   };
   const renderTree = (nodes: ChildrenEntity) => (
     <TreeItem
@@ -74,6 +79,7 @@ const ProjectHierarchy = ({
     const layersSelected = getSelectedLayers(treeViewData);
     setSelectedLayers(layersSelected);
     console.log([...layersSelected], "selectedLayers");
+    search ? handleExpand() : null;
   }, [treeViewData]);
 
   return (
@@ -112,6 +118,8 @@ const ProjectHierarchy = ({
             aria-label="rich object"
             defaultCollapseIcon={<RemoveIcon />}
             defaultExpandIcon={<AddIcon />}
+            expanded={expanded}
+            selected={selected}
           >
             {treeViewData.map((eachNode) => renderTree(eachNode))}
           </StyledTreeView>
