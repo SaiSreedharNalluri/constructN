@@ -697,32 +697,24 @@ const Index: React.FC<IProps> = () => {
             </div>
           </div>
         ) : (
-          <>
-            <div>
-              {
-                <OpenMenuButton
-                  onClick={() => {
-                    setHierarchy(!hierarchy);
-                  }}
-                >
-                  <Image
-                    src={ChevronRightIcon}
-                    alt="Arrow"
-                    width={17}
-                    height={17}
-                    style={{ transform: "rotate(90deg)" }}
-                  />
-                  <div>Hierarchy</div>
-                </OpenMenuButton>
-              }
-            </div>
-            <PopupComponent
-              modalTitle="Delete Issue"
-              modalmessage="Are you sure you want to delete this Issue “Safety (#407)”?"
-              SecondaryButtonlabel="Cancel"
-              primaryButtonLabel="Delete"
-            />
-          </>
+          <div>
+            {
+              <OpenMenuButton
+                onClick={() => {
+                  setHierarchy(!hierarchy);
+                }}
+              >
+                <Image
+                  src={ChevronRightIcon}
+                  alt="Arrow"
+                  width={17}
+                  height={17}
+                  style={{ transform: "rotate(90deg)" }}
+                />
+                <div>Hierarchy</div>
+              </OpenMenuButton>
+            }
+          </div>
         )}
         {/* <div>
             <FontAwesomeIcon
