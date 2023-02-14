@@ -559,8 +559,8 @@ const Index: React.FC<IProps> = () => {
           formData?.issuePriorityData?.length == 0) &&
         (formData?.issueStatusData?.includes(item.status) ||
           formData?.issueStatusData.length == 0) &&
-        (formData?.assigneesData?.some((ass: any) =>
-          item.assignees.some((it: any) => ass.value === it._id)
+        (item.assignees.filter(
+          (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
         ) ||
           formData?.assigneesData?.length == 0) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||

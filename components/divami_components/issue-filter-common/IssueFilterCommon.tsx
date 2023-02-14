@@ -485,7 +485,13 @@ const FilterCommon: React.FC<IProps> = ({
             </HeaderLeftSection>
             <HeaderRightSection>
               <HeaderRightSectionResetIcon>
-                <Image src={ResetIcon} alt="reset" />
+                <Image
+                  src={ResetIcon}
+                  alt="reset"
+                  onClick={() => {
+                    onReset();
+                  }}
+                />
               </HeaderRightSectionResetIcon>
               <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
               {/* <Image src={closeIcon} alt="reset"   onClick={() => {
@@ -554,9 +560,9 @@ const FilterCommon: React.FC<IProps> = ({
                 )}
               </FilterCardSelectAll>
               <FilterCardOptions>
-                {each?.options?.map((item: any) => {
+                {each?.options?.map((item: any, i: number) => {
                   return (
-                    <FilterCardOptionContainer key={index}>
+                    <FilterCardOptionContainer key={i}>
                       <FilterCardOptionSpan>
                         {item?.optionStatus === "T" ? (
                           <Image
