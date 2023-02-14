@@ -69,6 +69,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   openCreateIssue,
   openCreateTask,
   selectedLayersList,
+  deleteTheTask
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -231,6 +232,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           handleOnTaskFilter={handleOnTaskFilter}
           rightMenuClickHandler={rightMenuClickHandler}
           taskOpenDrawer={openCreateTask}
+          deleteTheTask={deleteTheTask}
         />
 
         <Hotspot />

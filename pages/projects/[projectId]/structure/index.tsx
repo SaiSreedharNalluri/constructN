@@ -28,7 +28,7 @@ import {
 } from "../../../../services/issue";
 import { getCookie } from "cookies-next";
 import { toast } from "react-toastify";
-import { getTasksList } from "../../../../services/task";
+import { deleteTask, getTasksList } from "../../../../services/task";
 import { Issue } from "../../../../models/Issue";
 import { ITasks } from "../../../../models/Itask";
 import IssueCreate from "../../../../components/container/rightFloatingMenu/issueMenu/issueCreate";
@@ -596,6 +596,22 @@ const Index: React.FC<IProps> = () => {
         console.log("error", error);
       });
   };
+
+  const deleteTheTask = (taskObj: any) => {
+    console.log("taskObj", taskObj, router.query.projectId)
+    deleteTask(router.query.projectId as string, taskObj._id)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success(response.message);
+          _.remove(issueFilterList, { _id: taskObj._id });
+          setIssueList(issueFilterList);
+        }
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
+  };
+
   const clickIssueEditSubmit = (editObj: any, issueObj: any) => {
     editIssue(
       router.query.projectId as string,
@@ -788,6 +804,7 @@ const Index: React.FC<IProps> = () => {
               openCreateIssue={openCreateIssue}
               openCreateTask={openCreateTask}
               selectedLayersList={currentViewLayers}
+              deleteTheTask={deleteTheTask}
             />
             {/* </div> */}
             {/* <RightFloatingMenu

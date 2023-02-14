@@ -317,15 +317,15 @@ const AssignEditSearchContainer = styled("div")({
     width: "100%",
   },
   "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
     marginTop: "-8px",
   },
@@ -674,13 +674,13 @@ function BasicTabs(props: any) {
                 sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="" />}
                 onChange={(event, value) => console.log(value)}
-                // InputProps={{
-                //   startAdornment: (
-                //     <InputAdornment position="start">
-                //       <SearchIcon />
-                //     </InputAdornment>
-                //   ),
-                // }}
+              // InputProps={{
+              //   startAdornment: (
+              //     <InputAdornment position="start">
+              //       <SearchIcon />
+              //     </InputAdornment>
+              //   ),
+              // }}
               />
             </AssignEditSearchContainer>
           )}
@@ -785,6 +785,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     taskPriority,
     taskStatus,
     projectUsers,
+    deleteTheTask
   } = props;
 
   const DetailsObj = {
@@ -881,7 +882,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
           </LeftTitleCont>
           <RightTitleCont>
             <EditIcon src={Edit} alt={"close icon"} />
-            <DeleteIcon src={Delete} alt={"close icon"} />
+            <DeleteIcon src={Delete} alt={"close icon"} onClick={() => { deleteTheTask(task) }} />
           </RightTitleCont>
         </TitleContainer>
       </HeaderContainer>

@@ -74,6 +74,7 @@ const CustomTaskListDrawer = (props: any) => {
     currentSnapshot,
     closeTaskFilterOverlay,
     handleOnTaskFilter,
+    deleteTheTask
   } = props;
 
   const [taskType, setTaskType] = useState<[string]>();
@@ -296,14 +297,14 @@ const CustomTaskListDrawer = (props: any) => {
                         val.type === "RFI"
                           ? RFIList
                           : val.type === "Transmittals"
-                          ? TransmittalList
-                          : val.type === "Submittals"
-                          ? SubmittalList
-                          : val.type === "Transmittals"
-                          ? TransmittalList
-                          : val.type === "Transmittals"
-                          ? TransmittalList
-                          : ""
+                            ? TransmittalList
+                            : val.type === "Submittals"
+                              ? SubmittalList
+                              : val.type === "Transmittals"
+                                ? TransmittalList
+                                : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : ""
                       }
                       alt="Arr"
                     />
@@ -344,6 +345,7 @@ const CustomTaskListDrawer = (props: any) => {
             taskPriority={taskPriority}
             taskStatus={taskStatus}
             projectUsers={projectUsers}
+            deleteTheTask={deleteTheTask}
           />
         </Drawer>
       )}
