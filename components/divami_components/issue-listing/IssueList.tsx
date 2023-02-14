@@ -1,25 +1,28 @@
 import { Box, Drawer, InputAdornment } from "@mui/material";
 import Image from "next/image";
 
+import SearchIcon from "@mui/icons-material/Search";
+import Moment from "moment";
+import commission from "../../../public/divami_icons/commission.svg";
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
+import designIcon from "../../../public/divami_icons/designIcon.svg";
+import Divider from "../../../public/divami_icons/divider.svg";
+import downArrow from "../../../public/divami_icons/downArrow.svg";
 import Download from "../../../public/divami_icons/download.svg";
 import FilterInActive from "../../../public/divami_icons/filterInactive.svg";
 import Search from "../../../public/divami_icons/search.svg";
 import UpArrow from "../../../public/divami_icons/upArrow.svg";
-import Divider from "../../../public/divami_icons/divider.svg";
-import downArrow from "../../../public/divami_icons/downArrow.svg";
-import commission from "../../../public/divami_icons/commission.svg";
-import designIcon from "../../../public/divami_icons/designIcon.svg";
-import SearchIcon from "@mui/icons-material/Search";
-import Moment from "moment";
 
+import HourglassIcon from "../../../public/divami_icons/hourGlassIcon.svg";
+import RFIList from "../../../public/divami_icons/rfiList.svg";
+import SubmittalList from "../../../public/divami_icons/submittalList.svg";
+import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
 import {
-  ArrowUpIcon,
+  ArrowDownIcon, ArrowUpIcon,
   BodyContainer,
   BodyContTitle,
   BodyInfo,
-  CloseIcon,
-  DownloadIcon,
+  CloseIcon, DividerIcon, DownloadIcon,
   DueDate,
   DueDateDiv,
   FirstHeader,
@@ -32,25 +35,17 @@ import {
   SecondHeader,
   TaskListContainer,
   ThirdHeader,
-  TitleContainer,
-  LoadMoreContainer,
-  LoadMoreButton,
-  ArrowUpContainer,
-  DividerIcon,
-  ArrowDownIcon,
+  TitleContainer
 } from "./IssueListStyles";
-import RFIList from "../../../public/divami_icons/rfiList.svg";
-import SubmittalList from "../../../public/divami_icons/submittalList.svg";
-import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
-import HourglassIcon from "../../../public/divami_icons/hourGlassIcon.svg";
-import IssuesHighlightedIcon from "../../../public/divami_icons/issuesHighlightedIcon.svg";
 
-import { Issue } from "../../../models/Issue";
+import _ from "lodash";
 import { useEffect, useState } from "react";
-import moment from "moment";
+import { CSVLink } from 'react-csv';
+import { Issue } from "../../../models/Issue";
 import { ITools } from "../../../models/ITools";
 import FilterCommon from "../issue-filter-common/IssueFilterCommon";
 import { CustomSearchField, SearchAreaContainer } from "../task_list/TaskListStyles";
+
 
 interface IProps {
   closeOverlay: () => void;
@@ -132,6 +127,24 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setFilteredTaskList([...filteredData])
   }
 
+  const getDownladableIssueList = (issL = issuesList) => {
+    console.log("issL", issL);
+    let myL = issL.map((iss) => {
+      let a = iss.assignees.map((a) => {
+        return a.firstName;
+      });
+      let x = _.omit(iss, 'progress', 'context');
+      let y = _.update(x, 'assignees', (ass) => {
+        let n = ass.map((o: { firstName: any }) => {
+          return o.firstName;
+        });
+        return n;
+      });
+      return y;
+    });
+    return myL;
+  };
+
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
@@ -207,7 +220,19 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 />
               )}
               <DueDate>Due Date</DueDate>
-              <DownloadIcon src={Download} alt="Arrow" />
+
+              <CSVLink
+                data={getDownladableIssueList(issuesListData)}
+                filename={'my-issues.csv'}
+                className="text-black btn btn-primary fill-black fa fa-Download "
+                target="_blank"
+              >
+                {/* <FontAwesomeIcon
+                  className=" fill-black text-black"
+                  icon={faDownload}
+                ></FontAwesomeIcon> */}
+                <DownloadIcon src={Download} alt="Arrow" />
+              </CSVLink>
               <FunnelIcon
                 src={FilterInActive}
                 alt="Arrow"
@@ -300,3 +325,4 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 };
 
 export default CustomIssueListDrawer;
+
