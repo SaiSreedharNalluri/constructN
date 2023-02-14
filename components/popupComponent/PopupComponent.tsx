@@ -31,6 +31,8 @@ export interface PopupComponentProps {
   primaryButtonLabel: string;
   SecondaryButtonlabel: string;
   callBackvalue?: any;
+  setShowPopUp: (value: boolean) => void;
+  open: boolean;
 }
 function BootstrapDialogTitle(props: DialogTitleProps) {
   const { children, onClose, ...other } = props;
@@ -63,27 +65,22 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
   );
 }
 const PopupComponent = (props: PopupComponentProps) => {
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
   const {
     modalTitle,
     modalmessage,
     primaryButtonLabel,
     SecondaryButtonlabel,
     callBackvalue,
+    setShowPopUp,
+    open
   } = props;
+
+  const handleClose = () => {
+    setShowPopUp(false);
+  };
+
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open dialog
-      </Button>
-
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
@@ -115,9 +112,7 @@ const PopupComponent = (props: PopupComponentProps) => {
 
             <Button
               variant="contained"
-              //   onClick={() => {
-              //     callBackvalue("yes");
-              //   }}
+              onClick={() => callBackvalue("Delete")}
               style={{
                 backgroundColor: "#F1742E",
                 width: "180px",
