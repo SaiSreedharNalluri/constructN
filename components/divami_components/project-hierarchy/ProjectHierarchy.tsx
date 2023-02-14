@@ -79,9 +79,17 @@ const ProjectHierarchy = ({
     const layersSelected = getSelectedLayers(treeViewData);
     setSelectedLayers(layersSelected);
     console.log([...layersSelected], "selectedLayers");
+    console.log(search);
     search ? handleExpand() : null;
   }, [treeViewData]);
 
+  const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
+    setExpanded(nodeIds);
+  };
+
+  const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
+    setSelected(nodeIds);
+  };
   return (
     <ProjectHierarchyContainer>
       <HeaderLabelContainer>
@@ -120,6 +128,8 @@ const ProjectHierarchy = ({
             defaultExpandIcon={<AddIcon />}
             expanded={expanded}
             selected={selected}
+            onNodeToggle={handleToggle}
+            onNodeSelect={handleSelect}
           >
             {treeViewData.map((eachNode) => renderTree(eachNode))}
           </StyledTreeView>
