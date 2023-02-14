@@ -73,6 +73,7 @@ interface IProps {
   currentSnapshot: any;
   contextInfo: any;
   issueTypesList?: any;
+  issueFilterState?: any;
 }
 
 const CustomIssueListDrawer: React.FC<IProps> = ({
@@ -92,6 +93,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   currentSnapshot,
   contextInfo,
   issueTypesList,
+  issueFilterState,
 }) => {
   const handleClose = () => {
     onClose(true);
@@ -114,7 +116,11 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [filteredIssuesList, setFilteredTaskList] =
     useState<any>(issueListData);
+  const [issueList, setIssueList] = useState<Issue[]>([]);
 
+  useEffect(() => {
+    setIssueList(issuesList);
+  }, []);
   const closeIssueList = () => {
     //setListOverlay(false);
     issueMenuInstance.toolAction = "issueViewClose";
@@ -129,12 +135,12 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const sortDateOrdering = () => {
     let sorted;
     if (sortOrder === "asc") {
-      sorted = [...issuesList].sort((a: any, b: any) => {
+      sorted = [...issueList].sort((a: any, b: any) => {
         return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
       });
       setSortOrder("desc");
     } else {
-      sorted = [...issuesList].sort((a: any, b: any) => {
+      sorted = [...issueList].sort((a: any, b: any) => {
         return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
       });
       setSortOrder("asc");
@@ -349,7 +355,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
         >
           <FilterCommon
             closeFilterOverlay={closeFilterOverlay}
-            issuesList={issuesListData}
+            issuesList={issueList}
             visibility={listOverlay}
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
@@ -357,6 +363,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             handleOnSort={() => {}}
             deleteTheIssue={() => {}}
             clickIssueEditSubmit={() => {}}
+            issueFilterState={issueFilterState}
           />
         </Drawer>
       )}

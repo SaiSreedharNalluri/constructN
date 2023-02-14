@@ -49,6 +49,7 @@ const Issues = ({
   issuePriorityList,
   issueStatusList,
   issueTypesList,
+  issueFilterState,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -297,6 +298,7 @@ const Issues = ({
             contextInfo={contextInfo}
             currentProject={currentProject}
             issueTypesList={issueTypesList}
+            issueFilterState={issueFilterState}
           />
           {/* <FilterCommon/> */}
         </Drawer>
