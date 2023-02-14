@@ -174,3 +174,56 @@ body {
   transition: all 0.2s ease;
   z-index: 15;
 }
+
+.Toastify {
+  width: 334px;
+}
+
+.Toastify__toast-container {
+  width: 334px;
+}
+
+.Toastify__toast--default {
+  border: 1px solid #3a9ea5 !important;
+  border-radius: 4px !important;
+  background: #ffffff !important;
+}
+.Toastify__toast-body {
+  font-family: "Open Sans" !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  padding:0px !important;
+  
+}
+.Toastify__toast--default::before {
+  content: url("../public/divami_icons/toasterIcon.svg");
+  position: relative;
+  z-index: 100000;
+  left: 0px;
+  top: 6px;
+}
+
+.Toastify__toast--success {
+  border: 1px solid #3a9ea5 !important;
+  border-radius: 4px !important;
+  background: #ffffff !important;
+}
+
+.Toastify__toast--success::before {
+  content: url("../public/divami_icons/toasterIcon.svg");
+  position: relative;
+  z-index: 100000;
+  left: 12px;
+  top: 6px;
+}
+
+/* .Toastify__toast--success::after {
+content: url("../public/divami_icons/toasterIcon.svg");
+  position: absolute;
+  color: #333333;
+  font-size: 15px;
+  font-weight: 700;
+  left: 265px;
+  padding-top: 14px !important;
+} */

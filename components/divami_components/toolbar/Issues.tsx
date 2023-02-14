@@ -28,12 +28,17 @@ import { ITools } from "../../../models/ITools";
 import CustomIssueListDrawer from "../issue-listing/IssueList";
 import { ISnapshot } from "../../../models/ISnapshot";
 import { IStructure } from "../../../models/IStructure";
+import { CustomToaster } from "../custom-toaster/CustomToaster";
+import toasterIcon from "../../../public/divami_icons/toasterIcon.svg";
+import { ToastImgContainer } from "../custom-toaster/CustomToastStyles";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
     width: 438px;
   }
 `;
+
+const ToasterIconMessage = styled("div")({});
 
 const Issues = ({
   rightMenuClickHandler,
@@ -52,6 +57,8 @@ const Issues = ({
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
   const [issueVisbility, setIssueVisibility] = useState(
     issueLayer === undefined ? false : issueLayer
@@ -155,7 +162,15 @@ const Issues = ({
     createIssue(projectId as string, data)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Issue added sucessfully");
+          setSuccessMessage("Issue is added sucessfully");
+
+          // toast("Issue created sucessfully", {
+          //   progressStyle: { backgroundColor: "orange" },
+          //   icon: "👋",
+          // });
+
+          toast(" Issue Created Successfully");
+          // return;
           // handleTaskSubmit(formData);
           console.log(formData);
           issueSubmit(response.result);
@@ -228,7 +243,7 @@ const Issues = ({
             // onClick={rightMenuClickHandler}
             onClick={() => {
               openIssueCreateFn();
-              // setOpenCreateIssue(true);
+              setOpenCreateIssue(true);
             }}
           />
         </IssuesSectionPlusImg>
@@ -271,6 +286,9 @@ const Issues = ({
           
         </StyledDrawer>
       )} */}
+
+      {/* {successMessage ? <CustomToaster successMessage={successMessage} /> : ""} */}
+      {/* <CustomToaster successMessage={successMessage} /> */}
 
       {openDrawer && (
         <Drawer

@@ -42,6 +42,7 @@ import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
 import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
 import { styled } from "@mui/system";
 import PopupComponent from "../../../../components/popupComponent/PopupComponent";
+import { CustomToaster } from "../../../../components/divami_components/custom-toaster/CustomToaster";
 
 interface IProps {}
 const OpenMenuButton = styled("div")({
@@ -795,6 +796,8 @@ const Index: React.FC<IProps> = () => {
               openCreateTask={openCreateTask}
               selectedLayersList={currentViewLayers}
             />
+
+            {/* <CustomToaster /> */}
             {/* </div> */}
             {/* <RightFloatingMenu
                 issuesList={issuesList}

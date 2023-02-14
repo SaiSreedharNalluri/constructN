@@ -1,23 +1,24 @@
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRouter } from 'next/router';
-import * as Yup from 'yup';
-import React, { useEffect, useState } from 'react';
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/router";
+import * as Yup from "yup";
+import React, { useEffect, useState } from "react";
 import {
   createIssue,
   getIssuesPriority,
   getIssuesTypes,
-} from '../../../../services/issue';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { getProjectUsers } from '../../../../services/project';
-import { IProjectUsers } from '../../../../models/IProjects';
-import { toast } from 'react-toastify';
-import { ISnapshot } from '../../../../models/ISnapshot';
-import { IStructure } from '../../../../models/IStructure';
-import { getCookie } from 'cookies-next';
-import { IToolResponse, ITools } from '../../../../models/ITools';
-import ReactSelect from 'react-select';
-import { getTagsList } from '../../../../services/tags';
+} from "../../../../services/issue";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { getProjectUsers } from "../../../../services/project";
+import { IProjectUsers } from "../../../../models/IProjects";
+import { toast } from "react-toastify";
+import { ISnapshot } from "../../../../models/ISnapshot";
+import { IStructure } from "../../../../models/IStructure";
+import { getCookie } from "cookies-next";
+import { IToolResponse, ITools } from "../../../../models/ITools";
+import ReactSelect from "react-select";
+import { getTagsList } from "../../../../services/tags";
+import { CustomToaster } from "../../../divami_components/custom-toaster/CustomToaster";
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
@@ -48,9 +49,10 @@ const IssueCreate: React.FC<IProps> = ({
   const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
-  const [loggedInUserId, SetLoggedInUserId] = useState('');
-  const [tagList, setTagList] = useState<[string]>(['']);
-  let toolInstance: ITools = { toolName: 'issue', toolAction: 'issueCreate' };
+  const [loggedInUserId, SetLoggedInUserId] = useState("");
+  const [tagList, setTagList] = useState<[string]>([""]);
+  let toolInstance: ITools = { toolName: "issue", toolAction: "issueCreate" };
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     if (router.isReady) {
@@ -79,7 +81,7 @@ const IssueCreate: React.FC<IProps> = ({
         })
         .catch();
     }
-    const userObj: any = getCookie('user');
+    const userObj: any = getCookie("user");
     let user = null;
     if (userObj) user = JSON.parse(userObj);
     if (user?._id) {
@@ -101,7 +103,7 @@ const IssueCreate: React.FC<IProps> = ({
   ]);
 
   const closeIssueCreate = () => {
-    toolInstance.toolAction = 'issueCreateFail';
+    toolInstance.toolAction = "issueCreateFail";
     issueToolClicked(toolInstance);
     closeOverlay();
   };
@@ -142,24 +144,25 @@ const IssueCreate: React.FC<IProps> = ({
     formData.title = `${myStructure?.name}_${formData.dueDate} `;
     formData.snapshot = mySnapshot?._id;
     formData.owner = loggedInUserId;
-    formData.status = 'To Do';
+    formData.status = "To Do";
     formData.context = myContext;
-    console.log('issue create button');
+    console.log("issue create button");
     createIssue(router.query.projectId as string, formData)
       .then((response) => {
         if (response.success === true) {
-          toast.success('Issue is added sucessfully');
+          setSuccessMessage("Issue is added sucessfully");
+          toast.success("Issue is added sucessfully");
           handleIssueSubmit(response.result);
-          toolInstance.toolAction = 'issueCreateSuccess';
+          toolInstance.toolAction = "issueCreateSuccess";
           issueToolClicked(toolInstance);
           resetForm();
         } else {
-          toolInstance.toolAction = 'issueCreateFail';
+          toolInstance.toolAction = "issueCreateFail";
           issueToolClicked(toolInstance);
         }
       })
       .catch((error) => {
-        toolInstance.toolAction = 'issueCreateFail';
+        toolInstance.toolAction = "issueCreateFail";
         issueToolClicked(toolInstance);
         if (error.success === false) {
           toast.error(error?.message);
@@ -219,24 +222,24 @@ const IssueCreate: React.FC<IProps> = ({
     status: string;
     file: object[];
   } = {
-    type: '',
-    priority: '',
-    description: '',
+    type: "",
+    priority: "",
+    description: "",
     assignees: [],
     tags: [],
-    dueDate: '',
+    dueDate: "",
     context: myContext,
-    structure: '',
-    title: '',
-    status: '',
-    owner: '',
-    snapshot: '',
+    structure: "",
+    title: "",
+    status: "",
+    owner: "",
+    snapshot: "",
     file: [],
   };
 
   const validationSchema = Yup.object().shape({
-    type: Yup.string().required('please select the issue type'),
-    priority: Yup.string().required('please select the issue priority'),
+    type: Yup.string().required("please select the issue type"),
+    priority: Yup.string().required("please select the issue priority"),
     description: Yup.string(),
     assignees: Yup.array().of(
       Yup.object().shape({
@@ -251,7 +254,7 @@ const IssueCreate: React.FC<IProps> = ({
       })
     ),
     dueDate: Yup.string(),
-    files: Yup.array().of(Yup.mixed()).min(1, 'At least one file is required'),
+    files: Yup.array().of(Yup.mixed()).min(1, "At least one file is required"),
   });
   interface user {
     label: string;
@@ -278,7 +281,7 @@ const IssueCreate: React.FC<IProps> = ({
   return (
     <div
       className={`fixed calc-h top-10 ${
-        myVisbility ? 'w-1/4 ' : ' w-0'
+        myVisbility ? "w-1/4 " : " w-0"
       }  bg-gray-200 right-0 z-10 overflow-x-hidden`}
     >
       <div>
@@ -303,7 +306,7 @@ const IssueCreate: React.FC<IProps> = ({
             <Form
               className=" grid grid-cols-1 gap-y-2 px-4"
               onKeyDown={(event) => {
-                if (event.key === 'Enter') {
+                if (event.key === "Enter") {
                   event.preventDefault();
                 }
               }}
@@ -392,7 +395,7 @@ const IssueCreate: React.FC<IProps> = ({
                     name="assignees"
                     options={usersList}
                     value={values.assignees}
-                    onChange={(value) => setFieldValue('assignees', value)}
+                    onChange={(value) => setFieldValue("assignees", value)}
                     isMulti
                     placeholder="Select the assignees "
                     className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
@@ -428,7 +431,7 @@ const IssueCreate: React.FC<IProps> = ({
                     name="tags"
                     options={tagsList as object[]}
                     value={values.tags}
-                    onChange={(value) => setFieldValue('tags', value)}
+                    onChange={(value) => setFieldValue("tags", value)}
                     isMulti
                     placeholder="Select the tags "
                     className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
@@ -473,6 +476,8 @@ const IssueCreate: React.FC<IProps> = ({
           )}
         </Formik>
       </div>
+
+      <CustomToaster successMessage={successMessage} />
     </div>
   );
 };

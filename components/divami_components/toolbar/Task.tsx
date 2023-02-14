@@ -150,7 +150,8 @@ const Task = ({
     createTask(projectId as string, data)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Task added sucessfully");
+          toast("Task added sucessfully");
+          // toast.success("Task added sucessfully");
           // handleTaskSubmit(formData);
           taskSubmit(response.result);
           toolInstance.toolAction = "taskCreateSuccess";
