@@ -76,7 +76,12 @@ import {
 } from "./StyledComponent";
 import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
-import { getTasksList } from "../../../services/task";
+import {
+  getTasksList,
+  getTasksPriority,
+  getTaskStatus,
+  getTasksTypes,
+} from "../../../services/task";
 import { CustomSearchField } from "../select-types/StyledComponents";
 import CustomSearch from "../custom-search/CustomSearch";
 import { mockData } from "../project-hierarchy/mockData";
@@ -85,17 +90,20 @@ import CustomLabel from "../custom-label/CustomLabel";
 import FormWrapper from "../form-wrapper/FormWrapper";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
 import CustomButton from "../custom-button/CustomButton";
+import router from "next/router";
 import TaskFilterFormWrapper from "./TaskFilterWrapper";
 
+import { IProjectUsers } from "../../../models/IProjects";
+import { getProjectUsers } from "../../../services/project";
 interface IProps {
-  closeOverlay: () => void;
-  visibility: boolean;
+  closeOverlay?: () => void;
+  visibility?: boolean;
   handleOnFilter: (formData: object) => void;
-  handleOnSort: (sortMethod: string) => void;
-  closeFilterOverlay: () => void;
-  deleteTheIssue: (issueObj: object) => void;
-  clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
-  onClose: any;
+  handleOnSort?: (sortMethod: string) => void;
+  closeFilterOverlay?: () => void;
+  deleteTheIssue?: (issueObj: object) => void;
+  clickIssueEditSubmit?: (editObj: object, issueObj: object) => void;
+  onClose?: any;
   tasksList: any;
   taskType: any;
   taskPriority: any;
@@ -121,10 +129,15 @@ const TaskFilterCommon: React.FC<any> = ({
   // currentStructure,
   // currentSnapshot,
   // closeTaskFilterOverlay,
-  // handleOnTaskFilter,
+  handleOnFilter,
 }) => {
   // console.log("tasksListapi", tasksList);
-  const [datePickerData, setDatePickerData] = useState(DATE_PICKER_DATA);
+  const [startDate, setStartData] = useState(DATE_PICKER_DATA);
+  const [dueDate, setDueData] = useState(DATE_PICKER_DATA);
+  const [taskTypes, setTaskType] = useState<[string]>();
+  const [taskPrioritys, setTaskPriority] = useState<[string]>();
+  const [projectUserss, setProjectUsers] = useState<IProjectUsers[]>([]);
+  const [taskStatuss, setTaskStatus] = useState<[string]>();
 
   const Filters = [
     {
@@ -159,10 +172,118 @@ const TaskFilterCommon: React.FC<any> = ({
     },
   ];
 
+  const assignees = {
+    id: "assignes",
+    type: "search",
+    listOfEntries: [
+      { label: "The Shawshank Redemption", year: 1994 },
+      { label: "The Godfather", year: 1972 },
+      { label: "The Godfather: Part II", year: 1974 },
+      { label: "The Dark Knight", year: 2008 },
+      { label: "12 Angry Men", year: 1957 },
+      { label: "Schindler's List", year: 1993 },
+    ],
+    selectedName: null,
+    label: "Select Name or Team",
+  };
+  const [assignee, setAssignees] = useState([assignees]);
   const handleClose = () => {
-    // onClose(true);
+    onClose(true);
   };
 
+  useEffect(() => {
+    if (router.isReady) {
+      getTasksTypes(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setTaskType(response.result);
+        }
+      });
+      getTasksPriority(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setTaskPriority(response.result);
+        }
+      });
+      getProjectUsers(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+          }
+        })
+        .catch();
+      getTaskStatus(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setTaskStatus(response.result);
+        }
+      });
+    }
+    // const filterArray =
+    // SetFilterState(filterArray)
+  }, []);
+  useEffect(() => {
+    SetFilterState((prev: any) => {
+      return prev.map((item: any) => {
+        if (item.title === "Issue Type") {
+          return {
+            ...item,
+            options: taskTypes?.map((eachItem: any) => {
+              return {
+                ...eachItem,
+                optionTitle: eachItem,
+                optionStatus: "F",
+              };
+            }),
+          };
+        }
+        if (item.title === "Issue Priority") {
+          return {
+            ...item,
+            options: taskPrioritys?.map((eachItem: any) => {
+              return {
+                ...eachItem,
+                optionTitle: eachItem,
+                optionStatus: "F",
+              };
+            }),
+          };
+        }
+        if (item.title === "Issue Status") {
+          return {
+            ...item,
+            options: taskStatuss?.map((eachItem: any) => {
+              return {
+                ...eachItem,
+                optionTitle: eachItem,
+                optionStatus: "F",
+              };
+            }),
+          };
+        }
+        return item;
+      });
+    });
+    setAssignees((prev: any) => {
+      return prev.map((item: any) => {
+        return {
+          ...item,
+          listOfEntries: projectUserss?.map((eachUser: any) => {
+            return {
+              ...eachUser,
+              label: eachUser?.user?.fullName,
+              value: eachUser?.user?._id,
+            };
+          }),
+        };
+      });
+    });
+  }, [taskTypes, taskStatuss, projectUserss, taskPrioritys]);
+  if (projectUserss?.length > 0) {
+    projectUserss?.map((projectUser: any) => {
+      // usersList.push({
+      //   _id: projectUser?.user?._id,
+      //   name: projectUser?.user?.fullName,
+      // });
+    });
+  }
   const [FilterState, SetFilterState] = useState<any>(Filters);
   const [optionState, setOptionState] = useState<any>("clash");
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
@@ -204,6 +325,7 @@ const TaskFilterCommon: React.FC<any> = ({
       };
     });
     SetFilterState(temp);
+    console.log(temp);
   };
 
   const handleOptionSelection = (item: any, index: any) => {
@@ -235,6 +357,7 @@ const TaskFilterCommon: React.FC<any> = ({
       });
       setOptionState(item.optionTitle);
       SetFilterState(temp);
+      console.log(temp);
     } else {
       let temp = FilterState?.map((each: any, serial: number) => {
         if (serial === index) {
@@ -262,9 +385,46 @@ const TaskFilterCommon: React.FC<any> = ({
       });
       setOptionState(item.optionTitle);
       SetFilterState(temp);
+      console.log(temp);
     }
   };
 
+  const onFilterApply = () => {
+    console.log(FilterState);
+    let data: any = {};
+    data.taskType = [];
+    data.taskPriority = [];
+    data.taskStatus = [];
+    data.assigneesData = assignee[0]?.selectedName;
+    FilterState.forEach((item: any) => {
+      if (item.title == "Issue Type") {
+        const x = item.options.filter(
+          (option: any) => option.optionStatus == "T"
+        );
+        x.forEach((element: any) => {
+          data.taskType.push(element.optionTitle);
+        });
+      } else if (item.title == "Issue Priority") {
+        const z = item.options.filter(
+          (option: any) => option.optionStatus == "T"
+        );
+        z.forEach((element: any) => {
+          data.taskPriority.push(element.optionTitle);
+        });
+      } else if (item.title == "Issue Status") {
+        const y = item.options.filter(
+          (option: any) => option.optionStatus == "T"
+        );
+        y.forEach((element: any) => {
+          data.taskStatus.push(element.optionTitle);
+        });
+      }
+    });
+    data.fromDate = startDate[0].defaultValue;
+    data.toDate = dueDate[0].defaultValue;
+    console.log(data);
+    handleOnFilter(data);
+  };
   useEffect(() => {
     let flag = false;
     for (const [i, outerObject] of FilterState.entries()) {
@@ -311,6 +471,15 @@ const TaskFilterCommon: React.FC<any> = ({
     SetFilterState(temp);
   }, [optionState]);
 
+  const formHandler = (event: any) => {
+    console.log("sdf");
+    if (event === "Cancel") {
+      handleClose();
+    } else {
+      onFilterApply();
+      handleClose();
+    }
+  };
   // console.log("tasksList",tasksList)
   return (
     <FilterCommonMain>
@@ -430,8 +599,8 @@ const TaskFilterCommon: React.FC<any> = ({
         <FormElementContainer>
           <CustomLabel label={"Assigned To"} />
           <TaskFilterFormWrapper
-            config={SEARCH_CONFIG}
-            setFormConfig={SEARCH_CONFIG}
+            config={assignee}
+            setFormConfig={setAssignees}
           />
         </FormElementContainer>
 
@@ -441,24 +610,32 @@ const TaskFilterCommon: React.FC<any> = ({
               <div>
                 <CustomLabel label={"Start Date"} />
                 <TaskFilterFormWrapper
-                  config={datePickerData}
-                  setFormConfig={setDatePickerData}
+                  config={startDate}
+                  setFormConfig={setStartData}
                 />
               </div>
             </DatePickerContainer>
             <div>
               <CustomLabel label={"Due Date"} />
               <TaskFilterFormWrapper
-                config={datePickerData}
-                setFormConfig={setDatePickerData}
+                config={dueDate}
+                setFormConfig={setDueData}
               />
             </div>
           </DatePickersContainer>
         </FormElementContainer>
 
         <ButtonsContainer>
-          <CustomButton type="outlined" label="Cancel" />
-          <CustomButton type="contained" label="Apply" />
+          <CustomButton
+            type="outlined"
+            label="Cancel"
+            formHandler={formHandler}
+          />
+          <CustomButton
+            type="contained"
+            formHandler={formHandler}
+            label="Apply"
+          />
         </ButtonsContainer>
       </FilterCommonBody>
     </FilterCommonMain>
