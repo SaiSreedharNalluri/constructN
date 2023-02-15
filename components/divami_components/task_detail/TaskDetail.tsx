@@ -8,8 +8,10 @@ import {
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { styled } from "@mui/system";
+import _ from "lodash";
 import Moment from "moment";
 import Image from "next/image";
+import router from "next/router";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import BackArrow from "../../../public/divami_icons/backArrow.svg";
@@ -82,7 +84,7 @@ const SpanTile = styled("span")`
 const BodyContainer = styled(Box)`
   height: calc(100vh - 134px);
   //   border: 2px solid black;
-  overflow: scroll;
+  // overflow: scroll;
 `;
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
@@ -314,7 +316,9 @@ const ProgressEditStateButtonsContainer = styled("div")`
   justify-content: space-between;
   bottom: 0;
   position: absolute;
-  bottom: 20px;
+  // bottom: 20px;
+  bottom: -75px;
+
   background: white;
   width: 90%;
 `;
@@ -327,15 +331,15 @@ const AssignEditSearchContainer = styled("div")({
     width: "100%",
   },
   "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-  {
-    height: "100%",
-    width: "100%",
-  },
+    {
+      height: "100%",
+      width: "100%",
+    },
   "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-  {
-    height: "100%",
-    width: "100%",
-  },
+    {
+      height: "100%",
+      width: "100%",
+    },
   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
     marginTop: "-8px",
   },
@@ -400,6 +404,7 @@ const SendButton = styled("button")({
   width: "48px",
   display: "flex",
   justifyContent: "center",
+  alignItems: "center",
 });
 
 const ProgressStateFalse = styled("div")({
@@ -455,14 +460,19 @@ function BasicTabs(props: any) {
     taskPriority,
     taskStatus,
     projectUsers,
+    taskUpdate,
   } = props;
 
   const [value, setValue] = React.useState(0);
   const [issueTypeConfig, setIssueTypeConfig] = useState("");
-  const [formState, setFormState] = useState({ selectedValue: "" });
+  const [formState, setFormState] = useState({
+    selectedValue: "",
+    selectedProgress: null,
+    selectedUser: null,
+  });
   const [progressEditState, setProgressEditState] = useState(false);
   const [assigneeEditState, setAssigneeEditState] = useState(false);
-  const [progressOptionsState, setProgressOptionsState] = useState<any>({});
+  const [progressOptionsState, setProgressOptionsState] = useState<any>([{}]);
   const [assigneeOptionsState, setAssigneeOptionsState] = useState([]);
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
   const [searchTerm, setSearchTerm] = useState("");
@@ -476,10 +486,20 @@ function BasicTabs(props: any) {
       };
     });
     setProgressOptionsState((prevState: any) => {
-      return {
-        ...prevState,
-        options: temp,
-      };
+      return [
+        {
+          id: "taskPriority",
+          type: "select",
+          defaultValue: "",
+          placeHolder: "Select",
+          label: "Material (Optional)",
+          isLarge: false,
+          isError: false,
+          isReq: false,
+          isflex: false,
+          options: temp,
+        },
+      ];
     });
     let tempUsers = projectUsers.map((each: any) => {
       return {
@@ -505,6 +525,10 @@ function BasicTabs(props: any) {
     if (assigneeEditState) {
       setAssigneeEditState(!assigneeEditState);
     }
+    taskUpdate({
+      ...formState,
+      selectedProgress: progressOptionsState[0].defaultValue,
+    });
   };
 
   const handleEditAssigne = () => {
@@ -563,7 +587,11 @@ function BasicTabs(props: any) {
           <Tab
             label="Details"
             {...a11yProps(0)}
-            style={{ marginRight: "40px", paddingLeft: "0px" }}
+            style={{
+              marginRight: "40px",
+              paddingLeft: "0px",
+              color: "#101F4B",
+            }}
           />
           <Tab label="Activity log" {...a11yProps(1)} />
         </Tabs>
@@ -571,17 +599,28 @@ function BasicTabs(props: any) {
       <CustomTabPanel value={value} index={0}>
         <TabOneDiv>
           <FirstHeaderDiv>
-            <Image src={""} alt="" />
+            <Image
+              src={
+                taskState.TabOne.attachments
+                  ? taskState.TabOne.attachments[0]?.url
+                  : ""
+              }
+              alt=""
+              width={400}
+              height={400}
+            />
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
               <PriorityTitle>Priority</PriorityTitle>
-              <PriorityStatus>{taskState.TabOne.priority}</PriorityStatus>
+              <PriorityStatus style={{ color: "#101F4B" }}>
+                {taskState.TabOne.priority}
+              </PriorityStatus>
             </SecondContPrior>
 
             <SecondContCapt>
               <CaptureTitle>Captured on</CaptureTitle>
-              <CaptureStatus>
+              <CaptureStatus style={{ color: "#101F4B" }}>
                 {" "}
                 {Moment(taskState.TabOne.capturedOn).format("DD MMM YY")}
               </CaptureStatus>
@@ -592,7 +631,7 @@ function BasicTabs(props: any) {
             <ProgressStateTrue>
               <ThirdContLeft>
                 <ThirdContWatch>Watcher</ThirdContWatch>
-                <ThirdContWatchName>
+                <ThirdContWatchName style={{ color: "#101F4B" }}>
                   {" "}
                   {taskState.TabOne.creator}
                 </ThirdContWatchName>
@@ -603,8 +642,8 @@ function BasicTabs(props: any) {
               >
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
-                  <FourthContProgType>
-                    {taskState.TabOne.creator}{" "}
+                  <FourthContProgType style={{ color: "#101F4B" }}>
+                    {taskState.TabOne.assignees}{" "}
                     <PenIconImage
                       onClick={() => {
                         handleEditAssigne();
@@ -620,7 +659,7 @@ function BasicTabs(props: any) {
             <ProgressStateFalse>
               <ThirdContLeft>
                 <ThirdContWatch>Watcher</ThirdContWatch>
-                <ThirdContWatchName>
+                <ThirdContWatchName style={{ color: "#101F4B" }}>
                   {" "}
                   {taskState.TabOne.creator}
                 </ThirdContWatchName>
@@ -628,9 +667,9 @@ function BasicTabs(props: any) {
               <ThirdContRight>
                 <ThirdContProg>Progress</ThirdContProg>
 
-                <ThirdContProgType>
-                  {/* {DetailsObj?.TabOne[0]?.status[0]?.progress}{" "} */}
-                  <div>In-Progress</div>
+                <ThirdContProgType style={{ color: "#101F4B" }}>
+                  {taskState.TabOne.status}
+
                   <PenIconImage
                     onClick={() => {
                       handleEditProgress();
@@ -646,11 +685,11 @@ function BasicTabs(props: any) {
             <ProgressCustomSelect>
               <CustomSelect
                 onChange={(event: any, value: any) => console.log(value)}
-                config={progressOptionsState}
-                defaultValue={progressOptionsState?.options[0].value}
-                id={""}
+                config={progressOptionsState[0]}
+                // defaultValue={progressOptionsState?.options[0].value}
+                id={"taskPriority"}
                 sx={{ minWidth: 120 }}
-                setFormConfig={setFormConfig}
+                setFormConfig={setProgressOptionsState}
                 isError={""}
                 label=""
               />
@@ -661,7 +700,7 @@ function BasicTabs(props: any) {
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
 
-                  <FourthContProgType>
+                  <FourthContProgType style={{ color: "#101F4B" }}>
                     {taskState?.TabOne.assignees}{" "}
                     <PenIconImage
                       onClick={() => {
@@ -683,14 +722,17 @@ function BasicTabs(props: any) {
                 options={assigneeOptionsState}
                 sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="" />}
-                onChange={(event, value) => console.log(value)}
-              // InputProps={{
-              //   startAdornment: (
-              //     <InputAdornment position="start">
-              //       <SearchIcon />
-              //     </InputAdornment>
-              //   ),
-              // }}
+                onChange={(event, value) => {
+                  console.log(value);
+                  setFormState({ ...formState, selectedUser: value });
+                }}
+                // InputProps={{
+                //   startAdornment: (
+                //     <InputAdornment position="start">
+                //       <SearchIcon />
+                //     </InputAdornment>
+                //   ),
+                // }}
               />
             </AssignEditSearchContainer>
           )}
@@ -705,7 +747,7 @@ function BasicTabs(props: any) {
           <DescriptionDiv>
             <DescriptionTitle>RFI Question</DescriptionTitle>
 
-            <DescriptionPara>
+            <DescriptionPara style={{ color: "#101F4B" }}>
               {taskState.TabOne.issueDescription}
             </DescriptionPara>
           </DescriptionDiv>
@@ -714,7 +756,7 @@ function BasicTabs(props: any) {
             <>
               <AttachmentDiv>
                 <AttachmentTitle>Attachments</AttachmentTitle>
-                <AttachmentDescription>
+                <AttachmentDescription style={{ color: "#101F4B" }}>
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
                       return (
@@ -802,6 +844,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     currentSnapshot,
     currentStructure,
     contextInfo,
+    closeTaskCreate,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
 
@@ -873,6 +916,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
       relatedTags: task.tags,
       assignees: task.assignees?.length ? task.assignees[0].fullName : "",
       id: task._id,
+      status: task.status,
     };
     setTaskState((prev: any) => {
       return {
@@ -883,7 +927,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
   }, []);
 
   const onDeleteTask = () => {
-    setshowPopUp(false)
+    setshowPopUp(false);
     deleteTheTask(task);
   };
 
@@ -898,10 +942,12 @@ const CustomTaskDetailsDrawer = (props: any) => {
       ?.selectedName;
     if (assignes && assignes.length > 0) {
       assignes.map((user: any) => {
-        userIdList.push(user.value);
+        userIdList?.push(user.value);
       });
     }
-    userIdList.push(assignes.value);
+    if (assignes?.value) {
+      userIdList.push(assignes.value);
+    }
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
@@ -928,8 +974,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
       (data.tags =
         (formData.length
           ? formData
-            .filter((item: any) => item.id == "tag-suggestions")[0]
-            ?.chipString?.join(";")
+              .filter((item: any) => item.id == "tag-suggestions")[0]
+              ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -946,69 +992,95 @@ const CustomTaskDetailsDrawer = (props: any) => {
     const fileformdata = new FormData();
     const filesArr = formData.filter(
       (item: any) => item.id === "file-upload"
-    )[0].selectedFile;
+    )[0]?.selectedFile;
     data.attachments = formData.filter(
       (item: any) => item.id === "file-upload"
-    )[0].selectedFile;
+    )[0]?.selectedFile;
     console.log("dfsdfsdokkkk", fileformdata, filesArr);
     // const uploadUrl = filesArr[0];
     // const obj = {
     //   file: [uploadUrl],
     // };
     // const uploadUrl = URL.createObjectURL(filesArr[0]);
-    const arr = filesArr.map((each: any) => {
-      // fileformdata.append("file", each.name);
-      fileformdata.append("file", each);
-      return {
-        ...each,
-      };
-    });
-    console.log("formData", fileformdata);
-
-    updateAttachments(fileformdata, task._id)
-      .then((response) => {
-        if (response.success === true) {
-          toast.success("Task added sucessfully");
-          // handleTaskSubmit(formData);
-          // taskSubmit(response.result);
-          // toolInstance.toolAction = "taskCreateSuccess";
-
-          // console.log(formData);
-        } else {
-          // toolInstance.toolAction = "taskCreateFail";
-          // issueToolClicked(toolInstance);
-        }
-      })
-      .catch((error) => {
-        // toolInstance.toolAction = "taskCreateFail";
-
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
+    if (filesArr?.length) {
+      const arr = filesArr.map((each: any) => {
+        // fileformdata.append("file", each.name);
+        fileformdata.append("file", each);
+        return {
+          ...each,
+        };
       });
-    updateTask(projectId as string, data, task._id)
+      console.log("formData", fileformdata);
+
+      updateAttachments(fileformdata, task._id)
+        .then((response) => {
+          if (response.success === true) {
+            toast.success("Task added sucessfully");
+            // handleTaskSubmit(formData);
+            // taskSubmit(response.result);
+            // toolInstance.toolAction = "taskCreateSuccess";
+
+            // console.log(formData);
+          } else {
+            // toolInstance.toolAction = "taskCreateFail";
+            // issueToolClicked(toolInstance);
+          }
+        })
+        .catch((error) => {
+          // toolInstance.toolAction = "taskCreateFail";
+
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+        });
+    }
+    if (data.title && data.type && data.priority) {
+      updateTask(projectId as string, data, task._id)
+        .then((response) => {
+          if (response.success === true) {
+            toast.success("Task added sucessfully");
+            // handleTaskSubmit(formData);
+            // taskSubmit(response.result);
+            // toolInstance.toolAction = "taskCreateSuccess";
+
+            // console.log(formData);
+          } else {
+            // toolInstance.toolAction = "taskCreateFail";
+            // issueToolClicked(toolInstance);
+          }
+          setOpenCreateTask(false);
+        })
+        .catch((error) => {
+          // toolInstance.toolAction = "taskCreateFail";
+
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+          setOpenCreateTask(false);
+        });
+    }
+  };
+  const taskUpdate = (data: any) => {
+    console.log(task);
+    const issueData = _.cloneDeep(task);
+    data.selectedUser?.user
+      ? (issueData.assignees = [data.selectedUser.user])
+      : null;
+    data.selectedProgress ? (issueData.priority = data.selectedProgress) : null;
+    const projectId = router.query.projectId;
+    updateTask(projectId as string, issueData, task._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Task added sucessfully");
-          // handleTaskSubmit(formData);
-          // taskSubmit(response.result);
-          // toolInstance.toolAction = "taskCreateSuccess";
-
-          // console.log(formData);
+          toast.success("Issue updated sucessfully");
         } else {
-          // toolInstance.toolAction = "taskCreateFail";
-          // issueToolClicked(toolInstance);
         }
       })
       .catch((error) => {
-        // toolInstance.toolAction = "taskCreateFail";
-
         if (error.success === false) {
           toast.error(error?.message);
         }
       });
   };
-
   return (
     <>
       <CustomTaskDrawerContainer>
@@ -1075,7 +1147,9 @@ const CustomTaskDetailsDrawer = (props: any) => {
             currentStructure={currentStructure}
             contextInfo={contextInfo}
             editData={task}
-            closeTaskCreate={closeTaskCreate}
+            closeTaskCreate={() => {
+              setOpenCreateTask(false);
+            }}
           />
         </CustomDrawer>
       )}

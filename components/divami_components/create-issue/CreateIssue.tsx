@@ -8,7 +8,7 @@ import { createTask } from "../../../services/task";
 const StyledDiv = styled("span")({
   fontFamily: '"Open Sans"',
   display: "block",
-  color: "#888888",
+  // color: "#888888",
   // fontStyle: "italic",
   // fontWeight: "400",
   // fontSize: "14px",
@@ -30,13 +30,14 @@ const CreateIssue = ({
   editData,
 }: any) => {
   const [formData, setFormData] = useState<any>(null);
-
+  const [validate, setValidate] = useState(false);
   const formHandler = (event: any) => {
     if (event === "Cancel") {
       setOpenCreateTask(false);
     } else {
+      setValidate(true);
       handleCreateTask(formData);
-      setOpenCreateTask(false);
+      // setOpenCreateTask(false);
     }
   };
 
@@ -51,7 +52,12 @@ const CreateIssue = ({
         setOpenCreateTask={setOpenCreateTask}
         closeIssueCreate={closeIssueCreate}
       />
-      <Body handleFormData={handleFormData} editData={editData} />
+      <Body
+        handleFormData={handleFormData}
+        editData={editData}
+        validate={validate}
+        setIsValidate={setValidate}
+      />
       <Footer formHandler={formHandler} />
     </StyledDiv>
   );

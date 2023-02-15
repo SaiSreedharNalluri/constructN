@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState } from "react";
 import constructnLogo from "../../../public/divami_icons/constructnLogo.svg";
 import hamburgerMenu from "../../../public/divami_icons/hamburgerMenu.svg";
 import profileImageHeader from "../../../public/divami_icons/profileImageHeader.svg";
+import ImgProfile from "../../../public/divami_icons/ImgProfile.svg";
+
 import Notification from "../../../public/divami_icons/Notification.svg";
 import clip from "../../../public/divami_icons/clip.svg";
 
@@ -28,6 +30,7 @@ import {
   HeaderProfileImageContainer,
   HeaderMenuImageContainer,
   HeaderNotificationImageContainer,
+  ProfileImgIcon,
 } from "./HeaderStyles";
 import { ITools } from "../../../models/ITools";
 
@@ -155,7 +158,7 @@ const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
             <></>
           )}
           <HeaderProfileImageContainer>
-            <Image
+            {/* <Image
               onClick={() => {
                 if (!loading) {
                   setLoading(true);
@@ -164,6 +167,28 @@ const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
                 }
               }}
               src={profileImageHeader}
+              alt="Profile Image"
+            /> */}
+            {/* <Image
+              onClick={() => {
+                if (!loading) {
+                  setLoading(true);
+                } else {
+                  setLoading(false);
+                }
+              }}
+              src={ImgProfile}
+              alt="Profile Image"
+            /> */}
+            <ProfileImgIcon
+              onClick={() => {
+                if (!loading) {
+                  setLoading(true);
+                } else {
+                  setLoading(false);
+                }
+              }}
+              src={ImgProfile}
               alt="Profile Image"
             />
           </HeaderProfileImageContainer>

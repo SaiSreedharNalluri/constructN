@@ -44,7 +44,7 @@ import { styled } from "@mui/system";
 import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 import { CustomToaster } from "../../../../components/divami_components/custom-toaster/CustomToaster";
 
-interface IProps { }
+interface IProps {}
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -58,7 +58,7 @@ const OpenMenuButton = styled("div")({
   left: "22px",
   bottom: "38px",
   cursor: "pointer",
-  backgroundColour: "#fffff",
+  backgroundColour: "#fff",
 });
 const CloseMenuButton = styled("div")({
   height: "38px",
@@ -114,6 +114,8 @@ const Index: React.FC<IProps> = () => {
   const [hierarchy, setHierarchy] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [expanded, setExpanded] = useState<string[]>([]);
+  const [openIssueDetails, setOpenIssueDetails] = useState(false);
+  const [openTaskDetails, setOpenTaskDetails] = useState(false);
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
   };
@@ -144,6 +146,13 @@ const Index: React.FC<IProps> = () => {
   };
   const closeIssueList = () => {
     setOpenIssueView(false);
+  };
+
+  const closeTaskDetails = () => {
+    setOpenTaskDetails(false);
+  };
+  const closeIssueDetails = () => {
+    setOpenIssueDetails(false);
   };
 
   const taskSubmit = (formdata: any) => {
@@ -279,9 +288,11 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
-                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
-                  }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${
+                  structure?._id
+                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
+                  currentProjectId as string
+                }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -365,6 +376,7 @@ const Index: React.FC<IProps> = () => {
           case "taskCreateFail":
           case "taskShow":
           case "taskHide":
+          case "taskSelect":
             setClickedTool(toolInstance);
             break;
         }
@@ -404,6 +416,10 @@ const Index: React.FC<IProps> = () => {
         } else if (data.toolAction === "selectIssue") {
           console.log("issue selected: ", data.response?.id);
           // issue detail view open logic comes here
+          if (data.response != undefined) {
+            setCurrentContext(data.response);
+            setOpenIssueDetails(true);
+          }
         }
         break;
       case "Task":
@@ -414,6 +430,10 @@ const Index: React.FC<IProps> = () => {
         } else if (data.toolAction === "selectTask") {
           console.log("task selected: ", data.response?.id);
           // task detail view open logic comes here
+          if (data.response != undefined) {
+            setCurrentContext(data.response);
+            setOpenTaskDetails(true);
+          }
         }
         break;
       default:
@@ -579,11 +599,12 @@ const Index: React.FC<IProps> = () => {
         (item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
         ) ||
-          formData?.assigneesData?.length == 0) &&
+          formData?.assigneesData?.length == 0 ||
+          !formData?.assigneesData) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
-          formData.fromDate == "") &&
+          !formData.fromDate) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
-          formData.toDate == "")
+          !formData.toDate)
     );
     setIssueList(result);
     setIssueFilterState({
@@ -591,6 +612,7 @@ const Index: React.FC<IProps> = () => {
       filterData: formData,
     });
   };
+  console.log(issuesList, "issuesListissuesList");
   const closeFilterOverlay = () => {
     setIssueList(issueFilterList);
     setIssueFilterState({
@@ -598,21 +620,49 @@ const Index: React.FC<IProps> = () => {
       filterData: {},
     });
   };
+  // const handleOnTaskFilter = (formData: any) => {
+  //   console.log(formData, "taskfilterdata");
+  //   console.log(taskFilterList);
+  //   const result = taskFilterList.filter(
+  //     (item: ITasks) =>
+  //       formData.taskType.includes(item.type) &&
+  //       formData?.taskPriority?.includes(item.priority) &&
+  //       formData?.taskStatus?.includes(item.status) &&
+  //       // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
+  //       //   formData.fromDate == "") &&
+  //       // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
+  //       //   formData.toDate == "") &&
+  //       item.assignees.filter(
+  //         (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
+  //       )
+  //   );
+  //   setTasksList(result);
+  //   setTaskFilterState({
+  //     isFilterApplied: true,
+  //     filterData: formData,
+  //   });
+  // };
+
   const handleOnTaskFilter = (formData: any) => {
-    console.log(formData);
-    console.log(taskFilterList);
+    console.log("structure/index.tsx", formData, taskFilterList);
     const result = taskFilterList.filter(
-      (item: ITasks) =>
-        formData.taskType.includes(item.type) &&
-        formData?.taskPriority?.includes(item.priority) &&
-        formData?.taskStatus?.includes(item.status) &&
-        // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
-        //   formData.fromDate == "") &&
-        // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
-        //   formData.toDate == "") &&
-        item.assignees.filter(
+      (item) =>
+        (formData.taskType.includes(item.type) ||
+          formData.taskType.length == 0) &&
+        (formData?.taskPriority?.includes(item.priority) ||
+          formData?.taskPriority?.length == 0) &&
+        (formData?.taskStatus?.includes(item.status) ||
+          formData?.taskStatus.length == 0) &&
+        (item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
-        )
+        ) ||
+          formData?.assigneesData?.length == 0 ||
+          !formData?.assigneesData)
+      // &&
+      // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
+      //   !formData.fromDate) &&
+      // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
+      //   !formData.toDate)
     );
     setTasksList(result);
     setTaskFilterState({
@@ -620,6 +670,7 @@ const Index: React.FC<IProps> = () => {
       filterData: formData,
     });
   };
+
   const closeTaskFilterOverlay = () => {
     setTasksList(taskFilterList);
     setTaskFilterState({
@@ -677,8 +728,6 @@ const Index: React.FC<IProps> = () => {
       });
   };
 
-  console.log(activeRealityMap, "layers list");
-
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -693,8 +742,9 @@ const Index: React.FC<IProps> = () => {
           {
             <div
               ref={leftRefContainer}
-              className={` ${leftNav ? "visible" : "hidden"
-                } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+              className={` ${
+                leftNav ? "visible" : "hidden"
+              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay
@@ -738,8 +788,9 @@ const Index: React.FC<IProps> = () => {
               {
                 <div
                   ref={leftRefContainer}
-                  className={`${hierarchy ? "visible" : "hidden"
-                    } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg projHier `}
+                  className={`${
+                    hierarchy ? "visible" : "hidden"
+                  } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg projHier `}
                 >
                   <div>
                     <LeftOverLay
@@ -865,6 +916,10 @@ const Index: React.FC<IProps> = () => {
               closeIssueCreate={closeIssueCreate}
               closeTaskCreate={closeTaskCreate}
               deleteTheIssue={deleteTheIssue}
+              openIssueDetails={openIssueDetails}
+              openTaskDetails={openTaskDetails}
+              closeTaskDetails={closeTaskDetails}
+              closeIssueDetails={closeIssueDetails}
             />
 
             {/* <CustomToaster /> */}

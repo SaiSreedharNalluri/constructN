@@ -24,8 +24,8 @@ export const DrawerHeader = styled("div")({
   padding: "20px 22px 15px 19px",
 });
 export const DrawerBox = styled(Box)({
-  // width: "253px",
-  width: "258px",
+  // width: "252px",
+  // width: "258px",
   border: "1px solid #b5b5b5",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
 });
