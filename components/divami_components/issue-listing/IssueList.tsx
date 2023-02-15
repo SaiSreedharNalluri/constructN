@@ -114,6 +114,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [issueList, setIssueList] = useState<any>(issuesList);
 
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(issueList);
+  useEffect(() => {
+    setIssueList(issuesList);
+  }, [issuesList?.length]);
+
+  useEffect(() => {
+    setFilteredIssuesList(issueList);
+  }, [issueList?.length]);
 
   const closeIssueList = () => {
     //setListOverlay(false);
@@ -196,7 +203,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
-
+  console.log(filteredIssuesList, issueList, "indetailsss");
   useEffect(() => {
     // setIssuesListData(filteredIssuesList);
   }, [filteredIssuesList]);

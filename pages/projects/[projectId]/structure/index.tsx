@@ -44,7 +44,7 @@ import { styled } from "@mui/system";
 import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 import { CustomToaster } from "../../../../components/divami_components/custom-toaster/CustomToaster";
 
-interface IProps {}
+interface IProps { }
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -288,11 +288,9 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${
-                  structure?._id
-                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
-                  currentProjectId as string
-                }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
+                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
+                  }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -599,11 +597,11 @@ const Index: React.FC<IProps> = () => {
         (item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
         ) ||
-          formData?.assigneesData?.length == 0) &&
+          formData?.assigneesData?.length == 0 || !formData?.assigneesData) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
-          formData.fromDate == "") &&
+          !formData.fromDate) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
-          formData.toDate == "")
+          !formData.toDate)
     );
     setIssueList(result);
     setIssueFilterState({
@@ -611,6 +609,7 @@ const Index: React.FC<IProps> = () => {
       filterData: formData,
     });
   };
+  console.log(issuesList, "issuesListissuesList")
   const closeFilterOverlay = () => {
     setIssueList(issueFilterList);
     setIssueFilterState({
@@ -618,21 +617,48 @@ const Index: React.FC<IProps> = () => {
       filterData: {},
     });
   };
+  // const handleOnTaskFilter = (formData: any) => {
+  //   console.log(formData, "taskfilterdata");
+  //   console.log(taskFilterList);
+  //   const result = taskFilterList.filter(
+  //     (item: ITasks) =>
+  //       formData.taskType.includes(item.type) &&
+  //       formData?.taskPriority?.includes(item.priority) &&
+  //       formData?.taskStatus?.includes(item.status) &&
+  //       // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
+  //       //   formData.fromDate == "") &&
+  //       // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
+  //       //   formData.toDate == "") &&
+  //       item.assignees.filter(
+  //         (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
+  //       )
+  //   );
+  //   setTasksList(result);
+  //   setTaskFilterState({
+  //     isFilterApplied: true,
+  //     filterData: formData,
+  //   });
+  // };
+
   const handleOnTaskFilter = (formData: any) => {
-    console.log(formData);
-    console.log(taskFilterList);
+    console.log("structure/index.tsx", formData, taskFilterList)
     const result = taskFilterList.filter(
-      (item: ITasks) =>
-        formData.taskType.includes(item.type) &&
-        formData?.taskPriority?.includes(item.priority) &&
-        formData?.taskStatus?.includes(item.status) &&
-        // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
-        //   formData.fromDate == "") &&
-        // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
-        //   formData.toDate == "") &&
-        item.assignees.filter(
+      (item) =>
+        (formData.taskType.includes(item.type) ||
+          formData.taskType.length == 0) &&
+        (formData?.taskPriority?.includes(item.priority) ||
+          formData?.taskPriority?.length == 0) &&
+        (formData?.taskStatus?.includes(item.status) ||
+          formData?.taskStatus.length == 0) &&
+        (item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
-        )
+        ) ||
+          formData?.assigneesData?.length == 0 || !formData?.assigneesData)
+      // &&
+      // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
+      //   !formData.fromDate) &&
+      // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
+      //   !formData.toDate)
     );
     setTasksList(result);
     setTaskFilterState({
@@ -640,6 +666,8 @@ const Index: React.FC<IProps> = () => {
       filterData: formData,
     });
   };
+
+
   const closeTaskFilterOverlay = () => {
     setTasksList(taskFilterList);
     setTaskFilterState({
@@ -711,9 +739,8 @@ const Index: React.FC<IProps> = () => {
           {
             <div
               ref={leftRefContainer}
-              className={` ${
-                leftNav ? "visible" : "hidden"
-              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+              className={` ${leftNav ? "visible" : "hidden"
+                } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay
@@ -757,9 +784,8 @@ const Index: React.FC<IProps> = () => {
               {
                 <div
                   ref={leftRefContainer}
-                  className={`${
-                    hierarchy ? "visible" : "hidden"
-                  } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg projHier `}
+                  className={`${hierarchy ? "visible" : "hidden"
+                    } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg projHier `}
                 >
                   <div>
                     <LeftOverLay
