@@ -126,6 +126,7 @@ export const StyledTreeView = styled(TreeView)({
   },
   "& .MuiTreeItem-content.MuiTreeItem-content.Mui-selected": {
     backgroundColor: "#FFF2EB",
+    color: "#F1742E",
   },
   " & .MuiTreeView-root": {
     "& .MuiTreeItem-content": {
