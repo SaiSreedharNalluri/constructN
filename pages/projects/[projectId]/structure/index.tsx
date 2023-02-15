@@ -59,7 +59,7 @@ const OpenMenuButton = styled("div")({
   bottom: "38px",
   cursor: "pointer",
   background: "#ffffff",
-  fontFamily: "Open Sans"
+  fontFamily: "Open Sans",
 });
 const CloseMenuButton = styled("div")({
   height: "38px",
@@ -115,6 +115,8 @@ const Index: React.FC<IProps> = () => {
   const [hierarchy, setHierarchy] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [expanded, setExpanded] = useState<string[]>([]);
+  const [openIssueDetails, setOpenIssueDetails] = useState(false);
+  const [openTaskDetails, setOpenTaskDetails] = useState(false);
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
   };
@@ -145,6 +147,13 @@ const Index: React.FC<IProps> = () => {
   };
   const closeIssueList = () => {
     setOpenIssueView(false);
+  };
+
+  const closeTaskDetails = () => {
+    setOpenTaskDetails(false);
+  };
+  const closeIssueDetails = () => {
+    setOpenIssueDetails(false);
   };
 
   const taskSubmit = (formdata: any) => {
@@ -368,6 +377,7 @@ const Index: React.FC<IProps> = () => {
           case "taskCreateFail":
           case "taskShow":
           case "taskHide":
+          case "taskSelect":
             setClickedTool(toolInstance);
             break;
         }
@@ -407,6 +417,10 @@ const Index: React.FC<IProps> = () => {
         } else if (data.toolAction === "selectIssue") {
           console.log("issue selected: ", data.response?.id);
           // issue detail view open logic comes here
+          if (data.response != undefined) {
+            setCurrentContext(data.response);
+            setOpenIssueDetails(true);
+          }
         }
         break;
       case "Task":
@@ -417,6 +431,10 @@ const Index: React.FC<IProps> = () => {
         } else if (data.toolAction === "selectTask") {
           console.log("task selected: ", data.response?.id);
           // task detail view open logic comes here
+          if (data.response != undefined) {
+            setCurrentContext(data.response);
+            setOpenTaskDetails(true);
+          }
         }
         break;
       default:
@@ -582,11 +600,12 @@ const Index: React.FC<IProps> = () => {
         (item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
         ) ||
-          formData?.assigneesData?.length == 0) &&
+          formData?.assigneesData?.length == 0 ||
+          !formData?.assigneesData) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
-          formData.fromDate == "") &&
+          !formData.fromDate) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
-          formData.toDate == "")
+          !formData.toDate)
     );
     setIssueList(result);
     setIssueFilterState({
@@ -594,6 +613,7 @@ const Index: React.FC<IProps> = () => {
       filterData: formData,
     });
   };
+  console.log(issuesList, "issuesListissuesList");
   const closeFilterOverlay = () => {
     setIssueList(issueFilterList);
     setIssueFilterState({
@@ -601,21 +621,49 @@ const Index: React.FC<IProps> = () => {
       filterData: {},
     });
   };
+  // const handleOnTaskFilter = (formData: any) => {
+  //   console.log(formData, "taskfilterdata");
+  //   console.log(taskFilterList);
+  //   const result = taskFilterList.filter(
+  //     (item: ITasks) =>
+  //       formData.taskType.includes(item.type) &&
+  //       formData?.taskPriority?.includes(item.priority) &&
+  //       formData?.taskStatus?.includes(item.status) &&
+  //       // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
+  //       //   formData.fromDate == "") &&
+  //       // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
+  //       //   formData.toDate == "") &&
+  //       item.assignees.filter(
+  //         (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
+  //       )
+  //   );
+  //   setTasksList(result);
+  //   setTaskFilterState({
+  //     isFilterApplied: true,
+  //     filterData: formData,
+  //   });
+  // };
+
   const handleOnTaskFilter = (formData: any) => {
-    console.log(formData);
-    console.log(taskFilterList);
+    console.log("structure/index.tsx", formData, taskFilterList);
     const result = taskFilterList.filter(
-      (item: ITasks) =>
-        formData.taskType.includes(item.type) &&
-        formData?.taskPriority?.includes(item.priority) &&
-        formData?.taskStatus?.includes(item.status) &&
-        // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
-        //   formData.fromDate == "") &&
-        // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
-        //   formData.toDate == "") &&
-        item.assignees.filter(
+      (item) =>
+        (formData.taskType.includes(item.type) ||
+          formData.taskType.length == 0) &&
+        (formData?.taskPriority?.includes(item.priority) ||
+          formData?.taskPriority?.length == 0) &&
+        (formData?.taskStatus?.includes(item.status) ||
+          formData?.taskStatus.length == 0) &&
+        (item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
-        )
+        ) ||
+          formData?.assigneesData?.length == 0 ||
+          !formData?.assigneesData)
+      // &&
+      // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
+      //   !formData.fromDate) &&
+      // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
+      //   !formData.toDate)
     );
     setTasksList(result);
     setTaskFilterState({
@@ -623,6 +671,7 @@ const Index: React.FC<IProps> = () => {
       filterData: formData,
     });
   };
+
   const closeTaskFilterOverlay = () => {
     setTasksList(taskFilterList);
     setTaskFilterState({
@@ -679,8 +728,6 @@ const Index: React.FC<IProps> = () => {
         console.log("error", error);
       });
   };
-
-  console.log(activeRealityMap, "layers list");
 
   return (
     <div className=" w-full  h-full">
@@ -869,6 +916,11 @@ const Index: React.FC<IProps> = () => {
               issueFilterState={issueFilterState}
               closeIssueCreate={closeIssueCreate}
               closeTaskCreate={closeTaskCreate}
+              deleteTheIssue={deleteTheIssue}
+              openIssueDetails={openIssueDetails}
+              openTaskDetails={openTaskDetails}
+              closeTaskDetails={closeTaskDetails}
+              closeIssueDetails={closeIssueDetails}
             />
 
             {/* <CustomToaster /> */}
