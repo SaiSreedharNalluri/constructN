@@ -517,6 +517,7 @@ function GenericViewer(props) {
           
         break;
     }
+    currentContext.current = undefined;
   }
 
   function updateViewerChanges() {
