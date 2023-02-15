@@ -100,22 +100,48 @@
   fill: transparent;
 }
 .adsk-viewing-viewer .adsk-toolbar {
-  bottom: calc(100% - 60px);
-  left: 10px;
+  bottom:  30px;
+  left: calc(100% - 60px);
   pointer-events: none;
   position: absolute;
   text-align: center;
-  width: calc(100% - 20px);
+  width: 30px;
   z-index: 15;
 }
 
 .adsk-viewing-viewer .adsk-toolbar .adsk-button .toolbar-vertical-group {
-  bottom: -60px;
-  left: -5px;
+  bottom: -20px;
+  left: -50px;
   margin: 0;
   position: absolute;
-  display: flex; 
-  flex-direction: row-reverse;
+  display: grid; 
   transition: all .2s ease;
   z-index: 15;
+}
+.adsk-viewing-viewer .adsk-button {
+  border: 2px solid rgba(34,34,34,0);
+  border-radius: 4px;
+  cursor: pointer;
+  float: left;
+  height: 18px;
+  margin: 4px;
+  padding: 5px;
+  position: relative;
+  width: 18px;
+}
+.adsk-viewing-viewer .adsk-button-icon {
+  background-position: 50%;
+  background-repeat: no-repeat;
+  display: inline-block;
+  font-size: 18px;
+  height: 100%;
+  line-height: 1;
+  padding-top: 2px;
+  position: relative;
+  width: 100%;
+}
+.adsk-button-arrow {
+  position: absolute;
+  right: -6px;
+  top: -6px;
 }
