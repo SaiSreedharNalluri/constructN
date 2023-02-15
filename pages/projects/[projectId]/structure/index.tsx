@@ -44,7 +44,7 @@ import { styled } from "@mui/system";
 import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 import { CustomToaster } from "../../../../components/divami_components/custom-toaster/CustomToaster";
 
-interface IProps { }
+interface IProps {}
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -279,9 +279,11 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
-                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
-                  }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${
+                  structure?._id
+                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
+                  currentProjectId as string
+                }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -340,10 +342,8 @@ const Index: React.FC<IProps> = () => {
           case "issueShow":
           case "issueHide":
             setClickedTool(toolInstance);
-
             break;
         }
-
         break;
       case "progress":
         switch (toolInstance.toolAction) {
@@ -644,7 +644,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const deleteTheTask = (taskObj: any) => {
-    console.log("taskObj", taskObj, router.query.projectId)
+    console.log("taskObj", taskObj, router.query.projectId);
     deleteTask(router.query.projectId as string, taskObj._id)
       .then((response) => {
         if (response.success === true) {
@@ -695,8 +695,9 @@ const Index: React.FC<IProps> = () => {
           {
             <div
               ref={leftRefContainer}
-              className={` ${leftNav ? "visible" : "hidden"
-                } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+              className={` ${
+                leftNav ? "visible" : "hidden"
+              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay
@@ -865,6 +866,8 @@ const Index: React.FC<IProps> = () => {
               issueTypesList={issueTypesList}
               taskFilterState={taskFilterState}
               issueFilterState={issueFilterState}
+              closeIssueCreate={closeIssueCreate}
+              closeTaskCreate={closeTaskCreate}
             />
 
             {/* <CustomToaster /> */}

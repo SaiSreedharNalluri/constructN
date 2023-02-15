@@ -24,14 +24,14 @@ const TitleContiner = styled(Box)({
 });
 const CloseIcon = styled(Image)({ cursor: "pointer" });
 
-const Header = ({ setOpenCreateTask }: any) => {
+const Header = ({ setOpenCreateTask, closeIssueCreate }: any) => {
   const title = "Create Issue";
   return (
     <HeaderContainer>
       <TitleContiner>
         <span>{title}</span>
         <CloseIcon
-          onClick={() => setOpenCreateTask(false)}
+          onClick={closeIssueCreate}
           src={closeIcon}
           alt={"close icon"}
         />

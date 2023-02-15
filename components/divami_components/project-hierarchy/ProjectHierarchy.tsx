@@ -25,7 +25,7 @@ import {
   MessageContainer,
   // useStyles,
 } from "./StyledComponents";
-import type { RenderTree, SelectLayerProps } from "./Type";
+import type { ProjectHierarchyProps, RenderTree, SelectLayerProps } from "./Type";
 import { getAllIds, getSelectedLayers } from "./Utils";
 
 const ProjectHierarchy = ({
@@ -39,7 +39,8 @@ const ProjectHierarchy = ({
   selectedNodes,
   handleNodeExpand,
   expandedNodes,
-}: SelectLayerProps) => {
+  setHierarchy
+}: ProjectHierarchyProps) => {
   const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>([]);
   const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
 
@@ -68,6 +69,9 @@ const ProjectHierarchy = ({
       label={renderTreeNode(nodes)}
       onClick={() => {
         getStructureData ? getStructureData(nodes) : null;
+        if(!(nodes.children && Array.isArray(nodes.children) && nodes.children.length)) {
+          setHierarchy(false);
+        }
         //setCurrentClickedStruct(structure._id);
       }}
     >

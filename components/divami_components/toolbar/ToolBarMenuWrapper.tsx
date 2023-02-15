@@ -24,6 +24,7 @@ import { IToolResponse, ITools } from "../../../models/ITools";
 import { SectionToolBar, ToolbarContainer } from "./ToolBarStyles";
 import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
+import CompareView from "./CompareView";
 
 // import TOOLBARMENU from '../../config/appConstant'
 
@@ -80,6 +81,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   issueTypesList,
   taskFilterState,
   issueFilterState,
+  closeIssueCreate,
+  closeTaskCreate,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -87,7 +90,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   const [iViewMode, setIViewMode] = useState(viewMode);
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
-  const [active, setActive] = useState();
+  const [active, setActive] = useState("hideCompare");
   const [myProject, setMyProject] = useState(currentProject);
   const [selectedType, setSelectedType] = useState("");
   const [selectedLayer, setSelectedLayer] = useState("");
@@ -141,6 +144,13 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     currentTypesList,
   ]);
   const rightMenuClickHandler = (e: any) => {
+    console.log(
+      e.currentTarget.id,
+      "cureid",
+      isCompareReality,
+      isCompareDesign
+    );
+
     setActive(e.currentTarget.id);
     setRighttNav(!rightNav);
     if (e.currentTarget.id === "Reality") {
@@ -165,8 +175,18 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         : "showCompare";
       setIsCompareReality(isCompareReality ? false : true);
       setIsCompareDesign(false);
+    } else if (e.currentTarget.id === "hideCompare") {
+      //console.log("CAptured....");
+      toolInstance.toolName = isCompareReality
+        ? "compareReality"
+        : "compareDesign";
+      // toolInstance.toolAction = isCompareReality
+      //   ? "closeCompare"
+      //   : "showCompare";
+      toolInstance.toolAction = "closeCompare";
+      setIsCompareDesign(false);
+      setIsCompareReality(false);
     }
-
     toolClicked(toolInstance);
   };
 
@@ -189,35 +209,41 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   };
 
   return (
-    <SectionToolBar>
+    <SectionToolBar viewMode={viewMode}>
       <ToolbarContainer>
-        <Typebar
-          rightMenuClickHandler={rightMenuClickHandler}
-          myTypesList={myTypesList}
-          typeChange={typeChange}
-          selectedValue={selectedType}
-          openList={openSelectTypes}
-          setOpenList={setOpenSelectTypes}
-          onListClick={() => {
-            setOpenSelectLayer(false);
-            setOpenSelectTypes(!openSelectTypes);
-          }}
-        />
-
-        <Layers
-          rightMenuClickHandler={rightMenuClickHandler}
-          myLayersList={myLayersList}
-          LayerChange={LayerChange}
-          selectedValue={selectedLayer}
-          openList={openSelectLayer}
-          setOpenList={setOpenSelectLayer}
-          onListClick={() => {
-            setOpenSelectTypes(false);
-            setOpenSelectLayer(!openSelectLayer);
-          }}
-          selectedLayersList={selectedLayersList}
-        />
-
+        {viewMode !== "Reality" ? (
+          <Typebar
+            rightMenuClickHandler={rightMenuClickHandler}
+            myTypesList={myTypesList}
+            typeChange={typeChange}
+            selectedValue={selectedType}
+            openList={openSelectTypes}
+            setOpenList={setOpenSelectTypes}
+            onListClick={() => {
+              setOpenSelectLayer(false);
+              setOpenSelectTypes(!openSelectTypes);
+            }}
+          />
+        ) : (
+          <></>
+        )}
+        {viewMode !== "Reality" ? (
+          <Layers
+            rightMenuClickHandler={rightMenuClickHandler}
+            myLayersList={myLayersList}
+            LayerChange={LayerChange}
+            selectedValue={selectedLayer}
+            openList={openSelectLayer}
+            setOpenList={setOpenSelectLayer}
+            onListClick={() => {
+              setOpenSelectTypes(false);
+              setOpenSelectLayer(!openSelectLayer);
+            }}
+            selectedLayersList={selectedLayersList}
+          />
+        ) : (
+          <></>
+        )}
         <Issues
           issuesList={issuesList}
           issueMenuClicked={issueMenuClicked}
@@ -233,6 +259,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           issueStatusList={issueStatusList}
           issueTypesList={issueTypesList}
           issueFilterState={issueFilterState}
+          closeIssueCreate={closeIssueCreate}
         />
 
         <Task
@@ -248,8 +275,17 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           taskOpenDrawer={openCreateTask}
           deleteTheTask={deleteTheTask}
           taskFilterState={taskFilterState}
+          closeTaskCreate={closeTaskCreate}
         />
 
+        {viewMode === "Reality" ? (
+          <CompareView
+            rightMenuClickHandler={rightMenuClickHandler}
+            active={active}
+          />
+        ) : (
+          <></>
+        )}
         <Hotspot />
       </ToolbarContainer>
     </SectionToolBar>

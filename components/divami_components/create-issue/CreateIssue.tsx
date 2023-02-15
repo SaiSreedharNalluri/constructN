@@ -26,8 +26,9 @@ const CreateIssue = ({
   currentSnapshot,
   currentStructure,
   contextInfo,
+  closeIssueCreate,
 }: any) => {
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState<any>(null);
 
   const formHandler = (event: any) => {
     if (event === "Cancel") {
@@ -45,7 +46,10 @@ const CreateIssue = ({
 
   return (
     <StyledDiv>
-      <Header setOpenCreateTask={setOpenCreateTask} />
+      <Header
+        setOpenCreateTask={setOpenCreateTask}
+        closeIssueCreate={closeIssueCreate}
+      />
       <Body handleFormData={handleFormData} />
       <Footer formHandler={formHandler} />
     </StyledDiv>

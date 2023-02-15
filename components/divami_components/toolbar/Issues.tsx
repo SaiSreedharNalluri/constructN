@@ -56,6 +56,7 @@ const Issues = ({
   issueStatusList,
   issueTypesList,
   issueFilterState,
+  closeIssueCreate,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -209,11 +210,11 @@ const Issues = ({
     issueMenuInstance.toolAction = "issueCreate";
     issueMenuClicked(issueMenuInstance);
   };
-  const closeIssueCreate = () => {
-    issueMenuInstance.toolAction = "issueCreateClose";
-    setCreateOverlay(false);
-    issueMenuClicked(issueMenuInstance);
-  };
+  // const closeIssueCreate = () => {
+  //   issueMenuInstance.toolAction = "issueCreateClose";
+  //   setCreateOverlay(false);
+  //   issueMenuClicked(issueMenuInstance);
+  // };
   const openIssueListFn = () => {
     //setListOverlay(true);
     console.log("coming herer");
@@ -226,10 +227,11 @@ const Issues = ({
     issueMenuClicked(issueMenuInstance);
   };
   const toggleIssueVisibility = () => {
-    setIssueVisibility(!issueVisbility);
+    console.log(issueVisbility, "isuevisi");
     if (issueVisbility) issueMenuInstance.toolAction = "issueHide";
     else issueMenuInstance.toolAction = "issueShow";
     issueMenuClicked(issueMenuInstance);
+    setIssueVisibility(!issueVisbility);
   };
 
   useEffect(() => {
@@ -247,7 +249,7 @@ const Issues = ({
             // onClick={rightMenuClickHandler}
             onClick={() => {
               openIssueCreateFn();
-              setOpenCreateIssue(true);
+              // setOpenCreateIssue(true);
             }}
           />
         </IssuesSectionPlusImg>
@@ -323,7 +325,7 @@ const Issues = ({
         </Drawer>
       )}
       {openCreateIssue && (
-        <CustomDrawer open>
+        <CustomDrawer>
           <CreateIssue
             handleCreateTask={handleCreateTask}
             setOpenCreateTask={setOpenCreateIssue}
@@ -331,6 +333,7 @@ const Issues = ({
             currentSnapshot={currentSnapshot}
             currentStructure={currentStructure}
             contextInfo={contextInfo}
+            closeIssueCreate={closeIssueCreate}
           />
         </CustomDrawer>
       )}

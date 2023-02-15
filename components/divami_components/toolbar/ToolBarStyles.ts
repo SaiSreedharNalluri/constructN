@@ -1,5 +1,5 @@
-import { styled } from '@mui/system';
-import Image from 'next/image';
+import { styled } from "@mui/system";
+import Image from "next/image";
 
 export const HotspotBox = styled("div")({
   border: "1px solid #d9d9d9",
@@ -64,19 +64,20 @@ export const IssuesSectionClipImg = styled("div")({
   marginLeft: "13px",
 });
 
-export const SectionToolBar = styled("div")({
+export const SectionToolBar = styled("div")((props: any) => ({
   background: "#ffffff",
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "12px",
   lineHeight: "18px",
-  width: "772px",
+  marginTop: "14px",
+  width: props.viewMode === "Reality" ? "620px" : "772px",
   display: "block",
   marginLeft: "auto",
   marginRight: "auto",
-  marginTop:"14px",
-});
+  boxShadow: "0px 2px 1px rgba(0, 0, 0, 0.25)",
+})) as any;
 
 export const ToolbarContainer = styled("div")({
   display: "flex",
@@ -146,7 +147,7 @@ export const LayerSecondSectionCamImg = styled("div")({
 });
 
 export const LayerSecondSectionArrImg = styled("div")({
-  marginLeft: "26px",
+  marginLeft: "16px",
   // width: '15px',
   // height: '15px',
 });
@@ -155,16 +156,54 @@ export const TaskTitle = styled("div")({
   fontWeight: "400",
   fontSize: "12px",
   // lineHeight:"16px"
+});
 
-})
+export const CameraIcon = styled(Image)({
+  width: "18px",
+  height: "18px",
+});
 
+export const DownIcon = styled(Image)({
+  // width:5px;
+  // height:7px
+});
 
-export const CameraIcon = styled(Image)`
-width:18px;
-height:18px
-`;
+export const CompareViewBox = styled("div")({
+  display: "flex",
+  alignItems: "center",
+  border: "1px solid #d9d9d9",
+  padding: "0 20px",
+  paddingRight: "35px",
+  borderRight: "transparent",
+});
 
-export const DownIcon = styled(Image)`
-// width:5px;
-// height:7px
-`;
+export const CompareIcon = styled("div")((props: any) => ({
+  // width: "30px",
+  // height: "30px",
+  borderRight: "1px solid #F1742E",
+  padding: "6px",
+  background: props.active === "hideCompare" ? "#F1742E" : "white",
+}));
+export const DesignCompareViewIcon = styled("div")((props: any) => ({
+  borderRight: "1px solid #F1742E",
+  padding: "6px",
+  background: props.active === "compareDesign" ? "#F1742E" : "white",
+}));
+export const RealityCompareViewIcon = styled("div")((props: any) => ({
+  borderRight: "1px solid #F1742E",
+  padding: "6px",
+  borderTopRightRadius: "4px",
+  borderBottomRightRadius: "4px",
+  paddingTop: "8px",
+  background: props.active === "compareReality" ? "#F1742E" : "white",
+}));
+export const CompareViewTitleDiv = styled("div")({});
+export const CompareContainer = styled("div")({
+  background: "#FFFFFF",
+  borderLeft: "1px solid #F1742E",
+  borderTop: "1px solid #F1742E",
+  borderBottom: "1px solid #F1742E",
+  borderRadius: "4px",
+  display: "flex",
+  marginLeft: "6px",
+});

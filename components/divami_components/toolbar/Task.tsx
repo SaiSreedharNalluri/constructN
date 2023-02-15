@@ -45,6 +45,7 @@ const Task = ({
   taskMenuClicked,
   deleteTheTask,
   taskFilterState,
+  closeTaskCreate,
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -117,8 +118,8 @@ const Task = ({
       (data.tags =
         (formData.length
           ? formData
-            .filter((item: any) => item.id == "tag-suggestions")[0]
-            ?.chipString?.join(";")
+              .filter((item: any) => item.id == "tag-suggestions")[0]
+              ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -250,7 +251,7 @@ const Task = ({
         <CameraIcon
           src={clipboardTask}
           onClick={() => {
-            handleViewTaskDetail();
+            toggleTaskVisibility();
           }}
           alt="Arrow"
         />
@@ -285,6 +286,7 @@ const Task = ({
             currentSnapshot={currentSnapshot}
             currentStructure={currentStructure}
             contextInfo={contextInfo}
+            closeTaskCreate={closeTaskCreate}
           />
         </CustomDrawer>
       )}

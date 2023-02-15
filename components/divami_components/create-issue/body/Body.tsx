@@ -21,6 +21,7 @@ import { IProjectUsers } from "../../../../models/IProjects";
 import { ISnapshot } from "../../../../models/ISnapshot";
 import { IStructure } from "../../../../models/IStructure";
 import { IToolResponse } from "../../../../models/ITools";
+import UploadedImagesList from "../../uploaded-images-list/UploadedImagesList";
 
 const BodyContainer = styled(Box)({
   // height: 'calc(100vh - 134px)',
@@ -51,6 +52,7 @@ const Body = ({ handleFormData }: any) => {
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
   const [issueTypes, setIssueTypes] = useState([]);
   const [issuePriorities, setIssuePriorities] = useState([]);
+  const [formData, setFormData] = useState<any>([]);
   const router = useRouter();
 
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
@@ -135,11 +137,13 @@ const Body = ({ handleFormData }: any) => {
     }
   }, [projectUsers, issuePriorities, issueTypes]);
   useEffect(() => {
-    handleFormData([
+    let updatedFormData = [
       ...formConfig,
       { owner: loggedInUserId },
       { projectId: router.query.projectId },
-    ]);
+    ];
+    setFormData(updatedFormData);
+    handleFormData(updatedFormData);
   }, [formConfig]);
   return (
     <BodyContainer>
@@ -150,6 +154,7 @@ const Body = ({ handleFormData }: any) => {
           formState={formState}
           setFormState={setFormState}
         />
+        <UploadedImagesList formData={formData} />
       </FormElementContainer>
       {/* <Box sx={{ marginTop: '15px' }}>
         <CustomLabel label={'Select the Type of Task'} />

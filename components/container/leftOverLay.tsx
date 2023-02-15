@@ -113,6 +113,7 @@ const LeftOverLay: React.FC<IProps> = ({
                 setHierarchy(false);
               }}
               treeData={state}
+              setHierarchy={setHierarchy}
               getStructureData={getStructureData}
               handleNodeSelection={handleNodeSelection}
               selectedNodes={selectedNodes}
