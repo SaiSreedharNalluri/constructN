@@ -27,6 +27,7 @@ const CreateIssue = ({
   currentStructure,
   contextInfo,
   closeIssueCreate,
+  editData,
 }: any) => {
   const [formData, setFormData] = useState<any>(null);
 
@@ -50,7 +51,7 @@ const CreateIssue = ({
         setOpenCreateTask={setOpenCreateTask}
         closeIssueCreate={closeIssueCreate}
       />
-      <Body handleFormData={handleFormData} />
+      <Body handleFormData={handleFormData} editData={editData} />
       <Footer formHandler={formHandler} />
     </StyledDiv>
   );

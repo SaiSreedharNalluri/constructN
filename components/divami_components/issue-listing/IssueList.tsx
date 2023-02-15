@@ -18,11 +18,14 @@ import RFIList from "../../../public/divami_icons/rfiList.svg";
 import SubmittalList from "../../../public/divami_icons/submittalList.svg";
 import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
 import {
-  ArrowDownIcon, ArrowUpIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
   BodyContainer,
   BodyContTitle,
   BodyInfo,
-  CloseIcon, DividerIcon, DownloadIcon,
+  CloseIcon,
+  DividerIcon,
+  DownloadIcon,
   DueDate,
   DueDateDiv,
   FirstHeader,
@@ -35,12 +38,12 @@ import {
   SecondHeader,
   TaskListContainer,
   ThirdHeader,
-  TitleContainer
+  TitleContainer,
 } from "./IssueListStyles";
 
 import _ from "lodash";
 import { useEffect, useState } from "react";
-import { CSVLink } from 'react-csv';
+import { CSVLink } from "react-csv";
 import { Issue } from "../../../models/Issue";
 import { ITools } from "../../../models/ITools";
 import FilterCommon from "../issue-filter-common/IssueFilterCommon";
@@ -49,7 +52,6 @@ import {
   SearchAreaContainer,
 } from "../task_list/TaskListStyles";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
-
 
 interface IProps {
   closeOverlay: () => void;
@@ -93,7 +95,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const handleClose = () => {
     onClose(true);
   };
-  const [issuesListData, setIssuesListData] = useState(issuesList);
   const [sortOrder, setSortOrder] = useState("asc");
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
@@ -106,16 +107,12 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [projectUsers, setProjectUsers] = useState([]);
   const [issueStatus, setIssueStatus] = useState<[string]>();
   const [dateSortState, setDateSortState] = useState("ascending");
-  const [issueListData, setIssueListDataState] = useState([]);
   const [viewIssue, setViewIssue] = useState({});
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
-  const [filteredIssuesList, setFilteredTaskList] =
-    useState<any>(issueListData);
-  const [issueList, setIssueList] = useState<Issue[]>([]);
+  const [issueList, setIssueList] = useState<any>(issuesList);
 
-  useEffect(() => {
-    setIssueList(issuesList);
-  }, []);
+  const [filteredIssuesList, setFilteredIssuesList] = useState<any>(issueList);
+
   const closeIssueList = () => {
     //setListOverlay(false);
     issueMenuInstance.toolAction = "issueViewClose";
@@ -130,17 +127,17 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const sortDateOrdering = () => {
     let sorted;
     if (sortOrder === "asc") {
-      sorted = [...issueList].sort((a: any, b: any) => {
+      sorted = filteredIssuesList.sort((a: any, b: any) => {
         return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
       });
       setSortOrder("desc");
     } else {
-      sorted = [...issueList].sort((a: any, b: any) => {
+      sorted = filteredIssuesList.sort((a: any, b: any) => {
         return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
       });
       setSortOrder("asc");
     }
-    setIssuesListData(sorted);
+    setFilteredIssuesList(sorted);
   };
 
   const handleSearchWindow = () => {
@@ -151,12 +148,17 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     }
   };
 
+  console.log("isselistdat", filteredIssuesList, issuesList);
   const handleSearch = () => {
-    const filteredData: any = issuesList?.filter((eachTask) => {
-      const taskName = eachTask.type.toLowerCase();
-      return taskName.includes(searchTerm.toLowerCase());
-    });
-    setFilteredTaskList([...filteredData]);
+    if (searchTerm) {
+      const filteredData: any = issueList?.filter((eachIssue: any) => {
+        const taskName = eachIssue?.type?.toLowerCase();
+        return taskName.includes(searchTerm.toLowerCase());
+      });
+      setFilteredIssuesList([...filteredData]);
+    } else {
+      setFilteredIssuesList(issueList);
+    }
   };
 
   const getDownladableIssueList = (issL = issuesList) => {
@@ -165,8 +167,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       let a = iss.assignees.map((a) => {
         return a.firstName;
       });
-      let x = _.omit(iss, 'progress', 'context');
-      let y = _.update(x, 'assignees', (ass) => {
+      let x = _.omit(iss, "progress", "context");
+      let y = _.update(x, "assignees", (ass) => {
         let n = ass.map((o: { firstName: any }) => {
           return o.firstName;
         });
@@ -182,17 +184,12 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   }, [searchTerm]);
 
   useEffect(() => {
-    setFilteredTaskList(issuesList);
-  }, [issuesList]);
-  useEffect(() => {
-    setIssuesListData(filteredIssuesList);
+    // setIssuesListData(filteredIssuesList);
   }, [filteredIssuesList]);
 
-  useEffect(() => { console.log(viewIssue) }, [viewIssue]);
-
-  console.log("issuesListnot fott-2", issuesListData, openDrawer);
   const handleViewIssue = (issue: any) => {
-    issuesListData.forEach((item: any) => {
+    console.log();
+    filteredIssuesList.forEach((item: any) => {
       if (issue._id === item._id) {
         setViewIssue(item);
       }
@@ -272,8 +269,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               <DueDate>Due Date</DueDate>
 
               <CSVLink
-                data={getDownladableIssueList(issuesListData)}
-                filename={'my-issues.csv'}
+                data={getDownladableIssueList(filteredIssuesList)}
+                filename={"my-issues.csv"}
                 className="text-black btn btn-primary fill-black fa fa-Download "
                 target="_blank"
               >
@@ -297,7 +294,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
       <BodyContainer>
         <Box sx={{ marginTop: "15px" }}>
-          {issuesListData.map((val, index: number) => {
+          {filteredIssuesList.map((val: any, index: number) => {
             return (
               <div key={index}>
                 <BodyInfo
@@ -360,7 +357,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
           onClose={() => setOpenIssueDetail((prev: any) => !prev)}
         >
           <CustomIssueDetailsDrawer
-            issuesList={issuesListData}
+            issuesList={issueList}
             issue={viewIssue}
             onClose={() => setOpenIssueDetail((prev: any) => !prev)}
             issueType={issueTypesList}
@@ -383,7 +380,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
         >
           <FilterCommon
             closeFilterOverlay={closeFilterOverlay}
-            issuesList={issueList}
+            issuesList={issuesList}
             visibility={listOverlay}
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
@@ -400,4 +397,3 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 };
 
 export default CustomIssueListDrawer;
-

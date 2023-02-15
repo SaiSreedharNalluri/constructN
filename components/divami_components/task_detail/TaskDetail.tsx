@@ -1,24 +1,30 @@
-import { Autocomplete, Box, Select, TextField, Typography } from '@mui/material';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import { styled } from '@mui/system';
-import Moment from 'moment';
-import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import {
+  Autocomplete,
+  Box,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import { styled } from "@mui/system";
+import Moment from "moment";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import BackArrow from '../../../public/divami_icons/backArrow.svg';
-import Clip from '../../../public/divami_icons/clip.svg';
-import Delete from '../../../public/divami_icons/delete.svg';
-import Edit from '../../../public/divami_icons/edit.svg';
-import Send from '../../../public/divami_icons/send.svg';
+import BackArrow from "../../../public/divami_icons/backArrow.svg";
+import Clip from "../../../public/divami_icons/clip.svg";
+import Delete from "../../../public/divami_icons/delete.svg";
+import Edit from "../../../public/divami_icons/edit.svg";
+import Send from "../../../public/divami_icons/send.svg";
 import { updateAttachments, updateTask } from "../../../services/task";
-import { TASK_FORM_CONFIG } from '../../divami_components/create-issue/body/Constants';
-import CustomButton from '../../divami_components/custom-button/CustomButton';
-import PopupComponent from '../../popupComponent/PopupComponent';
+import CustomButton from "../../divami_components/custom-button/CustomButton";
+import PopupComponent from "../../popupComponent/PopupComponent";
+import { TASK_FORM_CONFIG } from "../create-task/body/Constants";
 import CreateTask from "../create-task/CreateTask";
 import CustomDrawer from "../custom-drawer/custom-drawer";
-import CustomSelect from '../custom-select/CustomSelect';
-import ActivityLog from '../task_detail/ActivityLog';
+import CustomSelect from "../custom-select/CustomSelect";
+import ActivityLog from "../task_detail/ActivityLog";
 
 const HeaderContainer = styled(Box)`
   background-color: white;
@@ -57,18 +63,18 @@ const DeleteIcon = styled(Image)`
   //   margin-right: 10px;
 `;
 
-const LeftTitleCont = styled('div')`
+const LeftTitleCont = styled("div")`
   display: flex;
   //   margin-top: 10px;
 `;
 
-const RightTitleCont = styled('div')`
+const RightTitleCont = styled("div")`
   display: flex;
 
   //   margin-top: 10px;
 `;
 
-const SpanTile = styled('span')`
+const SpanTile = styled("span")`
   //   color: #787878;
 
   margin-left: 10px;
@@ -81,25 +87,25 @@ const BodyContainer = styled(Box)`
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;
-const TabOneDiv = styled('div')`
+const TabOneDiv = styled("div")`
   //   border: 2px solid pink;
   //   padding:30px;
 `;
 
-const FirstHeaderDiv = styled('div')`
+const FirstHeaderDiv = styled("div")`
   border: 1px solid #d9d9d9;
   display: flex;
   height: 150px;
   border-radius: 4px;
 `;
 
-const SecondBodyDiv = styled('div')`
+const SecondBodyDiv = styled("div")`
   display: flex;
   margin-top: 25px;
 `;
 
-const PriorityTitle = styled('div')`
-  font-family: 'Open Sans';
+const PriorityTitle = styled("div")`
+  font-family: "Open Sans";
   color: #787878;
 
   font-style: normal;
@@ -108,24 +114,24 @@ const PriorityTitle = styled('div')`
   line-height: 19px;
 `;
 
-const PriorityStatus = styled('div')`
-  font-family: 'Open Sans';
+const PriorityStatus = styled("div")`
+  font-family: "Open Sans";
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
 `;
 
-const SecondContPrior = styled('div')`
+const SecondContPrior = styled("div")`
   width: 186px;
 `;
 
-const SecondContCapt = styled('div')`
+const SecondContCapt = styled("div")`
   width: 186px;
 `;
 
-const CaptureTitle = styled('div')`
-  font-family: 'Open Sans';
+const CaptureTitle = styled("div")`
+  font-family: "Open Sans";
   color: #787878;
 
   font-style: normal;
@@ -134,16 +140,16 @@ const CaptureTitle = styled('div')`
   line-height: 19px;
 `;
 
-const CaptureStatus = styled('div')`
-  font-family: 'Open Sans';
+const CaptureStatus = styled("div")`
+  font-family: "Open Sans";
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
 `;
 
-const ThirdContWatch = styled('div')`
-  font-family: 'Open Sans';
+const ThirdContWatch = styled("div")`
+  font-family: "Open Sans";
   color: #787878;
 
   font-style: normal;
@@ -152,10 +158,10 @@ const ThirdContWatch = styled('div')`
   line-height: 19px;
 `;
 
-const ThirdContWatchName = styled('div')``;
+const ThirdContWatchName = styled("div")``;
 
-const ThirdContProg = styled('div')`
-  font-family: 'Open Sans';
+const ThirdContProg = styled("div")`
+  font-family: "Open Sans";
   color: #787878;
 
   font-style: normal;
@@ -164,21 +170,21 @@ const ThirdContProg = styled('div')`
   line-height: 19px;
 `;
 
-const ThirdContProgType = styled('div')`
+const ThirdContProgType = styled("div")`
   display: flex;
   align-items: center;
 `;
 
-const ThirdBodyDiv = styled('div')`
+const ThirdBodyDiv = styled("div")`
   display: flex;
   margin-top: 25px;
 `;
 
-const ThirdContLeft = styled('div')`
+const ThirdContLeft = styled("div")`
   margin-right: 100px;
 `;
 
-const ThirdContRight = styled('div')`
+const ThirdContRight = styled("div")`
   flex: 1;
 `;
 
@@ -186,15 +192,15 @@ const PenIconImage = styled(Image)`
   cursor: pointer;
   margin-left: 9px;
 `;
-const FourthBodyDiv = styled('div')((props: any) => ({
-  display: props.assigneeEditState ? 'none' : 'flex',
-  marginTop: '25px',
+const FourthBodyDiv = styled("div")((props: any) => ({
+  display: props.assigneeEditState ? "none" : "flex",
+  marginTop: "25px",
 })) as any;
 
-const FourthContLeft = styled('div')``;
+const FourthContLeft = styled("div")``;
 
-const FourthContAssigned = styled('div')`
-  font-family: 'Open Sans';
+const FourthContAssigned = styled("div")`
+  font-family: "Open Sans";
   color: #787878;
 
   font-style: normal;
@@ -203,7 +209,7 @@ const FourthContAssigned = styled('div')`
   line-height: 19px;
 `;
 
-const FourthContProgType = styled('div')`
+const FourthContProgType = styled("div")`
   display: flex;
 `;
 
@@ -211,12 +217,12 @@ const FormElementContainer = styled(Box)`
   margin-top: 30px;
 `;
 
-const DescriptionDiv = styled('div')`
+const DescriptionDiv = styled("div")`
   margin-top: 30px;
 `;
 
-const DescriptionTitle = styled('div')`
-  font-family: 'Open Sans';
+const DescriptionTitle = styled("div")`
+  font-family: "Open Sans";
   color: #787878;
 
   font-style: normal;
@@ -225,14 +231,14 @@ const DescriptionTitle = styled('div')`
   line-height: 19px;
 `;
 
-const DescriptionPara = styled('div')``;
+const DescriptionPara = styled("div")``;
 
-const AttachmentDiv = styled('div')`
+const AttachmentDiv = styled("div")`
   margin-top: 30px;
 `;
 
-const AttachmentTitle = styled('div')`
-  font-family: 'Open Sans';
+const AttachmentTitle = styled("div")`
+  font-family: "Open Sans";
   color: #787878;
 
   font-style: normal;
@@ -241,33 +247,33 @@ const AttachmentTitle = styled('div')`
   line-height: 19px;
 `;
 
-const AttachmentDescription = styled('div')`
+const AttachmentDescription = styled("div")`
   margin-top: 10px;
   margin-bottom: 15px;
 `;
 
-const AttachedImageDiv = styled('div')`
+const AttachedImageDiv = styled("div")`
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
 
-const AttachedImageTitle = styled('div')``;
+const AttachedImageTitle = styled("div")``;
 
-const AttachedImageIcon = styled('div')``;
+const AttachedImageIcon = styled("div")``;
 
-const AttachHorizontal = styled('div')`
+const AttachHorizontal = styled("div")`
   border-bottom: 1px solid #d9d9d9;
   margin-top: 15px;
   margin-bottom: 15px;
 `;
 
-const RelatedDiv = styled('div')`
+const RelatedDiv = styled("div")`
   margin: 25px 0px;
 `;
 
-const RelatedTagTitle = styled('div')`
-  font-family: 'Open Sans';
+const RelatedTagTitle = styled("div")`
+  font-family: "Open Sans";
   color: #787878;
 
   font-style: normal;
@@ -276,13 +282,13 @@ const RelatedTagTitle = styled('div')`
   line-height: 19px;
 `;
 
-const RelatedTagsButton = styled('div')`
+const RelatedTagsButton = styled("div")`
   display: flex;
   justify-content: space-between;
   margin-top: 8px;
 `;
 
-const RelatedSingleButton = styled('div')`
+const RelatedSingleButton = styled("div")`
   border: 1px solid black;
   padding: 8px 22px;
   border-radius: 40px;
@@ -299,11 +305,11 @@ const StyledLabel = styled(Typography)`
   margin-bottom: 8px;
 `;
 
-const CustomTaskDrawerContainer = styled('div')`
+const CustomTaskDrawerContainer = styled("div")`
   width: 438px;
 `;
 
-const ProgressEditStateButtonsContainer = styled('div')`
+const ProgressEditStateButtonsContainer = styled("div")`
   display: flex;
   justify-content: space-between;
   bottom: 0;
@@ -313,28 +319,28 @@ const ProgressEditStateButtonsContainer = styled('div')`
   width: 90%;
 `;
 
-const AssignEditSearchContainer = styled('div')({
-  height: '40px',
-  marginTop: '20px',
-  '& .MuiAutocomplete-root': {
-    height: '100%',
-    width: '100%',
+const AssignEditSearchContainer = styled("div")({
+  height: "40px",
+  marginTop: "20px",
+  "& .MuiAutocomplete-root": {
+    height: "100%",
+    width: "100%",
   },
-  '& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root':
+  "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
   {
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%",
   },
-  '& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root':
+  "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
   {
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%",
   },
-  '& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input': {
-    marginTop: '-8px',
+  "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
+    marginTop: "-8px",
   },
-  '& .MuiAutocomplete-root fieldset': {
-    borderColor: '#36415D !important',
+  "& .MuiAutocomplete-root fieldset": {
+    borderColor: "#36415D !important",
   },
 });
 
@@ -344,7 +350,7 @@ interface TabPanelProps {
   value: number;
 }
 
-const CustomSelectContainer = styled('div')`
+const CustomSelectContainer = styled("div")`
   width: 398px;
 `;
 
@@ -360,58 +366,58 @@ const StyledSelect = styled(Select)`
   }
 `;
 
-const AddCommentContainer = styled('div')({
-  borderTop: '1px solid #D9D9D9',
-  height: '50px',
-  display: 'flex',
-  position: 'absolute',
-  bottom: '0',
-  background: 'white',
-  marginLeft: '-24px',
-  width: '100%',
+const AddCommentContainer = styled("div")({
+  borderTop: "1px solid #D9D9D9",
+  height: "50px",
+  display: "flex",
+  position: "absolute",
+  bottom: "0",
+  background: "white",
+  marginLeft: "-24px",
+  width: "100%",
 });
 
-const AddCommentInput = styled('input')({
-  width: '100%',
-  paddingLeft: '10px',
+const AddCommentInput = styled("input")({
+  width: "100%",
+  paddingLeft: "10px",
 });
 
-const AddCommentButtonContainer = styled('div')({
-  display: 'flex',
+const AddCommentButtonContainer = styled("div")({
+  display: "flex",
 });
 
-const AttachButton = styled('button')({
-  width: '48px',
-  display: 'flex',
-  justifyContent: 'center',
-  height: '60%',
-  borderRight: '1px solid #D9D9D9',
-  marginTop: 'auto',
-  marginBottom: 'auto',
+const AttachButton = styled("button")({
+  width: "48px",
+  display: "flex",
+  justifyContent: "center",
+  height: "60%",
+  borderRight: "1px solid #D9D9D9",
+  marginTop: "auto",
+  marginBottom: "auto",
 });
 
-const SendButton = styled('button')({
-  width: '48px',
-  display: 'flex',
-  justifyContent: 'center',
+const SendButton = styled("button")({
+  width: "48px",
+  display: "flex",
+  justifyContent: "center",
 });
 
-const ProgressStateFalse = styled('div')({
-  display: 'flex',
-  marginTop: '20px',
+const ProgressStateFalse = styled("div")({
+  display: "flex",
+  marginTop: "20px",
 });
 
-const ProgressStateTrue = styled('div')({
-  display: 'flex',
-  marginTop: '20px',
+const ProgressStateTrue = styled("div")({
+  display: "flex",
+  marginTop: "20px",
 });
 
-const ProgressCustomSelect = styled('div')({
-  marginTop: '20px',
+const ProgressCustomSelect = styled("div")({
+  marginTop: "20px",
 });
 
-const AssigneeCustomSelect = styled('div')({
-  marginTop: '20px',
+const AssigneeCustomSelect = styled("div")({
+  marginTop: "20px",
 });
 
 function TabPanel(props: TabPanelProps) {
@@ -437,7 +443,7 @@ function TabPanel(props: TabPanelProps) {
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
@@ -452,14 +458,14 @@ function BasicTabs(props: any) {
   } = props;
 
   const [value, setValue] = React.useState(0);
-  const [issueTypeConfig, setIssueTypeConfig] = useState('');
-  const [formState, setFormState] = useState({ selectedValue: '' });
+  const [issueTypeConfig, setIssueTypeConfig] = useState("");
+  const [formState, setFormState] = useState({ selectedValue: "" });
   const [progressEditState, setProgressEditState] = useState(false);
   const [assigneeEditState, setAssigneeEditState] = useState(false);
   const [progressOptionsState, setProgressOptionsState] = useState<any>({});
   const [assigneeOptionsState, setAssigneeOptionsState] = useState([]);
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [list, setList] = useState<any>();
 
   useEffect(() => {
@@ -506,50 +512,50 @@ function BasicTabs(props: any) {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: '#D9D9D9', color: 'black' }}>
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
         <Tabs
-          TabIndicatorProps={{ style: { background: 'orange', height: '3px' } }}
+          TabIndicatorProps={{ style: { background: "orange", height: "3px" } }}
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
           sx={{
-            '& .MuiTabs-scroller': {
-              padding: '0px 20px',
+            "& .MuiTabs-scroller": {
+              padding: "0px 20px",
             },
-            '& .MuiBox-root': {
-              border: '1px solid red',
+            "& .MuiBox-root": {
+              border: "1px solid red",
             },
-            '& .MuiTabs-flexContainer': {
-              paddingTop: '20px',
-              paddingLeft: '0',
-            },
-
-            '& .Mui-selected': {
-              paddingTop: '0px',
-              paddingLeft: '0',
-              paddingBottom: '0',
-              fontSize: '14px',
-              fontWeight: '400',
-              textTransform: 'capitalize',
+            "& .MuiTabs-flexContainer": {
+              paddingTop: "20px",
+              paddingLeft: "0",
             },
 
-            '& .MuiTab-root': {
-              minWidth: '0px',
-              paddingTop: '0px',
-              paddingLeft: '0',
-              paddingBottom: '0',
-              fontSize: '14px',
-              fontWeight: '400',
-              textTransform: 'capitalize',
-              minHeight: '0',
+            "& .Mui-selected": {
+              paddingTop: "0px",
+              paddingLeft: "0",
+              paddingBottom: "0",
+              fontSize: "14px",
+              fontWeight: "400",
+              textTransform: "capitalize",
             },
-            '& .MuiTab-root .css-19kzrtu': {
-              padding: '0px',
+
+            "& .MuiTab-root": {
+              minWidth: "0px",
+              paddingTop: "0px",
+              paddingLeft: "0",
+              paddingBottom: "0",
+              fontSize: "14px",
+              fontWeight: "400",
+              textTransform: "capitalize",
+              minHeight: "0",
             },
-            '& .css-19kzrtu': {
-              padding: '0p !important',
-              background: 'red',
+            "& .MuiTab-root .css-19kzrtu": {
+              padding: "0px",
+            },
+            "& .css-19kzrtu": {
+              padding: "0p !important",
+              background: "red",
             },
           }}
         >
@@ -557,7 +563,7 @@ function BasicTabs(props: any) {
           <Tab
             label="Details"
             {...a11yProps(0)}
-            style={{ marginRight: '40px', paddingLeft: '0px' }}
+            style={{ marginRight: "40px", paddingLeft: "0px" }}
           />
           <Tab label="Activity log" {...a11yProps(1)} />
         </Tabs>
@@ -565,7 +571,7 @@ function BasicTabs(props: any) {
       <CustomTabPanel value={value} index={0}>
         <TabOneDiv>
           <FirstHeaderDiv>
-            <Image src={''} alt="" />
+            <Image src={""} alt="" />
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
@@ -576,8 +582,8 @@ function BasicTabs(props: any) {
             <SecondContCapt>
               <CaptureTitle>Captured on</CaptureTitle>
               <CaptureStatus>
-                {' '}
-                {Moment(taskState.TabOne.capturedOn).format('DD MMM YY')}
+                {" "}
+                {Moment(taskState.TabOne.capturedOn).format("DD MMM YY")}
               </CaptureStatus>
             </SecondContCapt>
           </SecondBodyDiv>
@@ -587,24 +593,24 @@ function BasicTabs(props: any) {
               <ThirdContLeft>
                 <ThirdContWatch>Watcher</ThirdContWatch>
                 <ThirdContWatchName>
-                  {' '}
+                  {" "}
                   {taskState.TabOne.creator}
                 </ThirdContWatchName>
               </ThirdContLeft>
               <FourthBodyDiv
                 assigneeEditState={assigneeEditState}
-                style={{ marginTop: '0px' }}
+                style={{ marginTop: "0px" }}
               >
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType>
-                    {taskState.TabOne.creator}{' '}
+                    {taskState.TabOne.creator}{" "}
                     <PenIconImage
                       onClick={() => {
                         handleEditAssigne();
                       }}
                       src={Edit}
-                      alt={'close icon'}
+                      alt={"close icon"}
                     />
                   </FourthContProgType>
                 </FourthContLeft>
@@ -615,7 +621,7 @@ function BasicTabs(props: any) {
               <ThirdContLeft>
                 <ThirdContWatch>Watcher</ThirdContWatch>
                 <ThirdContWatchName>
-                  {' '}
+                  {" "}
                   {taskState.TabOne.creator}
                 </ThirdContWatchName>
               </ThirdContLeft>
@@ -630,7 +636,7 @@ function BasicTabs(props: any) {
                       handleEditProgress();
                     }}
                     src={Edit}
-                    alt={'close icon'}
+                    alt={"close icon"}
                   />
                 </ThirdContProgType>
               </ThirdContRight>
@@ -642,10 +648,10 @@ function BasicTabs(props: any) {
                 onChange={(event: any, value: any) => console.log(value)}
                 config={progressOptionsState}
                 defaultValue={progressOptionsState?.options[0].value}
-                id={''}
+                id={""}
                 sx={{ minWidth: 120 }}
                 setFormConfig={setFormConfig}
-                isError={''}
+                isError={""}
                 label=""
               />
             </ProgressCustomSelect>
@@ -656,13 +662,13 @@ function BasicTabs(props: any) {
                   <FourthContAssigned>Assigned to</FourthContAssigned>
 
                   <FourthContProgType>
-                    {taskState?.TabOne.assignees}{' '}
+                    {taskState?.TabOne.assignees}{" "}
                     <PenIconImage
                       onClick={() => {
                         handleEditAssigne();
                       }}
                       src={Edit}
-                      alt={'close icon'}
+                      alt={"close icon"}
                     />
                   </FourthContProgType>
                 </FourthContLeft>
@@ -699,7 +705,9 @@ function BasicTabs(props: any) {
           <DescriptionDiv>
             <DescriptionTitle>RFI Question</DescriptionTitle>
 
-            <DescriptionPara>{taskState.TabOne.description}</DescriptionPara>
+            <DescriptionPara>
+              {taskState.TabOne.issueDescription}
+            </DescriptionPara>
           </DescriptionDiv>
 
           {taskState?.TabOne?.attachments?.length > 0 && (
@@ -714,7 +722,7 @@ function BasicTabs(props: any) {
                           <AttachedImageDiv>
                             <AttachedImageTitle>{a?.name}</AttachedImageTitle>
                             <AttachedImageIcon>
-                              <Image src={''} alt="" />
+                              <Image src={""} alt="" />
                             </AttachedImageIcon>
                           </AttachedImageDiv>
                           <AttachHorizontal></AttachHorizontal>
@@ -762,10 +770,10 @@ function BasicTabs(props: any) {
                 <AddCommentInput placeholder="Add Comment"></AddCommentInput>
                 <AddCommentButtonContainer>
                   <AttachButton>
-                    <Image src={Clip} alt="" />{' '}
+                    <Image src={Clip} alt="" />{" "}
                   </AttachButton>
                   <SendButton>
-                    <Image src={Send} alt="" />{' '}
+                    <Image src={Send} alt="" />{" "}
                   </SendButton>
                 </AddCommentButtonContainer>
               </AddCommentContainer>
@@ -800,53 +808,53 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const DetailsObj = {
     TabOne: {
       options: [
-        { value: 'option1', label: 'In-Progress', icon: '' },
-        { value: 'option2', label: 'Completed', icon: '' },
+        { value: "option1", label: "In-Progress", icon: "" },
+        { value: "option2", label: "Completed", icon: "" },
       ],
 
-      priority: 'High',
+      priority: "High",
       date: "15 Dec'22",
       userName: [
-        { value: 'option1', label: 'Aron Schutte', icon: '' },
-        { value: 'option2', label: 'Alex Brandon', icon: '' },
+        { value: "option1", label: "Aron Schutte", icon: "" },
+        { value: "option2", label: "Alex Brandon", icon: "" },
       ],
-      creator: 'Aron Schutte',
+      creator: "Aron Schutte",
 
       issueDescription:
-        'The Pipe seems bent which can cause issues later once it will be used by the residents of the flat.',
+        "The Pipe seems bent which can cause issues later once it will be used by the residents of the flat.",
 
       attachedImages: [
-        { icon: '', alt: 'Image 1' },
-        { icon: '', alt: 'Image 2' },
+        { icon: "", alt: "Image 1" },
+        { icon: "", alt: "Image 2" },
       ],
 
-      relatedTags: ['Interior Issues', 'Pipeline', 'Future Damage'],
+      relatedTags: ["Interior Issues", "Pipeline", "Future Damage"],
     },
     TabTwo: [
       {
-        status: 'RFI Updated',
-        timeStamp: '15 Nov 22',
-        profile: 'Jake',
+        status: "RFI Updated",
+        timeStamp: "15 Nov 22",
+        profile: "Jake",
         comment:
-          'Lorem Ipsum is simply dummy text of the printing and type setting industry.',
-        imageDetails: 'Blalalalal.jpg',
+          "Lorem Ipsum is simply dummy text of the printing and type setting industry.",
+        imageDetails: "Blalalalal.jpg",
       },
       {
-        status: 'Comment Added',
-        timeStamp: '15 Nov 22',
-        profile: 'Jake',
+        status: "Comment Added",
+        timeStamp: "15 Nov 22",
+        profile: "Jake",
         comment:
-          'Lorem Ipsum is simply dummy text of the printing and type setting industry.',
-        imageDetails: '',
+          "Lorem Ipsum is simply dummy text of the printing and type setting industry.",
+        imageDetails: "",
       },
       {
-        status: 'RFI Raised',
-        timeStamp: '15 Nov 22',
-        profile: 'Jake',
-        comment: '',
-        imageDetails: '',
-        issueType: 'Interior Issue',
-        issueDescription: 'Pipelines',
+        status: "RFI Raised",
+        timeStamp: "15 Nov 22",
+        profile: "Jake",
+        comment: "",
+        imageDetails: "",
+        issueType: "Interior Issue",
+        issueDescription: "Pipelines",
       },
     ],
   };
@@ -877,7 +885,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const onDeleteTask = () => {
     setshowPopUp(false)
     deleteTheTask(task);
-  }
+  };
 
   const handleCreateTask = (formData: any) => {
     console.log(formData, "form data at home");
@@ -1028,15 +1036,14 @@ const CustomTaskDetailsDrawer = (props: any) => {
               />
               <DeleteIcon
                 src={Delete}
-                alt={'close icon'}
+                alt={"close icon"}
                 onClick={() => {
                   setshowPopUp(true);
                 }}
               />
-
-            </RightTitleCont >
-          </TitleContainer >
-        </HeaderContainer >
+            </RightTitleCont>
+          </TitleContainer>
+        </HeaderContainer>
         <BodyContainer>
           <BasicTabs
             taskType={taskType}
@@ -1046,17 +1053,18 @@ const CustomTaskDetailsDrawer = (props: any) => {
             taskState={taskState}
           />
         </BodyContainer>
-      </CustomTaskDrawerContainer >
+      </CustomTaskDrawerContainer>
       {showPopUp && (
         <PopupComponent
           open={showPopUp}
           setShowPopUp={setshowPopUp}
-          modalTitle={'Delete Task'}
+          modalTitle={"Delete Task"}
           modalmessage={`Are you sure you want to delete this Task "${task.type}(#${task._id})"?`}
-          primaryButtonLabel={'Delete'}
-          SecondaryButtonlabel={'Cancel'}
+          primaryButtonLabel={"Delete"}
+          SecondaryButtonlabel={"Cancel"}
           callBackvalue={onDeleteTask}
-        />)}
+        />
+      )}
       {openCreateTask && (
         <CustomDrawer open>
           <CreateTask
@@ -1067,6 +1075,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             currentStructure={currentStructure}
             contextInfo={contextInfo}
             editData={task}
+            closeTaskCreate={closeTaskCreate}
           />
         </CustomDrawer>
       )}

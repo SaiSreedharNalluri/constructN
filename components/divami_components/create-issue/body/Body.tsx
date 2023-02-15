@@ -47,7 +47,7 @@ const DatePickerContainer = styled(Box)({
   flexDirection: "column",
 });
 
-const Body = ({ handleFormData }: any) => {
+const Body = ({ handleFormData, editData }: any) => {
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
   const [issueTypes, setIssueTypes] = useState([]);
@@ -93,47 +93,141 @@ const Body = ({ handleFormData }: any) => {
   }, [router.isReady, router.query.projectId]);
   useEffect(() => {
     if (projectUsers.length && issuePriorities.length && issueTypes.length) {
-      setFormConfig((prev: any) => {
-        return prev.map((item: any) => {
-          if (item.id === "issueType") {
-            return {
-              ...item,
-              options: issueTypes?.map((eachItem: any) => {
-                return {
-                  label: eachItem,
-                  value: eachItem,
-                  selected: false,
-                };
-              }),
-            };
-          }
-          if (item.id === "issuePriority") {
-            return {
-              ...item,
-              options: issuePriorities?.map((eachItem: any) => {
-                return {
-                  label: eachItem,
-                  value: eachItem,
-                  selected: false,
-                };
-              }),
-            };
-          }
-          if (item.id === "assignedTo") {
-            return {
-              ...item,
-              listOfEntries: projectUsers?.map((eachUser: any) => {
-                return {
-                  ...eachUser,
-                  label: eachUser?.user?.fullName,
-                  value: eachUser?.user?._id,
-                };
-              }),
-            };
-          }
-          return item;
+      console.log(editData, "editdata");
+      if (editData) {
+        setFormConfig((prev: any) => {
+          return prev.map((item: any) => {
+            if (item.id === "title") {
+              return {
+                ...item,
+                defaultValue: editData.title || "",
+              };
+            }
+            if (item.id === "issueType") {
+              return {
+                ...item,
+                options: issueTypes?.map((eachItem: any) => {
+                  return {
+                    // ...eachItem,
+                    label: eachItem,
+                    value: eachItem,
+                    selected: false,
+                  };
+                }),
+                defaultValue: editData.type,
+              };
+            }
+            if (item.id === "description") {
+              return {
+                ...item,
+                defaultValue: editData.description,
+              };
+            }
+            if (item.id === "issuePriority") {
+              return {
+                ...item,
+                options: issuePriorities?.map((eachItem: any) => {
+                  return {
+                    // ...eachItem,
+                    label: eachItem,
+                    value: eachItem,
+                    selected: false,
+                  };
+                }),
+                defaultValue: editData.priority,
+              };
+            }
+            if (item.id === "assignedTo") {
+              return {
+                ...item,
+                listOfEntries: projectUsers?.map((eachUser: any) => {
+                  return {
+                    ...eachUser,
+                    label: eachUser?.user?.fullName,
+                    value: eachUser?.user?._id,
+                  };
+                }),
+                selectedName: editData.assignees?.length
+                  ? editData.assignees[0]
+                  : undefined,
+              };
+            }
+            if (item.id === "dates") {
+              return {
+                ...item,
+                fields: item.fields.map((each: any) => {
+                  if (each.id == "start-date") {
+                    return {
+                      ...each,
+                      defaultValue: editData.createdAt,
+                    };
+                  } else {
+                    return {
+                      ...each,
+                      defaultValue: editData.updatedAt,
+                    };
+                  }
+                }),
+              };
+            }
+            if (item.id === "tag-suggestions") {
+              return {
+                ...item,
+                defaultValue: editData.tags,
+              };
+            }
+            if (item.id === "file-upload") {
+              return {
+                ...item,
+                defaultValue: editData.attachments,
+              };
+            }
+            return item;
+          });
         });
-      });
+      } else {
+        setFormConfig((prev: any) => {
+          return prev.map((item: any) => {
+            if (item.id === "issueType") {
+              return {
+                ...item,
+                options: issueTypes?.map((eachItem: any) => {
+                  return {
+                    label: eachItem,
+                    value: eachItem,
+                    selected: false,
+                  };
+                }),
+              };
+            }
+            if (item.id === "issuePriority") {
+              return {
+                ...item,
+                options: issuePriorities?.map((eachItem: any) => {
+                  return {
+                    label: eachItem,
+                    value: eachItem,
+                    selected: false,
+                  };
+                }),
+              };
+            }
+            if (item.id === "assignedTo") {
+              return {
+                ...item,
+                listOfEntries: projectUsers?.map((eachUser: any) => {
+                  return {
+                    ...eachUser,
+                    label: eachUser?.user?.fullName,
+                    value: eachUser?.user?._id,
+                  };
+                }),
+              };
+            }
+            return item;
+          });
+        });
+      }
     }
   }, [projectUsers, issuePriorities, issueTypes]);
   useEffect(() => {

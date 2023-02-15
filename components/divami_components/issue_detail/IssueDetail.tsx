@@ -21,6 +21,7 @@ import CustomDrawer from "../custom-drawer/custom-drawer";
 import CreateIssue from "../create-issue/CreateIssue";
 import { ISSUE_FORM_CONFIG } from "../create-issue/body/Constants";
 import PopupComponent from "../../popupComponent/PopupComponent";
+import { editIssue } from "../../../services/issue";
 
 const HeaderContainer = styled(Box)`
   background-color: white;
@@ -506,7 +507,6 @@ function BasicTabs(props: any) {
   const handleEditAssigne = () => {
     setAssigneeEditState(!assigneeEditState);
   };
-
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
@@ -701,7 +701,9 @@ function BasicTabs(props: any) {
           <DescriptionDiv>
             <DescriptionTitle>RFI Question</DescriptionTitle>
 
-            <DescriptionPara>{taskState.TabOne.description}</DescriptionPara>
+            <DescriptionPara>
+              {taskState.TabOne.issueDescription}
+            </DescriptionPara>
           </DescriptionDiv>
 
           {taskState?.TabOne?.attachments?.length > 0 && (
@@ -910,10 +912,10 @@ const CustomIssueDetailsDrawer = (props: any) => {
     )[0]?.defaultValue;
 
     data.type = formData.filter(
-      (item: any) => item.id == "tasks"
+      (item: any) => item.id == "issueType"
     )[0]?.defaultValue;
     (data.priority = formData.filter(
-      (item: any) => item.id == "taskPriority"
+      (item: any) => item.id == "issuePriority"
     )[0]?.defaultValue),
       (data.description = formData.filter(
         (item: any) => item.id == "description"
@@ -957,7 +959,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     updateAttachments(fileformdata, issue._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Task added sucessfully");
+          toast.success("Issue added sucessfully");
           // handleTaskSubmit(formData);
           // taskSubmit(response.result);
           // toolInstance.toolAction = "taskCreateSuccess";
@@ -975,10 +977,10 @@ const CustomIssueDetailsDrawer = (props: any) => {
           toast.error(error?.message);
         }
       });
-    updateTask(projectId as string, data, issue._id)
+    editIssue(projectId as string, data, issue._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Task added sucessfully");
+          toast.success("Issue updated sucessfully");
           // handleTaskSubmit(formData);
           // taskSubmit(response.result);
           // toolInstance.toolAction = "taskCreateSuccess";
@@ -1053,6 +1055,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
             currentStructure={currentStructure}
             contextInfo={contextInfo}
             editData={issue}
+            closeIssueCreate={() => {
+              setOpenCreateTask(false);
+            }}
           />
         </CustomDrawer>
       )}
