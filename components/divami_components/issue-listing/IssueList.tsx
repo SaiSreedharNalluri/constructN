@@ -52,6 +52,8 @@ import {
   SearchAreaContainer,
 } from "../task_list/TaskListStyles";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
+import { getProjectUsers } from "../../../services/project";
+import router from "next/router";
 
 interface IProps {
   closeOverlay: () => void;
@@ -112,6 +114,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [issueList, setIssueList] = useState<any>(issuesList);
 
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(issueList);
+  useEffect(() => {
+    setIssueList(issuesList);
+  }, [issuesList?.length]);
+
+  useEffect(() => {
+    setFilteredIssuesList(issueList);
+  }, [issueList?.length]);
 
   const closeIssueList = () => {
     //setListOverlay(false);
@@ -139,6 +148,18 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     }
     setFilteredIssuesList(sorted);
   };
+  useEffect(() => {
+    if (router.isReady) {
+      getProjectUsers(router.query.projectId as string)
+        .then((response: any) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+            console.log(projectUsers);
+          }
+        })
+        .catch();
+    }
+  }, [router.isReady, router.query.projectId]);
 
   const handleSearchWindow = () => {
     if (searchTerm === "") {
@@ -182,7 +203,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
-
+  console.log(filteredIssuesList, issueList, "indetailsss");
   useEffect(() => {
     // setIssuesListData(filteredIssuesList);
   }, [filteredIssuesList]);
@@ -308,20 +329,20 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         val.type === "RFI"
                           ? RFIList
                           : val.type === "Safety"
-                          ? HourglassIcon
-                          : val.type === "Transmittals"
-                          ? TransmittalList
-                          : val.type === "Clash"
-                          ? SubmittalList
-                          : val.type === "Commissioning"
-                          ? commission
-                          : val.type === "Building code"
-                          ? HourglassIcon
-                          : val.type === "Design"
-                          ? designIcon
-                          : val.type === "Submittals"
-                          ? SubmittalList
-                          : ""
+                            ? HourglassIcon
+                            : val.type === "Transmittals"
+                              ? TransmittalList
+                              : val.type === "Clash"
+                                ? SubmittalList
+                                : val.type === "Commissioning"
+                                  ? commission
+                                  : val.type === "Building code"
+                                    ? HourglassIcon
+                                    : val.type === "Design"
+                                      ? designIcon
+                                      : val.type === "Submittals"
+                                        ? SubmittalList
+                                        : ""
                       }
                       alt="Arrow"
                     />
@@ -368,6 +389,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             currentStructure={currentStructure}
             currentSnapshot={currentSnapshot}
             contextInfo={contextInfo}
+            deleteTheIssue={deleteTheIssue}
           />
         </Drawer>
       )}
@@ -384,9 +406,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => {}}
-            deleteTheIssue={() => {}}
-            clickIssueEditSubmit={() => {}}
+            handleOnSort={() => { }}
+            deleteTheIssue={() => { }}
+            clickIssueEditSubmit={() => { }}
             issueFilterState={issueFilterState}
           />
         </Drawer>

@@ -21,6 +21,11 @@ const TitleContiner = styled(Box)({
   alignItems: "center",
   paddingLeft: "20px",
   paddingRight: "20px",
+  fontFamily: "Open Sans",
+  fontWeight: "400",
+  lineHeight: "20px",
+  fontSize: "14px",
+  color: "black",
 });
 const CloseIcon = styled(Image)({ cursor: "pointer" });
 

@@ -2,13 +2,14 @@ import CustomCalender from "../custom-datepicker/CustomCalender";
 import CustomFileInput from "../custom-file-input/CustomFileInput";
 import CustomLabel from "../custom-label/CustomLabel";
 import CustomSearch from "../custom-search/CustomSearch";
-import CustomSelect from "../custom-select/CustomSelect";
+import CustomSelect, { ErrorField } from "../custom-select/CustomSelect";
 import CustomTagSuggestion from "../custom-tag-suggestion/CustomTagSuggestion";
 import { CustomTextField } from "../custom-textfield/CustomTextField";
 import { CustomTextArea } from "../custom-textarea/CustomTextArea";
 
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
+import { useEffect } from "react";
 
 const FormElementContainer = styled(Box)({
   marginTop: "30px",
@@ -23,8 +24,30 @@ const DoubleFieldContainer = styled("div")({
 });
 
 const FormWrapper = (props: any) => {
-  const { config, formState, setFormConfig } = props;
+  const { config, formState, setFormConfig, validate, setIsValidate } = props;
+  console.log("vak", validate);
 
+  useEffect(() => {
+    if (validate) {
+      console.log("coming");
+      setFormConfig((prev: any) => {
+        const newconfig = prev.map((item: any) => {
+          if (item.isReq && !item.defaultValue) {
+            return {
+              ...item,
+              isError: true,
+            };
+          } else {
+            return { ...item, isError: false };
+          }
+        });
+        console.log(newconfig, "newconfig");
+        return newconfig;
+      });
+      setIsValidate(false);
+    }
+  }, [validate]);
+  console.log("error", config);
   const handleTextChange = (e: any, id: string, data?: any) => {
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
