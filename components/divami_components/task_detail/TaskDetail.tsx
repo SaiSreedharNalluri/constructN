@@ -698,14 +698,17 @@ function BasicTabs(props: any) {
 
                 <ThirdContProgType style={{ color: "#101F4B" }}>
                   {taskState.TabOne.status}
-
-                  <PenIconImage
-                    onClick={() => {
-                      handleEditProgress();
-                    }}
-                    src={Edit}
-                    alt={"close icon"}
-                  />
+                  {taskState.TabOne.status ? (
+                    <PenIconImage
+                      onClick={() => {
+                        handleEditProgress();
+                      }}
+                      src={Edit}
+                      alt={"close icon"}
+                    />
+                  ) : (
+                    <></>
+                  )}
                 </ThirdContProgType>
               </ThirdContRight>
             </ProgressStateFalse>
