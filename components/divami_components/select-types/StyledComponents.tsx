@@ -34,6 +34,8 @@ export const DrawerHeaderTitle = styled("div")({});
 
 export const CloseIconStyled = styled(CloseIcon)({
   cursor: "pointer",
+  height: "16px",
+  width: "16px",
 });
 
 export const DrawerSearchBar = styled("div")({
@@ -62,5 +64,9 @@ export const ListStyled = styled(List)({
   },
   "& .MuiDivider-root": {
     margin: "0px 10px",
+  },
+  "& .css-10hburv-MuiTypography-root": {
+    fontSize: "14px",
+    fontFamily: "Open Sans",
   },
 });

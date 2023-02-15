@@ -58,7 +58,7 @@ const OpenMenuButton = styled("div")({
   left: "22px",
   bottom: "38px",
   cursor: "pointer",
-  backgroundColour: "#fffff",
+  backgroundColor: "#fffff !important",
 });
 const CloseMenuButton = styled("div")({
   height: "38px",
@@ -72,7 +72,7 @@ const CloseMenuButton = styled("div")({
   alignItems: "center",
   cursor: "pointer",
   zIndex: "99",
-  backgroundColour: "#fffff",
+  backgroundColor: "#fffff !important",
 });
 const Index: React.FC<IProps> = () => {
   const router = useRouter();

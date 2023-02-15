@@ -134,6 +134,7 @@ export const SelectLayersWrapper = styled("div")({
   border: "1px solid #D9D9D9",
   boxShadow: "5px 4px 8px rgb(0 0 0 / 24%)",
   background: "white",
+  fontSize:"14px",
 });
 
 export const LayerSecondSectionHexImg = styled("div")({
