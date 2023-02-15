@@ -6,6 +6,8 @@ import plusCircleIcon from "../../../public/divami_icons/plusCircleIcon.svg";
 import fileTextIcon from "../../../public/divami_icons/fileTextIcon.svg";
 import triWarnIcon from "../../../public/divami_icons/triWarnIcon.svg";
 import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIcon.svg";
+import fileTextIssue from "../../../public/divami_icons/fileTextIssue.svg";
+
 // import  IssueListing  from "../../divami_components/issue_listing/IssueList";
 import { styled } from "@mui/system";
 // import IssueList from "../issue_listing/IssueList";
@@ -63,6 +65,7 @@ const Issues = ({
   const [listOverlay, setListOverlay] = useState(false);
   const [createOverlay, setCreateOverlay] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [showImage, setShowImage] = useState(false);
 
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
   const [issueVisbility, setIssueVisibility] = useState(
@@ -234,6 +237,10 @@ const Issues = ({
     setIssueVisibility(!issueVisbility);
   };
 
+  const handleToggle = () => {
+    setShowImage(!showImage);
+  };
+
   useEffect(() => {
     setOpenCreateIssue(issueOpenDrawer);
   }, [issueOpenDrawer]);
@@ -271,14 +278,33 @@ const Issues = ({
         </IssuesSectionFileImg>
 
         <IssuesSectionClipImg>
-          <CameraIcon
-            src={clipboardSecondIcon}
-            // width={12}
-            // height={12}
-            alt="Arrow"
-            // onClick={rightMenuClickHandler}
-            onClick={toggleIssueVisibility}
-          />
+          {showImage && (
+            <CameraIcon
+              src={clipboardSecondIcon}
+              // width={12}
+              // height={12}
+              alt="Arrow"
+              // onClick={rightMenuClickHandler}
+              onClick={() => {
+                toggleIssueVisibility();
+                handleToggle();
+              }}
+            />
+          )}
+
+          {!showImage && (
+            <CameraIcon
+              src={fileTextIssue}
+              // width={12}
+              // height={12}
+              alt="Arrow"
+              // onClick={rightMenuClickHandler}
+              onClick={() => {
+                toggleIssueVisibility();
+                handleToggle();
+              }}
+            />
+          )}
         </IssuesSectionClipImg>
       </IssueBox>
 

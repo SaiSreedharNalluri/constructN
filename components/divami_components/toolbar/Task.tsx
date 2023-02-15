@@ -11,6 +11,7 @@ import triWarnIcon from "../../../public/divami_icons/triWarnIcon.svg";
 import clipboardIcon from "../../../public/divami_icons/clipboardIcon.svg";
 import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIcon.svg";
 import clipboardTask from "../../../public/divami_icons/clipboardTask.svg";
+import taskToogleIcon from "../../../public/divami_icons/taskToogleIcon.svg";
 
 import {
   TaskBox,
@@ -55,6 +56,8 @@ const Task = ({
   const [myTypesList, setMyTypesList] = useState(currentTypesList);
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
+
+  const [showImage, setShowImage] = useState(false);
 
   const [taskVisbility, setTaskVisibility] = useState(
     taskLayer === undefined ? false : taskLayer
@@ -213,6 +216,10 @@ const Task = ({
     taskMenuClicked(taskMenuInstance);
   };
 
+  const handleToggle = () => {
+    setShowImage(!showImage);
+  };
+
   useEffect(() => {
     setOpenCreateTask(taskOpenDrawer);
   }, [taskOpenDrawer]);
@@ -248,13 +255,33 @@ const Task = ({
       </IssuesSectionFileImg>
 
       <IssuesSectionClipImg>
-        <CameraIcon
-          src={clipboardTask}
-          onClick={() => {
-            toggleTaskVisibility();
-          }}
-          alt="Arrow"
-        />
+        {showImage && (
+          <CameraIcon
+            src={clipboardTask}
+            // width={12}
+            // height={12}
+            alt="Arrow"
+            // onClick={rightMenuClickHandler}
+            onClick={() => {
+              toggleTaskVisibility();
+              handleToggle();
+            }}
+          />
+        )}
+
+        {!showImage && (
+          <CameraIcon
+            src={taskToogleIcon}
+            // width={12}
+            // height={12}
+            alt="Arrow"
+            // onClick={rightMenuClickHandler}
+            onClick={() => {
+              toggleTaskVisibility();
+              handleToggle();
+            }}
+          />
+        )}
       </IssuesSectionClipImg>
       {openDrawer && (
         <Drawer
