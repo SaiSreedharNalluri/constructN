@@ -47,7 +47,7 @@ const DatePickerContainer = styled(Box)({
   flexDirection: "column",
 });
 
-const Body = ({ handleFormData, editData }: any) => {
+const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
   const [issueTypes, setIssueTypes] = useState([]);
@@ -247,6 +247,8 @@ const Body = ({ handleFormData, editData }: any) => {
           setFormConfig={setFormConfig}
           formState={formState}
           setFormState={setFormState}
+          validate={validate}
+          setIsValidate={setIsValidate}
         />
         <UploadedImagesList formData={formData} />
       </FormElementContainer>

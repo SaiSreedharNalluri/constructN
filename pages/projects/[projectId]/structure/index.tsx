@@ -58,7 +58,7 @@ const OpenMenuButton = styled("div")({
   left: "22px",
   bottom: "38px",
   cursor: "pointer",
-  backgroundColour: "#fffff",
+  backgroundColour: "#fff",
 });
 const CloseMenuButton = styled("div")({
   height: "38px",
@@ -114,6 +114,8 @@ const Index: React.FC<IProps> = () => {
   const [hierarchy, setHierarchy] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [expanded, setExpanded] = useState<string[]>([]);
+  const [openIssueDetails, setOpenIssueDetails] = useState(false);
+  const [openTaskDetails, setOpenTaskDetails] = useState(false);
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
   };
@@ -144,6 +146,13 @@ const Index: React.FC<IProps> = () => {
   };
   const closeIssueList = () => {
     setOpenIssueView(false);
+  };
+
+  const closeTaskDetails = () => {
+    setOpenTaskDetails(false);
+  };
+  const closeIssueDetails = () => {
+    setOpenIssueDetails(false);
   };
 
   const taskSubmit = (formdata: any) => {
@@ -365,6 +374,7 @@ const Index: React.FC<IProps> = () => {
           case "taskCreateFail":
           case "taskShow":
           case "taskHide":
+          case "taskSelect":
             setClickedTool(toolInstance);
             break;
         }
@@ -404,6 +414,10 @@ const Index: React.FC<IProps> = () => {
         } else if (data.toolAction === "selectIssue") {
           console.log("issue selected: ", data.response?.id);
           // issue detail view open logic comes here
+          if (data.response != undefined) {
+            setCurrentContext(data.response);
+            setOpenIssueDetails(true);
+          }
         }
         break;
       case "Task":
@@ -414,6 +428,10 @@ const Index: React.FC<IProps> = () => {
         } else if (data.toolAction === "selectTask") {
           console.log("task selected: ", data.response?.id);
           // task detail view open logic comes here
+          if (data.response != undefined) {
+            setCurrentContext(data.response);
+            setOpenTaskDetails(true);
+          }
         }
         break;
       default:
@@ -707,8 +725,6 @@ const Index: React.FC<IProps> = () => {
       });
   };
 
-  console.log(activeRealityMap, "layers list");
-
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -894,6 +910,10 @@ const Index: React.FC<IProps> = () => {
               issueFilterState={issueFilterState}
               closeIssueCreate={closeIssueCreate}
               closeTaskCreate={closeTaskCreate}
+              openIssueDetails={openIssueDetails}
+              openTaskDetails={openTaskDetails}
+              closeTaskDetails={closeTaskDetails}
+              closeIssueDetails={closeIssueDetails}
             />
 
             {/* <CustomToaster /> */}

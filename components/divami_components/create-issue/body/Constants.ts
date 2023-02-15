@@ -5,6 +5,8 @@ export const ISSUE_FORM_CONFIG = [
     defaultValue: "",
     formLabel: "Title",
     placeholder: "Title",
+    isError: false,
+    isReq: true,
   },
   {
     id: "issueType",
@@ -14,7 +16,7 @@ export const ISSUE_FORM_CONFIG = [
     label: "Material (Optional)",
     isLarge: false,
     isError: false,
-    isReq: false,
+    isReq: true,
     isflex: false,
     formLabel: "Select the Type of Issue",
     options: [
@@ -36,6 +38,8 @@ export const ISSUE_FORM_CONFIG = [
     defaultValue: "",
     formLabel: "Tell more about the Issue",
     placeholder: "Tell more about the issue",
+    isError: false,
+    isReq: false,
   },
   {
     id: "issuePriority",
@@ -45,7 +49,7 @@ export const ISSUE_FORM_CONFIG = [
     label: "Material (Optional)",
     isLarge: false,
     isError: false,
-    isReq: false,
+    isReq: true,
     isflex: false,
     formLabel: "Select Issue Priority",
     options: [
@@ -75,6 +79,8 @@ export const ISSUE_FORM_CONFIG = [
     ],
     selectedName: null,
     label: "Select Name or Team",
+    isError: false,
+    isReq: false,
   },
   {
     id: "dates",
@@ -87,7 +93,7 @@ export const ISSUE_FORM_CONFIG = [
         label: "MM/DD/YYYY",
         formLabel: "Start Date",
         isError: false,
-        isReq: true,
+        isReq: false,
       },
       {
         id: "due-date",
@@ -96,7 +102,7 @@ export const ISSUE_FORM_CONFIG = [
         label: "MM/DD/YYYY",
         formLabel: "Due Date",
         isError: false,
-        isReq: true,
+        isReq: false,
       },
     ],
   },
@@ -105,11 +111,15 @@ export const ISSUE_FORM_CONFIG = [
     type: "chip",
     chipString: [],
     formLabel: "Enter Some Suggested Tags",
+    isError: false,
+    isReq: false,
   },
   {
     id: "file-upload",
     type: "file",
     selectedFiles: null,
+    isError: false,
+    isReq: false,
   },
 ];
 export const TYPES_OF_ISSUES = [

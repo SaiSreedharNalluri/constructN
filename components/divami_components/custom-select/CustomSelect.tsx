@@ -36,6 +36,11 @@ const CustomSelectContainer = styled("div")({
   color: "#101F4B",
 });
 
+export const ErrorField = styled("div")({
+  color: "red",
+  fontSize: "14px",
+});
+
 const CustomSelect = (props: any) => {
   const { config, data, defaultValue, id, setFormConfig } = props;
 
@@ -66,9 +71,9 @@ const CustomSelect = (props: any) => {
   };
 
   useEffect(() => {
-    setVal(data.defaultValue);
+    setVal(data?.defaultValue);
   }, [data?.defaultValue]);
-  console.log(val, "val");
+  console.log(data, "vafsfsl");
   return (
     <CustomSelectContainer>
       <StyledSelect value={val} onChange={handlechange} id={id}>
@@ -83,9 +88,8 @@ const CustomSelect = (props: any) => {
             </StyledMenuItem>
           ))}
       </StyledSelect>
-      {/* {isError && (
-        <div className={textstyles.error_message}>This is required</div>
-      )} */}
+
+      <ErrorField>{data.isError ? "Required" : ""}</ErrorField>
     </CustomSelectContainer>
   );
 };
