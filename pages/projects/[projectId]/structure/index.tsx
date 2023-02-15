@@ -36,6 +36,7 @@ import IssueList from '../../../../components/container/rightFloatingMenu/issueM
 import { it } from 'node:test';
 import Moment from 'moment';
 import { deleteAttachment } from '../../../../services/attachments';
+import { log } from 'node:console';
 
 interface IProps {}
 const Index: React.FC<IProps> = () => {
@@ -127,6 +128,20 @@ const Index: React.FC<IProps> = () => {
       getStructureList(router.query.projectId as string)
         .then((response) => {
           setStructuresList(response.data.result);
+
+          if (response.data.result.length > 0) {
+            if (router.query.structId !== undefined) {
+              let structs: IStructure[] = response.data.result;
+              setStructure(
+                structs.find((e) => {
+                  console.log('finding structure: ', e._id);
+                  if (e._id === router.query.structId) {
+                    return e;
+                  }
+                })
+              );
+            } else setStructure(response.data.result[0]);
+          }
         })
         .catch((error) => {
           toast.error('failed to load data');
@@ -151,7 +166,9 @@ const Index: React.FC<IProps> = () => {
   };
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
+    //console.log('Loaded structures: ', structuresList);
     let currentStructure = structuresList.find((e) => {
+      //console.log('finding structure: ', e._id);
       if (e._id === structure._id) {
         return e;
       }
@@ -265,17 +282,17 @@ const Index: React.FC<IProps> = () => {
       case 'issue':
         switch (toolInstance.toolAction) {
           case 'issueView':
-            console.log('trying to open issue View');
+            //console.log('trying to open issue View');
             setOpenIssueView(true);
             break;
           case 'issueCreate':
+          //setOpenCreateIssue(true);
           case 'issueCreateSuccess':
           case 'issueCreateFail':
           case 'issueSelect':
           case 'issueShow':
           case 'issueHide':
             setClickedTool(toolInstance);
-
             break;
         }
 
@@ -618,6 +635,7 @@ const Index: React.FC<IProps> = () => {
                       setStructure(
                         getCurrentStructureFromStructureList(structureData)
                       );
+                      // setStructure(structureData);
                       getIssues(structureData._id);
                       getTasks(structureData._id);
                     }
