@@ -69,7 +69,6 @@ export class PotreeViewerUtils {
         this.mouseEnter = this.onMouseEnter.bind(this)
         this.cameraChange = this.onCameraChange.bind(this)
         this.zoomHandler = this.onZoomHandler.bind(this);
-        this.addEventListeners();
     }
 
     isCompareView() {
@@ -104,6 +103,7 @@ export class PotreeViewerUtils {
         let self = this;
         const loadGUICallback = () => {
             self.isViewerInitialized = true;
+            self.addEventListeners();
         }
         if (this.isCompareView()) {
             this.viewer = PotreeInstance.getCompareInstance(this.viewerId).viewer;
@@ -113,8 +113,6 @@ export class PotreeViewerUtils {
         this.viewer.canvasId = this.viewerId; //Used by potree
         this.viewer.loadGUI(loadGUICallback)
     }
-
-
 
     isViewerLoaded() {
         return this.isViewerInitialized;
@@ -303,7 +301,7 @@ export class PotreeViewerUtils {
         if(event.detail.viewer !== this.viewerId) {
             return;
         }
-        console.log("Inside new onOriented imageload: ", this.viewer, event, this.getCurrentImage(), this.sendContext);
+        // console.log("Inside new onOriented imageload: ", this.viewer, event, this.getCurrentImage(), this.sendContext);
         this.viewer.scene.removeAllMeasurements();
         this.currentMode = 'image';
         this.currentLoadedImage = event.detail.image.id;
@@ -326,7 +324,7 @@ export class PotreeViewerUtils {
     }
 
     onOrientedImageUnload = (viewer) => {
-        console.log("Inside new onOriented image unload: ", this.getCurrentImage(), this.sendContext, this.currentLoadedImage);
+        // console.log("Inside new onOriented image unload: ", this.getCurrentImage(), this.sendContext, this.currentLoadedImage);
         let currentImage = this.getCurrentImage();
 
             viewer.scene.removeAllClipVolumes(); // To remove hovered image
@@ -365,7 +363,7 @@ export class PotreeViewerUtils {
     }
 
     onPanoImageLoad = (image, viewer) => {
-        console.log("Inside new onPano imageload: ", image, this.getCurrentImage(), this.sendContext);
+        // console.log("Inside new onPano imageload: ", image, this.getCurrentImage(), this.sendContext);
         let currentImage = this.getCurrentImage();
         if(currentImage && currentImage.file.split('/').pop() === image.file.split('/').pop()) {
             this.currentMode = 'panorama';
@@ -476,7 +474,7 @@ export class PotreeViewerUtils {
                 }
             });
             if (nearestImage) {
-                console.log(nearestImage.id)
+                // console.log(nearestImage.id)
                 this.loadOrientedImages(nearestImage)
             }
         } else {
@@ -496,7 +494,7 @@ export class PotreeViewerUtils {
                 }
             });
             if (nearestImage) {
-                console.log(nearestImage.file)
+                // console.log(nearestImage.file)
                 this.loadPanoImages(nearestImage, cameraInfo)
             }
         }
@@ -520,7 +518,7 @@ export class PotreeViewerUtils {
                 }
             });
             if (nearestImage) {
-                console.log(nearestImage.id)
+                // console.log(nearestImage.id)
                 this.loadOrientedImages(nearestImage)
 
             }
@@ -735,7 +733,7 @@ export class PotreeViewerUtils {
 
     updateContext(context) {
         this.sendContext = false;
-        console.log("Inside update context potree: ", this.sendContext);
+        // console.log("Inside update context potree: ", this.sendContext);
         if (context) {
             this.context = this.getContextLocalFromGlobal(context);
         } else {
@@ -775,6 +773,7 @@ export class PotreeViewerUtils {
             }
             
         } else if (this.currentMode === "panorama" && viewerState.pitch){
+            // console.log("Inside set viewer state for panorama: ", this.viewerId)
             this.viewer.scene.view.pitch = viewerState.pitch;
             this.viewer.scene.view.yaw = viewerState.yaw
             if(viewerState.fov) {
@@ -921,7 +920,8 @@ export class PotreeViewerUtils {
                     this.unloadOrientedImage()
                     this.sendContext = true;
                 } else {
-                    
+                    // this.viewer.scene.images360[0].unfocus();
+                    // this.pointCloudView(false);
                 }
                 break;
             case "ArrowUp":
@@ -1022,7 +1022,7 @@ export class PotreeViewerUtils {
     }
 
     onMouseEnter() {
-        // console.log("Inside mouse eneter event potree: ");
+        console.log("Inside mouse eneter event potree: ", this.viewerId);
         this.eventHandler(this.viewerId, {type: "mouse"});
     }
 
@@ -1298,16 +1298,21 @@ export class PotreeViewerUtils {
         const intersectedObjects = raycaster.intersectObjects(objs, true);
         if (intersectedObjects.length) {
             let click_point = this.currentMode == 'image' ? intersectedObjects[2].point : intersectedObjects[0].point 
-            let measure = new Potree.Measure();
-            measure.showDistances = false;
-            measure.showCoordinates = true;
-            measure.maxMarkers = 1;
-            measure.type = 'Point';
-            measure.name = 'Point';
-            measure.addMarker(click_point);
-            this.viewer.scene.addMeasurement(measure);
-            this.processTag(click_point);
-            console.log("Event clicked : ", pos, event, click_point, intersectedObjects);
+            // let measure = new Potree.Measure();
+            // measure.showDistances = false;
+            // // measure.showCoordinates = true;
+            // measure.maxMarkers = 1;
+            // measure.type = 'Point';
+            // measure.name = 'Point';
+            // measure.addMarker(click_point);
+            // this.viewer.scene.addMeasurement(measure);
+
+            // this.createSprite(click_point);
+            this.createAnnotation(pickPosition);
+            
+
+            this.processTag(pickPosition);
+            console.log("Event clicked : ", pos, event, pickPosition);
         }
         this.viewer.renderArea.removeEventListener('click',  this.measureClickHandler);
     }
@@ -1317,12 +1322,19 @@ export class PotreeViewerUtils {
         // let screenShotPath = `${mainProjectID}/structures/${inProjectID}/snapshots/${viewer.tileset}/${date_time.getTime()}.png`
         // let latest_measure = viewer.scene.measurements.slice(-1)[0]
         this.isAddTagActive = this.deactivateCreateTagTool();
+        let offset = this.globalOffset;
+        let tagPosition = {
+            x: click_point.x - offset[0],
+            y: click_point.y - offset[1],
+            z: click_point.z - offset[2]
+        }
         let tagObject = {
-            position: click_point,
+            position: tagPosition,
             // screenShot: `https://${s3_bucket}.s3.ap-south-1.amazonaws.com/${screenShotPath}`
         }
         let save_obj = {
             type: this.tagType,
+            id: `Temp_${this.tagType}`,
             camera: this.getContext().cameraObject,
             tag: tagObject
             
@@ -1341,8 +1353,46 @@ export class PotreeViewerUtils {
         // takeScreenshot(screenShotPath, viewer);
     }
 
-    createSprite() {
+    getSpriteIcon(type) {
+        switch(type) {
+            case "Issue":
+                return "/icons/issuesInViewer.svg";
+                break;
+            case "Task":
+                return "/icons/tasksInViewer.svg";
+                break;
+        }
+    }
 
+    createAnnotation(position) {
+        let tagObject =  $(`
+        <span>
+            <img name="tag" src="${this.getSpriteIcon(this.tagType)}"/>
+        </span>`);
+        let tag = new Potree.Annotation({
+            position: [position.x, position.y, position.z],
+            title: tagObject,
+            // cameraPosition: [590105.53, 231541.63, 782.05],
+            // cameraTarget: [590043.63, 231488.79, 740.78],
+            // description: `<ul><li>Click on the annotation label to move a predefined view.</li> 
+            // <li>Click on the icon to execute the specified action.</li>
+            // In this case, the action will bring you to another scene and point cloud.</ul>`
+        });
+
+        this.viewer.scene.annotations.add(tag);
+
+    }
+
+    createSprite(position) {
+        const map = new THREE.TextureLoader().load(this.getSpriteIcon(this.tagType));
+        const material = new THREE.SpriteMaterial( { map: map } );
+
+        const sprite = new THREE.Sprite( material );
+        sprite.material.depthTest = false;
+        sprite.visible = true;
+        sprite.scale.set( 100, 100, 1);
+        sprite.position.set(position);
+        this.viewer.scene.scene.add(sprite);
     }
 
     clearTempMeasurements() {
