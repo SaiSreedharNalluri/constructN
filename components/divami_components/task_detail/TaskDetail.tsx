@@ -8,8 +8,10 @@ import {
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { styled } from "@mui/system";
+import _ from "lodash";
 import Moment from "moment";
 import Image from "next/image";
+import router from "next/router";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import BackArrow from "../../../public/divami_icons/backArrow.svg";
@@ -455,14 +457,19 @@ function BasicTabs(props: any) {
     taskPriority,
     taskStatus,
     projectUsers,
+    taskUpdate,
   } = props;
 
   const [value, setValue] = React.useState(0);
   const [issueTypeConfig, setIssueTypeConfig] = useState("");
-  const [formState, setFormState] = useState({ selectedValue: "" });
+  const [formState, setFormState] = useState({
+    selectedValue: "",
+    selectedProgress: null,
+    selectedUser: null,
+  });
   const [progressEditState, setProgressEditState] = useState(false);
   const [assigneeEditState, setAssigneeEditState] = useState(false);
-  const [progressOptionsState, setProgressOptionsState] = useState<any>({});
+  const [progressOptionsState, setProgressOptionsState] = useState<any>([{}]);
   const [assigneeOptionsState, setAssigneeOptionsState] = useState([]);
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
   const [searchTerm, setSearchTerm] = useState("");
@@ -476,10 +483,20 @@ function BasicTabs(props: any) {
       };
     });
     setProgressOptionsState((prevState: any) => {
-      return {
-        ...prevState,
-        options: temp,
-      };
+      return [
+        {
+          id: "taskPriority",
+          type: "select",
+          defaultValue: "",
+          placeHolder: "Select",
+          label: "Material (Optional)",
+          isLarge: false,
+          isError: false,
+          isReq: false,
+          isflex: false,
+          options: temp,
+        },
+      ];
     });
     let tempUsers = projectUsers.map((each: any) => {
       return {
@@ -505,6 +522,10 @@ function BasicTabs(props: any) {
     if (assigneeEditState) {
       setAssigneeEditState(!assigneeEditState);
     }
+    taskUpdate({
+      ...formState,
+      selectedProgress: progressOptionsState[0].defaultValue,
+    });
   };
 
   const handleEditAssigne = () => {
@@ -563,7 +584,11 @@ function BasicTabs(props: any) {
           <Tab
             label="Details"
             {...a11yProps(0)}
-            style={{ marginRight: "40px", paddingLeft: "0px" }}
+            style={{
+              marginRight: "40px",
+              paddingLeft: "0px",
+              color: "#101F4B",
+            }}
           />
           <Tab label="Activity log" {...a11yProps(1)} />
         </Tabs>
@@ -576,12 +601,14 @@ function BasicTabs(props: any) {
           <SecondBodyDiv>
             <SecondContPrior>
               <PriorityTitle>Priority</PriorityTitle>
-              <PriorityStatus>{taskState.TabOne.priority}</PriorityStatus>
+              <PriorityStatus style={{ color: "#101F4B" }}>
+                {taskState.TabOne.priority}
+              </PriorityStatus>
             </SecondContPrior>
 
             <SecondContCapt>
               <CaptureTitle>Captured on</CaptureTitle>
-              <CaptureStatus>
+              <CaptureStatus style={{ color: "#101F4B" }}>
                 {" "}
                 {Moment(taskState.TabOne.capturedOn).format("DD MMM YY")}
               </CaptureStatus>
@@ -592,7 +619,7 @@ function BasicTabs(props: any) {
             <ProgressStateTrue>
               <ThirdContLeft>
                 <ThirdContWatch>Watcher</ThirdContWatch>
-                <ThirdContWatchName>
+                <ThirdContWatchName style={{ color: "#101F4B" }}>
                   {" "}
                   {taskState.TabOne.creator}
                 </ThirdContWatchName>
@@ -603,8 +630,8 @@ function BasicTabs(props: any) {
               >
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
-                  <FourthContProgType>
-                    {taskState.TabOne.creator}{" "}
+                  <FourthContProgType style={{ color: "#101F4B" }}>
+                    {taskState.TabOne.assignees}{" "}
                     <PenIconImage
                       onClick={() => {
                         handleEditAssigne();
@@ -620,7 +647,7 @@ function BasicTabs(props: any) {
             <ProgressStateFalse>
               <ThirdContLeft>
                 <ThirdContWatch>Watcher</ThirdContWatch>
-                <ThirdContWatchName>
+                <ThirdContWatchName style={{ color: "#101F4B" }}>
                   {" "}
                   {taskState.TabOne.creator}
                 </ThirdContWatchName>
@@ -628,9 +655,9 @@ function BasicTabs(props: any) {
               <ThirdContRight>
                 <ThirdContProg>Progress</ThirdContProg>
 
-                <ThirdContProgType>
-                  {/* {DetailsObj?.TabOne[0]?.status[0]?.progress}{" "} */}
-                  <div>In-Progress</div>
+                <ThirdContProgType style={{ color: "#101F4B" }}>
+                  {taskState.TabOne.status}
+
                   <PenIconImage
                     onClick={() => {
                       handleEditProgress();
@@ -646,11 +673,11 @@ function BasicTabs(props: any) {
             <ProgressCustomSelect>
               <CustomSelect
                 onChange={(event: any, value: any) => console.log(value)}
-                config={progressOptionsState}
+                config={progressOptionsState[0]}
                 defaultValue={progressOptionsState?.options[0].value}
-                id={""}
+                id={"taskPriority"}
                 sx={{ minWidth: 120 }}
-                setFormConfig={setFormConfig}
+                setFormConfig={setProgressOptionsState}
                 isError={""}
                 label=""
               />
@@ -661,7 +688,7 @@ function BasicTabs(props: any) {
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
 
-                  <FourthContProgType>
+                  <FourthContProgType style={{ color: "#101F4B" }}>
                     {taskState?.TabOne.assignees}{" "}
                     <PenIconImage
                       onClick={() => {
@@ -683,7 +710,10 @@ function BasicTabs(props: any) {
                 options={assigneeOptionsState}
                 sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="" />}
-                onChange={(event, value) => console.log(value)}
+                onChange={(event, value) => {
+                  console.log(value);
+                  setFormState({ ...formState, selectedUser: value });
+                }}
                 // InputProps={{
                 //   startAdornment: (
                 //     <InputAdornment position="start">
@@ -705,7 +735,7 @@ function BasicTabs(props: any) {
           <DescriptionDiv>
             <DescriptionTitle>RFI Question</DescriptionTitle>
 
-            <DescriptionPara>
+            <DescriptionPara style={{ color: "#101F4B" }}>
               {taskState.TabOne.issueDescription}
             </DescriptionPara>
           </DescriptionDiv>
@@ -714,7 +744,7 @@ function BasicTabs(props: any) {
             <>
               <AttachmentDiv>
                 <AttachmentTitle>Attachments</AttachmentTitle>
-                <AttachmentDescription>
+                <AttachmentDescription style={{ color: "#101F4B" }}>
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
                       return (
@@ -1010,7 +1040,27 @@ const CustomTaskDetailsDrawer = (props: any) => {
         }
       });
   };
-
+  const taskUpdate = (data: any) => {
+    console.log(task);
+    const issueData = _.cloneDeep(task);
+    data.selectedUser?.user
+      ? (issueData.assignees = [data.selectedUser.user])
+      : null;
+    data.selectedProgress ? (issueData.priority = data.selectedProgress) : null;
+    const projectId = router.query.projectId;
+    updateTask(projectId as string, issueData, task._id)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success("Issue updated sucessfully");
+        } else {
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
   return (
     <>
       <CustomTaskDrawerContainer>

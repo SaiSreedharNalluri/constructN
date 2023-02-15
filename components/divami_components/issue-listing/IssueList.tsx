@@ -52,6 +52,8 @@ import {
   SearchAreaContainer,
 } from "../task_list/TaskListStyles";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
+import { getProjectUsers } from "../../../services/project";
+import router from "next/router";
 
 interface IProps {
   closeOverlay: () => void;
@@ -139,6 +141,18 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     }
     setFilteredIssuesList(sorted);
   };
+  useEffect(() => {
+    if (router.isReady) {
+      getProjectUsers(router.query.projectId as string)
+        .then((response: any) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+            console.log(projectUsers);
+          }
+        })
+        .catch();
+    }
+  }, [router.isReady, router.query.projectId]);
 
   const handleSearchWindow = () => {
     if (searchTerm === "") {
