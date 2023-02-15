@@ -341,10 +341,8 @@ const Index: React.FC<IProps> = () => {
           case "issueShow":
           case "issueHide":
             setClickedTool(toolInstance);
-
             break;
         }
-
         break;
       case "progress":
         switch (toolInstance.toolAction) {

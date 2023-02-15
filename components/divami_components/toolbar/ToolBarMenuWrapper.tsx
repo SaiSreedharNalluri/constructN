@@ -24,6 +24,7 @@ import { IToolResponse, ITools } from "../../../models/ITools";
 import { SectionToolBar, ToolbarContainer } from "./ToolBarStyles";
 import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
+import CompareView from "./CompareView";
 
 // import TOOLBARMENU from '../../config/appConstant'
 
@@ -140,6 +141,13 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     currentTypesList,
   ]);
   const rightMenuClickHandler = (e: any) => {
+    console.log(
+      e.currentTarget.id,
+      "cureid",
+      isCompareReality,
+      isCompareDesign
+    );
+
     setActive(e.currentTarget.id);
     setRighttNav(!rightNav);
     if (e.currentTarget.id === "Reality") {
@@ -164,8 +172,18 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         : "showCompare";
       setIsCompareReality(isCompareReality ? false : true);
       setIsCompareDesign(false);
+    } else if (e.currentTarget.id === "hideCompare") {
+      //console.log("CAptured....");
+      toolInstance.toolName = isCompareReality
+        ? "compareReality"
+        : "compareDesign";
+      // toolInstance.toolAction = isCompareReality
+      //   ? "closeCompare"
+      //   : "showCompare";
+      toolInstance.toolAction = "closeCompare";
+      setIsCompareDesign(false);
+      setIsCompareReality(false);
     }
-
     toolClicked(toolInstance);
   };
 
@@ -188,35 +206,41 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   };
 
   return (
-    <SectionToolBar>
+    <SectionToolBar viewMode={viewMode}>
       <ToolbarContainer>
-        <Typebar
-          rightMenuClickHandler={rightMenuClickHandler}
-          myTypesList={myTypesList}
-          typeChange={typeChange}
-          selectedValue={selectedType}
-          openList={openSelectTypes}
-          setOpenList={setOpenSelectTypes}
-          onListClick={() => {
-            setOpenSelectLayer(false);
-            setOpenSelectTypes(!openSelectTypes);
-          }}
-        />
-
-        <Layers
-          rightMenuClickHandler={rightMenuClickHandler}
-          myLayersList={myLayersList}
-          LayerChange={LayerChange}
-          selectedValue={selectedLayer}
-          openList={openSelectLayer}
-          setOpenList={setOpenSelectLayer}
-          onListClick={() => {
-            setOpenSelectTypes(false);
-            setOpenSelectLayer(!openSelectLayer);
-          }}
-          selectedLayersList={selectedLayersList}
-        />
-
+        {viewMode !== "Reality" ? (
+          <Typebar
+            rightMenuClickHandler={rightMenuClickHandler}
+            myTypesList={myTypesList}
+            typeChange={typeChange}
+            selectedValue={selectedType}
+            openList={openSelectTypes}
+            setOpenList={setOpenSelectTypes}
+            onListClick={() => {
+              setOpenSelectLayer(false);
+              setOpenSelectTypes(!openSelectTypes);
+            }}
+          />
+        ) : (
+          <></>
+        )}
+        {viewMode !== "Reality" ? (
+          <Layers
+            rightMenuClickHandler={rightMenuClickHandler}
+            myLayersList={myLayersList}
+            LayerChange={LayerChange}
+            selectedValue={selectedLayer}
+            openList={openSelectLayer}
+            setOpenList={setOpenSelectLayer}
+            onListClick={() => {
+              setOpenSelectTypes(false);
+              setOpenSelectLayer(!openSelectLayer);
+            }}
+            selectedLayersList={selectedLayersList}
+          />
+        ) : (
+          <></>
+        )}
         <Issues
           issuesList={issuesList}
           issueMenuClicked={issueMenuClicked}
@@ -248,7 +272,15 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           taskFilterState={taskFilterState}
         />
 
-        <Hotspot />
+        {viewMode === "Reality" ? (
+          <CompareView
+            rightMenuClickHandler={rightMenuClickHandler}
+            active={active}
+          />
+        ) : (
+          <></>
+        )}
+        {/* <Hotspot /> */}
       </ToolbarContainer>
     </SectionToolBar>
   );

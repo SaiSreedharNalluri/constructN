@@ -37,8 +37,6 @@ interface IProps {
 }
 
 const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
-  const [isDesignSelected, setIsDesignSelected] = useState(true);
-
   const router = useRouter();
   const headerRef: any = React.useRef();
   let [name, setName] = useState<string>("");
@@ -47,6 +45,10 @@ const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
   const [isCompareDesign, setIsCompareDesign] = useState(false);
   const [isCompareReality, setIsCompareReality] = useState(false);
   const [iViewMode, setIViewMode] = useState(viewMode);
+  const [isDesignSelected, setIsDesignSelected] = useState(
+    iViewMode === "Reality" ? false : true
+  );
+
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
@@ -60,6 +62,7 @@ const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
   }, [router.query.projectId]);
   useEffect(() => {
     setIViewMode(viewMode);
+    setIsDesignSelected(viewMode === "Reality" ? false : true);
     //   document.addEventListener('click', closeStructurePages);
     //   return () => {
     //     document.removeEventListener('click', closeStructurePages);
