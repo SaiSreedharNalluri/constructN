@@ -21,6 +21,8 @@ import CustomDrawer from "../custom-drawer/custom-drawer";
 import CreateIssue from "../create-issue/CreateIssue";
 import { ISSUE_FORM_CONFIG } from "../create-issue/body/Constants";
 import { editIssue } from "../../../services/issue";
+import router from "next/router";
+import _ from "lodash";
 
 const HeaderContainer = styled(Box)`
   background-color: white;
@@ -451,14 +453,19 @@ function BasicTabs(props: any) {
     taskPriority,
     taskStatus,
     projectUsers,
+    issueUpdate,
   } = props;
 
   const [value, setValue] = React.useState(0);
   const [issueTypeConfig, setIssueTypeConfig] = useState("");
-  const [formState, setFormState] = useState({ selectedValue: "" });
+  const [formState, setFormState] = useState({
+    selectedValue: "",
+    selectedProgress: null,
+    selectedUser: null,
+  });
   const [progressEditState, setProgressEditState] = useState(false);
   const [assigneeEditState, setAssigneeEditState] = useState(false);
-  const [progressOptionsState, setProgressOptionsState] = useState<any>({});
+  const [progressOptionsState, setProgressOptionsState] = useState<any>([{}]);
   const [assigneeOptionsState, setAssigneeOptionsState] = useState([]);
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
   const [searchTerm, setSearchTerm] = useState("");
@@ -472,10 +479,20 @@ function BasicTabs(props: any) {
       };
     });
     setProgressOptionsState((prevState: any) => {
-      return {
-        ...prevState,
-        options: temp,
-      };
+      return [
+        {
+          id: "issuePriority",
+          type: "select",
+          defaultValue: "",
+          placeHolder: "Select",
+          label: "Material (Optional)",
+          isLarge: false,
+          isError: false,
+          isReq: false,
+          isflex: false,
+          options: temp,
+        },
+      ];
     });
     let tempUsers = projectUsers.map((each: any) => {
       return {
@@ -501,6 +518,10 @@ function BasicTabs(props: any) {
     if (assigneeEditState) {
       setAssigneeEditState(!assigneeEditState);
     }
+    issueUpdate({
+      ...formState,
+      selectedProgress: progressOptionsState[0].defaultValue,
+    });
   };
 
   const handleEditAssigne = () => {
@@ -558,7 +579,11 @@ function BasicTabs(props: any) {
           <Tab
             label="Details"
             {...a11yProps(0)}
-            style={{ marginRight: "40px", paddingLeft: "0px" }}
+            style={{
+              marginRight: "40px",
+              paddingLeft: "0px",
+              color: "#101F4B",
+            }}
           />
           <Tab label="Activity log" {...a11yProps(1)} />
         </Tabs>
@@ -566,17 +591,28 @@ function BasicTabs(props: any) {
       <CustomTabPanel value={value} index={0}>
         <TabOneDiv>
           <FirstHeaderDiv>
-            <Image src={""} alt="" />
+            <Image
+              src={
+                taskState.TabOne.attachments
+                  ? taskState.TabOne.attachments[0]?.url
+                  : ""
+              }
+              alt=""
+              width={400}
+              height={400}
+            />
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
               <PriorityTitle>Priority</PriorityTitle>
-              <PriorityStatus>{taskState.TabOne.priority}</PriorityStatus>
+              <PriorityStatus style={{ color: "#101F4B" }}>
+                {taskState.TabOne.priority}
+              </PriorityStatus>
             </SecondContPrior>
 
             <SecondContCapt>
               <CaptureTitle>Captured on</CaptureTitle>
-              <CaptureStatus>
+              <CaptureStatus style={{ color: "#101F4B" }}>
                 {" "}
                 {Moment(taskState.TabOne.capturedOn).format("DD MMM YY")}
               </CaptureStatus>
@@ -587,19 +623,19 @@ function BasicTabs(props: any) {
             <ProgressStateTrue>
               <ThirdContLeft>
                 <ThirdContWatch>Watcher</ThirdContWatch>
-                <ThirdContWatchName>
+                <ThirdContWatchName style={{ color: "#101F4B" }}>
                   {" "}
                   {taskState.TabOne.creator}
                 </ThirdContWatchName>
               </ThirdContLeft>
               <FourthBodyDiv
                 assigneeEditState={assigneeEditState}
-                style={{ marginTop: "0px" }}
+                style={{ marginTop: "0px", color: "#101F4B" }}
               >
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
-                  <FourthContProgType>
-                    {taskState.TabOne.creator}{" "}
+                  <FourthContProgType style={{ color: "#101F4B" }}>
+                    {taskState?.TabOne.assignees}{" "}
                     <PenIconImage
                       onClick={() => {
                         handleEditAssigne();
@@ -615,7 +651,7 @@ function BasicTabs(props: any) {
             <ProgressStateFalse>
               <ThirdContLeft>
                 <ThirdContWatch>Watcher</ThirdContWatch>
-                <ThirdContWatchName>
+                <ThirdContWatchName style={{ color: "#101F4B" }}>
                   {" "}
                   {taskState.TabOne.creator}
                 </ThirdContWatchName>
@@ -623,9 +659,8 @@ function BasicTabs(props: any) {
               <ThirdContRight>
                 <ThirdContProg>Progress</ThirdContProg>
 
-                <ThirdContProgType>
-                  {/* {DetailsObj?.TabOne[0]?.status[0]?.progress}{" "} */}
-                  <div>In-Progress</div>
+                <ThirdContProgType style={{ color: "#101F4B" }}>
+                  {taskState.TabOne.status}
                   <PenIconImage
                     onClick={() => {
                       handleEditProgress();
@@ -640,12 +675,15 @@ function BasicTabs(props: any) {
           {progressEditState ? (
             <ProgressCustomSelect>
               <CustomSelect
-                onChange={(event: any, value: any) => console.log(value)}
-                config={progressOptionsState}
-                defaultValue={progressOptionsState?.options[0].value}
-                id={""}
+                onChange={(event: any, value: any) => {
+                  console.log(value);
+                  setFormState({ ...formState, selectedProgress: value });
+                }}
+                config={progressOptionsState[0]}
+                // defaultValue={progressOptionsState?.options[0].value}
+                id={"issuePriority"}
                 sx={{ minWidth: 120 }}
-                setFormConfig={setFormConfig}
+                setFormConfig={setProgressOptionsState}
                 isError={""}
                 label=""
               />
@@ -656,7 +694,7 @@ function BasicTabs(props: any) {
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
 
-                  <FourthContProgType>
+                  <FourthContProgType style={{ color: "#101F4B" }}>
                     {taskState?.TabOne.assignees}{" "}
                     <PenIconImage
                       onClick={() => {
@@ -678,7 +716,10 @@ function BasicTabs(props: any) {
                 options={assigneeOptionsState}
                 sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="" />}
-                onChange={(event, value) => console.log(value)}
+                onChange={(event, value) => {
+                  console.log(value);
+                  setFormState({ ...formState, selectedUser: value });
+                }}
                 // InputProps={{
                 //   startAdornment: (
                 //     <InputAdornment position="start">
@@ -698,9 +739,9 @@ function BasicTabs(props: any) {
           </FormElementContainer>
 
           <DescriptionDiv>
-            <DescriptionTitle>RFI Question</DescriptionTitle>
+            <DescriptionTitle>Issue Description</DescriptionTitle>
 
-            <DescriptionPara>
+            <DescriptionPara style={{ color: "#101F4B" }}>
               {taskState.TabOne.issueDescription}
             </DescriptionPara>
           </DescriptionDiv>
@@ -709,7 +750,7 @@ function BasicTabs(props: any) {
             <>
               <AttachmentDiv>
                 <AttachmentTitle>Attachments</AttachmentTitle>
-                <AttachmentDescription>
+                <AttachmentDescription style={{ color: "#101F4B" }}>
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
                       return (
@@ -992,7 +1033,27 @@ const CustomIssueDetailsDrawer = (props: any) => {
         }
       });
   };
-
+  const issueUpdate = (data: any) => {
+    console.log(issue);
+    const issueData = _.cloneDeep(issue);
+    data.selectedUser?.user
+      ? (issueData.assignees = [data.selectedUser.user])
+      : null;
+    data.selectedProgress ? (issueData.priority = data.selectedProgress) : null;
+    const projectId = router.query.projectId;
+    editIssue(projectId as string, issueData, issue._id)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success("Issue updated sucessfully");
+        } else {
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
   return (
     <>
       <CustomTaskDrawerContainer>
@@ -1029,6 +1090,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             taskStatus={issueStatus}
             projectUsers={projectUsers}
             taskState={taskState}
+            issueUpdate={issueUpdate}
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>
