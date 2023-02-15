@@ -82,7 +82,7 @@ const SpanTile = styled("span")`
 const BodyContainer = styled(Box)`
   height: calc(100vh - 134px);
   //   border: 2px solid black;
-  overflow: scroll;
+  // overflow: scroll;
 `;
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
@@ -314,7 +314,9 @@ const ProgressEditStateButtonsContainer = styled("div")`
   justify-content: space-between;
   bottom: 0;
   position: absolute;
-  bottom: 20px;
+  // bottom: 20px;
+  bottom: -75px;
+
   background: white;
   width: 90%;
 `;

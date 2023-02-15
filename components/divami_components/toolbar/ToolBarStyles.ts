@@ -129,7 +129,7 @@ export const LayersWrapper = styled("div")({
   position: "relative",
 });
 export const SelectLayersWrapper = styled("div")({
-  top: "50px",
+  top: "63px",
   position: "absolute",
   border: "1px solid #D9D9D9",
   boxShadow: "5px 4px 8px rgb(0 0 0 / 24%)",
