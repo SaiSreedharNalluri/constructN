@@ -32,19 +32,22 @@ const LeftOverLay: React.FC<IProps> = ({
   let router = useRouter();
   let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   let [stateFilter, setStateFilter] = useState<ChildrenEntity[]>([]);
+  const [selector, setSelector] = useState("");
   useEffect(() => {
     if (router.isReady) {
+      if (router.query.structId !== undefined)
+        setSelector(router.query.structId.toString());
       getStructureHierarchy(router.query.projectId as string)
         .then((response: AxiosResponse<any>) => {
           setState([...response.data.result]);
           setStateFilter([...response.data.result]);
-          getStructure(response.data.result[0]);
+          if (selector.length < 1) setSelector(response.data.result[0]._id);
         })
         .catch((error) => {
           console.log("error", error);
         });
     }
-  }, [router.isReady, router.query.projectId]);
+  }, [router.isReady, router.query.projectId, router.query.structId]);
   const schema = Yup.object().shape({
     searchQuery: Yup.string()
       .required("A search query is required")
@@ -98,30 +101,29 @@ const LeftOverLay: React.FC<IProps> = ({
       </Formik> */}
 
       <div>
-        {/* <SearchInput></SearchInput> */}
-        {
-          <>
-            {/* <Treelist treeList={state} getStructureData={getStructureData} /> */}
-            <ProjectHierarchy
-              handleSearch={(event: React.ChangeEvent<HTMLInputElement>) => {
-                // setFieldValue("searchQuery", event.target.value);
-                setState(filterBy(stateFilter, event.target.value));
-              }}
-              title={"Project Hierarchy"}
-              onCloseHandler={() => {
-                // setOpenSelectLayer(false)
-                setHierarchy(false);
-              }}
-              treeData={state}
-              setHierarchy={setHierarchy}
-              getStructureData={getStructureData}
-              handleNodeSelection={handleNodeSelection}
-              selectedNodes={selectedNodes}
-              handleNodeExpand={handleNodeExpand}
-              expandedNodes={expandedNodes}
-            />
-          </>
-        }
+        {state.length === 0 ? (
+          "no structures found for this project"
+        ) : (
+          <ProjectHierarchy
+            handleSearch={(event: React.ChangeEvent<HTMLInputElement>) => {
+              // setFieldValue("searchQuery", event.target.value);
+              setState(filterBy(stateFilter, event.target.value));
+            }}
+            title={"Project Hierarchy"}
+            onCloseHandler={() => {
+              // setOpenSelectLayer(false)
+              setHierarchy(false);
+            }}
+            treeData={state}
+            setHierarchy={setHierarchy}
+            getStructureData={getStructureData}
+            handleNodeSelection={handleNodeSelection}
+            selectedNodes={selectedNodes}
+            handleNodeExpand={handleNodeExpand}
+            expandedNodes={expandedNodes}
+          />
+          // <Treelist initialSelector={selector} treeList={state} getStructureData={getStructureData} />
+        )}
       </div>
     </React.Fragment>
   );

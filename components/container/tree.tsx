@@ -45,9 +45,7 @@ const Tree: React.FC<IProps> = ({
           >
             <div
               className={`flex margin${depth}`}
-              onClick={() => {
-                getStructureData(structure);
-              }}
+             
             >
               <div
                 className="hover:bg-gray-300 px-2 hover:rounded-full"
@@ -60,7 +58,11 @@ const Tree: React.FC<IProps> = ({
               >
                 {getICon()}
               </div>
+              <div  onClick={() => {
+                getStructureData(structure);
+              }}>
               <p className={`text-sm cursor-pointer `}>{structure.name} </p>
+              </div>
             </div>
           </div>
         </div>
