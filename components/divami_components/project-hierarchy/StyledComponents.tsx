@@ -8,7 +8,7 @@ import type { SelectLayerContainerProps } from "./Type";
 
 export const TreeViewContainer = styled("div")({
   width: "301px",
-  marginTop: "28px",
+  margin: "28px 0 0 20px",
 });
 export const CustomInputField = styled(TextField)({
   fontFamily: "Open Sans",
@@ -18,6 +18,7 @@ export const CustomInputField = styled(TextField)({
   color: "#101F4B",
   border: "1px solid #36415d",
   borderRadius: "6px",
+  marginLeft: "8px",
   "& .MuiOutlinedInput-root ": {
     width: "261px",
     height: "40px",
@@ -44,9 +45,9 @@ export const CustomInputField = styled(TextField)({
   "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
     ouline: "none",
   },
-  "& .MuiInputAdornment-root": {
-    paddingLeft: "15px",
-  },
+  img: {
+    marginRight: "8px"
+  }
   // "& .MuiInputBase-input": {
   //   fontFamily: "Open Sans",
   //   fontStyle: "normal",
@@ -174,6 +175,9 @@ export const SearchContainer = styled("div")({
   outline: "none",
   padding: "20px 0px 0px 20px",
   marginBottom: "2px",
+  "& .MuiTextField-root" : {
+    borderRadius: "4px"
+  }
 });
 
 export const HeaderLabel = styled("div")({

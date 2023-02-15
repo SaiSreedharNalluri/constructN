@@ -58,7 +58,8 @@ const OpenMenuButton = styled("div")({
   left: "22px",
   bottom: "38px",
   cursor: "pointer",
-  backgroundColour: "#fff",
+  background: "#ffffff",
+  fontFamily: "Open Sans",
 });
 const CloseMenuButton = styled("div")({
   height: "38px",
