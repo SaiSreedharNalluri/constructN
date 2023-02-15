@@ -24,6 +24,8 @@ import {
   faFileText,
   faFileAudio,
   faFileImage,
+  faFileExcel,
+  faFileCsv,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -47,7 +49,6 @@ import _ from 'lodash';
 import { getTagsList } from '../../../../services/tags';
 import { IContext, ITools } from '../../../../models/ITools';
 import MultipleFileUpload from '../../multipleFileUpload';
-import NextImage from '../../../core/Image';
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
@@ -88,6 +89,8 @@ const IssueList: React.FC<IProps> = ({
   const [attachmentId, setAttachmentId] = useState('');
   const [deletionType, setDeletionType] = useState('issueDelete'); //issueDelete,attachmentDelete
   const [tagList, setTagList] = useState<[string]>(['']);
+  const [fileType, setFileType] = useState('');
+  const [previewLoad, setPreviewLoad] = useState(false);
   let toolInstance: ITools = { toolName: 'issue', toolAction: 'issueSelect' };
   const [url, setUrl] = useState('');
   interface user {
@@ -129,15 +132,63 @@ const IssueList: React.FC<IProps> = ({
         return <FontAwesomeIcon icon={faFilePdf} className="mr-2" />;
       case 'mp3':
       case 'mp4':
-      case 'avi':
-      case 'mov':
         return <FontAwesomeIcon icon={faFileAudio} className="mr-2" />;
       case 'jpg':
       case 'jpeg':
       case 'png':
         return <FontAwesomeIcon icon={faFileImage} className="mr-2 w-5 h-5" />;
+      case 'xls':
+      case 'xlsx':
+        return <FontAwesomeIcon icon={faFileExcel} className="mr-2 w-5 h-5" />;
+      case 'doc':
+      case 'docx':
+        return <FontAwesomeIcon icon={faFileExcel} className="mr-2 w-5 h-5" />;
+      case 'csv':
+        return <FontAwesomeIcon icon={faFileCsv} className="mr-2 w-5 h-5" />;
       default:
         return <FontAwesomeIcon icon={faFile} className="mr-2" />;
+    }
+  };
+  const getFileType = (attachment: any) => {
+    let extension = attachment.name.split('.').pop()?.toLowerCase();
+    if (previewLoad) {
+      setPreviewLoad(false);
+    }
+    setOpenPreview(true);
+    switch (extension) {
+      case 'pdf':
+        setFileType('application/pdf');
+        setPreviewLoad(true);
+        setUrl(
+          'https://docs.google.com/viewer?url=' +
+            attachment.url +
+            '&embedded=true'
+        );
+        break;
+      case 'mp3':
+      case 'mp4':
+        setFileType('video/mp4');
+        setUrl(attachment.url);
+        break;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        setFileType('image/jpg');
+        setUrl(attachment.url);
+        setPreviewLoad(true);
+        break;
+      case 'doc':
+      case 'docx':
+        setFileType(
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        );
+        setUrl(attachment.url);
+        break;
+      case 'csv':
+        setFileType('text/csv');
+        break;
+      default:
+        setUrl(attachment.url);
     }
   };
   const getDownladableIssueList = (issL = issuesList) => {
@@ -753,8 +804,7 @@ const IssueList: React.FC<IProps> = ({
                       {getFileIcon(attachment.name)}
                       <a
                         onClick={() => {
-                          setUrl(attachment.url);
-                          setOpenPreview(true);
+                          getFileType(attachment);
                         }}
                       >
                         {attachment.name}
@@ -1136,7 +1186,11 @@ const IssueList: React.FC<IProps> = ({
           }}
         >
           <div>
-            <NextImage src={url} className="h-auto w-auto" />
+            {previewLoad ? (
+              <embed type={fileType} src={url} width={600} height={800} />
+            ) : (
+              <h1 className="p-20 w-10/12 h-10/12">PreView not avalible</h1>
+            )}
           </div>
         </Modal>
       </div>
