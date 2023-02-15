@@ -52,7 +52,7 @@ import {
   TitleContainer,
 } from "./TaskListStyles";
 import _ from "lodash";
-import { CSVLink } from 'react-csv';
+import { CSVLink } from "react-csv";
 
 interface IProps {
   closeOverlay: () => void;
@@ -155,11 +155,13 @@ const CustomTaskListDrawer = (props: any) => {
 
   const getDownloadableTaskList = (issuesList = filteredTaskList) => {
     let modifiedList = issuesList.map((issue: any) => {
-      let firstNames = issue.assignee.split(" ").map((name: string) => name.trim());
-      return _.omit(
-        { ...issue, assignee: firstNames },
-        ["progress", "context"]
-      );
+      let firstNames = issue.assignee
+        .split(" ")
+        .map((name: string) => name.trim());
+      return _.omit({ ...issue, assignee: firstNames }, [
+        "progress",
+        "context",
+      ]);
     });
     return modifiedList;
   };
@@ -202,7 +204,18 @@ const CustomTaskListDrawer = (props: any) => {
     });
     setFilteredTaskList([...filteredData]);
   };
-
+  useEffect(() => {
+    if (router.isReady) {
+      getProjectUsers(router.query.projectId as string)
+        .then((response: any) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+            console.log(projectUsers);
+          }
+        })
+        .catch();
+    }
+  }, [router.isReady, router.query.projectId]);
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
@@ -210,7 +223,6 @@ const CustomTaskListDrawer = (props: any) => {
   useEffect(() => {
     setFilteredTaskList(taskListDataState);
   }, [taskListDataState]);
-
 
   useEffect(() => {
     console.log(filteredTaskList, "FILTERED TASK LIST");
@@ -295,7 +307,7 @@ const CustomTaskListDrawer = (props: any) => {
               <DueDate>Due Date</DueDate>
               <CSVLink
                 data={getDownloadableTaskList(filteredTaskList)}
-                filename={'my-tasks.csv'}
+                filename={"my-tasks.csv"}
                 className="text-black btn btn-primary fill-black fa fa-Download "
                 target="_blank"
               >
@@ -333,14 +345,14 @@ const CustomTaskListDrawer = (props: any) => {
                         val.type === "RFI"
                           ? RFIList
                           : val.type === "Transmittals"
-                            ? TransmittalList
-                            : val.type === "Submittals"
-                              ? SubmittalList
-                              : val.type === "Transmittals"
-                                ? TransmittalList
-                                : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : ""
+                          ? TransmittalList
+                          : val.type === "Submittals"
+                          ? SubmittalList
+                          : val.type === "Transmittals"
+                          ? TransmittalList
+                          : val.type === "Transmittals"
+                          ? TransmittalList
+                          : ""
                       }
                       alt="Arr"
                     />
