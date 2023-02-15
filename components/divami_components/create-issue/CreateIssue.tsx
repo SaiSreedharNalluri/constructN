@@ -8,7 +8,7 @@ import { createTask } from "../../../services/task";
 const StyledDiv = styled("span")({
   fontFamily: '"Open Sans"',
   display: "block",
-  color: "#888888",
+  // color: "#888888",
   // fontStyle: "italic",
   // fontWeight: "400",
   // fontSize: "14px",

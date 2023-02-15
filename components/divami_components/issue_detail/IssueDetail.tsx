@@ -380,6 +380,7 @@ const AddCommentInput = styled("input")({
 
 const AddCommentButtonContainer = styled("div")({
   display: "flex",
+  alignItems: "center",
 });
 
 const AttachButton = styled("button")({
@@ -396,6 +397,7 @@ const SendButton = styled("button")({
   width: "48px",
   display: "flex",
   justifyContent: "center",
+  marginTop: "11px",
 });
 
 const ProgressStateFalse = styled("div")({
@@ -415,6 +417,8 @@ const ProgressCustomSelect = styled("div")({
 const AssigneeCustomSelect = styled("div")({
   marginTop: "20px",
 });
+
+
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -762,7 +766,7 @@ function BasicTabs(props: any) {
           ) : (
             <>
               <AddCommentContainer>
-                <AddCommentInput placeholder="Add Comment"></AddCommentInput>
+                <StyledInput placeholder="Add Comment"></StyledInput>
                 <AddCommentButtonContainer>
                   <AttachButton>
                     <Image src={Clip} alt="" />{" "}

@@ -100,6 +100,7 @@ export const TypesTitle = styled("div")({
 
 export const TypeArrowIconDiv = styled("div")({
   marginLeft: "110px",
+  cursor:"pointer"
 });
 
 export const TypesRightScroll = styled("div")({
@@ -149,6 +150,8 @@ export const LayerSecondSectionCamImg = styled("div")({
 
 export const LayerSecondSectionArrImg = styled("div")({
   marginLeft: "16px",
+  cursor:"pointer"
+
   // width: '15px',
   // height: '15px',
 });
@@ -162,6 +165,8 @@ export const TaskTitle = styled("div")({
 export const CameraIcon = styled(Image)({
   width: "18px",
   height: "18px",
+  cursor:"pointer"
+
 });
 
 export const DownIcon = styled(Image)({

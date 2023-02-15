@@ -27,6 +27,8 @@ const BodyContainer = styled(Box)({
   // height: 'calc(100vh - 134px)',
   paddingLeft: "20px",
   paddingRight: "20px",
+  color: "#888888",
+
   // overflow: 'scroll',
 });
 

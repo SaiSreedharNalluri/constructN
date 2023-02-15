@@ -402,6 +402,7 @@ const SendButton = styled("button")({
   width: "48px",
   display: "flex",
   justifyContent: "center",
+  marginTop: "11px",
 });
 
 const ProgressStateFalse = styled("div")({
