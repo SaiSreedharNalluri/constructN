@@ -1,6 +1,7 @@
-import { IContext } from "./ITools";
+import { IContext } from './ITools';
 
 export interface Issue {
+  splice(index: number, arg1: number): unknown;
   title: string;
   type: string;
   description: string;
@@ -20,6 +21,7 @@ export interface Issue {
       name: string;
       url: string;
       entity: string;
+      _id: string;
     }
   ];
   createdAt: string;

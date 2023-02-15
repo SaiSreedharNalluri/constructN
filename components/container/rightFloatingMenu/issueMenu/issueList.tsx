@@ -19,6 +19,11 @@ import {
   faArrowUpAZ,
   faArrowDown19,
   faArrowUp91,
+  faFile,
+  faFilePdf,
+  faFileText,
+  faFileAudio,
+  faFileImage,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -41,6 +46,7 @@ import { CSVLink } from 'react-csv';
 import _ from 'lodash';
 import { getTagsList } from '../../../../services/tags';
 import { IContext, ITools } from '../../../../models/ITools';
+import MultipleFileUpload from '../../multipleFileUpload';
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
@@ -51,6 +57,8 @@ interface IProps {
   closeFilterOverlay: () => void;
   deleteTheIssue: (issueObj: object) => void;
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
+  responseAttachmentData: (formData: any) => void;
+  deleteTheAttachment: (attachmentId: string) => void;
 }
 const IssueList: React.FC<IProps> = ({
   issueToolClicked,
@@ -62,6 +70,8 @@ const IssueList: React.FC<IProps> = ({
   closeFilterOverlay,
   deleteTheIssue,
   clickIssueEditSubmit,
+  responseAttachmentData,
+  deleteTheAttachment,
 }) => {
   const router = useRouter();
   const [isOpenSort, setIsOpenSort] = useState(false);
@@ -73,6 +83,8 @@ const IssueList: React.FC<IProps> = ({
   const [issueViewMode, setIssueViewMode] = useState('list'); //list, filter, detail
   const [issueObj, setIssueObj] = useState<Issue>();
   const [open, setOpen] = useState(false);
+  const [attachmentId, setAttachmentId] = useState('');
+  const [deletionType, setDeletionType] = useState('issueDelete'); //issueDelete,attachmentDelete
   const [tagList, setTagList] = useState<[string]>(['']);
   let toolInstance: ITools = { toolName: 'issue', toolAction: 'issueSelect' };
 
@@ -106,6 +118,26 @@ const IssueList: React.FC<IProps> = ({
       });
     });
   }
+  const getFileIcon = (fileName: string) => {
+    let extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'txt':
+        return <FontAwesomeIcon icon={faFileText} className="mr-2" />;
+      case 'pdf':
+        return <FontAwesomeIcon icon={faFilePdf} className="mr-2" />;
+      case 'mp3':
+      case 'mp4':
+      case 'avi':
+      case 'mov':
+        return <FontAwesomeIcon icon={faFileAudio} className="mr-2" />;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        return <FontAwesomeIcon icon={faFileImage} className="mr-2 w-5 h-5" />;
+      default:
+        return <FontAwesomeIcon icon={faFile} className="mr-2" />;
+    }
+  };
   const getDownladableIssueList = (issL = issuesList) => {
     let myL = issL.map((iss) => {
       let a = iss.assignees.map((a) => {
@@ -222,6 +254,10 @@ const IssueList: React.FC<IProps> = ({
       });
     });
   }
+  const responseData = (formData: any) => {
+    responseAttachmentData(formData);
+    setIssueViewMode('list');
+  };
   const clickIssueHandleEditSubmit = (editObj: any) => {
     let userIdList: any[] = [];
     let editTagList: any[] = [];
@@ -633,6 +669,7 @@ const IssueList: React.FC<IProps> = ({
                     className="mt-2 cursor-pointer"
                     onClick={() => {
                       setOpen(true);
+                      setDeletionType('issueDelete');
                     }}
                   />
                 </div>
@@ -702,8 +739,46 @@ const IssueList: React.FC<IProps> = ({
               </div>
               <div>
                 <h6 className="underline mt-3">Attachments</h6>
-                <input className="border border-solid border-gray-400 rounded p-1 w-10/12"></input>
+                <MultipleFileUpload
+                  issueId={issueObj?._id as string}
+                  responseData={responseData}
+                />
               </div>
+              <div>
+                {issueObj?.attachments.map((attachment) => {
+                  return (
+                    <div key={attachment._id}>
+                      {getFileIcon(attachment.name)}
+                      <a
+                        href={attachment.url}
+                        target={'_blank'}
+                        rel="noreferrer"
+                      >
+                        {attachment.name}
+                      </a>
+
+                      <FontAwesomeIcon
+                        icon={faTrashCan}
+                        className="mt-2 cursor-pointer pl-5"
+                        onClick={() => {
+                          setOpen(true);
+                          setDeletionType('attachmentDelete');
+                          setAttachmentId(attachment._id);
+                        }}
+                      />
+                      {/* <button
+                        role="link"
+                        onClick={() => {
+                          window.open(attachment.url, '_blank', 'noreferrer');
+                        }}
+                      >
+                        Visit
+                      </button> */}
+                    </div>
+                  );
+                })}
+              </div>
+
               <div className=" mt-2 ">
                 <h6 className="underline ">Related Tags</h6>
                 <div className="grid grid-cols-3 gap-2 text-center  mt-2">
@@ -1006,7 +1081,6 @@ const IssueList: React.FC<IProps> = ({
   });
 
   const handleOnFilterEvent = (formData: object) => {
-    console.log('filter', formData);
     handleOnFilter(formData);
     setIssueViewMode('list');
   };
@@ -1015,7 +1089,11 @@ const IssueList: React.FC<IProps> = ({
     setIssueViewMode('list');
   };
   const handleDeleteItem = () => {
-    deleteTheIssue(issueObj as Issue);
+    if (deletionType === 'issueDelete') {
+      deleteTheIssue(issueObj as Issue);
+    } else if (deletionType === 'attachmentDelete') {
+      deleteTheAttachment(attachmentId);
+    }
     setOpen(false);
     setTimeout(() => {
       setIssueViewMode('list');
