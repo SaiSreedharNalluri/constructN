@@ -1,22 +1,22 @@
-import { Box, Drawer, InputAdornment } from "@mui/material";
-import Image from "next/image";
+import { Box, Drawer, InputAdornment } from '@mui/material';
+import Image from 'next/image';
 
-import SearchIcon from "@mui/icons-material/Search";
-import Moment from "moment";
-import commission from "../../../public/divami_icons/commission.svg";
-import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
-import designIcon from "../../../public/divami_icons/designIcon.svg";
-import Divider from "../../../public/divami_icons/divider.svg";
-import downArrow from "../../../public/divami_icons/downArrow.svg";
-import Download from "../../../public/divami_icons/download.svg";
-import FilterInActive from "../../../public/divami_icons/filterInactive.svg";
-import Search from "../../../public/divami_icons/search.svg";
-import UpArrow from "../../../public/divami_icons/upArrow.svg";
+import SearchIcon from '@mui/icons-material/Search';
+import Moment from 'moment';
+import commission from '../../../public/divami_icons/commission.svg';
+import CrossIcon from '../../../public/divami_icons/crossIcon.svg';
+import designIcon from '../../../public/divami_icons/designIcon.svg';
+import Divider from '../../../public/divami_icons/divider.svg';
+import downArrow from '../../../public/divami_icons/downArrow.svg';
+import Download from '../../../public/divami_icons/download.svg';
+import FilterInActive from '../../../public/divami_icons/filterInactive.svg';
+import Search from '../../../public/divami_icons/search.svg';
+import UpArrow from '../../../public/divami_icons/upArrow.svg';
 
-import HourglassIcon from "../../../public/divami_icons/hourGlassIcon.svg";
-import RFIList from "../../../public/divami_icons/rfiList.svg";
-import SubmittalList from "../../../public/divami_icons/submittalList.svg";
-import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
+import HourglassIcon from '../../../public/divami_icons/hourGlassIcon.svg';
+import RFIList from '../../../public/divami_icons/rfiList.svg';
+import SubmittalList from '../../../public/divami_icons/submittalList.svg';
+import TransmittalList from '../../../public/divami_icons/transmittalList.svg';
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -39,19 +39,19 @@ import {
   TaskListContainer,
   ThirdHeader,
   TitleContainer,
-} from "./IssueListStyles";
+} from './IssueListStyles';
 
-import _ from "lodash";
-import { useEffect, useState } from "react";
-import { CSVLink } from "react-csv";
-import { Issue } from "../../../models/Issue";
-import { ITools } from "../../../models/ITools";
-import FilterCommon from "../issue-filter-common/IssueFilterCommon";
+import _ from 'lodash';
+import { useEffect, useState } from 'react';
+import { CSVLink } from 'react-csv';
+import { Issue } from '../../../models/Issue';
+import { ITools } from '../../../models/ITools';
+import FilterCommon from '../issue-filter-common/IssueFilterCommon';
 import {
   CustomSearchField,
   SearchAreaContainer,
-} from "../task_list/TaskListStyles";
-import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
+} from '../task_list/TaskListStyles';
+import CustomIssueDetailsDrawer from '../issue_detail/IssueDetail';
 
 interface IProps {
   closeOverlay: () => void;
@@ -95,27 +95,34 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const handleClose = () => {
     onClose(true);
   };
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortOrder, setSortOrder] = useState('asc');
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
   const [searchingOn, setSearchingOn] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
+  const [searchTerm, setSearchTerm] = useState('');
+  let issueMenuInstance: ITools = { toolName: 'issue', toolAction: '' };
   const [openIssueDetail, setOpenIssueDetail] = useState(false);
   const [issueType, setIssueType] = useState<[string]>();
   const [issuePriority, setIssuePriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState([]);
   const [issueStatus, setIssueStatus] = useState<[string]>();
-  const [dateSortState, setDateSortState] = useState("ascending");
+  const [dateSortState, setDateSortState] = useState('ascending');
   const [viewIssue, setViewIssue] = useState({});
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [issueList, setIssueList] = useState<any>(issuesList);
 
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(issueList);
+  useEffect(() => {
+    setIssueList(issuesList);
+  }, [issuesList?.length]);
+
+  useEffect(() => {
+    setFilteredIssuesList(issueList);
+  }, [issueList?.length]);
 
   const closeIssueList = () => {
     //setListOverlay(false);
-    issueMenuInstance.toolAction = "issueViewClose";
+    issueMenuInstance.toolAction = 'issueViewClose';
     // issueMenuClicked(issueMenuInstance);
   };
 
@@ -126,29 +133,29 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   const sortDateOrdering = () => {
     let sorted;
-    if (sortOrder === "asc") {
+    if (sortOrder === 'asc') {
       sorted = filteredIssuesList.sort((a: any, b: any) => {
         return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
       });
-      setSortOrder("desc");
+      setSortOrder('desc');
     } else {
       sorted = filteredIssuesList.sort((a: any, b: any) => {
         return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
       });
-      setSortOrder("asc");
+      setSortOrder('asc');
     }
     setFilteredIssuesList(sorted);
   };
 
   const handleSearchWindow = () => {
-    if (searchTerm === "") {
+    if (searchTerm === '') {
       setSearchingOn(!searchingOn);
     } else {
-      setSearchTerm("");
+      setSearchTerm('');
     }
   };
 
-  console.log("isselistdat", filteredIssuesList, issuesList);
+  console.log('isselistdat', filteredIssuesList, issuesList);
   const handleSearch = () => {
     if (searchTerm) {
       const filteredData: any = issueList?.filter((eachIssue: any) => {
@@ -162,13 +169,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   };
 
   const getDownladableIssueList = (issL = issuesList) => {
-    console.log("issL", issL);
+    console.log('issL', issL);
     let myL = issL.map((iss) => {
       let a = iss.assignees.map((a) => {
         return a.firstName;
       });
-      let x = _.omit(iss, "progress", "context");
-      let y = _.update(x, "assignees", (ass) => {
+      let x = _.omit(iss, 'progress', 'context');
+      let y = _.update(x, 'assignees', (ass) => {
         let n = ass.map((o: { firstName: any }) => {
           return o.firstName;
         });
@@ -182,7 +189,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
-
+  console.log(filteredIssuesList, issueList, 'indetailsss');
   useEffect(() => {
     // setIssuesListData(filteredIssuesList);
   }, [filteredIssuesList]);
@@ -207,7 +214,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               handleClose();
             }}
             src={CrossIcon}
-            alt={"close icon"}
+            alt={'close icon'}
           />
         </TitleContainer>
       </HeaderContainer>
@@ -237,7 +244,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                           handleSearchWindow();
                         }}
                         src={CrossIcon}
-                        alt={"close icon"}
+                        alt={'close icon'}
                       />
                     </InputAdornment>
                   ),
@@ -248,12 +255,12 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             <>
               <SearchGlassIcon
                 src={Search}
-                alt={"close icon"}
+                alt={'close icon'}
                 onClick={() => setSearchingOn((prev) => !prev)}
               />
               <DividerIcon src={Divider} alt="" />
 
-              {sortOrder === "asc" ? (
+              {sortOrder === 'asc' ? (
                 <ArrowUpIcon
                   onClick={sortDateOrdering}
                   src={UpArrow}
@@ -270,7 +277,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
               <CSVLink
                 data={getDownladableIssueList(filteredIssuesList)}
-                filename={"my-issues.csv"}
+                filename={'my-issues.csv'}
                 className="text-black btn btn-primary fill-black fa fa-Download "
                 target="_blank"
               >
@@ -293,7 +300,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       </MiniHeaderContainer>
 
       <BodyContainer>
-        <Box sx={{ marginTop: "15px" }}>
+        <Box sx={{ marginTop: '15px' }}>
           {filteredIssuesList.map((val: any, index: number) => {
             return (
               <div key={index}>
@@ -305,23 +312,23 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   <FirstHeader>
                     <Image
                       src={
-                        val.type === "RFI"
+                        val.type === 'RFI'
                           ? RFIList
-                          : val.type === "Safety"
-                          ? HourglassIcon
-                          : val.type === "Transmittals"
-                          ? TransmittalList
-                          : val.type === "Clash"
-                          ? SubmittalList
-                          : val.type === "Commissioning"
-                          ? commission
-                          : val.type === "Building code"
-                          ? HourglassIcon
-                          : val.type === "Design"
-                          ? designIcon
-                          : val.type === "Submittals"
-                          ? SubmittalList
-                          : ""
+                          : val.type === 'Safety'
+                            ? HourglassIcon
+                            : val.type === 'Transmittals'
+                              ? TransmittalList
+                              : val.type === 'Clash'
+                                ? SubmittalList
+                                : val.type === 'Commissioning'
+                                  ? commission
+                                  : val.type === 'Building code'
+                                    ? HourglassIcon
+                                    : val.type === 'Design'
+                                      ? designIcon
+                                      : val.type === 'Submittals'
+                                        ? SubmittalList
+                                        : ''
                       }
                       alt="Arrow"
                     />
@@ -352,7 +359,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       </LoadMoreContainer> */}
       {openIssueDetail && (
         <Drawer
-          anchor={"right"}
+          anchor={'right'}
           open={openIssueDetail}
           onClose={() => setOpenIssueDetail((prev: any) => !prev)}
         >
@@ -373,7 +380,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       )}
       {openDrawer && (
         <Drawer
-          anchor={"right"}
+          anchor={'right'}
           open={openDrawer}
           onClose={() => setOpenDrawer((prev: any) => !prev)}
         >
@@ -384,9 +391,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => {}}
-            deleteTheIssue={() => {}}
-            clickIssueEditSubmit={() => {}}
+            handleOnSort={() => { }}
+            deleteTheIssue={() => { }}
+            clickIssueEditSubmit={() => { }}
             issueFilterState={issueFilterState}
           />
         </Drawer>

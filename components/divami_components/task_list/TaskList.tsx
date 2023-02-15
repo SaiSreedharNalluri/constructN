@@ -98,7 +98,14 @@ const CustomTaskListDrawer = (props: any) => {
 
   useEffect(() => {
     setTaskList(tasksList);
-  }, []);
+  }, [tasksList]);
+
+  useEffect(() => {
+    console.log("filteredTaskList1", filteredTaskList);
+    setFilteredTaskList(tasksList);
+    console.log("filteredTaskList2", filteredTaskList);
+  }, [tasksList])
+
   const handleViewTaskList = () => {
     // console.log("teskssksk trigg");
     setOpenDrawer(true);
@@ -118,7 +125,7 @@ const CustomTaskListDrawer = (props: any) => {
       tempTaskDataState.push(tempTask);
     });
     setTaskListDataState(tempTaskDataState);
-  }, []);
+  }, [tasksList]);
 
   const handleClose = () => {
     onClose(true);
@@ -155,7 +162,7 @@ const CustomTaskListDrawer = (props: any) => {
 
   const getDownloadableTaskList = (issuesList = filteredTaskList) => {
     let modifiedList = issuesList.map((issue: any) => {
-      let firstNames = issue.assignee.split(" ").map((name: string) => name.trim());
+      let firstNames = issue?.assignee?.split(" ").map((name: string) => name.trim());
       return _.omit(
         { ...issue, assignee: firstNames },
         ["progress", "context"]
@@ -211,9 +218,8 @@ const CustomTaskListDrawer = (props: any) => {
     setFilteredTaskList(taskListDataState);
   }, [taskListDataState]);
 
-
   useEffect(() => {
-    console.log(filteredTaskList, "FILTERED TASK LIST");
+    console.log(filteredTaskList, "filteredTaskList");
   }, [filteredTaskList]);
 
   return (
@@ -320,6 +326,7 @@ const CustomTaskListDrawer = (props: any) => {
       <BodyContainer>
         <Box sx={{ marginTop: "15px" }}>
           {filteredTaskList.map((val: any) => {
+            { console.log(val, "VAL") }
             return (
               <>
                 <BodyInfo
