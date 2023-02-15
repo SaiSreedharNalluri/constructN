@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import TextareaAutosize from "@mui/base/TextareaAutosize";
 import { styled } from "@mui/system";
+import { ErrorField } from "../custom-select/CustomSelect";
 
 interface PropTypes {
   id: any;
@@ -66,6 +67,7 @@ export const CustomTextArea = (props: PropTypes) => {
       {/* {isError && (
                 <div className={classes.error_message}>This is required</div>
             )} */}
+      <ErrorField>{isError ? "Required" : ""}</ErrorField>
     </div>
   );
 };

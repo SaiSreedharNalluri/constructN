@@ -400,6 +400,7 @@ const SendButton = styled("button")({
   width: "48px",
   display: "flex",
   justifyContent: "center",
+  alignItems: "center",
 });
 
 const ProgressStateFalse = styled("div")({
@@ -802,6 +803,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     currentSnapshot,
     currentStructure,
     contextInfo,
+    closeTaskCreate,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
 
@@ -900,10 +902,12 @@ const CustomTaskDetailsDrawer = (props: any) => {
       ?.selectedName;
     if (assignes && assignes.length > 0) {
       assignes.map((user: any) => {
-        userIdList.push(user.value);
+        userIdList?.push(user.value);
       });
     }
-    userIdList.push(assignes.value);
+    if (assignes?.value) {
+      userIdList.push(assignes.value);
+    }
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
@@ -948,67 +952,73 @@ const CustomTaskDetailsDrawer = (props: any) => {
     const fileformdata = new FormData();
     const filesArr = formData.filter(
       (item: any) => item.id === "file-upload"
-    )[0].selectedFile;
+    )[0]?.selectedFile;
     data.attachments = formData.filter(
       (item: any) => item.id === "file-upload"
-    )[0].selectedFile;
+    )[0]?.selectedFile;
     console.log("dfsdfsdokkkk", fileformdata, filesArr);
     // const uploadUrl = filesArr[0];
     // const obj = {
     //   file: [uploadUrl],
     // };
     // const uploadUrl = URL.createObjectURL(filesArr[0]);
-    const arr = filesArr.map((each: any) => {
-      // fileformdata.append("file", each.name);
-      fileformdata.append("file", each);
-      return {
-        ...each,
-      };
-    });
-    console.log("formData", fileformdata);
-
-    updateAttachments(fileformdata, task._id)
-      .then((response) => {
-        if (response.success === true) {
-          toast.success("Task added sucessfully");
-          // handleTaskSubmit(formData);
-          // taskSubmit(response.result);
-          // toolInstance.toolAction = "taskCreateSuccess";
-
-          // console.log(formData);
-        } else {
-          // toolInstance.toolAction = "taskCreateFail";
-          // issueToolClicked(toolInstance);
-        }
-      })
-      .catch((error) => {
-        // toolInstance.toolAction = "taskCreateFail";
-
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
+    if (filesArr?.length) {
+      const arr = filesArr.map((each: any) => {
+        // fileformdata.append("file", each.name);
+        fileformdata.append("file", each);
+        return {
+          ...each,
+        };
       });
-    updateTask(projectId as string, data, task._id)
-      .then((response) => {
-        if (response.success === true) {
-          toast.success("Task added sucessfully");
-          // handleTaskSubmit(formData);
-          // taskSubmit(response.result);
-          // toolInstance.toolAction = "taskCreateSuccess";
+      console.log("formData", fileformdata);
 
-          // console.log(formData);
-        } else {
+      updateAttachments(fileformdata, task._id)
+        .then((response) => {
+          if (response.success === true) {
+            toast.success("Task added sucessfully");
+            // handleTaskSubmit(formData);
+            // taskSubmit(response.result);
+            // toolInstance.toolAction = "taskCreateSuccess";
+
+            // console.log(formData);
+          } else {
+            // toolInstance.toolAction = "taskCreateFail";
+            // issueToolClicked(toolInstance);
+          }
+        })
+        .catch((error) => {
           // toolInstance.toolAction = "taskCreateFail";
-          // issueToolClicked(toolInstance);
-        }
-      })
-      .catch((error) => {
-        // toolInstance.toolAction = "taskCreateFail";
 
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+        });
+    }
+    if (data.title && data.type && data.priority) {
+      updateTask(projectId as string, data, task._id)
+        .then((response) => {
+          if (response.success === true) {
+            toast.success("Task added sucessfully");
+            // handleTaskSubmit(formData);
+            // taskSubmit(response.result);
+            // toolInstance.toolAction = "taskCreateSuccess";
+
+            // console.log(formData);
+          } else {
+            // toolInstance.toolAction = "taskCreateFail";
+            // issueToolClicked(toolInstance);
+          }
+          setOpenCreateTask(false);
+        })
+        .catch((error) => {
+          // toolInstance.toolAction = "taskCreateFail";
+
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+          setOpenCreateTask(false);
+        });
+    }
   };
 
   return (
@@ -1077,7 +1087,9 @@ const CustomTaskDetailsDrawer = (props: any) => {
             currentStructure={currentStructure}
             contextInfo={contextInfo}
             editData={task}
-            closeTaskCreate={closeTaskCreate}
+            closeTaskCreate={() => {
+              setOpenCreateTask(false);
+            }}
           />
         </CustomDrawer>
       )}

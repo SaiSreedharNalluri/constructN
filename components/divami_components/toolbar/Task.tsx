@@ -46,6 +46,8 @@ const Task = ({
   deleteTheTask,
   taskFilterState,
   closeTaskCreate,
+  openTaskDetails,
+  closeTaskDetails,
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -55,6 +57,7 @@ const Task = ({
   const [myTypesList, setMyTypesList] = useState(currentTypesList);
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
+  const [selectedTask, setSelectedTask] = useState({});
 
   const [taskVisbility, setTaskVisibility] = useState(
     taskLayer === undefined ? false : taskLayer
@@ -91,7 +94,9 @@ const Task = ({
         userIdList.push(user.value);
       });
     }
-    userIdList.push(assignes.value);
+    if (assignes?.value) {
+      userIdList.push(assignes.value);
+    }
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
@@ -131,7 +136,7 @@ const Task = ({
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
     data.attachments = formData
       .filter((item: any) => item.id === "file-upload")[0]
-      .selectedFile.map((eachSelectedFile: any) => {
+      .selectedFile?.map((eachSelectedFile: any) => {
         // let reader = new FileReader();
         // let fileUrl: any = '';
         // reader.readAsDataURL(eachSelectedFile)
@@ -151,28 +156,32 @@ const Task = ({
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     console.log("formData", data);
-    createTask(projectId as string, data)
-      .then((response) => {
-        if (response.success === true) {
-          toast("Task added sucessfully");
-          // toast.success("Task added sucessfully");
-          // handleTaskSubmit(formData);
-          taskSubmit(response.result);
-          toolInstance.toolAction = "taskCreateSuccess";
+    if (data.title && data.type && data.priority) {
+      createTask(projectId as string, data)
+        .then((response) => {
+          if (response.success === true) {
+            toast("Task added sucessfully");
+            // toast.success("Task added sucessfully");
+            // handleTaskSubmit(formData);
+            taskSubmit(response.result);
+            toolInstance.toolAction = "taskCreateSuccess";
 
-          console.log(formData);
-        } else {
+            console.log(formData);
+          } else {
+            toolInstance.toolAction = "taskCreateFail";
+            // issueToolClicked(toolInstance);
+          }
+          setOpenCreateTask(false);
+        })
+        .catch((error) => {
           toolInstance.toolAction = "taskCreateFail";
-          // issueToolClicked(toolInstance);
-        }
-      })
-      .catch((error) => {
-        toolInstance.toolAction = "taskCreateFail";
 
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+          setOpenCreateTask(false);
+        });
+    }
   };
 
   const handleViewTaskDetail = () => {
@@ -180,6 +189,15 @@ const Task = ({
     setOpenTaskDetail(true);
   };
 
+  useEffect(() => {
+    console.log("contextinfo", contextInfo, tasksList);
+    if (openTaskDetails && contextInfo?.id) {
+      const selectedObj = tasksList.find(
+        (each: any) => each._id === contextInfo.id
+      );
+      setSelectedTask(selectedObj);
+    }
+  }, [openTaskDetails, contextInfo?.id]);
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
     taskMenuInstance.toolAction = "taskCreated";
@@ -289,6 +307,25 @@ const Task = ({
             closeTaskCreate={closeTaskCreate}
           />
         </CustomDrawer>
+      )}
+      {openTaskDetails && (
+        <Drawer
+          anchor={"right"}
+          open={openTaskDetails}
+          onClose={() => closeTaskDetails()}
+        >
+          <CustomTaskDetailsDrawer
+            task={selectedTask}
+            onClose={() => closeTaskDetails()}
+            taskType={currentTypesList}
+            deleteTheTask={deleteTheTask}
+            currentProject={currentProject}
+            currentSnapshot={currentSnapshot}
+            currentStructure={currentStructure}
+            contextInfo={contextInfo}
+            projectUsers={[]}
+          />
+        </Drawer>
       )}
     </TaskBox>
   );

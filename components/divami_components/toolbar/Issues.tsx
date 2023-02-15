@@ -31,6 +31,7 @@ import { IStructure } from "../../../models/IStructure";
 import { CustomToaster } from "../custom-toaster/CustomToaster";
 import toasterIcon from "../../../public/divami_icons/toasterIcon.svg";
 import { ToastImgContainer } from "../custom-toaster/CustomToastStyles";
+import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
@@ -57,6 +58,8 @@ const Issues = ({
   issueTypesList,
   issueFilterState,
   closeIssueCreate,
+  openIssueDetails,
+  closeIssueDetails,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -72,6 +75,7 @@ const Issues = ({
   const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
+  const [selectedIssue, setSelectedIssue] = useState({});
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
   useEffect(() => {
     setMyProject(currentProject);
@@ -96,7 +100,9 @@ const Issues = ({
     let userIdList: any[] = [];
     const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
       ?.selectedName;
-    userIdList.push(assignes.value);
+    if (assignes?.value) {
+      userIdList.push(assignes?.value);
+    }
     // if (assignes && assignes.length > 0) {
     //   assignes.map((user: any) => {
     //     userIdList.push(user.value);
@@ -106,15 +112,14 @@ const Issues = ({
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
-    data.owner = formData.owner;
-    console.log(contextInfo, "contexxt");
+    data.owner = formData?.owner;
+
     Object.keys(contextInfo).forEach((key) => {
       if (key !== "id") {
         data.context = { ...data.context, [key]: contextInfo[key] };
       }
     });
 
-    console.log(data.context, "datraocmte", contextInfo);
     data.title = formData.filter(
       (item: any) => item.id == "title"
     )[0]?.defaultValue;
@@ -144,7 +149,7 @@ const Issues = ({
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
     data.attachments = formData
       .filter((item: any) => item.id === "file-upload")[0]
-      .selectedFile.map((eachSelectedFile: any) => {
+      .selectedFile?.map((eachSelectedFile: any) => {
         // let reader = new FileReader();
         // let fileUrl: any = '';
         // reader.readAsDataURL(eachSelectedFile)
@@ -164,40 +169,54 @@ const Issues = ({
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     console.log("formData", data);
-    createIssue(projectId as string, data)
-      .then((response) => {
-        if (response.success === true) {
-          setSuccessMessage("Issue is added sucessfully");
+    if (data.title && data.type && data.priority) {
+      createIssue(projectId as string, data)
+        .then((response) => {
+          if (response.success === true) {
+            setSuccessMessage("Issue is added sucessfully");
 
-          // toast("Issue created sucessfully", {
-          //   progressStyle: { backgroundColor: "orange" },
-          //   icon: "👋",
-          // });
+            // toast("Issue created sucessfully", {
+            //   progressStyle: { backgroundColor: "orange" },
+            //   icon: "👋",
+            // });
 
-          toast(" Issue Created Successfully");
-          // return;
-          // handleTaskSubmit(formData);
-          console.log(formData);
-          issueSubmit(response.result);
-          toolInstance.toolAction = "issueCreateSuccess";
-          // issueToolClicked(toolInstance);
-          // resetForm();
-        } else {
+            toast(" Issue Created Successfully");
+            // return;
+            // handleTaskSubmit(formData);
+            console.log(formData);
+            issueSubmit(response.result);
+            toolInstance.toolAction = "issueCreateSuccess";
+            // issueToolClicked(toolInstance);
+            // resetForm();
+          } else {
+            toolInstance.toolAction = "issueCreateFail";
+            // issueToolClicked(toolInstance);
+          }
+          setOpenCreateIssue(false);
+        })
+        .catch((error) => {
           toolInstance.toolAction = "issueCreateFail";
           // issueToolClicked(toolInstance);
-        }
-      })
-      .catch((error) => {
-        toolInstance.toolAction = "issueCreateFail";
-        // issueToolClicked(toolInstance);
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+          setOpenCreateIssue(false);
+        });
+    }
   };
   const handleViewList = () => {
     // setOpenIssueList()
   };
+
+  useEffect(() => {
+    console.log("contextinfo", contextInfo, issuesList);
+    if (openIssueDetails && contextInfo?.id) {
+      const selectedObj = issuesList.find(
+        (each: any) => each._id === contextInfo.id
+      );
+      setSelectedIssue(selectedObj);
+    }
+  }, [openIssueDetails, contextInfo?.id]);
 
   const issueSubmit = (formdata: any) => {
     issuesList.push(formdata);
@@ -336,6 +355,27 @@ const Issues = ({
             closeIssueCreate={closeIssueCreate}
           />
         </CustomDrawer>
+      )}
+
+      {openIssueDetails && (
+        <Drawer
+          anchor={"right"}
+          open={openIssueDetails}
+          onClose={() => closeIssueDetails()}
+        >
+          <CustomIssueDetailsDrawer
+            issue={selectedIssue}
+            onClose={() => closeIssueDetails()}
+            issueType={issueTypesList}
+            issuePriority={issuePriorityList}
+            issueStatus={issueStatusList}
+            projectUsers={[]}
+            currentProject={currentProject}
+            currentStructure={currentStructure}
+            currentSnapshot={currentSnapshot}
+            contextInfo={contextInfo}
+          />
+        </Drawer>
       )}
     </div>
   );
