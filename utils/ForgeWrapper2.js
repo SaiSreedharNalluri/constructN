@@ -20,10 +20,11 @@ export const ForgeViewerUtils = (function () {
 	let _isModelLoaded = false;
 
 
-	let _realityPositionMap;
-	let _issuesList;
-	let _tasksList;
-	let _showLayersList;
+	let _realityPositionMap = {};
+	let _issuesList = [];
+	let _tasksList = [];
+	let _showLayersList = [];
+  let _showTag = {};
 
 	let _context;
 
@@ -135,15 +136,27 @@ export const ForgeViewerUtils = (function () {
     _isPendingLayersToLoad = true;
     if (loadLayersOnDataLoadCompletion()) {
       loadLayers();
+      loadIssues();
+      loadTasks();
     }
   }
 
   const updateIssuesData = (list) => {
+    console.log("Inside update issues data: ", list);
     _issuesList = list;
+    _isPendingLayersToLoad = true;
+    if (loadLayersOnDataLoadCompletion()) {
+      loadIssues();
+    }
   }
 
   const updateTasksData = (list) => {
+    console.log("Inside update tasks data: ", list);
     _tasksList = list;
+    _isPendingLayersToLoad = true;
+    if (loadLayersOnDataLoadCompletion()) {
+      loadTasks();
+    }
   }
 
   const updateProgressData = (progress) => {
@@ -238,9 +251,23 @@ export const ForgeViewerUtils = (function () {
     _dataVizUtils.removeExistingVisualizationData();
     _dataVizUtils.setOffset(_globalOffset);
     _dataVizUtils.addMediaData(_realityPositionMap);
-    _dataVizUtils.addTrackersData(_issuesList, _tasksList);
+    _dataVizUtils.addIssuesData(_issuesList);
+    _dataVizUtils.addTasksData(_tasksList);
+    _dataVizUtils.setTagState(_showTag);
     _dataVizUtils.setViewableState(_showLayersList);
     _dataVizUtils.updateData();
+    _isPendingLayersToLoad = false;
+  }
+
+  const loadIssues = () => {
+    _dataVizUtils.addIssuesData(_issuesList);
+    _dataVizUtils.refreshViewableData();
+    _isPendingLayersToLoad = false;
+  }
+
+  const loadTasks = () => {
+    _dataVizUtils.addTasksData(_tasksList);
+    _dataVizUtils.refreshViewableData();
     _isPendingLayersToLoad = false;
   }
 
@@ -256,9 +283,10 @@ export const ForgeViewerUtils = (function () {
 
   const showTag = (tag, show) => {
     _isPendingLayersToLoad = true;
+    _showTag[tag] = show;
     if(_dataVizUtils) {
       if(loadLayersOnDataLoadCompletion()) {
-        _dataVizUtils.showTracker(tag, show);
+        _dataVizUtils.setTagState(_showTag);
         _dataVizUtils.refreshViewableData();
         _isPendingLayersToLoad = false;
       }
@@ -447,27 +475,27 @@ export const ForgeViewerUtils = (function () {
   }
 
   const setForgeControls = (type) => {
-    if (_bimWalkExtn) {
-      if (isCompareView() && type === "panorama") {
-        _viewer.navigation.setLockSettings({
-					'orbit': false,
-					'pan': false,
-					'zoom': false,
-					'roll': false,
-					'fov': true
-				})
-				_viewer.navigation.setIsLocked(true);
+    // if (_bimWalkExtn) {
+    //   if (isCompareView() && type === "panorama") {
+    //     _viewer.navigation.setLockSettings({
+		// 			'orbit': false,
+		// 			'pan': false,
+		// 			'zoom': false,
+		// 			'roll': false,
+		// 			'fov': true
+		// 		})
+		// 		_viewer.navigation.setIsLocked(true);
 
-				if (_viewer.getExtension('Autodesk.BimWalk')){
-					_viewer.getExtension('Autodesk.BimWalk').activate()
-				}
-      } else {
-        _viewer.navigation.setIsLocked(false);
-				if (_viewer.getExtension('Autodesk.BimWalk')){
-					_viewer.getExtension('Autodesk.BimWalk').deactivate()
-				}
-      }
-    }
+		// 		if (_viewer.getExtension('Autodesk.BimWalk')){
+		// 			_viewer.getExtension('Autodesk.BimWalk').activate()
+		// 		}
+    //   } else {
+    //     _viewer.navigation.setIsLocked(false);
+		// 		if (_viewer.getExtension('Autodesk.BimWalk')){
+		// 			_viewer.getExtension('Autodesk.BimWalk').deactivate()
+		// 		}
+    //   }
+    // }
   }
 
 
@@ -486,6 +514,7 @@ export const ForgeViewerUtils = (function () {
 	const onViewerInitialized = () => {
     console.log("Viewer Initialized: Loading Model now");
     _isViewerInitialized = true;
+    loadExtension();
 		if(_isPendingDataToLoad) {
 			loadData();
 		}
@@ -504,12 +533,12 @@ export const ForgeViewerUtils = (function () {
 	} 
 
 	const onModelLayersLoadedEvent = (parameter) => {
-    console.log("Inside Model Layers loaded Event: model: ",parameter);
+    // console.log("Inside Model Layers loaded Event: model: ",parameter);
     if (_context) {
       updateContext(_context);
     }
 
-    loadExtension();
+    // loadExtension();
     _isPendingDataToLoad = false;
     _isModelLoaded = true;
     if(loadLayersOnDataLoadCompletion()) {
@@ -518,17 +547,17 @@ export const ForgeViewerUtils = (function () {
   }
 
 	const onGeometryLoadedEvent = (parameter) => {
-    console.log("Inside Geometry Loaded Event: model: ", parameter.model);
+    // console.log("Inside Geometry Loaded Event: model: ", parameter.model);
     _isModelLoaded = true;
   }
 
 	const onModelUnLoadedEvent = (model) => {
-    console.log("Inside Model Unload event", model);
+    // console.log("Inside Model Unload event", model);
     _isModelLoaded = false;
   }
 
 	const onExtensionLoadedEvent = (parameter) => {
-    console.log("Inside Extension Loaded Event:", parameter);
+    // console.log("Inside Extension Loaded Event:", parameter);
     if(parameter.extensionId === ForgeDataVisualization.EXTENSION_ID) {
       console.log("Inside Extension Loaded Event: Data Visualization", parameter);
       _dataVizExtn = _viewer.getExtension(parameter.extensionId);
@@ -595,13 +624,12 @@ export const ForgeViewerUtils = (function () {
     // console.log("Model Before Removed: ", this.model);
     if (_isViewerInitialized) {
       removeLayers();
-      _viewer.tearDown();
-      _dataVizExtn = undefined;
-      _dataVizUtils = undefined;
+      _viewer.unloadModel(_model);
     }
   }
 
   const removeLayers = () => {
+    console.log("Inside remove layers in forgeWrapper: ", _dataVizUtils);
     if(_dataVizUtils) {
       _dataVizUtils.removeExistingVisualizationData();
     }
@@ -612,7 +640,10 @@ export const ForgeViewerUtils = (function () {
     if(_isViewerInitialized) {
       removeData();
 			removeEventListeners();
+      _viewer.tearDown();
       _viewer.uninitialize();
+      _dataVizExtn = undefined;
+      _dataVizUtils = undefined;
       Autodesk.Viewing.shutdown();
     }
     _isViewerInitialized = false;
