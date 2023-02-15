@@ -23,8 +23,8 @@
 }
 
 .calc-h {
-  /* height: calc(100vh - 40px); */
-  height: calc(100vh - 116px);
+  height: calc(100vh - 40px);
+  /* height: calc(100vh - 116px); */
 
 }
 
@@ -234,4 +234,5 @@ content: url("../public/divami_icons/toasterIcon.svg");
 .projHier{
   margin-top: 75px !important;
   overflow: scroll !important;
+  height: calc(100vh - 119px);
 }
