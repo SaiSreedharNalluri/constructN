@@ -3,7 +3,7 @@ import Moment from 'moment';
 import React, { useEffect, useState, memo, useRef, useCallback } from "react";
 import Head from "next/head";
 import Header from "./header";
-import { ForgeViewerUtils } from "../../utils/ForgeWrapper";
+import { ForgeViewerUtils } from "../../utils/ForgeWrapper2";
 import { PotreeViewerUtils } from "../../utils/PotreeWrapper";
 import {
   getPointCloudTM,
@@ -394,8 +394,8 @@ function GenericViewer(props) {
     switch (viewMode) {
       case "Design":
         if (forgeUtils.current == undefined) {
-          let forge = new ForgeViewerUtils(viewerId, viewerEventHandler.bind(this));
-          forgeUtils.current = forge;
+          forgeUtils.current= ForgeViewerUtils;
+          forgeUtils.current.initializeViewer(viewerId, viewerEventHandler);
         }
         break;
       case "Reality":
@@ -413,8 +413,8 @@ function GenericViewer(props) {
     switch (compareViewMode) {
       case "Design":
         if (forgeCompareUtils.current == undefined) {
-          let forge = new ForgeViewerUtils(viewerId, viewerEventHandler.bind(this));
-          forgeCompareUtils.current = forge;
+          forgeCompareUtils.current= ForgeViewerUtils;
+          forgeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler);
         }
         break;
       case "Reality":

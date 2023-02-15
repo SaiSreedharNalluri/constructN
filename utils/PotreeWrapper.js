@@ -69,7 +69,6 @@ export class PotreeViewerUtils {
         this.mouseEnter = this.onMouseEnter.bind(this)
         this.cameraChange = this.onCameraChange.bind(this)
         this.zoomHandler = this.onZoomHandler.bind(this);
-        this.addEventListeners();
     }
 
     isCompareView() {
@@ -104,6 +103,7 @@ export class PotreeViewerUtils {
         let self = this;
         const loadGUICallback = () => {
             self.isViewerInitialized = true;
+            self.addEventListeners();
         }
         if (this.isCompareView()) {
             this.viewer = PotreeInstance.getCompareInstance(this.viewerId).viewer;
@@ -113,8 +113,6 @@ export class PotreeViewerUtils {
         this.viewer.canvasId = this.viewerId; //Used by potree
         this.viewer.loadGUI(loadGUICallback)
     }
-
-
 
     isViewerLoaded() {
         return this.isViewerInitialized;
@@ -303,7 +301,7 @@ export class PotreeViewerUtils {
         if(event.detail.viewer !== this.viewerId) {
             return;
         }
-        console.log("Inside new onOriented imageload: ", this.viewer, event, this.getCurrentImage(), this.sendContext);
+        // console.log("Inside new onOriented imageload: ", this.viewer, event, this.getCurrentImage(), this.sendContext);
         this.viewer.scene.removeAllMeasurements();
         this.currentMode = 'image';
         this.currentLoadedImage = event.detail.image.id;
@@ -326,7 +324,7 @@ export class PotreeViewerUtils {
     }
 
     onOrientedImageUnload = (viewer) => {
-        console.log("Inside new onOriented image unload: ", this.getCurrentImage(), this.sendContext, this.currentLoadedImage);
+        // console.log("Inside new onOriented image unload: ", this.getCurrentImage(), this.sendContext, this.currentLoadedImage);
         let currentImage = this.getCurrentImage();
 
             viewer.scene.removeAllClipVolumes(); // To remove hovered image
@@ -365,7 +363,7 @@ export class PotreeViewerUtils {
     }
 
     onPanoImageLoad = (image, viewer) => {
-        console.log("Inside new onPano imageload: ", image, this.getCurrentImage(), this.sendContext);
+        // console.log("Inside new onPano imageload: ", image, this.getCurrentImage(), this.sendContext);
         let currentImage = this.getCurrentImage();
         if(currentImage && currentImage.file.split('/').pop() === image.file.split('/').pop()) {
             this.currentMode = 'panorama';
@@ -476,7 +474,7 @@ export class PotreeViewerUtils {
                 }
             });
             if (nearestImage) {
-                console.log(nearestImage.id)
+                // console.log(nearestImage.id)
                 this.loadOrientedImages(nearestImage)
             }
         } else {
@@ -496,7 +494,7 @@ export class PotreeViewerUtils {
                 }
             });
             if (nearestImage) {
-                console.log(nearestImage.file)
+                // console.log(nearestImage.file)
                 this.loadPanoImages(nearestImage, cameraInfo)
             }
         }
@@ -520,7 +518,7 @@ export class PotreeViewerUtils {
                 }
             });
             if (nearestImage) {
-                console.log(nearestImage.id)
+                // console.log(nearestImage.id)
                 this.loadOrientedImages(nearestImage)
 
             }
@@ -735,7 +733,7 @@ export class PotreeViewerUtils {
 
     updateContext(context) {
         this.sendContext = false;
-        console.log("Inside update context potree: ", this.sendContext);
+        // console.log("Inside update context potree: ", this.sendContext);
         if (context) {
             this.context = this.getContextLocalFromGlobal(context);
         } else {
@@ -775,6 +773,7 @@ export class PotreeViewerUtils {
             }
             
         } else if (this.currentMode === "panorama" && viewerState.pitch){
+            // console.log("Inside set viewer state for panorama: ", this.viewerId)
             this.viewer.scene.view.pitch = viewerState.pitch;
             this.viewer.scene.view.yaw = viewerState.yaw
             if(viewerState.fov) {
@@ -1023,7 +1022,7 @@ export class PotreeViewerUtils {
     }
 
     onMouseEnter() {
-        // console.log("Inside mouse eneter event potree: ");
+        console.log("Inside mouse eneter event potree: ", this.viewerId);
         this.eventHandler(this.viewerId, {type: "mouse"});
     }
 

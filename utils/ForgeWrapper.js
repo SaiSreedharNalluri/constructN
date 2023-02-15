@@ -242,9 +242,18 @@ export class ForgeViewerUtils {
   async loadData() {
     // console.log("Inside loadModel: ",this.documentURNs);
     // console.log("Loading new Model: ", this.documentURNs);
+
+    const modelLoadProgress = (percent, state, model) => {
+      console.log("Inside model load progress: ", percent, state, model);
+      if (state === 1 && percent === 100) {
+        this.isModelLoaded = true;
+      }
+    } 
+
     if(this.isModelLoaded) {
      this.removeData();
     }
+    this.viewer.addEventListener(Autodesk.Viewing.PROGRESS_UPDATE_EVENT, modelLoadProgress);
     this.documentURNs[this.getAvailableType()].map((document) => {
       Autodesk.Viewing.Document.load(
         document.urn,
@@ -262,6 +271,8 @@ export class ForgeViewerUtils {
         }
       );
     });
+
+    
   }
 
   generateModelOptions(tm, manifestNode) {
@@ -493,7 +504,7 @@ export class ForgeViewerUtils {
   }
 
   onMouseEnter() {
-    // console.log("Inside mouse eneter event forge: ");
+    console.log("Inside mouse eneter event forge: ", this.viewerId);
     this.eventHandler(this.viewerId, {type: "mouse"});
   }
 
@@ -654,6 +665,7 @@ export class ForgeViewerUtils {
 
   onGeometryLoadedEvent(parameter) {
     // console.log("Inside Geometry Loaded Event: model: ", parameter.model);
+    this.isModelLoaded = true;
   }
 
   onBeforeModelUnLoadedEvent(model) {

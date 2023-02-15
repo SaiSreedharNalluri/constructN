@@ -57,7 +57,10 @@ export class ForgeDataVisualization {
                 break;
             }
         }
-        this.handleSelection(selectedViewable.dbId);
+        if (selectedViewable) {
+            this.handleSelection(selectedViewable.dbId);
+        }
+        
     }
 
     addListeners() {
