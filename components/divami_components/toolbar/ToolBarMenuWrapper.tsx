@@ -53,6 +53,7 @@ interface IProps {
   issueTypesList?: any;
   taskFilterState?: any;
   issueFilterState?: any;
+  deleteTheIssue?: any;
 }
 
 const ToolBarMenuWrapper: React.FC<any> = ({
@@ -83,6 +84,11 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   issueFilterState,
   closeIssueCreate,
   closeTaskCreate,
+  deleteTheIssue,
+  openIssueDetails,
+  openTaskDetails,
+  closeTaskDetails,
+  closeIssueDetails,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -211,7 +217,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   return (
     <SectionToolBar viewMode={viewMode}>
       <ToolbarContainer>
-        {viewMode !== "Reality" ? (
+        {/* {viewMode !== "Reality" ? (
           <Typebar
             rightMenuClickHandler={rightMenuClickHandler}
             myTypesList={myTypesList}
@@ -243,7 +249,32 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           />
         ) : (
           <></>
-        )}
+        )} */}
+        <Typebar
+          rightMenuClickHandler={rightMenuClickHandler}
+          myTypesList={myTypesList}
+          typeChange={typeChange}
+          selectedValue={selectedType}
+          openList={openSelectTypes}
+          setOpenList={setOpenSelectTypes}
+          onListClick={() => {
+            setOpenSelectLayer(false);
+            setOpenSelectTypes(!openSelectTypes);
+          }}
+        />
+        <Layers
+          rightMenuClickHandler={rightMenuClickHandler}
+          myLayersList={myLayersList}
+          LayerChange={LayerChange}
+          selectedValue={selectedLayer}
+          openList={openSelectLayer}
+          setOpenList={setOpenSelectLayer}
+          onListClick={() => {
+            setOpenSelectTypes(false);
+            setOpenSelectLayer(!openSelectLayer);
+          }}
+          selectedLayersList={selectedLayersList}
+        />
         <Issues
           issuesList={issuesList}
           issueMenuClicked={issueMenuClicked}
@@ -260,6 +291,9 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           issueTypesList={issueTypesList}
           issueFilterState={issueFilterState}
           closeIssueCreate={closeIssueCreate}
+          deleteTheIssue={deleteTheIssue}
+          openIssueDetails={openIssueDetails}
+          closeIssueDetails={closeIssueDetails}
         />
 
         <Task
@@ -276,6 +310,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           deleteTheTask={deleteTheTask}
           taskFilterState={taskFilterState}
           closeTaskCreate={closeTaskCreate}
+          openTaskDetails={openTaskDetails}
+          closeTaskDetails={closeTaskDetails}
         />
 
         {viewMode === "Reality" ? (

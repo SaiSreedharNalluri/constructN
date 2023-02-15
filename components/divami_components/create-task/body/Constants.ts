@@ -5,16 +5,19 @@ export const TASK_FORM_CONFIG = [
     defaultValue: "",
     formLabel: "Title",
     placeholder: "Title",
+
+    isError: false,
+    isReq: true,
   },
   {
     id: "tasks",
     type: "select",
     defaultValue: "",
     placeHolder: "Select",
-    label: "Material (Optional)",
+    label: "Select the Type of Task",
     isLarge: false,
     isError: false,
-    isReq: false,
+    isReq: true,
     isflex: false,
     formLabel: "Select the Type of Task",
     options: [
@@ -34,19 +37,22 @@ export const TASK_FORM_CONFIG = [
     id: "description",
     type: "textarea",
     defaultValue: "",
-    formLabel: "Tell more about the issue",
-    placeholder: "Tell more about the issue",
+    formLabel: "Tell more about the Task",
+    placeholder: "Tell more about the Task",
+    isError: false,
+    isReq: false,
   },
   {
     id: "taskPriority",
     type: "select",
     defaultValue: "",
     placeHolder: "Select",
-    label: "Material (Optional)",
+    label: "Select Task Priority",
     isLarge: false,
     isError: false,
-    isReq: false,
+    isReq: true,
     isflex: false,
+
     formLabel: "Select Task Priority",
     options: [
       {
@@ -76,6 +82,8 @@ export const TASK_FORM_CONFIG = [
     selectedName: null,
     label: "Select Name or Team",
     defaultValue: [],
+    isError: false,
+    isReq: false,
   },
   {
     id: "dates",
@@ -88,7 +96,7 @@ export const TASK_FORM_CONFIG = [
         label: "MM/DD/YYYY",
         formLabel: "Start Date",
         isError: false,
-        isReq: true,
+        isReq: false,
       },
       {
         id: "due-date",
@@ -97,7 +105,7 @@ export const TASK_FORM_CONFIG = [
         label: "MM/DD/YYYY",
         formLabel: "Due Date",
         isError: false,
-        isReq: true,
+        isReq: false,
       },
     ],
   },
@@ -107,12 +115,16 @@ export const TASK_FORM_CONFIG = [
     chipString: [],
     formLabel: "Enter Some Suggested Tags",
     defaultValue: [],
+    isError: false,
+    isReq: false,
   },
   {
     id: "file-upload",
     type: "file",
     selectedFiles: null,
     defaultValue: [],
+    isError: false,
+    isReq: false,
   },
 ];
 export const TYPES_OF_ISSUES = [
@@ -146,7 +158,7 @@ export const MORE_ABOUT_ISSUE = [
     id: "issueDescription",
     type: "textarea",
     defaultValue: "",
-    placeholder: "Tell more about the issue",
+    placeholder: "Tell more about the Task",
   },
 ];
 

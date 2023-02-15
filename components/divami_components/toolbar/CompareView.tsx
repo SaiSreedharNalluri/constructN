@@ -7,6 +7,9 @@ import hotspotCircleIcon from "../../../public/divami_icons/hotspotCircleIcon.sv
 import hideCompare from "../../../public/divami_icons/hideCompare.svg";
 import designCompare from "../../../public/divami_icons/designCompare.svg";
 import realityCompare from "../../../public/divami_icons/realityCompare.svg";
+import hideCompareLight from "../../../public/divami_icons/hideCompareLight.svg";
+import designCompareLight from "../../../public/divami_icons/designCompareLight.svg";
+import realityCompareLight from "../../../public/divami_icons/realityCompareLight.svg";
 
 import {
   HotspotBox,
@@ -21,8 +24,10 @@ import {
   CompareContainer,
   CompareIcon,
 } from "./ToolBarStyles";
+import { styled } from "@mui/system";
 
 const CompareView = ({ rightMenuClickHandler, active }: any) => {
+  console.log(active, "compare view active");
   return (
     <CompareViewBox>
       <CompareViewTitleDiv>Compare Views:</CompareViewTitleDiv>
@@ -32,7 +37,7 @@ const CompareView = ({ rightMenuClickHandler, active }: any) => {
           onClick={rightMenuClickHandler}
           active={active}
         >
-          <Image src={hideCompare} width={18} height={18} alt="Arrow" />{" "}
+          <Image src={active === "hideCompare" ? hideCompare : hideCompareLight} width={18} height={18} alt="Arrow" />{" "}
         </CompareIcon>
         <DesignCompareViewIcon
           id="compareDesign"
@@ -41,7 +46,7 @@ const CompareView = ({ rightMenuClickHandler, active }: any) => {
           }}
           active={active}
         >
-          <Image src={designCompare} width={18} height={18} alt="Arrow" />{" "}
+          <Image src={active === "compareDesign" ? designCompare : designCompareLight} width={18} height={18} alt="Arrow" />{" "}
         </DesignCompareViewIcon>
 
         <RealityCompareViewIcon
@@ -49,7 +54,7 @@ const CompareView = ({ rightMenuClickHandler, active }: any) => {
           onClick={rightMenuClickHandler}
           active={active}
         >
-          <Image src={realityCompare} width={14} height={18} alt="Arrow" />{" "}
+          <Image src={active === "compareReality" ? realityCompare : realityCompareLight} width={14} height={18} alt="Arrow" />{" "}
         </RealityCompareViewIcon>
       </CompareContainer>
       {/* <HotspotGroupIcon>

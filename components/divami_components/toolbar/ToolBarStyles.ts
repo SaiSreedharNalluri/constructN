@@ -72,7 +72,8 @@ export const SectionToolBar = styled("div")((props: any) => ({
   fontSize: "12px",
   lineHeight: "18px",
   marginTop: "14px",
-  width: props.viewMode === "Reality" ? "620px" : "772px",
+  // width: props.viewMode === "Reality" ? "620px" : "772px",
+  width: "fit-content",
   display: "block",
   marginLeft: "auto",
   marginRight: "auto",
@@ -100,6 +101,7 @@ export const TypesTitle = styled("div")({
 
 export const TypeArrowIconDiv = styled("div")({
   marginLeft: "110px",
+  cursor:"pointer"
 });
 
 export const TypesRightScroll = styled("div")({
@@ -129,7 +131,7 @@ export const LayersWrapper = styled("div")({
   position: "relative",
 });
 export const SelectLayersWrapper = styled("div")({
-  top: "50px",
+  top: "63px",
   position: "absolute",
   border: "1px solid #D9D9D9",
   boxShadow: "5px 4px 8px rgb(0 0 0 / 24%)",
@@ -149,6 +151,8 @@ export const LayerSecondSectionCamImg = styled("div")({
 
 export const LayerSecondSectionArrImg = styled("div")({
   marginLeft: "16px",
+  cursor:"pointer"
+
   // width: '15px',
   // height: '15px',
 });
@@ -162,6 +166,8 @@ export const TaskTitle = styled("div")({
 export const CameraIcon = styled(Image)({
   width: "18px",
   height: "18px",
+  cursor:"pointer"
+
 });
 
 export const DownIcon = styled(Image)({

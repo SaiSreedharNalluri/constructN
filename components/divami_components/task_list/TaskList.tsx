@@ -98,7 +98,14 @@ const CustomTaskListDrawer = (props: any) => {
 
   useEffect(() => {
     setTaskList(tasksList);
-  }, []);
+  }, [tasksList]);
+
+  useEffect(() => {
+    console.log("filteredTaskList1", filteredTaskList);
+    setFilteredTaskList(tasksList);
+    console.log("filteredTaskList2", filteredTaskList);
+  }, [tasksList]);
+
   const handleViewTaskList = () => {
     // console.log("teskssksk trigg");
     setOpenDrawer(true);
@@ -118,7 +125,7 @@ const CustomTaskListDrawer = (props: any) => {
       tempTaskDataState.push(tempTask);
     });
     setTaskListDataState(tempTaskDataState);
-  }, []);
+  }, [tasksList]);
 
   const handleClose = () => {
     onClose(true);
@@ -199,12 +206,23 @@ const CustomTaskListDrawer = (props: any) => {
 
   const handleSearch = () => {
     const filteredData = taskListDataState?.filter((eachTask: any) => {
-      const taskName = eachTask.type.toLowerCase();
+      const taskName = eachTask?.type?.toLowerCase();
       return taskName.includes(searchTerm.toLowerCase());
     });
     setFilteredTaskList([...filteredData]);
   };
-
+  useEffect(() => {
+    if (router.isReady) {
+      getProjectUsers(router.query.projectId as string)
+        .then((response: any) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+            console.log(projectUsers);
+          }
+        })
+        .catch();
+    }
+  }, [router.isReady, router.query.projectId]);
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
@@ -214,7 +232,7 @@ const CustomTaskListDrawer = (props: any) => {
   }, [taskListDataState]);
 
   useEffect(() => {
-    console.log(filteredTaskList, "FILTERED TASK LIST");
+    console.log(filteredTaskList, "filteredTaskList");
   }, [filteredTaskList]);
 
   return (
@@ -321,6 +339,9 @@ const CustomTaskListDrawer = (props: any) => {
       <BodyContainer>
         <Box sx={{ marginTop: "15px" }}>
           {filteredTaskList.map((val: any) => {
+            {
+              console.log(val, "VAL");
+            }
             return (
               <>
                 <BodyInfo
