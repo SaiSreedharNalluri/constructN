@@ -903,6 +903,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
       relatedTags: task.tags,
       assignees: task.assignees?.length ? task.assignees[0].fullName : "",
       id: task._id,
+      status: task.status,
     };
     setTaskState((prev: any) => {
       return {
