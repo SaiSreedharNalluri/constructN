@@ -40,6 +40,7 @@ const Task = ({
   taskOpenDrawer,
   taskLayer,
   taskMenuClicked,
+  deleteTheTask,
   taskFilterState,
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -113,8 +114,8 @@ const Task = ({
       (data.tags =
         (formData.length
           ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+            .filter((item: any) => item.id == "tag-suggestions")[0]
+            ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -266,6 +267,7 @@ const Task = ({
             closeTaskFilterOverlay={closeTaskFilterOverlay}
             handleOnTaskFilter={handleOnTaskFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
+            deleteTheTask={deleteTheTask}
             taskFilterState={taskFilterState}
           />
         </Drawer>

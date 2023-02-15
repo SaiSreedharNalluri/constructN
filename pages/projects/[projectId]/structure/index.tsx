@@ -28,7 +28,7 @@ import {
 } from "../../../../services/issue";
 import { getCookie } from "cookies-next";
 import { toast } from "react-toastify";
-import { getTasksList } from "../../../../services/task";
+import { deleteTask, getTasksList } from "../../../../services/task";
 import { Issue } from "../../../../models/Issue";
 import { ITasks } from "../../../../models/Itask";
 import IssueCreate from "../../../../components/container/rightFloatingMenu/issueMenu/issueCreate";
@@ -43,7 +43,7 @@ import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
 import { styled } from "@mui/system";
 import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 
-interface IProps {}
+interface IProps { }
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -278,11 +278,9 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${
-                  structure?._id
-                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
-                  currentProjectId as string
-                }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
+                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
+                  }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -641,6 +639,22 @@ const Index: React.FC<IProps> = () => {
         console.log("error", error);
       });
   };
+
+  const deleteTheTask = (taskObj: any) => {
+    console.log("taskObj", taskObj, router.query.projectId)
+    deleteTask(router.query.projectId as string, taskObj._id)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success(response.message);
+          _.remove(issueFilterList, { _id: taskObj._id });
+          setIssueList(issueFilterList);
+        }
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
+  };
+
   const clickIssueEditSubmit = (editObj: any, issueObj: any) => {
     editIssue(
       router.query.projectId as string,
@@ -678,9 +692,8 @@ const Index: React.FC<IProps> = () => {
           {
             <div
               ref={leftRefContainer}
-              className={` ${
-                leftNav ? "visible" : "hidden"
-              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+              className={` ${leftNav ? "visible" : "hidden"
+                } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay
@@ -724,9 +737,8 @@ const Index: React.FC<IProps> = () => {
               {
                 <div
                   ref={leftRefContainer}
-                  className={` ${
-                    hierarchy ? "visible" : "hidden"
-                  } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg`}
+                  className={` ${hierarchy ? "visible" : "hidden"
+                    } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg`}
                 >
                   <div>
                     <LeftOverLay
@@ -843,6 +855,7 @@ const Index: React.FC<IProps> = () => {
               openCreateIssue={openCreateIssue}
               openCreateTask={openCreateTask}
               selectedLayersList={currentViewLayers}
+              deleteTheTask={deleteTheTask}
               issuePriorityList={issuePriorityList}
               issueStatusList={issueStatusList}
               issueTypesList={issueTypesList}

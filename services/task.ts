@@ -1,5 +1,5 @@
-import instance from "./axiosInstance";
-import authHeader from "./auth-header";
+import instance from './axiosInstance';
+import authHeader from './auth-header';
 export const createTask = (projectId: string, taskObj: object) => {
   return instance
     .post(
@@ -45,7 +45,7 @@ export const updateAttachments = (file: any, id: any) => {
     });
 };
 export const getTasksList = async (projectId: string, structureId: string) => {
-  console.log("getTasksList", projectId, structureId);
+  console.log('getTasksList', projectId, structureId);
   return await instance
     .get(
       `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tasks?structure=${structureId}`,
@@ -92,6 +92,21 @@ export const getTaskStatus = async (projectId: string) => {
     .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tasks/status`, {
       headers: authHeader.authHeader(),
     })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
+export const deleteTask = async (projectId: string, taskId: string) => {
+  return await instance
+    .delete(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tasks/${taskId}`,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
     .then((response) => {
       return response.data;
     })

@@ -51,6 +51,8 @@ import {
   ThirdHeader,
   TitleContainer,
 } from "./TaskListStyles";
+import _ from "lodash";
+import { CSVLink } from 'react-csv';
 
 interface IProps {
   closeOverlay: () => void;
@@ -76,6 +78,7 @@ const CustomTaskListDrawer = (props: any) => {
     contextInfo,
     closeTaskFilterOverlay,
     handleOnTaskFilter,
+    deleteTheTask,
     taskFilterState,
   } = props;
 
@@ -150,6 +153,17 @@ const CustomTaskListDrawer = (props: any) => {
 
   console.log(taskType, taskPriority, taskStatus, projectUsers, "IMPORTANTT");
 
+  const getDownloadableTaskList = (issuesList = filteredTaskList) => {
+    let modifiedList = issuesList.map((issue: any) => {
+      let firstNames = issue.assignee.split(" ").map((name: string) => name.trim());
+      return _.omit(
+        { ...issue, assignee: firstNames },
+        ["progress", "context"]
+      );
+    });
+    return modifiedList;
+  };
+
   const handleDatesSort = () => {
     const sortedDatesData = [...taskListDataState].sort((a: any, b: any) => {
       if (dateSortState === "ascending") {
@@ -196,6 +210,11 @@ const CustomTaskListDrawer = (props: any) => {
   useEffect(() => {
     setFilteredTaskList(taskListDataState);
   }, [taskListDataState]);
+
+
+  useEffect(() => {
+    console.log(filteredTaskList, "FILTERED TASK LIST");
+  }, [filteredTaskList]);
 
   return (
     <TaskListContainer>
@@ -274,7 +293,18 @@ const CustomTaskListDrawer = (props: any) => {
                 </>
               )}
               <DueDate>Due Date</DueDate>
-              <DownloadIcon src={Download} alt="Arrow" />
+              <CSVLink
+                data={getDownloadableTaskList(filteredTaskList)}
+                filename={'my-tasks.csv'}
+                className="text-black btn btn-primary fill-black fa fa-Download "
+                target="_blank"
+              >
+                {/* <FontAwesomeIcon
+                  className=" fill-black text-black"
+                  icon={faDownload}
+                ></FontAwesomeIcon> */}
+                <DownloadIcon src={Download} alt="Arrow" />
+              </CSVLink>
               <FunnelIcon
                 src={FilterInActive}
                 alt="Arrow"
@@ -303,14 +333,14 @@ const CustomTaskListDrawer = (props: any) => {
                         val.type === "RFI"
                           ? RFIList
                           : val.type === "Transmittals"
-                          ? TransmittalList
-                          : val.type === "Submittals"
-                          ? SubmittalList
-                          : val.type === "Transmittals"
-                          ? TransmittalList
-                          : val.type === "Transmittals"
-                          ? TransmittalList
-                          : ""
+                            ? TransmittalList
+                            : val.type === "Submittals"
+                              ? SubmittalList
+                              : val.type === "Transmittals"
+                                ? TransmittalList
+                                : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : ""
                       }
                       alt="Arr"
                     />
@@ -351,6 +381,7 @@ const CustomTaskListDrawer = (props: any) => {
             taskPriority={taskPriority}
             taskStatus={taskStatus}
             projectUsers={projectUsers}
+            deleteTheTask={deleteTheTask}
             currentProject={currentProject}
             currentStructure={currentStructure}
             currentSnapshot={currentSnapshot}
