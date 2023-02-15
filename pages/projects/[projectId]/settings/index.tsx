@@ -26,6 +26,7 @@ const Editproject: React.FC = () => {
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [tabIndex, setTabIndex] = useState(0);
   let [state, setState] = useState<ChildrenEntity[]>([]);
+  const [selector,setSelector]=useState('');
   let [structureData, setStructureData] = useState<ChildrenEntity>();
   let [projectData, setProjectData] = useState<any>();
   useEffect(() => {
@@ -41,6 +42,7 @@ const Editproject: React.FC = () => {
         .then((response: AxiosResponse<any>) => {
           setState([...response.data.result]);
           setStructureData(response.data.result[0]);
+          setSelector(response.data.result[0]._id)
         })
         .catch((error) => {
           console.log('error', error);
@@ -167,6 +169,7 @@ const Editproject: React.FC = () => {
                     ) : (
                       <Treelist
                         treeList={state}
+                        initialSelector={selector}
                         getStructureData={(structure: ChildrenEntity) => {
                           setStructureData(structure);
                         }}
