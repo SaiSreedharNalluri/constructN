@@ -57,6 +57,7 @@ const Issues = ({
   issueTypesList,
   issueFilterState,
   closeIssueCreate,
+  deleteTheIssue
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -131,8 +132,8 @@ const Issues = ({
       (data.tags =
         (formData.length
           ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+            .filter((item: any) => item.id == "tag-suggestions")[0]
+            ?.chipString?.join(";")
           : []) || []),
       (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -309,9 +310,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => {}}
-            deleteTheIssue={() => {}}
-            clickIssueEditSubmit={() => {}}
+            handleOnSort={() => { }}
+            deleteTheIssue={deleteTheIssue}
+            clickIssueEditSubmit={() => { }}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}

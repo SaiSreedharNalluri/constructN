@@ -20,6 +20,7 @@ import CreateTask from "../create-task/CreateTask";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import CreateIssue from "../create-issue/CreateIssue";
 import { ISSUE_FORM_CONFIG } from "../create-issue/body/Constants";
+import PopupComponent from "../../popupComponent/PopupComponent";
 
 const HeaderContainer = styled(Box)`
   background-color: white;
@@ -322,15 +323,15 @@ const AssignEditSearchContainer = styled("div")({
     width: "100%",
   },
   "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
     marginTop: "-8px",
   },
@@ -679,13 +680,13 @@ function BasicTabs(props: any) {
                 sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="" />}
                 onChange={(event, value) => console.log(value)}
-                // InputProps={{
-                //   startAdornment: (
-                //     <InputAdornment position="start">
-                //       <SearchIcon />
-                //     </InputAdornment>
-                //   ),
-                // }}
+              // InputProps={{
+              //   startAdornment: (
+              //     <InputAdornment position="start">
+              //       <SearchIcon />
+              //     </InputAdornment>
+              //   ),
+              // }}
               />
             </AssignEditSearchContainer>
           )}
@@ -794,8 +795,15 @@ const CustomIssueDetailsDrawer = (props: any) => {
     currentSnapshot,
     currentStructure,
     contextInfo,
+    deleteTheIssue
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
+  const [showPopUp, setshowPopUp] = useState(false);
+
+  const onDeleteIssue = (status: any) => {
+    setshowPopUp(false)
+    deleteTheIssue(issue);
+  }
 
   const DetailsObj = {
     TabOne: {
@@ -914,8 +922,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
       (data.tags =
         (formData.length
           ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+            .filter((item: any) => item.id == "tag-suggestions")[0]
+            ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -1015,7 +1023,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
                   setOpenCreateTask(true);
                 }}
               />
-              <DeleteIcon src={Delete} alt={"close icon"} />
+              <DeleteIcon
+                src={Delete}
+                alt={'close icon'}
+                onClick={() => {
+                  setshowPopUp(true);
+                }}
+              />
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
@@ -1042,6 +1056,16 @@ const CustomIssueDetailsDrawer = (props: any) => {
           />
         </CustomDrawer>
       )}
+      {showPopUp && (
+        <PopupComponent
+          open={showPopUp}
+          setShowPopUp={setshowPopUp}
+          modalTitle={'Delete Issue'}
+          modalmessage={`Are you sure you want to delete this Issue "${issue.type}(#${issue._id})"?`}
+          primaryButtonLabel={'Delete'}
+          SecondaryButtonlabel={'Cancel'}
+          callBackvalue={onDeleteIssue}
+        />)}
     </>
   );
 };

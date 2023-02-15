@@ -874,10 +874,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
     });
   }, []);
 
-  const onDeleteTask = (status: any) => {
+  const onDeleteTask = () => {
     setshowPopUp(false)
-    console.log('status', status);
-    console.log(deleteTheTask, "deleteTheTask")
     deleteTheTask(task);
   }
 

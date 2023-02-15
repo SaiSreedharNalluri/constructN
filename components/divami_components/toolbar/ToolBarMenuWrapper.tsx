@@ -53,6 +53,7 @@ interface IProps {
   issueTypesList?: any;
   taskFilterState?: any;
   issueFilterState?: any;
+  deleteTheIssue?: any;
 }
 
 const ToolBarMenuWrapper: React.FC<any> = ({
@@ -83,6 +84,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   issueFilterState,
   closeIssueCreate,
   closeTaskCreate,
+  deleteTheIssue
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -260,6 +262,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           issueTypesList={issueTypesList}
           issueFilterState={issueFilterState}
           closeIssueCreate={closeIssueCreate}
+          deleteTheIssue={deleteTheIssue}
         />
 
         <Task
