@@ -538,6 +538,7 @@ function BasicTabs(props: any) {
               fontSize: "14px",
               fontWeight: "400",
               textTransform: "capitalize",
+              color: "#213365"
             },
 
             "& .MuiTab-root": {
@@ -563,9 +564,9 @@ function BasicTabs(props: any) {
           <Tab
             label="Details"
             {...a11yProps(0)}
-            style={{ marginRight: "40px", paddingLeft: "0px" }}
+            style={{ marginRight: "40px", paddingLeft: "0px", paddingRight: "0px" }}
           />
-          <Tab label="Activity log" {...a11yProps(1)} />
+          <Tab label="Activity log" {...a11yProps(1)} style={{ paddingRight: "0px" }}/>
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>

@@ -169,7 +169,7 @@ const Editproject: React.FC = () => {
                 <div className="flex ">
                   <div className="w-full lg:w-1/4 sm:w-1/3 2xl:w-1/5 calc-h50 overflow-y-auto  overflow-x-hidden bg-gray-200">
                     {state.length === 0 ? (
-                      'no structures found for this project'
+                      'No structures found for this project'
                     ) : (
                       <Treelist
                         treeList={state}

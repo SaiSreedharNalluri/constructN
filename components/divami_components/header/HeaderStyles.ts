@@ -34,16 +34,14 @@ export const HeaderToggle = styled("div")({
 });
 
 export const HeaderToggleButtonOne = styled("button")((props: any) => ({
-  background: !props?.toggleStatus ? "#FFFFFF" : "#F1742E",
-  border: !props?.toggleStatus ? `1px solid #FFFFFF` : "none",
+  background: !props?.toggleStatus ? "none" : "#F1742E",
+  // border: !props?.toggleStatus ? `1px solid #FFFFFF` : "none",
   cursor: "pointer",
   color: !props?.toggleStatus ? "#36415D" : "#FFFFFF",
   padding: "6px 10px",
   height: "30px",
   display: "flex",
   alignItems: "center",
-  borderTopLeftRadius: "4px",
-  borderBottomLeftRadius: "4px",
 })) as any;
 
 export const HeaderProfileImageContainer = styled("div")({
