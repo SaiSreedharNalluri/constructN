@@ -802,6 +802,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     currentSnapshot,
     currentStructure,
     contextInfo,
+    closeTaskCreate,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
 

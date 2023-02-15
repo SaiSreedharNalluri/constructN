@@ -36,7 +36,7 @@ const CompareView = ({ rightMenuClickHandler, active }: any) => {
         </CompareIcon>
         <DesignCompareViewIcon
           id="compareDesign"
-          onClick={(e) => {
+          onClick={(e: any) => {
             rightMenuClickHandler(e);
           }}
           active={active}
