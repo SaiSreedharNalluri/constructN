@@ -596,7 +596,16 @@ function BasicTabs(props: any) {
       <CustomTabPanel value={value} index={0}>
         <TabOneDiv>
           <FirstHeaderDiv>
-            <Image src={""} alt="" />
+            <Image
+              src={
+                taskState.TabOne.attachments
+                  ? taskState.TabOne.attachments[0]?.url
+                  : ""
+              }
+              alt=""
+              width={400}
+              height={400}
+            />
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
