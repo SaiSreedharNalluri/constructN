@@ -230,7 +230,7 @@ content: url("../public/divami_icons/toasterIcon.svg");
 
 .projHier {
   margin-top: 75px !important;
-  overflow: scroll !important;
+  overflow-y: scroll !important;
   height: calc(100vh - 119px);
 }
 

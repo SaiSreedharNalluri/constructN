@@ -46,8 +46,8 @@ export const CustomInputField = styled(TextField)({
     ouline: "none",
   },
   img: {
-    marginRight: "8px"
-  }
+    marginRight: "8px",
+  },
   // "& .MuiInputBase-input": {
   //   fontFamily: "Open Sans",
   //   fontStyle: "normal",
@@ -175,9 +175,9 @@ export const SearchContainer = styled("div")({
   outline: "none",
   padding: "20px 0px 0px 20px",
   marginBottom: "2px",
-  "& .MuiTextField-root" : {
-    borderRadius: "4px"
-  }
+  "& .MuiTextField-root": {
+    borderRadius: "4px",
+  },
 });
 
 export const HeaderLabel = styled("div")({
