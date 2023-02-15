@@ -806,7 +806,8 @@ function BasicTabs(props: any) {
           ) : (
             <>
               <AddCommentContainer>
-                <StyledInput placeholder="Add Comment"></StyledInput>
+                <AddCommentInput placeholder="Add Comment"></AddCommentInput>
+
                 <AddCommentButtonContainer>
                   <AttachButton>
                     <Image src={Clip} alt="" />{" "}

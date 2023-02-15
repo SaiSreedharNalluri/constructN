@@ -1,6 +1,5 @@
 import {
   ToasFirstHalf,
-  ToastContainer,
   ToastContainerDiv,
   ToasterCloseIcon,
   ToasterIcon,

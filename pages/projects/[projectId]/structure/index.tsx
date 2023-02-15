@@ -43,6 +43,7 @@ import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
 import { styled } from "@mui/system";
 import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 import { CustomToaster } from "../../../../components/divami_components/custom-toaster/CustomToaster";
+import { log } from "node:console";
 
 interface IProps {}
 const OpenMenuButton = styled("div")({
@@ -203,6 +204,20 @@ const Index: React.FC<IProps> = () => {
       getStructureList(router.query.projectId as string)
         .then((response) => {
           setStructuresList(response.data.result);
+
+          if (response.data.result.length > 0) {
+            if (router.query.structId !== undefined) {
+              let structs: IStructure[] = response.data.result;
+              setStructure(
+                structs.find((e) => {
+                  console.log("finding structure: ", e._id);
+                  if (e._id === router.query.structId) {
+                    return e;
+                  }
+                })
+              );
+            } else setStructure(response.data.result[0]);
+          }
         })
         .catch((error) => {
           toast.error("failed to load data");
@@ -227,7 +242,9 @@ const Index: React.FC<IProps> = () => {
   };
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
+    //console.log('Loaded structures: ', structuresList);
     let currentStructure = structuresList.find((e) => {
+      //console.log('finding structure: ', e._id);
       if (e._id === structure._id) {
         return e;
       }
@@ -342,10 +359,11 @@ const Index: React.FC<IProps> = () => {
       case "issue":
         switch (toolInstance.toolAction) {
           case "issueView":
-            console.log("trying to open issue View");
+            //console.log('trying to open issue View');
             setOpenIssueView(true);
             break;
           case "issueCreate":
+          //setOpenCreateIssue(true);
           case "issueCreateSuccess":
           case "issueCreateFail":
           case "issueSelect":
@@ -761,6 +779,7 @@ const Index: React.FC<IProps> = () => {
                         getCurrentStructureFromStructureList(structureData)
                       );
 
+                      // setStructure(structureData);
                       getIssues(structureData._id);
 
                       getTasks(structureData._id);
