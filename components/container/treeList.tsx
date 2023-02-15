@@ -11,8 +11,9 @@ const TreeList: React.FC<IProps> = ({
   getStructureData,
   initialSelector,
 }) => {
-  const [currentClickedStruct, setCurrentClickedStruct] =
-    useState(initialSelector);
+  const [currentClickedStruct, setCurrentClickedStruct] = useState(
+    initialSelector || ""
+  );
   //console.log("default selection",initialSelector);
 
   const getStructData = (structure: ChildrenEntity) => {
