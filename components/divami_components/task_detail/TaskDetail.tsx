@@ -674,7 +674,7 @@ function BasicTabs(props: any) {
               <CustomSelect
                 onChange={(event: any, value: any) => console.log(value)}
                 config={progressOptionsState[0]}
-                defaultValue={progressOptionsState?.options[0].value}
+                // defaultValue={progressOptionsState?.options[0].value}
                 id={"taskPriority"}
                 sx={{ minWidth: 120 }}
                 setFormConfig={setProgressOptionsState}
