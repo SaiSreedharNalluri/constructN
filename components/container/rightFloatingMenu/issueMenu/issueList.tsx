@@ -47,6 +47,7 @@ import _ from 'lodash';
 import { getTagsList } from '../../../../services/tags';
 import { IContext, ITools } from '../../../../models/ITools';
 import MultipleFileUpload from '../../multipleFileUpload';
+import NextImage from '../../../core/Image';
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
@@ -83,11 +84,12 @@ const IssueList: React.FC<IProps> = ({
   const [issueViewMode, setIssueViewMode] = useState('list'); //list, filter, detail
   const [issueObj, setIssueObj] = useState<Issue>();
   const [open, setOpen] = useState(false);
+  const [openPreview, setOpenPreview] = useState(false);
   const [attachmentId, setAttachmentId] = useState('');
   const [deletionType, setDeletionType] = useState('issueDelete'); //issueDelete,attachmentDelete
   const [tagList, setTagList] = useState<[string]>(['']);
   let toolInstance: ITools = { toolName: 'issue', toolAction: 'issueSelect' };
-
+  const [url, setUrl] = useState('');
   interface user {
     label: string;
     value: string;
@@ -750,13 +752,13 @@ const IssueList: React.FC<IProps> = ({
                     <div key={attachment._id}>
                       {getFileIcon(attachment.name)}
                       <a
-                        href={attachment.url}
-                        target={'_blank'}
-                        rel="noreferrer"
+                        onClick={() => {
+                          setUrl(attachment.url);
+                          setOpenPreview(true);
+                        }}
                       >
                         {attachment.name}
                       </a>
-
                       <FontAwesomeIcon
                         icon={faTrashCan}
                         className="mt-2 cursor-pointer pl-5"
@@ -766,14 +768,6 @@ const IssueList: React.FC<IProps> = ({
                           setAttachmentId(attachment._id);
                         }}
                       />
-                      {/* <button
-                        role="link"
-                        onClick={() => {
-                          window.open(attachment.url, '_blank', 'noreferrer');
-                        }}
-                      >
-                        Visit
-                      </button> */}
                     </div>
                   );
                 })}
@@ -1131,6 +1125,18 @@ const IssueList: React.FC<IProps> = ({
             >
               Confirm
             </button>
+          </div>
+        </Modal>
+      </div>
+      <div>
+        <Modal
+          open={openPreview}
+          onClose={() => {
+            setOpenPreview(false);
+          }}
+        >
+          <div>
+            <NextImage src={url} className="h-auto w-auto" />
           </div>
         </Modal>
       </div>
