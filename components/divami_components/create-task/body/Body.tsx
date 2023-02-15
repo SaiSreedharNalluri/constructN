@@ -88,10 +88,8 @@ const Body = ({ handleFormData, editData }: any) => {
     }
   }, [router.isReady, router.query.projectId]);
   useEffect(() => {
-    console.log(editData, "editdata", taskPriorities, taskTypes);
     if (projectUsers.length && taskPriorities.length && taskTypes.length) {
       if (editData) {
-        const editFormData = editData?.TabOne;
         setFormConfig((prev: any) => {
           return prev.map((item: any) => {
             if (item.id === "title") {
