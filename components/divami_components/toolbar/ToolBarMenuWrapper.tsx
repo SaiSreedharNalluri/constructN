@@ -215,7 +215,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   return (
     <SectionToolBar viewMode={viewMode}>
       <ToolbarContainer>
-        {viewMode !== "Reality" ? (
+        {/* {viewMode !== "Reality" ? (
           <Typebar
             rightMenuClickHandler={rightMenuClickHandler}
             myTypesList={myTypesList}
@@ -247,7 +247,32 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           />
         ) : (
           <></>
-        )}
+        )} */}
+        <Typebar
+          rightMenuClickHandler={rightMenuClickHandler}
+          myTypesList={myTypesList}
+          typeChange={typeChange}
+          selectedValue={selectedType}
+          openList={openSelectTypes}
+          setOpenList={setOpenSelectTypes}
+          onListClick={() => {
+            setOpenSelectLayer(false);
+            setOpenSelectTypes(!openSelectTypes);
+          }}
+        />
+        <Layers
+          rightMenuClickHandler={rightMenuClickHandler}
+          myLayersList={myLayersList}
+          LayerChange={LayerChange}
+          selectedValue={selectedLayer}
+          openList={openSelectLayer}
+          setOpenList={setOpenSelectLayer}
+          onListClick={() => {
+            setOpenSelectTypes(false);
+            setOpenSelectLayer(!openSelectLayer);
+          }}
+          selectedLayersList={selectedLayersList}
+        />
         <Issues
           issuesList={issuesList}
           issueMenuClicked={issueMenuClicked}
