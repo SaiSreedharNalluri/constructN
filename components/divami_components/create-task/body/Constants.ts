@@ -3,7 +3,7 @@ export const TASK_FORM_CONFIG = [
     id: "title",
     type: "textfield",
     defaultValue: "",
-    formLabel: "Title",
+    formLabel: "What shall we call this Task?",
     placeholder: "Title",
 
     isError: false,
@@ -14,12 +14,12 @@ export const TASK_FORM_CONFIG = [
     type: "select",
     defaultValue: "",
     placeHolder: "Select",
-    label: "Select the Type of Task",
+    label: "Select the type of task",
     isLarge: false,
     isError: false,
     isReq: true,
     isflex: false,
-    formLabel: "Select the Type of Task",
+    formLabel: "Select the type of task",
     options: [
       {
         label: "Plastic",
@@ -37,8 +37,8 @@ export const TASK_FORM_CONFIG = [
     id: "description",
     type: "textarea",
     defaultValue: "",
-    formLabel: "Tell more about the Task",
-    placeholder: "Tell more about the Task",
+    formLabel: "Tell us more about this task",
+    placeholder: "Tell us more about this task",
     isError: false,
     isReq: false,
   },
@@ -47,13 +47,13 @@ export const TASK_FORM_CONFIG = [
     type: "select",
     defaultValue: "",
     placeHolder: "Select",
-    label: "Select Task Priority",
+    label: "Select task priority",
     isLarge: false,
     isError: false,
     isReq: true,
     isflex: false,
 
-    formLabel: "Select Task Priority",
+    formLabel: "Select task priority",
     options: [
       {
         label: "Plastic",
@@ -70,7 +70,7 @@ export const TASK_FORM_CONFIG = [
   {
     id: "assignedTo",
     type: "search",
-    formLabel: "Assigned To",
+    formLabel: "Assigned to",
     listOfEntries: [
       { label: "The Shawshank Redemption", year: 1994 },
       { label: "The Godfather", year: 1972 },
@@ -113,7 +113,7 @@ export const TASK_FORM_CONFIG = [
     id: "tag-suggestions",
     type: "chip",
     chipString: [],
-    formLabel: "Enter Some Suggested Tags",
+    formLabel: "Enter some suggested tags",
     defaultValue: [],
     isError: false,
     isReq: false,
@@ -158,7 +158,7 @@ export const MORE_ABOUT_ISSUE = [
     id: "issueDescription",
     type: "textarea",
     defaultValue: "",
-    placeholder: "Tell more about the Task",
+    placeholder: "Tell us more about this task",
   },
 ];
 
