@@ -81,7 +81,7 @@ const SpanTile = styled("span")`
 const BodyContainer = styled(Box)`
   height: calc(100vh - 134px);
   //   border: 2px solid black;
-  overflow: scroll;
+  // overflow: scroll;
 `;
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
