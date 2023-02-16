@@ -136,7 +136,7 @@ const ProjectHierarchy = ({
           }}
         />
       </SearchContainer>
-      <TreeViewContainer>
+      <TreeViewContainer style={{ overflow: "auto", height: "60vh" }}>
         {treeViewData.length === 0 ? (
           // "no structures found for this project"
           <MessageContainer>

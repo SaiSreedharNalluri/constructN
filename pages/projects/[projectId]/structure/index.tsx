@@ -694,10 +694,11 @@ const Index: React.FC<IProps> = () => {
         <div>
           {
             <div
+              style={{ overflow: "hidden" }}
               ref={leftRefContainer}
               className={` ${
                 leftNav ? "visible" : "hidden"
-              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+              }  absolute z-10 border border-gray-300 `}
             >
               <div>
                 <LeftOverLay
@@ -740,10 +741,11 @@ const Index: React.FC<IProps> = () => {
             <div>
               {
                 <div
+                  style={{ overflow: "hidden" }}
                   ref={leftRefContainer}
                   className={`${
                     hierarchy ? "visible" : "hidden"
-                  } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg projHier `}
+                  }  absolute z-10 border  white-bg projHier `}
                 >
                   <div>
                     <LeftOverLay

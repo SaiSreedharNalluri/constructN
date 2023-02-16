@@ -97,7 +97,12 @@ const LeftOverLay: React.FC<IProps> = ({
         )}
       </Formik> */}
 
-      <div>
+      <div
+        style={{
+          overflow: "hidden",
+          height: "80vh",
+        }}
+      >
         {/* <SearchInput></SearchInput> */}
         {
           <>
