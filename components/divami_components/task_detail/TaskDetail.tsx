@@ -160,7 +160,13 @@ const ThirdContWatch = styled("div")`
   line-height: 19px;
 `;
 
-const ThirdContWatchName = styled("div")``;
+const ThirdContWatchName = styled("div")`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+`;
 
 const ThirdContProg = styled("div")`
   font-family: "Open Sans";
@@ -175,6 +181,11 @@ const ThirdContProg = styled("div")`
 const ThirdContProgType = styled("div")`
   display: flex;
   align-items: center;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
 `;
 
 const ThirdBodyDiv = styled("div")`
@@ -213,6 +224,11 @@ const FourthContAssigned = styled("div")`
 
 const FourthContProgType = styled("div")`
   display: flex;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
 `;
 
 const FormElementContainer = styled(Box)`
@@ -233,7 +249,13 @@ const DescriptionTitle = styled("div")`
   line-height: 19px;
 `;
 
-const DescriptionPara = styled("div")``;
+const DescriptionPara = styled("div")`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+`;
 
 const AttachmentDiv = styled("div")`
   margin-top: 30px;
@@ -383,7 +405,9 @@ const AddCommentContainer = styled("div")({
 
 const AddCommentInput = styled("input")({
   width: "100%",
-  paddingLeft: "10px",
+  paddingLeft: "20px",
+  fontFamily: "Open Sans",
+  fontSize: "14px",
 });
 
 const AddCommentButtonContainer = styled("div")({
@@ -562,6 +586,7 @@ function BasicTabs(props: any) {
               fontSize: "14px",
               fontWeight: "400",
               textTransform: "capitalize",
+              color: "#213365",
             },
 
             "& .MuiTab-root": {
@@ -593,7 +618,11 @@ function BasicTabs(props: any) {
               color: "#101F4B",
             }}
           />
-          <Tab label="Activity log" {...a11yProps(1)} />
+          <Tab
+            label="Activity log"
+            {...a11yProps(1)}
+            style={{ paddingRight: "0px" }}
+          />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -669,14 +698,17 @@ function BasicTabs(props: any) {
 
                 <ThirdContProgType style={{ color: "#101F4B" }}>
                   {taskState.TabOne.status}
-
-                  <PenIconImage
-                    onClick={() => {
-                      handleEditProgress();
-                    }}
-                    src={Edit}
-                    alt={"close icon"}
-                  />
+                  {taskState.TabOne.status ? (
+                    <PenIconImage
+                      onClick={() => {
+                        handleEditProgress();
+                      }}
+                      src={Edit}
+                      alt={"close icon"}
+                    />
+                  ) : (
+                    <></>
+                  )}
                 </ThirdContProgType>
               </ThirdContRight>
             </ProgressStateFalse>
@@ -926,10 +958,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
     });
   }, []);
 
-  const onDeleteTask = (status: any) => {
+  const onDeleteTask = () => {
     setshowPopUp(false);
-    console.log("status", status);
-    console.log(deleteTheTask, "deleteTheTask");
     deleteTheTask(task);
   };
 

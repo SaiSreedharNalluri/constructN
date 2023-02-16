@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import Header from '../../../../components/divami_components/header/Header';
-import Treelist from '../../../../components/container/treeList';
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Header from "../../../../components/divami_components/header/Header";
+import Treelist from "../../../../components/container/treeList";
 import {
   assignProjectUser,
   getProjectDetails,
@@ -9,19 +9,19 @@ import {
   removeProjectUser,
   updateProjectCover,
   updateProjectInfo,
-} from '../../../../services/project';
-import { IProjectUsers } from '../../../../models/IProjects';
-import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
-import authHeader from '../../../../services/auth-header';
-import CollapsableMenu from '../../../../components/layout/collapsableMenu';
-import 'react-tabs/style/react-tabs.css';
-import { ChildrenEntity } from '../../../../models/IStructure';
-import { AxiosResponse } from 'axios';
-import { getStructureHierarchy } from '../../../../services/structure';
-import ProjectInfo from '../../../../components/container/projectInfo';
-import ProjectUserAdd from '../../../../components/container/projectUsersAdd';
-import { toast } from 'react-toastify';
-import SidePanelMenu from '../../../../components/divami_components/side-panel/SidePanel';
+} from "../../../../services/project";
+import { IProjectUsers } from "../../../../models/IProjects";
+import { Tabs, TabList, Tab, TabPanel } from "react-tabs";
+import authHeader from "../../../../services/auth-header";
+import CollapsableMenu from "../../../../components/layout/collapsableMenu";
+import "react-tabs/style/react-tabs.css";
+import { ChildrenEntity } from "../../../../models/IStructure";
+import { AxiosResponse } from "axios";
+import { getStructureHierarchy } from "../../../../services/structure";
+import ProjectInfo from "../../../../components/container/projectInfo";
+import ProjectUserAdd from "../../../../components/container/projectUsersAdd";
+import { toast } from "react-toastify";
+import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 const Editproject: React.FC = () => {
   const router = useRouter();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
@@ -44,7 +44,7 @@ const Editproject: React.FC = () => {
           setStructureData(response.data.result[0]);
         })
         .catch((error) => {
-          console.log('error', error);
+          console.log("error", error);
         });
       getProjectDetails(router.query.projectId as string)
         .then((response) => {
@@ -82,7 +82,7 @@ const Editproject: React.FC = () => {
     updateProjectInfo(projectInfo, router.query.projectId as string)
       .then((response) => {
         if (response.success === true) {
-          toast.success('Project details updated sucessfully');
+          toast.success("Project details updated sucessfully");
           window.location.reload();
         }
       })
@@ -108,12 +108,12 @@ const Editproject: React.FC = () => {
   };
   const handleImageUPload = (e: any) => {
     const formData = new FormData();
-    formData.append('file', e.file);
+    formData.append("file", e.file);
     updateProjectCover(formData, router.query.projectId as string)
       .then((response) => {
-        console.log('response', response);
+        console.log("response", response);
         if (response?.success === true) {
-          toast.success('Project cover photo updated sucessfully');
+          toast.success("Project cover photo updated sucessfully");
           setProjectData(response.result);
         }
       })
@@ -133,9 +133,7 @@ const Editproject: React.FC = () => {
           {/* <CollapsableMenu onChangeData={() => { }} /> */}
           {/* <CollapsableMenu onChangeData={() => { }} />
           < */}
-                  <SidePanelMenu onChangeData={() => {}}/>
-
-          
+          <SidePanelMenu onChangeData={() => {}} />
         </div>
         <div className="w-full ">
           <Tabs
@@ -169,7 +167,7 @@ const Editproject: React.FC = () => {
                 <div className="flex ">
                   <div className="w-full lg:w-1/4 sm:w-1/3 2xl:w-1/5 calc-h50 overflow-y-auto  overflow-x-hidden bg-gray-200">
                     {state.length === 0 ? (
-                      'no structures found for this project'
+                      "No structures found for this project"
                     ) : (
                       <Treelist
                         treeList={state}
@@ -215,7 +213,6 @@ const Editproject: React.FC = () => {
                         {structureData?.parent}
                       </div>
                     </div> */}
-
                 </div>
                 {/* <table className='table-auto border-collapse border mt-4 border-slate-300 '>
                       <thead className="border border-solid border-gray-500">
@@ -257,13 +254,13 @@ const Editproject: React.FC = () => {
                         {structureData?.parent}
                       </div>
                     </div> */}
-
               </TabPanel>
               <TabPanel>
                 <iframe
                   className="w-95 h-93  "
-                  src={`https://dev.internal.constructn.ai/reports?projectId=${router.query.projectId as string
-                    }&token=${authHeader.getAuthToken()}`}
+                  src={`https://dev.internal.constructn.ai/reports?projectId=${
+                    router.query.projectId as string
+                  }&token=${authHeader.getAuthToken()}`}
                 />
               </TabPanel>
             </Tabs>

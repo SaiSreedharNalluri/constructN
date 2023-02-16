@@ -1,15 +1,17 @@
 import SearchIcon from "@mui/icons-material/Search";
-import {
-  Divider,
-  InputAdornment, ListItemText
-} from "@mui/material";
+import { Divider, InputAdornment, ListItemText } from "@mui/material";
 import { SetStateAction, useEffect, useState } from "react";
 import { SelectLayerContainer } from "../select-layers/StyledComponents";
 import { SelectLayerProps } from "../select-layers/Type";
 import {
-  CloseIconStyled, CustomSearchField, DrawerBox,
+  CloseIconStyled,
+  CustomSearchField,
+  DrawerBox,
   DrawerHeader,
-  DrawerHeaderTitle, DrawerSearchBar, ListItemStyled, ListStyled
+  DrawerHeaderTitle,
+  DrawerSearchBar,
+  ListItemStyled,
+  ListStyled,
 } from "./StyledComponents";
 
 const SelectTypesList = ({

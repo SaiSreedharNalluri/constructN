@@ -60,6 +60,7 @@ const Issues = ({
   issueTypesList,
   issueFilterState,
   closeIssueCreate,
+  deleteTheIssue,
   openIssueDetails,
   closeIssueDetails,
 }: any) => {
@@ -275,7 +276,7 @@ const Issues = ({
             // onClick={rightMenuClickHandler}
             onClick={() => {
               openIssueCreateFn();
-              setOpenCreateIssue(true);
+              // setOpenCreateIssue(true);
             }}
           />
         </IssuesSectionPlusImg>
@@ -355,7 +356,7 @@ const Issues = ({
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
             handleOnSort={() => {}}
-            deleteTheIssue={() => {}}
+            deleteTheIssue={deleteTheIssue}
             clickIssueEditSubmit={() => {}}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}

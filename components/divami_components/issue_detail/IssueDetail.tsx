@@ -20,6 +20,7 @@ import CreateTask from "../create-task/CreateTask";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import CreateIssue from "../create-issue/CreateIssue";
 import { ISSUE_FORM_CONFIG } from "../create-issue/body/Constants";
+import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
 import router from "next/router";
 import _ from "lodash";
@@ -663,13 +664,17 @@ function BasicTabs(props: any) {
 
                 <ThirdContProgType style={{ color: "#101F4B" }}>
                   {taskState.TabOne.status}
-                  <PenIconImage
-                    onClick={() => {
-                      handleEditProgress();
-                    }}
-                    src={Edit}
-                    alt={"close icon"}
-                  />
+                  {taskState.TabOne.status ? (
+                    <PenIconImage
+                      onClick={() => {
+                        handleEditProgress();
+                      }}
+                      src={Edit}
+                      alt={"close icon"}
+                    />
+                  ) : (
+                    <></>
+                  )}
                 </ThirdContProgType>
               </ThirdContRight>
             </ProgressStateFalse>
@@ -805,7 +810,8 @@ function BasicTabs(props: any) {
           ) : (
             <>
               <AddCommentContainer>
-                <StyledInput placeholder="Add Comment"></StyledInput>
+                <AddCommentInput placeholder="Add Comment"></AddCommentInput>
+
                 <AddCommentButtonContainer>
                   <AttachButton>
                     <Image src={Clip} alt="" />{" "}
@@ -839,8 +845,15 @@ const CustomIssueDetailsDrawer = (props: any) => {
     currentSnapshot,
     currentStructure,
     contextInfo,
+    deleteTheIssue,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
+  const [showPopUp, setshowPopUp] = useState(false);
+
+  const onDeleteIssue = (status: any) => {
+    setshowPopUp(false);
+    deleteTheIssue(issue);
+  };
   console.log("issuesdasf", issue, contextInfo);
 
   const DetailsObj = {
@@ -1096,7 +1109,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
                   setOpenCreateTask(true);
                 }}
               />
-              <DeleteIcon src={Delete} alt={"close icon"} />
+              <DeleteIcon
+                src={Delete}
+                alt={"close icon"}
+                onClick={() => {
+                  setshowPopUp(true);
+                }}
+              />
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
@@ -1126,6 +1145,17 @@ const CustomIssueDetailsDrawer = (props: any) => {
             }}
           />
         </CustomDrawer>
+      )}
+      {showPopUp && (
+        <PopupComponent
+          open={showPopUp}
+          setShowPopUp={setshowPopUp}
+          modalTitle={"Delete Issue"}
+          modalmessage={`Are you sure you want to delete this Issue "${issue.type}(#${issue._id})"?`}
+          primaryButtonLabel={"Delete"}
+          SecondaryButtonlabel={"Cancel"}
+          callBackvalue={onDeleteIssue}
+        />
       )}
     </>
   );

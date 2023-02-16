@@ -14,7 +14,9 @@ import { useEffect } from "react";
 const FormElementContainer = styled(Box)({
   marginTop: "30px",
 });
-
+const ElementContainer = styled("div")({
+  marginTop: "8px",
+});
 const DoubleFieldContainer = styled("div")({
   display: "flex",
   flexDirection: "row",
@@ -138,7 +140,7 @@ const FormWrapper = (props: any) => {
     switch (data.type) {
       case "select":
         return (
-          <>
+          <ElementContainer>
             <CustomSelect
               config={data}
               defaultValue={data.defaultValue}
@@ -149,11 +151,11 @@ const FormWrapper = (props: any) => {
               label=""
               data={data}
             />
-          </>
+          </ElementContainer>
         );
       case "textarea":
         return (
-          <>
+          <ElementContainer>
             <CustomTextArea
               id={data.id}
               variant="outlined"
@@ -175,14 +177,11 @@ const FormWrapper = (props: any) => {
               isDisabled={data.isDisabled}
               className={undefined}
             />
-            {/* <ErrorField>
-              {validate && data.isError ? "Required" : ""}
-            </ErrorField> */}
-          </>
+          </ElementContainer>
         );
       case "textfield":
         return (
-          <>
+          <ElementContainer>
             <CustomTextField
               id={data.id}
               variant="outlined"
@@ -204,45 +203,52 @@ const FormWrapper = (props: any) => {
               isDisabled={data.isDisabled}
               className={undefined}
             />
-            {/* <ErrorField>
-              {validate && data.isError ? "Required" : ""}
-            </ErrorField> */}
-          </>
+          </ElementContainer>
         );
       case "datePicker":
         return (
-          <CustomCalender
-            data={data}
-            onChange={(e: any) => {
-              handleDateChange(e, data.id);
-            }}
-          />
+          <ElementContainer>
+            {" "}
+            <CustomCalender
+              data={data}
+              onChange={(e: any) => {
+                handleDateChange(e, data.id);
+              }}
+            />
+          </ElementContainer>
         );
       case "search":
         return (
-          <CustomSearch
-            data={data}
-            handleSearchResult={(e: any, value: string) => {
-              handleSearchResult(e, value, data.id);
-            }}
-            selectedName={data.selectedName}
-          />
+          <ElementContainer>
+            <CustomSearch
+              data={data}
+              handleSearchResult={(e: any, value: string) => {
+                handleSearchResult(e, value, data.id);
+              }}
+              selectedName={data.selectedName}
+            />
+          </ElementContainer>
         );
       case "file":
         return (
-          <CustomFileInput
-            handleFileUpload={(e: any) => handleFileUpload(e, data.id)}
-            data
-          />
+          <ElementContainer>
+            <CustomFileInput
+              handleFileUpload={(e: any) => handleFileUpload(e, data.id)}
+              data
+            />
+          </ElementContainer>
         );
       case "chip":
         return (
-          <CustomTagSuggestion
-            handleChipMaking={(chipsString: any) =>
-              handleChipMaking(chipsString, data.id)
-            }
-            data={data}
-          />
+          <ElementContainer>
+            {" "}
+            <CustomTagSuggestion
+              handleChipMaking={(chipsString: any) =>
+                handleChipMaking(chipsString, data.id)
+              }
+              data={data}
+            />
+          </ElementContainer>
         );
       case "doubleField":
         return (

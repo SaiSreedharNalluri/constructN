@@ -43,8 +43,9 @@ import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
 import { styled } from "@mui/system";
 import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 import { CustomToaster } from "../../../../components/divami_components/custom-toaster/CustomToaster";
+import { log } from "node:console";
 
-interface IProps { }
+interface IProps {}
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -58,7 +59,8 @@ const OpenMenuButton = styled("div")({
   left: "22px",
   bottom: "38px",
   cursor: "pointer",
-  backgroundColour: "#fff",
+  background: "#ffffff",
+  fontFamily: "Open Sans",
 });
 const CloseMenuButton = styled("div")({
   height: "38px",
@@ -72,7 +74,7 @@ const CloseMenuButton = styled("div")({
   alignItems: "center",
   cursor: "pointer",
   zIndex: "99",
-  backgroundColour: "#fffff",
+  backgroundColor: "#fffff !important",
 });
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
@@ -202,6 +204,20 @@ const Index: React.FC<IProps> = () => {
       getStructureList(router.query.projectId as string)
         .then((response) => {
           setStructuresList(response.data.result);
+
+          if (response.data.result.length > 0) {
+            if (router.query.structId !== undefined) {
+              let structs: IStructure[] = response.data.result;
+              setStructure(
+                structs.find((e) => {
+                  console.log("finding structure: ", e._id);
+                  if (e._id === router.query.structId) {
+                    return e;
+                  }
+                })
+              );
+            } else setStructure(response.data.result[0]);
+          }
         })
         .catch((error) => {
           toast.error("failed to load data");
@@ -226,7 +242,9 @@ const Index: React.FC<IProps> = () => {
   };
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
+    //console.log('Loaded structures: ', structuresList);
     let currentStructure = structuresList.find((e) => {
+      //console.log('finding structure: ', e._id);
       if (e._id === structure._id) {
         return e;
       }
@@ -288,9 +306,11 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
-                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
-                  }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${
+                  structure?._id
+                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
+                  currentProjectId as string
+                }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -339,10 +359,11 @@ const Index: React.FC<IProps> = () => {
       case "issue":
         switch (toolInstance.toolAction) {
           case "issueView":
-            console.log("trying to open issue View");
+            //console.log('trying to open issue View');
             setOpenIssueView(true);
             break;
           case "issueCreate":
+          //setOpenCreateIssue(true);
           case "issueCreateSuccess":
           case "issueCreateFail":
           case "issueSelect":
@@ -597,7 +618,8 @@ const Index: React.FC<IProps> = () => {
         (item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
         ) ||
-          formData?.assigneesData?.length == 0 || !formData?.assigneesData) &&
+          formData?.assigneesData?.length == 0 ||
+          !formData?.assigneesData) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
           !formData.fromDate) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
@@ -609,7 +631,7 @@ const Index: React.FC<IProps> = () => {
       filterData: formData,
     });
   };
-  console.log(issuesList, "issuesListissuesList")
+  console.log(issuesList, "issuesListissuesList");
   const closeFilterOverlay = () => {
     setIssueList(issueFilterList);
     setIssueFilterState({
@@ -641,7 +663,7 @@ const Index: React.FC<IProps> = () => {
   // };
 
   const handleOnTaskFilter = (formData: any) => {
-    console.log("structure/index.tsx", formData, taskFilterList)
+    console.log("structure/index.tsx", formData, taskFilterList);
     const result = taskFilterList.filter(
       (item) =>
         (formData.taskType.includes(item.type) ||
@@ -653,7 +675,8 @@ const Index: React.FC<IProps> = () => {
         (item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
         ) ||
-          formData?.assigneesData?.length == 0 || !formData?.assigneesData)
+          formData?.assigneesData?.length == 0 ||
+          !formData?.assigneesData)
       // &&
       // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
       //   !formData.fromDate) &&
@@ -666,7 +689,6 @@ const Index: React.FC<IProps> = () => {
       filterData: formData,
     });
   };
-
 
   const closeTaskFilterOverlay = () => {
     setTasksList(taskFilterList);
@@ -739,8 +761,9 @@ const Index: React.FC<IProps> = () => {
           {
             <div
               ref={leftRefContainer}
-              className={` ${leftNav ? "visible" : "hidden"
-                } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+              className={` ${
+                leftNav ? "visible" : "hidden"
+              } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
             >
               <div>
                 <LeftOverLay
@@ -756,6 +779,7 @@ const Index: React.FC<IProps> = () => {
                         getCurrentStructureFromStructureList(structureData)
                       );
 
+                      // setStructure(structureData);
                       getIssues(structureData._id);
 
                       getTasks(structureData._id);
@@ -784,8 +808,9 @@ const Index: React.FC<IProps> = () => {
               {
                 <div
                   ref={leftRefContainer}
-                  className={`${hierarchy ? "visible" : "hidden"
-                    } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg projHier `}
+                  className={`${
+                    hierarchy ? "visible" : "hidden"
+                  } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg projHier `}
                 >
                   <div>
                     <LeftOverLay
@@ -910,6 +935,7 @@ const Index: React.FC<IProps> = () => {
               issueFilterState={issueFilterState}
               closeIssueCreate={closeIssueCreate}
               closeTaskCreate={closeTaskCreate}
+              deleteTheIssue={deleteTheIssue}
               openIssueDetails={openIssueDetails}
               openTaskDetails={openTaskDetails}
               closeTaskDetails={closeTaskDetails}

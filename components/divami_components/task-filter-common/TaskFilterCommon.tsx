@@ -145,11 +145,11 @@ const TaskFilterCommon: React.FC<any> = ({
       title: "Issue Type",
       selectAllStatus: "T",
       options: [
-        { optionTitle: "safety", optionStatus: "T" },
-        { optionTitle: "buildingCode", optionStatus: "T" },
-        { optionTitle: "clash", optionStatus: "F" },
-        { optionTitle: "commissioning", optionStatus: "T" },
-        { optionTitle: "design", optionStatus: "F" },
+        { optionTitle: "Safety", optionStatus: "T" },
+        { optionTitle: "BuildingCode", optionStatus: "T" },
+        { optionTitle: "Clash", optionStatus: "F" },
+        { optionTitle: "Commissioning", optionStatus: "T" },
+        { optionTitle: "Design", optionStatus: "F" },
       ],
     },
     {
