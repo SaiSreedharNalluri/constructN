@@ -7,6 +7,8 @@ import * as React from "react";
 import { styled } from "@mui/system";
 import Box from "@mui/material/Box";
 import { useEffect } from "react";
+import calender from "../../../public/divami_icons/calender.svg";
+import dayjs from "dayjs";
 
 const CustomDatePicker = styled(DatePicker)({
   border: "1px solid #36415d",
@@ -45,21 +47,26 @@ const CustomDatePickerInputField = styled(TextField)({
     textTransform: "uppercase",
   },
 });
-
+//data?.defaultValue
 const CustomCalender = (props: any) => {
   const { data, onChange, hideTextField = false } = props;
   const [value, setValue] = React.useState<Dayjs | null>(
-    data?.defaultValue || null
+    dayjs(data?.defaultValue) || null
   );
   useEffect(() => {
-    setValue(data?.defaultValue);
+    setValue(dayjs(data?.defaultValue));
   }, [data?.defaultValue]);
   return (
     <div data-testid="custom-calender-parent">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CustomDatePicker
+          // components={{
+          //   OpenPickerIcon: calender,
+          // }}
           label={"MM/DD/YYYY"}
           value={value}
+          minDate={data?.disableAll ? value : null}
+          maxDate={data?.disableAll ? value : null}
           onChange={(newValue: any) => {
             setValue(newValue);
             onChange(newValue);
