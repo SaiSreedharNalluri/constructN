@@ -144,3 +144,10 @@ export const ArrowUpContainer = styled("div")({
 });
 
 
+export const MessageDiv = styled("div")({
+  // border: "1px solid red",
+  // marginLeft: "10px",
+  marginTop:"50px"
+});
+
+

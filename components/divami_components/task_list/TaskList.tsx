@@ -42,6 +42,7 @@ import {
   FunnelIcon,
   HeaderContainer,
   HorizontalLine,
+  MessageDiv,
   MiniHeaderContainer,
   MiniSymbolsContainer,
   SearchAreaContainer,
@@ -174,7 +175,7 @@ const CustomTaskListDrawer = (props: any) => {
   };
 
   const handleDatesSort = () => {
-    console.log(filteredTaskList, "filteredTaskList")
+    console.log(filteredTaskList, "filteredTaskList");
     let sorted;
     if (sortOrder === "asc") {
       sorted = filteredTaskList.sort((a: any, b: any) => {
@@ -195,12 +196,18 @@ const CustomTaskListDrawer = (props: any) => {
     let sorted;
     if (sortOrder === "asc") {
       sorted = filteredTaskList.sort((a: any, b: any) => {
-        return new Date(a.due_date ? a.due_date : new Date()).valueOf() - new Date(b.due_date ? b.due_date : new Date()).valueOf();
+        return (
+          new Date(a.due_date ? a.due_date : new Date()).valueOf() -
+          new Date(b.due_date ? b.due_date : new Date()).valueOf()
+        );
       });
       setSortOrder("desc");
     } else {
       sorted = filteredTaskList.sort((a: any, b: any) => {
-        return new Date(b.due_date ? b.due_date : new Date()).valueOf() - new Date(a.due_date ? a.due_date : new Date()).valueOf();
+        return (
+          new Date(b.due_date ? b.due_date : new Date()).valueOf() -
+          new Date(a.due_date ? a.due_date : new Date()).valueOf()
+        );
       });
       setSortOrder("asc");
     }
@@ -359,51 +366,55 @@ const CustomTaskListDrawer = (props: any) => {
 
       <BodyContainer>
         <Box sx={{ marginTop: "15px" }}>
-          {filteredTaskList.length > 0 ? filteredTaskList.map((val: any) => {
-            return (
-              <>
-                <BodyInfo
-                  onClick={() => {
-                    handleViewTask(val);
-                  }}
-                >
-                  <FirstHeader>
-                    <Image
-                      src={
-                        val.type === "RFI"
-                          ? RFIList
-                          : val.type === "Transmittals"
+          {filteredTaskList.length > 0 ? (
+            filteredTaskList.map((val: any) => {
+              return (
+                <>
+                  <BodyInfo
+                    onClick={() => {
+                      handleViewTask(val);
+                    }}
+                  >
+                    <FirstHeader>
+                      <Image
+                        src={
+                          val.type === "RFI"
+                            ? RFIList
+                            : val.type === "Transmittals"
                             ? TransmittalList
                             : val.type === "Submittals"
-                              ? SubmittalList
-                              : val.type === "Transmittals"
-                                ? TransmittalList
-                                : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : ""
-                      }
-                      alt="Arr"
-                    />
-                    <BodyContTitle>
-                      {val.type} (#{val.id})
-                    </BodyContTitle>
-                  </FirstHeader>
-                  <SecondHeader>
-                    <div>{val.priority} Priority</div>
-                  </SecondHeader>
-                  <ThirdHeader>
-                    <div>{val.assignee}</div>
-                    <DueDateDiv>
-                      Due by {Moment(val.due_date).format("DD MMM 'YY")}
-                    </DueDateDiv>
-                  </ThirdHeader>
-                </BodyInfo>
-                <HorizontalLine></HorizontalLine>
-              </>
-            );
-          }) :
-            <p>No task matches the search</p>
-          }
+                            ? SubmittalList
+                            : val.type === "Transmittals"
+                            ? TransmittalList
+                            : val.type === "Transmittals"
+                            ? TransmittalList
+                            : ""
+                        }
+                        alt="Arr"
+                      />
+                      <BodyContTitle>
+                        {val.type} (#{val.id})
+                      </BodyContTitle>
+                    </FirstHeader>
+                    <SecondHeader>
+                      <div>{val.priority} Priority</div>
+                    </SecondHeader>
+                    <ThirdHeader>
+                      <div>{val.assignee}</div>
+                      <DueDateDiv>
+                        Due by {Moment(val.due_date).format("DD MMM 'YY")}
+                      </DueDateDiv>
+                    </ThirdHeader>
+                  </BodyInfo>
+                  <HorizontalLine></HorizontalLine>
+                </>
+              );
+            })
+          ) : (
+            <MessageDiv>
+              <p>No task matches the search</p>
+            </MessageDiv>
+          )}
         </Box>
       </BodyContainer>
       {/* <LoadMoreContainer>

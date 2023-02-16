@@ -164,4 +164,13 @@ export const SearchAreaContainer = styled('div')({
   justifyContent: 'space-between',
   width: '100%',
   gap: '10px',
+  marginTop:"30px"
+});
+
+
+
+export const MessageDiv = styled("div")({
+  // border: "1px solid red",
+  // marginLeft: "10px",
+  marginTop:"50px"
 });

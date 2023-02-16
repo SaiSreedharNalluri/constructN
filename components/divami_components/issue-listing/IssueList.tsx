@@ -32,6 +32,7 @@ import {
   FunnelIcon,
   HeaderContainer,
   HorizontalLine,
+  MessageDiv,
   MiniHeaderContainer,
   MiniSymbolsContainer,
   SearchGlassIcon,
@@ -315,59 +316,63 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
       <BodyContainer>
         <Box sx={{ marginTop: "15px" }}>
-          {filteredIssuesList.length ? filteredIssuesList.map((val: any, index: number) => {
-            return (
-              <div key={index}>
-                <BodyInfo
-                  onClick={() => {
-                    handleViewIssue(val);
-                  }}
-                >
-                  <FirstHeader>
-                    <Image
-                      src={
-                        val.type === "RFI"
-                          ? RFIList
-                          : val.type === "Safety"
+          {filteredIssuesList.length ? (
+            filteredIssuesList.map((val: any, index: number) => {
+              return (
+                <div key={index}>
+                  <BodyInfo
+                    onClick={() => {
+                      handleViewIssue(val);
+                    }}
+                  >
+                    <FirstHeader>
+                      <Image
+                        src={
+                          val.type === "RFI"
+                            ? RFIList
+                            : val.type === "Safety"
                             ? HourglassIcon
                             : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Clash"
-                                ? SubmittalList
-                                : val.type === "Commissioning"
-                                  ? commission
-                                  : val.type === "Building code"
-                                    ? HourglassIcon
-                                    : val.type === "Design"
-                                      ? designIcon
-                                      : val.type === "Submittals"
-                                        ? SubmittalList
-                                        : ""
-                      }
-                      alt="Arrow"
-                    />
-                    <BodyContTitle>
-                      {val.type} (#{val._id})
-                    </BodyContTitle>
-                  </FirstHeader>
+                            ? TransmittalList
+                            : val.type === "Clash"
+                            ? SubmittalList
+                            : val.type === "Commissioning"
+                            ? commission
+                            : val.type === "Building code"
+                            ? HourglassIcon
+                            : val.type === "Design"
+                            ? designIcon
+                            : val.type === "Submittals"
+                            ? SubmittalList
+                            : ""
+                        }
+                        alt="Arrow"
+                      />
+                      <BodyContTitle>
+                        {val.type} (#{val._id})
+                      </BodyContTitle>
+                    </FirstHeader>
 
-                  <SecondHeader>
-                    <div>{val.priority} Priority</div>
-                  </SecondHeader>
+                    <SecondHeader>
+                      <div>{val.priority} Priority</div>
+                    </SecondHeader>
 
-                  <ThirdHeader>
-                    <div>{val.assignees[0].firstName}</div>
-                    <DueDateDiv>
-                      Due by {Moment(val.dueDate).format("DD MMM 'YY")}
-                    </DueDateDiv>
-                  </ThirdHeader>
-                </BodyInfo>
-                <HorizontalLine></HorizontalLine>
-              </div>
-            );
-          })
-            : <p>No issue matches the search</p>
-          }
+                    <ThirdHeader>
+                      <div>{val.assignees[0].firstName}</div>
+                      <DueDateDiv>
+                        Due by {Moment(val.dueDate).format("DD MMM 'YY")}
+                      </DueDateDiv>
+                    </ThirdHeader>
+                  </BodyInfo>
+                  <HorizontalLine></HorizontalLine>
+                </div>
+              );
+            })
+          ) : (
+            <MessageDiv>
+              <p>No issue matches the search</p>
+            </MessageDiv>
+          )}
         </Box>
       </BodyContainer>
       {/* <LoadMoreContainer>
@@ -408,9 +413,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => { }}
-            deleteTheIssue={() => { }}
-            clickIssueEditSubmit={() => { }}
+            handleOnSort={() => {}}
+            deleteTheIssue={() => {}}
+            clickIssueEditSubmit={() => {}}
             issueFilterState={issueFilterState}
           />
         </Drawer>
