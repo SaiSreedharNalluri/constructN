@@ -92,6 +92,12 @@ export const HeaderLabelContainer = styled(Box)({
   justifyContent: "space-between",
   alignItems: "center",
   padding: "20px 22px 15px 19px",
+
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
 });
 
 export const SearchContainer = styled(Box)({
