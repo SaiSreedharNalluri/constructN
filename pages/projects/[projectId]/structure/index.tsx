@@ -35,6 +35,7 @@ import TaskCreate from '../../../../components/container/rightFloatingMenu/taskM
 import IssueList from '../../../../components/container/rightFloatingMenu/issueMenu/issueList';
 import { it } from 'node:test';
 import Moment from 'moment';
+import { deleteAttachment } from '../../../../services/attachments';
 import { log } from 'node:console';
 
 interface IProps {}
@@ -61,8 +62,6 @@ const Index: React.FC<IProps> = () => {
   const [loggedInUserId, SetLoggedInUserId] = useState('');
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
-  const [isIssueFilter, setIsIssueFilter] = useState(false);
-  const [isTaslFilter, setIsTaskFilter] = useState(false);
   const [issuePriorityList, setIssuePriorityList] = useState<[string]>(['']);
   const [issueStatusList, setIssueStatusList] = useState<[string]>(['']);
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
@@ -130,22 +129,20 @@ const Index: React.FC<IProps> = () => {
       getStructureList(router.query.projectId as string)
         .then((response) => {
           setStructuresList(response.data.result);
-          
-          if(response.data.result.length>0){
-            if(router.query.structId!==undefined)
-            {
-              let structs:IStructure[] = response.data.result;
-            setStructure(structs.find((e) => {
-              console.log('finding structure: ', e._id);
-              if (e._id === router.query.structId) {
-                return e;
-              }
-            }));
-            }
-            else
-            setStructure(response.data.result[0]);
-          }
 
+          if (response.data.result.length > 0) {
+            if (router.query.structId !== undefined) {
+              let structs: IStructure[] = response.data.result;
+              setStructure(
+                structs.find((e) => {
+                  console.log('finding structure: ', e._id);
+                  if (e._id === router.query.structId) {
+                    return e;
+                  }
+                })
+              );
+            } else setStructure(response.data.result[0]);
+          }
         })
         .catch((error) => {
           toast.error('failed to load data');
@@ -290,7 +287,7 @@ const Index: React.FC<IProps> = () => {
             setOpenIssueView(true);
             break;
           case 'issueCreate':
-            //setOpenCreateIssue(true);
+          //setOpenCreateIssue(true);
           case 'issueCreateSuccess':
           case 'issueCreateFail':
           case 'issueSelect':
@@ -586,6 +583,34 @@ const Index: React.FC<IProps> = () => {
         console.log('error', error);
       });
   };
+  const responseAttachmentData = (data: any) => {
+    issueFilterList.map((issueObj) => {
+      if (issueObj._id === data[0]?.entity) {
+        data.map((dataObj: any) => {
+          issueObj.attachments.push(dataObj);
+        });
+      }
+    });
+    setIssueList(issueFilterList);
+  };
+  const deleteTheAttachment = (attachmentId: string) => {
+    deleteAttachment(attachmentId)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success(response.message);
+          issueFilterList.map((issueObj) => {
+            const index = issueObj.attachments.findIndex(
+              (obj) => obj._id === attachmentId
+            );
+            issueObj.attachments.splice(index, 1);
+          });
+          setIssueList(issueFilterList);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -724,6 +749,8 @@ const Index: React.FC<IProps> = () => {
                 handleOnSort={handleOnIssueSort}
                 deleteTheIssue={deleteTheIssue}
                 clickIssueEditSubmit={clickIssueEditSubmit}
+                responseAttachmentData={responseAttachmentData}
+                deleteTheAttachment={deleteTheAttachment}
               ></IssueList>
             </div>
           </div>

@@ -16,22 +16,6 @@ export const createAttachment = (entityID: string, attachmentObj: object) => {
       throw error.response.data;
     });
 };
-export const editAttachment = (attachmentId: string, attachmentObj: object) => {
-  return instance
-    .post(
-      `${process.env.NEXT_PUBLIC_HOST}/attachments/:${attachmentId}`,
-      attachmentObj,
-      {
-        headers: authHeader.authHeader(),
-      }
-    )
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      throw error.response.data;
-    });
-};
 export const getAttachmentsList = async (entityID: string) => {
   return await instance
     .get(`${process.env.NEXT_PUBLIC_HOST}/attachments?entity=${entityID}`, {
@@ -46,7 +30,7 @@ export const getAttachmentsList = async (entityID: string) => {
 };
 export const getAttachment = async (attachmentId: string) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/attachments/:${attachmentId}`, {
+    .get(`${process.env.NEXT_PUBLIC_HOST}/attachments/${attachmentId}`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -58,7 +42,7 @@ export const getAttachment = async (attachmentId: string) => {
 };
 export const deleteAttachment = async (attachmentId: string) => {
   return await instance
-    .delete(`${process.env.NEXT_PUBLIC_HOST}/attachments/:${attachmentId}`, {
+    .delete(`${process.env.NEXT_PUBLIC_HOST}/attachments/${attachmentId}`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
