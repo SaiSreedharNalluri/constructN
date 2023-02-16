@@ -13,8 +13,6 @@ const HeaderContainer = styled(Box)({
   alignItems: "center",
   width: "100%",
   borderBottom: "1px solid #d9d9d9",
-  position: "sticky",
-  top: 0,
 });
 const TitleContiner = styled(Box)({
   width: "100%",
