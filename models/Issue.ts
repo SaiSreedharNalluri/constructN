@@ -1,4 +1,4 @@
-import { IContext } from "./ITools";
+import { IContext } from './ITools';
 
 export interface Issue {
   title: string;
@@ -20,6 +20,7 @@ export interface Issue {
       name: string;
       url: string;
       entity: string;
+      _id: string;
     }
   ];
   createdAt: string;

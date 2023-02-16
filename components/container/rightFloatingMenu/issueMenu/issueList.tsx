@@ -19,6 +19,13 @@ import {
   faArrowUpAZ,
   faArrowDown19,
   faArrowUp91,
+  faFile,
+  faFilePdf,
+  faFileText,
+  faFileAudio,
+  faFileImage,
+  faFileExcel,
+  faFileCsv,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -41,6 +48,7 @@ import { CSVLink } from 'react-csv';
 import _ from 'lodash';
 import { getTagsList } from '../../../../services/tags';
 import { IContext, ITools } from '../../../../models/ITools';
+import MultipleFileUpload from '../../multipleFileUpload';
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
@@ -51,6 +59,8 @@ interface IProps {
   closeFilterOverlay: () => void;
   deleteTheIssue: (issueObj: object) => void;
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
+  responseAttachmentData: (formData: any) => void;
+  deleteTheAttachment: (attachmentId: string) => void;
 }
 const IssueList: React.FC<IProps> = ({
   issueToolClicked,
@@ -62,6 +72,8 @@ const IssueList: React.FC<IProps> = ({
   closeFilterOverlay,
   deleteTheIssue,
   clickIssueEditSubmit,
+  responseAttachmentData,
+  deleteTheAttachment,
 }) => {
   const router = useRouter();
   const [isOpenSort, setIsOpenSort] = useState(false);
@@ -73,9 +85,14 @@ const IssueList: React.FC<IProps> = ({
   const [issueViewMode, setIssueViewMode] = useState('list'); //list, filter, detail
   const [issueObj, setIssueObj] = useState<Issue>();
   const [open, setOpen] = useState(false);
+  const [openPreview, setOpenPreview] = useState(false);
+  const [attachmentId, setAttachmentId] = useState('');
+  const [deletionType, setDeletionType] = useState('issueDelete'); //issueDelete,attachmentDelete
   const [tagList, setTagList] = useState<[string]>(['']);
+  const [fileType, setFileType] = useState('');
+  const [previewLoad, setPreviewLoad] = useState(false);
   let toolInstance: ITools = { toolName: 'issue', toolAction: 'issueSelect' };
-
+  const [url, setUrl] = useState('');
   interface user {
     label: string;
     value: string;
@@ -106,6 +123,74 @@ const IssueList: React.FC<IProps> = ({
       });
     });
   }
+  const getFileIcon = (fileName: string) => {
+    let extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'txt':
+        return <FontAwesomeIcon icon={faFileText} className="mr-2" />;
+      case 'pdf':
+        return <FontAwesomeIcon icon={faFilePdf} className="mr-2" />;
+      case 'mp3':
+      case 'mp4':
+        return <FontAwesomeIcon icon={faFileAudio} className="mr-2" />;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        return <FontAwesomeIcon icon={faFileImage} className="mr-2 w-5 h-5" />;
+      case 'xls':
+      case 'xlsx':
+        return <FontAwesomeIcon icon={faFileExcel} className="mr-2 w-5 h-5" />;
+      case 'doc':
+      case 'docx':
+        return <FontAwesomeIcon icon={faFileExcel} className="mr-2 w-5 h-5" />;
+      case 'csv':
+        return <FontAwesomeIcon icon={faFileCsv} className="mr-2 w-5 h-5" />;
+      default:
+        return <FontAwesomeIcon icon={faFile} className="mr-2" />;
+    }
+  };
+  const getFileType = (attachment: any) => {
+    let extension = attachment.name.split('.').pop()?.toLowerCase();
+    if (previewLoad) {
+      setPreviewLoad(false);
+    }
+    setOpenPreview(true);
+    switch (extension) {
+      case 'pdf':
+        setFileType('application/pdf');
+        setPreviewLoad(true);
+        setUrl(
+          'https://docs.google.com/viewer?url=' +
+            attachment.url +
+            '&embedded=true'
+        );
+        break;
+      case 'mp3':
+      case 'mp4':
+        setFileType('video/mp4');
+        setUrl(attachment.url);
+        break;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        setFileType('image/jpg');
+        setUrl(attachment.url);
+        setPreviewLoad(true);
+        break;
+      case 'doc':
+      case 'docx':
+        setFileType(
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        );
+        setUrl(attachment.url);
+        break;
+      case 'csv':
+        setFileType('text/csv');
+        break;
+      default:
+        setUrl(attachment.url);
+    }
+  };
   const getDownladableIssueList = (issL = issuesList) => {
     let myL = issL.map((iss) => {
       let a = iss.assignees.map((a) => {
@@ -222,6 +307,10 @@ const IssueList: React.FC<IProps> = ({
       });
     });
   }
+  const responseData = (formData: any) => {
+    responseAttachmentData(formData);
+    setIssueViewMode('list');
+  };
   const clickIssueHandleEditSubmit = (editObj: any) => {
     let userIdList: any[] = [];
     let editTagList: any[] = [];
@@ -633,6 +722,7 @@ const IssueList: React.FC<IProps> = ({
                     className="mt-2 cursor-pointer"
                     onClick={() => {
                       setOpen(true);
+                      setDeletionType('issueDelete');
                     }}
                   />
                 </div>
@@ -702,8 +792,37 @@ const IssueList: React.FC<IProps> = ({
               </div>
               <div>
                 <h6 className="underline mt-3">Attachments</h6>
-                <input className="border border-solid border-gray-400 rounded p-1 w-10/12"></input>
+                <MultipleFileUpload
+                  issueId={issueObj?._id as string}
+                  responseData={responseData}
+                />
               </div>
+              <div>
+                {issueObj?.attachments.map((attachment) => {
+                  return (
+                    <div key={attachment._id}>
+                      {getFileIcon(attachment.name)}
+                      <a
+                        onClick={() => {
+                          getFileType(attachment);
+                        }}
+                      >
+                        {attachment.name}
+                      </a>
+                      <FontAwesomeIcon
+                        icon={faTrashCan}
+                        className="mt-2 cursor-pointer pl-5"
+                        onClick={() => {
+                          setOpen(true);
+                          setDeletionType('attachmentDelete');
+                          setAttachmentId(attachment._id);
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+
               <div className=" mt-2 ">
                 <h6 className="underline ">Related Tags</h6>
                 <div className="grid grid-cols-3 gap-2 text-center  mt-2">
@@ -1006,7 +1125,6 @@ const IssueList: React.FC<IProps> = ({
   });
 
   const handleOnFilterEvent = (formData: object) => {
-    console.log('filter', formData);
     handleOnFilter(formData);
     setIssueViewMode('list');
   };
@@ -1015,7 +1133,11 @@ const IssueList: React.FC<IProps> = ({
     setIssueViewMode('list');
   };
   const handleDeleteItem = () => {
-    deleteTheIssue(issueObj as Issue);
+    if (deletionType === 'issueDelete') {
+      deleteTheIssue(issueObj as Issue);
+    } else if (deletionType === 'attachmentDelete') {
+      deleteTheAttachment(attachmentId);
+    }
     setOpen(false);
     setTimeout(() => {
       setIssueViewMode('list');
@@ -1053,6 +1175,22 @@ const IssueList: React.FC<IProps> = ({
             >
               Confirm
             </button>
+          </div>
+        </Modal>
+      </div>
+      <div>
+        <Modal
+          open={openPreview}
+          onClose={() => {
+            setOpenPreview(false);
+          }}
+        >
+          <div>
+            {previewLoad ? (
+              <embed type={fileType} src={url} width={600} height={800} />
+            ) : (
+              <h1 className="p-20 w-10/12 h-10/12">PreView not avalible</h1>
+            )}
           </div>
         </Modal>
       </div>

@@ -12,11 +12,6 @@ const ChangeIcon: React.FC<IProps> = ({ handleImageUPload }) => {
       .nullable()
       .required('A file is required')
       .test(
-        'Fichier taille',
-        'upload file',
-        (value) => !value || (value && value.size <= 1024 * 1024)
-      )
-      .test(
         'format',
         'upload file',
         (value) => !value || (value && SUPPORTED_FORMATS.includes(value.type))
