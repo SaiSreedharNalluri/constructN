@@ -276,7 +276,7 @@ const Issues = ({
             // onClick={rightMenuClickHandler}
             onClick={() => {
               openIssueCreateFn();
-              // setOpenCreateIssue(true);
+              setOpenCreateIssue(true);
             }}
           />
         </IssuesSectionPlusImg>

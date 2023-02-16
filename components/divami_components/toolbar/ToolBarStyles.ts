@@ -9,7 +9,7 @@ export const HotspotBox = styled("div")({
   display: "flex",
   /* justify-content: space-between; */
   alignItems: "center",
-  padding: "15px 20px",
+  padding: "15px 20px 14px 20px",
 });
 
 export const HotspotTitleDiv = styled("div")({});
@@ -38,7 +38,7 @@ export const TaskBox = styled("div")({
   display: "flex",
   /* justify-content: space-between; */
   alignItems: "center",
-  padding: "15px 20px",
+  padding: "15px 20px 14px 20px",
   "& .MuiDrawer-paper": {
     height: "calc(100% - 60px)",
   },
@@ -94,7 +94,7 @@ export const TypeParentCont = styled("div")({
   borderRight: "none",
   display: "flex",
   alignItems: "center",
-  padding: "15px 20px",
+  padding: "15px 20px 14px 20px",
 });
 
 export const TypesTitle = styled("div")({
@@ -115,7 +115,7 @@ export const IssueBox = styled("div")({
   borderRight: "none",
   display: "flex",
   alignItems: "center",
-  padding: "15px 20px",
+  padding: "15px 20px 14px 20px",
 });
 
 export const IssueTitle = styled("div")({
@@ -129,7 +129,8 @@ export const LayersWrapper = styled("div")({
   borderRight: "none",
   display: "flex",
   alignItems: "center",
-  padding: "15px 20px",
+    padding: "15px 20px 14px 20px",
+
   position: "relative",
 });
 export const SelectLayersWrapper = styled("div")({
@@ -153,7 +154,7 @@ export const LayerSecondSectionCamImg = styled("div")({
 });
 
 export const LayerSecondSectionArrImg = styled("div")({
-  marginLeft: "16px",
+  marginLeft: "22px",
   cursor:"pointer"
 
   // width: '15px',
@@ -173,9 +174,17 @@ export const CameraIcon = styled(Image)({
 
 });
 
+export const  GroupIcon = styled(Image)({
+  width: "18px",
+  height: "18px",
+  cursor:"pointer"
+
+});
+
 export const DownIcon = styled(Image)({
-  // width:5px;
-  // height:7px
+  // width:"5px",
+  // height:"7px"
+ 
 });
 
 export const CompareViewBox = styled("div")({

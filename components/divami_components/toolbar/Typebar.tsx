@@ -6,6 +6,7 @@ import {
   TypesTitle,
   TypeArrowIconDiv,
   SelectLayersWrapper,
+  DownIcon,
 } from "./ToolBarStyles";
 import SelectTypesList from "../select-types/SelectTypesList";
 
@@ -26,7 +27,7 @@ const Typebar = ({
         <TypesTitle>{selectedValue}</TypesTitle>
         <TypeArrowIconDiv>
           {/* <Image src={downArrowIcon} width={12} height={12} alt="Arrow" /> */}
-          <Image src={downArrowIcon} alt="Arrow" />
+          <DownIcon src={downArrowIcon} alt="Arrow" />
         </TypeArrowIconDiv>
       </TypeParentCont>
       <SelectLayersWrapper>
