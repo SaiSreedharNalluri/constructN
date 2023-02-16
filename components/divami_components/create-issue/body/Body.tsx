@@ -29,13 +29,15 @@ const BodyContainer = styled(Box)({
   paddingRight: "20px",
   color: "#888888",
   overflowY: "auto",
+  marginTop: "50px",
+  height: "calc(100% - 100px)",
   // height: 110px;
 
   // overflow: 'scroll',
 });
 
 const FormElementContainer = styled(Box)({
-  marginTop: "30px",
+  marginTop: "20px",
 });
 
 const FormElementContainerForLastChild = styled(FormElementContainer)({

@@ -12,8 +12,6 @@ const ButtonsContainer = styled(Box)({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-
-  // position: "fixed",
 });
 
 const Footer = ({ formHandler }: any) => (
