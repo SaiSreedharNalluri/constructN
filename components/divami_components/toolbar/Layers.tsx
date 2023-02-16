@@ -1,26 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
-import layersCubeIcon from '../../../public/divami_icons/layersCubeIcon.svg';
-import mapCubeIcon from '../../../public/divami_icons/mapCubeIcon.svg';
 
-import videoCubeIcon from '../../../public/divami_icons/videoCubeIcon.svg';
-import hexagonIcon from '../../../public/divami_icons/hexagonIcon.svg';
 import cameraIcon from '../../../public/divami_icons/cameraIcon.svg';
+import hexagonIcon from '../../../public/divami_icons/hexagonIcon.svg';
 import videoRecorderIcon from '../../../public/divami_icons/videoRecorderIcon.svg';
 
 import downArrowIcon from '../../../public/divami_icons/downArrowIcon.svg';
+import SelectLayer from '../select-layers/SelectLayer';
 import {
-  LayersWrapper,
-  LayerSecondSectionHexImg,
-  LayerSecondSectionCamImg,
-  LayerSecondSectionArrImg,
-  SelectLayersWrapper,
   CameraIcon,
   DownIcon,
-  IconsContainer,
+  IconsContainer, LayerSecondSectionCamImg, LayersWrapper, SelectLayersWrapper
 } from './ToolBarStyles';
-import SelectLayer from '../select-layers/SelectLayer';
 
 const Layers = ({
   rightMenuClickHandler,
