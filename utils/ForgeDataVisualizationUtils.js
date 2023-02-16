@@ -7,15 +7,26 @@ export class ForgeDataVisualization {
         this.viewer = viewer;
         this.dataVizExtn = dataVisualizationExtension; 
         this.dataVizCore = Autodesk.DataVisualization.Core;
-        this.viewableDataMap = {};
         this.dbIdArray = [];
         this.tempDbIdArray = [];
         this.createTagTool = false;
         this.tagType = "Issue";
         this.viewableLength = 0;
         this.tempViewableLength = 0;
-        this.viewableState = {};
-        this.trackerState = {};
+        this.viewableDataMap = {};
+        this.viewableState = {
+            "360 Video": true,
+            "360 Image": true,
+            "Phone Image": true,
+            "Drone Image": true,
+
+        };
+        this.tagMap = {};
+        this.tagState = {
+            "Issue": true,
+            "Task": true
+        };
+
 
         // window.dbIdMap = this.dbIdMap;
 
@@ -57,7 +68,10 @@ export class ForgeDataVisualization {
                 break;
             }
         }
-        this.handleSelection(selectedViewable.dbId);
+        if (selectedViewable) {
+            this.handleSelection(selectedViewable.dbId);
+        }
+        
     }
 
     addListeners() {
@@ -71,25 +85,12 @@ export class ForgeDataVisualization {
         // console.log("Inside forge data visualization removeListeners: ", this.viewer);
         this.viewer.removeEventListener(this.dataVizCore.MOUSE_HOVERING, this.viewableHoveringHandler);
         this.viewer.removeEventListener(this.dataVizCore.MOUSE_CLICK, this.viewableClickHandler);
+        this.viewer.removeEventListener(this.dataVizCore.MOUSE_CLICK_OUT, this.viewableClickOutHandler);
     }
 
     addMediaData(visualizationData) {
         this.mediaMap = visualizationData;
         this.formatDataMap(this.mediaMap);
-    }
-
-    addTrackersData(issueData, taskData) {
-        let trackerMap = {};
-        if (issueData && issueData.length > 0) {
-            trackerMap["Issue"] = issueData;
-        }
-
-        if (taskData && taskData.length > 0) {
-            trackerMap["Task"] = taskData;
-        }
-
-        this.trackerMap = trackerMap;
-        this.formatDataMap(this.trackerMap);
     }
 
     setViewableState(viewableList) {
@@ -107,9 +108,22 @@ export class ForgeDataVisualization {
         }
     }
 
-    showTracker(type, show) {
-        if (type in this.trackerState) {
-            this.trackerState[type] = show;
+    addIssuesData(issuesList) {
+        this.tagMap["Issue"] = issuesList;
+        this.formatDataMap(this.tagMap);
+    }
+
+    addTasksData(tasksList) {
+        this.tagMap["Task"] = tasksList;
+        this.formatDataMap(this.tagMap);
+    }
+
+    setTagState(state) {
+        // if (type in this.tagState) {
+        //     this.tagState[type] = show;
+        // }
+        for (const tagType in state) {
+            this.tagState[tagType] = state[tagType];
         }
     }
 
@@ -131,7 +145,7 @@ export class ForgeDataVisualization {
                             position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
                         }
                         this.dbIdArray[dbIdObject.dbId] = dbIdObject;
-                        this.viewableState[viewableType] = true;
+                        // this.viewableState[viewableType] = true;
                     }
                     break;
                 case "Drone Image":
@@ -148,7 +162,7 @@ export class ForgeDataVisualization {
                             position: this.applyOffset(tag.tagPosition, this.offset),
                         }
                         this.dbIdArray[dbIdObject.dbId] = dbIdObject;;
-                        this.trackerState[viewableType] = true;
+                        // this.tagState[viewableType] = true;
                     }
                     break;
             }   
@@ -157,8 +171,13 @@ export class ForgeDataVisualization {
         console.log("Viewable data map: ", this.viewableLength);
     }
 
+    removeDataMap(type) {
+
+    }
+
     
     updateData() {
+        this.removeViewableData();
         this.getNewViewableData();
         this.loadViewableData();
         this.addListeners();
@@ -170,27 +189,31 @@ export class ForgeDataVisualization {
         const spriteColor = new THREE.Color(0xffffff);
 
         let iconUrl = "";
+        let highlightUrl = ""
         switch (iconType) {
             case 'Drone Image':
-                // iconUrl = "https://img.icons8.com/external-kosonicon-solid-kosonicon/96/null/external-drone-drone-aircraft-and-aerial-kosonicon-solid-kosonicon-8.png";
                 iconUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
+                highlightUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
             break;
             case '360 Video':
-                // iconUrl = "https://img.icons8.com/ios-glyphs/90/null/360-view.png";
-                // iconUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
                 iconUrl = "/icons/360VideoWalkInViewer.svg";
+                highlightUrl = "/icons/360VideoWalkInViewer.svg";
             break;
             case '360 Image':
                 iconUrl = "/icons/360ImageInViewer.svg";
+                highlightUrl = "/icons/360ImageInViewer.svg";
                 break;
             case 'Phone Image':
                 iconUrl = "/icons/phoneImageInViewer.svg";
+                highlightUrl = "/icons/phoneImageInViewer.svg";
                 break;
             case 'Issue':
                 iconUrl = "/icons/issuesInViewer.svg";
+                highlightUrl = "/icons/issuesInViewer.svg";
             break;
             case 'Task':
                 iconUrl = "/icons/tasksInViewer.svg";
+                highlightUrl = "/icons/tasksInViewer.svg";
             break
 
         }
@@ -200,7 +223,7 @@ export class ForgeDataVisualization {
             spriteColor,
             iconUrl,
             spriteColor,
-            iconUrl,
+            highlightUrl,
             []
           );
     }
@@ -253,7 +276,7 @@ export class ForgeDataVisualization {
     }
 
     async loadViewableData() {
-        let combinedState = {...this.viewableState, ...this.trackerState}
+        let combinedState = {...this.viewableState, ...this.tagState}
         for (let viewableType in this.viewableDataMap) {
             if(combinedState[viewableType]) {
                 console.log("Awaiting viewable data finish: ", viewableType);
@@ -329,8 +352,8 @@ export class ForgeDataVisualization {
         // console.log("Inside data viz utils: selected dbId: ", event);
         // console.log(`Sprite clicked: ${this.dbIdMap[targetDbId].name}`);
         if (targetDbId > 0) {
-            event.hasStopped = true;
-            this.handleSelection(event.dbId);
+            // event.hasStopped = true;
+            // this.handleSelection(event.dbId);
             this.passToViewerHandler(event);
         } else if (this.createTagTool) {
             this.createTempViewable(this.tagType, event);
@@ -340,7 +363,7 @@ export class ForgeDataVisualization {
 
     onSpriteClickedOut(event) {
         console.log("Inside sprite clicked out selection : ", event.dbId);
-        event.hasStopped = true;
+        // event.hasStopped = true;
         this.handleSelectionOut(event.dbId);
     
     }
@@ -373,8 +396,10 @@ export class ForgeDataVisualization {
         let dbObject = this.dbIdArray[event.dbId];
         // console.log("Inside selected dbId object: ", this.dbIdMap, dbObject);
 
-        dbObject.position = this.removeOffset(dbObject.position, this.offset);
-        this.handlerFunction(event, dbObject);
+        if (dbObject) {
+            dbObject.position = this.removeOffset(dbObject.position, this.offset);
+            this.handlerFunction(event, dbObject);
+        }
     }
 
     applyOffset(position, offset) {
@@ -395,9 +420,12 @@ export class ForgeDataVisualization {
 
     removeExistingVisualizationData() {
         if(this.viewableDataMap && Object.keys(this.viewableDataMap).length > 0) {
+            console.log("Inside remove layers in dataviz layer: ");
             this.removeViewableData();
             this.viewableDataMap = {};
-            this.dbIdArray = [];
+            this.dbIdArray.length = 0;
+            this.viewableLength = 0;
+            console.log("Inside remove layers in dataviz layer: ", this.viewableDataMap, this.dbIdArray, this.viewableLength);
         }
         this.removeListeners();
         

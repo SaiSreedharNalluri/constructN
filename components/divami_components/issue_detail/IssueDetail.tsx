@@ -81,7 +81,7 @@ const SpanTile = styled("span")`
 const BodyContainer = styled(Box)`
   height: calc(100vh - 134px);
   //   border: 2px solid black;
-  overflow: scroll;
+  // overflow: scroll;
 `;
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
@@ -311,9 +311,7 @@ const CustomTaskDrawerContainer = styled("div")`
 const ProgressEditStateButtonsContainer = styled("div")`
   display: flex;
   justify-content: space-between;
-  bottom: 0;
-  position: absolute;
-  bottom: 20px;
+  margin: 20px;
   background: white;
   width: 90%;
 `;
@@ -326,15 +324,15 @@ const AssignEditSearchContainer = styled("div")({
     width: "100%",
   },
   "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
     marginTop: "-8px",
   },
@@ -365,16 +363,17 @@ const StyledSelect = styled(Select)`
   }
 `;
 
-const AddCommentContainer = styled("div")({
-  borderTop: "1px solid #D9D9D9",
-  height: "50px",
+const AddCommentContainer = styled("div")((props: any) => ({
+  // borderTop: `${props.containerType === "float" ? "none" : "1px solid #D9D9D9"}`,
+  height: `${props.containerType === "float" ? "80px" : "50px"}`,
   display: "flex",
   position: "absolute",
   bottom: "0",
   background: "white",
   marginLeft: "-24px",
   width: "100%",
-});
+})
+)
 
 const AddCommentInput = styled("input")({
   width: "100%",
@@ -588,7 +587,7 @@ function BasicTabs(props: any) {
               color: "#101F4B",
             }}
           />
-          <Tab label="Activity log" {...a11yProps(1)} />
+          {/* <Tab label="Activity log" {...a11yProps(1)} /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -727,13 +726,13 @@ function BasicTabs(props: any) {
                   console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
-                // InputProps={{
-                //   startAdornment: (
-                //     <InputAdornment position="start">
-                //       <SearchIcon />
-                //     </InputAdornment>
-                //   ),
-                // }}
+              // InputProps={{
+              //   startAdornment: (
+              //     <InputAdornment position="start">
+              //       <SearchIcon />
+              //     </InputAdornment>
+              //   ),
+              // }}
               />
             </AssignEditSearchContainer>
           )}
@@ -791,7 +790,7 @@ function BasicTabs(props: any) {
             </RelatedTagsButton>
           </RelatedDiv>
           {progressEditState || assigneeEditState ? (
-            <>
+            <AddCommentContainer containerType="float">
               <ProgressEditStateButtonsContainer>
                 <CustomButton
                   type="outlined"
@@ -806,12 +805,11 @@ function BasicTabs(props: any) {
                   }}
                 />
               </ProgressEditStateButtonsContainer>
-            </>
+            </AddCommentContainer>
           ) : (
             <>
-              <AddCommentContainer>
+              {/* <AddCommentContainer>
                 <AddCommentInput placeholder="Add Comment"></AddCommentInput>
-
                 <AddCommentButtonContainer>
                   <AttachButton>
                     <Image src={Clip} alt="" />{" "}
@@ -820,7 +818,7 @@ function BasicTabs(props: any) {
                     <Image src={Send} alt="" />{" "}
                   </SendButton>
                 </AddCommentButtonContainer>
-              </AddCommentContainer>
+              </AddCommentContainer> */}
             </>
           )}
         </TabOneDiv>
@@ -975,8 +973,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
       (data.tags =
         (formData.length
           ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+            .filter((item: any) => item.id == "tag-suggestions")[0]
+            ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]

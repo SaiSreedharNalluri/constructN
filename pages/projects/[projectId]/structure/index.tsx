@@ -44,6 +44,7 @@ import { styled } from "@mui/system";
 import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 import { CustomToaster } from "../../../../components/divami_components/custom-toaster/CustomToaster";
 import { log } from "node:console";
+import { deleteAttachment } from "../../../../services/attachments";
 
 interface IProps {}
 const OpenMenuButton = styled("div")({
@@ -99,8 +100,6 @@ const Index: React.FC<IProps> = () => {
   const [loggedInUserId, SetLoggedInUserId] = useState("");
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
-  const [isIssueFilter, setIsIssueFilter] = useState(false);
-  const [isTaslFilter, setIsTaskFilter] = useState(false);
   const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
   const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
   const [issueTypesList, setIssueTypesList] = useState<[string]>([""]);
@@ -136,8 +135,9 @@ const Index: React.FC<IProps> = () => {
   const closeIssueCreate = () => {
     setOpenCreateIssue(false);
   };
-  const issueSubmit = (formdata: any) => {
+  const issueSubmit = (formdata: Issue) => {
     issuesList.push(formdata);
+    setIssueList(structuredClone(issuesList));
     // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
     // toolClicked(myTool);
     setOpenCreateIssue(false);
@@ -746,7 +746,34 @@ const Index: React.FC<IProps> = () => {
         console.log("error", error);
       });
   };
-
+  const responseAttachmentData = (data: any) => {
+    issueFilterList.map((issueObj) => {
+      if (issueObj._id === data[0]?.entity) {
+        data.map((dataObj: any) => {
+          issueObj.attachments.push(dataObj);
+        });
+      }
+    });
+    setIssueList(issueFilterList);
+  };
+  const deleteTheAttachment = (attachmentId: string) => {
+    deleteAttachment(attachmentId)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success(response.message);
+          issueFilterList.map((issueObj) => {
+            const index = issueObj.attachments.findIndex(
+              (obj) => obj._id === attachmentId
+            );
+            issueObj.attachments.splice(index, 1);
+          });
+          setIssueList(issueFilterList);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -989,6 +1016,8 @@ const Index: React.FC<IProps> = () => {
                 handleOnSort={handleOnIssueSort}
                 deleteTheIssue={deleteTheIssue}
                 clickIssueEditSubmit={clickIssueEditSubmit}
+                responseAttachmentData={responseAttachmentData}
+                deleteTheAttachment={deleteTheAttachment}
               ></IssueList> */}
           </div>
         </div>

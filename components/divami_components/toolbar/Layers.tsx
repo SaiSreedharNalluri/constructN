@@ -1,25 +1,17 @@
-import React, { useState } from "react";
-import Image from "next/image";
+import { useEffect, useState } from 'react';
 
-import layersCubeIcon from "../../../public/divami_icons/layersCubeIcon.svg";
-import mapCubeIcon from "../../../public/divami_icons/mapCubeIcon.svg";
 
-import videoCubeIcon from "../../../public/divami_icons/videoCubeIcon.svg";
-import hexagonIcon from "../../../public/divami_icons/hexagonIcon.svg";
-import cameraIcon from "../../../public/divami_icons/cameraIcon.svg";
-import videoRecorderIcon from "../../../public/divami_icons/videoRecorderIcon.svg";
+import cameraIcon from '../../../public/divami_icons/cameraIcon.svg';
+import hexagonIcon from '../../../public/divami_icons/hexagonIcon.svg';
+import videoRecorderIcon from '../../../public/divami_icons/videoRecorderIcon.svg';
 
-import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
+import downArrowIcon from '../../../public/divami_icons/downArrowIcon.svg';
+import SelectLayer from '../select-layers/SelectLayer';
 import {
-  LayersWrapper,
-  LayerSecondSectionHexImg,
-  LayerSecondSectionCamImg,
-  LayerSecondSectionArrImg,
-  SelectLayersWrapper,
   CameraIcon,
   DownIcon,
-} from "./ToolBarStyles";
-import SelectLayer from "../select-layers/SelectLayer";
+  IconsContainer, LayerSecondSectionCamImg, LayersWrapper, SelectLayersWrapper
+} from './ToolBarStyles';
 
 const Layers = ({
   rightMenuClickHandler,
@@ -31,28 +23,63 @@ const Layers = ({
   setOpenList,
   selectedLayersList,
 }: any) => {
+  const [layersLabels, setLayersLabels] = useState<any>([]);
+
+  useEffect(() => {
+    if (myLayersList) {
+      setLayersLabels(Object.keys(myLayersList));
+    }
+  }, [myLayersList]);
+
+  useEffect(() => {
+    console.log(layersLabels, 'siva');
+  }, [layersLabels]);
+
+  const getLayersIcons = (layersLabels: any) => {
+    console.log(layersLabels, 'layersLabels');
+    return (
+      <>
+        {layersLabels.map((label: any, index: number) => {
+          if (label === 'Phone Image') {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={hexagonIcon} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          } else if (label === '360 Image') {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={cameraIcon} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          } else if (label === '360 Video') {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={videoRecorderIcon} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          }
+        })}
+      </>
+    );
+  };
+
   return (
     <>
       <LayersWrapper onClick={onListClick}>
-        <LayerSecondSectionHexImg>
-          {/* <Image src={hexagonIcon} alt="Arrow" width={18} height={18} />{" "} */}
-          <CameraIcon src={hexagonIcon} alt="Arrow" />
-        </LayerSecondSectionHexImg>
+        <IconsContainer>
+          {selectedLayersList.length > 0
+            ? getLayersIcons(selectedLayersList)
+            : 'Select Layer'}
+        </IconsContainer>
         <LayerSecondSectionCamImg>
-          <CameraIcon src={cameraIcon} alt="Arrow" />
-          {/* <Image src={cameraIcon} width={18} height={18} alt="Arrow" />{" "} */}
-        </LayerSecondSectionCamImg>
-        <LayerSecondSectionCamImg>
-          <CameraIcon src={videoRecorderIcon} alt="Arrow" />
-        </LayerSecondSectionCamImg>
-        <LayerSecondSectionArrImg>
           <DownIcon src={downArrowIcon} alt="Arrow" />
-        </LayerSecondSectionArrImg>
+        </LayerSecondSectionCamImg>
       </LayersWrapper>
       <SelectLayersWrapper>
         <SelectLayer
           openselectlayer={openList}
-          title={"Select Layer"}
+          title={'Select Layer'}
           onCloseHandler={() => {
             setOpenList(false);
           }}
