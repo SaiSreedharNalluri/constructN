@@ -338,10 +338,7 @@ const CustomTaskListDrawer = (props: any) => {
 
       <BodyContainer>
         <Box sx={{ marginTop: "15px" }}>
-          {filteredTaskList.map((val: any) => {
-            {
-              console.log(val, "VAL");
-            }
+          {filteredTaskList.length > 0 ? filteredTaskList.map((val: any) => {
             return (
               <>
                 <BodyInfo
@@ -355,14 +352,14 @@ const CustomTaskListDrawer = (props: any) => {
                         val.type === "RFI"
                           ? RFIList
                           : val.type === "Transmittals"
-                          ? TransmittalList
-                          : val.type === "Submittals"
-                          ? SubmittalList
-                          : val.type === "Transmittals"
-                          ? TransmittalList
-                          : val.type === "Transmittals"
-                          ? TransmittalList
-                          : ""
+                            ? TransmittalList
+                            : val.type === "Submittals"
+                              ? SubmittalList
+                              : val.type === "Transmittals"
+                                ? TransmittalList
+                                : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : ""
                       }
                       alt="Arr"
                     />
@@ -383,7 +380,9 @@ const CustomTaskListDrawer = (props: any) => {
                 <HorizontalLine></HorizontalLine>
               </>
             );
-          })}
+          }) :
+            <p>No task matches the search</p>
+          }
         </Box>
       </BodyContainer>
       {/* <LoadMoreContainer>
