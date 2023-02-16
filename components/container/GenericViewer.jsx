@@ -3,7 +3,7 @@ import Moment from 'moment';
 import React, { useEffect, useState, memo, useRef, useCallback } from "react";
 import Head from "next/head";
 import Header from "./header";
-import { ForgeViewerUtils } from "../../utils/ForgeWrapper";
+import { ForgeViewerUtils } from "../../utils/ForgeWrapper2";
 import { PotreeViewerUtils } from "../../utils/PotreeWrapper";
 import {
   getPointCloudTM,
@@ -307,6 +307,27 @@ function GenericViewer(props) {
     }
   }
 
+  const handleTagListChange = (type) => {
+    console.log("Inside taglist change: ", type, issuesList, tasksList);
+    switch (currentViewMode.current) {
+      case "Design" :
+        if (forgeUtils.current) {
+          if (type === "Issue") {
+            forgeUtils.current.updateIssuesData(issuesList);
+          } else if (type === "Task") {
+            forgeUtils.current.updateTasksData(tasksList);
+          }
+        }
+        break;
+      case "Reality":
+        if (potreeUtils.current) {
+
+        }
+        break;
+    }
+
+  }
+
   const viewerEventHandler = (viewerId, event) => {
     // console.log("Inside generic viewer: ", event, );
     if (event) {
@@ -394,8 +415,8 @@ function GenericViewer(props) {
     switch (viewMode) {
       case "Design":
         if (forgeUtils.current == undefined) {
-          let forge = new ForgeViewerUtils(viewerId, viewerEventHandler.bind(this));
-          forgeUtils.current = forge;
+          forgeUtils.current= ForgeViewerUtils;
+          forgeUtils.current.initializeViewer(viewerId, viewerEventHandler);
         }
         break;
       case "Reality":
@@ -413,8 +434,8 @@ function GenericViewer(props) {
     switch (compareViewMode) {
       case "Design":
         if (forgeCompareUtils.current == undefined) {
-          let forge = new ForgeViewerUtils(viewerId, viewerEventHandler.bind(this));
-          forgeCompareUtils.current = forge;
+          forgeCompareUtils.current= ForgeViewerUtils;
+          forgeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler);
         }
         break;
       case "Reality":
@@ -442,12 +463,13 @@ function GenericViewer(props) {
   }
 
   async function loadLayerData() {
+    console.log("Load layer data: ", issuesList, tasksList);
     switch (currentViewMode.current) {
       case "Design":
         if (forgeUtils.current != undefined) {
-          let data = await getRealityLayers(structure, realityMap);
-          // forgeUtils.current.updateTasksData(tasksList);
           forgeUtils.current.updateIssuesData(issuesList);
+          // forgeUtils.current.updateTasksData(tasksList);
+          let data = await getRealityLayers(structure, realityMap);
           forgeUtils.current.updateLayersData(data, currentContext.current);
         }
         break;
@@ -495,6 +517,7 @@ function GenericViewer(props) {
           
         break;
     }
+    currentContext.current = undefined;
   }
 
   function updateViewerChanges() {
@@ -566,6 +589,7 @@ function GenericViewer(props) {
     }
     console.log("Generic Viewer design modified: ", designList);
     setDesignList(designList);
+    //Set current design type and pass it to structure page.
     setDesignMap(getDesignMap(designList));
     updateDesignMap(getDesignMap(designList));
     return designList;
@@ -698,6 +722,7 @@ function GenericViewer(props) {
   }
 
   const destroyViewer = () => {
+    console.log("Inside destroy viewer: ");
     switch (currentViewMode.current) {
       case "Design":
         if (forgeUtils.current) {
@@ -765,6 +790,14 @@ function GenericViewer(props) {
     setIsCompare(false);
     cancelAnimationFrame(animationRequestId)
   };
+
+  useEffect(() => {
+    handleTagListChange("Issue");
+  }, [issuesList])
+
+  useEffect(() => {
+    handleTagListChange("Task")
+  }, [tasksList])
 
   useEffect(() => {
     // console.log("Generic Viewer load: Snapshot UseEffect", snapshot);

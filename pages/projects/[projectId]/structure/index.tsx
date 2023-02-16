@@ -76,8 +76,9 @@ const Index: React.FC<IProps> = () => {
   const closeIssueCreate = () => {
     setOpenCreateIssue(false);
   };
-  const issueSubmit = (formdata: any) => {
+  const issueSubmit = (formdata: Issue) => {
     issuesList.push(formdata);
+    setIssueList(structuredClone(issuesList));
     // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
     // toolClicked(myTool);
     setOpenCreateIssue(false);

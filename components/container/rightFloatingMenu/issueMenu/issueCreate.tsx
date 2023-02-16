@@ -18,11 +18,12 @@ import { getCookie } from 'cookies-next';
 import { IToolResponse, ITools } from '../../../../models/ITools';
 import ReactSelect from 'react-select';
 import { getTagsList } from '../../../../services/tags';
+import { Issue } from '../../../../models/Issue';
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
   visibility: boolean;
-  handleIssueSubmit: (formData: object) => void;
+  handleIssueSubmit: (formData: Issue) => void;
   currentStructure: IStructure;
   currentSnapshot: ISnapshot;
   currentProject: string;
