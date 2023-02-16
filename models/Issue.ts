@@ -1,7 +1,6 @@
 import { IContext } from './ITools';
 
 export interface Issue {
-  splice(index: number, arg1: number): unknown;
   title: string;
   type: string;
   description: string;
