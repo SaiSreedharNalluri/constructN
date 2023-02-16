@@ -86,7 +86,6 @@ const CustomTaskListDrawer = (props: any) => {
   const [taskPriority, setTaskPriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState([]);
   const [taskStatus, setTaskStatus] = useState<[string]>();
-  const [dateSortState, setDateSortState] = useState("ascending");
   const [taskListDataState, setTaskListDataState] = useState([]);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [viewTask, setViewTask] = useState({});
@@ -95,6 +94,7 @@ const CustomTaskListDrawer = (props: any) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredTaskList, setFilteredTaskList] = useState(taskListDataState);
   const [taskList, setTaskList] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
     setTaskList(tasksList);
@@ -174,17 +174,38 @@ const CustomTaskListDrawer = (props: any) => {
   };
 
   const handleDatesSort = () => {
-    const sortedDatesData = [...taskListDataState].sort((a: any, b: any) => {
-      if (dateSortState === "ascending") {
-        setDateSortState("descending");
-        return a.dueDate - b.dueDate;
-      } else {
-        setDateSortState("ascending");
-        return b.dueDate - a.dueDate;
-      }
-    });
-    console.log(sortedDatesData);
-    setTaskListDataState(sortedDatesData);
+    console.log(filteredTaskList, "filteredTaskList")
+    let sorted;
+    if (sortOrder === "asc") {
+      sorted = filteredTaskList.sort((a: any, b: any) => {
+        return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+      });
+      setSortOrder("desc");
+    } else {
+      sorted = filteredTaskList.sort((a: any, b: any) => {
+        return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+      });
+      setSortOrder("asc");
+    }
+    console.log(sorted, "sorted");
+    setFilteredTaskList(sorted);
+  };
+
+  const sortDateOrdering = () => {
+    let sorted;
+    if (sortOrder === "asc") {
+      sorted = filteredTaskList.sort((a: any, b: any) => {
+        return new Date(a.due_date ? a.due_date : new Date()).valueOf() - new Date(b.due_date ? b.due_date : new Date()).valueOf();
+      });
+      setSortOrder("desc");
+    } else {
+      sorted = filteredTaskList.sort((a: any, b: any) => {
+        return new Date(b.due_date ? b.due_date : new Date()).valueOf() - new Date(a.due_date ? a.due_date : new Date()).valueOf();
+      });
+      setSortOrder("asc");
+    }
+    console.log("sorted", sorted);
+    setFilteredTaskList(sorted);
   };
 
   const handleViewTask = (task: any) => {
@@ -290,11 +311,11 @@ const CustomTaskListDrawer = (props: any) => {
                 onClick={() => setSearchingOn((prev) => !prev)}
               />
               <DividerIcon src={Divider} alt="" />
-              {dateSortState === "ascending" ? (
+              {sortOrder === "asc" ? (
                 <>
                   <ArrowUpIcon
                     onClick={() => {
-                      handleDatesSort();
+                      sortDateOrdering();
                     }}
                     src={UpArrow}
                     alt="Arrow"
@@ -304,7 +325,7 @@ const CustomTaskListDrawer = (props: any) => {
                 <>
                   <ArrowDownIcon
                     onClick={() => {
-                      handleDatesSort();
+                      sortDateOrdering();
                     }}
                     src={DownArrow}
                     alt="Arrow"
