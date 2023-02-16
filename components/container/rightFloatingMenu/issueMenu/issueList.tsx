@@ -49,6 +49,7 @@ import _ from 'lodash';
 import { getTagsList } from '../../../../services/tags';
 import { IContext, ITools } from '../../../../models/ITools';
 import MultipleFileUpload from '../../multipleFileUpload';
+import NextImage from '../../../core/Image';
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
@@ -89,8 +90,7 @@ const IssueList: React.FC<IProps> = ({
   const [attachmentId, setAttachmentId] = useState('');
   const [deletionType, setDeletionType] = useState('issueDelete'); //issueDelete,attachmentDelete
   const [tagList, setTagList] = useState<[string]>(['']);
-  const [fileType, setFileType] = useState('');
-  const [previewLoad, setPreviewLoad] = useState(false);
+  const [previewType, setPreviewType] = useState(''); //image,file,video;
   let toolInstance: ITools = { toolName: 'issue', toolAction: 'issueSelect' };
   const [url, setUrl] = useState('');
   interface user {
@@ -143,22 +143,16 @@ const IssueList: React.FC<IProps> = ({
       case 'doc':
       case 'docx':
         return <FontAwesomeIcon icon={faFileExcel} className="mr-2 w-5 h-5" />;
-      case 'csv':
-        return <FontAwesomeIcon icon={faFileCsv} className="mr-2 w-5 h-5" />;
       default:
         return <FontAwesomeIcon icon={faFile} className="mr-2" />;
     }
   };
   const getFileType = (attachment: any) => {
     let extension = attachment.name.split('.').pop()?.toLowerCase();
-    if (previewLoad) {
-      setPreviewLoad(false);
-    }
     setOpenPreview(true);
     switch (extension) {
       case 'pdf':
-        setFileType('application/pdf');
-        setPreviewLoad(true);
+        setPreviewType('file');
         setUrl(
           'https://docs.google.com/viewer?url=' +
             attachment.url +
@@ -167,25 +161,28 @@ const IssueList: React.FC<IProps> = ({
         break;
       case 'mp3':
       case 'mp4':
-        setFileType('video/mp4');
         setUrl(attachment.url);
+        setPreviewType('video');
         break;
       case 'jpg':
       case 'jpeg':
       case 'png':
-        setFileType('image/jpg');
         setUrl(attachment.url);
-        setPreviewLoad(true);
+        setPreviewType('image');
         break;
       case 'doc':
       case 'docx':
-        setFileType(
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        setPreviewType('file');
+        setUrl(
+          `https://view.officeapps.live.com/op/embed.aspx?src=${attachment.url}`
         );
-        setUrl(attachment.url);
         break;
-      case 'csv':
-        setFileType('text/csv');
+      case 'xls':
+      case 'xlsx':
+        setPreviewType('file');
+        setUrl(
+          `https://view.officeapps.live.com/op/embed.aspx?src=${attachment.url}`
+        );
         break;
       default:
         setUrl(attachment.url);
@@ -1143,6 +1140,22 @@ const IssueList: React.FC<IProps> = ({
       setIssueViewMode('list');
     }, 2000);
   };
+  const loadPreviewData = (url: string) => {
+    switch (previewType) {
+      case 'image':
+        return <NextImage src={url} className="h-fit w-fit" />;
+      case 'file':
+        return <iframe src={url} width={800} height={800}></iframe>;
+      case 'video':
+        return (
+          <video autoPlay controls>
+            <source src={url} type="video/mp4" />
+          </video>
+        );
+      default:
+        return <iframe src={url} width={800} height={800}></iframe>;
+    }
+  };
   return (
     <div>
       <div
@@ -1185,13 +1198,7 @@ const IssueList: React.FC<IProps> = ({
             setOpenPreview(false);
           }}
         >
-          <div>
-            {previewLoad ? (
-              <embed type={fileType} src={url} width={600} height={800} />
-            ) : (
-              <h1 className="p-20 w-10/12 h-10/12">PreView not avalible</h1>
-            )}
-          </div>
+          <div>{loadPreviewData(url)}</div>
         </Modal>
       </div>
     </div>
