@@ -86,8 +86,6 @@ export const ToolbarContainer = styled("div")({
 });
 
 export const TypeParentCont = styled("div")({
-
-
   border: "1px solid #d9d9d9",
   borderTopLeftRadius: "4px",
   borderBottomLeftRadius: "4px",
@@ -95,7 +93,7 @@ export const TypeParentCont = styled("div")({
   display: "flex",
   alignItems: "center",
   padding: "15px 20px 14px 20px",
-  width:"250px"
+  width: "250px",
 });
 
 export const TypesTitle = styled("div")({
@@ -104,7 +102,7 @@ export const TypesTitle = styled("div")({
 
 export const TypeArrowIconDiv = styled("div")({
   marginLeft: "110px",
-  cursor:"pointer"
+  cursor: "pointer",
 });
 
 export const TypesRightScroll = styled("div")({
@@ -117,6 +115,7 @@ export const IssueBox = styled("div")({
   display: "flex",
   alignItems: "center",
   padding: "15px 20px 14px 20px",
+  width:"167px"
 });
 
 export const IssueTitle = styled("div")({
@@ -130,9 +129,10 @@ export const LayersWrapper = styled("div")({
   borderRight: "none",
   display: "flex",
   alignItems: "center",
-    padding: "15px 20px 14px 20px",
+  padding: "15px 20px 14px 20px",
 
   position: "relative",
+  width:"190px"
 });
 export const SelectLayersWrapper = styled("div")({
   top: "63px",
@@ -140,7 +140,7 @@ export const SelectLayersWrapper = styled("div")({
   border: "1px solid #D9D9D9",
   boxShadow: "5px 4px 8px rgb(0 0 0 / 24%)",
   background: "white",
-  fontSize:"14px",
+  fontSize: "14px",
 });
 
 export const LayerSecondSectionHexImg = styled("div")({
@@ -155,8 +155,8 @@ export const LayerSecondSectionCamImg = styled("div")({
 });
 
 export const LayerSecondSectionArrImg = styled("div")({
-  marginLeft: "22px",
-  cursor:"pointer"
+  marginLeft: "50px",
+  cursor: "pointer",
 
   // width: '15px',
   // height: '15px',
@@ -171,21 +171,18 @@ export const TaskTitle = styled("div")({
 export const CameraIcon = styled(Image)({
   width: "18px",
   height: "18px",
-  cursor:"pointer"
-
+  cursor: "pointer",
 });
 
-export const  GroupIcon = styled(Image)({
+export const GroupIcon = styled(Image)({
   width: "18px",
   height: "18px",
-  cursor:"pointer"
-
+  cursor: "pointer",
 });
 
 export const DownIcon = styled(Image)({
   // width:"5px",
   // height:"7px"
- 
 });
 
 export const CompareViewBox = styled("div")({
