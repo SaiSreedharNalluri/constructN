@@ -14,6 +14,7 @@ export const TimeLineStyleContainer = styled("div")({
   right: "0",
   bottom: "20px",
   height: "56px",
+  zIndex: "1",
 });
 
 export const SelectedTimeLine = styled("div")({

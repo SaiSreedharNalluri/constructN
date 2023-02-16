@@ -52,6 +52,8 @@ import {
   SearchAreaContainer,
 } from "../task_list/TaskListStyles";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
+import { getProjectUsers } from "../../../services/project";
+import router from "next/router";
 
 interface IProps {
   closeOverlay: () => void;
@@ -112,6 +114,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [issueList, setIssueList] = useState<any>(issuesList);
 
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(issueList);
+  useEffect(() => {
+    setIssueList(issuesList);
+  }, [issuesList?.length]);
+
+  useEffect(() => {
+    setFilteredIssuesList(issueList);
+  }, [issueList?.length]);
 
   const closeIssueList = () => {
     //setListOverlay(false);
@@ -139,6 +148,18 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     }
     setFilteredIssuesList(sorted);
   };
+  useEffect(() => {
+    if (router.isReady) {
+      getProjectUsers(router.query.projectId as string)
+        .then((response: any) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+            console.log(projectUsers);
+          }
+        })
+        .catch();
+    }
+  }, [router.isReady, router.query.projectId]);
 
   const handleSearchWindow = () => {
     if (searchTerm === "") {
@@ -182,7 +203,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
-
+  console.log(filteredIssuesList, issueList, "indetailsss");
   useEffect(() => {
     // setIssuesListData(filteredIssuesList);
   }, [filteredIssuesList]);
