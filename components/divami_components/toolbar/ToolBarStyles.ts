@@ -95,6 +95,7 @@ export const TypeParentCont = styled("div")({
   display: "flex",
   alignItems: "center",
   padding: "15px 20px 14px 20px",
+  width:"250px"
 });
 
 export const TypesTitle = styled("div")({

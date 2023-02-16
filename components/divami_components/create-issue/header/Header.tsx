@@ -21,6 +21,7 @@ const TitleContiner = styled(Box)({
   alignItems: "center",
   paddingLeft: "20px",
   paddingRight: "20px",
+  color: "#101F4C",
 });
 const CloseIcon = styled(Image)({ cursor: "pointer" });
 
