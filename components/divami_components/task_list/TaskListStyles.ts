@@ -16,6 +16,8 @@ export const HeaderContainer = styled('div')({
   alignItems: 'center',
   width: '100%',
   borderBottom: '1px solid #d9d9d9',
+  position:"fixed"
+
 });
 
 export const TitleContainer = styled(Box)({
@@ -38,6 +40,8 @@ export const MiniHeaderContainer = styled(Box)({
   justifyContent: 'center',
   alignItems: 'center',
   width: '100%',
+  marginTop:"60px"
+
 });
 
 // border-bottom: 1px solid #d9d9d9;
@@ -172,5 +176,5 @@ export const SearchAreaContainer = styled('div')({
 export const MessageDiv = styled("div")({
   // border: "1px solid red",
   // marginLeft: "10px",
-  marginTop:"50px"
+  marginTop:"30px"
 });

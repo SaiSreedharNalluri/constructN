@@ -365,7 +365,7 @@ const CustomTaskListDrawer = (props: any) => {
       </MiniHeaderContainer>
 
       <BodyContainer>
-        <Box sx={{ marginTop: "15px" }}>
+        <Box sx={{ marginTop: "30px" }}>
           {filteredTaskList.length > 0 ? (
             filteredTaskList.map((val: any) => {
               return (

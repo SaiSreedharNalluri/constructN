@@ -315,7 +315,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       </MiniHeaderContainer>
 
       <BodyContainer>
-        <Box sx={{ marginTop: "15px" }}>
+        <Box sx={{ marginTop: "30px" }}>
           {filteredIssuesList.length ? (
             filteredIssuesList.map((val: any, index: number) => {
               return (
