@@ -19,6 +19,13 @@ import {
   faArrowUpAZ,
   faArrowDown19,
   faArrowUp91,
+  faFile,
+  faFilePdf,
+  faFileText,
+  faFileAudio,
+  faFileImage,
+  faFileExcel,
+  faFileCsv,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -41,6 +48,8 @@ import { CSVLink } from 'react-csv';
 import _ from 'lodash';
 import { getTagsList } from '../../../../services/tags';
 import { IContext, ITools } from '../../../../models/ITools';
+import MultipleFileUpload from '../../multipleFileUpload';
+import NextImage from '../../../core/Image';
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
@@ -51,6 +60,8 @@ interface IProps {
   closeFilterOverlay: () => void;
   deleteTheIssue: (issueObj: object) => void;
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
+  responseAttachmentData: (formData: any) => void;
+  deleteTheAttachment: (attachmentId: string) => void;
 }
 const IssueList: React.FC<IProps> = ({
   issueToolClicked,
@@ -62,6 +73,8 @@ const IssueList: React.FC<IProps> = ({
   closeFilterOverlay,
   deleteTheIssue,
   clickIssueEditSubmit,
+  responseAttachmentData,
+  deleteTheAttachment,
 }) => {
   const router = useRouter();
   const [isOpenSort, setIsOpenSort] = useState(false);
@@ -73,9 +86,13 @@ const IssueList: React.FC<IProps> = ({
   const [issueViewMode, setIssueViewMode] = useState('list'); //list, filter, detail
   const [issueObj, setIssueObj] = useState<Issue>();
   const [open, setOpen] = useState(false);
+  const [openPreview, setOpenPreview] = useState(false);
+  const [attachmentId, setAttachmentId] = useState('');
+  const [deletionType, setDeletionType] = useState('issueDelete'); //issueDelete,attachmentDelete
   const [tagList, setTagList] = useState<[string]>(['']);
+  const [previewType, setPreviewType] = useState(''); //image,file,video;
   let toolInstance: ITools = { toolName: 'issue', toolAction: 'issueSelect' };
-
+  const [url, setUrl] = useState('');
   interface user {
     label: string;
     value: string;
@@ -106,6 +123,71 @@ const IssueList: React.FC<IProps> = ({
       });
     });
   }
+  const getFileIcon = (fileName: string) => {
+    let extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'txt':
+        return <FontAwesomeIcon icon={faFileText} className="mr-2" />;
+      case 'pdf':
+        return <FontAwesomeIcon icon={faFilePdf} className="mr-2" />;
+      case 'mp3':
+      case 'mp4':
+        return <FontAwesomeIcon icon={faFileAudio} className="mr-2" />;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        return <FontAwesomeIcon icon={faFileImage} className="mr-2 w-5 h-5" />;
+      case 'xls':
+      case 'xlsx':
+        return <FontAwesomeIcon icon={faFileExcel} className="mr-2 w-5 h-5" />;
+      case 'doc':
+      case 'docx':
+        return <FontAwesomeIcon icon={faFileExcel} className="mr-2 w-5 h-5" />;
+      default:
+        return <FontAwesomeIcon icon={faFile} className="mr-2" />;
+    }
+  };
+  const getFileType = (attachment: any) => {
+    let extension = attachment.name.split('.').pop()?.toLowerCase();
+    setOpenPreview(true);
+    switch (extension) {
+      case 'pdf':
+        setPreviewType('file');
+        setUrl(
+          'https://docs.google.com/viewer?url=' +
+            attachment.url +
+            '&embedded=true'
+        );
+        break;
+      case 'mp3':
+      case 'mp4':
+        setUrl(attachment.url);
+        setPreviewType('video');
+        break;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        setUrl(attachment.url);
+        setPreviewType('image');
+        break;
+      case 'doc':
+      case 'docx':
+        setPreviewType('file');
+        setUrl(
+          `https://view.officeapps.live.com/op/embed.aspx?src=${attachment.url}`
+        );
+        break;
+      case 'xls':
+      case 'xlsx':
+        setPreviewType('file');
+        setUrl(
+          `https://view.officeapps.live.com/op/embed.aspx?src=${attachment.url}`
+        );
+        break;
+      default:
+        setUrl(attachment.url);
+    }
+  };
   const getDownladableIssueList = (issL = issuesList) => {
     let myL = issL.map((iss) => {
       let a = iss.assignees.map((a) => {
@@ -222,6 +304,10 @@ const IssueList: React.FC<IProps> = ({
       });
     });
   }
+  const responseData = (formData: any) => {
+    responseAttachmentData(formData);
+    setIssueViewMode('list');
+  };
   const clickIssueHandleEditSubmit = (editObj: any) => {
     let userIdList: any[] = [];
     let editTagList: any[] = [];
@@ -633,6 +719,7 @@ const IssueList: React.FC<IProps> = ({
                     className="mt-2 cursor-pointer"
                     onClick={() => {
                       setOpen(true);
+                      setDeletionType('issueDelete');
                     }}
                   />
                 </div>
@@ -702,8 +789,37 @@ const IssueList: React.FC<IProps> = ({
               </div>
               <div>
                 <h6 className="underline mt-3">Attachments</h6>
-                <input className="border border-solid border-gray-400 rounded p-1 w-10/12"></input>
+                <MultipleFileUpload
+                  issueId={issueObj?._id as string}
+                  responseData={responseData}
+                />
               </div>
+              <div>
+                {issueObj?.attachments.map((attachment) => {
+                  return (
+                    <div key={attachment._id}>
+                      {getFileIcon(attachment.name)}
+                      <a
+                        onClick={() => {
+                          getFileType(attachment);
+                        }}
+                      >
+                        {attachment.name}
+                      </a>
+                      <FontAwesomeIcon
+                        icon={faTrashCan}
+                        className="mt-2 cursor-pointer pl-5"
+                        onClick={() => {
+                          setOpen(true);
+                          setDeletionType('attachmentDelete');
+                          setAttachmentId(attachment._id);
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+
               <div className=" mt-2 ">
                 <h6 className="underline ">Related Tags</h6>
                 <div className="grid grid-cols-3 gap-2 text-center  mt-2">
@@ -1006,7 +1122,6 @@ const IssueList: React.FC<IProps> = ({
   });
 
   const handleOnFilterEvent = (formData: object) => {
-    console.log('filter', formData);
     handleOnFilter(formData);
     setIssueViewMode('list');
   };
@@ -1015,11 +1130,31 @@ const IssueList: React.FC<IProps> = ({
     setIssueViewMode('list');
   };
   const handleDeleteItem = () => {
-    deleteTheIssue(issueObj as Issue);
+    if (deletionType === 'issueDelete') {
+      deleteTheIssue(issueObj as Issue);
+    } else if (deletionType === 'attachmentDelete') {
+      deleteTheAttachment(attachmentId);
+    }
     setOpen(false);
     setTimeout(() => {
       setIssueViewMode('list');
     }, 2000);
+  };
+  const loadPreviewData = (url: string) => {
+    switch (previewType) {
+      case 'image':
+        return <NextImage src={url} className="h-fit w-fit" />;
+      case 'file':
+        return <iframe src={url} width={800} height={800}></iframe>;
+      case 'video':
+        return (
+          <video autoPlay controls>
+            <source src={url} type="video/mp4" />
+          </video>
+        );
+      default:
+        return <iframe src={url} width={800} height={800}></iframe>;
+    }
   };
   return (
     <div>
@@ -1054,6 +1189,16 @@ const IssueList: React.FC<IProps> = ({
               Confirm
             </button>
           </div>
+        </Modal>
+      </div>
+      <div>
+        <Modal
+          open={openPreview}
+          onClose={() => {
+            setOpenPreview(false);
+          }}
+        >
+          <div>{loadPreviewData(url)}</div>
         </Modal>
       </div>
     </div>

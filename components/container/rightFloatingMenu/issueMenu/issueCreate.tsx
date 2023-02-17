@@ -19,11 +19,13 @@ import { IToolResponse, ITools } from "../../../../models/ITools";
 import ReactSelect from "react-select";
 import { getTagsList } from "../../../../services/tags";
 import { CustomToaster } from "../../../divami_components/custom-toaster/CustomToaster";
+import { Issue } from "../../../../models/Issue";
+
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
   visibility: boolean;
-  handleIssueSubmit: (formData: object) => void;
+  handleIssueSubmit: (formData: Issue) => void;
   currentStructure: IStructure;
   currentSnapshot: ISnapshot;
   currentProject: string;
@@ -319,17 +321,13 @@ const IssueCreate: React.FC<IProps> = ({
                   id="type"
                   className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                 >
-                  <option value="" disabled selected>
+                  <option value="" disabled>
                     Select a Type
                   </option>
                   {/* <select name='type' id='type' className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"> */}
                   {issueType &&
                     issueType.map((option: any, i) => (
-                      <option
-                        key={option}
-                        value={option}
-                        selected={i == 0 ? true : false}
-                      >
+                      <option key={option} value={option}>
                         {option}
                       </option>
                     ))}
@@ -366,16 +364,12 @@ const IssueCreate: React.FC<IProps> = ({
                   id="priority"
                   className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                 >
-                  <option value="" disabled selected>
+                  <option value="" disabled>
                     Select a Priority
                   </option>
                   {issuePriority &&
                     issuePriority.map((option: any, i) => (
-                      <option
-                        key={option}
-                        value={option}
-                        selected={i == 0 ? true : false}
-                      >
+                      <option key={option} value={option}>
                         {option}
                       </option>
                     ))}

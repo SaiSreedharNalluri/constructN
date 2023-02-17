@@ -1,5 +1,7 @@
 import { styled } from "@mui/system";
 import { Theme } from "../../../styles/globalStyles";
+import Image from "next/image";
+
 
 export const HeaderContainer = styled("div")({
   minHeight: "60px",
@@ -34,25 +36,30 @@ export const HeaderToggle = styled("div")({
 });
 
 export const HeaderToggleButtonOne = styled("button")((props: any) => ({
-  background: !props?.toggleStatus ? "#FFFFFF" : "#F1742E",
-  border: !props?.toggleStatus ? `1px solid #FFFFFF` : "none",
+  background: !props?.toggleStatus ? "none" : "#F1742E",
+  // border: !props?.toggleStatus ? `1px solid #FFFFFF` : "none",
   cursor: "pointer",
   color: !props?.toggleStatus ? "#36415D" : "#FFFFFF",
   padding: "6px 10px",
   height: "30px",
   display: "flex",
   alignItems: "center",
-  borderTopLeftRadius: "4px",
-  borderBottomLeftRadius: "4px",
 })) as any;
 
 export const HeaderProfileImageContainer = styled("div")({
   marginRight: "15px",
   cursor: "pointer",
-  border: "1.5px solid #36415D",
-  borderRadius: "50%",
-  boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.2)",
+  // border: "1.5px solid #36415D",
+  // borderRadius: "50%",
+  // boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.2)",
 });
+
+export const ProfileImgIcon = styled(Image)({
+  cursor: "pointer",
+  // boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.2)",
+
+});
+
 
 export const HeaderMenuImageContainer = styled("div")({
   marginRight: "15px",

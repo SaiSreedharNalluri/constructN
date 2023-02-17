@@ -84,7 +84,7 @@ const SpanTile = styled("span")`
 const BodyContainer = styled(Box)`
   height: calc(100vh - 134px);
   //   border: 2px solid black;
-  overflow: scroll;
+  // overflow: scroll;
 `;
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
@@ -160,7 +160,13 @@ const ThirdContWatch = styled("div")`
   line-height: 19px;
 `;
 
-const ThirdContWatchName = styled("div")``;
+const ThirdContWatchName = styled("div")`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+`;
 
 const ThirdContProg = styled("div")`
   font-family: "Open Sans";
@@ -175,6 +181,11 @@ const ThirdContProg = styled("div")`
 const ThirdContProgType = styled("div")`
   display: flex;
   align-items: center;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
 `;
 
 const ThirdBodyDiv = styled("div")`
@@ -213,6 +224,11 @@ const FourthContAssigned = styled("div")`
 
 const FourthContProgType = styled("div")`
   display: flex;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
 `;
 
 const FormElementContainer = styled(Box)`
@@ -233,7 +249,13 @@ const DescriptionTitle = styled("div")`
   line-height: 19px;
 `;
 
-const DescriptionPara = styled("div")``;
+const DescriptionPara = styled("div")`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+`;
 
 const AttachmentDiv = styled("div")`
   margin-top: 30px;
@@ -314,9 +336,7 @@ const CustomTaskDrawerContainer = styled("div")`
 const ProgressEditStateButtonsContainer = styled("div")`
   display: flex;
   justify-content: space-between;
-  bottom: 0;
-  position: absolute;
-  bottom: 20px;
+  margin: 20px;
   background: white;
   width: 90%;
 `;
@@ -329,15 +349,15 @@ const AssignEditSearchContainer = styled("div")({
     width: "100%",
   },
   "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
     marginTop: "-8px",
   },
@@ -368,20 +388,23 @@ const StyledSelect = styled(Select)`
   }
 `;
 
-const AddCommentContainer = styled("div")({
-  borderTop: "1px solid #D9D9D9",
-  height: "50px",
+const AddCommentContainer = styled("div")((props: any) => ({
+  // borderTop: `${props.containerType === "float" ? "none" : "1px solid #D9D9D9"}`,
+  height: `${props.containerType === "float" ? "80px" : "50px"}`,
   display: "flex",
   position: "absolute",
   bottom: "0",
   background: "white",
   marginLeft: "-24px",
   width: "100%",
-});
+})
+)
 
 const AddCommentInput = styled("input")({
   width: "100%",
-  paddingLeft: "10px",
+  paddingLeft: "20px",
+  fontFamily: "Open Sans",
+  fontSize: "14px",
 });
 
 const AddCommentButtonContainer = styled("div")({
@@ -402,6 +425,7 @@ const SendButton = styled("button")({
   width: "48px",
   display: "flex",
   justifyContent: "center",
+  alignItems: "center",
 });
 
 const ProgressStateFalse = styled("div")({
@@ -559,6 +583,7 @@ function BasicTabs(props: any) {
               fontSize: "14px",
               fontWeight: "400",
               textTransform: "capitalize",
+              color: "#213365",
             },
 
             "& .MuiTab-root": {
@@ -590,7 +615,11 @@ function BasicTabs(props: any) {
               color: "#101F4B",
             }}
           />
-          <Tab label="Activity log" {...a11yProps(1)} />
+          {/* <Tab
+            label="Activity log"
+            {...a11yProps(1)}
+            style={{ paddingRight: "0px" }}
+          /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -666,14 +695,17 @@ function BasicTabs(props: any) {
 
                 <ThirdContProgType style={{ color: "#101F4B" }}>
                   {taskState.TabOne.status}
-
-                  <PenIconImage
-                    onClick={() => {
-                      handleEditProgress();
-                    }}
-                    src={Edit}
-                    alt={"close icon"}
-                  />
+                  {taskState.TabOne.status ? (
+                    <PenIconImage
+                      onClick={() => {
+                        handleEditProgress();
+                      }}
+                      src={Edit}
+                      alt={"close icon"}
+                    />
+                  ) : (
+                    <></>
+                  )}
                 </ThirdContProgType>
               </ThirdContRight>
             </ProgressStateFalse>
@@ -723,13 +755,13 @@ function BasicTabs(props: any) {
                   console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
-                // InputProps={{
-                //   startAdornment: (
-                //     <InputAdornment position="start">
-                //       <SearchIcon />
-                //     </InputAdornment>
-                //   ),
-                // }}
+              // InputProps={{
+              //   startAdornment: (
+              //     <InputAdornment position="start">
+              //       <SearchIcon />
+              //     </InputAdornment>
+              //   ),
+              // }}
               />
             </AssignEditSearchContainer>
           )}
@@ -788,24 +820,26 @@ function BasicTabs(props: any) {
           </RelatedDiv>
           {progressEditState || assigneeEditState ? (
             <>
-              <ProgressEditStateButtonsContainer>
-                <CustomButton
-                  type="outlined"
-                  label="Cancel"
-                  formHandler={formHandler}
-                />
-                <CustomButton
-                  type="contained"
-                  label="Update"
-                  formHandler={() => {
-                    handleStateChange();
-                  }}
-                />
-              </ProgressEditStateButtonsContainer>
+              <AddCommentContainer containerType="float">
+                <ProgressEditStateButtonsContainer>
+                  <CustomButton
+                    type="outlined"
+                    label="Cancel"
+                    formHandler={formHandler}
+                  />
+                  <CustomButton
+                    type="contained"
+                    label="Update"
+                    formHandler={() => {
+                      handleStateChange();
+                    }}
+                  />
+                </ProgressEditStateButtonsContainer>
+              </AddCommentContainer>
             </>
           ) : (
             <>
-              <AddCommentContainer>
+              {/* <AddCommentContainer>
                 <AddCommentInput placeholder="Add Comment"></AddCommentInput>
                 <AddCommentButtonContainer>
                   <AttachButton>
@@ -815,7 +849,7 @@ function BasicTabs(props: any) {
                     <Image src={Send} alt="" />{" "}
                   </SendButton>
                 </AddCommentButtonContainer>
-              </AddCommentContainer>
+              </AddCommentContainer> */}
             </>
           )}
         </TabOneDiv>
@@ -841,6 +875,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     currentSnapshot,
     currentStructure,
     contextInfo,
+    closeTaskCreate,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
 
@@ -922,10 +957,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
     });
   }, []);
 
-  const onDeleteTask = (status: any) => {
+  const onDeleteTask = () => {
     setshowPopUp(false);
-    console.log("status", status);
-    console.log(deleteTheTask, "deleteTheTask");
     deleteTheTask(task);
   };
 
@@ -940,10 +973,12 @@ const CustomTaskDetailsDrawer = (props: any) => {
       ?.selectedName;
     if (assignes && assignes.length > 0) {
       assignes.map((user: any) => {
-        userIdList.push(user.value);
+        userIdList?.push(user.value);
       });
     }
-    userIdList.push(assignes.value);
+    if (assignes?.value) {
+      userIdList.push(assignes.value);
+    }
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
@@ -970,8 +1005,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
       (data.tags =
         (formData.length
           ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+            .filter((item: any) => item.id == "tag-suggestions")[0]
+            ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -988,67 +1023,73 @@ const CustomTaskDetailsDrawer = (props: any) => {
     const fileformdata = new FormData();
     const filesArr = formData.filter(
       (item: any) => item.id === "file-upload"
-    )[0].selectedFile;
+    )[0]?.selectedFile;
     data.attachments = formData.filter(
       (item: any) => item.id === "file-upload"
-    )[0].selectedFile;
+    )[0]?.selectedFile;
     console.log("dfsdfsdokkkk", fileformdata, filesArr);
     // const uploadUrl = filesArr[0];
     // const obj = {
     //   file: [uploadUrl],
     // };
     // const uploadUrl = URL.createObjectURL(filesArr[0]);
-    const arr = filesArr.map((each: any) => {
-      // fileformdata.append("file", each.name);
-      fileformdata.append("file", each);
-      return {
-        ...each,
-      };
-    });
-    console.log("formData", fileformdata);
-
-    updateAttachments(fileformdata, task._id)
-      .then((response) => {
-        if (response.success === true) {
-          toast.success("Task added sucessfully");
-          // handleTaskSubmit(formData);
-          // taskSubmit(response.result);
-          // toolInstance.toolAction = "taskCreateSuccess";
-
-          // console.log(formData);
-        } else {
-          // toolInstance.toolAction = "taskCreateFail";
-          // issueToolClicked(toolInstance);
-        }
-      })
-      .catch((error) => {
-        // toolInstance.toolAction = "taskCreateFail";
-
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
+    if (filesArr?.length) {
+      const arr = filesArr.map((each: any) => {
+        // fileformdata.append("file", each.name);
+        fileformdata.append("file", each);
+        return {
+          ...each,
+        };
       });
-    updateTask(projectId as string, data, task._id)
-      .then((response) => {
-        if (response.success === true) {
-          toast.success("Task added sucessfully");
-          // handleTaskSubmit(formData);
-          // taskSubmit(response.result);
-          // toolInstance.toolAction = "taskCreateSuccess";
+      console.log("formData", fileformdata);
 
-          // console.log(formData);
-        } else {
+      updateAttachments(fileformdata, task._id)
+        .then((response) => {
+          if (response.success === true) {
+            toast.success("Task added sucessfully");
+            // handleTaskSubmit(formData);
+            // taskSubmit(response.result);
+            // toolInstance.toolAction = "taskCreateSuccess";
+
+            // console.log(formData);
+          } else {
+            // toolInstance.toolAction = "taskCreateFail";
+            // issueToolClicked(toolInstance);
+          }
+        })
+        .catch((error) => {
           // toolInstance.toolAction = "taskCreateFail";
-          // issueToolClicked(toolInstance);
-        }
-      })
-      .catch((error) => {
-        // toolInstance.toolAction = "taskCreateFail";
 
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+        });
+    }
+    if (data.title && data.type && data.priority) {
+      updateTask(projectId as string, data, task._id)
+        .then((response) => {
+          if (response.success === true) {
+            toast.success("Task added sucessfully");
+            // handleTaskSubmit(formData);
+            // taskSubmit(response.result);
+            // toolInstance.toolAction = "taskCreateSuccess";
+
+            // console.log(formData);
+          } else {
+            // toolInstance.toolAction = "taskCreateFail";
+            // issueToolClicked(toolInstance);
+          }
+          setOpenCreateTask(false);
+        })
+        .catch((error) => {
+          // toolInstance.toolAction = "taskCreateFail";
+
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+          setOpenCreateTask(false);
+        });
+    }
   };
   const taskUpdate = (data: any) => {
     console.log(task);
@@ -1137,7 +1178,9 @@ const CustomTaskDetailsDrawer = (props: any) => {
             currentStructure={currentStructure}
             contextInfo={contextInfo}
             editData={task}
-            closeTaskCreate={closeTaskCreate}
+            closeTaskCreate={() => {
+              setOpenCreateTask(false);
+            }}
           />
         </CustomDrawer>
       )}

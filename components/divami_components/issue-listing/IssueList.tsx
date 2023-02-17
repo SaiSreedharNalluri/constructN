@@ -114,6 +114,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [issueList, setIssueList] = useState<any>(issuesList);
 
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(issueList);
+  useEffect(() => {
+    setIssueList(issuesList);
+  }, [issuesList?.length]);
+
+  useEffect(() => {
+    setFilteredIssuesList(issueList);
+  }, [issueList?.length]);
 
   const closeIssueList = () => {
     //setListOverlay(false);
@@ -196,7 +203,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
-
+  console.log(filteredIssuesList, issueList, "indetailsss");
   useEffect(() => {
     // setIssuesListData(filteredIssuesList);
   }, [filteredIssuesList]);
@@ -308,7 +315,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
       <BodyContainer>
         <Box sx={{ marginTop: "15px" }}>
-          {filteredIssuesList.map((val: any, index: number) => {
+          {filteredIssuesList.length ? filteredIssuesList.map((val: any, index: number) => {
             return (
               <div key={index}>
                 <BodyInfo
@@ -322,20 +329,20 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         val.type === "RFI"
                           ? RFIList
                           : val.type === "Safety"
-                          ? HourglassIcon
-                          : val.type === "Transmittals"
-                          ? TransmittalList
-                          : val.type === "Clash"
-                          ? SubmittalList
-                          : val.type === "Commissioning"
-                          ? commission
-                          : val.type === "Building code"
-                          ? HourglassIcon
-                          : val.type === "Design"
-                          ? designIcon
-                          : val.type === "Submittals"
-                          ? SubmittalList
-                          : ""
+                            ? HourglassIcon
+                            : val.type === "Transmittals"
+                              ? TransmittalList
+                              : val.type === "Clash"
+                                ? SubmittalList
+                                : val.type === "Commissioning"
+                                  ? commission
+                                  : val.type === "Building code"
+                                    ? HourglassIcon
+                                    : val.type === "Design"
+                                      ? designIcon
+                                      : val.type === "Submittals"
+                                        ? SubmittalList
+                                        : ""
                       }
                       alt="Arrow"
                     />
@@ -358,7 +365,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 <HorizontalLine></HorizontalLine>
               </div>
             );
-          })}
+          })
+            : <p>No issue matches the search</p>
+          }
         </Box>
       </BodyContainer>
       {/* <LoadMoreContainer>
@@ -382,6 +391,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             currentStructure={currentStructure}
             currentSnapshot={currentSnapshot}
             contextInfo={contextInfo}
+            deleteTheIssue={deleteTheIssue}
           />
         </Drawer>
       )}
@@ -398,9 +408,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => {}}
-            deleteTheIssue={() => {}}
-            clickIssueEditSubmit={() => {}}
+            handleOnSort={() => { }}
+            deleteTheIssue={() => { }}
+            clickIssueEditSubmit={() => { }}
             issueFilterState={issueFilterState}
           />
         </Drawer>

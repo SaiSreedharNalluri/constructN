@@ -2,18 +2,21 @@ import CustomCalender from "../custom-datepicker/CustomCalender";
 import CustomFileInput from "../custom-file-input/CustomFileInput";
 import CustomLabel from "../custom-label/CustomLabel";
 import CustomSearch from "../custom-search/CustomSearch";
-import CustomSelect from "../custom-select/CustomSelect";
+import CustomSelect, { ErrorField } from "../custom-select/CustomSelect";
 import CustomTagSuggestion from "../custom-tag-suggestion/CustomTagSuggestion";
 import { CustomTextField } from "../custom-textfield/CustomTextField";
 import { CustomTextArea } from "../custom-textarea/CustomTextArea";
 
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
+import { useEffect } from "react";
 
 const FormElementContainer = styled(Box)({
   marginTop: "30px",
 });
-
+const ElementContainer = styled("div")({
+  marginTop: "8px",
+});
 const DoubleFieldContainer = styled("div")({
   display: "flex",
   flexDirection: "row",
@@ -21,8 +24,30 @@ const DoubleFieldContainer = styled("div")({
 });
 
 const FormWrapper = (props: any) => {
-  const { config, formState, setFormConfig } = props;
+  const { config, formState, setFormConfig, validate, setIsValidate } = props;
+  console.log("vak", validate);
 
+  useEffect(() => {
+    if (validate) {
+      console.log("coming");
+      setFormConfig((prev: any) => {
+        const newconfig = prev.map((item: any) => {
+          if (item.isReq && !item.defaultValue) {
+            return {
+              ...item,
+              isError: true,
+            };
+          } else {
+            return { ...item, isError: false };
+          }
+        });
+        console.log(newconfig, "newconfig");
+        return newconfig;
+      });
+      setIsValidate(false);
+    }
+  }, [validate]);
+  console.log("error", config);
   const handleTextChange = (e: any, id: string, data?: any) => {
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
@@ -115,99 +140,115 @@ const FormWrapper = (props: any) => {
     switch (data.type) {
       case "select":
         return (
-          <CustomSelect
-            config={data}
-            defaultValue={data.defaultValue}
-            id={data.id}
-            sx={{ minWidth: 120 }}
-            setFormConfig={setFormConfig}
-            isError={data.isError}
-            label=""
-            data={data}
-          />
+          <ElementContainer>
+            <CustomSelect
+              config={data}
+              defaultValue={data.defaultValue}
+              id={data.id}
+              sx={{ minWidth: 120 }}
+              setFormConfig={setFormConfig}
+              isError={data.isError}
+              label=""
+              data={data}
+            />
+          </ElementContainer>
         );
       case "textarea":
         return (
-          <CustomTextArea
-            id={data.id}
-            variant="outlined"
-            placeholder={data?.placeholder}
-            onChange={(e: any) => {
-              handleTextChange(e, data.id, data);
-            }}
-            onBlur={(e: any) => {
-              handleTextChange(e, data.id, data);
-            }}
-            defaultValue={data.defaultValue}
-            isError={data.isError}
-            dataTestId="inputTextField"
-            isRequired={data.isReq}
-            type={data.type}
-            minVal={data?.minVal}
-            maxVal={data?.maxVal}
-            showRangeError={data.showRangeError}
-            isDisabled={data.isDisabled}
-            className={undefined}
-          />
+          <ElementContainer>
+            <CustomTextArea
+              id={data.id}
+              variant="outlined"
+              placeholder={data?.placeholder}
+              onChange={(e: any) => {
+                handleTextChange(e, data.id, data);
+              }}
+              onBlur={(e: any) => {
+                handleTextChange(e, data.id, data);
+              }}
+              defaultValue={data.defaultValue}
+              isError={data.isError}
+              dataTestId="inputTextField"
+              isRequired={data.isReq}
+              type={data.type}
+              minVal={data?.minVal}
+              maxVal={data?.maxVal}
+              showRangeError={data.showRangeError}
+              isDisabled={data.isDisabled}
+              className={undefined}
+            />
+          </ElementContainer>
         );
       case "textfield":
         return (
-          <CustomTextField
-            id={data.id}
-            variant="outlined"
-            placeholder={data?.placeholder}
-            onChange={(e: any) => {
-              handleTextChange(e, data.id, data);
-            }}
-            onBlur={(e: any) => {
-              handleTextChange(e, data.id, data);
-            }}
-            defaultValue={data.defaultValue}
-            isError={data.isError}
-            dataTestId="inputTextField"
-            isRequired={data.isReq}
-            type={data.type}
-            minVal={data?.minVal}
-            maxVal={data?.maxVal}
-            showRangeError={data.showRangeError}
-            isDisabled={data.isDisabled}
-            className={undefined}
-          />
+          <ElementContainer>
+            <CustomTextField
+              id={data.id}
+              variant="outlined"
+              placeholder={data?.placeholder}
+              onChange={(e: any) => {
+                handleTextChange(e, data.id, data);
+              }}
+              onBlur={(e: any) => {
+                handleTextChange(e, data.id, data);
+              }}
+              defaultValue={data.defaultValue}
+              isError={data.isError}
+              dataTestId="inputTextField"
+              isRequired={data.isReq}
+              type={data.type}
+              minVal={data?.minVal}
+              maxVal={data?.maxVal}
+              showRangeError={data.showRangeError}
+              isDisabled={data.isDisabled}
+              className={undefined}
+            />
+          </ElementContainer>
         );
       case "datePicker":
         return (
-          <CustomCalender
-            data={data}
-            onChange={(e: any) => {
-              handleDateChange(e, data.id);
-            }}
-          />
+          <ElementContainer>
+            {" "}
+            <CustomCalender
+              data={data}
+              onChange={(e: any) => {
+                handleDateChange(e, data.id);
+              }}
+            />
+          </ElementContainer>
         );
       case "search":
         return (
-          <CustomSearch
-            data={data}
-            handleSearchResult={(e: any, value: string) => {
-              handleSearchResult(e, value, data.id);
-            }}
-            selectedName={data.selectedName}
-          />
+          <ElementContainer>
+            <CustomSearch
+              data={data}
+              handleSearchResult={(e: any, value: string) => {
+                handleSearchResult(e, value, data.id);
+              }}
+              selectedName={data.selectedName}
+            />
+          </ElementContainer>
         );
       case "file":
         return (
-          <CustomFileInput
-            handleFileUpload={(e: any) => handleFileUpload(e, data.id)}
-            data
-          />
+          <ElementContainer>
+            <CustomFileInput
+              handleFileUpload={(e: any) => handleFileUpload(e, data.id)}
+              data
+            />
+          </ElementContainer>
         );
       case "chip":
         return (
-          <CustomTagSuggestion
-            handleChipMaking={(chipsString: any) =>
-              handleChipMaking(chipsString, data.id)
-            }
-            data={data}
-          />
+          <ElementContainer>
+            {" "}
+            <CustomTagSuggestion
+              handleChipMaking={(chipsString: any) =>
+                handleChipMaking(chipsString, data.id)
+              }
+              data={data}
+            />
+          </ElementContainer>
         );
       case "doubleField":
         return (

@@ -11,7 +11,7 @@ import CustomSearch from "../customSearch";
 // import CustomSearch from '../common/custom-search/CustomSearch'
 import { mockData } from "./mockData";
 import { InputAdornment } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import SearchImg from '../../../public/images/search.svg';
 import {
   CloseIcon,
   HeaderLabel,
@@ -31,6 +31,7 @@ import type {
   SelectLayerProps,
 } from "./Type";
 import { getAllIds, getSelectedLayers } from "./Utils";
+import Image from "next/image";
 
 const ProjectHierarchy = ({
   title,
@@ -126,22 +127,22 @@ const ProjectHierarchy = ({
           onChange={(e: any) => {
             handleSearchResult(e);
           }}
+          // InputProps={{
+          //   // ...params.InputProps,
+          //   startAdornment: (
+          //     <InputAdornment position="start">
+          //       <SearchIcon src={SearchIcon} alt="search" />
+          //     </InputAdornment>
+          //   ),
+          // }}
           InputProps={{
-            // ...params.InputProps,
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
+            startAdornment: <Image src={SearchImg} alt="search" />
           }}
         />
       </SearchContainer>
       <TreeViewContainer style={{ overflow: "auto", height: "60vh" }}>
         {treeViewData.length === 0 ? (
-          // "no structures found for this project"
-          <MessageContainer>
-            <div>No structures found for this project</div>
-          </MessageContainer>
+          "No structures found for this project"
         ) : (
           <StyledTreeView
             aria-label="rich object"

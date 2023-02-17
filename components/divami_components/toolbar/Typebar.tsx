@@ -23,7 +23,7 @@ const Typebar = ({
   return (
     <>
       <TypeParentCont onClick={onListClick}>
-        <TypesTitle>{selectedValue}</TypesTitle>
+        <TypesTitle>{selectedValue ? selectedValue : "Select Type"}</TypesTitle>
         <TypeArrowIconDiv>
           {/* <Image src={downArrowIcon} width={12} height={12} alt="Arrow" /> */}
           <Image src={downArrowIcon} alt="Arrow" />

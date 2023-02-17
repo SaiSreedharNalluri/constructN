@@ -43,6 +43,8 @@ import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
 import { styled } from "@mui/system";
 import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 import { CustomToaster } from "../../../../components/divami_components/custom-toaster/CustomToaster";
+import { log } from "node:console";
+import { deleteAttachment } from "../../../../services/attachments";
 
 interface IProps {}
 const OpenMenuButton = styled("div")({
@@ -58,7 +60,8 @@ const OpenMenuButton = styled("div")({
   left: "22px",
   bottom: "38px",
   cursor: "pointer",
-  backgroundColour: "#fffff",
+  background: "#ffffff",
+  fontFamily: "Open Sans",
 });
 const CloseMenuButton = styled("div")({
   height: "38px",
@@ -72,7 +75,7 @@ const CloseMenuButton = styled("div")({
   alignItems: "center",
   cursor: "pointer",
   zIndex: "99",
-  backgroundColour: "#fffff",
+  backgroundColor: "#fffff !important",
 });
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
@@ -97,8 +100,6 @@ const Index: React.FC<IProps> = () => {
   const [loggedInUserId, SetLoggedInUserId] = useState("");
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
-  const [isIssueFilter, setIsIssueFilter] = useState(false);
-  const [isTaslFilter, setIsTaskFilter] = useState(false);
   const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
   const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
   const [issueTypesList, setIssueTypesList] = useState<[string]>([""]);
@@ -114,6 +115,8 @@ const Index: React.FC<IProps> = () => {
   const [hierarchy, setHierarchy] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [expanded, setExpanded] = useState<string[]>([]);
+  const [openIssueDetails, setOpenIssueDetails] = useState(false);
+  const [openTaskDetails, setOpenTaskDetails] = useState(false);
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
   };
@@ -132,8 +135,9 @@ const Index: React.FC<IProps> = () => {
   const closeIssueCreate = () => {
     setOpenCreateIssue(false);
   };
-  const issueSubmit = (formdata: any) => {
+  const issueSubmit = (formdata: Issue) => {
     issuesList.push(formdata);
+    setIssueList(structuredClone(issuesList));
     // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
     // toolClicked(myTool);
     setOpenCreateIssue(false);
@@ -144,6 +148,13 @@ const Index: React.FC<IProps> = () => {
   };
   const closeIssueList = () => {
     setOpenIssueView(false);
+  };
+
+  const closeTaskDetails = () => {
+    setOpenTaskDetails(false);
+  };
+  const closeIssueDetails = () => {
+    setOpenIssueDetails(false);
   };
 
   const taskSubmit = (formdata: any) => {
@@ -193,6 +204,20 @@ const Index: React.FC<IProps> = () => {
       getStructureList(router.query.projectId as string)
         .then((response) => {
           setStructuresList(response.data.result);
+
+          if (response.data.result.length > 0) {
+            if (router.query.structId !== undefined) {
+              let structs: IStructure[] = response.data.result;
+              setStructure(
+                structs.find((e) => {
+                  console.log("finding structure: ", e._id);
+                  if (e._id === router.query.structId) {
+                    return e;
+                  }
+                })
+              );
+            } else setStructure(response.data.result[0]);
+          }
         })
         .catch((error) => {
           toast.error("failed to load data");
@@ -217,7 +242,9 @@ const Index: React.FC<IProps> = () => {
   };
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
+    //console.log('Loaded structures: ', structuresList);
     let currentStructure = structuresList.find((e) => {
+      //console.log('finding structure: ', e._id);
       if (e._id === structure._id) {
         return e;
       }
@@ -332,10 +359,11 @@ const Index: React.FC<IProps> = () => {
       case "issue":
         switch (toolInstance.toolAction) {
           case "issueView":
-            console.log("trying to open issue View");
+            //console.log('trying to open issue View');
             setOpenIssueView(true);
             break;
           case "issueCreate":
+          //setOpenCreateIssue(true);
           case "issueCreateSuccess":
           case "issueCreateFail":
           case "issueSelect":
@@ -367,6 +395,7 @@ const Index: React.FC<IProps> = () => {
           case "taskCreateFail":
           case "taskShow":
           case "taskHide":
+          case "taskSelect":
             setClickedTool(toolInstance);
             break;
         }
@@ -406,6 +435,10 @@ const Index: React.FC<IProps> = () => {
         } else if (data.toolAction === "selectIssue") {
           console.log("issue selected: ", data.response?.id);
           // issue detail view open logic comes here
+          if (data.response != undefined) {
+            setCurrentContext(data.response);
+            setOpenIssueDetails(true);
+          }
         }
         break;
       case "Task":
@@ -416,6 +449,10 @@ const Index: React.FC<IProps> = () => {
         } else if (data.toolAction === "selectTask") {
           console.log("task selected: ", data.response?.id);
           // task detail view open logic comes here
+          if (data.response != undefined) {
+            setCurrentContext(data.response);
+            setOpenTaskDetails(true);
+          }
         }
         break;
       default:
@@ -581,11 +618,12 @@ const Index: React.FC<IProps> = () => {
         (item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
         ) ||
-          formData?.assigneesData?.length == 0) &&
+          formData?.assigneesData?.length == 0 ||
+          !formData?.assigneesData) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
-          formData.fromDate == "") &&
+          !formData.fromDate) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
-          formData.toDate == "")
+          !formData.toDate)
     );
     setIssueList(result);
     setIssueFilterState({
@@ -593,6 +631,7 @@ const Index: React.FC<IProps> = () => {
       filterData: formData,
     });
   };
+  console.log(issuesList, "issuesListissuesList");
   const closeFilterOverlay = () => {
     setIssueList(issueFilterList);
     setIssueFilterState({
@@ -600,21 +639,49 @@ const Index: React.FC<IProps> = () => {
       filterData: {},
     });
   };
+  // const handleOnTaskFilter = (formData: any) => {
+  //   console.log(formData, "taskfilterdata");
+  //   console.log(taskFilterList);
+  //   const result = taskFilterList.filter(
+  //     (item: ITasks) =>
+  //       formData.taskType.includes(item.type) &&
+  //       formData?.taskPriority?.includes(item.priority) &&
+  //       formData?.taskStatus?.includes(item.status) &&
+  //       // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
+  //       //   formData.fromDate == "") &&
+  //       // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
+  //       //   formData.toDate == "") &&
+  //       item.assignees.filter(
+  //         (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
+  //       )
+  //   );
+  //   setTasksList(result);
+  //   setTaskFilterState({
+  //     isFilterApplied: true,
+  //     filterData: formData,
+  //   });
+  // };
+
   const handleOnTaskFilter = (formData: any) => {
-    console.log(formData);
-    console.log(taskFilterList);
+    console.log("structure/index.tsx", formData, taskFilterList);
     const result = taskFilterList.filter(
-      (item: ITasks) =>
-        formData.taskType.includes(item.type) &&
-        formData?.taskPriority?.includes(item.priority) &&
-        formData?.taskStatus?.includes(item.status) &&
-        // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
-        //   formData.fromDate == "") &&
-        // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
-        //   formData.toDate == "") &&
-        item.assignees.filter(
+      (item) =>
+        (formData.taskType.includes(item.type) ||
+          formData.taskType.length == 0) &&
+        (formData?.taskPriority?.includes(item.priority) ||
+          formData?.taskPriority?.length == 0) &&
+        (formData?.taskStatus?.includes(item.status) ||
+          formData?.taskStatus.length == 0) &&
+        (item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
-        )
+        ) ||
+          formData?.assigneesData?.length == 0 ||
+          !formData?.assigneesData)
+      // &&
+      // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
+      //   !formData.fromDate) &&
+      // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
+      //   !formData.toDate)
     );
     setTasksList(result);
     setTaskFilterState({
@@ -622,6 +689,7 @@ const Index: React.FC<IProps> = () => {
       filterData: formData,
     });
   };
+
   const closeTaskFilterOverlay = () => {
     setTasksList(taskFilterList);
     setTaskFilterState({
@@ -678,9 +746,34 @@ const Index: React.FC<IProps> = () => {
         console.log("error", error);
       });
   };
-
-  console.log(activeRealityMap, "layers list");
-
+  const responseAttachmentData = (data: any) => {
+    issueFilterList.map((issueObj) => {
+      if (issueObj._id === data[0]?.entity) {
+        data.map((dataObj: any) => {
+          issueObj.attachments.push(dataObj);
+        });
+      }
+    });
+    setIssueList(issueFilterList);
+  };
+  const deleteTheAttachment = (attachmentId: string) => {
+    deleteAttachment(attachmentId)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success(response.message);
+          issueFilterList.map((issueObj) => {
+            const index = issueObj.attachments.findIndex(
+              (obj) => obj._id === attachmentId
+            );
+            issueObj.attachments.splice(index, 1);
+          });
+          setIssueList(issueFilterList);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -714,6 +807,7 @@ const Index: React.FC<IProps> = () => {
                         getCurrentStructureFromStructureList(structureData)
                       );
 
+                      // setStructure(structureData);
                       getIssues(structureData._id);
 
                       getTasks(structureData._id);
@@ -870,6 +964,11 @@ const Index: React.FC<IProps> = () => {
               issueFilterState={issueFilterState}
               closeIssueCreate={closeIssueCreate}
               closeTaskCreate={closeTaskCreate}
+              deleteTheIssue={deleteTheIssue}
+              openIssueDetails={openIssueDetails}
+              openTaskDetails={openTaskDetails}
+              closeTaskDetails={closeTaskDetails}
+              closeIssueDetails={closeIssueDetails}
             />
 
             {/* <CustomToaster /> */}
@@ -919,6 +1018,8 @@ const Index: React.FC<IProps> = () => {
                 handleOnSort={handleOnIssueSort}
                 deleteTheIssue={deleteTheIssue}
                 clickIssueEditSubmit={clickIssueEditSubmit}
+                responseAttachmentData={responseAttachmentData}
+                deleteTheAttachment={deleteTheAttachment}
               ></IssueList> */}
           </div>
         </div>
