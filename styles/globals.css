@@ -121,7 +121,8 @@
   margin-left: auto;
   margin-right: auto;
   display: block;
-  left: 250px;
+  transform: translate(-50%, 0);
+  left: 50%;
 }
 
 .MuiDrawer-paper {
