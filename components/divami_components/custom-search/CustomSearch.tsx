@@ -65,7 +65,7 @@ const CustomSearch = (props: any) => {
           data.selectedName?.map((each: any) => {
             return {
               ...each,
-              label: each.fullName,
+              label: each.fullName || each.user?.fullName,
             };
           })
         );
@@ -109,14 +109,30 @@ const CustomSearch = (props: any) => {
               placeholder="Enter Name or Teams here ..."
               {...params}
               label={data.label}
-              InputProps={{
-                ...params.InputProps,
-                // startAdornment: (
-                //   <InputAdornment position="start">
-                //     <Image width={15} height={15} src={Search} alt="Search" />
-                //   </InputAdornment>
-                // ),
-              }}
+              InputProps={
+                val.length
+                  ? {
+                      ...params.InputProps,
+                      // startAdornment: (
+                      //   <InputAdornment position="start">
+                      //     <Image width={15} height={15} src={Search} alt="Search" />
+                      //   </InputAdornment>
+                      // ),
+                    }
+                  : {
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Image
+                            width={15}
+                            height={15}
+                            src={Search}
+                            alt="Search"
+                          />
+                        </InputAdornment>
+                      ),
+                    }
+              }
             />
           )}
           onChange={(e, value) => handleSearchResult(e, value, data.id)}

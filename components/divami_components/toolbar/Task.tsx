@@ -89,17 +89,22 @@ const Task = ({
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
-    let userIdList: any[] = [];
-    const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
-      ?.selectedName;
-    if (assignes && assignes.length > 0) {
-      assignes.map((user: any) => {
-        userIdList.push(user.value);
+    // let userIdList: any[] = [];
+    // const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
+    //   ?.selectedName;
+    // if (assignes && assignes.length > 0) {
+    //   assignes.map((user: any) => {
+    //     userIdList.push(user.value);
+    //   });
+    // }
+    // if (assignes?.value) {
+    //   userIdList.push(assignes.value);
+    // }
+    const userIdList = formData
+      .find((item: any) => item.id == "assignedTo")
+      ?.selectedName?.map((each: any) => {
+        return each.value;
       });
-    }
-    if (assignes?.value) {
-      userIdList.push(assignes.value);
-    }
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
@@ -273,21 +278,7 @@ const Task = ({
       </IssuesSectionFileImg>
 
       <IssuesSectionClipImg>
-        {showImage && (
-          <CameraIcon
-            src={clipboardTask}
-            // width={12}
-            // height={12}
-            alt="Arrow"
-            // onClick={rightMenuClickHandler}
-            onClick={() => {
-              toggleTaskVisibility();
-              handleToggle();
-            }}
-          />
-        )}
-
-        {!showImage && (
+        {taskVisbility && (
           <CameraIcon
             src={taskToogleIcon}
             // width={12}
@@ -296,7 +287,19 @@ const Task = ({
             // onClick={rightMenuClickHandler}
             onClick={() => {
               toggleTaskVisibility();
-              handleToggle();
+            }}
+          />
+        )}
+
+        {!taskVisbility && (
+          <CameraIcon
+            src={clipboardTask}
+            // width={12}
+            // height={12}
+            alt="Arrow"
+            // onClick={rightMenuClickHandler}
+            onClick={() => {
+              toggleTaskVisibility();
             }}
           />
         )}

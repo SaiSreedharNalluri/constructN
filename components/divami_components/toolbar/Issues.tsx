@@ -72,9 +72,7 @@ const Issues = ({
   const [showImage, setShowImage] = useState(false);
 
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
-  const [issueVisbility, setIssueVisibility] = useState(
-    issueLayer === undefined ? false : issueLayer
-  );
+  const [issueVisbility, setIssueVisibility] = useState(true);
   let toolInstance: ITools = { toolName: "issue", toolAction: "issueCreate" };
   const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
@@ -103,7 +101,7 @@ const Issues = ({
   const clickTaskSubmit = (formData: any) => {
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
-      ?.map((each: any) => {
+      ?.selectedName?.map((each: any) => {
         return each.value;
       });
 
@@ -298,21 +296,7 @@ const Issues = ({
         </IssuesSectionFileImg>
 
         <IssuesSectionClipImg>
-          {showImage && (
-            <CameraIcon
-              src={clipboardSecondIcon}
-              // width={12}
-              // height={12}
-              alt="Arrow"
-              // onClick={rightMenuClickHandler}
-              onClick={() => {
-                toggleIssueVisibility();
-                handleToggle();
-              }}
-            />
-          )}
-
-          {!showImage && (
+          {issueVisbility && (
             <CameraIcon
               src={fileTextIssue}
               // width={12}
@@ -321,7 +305,21 @@ const Issues = ({
               // onClick={rightMenuClickHandler}
               onClick={() => {
                 toggleIssueVisibility();
-                handleToggle();
+                // handleToggle();
+              }}
+            />
+          )}
+
+          {!issueVisbility && (
+            <CameraIcon
+              src={clipboardSecondIcon}
+              // width={12}
+              // height={12}
+              alt="Arrow"
+              // onClick={rightMenuClickHandler}
+              onClick={() => {
+                toggleIssueVisibility();
+                // handleToggle();
               }}
             />
           )}

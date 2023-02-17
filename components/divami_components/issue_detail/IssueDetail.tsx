@@ -603,16 +603,18 @@ function BasicTabs(props: any) {
       <CustomTabPanel value={value} index={0}>
         <TabOneDiv>
           <FirstHeaderDiv>
-            <Image
+            <div></div>
+            {/* <Image
               src={
-                taskState.TabOne.attachments
-                  ? taskState.TabOne.attachments[0]?.url
-                  : ""
+                ""
+                // taskState.TabOne.attachments
+                //   ? taskState.TabOne.attachments[0]?.url
+                //   : ""
               }
               alt=""
               width={400}
               height={400}
-            />
+            /> */}
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
@@ -647,15 +649,19 @@ function BasicTabs(props: any) {
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType style={{ color: "#101F4B" }}>
-                    {taskState?.TabOne.assignees}{" "}
-                    <MoreText>{taskState.TabOne.moreText}</MoreText>
-                    <PenIconImage
-                      onClick={() => {
-                        handleEditAssigne();
-                      }}
-                      src={Edit}
-                      alt={"close icon"}
-                    />
+                    {taskState?.TabOne?.assignees}{" "}
+                    <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                    {taskState?.TabOne?.assignees ? (
+                      <PenIconImage
+                        onClick={() => {
+                          handleEditAssigne();
+                        }}
+                        src={Edit}
+                        alt={"close icon"}
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </FourthContProgType>
                 </FourthContLeft>
               </FourthBodyDiv>
@@ -713,13 +719,18 @@ function BasicTabs(props: any) {
 
                   <FourthContProgType style={{ color: "#101F4B" }}>
                     {taskState?.TabOne.assignees}{" "}
-                    <PenIconImage
-                      onClick={() => {
-                        handleEditAssigne();
-                      }}
-                      src={Edit}
-                      alt={"close icon"}
-                    />
+                    <MoreText>{taskState.TabOne?.moreText}</MoreText>
+                    {taskState?.TabOne.assignees ? (
+                      <PenIconImage
+                        onClick={() => {
+                          handleEditAssigne();
+                        }}
+                        src={Edit}
+                        alt="close icon"
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </FourthContProgType>
                 </FourthContLeft>
               </FourthBodyDiv>
@@ -931,8 +942,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
       creator: issue?.owner,
       issueDescription: issue?.description,
       attachments: issue?.attachments,
-      assignees:
-        issue.assignees?.length > 1 ? `${issue.assignees[0].fullName}` : "",
+      assignees: issue.assignees?.length
+        ? `${issue.assignees[0].fullName}`
+        : "",
       assigneeName: issue.assignees?.length ? issue.assignees[0].fullName : "",
       moreText:
         issue.assignees?.length > 1
@@ -955,6 +967,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
+    const userIdList = formData
+      .find((item: any) => item.id == "assignedTo")
+      ?.selectedName?.map((each: any) => {
+        return each.value;
+      });
     // let userIdList: any[] = [];
     // const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
     //   ?.selectedName;
@@ -966,11 +983,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
     // if (assignes?.value) {
     //   userIdList.push(assignes.value);
     // }
-    const userIdList = formData
-      .find((item: any) => item.id == "assignedTo")
-      ?.map((each: any) => {
-        return each.value;
-      });
+    // const userIdList = formData
+    //   .find((item: any) => item.id == "assignedTo")
+    //   ?.map((each: any) => {
+    //     return each.value;
+    //   });
 
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
