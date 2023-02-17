@@ -632,8 +632,8 @@ function BasicTabs(props: any) {
                   : ""
               }
               alt=""
-              width={400}
-              height={400}
+              width={taskState.TabOne.attachments ? 400 : 0}
+              height={taskState.TabOne.attachments ? 400 : 0}
             />
           </FirstHeaderDiv>
           <SecondBodyDiv>

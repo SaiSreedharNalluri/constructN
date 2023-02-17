@@ -117,10 +117,11 @@
 }
 
 .toolbarWidth {
-  width: 100%;
+  /* width: 100%; */
   margin-left: auto;
   margin-right: auto;
   display: block;
+  left: 250px;
 }
 
 .MuiDrawer-paper {
@@ -230,8 +231,12 @@ content: url("../public/divami_icons/toasterIcon.svg");
 
 .projHier {
   margin-top: 75px !important;
-  overflow-y: scroll !important;
+  /* overflow-y: scroll !important; */
   height: calc(100vh - 119px);
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  box-shadow: 5px 4px 8px rgba(200, 200, 200, 0.1);
+  border-radius: 2px;
 }
 
 .adsk-viewing-viewer .adsk-button {

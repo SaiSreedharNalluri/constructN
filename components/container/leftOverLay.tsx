@@ -100,7 +100,12 @@ const LeftOverLay: React.FC<IProps> = ({
         )}
       </Formik> */}
 
-      <div>
+      <div
+        style={{
+          overflow: "hidden",
+          height: "80vh",
+        }}
+      >
         {state.length === 0 ? (
           "no structures found for this project"
         ) : (

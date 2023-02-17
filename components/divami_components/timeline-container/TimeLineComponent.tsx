@@ -26,7 +26,7 @@ const TimeLineComponent: React.FC<IProps> = ({
   snapshotHandler,
 }) => {
   const [bottomNav, setBottomNav] = useState(false);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(2);
   const [oldDate, setOldDate] = useState("");
   const [newDate, setNewDate] = useState("");
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -103,11 +103,17 @@ const TimeLineComponent: React.FC<IProps> = ({
                 <div className="flex text-sm items-center ml-1 ">
                   <p>{newDate && Moment(newDate).format("DD MMM YY")} </p>
                 </div>
-                <CustomCalender
-                  onChange={(e: any) => handleChange(e, 1)}
-                  shouldDisableDate={disableWeekends}
-                  hideTextField
-                />
+                {!isNaN(page) ? (
+                  <CustomCalender
+                    onChange={(e: any) => handleChange(e, 1)}
+                    shouldDisableDate={disableWeekends}
+                    hideTextField
+                    data={{
+                      disableAll: true,
+                      defaultValue: page === 2 ? newDate : oldDate,
+                    }}
+                  />
+                ) : null}
               </TimeLinePagination>
             )}
           </div>
