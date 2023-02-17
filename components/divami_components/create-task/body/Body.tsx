@@ -27,6 +27,10 @@ const BodyContainer = styled(Box)({
   overflowY: "auto",
   marginTop: "41px",
   height: "calc(100% - 100px)",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
   // overflow: 'scroll',
 });
 
