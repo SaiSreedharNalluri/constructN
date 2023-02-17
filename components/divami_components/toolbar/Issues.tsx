@@ -63,6 +63,8 @@ const Issues = ({
   deleteTheIssue,
   openIssueDetails,
   closeIssueDetails,
+  setIssueList,
+  getIssues,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -72,9 +74,7 @@ const Issues = ({
   const [showImage, setShowImage] = useState(false);
 
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
-  const [issueVisbility, setIssueVisibility] = useState(
-    issueLayer === undefined ? false : issueLayer
-  );
+  const [issueVisbility, setIssueVisibility] = useState(true);
   let toolInstance: ITools = { toolName: "issue", toolAction: "issueCreate" };
   const [myProject, setMyProject] = useState(currentProject);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
@@ -100,13 +100,14 @@ const Issues = ({
     console.log(formData, "form data at home");
     clickTaskSubmit(formData);
   };
+
   const clickTaskSubmit = (formData: any) => {
-    let userIdList: any[] = [];
-    const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
-      ?.selectedName;
-    if (assignes?.value) {
-      userIdList.push(assignes?.value);
-    }
+    const userIdList = formData
+      .find((item: any) => item.id == "assignedTo")
+      ?.selectedName?.map((each: any) => {
+        return each.value;
+      });
+
     // if (assignes && assignes.length > 0) {
     //   assignes.map((user: any) => {
     //     userIdList.push(user.value);
@@ -123,7 +124,9 @@ const Issues = ({
         data.context = { ...data.context, [key]: contextInfo[key] };
       }
     });
-
+    data.tags = formData.filter(
+      (item: any) => item.id == "tag-suggestions"
+    )[0]?.chipString;
     data.title = formData.filter(
       (item: any) => item.id == "title"
     )[0]?.defaultValue;
@@ -137,12 +140,12 @@ const Issues = ({
       (item: any) => item.id == "description"
     )[0]?.defaultValue),
       (data.assignees = userIdList),
-      (data.tags =
-        (formData.length
-          ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
-          : []) || []),
+      // (data.tags =
+      //   (formData.length
+      //     ? formData
+      //       .filter((item: any) => item.id == "tag-suggestions")[0]
+      //       ?.chipString?.join(";")
+      //     : []) || []),
       (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]
         ?.fields.filter(
@@ -174,10 +177,12 @@ const Issues = ({
       .projectId;
     console.log("formData", data);
     if (data.title && data.type && data.priority) {
+      console.log(data, data.tags, "sdfdsfsdfs");
+
       createIssue(projectId as string, data)
         .then((response) => {
           if (response.success === true) {
-            setSuccessMessage("Issue is added sucessfully");
+            // setSuccessMessage("Issue is added sucessfully");
 
             // toast("Issue created sucessfully", {
             //   progressStyle: { backgroundColor: "orange" },
@@ -300,30 +305,34 @@ const Issues = ({
         </IssuesSectionFileImg>
 
         <IssuesSectionClipImg>
-          {showImage && (
+          {issueVisbility && (
             <CameraIcon
-              src={clipboardSecondIcon}
               width={12}
               height={12}
+              src={fileTextIssue}
+              // width={12}
+              // height={12}
               alt="Arrow"
               // onClick={rightMenuClickHandler}
               onClick={() => {
                 toggleIssueVisibility();
-                handleToggle();
+                // handleToggle();
               }}
             />
           )}
 
-          {!showImage && (
+          {!issueVisbility && (
             <CameraIcon
-              src={fileTextIssue}
               width={12}
               height={12}
+              src={clipboardSecondIcon}
+              // width={12}
+              // height={12}
               alt="Arrow"
               // onClick={rightMenuClickHandler}
               onClick={() => {
                 toggleIssueVisibility();
-                handleToggle();
+                // handleToggle();
               }}
             />
           )}
@@ -368,6 +377,7 @@ const Issues = ({
             currentProject={currentProject}
             issueTypesList={issueTypesList}
             issueFilterState={issueFilterState}
+            getIssues={getIssues}
           />
           {/* <FilterCommon/> */}
         </Drawer>
@@ -403,6 +413,7 @@ const Issues = ({
             currentStructure={currentStructure}
             currentSnapshot={currentSnapshot}
             contextInfo={contextInfo}
+            setIssueList={setIssueList}
           />
         </Drawer>
       )}

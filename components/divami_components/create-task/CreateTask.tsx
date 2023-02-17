@@ -15,7 +15,7 @@ const StyledDiv = styled("span")({
   // fontSize: "14px",
   // lineHeight: "19px",
   // background: '#FFFFFF',
-  height: "calc(100vh - 134px)",
+  height: "calc(100vh - 60px)",
   //   paddingLeft: '20px',
   //   paddingRight: '20px',
   // overflow: 'scroll'
@@ -45,14 +45,14 @@ const CreateTask = ({
 
   return (
     <StyledDiv>
-      <Header closeTaskCreate={closeTaskCreate} />
+      <Header closeTaskCreate={closeTaskCreate} editData={editData} />
       <Body
         handleFormData={handleFormData}
         editData={editData}
         validate={validate}
         setIsValidate={setValidate}
       />
-      <Footer formHandler={formHandler} />
+      <Footer formHandler={formHandler} editData={editData} />
     </StyledDiv>
   );
 };

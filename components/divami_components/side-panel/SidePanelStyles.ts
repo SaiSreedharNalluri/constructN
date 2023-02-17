@@ -1,4 +1,5 @@
 import { styled } from "@mui/system";
+import { borderTopWidth } from "html2canvas/dist/types/css/property-descriptors/border-width";
 import Image from "next/image";
 
 export const SideMenuContainer = styled("div")({
@@ -22,6 +23,8 @@ export const SideMenuOption = styled("div")({
 });
 
 
+
+
 export const OvershowImg = styled("div")({
   
   width: "62px",
@@ -33,9 +36,10 @@ export const OvershowImg = styled("div")({
   left:"10px",
   zIndex:"1500",
   backgroundColor: "white",
-  borderRight: "1px solid #D9D9D9"
+  // borderRight: "1px solid #D9D9D9",
+  borderTopWidth:"0",
   // border:"2px solid green"
-  // boxShadow: "3px 0px 4px rgba(0, 0, 0, 0.25)",
+  boxShadow: "10px 0px 8px -11px rgb(0 0 0 / 36%)",
 
 });
 

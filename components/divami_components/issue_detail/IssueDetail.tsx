@@ -197,6 +197,13 @@ const FourthBodyDiv = styled("div")((props: any) => ({
   marginTop: "25px",
 })) as any;
 
+const MoreText = styled("div")`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ff843f;
+`;
+
 const FourthContLeft = styled("div")``;
 
 const FourthContAssigned = styled("div")`
@@ -284,8 +291,9 @@ const RelatedTagTitle = styled("div")`
 
 const RelatedTagsButton = styled("div")`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-top: 8px;
+  flex-wrap: wrap;
 `;
 
 const RelatedSingleButton = styled("div")`
@@ -296,6 +304,7 @@ const RelatedSingleButton = styled("div")`
   white-space: nowrap;
   font-size: 12px;
   margin-right: 10px;
+  margin-bottom: 10px;
 `;
 
 const StyledLabel = styled(Typography)`
@@ -325,15 +334,15 @@ const AssignEditSearchContainer = styled("div")({
     width: "100%",
   },
   "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
     marginTop: "-8px",
   },
@@ -599,16 +608,18 @@ function BasicTabs(props: any) {
       <CustomTabPanel value={value} index={0}>
         <TabOneDiv>
           <FirstHeaderDiv>
-            <Image
+            <div></div>
+            {/* <Image
               src={
-                taskState.TabOne.attachments
-                  ? taskState.TabOne.attachments[0]?.url
-                  : ""
+                ""
+                // taskState.TabOne.attachments
+                //   ? taskState.TabOne.attachments[0]?.url
+                //   : ""
               }
               alt=""
               width={400}
               height={400}
-            />
+            /> */}
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
@@ -643,14 +654,19 @@ function BasicTabs(props: any) {
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType style={{ color: "#101F4B" }}>
-                    {taskState?.TabOne.assignees}{" "}
-                    <PenIconImage
-                      onClick={() => {
-                        handleEditAssigne();
-                      }}
-                      src={Edit}
-                      alt={"close icon"}
-                    />
+                    {taskState?.TabOne?.assignees}{" "}
+                    <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                    {taskState?.TabOne?.assignees ? (
+                      <PenIconImage
+                        onClick={() => {
+                          handleEditAssigne();
+                        }}
+                        src={Edit}
+                        alt={"close icon"}
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </FourthContProgType>
                 </FourthContLeft>
               </FourthBodyDiv>
@@ -708,13 +724,18 @@ function BasicTabs(props: any) {
 
                   <FourthContProgType style={{ color: "#101F4B" }}>
                     {taskState?.TabOne.assignees}{" "}
-                    <PenIconImage
-                      onClick={() => {
-                        handleEditAssigne();
-                      }}
-                      src={Edit}
-                      alt={"close icon"}
-                    />
+                    <MoreText>{taskState.TabOne?.moreText}</MoreText>
+                    {taskState?.TabOne.assignees ? (
+                      <PenIconImage
+                        onClick={() => {
+                          handleEditAssigne();
+                        }}
+                        src={Edit}
+                        alt="close icon"
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </FourthContProgType>
                 </FourthContLeft>
               </FourthBodyDiv>
@@ -732,13 +753,13 @@ function BasicTabs(props: any) {
                   console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
-                // InputProps={{
-                //   startAdornment: (
-                //     <InputAdornment position="start">
-                //       <SearchIcon />
-                //     </InputAdornment>
-                //   ),
-                // }}
+              // InputProps={{
+              //   startAdornment: (
+              //     <InputAdornment position="start">
+              //       <SearchIcon />
+              //     </InputAdornment>
+              //   ),
+              // }}
               />
             </AssignEditSearchContainer>
           )}
@@ -792,12 +813,12 @@ function BasicTabs(props: any) {
           )}
           <RelatedDiv>
             <RelatedTagTitle>Related Tags</RelatedTagTitle>
-
             <RelatedTagsButton>
-              {taskState?.relatedTags?.map((item: any) => {
+              {console.log(taskState)}
+              {taskState?.TabOne.tags?.map((item: any) => {
                 return (
                   <>
-                    <RelatedSingleButton>{item?.tagName}</RelatedSingleButton>
+                    <RelatedSingleButton>{item}</RelatedSingleButton>
                   </>
                 );
               })}
@@ -860,6 +881,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
     currentStructure,
     contextInfo,
     deleteTheIssue,
+    setIssueList,
+    getIssues
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
@@ -945,9 +968,17 @@ const CustomIssueDetailsDrawer = (props: any) => {
       creator: issue?.owner,
       issueDescription: issue?.description,
       attachments: issue?.attachments,
+      assignees: issue.assignees?.length
+        ? `${issue.assignees[0].fullName}`
+        : "",
+      assigneeName: issue.assignees?.length ? issue.assignees[0].fullName : "",
+      moreText:
+        issue.assignees?.length > 1
+          ? `+${issue.assignees?.length - 1} more`
+          : "",
       relatedTags: issue?.tags,
-      assignees: issue?.assignees?.length ? issue?.assignees[0].fullName : "",
       id: issue?._id,
+      tags: issue?.tags,
     };
     setTaskState((prev: any) => {
       return {
@@ -957,23 +988,50 @@ const CustomIssueDetailsDrawer = (props: any) => {
     });
   }, []);
 
+  const taskSubmit = (formData: any) => {
+    // const updatedList = issuesList.map((item: any) => {
+    //   if (item._id == formData._id){
+    //     return formData;
+    //   }else{
+    //     return {
+    //       ...item
+    //     }
+    //   }
+    // })
+
+    // issuesList.push(formdata);
+    // issueMenuInstance.toolAction = "issueCreated";
+    // setCreateOverlay(false);
+    // issueMenuClicked(issueMenuInstance);
+  }
   const handleCreateTask = (formData: any) => {
     console.log(formData, "form data at home");
     clickTaskSubmit(formData);
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
-    let userIdList: any[] = [];
-    const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
-      ?.selectedName;
-    if (assignes && assignes.length > 0) {
-      assignes.map((user: any) => {
-        userIdList?.push(user.value);
+    const userIdList = formData
+      .find((item: any) => item.id == "assignedTo")
+      ?.selectedName?.map((each: any) => {
+        return each.value;
       });
-    }
-    if (assignes?.value) {
-      userIdList.push(assignes.value);
-    }
+    // let userIdList: any[] = [];
+    // const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
+    //   ?.selectedName;
+    // if (assignes && assignes.length > 0) {
+    //   assignes.map((user: any) => {
+    //     userIdList?.push(user.value);
+    //   });
+    // }
+    // if (assignes?.value) {
+    //   userIdList.push(assignes.value);
+    // }
+    // const userIdList = formData
+    //   .find((item: any) => item.id == "assignedTo")
+    //   ?.map((each: any) => {
+    //     return each.value;
+    //   });
+
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
@@ -986,6 +1044,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     data.title = formData.filter(
       (item: any) => item.id == "title"
     )[0]?.defaultValue;
+
 
     data.type = formData.filter(
       (item: any) => item.id == "issueType"
@@ -1000,8 +1059,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
       (data.tags =
         (formData.length
           ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+            .filter((item: any) => item.id == "tag-suggestions")[0]
+            ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -1041,7 +1100,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
             // handleTaskSubmit(formData);
             // taskSubmit(response.result);
             // toolInstance.toolAction = "taskCreateSuccess";
-
             // console.log(formData);
           } else {
             // toolInstance.toolAction = "taskCreateFail";
@@ -1072,6 +1130,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
             // toolInstance.toolAction = "taskCreateSuccess";
 
             // console.log(formData);
+            console.log(currentStructure, "currentStructure");
+            getIssues(currentStructure._id);
           } else {
             // toolInstance.toolAction = "taskCreateFail";
             // issueToolClicked(toolInstance);

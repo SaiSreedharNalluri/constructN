@@ -5,7 +5,7 @@ import { Box, TextField } from '@mui/material';
 
 export const TaskListContainer = styled('div')({
   width: '438px',
-  height: '100%',
+  height: 'calc(100vh - 60px)',
 });
 
 export const HeaderContainer = styled('div')({
@@ -14,7 +14,6 @@ export const HeaderContainer = styled('div')({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '100%',
   borderBottom: '1px solid #d9d9d9',
 });
 
@@ -25,6 +24,8 @@ export const TitleContainer = styled(Box)({
   alignItems: 'center',
   paddingLeft: '20px',
   paddingRight: '20px',
+
+  color: '#36415D',
 });
 
 export const CloseIcon = styled(Image)({
@@ -38,6 +39,9 @@ export const MiniHeaderContainer = styled(Box)({
   justifyContent: 'center',
   alignItems: 'center',
   width: '100%',
+  marginTop: '20px',
+  // overflowY: "auto",
+  color: '#36415D',
 });
 
 // border-bottom: 1px solid #d9d9d9;
@@ -80,9 +84,15 @@ export const DueDate = styled(Box)({
 });
 
 export const BodyContainer = styled(Box)`
+  height: calc(100vh - 200px);
   padding-left: 20px;
   padding-right: 20px;
-  overflow: auto;
+  margin-top: 16px;
+  overflow-y: auto;
+  margin-top: 16px;
+  color: #101f4c;
+  padding-bottom: 20px;
+  // overflow: scroll;
 `;
 
 export const FirstHeader = styled('div')({
@@ -164,4 +174,11 @@ export const SearchAreaContainer = styled('div')({
   justifyContent: 'space-between',
   width: '100%',
   gap: '10px',
+  // marginTop:"30px"
+});
+
+export const MessageDiv = styled('div')({
+  // border: "1px solid red",
+  // marginLeft: "10px",
+  marginTop: '30px',
 });
