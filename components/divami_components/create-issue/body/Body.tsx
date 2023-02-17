@@ -29,7 +29,7 @@ const BodyContainer = styled(Box)({
   paddingRight: "20px",
   color: "#888888",
   overflowY: "auto",
-  marginTop: "50px",
+  marginTop: "41px",
   height: "calc(100% - 100px)",
   // height: 110px;
 

@@ -11,7 +11,9 @@ const HeaderContainer = styled(Box)({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  width: "100%",
+  width: "34%",
+  zIndex: "50",
+
   borderBottom: "1px solid #d9d9d9",
   position: "fixed",
 });

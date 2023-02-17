@@ -11,9 +11,10 @@ const HeaderContainer = styled(Box)({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  width: "100%",
+  width: "34%",
   borderBottom: "1px solid #d9d9d9",
   position: "fixed",
+  zIndex: "50",
 });
 const TitleContiner = styled(Box)({
   width: "100%",
