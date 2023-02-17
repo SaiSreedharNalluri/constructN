@@ -336,11 +336,7 @@ const CustomTaskDrawerContainer = styled("div")`
 const ProgressEditStateButtonsContainer = styled("div")`
   display: flex;
   justify-content: space-between;
-  bottom: 0;
-  position: absolute;
-  // bottom: 20px;
-  bottom: -75px;
-
+  margin: 20px;
   background: white;
   width: 90%;
 `;
@@ -392,16 +388,16 @@ const StyledSelect = styled(Select)`
   }
 `;
 
-const AddCommentContainer = styled("div")({
-  borderTop: "1px solid #D9D9D9",
-  height: "50px",
+const AddCommentContainer = styled("div")((props: any) => ({
+  // borderTop: `${props.containerType === "float" ? "none" : "1px solid #D9D9D9"}`,
+  height: `${props.containerType === "float" ? "80px" : "50px"}`,
   display: "flex",
   position: "absolute",
   bottom: "0",
   background: "white",
   marginLeft: "-24px",
   width: "100%",
-});
+}));
 
 const AddCommentInput = styled("input")({
   width: "100%",
@@ -541,7 +537,10 @@ function BasicTabs(props: any) {
   const handleEditProgress = () => {
     setProgressEditState(!progressEditState);
   };
-
+  const handleClose = () => {
+    setProgressEditState(false);
+    setAssigneeEditState(false);
+  };
   const handleStateChange = () => {
     if (progressEditState) {
       setProgressEditState(!progressEditState);
@@ -618,11 +617,11 @@ function BasicTabs(props: any) {
               color: "#101F4B",
             }}
           />
-          <Tab
+          {/* <Tab
             label="Activity log"
             {...a11yProps(1)}
             style={{ paddingRight: "0px" }}
-          />
+          /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -635,8 +634,8 @@ function BasicTabs(props: any) {
                   : ""
               }
               alt=""
-              width={400}
-              height={400}
+              width={taskState.TabOne.attachments ? 400 : 0}
+              height={taskState.TabOne.attachments ? 400 : 0}
             />
           </FirstHeaderDiv>
           <SecondBodyDiv>
@@ -823,24 +822,28 @@ function BasicTabs(props: any) {
           </RelatedDiv>
           {progressEditState || assigneeEditState ? (
             <>
-              <ProgressEditStateButtonsContainer>
-                <CustomButton
-                  type="outlined"
-                  label="Cancel"
-                  formHandler={formHandler}
-                />
-                <CustomButton
-                  type="contained"
-                  label="Update"
-                  formHandler={() => {
-                    handleStateChange();
-                  }}
-                />
-              </ProgressEditStateButtonsContainer>
+              <AddCommentContainer containerType="float">
+                <ProgressEditStateButtonsContainer>
+                  <CustomButton
+                    type="outlined"
+                    label="Cancel"
+                    formHandler={() => {
+                      handleClose();
+                    }}
+                  />
+                  <CustomButton
+                    type="contained"
+                    label="Update"
+                    formHandler={() => {
+                      handleStateChange();
+                    }}
+                  />
+                </ProgressEditStateButtonsContainer>
+              </AddCommentContainer>
             </>
           ) : (
             <>
-              <AddCommentContainer>
+              {/* <AddCommentContainer>
                 <AddCommentInput placeholder="Add Comment"></AddCommentInput>
                 <AddCommentButtonContainer>
                   <AttachButton>
@@ -850,7 +853,7 @@ function BasicTabs(props: any) {
                     <Image src={Send} alt="" />{" "}
                   </SendButton>
                 </AddCommentButtonContainer>
-              </AddCommentContainer>
+              </AddCommentContainer> */}
             </>
           )}
         </TabOneDiv>

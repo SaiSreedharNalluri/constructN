@@ -66,7 +66,7 @@ const OpenMenuButton = styled("div")({
 const CloseMenuButton = styled("div")({
   height: "38px",
   width: "31px",
-  border: "1px solid #BDBDBD",
+  // border: "1px solid #BDBDBD",
   position: "fixed",
   bottom: "0",
   display: "flex",
@@ -76,6 +76,10 @@ const CloseMenuButton = styled("div")({
   cursor: "pointer",
   zIndex: "99",
   backgroundColor: "#fffff !important",
+  background: "rgb(255, 255, 255)",
+  border: "1px solid rgb(189, 189, 189)",
+  boxShadow: "rgb(200 200 200 / 10%) 5px 4px 8px",
+  transform: "matrix(-1, 0, 0, 1, 0, 0)",
 });
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
@@ -785,9 +789,10 @@ const Index: React.FC<IProps> = () => {
         <div>
           {
             <div
+              style={{ overflow: "hidden" }}
               ref={leftRefContainer}
               className={` ${leftNav ? "visible" : "hidden"
-                } calc-h absolute z-10 border border-gray-300 overflow-y-auto`}
+                }  absolute z-10 border border-gray-300 `}
             >
               <div>
                 <LeftOverLay
@@ -816,7 +821,14 @@ const Index: React.FC<IProps> = () => {
         </div>
         <div id="viewer">{renderSwitch(viewerTypeState)}</div>
         {hierarchy ? (
-          <div>
+          <div
+            style={{
+              background: "#FFFFFF",
+              border: "1px solid #BDBDBD",
+              boxShadow: "5px 4px 8px rgb(200 200 200 / 10%)",
+              // transform: "matrix(-1, 0, 0, 1, 0, 0)",
+            }}
+          >
             <CloseMenuButton>
               <Image
                 src={ChevronLeftIcon}
@@ -831,9 +843,10 @@ const Index: React.FC<IProps> = () => {
             <div>
               {
                 <div
+                  style={{ overflow: "hidden" }}
                   ref={leftRefContainer}
                   className={`${hierarchy ? "visible" : "hidden"
-                    } calc-h absolute z-10 border border-gray-300 overflow-y-auto white-bg projHier `}
+                    }  absolute z-10 border  white-bg projHier `}
                 >
                   <div>
                     <LeftOverLay

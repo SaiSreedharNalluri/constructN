@@ -317,7 +317,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
       <BodyContainer>
         <Box sx={{ marginTop: "15px" }}>
-          {filteredIssuesList.map((val: any, index: number) => {
+          {filteredIssuesList.length ? filteredIssuesList.map((val: any, index: number) => {
             return (
               <div key={index}>
                 <BodyInfo
@@ -367,7 +367,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 <HorizontalLine></HorizontalLine>
               </div>
             );
-          })}
+          })
+            : <p>No issue matches the search</p>
+          }
         </Box>
       </BodyContainer>
       {/* <LoadMoreContainer>
