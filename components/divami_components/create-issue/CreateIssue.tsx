@@ -31,7 +31,7 @@ const CreateIssue = ({
   closeIssueCreate,
   editData,
 }: any) => {
-  console.log(editData, "editData")
+  console.log(editData, "editData");
   const router = useRouter();
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);
@@ -58,7 +58,7 @@ const CreateIssue = ({
           setTagList(response.result[0]?.tagList);
         }
       })
-      .catch(e => console.log(e));
+      .catch((e) => console.log(e));
   }, []);
 
   return (
@@ -66,6 +66,7 @@ const CreateIssue = ({
       <Header
         setOpenCreateTask={setOpenCreateTask}
         closeIssueCreate={closeIssueCreate}
+        editData={editData}
       />
       <Body
         handleFormData={handleFormData}
@@ -74,7 +75,7 @@ const CreateIssue = ({
         setIsValidate={setValidate}
         tagsList={tagList}
       />
-      <Footer formHandler={formHandler} />
+      <Footer formHandler={formHandler} editData={editData} />
     </StyledDiv>
   );
 };

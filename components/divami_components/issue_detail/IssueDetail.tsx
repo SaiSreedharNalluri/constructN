@@ -24,6 +24,7 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
 import router from "next/router";
 import _ from "lodash";
+import { deleteAttachment } from "../../../services/attachments";
 
 const HeaderContainer = styled(Box)`
   background-color: white;
@@ -464,6 +465,7 @@ function BasicTabs(props: any) {
     taskStatus,
     projectUsers,
     issueUpdate,
+    deleteTheAttachment,
   } = props;
 
   const [value, setValue] = React.useState(0);
@@ -541,6 +543,7 @@ function BasicTabs(props: any) {
   const handleEditAssigne = () => {
     setAssigneeEditState(!assigneeEditState);
   };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
@@ -785,11 +788,19 @@ function BasicTabs(props: any) {
                     (a: any, index: number) => {
                       return (
                         <>
-                          <AttachedImageDiv>
+                          <AttachedImageDiv className={`detailsImageDiv`}>
                             <AttachedImageTitle>{a?.name}</AttachedImageTitle>
                             <AttachedImageIcon>
                               <Image src={""} alt="" />
                             </AttachedImageIcon>
+                            <DeleteIcon
+                              src={Delete}
+                              alt={"delete icon"}
+                              onClick={() => {
+                                deleteTheAttachment(a?._id);
+                              }}
+                              className={`deleteIcon`}
+                            />
                           </AttachedImageDiv>
                           <AttachHorizontal></AttachHorizontal>
                         </>
@@ -879,6 +890,17 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
     deleteTheIssue(issue);
+  };
+  const deleteTheAttachment = (attachmentId: string) => {
+    deleteAttachment(attachmentId)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success(response.message);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
   console.log("issuesdasf", issue, contextInfo);
 
@@ -1190,6 +1212,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             projectUsers={projectUsers}
             taskState={taskState}
             issueUpdate={issueUpdate}
+            deleteTheAttachment={deleteTheAttachment}
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>

@@ -45,14 +45,14 @@ const CreateTask = ({
 
   return (
     <StyledDiv>
-      <Header closeTaskCreate={closeTaskCreate} />
+      <Header closeTaskCreate={closeTaskCreate} editData={editData} />
       <Body
         handleFormData={handleFormData}
         editData={editData}
         validate={validate}
         setIsValidate={setValidate}
       />
-      <Footer formHandler={formHandler} />
+      <Footer formHandler={formHandler} editData={editData} />
     </StyledDiv>
   );
 };

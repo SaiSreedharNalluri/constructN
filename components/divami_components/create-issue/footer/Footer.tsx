@@ -11,10 +11,14 @@ const ButtonsContainer = styled(Box)({
   alignItems: "center",
 });
 
-const Footer = ({ formHandler }: any) => (
+const Footer = ({ formHandler, editData }: any) => (
   <ButtonsContainer>
     <CustomButton type="outlined" label="Cancel" formHandler={formHandler} />
-    <CustomButton type="contained" label="Create" formHandler={formHandler} />
+    <CustomButton
+      type="contained"
+      label={editData ? "Update" : "Create"}
+      formHandler={formHandler}
+    />
   </ButtonsContainer>
 );
 

@@ -24,8 +24,8 @@ const TitleContiner = styled(Box)({
 });
 const CloseIcon = styled(Image)({ cursor: "pointer" });
 
-const Header = ({ setOpenCreateTask, closeIssueCreate }: any) => {
-  const title = "Create Issue";
+const Header = ({ setOpenCreateTask, closeIssueCreate, editData }: any) => {
+  const title = editData ? "Edit Issue" : "Create Issue";
   return (
     <HeaderContainer>
       <TitleContiner>

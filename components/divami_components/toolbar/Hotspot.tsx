@@ -16,20 +16,21 @@ import {
 
 const Hotspot = () => {
   return (
-    <HotspotBox>
-      {/* <HotspotTitleDiv>Hotspot:</HotspotTitleDiv>
-      <HotspotSectionFileTextImg>
-        <Image src={fileTextIcon} width={12} height={12} alt="Arrow" />{" "}
-      </HotspotSectionFileTextImg>
-      <HotspotCircleDiv>
-        <Image src={hotspotCircleIcon} width={12} height={12} alt="Arrow" />{" "}
-      </HotspotCircleDiv> */}
+    <></>
+    // <HotspotBox>
+    //   {/* <HotspotTitleDiv>Hotspot:</HotspotTitleDiv>
+    //   <HotspotSectionFileTextImg>
+    //     <Image src={fileTextIcon} width={12} height={12} alt="Arrow" />{" "}
+    //   </HotspotSectionFileTextImg>
+    //   <HotspotCircleDiv>
+    //     <Image src={hotspotCircleIcon} width={12} height={12} alt="Arrow" />{" "}
+    //   </HotspotCircleDiv> */}
 
-      <HotspotGroupIcon>
-        <GroupIcon src={groupSpotIcon} alt="Arrow" />
-        {/* <Image src={groupSpotIcon} width={12} height={12} alt="Arrow" />{" "} */}
-      </HotspotGroupIcon>
-    </HotspotBox>
+    //   <HotspotGroupIcon>
+    //     <GroupIcon src={groupSpotIcon} alt="Arrow" />
+    //     {/* <Image src={groupSpotIcon} width={12} height={12} alt="Arrow" />{" "} */}
+    //   </HotspotGroupIcon>
+    // </HotspotBox>
   );
 };
 

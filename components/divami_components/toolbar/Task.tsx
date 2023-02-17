@@ -255,12 +255,12 @@ const Task = ({
           onClick={() => {
             openTaskCreateFn();
 
-            setOpenCreateTask(true);
+            // setOpenCreateTask(true);
           }}
           src={plusCircleIcon}
           // onClick={props.rightMenuClickHandler}
-          // width={12}
-          // height={12}
+          width={12}
+          height={12}
           alt="Arrow"
         />
       </IssuesSectionPlusImg>
@@ -271,8 +271,8 @@ const Task = ({
             handleViewTaskList();
           }}
           src={fileTextIcon}
-          // width={12}
-          // height={12}
+          width={12}
+          height={12}
           alt="Arrow"
         />
       </IssuesSectionFileImg>
@@ -280,6 +280,8 @@ const Task = ({
       <IssuesSectionClipImg>
         {taskVisbility && (
           <CameraIcon
+            width={12}
+            height={12}
             src={taskToogleIcon}
             // width={12}
             // height={12}
@@ -293,6 +295,8 @@ const Task = ({
 
         {!taskVisbility && (
           <CameraIcon
+            width={12}
+            height={12}
             src={clipboardTask}
             // width={12}
             // height={12}

@@ -64,7 +64,7 @@ const Issues = ({
   openIssueDetails,
   closeIssueDetails,
   setIssueList,
-  getIssues
+  getIssues,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -177,7 +177,7 @@ const Issues = ({
       .projectId;
     console.log("formData", data);
     if (data.title && data.type && data.priority) {
-      console.log(data, data.tags, "sdfdsfsdfs")
+      console.log(data, data.tags, "sdfdsfsdfs");
 
       createIssue(projectId as string, data)
         .then((response) => {
@@ -281,16 +281,18 @@ const Issues = ({
             // onClick={rightMenuClickHandler}
             onClick={() => {
               openIssueCreateFn();
-              setOpenCreateIssue(true);
+              // setOpenCreateIssue(true);
             }}
+            width={12}
+            height={12}
           />
         </IssuesSectionPlusImg>
 
         <IssuesSectionFileImg>
           <CameraIcon
             src={fileTextIcon}
-            // width={12}
-            // height={12}
+            width={12}
+            height={12}
             alt="Arrow"
             // onClick={() => {
             //   setOpenIssueList(true);
@@ -305,6 +307,8 @@ const Issues = ({
         <IssuesSectionClipImg>
           {issueVisbility && (
             <CameraIcon
+              width={12}
+              height={12}
               src={fileTextIssue}
               // width={12}
               // height={12}
@@ -319,6 +323,8 @@ const Issues = ({
 
           {!issueVisbility && (
             <CameraIcon
+              width={12}
+              height={12}
               src={clipboardSecondIcon}
               // width={12}
               // height={12}
@@ -360,9 +366,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => { }}
+            handleOnSort={() => {}}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => { }}
+            clickIssueEditSubmit={() => {}}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}
