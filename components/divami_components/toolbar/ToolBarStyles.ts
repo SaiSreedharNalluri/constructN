@@ -162,6 +162,7 @@ export const CameraIcon = styled(Image)({
   width: '18px',
   height: '18px',
   cursor: 'pointer',
+  margin: "0 6px"
 });
 
 export const DownIcon = styled(Image)({

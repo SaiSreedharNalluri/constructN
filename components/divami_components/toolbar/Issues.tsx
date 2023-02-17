@@ -272,7 +272,6 @@ const Issues = ({
         <IssuesSectionPlusImg>
           <CameraIcon
             src={plusCircleIcon}
-            style={{ margin: "0 6px" }}
             alt="Arrow"
             // onClick={rightMenuClickHandler}
             onClick={() => {
@@ -287,7 +286,6 @@ const Issues = ({
         <IssuesSectionFileImg>
           <CameraIcon
             src={fileTextIcon}
-            style={{ margin: "0 6px" }}
             width={12}
             height={12}
             alt="Arrow"
@@ -305,7 +303,6 @@ const Issues = ({
           {showImage && (
             <CameraIcon
               src={clipboardSecondIcon}
-              style={{ margin: "0 6px" }}
               width={12}
               height={12}
               alt="Arrow"
@@ -322,7 +319,6 @@ const Issues = ({
               src={fileTextIssue}
               width={12}
               height={12}
-              style={{ margin: "0 6px" }}
               alt="Arrow"
               // onClick={rightMenuClickHandler}
               onClick={() => {

@@ -125,6 +125,12 @@
   left: 50%;
 }
 
+.detailsImageDiv .deleteIcon {
+  visibility: hidden;
+}
+.detailsImageDiv:hover .deleteIcon {
+  visibility: visible;
+}
 .MuiDrawer-paper {
   top: auto !important;
   bottom: 0 !important;

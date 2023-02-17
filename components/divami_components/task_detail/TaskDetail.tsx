@@ -19,6 +19,7 @@ import Clip from "../../../public/divami_icons/clip.svg";
 import Delete from "../../../public/divami_icons/delete.svg";
 import Edit from "../../../public/divami_icons/edit.svg";
 import Send from "../../../public/divami_icons/send.svg";
+import { deleteAttachment } from "../../../services/attachments";
 import { updateAttachments, updateTask } from "../../../services/task";
 import CustomButton from "../../divami_components/custom-button/CustomButton";
 import PopupComponent from "../../popupComponent/PopupComponent";
@@ -481,6 +482,7 @@ function BasicTabs(props: any) {
     taskStatus,
     projectUsers,
     taskUpdate,
+    deleteTheAttachment,
   } = props;
 
   const [value, setValue] = React.useState(0);
@@ -792,11 +794,19 @@ function BasicTabs(props: any) {
                     (a: any, index: number) => {
                       return (
                         <>
-                          <AttachedImageDiv>
+                          <AttachedImageDiv className={`detailsImageDiv`}>
                             <AttachedImageTitle>{a?.name}</AttachedImageTitle>
-                            <AttachedImageIcon>
+                            {/* <AttachedImageIcon>
                               <Image src={""} alt="" />
-                            </AttachedImageIcon>
+                            </AttachedImageIcon> */}
+                            <DeleteIcon
+                              src={Delete}
+                              alt={"delete icon"}
+                              onClick={() => {
+                                deleteTheAttachment(a?._id);
+                              }}
+                              className={`deleteIcon`}
+                            />
                           </AttachedImageDiv>
                           <AttachHorizontal></AttachHorizontal>
                         </>
@@ -1116,6 +1126,17 @@ const CustomTaskDetailsDrawer = (props: any) => {
         }
       });
   };
+  const deleteTheAttachment = (attachmentId: string) => {
+    deleteAttachment(attachmentId)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success(response.message);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
   return (
     <>
       <CustomTaskDrawerContainer>
@@ -1158,6 +1179,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             taskStatus={taskStatus}
             projectUsers={projectUsers}
             taskState={taskState}
+            deleteTheAttachment={deleteTheAttachment}
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>
