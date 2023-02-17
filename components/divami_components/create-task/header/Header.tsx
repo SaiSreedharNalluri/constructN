@@ -11,7 +11,6 @@ const HeaderContainer = styled(Box)({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  width: "100%",
   borderBottom: "1px solid #d9d9d9",
 });
 const TitleContiner = styled(Box)({
@@ -25,7 +24,7 @@ const TitleContiner = styled(Box)({
   fontWeight: "400",
   lineHeight: "20px",
   fontSize: "14px",
-  color: "black",
+  color: "#101F4C",
 });
 const CloseIcon = styled(Image)({ cursor: "pointer" });
 

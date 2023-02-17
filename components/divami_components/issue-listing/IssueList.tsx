@@ -32,6 +32,7 @@ import {
   FunnelIcon,
   HeaderContainer,
   HorizontalLine,
+  MessageDiv,
   MiniHeaderContainer,
   MiniSymbolsContainer,
   SearchGlassIcon,
@@ -73,6 +74,7 @@ interface IProps {
   contextInfo: any;
   issueTypesList?: any;
   issueFilterState?: any;
+  getIssues?: any
 }
 
 const CustomIssueListDrawer: React.FC<IProps> = ({
@@ -93,6 +95,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   contextInfo,
   issueTypesList,
   issueFilterState,
+  getIssues
 }) => {
   const handleClose = () => {
     onClose(true);
@@ -314,61 +317,127 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       </MiniHeaderContainer>
 
       <BodyContainer>
-        <Box sx={{ marginTop: "15px" }}>
-          {filteredIssuesList.length ? filteredIssuesList.map((val: any, index: number) => {
-            return (
-              <div key={index}>
-                <BodyInfo
-                  onClick={() => {
-                    handleViewIssue(val);
-                  }}
-                >
-                  <FirstHeader>
-                    <Image
-                      src={
-                        val.type === "RFI"
-                          ? RFIList
-                          : val.type === "Safety"
-                            ? HourglassIcon
-                            : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Clash"
-                                ? SubmittalList
-                                : val.type === "Commissioning"
-                                  ? commission
-                                  : val.type === "Building code"
-                                    ? HourglassIcon
-                                    : val.type === "Design"
-                                      ? designIcon
-                                      : val.type === "Submittals"
-                                        ? SubmittalList
-                                        : ""
-                      }
-                      alt="Arrow"
-                    />
-                    <BodyContTitle>
-                      {val.type} (#{val._id})
-                    </BodyContTitle>
-                  </FirstHeader>
+        {searchingOn ? (
+          <Box sx={{ marginTop: "10px" }}>
+            {filteredIssuesList.length ? (
+              filteredIssuesList.map((val: any, index: number) => {
+                return (
+                  <div key={index}>
+                    <BodyInfo
+                      onClick={() => {
+                        handleViewIssue(val);
+                      }}
+                    >
+                      <FirstHeader>
+                        <Image
+                          src={
+                            val.type === "RFI"
+                              ? RFIList
+                              : val.type === "Safety"
+                                ? HourglassIcon
+                                : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : val.type === "Clash"
+                                    ? SubmittalList
+                                    : val.type === "Commissioning"
+                                      ? commission
+                                      : val.type === "Building code"
+                                        ? HourglassIcon
+                                        : val.type === "Design"
+                                          ? designIcon
+                                          : val.type === "Submittals"
+                                            ? SubmittalList
+                                            : ""
+                          }
+                          alt="Arrow"
+                        />
+                        <BodyContTitle>
+                          {val.type} (#{val._id})
+                        </BodyContTitle>
+                      </FirstHeader>
 
-                  <SecondHeader>
-                    <div>{val.priority} Priority</div>
-                  </SecondHeader>
+                      <SecondHeader>
+                        <div>{val.priority} Priority</div>
+                      </SecondHeader>
 
-                  <ThirdHeader>
-                    <div>{val.assignees[0].firstName}</div>
-                    <DueDateDiv>
-                      Due by {Moment(val.dueDate).format("DD MMM 'YY")}
-                    </DueDateDiv>
-                  </ThirdHeader>
-                </BodyInfo>
-                <HorizontalLine></HorizontalLine>
-              </div>
-            );
-          })
-            : <p>No issue matches the search</p>
-          }
-        </Box>
+                      <ThirdHeader>
+                        <div>{val.assignees[0].firstName}</div>
+                        <DueDateDiv>
+                          Due by {Moment(val.dueDate).format("DD MMM 'YY")}
+                        </DueDateDiv>
+                      </ThirdHeader>
+                    </BodyInfo>
+                    <HorizontalLine></HorizontalLine>
+                  </div>
+                );
+              })
+            ) : (
+              <MessageDiv>
+                <p>No issue matches the search</p>
+              </MessageDiv>
+            )}
+          </Box>
+        ) : (
+          <Box>
+            {filteredIssuesList.length ? (
+              filteredIssuesList.map((val: any, index: number) => {
+                return (
+                  <div key={index}>
+                    <BodyInfo
+                      onClick={() => {
+                        handleViewIssue(val);
+                      }}
+                    >
+                      <FirstHeader>
+                        <Image
+                          src={
+                            val.type === "RFI"
+                              ? RFIList
+                              : val.type === "Safety"
+                                ? HourglassIcon
+                                : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : val.type === "Clash"
+                                    ? SubmittalList
+                                    : val.type === "Commissioning"
+                                      ? commission
+                                      : val.type === "Building code"
+                                        ? HourglassIcon
+                                        : val.type === "Design"
+                                          ? designIcon
+                                          : val.type === "Submittals"
+                                            ? SubmittalList
+                                            : ""
+                          }
+                          alt="Arrow"
+                        />
+                        <BodyContTitle>
+                          {val.type} (#{val._id})
+                        </BodyContTitle>
+                      </FirstHeader>
+
+                      <SecondHeader>
+                        <div>{val.priority} Priority</div>
+                      </SecondHeader>
+
+                      <ThirdHeader>
+                        <div>{val.assignees[0].firstName}</div>
+                        <DueDateDiv>
+                          Due by {Moment(val.dueDate).format("DD MMM 'YY")}
+                        </DueDateDiv>
+                      </ThirdHeader>
+                    </BodyInfo>
+                    <HorizontalLine></HorizontalLine>
+                  </div>
+                );
+              })
+            ) : (
+              <MessageDiv>
+                <p>No issue matches the search</p>
+              </MessageDiv>
+            )}
+          </Box>
+        )}
       </BodyContainer>
       {/* <LoadMoreContainer>
         <LoadMoreButton>Load More</LoadMoreButton>
@@ -392,6 +461,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             currentSnapshot={currentSnapshot}
             contextInfo={contextInfo}
             deleteTheIssue={deleteTheIssue}
+            getIssues={getIssues}
           />
         </Drawer>
       )}

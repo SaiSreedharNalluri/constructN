@@ -20,14 +20,20 @@ import { getProjectUsers } from "../../../../services/project";
 import UploadedImagesList from "../../uploaded-images-list/UploadedImagesList";
 
 const BodyContainer = styled(Box)({
-  // height: 'calc(100vh - 134px)',
   paddingLeft: "20px",
   paddingRight: "20px",
+  color: "#888888",
+  overflowY: "auto",
+  height: "calc(100% - 132px)",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
   // overflow: 'scroll',
 });
 
 const FormElementContainer = styled(Box)({
-  marginTop: "30px",
+  marginTop: "20px",
 });
 
 const FormElementContainerForLastChild = styled(FormElementContainer)({
