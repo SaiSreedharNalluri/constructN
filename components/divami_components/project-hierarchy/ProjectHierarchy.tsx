@@ -11,7 +11,7 @@ import CustomSearch from "../customSearch";
 // import CustomSearch from '../common/custom-search/CustomSearch'
 import { mockData } from "./mockData";
 import { InputAdornment } from "@mui/material";
-import SearchImg from '../../../public/images/search.svg';
+import SearchImg from "../../../public/images/search.svg";
 import {
   CloseIcon,
   HeaderLabel,
@@ -112,7 +112,9 @@ const ProjectHierarchy = ({
   return (
     <ProjectHierarchyContainer>
       <HeaderLabelContainer>
-        <HeaderLabel style={{ color: "#101F4B" }}>{title}</HeaderLabel>
+        <HeaderLabel style={{ color: "#101F4B", textAlign: "center" }}>
+          {title}
+        </HeaderLabel>
         <CloseIcon
           src={closeIcon}
           onClick={onCloseHandler}
@@ -136,11 +138,11 @@ const ProjectHierarchy = ({
           //   ),
           // }}
           InputProps={{
-            startAdornment: <Image src={SearchImg} alt="search" />
+            startAdornment: <Image src={SearchImg} alt="search" />,
           }}
         />
       </SearchContainer>
-      <TreeViewContainer style={{ overflow: "auto", height: "60vh" }}>
+      <TreeViewContainer style={{ overflow: "auto", height: "63vh" }}>
         {treeViewData.length === 0 ? (
           "No structures found for this project"
         ) : (

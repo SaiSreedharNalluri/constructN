@@ -106,8 +106,7 @@ const CustomCalender = (props: any) => {
           }}
           label={"MM/DD/YYYY"}
           value={value}
-          minDate={data?.disableAll ? value : null}
-          maxDate={data?.disableAll ? value : null}
+          shouldDisableDate={data.disableDays}
           onChange={(newValue: any) => {
             setValue(newValue);
             onChange(newValue);
