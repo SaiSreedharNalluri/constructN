@@ -15,7 +15,7 @@ const StyledDiv = styled("span")({
   // fontSize: "14px",
   // lineHeight: "19px",
   // background: '#FFFFFF',
-  height: "calc(100vh - 134px)",
+  height: "calc(100vh - 60px)",
   //   paddingLeft: '20px',
   //   paddingRight: '20px',
   // overflow: 'scroll'

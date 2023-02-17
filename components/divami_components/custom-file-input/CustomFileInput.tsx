@@ -52,7 +52,7 @@ const LabelArea = styled.div`
 `;
 
 const RedLabel = styled.span`
-  color: red;
+  color: rgba(241, 116, 46, 1);
 `;
 
 const GreyLabel = styled.span`

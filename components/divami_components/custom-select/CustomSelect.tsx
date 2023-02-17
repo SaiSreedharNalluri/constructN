@@ -89,7 +89,7 @@ const CustomSelect = (props: any) => {
           ))}
       </StyledSelect>
 
-      <ErrorField>{data.isError ? "Required" : ""}</ErrorField>
+      <ErrorField>{data?.isError ? "Required" : ""}</ErrorField>
     </CustomSelectContainer>
   );
 };

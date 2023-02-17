@@ -22,12 +22,24 @@ export const DrawerHeader = styled("div")({
   justifyContent: "space-between",
   alignItems: "center",
   padding: "20px 22px 15px 19px",
+
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
 });
 export const DrawerBox = styled(Box)({
   // width: "252px",
   // width: "258px",
   border: "1px solid #b5b5b5",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
+
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
 });
 
 export const DrawerHeaderTitle = styled("div")({});

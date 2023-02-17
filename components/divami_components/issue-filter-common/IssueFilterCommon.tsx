@@ -4,6 +4,9 @@ import Checked from "../../../public/divami_icons/checked.svg";
 import Indeterminate from "../../../public/divami_icons/indeterminate.svg";
 import UnChecked from "../../../public/divami_icons/unchecked.svg";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
+import NotificationNewIcon from "../../../public/divami_icons/NotificationNewIcon.svg";
+import newRefreshIcon from "../../../public/divami_icons/newRefreshIcon.svg";
+
 import { InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/system";
@@ -34,6 +37,7 @@ import {
   FormElementContainer,
   DatePickersContainer,
   DatePickerContainer,
+  FilterFooter,
 } from "./IssueStyledComponent";
 import { Issue } from "../../../models/Issue";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
@@ -465,6 +469,14 @@ const FilterCommon: React.FC<IProps> = ({
   };
   const CloseIcon = styled(Image)({
     cursor: "pointer",
+    width: "24px",
+    height: "24px",
+  });
+
+  const RefreshIcon = styled(Image)({
+    cursor: "pointer",
+    width: "18px",
+    height: "15px",
   });
   const onReset = () => {
     let temp = FilterState?.map((each: any, serial: number) => {
@@ -493,13 +505,20 @@ const FilterCommon: React.FC<IProps> = ({
             </HeaderLeftSection>
             <HeaderRightSection>
               <HeaderRightSectionResetIcon>
-                <Image
-                  src={ResetIcon}
+                <RefreshIcon
+                  src={newRefreshIcon}
                   alt="reset"
                   onClick={() => {
                     onReset();
                   }}
                 />
+                {/* <Image
+                  src={ResetIcon}
+                  alt="reset"
+                  onClick={() => {
+                    onReset();
+                  }}
+                /> */}
               </HeaderRightSectionResetIcon>
               <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
               {/* <Image src={closeIcon} alt="reset"   onClick={() => {
@@ -509,7 +528,7 @@ const FilterCommon: React.FC<IProps> = ({
                 onClick={() => {
                   handleClose();
                 }}
-                src={closeIcon}
+                src={NotificationNewIcon}
                 alt={"close icon"}
               />
             </HeaderRightSection>
@@ -632,7 +651,9 @@ const FilterCommon: React.FC<IProps> = ({
             </div>
           </DatePickersContainer>
         </FormElementContainer>
+      </FilterCommonBody>
 
+      <FilterFooter>
         <ButtonsContainer>
           <CustomButton
             type="outlined"
@@ -645,7 +666,7 @@ const FilterCommon: React.FC<IProps> = ({
             formHandler={formHandler}
           />
         </ButtonsContainer>
-      </FilterCommonBody>
+      </FilterFooter>
     </FilterCommonMain>
   );
 };

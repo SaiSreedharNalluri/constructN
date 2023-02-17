@@ -8,8 +8,8 @@ export const HotspotBox = styled('div')({
   borderBottomRightRadius: '4px',
   display: 'flex',
   /* justify-content: space-between; */
-  alignItems: 'center',
-  padding: '15px 20px',
+  alignItems: "center",
+  padding: "15px 20px 14px 20px",
 });
 
 export const HotspotTitleDiv = styled('div')({});
@@ -37,10 +37,10 @@ export const TaskBox = styled('div')({
   borderRight: 'none',
   display: 'flex',
   /* justify-content: space-between; */
-  alignItems: 'center',
-  padding: '15px 20px',
-  '& .MuiDrawer-paper': {
-    height: 'calc(100% - 60px)',
+  alignItems: "center",
+  padding: "15px 20px 14px 20px",
+  "& .MuiDrawer-paper": {
+    height: "calc(100% - 60px)",
   },
 });
 
@@ -88,35 +88,37 @@ export const ToolbarContainer = styled('div')({
   borderRight: '1px solid #d9d9d9',
 });
 
-export const TypeParentCont = styled('div')({
-  border: '1px solid #d9d9d9',
-  borderTopLeftRadius: '4px',
-  borderBottomLeftRadius: '4px',
-  borderRight: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  padding: '15px 20px',
+export const TypeParentCont = styled("div")({
+  border: "1px solid #d9d9d9",
+  borderTopLeftRadius: "4px",
+  borderBottomLeftRadius: "4px",
+  borderRight: "none",
+  display: "flex",
+  alignItems: "center",
+  padding: "15px 20px 14px 20px",
+  width: "250px",
 });
 
 export const TypesTitle = styled('div')({
   width: '100px',
 });
 
-export const TypeArrowIconDiv = styled('div')({
-  marginLeft: '110px',
-  cursor: 'pointer',
+export const TypeArrowIconDiv = styled("div")({
+  marginLeft: "110px",
+  cursor: "pointer",
 });
 
 export const TypesRightScroll = styled('div')({
   marginLeft: 'auto',
 });
 
-export const IssueBox = styled('div')({
-  border: '1px solid #d9d9d9',
-  borderRight: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  padding: '15px 20px',
+export const IssueBox = styled("div")({
+  border: "1px solid #d9d9d9",
+  borderRight: "none",
+  display: "flex",
+  alignItems: "center",
+  padding: "15px 20px 14px 20px",
+  width:"167px"
 });
 
 export const IssueTitle = styled('div')({
@@ -125,14 +127,17 @@ export const IssueTitle = styled('div')({
   // lineHeight:"16px"
 });
 
-export const LayersWrapper = styled('div')({
-  border: '1px solid #d9d9d9',
-  borderRight: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  padding: '15px 20px',
-  position: 'relative',
+export const LayersWrapper = styled("div")({
+  border: "1px solid #d9d9d9",
+  borderRight: "none",
+  display: "flex",
+  alignItems: "center",
+  padding: "15px 20px 14px 20px",
+
+  position: "relative",
+  width:"190px"
 });
+
 
 export const IconsContainer = styled('div')({
   minWidth: '108px',
@@ -154,6 +159,15 @@ export const LayerSecondSectionCamImg = styled('div')({
   // height: '15px',
 });
 
+export const LayerSecondSectionArrImg = styled("div")({
+  marginLeft: "50px",
+  cursor: "pointer",
+
+  // width: '15px',
+  // height: '15px',
+});
+
+
 export const TaskTitle = styled('div')({
   fontWeight: '400',
   fontSize: '12px',
@@ -161,14 +175,21 @@ export const TaskTitle = styled('div')({
 });
 
 export const CameraIcon = styled(Image)({
-  width: '18px',
-  height: '18px',
-  cursor: 'pointer',
+  width: "18px",
+  height: "18px",
+  cursor: "pointer",
+});
+
+export const GroupIcon = styled(Image)({
+  width: "18px",
+  height: "18px",
+  cursor: "pointer",
+  
 });
 
 export const DownIcon = styled(Image)({
-  // width:5px;
-  // height:7px
+  // width:"5px",
+  // height:"7px"
 });
 
 export const CompareViewBox = styled('div')({

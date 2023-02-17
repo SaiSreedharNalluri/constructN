@@ -5,10 +5,7 @@ import { Box } from "@mui/material";
 import CustomButton from "../../custom-button/CustomButton";
 
 const ButtonsContainer = styled(Box)({
-  paddingLeft: "20px",
-  paddingRight: "20px",
-  marginTop: "60px",
-  paddingBottom: "20px",
+  padding: "20px",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
