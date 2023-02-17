@@ -24,21 +24,15 @@ import { IToolResponse } from "../../../../models/ITools";
 import UploadedImagesList from "../../uploaded-images-list/UploadedImagesList";
 
 const BodyContainer = styled(Box)({
-  // height: 'calc(100vh - 134px)',
   paddingLeft: "20px",
   paddingRight: "20px",
   color: "#888888",
   overflowY: "auto",
-  marginTop: "41px",
-  height: "calc(100% - 100px)",
-  // height: 110px;
-
+  height: "calc(100% - 132px)",
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "14px",
-
-  // overflow: 'scroll',
 });
 
 const FormElementContainer = styled(Box)({
