@@ -73,7 +73,7 @@ export const StyledTreeView = styled(TreeView)({
 
 export const SelectLayerContainer = styled(Box)((props: any) => ({
   display: props.openSelectLayer ? "" : "none",
-  width: "251px",
+  width: "250px",
   // width: "259px",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
 
