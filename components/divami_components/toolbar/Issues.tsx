@@ -63,6 +63,8 @@ const Issues = ({
   deleteTheIssue,
   openIssueDetails,
   closeIssueDetails,
+  setIssueList,
+  getIssues
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -100,6 +102,7 @@ const Issues = ({
     console.log(formData, "form data at home");
     clickTaskSubmit(formData);
   };
+
   const clickTaskSubmit = (formData: any) => {
     let userIdList: any[] = [];
     const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
@@ -123,7 +126,9 @@ const Issues = ({
         data.context = { ...data.context, [key]: contextInfo[key] };
       }
     });
-
+    data.tags = formData.filter(
+      (item: any) => item.id == "tag-suggestions"
+    )[0]?.chipString;
     data.title = formData.filter(
       (item: any) => item.id == "title"
     )[0]?.defaultValue;
@@ -137,12 +142,12 @@ const Issues = ({
       (item: any) => item.id == "description"
     )[0]?.defaultValue),
       (data.assignees = userIdList),
-      (data.tags =
-        (formData.length
-          ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
-          : []) || []),
+      // (data.tags =
+      //   (formData.length
+      //     ? formData
+      //       .filter((item: any) => item.id == "tag-suggestions")[0]
+      //       ?.chipString?.join(";")
+      //     : []) || []),
       (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]
         ?.fields.filter(
@@ -174,6 +179,8 @@ const Issues = ({
       .projectId;
     console.log("formData", data);
     if (data.title && data.type && data.priority) {
+      console.log(data, data.tags, "sdfdsfsdfs")
+
       createIssue(projectId as string, data)
         .then((response) => {
           if (response.success === true) {
@@ -355,9 +362,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => {}}
+            handleOnSort={() => { }}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => {}}
+            clickIssueEditSubmit={() => { }}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}
@@ -366,6 +373,7 @@ const Issues = ({
             currentProject={currentProject}
             issueTypesList={issueTypesList}
             issueFilterState={issueFilterState}
+            getIssues={getIssues}
           />
           {/* <FilterCommon/> */}
         </Drawer>
@@ -401,6 +409,7 @@ const Issues = ({
             currentStructure={currentStructure}
             currentSnapshot={currentSnapshot}
             contextInfo={contextInfo}
+            setIssueList={setIssueList}
           />
         </Drawer>
       )}

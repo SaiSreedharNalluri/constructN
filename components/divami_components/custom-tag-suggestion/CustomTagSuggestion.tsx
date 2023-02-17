@@ -41,24 +41,31 @@ const CustomAutoComplete = styled(Autocomplete)({
 
 const CustomTagSuggestion = (props: any) => {
   const { data, handleChipMaking } = props;
-  // const [autoCompleteValue, setAutoCompleteValue] = useState(['foo', 'bar'])
-  const [autoCompleteValue, setAutoCompleteValue] = useState(
-    data.defaultValue ? data.defaultValue : []
-  );
+  console.log("data", data);
+  const [options, setOptions] = useState(data.chipSuggestions)
+  const [autoCompleteValue, setAutoCompleteValue] = useState([]);
+
 
   useEffect(() => {
-    handleChipMaking(autoCompleteValue);
-  }, [autoCompleteValue]);
 
+    setAutoCompleteValue(data.chipString)
+
+  }, [data.chipString])
+  useEffect(() => {
+    console.log("data-changed", data);
+    setOptions(data.chipSuggestions);
+  }, [data]);
+
+  console.log("autoCompleteValue", data)
   return (
     <CustomAutoComplete
       multiple
       id="tags-outlined"
-      options={[]}
+      options={options}
       value={autoCompleteValue}
       freeSolo
       onChange={(e, newval, reason) => {
-        setAutoCompleteValue(newval as any);
+        handleChipMaking(newval);
       }}
       renderInput={(params) => (
         <TextField
@@ -66,14 +73,14 @@ const CustomTagSuggestion = (props: any) => {
           variant="outlined"
           label="filterSelectedOptions"
           placeholder="Add tags separated by commas"
-          onKeyDown={(e: any) => {
-            if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
-              setAutoCompleteValue(
-                // autoCompleteValue.concat((e.target as HTMLInputElement).value)
-                autoCompleteValue.concat(e.target.value)
-              );
-            }
-          }}
+        // onKeyDown={(e: any) => {
+        //   if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
+        //     setAutoCompleteValue(
+        //       // autoCompleteValue.concat((e.target as HTMLInputElement).value)
+        //       autoCompleteValue.concat(e.target.value)
+        //     );
+        //   }
+        // }}
         />
       )}
     />

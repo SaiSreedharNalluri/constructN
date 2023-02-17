@@ -4,6 +4,8 @@ import Footer from "./footer/Footer";
 import Header from "./header/Header";
 import { styled } from "@mui/system";
 import { createTask } from "../../../services/task";
+import { getTagsList } from "../../../services/tags";
+import { useRouter } from "next/router";
 
 const StyledDiv = styled("span")({
   fontFamily: '"Open Sans"',
@@ -29,8 +31,12 @@ const CreateIssue = ({
   closeIssueCreate,
   editData,
 }: any) => {
+  console.log(editData, "editData")
+  const router = useRouter();
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);
+  const [tagList, setTagList] = useState<[string]>([""]);
+
   const formHandler = (event: any) => {
     if (event === "Cancel") {
       setOpenCreateTask(false);
@@ -43,8 +49,17 @@ const CreateIssue = ({
 
   const handleFormData = (data: any) => {
     setFormData(data);
-    console.log(data);
   };
+
+  useEffect(() => {
+    getTagsList(router.query.projectId as string)
+      .then((response) => {
+        if (response.success === true) {
+          setTagList(response.result[0]?.tagList);
+        }
+      })
+      .catch(e => console.log(e));
+  }, []);
 
   return (
     <StyledDiv>
@@ -57,6 +72,7 @@ const CreateIssue = ({
         editData={editData}
         validate={validate}
         setIsValidate={setValidate}
+        tagsList={tagList}
       />
       <Footer formHandler={formHandler} />
     </StyledDiv>

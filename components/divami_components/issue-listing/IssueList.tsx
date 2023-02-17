@@ -73,6 +73,7 @@ interface IProps {
   contextInfo: any;
   issueTypesList?: any;
   issueFilterState?: any;
+  getIssues?: any
 }
 
 const CustomIssueListDrawer: React.FC<IProps> = ({
@@ -93,6 +94,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   contextInfo,
   issueTypesList,
   issueFilterState,
+  getIssues
 }) => {
   const handleClose = () => {
     onClose(true);
@@ -392,6 +394,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             currentSnapshot={currentSnapshot}
             contextInfo={contextInfo}
             deleteTheIssue={deleteTheIssue}
+            getIssues={getIssues}
           />
         </Drawer>
       )}
