@@ -41,7 +41,6 @@ const CustomAutoComplete = styled(Autocomplete)({
 
 const CustomTagSuggestion = (props: any) => {
   const { data, handleChipMaking } = props;
-  // const [autoCompleteValue, setAutoCompleteValue] = useState(['foo', 'bar'])
   const [autoCompleteValue, setAutoCompleteValue] = useState(
     data.defaultValue ? data.defaultValue : []
   );
