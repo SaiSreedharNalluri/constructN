@@ -231,6 +231,13 @@ const FourthContProgType = styled("div")`
   line-height: 19px;
 `;
 
+const MoreText = styled("div")`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ff843f;
+`;
+
 const FormElementContainer = styled(Box)`
   margin-top: 30px;
 `;
@@ -397,7 +404,7 @@ const AddCommentContainer = styled("div")((props: any) => ({
   background: "white",
   marginLeft: "-24px",
   width: "100%",
-}));
+})) as any;
 
 const AddCommentInput = styled("input")({
   width: "100%",
@@ -475,7 +482,7 @@ function a11yProps(index: number) {
 function BasicTabs(props: any) {
   const {
     taskState,
-    formHandler,
+    onClose,
     taskType,
     taskPriority,
     taskStatus,
@@ -732,7 +739,8 @@ function BasicTabs(props: any) {
                   <FourthContAssigned>Assigned to</FourthContAssigned>
 
                   <FourthContProgType style={{ color: "#101F4B" }}>
-                    {taskState?.TabOne.assignees}{" "}
+                    {taskState.TabOne.assigneeName}
+                    <MoreText>{taskState.TabOne.moreText}</MoreText>
                     <PenIconImage
                       onClick={() => {
                         handleEditAssigne();
@@ -949,7 +957,11 @@ const CustomTaskDetailsDrawer = (props: any) => {
       issueDescription: task.description,
       attachments: task.attachments,
       relatedTags: task.tags,
-      assignees: task.assignees?.length ? task.assignees[0].fullName : "",
+      assignees:
+        task.assignees?.length > 1 ? `${task.assignees[0].fullName}` : "",
+      assigneeName: task.assignees?.length ? task.assignees[0].fullName : "",
+      moreText:
+        task.assignees?.length > 1 ? `+${task.assignees?.length - 1} more` : "",
       id: task._id,
       status: task.status,
     };
@@ -1158,6 +1170,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             taskStatus={taskStatus}
             projectUsers={projectUsers}
             taskState={taskState}
+            onClose={onClose}
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>

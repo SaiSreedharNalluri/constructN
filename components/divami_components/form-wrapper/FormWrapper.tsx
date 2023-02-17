@@ -91,6 +91,7 @@ const FormWrapper = (props: any) => {
   };
 
   const handleSearchResult = (e: any, value: string, id: string) => {
+    console.log(e, value, "sdfsdfsearch");
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {

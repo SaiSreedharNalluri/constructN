@@ -52,7 +52,6 @@ export const TASK_FORM_CONFIG = [
     isError: false,
     isReq: true,
     isflex: false,
-
     formLabel: "Select Task Priority",
     options: [
       {
@@ -80,6 +79,8 @@ export const TASK_FORM_CONFIG = [
       { label: "Schindler's List", year: 1993 },
     ],
     selectedName: null,
+    isMultiSelect: true,
+
     label: "Select Name or Team",
     defaultValue: [],
     isError: false,

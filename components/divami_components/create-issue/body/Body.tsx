@@ -150,7 +150,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
                   };
                 }),
                 selectedName: editData.assignees?.length
-                  ? editData.assignees[0]
+                  ? editData.assignees
                   : undefined,
               };
             }

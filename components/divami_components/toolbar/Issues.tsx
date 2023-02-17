@@ -101,12 +101,12 @@ const Issues = ({
     clickTaskSubmit(formData);
   };
   const clickTaskSubmit = (formData: any) => {
-    let userIdList: any[] = [];
-    const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
-      ?.selectedName;
-    if (assignes?.value) {
-      userIdList.push(assignes?.value);
-    }
+    const userIdList = formData
+      .find((item: any) => item.id == "assignedTo")
+      ?.map((each: any) => {
+        return each.value;
+      });
+
     // if (assignes && assignes.length > 0) {
     //   assignes.map((user: any) => {
     //     userIdList.push(user.value);
@@ -177,7 +177,7 @@ const Issues = ({
       createIssue(projectId as string, data)
         .then((response) => {
           if (response.success === true) {
-            setSuccessMessage("Issue is added sucessfully");
+            // setSuccessMessage("Issue is added sucessfully");
 
             // toast("Issue created sucessfully", {
             //   progressStyle: { backgroundColor: "orange" },

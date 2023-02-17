@@ -78,6 +78,8 @@ export const ISSUE_FORM_CONFIG = [
       { label: "Schindler's List", year: 1993 },
     ],
     selectedName: null,
+    isMultiSelect: true,
+
     label: "Select Name or Team",
     isError: false,
     isReq: false,

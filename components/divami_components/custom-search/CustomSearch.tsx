@@ -54,46 +54,98 @@ const CustomAutoComplete = styled(Autocomplete)({
 
 const CustomSearch = (props: any) => {
   const { data, handleSearchResult } = props;
-
-  const [val, setVal] = React.useState<any>();
+  const { isMultiSelect = false } = props.data;
+  const [val, setVal] = React.useState<any>([]);
 
   React.useEffect(() => {
-    console.log(data, "sdrsdfr");
-    if (data.selectedName) {
-      if (data?.selectedName?.label && data?.selectedName?.value) {
-        setVal(data.selectedName);
+    if (isMultiSelect) {
+      console.log(data, "sdrsdfr");
+      if (data?.selectedName?.length) {
+        setVal(
+          data.selectedName?.map((each: any) => {
+            return {
+              ...each,
+              label: each.fullName,
+            };
+          })
+        );
       } else {
-        setVal({
-          user: data.selectedName,
-          label: data?.selectedName?.fullName,
-          value: data.selectedName?._id,
-        });
+        setVal([
+          // {
+          //   user: data.selectedName,
+          //   label: data?.selectedName?.fullName,
+          //   value: data.selectedName?._id,
+          // },
+        ]);
+      }
+    } else {
+      if (data.selectedName) {
+        if (data?.selectedName?.label && data?.selectedName?.value) {
+          setVal(data.selectedName);
+        } else {
+          setVal({
+            user: data.selectedName,
+            label: data?.selectedName?.fullName,
+            value: data.selectedName?._id,
+          });
+        }
       }
     }
-  }, [data.selectedName]);
+  }, [data.selectedName?.length]);
+  console.log(val, "detailsval");
+
   return (
-    <CustomAutoComplete
-      disablePortal
-      id="combo-box-demo"
-      options={data.listOfEntries}
-      value={val}
-      renderInput={(params) => (
-        <TextField
-          placeholder="Enter Name or Teams here ..."
-          {...params}
-          label={data.label}
-          InputProps={{
-            ...params.InputProps,
-            startAdornment: (
-              <InputAdornment position="start">
-                <Image width={15} height={15} src={Search} alt="Search" />
-              </InputAdornment>
-            ),
-          }}
+    <>
+      {isMultiSelect ? (
+        <CustomAutoComplete
+          disablePortal
+          id="combo-box-demo"
+          options={data.listOfEntries}
+          getOptionLabel={(option: any) => option.label}
+          value={val}
+          multiple={isMultiSelect}
+          renderInput={(params) => (
+            <TextField
+              placeholder="Enter Name or Teams here ..."
+              {...params}
+              label={data.label}
+              InputProps={{
+                ...params.InputProps,
+                // startAdornment: (
+                //   <InputAdornment position="start">
+                //     <Image width={15} height={15} src={Search} alt="Search" />
+                //   </InputAdornment>
+                // ),
+              }}
+            />
+          )}
+          onChange={(e, value) => handleSearchResult(e, value, data.id)}
+        />
+      ) : (
+        <CustomAutoComplete
+          disablePortal
+          id="combo-box-demo"
+          options={data.listOfEntries}
+          value={val}
+          renderInput={(params) => (
+            <TextField
+              placeholder="Enter Name or Teams here ..."
+              {...params}
+              label={data.label}
+              InputProps={{
+                ...params.InputProps,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Image width={15} height={15} src={Search} alt="Search" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
+          onChange={(e, value) => handleSearchResult(e, value, data.id)}
         />
       )}
-      onChange={(e, value) => handleSearchResult(e, value)}
-    />
+    </>
   );
 };
 

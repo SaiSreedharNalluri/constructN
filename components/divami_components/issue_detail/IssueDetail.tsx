@@ -196,6 +196,13 @@ const FourthBodyDiv = styled("div")((props: any) => ({
   marginTop: "25px",
 })) as any;
 
+const MoreText = styled("div")`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ff843f;
+`;
+
 const FourthContLeft = styled("div")``;
 
 const FourthContAssigned = styled("div")`
@@ -641,6 +648,7 @@ function BasicTabs(props: any) {
                   <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType style={{ color: "#101F4B" }}>
                     {taskState?.TabOne.assignees}{" "}
+                    <MoreText>{taskState.TabOne.moreText}</MoreText>
                     <PenIconImage
                       onClick={() => {
                         handleEditAssigne();
@@ -923,8 +931,14 @@ const CustomIssueDetailsDrawer = (props: any) => {
       creator: issue?.owner,
       issueDescription: issue?.description,
       attachments: issue?.attachments,
+      assignees:
+        issue.assignees?.length > 1 ? `${issue.assignees[0].fullName}` : "",
+      assigneeName: issue.assignees?.length ? issue.assignees[0].fullName : "",
+      moreText:
+        issue.assignees?.length > 1
+          ? `+${issue.assignees?.length - 1} more`
+          : "",
       relatedTags: issue?.tags,
-      assignees: issue?.assignees?.length ? issue?.assignees[0].fullName : "",
       id: issue?._id,
     };
     setTaskState((prev: any) => {
@@ -941,17 +955,23 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
-    let userIdList: any[] = [];
-    const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
-      ?.selectedName;
-    if (assignes && assignes.length > 0) {
-      assignes.map((user: any) => {
-        userIdList?.push(user.value);
+    // let userIdList: any[] = [];
+    // const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
+    //   ?.selectedName;
+    // if (assignes && assignes.length > 0) {
+    //   assignes.map((user: any) => {
+    //     userIdList?.push(user.value);
+    //   });
+    // }
+    // if (assignes?.value) {
+    //   userIdList.push(assignes.value);
+    // }
+    const userIdList = formData
+      .find((item: any) => item.id == "assignedTo")
+      ?.map((each: any) => {
+        return each.value;
       });
-    }
-    if (assignes?.value) {
-      userIdList.push(assignes.value);
-    }
+
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";

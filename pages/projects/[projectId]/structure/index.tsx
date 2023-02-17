@@ -469,6 +469,7 @@ const Index: React.FC<IProps> = () => {
         console.log("IMPORTANT 4");
         setIssueList(response.result);
         setIssueFilterList(response.result);
+        console.log(issuesList, "structuresList", response.result);
       })
       .catch((error) => {
         if (error.success === false) {
