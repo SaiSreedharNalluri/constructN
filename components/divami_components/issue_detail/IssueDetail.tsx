@@ -283,8 +283,9 @@ const RelatedTagTitle = styled("div")`
 
 const RelatedTagsButton = styled("div")`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-top: 8px;
+  flex-wrap: wrap;
 `;
 
 const RelatedSingleButton = styled("div")`
@@ -295,6 +296,7 @@ const RelatedSingleButton = styled("div")`
   white-space: nowrap;
   font-size: 12px;
   margin-right: 10px;
+  margin-bottom: 10px;
 `;
 
 const StyledLabel = styled(Typography)`
@@ -326,15 +328,15 @@ const AssignEditSearchContainer = styled("div")({
     width: "100%",
   },
   "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
     marginTop: "-8px",
   },
@@ -727,13 +729,13 @@ function BasicTabs(props: any) {
                   console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
-                // InputProps={{
-                //   startAdornment: (
-                //     <InputAdornment position="start">
-                //       <SearchIcon />
-                //     </InputAdornment>
-                //   ),
-                // }}
+              // InputProps={{
+              //   startAdornment: (
+              //     <InputAdornment position="start">
+              //       <SearchIcon />
+              //     </InputAdornment>
+              //   ),
+              // }}
               />
             </AssignEditSearchContainer>
           )}
@@ -779,12 +781,12 @@ function BasicTabs(props: any) {
           )}
           <RelatedDiv>
             <RelatedTagTitle>Related Tags</RelatedTagTitle>
-
             <RelatedTagsButton>
-              {taskState?.relatedTags?.map((item: any) => {
+              {console.log(taskState)}
+              {taskState?.TabOne.tags?.map((item: any) => {
                 return (
                   <>
-                    <RelatedSingleButton>{item?.tagName}</RelatedSingleButton>
+                    <RelatedSingleButton>{item}</RelatedSingleButton>
                   </>
                 );
               })}
@@ -846,6 +848,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
     currentStructure,
     contextInfo,
     deleteTheIssue,
+    setIssueList,
+    getIssues
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
@@ -923,6 +927,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       relatedTags: issue?.tags,
       assignees: issue?.assignees?.length ? issue?.assignees[0].fullName : "",
       id: issue?._id,
+      tags: issue?.tags,
     };
     setTaskState((prev: any) => {
       return {
@@ -932,6 +937,22 @@ const CustomIssueDetailsDrawer = (props: any) => {
     });
   }, []);
 
+  const taskSubmit = (formData: any) => {
+    // const updatedList = issuesList.map((item: any) => {
+    //   if (item._id == formData._id){
+    //     return formData;
+    //   }else{
+    //     return {
+    //       ...item
+    //     }
+    //   }
+    // })
+
+    // issuesList.push(formdata);
+    // issueMenuInstance.toolAction = "issueCreated";
+    // setCreateOverlay(false);
+    // issueMenuClicked(issueMenuInstance);
+  }
   const handleCreateTask = (formData: any) => {
     console.log(formData, "form data at home");
     clickTaskSubmit(formData);
@@ -962,6 +983,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       (item: any) => item.id == "title"
     )[0]?.defaultValue;
 
+
     data.type = formData.filter(
       (item: any) => item.id == "issueType"
     )[0]?.defaultValue;
@@ -975,8 +997,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
       (data.tags =
         (formData.length
           ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+            .filter((item: any) => item.id == "tag-suggestions")[0]
+            ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -1016,7 +1038,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
             // handleTaskSubmit(formData);
             // taskSubmit(response.result);
             // toolInstance.toolAction = "taskCreateSuccess";
-
             // console.log(formData);
           } else {
             // toolInstance.toolAction = "taskCreateFail";
@@ -1047,6 +1068,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
             // toolInstance.toolAction = "taskCreateSuccess";
 
             // console.log(formData);
+            console.log(currentStructure, "currentStructure");
+            getIssues(currentStructure._id);
           } else {
             // toolInstance.toolAction = "taskCreateFail";
             // issueToolClicked(toolInstance);

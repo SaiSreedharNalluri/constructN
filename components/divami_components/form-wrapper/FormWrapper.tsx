@@ -25,7 +25,7 @@ const DoubleFieldContainer = styled("div")({
 
 const FormWrapper = (props: any) => {
   const { config, formState, setFormConfig, validate, setIsValidate } = props;
-  console.log("vak", validate);
+  console.log("vak", config);
 
   useEffect(() => {
     if (validate) {
@@ -47,7 +47,7 @@ const FormWrapper = (props: any) => {
       setIsValidate(false);
     }
   }, [validate]);
-  console.log("error", config);
+
   const handleTextChange = (e: any, id: string, data?: any) => {
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
@@ -123,12 +123,13 @@ const FormWrapper = (props: any) => {
   };
 
   const handleChipMaking = (chipsString: any, id: any) => {
+    console.log(chipsString, "chipsString")
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
           return {
             ...item,
-            chipString: [...chipsString],
+            chipString: chipsString,
           };
         }
         return item;

@@ -49,16 +49,30 @@ const DatePickerContainer = styled(Box)({
   flexDirection: "column",
 });
 
-const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
+const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: any) => {
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
   const [issueTypes, setIssueTypes] = useState([]);
   const [issuePriorities, setIssuePriorities] = useState([]);
   const [formData, setFormData] = useState<any>([]);
-  const router = useRouter();
-
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [loggedInUserId, SetLoggedInUserId] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    console.log(formConfig, " formConfig", tagsList, "tagsList");
+    const tempFormData = formConfig.map((item: any) => {
+      if (item.id === "tag-suggestions") {
+        return {
+          ...item,
+          chipSuggestions: tagsList,
+        };
+      }
+      return item;
+    })
+    setFormConfig(tempFormData);
+  }, [tagsList]);
+
   useEffect(() => {
     if (router.isReady) {
       getIssuesTypes(router.query.projectId as string).then((response: any) => {
@@ -103,6 +117,13 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
               return {
                 ...item,
                 defaultValue: editData.title || "",
+              };
+            }
+            if (item.id === "tag-suggestions") {
+              return {
+                ...item,
+                tags: editData.tags,
+                chipString: editData.tags,
               };
             }
             if (item.id === "issueType") {
@@ -184,6 +205,12 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
                 defaultValue: editData.attachments,
               };
             }
+            if (item.id === "tag-suggestions") {
+              return {
+                ...item,
+                defaultValue: editData.chipString,
+              };
+            }
             return item;
           });
         });
@@ -232,6 +259,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
       }
     }
   }, [projectUsers, issuePriorities, issueTypes]);
+
   useEffect(() => {
     let updatedFormData = [
       ...formConfig,
@@ -241,6 +269,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
     setFormData(updatedFormData);
     handleFormData(updatedFormData);
   }, [formConfig]);
+
   return (
     <BodyContainer>
       <FormElementContainer>
