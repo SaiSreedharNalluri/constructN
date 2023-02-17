@@ -116,37 +116,7 @@
 .spinner > circle {
   fill: transparent;
 }
-.adsk-viewing-viewer .adsk-toolbar {
-  bottom: calc(100% - 60px);
-  left: 10px;
-  pointer-events: none;
-  position: absolute;
-  text-align: center;
-  width: calc(100% - 20px);
-  z-index: 15;
-}
 
-.adsk-viewing-viewer .adsk-toolbar .adsk-button .toolbar-vertical-group {
-  bottom: -60px;
-  left: -5px;
-  margin: 0;
-  position: absolute;
-  display: flex;
-  flex-direction: row-reverse;
-  transition: all 0.2s ease;
-  z-index: 15;
-}
-.adsk-viewing-viewer .adsk-button {
-  border: 2px solid rgba(34, 34, 34, 0);
-  border-radius: 4px;
-  cursor: pointer;
-  float: left;
-  height: 18px;
-  margin: 4px;
-  padding: 5px;
-  position: relative;
-  width: 18px;
-}
 .adsk-viewing-viewer .adsk-button-icon {
   background-position: 50%;
   background-repeat: no-repeat;
@@ -159,6 +129,34 @@
   width: 100%;
 }
 .adsk-button-arrow {
+  position: absolute;
+  right: -6px;
+  top: -6px;
+}
+.adsk-viewing-viewer .adsk-toolbar {
+  bottom: 30px;
+  left: calc(100% - 60px);
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  width: 30px;
+  z-index: 15;
+}
+
+.adsk-viewing-viewer .adsk-toolbar .adsk-button .toolbar-vertical-group {
+  bottom: -20px;
+  left: -50px;
+  margin: 0;
+  position: absolute;
+  display: grid;
+  transition: all 0.2s ease;
+  z-index: 15;
+}
+.adsk-viewing-viewer .adsk-button {
+  border: 2px solid rgba(34, 34, 34, 0);
+  border-radius: 4px;
+  cursor: pointer;
+  float: left;
   position: absolute;
   right: -6px;
   top: -6px;
