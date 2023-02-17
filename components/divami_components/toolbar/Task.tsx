@@ -247,6 +247,7 @@ const Task = ({
 
       <IssuesSectionPlusImg>
         <CameraIcon
+          style={{ margin: "0 6px" }}
           onClick={() => {
             openTaskCreateFn();
 
@@ -254,20 +255,21 @@ const Task = ({
           }}
           src={plusCircleIcon}
           // onClick={props.rightMenuClickHandler}
-          // width={12}
-          // height={12}
+          width={12}
+          height={12}
           alt="Arrow"
         />
       </IssuesSectionPlusImg>
 
       <IssuesSectionFileImg>
         <CameraIcon
+          style={{ margin: "0 6px" }}
           onClick={() => {
             handleViewTaskList();
           }}
           src={fileTextIcon}
-          // width={12}
-          // height={12}
+          width={12}
+          height={12}
           alt="Arrow"
         />
       </IssuesSectionFileImg>
@@ -275,9 +277,10 @@ const Task = ({
       <IssuesSectionClipImg>
         {showImage && (
           <CameraIcon
+            style={{ margin: "0 6px" }}
             src={clipboardTask}
-            // width={12}
-            // height={12}
+            width={12}
+            height={12}
             alt="Arrow"
             // onClick={rightMenuClickHandler}
             onClick={() => {
@@ -290,8 +293,9 @@ const Task = ({
         {!showImage && (
           <CameraIcon
             src={taskToogleIcon}
-            // width={12}
-            // height={12}
+            width={12}
+            height={12}
+            style={{ margin: "0 6px" }}
             alt="Arrow"
             // onClick={rightMenuClickHandler}
             onClick={() => {

@@ -49,19 +49,20 @@ export const TaskTitleDiv = styled('div')({});
 export const IssuesSectionPlusImg = styled('div')({
   // width: '12px',
   // height: '12px',
-  marginLeft: '8px',
+  // marginLeft: '8px',
+  // margin: '0 6px'
 });
 
 export const IssuesSectionFileImg = styled('div')({
   // width: '12px',
   // height: '12px',
-  marginLeft: '13px',
+  // margin: '0 6px',
 });
 
 export const IssuesSectionClipImg = styled('div')({
   // width: '12px',
   // height: '12px',
-  marginLeft: '13px',
+  // margin: '0 6px',
 });
 
 export const SectionToolBar = styled('div')((props: any) => ({

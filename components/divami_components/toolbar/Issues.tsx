@@ -272,20 +272,24 @@ const Issues = ({
         <IssuesSectionPlusImg>
           <CameraIcon
             src={plusCircleIcon}
+            style={{ margin: "0 6px" }}
             alt="Arrow"
             // onClick={rightMenuClickHandler}
             onClick={() => {
               openIssueCreateFn();
               // setOpenCreateIssue(true);
             }}
+            width={12}
+            height={12}
           />
         </IssuesSectionPlusImg>
 
         <IssuesSectionFileImg>
           <CameraIcon
             src={fileTextIcon}
-            // width={12}
-            // height={12}
+            style={{ margin: "0 6px" }}
+            width={12}
+            height={12}
             alt="Arrow"
             // onClick={() => {
             //   setOpenIssueList(true);
@@ -301,8 +305,9 @@ const Issues = ({
           {showImage && (
             <CameraIcon
               src={clipboardSecondIcon}
-              // width={12}
-              // height={12}
+              style={{ margin: "0 6px" }}
+              width={12}
+              height={12}
               alt="Arrow"
               // onClick={rightMenuClickHandler}
               onClick={() => {
@@ -315,8 +320,9 @@ const Issues = ({
           {!showImage && (
             <CameraIcon
               src={fileTextIssue}
-              // width={12}
-              // height={12}
+              width={12}
+              height={12}
+              style={{ margin: "0 6px" }}
               alt="Arrow"
               // onClick={rightMenuClickHandler}
               onClick={() => {
