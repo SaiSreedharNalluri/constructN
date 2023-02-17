@@ -20,13 +20,11 @@ import { getProjectUsers } from "../../../../services/project";
 import UploadedImagesList from "../../uploaded-images-list/UploadedImagesList";
 
 const BodyContainer = styled(Box)({
-  // height: 'calc(100vh - 134px)',
   paddingLeft: "20px",
   paddingRight: "20px",
   color: "#888888",
   overflowY: "auto",
-  marginTop: "41px",
-  height: "calc(100% - 100px)",
+  height: "calc(100% - 132px)",
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",
