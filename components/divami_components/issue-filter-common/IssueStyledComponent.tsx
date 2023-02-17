@@ -107,6 +107,7 @@ export const FilterCardOptions = styled.div`
   display: flex;
   flex-wrap: wrap;
   padding: 0px 20px;
+  margin-top: 5px;
 `;
 
 export const FilterCardOptionContainer = styled.div`
