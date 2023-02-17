@@ -11,6 +11,7 @@ import {
   HotspotSectionFileTextImg,
   HotspotCircleDiv,
   HotspotGroupIcon,
+  GroupIcon,
 } from "./ToolBarStyles";
 
 const Hotspot = () => {
@@ -25,7 +26,8 @@ const Hotspot = () => {
       </HotspotCircleDiv> */}
 
       <HotspotGroupIcon>
-        <Image src={groupSpotIcon} width={12} height={12} alt="Arrow" />{" "}
+        <GroupIcon src={groupSpotIcon} alt="Arrow" />
+        {/* <Image src={groupSpotIcon} width={12} height={12} alt="Arrow" />{" "} */}
       </HotspotGroupIcon>
     </HotspotBox>
   );

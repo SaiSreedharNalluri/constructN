@@ -2,6 +2,7 @@ import { styled } from "@mui/system";
 import { Theme } from "../../../styles/globalStyles";
 import Image from "next/image";
 import { Box } from "@mui/material";
+import zIndex from "@mui/material/styles/zIndex";
 
 export const TaskListContainer = styled("div")({
   width: "438px",
@@ -14,8 +15,10 @@ export const HeaderContainer = styled("div")({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  width: "100%",
+  width: "34%",
   borderBottom: "1px solid #d9d9d9",
+  position: "fixed",
+  zIndex:"50"
 });
 
 export const TitleContainer = styled(Box)({
@@ -25,6 +28,10 @@ export const TitleContainer = styled(Box)({
   alignItems: "center",
   paddingLeft: "20px",
   paddingRight: "20px",
+color: "#36415D",
+
+    // position:"fixed"
+
 });
 
 export const CloseIcon = styled(Image)({
@@ -38,6 +45,9 @@ export const MiniHeaderContainer = styled(Box)({
   justifyContent: "center",
   alignItems: "center",
   width: "100%",
+  marginTop: "60px",
+  // overflowY: "auto",
+  color: "#36415D",
 });
 
 // border-bottom: 1px solid #d9d9d9;
@@ -88,7 +98,17 @@ export const BodyContainer = styled(Box)`
   height: 71%;
   padding-left: 20px;
   padding-right: 20px;
+  margin-top:16px;
+  // overflow-y: auto;
+  margin-top:16px;
+  color: #101F4C;
+
+
+  
+
   // overflow: scroll;
+
+
 `;
 
 export const FirstHeader = styled("div")({
@@ -141,6 +161,13 @@ export const LoadMoreButton = styled("div")({
 export const ArrowUpContainer = styled("div")({
   border: "1px solid red",
   marginLeft: "10px",
+});
+
+
+export const MessageDiv = styled("div")({
+  // border: "1px solid red",
+  // marginLeft: "10px",
+  marginTop:"30px"
 });
 
 

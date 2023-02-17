@@ -250,7 +250,7 @@ const Task = ({
           onClick={() => {
             openTaskCreateFn();
 
-            // setOpenCreateTask(true);
+            setOpenCreateTask(true);
           }}
           src={plusCircleIcon}
           // onClick={props.rightMenuClickHandler}
