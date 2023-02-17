@@ -27,7 +27,12 @@
 .calc-h50 {
   height: calc(100vh - 87px);
 }
-
+.calc-h78 {
+  height: calc(100vh - 88px);
+}
+.calc-h30 {
+  height: calc(100vh - 30px);
+}
 .calc-h500 {
   height: calc(100vh - 114px);
 }
@@ -50,7 +55,7 @@
   height: calc(100vh - 112px);
 }
 .panoIcon {
-  background: #F1742E;
+  background: #f1742e;
   border-radius: 100%;
   position: absolute;
   z-index: 101;
@@ -100,7 +105,7 @@
   fill: transparent;
 }
 .adsk-viewing-viewer .adsk-toolbar {
-  bottom:  30px;
+  bottom: 30px;
   left: calc(100% - 60px);
   pointer-events: none;
   position: absolute;
@@ -114,12 +119,12 @@
   left: -50px;
   margin: 0;
   position: absolute;
-  display: grid; 
-  transition: all .2s ease;
+  display: grid;
+  transition: all 0.2s ease;
   z-index: 15;
 }
 .adsk-viewing-viewer .adsk-button {
-  border: 2px solid rgba(34,34,34,0);
+  border: 2px solid rgba(34, 34, 34, 0);
   border-radius: 4px;
   cursor: pointer;
   float: left;
@@ -144,4 +149,26 @@
   position: absolute;
   right: -6px;
   top: -6px;
+}
+.tableInfo {
+  height: calc(50vh - 105px);
+}
+.tableInfo thead,
+.tableInfo tbody,
+.tableInfo tr {
+  width: 100%;
+  display: block;
+}
+.tableInfo th,
+.tableInfo td {
+  width: 50%;
+  display: inline-block;
+  height: 100%;
+  padding: 6px;
+  text-align: center;
+  /* font-size: medium; */
+}
+.tableInfo tbody {
+  height: calc(100% - 69px);
+  overflow-y: auto;
 }
