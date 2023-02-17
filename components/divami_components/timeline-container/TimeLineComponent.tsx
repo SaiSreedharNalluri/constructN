@@ -77,7 +77,7 @@ const TimeLineComponent: React.FC<IProps> = ({
       {snapshotList && snapshotList.length > 0 && (
         <TimeLineStyleContainer>
           <SelectedTimeLine
-            style={{ bottom: bottomNav ? null : 0 }}
+            style={{ bottom: bottomNav ? "" : 0 }}
             onClick={toggleTimeline}
           >
             {Moment(currentSnapshot?.date).format("DD MMM YYYY")}
