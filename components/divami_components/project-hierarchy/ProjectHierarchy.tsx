@@ -25,7 +25,11 @@ import {
   MessageContainer,
   // useStyles,
 } from "./StyledComponents";
-import type { ProjectHierarchyProps, RenderTree, SelectLayerProps } from "./Type";
+import type {
+  ProjectHierarchyProps,
+  RenderTree,
+  SelectLayerProps,
+} from "./Type";
 import { getAllIds, getSelectedLayers } from "./Utils";
 import Image from "next/image";
 
@@ -40,7 +44,7 @@ const ProjectHierarchy = ({
   selectedNodes,
   handleNodeExpand,
   expandedNodes,
-  setHierarchy
+  setHierarchy,
 }: ProjectHierarchyProps) => {
   const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>([]);
   const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
@@ -70,11 +74,18 @@ const ProjectHierarchy = ({
       label={renderTreeNode(nodes)}
       onClick={() => {
         getStructureData ? getStructureData(nodes) : null;
-        if(!(nodes.children && Array.isArray(nodes.children) && nodes.children.length)) {
+        if (
+          !(
+            nodes.children &&
+            Array.isArray(nodes.children) &&
+            nodes.children.length
+          )
+        ) {
           setHierarchy(false);
         }
         //setCurrentClickedStruct(structure._id);
       }}
+      style={{ borderBottom: "1px solid #D9D9D9" }}
     >
       {Array.isArray(nodes.children) && nodes.children.length
         ? nodes.children.map((node) => renderTree(node))
@@ -101,7 +112,7 @@ const ProjectHierarchy = ({
   return (
     <ProjectHierarchyContainer>
       <HeaderLabelContainer>
-        <HeaderLabel>{title}</HeaderLabel>
+        <HeaderLabel style={{ color: "#101F4B" }}>{title}</HeaderLabel>
         <CloseIcon
           src={closeIcon}
           onClick={onCloseHandler}
@@ -129,7 +140,7 @@ const ProjectHierarchy = ({
           }}
         />
       </SearchContainer>
-      <TreeViewContainer>
+      <TreeViewContainer style={{ overflow: "auto", height: "60vh" }}>
         {treeViewData.length === 0 ? (
           "No structures found for this project"
         ) : (
