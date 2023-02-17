@@ -13,6 +13,7 @@ import {
   TimeLinePagination,
   TimeLineStyleContainer,
 } from "./TimeLineComponentStyles";
+import dayjs from "dayjs";
 
 interface IProps {
   currentSnapshot: ISnapshot;
@@ -30,7 +31,7 @@ const TimeLineComponent: React.FC<IProps> = ({
   const [oldDate, setOldDate] = useState("");
   const [newDate, setNewDate] = useState("");
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
+    setPage(page == 1 ? 2 : 1);
   };
 
   const toggleTimeline = () => {
@@ -61,7 +62,13 @@ const TimeLineComponent: React.FC<IProps> = ({
   }, [snapshotList]);
 
   const disableWeekends = (date: any) => {
-    return date.getDay() === 0 || date.getDay() === 6;
+    const timelineDates: any[] = [];
+    if (snapshotList.length) {
+      snapshotList.forEach((element, i) => {
+        timelineDates.push(dayjs(element.date).format("YYYY-MM-DD"));
+      });
+    }
+    return timelineDates.indexOf(dayjs(date).format("YYYY-MM-DD")) < 0;
   };
 
   console.log(snapshotList, "snaphsot listt");
@@ -69,54 +76,60 @@ const TimeLineComponent: React.FC<IProps> = ({
     <>
       {snapshotList && snapshotList.length > 0 && (
         <TimeLineStyleContainer>
-          <SelectedTimeLine onClick={toggleTimeline}>
+          <SelectedTimeLine
+            style={{ bottom: bottomNav ? null : 0 }}
+            onClick={toggleTimeline}
+          >
             {Moment(currentSnapshot?.date).format("DD MMM YYYY")}
           </SelectedTimeLine>
 
-          <div
-          //  className="absolute flex flex-col items-center z-10 top-0 inset-x-0"
-          >
+          {bottomNav ? (
             <div
-            // className="bg-gray-300 border border-gray-700 rounded duration-300 cursor-pointer"
+            //  className="absolute flex flex-col items-center z-10 top-0 inset-x-0"
             >
-              {/* <p onClick={toggleTimeline}>{getSnapshotDate()}</p> */}
-            </div>
-            {snapshotList && currentSnapshot && (
-              <TimeLinePagination>
-                <div className=" flex text-sm">
-                  <p>{oldDate && Moment(oldDate).format("DD MMM YY")}</p>
-                </div>
-                <PaginationStyle
-                  count={snapshotList?.length}
-                  page={page}
-                  onChange={handleChange}
-                  renderItem={(item: any) => (
-                    <PaginationItem
-                      slots={{
-                        previous: KeyboardDoubleArrowLeftIcon,
-                        next: KeyboardDoubleArrowRightIcon,
-                      }}
-                      {...item}
-                    />
-                  )}
-                />
-                <div className="flex text-sm items-center ml-1 ">
-                  <p>{newDate && Moment(newDate).format("DD MMM YY")} </p>
-                </div>
-                {!isNaN(page) ? (
-                  <CustomCalender
-                    onChange={(e: any) => handleChange(e, 1)}
-                    shouldDisableDate={disableWeekends}
-                    hideTextField
-                    data={{
-                      disableAll: true,
-                      defaultValue: page === 2 ? newDate : oldDate,
-                    }}
+              <div
+              // className="bg-gray-300 border border-gray-700 rounded duration-300 cursor-pointer"
+              >
+                {/* <p onClick={toggleTimeline}>{getSnapshotDate()}</p> */}
+              </div>
+              {snapshotList && currentSnapshot && (
+                <TimeLinePagination>
+                  <div className=" flex text-sm">
+                    <p>{oldDate && Moment(oldDate).format("DD MMM YY")}</p>
+                  </div>
+                  <PaginationStyle
+                    count={snapshotList?.length}
+                    page={page}
+                    onChange={handleChange}
+                    renderItem={(item: any) => (
+                      <PaginationItem
+                        slots={{
+                          previous: KeyboardDoubleArrowLeftIcon,
+                          next: KeyboardDoubleArrowRightIcon,
+                        }}
+                        {...item}
+                      />
+                    )}
                   />
-                ) : null}
-              </TimeLinePagination>
-            )}
-          </div>
+                  <div className="flex text-sm items-center ml-1 ">
+                    <p>{newDate && Moment(newDate).format("DD MMM YY")} </p>
+                  </div>
+                  {!isNaN(page) ? (
+                    <CustomCalender
+                      onChange={(e: any) => handleChange(e, 1)}
+                      shouldDisableDate={disableWeekends}
+                      hideTextField
+                      data={{
+                        disableAll: true,
+                        defaultValue: page === 2 ? newDate : oldDate,
+                        disableDays: disableWeekends,
+                      }}
+                    />
+                  ) : null}
+                </TimeLinePagination>
+              )}
+            </div>
+          ) : null}
         </TimeLineStyleContainer>
       )}
     </>
