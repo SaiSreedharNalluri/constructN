@@ -31,7 +31,7 @@ const TimeLineComponent: React.FC<IProps> = ({
   const [oldDate, setOldDate] = useState("");
   const [newDate, setNewDate] = useState("");
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
+    setPage(page == 1 ? 2 : 1);
   };
 
   const toggleTimeline = () => {
