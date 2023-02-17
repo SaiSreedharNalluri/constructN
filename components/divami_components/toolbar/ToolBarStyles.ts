@@ -77,12 +77,15 @@ export const SectionToolBar = styled('div')((props: any) => ({
   display: 'block',
   marginLeft: 'auto',
   marginRight: 'auto',
-  boxShadow: '0px 2px 1px rgba(0, 0, 0, 0.25)',
+  // boxShadow: '0px 2px 1px rgba(0, 0, 0, 0.25)',
   borderRadius: '4px',
 })) as any;
 
 export const ToolbarContainer = styled('div')({
   display: 'flex',
+  borderTopRightRadius: '4px',
+  borderBottomRightRadius: '4px',
+  borderRight: '1px solid #d9d9d9',
 });
 
 export const TypeParentCont = styled("div")({
@@ -204,6 +207,8 @@ export const CompareIcon = styled('div')((props: any) => ({
   borderRight: '1px solid #F1742E',
   padding: '6px',
   background: props.active === 'hideCompare' ? '#F1742E' : 'white',
+  borderTopLeftRadius: 3,
+  borderBottomLeftRadius: 3,
 })) as any;
 export const DesignCompareViewIcon = styled('div')((props: any) => ({
   borderRight: '1px solid #F1742E',
@@ -213,8 +218,8 @@ export const DesignCompareViewIcon = styled('div')((props: any) => ({
 export const RealityCompareViewIcon = styled('div')((props: any) => ({
   borderRight: '1px solid #F1742E',
   padding: '6px',
-  borderTopRightRadius: '4px',
-  borderBottomRightRadius: '4px',
+  borderTopRightRadius: '3px',
+  borderBottomRightRadius: '3px',
   paddingTop: '8px',
   background: props.active === 'compareReality' ? '#F1742E' : 'white',
 })) as any;
