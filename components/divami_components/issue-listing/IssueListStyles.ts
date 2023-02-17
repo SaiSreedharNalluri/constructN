@@ -46,7 +46,7 @@ export const MiniHeaderContainer = styled(Box)({
   alignItems: "center",
   width: "100%",
   marginTop: "60px",
-  overflowY: "auto",
+  // overflowY: "auto",
   color: "#36415D",
 });
 
@@ -99,7 +99,7 @@ export const BodyContainer = styled(Box)`
   padding-left: 20px;
   padding-right: 20px;
   margin-top:16px;
-  overflow-y: auto;
+  // overflow-y: auto;
   margin-top:16px;
   color: #101F4C;
 

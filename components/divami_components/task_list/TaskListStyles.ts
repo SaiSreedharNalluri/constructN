@@ -44,7 +44,7 @@ export const MiniHeaderContainer = styled(Box)({
   alignItems: 'center',
   width: '100%',
   marginTop: "60px",
-  overflowY: "auto",
+  // overflowY: "auto",
    color: "#36415D",
 
 });
@@ -91,7 +91,7 @@ export const DueDate = styled(Box)({
 export const BodyContainer = styled(Box)`
   padding-left: 20px;
   padding-right: 20px;
-  overflow-y: auto;
+  // overflow-y: auto;
   margin-top:16px;
   color: #101F4C;
 `;
