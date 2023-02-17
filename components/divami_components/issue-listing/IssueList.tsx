@@ -334,20 +334,20 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                             val.type === "RFI"
                               ? RFIList
                               : val.type === "Safety"
-                              ? HourglassIcon
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Clash"
-                              ? SubmittalList
-                              : val.type === "Commissioning"
-                              ? commission
-                              : val.type === "Building code"
-                              ? HourglassIcon
-                              : val.type === "Design"
-                              ? designIcon
-                              : val.type === "Submittals"
-                              ? SubmittalList
-                              : ""
+                                ? HourglassIcon
+                                : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : val.type === "Clash"
+                                    ? SubmittalList
+                                    : val.type === "Commissioning"
+                                      ? commission
+                                      : val.type === "Building code"
+                                        ? HourglassIcon
+                                        : val.type === "Design"
+                                          ? designIcon
+                                          : val.type === "Submittals"
+                                            ? SubmittalList
+                                            : ""
                           }
                           alt="Arrow"
                         />
@@ -394,20 +394,20 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                             val.type === "RFI"
                               ? RFIList
                               : val.type === "Safety"
-                              ? HourglassIcon
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Clash"
-                              ? SubmittalList
-                              : val.type === "Commissioning"
-                              ? commission
-                              : val.type === "Building code"
-                              ? HourglassIcon
-                              : val.type === "Design"
-                              ? designIcon
-                              : val.type === "Submittals"
-                              ? SubmittalList
-                              : ""
+                                ? HourglassIcon
+                                : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : val.type === "Clash"
+                                    ? SubmittalList
+                                    : val.type === "Commissioning"
+                                      ? commission
+                                      : val.type === "Building code"
+                                        ? HourglassIcon
+                                        : val.type === "Design"
+                                          ? designIcon
+                                          : val.type === "Submittals"
+                                            ? SubmittalList
+                                            : ""
                           }
                           alt="Arrow"
                         />
@@ -478,9 +478,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => {}}
-            deleteTheIssue={() => {}}
-            clickIssueEditSubmit={() => {}}
+            handleOnSort={() => { }}
+            deleteTheIssue={() => { }}
+            clickIssueEditSubmit={() => { }}
             issueFilterState={issueFilterState}
           />
         </Drawer>
