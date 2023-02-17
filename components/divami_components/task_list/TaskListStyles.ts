@@ -14,9 +14,10 @@ export const HeaderContainer = styled('div')({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '100%',
+  width: '34%',
   borderBottom: '1px solid #d9d9d9',
-  position:"fixed"
+  position: "fixed",
+  zIndex:"50"
 
 });
 
@@ -27,6 +28,8 @@ export const TitleContainer = styled(Box)({
   alignItems: 'center',
   paddingLeft: '20px',
   paddingRight: '20px',
+  
+color: "#36415D",
 });
 
 export const CloseIcon = styled(Image)({
@@ -40,7 +43,9 @@ export const MiniHeaderContainer = styled(Box)({
   justifyContent: 'center',
   alignItems: 'center',
   width: '100%',
-  marginTop:"60px"
+  marginTop: "60px",
+  overflowY: "auto",
+   color: "#36415D",
 
 });
 
@@ -86,7 +91,9 @@ export const DueDate = styled(Box)({
 export const BodyContainer = styled(Box)`
   padding-left: 20px;
   padding-right: 20px;
-  overflow: auto;
+  overflow-y: auto;
+  margin-top:16px;
+  color: #101F4C;
 `;
 
 export const FirstHeader = styled('div')({
@@ -168,7 +175,7 @@ export const SearchAreaContainer = styled('div')({
   justifyContent: 'space-between',
   width: '100%',
   gap: '10px',
-  marginTop:"30px"
+  // marginTop:"30px"
 });
 
 

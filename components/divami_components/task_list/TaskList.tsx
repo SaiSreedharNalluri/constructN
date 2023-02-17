@@ -365,57 +365,111 @@ const CustomTaskListDrawer = (props: any) => {
       </MiniHeaderContainer>
 
       <BodyContainer>
-        <Box sx={{ marginTop: "30px" }}>
-          {filteredTaskList.length > 0 ? (
-            filteredTaskList.map((val: any) => {
-              return (
-                <>
-                  <BodyInfo
-                    onClick={() => {
-                      handleViewTask(val);
-                    }}
-                  >
-                    <FirstHeader>
-                      <Image
-                        src={
-                          val.type === "RFI"
-                            ? RFIList
-                            : val.type === "Transmittals"
-                            ? TransmittalList
-                            : val.type === "Submittals"
-                            ? SubmittalList
-                            : val.type === "Transmittals"
-                            ? TransmittalList
-                            : val.type === "Transmittals"
-                            ? TransmittalList
-                            : ""
-                        }
-                        alt="Arr"
-                      />
-                      <BodyContTitle>
-                        {val.type} (#{val.id})
-                      </BodyContTitle>
-                    </FirstHeader>
-                    <SecondHeader>
-                      <div>{val.priority} Priority</div>
-                    </SecondHeader>
-                    <ThirdHeader>
-                      <div>{val.assignee}</div>
-                      <DueDateDiv>
-                        Due by {Moment(val.due_date).format("DD MMM 'YY")}
-                      </DueDateDiv>
-                    </ThirdHeader>
-                  </BodyInfo>
-                  <HorizontalLine></HorizontalLine>
-                </>
-              );
-            })
-          ) : (
-            <MessageDiv>
-              <p>No task matches the search</p>
-            </MessageDiv>
-          )}
-        </Box>
+        {searchingOn ? (
+          <Box sx={{ marginTop: "10px" }}>
+            {filteredTaskList.length > 0 ? (
+              filteredTaskList.map((val: any) => {
+                return (
+                  <>
+                    <BodyInfo
+                      onClick={() => {
+                        handleViewTask(val);
+                      }}
+                    >
+                      <FirstHeader>
+                        <Image
+                          src={
+                            val.type === "RFI"
+                              ? RFIList
+                              : val.type === "Transmittals"
+                              ? TransmittalList
+                              : val.type === "Submittals"
+                              ? SubmittalList
+                              : val.type === "Transmittals"
+                              ? TransmittalList
+                              : val.type === "Transmittals"
+                              ? TransmittalList
+                              : ""
+                          }
+                          alt="Arr"
+                        />
+                        <BodyContTitle>
+                          {val.type} (#{val.id})
+                        </BodyContTitle>
+                      </FirstHeader>
+                      <SecondHeader>
+                        <div>{val.priority} Priority</div>
+                      </SecondHeader>
+                      <ThirdHeader>
+                        <div>{val.assignee}</div>
+                        <DueDateDiv>
+                          Due by {Moment(val.due_date).format("DD MMM 'YY")}
+                        </DueDateDiv>
+                      </ThirdHeader>
+                    </BodyInfo>
+                    <HorizontalLine></HorizontalLine>
+                  </>
+                );
+              })
+            ) : (
+              <MessageDiv>
+                <p>No task matches the search</p>
+              </MessageDiv>
+            )}
+          </Box>
+        ) : (
+          <Box>
+            {filteredTaskList.length > 0 ? (
+              filteredTaskList.map((val: any) => {
+                return (
+                  <>
+                    <BodyInfo
+                      onClick={() => {
+                        handleViewTask(val);
+                      }}
+                    >
+                      <FirstHeader>
+                        <Image
+                          src={
+                            val.type === "RFI"
+                              ? RFIList
+                              : val.type === "Transmittals"
+                              ? TransmittalList
+                              : val.type === "Submittals"
+                              ? SubmittalList
+                              : val.type === "Transmittals"
+                              ? TransmittalList
+                              : val.type === "Transmittals"
+                              ? TransmittalList
+                              : ""
+                          }
+                          alt="Arr"
+                        />
+                        <BodyContTitle>
+                          {val.type} (#{val.id})
+                        </BodyContTitle>
+                      </FirstHeader>
+                      <SecondHeader>
+                        <div>{val.priority} Priority</div>
+                      </SecondHeader>
+                      <ThirdHeader>
+                        <div>{val.assignee}</div>
+                        <DueDateDiv>
+                          Due by {Moment(val.due_date).format("DD MMM 'YY")}
+                        </DueDateDiv>
+                      </ThirdHeader>
+                    </BodyInfo>
+                    <HorizontalLine></HorizontalLine>
+                  </>
+                );
+              })
+            ) : (
+              <MessageDiv>
+                <p>No task matches the search</p>
+              </MessageDiv>
+            )}
+          </Box>
+        )}
       </BodyContainer>
       {/* <LoadMoreContainer>
         <LoadMoreButton>Load More</LoadMoreButton>
