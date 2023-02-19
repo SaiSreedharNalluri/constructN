@@ -273,18 +273,17 @@ content: url("../public/divami_icons/toasterIcon.svg");
   right: -6px;
   top: -6px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
+.css-1wg4ruk-MuiList-root{
+  padding-bottom: 0px;
+}
+.css-9e5uuu-MuiPaper-root-MuiAutocomplete-paper{
+  width: 102% !important;
+  margin-left:-1px;
+}
+.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper {
+  margin-left:-2px;
+  right: 26px;
+}
 .css-v7v99c{
   font-weight: 400;
     font-size: 12px;
@@ -298,14 +297,9 @@ font-size:  14px;
 /* line-height: ; */
 
   }
-
-
     .css-148z76l-MuiList-root{
       padding-bottom: 1px;
     }
-
-
-
     .css-z3nc8-MuiTypography-root{
       font-size: 14px;
       font-family: "Open Sans";

@@ -1,17 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
+import cameraIcon from "../../../public/divami_icons/cameraIcon.svg";
+import hexagonIcon from "../../../public/divami_icons/hexagonIcon.svg";
+import videoRecorderIcon from "../../../public/divami_icons/videoRecorderIcon.svg";
 
-import cameraIcon from '../../../public/divami_icons/cameraIcon.svg';
-import hexagonIcon from '../../../public/divami_icons/hexagonIcon.svg';
-import videoRecorderIcon from '../../../public/divami_icons/videoRecorderIcon.svg';
-
-import downArrowIcon from '../../../public/divami_icons/downArrowIcon.svg';
-import SelectLayer from '../select-layers/SelectLayer';
+import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
+import SelectLayer from "../select-layers/SelectLayer";
 import {
   CameraIcon,
   DownIcon,
-  IconsContainer, LayerSecondSectionCamImg, LayersWrapper, SelectLayersWrapper
-} from './ToolBarStyles';
+  IconsContainer,
+  LayerSecondSectionCamImg,
+  LayersWrapper,
+  SelectLayersWrapper,
+} from "./ToolBarStyles";
 
 const Layers = ({
   rightMenuClickHandler,
@@ -32,27 +34,27 @@ const Layers = ({
   }, [myLayersList]);
 
   useEffect(() => {
-    console.log(layersLabels, 'siva');
+    console.log(layersLabels, "siva");
   }, [layersLabels]);
 
   const getLayersIcons = (layersLabels: any) => {
-    console.log(layersLabels, 'layersLabels');
+    console.log(layersLabels, "layersLabels");
     return (
       <>
         {layersLabels.map((label: any, index: number) => {
-          if (label === 'Phone Image') {
+          if (label === "Phone Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={hexagonIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-          } else if (label === '360 Image') {
+          } else if (label === "360 Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={cameraIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-          } else if (label === '360 Video') {
+          } else if (label === "360 Video") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={videoRecorderIcon} alt="Arrow" />
@@ -70,7 +72,7 @@ const Layers = ({
         <IconsContainer>
           {selectedLayersList.length > 0
             ? getLayersIcons(selectedLayersList)
-            : 'Select Layer'}
+            : "Select Layer"}
         </IconsContainer>
         <LayerSecondSectionCamImg>
           <DownIcon src={downArrowIcon} alt="Arrow" />
@@ -79,7 +81,7 @@ const Layers = ({
       <SelectLayersWrapper>
         <SelectLayer
           openselectlayer={openList}
-          title={'Select Layer'}
+          title={"Select Layer"}
           onCloseHandler={() => {
             setOpenList(false);
           }}

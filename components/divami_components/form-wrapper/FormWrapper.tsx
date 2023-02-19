@@ -123,7 +123,7 @@ const FormWrapper = (props: any) => {
   };
 
   const handleChipMaking = (chipsString: any, id: any) => {
-    console.log(chipsString, "chipsString")
+    console.log(chipsString, "chipsString");
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
