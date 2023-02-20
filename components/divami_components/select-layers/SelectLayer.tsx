@@ -1,6 +1,5 @@
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import { SetStateAction, useEffect, useState } from "react";
@@ -23,6 +22,10 @@ import {
   getTreeViewDataForLayers,
   handleSelection,
 } from "./Utils";
+import Image from "next/image";
+import CheckedIcon from "../../../public/divami_icons/checked.svg";
+import UnCheckedIcon from "../../../public/divami_icons/unchecked.svg";
+import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 
 const SelectLayer = ({
   title,
@@ -42,8 +45,8 @@ const SelectLayer = ({
   const renderTreeNode = (node: RenderTree) => (
     <div>
       <Checkbox
-        icon={<CheckBoxChecked />}
-        checkedIcon={<CheckBox />}
+        icon={<Image src={UnCheckedIcon} alt="" />}
+        checkedIcon={<Image src={CheckedIcon} alt="" />}
         size="small"
         onChange={(e) => {
           const arr = handleSelection(treeViewData, node.id);
@@ -113,7 +116,7 @@ const SelectLayer = ({
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon />
+                <Image src={SearchBoxIcon} alt="" />
               </InputAdornment>
             ),
           }}
@@ -122,8 +125,8 @@ const SelectLayer = ({
       <TreeViewContainer>
         <StyledTreeView
           aria-label="rich object"
-          defaultCollapseIcon={<RemoveIcon />}
-          defaultExpandIcon={<AddIcon />}
+          // defaultCollapseIcon={<RemoveIcon />}
+          // defaultExpandIcon={<AddIcon />}
         >
           {filtedTreeViewData?.map((eachNode) => renderTree(eachNode))}
         </StyledTreeView>

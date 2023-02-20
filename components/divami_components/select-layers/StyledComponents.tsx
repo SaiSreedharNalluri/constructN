@@ -25,10 +25,12 @@ export const StyledTreeView = styled(TreeView)({
     padding: "0",
     paddingRight: "10px",
     paddingLeft: "10px",
+    marginRight: "10px",
+    borderBottom: "1px solid #E7E7E7",
     "& .MuiTreeItem-label": {
       fontSize: "14px",
       lineHeight: "18px",
-      borderBottom: "1px solid #E7E7E7",
+      // borderBottom: "1px solid #E7E7E7",
     },
   },
   "& .MuiTreeItem-iconContainer": {

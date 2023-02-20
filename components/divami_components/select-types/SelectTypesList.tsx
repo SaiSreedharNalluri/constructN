@@ -13,6 +13,8 @@ import {
   ListItemStyled,
   ListStyled,
 } from "./StyledComponents";
+import Image from "next/image";
+import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 
 const SelectTypesList = ({
   title,
@@ -76,7 +78,7 @@ const SelectTypesList = ({
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <Image src={SearchBoxIcon} alt="" />
                 </InputAdornment>
               ),
             }}
