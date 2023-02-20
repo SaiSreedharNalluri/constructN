@@ -232,14 +232,6 @@ const Index: React.FC<IProps> = () => {
       if (user?._id) {
         SetLoggedInUserId(user._id);
       }
-      // if (window.localStorage.getItem("nodeData")) {
-      //   let nodeData = JSON.parse(
-      //     window.localStorage.getItem("nodeData") || ""
-      //   );
-      //   getStructureData(nodeData);
-      //   handleNodeExpand([nodeData._id]);
-      //   handleNodeSelection(nodeData._id);
-      // }
       const handler = document.addEventListener("click", closeStructurePage);
       return () => {
         document.removeEventListener("click", closeStructurePage);
