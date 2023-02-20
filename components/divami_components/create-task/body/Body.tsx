@@ -93,6 +93,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
       SetLoggedInUserId(user._id);
     }
   }, [router.isReady, router.query.projectId]);
+
   useEffect(() => {
     if (projectUsers.length && taskPriorities.length && taskTypes.length) {
       if (editData) {
@@ -160,12 +161,12 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
                   if (each.id == "start-date") {
                     return {
                       ...each,
-                      defaultValue: editData.createdAt,
+                      defaultValue: editData?.startDate ?? null,
                     };
                   } else {
                     return {
                       ...each,
-                      defaultValue: editData.updatedAt,
+                      defaultValue: editData?.dueDate ?? null,
                     };
                   }
                 }),

@@ -29,6 +29,7 @@ import { createTask } from "../../../services/task";
 import { toast } from "react-toastify";
 import { ITools } from "../../../models/ITools";
 import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
+import Tooltip from "@mui/material/Tooltip";
 
 const Task = ({
   rightMenuClickHandler,
@@ -250,64 +251,70 @@ const Task = ({
     <TaskBox>
       <TaskTitle>Task: </TaskTitle>
 
-      <IssuesSectionPlusImg>
-        <CameraIcon
-          onClick={() => {
-            openTaskCreateFn();
-
-            // setOpenCreateTask(true);
-          }}
-          src={plusCircleIcon}
-          // onClick={props.rightMenuClickHandler}
-          width={12}
-          height={12}
-          alt="Arrow"
-        />
-      </IssuesSectionPlusImg>
-
-      <IssuesSectionFileImg>
-        <CameraIcon
-          onClick={() => {
-            handleViewTaskList();
-          }}
-          src={fileTextIcon}
-          width={12}
-          height={12}
-          alt="Arrow"
-        />
-      </IssuesSectionFileImg>
-
-      <IssuesSectionClipImg>
-        {taskVisbility && (
+      <Tooltip title="Create Task">
+        <IssuesSectionPlusImg>
           <CameraIcon
+            onClick={() => {
+              openTaskCreateFn();
+
+              // setOpenCreateTask(true);
+            }}
+            src={plusCircleIcon}
+            // onClick={props.rightMenuClickHandler}
             width={12}
             height={12}
-            src={taskToogleIcon}
-            // width={12}
-            // height={12}
             alt="Arrow"
-            // onClick={rightMenuClickHandler}
-            onClick={() => {
-              toggleTaskVisibility();
-            }}
           />
-        )}
+        </IssuesSectionPlusImg>
+      </Tooltip>
 
-        {!taskVisbility && (
+      <Tooltip title="Task Lists">
+        <IssuesSectionFileImg>
           <CameraIcon
+            onClick={() => {
+              handleViewTaskList();
+            }}
+            src={fileTextIcon}
             width={12}
             height={12}
-            src={clipboardTask}
-            // width={12}
-            // height={12}
             alt="Arrow"
-            // onClick={rightMenuClickHandler}
-            onClick={() => {
-              toggleTaskVisibility();
-            }}
           />
-        )}
-      </IssuesSectionClipImg>
+        </IssuesSectionFileImg>
+      </Tooltip>
+
+      <Tooltip title={taskVisbility ? "Hide Tasks" : "Show Tasks"}>
+        <IssuesSectionClipImg>
+          {taskVisbility && (
+            <CameraIcon
+              width={12}
+              height={12}
+              src={taskToogleIcon}
+              // width={12}
+              // height={12}
+              alt="Arrow"
+              // onClick={rightMenuClickHandler}
+              onClick={() => {
+                toggleTaskVisibility();
+              }}
+            />
+          )}
+
+          {!taskVisbility && (
+            <CameraIcon
+              width={12}
+              height={12}
+              src={clipboardTask}
+              // width={12}
+              // height={12}
+              alt="Arrow"
+              // onClick={rightMenuClickHandler}
+              onClick={() => {
+                toggleTaskVisibility();
+              }}
+            />
+          )}
+        </IssuesSectionClipImg>
+      </Tooltip>
       {openDrawer && (
         <Drawer
           anchor={"right"}

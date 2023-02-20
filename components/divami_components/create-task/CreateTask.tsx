@@ -35,7 +35,7 @@ const CreateTask = ({
     } else {
       setValidate(true);
       handleCreateTask(formData);
-      // setOpenCreateTask(false);
+      // setOpenCreateTask(true);
     }
   };
 

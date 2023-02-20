@@ -185,12 +185,12 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
                   if (each.id == "start-date") {
                     return {
                       ...each,
-                      defaultValue: editData.createdAt,
+                      defaultValue: editData.startDate ?? null,
                     };
                   } else {
                     return {
                       ...each,
-                      defaultValue: editData.updatedAt,
+                      defaultValue: editData.dueDate ?? null,
                     };
                   }
                 }),

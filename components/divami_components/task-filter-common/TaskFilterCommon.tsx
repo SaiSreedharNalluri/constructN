@@ -3,11 +3,13 @@ import ResetIcon from "../../../public/divami_icons/reset.svg";
 import Checked from "../../../public/divami_icons/checked.svg";
 import Indeterminate from "../../../public/divami_icons/indeterminate.svg";
 import UnChecked from "../../../public/divami_icons/unchecked.svg";
-import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import { InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/system";
 import Autocomplete from "@mui/material/Autocomplete";
+import closeIcon from "../../../public/divami_icons/closeIcon.svg";
+import NotificationNewIcon from "../../../public/divami_icons/NotificationNewIcon.svg";
+import newRefreshIcon from "../../../public/divami_icons/newRefreshIcon.svg";
 
 const CustomAutoComplete = styled(Autocomplete)({
   border: "1px solid #36415d",
@@ -73,6 +75,7 @@ import {
   DatePickersContainer,
   DatePickerContainer,
   ButtonsContainer,
+  FilterCardSecondContainer,
 } from "./StyledComponent";
 import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
@@ -116,6 +119,14 @@ interface IProps {
 // };
 const CloseIcon = styled(Image)({
   cursor: "pointer",
+  width: "24px",
+  height: "24px",
+});
+
+const RefreshIcon = styled(Image)({
+  cursor: "pointer",
+  width: "18px",
+  height: "15px",
 });
 const TaskFilterCommon: React.FC<any> = ({
   tasksList,
@@ -142,18 +153,18 @@ const TaskFilterCommon: React.FC<any> = ({
 
   const Filters = [
     {
-      title: "Issue Type",
+      title: "Task Type",
       selectAllStatus: "T",
       options: [
-        { optionTitle: "Safety", optionStatus: "T" },
-        { optionTitle: "BuildingCode", optionStatus: "T" },
-        { optionTitle: "Clash", optionStatus: "F" },
-        { optionTitle: "Commissioning", optionStatus: "T" },
-        { optionTitle: "Design", optionStatus: "F" },
+        { optionTitle: "RFI", optionStatus: "T" },
+        { optionTitle: "Transmittals", optionStatus: "T" },
+        { optionTitle: "Submittals", optionStatus: "F" },
+        // { optionTitle: "Commissioning", optionStatus: "T" },
+        // { optionTitle: "Design", optionStatus: "F" },
       ],
     },
     {
-      title: "Issue Priority",
+      title: "Task Priority",
       selectAllStatus: "T",
       options: [
         { optionTitle: "Low", optionStatus: "T" },
@@ -162,7 +173,7 @@ const TaskFilterCommon: React.FC<any> = ({
       ],
     },
     {
-      title: "Issue Status",
+      title: "Task Status",
       selectAllStatus: "T",
       options: [
         { optionTitle: "In Progress", optionStatus: "T" },
@@ -537,23 +548,30 @@ const TaskFilterCommon: React.FC<any> = ({
             </HeaderLeftSection>
             <HeaderRightSection>
               <HeaderRightSectionResetIcon>
-                <Image
-                  src={ResetIcon}
+                <RefreshIcon
+                  src={newRefreshIcon}
                   alt="reset"
                   onClick={() => {
                     onReset();
                   }}
                 />
+                {/* <Image
+                  src={ResetIcon}
+                  alt="reset"
+                  onClick={() => {
+                    onReset();
+                  }}
+                /> */}
               </HeaderRightSectionResetIcon>
               <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
-              {/* <Image src={closeIcon} alt="reset" onClick={() => {
+              {/* <Image src={closeIcon} alt="reset"   onClick={() => {
               handleClose();
-            }}/> */}
+              }} /> */}
               <CloseIcon
                 onClick={() => {
                   handleClose();
                 }}
-                src={closeIcon}
+                src={NotificationNewIcon}
                 alt={"close icon"}
               />
             </HeaderRightSection>
@@ -562,7 +580,7 @@ const TaskFilterCommon: React.FC<any> = ({
       </FilterCommonHeader>
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
-          return (
+          return each.title === "Task Type" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
                 <FilterCardTitleText>{each?.title}</FilterCardTitleText>
@@ -645,6 +663,89 @@ const TaskFilterCommon: React.FC<any> = ({
                 })}
               </FilterCardOptions>
             </FilterCardContainer>
+          ) : (
+            <FilterCardSecondContainer key={index}>
+              <FilterCardTitle>
+                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+              </FilterCardTitle>
+              <FilterCardSelectAll>
+                {each?.selectAllStatus === "T" ? (
+                  <FilterCardSelectAllSpan>
+                    <Image
+                      onClick={() => {
+                        handleAllSelection(each, index);
+                      }}
+                      src={Checked}
+                      alt="reset"
+                    />
+                    <FilterCardSelectAllText>
+                      Select All
+                    </FilterCardSelectAllText>
+                  </FilterCardSelectAllSpan>
+                ) : each?.selectAllStatus === "F" ? (
+                  <FilterCardSelectAllSpan>
+                    <Image
+                      onClick={() => {
+                        handleAllSelection(each, index);
+                      }}
+                      src={UnChecked}
+                      alt="reset"
+                    />
+                    <FilterCardSelectAllText>
+                      Select All
+                    </FilterCardSelectAllText>
+                  </FilterCardSelectAllSpan>
+                ) : each?.selectAllStatus === "I" ? (
+                  <FilterCardSelectAllSpan>
+                    <Image
+                      onClick={() => {
+                        handleAllSelection(each, index);
+                      }}
+                      src={Indeterminate}
+                      alt="reset"
+                    />
+                    <FilterCardSelectAllText>
+                      Select All
+                    </FilterCardSelectAllText>
+                  </FilterCardSelectAllSpan>
+                ) : (
+                  ""
+                )}
+              </FilterCardSelectAll>
+              <FilterCardOptions>
+                {each?.options?.map((item: any, i: number) => {
+                  return (
+                    <FilterCardOptionContainer key={i}>
+                      <FilterCardOptionSpan>
+                        {item?.optionStatus === "T" ? (
+                          <Image
+                            onClick={() => {
+                              handleOptionSelection(item, index);
+                            }}
+                            src={Checked}
+                            alt="reset"
+                          />
+                        ) : item?.optionStatus === "F" ? (
+                          <Image
+                            onClick={() => {
+                              handleOptionSelection(item, index);
+                            }}
+                            src={UnChecked}
+                            alt=""
+                          />
+                        ) : (
+                          ""
+                        )}
+
+                        <FilterCardSelectAllText>
+                          {item?.optionTitle}
+                        </FilterCardSelectAllText>
+                      </FilterCardOptionSpan>
+                    </FilterCardOptionContainer>
+                  );
+                })}
+              </FilterCardOptions>
+            </FilterCardSecondContainer>
           );
         })}
 
@@ -660,7 +761,7 @@ const TaskFilterCommon: React.FC<any> = ({
           <DatePickersContainer>
             <DatePickerContainer>
               <div>
-                <CustomLabel label={"Start Date"} />
+                <CustomLabel label={"Start date"} />
                 <TaskFilterFormWrapper
                   config={startDate}
                   setFormConfig={setStartData}
@@ -668,7 +769,7 @@ const TaskFilterCommon: React.FC<any> = ({
               </div>
             </DatePickerContainer>
             <div>
-              <CustomLabel label={"Due Date"} />
+              <CustomLabel label={"Due date"} />
               <TaskFilterFormWrapper
                 config={dueDate}
                 setFormConfig={setDueData}
