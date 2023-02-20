@@ -53,6 +53,7 @@ import {
   updateTaskStatusListApi,
   updateTaskTypeListApi,
 } from "../../../../services/task";
+import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 const Editproject: React.FC = () => {
   const router = useRouter();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);

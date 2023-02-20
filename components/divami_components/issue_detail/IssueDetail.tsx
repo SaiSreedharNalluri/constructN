@@ -1027,7 +1027,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each.value;
+        return each._id || each.value;
       });
     // let userIdList: any[] = [];
     // const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
@@ -1048,7 +1048,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
-    data.status = "To Do";
+    data.status = formData.filter(
+      (item: any) => item.id == "issueStatus"
+    )[0]?.defaultValue;
     // data.context = contextInfo;
     // Object.keys(contextInfo).forEach((key) => {
     //   if (key !== "id") {
@@ -1105,32 +1107,31 @@ const CustomIssueDetailsDrawer = (props: any) => {
         };
       });
     console.log("formData", fileformdata);
-    if (filesArr?.length) {
-      updateAttachments(fileformdata, issue._id)
-        .then((response) => {
-          if (response.success === true) {
-            toast.success("Issue added sucessfully");
-            // handleTaskSubmit(formData);
-            // taskSubmit(response.result);
-            // toolInstance.toolAction = "taskCreateSuccess";
-            // console.log(formData);
-          } else {
-            // toolInstance.toolAction = "taskCreateFail";
-            // issueToolClicked(toolInstance);
-          }
-          setOpenCreateTask(false);
-        })
-        .catch((error) => {
-          // toolInstance.toolAction = "taskCreateFail";
+    // if (filesArr?.length) {
+    //   updateAttachments(fileformdata, issue._id)
+    //     .then((response) => {
+    //       if (response.success === true) {
+    //         toast.success("Issue added sucessfully");
+    //         // handleTaskSubmit(formData);
+    //         // taskSubmit(response.result);
+    //         // toolInstance.toolAction = "taskCreateSuccess";
+    //         // console.log(formData);
+    //       } else {
+    //         // toolInstance.toolAction = "taskCreateFail";
+    //         // issueToolClicked(toolInstance);
+    //       }
+    //       setOpenCreateTask(false);
+    //     })
+    //     .catch((error) => {
+    //       // toolInstance.toolAction = "taskCreateFail";
 
-          if (error.success === false) {
-            toast.error(error?.message);
-          }
-          setOpenCreateTask(false);
-        });
-    }
+    //       if (error.success === false) {
+    //         toast.error(error?.message);
+    //       }
+    //       setOpenCreateTask(false);
+    //     });
+    // }
 
-    console.log("uoudfide");
     if (data.title && data.type && data.priority) {
       console.log("inside");
 
@@ -1167,7 +1168,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     data.selectedUser?.user
       ? (issueData.assignees = [data.selectedUser.user])
       : null;
-    data.selectedProgress ? (issueData.priority = data.selectedProgress) : null;
+    data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
     editIssue(projectId as string, issueData, issue._id)
       .then((response) => {
@@ -1243,6 +1244,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             closeIssueCreate={() => {
               setOpenCreateTask(false);
             }}
+            issueStatusList={issueStatus}
           />
         </CustomDrawer>
       )}

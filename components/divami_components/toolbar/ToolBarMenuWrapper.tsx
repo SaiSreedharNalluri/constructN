@@ -91,6 +91,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   closeIssueDetails,
   setIssueList,
   getIssues,
+  getTasks,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -316,6 +317,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           closeTaskCreate={closeTaskCreate}
           openTaskDetails={openTaskDetails}
           closeTaskDetails={closeTaskDetails}
+          getTasks={getTasks}
         />
 
         {viewMode === "Reality" ? (

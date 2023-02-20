@@ -50,6 +50,7 @@ const Task = ({
   closeTaskCreate,
   openTaskDetails,
   closeTaskDetails,
+  getTasks,
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -104,7 +105,7 @@ const Task = ({
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each.value;
+        return each._id || each.value;
       });
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
@@ -193,10 +194,11 @@ const Task = ({
     }
   };
 
-  const handleViewTaskDetail = () => {
-    console.log("true");
-    setOpenTaskDetail(true);
-  };
+  // const onCancelCreate = () => {
+  //   taskMenuInstance.toolAction = "taskCreateFail";
+  //   setOpenCreateTask(false);
+  //   taskMenuClicked(taskMenuInstance);
+  // };
 
   useEffect(() => {
     console.log("contextinfo", contextInfo, tasksList);
@@ -333,6 +335,7 @@ const Task = ({
             onClose={() => setOpenDrawer((prev: any) => !prev)}
             deleteTheTask={deleteTheTask}
             taskFilterState={taskFilterState}
+            getTasks={getTasks}
           />
         </Drawer>
       )}

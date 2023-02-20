@@ -996,6 +996,7 @@ const Index: React.FC<IProps> = () => {
               closeIssueDetails={closeIssueDetails}
               setIssueList={setIssueList}
               getIssues={getIssues}
+              getTasks={getTasks}
             />
 
             {/* <CustomToaster /> */}

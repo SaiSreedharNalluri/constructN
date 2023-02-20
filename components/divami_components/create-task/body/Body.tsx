@@ -15,7 +15,11 @@ import {
 import FormWrapper from "../../form-wrapper/FormWrapper";
 import { useRouter } from "next/router";
 import { getCookie } from "cookies-next";
-import { getTasksPriority, getTasksTypes } from "../../../../services/task";
+import {
+  getTasksPriority,
+  getTasksTypes,
+  getTaskStatus,
+} from "../../../../services/task";
 import { getProjectUsers } from "../../../../services/project";
 import UploadedImagesList from "../../uploaded-images-list/UploadedImagesList";
 
@@ -55,6 +59,8 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
   const [taskTypes, setTaskTypes] = useState([]);
   const [taskPriorities, setTaskPriorities] = useState([]);
+  const [taskStatusList, setTaskStatusList] = useState([]);
+
   const [projectUsers, setProjectUsers] = useState([]);
   const [loggedInUserId, SetLoggedInUserId] = useState(null);
   const [formData, setFormData] = useState<any>([]);
@@ -77,6 +83,13 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
           }
         }
       );
+      getTaskStatus(router.query.projectId as string).then((response: any) => {
+        if (response.success === true) {
+          // response.result.push('Please select the task priority');
+          setTaskStatusList(response.result);
+          console.log(taskPriorities);
+        }
+      });
       getProjectUsers(router.query.projectId as string)
         .then((response: any) => {
           if (response.success === true) {
@@ -98,7 +111,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
     if (projectUsers.length && taskPriorities.length && taskTypes.length) {
       if (editData) {
         setFormConfig((prev: any) => {
-          return prev.map((item: any) => {
+          let newFormConfig = prev.map((item: any) => {
             if (item.id === "title") {
               return {
                 ...item,
@@ -186,6 +199,33 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
             }
             return item;
           });
+          if (
+            newFormConfig.findIndex((item: any) => item.id === "taskStatus") ==
+            -1
+          ) {
+            newFormConfig.splice(2, 0, {
+              id: "taskStatus",
+              type: "select",
+              defaultValue: editData?.status || "To Do",
+              placeHolder: "Select task status",
+              label: "Task Status",
+              isLarge: false,
+              isError: false,
+              isReq: true,
+              isflex: false,
+              formLabel: "Select task status",
+              options: taskStatusList.map((item: any) => {
+                return {
+                  ...item,
+                  label: item,
+                  value: item,
+                  selected: item === editData?.status,
+                };
+              }),
+            });
+          }
+
+          return newFormConfig;
         });
       } else {
         setFormConfig((prev: any) => {
