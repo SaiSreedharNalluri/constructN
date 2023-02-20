@@ -34,6 +34,7 @@ import { CustomToaster } from "../custom-toaster/CustomToaster";
 import toasterIcon from "../../../public/divami_icons/toasterIcon.svg";
 import { ToastImgContainer } from "../custom-toaster/CustomToastStyles";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
+import Tooltip from "@mui/material/Tooltip";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
@@ -273,70 +274,75 @@ const Issues = ({
     <div>
       <IssueBox>
         <IssueTitle>Issues:</IssueTitle>
-
-        <IssuesSectionPlusImg>
-          <CameraIcon
-            src={plusCircleIcon}
-            alt="Arrow"
-            // onClick={rightMenuClickHandler}
-            onClick={() => {
-              openIssueCreateFn();
-              setOpenCreateIssue(true);
-            }}
-            width={12}
-            height={12}
-          />
-        </IssuesSectionPlusImg>
-
-        <IssuesSectionFileImg>
-          <CameraIcon
-            src={fileTextIcon}
-            width={12}
-            height={12}
-            alt="Arrow"
-            // onClick={() => {
-            //   setOpenIssueList(true);
-            // }}
-            onClick={() => {
-              openIssueListFn();
-              handleViewTaskList();
-            }}
-          />
-        </IssuesSectionFileImg>
-
-        <IssuesSectionClipImg>
-          {issueVisbility && (
+        <Tooltip title="Create Issue">
+          <IssuesSectionPlusImg>
             <CameraIcon
-              width={12}
-              height={12}
-              src={fileTextIssue}
-              // width={12}
-              // height={12}
+              src={plusCircleIcon}
               alt="Arrow"
               // onClick={rightMenuClickHandler}
               onClick={() => {
-                toggleIssueVisibility();
-                // handleToggle();
+                openIssueCreateFn();
+                setOpenCreateIssue(true);
               }}
-            />
-          )}
-
-          {!issueVisbility && (
-            <CameraIcon
               width={12}
               height={12}
-              src={clipboardSecondIcon}
-              // width={12}
-              // height={12}
+            />
+          </IssuesSectionPlusImg>
+        </Tooltip>
+
+        <Tooltip title="Issue Lists">
+          <IssuesSectionFileImg>
+            <CameraIcon
+              src={fileTextIcon}
+              width={12}
+              height={12}
               alt="Arrow"
-              // onClick={rightMenuClickHandler}
+              // onClick={() => {
+              //   setOpenIssueList(true);
+              // }}
               onClick={() => {
-                toggleIssueVisibility();
-                // handleToggle();
+                openIssueListFn();
+                handleViewTaskList();
               }}
             />
-          )}
-        </IssuesSectionClipImg>
+          </IssuesSectionFileImg>
+        </Tooltip>
+
+        <Tooltip title={issueVisbility ? "Hide Issues" : "Show Issues"}>
+          <IssuesSectionClipImg>
+            {issueVisbility && (
+              <CameraIcon
+                width={12}
+                height={12}
+                src={fileTextIssue}
+                // width={12}
+                // height={12}
+                alt="Arrow"
+                // onClick={rightMenuClickHandler}
+                onClick={() => {
+                  toggleIssueVisibility();
+                  // handleToggle();
+                }}
+              />
+            )}
+
+            {!issueVisbility && (
+              <CameraIcon
+                width={12}
+                height={12}
+                src={clipboardSecondIcon}
+                // width={12}
+                // height={12}
+                alt="Arrow"
+                // onClick={rightMenuClickHandler}
+                onClick={() => {
+                  toggleIssueVisibility();
+                  // handleToggle();
+                }}
+              />
+            )}
+          </IssuesSectionClipImg>
+        </Tooltip>
       </IssueBox>
 
       {/* {openIssueList && (
