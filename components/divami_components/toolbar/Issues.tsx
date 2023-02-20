@@ -20,7 +20,7 @@ import {
   IssueTitle,
   CameraIcon,
 } from "./ToolBarStyles";
-import { Drawer } from "@mui/material";
+import { Drawer, Tooltip } from "@mui/material";
 import CreateIssue from "../create-issue/CreateIssue";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import { createIssue } from "../../../services/issue";
@@ -34,7 +34,6 @@ import { CustomToaster } from "../custom-toaster/CustomToaster";
 import toasterIcon from "../../../public/divami_icons/toasterIcon.svg";
 import { ToastImgContainer } from "../custom-toaster/CustomToastStyles";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
-import Tooltip from "@mui/material/Tooltip";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
@@ -106,7 +105,7 @@ const Issues = ({
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each.value;
+        return each._id || each.value;
       });
 
     // if (assignes && assignes.length > 0) {
@@ -214,8 +213,12 @@ const Issues = ({
         });
     }
   };
-  const handleViewList = () => {
-    // setOpenIssueList()
+  const onCancelCreate = () => {
+    setOpenCreateIssue(false);
+    setCreateOverlay(false);
+    issueMenuInstance.toolAction = "issueCreateFail";
+
+    issueMenuClicked(issueMenuInstance);
   };
 
   useEffect(() => {
@@ -230,7 +233,7 @@ const Issues = ({
 
   const issueSubmit = (formdata: any) => {
     issuesList.push(formdata);
-    issueMenuInstance.toolAction = "issueCreated";
+    issueMenuInstance.toolAction = "issueCreateSuccess";
     setCreateOverlay(false);
     issueMenuClicked(issueMenuInstance);
   };
@@ -274,6 +277,7 @@ const Issues = ({
     <div>
       <IssueBox>
         <IssueTitle>Issues:</IssueTitle>
+
         <Tooltip title="Create Issue">
           <IssuesSectionPlusImg>
             <CameraIcon
@@ -372,9 +376,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => { }}
+            handleOnSort={() => {}}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => { }}
+            clickIssueEditSubmit={() => {}}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}
@@ -398,6 +402,8 @@ const Issues = ({
             currentStructure={currentStructure}
             contextInfo={contextInfo}
             closeIssueCreate={closeIssueCreate}
+            issueStatusList={issueStatusList}
+            onCancelCreate={onCancelCreate}
           />
         </CustomDrawer>
       )}

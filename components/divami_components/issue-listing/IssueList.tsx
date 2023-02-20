@@ -173,7 +173,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     }
   };
 
-  console.log("isselistdat", filteredIssuesList, issuesList);
   const handleSearch = () => {
     if (searchTerm) {
       const filteredData: any = issueList?.filter((eachIssue: any) => {

@@ -52,7 +52,14 @@ const DatePickerContainer = styled(Box)({
   flexDirection: "column",
 });
 
-const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: any) => {
+const Body = ({
+  handleFormData,
+  editData,
+  validate,
+  setIsValidate,
+  tagsList,
+  issueStatusList,
+}: any) => {
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
   const [issueTypes, setIssueTypes] = useState([]);
@@ -61,7 +68,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [loggedInUserId, SetLoggedInUserId] = useState("");
   const router = useRouter();
-
+  console.log(issueStatusList, "issueStatusListjsfskdj");
   useEffect(() => {
     console.log(formConfig, " formConfig", tagsList, "tagsList");
     const tempFormData = formConfig.map((item: any) => {
@@ -72,7 +79,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
         };
       }
       return item;
-    })
+    });
     setFormConfig(tempFormData);
   }, [tagsList]);
 
@@ -112,10 +119,9 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
   }, [router.isReady, router.query.projectId]);
   useEffect(() => {
     if (projectUsers.length && issuePriorities.length && issueTypes.length) {
-      console.log(editData, "editdata");
       if (editData) {
         setFormConfig((prev: any) => {
-          return prev.map((item: any) => {
+          let newFormConfig = prev.map((item: any) => {
             if (item.id === "title") {
               return {
                 ...item,
@@ -216,6 +222,34 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
             }
             return item;
           });
+          if (
+            newFormConfig.findIndex((item: any) => item.id === "issueStatus") ==
+            -1
+          ) {
+            newFormConfig.splice(2, 0, {
+              id: "issueStatus",
+              type: "select",
+              defaultValue: editData?.status || "To Do",
+              placeHolder: "Select issue status",
+              label: "Issue Status",
+              isLarge: false,
+              isError: false,
+              isReq: true,
+              isflex: false,
+              formLabel: "Select issue status",
+              options: issueStatusList.map((item: any) => {
+                return {
+                  ...item,
+                  label: item,
+                  value: item,
+                  selected: item === editData?.status,
+                };
+              }),
+            });
+          }
+
+          // newFormConfig = [...newFormConfig];
+          return newFormConfig;
         });
       } else {
         setFormConfig((prev: any) => {
