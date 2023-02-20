@@ -281,7 +281,7 @@ const Issues = ({
             // onClick={rightMenuClickHandler}
             onClick={() => {
               openIssueCreateFn();
-              // setOpenCreateIssue(true);
+              setOpenCreateIssue(true);
             }}
             width={12}
             height={12}
