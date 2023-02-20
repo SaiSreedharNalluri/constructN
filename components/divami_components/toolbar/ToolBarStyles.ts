@@ -151,7 +151,7 @@ export const SelectLayersWrapper = styled("div")({
 });
 
 export const LayerSecondSectionCamImg = styled("div")({
-  marginRight: "14px",
+  // marginRight: "14px",
   // width: '15px',
   // height: '15px',
 });

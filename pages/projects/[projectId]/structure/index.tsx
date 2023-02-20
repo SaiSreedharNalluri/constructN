@@ -46,7 +46,7 @@ import { CustomToaster } from "../../../../components/divami_components/custom-t
 import { log } from "node:console";
 import { deleteAttachment } from "../../../../services/attachments";
 
-interface IProps { }
+interface IProps {}
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -310,9 +310,11 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
-                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
-                  }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${
+                  structure?._id
+                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
+                  currentProjectId as string
+                }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -792,8 +794,9 @@ const Index: React.FC<IProps> = () => {
             <div
               style={{ overflow: "hidden" }}
               ref={leftRefContainer}
-              className={` ${leftNav ? "visible" : "hidden"
-                }  absolute z-10 border border-gray-300 `}
+              className={` ${
+                leftNav ? "visible" : "hidden"
+              }  absolute z-10 border border-gray-300 `}
             >
               <div>
                 <LeftOverLay
@@ -846,8 +849,9 @@ const Index: React.FC<IProps> = () => {
                 <div
                   style={{ overflow: "hidden" }}
                   ref={leftRefContainer}
-                  className={`${hierarchy ? "visible" : "hidden"
-                    }  absolute z-10 border  white-bg projHier `}
+                  className={`${
+                    hierarchy ? "visible" : "hidden"
+                  }  absolute z-10 border  white-bg projHier `}
                 >
                   <div>
                     <LeftOverLay
