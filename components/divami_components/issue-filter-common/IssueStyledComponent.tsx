@@ -56,30 +56,35 @@ export const HeaderRightSectionResetText = styled.div({
 
 export const HeaderRightSectionCancel = styled.div({});
 
-export const FilterCardContainer = styled.div`
-  margin-top: 20px;
-`;
+export const FilterCardContainer = styled.div({
+  marginTop: "20px",
+});
 
-export const FilterCardSecondContainer = styled.div`
-  margin-top: 30px;
-`;
+export const FilterCardSecondContainer = styled.div({
+  marginTop: "30px",
+});
 
-export const FilterCardTitle = styled.div`
-  padding-left: 20px;
-`;
+export const FilterCardTitle = styled.div({
+  paddingLeft: "20px",
+});
 
-export const FormElementContainer = styled(Box)`
-  margin-top: 30px;
-  padding-left: 20px;
-  padding-right: 20px;
-`;
+export const FormElementContainer = styled(Box)({
+  marginTop: "30px",
+  paddingLeft: "20px",
+  paddingRight: "20px",
+});
 
-export const StyledLabel = styled(Typography)`
-  font-weight: 400;
-  line-height: 20px;
-  font-size: 14px;
-  margin-bottom: 8px;
-`;
+export const StyledLabel = styled(Typography)({
+  fontWeight: "400",
+  lineHeight: "20px",
+  fontSize: "14px",
+  marginBottom: "8px",
+});
+
+// export const FilterCardTitleText = styled.div({
+//   color: " #101f4c",
+//   fontFamily:""
+// })
 
 export const FilterCardTitleText = styled.div`
   color: #101f4c;
