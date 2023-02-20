@@ -82,11 +82,12 @@ const SpanTile = styled("span")`
 
 interface ContainerProps {
   footerState: boolean;
-};
+}
 
-const BodyContainer = styled(Box) <ContainerProps>`
-  height: ${props => props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
-  overflow-Y: scroll;
+const BodyContainer = styled(Box)<ContainerProps>`
+  height: ${(props) =>
+    props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
+  overflow-y: scroll;
 `;
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
@@ -471,7 +472,7 @@ function BasicTabs(props: any) {
     projectUsers,
     issueUpdate,
     deleteTheAttachment,
-    handleFooter
+    handleFooter,
   } = props;
 
   const [value, setValue] = React.useState(0);
@@ -552,7 +553,7 @@ function BasicTabs(props: any) {
 
   useEffect(() => {
     if (progressEditState || assigneeEditState) handleFooter(true);
-    else handleFooter(false)
+    else handleFooter(false);
   }, [progressEditState, assigneeEditState]);
 
   return (
@@ -972,9 +973,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
 
-
   useEffect(() => {
     let tempObj = {
+      ...issue,
       options: issue?.options,
       priority: issue?.priority,
       capturedOn: issue?.createdAt,
@@ -992,6 +993,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       relatedTags: issue?.tags,
       id: issue?._id,
       tags: issue?.tags,
+      status: issue?.status,
     };
     setTaskState((prev: any) => {
       return {
@@ -1215,7 +1217,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-        <BodyContainer footerState={footerState} >
+        <BodyContainer footerState={footerState}>
           <BasicTabs
             taskType={issueType}
             taskPriority={issuePriority}

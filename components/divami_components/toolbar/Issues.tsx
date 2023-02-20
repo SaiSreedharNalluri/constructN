@@ -282,7 +282,7 @@ const Issues = ({
               // onClick={rightMenuClickHandler}
               onClick={() => {
                 openIssueCreateFn();
-                setOpenCreateIssue(true);
+                // setOpenCreateIssue(true);
               }}
               width={12}
               height={12}
@@ -372,9 +372,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => {}}
+            handleOnSort={() => { }}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => {}}
+            clickIssueEditSubmit={() => { }}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}

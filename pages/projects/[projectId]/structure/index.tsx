@@ -126,7 +126,7 @@ const Index: React.FC<IProps> = () => {
   };
   const handleNodeExpand = (data: any) => {
     setExpanded(data);
-    // setExpanded(getAllIds(treeViewData));
+    window.localStorage.setItem("expandedNodes", JSON.stringify(data));
   };
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
@@ -232,6 +232,19 @@ const Index: React.FC<IProps> = () => {
       if (user?._id) {
         SetLoggedInUserId(user._id);
       }
+      if (window.localStorage.getItem("nodeData")) {
+        let nodeData = JSON.parse(
+          window.localStorage.getItem("nodeData") || ""
+        );
+        if (nodeData) {
+          getStructureData(nodeData);
+          setExpanded(
+            JSON.parse(window.localStorage.getItem("expandedNodes") || "") || []
+          );
+          setSelected(nodeData?._id || "");
+        }
+      }
+
       const handler = document.addEventListener("click", closeStructurePage);
       return () => {
         document.removeEventListener("click", closeStructurePage);
