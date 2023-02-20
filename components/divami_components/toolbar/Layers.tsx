@@ -78,7 +78,7 @@ const Layers = ({
           <DownIcon src={downArrowIcon} alt="Arrow" />
         </LayerSecondSectionCamImg>
       </LayersWrapper>
-      <SelectLayersWrapper>
+      <SelectLayersWrapper typeOfWindow={"layer"}>
         <SelectLayer
           openselectlayer={openList}
           title={"Select Layer"}

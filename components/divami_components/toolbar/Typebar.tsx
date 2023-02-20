@@ -30,7 +30,7 @@ const Typebar = ({
           <DownIcon src={downArrowIcon} alt="Arrow" />
         </TypeArrowIconDiv>
       </TypeParentCont>
-      <SelectLayersWrapper>
+      <SelectLayersWrapper typeOfWindow="type">
         <SelectTypesList
           openselectlayer={openList}
           title={"Select Type"}
