@@ -39,7 +39,7 @@ const CommentForm: React.FC<IProps> = ({
       {hasCancelButton && (
         <button
           type="button"
-          className="px-2 py-1  focus:outline-none bg-gray-500 hover:bg-gray-800 rounded text-gray-200 font-semibold"
+          className="ml-2 px-2 py-1  focus:outline-none bg-gray-500 hover:bg-gray-800 rounded text-gray-200 font-semibold"
           onClick={handleCancel}
         >
           Cancel

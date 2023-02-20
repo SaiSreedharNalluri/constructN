@@ -19,6 +19,7 @@ export interface RepliesEntity {
   _id: string;
   reply: string;
   by: By;
+  replies?: RepliesEntity[] | null;
   createdAt: string;
   updatedAt: string;
 }

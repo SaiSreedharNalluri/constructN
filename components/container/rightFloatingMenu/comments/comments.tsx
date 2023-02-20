@@ -2,7 +2,12 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Comments } from '../../../../models/IComments';
-import { createComment, getCommentsList } from '../../../../services/comments';
+import {
+  createComment,
+  createCommentReply,
+  editComment,
+  getCommentsList,
+} from '../../../../services/comments';
 import CommentForm from './commentForm';
 import CommentsListing from './commentsListing';
 interface IProps {
@@ -11,6 +16,10 @@ interface IProps {
 const Comments: React.FC<IProps> = ({ entityId }) => {
   const router = useRouter();
   const [backendComments, setBackendComments] = useState<Comments[]>([]);
+  const [activeComment, setActiveComment] = useState<{
+    _id: string;
+    type: string;
+  } | null>(null);
   useEffect(() => {
     if (router.isReady) {
       getCommentsList(entityId)
@@ -31,6 +40,41 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
     }).then((response) => {
       if (response.success === true) {
         toast.success('Comment is added sucessfully');
+        setBackendComments([response.result, ...backendComments]);
+      }
+    });
+  };
+  const updateComment = (text: string, commentId: string, type: string) => {
+    if (type === 'comments') {
+      editComment(commentId, { comment: text }).then((response) => {
+        if (response.success === true) {
+          toast.success('Comment is updated sucessfully');
+          const updatedBackendComments = backendComments.map(
+            (backendComment) => {
+              if (backendComment._id === commentId) {
+                return { ...backendComment, comment: text };
+              }
+              return backendComment;
+            }
+          );
+          setBackendComments(updatedBackendComments);
+          setActiveComment(null);
+        }
+      });
+    } else if (type === 'reply') {
+    }
+  };
+  const addReplyToComment = (text: string, commentId: string) => {
+    createCommentReply({ reply: text }, commentId).then((response) => {
+      if (response.success === true) {
+        toast.success(response.message);
+        backendComments.map((commentObj) => {
+          if (commentObj._id === commentId) {
+            commentObj.replies?.push(response.result);
+          }
+        });
+        setBackendComments(backendComments);
+        setActiveComment(null);
       }
     });
   };
@@ -47,7 +91,14 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
         <div>
           {backendComments.map((commentObj: Comments) => {
             return (
-              <CommentsListing key={commentObj._id} comment={commentObj} />
+              <CommentsListing
+                key={commentObj._id}
+                comment={commentObj}
+                updateComment={updateComment}
+                activeComment={activeComment}
+                setActiveComment={setActiveComment}
+                addReplyToComment={addReplyToComment}
+              />
             );
           })}
         </div>
