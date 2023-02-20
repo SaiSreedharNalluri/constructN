@@ -290,7 +290,7 @@ const Issues = ({
           </IssuesSectionPlusImg>
         </Tooltip>
 
-        <Tooltip title="Issue Lists">
+        <Tooltip title="Issue List">
           <IssuesSectionFileImg>
             <CameraIcon
               src={fileTextIcon}
@@ -308,7 +308,7 @@ const Issues = ({
           </IssuesSectionFileImg>
         </Tooltip>
 
-        <Tooltip title={issueVisbility ? "Hide Issues" : "Show Issues"}>
+        <Tooltip title={issueVisbility ? "Show Issues" : "Hide Issues"}>
           <IssuesSectionClipImg>
             {issueVisbility && (
               <CameraIcon
