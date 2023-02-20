@@ -79,10 +79,14 @@ const SpanTile = styled("span")`
 
   margin-left: 10px;
 `;
-const BodyContainer = styled(Box)`
-  height: calc(100vh - 134px);
-  //   border: 2px solid black;
-  // overflow: scroll;
+
+interface ContainerProps {
+  footerState: boolean;
+};
+
+const BodyContainer = styled(Box) <ContainerProps>`
+  height: ${props => props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
+  overflow-Y: scroll;
 `;
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
@@ -316,6 +320,7 @@ const StyledLabel = styled(Typography)`
 
 const CustomTaskDrawerContainer = styled("div")`
   width: 438px;
+  height: calc(100vh - 61px);
 `;
 
 const ProgressEditStateButtonsContainer = styled("div")`
@@ -334,15 +339,15 @@ const AssignEditSearchContainer = styled("div")({
     width: "100%",
   },
   "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-  {
-    height: "100%",
-    width: "100%",
-  },
+    {
+      height: "100%",
+      width: "100%",
+    },
   "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-  {
-    height: "100%",
-    width: "100%",
-  },
+    {
+      height: "100%",
+      width: "100%",
+    },
   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
     marginTop: "-8px",
   },
@@ -382,7 +387,7 @@ const AddCommentContainer = styled("div")((props: any) => ({
   background: "white",
   marginLeft: "-24px",
   width: "100%",
-}));
+})) as any;
 
 const AddCommentInput = styled("input")({
   width: "100%",
@@ -466,6 +471,7 @@ function BasicTabs(props: any) {
     projectUsers,
     issueUpdate,
     deleteTheAttachment,
+    handleFooter
   } = props;
 
   const [value, setValue] = React.useState(0);
@@ -543,6 +549,11 @@ function BasicTabs(props: any) {
   const handleEditAssigne = () => {
     setAssigneeEditState(!assigneeEditState);
   };
+
+  useEffect(() => {
+    if (progressEditState || assigneeEditState) handleFooter(true);
+    else handleFooter(false)
+  }, [progressEditState, assigneeEditState]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -753,13 +764,13 @@ function BasicTabs(props: any) {
                   console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
-              // InputProps={{
-              //   startAdornment: (
-              //     <InputAdornment position="start">
-              //       <SearchIcon />
-              //     </InputAdornment>
-              //   ),
-              // }}
+                // InputProps={{
+                //   startAdornment: (
+                //     <InputAdornment position="start">
+                //       <SearchIcon />
+                //     </InputAdornment>
+                //   ),
+                // }}
               />
             </AssignEditSearchContainer>
           )}
@@ -882,10 +893,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
     contextInfo,
     deleteTheIssue,
     setIssueList,
-    getIssues
+    getIssues,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
+  const [footerState, SetFooterState] = useState(false);
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
@@ -960,6 +972,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
 
+
   useEffect(() => {
     let tempObj = {
       options: issue?.options,
@@ -998,12 +1011,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
     //     }
     //   }
     // })
-
     // issuesList.push(formdata);
     // issueMenuInstance.toolAction = "issueCreated";
     // setCreateOverlay(false);
     // issueMenuClicked(issueMenuInstance);
-  }
+  };
   const handleCreateTask = (formData: any) => {
     console.log(formData, "form data at home");
     clickTaskSubmit(formData);
@@ -1045,7 +1057,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
       (item: any) => item.id == "title"
     )[0]?.defaultValue;
 
-
     data.type = formData.filter(
       (item: any) => item.id == "issueType"
     )[0]?.defaultValue;
@@ -1059,8 +1070,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
       (data.tags =
         (formData.length
           ? formData
-            .filter((item: any) => item.id == "tag-suggestions")[0]
-            ?.chipString?.join(";")
+              .filter((item: any) => item.id == "tag-suggestions")[0]
+              ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -1204,7 +1215,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-        <BodyContainer>
+        <BodyContainer footerState={footerState} >
           <BasicTabs
             taskType={issueType}
             taskPriority={issuePriority}
@@ -1213,6 +1224,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             taskState={taskState}
             issueUpdate={issueUpdate}
             deleteTheAttachment={deleteTheAttachment}
+            handleFooter={SetFooterState}
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>

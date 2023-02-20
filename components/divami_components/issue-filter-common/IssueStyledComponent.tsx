@@ -58,6 +58,10 @@ export const FilterCardContainer = styled.div`
   margin-top: 20px;
 `;
 
+export const FilterCardSecondContainer = styled.div`
+  margin-top: 30px;
+`;
+
 export const FilterCardTitle = styled.div`
   padding-left: 20px;
 `;
@@ -101,6 +105,13 @@ export const FilterCardSelectAllSpan = styled.span`
 
 export const FilterCardSelectAllText = styled.div`
   margin-left: 10px;
+  color: #101f4c;
+
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  // line-height: 19px;
 `;
 
 export const FilterCardOptions = styled.div`

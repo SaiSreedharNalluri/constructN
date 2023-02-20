@@ -27,35 +27,43 @@ export const TitleContainer = styled(Box)({
 });
 
 
-export const HeaderLeftSection = styled.div`
-  // padding-left: 20px;
-`
+export const HeaderLeftSection = styled.div({});
 
-export const HeaderLeftSectionText = styled.div``
+export const HeaderLeftSectionText = styled.div({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "16px",
+  color: "#36415d",
+});
 
-export const HeaderRightSection = styled.div`
-  // margin-right: 20px;
-  width: 100px;
-  display: flex;
-  align-items: center;
-`
-export const HeaderRightSectionResetIcon = styled.div`
-  margin-right: 7px;
-  // width: 100%;
-  // height: 100%;
-`
+export const HeaderRightSection = styled.div({
+  display: "flex",
+  alignItems: "center",
+});
+export const HeaderRightSectionResetIcon = styled.div({
+  marginRight: "7px",
+});
 
-export const HeaderRightSectionResetText = styled.div`
-  margin-right: 10px;
-  border-right: 1px solid #d9d9d9;
-  padding-right: 15px;
-`
+export const HeaderRightSectionResetText = styled.div({
+  marginRight: "10px",
+  borderRight: "1px solid #d9d9d9",
+  paddingRight: "15px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  color: " #ff843f",
+});
 
-export const HeaderRightSectionCancel = styled.div``
+export const HeaderRightSectionCancel = styled.div({});
 
 export const FilterCardContainer = styled.div`
   margin-top: 20px;
 `
+
+export const FilterCardSecondContainer = styled.div`
+  margin-top: 30px;
+`;
 
 export const FilterCardTitle = styled.div`
   padding-left: 20px;
@@ -74,13 +82,21 @@ export const StyledLabel = styled(Typography)`
   margin-bottom: 8px;
 `
 
-export const FilterCardTitleText = styled.div``
+export const FilterCardTitleText = styled.div`
+color: #101f4c;
+
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+`
 
 export const FilterCardSelectAll = styled.div`
   display: flex;
   align-items: center;
   margin-top: 15px;
-  padding-bottom: 10px;
+  padding-bottom: 15px;
   margin-left: 20px;
   margin-right: 20px;
   border-bottom: 1px solid #d9d9d9;
@@ -92,12 +108,22 @@ export const FilterCardSelectAllSpan = styled.span`
 
 export const FilterCardSelectAllText = styled.div`
   margin-left: 10px;
+
+  color: #101f4c;
+
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  // line-height: 19px;
 `
 
 export const FilterCardOptions = styled.div`
   display: flex;
   flex-wrap: wrap;
   padding: 0px 20px;
+  margin-top: 5px;
+
 `
 
 export const FilterCardOptionContainer = styled.div`
