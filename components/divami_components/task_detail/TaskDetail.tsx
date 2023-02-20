@@ -1144,7 +1144,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     updateTask(projectId as string, issueData, task._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Issue updated sucessfully");
+          toast.success("Task updated sucessfully");
         } else {
         }
       })
