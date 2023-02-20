@@ -79,10 +79,14 @@ const SpanTile = styled("span")`
 
   margin-left: 10px;
 `;
-const BodyContainer = styled(Box)`
-  height: calc(100vh - 134px);
-  //   border: 2px solid black;
-  // overflow: scroll;
+
+interface ContainerProps {
+  footerState: boolean;
+};
+
+const BodyContainer = styled(Box) <ContainerProps>`
+  height: ${props => props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
+  overflow-Y: scroll;
 `;
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
@@ -316,6 +320,7 @@ const StyledLabel = styled(Typography)`
 
 const CustomTaskDrawerContainer = styled("div")`
   width: 438px;
+  height: calc(100vh - 61px);
 `;
 
 const ProgressEditStateButtonsContainer = styled("div")`
@@ -466,6 +471,7 @@ function BasicTabs(props: any) {
     projectUsers,
     issueUpdate,
     deleteTheAttachment,
+    handleFooter
   } = props;
 
   const [value, setValue] = React.useState(0);
@@ -543,6 +549,11 @@ function BasicTabs(props: any) {
   const handleEditAssigne = () => {
     setAssigneeEditState(!assigneeEditState);
   };
+
+  useEffect(() => {
+    if (progressEditState || assigneeEditState) handleFooter(true);
+    else handleFooter(false)
+  }, [progressEditState, assigneeEditState]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -886,6 +897,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
+  const [footerState, SetFooterState] = useState(false);
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
@@ -959,6 +971,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
+
 
   useEffect(() => {
     let tempObj = {
@@ -1204,7 +1217,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-        <BodyContainer>
+        <BodyContainer footerState={footerState} >
           <BasicTabs
             taskType={issueType}
             taskPriority={issuePriority}
@@ -1213,6 +1226,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             taskState={taskState}
             issueUpdate={issueUpdate}
             deleteTheAttachment={deleteTheAttachment}
+            handleFooter={SetFooterState}
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>
