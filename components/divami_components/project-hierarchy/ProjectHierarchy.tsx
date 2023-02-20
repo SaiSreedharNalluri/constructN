@@ -60,8 +60,6 @@ const ProjectHierarchy = ({
     if (window.localStorage.getItem("nodeData")) {
       let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
       getStructureData(nodeData);
-      handleNodeExpand([nodeData._id]);
-      handleNodeSelection(nodeData._id);
     }
   }, [treeViewData]);
 
