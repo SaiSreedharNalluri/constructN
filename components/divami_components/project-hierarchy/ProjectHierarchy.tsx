@@ -55,6 +55,16 @@ const ProjectHierarchy = ({
   useEffect(() => {
     setTreeViewData(treeData);
   }, [treeData]);
+
+  useEffect(() => {
+    if (window.localStorage.getItem("nodeData")) {
+      let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
+      getStructureData(nodeData);
+      handleNodeExpand([nodeData._id]);
+      handleNodeSelection(nodeData._id);
+    }
+  }, [treeViewData]);
+
   const classes = {};
   const renderTreeNode = (node: ChildrenEntity) => (
     <div>
@@ -72,7 +82,9 @@ const ProjectHierarchy = ({
       key={nodes._id}
       nodeId={nodes._id}
       label={renderTreeNode(nodes)}
-      onClick={() => {
+      onClick={(event: any) => {
+        console.log("onclick");
+        window.localStorage.setItem("nodeData", JSON.stringify(nodes));
         getStructureData ? getStructureData(nodes) : null;
         if (
           !(

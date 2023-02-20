@@ -106,9 +106,7 @@ const LeftOverLay: React.FC<IProps> = ({
           height: "80vh",
         }}
       >
-        {state.length === 0 ? (
-          "no structures found for this project"
-        ) : (
+        {
           <ProjectHierarchy
             handleSearch={(event: React.ChangeEvent<HTMLInputElement>) => {
               // setFieldValue("searchQuery", event.target.value);
@@ -128,7 +126,7 @@ const LeftOverLay: React.FC<IProps> = ({
             expandedNodes={expandedNodes}
           />
           // <Treelist initialSelector={selector} treeList={state} getStructureData={getStructureData} />
-        )}
+        }
       </div>
     </React.Fragment>
   );
