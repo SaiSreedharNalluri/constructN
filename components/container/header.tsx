@@ -13,8 +13,10 @@ import DesignRealitySwitch from './designRealitySwitch';
 interface IProps {
   // showDesignRealitySwitch?:boolean;
   // isDesignView?:boolean;
+  breadCrumb? : string;
+  
 }
-const Header: React.FC<IProps> = () => {
+const Header: React.FC<IProps> = ({breadCrumb}) => {
   // if (showDesignRealitySwitch===undefined)
   // {
   //   showDesignRealitySwitch=false
@@ -26,6 +28,7 @@ const Header: React.FC<IProps> = () => {
   const router = useRouter();
   const headerRef: any = React.useRef();
   let [name, setName] = useState<string>('');
+  const [breadCrumbString, setBreadCrumbString] = useState(breadCrumb||'');
   useEffect(() => {
     const userObj: any = getCookie('user');
     let user = null;
@@ -33,7 +36,17 @@ const Header: React.FC<IProps> = () => {
     if (user?.fullName) {
       setName(user.fullName);
     }
+
   }, [router.query.projectId]);
+
+  useEffect(() => {
+    if (breadCrumb!==undefined)
+    setBreadCrumbString(breadCrumb);
+    else
+    setBreadCrumbString('');
+
+  }, [breadCrumb]);
+  
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     const closePopup = (e: any) => {
@@ -72,6 +85,8 @@ const Header: React.FC<IProps> = () => {
                 alt=""
               ></img>
             </div>
+            <div className='flex-auto text-sm p-2'>{breadCrumbString}</div>
+
             <div className='flex '>
               {/* <div className={`mt-2 mr-2 mb-2 ${showDesignRealitySwitch?'visible':'hidden'}`}>
               <DesignRealitySwitch toggleDesignType={toggleDesignType} designState={isDesignView?true:false}></DesignRealitySwitch>
@@ -98,6 +113,7 @@ const Header: React.FC<IProps> = () => {
                     width={1080}
                   />
                 </div>
+                
               </div>
 
               {loading && (

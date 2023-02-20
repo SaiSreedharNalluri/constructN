@@ -939,7 +939,7 @@ function GenericViewer(props) {
 
   return (
       <div className="fixed calc-w calc-h flex flex-row">
-        <div className="relative basis-1/2 flex grow shrink">
+        <div id='TheView' className="relative basis-1/2 flex grow shrink">
           {renderViewer(1)}
           <TimelineContainer currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimelineContainer>
         </div>
