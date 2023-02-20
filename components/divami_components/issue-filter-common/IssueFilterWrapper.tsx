@@ -9,14 +9,14 @@ import { styled } from "@mui/system";
 import { Box } from "@mui/material";
 
 const FormElementContainer = styled(Box)({
-  marginTop: '8px'
-})
+  marginTop: "8px",
+});
 
 const DoubleFieldContainer = styled("div")({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between'
-})
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
+});
 
 const IssueFilterFormWrapper = (props: any) => {
   const { config, formState, setFormConfig } = props;
@@ -38,22 +38,25 @@ const IssueFilterFormWrapper = (props: any) => {
   const handleDateChange = (e: any, id: string) => {
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
-        if(item.id === "dates"){
-        return {
-          ...item,
-          fields:item.fields.map((eachField:any)=>{
-            return {
-              ...eachField,
-              defaultValue: eachField.id == id? JSON.parse(JSON.stringify(e)) :eachField.defaultValue
-            }
-          })
-        };
-      }else if (id === item.id) {
-        return {
-          ...item,
-          defaultValue: JSON.parse(JSON.stringify(e)),
-        };
-      }
+        if (item.id === "dates") {
+          return {
+            ...item,
+            fields: item.fields.map((eachField: any) => {
+              return {
+                ...eachField,
+                defaultValue:
+                  eachField.id == id
+                    ? JSON.parse(JSON.stringify(e))
+                    : eachField.defaultValue,
+              };
+            }),
+          };
+        } else if (id === item.id) {
+          return {
+            ...item,
+            defaultValue: JSON.parse(JSON.stringify(e)),
+          };
+        }
 
         return item;
       })
@@ -79,7 +82,7 @@ const IssueFilterFormWrapper = (props: any) => {
       prev.map((item: any) => {
         if (id === item.id) {
           let files: any = [];
-          Object.keys(e.target.files).forEach(eachkey => {
+          Object.keys(e.target.files).forEach((eachkey) => {
             files.push(e.target.files[eachkey]);
           });
           return {
@@ -180,12 +183,14 @@ const IssueFilterFormWrapper = (props: any) => {
         return (
           <DoubleFieldContainer>
             {data.fields?.map((eachConfig: any, index: number) => {
-              return <Box key={eachConfig.id}>
-              {eachConfig.formLabel ?? (
-                <CustomLabel label={eachConfig.formLabel} />
-              )}
-              {renderHTML(eachConfig, false, index)}
-            </Box>
+              return (
+                <Box key={eachConfig.id}>
+                  {eachConfig.formLabel ?? (
+                    <CustomLabel label={eachConfig.formLabel} />
+                  )}
+                  {renderHTML(eachConfig, false, index)}
+                </Box>
+              );
             })}
           </DoubleFieldContainer>
         );
@@ -193,7 +198,6 @@ const IssueFilterFormWrapper = (props: any) => {
         return "";
     }
   };
-
 
   return (
     <div>

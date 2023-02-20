@@ -38,6 +38,7 @@ import {
   DatePickersContainer,
   DatePickerContainer,
   FilterFooter,
+  FilterCardSecondContainer,
 } from "./IssueStyledComponent";
 import { Issue } from "../../../models/Issue";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
@@ -537,7 +538,7 @@ const FilterCommon: React.FC<IProps> = ({
       </FilterCommonHeader>
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
-          return (
+          return each.title === "Issue Type" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
                 <FilterCardTitleText>{each?.title}</FilterCardTitleText>
@@ -620,6 +621,89 @@ const FilterCommon: React.FC<IProps> = ({
                 })}
               </FilterCardOptions>
             </FilterCardContainer>
+          ) : (
+            <FilterCardSecondContainer key={index}>
+              <FilterCardTitle>
+                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+              </FilterCardTitle>
+              <FilterCardSelectAll>
+                {each?.selectAllStatus === "T" ? (
+                  <FilterCardSelectAllSpan>
+                    <Image
+                      onClick={() => {
+                        handleAllSelection(each, index);
+                      }}
+                      src={Checked}
+                      alt="reset"
+                    />
+                    <FilterCardSelectAllText>
+                      Select All
+                    </FilterCardSelectAllText>
+                  </FilterCardSelectAllSpan>
+                ) : each?.selectAllStatus === "F" ? (
+                  <FilterCardSelectAllSpan>
+                    <Image
+                      onClick={() => {
+                        handleAllSelection(each, index);
+                      }}
+                      src={UnChecked}
+                      alt="reset"
+                    />
+                    <FilterCardSelectAllText>
+                      Select All
+                    </FilterCardSelectAllText>
+                  </FilterCardSelectAllSpan>
+                ) : each?.selectAllStatus === "I" ? (
+                  <FilterCardSelectAllSpan>
+                    <Image
+                      onClick={() => {
+                        handleAllSelection(each, index);
+                      }}
+                      src={Indeterminate}
+                      alt="reset"
+                    />
+                    <FilterCardSelectAllText>
+                      Select All
+                    </FilterCardSelectAllText>
+                  </FilterCardSelectAllSpan>
+                ) : (
+                  ""
+                )}
+              </FilterCardSelectAll>
+              <FilterCardOptions>
+                {each?.options?.map((item: any, i: number) => {
+                  return (
+                    <FilterCardOptionContainer key={i}>
+                      <FilterCardOptionSpan>
+                        {item?.optionStatus === "T" ? (
+                          <Image
+                            onClick={() => {
+                              handleOptionSelection(item, index);
+                            }}
+                            src={Checked}
+                            alt="reset"
+                          />
+                        ) : item?.optionStatus === "F" ? (
+                          <Image
+                            onClick={() => {
+                              handleOptionSelection(item, index);
+                            }}
+                            src={UnChecked}
+                            alt=""
+                          />
+                        ) : (
+                          ""
+                        )}
+
+                        <FilterCardSelectAllText>
+                          {item?.optionTitle}
+                        </FilterCardSelectAllText>
+                      </FilterCardOptionSpan>
+                    </FilterCardOptionContainer>
+                  );
+                })}
+              </FilterCardOptions>
+            </FilterCardSecondContainer>
           );
         })}
 
@@ -635,7 +719,7 @@ const FilterCommon: React.FC<IProps> = ({
           <DatePickersContainer>
             <DatePickerContainer>
               <div>
-                <CustomLabel label={"Start Date"} />
+                <CustomLabel label={"Start date"} />
                 <IssueFilterFormWrapper
                   config={startDate}
                   setFormConfig={setStartData}
@@ -643,7 +727,7 @@ const FilterCommon: React.FC<IProps> = ({
               </div>
             </DatePickerContainer>
             <div>
-              <CustomLabel label={"Due Date"} />
+              <CustomLabel label={"Due date"} />
               <IssueFilterFormWrapper
                 config={dueDate}
                 setFormConfig={setDueData}

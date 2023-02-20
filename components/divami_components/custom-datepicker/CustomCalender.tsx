@@ -97,6 +97,17 @@ const CustomCalender = (props: any) => {
   const calenderIcon = React.forwardRef((props, ref) => (
     <CalenderICon ref={ref} />
   ));
+
+  const disablePreviousDates = (date: Dayjs) => {
+    if (!value) {
+      // if no start date has been selected, disable all previous dates
+      // return date.isAfter(dayjs());
+      return true;
+    } else {
+      // return date.isBefore(value.startOf("day"));
+      return false;
+    }
+  };
   return (
     <div data-testid="custom-calender-parent">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -107,6 +118,9 @@ const CustomCalender = (props: any) => {
           label={"MM/DD/YYYY"}
           value={value}
           shouldDisableDate={data.disableDays}
+          // shouldDisableDate={disablePreviousDates}
+          disablePast={true}
+          // minDate={}
           onChange={(newValue: any) => {
             setValue(newValue);
             onChange(newValue);
