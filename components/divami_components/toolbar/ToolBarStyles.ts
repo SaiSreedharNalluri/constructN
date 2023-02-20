@@ -126,18 +126,17 @@ export const IssueTitle = styled('div')({
 });
 
 export const LayersWrapper = styled('div')({
+  minWidth: '250px !important',
   border: '1px solid #d9d9d9',
   borderRight: 'none',
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'space-between',
   padding: '15px 20px 14px 20px',
-
-  position: 'relative',
-  width: '190px',
 });
 
 export const IconsContainer = styled('div')({
-  minWidth: '108px',
+  // minWidth: '108px',
   display: 'flex',
   alignItems: 'center',
 });
@@ -147,13 +146,14 @@ interface selectLayerWrapperProps {
 }
 export const SelectLayersWrapper = styled('div')(
   (props: selectLayerWrapperProps) => ({
-    top: '63px',
+    top: '62px',
     position: 'absolute',
-    left: props.typeOfWindow === 'type' ? '0px' : '250px',
-    border: '1px solid #D9D9D9',
+    left: props.typeOfWindow === 'type' ? '1px' : '250px',
+    // border: '1px solid #D9D9D9',
     boxShadow: '5px 4px 8px rgb(0 0 0 / 24%)',
     background: 'white',
     fontSize: '14px',
+    zIndex: -1,
   })
 );
 
@@ -166,7 +166,6 @@ export const LayerSecondSectionCamImg = styled('div')({
 export const LayerSecondSectionArrImg = styled('div')({
   marginLeft: '50px',
   cursor: 'pointer',
-
   // width: '15px',
   // height: '15px',
 });

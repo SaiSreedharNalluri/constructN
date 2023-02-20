@@ -366,9 +366,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => {}}
+            handleOnSort={() => { }}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => {}}
+            clickIssueEditSubmit={() => { }}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}
