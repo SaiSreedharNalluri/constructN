@@ -26,12 +26,18 @@ export const TitleContainer = styled(Box)({
   paddingLeft: '20px',
   paddingRight: '20px',
   color: '#36415D',
+   fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "16px",
 
   // position:"fixed"
 });
 
 export const CloseIcon = styled(Image)({
   cursor: 'pointer',
+  width:"12px",
+  height:"12px"
 });
 
 export const MiniHeaderContainer = styled(Box)({
