@@ -26,30 +26,30 @@ import {
   faFileImage,
   faFileExcel,
   faFileCsv,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react';
-import { Issue } from '../../../../models/Issue';
-import Moment from 'moment';
-import { IProjectUsers } from '../../../../models/IProjects';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { useRouter } from 'next/router';
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useEffect, useState } from "react";
+import { Issue } from "../../../../models/Issue";
+import Moment from "moment";
+import { IProjectUsers } from "../../../../models/IProjects";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useRouter } from "next/router";
 import {
   getIssuesTypes,
   getIssuesPriority,
   getIssuesStatus,
-} from '../../../../services/issue';
-import { getProjectUsers } from '../../../../services/project';
-import * as Yup from 'yup';
-import Image from 'next/image';
-import { Modal } from 'react-responsive-modal';
-import ReactSelect from 'react-select';
-import { CSVLink } from 'react-csv';
-import _ from 'lodash';
-import { getTagsList } from '../../../../services/tags';
-import { IContext, ITools } from '../../../../models/ITools';
-import MultipleFileUpload from '../../multipleFileUpload';
-import NextImage from '../../../core/Image';
+} from "../../../../services/issue";
+import { getProjectUsers } from "../../../../services/project";
+import * as Yup from "yup";
+import Image from "next/image";
+import { Modal } from "react-responsive-modal";
+import ReactSelect from "react-select";
+import { CSVLink } from "react-csv";
+import _ from "lodash";
+import { getTagsList } from "../../../../services/tags";
+import { IContext, ITools } from "../../../../models/ITools";
+import MultipleFileUpload from "../../multipleFileUpload";
+import NextImage from "../../../core/Image";
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
@@ -83,16 +83,16 @@ const IssueList: React.FC<IProps> = ({
   const [issuePriority, setIssuePriority] = useState<[string]>();
   const [issueStatus, setIssueStatus] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
-  const [issueViewMode, setIssueViewMode] = useState('list'); //list, filter, detail
+  const [issueViewMode, setIssueViewMode] = useState("list"); //list, filter, detail
   const [issueObj, setIssueObj] = useState<Issue>();
   const [open, setOpen] = useState(false);
   const [openPreview, setOpenPreview] = useState(false);
-  const [attachmentId, setAttachmentId] = useState('');
-  const [deletionType, setDeletionType] = useState('issueDelete'); //issueDelete,attachmentDelete
-  const [tagList, setTagList] = useState<[string]>(['']);
-  const [previewType, setPreviewType] = useState(''); //image,file,video;
-  let toolInstance: ITools = { toolName: 'issue', toolAction: 'issueSelect' };
-  const [url, setUrl] = useState('');
+  const [attachmentId, setAttachmentId] = useState("");
+  const [deletionType, setDeletionType] = useState("issueDelete"); //issueDelete,attachmentDelete
+  const [tagList, setTagList] = useState<[string]>([""]);
+  const [previewType, setPreviewType] = useState(""); //image,file,video;
+  let toolInstance: ITools = { toolName: "issue", toolAction: "issueSelect" };
+  const [url, setUrl] = useState("");
   interface user {
     label: string;
     value: string;
@@ -124,62 +124,62 @@ const IssueList: React.FC<IProps> = ({
     });
   }
   const getFileIcon = (fileName: string) => {
-    let extension = fileName.split('.').pop()?.toLowerCase();
+    let extension = fileName.split(".").pop()?.toLowerCase();
     switch (extension) {
-      case 'txt':
+      case "txt":
         return <FontAwesomeIcon icon={faFileText} className="mr-2" />;
-      case 'pdf':
+      case "pdf":
         return <FontAwesomeIcon icon={faFilePdf} className="mr-2" />;
-      case 'mp3':
-      case 'mp4':
+      case "mp3":
+      case "mp4":
         return <FontAwesomeIcon icon={faFileAudio} className="mr-2" />;
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
+      case "jpg":
+      case "jpeg":
+      case "png":
         return <FontAwesomeIcon icon={faFileImage} className="mr-2 w-5 h-5" />;
-      case 'xls':
-      case 'xlsx':
+      case "xls":
+      case "xlsx":
         return <FontAwesomeIcon icon={faFileExcel} className="mr-2 w-5 h-5" />;
-      case 'doc':
-      case 'docx':
+      case "doc":
+      case "docx":
         return <FontAwesomeIcon icon={faFileExcel} className="mr-2 w-5 h-5" />;
       default:
         return <FontAwesomeIcon icon={faFile} className="mr-2" />;
     }
   };
   const getFileType = (attachment: any) => {
-    let extension = attachment.name.split('.').pop()?.toLowerCase();
+    let extension = attachment.name.split(".").pop()?.toLowerCase();
     setOpenPreview(true);
     switch (extension) {
-      case 'pdf':
-        setPreviewType('file');
+      case "pdf":
+        setPreviewType("file");
         setUrl(
-          'https://docs.google.com/viewer?url=' +
+          "https://docs.google.com/viewer?url=" +
             attachment.url +
-            '&embedded=true'
+            "&embedded=true"
         );
         break;
-      case 'mp3':
-      case 'mp4':
+      case "mp3":
+      case "mp4":
         setUrl(attachment.url);
-        setPreviewType('video');
+        setPreviewType("video");
         break;
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
+      case "jpg":
+      case "jpeg":
+      case "png":
         setUrl(attachment.url);
-        setPreviewType('image');
+        setPreviewType("image");
         break;
-      case 'doc':
-      case 'docx':
-        setPreviewType('file');
+      case "doc":
+      case "docx":
+        setPreviewType("file");
         setUrl(
           `https://view.officeapps.live.com/op/embed.aspx?src=${attachment.url}`
         );
         break;
-      case 'xls':
-      case 'xlsx':
-        setPreviewType('file');
+      case "xls":
+      case "xlsx":
+        setPreviewType("file");
         setUrl(
           `https://view.officeapps.live.com/op/embed.aspx?src=${attachment.url}`
         );
@@ -193,8 +193,8 @@ const IssueList: React.FC<IProps> = ({
       let a = iss.assignees.map((a) => {
         return a.firstName;
       });
-      let x = _.omit(iss, 'progress', 'context');
-      let y = _.update(x, 'assignees', (ass) => {
+      let x = _.omit(iss, "progress", "context");
+      let y = _.update(x, "assignees", (ass) => {
         let n = ass.map((o: { firstName: any }) => {
           return o.firstName;
         });
@@ -216,14 +216,14 @@ const IssueList: React.FC<IProps> = ({
     issuePriorityData: [], // (issuePriority ===undefined)?[]:issuePriority ,
     issueStatusData: [], //(issueStatus ===undefined)?[]:issueStatus ,
     assigneesData: [],
-    fromDate: '',
-    toDate: '',
+    fromDate: "",
+    toDate: "",
   };
   const getOwnerName = (userId: string) => {
     const user: any = projectUsers.find(
       (userObj: any) => userObj.user._id === userId
     );
-    return user?.user.firstName ? user?.user.firstName : '';
+    return user?.user.firstName ? user?.user.firstName : "";
   };
   const initialEditValues: {
     type: string;
@@ -234,15 +234,15 @@ const IssueList: React.FC<IProps> = ({
     tags: object[];
     date: string;
   } = {
-    type: issueObj?.type ? issueObj.type : '',
-    status: issueObj?.status ? issueObj.status : '',
+    type: issueObj?.type ? issueObj.type : "",
+    status: issueObj?.status ? issueObj.status : "",
     priority: issueObj?.priority
       ? issueObj.priority
-      : 'Please select the issue priority',
-    description: issueObj?.description ? issueObj?.description : '',
+      : "Please select the issue priority",
+    description: issueObj?.description ? issueObj?.description : "",
     assignees: defaultList,
     tags: defaultTagList,
-    date: Moment(issueObj?.dueDate).format('YYYY-MM-DD'),
+    date: Moment(issueObj?.dueDate).format("YYYY-MM-DD"),
   };
   const validationEditSchema = Yup.object().shape({
     type: Yup.string(),
@@ -306,7 +306,7 @@ const IssueList: React.FC<IProps> = ({
   }
   const responseData = (formData: any) => {
     responseAttachmentData(formData);
-    setIssueViewMode('list');
+    setIssueViewMode("list");
   };
   const clickIssueHandleEditSubmit = (editObj: any) => {
     let userIdList: any[] = [];
@@ -325,12 +325,12 @@ const IssueList: React.FC<IProps> = ({
     }
     clickIssueEditSubmit(editObj, issueObj as Issue);
     setTimeout(() => {
-      setIssueViewMode('list');
+      setIssueViewMode("list");
     }, 2000);
   };
   const renderIssueView = (viewParam: string) => {
     switch (viewParam) {
-      case 'filter':
+      case "filter":
         return (
           <div>
             <div className="flex justify-between border-b border-black border-solid">
@@ -339,7 +339,7 @@ const IssueList: React.FC<IProps> = ({
                   icon={faArrowLeftLong}
                   className="mt-2"
                   onClick={() => {
-                    setIssueViewMode('list'), closeFilterOverlay();
+                    setIssueViewMode("list"), closeFilterOverlay();
                   }}
                 ></FontAwesomeIcon>
 
@@ -439,7 +439,7 @@ const IssueList: React.FC<IProps> = ({
                           placeholder="Select the assignees "
                           value={values.assigneesData}
                           onChange={(value) =>
-                            setFieldValue('assigneesData', value)
+                            setFieldValue("assigneesData", value)
                           }
                           className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                         />
@@ -492,7 +492,7 @@ const IssueList: React.FC<IProps> = ({
                       type="reset"
                       className="p-1.5 mt-2 bg-gray-500  rounded-md"
                       onClick={() => {
-                        setIssueViewMode('list');
+                        setIssueViewMode("list");
                         closeFilterOverlay();
                       }}
                     >
@@ -502,12 +502,12 @@ const IssueList: React.FC<IProps> = ({
                 )}
               </Formik>
             ) : (
-              'There is no data available to filter the issue list'
+              "There is no data available to filter the issue list"
             )}
           </div>
         );
         break;
-      case 'edit':
+      case "edit":
         return (
           <div>
             <div className="flex h-8 justify-between border-b border-black border-solid">
@@ -518,7 +518,7 @@ const IssueList: React.FC<IProps> = ({
                 <FontAwesomeIcon
                   icon={faTimes}
                   onClick={() => {
-                    setIssueViewMode('detail');
+                    setIssueViewMode("detail");
                   }}
                   className="hover:white cursor-pointer mr-2 "
                 ></FontAwesomeIcon>
@@ -533,7 +533,7 @@ const IssueList: React.FC<IProps> = ({
                 <Form
                   className=" grid grid-cols-1 gap-y-2 px-4 overflow-y-auto calc-h72"
                   onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
+                    if (event.key === "Enter") {
                       event.preventDefault();
                     }
                   }}
@@ -631,7 +631,7 @@ const IssueList: React.FC<IProps> = ({
                         isMulti
                         placeholder="Select the assignees "
                         value={values.assignees}
-                        onChange={(value) => setFieldValue('assignees', value)}
+                        onChange={(value) => setFieldValue("assignees", value)}
                         className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
                       />
                       <ErrorMessage
@@ -665,7 +665,7 @@ const IssueList: React.FC<IProps> = ({
                         name="tags"
                         options={tagsList as object[]}
                         value={values.tags}
-                        onChange={(value) => setFieldValue('tags', value)}
+                        onChange={(value) => setFieldValue("tags", value)}
                         isMulti
                         placeholder="Select the tags "
                         className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"
@@ -691,7 +691,7 @@ const IssueList: React.FC<IProps> = ({
           </div>
         );
         break;
-      case 'detail':
+      case "detail":
         return (
           <div>
             <div className="h-8 bg-gray-100 w-full   flex justify-between px-2">
@@ -699,7 +699,7 @@ const IssueList: React.FC<IProps> = ({
                 <FontAwesomeIcon
                   icon={faArrowLeftLong}
                   className="mt-2 cursor-pointer"
-                  onClick={() => setIssueViewMode('list')}
+                  onClick={() => setIssueViewMode("list")}
                 ></FontAwesomeIcon>
                 <p className="ml-2 mt-1  font-semibold">
                   {issueObj?.type} Issue
@@ -710,7 +710,7 @@ const IssueList: React.FC<IProps> = ({
                   <FontAwesomeIcon
                     icon={faPen}
                     className="mt-2 cursor-pointer pr-2"
-                    onClick={() => setIssueViewMode('edit')}
+                    onClick={() => setIssueViewMode("edit")}
                   />
                 </div>
                 <div>
@@ -719,7 +719,7 @@ const IssueList: React.FC<IProps> = ({
                     className="mt-2 cursor-pointer"
                     onClick={() => {
                       setOpen(true);
-                      setDeletionType('issueDelete');
+                      setDeletionType("issueDelete");
                     }}
                   />
                 </div>
@@ -758,7 +758,7 @@ const IssueList: React.FC<IProps> = ({
                     icon={faCalendar}
                   ></FontAwesomeIcon>
                   <p className="ml-1">
-                    {Moment(issueObj?.dueDate).format('MMM Do YYYY')}
+                    {Moment(issueObj?.dueDate).format("MMM Do YYYY")}
                   </p>
                 </div>
                 <div className="flex">
@@ -778,7 +778,7 @@ const IssueList: React.FC<IProps> = ({
                     icon={faUser}
                   ></FontAwesomeIcon>
                   <p className="ml-1"></p>
-                  {issueObj?.assignees.map((a: any) => a.firstName).join(',')}
+                  {issueObj?.assignees.map((a: any) => a.firstName).join(",")}
                 </div>
               </div>
               <div className=" mt-2 ">
@@ -811,7 +811,7 @@ const IssueList: React.FC<IProps> = ({
                         className="mt-2 cursor-pointer pl-5"
                         onClick={() => {
                           setOpen(true);
-                          setDeletionType('attachmentDelete');
+                          setDeletionType("attachmentDelete");
                           setAttachmentId(attachment._id);
                         }}
                       />
@@ -861,7 +861,7 @@ const IssueList: React.FC<IProps> = ({
         );
         break;
 
-      case 'list':
+      case "list":
       default:
         return (
           <div className="grid grid-cols-1">
@@ -891,7 +891,7 @@ const IssueList: React.FC<IProps> = ({
                       <FontAwesomeIcon
                         icon={faFilter}
                         onClick={() => {
-                          setIssueViewMode('filter');
+                          setIssueViewMode("filter");
                         }}
                         className="cursor-pointer"
                       />
@@ -913,7 +913,7 @@ const IssueList: React.FC<IProps> = ({
                               className="font-medium cursor-pointer"
                               onClick={() => {
                                 setIsOpenSort(false);
-                                handleOnSort('Last Updated');
+                                handleOnSort("Last Updated");
                               }}
                             >
                               <div className="flex items-center justify-center transform transition-colors duration-200">
@@ -929,7 +929,7 @@ const IssueList: React.FC<IProps> = ({
                               className="font-medium cursor-pointer"
                               onClick={() => {
                                 setIsOpenSort(false);
-                                handleOnSort('First Updated');
+                                handleOnSort("First Updated");
                               }}
                             >
                               <div className="flex items-center justify-center transform transition-colors duration-200 ">
@@ -946,7 +946,7 @@ const IssueList: React.FC<IProps> = ({
                               className="font-medium cursor-pointer"
                               onClick={() => {
                                 setIsOpenSort(false);
-                                handleOnSort('Asc DueDate');
+                                handleOnSort("Asc DueDate");
                               }}
                             >
                               <div className="flex items-center justify-center transform transition-colors duration-200 ">
@@ -962,7 +962,7 @@ const IssueList: React.FC<IProps> = ({
                               className="font-medium cursor-pointer"
                               onClick={() => {
                                 setIsOpenSort(false);
-                                handleOnSort('Dsc DueDate');
+                                handleOnSort("Dsc DueDate");
                               }}
                             >
                               <div className="flex items-center justify-center transform transition-colors duration-200 ">
@@ -979,7 +979,7 @@ const IssueList: React.FC<IProps> = ({
                               className="font-medium cursor-pointer"
                               onClick={() => {
                                 setIsOpenSort(false);
-                                handleOnSort('Asc Priority');
+                                handleOnSort("Asc Priority");
                               }}
                             >
                               <div className="flex items-center justify-center transform transition-colors duration-200 ">
@@ -995,7 +995,7 @@ const IssueList: React.FC<IProps> = ({
                               className="font-medium cursor-pointer"
                               onClick={() => {
                                 setIsOpenSort(false);
-                                handleOnSort('Dsc Priority');
+                                handleOnSort("Dsc Priority");
                               }}
                             >
                               <div className="flex items-center justify-center transform transition-colors duration-200 ">
@@ -1014,7 +1014,7 @@ const IssueList: React.FC<IProps> = ({
                     <div>
                       <CSVLink
                         data={getDownladableIssueList(issuesList)}
-                        filename={'my-issues.csv'}
+                        filename={"my-issues.csv"}
                         className="text-black btn btn-primary fill-black fa fa-Download "
                         target="_blank"
                       >
@@ -1035,10 +1035,10 @@ const IssueList: React.FC<IProps> = ({
                           className="h-full mt-2 w-full "
                           key={issueInfo._id}
                           onClick={() => {
-                            setIssueViewMode('detail');
+                            setIssueViewMode("detail");
                             let issueContext: IContext = issueInfo.context
                               ? issueInfo.context
-                              : { type: 'Issue' };
+                              : { type: "Issue" };
                             issueContext.id = issueInfo._id;
                             toolInstance.response = issueContext;
                             issueToolClicked(toolInstance);
@@ -1088,7 +1088,7 @@ const IssueList: React.FC<IProps> = ({
                                     />
                                     <p className="text-gray-500 -mt-1 ml-1">
                                       {Moment(issueInfo.dueDate).format(
-                                        'MMM Do YYYY'
+                                        "MMM Do YYYY"
                                       )}
                                     </p>
                                   </div>
@@ -1099,7 +1099,7 @@ const IssueList: React.FC<IProps> = ({
                         </div>
                       );
                     })
-                  : 'there is no data avaliable'}
+                  : "there is no data avaliable"}
               </div>
             </div>
           </div>
@@ -1123,30 +1123,30 @@ const IssueList: React.FC<IProps> = ({
 
   const handleOnFilterEvent = (formData: object) => {
     handleOnFilter(formData);
-    setIssueViewMode('list');
+    setIssueViewMode("list");
   };
   const closeFilterView = () => {
     closeOverlay();
-    setIssueViewMode('list');
+    setIssueViewMode("list");
   };
   const handleDeleteItem = () => {
-    if (deletionType === 'issueDelete') {
+    if (deletionType === "issueDelete") {
       deleteTheIssue(issueObj as Issue);
-    } else if (deletionType === 'attachmentDelete') {
+    } else if (deletionType === "attachmentDelete") {
       deleteTheAttachment(attachmentId);
     }
     setOpen(false);
     setTimeout(() => {
-      setIssueViewMode('list');
+      setIssueViewMode("list");
     }, 2000);
   };
   const loadPreviewData = (url: string) => {
     switch (previewType) {
-      case 'image':
+      case "image":
         return <NextImage src={url} className="h-fit w-fit" />;
-      case 'file':
+      case "file":
         return <iframe src={url} width={800} height={800}></iframe>;
-      case 'video':
+      case "video":
         return (
           <video autoPlay controls>
             <source src={url} type="video/mp4" />
@@ -1159,7 +1159,7 @@ const IssueList: React.FC<IProps> = ({
   return (
     <div>
       <div
-        className={`fixed calc-h ${myVisibility ? '  lg:w-1/4' : 'w-0'}  
+        className={`fixed calc-h ${myVisibility ? "  lg:w-1/4" : "w-0"}  
           top-10  bg-gray-200 right-0 z-10 overflow-x-hidden overflow-y-hidden`}
       >
         <div className="">{renderIssueView(issueViewMode)}</div>

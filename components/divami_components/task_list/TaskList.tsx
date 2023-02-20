@@ -54,6 +54,7 @@ import {
 } from "./TaskListStyles";
 import _ from "lodash";
 import { CSVLink } from "react-csv";
+import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -293,7 +294,7 @@ const CustomTaskListDrawer = (props: any) => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon />
+                      <Image src={SearchBoxIcon} alt="" />
                     </InputAdornment>
                   ),
                   endAdornment: (

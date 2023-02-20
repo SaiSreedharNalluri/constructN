@@ -75,7 +75,7 @@ export const ListStyled = styled(List)({
     height: "38px",
   },
   "& .MuiDivider-root": {
-    margin: "0px 10px",
+    margin: "0px 10px 0px 0px",
   },
   "& .css-10hburv-MuiTypography-root": {
     fontSize: "14px",
