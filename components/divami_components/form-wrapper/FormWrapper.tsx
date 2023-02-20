@@ -138,7 +138,7 @@ const FormWrapper = (props: any) => {
     );
   };
 
-  const renderHTML = (data: any, isDisabled: boolean, index: number) => {
+  const renderHTML = (data: any, isDisabled: boolean, index: number, configObject: any = config) => {
     switch (data.type) {
       case "select":
         return (
@@ -213,6 +213,7 @@ const FormWrapper = (props: any) => {
             {" "}
             <CustomCalender
               data={data}
+              config={configObject}
               onChange={(e: any) => {
                 handleDateChange(e, data.id);
               }}
@@ -261,7 +262,7 @@ const FormWrapper = (props: any) => {
                   {eachConfig.formLabel ?? (
                     <CustomLabel label={eachConfig.formLabel} />
                   )}
-                  {renderHTML(eachConfig, false, index)}
+                  {renderHTML(eachConfig, false, index, data.fields)}
                 </Box>
               );
             })}
