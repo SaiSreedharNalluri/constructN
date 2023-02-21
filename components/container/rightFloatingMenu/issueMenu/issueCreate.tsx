@@ -166,9 +166,10 @@ const IssueCreate: React.FC<IProps> = ({
     for (let i = 0; i < jreq.attachments?.length; i++) {
       formData.append('attachments', jreq.attachments![i]);
     }
-    formData.append('screenshot', image as Blob);
+    formData.append('screenshot',image as Blob,'imageName.png');
     delete jreq['screenshot'];
     delete jreq['attachments'];
+    delete jreq['id'];
     formData.append('jreq', JSON.stringify(jreq));
     createIssueWithAttachments(router.query.projectId as string, formData)
       .then((response) => {
