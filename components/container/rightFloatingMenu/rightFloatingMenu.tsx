@@ -35,6 +35,7 @@ interface IProps {
   currentProject: string;
   currentLayersList: IActiveRealityMap;
   currentTypesList: IDesignMap;
+  currentViewType: string;
   closeFilterOverlay: () => void;
   handleOnTaskFilter: (formData: object) => void;
   closeTaskFilterOverlay: () => void;
@@ -52,6 +53,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
   currentStructure,
   currentLayersList,
   currentTypesList,
+  currentViewType,
   closeFilterOverlay,
   closeTaskFilterOverlay,
   handleOnTaskFilter,
@@ -69,6 +71,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
   const [myTypesList, setMyTypesList] = useState<IDesignMap>(currentTypesList);
   const [myLayersList, setMyLayersList] =
     useState<IActiveRealityMap>(currentLayersList);
+  const [mySelectedType,setMySelectedType] = useState(currentViewType);
   let toolInstance: ITools = { toolName: '', toolAction: '' };
   useEffect(() => {
     setIViewMode(viewMode);
@@ -80,12 +83,14 @@ const RightFloatingMenu: React.FC<IProps> = ({
     setMySnapshot(currentSnapshot);
     setMyTypesList(currentTypesList);
     setMyLayersList(currentLayersList);
+    setMySelectedType(currentViewType);
   }, [
     currentProject,
     currentSnapshot,
     currentStructure,
     currentLayersList,
     currentTypesList,
+    currentViewType,
   ]);
 
   const rightMenuClickHandler = (e: any) => {
@@ -173,7 +178,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 <select onChange={typeChange} id="typeList">
                   {myTypesList &&
                     Object.keys(myTypesList).map((key) => (
-                      <option key={key} value={key} defaultChecked={true}>
+                      <option key={key} value={key} defaultChecked={mySelectedType===key? true:false}>
                         {key}
                       </option>
                     ))}

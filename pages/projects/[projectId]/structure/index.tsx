@@ -355,15 +355,17 @@ const Index: React.FC<IProps> = () => {
       case 'viewMode':
         setViewMode(data.toolAction);
         break;
+      case 'viewType':
+        setViewType(data.toolAction);
       case 'Issue':
         if (data.toolAction === 'createIssue') {
           console.log('Open issue Menu');
           
-          html2canvas(document.getElementById('TheView')||document.body).then(function(canvas) {
-            //window.open('','_blank')?.document.body.appendChild(canvas);
-            //canvas.toDataURL('image/png');
+        //   html2canvas(document.getElementById('TheView')||document.body).then(function(canvas) {
+        //     //window.open('','_blank')?.document.body.appendChild(canvas);
+        //     //canvas.toDataURL('image/png');
             
-        });
+        // });
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateIssue(true);
         } else if (data.toolAction === 'selectIssue') {
@@ -735,6 +737,7 @@ const Index: React.FC<IProps> = () => {
                 currentSnapshot={snapshot}
                 currentTypesList={designMap}
                 currentLayersList={activeRealityMap}
+                currentViewType ={currentViewType}
                 closeFilterOverlay={closeFilterOverlay}
                 closeTaskFilterOverlay={closeTaskFilterOverlay}
                 handleOnTaskFilter={handleOnTaskFilter}
