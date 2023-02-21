@@ -321,8 +321,9 @@ const RelatedTagTitle = styled("div")`
 
 const RelatedTagsButton = styled("div")`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-top: 8px;
+  flex-wrap: wrap;
 `;
 
 const RelatedSingleButton = styled("div")`
@@ -333,6 +334,7 @@ const RelatedSingleButton = styled("div")`
   white-space: nowrap;
   font-size: 12px;
   margin-right: 10px;
+  margin-bottom: 10px;
 `;
 
 const StyledLabel = styled(Typography)`
@@ -849,12 +851,12 @@ function BasicTabs(props: any) {
           )}
           <RelatedDiv>
             <RelatedTagTitle>Related Tags</RelatedTagTitle>
-
             <RelatedTagsButton>
-              {taskState?.relatedTags?.map((item: any) => {
+              {console.log("taskState?.relatedTags", taskState)}
+              {taskState?.TabOne?.relatedTags?.map((item: any) => {
                 return (
                   <>
-                    <RelatedSingleButton>{item?.tagName}</RelatedSingleButton>
+                    <RelatedSingleButton>{item}</RelatedSingleButton>
                   </>
                 );
               })}
