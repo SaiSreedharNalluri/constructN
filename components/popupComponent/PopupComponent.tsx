@@ -16,6 +16,8 @@ export const CloseIcon = styled(Image)({
 });
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  fontWeight: "900",
+  fontFamily: 'Open Sans',
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
   },
@@ -51,7 +53,10 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
       {...other}
       style={{
         fontSize: "16px",
-        padding: "16px",
+        padding: "16px 0px 16px 30px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
       }}
     >
       {children}
@@ -64,6 +69,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
             right: 8,
             top: 15,
             color: (theme) => theme.palette.grey[500],
+            marginRight: "22px",
           }}
         >
           <CloseIcon
@@ -75,6 +81,14 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
     </DialogTitle>
   );
 }
+
+const TextComponent = styled(Typography)({
+  fontSize: "14px",
+  lineHeight: "21px",
+  color: "#101F4C",
+  fontFamily: 'Open Sans',
+})
+
 const PopupComponent = (props: PopupComponentProps) => {
   const {
     modalTitle,
@@ -101,23 +115,24 @@ const PopupComponent = (props: PopupComponentProps) => {
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          {modalTitle}
+          <TextComponent>{modalTitle}</TextComponent>
         </BootstrapDialogTitle>
-        <DialogContent dividers style={{ borderBottom: 0 }}>
-          <Typography gutterBottom>{modalmessage}</Typography>
+        <DialogContent dividers style={{ borderBottom: 0, padding: "30px", paddingBottom: "22px" }}>
+          <TextComponent>{modalmessage}</TextComponent>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ padding: 0 }}>
           <ButtonDiv>
             <Button
               variant="text"
               autoFocus
               onClick={handleClose}
               style={{
-                color: "#F1742E",
+                color: "#FF843F",
                 width: "180px",
                 height: "40px",
                 textTransform: "none",
-                marginBottom: "30px",
+                marginBottom: "22px",
+                fontFamily: 'Open Sans',
               }}
             >
               {SecondaryButtonlabel}
@@ -127,12 +142,13 @@ const PopupComponent = (props: PopupComponentProps) => {
               variant="contained"
               onClick={() => callBackvalue("Delete")}
               style={{
-                backgroundColor: "#F1742E",
+                backgroundColor: "#FF843F",
                 width: "180px",
                 height: "40px",
-                marginBottom: "30px",
-                marginRight: "30px",
+                marginBottom: "22px",
+                marginRight: "22px",
                 textTransform: "none",
+                fontFamily: 'Open Sans',
               }}
             >
               {primaryButtonLabel}
