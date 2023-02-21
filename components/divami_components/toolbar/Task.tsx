@@ -274,7 +274,7 @@ const Task = ({
         </IssuesSectionPlusImg>
       </Tooltip>
 
-      <Tooltip title="Task Lists">
+      <Tooltip title="Task List">
         <IssuesSectionFileImg>
           <CameraIcon
             onClick={() => {
@@ -288,7 +288,7 @@ const Task = ({
         </IssuesSectionFileImg>
       </Tooltip>
 
-      <Tooltip title={taskVisbility ? "Hide Tasks" : "Show Tasks"}>
+      <Tooltip title={taskVisbility ? "Show Tasks" : "Hide Tasks"}>
         <IssuesSectionClipImg>
           {taskVisbility && (
             <CameraIcon
