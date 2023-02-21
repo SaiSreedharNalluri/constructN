@@ -14,7 +14,7 @@ export const createComment = (commentObj: object) => {
 };
 export const editComment = (commentId: string, commentObj: object) => {
   return instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/comments${commentId}`, commentObj, {
+    .put(`${process.env.NEXT_PUBLIC_HOST}/comments/${commentId}`, commentObj, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -62,7 +62,7 @@ export const deleteComment = async (commentId: string) => {
 };
 export const createCommentReply = (commentObj: object, commentId: string) => {
   return instance
-    .post(
+    .put(
       `${process.env.NEXT_PUBLIC_HOST}/comments/${commentId}/replies/add`,
       commentObj,
       {
