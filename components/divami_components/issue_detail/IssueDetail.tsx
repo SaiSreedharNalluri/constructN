@@ -377,22 +377,22 @@ const ProgressEditStateButtonsContainer = styled("div")`
 `;
 
 const AssignEditSearchContainer = styled("div")({
-  height: "40px",
+  minHeight: "40px",
   marginTop: "20px",
   "& .MuiAutocomplete-root": {
     height: "100%",
     width: "100%",
   },
   "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-  {
-    height: "100%",
-    width: "100%",
-  },
+    {
+      height: "100%",
+      width: "100%",
+    },
   "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-  {
-    height: "100%",
-    width: "100%",
-  },
+    {
+      height: "100%",
+      width: "100%",
+    },
   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
     marginTop: "-8px",
   },
@@ -524,7 +524,8 @@ function BasicTabs(props: any) {
   const [formState, setFormState] = useState({
     selectedValue: "",
     selectedProgress: null,
-    selectedUser: null,
+    selectedUser:
+      taskState?.assignessList || taskState?.TabOne?.assignessList || [],
   });
   const [progressEditState, setProgressEditState] = useState(false);
   const [assigneeEditState, setAssigneeEditState] = useState(false);
@@ -564,8 +565,18 @@ function BasicTabs(props: any) {
       };
     });
     setAssigneeOptionsState(tempUsers);
+    setFormState({
+      ...formState,
+      selectedUser: taskState?.TabOne?.assignessList,
+    });
   }, []);
 
+  useEffect(() => {
+    setFormState({
+      ...formState,
+      selectedUser: taskState?.TabOne?.assignessList,
+    });
+  }, [taskState]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -793,6 +804,10 @@ function BasicTabs(props: any) {
                   setFormState({ ...formState, selectedProgress: value });
                 }}
                 config={progressOptionsState[0]}
+                data={{
+                  ...progressOptionsState[0],
+                  defaultValue: taskState.TabOne.status,
+                }}
                 // defaultValue={progressOptionsState?.options[0].value}
                 id={"issuePriority"}
                 sx={{ minWidth: 120 }}
@@ -809,20 +824,27 @@ function BasicTabs(props: any) {
               <Autocomplete
                 disablePortal
                 id="combo-box-demo"
-                options={assigneeOptionsState}
+                options={projectUsers.map((each: any) => {
+                  return {
+                    ...each,
+                    label: each.user?.fullName,
+                  };
+                })}
                 sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="" />}
-                onChange={(event, value) => {
+                onChange={(event, value: any) => {
                   console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
-              // InputProps={{
-              //   startAdornment: (
-              //     <InputAdornment position="start">
-              //       <SearchIcon />
-              //     </InputAdornment>
-              //   ),
-              // }}
+                value={formState.selectedUser}
+                multiple={true}
+                // InputProps={{
+                //   startAdornment: (
+                //     <InputAdornment position="start">
+                //       <SearchIcon />
+                //     </InputAdornment>
+                //   ),
+                // }}
               />
             </AssignEditSearchContainer>
           )}
@@ -1037,6 +1059,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
         ? `${issue.assignees[0].fullName}`
         : "",
       assigneeName: issue.assignees?.length ? issue.assignees[0].fullName : "",
+      assignessList: issue.assignees?.length
+        ? issue.assignees?.map((item: any) => {
+            return { ...item, label: item.fullName };
+          })
+        : [],
       moreText:
         issue.assignees?.length > 1
           ? `+${issue.assignees?.length - 1} more`
@@ -1125,8 +1152,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
       (data.tags =
         (formData.length
           ? formData
-            .filter((item: any) => item.id == "tag-suggestions")[0]
-            ?.chipString?.join(";")
+              .filter((item: any) => item.id == "tag-suggestions")[0]
+              ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -1216,9 +1243,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const issueUpdate = (data: any) => {
     console.log(issue);
     const issueData = _.cloneDeep(issue);
-    data.selectedUser?.user
-      ? (issueData.assignees = [data.selectedUser.user])
-      : null;
+    issueData.assignees = data.selectedUser.map((user: any) => {
+      return user._id || user.user._id;
+    });
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
     editIssue(projectId as string, issueData, issue._id)
