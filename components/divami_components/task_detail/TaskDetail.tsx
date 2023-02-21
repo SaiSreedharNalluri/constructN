@@ -356,7 +356,7 @@ const ProgressEditStateButtonsContainer = styled("div")`
 `;
 
 const AssignEditSearchContainer = styled("div")({
-  height: "40px",
+  minHeight: "40px",
   marginTop: "20px",
   "& .MuiAutocomplete-root": {
     height: "100%",
@@ -503,7 +503,7 @@ function BasicTabs(props: any) {
   const [formState, setFormState] = useState({
     selectedValue: "",
     selectedProgress: null,
-    selectedUser: null,
+    selectedUser: taskState?.assignessList || taskState?.TabOne?.assignessList,
   });
   const [progressEditState, setProgressEditState] = useState(false);
   const [assigneeEditState, setAssigneeEditState] = useState(false);
@@ -544,7 +544,13 @@ function BasicTabs(props: any) {
     });
     setAssigneeOptionsState(tempUsers);
   }, []);
-
+  useEffect(() => {
+    setFormState({
+      ...formState,
+      selectedUser:
+        taskState?.assignessList || taskState?.TabOne?.assignessList,
+    });
+  }, [taskState]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -738,6 +744,10 @@ function BasicTabs(props: any) {
               <CustomSelect
                 onChange={(event: any, value: any) => console.log(value)}
                 config={progressOptionsState[0]}
+                data={{
+                  ...progressOptionsState[0],
+                  defaultValue: taskState.TabOne.status,
+                }}
                 // defaultValue={progressOptionsState?.options[0].value}
                 id={"taskPriority"}
                 sx={{ minWidth: 120 }}
@@ -776,13 +786,20 @@ function BasicTabs(props: any) {
               <Autocomplete
                 disablePortal
                 id="combo-box-demo"
-                options={assigneeOptionsState}
-                sx={{ width: 300 }}
+                options={projectUsers.map((each: any) => {
+                  return {
+                    ...each,
+                    label: each.user?.fullName,
+                  };
+                })}
+                sx={{ minWidth: 120 }}
                 renderInput={(params) => <TextField {...params} label="" />}
-                onChange={(event, value) => {
+                onChange={(event, value: any) => {
                   console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
+                value={formState.selectedUser}
+                multiple={true}
                 // InputProps={{
                 //   startAdornment: (
                 //     <InputAdornment position="start">
@@ -794,12 +811,12 @@ function BasicTabs(props: any) {
             </AssignEditSearchContainer>
           )}
 
-          <FormElementContainer>
+          {/* <FormElementContainer>
             <CustomSelectContainer>
-              {/* <SelectVariants options={DetailsObj.TabOne[0].options} /> */}
-              {/* <BasicSelect options={DetailsObj.TabOne[0].options} /> */}
+              <SelectVariants options={DetailsObj.TabOne[0].options} />
+              <BasicSelect options={DetailsObj.TabOne[0].options} />
             </CustomSelectContainer>
-          </FormElementContainer>
+          </FormElementContainer> */}
 
           <DescriptionDiv>
             <DescriptionTitle>RFI Question</DescriptionTitle>
@@ -986,6 +1003,11 @@ const CustomTaskDetailsDrawer = (props: any) => {
       relatedTags: task.tags,
       assignees: task.assignees?.length ? `${task.assignees[0].fullName}` : "",
       assigneeName: task.assignees?.length ? task.assignees[0].fullName : "",
+      assignessList: task.assignees?.length
+        ? task.assignees?.map((item: any) => {
+            return { ...item, label: item.fullName };
+          })
+        : [],
       moreText:
         task.assignees?.length > 1 ? `+${task.assignees?.length - 1} more` : "",
       id: task._id,
@@ -1138,9 +1160,9 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const taskUpdate = (data: any) => {
     console.log(task);
     const issueData = _.cloneDeep(task);
-    data.selectedUser?.user
-      ? (issueData.assignees = [data.selectedUser.user])
-      : null;
+    issueData.assignees = data.selectedUser.map((user: any) => {
+      return user._id || user.user._id;
+    });
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
     updateTask(projectId as string, issueData, task._id)
