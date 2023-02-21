@@ -34,12 +34,15 @@
 .calc-h50 {
   height: calc(100vh - 87px);
 }
+
 .calc-h78 {
   height: calc(100vh - 88px);
 }
+
 .calc-h30 {
   height: calc(100vh - 30px);
 }
+
 .calc-h500 {
   height: calc(100vh - 114px);
 }
@@ -117,7 +120,7 @@
   }
 }
 
-.spinner > circle {
+.spinner>circle {
   fill: transparent;
 }
 
@@ -133,9 +136,11 @@
 .detailsImageDiv .deleteIcon {
   visibility: hidden;
 }
+
 .detailsImageDiv:hover .deleteIcon {
   visibility: visible;
 }
+
 .MuiDrawer-paper {
   top: auto !important;
   bottom: 0 !important;
@@ -161,13 +166,13 @@ body {
 @font-face {
   font-family: "Open Sans";
   src: local("Lato"),
-    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf")
-      format("opentype");
+    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf") format("opentype");
 }
 
 .white-bg {
   background: white !important;
 }
+
 .adsk-viewing-viewer .adsk-toolbar {
   bottom: 30px;
   left: calc(100% - 60px);
@@ -201,6 +206,7 @@ body {
   border-radius: 4px !important;
   background: #ffffff !important;
 }
+
 .Toastify__toast-body {
   font-family: "Open Sans" !important;
   font-style: normal !important;
@@ -208,6 +214,7 @@ body {
   font-size: 14px !important;
   padding: 0px !important;
 }
+
 .Toastify__toast--default::before {
   content: url("../public/divami_icons/toasterIcon.svg");
   position: relative;
@@ -267,6 +274,7 @@ content: url("../public/divami_icons/toasterIcon.svg");
   position: relative;
   width: 18px;
 }
+
 .adsk-viewing-viewer .adsk-button-icon {
   background-position: 50%;
   background-repeat: no-repeat;
@@ -278,18 +286,22 @@ content: url("../public/divami_icons/toasterIcon.svg");
   position: relative;
   width: 100%;
 }
+
 .adsk-button-arrow {
   position: absolute;
   right: -6px;
   top: -6px;
 }
+
 .css-1wg4ruk-MuiList-root {
   padding-bottom: 0px;
 }
+
 .css-9e5uuu-MuiPaper-root-MuiAutocomplete-paper {
   width: 102% !important;
   margin-left: -1px;
 }
+
 .css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper {
   margin-left: -2px;
   right: 26px;
@@ -299,6 +311,7 @@ content: url("../public/divami_icons/toasterIcon.svg");
   font-weight: 400;
   font-size: 12px;
 }
+
 .css-1xzyirs {
   font-family: Open Sans;
   font-style: normal;
@@ -306,6 +319,7 @@ content: url("../public/divami_icons/toasterIcon.svg");
   font-size: 14px;
   /* line-height: ; */
 }
+
 .css-1xzyirs {
   font-family: Open Sans;
   font-style: normal;
@@ -313,9 +327,11 @@ content: url("../public/divami_icons/toasterIcon.svg");
   font-size: 14px;
   /* line-height: ; */
 }
+
 .css-148z76l-MuiList-root {
   padding-bottom: 1px;
 }
+
 .css-z3nc8-MuiTypography-root {
   font-size: 14px;
   font-family: "Open Sans";
@@ -333,12 +349,14 @@ content: url("../public/divami_icons/toasterIcon.svg");
 .tableInfo {
   height: calc(50vh - 105px);
 }
+
 .tableInfo thead,
 .tableInfo tbody,
 .tableInfo tr {
   width: 100%;
   display: block;
 }
+
 .tableInfo th,
 .tableInfo td {
   width: 50%;
@@ -348,6 +366,7 @@ content: url("../public/divami_icons/toasterIcon.svg");
   text-align: center;
   /* font-size: medium; */
 }
+
 .tableInfo tbody {
   height: calc(100% - 69px);
   overflow-y: auto;
