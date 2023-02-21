@@ -49,7 +49,7 @@ const DatePickerContainer = styled(Box)({
   flexDirection: "column",
 });
 
-const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
+const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: any) => {
   console.log(editData, "editData");
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
@@ -59,6 +59,21 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
   const [loggedInUserId, SetLoggedInUserId] = useState(null);
   const [formData, setFormData] = useState<any>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    console.log(formConfig, " formConfig", tagsList, "tagsList");
+    const tempFormData = formConfig.map((item: any) => {
+      if (item.id === "tag-suggestions") {
+        return {
+          ...item,
+          chipSuggestions: tagsList,
+        };
+      }
+      return item;
+    })
+    setFormConfig(tempFormData);
+  }, [tagsList]);
+
   useEffect(() => {
     if (router.isReady) {
       getTasksTypes(router.query.projectId as string).then((response: any) => {
@@ -234,6 +249,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
       }
     }
   }, [projectUsers, taskPriorities, taskTypes]);
+
   useEffect(() => {
     let updatedFormData = [
       ...formConfig,
@@ -243,6 +259,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
     setFormData(updatedFormData);
     handleFormData(updatedFormData);
   }, [formConfig]);
+
   return (
     <BodyContainer>
       <FormElementContainer>

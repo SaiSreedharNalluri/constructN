@@ -339,15 +339,15 @@ const AssignEditSearchContainer = styled("div")({
     width: "100%",
   },
   "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
+  {
+    height: "100%",
+    width: "100%",
+  },
   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
     marginTop: "-8px",
   },
@@ -764,13 +764,13 @@ function BasicTabs(props: any) {
                   console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
-                // InputProps={{
-                //   startAdornment: (
-                //     <InputAdornment position="start">
-                //       <SearchIcon />
-                //     </InputAdornment>
-                //   ),
-                // }}
+              // InputProps={{
+              //   startAdornment: (
+              //     <InputAdornment position="start">
+              //       <SearchIcon />
+              //     </InputAdornment>
+              //   ),
+              // }}
               />
             </AssignEditSearchContainer>
           )}
@@ -825,7 +825,6 @@ function BasicTabs(props: any) {
           <RelatedDiv>
             <RelatedTagTitle>Related Tags</RelatedTagTitle>
             <RelatedTagsButton>
-              {console.log(taskState)}
               {taskState?.TabOne.tags?.map((item: any) => {
                 return (
                   <>
@@ -1070,8 +1069,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
       (data.tags =
         (formData.length
           ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+            .filter((item: any) => item.id == "tag-suggestions")[0]
+            ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]

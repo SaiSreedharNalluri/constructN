@@ -123,6 +123,7 @@ const CustomTaskListDrawer = (props: any) => {
         priority: task.priority,
         assignee: task.assignees[0].firstName,
         due_date: task.dueDate,
+        tags: task.tags,
       };
       tempTaskDataState.push(tempTask);
     });
