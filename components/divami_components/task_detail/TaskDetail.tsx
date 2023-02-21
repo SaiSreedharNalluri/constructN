@@ -785,11 +785,7 @@ function BasicTabs(props: any) {
                   console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
-                value={
-                  taskState?.TabOne?.assignees?.length
-                    ? taskState?.TabOne?.assignees
-                    : undefined
-                }
+                value={taskState?.TabOne?.assigneeName}
                 // InputProps={{
                 //   startAdornment: (
                 //     <InputAdornment position="start">
