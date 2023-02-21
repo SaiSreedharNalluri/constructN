@@ -631,7 +631,7 @@ const Index: React.FC<IProps> = () => {
      {
       return('');
      }
-    return (project?.name+' / '+structure?.name);
+    return (' | '+project?.name+' / '+structure?.name);
   }
   return (
     <div className=" w-full  h-full">
