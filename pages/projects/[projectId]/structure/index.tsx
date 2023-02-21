@@ -37,6 +37,9 @@ import { it } from 'node:test';
 import Moment from 'moment';
 import { deleteAttachment } from '../../../../services/attachments';
 import { log } from 'node:console';
+import html2canvas from 'html2canvas';
+import ProjectInfo from '../../../../components/container/projectInfo';
+import { IProjects } from '../../../../models/IProjects';
 
 interface IProps {}
 const Index: React.FC<IProps> = () => {
@@ -44,6 +47,7 @@ const Index: React.FC<IProps> = () => {
   const [currentViewMode, setViewMode] = useState('Design'); //Design/ Reality
   const [currentProjectId, setActiveProjectId] = useState('');
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
+  const [project,setProject]= useState<IProjects>();
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
   const [designMap, setDesignMap] = useState<IDesignMap>();
@@ -122,6 +126,7 @@ const Index: React.FC<IProps> = () => {
         .then((response) => {
           setProjectUtm(response?.data?.result?.utm);
           setActiveProjectId(router.query.projectId as string);
+          setProject(response.data.result);
         })
         .catch((error) => {
           toast.error('failed to load data');
@@ -350,9 +355,17 @@ const Index: React.FC<IProps> = () => {
       case 'viewMode':
         setViewMode(data.toolAction);
         break;
+      case 'viewType':
+        setViewType(data.toolAction);
       case 'Issue':
         if (data.toolAction === 'createIssue') {
           console.log('Open issue Menu');
+          
+        //   html2canvas(document.getElementById('TheView')||document.body).then(function(canvas) {
+        //     //window.open('','_blank')?.document.body.appendChild(canvas);
+        //     //canvas.toDataURL('image/png');
+            
+        // });
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateIssue(true);
         } else if (data.toolAction === 'selectIssue') {
@@ -611,10 +624,19 @@ const Index: React.FC<IProps> = () => {
         toast.error(error.message);
       });
   };
+  const getBreadCrumbs =()=>{
+    //let structTemp :IStructure = structure;
+    // let outputSting : string = structure?.name || '';
+     if(structure===undefined)
+     {
+      return('');
+     }
+    return (project?.name+' / '+structure?.name);
+  }
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
-        <Header></Header>
+        <Header breadCrumb={getBreadCrumbs()}></Header>
       </div>
       <div className="flex ">
         <div ref={leftOverlayRef}>
@@ -715,6 +737,7 @@ const Index: React.FC<IProps> = () => {
                 currentSnapshot={snapshot}
                 currentTypesList={designMap}
                 currentLayersList={activeRealityMap}
+                currentViewType ={currentViewType}
                 closeFilterOverlay={closeFilterOverlay}
                 closeTaskFilterOverlay={closeTaskFilterOverlay}
                 handleOnTaskFilter={handleOnTaskFilter}

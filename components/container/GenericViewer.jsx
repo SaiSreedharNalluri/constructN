@@ -210,9 +210,9 @@ function GenericViewer(props) {
         }
         break;
       case 'Reality':
-        // if (potreeUtils.current) {
-        //   potreeUtils.current.initiateAddTag(type);
-        // }
+        if (potreeUtils.current) {
+          potreeUtils.current.cancelAddTag();
+        }
         break;
     }
   };
@@ -484,6 +484,8 @@ function GenericViewer(props) {
         break;
       case 'Reality':
         if (potreeUtils.current != undefined) {
+          potreeUtils.current.updateIssuesData(issuesList);
+          // potreeUtils.current.updateTasksData(tasksList);
           potreeUtils.current.updateData(
             await getPointCloud(structure, snapshot),
             getFloorPlanData(designMap)
@@ -959,7 +961,7 @@ function GenericViewer(props) {
 
   return (
     <div className="fixed calc-w calc-h flex flex-row">
-      <div className="relative basis-1/2 flex grow shrink" id="TheView">
+      <div id="TheView" className="relative basis-1/2 flex grow shrink">
         {renderViewer(1)}
         <TimelineContainer
           currentSnapshot={snapshot}

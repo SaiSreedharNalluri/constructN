@@ -199,7 +199,7 @@ const ProjectInfo: React.FC<IProps> = ({
 
             <div className="flex  justify-center py-4  mt-4">
               <button
-                className="bg-gray-500 rounded hover:bg-gray-300 text-white font-bold py-1 px-2 w-2/12 "
+                className="bg-gray-500 rounded hover:bg-gray-300 text-white font-bold py-1 px-2 lg:w-2/12 "
                 type="submit"
                 disabled={isSubmitting}
               >
