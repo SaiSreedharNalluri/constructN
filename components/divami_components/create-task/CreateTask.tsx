@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { styled } from "@mui/system";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { getTagsList } from "../../../services/tags";
 import Body from "./body/Body";
 import Footer from "./footer/Footer";
 import Header from "./header/Header";
-import { styled } from "@mui/system";
-import { createTask } from "../../../services/task";
-import { CustomToaster } from "../custom-toaster/CustomToaster";
-import PopupComponent from "../../popupComponent/PopupComponent";
 
 const StyledDiv = styled("span")({
   fontFamily: '"Open Sans"',
@@ -27,9 +26,10 @@ const CreateTask = ({
   editData,
   closeTaskCreate,
 }: any) => {
+  const router = useRouter();
   const [formData, setFormData] = useState(null);
   const [validate, setValidate] = useState(false);
-  const [showPopUp, setshowPopUp] = useState(false);
+  const [tagList, setTagList] = useState<[string]>([""]);
 
   const formHandler = (event: any) => {
     if (event === "Cancel") {
@@ -51,6 +51,16 @@ const CreateTask = ({
     setFormData(data);
   };
 
+  useEffect(() => {
+    getTagsList(router.query.projectId as string)
+      .then((response) => {
+        if (response.success === true) {
+          setTagList(response.result[0]?.tagList);
+        }
+      })
+      .catch((e) => console.log(e));
+  }, []);
+
   return (
     <StyledDiv>
       <Header closeTaskCreate={closeTaskCreate} editData={editData} />
@@ -59,6 +69,7 @@ const CreateTask = ({
         editData={editData}
         validate={validate}
         setIsValidate={setValidate}
+        tagsList={tagList}
       />
       <Footer formHandler={formHandler} editData={editData} />
       {/* {showPopUp && (
