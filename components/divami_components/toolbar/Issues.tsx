@@ -69,7 +69,6 @@ const Issues = ({
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
-  const [createOverlay, setCreateOverlay] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [showImage, setShowImage] = useState(false);
 
@@ -182,43 +181,22 @@ const Issues = ({
       createIssue(projectId as string, data)
         .then((response) => {
           if (response.success === true) {
-            // setSuccessMessage("Issue is added sucessfully");
-
-            // toast("Issue created sucessfully", {
-            //   progressStyle: { backgroundColor: "orange" },
-            //   icon: "👋",
-            // });
-
             toast(" Issue Created Successfully");
-            // return;
-            // handleTaskSubmit(formData);
-            console.log(formData);
             issueSubmit(response.result);
-            toolInstance.toolAction = "issueCreateSuccess";
-            // issueToolClicked(toolInstance);
-            // resetForm();
           } else {
-            toolInstance.toolAction = "issueCreateFail";
-            // issueToolClicked(toolInstance);
+            toast(`Something went wrong`);
           }
-          setOpenCreateIssue(false);
         })
         .catch((error) => {
-          toolInstance.toolAction = "issueCreateFail";
-          // issueToolClicked(toolInstance);
-          if (error.success === false) {
-            toast.error(error?.message);
-          }
-          setOpenCreateIssue(false);
+          toast(`Something went wrong`);
         });
     }
   };
   const onCancelCreate = () => {
-    setOpenCreateIssue(false);
-    setCreateOverlay(false);
+    // setOpenCreateIssue(false);
     issueMenuInstance.toolAction = "issueCreateFail";
-
     issueMenuClicked(issueMenuInstance);
+    closeIssueCreate();
   };
 
   useEffect(() => {
@@ -234,8 +212,8 @@ const Issues = ({
   const issueSubmit = (formdata: any) => {
     issuesList.push(formdata);
     issueMenuInstance.toolAction = "issueCreateSuccess";
-    setCreateOverlay(false);
     issueMenuClicked(issueMenuInstance);
+    closeIssueCreate();
   };
   const openIssueCreateFn = () => {
     //setCreateOverlay(true);
@@ -396,7 +374,6 @@ const Issues = ({
         <CustomDrawer>
           <CreateIssue
             handleCreateTask={handleCreateTask}
-            setOpenCreateTask={setOpenCreateIssue}
             currentProject={myProject}
             currentSnapshot={currentSnapshot}
             currentStructure={currentStructure}

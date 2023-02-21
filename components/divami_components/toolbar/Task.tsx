@@ -174,35 +174,38 @@ const Task = ({
       createTask(projectId as string, data)
         .then((response) => {
           if (response.success === true) {
-            toast("Task added sucessfully");
+            toast("Task Created sucessfully");
             // toast.success("Task added sucessfully");
             // handleTaskSubmit(formData);
             taskSubmit(response.result);
-            toolInstance.toolAction = "taskCreateSuccess";
+            // toolInstance.toolAction = "taskCreateSuccess";
 
-            console.log(formData);
+            // console.log(formData);
           } else {
-            toolInstance.toolAction = "taskCreateFail";
+            // toolInstance.toolAction = "taskCreateFail";
             // issueToolClicked(toolInstance);
+            toast(`Something went wrong`);
           }
-          setOpenCreateTask(false);
         })
         .catch((error) => {
-          toolInstance.toolAction = "taskCreateFail";
+          toast(`Something went wrong`);
 
-          if (error.success === false) {
-            toast.error(error?.message);
-          }
-          setOpenCreateTask(false);
+          // toolInstance.toolAction = "taskCreateFail";
+
+          // if (error.success === false) {
+          //   toast.error(error?.message);
+          // }
+          // setOpenCreateTask(false);
         });
     }
   };
 
-  // const onCancelCreate = () => {
-  //   taskMenuInstance.toolAction = "taskCreateFail";
-  //   setOpenCreateTask(false);
-  //   taskMenuClicked(taskMenuInstance);
-  // };
+  const onCancelCreate = () => {
+    taskMenuInstance.toolAction = "taskCreateFail";
+    // setOpenCreateTask(false);
+    taskMenuClicked(taskMenuInstance);
+    closeTaskCreate();
+  };
 
   useEffect(() => {
     console.log("contextinfo", contextInfo, tasksList);
@@ -215,9 +218,10 @@ const Task = ({
   }, [openTaskDetails, contextInfo?.id]);
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
-    taskMenuInstance.toolAction = "taskCreated";
+    taskMenuInstance.toolAction = "taskCreateSuccess";
     // setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);
+    closeTaskCreate();
   };
   const openTaskCreateFn = () => {
     //setCreateOverlay(true);
@@ -347,12 +351,13 @@ const Task = ({
         <CustomDrawer open>
           <CreateTask
             handleCreateTask={handleCreateTask}
-            setOpenCreateTask={setOpenCreateTask}
+            // setOpenCreateTask={setOpenCreateTask}
             currentProject={currentProject}
             currentSnapshot={currentSnapshot}
             currentStructure={currentStructure}
             contextInfo={contextInfo}
             closeTaskCreate={closeTaskCreate}
+            onCancelCreate={onCancelCreate}
           />
         </CustomDrawer>
       )}

@@ -43,17 +43,14 @@ const CreateIssue = ({
 
   const formHandler = (event: any) => {
     if (event === "Cancel") {
-      setOpenCreateTask(false);
-      // setshowPopUp(true);
+      setshowPopUp(true);
     } else {
       setValidate(true);
       handleCreateTask(formData);
-      // setOpenCreateTask(false);
     }
   };
 
   const onCancelEdit = () => {
-    setOpenCreateTask(false);
     closeIssueCreate();
   };
 
@@ -74,11 +71,9 @@ const CreateIssue = ({
   return (
     <StyledDiv>
       <Header
-        setOpenCreateTask={setOpenCreateTask}
-        closeIssueCreate={closeIssueCreate}
-        // closeIssueCreate={() => {
-        //   // setshowPopUp(true);
-        // }}
+        closeIssueCreate={() => {
+          setshowPopUp(true);
+        }}
         editData={editData}
       />
       <Body
@@ -90,7 +85,7 @@ const CreateIssue = ({
         issueStatusList={issueStatusList}
       />
       <Footer formHandler={formHandler} editData={editData} />
-      {/* {showPopUp && (
+      {showPopUp && (
         <PopupComponent
           open={showPopUp}
           setShowPopUp={setshowPopUp}
@@ -104,7 +99,7 @@ const CreateIssue = ({
           SecondaryButtonlabel={"No"}
           callBackvalue={editData ? onCancelEdit : onCancelCreate}
         />
-      )} */}
+      )}
     </StyledDiv>
   );
 };
