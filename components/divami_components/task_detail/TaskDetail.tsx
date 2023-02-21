@@ -736,6 +736,10 @@ function BasicTabs(props: any) {
               <CustomSelect
                 onChange={(event: any, value: any) => console.log(value)}
                 config={progressOptionsState[0]}
+                data={{
+                  ...progressOptionsState[0],
+                  defaultValue: taskState.TabOne.status,
+                }}
                 // defaultValue={progressOptionsState?.options[0].value}
                 id={"taskPriority"}
                 sx={{ minWidth: 120 }}
@@ -781,6 +785,11 @@ function BasicTabs(props: any) {
                   console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
+                value={
+                  taskState?.TabOne?.assignees?.length
+                    ? taskState?.TabOne?.assignees
+                    : undefined
+                }
                 // InputProps={{
                 //   startAdornment: (
                 //     <InputAdornment position="start">

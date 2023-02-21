@@ -720,6 +720,10 @@ function BasicTabs(props: any) {
                   setFormState({ ...formState, selectedProgress: value });
                 }}
                 config={progressOptionsState[0]}
+                data={{
+                  ...progressOptionsState[0],
+                  defaultValue: taskState.TabOne.status,
+                }}
                 // defaultValue={progressOptionsState?.options[0].value}
                 id={"issuePriority"}
                 sx={{ minWidth: 120 }}
@@ -765,6 +769,11 @@ function BasicTabs(props: any) {
                   console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
+                value={
+                  taskState?.TabOne?.assignees?.length
+                    ? taskState?.TabOne?.assignees
+                    : undefined
+                }
                 // InputProps={{
                 //   startAdornment: (
                 //     <InputAdornment position="start">
