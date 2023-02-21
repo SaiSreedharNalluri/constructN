@@ -223,6 +223,7 @@ const FourthContAssigned = styled("div")`
 
 const FourthContProgType = styled("div")`
   display: flex;
+  align-items: center;
 `;
 
 const FormElementContainer = styled(Box)`

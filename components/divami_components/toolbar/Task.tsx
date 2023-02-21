@@ -284,7 +284,7 @@ const Task = ({
         </IssuesSectionFileImg>
       </Tooltip>
 
-      <Tooltip title={taskVisbility ? "Hide Tasks" : "Show Tasks"}>
+      <Tooltip title={taskVisbility ? "Show Tasks" : "Hide Tasks"}>
         <IssuesSectionClipImg>
           {taskVisbility && (
             <CameraIcon
