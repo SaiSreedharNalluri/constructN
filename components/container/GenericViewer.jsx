@@ -210,9 +210,9 @@ function GenericViewer(props) {
         }
         break;
       case "Reality":
-        // if (potreeUtils.current) {
-        //   potreeUtils.current.initiateAddTag(type);
-        // }
+        if (potreeUtils.current) {
+          potreeUtils.current.cancelAddTag();
+        }
         break;
     }
   }
@@ -474,6 +474,8 @@ function GenericViewer(props) {
         break;
       case 'Reality':
         if (potreeUtils.current != undefined) {
+          potreeUtils.current.updateIssuesData(issuesList);
+          // potreeUtils.current.updateTasksData(tasksList);
           potreeUtils.current.updateData(await getPointCloud(structure, snapshot), getFloorPlanData(designMap));
           potreeUtils.current.updateLayersData(
             getRealityLayersPath(structure, realityMap),
