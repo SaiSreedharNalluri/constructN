@@ -5,6 +5,7 @@ import { Comments } from '../../../../models/IComments';
 import {
   createComment,
   createCommentReply,
+  deleteComment,
   editComment,
   getCommentsList,
 } from '../../../../services/comments';
@@ -68,13 +69,25 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
     createCommentReply({ reply: text }, commentId).then((response) => {
       if (response.success === true) {
         toast.success(response.message);
-        backendComments.map((commentObj) => {
-          if (commentObj._id === commentId) {
-            commentObj.replies?.push(response.result);
-          }
-        });
+        const indexOfUserToReplace = backendComments.findIndex(
+          (comment) => comment._id === commentId
+        );
+        if (indexOfUserToReplace !== -1) {
+          backendComments[indexOfUserToReplace] = response.result;
+        }
         setBackendComments(backendComments);
         setActiveComment(null);
+      }
+    });
+  };
+  const deleteComments = (commentId: string) => {
+    deleteComment(commentId).then((response) => {
+      if (response.success === true) {
+        toast.success('Comment is deleted sucessfully');
+        const updatedBackendComments = backendComments.filter(
+          (backendComment) => backendComment._id !== commentId
+        );
+        setBackendComments(updatedBackendComments);
       }
     });
   };
@@ -98,6 +111,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
                 activeComment={activeComment}
                 setActiveComment={setActiveComment}
                 addReplyToComment={addReplyToComment}
+                deleteComment={deleteComments}
               />
             );
           })}

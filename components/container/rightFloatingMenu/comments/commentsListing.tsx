@@ -3,6 +3,7 @@ import { Comments } from '../../../../models/IComments';
 import Moment from 'moment';
 import NextImage from '../../../core/Image';
 import CommentForm from './commentForm';
+import Modal from 'react-responsive-modal';
 interface IProps {
   comment: any;
   updateComment: (text: string, commentId: string, editType: string) => void;
@@ -11,6 +12,7 @@ interface IProps {
     React.SetStateAction<{ _id: string; type: string } | null>
   >;
   addReplyToComment: (text: string, commentId: string) => void;
+  deleteComment: (commentId: string) => void;
 }
 const CommentsListing: React.FC<IProps> = ({
   comment,
@@ -18,6 +20,7 @@ const CommentsListing: React.FC<IProps> = ({
   activeComment,
   setActiveComment,
   addReplyToComment,
+  deleteComment,
 }) => {
   const isEditing =
     activeComment &&
@@ -28,6 +31,14 @@ const CommentsListing: React.FC<IProps> = ({
     activeComment._id === comment._id &&
     activeComment.type === 'replying';
   const [editType, setEditType] = useState(''); //comments,reply
+  const [open, setOpen] = useState(false);
+  const [commentObj, setCommentObj] = useState<Comments>();
+  const handleDeleteItem = () => {
+    deleteComment(commentObj?._id as string);
+    setTimeout(() => {
+      setOpen(false);
+    }, 1000);
+  };
   return (
     <React.Fragment>
       <div key={comment._id} className="mt-2">
@@ -71,7 +82,15 @@ const CommentsListing: React.FC<IProps> = ({
               >
                 Edit
               </div>
-              <div className="ml-2">Delete</div>
+              <div
+                className="ml-2"
+                onClick={() => {
+                  setOpen(true);
+                  setCommentObj(comment);
+                }}
+              >
+                Delete
+              </div>
             </div>
             {isEditing && (
               <CommentForm
@@ -107,10 +126,40 @@ const CommentsListing: React.FC<IProps> = ({
                     activeComment={activeComment}
                     setActiveComment={setActiveComment}
                     addReplyToComment={() => {}}
+                    deleteComment={() => {}}
                   />
                 );
               })}
           </div>
+        </div>
+        <div>
+          <Modal
+            open={open}
+            onClose={() => {
+              setOpen(false);
+            }}
+          >
+            <h1 className=" font-bold">Delete confirmation</h1>
+            <p className="mt-2">
+              Are you sure you want to delete this comment?
+            </p>
+            <div className="grid grid-cols-2 gap-x-4 mt-4">
+              <button
+                onClick={() => {
+                  setOpen(false);
+                }}
+                className="px-2 py-1  focus:outline-none bg-gray-500 hover:bg-gray-800 rounded text-gray-200 font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                className="px-2 py-1 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold "
+                onClick={handleDeleteItem}
+              >
+                Confirm
+              </button>
+            </div>
+          </Modal>
         </div>
       </div>
     </React.Fragment>
