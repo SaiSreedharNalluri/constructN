@@ -53,7 +53,7 @@ const DatePickerContainer = styled(Box)({
   flexDirection: "column",
 });
 
-const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
+const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: any) => {
   console.log(editData, "editData");
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
@@ -65,6 +65,20 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
   const [loggedInUserId, SetLoggedInUserId] = useState(null);
   const [formData, setFormData] = useState<any>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    const tempFormData = formConfig.map((item: any) => {
+      if (item.id === "tag-suggestions") {
+        return {
+          ...item,
+          chipSuggestions: tagsList,
+        };
+      }
+      return item;
+    })
+    setFormConfig(tempFormData);
+  }, [tagsList]);
+
   useEffect(() => {
     if (router.isReady) {
       getTasksTypes(router.query.projectId as string).then((response: any) => {
@@ -109,6 +123,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
 
   useEffect(() => {
     if (projectUsers.length && taskPriorities.length && taskTypes.length) {
+      console.log(editData, "editdata", formConfig, "formconfig");
       if (editData) {
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {
@@ -185,10 +200,11 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
                 }),
               };
             }
-            if (item.id === "tag-suggestion") {
+            if (item.id === "tag-suggestions") {
               return {
                 ...item,
                 defaultValue: editData.tags,
+                chipString: editData.tags,
               };
             }
             if (item.id === "file-upload") {
@@ -274,7 +290,9 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
       }
     }
   }, [projectUsers, taskPriorities, taskTypes]);
+
   useEffect(() => {
+    console.log(formConfig, "formconfig in effect")
     let updatedFormData = [
       ...formConfig,
       { owner: loggedInUserId },
@@ -283,6 +301,11 @@ const Body = ({ handleFormData, editData, validate, setIsValidate }: any) => {
     setFormData(updatedFormData);
     handleFormData(updatedFormData);
   }, [formConfig]);
+
+  useEffect(() => {
+    console.log("chii string", formConfig[6].chipString)
+  }, [formConfig[6].chipString])
+
   return (
     <BodyContainer>
       <FormElementContainer>

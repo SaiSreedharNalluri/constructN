@@ -120,6 +120,10 @@ const Task = ({
       (item: any) => item.id == "title"
     )[0]?.defaultValue;
 
+    data.tags = formData.filter(
+      (item: any) => item.id == "tag-suggestions"
+    )[0]?.chipString;
+
     data.type = formData.filter(
       (item: any) => item.id == "tasks"
     )[0]?.defaultValue;
@@ -130,12 +134,12 @@ const Task = ({
         (item: any) => item.id == "description"
       )[0]?.defaultValue),
       (data.assignees = userIdList),
-      (data.tags =
-        (formData.length
-          ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
-          : []) || []),
+      // (data.tags =
+      //   (formData.length
+      //     ? formData
+      //       .filter((item: any) => item.id == "tag-suggestions")[0]
+      //       ?.chipString?.join(";")
+      //     : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
         ?.fields.filter(
