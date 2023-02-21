@@ -1,8 +1,8 @@
-import React from 'react';
-import { IProjects } from '../../models/IProjects';
-import Moment from 'moment';
-import { useRouter } from 'next/router';
-import NextImage from '../core/Image';
+import React from "react";
+import { IProjects } from "../../models/IProjects";
+import Moment from "moment";
+import { useRouter } from "next/router";
+import NextImage from "../core/Image";
 interface IProps {
   projects: IProjects[];
 }
@@ -17,6 +17,8 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
               <div className="m-auto  border p-2 border-gray-900 border-solid h-11/12 w-11/12 mt-6 rounded-2xl  text-center  bg-white">
                 <div
                   onClick={() => {
+                    window.localStorage.setItem("nodeData", "");
+                    window.localStorage.setItem("expandedNodes", []);
                     router.push(`projects/${pData._id}/structure`);
                   }}
                 >
@@ -32,7 +34,7 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
                   <p className="mt-6">last capture:</p>
                   {pData.LastUpdatedOn ? (
                     <h4 className="mt-2">
-                      {Moment(pData.LastUpdatedOn).format('MMM Do YYYY')}
+                      {Moment(pData.LastUpdatedOn).format("MMM Do YYYY")}
                     </h4>
                   ) : (
                     <div className="mt-2">

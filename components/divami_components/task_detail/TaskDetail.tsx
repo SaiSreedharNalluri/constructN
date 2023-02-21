@@ -20,7 +20,11 @@ import Delete from "../../../public/divami_icons/delete.svg";
 import Edit from "../../../public/divami_icons/edit.svg";
 import Send from "../../../public/divami_icons/send.svg";
 import { deleteAttachment } from "../../../services/attachments";
-import { updateAttachments, updateTask } from "../../../services/task";
+import {
+  getTasksList,
+  updateAttachments,
+  updateTask,
+} from "../../../services/task";
 import CustomButton from "../../divami_components/custom-button/CustomButton";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { TASK_FORM_CONFIG } from "../create-task/body/Constants";
@@ -82,16 +86,11 @@ const SpanTile = styled("span")`
 
   margin-left: 10px;
 `;
-
-interface ContainerProps {
-  footerState: boolean;
-};
-
-const BodyContainer = styled(Box) <ContainerProps>`
-  height: ${props => props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
-  overflow-Y: scroll;
+const BodyContainer = styled(Box)`
+  height: calc(100vh - 134px);
+  //   border: 2px solid black;
+  // overflow: scroll;
 `;
-
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;
@@ -346,7 +345,6 @@ const StyledLabel = styled(Typography)`
 
 const CustomTaskDrawerContainer = styled("div")`
   width: 438px;
-  height: calc(100vh - 61px);
 `;
 
 const ProgressEditStateButtonsContainer = styled("div")`
@@ -365,15 +363,15 @@ const AssignEditSearchContainer = styled("div")({
     width: "100%",
   },
   "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-  {
-    height: "100%",
-    width: "100%",
-  },
+    {
+      height: "100%",
+      width: "100%",
+    },
   "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-  {
-    height: "100%",
-    width: "100%",
-  },
+    {
+      height: "100%",
+      width: "100%",
+    },
   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
     marginTop: "-8px",
   },
@@ -498,7 +496,6 @@ function BasicTabs(props: any) {
     projectUsers,
     taskUpdate,
     deleteTheAttachment,
-    handleFooter
   } = props;
 
   const [value, setValue] = React.useState(0);
@@ -542,7 +539,7 @@ function BasicTabs(props: any) {
     let tempUsers = projectUsers.map((each: any) => {
       return {
         ...each,
-        label: each.user.fullName,
+        label: each.user?.fullName,
       };
     });
     setAssigneeOptionsState(tempUsers);
@@ -575,11 +572,6 @@ function BasicTabs(props: any) {
   const handleEditAssigne = () => {
     setAssigneeEditState(!assigneeEditState);
   };
-
-  useEffect(() => {
-    if (progressEditState || assigneeEditState) handleFooter(true);
-    else handleFooter(false)
-  }, [progressEditState, assigneeEditState]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -791,13 +783,13 @@ function BasicTabs(props: any) {
                   console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
-              // InputProps={{
-              //   startAdornment: (
-              //     <InputAdornment position="start">
-              //       <SearchIcon />
-              //     </InputAdornment>
-              //   ),
-              // }}
+                // InputProps={{
+                //   startAdornment: (
+                //     <InputAdornment position="start">
+                //       <SearchIcon />
+                //     </InputAdornment>
+                //   ),
+                // }}
               />
             </AssignEditSearchContainer>
           )}
@@ -922,6 +914,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     currentStructure,
     contextInfo,
     closeTaskCreate,
+    getTasks,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
 
@@ -981,7 +974,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
   const [showPopUp, setshowPopUp] = useState(false);
-  const [footerState, SetFooterState] = useState(false);
 
   useEffect(() => {
     let tempObj = {
@@ -1032,17 +1024,13 @@ const CustomTaskDetailsDrawer = (props: any) => {
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each.value;
+        return each.value || each._id;
       });
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
-    data.status = "To Do";
-    // data.context = contextInfo;
-    // Object.keys(contextInfo).forEach((key) => {
-    //   if (key !== "id") {
-    //     data.context = { ...data.context, [key]: contextInfo[key] };
-    //   }
-    // });
+    data.status = formData.filter(
+      (item: any) => item.id == "taskStatus"
+    )[0]?.defaultValue;
     data.title = formData.filter(
       (item: any) => item.id == "title"
     )[0]?.defaultValue;
@@ -1060,8 +1048,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
       (data.tags =
         (formData.length
           ? formData
-            .filter((item: any) => item.id == "tag-suggestions")[0]
-            ?.chipString?.join(";")
+              .filter((item: any) => item.id == "tag-suggestions")[0]
+              ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -1088,38 +1076,38 @@ const CustomTaskDetailsDrawer = (props: any) => {
     //   file: [uploadUrl],
     // };
     // const uploadUrl = URL.createObjectURL(filesArr[0]);
-    if (filesArr?.length) {
-      const arr = filesArr.map((each: any) => {
-        // fileformdata.append("file", each.name);
-        fileformdata.append("file", each);
-        return {
-          ...each,
-        };
-      });
-      console.log("formData", fileformdata);
+    // if (filesArr?.length) {
+    //   const arr = filesArr.map((each: any) => {
+    //     // fileformdata.append("file", each.name);
+    //     fileformdata.append("file", each);
+    //     return {
+    //       ...each,
+    //     };
+    //   });
+    //   console.log("formData", fileformdata);
 
-      updateAttachments(fileformdata, task._id)
-        .then((response) => {
-          if (response.success === true) {
-            toast.success("Task added sucessfully");
-            // handleTaskSubmit(formData);
-            // taskSubmit(response.result);
-            // toolInstance.toolAction = "taskCreateSuccess";
+    //   updateAttachments(fileformdata, task._id)
+    //     .then((response) => {
+    //       if (response.success === true) {
+    //         toast.success("Task added sucessfully");
+    //         // handleTaskSubmit(formData);
+    //         // taskSubmit(response.result);
+    //         // toolInstance.toolAction = "taskCreateSuccess";
 
-            // console.log(formData);
-          } else {
-            // toolInstance.toolAction = "taskCreateFail";
-            // issueToolClicked(toolInstance);
-          }
-        })
-        .catch((error) => {
-          // toolInstance.toolAction = "taskCreateFail";
+    //         // console.log(formData);
+    //       } else {
+    //         // toolInstance.toolAction = "taskCreateFail";
+    //         // issueToolClicked(toolInstance);
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       // toolInstance.toolAction = "taskCreateFail";
 
-          if (error.success === false) {
-            toast.error(error?.message);
-          }
-        });
-    }
+    //       if (error.success === false) {
+    //         toast.error(error?.message);
+    //       }
+    //     });
+    // }
     if (data.title && data.type && data.priority) {
       updateTask(projectId as string, data, task._id)
         .then((response) => {
@@ -1130,6 +1118,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             // toolInstance.toolAction = "taskCreateSuccess";
 
             // console.log(formData);
+            getTasks(currentStructure._id);
           } else {
             // toolInstance.toolAction = "taskCreateFail";
             // issueToolClicked(toolInstance);
@@ -1152,12 +1141,12 @@ const CustomTaskDetailsDrawer = (props: any) => {
     data.selectedUser?.user
       ? (issueData.assignees = [data.selectedUser.user])
       : null;
-    data.selectedProgress ? (issueData.priority = data.selectedProgress) : null;
+    data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
     updateTask(projectId as string, issueData, task._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Issue updated sucessfully");
+          toast.success("Task updated sucessfully");
         } else {
         }
       })
@@ -1213,7 +1202,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-        <BodyContainer footerState={footerState} >
+        <BodyContainer>
           <BasicTabs
             taskType={taskType}
             taskPriority={taskPriority}
@@ -1222,7 +1211,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             taskState={taskState}
             deleteTheAttachment={deleteTheAttachment}
             onClose={onClose}
-            handleFooter={SetFooterState}
+            taskUpdate={taskUpdate}
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>

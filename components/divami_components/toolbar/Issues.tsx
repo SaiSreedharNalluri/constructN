@@ -34,7 +34,6 @@ import { CustomToaster } from "../custom-toaster/CustomToaster";
 import toasterIcon from "../../../public/divami_icons/toasterIcon.svg";
 import { ToastImgContainer } from "../custom-toaster/CustomToastStyles";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
-import Tooltip from "@mui/material/Tooltip";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
@@ -106,7 +105,7 @@ const Issues = ({
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each.value;
+        return each._id || each.value;
       });
 
     // if (assignes && assignes.length > 0) {
@@ -214,8 +213,12 @@ const Issues = ({
         });
     }
   };
-  const handleViewList = () => {
-    // setOpenIssueList()
+  const onCancelCreate = () => {
+    setOpenCreateIssue(false);
+    setCreateOverlay(false);
+    issueMenuInstance.toolAction = "issueCreateFail";
+
+    issueMenuClicked(issueMenuInstance);
   };
 
   useEffect(() => {
@@ -230,7 +233,7 @@ const Issues = ({
 
   const issueSubmit = (formdata: any) => {
     issuesList.push(formdata);
-    issueMenuInstance.toolAction = "issueCreated";
+    issueMenuInstance.toolAction = "issueCreateSuccess";
     setCreateOverlay(false);
     issueMenuClicked(issueMenuInstance);
   };
@@ -274,75 +277,70 @@ const Issues = ({
     <div>
       <IssueBox>
         <IssueTitle>Issues:</IssueTitle>
-        <Tooltip title="Create Issue">
-          <IssuesSectionPlusImg>
+
+        <IssuesSectionPlusImg>
+          <CameraIcon
+            src={plusCircleIcon}
+            alt="Arrow"
+            // onClick={rightMenuClickHandler}
+            onClick={() => {
+              openIssueCreateFn();
+              // setOpenCreateIssue(true);
+            }}
+            width={12}
+            height={12}
+          />
+        </IssuesSectionPlusImg>
+
+        <IssuesSectionFileImg>
+          <CameraIcon
+            src={fileTextIcon}
+            width={12}
+            height={12}
+            alt="Arrow"
+            // onClick={() => {
+            //   setOpenIssueList(true);
+            // }}
+            onClick={() => {
+              openIssueListFn();
+              handleViewTaskList();
+            }}
+          />
+        </IssuesSectionFileImg>
+
+        <IssuesSectionClipImg>
+          {issueVisbility && (
             <CameraIcon
-              src={plusCircleIcon}
+              width={12}
+              height={12}
+              src={fileTextIssue}
+              // width={12}
+              // height={12}
               alt="Arrow"
               // onClick={rightMenuClickHandler}
               onClick={() => {
-                openIssueCreateFn();
-                // setOpenCreateIssue(true);
+                toggleIssueVisibility();
+                // handleToggle();
               }}
-              width={12}
-              height={12}
             />
-          </IssuesSectionPlusImg>
-        </Tooltip>
+          )}
 
-        <Tooltip title="Issue Lists">
-          <IssuesSectionFileImg>
+          {!issueVisbility && (
             <CameraIcon
-              src={fileTextIcon}
               width={12}
               height={12}
+              src={clipboardSecondIcon}
+              // width={12}
+              // height={12}
               alt="Arrow"
-              // onClick={() => {
-              //   setOpenIssueList(true);
-              // }}
+              // onClick={rightMenuClickHandler}
               onClick={() => {
-                openIssueListFn();
-                handleViewTaskList();
+                toggleIssueVisibility();
+                // handleToggle();
               }}
             />
-          </IssuesSectionFileImg>
-        </Tooltip>
-
-        <Tooltip title={issueVisbility ? "Hide Issues" : "Show Issues"}>
-          <IssuesSectionClipImg>
-            {issueVisbility && (
-              <CameraIcon
-                width={12}
-                height={12}
-                src={fileTextIssue}
-                // width={12}
-                // height={12}
-                alt="Arrow"
-                // onClick={rightMenuClickHandler}
-                onClick={() => {
-                  toggleIssueVisibility();
-                  // handleToggle();
-                }}
-              />
-            )}
-
-            {!issueVisbility && (
-              <CameraIcon
-                width={12}
-                height={12}
-                src={clipboardSecondIcon}
-                // width={12}
-                // height={12}
-                alt="Arrow"
-                // onClick={rightMenuClickHandler}
-                onClick={() => {
-                  toggleIssueVisibility();
-                  // handleToggle();
-                }}
-              />
-            )}
-          </IssuesSectionClipImg>
-        </Tooltip>
+          )}
+        </IssuesSectionClipImg>
       </IssueBox>
 
       {/* {openIssueList && (
@@ -372,9 +370,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => { }}
+            handleOnSort={() => {}}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => { }}
+            clickIssueEditSubmit={() => {}}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}
@@ -398,6 +396,8 @@ const Issues = ({
             currentStructure={currentStructure}
             contextInfo={contextInfo}
             closeIssueCreate={closeIssueCreate}
+            issueStatusList={issueStatusList}
+            onCancelCreate={onCancelCreate}
           />
         </CustomDrawer>
       )}

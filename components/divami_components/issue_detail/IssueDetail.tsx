@@ -82,11 +82,12 @@ const SpanTile = styled("span")`
 
 interface ContainerProps {
   footerState: boolean;
-};
+}
 
-const BodyContainer = styled(Box) <ContainerProps>`
-  height: ${props => props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
-  overflow-Y: scroll;
+const BodyContainer = styled(Box)<ContainerProps>`
+  height: ${(props) =>
+    props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
+  overflow-y: scroll;
 `;
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
@@ -471,7 +472,7 @@ function BasicTabs(props: any) {
     projectUsers,
     issueUpdate,
     deleteTheAttachment,
-    handleFooter
+    handleFooter,
   } = props;
 
   const [value, setValue] = React.useState(0);
@@ -552,7 +553,7 @@ function BasicTabs(props: any) {
 
   useEffect(() => {
     if (progressEditState || assigneeEditState) handleFooter(true);
-    else handleFooter(false)
+    else handleFooter(false);
   }, [progressEditState, assigneeEditState]);
 
   return (
@@ -971,9 +972,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
 
-
   useEffect(() => {
     let tempObj = {
+      ...issue,
       options: issue?.options,
       priority: issue?.priority,
       capturedOn: issue?.createdAt,
@@ -991,6 +992,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       relatedTags: issue?.tags,
       id: issue?._id,
       tags: issue?.tags,
+      status: issue?.status,
     };
     setTaskState((prev: any) => {
       return {
@@ -1024,7 +1026,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each.value;
+        return each._id || each.value;
       });
     // let userIdList: any[] = [];
     // const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
@@ -1045,7 +1047,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
-    data.status = "To Do";
+    data.status = formData.filter(
+      (item: any) => item.id == "issueStatus"
+    )[0]?.defaultValue;
     // data.context = contextInfo;
     // Object.keys(contextInfo).forEach((key) => {
     //   if (key !== "id") {
@@ -1102,32 +1106,31 @@ const CustomIssueDetailsDrawer = (props: any) => {
         };
       });
     console.log("formData", fileformdata);
-    if (filesArr?.length) {
-      updateAttachments(fileformdata, issue._id)
-        .then((response) => {
-          if (response.success === true) {
-            toast.success("Issue added sucessfully");
-            // handleTaskSubmit(formData);
-            // taskSubmit(response.result);
-            // toolInstance.toolAction = "taskCreateSuccess";
-            // console.log(formData);
-          } else {
-            // toolInstance.toolAction = "taskCreateFail";
-            // issueToolClicked(toolInstance);
-          }
-          setOpenCreateTask(false);
-        })
-        .catch((error) => {
-          // toolInstance.toolAction = "taskCreateFail";
+    // if (filesArr?.length) {
+    //   updateAttachments(fileformdata, issue._id)
+    //     .then((response) => {
+    //       if (response.success === true) {
+    //         toast.success("Issue added sucessfully");
+    //         // handleTaskSubmit(formData);
+    //         // taskSubmit(response.result);
+    //         // toolInstance.toolAction = "taskCreateSuccess";
+    //         // console.log(formData);
+    //       } else {
+    //         // toolInstance.toolAction = "taskCreateFail";
+    //         // issueToolClicked(toolInstance);
+    //       }
+    //       setOpenCreateTask(false);
+    //     })
+    //     .catch((error) => {
+    //       // toolInstance.toolAction = "taskCreateFail";
 
-          if (error.success === false) {
-            toast.error(error?.message);
-          }
-          setOpenCreateTask(false);
-        });
-    }
+    //       if (error.success === false) {
+    //         toast.error(error?.message);
+    //       }
+    //       setOpenCreateTask(false);
+    //     });
+    // }
 
-    console.log("uoudfide");
     if (data.title && data.type && data.priority) {
       console.log("inside");
 
@@ -1164,7 +1167,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     data.selectedUser?.user
       ? (issueData.assignees = [data.selectedUser.user])
       : null;
-    data.selectedProgress ? (issueData.priority = data.selectedProgress) : null;
+    data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
     editIssue(projectId as string, issueData, issue._id)
       .then((response) => {
@@ -1214,7 +1217,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-        <BodyContainer footerState={footerState} >
+        <BodyContainer footerState={footerState}>
           <BasicTabs
             taskType={issueType}
             taskPriority={issuePriority}
@@ -1240,6 +1243,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             closeIssueCreate={() => {
               setOpenCreateTask(false);
             }}
+            issueStatusList={issueStatus}
           />
         </CustomDrawer>
       )}

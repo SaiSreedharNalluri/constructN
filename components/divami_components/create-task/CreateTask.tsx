@@ -34,11 +34,17 @@ const CreateTask = ({
   const formHandler = (event: any) => {
     if (event === "Cancel") {
       setOpenCreateTask(false);
+      // setshowPopUp(true);
     } else {
       setValidate(true);
       handleCreateTask(formData);
       // setOpenCreateTask(true);
     }
+  };
+
+  const onCancelEdit = () => {
+    setOpenCreateTask(false);
+    closeTaskCreate();
   };
 
   const handleFormData = (data: any) => {
@@ -66,6 +72,21 @@ const CreateTask = ({
         tagsList={tagList}
       />
       <Footer formHandler={formHandler} editData={editData} />
+      {/* {showPopUp && (
+        <PopupComponent
+          open={showPopUp}
+          setShowPopUp={setshowPopUp}
+          modalTitle={"Cancel"}
+          modalmessage={
+            editData
+              ? `Are you sure you want to cancel edit task?`
+              : `Are you sure you want to cancel create task?`
+          }
+          primaryButtonLabel={"Yes"}
+          SecondaryButtonlabel={"No"}
+          callBackvalue={editData ? onCancelEdit : onCancelCreate}
+        />
+      )} */}
     </StyledDiv>
   );
 };

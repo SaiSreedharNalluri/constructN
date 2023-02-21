@@ -6,6 +6,7 @@ import { styled } from "@mui/system";
 import { createTask } from "../../../services/task";
 import { getTagsList } from "../../../services/tags";
 import { useRouter } from "next/router";
+import PopupComponent from "../../popupComponent/PopupComponent";
 
 const StyledDiv = styled("span")({
   fontFamily: '"Open Sans"',
@@ -30,21 +31,30 @@ const CreateIssue = ({
   contextInfo,
   closeIssueCreate,
   editData,
+  issueStatusList,
+  onCancelCreate,
 }: any) => {
-  console.log(editData, "editData");
+  console.log(editData, "esdssditData", issueStatusList);
   const router = useRouter();
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);
   const [tagList, setTagList] = useState<[string]>([""]);
+  const [showPopUp, setshowPopUp] = useState(false);
 
   const formHandler = (event: any) => {
     if (event === "Cancel") {
       setOpenCreateTask(false);
+      // setshowPopUp(true);
     } else {
       setValidate(true);
       handleCreateTask(formData);
       // setOpenCreateTask(false);
     }
+  };
+
+  const onCancelEdit = () => {
+    setOpenCreateTask(false);
+    closeIssueCreate();
   };
 
   const handleFormData = (data: any) => {
@@ -66,6 +76,9 @@ const CreateIssue = ({
       <Header
         setOpenCreateTask={setOpenCreateTask}
         closeIssueCreate={closeIssueCreate}
+        // closeIssueCreate={() => {
+        //   // setshowPopUp(true);
+        // }}
         editData={editData}
       />
       <Body
@@ -74,8 +87,24 @@ const CreateIssue = ({
         validate={validate}
         setIsValidate={setValidate}
         tagsList={tagList}
+        issueStatusList={issueStatusList}
       />
       <Footer formHandler={formHandler} editData={editData} />
+      {/* {showPopUp && (
+        <PopupComponent
+          open={showPopUp}
+          setShowPopUp={setshowPopUp}
+          modalTitle={"Cancel"}
+          modalmessage={
+            editData
+              ? `Are you sure you want to cancel edit issue?`
+              : `Are you sure you want to cancel create issue?`
+          }
+          primaryButtonLabel={"Yes"}
+          SecondaryButtonlabel={"No"}
+          callBackvalue={editData ? onCancelEdit : onCancelCreate}
+        />
+      )} */}
     </StyledDiv>
   );
 };

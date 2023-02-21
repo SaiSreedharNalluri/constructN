@@ -82,6 +82,7 @@ const CustomTaskListDrawer = (props: any) => {
     handleOnTaskFilter,
     deleteTheTask,
     taskFilterState,
+    getTasks,
   } = props;
 
   const [taskType, setTaskType] = useState<[string]>();
@@ -384,14 +385,14 @@ const CustomTaskListDrawer = (props: any) => {
                             val.type === "RFI"
                               ? RFIList
                               : val.type === "Transmittals"
-                                ? TransmittalList
-                                : val.type === "Submittals"
-                                  ? SubmittalList
-                                  : val.type === "Transmittals"
-                                    ? TransmittalList
-                                    : val.type === "Transmittals"
-                                      ? TransmittalList
-                                      : ""
+                              ? TransmittalList
+                              : val.type === "Submittals"
+                              ? SubmittalList
+                              : val.type === "Transmittals"
+                              ? TransmittalList
+                              : val.type === "Transmittals"
+                              ? TransmittalList
+                              : ""
                           }
                           alt="Arr"
                         />
@@ -436,14 +437,14 @@ const CustomTaskListDrawer = (props: any) => {
                             val.type === "RFI"
                               ? RFIList
                               : val.type === "Transmittals"
-                                ? TransmittalList
-                                : val.type === "Submittals"
-                                  ? SubmittalList
-                                  : val.type === "Transmittals"
-                                    ? TransmittalList
-                                    : val.type === "Transmittals"
-                                      ? TransmittalList
-                                      : ""
+                              ? TransmittalList
+                              : val.type === "Submittals"
+                              ? SubmittalList
+                              : val.type === "Transmittals"
+                              ? TransmittalList
+                              : val.type === "Transmittals"
+                              ? TransmittalList
+                              : ""
                           }
                           alt="Arr"
                         />
@@ -495,6 +496,7 @@ const CustomTaskListDrawer = (props: any) => {
             currentStructure={currentStructure}
             currentSnapshot={currentSnapshot}
             contextInfo={contextInfo}
+            getTasks={getTasks}
           />
         </Drawer>
       )}
