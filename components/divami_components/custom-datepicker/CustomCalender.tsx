@@ -87,7 +87,13 @@ const CustomDatePickerInputField = styled(TextField)({
 });
 //data?.defaultValue
 const CustomCalender = (props: any) => {
-  const { data, onChange, hideTextField = false, config } = props;
+  const {
+    data,
+    onChange,
+    hideTextField = false,
+    disablePast = false,
+    config,
+  } = props;
   const [value, setValue] = React.useState<Dayjs | null>(
     dayjs(data?.defaultValue) || null
   );
@@ -97,7 +103,6 @@ const CustomCalender = (props: any) => {
   const calenderIcon = React.forwardRef((props, ref) => (
     <CalenderICon ref={ref} />
   ));
-
 
   console.log("date-data", data);
 
@@ -111,8 +116,8 @@ const CustomCalender = (props: any) => {
           label={"MM/DD/YYYY"}
           value={value}
           shouldDisableDate={data.disableDays}
-          disablePast={true}
-          minDate={config[0].defaultValue}
+          disablePast={disablePast}
+          minDate={config && config[0] ? config[0]?.defaultValue : null}
           onChange={(newValue: any) => {
             setValue(newValue);
             onChange(newValue);
@@ -120,17 +125,17 @@ const CustomCalender = (props: any) => {
           renderInput={
             hideTextField
               ? ({ inputRef, inputProps, InputProps }) => (
-                <Box ref={inputRef}>{InputProps?.endAdornment}</Box>
-              )
+                  <Box ref={inputRef}>{InputProps?.endAdornment}</Box>
+                )
               : (params) => (
-                <CustomDatePickerInputField
-                  {...params}
-                  value={value}
-                  InputLabelProps={{ shrink: true }}
-                  placeholder="MM/DD/YYYY"
-                  sx={calender}
-                />
-              )
+                  <CustomDatePickerInputField
+                    {...params}
+                    value={value}
+                    InputLabelProps={{ shrink: true }}
+                    placeholder="MM/DD/YYYY"
+                    sx={calender}
+                  />
+                )
           }
           data-testid="date-picker"
         />
