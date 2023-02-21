@@ -138,7 +138,12 @@ const FormWrapper = (props: any) => {
     );
   };
 
-  const renderHTML = (data: any, isDisabled: boolean, index: number, configObject: any = config) => {
+  const renderHTML = (
+    data: any,
+    isDisabled: boolean,
+    index: number,
+    configObject: any = config
+  ) => {
     switch (data.type) {
       case "select":
         return (
@@ -152,6 +157,7 @@ const FormWrapper = (props: any) => {
               isError={data.isError}
               label=""
               data={data}
+              isReadOnly={data.isReadOnly}
             />
           </ElementContainer>
         );
@@ -178,6 +184,7 @@ const FormWrapper = (props: any) => {
               showRangeError={data.showRangeError}
               isDisabled={data.isDisabled}
               className={undefined}
+              isReadOnly={data.isReadOnly}
             />
           </ElementContainer>
         );
@@ -204,6 +211,7 @@ const FormWrapper = (props: any) => {
               showRangeError={data.showRangeError}
               isDisabled={data.isDisabled}
               className={undefined}
+              isReadOnly={data.isReadOnly}
             />
           </ElementContainer>
         );
@@ -217,6 +225,7 @@ const FormWrapper = (props: any) => {
               onChange={(e: any) => {
                 handleDateChange(e, data.id);
               }}
+              isReadOnly={data.isReadOnly}
             />
           </ElementContainer>
         );
@@ -229,6 +238,7 @@ const FormWrapper = (props: any) => {
                 handleSearchResult(e, value, data.id);
               }}
               selectedName={data.selectedName}
+              isReadOnly={data.isReadOnly}
             />
           </ElementContainer>
         );

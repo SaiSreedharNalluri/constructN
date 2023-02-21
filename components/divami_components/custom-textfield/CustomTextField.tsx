@@ -20,6 +20,7 @@ interface PropTypes {
   maxVal?: number;
   showRangeError?: boolean;
   onBlur?: any;
+  isReadOnly?: boolean;
 }
 
 const StyledTextField = styled(TextareaAutosize)({
@@ -46,6 +47,7 @@ export const CustomTextField = (props: PropTypes) => {
     type = "text",
     isDisabled = false,
     onBlur,
+    isReadOnly = false,
   } = props;
   return (
     <div>
@@ -62,6 +64,7 @@ export const CustomTextField = (props: PropTypes) => {
         onClick={(e) => {
           reff?.current?.focus();
         }}
+        readOnly={isReadOnly}
       />
       <ErrorField>{isError ? "Required" : ""}</ErrorField>
     </div>

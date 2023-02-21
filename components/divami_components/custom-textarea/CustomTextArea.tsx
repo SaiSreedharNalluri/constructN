@@ -20,6 +20,7 @@ interface PropTypes {
   maxVal?: number;
   showRangeError?: boolean;
   onBlur?: any;
+  isReadOnly?: boolean;
 }
 
 const StyledTextArea = styled(TextareaAutosize)({
@@ -47,6 +48,7 @@ export const CustomTextArea = (props: PropTypes) => {
     type = "text",
     isDisabled = false,
     onBlur,
+    isReadOnly = false,
   } = props;
   return (
     <div>
@@ -63,6 +65,7 @@ export const CustomTextArea = (props: PropTypes) => {
         onClick={(e) => {
           reff?.current?.focus();
         }}
+        readOnly={isReadOnly}
       />
       {/* {isError && (
                 <div className={classes.error_message}>This is required</div>

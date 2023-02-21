@@ -7,6 +7,7 @@ export const ISSUE_FORM_CONFIG = [
     placeholder: "What shall we call this issue?",
     isError: false,
     isReq: true,
+    isReadOnly: false,
   },
   {
     id: "issueType",
@@ -18,6 +19,7 @@ export const ISSUE_FORM_CONFIG = [
     isError: false,
     isReq: true,
     isflex: false,
+    isReadOnly: false,
     formLabel: "Select the type of issue",
     options: [
       {
@@ -40,6 +42,7 @@ export const ISSUE_FORM_CONFIG = [
     placeholder: "Tell us more about this issue",
     isError: false,
     isReq: false,
+    isReadOnly: false,
   },
   {
     id: "issuePriority",
@@ -51,6 +54,8 @@ export const ISSUE_FORM_CONFIG = [
     isError: false,
     isReq: true,
     isflex: false,
+    isReadOnly: false,
+
     formLabel: "Select issue priority",
     options: [
       {
@@ -69,6 +74,7 @@ export const ISSUE_FORM_CONFIG = [
     id: "assignedTo",
     type: "search",
     formLabel: "Assigned To",
+    isReadOnly: false,
     listOfEntries: [
       { label: "The Shawshank Redemption", year: 1994 },
       { label: "The Godfather", year: 1972 },
@@ -87,6 +93,7 @@ export const ISSUE_FORM_CONFIG = [
   {
     id: "dates",
     type: "doubleField",
+    isReadOnly: false,
     fields: [
       {
         id: "start-date",
@@ -112,6 +119,7 @@ export const ISSUE_FORM_CONFIG = [
     id: "tag-suggestions",
     type: "chip",
     chipString: [],
+    isReadOnly: false,
     formLabel: "Enter some suggested tags",
     isError: false,
     isReq: false,
@@ -119,6 +127,7 @@ export const ISSUE_FORM_CONFIG = [
   {
     id: "file-upload",
     type: "file",
+    isReadOnly: false,
     selectedFiles: null,
     isError: false,
     isReq: false,
