@@ -848,7 +848,6 @@ function BasicTabs(props: any) {
           <RelatedDiv>
             <RelatedTagTitle>Related Tags</RelatedTagTitle>
             <RelatedTagsButton>
-              {console.log(taskState)}
               {taskState?.TabOne.tags?.map((item: any) => {
                 return (
                   <>

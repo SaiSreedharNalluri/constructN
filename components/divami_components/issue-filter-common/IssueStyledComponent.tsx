@@ -3,7 +3,9 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 
 export const FilterCommonMain = styled("div")({
   width: "438px",
-  height: "100%",
+  // height: "100%",
+  display: "block",
+  height: "calc(100vh - 60px)",
 });
 export const HeaderContainer = styled("div")({
   backgroundColor: "white",
@@ -11,7 +13,7 @@ export const HeaderContainer = styled("div")({
   display: "flex",
   // justifyContent: "center",
   alignItems: "center",
-  width: "100%",
+  // width: "100%",
   borderBottom: "1px solid #d9d9d9",
 });
 
@@ -54,30 +56,35 @@ export const HeaderRightSectionResetText = styled.div({
 
 export const HeaderRightSectionCancel = styled.div({});
 
-export const FilterCardContainer = styled.div`
-  margin-top: 20px;
-`;
+export const FilterCardContainer = styled.div({
+  marginTop: "20px",
+});
 
-export const FilterCardSecondContainer = styled.div`
-  margin-top: 30px;
-`;
+export const FilterCardSecondContainer = styled.div({
+  marginTop: "30px",
+});
 
-export const FilterCardTitle = styled.div`
-  padding-left: 20px;
-`;
+export const FilterCardTitle = styled.div({
+  paddingLeft: "20px",
+});
 
-export const FormElementContainer = styled(Box)`
-  margin-top: 30px;
-  padding-left: 20px;
-  padding-right: 20px;
-`;
+export const FormElementContainer = styled(Box)({
+  marginTop: "30px",
+  paddingLeft: "20px",
+  paddingRight: "20px",
+});
 
-export const StyledLabel = styled(Typography)`
-  font-weight: 400;
-  line-height: 20px;
-  font-size: 14px;
-  margin-bottom: 8px;
-`;
+export const StyledLabel = styled(Typography)({
+  fontWeight: "400",
+  lineHeight: "20px",
+  fontSize: "14px",
+  marginBottom: "8px",
+});
+
+// export const FilterCardTitleText = styled.div({
+//   color: " #101f4c",
+//   fontFamily:""
+// })
 
 export const FilterCardTitleText = styled.div`
   color: #101f4c;
@@ -139,10 +146,19 @@ export const FilterFooter = styled.div`
   // margin-top: 72px;
 `;
 
-export const FilterCommonBody = styled.div`
-  // height: calc(100% - 50px);
-  margin-bottom: 50px;
-`;
+export const FilterCommonBody = styled.div({
+  // marginBottom: "50px",
+  overflowY: "auto",
+  height: "calc(100% - 130px)",
+});
+
+// export const FilterCommonBody = styled.div`
+//   // height: calc(100% - 50px);
+//   margin-bottom: 50px;
+
+//   overflowY: "auto",
+//   height: "calc(100% - 132px)",
+// `;
 
 export const FilterCommonFooter = styled.div`
   // border: 1px solid blue;
@@ -186,7 +202,7 @@ export const ButtonsContainer = styled(Box)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 50px;
+  // margin-top: 50px;
 `;
 
 export const StyledButton = styled(Button)`

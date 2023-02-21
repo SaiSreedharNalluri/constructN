@@ -5,7 +5,9 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 
 export const FilterCommonMain  = styled("div")({
   width: "438px",
-  height: "100%",
+  // height: "100%",
+   display: "block",
+  height: "calc(100vh - 60px)",
 });
 export const HeaderContainer = styled("div")({
   backgroundColor: "white",
@@ -13,7 +15,7 @@ export const HeaderContainer = styled("div")({
   display: "flex",
   // justifyContent: "center",
   alignItems: "center",
-  width: "100%",
+  // width: "100%",
   borderBottom: "1px solid #d9d9d9",
 });
 
@@ -141,9 +143,11 @@ export const FilterCommonHeader = styled.div`
   height: 52px;
 `
 
-export const FilterCommonBody = styled.div`
-  height: calc(100% - 50px);
-`
+export const FilterCommonBody = styled.div({
+  // marginBottom: "50px",
+  overflowY: "auto",
+  height: "calc(100% - 130px)",
+});
 
 export const FilterCommonFooter = styled.div`
   // border: 1px solid blue;
@@ -189,7 +193,7 @@ export const ButtonsContainer = styled(Box)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 50px;
+  // margin-top: 50px;
 `
 
 
@@ -227,3 +231,9 @@ export const DatePickerContainer = styled(Box)`
   display: flex;
   flex-direction: column;
 `
+
+
+export const FilterFooter = styled.div`
+  // height: calc(100% - 50px);
+  // margin-top: 72px;
+`;

@@ -26,22 +26,29 @@ export const TitleContainer = styled(Box)({
   paddingLeft: '20px',
   paddingRight: '20px',
   color: '#36415D',
+   fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "16px",
 
   // position:"fixed"
 });
 
 export const CloseIcon = styled(Image)({
   cursor: 'pointer',
+  width:"12px",
+  height:"12px"
 });
 
 export const MiniHeaderContainer = styled(Box)({
   backgroundColor: 'white',
-  height: '51px',
+  // height: '51px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   width: '100%',
   marginTop: '20px',
+  marginBottom:"24px",
   // overflowY: "auto",
   color: '#36415D',
 });

@@ -21,8 +21,17 @@ const TitleContiner = styled(Box)({
   paddingLeft: "20px",
   paddingRight: "20px",
   color: "#101F4C",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "16px",
+  
 });
-const CloseIcon = styled(Image)({ cursor: "pointer" });
+const CloseIcon = styled(Image)({
+  cursor: "pointer",
+  width: "12px",
+  height: "12px",
+});
 
 const Header = ({ setOpenCreateTask, closeIssueCreate, editData }: any) => {
   const title = editData ? "Edit Issue" : "Create Issue";

@@ -76,6 +76,7 @@ import {
   DatePickerContainer,
   ButtonsContainer,
   FilterCardSecondContainer,
+  FilterFooter,
 } from "./StyledComponent";
 import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
@@ -777,7 +778,9 @@ const TaskFilterCommon: React.FC<any> = ({
             </div>
           </DatePickersContainer>
         </FormElementContainer>
+      </FilterCommonBody>
 
+      <FilterFooter>
         <ButtonsContainer>
           <CustomButton
             type="outlined"
@@ -790,7 +793,7 @@ const TaskFilterCommon: React.FC<any> = ({
             label="Apply"
           />
         </ButtonsContainer>
-      </FilterCommonBody>
+      </FilterFooter>
     </FilterCommonMain>
   );
 };
