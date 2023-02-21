@@ -118,6 +118,15 @@ const PriorityTitle = styled("div")`
   font-size: 14px;
   line-height: 19px;
 `;
+const TypeTitle = styled("div")`
+  font-family: "Open Sans";
+  color: #787878;
+
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+`;
 
 const PriorityStatus = styled("div")`
   font-family: "Open Sans";
@@ -125,6 +134,19 @@ const PriorityStatus = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
+  color: #101f4c;
+`;
+
+const TypeStatus = styled("div")`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+`;
+
+const SecondContType = styled("div")`
+  width: 186px;
 `;
 
 const SecondContPrior = styled("div")`
@@ -155,15 +177,21 @@ const CaptureStatus = styled("div")`
 
 const ThirdContWatch = styled("div")`
   font-family: "Open Sans";
-  color: #787878;
-
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
+  color: #787878;
 `;
 
-const ThirdContWatchName = styled("div")``;
+const ThirdContWatchName = styled("div")`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #101f4c;
+`;
 
 const ThirdContProg = styled("div")`
   font-family: "Open Sans";
@@ -178,6 +206,13 @@ const ThirdContProg = styled("div")`
 const ThirdContProgType = styled("div")`
   display: flex;
   align-items: center;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+
+  color: #101f4c;
 `;
 
 const ThirdBodyDiv = styled("div")`
@@ -190,7 +225,8 @@ const ThirdContLeft = styled("div")`
 `;
 
 const ThirdContRight = styled("div")`
-  flex: 1;
+  // flex: 1;
+  width: 186px;
 `;
 
 const PenIconImage = styled(Image)`
@@ -207,6 +243,7 @@ const MoreText = styled("div")`
   font-size: 14px;
   line-height: 20px;
   color: #ff843f;
+  margin-left: 5px;
 `;
 
 const FourthContLeft = styled("div")``;
@@ -223,6 +260,13 @@ const FourthContAssigned = styled("div")`
 
 const FourthContProgType = styled("div")`
   display: flex;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+
+  color: #101f4c;
 `;
 
 const FormElementContainer = styled(Box)`
@@ -646,12 +690,21 @@ function BasicTabs(props: any) {
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
+              <PriorityTitle>Type</PriorityTitle>
+              <PriorityStatus style={{ color: "#101F4B" }}>
+                {taskState.TabOne.type}
+              </PriorityStatus>
+            </SecondContPrior>
+
+            <SecondContPrior>
               <PriorityTitle>Priority</PriorityTitle>
               <PriorityStatus style={{ color: "#101F4B" }}>
                 {taskState.TabOne.priority}
               </PriorityStatus>
             </SecondContPrior>
+          </SecondBodyDiv>
 
+          <SecondBodyDiv>
             <SecondContCapt>
               <CaptureTitle>Captured on</CaptureTitle>
               <CaptureStatus style={{ color: "#101F4B" }}>
@@ -659,17 +712,19 @@ function BasicTabs(props: any) {
                 {Moment(taskState.TabOne.capturedOn).format("DD MMM YY")}
               </CaptureStatus>
             </SecondContCapt>
+
+            <SecondContPrior>
+              <ThirdContWatch>Watcher</ThirdContWatch>
+              <ThirdContWatchName style={{ color: "#101F4B" }}>
+                {" "}
+                {taskState.TabOne.creator}
+              </ThirdContWatchName>
+            </SecondContPrior>
           </SecondBodyDiv>
 
           {progressEditState ? (
             <ProgressStateTrue>
-              <ThirdContLeft>
-                <ThirdContWatch>Watcher</ThirdContWatch>
-                <ThirdContWatchName style={{ color: "#101F4B" }}>
-                  {" "}
-                  {taskState.TabOne.creator}
-                </ThirdContWatchName>
-              </ThirdContLeft>
+              {" "}
               <FourthBodyDiv
                 assigneeEditState={assigneeEditState}
                 style={{ marginTop: "0px", color: "#101F4B" }}
@@ -696,13 +751,7 @@ function BasicTabs(props: any) {
             </ProgressStateTrue>
           ) : (
             <ProgressStateFalse>
-              <ThirdContLeft>
-                <ThirdContWatch>Watcher</ThirdContWatch>
-                <ThirdContWatchName style={{ color: "#101F4B" }}>
-                  {" "}
-                  {taskState.TabOne.creator}
-                </ThirdContWatchName>
-              </ThirdContLeft>
+              {" "}
               <ThirdContRight>
                 <ThirdContProg>Progress</ThirdContProg>
 
@@ -721,8 +770,32 @@ function BasicTabs(props: any) {
                   )}
                 </ThirdContProgType>
               </ThirdContRight>
+              <FourthBodyDiv
+                assigneeEditState={assigneeEditState}
+                style={{ marginTop: "0px", color: "#101F4B" }}
+              >
+                <FourthContLeft>
+                  <FourthContAssigned>Assigned to</FourthContAssigned>
+                  <FourthContProgType style={{ color: "#101F4B" }}>
+                    {taskState?.TabOne?.assignees}{" "}
+                    <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                    {taskState?.TabOne?.assignees ? (
+                      <PenIconImage
+                        onClick={() => {
+                          handleEditAssigne();
+                        }}
+                        src={Edit}
+                        alt={"close icon"}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </FourthContProgType>
+                </FourthContLeft>
+              </FourthBodyDiv>
             </ProgressStateFalse>
           )}
+
           {progressEditState ? (
             <ProgressCustomSelect>
               <CustomSelect
@@ -744,29 +817,7 @@ function BasicTabs(props: any) {
               />
             </ProgressCustomSelect>
           ) : (
-            <>
-              <FourthBodyDiv assigneeEditState={assigneeEditState}>
-                <FourthContLeft>
-                  <FourthContAssigned>Assigned to</FourthContAssigned>
-
-                  <FourthContProgType style={{ color: "#101F4B" }}>
-                    {taskState?.TabOne.assignees}{" "}
-                    <MoreText>{taskState.TabOne?.moreText}</MoreText>
-                    {taskState?.TabOne.assignees ? (
-                      <PenIconImage
-                        onClick={() => {
-                          handleEditAssigne();
-                        }}
-                        src={Edit}
-                        alt="close icon"
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </FourthContProgType>
-                </FourthContLeft>
-              </FourthBodyDiv>
-            </>
+            ""
           )}
           {assigneeEditState && (
             <AssignEditSearchContainer>
@@ -848,6 +899,7 @@ function BasicTabs(props: any) {
           <RelatedDiv>
             <RelatedTagTitle>Related Tags</RelatedTagTitle>
             <RelatedTagsButton>
+              {/* {console.log("taskState", taskState)} */}
               {taskState?.TabOne.tags?.map((item: any) => {
                 return (
                   <>

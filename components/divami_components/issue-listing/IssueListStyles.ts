@@ -113,10 +113,14 @@ export const FirstHeader = styled('div')({
   display: 'flex',
 });
 
-export const BodyInfo = styled('div')({});
+export const BodyInfo = styled('div')({
+  cursor:"pointer"
+
+});
 
 export const BodyContTitle = styled('div')({
   marginLeft: '10px',
+  cursor:"pointer"
 });
 
 export const SecondHeader = styled('div')({

@@ -212,11 +212,14 @@ export const CompareIcon = styled('div')((props: any) => ({
   background: props.active === 'hideCompare' ? '#F1742E' : 'white',
   borderTopLeftRadius: 3,
   borderBottomLeftRadius: 3,
+  cursor:"pointer"
 })) as any;
 export const DesignCompareViewIcon = styled('div')((props: any) => ({
   borderRight: '1px solid #F1742E',
   padding: '6px',
   background: props.active === 'compareDesign' ? '#F1742E' : 'white',
+  cursor:"pointer"
+
 })) as any;
 export const RealityCompareViewIcon = styled('div')((props: any) => ({
   borderRight: '1px solid #F1742E',
@@ -225,6 +228,8 @@ export const RealityCompareViewIcon = styled('div')((props: any) => ({
   borderBottomRightRadius: '3px',
   paddingTop: '8px',
   background: props.active === 'compareReality' ? '#F1742E' : 'white',
+  cursor:"pointer"
+
 })) as any;
 export const CompareViewTitleDiv = styled('div')({});
 export const CompareContainer = styled('div')({

@@ -86,10 +86,19 @@ const SpanTile = styled("span")`
 
   margin-left: 10px;
 `;
-const BodyContainer = styled(Box)`
-  height: calc(100vh - 134px);
-  //   border: 2px solid black;
-  // overflow: scroll;
+// const BodyContainer = styled(Box)`
+//   height: calc(100vh - 134px);
+//   //   border: 2px solid black;
+//   // overflow: scroll;
+// `;
+interface ContainerProps {
+  footerState: boolean;
+}
+
+const BodyContainer = styled(Box)<ContainerProps>`
+  height: ${(props) =>
+    props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
+  overflow-y: scroll;
 `;
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
@@ -127,6 +136,7 @@ const PriorityStatus = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
+  color: #101f4c;
 `;
 
 const SecondContPrior = styled("div")`
@@ -157,12 +167,11 @@ const CaptureStatus = styled("div")`
 
 const ThirdContWatch = styled("div")`
   font-family: "Open Sans";
-  color: #787878;
-
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
+  color: #787878;
 `;
 
 const ThirdContWatchName = styled("div")`
@@ -171,6 +180,7 @@ const ThirdContWatchName = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
+  color: #101f4c;
 `;
 
 const ThirdContProg = styled("div")`
@@ -191,6 +201,8 @@ const ThirdContProgType = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
+
+  color: #101f4c;
 `;
 
 const ThirdBodyDiv = styled("div")`
@@ -203,7 +215,8 @@ const ThirdContLeft = styled("div")`
 `;
 
 const ThirdContRight = styled("div")`
-  flex: 1;
+  // flex: 1;
+  width: 186px;
 `;
 
 const PenIconImage = styled(Image)`
@@ -233,7 +246,9 @@ const FourthContProgType = styled("div")`
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
-  line-height: 19px;
+  line-height: 20px;
+
+  color: #101f4c;
 `;
 
 const MoreText = styled("div")`
@@ -241,6 +256,7 @@ const MoreText = styled("div")`
   font-size: 14px;
   line-height: 20px;
   color: #ff843f;
+  margin-left: 5px;
 `;
 
 const FormElementContainer = styled(Box)`
@@ -345,6 +361,7 @@ const StyledLabel = styled(Typography)`
 
 const CustomTaskDrawerContainer = styled("div")`
   width: 438px;
+  height: calc(100vh - 61px);
 `;
 
 const ProgressEditStateButtonsContainer = styled("div")`
@@ -651,23 +668,33 @@ function BasicTabs(props: any) {
             <div></div>
             {/* <Image
               src={
-                taskState.TabOne.attachments
-                  ? taskState.TabOne.attachments[0]?.url
-                  : ""
+                ""
+                // taskState.TabOne.attachments
+                //   ? taskState.TabOne.attachments[0]?.url
+                //   : ""
               }
               alt=""
-              width={taskState.TabOne.attachments ? 400 : 0}
-              height={taskState.TabOne.attachments ? 400 : 0}
+              width={400}
+              height={400}
             /> */}
           </FirstHeaderDiv>
           <SecondBodyDiv>
+            <SecondContPrior>
+              <PriorityTitle>Type</PriorityTitle>
+              <PriorityStatus style={{ color: "#101F4B" }}>
+                {taskState.TabOne.type}
+              </PriorityStatus>
+            </SecondContPrior>
+
             <SecondContPrior>
               <PriorityTitle>Priority</PriorityTitle>
               <PriorityStatus style={{ color: "#101F4B" }}>
                 {taskState.TabOne.priority}
               </PriorityStatus>
             </SecondContPrior>
+          </SecondBodyDiv>
 
+          <SecondBodyDiv>
             <SecondContCapt>
               <CaptureTitle>Captured on</CaptureTitle>
               <CaptureStatus style={{ color: "#101F4B" }}>
@@ -675,20 +702,22 @@ function BasicTabs(props: any) {
                 {Moment(taskState.TabOne.capturedOn).format("DD MMM YY")}
               </CaptureStatus>
             </SecondContCapt>
+
+            <SecondContPrior>
+              <ThirdContWatch>Watcher</ThirdContWatch>
+              <ThirdContWatchName style={{ color: "#101F4B" }}>
+                {" "}
+                {taskState.TabOne.creator}
+              </ThirdContWatchName>
+            </SecondContPrior>
           </SecondBodyDiv>
 
           {progressEditState ? (
             <ProgressStateTrue>
-              <ThirdContLeft>
-                <ThirdContWatch>Watcher</ThirdContWatch>
-                <ThirdContWatchName style={{ color: "#101F4B" }}>
-                  {" "}
-                  {taskState.TabOne.creator}
-                </ThirdContWatchName>
-              </ThirdContLeft>
+              {" "}
               <FourthBodyDiv
                 assigneeEditState={assigneeEditState}
-                style={{ marginTop: "0px" }}
+                style={{ marginTop: "0px", color: "#101F4B" }}
               >
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
@@ -712,13 +741,7 @@ function BasicTabs(props: any) {
             </ProgressStateTrue>
           ) : (
             <ProgressStateFalse>
-              <ThirdContLeft>
-                <ThirdContWatch>Watcher</ThirdContWatch>
-                <ThirdContWatchName style={{ color: "#101F4B" }}>
-                  {" "}
-                  {taskState.TabOne.creator}
-                </ThirdContWatchName>
-              </ThirdContLeft>
+              {" "}
               <ThirdContRight>
                 <ThirdContProg>Progress</ThirdContProg>
 
@@ -737,35 +760,16 @@ function BasicTabs(props: any) {
                   )}
                 </ThirdContProgType>
               </ThirdContRight>
-            </ProgressStateFalse>
-          )}
-          {progressEditState ? (
-            <ProgressCustomSelect>
-              <CustomSelect
-                onChange={(event: any, value: any) => console.log(value)}
-                config={progressOptionsState[0]}
-                data={{
-                  ...progressOptionsState[0],
-                  defaultValue: taskState.TabOne.status,
-                }}
-                // defaultValue={progressOptionsState?.options[0].value}
-                id={"taskPriority"}
-                sx={{ minWidth: 120 }}
-                setFormConfig={setProgressOptionsState}
-                isError={""}
-                label=""
-              />
-            </ProgressCustomSelect>
-          ) : (
-            <>
-              <FourthBodyDiv assigneeEditState={assigneeEditState}>
+              <FourthBodyDiv
+                assigneeEditState={assigneeEditState}
+                style={{ marginTop: "0px", color: "#101F4B" }}
+              >
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
-
                   <FourthContProgType style={{ color: "#101F4B" }}>
-                    {taskState?.TabOne?.assigneeName}
+                    {taskState?.TabOne?.assignees}{" "}
                     <MoreText>{taskState?.TabOne?.moreText}</MoreText>
-                    {taskState.TabOne?.assigneeName ? (
+                    {taskState?.TabOne?.assignees ? (
                       <PenIconImage
                         onClick={() => {
                           handleEditAssigne();
@@ -779,7 +783,27 @@ function BasicTabs(props: any) {
                   </FourthContProgType>
                 </FourthContLeft>
               </FourthBodyDiv>
-            </>
+            </ProgressStateFalse>
+          )}
+
+          {progressEditState ? (
+            <ProgressCustomSelect>
+              <CustomSelect
+                onChange={(event: any, value: any) => {
+                  console.log(value);
+                  setFormState({ ...formState, selectedProgress: value });
+                }}
+                config={progressOptionsState[0]}
+                // defaultValue={progressOptionsState?.options[0].value}
+                id={"issuePriority"}
+                sx={{ minWidth: 120 }}
+                setFormConfig={setProgressOptionsState}
+                isError={""}
+                label=""
+              />
+            </ProgressCustomSelect>
+          ) : (
+            ""
           )}
           {assigneeEditState && (
             <AssignEditSearchContainer>
@@ -837,9 +861,9 @@ function BasicTabs(props: any) {
                         <>
                           <AttachedImageDiv className={`detailsImageDiv`}>
                             <AttachedImageTitle>{a?.name}</AttachedImageTitle>
-                            {/* <AttachedImageIcon>
+                            <AttachedImageIcon>
                               <Image src={""} alt="" />
-                            </AttachedImageIcon> */}
+                            </AttachedImageIcon>
                             <DeleteIcon
                               src={Delete}
                               alt={"delete icon"}
@@ -861,8 +885,8 @@ function BasicTabs(props: any) {
           <RelatedDiv>
             <RelatedTagTitle>Related Tags</RelatedTagTitle>
             <RelatedTagsButton>
-              {console.log("taskState?.relatedTags", taskState)}
-              {taskState?.TabOne?.relatedTags?.map((item: any) => {
+              {console.log("taskState12", taskState)}
+              {taskState?.TabOne.tags?.map((item: any) => {
                 return (
                   <>
                     <RelatedSingleButton>{item}</RelatedSingleButton>
@@ -872,26 +896,24 @@ function BasicTabs(props: any) {
             </RelatedTagsButton>
           </RelatedDiv>
           {progressEditState || assigneeEditState ? (
-            <>
-              <AddCommentContainer containerType="float">
-                <ProgressEditStateButtonsContainer>
-                  <CustomButton
-                    type="outlined"
-                    label="Cancel"
-                    formHandler={() => {
-                      handleClose();
-                    }}
-                  />
-                  <CustomButton
-                    type="contained"
-                    label="Update"
-                    formHandler={() => {
-                      handleStateChange();
-                    }}
-                  />
-                </ProgressEditStateButtonsContainer>
-              </AddCommentContainer>
-            </>
+            <AddCommentContainer containerType="float">
+              <ProgressEditStateButtonsContainer>
+                <CustomButton
+                  type="outlined"
+                  label="Cancel"
+                  formHandler={() => {
+                    handleClose();
+                  }}
+                />
+                <CustomButton
+                  type="contained"
+                  label="Update"
+                  formHandler={() => {
+                    handleStateChange();
+                  }}
+                />
+              </ProgressEditStateButtonsContainer>
+            </AddCommentContainer>
           ) : (
             <>
               {/* <AddCommentContainer>
@@ -934,6 +956,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     getTasks,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
+  const [footerState, SetFooterState] = useState(false);
 
   const DetailsObj = {
     TabOne: {
@@ -1224,7 +1247,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-        <BodyContainer>
+        <BodyContainer footerState={footerState}>
           <BasicTabs
             taskType={taskType}
             taskPriority={taskPriority}
