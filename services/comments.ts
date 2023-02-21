@@ -1,8 +1,8 @@
 import instance from './axiosInstance';
 import authHeader from './auth-header';
-export const createComment = (commentObj: object) => {
+export const createComment = (projectId: string, commentObj: object) => {
   return instance
-    .post(`${process.env.NEXT_PUBLIC_HOST}/comments`, commentObj, {
+    .post(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments`, commentObj, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -12,9 +12,9 @@ export const createComment = (commentObj: object) => {
       throw error.response.data;
     });
 };
-export const editComment = (commentId: string, commentObj: object) => {
+export const editComment = (projectId: string, commentId: string, commentObj: object) => {
   return instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/comments/${commentId}`, commentObj, {
+    .put(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments/${commentId}`, commentObj, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -24,9 +24,9 @@ export const editComment = (commentId: string, commentObj: object) => {
       throw error.response.data;
     });
 };
-export const getCommentsList = async (entityID: string) => {
+export const getCommentsList = async (projectId: string, entityID: string) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/comments?entity=${entityID}`, {
+    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments?entity=${entityID}`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -36,9 +36,9 @@ export const getCommentsList = async (entityID: string) => {
       throw error.response.data;
     });
 };
-export const getCommentDetails = (commentId: string) => {
+export const getCommentDetails = (projectId: string, commentId: string) => {
   return instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/comments${commentId}`, {
+    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments${commentId}`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -48,9 +48,9 @@ export const getCommentDetails = (commentId: string) => {
       throw error.response.data;
     });
 };
-export const deleteComment = async (commentId: string) => {
+export const deleteComment = async (projectId: string, commentId: string) => {
   return await instance
-    .delete(`${process.env.NEXT_PUBLIC_HOST}/comments/${commentId}`, {
+    .delete(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments/${commentId}`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -60,10 +60,10 @@ export const deleteComment = async (commentId: string) => {
       throw error.response.data;
     });
 };
-export const createCommentReply = (commentObj: object, commentId: string) => {
+export const createCommentReply = (projectId: string, commentObj: object, commentId: string) => {
   return instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/comments/${commentId}/replies/add`,
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments/${commentId}/replies/add`,
       commentObj,
       {
         headers: authHeader.authHeader(),
@@ -76,14 +76,14 @@ export const createCommentReply = (commentObj: object, commentId: string) => {
       throw error.response.data;
     });
 };
-export const editCommentReply = (
+export const editCommentReply = (projectId: string, 
   commentObj: object,
   commentId: string,
   repliId: string
 ) => {
   return instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/comments/${commentId}/replies/${repliId}/update`,
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments/${commentId}/replies/${repliId}/update`,
       commentObj,
       {
         headers: authHeader.authHeader(),
@@ -96,13 +96,13 @@ export const editCommentReply = (
       throw error.response.data;
     });
 };
-export const deleteCommentReply = async (
+export const deleteCommentReply = async (projectId: string, 
   commentId: string,
   repliId: string
 ) => {
   return await instance
     .delete(
-      `${process.env.NEXT_PUBLIC_HOST}/comments/${commentId}/replies/${repliId}/delete`,
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments/${commentId}/replies/${repliId}/delete`,
       {
         headers: authHeader.authHeader(),
       }
