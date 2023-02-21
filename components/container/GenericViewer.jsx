@@ -326,6 +326,11 @@ function GenericViewer(props) {
         break;
       case 'Reality':
         if (potreeUtils.current) {
+          if (type === 'Issue') {
+            potreeUtils.current.updateIssuesData(issuesList);
+          } else if (type === 'Task') {
+            potreeUtils.current.updateTasksData(tasksList);
+          }
         }
         break;
     }
