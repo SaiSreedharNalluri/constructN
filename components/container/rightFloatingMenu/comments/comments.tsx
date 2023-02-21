@@ -13,17 +13,22 @@ import CommentForm from './commentForm';
 import CommentsListing from './commentsListing';
 interface IProps {
   entityId: string;
+  currentProject: string;
 }
-const Comments: React.FC<IProps> = ({ entityId }) => {
+const Comments: React.FC<IProps> = ({ entityId, currentProject }) => {
   const router = useRouter();
   const [backendComments, setBackendComments] = useState<Comments[]>([]);
   const [activeComment, setActiveComment] = useState<{
     _id: string;
     type: string;
   } | null>(null);
+  const [myProject,setMyProject] = useState(currentProject);
   useEffect(() => {
     if (router.isReady) {
-      getCommentsList(entityId)
+      if(router.query.projectId)
+      setMyProject(currentProject);
+      //setMyProject(router.query.projectId as string);
+      getCommentsList(myProject, entityId)
         .then((response) => {
           if (response.success === true) {
             setBackendComments(response.result);
@@ -33,9 +38,9 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
           toast.error('failed to load the data');
         });
     }
-  }, [entityId, router.isReady]);
+  }, [entityId, router.isReady,currentProject]);
   const addComment = (text: string) => {
-    createComment({
+    createComment(myProject, {
       comment: text,
       entity: entityId,
     }).then((response) => {
@@ -47,7 +52,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
   };
   const updateComment = (text: string, commentId: string, type: string) => {
     if (type === 'comments') {
-      editComment(commentId, { comment: text }).then((response) => {
+      editComment(myProject, commentId, { comment: text }).then((response) => {
         if (response.success === true) {
           toast.success('Comment is updated sucessfully');
           const updatedBackendComments = backendComments.map(
@@ -66,7 +71,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
     }
   };
   const addReplyToComment = (text: string, commentId: string) => {
-    createCommentReply({ reply: text }, commentId).then((response) => {
+    createCommentReply(myProject, { reply: text }, commentId).then((response) => {
       if (response.success === true) {
         toast.success(response.message);
         const indexOfUserToReplace = backendComments.findIndex(
@@ -81,7 +86,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
     });
   };
   const deleteComments = (commentId: string) => {
-    deleteComment(commentId).then((response) => {
+    deleteComment(myProject, commentId).then((response) => {
       if (response.success === true) {
         toast.success('Comment is deleted sucessfully');
         const updatedBackendComments = backendComments.filter(
