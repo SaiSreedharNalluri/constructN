@@ -78,7 +78,7 @@ export const SectionToolBar = styled('div')((props: any) => ({
   display: 'block',
   marginLeft: 'auto',
   marginRight: 'auto',
-  boxShadow: '0px 2px 1px rgba(0, 0, 0, 0.25)',
+  // boxShadow: '0px 2px 1px rgba(0, 0, 0, 0.25)',
   borderRadius: '4px',
 })) as any;
 
