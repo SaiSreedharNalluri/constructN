@@ -26,7 +26,7 @@ export const TitleContainer = styled(Box)({
   paddingLeft: '20px',
   paddingRight: '20px',
   color: '#36415D',
-   fontFamily: "Open Sans",
+  fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "16px",
@@ -36,8 +36,8 @@ export const TitleContainer = styled(Box)({
 
 export const CloseIcon = styled(Image)({
   cursor: 'pointer',
-  width:"12px",
-  height:"12px"
+  width: "12px",
+  height: "12px"
 });
 
 export const MiniHeaderContainer = styled(Box)({
@@ -48,7 +48,7 @@ export const MiniHeaderContainer = styled(Box)({
   alignItems: 'center',
   width: '100%',
   marginTop: '20px',
-  marginBottom:"24px",
+  marginBottom: "24px",
   // overflowY: "auto",
   color: '#36415D',
 });
@@ -91,6 +91,11 @@ export const DownloadIcon = styled(Image)({
 export const FunnelIcon = styled(Image)({
   cursor: 'pointer',
   marginLeft: '12px',
+});
+export const FilterIcon = styled(Image)({
+  cursor: 'pointer',
+  marginRight: '10px',
+  marginLeft: '7px'
 });
 
 export const DueDate = styled(Box)({
@@ -166,3 +171,18 @@ export const MessageDiv = styled('div')({
   // marginLeft: "10px",
   marginTop: '30px',
 });
+
+export const AppliedFilter = styled('div')({
+  border: '1px solid #D9D9D9',
+  borderRadius: '40px',
+  color: '#F1742E',
+  fontFamily: 'Open Sans',
+  fontStyle: 'normal',
+  fontWeight: '400',
+  fontSize: '14px',
+  lineHeight: '19px',
+  padding: '6px 6px 6px 15px',
+  display: 'flex',
+  marginLeft: '10px',
+  cursor: 'pointer',
+})

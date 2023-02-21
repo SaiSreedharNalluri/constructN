@@ -131,10 +131,12 @@ const Index: React.FC<IProps> = () => {
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
     filterData: {},
+    numberOfFilters: 0,
   });
   const [issueFilterState, setIssueFilterState] = useState({
     isFilterApplied: false,
     filterData: {},
+    numberOfFilters: 0,
   });
   const closeIssueCreate = () => {
     setOpenCreateIssue(false);
@@ -625,6 +627,7 @@ const Index: React.FC<IProps> = () => {
     }
   };
   const handleOnIssueFilter = (formData: any) => {
+    console.log("formdata", formData);
     const result = issueFilterList.filter(
       (item: Issue) =>
         (formData.issueTypeData.includes(item.type) ||
@@ -643,10 +646,24 @@ const Index: React.FC<IProps> = () => {
         (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
           !formData.toDate)
     );
+    let count =
+      formData?.issueTypeData?.length +
+      formData?.issuePriorityData?.length +
+      formData?.issueStatusData?.length;
+    if (formData?.assigneesData) {
+      count = count + 1;
+    }
+    if (formData?.toDate) {
+      count = count + 1;
+    }
+    if (formData?.fromDate) {
+      count = count + 1;
+    }
     setIssueList(result);
     setIssueFilterState({
       isFilterApplied: true,
       filterData: formData,
+      numberOfFilters: count,
     });
   };
   console.log(issuesList, "issuesListissuesList");
@@ -655,6 +672,7 @@ const Index: React.FC<IProps> = () => {
     setIssueFilterState({
       isFilterApplied: false,
       filterData: {},
+      numberOfFilters: 0,
     });
   };
   // const handleOnTaskFilter = (formData: any) => {
@@ -701,10 +719,24 @@ const Index: React.FC<IProps> = () => {
       // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
       //   !formData.toDate)
     );
+    let count =
+      formData?.taskType?.length +
+      formData?.taskPriority?.length +
+      formData?.taskStatus?.length;
+    if (formData?.assigneesData) {
+      count = count + 1;
+    }
+    if (formData?.toDate) {
+      count = count + 1;
+    }
+    if (formData?.fromDate) {
+      count = count + 1;
+    }
     setTasksList(result);
     setTaskFilterState({
       isFilterApplied: true,
       filterData: formData,
+      numberOfFilters: 3,
     });
   };
 
@@ -713,6 +745,7 @@ const Index: React.FC<IProps> = () => {
     setTaskFilterState({
       isFilterApplied: false,
       filterData: {},
+      numberOfFilters: 0,
     });
   };
   const deleteTheIssue = (issueObj: any) => {
