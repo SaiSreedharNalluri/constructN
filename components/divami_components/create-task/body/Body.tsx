@@ -61,7 +61,6 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
   const router = useRouter();
 
   useEffect(() => {
-    console.log(formConfig, " formConfig", tagsList, "tagsList");
     const tempFormData = formConfig.map((item: any) => {
       if (item.id === "tag-suggestions") {
         return {
@@ -111,6 +110,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
 
   useEffect(() => {
     if (projectUsers.length && taskPriorities.length && taskTypes.length) {
+      console.log(editData, "editdata", formConfig, "formconfig");
       if (editData) {
         setFormConfig((prev: any) => {
           return prev.map((item: any) => {
@@ -187,10 +187,11 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
                 }),
               };
             }
-            if (item.id === "tag-suggestion") {
+            if (item.id === "tag-suggestions") {
               return {
                 ...item,
                 defaultValue: editData.tags,
+                chipString: editData.tags,
               };
             }
             if (item.id === "file-upload") {
@@ -251,6 +252,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
   }, [projectUsers, taskPriorities, taskTypes]);
 
   useEffect(() => {
+    console.log(formConfig, "formconfig in effect")
     let updatedFormData = [
       ...formConfig,
       { owner: loggedInUserId },
@@ -259,6 +261,10 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
     setFormData(updatedFormData);
     handleFormData(updatedFormData);
   }, [formConfig]);
+
+  useEffect(() => {
+    console.log("chii string", formConfig[6].chipString)
+  }, [formConfig[6].chipString])
 
   return (
     <BodyContainer>
