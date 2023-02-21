@@ -22,6 +22,7 @@ import tasks from '../../../public/icons/taskVisibleInToolbar.svg';
 import hotspot from '../../../public/icons/Hotspot.svg';
 import { IActiveRealityMap } from '../../../models/IReality';
 import { IDesignMap } from '../../../models/IDesign';
+import Select from 'react-select/dist/declarations/src/Select';
 interface IProps {
   toolClicked: (a: ITools) => void;
   viewMode: string;
@@ -84,6 +85,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
     setMyTypesList(currentTypesList);
     setMyLayersList(currentLayersList);
     setMySelectedType(currentViewType);
+    //console.log('Layers',myLayersList)
   }, [
     currentProject,
     currentSnapshot,
@@ -178,7 +180,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 <select onChange={typeChange} id="typeList">
                   {myTypesList &&
                     Object.keys(myTypesList).map((key) => (
-                      <option key={key} value={key} defaultChecked={mySelectedType===key? true:false}>
+                      <option key={key} value={key} selected={key===mySelectedType?true:false}>
                         {key}
                       </option>
                     ))}
