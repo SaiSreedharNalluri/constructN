@@ -15,16 +15,14 @@ import CommentForm from './commentForm';
 import CommentsListing from './commentsListing';
 interface IProps {
   entityId: string;
-  currentProject: string;
 }
-const Comments: React.FC<IProps> = ({ entityId, currentProject }) => {
+const Comments: React.FC<IProps> = ({ entityId }) => {
   const router = useRouter();
   const [backendComments, setBackendComments] = useState<Comments[]>([]);
   const [activeComment, setActiveComment] = useState<{
     _id: string;
     type: string;
   } | null>(null);
-  const [myProject, setMyProject] = useState(currentProject);
   useEffect(() => {
     if (router.isReady) {
       if (router.query.projectId)
