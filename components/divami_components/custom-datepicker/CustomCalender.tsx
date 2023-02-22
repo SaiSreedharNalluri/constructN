@@ -68,6 +68,10 @@ const CustomDatePicker = styled(DatePicker)({
     display: "none",
     textTransform: "uppercase",
   },
+  "& .MuiFormLabel-root.MuiInputLabel-root.Mui-focused": {
+    border: "1px solid #ff843f !important",
+    borderRadius: "4px",
+  },
 });
 
 const CustomDatePickerInputField = styled(TextField)({
@@ -110,7 +114,7 @@ const CustomCalender = (props: any) => {
     <div data-testid="custom-calender-parent">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CustomDatePicker
-          className={` ${data?.isError ? "formErrorField" : ""}`}
+          className={` ${data?.isError ? "formErrorField" : ""} formField`}
           components={{
             OpenPickerIcon: calenderIcon,
           }}

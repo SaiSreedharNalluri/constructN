@@ -89,7 +89,7 @@ const CustomSelect = (props: any) => {
         onChange={handlechange}
         id={id}
         readOnly={isReadOnly}
-        className={` ${data?.isError ? "formErrorField" : ""}`}
+        className={` ${data?.isError ? "formErrorField" : ""} formField`}
       >
         {config.options?.length &&
           config.options.map((item: any, index: any) => (

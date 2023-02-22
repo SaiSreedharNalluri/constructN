@@ -53,7 +53,7 @@ export const CustomTextField = (props: PropTypes) => {
     <div>
       <StyledTextField
         id={id}
-        className={` ${isError ? "formErrorField" : ""}`}
+        className={` ${isError ? "formErrorField" : ""} formField`}
         // placeholder={placeholder}
         defaultValue={defaultValue}
         data-testid={dataTestId}

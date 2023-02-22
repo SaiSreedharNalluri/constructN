@@ -53,7 +53,7 @@ export const CustomTextArea = (props: PropTypes) => {
   return (
     <div>
       <StyledTextArea
-        className={` ${isError ? "formErrorField" : ""}`}
+        className={` ${isError ? "formErrorField" : ""} formField`}
         id={id}
         // placeholder={placeholder}
         defaultValue={defaultValue}

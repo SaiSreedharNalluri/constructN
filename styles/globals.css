@@ -380,3 +380,12 @@ content: url("../public/divami_icons/toasterIcon.svg");
 .formErrorLabel {
   color: #f67c74;
 }
+.formField:focus-visible {
+  outline: none;
+  border: 1px solid #ff843f !important;
+  border-radius: 4px;
+}
+.formField.Mui-focused {
+  border: 1px solid #ff843f !important;
+  border-radius: 4px;
+}
