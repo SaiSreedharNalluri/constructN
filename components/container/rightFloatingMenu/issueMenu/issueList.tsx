@@ -841,7 +841,7 @@ const IssueList: React.FC<IProps> = ({
               </div>
               <div className="w-full mt-5">
                 <div>
-                  <Comments currentProject = {router.query.projectId as string} entityId={issueObj?._id as string} />
+                  <Comments entityId={issueObj?._id as string} />
                 </div>
               </div>
             </div>
