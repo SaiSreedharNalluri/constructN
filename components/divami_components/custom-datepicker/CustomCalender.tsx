@@ -110,6 +110,7 @@ const CustomCalender = (props: any) => {
     <div data-testid="custom-calender-parent">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CustomDatePicker
+          className={` ${data?.isError ? "formErrorField" : ""}`}
           components={{
             OpenPickerIcon: calenderIcon,
           }}

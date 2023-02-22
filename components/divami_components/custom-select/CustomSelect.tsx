@@ -89,6 +89,7 @@ const CustomSelect = (props: any) => {
         onChange={handlechange}
         id={id}
         readOnly={isReadOnly}
+        className={` ${data?.isError ? "formErrorField" : ""}`}
       >
         {config.options?.length &&
           config.options.map((item: any, index: any) => (
@@ -102,7 +103,7 @@ const CustomSelect = (props: any) => {
           ))}
       </StyledSelect>
 
-      <ErrorField>{data?.isError ? "Required" : ""}</ErrorField>
+      {/* <ErrorField>{data?.isError ? "Required" : ""}</ErrorField> */}
     </CustomSelectContainer>
   );
 };

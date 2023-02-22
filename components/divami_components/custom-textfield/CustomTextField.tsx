@@ -53,6 +53,7 @@ export const CustomTextField = (props: PropTypes) => {
     <div>
       <StyledTextField
         id={id}
+        className={` ${isError ? "formErrorField" : ""}`}
         // placeholder={placeholder}
         defaultValue={defaultValue}
         data-testid={dataTestId}
@@ -66,7 +67,7 @@ export const CustomTextField = (props: PropTypes) => {
         }}
         readOnly={isReadOnly}
       />
-      <ErrorField>{isError ? "Required" : ""}</ErrorField>
+      {/* <ErrorField>{isError ? "Required" : ""}</ErrorField> */}
     </div>
   );
 };

@@ -53,6 +53,7 @@ export const CustomTextArea = (props: PropTypes) => {
   return (
     <div>
       <StyledTextArea
+        className={` ${isError ? "formErrorField" : ""}`}
         id={id}
         // placeholder={placeholder}
         defaultValue={defaultValue}
@@ -70,7 +71,7 @@ export const CustomTextArea = (props: PropTypes) => {
       {/* {isError && (
                 <div className={classes.error_message}>This is required</div>
             )} */}
-      <ErrorField>{isError ? "Required" : ""}</ErrorField>
+      {/* <ErrorField>{isError ? "Required" : ""}</ErrorField> */}
     </div>
   );
 };

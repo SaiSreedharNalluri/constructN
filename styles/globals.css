@@ -120,7 +120,7 @@
   }
 }
 
-.spinner>circle {
+.spinner > circle {
   fill: transparent;
 }
 
@@ -166,7 +166,8 @@ body {
 @font-face {
   font-family: "Open Sans";
   src: local("Lato"),
-    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf") format("opentype");
+    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf")
+      format("opentype");
 }
 
 .white-bg {
@@ -370,4 +371,12 @@ content: url("../public/divami_icons/toasterIcon.svg");
 .tableInfo tbody {
   height: calc(100% - 69px);
   overflow-y: auto;
+}
+
+.formErrorField {
+  border: 1px solid #f67c74;
+  border-radius: 4px;
+}
+.formErrorLabel {
+  color: #f67c74;
 }
