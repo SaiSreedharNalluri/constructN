@@ -6,13 +6,13 @@ import CommentForm from './commentForm';
 import Modal from 'react-responsive-modal';
 interface IProps {
   comment: any;
-  updateComment: (text: string, commentId: string, editType: string) => void;
+  updateComment: (text: string, comment: Comments) => void;
   activeComment: { _id: string; type: string } | null;
   setActiveComment: React.Dispatch<
     React.SetStateAction<{ _id: string; type: string } | null>
   >;
   addReplyToComment: (text: string, commentId: string) => void;
-  deleteComment: (commentId: string) => void;
+  deleteComment: (comment: Comments) => void;
 }
 const CommentsListing: React.FC<IProps> = ({
   comment,
@@ -34,7 +34,7 @@ const CommentsListing: React.FC<IProps> = ({
   const [open, setOpen] = useState(false);
   const [commentObj, setCommentObj] = useState<Comments>();
   const handleDeleteItem = () => {
-    deleteComment(commentObj?._id as string);
+    deleteComment(commentObj as Comments);
     setTimeout(() => {
       setOpen(false);
     }, 1000);
@@ -101,7 +101,7 @@ const CommentsListing: React.FC<IProps> = ({
                 }}
                 initialText={comment.comment ? comment.comment : comment.reply}
                 handleSubmit={(text) => {
-                  updateComment(text, comment._id, editType);
+                  updateComment(text, comment);
                 }}
               />
             )}
