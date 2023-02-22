@@ -1,7 +1,7 @@
 import { styled } from '@mui/system';
 import { Theme } from '../../../styles/globalStyles';
 import Image from 'next/image';
-import { Box } from '@mui/material';
+import { Box, MenuItem } from '@mui/material';
 import zIndex from '@mui/material/styles/zIndex';
 
 export const TaskListContainer = styled('div')({
@@ -26,18 +26,18 @@ export const TitleContainer = styled(Box)({
   paddingLeft: '20px',
   paddingRight: '20px',
   color: '#36415D',
-  fontFamily: "Open Sans",
-  fontStyle: "normal",
-  fontWeight: "400",
-  fontSize: "16px",
+  fontFamily: 'Open Sans',
+  fontStyle: 'normal',
+  fontWeight: '400',
+  fontSize: '16px',
 
   // position:"fixed"
 });
 
 export const CloseIcon = styled(Image)({
   cursor: 'pointer',
-  width: "12px",
-  height: "12px"
+  width: '12px',
+  height: '12px',
 });
 
 export const MiniHeaderContainer = styled(Box)({
@@ -48,7 +48,7 @@ export const MiniHeaderContainer = styled(Box)({
   alignItems: 'center',
   width: '100%',
   marginTop: '20px',
-  marginBottom: "24px",
+  marginBottom: '24px',
   // overflowY: "auto",
   color: '#36415D',
 });
@@ -100,7 +100,7 @@ export const FunnelIcon = styled(Image)({
 export const FilterIcon = styled(Image)({
   cursor: 'pointer',
   marginRight: '10px',
-  marginLeft: '7px'
+  marginLeft: '7px',
 });
 
 export const DueDate = styled(Box)({
@@ -124,13 +124,12 @@ export const FirstHeader = styled('div')({
 });
 
 export const BodyInfo = styled('div')({
-  cursor:"pointer"
-
+  cursor: 'pointer',
 });
 
 export const BodyContTitle = styled('div')({
   marginLeft: '10px',
-  cursor:"pointer"
+  cursor: 'pointer',
 });
 
 export const SecondHeader = styled('div')({
@@ -194,4 +193,16 @@ export const AppliedFilter = styled('div')({
   display: 'flex',
   marginLeft: '10px',
   cursor: 'pointer',
-})
+});
+
+export const StyledMenu = styled(MenuItem)({
+  borderBottom: '1px solid #D9D9D9',
+  width: '218px',
+  margin: '0px 20px',
+  '&:hover': {
+    cursor: 'pointer',
+  },
+  padding: 0,
+  height: '38px',
+  fontSize: '14px',
+});

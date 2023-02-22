@@ -1,20 +1,24 @@
-import { Box, Drawer, InputAdornment } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { useEffect, useState } from "react";
 // ../styles/Home.module.css
 import Image from "next/image";
 // import dividerIcon from "../../../public/images/dividerIcon.svg";
 // import filterFunnelIcon from "../../../public/images/filterFunnelIcon.svg";
-import SearchIcon from "@mui/icons-material/Search";
+import _ from "lodash";
 import Moment from "moment";
 import router from "next/router";
+import { CSVLink } from "react-csv";
 import { ITasks } from "../../../models/Itask";
+import AppliedFilterIcon from "../../../public/divami_icons/appliedFilter.svg";
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
-import Divider from "../../../public/divami_icons/divider.svg";
+import DividerSvg from "../../../public/divami_icons/divider.svg";
 import DownArrow from "../../../public/divami_icons/downArrow.svg";
 import Download from "../../../public/divami_icons/download.svg";
 import FilterInActive from "../../../public/divami_icons/filterInactive.svg";
 import RFIList from "../../../public/divami_icons/rfiList.svg";
-import Search from "../../../public/divami_icons/search.svg";
+import { default as Search, default as SearchBoxIcon } from "../../../public/divami_icons/search.svg";
+import sort from "../../../public/divami_icons/sort.svg";
 import SubmittalList from "../../../public/divami_icons/submittalList.svg";
 import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
 import UpArrow from "../../../public/divami_icons/upArrow.svg";
@@ -22,7 +26,7 @@ import { getProjectUsers } from "../../../services/project";
 import {
   getTasksPriority,
   getTaskStatus,
-  getTasksTypes,
+  getTasksTypes
 } from "../../../services/task";
 import TaskFilterCommon from "../task-filter-common/TaskFilterCommon";
 import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
@@ -41,9 +45,9 @@ import {
   DueDateDiv,
   FilterIcon,
   FirstHeader,
-  FunnelIcon,
   HeaderContainer,
   HorizontalLine,
+  IconContainer,
   MessageDiv,
   MiniHeaderContainer,
   MiniSymbolsContainer,
@@ -51,14 +55,12 @@ import {
   SearchGlassIcon,
   SecondDividerIcon,
   SecondHeader,
+  StyledMenu,
   TaskListContainer,
   ThirdHeader,
-  TitleContainer,
+  TitleContainer
 } from "./TaskListStyles";
-import _ from "lodash";
-import { CSVLink } from "react-csv";
-import SearchBoxIcon from "../../../public/divami_icons/search.svg";
-import AppliedFilterIcon from "../../../public/divami_icons/appliedFilter.svg";
+import { Box, Divider, Drawer, InputAdornment, ListItemIcon, Tooltip } from '@mui/material';
 
 interface IProps {
   closeOverlay: () => void;
@@ -87,6 +89,7 @@ const CustomTaskListDrawer = (props: any) => {
     deleteTheTask,
     taskFilterState,
     getTasks,
+    handleOnTasksSort
   } = props;
 
   const [taskType, setTaskType] = useState<[string]>();
@@ -102,6 +105,52 @@ const CustomTaskListDrawer = (props: any) => {
   const [filteredTaskList, setFilteredTaskList] = useState(taskListDataState);
   const [taskList, setTaskList] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc");
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const sortMenuOptions = [
+    {
+      label: "Status ( To Do - Completed)",
+      icon: null,
+      method: "status_asc"
+    },
+    {
+      label: "Status ( Completed - To Do)",
+      icon: null,
+      method: "status_desc"
+    },
+
+    {
+      label: "Priotity ( High - Low)",
+      icon: null,
+      method: "Dsc Priority"
+    },
+    {
+      label: "Priotity ( Low - High)",
+      icon: null,
+      method: "Asc Priority"
+    },
+    {
+      label: "Due Date ",
+      icon: UpArrow,
+      method: "Dsc DueDate"
+    },
+    {
+      label: "Due Date ",
+      icon: DownArrow,
+      method: "Asc DueDate"
+    },
+  ]
+
+  const handleSortClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleSortMenuClose = () => {
+    setIsSortMenuOpen(false)
+    setAnchorEl(null)
+  }
+
+  const handleSortMenuClick = (sortMethod: string) => handleOnTasksSort(sortMethod)
 
   useEffect(() => {
     setTaskList(tasksList);
@@ -324,7 +373,7 @@ const CustomTaskListDrawer = (props: any) => {
                 alt={"close icon"}
                 onClick={() => setSearchingOn((prev) => !prev)}
               />
-              <DividerIcon src={Divider} alt="" />
+              <DividerIcon src={DividerSvg} alt="" />
               {taskFilterState.isFilterApplied ? (
                 <AppliedFilter>
                   {taskFilterState.numberOfFilters} Filters{" "}
@@ -337,6 +386,17 @@ const CustomTaskListDrawer = (props: any) => {
                   />
                 </AppliedFilter>
               ) : null}
+
+              <Tooltip title="Sort Menu">
+                <IconContainer
+                  src={sort}
+                  alt="Arrow"
+                  onClick={(e) => {
+                    setIsSortMenuOpen(prev => !prev);
+                    handleSortClick(e)
+                  }}
+                />
+              </Tooltip>
               {sortOrder === "asc" ? (
                 <>
                   <ArrowUpIcon
@@ -360,9 +420,10 @@ const CustomTaskListDrawer = (props: any) => {
               )}
               <DueDate>Due Date</DueDate>
 
-              <SecondDividerIcon src={Divider} alt="" />
 
-              <FunnelIcon
+              <SecondDividerIcon src={DividerSvg} alt="" />
+
+              <IconContainer
                 src={FilterInActive}
                 alt="Arrow"
                 onClick={() => {
@@ -405,14 +466,14 @@ const CustomTaskListDrawer = (props: any) => {
                             val.type === "RFI"
                               ? RFIList
                               : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Submittals"
-                              ? SubmittalList
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : ""
+                                ? TransmittalList
+                                : val.type === "Submittals"
+                                  ? SubmittalList
+                                  : val.type === "Transmittals"
+                                    ? TransmittalList
+                                    : val.type === "Transmittals"
+                                      ? TransmittalList
+                                      : ""
                           }
                           alt="Arr"
                         />
@@ -457,14 +518,14 @@ const CustomTaskListDrawer = (props: any) => {
                             val.type === "RFI"
                               ? RFIList
                               : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Submittals"
-                              ? SubmittalList
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : ""
+                                ? TransmittalList
+                                : val.type === "Submittals"
+                                  ? SubmittalList
+                                  : val.type === "Transmittals"
+                                    ? TransmittalList
+                                    : val.type === "Transmittals"
+                                      ? TransmittalList
+                                      : ""
                           }
                           alt="Arr"
                         />
@@ -540,6 +601,57 @@ const CustomTaskListDrawer = (props: any) => {
           />
         </Drawer>
       )}
+      <Menu
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={isSortMenuOpen}
+        onClose={handleSortMenuClose}
+        onClick={handleSortMenuClose}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            mt: 1.5,
+            '& .MuiAvatar-root': {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            '&:before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: 'background.paper',
+              transform: 'translateY(-50%) rotate(45deg)',
+              zIndex: 0,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        {sortMenuOptions.map((option) =>
+          <>
+            <StyledMenu key={option.label} onClick={() => { handleSortMenuClick(option.method) }}>
+              {option.label}
+              {option.icon && <ListItemIcon>
+                <IconContainer
+                  src={option.icon}
+                  alt={option.label}
+                />
+              </ListItemIcon>
+              }
+            </StyledMenu>
+          </>
+        )
+        }
+      </Menu>
     </TaskListContainer>
   );
 };

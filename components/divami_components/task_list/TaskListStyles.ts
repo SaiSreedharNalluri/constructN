@@ -1,7 +1,7 @@
 import { styled } from '@mui/system';
 import { Theme } from '../../../styles/globalStyles';
 import Image from 'next/image';
-import { Box, TextField } from '@mui/material';
+import { Box, MenuItem, TextField } from '@mui/material';
 
 export const TaskListContainer = styled('div')({
   width: '438px',
@@ -26,16 +26,16 @@ export const TitleContainer = styled(Box)({
   paddingRight: '20px',
 
   color: '#36415D',
-  fontFamily: "Open Sans",
-  fontStyle: "normal",
-  fontWeight: "400",
-  fontSize: "16px",
+  fontFamily: 'Open Sans',
+  fontStyle: 'normal',
+  fontWeight: '400',
+  fontSize: '16px',
 });
 
 export const CloseIcon = styled(Image)({
   cursor: 'pointer',
-  width: "12px",
-  height: "12px"
+  width: '12px',
+  height: '12px',
 });
 
 export const MiniHeaderContainer = styled(Box)({
@@ -46,7 +46,7 @@ export const MiniHeaderContainer = styled(Box)({
   alignItems: 'center',
   width: '100%',
   marginTop: '20px',
-  marginBottom: "24px",
+  marginBottom: '24px',
 
   // overflowY: "auto",
   color: '#36415D',
@@ -78,7 +78,7 @@ export const SecondDividerIcon = styled(Image)({
 
 export const ArrowUpIcon = styled(Image)({
   cursor: 'pointer',
-   marginLeft: '15px',
+  marginLeft: '15px',
 });
 
 export const DownloadIcon = styled(Image)({
@@ -86,14 +86,15 @@ export const DownloadIcon = styled(Image)({
   marginLeft: '12px',
 });
 
-export const FunnelIcon = styled(Image)({
+export const IconContainer = styled(Image)({
   cursor: 'pointer',
-   marginLeft: '16px',
+  marginLeft: '16px',
 });
+
 export const FilterIcon = styled(Image)({
   cursor: 'pointer',
   marginRight: '10px',
-  marginLeft: '7px'
+  marginLeft: '7px',
 });
 export const AppliedFilter = styled('div')({
   border: '1px solid #D9D9D9',
@@ -108,7 +109,7 @@ export const AppliedFilter = styled('div')({
   display: 'flex',
   marginLeft: '10px',
   cursor: 'pointer',
-})
+});
 
 export const DueDate = styled(Box)({
   marginLeft: '14px',
@@ -212,4 +213,16 @@ export const MessageDiv = styled('div')({
   // border: "1px solid red",
   // marginLeft: "10px",
   marginTop: '30px',
+});
+
+export const StyledMenu = styled(MenuItem)({
+  borderBottom: '1px solid #D9D9D9',
+  width: '218px',
+  margin: '0px 20px',
+  '&:hover': {
+    cursor: 'pointer',
+  },
+  padding: 0,
+  height: '38px',
+  fontSize: '14px',
 });

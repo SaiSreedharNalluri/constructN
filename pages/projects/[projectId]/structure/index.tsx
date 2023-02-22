@@ -1,55 +1,42 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import Header from "../../../../components/divami_components/header/Header";
-import { ChildrenEntity, IStructure } from "../../../../models/IStructure";
-import CollapsableMenu from "../../../../components/layout/collapsableMenu";
-import { getProjectDetails } from "../../../../services/project";
-import { ISnapshot } from "../../../../models/ISnapshot";
+import { styled } from "@mui/system";
+import { getCookie } from "cookies-next";
 import _ from "lodash";
-import { faLessThan } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Moment from "moment";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import React, { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
+import GenericViewer from "../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../components/container/leftOverLay";
 import MapLoading from "../../../../components/container/mapLoading";
-import authHeader from "../../../../services/auth-header";
-import GenericViewer from "../../../../components/container/GenericViewer";
-import RightFloatingMenu from "../../../../components/container/rightFloatingMenu/rightFloatingMenu";
-import { IToolResponse, ITools } from "../../../../models/ITools";
-import { getStructureList } from "../../../../services/structure";
-import { IActiveRealityMap } from "../../../../models/IReality";
+import Header from "../../../../components/divami_components/header/Header";
+import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
+import ToolBarMenuWrapper from "../../../../components/divami_components/toolbar/ToolBarMenuWrapper";
 import { IDesignMap } from "../../../../models/IDesign";
+import { IProjects } from "../../../../models/IProjects";
+import { IActiveRealityMap } from "../../../../models/IReality";
+import { ISnapshot } from "../../../../models/ISnapshot";
+import { Issue } from "../../../../models/Issue";
+import { ChildrenEntity, IStructure } from "../../../../models/IStructure";
+import { ITasks } from "../../../../models/Itask";
+import { IToolResponse, ITools } from "../../../../models/ITools";
+import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
+import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
+import { deleteAttachment } from "../../../../services/attachments";
+import authHeader from "../../../../services/auth-header";
 import {
   deleteIssue,
   editIssue,
   getIssuesList,
   getIssuesPriority,
   getIssuesStatus,
-  getIssuesTypes,
+  getIssuesTypes
 } from "../../../../services/issue";
-import { getCookie } from "cookies-next";
-import { toast } from "react-toastify";
-import { deleteTask, getTasksList } from "../../../../services/task";
-import { Issue } from "../../../../models/Issue";
-import { ITasks } from "../../../../models/Itask";
-import IssueCreate from "../../../../components/container/rightFloatingMenu/issueMenu/issueCreate";
-import TaskCreate from "../../../../components/container/rightFloatingMenu/taskMenu/taskCreate";
-import IssueList from "../../../../components/container/rightFloatingMenu/issueMenu/issueList";
-import { it } from "node:test";
-import Moment from "moment";
-import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
-import ToolBarMenuWrapper from "../../../../components/divami_components/toolbar/ToolBarMenuWrapper";
-import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
-import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
-import { styled } from "@mui/system";
-import PopupComponent from "../../../../components/popupComponent/PopupComponent";
-import { CustomToaster } from "../../../../components/divami_components/custom-toaster/CustomToaster";
-import { log } from "node:console";
-import { deleteAttachment } from "../../../../services/attachments";
-import html2canvas from "html2canvas";
-import ProjectInfo from "../../../../components/container/projectInfo";
-import { IProjects } from "../../../../models/IProjects";
+import { getProjectDetails } from "../../../../services/project";
+import { getStructureList } from "../../../../services/structure";
+import { deleteTask, getTasksList, getTasksPriority, getTaskStatus } from "../../../../services/task";
 
-interface IProps {}
+interface IProps { }
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -109,7 +96,9 @@ const Index: React.FC<IProps> = () => {
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
   const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
+  const [tasksPriotityList, setTasksPriorityList] = useState<[string]>([""]);
   const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
+  const [tasksStatusList, setTasksStatusList] = useState<[string]>([""]);
   const [issueTypesList, setIssueTypesList] = useState<[string]>([""]);
 
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
@@ -185,10 +174,30 @@ const Index: React.FC<IProps> = () => {
         .catch((error) => {
           toast.error("failed to load data");
         });
+
+      getTasksPriority(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setTasksPriorityList(response.result);
+          }
+        })
+        .catch((error) => {
+          toast.error("failed to load data");
+        });
+
       getIssuesStatus(router.query.projectId as string)
         .then((response) => {
           if (response.success === true) {
             setIssueStatusList(response.result);
+          }
+        })
+        .catch((error) => {
+          toast.error("failed to load data");
+        });
+      getTaskStatus(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setTasksStatusList(response.result);
           }
         })
         .catch((error) => {
@@ -330,11 +339,9 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${
-                  structure?._id
-                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
-                  currentProjectId as string
-                }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
+                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
+                  }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -567,34 +574,28 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "Asc DueDate":
+        console.log("sortMethod", sortMethod);
         setIssueFilterList(issuesList);
         setIssueFilterList(
-          issueFilterList.sort((a, b) => {
-            if (a.dueDate > b.dueDate) {
-              return 1;
-            } else if (b.dueDate > a.dueDate) {
-              return -1;
-            }
-            return 0;
+          issueFilterList.sort((a: any, b: any) => {
+            return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
           })
         );
         setIssueList(issueFilterList);
         break;
       case "Dsc DueDate":
+        console.log("sortMethod", sortMethod);
         setIssueFilterList(issuesList);
         setIssueFilterList(
-          issueFilterList.sort((a, b) => {
-            if (a.dueDate > b.dueDate) {
-              return -1;
-            } else if (b.dueDate > a.dueDate) {
-              return 1;
-            }
-            return 0;
+          issueFilterList.sort((a: any, b: any) => {
+            return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
           })
         );
         setIssueList(issueFilterList);
         break;
       case "Asc Priority":
+        console.log("sortMethod", sortMethod);
+
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a, b) => {
@@ -615,6 +616,8 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "Dsc Priority":
+        console.log("sortMethod", sortMethod);
+
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a, b) => {
@@ -634,11 +637,149 @@ const Index: React.FC<IProps> = () => {
         );
         setIssueList(issueFilterList);
         break;
+      case "status_asc":
+        console.log("sortMethod", sortMethod);
+        setIssueFilterList(issuesList);
+        setIssueFilterList(
+          issueFilterList.sort((a, b) => {
+            if (
+              issueStatusList?.indexOf(a.priority) >
+              issueStatusList?.indexOf(b.priority)
+            ) {
+              return -1;
+            } else if (
+              issueStatusList?.indexOf(b.priority) >
+              issueStatusList?.indexOf(a.priority)
+            ) {
+              return 1;
+            }
+            return 0;
+          })
+        );
+        setIssueList(issueFilterList);
+        break;
+      case "status_desc":
+        console.log("sortMethod", sortMethod);
+        setIssueFilterList(issuesList);
+        setIssueFilterList(
+          issueFilterList.sort((b, a) => {
+            if (
+              issueStatusList?.indexOf(a.priority) >
+              issueStatusList?.indexOf(b.priority)
+            ) {
+              return -1;
+            } else if (
+              issueStatusList?.indexOf(b.priority) >
+              issueStatusList?.indexOf(a.priority)
+            ) {
+              return 1;
+            }
+            return 0;
+          })
+        );
+        setIssueList(issueFilterList);
+        break;
       default:
         console.log("Not Sorted");
         break;
     }
   };
+
+  const handleOnTasksSort = (sortMethod: string) => {
+    console.log("sortMethod-tasks", sortMethod, taskFilterList, "taskFilterList");
+    switch (sortMethod) {
+      case "Last Updated":
+        setTaskFilterList(tasksList)
+        setTaskFilterList(
+          taskFilterList.sort((a, b) => {
+            if (a.updatedAt > b.updatedAt) {
+              return 1;
+            } else if (b.updatedAt > a.updatedAt) {
+              return -1;
+            }
+            return 0;
+          })
+        );
+        setTasksList(taskFilterList);
+        break;
+      case "First Updated":
+        setTaskFilterList(tasksList)
+        setTaskFilterList(
+          taskFilterList.sort((a, b) => {
+            if (a.updatedAt > b.updatedAt) {
+              return -1;
+            } else if (b.updatedAt > a.updatedAt) {
+              return 1;
+            }
+            return 0;
+          })
+        );
+        setTasksList(taskFilterList);
+        break;
+      case "Asc DueDate":
+        setTaskFilterList(tasksList)
+        setTaskFilterList(
+          taskFilterList.sort((a: any, b: any) => {
+            return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+          })
+        );
+        setTasksList(taskFilterList);
+        break;
+      case "Dsc DueDate":
+        setTaskFilterList(tasksList)
+        setTaskFilterList(
+          taskFilterList.sort((a: any, b: any) => {
+            return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+          })
+        );
+        setTasksList(taskFilterList);
+        break;
+      case "Asc Priority":
+        setTaskFilterList(tasksList)
+        setTaskFilterList(
+          taskFilterList.sort((a, b) => {
+            if (
+              tasksPriotityList?.indexOf(a.priority) >
+              tasksPriotityList?.indexOf(b.priority)
+            ) {
+              return 1;
+            } else if (
+              tasksPriotityList?.indexOf(b.priority) >
+              tasksPriotityList?.indexOf(a.priority)
+            ) {
+              return -1;
+            }
+            return 0;
+          })
+        );
+        setTasksList(taskFilterList);
+        break;
+      case "Dsc Priority":
+        setTaskFilterList(tasksList)
+        setTaskFilterList(
+          taskFilterList.sort((a, b) => {
+            if (
+              tasksPriotityList?.indexOf(a.priority) >
+              tasksPriotityList?.indexOf(b.priority)
+            ) {
+              return -1;
+            } else if (
+              tasksPriotityList?.indexOf(b.priority) >
+              tasksPriotityList?.indexOf(a.priority)
+            ) {
+              return 1;
+            }
+            return 0;
+          })
+        );
+        setTasksList(taskFilterList);
+        break;
+      default:
+        console.log("Not Sorted");
+        break;
+    }
+  };
+
   const handleOnIssueFilter = (formData: any) => {
     console.log("formdata", formData);
     const result = issueFilterList.filter(
@@ -846,6 +987,10 @@ const Index: React.FC<IProps> = () => {
     }
     return " | " + project?.name + " / " + structure?.name;
   };
+
+  useEffect(() => { console.log('issue list chnaged', issuesList) }, [issuesList])
+  useEffect(() => { console.log('issue list chnaged', tasksList) }, [tasksList])
+
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -862,9 +1007,8 @@ const Index: React.FC<IProps> = () => {
             <div
               style={{ overflow: "hidden" }}
               ref={leftRefContainer}
-              className={` ${
-                leftNav ? "visible" : "hidden"
-              }  absolute z-10 border border-gray-300 `}
+              className={` ${leftNav ? "visible" : "hidden"
+                }  absolute z-10 border border-gray-300 `}
             >
               <div>
                 <LeftOverLay
@@ -917,9 +1061,8 @@ const Index: React.FC<IProps> = () => {
                 <div
                   style={{ overflow: "hidden" }}
                   ref={leftRefContainer}
-                  className={`${
-                    hierarchy ? "visible" : "hidden"
-                  }  absolute z-10 border  white-bg projHier `}
+                  className={`${hierarchy ? "visible" : "hidden"
+                    }  absolute z-10 border  white-bg projHier `}
                 >
                   <div>
                     <LeftOverLay
@@ -1052,6 +1195,8 @@ const Index: React.FC<IProps> = () => {
               setIssueList={setIssueList}
               getIssues={getIssues}
               getTasks={getTasks}
+              handleOnIssueSort={handleOnIssueSort}
+              handleOnTasksSort={handleOnTasksSort}
             />
 
             {/* <CustomToaster /> */}
