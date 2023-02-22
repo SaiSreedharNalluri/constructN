@@ -71,10 +71,14 @@ export const DividerIcon = styled(Image)({
   cursor: 'pointer',
   marginLeft: '21px',
 });
+export const SecondDividerIcon = styled(Image)({
+  cursor: 'pointer',
+  marginLeft: '15px',
+});
 
 export const ArrowUpIcon = styled(Image)({
   cursor: 'pointer',
-  marginLeft: '27px',
+   marginLeft: '15px',
 });
 
 export const DownloadIcon = styled(Image)({
@@ -84,7 +88,7 @@ export const DownloadIcon = styled(Image)({
 
 export const FunnelIcon = styled(Image)({
   cursor: 'pointer',
-  marginLeft: '12px',
+   marginLeft: '16px',
 });
 export const FilterIcon = styled(Image)({
   cursor: 'pointer',
