@@ -6,7 +6,9 @@ import {
   createComment,
   createCommentReply,
   deleteComment,
+  deleteCommentReply,
   editComment,
+  editCommentReply,
   getCommentsList,
 } from '../../../../services/comments';
 import CommentForm from './commentForm';
@@ -22,25 +24,23 @@ const Comments: React.FC<IProps> = ({ entityId, currentProject }) => {
     _id: string;
     type: string;
   } | null>(null);
-  const [myProject,setMyProject] = useState(currentProject);
+  const [myProject, setMyProject] = useState(currentProject);
   useEffect(() => {
     if (router.isReady) {
-      if(router.query.projectId)
-      setMyProject(currentProject);
-      //setMyProject(router.query.projectId as string);
-      getCommentsList(myProject, entityId)
-        .then((response) => {
-          if (response.success === true) {
-            setBackendComments(response.result);
-          }
-        })
-        .catch((error) => {
-          toast.error('failed to load the data');
-        });
+      if (router.query.projectId)
+        getCommentsList(router.query.projectId as string, entityId)
+          .then((response) => {
+            if (response.success === true) {
+              setBackendComments(response.result);
+            }
+          })
+          .catch((error) => {
+            toast.error('failed to load the data');
+          });
     }
-  }, [entityId, router.isReady,currentProject]);
+  }, [entityId, router.isReady, router.query.projectId]);
   const addComment = (text: string) => {
-    createComment(myProject, {
+    createComment(router.query.projectId as string, {
       comment: text,
       entity: entityId,
     }).then((response) => {
@@ -50,14 +50,27 @@ const Comments: React.FC<IProps> = ({ entityId, currentProject }) => {
       }
     });
   };
-  const updateComment = (text: string, commentId: string, type: string) => {
-    if (type === 'comments') {
-      editComment(myProject, commentId, { comment: text }).then((response) => {
+  const updateComment = (text: string, comment: any) => {
+    if (comment.commentId) {
+      editCommentReply(
+        router.query.projectId as string,
+        { reply: text },
+        comment.commentId,
+        comment._id
+      ).then((response) => {
+        if (response.success === true) {
+          toast.success('Comment reply is updated sucessfully');
+        }
+      });
+    } else {
+      editComment(router.query.projectId as string, comment._id, {
+        comment: text,
+      }).then((response) => {
         if (response.success === true) {
           toast.success('Comment is updated sucessfully');
           const updatedBackendComments = backendComments.map(
             (backendComment) => {
-              if (backendComment._id === commentId) {
+              if (backendComment._id === comment._id) {
                 return { ...backendComment, comment: text };
               }
               return backendComment;
@@ -67,11 +80,14 @@ const Comments: React.FC<IProps> = ({ entityId, currentProject }) => {
           setActiveComment(null);
         }
       });
-    } else if (type === 'reply') {
     }
   };
   const addReplyToComment = (text: string, commentId: string) => {
-    createCommentReply(myProject, { reply: text }, commentId).then((response) => {
+    createCommentReply(
+      router.query.projectId as string,
+      { reply: text },
+      commentId
+    ).then((response) => {
       if (response.success === true) {
         toast.success(response.message);
         const indexOfUserToReplace = backendComments.findIndex(
@@ -85,16 +101,30 @@ const Comments: React.FC<IProps> = ({ entityId, currentProject }) => {
       }
     });
   };
-  const deleteComments = (commentId: string) => {
-    deleteComment(myProject, commentId).then((response) => {
-      if (response.success === true) {
-        toast.success('Comment is deleted sucessfully');
-        const updatedBackendComments = backendComments.filter(
-          (backendComment) => backendComment._id !== commentId
-        );
-        setBackendComments(updatedBackendComments);
-      }
-    });
+  const deleteComments = (comment: any) => {
+    if (comment.comment) {
+      deleteCommentReply(
+        router.query.projectId as string,
+        comment.commentId,
+        comment._id
+      ).then((response) => {
+        if (response.success === true) {
+          toast.success('Comment reply is deleted sucessfully');
+        }
+      });
+    } else {
+      deleteComment(router.query.projectId as string, comment._id).then(
+        (response) => {
+          if (response.success === true) {
+            toast.success('Comment is deleted sucessfully');
+            const updatedBackendComments = backendComments.filter(
+              (backendComment) => backendComment._id !== comment._id
+            );
+            setBackendComments(updatedBackendComments);
+          }
+        }
+      );
+    }
   };
   return (
     <React.Fragment>
