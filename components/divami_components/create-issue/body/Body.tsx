@@ -147,6 +147,7 @@ const Body = ({
                   };
                 }),
                 defaultValue: editData.type,
+                isReadOnly: true,
               };
             }
             if (item.id === "description") {

@@ -50,6 +50,7 @@ import { getTagsList } from "../../../../services/tags";
 import { IContext, ITools } from "../../../../models/ITools";
 import MultipleFileUpload from "../../multipleFileUpload";
 import NextImage from "../../../core/Image";
+import Comments from "../comments/comments";
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
@@ -328,6 +329,7 @@ const IssueList: React.FC<IProps> = ({
       setIssueViewMode("list");
     }, 2000);
   };
+
   const renderIssueView = (viewParam: string) => {
     switch (viewParam) {
       case "filter":
@@ -726,135 +728,124 @@ const IssueList: React.FC<IProps> = ({
               </div>
             </div>
             <div className="overflow-y-auto calc-h112 px-4 ">
-              <div className="">
-                <p>Details</p>
-                <Image
-                  alt=""
-                  width={1080}
-                  height={1080}
-                  className="w-10/12 h-24"
-                  src={issueObj?.screenshot as string}
-                />
-                <p className="mt-2">{issueObj?.title}</p>
-              </div>
               <div>
-                <div className="flex mt-2">
-                  <FontAwesomeIcon
-                    icon={faSpinner}
-                    className="mt-1 "
-                  ></FontAwesomeIcon>
-                  <p className="ml-2">{issueObj?.status}</p>
+                <div className="">
+                  <p>Details</p>
+                  <Image
+                    alt=""
+                    width={1080}
+                    height={1080}
+                    className="w-10/12 h-24"
+                    src={issueObj?.screenshot as string}
+                  />
+                  <p className="mt-2">{issueObj?.title}</p>
                 </div>
-                <div className="flex">
-                  <FontAwesomeIcon
-                    className="mt-1"
-                    icon={faFlag}
-                  ></FontAwesomeIcon>
-                  <p className="ml-1">{issueObj?.priority}</p>
+                <div>
+                  <div className="flex mt-2">
+                    <FontAwesomeIcon
+                      icon={faSpinner}
+                      className="mt-1 "
+                    ></FontAwesomeIcon>
+                    <p className="ml-2">{issueObj?.status}</p>
+                  </div>
+                  <div className="flex">
+                    <FontAwesomeIcon
+                      className="mt-1"
+                      icon={faFlag}
+                    ></FontAwesomeIcon>
+                    <p className="ml-1">{issueObj?.priority}</p>
+                  </div>
+                  <div className="flex">
+                    <FontAwesomeIcon
+                      className="mt-1"
+                      icon={faCalendar}
+                    ></FontAwesomeIcon>
+                    <p className="ml-1">
+                      {Moment(issueObj?.dueDate).format("MMM Do YYYY")}
+                    </p>
+                  </div>
+                  <div className="flex">
+                    <FontAwesomeIcon
+                      className="mt-1"
+                      icon={faUser}
+                    ></FontAwesomeIcon>
+                    <p className="ml-1">
+                      {getOwnerName(issueObj?.owner as string)}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex">
-                  <FontAwesomeIcon
-                    className="mt-1"
-                    icon={faCalendar}
-                  ></FontAwesomeIcon>
-                  <p className="ml-1">
-                    {Moment(issueObj?.dueDate).format("MMM Do YYYY")}
+                <div className="grid grid-cols-1 gap-x-4 gap-y-2   grid-rows-2  mt-2">
+                  <div className="flex">
+                    <FontAwesomeIcon
+                      className="mt-1"
+                      icon={faUser}
+                    ></FontAwesomeIcon>
+                    <p className="ml-1"></p>
+                    {issueObj?.assignees.map((a: any) => a.firstName).join(",")}
+                  </div>
+                </div>
+                <div className=" mt-2 ">
+                  <h6 className="underline ">Issue Description</h6>
+                  <p className=" break-words  whitespace-pre-wrap">
+                    {issueObj?.description}
                   </p>
                 </div>
-                <div className="flex">
-                  <FontAwesomeIcon
-                    className="mt-1"
-                    icon={faUser}
-                  ></FontAwesomeIcon>
-                  <p className="ml-1">
-                    {getOwnerName(issueObj?.owner as string)}
-                  </p>
+                <div>
+                  <h6 className="underline mt-3">Attachments</h6>
+                  <MultipleFileUpload
+                    issueId={issueObj?._id as string}
+                    responseData={responseData}
+                  />
                 </div>
-              </div>
-              <div className="grid grid-cols-1 gap-x-4 gap-y-2   grid-rows-2  mt-2">
-                <div className="flex">
-                  <FontAwesomeIcon
-                    className="mt-1"
-                    icon={faUser}
-                  ></FontAwesomeIcon>
-                  <p className="ml-1"></p>
-                  {issueObj?.assignees.map((a: any) => a.firstName).join(",")}
-                </div>
-              </div>
-              <div className=" mt-2 ">
-                <h6 className="underline ">Issue Description</h6>
-                <p className=" break-words  whitespace-pre-wrap">
-                  {issueObj?.description}
-                </p>
-              </div>
-              <div>
-                <h6 className="underline mt-3">Attachments</h6>
-                <MultipleFileUpload
-                  issueId={issueObj?._id as string}
-                  responseData={responseData}
-                />
-              </div>
-              <div>
-                {issueObj?.attachments.map((attachment) => {
-                  return (
-                    <div key={attachment._id}>
-                      {getFileIcon(attachment.name)}
-                      <a
-                        onClick={() => {
-                          getFileType(attachment);
-                        }}
-                      >
-                        {attachment.name}
-                      </a>
-                      <FontAwesomeIcon
-                        icon={faTrashCan}
-                        className="mt-2 cursor-pointer pl-5"
-                        onClick={() => {
-                          setOpen(true);
-                          setDeletionType("attachmentDelete");
-                          setAttachmentId(attachment._id);
-                        }}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className=" mt-2 ">
-                <h6 className="underline ">Related Tags</h6>
-                <div className="grid grid-cols-3 gap-2 text-center  mt-2">
-                  {issueObj?.tags.map((tagData) => {
+                <div>
+                  {issueObj?.attachments.map((attachment) => {
                     return (
-                      <div
-                        className="bg-gray-500 rounded-xl w-full px-0.5 py-1"
-                        key={tagData}
-                      >
-                        {tagData}
+                      <div key={attachment._id}>
+                        {getFileIcon(attachment.name)}
+                        <a
+                          onClick={() => {
+                            getFileType(attachment);
+                          }}
+                        >
+                          {attachment.name}
+                        </a>
+                        <FontAwesomeIcon
+                          icon={faTrashCan}
+                          className="mt-2 cursor-pointer pl-5"
+                          onClick={() => {
+                            setOpen(true);
+                            setDeletionType("attachmentDelete");
+                            setAttachmentId(attachment._id);
+                          }}
+                        />
                       </div>
                     );
                   })}
                 </div>
+
+                <div className=" mt-2 ">
+                  <h6 className="underline ">Related Tags</h6>
+                  <div className="grid grid-cols-3 gap-2 text-center  mt-2">
+                    {issueObj?.tags.map((tagData) => {
+                      return (
+                        <div
+                          className="bg-gray-500 rounded-xl w-full px-0.5 py-1"
+                          key={tagData}
+                        >
+                          {tagData}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="absolute bottom-0  border-t border-solid border-black w-full">
-              <input
-                type="text"
-                className="flex w-full  rounded focus:outline-none focus:border-indigo-300 pl-4  h-10"
-                placeholder="Add Comment"
-              />
-              <div className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400">
-                <FontAwesomeIcon
-                  icon={faPaperclip}
-                  className="mr-2"
-                ></FontAwesomeIcon>
-                <FontAwesomeIcon
-                  icon={faSmile}
-                  className="mr-2"
-                ></FontAwesomeIcon>
-                <FontAwesomeIcon
-                  icon={faPaperPlane}
-                  className="mr-6"
-                ></FontAwesomeIcon>
+              <div className="w-full mt-5">
+                <div>
+                  <Comments
+                    currentProject={router.query.projectId as string}
+                    entityId={issueObj?._id as string}
+                  />
+                </div>
               </div>
             </div>
           </div>

@@ -23,6 +23,7 @@ export interface Issue {
       _id: string;
     }
   ];
+  sequenceNumber?: number;
   createdAt: string;
   updatedAt: string;
   startDate: string;

@@ -60,6 +60,16 @@ export class PotreeViewerUtils {
         window.floorMap = this.floorMap;
 
         this.createTagTool = false;
+        this.tempTag;
+        this._issuesList = [];
+        this._tasksList = [];
+        this.tagMap = {};
+        this.issueSpriteMap = {};
+        this.taskSpriteMap = {};
+        this.tagState = {
+            "Issue": true,
+            "Task": true
+        };
 
         this.measureClickHandler = this.clickHandler.bind(this);
         this.sendContext = false;
@@ -149,11 +159,31 @@ export class PotreeViewerUtils {
         console.log("Context: ", this.context)
         this.realityPositionMap = realityPositionMap;
         this.isPendingLayersToLoad = true;
-        if (this.isPointCloudLoaded) {
+        if (this.loadLayersOnDataLoadCompletion()) {
             this.loadLayers();
+            this.loadIssues();
+            this.loadTasks();
         }
 
     }
+
+    updateIssuesData = (list) => {
+        console.log("Inside update issues data: ", list);
+        this._issuesList = list;
+        this.isPendingLayersToLoad = true;
+        if (this.loadLayersOnDataLoadCompletion()) {
+          this.loadIssues();
+        }
+      }
+    
+    updateTasksData = (list) => {
+        console.log("Inside update tasks data: ", list);
+        this._tasksList = list;
+        this.isPendingLayersToLoad = true;
+        if (this.loadLayersOnDataLoadCompletion()) {
+          this.loadTasks();
+        }
+      }
 
     loadData() {
         this.removeData();
@@ -176,13 +206,26 @@ export class PotreeViewerUtils {
             this.viewer.fitToScreen();
             // console.log('Point Cloud Loaded');
             this.isPointCloudLoaded = true;
-            if (this.isPendingLayersToLoad) {
+            if (this.loadLayersOnDataLoadCompletion()) {
                 this.loadLayers();
+                this.loadIssues();
+                this.loadTasks();
             }
 
 
         });
     }
+
+    loadLayersOnDataLoadCompletion = () => {
+        console.log("Inside loadlayers On data load complete: ", this.isPendingLayersToLoad, this.isPointCloudLoaded);
+        if (this.isPendingLayersToLoad) {
+          if (this.isViewerInitialized && this.isPointCloudLoaded) {
+            return true;
+          }
+          return false;
+        }
+        return false;
+      }
 
     loadLayers() {
         // console.log("Inside Potree load layers: ", this.realityPositionMap);
@@ -243,6 +286,46 @@ export class PotreeViewerUtils {
             }
             this.loadFloormap(imagePositionsPath);
         });
+    }
+
+    loadIssues() {
+        // console.log("Inside load issue: ", this._issuesList);
+        this.removeIssues();
+        delete this.issueSpriteMap;
+        this.issueSpriteMap = {};
+        for(let issue of this._issuesList) {
+            // console.log("Inside issue create reality: ", issue);
+            let context = this.getContextLocalFromGlobal(issue.context);
+            context.id = issue._id;
+            // let sprite = this.createSprite(context);
+            let sprite = this.createAnnotation(context);
+            this.issueSpriteMap[context.id] = {
+                context: context,
+                tag: sprite
+            }
+            // this.viewer.scene.scene.add(sprite);
+            this.viewer.scene.annotations.add(sprite);
+        }
+    }
+
+    loadTasks() {
+        // console.log("Inside load issue: ", this._tasksList);
+        this.removeTasks();
+        delete this.taskSpriteMap;
+        this.taskSpriteMap = {};
+        for(let task of this._tasksList) {
+            // console.log("Inside issue create reality: ", task);
+            let context = this.getContextLocalFromGlobal(task.context);
+            context.id = task._id;
+            // let sprite = this.createSprite(context);
+            let sprite = this.createAnnotation(context);
+            this.taskSpriteMap[context.id] = {
+                context: context,
+                tag: sprite
+            }
+            // this.viewer.scene.scene.add(sprite);
+            this.viewer.scene.annotations.add(sprite);
+        }
     }
 
     handleContext(context) {
@@ -920,8 +1003,8 @@ export class PotreeViewerUtils {
                     this.unloadOrientedImage()
                     this.sendContext = true;
                 } else {
-                    // this.viewer.scene.images360[0].unfocus();
-                    // this.pointCloudView(false);
+                    this.viewer.scene.images360[0].unfocus();
+                    this.pointCloudView(false);
                 }
                 break;
             case "ArrowUp":
@@ -1277,80 +1360,130 @@ export class PotreeViewerUtils {
         this.isAddTagActive = this.activateCreateTagTool();
     }
 
-    clickHandler = (event) => {
-        const raycaster = new THREE.Raycaster();
-        let pickedObject = undefined;
+    cancelAddTag(){
+        console.log("Inside cancel add tag potree: ", this.tempTag);
+        this.viewer.scene.annotations.remove(this.tempTag);
+        // this.viewer.scene.scene.remove(this.tempTag);
+    }
 
+    selectTag(tag){
+
+    }
+
+    getMousePointCloudIntersection(mouse, camera, viewer, pointclouds, params = {}) {
+
+        let renderer = viewer.renderer;
+
+        let nmouse = {
+            x: (mouse.x / renderer.domElement.clientWidth) * 2 - 1,
+            y: -(mouse.y / renderer.domElement.clientHeight) * 2 + 1
+        };
+
+        let pickParams = {};
+
+        if(params.pickClipped){
+            pickParams.pickClipped = params.pickClipped;
+        }
+
+        pickParams.x = mouse.x;
+        pickParams.y = renderer.domElement.clientHeight - mouse.y;
+
+        let raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(nmouse, camera);
+        let ray = raycaster.ray;
+
+        let selectedPointcloud = null;
+        let closestDistance = Infinity;
+        let closestIntersection = null;
+        let closestPoint = null;
+
+        for(let pointcloud of pointclouds){
+            let point = pointcloud.pick(viewer, camera, ray, pickParams);
+
+            if(!point){
+                continue;
+            }
+
+            let distance = camera.position.distanceTo(point.position);
+
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                selectedPointcloud = pointcloud;
+                closestIntersection = point.position;
+                closestPoint = point;
+            }
+        }
+
+        if (selectedPointcloud) {
+            return {
+                location: closestIntersection,
+                distance: closestDistance,
+                pointcloud: selectedPointcloud,
+                point: closestPoint
+            };
+        } else {
+            return null;
+        }
+    }
+
+    clickHandler = (event) => {
         const rect = this.viewer.renderArea.getBoundingClientRect();
         let pos = {
             x: event.clientX - rect.left,
             y: event.clientY - rect.top,
         };
         
-
-        // const pos = this.getCanvasRelativePosition(event);
-        let pickPosition = { x: 0, y: 0 };
-        pickPosition.x = (pos.x / this.viewer.renderArea.clientWidth) * 2 - 1;
-        pickPosition.y = (pos.y / this.viewer.renderArea.clientHeight) * -2 + 1;  // note we flip Y
-
-        raycaster.setFromCamera(pickPosition, this.viewer.scene.cameraP);
-        let objs = this.currentMode == 'image' ? this.viewer.scene.scene.children : [this.viewer.scene.scene.children[0].children[0]]
-        const intersectedObjects = raycaster.intersectObjects(objs, true);
-        if (intersectedObjects.length) {
-            let click_point = this.currentMode == 'image' ? intersectedObjects[2].point : intersectedObjects[0].point 
-            // let measure = new Potree.Measure();
-            // measure.showDistances = false;
-            // // measure.showCoordinates = true;
-            // measure.maxMarkers = 1;
-            // measure.type = 'Point';
-            // measure.name = 'Point';
-            // measure.addMarker(click_point);
-            // this.viewer.scene.addMeasurement(measure);
-
-            // this.createSprite(click_point);
-            this.createAnnotation(pickPosition);
-            
-
-            this.processTag(pickPosition);
-            console.log("Event clicked : ", pos, event, pickPosition);
+        const intersectedObjects = this.getMousePointCloudIntersection(pos, this.viewer.scene.cameraP, this.viewer, this.viewer.scene.pointclouds);
+        if (intersectedObjects) {
+            let click_point = intersectedObjects.location;
+            this.processTag(click_point);
+            console.log("Event clicked : ", pos, event, click_point);
         }
         this.viewer.renderArea.removeEventListener('click',  this.measureClickHandler);
     }
 
     processTag(click_point) {
-        let date_time = new Date();
-        // let screenShotPath = `${mainProjectID}/structures/${inProjectID}/snapshots/${viewer.tileset}/${date_time.getTime()}.png`
-        // let latest_measure = viewer.scene.measurements.slice(-1)[0]
         this.isAddTagActive = this.deactivateCreateTagTool();
         let offset = this.globalOffset;
         let tagPosition = {
-            x: click_point.x - offset[0],
-            y: click_point.y - offset[1],
-            z: click_point.z - offset[2]
+            x: click_point.x + offset[0],
+            y: click_point.y + offset[1],
+            z: click_point.z + offset[2]
         }
         let tagObject = {
-            position: tagPosition,
-            // screenShot: `https://${s3_bucket}.s3.ap-south-1.amazonaws.com/${screenShotPath}`
+            tagPosition: tagPosition,
         }
-        let save_obj = {
+        let tag_context_obj = {
             type: this.tagType,
             id: `Temp_${this.tagType}`,
             camera: this.getContext().cameraObject,
             tag: tagObject
-            
         }
 
         if (this.currentMode != "3d") {
+            let curImage = this.getCurrentImage();
+            console.log("Inside create tag object reality: ", curImage);
+            let imagePosition = this.currentMode === "image" ? {
+                x: curImage.position.x + offset[0],
+                y: curImage.position.y + offset[1],
+                z: curImage.position.z + offset[2]
+            } : {
+                x: curImage.position[0] + offset[0],
+                y: curImage.position[1] + offset[1],
+                z: curImage.position[2] + offset[2]
+            }
             let imageObject = {
-                position: this.getCurrentImage().position,
-                name: this.currentMode === "image" ? this.getCurrentImage.id: this.getCurrentImage.file
+                position: imagePosition,
+                name: this.currentMode === "image" ? curImage.id : curImage.file.split('/').pop()
             };
-            save_obj.image = imageObject;
+            tag_context_obj.image = imageObject;
         }
-        console.log('Saving Annotation: ', save_obj);
-        this.eventHandler(this.viewerId, save_obj)
-        // window.top.postMessage({type: 'save-tag', data: JSON.stringify(save_obj)}, "*");
-        // takeScreenshot(screenShotPath, viewer);
+        console.log('Saving Annotation: ', tag_context_obj);
+        // let tag = this.createSprite(this.getContextLocalFromGlobal(tag_context_obj));
+        let tag = this.createAnnotation(this.getContextLocalFromGlobal(tag_context_obj));
+        this.tempTag = tag;
+        this.viewer.scene.annotations.add(tag);
+        this.eventHandler(this.viewerId, tag_context_obj)
     }
 
     getSpriteIcon(type) {
@@ -1364,35 +1497,52 @@ export class PotreeViewerUtils {
         }
     }
 
-    createAnnotation(position) {
+    createAnnotation(context) {
+        let position = context.tag.tagPosition;
+        let cameraPosition = context.tag.tagPosition;
+        let cameraTarget = context.tag.tagPosition;
+        if (context.camera) {
+            cameraPosition = context.camera.cameraPosition;
+            cameraTarget = context.camera.cameraTarget;
+        }
+
         let tagObject =  $(`
         <span>
-            <img name="tag" src="${this.getSpriteIcon(this.tagType)}"/>
+            <img name=${context.id} src="${this.getSpriteIcon(context.type)}"/>
         </span>`);
+        tagObject.find(`img[name=${context.id}]`).click((event) => {
+            event.stopPropagation();
+            console.log("Inside temp tag clock event: ", event.target.name);
+            this.eventHandler(this.viewerId, context);
+        });
         let tag = new Potree.Annotation({
             position: [position.x, position.y, position.z],
             title: tagObject,
-            // cameraPosition: [590105.53, 231541.63, 782.05],
-            // cameraTarget: [590043.63, 231488.79, 740.78],
-            // description: `<ul><li>Click on the annotation label to move a predefined view.</li> 
-            // <li>Click on the icon to execute the specified action.</li>
-            // In this case, the action will bring you to another scene and point cloud.</ul>`
+            cameraPosition: [cameraPosition.x, cameraPosition.y, cameraPosition.z],
+            cameraTarget: [cameraTarget.x, cameraTarget.y, cameraTarget.z],
         });
+        // tag._display = false;
+        // tag._visible = false;
 
-        this.viewer.scene.annotations.add(tag);
-
+        return tag;
+        
     }
 
-    createSprite(position) {
-        const map = new THREE.TextureLoader().load(this.getSpriteIcon(this.tagType));
+    createSprite(context) {
+        let position = context.tag.tagPosition;
+
+        const map = new THREE.TextureLoader().load(this.getSpriteIcon(context.type));
         const material = new THREE.SpriteMaterial( { map: map } );
 
         const sprite = new THREE.Sprite( material );
-        sprite.material.depthTest = false;
+        sprite.material.depthTest = true;
         sprite.visible = true;
-        sprite.scale.set( 100, 100, 1);
-        sprite.position.set(position);
-        this.viewer.scene.scene.add(sprite);
+        sprite.scale.set( .2, .2, 1);
+        sprite.position.set(position.x, position.y, position.z);
+        if(context.id.includes("Temp")) {
+            this.tempTag = sprite;
+        }
+        return sprite;
     }
 
     clearTempMeasurements() {
@@ -1410,9 +1560,29 @@ export class PotreeViewerUtils {
     removeData() {
         // console.log("Inside remove data potree");
         try {
+            this.removeTasks();
+            this.removeIssues();
             this.removeAssets();
         } catch {
             console.log("Error while removing data from potree viewer: ");
+        }
+    }
+
+    removeTasks() {
+        // console.log("Inside remove tasks: ", this.taskSpriteMap);
+        for(let taskId of Object.keys(this.taskSpriteMap)) {
+            let annotation = this.taskSpriteMap[taskId].tag;
+            this.viewer.scene.annotations.remove(annotation);
+            annotation.dispose();
+        }
+    }
+
+    removeIssues() {
+        // console.log("Inside remove issues: ", this.issueSpriteMap);
+        for(let issueId of Object.keys(this.issueSpriteMap)) {
+            let annotation = this.issueSpriteMap[issueId].tag;
+            this.viewer.scene.annotations.remove(annotation);
+            annotation.dispose();
         }
     }
 
@@ -1428,6 +1598,13 @@ export class PotreeViewerUtils {
             });
            this.viewer.scene.scene.remove(this.viewer.scene.scene.children[0]);
            this.viewer.scene.removeOrientedImages(this.viewer.scene.orientedImages[0]);
+        }
+
+        if (this.viewer.scene.annotations.children && this.viewer.scene.annotations.children.length > 0) {
+            for(let annotation of this.viewer.scene.annotations.children) {
+                this.viewer.scene.annotations.remove(annotation);
+                annotation.dispose();
+            }
         }
 
         if (this.viewer.scene.images360.length && this.viewer.scene.images360[0]) {

@@ -42,7 +42,15 @@ export const ErrorField = styled("div")({
 });
 
 const CustomSelect = (props: any) => {
-  const { config, data, defaultValue, id, setFormConfig } = props;
+  const {
+    config,
+    data,
+    defaultValue,
+    id,
+    setFormConfig,
+
+    isReadOnly = false,
+  } = props;
 
   const [val, setVal] = useState(data?.defaultValue);
 
@@ -76,7 +84,12 @@ const CustomSelect = (props: any) => {
   console.log(data, "vafsfsl");
   return (
     <CustomSelectContainer>
-      <StyledSelect value={val} onChange={handlechange} id={id}>
+      <StyledSelect
+        value={val}
+        onChange={handlechange}
+        id={id}
+        readOnly={isReadOnly}
+      >
         {config.options?.length &&
           config.options.map((item: any, index: any) => (
             <StyledMenuItem

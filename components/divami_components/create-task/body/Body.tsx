@@ -53,7 +53,13 @@ const DatePickerContainer = styled(Box)({
   flexDirection: "column",
 });
 
-const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: any) => {
+const Body = ({
+  handleFormData,
+  editData,
+  validate,
+  setIsValidate,
+  tagsList,
+}: any) => {
   console.log(editData, "editData");
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
@@ -75,7 +81,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
         };
       }
       return item;
-    })
+    });
     setFormConfig(tempFormData);
   }, [tagsList]);
 
@@ -145,6 +151,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
                   };
                 }),
                 defaultValue: editData.type,
+                isReadOnly: true,
               };
             }
             if (item.id === "description") {
@@ -292,7 +299,7 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
   }, [projectUsers, taskPriorities, taskTypes]);
 
   useEffect(() => {
-    console.log(formConfig, "formconfig in effect")
+    console.log(formConfig, "formconfig in effect");
     let updatedFormData = [
       ...formConfig,
       { owner: loggedInUserId },
@@ -303,8 +310,8 @@ const Body = ({ handleFormData, editData, validate, setIsValidate, tagsList }: a
   }, [formConfig]);
 
   useEffect(() => {
-    console.log("chii string", formConfig[6].chipString)
-  }, [formConfig[6].chipString])
+    console.log("chii string", formConfig[6].chipString);
+  }, [formConfig[6].chipString]);
 
   return (
     <BodyContainer>

@@ -84,7 +84,7 @@ interface ContainerProps {
   footerState: boolean;
 }
 
-const BodyContainer = styled(Box) <ContainerProps>`
+const BodyContainer = styled(Box)<ContainerProps>`
   height: ${(props) =>
     props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
   overflow-y: scroll;
@@ -267,6 +267,7 @@ const FourthContProgType = styled("div")`
   line-height: 20px;
 
   color: #101f4c;
+  align-items: center;
 `;
 
 const FormElementContainer = styled(Box)`
@@ -615,7 +616,9 @@ function BasicTabs(props: any) {
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
         <Tabs
-          TabIndicatorProps={{ style: { background: "#FF843F", height: "3px" } }}
+          TabIndicatorProps={{
+            style: { background: "#FF843F", height: "3px" },
+          }}
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
@@ -660,7 +663,7 @@ function BasicTabs(props: any) {
             "& .MuiTabs-indicator": {
               background: "blue",
               width: "45px !important",
-            }
+            },
           }}
         >
           {/* MuiTab-root.Mui-selected */}

@@ -55,7 +55,7 @@ const MultipleFileUpload: React.FC<IProps> = ({ issueId, responseData }) => {
           />
           <button
             type="submit"
-            className="px-2 py-1  focus:outline-none bg-gray-500 hover:bg-gray-800 rounded text-gray-200 font-semibold"
+            className="px-2 py-1  focus:outline-none bg-blue-500 hover:bg-gray-800 rounded text-gray-200 font-semibold"
           >
             Add Attachments
           </button>

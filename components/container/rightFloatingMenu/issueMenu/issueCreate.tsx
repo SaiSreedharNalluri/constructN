@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import * as Yup from "yup";
 import React, { useEffect, useState } from "react";
 import {
-  createIssue,
+  createIssueWithAttachments,
   getIssuesPriority,
   getIssuesTypes,
 } from "../../../../services/issue";
@@ -18,9 +18,8 @@ import { getCookie } from "cookies-next";
 import { IToolResponse, ITools } from "../../../../models/ITools";
 import ReactSelect from "react-select";
 import { getTagsList } from "../../../../services/tags";
-import { CustomToaster } from "../../../divami_components/custom-toaster/CustomToaster";
 import { Issue } from "../../../../models/Issue";
-
+import html2canvas from "html2canvas";
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
@@ -53,8 +52,8 @@ const IssueCreate: React.FC<IProps> = ({
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   const [loggedInUserId, SetLoggedInUserId] = useState("");
   const [tagList, setTagList] = useState<[string]>([""]);
+  const [image, setImage] = useState<Blob>();
   let toolInstance: ITools = { toolName: "issue", toolAction: "issueCreate" };
-  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     if (router.isReady) {
@@ -89,6 +88,13 @@ const IssueCreate: React.FC<IProps> = ({
     if (user?._id) {
       SetLoggedInUserId(user._id);
     }
+    html2canvas(document.getElementById("TheView") || document.body).then(
+      function (canvas) {
+        canvas.toBlob((blob) => {
+          setImage(blob as Blob);
+        }, "image/png");
+      }
+    );
     setMyProject(currentProject);
     setMyStructure(currentStructure);
     setMySnapshot(currentSnapshot);
@@ -122,34 +128,50 @@ const IssueCreate: React.FC<IProps> = ({
     snapshot: string;
     owner: string;
     status: string;
-    file: object[];
+    attachments: object[];
+    screenshot: string;
   }
   const clickIssueSubmit = (
-    formData: FormValues,
-    { resetForm }: { resetForm: (nextValues?: Partial<FormValues>) => void }
+    values: FormValues,
+    {
+      resetForm,
+    }: {
+      resetForm: (nextValues?: Partial<FormValues>) => void;
+    }
   ) => {
+    const formData = new FormData();
+
     let userIdList: any[] = [];
-    if (formData.assignees.length > 0) {
-      formData.assignees.map((user: any) => {
+    if (values.assignees.length > 0) {
+      values.assignees.map((user: any) => {
         userIdList.push(user.value);
       });
-      formData.assignees = userIdList;
+      values.assignees = userIdList;
     }
     let tagList: any[] = [];
-    if (formData.tags.length > 0) {
-      formData.tags.map((tag: any) => {
+    if (values.tags.length > 0) {
+      values.tags.map((tag: any) => {
         tagList.push(tag.value);
       });
-      formData.tags = tagList;
+      values.tags = tagList;
     }
-    formData.structure = myStructure?._id;
-    formData.title = `${myStructure?.name}_${formData.dueDate} `;
-    formData.snapshot = mySnapshot?._id;
-    formData.owner = loggedInUserId;
-    formData.status = "To Do";
-    formData.context = myContext;
-    console.log("issue create button");
-    createIssue(router.query.projectId as string, formData)
+    values.structure = myStructure?._id;
+    values.title = `${myStructure?.name}_${values.dueDate} `;
+    values.snapshot = mySnapshot?._id;
+    values.owner = loggedInUserId;
+    values.status = "To Do";
+    values.context = myContext;
+
+    let jreq: any = values;
+    for (let i = 0; i < jreq.attachments?.length; i++) {
+      formData.append("attachments", jreq.attachments![i]);
+    }
+    formData.append("screenshot", image as Blob, "imageName.png");
+    delete jreq["screenshot"];
+    delete jreq["attachments"];
+    delete jreq["id"];
+    formData.append("jreq", JSON.stringify(jreq));
+    createIssueWithAttachments(router.query.projectId as string, formData)
       .then((response) => {
         if (response.success === true) {
           setSuccessMessage("Issue is added sucessfully");
@@ -170,44 +192,6 @@ const IssueCreate: React.FC<IProps> = ({
           toast.error(error?.message);
         }
       });
-
-    // if (values.assignees.length > 0) {
-    //   values.assignees.map((user: any) => {
-    //     userIdList.push(user.value);
-    //   });
-    //   values.assignees = userIdList;
-    // }
-    // if (values.file.length > 0) {
-    //   const formData = new FormData();
-    //   formData.append('type', values.type);
-    //   formData.append('title', values.title);
-    //   formData.append('structure', values.structure);
-    //   formData.append('snapshot', values.snapshot);
-    //   formData.append('priority', values.priority);
-    //   formData.append('owner', values.owner);
-    //   formData.append('dueDate', values.dueDate);
-    //   formData.append('description', values.description);
-    // } else {
-    //   values.structure = myStructure?._id;
-    //   values.title = `${myStructure?.name}_${values.dueDate} `;
-    //   values.snapshot = mySnapshot?._id;
-    //   values.owner = loggedInUserId;
-    //   values.status = 'To Do';
-    //   values.context = myContext;
-    //   createIssue(router.query.projectId as string, values)
-    //     .then((response) => {
-    //       if (response.success === true) {
-    //         toast.success('Issue is added sucessfully');
-    //         handleIssueSubmit(values);
-    //         resetForm();
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       if (error.success === false) {
-    //         toast.error(error?.message);
-    //       }
-    //     });
-    // }
   };
   const initialValues: {
     type: string;
@@ -222,7 +206,8 @@ const IssueCreate: React.FC<IProps> = ({
     snapshot: string;
     owner: string;
     status: string;
-    file: object[];
+    attachments: object[];
+    screenshot: string;
   } = {
     type: "",
     priority: "",
@@ -236,7 +221,8 @@ const IssueCreate: React.FC<IProps> = ({
     status: "",
     owner: "",
     snapshot: "",
-    file: [],
+    attachments: [],
+    screenshot: "",
   };
 
   const validationSchema = Yup.object().shape({
@@ -256,7 +242,8 @@ const IssueCreate: React.FC<IProps> = ({
       })
     ),
     dueDate: Yup.string(),
-    files: Yup.array().of(Yup.mixed()).min(1, "At least one file is required"),
+    file: Yup.mixed().nullable(),
+    screenshot: Yup.mixed().nullable(),
   });
   interface user {
     label: string;
@@ -324,14 +311,12 @@ const IssueCreate: React.FC<IProps> = ({
                   <option value="" disabled>
                     Select a Type
                   </option>
-                  {/* <select name='type' id='type' className="border border-solid border-gray-500 w-full px-2 py-1.5 rounded"> */}
                   {issueType &&
                     issueType.map((option: any, i) => (
                       <option key={option} value={option}>
                         {option}
                       </option>
                     ))}
-                  {/* </select> */}
                 </Field>
                 <ErrorMessage
                   name="type"
@@ -437,27 +422,46 @@ const IssueCreate: React.FC<IProps> = ({
                   />
                 </div>
               </div>
-              {/* <div>
+              <div>
                 <div>
                   <h5 className="text-gray-500">Attachments</h5>
                 </div>
                 <div>
                   <input
                     type="file"
+                    name="attachments"
                     multiple
-                    name="file"
-                    onChange={(event) => {
-                      console.log('dscdksn', event);
-                      setFieldValue('file', event.currentTarget.files);
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setFieldValue("attachments", event.target.files);
                     }}
                   />
                   <ErrorMessage
-                    name="file"
+                    name="attachments"
                     component="div"
                     className="alert alert-danger"
                   />
                 </div>
-              </div> */}
+              </div>
+              <div>
+                <div>
+                  <h5 className="text-gray-500">Screenshot</h5>
+                </div>
+                {/* <div>
+                  <input
+                    hidden
+                    type="file"
+                    name="screenshot"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setFieldValue('screenshot', e.target.files![0]);
+                    }}
+                  />
+                  <ErrorMessage
+                    name="screenshot"
+                    component="div"
+                    className="alert alert-danger"
+                  />
+                </div> */}
+              </div>
               <div className="flex justify-center">
                 <button
                   type="submit"

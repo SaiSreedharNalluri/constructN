@@ -2,6 +2,7 @@ import { styled } from "@mui/system";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getTagsList } from "../../../services/tags";
+import PopupComponent from "../../popupComponent/PopupComponent";
 import Body from "./body/Body";
 import Footer from "./footer/Footer";
 import Header from "./header/Header";
@@ -22,28 +23,26 @@ const StyledDiv = styled("span")({
 });
 const CreateTask = ({
   handleCreateTask,
-  setOpenCreateTask,
   editData,
   closeTaskCreate,
+  onCancelCreate,
 }: any) => {
   const router = useRouter();
   const [formData, setFormData] = useState(null);
   const [validate, setValidate] = useState(false);
   const [tagList, setTagList] = useState<[string]>([""]);
+  const [showPopUp, setshowPopUp] = useState(false);
 
   const formHandler = (event: any) => {
     if (event === "Cancel") {
-      setOpenCreateTask(false);
-      // setshowPopUp(true);
+      setshowPopUp(true);
     } else {
       setValidate(true);
       handleCreateTask(formData);
-      // setOpenCreateTask(true);
     }
   };
 
   const onCancelEdit = () => {
-    setOpenCreateTask(false);
     closeTaskCreate();
   };
 
@@ -63,7 +62,13 @@ const CreateTask = ({
 
   return (
     <StyledDiv>
-      <Header closeTaskCreate={closeTaskCreate} editData={editData} />
+      <Header
+        closeTaskCreate={() => {
+          setshowPopUp(true);
+        }}
+        editData={editData}
+      />
+
       <Body
         handleFormData={handleFormData}
         editData={editData}
@@ -72,7 +77,7 @@ const CreateTask = ({
         tagsList={tagList}
       />
       <Footer formHandler={formHandler} editData={editData} />
-      {/* {showPopUp && (
+      {showPopUp && (
         <PopupComponent
           open={showPopUp}
           setShowPopUp={setshowPopUp}
@@ -86,7 +91,7 @@ const CreateTask = ({
           SecondaryButtonlabel={"No"}
           callBackvalue={editData ? onCancelEdit : onCancelCreate}
         />
-      )} */}
+      )}
     </StyledDiv>
   );
 };

@@ -12,12 +12,14 @@ import Download from "../../../public/divami_icons/download.svg";
 import FilterInActive from "../../../public/divami_icons/filterInactive.svg";
 import Search from "../../../public/divami_icons/search.svg";
 import UpArrow from "../../../public/divami_icons/upArrow.svg";
+import AppliedFilterIcon from "../../../public/divami_icons/appliedFilter.svg";
 
 import HourglassIcon from "../../../public/divami_icons/hourGlassIcon.svg";
 import RFIList from "../../../public/divami_icons/rfiList.svg";
 import SubmittalList from "../../../public/divami_icons/submittalList.svg";
 import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
 import {
+  AppliedFilter,
   ArrowDownIcon,
   ArrowUpIcon,
   BodyContainer,
@@ -28,6 +30,7 @@ import {
   DownloadIcon,
   DueDate,
   DueDateDiv,
+  FilterIcon,
   FirstHeader,
   FunnelIcon,
   HeaderContainer,
@@ -277,7 +280,18 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 onClick={() => setSearchingOn((prev) => !prev)}
               />
               <DividerIcon src={Divider} alt="" />
-
+              {issueFilterState.isFilterApplied ? (
+                <AppliedFilter>
+                  {issueFilterState.numberOfFilters} Filters{" "}
+                  <FilterIcon
+                    src={AppliedFilterIcon}
+                    alt="Arrow"
+                    onClick={() => {
+                      handleViewTaskList();
+                    }}
+                  />
+                </AppliedFilter>
+              ) : null}
               {sortOrder === "asc" ? (
                 <ArrowUpIcon
                   onClick={sortDateOrdering}

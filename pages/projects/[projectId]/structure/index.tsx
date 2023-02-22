@@ -45,6 +45,9 @@ import PopupComponent from "../../../../components/popupComponent/PopupComponent
 import { CustomToaster } from "../../../../components/divami_components/custom-toaster/CustomToaster";
 import { log } from "node:console";
 import { deleteAttachment } from "../../../../services/attachments";
+import html2canvas from "html2canvas";
+import ProjectInfo from "../../../../components/container/projectInfo";
+import { IProjects } from "../../../../models/IProjects";
 
 interface IProps {}
 const OpenMenuButton = styled("div")({
@@ -86,6 +89,7 @@ const Index: React.FC<IProps> = () => {
   const [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
   const [currentProjectId, setActiveProjectId] = useState("");
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
+  const [project, setProject] = useState<IProjects>();
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
   const [designMap, setDesignMap] = useState<IDesignMap>();
@@ -131,10 +135,12 @@ const Index: React.FC<IProps> = () => {
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
     filterData: {},
+    numberOfFilters: 0,
   });
   const [issueFilterState, setIssueFilterState] = useState({
     isFilterApplied: false,
     filterData: {},
+    numberOfFilters: 0,
   });
   const closeIssueCreate = () => {
     setOpenCreateIssue(false);
@@ -201,6 +207,7 @@ const Index: React.FC<IProps> = () => {
         .then((response) => {
           setProjectUtm(response?.data?.result?.utm);
           setActiveProjectId(router.query.projectId as string);
+          setProject(response.data.result);
         })
         .catch((error) => {
           toast.error("failed to load data");
@@ -444,9 +451,17 @@ const Index: React.FC<IProps> = () => {
       case "viewMode":
         setViewMode(data.toolAction);
         break;
+      case "viewType":
+        setViewType(data.toolAction);
       case "Issue":
         if (data.toolAction === "createIssue") {
           console.log("Open issue Menu");
+
+          //   html2canvas(document.getElementById('TheView')||document.body).then(function(canvas) {
+          //     //window.open('','_blank')?.document.body.appendChild(canvas);
+          //     //canvas.toDataURL('image/png');
+
+          // });
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateIssue(true);
         } else if (data.toolAction === "selectIssue") {
@@ -625,6 +640,7 @@ const Index: React.FC<IProps> = () => {
     }
   };
   const handleOnIssueFilter = (formData: any) => {
+    console.log("formdata", formData);
     const result = issueFilterList.filter(
       (item: Issue) =>
         (formData.issueTypeData.includes(item.type) ||
@@ -643,10 +659,24 @@ const Index: React.FC<IProps> = () => {
         (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
           !formData.toDate)
     );
+    let count =
+      formData?.issueTypeData?.length +
+      formData?.issuePriorityData?.length +
+      formData?.issueStatusData?.length;
+    if (formData?.assigneesData) {
+      count = count + 1;
+    }
+    if (formData?.toDate) {
+      count = count + 1;
+    }
+    if (formData?.fromDate) {
+      count = count + 1;
+    }
     setIssueList(result);
     setIssueFilterState({
       isFilterApplied: true,
       filterData: formData,
+      numberOfFilters: count,
     });
   };
   console.log(issuesList, "issuesListissuesList");
@@ -655,6 +685,7 @@ const Index: React.FC<IProps> = () => {
     setIssueFilterState({
       isFilterApplied: false,
       filterData: {},
+      numberOfFilters: 0,
     });
   };
   // const handleOnTaskFilter = (formData: any) => {
@@ -701,10 +732,24 @@ const Index: React.FC<IProps> = () => {
       // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
       //   !formData.toDate)
     );
+    let count =
+      formData?.taskType?.length +
+      formData?.taskPriority?.length +
+      formData?.taskStatus?.length;
+    if (formData?.assigneesData) {
+      count = count + 1;
+    }
+    if (formData?.toDate) {
+      count = count + 1;
+    }
+    if (formData?.fromDate) {
+      count = count + 1;
+    }
     setTasksList(result);
     setTaskFilterState({
       isFilterApplied: true,
       filterData: formData,
+      numberOfFilters: 3,
     });
   };
 
@@ -713,6 +758,7 @@ const Index: React.FC<IProps> = () => {
     setTaskFilterState({
       isFilterApplied: false,
       filterData: {},
+      numberOfFilters: 0,
     });
   };
   const deleteTheIssue = (issueObj: any) => {
@@ -792,10 +838,19 @@ const Index: React.FC<IProps> = () => {
         toast.error(error.message);
       });
   };
+  const getBreadCrumbs = () => {
+    //let structTemp :IStructure = structure;
+    // let outputSting : string = structure?.name || '';
+    if (structure === undefined) {
+      return "";
+    }
+    return " | " + project?.name + " / " + structure?.name;
+  };
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
         <Header toolClicked={toolClicked} viewMode={currentViewMode} />
+        {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
       <div className="flex ">
         <div ref={leftOverlayRef}>
@@ -1012,6 +1067,7 @@ const Index: React.FC<IProps> = () => {
                 currentSnapshot={snapshot}
                 currentTypesList={designMap}
                 currentLayersList={activeRealityMap}
+                currentViewType ={currentViewType}
                 closeFilterOverlay={closeFilterOverlay}
                 closeTaskFilterOverlay={closeTaskFilterOverlay}
                 handleOnTaskFilter={handleOnTaskFilter}

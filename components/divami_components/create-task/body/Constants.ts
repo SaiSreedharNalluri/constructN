@@ -5,7 +5,7 @@ export const TASK_FORM_CONFIG = [
     defaultValue: "",
     formLabel: "What shall we call this Task?",
     placeholder: "Title",
-
+    isReadOnly: false,
     isError: false,
     isReq: true,
   },
@@ -14,6 +14,7 @@ export const TASK_FORM_CONFIG = [
     type: "select",
     defaultValue: "",
     placeHolder: "Select",
+    isReadOnly: false,
     label: "Select the type of task",
     isLarge: false,
     isError: false,
@@ -41,6 +42,7 @@ export const TASK_FORM_CONFIG = [
     placeholder: "Tell us more about this task",
     isError: false,
     isReq: false,
+    isReadOnly: false,
   },
   {
     id: "taskPriority",
@@ -52,7 +54,7 @@ export const TASK_FORM_CONFIG = [
     isError: false,
     isReq: true,
     isflex: false,
-
+    isReadOnly: false,
     formLabel: "Select task priority",
     options: [
       {
@@ -70,6 +72,7 @@ export const TASK_FORM_CONFIG = [
   {
     id: "assignedTo",
     type: "search",
+    isReadOnly: false,
     formLabel: "Assigned to",
     listOfEntries: [
       { label: "The Shawshank Redemption", year: 1994 },
@@ -90,6 +93,7 @@ export const TASK_FORM_CONFIG = [
   {
     id: "dates",
     type: "doubleField",
+    isReadOnly: false,
     fields: [
       {
         id: "start-date",
@@ -114,6 +118,7 @@ export const TASK_FORM_CONFIG = [
   {
     id: "tag-suggestions",
     type: "chip",
+    isReadOnly: false,
     chipString: [],
     formLabel: "Enter some suggested tags",
     defaultValue: [],
@@ -123,6 +128,7 @@ export const TASK_FORM_CONFIG = [
   {
     id: "file-upload",
     type: "file",
+    isReadOnly: false,
     selectedFiles: null,
     defaultValue: [],
     isError: false,

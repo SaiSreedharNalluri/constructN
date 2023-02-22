@@ -27,6 +27,7 @@ import {
 import TaskFilterCommon from "../task-filter-common/TaskFilterCommon";
 import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
 import {
+  AppliedFilter,
   ArrowDownIcon,
   ArrowUpIcon,
   BodyContainer,
@@ -38,6 +39,7 @@ import {
   DownloadIcon,
   DueDate,
   DueDateDiv,
+  FilterIcon,
   FirstHeader,
   FunnelIcon,
   HeaderContainer,
@@ -56,6 +58,7 @@ import {
 import _ from "lodash";
 import { CSVLink } from "react-csv";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
+import AppliedFilterIcon from "../../../public/divami_icons/appliedFilter.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -322,6 +325,18 @@ const CustomTaskListDrawer = (props: any) => {
                 onClick={() => setSearchingOn((prev) => !prev)}
               />
               <DividerIcon src={Divider} alt="" />
+              {taskFilterState.isFilterApplied ? (
+                <AppliedFilter>
+                  {taskFilterState.numberOfFilters} Filters{" "}
+                  <FilterIcon
+                    src={AppliedFilterIcon}
+                    alt="Arrow"
+                    onClick={() => {
+                      handleViewTaskList();
+                    }}
+                  />
+                </AppliedFilter>
+              ) : null}
               {sortOrder === "asc" ? (
                 <>
                   <ArrowUpIcon
