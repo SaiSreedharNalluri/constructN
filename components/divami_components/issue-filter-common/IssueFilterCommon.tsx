@@ -227,8 +227,20 @@ const FilterCommon: React.FC<IProps> = ({
     SetFilterState((prev: any) => {
       return prev.map((item: any) => {
         if (item.title === "Issue Type") {
+          let selectAllStatus = "F";
+          if (issueFilterState.isFilterApplied) {
+            if (
+              item.options?.length ===
+              issueFilterState.filterData.issueTypeData?.length
+            ) {
+              selectAllStatus = "T";
+            } else if (issueFilterState.filterData?.issueTypeData?.length) {
+              selectAllStatus = "I";
+            }
+          }
           return {
             ...item,
+            selectAllStatus: selectAllStatus,
             options: taskType?.map((eachItem: any) => {
               if (issueFilterState.isFilterApplied) {
                 if (
@@ -250,8 +262,20 @@ const FilterCommon: React.FC<IProps> = ({
           };
         }
         if (item.title === "Issue Priority") {
+          let selectAllStatus = "F";
+          if (issueFilterState.isFilterApplied) {
+            if (
+              item.options?.length ===
+              issueFilterState.filterData.issuePriorityData?.length
+            ) {
+              selectAllStatus = "T";
+            } else if (issueFilterState.filterData?.issuePriorityData?.length) {
+              selectAllStatus = "I";
+            }
+          }
           return {
             ...item,
+            selectAllStatus: selectAllStatus,
             options: taskPriority?.map((eachItem: any) => {
               if (issueFilterState.isFilterApplied) {
                 if (
@@ -275,6 +299,17 @@ const FilterCommon: React.FC<IProps> = ({
           };
         }
         if (item.title === "Issue Status") {
+          let selectAllStatus = "F";
+          if (issueFilterState.isFilterApplied) {
+            if (
+              item.options?.length ===
+              issueFilterState.filterData.issueStatusData?.length
+            ) {
+              selectAllStatus = "T";
+            } else if (issueFilterState.filterData?.issueStatusData?.length) {
+              selectAllStatus = "I";
+            }
+          }
           return {
             ...item,
             options: taskStatus?.map((eachItem: any) => {

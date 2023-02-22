@@ -326,15 +326,13 @@ const CustomTaskListDrawer = (props: any) => {
               />
               <DividerIcon src={Divider} alt="" />
               {taskFilterState.isFilterApplied ? (
-                <AppliedFilter>
+                <AppliedFilter
+                  onClick={() => {
+                    handleViewTaskList();
+                  }}
+                >
                   {taskFilterState.numberOfFilters} Filters{" "}
-                  <FilterIcon
-                    src={AppliedFilterIcon}
-                    alt="Arrow"
-                    onClick={() => {
-                      handleViewTaskList();
-                    }}
-                  />
+                  <FilterIcon src={AppliedFilterIcon} alt="Arrow" />
                 </AppliedFilter>
               ) : null}
               {sortOrder === "asc" ? (
@@ -362,13 +360,15 @@ const CustomTaskListDrawer = (props: any) => {
 
               <SecondDividerIcon src={Divider} alt="" />
 
-              <FunnelIcon
-                src={FilterInActive}
-                alt="Arrow"
-                onClick={() => {
-                  handleViewTaskList();
-                }}
-              />
+              {!taskFilterState.isFilterApplied ? (
+                <FunnelIcon
+                  src={FilterInActive}
+                  alt="Arrow"
+                  onClick={() => {
+                    handleViewTaskList();
+                  }}
+                />
+              ) : null}
 
               <CSVLink
                 data={getDownloadableTaskList(filteredTaskList)}

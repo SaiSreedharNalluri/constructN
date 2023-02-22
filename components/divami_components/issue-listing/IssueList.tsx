@@ -281,15 +281,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               />
               <DividerIcon src={Divider} alt="" />
               {issueFilterState.isFilterApplied ? (
-                <AppliedFilter>
+                <AppliedFilter
+                  onClick={() => {
+                    handleViewTaskList();
+                  }}
+                >
                   {issueFilterState.numberOfFilters} Filters{" "}
-                  <FilterIcon
-                    src={AppliedFilterIcon}
-                    alt="Arrow"
-                    onClick={() => {
-                      handleViewTaskList();
-                    }}
-                  />
+                  <FilterIcon src={AppliedFilterIcon} alt="Arrow" />
                 </AppliedFilter>
               ) : null}
               {sortOrder === "asc" ? (
@@ -309,13 +307,15 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
               <SecondDividerIcon src={Divider} alt="" />
 
-              <FunnelIcon
-                src={FilterInActive}
-                alt="Arrow"
-                onClick={() => {
-                  handleViewTaskList();
-                }}
-              />
+              {!issueFilterState.isFilterApplied ? (
+                <FunnelIcon
+                  src={FilterInActive}
+                  alt="Arrow"
+                  onClick={() => {
+                    handleViewTaskList();
+                  }}
+                />
+              ) : null}
 
               <CSVLink
                 data={getDownladableIssueList(filteredIssuesList)}

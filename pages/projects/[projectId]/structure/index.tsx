@@ -749,7 +749,7 @@ const Index: React.FC<IProps> = () => {
     setTaskFilterState({
       isFilterApplied: true,
       filterData: formData,
-      numberOfFilters: 3,
+      numberOfFilters: count,
     });
   };
 
