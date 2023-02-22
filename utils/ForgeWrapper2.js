@@ -236,7 +236,7 @@ export const ForgeViewerUtils = (function () {
       // console.log('BIM TM Loaded', tm);
     }
 
-    if (tm && tm.offset && !_manifestNode.is2D()) {
+    if (tm && tm.offset ) {
       globalOff = tm.offset;
       modelOptions.globalOffset = {
         x: globalOff[0],
@@ -244,6 +244,10 @@ export const ForgeViewerUtils = (function () {
         z: globalOff[2],
       };
       _globalOffset = tm.offset;
+      if (_manifestNode.is2D()) {
+        _globalOffset[0] = 0;
+        _globalOffset[1] = 0;
+      }
       // console.log("Offset Loaded", offset);
     }
     return modelOptions;
@@ -356,17 +360,29 @@ export const ForgeViewerUtils = (function () {
           };
         } else {
           console.log(`Inside Rag Click click: ${targetObject.position.x}`);
-          let imageObject = {
-            imagePosition: targetObject.position,
-            imageRotation: targetObject.rotation,
-            imageName: targetObject.id,
-          };
-          contextObject = {
-            id: targetObject.id,
-            type: targetObject.type,
-            cameraObject: getCamera(),
-            image: imageObject,
-          };
+          if (targetObject.type === "Issue") {
+            let clickedIssue = _issuesList.find(issue => issue._id === targetObject.id)
+            contextObject = clickedIssue.context;
+            contextObject.id = clickedIssue._id;
+          } else if (targetObject.type === "Task") {
+            let clickedTask = _tasksList.find(task => task._id === targetObject.id)
+            contextObject = clickedTask.context;
+            contextObject = clickedTask._id;
+          }
+          else {
+            let imageObject = {
+              imagePosition: targetObject.position,
+              imageRotation: targetObject.rotation,
+              imageName: targetObject.id,
+            };
+            contextObject = {
+              id: targetObject.id,
+              type: targetObject.type,
+              cameraObject: getCamera(),
+              image: imageObject,
+            };
+          }
+
         }
         _eventHandler(_viewerId, Object.freeze(contextObject));
 
