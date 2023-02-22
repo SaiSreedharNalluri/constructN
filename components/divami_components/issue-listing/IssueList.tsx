@@ -36,6 +36,7 @@ import {
   MiniHeaderContainer,
   MiniSymbolsContainer,
   SearchGlassIcon,
+  SecondDividerIcon,
   SecondHeader,
   TaskListContainer,
   ThirdHeader,
@@ -292,6 +293,16 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               )}
               <DueDate>Due Date</DueDate>
 
+              <SecondDividerIcon src={Divider} alt="" />
+
+              <FunnelIcon
+                src={FilterInActive}
+                alt="Arrow"
+                onClick={() => {
+                  handleViewTaskList();
+                }}
+              />
+
               <CSVLink
                 data={getDownladableIssueList(filteredIssuesList)}
                 filename={"my-issues.csv"}
@@ -304,13 +315,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 ></FontAwesomeIcon> */}
                 <DownloadIcon src={Download} alt="Arrow" />
               </CSVLink>
-              <FunnelIcon
-                src={FilterInActive}
-                alt="Arrow"
-                onClick={() => {
-                  handleViewTaskList();
-                }}
-              />
             </>
           )}
         </MiniSymbolsContainer>

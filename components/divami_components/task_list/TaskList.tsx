@@ -47,6 +47,7 @@ import {
   MiniSymbolsContainer,
   SearchAreaContainer,
   SearchGlassIcon,
+  SecondDividerIcon,
   SecondHeader,
   TaskListContainer,
   ThirdHeader,
@@ -343,6 +344,17 @@ const CustomTaskListDrawer = (props: any) => {
                 </>
               )}
               <DueDate>Due Date</DueDate>
+
+              <SecondDividerIcon src={Divider} alt="" />
+
+              <FunnelIcon
+                src={FilterInActive}
+                alt="Arrow"
+                onClick={() => {
+                  handleViewTaskList();
+                }}
+              />
+
               <CSVLink
                 data={getDownloadableTaskList(filteredTaskList)}
                 filename={"my-tasks.csv"}
@@ -355,13 +367,6 @@ const CustomTaskListDrawer = (props: any) => {
                 ></FontAwesomeIcon> */}
                 <DownloadIcon src={Download} alt="Arrow" />
               </CSVLink>
-              <FunnelIcon
-                src={FilterInActive}
-                alt="Arrow"
-                onClick={() => {
-                  handleViewTaskList();
-                }}
-              />
             </>
           )}
         </MiniSymbolsContainer>

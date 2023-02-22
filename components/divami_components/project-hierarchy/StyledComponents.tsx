@@ -45,6 +45,9 @@ export const CustomInputField = styled(TextField)({
   "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
     ouline: "none",
   },
+  "& .MuiOutlinedInput-input::placeholder": {
+    color: "#36415D;",
+  },
   img: {
     marginRight: "8px",
   },
