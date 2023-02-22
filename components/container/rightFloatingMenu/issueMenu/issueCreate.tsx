@@ -166,7 +166,7 @@ const IssueCreate: React.FC<IProps> = ({
     for (let i = 0; i < jreq.attachments?.length; i++) {
       formData.append('attachments', jreq.attachments![i]);
     }
-    formData.append('screenshot',image as Blob,'imageName.png');
+    formData.append('screenshot', image as Blob, 'imageName.png');
     delete jreq['screenshot'];
     delete jreq['attachments'];
     delete jreq['id'];
@@ -179,6 +179,12 @@ const IssueCreate: React.FC<IProps> = ({
           toolInstance.toolAction = 'issueCreateSuccess';
           issueToolClicked(toolInstance);
           resetForm();
+          const fileInput = document.getElementById(
+            'file-upload'
+          ) as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = '';
+          }
         } else {
           toolInstance.toolAction = 'issueCreateFail';
           issueToolClicked(toolInstance);
@@ -427,6 +433,7 @@ const IssueCreate: React.FC<IProps> = ({
                 </div>
                 <div>
                   <input
+                    id="file-upload"
                     type="file"
                     name="attachments"
                     multiple
@@ -442,9 +449,9 @@ const IssueCreate: React.FC<IProps> = ({
                 </div>
               </div>
               <div>
-                <div>
+                {/* <div>
                   <h5 className="text-gray-500">Screenshot</h5>
-                </div>
+                </div> */}
                 {/* <div>
                   <input
                     hidden
