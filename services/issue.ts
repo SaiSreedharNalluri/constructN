@@ -1,5 +1,5 @@
-import instance from "./axiosInstance";
-import authHeader from "./auth-header";
+import instance from './axiosInstance';
+import authHeader from './auth-header';
 export const createIssue = (projectId: string, issueObj: object) => {
   return instance
     .post(
@@ -112,10 +112,9 @@ export const createIssueWithAttachments = (
   projectId: string,
   issueObj: object
 ) => {
-  console.log("dshjkbdns", projectId, issueObj);
   return instance
     .post(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/addissueWithAttachment`,
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/addissueWithScreenshotAndAttachment`,
       issueObj,
       {
         headers: authHeader.authHeader(),

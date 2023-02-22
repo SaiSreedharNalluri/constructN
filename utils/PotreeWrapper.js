@@ -61,9 +61,11 @@ export class PotreeViewerUtils {
 
         this.createTagTool = false;
         this.tempTag;
-        let _issuesList = [];
-        let _tasksList = [];
+        this._issuesList = [];
+        this._tasksList = [];
         this.tagMap = {};
+        this.issueSpriteMap = {};
+        this.taskSpriteMap = {};
         this.tagState = {
             "Issue": true,
             "Task": true
@@ -170,7 +172,7 @@ export class PotreeViewerUtils {
         this._issuesList = list;
         this.isPendingLayersToLoad = true;
         if (this.loadLayersOnDataLoadCompletion()) {
-          loadIssues();
+          this.loadIssues();
         }
       }
     
@@ -179,7 +181,7 @@ export class PotreeViewerUtils {
         this._tasksList = list;
         this.isPendingLayersToLoad = true;
         if (this.loadLayersOnDataLoadCompletion()) {
-          loadTasks();
+          this.loadTasks();
         }
       }
 
@@ -287,14 +289,43 @@ export class PotreeViewerUtils {
     }
 
     loadIssues() {
-        console.log("Inside load issue: ", this._issuesList);
+        // console.log("Inside load issue: ", this._issuesList);
+        this.removeIssues();
+        delete this.issueSpriteMap;
+        this.issueSpriteMap = {};
         for(let issue of this._issuesList) {
-            console.log("Inside issue create reality: ", issue);
+            // console.log("Inside issue create reality: ", issue);
+            let context = this.getContextLocalFromGlobal(issue.context);
+            context.id = issue._id;
+            // let sprite = this.createSprite(context);
+            let sprite = this.createAnnotation(context);
+            this.issueSpriteMap[context.id] = {
+                context: context,
+                tag: sprite
+            }
+            // this.viewer.scene.scene.add(sprite);
+            this.viewer.scene.annotations.add(sprite);
         }
     }
 
     loadTasks() {
-
+        // console.log("Inside load issue: ", this._tasksList);
+        this.removeTasks();
+        delete this.taskSpriteMap;
+        this.taskSpriteMap = {};
+        for(let task of this._tasksList) {
+            // console.log("Inside issue create reality: ", task);
+            let context = this.getContextLocalFromGlobal(task.context);
+            context.id = task._id;
+            // let sprite = this.createSprite(context);
+            let sprite = this.createAnnotation(context);
+            this.taskSpriteMap[context.id] = {
+                context: context,
+                tag: sprite
+            }
+            // this.viewer.scene.scene.add(sprite);
+            this.viewer.scene.annotations.add(sprite);
+        }
     }
 
     handleContext(context) {
@@ -1412,9 +1443,6 @@ export class PotreeViewerUtils {
     }
 
     processTag(click_point) {
-        let date_time = new Date();
-        // let screenShotPath = `${mainProjectID}/structures/${inProjectID}/snapshots/${viewer.tileset}/${date_time.getTime()}.png`
-        // let latest_measure = viewer.scene.measurements.slice(-1)[0]
         this.isAddTagActive = this.deactivateCreateTagTool();
         let offset = this.globalOffset;
         let tagPosition = {
@@ -1424,14 +1452,12 @@ export class PotreeViewerUtils {
         }
         let tagObject = {
             tagPosition: tagPosition,
-            // screenShot: `https://${s3_bucket}.s3.ap-south-1.amazonaws.com/${screenShotPath}`
         }
         let tag_context_obj = {
             type: this.tagType,
             id: `Temp_${this.tagType}`,
             camera: this.getContext().cameraObject,
             tag: tagObject
-            
         }
 
         if (this.currentMode != "3d") {
@@ -1453,11 +1479,11 @@ export class PotreeViewerUtils {
             tag_context_obj.image = imageObject;
         }
         console.log('Saving Annotation: ', tag_context_obj);
-        // this.createSprite(tag_context_obj);
-        this.createAnnotation(tag_context_obj);
+        // let tag = this.createSprite(this.getContextLocalFromGlobal(tag_context_obj));
+        let tag = this.createAnnotation(this.getContextLocalFromGlobal(tag_context_obj));
+        this.tempTag = tag;
+        this.viewer.scene.annotations.add(tag);
         this.eventHandler(this.viewerId, tag_context_obj)
-        // window.top.postMessage({type: 'save-tag', data: JSON.stringify(save_obj)}, "*");
-        // takeScreenshot(screenShotPath, viewer);
     }
 
     getSpriteIcon(type) {
@@ -1472,28 +1498,22 @@ export class PotreeViewerUtils {
     }
 
     createAnnotation(context) {
-        let offset = this.globalOffset;
-        let position = {
-            x: context.tag.tagPosition.x - offset[0],
-            y: context.tag.tagPosition.y - offset[1],
-            z: context.tag.tagPosition.z - offset[2]
+        let position = context.tag.tagPosition;
+        let cameraPosition = context.tag.tagPosition;
+        let cameraTarget = context.tag.tagPosition;
+        if (context.camera) {
+            cameraPosition = context.camera.cameraPosition;
+            cameraTarget = context.camera.cameraTarget;
         }
-        let cameraPosition = {
-            x: context.camera.cameraPosition.x - offset[0],
-            y: context.camera.cameraPosition.y - offset[1],
-            z: context.camera.cameraPosition.z - offset[2]
-        };
-        let cameraTarget = {
-            x: context.camera.cameraTarget.x - offset[0],
-            y: context.camera.cameraTarget.y - offset[1],
-            z: context.camera.cameraTarget.z - offset[2]
-        };
+
         let tagObject =  $(`
         <span>
             <img name=${context.id} src="${this.getSpriteIcon(context.type)}"/>
         </span>`);
         tagObject.find(`img[name=${context.id}]`).click((event) => {
+            event.stopPropagation();
             console.log("Inside temp tag clock event: ", event.target.name);
+            this.eventHandler(this.viewerId, context);
         });
         let tag = new Potree.Annotation({
             position: [position.x, position.y, position.z],
@@ -1503,43 +1523,26 @@ export class PotreeViewerUtils {
         });
         // tag._display = false;
         // tag._visible = false;
-        if(context.id.includes("Temp")) {
-            this.tempTag = tag;
-        }
 
-        this.viewer.scene.annotations.add(tag);
+        return tag;
+        
     }
 
     createSprite(context) {
-        let offset = this.globalOffset;
-        let position = {
-            x: context.tag.tagPosition.x - offset[0],
-            y: context.tag.tagPosition.y - offset[1],
-            z: context.tag.tagPosition.z - offset[2]
-        }
-        let cameraPosition = {
-            x: context.camera.cameraPosition.x - offset[0],
-            y: context.camera.cameraPosition.y - offset[1],
-            z: context.camera.cameraPosition.z - offset[2]
-        };
-        let cameraTarget = {
-            x: context.camera.cameraTarget.x - offset[0],
-            y: context.camera.cameraTarget.y - offset[1],
-            z: context.camera.cameraTarget.z - offset[2]
-        };
+        let position = context.tag.tagPosition;
 
         const map = new THREE.TextureLoader().load(this.getSpriteIcon(context.type));
         const material = new THREE.SpriteMaterial( { map: map } );
 
         const sprite = new THREE.Sprite( material );
-        sprite.material.depthTest = false;
+        sprite.material.depthTest = true;
         sprite.visible = true;
         sprite.scale.set( .2, .2, 1);
         sprite.position.set(position.x, position.y, position.z);
         if(context.id.includes("Temp")) {
             this.tempTag = sprite;
         }
-        this.viewer.scene.scene.add(sprite);
+        return sprite;
     }
 
     clearTempMeasurements() {
@@ -1557,9 +1560,29 @@ export class PotreeViewerUtils {
     removeData() {
         // console.log("Inside remove data potree");
         try {
+            this.removeTasks();
+            this.removeIssues();
             this.removeAssets();
         } catch {
             console.log("Error while removing data from potree viewer: ");
+        }
+    }
+
+    removeTasks() {
+        // console.log("Inside remove tasks: ", this.taskSpriteMap);
+        for(let taskId of Object.keys(this.taskSpriteMap)) {
+            let annotation = this.taskSpriteMap[taskId].tag;
+            this.viewer.scene.annotations.remove(annotation);
+            annotation.dispose();
+        }
+    }
+
+    removeIssues() {
+        // console.log("Inside remove issues: ", this.issueSpriteMap);
+        for(let issueId of Object.keys(this.issueSpriteMap)) {
+            let annotation = this.issueSpriteMap[issueId].tag;
+            this.viewer.scene.annotations.remove(annotation);
+            annotation.dispose();
         }
     }
 
