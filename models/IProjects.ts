@@ -2,6 +2,7 @@ export interface IProjects {
   _id: string;
   type: string;
   name: string;
+  description?: string;
   company?: null;
   email: string;
   contact: Contact;
@@ -12,6 +13,7 @@ export interface IProjects {
   jobsOpened?: number;
   LastUpdatedOn?: string;
   coverPhoto: string;
+  utm: string;
 }
 export interface Contact {
   code: string;
@@ -22,4 +24,21 @@ export interface Address {
   city: string;
   state: string;
   country: string;
+}
+
+export interface IProjectUsers {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  contact: Contact;
+  dob: string;
+  createdAt: string;
+  updatedAt: string;
+  fullName: string;
+  age: number;
+}
+export interface Contact {
+  code: string;
+  number: number;
 }

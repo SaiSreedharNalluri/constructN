@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Loginpage from '../components/container/loginpage';
 import { login } from '../services/userAuth';
 import { useRouter } from 'next/router';
+import { getCookie } from 'cookies-next';
+import { toast } from 'react-toastify';
 const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
   const router = useRouter();
+  useEffect(() => {
+    const userObj: any = getCookie('user');
+    let user = null;
+    if (userObj) user = JSON.parse(userObj);
+    if (user && user.token) {
+      router.push('/projects');
+    }
+  });
   const handlerLogin = (formValue: { email: string; password: string }) => {
     const { email, password } = formValue;
     setMessage('');
@@ -13,6 +23,7 @@ const Login: React.FC = () => {
     login(email, password).then(
       (response) => {
         if (response.success === true) {
+          toast.success('user logged in sucessfully');
           router.push('/projects');
         }
       },
@@ -29,7 +40,6 @@ const Login: React.FC = () => {
       }
     );
   };
-
   return (
     <React.Fragment>
       <Loginpage

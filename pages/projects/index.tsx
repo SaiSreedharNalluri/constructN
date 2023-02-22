@@ -1,7 +1,6 @@
-import { getCookie } from 'cookies-next';
 import _ from 'lodash';
 import { GetServerSideProps } from 'next';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Header from '../../components/container/header';
 import ProjectsList from '../../components/container/projectsList';
 import { IJobs } from '../../models/IJobs';
@@ -15,41 +14,34 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     resp.data.result.map(async (pData: IProjects) => {
       const jobResp: any = await getjobsInfo(pData._id, context);
       if (jobResp.data.result.length > 0) {
-        pData.jobsOpened = jobResp.data.result.length;
-        if (jobResp.data.result.length > 0) {
-          pData.LastUpdatedOn = jobResp.data.result.sort(
-            (a: IJobs, b: IJobs) =>
-              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          )[0].updatedAt;
-        }
-        tempData.push(pData);
+        pData.LastUpdatedOn = jobResp.data.result.sort(
+          (a: IJobs, b: IJobs) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+        )[0].updatedAt;
       }
+      tempData.push(pData);
     })
   );
-
   return {
-    props: { projects: _.sortBy(tempData, 'LastUpdatedOn').reverse() },
+    props: { projects: _.sortBy(tempData, 'LastUpdatedOn') },
   };
 };
 interface IProps {
   projects: IProjects[];
 }
 const Projects: React.FC<IProps> = ({ projects }) => {
-  let [name, setName] = useState<string>('');
-  useEffect(() => {
-    const userObj: any = getCookie('user');
-    let user = null;
-    if (userObj) user = JSON.parse(userObj);
-    if (user.fullName) {
-      setName(user.fullName);
-    }
-  }, []);
   return (
     <React.Fragment>
-      <div className="bg-gray-100">
-        <Header headerName={name} />
-        <ProjectsList projects={projects} />
+      <div className='flex-col'>
+        <div>
+          <Header></Header>
+        </div>
+        <div className="bg-gray-100 w-screen ">
+          <ProjectsList projects={projects} />
+        </div>
       </div>
+
+
     </React.Fragment>
   );
 };
