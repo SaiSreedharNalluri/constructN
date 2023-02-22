@@ -199,3 +199,38 @@ export const MessageContainer = styled("div")({
   display: "flex",
   justifyContent: "center",
 });
+
+export const ErrorImageDiv = styled("div")({
+  // position: "absolute",
+  // top: "50%",
+  // left: "50%",
+  // transform: "translate(-50%, -50%)",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop: "50px",
+
+  // margin:"auto"
+});
+
+export const ImageErrorIcon = styled(Image)({
+  cursor: "pointer",
+  width: "184px",
+  height: "172px",
+  // marginLeft: '27px',
+});
+
+export const MessageDivShowErr = styled("div")({
+  width: "103px",
+  height: "19px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
+  textAlign: "center",
+  color: "#101F4C",
+  marginTop: "24px",
+  // marginLeft: "12px",
+});

@@ -1,31 +1,31 @@
-import { styled } from '@mui/system';
-import { Theme } from '../../../styles/globalStyles';
-import Image from 'next/image';
-import { Box } from '@mui/material';
-import zIndex from '@mui/material/styles/zIndex';
+import { styled } from "@mui/system";
+import { Theme } from "../../../styles/globalStyles";
+import Image from "next/image";
+import { Box } from "@mui/material";
+import zIndex from "@mui/material/styles/zIndex";
 
-export const TaskListContainer = styled('div')({
-  width: '438px',
-  height: 'calc(100vh - 60px)',
+export const TaskListContainer = styled("div")({
+  width: "438px",
+  height: "calc(100vh - 60px)",
 });
 
-export const HeaderContainer = styled('div')({
-  backgroundColor: 'white',
-  height: '51px',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  borderBottom: '1px solid #d9d9d9',
+export const HeaderContainer = styled("div")({
+  backgroundColor: "white",
+  height: "51px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  borderBottom: "1px solid #d9d9d9",
 });
 
 export const TitleContainer = styled(Box)({
-  width: '100%',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  paddingLeft: '20px',
-  paddingRight: '20px',
-  color: '#36415D',
+  width: "100%",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  paddingLeft: "20px",
+  paddingRight: "20px",
+  color: "#36415D",
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",
@@ -35,76 +35,76 @@ export const TitleContainer = styled(Box)({
 });
 
 export const CloseIcon = styled(Image)({
-  cursor: 'pointer',
+  cursor: "pointer",
   width: "12px",
-  height: "12px"
+  height: "12px",
 });
 
 export const MiniHeaderContainer = styled(Box)({
-  backgroundColor: 'white',
+  backgroundColor: "white",
   // height: '51px',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  width: '100%',
-  marginTop: '20px',
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  width: "100%",
+  marginTop: "20px",
   marginBottom: "24px",
   // overflowY: "auto",
-  color: '#36415D',
+  color: "#36415D",
 });
 
 // border-bottom: 1px solid #d9d9d9;
 
 export const MiniSymbolsContainer = styled(Box)({
-  width: '100%',
-  display: 'flex',
-  justifyContent: 'flex-end',
-  alignItems: 'center',
-  paddingLeft: '20px',
-  paddingRight: '20px',
+  width: "100%",
+  display: "flex",
+  justifyContent: "flex-end",
+  alignItems: "center",
+  paddingLeft: "20px",
+  paddingRight: "20px",
 });
 
 export const SearchGlassIcon = styled(Image)({
-  cursor: 'pointer',
+  cursor: "pointer",
 });
 
 export const DividerIcon = styled(Image)({
-  cursor: 'pointer',
-  marginLeft: '21px',
+  cursor: "pointer",
+  marginLeft: "21px",
 });
 
 export const SecondDividerIcon = styled(Image)({
-  cursor: 'pointer',
-  marginLeft: '15px',
+  cursor: "pointer",
+  marginLeft: "15px",
 });
 
 export const ArrowUpIcon = styled(Image)({
-  cursor: 'pointer',
-  marginLeft: '15px',
+  cursor: "pointer",
+  marginLeft: "15px",
 });
 
 export const ArrowDownIcon = styled(Image)({
-  cursor: 'pointer',
-  marginLeft: '27px',
+  cursor: "pointer",
+  marginLeft: "27px",
 });
 
 export const DownloadIcon = styled(Image)({
-  cursor: 'pointer',
-  marginLeft: '12px',
+  cursor: "pointer",
+  marginLeft: "12px",
 });
 
 export const FunnelIcon = styled(Image)({
-  cursor: 'pointer',
-  marginLeft: '16px',
+  cursor: "pointer",
+  marginLeft: "16px",
 });
 export const FilterIcon = styled(Image)({
-  cursor: 'pointer',
-  marginRight: '10px',
-  marginLeft: '7px'
+  cursor: "pointer",
+  marginRight: "10px",
+  marginLeft: "7px",
 });
 
 export const DueDate = styled(Box)({
-  marginLeft: '14px',
+  marginLeft: "14px",
 });
 
 export const BodyContainer = styled(Box)`
@@ -119,79 +119,150 @@ export const BodyContainer = styled(Box)`
   // overflow: scroll;
 `;
 
-export const FirstHeader = styled('div')({
-  display: 'flex',
+export const FirstHeader = styled("div")({
+  display: "flex",
 });
 
-export const BodyInfo = styled('div')({
-  cursor:"pointer"
-
+export const BodyInfo = styled("div")({
+  cursor: "pointer",
 });
 
-export const BodyContTitle = styled('div')({
-  marginLeft: '10px',
-  cursor:"pointer"
+export const BodyContTitle = styled("div")({
+  marginLeft: "10px",
+  cursor: "pointer",
 });
 
-export const SecondHeader = styled('div')({
-  marginLeft: '35px',
+export const SecondHeader = styled("div")({
+  marginLeft: "35px",
 });
 
-export const ThirdHeader = styled('div')({
-  display: 'flex',
-  marginLeft: '35px',
-  marginTop: '6px',
-  justifyContent: 'space-between',
+export const ThirdHeader = styled("div")({
+  display: "flex",
+  marginLeft: "35px",
+  marginTop: "6px",
+  justifyContent: "space-between",
 });
 
-export const DueDateDiv = styled('div')({
+export const DueDateDiv = styled("div")({
   fontFamily: '"Open Sans"',
-  fontStyle: 'italic',
-  fontWeight: '400',
-  fontSize: '14px',
-  lineHeight: '19px',
-  color: '#787878',
+  fontStyle: "italic",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
+  color: "#787878",
 });
 
-export const HorizontalLine = styled('div')({
-  backgroundColor: '#d9d9d9',
-  borderBottom: '1px solid #d9d9d9',
-  width: '398x',
-  marginTop: '18px',
-  marginBottom: '20px',
+export const HorizontalLine = styled("div")({
+  backgroundColor: "#d9d9d9",
+  borderBottom: "1px solid #d9d9d9",
+  width: "398x",
+  marginTop: "18px",
+  marginBottom: "20px",
 });
 
-export const LoadMoreContainer = styled('div')({
-  border: '1px solid #d9d9d9',
-  display: 'flex',
+export const LoadMoreContainer = styled("div")({
+  border: "1px solid #d9d9d9",
+  display: "flex",
 });
 
-export const LoadMoreButton = styled('div')({
-  border: '1px solid red',
+export const LoadMoreButton = styled("div")({
+  border: "1px solid red",
 });
 
-export const ArrowUpContainer = styled('div')({
-  border: '1px solid red',
-  marginLeft: '10px',
+export const ArrowUpContainer = styled("div")({
+  border: "1px solid red",
+  marginLeft: "10px",
 });
 
-export const MessageDiv = styled('div')({
+export const MessageDiv = styled("div")({
   // border: "1px solid red",
   // marginLeft: "10px",
-  marginTop: '30px',
+  marginTop: "30px",
 });
 
-export const AppliedFilter = styled('div')({
-  border: '1px solid #D9D9D9',
-  borderRadius: '40px',
-  color: '#F1742E',
-  fontFamily: 'Open Sans',
-  fontStyle: 'normal',
-  fontWeight: '400',
-  fontSize: '14px',
-  lineHeight: '19px',
-  padding: '6px 6px 6px 15px',
-  display: 'flex',
-  marginLeft: '10px',
-  cursor: 'pointer',
-})
+export const AppliedFilter = styled("div")({
+  border: "1px solid #D9D9D9",
+  borderRadius: "40px",
+  color: "#F1742E",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
+  padding: "6px 6px 6px 15px",
+  display: "flex",
+  marginLeft: "10px",
+  cursor: "pointer",
+});
+
+export const ErrorImageDiv = styled("div")({
+  // position: "absolute",
+  // top: "50%",
+  // left: "50%",
+  // transform: "translate(-50%, -50%)",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop:"50px"
+  
+  // margin:"auto"
+  
+});
+
+export const ImageErrorIcon = styled(Image)({
+  cursor: "pointer",
+  width: "226px",
+  height: "201px",
+  // marginLeft: '27px',
+});
+
+export const MessageDivShowErr = styled("div")({
+  width: "200px",
+  height: "38px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
+  textAlign: "center",
+  color: "#101F4C",
+  marginTop: "30px",
+  // marginLeft: "12px",
+});
+
+export const RaiseButtonDiv = styled("div")({
+  width: "180px",
+  height: "40px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "16px",
+  lineHeight: "16px",
+  textAlign: "center",
+  color: "#FFFFFF",
+  marginTop: "20px",
+  background: "#FF843F",
+  borderRadius: "4px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  // marginLeft: "20px",
+});
+
+export const ContentError = styled("div")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "16px",
+  lineHeight: "22px",
+  color: " #101F4C",
+  width: "245px",
+  height: "22px",
+  marginTop: "100px",
+});
+
+export const ContentErrorSpan = styled("span")({
+  // marginLeft:"2px"
+  color: "rgba(255, 132, 63, 1)",
+});
