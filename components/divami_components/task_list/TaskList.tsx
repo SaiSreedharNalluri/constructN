@@ -52,6 +52,7 @@ import {
   MessageDivShowErr,
   MiniHeaderContainer,
   MiniSymbolsContainer,
+  NoMatchDiv,
   RaiseButtonDiv,
   SearchAreaContainer,
   SearchGlassIcon,
@@ -66,6 +67,7 @@ import { CSVLink } from "react-csv";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import AppliedFilterIcon from "../../../public/divami_icons/appliedFilter.svg";
 import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
+import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -279,7 +281,7 @@ const CustomTaskListDrawer = (props: any) => {
 
   return (
     <TaskListContainer>
-      {filteredTaskList.length > 0 ? (
+      {taskListDataState.length > 0 ? (
         <>
           <HeaderContainer>
             <TitleContainer>
@@ -444,9 +446,13 @@ const CustomTaskListDrawer = (props: any) => {
                     );
                   })
                 ) : (
-                  <MessageDiv>
-                    <p>No task matches the search</p>
-                  </MessageDiv>
+                  // <MessageDiv>
+                  //   <p>No task matches the search</p>
+                  // </MessageDiv>
+                  <NoMatchDiv>
+                    <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+                    <MessageDivShowErr>No result found</MessageDivShowErr>
+                  </NoMatchDiv>
                 )}
               </Box>
             ) : (
@@ -496,9 +502,13 @@ const CustomTaskListDrawer = (props: any) => {
                     );
                   })
                 ) : (
-                  <MessageDiv>
-                    <p>No task matches the search</p>
-                  </MessageDiv>
+                  // <MessageDiv>
+                  //   <p>No task matches the search</p>
+                  // </MessageDiv>
+                  <NoMatchDiv>
+                    <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+                    <MessageDivShowErr>No result found</MessageDivShowErr>
+                  </NoMatchDiv>
                 )}
               </Box>
             )}

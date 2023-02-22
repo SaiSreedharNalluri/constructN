@@ -266,3 +266,19 @@ export const ContentErrorSpan = styled("span")({
   // marginLeft:"2px"
   color: "rgba(255, 132, 63, 1)",
 });
+
+
+
+export const NoMatchDiv = styled("div")({
+  // position: "absolute",
+  // top: "50%",
+  // left: "50%",
+  // transform: "translate(-50%, -50%)",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop: "50px",
+
+  // margin:"auto"
+});

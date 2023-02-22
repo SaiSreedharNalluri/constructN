@@ -19,6 +19,7 @@ import RFIList from "../../../public/divami_icons/rfiList.svg";
 import SubmittalList from "../../../public/divami_icons/submittalList.svg";
 import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
 import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
+import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 
 import {
   AppliedFilter,
@@ -52,6 +53,7 @@ import {
   RaiseButtonDiv,
   ContentError,
   ContentErrorSpan,
+  NoMatchDiv,
 } from "./IssueListStyles";
 
 import _ from "lodash";
@@ -235,7 +237,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   };
   return (
     <TaskListContainer>
-      {filteredIssuesList.length > 0 ? (
+      {issueList.length > 0 ? (
         <>
           <HeaderContainer>
             <TitleContainer>
@@ -401,9 +403,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     );
                   })
                 ) : (
-                  <MessageDiv>
-                    <p>No issue matches the search</p>
-                  </MessageDiv>
+                  // <MessageDiv>
+                  //   <p>No issue matches the search</p>
+                  // </MessageDiv>
+                  <NoMatchDiv>
+                    <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+                    <MessageDivShowErr>No result found</MessageDivShowErr>
+                  </NoMatchDiv>
                 )}
               </Box>
             ) : (
