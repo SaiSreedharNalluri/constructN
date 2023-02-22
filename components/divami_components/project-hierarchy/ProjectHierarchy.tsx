@@ -59,7 +59,9 @@ const ProjectHierarchy = ({
   useEffect(() => {
     if (window.localStorage.getItem("nodeData")) {
       let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
-      getStructureData(nodeData);
+      if (nodeData && getStructureData) {
+        getStructureData(nodeData);
+      }
     }
   }, [treeViewData]);
 

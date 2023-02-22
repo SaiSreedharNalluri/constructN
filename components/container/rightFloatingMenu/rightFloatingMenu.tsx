@@ -22,6 +22,7 @@ import tasks from "../../../public/icons/taskVisibleInToolbar.svg";
 import hotspot from "../../../public/icons/Hotspot.svg";
 import { IActiveRealityMap } from "../../../models/IReality";
 import { IDesignMap } from "../../../models/IDesign";
+import Select from "react-select/dist/declarations/src/Select";
 interface IProps {
   toolClicked: (a: ITools) => void;
   viewMode: string;
@@ -35,6 +36,7 @@ interface IProps {
   currentProject: string;
   currentLayersList: IActiveRealityMap;
   currentTypesList: IDesignMap;
+  currentViewType: string;
   closeFilterOverlay: () => void;
   handleOnTaskFilter: (formData: object) => void;
   closeTaskFilterOverlay: () => void;
@@ -52,6 +54,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
   currentStructure,
   currentLayersList,
   currentTypesList,
+  currentViewType,
   closeFilterOverlay,
   closeTaskFilterOverlay,
   handleOnTaskFilter,
@@ -69,14 +72,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
   const [myTypesList, setMyTypesList] = useState<IDesignMap>(currentTypesList);
   const [myLayersList, setMyLayersList] =
     useState<IActiveRealityMap>(currentLayersList);
+  const [mySelectedType, setMySelectedType] = useState(currentViewType);
   let toolInstance: ITools = { toolName: "", toolAction: "" };
-  // const closeStructurePages = (e: any) => {
-  //   if (!rightOverlayRefs.current.contains(e.target)) {
-  //     setRighttNav(false);
-  //     setActive(e.target.id);
-  //     console.log('This is triggered!!!!!!!!!!!!!!!!!!!!!!!!',e);
-  //   }
-  // };
   useEffect(() => {
     setIViewMode(viewMode);
   }, [viewMode]);
@@ -87,12 +84,15 @@ const RightFloatingMenu: React.FC<IProps> = ({
     setMySnapshot(currentSnapshot);
     setMyTypesList(currentTypesList);
     setMyLayersList(currentLayersList);
+    setMySelectedType(currentViewType);
+    //console.log('Layers',myLayersList)
   }, [
     currentProject,
     currentSnapshot,
     currentStructure,
     currentLayersList,
     currentTypesList,
+    currentViewType,
   ]);
 
   const rightMenuClickHandler = (e: any) => {
@@ -183,7 +183,11 @@ const RightFloatingMenu: React.FC<IProps> = ({
                 <select onChange={typeChange} id="typeList">
                   {myTypesList &&
                     Object.keys(myTypesList).map((key) => (
-                      <option key={key} value={key} defaultChecked={true}>
+                      <option
+                        key={key}
+                        value={key}
+                        selected={key === mySelectedType ? true : false}
+                      >
                         {key}
                       </option>
                     ))}
@@ -195,8 +199,9 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
           <FontAwesomeIcon
             id="type"
-            className={` flex w-full py-2  cursor-pointer ${active === "type" ? "selectedClass" : "unSelectedClass"
-              }`}
+            className={` flex w-full py-2  cursor-pointer ${
+              active === "type" ? "selectedClass" : "unSelectedClass"
+            }`}
             onClick={rightMenuClickHandler}
             icon={faSitemap}
           ></FontAwesomeIcon>
@@ -207,8 +212,9 @@ const RightFloatingMenu: React.FC<IProps> = ({
           <FontAwesomeIcon
             icon={faDatabase}
             id="layer"
-            className={` w-full py-2  cursor-pointer ${active === "layer" ? "selectedClass" : "unSelectedClass"
-              }`}
+            className={` w-full py-2  cursor-pointer ${
+              active === "layer" ? "selectedClass" : "unSelectedClass"
+            }`}
             onClick={rightMenuClickHandler}
           ></FontAwesomeIcon>
           {active === "layer" ? (
@@ -237,8 +243,9 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
         </div>
         <div
-          className={`${active === "issue" ? "selectedClass" : "unSelectedClass"
-            }`}
+          className={`${
+            active === "issue" ? "selectedClass" : "unSelectedClass"
+          }`}
         >
           <Image
             alt=""
@@ -264,8 +271,9 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
         </div>
         <div
-          className={` ${active === "task" ? "selectedClass" : "unSelectedClass"
-            }`}
+          className={` ${
+            active === "task" ? "selectedClass" : "unSelectedClass"
+          }`}
         >
           <Image
             alt=""
@@ -291,8 +299,9 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
         </div>
         <div
-          className={` justify-center cursor-pointer ${active === "progress" ? "selectedClass" : "unSelectedClass"
-            }`}
+          className={` justify-center cursor-pointer ${
+            active === "progress" ? "selectedClass" : "unSelectedClass"
+          }`}
         >
           <Image
             alt=""
@@ -317,10 +326,11 @@ const RightFloatingMenu: React.FC<IProps> = ({
               <FontAwesomeIcon
                 icon={faCodeBranch}
                 id="compareDesign"
-                className={` w-full  cursor-pointer ${active === "compareDesign"
+                className={` w-full  cursor-pointer ${
+                  active === "compareDesign"
                     ? "selectedClass"
                     : "unSelectedClass"
-                  }`}
+                }`}
                 onClick={rightMenuClickHandler}
               ></FontAwesomeIcon>
             </div>
@@ -329,10 +339,11 @@ const RightFloatingMenu: React.FC<IProps> = ({
               <FontAwesomeIcon
                 icon={faArrowsSplitUpAndLeft}
                 id="compareReality"
-                className={` w-full  cursor-pointer ${active === "compareReality"
+                className={` w-full  cursor-pointer ${
+                  active === "compareReality"
                     ? "selectedClass"
                     : "unSelectedClass"
-                  }`}
+                }`}
                 onClick={rightMenuClickHandler}
               ></FontAwesomeIcon>
             </div>

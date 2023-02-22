@@ -18,7 +18,7 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
                 <div
                   onClick={() => {
                     window.localStorage.setItem("nodeData", "");
-                    window.localStorage.setItem("expandedNodes", []);
+                    window.localStorage.setItem("expandedNodes", "");
                     router.push(`projects/${pData._id}/structure`);
                   }}
                 >
