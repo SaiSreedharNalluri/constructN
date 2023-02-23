@@ -430,6 +430,20 @@ const AddCommentContainer = styled("div")((props: any) => ({
   width: "100%",
 })) as any;
 
+const AddCommentContainerSecond = styled("div")({
+  height: "50px",
+  display: "flex",
+  alignItems: "center",
+  // justifyContent: "space-around",
+  paddingLeft: "20px",
+  border: "1px solid #D9D9D9",
+  width: "100%",
+  position: "absolute",
+  bottom: "0",
+  background: "white",
+  marginLeft: "-24px",
+});
+
 const AddCommentInput = styled("input")({
   width: "100%",
   paddingLeft: "20px",
@@ -439,6 +453,8 @@ const AddCommentInput = styled("input")({
 
 const AddCommentButtonContainer = styled("div")({
   display: "flex",
+  alignItems: "center",
+  marginLeft: "auto",
 });
 
 const AttachButton = styled("button")({
@@ -474,6 +490,12 @@ const ProgressCustomSelect = styled("div")({
 
 const AssigneeCustomSelect = styled("div")({
   marginTop: "20px",
+});
+
+const ImageErrorIcon = styled(Image)({
+  cursor: "pointer",
+  width: "24px",
+  height: "24px",
 });
 
 function TabPanel(props: TabPanelProps) {
@@ -529,6 +551,27 @@ function BasicTabs(props: any) {
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
   const [searchTerm, setSearchTerm] = useState("");
   const [list, setList] = useState<any>();
+
+  const StyledInput = styled(TextField)(({ theme }) => ({
+    color: "blue",
+    "label + &": {
+      marginTop: theme.spacing(8),
+    },
+
+    "& .MuiInput-root": {
+      "&:before, :after, :hover:not(.Mui-disabled):before": {
+        borderBottom: 0,
+      },
+    },
+    "&& .MuiInput-underline": {
+      borderBottom: "none",
+      // borderBottomColor: "none",
+    },
+    "& .MuiInput-underline:after": {
+      borderBottom: "none",
+      // borderBottomColor: "none",
+    },
+  }));
 
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
@@ -916,17 +959,24 @@ function BasicTabs(props: any) {
             </AddCommentContainer>
           ) : (
             <>
-              {/* <AddCommentContainer>
-                <AddCommentInput placeholder="Add Comment"></AddCommentInput>
+              <AddCommentContainerSecond>
+                {/* <AddCommentInput placeholder="Add Comment"></AddCommentInput> */}
+                <StyledInput
+                  id="standard-basic"
+                  variant="standard"
+                  placeholder="Add Comment"
+                />
                 <AddCommentButtonContainer>
                   <AttachButton>
-                    <Image src={Clip} alt="" />{" "}
+                    <ImageErrorIcon src={Clip} alt="" />
+                    {/* <Image src={Clip} alt="" />{" "} */}
                   </AttachButton>
                   <SendButton>
-                    <Image src={Send} alt="" />{" "}
+                    <ImageErrorIcon src={Send} alt="" />
+                    {/* <Image src={Send} alt="" />{" "} */}
                   </SendButton>
                 </AddCommentButtonContainer>
-              </AddCommentContainer> */}
+              </AddCommentContainerSecond>
             </>
           )}
         </TabOneDiv>

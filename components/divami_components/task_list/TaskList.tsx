@@ -112,6 +112,8 @@ const CustomTaskListDrawer = (props: any) => {
   const [taskList, setTaskList] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc");
 
+  const [errorShow, setErrorShow] = useState<any>(tasksList);
+
   useEffect(() => {
     setTaskList(tasksList);
   }, [tasksList]);
@@ -281,7 +283,7 @@ const CustomTaskListDrawer = (props: any) => {
 
   return (
     <TaskListContainer>
-      {taskListDataState.length > 0 ? (
+      {errorShow.length > 0 ? (
         <>
           <HeaderContainer>
             <TitleContainer>

@@ -132,13 +132,15 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [issueList, setIssueList] = useState<any>(issuesList);
 
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(issueList);
-  const [errorShow, setErrorShow] = useState(false);
+  const [errorShow, setErrorShow] = useState<any>(issueList);
+
   useEffect(() => {
     setIssueList(issuesList);
   }, [issuesList?.length]);
 
   useEffect(() => {
     setFilteredIssuesList(issueList);
+    // setErrorShow(true);
   }, [issueList?.length]);
 
   const closeIssueList = () => {
@@ -236,9 +238,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setOpenIssueDetail(true);
   };
   return (
-    <TaskListContainer>
-      {issueList.length > 0 ? (
-        <>
+    <>
+      {errorShow.length > 0 ? (
+        <TaskListContainer>
           <HeaderContainer>
             <TitleContainer>
               <span>Issue List</span>
@@ -406,6 +408,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   // <MessageDiv>
                   //   <p>No issue matches the search</p>
                   // </MessageDiv>
+
                   <NoMatchDiv>
                     <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
                     <MessageDivShowErr>No result found</MessageDivShowErr>
@@ -467,9 +470,10 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     );
                   })
                 ) : (
-                  <MessageDiv>
-                    <p>No issue matches the search</p>
-                  </MessageDiv>
+                  <NoMatchDiv>
+                    <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+                    <MessageDivShowErr>No result found</MessageDivShowErr>
+                  </NoMatchDiv>
                 )}
               </Box>
             )}
@@ -518,22 +522,24 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               />
             </Drawer>
           )}
-        </>
+        </TaskListContainer>
       ) : (
-        <ErrorImageDiv>
-          <ImageErrorIcon src={listingErrorIcon} alt="Error Image" />
-          <MessageDivShowErr>
-            No Issue has been raised yet. Get a headstart by raising one.
-          </MessageDivShowErr>
-          <RaiseButtonDiv>Raise Issue</RaiseButtonDiv>
+        <TaskListContainer>
+          <ErrorImageDiv>
+            <ImageErrorIcon src={listingErrorIcon} alt="Error Image" />
+            <MessageDivShowErr>
+              No Issue has been raised yet. Get a headstart by raising one.
+            </MessageDivShowErr>
+            <RaiseButtonDiv>Raise Issue</RaiseButtonDiv>
 
-          <ContentError>
-            Check out
-            <ContentErrorSpan> How to raise an Issue?</ContentErrorSpan>
-          </ContentError>
-        </ErrorImageDiv>
+            <ContentError>
+              Check out
+              <ContentErrorSpan> How to raise an Issue?</ContentErrorSpan>
+            </ContentError>
+          </ErrorImageDiv>
+        </TaskListContainer>
       )}
-    </TaskListContainer>
+    </>
   );
 };
 
