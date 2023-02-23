@@ -774,6 +774,44 @@ const Index: React.FC<IProps> = () => {
         );
         setTasksList(taskFilterList);
         break;
+      case 'status_desc':
+        setIssueFilterList(issuesList);
+        setTaskFilterList(taskFilterList.sort((a, b) => {
+          if (
+            issueStatusList?.indexOf(a.status) >
+            issueStatusList?.indexOf(b.status)
+          ) {
+            return -1;
+          } else if (
+            issueStatusList?.indexOf(b.status) >
+            issueStatusList?.indexOf(a.status)
+          ) {
+            return 1;
+          }
+          return 0;
+        }));
+        // setTaskFilterList(statusDescList);
+        setTasksList(taskFilterList);
+        break;
+      case 'status_asc':
+        // setIssueFilterList(issuesList);
+        setTaskFilterList(taskFilterList.sort((a, b) => {
+          if (
+            issueStatusList?.indexOf(a.status) >
+            issueStatusList?.indexOf(b.status)
+          ) {
+            return 1;
+          } else if (
+            issueStatusList?.indexOf(b.status) >
+            issueStatusList?.indexOf(a.status)
+          ) {
+            return -1;
+          }
+          return 0;
+        }));
+        // setTaskFilterList(statusAscList);
+        setTasksList(taskFilterList);
+        break;
       default:
         console.log("Not Sorted");
         break;

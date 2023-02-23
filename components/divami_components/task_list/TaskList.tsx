@@ -532,7 +532,7 @@ const CustomTaskListDrawer = (props: any) => {
                         <div>{val.priority} Priority</div>
                       </SecondHeader>
                       <ThirdHeader>
-                        <div>{val.assignees}</div>
+                        <div>{val.assignee}</div>
                         <DueDateDiv>
                           Due by {Moment(val.due_date).format("DD MMM 'YY")}
                         </DueDateDiv>
