@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import * as Yup from "yup";
 import { Formik, Form, ErrorMessage } from 'formik';
-import SubmitButton from './core/buttons/submitButton';
-import InputPassword from './core/Input/inputPassword';
+import SubmitButton from '../core/buttons/submitButton';
+import InputPassword from '../core/Input/inputPassword';
 import showPasswordImage from "../public/icons/show-password.svg";
 import hidePasswordImage from "../public/icons/hide-password.svg";
-import NextImage from '../components/core/Image';
+import NextImage from '../core/Image';
 import Image from 'next/image';
 import router from 'next/router';
-import OkButton from './core/buttons/okButton';
+import OkButton from '../core/buttons/okButton';
 interface IProps {
     message: string;
     loading: boolean;
@@ -25,7 +25,11 @@ const ResetPassword: React.FC<IProps> = ({ loading, message, handleResetPassword
     const validationSchema = Yup.object().shape({
         password: Yup.string()
             .required('Password is required')
-            .min(5, 'Minimum 5 characters required'),
+            .min(8, 'Minimum 8 characters required')
+      .matches(/[0-9]/, 'Password requires a number')
+      .matches(/[a-z]/, 'Password requires a lowercase letter')
+      .matches(/[A-Z]/, 'Password requires an uppercase letter')
+      .matches(/[^\w]/, 'Password requires a symbol'),
         confirmPassword: Yup.string()
             .required('Confirm password is required')
             .oneOf([Yup.ref('password'), null], 'Passwords must match'),
