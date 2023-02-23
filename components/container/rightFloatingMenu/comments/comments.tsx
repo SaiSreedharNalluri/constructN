@@ -64,7 +64,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
           if (indexOfUserToReplace !== -1) {
             backendComments[indexOfUserToReplace] = response.result;
           }
-          setBackendComments(backendComments);
+          setBackendComments(structuredClone(backendComments));
           setActiveComment(null);
         }
       });
@@ -102,7 +102,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
         if (indexOfUserToReplace !== -1) {
           backendComments[indexOfUserToReplace] = response.result;
         }
-        setBackendComments(backendComments);
+        setBackendComments(structuredClone(backendComments));
         setActiveComment(null);
       }
     });
