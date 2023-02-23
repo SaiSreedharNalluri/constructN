@@ -1,10 +1,9 @@
-import { faComment, faMailBulk, faMailForward, faMailReply, faPaperPlane, faShare } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 
 interface IProps {
   handleSubmit: (text: string) => void;
-  submitLabel: string;
   hasCancelButton?: boolean;
   handleCancel: () => void;
   initialText?: string;
@@ -12,7 +11,6 @@ interface IProps {
 
 const CommentForm: React.FC<IProps> = ({
   handleSubmit,
-  submitLabel,
   hasCancelButton = false,
   handleCancel,
   initialText = '',
@@ -26,20 +24,23 @@ const CommentForm: React.FC<IProps> = ({
   };
   return (
     <form onSubmit={onSubmit}>
-      <div className='grid grid-cols-8 p-2'>
-      <textarea
-        className=" col-span-7"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      <button
-        className="focus:outline-none bg-gray-600 hover:bg-gray-800 rounded text-gray-200 font-semibold"
-        type="submit"
-        disabled={isTextareaDisabled}
-      >
-        {/* {submitLabel} */}
-        <FontAwesomeIcon icon={faPaperPlane} className='rounded-full'></FontAwesomeIcon>
-      </button></div>
+      <div className="grid grid-cols-8 p-2">
+        <textarea
+          className=" col-span-7"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <button
+          className="focus:outline-none bg-gray-600 hover:bg-gray-800 rounded text-gray-200 font-semibold"
+          type="submit"
+          disabled={isTextareaDisabled}
+        >
+          <FontAwesomeIcon
+            icon={faPaperPlane}
+            className="rounded-full"
+          ></FontAwesomeIcon>
+        </button>
+      </div>
       {hasCancelButton && (
         <button
           type="button"

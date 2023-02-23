@@ -329,7 +329,6 @@ const IssueList: React.FC<IProps> = ({
       setIssueViewMode('list');
     }, 2000);
   };
-
   const renderIssueView = (viewParam: string) => {
     switch (viewParam) {
       case 'filter':
