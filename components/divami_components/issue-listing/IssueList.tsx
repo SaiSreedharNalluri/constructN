@@ -356,7 +356,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   }}
                 />
               </Tooltip>
-              {sortOrder === "asc" ? (
+              {/* {sortOrder === "asc" ? (
                 <ArrowUpIcon
                   onClick={sortDateOrdering}
                   src={UpArrow}
@@ -371,7 +371,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               )}
               <DueDate>Due Date</DueDate>
 
-              <SecondDividerIcon src={DividerIconSVG} alt="" />
+              <SecondDividerIcon src={DividerIconSVG} alt="" /> */}
 
               <FunnelIcon
                 src={FilterInActive}

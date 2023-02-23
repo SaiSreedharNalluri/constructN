@@ -91,7 +91,6 @@ const CustomTaskListDrawer = (props: any) => {
     getTasks,
     handleOnTasksSort
   } = props;
-
   const [taskType, setTaskType] = useState<[string]>();
   const [taskPriority, setTaskPriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState([]);
@@ -102,8 +101,8 @@ const CustomTaskListDrawer = (props: any) => {
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredTaskList, setFilteredTaskList] = useState(taskListDataState);
   const [taskList, setTaskList] = useState([]);
+  const [filteredTaskList, setFilteredTaskList] = useState(taskList);
   const [sortOrder, setSortOrder] = useState("asc");
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -140,6 +139,13 @@ const CustomTaskListDrawer = (props: any) => {
       method: "Asc DueDate"
     },
   ]
+  useEffect(() => {
+    setTaskList(tasksList);
+  }, [tasksList]);
+
+  useEffect(() => {
+    setFilteredTaskList(taskList);
+  }, [taskList]);
 
   const handleSortClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -152,37 +158,28 @@ const CustomTaskListDrawer = (props: any) => {
 
   const handleSortMenuClick = (sortMethod: string) => handleOnTasksSort(sortMethod)
 
-  useEffect(() => {
-    setTaskList(tasksList);
-  }, [tasksList]);
 
-  useEffect(() => {
-    console.log("filteredTaskList1", filteredTaskList);
-    setFilteredTaskList(tasksList);
-    console.log("filteredTaskList2", filteredTaskList);
-  }, [tasksList]);
+  console.log(tasksList, taskList, filteredTaskList, "fsfsdf")
 
   const handleViewTaskList = () => {
-    // console.log("teskssksk trigg");
     setOpenDrawer(true);
   };
-  console.log(taskList, "tasklist");
-  useEffect(() => {
-    handleDatesSort();
-    let tempTaskDataState: any = [];
-    tasksList?.map((task: any) => {
-      let tempTask = {
-        id: task._id,
-        type: task.type,
-        priority: task.priority,
-        assignee: task.assignees[0].firstName,
-        due_date: task.dueDate,
-        tags: task.tags,
-      };
-      tempTaskDataState.push(tempTask);
-    });
-    setTaskListDataState(tempTaskDataState);
-  }, [tasksList]);
+  // useEffect(() => {
+  //   handleDatesSort();
+  //   let tempTaskDataState: any = [];
+  //   tasksList?.map((task: any) => {
+  //     let tempTask = {
+  //       id: task._id,
+  //       type: task.type,
+  //       priority: task.priority,
+  //       assignee: task.assignees[0].firstName,
+  //       due_date: task.dueDate,
+  //       tags: task.tags,
+  //     };
+  //     tempTaskDataState.push(tempTask);
+  //   });
+  //   setTaskListDataState(tempTaskDataState);
+  // }, [tasksList]);
 
   const handleClose = () => {
     onClose(true);
@@ -215,7 +212,6 @@ const CustomTaskListDrawer = (props: any) => {
     }
   }, []);
 
-  console.log(taskType, taskPriority, taskStatus, projectUsers, "IMPORTANTT");
 
   const getDownloadableTaskList = (issuesList = filteredTaskList) => {
     let modifiedList = issuesList.map((issue: any) => {
@@ -230,23 +226,6 @@ const CustomTaskListDrawer = (props: any) => {
     return modifiedList;
   };
 
-  const handleDatesSort = () => {
-    console.log(filteredTaskList, "filteredTaskList");
-    let sorted;
-    if (sortOrder === "asc") {
-      sorted = filteredTaskList.sort((a: any, b: any) => {
-        return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
-      });
-      setSortOrder("desc");
-    } else {
-      sorted = filteredTaskList.sort((a: any, b: any) => {
-        return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
-      });
-      setSortOrder("asc");
-    }
-    console.log(sorted, "sorted");
-    setFilteredTaskList(sorted);
-  };
 
   const sortDateOrdering = () => {
     let sorted;
@@ -267,13 +246,12 @@ const CustomTaskListDrawer = (props: any) => {
       });
       setSortOrder("asc");
     }
-    console.log("sorted", sorted);
     setFilteredTaskList(sorted);
   };
 
   const handleViewTask = (task: any) => {
-    tasksList.forEach((item: any) => {
-      if (task.id === item._id) {
+    filteredTaskList.forEach((item: any) => {
+      if (task._id === item._id) {
         setViewTask(item);
       }
     });
@@ -289,34 +267,50 @@ const CustomTaskListDrawer = (props: any) => {
   };
 
   const handleSearch = () => {
-    const filteredData = taskListDataState?.filter((eachTask: any) => {
-      const taskName = eachTask?.type?.toLowerCase();
-      return taskName.includes(searchTerm.toLowerCase());
-    });
-    setFilteredTaskList([...filteredData]);
+    if (searchTerm) {
+      const filteredData = taskList?.filter((eachTask: any) => {
+        const taskName = eachTask?.type?.toLowerCase();
+        return taskName.includes(searchTerm.toLowerCase());
+      });
+      setFilteredTaskList([...filteredData]);
+    } else {
+      setFilteredTaskList(taskList);
+    }
   };
+
   useEffect(() => {
     if (router.isReady) {
       getProjectUsers(router.query.projectId as string)
         .then((response: any) => {
           if (response.success === true) {
             setProjectUsers(response.result);
-            console.log(projectUsers);
           }
         })
         .catch();
     }
   }, [router.isReady, router.query.projectId]);
+
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
 
-  useEffect(() => {
-    setFilteredTaskList(taskListDataState);
-  }, [taskListDataState]);
+  // useEffect(() => {
+  //   setFilteredTaskList(taskListDataState);
+  // }, [taskListDataState]);
+
+  // useEffect(() => {
+  //   console.log("filtered Tasks", filteredTaskList)
+  // }, [filteredTaskList])
 
   useEffect(() => {
-    console.log(filteredTaskList, "filteredTaskList");
+    // setIssuesListData(filteredIssuesList);
+    if (viewTask?._id) {
+      filteredTaskList.forEach((item: any) => {
+        if (viewTask._id === item._id) {
+          setViewTask(item);
+        }
+      });
+    }
   }, [filteredTaskList]);
 
   return (
@@ -505,6 +499,7 @@ const CustomTaskListDrawer = (props: any) => {
           <Box>
             {filteredTaskList.length > 0 ? (
               filteredTaskList.map((val: any) => {
+                console.log("val", val)
                 return (
                   <>
                     <BodyInfo
@@ -530,14 +525,14 @@ const CustomTaskListDrawer = (props: any) => {
                           alt="Arr"
                         />
                         <BodyContTitle>
-                          {val.type} (#{val.id})
+                          {val.type} (#{val._id})
                         </BodyContTitle>
                       </FirstHeader>
                       <SecondHeader>
                         <div>{val.priority} Priority</div>
                       </SecondHeader>
                       <ThirdHeader>
-                        <div>{val.assignee}</div>
+                        <div>{val.assignees}</div>
                         <DueDateDiv>
                           Due by {Moment(val.due_date).format("DD MMM 'YY")}
                         </DueDateDiv>

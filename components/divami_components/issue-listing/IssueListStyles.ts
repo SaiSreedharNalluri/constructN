@@ -197,7 +197,7 @@ export const AppliedFilter = styled('div')({
 
 export const StyledMenu = styled(MenuItem)({
   borderBottom: '1px solid #D9D9D9',
-  width: '218px',
+  width: '178px',
   margin: '0px 20px',
   '&:hover': {
     cursor: 'pointer',
