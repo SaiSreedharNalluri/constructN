@@ -761,7 +761,7 @@ const IssueList: React.FC<IProps> = ({
                       icon={faCalendar}
                     ></FontAwesomeIcon>
                     <p className="ml-1">
-                      {Moment(issueObj?.dueDate).format('MMM Do YYYY')}
+                      {issueObj?.dueDate!==null?Moment(issueObj?.dueDate).format('MMM Do YYYY'):'open'}
                     </p>
                   </div>
                   <div className="flex">
@@ -798,7 +798,8 @@ const IssueList: React.FC<IProps> = ({
                   />
                 </div>
                 <div>
-                  {issueObj?.attachments.map((attachment) => {
+                  {
+                  issueObj?.attachments?.map((attachment) => {
                     return (
                       <div key={attachment._id}>
                         {getFileIcon(attachment.name)}
@@ -1062,23 +1063,26 @@ const IssueList: React.FC<IProps> = ({
                                   </div>
                                 </div>
                                 <div className="flex mt-2 ml-3">
-                                  <div className="flex">
+                                  <div className="grid grid-cols-2">
+                                    <div className='flex'>
                                     <FontAwesomeIcon
                                       icon={faUser}
                                       className="text-gray-500 "
                                     ></FontAwesomeIcon>
                                     <p className="text-gray-500 -mt-1 ml-1">
                                       {issueInfo.assignees[0]?.firstName}
-                                    </p>
+                                    </p></div>
+                                    <div className='flex'>
                                     <FontAwesomeIcon
                                       icon={faCalendar}
                                       className="text-gray-500 ml-2"
                                     />
                                     <p className="text-gray-500 -mt-1 ml-1">
-                                      {Moment(issueInfo.dueDate).format(
+                                      {issueInfo.dueDate!==null?Moment(issueInfo.dueDate).format(
                                         'MMM Do YYYY'
-                                      )}
+                                      ):'open'}
                                     </p>
+                                    </div>
                                   </div>
                                 </div>
                               </div>

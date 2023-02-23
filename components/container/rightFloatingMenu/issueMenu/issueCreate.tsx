@@ -219,7 +219,7 @@ const IssueCreate: React.FC<IProps> = ({
     description: '',
     assignees: [],
     tags: [],
-    dueDate: '',
+    dueDate: new Date().toISOString().slice(0, 10),
     context: myContext,
     structure: '',
     title: '',
