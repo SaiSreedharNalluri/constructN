@@ -139,8 +139,11 @@ const IssueCreate: React.FC<IProps> = ({
       resetForm: (nextValues?: Partial<FormValues>) => void;
     }
   ) => {
+    console.log('values', values);
     const formData = new FormData();
-
+    let assignees = values.assignees;
+    let tags = values.tags;
+    let attachment = values.attachments;
     let userIdList: any[] = [];
     if (values.assignees.length > 0) {
       values.assignees.map((user: any) => {
@@ -164,6 +167,13 @@ const IssueCreate: React.FC<IProps> = ({
 
     let jreq: any = values;
     for (let i = 0; i < jreq.attachments?.length; i++) {
+      if (jreq.attachments![i].size > 50 * 1024 * 1024) {
+        toast.error('file size is to large. failed to create issue');
+        values.assignees = assignees;
+        values.tags = tags;
+        values.attachments = attachment;
+        return;
+      }
       formData.append('attachments', jreq.attachments![i]);
     }
     formData.append('screenshot', image as Blob, 'imageName.png');
@@ -191,10 +201,15 @@ const IssueCreate: React.FC<IProps> = ({
         }
       })
       .catch((error) => {
+        values.assignees = assignees;
+        values.tags = tags;
+        values.attachments = attachment;
         toolInstance.toolAction = 'issueCreateFail';
         issueToolClicked(toolInstance);
         if (error.success === false) {
           toast.error(error?.message);
+        } else {
+          toast.error('some thing went to worng, failed to create the issue');
         }
       });
   };
@@ -441,32 +456,17 @@ const IssueCreate: React.FC<IProps> = ({
                       setFieldValue('attachments', event.target.files);
                     }}
                   />
+                  <div className="flex">
+                    <h1>Note:-</h1>
+                    <p>The attachment file size should be less than 50mb </p>
+                  </div>
+
                   <ErrorMessage
                     name="attachments"
                     component="div"
                     className="alert alert-danger"
                   />
                 </div>
-              </div>
-              <div>
-                {/* <div>
-                  <h5 className="text-gray-500">Screenshot</h5>
-                </div> */}
-                {/* <div>
-                  <input
-                    hidden
-                    type="file"
-                    name="screenshot"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setFieldValue('screenshot', e.target.files![0]);
-                    }}
-                  />
-                  <ErrorMessage
-                    name="screenshot"
-                    component="div"
-                    className="alert alert-danger"
-                  />
-                </div> */}
               </div>
               <div className="flex justify-center">
                 <button
