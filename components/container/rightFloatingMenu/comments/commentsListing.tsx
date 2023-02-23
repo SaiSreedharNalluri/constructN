@@ -30,40 +30,41 @@ const CommentsListing: React.FC<IProps> = ({
     activeComment &&
     activeComment._id === comment._id &&
     activeComment.type === 'replying';
-  const [editType, setEditType] = useState(''); //comments,reply
   const [open, setOpen] = useState(false);
   const [commentObj, setCommentObj] = useState<Comments>();
   const handleDeleteItem = () => {
-    deleteComment(commentObj as Comments);
+    deleteComment(commentObj as any);
     setTimeout(() => {
       setOpen(false);
-    }, 1000);
+    }, 4000);
   };
   return (
     <React.Fragment>
       <div key={comment._id} className="">
-        
-          <div className="grid grid-cols-8">
-          <div className={`${comment.comment?'':'col-start-2'} p-1 text-xs overflow-hidden  col-span-1`}>
+        <div className="grid grid-cols-8">
+          <div
+            className={`${
+              comment.comment ? '' : 'col-start-2'
+            } p-1 text-xs overflow-hidden  col-span-1`}
+          >
             <NextImage
               src={comment.by.avatar}
               className={`rounded-full cursor-pointer object-cover`}
-              
             />
           </div>
           <div className="font-bold text-cyan-700 text-base col-span-6">
-                {comment.by.fullName}
-                
-              </div>
-              <div className=" col-start-2 text-xs col-span-6">
-                {Moment(comment?.createdAt).format('DD-MMM-YYYY hh:mm A')}
-              </div>
-              </div>
+            {comment.by.fullName}
+          </div>
+          <div className=" col-start-2 text-xs col-span-6">
+            {Moment(comment?.createdAt).format('DD-MMM-YYYY hh:mm A')}
+          </div>
+        </div>
 
-              <div className="grid grid-cols-8">  
-            <div className={`col-span-6 ${comment.comment?'':'col-start-2'}`}>
-            
-            <div className={`px-3`}><p>{comment.comment ? comment.comment : comment.reply}</p></div>
+        <div className="grid grid-cols-8">
+          <div className={`col-span-6 ${comment.comment ? '' : 'col-start-2'}`}>
+            <div className={`px-3`}>
+              <p>{comment.comment ? comment.comment : comment.reply}</p>
+            </div>
             <div className="flex justify-items-start cursor-pointer hover:underline text-blue-700">
               {comment?.replies && (
                 <div
@@ -78,11 +79,6 @@ const CommentsListing: React.FC<IProps> = ({
                 className="ml-2 "
                 onClick={() => {
                   setActiveComment({ _id: comment._id, type: 'editing' });
-                  if (comment.replies) {
-                    setEditType('comments');
-                  } else {
-                    setEditType('reply');
-                  }
                 }}
               >
                 Edit
@@ -99,7 +95,6 @@ const CommentsListing: React.FC<IProps> = ({
             </div>
             {isEditing && (
               <CommentForm
-                submitLabel="Update"
                 hasCancelButton={true}
                 handleCancel={() => {
                   setActiveComment(null);
@@ -112,7 +107,6 @@ const CommentsListing: React.FC<IProps> = ({
             )}
             {isReplying && (
               <CommentForm
-                submitLabel="Reply"
                 handleSubmit={(text) => addReplyToComment(text, comment._id)}
                 hasCancelButton={true}
                 handleCancel={() => {
@@ -131,7 +125,7 @@ const CommentsListing: React.FC<IProps> = ({
                     activeComment={activeComment}
                     setActiveComment={setActiveComment}
                     addReplyToComment={() => {}}
-                    deleteComment={() => {}}
+                    deleteComment={deleteComment}
                   />
                 );
               })}

@@ -58,6 +58,14 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
       ).then((response) => {
         if (response.success === true) {
           toast.success('Comment reply is updated sucessfully');
+          const indexOfUserToReplace = backendComments.findIndex(
+            (comment) => comment._id === comment._id
+          );
+          if (indexOfUserToReplace !== -1) {
+            backendComments[indexOfUserToReplace] = response.result;
+          }
+          setBackendComments(backendComments);
+          setActiveComment(null);
         }
       });
     } else {
@@ -100,16 +108,27 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
     });
   };
   const deleteComments = (comment: any) => {
-    if (comment.comment) {
+    if (comment.commentId) {
       deleteCommentReply(
         router.query.projectId as string,
         comment.commentId,
         comment._id
-      ).then((response) => {
-        if (response.success === true) {
-          toast.success('Comment reply is deleted sucessfully');
-        }
-      });
+      )
+        .then((response) => {
+          if (response.success === true) {
+            toast.success(response.message);
+            const indexOfUserToReplace = backendComments.findIndex(
+              (commentobj) => commentobj._id === comment?.commentId
+            );
+            if (indexOfUserToReplace !== -1) {
+              backendComments[indexOfUserToReplace] = response.result;
+            }
+            setBackendComments(structuredClone(backendComments));
+          }
+        })
+        .catch((error) => {
+          console.log('error', error);
+        });
     } else {
       deleteComment(router.query.projectId as string, comment._id).then(
         (response) => {
@@ -128,13 +147,9 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
     <React.Fragment>
       <div>
         <h1 className="font-bold ">Comments</h1>
-        <div className='absolute bottom-0 w-full left-1'>
-        {/* <h6>Write comment</h6> */}
-        <CommentForm
-          submitLabel="Add Comment"
-          handleSubmit={addComment}
-          handleCancel={() => {}}
-        /></div>
+        <div className="absolute bottom-0 w-full left-1">
+          <CommentForm handleSubmit={addComment} handleCancel={() => {}} />
+        </div>
         <div>
           {backendComments.map((commentObj: Comments) => {
             return (
