@@ -1047,7 +1047,7 @@ const IssueList: React.FC<IProps> = ({
                                     <div>
                                       <p className="text-base">
                                         {issueInfo.type} (#
-                                        {issueInfo?._id?.substring(3)})
+                                        {issueInfo?.sequenceNumber})
                                       </p>
                                     </div>
                                     <div className="flex gap-3">

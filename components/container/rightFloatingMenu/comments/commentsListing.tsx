@@ -41,24 +41,29 @@ const CommentsListing: React.FC<IProps> = ({
   };
   return (
     <React.Fragment>
-      <div key={comment._id} className="mt-2">
-        <div className="flex justify-start">
-          <div className="w-1/6 h-1/6 mt-2 mr-2 mb-2 rounded-full overflow-hidden">
+      <div key={comment._id} className="">
+        
+          <div className="grid grid-cols-8">
+          <div className={`${comment.comment?'':'col-start-2'} p-1 text-xs overflow-hidden  col-span-1`}>
             <NextImage
               src={comment.by.avatar}
-              className={`w-full h-full cursor-pointer object-cover`}
+              className={`rounded-full cursor-pointer object-cover`}
+              
             />
           </div>
-          <div>
-            <div className="flex justify-start">
-              <div className="font-bold text-cyan-700">
+          <div className="font-bold text-cyan-700 text-base col-span-6">
                 {comment.by.fullName}
+                
               </div>
-              <div className="ml-2">
+              <div className=" col-start-2 text-xs col-span-6">
                 {Moment(comment?.createdAt).format('DD-MMM-YYYY hh:mm A')}
               </div>
-            </div>
-            <div>{comment.comment ? comment.comment : comment.reply}</div>
+              </div>
+
+              <div className="grid grid-cols-8">  
+            <div className={`col-span-6 ${comment.comment?'':'col-start-2'}`}>
+            
+            <div className={`px-3`}><p>{comment.comment ? comment.comment : comment.reply}</p></div>
             <div className="flex justify-items-start cursor-pointer hover:underline text-blue-700">
               {comment?.replies && (
                 <div

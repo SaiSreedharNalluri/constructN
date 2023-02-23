@@ -1,6 +1,9 @@
+import { IContext } from "./ITools";
+
 export interface ITasks {
   title: 'string';
   type: 'string';
+  description: string;
   status: 'string';
   priority: 'string';
   screenshot: 'string';
@@ -19,8 +22,12 @@ export interface ITasks {
       entity: 'string';
     }
   ];
-  createdAt: 'string';
-  updatedAt: 'string';
-  _id: 'string';
+  sequenceNumber?: number;
+  createdAt: string;
+  updatedAt: string;
+  startDate: string;
+  dueDate: string;
+  context?: IContext;
+  _id: string;
   __v: 0;
 }

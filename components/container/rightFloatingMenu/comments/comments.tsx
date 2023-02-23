@@ -44,7 +44,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
     }).then((response) => {
       if (response.success === true) {
         toast.success('Comment is added sucessfully');
-        setBackendComments([response.result, ...backendComments]);
+        setBackendComments([...backendComments, response.result]);
       }
     });
   };
@@ -128,12 +128,13 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
     <React.Fragment>
       <div>
         <h1 className="font-bold ">Comments</h1>
-        <h4>Write comment</h4>
+        <div className='absolute bottom-0 w-full left-1'>
+        {/* <h6>Write comment</h6> */}
         <CommentForm
           submitLabel="Add Comment"
           handleSubmit={addComment}
           handleCancel={() => {}}
-        />
+        /></div>
         <div>
           {backendComments.map((commentObj: Comments) => {
             return (
