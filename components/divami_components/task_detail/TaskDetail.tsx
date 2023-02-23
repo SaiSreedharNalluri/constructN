@@ -32,60 +32,53 @@ import CreateTask from "../create-task/CreateTask";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import CustomSelect from "../custom-select/CustomSelect";
 import ActivityLog from "../task_detail/ActivityLog";
+import {
+  ArrowIcon,
+  AttachedImageDiv,
+  AttachedImageIcon,
+  AttachedImageTitle,
+  AttachHorizontal,
+  AttachmentDescription,
+  AttachmentDiv,
+  AttachmentTitle,
+  CaptureStatus,
+  CaptureTitle,
+  CustomTaskDrawerContainer,
+  DeleteIcon,
+  DescriptionDiv,
+  DescriptionPara,
+  DescriptionTitle,
+  EditIcon,
+  FirstHeaderDiv,
+  FourthContAssigned,
+  FourthContLeft,
+  FourthContProgType,
+  HeaderContainer,
+  LeftTitleCont,
+  MoreText,
+  PenIconImage,
+  PriorityStatus,
+  PriorityTitle,
+  ProgressEditStateButtonsContainer,
+  RelatedDiv,
+  RelatedSingleButton,
+  RelatedTagsButton,
+  RelatedTagTitle,
+  RightTitleCont,
+  SecondBodyDiv,
+  SecondContCapt,
+  SecondContPrior,
+  SecondContPriorParal,
+  SpanTile,
+  TabOneDiv,
+  ThirdContProg,
+  ThirdContProgType,
+  ThirdContRight,
+  ThirdContWatch,
+  ThirdContWatchName,
+  TitleContainer,
+} from "./TaskDetailStyles";
 
-const HeaderContainer = styled(Box)`
-  background-color: white;
-  height: 51px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  border-bottom: 1px solid #d9d9d9;
-`;
-
-const TitleContainer = styled(Box)`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-left: 20px;
-  padding-right: 20px;
-`;
-
-const CloseIcon = styled(Image)`
-  cursor: pointer;
-`;
-const ArrowIcon = styled(Image)`
-  cursor: pointer;
-  //   margin-right: 10px;
-`;
-
-const EditIcon = styled(Image)`
-  cursor: pointer;
-  margin-right: 20px;
-`;
-
-const DeleteIcon = styled(Image)`
-  cursor: pointer;
-  //   margin-right: 10px;
-`;
-
-const LeftTitleCont = styled("div")`
-  display: flex;
-  //   margin-top: 10px;
-`;
-
-const RightTitleCont = styled("div")`
-  display: flex;
-
-  //   margin-top: 10px;
-`;
-
-const SpanTile = styled("span")`
-  //   color: #787878;
-
-  margin-left: 10px;
-`;
 // const BodyContainer = styled(Box)`
 //   height: calc(100vh - 134px);
 //   //   border: 2px solid black;
@@ -103,274 +96,11 @@ const BodyContainer = styled(Box)<ContainerProps>`
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;
-const TabOneDiv = styled("div")`
-  //   border: 2px solid pink;
-  //   padding:30px;
-`;
 
-const FirstHeaderDiv = styled("div")`
-  border: 1px solid #d9d9d9;
-  display: flex;
-  height: 150px;
-  border-radius: 4px;
-`;
-
-const SecondBodyDiv = styled("div")`
-  display: flex;
-  margin-top: 25px;
-`;
-
-const PriorityTitle = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const PriorityStatus = styled("div")`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  color: #101f4c;
-`;
-
-const SecondContPrior = styled("div")`
-  width: 186px;
-`;
-
-const SecondContCapt = styled("div")`
-  width: 186px;
-`;
-
-const CaptureTitle = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const CaptureStatus = styled("div")`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-`;
-
-const ThirdContWatch = styled("div")`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-  color: #787878;
-`;
-
-const ThirdContWatchName = styled("div")`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-  color: #101f4c;
-`;
-
-const ThirdContProg = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const ThirdContProgType = styled("div")`
-  display: flex;
-  align-items: center;
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-
-  color: #101f4c;
-`;
-
-const ThirdBodyDiv = styled("div")`
-  display: flex;
-  margin-top: 25px;
-`;
-
-const ThirdContLeft = styled("div")`
-  margin-right: 100px;
-`;
-
-const ThirdContRight = styled("div")`
-  // flex: 1;
-  width: 186px;
-`;
-
-const PenIconImage = styled(Image)`
-  cursor: pointer;
-  margin-left: 9px;
-`;
 const FourthBodyDiv = styled("div")((props: any) => ({
   display: props.assigneeEditState ? "none" : "flex",
   marginTop: "25px",
 })) as any;
-
-const FourthContLeft = styled("div")``;
-
-const FourthContAssigned = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const FourthContProgType = styled("div")`
-  display: flex;
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-
-  color: #101f4c;
-`;
-
-const MoreText = styled("div")`
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  color: #ff843f;
-  margin-left: 5px;
-`;
-
-const FormElementContainer = styled(Box)`
-  margin-top: 30px;
-`;
-
-const DescriptionDiv = styled("div")`
-  margin-top: 30px;
-`;
-
-const DescriptionTitle = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const DescriptionPara = styled("div")`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const AttachmentDiv = styled("div")`
-  margin-top: 30px;
-`;
-
-const AttachmentTitle = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const AttachmentDescription = styled("div")`
-  margin-top: 10px;
-  margin-bottom: 15px;
-`;
-
-const AttachedImageDiv = styled("div")`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const AttachedImageTitle = styled("div")``;
-
-const AttachedImageIcon = styled("div")``;
-
-const AttachHorizontal = styled("div")`
-  border-bottom: 1px solid #d9d9d9;
-  margin-top: 15px;
-  margin-bottom: 15px;
-`;
-
-const RelatedDiv = styled("div")`
-  margin: 25px 0px;
-`;
-
-const RelatedTagTitle = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const RelatedTagsButton = styled("div")`
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 8px;
-  flex-wrap: wrap;
-`;
-
-const RelatedSingleButton = styled("div")`
-  border: 1px solid black;
-  padding: 8px 22px;
-  border-radius: 40px;
-  height: 32px;
-  white-space: nowrap;
-  font-size: 12px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-`;
-
-const StyledLabel = styled(Typography)`
-  font-weight: 400;
-  line-height: 20px;
-  font-size: 14px;
-  margin-bottom: 8px;
-`;
-
-const CustomTaskDrawerContainer = styled("div")`
-  width: 438px;
-  height: calc(100vh - 61px);
-`;
-
-const ProgressEditStateButtonsContainer = styled("div")`
-  display: flex;
-  justify-content: space-between;
-  margin: 20px;
-  background: white;
-  width: 90%;
-`;
 
 const AssignEditSearchContainer = styled("div")({
   minHeight: "40px",
@@ -402,22 +132,6 @@ interface TabPanelProps {
   index: number;
   value: number;
 }
-
-const CustomSelectContainer = styled("div")`
-  width: 398px;
-`;
-
-const StyledSelect = styled(Select)`
-  width: 100%;
-  height: 40px;
-  outline: 0px;
-  border: 1px solid #36415d;
-  border-radius: 4px;
-  & .MuiOutlinedInput-notchedOutline {
-    border: 0;
-    offset: 0;
-  }
-`;
 
 const AddCommentContainer = styled("div")((props: any) => ({
   // borderTop: `${props.containerType === "float" ? "none" : "1px solid #D9D9D9"}`,
@@ -643,7 +357,9 @@ function BasicTabs(props: any) {
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
         <Tabs
-          TabIndicatorProps={{ style: { background: "orange", height: "3px" } }}
+          TabIndicatorProps={{
+            style: { background: "#FF843F", height: "3px" },
+          }}
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
@@ -666,7 +382,6 @@ function BasicTabs(props: any) {
               fontSize: "14px",
               fontWeight: "400",
               textTransform: "capitalize",
-              color: "#213365",
             },
 
             "& .MuiTab-root": {
@@ -679,12 +394,10 @@ function BasicTabs(props: any) {
               textTransform: "capitalize",
               minHeight: "0",
             },
-            "& .MuiTab-root .css-19kzrtu": {
-              padding: "0px",
-            },
-            "& .css-19kzrtu": {
-              padding: "0p !important",
-              background: "red",
+
+            "& .MuiTabs-indicator": {
+              background: "blue",
+              width: "45px !important",
             },
           }}
         >
@@ -695,7 +408,11 @@ function BasicTabs(props: any) {
             style={{
               marginRight: "40px",
               paddingLeft: "0px",
-              color: "#101F4B",
+              color: "#101F4C",
+              fontFamily: "Open Sans",
+              fontStyle: "normal",
+              fontSize: "14px",
+              fontWeight: "400",
             }}
           />
           {/* <Tab
@@ -723,18 +440,18 @@ function BasicTabs(props: any) {
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
-              <PriorityTitle>Type</PriorityTitle>
+              <PriorityTitle>Title</PriorityTitle>
               <PriorityStatus style={{ color: "#101F4B" }}>
-                {taskState.TabOne.type}
+                {taskState.TabOne.title}
               </PriorityStatus>
             </SecondContPrior>
 
-            <SecondContPrior>
+            <SecondContPriorParal>
               <PriorityTitle>Priority</PriorityTitle>
               <PriorityStatus style={{ color: "#101F4B" }}>
                 {taskState.TabOne.priority}
               </PriorityStatus>
-            </SecondContPrior>
+            </SecondContPriorParal>
           </SecondBodyDiv>
 
           <SecondBodyDiv>
@@ -746,13 +463,13 @@ function BasicTabs(props: any) {
               </CaptureStatus>
             </SecondContCapt>
 
-            <SecondContPrior>
+            <SecondContPriorParal>
               <ThirdContWatch>Watcher</ThirdContWatch>
               <ThirdContWatchName style={{ color: "#101F4B" }}>
                 {" "}
                 {taskState.TabOne.creator}
               </ThirdContWatchName>
-            </SecondContPrior>
+            </SecondContPriorParal>
           </SecondBodyDiv>
 
           {progressEditState ? (
@@ -805,7 +522,11 @@ function BasicTabs(props: any) {
               </ThirdContRight>
               <FourthBodyDiv
                 assigneeEditState={assigneeEditState}
-                style={{ marginTop: "0px", color: "#101F4B" }}
+                style={{
+                  marginTop: "0px",
+                  color: "#101F4B",
+                  marginLeft: "auto",
+                }}
               >
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
@@ -859,7 +580,8 @@ function BasicTabs(props: any) {
                     label: each.user?.fullName,
                   };
                 })}
-                sx={{ minWidth: 120 }}
+                // sx={{ minWidth: 120 }}
+                sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="" />}
                 onChange={(event, value: any) => {
                   console.log(value);
@@ -888,22 +610,25 @@ function BasicTabs(props: any) {
           <DescriptionDiv>
             <DescriptionTitle>RFI Question</DescriptionTitle>
 
-            <DescriptionPara style={{ color: "#101F4B" }}>
+            <DescriptionPara>
               {taskState.TabOne.issueDescription}
             </DescriptionPara>
           </DescriptionDiv>
 
           {taskState?.TabOne?.attachments?.length > 0 && (
             <>
-              <AttachmentDiv>
+              <AttachmentDiv className={`attachmentsSection`}>
                 <AttachmentTitle>Attachments</AttachmentTitle>
                 <AttachmentDescription style={{ color: "#101F4B" }}>
+                  {/* {console.log(taskState?.TabOne.attachments)} */}
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
                       return (
                         <>
                           <AttachedImageDiv className={`detailsImageDiv`}>
-                            <AttachedImageTitle>{a?.name}</AttachedImageTitle>
+                            {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
+                            <AttachedImageTitle>{a}</AttachedImageTitle>
+
                             <AttachedImageIcon>
                               <Image src={""} alt="" />
                             </AttachedImageIcon>
@@ -1067,12 +792,16 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
   useEffect(() => {
     let tempObj = {
+      title: task.title,
+      sequenceNumber: task.sequenceNumber,
       options: task.options,
       priority: task.priority,
       capturedOn: task.createdAt,
       creator: task.owner,
       issueDescription: task.description,
-      attachments: task.attachments,
+      // attachments: task.attachments,
+      attachments: ["arr1", "arr2", "arr3"],
+
       relatedTags: task.tags,
       assignees: task.assignees?.length ? `${task.assignees[0].fullName}` : "",
       assigneeName: task.assignees?.length ? task.assignees[0].fullName : "",
@@ -1099,6 +828,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     deleteTheTask(task);
   };
 
+  console.log("taskdede", task);
   const handleCreateTask = (formData: any) => {
     console.log(formData, "form data at home");
     clickTaskSubmit(formData);
@@ -1276,7 +1006,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 alt={"close icon"}
               />
               <SpanTile>
-                {task.type} (#{task._id})
+                {task.type} (#{task.sequenceNumber})
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>

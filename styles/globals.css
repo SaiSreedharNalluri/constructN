@@ -139,8 +139,13 @@
 
 .detailsImageDiv:hover .deleteIcon {
   visibility: visible;
+  content: url("../public/divami_icons/orangeDeleteIcon.svg");
 }
-
+.attachmentsSection .detailsImageDiv:hover {
+  background: #fff2eb;
+  color: #ff843f;
+  
+}
 .MuiDrawer-paper {
   top: auto !important;
   bottom: 0 !important;
@@ -388,4 +393,11 @@ content: url("../public/divami_icons/toasterIcon.svg");
 .formField.Mui-focused {
   border: 1px solid #ff843f !important;
   border-radius: 4px;
+}
+
+.css-19kzrtu {
+  /* padding: 0px; */
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  padding-top: 22px !important;
 }
