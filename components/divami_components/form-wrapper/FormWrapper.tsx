@@ -287,7 +287,10 @@ const FormWrapper = (props: any) => {
     <div>
       {config.map((eachConfig: any, index: any) => {
         return (
-          <FormElementContainer key={eachConfig.id}>
+          <FormElementContainer
+            key={eachConfig.id}
+            className={` ${eachConfig.isError ? "formErrorLabel" : ""}`}
+          >
             {eachConfig.formLabel ?? (
               <CustomLabel label={eachConfig.formLabel} />
             )}
