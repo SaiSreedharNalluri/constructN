@@ -529,7 +529,6 @@ function BasicTabs(props: any) {
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
   const [searchTerm, setSearchTerm] = useState("");
   const [list, setList] = useState<any>();
-
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
       return {
@@ -586,10 +585,11 @@ function BasicTabs(props: any) {
     if (assigneeEditState) {
       setAssigneeEditState(!assigneeEditState);
     }
-    taskUpdate({
+    const optState = {
       ...formState,
       selectedProgress: progressOptionsState[0].defaultValue,
-    });
+    };
+    taskUpdate(optState);
   };
 
   const handleEditAssigne = () => {
@@ -789,13 +789,12 @@ function BasicTabs(props: any) {
           {progressEditState ? (
             <ProgressCustomSelect>
               <CustomSelect
-                onChange={(event: any, value: any) => {
-                  console.log(value);
-                  setFormState({ ...formState, selectedProgress: value });
-                }}
                 config={progressOptionsState[0]}
-                // defaultValue={progressOptionsState?.options[0].value}
-                id={"issuePriority"}
+                data={{
+                  ...progressOptionsState[0],
+                  defaultValue: taskState.TabOne.status,
+                }}
+                id={"taskPriority"}
                 sx={{ minWidth: 120 }}
                 setFormConfig={setProgressOptionsState}
                 isError={""}
@@ -957,7 +956,10 @@ const CustomTaskDetailsDrawer = (props: any) => {
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [footerState, SetFooterState] = useState(false);
-
+  const [selectedTask, setSelectedTask] = useState(task);
+  useEffect(() => {
+    setSelectedTask(task);
+  }, [task]);
   const DetailsObj = {
     TabOne: {
       options: [
@@ -1017,24 +1019,30 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
   useEffect(() => {
     let tempObj = {
-      options: task.options,
-      priority: task.priority,
-      capturedOn: task.createdAt,
-      creator: task.owner,
-      issueDescription: task.description,
-      attachments: task.attachments,
-      relatedTags: task.tags,
-      assignees: task.assignees?.length ? `${task.assignees[0].fullName}` : "",
-      assigneeName: task.assignees?.length ? task.assignees[0].fullName : "",
-      assignessList: task.assignees?.length
-        ? task.assignees?.map((item: any) => {
+      options: selectedTask.options,
+      priority: selectedTask.priority,
+      capturedOn: selectedTask.createdAt,
+      creator: selectedTask.owner,
+      issueDescription: selectedTask.description,
+      attachments: selectedTask.attachments,
+      relatedTags: selectedTask.tags,
+      assignees: selectedTask.assignees?.length
+        ? `${selectedTask.assignees[0].fullName}`
+        : "",
+      assigneeName: selectedTask.assignees?.length
+        ? selectedTask.assignees[0].fullName
+        : "",
+      assignessList: selectedTask.assignees?.length
+        ? selectedTask.assignees?.map((item: any) => {
             return { ...item, label: item.fullName };
           })
         : [],
       moreText:
-        task.assignees?.length > 1 ? `+${task.assignees?.length - 1} more` : "",
-      id: task._id,
-      status: task.status,
+        selectedTask.assignees?.length > 1
+          ? `+${selectedTask.assignees?.length - 1} more`
+          : "",
+      id: selectedTask._id,
+      status: selectedTask.status,
     };
     setTaskState((prev: any) => {
       return {
@@ -1042,11 +1050,11 @@ const CustomTaskDetailsDrawer = (props: any) => {
         TabOne: tempObj,
       };
     });
-  }, []);
+  }, [selectedTask]);
 
   const onDeleteTask = () => {
     setshowPopUp(false);
-    deleteTheTask(task);
+    deleteTheTask(selectedTask);
   };
 
   const handleCreateTask = (formData: any) => {
@@ -1154,7 +1162,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     //     });
     // }
     if (data.title && data.type && data.priority) {
-      updateTask(projectId as string, data, task._id)
+      updateTask(projectId as string, data, selectedTask._id)
         .then((response) => {
           if (response.success === true) {
             toast.success("Task added sucessfully");
@@ -1181,17 +1189,17 @@ const CustomTaskDetailsDrawer = (props: any) => {
     }
   };
   const taskUpdate = (data: any) => {
-    console.log(task);
-    const issueData = _.cloneDeep(task);
+    const issueData = _.cloneDeep(selectedTask);
     issueData.assignees = data.selectedUser.map((user: any) => {
       return user._id || user.user._id;
     });
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
-    updateTask(projectId as string, issueData, task._id)
+    updateTask(projectId as string, issueData, selectedTask._id)
       .then((response) => {
         if (response.success === true) {
           toast.success("Task updated sucessfully");
+          getTasks(currentStructure._id);
         } else {
         }
       })
@@ -1226,7 +1234,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 alt={"close icon"}
               />
               <SpanTile>
-                {task.type} (#{task._id})
+                {selectedTask?.type} (#{selectedTask?._id})
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
@@ -1265,7 +1273,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
           open={showPopUp}
           setShowPopUp={setshowPopUp}
           modalTitle={"Delete Task"}
-          modalmessage={`Are you sure you want to delete this Task "${task.type}(#${task._id})"?`}
+          modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
           primaryButtonLabel={"Delete"}
           SecondaryButtonlabel={"Cancel"}
           callBackvalue={onDeleteTask}
@@ -1280,7 +1288,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             currentSnapshot={currentSnapshot}
             currentStructure={currentStructure}
             contextInfo={contextInfo}
-            editData={task}
+            editData={selectedTask}
             closeTaskCreate={() => {
               setOpenCreateTask(false);
             }}

@@ -93,14 +93,13 @@ const CustomTaskListDrawer = (props: any) => {
   const [taskPriority, setTaskPriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState([]);
   const [taskStatus, setTaskStatus] = useState<[string]>();
-  const [taskListDataState, setTaskListDataState] = useState([]);
   const [openDrawer, setOpenDrawer] = useState(false);
-  const [viewTask, setViewTask] = useState({});
+  const [viewTask, setViewTask] = useState<any>({});
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredTaskList, setFilteredTaskList] = useState(taskListDataState);
   const [taskList, setTaskList] = useState([]);
+  const [filteredTaskList, setFilteredTaskList] = useState(taskList);
   const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
@@ -108,32 +107,13 @@ const CustomTaskListDrawer = (props: any) => {
   }, [tasksList]);
 
   useEffect(() => {
-    console.log("filteredTaskList1", filteredTaskList);
-    setFilteredTaskList(tasksList);
-    console.log("filteredTaskList2", filteredTaskList);
-  }, [tasksList]);
+    setFilteredTaskList(taskList);
+  }, [taskList]);
 
   const handleViewTaskList = () => {
     // console.log("teskssksk trigg");
     setOpenDrawer(true);
   };
-  console.log(taskList, "tasklist");
-  useEffect(() => {
-    handleDatesSort();
-    let tempTaskDataState: any = [];
-    tasksList?.map((task: any) => {
-      let tempTask = {
-        id: task._id,
-        type: task.type,
-        priority: task.priority,
-        assignee: task.assignees[0].firstName,
-        due_date: task.dueDate,
-        tags: task.tags,
-      };
-      tempTaskDataState.push(tempTask);
-    });
-    setTaskListDataState(tempTaskDataState);
-  }, [tasksList]);
 
   const handleClose = () => {
     onClose(true);
@@ -166,8 +146,6 @@ const CustomTaskListDrawer = (props: any) => {
     }
   }, []);
 
-  console.log(taskType, taskPriority, taskStatus, projectUsers, "IMPORTANTT");
-
   const getDownloadableTaskList = (issuesList = filteredTaskList) => {
     let modifiedList = issuesList.map((issue: any) => {
       let firstNames = issue.assignee
@@ -181,8 +159,7 @@ const CustomTaskListDrawer = (props: any) => {
     return modifiedList;
   };
 
-  const handleDatesSort = () => {
-    console.log(filteredTaskList, "filteredTaskList");
+  const sortDateOrdering = () => {
     let sorted;
     if (sortOrder === "asc") {
       sorted = filteredTaskList.sort((a: any, b: any) => {
@@ -195,36 +172,12 @@ const CustomTaskListDrawer = (props: any) => {
       });
       setSortOrder("asc");
     }
-    console.log(sorted, "sorted");
-    setFilteredTaskList(sorted);
-  };
-
-  const sortDateOrdering = () => {
-    let sorted;
-    if (sortOrder === "asc") {
-      sorted = filteredTaskList.sort((a: any, b: any) => {
-        return (
-          new Date(a.due_date ? a.due_date : new Date()).valueOf() -
-          new Date(b.due_date ? b.due_date : new Date()).valueOf()
-        );
-      });
-      setSortOrder("desc");
-    } else {
-      sorted = filteredTaskList.sort((a: any, b: any) => {
-        return (
-          new Date(b.due_date ? b.due_date : new Date()).valueOf() -
-          new Date(a.due_date ? a.due_date : new Date()).valueOf()
-        );
-      });
-      setSortOrder("asc");
-    }
-    console.log("sorted", sorted);
     setFilteredTaskList(sorted);
   };
 
   const handleViewTask = (task: any) => {
-    tasksList.forEach((item: any) => {
-      if (task.id === item._id) {
+    filteredTaskList.forEach((item: any) => {
+      if (task._id === item._id) {
         setViewTask(item);
       }
     });
@@ -240,11 +193,15 @@ const CustomTaskListDrawer = (props: any) => {
   };
 
   const handleSearch = () => {
-    const filteredData = taskListDataState?.filter((eachTask: any) => {
-      const taskName = eachTask?.type?.toLowerCase();
-      return taskName.includes(searchTerm.toLowerCase());
-    });
-    setFilteredTaskList([...filteredData]);
+    if (searchTerm) {
+      const filteredData = taskList?.filter((eachTask: any) => {
+        const taskName = eachTask?.type?.toLowerCase();
+        return taskName.includes(searchTerm.toLowerCase());
+      });
+      setFilteredTaskList([...filteredData]);
+    } else {
+      setFilteredTaskList(taskList);
+    }
   };
   useEffect(() => {
     if (router.isReady) {
@@ -263,11 +220,13 @@ const CustomTaskListDrawer = (props: any) => {
   }, [searchTerm]);
 
   useEffect(() => {
-    setFilteredTaskList(taskListDataState);
-  }, [taskListDataState]);
-
-  useEffect(() => {
-    console.log(filteredTaskList, "filteredTaskList");
+    if (viewTask?._id) {
+      filteredTaskList.forEach((item: any) => {
+        if (viewTask._id === item._id) {
+          setViewTask(item);
+        }
+      });
+    }
   }, [filteredTaskList]);
 
   return (

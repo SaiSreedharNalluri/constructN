@@ -120,7 +120,7 @@
   }
 }
 
-.spinner>circle {
+.spinner > circle {
   fill: transparent;
 }
 
@@ -166,7 +166,8 @@ body {
 @font-face {
   font-family: "Open Sans";
   src: local("Lato"),
-    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf") format("opentype");
+    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf")
+      format("opentype");
 }
 
 .white-bg {
@@ -218,7 +219,7 @@ body {
 .Toastify__toast--default::before {
   content: url("../public/divami_icons/toasterIcon.svg");
   position: relative;
-  z-index: 100000;
+  z-index: 100;
   left: 0px;
   top: 6px;
 }

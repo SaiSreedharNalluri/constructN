@@ -117,18 +117,17 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [projectUsers, setProjectUsers] = useState([]);
   const [issueStatus, setIssueStatus] = useState<[string]>();
   const [dateSortState, setDateSortState] = useState("ascending");
-  const [viewIssue, setViewIssue] = useState({});
+  const [viewIssue, setViewIssue] = useState<any>({});
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [issueList, setIssueList] = useState<any>(issuesList);
-
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(issueList);
   useEffect(() => {
     setIssueList(issuesList);
-  }, [issuesList?.length]);
+  }, [issuesList]);
 
   useEffect(() => {
     setFilteredIssuesList(issueList);
-  }, [issueList?.length]);
+  }, [issueList]);
 
   const closeIssueList = () => {
     //setListOverlay(false);
@@ -210,13 +209,18 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
-  console.log(filteredIssuesList, issueList, "indetailsss");
+
   useEffect(() => {
-    // setIssuesListData(filteredIssuesList);
+    if (viewIssue?._id) {
+      filteredIssuesList.forEach((item: any) => {
+        if (viewIssue._id === item._id) {
+          setViewIssue(item);
+        }
+      });
+    }
   }, [filteredIssuesList]);
 
   const handleViewIssue = (issue: any) => {
-    console.log();
     filteredIssuesList.forEach((item: any) => {
       if (issue._id === item._id) {
         setViewIssue(item);
