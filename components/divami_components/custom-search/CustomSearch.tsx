@@ -98,6 +98,7 @@ const CustomSearch = (props: any) => {
     <>
       {isMultiSelect ? (
         <CustomAutoComplete
+          className={"formField"}
           disablePortal
           id="combo-box-demo"
           options={data.listOfEntries}

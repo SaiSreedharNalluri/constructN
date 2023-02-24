@@ -25,63 +25,63 @@ import { editIssue } from "../../../services/issue";
 import router from "next/router";
 import _ from "lodash";
 import { deleteAttachment } from "../../../services/attachments";
-
-const HeaderContainer = styled(Box)`
-  background-color: white;
-  height: 51px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  border-bottom: 1px solid #d9d9d9;
-`;
-
-const TitleContainer = styled(Box)`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-left: 20px;
-  padding-right: 20px;
-`;
-
-const CloseIcon = styled(Image)`
-  cursor: pointer;
-`;
-const ArrowIcon = styled(Image)`
-  cursor: pointer;
-  //   margin-right: 10px;
-`;
-
-const EditIcon = styled(Image)`
-  cursor: pointer;
-  margin-right: 20px;
-`;
-
-const DeleteIcon = styled(Image)`
-  cursor: pointer;
-  //   margin-right: 10px;
-`;
-
-const LeftTitleCont = styled("div")`
-  display: flex;
-  //   margin-top: 10px;
-`;
-
-const RightTitleCont = styled("div")`
-  display: flex;
-
-  //   margin-top: 10px;
-`;
-
-const SpanTile = styled("span")`
-  //   color: #787878;
-
-  margin-left: 10px;
-`;
+import {
+  ArrowIcon,
+  AssignEditSearchContainer,
+  AttachedImageDiv,
+  AttachedImageIcon,
+  AttachedImageTitle,
+  AttachHorizontal,
+  AttachmentDescription,
+  AttachmentDiv,
+  AttachmentTitle,
+  CaptureStatus,
+  CaptureTitle,
+  CustomTaskDrawerContainer,
+  DeleteIcon,
+  DescriptionDiv,
+  DescriptionPara,
+  DescriptionTitle,
+  EditIcon,
+  FirstHeaderDiv,
+  FormElementContainer,
+  FourthContAssigned,
+  FourthContLeft,
+  FourthContProgType,
+  HeaderContainer,
+  LeftTitleCont,
+  MoreText,
+  PenIconImage,
+  PriorityStatus,
+  PriorityTitle,
+  ProgressEditStateButtonsContainer,
+  RelatedDiv,
+  RelatedSingleButton,
+  RelatedTagsButton,
+  RelatedTagTitle,
+  RightTitleCont,
+  SecondBodyDiv,
+  SecondContCapt,
+  SecondContPrior,
+  SecondContPriorParal,
+  SpanTile,
+  TabOneDiv,
+  ThirdContProg,
+  ThirdContProgType,
+  ThirdContRight,
+  ThirdContWatch,
+  ThirdContWatchName,
+  TitleContainer,
+} from "./IssueDetailStyles";
 
 interface ContainerProps {
   footerState: boolean;
+}
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
 }
 
 const BodyContainer = styled(Box)<ContainerProps>`
@@ -89,324 +89,15 @@ const BodyContainer = styled(Box)<ContainerProps>`
     props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
   overflow-y: scroll;
 `;
-const CustomTabPanel = styled(TabPanel)`
-  padding: none;
-`;
-const TabOneDiv = styled("div")`
-  //   border: 2px solid pink;
-  //   padding:30px;
-`;
 
-const FirstHeaderDiv = styled("div")`
-  border: 1px solid #d9d9d9;
-  display: flex;
-  height: 150px;
-  border-radius: 4px;
-`;
-
-const SecondBodyDiv = styled("div")`
-  display: flex;
-  margin-top: 25px;
-`;
-
-const PriorityTitle = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-const TypeTitle = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const PriorityStatus = styled("div")`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  color: #101f4c;
-`;
-
-const TypeStatus = styled("div")`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-`;
-
-const SecondContType = styled("div")`
-  width: 186px;
-`;
-
-const SecondContPrior = styled("div")`
-  width: 186px;
-`;
-
-const SecondContCapt = styled("div")`
-  width: 186px;
-`;
-
-const CaptureTitle = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const CaptureStatus = styled("div")`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-`;
-
-const ThirdContWatch = styled("div")`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-  color: #787878;
-`;
-
-const ThirdContWatchName = styled("div")`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  color: #101f4c;
-`;
-
-const ThirdContProg = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const ThirdContProgType = styled("div")`
-  display: flex;
-  align-items: center;
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-
-  color: #101f4c;
-`;
-
-const ThirdBodyDiv = styled("div")`
-  display: flex;
-  margin-top: 25px;
-`;
-
-const ThirdContLeft = styled("div")`
-  margin-right: 100px;
-`;
-
-const ThirdContRight = styled("div")`
-  // flex: 1;
-  width: 186px;
-`;
-
-const PenIconImage = styled(Image)`
-  cursor: pointer;
-  margin-left: 9px;
-`;
 const FourthBodyDiv = styled("div")((props: any) => ({
   display: props.assigneeEditState ? "none" : "flex",
   marginTop: "25px",
 })) as any;
 
-const MoreText = styled("div")`
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  color: #ff843f;
-  margin-left: 5px;
+const CustomTabPanel = styled(TabPanel)`
+  padding: none;
 `;
-
-const FourthContLeft = styled("div")``;
-
-const FourthContAssigned = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const FourthContProgType = styled("div")`
-  display: flex;
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-
-  color: #101f4c;
-  align-items: center;
-`;
-
-const FormElementContainer = styled(Box)`
-  margin-top: 30px;
-`;
-
-const DescriptionDiv = styled("div")`
-  margin-top: 30px;
-`;
-
-const DescriptionTitle = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const DescriptionPara = styled("div")``;
-
-const AttachmentDiv = styled("div")`
-  margin-top: 30px;
-`;
-
-const AttachmentTitle = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const AttachmentDescription = styled("div")`
-  margin-top: 10px;
-  margin-bottom: 15px;
-`;
-
-const AttachedImageDiv = styled("div")`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const AttachedImageTitle = styled("div")``;
-
-const AttachedImageIcon = styled("div")``;
-
-const AttachHorizontal = styled("div")`
-  border-bottom: 1px solid #d9d9d9;
-  margin-top: 15px;
-  margin-bottom: 15px;
-`;
-
-const RelatedDiv = styled("div")`
-  margin: 25px 0px;
-`;
-
-const RelatedTagTitle = styled("div")`
-  font-family: "Open Sans";
-  color: #787878;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
-`;
-
-const RelatedTagsButton = styled("div")`
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 8px;
-  flex-wrap: wrap;
-`;
-
-const RelatedSingleButton = styled("div")`
-  border: 1px solid black;
-  padding: 8px 22px;
-  border-radius: 40px;
-  height: 32px;
-  white-space: nowrap;
-  font-size: 12px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-`;
-
-const StyledLabel = styled(Typography)`
-  font-weight: 400;
-  line-height: 20px;
-  font-size: 14px;
-  margin-bottom: 8px;
-`;
-
-const CustomTaskDrawerContainer = styled("div")`
-  width: 438px;
-  height: calc(100vh - 61px);
-`;
-
-const ProgressEditStateButtonsContainer = styled("div")`
-  display: flex;
-  justify-content: space-between;
-  margin: 20px;
-  background: white;
-  width: 90%;
-`;
-
-const AssignEditSearchContainer = styled("div")({
-  minHeight: "40px",
-  marginTop: "20px",
-  "& .MuiAutocomplete-root": {
-    height: "100%",
-    width: "100%",
-  },
-  "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
-  "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
-  "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
-    marginTop: "-8px",
-  },
-  "& .MuiAutocomplete-root fieldset": {
-    borderColor: "#36415D !important",
-  },
-});
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
 
 const CustomSelectContainer = styled("div")`
   width: 398px;
@@ -435,6 +126,20 @@ const AddCommentContainer = styled("div")((props: any) => ({
   width: "100%",
 })) as any;
 
+const AddCommentContainerSecond = styled("div")({
+  height: "50px",
+  display: "flex",
+  alignItems: "center",
+  // justifyContent: "space-around",
+  paddingLeft: "20px",
+  border: "1px solid #D9D9D9",
+  width: "100%",
+  position: "absolute",
+  bottom: "0",
+  background: "white",
+  marginLeft: "-24px",
+});
+
 const AddCommentInput = styled("input")({
   width: "100%",
   paddingLeft: "10px",
@@ -442,7 +147,9 @@ const AddCommentInput = styled("input")({
 
 const AddCommentButtonContainer = styled("div")({
   display: "flex",
+  justifyContent: "center",
   alignItems: "center",
+  marginLeft: "auto",
 });
 
 const AttachButton = styled("button")({
@@ -453,6 +160,12 @@ const AttachButton = styled("button")({
   borderRight: "1px solid #D9D9D9",
   marginTop: "auto",
   marginBottom: "auto",
+});
+
+const ImageErrorIcon = styled(Image)({
+  cursor: "pointer",
+  width: "24px",
+  height: "24px",
 });
 
 const SendButton = styled("button")({
@@ -479,6 +192,27 @@ const ProgressCustomSelect = styled("div")({
 const AssigneeCustomSelect = styled("div")({
   marginTop: "20px",
 });
+
+const StyledInput = styled(TextField)(({ theme }) => ({
+  color: "blue",
+  "label + &": {
+    marginTop: theme.spacing(8),
+  },
+
+  "& .MuiInput-root": {
+    "&:before, :after, :hover:not(.Mui-disabled):before": {
+      borderBottom: 0,
+    },
+  },
+  "&& .MuiInput-underline": {
+    borderBottom: "none",
+    // borderBottomColor: "none",
+  },
+  "& .MuiInput-underline:after": {
+    borderBottom: "none",
+    // borderBottomColor: "none",
+  },
+}));
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -597,10 +331,11 @@ function BasicTabs(props: any) {
     if (assigneeEditState) {
       setAssigneeEditState(!assigneeEditState);
     }
-    issueUpdate({
+    const optState = {
       ...formState,
       selectedProgress: progressOptionsState[0].defaultValue,
-    });
+    };
+    issueUpdate(optState);
   };
 
   const handleEditAssigne = () => {
@@ -653,13 +388,7 @@ function BasicTabs(props: any) {
               textTransform: "capitalize",
               minHeight: "0",
             },
-            "& .MuiTab-root .css-19kzrtu": {
-              padding: "0px",
-            },
-            "& .css-19kzrtu": {
-              padding: "0p !important",
-              background: "red",
-            },
+
             "& .MuiTabs-indicator": {
               background: "blue",
               width: "45px !important",
@@ -673,7 +402,11 @@ function BasicTabs(props: any) {
             style={{
               marginRight: "40px",
               paddingLeft: "0px",
-              color: "#101F4B",
+              color: "#101F4C",
+              fontFamily: "Open Sans",
+              fontStyle: "normal",
+              fontSize: "14px",
+              fontWeight: "400",
             }}
           />
           {/* <Tab label="Activity log" {...a11yProps(1)} /> */}
@@ -697,18 +430,18 @@ function BasicTabs(props: any) {
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
-              <PriorityTitle>Type</PriorityTitle>
+              <PriorityTitle>Title</PriorityTitle>
               <PriorityStatus style={{ color: "#101F4B" }}>
-                {taskState.TabOne.type}
+                {taskState.TabOne.title}
               </PriorityStatus>
             </SecondContPrior>
 
-            <SecondContPrior>
+            <SecondContPriorParal>
               <PriorityTitle>Priority</PriorityTitle>
               <PriorityStatus style={{ color: "#101F4B" }}>
                 {taskState.TabOne.priority}
               </PriorityStatus>
-            </SecondContPrior>
+            </SecondContPriorParal>
           </SecondBodyDiv>
 
           <SecondBodyDiv>
@@ -720,13 +453,13 @@ function BasicTabs(props: any) {
               </CaptureStatus>
             </SecondContCapt>
 
-            <SecondContPrior>
+            <SecondContPriorParal>
               <ThirdContWatch>Watcher</ThirdContWatch>
               <ThirdContWatchName style={{ color: "#101F4B" }}>
                 {" "}
                 {taskState.TabOne.creator}
               </ThirdContWatchName>
-            </SecondContPrior>
+            </SecondContPriorParal>
           </SecondBodyDiv>
 
           {progressEditState ? (
@@ -734,7 +467,10 @@ function BasicTabs(props: any) {
               {" "}
               <FourthBodyDiv
                 assigneeEditState={assigneeEditState}
-                style={{ marginTop: "0px", color: "#101F4B" }}
+                style={{
+                  marginTop: "0px",
+                  color: "#101F4B",
+                }}
               >
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
@@ -779,7 +515,11 @@ function BasicTabs(props: any) {
               </ThirdContRight>
               <FourthBodyDiv
                 assigneeEditState={assigneeEditState}
-                style={{ marginTop: "0px", color: "#101F4B" }}
+                style={{
+                  marginTop: "0px",
+                  color: "#101F4B",
+                  marginLeft: "auto",
+                }}
               >
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
@@ -806,10 +546,6 @@ function BasicTabs(props: any) {
           {progressEditState ? (
             <ProgressCustomSelect>
               <CustomSelect
-                onChange={(event: any, value: any) => {
-                  console.log(value);
-                  setFormState({ ...formState, selectedProgress: value });
-                }}
                 config={progressOptionsState[0]}
                 data={{
                   ...progressOptionsState[0],
@@ -866,22 +602,25 @@ function BasicTabs(props: any) {
           <DescriptionDiv>
             <DescriptionTitle>Issue Description</DescriptionTitle>
 
-            <DescriptionPara style={{ color: "#101F4B" }}>
+            <DescriptionPara>
               {taskState.TabOne.issueDescription}
             </DescriptionPara>
           </DescriptionDiv>
 
           {taskState?.TabOne?.attachments?.length > 0 && (
             <>
-              <AttachmentDiv>
+              <AttachmentDiv className={`attachmentsSection`}>
                 <AttachmentTitle>Attachments</AttachmentTitle>
                 <AttachmentDescription style={{ color: "#101F4B" }}>
+                  {console.log(taskState?.TabOne.attachments)}
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
                       return (
                         <>
                           <AttachedImageDiv className={`detailsImageDiv`}>
-                            <AttachedImageTitle>{a?.name}</AttachedImageTitle>
+                            {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
+                            <AttachedImageTitle>{a}</AttachedImageTitle>
+
                             <AttachedImageIcon>
                               <Image src={""} alt="" />
                             </AttachedImageIcon>
@@ -937,17 +676,24 @@ function BasicTabs(props: any) {
             </AddCommentContainer>
           ) : (
             <>
-              {/* <AddCommentContainer>
-                <AddCommentInput placeholder="Add Comment"></AddCommentInput>
+              <AddCommentContainerSecond>
+                {/* <AddCommentInput placeholder="Add Comment"></AddCommentInput> */}
+                <StyledInput
+                  id="standard-basic"
+                  variant="standard"
+                  placeholder="Add Comment"
+                />
                 <AddCommentButtonContainer>
                   <AttachButton>
-                    <Image src={Clip} alt="" />{" "}
+                    <ImageErrorIcon src={Clip} alt="" />
+                    {/* <Image src={Clip} alt="" />{" "} */}
                   </AttachButton>
                   <SendButton>
-                    <Image src={Send} alt="" />{" "}
+                    <ImageErrorIcon src={Send} alt="" />
+                    {/* <Image src={Send} alt="" />{" "} */}
                   </SendButton>
                 </AddCommentButtonContainer>
-              </AddCommentContainer> */}
+              </AddCommentContainerSecond>
             </>
           )}
         </TabOneDiv>
@@ -979,10 +725,14 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
   const [footerState, SetFooterState] = useState(false);
+  const [selectedIssue, setSelectedIssue] = useState(issue);
+  useEffect(() => {
+    setSelectedIssue(issue);
+  }, [issue]);
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
-    deleteTheIssue(issue);
+    deleteTheIssue(selectedIssue);
   };
   const deleteTheAttachment = (attachmentId: string) => {
     deleteAttachment(attachmentId)
@@ -995,7 +745,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
         toast.error(error.message);
       });
   };
-  console.log("issuesdasf", issue, contextInfo);
 
   const DetailsObj = {
     TabOne: {
@@ -1052,33 +801,36 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
+  // console.log(issue)
 
   useEffect(() => {
     let tempObj = {
-      ...issue,
-      options: issue?.options,
-      priority: issue?.priority,
-      capturedOn: issue?.createdAt,
-      creator: issue?.owner,
-      issueDescription: issue?.description,
-      attachments: issue?.attachments,
-      assignees: issue.assignees?.length
-        ? `${issue.assignees[0].fullName}`
+      ...selectedIssue,
+      options: selectedIssue?.options,
+      priority: selectedIssue?.priority,
+      capturedOn: selectedIssue?.createdAt,
+      creator: selectedIssue?.owner,
+      issueDescription: selectedIssue?.description,
+      attachments: selectedIssue?.attachments,
+      assignees: selectedIssue.assignees?.length
+        ? `${selectedIssue.assignees[0].fullName}`
         : "",
-      assigneeName: issue.assignees?.length ? issue.assignees[0].fullName : "",
-      assignessList: issue.assignees?.length
-        ? issue.assignees?.map((item: any) => {
+      assigneeName: selectedIssue.assignees?.length
+        ? selectedIssue.assignees[0].fullName
+        : "",
+      assignessList: selectedIssue.assignees?.length
+        ? selectedIssue.assignees?.map((item: any) => {
             return { ...item, label: item.fullName };
           })
         : [],
       moreText:
-        issue.assignees?.length > 1
-          ? `+${issue.assignees?.length - 1} more`
+        selectedIssue.assignees?.length > 1
+          ? `+${selectedIssue.assignees?.length - 1} more`
           : "",
-      relatedTags: issue?.tags,
-      id: issue?._id,
-      tags: issue?.tags,
-      status: issue?.status,
+      relatedTags: selectedIssue?.tags,
+      id: selectedIssue?._id,
+      tags: selectedIssue?.tags,
+      status: selectedIssue?.status,
     };
     setTaskState((prev: any) => {
       return {
@@ -1086,7 +838,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         TabOne: tempObj,
       };
     });
-  }, []);
+  }, [selectedIssue]);
 
   const taskSubmit = (formData: any) => {
     // const updatedList = issuesList.map((item: any) => {
@@ -1218,9 +970,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     // }
 
     if (data.title && data.type && data.priority) {
-      console.log("inside");
-
-      editIssue(projectId as string, data, issue._id)
+      editIssue(projectId as string, data, selectedIssue._id)
         .then((response) => {
           if (response.success === true) {
             toast.success("Issue updated sucessfully");
@@ -1248,17 +998,17 @@ const CustomIssueDetailsDrawer = (props: any) => {
     }
   };
   const issueUpdate = (data: any) => {
-    console.log(issue);
-    const issueData = _.cloneDeep(issue);
+    const issueData = _.cloneDeep(selectedIssue);
     issueData.assignees = data.selectedUser.map((user: any) => {
       return user._id || user.user._id;
     });
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
-    editIssue(projectId as string, issueData, issue._id)
+    editIssue(projectId as string, issueData, selectedIssue._id)
       .then((response) => {
         if (response.success === true) {
           toast.success("Issue updated sucessfully");
+          getIssues(currentStructure._id);
         } else {
         }
       })
@@ -1282,7 +1032,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 alt={"close icon"}
               />
               <SpanTile>
-                {issue?.type} (#{issue?._id})
+                {selectedIssue?.type} (#{selectedIssue?.sequenceNumber})
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
@@ -1325,7 +1075,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             currentSnapshot={currentSnapshot}
             currentStructure={currentStructure}
             contextInfo={contextInfo}
-            editData={issue}
+            editData={selectedIssue}
             closeIssueCreate={() => {
               setOpenCreateTask(false);
             }}
@@ -1338,7 +1088,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           open={showPopUp}
           setShowPopUp={setshowPopUp}
           modalTitle={"Delete Issue"}
-          modalmessage={`Are you sure you want to delete this Issue "${issue.type}(#${issue._id})"?`}
+          modalmessage={`Are you sure you want to delete this Issue "${selectedIssue.type}(#${selectedIssue._id})"?`}
           primaryButtonLabel={"Delete"}
           SecondaryButtonlabel={"Cancel"}
           callBackvalue={onDeleteIssue}
