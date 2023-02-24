@@ -1,4 +1,4 @@
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 
@@ -24,32 +24,38 @@ const CommentForm: React.FC<IProps> = ({
   };
   return (
     <form onSubmit={onSubmit}>
-      <div className="grid grid-cols-8 p-2">
+      <div className="grid grid-cols-9 p-2">
         <textarea
-          className=" col-span-7"
+          className="resize-none  rounded-full h-6 col-span-7"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
         <button
-          className="focus:outline-none bg-gray-600 hover:bg-gray-800 rounded text-gray-200 font-semibold"
+          //className="rounded-full"
           type="submit"
           disabled={isTextareaDisabled}
         >
           <FontAwesomeIcon
             icon={faPaperPlane}
-            className="rounded-full"
+            className="rounded-full cursor-pointer p-2 bg-gray-300 justify-between"
           ></FontAwesomeIcon>
         </button>
-      </div>
+      
       {hasCancelButton && (
         <button
+        className=''
           type="button"
-          className="ml-2 px-2 py-1  focus:outline-none bg-gray-500 hover:bg-gray-800 rounded text-gray-200 font-semibold"
-          onClick={handleCancel}
         >
-          Cancel
+          {/* Cancel */}
+          <FontAwesomeIcon
+            icon={faTimesCircle}
+            className="rounded-full bg-gray-300 justify-between p-2"
+            onClick={handleCancel}
+          ></FontAwesomeIcon>
         </button>
+        
       )}
+      </div>
     </form>
   );
 };

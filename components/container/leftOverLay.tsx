@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ChildrenEntity } from '../../models/IStructure';
+import { ChildrenEntity, IStructure } from '../../models/IStructure';
 import Treelist from './treeList';
 import { useRouter } from 'next/router';
 import { AxiosResponse } from 'axios';
@@ -23,8 +23,19 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
         .then((response: AxiosResponse<any>) => {
           setState([...response.data.result]);
           setStateFilter([...response.data.result]);
-          if(selector.length<1)
-          setSelector(response.data.result[0]._id);
+          if(selector.length<1){
+            let index =response.data.result.findIndex((structData:IStructure)=>{
+                
+              return ((structData.designs!==undefined )&& (structData.designs.length>0))
+            })
+            if(index>0)
+            setSelector(response.data.result[index]._id);
+            else
+            setSelector(response.data.result[0]._id);
+           
+            //to find structure with data and set
+          }
+          
         })
         .catch((error) => {
           console.log('error', error);
