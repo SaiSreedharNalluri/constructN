@@ -9,15 +9,16 @@ import Typography from "@mui/material/Typography";
 import { IconButton } from "@mui/material";
 import { fontSize } from "@mui/system";
 import CrossIcon from "../../public/divami_icons/crossIcon.svg";
-import Image from 'next/image';
+import Image from "next/image";
 
 export const CloseIcon = styled(Image)({
-  cursor: 'pointer',
+  cursor: "pointer",
 });
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   fontWeight: "900",
-  fontFamily: 'Open Sans',
+  fontFamily: "Open Sans",
+
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
   },
@@ -26,7 +27,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
   "& .MuiPaper-root.MuiDialog-paper": {
     width: "493px",
-  }
+  },
 }));
 const ButtonDiv = styled("div")({});
 
@@ -72,10 +73,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
             marginRight: "22px",
           }}
         >
-          <CloseIcon
-            src={CrossIcon}
-            alt={"close icon"}
-          />
+          <CloseIcon src={CrossIcon} alt={"close icon"} />
         </IconButton>
       ) : null}
     </DialogTitle>
@@ -83,11 +81,11 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
 }
 
 const TextComponent = styled(Typography)({
-  fontSize: "14px",
+  fontSize: "16px",
   lineHeight: "21px",
   color: "#101F4C",
-  fontFamily: 'Open Sans',
-})
+  fontFamily: "Open Sans",
+});
 
 const PopupComponent = (props: PopupComponentProps) => {
   const {
@@ -97,7 +95,7 @@ const PopupComponent = (props: PopupComponentProps) => {
     SecondaryButtonlabel,
     callBackvalue,
     setShowPopUp,
-    open
+    open,
   } = props;
 
   const handleClose = () => {
@@ -117,7 +115,10 @@ const PopupComponent = (props: PopupComponentProps) => {
         >
           <TextComponent>{modalTitle}</TextComponent>
         </BootstrapDialogTitle>
-        <DialogContent dividers style={{ borderBottom: 0, padding: "30px", paddingBottom: "22px" }}>
+        <DialogContent
+          dividers
+          style={{ borderBottom: 0, padding: "30px", paddingBottom: "22px" }}
+        >
           <TextComponent>{modalmessage}</TextComponent>
         </DialogContent>
         <DialogActions sx={{ padding: 0 }}>
@@ -132,7 +133,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 height: "40px",
                 textTransform: "none",
                 marginBottom: "22px",
-                fontFamily: 'Open Sans',
+                fontFamily: "Open Sans",
               }}
             >
               {SecondaryButtonlabel}
@@ -148,7 +149,8 @@ const PopupComponent = (props: PopupComponentProps) => {
                 marginBottom: "22px",
                 marginRight: "22px",
                 textTransform: "none",
-                fontFamily: 'Open Sans',
+                fontFamily: "Open Sans",
+                fontSize: "16px",
               }}
             >
               {primaryButtonLabel}

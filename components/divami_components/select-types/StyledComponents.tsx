@@ -15,6 +15,9 @@ export const CustomSearchField = styled(TextField)({
     paddingRight: "8px",
     width: "209px",
   },
+  "& .MuiOutlinedInput-input::placeholder": {
+    color: "#36415D",
+  },
 });
 
 export const DrawerHeader = styled("div")({

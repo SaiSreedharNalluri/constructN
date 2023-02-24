@@ -18,6 +18,9 @@ import HourglassIcon from "../../../public/divami_icons/hourGlassIcon.svg";
 import RFIList from "../../../public/divami_icons/rfiList.svg";
 import SubmittalList from "../../../public/divami_icons/submittalList.svg";
 import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
+import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
+import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
+
 import {
   AppliedFilter,
   ArrowDownIcon,
@@ -30,11 +33,13 @@ import {
   DownloadIcon,
   DueDate,
   DueDateDiv,
+  ErrorImageDiv,
   FilterIcon,
   FirstHeader,
   FunnelIcon,
   HeaderContainer,
   HorizontalLine,
+  ImageErrorIcon,
   MessageDiv,
   MiniHeaderContainer,
   MiniSymbolsContainer,
@@ -44,6 +49,11 @@ import {
   TaskListContainer,
   ThirdHeader,
   TitleContainer,
+  MessageDivShowErr,
+  RaiseButtonDiv,
+  ContentError,
+  ContentErrorSpan,
+  NoMatchDiv,
 } from "./IssueListStyles";
 
 import _ from "lodash";
@@ -122,12 +132,15 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [issueList, setIssueList] = useState<any>(issuesList);
 
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(issueList);
+  const [errorShow, setErrorShow] = useState<any>(issueList);
+
   useEffect(() => {
     setIssueList(issuesList);
   }, [issuesList?.length]);
 
   useEffect(() => {
     setFilteredIssuesList(issueList);
+    // setErrorShow(true);
   }, [issueList?.length]);
 
   const closeIssueList = () => {
@@ -225,285 +238,308 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setOpenIssueDetail(true);
   };
   return (
-    <TaskListContainer>
-      <HeaderContainer>
-        <TitleContainer>
-          <span>Issue List</span>
+    <>
+      {errorShow.length > 0 ? (
+        <TaskListContainer>
+          <HeaderContainer>
+            <TitleContainer>
+              <span>Issue List</span>
 
-          <CloseIcon
-            onClick={() => {
-              handleClose();
-            }}
-            src={CrossIcon}
-            alt={"close icon"}
-          />
-        </TitleContainer>
-      </HeaderContainer>
-
-      <MiniHeaderContainer>
-        <MiniSymbolsContainer>
-          {searchingOn ? (
-            <SearchAreaContainer>
-              <CustomSearchField
-                placeholder="Search"
-                variant="outlined"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
+              <CloseIcon
+                onClick={() => {
+                  handleClose();
                 }}
-                InputLabelProps={{ shrink: false }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Image src={SearchBoxIcon} alt="" />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="start">
-                      <CloseIcon
-                        onClick={() => {
-                          handleSearchWindow();
-                        }}
-                        src={CrossIcon}
-                        alt={"close icon"}
-                      />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </SearchAreaContainer>
-          ) : (
-            <>
-              <SearchGlassIcon
-                src={Search}
+                src={CrossIcon}
                 alt={"close icon"}
-                onClick={() => setSearchingOn((prev) => !prev)}
               />
-              <DividerIcon src={Divider} alt="" />
-              {issueFilterState.isFilterApplied ? (
-                <AppliedFilter>
-                  {issueFilterState.numberOfFilters} Filters{" "}
-                  <FilterIcon
-                    src={AppliedFilterIcon}
+            </TitleContainer>
+          </HeaderContainer>
+
+          <MiniHeaderContainer>
+            <MiniSymbolsContainer>
+              {searchingOn ? (
+                <SearchAreaContainer>
+                  <CustomSearchField
+                    placeholder="Search"
+                    variant="outlined"
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                    }}
+                    InputLabelProps={{ shrink: false }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Image src={SearchBoxIcon} alt="" />
+                        </InputAdornment>
+                      ),
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <CloseIcon
+                            onClick={() => {
+                              handleSearchWindow();
+                            }}
+                            src={CrossIcon}
+                            alt={"close icon"}
+                          />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </SearchAreaContainer>
+              ) : (
+                <>
+                  <SearchGlassIcon
+                    src={Search}
+                    alt={"close icon"}
+                    onClick={() => setSearchingOn((prev) => !prev)}
+                  />
+                  <DividerIcon src={Divider} alt="" />
+                  {issueFilterState.isFilterApplied ? (
+                    <AppliedFilter>
+                      {issueFilterState.numberOfFilters} Filters{" "}
+                      <FilterIcon
+                        src={AppliedFilterIcon}
+                        alt="Arrow"
+                        onClick={() => {
+                          handleViewTaskList();
+                        }}
+                      />
+                    </AppliedFilter>
+                  ) : null}
+                  {sortOrder === "asc" ? (
+                    <ArrowUpIcon
+                      onClick={sortDateOrdering}
+                      src={UpArrow}
+                      alt="Arrow"
+                    />
+                  ) : (
+                    <ArrowDownIcon
+                      onClick={sortDateOrdering}
+                      src={downArrow}
+                      alt="Arrow"
+                    />
+                  )}
+                  <DueDate>Due Date</DueDate>
+
+                  <SecondDividerIcon src={Divider} alt="" />
+
+                  <FunnelIcon
+                    src={FilterInActive}
                     alt="Arrow"
                     onClick={() => {
                       handleViewTaskList();
                     }}
                   />
-                </AppliedFilter>
-              ) : null}
-              {sortOrder === "asc" ? (
-                <ArrowUpIcon
-                  onClick={sortDateOrdering}
-                  src={UpArrow}
-                  alt="Arrow"
-                />
-              ) : (
-                <ArrowDownIcon
-                  onClick={sortDateOrdering}
-                  src={downArrow}
-                  alt="Arrow"
-                />
-              )}
-              <DueDate>Due Date</DueDate>
 
-              <SecondDividerIcon src={Divider} alt="" />
-
-              <FunnelIcon
-                src={FilterInActive}
-                alt="Arrow"
-                onClick={() => {
-                  handleViewTaskList();
-                }}
-              />
-
-              <CSVLink
-                data={getDownladableIssueList(filteredIssuesList)}
-                filename={"my-issues.csv"}
-                className="text-black btn btn-primary fill-black fa fa-Download "
-                target="_blank"
-              >
-                {/* <FontAwesomeIcon
+                  <CSVLink
+                    data={getDownladableIssueList(filteredIssuesList)}
+                    filename={"my-issues.csv"}
+                    className="text-black btn btn-primary fill-black fa fa-Download "
+                    target="_blank"
+                  >
+                    {/* <FontAwesomeIcon
                   className=" fill-black text-black"
                   icon={faDownload}
                 ></FontAwesomeIcon> */}
-                <DownloadIcon src={Download} alt="Arrow" />
-              </CSVLink>
-            </>
+                    <DownloadIcon src={Download} alt="Arrow" />
+                  </CSVLink>
+                </>
+              )}
+            </MiniSymbolsContainer>
+          </MiniHeaderContainer>
+
+          <BodyContainer>
+            {searchingOn ? (
+              <Box sx={{ marginTop: "10px" }}>
+                {filteredIssuesList.length ? (
+                  filteredIssuesList.map((val: any, index: number) => {
+                    return (
+                      <div key={index}>
+                        <BodyInfo
+                          onClick={() => {
+                            handleViewIssue(val);
+                          }}
+                        >
+                          <FirstHeader>
+                            <Image
+                              src={
+                                val.type === "RFI"
+                                  ? RFIList
+                                  : val.type === "Safety"
+                                  ? HourglassIcon
+                                  : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : val.type === "Clash"
+                                  ? SubmittalList
+                                  : val.type === "Commissioning"
+                                  ? commission
+                                  : val.type === "Building code"
+                                  ? HourglassIcon
+                                  : val.type === "Design"
+                                  ? designIcon
+                                  : val.type === "Submittals"
+                                  ? SubmittalList
+                                  : ""
+                              }
+                              alt="Arrow"
+                            />
+                            <BodyContTitle>
+                              {val.type} (#{val._id})
+                            </BodyContTitle>
+                          </FirstHeader>
+
+                          <SecondHeader>
+                            <div>{val.priority} Priority</div>
+                          </SecondHeader>
+
+                          <ThirdHeader>
+                            <div>{val.assignees[0].firstName}</div>
+                            <DueDateDiv>
+                              Due by {Moment(val.dueDate).format("DD MMM 'YY")}
+                            </DueDateDiv>
+                          </ThirdHeader>
+                        </BodyInfo>
+                        <HorizontalLine></HorizontalLine>
+                      </div>
+                    );
+                  })
+                ) : (
+                  // <MessageDiv>
+                  //   <p>No issue matches the search</p>
+                  // </MessageDiv>
+
+                  <NoMatchDiv>
+                    <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+                    <MessageDivShowErr>No result found</MessageDivShowErr>
+                  </NoMatchDiv>
+                )}
+              </Box>
+            ) : (
+              <Box>
+                {filteredIssuesList.length ? (
+                  filteredIssuesList.map((val: any, index: number) => {
+                    return (
+                      <div key={index}>
+                        <BodyInfo
+                          onClick={() => {
+                            handleViewIssue(val);
+                          }}
+                        >
+                          <FirstHeader>
+                            <Image
+                              src={
+                                val.type === "RFI"
+                                  ? RFIList
+                                  : val.type === "Safety"
+                                  ? HourglassIcon
+                                  : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : val.type === "Clash"
+                                  ? SubmittalList
+                                  : val.type === "Commissioning"
+                                  ? commission
+                                  : val.type === "Building code"
+                                  ? HourglassIcon
+                                  : val.type === "Design"
+                                  ? designIcon
+                                  : val.type === "Submittals"
+                                  ? SubmittalList
+                                  : ""
+                              }
+                              alt="Arrow"
+                            />
+                            <BodyContTitle>
+                              {val.type} (#{val._id})
+                            </BodyContTitle>
+                          </FirstHeader>
+
+                          <SecondHeader>
+                            <div>{val.priority} Priority</div>
+                          </SecondHeader>
+
+                          <ThirdHeader>
+                            <div>{val.assignees[0].firstName}</div>
+                            <DueDateDiv>
+                              Due by {Moment(val.dueDate).format("DD MMM 'YY")}
+                            </DueDateDiv>
+                          </ThirdHeader>
+                        </BodyInfo>
+                        <HorizontalLine></HorizontalLine>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <NoMatchDiv>
+                    <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+                    <MessageDivShowErr>No result found</MessageDivShowErr>
+                  </NoMatchDiv>
+                )}
+              </Box>
+            )}
+          </BodyContainer>
+
+          {openIssueDetail && (
+            <Drawer
+              anchor={"right"}
+              open={openIssueDetail}
+              onClose={() => setOpenIssueDetail((prev: any) => !prev)}
+            >
+              <CustomIssueDetailsDrawer
+                issuesList={issueList}
+                issue={viewIssue}
+                onClose={() => setOpenIssueDetail((prev: any) => !prev)}
+                issueType={issueTypesList}
+                issuePriority={issuePriorityList}
+                issueStatus={issueStatusList}
+                projectUsers={projectUsers}
+                currentProject={currentProject}
+                currentStructure={currentStructure}
+                currentSnapshot={currentSnapshot}
+                contextInfo={contextInfo}
+                deleteTheIssue={deleteTheIssue}
+                getIssues={getIssues}
+              />
+            </Drawer>
           )}
-        </MiniSymbolsContainer>
-      </MiniHeaderContainer>
+          {openDrawer && (
+            <Drawer
+              anchor={"right"}
+              open={openDrawer}
+              onClose={() => setOpenDrawer((prev: any) => !prev)}
+            >
+              <FilterCommon
+                closeFilterOverlay={closeFilterOverlay}
+                issuesList={issuesList}
+                visibility={listOverlay}
+                closeOverlay={closeIssueList}
+                handleOnFilter={handleOnFilter}
+                onClose={() => setOpenDrawer((prev: any) => !prev)}
+                handleOnSort={() => {}}
+                deleteTheIssue={() => {}}
+                clickIssueEditSubmit={() => {}}
+                issueFilterState={issueFilterState}
+              />
+            </Drawer>
+          )}
+        </TaskListContainer>
+      ) : (
+        <TaskListContainer>
+          <ErrorImageDiv>
+            <ImageErrorIcon src={listingErrorIcon} alt="Error Image" />
+            <MessageDivShowErr>
+              No Issue has been raised yet. Get a headstart by raising one.
+            </MessageDivShowErr>
+            <RaiseButtonDiv>Raise Issue</RaiseButtonDiv>
 
-      <BodyContainer>
-        {searchingOn ? (
-          <Box sx={{ marginTop: "10px" }}>
-            {filteredIssuesList.length ? (
-              filteredIssuesList.map((val: any, index: number) => {
-                return (
-                  <div key={index}>
-                    <BodyInfo
-                      onClick={() => {
-                        handleViewIssue(val);
-                      }}
-                    >
-                      <FirstHeader>
-                        <Image
-                          src={
-                            val.type === "RFI"
-                              ? RFIList
-                              : val.type === "Safety"
-                              ? HourglassIcon
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Clash"
-                              ? SubmittalList
-                              : val.type === "Commissioning"
-                              ? commission
-                              : val.type === "Building code"
-                              ? HourglassIcon
-                              : val.type === "Design"
-                              ? designIcon
-                              : val.type === "Submittals"
-                              ? SubmittalList
-                              : ""
-                          }
-                          alt="Arrow"
-                        />
-                        <BodyContTitle>
-                          {val.type} (#{val._id})
-                        </BodyContTitle>
-                      </FirstHeader>
-
-                      <SecondHeader>
-                        <div>{val.priority} Priority</div>
-                      </SecondHeader>
-
-                      <ThirdHeader>
-                        <div>{val.assignees[0].firstName}</div>
-                        <DueDateDiv>
-                          Due by {Moment(val.dueDate).format("DD MMM 'YY")}
-                        </DueDateDiv>
-                      </ThirdHeader>
-                    </BodyInfo>
-                    <HorizontalLine></HorizontalLine>
-                  </div>
-                );
-              })
-            ) : (
-              <MessageDiv>
-                <p>No issue matches the search</p>
-              </MessageDiv>
-            )}
-          </Box>
-        ) : (
-          <Box>
-            {filteredIssuesList.length ? (
-              filteredIssuesList.map((val: any, index: number) => {
-                return (
-                  <div key={index}>
-                    <BodyInfo
-                      onClick={() => {
-                        handleViewIssue(val);
-                      }}
-                    >
-                      <FirstHeader>
-                        <Image
-                          src={
-                            val.type === "RFI"
-                              ? RFIList
-                              : val.type === "Safety"
-                              ? HourglassIcon
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Clash"
-                              ? SubmittalList
-                              : val.type === "Commissioning"
-                              ? commission
-                              : val.type === "Building code"
-                              ? HourglassIcon
-                              : val.type === "Design"
-                              ? designIcon
-                              : val.type === "Submittals"
-                              ? SubmittalList
-                              : ""
-                          }
-                          alt="Arrow"
-                        />
-                        <BodyContTitle>
-                          {val.type} (#{val._id})
-                        </BodyContTitle>
-                      </FirstHeader>
-
-                      <SecondHeader>
-                        <div>{val.priority} Priority</div>
-                      </SecondHeader>
-
-                      <ThirdHeader>
-                        <div>{val.assignees[0].firstName}</div>
-                        <DueDateDiv>
-                          Due by {Moment(val.dueDate).format("DD MMM 'YY")}
-                        </DueDateDiv>
-                      </ThirdHeader>
-                    </BodyInfo>
-                    <HorizontalLine></HorizontalLine>
-                  </div>
-                );
-              })
-            ) : (
-              <MessageDiv>
-                <p>No issue matches the search</p>
-              </MessageDiv>
-            )}
-          </Box>
-        )}
-      </BodyContainer>
-      {/* <LoadMoreContainer>
-        <LoadMoreButton>Load More</LoadMoreButton>
-      </LoadMoreContainer> */}
-      {openIssueDetail && (
-        <Drawer
-          anchor={"right"}
-          open={openIssueDetail}
-          onClose={() => setOpenIssueDetail((prev: any) => !prev)}
-        >
-          <CustomIssueDetailsDrawer
-            issuesList={issueList}
-            issue={viewIssue}
-            onClose={() => setOpenIssueDetail((prev: any) => !prev)}
-            issueType={issueTypesList}
-            issuePriority={issuePriorityList}
-            issueStatus={issueStatusList}
-            projectUsers={projectUsers}
-            currentProject={currentProject}
-            currentStructure={currentStructure}
-            currentSnapshot={currentSnapshot}
-            contextInfo={contextInfo}
-            deleteTheIssue={deleteTheIssue}
-            getIssues={getIssues}
-          />
-        </Drawer>
+            <ContentError>
+              Check out
+              <ContentErrorSpan> How to raise an Issue?</ContentErrorSpan>
+            </ContentError>
+          </ErrorImageDiv>
+        </TaskListContainer>
       )}
-      {openDrawer && (
-        <Drawer
-          anchor={"right"}
-          open={openDrawer}
-          onClose={() => setOpenDrawer((prev: any) => !prev)}
-        >
-          <FilterCommon
-            closeFilterOverlay={closeFilterOverlay}
-            issuesList={issuesList}
-            visibility={listOverlay}
-            closeOverlay={closeIssueList}
-            handleOnFilter={handleOnFilter}
-            onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => {}}
-            deleteTheIssue={() => {}}
-            clickIssueEditSubmit={() => {}}
-            issueFilterState={issueFilterState}
-          />
-        </Drawer>
-      )}
-    </TaskListContainer>
+    </>
   );
 };
 

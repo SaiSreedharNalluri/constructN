@@ -213,3 +213,94 @@ export const MessageDiv = styled('div')({
   // marginLeft: "10px",
   marginTop: '30px',
 });
+
+
+
+
+export const ErrorImageDiv = styled("div")({
+  // position: "absolute",
+  // top: "50%",
+  // left: "50%",
+  // transform: "translate(-50%, -50%)",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop:"50px"
+  
+  // margin:"auto"
+  
+});
+
+export const ImageErrorIcon = styled(Image)({
+  cursor: "pointer",
+  width: "226px",
+  height: "201px",
+  // marginLeft: '27px',
+});
+
+export const MessageDivShowErr = styled("div")({
+  width: "200px",
+  height: "38px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
+  textAlign: "center",
+  color: "#101F4C",
+  marginTop: "30px",
+  // marginLeft: "12px",
+});
+
+export const RaiseButtonDiv = styled("div")({
+  width: "180px",
+  height: "40px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "16px",
+  lineHeight: "16px",
+  textAlign: "center",
+  color: "#FFFFFF",
+  marginTop: "20px",
+  background: "#FF843F",
+  borderRadius: "4px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  // marginLeft: "20px",
+});
+
+export const ContentError = styled("div")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "16px",
+  lineHeight: "22px",
+  color: " #101F4C",
+  width: "245px",
+  height: "22px",
+  marginTop: "100px",
+});
+
+export const ContentErrorSpan = styled("span")({
+  // marginLeft:"2px"
+  color: "rgba(255, 132, 63, 1)",
+});
+
+
+
+export const NoMatchDiv = styled("div")({
+  // position: "absolute",
+  // top: "50%",
+  // left: "50%",
+  // transform: "translate(-50%, -50%)",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop: "50px",
+
+  // margin:"auto"
+});

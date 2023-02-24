@@ -12,6 +12,7 @@ import CustomSearch from "../customSearch";
 import { mockData } from "./mockData";
 import { InputAdornment } from "@mui/material";
 import SearchImg from "../../../public/images/search.svg";
+import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import {
   CloseIcon,
   HeaderLabel,
@@ -23,6 +24,9 @@ import {
   StyledTreeView,
   CustomInputField,
   MessageContainer,
+  ErrorImageDiv,
+  ImageErrorIcon,
+  MessageDivShowErr,
   // useStyles,
 } from "./StyledComponents";
 import type {
@@ -156,7 +160,11 @@ const ProjectHierarchy = ({
       </SearchContainer>
       <TreeViewContainer style={{ overflow: "auto", height: "63vh" }}>
         {treeViewData.length === 0 ? (
-          "No structures found for this project"
+          // "No structures found for this project"
+          <ErrorImageDiv>
+            <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+            <MessageDivShowErr>No result found</MessageDivShowErr>
+          </ErrorImageDiv>
         ) : (
           <StyledTreeView
             aria-label="rich object"
