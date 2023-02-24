@@ -34,19 +34,26 @@ import {
   BodyContTitle,
   BodyInfo,
   CloseIcon,
+  ContentError,
+  ContentErrorSpan,
   CustomSearchField,
   DividerIcon,
   DownloadIcon,
   DueDate,
   DueDateDiv,
+  ErrorImageDiv,
   FilterIcon,
   FirstHeader,
   FunnelIcon,
   HeaderContainer,
   HorizontalLine,
+  ImageErrorIcon,
   MessageDiv,
+  MessageDivShowErr,
   MiniHeaderContainer,
   MiniSymbolsContainer,
+  NoMatchDiv,
+  RaiseButtonDiv,
   SearchAreaContainer,
   SearchGlassIcon,
   SecondDividerIcon,
@@ -59,6 +66,8 @@ import _ from "lodash";
 import { CSVLink } from "react-csv";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import AppliedFilterIcon from "../../../public/divami_icons/appliedFilter.svg";
+import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
+import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -101,6 +110,8 @@ const CustomTaskListDrawer = (props: any) => {
   const [taskList, setTaskList] = useState([]);
   const [filteredTaskList, setFilteredTaskList] = useState(taskList);
   const [sortOrder, setSortOrder] = useState("asc");
+
+  const [errorShow, setErrorShow] = useState<any>(tasksList);
 
   useEffect(() => {
     setTaskList(tasksList);
@@ -231,273 +242,298 @@ const CustomTaskListDrawer = (props: any) => {
 
   return (
     <TaskListContainer>
-      <HeaderContainer>
-        <TitleContainer>
-          <span>Task List</span>
-          <CloseIcon
-            onClick={() => {
-              handleClose();
-            }}
-            src={CrossIcon}
-            alt={"close icon"}
-          />
-        </TitleContainer>
-      </HeaderContainer>
-
-      <MiniHeaderContainer>
-        <MiniSymbolsContainer>
-          {searchingOn ? (
-            <SearchAreaContainer>
-              <CustomSearchField
-                placeholder="Search"
-                variant="outlined"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
+      {errorShow.length > 0 ? (
+        <>
+          <HeaderContainer>
+            <TitleContainer>
+              <span>Task List</span>
+              <CloseIcon
+                onClick={() => {
+                  handleClose();
                 }}
-                InputLabelProps={{ shrink: false }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Image src={SearchBoxIcon} alt="" />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="start">
-                      <CloseIcon
-                        onClick={() => {
-                          handleSearchWindow();
-                        }}
-                        src={CrossIcon}
-                        alt={"close icon"}
-                      />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </SearchAreaContainer>
-          ) : (
-            <>
-              <SearchGlassIcon
-                src={Search}
+                src={CrossIcon}
                 alt={"close icon"}
-                onClick={() => setSearchingOn((prev) => !prev)}
               />
-              <DividerIcon src={Divider} alt="" />
-              {taskFilterState.isFilterApplied ? (
-                <AppliedFilter>
-                  {taskFilterState.numberOfFilters} Filters{" "}
-                  <FilterIcon
-                    src={AppliedFilterIcon}
+            </TitleContainer>
+          </HeaderContainer>
+
+          <MiniHeaderContainer>
+            <MiniSymbolsContainer>
+              {searchingOn ? (
+                <SearchAreaContainer>
+                  <CustomSearchField
+                    placeholder="Search"
+                    variant="outlined"
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                    }}
+                    InputLabelProps={{ shrink: false }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Image src={SearchBoxIcon} alt="" />
+                        </InputAdornment>
+                      ),
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <CloseIcon
+                            onClick={() => {
+                              handleSearchWindow();
+                            }}
+                            src={CrossIcon}
+                            alt={"close icon"}
+                          />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </SearchAreaContainer>
+              ) : (
+                <>
+                  <SearchGlassIcon
+                    src={Search}
+                    alt={"close icon"}
+                    onClick={() => setSearchingOn((prev) => !prev)}
+                  />
+                  <DividerIcon src={Divider} alt="" />
+                  {taskFilterState.isFilterApplied ? (
+                    <AppliedFilter>
+                      {taskFilterState.numberOfFilters} Filters{" "}
+                      <FilterIcon
+                        src={AppliedFilterIcon}
+                        alt="Arrow"
+                        onClick={() => {
+                          handleViewTaskList();
+                        }}
+                      />
+                    </AppliedFilter>
+                  ) : null}
+                  {sortOrder === "asc" ? (
+                    <>
+                      <ArrowUpIcon
+                        onClick={() => {
+                          sortDateOrdering();
+                        }}
+                        src={UpArrow}
+                        alt="Arrow"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <ArrowDownIcon
+                        onClick={() => {
+                          sortDateOrdering();
+                        }}
+                        src={DownArrow}
+                        alt="Arrow"
+                      />
+                    </>
+                  )}
+                  <DueDate>Due Date</DueDate>
+
+                  <SecondDividerIcon src={Divider} alt="" />
+
+                  <FunnelIcon
+                    src={FilterInActive}
                     alt="Arrow"
                     onClick={() => {
                       handleViewTaskList();
                     }}
                   />
-                </AppliedFilter>
-              ) : null}
-              {sortOrder === "asc" ? (
-                <>
-                  <ArrowUpIcon
-                    onClick={() => {
-                      sortDateOrdering();
-                    }}
-                    src={UpArrow}
-                    alt="Arrow"
-                  />
-                </>
-              ) : (
-                <>
-                  <ArrowDownIcon
-                    onClick={() => {
-                      sortDateOrdering();
-                    }}
-                    src={DownArrow}
-                    alt="Arrow"
-                  />
-                </>
-              )}
-              <DueDate>Due Date</DueDate>
 
-              <SecondDividerIcon src={Divider} alt="" />
-
-              <FunnelIcon
-                src={FilterInActive}
-                alt="Arrow"
-                onClick={() => {
-                  handleViewTaskList();
-                }}
-              />
-
-              <CSVLink
-                data={getDownloadableTaskList(filteredTaskList)}
-                filename={"my-tasks.csv"}
-                className="text-black btn btn-primary fill-black fa fa-Download "
-                target="_blank"
-              >
-                {/* <FontAwesomeIcon
+                  <CSVLink
+                    data={getDownloadableTaskList(filteredTaskList)}
+                    filename={"my-tasks.csv"}
+                    className="text-black btn btn-primary fill-black fa fa-Download "
+                    target="_blank"
+                  >
+                    {/* <FontAwesomeIcon
                   className=" fill-black text-black"
                   icon={faDownload}
                 ></FontAwesomeIcon> */}
-                <DownloadIcon src={Download} alt="Arrow" />
-              </CSVLink>
-            </>
-          )}
-        </MiniSymbolsContainer>
-      </MiniHeaderContainer>
+                    <DownloadIcon src={Download} alt="Arrow" />
+                  </CSVLink>
+                </>
+              )}
+            </MiniSymbolsContainer>
+          </MiniHeaderContainer>
 
-      <BodyContainer>
-        {searchingOn ? (
-          <Box sx={{ marginTop: "10px" }}>
-            {filteredTaskList.length > 0 ? (
-              filteredTaskList.map((val: any) => {
-                return (
-                  <>
-                    <BodyInfo
-                      onClick={() => {
-                        handleViewTask(val);
-                      }}
-                    >
-                      <FirstHeader>
-                        <Image
-                          src={
-                            val.type === "RFI"
-                              ? RFIList
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Submittals"
-                              ? SubmittalList
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : ""
-                          }
-                          alt="Arr"
-                        />
-                        <BodyContTitle>
-                          {val.type} (#{val.id})
-                        </BodyContTitle>
-                      </FirstHeader>
-                      <SecondHeader>
-                        <div>{val.priority} Priority</div>
-                      </SecondHeader>
-                      <ThirdHeader>
-                        <div>{val.assignee}</div>
-                        <DueDateDiv>
-                          Due by {Moment(val.due_date).format("DD MMM 'YY")}
-                        </DueDateDiv>
-                      </ThirdHeader>
-                    </BodyInfo>
-                    <HorizontalLine></HorizontalLine>
-                  </>
-                );
-              })
+          <BodyContainer>
+            {searchingOn ? (
+              <Box sx={{ marginTop: "10px" }}>
+                {filteredTaskList.length > 0 ? (
+                  filteredTaskList.map((val: any) => {
+                    return (
+                      <>
+                        <BodyInfo
+                          onClick={() => {
+                            handleViewTask(val);
+                          }}
+                        >
+                          <FirstHeader>
+                            <Image
+                              src={
+                                val.type === "RFI"
+                                  ? RFIList
+                                  : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : val.type === "Submittals"
+                                  ? SubmittalList
+                                  : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : ""
+                              }
+                              alt="Arr"
+                            />
+                            <BodyContTitle>
+                              {val.type} (#{val.id})
+                            </BodyContTitle>
+                          </FirstHeader>
+                          <SecondHeader>
+                            <div>{val.priority} Priority</div>
+                          </SecondHeader>
+                          <ThirdHeader>
+                            <div>{val.assignee}</div>
+                            <DueDateDiv>
+                              Due by {Moment(val.due_date).format("DD MMM 'YY")}
+                            </DueDateDiv>
+                          </ThirdHeader>
+                        </BodyInfo>
+                        <HorizontalLine></HorizontalLine>
+                      </>
+                    );
+                  })
+                ) : (
+                  // <MessageDiv>
+                  //   <p>No task matches the search</p>
+                  // </MessageDiv>
+                  <NoMatchDiv>
+                    <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+                    <MessageDivShowErr>No result found</MessageDivShowErr>
+                  </NoMatchDiv>
+                )}
+              </Box>
             ) : (
-              <MessageDiv>
-                <p>No task matches the search</p>
-              </MessageDiv>
+              <Box>
+                {filteredTaskList.length > 0 ? (
+                  filteredTaskList.map((val: any) => {
+                    return (
+                      <>
+                        <BodyInfo
+                          onClick={() => {
+                            handleViewTask(val);
+                          }}
+                        >
+                          <FirstHeader>
+                            <Image
+                              src={
+                                val.type === "RFI"
+                                  ? RFIList
+                                  : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : val.type === "Submittals"
+                                  ? SubmittalList
+                                  : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : ""
+                              }
+                              alt="Arr"
+                            />
+                            <BodyContTitle>
+                              {val.type} (#{val.id})
+                            </BodyContTitle>
+                          </FirstHeader>
+                          <SecondHeader>
+                            <div>{val.priority} Priority</div>
+                          </SecondHeader>
+                          <ThirdHeader>
+                            <div>{val.assignee}</div>
+                            <DueDateDiv>
+                              Due by {Moment(val.due_date).format("DD MMM 'YY")}
+                            </DueDateDiv>
+                          </ThirdHeader>
+                        </BodyInfo>
+                        <HorizontalLine></HorizontalLine>
+                      </>
+                    );
+                  })
+                ) : (
+                  // <MessageDiv>
+                  //   <p>No task matches the search</p>
+                  // </MessageDiv>
+                  <NoMatchDiv>
+                    <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+                    <MessageDivShowErr>No result found</MessageDivShowErr>
+                  </NoMatchDiv>
+                )}
+              </Box>
             )}
-          </Box>
-        ) : (
-          <Box>
-            {filteredTaskList.length > 0 ? (
-              filteredTaskList.map((val: any) => {
-                return (
-                  <>
-                    <BodyInfo
-                      onClick={() => {
-                        handleViewTask(val);
-                      }}
-                    >
-                      <FirstHeader>
-                        <Image
-                          src={
-                            val.type === "RFI"
-                              ? RFIList
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Submittals"
-                              ? SubmittalList
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : val.type === "Transmittals"
-                              ? TransmittalList
-                              : ""
-                          }
-                          alt="Arr"
-                        />
-                        <BodyContTitle>
-                          {val.type} (#{val.id})
-                        </BodyContTitle>
-                      </FirstHeader>
-                      <SecondHeader>
-                        <div>{val.priority} Priority</div>
-                      </SecondHeader>
-                      <ThirdHeader>
-                        <div>{val.assignee}</div>
-                        <DueDateDiv>
-                          Due by {Moment(val.due_date).format("DD MMM 'YY")}
-                        </DueDateDiv>
-                      </ThirdHeader>
-                    </BodyInfo>
-                    <HorizontalLine></HorizontalLine>
-                  </>
-                );
-              })
-            ) : (
-              <MessageDiv>
-                <p>No task matches the search</p>
-              </MessageDiv>
-            )}
-          </Box>
-        )}
-      </BodyContainer>
-      {/* <LoadMoreContainer>
+          </BodyContainer>
+          {/* <LoadMoreContainer>
         <LoadMoreButton>Load More</LoadMoreButton>
       </LoadMoreContainer> */}
-      {openTaskDetail && (
-        <Drawer
-          anchor={"right"}
-          open={openTaskDetail}
-          onClose={() => setOpenTaskDetail((prev: any) => !prev)}
-        >
-          <CustomTaskDetailsDrawer
-            taskList={tasksList}
-            task={viewTask}
-            onClose={() => setOpenTaskDetail((prev: any) => !prev)}
-            taskType={taskType}
-            taskPriority={taskPriority}
-            taskStatus={taskStatus}
-            projectUsers={projectUsers}
-            deleteTheTask={deleteTheTask}
-            currentProject={currentProject}
-            currentStructure={currentStructure}
-            currentSnapshot={currentSnapshot}
-            contextInfo={contextInfo}
-            getTasks={getTasks}
-          />
-        </Drawer>
-      )}
+          {openTaskDetail && (
+            <Drawer
+              anchor={"right"}
+              open={openTaskDetail}
+              onClose={() => setOpenTaskDetail((prev: any) => !prev)}
+            >
+              <CustomTaskDetailsDrawer
+                taskList={tasksList}
+                task={viewTask}
+                onClose={() => setOpenTaskDetail((prev: any) => !prev)}
+                taskType={taskType}
+                taskPriority={taskPriority}
+                taskStatus={taskStatus}
+                projectUsers={projectUsers}
+                deleteTheTask={deleteTheTask}
+                currentProject={currentProject}
+                currentStructure={currentStructure}
+                currentSnapshot={currentSnapshot}
+                contextInfo={contextInfo}
+                getTasks={getTasks}
+              />
+            </Drawer>
+          )}
 
-      {openDrawer && (
-        <Drawer
-          anchor={"right"}
-          open={openDrawer}
-          onClose={() => setOpenDrawer((prev: any) => !prev)}
-        >
-          <TaskFilterCommon
-            tasksList={tasksList}
-            // taskMenuClicked={taskMenuClicked}
-            // currentProject={myProject}
-            // currentStructure={myStructure}
-            // currentSnapshot={mySnapshot}
-            closeTaskFilterOverlay={closeTaskFilterOverlay}
-            handleOnFilter={handleOnTaskFilter}
-            onClose={() => setOpenDrawer((prev: any) => !prev)}
-            taskFilterState={taskFilterState}
-          />
-        </Drawer>
+          {openDrawer && (
+            <Drawer
+              anchor={"right"}
+              open={openDrawer}
+              onClose={() => setOpenDrawer((prev: any) => !prev)}
+            >
+              <TaskFilterCommon
+                tasksList={tasksList}
+                // taskMenuClicked={taskMenuClicked}
+                // currentProject={myProject}
+                // currentStructure={myStructure}
+                // currentSnapshot={mySnapshot}
+                closeTaskFilterOverlay={closeTaskFilterOverlay}
+                handleOnFilter={handleOnTaskFilter}
+                onClose={() => setOpenDrawer((prev: any) => !prev)}
+                taskFilterState={taskFilterState}
+              />
+            </Drawer>
+          )}
+        </>
+      ) : (
+        <ErrorImageDiv>
+          <ImageErrorIcon src={listingErrorIcon} alt="Error Image" />
+          <MessageDivShowErr>
+            No Task has been raised yet. Get a headstart by raising one.
+          </MessageDivShowErr>
+          <RaiseButtonDiv>Raise Task</RaiseButtonDiv>
+
+          <ContentError>
+            Check out
+            <ContentErrorSpan> How to raise a Task?</ContentErrorSpan>
+          </ContentError>
+        </ErrorImageDiv>
       )}
     </TaskListContainer>
   );

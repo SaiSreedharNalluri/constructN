@@ -139,8 +139,12 @@
 
 .detailsImageDiv:hover .deleteIcon {
   visibility: visible;
+  content: url("../public/divami_icons/orangeDeleteIcon.svg");
 }
-
+.attachmentsSection .detailsImageDiv:hover {
+  background: #fff2eb;
+  color: #ff843f;
+}
 .MuiDrawer-paper {
   top: auto !important;
   bottom: 0 !important;
@@ -371,4 +375,28 @@ content: url("../public/divami_icons/toasterIcon.svg");
 .tableInfo tbody {
   height: calc(100% - 69px);
   overflow-y: auto;
+}
+
+.formErrorField {
+  border: 1px solid #f67c74;
+  border-radius: 4px;
+}
+.formErrorLabel {
+  color: #f67c74;
+}
+.formField:focus-visible {
+  outline: none;
+  border: 1px solid #ff843f !important;
+  border-radius: 4px;
+}
+.formField.Mui-focused {
+  border: 1px solid #ff843f !important;
+  border-radius: 4px;
+}
+
+.css-19kzrtu {
+  /* padding: 0px; */
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  padding-top: 22px !important;
 }
