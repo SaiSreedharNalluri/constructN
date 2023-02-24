@@ -720,7 +720,7 @@ const Index: React.FC<IProps> = () => {
         </div> */}
         {structure && snapshot && designMap && activeRealityMap && (
           <div ref={rightrefContainer}>
-            <FontAwesomeIcon
+            {/* <FontAwesomeIcon
               className={`fixed  ${
                 rightNav && 'rotate-180'
               } text-lg text-blue-300  ${
@@ -728,13 +728,13 @@ const Index: React.FC<IProps> = () => {
               }  top-46  cursor-pointer border rounded  p-1 bg-gray-400 z-10 text-white`}
               onClick={rightNavCollapse}
               icon={faLessThan}
-            ></FontAwesomeIcon>
+            ></FontAwesomeIcon> */}
             <div
               ref={rightOverlayRef}
               id="bg-color"
-              className={`fixed  w-9 border border-gray-300   ${
-                rightNav ? 'visible' : 'hidden'
-              }  bg-gray-200 top-40  rounded  right-0  duration-300 z-10 overflow-y-hidden`}
+              className={`fixed h-9  border border-gray-300   ${
+                rightNav ? 'visible' : ''
+              }  bg-gray-200 top-10  rounded-lg  inset-x-1/3 duration-300 z-10 overflow-y-hidden`}
             >
               <RightFloatingMenu
                 issuesList={issuesList}

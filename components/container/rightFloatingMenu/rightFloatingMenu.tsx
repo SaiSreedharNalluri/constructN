@@ -164,18 +164,21 @@ const RightFloatingMenu: React.FC<IProps> = ({
   };
   return (
     <div ref={rightOverlayRefs}>
-      <div ref={rightOverlayRef} className="flex-col ">
-        <div className="justify-center cursor-pointer">
+      <div ref={rightOverlayRef} className="grid  grid-flow-col">
+        <div className="justify-center cursor-pointer selectedClass">
           <FontAwesomeIcon
             icon={iViewMode === 'Design' ? faD : faR}
             id={iViewMode}
-            className={`flex w-full justify-center  py-2 cursor-pointer selectedClass`}
+            className={`flex w-full h-full justify-center  p-1.5 cursor-pointer `}
             onClick={rightMenuClickHandler}
           ></FontAwesomeIcon>
         </div>
-        <div className="cursor-pointer">
+        <div className={`cursor-pointer justify-center ${
+              active === 'type' ? 'selectedClass' : 'unSelectedClass'
+            }`}>
+              
           {active === 'type' ? (
-            <div className={`fixed  ${rightNav ? 'right-9' : 'hidden'}`}>
+            <div className={`fixed mt-9 ${rightNav ? '' : 'hidden'}`}>
               <div className="bg-gray-400">
                 <select onChange={typeChange} id="typeList">
                   {myTypesList &&
@@ -192,28 +195,25 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
           <FontAwesomeIcon
             id="type"
-            className={` flex w-full py-2  cursor-pointer ${
-              active === 'type' ? 'selectedClass' : 'unSelectedClass'
-            }`}
+            className={`w-full h-full  p-2  cursor-pointer `}
             onClick={rightMenuClickHandler}
             icon={faSitemap}
           ></FontAwesomeIcon>
-
-          <div className="my-2 border-2 border-solid border-gray-500"></div>
+          <div className=" border-solid border-gray-500"></div>
         </div>
-        <div className=" cursor-pointer">
+        <div className={`cursor-pointer  ${
+              active === 'layer' ? 'selectedClass' : 'unSelectedClass'
+            }`}>
           <FontAwesomeIcon
             icon={faDatabase}
             id="layer"
-            className={` w-full py-2  cursor-pointer ${
-              active === 'layer' ? 'selectedClass' : 'unSelectedClass'
-            }`}
+            className={`m-auto w-full h-full p-2  cursor-pointer`}
             onClick={rightMenuClickHandler}
           ></FontAwesomeIcon>
           {active === 'layer' ? (
-            <div className={`fixed   ${rightNav ? 'right-9' : 'hidden'}`}>
+            <div className={`fixed ${rightNav ? '' : 'hidden'}`}>
               <div
-                className={`border  -mt-8 border-solid bg-slate-300 p-1.5 rounded `}
+                className={`border   border-solid bg-slate-300 p-1.5 rounded `}
               >
                 <ul className=" h-full text-xs" id="items">
                   {myLayersList &&
@@ -232,7 +232,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
               </div>
             </div>
           ) : (
-            ''
+            <div></div>
           )}
         </div>
         <div
@@ -244,11 +244,11 @@ const RightFloatingMenu: React.FC<IProps> = ({
             alt=""
             src={issues}
             id="issue"
-            className={` m-auto  p-1.5  w-full cursor-pointer `}
+            className={` m-auto  p-1.5  w-9 h-9 cursor-pointer `}
             onClick={rightMenuClickHandler}
           ></Image>
           {active === 'issue' ? (
-            <div className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'}`}>
+            <div className={`fixed ${rightNav ? '' : 'hidden'}`}>
               <IssueMenu
                 issuesList={issuesList}
                 issueMenuClicked={issueMenuClicked}
@@ -272,11 +272,11 @@ const RightFloatingMenu: React.FC<IProps> = ({
             alt=""
             src={tasks}
             id="task"
-            className={` m-auto  w-full  p-1  text-4xl cursor-pointer `}
+            className={` m-auto  w-9 h-9  p-1   cursor-pointer `}
             onClick={rightMenuClickHandler}
           ></Image>
           {active === 'task' ? (
-            <div className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'}`}>
+            <div className={`fixed ${rightNav ? '' : 'hidden'}`}>
               <TaskMenu
                 tasksList={tasksList}
                 taskMenuClicked={taskMenuClicked}
@@ -300,11 +300,11 @@ const RightFloatingMenu: React.FC<IProps> = ({
             alt=""
             src={hotspot}
             id="progress"
-            className={` w-full  cursor-pointer p-1 `}
+            className={` m-auto w-9 h-9  cursor-pointer p-1 `}
             onClick={rightMenuClickHandler}
           ></Image>
           {active === 'progress' ? (
-            <div className={`fixed -mt-8 ${rightNav ? 'right-9' : 'hidden'}`}>
+            <div className={`fixed  ${rightNav ? '' : 'hidden'}`}>
               <ProgressMenu
                 progressMenuClicked={progressMenuClicked}
               ></ProgressMenu>
@@ -314,12 +314,12 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
         </div>
         {iViewMode === 'Reality' ? (
-          <div>
+          <div className='grid grid-flow-col'>
             <div className="justify-center cursor-pointer">
               <FontAwesomeIcon
                 icon={faCodeBranch}
                 id="compareDesign"
-                className={` w-full  cursor-pointer ${
+                className={`m-auto w-9 h-9  cursor-pointer ${
                   active === 'compareDesign'
                     ? 'selectedClass'
                     : 'unSelectedClass'
@@ -332,7 +332,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
               <FontAwesomeIcon
                 icon={faArrowsSplitUpAndLeft}
                 id="compareReality"
-                className={` w-full  cursor-pointer ${
+                className={`m-auto w-9 h-9  cursor-pointer ${
                   active === 'compareReality'
                     ? 'selectedClass'
                     : 'unSelectedClass'
