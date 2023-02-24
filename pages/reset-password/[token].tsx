@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import NextImage from '../../components/core/Image';
 import { resetPasswordToken } from '../../services/userAuth';
-import ResetPassword from '../../components/resetPassword';
+import ResetPassword from '../../components/container/resetPassword';
 
 const ResetPasswords: React.FC = () => {
     const router = useRouter();
