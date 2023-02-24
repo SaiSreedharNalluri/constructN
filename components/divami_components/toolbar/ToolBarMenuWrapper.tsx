@@ -92,6 +92,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   setIssueList,
   getIssues,
   getTasks,
+  handleOnIssueSort,
+  handleOnTasksSort
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -299,6 +301,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           closeIssueDetails={closeIssueDetails}
           setIssueList={setIssueList}
           getIssues={getIssues}
+          handleOnIssueSort={handleOnIssueSort}
         />
 
         <Task
@@ -318,6 +321,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           openTaskDetails={openTaskDetails}
           closeTaskDetails={closeTaskDetails}
           getTasks={getTasks}
+          handleOnTasksSort={handleOnTasksSort}
         />
 
         {viewMode === "Reality" ? (

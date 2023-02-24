@@ -51,6 +51,7 @@ const Task = ({
   openTaskDetails,
   closeTaskDetails,
   getTasks,
+  handleOnTasksSort
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -344,6 +345,7 @@ const Task = ({
             deleteTheTask={deleteTheTask}
             taskFilterState={taskFilterState}
             getTasks={getTasks}
+            handleOnTasksSort={handleOnTasksSort}
           />
         </Drawer>
       )}

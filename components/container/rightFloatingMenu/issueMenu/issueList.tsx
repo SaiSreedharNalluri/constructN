@@ -329,7 +329,6 @@ const IssueList: React.FC<IProps> = ({
       setIssueViewMode("list");
     }, 2000);
   };
-
   const renderIssueView = (viewParam: string) => {
     switch (viewParam) {
       case "filter":
@@ -761,7 +760,9 @@ const IssueList: React.FC<IProps> = ({
                       icon={faCalendar}
                     ></FontAwesomeIcon>
                     <p className="ml-1">
-                      {Moment(issueObj?.dueDate).format("MMM Do YYYY")}
+                      {issueObj?.dueDate !== null
+                        ? Moment(issueObj?.dueDate).format("MMM Do YYYY")
+                        : "open"}
                     </p>
                   </div>
                   <div className="flex">
@@ -798,7 +799,7 @@ const IssueList: React.FC<IProps> = ({
                   />
                 </div>
                 <div>
-                  {issueObj?.attachments.map((attachment) => {
+                  {issueObj?.attachments?.map((attachment) => {
                     return (
                       <div key={attachment._id}>
                         {getFileIcon(attachment.name)}
@@ -841,10 +842,7 @@ const IssueList: React.FC<IProps> = ({
               </div>
               <div className="w-full mt-5">
                 <div>
-                  <Comments
-                    currentProject={router.query.projectId as string}
-                    entityId={issueObj?._id as string}
-                  />
+                  <Comments entityId={issueObj?._id as string} />
                 </div>
               </div>
             </div>
@@ -1050,7 +1048,7 @@ const IssueList: React.FC<IProps> = ({
                                     <div>
                                       <p className="text-base">
                                         {issueInfo.type} (#
-                                        {issueInfo?._id?.substring(3)})
+                                        {issueInfo?.sequenceNumber})
                                       </p>
                                     </div>
                                     <div className="flex gap-3">
@@ -1065,23 +1063,29 @@ const IssueList: React.FC<IProps> = ({
                                   </div>
                                 </div>
                                 <div className="flex mt-2 ml-3">
-                                  <div className="flex">
-                                    <FontAwesomeIcon
-                                      icon={faUser}
-                                      className="text-gray-500 "
-                                    ></FontAwesomeIcon>
-                                    <p className="text-gray-500 -mt-1 ml-1">
-                                      {issueInfo.assignees[0]?.firstName}
-                                    </p>
-                                    <FontAwesomeIcon
-                                      icon={faCalendar}
-                                      className="text-gray-500 ml-2"
-                                    />
-                                    <p className="text-gray-500 -mt-1 ml-1">
-                                      {Moment(issueInfo.dueDate).format(
-                                        "MMM Do YYYY"
-                                      )}
-                                    </p>
+                                  <div className="grid grid-cols-2">
+                                    <div className="flex">
+                                      <FontAwesomeIcon
+                                        icon={faUser}
+                                        className="text-gray-500 "
+                                      ></FontAwesomeIcon>
+                                      <p className="text-gray-500 -mt-1 ml-1">
+                                        {issueInfo.assignees[0]?.firstName}
+                                      </p>
+                                    </div>
+                                    <div className="flex">
+                                      <FontAwesomeIcon
+                                        icon={faCalendar}
+                                        className="text-gray-500 ml-2"
+                                      />
+                                      <p className="text-gray-500 -mt-1 ml-1">
+                                        {issueInfo.dueDate !== null
+                                          ? Moment(issueInfo.dueDate).format(
+                                              "MMM Do YYYY"
+                                            )
+                                          : "open"}
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
                               </div>

@@ -27,13 +27,24 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
     password: '',
     confirmPassword: '',
   };
+
   const validationSchema = Yup.object().shape({
-    firstName: Yup.string().required('First name is required'),
-    lastName: Yup.string().required('Last name is required'),
+    firstName: Yup.string()
+      .required('First name is required')
+      .matches(/[a-zA-Z]/, 'Atleast one letter is reqired')
+      .matches(/^[^0-9]+$/, 'Number is not allowed'),
+    lastName: Yup.string()
+      .required('Last name is required')
+      .matches(/[a-zA-Z]/, 'Atleast one letter is reqired')
+      .matches(/^([^0-9]*)$/, 'Number is not allowed'),
     email: Yup.string().email('Invalid email').required('Email is required'),
     password: Yup.string()
       .required('Password is required')
-      .min(5, 'Minimum 8 characters required'),
+      .min(8, 'Minimum 8 characters required')
+      .matches(/[0-9]/, 'Password requires a number')
+      .matches(/[a-z]/, 'Password requires a lowercase letter')
+      .matches(/[A-Z]/, 'Password requires an uppercase letter')
+      .matches(/[^\w]/, 'Password requires a symbol'),
     confirmPassword: Yup.string()
       .required('Confirm password is required')
       .oneOf([Yup.ref('password'), null], 'Passwords must match'),
@@ -122,8 +133,9 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                   placeholderName="Confirm Password"
                 />
                 <div
-                  className={`${active === 'confirm password'
-                    } absolute p-3 inset-y-0 right-0`}
+                  className={`${
+                    active === 'confirm password'
+                  } absolute p-3 inset-y-0 right-0`}
                   id="confirm password"
                 >
                   <Image

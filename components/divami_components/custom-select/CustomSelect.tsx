@@ -81,7 +81,6 @@ const CustomSelect = (props: any) => {
   useEffect(() => {
     setVal(data?.defaultValue);
   }, [data?.defaultValue]);
-  console.log(data, "vafsfsl");
   return (
     <CustomSelectContainer>
       <StyledSelect

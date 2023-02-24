@@ -65,6 +65,7 @@ const Issues = ({
   closeIssueDetails,
   setIssueList,
   getIssues,
+  handleOnIssueSort
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -354,9 +355,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => {}}
+            handleOnSort={() => { }}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => {}}
+            clickIssueEditSubmit={() => { }}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}
@@ -366,6 +367,7 @@ const Issues = ({
             issueTypesList={issueTypesList}
             issueFilterState={issueFilterState}
             getIssues={getIssues}
+            handleOnIssueSort={handleOnIssueSort}
           />
           {/* <FilterCommon/> */}
         </Drawer>

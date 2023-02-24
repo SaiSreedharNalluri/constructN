@@ -78,6 +78,12 @@ interface ContainerProps {
   footerState: boolean;
 }
 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
 const BodyContainer = styled(Box)<ContainerProps>`
   height: ${(props) =>
     props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
@@ -92,12 +98,6 @@ const FourthBodyDiv = styled("div")((props: any) => ({
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
 
 const CustomSelectContainer = styled("div")`
   width: 398px;
@@ -331,10 +331,11 @@ function BasicTabs(props: any) {
     if (assigneeEditState) {
       setAssigneeEditState(!assigneeEditState);
     }
-    issueUpdate({
+    const optState = {
       ...formState,
       selectedProgress: progressOptionsState[0].defaultValue,
-    });
+    };
+    issueUpdate(optState);
   };
 
   const handleEditAssigne = () => {
@@ -545,10 +546,6 @@ function BasicTabs(props: any) {
           {progressEditState ? (
             <ProgressCustomSelect>
               <CustomSelect
-                onChange={(event: any, value: any) => {
-                  console.log(value);
-                  setFormState({ ...formState, selectedProgress: value });
-                }}
                 config={progressOptionsState[0]}
                 data={{
                   ...progressOptionsState[0],
@@ -605,7 +602,7 @@ function BasicTabs(props: any) {
           <DescriptionDiv>
             <DescriptionTitle>Issue Description</DescriptionTitle>
 
-            <DescriptionPara >
+            <DescriptionPara>
               {taskState.TabOne.issueDescription}
             </DescriptionPara>
           </DescriptionDiv>
@@ -728,10 +725,14 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
   const [footerState, SetFooterState] = useState(false);
+  const [selectedIssue, setSelectedIssue] = useState(issue);
+  useEffect(() => {
+    setSelectedIssue(issue);
+  }, [issue]);
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
-    deleteTheIssue(issue);
+    deleteTheIssue(selectedIssue);
   };
   const deleteTheAttachment = (attachmentId: string) => {
     deleteAttachment(attachmentId)
@@ -744,7 +745,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
         toast.error(error.message);
       });
   };
-  console.log("issuesdasf", issue, contextInfo);
 
   const DetailsObj = {
     TabOne: {
@@ -805,32 +805,32 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   useEffect(() => {
     let tempObj = {
-      ...issue,
-      options: issue?.options,
-      priority: issue?.priority,
-      capturedOn: issue?.createdAt,
-      creator: issue?.owner,
-      issueDescription: issue?.description,
-      // attachments: issue?.attachments,
-      attachments: ["arr1", "arr2", "arr3"],
-
-      assignees: issue.assignees?.length
-        ? `${issue.assignees[0].fullName}`
+      ...selectedIssue,
+      options: selectedIssue?.options,
+      priority: selectedIssue?.priority,
+      capturedOn: selectedIssue?.createdAt,
+      creator: selectedIssue?.owner,
+      issueDescription: selectedIssue?.description,
+      attachments: selectedIssue?.attachments,
+      assignees: selectedIssue.assignees?.length
+        ? `${selectedIssue.assignees[0].fullName}`
         : "",
-      assigneeName: issue.assignees?.length ? issue.assignees[0].fullName : "",
-      assignessList: issue.assignees?.length
-        ? issue.assignees?.map((item: any) => {
+      assigneeName: selectedIssue.assignees?.length
+        ? selectedIssue.assignees[0].fullName
+        : "",
+      assignessList: selectedIssue.assignees?.length
+        ? selectedIssue.assignees?.map((item: any) => {
             return { ...item, label: item.fullName };
           })
         : [],
       moreText:
-        issue.assignees?.length > 1
-          ? `+${issue.assignees?.length - 1} more`
+        selectedIssue.assignees?.length > 1
+          ? `+${selectedIssue.assignees?.length - 1} more`
           : "",
-      relatedTags: issue?.tags,
-      id: issue?._id,
-      tags: issue?.tags,
-      status: issue?.status,
+      relatedTags: selectedIssue?.tags,
+      id: selectedIssue?._id,
+      tags: selectedIssue?.tags,
+      status: selectedIssue?.status,
     };
     setTaskState((prev: any) => {
       return {
@@ -838,7 +838,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         TabOne: tempObj,
       };
     });
-  }, []);
+  }, [selectedIssue]);
 
   const taskSubmit = (formData: any) => {
     // const updatedList = issuesList.map((item: any) => {
@@ -970,9 +970,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     // }
 
     if (data.title && data.type && data.priority) {
-      console.log("inside");
-
-      editIssue(projectId as string, data, issue._id)
+      editIssue(projectId as string, data, selectedIssue._id)
         .then((response) => {
           if (response.success === true) {
             toast.success("Issue updated sucessfully");
@@ -1000,17 +998,17 @@ const CustomIssueDetailsDrawer = (props: any) => {
     }
   };
   const issueUpdate = (data: any) => {
-    console.log(issue);
-    const issueData = _.cloneDeep(issue);
+    const issueData = _.cloneDeep(selectedIssue);
     issueData.assignees = data.selectedUser.map((user: any) => {
       return user._id || user.user._id;
     });
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
-    editIssue(projectId as string, issueData, issue._id)
+    editIssue(projectId as string, issueData, selectedIssue._id)
       .then((response) => {
         if (response.success === true) {
           toast.success("Issue updated sucessfully");
+          getIssues(currentStructure._id);
         } else {
         }
       })
@@ -1034,7 +1032,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 alt={"close icon"}
               />
               <SpanTile>
-                {issue?.type} (#{issue?.sequenceNumber})
+                {selectedIssue?.type} (#{selectedIssue?.sequenceNumber})
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
@@ -1077,7 +1075,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             currentSnapshot={currentSnapshot}
             currentStructure={currentStructure}
             contextInfo={contextInfo}
-            editData={issue}
+            editData={selectedIssue}
             closeIssueCreate={() => {
               setOpenCreateTask(false);
             }}
@@ -1090,7 +1088,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           open={showPopUp}
           setShowPopUp={setshowPopUp}
           modalTitle={"Delete Issue"}
-          modalmessage={`Are you sure you want to delete this Issue "${issue.type}(#${issue._id})"?`}
+          modalmessage={`Are you sure you want to delete this Issue "${selectedIssue.type}(#${selectedIssue._id})"?`}
           primaryButtonLabel={"Delete"}
           SecondaryButtonlabel={"Cancel"}
           callBackvalue={onDeleteIssue}

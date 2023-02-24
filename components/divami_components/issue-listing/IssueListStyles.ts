@@ -1,7 +1,7 @@
 import { styled } from "@mui/system";
 import { Theme } from "../../../styles/globalStyles";
 import Image from "next/image";
-import { Box } from "@mui/material";
+import { Box, MenuItem } from "@mui/material";
 import zIndex from "@mui/material/styles/zIndex";
 
 export const TaskListContainer = styled("div")({
@@ -195,6 +195,18 @@ export const AppliedFilter = styled("div")({
   cursor: "pointer",
 });
 
+export const StyledMenu = styled(MenuItem)({
+  borderBottom: "1px solid #D9D9D9",
+  width: "178px",
+  margin: "0px 20px",
+  "&:hover": {
+    cursor: "pointer",
+  },
+  padding: 0,
+  height: "38px",
+  fontSize: "14px",
+});
+
 export const ErrorImageDiv = styled("div")({
   // position: "absolute",
   // top: "50%",
@@ -204,10 +216,9 @@ export const ErrorImageDiv = styled("div")({
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  marginTop:"50px"
-  
+  marginTop: "50px",
+
   // margin:"auto"
-  
 });
 
 export const ImageErrorIcon = styled(Image)({
@@ -266,8 +277,6 @@ export const ContentErrorSpan = styled("span")({
   // marginLeft:"2px"
   color: "rgba(255, 132, 63, 1)",
 });
-
-
 
 export const NoMatchDiv = styled("div")({
   // position: "absolute",
