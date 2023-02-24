@@ -146,7 +146,17 @@ const Index: React.FC<IProps> = () => {
                   }
                 })
               );
-            } else setStructure(response.data.result[0]);
+            } else{
+              let index =response.data.result.findIndex((structData:IStructure)=>{
+                
+                return ((structData.designs!==undefined )&& (structData.designs.length>0))
+              })
+              if(index>0)
+              setStructure(response.data.result[index]);
+              else
+              setStructure(response.data.result[0]);
+              //console.log("first struct=",index);
+            } 
           }
         })
         .catch((error) => {
