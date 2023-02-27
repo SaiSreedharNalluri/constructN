@@ -51,7 +51,8 @@ const Task = ({
   openTaskDetails,
   closeTaskDetails,
   getTasks,
-  handleOnTasksSort
+  handleOnTasksSort,
+  taskSubmit,
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -178,7 +179,7 @@ const Task = ({
             toast("Task Created sucessfully");
             // toast.success("Task added sucessfully");
             // handleTaskSubmit(formData);
-            taskSubmit(response.result);
+            taskSubmitFn(response.result);
             // toolInstance.toolAction = "taskCreateSuccess";
 
             // console.log(formData);
@@ -217,12 +218,13 @@ const Task = ({
       setSelectedTask(selectedObj);
     }
   }, [openTaskDetails, contextInfo?.id]);
-  const taskSubmit = (formdata: any) => {
+  const taskSubmitFn = (formdata: any) => {
     tasksList.push(formdata);
     taskMenuInstance.toolAction = "taskCreateSuccess";
     // setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);
     closeTaskCreate();
+    taskSubmit(formdata);
   };
   const openTaskCreateFn = () => {
     //setCreateOverlay(true);
