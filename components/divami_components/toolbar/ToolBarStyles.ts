@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export const HotspotBox = styled('div')({
   border: '1px solid #d9d9d9',
-  borderLeft: 'none',
+  // borderLeft: 'none',
   borderTopRightRadius: '4px',
   borderBottomRightRadius: '4px',
   display: 'flex',
@@ -12,7 +12,11 @@ export const HotspotBox = styled('div')({
   padding: '15px 20px 14px 20px',
 });
 
-export const HotspotTitleDiv = styled('div')({});
+export const HotspotTitleDiv = styled('div')({
+ fontWeight: '400',
+  fontSize: '12px',
+
+});
 
 export const HotspotImageContainerDiv = styled('div')({
   display: 'flex',
@@ -21,11 +25,11 @@ export const HotspotImageContainerDiv = styled('div')({
 });
 
 export const HotspotSectionFileTextImg = styled('div')({
-  marginLeft: '13px',
+  // marginLeft: '13px',
 });
 
 export const HotspotCircleDiv = styled('div')({
-  marginLeft: '20px',
+  marginLeft: '12px',
 });
 
 export const HotspotGroupIcon = styled('div')({
@@ -36,7 +40,6 @@ export const TaskBox = styled('div')({
   border: '1px solid #d9d9d9',
   borderRight: 'none',
   display: 'flex',
-  /* justify-content: space-between; */
   alignItems: 'center',
   padding: '15px 20px 14px 20px',
   '& .MuiDrawer-paper': {
