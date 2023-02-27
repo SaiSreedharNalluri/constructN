@@ -459,7 +459,7 @@ const CustomTaskListDrawer = (props: any) => {
                               alt="Arr"
                             />
                             <BodyContTitle>
-                              {val.type} (#{val.id})
+                              {val.type} (#{val.sequenceNumber})
                             </BodyContTitle>
                           </FirstHeader>
                           <SecondHeader>
@@ -515,7 +515,7 @@ const CustomTaskListDrawer = (props: any) => {
                               alt="Arr"
                             />
                             <BodyContTitle>
-                              {val.type} (#{val.id})
+                              {val.type} (#{val.sequenceNumber})
                             </BodyContTitle>
                           </FirstHeader>
                           <SecondHeader>

@@ -78,6 +78,7 @@ import {
   ThirdContWatchName,
   TitleContainer,
 } from "./TaskDetailStyles";
+import { createComment } from "../../../services/comments";
 
 // const BodyContainer = styled(Box)`
 //   height: calc(100vh - 134px);
@@ -265,6 +266,8 @@ function BasicTabs(props: any) {
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
   const [searchTerm, setSearchTerm] = useState("");
   const [list, setList] = useState<any>();
+  const [comments, setComments] = useState("");
+  const [backendComments, setBackendComments] = useState<any>([]);
 
   const StyledInput = styled(TextField)(({ theme }) => ({
     color: "blue",
@@ -318,6 +321,7 @@ function BasicTabs(props: any) {
     });
     setAssigneeOptionsState(tempUsers);
   }, []);
+
   useEffect(() => {
     setFormState({
       ...formState,
@@ -352,6 +356,12 @@ function BasicTabs(props: any) {
 
   const handleEditAssigne = () => {
     setAssigneeEditState(!assigneeEditState);
+  };
+
+  const addComment = (text: string, entityId: string) => {
+    console.log("text", text, "enttit", entityId);
+
+    //
   };
 
   return (
@@ -653,7 +663,7 @@ function BasicTabs(props: any) {
           <RelatedDiv>
             <RelatedTagTitle>Related Tags</RelatedTagTitle>
             <RelatedTagsButton>
-              {console.log("taskState12", taskState)}
+              {/* {console.log("taskState12", taskState)} */}
               {taskState?.TabOne.tags?.map((item: any) => {
                 return (
                   <>
@@ -686,17 +696,28 @@ function BasicTabs(props: any) {
             <>
               <AddCommentContainerSecond>
                 {/* <AddCommentInput placeholder="Add Comment"></AddCommentInput> */}
+                {/* {console.log("commenting", comments)} */}
                 <StyledInput
                   id="standard-basic"
                   variant="standard"
                   placeholder="Add Comment"
+                  value={comments}
+                  onChange={(e) => {
+                    setComments(e.target.value);
+                  }}
+                  // error={!comments}
+                  // helperText={!comments ? "Required" : ""}
                 />
                 <AddCommentButtonContainer>
                   <AttachButton>
                     <ImageErrorIcon src={Clip} alt="" />
                     {/* <Image src={Clip} alt="" />{" "} */}
                   </AttachButton>
-                  <SendButton>
+                  <SendButton
+                    onClick={() => {
+                      addComment(comments, taskState.TabOne.id);
+                    }}
+                  >
                     <ImageErrorIcon src={Send} alt="" />
                     {/* <Image src={Send} alt="" />{" "} */}
                   </SendButton>

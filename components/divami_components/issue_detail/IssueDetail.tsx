@@ -73,6 +73,7 @@ import {
   ThirdContWatchName,
   TitleContainer,
 } from "./IssueDetailStyles";
+import { createComment } from "../../../services/comments";
 
 interface ContainerProps {
   footerState: boolean;
@@ -269,6 +270,8 @@ function BasicTabs(props: any) {
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
   const [searchTerm, setSearchTerm] = useState("");
   const [list, setList] = useState<any>();
+  const [comments, setComments] = useState("");
+  const [backendComments, setBackendComments] = useState<any>([]);
 
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
@@ -346,6 +349,23 @@ function BasicTabs(props: any) {
     if (progressEditState || assigneeEditState) handleFooter(true);
     else handleFooter(false);
   }, [progressEditState, assigneeEditState]);
+
+  const addComment = (text: string, entityId: string) => {
+    if (text !== "") {
+      console.log("text", text, "enttit", entityId);
+      createComment(router.query.projectId as string, {
+        comment: text,
+        entity: entityId,
+      }).then((response) => {
+        if (response.success === true) {
+          toast.success("Comment is added sucessfully");
+          setBackendComments([...backendComments, response.result]);
+        }
+      });
+      setComments("");
+    }
+    //
+  };
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -612,7 +632,7 @@ function BasicTabs(props: any) {
               <AttachmentDiv className={`attachmentsSection`}>
                 <AttachmentTitle>Attachments</AttachmentTitle>
                 <AttachmentDescription style={{ color: "#101F4B" }}>
-                  {console.log(taskState?.TabOne.attachments)}
+                  {/* {console.log(taskState?.TabOne.attachments)} */}
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
                       return (
@@ -678,17 +698,28 @@ function BasicTabs(props: any) {
             <>
               <AddCommentContainerSecond>
                 {/* <AddCommentInput placeholder="Add Comment"></AddCommentInput> */}
+                {/* {console.log("commenting", comments)} */}
                 <StyledInput
                   id="standard-basic"
                   variant="standard"
                   placeholder="Add Comment"
+                  value={comments}
+                  onChange={(e) => {
+                    setComments(e.target.value);
+                  }}
+                  // error={!comments}
+                  // helperText={!comments ? "Required" : ""}
                 />
                 <AddCommentButtonContainer>
                   <AttachButton>
                     <ImageErrorIcon src={Clip} alt="" />
                     {/* <Image src={Clip} alt="" />{" "} */}
                   </AttachButton>
-                  <SendButton>
+                  <SendButton
+                    onClick={() => {
+                      addComment(comments, taskState.TabOne.id);
+                    }}
+                  >
                     <ImageErrorIcon src={Send} alt="" />
                     {/* <Image src={Send} alt="" />{" "} */}
                   </SendButton>
