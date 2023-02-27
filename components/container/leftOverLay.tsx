@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import {
-  ChildrenEntity,
-  IStructure,
-  IStructures,
-} from "../../models/IStructure";
+import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import Treelist from "./treeList";
 import { useRouter } from "next/router";
 import { AxiosResponse } from "axios";
-import { getStructureHierarchy } from "../../services/structure";
-import ProjectHierarchy from "../divami_components/project-hierarchy/ProjectHierarchy";
+import {
+  getStructureHierarchy,
+  getStructureList,
+} from "../../services/structure";
 import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
+import ProjectHierarchy from "../divami_components/project-hierarchy/ProjectHierarchy";
+
 interface IProps {
   getStructureData: (structure: ChildrenEntity) => void;
   getStructure: (Structure: ChildrenEntity) => void;
@@ -41,10 +41,52 @@ const LeftOverLay: React.FC<IProps> = ({
         .then((response: AxiosResponse<any>) => {
           setState([...response.data.result]);
           setStateFilter([...response.data.result]);
-          if (selector.length < 1) setSelector(response.data.result[0]._id);
+          // if (selector.length < 1) setSelector(response.data.result[0]._id);
+          // if(selector.length<1){
+          //   let index =response.data.result.findIndex((structData:IStructure)=>{
+
+          //     return ((structData.designs!==undefined )&& (structData.designs.length>0))
+          //   })
+          //   if(index>0)
+          //   setSelector(response.data.result[index]._id);
+          //   else
+          //   setSelector(response.data.result[0]._id);
+
+          //   //to find structure with data and set
+          // }
         })
         .catch((error) => {
           console.log("error", error);
+        });
+      getStructureList(router.query.projectId as string)
+        .then((response) => {
+          if (response.data.result.length > 0) {
+            if (router.query.structId !== undefined) {
+              let structs: IStructure[] = response.data.result;
+              let temp_struct: IStructure | undefined = structs?.find((e) => {
+                console.log("finding structure: ", e._id);
+                if (e._id === router.query.structId) {
+                  return e;
+                }
+              });
+              if (temp_struct !== undefined) setSelector(temp_struct._id);
+            } else {
+              let index = response.data.result.findIndex(
+                (structData: IStructure) => {
+                  return (
+                    structData.designs !== undefined &&
+                    structData.designs.length > 0
+                  );
+                }
+              );
+              if (index > 0) setSelector(response.data.result[index]._id);
+              else setSelector(response.data.result[0]._id);
+              //console.log("first struct=",index);
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("failed to load data");
         });
     }
   }, [router.isReady, router.query.projectId, router.query.structId]);

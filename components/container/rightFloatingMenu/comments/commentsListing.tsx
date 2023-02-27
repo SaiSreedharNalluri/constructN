@@ -6,13 +6,13 @@ import CommentForm from './commentForm';
 import Modal from 'react-responsive-modal';
 interface IProps {
   comment: any;
-  updateComment: (text: string, commentId: string, editType: string) => void;
+  updateComment: (text: string, comment: Comments) => void;
   activeComment: { _id: string; type: string } | null;
   setActiveComment: React.Dispatch<
     React.SetStateAction<{ _id: string; type: string } | null>
   >;
   addReplyToComment: (text: string, commentId: string) => void;
-  deleteComment: (commentId: string) => void;
+  deleteComment: (comment: Comments) => void;
 }
 const CommentsListing: React.FC<IProps> = ({
   comment,
@@ -30,35 +30,41 @@ const CommentsListing: React.FC<IProps> = ({
     activeComment &&
     activeComment._id === comment._id &&
     activeComment.type === 'replying';
-  const [editType, setEditType] = useState(''); //comments,reply
   const [open, setOpen] = useState(false);
   const [commentObj, setCommentObj] = useState<Comments>();
   const handleDeleteItem = () => {
-    deleteComment(commentObj?._id as string);
+    deleteComment(commentObj as any);
     setTimeout(() => {
       setOpen(false);
-    }, 1000);
+    }, 4000);
   };
   return (
     <React.Fragment>
-      <div key={comment._id} className="mt-2">
-        <div className="flex justify-start">
-          <div className="w-1/6 h-1/6 mt-2 mr-2 mb-2 rounded-full overflow-hidden">
+      <div key={comment._id} className="">
+        <div className="grid grid-cols-8">
+          <div
+            className={`${
+              comment.comment ? '' : 'col-start-2'
+            } p-1 text-xs overflow-hidden  col-span-1`}
+          >
             <NextImage
               src={comment.by.avatar}
-              className={`w-full h-full cursor-pointer object-cover`}
+              className={`rounded-full row-span-2 cursor-pointer object-cover`}
             />
           </div>
-          <div>
-            <div className="flex justify-start">
-              <div className="font-bold text-cyan-700">
-                {comment.by.fullName}
-              </div>
-              <div className="ml-2">
-                {Moment(comment?.createdAt).format('DD-MMM-YYYY hh:mm A')}
-              </div>
+          <div className="font-bold text-cyan-700 text-base col-span-6">
+            {comment.by.fullName}
+          </div>
+          <div className={`text-xs col-span-full ${comment.comment ? 'col-start-2' : 'col-start-3'}`}>
+            {Moment(comment?.createdAt).format('DD-MMM-YYYY hh:mm A')}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-8">
+          <div className={`col-span-full ${comment.comment ? '' : 'col-start-2'}`}>
+            <div className={`px-3`}>
+              <p>{comment.comment ? comment.comment : comment.reply}</p>
             </div>
-            <div>{comment.comment ? comment.comment : comment.reply}</div>
             <div className="flex justify-items-start cursor-pointer hover:underline text-blue-700">
               {comment?.replies && (
                 <div
@@ -73,11 +79,6 @@ const CommentsListing: React.FC<IProps> = ({
                 className="ml-2 "
                 onClick={() => {
                   setActiveComment({ _id: comment._id, type: 'editing' });
-                  if (comment.replies) {
-                    setEditType('comments');
-                  } else {
-                    setEditType('reply');
-                  }
                 }}
               >
                 Edit
@@ -94,20 +95,18 @@ const CommentsListing: React.FC<IProps> = ({
             </div>
             {isEditing && (
               <CommentForm
-                submitLabel="Update"
                 hasCancelButton={true}
                 handleCancel={() => {
                   setActiveComment(null);
                 }}
                 initialText={comment.comment ? comment.comment : comment.reply}
                 handleSubmit={(text) => {
-                  updateComment(text, comment._id, editType);
+                  updateComment(text, comment);
                 }}
               />
             )}
             {isReplying && (
               <CommentForm
-                submitLabel="Reply"
                 handleSubmit={(text) => addReplyToComment(text, comment._id)}
                 hasCancelButton={true}
                 handleCancel={() => {
@@ -126,7 +125,7 @@ const CommentsListing: React.FC<IProps> = ({
                     activeComment={activeComment}
                     setActiveComment={setActiveComment}
                     addReplyToComment={() => {}}
-                    deleteComment={() => {}}
+                    deleteComment={deleteComment}
                   />
                 );
               })}
