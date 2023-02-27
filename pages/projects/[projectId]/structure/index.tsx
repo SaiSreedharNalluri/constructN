@@ -164,7 +164,8 @@ const Index: React.FC<IProps> = () => {
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
     let myTool: ITools = { toolName: "task", toolAction: "taskCreated" };
-    toolClicked(myTool);
+    setTasksList(structuredClone(tasksList));
+    // toolClicked(myTool);
     closeTaskCreate();
   };
 
