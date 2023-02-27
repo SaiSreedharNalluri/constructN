@@ -116,9 +116,9 @@ const Index: React.FC<IProps> = () => {
   const [openTaskDetails, setOpenTaskDetails] = useState(false);
   const [breadCrumbsData, setBreadCrumbsData] = useState<any>([]);
 
-  // useEffect(() => {
-  //   setBreadCrumbsData((prev: any) => [project?.name, prev.slice(1)])
-  // }, [project?.name]);
+  useEffect(() => {
+    setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
+  }, [project]);
 
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
@@ -275,6 +275,7 @@ const Index: React.FC<IProps> = () => {
   }, [router.isReady, router.query.projectId]);
 
   const getNodeDataById = (id: string) => {
+    console.log("finding structure: ", id, structuresList)
     return structuresList.find((e) => {
       if (e._id === id) {
         return e;
@@ -282,7 +283,7 @@ const Index: React.FC<IProps> = () => {
     });
   }
 
-  const x = (structure: any) => {
+  const getBreadCrumbsData = (structure: any) => {
     const dataB: any[] = []
     const getBreadCrumbs = (NodeData: any) => {
       dataB.unshift(NodeData);
@@ -295,13 +296,11 @@ const Index: React.FC<IProps> = () => {
     return dataB;
   }
 
-
-
   const getStructureData = (structure: ChildrenEntity) => {
     setStructure(getCurrentStructureFromStructureList(structure));
     getIssues(structure._id);
     getTasks(structure._id);
-    setBreadCrumbsData((prev: any) => [...x(structure)])
+    setBreadCrumbsData((prev: any) => [prev[0], ...getBreadCrumbsData(structure)]);
   };
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
@@ -1051,19 +1050,15 @@ const Index: React.FC<IProps> = () => {
   useEffect(() => { console.log('issue list chnaged', issuesList) }, [issuesList])
   useEffect(() => { console.log('issue list chnaged', tasksList) }, [tasksList])
 
-  const handleBreadCrumbClick = (node: any) => {
-    console.log(node, "clicked node");
-    // window.localStorage.setItem("nodeData", JSON.stringify(node));
-    // getStructureData ? getStructureData(node) : null;
-    // if (
-    //   !(
-    //     node.children &&
-    //     Array.isArray(node.children) &&
-    //     node.children.length
-    //   )
-    // ) {
-    //   setHierarchy(true);
-    // }
+  const handleBreadCrumbClick = (node: any, index: number) => {
+    console.log(node, "clicked node", breadCrumbsData, index);
+    window.localStorage.setItem("nodeData", JSON.stringify(node));
+    const expandedNodes = breadCrumbsData.map((e: any) => e._id);
+    window.localStorage.setItem("expandedNodes", JSON.stringify(expandedNodes.slice(0, index + 1)));
+    setSelected(node._id);
+    setExpanded(expandedNodes.slice(0, index + 2));
+    getStructureData(node)
+    setHierarchy(true);
   }
 
   return (

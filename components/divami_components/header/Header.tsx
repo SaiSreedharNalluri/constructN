@@ -34,11 +34,20 @@ import {
 } from "./HeaderStyles";
 import { ITools } from "../../../models/ITools";
 import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
+import headerLogSeparator from "../../..//public/divami_icons/headerLogSeparator.svg";
+import { styled } from "@mui/system";
 
 interface IProps {
   // showDesignRealitySwitch?:boolean;
   // isDesignView?:boolean;
 }
+
+export const DividerIcon = styled(Image)({
+  cursor: "pointer",
+  height: "20px",
+  marginLeft: "15px",
+  marginRight: "15px",
+});
 
 const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false, breadCrumbData, handleBreadCrumbClick }) => {
   const router = useRouter();
@@ -136,6 +145,7 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
               alt="Constructn Logo"
             />
           </HeaderLogoImageContainer>
+          {showBreadcrumbs && <DividerIcon src={headerLogSeparator} alt="" />}
           {showBreadcrumbs && <CustomBreadcrumbs breadCrumbData={breadCrumbData} handleBreadCrumbClick={handleBreadCrumbClick} />}
         </HeaderLeftPart>
         <HeaderRightPart>
