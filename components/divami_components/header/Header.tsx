@@ -33,13 +33,14 @@ import {
   ProfileImgIcon,
 } from "./HeaderStyles";
 import { ITools } from "../../../models/ITools";
+import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
 
 interface IProps {
   // showDesignRealitySwitch?:boolean;
   // isDesignView?:boolean;
 }
 
-const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
+const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false, breadCrumbData, handleBreadCrumbClick }) => {
   const router = useRouter();
   const headerRef: any = React.useRef();
   let [name, setName] = useState<string>("");
@@ -135,6 +136,7 @@ const Header: React.FC<any> = ({ toolClicked, viewMode }) => {
               alt="Constructn Logo"
             />
           </HeaderLogoImageContainer>
+          {showBreadcrumbs && <CustomBreadcrumbs breadCrumbData={breadCrumbData} handleBreadCrumbClick={handleBreadCrumbClick} />}
         </HeaderLeftPart>
         <HeaderRightPart>
           {toolClicked ? (

@@ -114,6 +114,12 @@ const Index: React.FC<IProps> = () => {
   const [expanded, setExpanded] = useState<string[]>([]);
   const [openIssueDetails, setOpenIssueDetails] = useState(false);
   const [openTaskDetails, setOpenTaskDetails] = useState(false);
+  const [breadCrumbsData, setBreadCrumbsData] = useState<any>([]);
+
+  // useEffect(() => {
+  //   setBreadCrumbsData((prev: any) => [project?.name, prev.slice(1)])
+  // }, [project?.name]);
+
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
   };
@@ -268,10 +274,34 @@ const Index: React.FC<IProps> = () => {
     }
   }, [router.isReady, router.query.projectId]);
 
+  const getNodeDataById = (id: string) => {
+    return structuresList.find((e) => {
+      if (e._id === id) {
+        return e;
+      }
+    });
+  }
+
+  const x = (structure: any) => {
+    const dataB: any[] = []
+    const getBreadCrumbs = (NodeData: any) => {
+      dataB.unshift(NodeData);
+      const struct = NodeData.parent ? getNodeDataById(NodeData.parent) : null;
+      if (struct) {
+        getBreadCrumbs(struct);
+      }
+    };
+    getBreadCrumbs(structure);
+    return dataB;
+  }
+
+
+
   const getStructureData = (structure: ChildrenEntity) => {
     setStructure(getCurrentStructureFromStructureList(structure));
     getIssues(structure._id);
     getTasks(structure._id);
+    setBreadCrumbsData((prev: any) => [...x(structure)])
   };
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
@@ -282,7 +312,7 @@ const Index: React.FC<IProps> = () => {
         return e;
       }
     });
-    console.log("Selected structure: ", currentStructure?.name);
+    console.log("Selected structure: ", structuresList, currentStructure);
     return currentStructure;
   };
 
@@ -1017,22 +1047,29 @@ const Index: React.FC<IProps> = () => {
         toast.error(error.message);
       });
   };
-  const getBreadCrumbs = () => {
-    //let structTemp :IStructure = structure;
-    // let outputSting : string = structure?.name || '';
-    if (structure === undefined) {
-      return "";
-    }
-    return " | " + project?.name + " / " + structure?.name;
-  };
 
   useEffect(() => { console.log('issue list chnaged', issuesList) }, [issuesList])
   useEffect(() => { console.log('issue list chnaged', tasksList) }, [tasksList])
 
+  const handleBreadCrumbClick = (node: any) => {
+    console.log(node, "clicked node");
+    // window.localStorage.setItem("nodeData", JSON.stringify(node));
+    // getStructureData ? getStructureData(node) : null;
+    // if (
+    //   !(
+    //     node.children &&
+    //     Array.isArray(node.children) &&
+    //     node.children.length
+    //   )
+    // ) {
+    //   setHierarchy(true);
+    // }
+  }
+
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
-        <Header toolClicked={toolClicked} viewMode={currentViewMode} />
+        <Header toolClicked={toolClicked} viewMode={currentViewMode} showBreadcrumbs breadCrumbData={breadCrumbsData} handleBreadCrumbClick={handleBreadCrumbClick} />
         {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
       <div className="flex ">
@@ -1049,26 +1086,29 @@ const Index: React.FC<IProps> = () => {
                 }  absolute z-10 border border-gray-300 `}
             >
               <div>
-                <LeftOverLay
-                  getStructureData={getStructureData}
-                  handleNodeSelection={handleNodeSelection}
-                  handleNodeExpand={handleNodeExpand}
-                  selectedNodes={selected}
-                  expandedNodes={expanded}
-                  setHierarchy={setHierarchy}
-                  getStructure={(structureData) => {
-                    if (structure === undefined) {
-                      setStructure(
-                        getCurrentStructureFromStructureList(structureData)
-                      );
+                <>
+                  {console.log(selected, "structureData")}
+                  <LeftOverLay
+                    getStructureData={getStructureData}
+                    handleNodeSelection={handleNodeSelection}
+                    handleNodeExpand={handleNodeExpand}
+                    selectedNodes={selected}
+                    expandedNodes={expanded}
+                    setHierarchy={setHierarchy}
+                    getStructure={(structureData) => {
+                      if (structure === undefined) {
+                        setStructure(
+                          getCurrentStructureFromStructureList(structureData)
+                        );
 
-                      // setStructure(structureData);
-                      getIssues(structureData._id);
+                        // setStructure(structureData);
+                        getIssues(structureData._id);
 
-                      getTasks(structureData._id);
-                    }
-                  }}
-                ></LeftOverLay>
+                        getTasks(structureData._id);
+                      }
+                    }}
+                  ></LeftOverLay>
+                </>
               </div>
             </div>
           }

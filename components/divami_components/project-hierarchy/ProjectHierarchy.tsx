@@ -63,6 +63,7 @@ const ProjectHierarchy = ({
   useEffect(() => {
     if (window.localStorage.getItem("nodeData")) {
       let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
+      console.log("nodeData", nodeData);
       if (nodeData && getStructureData) {
         getStructureData(nodeData);
       }
@@ -75,6 +76,7 @@ const ProjectHierarchy = ({
       <span>{node.name}</span>
     </div>
   );
+
   const [search, setSearch] = useState(false);
   const handleSearchResult = (e: any) => {
     console.log(e);
