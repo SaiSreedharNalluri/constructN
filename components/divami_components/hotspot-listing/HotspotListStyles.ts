@@ -1,7 +1,7 @@
 import { styled } from "@mui/system";
 import { Theme } from "../../../styles/globalStyles";
 import Image from "next/image";
-import { Box, TextField } from "@mui/material";
+import { Box, MenuItem, TextField } from "@mui/material";
 import zIndex from "@mui/material/styles/zIndex";
 
 export const HotspotListContainer = styled("div")({
@@ -242,4 +242,23 @@ export const AppliedFilter = styled("div")({
   display: "flex",
   marginLeft: "10px",
   cursor: "pointer",
+});
+
+
+export const IconContainer = styled(Image)({
+  cursor: "pointer",
+  marginLeft: "16px",
+});
+
+
+export const StyledMenu = styled(MenuItem)({
+  borderBottom: "1px solid #D9D9D9",
+  width: "178px",
+  margin: "0px 20px",
+  "&:hover": {
+    cursor: "pointer",
+  },
+  padding: 0,
+  height: "38px",
+  fontSize: "14px",
 });

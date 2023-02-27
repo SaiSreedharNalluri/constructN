@@ -1,4 +1,11 @@
-import { Box, Drawer, InputAdornment } from "@mui/material";
+import {
+  Box,
+  Drawer,
+  InputAdornment,
+  ListItemIcon,
+  Menu,
+  Tooltip,
+} from "@mui/material";
 import Image from "next/image";
 import Moment from "moment";
 
@@ -32,6 +39,8 @@ import {
   SearchAreaContainer,
   CustomSearchField,
   AppliedFilter,
+  IconContainer,
+  StyledMenu,
 } from "./HotspotListStyles";
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
 import Divider from "../../../public/divami_icons/divider.svg";
@@ -52,6 +61,8 @@ import highProgressIcon from "../../../public/divami_icons/highProgressIcon.svg"
 import downArrow from "../../../public/divami_icons/downArrow.svg";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import FilterInActive from "../../../public/divami_icons/filterInactive.svg";
+import sort from "../../../public/divami_icons/sort.svg";
+import DownArrow from "../../../public/divami_icons/downArrow.svg";
 
 import { useEffect, useState } from "react";
 import hotspotObj from "./config";
@@ -70,6 +81,8 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
     handleSearch();
@@ -109,6 +122,53 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
       setFilteredHotspotList(hotspotObj);
     }
   };
+
+  const handleSortClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleSortMenuClose = () => {
+    setIsSortMenuOpen(false);
+    setAnchorEl(null);
+  };
+
+  const handleSortMenuClick = (sortMethod: string) => {
+    // handleOnIssueSort(sortMethod);
+  };
+
+  const sortMenuOptions = [
+    {
+      label: "Status ( To Do - Completed)",
+      icon: null,
+      method: "status_asc",
+    },
+    {
+      label: "Status ( Completed - To Do)",
+      icon: null,
+      method: "status_desc",
+    },
+
+    {
+      label: "Priotity ( High - Low)",
+      icon: null,
+      method: "Dsc Priority",
+    },
+    {
+      label: "Priotity ( Low - High)",
+      icon: null,
+      method: "Asc Priority",
+    },
+    {
+      label: "Due Date ",
+      icon: UpArrow,
+      method: "Dsc DueDate",
+    },
+    {
+      label: "Due Date ",
+      icon: DownArrow,
+      method: "Asc DueDate",
+    },
+  ];
 
   return (
     <HotspotListContainer>
@@ -178,7 +238,18 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
                   />
                 </AppliedFilter>
               ) : null}
-              {sortOrder === "asc" ? (
+
+              <Tooltip title="Sort Menu">
+                <IconContainer
+                  src={sort}
+                  alt="Arrow"
+                  onClick={(e) => {
+                    setIsSortMenuOpen((prev) => !prev);
+                    handleSortClick(e);
+                  }}
+                />
+              </Tooltip>
+              {/* {sortOrder === "asc" ? (
                 <ArrowUpIcon
                   onClick={sortDateOrdering}
                   src={UpArrow}
@@ -191,7 +262,7 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
                   alt="Arrow"
                 />
               )}
-              <DueDate>Due Date</DueDate>
+              <DueDate>Due Date</DueDate> */}
 
               <SecondDividerIcon src={Divider} alt="" />
 
@@ -323,6 +394,57 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
           </Box>
         )}
       </BodyContainer>
+      <Menu
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={isSortMenuOpen}
+        onClose={handleSortMenuClose}
+        onClick={handleSortMenuClose}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            mt: 1.5,
+            "& .MuiAvatar-root": {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            "&:before": {
+              content: '""',
+              display: "block",
+              position: "absolute",
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
+              zIndex: 0,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        {sortMenuOptions.map((option) => (
+          <>
+            <StyledMenu
+              key={option.label}
+              onClick={() => handleSortMenuClick(option.method)}
+            >
+              {option.label}
+              {option.icon && (
+                <ListItemIcon>
+                  <IconContainer src={option.icon} alt={option.label} />
+                </ListItemIcon>
+              )}
+            </StyledMenu>
+          </>
+        ))}
+      </Menu>
     </HotspotListContainer>
   );
 };
