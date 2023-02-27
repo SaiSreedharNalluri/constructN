@@ -27,6 +27,7 @@ import {
   ErrorImageDiv,
   ImageErrorIcon,
   MessageDivShowErr,
+  LabelContainer,
   // useStyles,
 } from "./StyledComponents";
 import type {
@@ -56,6 +57,7 @@ const ProjectHierarchy = ({
   const handleExpand = () => {
     handleNodeExpand(getAllIds(treeViewData));
   };
+
   useEffect(() => {
     setTreeViewData(treeData);
   }, [treeData]);
@@ -72,9 +74,9 @@ const ProjectHierarchy = ({
 
   const classes = {};
   const renderTreeNode = (node: ChildrenEntity) => (
-    <div>
+    <LabelContainer>
       <span>{node.name}</span>
-    </div>
+    </LabelContainer>
   );
 
   const [search, setSearch] = useState(false);
@@ -83,32 +85,46 @@ const ProjectHierarchy = ({
     handleSearch(e);
     setSearch(true);
   };
+
+
   const renderTree = (nodes: ChildrenEntity) => (
-    <TreeItem
-      key={nodes._id}
-      nodeId={nodes._id}
-      label={renderTreeNode(nodes)}
-      onClick={(event: any) => {
-        console.log("onclick");
-        window.localStorage.setItem("nodeData", JSON.stringify(nodes));
-        getStructureData ? getStructureData(nodes) : null;
-        if (
-          !(
-            nodes.children &&
-            Array.isArray(nodes.children) &&
-            nodes.children.length
-          )
-        ) {
-          setHierarchy(false);
+    <>
+      <StyledTreeItem
+        needClick={nodes?.children && nodes?.children?.length > 0 ? false : true}
+        key={nodes._id}
+        nodeId={nodes._id}
+        label={renderTreeNode(nodes)}
+        onClick={(event: any) => {
+          if (nodes?.children && nodes?.children?.length > 0) {
+            event.preventDefault();
+          }
+          else {
+            {
+              console.log("onclick");
+              window.localStorage.setItem("nodeData", JSON.stringify(nodes));
+              getStructureData ? getStructureData(nodes) : null;
+              if (
+                !(
+                  nodes.children &&
+                  Array.isArray(nodes.children) &&
+                  nodes.children.length
+                )
+              ) {
+                setHierarchy(false);
+              }
+              //setCurrentClickedStruct(structure._id);
+            }
+          }
+
         }
-        //setCurrentClickedStruct(structure._id);
-      }}
-      style={{ borderBottom: "1px solid #D9D9D9" }}
-    >
-      {Array.isArray(nodes.children) && nodes.children.length
-        ? nodes.children.map((node) => renderTree(node))
-        : null}
-    </TreeItem>
+        }
+        style={{ borderBottom: "1px solid #D9D9D9" }}
+      >
+        {Array.isArray(nodes.children) && nodes.children.length
+          ? nodes.children.map((node) => renderTree(node))
+          : null}
+      </StyledTreeItem>
+    </>
   );
 
   useEffect(() => {
@@ -121,6 +137,7 @@ const ProjectHierarchy = ({
   }, [treeViewData]);
 
   const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
+    console.log(nodeIds, "nodeIds")
     handleNodeExpand(nodeIds);
   };
 
