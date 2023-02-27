@@ -447,14 +447,14 @@ const CustomTaskListDrawer = (props: any) => {
                                 val.type === "RFI"
                                   ? RFIList
                                   : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : val.type === "Submittals"
-                                  ? SubmittalList
-                                  : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : ""
+                                    ? TransmittalList
+                                    : val.type === "Submittals"
+                                      ? SubmittalList
+                                      : val.type === "Transmittals"
+                                        ? TransmittalList
+                                        : val.type === "Transmittals"
+                                          ? TransmittalList
+                                          : ""
                               }
                               alt="Arr"
                             />
@@ -503,14 +503,14 @@ const CustomTaskListDrawer = (props: any) => {
                                 val.type === "RFI"
                                   ? RFIList
                                   : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : val.type === "Submittals"
-                                  ? SubmittalList
-                                  : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : ""
+                                    ? TransmittalList
+                                    : val.type === "Submittals"
+                                      ? SubmittalList
+                                      : val.type === "Transmittals"
+                                        ? TransmittalList
+                                        : val.type === "Transmittals"
+                                          ? TransmittalList
+                                          : ""
                               }
                               alt="Arr"
                             />
@@ -522,7 +522,8 @@ const CustomTaskListDrawer = (props: any) => {
                             <div>{val.priority} Priority</div>
                           </SecondHeader>
                           <ThirdHeader>
-                            <div>{val.assignee}</div>
+                            {/* <div>{val.assignee}</div> */}
+                            <div>{val.assignees[0].firstName}</div>
                             <DueDateDiv>
                               Due by {Moment(val.due_date).format("DD MMM 'YY")}
                             </DueDateDiv>
