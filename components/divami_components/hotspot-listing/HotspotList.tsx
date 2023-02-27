@@ -66,6 +66,7 @@ import DownArrow from "../../../public/divami_icons/downArrow.svg";
 
 import { useEffect, useState } from "react";
 import hotspotObj from "./config";
+import HotspotFilterCommon from "../hotspot-filter-common/HotspotFilterCommon";
 
 interface IProps {
   onClose: any;
@@ -83,6 +84,7 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   useEffect(() => {
     handleSearch();
@@ -130,6 +132,10 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
   const handleSortMenuClose = () => {
     setIsSortMenuOpen(false);
     setAnchorEl(null);
+  };
+  const handleViewTaskList = () => {
+    // console.log("teskssksk trigg");
+    setOpenDrawer(true);
   };
 
   const handleSortMenuClick = (sortMethod: string) => {
@@ -233,7 +239,7 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
                     src={AppliedFilterIcon}
                     alt="Arrow"
                     onClick={() => {
-                      //   handleViewTaskList();
+                      handleViewTaskList();
                     }}
                   />
                 </AppliedFilter>
@@ -270,7 +276,7 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
                 src={FilterInActive}
                 alt="Arrow"
                 onClick={() => {
-                  //   handleViewTaskList();
+                  handleViewTaskList();
                 }}
               />
 
@@ -394,6 +400,17 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
           </Box>
         )}
       </BodyContainer>
+      {openDrawer && (
+        <Drawer
+          anchor={"right"}
+          open={openDrawer}
+          onClose={() => setOpenDrawer((prev: any) => !prev)}
+        >
+          <HotspotFilterCommon
+            onClose={() => setOpenDrawer((prev: any) => !prev)}
+          />
+        </Drawer>
+      )}
       <Menu
         anchorEl={anchorEl}
         id="account-menu"

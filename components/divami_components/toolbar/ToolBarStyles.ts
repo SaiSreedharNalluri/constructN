@@ -9,7 +9,8 @@ export const HotspotBox = styled('div')({
   display: 'flex',
   /* justify-content: space-between; */
   alignItems: 'center',
-  padding: '15px 20px 14px 20px',
+  // padding: '15px 20px 14px 20px',
+  padding:"15px 20px 14px 15px",
 });
 
 export const HotspotTitleDiv = styled('div')({
@@ -29,7 +30,7 @@ export const HotspotSectionFileTextImg = styled('div')({
 });
 
 export const HotspotCircleDiv = styled('div')({
-  marginLeft: '12px',
+  // marginLeft: '12px',
 });
 
 export const HotspotGroupIcon = styled('div')({
@@ -41,7 +42,8 @@ export const TaskBox = styled('div')({
   borderRight: 'none',
   display: 'flex',
   alignItems: 'center',
-  padding: '15px 20px 14px 20px',
+  // padding: '15px 20px 14px 20px',
+  padding:"15px 7px 14px 15px",
   '& .MuiDrawer-paper': {
     height: 'calc(100% - 60px)',
   },
@@ -97,7 +99,9 @@ export const TypeParentCont = styled('div')({
   display: 'flex',
   alignItems: 'center',
   padding: '15px 20px 14px 20px',
-  width: '250px',
+  // width: '250px',
+  width: '238px',
+
 });
 
 export const TypesTitle = styled('div')({
@@ -129,7 +133,8 @@ export const IssueTitle = styled('div')({
 });
 
 export const LayersWrapper = styled('div')({
-  minWidth: '250px !important',
+  // minWidth: '250px !important',
+  minWidth:"238px !important",
   border: '1px solid #d9d9d9',
   borderRight: 'none',
   display: 'flex',
@@ -151,7 +156,9 @@ export const SelectLayersWrapper = styled('div')(
   (props: selectLayerWrapperProps) => ({
     top: '62px',
     position: 'absolute',
-    left: props.typeOfWindow === 'type' ? '1px' : '250px',
+    // left: props.typeOfWindow === 'type' ? '1px' : '250px',
+    left: props.typeOfWindow === 'type' ? '1px' : '238px',
+
     // border: '1px solid #D9D9D9',
     boxShadow: '5px 4px 8px rgb(0 0 0 / 24%)',
     background: 'white',
@@ -202,9 +209,13 @@ export const CompareViewBox = styled('div')({
   alignItems: 'center',
   border: '1px solid #d9d9d9',
   padding: '0 20px',
-  paddingRight: '35px',
+  // paddingRight: '35px',
+  paddingRight: '20px',
+
   borderRight: 'transparent',
-  width: '270px',
+  // width: '270px',
+  width: '258px',
+
 });
 
 export const CompareIcon = styled('div')((props: any) => ({

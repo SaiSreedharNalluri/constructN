@@ -6,7 +6,9 @@ import type { SelectLayerContainerProps } from "./Type";
 import { styled } from "@mui/system";
 
 export const TreeViewContainer = styled("div")({
-  width: "252px",
+  // width: "252px",
+  // width: "252px",
+  //
   marginTop: "28px",
 });
 
@@ -75,8 +77,8 @@ export const StyledTreeView = styled(TreeView)({
 
 export const SelectLayerContainer = styled(Box)((props: any) => ({
   display: props.openSelectLayer ? "" : "none",
-  width: "250px",
-  // width: "259px",
+  // width: "250px",
+  width: "237px",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
 
   fontFamily: "Open Sans",
