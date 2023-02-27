@@ -89,19 +89,26 @@ interface ContainerProps {
   footerState: boolean;
 }
 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
 const BodyContainer = styled(Box)<ContainerProps>`
   height: ${(props) =>
     props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
   overflow-y: scroll;
-`;
-const CustomTabPanel = styled(TabPanel)`
-  padding: none;
 `;
 
 const FourthBodyDiv = styled("div")((props: any) => ({
   display: props.assigneeEditState ? "none" : "flex",
   marginTop: "25px",
 })) as any;
+
+const CustomTabPanel = styled(TabPanel)`
+  padding: none;
+`;
 
 const AssignEditSearchContainer = styled("div")({
   minHeight: "40px",
@@ -127,12 +134,6 @@ const AssignEditSearchContainer = styled("div")({
     borderColor: "#36415D !important",
   },
 });
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
 
 const AddCommentContainer = styled("div")((props: any) => ({
   // borderTop: `${props.containerType === "float" ? "none" : "1px solid #D9D9D9"}`,
@@ -213,6 +214,27 @@ const ImageErrorIcon = styled(Image)({
   height: "24px",
 });
 
+const StyledInput = styled(TextField)(({ theme }) => ({
+  color: "blue",
+  "label + &": {
+    marginTop: theme.spacing(8),
+  },
+
+  "& .MuiInput-root": {
+    "&:before, :after, :hover:not(.Mui-disabled):before": {
+      borderBottom: 0,
+    },
+  },
+  "&& .MuiInput-underline": {
+    borderBottom: "none",
+    // borderBottomColor: "none",
+  },
+  "& .MuiInput-underline:after": {
+    borderBottom: "none",
+    // borderBottomColor: "none",
+  },
+}));
+
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
@@ -268,27 +290,6 @@ function BasicTabs(props: any) {
   const [list, setList] = useState<any>();
   const [comments, setComments] = useState("");
   const [backendComments, setBackendComments] = useState<any>([]);
-
-  const StyledInput = styled(TextField)(({ theme }) => ({
-    color: "blue",
-    "label + &": {
-      marginTop: theme.spacing(8),
-    },
-
-    "& .MuiInput-root": {
-      "&:before, :after, :hover:not(.Mui-disabled):before": {
-        borderBottom: 0,
-      },
-    },
-    "&& .MuiInput-underline": {
-      borderBottom: "none",
-      // borderBottomColor: "none",
-    },
-    "& .MuiInput-underline:after": {
-      borderBottom: "none",
-      // borderBottomColor: "none",
-    },
-  }));
 
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
@@ -360,6 +361,19 @@ function BasicTabs(props: any) {
 
   const addComment = (text: string, entityId: string) => {
     console.log("text", text, "enttit", entityId);
+    if (text !== "") {
+      console.log("text", text, "enttit", entityId);
+      createComment(router.query.projectId as string, {
+        comment: text,
+        entity: entityId,
+      }).then((response) => {
+        if (response.success === true) {
+          toast.success("Comment is added sucessfully");
+          setBackendComments([...backendComments, response.result]);
+        }
+      });
+      setComments("");
+    }
 
     //
   };
