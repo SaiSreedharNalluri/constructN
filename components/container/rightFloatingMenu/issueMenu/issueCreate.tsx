@@ -139,7 +139,6 @@ const IssueCreate: React.FC<IProps> = ({
       resetForm: (nextValues?: Partial<FormValues>) => void;
     }
   ) => {
-    console.log('values', values);
     const formData = new FormData();
     let assignees = values.assignees;
     let tags = values.tags;
