@@ -13,10 +13,10 @@ import DesignRealitySwitch from './designRealitySwitch';
 interface IProps {
   // showDesignRealitySwitch?:boolean;
   // isDesignView?:boolean;
-  breadCrumb? : string;
-  
+  breadCrumb?: string;
+
 }
-const Header: React.FC<IProps> = ({breadCrumb}) => {
+const Header: React.FC<IProps> = ({ breadCrumb }) => {
   // if (showDesignRealitySwitch===undefined)
   // {
   //   showDesignRealitySwitch=false
@@ -28,7 +28,7 @@ const Header: React.FC<IProps> = ({breadCrumb}) => {
   const router = useRouter();
   const headerRef: any = React.useRef();
   let [name, setName] = useState<string>('');
-  const [breadCrumbString, setBreadCrumbString] = useState(breadCrumb||'');
+  const [breadCrumbString, setBreadCrumbString] = useState(breadCrumb || '');
   useEffect(() => {
     const userObj: any = getCookie('user');
     let user = null;
@@ -40,13 +40,13 @@ const Header: React.FC<IProps> = ({breadCrumb}) => {
   }, [router.query.projectId]);
 
   useEffect(() => {
-    if (breadCrumb!==undefined)
-    setBreadCrumbString(breadCrumb);
+    if (breadCrumb !== undefined)
+      setBreadCrumbString(breadCrumb);
     else
-    setBreadCrumbString('');
+      setBreadCrumbString('');
 
   }, [breadCrumb]);
-  
+
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     const closePopup = (e: any) => {
@@ -113,13 +113,13 @@ const Header: React.FC<IProps> = ({breadCrumb}) => {
                     width={1080}
                   />
                 </div>
-                
+
               </div>
 
               {loading && (
                 <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
                   <ul className="text-white p-4 ">
-                    <li className="font-medium cursor-pointer">
+                    <li className="font-medium cursor-pointer" onClick={() => router.push(`/user-account`)}>
                       <div className="flex items-center justify-center transform transition-colors duration-200">
                         <div className="mr-3">
                           <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
