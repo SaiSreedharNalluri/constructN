@@ -11,7 +11,7 @@ export const ForgeViewerUtils = (function () {
   let _isPendingLayersToLoad = false;
 
   let _documentURNs;
-  let _selectedType = 'Plan Drawings';
+  let _selectedType;
   let _tm;
   let _globalOffset;
   let _manifestNode;
@@ -49,9 +49,6 @@ export const ForgeViewerUtils = (function () {
 
   const setType = (type) => {
     _selectedType = type;
-    _isPendingDataToLoad = true;
-    _isPendingLayersToLoad = true;
-    loadData();
   };
 
   const getAvailableType = () => {
@@ -133,8 +130,8 @@ export const ForgeViewerUtils = (function () {
     _isPendingLayersToLoad = true;
     if (loadLayersOnDataLoadCompletion()) {
       loadLayers();
-      loadIssues();
-      loadTasks();
+      // loadIssues();
+      // loadTasks();
     }
   };
 
@@ -158,6 +155,12 @@ export const ForgeViewerUtils = (function () {
 
   const updateProgressData = (progress) => {
     _progressData = progress;
+  };
+
+  const refreshData = () => {
+    _isPendingDataToLoad = true;
+    _isPendingLayersToLoad = true;
+    loadData();
   };
 
   const loadLayersOnDataLoadCompletion = () => {
@@ -362,7 +365,7 @@ export const ForgeViewerUtils = (function () {
           console.log(`Inside Rag Click click: ${targetObject.position.x}`);
           if (targetObject.type === "Issue") {
             let clickedIssue = _issuesList.find(issue => issue._id === targetObject.id)
-            contextObject = clickedIssue.context;
+            contextObject = structuredClone(clickedIssue.context);
             contextObject.id = clickedIssue._id;
           } else if (targetObject.type === "Task") {
             let clickedTask = _tasksList.find(task => task._id === targetObject.id)
@@ -721,6 +724,7 @@ export const ForgeViewerUtils = (function () {
     updateLayersData: updateLayersData,
     updateIssuesData: updateIssuesData,
     updateTasksData: updateTasksData,
+    refreshData: refreshData,
     showLayers: showLayers,
     initiateAddTag: initiateAddTag,
     cancelAddTag: cancelAddTag,

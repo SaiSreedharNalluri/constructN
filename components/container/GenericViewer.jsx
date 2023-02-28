@@ -116,6 +116,7 @@ function GenericViewer(props) {
       case 'Design':
         if (forgeUtils.current) {
           forgeUtils.current.setType(viewType.current);
+          forgeUtils.current.refreshData();
         }
         break;
       case 'Reality':
@@ -422,6 +423,7 @@ function GenericViewer(props) {
         if (forgeUtils.current == undefined) {
           forgeUtils.current = ForgeViewerUtils;
           forgeUtils.current.initializeViewer(viewerId, viewerEventHandler);
+          forgeUtils.current.setType(viewType.current);
         }
         break;
       case 'Reality':
@@ -447,6 +449,7 @@ function GenericViewer(props) {
             viewerId,
             viewerEventHandler
           );
+          forgeCompareUtils.current.setType(viewType.current);
         }
         break;
       case 'Reality':
