@@ -155,6 +155,7 @@ const TaskFilterCommon: React.FC<any> = ({
   const Filters = [
     {
       title: "Task Type",
+      code: "taskType",
       selectAllStatus: "T",
       options: [
         { optionTitle: "RFI", optionStatus: "T" },
@@ -166,6 +167,7 @@ const TaskFilterCommon: React.FC<any> = ({
     },
     {
       title: "Task Priority",
+      code: "taskPriority",
       selectAllStatus: "T",
       options: [
         { optionTitle: "Low", optionStatus: "T" },
@@ -175,6 +177,7 @@ const TaskFilterCommon: React.FC<any> = ({
     },
     {
       title: "Task Status",
+      code: "taskStatus",
       selectAllStatus: "T",
       options: [
         { optionTitle: "In Progress", optionStatus: "T" },
@@ -232,12 +235,29 @@ const TaskFilterCommon: React.FC<any> = ({
   }, []);
   useEffect(() => {
     SetFilterState((prev: any) => {
+      console.log("prev", prev);
       return prev.map((item: any) => {
-        if (item.title === "Issue Type") {
+        if (item.code === "taskType") {
+          let selectAllStatus = "F";
+          if (taskFilterState.isFilterApplied) {
+            if (
+              item.options.length === taskFilterState.filterData.taskType.length
+            ) {
+              selectAllStatus = "T";
+            } else if (taskFilterState.filterData?.taskType?.length) {
+              selectAllStatus = "I";
+            }
+          }
           return {
             ...item,
+            selectAllStatus: selectAllStatus,
             options: taskTypes?.map((eachItem: any) => {
               if (taskFilterState.isFilterApplied) {
+                if (
+                  item.options.length === taskFilterState.filterData.taskType
+                ) {
+                  selectAllStatus: "T";
+                }
                 if (taskFilterState.filterData.taskType.includes(eachItem)) {
                   return {
                     ...eachItem,
@@ -254,9 +274,21 @@ const TaskFilterCommon: React.FC<any> = ({
             }),
           };
         }
-        if (item.title === "Issue Priority") {
+        if (item.code === "taskPriority") {
+          let selectAllStatus = "F";
+          if (taskFilterState.isFilterApplied) {
+            if (
+              item.options?.length ===
+              taskFilterState.filterData.taskPriority?.length
+            ) {
+              selectAllStatus = "T";
+            } else if (taskFilterState.filterData?.taskPriority?.length) {
+              selectAllStatus = "I";
+            }
+          }
           return {
             ...item,
+            selectAllStatus: selectAllStatus,
             options: taskPrioritys?.map((eachItem: any) => {
               if (taskFilterState.isFilterApplied) {
                 if (
@@ -277,9 +309,21 @@ const TaskFilterCommon: React.FC<any> = ({
             }),
           };
         }
-        if (item.title === "Issue Status") {
+        if (item.code === "taskStatus") {
+          let selectAllStatus = "F";
+          if (taskFilterState.isFilterApplied) {
+            if (
+              item.options?.length ===
+              taskFilterState.filterData.taskStatus?.length
+            ) {
+              selectAllStatus = "T";
+            } else if (taskFilterState.filterData?.taskStatus?.length) {
+              selectAllStatus = "I";
+            }
+          }
           return {
             ...item,
+            selectAllStatus: selectAllStatus,
             options: taskStatuss?.map((eachItem: any) => {
               if (taskFilterState.isFilterApplied) {
                 if (taskFilterState.filterData.taskStatus.includes(eachItem)) {
@@ -438,21 +482,21 @@ const TaskFilterCommon: React.FC<any> = ({
     data.taskStatus = [];
     data.assigneesData = assignee[0]?.selectedName;
     FilterState.forEach((item: any) => {
-      if (item.title == "Issue Type") {
+      if (item.code == "taskType") {
         const x = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
         x.forEach((element: any) => {
           data.taskType.push(element.optionTitle);
         });
-      } else if (item.title == "Issue Priority") {
+      } else if (item.code == "taskPriority") {
         const z = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
         z.forEach((element: any) => {
           data.taskPriority.push(element.optionTitle);
         });
-      } else if (item.title == "Issue Status") {
+      } else if (item.code == "taskStatus") {
         const y = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
@@ -581,7 +625,7 @@ const TaskFilterCommon: React.FC<any> = ({
       </FilterCommonHeader>
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
-          return each.title === "Task Type" ? (
+          return each.code === "taskType" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
                 <FilterCardTitleText>{each?.title}</FilterCardTitleText>
