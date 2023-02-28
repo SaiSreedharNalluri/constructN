@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Loginpage from '../components/container/loginpage';
 import { login } from '../services/userAuth';
-import { useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import { getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
 const Login: React.FC = () => {
@@ -11,11 +11,15 @@ const Login: React.FC = () => {
   useEffect(() => {
     const userObj: any = getCookie('user');
     let user = null;
+    if(router.isReady){
     if (userObj) user = JSON.parse(userObj);
     if (user && user.token) {
+      //console.log(router.query.sessionExpired,"TEST")
+      if(router.query.sessionExpired===undefined)
       router.push('/projects');
     }
-  });
+  }
+  },[router.isReady]);
   const handlerLogin = (formValue: { email: string; password: string }) => {
     const { email, password } = formValue;
     setMessage('');

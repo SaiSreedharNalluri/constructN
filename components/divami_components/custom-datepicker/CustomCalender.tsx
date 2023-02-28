@@ -127,6 +127,7 @@ const CustomCalender = (props: any) => {
             setValue(newValue);
             onChange(newValue);
           }}
+          PopperProps={data.styles ? data.styles : null}
           renderInput={
             hideTextField
               ? ({ inputRef, inputProps, InputProps }) => (

@@ -58,6 +58,7 @@ const TimeLineComponent: React.FC<IProps> = ({
     if (snapshotList.length > 0) {
       setOldDate(snapshotList[0].date);
       setNewDate(snapshotList[snapshotList.length - 1].date);
+      setPage(snapshotList.length);
     }
   }, [snapshotList]);
 
@@ -69,6 +70,15 @@ const TimeLineComponent: React.FC<IProps> = ({
       });
     }
     return timelineDates.indexOf(dayjs(date).format("YYYY-MM-DD")) < 0;
+  };
+
+  const calenderStyles = {
+    sx: {
+      "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-disabled,.Mui-selected)":
+        {
+          backgroundColor: "rgba(0, 0, 0, 0.04)",
+        },
+    },
   };
 
   console.log(snapshotList, "snaphsot listt");
@@ -121,8 +131,10 @@ const TimeLineComponent: React.FC<IProps> = ({
                       hideTextField
                       data={{
                         disableAll: true,
-                        defaultValue: page === 2 ? newDate : oldDate,
+                        defaultValue: currentSnapshot?.date,
+                        // defaultValue: page === 2 ? newDate : oldDate,
                         disableDays: disableWeekends,
+                        styles: calenderStyles,
                       }}
                     />
                   ) : null}

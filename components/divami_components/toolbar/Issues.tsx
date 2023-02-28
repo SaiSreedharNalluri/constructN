@@ -66,6 +66,7 @@ const Issues = ({
   setIssueList,
   getIssues,
   handleOnIssueSort,
+  issueSubmit,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -183,7 +184,8 @@ const Issues = ({
         .then((response) => {
           if (response.success === true) {
             toast(" Issue Created Successfully");
-            issueSubmit(response.result);
+            issueSubmitFn(response.result);
+            // issueSubmit(response.result)
           } else {
             toast(`Something went wrong`);
           }
@@ -210,11 +212,12 @@ const Issues = ({
     }
   }, [openIssueDetails, contextInfo?.id]);
 
-  const issueSubmit = (formdata: any) => {
-    issuesList.push(formdata);
+  const issueSubmitFn = (formdata: any) => {
+    // issuesList.push(formdata);
     issueMenuInstance.toolAction = "issueCreateSuccess";
     issueMenuClicked(issueMenuInstance);
     closeIssueCreate();
+    issueSubmit(formdata);
   };
   const openIssueCreateFn = () => {
     //setCreateOverlay(true);

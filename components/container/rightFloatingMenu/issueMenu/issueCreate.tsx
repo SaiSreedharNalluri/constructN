@@ -184,7 +184,6 @@ const IssueCreate: React.FC<IProps> = ({
     createIssueWithAttachments(router.query.projectId as string, formData)
       .then((response) => {
         if (response.success === true) {
-          setSuccessMessage("Issue is added sucessfully");
           toast.success("Issue is added sucessfully");
           handleIssueSubmit(response.result);
           toolInstance.toolAction = "issueCreateSuccess";
