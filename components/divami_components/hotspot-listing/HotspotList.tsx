@@ -67,6 +67,7 @@ import DownArrow from "../../../public/divami_icons/downArrow.svg";
 import { useEffect, useState } from "react";
 import hotspotObj from "./config";
 import HotspotFilterCommon from "../hotspot-filter-common/HotspotFilterCommon";
+import CustomHotspotDetailsDrawer from "../hotspot_detail/HotspotDetail";
 
 interface IProps {
   onClose: any;
@@ -85,6 +86,8 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [openHotspotDetail, setOpenHotspotDetail] = useState(false);
+  const [viewHotspot, setViewHotspot] = useState<any>({});
 
   useEffect(() => {
     handleSearch();
@@ -134,8 +137,18 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
     setAnchorEl(null);
   };
   const handleViewTaskList = () => {
-    // console.log("teskssksk trigg");
+    console.log("teskssksk trigg");
     setOpenDrawer(true);
+  };
+
+  const handleViewIssue = (issue: any) => {
+    console.log("hiiifilled");
+    filteredHotspotList.forEach((item: any) => {
+      if (issue._id === item._id) {
+        setViewHotspot(item);
+      }
+    });
+    setOpenHotspotDetail(true);
   };
 
   const handleSortMenuClick = (sortMethod: string) => {
@@ -302,9 +315,9 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
                 return (
                   <div key={index}>
                     <BodyInfo
-                    // onClick={() => {
-                    //   handleViewIssue(val);
-                    // }}
+                      onClick={() => {
+                        handleViewIssue(val);
+                      }}
                     >
                       <FirstHeader>
                         <Image
@@ -354,9 +367,9 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
                 return (
                   <div key={index}>
                     <BodyInfo
-                    // onClick={() => {
-                    //   handleViewIssue(val);
-                    // }}
+                      onClick={() => {
+                        handleViewIssue(val);
+                      }}
                     >
                       <FirstHeader>
                         <Image
@@ -400,6 +413,17 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
           </Box>
         )}
       </BodyContainer>
+      {openHotspotDetail && (
+        <Drawer
+          anchor={"right"}
+          open={openHotspotDetail}
+          onClose={() => setOpenHotspotDetail((prev: any) => !prev)}
+        >
+          <CustomHotspotDetailsDrawer
+            onClose={() => setOpenHotspotDetail((prev: any) => !prev)}
+          />
+        </Drawer>
+      )}
       {openDrawer && (
         <Drawer
           anchor={"right"}

@@ -416,11 +416,11 @@ function BasicTabs(props: any) {
               fontWeight: "400",
             }}
           />
-          {/* <Tab
+          <Tab
             label="Activity log"
             {...a11yProps(1)}
             style={{ paddingRight: "0px" }}
-          /> */}
+          />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
