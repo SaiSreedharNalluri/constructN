@@ -61,7 +61,7 @@ const ProjectHierarchy = ({
   }, [treeData]);
 
   useEffect(() => {
-    if (window.localStorage.getItem("nodeData")) {
+    if (window.localStorage.getItem("nodeData") && getStructureData) {
       let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
       if (nodeData && getStructureData) {
         getStructureData(nodeData);

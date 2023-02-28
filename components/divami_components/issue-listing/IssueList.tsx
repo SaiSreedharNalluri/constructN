@@ -399,13 +399,15 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
                   <SecondDividerIcon src={DividerIconSVG} alt="" />
 
-                  <FunnelIcon
-                    src={FilterInActive}
-                    alt="Arrow"
-                    onClick={() => {
-                      handleViewTaskList();
-                    }}
-                  />
+                  {!issueFilterState.isFilterApplied ? (
+                    <FunnelIcon
+                      src={FilterInActive}
+                      alt="Arrow"
+                      onClick={() => {
+                        handleViewTaskList();
+                      }}
+                    />
+                  ) : null}
 
                   <CSVLink
                     data={getDownladableIssueList(filteredIssuesList)}
