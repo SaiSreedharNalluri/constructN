@@ -37,6 +37,7 @@ import {
   AttachmentTitle,
   CaptureStatus,
   CaptureTitle,
+  CustomSelectContainer,
   CustomTaskDrawerContainer,
   DeleteIcon,
   DescriptionDiv,
@@ -72,12 +73,20 @@ import {
   ThirdContWatch,
   ThirdContWatchName,
   TitleContainer,
+  BodyContainer,
+  ProgressStateTrue,
+  FourthBodyDiv,
+  ProgressStateFalse,
+  ProgressCustomSelect,
+  AddCommentContainer,
+  AddCommentContainerSecond,
+  AddCommentButtonContainer,
+  AttachButton,
+  ImageErrorIcon,
+  SendButton,
+  StyledInput,
 } from "./IssueDetailStyles";
 import { createComment } from "../../../services/comments";
-
-interface ContainerProps {
-  footerState: boolean;
-}
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -85,135 +94,9 @@ interface TabPanelProps {
   value: number;
 }
 
-const BodyContainer = styled(Box)<ContainerProps>`
-  height: ${(props) =>
-    props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
-  overflow-y: scroll;
-`;
-
-const FourthBodyDiv = styled("div")((props: any) => ({
-  display: props.assigneeEditState ? "none" : "flex",
-  marginTop: "25px",
-})) as any;
-
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;
-
-const CustomSelectContainer = styled("div")`
-  width: 398px;
-`;
-
-const StyledSelect = styled(Select)`
-  width: 100%;
-  height: 40px;
-  outline: 0px;
-  border: 1px solid #36415d;
-  border-radius: 4px;
-  & .MuiOutlinedInput-notchedOutline {
-    border: 0;
-    offset: 0;
-  }
-`;
-
-const AddCommentContainer = styled("div")((props: any) => ({
-  // borderTop: `${props.containerType === "float" ? "none" : "1px solid #D9D9D9"}`,
-  height: `${props.containerType === "float" ? "80px" : "50px"}`,
-  display: "flex",
-  position: "absolute",
-  bottom: "0",
-  background: "white",
-  marginLeft: "-24px",
-  width: "100%",
-})) as any;
-
-const AddCommentContainerSecond = styled("div")({
-  height: "50px",
-  display: "flex",
-  alignItems: "center",
-  // justifyContent: "space-around",
-  paddingLeft: "20px",
-  border: "1px solid #D9D9D9",
-  width: "100%",
-  position: "absolute",
-  bottom: "0",
-  background: "white",
-  marginLeft: "-24px",
-});
-
-const AddCommentInput = styled("input")({
-  width: "100%",
-  paddingLeft: "10px",
-});
-
-const AddCommentButtonContainer = styled("div")({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  marginLeft: "auto",
-});
-
-const AttachButton = styled("button")({
-  width: "48px",
-  display: "flex",
-  justifyContent: "center",
-  height: "60%",
-  borderRight: "1px solid #D9D9D9",
-  marginTop: "auto",
-  marginBottom: "auto",
-});
-
-const ImageErrorIcon = styled(Image)({
-  cursor: "pointer",
-  width: "24px",
-  height: "24px",
-});
-
-const SendButton = styled("button")({
-  width: "48px",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-});
-
-const ProgressStateFalse = styled("div")({
-  display: "flex",
-  marginTop: "20px",
-});
-
-const ProgressStateTrue = styled("div")({
-  display: "flex",
-  marginTop: "20px",
-});
-
-const ProgressCustomSelect = styled("div")({
-  marginTop: "20px",
-});
-
-const AssigneeCustomSelect = styled("div")({
-  marginTop: "20px",
-});
-
-const StyledInput = styled(TextField)(({ theme }) => ({
-  color: "blue",
-  "label + &": {
-    marginTop: theme.spacing(8),
-  },
-
-  "& .MuiInput-root": {
-    "&:before, :after, :hover:not(.Mui-disabled):before": {
-      borderBottom: 0,
-    },
-  },
-  "&& .MuiInput-underline": {
-    borderBottom: "none",
-    // borderBottomColor: "none",
-  },
-  "& .MuiInput-underline:after": {
-    borderBottom: "none",
-    // borderBottomColor: "none",
-  },
-}));
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;

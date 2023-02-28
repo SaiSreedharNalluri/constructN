@@ -33,7 +33,12 @@ import CustomDrawer from "../custom-drawer/custom-drawer";
 import CustomSelect from "../custom-select/CustomSelect";
 import ActivityLog from "../task_detail/ActivityLog";
 import {
+  AddCommentButtonContainer,
+  AddCommentContainer,
+  AddCommentContainerSecond,
   ArrowIcon,
+  AssignEditSearchContainer,
+  AttachButton,
   AttachedImageDiv,
   AttachedImageIcon,
   AttachedImageTitle,
@@ -41,6 +46,7 @@ import {
   AttachmentDescription,
   AttachmentDiv,
   AttachmentTitle,
+  BodyContainer,
   CaptureStatus,
   CaptureTitle,
   CustomTaskDrawerContainer,
@@ -50,16 +56,21 @@ import {
   DescriptionTitle,
   EditIcon,
   FirstHeaderDiv,
+  FourthBodyDiv,
   FourthContAssigned,
   FourthContLeft,
   FourthContProgType,
   HeaderContainer,
+  ImageErrorIcon,
   LeftTitleCont,
   MoreText,
   PenIconImage,
   PriorityStatus,
   PriorityTitle,
+  ProgressCustomSelect,
   ProgressEditStateButtonsContainer,
+  ProgressStateFalse,
+  ProgressStateTrue,
   RelatedDiv,
   RelatedSingleButton,
   RelatedTagsButton,
@@ -69,7 +80,9 @@ import {
   SecondContCapt,
   SecondContPrior,
   SecondContPriorParal,
+  SendButton,
   SpanTile,
+  StyledInput,
   TabOneDiv,
   ThirdContProg,
   ThirdContProgType,
@@ -95,145 +108,9 @@ interface TabPanelProps {
   value: number;
 }
 
-const BodyContainer = styled(Box)<ContainerProps>`
-  height: ${(props) =>
-    props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
-  overflow-y: scroll;
-`;
-
-const FourthBodyDiv = styled("div")((props: any) => ({
-  display: props.assigneeEditState ? "none" : "flex",
-  marginTop: "25px",
-})) as any;
-
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;
-
-const AssignEditSearchContainer = styled("div")({
-  minHeight: "40px",
-  marginTop: "20px",
-  "& .MuiAutocomplete-root": {
-    height: "100%",
-    width: "100%",
-  },
-  "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
-  "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
-  "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
-    marginTop: "-8px",
-  },
-  "& .MuiAutocomplete-root fieldset": {
-    borderColor: "#36415D !important",
-  },
-});
-
-const AddCommentContainer = styled("div")((props: any) => ({
-  // borderTop: `${props.containerType === "float" ? "none" : "1px solid #D9D9D9"}`,
-  height: `${props.containerType === "float" ? "80px" : "50px"}`,
-  display: "flex",
-  position: "absolute",
-  bottom: "0",
-  background: "white",
-  marginLeft: "-24px",
-  width: "100%",
-})) as any;
-
-const AddCommentContainerSecond = styled("div")({
-  height: "50px",
-  display: "flex",
-  alignItems: "center",
-  // justifyContent: "space-around",
-  paddingLeft: "20px",
-  border: "1px solid #D9D9D9",
-  width: "100%",
-  position: "absolute",
-  bottom: "0",
-  background: "white",
-  marginLeft: "-24px",
-});
-
-const AddCommentInput = styled("input")({
-  width: "100%",
-  paddingLeft: "20px",
-  fontFamily: "Open Sans",
-  fontSize: "14px",
-});
-
-const AddCommentButtonContainer = styled("div")({
-  display: "flex",
-  alignItems: "center",
-  marginLeft: "auto",
-});
-
-const AttachButton = styled("button")({
-  width: "48px",
-  display: "flex",
-  justifyContent: "center",
-  height: "60%",
-  borderRight: "1px solid #D9D9D9",
-  marginTop: "auto",
-  marginBottom: "auto",
-});
-
-const SendButton = styled("button")({
-  width: "48px",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-});
-
-const ProgressStateFalse = styled("div")({
-  display: "flex",
-  marginTop: "20px",
-});
-
-const ProgressStateTrue = styled("div")({
-  display: "flex",
-  marginTop: "20px",
-});
-
-const ProgressCustomSelect = styled("div")({
-  marginTop: "20px",
-});
-
-const AssigneeCustomSelect = styled("div")({
-  marginTop: "20px",
-});
-
-const ImageErrorIcon = styled(Image)({
-  cursor: "pointer",
-  width: "24px",
-  height: "24px",
-});
-
-const StyledInput = styled(TextField)(({ theme }) => ({
-  color: "blue",
-  "label + &": {
-    marginTop: theme.spacing(8),
-  },
-
-  "& .MuiInput-root": {
-    "&:before, :after, :hover:not(.Mui-disabled):before": {
-      borderBottom: 0,
-    },
-  },
-  "&& .MuiInput-underline": {
-    borderBottom: "none",
-    // borderBottomColor: "none",
-  },
-  "& .MuiInput-underline:after": {
-    borderBottom: "none",
-    // borderBottomColor: "none",
-  },
-}));
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
