@@ -402,12 +402,14 @@ export const ForgeViewerUtils = (function () {
       return;
     }
     handleContext(_context);
+    _context = null;
   };
 
   const handleContext = (context) => {
     switch (context.type) {
       case '3d':
         setNavigation(context);
+        setForgeControls(context.type);
         break;
       case 'image':
       case 'panorama':
@@ -509,15 +511,18 @@ export const ForgeViewerUtils = (function () {
 
   const setForgeControls = (type) => {
     if (_bimWalkExtn) {
-      if (isCompareView() && type === 'panorama') {
-        _viewer.navigation.setLockSettings({
-          orbit: false,
-          pan: false,
-          zoom: false,
-          roll: false,
-          fov: true,
-        });
-        _viewer.navigation.setIsLocked(true);
+      if ((type === 'panorama' || type === 'image')) {
+        _viewer.navigation.setIsLocked(false);
+        if (isCompareView() && type === 'panorama') {
+          _viewer.navigation.setLockSettings({
+            orbit: false,
+            pan: false,
+            zoom: false,
+            roll: false,
+            fov: true,
+          });
+          _viewer.navigation.setIsLocked(true);
+        }
 
         if (_viewer.getExtension('Autodesk.BimWalk')) {
           _viewer.getExtension('Autodesk.BimWalk').activate();
