@@ -726,7 +726,7 @@ const IssueList: React.FC<IProps> = ({
                 </div>
               </div>
             </div>
-            <div className="overflow-y-auto calc-h112 px-4 ">
+            <div className="overflow-y-auto overflow-x-hidden calc-h112 px-3 ">
               <div>
                 <div className="">
                   <p>Details</p>

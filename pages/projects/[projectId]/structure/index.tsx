@@ -30,11 +30,16 @@ import {
   getIssuesList,
   getIssuesPriority,
   getIssuesStatus,
-  getIssuesTypes
+  getIssuesTypes,
 } from "../../../../services/issue";
 import { getProjectDetails } from "../../../../services/project";
 import { getStructureList } from "../../../../services/structure";
-import { deleteTask, getTasksList, getTasksPriority, getTaskStatus } from "../../../../services/task";
+import {
+  deleteTask,
+  getTasksList,
+  getTasksPriority,
+  getTaskStatus,
+} from "../../../../services/task";
 
 interface IProps { }
 const OpenMenuButton = styled("div")({
@@ -145,7 +150,7 @@ const Index: React.FC<IProps> = () => {
     setIssueList(structuredClone(issuesList));
     // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
     // toolClicked(myTool);
-    setOpenCreateIssue(false);
+    closeIssueCreate();
   };
 
   const closeTaskCreate = () => {
@@ -165,8 +170,9 @@ const Index: React.FC<IProps> = () => {
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
     let myTool: ITools = { toolName: "task", toolAction: "taskCreated" };
-    toolClicked(myTool);
-    setOpenCreateTask(false);
+    setTasksList(structuredClone(tasksList));
+    // toolClicked(myTool);
+    closeTaskCreate();
   };
 
   useEffect(() => {
@@ -242,7 +248,19 @@ const Index: React.FC<IProps> = () => {
                   }
                 })
               );
-            } else setStructure(response.data.result[0]);
+            } else {
+              let index = response.data.result.findIndex(
+                (structData: IStructure) => {
+                  return (
+                    structData.designs !== undefined &&
+                    structData.designs.length > 0
+                  );
+                }
+              );
+              if (index > 0) setStructure(response.data.result[index]);
+              else setStructure(response.data.result[0]);
+              //console.log("first struct=",index);
+            }
           }
         })
         .catch((error) => {
@@ -607,7 +625,9 @@ const Index: React.FC<IProps> = () => {
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a: any, b: any) => {
-            return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+            return (
+              new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf()
+            );
           })
         );
         setIssueList(issueFilterList);
@@ -617,7 +637,9 @@ const Index: React.FC<IProps> = () => {
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a: any, b: any) => {
-            return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+            return (
+              new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
+            );
           })
         );
         setIssueList(issueFilterList);
@@ -715,10 +737,15 @@ const Index: React.FC<IProps> = () => {
   };
 
   const handleOnTasksSort = (sortMethod: string) => {
-    console.log("sortMethod-tasks", sortMethod, taskFilterList, "taskFilterList");
+    console.log(
+      "sortMethod-tasks",
+      sortMethod,
+      taskFilterList,
+      "taskFilterList"
+    );
     switch (sortMethod) {
       case "Last Updated":
-        setTaskFilterList(tasksList)
+        setTaskFilterList(tasksList);
         setTaskFilterList(
           taskFilterList.sort((a, b) => {
             if (a.updatedAt > b.updatedAt) {
@@ -732,7 +759,7 @@ const Index: React.FC<IProps> = () => {
         setTasksList(taskFilterList);
         break;
       case "First Updated":
-        setTaskFilterList(tasksList)
+        setTaskFilterList(tasksList);
         setTaskFilterList(
           taskFilterList.sort((a, b) => {
             if (a.updatedAt > b.updatedAt) {
@@ -746,25 +773,29 @@ const Index: React.FC<IProps> = () => {
         setTasksList(taskFilterList);
         break;
       case "Asc DueDate":
-        setTaskFilterList(tasksList)
+        setTaskFilterList(tasksList);
         setTaskFilterList(
           taskFilterList.sort((a: any, b: any) => {
-            return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+            return (
+              new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf()
+            );
           })
         );
         setTasksList(taskFilterList);
         break;
       case "Dsc DueDate":
-        setTaskFilterList(tasksList)
+        setTaskFilterList(tasksList);
         setTaskFilterList(
           taskFilterList.sort((a: any, b: any) => {
-            return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+            return (
+              new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
+            );
           })
         );
         setTasksList(taskFilterList);
         break;
       case "Asc Priority":
-        setTaskFilterList(tasksList)
+        setTaskFilterList(tasksList);
         setTaskFilterList(
           taskFilterList.sort((a, b) => {
             if (
@@ -784,7 +815,7 @@ const Index: React.FC<IProps> = () => {
         setTasksList(taskFilterList);
         break;
       case "Dsc Priority":
-        setTaskFilterList(tasksList)
+        setTaskFilterList(tasksList);
         setTaskFilterList(
           taskFilterList.sort((a, b) => {
             if (
@@ -803,41 +834,45 @@ const Index: React.FC<IProps> = () => {
         );
         setTasksList(taskFilterList);
         break;
-      case 'status_desc':
+      case "status_desc":
         setIssueFilterList(issuesList);
-        setTaskFilterList(taskFilterList.sort((a, b) => {
-          if (
-            issueStatusList?.indexOf(a.status) >
-            issueStatusList?.indexOf(b.status)
-          ) {
-            return -1;
-          } else if (
-            issueStatusList?.indexOf(b.status) >
-            issueStatusList?.indexOf(a.status)
-          ) {
-            return 1;
-          }
-          return 0;
-        }));
+        setTaskFilterList(
+          taskFilterList.sort((a, b) => {
+            if (
+              issueStatusList?.indexOf(a.status) >
+              issueStatusList?.indexOf(b.status)
+            ) {
+              return -1;
+            } else if (
+              issueStatusList?.indexOf(b.status) >
+              issueStatusList?.indexOf(a.status)
+            ) {
+              return 1;
+            }
+            return 0;
+          })
+        );
         // setTaskFilterList(statusDescList);
         setTasksList(taskFilterList);
         break;
-      case 'status_asc':
+      case "status_asc":
         // setIssueFilterList(issuesList);
-        setTaskFilterList(taskFilterList.sort((a, b) => {
-          if (
-            issueStatusList?.indexOf(a.status) >
-            issueStatusList?.indexOf(b.status)
-          ) {
-            return 1;
-          } else if (
-            issueStatusList?.indexOf(b.status) >
-            issueStatusList?.indexOf(a.status)
-          ) {
-            return -1;
-          }
-          return 0;
-        }));
+        setTaskFilterList(
+          taskFilterList.sort((a, b) => {
+            if (
+              issueStatusList?.indexOf(a.status) >
+              issueStatusList?.indexOf(b.status)
+            ) {
+              return 1;
+            } else if (
+              issueStatusList?.indexOf(b.status) >
+              issueStatusList?.indexOf(a.status)
+            ) {
+              return -1;
+            }
+            return 0;
+          })
+        );
         // setTaskFilterList(statusAscList);
         setTasksList(taskFilterList);
         break;
@@ -957,7 +992,7 @@ const Index: React.FC<IProps> = () => {
     setTaskFilterState({
       isFilterApplied: true,
       filterData: formData,
-      numberOfFilters: 3,
+      numberOfFilters: count,
     });
   };
 
@@ -1046,9 +1081,6 @@ const Index: React.FC<IProps> = () => {
         toast.error(error.message);
       });
   };
-
-  useEffect(() => { console.log('issue list chnaged', issuesList) }, [issuesList])
-  useEffect(() => { console.log('issue list chnaged', tasksList) }, [tasksList])
 
   const handleBreadCrumbClick = (node: any, index: number) => {
     console.log(node, "clicked node", breadCrumbsData, index);
@@ -1270,6 +1302,8 @@ const Index: React.FC<IProps> = () => {
               getTasks={getTasks}
               handleOnIssueSort={handleOnIssueSort}
               handleOnTasksSort={handleOnTasksSort}
+              issueSubmit={issueSubmit}
+              taskSubmit={taskSubmit}
             />
 
             {/* <CustomToaster /> */}
