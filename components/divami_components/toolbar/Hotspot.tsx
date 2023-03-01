@@ -57,10 +57,10 @@ const Hotspot = () => {
           {/* <Image src={hotspotCircleIcon} width={12} height={12} alt="Arrow" />{" "} */}
         </HotspotCircleDiv>
 
-        <HotspotGroupIcon>
+        {/* <HotspotGroupIcon>
           <GroupIcon src={groupSpotIcon} alt="Arrow" />
           <Image src={groupSpotIcon} width={12} height={12} alt="Arrow" />{" "}
-        </HotspotGroupIcon>
+        </HotspotGroupIcon> */}
       </HotspotBox>
 
       {openDrawer && (

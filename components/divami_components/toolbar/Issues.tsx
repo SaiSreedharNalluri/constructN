@@ -256,7 +256,7 @@ const Issues = ({
     setOpenCreateIssue(issueOpenDrawer);
   }, [issueOpenDrawer]);
   return (
-    <div>
+    <>
       <IssueBox>
         <IssueTitle>Issues:</IssueTitle>
 
@@ -411,7 +411,7 @@ const Issues = ({
           />
         </Drawer>
       )}
-    </div>
+    </>
   );
 };
 
