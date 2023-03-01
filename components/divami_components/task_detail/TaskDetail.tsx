@@ -537,7 +537,7 @@ function BasicTabs(props: any) {
                               src={Delete}
                               alt={"delete icon"}
                               onClick={() => {
-                                deleteTheAttachment(a?._id);
+                                deleteTheAttachment(a?._id, "task");
                               }}
                               className={`deleteIcon`}
                             />
@@ -641,6 +641,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     contextInfo,
     closeTaskCreate,
     getTasks,
+    deleteTheAttachment,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [footerState, SetFooterState] = useState(false);
@@ -712,7 +713,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
       sequenceNumber: selectedTask.sequenceNumber,
 
       capturedOn: selectedTask.createdAt,
-      creator: selectedTask.owner,
+      creator: selectedTask?.owner?.fullName,
       issueDescription: selectedTask.description,
       attachments: selectedTask.attachments,
       relatedTags: selectedTask.tags,
@@ -900,17 +901,17 @@ const CustomTaskDetailsDrawer = (props: any) => {
         }
       });
   };
-  const deleteTheAttachment = (attachmentId: string) => {
-    deleteAttachment(attachmentId)
-      .then((response) => {
-        if (response.success === true) {
-          toast.success(response.message);
-        }
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      });
-  };
+  // const deleteTheAttachment = (attachmentId: string) => {
+  //   deleteAttachment(attachmentId)
+  //     .then((response) => {
+  //       if (response.success === true) {
+  //         toast.success(response.message);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       toast.error(error.message);
+  //     });
+  // };
   return (
     <>
       <CustomTaskDrawerContainer>

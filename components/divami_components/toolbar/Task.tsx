@@ -53,6 +53,7 @@ const Task = ({
   getTasks,
   handleOnTasksSort,
   taskSubmit,
+  deleteTheAttachment,
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -70,7 +71,6 @@ const Task = ({
     taskLayer === undefined ? false : taskLayer
   );
 
-  let toolInstance: ITools = { toolName: "task", toolAction: "taskCreate" };
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
 
   useEffect(() => {
@@ -78,32 +78,16 @@ const Task = ({
     setMyStructure(currentStructure);
     setMySnapshot(currentSnapshot);
   }, [currentProject, currentSnapshot, currentStructure]);
-  // const closeIssueList = () => {
-  //   //setListOverlay(false);
-  //   issueMenuInstance.toolAction = "issueViewClose";
-  //   issueMenuClicked(issueMenuInstance);
-  // };
 
   const handleViewTaskList = () => {
     setOpenDrawer(true);
   };
   const handleCreateTask = (formData: any) => {
-    console.log(formData, "form data at home");
     clickTaskSubmit(formData);
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
-    // let userIdList: any[] = [];
-    // const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
-    //   ?.selectedName;
-    // if (assignes && assignes.length > 0) {
-    //   assignes.map((user: any) => {
-    //     userIdList.push(user.value);
-    //   });
-    // }
-    // if (assignes?.value) {
-    //   userIdList.push(assignes.value);
-    // }
+
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
@@ -136,12 +120,6 @@ const Task = ({
         (item: any) => item.id == "description"
       )[0]?.defaultValue),
       (data.assignees = userIdList),
-      // (data.tags =
-      //   (formData.length
-      //     ? formData
-      //       .filter((item: any) => item.id == "tag-suggestions")[0]
-      //       ?.chipString?.join(";")
-      //     : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
         ?.fields.filter(
@@ -153,16 +131,6 @@ const Task = ({
     data.attachments = formData
       .filter((item: any) => item.id === "file-upload")[0]
       .selectedFile?.map((eachSelectedFile: any) => {
-        // let reader = new FileReader();
-        // let fileUrl: any = '';
-        // reader.readAsDataURL(eachSelectedFile)
-        // reader.onload = () => {
-        //   console.log("CHECK RESULT FILE", reader.result);
-        //   fileUrl = reader.result ? reader.result : '';
-        // };
-        // reader.onerror = function (error) {
-        //   console.log('Error: ', error);
-        // }
         return {
           name: eachSelectedFile.name,
           url: eachSelectedFile.name,
@@ -177,27 +145,14 @@ const Task = ({
         .then((response) => {
           if (response.success === true) {
             toast("Task Created sucessfully");
-            // toast.success("Task added sucessfully");
-            // handleTaskSubmit(formData);
-            taskSubmitFn(response.result);
-            // toolInstance.toolAction = "taskCreateSuccess";
 
-            // console.log(formData);
+            taskSubmitFn(response.result);
           } else {
-            // toolInstance.toolAction = "taskCreateFail";
-            // issueToolClicked(toolInstance);
             toast(`Something went wrong`);
           }
         })
         .catch((error) => {
           toast(`Something went wrong`);
-
-          // toolInstance.toolAction = "taskCreateFail";
-
-          // if (error.success === false) {
-          //   toast.error(error?.message);
-          // }
-          // setOpenCreateTask(false);
         });
     }
   };
@@ -302,10 +257,7 @@ const Task = ({
               width={12}
               height={12}
               src={taskToogleIcon}
-              // width={12}
-              // height={12}
               alt="Arrow"
-              // onClick={rightMenuClickHandler}
               onClick={() => {
                 toggleTaskVisibility();
               }}
@@ -317,10 +269,7 @@ const Task = ({
               width={12}
               height={12}
               src={clipboardTask}
-              // width={12}
-              // height={12}
               alt="Arrow"
-              // onClick={rightMenuClickHandler}
               onClick={() => {
                 toggleTaskVisibility();
               }}
@@ -348,6 +297,7 @@ const Task = ({
             taskFilterState={taskFilterState}
             getTasks={getTasks}
             handleOnTasksSort={handleOnTasksSort}
+            deleteTheAttachment={deleteTheAttachment}
           />
         </Drawer>
       )}
@@ -355,7 +305,6 @@ const Task = ({
         <CustomDrawer open>
           <CreateTask
             handleCreateTask={handleCreateTask}
-            // setOpenCreateTask={setOpenCreateTask}
             currentProject={currentProject}
             currentSnapshot={currentSnapshot}
             currentStructure={currentStructure}
