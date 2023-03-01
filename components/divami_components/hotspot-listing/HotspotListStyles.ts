@@ -79,7 +79,6 @@ export const FilterIcon = styled(Image)({
   height: "24px",
 });
 
-
 export const ArrowUpIcon = styled(Image)({
   cursor: "pointer",
   marginLeft: "15px",
@@ -89,11 +88,9 @@ export const ArrowDownIcon = styled(Image)({
   marginLeft: "27px",
 });
 
-
 export const DueDate = styled(Box)({
   marginLeft: "14px",
 });
-
 
 export const SecondDividerIcon = styled(Image)({
   cursor: "pointer",
@@ -105,19 +102,16 @@ export const DownloadIcon = styled(Image)({
   marginLeft: "12px",
 });
 
-
-export const BodyContainer = styled(Box)`
-  height: calc(100vh - 200px);
-  padding-left: 20px;
-  padding-right: 20px;
-  margin-top: 16px;
-  overflow-y: auto;
-  margin-top: 16px;
-  color: #101f4c;
-  padding-bottom: 20px;
+export const BodyContainer = styled(Box)({
+  height: "calc(100vh - 200px)",
+  paddingLeft: "20px",
+  paddingRight: "20px",
+  marginTop: "16px",
+  overflowY: "auto",
+  color: "#101f4c",
+  paddingBottom: "20px",
   // overflow: scroll;
-`;
-
+});
 
 export const BodyInfo = styled("div")({
   cursor: "pointer",
@@ -127,13 +121,10 @@ export const FirstHeader = styled("div")({
   display: "flex",
 });
 
-
-
 export const BodyContTitle = styled("div")({
   marginLeft: "10px",
   cursor: "pointer",
 });
-
 
 export const SecondHeader = styled("div")({
   marginLeft: "35px",
@@ -198,28 +189,26 @@ export const MessageDivShowErr = styled("div")({
   // marginLeft: "12px",
 });
 
-
-export const SearchAreaContainer = styled('div')({
-  display: 'flex',
-  justifyContent: 'space-between',
-  width: '100%',
-  gap: '10px',
+export const SearchAreaContainer = styled("div")({
+  display: "flex",
+  justifyContent: "space-between",
+  width: "100%",
+  gap: "10px",
   // marginTop:"30px"
 });
 
-
 export const CustomSearchField = styled(TextField)({
-  width: '100%',
-  '&:focus-within fieldset': {
-    border: '1px solid #36415d !important',
+  width: "100%",
+  "&:focus-within fieldset": {
+    border: "1px solid #36415d !important",
   },
-  '&:focus-visible fieldset': {
-    border: '1px solid #36415d !important',
+  "&:focus-visible fieldset": {
+    border: "1px solid #36415d !important",
   },
-  '& .MuiOutlinedInput-root': {
-    height: '40px',
-    paddingLeft: '16px',
-    paddingRight: '8px',
+  "& .MuiOutlinedInput-root": {
+    height: "40px",
+    paddingLeft: "16px",
+    paddingRight: "8px",
   },
 });
 
@@ -227,7 +216,6 @@ export const FunnelIcon = styled(Image)({
   cursor: "pointer",
   marginLeft: "16px",
 });
-
 
 export const AppliedFilter = styled("div")({
   border: "1px solid #D9D9D9",
@@ -244,12 +232,10 @@ export const AppliedFilter = styled("div")({
   cursor: "pointer",
 });
 
-
 export const IconContainer = styled(Image)({
   cursor: "pointer",
   marginLeft: "16px",
 });
-
 
 export const StyledMenu = styled(MenuItem)({
   borderBottom: "1px solid #D9D9D9",
@@ -262,3 +248,15 @@ export const StyledMenu = styled(MenuItem)({
   height: "38px",
   fontSize: "14px",
 });
+
+
+
+
+interface ContainerProps {
+  searchingOn: boolean;
+}
+
+
+export const CustomBox = styled(Box)<ContainerProps>`
+  margin-top: ${(props) => (props.searchingOn ? "10px" : "")};
+`;

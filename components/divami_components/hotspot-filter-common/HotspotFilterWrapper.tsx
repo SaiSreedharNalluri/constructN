@@ -7,16 +7,10 @@ import CustomTagSuggestion from "../custom-tag-suggestion/CustomTagSuggestion";
 import { CustomTextField } from "../custom-textfield/CustomTextField";
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
-
-const FormElementContainer = styled(Box)({
-  marginTop: "8px",
-});
-
-const DoubleFieldContainer = styled("div")({
-  display: "flex",
-  flexDirection: "row",
-  justifyContent: "space-between",
-});
+import {
+  DoubleFieldContainer,
+  FormElementContainerWrapper,
+} from "./HotspotFilterStyled";
 
 const HotspotFilterFormWrapper = (props: any) => {
   const { config, formState, setFormConfig } = props;
@@ -203,12 +197,12 @@ const HotspotFilterFormWrapper = (props: any) => {
     <div>
       {config.map((eachConfig: any, index: any) => {
         return (
-          <FormElementContainer key={eachConfig.id}>
+          <FormElementContainerWrapper key={eachConfig.id}>
             {eachConfig.formLabel ?? (
               <CustomLabel label={eachConfig.formLabel} />
             )}
             {renderHTML(eachConfig, false, index)}
-          </FormElementContainer>
+          </FormElementContainerWrapper>
         );
       })}
     </div>

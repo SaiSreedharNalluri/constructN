@@ -19,6 +19,8 @@ import {
   HorizontalLine,
   HotspotFilterCommonMain,
   TitleContainer,
+  RefreshIcon,
+  CloseIcon,
 } from "./HotspotFilterStyled";
 import CustomLabel from "../custom-label/CustomLabel";
 
@@ -33,18 +35,6 @@ import Image from "next/image";
 interface IProps {
   onClose: any;
 }
-
-const RefreshIcon = styled(Image)({
-  cursor: "pointer",
-  width: "18px",
-  height: "15px",
-});
-
-const CloseIcon = styled(Image)({
-  cursor: "pointer",
-  width: "24px",
-  height: "24px",
-});
 
 const HotspotFilterCommon: React.FC<IProps> = ({ onClose }) => {
   const assignees = {

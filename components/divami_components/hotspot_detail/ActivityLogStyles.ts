@@ -22,12 +22,11 @@ export const ActivityStatusIcon = styled("span")({
   marginRight: "7px",
 });
 export const ActivityStatusTitle = styled("span")({
-  fontFamily: 'Open Sans',
+  fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: "14px",
-  color:" #787878",
-
+  color: " #787878",
 });
 export const ActivityHeaderDivider = styled("span")({
   margin: "0px 7px",
@@ -44,12 +43,11 @@ export const ActivityBody = styled("div")({
 });
 
 export const ActivityTimeStamp = styled("span")({
-
-   fontFamily: 'Open Sans',
+  fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: "14px",
-  color:" #787878",
+  color: " #787878",
 });
 
 export const ActivityBodyIssueRaisedCase = styled("div")({
@@ -67,9 +65,7 @@ export const ActivityCommentAddedBy = styled("div")({
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "14px",
-  color:"#101F4C"
-  
-
+  color: "#101F4C",
 });
 export const ActivityCommentAddedByMain = styled("span")({});
 export const ActivityAddedComment = styled("span")({
@@ -99,20 +95,19 @@ export const ActivityScanUploadBox = styled("div")({
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "14px",
-  color:"#101F4C"
+  color: "#101F4C",
 });
 export const ActivityIssueRaisedMainProfile = styled("span")({});
 export const ActivityCurrentProgress = styled("span")({
   marginTop: "6px",
 
-   marginLeft: "4px",
+  marginLeft: "4px",
 
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "14px",
-  color:"#101F4C"
-  
+  color: "#101F4C",
 });
 
 export const ActivityImageSection = styled("div")({

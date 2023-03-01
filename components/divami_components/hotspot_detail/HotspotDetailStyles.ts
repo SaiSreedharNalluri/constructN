@@ -85,7 +85,7 @@ export const ProgressStatus = styled("div")`
 
 export const SecondContPriorParal = styled("div")`
   width: 186px;
-  margin-left: auto;
+  // margin-left: auto;
 `;
 
 export const ThirdBodyDiv = styled("div")`

@@ -63,13 +63,7 @@ export const HeaderRightSectionResetText = styled.div({
 
 export const HeaderRightSectionCancel = styled.div({});
 
-//  export 
-  
-//  export  const CloseIcon = styled(Image)({
-//     cursor: "pointer",
-//     width: "24px",
-//     height: "24px",
-//  });
+
   
  export const FilterCommonBody = styled.div({
   // marginBottom: "50px",
@@ -100,30 +94,58 @@ export const HorizontalLine = styled.div({
     marginTop:"5px"
 });
  
-export const DatePickersContainer = styled(Box)`
-  display: flex;
-  justify-content: space-between;
-`;
 
 
-export const DatePickerContainer = styled(Box)`
-  display: flex;
-  flex-direction: column;
-`;
+export const DatePickersContainer = styled(Box)({
+  display: "flex",
+  justifyContent:"space-between"
+})
+export const DatePickerContainer = styled(Box)({
+  display: "flex",
+  flexDirection:"column"
+})
+
+export const FilterFooter = styled.div({})
 
 
-export const FilterFooter = styled.div`
-  // height: calc(100% - 50px);
-  // margin-top: 72px;
-`;
+// export const FilterFooter = styled.div`
+//   // height: calc(100% - 50px);
+//   // margin-top: 72px;
+// `;
+
+export const ButtonsContainer = styled(Box)({
+  paddingLeft: "20px",
+  paddingRight: "20px",
+  height: "80px",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  // marginTop:"50px"
+})
 
 
-export const ButtonsContainer = styled(Box)`
-  padding-left: 20px;
-  padding-right: 20px;
-  height: 80px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  // margin-top: 50px;
-`;
+
+
+export const RefreshIcon = styled(Image)({
+  cursor: "pointer",
+  width: "18px",
+  height: "15px",
+});
+
+
+export const CloseIcon = styled(Image)({
+  cursor: "pointer",
+  width: "24px",
+  height: "24px",
+});
+
+
+export const FormElementContainerWrapper = styled(Box)({
+  marginTop: "8px",
+});
+
+export const DoubleFieldContainer = styled("div")({
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
+});

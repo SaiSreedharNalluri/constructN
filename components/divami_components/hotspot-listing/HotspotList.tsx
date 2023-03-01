@@ -41,6 +41,7 @@ import {
   AppliedFilter,
   IconContainer,
   StyledMenu,
+  CustomBox,
 } from "./HotspotListStyles";
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
 import Divider from "../../../public/divami_icons/divider.svg";
@@ -307,111 +308,56 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
       </MiniHeaderContainer>
 
       <BodyContainer>
-        {searchingOn ? (
-          <Box sx={{ marginTop: "10px" }}>
-            {/* {console.log("filteredHotspotList", filteredHotspotList)} */}
-            {filteredHotspotList.length ? (
-              filteredHotspotList.map((val: any, index: number) => {
-                return (
-                  <div key={index}>
-                    <BodyInfo
-                      onClick={() => {
-                        handleViewIssue(val);
-                      }}
-                    >
-                      <FirstHeader>
-                        <Image
-                          src={
-                            val.progress_rate > 0
-                              ? highProgressIcon
-                              : stagProgressIcon
-                          }
-                          alt="Arrow"
-                        />
-                        <BodyContTitle>
-                          {val.current_progress}% Current Progress
-                        </BodyContTitle>
-                      </FirstHeader>
+        <CustomBox searchingOn={searchingOn}>
+          {filteredHotspotList.length ? (
+            filteredHotspotList.map((val: any, index: number) => {
+              return (
+                <div key={index}>
+                  <BodyInfo
+                    onClick={() => {
+                      handleViewIssue(val);
+                    }}
+                  >
+                    <FirstHeader>
+                      <Image
+                        src={
+                          val.progress_rate > 0
+                            ? highProgressIcon
+                            : stagProgressIcon
+                        }
+                        alt="Arrow"
+                      />
+                      <BodyContTitle>
+                        {val.current_progress}% Current Progress
+                      </BodyContTitle>
+                    </FirstHeader>
 
-                      {/* <SecondHeader>
+                    {/* <SecondHeader>
                       <div>{val.priority} Priority</div>
                     </SecondHeader> */}
 
-                      <ThirdHeader>
-                        <div>Progress Rate: {val.progress_rate}%</div>
-                        <DueDateDiv>
-                          Took on {Moment(val.dueDate).format("DD MMM 'YY")}
-                        </DueDateDiv>
-                      </ThirdHeader>
-                    </BodyInfo>
-                    <HorizontalLine></HorizontalLine>
-                  </div>
-                );
-              })
-            ) : (
-              // <MessageDiv>
-              //   <p>No issue matches the search</p>
-              // </MessageDiv>
+                    <ThirdHeader>
+                      <div>Progress Rate: {val.progress_rate}%</div>
+                      <DueDateDiv>
+                        Took on {Moment(val.dueDate).format("DD MMM 'YY")}
+                      </DueDateDiv>
+                    </ThirdHeader>
+                  </BodyInfo>
+                  <HorizontalLine></HorizontalLine>
+                </div>
+              );
+            })
+          ) : (
+            // <MessageDiv>
+            //   <p>No issue matches the search</p>
+            // </MessageDiv>
 
-              <NoMatchDiv>
-                <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
-                <MessageDivShowErr>No result found</MessageDivShowErr>
-              </NoMatchDiv>
-            )}
-          </Box>
-        ) : (
-          <Box>
-            {/* {console.log("filteredHotspotList", filteredHotspotList)} */}
-            {filteredHotspotList.length ? (
-              filteredHotspotList.map((val: any, index: number) => {
-                return (
-                  <div key={index}>
-                    <BodyInfo
-                      onClick={() => {
-                        handleViewIssue(val);
-                      }}
-                    >
-                      <FirstHeader>
-                        <Image
-                          src={
-                            val.progress_rate > 0
-                              ? highProgressIcon
-                              : stagProgressIcon
-                          }
-                          alt="Arrow"
-                        />
-                        <BodyContTitle>
-                          {val.current_progress}% Current Progress
-                        </BodyContTitle>
-                      </FirstHeader>
-
-                      {/* <SecondHeader>
-                      <div>{val.priority} Priority</div>
-                    </SecondHeader> */}
-
-                      <ThirdHeader>
-                        <div>Progress Rate: {val.progress_rate}%</div>
-                        <DueDateDiv>
-                          Took on {Moment(val.dueDate).format("DD MMM 'YY")}
-                        </DueDateDiv>
-                      </ThirdHeader>
-                    </BodyInfo>
-                    <HorizontalLine></HorizontalLine>
-                  </div>
-                );
-              })
-            ) : (
-              // <MessageDiv>
-              //   <p>No issue matches the search</p>
-              // </MessageDiv>
-
-              <NoMatchDiv>
-                <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
-                <MessageDivShowErr>No result found</MessageDivShowErr>
-              </NoMatchDiv>
-            )}
-          </Box>
-        )}
+            <NoMatchDiv>
+              <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+              <MessageDivShowErr>No result found</MessageDivShowErr>
+            </NoMatchDiv>
+          )}
+        </CustomBox>
       </BodyContainer>
       {openHotspotDetail && (
         <Drawer
