@@ -146,8 +146,8 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
   return (
     <React.Fragment>
       <div>
-        <h1 className="font-bold ">Comments</h1>
-        <div className="absolute bottom-0 w-full left-1">
+        <h1 className="font-bold  w-full">Comments</h1>
+        <div className="absolute bottom-0 w-full">
           <CommentForm handleSubmit={addComment} handleCancel={() => {}} />
         </div>
         <div>

@@ -404,13 +404,15 @@ const CustomTaskListDrawer = (props: any) => {
 
                   <SecondDividerIcon src={DividerSvg} alt="" />
 
-                  <IconContainer
-                    src={FilterInActive}
-                    alt="Arrow"
-                    onClick={() => {
-                      handleViewTaskList();
-                    }}
-                  />
+                  {!taskFilterState.isFilterApplied ? (
+                    <IconContainer
+                      src={FilterInActive}
+                      alt="Arrow"
+                      onClick={() => {
+                        handleViewTaskList();
+                      }}
+                    />
+                  ) : null}
 
                   <CSVLink
                     data={getDownloadableTaskList(filteredTaskList)}
@@ -447,19 +449,19 @@ const CustomTaskListDrawer = (props: any) => {
                                 val.type === "RFI"
                                   ? RFIList
                                   : val.type === "Transmittals"
-                                    ? TransmittalList
-                                    : val.type === "Submittals"
-                                      ? SubmittalList
-                                      : val.type === "Transmittals"
-                                        ? TransmittalList
-                                        : val.type === "Transmittals"
-                                          ? TransmittalList
-                                          : ""
+                                  ? TransmittalList
+                                  : val.type === "Submittals"
+                                  ? SubmittalList
+                                  : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : ""
                               }
                               alt="Arr"
                             />
                             <BodyContTitle>
-                              {val.type} (#{val.id})
+                              {val.type} (#{val.sequenceNumber})
                             </BodyContTitle>
                           </FirstHeader>
                           <SecondHeader>
@@ -503,19 +505,19 @@ const CustomTaskListDrawer = (props: any) => {
                                 val.type === "RFI"
                                   ? RFIList
                                   : val.type === "Transmittals"
-                                    ? TransmittalList
-                                    : val.type === "Submittals"
-                                      ? SubmittalList
-                                      : val.type === "Transmittals"
-                                        ? TransmittalList
-                                        : val.type === "Transmittals"
-                                          ? TransmittalList
-                                          : ""
+                                  ? TransmittalList
+                                  : val.type === "Submittals"
+                                  ? SubmittalList
+                                  : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : val.type === "Transmittals"
+                                  ? TransmittalList
+                                  : ""
                               }
                               alt="Arr"
                             />
                             <BodyContTitle>
-                              {val.type} (#{val.id})
+                              {val.type} (#{val.sequenceNumber})
                             </BodyContTitle>
                           </FirstHeader>
                           <SecondHeader>

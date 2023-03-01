@@ -93,7 +93,9 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   getIssues,
   getTasks,
   handleOnIssueSort,
-  handleOnTasksSort
+  handleOnTasksSort,
+  issueSubmit,
+  taskSubmit,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -201,6 +203,22 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     toolClicked(toolInstance);
   };
 
+  const realitySwitch = () => {
+    setActive("hideCompare");
+
+    // toolInstance.toolAction = isCompareReality
+    //   ? "closeCompare"
+    //   : "showCompare";
+    toolInstance.toolAction = "closeCompare";
+    setIsCompareDesign(false);
+    setIsCompareReality(false);
+  };
+
+  useEffect(() => {
+    if (iViewMode === "Reality") {
+      realitySwitch();
+    }
+  }, [iViewMode]);
   const issueMenuClicked = (localTool: ITools) => {
     toolClicked(localTool);
     if (
@@ -302,6 +320,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           setIssueList={setIssueList}
           getIssues={getIssues}
           handleOnIssueSort={handleOnIssueSort}
+          issueSubmit={issueSubmit}
         />
 
         <Task
@@ -322,6 +341,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           closeTaskDetails={closeTaskDetails}
           getTasks={getTasks}
           handleOnTasksSort={handleOnTasksSort}
+          taskSubmit={taskSubmit}
         />
 
         {viewMode === "Reality" ? (
@@ -332,7 +352,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         ) : (
           <></>
         )}
-        <Hotspot />
+        {/* <Hotspot /> */}
       </ToolbarContainer>
     </SectionToolBar>
   );

@@ -1,9 +1,12 @@
 import { styled } from "@mui/system";
 import { Theme } from "../../../styles/globalStyles";
 import Image from "next/image";
-import { Box, Typography } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 
 
+interface ContainerProps {
+  footerState: boolean;
+}
 
 
 export const HeaderContainer = styled(Box)`
@@ -404,3 +407,122 @@ export const AssignEditSearchContainer = styled("div")({
     borderColor: "#36415D !important",
   },
 });
+
+export const BodyContainer = styled(Box)<ContainerProps>`
+  height: ${(props) =>
+    props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
+  overflow-y: scroll;
+`;
+
+
+export const FourthBodyDiv = styled("div")((props: any) => ({
+  display: props.assigneeEditState ? "none" : "flex",
+  marginTop: "25px",
+})) as any;
+
+
+
+
+export const AddCommentContainer = styled("div")((props: any) => ({
+  // borderTop: `${props.containerType === "float" ? "none" : "1px solid #D9D9D9"}`,
+  height: `${props.containerType === "float" ? "80px" : "50px"}`,
+  display: "flex",
+  position: "absolute",
+  bottom: "0",
+  background: "white",
+  marginLeft: "-24px",
+  width: "100%",
+})) as any;
+
+export const  AddCommentContainerSecond = styled("div")({
+  height: "50px",
+  display: "flex",
+  alignItems: "center",
+  // justifyContent: "space-around",
+  paddingLeft: "20px",
+  border: "1px solid #D9D9D9",
+  width: "100%",
+  position: "absolute",
+  bottom: "0",
+  background: "white",
+  marginLeft: "-24px",
+});
+
+export const AddCommentInput = styled("input")({
+  width: "100%",
+  paddingLeft: "20px",
+  fontFamily: "Open Sans",
+  fontSize: "14px",
+});
+
+
+export const AddCommentButtonContainer = styled("div")({
+  display: "flex",
+  alignItems: "center",
+  marginLeft: "auto",
+});
+
+
+export const AttachButton = styled("button")({
+  width: "48px",
+  display: "flex",
+  justifyContent: "center",
+  height: "60%",
+  borderRight: "1px solid #D9D9D9",
+  marginTop: "auto",
+  marginBottom: "auto",
+});
+
+export const SendButton = styled("button")({
+  width: "48px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+});
+
+export const ProgressStateFalse = styled("div")({
+  display: "flex",
+  marginTop: "20px",
+});
+
+
+export const ProgressStateTrue = styled("div")({
+  display: "flex",
+  marginTop: "20px",
+});
+
+export const ProgressCustomSelect = styled("div")({
+  marginTop: "20px",
+});
+
+export const AssigneeCustomSelect = styled("div")({
+  marginTop: "20px",
+});
+
+export const ImageErrorIcon = styled(Image)({
+  cursor: "pointer",
+  width: "24px",
+  height: "24px",
+});
+
+
+export const StyledInput = styled(TextField)(({ theme }) => ({
+  color: "blue",
+  "label + &": {
+    marginTop: theme.spacing(8),
+  },
+
+  "& .MuiInput-root": {
+    "&:before, :after, :hover:not(.Mui-disabled):before": {
+      borderBottom: 0,
+    },
+  },
+  "&& .MuiInput-underline": {
+    borderBottom: "none",
+    // borderBottomColor: "none",
+  },
+  "& .MuiInput-underline:after": {
+    borderBottom: "none",
+    // borderBottomColor: "none",
+  },
+}));

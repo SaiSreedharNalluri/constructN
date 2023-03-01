@@ -49,19 +49,19 @@ const CommentsListing: React.FC<IProps> = ({
           >
             <NextImage
               src={comment.by.avatar}
-              className={`rounded-full cursor-pointer object-cover`}
+              className={`rounded-full row-span-2 cursor-pointer object-cover`}
             />
           </div>
           <div className="font-bold text-cyan-700 text-base col-span-6">
             {comment.by.fullName}
           </div>
-          <div className=" col-start-2 text-xs col-span-6">
+          <div className={`text-xs col-span-full ${comment.comment ? 'col-start-2' : 'col-start-3'}`}>
             {Moment(comment?.createdAt).format('DD-MMM-YYYY hh:mm A')}
           </div>
         </div>
 
         <div className="grid grid-cols-8">
-          <div className={`col-span-6 ${comment.comment ? '' : 'col-start-2'}`}>
+          <div className={`col-span-full ${comment.comment ? '' : 'col-start-2'}`}>
             <div className={`px-3`}>
               <p>{comment.comment ? comment.comment : comment.reply}</p>
             </div>
