@@ -241,6 +241,9 @@ function GenericViewer(props) {
         }
         break;
       case 'Reality':
+        if (potreeUtils.current) {
+          potreeUtils.current.showTag(tag, show);
+        }
         break;
     }
   };

@@ -1399,6 +1399,17 @@ export class PotreeViewerUtils {
         this.updateContext(tag, true); 
     }
 
+    showTag(tag, show){
+        switch(tag) {
+            case "Issue":
+                this.showIssues(show);
+                break;
+            case "Task":
+                this.showTasks(show);
+                break;
+        }
+    }
+
     getMousePointCloudIntersection(mouse, camera, viewer, pointclouds, params = {}) {
 
         let renderer = viewer.renderer;
@@ -1597,6 +1608,20 @@ export class PotreeViewerUtils {
             this.removeAssets();
         } catch {
             console.log("Error while removing data from potree viewer: ");
+        }
+    }
+
+    showIssues(show) {
+        for(let issueId of Object.keys(this.issueSpriteMap)) {
+            let annotation = this.issueSpriteMap[issueId].tag;
+            annotation._visible = show;
+        }
+    }
+
+    showTasks() {
+        for(let taskId of Object.keys(this.taskSpriteMap)) {
+            let annotation = this.taskSpriteMap[taskId].tag;
+            annotation._visible = show;
         }
     }
 
