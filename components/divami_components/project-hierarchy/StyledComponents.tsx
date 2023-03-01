@@ -161,9 +161,21 @@ export const ProjectHierarchyContainer = styled(
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
   backgroundColor: "#fff",
 });
-export const StyledTreeItem = styled(TreeItem)({
+interface StyledTreeItemProps {
+  needClick: boolean;
+}
+
+export const StyledTreeItem = styled(TreeItem)<StyledTreeItemProps>((props) => ({
   padding: 0,
-});
+  pointerEvents: props.needClick ? "auto" : "none",
+  '& .MuiTreeItem-iconContainer': {
+    pointerEvents: "auto",
+  }
+})) as any;
+
+export const LabelContainer = styled("div")({
+  pointerEvents: "none",
+})
 
 export const HeaderLabelContainer = styled("div")({
   display: "flex",

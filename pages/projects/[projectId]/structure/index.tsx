@@ -1,4 +1,5 @@
 import { styled } from "@mui/system";
+import { AxiosResponse } from "axios";
 import { getCookie } from "cookies-next";
 import _ from "lodash";
 import Moment from "moment";
@@ -33,13 +34,8 @@ import {
   getIssuesTypes,
 } from "../../../../services/issue";
 import { getProjectDetails } from "../../../../services/project";
-import { getStructureList } from "../../../../services/structure";
-import {
-  deleteTask,
-  getTasksList,
-  getTasksPriority,
-  getTaskStatus,
-} from "../../../../services/task";
+import { getStructureHierarchy, getStructureList } from "../../../../services/structure";
+import { deleteTask, getTasksList, getTasksPriority, getTaskStatus } from "../../../../services/task";
 
 interface IProps { }
 const OpenMenuButton = styled("div")({
@@ -1093,6 +1089,25 @@ const Index: React.FC<IProps> = () => {
     setHierarchy(true);
   }
 
+  const [selector, setSelector] = useState("");
+  let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
+  let [stateFilter, setStateFilter] = useState<ChildrenEntity[]>([]);
+  useEffect(() => {
+    if (router.isReady) {
+      if (router.query.structId !== undefined)
+        setSelector(router.query.structId.toString());
+      getStructureHierarchy(router.query.projectId as string)
+        .then((response: AxiosResponse<any>) => {
+          setState([...response.data.result]);
+          setStateFilter([...response.data.result]);
+          if (selector.length < 1) setSelector(response.data.result[0]._id);
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+    }
+  }, [router.isReady, router.query.projectId, router.query.structId]);
+
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -1112,7 +1127,7 @@ const Index: React.FC<IProps> = () => {
               className={` ${leftNav ? "visible" : "hidden"
                 }  absolute z-10 border border-gray-300 `}
             >
-              <div>
+              {/* <div>
                 <>
                   {console.log(selected, "structureData")}
                   <LeftOverLay
@@ -1136,7 +1151,7 @@ const Index: React.FC<IProps> = () => {
                     }}
                   ></LeftOverLay>
                 </>
-              </div>
+              </div> */}
             </div>
           }
         </div>
@@ -1186,6 +1201,7 @@ const Index: React.FC<IProps> = () => {
                           getTasks(structureData._id);
                         }
                       }}
+                      treeData={state}
                     ></LeftOverLay>
                   </div>
                 </div>

@@ -19,8 +19,10 @@ interface IProps {
   selectedNodes: any;
   handleNodeExpand: any;
   expandedNodes: any;
+  treeData: any;
 }
 const LeftOverLay: React.FC<IProps> = ({
+  treeData,
   getStructureData,
   getStructure,
   setHierarchy,
@@ -30,66 +32,28 @@ const LeftOverLay: React.FC<IProps> = ({
   expandedNodes,
 }) => {
   let router = useRouter();
-  let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
+  let [state, setState] = useState<ChildrenEntity[] | any[]>(treeData);
   let [stateFilter, setStateFilter] = useState<ChildrenEntity[]>([]);
   const [selector, setSelector] = useState("");
+
   useEffect(() => {
-    if (router.isReady) {
-      if (router.query.structId !== undefined)
-        setSelector(router.query.structId.toString());
-      getStructureHierarchy(router.query.projectId as string)
-        .then((response: AxiosResponse<any>) => {
-          setState([...response.data.result]);
-          setStateFilter([...response.data.result]);
-          // if (selector.length < 1) setSelector(response.data.result[0]._id);
-          // if(selector.length<1){
-          //   let index =response.data.result.findIndex((structData:IStructure)=>{
-
-          //     return ((structData.designs!==undefined )&& (structData.designs.length>0))
-          //   })
-          //   if(index>0)
-          //   setSelector(response.data.result[index]._id);
-          //   else
-          //   setSelector(response.data.result[0]._id);
-
-          //   //to find structure with data and set
-          // }
-        })
-        .catch((error) => {
-          console.log("error", error);
-        });
-      getStructureList(router.query.projectId as string)
-        .then((response) => {
-          if (response.data.result.length > 0) {
-            if (router.query.structId !== undefined) {
-              let structs: IStructure[] = response.data.result;
-              let temp_struct: IStructure | undefined = structs?.find((e) => {
-                console.log("finding structure: ", e._id);
-                if (e._id === router.query.structId) {
-                  return e;
-                }
-              });
-              if (temp_struct !== undefined) setSelector(temp_struct._id);
-            } else {
-              let index = response.data.result.findIndex(
-                (structData: IStructure) => {
-                  return (
-                    structData.designs !== undefined &&
-                    structData.designs.length > 0
-                  );
-                }
-              );
-              if (index > 0) setSelector(response.data.result[index]._id);
-              else setSelector(response.data.result[0]._id);
-              //console.log("first struct=",index);
-            }
-          }
-        })
-        .catch((error) => {
-          console.error("failed to load data");
-        });
-    }
-  }, [router.isReady, router.query.projectId, router.query.structId]);
+    setState(treeData)
+  }, [treeData])
+  // useEffect(() => {
+  //   if (router.isReady) {
+  //     if (router.query.structId !== undefined)
+  //       setSelector(router.query.structId.toString());
+  //     getStructureHierarchy(router.query.projectId as string)
+  //       .then((response: AxiosResponse<any>) => {
+  //         setState([...response.data.result]);
+  //         setStateFilter([...response.data.result]);
+  //         if (selector.length < 1) setSelector(response.data.result[0]._id);
+  //       })
+  //       .catch((error) => {
+  //         console.log("error", error);
+  //       });
+  //   }
+  // }, [router.isReady, router.query.projectId, router.query.structId]);
   const schema = Yup.object().shape({
     searchQuery: Yup.string()
       .required("A search query is required")
@@ -99,17 +63,17 @@ const LeftOverLay: React.FC<IProps> = ({
   function filterBy(arr: ChildrenEntity[], query: string) {
     return query
       ? arr.reduce((acc: any, item: any) => {
-          if (item.children?.length) {
-            const filtered: any = filterBy(item.children, query);
-            if (filtered.length)
-              return [...acc, { ...item, children: filtered }];
-          }
+        if (item.children?.length) {
+          const filtered: any = filterBy(item.children, query);
+          if (filtered.length)
+            return [...acc, { ...item, children: filtered }];
+        }
 
-          const { children, ...itemWithoutChildren } = item;
-          return item.name?.toLowerCase().includes(query.toLowerCase())
-            ? [...acc, itemWithoutChildren]
-            : acc;
-        }, [])
+        const { children, ...itemWithoutChildren } = item;
+        return item.name?.toLowerCase().includes(query.toLowerCase())
+          ? [...acc, itemWithoutChildren]
+          : acc;
+      }, [])
       : arr;
   }
 
