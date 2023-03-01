@@ -25,7 +25,7 @@ import {
   addIssuePriorityApi,
   addIssueStatusApi,
   addIssueTypeApi,
-  getIssuesPriority,
+  getIssuesPriorityList,
   getIssueStatusList,
   getIssueTypeList,
   removeIssueStatusItemApi,
@@ -111,9 +111,9 @@ const Editproject: React.FC = () => {
           }
         })
         .catch();
-      getIssuesPriority(router.query.projectId as string).then((response) => {
+      getIssuesPriorityList(router.query.projectId as string).then((response) => {
         if (response.success === true) {
-          setIssuePriorityList(response.result);
+          setIssuePriorityList(response.result.priorityList.Issue);
         }
       });
       getTaskPriorityList(router.query.projectId as string).then((response) => {
@@ -268,7 +268,7 @@ const Editproject: React.FC = () => {
   const dragIssuePriorityRef: any = useRef();
   const dragOverIssuePriorityRef: any = useRef();
   const handleIssuePriorityUpdate = (e: any) => {
-    let copyListItems = issuePriorityList;
+    let copyListItems = [...issuePriorityList];
     const dragItemContent = copyListItems.splice(
       dragIssuePriorityRef.current,
       1
