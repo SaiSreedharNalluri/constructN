@@ -2,6 +2,7 @@
 import TimeLineComponent from "../components/divami_components/timeline-container/TimeLineComponent";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { ISnapshot } from "../models/ISnapshot";
+import '@testing-library/jest-dom';
 const currentSnapshot: ISnapshot = {
     createdAt:"2023-01-24T15:23:40.031Z",
 date:"2023-1-06",
@@ -40,10 +41,13 @@ it("renders component unchanged", () => {
 it("check the bottom toggle", () => {
     const timeline = screen.getByTestId(/selected-timeline/i);
       fireEvent.click(timeline);
+      const bottomNav = screen.getByTestId(/bottomNav/i);
+      expect(bottomNav).toBeInTheDocument();
   });
 it("check the timeline changes", () => {
       const timeline = screen.getByTestId(/selected-timeline/i);
       fireEvent.click(timeline);
     const page = screen.getByTestId(/page/i);
       fireEvent.click(page);
+      expect(timeline).toBeInTheDocument()
   });

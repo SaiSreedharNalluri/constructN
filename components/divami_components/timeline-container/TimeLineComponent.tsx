@@ -95,7 +95,7 @@ const TimeLineComponent: React.FC<IProps> = ({
           </SelectedTimeLine>
 
           {bottomNav ? (
-            <div
+            <div data-testid="bottomNav"
             //  className="absolute flex flex-col items-center z-10 top-0 inset-x-0"
             >
               <div
