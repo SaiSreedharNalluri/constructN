@@ -109,12 +109,10 @@ export const updateProjectUserRole = async (
       return response.data;
     })
     .catch((error) => {
-      console.log('error', error);
-      throw error;
+      throw error.response.data;
     });
 };
 export const updateProjectCover = async (file: any, projectId: string) => {
-  console.log('file', file.file);
   return await instance
     .put(
       `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/cover-photo`,

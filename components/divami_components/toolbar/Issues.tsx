@@ -33,9 +33,6 @@ import { ITools } from "../../../models/ITools";
 import CustomIssueListDrawer from "../issue-listing/IssueList";
 import { ISnapshot } from "../../../models/ISnapshot";
 import { IStructure } from "../../../models/IStructure";
-import { CustomToaster } from "../custom-toaster/CustomToaster";
-import toasterIcon from "../../../public/divami_icons/toasterIcon.svg";
-import { ToastImgContainer } from "../custom-toaster/CustomToastStyles";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import html2canvas from "html2canvas";
 
@@ -71,6 +68,7 @@ const Issues = ({
   getIssues,
   handleOnIssueSort,
   issueSubmit,
+  deleteTheAttachment,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -87,6 +85,7 @@ const Issues = ({
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   const [selectedIssue, setSelectedIssue] = useState({});
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
+
   useEffect(() => {
     setMyProject(currentProject);
     setMyStructure(currentStructure);
@@ -99,18 +98,16 @@ const Issues = ({
       }
     );
   }, [currentProject, currentSnapshot, currentStructure]);
+
   const closeIssueList = () => {
-    //setListOverlay(false);
     issueMenuInstance.toolAction = "issueViewClose";
     issueMenuClicked(issueMenuInstance);
   };
   const handleViewTaskList = () => {
-    // console.log("teskssksk trigg");
     setOpenDrawer(true);
   };
 
   const handleCreateTask = (formData: any) => {
-    console.log(formData, "form data at home");
     clickTaskSubmit(formData);
   };
 
@@ -227,7 +224,6 @@ const Issues = ({
           if (response.success === true) {
             toast(" Issue Created Successfully");
             issueSubmitFn(response.result);
-            // issueSubmit(response.result)
           } else {
             toast(`Something went wrong`);
           }
@@ -238,14 +234,12 @@ const Issues = ({
     }
   };
   const onCancelCreate = () => {
-    // setOpenCreateIssue(false);
     issueMenuInstance.toolAction = "issueCreateFail";
     issueMenuClicked(issueMenuInstance);
     closeIssueCreate();
   };
 
   useEffect(() => {
-    console.log("contextinfo", contextInfo, issuesList);
     if (openIssueDetails && contextInfo?.id) {
       const selectedObj = issuesList.find(
         (each: any) => each._id === contextInfo.id
@@ -255,50 +249,32 @@ const Issues = ({
   }, [openIssueDetails, contextInfo?.id]);
 
   const issueSubmitFn = (formdata: any) => {
-    // issuesList.push(formdata);
     issueMenuInstance.toolAction = "issueCreateSuccess";
     issueMenuClicked(issueMenuInstance);
     closeIssueCreate();
     issueSubmit(formdata);
   };
   const openIssueCreateFn = () => {
-    //setCreateOverlay(true);
     issueMenuInstance.toolAction = "issueCreate";
     issueMenuClicked(issueMenuInstance);
   };
-  // const closeIssueCreate = () => {
-  //   issueMenuInstance.toolAction = "issueCreateClose";
-  //   setCreateOverlay(false);
-  //   issueMenuClicked(issueMenuInstance);
-  // };
+
   const openIssueListFn = () => {
-    //setListOverlay(true);
-    console.log("coming herer");
     issueMenuInstance.toolAction = "issueView";
     issueMenuClicked(issueMenuInstance);
   };
-  const closeIssueListFn = () => {
-    //setListOverlay(false);
-    issueMenuInstance.toolAction = "issueViewClose";
-    issueMenuClicked(issueMenuInstance);
-  };
+
   const toggleIssueVisibility = () => {
-    console.log(issueVisbility, "isuevisi");
     if (issueVisbility) issueMenuInstance.toolAction = "issueHide";
     else issueMenuInstance.toolAction = "issueShow";
     issueMenuClicked(issueMenuInstance);
     setIssueVisibility(!issueVisbility);
   };
 
-  const handleToggle = () => {
-    setShowImage(!showImage);
-  };
-
   useEffect(() => {
     setOpenCreateIssue(issueOpenDrawer);
   }, [issueOpenDrawer]);
 
-  console.log(selectedIssue, "selectedIssueselectedIssue");
   return (
     <>
       <IssueBox>
@@ -309,10 +285,8 @@ const Issues = ({
             <CameraIcon
               src={plusCircleIcon}
               alt="Arrow"
-              // onClick={rightMenuClickHandler}
               onClick={() => {
                 openIssueCreateFn();
-                // setOpenCreateIssue(true);
               }}
               width={12}
               height={12}
@@ -327,9 +301,6 @@ const Issues = ({
               width={12}
               height={12}
               alt="Arrow"
-              // onClick={() => {
-              //   setOpenIssueList(true);
-              // }}
               onClick={() => {
                 openIssueListFn();
                 handleViewTaskList();
@@ -345,13 +316,9 @@ const Issues = ({
                 width={12}
                 height={12}
                 src={fileTextIssue}
-                // width={12}
-                // height={12}
                 alt="Arrow"
-                // onClick={rightMenuClickHandler}
                 onClick={() => {
                   toggleIssueVisibility();
-                  // handleToggle();
                 }}
               />
             )}
@@ -361,33 +328,15 @@ const Issues = ({
                 width={12}
                 height={12}
                 src={clipboardSecondIcon}
-                // width={12}
-                // height={12}
                 alt="Arrow"
-                // onClick={rightMenuClickHandler}
                 onClick={() => {
                   toggleIssueVisibility();
-                  // handleToggle();
                 }}
               />
             )}
           </IssuesSectionClipImg>
         </Tooltip>
       </IssueBox>
-
-      {/* {openIssueList && (
-        <StyledDrawer
-          anchor={"right"}
-          open={openIssueList}
-          onClose={() => setOpenIssueList((prev: any) => !prev)}
-        >
-          <IssueListing />
-          
-        </StyledDrawer>
-      )} */}
-
-      {/* {successMessage ? <CustomToaster successMessage={successMessage} /> : ""} */}
-      {/* <CustomToaster successMessage={successMessage} /> */}
 
       {openDrawer && (
         <Drawer
@@ -415,8 +364,8 @@ const Issues = ({
             issueFilterState={issueFilterState}
             getIssues={getIssues}
             handleOnIssueSort={handleOnIssueSort}
+            deleteTheAttachment={deleteTheAttachment}
           />
-          {/* <FilterCommon/> */}
         </Drawer>
       )}
       {openCreateIssue && (

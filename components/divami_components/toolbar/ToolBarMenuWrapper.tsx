@@ -54,6 +54,7 @@ interface IProps {
   taskFilterState?: any;
   issueFilterState?: any;
   deleteTheIssue?: any;
+  deleteTheAttachment?: any;
 }
 
 const ToolBarMenuWrapper: React.FC<any> = ({
@@ -97,6 +98,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   issueSubmit,
   taskSubmit,
   selectedType,
+  deleteTheAttachment,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -324,6 +326,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           getIssues={getIssues}
           handleOnIssueSort={handleOnIssueSort}
           issueSubmit={issueSubmit}
+          deleteTheAttachment={deleteTheAttachment}
         />
 
         <Task
@@ -345,6 +348,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           getTasks={getTasks}
           handleOnTasksSort={handleOnTasksSort}
           taskSubmit={taskSubmit}
+          deleteTheAttachment={deleteTheAttachment}
         />
 
         {viewMode === "Reality" ? (

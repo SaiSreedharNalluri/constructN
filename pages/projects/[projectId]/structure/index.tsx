@@ -34,10 +34,18 @@ import {
   getIssuesTypes,
 } from "../../../../services/issue";
 import { getProjectDetails } from "../../../../services/project";
-import { getStructureHierarchy, getStructureList } from "../../../../services/structure";
-import { deleteTask, getTasksList, getTasksPriority, getTaskStatus } from "../../../../services/task";
+import {
+  getStructureHierarchy,
+  getStructureList,
+} from "../../../../services/structure";
+import {
+  deleteTask,
+  getTasksList,
+  getTasksPriority,
+  getTaskStatus,
+} from "../../../../services/task";
 
-interface IProps { }
+interface IProps {}
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -289,16 +297,16 @@ const Index: React.FC<IProps> = () => {
   }, [router.isReady, router.query.projectId]);
 
   const getNodeDataById = (id: string) => {
-    console.log("finding structure: ", id, structuresList)
+    console.log("finding structure: ", id, structuresList);
     return structuresList.find((e) => {
       if (e._id === id) {
         return e;
       }
     });
-  }
+  };
 
   const getBreadCrumbsData = (structure: any) => {
-    const dataB: any[] = []
+    const dataB: any[] = [];
     const getBreadCrumbs = (NodeData: any) => {
       dataB.unshift(NodeData);
       const struct = NodeData.parent ? getNodeDataById(NodeData.parent) : null;
@@ -308,13 +316,16 @@ const Index: React.FC<IProps> = () => {
     };
     getBreadCrumbs(structure);
     return dataB;
-  }
+  };
 
   const getStructureData = (structure: ChildrenEntity) => {
     setStructure(getCurrentStructureFromStructureList(structure));
     getIssues(structure._id);
     getTasks(structure._id);
-    setBreadCrumbsData((prev: any) => [prev[0], ...getBreadCrumbsData(structure)]);
+    setBreadCrumbsData((prev: any) => [
+      prev[0],
+      ...getBreadCrumbsData(structure),
+    ]);
   };
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
@@ -382,9 +393,11 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
-                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
-                  }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${
+                  structure?._id
+                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
+                  currentProjectId as string
+                }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -443,6 +456,7 @@ const Index: React.FC<IProps> = () => {
           case "issueSelect":
           case "issueShow":
           case "issueHide":
+          case "issueRemoved":
             setClickedTool(toolInstance);
             break;
         }
@@ -470,6 +484,7 @@ const Index: React.FC<IProps> = () => {
           case "taskShow":
           case "taskHide":
           case "taskSelect":
+          case "taskRemoved":
             setClickedTool(toolInstance);
             break;
         }
@@ -1010,6 +1025,12 @@ const Index: React.FC<IProps> = () => {
           if (callback) {
             callback();
           }
+          const issueMenuInstance: ITools = {
+            toolName: "issue",
+            toolAction: "issueRemoved",
+          };
+
+          toolClicked(issueMenuInstance);
         }
       })
       .catch((error) => {
@@ -1018,7 +1039,6 @@ const Index: React.FC<IProps> = () => {
   };
 
   const deleteTheTask = (taskObj: any, callback?: any) => {
-    console.log("taskObj", taskObj, router.query.projectId);
     deleteTask(router.query.projectId as string, taskObj._id)
       .then((response) => {
         if (response.success === true) {
@@ -1028,6 +1048,12 @@ const Index: React.FC<IProps> = () => {
           if (callback) {
             callback();
           }
+          const taskMenuInstance: ITools = {
+            toolName: "task",
+            toolAction: "taskRemoved",
+          };
+
+          toolClicked(taskMenuInstance);
         }
       })
       .catch((error) => {
@@ -1065,18 +1091,28 @@ const Index: React.FC<IProps> = () => {
     });
     setIssueList(issueFilterList);
   };
-  const deleteTheAttachment = (attachmentId: string) => {
+  const deleteTheAttachment = (attachmentId: string, entity?: string) => {
     deleteAttachment(attachmentId)
       .then((response) => {
         if (response.success === true) {
           toast.success(response.message);
-          issueFilterList.map((issueObj) => {
-            const index = issueObj.attachments.findIndex(
-              (obj) => obj._id === attachmentId
-            );
-            issueObj.attachments.splice(index, 1);
-          });
-          setIssueList(issueFilterList);
+          if (entity === "issue") {
+            issueFilterList.map((issueObj) => {
+              const index = issueObj.attachments.findIndex(
+                (obj: any) => obj._id === attachmentId
+              );
+              issueObj.attachments.splice(index, 1);
+            });
+            setIssueList(issueFilterList);
+          } else {
+            taskFilterList.map((taskObj) => {
+              const index = taskObj.attachments.findIndex(
+                (obj: any) => obj._id === attachmentId
+              );
+              taskObj.attachments.splice(index, 1);
+            });
+            setTasksList(taskFilterList);
+          }
         }
       })
       .catch((error) => {
@@ -1088,12 +1124,15 @@ const Index: React.FC<IProps> = () => {
     console.log(node, "clicked node", breadCrumbsData, index);
     window.localStorage.setItem("nodeData", JSON.stringify(node));
     const expandedNodes = breadCrumbsData.map((e: any) => e._id);
-    window.localStorage.setItem("expandedNodes", JSON.stringify(expandedNodes.slice(0, index + 1)));
+    window.localStorage.setItem(
+      "expandedNodes",
+      JSON.stringify(expandedNodes.slice(0, index + 1))
+    );
     setSelected(node._id);
     setExpanded(expandedNodes.slice(0, index + 2));
-    getStructureData(node)
+    getStructureData(node);
     setHierarchy(true);
-  }
+  };
 
   const [selector, setSelector] = useState("");
   let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
@@ -1117,7 +1156,13 @@ const Index: React.FC<IProps> = () => {
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
-        <Header toolClicked={toolClicked} viewMode={currentViewMode} showBreadcrumbs breadCrumbData={breadCrumbsData} handleBreadCrumbClick={handleBreadCrumbClick} />
+        <Header
+          toolClicked={toolClicked}
+          viewMode={currentViewMode}
+          showBreadcrumbs
+          breadCrumbData={breadCrumbsData}
+          handleBreadCrumbClick={handleBreadCrumbClick}
+        />
         {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
       <div className="flex ">
@@ -1130,8 +1175,9 @@ const Index: React.FC<IProps> = () => {
             <div
               style={{ overflow: "hidden" }}
               ref={leftRefContainer}
-              className={` ${leftNav ? "visible" : "hidden"
-                }  absolute z-10 border border-gray-300 `}
+              className={` ${
+                leftNav ? "visible" : "hidden"
+              }  absolute z-10 border border-gray-300 `}
             >
               {/* <div>
                 <>
@@ -1187,8 +1233,9 @@ const Index: React.FC<IProps> = () => {
                 <div
                   style={{ overflow: "hidden" }}
                   ref={leftRefContainer}
-                  className={`${hierarchy ? "visible" : "hidden"
-                    }  absolute z-10 border  white-bg projHier `}
+                  className={`${
+                    hierarchy ? "visible" : "hidden"
+                  }  absolute z-10 border  white-bg projHier `}
                 >
                   <div>
                     <LeftOverLay
@@ -1327,6 +1374,7 @@ const Index: React.FC<IProps> = () => {
               issueSubmit={issueSubmit}
               taskSubmit={taskSubmit}
               selectedType={currentViewType}
+              deleteTheAttachment={deleteTheAttachment}
             />
 
             {/* <CustomToaster /> */}

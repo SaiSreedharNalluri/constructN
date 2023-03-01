@@ -251,6 +251,7 @@ function BasicTabs(props: any) {
     //
   };
 
+  console.log(taskState, "taskstatek");
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
@@ -299,7 +300,6 @@ function BasicTabs(props: any) {
             },
           }}
         >
-          {/* MuiTab-root.Mui-selected */}
           <Tab
             label="Details"
             {...a11yProps(0)}
@@ -313,7 +313,6 @@ function BasicTabs(props: any) {
               fontWeight: "400",
             }}
           />
-          {/* <Tab label="Activity log" {...a11yProps(1)} /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -529,7 +528,7 @@ function BasicTabs(props: any) {
                               src={Delete}
                               alt={"delete icon"}
                               onClick={() => {
-                                deleteTheAttachment(a?._id);
+                                deleteTheAttachment(a?._id, "issue");
                               }}
                               className={`deleteIcon`}
                             />
@@ -546,7 +545,6 @@ function BasicTabs(props: any) {
           <RelatedDiv>
             <RelatedTagTitle>Related Tags</RelatedTagTitle>
             <RelatedTagsButton>
-              {/* {console.log("taskState", taskState)} */}
               {taskState?.TabOne.tags?.map((item: any) => {
                 return (
                   <>
@@ -633,6 +631,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     deleteTheIssue,
     setIssueList,
     getIssues,
+    deleteTheAttachment,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
@@ -646,17 +645,17 @@ const CustomIssueDetailsDrawer = (props: any) => {
     setshowPopUp(false);
     deleteTheIssue(selectedIssue, onClose);
   };
-  const deleteTheAttachment = (attachmentId: string) => {
-    deleteAttachment(attachmentId)
-      .then((response) => {
-        if (response.success === true) {
-          toast.success(response.message);
-        }
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      });
-  };
+  // const deleteTheAttachment = (attachmentId: string) => {
+  //   deleteAttachment(attachmentId)
+  //     .then((response) => {
+  //       if (response.success === true) {
+  //         toast.success(response.message);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       toast.error(error.message);
+  //     });
+  // };
 
   const DetailsObj = {
     TabOne: {
@@ -720,7 +719,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       options: selectedIssue?.options,
       priority: selectedIssue?.priority,
       capturedOn: selectedIssue?.createdAt,
-      creator: selectedIssue?.owner,
+      creator: selectedIssue?.owner?.fullName,
       issueDescription: selectedIssue?.description,
       screenshot: selectedIssue?.screenshot as string,
       attachments: selectedIssue?.attachments,

@@ -45,6 +45,7 @@ export class PotreeViewerUtils {
     constructor(viewerId, eventHandler) {
         this.viewerId = viewerId;
         this.viewer = undefined;
+        this.isActive = false;
         this.realityPositionMap = {};
         this.isPointCloudLoaded = false;
         this.isViewerInitialized = false;
@@ -114,6 +115,7 @@ export class PotreeViewerUtils {
         const loadGUICallback = () => {
             self.isViewerInitialized = true;
             self.addEventListeners();
+            self.isActive = true;
         }
         if (this.isCompareView()) {
             this.viewer = PotreeInstance.getCompareInstance(this.viewerId).viewer;
@@ -475,7 +477,7 @@ export class PotreeViewerUtils {
             // }).bind(this), 100)
         } else {
             setTimeout(() => {
-                this.onPanoImageLoad2(image, viewer);
+                this.onPanoImageLoad(image, viewer);
             }, 500);
         }
     }
@@ -989,6 +991,9 @@ export class PotreeViewerUtils {
 
     onKeyDown(event) {
         console.log("Inside event listener: ", event, this.viewer);
+        if (!this.isActive) {
+            return;
+        }
         if(this.viewer === undefined) {
             return;
         }
@@ -1555,6 +1560,7 @@ export class PotreeViewerUtils {
           this.removeEventListeners();
         }
         this.isViewerInitialized = false;
+        this.isActive = false;
     }
 
     removeData() {

@@ -93,6 +93,7 @@ interface IProps {
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
   onClose: any;
   taskFilterState: any;
+  deleteTheAttachment?: any;
 }
 
 const CustomTaskListDrawer = (props: any) => {
@@ -110,6 +111,7 @@ const CustomTaskListDrawer = (props: any) => {
     taskFilterState,
     getTasks,
     handleOnTasksSort,
+    deleteTheAttachment,
   } = props;
   const [taskType, setTaskType] = useState<[string]>();
   const [taskPriority, setTaskPriority] = useState<[string]>();
@@ -512,6 +514,7 @@ const CustomTaskListDrawer = (props: any) => {
                 currentSnapshot={currentSnapshot}
                 contextInfo={contextInfo}
                 getTasks={getTasks}
+                deleteTheAttachment={deleteTheAttachment}
               />
             </Drawer>
           )}
