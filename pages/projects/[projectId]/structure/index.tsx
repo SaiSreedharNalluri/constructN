@@ -976,13 +976,16 @@ const Index: React.FC<IProps> = () => {
       numberOfFilters: 0,
     });
   };
-  const deleteTheIssue = (issueObj: any) => {
+  const deleteTheIssue = (issueObj: any, callback?: any) => {
     deleteIssue(router.query.projectId as string, issueObj._id)
       .then((response) => {
         if (response.success === true) {
           toast.success(response.message);
           _.remove(issueFilterList, { _id: issueObj._id });
           setIssueList(issueFilterList);
+          if (callback) {
+            callback();
+          }
         }
       })
       .catch((error) => {
@@ -990,14 +993,17 @@ const Index: React.FC<IProps> = () => {
       });
   };
 
-  const deleteTheTask = (taskObj: any) => {
+  const deleteTheTask = (taskObj: any, callback?: any) => {
     console.log("taskObj", taskObj, router.query.projectId);
     deleteTask(router.query.projectId as string, taskObj._id)
       .then((response) => {
         if (response.success === true) {
           toast.success(response.message);
-          _.remove(issueFilterList, { _id: taskObj._id });
-          setIssueList(issueFilterList);
+          _.remove(taskFilterList, { _id: taskObj._id });
+          setTasksList(taskFilterList);
+          if (callback) {
+            callback();
+          }
         }
       })
       .catch((error) => {
@@ -1272,6 +1278,7 @@ const Index: React.FC<IProps> = () => {
               handleOnTasksSort={handleOnTasksSort}
               issueSubmit={issueSubmit}
               taskSubmit={taskSubmit}
+              selectedType={currentViewType}
             />
 
             {/* <CustomToaster /> */}

@@ -525,7 +525,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                               alt="Arrow"
                             />
                             <BodyContTitle>
-                              {val.type} (#{val._id})
+                              {val.type} (#{val.sequenceNumber})
                             </BodyContTitle>
                           </FirstHeader>
 
