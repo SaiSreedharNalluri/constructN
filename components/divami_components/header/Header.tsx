@@ -84,7 +84,6 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     const closePopup = (e: any) => {
-      //console.log(headerRef.current.contains(e.target));
       if (!headerRef?.current?.contains(e.target)) {
         setLoading(false);
       }
@@ -102,6 +101,14 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
     router.push("/projects");
   };
 
+  const onProfilePicClick = () => {
+    if (!loading) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }
+
   const rightMenuClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
     setIsDesignSelected((prev: any) => !prev);
@@ -112,23 +119,22 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
     } else if (e.currentTarget.id === "Reality") {
       toolInstance.toolName = "viewMode";
       toolInstance.toolAction = "Reality";
-    } else if (e.currentTarget.id === "compareDesign") {
-      //console.log("CAptured....");
-      toolInstance.toolName = "compareDesign";
-      toolInstance.toolAction = isCompareDesign
-        ? "closeCompare"
-        : "showCompare";
-      setIsCompareDesign(isCompareDesign ? false : true);
-      setIsCompareReality(false);
-    } else if (e.currentTarget.id === "compareReality") {
-      //console.log("CAptured....");
-      toolInstance.toolName = "compareReality";
-      toolInstance.toolAction = isCompareReality
-        ? "closeCompare"
-        : "showCompare";
-      setIsCompareReality(isCompareReality ? false : true);
-      setIsCompareDesign(false);
     }
+    // else if (e.currentTarget.id === "compareDesign") {
+    //   toolInstance.toolName = "compareDesign";
+    //   toolInstance.toolAction = isCompareDesign
+    //     ? "closeCompare"
+    //     : "showCompare";
+    //   setIsCompareDesign(isCompareDesign ? false : true);
+    //   setIsCompareReality(false);
+    // } else if (e.currentTarget.id === "compareReality") {
+    //   toolInstance.toolName = "compareReality";
+    //   toolInstance.toolAction = isCompareReality
+    //     ? "closeCompare"
+    //     : "showCompare";
+    //   setIsCompareReality(isCompareReality ? false : true);
+    //   setIsCompareDesign(false);
+    // }
 
     toolClicked(toolInstance);
   };
@@ -143,6 +149,7 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
               onClick={goToProjectsList}
               src={constructnLogo}
               alt="Constructn Logo"
+              data-testid="constructn-logo"
             />
           </HeaderLogoImageContainer>
           {showBreadcrumbs && <DividerIcon src={headerLogSeparator} alt="" />}
@@ -155,6 +162,7 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
                 onClick={rightMenuClickHandler}
                 toggleStatus={isDesignSelected}
                 id="Design"
+                data-testid="design-button"
               >
                 Design
               </HeaderToggleButtonOne>
@@ -162,6 +170,7 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
                 onClick={rightMenuClickHandler}
                 toggleStatus={!isDesignSelected}
                 id="Reality"
+                data-testid="reality-button"
               >
                 Reality
               </HeaderToggleButtonOne>
@@ -193,15 +202,9 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
               alt="Profile Image"
             /> */}
             <ProfileImgIcon
-              onClick={() => {
-                if (!loading) {
-                  setLoading(true);
-                } else {
-                  setLoading(false);
-                }
-              }}
+              onClick={onProfilePicClick}
               src={ImgProfile}
-              alt="Profile Image"
+              alt="Profile Image Icon"
             />
           </HeaderProfileImageContainer>
           <HeaderNotificationImageContainer>
@@ -234,9 +237,9 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
               <hr className="border-gray-700" />
               <li
                 className="font-medium cursor-pointer"
-                onClick={() => userLogOut()}
+                onClick={userLogOut}
               >
-                <div className="flex items-center justify-center transform transition-colors duration-200 ">
+                <div className="flex items-center justify-center transform transition-colors duration-200 " data-testid="logout-button">
                   <div className="mr-3 ">
                     <FontAwesomeIcon
                       icon={faRightFromBracket}
