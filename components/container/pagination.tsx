@@ -25,7 +25,7 @@ const Pagination: React.FC<IProps> = ({ currentSnapshot, snapshotList, getSnapsh
         </div>
         <div className="flex items-center ">
           <div className=" flex text-sm">
-            <p>{oldDate && Moment(oldDate).format('Do MMM YY')}</p>
+            <p>{oldDate && Moment(oldDate.replace(/-/g, '/')).format('Do MMM YY')}</p>
           </div>
           {snapshotList &&
             snapshotList.length > 0 &&
@@ -58,7 +58,7 @@ const Pagination: React.FC<IProps> = ({ currentSnapshot, snapshotList, getSnapsh
             })}
 
           <div className="flex text-sm items-center ml-1 ">
-            <p>{newDate && Moment(newDate).format('Do MMM YY')} </p>
+            <p>{newDate && Moment(newDate.replace(/-/g, '/')).format('Do MMM YY')} </p>
           </div>
         </div>
 

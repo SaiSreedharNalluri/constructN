@@ -63,6 +63,7 @@ import {
   ContentError,
   ContentErrorSpan,
   NoMatchDiv,
+  CustomBox,
 } from "./IssueListStyles";
 
 import _ from "lodash";
@@ -425,133 +426,70 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
           </MiniHeaderContainer>
 
           <BodyContainer>
-            {searchingOn ? (
-              <Box sx={{ marginTop: "10px" }}>
-                {filteredIssuesList.length ? (
-                  filteredIssuesList.map((val: any, index: number) => {
-                    return (
-                      <div key={index}>
-                        <BodyInfo
-                          onClick={() => {
-                            handleViewIssue(val);
-                          }}
-                        >
-                          <FirstHeader>
-                            <Image
-                              src={
-                                val.type === "RFI"
-                                  ? RFIList
-                                  : val.type === "Safety"
-                                  ? HourglassIcon
-                                  : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : val.type === "Clash"
-                                  ? SubmittalList
-                                  : val.type === "Commissioning"
-                                  ? commission
-                                  : val.type === "Building code"
-                                  ? HourglassIcon
-                                  : val.type === "Design"
-                                  ? designIcon
-                                  : val.type === "Submittals"
-                                  ? SubmittalList
-                                  : ""
-                              }
-                              alt="Arrow"
-                            />
-                            <BodyContTitle>
-                              {val.type} (#{val._id})
-                            </BodyContTitle>
-                          </FirstHeader>
+            <CustomBox searchingOn={searchingOn}>
+              {filteredIssuesList.length ? (
+                filteredIssuesList.map((val: any, index: number) => {
+                  return (
+                    <div key={index}>
+                      <BodyInfo
+                        onClick={() => {
+                          handleViewIssue(val);
+                        }}
+                      >
+                        <FirstHeader>
+                          <Image
+                            src={
+                              val.type === "RFI"
+                                ? RFIList
+                                : val.type === "Safety"
+                                ? HourglassIcon
+                                : val.type === "Transmittals"
+                                ? TransmittalList
+                                : val.type === "Clash"
+                                ? SubmittalList
+                                : val.type === "Commissioning"
+                                ? commission
+                                : val.type === "Building code"
+                                ? HourglassIcon
+                                : val.type === "Design"
+                                ? designIcon
+                                : val.type === "Submittals"
+                                ? SubmittalList
+                                : ""
+                            }
+                            alt="Arrow"
+                          />
+                          <BodyContTitle>
+                            {val.type} (#{val._id})
+                          </BodyContTitle>
+                        </FirstHeader>
 
-                          <SecondHeader>
-                            <div>{val.priority} Priority</div>
-                          </SecondHeader>
+                        <SecondHeader>
+                          <div>{val.priority} Priority</div>
+                        </SecondHeader>
 
-                          <ThirdHeader>
-                            <div>{val.assignees[0].firstName}</div>
-                            <DueDateDiv>
-                              Due by {Moment(val.dueDate).format("DD MMM 'YY")}
-                            </DueDateDiv>
-                          </ThirdHeader>
-                        </BodyInfo>
-                        <HorizontalLine></HorizontalLine>
-                      </div>
-                    );
-                  })
-                ) : (
-                  // <MessageDiv>
-                  //   <p>No issue matches the search</p>
-                  // </MessageDiv>
+                        <ThirdHeader>
+                          <div>{val.assignees[0].firstName}</div>
+                          <DueDateDiv>
+                            Due by {Moment(val.dueDate).format("DD MMM 'YY")}
+                          </DueDateDiv>
+                        </ThirdHeader>
+                      </BodyInfo>
+                      <HorizontalLine></HorizontalLine>
+                    </div>
+                  );
+                })
+              ) : (
+                // <MessageDiv>
+                //   <p>No issue matches the search</p>
+                // </MessageDiv>
 
-                  <NoMatchDiv>
-                    <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
-                    <MessageDivShowErr>No result found</MessageDivShowErr>
-                  </NoMatchDiv>
-                )}
-              </Box>
-            ) : (
-              <Box>
-                {filteredIssuesList.length ? (
-                  filteredIssuesList.map((val: any, index: number) => {
-                    return (
-                      <div key={index}>
-                        <BodyInfo
-                          onClick={() => {
-                            handleViewIssue(val);
-                          }}
-                        >
-                          <FirstHeader>
-                            <Image
-                              src={
-                                val.type === "RFI"
-                                  ? RFIList
-                                  : val.type === "Safety"
-                                  ? HourglassIcon
-                                  : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : val.type === "Clash"
-                                  ? SubmittalList
-                                  : val.type === "Commissioning"
-                                  ? commission
-                                  : val.type === "Building code"
-                                  ? HourglassIcon
-                                  : val.type === "Design"
-                                  ? designIcon
-                                  : val.type === "Submittals"
-                                  ? SubmittalList
-                                  : ""
-                              }
-                              alt="Arrow"
-                            />
-                            <BodyContTitle>
-                              {val.type} (#{val._id})
-                            </BodyContTitle>
-                          </FirstHeader>
-
-                          <SecondHeader>
-                            <div>{val.priority} Priority</div>
-                          </SecondHeader>
-
-                          <ThirdHeader>
-                            <div>{val.assignees[0].firstName}</div>
-                            <DueDateDiv>
-                              Due by {Moment(val.dueDate).format("DD MMM 'YY")}
-                            </DueDateDiv>
-                          </ThirdHeader>
-                        </BodyInfo>
-                        <HorizontalLine></HorizontalLine>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <NoMatchDiv>
-                    <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
-                    <MessageDivShowErr>No result found</MessageDivShowErr>
-                  </NoMatchDiv>
-                )}
-              </Box>
-            )}
+                <NoMatchDiv>
+                  <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+                  <MessageDivShowErr>No result found</MessageDivShowErr>
+                </NoMatchDiv>
+              )}
+            </CustomBox>
           </BodyContainer>
 
           {openIssueDetail && (

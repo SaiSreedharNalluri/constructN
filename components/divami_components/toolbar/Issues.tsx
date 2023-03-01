@@ -65,7 +65,8 @@ const Issues = ({
   closeIssueDetails,
   setIssueList,
   getIssues,
-  handleOnIssueSort
+  handleOnIssueSort,
+  issueSubmit,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -183,7 +184,8 @@ const Issues = ({
         .then((response) => {
           if (response.success === true) {
             toast(" Issue Created Successfully");
-            issueSubmit(response.result);
+            issueSubmitFn(response.result);
+            // issueSubmit(response.result)
           } else {
             toast(`Something went wrong`);
           }
@@ -210,11 +212,12 @@ const Issues = ({
     }
   }, [openIssueDetails, contextInfo?.id]);
 
-  const issueSubmit = (formdata: any) => {
-    issuesList.push(formdata);
+  const issueSubmitFn = (formdata: any) => {
+    // issuesList.push(formdata);
     issueMenuInstance.toolAction = "issueCreateSuccess";
     issueMenuClicked(issueMenuInstance);
     closeIssueCreate();
+    issueSubmit(formdata);
   };
   const openIssueCreateFn = () => {
     //setCreateOverlay(true);
@@ -253,7 +256,7 @@ const Issues = ({
     setOpenCreateIssue(issueOpenDrawer);
   }, [issueOpenDrawer]);
   return (
-    <div>
+    <>
       <IssueBox>
         <IssueTitle>Issues:</IssueTitle>
 
@@ -355,9 +358,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => { }}
+            handleOnSort={() => {}}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => { }}
+            clickIssueEditSubmit={() => {}}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}
@@ -408,7 +411,7 @@ const Issues = ({
           />
         </Drawer>
       )}
-    </div>
+    </>
   );
 };
 

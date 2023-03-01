@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import {
-  ChildrenEntity,
-  IStructure,
-  IStructures,
-} from "../../models/IStructure";
+import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import Treelist from "./treeList";
 import { useRouter } from "next/router";
 import { AxiosResponse } from "axios";
-import { getStructureHierarchy } from "../../services/structure";
-import ProjectHierarchy from "../divami_components/project-hierarchy/ProjectHierarchy";
+import {
+  getStructureHierarchy,
+  getStructureList,
+} from "../../services/structure";
 import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
+import ProjectHierarchy from "../divami_components/project-hierarchy/ProjectHierarchy";
+
 interface IProps {
   getStructureData: (structure: ChildrenEntity) => void;
   getStructure: (Structure: ChildrenEntity) => void;
