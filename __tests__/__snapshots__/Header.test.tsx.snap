@@ -1,0 +1,177 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header should not render the Design Button when not passsing toolClicked prop 1`] = `
+<div>
+  <div
+    class="css-17upbst"
+  >
+    <div
+      class="css-70qvj9"
+    >
+      <div
+        class="css-t8zu8z"
+      >
+        <img
+          alt="Constructn Logo"
+          data-nimg="1"
+          data-testid="constructn-logo"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+      </div>
+    </div>
+    <div
+      class="css-c67lzo"
+    >
+      <div
+        class="css-e3q2mi"
+      >
+        <img
+          alt="Profile Image Icon"
+          class="css-4g6ai3"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+      </div>
+      <div
+        class="css-e3q2mi"
+      >
+        <img
+          alt="Profile Image"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+      </div>
+      <div
+        class="css-e3q2mi"
+      >
+        <img
+          alt="Menu"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Header should render the Header component Logo 1`] = `
+<div>
+  <div
+    class="css-17upbst"
+  >
+    <div
+      class="css-70qvj9"
+    >
+      <div
+        class="css-t8zu8z"
+      >
+        <img
+          alt="Constructn Logo"
+          data-nimg="1"
+          data-testid="constructn-logo"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+      </div>
+    </div>
+    <div
+      class="css-c67lzo"
+    >
+      <div
+        class="css-d5damw"
+      >
+        <button
+          class="css-1efwal5"
+          data-testid="design-button"
+          id="Design"
+        >
+          Design
+        </button>
+        <button
+          class="css-1sde0mq"
+          data-testid="reality-button"
+          id="Reality"
+        >
+          Reality
+        </button>
+      </div>
+      <div
+        class="css-e3q2mi"
+      >
+        <img
+          alt="Profile Image Icon"
+          class="css-4g6ai3"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+      </div>
+      <div
+        class="css-e3q2mi"
+      >
+        <img
+          alt="Profile Image"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+      </div>
+      <div
+        class="css-e3q2mi"
+      >
+        <img
+          alt="Menu"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

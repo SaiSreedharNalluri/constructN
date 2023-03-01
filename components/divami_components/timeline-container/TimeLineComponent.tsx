@@ -42,13 +42,13 @@ const TimeLineComponent: React.FC<IProps> = ({
     snapshotHandler(snapshot);
   };
 
-  const getSnapshotDate = () => {
-    if (currentSnapshot) {
-      return Moment(currentSnapshot.date).format("Do MMM YYYY");
-    } else {
-      return "No Reality";
-    }
-  };
+  // const getSnapshotDate = () => {
+  //   if (currentSnapshot) {
+  //     return Moment(currentSnapshot.date).format("Do MMM YYYY");
+  //   } else {
+  //     return "No Reality";
+  //   }
+  // };
 
   useEffect(() => {
     setCurrentSnapshot(snapshotList[page - 1]);
@@ -89,6 +89,7 @@ const TimeLineComponent: React.FC<IProps> = ({
           <SelectedTimeLine
             style={{ bottom: bottomNav ? "" : 0 }}
             onClick={toggleTimeline}
+            data-testid={"selected-timeline"}
           >
             {Moment(currentSnapshot?.date).format("DD MMM YYYY")}
           </SelectedTimeLine>
@@ -111,6 +112,7 @@ const TimeLineComponent: React.FC<IProps> = ({
                     count={snapshotList?.length}
                     page={page}
                     onChange={handleChange}
+                    data-testid={"page"}
                     renderItem={(item: any) => (
                       <PaginationItem
                         slots={{
@@ -127,6 +129,7 @@ const TimeLineComponent: React.FC<IProps> = ({
                   {!isNaN(page) ? (
                     <CustomCalender
                       onChange={(e: any) => handleChange(e, 1)}
+                      data-testid="calender"
                       shouldDisableDate={disableWeekends}
                       hideTextField
                       data={{
