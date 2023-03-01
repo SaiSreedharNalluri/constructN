@@ -153,6 +153,7 @@ const Editproject: React.FC = () => {
       .then((response) => {
         if (response?.success === true) {
           toast.success(response?.message);
+          setProjectUsers(response?.result)
         }
       })
       .catch((error) => {
@@ -176,7 +177,7 @@ const Editproject: React.FC = () => {
       .then((response) => {
         if (response.success === true) {
           toast.success('Project details updated sucessfully');
-          window.location.reload();
+         setProjectData(response.result)
         }
       })
       .catch((error) => {
@@ -190,7 +191,7 @@ const Editproject: React.FC = () => {
       .then((response) => {
         if (response?.success === true) {
           toast.success(response?.message);
-          window.location.reload();
+         setProjectUsers(response?.result)
         }
       })
       .catch((error) => {
