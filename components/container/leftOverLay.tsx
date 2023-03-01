@@ -39,7 +39,6 @@ const LeftOverLay: React.FC<IProps> = ({
   useEffect(() => {
     setState(treeData)
   }, [treeData])
-
   const schema = Yup.object().shape({
     searchQuery: Yup.string()
       .required("A search query is required")
