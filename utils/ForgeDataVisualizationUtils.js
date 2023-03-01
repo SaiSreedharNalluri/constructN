@@ -381,14 +381,16 @@ export class ForgeDataVisualization {
 
     handleSelection(tagId) {
         console.log("Inside handle selection : ", tagId);
-        const viewablesToUpdate = [tagId];
-        this.dataVizExtn.invalidateViewables(viewablesToUpdate, (viewable) => {
-            console.log("Inside invalidate for selection : ", viewable);
-            return {
-                scale: 2.0, // Double the viewable size
-                url: "/icons/issuesInViewer.svg"
-            };
-        });
+        this.dataVizExtn.clearHighlightedViewables();
+        this.dataVizExtn.highlightViewables(tagId);
+        // const viewablesToUpdate = [tagId];
+        // this.dataVizExtn.invalidateViewables(viewablesToUpdate, (viewable) => {
+        //     console.log("Inside invalidate for selection : ", viewable);
+        //     return {
+        //         scale: 2.0, // Double the viewable size
+        //         url: "/icons/issuesInViewer.svg"
+        //     };
+        // });
     }
 
     passToViewerHandler(event) {
