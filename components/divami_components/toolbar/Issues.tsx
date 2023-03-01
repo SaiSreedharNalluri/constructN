@@ -300,7 +300,7 @@ const Issues = ({
 
   console.log(selectedIssue, "selectedIssueselectedIssue");
   return (
-    <div>
+    <>
       <IssueBox>
         <IssueTitle>Issues:</IssueTitle>
 
@@ -455,7 +455,7 @@ const Issues = ({
           />
         </Drawer>
       )}
-    </div>
+    </>
   );
 };
 

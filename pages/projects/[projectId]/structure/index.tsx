@@ -1,4 +1,5 @@
 import { styled } from "@mui/system";
+import { AxiosResponse } from "axios";
 import { getCookie } from "cookies-next";
 import _ from "lodash";
 import Moment from "moment";
@@ -33,15 +34,10 @@ import {
   getIssuesTypes,
 } from "../../../../services/issue";
 import { getProjectDetails } from "../../../../services/project";
-import { getStructureList } from "../../../../services/structure";
-import {
-  deleteTask,
-  getTasksList,
-  getTasksPriority,
-  getTaskStatus,
-} from "../../../../services/task";
+import { getStructureHierarchy, getStructureList } from "../../../../services/structure";
+import { deleteTask, getTasksList, getTasksPriority, getTaskStatus } from "../../../../services/task";
 
-interface IProps {}
+interface IProps { }
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -119,6 +115,12 @@ const Index: React.FC<IProps> = () => {
   const [expanded, setExpanded] = useState<string[]>([]);
   const [openIssueDetails, setOpenIssueDetails] = useState(false);
   const [openTaskDetails, setOpenTaskDetails] = useState(false);
+  const [breadCrumbsData, setBreadCrumbsData] = useState<any>([]);
+
+  useEffect(() => {
+    setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
+  }, [project]);
+
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
   };
@@ -164,7 +166,8 @@ const Index: React.FC<IProps> = () => {
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
     let myTool: ITools = { toolName: "task", toolAction: "taskCreated" };
-    toolClicked(myTool);
+    setTasksList(structuredClone(tasksList));
+    // toolClicked(myTool);
     closeTaskCreate();
   };
 
@@ -285,10 +288,33 @@ const Index: React.FC<IProps> = () => {
     }
   }, [router.isReady, router.query.projectId]);
 
+  const getNodeDataById = (id: string) => {
+    console.log("finding structure: ", id, structuresList)
+    return structuresList.find((e) => {
+      if (e._id === id) {
+        return e;
+      }
+    });
+  }
+
+  const getBreadCrumbsData = (structure: any) => {
+    const dataB: any[] = []
+    const getBreadCrumbs = (NodeData: any) => {
+      dataB.unshift(NodeData);
+      const struct = NodeData.parent ? getNodeDataById(NodeData.parent) : null;
+      if (struct) {
+        getBreadCrumbs(struct);
+      }
+    };
+    getBreadCrumbs(structure);
+    return dataB;
+  }
+
   const getStructureData = (structure: ChildrenEntity) => {
     setStructure(getCurrentStructureFromStructureList(structure));
     getIssues(structure._id);
     getTasks(structure._id);
+    setBreadCrumbsData((prev: any) => [prev[0], ...getBreadCrumbsData(structure)]);
   };
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
@@ -299,7 +325,7 @@ const Index: React.FC<IProps> = () => {
         return e;
       }
     });
-    console.log("Selected structure: ", currentStructure?.name);
+    console.log("Selected structure: ", structuresList, currentStructure);
     return currentStructure;
   };
 
@@ -356,11 +382,9 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${
-                  structure?._id
-                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
-                  currentProjectId as string
-                }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
+                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
+                  }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -964,7 +988,7 @@ const Index: React.FC<IProps> = () => {
     setTaskFilterState({
       isFilterApplied: true,
       filterData: formData,
-      numberOfFilters: 3,
+      numberOfFilters: count,
     });
   };
 
@@ -1059,19 +1083,41 @@ const Index: React.FC<IProps> = () => {
         toast.error(error.message);
       });
   };
-  const getBreadCrumbs = () => {
-    //let structTemp :IStructure = structure;
-    // let outputSting : string = structure?.name || '';
-    if (structure === undefined) {
-      return "";
+
+  const handleBreadCrumbClick = (node: any, index: number) => {
+    console.log(node, "clicked node", breadCrumbsData, index);
+    window.localStorage.setItem("nodeData", JSON.stringify(node));
+    const expandedNodes = breadCrumbsData.map((e: any) => e._id);
+    window.localStorage.setItem("expandedNodes", JSON.stringify(expandedNodes.slice(0, index + 1)));
+    setSelected(node._id);
+    setExpanded(expandedNodes.slice(0, index + 2));
+    getStructureData(node)
+    setHierarchy(true);
+  }
+
+  const [selector, setSelector] = useState("");
+  let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
+  let [stateFilter, setStateFilter] = useState<ChildrenEntity[]>([]);
+  useEffect(() => {
+    if (router.isReady) {
+      if (router.query.structId !== undefined)
+        setSelector(router.query.structId.toString());
+      getStructureHierarchy(router.query.projectId as string)
+        .then((response: AxiosResponse<any>) => {
+          setState([...response.data.result]);
+          setStateFilter([...response.data.result]);
+          if (selector.length < 1) setSelector(response.data.result[0]._id);
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
     }
-    return " | " + project?.name + " / " + structure?.name;
-  };
+  }, [router.isReady, router.query.projectId, router.query.structId]);
 
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
-        <Header toolClicked={toolClicked} viewMode={currentViewMode} />
+        <Header toolClicked={toolClicked} viewMode={currentViewMode} showBreadcrumbs breadCrumbData={breadCrumbsData} handleBreadCrumbClick={handleBreadCrumbClick} />
         {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
       <div className="flex ">
@@ -1084,32 +1130,34 @@ const Index: React.FC<IProps> = () => {
             <div
               style={{ overflow: "hidden" }}
               ref={leftRefContainer}
-              className={` ${
-                leftNav ? "visible" : "hidden"
-              }  absolute z-10 border border-gray-300 `}
+              className={` ${leftNav ? "visible" : "hidden"
+                }  absolute z-10 border border-gray-300 `}
             >
-              <div>
-                <LeftOverLay
-                  getStructureData={getStructureData}
-                  handleNodeSelection={handleNodeSelection}
-                  handleNodeExpand={handleNodeExpand}
-                  selectedNodes={selected}
-                  expandedNodes={expanded}
-                  setHierarchy={setHierarchy}
-                  getStructure={(structureData) => {
-                    if (structure === undefined) {
-                      setStructure(
-                        getCurrentStructureFromStructureList(structureData)
-                      );
+              {/* <div>
+                <>
+                  {console.log(selected, "structureData")}
+                  <LeftOverLay
+                    getStructureData={getStructureData}
+                    handleNodeSelection={handleNodeSelection}
+                    handleNodeExpand={handleNodeExpand}
+                    selectedNodes={selected}
+                    expandedNodes={expanded}
+                    setHierarchy={setHierarchy}
+                    getStructure={(structureData) => {
+                      if (structure === undefined) {
+                        setStructure(
+                          getCurrentStructureFromStructureList(structureData)
+                        );
 
-                      // setStructure(structureData);
-                      getIssues(structureData._id);
+                        // setStructure(structureData);
+                        getIssues(structureData._id);
 
-                      getTasks(structureData._id);
-                    }
-                  }}
-                ></LeftOverLay>
-              </div>
+                        getTasks(structureData._id);
+                      }
+                    }}
+                  ></LeftOverLay>
+                </>
+              </div> */}
             </div>
           }
         </div>
@@ -1139,9 +1187,8 @@ const Index: React.FC<IProps> = () => {
                 <div
                   style={{ overflow: "hidden" }}
                   ref={leftRefContainer}
-                  className={`${
-                    hierarchy ? "visible" : "hidden"
-                  }  absolute z-10 border  white-bg projHier `}
+                  className={`${hierarchy ? "visible" : "hidden"
+                    }  absolute z-10 border  white-bg projHier `}
                 >
                   <div>
                     <LeftOverLay
@@ -1160,6 +1207,7 @@ const Index: React.FC<IProps> = () => {
                           getTasks(structureData._id);
                         }
                       }}
+                      treeData={state}
                     ></LeftOverLay>
                   </div>
                 </div>

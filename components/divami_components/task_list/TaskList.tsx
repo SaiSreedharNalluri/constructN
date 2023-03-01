@@ -43,6 +43,7 @@ import {
   CloseIcon,
   ContentError,
   ContentErrorSpan,
+  CustomBox,
   CustomSearchField,
   DividerIcon,
   DownloadIcon,
@@ -404,13 +405,15 @@ const CustomTaskListDrawer = (props: any) => {
 
                   <SecondDividerIcon src={DividerSvg} alt="" />
 
-                  <IconContainer
-                    src={FilterInActive}
-                    alt="Arrow"
-                    onClick={() => {
-                      handleViewTaskList();
-                    }}
-                  />
+                  {!taskFilterState.isFilterApplied ? (
+                    <IconContainer
+                      src={FilterInActive}
+                      alt="Arrow"
+                      onClick={() => {
+                        handleViewTaskList();
+                      }}
+                    />
+                  ) : null}
 
                   <CSVLink
                     data={getDownloadableTaskList(filteredTaskList)}
@@ -430,120 +433,61 @@ const CustomTaskListDrawer = (props: any) => {
           </MiniHeaderContainer>
 
           <BodyContainer>
-            {searchingOn ? (
-              <Box sx={{ marginTop: "10px" }}>
-                {filteredTaskList.length > 0 ? (
-                  filteredTaskList.map((val: any) => {
-                    return (
-                      <>
-                        <BodyInfo
-                          onClick={() => {
-                            handleViewTask(val);
-                          }}
-                        >
-                          <FirstHeader>
-                            <Image
-                              src={
-                                val.type === "RFI"
-                                  ? RFIList
-                                  : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : val.type === "Submittals"
-                                  ? SubmittalList
-                                  : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : ""
-                              }
-                              alt="Arr"
-                            />
-                            <BodyContTitle>
-                              {val.type} (#{val.sequenceNumber})
-                            </BodyContTitle>
-                          </FirstHeader>
-                          <SecondHeader>
-                            <div>{val.priority} Priority</div>
-                          </SecondHeader>
-                          <ThirdHeader>
-                            <div>{val.assignee}</div>
-                            <DueDateDiv>
-                              Due by {Moment(val.due_date).format("DD MMM 'YY")}
-                            </DueDateDiv>
-                          </ThirdHeader>
-                        </BodyInfo>
-                        <HorizontalLine></HorizontalLine>
-                      </>
-                    );
-                  })
-                ) : (
-                  // <MessageDiv>
-                  //   <p>No task matches the search</p>
-                  // </MessageDiv>
-                  <NoMatchDiv>
-                    <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
-                    <MessageDivShowErr>No result found</MessageDivShowErr>
-                  </NoMatchDiv>
-                )}
-              </Box>
-            ) : (
-              <Box>
-                {filteredTaskList.length > 0 ? (
-                  filteredTaskList.map((val: any) => {
-                    return (
-                      <>
-                        <BodyInfo
-                          onClick={() => {
-                            handleViewTask(val);
-                          }}
-                        >
-                          <FirstHeader>
-                            <Image
-                              src={
-                                val.type === "RFI"
-                                  ? RFIList
-                                  : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : val.type === "Submittals"
-                                  ? SubmittalList
-                                  : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : val.type === "Transmittals"
-                                  ? TransmittalList
-                                  : ""
-                              }
-                              alt="Arr"
-                            />
-                            <BodyContTitle>
-                              {val.type} (#{val.sequenceNumber})
-                            </BodyContTitle>
-                          </FirstHeader>
-                          <SecondHeader>
-                            <div>{val.priority} Priority</div>
-                          </SecondHeader>
-                          <ThirdHeader>
-                            {/* <div>{val.assignee}</div> */}
-                            <div>{val.assignees[0].firstName}</div>
-                            <DueDateDiv>
-                              Due by {Moment(val.due_date).format("DD MMM 'YY")}
-                            </DueDateDiv>
-                          </ThirdHeader>
-                        </BodyInfo>
-                        <HorizontalLine></HorizontalLine>
-                      </>
-                    );
-                  })
-                ) : (
-                  // <MessageDiv>
-                  //   <p>No task matches the search</p>
-                  // </MessageDiv>
-                  <NoMatchDiv>
-                    <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
-                    <MessageDivShowErr>No result found</MessageDivShowErr>
-                  </NoMatchDiv>
-                )}
-              </Box>
-            )}
+            <CustomBox searchingOn={searchingOn}>
+              {filteredTaskList.length > 0 ? (
+                filteredTaskList.map((val: any) => {
+                  return (
+                    <>
+                      <BodyInfo
+                        onClick={() => {
+                          handleViewTask(val);
+                        }}
+                      >
+                        <FirstHeader>
+                          <Image
+                            src={
+                              val.type === "RFI"
+                                ? RFIList
+                                : val.type === "Transmittals"
+                                ? TransmittalList
+                                : val.type === "Submittals"
+                                ? SubmittalList
+                                : val.type === "Transmittals"
+                                ? TransmittalList
+                                : val.type === "Transmittals"
+                                ? TransmittalList
+                                : ""
+                            }
+                            alt="Arr"
+                          />
+                          <BodyContTitle>
+                            {val.type} (#{val.sequenceNumber})
+                          </BodyContTitle>
+                        </FirstHeader>
+                        <SecondHeader>
+                          <div>{val.priority} Priority</div>
+                        </SecondHeader>
+                        <ThirdHeader>
+                          <div>{val.assignee}</div>
+                          <DueDateDiv>
+                            Due by {Moment(val.due_date).format("DD MMM 'YY")}
+                          </DueDateDiv>
+                        </ThirdHeader>
+                      </BodyInfo>
+                      <HorizontalLine></HorizontalLine>
+                    </>
+                  );
+                })
+              ) : (
+                // <MessageDiv>
+                //   <p>No task matches the search</p>
+                // </MessageDiv>
+                <NoMatchDiv>
+                  <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+                  <MessageDivShowErr>No result found</MessageDivShowErr>
+                </NoMatchDiv>
+              )}
+            </CustomBox>
           </BodyContainer>
           {/* <LoadMoreContainer>
         <LoadMoreButton>Load More</LoadMoreButton>

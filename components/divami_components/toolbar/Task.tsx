@@ -244,7 +244,7 @@ const Task = ({
     }
   }, [openTaskDetails, contextInfo?.id]);
   const taskSubmitFn = (formdata: any) => {
-    tasksList.push(formdata);
+    // tasksList.push(formdata);
     taskMenuInstance.toolAction = "taskCreateSuccess";
     // setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);

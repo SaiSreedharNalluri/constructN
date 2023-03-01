@@ -311,3 +311,11 @@ export const NoMatchDiv = styled("div")({
 
   // margin:"auto"
 });
+interface ContainerProps {
+  searchingOn: boolean;
+}
+
+
+export const CustomBox = styled(Box)<ContainerProps>`
+  margin-top: ${(props) => (props.searchingOn ? "10px" : "")};
+`;
