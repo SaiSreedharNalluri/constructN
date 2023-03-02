@@ -54,6 +54,7 @@ interface IProps {
   taskFilterState?: any;
   issueFilterState?: any;
   deleteTheIssue?: any;
+  deleteTheAttachment?: any;
 }
 
 const ToolBarMenuWrapper: React.FC<any> = ({
@@ -96,6 +97,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   handleOnTasksSort,
   issueSubmit,
   taskSubmit,
+  selectedType,
+  deleteTheAttachment,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -105,7 +108,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState("hideCompare");
   const [myProject, setMyProject] = useState(currentProject);
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedTypeVal, setSelectedTypeVal] = useState(selectedType);
   const [selectedLayer, setSelectedLayer] = useState("");
   const [openSelectTypes, setOpenSelectTypes] = useState(false);
   const [openSelectLayer, setOpenSelectLayer] = useState(false);
@@ -120,15 +123,17 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   }, [viewMode]);
   useEffect(() => {
     if (myTypesList && Object.keys(myTypesList)?.length) {
-      setSelectedType(Object.keys(myTypesList)[0]);
+      setSelectedTypeVal(Object.keys(myTypesList)[0]);
     }
   }, [myTypesList]);
+  useEffect(() => {
+    setSelectedTypeVal(selectedType);
+  }, [selectedType]);
   const typeChange = (changeOb: any) => {
     setRighttNav(false);
     toolInstance.toolName = "viewType";
     toolInstance.toolAction = changeOb.target.value;
     toolClicked(toolInstance);
-    setSelectedType(changeOb.target.value);
   };
 
   const LayerChange = (changeOb: any, layerLabel: string) => {
@@ -277,7 +282,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           rightMenuClickHandler={rightMenuClickHandler}
           myTypesList={myTypesList}
           typeChange={typeChange}
-          selectedValue={selectedType}
+          selectedValue={selectedTypeVal}
           openList={openSelectTypes}
           setOpenList={setOpenSelectTypes}
           onListClick={() => {
@@ -321,6 +326,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           getIssues={getIssues}
           handleOnIssueSort={handleOnIssueSort}
           issueSubmit={issueSubmit}
+          deleteTheAttachment={deleteTheAttachment}
         />
 
         <Task
@@ -342,6 +348,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           getTasks={getTasks}
           handleOnTasksSort={handleOnTasksSort}
           taskSubmit={taskSubmit}
+          deleteTheAttachment={deleteTheAttachment}
         />
 
         {viewMode === "Reality" ? (

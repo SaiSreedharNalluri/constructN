@@ -341,3 +341,23 @@ export const removeTaskStatusListApi = async (
       throw error.response.data;
     });
 };
+
+export const createTaskWithAttachments = (
+  projectId: string,
+  issueObj: object
+) => {
+  return instance
+    .post(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tasks/addTaskWithScreenshotAndAttachment`,
+      issueObj,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};

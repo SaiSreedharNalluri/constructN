@@ -29,6 +29,7 @@ import {
   MessageDivShowErr,
   LabelContainer,
   // useStyles,
+  StyledSpan
 } from "./StyledComponents";
 import type {
   ProjectHierarchyProps,
@@ -72,10 +73,33 @@ const ProjectHierarchy = ({
     }
   }, [treeViewData]);
 
-  const classes = {};
-  const renderTreeNode = (node: ChildrenEntity) => (
-    <LabelContainer>
-      <span>{node.name}</span>
+  const onLabelClick = (event: any,nodes: any) =>{
+      {
+        console.log("onclickinlable");
+        window.localStorage.setItem("nodeData", JSON.stringify(nodes));
+        getStructureData ? getStructureData(nodes) : null;
+        
+        if (
+          !(
+            nodes.children &&
+            Array.isArray(nodes.children) &&
+            nodes.children.length
+          )
+        ) {
+          setHierarchy(false);
+        }
+      }
+  }
+
+  const renderTreeNode = (node: ChildrenEntity,onLabelClick: any) => (
+    <LabelContainer data-testid="label">
+      <span onClick={(e:any) => onLabelClick(e,node)}>{node.name}</span> 
+      {(node.children?.length) ? 
+      ((expandedNodes.includes(node._id)) ? <span  onClick={(e) => {
+        handleNodeExpand(getAllIds(node))
+      }}>
+      <RemoveIcon style={{cursor:'pointer',fontSize:'14px'}} data-testid={'addIcon'}/></span> : <StyledSpan onClick={(e) => handleNodeExpand(getAllIds(node))}>
+      <AddIcon style={{cursor:'pointer',fontSize:'14px'}} data-testid={'addIcon'}/></StyledSpan>) : ''}
     </LabelContainer>
   );
 
@@ -87,43 +111,21 @@ const ProjectHierarchy = ({
   };
 
 
-  const renderTree = (nodes: ChildrenEntity) => (
+  const renderTree = (nodes: ChildrenEntity,onLabelClick: any) => (
     <>
       <StyledTreeItem
-        needClick={nodes?.children && nodes?.children?.length > 0 ? false : true}
+        // needClick={nodes?.children && nodes?.children?.length > 0 ? false : true}
         key={nodes._id}
         nodeId={nodes._id}
-        label={renderTreeNode(nodes)}
-        onClick={(event: any) => {
-          if (nodes?.children && nodes?.children?.length > 0) {
-            event.preventDefault();
-          }
-          else {
-            {
-              console.log("onclick");
-              window.localStorage.setItem("nodeData", JSON.stringify(nodes));
-              getStructureData ? getStructureData(nodes) : null;
-              if (
-                !(
-                  nodes.children &&
-                  Array.isArray(nodes.children) &&
-                  nodes.children.length
-                )
-              ) {
-                setHierarchy(false);
-              }
-              //setCurrentClickedStruct(structure._id);
-            }
-          }
-
-        }
-        }
+        label={renderTreeNode(nodes,onLabelClick)}
+        data-testid={'treeItem'}
         style={{ borderBottom: "1px solid #D9D9D9" }}
       >
         {Array.isArray(nodes.children) && nodes.children.length
-          ? nodes.children.map((node) => renderTree(node))
+          ? nodes.children.map((node) => renderTree(node,onLabelClick))
           : null}
       </StyledTreeItem>
+  
     </>
   );
 
@@ -141,9 +143,10 @@ const ProjectHierarchy = ({
     handleNodeExpand(nodeIds);
   };
 
-  const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
-    handleNodeSelection(nodeIds);
-  };
+  // const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
+  //   handleNodeSelection(nodeIds);
+  // };
+
   return (
     <ProjectHierarchyContainer>
       <HeaderLabelContainer>
@@ -164,6 +167,7 @@ const ProjectHierarchy = ({
           onChange={(e: any) => {
             handleSearchResult(e);
           }}
+          data-testid={'search'}          
           // InputProps={{
           //   // ...params.InputProps,
           //   startAdornment: (
@@ -174,6 +178,7 @@ const ProjectHierarchy = ({
           // }}
           InputProps={{
             startAdornment: <Image src={SearchImg} alt="search" />,
+            // ariaLabel:{"search-input"}
           }}
         />
       </SearchContainer>
@@ -187,14 +192,14 @@ const ProjectHierarchy = ({
         ) : (
           <StyledTreeView
             aria-label="rich object"
-            defaultCollapseIcon={<RemoveIcon />}
-            defaultExpandIcon={<AddIcon />}
+            defaultCollapseIcon={<></>}
+            defaultExpandIcon={<></>}
             expanded={expandedNodes}
             selected={selectedNodes}
             onNodeToggle={handleToggle}
-            onNodeSelect={handleSelect}
+          // onNodeSelect={handleSelect}
           >
-            {treeViewData.map((eachNode) => renderTree(eachNode))}
+            {treeViewData.map((eachNode) => renderTree(eachNode,onLabelClick))}
           </StyledTreeView>
         )}
       </TreeViewContainer>

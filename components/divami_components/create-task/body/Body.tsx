@@ -217,7 +217,7 @@ const Body = ({
             if (item.id === "file-upload") {
               return {
                 ...item,
-                defaultValue: editData.attachments,
+                selectedFile: editData.attachments,
               };
             }
             return item;

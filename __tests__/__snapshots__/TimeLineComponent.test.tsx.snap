@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders component unchanged 1`] = `
+<div>
+  <div
+    class="css-y7nvji"
+  >
+    <div
+      class="css-99de4n"
+      data-testid="selected-timeline"
+      style="bottom: 0px;"
+    >
+      06 Jan 2023
+    </div>
+  </div>
+</div>
+`;

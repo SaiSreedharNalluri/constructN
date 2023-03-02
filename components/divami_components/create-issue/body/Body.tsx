@@ -212,7 +212,8 @@ const Body = ({
             if (item.id === "file-upload") {
               return {
                 ...item,
-                defaultValue: editData.attachments,
+                // defaultValue: editData.attachments,
+                selectedFile: editData.attachments,
               };
             }
             if (item.id === "tag-suggestions") {

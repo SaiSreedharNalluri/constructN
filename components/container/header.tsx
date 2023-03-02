@@ -113,7 +113,10 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
               {loading && (
                 <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
                   <ul className="text-white p-4 ">
-                    <li className="font-medium cursor-pointer">
+                    <li
+                      className="font-medium cursor-pointer"
+                      onClick={() => router.push(`/user-account`)}
+                    >
                       <div className="flex items-center justify-center transform transition-colors duration-200">
                         <div className="mr-3">
                           <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>

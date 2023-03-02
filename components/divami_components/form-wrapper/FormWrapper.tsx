@@ -25,7 +25,6 @@ const DoubleFieldContainer = styled("div")({
 
 const FormWrapper = (props: any) => {
   const { config, formState, setFormConfig, validate, setIsValidate } = props;
-  console.log("vak", config);
 
   useEffect(() => {
     if (validate) {
@@ -41,7 +40,6 @@ const FormWrapper = (props: any) => {
             return { ...item, isError: false };
           }
         });
-        console.log(newconfig, "newconfig");
         return newconfig;
       });
       setIsValidate(false);
@@ -106,17 +104,31 @@ const FormWrapper = (props: any) => {
   };
 
   const handleFileUpload = (e: any, id: any) => {
+    let arr: any[] = [];
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
-          let files: any = [];
-          Object.keys(e.target.files).forEach((eachkey) => {
-            files.push(e.target.files[eachkey]);
-          });
-          return {
-            ...item,
-            selectedFile: files,
-          };
+          let files: any = e.target.files;
+          if (item.selectedFile?.length) {
+            const filesnames = item.selectedFile.map((each: any) => each.name);
+            Object.keys(files).forEach((eachkey) => {
+              if (filesnames.indexOf(files[eachkey].name) === -1) {
+                arr.push(files[eachkey]);
+              }
+            });
+            return {
+              ...item,
+              selectedFile: [...item.selectedFile, ...arr],
+            };
+          } else {
+            Object.keys(files).forEach((eachkey) => {
+              arr.push(files[eachkey]);
+            });
+            return {
+              ...item,
+              selectedFile: arr,
+            };
+          }
         }
         return item;
       })

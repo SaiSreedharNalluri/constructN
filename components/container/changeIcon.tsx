@@ -30,6 +30,7 @@ const ChangeIcon: React.FC<IProps> = ({ handleImageUPload }) => {
             <div className="flex w-full mt-2">
               <div className="w-1/2">
                 <input
+                  id="file-upload"
                   type="file"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setFieldValue('file', e.target.files![0]);
