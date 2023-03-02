@@ -81,7 +81,7 @@ const TimeLineComponent: React.FC<IProps> = ({
     },
   };
 
-  console.log(snapshotList, "snaphsot listt");
+  // console.log(snapshotList, "snaphsot listt");
   return (
     <>
       {snapshotList && snapshotList.length > 0 && (

@@ -288,7 +288,7 @@ const Index: React.FC<IProps> = () => {
           setSelected(nodeData?._id || "");
         }
       }
-
+      
       const handler = document.addEventListener("click", closeStructurePage);
       return () => {
         document.removeEventListener("click", closeStructurePage);
