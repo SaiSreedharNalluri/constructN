@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import Header from '../../../../components/container/header';
 import Treelist from '../../../../components/container/treeList';
 import {
-  assignProjectUser,
   getProjectDetails,
   getProjectUsers,
   removeProjectUser,
@@ -148,20 +147,7 @@ const Editproject: React.FC = () => {
       });
     }
   }, [router.isReady, router.query.projectId]);
-  const addProjectUser = (userInfo: object) => {
-    assignProjectUser(userInfo, router.query.projectId as string)
-      .then((response) => {
-        if (response?.success === true) {
-          toast.success(response?.message);
-          setProjectUsers(response?.result)
-        }
-      })
-      .catch((error) => {
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
-  };
+ 
   const updateProjectData = (projectInfo: any) => {
     if (
       projectInfo.latitude != undefined &&
@@ -672,7 +658,7 @@ const Editproject: React.FC = () => {
                   <ProjectUserAdd
                     deassignProjectUser={deassignProjectUser}
                     projectUsers={projectUsers}
-                    addProjectUser={addProjectUser}
+                    setProjectUsers={setProjectUsers}
                     updateUserRole={updateUserRole}
                   />
                 </TabPanel>
