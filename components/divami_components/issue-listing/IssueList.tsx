@@ -317,6 +317,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 }}
                 src={CrossIcon}
                 alt={"close icon"}
+                data-testid="const-custom-drawer-close-icon"
               />
             </TitleContainer>
           </HeaderContainer>
