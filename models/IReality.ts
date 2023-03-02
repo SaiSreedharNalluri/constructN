@@ -3,7 +3,7 @@ export interface IReality {
     job: string;
     capture: string;
     snapshot: string;
-    completedDateTime: Date;
+    completedDateTime: Date | string;
     status: string;
     type: string;
     mode: string;
