@@ -180,7 +180,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady && router.query?.projectId) {
       getIssuesPriority(router.query.projectId as string)
         .then((response) => {
           if (response.success === true) {
@@ -297,7 +297,6 @@ const Index: React.FC<IProps> = () => {
   }, [router.isReady, router.query.projectId]);
 
   const getNodeDataById = (id: string) => {
-    console.log("finding structure: ", id, structuresList);
     return structuresList.find((e) => {
       if (e._id === id) {
         return e;
@@ -329,14 +328,11 @@ const Index: React.FC<IProps> = () => {
   };
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
-    //console.log('Loaded structures: ', structuresList);
     let currentStructure = structuresList.find((e) => {
-      //console.log('finding structure: ', e._id);
       if (e._id === structure._id) {
         return e;
       }
     });
-    console.log("Selected structure: ", structuresList, currentStructure);
     return currentStructure;
   };
 
@@ -348,7 +344,6 @@ const Index: React.FC<IProps> = () => {
     Object.keys(realityMap).map((key) => {
       currentViewLayers.push(key);
     });
-    console.log("change triggered", realityMap);
   };
 
   const updatedSnapshot = (snapshot: ISnapshot) => {
@@ -357,7 +352,6 @@ const Index: React.FC<IProps> = () => {
 
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
-    console.log("change triggered", designMap);
   };
 
   const activeClass = (e: any) => {
@@ -425,7 +419,6 @@ const Index: React.FC<IProps> = () => {
   };
 
   const onChangeData = () => {
-    console.log("leftnavclick");
     if (leftNav) {
       setLeftNav(false);
     } else {
@@ -493,17 +486,14 @@ const Index: React.FC<IProps> = () => {
       case "addViewLayer":
         newLayers.push(toolInstance.toolAction);
         setViewLayers(newLayers);
-        console.log(currentViewLayers);
         break;
       case "removeViewLayer":
         newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
         setViewLayers(newLayers);
-        console.log(currentViewLayers);
         break;
       case "compareReality":
       case "compareDesign":
         setClickedTool(toolInstance);
-        //console.log(toolInstance);
         break;
       default:
         break;
@@ -511,7 +501,6 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolResponse = (data: ITools) => {
-    console.log("Got tool REsponse->", data);
     switch (data.toolName) {
       case "viewMode":
         setViewMode(data.toolAction);
@@ -520,8 +509,6 @@ const Index: React.FC<IProps> = () => {
         setViewType(data.toolAction);
       case "Issue":
         if (data.toolAction === "createIssue") {
-          console.log("Open issue Menu");
-
           //   html2canvas(document.getElementById('TheView')||document.body).then(function(canvas) {
           //     //window.open('','_blank')?.document.body.appendChild(canvas);
           //     //canvas.toDataURL('image/png');
@@ -530,7 +517,6 @@ const Index: React.FC<IProps> = () => {
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateIssue(true);
         } else if (data.toolAction === "selectIssue") {
-          console.log("issue selected: ", data.response?.id);
           // issue detail view open logic comes here
           if (data.response != undefined) {
             setCurrentContext(data.response);
@@ -540,11 +526,9 @@ const Index: React.FC<IProps> = () => {
         break;
       case "Task":
         if (data.toolAction === "createTask") {
-          console.log("Open task Menu");
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateTask(true);
         } else if (data.toolAction === "selectTask") {
-          console.log("task selected: ", data.response?.id);
           // task detail view open logic comes here
           if (data.response != undefined) {
             setCurrentContext(data.response);
@@ -559,10 +543,8 @@ const Index: React.FC<IProps> = () => {
   const getIssues = (structureId: string) => {
     getIssuesList(router.query.projectId as string, structureId)
       .then((response) => {
-        console.log("IMPORTANT 4", structureId, response.result);
         setIssueList(response.result);
         setIssueFilterList(response.result);
-        console.log(issuesList, "structuresList", response.result);
       })
       .catch((error) => {
         if (error.success === false) {
@@ -582,16 +564,8 @@ const Index: React.FC<IProps> = () => {
       });
   };
   const getTasks = (structureId: string) => {
-    console.log(
-      router.query.projectId,
-      "PROJECT ID",
-      structureId,
-      "STRUCTURE ID",
-      "IMPORTANT 5"
-    );
     getTasksList(router.query.projectId as string, structureId)
       .then((response) => {
-        console.log(response, "IMPORTANT 3");
         setTasksList(response.result);
         setTaskFilterList(response.result);
       })
@@ -632,7 +606,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "Asc DueDate":
-        console.log("sortMethod", sortMethod);
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a: any, b: any) => {
@@ -644,7 +617,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "Dsc DueDate":
-        console.log("sortMethod", sortMethod);
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a: any, b: any) => {
@@ -656,8 +628,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "Asc Priority":
-        console.log("sortMethod", sortMethod);
-
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a, b) => {
@@ -678,8 +648,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "Dsc Priority":
-        console.log("sortMethod", sortMethod);
-
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a, b) => {
@@ -700,7 +668,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "status_asc":
-        console.log("sortMethod", sortMethod);
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a, b) => {
@@ -721,7 +688,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "status_desc":
-        console.log("sortMethod", sortMethod);
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((b, a) => {
@@ -748,12 +714,6 @@ const Index: React.FC<IProps> = () => {
   };
 
   const handleOnTasksSort = (sortMethod: string) => {
-    console.log(
-      "sortMethod-tasks",
-      sortMethod,
-      taskFilterList,
-      "taskFilterList"
-    );
     switch (sortMethod) {
       case "Last Updated":
         setTaskFilterList(tasksList);
@@ -888,13 +848,11 @@ const Index: React.FC<IProps> = () => {
         setTasksList(taskFilterList);
         break;
       default:
-        console.log("Not Sorted");
         break;
     }
   };
 
   const handleOnIssueFilter = (formData: any) => {
-    console.log("formdata", formData);
     const result = issueFilterList.filter(
       (item: Issue) =>
         (formData.issueTypeData.includes(item.type) ||
@@ -933,7 +891,6 @@ const Index: React.FC<IProps> = () => {
       numberOfFilters: count,
     });
   };
-  console.log(issuesList, "issuesListissuesList");
   const closeFilterOverlay = () => {
     setIssueList(issueFilterList);
     setIssueFilterState({
@@ -966,7 +923,6 @@ const Index: React.FC<IProps> = () => {
   // };
 
   const handleOnTaskFilter = (formData: any) => {
-    console.log("structure/index.tsx", formData, taskFilterList);
     const result = taskFilterList.filter(
       (item) =>
         (formData.taskType.includes(item.type) ||
@@ -1121,7 +1077,6 @@ const Index: React.FC<IProps> = () => {
   };
 
   const handleBreadCrumbClick = (node: any, index: number) => {
-    console.log(node, "clicked node", breadCrumbsData, index);
     window.localStorage.setItem("nodeData", JSON.stringify(node));
     const expandedNodes = breadCrumbsData.map((e: any) => e._id);
     window.localStorage.setItem(

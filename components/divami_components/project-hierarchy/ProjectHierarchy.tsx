@@ -86,19 +86,19 @@ const ProjectHierarchy = ({
     setSearch(true);
   };
 
-
   const renderTree = (nodes: ChildrenEntity) => (
     <>
       <StyledTreeItem
-        needClick={nodes?.children && nodes?.children?.length > 0 ? false : true}
+        needClick={
+          nodes?.children && nodes?.children?.length > 0 ? false : true
+        }
         key={nodes._id}
         nodeId={nodes._id}
         label={renderTreeNode(nodes)}
         onClick={(event: any) => {
           if (nodes?.children && nodes?.children?.length > 0) {
             event.preventDefault();
-          }
-          else {
+          } else {
             {
               handleNodeSelection(nodes._id);
               console.log("onclick");
@@ -116,9 +116,7 @@ const ProjectHierarchy = ({
               //setCurrentClickedStruct(structure._id);
             }
           }
-
-        }
-        }
+        }}
         style={{ borderBottom: "1px solid #D9D9D9" }}
       >
         {Array.isArray(nodes.children) && nodes.children.length
@@ -138,7 +136,7 @@ const ProjectHierarchy = ({
   }, [treeViewData]);
 
   const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
-    console.log(nodeIds, "nodeIds")
+    console.log(nodeIds, "nodeIds");
     handleNodeExpand(nodeIds);
   };
 
@@ -179,7 +177,9 @@ const ProjectHierarchy = ({
           }}
         />
       </SearchContainer>
-      <TreeViewContainer style={{ overflow: "auto", height: "63vh" }}>
+      <TreeViewContainer
+        style={{ overflow: "auto", height: `calc(100vh - 300px)` }}
+      >
         {treeViewData.length === 0 ? (
           // "No structures found for this project"
           <ErrorImageDiv>
@@ -194,7 +194,7 @@ const ProjectHierarchy = ({
             expanded={expandedNodes}
             selected={selectedNodes}
             onNodeToggle={handleToggle}
-          // onNodeSelect={handleSelect}
+            // onNodeSelect={handleSelect}
           >
             {treeViewData.map((eachNode) => renderTree(eachNode))}
           </StyledTreeView>
