@@ -15,8 +15,6 @@ import CustomButton from "../custom-button/CustomButton";
 import CustomSelect from "../custom-select/CustomSelect";
 import ActivityLog from "../task_detail/ActivityLog";
 import { toast } from "react-toastify";
-import { updateAttachments, updateTask } from "../../../services/task";
-import CreateTask from "../create-task/CreateTask";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import CreateIssue from "../create-issue/CreateIssue";
 import { ISSUE_FORM_CONFIG } from "../create-issue/body/Constants";
@@ -24,7 +22,10 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
 import router from "next/router";
 import _ from "lodash";
-import { deleteAttachment } from "../../../services/attachments";
+import {
+  createAttachment,
+  deleteAttachment,
+} from "../../../services/attachments";
 import {
   ArrowIcon,
   AssignEditSearchContainer,
@@ -250,6 +251,7 @@ function BasicTabs(props: any) {
     //
   };
 
+  console.log(taskState, "taskstatek");
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
@@ -298,7 +300,6 @@ function BasicTabs(props: any) {
             },
           }}
         >
-          {/* MuiTab-root.Mui-selected */}
           <Tab
             label="Details"
             {...a11yProps(0)}
@@ -312,24 +313,20 @@ function BasicTabs(props: any) {
               fontWeight: "400",
             }}
           />
-          {/* <Tab label="Activity log" {...a11yProps(1)} /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
         <TabOneDiv>
           <FirstHeaderDiv>
             <div></div>
-            {/* <Image
+            <Image
               src={
-                ""
-                // taskState.TabOne.attachments
-                //   ? taskState.TabOne.attachments[0]?.url
-                //   : ""
+                taskState.TabOne.screenshot ? taskState.TabOne.screenshot : ""
               }
               alt=""
               width={400}
               height={400}
-            /> */}
+            />
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
@@ -522,7 +519,7 @@ function BasicTabs(props: any) {
                         <>
                           <AttachedImageDiv className={`detailsImageDiv`}>
                             {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
-                            <AttachedImageTitle>{a}</AttachedImageTitle>
+                            <AttachedImageTitle>{a?.name}</AttachedImageTitle>
 
                             <AttachedImageIcon>
                               <Image src={""} alt="" />
@@ -531,7 +528,7 @@ function BasicTabs(props: any) {
                               src={Delete}
                               alt={"delete icon"}
                               onClick={() => {
-                                deleteTheAttachment(a?._id);
+                                deleteTheAttachment(a?._id, "issue");
                               }}
                               className={`deleteIcon`}
                             />
@@ -548,7 +545,6 @@ function BasicTabs(props: any) {
           <RelatedDiv>
             <RelatedTagTitle>Related Tags</RelatedTagTitle>
             <RelatedTagsButton>
-              {/* {console.log("taskState", taskState)} */}
               {taskState?.TabOne.tags?.map((item: any) => {
                 return (
                   <>
@@ -635,6 +631,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     deleteTheIssue,
     setIssueList,
     getIssues,
+    deleteTheAttachment,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
@@ -646,19 +643,19 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
-    deleteTheIssue(selectedIssue);
+    deleteTheIssue(selectedIssue, onClose);
   };
-  const deleteTheAttachment = (attachmentId: string) => {
-    deleteAttachment(attachmentId)
-      .then((response) => {
-        if (response.success === true) {
-          toast.success(response.message);
-        }
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      });
-  };
+  // const deleteTheAttachment = (attachmentId: string) => {
+  //   deleteAttachment(attachmentId)
+  //     .then((response) => {
+  //       if (response.success === true) {
+  //         toast.success(response.message);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       toast.error(error.message);
+  //     });
+  // };
 
   const DetailsObj = {
     TabOne: {
@@ -715,7 +712,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
-  // console.log(issue)
 
   useEffect(() => {
     let tempObj = {
@@ -723,8 +719,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
       options: selectedIssue?.options,
       priority: selectedIssue?.priority,
       capturedOn: selectedIssue?.createdAt,
-      creator: selectedIssue?.owner,
+      creator: selectedIssue?.owner?.fullName,
       issueDescription: selectedIssue?.description,
+      screenshot: selectedIssue?.screenshot as string,
       attachments: selectedIssue?.attachments,
       assignees: selectedIssue.assignees?.length
         ? `${selectedIssue.assignees[0].fullName}`
@@ -753,7 +750,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       };
     });
   }, [selectedIssue]);
-
+  console.log(selectedIssue, "selectedIssueselectedIssue");
   const taskSubmit = (formData: any) => {
     // const updatedList = issuesList.map((item: any) => {
     //   if (item._id == formData._id){
@@ -772,6 +769,27 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const handleCreateTask = (formData: any) => {
     console.log(formData, "form data at home");
     clickTaskSubmit(formData);
+  };
+
+  const saveEditDetails = async (data: any, projectId: string) => {
+    if (data.title && data.type && data.priority) {
+      editIssue(projectId, data, selectedIssue._id)
+        .then((response) => {
+          if (response.success === true) {
+            toast.success("Issue updated sucessfully");
+            getIssues(currentStructure._id);
+          } else {
+            toast.error("Error updating the issue");
+          }
+          setOpenCreateTask(false);
+        })
+        .catch((error) => {
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+          setOpenCreateTask(false);
+        });
+    }
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
@@ -842,72 +860,34 @@ const CustomIssueDetailsDrawer = (props: any) => {
     const filesArr = formData.filter(
       (item: any) => item.id === "file-upload"
     )[0]?.selectedFile;
-    data.attachments = formData.filter(
-      (item: any) => item.id === "file-upload"
-    )[0]?.selectedFile;
-    console.log("dfsdfsdokkkk", fileformdata, filesArr);
 
-    // const uploadUrl = URL.createObjectURL(filesArr[0]);
     const arr =
       filesArr?.length &&
       filesArr.map((each: any) => {
-        fileformdata.append("file", each);
+        if (!each._id) {
+          fileformdata.append("file", each);
+        }
 
         return {
           ...each,
         };
       });
-    console.log("formData", fileformdata);
-    // if (filesArr?.length) {
-    //   updateAttachments(fileformdata, issue._id)
-    //     .then((response) => {
-    //       if (response.success === true) {
-    //         toast.success("Issue added sucessfully");
-    //         // handleTaskSubmit(formData);
-    //         // taskSubmit(response.result);
-    //         // toolInstance.toolAction = "taskCreateSuccess";
-    //         // console.log(formData);
-    //       } else {
-    //         // toolInstance.toolAction = "taskCreateFail";
-    //         // issueToolClicked(toolInstance);
-    //       }
-    //       setOpenCreateTask(false);
-    //     })
-    //     .catch((error) => {
-    //       // toolInstance.toolAction = "taskCreateFail";
 
-    //       if (error.success === false) {
-    //         toast.error(error?.message);
-    //       }
-    //       setOpenCreateTask(false);
-    //     });
-    // }
-
-    if (data.title && data.type && data.priority) {
-      editIssue(projectId as string, data, selectedIssue._id)
+    if (filesArr?.length) {
+      createAttachment(issue._id, fileformdata)
         .then((response) => {
           if (response.success === true) {
-            toast.success("Issue updated sucessfully");
-            // handleTaskSubmit(formData);
-            // taskSubmit(response.result);
-            // toolInstance.toolAction = "taskCreateSuccess";
-
-            // console.log(formData);
-            console.log(currentStructure, "currentStructure");
-            getIssues(currentStructure._id);
+            toast.success("Attachments uploaded sucessfully");
           } else {
-            // toolInstance.toolAction = "taskCreateFail";
-            // issueToolClicked(toolInstance);
+            toast.error("Error uploading attachments");
           }
-          setOpenCreateTask(false);
+          saveEditDetails(data, projectId);
         })
         .catch((error) => {
-          // toolInstance.toolAction = "taskCreateFail";
-
           if (error.success === false) {
             toast.error(error?.message);
           }
-          setOpenCreateTask(false);
+          saveEditDetails(data, projectId);
         });
     }
   };

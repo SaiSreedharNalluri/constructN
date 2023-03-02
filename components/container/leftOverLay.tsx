@@ -39,21 +39,6 @@ const LeftOverLay: React.FC<IProps> = ({
   useEffect(() => {
     setState(treeData)
   }, [treeData])
-  // useEffect(() => {
-  //   if (router.isReady) {
-  //     if (router.query.structId !== undefined)
-  //       setSelector(router.query.structId.toString());
-  //     getStructureHierarchy(router.query.projectId as string)
-  //       .then((response: AxiosResponse<any>) => {
-  //         setState([...response.data.result]);
-  //         setStateFilter([...response.data.result]);
-  //         if (selector.length < 1) setSelector(response.data.result[0]._id);
-  //       })
-  //       .catch((error) => {
-  //         console.log("error", error);
-  //       });
-  //   }
-  // }, [router.isReady, router.query.projectId, router.query.structId]);
   const schema = Yup.object().shape({
     searchQuery: Yup.string()
       .required("A search query is required")

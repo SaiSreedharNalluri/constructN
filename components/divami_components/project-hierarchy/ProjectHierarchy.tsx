@@ -143,9 +143,10 @@ const ProjectHierarchy = ({
     handleNodeExpand(nodeIds);
   };
 
-  const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
-    handleNodeSelection(nodeIds);
-  };
+  // const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
+  //   handleNodeSelection(nodeIds);
+  // };
+
   return (
     <ProjectHierarchyContainer>
       <HeaderLabelContainer>
@@ -196,7 +197,7 @@ const ProjectHierarchy = ({
             expanded={expandedNodes}
             selected={selectedNodes}
             onNodeToggle={handleToggle}
-            onNodeSelect={handleSelect}
+          // onNodeSelect={handleSelect}
           >
             {treeViewData.map((eachNode) => renderTree(eachNode,onLabelClick))}
           </StyledTreeView>

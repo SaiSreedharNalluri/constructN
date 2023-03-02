@@ -102,6 +102,7 @@ interface IProps {
   issueFilterState?: any;
   getIssues?: any;
   handleOnIssueSort?: any;
+  deleteTheAttachment?: any;
 }
 
 const CustomIssueListDrawer: React.FC<IProps> = ({
@@ -124,6 +125,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   issueFilterState,
   getIssues,
   handleOnIssueSort,
+  deleteTheAttachment,
 }) => {
   const handleClose = () => {
     onClose(true);
@@ -460,7 +462,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                             alt="Arrow"
                           />
                           <BodyContTitle>
-                            {val.type} (#{val._id})
+                            {val.type} (#{val.sequenceNumber})
                           </BodyContTitle>
                         </FirstHeader>
 
@@ -512,6 +514,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 contextInfo={contextInfo}
                 deleteTheIssue={deleteTheIssue}
                 getIssues={getIssues}
+                deleteTheAttachment={deleteTheAttachment}
               />
             </Drawer>
           )}

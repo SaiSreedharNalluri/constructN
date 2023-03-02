@@ -19,7 +19,10 @@ import Clip from "../../../public/divami_icons/clip.svg";
 import Delete from "../../../public/divami_icons/delete.svg";
 import Edit from "../../../public/divami_icons/edit.svg";
 import Send from "../../../public/divami_icons/send.svg";
-import { deleteAttachment } from "../../../services/attachments";
+import {
+  createAttachment,
+  deleteAttachment,
+} from "../../../services/attachments";
 import {
   getTasksList,
   updateAttachments,
@@ -328,17 +331,14 @@ function BasicTabs(props: any) {
         <TabOneDiv>
           <FirstHeaderDiv>
             <div></div>
-            {/* <Image
+            <Image
               src={
-                ""
-                // taskState.TabOne.attachments
-                //   ? taskState.TabOne.attachments[0]?.url
-                //   : ""
+                taskState.TabOne.screenshot ? taskState.TabOne.screenshot : ""
               }
               alt=""
               width={400}
               height={400}
-            /> */}
+            />
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
@@ -528,7 +528,7 @@ function BasicTabs(props: any) {
                         <>
                           <AttachedImageDiv className={`detailsImageDiv`}>
                             {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
-                            <AttachedImageTitle>{a}</AttachedImageTitle>
+                            <AttachedImageTitle>{a?.name}</AttachedImageTitle>
 
                             <AttachedImageIcon>
                               <Image src={""} alt="" />
@@ -537,7 +537,7 @@ function BasicTabs(props: any) {
                               src={Delete}
                               alt={"delete icon"}
                               onClick={() => {
-                                deleteTheAttachment(a?._id);
+                                deleteTheAttachment(a?._id, "task");
                               }}
                               className={`deleteIcon`}
                             />
@@ -641,6 +641,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     contextInfo,
     closeTaskCreate,
     getTasks,
+    deleteTheAttachment,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [footerState, SetFooterState] = useState(false);
@@ -712,8 +713,9 @@ const CustomTaskDetailsDrawer = (props: any) => {
       sequenceNumber: selectedTask.sequenceNumber,
 
       capturedOn: selectedTask.createdAt,
-      creator: selectedTask.owner,
+      creator: selectedTask?.owner?.fullName,
       issueDescription: selectedTask.description,
+      screenshot: selectedTask?.screenshot as string,
       attachments: selectedTask.attachments,
       relatedTags: selectedTask.tags,
       assignees: selectedTask.assignees?.length
@@ -744,13 +746,33 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
   const onDeleteTask = () => {
     setshowPopUp(false);
-    deleteTheTask(selectedTask);
+    deleteTheTask(selectedTask, onClose);
   };
 
-  console.log("taskdede", task);
   const handleCreateTask = (formData: any) => {
     console.log(formData, "form data at home");
     clickTaskSubmit(formData);
+  };
+
+  const saveEditDetails = async (data: any, projectId: string) => {
+    if (data.title && data.type && data.priority) {
+      updateTask(projectId, data, selectedTask._id)
+        .then((response) => {
+          if (response.success === true) {
+            toast.success("Task updated sucessfully");
+            getTasks(currentStructure._id);
+          } else {
+            toast.error("Error updating the task");
+          }
+          setOpenCreateTask(false);
+        })
+        .catch((error) => {
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+          setOpenCreateTask(false);
+        });
+    }
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
@@ -811,71 +833,33 @@ const CustomTaskDetailsDrawer = (props: any) => {
     const filesArr = formData.filter(
       (item: any) => item.id === "file-upload"
     )[0]?.selectedFile;
-    data.attachments = formData.filter(
-      (item: any) => item.id === "file-upload"
-    )[0]?.selectedFile;
-    console.log("dfsdfsdokkkk", fileformdata, filesArr);
-    // const uploadUrl = filesArr[0];
-    // const obj = {
-    //   file: [uploadUrl],
-    // };
-    // const uploadUrl = URL.createObjectURL(filesArr[0]);
-    // if (filesArr?.length) {
-    //   const arr = filesArr.map((each: any) => {
-    //     // fileformdata.append("file", each.name);
-    //     fileformdata.append("file", each);
-    //     return {
-    //       ...each,
-    //     };
-    //   });
-    //   console.log("formData", fileformdata);
 
-    //   updateAttachments(fileformdata, task._id)
-    //     .then((response) => {
-    //       if (response.success === true) {
-    //         toast.success("Task added sucessfully");
-    //         // handleTaskSubmit(formData);
-    //         // taskSubmit(response.result);
-    //         // toolInstance.toolAction = "taskCreateSuccess";
+    const arr =
+      filesArr?.length &&
+      filesArr.map((each: any) => {
+        if (!each._id) {
+          fileformdata.append("file", each);
+        }
 
-    //         // console.log(formData);
-    //       } else {
-    //         // toolInstance.toolAction = "taskCreateFail";
-    //         // issueToolClicked(toolInstance);
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       // toolInstance.toolAction = "taskCreateFail";
-
-    //       if (error.success === false) {
-    //         toast.error(error?.message);
-    //       }
-    //     });
-    // }
-    if (data.title && data.type && data.priority) {
-      updateTask(projectId as string, data, selectedTask._id)
+        return {
+          ...each,
+        };
+      });
+    if (filesArr?.length) {
+      createAttachment(task._id, fileformdata)
         .then((response) => {
           if (response.success === true) {
-            toast.success("Task added sucessfully");
-            // handleTaskSubmit(formData);
-            // taskSubmit(response.result);
-            // toolInstance.toolAction = "taskCreateSuccess";
-
-            // console.log(formData);
-            getTasks(currentStructure._id);
+            toast.success("Attachments uploaded sucessfully");
           } else {
-            // toolInstance.toolAction = "taskCreateFail";
-            // issueToolClicked(toolInstance);
+            toast.error("Error uploading attachments");
           }
-          setOpenCreateTask(false);
+          saveEditDetails(data, projectId);
         })
         .catch((error) => {
-          // toolInstance.toolAction = "taskCreateFail";
-
           if (error.success === false) {
             toast.error(error?.message);
           }
-          setOpenCreateTask(false);
+          saveEditDetails(data, projectId);
         });
     }
   };
@@ -900,17 +884,17 @@ const CustomTaskDetailsDrawer = (props: any) => {
         }
       });
   };
-  const deleteTheAttachment = (attachmentId: string) => {
-    deleteAttachment(attachmentId)
-      .then((response) => {
-        if (response.success === true) {
-          toast.success(response.message);
-        }
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      });
-  };
+  // const deleteTheAttachment = (attachmentId: string) => {
+  //   deleteAttachment(attachmentId)
+  //     .then((response) => {
+  //       if (response.success === true) {
+  //         toast.success(response.message);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       toast.error(error.message);
+  //     });
+  // };
   return (
     <>
       <CustomTaskDrawerContainer>
