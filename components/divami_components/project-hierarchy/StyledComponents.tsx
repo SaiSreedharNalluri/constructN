@@ -167,14 +167,22 @@ interface StyledTreeItemProps {
 
 export const StyledTreeItem = styled(TreeItem)<StyledTreeItemProps>((props) => ({
   padding: 0,
-  pointerEvents: props.needClick ? "auto" : "none",
-  '& .MuiTreeItem-iconContainer': {
-    pointerEvents: "auto",
-  }
+  // pointerEvents: props.needClick ? "auto" : "none",
+  // '& .MuiTreeItem-iconContainer': {
+  //   pointerEvents: "auto",
+  // }
 })) as any;
 
 export const LabelContainer = styled("div")({
-  pointerEvents: "none",
+  // pointerEvents: props.needClick ? "auto" : "none",
+  display: 'flex',
+  justifyContent: 'space-between'
+  
+})
+
+export const StyledSpan = styled("span")({
+  cursor:'pointer',
+  fontSize:'14px'
 })
 
 export const HeaderLabelContainer = styled("div")({
