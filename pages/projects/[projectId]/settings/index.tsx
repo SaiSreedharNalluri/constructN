@@ -682,10 +682,10 @@ const Editproject: React.FC = () => {
                     <div className="px-4 lg:w-3/4 ">
                       <h1 className="">Project Details</h1>
                       <div>
-                      <table className="w-full overflow-y-auto">
+                      <table className="w-full">
                           <thead>
-                          <tr className="bg-gray-300 border-b border-gray-200  uppercase ">
-                              <th className='p-2 '>Id</th>
+                          <tr className="bg-gray-300 border-b border-gray-300 ">
+                              <th className='p-1.5 '>Id</th>
                               <th >Name</th>
                               <th>Type</th>
                               <th>Parent</th>
@@ -693,7 +693,7 @@ const Editproject: React.FC = () => {
                           </thead>
                           <tbody>
                             <tr>                     
-                              <td className="border-b p-1 text-center border-gray-200"> {structureData?._id}</td>
+                              <td className="border-b p-1.5 text-center border-gray-300"> {structureData?._id}</td>
                               <td className="border-b text-center border-gray-200"> {structureData?.name}</td>
                               <td className="border-b text-center border-gray-200"> {structureData?.type}</td>
                               <td className="border-b  text-center border-gray-200"> {structureData?.parent}</td>
