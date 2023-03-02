@@ -56,7 +56,6 @@ const ProjectInfo: React.FC<IProps> = ({
     Location: Yup.array(),
     utm: Yup.string(),
   });
-
   return (
     <React.Fragment>
       <div className="w-full row-span-2 overflow">
@@ -201,9 +200,8 @@ const ProjectInfo: React.FC<IProps> = ({
               <button
                 className="bg-gray-500 rounded hover:bg-gray-300 text-white font-bold py-1 px-2 lg:w-2/12 "
                 type="submit"
-                disabled={isSubmitting}
-              >
-                Submit
+               >
+                Update
               </button>
             </div>
           </Form>

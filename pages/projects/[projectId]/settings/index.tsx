@@ -25,7 +25,7 @@ import {
   addIssuePriorityApi,
   addIssueStatusApi,
   addIssueTypeApi,
-  getIssuesPriority,
+  getIssuesPriorityList,
   getIssueStatusList,
   getIssueTypeList,
   removeIssueStatusItemApi,
@@ -111,11 +111,13 @@ const Editproject: React.FC = () => {
           }
         })
         .catch();
-      getIssuesPriority(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setIssuePriorityList(response.result);
+      getIssuesPriorityList(router.query.projectId as string).then(
+        (response) => {
+          if (response.success === true) {
+            setIssuePriorityList(response.result.priorityList.Issue);
+          }
         }
-      });
+      );
       getTaskPriorityList(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskPriorityList(response.result.priorityList.Task);
@@ -153,6 +155,7 @@ const Editproject: React.FC = () => {
       .then((response) => {
         if (response?.success === true) {
           toast.success(response?.message);
+          setProjectUsers(response?.result);
         }
       })
       .catch((error) => {
@@ -176,7 +179,7 @@ const Editproject: React.FC = () => {
       .then((response) => {
         if (response.success === true) {
           toast.success("Project details updated sucessfully");
-          window.location.reload();
+          setProjectData(response.result);
         }
       })
       .catch((error) => {
@@ -190,7 +193,7 @@ const Editproject: React.FC = () => {
       .then((response) => {
         if (response?.success === true) {
           toast.success(response?.message);
-          window.location.reload();
+          setProjectUsers(response?.result);
         }
       })
       .catch((error) => {
@@ -267,7 +270,7 @@ const Editproject: React.FC = () => {
   const dragIssuePriorityRef: any = useRef();
   const dragOverIssuePriorityRef: any = useRef();
   const handleIssuePriorityUpdate = (e: any) => {
-    let copyListItems = issuePriorityList;
+    let copyListItems = [...issuePriorityList];
     const dragItemContent = copyListItems.splice(
       dragIssuePriorityRef.current,
       1
