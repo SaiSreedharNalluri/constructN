@@ -4,13 +4,6 @@ import { TreeItem, TreeView } from "@mui/lab";
 import { useEffect, useState } from "react";
 import { ChildrenEntity } from "../../../models/IStructure";
 import closeIcon from "../../../public/images/closeIcon.svg";
-import { CustomTextField } from "../custom-textfield/CustomTextField";
-import TextField from "@mui/material/TextField";
-import CustomSearch from "../customSearch";
-// import CustomSearch from '../Common/custom-search/CustomSearch'
-// import CustomSearch from '../common/custom-search/CustomSearch'
-import { mockData } from "./mockData";
-import { InputAdornment } from "@mui/material";
 import SearchImg from "../../../public/images/search.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import {
@@ -29,6 +22,9 @@ import {
   MessageDivShowErr,
   LabelContainer,
   // useStyles,
+  StyledSpan,
+  LabelIcon,
+  LabelText,
 } from "./StyledComponents";
 import type {
   ProjectHierarchyProps,
@@ -51,31 +47,75 @@ const ProjectHierarchy = ({
   expandedNodes,
   setHierarchy,
 }: ProjectHierarchyProps) => {
-  const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>([]);
+  const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>(treeData);
   const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
 
   const handleExpand = () => {
     handleNodeExpand(getAllIds(treeViewData));
   };
 
-  useEffect(() => {
-    setTreeViewData(treeData);
-  }, [treeData]);
+  // useEffect(() => {
+  //   console.log(treeData, "treeData");
 
-  useEffect(() => {
-    if (window.localStorage.getItem("nodeData") && getStructureData) {
-      let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
-      console.log("nodeData", nodeData);
-      if (nodeData && getStructureData) {
-        getStructureData(nodeData);
+  //   setTreeViewData(treeData);
+  // }, [treeData.length]);
+
+  // useEffect(() => {
+  //   if (window.localStorage.getItem("nodeData") && getStructureData) {
+  //     let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
+  //     console.log("nodeData", nodeData);
+  //     // if (nodeData && getStructureData) {
+  //     //   getStructureData(nodeData);
+  //     // }
+  //   }
+  // }, [treeViewData]);
+
+  const onLabelClick = (event: any, nodes: any) => {
+    {
+      console.log("onclickinlable");
+      window.localStorage.setItem("nodeData", JSON.stringify(nodes));
+      getStructureData ? getStructureData(nodes) : null;
+
+      if (
+        !(
+          nodes.children &&
+          Array.isArray(nodes.children) &&
+          nodes.children.length
+        )
+      ) {
+        setHierarchy(false);
       }
     }
-  }, [treeViewData]);
+  };
 
-  const classes = {};
-  const renderTreeNode = (node: ChildrenEntity) => (
-    <LabelContainer>
-      <span>{node.name}</span>
+  const renderTreeNode = (node: ChildrenEntity, onLabelClick: any) => (
+    <LabelContainer data-testid="label">
+      <LabelText onClick={(e: any) => onLabelClick(e, node)}>
+        {node.name}
+      </LabelText>
+      {node.children?.length ? (
+        expandedNodes.includes(node._id) ? (
+          <LabelIcon
+            onClick={(e: any) => {
+              handleNodeExpand(getAllIds(node));
+            }}
+          >
+            <RemoveIcon
+              style={{ cursor: "pointer", fontSize: "14px" }}
+              data-testid={"addIcon"}
+            />
+          </LabelIcon>
+        ) : (
+          <StyledSpan onClick={(e) => handleNodeExpand(getAllIds(node))}>
+            <AddIcon
+              style={{ cursor: "pointer", fontSize: "14px" }}
+              data-testid={"addIcon"}
+            />
+          </StyledSpan>
+        )
+      ) : (
+        <></>
+      )}
     </LabelContainer>
   );
 
@@ -86,41 +126,18 @@ const ProjectHierarchy = ({
     setSearch(true);
   };
 
-  const renderTree = (nodes: ChildrenEntity) => (
+  const renderTree = (nodes: ChildrenEntity, onLabelClick: any) => (
     <>
       <StyledTreeItem
-        needClick={
-          nodes?.children && nodes?.children?.length > 0 ? false : true
-        }
+        // needClick={nodes?.children && nodes?.children?.length > 0 ? false : true}
         key={nodes._id}
         nodeId={nodes._id}
-        label={renderTreeNode(nodes)}
-        onClick={(event: any) => {
-          if (nodes?.children && nodes?.children?.length > 0) {
-            event.preventDefault();
-          } else {
-            {
-              handleNodeSelection(nodes._id);
-              console.log("onclick");
-              window.localStorage.setItem("nodeData", JSON.stringify(nodes));
-              getStructureData ? getStructureData(nodes) : null;
-              if (
-                !(
-                  nodes.children &&
-                  Array.isArray(nodes.children) &&
-                  nodes.children.length
-                )
-              ) {
-                setHierarchy(false);
-              }
-              //setCurrentClickedStruct(structure._id);
-            }
-          }
-        }}
+        label={renderTreeNode(nodes, onLabelClick)}
+        data-testid={"treeItem"}
         style={{ borderBottom: "1px solid #D9D9D9" }}
       >
         {Array.isArray(nodes.children) && nodes.children.length
-          ? nodes.children.map((node) => renderTree(node))
+          ? nodes.children.map((node) => renderTree(node, onLabelClick))
           : null}
       </StyledTreeItem>
     </>
@@ -131,7 +148,6 @@ const ProjectHierarchy = ({
     setSelectedLayers(layersSelected);
     console.log([...layersSelected], "selectedLayers");
     console.log(search);
-    console.log(selectedNodes);
     search ? handleExpand() : null;
   }, [treeViewData]);
 
@@ -140,9 +156,9 @@ const ProjectHierarchy = ({
     handleNodeExpand(nodeIds);
   };
 
-  // const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
-  //   handleNodeSelection(nodeIds);
-  // };
+  const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
+    handleNodeSelection(nodeIds);
+  };
 
   return (
     <ProjectHierarchyContainer>
@@ -164,6 +180,7 @@ const ProjectHierarchy = ({
           onChange={(e: any) => {
             handleSearchResult(e);
           }}
+          data-testid={"search"}
           // InputProps={{
           //   // ...params.InputProps,
           //   startAdornment: (
@@ -174,6 +191,7 @@ const ProjectHierarchy = ({
           // }}
           InputProps={{
             startAdornment: <Image src={SearchImg} alt="search" />,
+            // ariaLabel:{"search-input"}
           }}
         />
       </SearchContainer>
@@ -189,14 +207,14 @@ const ProjectHierarchy = ({
         ) : (
           <StyledTreeView
             aria-label="rich object"
-            defaultCollapseIcon={<RemoveIcon />}
-            defaultExpandIcon={<AddIcon />}
+            defaultCollapseIcon={<></>}
+            defaultExpandIcon={<></>}
             expanded={expandedNodes}
             selected={selectedNodes}
             onNodeToggle={handleToggle}
-            // onNodeSelect={handleSelect}
+            onNodeSelect={handleSelect}
           >
-            {treeViewData.map((eachNode) => renderTree(eachNode))}
+            {treeViewData.map((eachNode) => renderTree(eachNode, onLabelClick))}
           </StyledTreeView>
         )}
       </TreeViewContainer>

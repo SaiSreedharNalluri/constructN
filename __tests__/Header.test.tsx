@@ -20,7 +20,7 @@ describe('Header', () => {
   }));
 
   it('should render the Header component Logo', () => {
-    render(
+    const { container } = render(
       <Header
         toolClicked={true}
         viewMode
@@ -29,6 +29,7 @@ describe('Header', () => {
         handleBreadCrumbClick={jest.fn()}
       />
     );
+    expect(container).toMatchSnapshot();
     const logoElement = screen.getByTestId(/constructn-logo/i);
     fireEvent.click(logoElement);
     expect(logoElement).toBeInTheDocument();
@@ -52,7 +53,7 @@ describe('Header', () => {
   });
 
   it('should not render the Design Button when not passsing toolClicked prop', () => {
-    render(
+    const {container} = render(
       <Header
         viewMode="Design"
         showBreadcrumbs={false}
@@ -60,6 +61,7 @@ describe('Header', () => {
         handleBreadCrumbClick={jest.fn()}
       />
     );
+    expect(container).toMatchSnapshot();
     const designButton = screen.queryByText(/design/i);
     expect(designButton).toBeNull();
   });

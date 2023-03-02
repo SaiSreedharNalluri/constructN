@@ -124,10 +124,11 @@ const Index: React.FC<IProps> = () => {
   const [openIssueDetails, setOpenIssueDetails] = useState(false);
   const [openTaskDetails, setOpenTaskDetails] = useState(false);
   const [breadCrumbsData, setBreadCrumbsData] = useState<any>([]);
+  console.log(project, "projectsd", breadCrumbsData);
 
-  useEffect(() => {
-    setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
-  }, [project]);
+  // useEffect(() => {
+  //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
+  // }, [project]);
 
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
@@ -240,10 +241,14 @@ const Index: React.FC<IProps> = () => {
       getStructureList(router.query.projectId as string)
         .then((response) => {
           setStructuresList(response.data.result);
+          let nodeData = localStorage.getItem("nodeData")
+            ? JSON.parse(window.localStorage.getItem("nodeData") || "")
+            : "";
 
           if (response.data.result.length > 0) {
+            let structs: IStructure[] = response.data.result;
+
             if (router.query.structId !== undefined) {
-              let structs: IStructure[] = response.data.result;
               setStructure(
                 structs.find((e) => {
                   console.log("finding structure: ", e._id);
@@ -252,6 +257,22 @@ const Index: React.FC<IProps> = () => {
                   }
                 })
               );
+              // setDefaultBreadcrumb()
+            } else if (nodeData) {
+              const selNode = structs.find((e) => {
+                if (e._id === nodeData?._id) {
+                  return e;
+                }
+              });
+              if (selNode) {
+                setStructure(selNode);
+                // window.localStorage.setItem(
+                //   "expandedNodes",
+                //   JSON.stringify([selNode?._id])
+                // );
+
+                // setExpanded([selNode._id]);
+              }
             } else {
               let index = response.data.result.findIndex(
                 (structData: IStructure) => {
@@ -261,8 +282,24 @@ const Index: React.FC<IProps> = () => {
                   );
                 }
               );
-              if (index > 0) setStructure(response.data.result[index]);
-              else setStructure(response.data.result[0]);
+
+              if (index > 0) {
+                setStructure(response.data.result[index]);
+                // window.localStorage.setItem(
+                //   "expandedNodes",
+                //   JSON.stringify([response.data.result[index]?._id])
+                // );
+
+                // setExpanded([response.data.result[index]?._id]);
+              } else {
+                setStructure(response.data.result[0]);
+                // window.localStorage.setItem(
+                //   "expandedNodes",
+                //   JSON.stringify([response.data.result[0]?._id])
+                // );
+
+                // setExpanded([response.data.result[0]?._id]);
+              }
               //console.log("first struct=",index);
             }
           }
@@ -276,18 +313,25 @@ const Index: React.FC<IProps> = () => {
       if (user?._id) {
         SetLoggedInUserId(user._id);
       }
-      if (window.localStorage.getItem("nodeData")) {
-        let nodeData = JSON.parse(
-          window.localStorage.getItem("nodeData") || ""
-        );
-        if (nodeData) {
-          getStructureData(nodeData);
-          setExpanded(
-            JSON.parse(window.localStorage.getItem("expandedNodes") || "") || []
-          );
-          setSelected(nodeData?._id || "");
-        }
-      }
+
+      // if (window.localStorage.getItem("expandedNodes")) {
+      //   setExpanded(
+      //     JSON.parse(window.localStorage.getItem("expandedNodes") || "") || []
+      //   );
+      // }
+      // if (window.localStorage.getItem("nodeData")) {
+      //   let nodeData = JSON.parse(
+      //     window.localStorage.getItem("nodeData") || ""
+      //   );
+      //   if (nodeData) {
+      //     console.log("fdsfsf", nodeData, structuresList);
+      //     getStructureData(nodeData);
+      //     setExpanded(
+      //       JSON.parse(window.localStorage.getItem("expandedNodes") || "") || []
+      //     );
+      //     setSelected(nodeData?._id || "");
+      //   }
+      // }
 
       const handler = document.addEventListener("click", closeStructurePage);
       return () => {
@@ -321,11 +365,18 @@ const Index: React.FC<IProps> = () => {
     setStructure(getCurrentStructureFromStructureList(structure));
     getIssues(structure._id);
     getTasks(structure._id);
-    setBreadCrumbsData((prev: any) => [
-      prev[0],
-      ...getBreadCrumbsData(structure),
-    ]);
   };
+
+  useEffect(() => {
+    if (structure && project) {
+      setBreadCrumbsData((prev: any) => [
+        project,
+        ...getBreadCrumbsData(structure),
+      ]);
+    } else if (project) {
+      setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
+    }
+  }, [structure, project]);
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
     let currentStructure = structuresList.find((e) => {
@@ -541,16 +592,18 @@ const Index: React.FC<IProps> = () => {
     }
   };
   const getIssues = (structureId: string) => {
-    getIssuesList(router.query.projectId as string, structureId)
-      .then((response) => {
-        setIssueList(response.result);
-        setIssueFilterList(response.result);
-      })
-      .catch((error) => {
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
+    if (structureId && router.query.projectId) {
+      getIssuesList(router.query.projectId as string, structureId)
+        .then((response) => {
+          setIssueList(response.result);
+          setIssueFilterList(response.result);
+        })
+        .catch((error) => {
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+        });
+    }
   };
   const getIssuesPriorityList = (projId: string) => {
     return getIssuesPriority(router.query.projectId as string)
@@ -564,16 +617,18 @@ const Index: React.FC<IProps> = () => {
       });
   };
   const getTasks = (structureId: string) => {
-    getTasksList(router.query.projectId as string, structureId)
-      .then((response) => {
-        setTasksList(response.result);
-        setTaskFilterList(response.result);
-      })
-      .catch((error) => {
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
+    if (structureId && router.query.projectId) {
+      getTasksList(router.query.projectId as string, structureId)
+        .then((response) => {
+          setTasksList(response.result);
+          setTaskFilterList(response.result);
+        })
+        .catch((error) => {
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+        });
+    }
   };
   const handleOnIssueSort = (sortMethod: string) => {
     switch (sortMethod) {
@@ -1094,13 +1149,13 @@ const Index: React.FC<IProps> = () => {
   let [stateFilter, setStateFilter] = useState<ChildrenEntity[]>([]);
   useEffect(() => {
     if (router.isReady) {
-      if (router.query.structId !== undefined)
-        setSelector(router.query.structId.toString());
+      // if (router.query.structId !== undefined)
+      // setSelector(router.query.structId.toString());
       getStructureHierarchy(router.query.projectId as string)
         .then((response: AxiosResponse<any>) => {
           setState([...response.data.result]);
           setStateFilter([...response.data.result]);
-          if (selector.length < 1) setSelector(response.data.result[0]._id);
+          // if (selector.length < 1) setSelector(response.data.result[0]._id);
         })
         .catch((error) => {
           console.log("error", error);
@@ -1195,19 +1250,19 @@ const Index: React.FC<IProps> = () => {
                   <div>
                     <LeftOverLay
                       handleNodeSelection={handleNodeSelection}
-                      selectedNodes={selected}
+                      selectedNodes={structure?._id}
                       handleNodeExpand={handleNodeExpand}
                       expandedNodes={expanded}
                       getStructureData={getStructureData}
                       setHierarchy={setHierarchy}
                       getStructure={(structureData) => {
-                        if (structure === undefined) {
-                          setStructure(
-                            getCurrentStructureFromStructureList(structureData)
-                          );
-                          getIssues(structureData._id);
-                          getTasks(structureData._id);
-                        }
+                        // if (structure === undefined) {
+                        //   setStructure(
+                        //     getCurrentStructureFromStructureList(structureData)
+                        //   );
+                        //   getIssues(structureData._id);
+                        //   getTasks(structureData._id);
+                        // }
                       }}
                       treeData={state}
                     ></LeftOverLay>
