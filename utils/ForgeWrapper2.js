@@ -7,6 +7,9 @@ export const ForgeViewerUtils = (function () {
   let _viewer;
   let _isViewerInitialized = false;
 
+  let _structure;
+  let _snapshot;
+
   let _isPendingDataToLoad = false;
   let _isPendingLayersToLoad = false;
 
@@ -107,6 +110,15 @@ export const ForgeViewerUtils = (function () {
 
     Autodesk.Viewing.Initializer(initializeOptions, initializerCallBack);
   };
+
+  const setStructure = (structure) => {
+    _structure = structure;
+  } 
+
+  const setSnapshot = (snapshot) => {
+    _snapshot = snapshot;
+  } 
+
 
   const updateData = (documentURNs) => {
     console.log('Inside update data: ', documentURNs);
@@ -393,7 +405,7 @@ export const ForgeViewerUtils = (function () {
     }
   };
 
-  const updateContext = (context) => {
+  const updateContext = (context, sendContext) => {
     // console.log("Updating context for forge: ", context);
     if (context) {
       _context = getContextLocalFromGlobal(context, _globalOffset);
@@ -563,7 +575,7 @@ export const ForgeViewerUtils = (function () {
   const onModelLayersLoadedEvent = (parameter) => {
     // console.log("Inside Model Layers loaded Event: model: ",parameter);
     if (_context) {
-      updateContext(_context);
+      updateContext(_context, false);
     }
 
     // loadExtension();
@@ -725,6 +737,8 @@ export const ForgeViewerUtils = (function () {
   return {
     initializeViewer: initializeViewer,
     setType: setType,
+    setStructure: setStructure,
+    setSnapshot: setSnapshot,
     updateData: updateData,
     updateLayersData: updateLayersData,
     updateIssuesData: updateIssuesData,
