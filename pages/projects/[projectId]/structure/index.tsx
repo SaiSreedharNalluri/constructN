@@ -240,13 +240,14 @@ const Index: React.FC<IProps> = () => {
         });
       getStructureList(router.query.projectId as string)
         .then((response) => {
-          setStructuresList(response.data.result);
+          const list = response.data.result;
+          setStructuresList(list);
           let nodeData = localStorage.getItem("nodeData")
             ? JSON.parse(window.localStorage.getItem("nodeData") || "")
             : "";
 
-          if (response.data.result.length > 0) {
-            let structs: IStructure[] = response.data.result;
+          if (list.length > 0) {
+            let structs: IStructure[] = list;
 
             if (router.query.structId !== undefined) {
               setStructure(
@@ -266,12 +267,13 @@ const Index: React.FC<IProps> = () => {
               });
               if (selNode) {
                 setStructure(selNode);
-                // window.localStorage.setItem(
-                //   "expandedNodes",
-                //   JSON.stringify([selNode?._id])
-                // );
-
-                // setExpanded([selNode._id]);
+                const nodes = getStructureIds(selNode, list);
+                window.localStorage.setItem(
+                  "expandedNodes",
+                  JSON.stringify(nodes)
+                );
+                console.log(nodes, "noddfses");
+                setExpanded(nodes);
               }
             } else {
               let index = response.data.result.findIndex(
@@ -285,14 +287,28 @@ const Index: React.FC<IProps> = () => {
 
               if (index > 0) {
                 setStructure(response.data.result[index]);
-                // window.localStorage.setItem(
-                //   "expandedNodes",
-                //   JSON.stringify([response.data.result[index]?._id])
-                // );
 
-                // setExpanded([response.data.result[index]?._id]);
+                const nodes = getStructureIds(
+                  response.data.result[index],
+                  list
+                );
+                window.localStorage.setItem(
+                  "expandedNodes",
+                  JSON.stringify(nodes)
+                );
+                console.log(nodes, "okokokoj");
+
+                setExpanded(nodes);
               } else {
                 setStructure(response.data.result[0]);
+                const nodes = getStructureIds(response.data.result[0], list);
+                window.localStorage.setItem(
+                  "expandedNodes",
+                  JSON.stringify(nodes)
+                );
+                console.log(nodes, "yutrye");
+
+                setExpanded(nodes);
                 // window.localStorage.setItem(
                 //   "expandedNodes",
                 //   JSON.stringify([response.data.result[0]?._id])
@@ -340,12 +356,41 @@ const Index: React.FC<IProps> = () => {
     }
   }, [router.isReady, router.query.projectId]);
 
-  const getNodeDataById = (id: string) => {
-    return structuresList.find((e) => {
-      if (e._id === id) {
-        return e;
+  const getNodeDataById = (id: string, list?: any) => {
+    if (list?.length) {
+      return list.find((e: any) => {
+        if (e._id === id) {
+          return e;
+        }
+      });
+    } else {
+      return structuresList.find((e) => {
+        if (e._id === id) {
+          return e;
+        }
+      });
+    }
+  };
+
+  const getStructureIds = (structure: any, list: any) => {
+    const dataB: any[] = [];
+    const getBreadCrumbs = (NodeData: any) => {
+      dataB.unshift(NodeData?._id);
+      console.log(
+        NodeData,
+        getNodeDataById(NodeData.parent, list),
+        "dsfdfsfsd"
+      );
+      const struct = NodeData.parent
+        ? getNodeDataById(NodeData.parent, list)
+        : null;
+      if (struct) {
+        getBreadCrumbs(struct);
       }
-    });
+    };
+    getBreadCrumbs(structure);
+    console.log(dataB, "Fsdfsd");
+    return dataB;
   };
 
   const getBreadCrumbsData = (structure: any) => {

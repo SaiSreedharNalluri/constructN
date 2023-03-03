@@ -53,7 +53,7 @@ const ProjectHierarchy = ({
   const handleExpand = () => {
     handleNodeExpand(getAllIds(treeViewData));
   };
-
+  console.log(expandedNodes, "fsffs");
   // useEffect(() => {
   //   console.log(treeData, "treeData");
 
