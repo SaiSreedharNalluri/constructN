@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import Header from "../../../../components/container/header";
 import Treelist from "../../../../components/container/treeList";
 import {
   getProjectDetails,
@@ -58,6 +57,7 @@ import {
   getTagsList,
   updateTagsListApi,
 } from "../../../../services/tags";
+import Header from "../../../../components/divami_components/header/Header";
 const Editproject: React.FC = () => {
   const router = useRouter();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
