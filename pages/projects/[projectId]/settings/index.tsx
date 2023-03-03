@@ -13,7 +13,6 @@ import {
 import { IProjects, IProjectUsers } from '../../../../models/IProjects';
 import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
-import 'react-tabs/style/react-tabs.css';
 import { ChildrenEntity } from '../../../../models/IStructure';
 import { AxiosResponse } from 'axios';
 import { getStructureHierarchy } from '../../../../services/structure';
@@ -37,7 +36,6 @@ import {
 // import { updateIssuesPriority } from '../../../../services/issue';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
-import Modal from 'react-responsive-modal';
 import {
   addTaskStatusApi,
   addTaskTypeListsApi,
@@ -110,11 +108,13 @@ const Editproject: React.FC = () => {
           }
         })
         .catch();
-      getIssuesPriorityList(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setIssuePriorityList(response.result.priorityList.Issue);
+      getIssuesPriorityList(router.query.projectId as string).then(
+        (response) => {
+          if (response.success === true) {
+            setIssuePriorityList(response.result.priorityList.Issue);
+          }
         }
-      });
+      );
       getTaskPriorityList(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskPriorityList(response.result.priorityList.Task);
@@ -147,7 +147,7 @@ const Editproject: React.FC = () => {
       });
     }
   }, [router.isReady, router.query.projectId]);
- 
+
   const updateProjectData = (projectInfo: any) => {
     if (
       projectInfo.latitude != undefined &&
@@ -163,7 +163,7 @@ const Editproject: React.FC = () => {
       .then((response) => {
         if (response.success === true) {
           toast.success('Project details updated sucessfully');
-         setProjectData(response.result)
+          setProjectData(response.result);
         }
       })
       .catch((error) => {
@@ -177,7 +177,7 @@ const Editproject: React.FC = () => {
       .then((response) => {
         if (response?.success === true) {
           toast.success(response?.message);
-         setProjectUsers(response?.result)
+          setProjectUsers(response?.result);
         }
       })
       .catch((error) => {

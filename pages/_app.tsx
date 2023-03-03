@@ -13,6 +13,7 @@ import 'public/potree/libs/spectrum/spectrum.css';
 import 'public/potree/libs/jstree/themes/mixed/style.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
+import 'react-tabs/style/react-tabs.css';
 config.autoAddCss = false;
 
 export default function App({ Component, pageProps }: AppProps) {
