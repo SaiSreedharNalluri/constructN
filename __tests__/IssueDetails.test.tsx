@@ -2,6 +2,14 @@ import CustomIssueDetailsDrawer from "../components/divami_components/issue_deta
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Moment from "moment";
+import { deleteIssue, editIssue } from "../services/issue";
+import axios from "axios";
+
+jest.spyOn(axios, "get").mockImplementation(() => Promise.resolve({ response: { success: true } }));
+jest.spyOn(axios, "put").mockImplementation(() => Promise.resolve({ response: { success: true } }));
+jest.spyOn(axios, "get").mockImplementation(() => Promise.reject());
+
+
 
 const issueMock = {
   "title": "test",
@@ -96,28 +104,6 @@ describe("IssueDetails", () => {
     prefetch: jest.fn(() => null),
   }));
 
-  xit("should render the IssueDetails component", () => {
-    const { asFragment } = render(<CustomIssueDetailsDrawer
-      onClose={jest.fn()}
-      issue={issueMock}
-      issuesList={[issueMock]}
-      issueType={[
-        "Safety"]}
-      issuePriority={["high"]}
-      issueStatus={["To Do"]}
-      projectUsers={projectUsersMock}
-      currentProject={"PRJ201897"}
-      currentSnapshot={issueMock}
-      currentStructure={issueMock}
-      contextInfo={""}
-      deleteTheIssu={jest.fn()}
-      setIssueList={jest.fn()}
-      getIssues={jest.fn()}
-    />);
-    expect(asFragment()).toMatchSnapshot();
-
-  })
-
   it("should render the IssueDetails component", () => {
     const { getByTestId } = render(<CustomIssueDetailsDrawer
       onClose={jest.fn()}
@@ -149,7 +135,8 @@ describe("IssueDetails", () => {
     // expect(getByTestId('issue-attachments-label')).toHaveTextContent()
   })
 
-  it("should get a dropdown upon clicking edit progress icon", () => {
+  it("should get a dropdown upon clicking edit progress icon", async () => {
+
     render(<CustomIssueDetailsDrawer
       onClose={jest.fn()}
       issue={issueMock}
@@ -214,5 +201,89 @@ describe("IssueDetails", () => {
     fireEvent.click(cancelButton);
     const progressLabel = screen.getByTestId("progres-label");
     expect(progressLabel).toHaveTextContent("Progress");
+
+    const editIcon1 = screen.getByTestId('issue-assignees-edit');
+    fireEvent.click(editIcon1);
+    const updateButton = screen.getByTestId("issue-edit-save");
+    fireEvent.click(updateButton);
+    const progressLabeAgain = screen.getByTestId("assigned-to-label");
+    expect(progressLabeAgain).toHaveTextContent("Assigned to");
   })
+
+  it("should rendeer a pop up after clicking on delete icon", async () => {
+    const deleteFn = jest.fn()
+    render(<CustomIssueDetailsDrawer
+      onClose={jest.fn()}
+      issue={issueMock}
+      issuesList={[issueMock]}
+      issueType={[
+        "Safety"]}
+      issuePriority={["high"]}
+      issueStatus={["To Do"]}
+      projectUsers={projectUsersMock}
+      currentProject={"PRJ201897"}
+      currentSnapshot={issueMock}
+      currentStructure={issueMock}
+      contextInfo={""}
+      deleteTheIssue={deleteFn}
+      setIssueList={jest.fn()}
+      getIssues={jest.fn()}
+    />);
+
+    const deleteIcon = screen.getByTestId('delete-icon');
+    fireEvent.click(deleteIcon);
+    const popup = screen.getByTestId('popup-message');
+    expect(popup).toHaveTextContent("ISS371422");
+    const deleteButton = screen.getByTestId("delete-popup-button");
+    fireEvent.click(deleteButton);
+    expect(deleteFn.mock.calls.length).toBe(1);
+  });
+  it("should be unmount the issue details page after clicking on back arrow icon", () => {
+
+    render(<CustomIssueDetailsDrawer
+      onClose={jest.fn()}
+      issue={issueMock}
+      issuesList={[issueMock]}
+      issueType={[
+        "Safety"]}
+      issuePriority={["high"]}
+      issueStatus={["To Do"]}
+      projectUsers={projectUsersMock}
+      currentProject={"PRJ201897"}
+      currentSnapshot={issueMock}
+      currentStructure={issueMock}
+      contextInfo={""}
+      deleteTheIssu={jest.fn()}
+      setIssueList={jest.fn()}
+      getIssues={jest.fn()}
+    />);
+
+    const backArrowIcon = screen.getByTestId('back-arrow');
+    fireEvent.click(backArrowIcon);
+    const detailsHeader = screen.queryByText('ISS371422');
+    expect(detailsHeader).toBeNull();
+  });
+
+  it("should be able to edit the issue title", () => {
+    render(<CustomIssueDetailsDrawer
+      onClose={jest.fn()}
+      issue={issueMock}
+      issuesList={[issueMock]}
+      issueType={[
+        "Safety"]}
+      issuePriority={["high"]}
+      issueStatus={["To Do"]}
+      projectUsers={projectUsersMock}
+      currentProject={"PRJ201897"}
+      currentSnapshot={issueMock}
+      currentStructure={issueMock}
+      contextInfo={""}
+      deleteTheIssu={jest.fn()}
+      setIssueList={jest.fn()}
+      getIssues={jest.fn()}
+    />);
+
+    const editIcon = screen.getByTestId('edit-icon');
+
+  });
 })

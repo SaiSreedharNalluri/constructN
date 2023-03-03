@@ -237,7 +237,6 @@ function BasicTabs(props: any) {
 
   const addComment = (text: string, entityId: string) => {
     if (text !== '') {
-      console.log('text', text, 'enttit', entityId);
       createComment(router.query.projectId as string, {
         comment: text,
         entity: entityId,
@@ -441,7 +440,7 @@ function BasicTabs(props: any) {
                 }}
               >
                 <FourthContLeft>
-                  <FourthContAssigned>Assigned to</FourthContAssigned>
+                  <FourthContAssigned data-testid="assigned-to-label">Assigned to</FourthContAssigned>
                   <FourthContProgType
                     style={{ color: '#101F4B' }}
                     data-testid="issue-assignees"
@@ -499,7 +498,6 @@ function BasicTabs(props: any) {
                 sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="" />}
                 onChange={(event, value: any) => {
-                  console.log(value);
                   setFormState({ ...formState, selectedUser: value });
                 }}
                 value={formState.selectedUser}
@@ -537,7 +535,6 @@ function BasicTabs(props: any) {
                   Attachments
                 </AttachmentTitle>
                 <AttachmentDescription style={{ color: '#101F4B' }}>
-                  {/* {console.log(taskState?.TabOne.attachments)} */}
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
                       return (
@@ -570,7 +567,6 @@ function BasicTabs(props: any) {
           <RelatedDiv>
             <RelatedTagTitle>Related Tags</RelatedTagTitle>
             <RelatedTagsButton>
-              {/* {console.log("taskState", taskState)} */}
               {taskState?.TabOne.tags?.map((item: any) => {
                 return (
                   <>
@@ -607,7 +603,6 @@ function BasicTabs(props: any) {
             <>
               <AddCommentContainerSecond>
                 {/* <AddCommentInput placeholder="Add Comment"></AddCommentInput> */}
-                {/* {console.log("commenting", comments)} */}
                 <StyledInput
                   id="standard-basic"
                   variant="standard"
@@ -742,7 +737,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
-  // console.log(issue)
 
   useEffect(() => {
     let tempObj = {
@@ -797,7 +791,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
     // issueMenuClicked(issueMenuInstance);
   };
   const handleCreateTask = (formData: any) => {
-    console.log(formData, 'form data at home');
     clickTaskSubmit(formData);
   };
   const clickTaskSubmit = (formData: any) => {
@@ -872,7 +865,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
     data.attachments = formData.filter(
       (item: any) => item.id === 'file-upload'
     )[0]?.selectedFile;
-    console.log('dfsdfsdokkkk', fileformdata, filesArr);
 
     // const uploadUrl = URL.createObjectURL(filesArr[0]);
     const arr =
@@ -884,7 +876,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
           ...each,
         };
       });
-    console.log('formData', fileformdata);
     // if (filesArr?.length) {
     //   updateAttachments(fileformdata, issue._id)
     //     .then((response) => {
@@ -920,7 +911,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
             // toolInstance.toolAction = "taskCreateSuccess";
 
             // console.log(formData);
-            console.log(currentStructure, 'currentStructure');
             getIssues(currentStructure._id);
           } else {
             // toolInstance.toolAction = "taskCreateFail";
@@ -971,6 +961,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 }}
                 src={BackArrow}
                 alt={'close icon'}
+                data-testid="back-arrow"
               />
               <SpanTile data-testid="issue-detail-header">
                 {selectedIssue?.type} (#{selectedIssue?.sequenceNumber})
@@ -983,10 +974,12 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 onClick={() => {
                   setOpenCreateTask(true);
                 }}
+                data-testid="edit-icon"
               />
               <DeleteIcon
                 src={Delete}
                 alt={'close icon'}
+                data-testid="delete-icon"
                 onClick={() => {
                   setshowPopUp(true);
                 }}
