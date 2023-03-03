@@ -37,8 +37,8 @@ const LeftOverLay: React.FC<IProps> = ({
   const [selector, setSelector] = useState("");
 
   useEffect(() => {
-    setState(treeData)
-  }, [treeData])
+    setState(treeData);
+  }, [treeData]);
   const schema = Yup.object().shape({
     searchQuery: Yup.string()
       .required("A search query is required")
@@ -48,17 +48,17 @@ const LeftOverLay: React.FC<IProps> = ({
   function filterBy(arr: ChildrenEntity[], query: string) {
     return query
       ? arr.reduce((acc: any, item: any) => {
-        if (item.children?.length) {
-          const filtered: any = filterBy(item.children, query);
-          if (filtered.length)
-            return [...acc, { ...item, children: filtered }];
-        }
+          if (item.children?.length) {
+            const filtered: any = filterBy(item.children, query);
+            if (filtered.length)
+              return [...acc, { ...item, children: filtered }];
+          }
 
-        const { children, ...itemWithoutChildren } = item;
-        return item.name?.toLowerCase().includes(query.toLowerCase())
-          ? [...acc, itemWithoutChildren]
-          : acc;
-      }, [])
+          const { children, ...itemWithoutChildren } = item;
+          return item.name?.toLowerCase().includes(query.toLowerCase())
+            ? [...acc, itemWithoutChildren]
+            : acc;
+        }, [])
       : arr;
   }
 
@@ -94,7 +94,7 @@ const LeftOverLay: React.FC<IProps> = ({
       <div
         style={{
           overflow: "hidden",
-          height: "80vh",
+          height: "100%",
         }}
       >
         {

@@ -3,20 +3,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { IProjectUsers } from '../../models/IProjects';
 import * as Yup from 'yup';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik';
 import { role, roleData } from '../../utils/constants';
 import { getCookie } from 'cookies-next';
 import { Modal } from 'react-responsive-modal';
 import Image from 'next/image';
+import router from 'next/router';
+import { toast } from 'react-toastify';
+import { assignProjectUser } from '../../services/project';
 interface IProps {
   projectUsers: IProjectUsers[];
-  addProjectUser: (e: object) => void;
+ setProjectUsers: React.Dispatch<
+    React.SetStateAction<IProjectUsers[]>
+  >;
   deassignProjectUser: (e: string) => void;
   updateUserRole: (e: { email: 'string'; role: 'string' }) => void;
 }
 const ProjectUserAdd: React.FC<IProps> = ({
   projectUsers,
-  addProjectUser,
+ setProjectUsers,
   deassignProjectUser,
   updateUserRole,
 }) => {
@@ -48,6 +53,21 @@ const ProjectUserAdd: React.FC<IProps> = ({
     deassignProjectUser(email);
     setOpen(false);
   };
+   const addProjectUser = (userInfo:{email:string,role:string},{ resetForm }: FormikHelpers<{email:string,role:string}>) => {
+    assignProjectUser(userInfo, router.query.projectId as string)
+      .then((response) => {
+        if (response?.success === true) {
+          toast.success(response?.message);
+          resetForm();
+          setProjectUsers(response?.result)
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
   return (
     <React.Fragment>
       <div>
@@ -62,6 +82,7 @@ const ProjectUserAdd: React.FC<IProps> = ({
               <div>
                 <Field
                   type="email"
+                  id="email"
                   name="email"
                   placeholder="email "
                   className="w-full rounded border px-2 py-1.5 border-solid border-gray-500"

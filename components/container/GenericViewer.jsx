@@ -224,6 +224,9 @@ function GenericViewer(props) {
         }
         break;
       case 'Reality':
+        if(potreeUtils.current) {
+          potreeUtils.current.selectTag(tag);
+        }
         break;
     }
   };
@@ -236,6 +239,9 @@ function GenericViewer(props) {
         }
         break;
       case 'Reality':
+        if (potreeUtils.current) {
+          potreeUtils.current.showTag(tag, show);
+        }
         break;
     }
   };
@@ -375,12 +381,12 @@ function GenericViewer(props) {
         case 'image':
           if (currentIsCompare.current == true) {
             if (isCompareViewer(viewerId)) {
-              potreeUtils.current.updateContext(event);
+              potreeUtils.current.updateContext(event, false);
             } else {
               if (currentCompareViewMode.current === 'Reality') {
-                potreeCompareUtils.current.updateContext(event);
+                potreeCompareUtils.current.updateContext(event, false);
               } else {
-                forgeCompareUtils.current.updateContext(event);
+                forgeCompareUtils.current.updateContext(event, false);
               }
             }
           }
@@ -468,11 +474,15 @@ function GenericViewer(props) {
     switch (currentViewMode.current) {
       case 'Design':
         if (forgeUtils.current != undefined) {
+          forgeUtils.current.setStructure(structure);
           forgeUtils.current.updateData(getForgeModels(designMap));
         }
 
         break;
       case 'Reality':
+        if (potreeUtils.current != undefined) {
+          potreeUtils.current.setStructure(structure);
+        }
         break;
     }
   }
@@ -482,6 +492,7 @@ function GenericViewer(props) {
     switch (currentViewMode.current) {
       case 'Design':
         if (forgeUtils.current != undefined) {
+          forgeUtils.current.setSnapshot(snapshot);
           forgeUtils.current.updateIssuesData(issuesList);
           // forgeUtils.current.updateTasksData(tasksList);
           let data = await getRealityLayers(structure, realityMap);
@@ -490,6 +501,7 @@ function GenericViewer(props) {
         break;
       case 'Reality':
         if (potreeUtils.current != undefined) {
+          potreeUtils.current.setSnapshot(snapshot);
           potreeUtils.current.updateIssuesData(issuesList);
           // potreeUtils.current.updateTasksData(tasksList);
           potreeUtils.current.updateData(
@@ -511,11 +523,15 @@ function GenericViewer(props) {
     switch (compareViewMode) {
       case 'Design':
         if (forgeCompareUtils.current != undefined) {
+          forgeCompareUtils.current.setStructure(structure);
           forgeCompareUtils.current.updateData(getForgeModels(designMap));
         }
 
         break;
       case 'Reality':
+        if (potreeCompareUtils.current != undefined) {
+          potreeCompareUtils.current.setStructure(structure);
+        }
         break;
     }
   }
@@ -524,6 +540,7 @@ function GenericViewer(props) {
     switch (compareViewMode) {
       case 'Design':
         if (forgeCompareUtils.current) {
+          forgeCompareUtils.current.setSnapshot(compareSnapshot);
           let data = await getRealityLayers(structure, compareRealityMap);
           forgeCompareUtils.current.updateLayersData(
             data,
@@ -533,6 +550,7 @@ function GenericViewer(props) {
         break;
       case 'Reality':
         if (potreeCompareUtils.current) {
+          potreeCompareUtils.current.setSnapshot(compareSnapshot);
           potreeCompareUtils.current.updateData(
             await getPointCloud(structure, compareSnapshot),
             getFloorPlanData(designMap)
