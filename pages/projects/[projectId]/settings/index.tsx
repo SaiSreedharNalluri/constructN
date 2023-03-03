@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import Header from "../../../../components/container/header";
 import Treelist from "../../../../components/container/treeList";
 import {
-  assignProjectUser,
   getProjectDetails,
   getProjectUsers,
   removeProjectUser,
@@ -150,20 +149,7 @@ const Editproject: React.FC = () => {
       });
     }
   }, [router.isReady, router.query.projectId]);
-  const addProjectUser = (userInfo: object) => {
-    assignProjectUser(userInfo, router.query.projectId as string)
-      .then((response) => {
-        if (response?.success === true) {
-          toast.success(response?.message);
-          setProjectUsers(response?.result);
-        }
-      })
-      .catch((error) => {
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
-  };
+
   const updateProjectData = (projectInfo: any) => {
     if (
       projectInfo.latitude != undefined &&
@@ -674,7 +660,7 @@ const Editproject: React.FC = () => {
                   <ProjectUserAdd
                     deassignProjectUser={deassignProjectUser}
                     projectUsers={projectUsers}
-                    addProjectUser={addProjectUser}
+                    setProjectUsers={setProjectUsers}
                     updateUserRole={updateUserRole}
                   />
                 </TabPanel>
@@ -695,20 +681,39 @@ const Editproject: React.FC = () => {
                         />
                       )}
                     </div>
-                    <div className="ml-6">
+                    <div className="px-4 lg:w-3/4 ">
                       <h1 className="">Project Details</h1>
                       <div>
-                        <span>Id:</span>
-                        {structureData?._id}
-                        <br />
-                        <span>Name:</span>
-                        {structureData?.name}
-                        <br />
-                        <span>Type:</span>
-                        {structureData?.type}
-                        <br />
-                        <span>parent :</span>
-                        {structureData?.parent}
+                        <table className="w-full">
+                          <thead>
+                            <tr className="bg-gray-300 border-b border-gray-300 ">
+                              <th className="p-1.5 ">Id</th>
+                              <th>Name</th>
+                              <th>Type</th>
+                              <th>Parent</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="border-b p-1.5 text-center border-gray-300">
+                                {" "}
+                                {structureData?._id}
+                              </td>
+                              <td className="border-b text-center border-gray-200">
+                                {" "}
+                                {structureData?.name}
+                              </td>
+                              <td className="border-b text-center border-gray-200">
+                                {" "}
+                                {structureData?.type}
+                              </td>
+                              <td className="border-b  text-center border-gray-200">
+                                {" "}
+                                {structureData?.parent}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                   </div>
