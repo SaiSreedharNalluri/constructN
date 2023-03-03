@@ -284,31 +284,31 @@ jest.mock('next/router', () => ({
       }));
 
   
-    beforeEach(() => {
-        <CustomIssueListDrawer
-        closeFilterOverlay={()=>{}}
-        issuesList={issues as unknown as Issue[]}
-        visibility={false}
-        closeOverlay={jest.fn()}
-        handleOnFilter={jest.fn()}
-        onClose={jest.fn()}
-        handleOnSort={jest.fn()}
-        deleteTheIssue={()=>{}}
-        clickIssueEditSubmit={jest.fn()}
-        issuePriorityList={ ['High', 'Low', 'Medium']}
-        issueStatusList={['Blocked', 'To Do', 'In Progress', 'Completed']}
-        currentStructure={str}
-        currentSnapshot={currentSnapshot}
-        contextInfo={
-            {type: 'Task'}}
-        currentProject={'"PRJ201897"'}
-        issueTypesList={['Clash', 'Building code', 'Design', 'Safety', 'Commissioning']}
-        issueFilterState={{}}
-        getIssues={()=>{}}
-        handleOnIssueSort={()=>{}}
-        deleteTheAttachment={()=>{}}
-      /> 
-    });    
+    // beforeEach(() => {
+    // //     <CustomIssueListDrawer
+    // //     closeFilterOverlay={()=>{}}
+    // //     issuesList={issues as unknown as Issue[]}
+    // //     visibility={false}
+    // //     closeOverlay={jest.fn()}
+    // //     handleOnFilter={jest.fn()}
+    // //     onClose={jest.fn()}
+    // //     handleOnSort={jest.fn()}
+    // //     deleteTheIssue={()=>{}}
+    // //     clickIssueEditSubmit={jest.fn()}
+    // //     issuePriorityList={ ['High', 'Low', 'Medium']}
+    // //     issueStatusList={['Blocked', 'To Do', 'In Progress', 'Completed']}
+    // //     currentStructure={str}
+    // //     currentSnapshot={currentSnapshot}
+    // //     contextInfo={
+    // //         {type: 'Task'}}
+    // //     currentProject={'"PRJ201897"'}
+    // //     issueTypesList={['Clash', 'Building code', 'Design', 'Safety', 'Commissioning']}
+    // //     issueFilterState={{}}
+    // //     getIssues={()=>{}}
+    // //     handleOnIssueSort={()=>{}}
+    // //     deleteTheAttachment={()=>{}}
+    // //   /> 
+    // });    
     it("renders component with empty issue list", () => {    
         const { container } = render(
             <CustomIssueListDrawer
@@ -366,7 +366,6 @@ jest.mock('next/router', () => ({
                     deleteTheAttachment={()=>{}}
                 />
             );
-            screen.debug()
             expect(screen.getByText("Issue List")).toBeInTheDocument();
             const s = screen.getByTestId('search-icon');
             fireEvent.click(s);
