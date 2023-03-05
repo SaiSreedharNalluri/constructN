@@ -18,6 +18,7 @@ const Footer = ({ formHandler, editData }: any) => (
       type="contained"
       label={editData ? "Update" : "Create"}
       formHandler={formHandler}
+      dataTestId={"create-issue-button"}
     />
   </ButtonsContainer>
 );

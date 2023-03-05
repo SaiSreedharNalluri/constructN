@@ -2,13 +2,15 @@ import CustomIssueDetailsDrawer from "../components/divami_components/issue_deta
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Moment from "moment";
-import { deleteIssue, editIssue } from "../services/issue";
-import axios from "axios";
+import * as editIssueAPI from "../services/issue";
+import * as deleteIssueAPI from "../services/issue";
 
-jest.spyOn(axios, "get").mockImplementation(() => Promise.resolve({ response: { success: true } }));
-jest.spyOn(axios, "put").mockImplementation(() => Promise.resolve({ response: { success: true } }));
-jest.spyOn(axios, "get").mockImplementation(() => Promise.reject());
-
+jest.mock('../services/issue');
+const response: any = { success: true };
+const rejectionValue: any = { success: false };
+const mockGetUsers = jest.spyOn(editIssueAPI, 'editIssue');
+mockGetUsers.mockResolvedValue(response);
+// mockGetUsers.mockRejectedValue(rejectionValue);
 
 
 const issueMock = {
@@ -264,7 +266,7 @@ describe("IssueDetails", () => {
     expect(detailsHeader).toBeNull();
   });
 
-  it("should be able to edit the issue title", () => {
+  it("should be able to edit the issue", () => {
     render(<CustomIssueDetailsDrawer
       onClose={jest.fn()}
       issue={issueMock}
@@ -283,7 +285,14 @@ describe("IssueDetails", () => {
       getIssues={jest.fn()}
     />);
 
+
+
+
     const editIcon = screen.getByTestId('edit-icon');
+    fireEvent.click(editIcon);
+    const createIssueButton = screen.getByTestId('create-issue-button');
+    expect(createIssueButton).toHaveTextContent(/Update/i);
+    fireEvent.click(createIssueButton);
 
   });
 })
