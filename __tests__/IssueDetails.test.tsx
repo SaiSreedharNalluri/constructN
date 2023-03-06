@@ -369,4 +369,43 @@ describe("IssueDetails", () => {
     fireEvent.click(sendButton);
   });
 
+  it("should be able to create or delete attachment", async () => {
+
+    jest.spyOn(commentsAPI, "createComment").mockImplementation(() => Promise.resolve({ success: true, result: [] }));
+
+    const renderedEle = render(<CustomIssueDetailsDrawer
+      onClose={jest.fn()}
+      issue={issueMock}
+      issuesList={[{
+        ...issueMock, attachments: [
+          {
+            "_id": "ATT613938",
+            "name": "PHOTO_ALONE.JPG",
+            "url": "https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/ISS/ISS613704/1678107613569-PHOTO_ALONE.JPG",
+            "entity": "ISS613704",
+            "createdAt": "2023-03-06T13:00:13.937Z",
+            "updatedAt": "2023-03-06T13:00:13.937Z",
+            "__v": 0
+          }
+        ]
+      }]}
+      issueType={
+        [
+          "Safety"]}
+      issuePriority={["high"]}
+      issueStatus={["To Do"]}
+      projectUsers={projectUsersMock}
+      currentProject={"PRJ201897"}
+      currentSnapshot={issueMock}
+      currentStructure={issueMock}
+      contextInfo={""}
+      deleteTheIssu={jest.fn()}
+      setIssueList={jest.fn()}
+      getIssues={jest.fn()}
+    />);
+
+    const deleteAttachment = screen.getByTestId('delete-attachment');
+    fireEvent.click(deleteAttachment, { target: { value: "ATT613938" } });
+  });
+
 });
