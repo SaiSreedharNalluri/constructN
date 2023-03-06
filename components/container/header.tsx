@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBell,
-  faCog,
+  faQuestion,
   faRightFromBracket,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
@@ -127,12 +127,12 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
                         Account
                       </div>
                     </li>
-                    <li className="font-medium cursor-pointer">
+                    <li className="font-medium cursor-pointer" onClick={() => router.push(`/support`)}>
                       <div className="flex items-center justify-center transform transition-colors duration-200 ">
                         <div className="mr-3">
-                          <FontAwesomeIcon icon={faCog}></FontAwesomeIcon>
+                          <FontAwesomeIcon icon={faQuestion} />
                         </div>
-                        Settings
+                        Support
                       </div>
                     </li>
                     <hr className="border-gray-700" />
