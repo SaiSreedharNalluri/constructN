@@ -3,7 +3,7 @@ import { render, fireEvent, screen, waitFor } from "@testing-library/react";
 import { useRouter } from "next/router";
 import type { NextRouter } from "next/router";
 import "@testing-library/jest-dom";
-import ActivityLog from "./ActivityLog";
+import ActivityLog from "../components/divami_components/task_detail/ActivityLog";
 
 describe("ActivityLog Component", () => {
   const mockActivityLog = [
@@ -31,38 +31,8 @@ describe("ActivityLog Component", () => {
       <ActivityLog ActivityLog={mockActivityLog} />
     );
     expect(getByTestId("const-custom-activity-log-issue")).toBeInTheDocument();
-    // expect(getByText("Issue Raised")).toBeInTheDocument();
-    // expect(getByText("John")).toBeInTheDocument();
-    // expect(getByText("bug")).toBeInTheDocument();
-    // expect(getByText("This is a bug")).toBeInTheDocument();
-    // expect(getByText("2022-01-01")).toBeInTheDocument();
-    // expect(getByText("Comment Added")).toBeInTheDocument();
-    // expect(getByText("Mark")).toBeInTheDocument();
-    // expect(getByText("This is a comment")).toBeInTheDocument();
-    // expect(getByText("2022-01-02")).toBeInTheDocument();
   });
 });
-
-// test("renders IssueUpdated icon when status is 'Issue Updated'", () => {
-//   const ActivityLogData = [
-//     {
-//       status: "Issue Updated",
-//       timeStamp: "2023-03-06T10:00:00Z",
-//       profile: "John Doe",
-//       comment: "",
-//       issueType: "",
-//       issueDescription: "",
-//       currentProgress: "",
-//       imageDetails: [],
-//     },
-//   ];
-
-//   render(<ActivityLog ActivityLog={ActivityLogData} />);
-
-//   const IssueUpdatedIcon = screen.getByAltText("Issue Updated");
-
-//   expect(IssueUpdatedIcon).toBeInTheDocument();
-// });
 
 test("renders comment added activity card", () => {
   const mockProps = {

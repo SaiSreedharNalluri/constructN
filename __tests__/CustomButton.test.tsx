@@ -1,5 +1,5 @@
 import { render, fireEvent, screen, getByText } from "@testing-library/react";
-import CustomButton from "./CustomButton";
+import CustomButton from "../components/divami_components/custom-button/CustomButton";
 import "@testing-library/jest-dom";
 
 describe("CustomButton", () => {

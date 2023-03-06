@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import type { NextRouter } from "next/router";
 import "@testing-library/jest-dom";
 
-import SidePanelMenu from "./SidePanel";
+import SidePanelMenu from "../components/divami_components/side-panel/SidePanel";
 import { Router } from "react-router-dom";
 
 jest.mock("next/router", () => ({

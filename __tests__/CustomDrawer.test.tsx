@@ -1,5 +1,5 @@
 import { render, fireEvent, screen } from "@testing-library/react";
-import CustomDrawer from "./custom-drawer";
+import CustomDrawer from "../components/divami_components/custom-drawer/custom-drawer";
 import "@testing-library/jest-dom";
 
 describe("CustomDrawer", () => {
