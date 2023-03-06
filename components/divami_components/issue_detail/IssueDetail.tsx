@@ -553,6 +553,7 @@ function BasicTabs(props: any) {
                                 deleteTheAttachment(a?._id);
                               }}
                               className={`deleteIcon`}
+                              data-testid="delete-attachment"
                             />
                           </AttachedImageDiv>
                           <AttachHorizontal></AttachHorizontal>
@@ -611,6 +612,7 @@ function BasicTabs(props: any) {
                   onChange={(e) => {
                     setComments(e.target.value);
                   }}
+                  data-testid="issue-comment-input"
                 // error={!comments}
                 // helperText={!comments ? "Required" : ""}
                 />
@@ -623,6 +625,7 @@ function BasicTabs(props: any) {
                     onClick={() => {
                       addComment(comments, taskState.TabOne.id);
                     }}
+                    data-testid="issue-comment-send-button"
                   >
                     <ImageErrorIcon src={Send} alt="" />
                     {/* <Image src={Send} alt="" />{" "} */}
@@ -775,22 +778,23 @@ const CustomIssueDetailsDrawer = (props: any) => {
     });
   }, [selectedIssue]);
 
-  const taskSubmit = (formData: any) => {
-    // const updatedList = issuesList.map((item: any) => {
-    //   if (item._id == formData._id){
-    //     return formData;
-    //   }else{
-    //     return {
-    //       ...item
-    //     }
-    //   }
-    // })
-    // issuesList.push(formdata);
-    // issueMenuInstance.toolAction = "issueCreated";
-    // setCreateOverlay(false);
-    // issueMenuClicked(issueMenuInstance);
-  };
+  // const taskSubmit = (formData: any) => {
+  // const updatedList = issuesList.map((item: any) => {
+  //   if (item._id == formData._id){
+  //     return formData;
+  //   }else{
+  //     return {
+  //       ...item
+  //     }
+  //   }
+  // })
+  // issuesList.push(formdata);
+  // issueMenuInstance.toolAction = "issueCreated";
+  // setCreateOverlay(false);
+  // issueMenuClicked(issueMenuInstance);
+  // };
   const handleCreateTask = (formData: any) => {
+    console.log(formData, "formadata")
     clickTaskSubmit(formData);
   };
   const clickTaskSubmit = (formData: any) => {
@@ -912,9 +916,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
             // console.log(formData);
             getIssues(currentStructure._id);
-          } else {
-            // toolInstance.toolAction = "taskCreateFail";
-            // issueToolClicked(toolInstance);
           }
           setOpenCreateTask(false);
         })
@@ -940,7 +941,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
         if (response.success === true) {
           toast.success('Issue updated sucessfully');
           getIssues(currentStructure._id);
-        } else {
         }
       })
       .catch((error) => {

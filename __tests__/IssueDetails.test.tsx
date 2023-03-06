@@ -1,18 +1,18 @@
-import CustomIssueDetailsDrawer from "../components/divami_components/issue_detail/IssueDetail"
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Moment from "moment";
-import * as editIssueAPI from "../services/issue";
-import * as deleteIssueAPI from "../services/issue";
+import CustomIssueDetailsDrawer from "../components/divami_components/issue_detail/IssueDetail";
+import { createComment } from '../services/comments';
+// import * as editIssueAPI from "../services/issue";
+import * as commentsAPI from "../services/comments";
+// import { editIssue } from "../services/issue"
+// import { createComment } from "../services/comments";
+// import * as issueDetails from "../components/divami_components/issue_detail/IssueDetail";
 
-jest.mock('../services/issue');
-const response: any = { success: true };
-const rejectionValue: any = { success: false };
-const mockGetUsers = jest.spyOn(editIssueAPI, 'editIssue');
-mockGetUsers.mockResolvedValue(response);
-// mockGetUsers.mockRejectedValue(rejectionValue);
-
-
+// jest.mock("../services/comments");
+// jest.mock("../services/issue");
+// const editIssueAPI = editIssue as jest.Mock;
+// editIssueAPI.mockResolvedValue(() => Promise.resolve({ success: true }));
 const issueMock = {
   "title": "test",
   "description": "test",
@@ -61,7 +61,6 @@ const issueMock = {
   "tags": [
     "Software"
   ],
-  "attachments": [],
   "createdAt": "2023-03-01T10:09:31.422Z",
   "updatedAt": "2023-03-01T10:09:31.422Z",
   "_id": "ISS371422",
@@ -89,22 +88,70 @@ const projectUsersMock = [
     "role": "admin"
   }]
 
-afterEach(cleanup)
+
+
+// jest.mock("../services/comments", () => {
+//   return {
+//     createComment: jest.fn(() => Promise.resolve({ success: true, result: [] })),
+//   };
+// });
+
+
+jest.mock('../services/comments.ts', () => {
+  return {
+    __esModule: true,    //    <----- this __esModule: true is important
+    ...jest.requireActual('../services/comments.ts')
+  };
+});
+
+jest.mock('../services/issue.ts', () => {
+  return {
+    __esModule: true,    //    <----- this __esModule: true is important
+    ...jest.requireActual('../services/issue.ts')
+  };
+});
+
+jest.mock("../services/issue", () => {
+  return {
+    editIssue: jest.fn(() => Promise.resolve({ success: true, result: [] })),
+  };
+});
+
+
 describe("IssueDetails", () => {
-  const useRouter = jest.spyOn(require('next/router'), 'useRouter');
-  useRouter.mockImplementation(() => ({
-    route: '/',
-    pathname: '',
-    query: { projectId: '1234' },
-    asPath: '',
-    push: jest.fn(),
-    events: {
-      on: jest.fn(),
-      off: jest.fn(),
-    },
-    beforePopState: jest.fn(() => null),
-    prefetch: jest.fn(() => null),
-  }));
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    // jest.mock("../services/issue", () => {
+    //   return {
+    //     editIssue: jest.fn(() => Promise.resolve({ success: true, result: [] })),
+    //   };
+    // });
+
+    // jest.mock("../services/comments", () => {
+    //   return {
+    //     createComment: jest.fn(() => Promise.resolve({ success: true, result: [] })),
+    //   };
+    // });
+
+    // jest.spyOn(editIssueAPI, "editIssue").mockImplementation(() => Promise.resolve({ success: true, result: [] }));
+
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter');
+    useRouter.mockImplementation(() => ({
+      route: '/',
+      pathname: '',
+      query: { projectId: '1234' },
+      asPath: '',
+      push: jest.fn(),
+      events: {
+        on: jest.fn(),
+        off: jest.fn(),
+      },
+      beforePopState: jest.fn(() => null),
+      prefetch: jest.fn(() => null),
+    }));
+  });
 
   it("should render the IssueDetails component", () => {
     const { getByTestId } = render(<CustomIssueDetailsDrawer
@@ -267,6 +314,7 @@ describe("IssueDetails", () => {
   });
 
   it("should be able to edit the issue", () => {
+
     render(<CustomIssueDetailsDrawer
       onClose={jest.fn()}
       issue={issueMock}
@@ -285,9 +333,6 @@ describe("IssueDetails", () => {
       getIssues={jest.fn()}
     />);
 
-
-
-
     const editIcon = screen.getByTestId('edit-icon');
     fireEvent.click(editIcon);
     const createIssueButton = screen.getByTestId('create-issue-button');
@@ -295,4 +340,33 @@ describe("IssueDetails", () => {
     fireEvent.click(createIssueButton);
 
   });
-})
+
+  it("should be able add new comment", async () => {
+
+    jest.spyOn(commentsAPI, "createComment").mockImplementation(() => Promise.resolve({ success: true, result: [] }));
+
+    const renderedEle = render(<CustomIssueDetailsDrawer
+      onClose={jest.fn()}
+      issue={issueMock}
+      issuesList={[issueMock]}
+      issueType={[
+        "Safety"]}
+      issuePriority={["high"]}
+      issueStatus={["To Do"]}
+      projectUsers={projectUsersMock}
+      currentProject={"PRJ201897"}
+      currentSnapshot={issueMock}
+      currentStructure={issueMock}
+      contextInfo={""}
+      deleteTheIssu={jest.fn()}
+      setIssueList={jest.fn()}
+      getIssues={jest.fn()}
+    />);
+
+    const inputEl: any = renderedEle.getByTestId('issue-comment-input').querySelector('input');
+    fireEvent.change(inputEl, { target: { value: 'test comment' } });
+    const sendButton = renderedEle.getByTestId('issue-comment-send-button');
+    fireEvent.click(sendButton);
+  });
+
+});
