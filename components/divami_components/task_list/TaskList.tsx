@@ -81,6 +81,7 @@ import {
 } from "@mui/material";
 import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
+import { toast } from "react-toastify";
 
 interface IProps {
   closeOverlay: () => void;
@@ -112,6 +113,7 @@ const CustomTaskListDrawer = (props: any) => {
     getTasks,
     handleOnTasksSort,
     deleteTheAttachment,
+    openTaskCreateFn,
   } = props;
   const [taskType, setTaskType] = useState<[string]>();
   const [taskPriority, setTaskPriority] = useState<[string]>();
@@ -545,7 +547,15 @@ const CustomTaskListDrawer = (props: any) => {
           <MessageDivShowErr>
             No Task has been raised yet. Get a headstart by raising one.
           </MessageDivShowErr>
-          <RaiseButtonDiv>Raise Task</RaiseButtonDiv>
+          <RaiseButtonDiv
+            onClick={() => {
+              onClose();
+              openTaskCreateFn();
+              toast.info("Click on the map where you want to create a task");
+            }}
+          >
+            Raise Task
+          </RaiseButtonDiv>
 
           <ContentError>
             Check out

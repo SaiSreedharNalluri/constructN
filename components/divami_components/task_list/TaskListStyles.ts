@@ -278,6 +278,7 @@ export const RaiseButtonDiv = styled("div")({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  cursor: "pointer",
   // marginLeft: "20px",
 });
 
@@ -314,7 +315,6 @@ export const NoMatchDiv = styled("div")({
 interface ContainerProps {
   searchingOn: boolean;
 }
-
 
 export const CustomBox = styled(Box)<ContainerProps>`
   margin-top: ${(props) => (props.searchingOn ? "10px" : "")};

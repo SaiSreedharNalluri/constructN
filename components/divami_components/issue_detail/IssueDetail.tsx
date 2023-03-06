@@ -242,7 +242,7 @@ function BasicTabs(props: any) {
         entity: entityId,
       }).then((response) => {
         if (response.success === true) {
-          toast.success("Comment is added sucessfully");
+          toast("Comment is added sucessfully");
           setBackendComments([...backendComments, response.result]);
         }
       });
@@ -649,7 +649,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   //   deleteAttachment(attachmentId)
   //     .then((response) => {
   //       if (response.success === true) {
-  //         toast.success(response.message);
+  //         toast(response.message);
   //       }
   //     })
   //     .catch((error) => {
@@ -776,7 +776,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       editIssue(projectId, data, selectedIssue._id)
         .then((response) => {
           if (response.success === true) {
-            toast.success("Issue updated sucessfully");
+            toast("Issue updated sucessfully");
             getIssues(currentStructure._id);
           } else {
             toast.error("Error updating the issue");
@@ -877,7 +877,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       createAttachment(issue._id, fileformdata)
         .then((response) => {
           if (response.success === true) {
-            toast.success("Attachments uploaded sucessfully");
+            toast("Attachments uploaded sucessfully");
           } else {
             toast.error("Error uploading attachments");
           }
@@ -901,7 +901,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     editIssue(projectId as string, issueData, selectedIssue._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Issue updated sucessfully");
+          toast("Issue updated sucessfully");
           getIssues(currentStructure._id);
         } else {
         }

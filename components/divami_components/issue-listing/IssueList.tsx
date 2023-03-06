@@ -81,6 +81,7 @@ import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import { getProjectUsers } from "../../../services/project";
 import router from "next/router";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
+import { toast } from "react-toastify";
 
 interface IProps {
   closeOverlay: () => void;
@@ -103,6 +104,7 @@ interface IProps {
   getIssues?: any;
   handleOnIssueSort?: any;
   deleteTheAttachment?: any;
+  openIssueCreateFn?: any;
 }
 
 const CustomIssueListDrawer: React.FC<IProps> = ({
@@ -126,6 +128,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   getIssues,
   handleOnIssueSort,
   deleteTheAttachment,
+  openIssueCreateFn,
 }) => {
   const handleClose = () => {
     onClose(true);
@@ -597,7 +600,15 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             <MessageDivShowErr>
               No Issue has been raised yet. Get a headstart by raising one.
             </MessageDivShowErr>
-            <RaiseButtonDiv>Raise Issue</RaiseButtonDiv>
+            <RaiseButtonDiv
+              onClick={() => {
+                onClose();
+                openIssueCreateFn();
+                toast("Click on the map where you want to create an issue");
+              }}
+            >
+              Raise Issue
+            </RaiseButtonDiv>
 
             <ContentError>
               Check out

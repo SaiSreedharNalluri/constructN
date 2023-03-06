@@ -258,6 +258,7 @@ export const RaiseButtonDiv = styled("div")({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  cursor: "pointer",
   // marginLeft: "20px",
 });
 
