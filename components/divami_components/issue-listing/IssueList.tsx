@@ -81,6 +81,7 @@ import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import { getProjectUsers } from "../../../services/project";
 import router from "next/router";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
+import { toast } from "react-toastify";
 
 interface IProps {
   closeOverlay: () => void;
@@ -102,6 +103,8 @@ interface IProps {
   issueFilterState?: any;
   getIssues?: any;
   handleOnIssueSort?: any;
+  deleteTheAttachment?: any;
+  openIssueCreateFn?: any;
 }
 
 const CustomIssueListDrawer: React.FC<IProps> = ({
@@ -124,6 +127,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   issueFilterState,
   getIssues,
   handleOnIssueSort,
+  deleteTheAttachment,
+  openIssueCreateFn,
 }) => {
   const handleClose = () => {
     onClose(true);
@@ -214,22 +219,21 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setOpenDrawer(true);
   };
 
-  const sortDateOrdering = () => {
-    let sorted;
-    if (sortOrder === "asc") {
-      sorted = filteredIssuesList.sort((a: any, b: any) => {
-        return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
-      });
-      setSortOrder("desc");
-    } else {
-      sorted = filteredIssuesList.sort((a: any, b: any) => {
-        return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
-      });
-      setSortOrder("asc");
-    }
-    setFilteredIssuesList(sorted);
-  };
-
+  // const sortDateOrdering = () => {
+  //   let sorted;
+  //   if (sortOrder === "asc") {
+  //     sorted = filteredIssuesList.sort((a: any, b: any) => {
+  //       return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+  //     });
+  //     setSortOrder("desc");
+  //   } else {
+  //     sorted = filteredIssuesList.sort((a: any, b: any) => {
+  //       return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+  //     });
+  //     setSortOrder("asc");
+  //   }
+  //   setFilteredIssuesList(sorted);
+  // };
   useEffect(() => {
     if (router.isReady) {
       getProjectUsers(router.query.projectId as string)
@@ -317,6 +321,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 }}
                 src={CrossIcon}
                 alt={"close icon"}
+                data-testid="close-icon"
               />
             </TitleContainer>
           </HeaderContainer>
@@ -347,6 +352,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                             }}
                             src={CrossIcon}
                             alt={"close icon"}
+                            data-testid="search-close"
                           />
                         </InputAdornment>
                       ),
@@ -357,6 +363,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 <>
                   <SearchGlassIcon
                     src={Search}
+                    data-testid='search-icon'
                     alt={"close icon"}
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
@@ -381,6 +388,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         setIsSortMenuOpen((prev) => !prev);
                         handleSortClick(e);
                       }}
+                      data-testid="sort"
                     />
                   </Tooltip>
                   {/* {sortOrder === "asc" ? (
@@ -406,6 +414,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     onClick={() => {
                       handleViewTaskList();
                     }}
+                    data-testid="filter"
                   />
 
                   <CSVLink
@@ -413,6 +422,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     filename={"my-issues.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
                     target="_blank"
+                    data-testid="download"
                   >
                     {/* <FontAwesomeIcon
                   className=" fill-black text-black"
@@ -432,6 +442,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   return (
                     <div key={index}>
                       <BodyInfo
+                        data-testid="item-body"
                         onClick={() => {
                           handleViewIssue(val);
                         }}
@@ -460,7 +471,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                             alt="Arrow"
                           />
                           <BodyContTitle>
-                            {val.type} (#{val._id})
+                            {val.type} (#{val.sequenceNumber})
                           </BodyContTitle>
                         </FirstHeader>
 
@@ -512,6 +523,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 contextInfo={contextInfo}
                 deleteTheIssue={deleteTheIssue}
                 getIssues={getIssues}
+                deleteTheAttachment={deleteTheAttachment}
               />
             </Drawer>
           )}
@@ -575,6 +587,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 <StyledMenu
                   key={option.label}
                   onClick={() => handleSortMenuClick(option.method)}
+                  data-testid="sort-menu-item"
                 >
                   {option.label}
                   {option.icon && (
@@ -594,7 +607,15 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             <MessageDivShowErr>
               No Issue has been raised yet. Get a headstart by raising one.
             </MessageDivShowErr>
-            <RaiseButtonDiv>Raise Issue</RaiseButtonDiv>
+            <RaiseButtonDiv
+              onClick={() => {
+                onClose();
+                openIssueCreateFn();
+                toast("Click on the map where you want to create an issue");
+              }}
+            >
+              Raise Issue
+            </RaiseButtonDiv>
 
             <ContentError>
               Check out

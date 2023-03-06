@@ -139,7 +139,6 @@ const IssueCreate: React.FC<IProps> = ({
       resetForm: (nextValues?: Partial<FormValues>) => void;
     }
   ) => {
-    console.log("values", values);
     const formData = new FormData();
     let assignees = values.assignees;
     let tags = values.tags;
@@ -160,7 +159,7 @@ const IssueCreate: React.FC<IProps> = ({
     }
     values.structure = myStructure?._id;
     values.title = `${myStructure?.name}_${values.dueDate} `;
-    values.snapshot = mySnapshot?._id;
+    values.snapshot = `${mySnapshot?._id || ""}`;
     values.owner = loggedInUserId;
     values.status = "To Do";
     values.context = myContext;

@@ -81,6 +81,7 @@ import {
 } from "@mui/material";
 import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
+import { toast } from "react-toastify";
 
 interface IProps {
   closeOverlay: () => void;
@@ -93,6 +94,7 @@ interface IProps {
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
   onClose: any;
   taskFilterState: any;
+  deleteTheAttachment?: any;
 }
 
 const CustomTaskListDrawer = (props: any) => {
@@ -110,6 +112,8 @@ const CustomTaskListDrawer = (props: any) => {
     taskFilterState,
     getTasks,
     handleOnTasksSort,
+    deleteTheAttachment,
+    openTaskCreateFn,
   } = props;
   const [taskType, setTaskType] = useState<[string]>();
   const [taskPriority, setTaskPriority] = useState<[string]>();
@@ -230,21 +234,21 @@ const CustomTaskListDrawer = (props: any) => {
     return modifiedList;
   };
 
-  const sortDateOrdering = () => {
-    let sorted;
-    if (sortOrder === "asc") {
-      sorted = filteredTaskList.sort((a: any, b: any) => {
-        return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
-      });
-      setSortOrder("desc");
-    } else {
-      sorted = filteredTaskList.sort((a: any, b: any) => {
-        return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
-      });
-      setSortOrder("asc");
-    }
-    setFilteredTaskList(sorted);
-  };
+  // const sortDateOrdering = () => {
+  //   let sorted;
+  //   if (sortOrder === "asc") {
+  //     sorted = filteredTaskList.sort((a: any, b: any) => {
+  //       return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+  //     });
+  //     setSortOrder("desc");
+  //   } else {
+  //     sorted = filteredTaskList.sort((a: any, b: any) => {
+  //       return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+  //     });
+  //     setSortOrder("asc");
+  //   }
+  //   setFilteredTaskList(sorted);
+  // };
 
   const handleViewTask = (task: any) => {
     filteredTaskList.forEach((item: any) => {
@@ -314,6 +318,7 @@ const CustomTaskListDrawer = (props: any) => {
                 }}
                 src={CrossIcon}
                 alt={"close icon"}
+                data-testid="close-icon"
               />
             </TitleContainer>
           </HeaderContainer>
@@ -344,6 +349,7 @@ const CustomTaskListDrawer = (props: any) => {
                             }}
                             src={CrossIcon}
                             alt={"close icon"}
+                            data-testid="search-close"
                           />
                         </InputAdornment>
                       ),
@@ -354,6 +360,7 @@ const CustomTaskListDrawer = (props: any) => {
                 <>
                   <SearchGlassIcon
                     src={Search}
+                    data-testid='search-icon'
                     alt={"close icon"}
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
@@ -378,6 +385,7 @@ const CustomTaskListDrawer = (props: any) => {
                         setIsSortMenuOpen((prev) => !prev);
                         handleSortClick(e);
                       }}
+                      data-testid="sort"
                     />
                   </Tooltip>
                   {/* {sortOrder === "asc" ? (
@@ -412,6 +420,7 @@ const CustomTaskListDrawer = (props: any) => {
                       onClick={() => {
                         handleViewTaskList();
                       }}
+                      data-testid="filter"
                     />
                   ) : null}
 
@@ -420,6 +429,7 @@ const CustomTaskListDrawer = (props: any) => {
                     filename={"my-tasks.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
                     target="_blank"
+                    data-testid="download"
                   >
                     {/* <FontAwesomeIcon
                   className=" fill-black text-black"
@@ -439,6 +449,7 @@ const CustomTaskListDrawer = (props: any) => {
                   return (
                     <>
                       <BodyInfo
+                        data-testid="item-body"
                         onClick={() => {
                           handleViewTask(val);
                         }}
@@ -512,6 +523,7 @@ const CustomTaskListDrawer = (props: any) => {
                 currentSnapshot={currentSnapshot}
                 contextInfo={contextInfo}
                 getTasks={getTasks}
+                deleteTheAttachment={deleteTheAttachment}
               />
             </Drawer>
           )}
@@ -542,7 +554,15 @@ const CustomTaskListDrawer = (props: any) => {
           <MessageDivShowErr>
             No Task has been raised yet. Get a headstart by raising one.
           </MessageDivShowErr>
-          <RaiseButtonDiv>Raise Task</RaiseButtonDiv>
+          <RaiseButtonDiv
+            onClick={() => {
+              onClose();
+              openTaskCreateFn();
+              toast.info("Click on the map where you want to create a task");
+            }}
+          >
+            Raise Task
+          </RaiseButtonDiv>
 
           <ContentError>
             Check out
@@ -588,6 +608,7 @@ const CustomTaskListDrawer = (props: any) => {
         {sortMenuOptions.map((option) => (
           <>
             <StyledMenu
+            data-testid="sort-menu-item"
               key={option.label}
               onClick={() => {
                 handleSortMenuClick(option.method);

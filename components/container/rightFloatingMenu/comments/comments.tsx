@@ -133,7 +133,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
       deleteComment(router.query.projectId as string, comment._id).then(
         (response) => {
           if (response.success === true) {
-            toast.success('Comment is deleted sucessfully');
+            toast.success(response.message);
             const updatedBackendComments = backendComments.filter(
               (backendComment) => backendComment._id !== comment._id
             );

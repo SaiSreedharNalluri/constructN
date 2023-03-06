@@ -12,6 +12,7 @@ export interface IUser {
   fullName: string;
   age: number;
   token: string;
+  avatar:string
 }
 export interface Contact {
   code: string;

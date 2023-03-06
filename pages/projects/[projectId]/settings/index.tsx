@@ -1,18 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import Header from "../../../../components/container/header";
 import Treelist from "../../../../components/container/treeList";
 import {
-  assignProjectUser,
   getProjectDetails,
   getProjectUsers,
   removeProjectUser,
   updateProjectCover,
   updateProjectInfo,
+  updateProjectUserRole,
 } from "../../../../services/project";
-import { IProjectUsers } from "../../../../models/IProjects";
+import { IProjects, IProjectUsers } from "../../../../models/IProjects";
 import { Tabs, TabList, Tab, TabPanel } from "react-tabs";
-import authHeader from "../../../../services/auth-header";
 import CollapsableMenu from "../../../../components/layout/collapsableMenu";
 import "react-tabs/style/react-tabs.css";
 import { ChildrenEntity } from "../../../../models/IStructure";
@@ -25,7 +23,7 @@ import {
   addIssuePriorityApi,
   addIssueStatusApi,
   addIssueTypeApi,
-  getIssuesPriority,
+  getIssuesPriorityList,
   getIssueStatusList,
   getIssueTypeList,
   removeIssueStatusItemApi,
@@ -53,7 +51,13 @@ import {
   updateTaskStatusListApi,
   updateTaskTypeListApi,
 } from "../../../../services/task";
-import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
+import {
+  addTagsListApi,
+  deleteTagsListApi,
+  getTagsList,
+  updateTagsListApi,
+} from "../../../../services/tags";
+import Header from "../../../../components/divami_components/header/Header";
 const Editproject: React.FC = () => {
   const router = useRouter();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
@@ -61,8 +65,7 @@ const Editproject: React.FC = () => {
   let [state, setState] = useState<ChildrenEntity[]>([]);
   const [selector, setSelector] = useState("");
   let [structureData, setStructureData] = useState<ChildrenEntity>();
-  let [projectData, setProjectData] = useState<any>();
-  let [open, setOpen] = useState(false);
+  let [projectData, setProjectData] = useState<IProjects>();
   let [issuePriorityList, setIssuePriorityList] = useState<any>();
   let [issueTypeList, setIssueTypeList] = useState<any>();
   // let [issueTypeListId, setIssueTypeListId] = useState<any>();
@@ -70,13 +73,18 @@ const Editproject: React.FC = () => {
   let [taskPriorityList, setTaskPriorityList] = useState<any>();
   let [taskTypeList, setTaskTypeList] = useState<any>();
   let [taskStatusList, setTaskStatusList] = useState<any>();
+  let [tags, setTags] = useState<any>();
   let [addIssue, setAddIssue] = useState<any>("");
   let [addIssuePriorityType, setAddIssuePriorityType] = useState<any>("");
   let [addTaskType, setAddTaskType] = useState<any>("");
   let [addTaskTypelist, setAddTaskTypeList] = useState<any>("");
   let [addIssueStatuslist, setAddIssueStatusList] = useState<any>("");
   let [addTaskStatuslist, setAddTaskStatusList] = useState<any>("");
-
+  let [addTagslist, setAddTagsList] = useState<any>("");
+  const [isActive, setIsActive] = useState("issuePriority");
+  const toggle = (e: any) => {
+    setIsActive(e.target.id);
+  };
   useEffect(() => {
     if (router.isReady) {
       getProjectUsers(router.query.projectId as string)
@@ -102,57 +110,46 @@ const Editproject: React.FC = () => {
           }
         })
         .catch();
-      getIssuesPriority(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          console.log(response, "test issue");
-          setIssuePriorityList(response.result);
+      getIssuesPriorityList(router.query.projectId as string).then(
+        (response) => {
+          if (response.success === true) {
+            setIssuePriorityList(response.result.priorityList.Issue);
+          }
         }
-      });
+      );
       getTaskPriorityList(router.query.projectId as string).then((response) => {
         if (response.success === true) {
-          console.log(response.result.priorityList.Task, "Task priority");
           setTaskPriorityList(response.result.priorityList.Task);
         }
       });
       getIssueTypeList(router.query.projectId as string).then((response) => {
         if (response.success === true) {
-          console.log(response.result._id, "issue typelist");
           setIssueTypeList(response.result.typeList.Issue);
         }
       });
       getTaskTypeList(router.query.projectId as string).then((response) => {
         if (response.success === true) {
-          console.log(response.result.typeList.Task, "task typelist");
           setTaskTypeList(response.result.typeList.Task);
         }
       });
       getIssueStatusList(router.query.projectId as string).then((response) => {
         if (response.success === true) {
-          console.log(response.result.statusList.Issue, "issue statuslist");
           setIssueStatusList(response.result.statusList.Issue);
         }
       });
       getTaskStatusList(router.query.projectId as string).then((response) => {
         if (response.success === true) {
-          console.log(response.result.statusList.Task, "task statuslist");
           setTaskStatusList(response.result.statusList.Task);
+        }
+      });
+      getTagsList(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          setTags(response.result[0]?.tagList);
         }
       });
     }
   }, [router.isReady, router.query.projectId]);
-  const addProjectUser = (userInfo: object) => {
-    assignProjectUser(userInfo, router.query.projectId as string)
-      .then((response) => {
-        if (response?.success === true) {
-          toast.success(response?.message);
-        }
-      })
-      .catch((error) => {
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
-  };
+
   const updateProjectData = (projectInfo: any) => {
     if (
       projectInfo.latitude != undefined &&
@@ -168,7 +165,7 @@ const Editproject: React.FC = () => {
       .then((response) => {
         if (response.success === true) {
           toast.success("Project details updated sucessfully");
-          window.location.reload();
+          setProjectData(response.result);
         }
       })
       .catch((error) => {
@@ -182,7 +179,7 @@ const Editproject: React.FC = () => {
       .then((response) => {
         if (response?.success === true) {
           toast.success(response?.message);
-          window.location.reload();
+          setProjectUsers(response?.result);
         }
       })
       .catch((error) => {
@@ -196,9 +193,15 @@ const Editproject: React.FC = () => {
     formData.append("file", e.file);
     updateProjectCover(formData, router.query.projectId as string)
       .then((response) => {
-        console.log("response", response);
         if (response?.success === true) {
           toast.success("Project cover photo updated sucessfully");
+          const fileInput = document.getElementById(
+            "file-upload"
+          ) as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = "";
+          }
+
           setProjectData(response.result);
         }
       })
@@ -211,20 +214,15 @@ const Editproject: React.FC = () => {
   const dragItem: any = useRef();
   const dragOverItem: any = useRef();
   const handleIssueTypeUpdate = (e: any) => {
-    console.log("handle Issue Type Update  called", e);
     let copyListItems = [...issueTypeList];
-    console.log("copylist items", copyListItems);
     const dragItemContent = copyListItems.splice(dragItem.current, 1)[0];
-    console.log(dragItemContent, "dragItemContent");
     copyListItems.splice(dragOverItem.current, 0, dragItemContent);
-    console.log("dragoveritem", dragOverItem);
     dragItem.current = null;
     dragOverItem.current = null;
     setIssueTypeList(copyListItems);
     updateIssueTypeListApi(router.query.projectId as string, copyListItems)
       .then((response) => {
         if (response?.success === true) {
-          console.log(response);
           toast.success(response?.message);
         }
       })
@@ -246,7 +244,6 @@ const Editproject: React.FC = () => {
     updateTaskTypeListApi(router.query.projectId as string, copyListItems)
       .then((response) => {
         if (response?.success === true) {
-          console.log(response);
           toast.success(response?.message);
         }
       })
@@ -259,24 +256,17 @@ const Editproject: React.FC = () => {
   const dragIssuePriorityRef: any = useRef();
   const dragOverIssuePriorityRef: any = useRef();
   const handleIssuePriorityUpdate = (e: any) => {
-    console.log("handle Issue Type Update  called", e);
-    let copyListItems = issuePriorityList;
-    console.log("copylist items", copyListItems);
+    let copyListItems = [...issuePriorityList];
     const dragItemContent = copyListItems.splice(
       dragIssuePriorityRef.current,
       1
     )[0];
-    console.log(dragItemContent, "dragItemContent");
     copyListItems.splice(dragOverIssuePriorityRef.current, 0, dragItemContent);
-    console.log("dragoveritem", dragOverIssuePriorityRef);
     dragIssuePriorityRef.current = null;
     dragOverIssuePriorityRef.current = null;
-    // setIssuePriorityList(copyListItems);
     updateIssuePriorityListApi(router.query.projectId as string, copyListItems)
       .then((response) => {
         if (response?.success === true) {
-          console.log("response pr", response);
-
           setIssuePriorityList(response.result.priorityList.Issue);
           toast.success(response?.message);
         }
@@ -290,23 +280,18 @@ const Editproject: React.FC = () => {
   const dragTaskPriorityRef: any = useRef();
   const dragOverTaskPriorityRef: any = useRef();
   const handleTaskPriorityUpdate = (e: any) => {
-    console.log("handle Issue Type Update  called", e);
     let copyListItems = [...taskPriorityList];
-    console.log("copylist items", copyListItems);
     const dragItemContent = copyListItems.splice(
       dragTaskPriorityRef.current,
       1
     )[0];
-    console.log(dragItemContent, "dragItemContent");
     copyListItems.splice(dragOverTaskPriorityRef.current, 0, dragItemContent);
-    console.log("dragoveritem", dragOverTaskPriorityRef);
     dragTaskPriorityRef.current = null;
     dragOverTaskPriorityRef.current = null;
     setTaskPriorityList(copyListItems);
     updateTaskPriorityListApi(router.query.projectId as string, copyListItems)
       .then((response) => {
         if (response?.success === true) {
-          console.log(response);
           toast.success(response?.message);
         }
       })
@@ -319,23 +304,18 @@ const Editproject: React.FC = () => {
   const dragIssueStatusRef: any = useRef();
   const dragOverIssueStatusRef: any = useRef();
   const handleIssueStatusListUpdate = (e: any) => {
-    console.log("handle Issue Type Update  called", e);
     let copyListItems = [...issueStatusList];
-    console.log("copylist items", copyListItems);
     const dragItemContent = copyListItems.splice(
       dragIssueStatusRef.current,
       1
     )[0];
-    console.log(dragItemContent, "dragItemContent");
     copyListItems.splice(dragOverIssueStatusRef.current, 0, dragItemContent);
-    console.log("dragoveritem", dragOverIssueStatusRef);
     dragIssueStatusRef.current = null;
     dragOverIssueStatusRef.current = null;
     setIssueStatusList(copyListItems);
     updateIssueStatusListApi(router.query.projectId as string, copyListItems)
       .then((response) => {
         if (response?.success === true) {
-          console.log(response);
           toast.success(response?.message);
         }
       })
@@ -349,21 +329,39 @@ const Editproject: React.FC = () => {
   const dragOverTaskStatusRef: any = useRef();
   const handleTaskStatusListUpdate = (e: any) => {
     let copyListItems = [...taskStatusList];
-    console.log("copylist items", copyListItems);
     const dragItemContent = copyListItems.splice(
       dragTaskStatusRef.current,
       1
     )[0];
-    console.log(dragItemContent, "dragItemContent");
     copyListItems.splice(dragOverTaskStatusRef.current, 0, dragItemContent);
-    console.log("dragoveritem", dragOverTaskStatusRef);
     dragTaskStatusRef.current = null;
     dragOverTaskStatusRef.current = null;
     setTaskStatusList(copyListItems);
     updateTaskStatusListApi(router.query.projectId as string, copyListItems)
       .then((response) => {
         if (response?.success === true) {
-          console.log(response);
+          toast.success(response?.message);
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
+
+  const dragTagsRef: any = useRef();
+  const dragOverTagsRef: any = useRef();
+  const handleTagsUpdate = (e: any) => {
+    let copyListItems = [...tags];
+    const dragItemContent = copyListItems.splice(dragTagsRef.current, 1)[0];
+    copyListItems.splice(dragOverTagsRef.current, 0, dragItemContent);
+    dragTagsRef.current = null;
+    dragOverTagsRef.current = null;
+    setTags(copyListItems);
+    updateTagsListApi(router.query.projectId as string, copyListItems)
+      .then((response) => {
+        if (response?.success === true) {
           toast.success(response?.message);
         }
       })
@@ -375,14 +373,11 @@ const Editproject: React.FC = () => {
   };
   const deleteIssueTypeItem = (e: any, id: any) => {
     e.preventDefault();
-    console.log("id", id);
     const indexValue = issueTypeList?.filter((item: any, index: any) => {
       return index === id;
     });
-    console.log("indexValue", indexValue);
     removeIssueTypeApi(router.query.projectId as string, indexValue)
       .then((response) => {
-        console.log("response", response);
         if (response?.success === true) {
           setIssueTypeList(response.result.typeList.Issue);
           toast.success(response?.message);
@@ -396,11 +391,9 @@ const Editproject: React.FC = () => {
   };
   let handleIssueTypeSubmit = (e: any) => {
     e.preventDefault();
-    console.log(addIssue);
     setAddIssue("");
     addIssueTypeApi(router.query.projectId as string, addIssue)
       .then((response) => {
-        console.log("response", response);
         if (response?.success === true) {
           setIssueTypeList(response.result.typeList.Issue);
           toast.success(response?.message);
@@ -414,11 +407,9 @@ const Editproject: React.FC = () => {
   };
   let handleIssuePrioritySubmit = (e: any) => {
     e.preventDefault();
-    console.log(addIssuePriorityType);
     setAddIssuePriorityType("");
     addIssuePriorityApi(router.query.projectId as string, addIssuePriorityType)
       .then((response) => {
-        console.log("response", response);
         if (response?.success === true) {
           setIssuePriorityList(response.result.priorityList.Issue);
           toast.success(response?.message);
@@ -432,11 +423,9 @@ const Editproject: React.FC = () => {
   };
   let handleTaskPriortySumbit = (e: any) => {
     e.preventDefault();
-    console.log(addTaskType);
     setAddTaskType("");
     addTaskTypesApi(router.query.projectId as string, addTaskType)
       .then((response) => {
-        console.log("response", response);
         if (response?.success === true) {
           setTaskPriorityList(response.result.priorityList.Task);
           toast.success(response?.message);
@@ -450,14 +439,11 @@ const Editproject: React.FC = () => {
   };
   const deleteIssuePriorityItem = (e: any, id: any) => {
     e.preventDefault();
-    console.log("id", id);
     const indexValue = issuePriorityList?.filter((item: any, index: any) => {
       return index === id;
     });
-    console.log("indexValue", indexValue);
     removePriorityTypeApi(router.query.projectId as string, indexValue)
       .then((response) => {
-        console.log("response", response);
         if (response?.success === true) {
           setIssuePriorityList(response.result.priorityList.Issue);
           toast.success(response?.message);
@@ -471,14 +457,11 @@ const Editproject: React.FC = () => {
   };
   const deleteTaskPriorityItem = (e: any, id: any) => {
     e.preventDefault();
-    console.log("id", id);
     const indexValue = taskPriorityList?.filter((item: any, index: any) => {
       return index === id;
     });
-    console.log("indexValue", indexValue);
     removeTaskTypePriorityApi(router.query.projectId as string, indexValue)
       .then((response) => {
-        console.log("response", response);
         if (response?.success === true) {
           setTaskPriorityList(response.result.priorityList.Task);
           toast.success(response?.message);
@@ -492,14 +475,11 @@ const Editproject: React.FC = () => {
   };
   const deleteTaskTypeListItem = (e: any, id: any) => {
     e.preventDefault();
-    console.log("id", id);
     const indexValue = taskTypeList?.filter((item: any, index: any) => {
       return index === id;
     });
-    console.log("indexValue", indexValue);
     removeTaskTypeListsApi(router.query.projectId as string, indexValue)
       .then((response) => {
-        console.log("response", response);
         if (response?.success === true) {
           setTaskTypeList(response.result.typeList.Task);
           toast.success(response?.message);
@@ -513,11 +493,9 @@ const Editproject: React.FC = () => {
   };
   let handleTaskTypeListSumbit = (e: any) => {
     e.preventDefault();
-    console.log(addTaskTypelist);
     setAddTaskTypeList("");
     addTaskTypeListsApi(router.query.projectId as string, addTaskTypelist)
       .then((response) => {
-        console.log("response", response);
         if (response.success === true) {
           setTaskTypeList(response.result.typeList.Task);
           toast.success(response?.message);
@@ -531,11 +509,9 @@ const Editproject: React.FC = () => {
   };
   let handleIssueStatusListSubmit = (e: any) => {
     e.preventDefault();
-    console.log(addIssueStatuslist);
     setAddIssueStatusList("");
     addIssueStatusApi(router.query.projectId as string, addIssueStatuslist)
       .then((response) => {
-        console.log("response", response);
         if (response?.success === true) {
           setIssueStatusList(response.result.statusList.Issue);
           toast.success(response?.message);
@@ -549,11 +525,9 @@ const Editproject: React.FC = () => {
   };
   let handleTaskStatusListSubmit = (e: any) => {
     e.preventDefault();
-    console.log(addTaskStatuslist);
     setAddTaskStatusList("");
     addTaskStatusApi(router.query.projectId as string, addTaskStatuslist)
       .then((response) => {
-        console.log("response", response);
         if (response?.success === true) {
           setTaskStatusList(response.result.statusList.Task);
           toast.success(response?.message);
@@ -565,16 +539,30 @@ const Editproject: React.FC = () => {
         }
       });
   };
+
+  let handleTagsListSubmit = (e: any) => {
+    e.preventDefault();
+    setAddTagsList("");
+    addTagsListApi(router.query.projectId as string, addTagslist)
+      .then((response) => {
+        if (response?.success === true) {
+          setTags(response.result.tagList);
+          toast.success(response?.message);
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
   const deleteIssueStatusItem = (e: any, id: any) => {
     e.preventDefault();
-    console.log("id", id);
     const indexValue = issueStatusList?.filter((item: any, index: any) => {
       return index === id;
     });
-    console.log("indexValue", indexValue);
     removeIssueStatusItemApi(router.query.projectId as string, indexValue)
       .then((response) => {
-        console.log("response", response);
         if (response?.success === true) {
           setIssueStatusList(response.result.statusList.Issue);
           // toast.info("Issue Status Item is Removed");
@@ -588,14 +576,11 @@ const Editproject: React.FC = () => {
   };
   const deleteTaskStatusItem = (e: any, id: any) => {
     e.preventDefault();
-    console.log("id", id);
     const indexValue = taskStatusList?.filter((item: any, index: any) => {
       return index === id;
     });
-    console.log("indexValue", indexValue);
     removeTaskStatusListApi(router.query.projectId as string, indexValue)
       .then((response) => {
-        console.log("response", response);
         if (response?.success === true) {
           setTaskStatusList(response.result.statusList.Task);
           toast.success(response?.message);
@@ -607,6 +592,39 @@ const Editproject: React.FC = () => {
         }
       });
   };
+  const updateUserRole = (upDateObj: any) => {
+    updateProjectUserRole(upDateObj, router.query.projectId as string)
+      .then((response) => {
+        if (response.success === true) {
+          toast.success(response?.message);
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
+
+  const deleteTagsItem = (e: any, id: any) => {
+    e.preventDefault();
+    const indexValue = tags?.filter((item: any, index: any) => {
+      return index === id;
+    });
+    deleteTagsListApi(router.query.projectId as string, indexValue)
+      .then((response) => {
+        if (response?.success === true) {
+          setTags(response.result.tagList);
+          toast.success(response?.message);
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
+
   return (
     <div>
       <div>
@@ -614,10 +632,7 @@ const Editproject: React.FC = () => {
       </div>
       <div className="flex w-full fixed">
         <div>
-          {/* <CollapsableMenu onChangeData={() => { }} /> */}
-          {/* <CollapsableMenu onChangeData={() => { }} />
-          < */}
-          <SidePanelMenu onChangeData={() => {}} />
+          <CollapsableMenu onChangeData={() => {}} />
         </div>
         <div className="calc-w  calc-h overflow-y-auto ">
           <Tabs
@@ -636,7 +651,7 @@ const Editproject: React.FC = () => {
                   {projectData && (
                     <ProjectInfo
                       handleImageUPload={handleImageUPload}
-                      projectData={projectData}
+                      projectData={projectData as IProjects}
                       updateProjectData={updateProjectData}
                     />
                   )}
@@ -645,7 +660,8 @@ const Editproject: React.FC = () => {
                   <ProjectUserAdd
                     deassignProjectUser={deassignProjectUser}
                     projectUsers={projectUsers}
-                    addProjectUser={addProjectUser}
+                    setProjectUsers={setProjectUsers}
+                    updateUserRole={updateUserRole}
                   />
                 </TabPanel>
                 <TabPanel>
@@ -665,101 +681,319 @@ const Editproject: React.FC = () => {
                         />
                       )}
                     </div>
-                    <div className="ml-6">
+                    <div className="px-4 lg:w-3/4 ">
                       <h1 className="">Project Details</h1>
                       <div>
-                        <span>Id:</span>
-                        {structureData?._id}
-                        <br />
-                        <span>Name:</span>
-                        {structureData?.name}
-                        <br />
-                        <span>Type:</span>
-                        {structureData?.type}
-                        <br />
-                        <span>parent :</span>
-                        {structureData?.parent}
+                        <table className="w-full">
+                          <thead>
+                            <tr className="bg-gray-300 border-b border-gray-300 ">
+                              <th className="p-1.5 ">Id</th>
+                              <th>Name</th>
+                              <th>Type</th>
+                              <th>Parent</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="border-b p-1.5 text-center border-gray-300">
+                                {" "}
+                                {structureData?._id}
+                              </td>
+                              <td className="border-b text-center border-gray-200">
+                                {" "}
+                                {structureData?.name}
+                              </td>
+                              <td className="border-b text-center border-gray-200">
+                                {" "}
+                                {structureData?.type}
+                              </td>
+                              <td className="border-b  text-center border-gray-200">
+                                {" "}
+                                {structureData?.parent}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                   </div>
                 </TabPanel>
                 <TabPanel>
-                  <div className="grid lg:grid-cols-3  ">
-                    <div className=" lg:grid-rows-2 ">
-                      <div>
-                        <div>
-                          <form
-                            className="flex gap-2 px-4  "
-                            onSubmit={handleIssuePrioritySubmit}
+                  <div className="flex">
+                    <div className="w-1/4 ">
+                      <ul>
+                        <li>
+                          <button
+                            id="issuePriority"
+                            className={
+                              isActive === "issuePriority" ? "bg-green-300" : ""
+                            }
+                            onClick={(e) => {
+                              toggle(e);
+                            }}
                           >
-                            <div className="mt-2 ">
-                              <input
-                                type="text"
-                                required
-                                value={addIssuePriorityType}
-                                onChange={(e) =>
-                                  setAddIssuePriorityType([e.target.value])
-                                }
-                                placeholder="Enter Issue priority"
-                                className=" border border-gray-600 focus:outline-none w-full text-sm rounded  p-2"
-                              ></input>
-                            </div>
-                            <div className="">
-                              <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800   rounded text-gray-200 font-semibold ">
-                                add
-                              </button>
-                            </div>
-                          </form>
-                        </div>
+                            Issue Priortiy
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            id="taskPriority"
+                            className={
+                              isActive === "taskPriority" ? "bg-green-300" : ""
+                            }
+                            onClick={(e) => {
+                              toggle(e);
+                            }}
+                          >
+                            Task Priortiy
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            id="issueType"
+                            className={
+                              isActive === "issueType" ? "bg-green-300" : ""
+                            }
+                            onClick={(e) => {
+                              toggle(e);
+                            }}
+                          >
+                            Issue Type{" "}
+                          </button>{" "}
+                        </li>
+                        <li>
+                          <button
+                            id="taskType"
+                            className={
+                              isActive === "taskType" ? "bg-green-300" : ""
+                            }
+                            onClick={(e) => {
+                              toggle(e);
+                            }}
+                          >
+                            Task Type{" "}
+                          </button>{" "}
+                        </li>
+                        <li>
+                          <button
+                            id="issueStatus"
+                            className={
+                              isActive === "issueStatus" ? "bg-green-300" : ""
+                            }
+                            onClick={(e) => {
+                              toggle(e);
+                            }}
+                          >
+                            Issue Status{" "}
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            id="taskStatus"
+                            className={
+                              isActive === "taskStatus" ? "bg-green-300" : ""
+                            }
+                            onClick={(e) => {
+                              toggle(e);
+                            }}
+                          >
+                            Issue Status{" "}
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            id="tags"
+                            className={
+                              isActive === "tags" ? "bg-green-300" : ""
+                            }
+                            onClick={(e) => {
+                              toggle(e);
+                            }}
+                          >
+                            Tags List
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="w-3/4">
+                      <div
+                        className={
+                          isActive === "issuePriority"
+                            ? `issuePriority`
+                            : " hidden"
+                        }
+                      >
                         <div>
-                          <div className="px-4  py-2  ">
-                            <table className="w-full overflow-y-auto tableInfo">
+                          <div>
+                            <form
+                              className="flex gap-2 px-4  "
+                              onSubmit={handleIssuePrioritySubmit}
+                            >
+                              <div className="mt-2 ">
+                                <input
+                                  type="text"
+                                  required
+                                  value={addIssuePriorityType}
+                                  onChange={(e) =>
+                                    setAddIssuePriorityType([e.target.value])
+                                  }
+                                  placeholder="Enter Issue priority"
+                                  className=" border border-gray-600 focus:outline-none w-full text-sm rounded  p-2"
+                                ></input>
+                              </div>
+                              <div className="">
+                                <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800   rounded text-gray-200 font-semibold ">
+                                  add
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                          <div>
+                            <div className="px-4  py-2  ">
+                              <table className="w-full overflow-y-auto">
+                                <thead>
+                                  <tr className="bg-gray-200 border-b border-gray-200  uppercase ">
+                                    <th className="inline-grid p-2">
+                                      Issue Priority
+                                    </th>
+                                    <th>Delete</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {issuePriorityList?.map(
+                                    (item: any, index: any) => {
+                                      return (
+                                        <tr key={index}>
+                                          <td className="border-b border-gray-200">
+                                            <div>
+                                              <div
+                                                key={index}
+                                                className=" cursor-move"
+                                                draggable
+                                                onDragStart={(e: any) =>
+                                                  (dragIssuePriorityRef.current =
+                                                    index)
+                                                }
+                                                onDragEnter={(e: any) =>
+                                                  (dragOverIssuePriorityRef.current =
+                                                    index)
+                                                }
+                                                onDragEnd={
+                                                  handleIssuePriorityUpdate
+                                                }
+                                                onDragOver={(e) =>
+                                                  e.preventDefault()
+                                                }
+                                              >
+                                                <h2 className="p-2"> {item}</h2>
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td className=" border-b text-center border-gray-200">
+                                            <div>
+                                              <FontAwesomeIcon
+                                                onClick={() =>
+                                                  deleteIssuePriorityItem(
+                                                    event,
+                                                    index
+                                                  )
+                                                }
+                                                className="ml-2 cursor-pointer"
+                                                icon={faTrashCan}
+                                              ></FontAwesomeIcon>
+                                            </div>
+                                          </td>
+                                        </tr>
+                                      );
+                                    }
+                                  )}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        className={
+                          isActive === "taskPriority"
+                            ? `taskPriority`
+                            : "  hidden"
+                        }
+                      >
+                        <div>
+                          <div className="px-4">
+                            <form
+                              className="flex gap-x-2 "
+                              onSubmit={handleTaskPriortySumbit}
+                            >
+                              <div className="mt-2 ">
+                                <input
+                                  placeholder="Enter Task priority"
+                                  required
+                                  value={addTaskType}
+                                  onChange={(e) =>
+                                    setAddTaskType([e.target.value])
+                                  }
+                                  className="border border-gray-600 focus:outline-none  text-sm rounded w-full p-2"
+                                ></input>
+                              </div>
+                              <div className="">
+                                <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ">
+                                  add
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                          <div className="px-4 py-2 ">
+                            <table className="w-full overflow-y-auto ">
                               <thead>
-                                <tr className="bg-gray-200 border-b border-gray-200  uppercase ">
-                                  <th>Issue Priority</th>
+                                <tr className="bg-gray-200 border-b border-gray-200   uppercase ">
+                                  <th className="inline-grid p-2">
+                                    Task Priority
+                                  </th>
                                   <th>Delete</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {issuePriorityList?.map(
+                                {taskPriorityList?.map(
                                   (item: any, index: any) => {
                                     return (
                                       <tr key={index}>
-                                        <td className="border-b border-gray-200">
+                                        <td className=" border-b border-gray-200">
                                           <div>
                                             <div
                                               key={index}
                                               className=" cursor-move"
                                               draggable
                                               onDragStart={(e: any) =>
-                                                (dragIssuePriorityRef.current =
+                                                (dragTaskPriorityRef.current =
                                                   index)
                                               }
                                               onDragEnter={(e: any) =>
-                                                (dragOverIssuePriorityRef.current =
+                                                (dragOverTaskPriorityRef.current =
                                                   index)
                                               }
                                               onDragEnd={
-                                                handleIssuePriorityUpdate
+                                                handleTaskPriorityUpdate
                                               }
                                               onDragOver={(e) =>
                                                 e.preventDefault()
                                               }
                                             >
-                                              <h2> {item}</h2>
+                                              <h2 className="p-2"> {item}</h2>
                                             </div>
                                           </div>
                                         </td>
-                                        <td className=" border-b border-gray-200">
+                                        <td className="border-b text-center border-gray-200">
                                           <div>
                                             <FontAwesomeIcon
                                               onClick={() =>
-                                                deleteIssuePriorityItem(
+                                                deleteTaskPriorityItem(
                                                   event,
                                                   index
                                                 )
                                               }
-                                              className="ml-2 cursor-pointer"
+                                              className="cursor-pointer"
                                               icon={faTrashCan}
                                             ></FontAwesomeIcon>
                                           </div>
@@ -773,71 +1007,157 @@ const Editproject: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                      <div>
-                        <div className="px-4">
-                          <form
-                            className="flex gap-x-2 "
-                            onSubmit={handleTaskPriortySumbit}
-                          >
-                            <div className="mt-2 ">
-                              <input
-                                placeholder="Enter Task priority"
-                                required
-                                value={addTaskType}
-                                onChange={(e) =>
-                                  setAddTaskType([e.target.value])
-                                }
-                                className="border border-gray-600 focus:outline-none  text-sm rounded w-full p-2"
-                              ></input>
-                            </div>
-                            <div className="">
-                              <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ">
-                                add
-                              </button>
-                            </div>
-                          </form>
-                        </div>
-                        <div className="px-4 py-2 ">
-                          <table className="w-full overflow-y-auto tableInfo">
-                            <thead>
-                              <tr className="bg-gray-200 border-b border-gray-200   uppercase ">
-                                <th>Task Priority</th>
-                                <th>Delete</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {taskPriorityList?.map(
-                                (item: any, index: any) => {
+
+                      <div
+                        className={
+                          isActive === "issueType" ? `issueType` : " hidden"
+                        }
+                      >
+                        <div>
+                          <div className="  flex  gap-3 px-4 ">
+                            <form
+                              className="flex gap-x-2"
+                              onSubmit={handleIssueTypeSubmit}
+                            >
+                              <div className="mt-2 ">
+                                <input
+                                  required
+                                  value={addIssue}
+                                  onChange={(e) =>
+                                    setAddIssue([e.target.value])
+                                  }
+                                  placeholder="Enter Issue type"
+                                  className="border border-gray-600 focus:outline-none w-full  text-sm rounded  p-2"
+                                ></input>
+                              </div>
+                              <div>
+                                <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ">
+                                  add
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                          <div className="px-4 py-2  ">
+                            <table className="w-full overflow-y-auto">
+                              <thead>
+                                <tr className="bg-gray-200 border-b border-gray-200  uppercase ">
+                                  <th className="inline-grid p-2">
+                                    Issue Type
+                                  </th>
+                                  <th>Delete</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {issueTypeList?.map((item: any, index: any) => {
                                   return (
                                     <tr key={index}>
-                                      <td className=" border-b border-gray-200">
+                                      <td className="border-b border-gray-200">
                                         <div>
                                           <div
                                             key={index}
                                             className=" cursor-move"
                                             draggable
                                             onDragStart={(e: any) =>
-                                              (dragTaskPriorityRef.current =
-                                                index)
+                                              (dragItem.current = index)
                                             }
                                             onDragEnter={(e: any) =>
-                                              (dragOverTaskPriorityRef.current =
-                                                index)
+                                              (dragOverItem.current = index)
                                             }
-                                            onDragEnd={handleTaskPriorityUpdate}
+                                            onDragEnd={handleIssueTypeUpdate}
                                             onDragOver={(e) =>
                                               e.preventDefault()
                                             }
                                           >
-                                            <h2> {item}</h2>
+                                            <h2 className="p-2"> {item}</h2>
                                           </div>
                                         </div>
                                       </td>
-                                      <td className="border-b border-gray-200">
+                                      <td className="border-b text-center border-gray-200">
                                         <div>
                                           <FontAwesomeIcon
                                             onClick={() =>
-                                              deleteTaskPriorityItem(
+                                              deleteIssueTypeItem(event, index)
+                                            }
+                                            className="cursor-pointer"
+                                            icon={faTrashCan}
+                                          ></FontAwesomeIcon>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        className={
+                          isActive === "taskType" ? `taskType ` : "  hidden"
+                        }
+                      >
+                        <div>
+                          <div className=" px-4 ">
+                            <form
+                              className="flex gap-x-2"
+                              onSubmit={handleTaskTypeListSumbit}
+                            >
+                              <div className="mt-2 ">
+                                <input
+                                  required
+                                  value={addTaskTypelist}
+                                  onChange={(e) =>
+                                    setAddTaskTypeList([e.target.value])
+                                  }
+                                  placeholder="Enter Task type"
+                                  className="border border-gray-600 w-full focus:outline-none  text-sm rounded  p-2"
+                                ></input>
+                              </div>
+                              <div>
+                                <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ">
+                                  add
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                          <div className="px-4 py-2 ">
+                            <table className="w-full overflow-y-auto ">
+                              <thead>
+                                <tr className="bg-gray-200 border-b border-gray-200  uppercase ">
+                                  <th className="inline-grid p-2">Task Type</th>
+                                  <th>Delete</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {taskTypeList?.map((item: any, index: any) => {
+                                  return (
+                                    <tr key={index}>
+                                      <td className="border-b border-gray-200">
+                                        <div>
+                                          <div
+                                            key={index}
+                                            className=" cursor-move"
+                                            draggable
+                                            onDragStart={(e: any) =>
+                                              (dragItems.current = index)
+                                            }
+                                            onDragEnter={(e: any) =>
+                                              (dragOverItems.current = index)
+                                            }
+                                            onDragEnd={handleTaskTypeUpdate}
+                                            onDragOver={(e) =>
+                                              e.preventDefault()
+                                            }
+                                          >
+                                            <h2 className="p-2"> {item}</h2>
+                                          </div>
+                                        </div>
+                                      </td>
+                                      <td className="border-b text-center border-gray-200">
+                                        <div>
+                                          <FontAwesomeIcon
+                                            onClick={() =>
+                                              deleteTaskTypeListItem(
                                                 event,
                                                 index
                                               )
@@ -849,308 +1169,274 @@ const Editproject: React.FC = () => {
                                       </td>
                                     </tr>
                                   );
-                                }
-                              )}
-                            </tbody>
-                          </table>
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="  lg:grid-rows-2  ">
-                      <div>
-                        <div className="  flex  gap-3 px-4 ">
-                          <form
-                            className="flex gap-x-2"
-                            onSubmit={handleIssueTypeSubmit}
-                          >
-                            <div className="mt-2 ">
-                              <input
-                                required
-                                value={addIssue}
-                                onChange={(e) => setAddIssue([e.target.value])}
-                                placeholder="Enter Issue type"
-                                className="border border-gray-600 focus:outline-none w-full  text-sm rounded  p-2"
-                              ></input>
-                            </div>
-                            <div>
-                              <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ">
-                                add
-                              </button>
-                            </div>
-                          </form>
-                        </div>
-                        <div className="px-4 py-2  ">
-                          <table className="w-full overflow-y-auto tableInfo">
-                            <thead>
-                              <tr className="bg-gray-200 border-b border-gray-200  uppercase ">
-                                <th>Issue Type</th>
-                                <th>Delete</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {issueTypeList?.map((item: any, index: any) => {
-                                return (
-                                  <tr key={index}>
-                                    <td className="border-b border-gray-200">
-                                      <div>
-                                        <div
-                                          key={index}
-                                          className=" cursor-move"
-                                          draggable
-                                          onDragStart={(e: any) =>
-                                            (dragItem.current = index)
-                                          }
-                                          onDragEnter={(e: any) =>
-                                            (dragOverItem.current = index)
-                                          }
-                                          onDragEnd={handleIssueTypeUpdate}
-                                          onDragOver={(e) => e.preventDefault()}
-                                        >
-                                          <h2> {item}</h2>
-                                        </div>
-                                      </div>
-                                    </td>
-                                    <td className="border-b border-gray-200">
-                                      <div>
-                                        <FontAwesomeIcon
-                                          onClick={() =>
-                                            deleteIssueTypeItem(event, index)
-                                          }
-                                          className="cursor-pointer"
-                                          icon={faTrashCan}
-                                        ></FontAwesomeIcon>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                      <div>
-                        <div className=" px-4 ">
-                          <form
-                            className="flex gap-x-2"
-                            onSubmit={handleTaskTypeListSumbit}
-                          >
-                            <div className="mt-2 ">
-                              <input
-                                required
-                                value={addTaskTypelist}
-                                onChange={(e) =>
-                                  setAddTaskTypeList([e.target.value])
-                                }
-                                placeholder="Enter Task type"
-                                className="border border-gray-600 w-full focus:outline-none  text-sm rounded  p-2"
-                              ></input>
-                            </div>
-                            <div>
-                              <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ">
-                                add
-                              </button>
-                            </div>
-                          </form>
-                        </div>
-                        <div className="px-4 py-2 ">
-                          <table className="w-full overflow-y-auto tableInfo">
-                            <thead>
-                              <tr className="bg-gray-200 border-b border-gray-200  uppercase ">
-                                <th>Task Type</th>
-                                <th>Delete</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {taskTypeList?.map((item: any, index: any) => {
-                                return (
-                                  <tr key={index}>
-                                    <td className="border-b border-gray-200">
-                                      <div>
-                                        <div
-                                          key={index}
-                                          className=" cursor-move"
-                                          draggable
-                                          onDragStart={(e: any) =>
-                                            (dragItems.current = index)
-                                          }
-                                          onDragEnter={(e: any) =>
-                                            (dragOverItems.current = index)
-                                          }
-                                          onDragEnd={handleTaskTypeUpdate}
-                                          onDragOver={(e) => e.preventDefault()}
-                                        >
-                                          <h2> {item}</h2>
-                                        </div>
-                                      </div>
-                                    </td>
-                                    <td className="border-b border-gray-200">
-                                      <div>
-                                        <FontAwesomeIcon
-                                          onClick={() =>
-                                            deleteTaskTypeListItem(event, index)
-                                          }
-                                          className="cursor-pointer"
-                                          icon={faTrashCan}
-                                        ></FontAwesomeIcon>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
+                      <div
+                        className={
+                          isActive === "issueStatus"
+                            ? `issueStatus`
+                            : "  hidden"
+                        }
+                      >
+                        <div>
+                          <div className="px-4">
+                            <form
+                              className="flex gap-x-2"
+                              onSubmit={handleIssueStatusListSubmit}
+                            >
+                              <div className="mt-2 ">
+                                <input
+                                  required
+                                  value={addIssueStatuslist}
+                                  onChange={(e) =>
+                                    setAddIssueStatusList([e.target.value])
+                                  }
+                                  placeholder="Enter Issue Status"
+                                  className="border w-full border-gray-600 focus:outline-none  text-sm rounded  p-2"
+                                ></input>
+                              </div>
+                              <div className="">
+                                <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ">
+                                  add
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                          <div className="px-4 py-2 ">
+                            <table className="w-full overflow-y-auto ">
+                              <thead>
+                                <tr className="bg-gray-200 border-b border-gray-200  uppercase ">
+                                  <th className="inline-grid p-2">
+                                    Issue Status
+                                  </th>
+                                  <th>Delete</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {issueStatusList?.map(
+                                  (item: any, index: any) => {
+                                    return (
+                                      <tr key={index}>
+                                        <td className="border-b border-gray-200">
+                                          <div>
+                                            <div
+                                              key={index}
+                                              className=" cursor-move"
+                                              draggable
+                                              onDragStart={(e: any) =>
+                                                (dragIssueStatusRef.current =
+                                                  index)
+                                              }
+                                              onDragEnter={(e: any) =>
+                                                (dragOverIssueStatusRef.current =
+                                                  index)
+                                              }
+                                              onDragEnd={
+                                                handleIssueStatusListUpdate
+                                              }
+                                              onDragOver={(e) =>
+                                                e.preventDefault()
+                                              }
+                                            >
+                                              <h2 className="p-2"> {item}</h2>
+                                            </div>
+                                          </div>
+                                        </td>
+                                        <td className=" border-b text-center border-gray-200">
+                                          <div>
+                                            <FontAwesomeIcon
+                                              onClick={() =>
+                                                deleteIssueStatusItem(
+                                                  event,
+                                                  index
+                                                )
+                                              }
+                                              className=" cursor-pointer"
+                                              icon={faTrashCan}
+                                            ></FontAwesomeIcon>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    );
+                                  }
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className=" lg:grid-rows-2  ">
-                      <div>
-                        <div className="px-4">
-                          <form
-                            className="flex gap-x-2"
-                            onSubmit={handleIssueStatusListSubmit}
-                          >
-                            <div className="mt-2 ">
-                              <input
-                                required
-                                value={addIssueStatuslist}
-                                onChange={(e) =>
-                                  setAddIssueStatusList([e.target.value])
-                                }
-                                placeholder="Enter Issue Status"
-                                className="border w-full border-gray-600 focus:outline-none  text-sm rounded  p-2"
-                              ></input>
-                            </div>
-                            <div className="">
-                              <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ">
-                                add
-                              </button>
-                            </div>
-                          </form>
-                        </div>
-                        <div className="px-4 py-2 ">
-                          <table className="w-full overflow-y-auto tableInfo">
-                            <thead>
-                              <tr className="bg-gray-200 border-b border-gray-200  uppercase ">
-                                <th>Issue Status</th>
-                                <th>Delete</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {issueStatusList?.map((item: any, index: any) => {
-                                return (
-                                  <tr key={index}>
-                                    <td className="border-b border-gray-200">
-                                      <div>
-                                        <div
-                                          key={index}
-                                          className=" cursor-move"
-                                          draggable
-                                          onDragStart={(e: any) =>
-                                            (dragIssueStatusRef.current = index)
-                                          }
-                                          onDragEnter={(e: any) =>
-                                            (dragOverIssueStatusRef.current =
-                                              index)
-                                          }
-                                          onDragEnd={
-                                            handleIssueStatusListUpdate
-                                          }
-                                          onDragOver={(e) => e.preventDefault()}
-                                        >
-                                          <h2> {item}</h2>
-                                        </div>
-                                      </div>
-                                    </td>
-                                    <td className=" border-b border-gray-200">
-                                      <div>
-                                        <FontAwesomeIcon
-                                          onClick={() =>
-                                            deleteIssueStatusItem(event, index)
-                                          }
-                                          className=" cursor-pointer"
-                                          icon={faTrashCan}
-                                        ></FontAwesomeIcon>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
+                      <div
+                        className={
+                          isActive === "taskStatus" ? `taskStatus` : "  hidden"
+                        }
+                      >
+                        <div>
+                          <div className="px-4">
+                            <form
+                              className="flex gap-x-2"
+                              onSubmit={handleTaskStatusListSubmit}
+                            >
+                              <div className="mt-2 ">
+                                <input
+                                  placeholder="Enter Task Status"
+                                  required
+                                  value={addTaskStatuslist}
+                                  onChange={(e) => {
+                                    setAddTaskStatusList([e.target.value]);
+                                  }}
+                                  className="border border-gray-600 focus:outline-none  text-sm  w-full rounded  p-2"
+                                ></input>
+                              </div>
+                              <div>
+                                <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ">
+                                  add
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                          <div className="px-4 py-2 ">
+                            <table className="w-full overflow-y-auto ">
+                              <thead>
+                                <tr className="bg-gray-200 border-b border-gray-200  uppercase ">
+                                  <th className="inline-grid p-2">
+                                    Task Status
+                                  </th>
+                                  <th>Delete</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {taskStatusList?.map(
+                                  (item: any, index: any) => {
+                                    return (
+                                      <tr key={index}>
+                                        <td className="  border-b border-gray-200">
+                                          <div>
+                                            <div
+                                              key={index}
+                                              className=" cursor-move"
+                                              draggable
+                                              onDragStart={(e: any) =>
+                                                (dragTaskStatusRef.current =
+                                                  index)
+                                              }
+                                              onDragEnter={(e: any) =>
+                                                (dragOverTaskStatusRef.current =
+                                                  index)
+                                              }
+                                              onDragEnd={
+                                                handleTaskStatusListUpdate
+                                              }
+                                              onDragOver={(e) =>
+                                                e.preventDefault()
+                                              }
+                                            >
+                                              <h2 className="p-2"> {item}</h2>
+                                            </div>
+                                          </div>
+                                        </td>
+                                        <td className=" border-b text-center border-gray-200">
+                                          <div>
+                                            <FontAwesomeIcon
+                                              onClick={(e) =>
+                                                deleteTaskStatusItem(
+                                                  event,
+                                                  index
+                                                )
+                                              }
+                                              className=" cursor-pointer"
+                                              icon={faTrashCan}
+                                            ></FontAwesomeIcon>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    );
+                                  }
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
-                      <div>
-                        <div className="px-4">
-                          <form
-                            className="flex gap-x-2"
-                            onSubmit={handleTaskStatusListSubmit}
-                          >
-                            <div className="mt-2 ">
-                              <input
-                                placeholder="Enter Task Status"
-                                required
-                                value={addTaskStatuslist}
-                                onChange={(e) => {
-                                  setAddTaskStatusList([e.target.value]);
-                                }}
-                                className="border border-gray-600 focus:outline-none  text-sm  w-full rounded  p-2"
-                              ></input>
-                            </div>
-                            <div>
-                              <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ">
-                                add
-                              </button>
-                            </div>
-                          </form>
-                        </div>
-                        <div className="px-4 py-2 ">
-                          <table className="w-full overflow-y-auto tableInfo">
-                            <thead>
-                              <tr className="bg-gray-200 border-b border-gray-200  uppercase ">
-                                <th>Task Status</th>
-                                <th>Delete</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {taskStatusList?.map((item: any, index: any) => {
-                                return (
-                                  <tr key={index}>
-                                    <td className="  border-b border-gray-200">
-                                      <div>
-                                        <div
-                                          key={index}
-                                          className=" cursor-move"
-                                          draggable
-                                          onDragStart={(e: any) =>
-                                            (dragTaskStatusRef.current = index)
-                                          }
-                                          onDragEnter={(e: any) =>
-                                            (dragOverTaskStatusRef.current =
-                                              index)
-                                          }
-                                          onDragEnd={handleTaskStatusListUpdate}
-                                          onDragOver={(e) => e.preventDefault()}
-                                        >
-                                          <h2> {item}</h2>
+                      <div
+                        className={isActive === "tags" ? `tags` : "  hidden"}
+                      >
+                        <div>
+                          <div className="px-4">
+                            <form
+                              className="flex gap-x-2"
+                              onSubmit={handleTagsListSubmit}
+                            >
+                              <div className="mt-2 ">
+                                <input
+                                  required
+                                  value={addTagslist}
+                                  onChange={(e) =>
+                                    setAddTagsList([e.target.value])
+                                  }
+                                  placeholder="Enter Issue Status"
+                                  className="border w-full border-gray-600 focus:outline-none  text-sm rounded  p-2"
+                                ></input>
+                              </div>
+                              <div className="">
+                                <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800  rounded text-gray-200 font-semibold ">
+                                  add
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                          <div className="px-4 py-2 ">
+                            <table className="w-full overflow-y-auto ">
+                              <thead>
+                                <tr className="bg-gray-200 border-b border-gray-200  uppercase ">
+                                  <th className=" inline-grid p-2">Tags</th>
+                                  <th className="">Delete</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {tags?.map((item: any, index: any) => {
+                                  return (
+                                    <tr key={index}>
+                                      <td className="  border-b border-gray-200">
+                                        <div>
+                                          <div
+                                            className=" cursor-move"
+                                            draggable
+                                            onDragStart={(e: any) =>
+                                              (dragTagsRef.current = index)
+                                            }
+                                            onDragEnter={(e: any) =>
+                                              (dragOverTagsRef.current = index)
+                                            }
+                                            onDragEnd={handleTagsUpdate}
+                                            onDragOver={(e) =>
+                                              e.preventDefault()
+                                            }
+                                          >
+                                            <h2 className="p-2">{item}</h2>
+                                          </div>
                                         </div>
-                                      </div>
-                                    </td>
-                                    <td className=" border-b border-gray-200">
-                                      <div>
-                                        <FontAwesomeIcon
-                                          onClick={(e) =>
-                                            deleteTaskStatusItem(event, index)
-                                          }
-                                          className=" cursor-pointer"
-                                          icon={faTrashCan}
-                                        ></FontAwesomeIcon>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
+                                      </td>
+                                      <td className=" border-b  text-center border-gray-200">
+                                        <div>
+                                          <FontAwesomeIcon
+                                            onClick={(e) =>
+                                              deleteTagsItem(event, index)
+                                            }
+                                            className=" cursor-pointer"
+                                            icon={faTrashCan}
+                                          ></FontAwesomeIcon>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
                     </div>

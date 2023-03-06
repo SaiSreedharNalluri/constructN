@@ -25,11 +25,12 @@ import {
 import TaskList from "../task_list/TaskList";
 import CreateTask from "../create-task/CreateTask";
 import CustomDrawer from "../custom-drawer/custom-drawer";
-import { createTask } from "../../../services/task";
+import { createTask, createTaskWithAttachments } from "../../../services/task";
 import { toast } from "react-toastify";
 import { ITools } from "../../../models/ITools";
 import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
 import Tooltip from "@mui/material/Tooltip";
+import html2canvas from "html2canvas";
 
 const Task = ({
   rightMenuClickHandler,
@@ -53,6 +54,7 @@ const Task = ({
   getTasks,
   handleOnTasksSort,
   taskSubmit,
+  deleteTheAttachment,
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -63,47 +65,34 @@ const Task = ({
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [selectedTask, setSelectedTask] = useState({});
-
+  const [image, setImage] = useState<Blob>();
   const [showImage, setShowImage] = useState(false);
 
-  const [taskVisbility, setTaskVisibility] = useState(
-    taskLayer === undefined ? false : taskLayer
-  );
+  const [taskVisbility, setTaskVisibility] = useState(true);
 
-  let toolInstance: ITools = { toolName: "task", toolAction: "taskCreate" };
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
 
   useEffect(() => {
     setMyProject(currentProject);
     setMyStructure(currentStructure);
     setMySnapshot(currentSnapshot);
+    html2canvas(document.getElementById("TheView") || document.body).then(
+      function (canvas) {
+        canvas.toBlob((blob) => {
+          setImage(blob as Blob);
+        }, "image/png");
+      }
+    );
   }, [currentProject, currentSnapshot, currentStructure]);
-  // const closeIssueList = () => {
-  //   //setListOverlay(false);
-  //   issueMenuInstance.toolAction = "issueViewClose";
-  //   issueMenuClicked(issueMenuInstance);
-  // };
-
   const handleViewTaskList = () => {
     setOpenDrawer(true);
   };
   const handleCreateTask = (formData: any) => {
-    console.log(formData, "form data at home");
     clickTaskSubmit(formData);
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
-    // let userIdList: any[] = [];
-    // const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
-    //   ?.selectedName;
-    // if (assignes && assignes.length > 0) {
-    //   assignes.map((user: any) => {
-    //     userIdList.push(user.value);
-    //   });
-    // }
-    // if (assignes?.value) {
-    //   userIdList.push(assignes.value);
-    // }
+
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
@@ -136,12 +125,6 @@ const Task = ({
         (item: any) => item.id == "description"
       )[0]?.defaultValue),
       (data.assignees = userIdList),
-      // (data.tags =
-      //   (formData.length
-      //     ? formData
-      //       .filter((item: any) => item.id == "tag-suggestions")[0]
-      //       ?.chipString?.join(";")
-      //     : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
         ?.fields.filter(
@@ -150,54 +133,58 @@ const Task = ({
     data.duedate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-    data.attachments = formData
-      .filter((item: any) => item.id === "file-upload")[0]
-      .selectedFile?.map((eachSelectedFile: any) => {
-        // let reader = new FileReader();
-        // let fileUrl: any = '';
-        // reader.readAsDataURL(eachSelectedFile)
-        // reader.onload = () => {
-        //   console.log("CHECK RESULT FILE", reader.result);
-        //   fileUrl = reader.result ? reader.result : '';
-        // };
-        // reader.onerror = function (error) {
-        //   console.log('Error: ', error);
-        // }
-        return {
-          name: eachSelectedFile.name,
-          url: eachSelectedFile.name,
-          entity: "image",
-        };
-      });
+    data.attachments = formData.filter(
+      (item: any) => item.id === "file-upload"
+    )[0].selectedFile;
+    // ?.map((eachSelectedFile: any) => {
+    //   // let reader = new FileReader();
+    //   // let fileUrl: any = '';
+    //   // reader.readAsDataURL(eachSelectedFile)
+    //   // reader.onload = () => {
+    //   //   console.log("CHECK RESULT FILE", reader.result);
+    //   //   fileUrl = reader.result ? reader.result : '';
+    //   // };
+    //   // reader.onerror = function (error) {
+    //   //   console.log('Error: ', error);
+    //   // }
+    //   return {
+    //     name: eachSelectedFile.name,
+    //     url: eachSelectedFile.name,
+    //     entity: "image",
+    //   };
+    // });
+    const formDataObj = new FormData();
+
+    for (let i = 0; i < data.attachments?.length; i++) {
+      if (data.attachments![i].size > 50 * 1024 * 1024) {
+        toast.error("file size is too large. failed to create issue");
+        return;
+      }
+      formDataObj.append("attachments", data.attachments![i]);
+    }
+    // data.screenshot = image;
+
+    formDataObj.append("screenshot", image as Blob, "imageName.png");
+    delete data["screenshot"];
+    delete data["attachments"];
+    delete data["id"];
+    formDataObj.append("jreq", JSON.stringify(data));
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     console.log("formData", data);
     if (data.title && data.type && data.priority) {
-      createTask(projectId as string, data)
+      createTaskWithAttachments(projectId as string, formDataObj)
         .then((response) => {
           if (response.success === true) {
             toast("Task Created sucessfully");
-            // toast.success("Task added sucessfully");
-            // handleTaskSubmit(formData);
-            taskSubmitFn(response.result);
-            // toolInstance.toolAction = "taskCreateSuccess";
 
-            // console.log(formData);
+            taskSubmitFn(response.result);
           } else {
-            // toolInstance.toolAction = "taskCreateFail";
-            // issueToolClicked(toolInstance);
             toast(`Something went wrong`);
           }
         })
         .catch((error) => {
           toast(`Something went wrong`);
-
-          // toolInstance.toolAction = "taskCreateFail";
-
-          // if (error.success === false) {
-          //   toast.error(error?.message);
-          // }
-          // setOpenCreateTask(false);
         });
     }
   };
@@ -302,10 +289,7 @@ const Task = ({
               width={12}
               height={12}
               src={taskToogleIcon}
-              // width={12}
-              // height={12}
               alt="Arrow"
-              // onClick={rightMenuClickHandler}
               onClick={() => {
                 toggleTaskVisibility();
               }}
@@ -317,10 +301,7 @@ const Task = ({
               width={12}
               height={12}
               src={clipboardTask}
-              // width={12}
-              // height={12}
               alt="Arrow"
-              // onClick={rightMenuClickHandler}
               onClick={() => {
                 toggleTaskVisibility();
               }}
@@ -348,6 +329,8 @@ const Task = ({
             taskFilterState={taskFilterState}
             getTasks={getTasks}
             handleOnTasksSort={handleOnTasksSort}
+            deleteTheAttachment={deleteTheAttachment}
+            openTaskCreateFn={openTaskCreateFn}
           />
         </Drawer>
       )}
@@ -355,7 +338,6 @@ const Task = ({
         <CustomDrawer open>
           <CreateTask
             handleCreateTask={handleCreateTask}
-            // setOpenCreateTask={setOpenCreateTask}
             currentProject={currentProject}
             currentSnapshot={currentSnapshot}
             currentStructure={currentStructure}

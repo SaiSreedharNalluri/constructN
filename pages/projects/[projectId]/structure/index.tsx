@@ -34,10 +34,18 @@ import {
   getIssuesTypes,
 } from "../../../../services/issue";
 import { getProjectDetails } from "../../../../services/project";
-import { getStructureHierarchy, getStructureList } from "../../../../services/structure";
-import { deleteTask, getTasksList, getTasksPriority, getTaskStatus } from "../../../../services/task";
+import {
+  getStructureHierarchy,
+  getStructureList,
+} from "../../../../services/structure";
+import {
+  deleteTask,
+  getTasksList,
+  getTasksPriority,
+  getTaskStatus,
+} from "../../../../services/task";
 
-interface IProps { }
+interface IProps {}
 const OpenMenuButton = styled("div")({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -117,9 +125,9 @@ const Index: React.FC<IProps> = () => {
   const [openTaskDetails, setOpenTaskDetails] = useState(false);
   const [breadCrumbsData, setBreadCrumbsData] = useState<any>([]);
 
-  useEffect(() => {
-    setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
-  }, [project]);
+  // useEffect(() => {
+  //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
+  // }, [project]);
 
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
@@ -172,7 +180,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady && router.query?.projectId) {
       getIssuesPriority(router.query.projectId as string)
         .then((response) => {
           if (response.success === true) {
@@ -231,11 +239,16 @@ const Index: React.FC<IProps> = () => {
         });
       getStructureList(router.query.projectId as string)
         .then((response) => {
-          setStructuresList(response.data.result);
+          const list = response.data.result;
+          setStructuresList(list);
+          let nodeData = localStorage.getItem("nodeData")
+            ? JSON.parse(window.localStorage.getItem("nodeData") || "")
+            : "";
 
-          if (response.data.result.length > 0) {
+          if (list.length > 0) {
+            let structs: IStructure[] = list;
+
             if (router.query.structId !== undefined) {
-              let structs: IStructure[] = response.data.result;
               setStructure(
                 structs.find((e) => {
                   console.log("finding structure: ", e._id);
@@ -244,6 +257,23 @@ const Index: React.FC<IProps> = () => {
                   }
                 })
               );
+              // setDefaultBreadcrumb()
+            } else if (nodeData) {
+              const selNode = structs.find((e) => {
+                if (e._id === nodeData?._id) {
+                  return e;
+                }
+              });
+              if (selNode) {
+                setStructure(selNode);
+                const nodes = getStructureIds(selNode, list);
+                window.localStorage.setItem(
+                  "expandedNodes",
+                  JSON.stringify(nodes)
+                );
+                console.log(nodes, "noddfses");
+                setExpanded(nodes);
+              }
             } else {
               let index = response.data.result.findIndex(
                 (structData: IStructure) => {
@@ -253,8 +283,38 @@ const Index: React.FC<IProps> = () => {
                   );
                 }
               );
-              if (index > 0) setStructure(response.data.result[index]);
-              else setStructure(response.data.result[0]);
+
+              if (index > 0) {
+                setStructure(response.data.result[index]);
+
+                const nodes = getStructureIds(
+                  response.data.result[index],
+                  list
+                );
+                window.localStorage.setItem(
+                  "expandedNodes",
+                  JSON.stringify(nodes)
+                );
+                console.log(nodes, "okokokoj");
+
+                setExpanded(nodes);
+              } else {
+                setStructure(response.data.result[0]);
+                const nodes = getStructureIds(response.data.result[0], list);
+                window.localStorage.setItem(
+                  "expandedNodes",
+                  JSON.stringify(nodes)
+                );
+                console.log(nodes, "yutrye");
+
+                setExpanded(nodes);
+                // window.localStorage.setItem(
+                //   "expandedNodes",
+                //   JSON.stringify([response.data.result[0]?._id])
+                // );
+
+                // setExpanded([response.data.result[0]?._id]);
+              }
               //console.log("first struct=",index);
             }
           }
@@ -268,18 +328,25 @@ const Index: React.FC<IProps> = () => {
       if (user?._id) {
         SetLoggedInUserId(user._id);
       }
-      if (window.localStorage.getItem("nodeData")) {
-        let nodeData = JSON.parse(
-          window.localStorage.getItem("nodeData") || ""
-        );
-        if (nodeData) {
-          getStructureData(nodeData);
-          setExpanded(
-            JSON.parse(window.localStorage.getItem("expandedNodes") || "") || []
-          );
-          setSelected(nodeData?._id || "");
-        }
-      }
+
+      // if (window.localStorage.getItem("expandedNodes")) {
+      //   setExpanded(
+      //     JSON.parse(window.localStorage.getItem("expandedNodes") || "") || []
+      //   );
+      // }
+      // if (window.localStorage.getItem("nodeData")) {
+      //   let nodeData = JSON.parse(
+      //     window.localStorage.getItem("nodeData") || ""
+      //   );
+      //   if (nodeData) {
+      //     console.log("fdsfsf", nodeData, structuresList);
+      //     getStructureData(nodeData);
+      //     setExpanded(
+      //       JSON.parse(window.localStorage.getItem("expandedNodes") || "") || []
+      //     );
+      //     setSelected(nodeData?._id || "");
+      //   }
+      // }
 
       const handler = document.addEventListener("click", closeStructurePage);
       return () => {
@@ -288,17 +355,45 @@ const Index: React.FC<IProps> = () => {
     }
   }, [router.isReady, router.query.projectId]);
 
-  const getNodeDataById = (id: string) => {
-    console.log("finding structure: ", id, structuresList)
-    return structuresList.find((e) => {
-      if (e._id === id) {
-        return e;
+  const getNodeDataById = (id: string, list?: any) => {
+    if (list?.length) {
+      return list.find((e: any) => {
+        if (e._id === id) {
+          return e;
+        }
+      });
+    } else {
+      return structuresList.find((e) => {
+        if (e._id === id) {
+          return e;
+        }
+      });
+    }
+  };
+
+  const getStructureIds = (structure: any, list: any) => {
+    const dataB: any[] = [];
+    const getBreadCrumbs = (NodeData: any) => {
+      dataB.unshift(NodeData?._id);
+      console.log(
+        NodeData,
+        getNodeDataById(NodeData.parent, list),
+        "dsfdfsfsd"
+      );
+      const struct = NodeData.parent
+        ? getNodeDataById(NodeData.parent, list)
+        : null;
+      if (struct) {
+        getBreadCrumbs(struct);
       }
-    });
-  }
+    };
+    getBreadCrumbs(structure);
+    console.log(dataB, "Fsdfsd");
+    return dataB;
+  };
 
   const getBreadCrumbsData = (structure: any) => {
-    const dataB: any[] = []
+    const dataB: any[] = [];
     const getBreadCrumbs = (NodeData: any) => {
       dataB.unshift(NodeData);
       const struct = NodeData.parent ? getNodeDataById(NodeData.parent) : null;
@@ -308,24 +403,31 @@ const Index: React.FC<IProps> = () => {
     };
     getBreadCrumbs(structure);
     return dataB;
-  }
+  };
 
   const getStructureData = (structure: ChildrenEntity) => {
     setStructure(getCurrentStructureFromStructureList(structure));
     getIssues(structure._id);
     getTasks(structure._id);
-    setBreadCrumbsData((prev: any) => [prev[0], ...getBreadCrumbsData(structure)]);
   };
 
+  useEffect(() => {
+    if (structure && project) {
+      setBreadCrumbsData((prev: any) => [
+        project,
+        ...getBreadCrumbsData(structure),
+      ]);
+    } else if (project) {
+      setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
+    }
+  }, [structure, project]);
+
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
-    //console.log('Loaded structures: ', structuresList);
     let currentStructure = structuresList.find((e) => {
-      //console.log('finding structure: ', e._id);
       if (e._id === structure._id) {
         return e;
       }
     });
-    console.log("Selected structure: ", structuresList, currentStructure);
     return currentStructure;
   };
 
@@ -337,7 +439,6 @@ const Index: React.FC<IProps> = () => {
     Object.keys(realityMap).map((key) => {
       currentViewLayers.push(key);
     });
-    console.log("change triggered", realityMap);
   };
 
   const updatedSnapshot = (snapshot: ISnapshot) => {
@@ -346,7 +447,6 @@ const Index: React.FC<IProps> = () => {
 
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
-    console.log("change triggered", designMap);
   };
 
   const activeClass = (e: any) => {
@@ -382,9 +482,11 @@ const Index: React.FC<IProps> = () => {
             <div className="overflow-x-hidden overflow-y-hidden">
               <iframe
                 className="overflow-x-hidden h-96 w-screen"
-                src={`https://dev.internal.constructn.ai/2d?structure=${structure?._id
-                  }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${currentProjectId as string
-                  }&token=${authHeader.getAuthToken()}`}
+                src={`https://dev.internal.constructn.ai/2d?structure=${
+                  structure?._id
+                }&snapshot1=${snapshot?._id}&zone_utm=${projectutm}&project=${
+                  currentProjectId as string
+                }&token=${authHeader.getAuthToken()}`}
               />
             </div>
           )
@@ -412,7 +514,6 @@ const Index: React.FC<IProps> = () => {
   };
 
   const onChangeData = () => {
-    console.log("leftnavclick");
     if (leftNav) {
       setLeftNav(false);
     } else {
@@ -443,6 +544,7 @@ const Index: React.FC<IProps> = () => {
           case "issueSelect":
           case "issueShow":
           case "issueHide":
+          case "issueRemoved":
             setClickedTool(toolInstance);
             break;
         }
@@ -470,6 +572,7 @@ const Index: React.FC<IProps> = () => {
           case "taskShow":
           case "taskHide":
           case "taskSelect":
+          case "taskRemoved":
             setClickedTool(toolInstance);
             break;
         }
@@ -478,17 +581,14 @@ const Index: React.FC<IProps> = () => {
       case "addViewLayer":
         newLayers.push(toolInstance.toolAction);
         setViewLayers(newLayers);
-        console.log(currentViewLayers);
         break;
       case "removeViewLayer":
         newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
         setViewLayers(newLayers);
-        console.log(currentViewLayers);
         break;
       case "compareReality":
       case "compareDesign":
         setClickedTool(toolInstance);
-        //console.log(toolInstance);
         break;
       default:
         break;
@@ -496,7 +596,6 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolResponse = (data: ITools) => {
-    console.log("Got tool REsponse->", data);
     switch (data.toolName) {
       case "viewMode":
         setViewMode(data.toolAction);
@@ -505,8 +604,6 @@ const Index: React.FC<IProps> = () => {
         setViewType(data.toolAction);
       case "Issue":
         if (data.toolAction === "createIssue") {
-          console.log("Open issue Menu");
-
           //   html2canvas(document.getElementById('TheView')||document.body).then(function(canvas) {
           //     //window.open('','_blank')?.document.body.appendChild(canvas);
           //     //canvas.toDataURL('image/png');
@@ -515,7 +612,6 @@ const Index: React.FC<IProps> = () => {
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateIssue(true);
         } else if (data.toolAction === "selectIssue") {
-          console.log("issue selected: ", data.response?.id);
           // issue detail view open logic comes here
           if (data.response != undefined) {
             setCurrentContext(data.response);
@@ -525,11 +621,9 @@ const Index: React.FC<IProps> = () => {
         break;
       case "Task":
         if (data.toolAction === "createTask") {
-          console.log("Open task Menu");
           if (data.response != undefined) setCurrentContext(data.response);
           setOpenCreateTask(true);
         } else if (data.toolAction === "selectTask") {
-          console.log("task selected: ", data.response?.id);
           // task detail view open logic comes here
           if (data.response != undefined) {
             setCurrentContext(data.response);
@@ -542,18 +636,18 @@ const Index: React.FC<IProps> = () => {
     }
   };
   const getIssues = (structureId: string) => {
-    getIssuesList(router.query.projectId as string, structureId)
-      .then((response) => {
-        console.log("IMPORTANT 4", structureId, response.result);
-        setIssueList(response.result);
-        setIssueFilterList(response.result);
-        console.log(issuesList, "structuresList", response.result);
-      })
-      .catch((error) => {
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
+    if (structureId && router.query.projectId) {
+      getIssuesList(router.query.projectId as string, structureId)
+        .then((response) => {
+          setIssueList(response.result);
+          setIssueFilterList(response.result);
+        })
+        .catch((error) => {
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+        });
+    }
   };
   const getIssuesPriorityList = (projId: string) => {
     return getIssuesPriority(router.query.projectId as string)
@@ -567,24 +661,18 @@ const Index: React.FC<IProps> = () => {
       });
   };
   const getTasks = (structureId: string) => {
-    console.log(
-      router.query.projectId,
-      "PROJECT ID",
-      structureId,
-      "STRUCTURE ID",
-      "IMPORTANT 5"
-    );
-    getTasksList(router.query.projectId as string, structureId)
-      .then((response) => {
-        console.log(response, "IMPORTANT 3");
-        setTasksList(response.result);
-        setTaskFilterList(response.result);
-      })
-      .catch((error) => {
-        if (error.success === false) {
-          toast.error(error?.message);
-        }
-      });
+    if (structureId && router.query.projectId) {
+      getTasksList(router.query.projectId as string, structureId)
+        .then((response) => {
+          setTasksList(response.result);
+          setTaskFilterList(response.result);
+        })
+        .catch((error) => {
+          if (error.success === false) {
+            toast.error(error?.message);
+          }
+        });
+    }
   };
   const handleOnIssueSort = (sortMethod: string) => {
     switch (sortMethod) {
@@ -617,7 +705,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "Asc DueDate":
-        console.log("sortMethod", sortMethod);
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a: any, b: any) => {
@@ -629,7 +716,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "Dsc DueDate":
-        console.log("sortMethod", sortMethod);
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a: any, b: any) => {
@@ -641,8 +727,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "Asc Priority":
-        console.log("sortMethod", sortMethod);
-
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a, b) => {
@@ -663,8 +747,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "Dsc Priority":
-        console.log("sortMethod", sortMethod);
-
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a, b) => {
@@ -685,7 +767,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "status_asc":
-        console.log("sortMethod", sortMethod);
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((a, b) => {
@@ -706,7 +787,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       case "status_desc":
-        console.log("sortMethod", sortMethod);
         setIssueFilterList(issuesList);
         setIssueFilterList(
           issueFilterList.sort((b, a) => {
@@ -733,12 +813,6 @@ const Index: React.FC<IProps> = () => {
   };
 
   const handleOnTasksSort = (sortMethod: string) => {
-    console.log(
-      "sortMethod-tasks",
-      sortMethod,
-      taskFilterList,
-      "taskFilterList"
-    );
     switch (sortMethod) {
       case "Last Updated":
         setTaskFilterList(tasksList);
@@ -873,13 +947,11 @@ const Index: React.FC<IProps> = () => {
         setTasksList(taskFilterList);
         break;
       default:
-        console.log("Not Sorted");
         break;
     }
   };
 
   const handleOnIssueFilter = (formData: any) => {
-    console.log("formdata", formData);
     const result = issueFilterList.filter(
       (item: Issue) =>
         (formData.issueTypeData.includes(item.type) ||
@@ -918,7 +990,6 @@ const Index: React.FC<IProps> = () => {
       numberOfFilters: count,
     });
   };
-  console.log(issuesList, "issuesListissuesList");
   const closeFilterOverlay = () => {
     setIssueList(issueFilterList);
     setIssueFilterState({
@@ -951,7 +1022,6 @@ const Index: React.FC<IProps> = () => {
   // };
 
   const handleOnTaskFilter = (formData: any) => {
-    console.log("structure/index.tsx", formData, taskFilterList);
     const result = taskFilterList.filter(
       (item) =>
         (formData.taskType.includes(item.type) ||
@@ -1000,13 +1070,22 @@ const Index: React.FC<IProps> = () => {
       numberOfFilters: 0,
     });
   };
-  const deleteTheIssue = (issueObj: any) => {
+  const deleteTheIssue = (issueObj: any, callback?: any) => {
     deleteIssue(router.query.projectId as string, issueObj._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success(response.message);
+          toast(response.message);
           _.remove(issueFilterList, { _id: issueObj._id });
           setIssueList(issueFilterList);
+          if (callback) {
+            callback();
+          }
+          const issueMenuInstance: ITools = {
+            toolName: "issue",
+            toolAction: "issueRemoved",
+          };
+
+          toolClicked(issueMenuInstance);
         }
       })
       .catch((error) => {
@@ -1014,14 +1093,22 @@ const Index: React.FC<IProps> = () => {
       });
   };
 
-  const deleteTheTask = (taskObj: any) => {
-    console.log("taskObj", taskObj, router.query.projectId);
+  const deleteTheTask = (taskObj: any, callback?: any) => {
     deleteTask(router.query.projectId as string, taskObj._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success(response.message);
-          _.remove(issueFilterList, { _id: taskObj._id });
-          setIssueList(issueFilterList);
+          toast(response.message);
+          _.remove(taskFilterList, { _id: taskObj._id });
+          setTasksList(taskFilterList);
+          if (callback) {
+            callback();
+          }
+          const taskMenuInstance: ITools = {
+            toolName: "task",
+            toolAction: "taskRemoved",
+          };
+
+          toolClicked(taskMenuInstance);
         }
       })
       .catch((error) => {
@@ -1037,7 +1124,7 @@ const Index: React.FC<IProps> = () => {
     )
       .then((response) => {
         if (response.success === true) {
-          toast.success("issue information updated successfully");
+          toast("issue information updated successfully");
           const index = issueFilterList.findIndex(
             (obj: Issue) => obj._id === response.result._id
           );
@@ -1059,18 +1146,28 @@ const Index: React.FC<IProps> = () => {
     });
     setIssueList(issueFilterList);
   };
-  const deleteTheAttachment = (attachmentId: string) => {
+  const deleteTheAttachment = (attachmentId: string, entity?: string) => {
     deleteAttachment(attachmentId)
       .then((response) => {
         if (response.success === true) {
-          toast.success(response.message);
-          issueFilterList.map((issueObj) => {
-            const index = issueObj.attachments.findIndex(
-              (obj) => obj._id === attachmentId
-            );
-            issueObj.attachments.splice(index, 1);
-          });
-          setIssueList(issueFilterList);
+          toast(response.message);
+          if (entity === "issue") {
+            issueFilterList.map((issueObj) => {
+              const index = issueObj.attachments.findIndex(
+                (obj: any) => obj._id === attachmentId
+              );
+              issueObj.attachments.splice(index, 1);
+            });
+            setIssueList(issueFilterList);
+          } else {
+            taskFilterList.map((taskObj) => {
+              const index = taskObj.attachments.findIndex(
+                (obj: any) => obj._id === attachmentId
+              );
+              taskObj.attachments.splice(index, 1);
+            });
+            setTasksList(taskFilterList);
+          }
         }
       })
       .catch((error) => {
@@ -1079,28 +1176,30 @@ const Index: React.FC<IProps> = () => {
   };
 
   const handleBreadCrumbClick = (node: any, index: number) => {
-    console.log(node, "clicked node", breadCrumbsData, index);
     window.localStorage.setItem("nodeData", JSON.stringify(node));
     const expandedNodes = breadCrumbsData.map((e: any) => e._id);
-    window.localStorage.setItem("expandedNodes", JSON.stringify(expandedNodes.slice(0, index + 1)));
+    window.localStorage.setItem(
+      "expandedNodes",
+      JSON.stringify(expandedNodes.slice(0, index + 1))
+    );
     setSelected(node._id);
     setExpanded(expandedNodes.slice(0, index + 2));
-    getStructureData(node)
+    getStructureData(node);
     setHierarchy(true);
-  }
+  };
 
   const [selector, setSelector] = useState("");
   let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   let [stateFilter, setStateFilter] = useState<ChildrenEntity[]>([]);
   useEffect(() => {
     if (router.isReady) {
-      if (router.query.structId !== undefined)
-        setSelector(router.query.structId.toString());
+      // if (router.query.structId !== undefined)
+      // setSelector(router.query.structId.toString());
       getStructureHierarchy(router.query.projectId as string)
         .then((response: AxiosResponse<any>) => {
           setState([...response.data.result]);
           setStateFilter([...response.data.result]);
-          if (selector.length < 1) setSelector(response.data.result[0]._id);
+          // if (selector.length < 1) setSelector(response.data.result[0]._id);
         })
         .catch((error) => {
           console.log("error", error);
@@ -1111,7 +1210,13 @@ const Index: React.FC<IProps> = () => {
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
-        <Header toolClicked={toolClicked} viewMode={currentViewMode} showBreadcrumbs breadCrumbData={breadCrumbsData} handleBreadCrumbClick={handleBreadCrumbClick} />
+        <Header
+          toolClicked={toolClicked}
+          viewMode={currentViewMode}
+          showBreadcrumbs
+          breadCrumbData={breadCrumbsData}
+          handleBreadCrumbClick={handleBreadCrumbClick}
+        />
         {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
       <div className="flex ">
@@ -1124,8 +1229,9 @@ const Index: React.FC<IProps> = () => {
             <div
               style={{ overflow: "hidden" }}
               ref={leftRefContainer}
-              className={` ${leftNav ? "visible" : "hidden"
-                }  absolute z-10 border border-gray-300 `}
+              className={` ${
+                leftNav ? "visible" : "hidden"
+              }  absolute z-10 border border-gray-300 `}
             >
               {/* <div>
                 <>
@@ -1181,25 +1287,26 @@ const Index: React.FC<IProps> = () => {
                 <div
                   style={{ overflow: "hidden" }}
                   ref={leftRefContainer}
-                  className={`${hierarchy ? "visible" : "hidden"
-                    }  absolute z-10 border  white-bg projHier `}
+                  className={`${
+                    hierarchy ? "visible" : "hidden"
+                  }  absolute z-10 border  white-bg projHier `}
                 >
                   <div>
                     <LeftOverLay
                       handleNodeSelection={handleNodeSelection}
-                      selectedNodes={selected}
+                      selectedNodes={structure?._id}
                       handleNodeExpand={handleNodeExpand}
                       expandedNodes={expanded}
                       getStructureData={getStructureData}
                       setHierarchy={setHierarchy}
                       getStructure={(structureData) => {
-                        if (structure === undefined) {
-                          setStructure(
-                            getCurrentStructureFromStructureList(structureData)
-                          );
-                          getIssues(structureData._id);
-                          getTasks(structureData._id);
-                        }
+                        // if (structure === undefined) {
+                        //   setStructure(
+                        //     getCurrentStructureFromStructureList(structureData)
+                        //   );
+                        //   getIssues(structureData._id);
+                        //   getTasks(structureData._id);
+                        // }
                       }}
                       treeData={state}
                     ></LeftOverLay>
@@ -1320,6 +1427,8 @@ const Index: React.FC<IProps> = () => {
               handleOnTasksSort={handleOnTasksSort}
               issueSubmit={issueSubmit}
               taskSubmit={taskSubmit}
+              selectedType={currentViewType}
+              deleteTheAttachment={deleteTheAttachment}
             />
 
             {/* <CustomToaster /> */}

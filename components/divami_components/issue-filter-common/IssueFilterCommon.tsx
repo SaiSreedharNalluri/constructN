@@ -566,6 +566,7 @@ const FilterCommon: React.FC<IProps> = ({
                 }}
                 src={NotificationNewIcon}
                 alt={"close icon"}
+                data-testid="filter-close"
               />
             </HeaderRightSection>
           </TitleContainer>

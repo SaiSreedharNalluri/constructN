@@ -1,5 +1,6 @@
-import instance from "./axiosInstance";
-import { setCookie } from "cookies-next";
+import instance from './axiosInstance';
+import { setCookie } from 'cookies-next';
+import authHeader from './auth-header';
 export const login = (email: string, password: string) => {
   return instance
     .post(`${process.env.NEXT_PUBLIC_HOST}/users/signin`, {
@@ -8,12 +9,12 @@ export const login = (email: string, password: string) => {
     })
     .then((response) => {
       if (response.data.result) {
-        setCookie("user", JSON.stringify(response.data.result));
+        setCookie('user', JSON.stringify(response.data.result));
       }
       return response.data;
     })
     .catch((error) => {
-      console.log("error", error);
+      console.log('error', error);
       throw error;
     });
 };
@@ -62,5 +63,43 @@ export const resetPasswordInit = (resetUserEmail: string) => {
     })
     .catch((error) => {
       throw error.response.data;
+    });
+};
+export const getUserProfile = async () => {
+  return await instance
+    .get(`${process.env.NEXT_PUBLIC_HOST}/users/profile`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
+
+export const updateUserProfile = async (updateInfo: object) => {
+  return await instance
+    .put(`${process.env.NEXT_PUBLIC_HOST}/users/profile`, updateInfo, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
+
+export const updateProfileAvatar = async (file: any) => {
+  return await instance
+    .put(`${process.env.NEXT_PUBLIC_HOST}/users/profile/avatar`, file, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response?.data;
     });
 };

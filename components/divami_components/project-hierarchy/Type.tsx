@@ -26,4 +26,5 @@ export interface SelectLayerProps {
 
 export interface ProjectHierarchyProps extends SelectLayerProps {
   setHierarchy: any;
+  updateBreadcrumbData?: any;
 }

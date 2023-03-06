@@ -119,10 +119,10 @@ export const StyledTreeView = styled(TreeView)({
     flexDirection: "row-reverse",
     width: "unset",
     padding: "0",
-    paddingRight: "20px",
-    paddingLeft: "20px",
+    // paddingRight: "20px",
+    // paddingLeft: "20px",
     "& .MuiTreeItem-label": {
-      padding: "10px 0px 10px 0px",
+      // padding: "10px 0px 10px 0px",
       fontSize: "14px",
       lineHeight: "18px",
       // borderBottom: "1px solid #E7E7E7",
@@ -165,17 +165,43 @@ interface StyledTreeItemProps {
   needClick: boolean;
 }
 
-export const StyledTreeItem = styled(TreeItem)<StyledTreeItemProps>((props) => ({
-  padding: 0,
-  pointerEvents: props.needClick ? "auto" : "none",
-  '& .MuiTreeItem-iconContainer': {
-    pointerEvents: "auto",
-  }
-})) as any;
+export const StyledTreeItem = styled(TreeItem)<StyledTreeItemProps>(
+  (props) => ({
+    padding: 0,
+    // pointerEvents: props.needClick ? "auto" : "none",
+    // '& .MuiTreeItem-iconContainer': {
+    //   pointerEvents: "auto",
+    // }
+  })
+) as any;
 
 export const LabelContainer = styled("div")({
-  pointerEvents: "none",
-})
+  // pointerEvents: props.needClick ? "auto" : "none",
+  // display: 'flex',
+  // justifyContent: 'space-between'
+  width: "100%",
+  position: "relative",
+});
+export const LabelText = styled("div")({
+  height: "40px",
+  display: "block",
+  paddingTop: "13px",
+  paddingLeft: "10px",
+});
+
+export const LabelIcon = styled("div")({
+  position: "absolute",
+  right: 0,
+  top: "13px",
+});
+
+export const StyledSpan = styled("span")({
+  cursor: "pointer",
+  fontSize: "14px",
+  position: "absolute",
+  right: 0,
+  top: "13px",
+});
 
 export const HeaderLabelContainer = styled("div")({
   display: "flex",
