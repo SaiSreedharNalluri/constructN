@@ -616,6 +616,7 @@ const TaskFilterCommon: React.FC<any> = ({
                 onClick={() => {
                   handleClose();
                 }}
+                data-testid="filter-close"
                 src={NotificationNewIcon}
                 alt={"close icon"}
               />

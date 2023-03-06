@@ -157,7 +157,7 @@ const Task = ({
 
     for (let i = 0; i < data.attachments?.length; i++) {
       if (data.attachments![i].size > 50 * 1024 * 1024) {
-        toast.error("file size is to large. failed to create issue");
+        toast.error("file size is too large. failed to create issue");
         return;
       }
       formDataObj.append("attachments", data.attachments![i]);
@@ -330,6 +330,7 @@ const Task = ({
             getTasks={getTasks}
             handleOnTasksSort={handleOnTasksSort}
             deleteTheAttachment={deleteTheAttachment}
+            openTaskCreateFn={openTaskCreateFn}
           />
         </Drawer>
       )}

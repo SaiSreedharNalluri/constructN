@@ -124,7 +124,6 @@ const Index: React.FC<IProps> = () => {
   const [openIssueDetails, setOpenIssueDetails] = useState(false);
   const [openTaskDetails, setOpenTaskDetails] = useState(false);
   const [breadCrumbsData, setBreadCrumbsData] = useState<any>([]);
-  console.log(project, "projectsd", breadCrumbsData);
 
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
@@ -1075,7 +1074,7 @@ const Index: React.FC<IProps> = () => {
     deleteIssue(router.query.projectId as string, issueObj._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success(response.message);
+          toast(response.message);
           _.remove(issueFilterList, { _id: issueObj._id });
           setIssueList(issueFilterList);
           if (callback) {
@@ -1098,7 +1097,7 @@ const Index: React.FC<IProps> = () => {
     deleteTask(router.query.projectId as string, taskObj._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success(response.message);
+          toast(response.message);
           _.remove(taskFilterList, { _id: taskObj._id });
           setTasksList(taskFilterList);
           if (callback) {
@@ -1125,7 +1124,7 @@ const Index: React.FC<IProps> = () => {
     )
       .then((response) => {
         if (response.success === true) {
-          toast.success("issue information updated successfully");
+          toast("issue information updated successfully");
           const index = issueFilterList.findIndex(
             (obj: Issue) => obj._id === response.result._id
           );
@@ -1151,7 +1150,7 @@ const Index: React.FC<IProps> = () => {
     deleteAttachment(attachmentId)
       .then((response) => {
         if (response.success === true) {
-          toast.success(response.message);
+          toast(response.message);
           if (entity === "issue") {
             issueFilterList.map((issueObj) => {
               const index = issueObj.attachments.findIndex(

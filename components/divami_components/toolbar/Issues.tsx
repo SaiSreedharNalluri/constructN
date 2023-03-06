@@ -204,7 +204,7 @@ const Issues = ({
     // formData.append("attachments", data.attachments);
     for (let i = 0; i < data.attachments?.length; i++) {
       if (data.attachments![i].size > 50 * 1024 * 1024) {
-        toast.error("file size is to large. failed to create issue");
+        toast.error("file size is too large. failed to create issue");
         return;
       }
       formData.append("attachments", data.attachments![i]);
@@ -366,6 +366,7 @@ const Issues = ({
             getIssues={getIssues}
             handleOnIssueSort={handleOnIssueSort}
             deleteTheAttachment={deleteTheAttachment}
+            openIssueCreateFn={openIssueCreateFn}
           />
         </Drawer>
       )}
