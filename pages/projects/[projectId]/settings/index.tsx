@@ -706,40 +706,37 @@ const Editproject: React.FC = () => {
                 </TabPanel>
                 <TabPanel>
                   <div className="flex">
-                    <div className="w-1/4 ">
-                      <ul>
-                        <li>
-                          <button
-                            id="issuePriority"
+                    <div className="w-1/4 calc-h78 bg-slate-50">
+                      <ul >
+                        <li 
                             className={
-                              isActive === 'issuePriority' ? 'bg-green-300' : ''
+                              isActive === "issuePriority" ? "bg-gray-400  " : " hover:bg-slate-200"
                             }
-                            onClick={(e) => {
-                              toggle(e);
-                            }}
                           >
-                            Issue Priortiy
-                          </button>
+                              <button id="issuePriority" className='p-2 text-gray-600 text-center text-lg font-medium' onClick={(e) => {
+                              toggle(e);
+                            }}>Issue Priortiy </button>
+                                    
                         </li>
-                        <li>
-                          <button
-                            id="taskPriority"
+                        <li    
                             className={
-                              isActive === 'taskPriority' ? 'bg-green-300' : ''
+                              isActive === "taskPriority" ? "bg-gray-400  " : "  hover:bg-slate-200"
                             }
-                            onClick={(e) => {
+                           >
+                        <button  onClick={(e) => {
                               toggle(e);
-                            }}
-                          >
-                            Task Priortiy
-                          </button>
+                            }}  id="taskPriority" className='p-2 text-gray-600 text-center text-lg font-medium'>
+                        Task Priortiy
+                        </button>
+                           
+                         
                         </li>
-                        <li>
+                        <li className={
+                              isActive === 'issueType' ? "bg-gray-400  " : "  hover:bg-slate-200"
+                            }>
                           <button
                             id="issueType"
-                            className={
-                              isActive === 'issueType' ? 'bg-green-300' : ''
-                            }
+                            className='p-2 text-center text-gray-600 text-lg font-medium'
                             onClick={(e) => {
                               toggle(e);
                             }}
@@ -747,12 +744,13 @@ const Editproject: React.FC = () => {
                             Issue Type{' '}
                           </button>{' '}
                         </li>
-                        <li>
+                        <li   className={
+                              isActive === 'taskType' ? "bg-gray-400  " : "  hover:bg-slate-200"
+                            }>
                           <button
                             id="taskType"
-                            className={
-                              isActive === 'taskType' ? 'bg-green-300' : ''
-                            }
+                          
+                            className='p-2 text-gray-600 text-center text-lg font-medium'
                             onClick={(e) => {
                               toggle(e);
                             }}
@@ -760,44 +758,43 @@ const Editproject: React.FC = () => {
                             Task Type{' '}
                           </button>{' '}
                         </li>
-                        <li>
+                        <li    className={
+                              isActive === 'issueStatus' ?"bg-gray-400  " : " hover:bg-slate-200"
+                            }>
                           <button
                             id="issueStatus"
-                            className={
-                              isActive === 'issueStatus' ? 'bg-green-300' : ''
-                            }
+                         
                             onClick={(e) => {
                               toggle(e);
                             }}
+                            className='p-2 text-gray-600 text-center text-lg font-medium'
                           >
                             Issue Status{' '}
                           </button>
                         </li>
-                        <li>
+                        <li    className={
+                              isActive === 'taskStatus' ? "bg-gray-400  " : " hover:bg-slate-200"
+                            }>
                           <button
                             id="taskStatus"
-                            className={
-                              isActive === 'taskStatus' ? 'bg-green-300' : ''
-                            }
+                         
                             onClick={(e) => {
                               toggle(e);
                             }}
+                            className='p-2   text-gray-600 text-lg font-medium'
                           >
                             Issue Status{' '}
                           </button>
                         </li>
-                        <li>
-                          <button
-                            id="tags"
+                              <li 
                             className={
-                              isActive === 'tags' ? 'bg-green-300' : ''
+                              isActive === "tags" ? "bg-gray-400 " : " hover:bg-slate-200 "
                             }
-                            onClick={(e) => {
-                              toggle(e);
-                            }}
                           >
-                            Tags List
-                          </button>
+                              <button id="tags" className='p-2   text-gray-600  text-lg font-medium' onClick={(e) => {
+                              toggle(e);
+                            }}>Tags </button>
+                                    
                         </li>
                       </ul>
                     </div>
