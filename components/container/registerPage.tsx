@@ -8,6 +8,7 @@ import InputPassword from '../core/Input/inputPassword';
 import InputText from '../core/Input/inputText';
 import NextImage from '../core/Image';
 import Image from 'next/image';
+import router from 'next/router';
 interface IProps {
   loading: boolean;
   message: string;
@@ -163,6 +164,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
               )}
             </Form>
           </Formik>
+          <button onClick={()=>router.push('/login')}>Back To Login</button>
         </div>
       </div>
     </div>
