@@ -68,9 +68,7 @@ const Task = ({
   const [image, setImage] = useState<Blob>();
   const [showImage, setShowImage] = useState(false);
 
-  const [taskVisbility, setTaskVisibility] = useState(
-    taskLayer === undefined ? false : taskLayer
-  );
+  const [taskVisbility, setTaskVisibility] = useState(true);
 
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
 

@@ -1248,6 +1248,8 @@ export class PotreeViewerUtils {
             iconImg.setAttribute('src', '/icons/360VideoWalkInViewer.svg');
             icon.appendChild(iconImg);
             iconImg.setAttribute('data', JSON.stringify({name: imageName, id: id}));
+            iconImg.style.width = (fpCanvas.width * iconSize) + 'px';
+            iconImg.style.height = (fpCanvas.width * iconSize) + 'px';
             icon.style.width = (fpCanvas.width * iconSize) + 'px';
             icon.style.height = (fpCanvas.width * iconSize) + 'px';
             icon.style.top = (screenCoords[1] - 5) + 'px';
