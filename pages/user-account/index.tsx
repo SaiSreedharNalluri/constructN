@@ -78,6 +78,8 @@ const Index: React.FC = () => {
               <TabList>
                 <Tab>User Profile</Tab>
                 <Tab>change Password</Tab>
+                <div className='absolute right-0 cursor-pointer font-bold decoration-4' onClick={()=>{router.back()}}><button className='p-1 bg-gray-400 rounded-full'>Go Back</button></div>
+
               </TabList>
               <div>
                 <TabPanel>
@@ -92,6 +94,7 @@ const Index: React.FC = () => {
                 </TabPanel>
               </div>
             </Tabs>
+            
           </Tabs>
         </div>
       </div>
