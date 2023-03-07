@@ -83,16 +83,7 @@ const ChangePassword: React.FC = () => {
         <div className="w-full">
           <div className=" absolute w-full top-0 bg-opacity-50 px-5 h-full 2xl:w-full xl:w-1/3 lg:w-1/4 md:w-1/2 sm:w-1/2   place-items-center ">
             <div className="grid grid-cols-1 gap-4 border my-48   border-solid place-content-center border-gray-500 rounded-3xl ">
-              <div className="flex flex-grow ">
-                <h2 className="ml-10 text-xl font-bold">Change Password</h2>
-                <FontAwesomeIcon
-                  icon={faTimes}
-                  onClick={() => {
-                    setShow(false);
-                  }}
-                  className="hover:white cursor-pointer w-10 h-10 "
-                />
-              </div>
+              <h2 className="text-center text-xl font-bold">Change Password</h2>
               <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
@@ -177,6 +168,15 @@ const ChangePassword: React.FC = () => {
                       className="p-2 w-full bg-gray-500 hover:bg-gray-400  rounded-md"
                     >
                       Confirm
+                    </button>
+                    <button
+                      type="submit"
+                      onClick={() => {
+                        setShow(false);
+                      }}
+                      className="p-2 w-full bg-gray-500 hover:bg-gray-400  rounded-md"
+                    >
+                      Cancel
                     </button>
                   </div>
                 </Form>
