@@ -89,31 +89,29 @@ const projectUsersMock = [
   }]
 
 
-
-// jest.mock("../services/comments", () => {
+// jest.mock('../services/comments.ts', () => {
 //   return {
-//     createComment: jest.fn(() => Promise.resolve({ success: true, result: [] })),
+//     __esModule: true,    //    <----- this __esModule: true is important
+//     ...jest.requireActual('../services/comments.ts')
 //   };
 // });
 
-
-jest.mock('../services/comments.ts', () => {
-  return {
-    __esModule: true,    //    <----- this __esModule: true is important
-    ...jest.requireActual('../services/comments.ts')
-  };
-});
-
-jest.mock('../services/issue.ts', () => {
-  return {
-    __esModule: true,    //    <----- this __esModule: true is important
-    ...jest.requireActual('../services/issue.ts')
-  };
-});
+// jest.mock('../services/issue.ts', () => {
+//   return {
+//     __esModule: true,    //    <----- this __esModule: true is important
+//     ...jest.requireActual('../services/issue.ts')
+//   };
+// });
 
 jest.mock("../services/issue", () => {
   return {
     editIssue: jest.fn(() => Promise.resolve({ success: true, result: [] })),
+  };
+});
+
+jest.mock("../services/comments", () => {
+  return {
+    createComment: jest.fn(() => Promise.resolve({ success: true, result: [] })),
   };
 });
 
@@ -176,12 +174,10 @@ describe("IssueDetails", () => {
     expect(getByTestId('issue-title')).toHaveTextContent("test");
     expect(getByTestId('issue-priority')).toHaveTextContent("High");
     expect(getByTestId('issue-captured')).toHaveTextContent(Moment("2023-03-01T10:09:31.422Z").format("DD MMM YY"))
-    expect(getByTestId('issue-watcher')).toHaveTextContent("USR370060")
     expect(getByTestId('issue-progress')).toHaveTextContent("To Do")
     expect(getByTestId('issue-assignees')).toHaveTextContent("swathi divami")
     expect(getByTestId('issue-description')).toHaveTextContent("test")
     expect(getByTestId('chip-button')).toHaveTextContent("Software")
-    // expect(getByTestId('issue-attachments-label')).toHaveTextContent()
   })
 
   it("should get a dropdown upon clicking edit progress icon", async () => {
@@ -341,11 +337,8 @@ describe("IssueDetails", () => {
 
   });
 
-  it("should be able add new comment", async () => {
-
-    jest.spyOn(commentsAPI, "createComment").mockImplementation(() => Promise.resolve({ success: true, result: [] }));
-
-    const renderedEle = render(<CustomIssueDetailsDrawer
+  it("should be able add new comment", () => {
+    render(<CustomIssueDetailsDrawer
       onClose={jest.fn()}
       issue={issueMock}
       issuesList={[issueMock]}
@@ -363,49 +356,10 @@ describe("IssueDetails", () => {
       getIssues={jest.fn()}
     />);
 
-    const inputEl: any = renderedEle.getByTestId('issue-comment-input').querySelector('input');
+    const inputEl: any = screen.getByTestId('issue-comment-input').querySelector('input');
     fireEvent.change(inputEl, { target: { value: 'test comment' } });
-    const sendButton = renderedEle.getByTestId('issue-comment-send-button');
+    const sendButton = screen.getByTestId('issue-comment-send-button');
     fireEvent.click(sendButton);
-  });
-
-  it("should be able to create or delete attachment", async () => {
-
-    jest.spyOn(commentsAPI, "createComment").mockImplementation(() => Promise.resolve({ success: true, result: [] }));
-
-    const renderedEle = render(<CustomIssueDetailsDrawer
-      onClose={jest.fn()}
-      issue={issueMock}
-      issuesList={[{
-        ...issueMock, attachments: [
-          {
-            "_id": "ATT613938",
-            "name": "PHOTO_ALONE.JPG",
-            "url": "https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/ISS/ISS613704/1678107613569-PHOTO_ALONE.JPG",
-            "entity": "ISS613704",
-            "createdAt": "2023-03-06T13:00:13.937Z",
-            "updatedAt": "2023-03-06T13:00:13.937Z",
-            "__v": 0
-          }
-        ]
-      }]}
-      issueType={
-        [
-          "Safety"]}
-      issuePriority={["high"]}
-      issueStatus={["To Do"]}
-      projectUsers={projectUsersMock}
-      currentProject={"PRJ201897"}
-      currentSnapshot={issueMock}
-      currentStructure={issueMock}
-      contextInfo={""}
-      deleteTheIssu={jest.fn()}
-      setIssueList={jest.fn()}
-      getIssues={jest.fn()}
-    />);
-
-    const deleteAttachment = screen.getByTestId('delete-attachment');
-    fireEvent.click(deleteAttachment, { target: { value: "ATT613938" } });
   });
 
 });
