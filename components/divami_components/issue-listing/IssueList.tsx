@@ -424,10 +424,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     target="_blank"
                     data-testid="download"
                   >
-                    {/* <FontAwesomeIcon
-                  className=" fill-black text-black"
-                  icon={faDownload}
-                ></FontAwesomeIcon> */}
                     <DownloadIcon src={Download} alt="Arrow" />
                   </CSVLink>
                 </>

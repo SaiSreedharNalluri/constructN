@@ -32,7 +32,7 @@ import ImageScreenShot from "../../../public/divami_icons/imageScreenShot.svg";
 const ActivityLog = (props: any) => {
   const { ActivityLog } = props;
   return (
-    <ActivityCardContainer>
+    <ActivityCardContainer data-testid="const-custom-activity-log-issue">
       {ActivityLog.map((each: any, index: number) => {
         return (
           <ActivityCard key={index}>
