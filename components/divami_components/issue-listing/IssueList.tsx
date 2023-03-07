@@ -219,22 +219,21 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setOpenDrawer(true);
   };
 
-  const sortDateOrdering = () => {
-    let sorted;
-    if (sortOrder === "asc") {
-      sorted = filteredIssuesList.sort((a: any, b: any) => {
-        return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
-      });
-      setSortOrder("desc");
-    } else {
-      sorted = filteredIssuesList.sort((a: any, b: any) => {
-        return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
-      });
-      setSortOrder("asc");
-    }
-    setFilteredIssuesList(sorted);
-  };
-
+  // const sortDateOrdering = () => {
+  //   let sorted;
+  //   if (sortOrder === "asc") {
+  //     sorted = filteredIssuesList.sort((a: any, b: any) => {
+  //       return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+  //     });
+  //     setSortOrder("desc");
+  //   } else {
+  //     sorted = filteredIssuesList.sort((a: any, b: any) => {
+  //       return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+  //     });
+  //     setSortOrder("asc");
+  //   }
+  //   setFilteredIssuesList(sorted);
+  // };
   useEffect(() => {
     if (router.isReady) {
       getProjectUsers(router.query.projectId as string)
@@ -322,6 +321,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 }}
                 src={CrossIcon}
                 alt={"close icon"}
+                data-testid="close-icon"
               />
             </TitleContainer>
           </HeaderContainer>
@@ -352,6 +352,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                             }}
                             src={CrossIcon}
                             alt={"close icon"}
+                            data-testid="search-close"
                           />
                         </InputAdornment>
                       ),
@@ -362,6 +363,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 <>
                   <SearchGlassIcon
                     src={Search}
+                    data-testid='search-icon'
                     alt={"close icon"}
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
@@ -386,6 +388,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         setIsSortMenuOpen((prev) => !prev);
                         handleSortClick(e);
                       }}
+                      data-testid="sort"
                     />
                   </Tooltip>
                   {/* {sortOrder === "asc" ? (
@@ -411,6 +414,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     onClick={() => {
                       handleViewTaskList();
                     }}
+                    data-testid="filter"
                   />
 
                   <CSVLink
@@ -418,6 +422,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     filename={"my-issues.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
                     target="_blank"
+                    data-testid="download"
                   >
                     {/* <FontAwesomeIcon
                   className=" fill-black text-black"
@@ -437,6 +442,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   return (
                     <div key={index}>
                       <BodyInfo
+                        data-testid="item-body"
                         onClick={() => {
                           handleViewIssue(val);
                         }}
@@ -581,6 +587,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 <StyledMenu
                   key={option.label}
                   onClick={() => handleSortMenuClick(option.method)}
+                  data-testid="sort-menu-item"
                 >
                   {option.label}
                   {option.icon && (
