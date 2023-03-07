@@ -343,7 +343,7 @@ function BasicTabs(props: any) {
           <SecondBodyDiv>
             <SecondContPrior>
               <PriorityTitle>Title</PriorityTitle>
-              <PriorityStatus style={{ color: "#101F4B" }}>
+              <PriorityStatus style={{ color: "#101F4B" }} >
                 {taskState.TabOne.title}
               </PriorityStatus>
             </SecondContPrior>
@@ -490,13 +490,13 @@ function BasicTabs(props: any) {
                 }}
                 value={formState.selectedUser}
                 multiple={true}
-                // InputProps={{
-                //   startAdornment: (
-                //     <InputAdornment position="start">
-                //       <SearchIcon />
-                //     </InputAdornment>
-                //   ),
-                // }}
+              // InputProps={{
+              //   startAdornment: (
+              //     <InputAdornment position="start">
+              //       <SearchIcon />
+              //     </InputAdornment>
+              //   ),
+              // }}
               />
             </AssignEditSearchContainer>
           )}
@@ -596,8 +596,8 @@ function BasicTabs(props: any) {
                   onChange={(e) => {
                     setComments(e.target.value);
                   }}
-                  // error={!comments}
-                  // helperText={!comments ? "Required" : ""}
+                // error={!comments}
+                // helperText={!comments ? "Required" : ""}
                 />
                 <AddCommentButtonContainer>
                   <AttachButton>
@@ -726,8 +726,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
         : "",
       assignessList: selectedTask.assignees?.length
         ? selectedTask.assignees?.map((item: any) => {
-            return { ...item, label: item.fullName };
-          })
+          return { ...item, label: item.fullName };
+        })
         : [],
       moreText:
         selectedTask.assignees?.length > 1
@@ -814,8 +814,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
       (data.tags =
         (formData.length
           ? formData
-              .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+            .filter((item: any) => item.id == "tag-suggestions")[0]
+            ?.chipString?.join(";")
           : []) || []),
       (data.startdate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -908,7 +908,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 src={BackArrow}
                 alt={"close icon"}
               />
-              <SpanTile>
+              <SpanTile data-testid="task-detail-header">
                 {selectedTask?.type} (#{selectedTask?.sequenceNumber})
               </SpanTile>
             </LeftTitleCont>
