@@ -339,7 +339,7 @@ const ActivityLog = (props: any) => {
                     </CommentActions>
                     {each.replies?.map((replyObj: any) => {
                       return (
-                        <RepliesContainer>
+                        <RepliesContainer key={`${replyObj._id}`}>
                           <ActivityCard key={index}>
                             <ActivityHeader>
                               <ActivityStatusIcon>
