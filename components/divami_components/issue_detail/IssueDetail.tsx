@@ -1,6 +1,6 @@
 import { Autocomplete, Box, TextField, Typography } from "@mui/material";
 import { styled } from "@mui/system";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { Select } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
@@ -87,7 +87,7 @@ import {
   SendButton,
   StyledInput,
 } from "./IssueDetailStyles";
-import { createComment } from "../../../services/comments";
+import { createComment, getCommentsList } from "../../../services/comments";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -156,6 +156,7 @@ function BasicTabs(props: any) {
   const [list, setList] = useState<any>();
   const [comments, setComments] = useState("");
   const [backendComments, setBackendComments] = useState<any>([]);
+  const [file, setFile] = useState<File>();
 
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
@@ -234,6 +235,24 @@ function BasicTabs(props: any) {
     else handleFooter(false);
   }, [progressEditState, assigneeEditState]);
 
+  const getComments = async (entityId: any) => {
+    getCommentsList(router.query.projectId as string, entityId)
+      .then((response) => {
+        if (response.success === true) {
+          setBackendComments(response.result);
+        }
+      })
+      .catch((error) => {
+        toast.error("failed to load the data");
+      });
+  };
+
+  useEffect(() => {
+    if (taskState?.TabOne?.id) {
+      getComments(taskState.TabOne.id);
+    }
+  }, [taskState]);
+
   const addComment = (text: string, entityId: string) => {
     if (text !== "") {
       console.log("text", text, "enttit", entityId);
@@ -251,7 +270,12 @@ function BasicTabs(props: any) {
     //
   };
 
-  console.log(taskState, "taskstatek");
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
+    }
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
@@ -312,6 +336,11 @@ function BasicTabs(props: any) {
               fontSize: "14px",
               fontWeight: "400",
             }}
+          />
+          <Tab
+            label="Activity log"
+            {...a11yProps(1)}
+            style={{ paddingRight: "0px" }}
           />
         </Tabs>
       </Box>
@@ -576,8 +605,6 @@ function BasicTabs(props: any) {
           ) : (
             <>
               <AddCommentContainerSecond>
-                {/* <AddCommentInput placeholder="Add Comment"></AddCommentInput> */}
-                {/* {console.log("commenting", comments)} */}
                 <StyledInput
                   id="standard-basic"
                   variant="standard"
@@ -586,21 +613,18 @@ function BasicTabs(props: any) {
                   onChange={(e) => {
                     setComments(e.target.value);
                   }}
-                  // error={!comments}
-                  // helperText={!comments ? "Required" : ""}
                 />
                 <AddCommentButtonContainer>
-                  <AttachButton>
+                  {/* <AttachButton>
                     <ImageErrorIcon src={Clip} alt="" />
-                    {/* <Image src={Clip} alt="" />{" "} */}
-                  </AttachButton>
+                    <input type="file" onChange={handleFileChange} />
+                  </AttachButton> */}
                   <SendButton
                     onClick={() => {
                       addComment(comments, taskState.TabOne.id);
                     }}
                   >
                     <ImageErrorIcon src={Send} alt="" />
-                    {/* <Image src={Send} alt="" />{" "} */}
                   </SendButton>
                 </AddCommentButtonContainer>
               </AddCommentContainerSecond>
@@ -609,8 +633,38 @@ function BasicTabs(props: any) {
         </TabOneDiv>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <ActivityLog ActivityLog={taskState.TabTwo} />
+        <ActivityLog
+          ActivityLog={taskState.TabTwo}
+          comments={backendComments}
+          getComments={getComments}
+        />
       </CustomTabPanel>
+      {/* <>
+        <AddCommentContainerSecond>
+          <StyledInput
+            id="standard-basic"
+            variant="standard"
+            placeholder="Add Comment"
+            value={comments}
+            onChange={(e) => {
+              setComments(e.target.value);
+            }}
+          />
+          <AddCommentButtonContainer>
+            <AttachButton>
+              <ImageErrorIcon src={Clip} alt="" />
+              <input type="file" onChange={handleFileChange} />
+            </AttachButton>
+            <SendButton
+              onClick={() => {
+                addComment(comments, taskState.TabOne.id);
+              }}
+            >
+              <ImageErrorIcon src={Send} alt="" />
+            </SendButton>
+          </AddCommentButtonContainer>
+        </AddCommentContainerSecond>
+      </> */}
     </Box>
   );
 }
@@ -750,7 +804,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       };
     });
   }, [selectedIssue]);
-  console.log(selectedIssue, "selectedIssueselectedIssue");
+
   const taskSubmit = (formData: any) => {
     // const updatedList = issuesList.map((item: any) => {
     //   if (item._id == formData._id){

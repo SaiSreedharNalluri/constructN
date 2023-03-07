@@ -1,3 +1,4 @@
+import { Tooltip } from "@mui/material";
 import { styled } from "@mui/system";
 import Image from "next/image";
 
@@ -45,6 +46,8 @@ export const SideMenuOptionImageContainer = styled("div")({
   width: "59px",
   height: "59px",
 });
+
+export const TooltipText = styled(Tooltip)({});
 
 export const StyledImage = styled(Image)`
   cursor: pointer;

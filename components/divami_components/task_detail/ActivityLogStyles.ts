@@ -91,3 +91,18 @@ export const ActivityImage = styled("span")({
 });
 
 export const ActivityScreenShotIconContainer = styled("div")({});
+export const CommentActions = styled("div")({
+  display: "flex",
+  margin: "20px",
+  marginLeft: 0,
+});
+
+export const ReplyButton = styled("div")({
+  marginRight: "20px",
+  color: "#FF843F",
+  cursor: "pointer",
+});
+
+export const RepliesContainer = styled("div")({
+  marginLeft: "40px",
+});

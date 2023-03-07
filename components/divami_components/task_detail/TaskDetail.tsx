@@ -94,7 +94,7 @@ import {
   ThirdContWatchName,
   TitleContainer,
 } from "./TaskDetailStyles";
-import { createComment } from "../../../services/comments";
+import { createComment, getCommentsList } from "../../../services/comments";
 
 // const BodyContainer = styled(Box)`
 //   height: calc(100vh - 134px);
@@ -254,9 +254,24 @@ function BasicTabs(props: any) {
       });
       setComments("");
     }
-
-    //
   };
+
+  const getComments = async (entityId: any) => {
+    getCommentsList(router.query.projectId as string, entityId)
+      .then((response) => {
+        if (response.success === true) {
+          setBackendComments(response.result);
+        }
+      })
+      .catch((error) => {
+        toast.error("failed to load the data");
+      });
+  };
+  useEffect(() => {
+    if (taskState?.TabOne?.id) {
+      getComments(taskState.TabOne.id);
+    }
+  }, [taskState]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -600,10 +615,9 @@ function BasicTabs(props: any) {
                   // helperText={!comments ? "Required" : ""}
                 />
                 <AddCommentButtonContainer>
-                  <AttachButton>
+                  {/* <AttachButton>
                     <ImageErrorIcon src={Clip} alt="" />
-                    {/* <Image src={Clip} alt="" />{" "} */}
-                  </AttachButton>
+                  </AttachButton> */}
                   <SendButton
                     onClick={() => {
                       addComment(comments, taskState.TabOne.id);
@@ -619,7 +633,11 @@ function BasicTabs(props: any) {
         </TabOneDiv>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <ActivityLog ActivityLog={taskState.TabTwo} />
+        <ActivityLog
+          ActivityLog={taskState.TabTwo}
+          comments={backendComments}
+          getComments={getComments}
+        />
       </CustomTabPanel>
     </Box>
   );
@@ -646,6 +664,9 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [footerState, SetFooterState] = useState(false);
   const [selectedTask, setSelectedTask] = useState(task);
+  const [backendComments, setBackendComments] = useState<any>([]);
+  const [file, setFile] = useState<File>();
+
   useEffect(() => {
     setSelectedTask(task);
   }, [task]);

@@ -49,7 +49,13 @@ export const DividerIcon = styled(Image)({
   marginRight: "15px",
 });
 
-const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false, breadCrumbData, handleBreadCrumbClick }) => {
+const Header: React.FC<any> = ({
+  toolClicked,
+  viewMode,
+  showBreadcrumbs = false,
+  breadCrumbData,
+  handleBreadCrumbClick,
+}) => {
   const router = useRouter();
   const headerRef: any = React.useRef();
   let [name, setName] = useState<string>("");
@@ -61,18 +67,29 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
   const [isDesignSelected, setIsDesignSelected] = useState(
     iViewMode === "Reality" ? false : true
   );
-
+  let [eMail, setEMail] = useState<string>("");
+  let [avatar, setAvatar] = useState<string>("");
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
+
   useEffect(() => {
     const userObj: any = getCookie("user");
     let user = null;
     if (userObj) user = JSON.parse(userObj);
+    console.log(user, "mnfdss");
+
     if (user?.fullName) {
       setName(user.fullName);
     }
+    if (user?.email) {
+      setEMail(user.email);
+    }
+    if (user?.avatar) {
+      setAvatar(user.avatar);
+    }
   }, [router.query.projectId]);
+
   useEffect(() => {
     setIViewMode(viewMode);
     setIsDesignSelected(viewMode === "Reality" ? false : true);
@@ -107,18 +124,19 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
     } else {
       setLoading(false);
     }
-  }
+  };
 
   const rightMenuClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
-    setIsDesignSelected((prev: any) => !prev);
     setRighttNav(!rightNav);
     if (e.currentTarget.id === "Design") {
       toolInstance.toolName = "viewMode";
       toolInstance.toolAction = "Design";
+      setIsDesignSelected(true);
     } else if (e.currentTarget.id === "Reality") {
       toolInstance.toolName = "viewMode";
       toolInstance.toolAction = "Reality";
+      setIsDesignSelected(false);
     }
     // else if (e.currentTarget.id === "compareDesign") {
     //   toolInstance.toolName = "compareDesign";
@@ -153,7 +171,12 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
             />
           </HeaderLogoImageContainer>
           {showBreadcrumbs && <DividerIcon src={headerLogSeparator} alt="" />}
-          {showBreadcrumbs && <CustomBreadcrumbs breadCrumbData={breadCrumbData} handleBreadCrumbClick={handleBreadCrumbClick} />}
+          {showBreadcrumbs && (
+            <CustomBreadcrumbs
+              breadCrumbData={breadCrumbData}
+              handleBreadCrumbClick={handleBreadCrumbClick}
+            />
+          )}
         </HeaderLeftPart>
         <HeaderRightPart>
           {toolClicked ? (
@@ -203,7 +226,7 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
             /> */}
             <ProfileImgIcon
               onClick={onProfilePicClick}
-              src={ImgProfile}
+              src={avatar}
               alt="Profile Image Icon"
             />
           </HeaderProfileImageContainer>
@@ -235,11 +258,11 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
                 </div>
               </li>
               <hr className="border-gray-700" />
-              <li
-                className="font-medium cursor-pointer"
-                onClick={userLogOut}
-              >
-                <div className="flex items-center justify-center transform transition-colors duration-200 " data-testid="logout-button">
+              <li className="font-medium cursor-pointer" onClick={userLogOut}>
+                <div
+                  className="flex items-center justify-center transform transition-colors duration-200 "
+                  data-testid="logout-button"
+                >
                   <div className="mr-3 ">
                     <FontAwesomeIcon
                       icon={faRightFromBracket}

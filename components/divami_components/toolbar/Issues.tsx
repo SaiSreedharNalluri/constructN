@@ -366,6 +366,7 @@ const Issues = ({
             handleOnIssueSort={handleOnIssueSort}
             deleteTheAttachment={deleteTheAttachment}
             openIssueCreateFn={openIssueCreateFn}
+            issueMenuClicked={issueMenuClicked}
           />
         </Drawer>
       )}

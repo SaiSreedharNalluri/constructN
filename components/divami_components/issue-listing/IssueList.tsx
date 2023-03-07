@@ -105,6 +105,7 @@ interface IProps {
   handleOnIssueSort?: any;
   deleteTheAttachment?: any;
   openIssueCreateFn?: any;
+  issueMenuClicked?: any;
 }
 
 const CustomIssueListDrawer: React.FC<IProps> = ({
@@ -129,6 +130,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   handleOnIssueSort,
   deleteTheAttachment,
   openIssueCreateFn,
+  issueMenuClicked,
 }) => {
   const handleClose = () => {
     onClose(true);
@@ -306,6 +308,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       }
     });
     setOpenIssueDetail(true);
+    issueMenuInstance.toolAction = "issueSelect";
+    issueMenuInstance.response = { ...issue.context, id: issue._id };
+    issueMenuClicked(issueMenuInstance);
   };
   return (
     <>
