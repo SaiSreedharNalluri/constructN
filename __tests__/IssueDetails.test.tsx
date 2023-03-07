@@ -334,7 +334,6 @@ describe("IssueDetails", () => {
     const createIssueButton = screen.getByTestId('create-issue-button');
     expect(createIssueButton).toHaveTextContent(/Update/i);
     fireEvent.click(createIssueButton);
-
   });
 
   it("should be able add new comment", () => {

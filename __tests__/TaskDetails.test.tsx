@@ -4,6 +4,32 @@ import Moment from "moment";
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+// jest.mock('next/router', () => ({
+//   route: '/',
+//   pathname: '',
+//   query: { projectId: '1234' },
+//   isReady: true,
+//   asPath: '',
+//   push: jest.fn(),
+//   events: {
+//     on: jest.fn(),
+//     off: jest.fn()
+//   },
+//   beforePopState: jest.fn(() => null),
+//   prefetch: jest.fn(() => null)
+// }));
+
+jest.mock("../services/task", () => {
+  return {
+    updateTask: jest.fn(() => Promise.resolve({ success: true, result: [] })),
+  };
+});
+
+jest.mock("../services/comments", () => {
+  return {
+    createComment: jest.fn(() => Promise.resolve({ success: true, result: [] })),
+  };
+});
 
 describe('TaskDetails', () => {
   beforeEach(() => {
@@ -172,7 +198,7 @@ describe('TaskDetails', () => {
 
   const mockTask = {
     "_id": "TSK557956",
-    "title": "task_1",
+    "title": "Siva",
     "description": "",
     "type": "Transmittals",
     "status": "To Do",
@@ -263,14 +289,211 @@ describe('TaskDetails', () => {
 
     expect(getByTestId('task-detail-header')).toHaveTextContent("Transmittals");
     expect(getByTestId('task-detail-header')).toHaveTextContent("422");
-    expect(getByTestId('task-title')).toHaveTextContent("test");
-    // expect(getByTestId('task-priority')).toHaveTextContent("High");
-    // expect(getByTestId('task-captured')).toHaveTextContent(Moment("2023-03-01T10:09:31.422Z").format("DD MMM YY"))
-    // expect(getByTestId('task-progress')).toHaveTextContent("To Do")
-    // expect(getByTestId('task-assignees')).toHaveTextContent("swathi divami")
-    // expect(getByTestId('task-description')).toHaveTextContent("test")
-    // expect(getByTestId('chip-button')).toHaveTextContent("Software")
+    expect(getByTestId('task-title')).toHaveTextContent("Siva");
+    expect(getByTestId('task-priority')).toHaveTextContent("High");
+    expect(getByTestId('task-captured')).toHaveTextContent(Moment("2023-03-02T07:02:37.956Z").format("DD MMM YY"))
+    expect(getByTestId('task-progress')).toHaveTextContent("To Do")
   });
 
+  it('should be unmount the issue details page after clicking on back arrow icon', () => {
+    render(<CustomTaskDetailsDrawer
+      taskList={[mockTask]}
+      task={mockTask}
+      onClose={jest.fn()}
+      taskType={"Transmittals"}
+      taskPriority={"High"}
+      taskStatus={["To Do"]}
+      projectUsers={[...mockTask.assignees]}
+      deleteTheTask={jest.fn()}
+      currentProject={"PRJ201897"}
+      currentStructure={structure}
+      currentSnapshot={currentSnapshot}
+      contextInfo={{ type: 'Task' }}
+      getTasks={jest.fn()}
+      deleteTheAttachment={jest.fn()}
+    />)
 
+    const detailsHeader = screen.queryByText('TSK557956');
+    expect(detailsHeader).toBeNull();
+    const backArrowIcon = screen.getByTestId('back-arrow');
+    fireEvent.click(backArrowIcon);
+    const detailsHeader1 = screen.queryByText('TSK557956');
+    expect(detailsHeader1).toBeNull();
+  });
+
+  it('should be unmount the issue details page after clicking on back arrow icon', () => {
+    render(<CustomTaskDetailsDrawer
+      taskList={[mockTask]}
+      task={mockTask}
+      onClose={jest.fn()}
+      taskType={"Transmittals"}
+      taskPriority={"High"}
+      taskStatus={["To Do"]}
+      projectUsers={[...mockTask.assignees]}
+      deleteTheTask={jest.fn()}
+      currentProject={"PRJ201897"}
+      currentStructure={structure}
+      currentSnapshot={currentSnapshot}
+      contextInfo={{ type: 'Task' }}
+      getTasks={jest.fn()}
+      deleteTheAttachment={jest.fn()}
+    />)
+
+    const detailsHeader = screen.queryByText('TSK557956');
+    expect(detailsHeader).toBeNull();
+    const backArrowIcon = screen.getByTestId('back-arrow');
+    fireEvent.click(backArrowIcon);
+    const detailsHeader1 = screen.queryByText('TSK557956');
+    expect(detailsHeader1).toBeNull();
+  });
+
+  it('should get a dropdown upon clicking edit progress icon', () => {
+    render(<CustomTaskDetailsDrawer
+      taskList={[mockTask]}
+      task={mockTask}
+      onClose={jest.fn()}
+      taskType={"Transmittals"}
+      taskPriority={"High"}
+      taskStatus={["To Do"]}
+      projectUsers={[...mockTask.assignees]}
+      deleteTheTask={jest.fn()}
+      currentProject={"PRJ201897"}
+      currentStructure={structure}
+      currentSnapshot={currentSnapshot}
+      contextInfo={{ type: 'Task' }}
+      getTasks={jest.fn()}
+      deleteTheAttachment={jest.fn()}
+    />)
+
+    const editIcon = screen.getByTestId('issue-progress-edit');
+    fireEvent.click(editIcon);
+    const dropdown = screen.getByTestId('progress-options');
+    fireEvent.click(dropdown);
+    expect(dropdown).toHaveTextContent("To Do");
+    const cancelButton = screen.getByTestId("issue-edit-cancel");
+    fireEvent.click(cancelButton);
+    const progressLabel = screen.getByTestId("progres-label");
+    expect(progressLabel).toHaveTextContent("Progress");
+
+    const editIcon1 = screen.getByTestId('issue-progress-edit');
+    fireEvent.click(editIcon1);
+    const updateButton = screen.getByTestId("issue-edit-save");
+    fireEvent.click(updateButton);
+    const progressLabeAgain = screen.getByTestId("progres-label");
+    expect(progressLabeAgain).toHaveTextContent("Progress");
+  });
+  it('should rendeer a autocomplete component upon clicking assignee edit icon', () => {
+    render(<CustomTaskDetailsDrawer
+      taskList={[mockTask]}
+      task={mockTask}
+      onClose={jest.fn()}
+      taskType={"Transmittals"}
+      taskPriority={"High"}
+      taskStatus={["To Do"]}
+      projectUsers={[...mockTask.assignees]}
+      deleteTheTask={jest.fn()}
+      currentProject={"PRJ201897"}
+      currentStructure={structure}
+      currentSnapshot={currentSnapshot}
+      contextInfo={{ type: 'Task' }}
+      getTasks={jest.fn()}
+      deleteTheAttachment={jest.fn()}
+    />)
+
+    const editIcon = screen.getByTestId('assignees-edit');
+    fireEvent.click(editIcon);
+    const dropdown = screen.getByTestId('assignee-options');
+    fireEvent.keyDown(dropdown, { key: 'Enter' });
+    const cancelButton = screen.getByTestId("issue-edit-cancel");
+    fireEvent.click(cancelButton);
+    const progressLabel = screen.getByTestId("progres-label");
+    expect(progressLabel).toHaveTextContent("Progress");
+
+    const editIcon1 = screen.getByTestId('assignees-edit');
+    fireEvent.click(editIcon1);
+    const updateButton = screen.getByTestId("issue-edit-save");
+    fireEvent.click(updateButton);
+    const progressLabeAgain = screen.getByTestId("assigned-to-label");
+    expect(progressLabeAgain).toHaveTextContent("Assigned to");
+  });
+
+  it('should rendeer a pop up after clicking on delete icon', () => {
+    const deleteFn = jest.fn();
+    render(<CustomTaskDetailsDrawer
+      taskList={[mockTask]}
+      task={mockTask}
+      onClose={jest.fn()}
+      taskType={"Transmittals"}
+      taskPriority={"High"}
+      taskStatus={["To Do"]}
+      projectUsers={[...mockTask.assignees]}
+      deleteTheTask={deleteFn}
+      currentProject={"PRJ201897"}
+      currentStructure={structure}
+      currentSnapshot={currentSnapshot}
+      contextInfo={{ type: 'Task' }}
+      getTasks={jest.fn()}
+      deleteTheAttachment={jest.fn()}
+    />)
+
+    const deleteIcon = screen.getByTestId('delete-icon');
+    fireEvent.click(deleteIcon);
+    const popup = screen.getByTestId('popup-message');
+    expect(popup).toHaveTextContent("TSK557956");
+    const deleteButton = screen.getByTestId("delete-popup-button");
+    fireEvent.click(deleteButton);
+    expect(deleteFn.mock.calls.length).toBe(1);
+
+  });
+
+  it('should be able to edit the task', () => {
+    const deleteFn = jest.fn();
+    render(<CustomTaskDetailsDrawer
+      taskList={[mockTask]}
+      task={mockTask}
+      onClose={jest.fn()}
+      taskType={"Transmittals"}
+      taskPriority={"High"}
+      taskStatus={["To Do"]}
+      projectUsers={[...mockTask.assignees]}
+      deleteTheTask={deleteFn}
+      currentProject={"PRJ201897"}
+      currentStructure={structure}
+      currentSnapshot={currentSnapshot}
+      contextInfo={{ type: 'Task' }}
+      getTasks={jest.fn()}
+      deleteTheAttachment={jest.fn()}
+    />)
+
+    const editIcon = screen.getByTestId('edit-icon');
+    fireEvent.click(editIcon);
+    const createIssueButton = screen.getByTestId('create-issue-button');
+    expect(createIssueButton).toHaveTextContent(/Update/i);
+    fireEvent.click(createIssueButton);
+  });
+
+  it('should be able add new comment', () => {
+    const deleteFn = jest.fn();
+    render(<CustomTaskDetailsDrawer
+      taskList={[mockTask]}
+      task={mockTask}
+      onClose={jest.fn()}
+      taskType={"Transmittals"}
+      taskPriority={"High"}
+      taskStatus={["To Do"]}
+      projectUsers={[...mockTask.assignees]}
+      deleteTheTask={deleteFn}
+      currentProject={"PRJ201897"}
+      currentStructure={structure}
+      currentSnapshot={currentSnapshot}
+      contextInfo={{ type: 'Task' }}
+      getTasks={jest.fn()}
+      deleteTheAttachment={jest.fn()}
+    />)
+
+    const inputEl: any = screen.getByTestId('issue-comment-input').querySelector('input');
+    fireEvent.change(inputEl, { target: { value: 'test comment' } });
+    const sendButton = screen.getByTestId('issue-comment-send-button');
+    fireEvent.click(sendButton);
+  });
 });

@@ -20,7 +20,7 @@ import CreateIssue from "../create-issue/CreateIssue";
 import { ISSUE_FORM_CONFIG } from "../create-issue/body/Constants";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import _ from "lodash";
 import {
   createAttachment,
