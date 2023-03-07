@@ -416,33 +416,34 @@ const ActivityLog = (props: any) => {
           </ActivityCard>
         );
       })}
-      <>
-        <AddCommentContainerSecond>
-          <StyledInput
-            id="standard-basic"
-            variant="standard"
-            placeholder="Add Comment"
-            value={commentInputData?.data?.text}
-            // autoFocus={true}
-            inputRef={(input) => {
-              if (autofocusState) {
-                input && input.focus();
-              }
-            }}
-            onChange={(e) => {
-              setCommentInputData((prev: any) => {
-                return {
-                  ...prev,
-                  data: {
-                    ...prev.data,
-                    text: e.target.value,
-                  },
-                };
-              });
-            }}
-          />
-          <AddCommentButtonContainer>
-            {/* <AttachButton>
+      {commentsData.length ? (
+        <>
+          <AddCommentContainerSecond>
+            <StyledInput
+              id="standard-basic"
+              variant="standard"
+              placeholder="Add Comment"
+              value={commentInputData?.data?.text}
+              // autoFocus={true}
+              inputRef={(input) => {
+                if (autofocusState) {
+                  input && input.focus();
+                }
+              }}
+              onChange={(e) => {
+                setCommentInputData((prev: any) => {
+                  return {
+                    ...prev,
+                    data: {
+                      ...prev.data,
+                      text: e.target.value,
+                    },
+                  };
+                });
+              }}
+            />
+            <AddCommentButtonContainer>
+              {/* <AttachButton>
               <ImageErrorIcon src={Clip} alt="" />
               <input
                 type="file"
@@ -460,24 +461,27 @@ const ActivityLog = (props: any) => {
                 }}
               />
             </AttachButton> */}
-            <SendButton
-              onClick={() => {
-                if (commentInputData?.isReply) {
-                  saveRepliedComments();
-                } else if (commentInputData?.isEdit) {
-                  saveEditComment();
-                } else if (commentInputData?.isEditReply) {
-                  saveEditRepliedComments();
-                } else {
-                  saveAddedComments();
-                }
-              }}
-            >
-              <ImageErrorIcon src={Send} alt="" />
-            </SendButton>
-          </AddCommentButtonContainer>
-        </AddCommentContainerSecond>
-      </>
+              <SendButton
+                onClick={() => {
+                  if (commentInputData?.isReply) {
+                    saveRepliedComments();
+                  } else if (commentInputData?.isEdit) {
+                    saveEditComment();
+                  } else if (commentInputData?.isEditReply) {
+                    saveEditRepliedComments();
+                  } else {
+                    saveAddedComments();
+                  }
+                }}
+              >
+                <ImageErrorIcon src={Send} alt="" />
+              </SendButton>
+            </AddCommentButtonContainer>
+          </AddCommentContainerSecond>
+        </>
+      ) : (
+        <></>
+      )}
     </ActivityCardContainer>
   );
 };

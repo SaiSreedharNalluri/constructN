@@ -1,6 +1,5 @@
-import { getCookie } from 'cookies-next';
 import router from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { toast } from 'react-toastify';
 import ChangePassword from '../../components/container/changePassword';
@@ -72,29 +71,36 @@ const Index: React.FC = () => {
         <div className="w-full  calc-h overflow-y-auto ">
           <Tabs
             selectedIndex={tabIndex}
-            onSelect={(index) => setTabIndex(index)}
+            onSelect={(index) => {
+              setTabIndex(index);
+            }}
           >
-            <Tabs>
-              <TabList>
-                <Tab>User Profile</Tab>
-                <Tab>change Password</Tab>
-                <div className='absolute right-0 cursor-pointer font-bold decoration-4' onClick={()=>{router.back()}}><button className='p-1 bg-gray-400 rounded-full'>Go Back</button></div>
-
-              </TabList>
-              <div>
-                <TabPanel>
-                  <UserProfile
-                    userDetails={userDetails as IUser}
-                    handleImageUPload={handleImageUPload}
-                    updateProfileInfo={updateProfileInfo}
-                  />
-                </TabPanel>
-                <TabPanel>
-                  <ChangePassword />
-                </TabPanel>
+            <TabList>
+              <Tab>User Profile</Tab>
+              <Tab>change Password</Tab>
+              <div
+                className="absolute right-0 cursor-pointer font-bold decoration-4"
+                onClick={() => {
+                  router.back();
+                }}
+              >
+                <button className="p-1 bg-gray-400 rounded-full">
+                  Go Back
+                </button>
               </div>
-            </Tabs>
-            
+            </TabList>
+            <div>
+              <TabPanel>
+                <UserProfile
+                  userDetails={userDetails as IUser}
+                  handleImageUPload={handleImageUPload}
+                  updateProfileInfo={updateProfileInfo}
+                />
+              </TabPanel>
+              <TabPanel>
+                <ChangePassword />
+              </TabPanel>
+            </div>
           </Tabs>
         </div>
       </div>
