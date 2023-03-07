@@ -103,3 +103,15 @@ export const updateProfileAvatar = async (file: any) => {
       throw error.response?.data;
     });
 };
+export const changePassword = async (updateInfo: object) => {
+  return await instance
+    .put(`${process.env.NEXT_PUBLIC_HOST}/users/change-password`, updateInfo, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};

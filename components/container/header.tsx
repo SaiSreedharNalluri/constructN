@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
-  faCog,
+  faQuestion,
   faRightFromBracket,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -28,6 +28,8 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
   const router = useRouter();
   const headerRef: any = React.useRef();
   let [name, setName] = useState<string>("");
+  let [eMail, setEMail] = useState<string>("");
+  let [avatar, setAvatar] = useState<string>("");
   const [breadCrumbString, setBreadCrumbString] = useState(breadCrumb || "");
   useEffect(() => {
     const userObj: any = getCookie("user");
@@ -36,7 +38,13 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
     if (user?.fullName) {
       setName(user.fullName);
     }
-  }, [router.query.projectId]);
+    if (user?.email) {
+      setEMail(user.email);
+    }
+    if (user?.avatar) {
+      setAvatar(user.avatar);
+    }
+  }, [router.query.projectId, router.isReady]);
 
   useEffect(() => {
     if (breadCrumb !== undefined) setBreadCrumbString(breadCrumb);
@@ -100,7 +108,7 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
               >
                 <div className="w-6 h-6 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 border-gray-900">
                   <Image
-                    src="https://images.unsplash.com/photo-1610397095767-84a5b4736cbd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
+                    src={avatar}
                     alt=""
                     className={`w-full h-full cursor-pointer object-cover `}
                     title={name}
@@ -113,23 +121,48 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
               {loading && (
                 <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
                   <ul className="text-white p-4 ">
-                    <li
-                      className="font-medium cursor-pointer"
-                      onClick={() => router.push(`/user-account`)}
-                    >
+                    <li className="font-medium">
+                      <div className="flex flex-col items-center justify-center transform transition-colors duration-200">
+                        <div className="w-11 h-11 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 border-gray-900">
+                          {/* <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> */}
+                          <Image
+                            src={avatar}
+                            alt=""
+                            className={`w-full h-full cursor-pointer object-cover `}
+                            title={name}
+                            height={1920}
+                            width={1080}
+                            onClick={() => router.push(`/user-account`)}
+                          />
+                        </div>
+                        <div className="text-base font-bold">{name}</div>
+                        <div className="text-xs italic font-thin">{eMail}</div>
+                        <div
+                          className="cursor-pointer font-bold"
+                          onClick={() => router.push(`/user-account`)}
+                        >
+                          Manage Account
+                        </div>
+                      </div>
+                    </li>
+                    <hr className="border-gray-700" />
+                    {/* <li className="font-medium cursor-pointer" onClick={() => router.push(`/user-account`)}>
                       <div className="flex items-center justify-center transform transition-colors duration-200">
                         <div className="mr-3">
                           <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
                         </div>
                         Account
                       </div>
-                    </li>
-                    <li className="font-medium cursor-pointer">
+                    </li> */}
+                    <li
+                      className="font-medium cursor-pointer"
+                      onClick={() => router.push(`/support`)}
+                    >
                       <div className="flex items-center justify-center transform transition-colors duration-200 ">
                         <div className="mr-3">
-                          <FontAwesomeIcon icon={faCog}></FontAwesomeIcon>
+                          <FontAwesomeIcon icon={faQuestion} />
                         </div>
-                        Settings
+                        Support
                       </div>
                     </li>
                     <hr className="border-gray-700" />

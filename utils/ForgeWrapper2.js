@@ -381,8 +381,8 @@ export const ForgeViewerUtils = (function () {
             contextObject.id = clickedIssue._id;
           } else if (targetObject.type === "Task") {
             let clickedTask = _tasksList.find(task => task._id === targetObject.id)
-            contextObject = clickedTask.context;
-            contextObject = clickedTask._id;
+            contextObject = structuredClone(clickedTask.context);
+            contextObject.id = clickedTask._id;
           }
           else {
             let imageObject = {

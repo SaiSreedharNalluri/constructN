@@ -12,7 +12,6 @@ import {
 import { IProjects, IProjectUsers } from "../../../../models/IProjects";
 import { Tabs, TabList, Tab, TabPanel } from "react-tabs";
 import CollapsableMenu from "../../../../components/layout/collapsableMenu";
-import "react-tabs/style/react-tabs.css";
 import { ChildrenEntity } from "../../../../models/IStructure";
 import { AxiosResponse } from "axios";
 import { getStructureHierarchy } from "../../../../services/structure";
@@ -36,7 +35,6 @@ import {
 // import { updateIssuesPriority } from '../../../../services/issue';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import Modal from "react-responsive-modal";
 import {
   addTaskStatusApi,
   addTaskTypeListsApi,
@@ -720,40 +718,52 @@ const Editproject: React.FC = () => {
                 </TabPanel>
                 <TabPanel>
                   <div className="flex">
-                    <div className="w-1/4 ">
+                    <div className="w-1/4 calc-h78 bg-slate-50">
                       <ul>
-                        <li>
+                        <li
+                          className={
+                            isActive === "issuePriority"
+                              ? "bg-gray-400  "
+                              : " hover:bg-slate-200"
+                          }
+                        >
                           <button
                             id="issuePriority"
-                            className={
-                              isActive === "issuePriority" ? "bg-green-300" : ""
-                            }
+                            className="p-2 text-gray-600 text-center text-lg font-medium"
                             onClick={(e) => {
                               toggle(e);
                             }}
                           >
-                            Issue Priortiy
+                            Issue Priortiy{" "}
                           </button>
                         </li>
-                        <li>
+                        <li
+                          className={
+                            isActive === "taskPriority"
+                              ? "bg-gray-400  "
+                              : "  hover:bg-slate-200"
+                          }
+                        >
                           <button
-                            id="taskPriority"
-                            className={
-                              isActive === "taskPriority" ? "bg-green-300" : ""
-                            }
                             onClick={(e) => {
                               toggle(e);
                             }}
+                            id="taskPriority"
+                            className="p-2 text-gray-600 text-center text-lg font-medium"
                           >
                             Task Priortiy
                           </button>
                         </li>
-                        <li>
+                        <li
+                          className={
+                            isActive === "issueType"
+                              ? "bg-gray-400  "
+                              : "  hover:bg-slate-200"
+                          }
+                        >
                           <button
                             id="issueType"
-                            className={
-                              isActive === "issueType" ? "bg-green-300" : ""
-                            }
+                            className="p-2 text-center text-gray-600 text-lg font-medium"
                             onClick={(e) => {
                               toggle(e);
                             }}
@@ -761,12 +771,16 @@ const Editproject: React.FC = () => {
                             Issue Type{" "}
                           </button>{" "}
                         </li>
-                        <li>
+                        <li
+                          className={
+                            isActive === "taskType"
+                              ? "bg-gray-400  "
+                              : "  hover:bg-slate-200"
+                          }
+                        >
                           <button
                             id="taskType"
-                            className={
-                              isActive === "taskType" ? "bg-green-300" : ""
-                            }
+                            className="p-2 text-gray-600 text-center text-lg font-medium"
                             onClick={(e) => {
                               toggle(e);
                             }}
@@ -774,43 +788,55 @@ const Editproject: React.FC = () => {
                             Task Type{" "}
                           </button>{" "}
                         </li>
-                        <li>
+                        <li
+                          className={
+                            isActive === "issueStatus"
+                              ? "bg-gray-400  "
+                              : " hover:bg-slate-200"
+                          }
+                        >
                           <button
                             id="issueStatus"
-                            className={
-                              isActive === "issueStatus" ? "bg-green-300" : ""
-                            }
                             onClick={(e) => {
                               toggle(e);
                             }}
+                            className="p-2 text-gray-600 text-center text-lg font-medium"
                           >
                             Issue Status{" "}
                           </button>
                         </li>
-                        <li>
+                        <li
+                          className={
+                            isActive === "taskStatus"
+                              ? "bg-gray-400  "
+                              : " hover:bg-slate-200"
+                          }
+                        >
                           <button
                             id="taskStatus"
-                            className={
-                              isActive === "taskStatus" ? "bg-green-300" : ""
-                            }
                             onClick={(e) => {
                               toggle(e);
                             }}
+                            className="p-2   text-gray-600 text-lg font-medium"
                           >
                             Issue Status{" "}
                           </button>
                         </li>
-                        <li>
+                        <li
+                          className={
+                            isActive === "tags"
+                              ? "bg-gray-400 "
+                              : " hover:bg-slate-200 "
+                          }
+                        >
                           <button
                             id="tags"
-                            className={
-                              isActive === "tags" ? "bg-green-300" : ""
-                            }
+                            className="p-2   text-gray-600  text-lg font-medium"
                             onClick={(e) => {
                               toggle(e);
                             }}
                           >
-                            Tags List
+                            Tags{" "}
                           </button>
                         </li>
                       </ul>
