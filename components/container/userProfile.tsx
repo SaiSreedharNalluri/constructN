@@ -38,7 +38,6 @@ const UserProfile: React.FC<IProps> = ({
     email: Yup.string().email('Invalid email').required('Email is required'),
     dob: Yup.string(),
   });
-  console.log('use', userDetails);
   return (
     <React.Fragment>
       <div>
