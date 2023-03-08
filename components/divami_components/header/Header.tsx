@@ -228,6 +228,8 @@ const Header: React.FC<any> = ({
               onClick={onProfilePicClick}
               src={avatar}
               alt="Profile Image Icon"
+              width={34}
+              height={34}
             />
           </HeaderProfileImageContainer>
           <HeaderNotificationImageContainer>

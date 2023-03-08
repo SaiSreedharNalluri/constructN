@@ -355,7 +355,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         ) : (
           <></>
         )}
-        <Hotspot />
+        {/* <Hotspot /> */}
       </ToolbarContainer>
     </SectionToolBar>
   );
