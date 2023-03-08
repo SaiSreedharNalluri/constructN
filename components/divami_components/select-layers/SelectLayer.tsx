@@ -14,6 +14,8 @@ import {
   SelectLayerContainer,
   StyledTreeItem,
   StyledTreeView,
+  TreeItemLabelContainer,
+  TreeLabelContainer,
   TreeViewContainer,
 } from "./StyledComponents";
 import type { RenderTree, SelectLayerProps } from "./Type";
@@ -43,7 +45,7 @@ const SelectLayer = ({
   const [searchTerm, setSearchTerm] = useState("");
 
   const renderTreeNode = (node: RenderTree) => (
-    <div>
+    <TreeItemLabelContainer>
       <Checkbox
         icon={<Image src={UnCheckedIcon} alt="" />}
         checkedIcon={<Image src={CheckedIcon} alt="" />}
@@ -59,8 +61,8 @@ const SelectLayer = ({
             : false
         }
       />
-      <span>{node.name}</span>
-    </div>
+      <TreeLabelContainer>{node.name}</TreeLabelContainer>
+    </TreeItemLabelContainer>
   );
 
   const renderTree = (nodes: RenderTree) => (
@@ -125,8 +127,8 @@ const SelectLayer = ({
       <TreeViewContainer>
         <StyledTreeView
           aria-label="rich object"
-          // defaultCollapseIcon={<RemoveIcon />}
-          // defaultExpandIcon={<AddIcon />}
+        // defaultCollapseIcon={<RemoveIcon />}
+        // defaultExpandIcon={<AddIcon />}
         >
           {filtedTreeViewData?.map((eachNode) => renderTree(eachNode))}
         </StyledTreeView>
