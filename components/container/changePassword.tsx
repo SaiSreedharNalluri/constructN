@@ -80,9 +80,9 @@ const ChangePassword: React.FC = () => {
         </button>
       </div>
       {show && (
-        <div className="w-full">
-          <div className=" absolute w-full top-0 bg-opacity-50 px-5 h-full 2xl:w-full xl:w-1/3 lg:w-1/4 md:w-1/2 sm:w-1/2   place-items-center ">
-            <div className="grid grid-cols-1 gap-4 border my-48   border-solid place-content-center border-gray-500 rounded-3xl ">
+        <div>
+          <div>
+            <div>
               <h2 className="text-center text-xl font-bold">Change Password</h2>
               <Formik
                 initialValues={initialValues}
