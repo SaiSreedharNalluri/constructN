@@ -69,7 +69,7 @@ const ChangePassword: React.FC = () => {
       <div className="mt-3 flex">
         <h1 className="font-bold">ChangePassword</h1>
         <button
-          className="ml-2 p-2 w-1/12 bg-blue-500 hover:bg-gray-400  rounded-md"
+          className="ml-2 p-2 w-1/12 bg-gray-500 hover:bg-gray-400   rounded-md"
           onClick={() => {
             setShow(true);
           }}
