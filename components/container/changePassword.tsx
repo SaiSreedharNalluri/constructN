@@ -5,8 +5,6 @@ import hidePasswordImage from '../../public/icons/hide-password.svg';
 import Image from 'next/image';
 import * as Yup from 'yup';
 import InputPassword from '../core/Input/inputPassword';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { changePassword } from '../../services/userAuth';
 import { toast } from 'react-toastify';
 
