@@ -4,7 +4,6 @@ import showPasswordImage from '../../public/icons/show-password.svg';
 import hidePasswordImage from '../../public/icons/hide-password.svg';
 import Image from 'next/image';
 import * as Yup from 'yup';
-import SubmitButton from '../core/buttons/submitButton';
 import InputPassword from '../core/Input/inputPassword';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -30,18 +29,10 @@ const ChangePassword: React.FC = () => {
       .required('Confirm password is required')
       .oneOf([Yup.ref('new_password'), null], 'Passwords must match'),
   });
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [revealPwd, setRevealPwd] = useState(false);
   const [isRevealPwd, setIsRevealPwd] = useState(false);
   const [isCRevealPwd, setIsCRevealPwd] = useState(false);
-  const [active, setActive] = useState('');
-  const h = (e: any) => {
-    setIsRevealPwd(!isRevealPwd);
-    setActive(e.target.id);
-  };
-
   const changeUserPassword = (
     values: {
       currentPassword: string;
@@ -92,16 +83,7 @@ const ChangePassword: React.FC = () => {
         <div className="w-full">
           <div className=" absolute w-full top-0 bg-opacity-50 px-5 h-full 2xl:w-full xl:w-1/3 lg:w-1/4 md:w-1/2 sm:w-1/2   place-items-center ">
             <div className="grid grid-cols-1 gap-4 border my-48   border-solid place-content-center border-gray-500 rounded-3xl ">
-              <div className="flex flex-grow ">
-                <h2 className="ml-10 text-xl font-bold">Change Password</h2>
-                <FontAwesomeIcon
-                  icon={faTimes}
-                  onClick={() => {
-                    setShow(false);
-                  }}
-                  className="hover:white cursor-pointer w-10 h-10 "
-                />
-              </div>
+              <h2 className="text-center text-xl font-bold">Change Password</h2>
               <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
@@ -160,9 +142,7 @@ const ChangePassword: React.FC = () => {
                       placeholderName="Confirm Password"
                     />
                     <div
-                      className={`${
-                        active === 'confirm password'
-                      } absolute p-3 inset-y-0 right-0`}
+                      className="absolute p-3 inset-y-0 right-0"
                       id="confirm password"
                     >
                       <Image
@@ -183,15 +163,22 @@ const ChangePassword: React.FC = () => {
                     />
                   </div>
                   <div className="py-2 grid grid-cols-1 gap-2">
-                    <SubmitButton buttonName="Confirm" disabled={loading} />
+                    <button
+                      type="submit"
+                      className="p-2 w-full bg-gray-500 hover:bg-gray-400  rounded-md"
+                    >
+                      Confirm
+                    </button>
+                    <button
+                      type="submit"
+                      onClick={() => {
+                        setShow(false);
+                      }}
+                      className="p-2 w-full bg-gray-500 hover:bg-gray-400  rounded-md"
+                    >
+                      Cancel
+                    </button>
                   </div>
-                  {message && (
-                    <div className="form-group">
-                      <div className="alert alert-danger" role="alert">
-                        {message}
-                      </div>
-                    </div>
-                  )}
                 </Form>
               </Formik>
             </div>
