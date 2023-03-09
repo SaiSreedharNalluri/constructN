@@ -22,7 +22,11 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
                 >
                   <NextImage
                     className="h-7 mt-8 cursor-pointer w-1/2 m-auto hover:border border-gray-500 border-solid"
-                    src={pData.coverPhoto?pData.coverPhoto:'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp'}
+                    src={
+                      pData.coverPhoto
+                        ? pData.coverPhoto
+                        : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp'
+                    }
                   />
                 </div>
                 <div>

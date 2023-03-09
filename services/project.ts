@@ -1,6 +1,6 @@
 import instance from './axiosInstance';
 import authHeader from './auth-header';
-import { removeCookies } from 'cookies-next';
+import { deleteCookie, removeCookies } from 'cookies-next';
 export const getProjects = async (context: any) => {
   try {
     return await instance.get(`${process.env.NEXT_PUBLIC_HOST}/projects`, {
@@ -8,7 +8,10 @@ export const getProjects = async (context: any) => {
     });
   } catch (error: any) {
     if (error.response?.status === 401) {
-      removeCookies('user');
+      deleteCookie('user', {
+        req: context.req,
+        res: context.res,
+      });
       context.res.writeHead(302, {
         Location: '/login',
       });

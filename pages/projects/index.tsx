@@ -32,7 +32,7 @@ interface IProps {
 const Projects: React.FC<IProps> = ({ projects }) => {
   return (
     <React.Fragment>
-      <div className='flex-col'>
+      <div className="flex-col">
         <div>
           <Header></Header>
         </div>
@@ -40,8 +40,6 @@ const Projects: React.FC<IProps> = ({ projects }) => {
           <ProjectsList projects={projects} />
         </div>
       </div>
-
-
     </React.Fragment>
   );
 };
