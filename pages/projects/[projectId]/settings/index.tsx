@@ -56,6 +56,7 @@ import {
   updateTagsListApi,
 } from "../../../../services/tags";
 import Header from "../../../../components/divami_components/header/Header";
+import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 const Editproject: React.FC = () => {
   const router = useRouter();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
@@ -630,7 +631,9 @@ const Editproject: React.FC = () => {
       </div>
       <div className="flex w-full fixed">
         <div>
-          <CollapsableMenu onChangeData={() => {}} />
+          {/* <CollapsableMenu onChangeData={() => {}} /> */}
+          <SidePanelMenu onChangeData={() => { }} />
+
         </div>
         <div className="calc-w  calc-h overflow-y-auto ">
           <Tabs
@@ -898,12 +901,12 @@ const Editproject: React.FC = () => {
                                               className=" cursor-move"
                                               draggable
                                               onDragStart={(e: any) =>
-                                                (dragIssuePriorityRef.current =
-                                                  index)
+                                              (dragIssuePriorityRef.current =
+                                                index)
                                               }
                                               onDragEnter={(e: any) =>
-                                                (dragOverIssuePriorityRef.current =
-                                                  index)
+                                              (dragOverIssuePriorityRef.current =
+                                                index)
                                               }
                                               onDragEnd={
                                                 handleIssuePriorityUpdate
@@ -993,12 +996,12 @@ const Editproject: React.FC = () => {
                                             className=" cursor-move"
                                             draggable
                                             onDragStart={(e: any) =>
-                                              (dragTaskPriorityRef.current =
-                                                index)
+                                            (dragTaskPriorityRef.current =
+                                              index)
                                             }
                                             onDragEnter={(e: any) =>
-                                              (dragOverTaskPriorityRef.current =
-                                                index)
+                                            (dragOverTaskPriorityRef.current =
+                                              index)
                                             }
                                             onDragEnd={handleTaskPriorityUpdate}
                                             onDragOver={(e) =>
@@ -1242,8 +1245,8 @@ const Editproject: React.FC = () => {
                                             (dragIssueStatusRef.current = index)
                                           }
                                           onDragEnter={(e: any) =>
-                                            (dragOverIssueStatusRef.current =
-                                              index)
+                                          (dragOverIssueStatusRef.current =
+                                            index)
                                           }
                                           onDragEnd={
                                             handleIssueStatusListUpdate
@@ -1324,8 +1327,8 @@ const Editproject: React.FC = () => {
                                             (dragTaskStatusRef.current = index)
                                           }
                                           onDragEnter={(e: any) =>
-                                            (dragOverTaskStatusRef.current =
-                                              index)
+                                          (dragOverTaskStatusRef.current =
+                                            index)
                                           }
                                           onDragEnd={handleTaskStatusListUpdate}
                                           onDragOver={(e) => e.preventDefault()}
