@@ -17,7 +17,6 @@ import {
   ActivityStatusIcon,
   ActivityStatusTitle,
   ActivityHeaderDivider,
-  ActivityBody,
   ActivityTimeStamp,
   ActivityBodyIssueRaisedCase,
   ActivityCommentAddedBy,
@@ -39,6 +38,8 @@ import {
   CommentActions,
   ReplyButton,
   RepliesContainer,
+  ActivityBodyChild,
+  ActivityBody,
 } from "./ActivityLogStyles";
 import moment from "moment";
 import router from "next/router";
@@ -282,137 +283,271 @@ const ActivityLog = (props: any) => {
                 {moment(each.createdAt).format("DD MMM YY")}
               </ActivityTimeStamp>
             </ActivityHeader>
-            <ActivityBodyIssueRaisedCase>
-              <ActivityCommentAddedBy>
-                <>
-                  <ActivityCommentAddedByMain>
-                    {each.by?.firstName}
-                  </ActivityCommentAddedByMain>
-                  <ActivityAddedComment>added a Comment</ActivityAddedComment>
-                  <ActivityCommentDiv>
-                    <ActivityComment>{`"${each.comment}"`}</ActivityComment>
-                    <CommentActions>
-                      <ReplyButton
-                        onClick={() => {
-                          setAutoFocusState(true);
-                          setCommentInputData((prev: any) => {
-                            return {
-                              ...prev,
-                              isReply: true,
-                              isEdit: false,
-                              data: {
-                                ...prev.data,
-                                text: "",
-                                commentId: each?._id,
-                              },
-                            };
-                          });
-                        }}
-                      >
-                        Reply
-                      </ReplyButton>
-                      <ReplyButton
-                        onClick={() => {
-                          setCommentInputData((prev: any) => {
-                            return {
-                              ...prev,
-                              isEdit: true,
-                              data: {
-                                ...prev.data,
-                                commentId: each?._id,
-                                text: each.comment,
-                              },
-                              isReply: false,
-                            };
-                          });
-                        }}
-                      >
-                        Edit
-                      </ReplyButton>
-                      <ReplyButton
-                        onClick={() => {
-                          deleteComments(each?._id);
-                        }}
-                      >
-                        Delete
-                      </ReplyButton>
-                    </CommentActions>
-                    {each.replies?.map((replyObj: any) => {
-                      return (
-                        <RepliesContainer key={`${replyObj._id}`}>
-                          <ActivityCard key={index}>
-                            <ActivityHeader>
-                              <ActivityStatusIcon>
-                                <Image src={CommentAdded} alt={""} />
-                              </ActivityStatusIcon>
-                              <ActivityStatusTitle>
-                                Reply Added
-                              </ActivityStatusTitle>
+            {index === commentsData.length - 1 ? (
+              <ActivityBodyIssueRaisedCase>
+                <ActivityCommentAddedBy>
+                  <>
+                    <ActivityCommentAddedByMain>
+                      {each.by?.firstName}
+                    </ActivityCommentAddedByMain>
+                    <ActivityAddedComment>added a Comment</ActivityAddedComment>
+                    <ActivityCommentDiv>
+                      <ActivityComment>{`"${each.comment}"`}</ActivityComment>
+                      <CommentActions>
+                        <ReplyButton
+                          onClick={() => {
+                            setAutoFocusState(true);
+                            setCommentInputData((prev: any) => {
+                              return {
+                                ...prev,
+                                isReply: true,
+                                isEdit: false,
+                                data: {
+                                  ...prev.data,
+                                  text: "",
+                                  commentId: each?._id,
+                                },
+                              };
+                            });
+                          }}
+                        >
+                          Reply
+                        </ReplyButton>
+                        <ReplyButton
+                          onClick={() => {
+                            setCommentInputData((prev: any) => {
+                              return {
+                                ...prev,
+                                isEdit: true,
+                                data: {
+                                  ...prev.data,
+                                  commentId: each?._id,
+                                  text: each.comment,
+                                },
+                                isReply: false,
+                              };
+                            });
+                          }}
+                        >
+                          Edit
+                        </ReplyButton>
+                        <ReplyButton
+                          onClick={() => {
+                            deleteComments(each?._id);
+                          }}
+                        >
+                          Delete
+                        </ReplyButton>
+                      </CommentActions>
+                      {each.replies?.map((replyObj: any) => {
+                        return (
+                          <RepliesContainer key={`${replyObj._id}`}>
+                            <ActivityCard key={index}>
+                              <ActivityHeader>
+                                <ActivityStatusIcon>
+                                  <Image src={CommentAdded} alt={""} />
+                                </ActivityStatusIcon>
+                                <ActivityStatusTitle>
+                                  Reply Added
+                                </ActivityStatusTitle>
 
-                              <ActivityHeaderDivider>
-                                {" | "}
-                              </ActivityHeaderDivider>
-                              <ActivityTimeStamp>
-                                {moment(replyObj?.createdAt).format(
-                                  "DD MMM YY"
-                                )}
-                              </ActivityTimeStamp>
-                            </ActivityHeader>
+                                <ActivityHeaderDivider>
+                                  {" | "}
+                                </ActivityHeaderDivider>
+                                <ActivityTimeStamp>
+                                  {moment(replyObj?.createdAt).format(
+                                    "DD MMM YY"
+                                  )}
+                                </ActivityTimeStamp>
+                              </ActivityHeader>
 
-                            <ActivityBody>
-                              <ActivityCommentAddedBy>
-                                <>
-                                  <ActivityCommentAddedByMain>
-                                    {replyObj?.by?.firstName}
-                                  </ActivityCommentAddedByMain>
-                                  <ActivityAddedComment>
-                                    added a reply
-                                  </ActivityAddedComment>
-                                  <ActivityCommentDiv>
-                                    <ActivityComment>{`"${replyObj.reply}"`}</ActivityComment>
-                                  </ActivityCommentDiv>
-                                  <CommentActions>
-                                    <ReplyButton
-                                      onClick={() => {
-                                        setCommentInputData((prev: any) => {
-                                          return {
-                                            ...prev,
-                                            isEditReply: true,
-                                            data: {
-                                              ...prev.data,
-                                              replyId: replyObj?._id,
-                                              text: replyObj?.reply,
-                                              commentId: replyObj?.commentId,
-                                            },
-                                            isReply: false,
-                                          };
-                                        });
-                                      }}
-                                    >
-                                      Edit
-                                    </ReplyButton>
-                                    <ReplyButton
-                                      onClick={() => {
-                                        deleteReplyComments(
-                                          replyObj?.commentId,
-                                          replyObj?._id
-                                        );
-                                      }}
-                                    >
-                                      Delete
-                                    </ReplyButton>
-                                  </CommentActions>
-                                </>
-                              </ActivityCommentAddedBy>
-                            </ActivityBody>
-                          </ActivityCard>
-                        </RepliesContainer>
-                      );
-                    })}
-                  </ActivityCommentDiv>
-                </>
-              </ActivityCommentAddedBy>
-            </ActivityBodyIssueRaisedCase>
+                              <ActivityBodyChild>
+                                <ActivityCommentAddedBy>
+                                  <>
+                                    <ActivityCommentAddedByMain>
+                                      {replyObj?.by?.firstName}
+                                    </ActivityCommentAddedByMain>
+                                    <ActivityAddedComment>
+                                      added a reply
+                                    </ActivityAddedComment>
+                                    <ActivityCommentDiv>
+                                      <ActivityComment>{`"${replyObj.reply}"`}</ActivityComment>
+                                    </ActivityCommentDiv>
+                                    <CommentActions>
+                                      <ReplyButton
+                                        onClick={() => {
+                                          setCommentInputData((prev: any) => {
+                                            return {
+                                              ...prev,
+                                              isEditReply: true,
+                                              data: {
+                                                ...prev.data,
+                                                replyId: replyObj?._id,
+                                                text: replyObj?.reply,
+                                                commentId: replyObj?.commentId,
+                                              },
+                                              isReply: false,
+                                            };
+                                          });
+                                        }}
+                                      >
+                                        Edit
+                                      </ReplyButton>
+                                      <ReplyButton
+                                        onClick={() => {
+                                          deleteReplyComments(
+                                            replyObj?.commentId,
+                                            replyObj?._id
+                                          );
+                                        }}
+                                      >
+                                        Delete
+                                      </ReplyButton>
+                                    </CommentActions>
+                                  </>
+                                </ActivityCommentAddedBy>
+                              </ActivityBodyChild>
+                            </ActivityCard>
+                          </RepliesContainer>
+                        );
+                      })}
+                    </ActivityCommentDiv>
+                  </>
+                </ActivityCommentAddedBy>
+              </ActivityBodyIssueRaisedCase>
+            ) : (
+              <ActivityBody>
+                <ActivityCommentAddedBy>
+                  <>
+                    <ActivityCommentAddedByMain>
+                      {each.by?.firstName}
+                    </ActivityCommentAddedByMain>
+                    <ActivityAddedComment>added a Comment</ActivityAddedComment>
+                    <ActivityCommentDiv>
+                      <ActivityComment>{`"${each.comment}"`}</ActivityComment>
+                      <CommentActions>
+                        <ReplyButton
+                          onClick={() => {
+                            setAutoFocusState(true);
+                            setCommentInputData((prev: any) => {
+                              return {
+                                ...prev,
+                                isReply: true,
+                                isEdit: false,
+                                data: {
+                                  ...prev.data,
+                                  text: "",
+                                  commentId: each?._id,
+                                },
+                              };
+                            });
+                          }}
+                        >
+                          Reply
+                        </ReplyButton>
+                        <ReplyButton
+                          onClick={() => {
+                            setCommentInputData((prev: any) => {
+                              return {
+                                ...prev,
+                                isEdit: true,
+                                data: {
+                                  ...prev.data,
+                                  commentId: each?._id,
+                                  text: each.comment,
+                                },
+                                isReply: false,
+                              };
+                            });
+                          }}
+                        >
+                          Edit
+                        </ReplyButton>
+                        <ReplyButton
+                          onClick={() => {
+                            deleteComments(each?._id);
+                          }}
+                        >
+                          Delete
+                        </ReplyButton>
+                      </CommentActions>
+                      {each.replies?.map((replyObj: any) => {
+                        return (
+                          <RepliesContainer key={`${replyObj._id}`}>
+                            <ActivityCard key={index}>
+                              <ActivityHeader>
+                                <ActivityStatusIcon>
+                                  <Image src={CommentAdded} alt={""} />
+                                </ActivityStatusIcon>
+                                <ActivityStatusTitle>
+                                  Reply Added
+                                </ActivityStatusTitle>
+
+                                <ActivityHeaderDivider>
+                                  {" | "}
+                                </ActivityHeaderDivider>
+                                <ActivityTimeStamp>
+                                  {moment(replyObj?.createdAt).format(
+                                    "DD MMM YY"
+                                  )}
+                                </ActivityTimeStamp>
+                              </ActivityHeader>
+
+                              <ActivityBodyChild>
+                                <ActivityCommentAddedBy>
+                                  <>
+                                    <ActivityCommentAddedByMain>
+                                      {replyObj?.by?.firstName}
+                                    </ActivityCommentAddedByMain>
+                                    <ActivityAddedComment>
+                                      added a reply
+                                    </ActivityAddedComment>
+                                    <ActivityCommentDiv>
+                                      <ActivityComment>{`"${replyObj.reply}"`}</ActivityComment>
+                                    </ActivityCommentDiv>
+                                    <CommentActions>
+                                      <ReplyButton
+                                        onClick={() => {
+                                          setCommentInputData((prev: any) => {
+                                            return {
+                                              ...prev,
+                                              isEditReply: true,
+                                              data: {
+                                                ...prev.data,
+                                                replyId: replyObj?._id,
+                                                text: replyObj?.reply,
+                                                commentId: replyObj?.commentId,
+                                              },
+                                              isReply: false,
+                                            };
+                                          });
+                                        }}
+                                      >
+                                        Edit
+                                      </ReplyButton>
+                                      <ReplyButton
+                                        onClick={() => {
+                                          deleteReplyComments(
+                                            replyObj?.commentId,
+                                            replyObj?._id
+                                          );
+                                        }}
+                                      >
+                                        Delete
+                                      </ReplyButton>
+                                    </CommentActions>
+                                  </>
+                                </ActivityCommentAddedBy>
+                              </ActivityBodyChild>
+                            </ActivityCard>
+                          </RepliesContainer>
+                        );
+                      })}
+                    </ActivityCommentDiv>
+                  </>
+                </ActivityCommentAddedBy>
+              </ActivityBody>
+            )}
           </ActivityCard>
         );
       })}

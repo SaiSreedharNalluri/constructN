@@ -34,7 +34,6 @@ import { TASK_FORM_CONFIG } from "../create-task/body/Constants";
 import CreateTask from "../create-task/CreateTask";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import CustomSelect from "../custom-select/CustomSelect";
-import ActivityLog from "../task_detail/ActivityLog";
 import {
   AddCommentButtonContainer,
   AddCommentContainer,
@@ -95,6 +94,7 @@ import {
   TitleContainer,
 } from "./TaskDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
+import ActivityLog from "./ActivityLog";
 
 // const BodyContainer = styled(Box)`
 //   height: calc(100vh - 134px);
@@ -302,6 +302,7 @@ function BasicTabs(props: any) {
               fontSize: "14px",
               fontWeight: "400",
               textTransform: "capitalize",
+              color: "#101F4C",
             },
 
             "& .MuiTab-root": {

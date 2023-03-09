@@ -21,9 +21,17 @@ export const ActivityStatusIcon = styled("span")({
   display: "flex",
   marginRight: "7px",
 });
-export const ActivityStatusTitle = styled("span")({});
+export const ActivityStatusTitle = styled("span")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#787878",
+});
 export const ActivityHeaderDivider = styled("span")({
   margin: "0px 7px",
+  color: "#787878",
+
 });
 
 export const ActivityBody = styled("div")({
@@ -36,7 +44,13 @@ export const ActivityBody = styled("div")({
   color: "#787878",
 });
 
-export const ActivityTimeStamp = styled("span")({});
+export const ActivityTimeStamp = styled("span")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#787878",
+});
 
 export const ActivityBodyIssueRaisedCase = styled("div")({
   marginLeft: "10px",
@@ -50,26 +64,69 @@ export const ActivityBodyIssueRaisedCase = styled("div")({
 export const ActivityCommentAddedBy = styled("div")({
   marginLeft: "4px",
 });
-export const ActivityCommentAddedByMain = styled("span")({});
+export const ActivityCommentAddedByMain = styled("span")({
+  marginLeft: "4px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#101F4C",
+});
 export const ActivityAddedComment = styled("span")({
   marginLeft: "4px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#101F4C",
 });
 export const ActivityCommentDiv = styled("div")({
   marginTop: "5px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#101F4C",
 });
 export const ActivityComment = styled("span")({});
-export const ActivityIssueRaisedMain = styled("span")({});
+export const ActivityIssueRaisedMain = styled("span")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#101F4C",
+});
 export const ActivityCreated = styled("span")({
   marginLeft: "4px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#101F4C",
 });
 export const ActivityIssueType = styled("span")({
   marginLeft: "4px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#101F4C",
 });
 export const ActivityFor = styled("span")({
   marginLeft: "4px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#101F4C",
 });
 export const IssuesDescription = styled("span")({
   marginLeft: "4px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#101F4C",
 });
 export const ActivityScanUploadBox = styled("div")({});
 export const ActivityIssueRaisedMainProfile = styled("span")({});
