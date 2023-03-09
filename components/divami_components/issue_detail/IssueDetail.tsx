@@ -13,7 +13,6 @@ import Edit from "../../../public/divami_icons/edit.svg";
 import Send from "../../../public/divami_icons/send.svg";
 import CustomButton from "../custom-button/CustomButton";
 import CustomSelect from "../custom-select/CustomSelect";
-import ActivityLog from "../task_detail/ActivityLog";
 import { toast } from "react-toastify";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import CreateIssue from "../create-issue/CreateIssue";
@@ -88,6 +87,7 @@ import {
   StyledInput,
 } from "./IssueDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
+import ActivityLog from "./ActivityLog";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -281,7 +281,7 @@ function BasicTabs(props: any) {
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
         <Tabs
           TabIndicatorProps={{
-            style: { background: "#FF843F", height: "3px" },
+            style: { background: "#FF843F", height: "3px", color: "black" },
           }}
           value={value}
           onChange={handleChange}
@@ -305,6 +305,7 @@ function BasicTabs(props: any) {
               fontSize: "14px",
               fontWeight: "400",
               textTransform: "capitalize",
+              color: "#101F4C",
             },
 
             "& .MuiTab-root": {
