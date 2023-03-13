@@ -61,6 +61,24 @@ export const ProfileImgIcon = styled(Image)({
   // boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.2)",
 });
 
+export const ProfileImgIconDefault = styled(Image)({
+  cursor: 'pointer',
+  borderRadius: '50%',
+  // border: '1.5px solid #36415D',
+  height: '34px',
+  // boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.2)",
+});
+
+
+export const ProfileImgSecIcon = styled(Image)({
+  cursor: 'pointer',
+  borderRadius: '100%',
+  border: '1.5px solid #36415D',
+  height: '34px',
+  marginLeft:"auto"
+  // boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.2)",
+});
+
 export const HeaderMenuImageContainer = styled('div')({
   marginRight: '15px',
   cursor: 'pointer',
