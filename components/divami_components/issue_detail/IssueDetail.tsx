@@ -261,7 +261,7 @@ function BasicTabs(props: any) {
         entity: entityId,
       }).then((response) => {
         if (response.success === true) {
-          toast("Comment is added sucessfully");
+          toast.success("Comment is added sucessfully");
           setBackendComments([...backendComments, response.result]);
         }
       });

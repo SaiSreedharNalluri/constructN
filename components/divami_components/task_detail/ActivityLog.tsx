@@ -173,7 +173,7 @@ const ActivityLog = (props: any) => {
         entity: commentsData[0]?.entity,
       }).then((response: any) => {
         if (response.success === true) {
-          toast("Comment added sucessfully");
+          toast.success("Comment added sucessfully");
           getComments(commentsData[0]?.entity);
         }
 
@@ -249,7 +249,7 @@ const ActivityLog = (props: any) => {
   };
 
   return (
-    <ActivityCardContainer>
+    <ActivityCardContainer data-testid="const-custom-activity-log-issue">
       {commentsData?.map((each: any, index: number) => {
         return (
           <ActivityCard key={index}>

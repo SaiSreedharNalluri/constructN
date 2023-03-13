@@ -199,16 +199,17 @@ body {
   z-index: 15;
 }
 
-.Toastify {
+/* .Toastify {
   width: 334px;
-}
+  content: none;
+} */
 
 .Toastify__toast-container {
   width: 334px;
 }
 
 .Toastify__toast--default {
-  border: 1px solid #3a9ea5 !important;
+  /* border: 1px solid #3a9ea5 !important; */
   border-radius: 4px !important;
   background: #ffffff !important;
 }
@@ -222,29 +223,85 @@ body {
 }
 
 .Toastify__toast--default::before {
-  content: url("../public/divami_icons/toasterIcon.svg");
+  /* content: url("../public/divami_icons/toasterIcon.svg"); */
+  content: none;
   position: relative;
   z-index: 100;
   left: 0px;
   top: 6px;
 }
 
-/* .Toastify__toast--success {
-  border: 1px solid #3a9ea5 !important;
+.Toastify--animate-icon {
+  display: none;
+}
+
+.Toastify__zoom-enter {
+  display: none;
+}
+
+.Toastify__toast--success {
+  /* border: 5px solid #3a9ea5 !important; */
+
   border-radius: 4px !important;
   background: #ffffff !important;
-} */
+  width: 334px;
+  height: 68px;
+  /* content: none; */
+}
 
-/* .Toastify__toast--success::before {
+.Toastify__toast--success::before {
   content: url("../public/divami_icons/toasterIcon.svg");
+  /* content: none; */
   position: relative;
-  z-index: 100000;
-  left: 12px;
+  z-index: 100;
+  left: 2px;
   top: 6px;
-} */
+}
+.Toastify__toast-body > div:last-child {
+  position: relative;
+  left: 8px;
+}
+
+.Toastify__toast--error {
+  /* border: 5px solid #3a9ea5 !important; */
+
+  border-radius: 4px !important;
+  background: #ffffff !important;
+  width: 334px;
+  height: 68px;
+  /* content: none; */
+}
+
+.Toastify__toast--error::before {
+  content: url("../public/divami_icons/toastError.svg");
+  /* content: none; */
+  position: relative;
+  z-index: 100;
+  left: 2px;
+  top: 6px;
+}
+
+.Toastify__toast--warning {
+  /* border: 5px solid #3a9ea5 !important; */
+
+  border-radius: 4px !important;
+  background: #ffffff !important;
+  width: 334px;
+  height: 68px;
+  /* content: none; */
+}
+
+.Toastify__toast--warning::before {
+  content: url("../public/divami_icons/toastWarn.svg");
+  /* content: none; */
+  position: relative;
+  z-index: 100;
+  left: 2px;
+  top: 6px;
+}
 
 /* .Toastify__toast--success::after {
-content: url("../public/divami_icons/toasterIcon.svg");
+  content: url("../public/divami_icons/toasterIcon.svg");
   position: absolute;
   color: #333333;
   font-size: 15px;
