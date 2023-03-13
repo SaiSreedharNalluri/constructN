@@ -40,7 +40,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
       <StyledToastContainer
         position="bottom-right"
-        autoClose={false}
+        autoClose={2000}
         hideProgressBar={true}
       />
     </>
