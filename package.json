@@ -39,6 +39,7 @@
     "react": "^18.2.0",
     "react-datepicker": "^4.8.0",
     "react-dom": "^18.2.0",
+    "react-easyfullscreen": "^1.1.2",
     "react-map-gl": "^7.0.21",
     "react-responsive-modal": "^6.4.1",
     "react-router-dom": "^6.8.1",
