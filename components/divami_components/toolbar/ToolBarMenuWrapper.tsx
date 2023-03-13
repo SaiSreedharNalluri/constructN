@@ -180,18 +180,14 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     } else if (e.currentTarget.id === "compareDesign") {
       //console.log("CAptured....");
       toolInstance.toolName = "compareDesign";
-      toolInstance.toolAction = isCompareDesign
-        ? "closeCompare"
-        : "showCompare";
-      setIsCompareDesign(isCompareDesign ? false : true);
+      toolInstance.toolAction = "showCompare";
+      setIsCompareDesign(true);
       setIsCompareReality(false);
     } else if (e.currentTarget.id === "compareReality") {
       //console.log("CAptured....");
       toolInstance.toolName = "compareReality";
-      toolInstance.toolAction = isCompareReality
-        ? "closeCompare"
-        : "showCompare";
-      setIsCompareReality(isCompareReality ? false : true);
+      toolInstance.toolAction = "showCompare";
+      setIsCompareReality(true);
       setIsCompareDesign(false);
     } else if (e.currentTarget.id === "hideCompare") {
       //console.log("CAptured....");
@@ -359,7 +355,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         ) : (
           <></>
         )}
-        <Hotspot />
+        {/* <Hotspot /> */}
       </ToolbarContainer>
     </SectionToolBar>
   );

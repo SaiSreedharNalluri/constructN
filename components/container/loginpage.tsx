@@ -72,10 +72,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                   className="alert alert-danger"
                 />
               </div>
-              <div className='flex justify-between' >
-                <div >
-                  <InputCheckBox checkBoxName="Remember me"></InputCheckBox>
-                </div>
+              <div>
                 <div className="text-gray-500 cursor-pointer ml-4 lg:ml-0" onClick={() => { router.push("reset-password") }}>
                   Forgot Password
                 </div>

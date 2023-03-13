@@ -21,9 +21,17 @@ export const ActivityStatusIcon = styled("span")({
   display: "flex",
   marginRight: "7px",
 });
-export const ActivityStatusTitle = styled("span")({});
+export const ActivityStatusTitle = styled("span")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#787878",
+});
 export const ActivityHeaderDivider = styled("span")({
   margin: "0px 7px",
+  color: "#787878",
+
 });
 
 export const ActivityBody = styled("div")({
@@ -36,7 +44,24 @@ export const ActivityBody = styled("div")({
   color: "#787878",
 });
 
-export const ActivityTimeStamp = styled("span")({});
+export const ActivityBodyChild = styled("div")({
+  borderLeft: "1px solid #d9d9d9",
+
+  marginLeft: "10px",
+  marginTop: "6px",
+  marginBottom: "10px",
+  paddingLeft: "14px !important",
+  paddingBottom: "15px",
+  color: "#787878",
+});
+
+export const ActivityTimeStamp = styled("span")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#787878",
+});
 
 export const ActivityBodyIssueRaisedCase = styled("div")({
   marginLeft: "10px",
@@ -50,12 +75,28 @@ export const ActivityBodyIssueRaisedCase = styled("div")({
 export const ActivityCommentAddedBy = styled("div")({
   marginLeft: "4px",
 });
-export const ActivityCommentAddedByMain = styled("span")({});
+export const ActivityCommentAddedByMain = styled("span")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#101F4C",
+});
 export const ActivityAddedComment = styled("span")({
   marginLeft: "4px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#101F4C",
 });
 export const ActivityCommentDiv = styled("div")({
   marginTop: "5px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#101F4C",
 });
 export const ActivityComment = styled("span")({});
 export const ActivityIssueRaisedMain = styled("span")({});
@@ -91,3 +132,18 @@ export const ActivityImage = styled("span")({
 });
 
 export const ActivityScreenShotIconContainer = styled("div")({});
+export const CommentActions = styled("div")({
+  display: "flex",
+  margin: "20px",
+  marginLeft: 0,
+});
+
+export const ReplyButton = styled("div")({
+  marginRight: "20px",
+  color: "#FF843F",
+  cursor: "pointer",
+});
+
+export const RepliesContainer = styled("div")({
+  marginLeft: "40px",
+});

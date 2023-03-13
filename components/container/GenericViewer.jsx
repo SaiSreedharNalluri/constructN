@@ -494,7 +494,7 @@ function GenericViewer(props) {
         if (forgeUtils.current != undefined) {
           forgeUtils.current.setSnapshot(snapshot);
           forgeUtils.current.updateIssuesData(issuesList);
-          // forgeUtils.current.updateTasksData(tasksList);
+          forgeUtils.current.updateTasksData(tasksList);
           let data = await getRealityLayers(structure, realityMap);
           forgeUtils.current.updateLayersData(data, currentContext.current);
         }
@@ -503,7 +503,7 @@ function GenericViewer(props) {
         if (potreeUtils.current != undefined) {
           potreeUtils.current.setSnapshot(snapshot);
           potreeUtils.current.updateIssuesData(issuesList);
-          // potreeUtils.current.updateTasksData(tasksList);
+          potreeUtils.current.updateTasksData(tasksList);
           potreeUtils.current.updateData(
             await getPointCloud(structure, snapshot),
             getFloorPlanData(designMap)

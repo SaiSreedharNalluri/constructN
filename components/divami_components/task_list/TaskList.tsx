@@ -82,6 +82,7 @@ import {
 import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import { toast } from "react-toastify";
+import { ITools } from "../../../models/ITools";
 
 interface IProps {
   closeOverlay: () => void;
@@ -129,6 +130,8 @@ const CustomTaskListDrawer = (props: any) => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
+
   const sortMenuOptions = [
     {
       label: "Status ( To Do - Completed)",
@@ -257,6 +260,9 @@ const CustomTaskListDrawer = (props: any) => {
       }
     });
     setOpenTaskDetail(true);
+    taskMenuInstance.toolAction = "taskSelect";
+    taskMenuInstance.response = { ...task.context, id: task._id };
+    taskMenuClicked(taskMenuInstance);
   };
 
   const handleSearchWindow = () => {

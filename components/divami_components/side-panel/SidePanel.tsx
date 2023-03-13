@@ -29,7 +29,9 @@ import {
   SideMenuOptionContainer,
   SideMenuOptionImageContainer,
   StyledImage,
+  TooltipText,
 } from "./SidePanelStyles";
+import { Tooltip } from "@mui/material";
 interface IProps {
   onChangeData: () => void;
 }
@@ -41,14 +43,15 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       activeIcon: dashboardProgressHighlight,
       isActive: false,
       nextPage: "",
+      toolTipMsg: "Project Dashboard",
     },
     {
       id: "structure",
-
       icon: drawing,
       activeIcon: drawingInactive,
       isActive: false,
       nextPage: "",
+      toolTipMsg: "Drawings",
     },
 
     {
@@ -56,6 +59,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       icon: calendar,
       activeIcon: calendarHighlighted,
       isActive: false,
+      toolTipMsg: "Schedule & Reports",
     },
 
     {
@@ -63,6 +67,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       icon: people,
       isActive: false,
       activeIcon: peopleHighlighted,
+      toolTipMsg: "Settings",
     },
   ]);
 
@@ -91,25 +96,27 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         router.push(`/projects/${router.query.projectId as string}/dashboard`);
 
         break;
-      // case "views":
+      case "views":
 
       case "structure":
         router.push(`/projects/${router.query.projectId as string}/structure`);
 
         break;
-      // case "issue":
-      //   router.push(`/projects/${router.query.projectId as string}/issue`);
-      //   break;
+      case "issue":
+        router.push(`/projects/${router.query.projectId as string}/issue`);
+        break;
       case "schedule":
         router.push(`/projects/${router.query.projectId as string}/schedule`);
         break;
-      // case "lineChart":
-      //   router.push(`/projects/${router.query.projectId as string}/lineChart`);
-      //   break;
+      case "lineChart":
+        router.push(`/projects/${router.query.projectId as string}/lineChart`);
+        break;
       case "settings":
         router.push(`/projects/${router.query.projectId as string}/settings`);
         break;
-
+      case "tasks":
+        router.push(`/projects/${router.query.projectId as string}/tasks`);
+        break;
       default:
         router.push(`/projects/${router.query.projectId as string}/structure`);
     }
@@ -126,26 +133,27 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           // }
           // onClick={() => handleClick(item.id)}
           >
-            <SideMenuOptionImageContainer>
-              {router.pathname.includes(item.id) ? (
-                <OvershowImg>
-                  <HighlightedSytledImage
-                    src={item.activeIcon}
+            <TooltipText title={item.toolTipMsg} placement="right">
+              <SideMenuOptionImageContainer>
+                {router.pathname.includes(item.id) ? (
+                  <OvershowImg>
+                    <HighlightedSytledImage
+                      src={item.activeIcon}
+                      alt={item.id}
+                      id={item.id}
+                      onClick={leftClickHandler}
+                    />
+                  </OvershowImg>
+                ) : (
+                  <StyledImage
+                    src={item.icon}
                     alt={item.id}
                     id={item.id}
                     onClick={leftClickHandler}
                   />
-                </OvershowImg>
-              ) : (
-                <StyledImage
-                  src={item.icon}
-                  alt={item.id}
-                  id={item.id}
-                  onClick={leftClickHandler}
-                  data-testid={`const-custom-sidepanel-icon-${index}`}
-                />
-              )}
-            </SideMenuOptionImageContainer>
+                )}
+              </SideMenuOptionImageContainer>
+            </TooltipText>
           </SideMenuOption>
         </SideMenuOptionContainer>
       ))}

@@ -525,4 +525,10 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
     borderBottom: "none",
     // borderBottomColor: "none",
   },
+
+   "& .MuiInputBase-input": {
+    "&::placeholder": {
+      color: "#787878",
+    },
+  },
 }));
