@@ -42,6 +42,10 @@ export const TaskBox = styled('div')({
   borderRight: 'none',
   display: 'flex',
   alignItems: 'center',
+  width: '164px',
+  justifyContent:"center",
+  borderTopRightRadius: '4px',
+  borderBottomRightRadius: '4px',
   // padding: '15px 20px 14px 20px',
   padding:"15px 7px 14px 15px",
   '& .MuiDrawer-paper': {
@@ -100,16 +104,17 @@ export const TypeParentCont = styled('div')({
   alignItems: 'center',
   padding: '15px 20px 14px 20px',
   // width: '250px',
-  width: '238px',
+  width: '250px',
 
 });
 
 export const TypesTitle = styled('div')({
-  width: '100px',
+  width: '156px',
+  color:"#101F4C"
 });
 
 export const TypeArrowIconDiv = styled('div')({
-  marginLeft: '110px',
+  marginLeft: '40px',
   cursor: 'pointer',
 });
 
@@ -122,13 +127,15 @@ export const IssueBox = styled('div')({
   borderRight: 'none',
   display: 'flex',
   alignItems: 'center',
-  padding: '15px 20px 14px 20px',
+  justifyContent:"center",
+  padding: '15px 7px 14px 15px',
   width: '167px',
 });
 
 export const IssueTitle = styled('div')({
   fontWeight: '400',
   fontSize: '12px',
+  color:"#101F4C"
   // lineHeight:"16px"
 });
 
@@ -183,6 +190,7 @@ export const LayerSecondSectionArrImg = styled('div')({
 export const TaskTitle = styled('div')({
   fontWeight: '400',
   fontSize: '12px',
+  color:"#101F4C"
   // lineHeight:"16px"
 });
 
@@ -190,7 +198,7 @@ export const CameraIcon = styled(Image)({
   width: '18px',
   height: '18px',
   cursor: 'pointer',
-  margin: '0 12px',
+  margin: '0 7px',
 });
 
 export const GroupIcon = styled(Image)({
@@ -214,7 +222,9 @@ export const CompareViewBox = styled('div')({
 
   borderRight: 'transparent',
   // width: '270px',
-  width: '258px',
+  width: '230px',
+  borderTopRightRadius:'4px',
+  borderBottomRightRadius:'4px'
 
 });
 
@@ -245,7 +255,9 @@ export const RealityCompareViewIcon = styled('div')((props: any) => ({
   cursor:"pointer"
 
 })) as any;
-export const CompareViewTitleDiv = styled('div')({});
+export const CompareViewTitleDiv = styled('div')({
+  color:'#101F4C'
+});
 export const CompareContainer = styled('div')({
   background: '#FFFFFF',
   borderLeft: '1px solid #F1742E',
