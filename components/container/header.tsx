@@ -11,6 +11,9 @@ import { useRouter } from 'next/router';
 import { getCookie, removeCookies } from 'cookies-next';
 import DesignRealitySwitch from './designRealitySwitch';
 import { IUser } from '../../models/IUser';
+import { url } from 'inspector';
+import Modal from 'react-responsive-modal';
+import UserNotification from './userNotification';
 interface IProps {
   // showDesignRealitySwitch?:boolean;
   // isDesignView?:boolean;
@@ -37,7 +40,7 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
       setUser(user);
     }
   }, [router.query.projectId, router.isReady]);
-
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     if (breadCrumb !== undefined) setBreadCrumbString(breadCrumb);
     else setBreadCrumbString('');
@@ -86,7 +89,12 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
               <DesignRealitySwitch toggleDesignType={toggleDesignType} designState={isDesignView?true:false}></DesignRealitySwitch>
             </div> */}
               <div className="mt-2 mr-2 mb-2 w-6 h-6">
-                <FontAwesomeIcon icon={faBell} />
+                <FontAwesomeIcon
+                  icon={faBell}
+                  onClick={() => {
+                    setOpen(true);
+                  }}
+                />
               </div>
               <div
                 onClick={() => {
@@ -118,7 +126,6 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
                     <li className="font-medium">
                       <div className="flex flex-col items-center justify-center transform transition-colors duration-200">
                         <div className="w-11 h-11 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 border-gray-900">
-                          {/* <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> */}
                           <Image
                             src={
                               user && user.avatar
@@ -184,6 +191,18 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
                 </div>
               )}
             </div>
+          </div>
+          <div>
+            <Modal
+              open={open}
+              onClose={() => {
+                setOpen(false);
+              }}
+            >
+              <div>
+                <UserNotification />
+              </div>
+            </Modal>
           </div>
         </header>
       </div>

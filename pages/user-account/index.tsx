@@ -4,7 +4,7 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { toast } from 'react-toastify';
 import ChangePassword from '../../components/container/changePassword';
 import Header from '../../components/container/header';
-import Notification from '../../components/container/notification';
+import Notification from '../../components/container/userNotification';
 import UserProfile from '../../components/container/userProfile';
 import { IUser } from '../../models/IUser';
 import {
