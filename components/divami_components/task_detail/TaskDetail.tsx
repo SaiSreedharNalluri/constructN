@@ -248,7 +248,7 @@ function BasicTabs(props: any) {
         entity: entityId,
       }).then((response) => {
         if (response.success === true) {
-          toast("Comment is added sucessfully");
+          toast.success("Comment is added sucessfully");
           setBackendComments([...backendComments, response.result]);
         }
       });
@@ -781,7 +781,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
       updateTask(projectId, data, selectedTask._id)
         .then((response) => {
           if (response.success === true) {
-            toast("Task updated sucessfully");
+            toast.success("Task updated sucessfully");
             getTasks(currentStructure._id);
           } else {
             toast.error("Error updating the task");
@@ -871,7 +871,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
       createAttachment(task._id, fileformdata)
         .then((response) => {
           if (response.success === true) {
-            toast("Attachments uploaded sucessfully");
+            toast.success("Attachments uploaded sucessfully");
           } else {
             toast.error("Error uploading attachments");
           }
@@ -895,7 +895,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     updateTask(projectId as string, issueData, selectedTask._id)
       .then((response) => {
         if (response.success === true) {
-          toast("Task updated sucessfully");
+          toast.success("Task updated sucessfully");
           getTasks(currentStructure._id);
         } else {
         }

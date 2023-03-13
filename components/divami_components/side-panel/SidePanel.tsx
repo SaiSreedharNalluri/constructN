@@ -53,21 +53,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       nextPage: "",
       toolTipMsg: "Drawings",
     },
-    // {
-    //   id: "issue",
 
-    //   icon: issuesIcon,
-    //   activeIcon: IssuesHighlightedIcon,
-    //   isActive: false,
-    //   nextPage: "",
-    // },
-    // {
-    //   id: "tasks",
-    //   icon: tasks,
-    //   activeIcon: tasksHighlighted,
-    //   isActive: false,
-    //   nextPage: "",
-    // },
     {
       id: "schedule",
       icon: calendar,
@@ -75,13 +61,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       isActive: false,
       toolTipMsg: "Schedule & Reports",
     },
-    // {
-    //   id: "lineChart",
 
-    //   icon: branch,
-    //   activeIcon: branchHighlighted,
-    //   isActive: false,
-    // },
     {
       id: "settings",
       icon: people,
@@ -91,34 +71,15 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     },
   ]);
 
-  // const handleClick = (item: any) => {
-  //   setConfig((prev) =>
-  //     prev.map((data) => {
-  //       onChangeData();
-  //       if (data?.label === item?.label) {
-  //         return {
-  //           ...data,
-  //           isActive: item?.isActive ? false : true,
-  //         };
-  //       } else {
-  //         return {
-  //           ...data,
-  //           isActive: false,
-  //         };
-  //       }
-  //     })
+  // const handleClick = (id: any) => {
+  //   setConfig((prevConfig) =>
+  //     prevConfig.map((item) =>
+  //       item.id === id
+  //         ? { ...item, isActive: true }
+  //         : { ...item, isActive: false }
+  //     )
   //   );
   // };
-
-  const handleClick = (id: any) => {
-    setConfig((prevConfig) =>
-      prevConfig.map((item) =>
-        item.id === id
-          ? { ...item, isActive: true }
-          : { ...item, isActive: false }
-      )
-    );
-  };
 
   const router = useRouter();
   const [active, setActive] = useState(router.pathname.split("/").pop());
@@ -163,7 +124,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   };
 
   return (
-    <SideMenuContainer>
+    <SideMenuContainer data-testid="const-custom-sidepanel">
       {config.map((item, index) => (
         <SideMenuOptionContainer key={index}>
           <SideMenuOption

@@ -92,7 +92,7 @@ const ActivityLog = (props: any) => {
       commentInputData?.data?.commentId
     ).then((response) => {
       if (response.success === true) {
-        toast("Reply added sucessfully");
+        toast.success("Reply added sucessfully");
         getComments(commentsData[0]?.entity);
       }
     });
@@ -119,7 +119,7 @@ const ActivityLog = (props: any) => {
         commentInputData.data?.replyId
       ).then((response) => {
         if (response.success === true) {
-          toast("Reply updated sucessfully");
+          toast.success("Reply updated sucessfully");
           getComments(commentsData[0]?.entity);
         }
       });
@@ -147,7 +147,7 @@ const ActivityLog = (props: any) => {
         }
       ).then((response) => {
         if (response.success === true) {
-          toast("Comment updated sucessfully");
+          toast.success("Comment updated sucessfully");
           getComments(commentsData[0]?.entity);
         }
       });
@@ -173,7 +173,7 @@ const ActivityLog = (props: any) => {
         entity: commentsData[0]?.entity,
       }).then((response: any) => {
         if (response.success === true) {
-          toast("Comment added sucessfully");
+          toast.success("Comment added sucessfully");
           getComments(commentsData[0]?.entity);
         }
 
@@ -197,7 +197,7 @@ const ActivityLog = (props: any) => {
       deleteComment(router.query.projectId as string, commentId).then(
         (response: any) => {
           if (response.success === true) {
-            toast("Comment Deleted sucessfully");
+            toast.success("Comment Deleted sucessfully");
             getComments(commentsData[0]?.entity);
 
             // setBackendComments([...backendComments, response.result]);
@@ -227,7 +227,7 @@ const ActivityLog = (props: any) => {
         replyId
       ).then((response: any) => {
         if (response.success === true) {
-          toast("Reply deleted sucessfully");
+          toast.success("Reply deleted sucessfully");
           getComments(commentsData[0]?.entity);
 
           // setBackendComments([...backendComments, response.result]);
@@ -249,7 +249,7 @@ const ActivityLog = (props: any) => {
   };
 
   return (
-    <ActivityCardContainer>
+    <ActivityCardContainer data-testid="const-custom-activity-log-issue">
       {commentsData?.map((each: any, index: number) => {
         return (
           <ActivityCard key={index}>

@@ -222,7 +222,7 @@ const Issues = ({
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
           if (response.success === true) {
-            toast(" Issue Created Successfully");
+            toast.success(" Issue Created Successfully");
             issueSubmitFn(response.result);
           } else {
             toast(`Something went wrong`);

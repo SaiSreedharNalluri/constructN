@@ -38,6 +38,7 @@ const Header = ({ closeTaskCreate, editData }: any) => {
           onClick={closeTaskCreate}
           src={closeIcon}
           alt={"close icon"}
+          data-testid="const-custom-drawer-close-icon"
         />
       </TitleContiner>
     </HeaderContainer>

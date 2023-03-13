@@ -40,7 +40,7 @@ const ActivityLog = (props: any) => {
 
   console.log(`ActivityLog`, ActivityLog);
   return (
-    <ActivityCardContainer>
+    <ActivityCardContainer data-testid="const-custom-activity-log-issue">
       {ActivityLog?.map((each: any, index: number) => {
         return (
           <ActivityCard key={index}>
@@ -107,7 +107,7 @@ const ActivityLog = (props: any) => {
                   </>
                 )}
                 {each.status === "Scan Updated" && (
-                  <ActivityScanUploadBox>
+                  <ActivityScanUploadBox data-testid="activity-scan-upload-box">
                     <ActivityIssueRaisedMainProfile>
                       {each.profile}
                     </ActivityIssueRaisedMainProfile>
@@ -120,7 +120,7 @@ const ActivityLog = (props: any) => {
                     <span>{each.currentProgress}</span>
                   </ActivityCurrentProgress>
                 )}
-                {each.imageDetails.length > 0 && (
+                {each.imageDetails?.length > 0 && (
                   <ActivityImageSection>
                     <ActivityScreenShotIconContainer>
                       <Image src={ImageScreenShot} alt="" />
@@ -174,7 +174,7 @@ const ActivityLog = (props: any) => {
                     <span>{each.currentProgress}</span>
                   </ActivityCurrentProgress>
                 )}
-                {each.imageDetails.length > 0 && (
+                {each.imageDetails?.length > 0 && (
                   <ActivityImageSection>
                     <ActivityScreenShotIconContainer>
                       <Image src={ImageScreenShot} alt="" />

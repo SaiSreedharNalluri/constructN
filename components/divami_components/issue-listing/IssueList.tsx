@@ -368,7 +368,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 <>
                   <SearchGlassIcon
                     src={Search}
-                    data-testid='search-icon'
+                    data-testid="search-icon"
                     alt={"close icon"}
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
@@ -429,10 +429,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     target="_blank"
                     data-testid="download"
                   >
-                    {/* <FontAwesomeIcon
-                  className=" fill-black text-black"
-                  icon={faDownload}
-                ></FontAwesomeIcon> */}
                     <DownloadIcon src={Download} alt="Arrow" />
                   </CSVLink>
                 </>
