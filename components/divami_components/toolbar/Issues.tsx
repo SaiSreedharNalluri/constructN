@@ -304,7 +304,6 @@ const Issues = ({
               onClick={() => {
                 openIssueListFn();
                 handleViewTaskList();
-                toast.success("Created success");
               }}
             />
           </IssuesSectionFileImg>

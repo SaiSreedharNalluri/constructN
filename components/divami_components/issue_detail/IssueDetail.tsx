@@ -831,7 +831,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       editIssue(projectId, data, selectedIssue._id)
         .then((response) => {
           if (response.success === true) {
-            toast("Issue updated sucessfully");
+            toast.success("Issue updated sucessfully");
             getIssues(currentStructure._id);
           } else {
             toast.error("Error updating the issue");
@@ -932,7 +932,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       createAttachment(issue._id, fileformdata)
         .then((response) => {
           if (response.success === true) {
-            toast("Attachments uploaded sucessfully");
+            toast.success("Attachments uploaded sucessfully");
           } else {
             toast.error("Error uploading attachments");
           }
@@ -956,7 +956,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     editIssue(projectId as string, issueData, selectedIssue._id)
       .then((response) => {
         if (response.success === true) {
-          toast("Issue updated sucessfully");
+          toast.success("Issue updated sucessfully");
           getIssues(currentStructure._id);
         } else {
         }

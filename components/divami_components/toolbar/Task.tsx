@@ -176,15 +176,15 @@ const Task = ({
       createTaskWithAttachments(projectId as string, formDataObj)
         .then((response) => {
           if (response.success === true) {
-            toast("Task Created sucessfully");
+            toast.success("Task Created sucessfully");
 
             taskSubmitFn(response.result);
           } else {
-            toast(`Something went wrong`);
+            toast.error(`Something went wrong`);
           }
         })
         .catch((error) => {
-          toast(`Something went wrong`);
+          toast.error(`Something went wrong`);
         });
     }
   };

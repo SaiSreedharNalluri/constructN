@@ -232,11 +232,11 @@ body {
 }
 
 .Toastify--animate-icon {
-  display: none;
+  display: none !important;
 }
 
 .Toastify__zoom-enter {
-  display: none;
+  display: none !important;
 }
 
 .Toastify__toast--success {
