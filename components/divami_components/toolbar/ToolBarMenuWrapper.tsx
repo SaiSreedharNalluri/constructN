@@ -219,7 +219,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     if (iViewMode === "Reality") {
       realitySwitch();
     }
-  }, [iViewMode]);
+  }, [iViewMode, currentStructure]);
+
   const issueMenuClicked = (localTool: ITools) => {
     toolClicked(localTool);
     if (

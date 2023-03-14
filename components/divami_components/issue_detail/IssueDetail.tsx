@@ -87,7 +87,7 @@ import {
   StyledInput,
 } from "./IssueDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
-import ActivityLog from "./ActivityLog";
+import ActivityLog from "../task_detail/ActivityLog";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -275,6 +275,8 @@ function BasicTabs(props: any) {
       setFile(e.target.files[0]);
     }
   };
+
+  console.log("taskState.TabOne issue", taskState.TabOne);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -507,7 +509,22 @@ function BasicTabs(props: any) {
                 renderInput={(params) => <TextField {...params} label="" />}
                 onChange={(event, value: any) => {
                   console.log(value);
-                  setFormState({ ...formState, selectedUser: value });
+                  const newSelectedUser = value
+                    ? value.filter(
+                        (selected: any, index: number, array: any[]) => {
+                          // Remove duplicate values based on label property
+                          return (
+                            array.findIndex(
+                              (elem: any) => elem.label === selected.label
+                            ) === index
+                          );
+                        }
+                      )
+                    : [];
+                  setFormState({
+                    ...formState,
+                    selectedUser: newSelectedUser,
+                  });
                 }}
                 value={formState.selectedUser}
                 multiple={true}

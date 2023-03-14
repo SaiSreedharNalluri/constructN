@@ -93,9 +93,19 @@ const FormWrapper = (props: any) => {
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
+          const newSelectedUser = Array.isArray(value)
+            ? value.filter((selected: any, index: number, array: any[]) => {
+                // Remove duplicate values based on label property
+                return (
+                  array.findIndex(
+                    (elem: any) => elem.label === selected.label
+                  ) === index
+                );
+              })
+            : [];
           return {
             ...item,
-            selectedName: value,
+            selectedName: newSelectedUser,
           };
         }
         return item;
