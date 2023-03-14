@@ -612,7 +612,7 @@ const FilterCommon: React.FC<IProps> = ({
                         handleAllSelection(each, index);
                       }}
                       src={Checked}
-                      alt="reset"
+                      alt="checked checkbox"
                       data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllText>
@@ -626,7 +626,7 @@ const FilterCommon: React.FC<IProps> = ({
                         handleAllSelection(each, index);
                       }}
                       src={UnChecked}
-                      alt="reset"
+                      alt="unchecked checkbox"
                       data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllText>
@@ -662,7 +662,7 @@ const FilterCommon: React.FC<IProps> = ({
                               handleOptionSelection(item, index);
                             }}
                             src={Checked}
-                            alt="reset"
+                            alt="checked checkbox"
                             data-testid="filter-select-each"
                           />
                         ) : item?.optionStatus === "F" ? (
@@ -671,7 +671,7 @@ const FilterCommon: React.FC<IProps> = ({
                               handleOptionSelection(item, index);
                             }}
                             src={UnChecked}
-                            alt=""
+                            alt="unchecked checkbox"
                             data-testid="filter-select-each"
 
                           />

@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import FilterCommon from '../components/divami_components/issue-filter-common/IssueFilterCommon';
 import * as issuesAPI from "../services/issue"
 
@@ -165,7 +165,7 @@ describe('IssueFilter', () => {
     render(
       <FilterCommon
         closeFilterOverlay={closeFitlerOverlay}
-        issuesList={issues}
+        issuesList={issues as any}
         visibility={false}
         closeOverlay={jest.fn()}
         handleOnFilter={jest.fn()}
@@ -179,18 +179,19 @@ describe('IssueFilter', () => {
 
     const filterTitleHeader = screen.queryByText(/Filters/i);
     expect(filterTitleHeader).toBeInTheDocument();
-
+    // filter screen closing icon test
     const closeIcon = screen.getByTestId('filter-close');
     fireEvent.click(closeIcon);
     expect(closeFitlerOverlay).toBeCalled();
-
+    // refresh all checkboxes
     const resetButton = screen.getByTestId('filter-refresh');
     fireEvent.click(resetButton);
-
+    expect(closeFitlerOverlay).toBeCalled();
+    // apply filter button test
     const applyFilterButton = screen.getByTestId('filter-apply');
     fireEvent.click(applyFilterButton);
-
-
+    expect(closeFitlerOverlay).toBeCalled();
+    //cancel filter button test
     const cancelFilterButton = screen.getByTestId('filter-cancel');
     fireEvent.click(cancelFilterButton);
     expect(closeFitlerOverlay).toBeCalled();
@@ -199,7 +200,7 @@ describe('IssueFilter', () => {
   });
 
 
-  it('should render issue filter screen1', () => {
+  it('should render issue filter screen with filter options', () => {
     const mockFilteredIssues = {
       "isFilterApplied": true,
       "filterData": {
@@ -214,11 +215,10 @@ describe('IssueFilter', () => {
       "numberOfFilters": 0
     }
     const closeFitlerOverlay = jest.fn();
-    // const onCloseMock = jest.fn((x = false) => !x)
     render(
       <FilterCommon
         closeFilterOverlay={closeFitlerOverlay}
-        issuesList={issues}
+        issuesList={issues as any}
         visibility={false}
         closeOverlay={jest.fn()}
         handleOnFilter={jest.fn()}
@@ -251,7 +251,7 @@ describe('IssueFilter', () => {
 
   });
 
-  it('should render issue filter screen2', () => {
+  it('should render issue filter screen with a different mock data', () => {
     const mockFilteredIssues = {
       "isFilterApplied": true,
       "filterData": {
@@ -270,7 +270,7 @@ describe('IssueFilter', () => {
     render(
       <FilterCommon
         closeFilterOverlay={closeFitlerOverlay}
-        issuesList={issues}
+        issuesList={issues as any}
         visibility={false}
         closeOverlay={jest.fn()}
         handleOnFilter={jest.fn()}
@@ -291,10 +291,11 @@ describe('IssueFilter', () => {
 
     const resetButton = screen.getByTestId('filter-refresh');
     fireEvent.click(resetButton);
+    expect(closeFitlerOverlay).toBeCalled();
 
     const applyFilterButton = screen.getByTestId('filter-apply');
     fireEvent.click(applyFilterButton);
-
+    expect(closeFitlerOverlay).toBeCalled();
 
     const cancelFilterButton = screen.getByTestId('filter-cancel');
     fireEvent.click(cancelFilterButton);
@@ -302,18 +303,11 @@ describe('IssueFilter', () => {
 
     const selectAllCheckbox = screen.getByTestId('filter-select-all');
     fireEvent.click(selectAllCheckbox);
+    expect(selectAllCheckbox).toHaveAttribute("alt", 'unchecked checkbox');
 
-    const selectEachCheckbox = screen.getByTestId('filter-select-each');
-    fireEvent.click(selectEachCheckbox, {
-      target: {
-        index: 1, item: {
-          "0": "L",
-          "1": "o",
-          "2": "w",
-          "optionTitle": "Low",
-          "optionStatus": "F"
-        }
-      }
-    });
+    const selectEachCheckbox = screen.getAllByTestId('filter-select-each');
+    fireEvent.click(selectEachCheckbox[0], {});
+    expect(selectEachCheckbox[0]).toHaveAttribute("alt", 'checked checkbox');
   });
+
 });

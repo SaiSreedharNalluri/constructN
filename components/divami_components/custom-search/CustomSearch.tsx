@@ -99,6 +99,7 @@ const CustomSearch = (props: any) => {
       {isMultiSelect ? (
         <CustomAutoComplete
           className={"formField"}
+          data-testid={props.dataTestId}
           disablePortal
           id="combo-box-demo"
           options={data.listOfEntries}
@@ -113,26 +114,26 @@ const CustomSearch = (props: any) => {
               InputProps={
                 val.length
                   ? {
-                      ...params.InputProps,
-                      // startAdornment: (
-                      //   <InputAdornment position="start">
-                      //     <Image width={15} height={15} src={Search} alt="Search" />
-                      //   </InputAdornment>
-                      // ),
-                    }
+                    ...params.InputProps,
+                    // startAdornment: (
+                    //   <InputAdornment position="start">
+                    //     <Image width={15} height={15} src={Search} alt="Search" />
+                    //   </InputAdornment>
+                    // ),
+                  }
                   : {
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Image
-                            width={15}
-                            height={15}
-                            src={Search}
-                            alt="Search"
-                          />
-                        </InputAdornment>
-                      ),
-                    }
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Image
+                          width={15}
+                          height={15}
+                          src={Search}
+                          alt="Search"
+                        />
+                      </InputAdornment>
+                    ),
+                  }
               }
             />
           )}
@@ -141,6 +142,7 @@ const CustomSearch = (props: any) => {
       ) : (
         <CustomAutoComplete
           disablePortal
+          data-testid={props.dataTestId}
           id="combo-box-demo"
           options={data.listOfEntries}
           value={val}
