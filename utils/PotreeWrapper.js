@@ -1032,8 +1032,8 @@ export class PotreeViewerUtils {
                     this.unloadOrientedImage()
                     this.sendContext = true;
                 } else {
-                    this.viewer.scene.images360[0].unfocus();
-                    this.pointCloudView(false);
+                    // this.viewer.scene.images360[0].unfocus();
+                    // this.pointCloudView(false);
                 }
                 break;
             case "ArrowUp":
@@ -1620,7 +1620,7 @@ export class PotreeViewerUtils {
         }
     }
 
-    showTasks() {
+    showTasks(show) {
         for(let taskId of Object.keys(this.taskSpriteMap)) {
             let annotation = this.taskSpriteMap[taskId].tag;
             annotation._visible = show;
