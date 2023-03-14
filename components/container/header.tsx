@@ -3,35 +3,25 @@ import {
   faBell,
   faQuestion,
   faRightFromBracket,
-  faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCookie, removeCookies } from 'cookies-next';
-import DesignRealitySwitch from './designRealitySwitch';
 import { IUser } from '../../models/IUser';
-import { url } from 'inspector';
-import Modal from 'react-responsive-modal';
 import UserNotification from './userNotification';
+import { IUserNotification } from '../../models/IUserNotification';
+import { getAllUserNotifications } from '../../services/userNotifications';
 interface IProps {
-  // showDesignRealitySwitch?:boolean;
-  // isDesignView?:boolean;
   breadCrumb?: string;
 }
 const Header: React.FC<IProps> = ({ breadCrumb }) => {
-  // if (showDesignRealitySwitch===undefined)
-  // {
-  //   showDesignRealitySwitch=false
-  // }
-  // if (isDesignView===undefined)
-  // {
-  //   showDesignRealitySwitch=false
-  // }
   const router = useRouter();
   const headerRef: any = React.useRef();
   let [user, setUser] = useState<IUser>();
   const [breadCrumbString, setBreadCrumbString] = useState(breadCrumb || '');
+  const [notifications, setNotifications] = useState<IUserNotification[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   useEffect(() => {
     const userObj: any = getCookie('user');
     let user = null;
@@ -39,6 +29,7 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
     if (user?.fullName) {
       setUser(user);
     }
+    getUserNotifications();
   }, [router.query.projectId, router.isReady]);
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -49,9 +40,9 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     const closePopup = (e: any) => {
-      //console.log(headerRef.current.contains(e.target));
       if (!headerRef.current.contains(e.target)) {
         setLoading(false);
+        setOpen(false);
       }
     };
     document.addEventListener('click', closePopup);
@@ -59,6 +50,13 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
       document.removeEventListener('click', closePopup);
     };
   }, []);
+  const getUserNotifications = (condition = 1) => {
+    getAllUserNotifications(condition, currentPage)
+      .then((response) => {
+        setNotifications(response.result);
+      })
+      .catch((error) => {});
+  };
   const userLogOut = () => {
     removeCookies('user');
     router.push('/login');
@@ -66,10 +64,7 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
   const goToProjectsList = () => {
     router.push('/projects');
   };
-  //   const toggleDesignType = ()=>{
-  //  isDesignView=!isDesignView;
-  //  console.log(isDesignView);
-  //   }
+  const loadMoreData = () => {};
   return (
     <React.Fragment>
       <div ref={headerRef}>
@@ -85,16 +80,34 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
             </div>
             <div className="flex-auto text-sm p-2">{breadCrumbString}</div>
             <div className="flex ">
-              {/* <div className={`mt-2 mr-2 mb-2 ${showDesignRealitySwitch?'visible':'hidden'}`}>
-              <DesignRealitySwitch toggleDesignType={toggleDesignType} designState={isDesignView?true:false}></DesignRealitySwitch>
-            </div> */}
               <div className="mt-2 mr-2 mb-2 w-6 h-6">
                 <FontAwesomeIcon
                   icon={faBell}
                   onClick={() => {
-                    setOpen(true);
+                    if (open) {
+                      setOpen(false);
+                    } else {
+                      setOpen(true);
+                    }
                   }}
                 />
+                {open && (
+                  <div className="absolute top-10 right-0 z-50 bg-gray-400 rounded-lg shadow border">
+                    <ul>
+                      <li className="font-medium">
+                        <div className="flex flex-col items-center justify-center transform transition-colors duration-200">
+                          <div className="w-full h-fit mt-2 mr-2 mb-2 border-1 border-gray-900">
+                            <h1 className="ml-1">Notifications</h1>
+                            <UserNotification
+                              notifications={notifications}
+                              loadMoreData={loadMoreData}
+                            />
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </div>
               <div
                 onClick={() => {
@@ -119,7 +132,6 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
                   />
                 </div>
               </div>
-
               {loading && (
                 <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
                   <ul className="text-white p-4 ">
@@ -154,14 +166,6 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
                       </div>
                     </li>
                     <hr className="border-gray-700" />
-                    {/* <li className="font-medium cursor-pointer" onClick={() => router.push(`/user-account`)}>
-                      <div className="flex items-center justify-center transform transition-colors duration-200">
-                        <div className="mr-3">
-                          <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-                        </div>
-                        Account
-                      </div>
-                    </li> */}
                     <li
                       className="font-medium cursor-pointer"
                       onClick={() => router.push(`/support`)}
@@ -191,18 +195,6 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
                 </div>
               )}
             </div>
-          </div>
-          <div>
-            <Modal
-              open={open}
-              onClose={() => {
-                setOpen(false);
-              }}
-            >
-              <div>
-                <UserNotification />
-              </div>
-            </Modal>
           </div>
         </header>
       </div>

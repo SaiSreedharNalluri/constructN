@@ -7,14 +7,19 @@ import Header from '../../components/container/header';
 import Notification from '../../components/container/userNotification';
 import UserProfile from '../../components/container/userProfile';
 import { IUser } from '../../models/IUser';
+import { IUserNotification } from '../../models/IUserNotification';
 import {
   getUserProfile,
   updateProfileAvatar,
   updateUserProfile,
 } from '../../services/userAuth';
+import { getAllUserNotifications } from '../../services/userNotifications';
+import { userNotificationData } from '../../utils/constants';
 const Index: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const [userDetails, setUserDetails] = useState<IUser>();
+  const [notifications, setNotifications] = useState<IUserNotification[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   useEffect(() => {
     if (router.isReady) {
       getUserProfile()
@@ -26,6 +31,7 @@ const Index: React.FC = () => {
         .catch((error) => {
           toast.error('unable to load the data');
         });
+      getUserNotifications();
     }
   }, []);
   const handleImageUPload = (e: any) => {
@@ -63,6 +69,18 @@ const Index: React.FC = () => {
         }
       });
   };
+  const getUserNotifications = (condition = 2) => {
+    getAllUserNotifications(condition, currentPage)
+      .then((response) => {
+        setNotifications(response.result);
+      })
+      .catch((error) => {});
+  };
+
+  const handleOptionChange = (event: any) => {
+    getUserNotifications(event.target.value);
+  };
+  const loadMoreData = () => {};
   return (
     <div>
       <div>
@@ -103,7 +121,30 @@ const Index: React.FC = () => {
                 <ChangePassword />
               </TabPanel>
               <TabPanel>
-                <Notification />
+                <label className="font-bold">Notifications</label>
+                <select
+                  id="options"
+                  defaultValue={2}
+                  onChange={handleOptionChange}
+                  className="ml-2 border border-solid border-gray-500 w-1/4 px-2 py-1.5 rounded"
+                >
+                  {userNotificationData.map((noticationOptions) => {
+                    return (
+                      <option
+                        value={noticationOptions.id}
+                        key={noticationOptions.id}
+                      >
+                        {noticationOptions.name}
+                      </option>
+                    );
+                  })}
+                </select>
+                <div className="w-1/2">
+                  <Notification
+                    notifications={notifications}
+                    loadMoreData={loadMoreData}
+                  />
+                </div>
               </TabPanel>
             </div>
           </Tabs>

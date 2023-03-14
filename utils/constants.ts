@@ -11,6 +11,5 @@ export const roleData = [
 ];
 export const userNotificationData = [
   { id: 1, name: 'Unread' },
-  { id: 2, name: 'Read & Unread' },
-  { id: 3, name: 'Read' },
+  { id: 2, name: 'All' },
 ];
