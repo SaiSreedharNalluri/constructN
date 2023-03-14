@@ -429,6 +429,8 @@ const Index: React.FC<IProps> = () => {
         project,
         ...getBreadCrumbsData(structure),
       ]);
+    getIssues(structure._id);
+    getTasks(structure._id);
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
