@@ -57,6 +57,7 @@ import {
 } from "../../../../services/tags";
 import Header from "../../../../components/divami_components/header/Header";
 import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
+const regex = /^[a-zA-Z ]*$/;
 const Editproject: React.FC = () => {
   const router = useRouter();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
@@ -632,8 +633,7 @@ const Editproject: React.FC = () => {
       <div className="flex w-full fixed">
         <div>
           {/* <CollapsableMenu onChangeData={() => {}} /> */}
-          <SidePanelMenu onChangeData={() => { }} />
-
+          <SidePanelMenu onChangeData={() => {}} />
         </div>
         <div className="calc-w  calc-h overflow-y-auto ">
           <Tabs
@@ -864,9 +864,11 @@ const Editproject: React.FC = () => {
                                 type="text"
                                 required
                                 value={addIssuePriorityType}
-                                onChange={(e) =>
-                                  setAddIssuePriorityType([e.target.value])
-                                }
+                                onChange={(e) => {
+                                  if (regex.test(e.target.value)) {
+                                    setAddIssuePriorityType([e.target.value]);
+                                  }
+                                }}
                                 placeholder="Enter Issue priority"
                                 className=" border border-gray-600 focus:outline-none w-full text-sm rounded  p-2"
                               ></input>
@@ -901,12 +903,12 @@ const Editproject: React.FC = () => {
                                               className=" cursor-move"
                                               draggable
                                               onDragStart={(e: any) =>
-                                              (dragIssuePriorityRef.current =
-                                                index)
+                                                (dragIssuePriorityRef.current =
+                                                  index)
                                               }
                                               onDragEnter={(e: any) =>
-                                              (dragOverIssuePriorityRef.current =
-                                                index)
+                                                (dragOverIssuePriorityRef.current =
+                                                  index)
                                               }
                                               onDragEnd={
                                                 handleIssuePriorityUpdate
@@ -961,9 +963,11 @@ const Editproject: React.FC = () => {
                                 placeholder="Enter Task priority"
                                 required
                                 value={addTaskType}
-                                onChange={(e) =>
-                                  setAddTaskType([e.target.value])
-                                }
+                                onChange={(e) => {
+                                  if (regex.test(e.target.value)) {
+                                    setAddTaskType([e.target.value]);
+                                  }
+                                }}
                                 className="border border-gray-600 focus:outline-none  text-sm rounded w-full p-2"
                               ></input>
                             </div>
@@ -996,12 +1000,12 @@ const Editproject: React.FC = () => {
                                             className=" cursor-move"
                                             draggable
                                             onDragStart={(e: any) =>
-                                            (dragTaskPriorityRef.current =
-                                              index)
+                                              (dragTaskPriorityRef.current =
+                                                index)
                                             }
                                             onDragEnter={(e: any) =>
-                                            (dragOverTaskPriorityRef.current =
-                                              index)
+                                              (dragOverTaskPriorityRef.current =
+                                                index)
                                             }
                                             onDragEnd={handleTaskPriorityUpdate}
                                             onDragOver={(e) =>
@@ -1051,7 +1055,11 @@ const Editproject: React.FC = () => {
                               <input
                                 required
                                 value={addIssue}
-                                onChange={(e) => setAddIssue([e.target.value])}
+                                onChange={(e) => {
+                                  if (regex.test(e.target.value)) {
+                                    setAddIssue([e.target.value]);
+                                  }
+                                }}
                                 placeholder="Enter Issue type"
                                 className="border border-gray-600 focus:outline-none w-full  text-sm rounded  p-2"
                               ></input>
@@ -1128,9 +1136,11 @@ const Editproject: React.FC = () => {
                               <input
                                 required
                                 value={addTaskTypelist}
-                                onChange={(e) =>
-                                  setAddTaskTypeList([e.target.value])
-                                }
+                                onChange={(e) => {
+                                  if (regex.test(e.target.value)) {
+                                    setAddTaskTypeList([e.target.value]);
+                                  }
+                                }}
                                 placeholder="Enter Task type"
                                 className="border border-gray-600 w-full focus:outline-none  text-sm rounded  p-2"
                               ></input>
@@ -1207,9 +1217,11 @@ const Editproject: React.FC = () => {
                               <input
                                 required
                                 value={addIssueStatuslist}
-                                onChange={(e) =>
-                                  setAddIssueStatusList([e.target.value])
-                                }
+                                onChange={(e) => {
+                                  if (regex.test(e.target.value)) {
+                                    setAddIssueStatusList([e.target.value]);
+                                  }
+                                }}
                                 placeholder="Enter Issue Status"
                                 className="border w-full border-gray-600 focus:outline-none  text-sm rounded  p-2"
                               ></input>
@@ -1245,8 +1257,8 @@ const Editproject: React.FC = () => {
                                             (dragIssueStatusRef.current = index)
                                           }
                                           onDragEnter={(e: any) =>
-                                          (dragOverIssueStatusRef.current =
-                                            index)
+                                            (dragOverIssueStatusRef.current =
+                                              index)
                                           }
                                           onDragEnd={
                                             handleIssueStatusListUpdate
@@ -1293,7 +1305,9 @@ const Editproject: React.FC = () => {
                                 required
                                 value={addTaskStatuslist}
                                 onChange={(e) => {
-                                  setAddTaskStatusList([e.target.value]);
+                                  if (regex.test(e.target.value)) {
+                                    setAddTaskStatusList([e.target.value]);
+                                  }
                                 }}
                                 className="border border-gray-600 focus:outline-none  text-sm  w-full rounded  p-2"
                               ></input>
@@ -1327,8 +1341,8 @@ const Editproject: React.FC = () => {
                                             (dragTaskStatusRef.current = index)
                                           }
                                           onDragEnter={(e: any) =>
-                                          (dragOverTaskStatusRef.current =
-                                            index)
+                                            (dragOverTaskStatusRef.current =
+                                              index)
                                           }
                                           onDragEnd={handleTaskStatusListUpdate}
                                           onDragOver={(e) => e.preventDefault()}
@@ -1367,9 +1381,11 @@ const Editproject: React.FC = () => {
                               <input
                                 required
                                 value={addTagslist}
-                                onChange={(e) =>
-                                  setAddTagsList([e.target.value])
-                                }
+                                onChange={(e) => {
+                                  if (regex.test(e.target.value)) {
+                                    setAddTagsList([e.target.value]);
+                                  }
+                                }}
                                 placeholder="Enter Issue Status"
                                 className="border w-full border-gray-600 focus:outline-none  text-sm rounded  p-2"
                               ></input>

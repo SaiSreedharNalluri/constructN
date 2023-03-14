@@ -35,6 +35,8 @@ function GenericViewer(props) {
   const compareViewer = 'compareViewer';
   const compareViewerRef = useRef();
   let structure = props.structure;
+  let isFullScreenActive=props.isFullScreenActive;
+ 
   let currentStructure = useRef();
 
   let [designList, setDesignList] = useState([]);
@@ -1000,7 +1002,8 @@ function GenericViewer(props) {
           {renderViewer(2)}
           <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
         </div>
-    {/* <div className="fixed calc-w calc-h flex flex-row">
+    {/* 
+    <div className={` ${isFullScreenActive?"w-full h-full":" calc-w calc-h"} fixed flex flex-row`}>
       <div id="TheView" className="relative basis-1/2 flex grow shrink">
         {renderViewer(1)}
         <TimelineContainer

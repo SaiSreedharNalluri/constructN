@@ -25,6 +25,21 @@ import ChevronLeftIcon from "../../../../public/divami_icons/chevronLeft.svg";
 import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
 import { deleteAttachment } from "../../../../services/attachments";
 import authHeader from "../../../../services/auth-header";
+import CollapsableMenu from "../../../../components/layout/collapsableMenu";
+import { getProjectDetails } from "../../../../services/project";
+import {
+  faCompressArrowsAlt,
+  faExpandArrowsAlt,
+  faGreaterThan,
+  faLessThan,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import RightFloatingMenu from "../../../../components/container/rightFloatingMenu/rightFloatingMenu";
+import {
+  getStructureHierarchy,
+  getStructureList,
+} from "../../../../services/structure";
+import ReactFullscreen from "react-easyfullscreen";
 import {
   deleteIssue,
   editIssue,
@@ -33,11 +48,7 @@ import {
   getIssuesStatus,
   getIssuesTypes,
 } from "../../../../services/issue";
-import { getProjectDetails } from "../../../../services/project";
-import {
-  getStructureHierarchy,
-  getStructureList,
-} from "../../../../services/structure";
+
 import {
   deleteTask,
   getTasksList,
@@ -115,6 +126,7 @@ const Index: React.FC<IProps> = () => {
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openIssueView, setOpenIssueView] = useState(false);
+
   const [currentContext, setCurrentContext] = useState<IToolResponse>({
     type: "Task",
   });
@@ -472,6 +484,7 @@ const Index: React.FC<IProps> = () => {
               viewMode={currentViewMode}
               viewType={currentViewType}
               viewLayers={currentViewLayers}
+              isFullScreenActive={isFullScreenActive}
             ></GenericViewer>
           )
         );
@@ -590,6 +603,9 @@ const Index: React.FC<IProps> = () => {
       case "compareDesign":
         setClickedTool(toolInstance);
         break;
+      case "fullScreen":
+        if (toolInstance.toolAction === "true") {
+        }
       default:
         break;
     }
@@ -1207,6 +1223,17 @@ const Index: React.FC<IProps> = () => {
     }
   }, [router.isReady, router.query.projectId, router.query.structId]);
 
+  const getBreadCrumbs = () => {
+    //let structTemp :IStructure = structure;
+    // let outputSting : string = structure?.name || '';
+    if (structure === undefined) {
+      return "";
+    }
+    return " | " + project?.name + " / " + structure?.name;
+  };
+  const [isFullScreenActive, setFullScreenActive] = useState<boolean>(false);
+
+  const r: any = useRef();
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -1335,6 +1362,13 @@ const Index: React.FC<IProps> = () => {
             }
           </div>
         )}
+
+        {/* <ReactFullscreen>
+    {({ ref=r, onRequest, onExit }) => (
+      <div
+        ref={ref}>
+       <div id="viewer" >{renderSwitch(viewerTypeState)}</div> */}
+
         {/* <div>
             <FontAwesomeIcon
               className={`absolute  ${
@@ -1434,6 +1468,21 @@ const Index: React.FC<IProps> = () => {
             {/* <CustomToaster /> */}
             {/* </div> */}
             {/* <RightFloatingMenu
+              onClick={rightNavCollapse}
+              icon={faLessThan}
+            ></FontAwesomeIcon> */}
+            {/* <div
+              ref={rightOverlayRef}
+              id="bg-color"
+              className={`${
+                isFullScreenActive && " top-0"
+              } fixed h-9  border border-gray-300   ${
+                rightNav ? "visible" : ""
+              }  bg-gray-200 top-10  rounded-lg  inset-x-1/3 duration-300 z-10 overflow-y-hidden`}
+            > */}
+            {/* <div  className='flex w-full '>
+              <div className=' w-full'> 
+              <RightFloatingMenu
                 issuesList={issuesList}
                 tasksList={tasksList}
                 toolClicked={toolClicked}
@@ -1448,8 +1497,16 @@ const Index: React.FC<IProps> = () => {
                 closeFilterOverlay={closeFilterOverlay}
                 closeTaskFilterOverlay={closeTaskFilterOverlay}
                 handleOnTaskFilter={handleOnTaskFilter}
-              ></RightFloatingMenu>
-              <IssueCreate
+              ></RightFloatingMenu></div>
+              <div className='mt-1 '>
+              {isFullScreenActive ? (
+         <FontAwesomeIcon icon={faCompressArrowsAlt} className="px-2  cursor-pointer"  onClick={() => {onExit();setFullScreenActive(!isFullScreenActive)}} ></FontAwesomeIcon>
+        ) : (
+        <FontAwesomeIcon icon={faExpandArrowsAlt} className="px-2  cursor-pointer" onClick={() =>{onRequest(); setFullScreenActive(!isFullScreenActive)}} ></FontAwesomeIcon>
+        )}
+              </div>
+             </div> */}
+            {/* <IssueCreate
                 issueToolClicked={toolClicked}
                 handleIssueSubmit={issueSubmit}
                 visibility={openCreateIssue}
@@ -1481,10 +1538,13 @@ const Index: React.FC<IProps> = () => {
                 clickIssueEditSubmit={clickIssueEditSubmit}
                 responseAttachmentData={responseAttachmentData}
                 deleteTheAttachment={deleteTheAttachment}
-              ></IssueList> */}
+              ></IssueList>  */}
+            {/* </div> */}
           </div>
+          {/* )} */}
         </div>
         {/* )} */}
+        {/* </ReactFullscreen> */}
       </div>
     </div>
   );
