@@ -125,9 +125,9 @@ const tasksList = [
 
 jest.mock("../services/task.ts", () => {
   return {
-    getTasksTypes: jest.fn(() => Promise.resolve({ success: true, result: [] })),
-    getTasksPriority: jest.fn(() => Promise.resolve({ success: true, result: [] })),
-    getTaskStatus: jest.fn(() => Promise.resolve({ success: true, result: [] })),
+    getTasksTypes: jest.fn(() => Promise.resolve({ success: true, result: ["Transmittals", "Submittals", "RFI"] })),
+    getTasksPriority: jest.fn(() => Promise.resolve({ success: true, result: ["High", "Low", "Medium"] })),
+    getTaskStatus: jest.fn(() => Promise.resolve({ success: true, result: ["To Do", "Blocked", "In Progress", "Completed"] })),
   };
 });
 
@@ -145,11 +145,23 @@ jest.mock('../services/project', () => {
 
 jest.spyOn(API, "getProjectUsers").mockImplementation(() => Promise.resolve({
   success: true, result: [{
-    "_id": "USR370060",
-    "firstName": "swathi",
-    "lastName": "divami",
-    "email": "swathi@divami.com",
-    "fullName": "swathi divami"
+    "user": {
+      "_id": "USR744836",
+      "firstName": "vineeth ",
+      "lastName": "constructn",
+      "email": "vineeth@constructn.ai",
+      "contact": {
+        "code": "500049",
+        "number": 1234567890
+      },
+      "dob": "1996-08-19T00:00:00.000Z",
+      "createdAt": "2023-01-24T07:19:04.836Z",
+      "updatedAt": "2023-03-03T06:46:53.846Z",
+      "avatar": "https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/avatars/USR744836.png",
+      "fullName": "vineeth  constructn",
+      "age": 26
+    },
+    "role": "admin"
   }]
 }));
 
