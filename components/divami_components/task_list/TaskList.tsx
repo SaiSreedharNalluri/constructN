@@ -564,7 +564,7 @@ const CustomTaskListDrawer = (props: any) => {
             onClick={() => {
               onClose();
               openTaskCreateFn();
-              toast.info("Click on the map where you want to create a task");
+              toast("Click on the map where you want to create a task");
             }}
           >
             Raise Task

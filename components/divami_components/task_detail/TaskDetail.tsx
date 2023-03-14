@@ -502,7 +502,22 @@ function BasicTabs(props: any) {
                 renderInput={(params) => <TextField {...params} label="" />}
                 onChange={(event, value: any) => {
                   console.log(value);
-                  setFormState({ ...formState, selectedUser: value });
+                  const newSelectedUser = value
+                    ? value.filter(
+                        (selected: any, index: number, array: any[]) => {
+                          // Remove duplicate values based on label property
+                          return (
+                            array.findIndex(
+                              (elem: any) => elem.label === selected.label
+                            ) === index
+                          );
+                        }
+                      )
+                    : [];
+                  setFormState({
+                    ...formState,
+                    selectedUser: newSelectedUser,
+                  });
                 }}
                 value={formState.selectedUser}
                 multiple={true}
@@ -730,6 +745,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
   useEffect(() => {
     let tempObj = {
+      ...selectedTask,
       options: selectedTask.options,
       priority: selectedTask.priority,
       sequenceNumber: selectedTask.sequenceNumber,
