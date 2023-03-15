@@ -4,27 +4,17 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { toast } from 'react-toastify';
 import ChangePassword from '../../components/container/changePassword';
 import Header from '../../components/container/header';
-import Notification from '../../components/container/userNotification';
 import UserProfile from '../../components/container/userProfile';
 import { IUser } from '../../models/IUser';
-import { IUserNotification } from '../../models/IUserNotification';
 import {
   getUserProfile,
   updateProfileAvatar,
   updateUserProfile,
 } from '../../services/userAuth';
-import {
-  getAllUserNotifications,
-  updateUserNotifications,
-} from '../../services/userNotifications';
-import { userNotificationData } from '../../utils/constants';
 const Index: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const [userDetails, setUserDetails] = useState<IUser>();
-  const [notifications, setNotifications] = useState<IUserNotification[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalNotifications, setTotalNotifications] = useState<number>(0);
-  const [defaultValue, setDefaultValue] = useState(2);
+
   useEffect(() => {
     if (router.isReady) {
       getUserProfile()
@@ -36,7 +26,6 @@ const Index: React.FC = () => {
         .catch((error) => {
           toast.error('unable to load the data');
         });
-      getUserNotifications();
     }
   }, []);
   const handleImageUPload = (e: any) => {
@@ -74,43 +63,7 @@ const Index: React.FC = () => {
         }
       });
   };
-  const getUserNotifications = (condition = defaultValue) => {
-    getAllUserNotifications(condition, currentPage)
-      .then((response) => {
-        if (notifications.length > 0 && currentPage > 1) {
-          setNotifications(notifications.concat(response.result));
-          setTotalNotifications(response.totalUserNotifications);
-        } else {
-          setNotifications(response.result);
-          setTotalNotifications(response.totalUserNotifications);
-        }
-      })
-      .catch((error) => {});
-  };
 
-  const handleOptionChange = (event: any) => {
-    setNotifications(notifications.splice(0, notifications.length));
-    getUserNotifications(event.target.value);
-    setDefaultValue(event.target.value);
-    setCurrentPage(1);
-  };
-  const loadMoreData = () => {
-    if (currentPage < totalNotifications / 10) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-  useEffect(() => {
-    getUserNotifications(defaultValue);
-  }, [currentPage, defaultValue]);
-  const updateNotifications = (notificationId: string) => {
-    updateUserNotifications([notificationId]).then((response) => {
-      if (response.success === true) {
-        setNotifications(notifications.splice(0, notifications.length));
-        getUserNotifications(defaultValue);
-        setCurrentPage(1);
-      }
-    });
-  };
   return (
     <div>
       <div>
@@ -127,7 +80,6 @@ const Index: React.FC = () => {
             <TabList>
               <Tab>User Profile</Tab>
               <Tab>change Password</Tab>
-              <Tab>Notifications</Tab>
               <div
                 className="absolute right-0 cursor-pointer font-bold decoration-4"
                 onClick={() => {
@@ -149,33 +101,6 @@ const Index: React.FC = () => {
               </TabPanel>
               <TabPanel>
                 <ChangePassword />
-              </TabPanel>
-              <TabPanel>
-                <label className="font-bold">Notifications</label>
-                <select
-                  id="options"
-                  defaultValue={defaultValue}
-                  onChange={handleOptionChange}
-                  className="ml-2 border border-solid border-gray-500 w-1/4 px-2 py-1.5 rounded"
-                >
-                  {userNotificationData.map((noticationOptions) => {
-                    return (
-                      <option
-                        value={noticationOptions.id}
-                        key={noticationOptions.id}
-                      >
-                        {noticationOptions.name}
-                      </option>
-                    );
-                  })}
-                </select>
-                <div className="w-1/2">
-                  <Notification
-                    notifications={notifications}
-                    loadMoreData={loadMoreData}
-                    updateNotifications={updateNotifications}
-                  />
-                </div>
               </TabPanel>
             </div>
           </Tabs>

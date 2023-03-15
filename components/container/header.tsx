@@ -120,7 +120,17 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
                 {open && (
                   <div className="absolute top-10 right-0 z-50 bg-gray-200 rounded-lg shadow border">
                     <div className="w-full h-full mt-2 mr-2 mb-2 font-medium overflow-auto">
-                      <h1 className="ml-2">Notifications</h1>
+                      <div className="flex">
+                        <h1 className="ml-2">Notifications:-</h1>
+                        <p
+                          className="font-bold text-blue-700"
+                          onClick={() => {
+                            router.push('/user-account/user-notifications');
+                          }}
+                        >
+                          GoToNotificatrion
+                        </p>
+                      </div>
                       <UserNotification
                         notifications={notifications}
                         loadMoreData={loadMoreData}
