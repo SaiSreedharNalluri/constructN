@@ -20,6 +20,7 @@ const Index: React.FC = () => {
   const [userDetails, setUserDetails] = useState<IUser>();
   const [notifications, setNotifications] = useState<IUserNotification[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalNotifications, setTotalNotifications] = useState<number>(0);
   useEffect(() => {
     if (router.isReady) {
       getUserProfile()
@@ -72,15 +73,29 @@ const Index: React.FC = () => {
   const getUserNotifications = (condition = 2) => {
     getAllUserNotifications(condition, currentPage)
       .then((response) => {
-        setNotifications(response.result);
+        if (notifications.length > 0 && currentPage > 1) {
+          setNotifications(notifications.concat(response.result));
+          setTotalNotifications(response.totalUserNotifications);
+        } else {
+          setNotifications(response.result);
+          setTotalNotifications(response.totalUserNotifications);
+        }
       })
       .catch((error) => {});
   };
 
   const handleOptionChange = (event: any) => {
     getUserNotifications(event.target.value);
+    setNotifications(notifications.splice(0, notifications.length));
   };
-  const loadMoreData = () => {};
+  const loadMoreData = () => {
+    if (currentPage < totalNotifications / 10) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+  useEffect(() => {
+    getUserNotifications();
+  }, [currentPage]);
   return (
     <div>
       <div>

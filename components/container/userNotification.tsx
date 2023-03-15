@@ -34,9 +34,11 @@ const UserNotification: React.FC<IProps> = ({
                 </div>
               );
             })}
-          <a className="font-bold text-blue-700 mt-3" onClick={loadMoreData}>
-            load More
-          </a>
+          <div className="text-center mt-3">
+            <a className="font-bold text-blue-700" onClick={loadMoreData}>
+              load More
+            </a>
+          </div>
         </div>
       </div>
     </React.Fragment>

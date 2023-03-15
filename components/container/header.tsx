@@ -22,6 +22,7 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
   const [breadCrumbString, setBreadCrumbString] = useState(breadCrumb || '');
   const [notifications, setNotifications] = useState<IUserNotification[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalNotifications, setTotalNotifications] = useState<number>(0);
   useEffect(() => {
     const userObj: any = getCookie('user');
     let user = null;
@@ -53,7 +54,13 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
   const getUserNotifications = (condition = 1) => {
     getAllUserNotifications(condition, currentPage)
       .then((response) => {
-        setNotifications(response.result);
+        if (notifications.length > 0 && currentPage > 1) {
+          setNotifications(notifications.concat(response.result));
+          setTotalNotifications(response.totalUserNotifications);
+        } else {
+          setNotifications(response.result);
+          setTotalNotifications(response.totalUserNotifications);
+        }
       })
       .catch((error) => {});
   };
@@ -64,7 +71,14 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
   const goToProjectsList = () => {
     router.push('/projects');
   };
-  const loadMoreData = () => {};
+  const loadMoreData = () => {
+    if (currentPage < totalNotifications / 10) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+  useEffect(() => {
+    getUserNotifications();
+  }, [currentPage]);
   return (
     <React.Fragment>
       <div ref={headerRef}>
@@ -92,20 +106,14 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
                   }}
                 />
                 {open && (
-                  <div className="absolute top-10 right-0 z-50 bg-gray-400 rounded-lg shadow border">
-                    <ul>
-                      <li className="font-medium">
-                        <div className="flex flex-col items-center justify-center transform transition-colors duration-200">
-                          <div className="w-full h-fit mt-2 mr-2 mb-2 border-1 border-gray-900">
-                            <h1 className="ml-1">Notifications</h1>
-                            <UserNotification
-                              notifications={notifications}
-                              loadMoreData={loadMoreData}
-                            />
-                          </div>
-                        </div>
-                      </li>
-                    </ul>
+                  <div className="absolute top-10 right-0 z-50 bg-gray-200 rounded-lg shadow border">
+                    <div className="w-full h-full mt-2 mr-2 mb-2 font-medium overflow-auto">
+                      <h1 className="ml-2">Notifications</h1>
+                      <UserNotification
+                        notifications={notifications}
+                        loadMoreData={loadMoreData}
+                      />
+                    </div>
                   </div>
                 )}
               </div>

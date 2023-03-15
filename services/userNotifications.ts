@@ -6,7 +6,7 @@ export const getAllUserNotifications = async (
 ) => {
   return await instance
     .get(
-      `${process.env.NEXT_PUBLIC_HOST}/user-notifications?condition=${condition}&offset={pageNo}`,
+      `${process.env.NEXT_PUBLIC_HOST}/user-notifications?condition=${condition}&offset=${pageNo}`,
       {
         headers: authHeader.authHeader(),
       }
