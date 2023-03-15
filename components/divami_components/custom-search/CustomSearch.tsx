@@ -53,7 +53,7 @@ const CustomAutoComplete = styled(Autocomplete)({
 });
 
 const CustomSearch = (props: any) => {
-  const { data, handleSearchResult } = props;
+  const { data, handleSearchResult, dataTestId } = props;
   const { isMultiSelect = false } = props.data;
   const [val, setVal] = React.useState<any>([]);
 
@@ -98,6 +98,7 @@ const CustomSearch = (props: any) => {
     <>
       {isMultiSelect ? (
         <CustomAutoComplete
+          data-testid={dataTestId}
           className={"formField"}
           disablePortal
           id="combo-box-demo"
@@ -113,26 +114,26 @@ const CustomSearch = (props: any) => {
               InputProps={
                 val.length
                   ? {
-                      ...params.InputProps,
-                      // startAdornment: (
-                      //   <InputAdornment position="start">
-                      //     <Image width={15} height={15} src={Search} alt="Search" />
-                      //   </InputAdornment>
-                      // ),
-                    }
+                    ...params.InputProps,
+                    // startAdornment: (
+                    //   <InputAdornment position="start">
+                    //     <Image width={15} height={15} src={Search} alt="Search" />
+                    //   </InputAdornment>
+                    // ),
+                  }
                   : {
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Image
-                            width={15}
-                            height={15}
-                            src={Search}
-                            alt="Search"
-                          />
-                        </InputAdornment>
-                      ),
-                    }
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Image
+                          width={15}
+                          height={15}
+                          src={Search}
+                          alt="Search"
+                        />
+                      </InputAdornment>
+                    ),
+                  }
               }
             />
           )}

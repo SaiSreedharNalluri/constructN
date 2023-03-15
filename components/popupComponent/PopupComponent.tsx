@@ -135,6 +135,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 marginBottom: "22px",
                 fontFamily: "Open Sans",
               }}
+              data-testid="closePopup"
             >
               {SecondaryButtonlabel}
             </Button>
@@ -152,6 +153,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 fontFamily: "Open Sans",
                 fontSize: "16px",
               }}
+              data-testid="closeWindow"
             >
               {primaryButtonLabel}
             </Button>

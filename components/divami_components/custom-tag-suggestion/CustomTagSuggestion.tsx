@@ -40,7 +40,7 @@ const CustomAutoComplete = styled(Autocomplete)({
 });
 
 const CustomTagSuggestion = (props: any) => {
-  const { data, handleChipMaking } = props;
+  const { data, handleChipMaking, dataTestId } = props;
   console.log("data", data);
   const [options, setOptions] = useState(data.chipSuggestions);
   const [autoCompleteValue, setAutoCompleteValue] = useState([]);
@@ -64,20 +64,21 @@ const CustomTagSuggestion = (props: any) => {
       onChange={(e, newval, reason) => {
         handleChipMaking(newval);
       }}
+      data-testid={dataTestId}
       renderInput={(params) => (
         <TextField
           {...params}
           variant="outlined"
           label="filterSelectedOptions"
           placeholder="Add tags separated by commas"
-          // onKeyDown={(e: any) => {
-          //   if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
-          //     setAutoCompleteValue(
-          //       // autoCompleteValue.concat((e.target as HTMLInputElement).value)
-          //       autoCompleteValue.concat(e.target.value)
-          //     );
-          //   }
-          // }}
+        // onKeyDown={(e: any) => {
+        //   if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
+        //     setAutoCompleteValue(
+        //       // autoCompleteValue.concat((e.target as HTMLInputElement).value)
+        //       autoCompleteValue.concat(e.target.value)
+        //     );
+        //   }
+        // }}
         />
       )}
     />

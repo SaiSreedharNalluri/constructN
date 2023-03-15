@@ -95,13 +95,13 @@ const FormWrapper = (props: any) => {
         if (id === item.id) {
           const newSelectedUser = Array.isArray(value)
             ? value.filter((selected: any, index: number, array: any[]) => {
-                // Remove duplicate values based on label property
-                return (
-                  array.findIndex(
-                    (elem: any) => elem.label === selected.label
-                  ) === index
-                );
-              })
+              // Remove duplicate values based on label property
+              return (
+                array.findIndex(
+                  (elem: any) => elem.label === selected.label
+                ) === index
+              );
+            })
             : [];
           return {
             ...item,
@@ -180,6 +180,7 @@ const FormWrapper = (props: any) => {
               label=""
               data={data}
               isReadOnly={data.isReadOnly}
+              dataTestId="select"
             />
           </ElementContainer>
         );
@@ -198,7 +199,7 @@ const FormWrapper = (props: any) => {
               }}
               defaultValue={data.defaultValue}
               isError={data.isError}
-              dataTestId="inputTextField"
+              dataTestId="inputTextArea"
               isRequired={data.isReq}
               type={data.type}
               minVal={data?.minVal}
@@ -248,6 +249,7 @@ const FormWrapper = (props: any) => {
                 handleDateChange(e, data.id);
               }}
               isReadOnly={data.isReadOnly}
+              dataTestId={"datePicker"}
             />
           </ElementContainer>
         );
@@ -261,6 +263,7 @@ const FormWrapper = (props: any) => {
               }}
               selectedName={data.selectedName}
               isReadOnly={data.isReadOnly}
+              dataTestId="searchField"
             />
           </ElementContainer>
         );
@@ -270,6 +273,7 @@ const FormWrapper = (props: any) => {
             <CustomFileInput
               handleFileUpload={(e: any) => handleFileUpload(e, data.id)}
               data
+              dataTestId={"fileInput"}
             />
           </ElementContainer>
         );
@@ -282,6 +286,7 @@ const FormWrapper = (props: any) => {
                 handleChipMaking(chipsString, data.id)
               }
               data={data}
+              dataTestId={"chip"}
             />
           </ElementContainer>
         );
