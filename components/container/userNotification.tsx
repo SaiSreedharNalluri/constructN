@@ -4,10 +4,12 @@ import Moment from 'moment';
 interface IProps {
   notifications: IUserNotification[];
   loadMoreData: () => void;
+  updateNotifications: (notificationId: string) => void;
 }
 const UserNotification: React.FC<IProps> = ({
   notifications,
   loadMoreData,
+  updateNotifications,
 }) => {
   return (
     <React.Fragment>
@@ -26,7 +28,12 @@ const UserNotification: React.FC<IProps> = ({
                         )}
                       </div>
                     ) : (
-                      <div className="border  border-gray-900 border-solid h-11/12 w-full mt-3 rounded-2xl  text-center  bg-white">
+                      <div
+                        className="border  border-gray-900 border-solid h-11/12 w-full mt-3 rounded-2xl  text-center  bg-white"
+                        onClick={() => {
+                          updateNotifications(notificationObj.id);
+                        }}
+                      >
                         {notificationObj.message}
                       </div>
                     )}

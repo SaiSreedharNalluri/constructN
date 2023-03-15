@@ -18,11 +18,13 @@ export const getAllUserNotifications = async (
       throw error.response.data;
     });
 };
-export const updateUserNotifications = async (UpdateInfo: Array<string>) => {
+export const updateUserNotifications = async (
+  userNotifications: Array<string>
+) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/user-notifications`,
-      { UpdateInfo },
+      `${process.env.NEXT_PUBLIC_HOST}/user-notifications`,
+      { userNotifications },
       {
         headers: authHeader.authHeader(),
       }

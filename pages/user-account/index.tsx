@@ -13,7 +13,10 @@ import {
   updateProfileAvatar,
   updateUserProfile,
 } from '../../services/userAuth';
-import { getAllUserNotifications } from '../../services/userNotifications';
+import {
+  getAllUserNotifications,
+  updateUserNotifications,
+} from '../../services/userNotifications';
 import { userNotificationData } from '../../utils/constants';
 const Index: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -21,6 +24,7 @@ const Index: React.FC = () => {
   const [notifications, setNotifications] = useState<IUserNotification[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalNotifications, setTotalNotifications] = useState<number>(0);
+  const [defaultValue, setDefaultValue] = useState(2);
   useEffect(() => {
     if (router.isReady) {
       getUserProfile()
@@ -70,7 +74,7 @@ const Index: React.FC = () => {
         }
       });
   };
-  const getUserNotifications = (condition = 2) => {
+  const getUserNotifications = (condition = defaultValue) => {
     getAllUserNotifications(condition, currentPage)
       .then((response) => {
         if (notifications.length > 0 && currentPage > 1) {
@@ -85,8 +89,10 @@ const Index: React.FC = () => {
   };
 
   const handleOptionChange = (event: any) => {
-    getUserNotifications(event.target.value);
     setNotifications(notifications.splice(0, notifications.length));
+    getUserNotifications(event.target.value);
+    setDefaultValue(event.target.value);
+    setCurrentPage(1);
   };
   const loadMoreData = () => {
     if (currentPage < totalNotifications / 10) {
@@ -94,8 +100,17 @@ const Index: React.FC = () => {
     }
   };
   useEffect(() => {
-    getUserNotifications();
-  }, [currentPage]);
+    getUserNotifications(defaultValue);
+  }, [currentPage, defaultValue]);
+  const updateNotifications = (notificationId: string) => {
+    updateUserNotifications([notificationId]).then((response) => {
+      if (response.success === true) {
+        setNotifications(notifications.splice(0, notifications.length));
+        getUserNotifications(defaultValue);
+        setCurrentPage(1);
+      }
+    });
+  };
   return (
     <div>
       <div>
@@ -139,7 +154,7 @@ const Index: React.FC = () => {
                 <label className="font-bold">Notifications</label>
                 <select
                   id="options"
-                  defaultValue={2}
+                  defaultValue={defaultValue}
                   onChange={handleOptionChange}
                   className="ml-2 border border-solid border-gray-500 w-1/4 px-2 py-1.5 rounded"
                 >
@@ -158,6 +173,7 @@ const Index: React.FC = () => {
                   <Notification
                     notifications={notifications}
                     loadMoreData={loadMoreData}
+                    updateNotifications={updateNotifications}
                   />
                 </div>
               </TabPanel>

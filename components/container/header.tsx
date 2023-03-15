@@ -11,7 +11,10 @@ import { getCookie, removeCookies } from 'cookies-next';
 import { IUser } from '../../models/IUser';
 import UserNotification from './userNotification';
 import { IUserNotification } from '../../models/IUserNotification';
-import { getAllUserNotifications } from '../../services/userNotifications';
+import {
+  getAllUserNotifications,
+  updateUserNotifications,
+} from '../../services/userNotifications';
 interface IProps {
   breadCrumb?: string;
 }
@@ -79,6 +82,15 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
   useEffect(() => {
     getUserNotifications();
   }, [currentPage]);
+  const updateNotifications = (notificationId: string) => {
+    updateUserNotifications([notificationId]).then((response) => {
+      if (response.success === true) {
+        setNotifications(notifications.splice(0, notifications.length));
+        getUserNotifications();
+        setCurrentPage(1);
+      }
+    });
+  };
   return (
     <React.Fragment>
       <div ref={headerRef}>
@@ -112,6 +124,7 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
                       <UserNotification
                         notifications={notifications}
                         loadMoreData={loadMoreData}
+                        updateNotifications={updateNotifications}
                       />
                     </div>
                   </div>
