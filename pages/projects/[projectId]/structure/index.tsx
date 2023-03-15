@@ -127,6 +127,8 @@ const Index: React.FC<IProps> = () => {
           setProjectUtm(response?.data?.result?.utm);
           setActiveProjectId(router.query.projectId as string);
           setProject(response.data.result);
+          setViewMode(response.data.result.type === "Pipeline" ? "Reality" : "Design")
+          setViewType(response.data.result.type === "Pipeline" ? "OrthoPhoto" : "forge")
         })
         .catch((error) => {
           toast.error('failed to load data');
@@ -236,6 +238,7 @@ const Index: React.FC<IProps> = () => {
               viewMode={currentViewMode}
               viewType={currentViewType}
               viewLayers={currentViewLayers}
+              project={project}
             ></GenericViewer>
           )
         );
@@ -718,7 +721,7 @@ const Index: React.FC<IProps> = () => {
              </div>
           </div>
         </div> */}
-        {structure && snapshot && designMap && activeRealityMap && (
+        {structure && snapshot && activeRealityMap && (
           <div ref={rightrefContainer}>
             {/* <FontAwesomeIcon
               className={`fixed  ${
@@ -732,7 +735,7 @@ const Index: React.FC<IProps> = () => {
             <div
               ref={rightOverlayRef}
               id="bg-color"
-              className={`fixed h-9  border border-gray-300   ${
+              className={`fixed h-14 align-items-center border border-gray-300   ${
                 rightNav ? 'visible' : ''
               }  bg-gray-200 top-10  rounded-lg  inset-x-1/3 duration-300 z-10 overflow-y-hidden`}
             >

@@ -11,9 +11,14 @@
     "docker-image-dev": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:dev ."
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/material": "^5.11.13",
+    "@turf/turf": "^6.5.0",
     "@types/node": "18.11.9",
     "@types/react": "18.0.25",
     "@types/react-dom": "18.0.8",
@@ -24,6 +29,7 @@
     "formik": "^2.2.9",
     "html2canvas": "^1.4.1",
     "i": "^0.3.7",
+    "mapbox-gl": "^2.13.0",
     "moment": "^2.29.4",
     "next": "13.0.2",
     "react": "^18.2.0",

@@ -8,6 +8,9 @@ import {
   faR,
   faSitemap,
 } from '@fortawesome/free-solid-svg-icons';
+import ArchitectureIcon from '@mui/icons-material/Architecture';
+import ThreeDRotationIcon from '@mui/icons-material/ThreeDRotation';
+import MapIcon from '@mui/icons-material/Map';
 import { ITools } from '../../../models/ITools';
 import IssueMenu from './issueMenu/issueMenu';
 import TaskMenu from './taskMenu/taskMenu';
@@ -23,6 +26,7 @@ import hotspot from '../../../public/icons/Hotspot.svg';
 import { IActiveRealityMap } from '../../../models/IReality';
 import { IDesignMap } from '../../../models/IDesign';
 import Select from 'react-select/dist/declarations/src/Select';
+import { ToggleButtonGroup, ToggleButton } from '@mui/material';
 interface IProps {
   toolClicked: (a: ITools) => void;
   viewMode: string;
@@ -62,7 +66,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
   const [isCompareReality, setIsCompareReality] = useState(false);
-  const [iViewMode, setIViewMode] = useState(viewMode);
+  let [iViewMode, setIViewMode] = useState(viewMode);
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
@@ -72,7 +76,7 @@ const RightFloatingMenu: React.FC<IProps> = ({
   const [myTypesList, setMyTypesList] = useState<IDesignMap>(currentTypesList);
   const [myLayersList, setMyLayersList] =
     useState<IActiveRealityMap>(currentLayersList);
-  const [mySelectedType,setMySelectedType] = useState(currentViewType);
+  const [mySelectedType, setMySelectedType] = useState(currentViewType);
   let toolInstance: ITools = { toolName: '', toolAction: '' };
   useEffect(() => {
     setIViewMode(viewMode);
@@ -164,26 +168,53 @@ const RightFloatingMenu: React.FC<IProps> = ({
   };
   return (
     <div ref={rightOverlayRefs}>
-      <div ref={rightOverlayRef} className="grid  grid-flow-col">
+      <div ref={rightOverlayRef} className="grid  grid-flow-col items-center">
         <div className="justify-center cursor-pointer selectedClass">
-          <FontAwesomeIcon
+          <ToggleButtonGroup
+            color="primary"
+            value={iViewMode}
+            size="small"
+            exclusive
+            className={`flex w-full h-full justify-center  p-1.5 cursor-pointer bg-transperant`}
+            onChange={(e: any, newValue: string) => {
+              toolInstance.toolName = 'viewMode';
+              toolInstance.toolAction = newValue === 'Design' ? 'Design' : 'Reality';
+              toolClicked(toolInstance)
+              if(newValue !== 'Design') {
+                toolInstance.toolName = 'viewType';
+                toolInstance.toolAction = newValue === 'OrthoPhoto' ? 'OrthoPhoto' : '3D';
+                toolClicked(toolInstance)
+              }
+            }}
+            aria-label="Platform"
+          >
+            <ToggleButton value="Design">
+              <ArchitectureIcon />
+            </ToggleButton>
+            <ToggleButton value="Reality">
+              <ThreeDRotationIcon />
+            </ToggleButton>
+            <ToggleButton value="OrthoPhoto">
+              <MapIcon />
+            </ToggleButton>
+          </ToggleButtonGroup>
+          {/* <FontAwesomeIcon
             icon={iViewMode === 'Design' ? faD : faR}
             id={iViewMode}
             className={`flex w-full h-full justify-center  p-1.5 cursor-pointer `}
             onClick={rightMenuClickHandler}
-          ></FontAwesomeIcon>
+          ></FontAwesomeIcon> */}
         </div>
-        <div className={`cursor-pointer justify-center ${
-              active === 'type' ? 'selectedClass' : 'unSelectedClass'
-            }`}>
-              
+        <div className={`cursor-pointer justify-center ${active === 'type' ? 'selectedClass' : 'unSelectedClass'
+          }`}>
+
           {active === 'type' ? (
             <div className={`fixed mt-9 ${rightNav ? '' : 'hidden'}`}>
               <div className="bg-gray-400">
                 <select onChange={typeChange} id="typeList">
                   {myTypesList &&
                     Object.keys(myTypesList).map((key) => (
-                      <option key={key} value={key} selected={key===mySelectedType?true:false}>
+                      <option key={key} value={key} selected={key === mySelectedType ? true : false}>
                         {key}
                       </option>
                     ))}
@@ -201,9 +232,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
           ></FontAwesomeIcon>
           <div className=" border-solid border-gray-500"></div>
         </div>
-        <div className={`cursor-pointer  ${
-              active === 'layer' ? 'selectedClass' : 'unSelectedClass'
-            }`}>
+        <div className={`cursor-pointer  ${active === 'layer' ? 'selectedClass' : 'unSelectedClass'
+          }`}>
           <FontAwesomeIcon
             icon={faDatabase}
             id="layer"
@@ -236,9 +266,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
         </div>
         <div
-          className={`${
-            active === 'issue' ? 'selectedClass' : 'unSelectedClass'
-          }`}
+          className={`${active === 'issue' ? 'selectedClass' : 'unSelectedClass'
+            }`}
         >
           <Image
             alt=""
@@ -264,9 +293,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
         </div>
         <div
-          className={` ${
-            active === 'task' ? 'selectedClass' : 'unSelectedClass'
-          }`}
+          className={` ${active === 'task' ? 'selectedClass' : 'unSelectedClass'
+            }`}
         >
           <Image
             alt=""
@@ -292,9 +320,8 @@ const RightFloatingMenu: React.FC<IProps> = ({
           )}
         </div>
         <div
-          className={` justify-center cursor-pointer ${
-            active === 'progress' ? 'selectedClass' : 'unSelectedClass'
-          }`}
+          className={` justify-center cursor-pointer ${active === 'progress' ? 'selectedClass' : 'unSelectedClass'
+            }`}
         >
           <Image
             alt=""
@@ -319,11 +346,10 @@ const RightFloatingMenu: React.FC<IProps> = ({
               <FontAwesomeIcon
                 icon={faCodeBranch}
                 id="compareDesign"
-                className={`m-auto w-9 h-9  cursor-pointer ${
-                  active === 'compareDesign'
+                className={`m-auto w-9 h-9  cursor-pointer ${active === 'compareDesign'
                     ? 'selectedClass'
                     : 'unSelectedClass'
-                }`}
+                  }`}
                 onClick={rightMenuClickHandler}
               ></FontAwesomeIcon>
             </div>
@@ -332,11 +358,10 @@ const RightFloatingMenu: React.FC<IProps> = ({
               <FontAwesomeIcon
                 icon={faArrowsSplitUpAndLeft}
                 id="compareReality"
-                className={`m-auto w-9 h-9  cursor-pointer ${
-                  active === 'compareReality'
+                className={`m-auto w-9 h-9  cursor-pointer ${active === 'compareReality'
                     ? 'selectedClass'
                     : 'unSelectedClass'
-                }`}
+                  }`}
                 onClick={rightMenuClickHandler}
               ></FontAwesomeIcon>
             </div>
