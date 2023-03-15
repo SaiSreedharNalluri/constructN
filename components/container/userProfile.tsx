@@ -51,7 +51,11 @@ const UserProfile: React.FC<IProps> = ({
                 <div className="flex mt-4">
                   <div className="w-36 4 h-36  rounded-full overflow-hidden  border border-solid border-gray-900">
                     <Image
-                      src={userDetails?.avatar as string}
+                      src={
+                        userDetails?.avatar
+                          ? userDetails?.avatar
+                          : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/user_icon_def_01.png'
+                      }
                       alt=""
                       width={720}
                       height={720}

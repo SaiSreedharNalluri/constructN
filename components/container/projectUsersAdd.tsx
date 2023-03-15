@@ -13,15 +13,13 @@ import { toast } from 'react-toastify';
 import { assignProjectUser } from '../../services/project';
 interface IProps {
   projectUsers: IProjectUsers[];
- setProjectUsers: React.Dispatch<
-    React.SetStateAction<IProjectUsers[]>
-  >;
+  setProjectUsers: React.Dispatch<React.SetStateAction<IProjectUsers[]>>;
   deassignProjectUser: (e: string) => void;
   updateUserRole: (e: { email: 'string'; role: 'string' }) => void;
 }
 const ProjectUserAdd: React.FC<IProps> = ({
   projectUsers,
- setProjectUsers,
+  setProjectUsers,
   deassignProjectUser,
   updateUserRole,
 }) => {
@@ -53,13 +51,16 @@ const ProjectUserAdd: React.FC<IProps> = ({
     deassignProjectUser(email);
     setOpen(false);
   };
-   const addProjectUser = (userInfo:{email:string,role:string},{ resetForm }: FormikHelpers<{email:string,role:string}>) => {
+  const addProjectUser = (
+    userInfo: { email: string; role: string },
+    { resetForm }: FormikHelpers<{ email: string; role: string }>
+  ) => {
     assignProjectUser(userInfo, router.query.projectId as string)
       .then((response) => {
         if (response?.success === true) {
           toast.success(response?.message);
           resetForm();
-          setProjectUsers(response?.result)
+          setProjectUsers(response?.result);
         }
       })
       .catch((error) => {
@@ -145,7 +146,11 @@ const ProjectUserAdd: React.FC<IProps> = ({
                               <div className="flex  text-gray-900">
                                 <div className="w-6 h-6 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 dark:border-white border-gray-900">
                                   <Image
-                                    src="https://images.unsplash.com/photo-1610397095767-84a5b4736cbd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
+                                    src={
+                                      pUserData.user.avatar
+                                        ? pUserData.user.avatar
+                                        : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/user_icon_def_01.png'
+                                    }
                                     alt=""
                                     className={`w-full h-full cursor-pointer object-cover `}
                                     height={1920}
