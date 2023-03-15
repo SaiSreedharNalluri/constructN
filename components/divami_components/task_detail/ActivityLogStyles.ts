@@ -81,6 +81,7 @@ export const ActivityCommentAddedByMain = styled("span")({
   fontWeight: 400,
   fontSize: "14px",
   color: "#101F4C",
+  lineHeight: "20px"
 });
 export const ActivityAddedComment = styled("span")({
   marginLeft: "4px",
@@ -89,6 +90,7 @@ export const ActivityAddedComment = styled("span")({
   fontWeight: 400,
   fontSize: "14px",
   color: "#101F4C",
+  lineHeight: "20px"
 });
 export const ActivityCommentDiv = styled("div")({
   marginTop: "5px",
@@ -97,6 +99,7 @@ export const ActivityCommentDiv = styled("div")({
   fontWeight: 400,
   fontSize: "14px",
   color: "#101F4C",
+  lineHeight: "20px"
 });
 export const ActivityComment = styled("span")({});
 export const ActivityIssueRaisedMain = styled("span")({});

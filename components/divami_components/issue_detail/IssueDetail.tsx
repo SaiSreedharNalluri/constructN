@@ -558,7 +558,7 @@ function BasicTabs(props: any) {
             <>
               <AttachmentDiv className={`attachmentsSection`}>
                 <AttachmentTitle>Attachments</AttachmentTitle>
-                <AttachmentDescription style={{ color: "#101F4B" }}>
+                <AttachmentDescription>
                   {/* {console.log(taskState?.TabOne.attachments)} */}
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
