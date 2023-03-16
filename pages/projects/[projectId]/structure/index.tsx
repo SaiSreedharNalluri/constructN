@@ -433,6 +433,7 @@ const Index: React.FC<IProps> = () => {
       ]);
     getIssues(structure._id);
     getTasks(structure._id);
+    
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
@@ -456,20 +457,18 @@ const Index: React.FC<IProps> = () => {
       currentViewLayers.push(key);
     });
     Object.values(realityMap).map((val) => {
-      
-      val.forEach((r)=>{
+      val.forEach((reality)=>{
         
-          r.realityType?.forEach((rType)=>{
-            if(viewTypes.findIndex((t)=>t==rType)==-1)
+          reality.realityType?.forEach((rType)=>{
+            if(viewTypes.findIndex((typ)=>typ===rType)==-1)
             {
-              //console.log("My_Test",rType);
               viewTypes.push(rType);
-              setViewTypes(viewTypes);
             }
           }) 
       })
     });
-
+    setViewTypes(structuredClone(viewTypes));
+    //console.log("MyViewTypeList-->r",viewTypes);
   };
 
   const updatedSnapshot = (snapshot: ISnapshot) => {
@@ -477,12 +476,15 @@ const Index: React.FC<IProps> = () => {
   };
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
+    setViewTypes([]);
     Object.keys(designMap).map((key)=>{
-      if(viewTypes.findIndex((k)=>k==key)==-1){
-      viewTypes.push(key);
-      setViewTypes(viewTypes);
+      if(viewTypes.findIndex((k)=>k===key)==-1){
+      viewTypes.push(key)
       }
     });
+   // console.log("MyTypeList-->d",types_list);
+    setViewTypes((viewTypes));
+    //console.log("MyViewTypeList-->d",viewTypes);
   };
 
   const activeClass = (e: any) => {
