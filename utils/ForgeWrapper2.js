@@ -656,14 +656,14 @@ export const ForgeViewerUtils = (function () {
     _eventHandler(_viewerId, { type: 'sync' });
   };
 
-  const onClickEventOnContainer = (ev) => {
-    const result = _viewer.clientToWorld(ev.clientX, ev.clientY);
-    if (result) {
-      console.log("Click Point", result.point);
-      // this.eventHandler('issue',result);
-    }
-    return false;
-  }
+  // const onClickEventOnContainer = (ev) => {
+  //   const result = _viewer.clientToWorld(ev.clientX, ev.clientY);
+  //   if (result) {
+  //     console.log("Click Point", result.point);
+  //     // this.eventHandler('issue',result);
+  //   }
+  //   return false;
+  // }
 
   const setUpEventListeners = () => {
     _viewer.addEventListener(
@@ -704,10 +704,10 @@ export const ForgeViewerUtils = (function () {
       viewerElement.addEventListener('mouseenter', onMouseEnter);
     }
 
-    _viewer.container.addEventListener(
-      "click",
-      onClickEventOnContainer
-    );
+    // _viewer.container.addEventListener(
+    //   "click",
+    //   onClickEventOnContainer
+    // );
 
   };
 
