@@ -353,7 +353,7 @@ export class PotreeViewerUtils {
                 break;
             case "Issue":
                 let issue = this._issuesList.find(issue => issue._id === context.id)
-                if(this.snapshot._id === issue.snapshot) {
+                if(this.snapshot._id === issue.snapshot && context.image) {
                     this.goToImageContext(context);
                 } else {
                     this.goToContext(context);
@@ -361,7 +361,7 @@ export class PotreeViewerUtils {
                 break;
             case "Task":
                 let task = this._tasksList.find(task => task._id === context.id)
-                if(this.snapshot._id === task.snapshot) {
+                if(this.snapshot._id === task.snapshot && context.image) {
                     this.goToImageContext(context);
                 } else {
                     this.goToContext(context);
@@ -659,7 +659,7 @@ export class PotreeViewerUtils {
 
         if (context.image) {
             this.getNearestImage(context);
-        } else if (context.type === "image" || context.type === "panorama" || (context.type === "3d")) {
+        } else if (context.type === "image" || context.type === "panorama" || (context.type === "3d") || (context.type === "Task") || (context.type === "Issue")) {
             this.getNearestImageToCamera(context.cameraObject, this.currentMode)
         } else {
             this.viewer.scene.view.setView(context.cameraObject.cameraPosition, context.cameraObject.cameraTarget)
@@ -688,40 +688,6 @@ export class PotreeViewerUtils {
 
         this.goToImage(context.image.imageName, context.cameraObject);
     }
-
-    // goToTask(info) {
-    //     console.log("Inside potree utils, going to task: ", info);
-    //     let offset = this.globalOffset
-    //     let targetValue = info.target ? info.target : info.position;
-    //     let inCamera_withOffset = {
-    //         position: new THREE.Vector3().fromArray([info.position.x-offset[0], info.position.y-offset[1], info.position.z-offset[2]]),
-    //         target: new THREE.Vector3().fromArray([targetValue.x-offset[0], targetValue.y-offset[1], targetValue.z-offset[2]]),
-    //         // pitch: info.rotation ? info.rotation.pitch : null,
-    //         // yaw: info.rotation ? info.rotation.yaw : null
-    //     }
-    //     if (info.image) {
-    //         // isMouseOnV1 = true;
-    //         this.tagToAddOnImageLoad = {
-    //             'info': info,
-    //             'viewer': this.viewer
-    //         }
-
-    //         this.goToImage(info.imageName, inCamera_withOffset);
-    //     } else if (isExterior) {
-    //         console.log('Load 3d tags')
-    //         // viewer_1.controls.elExit.click();
-    //         if (this.viewer.cur_loaded_image) {
-    //             this.viewer.controls.elExit.click();
-    //         }
-    //         setTimeout((() => {
-    //             if (this.viewer.tileset == info.tileset) {
-    //                 // isMouseOnV1 = true; 
-    //                 this.goToContext(info.camera)
-    //                 this.addTag(info, viewer_1)
-    //             }
-    //         }).bind(this), 1000)
-    //     }
-    // }
 
     getContextLocalFromGlobal(globalContext) {
         // console.log("Global offset: ", globalContext, this.globalOffset);
