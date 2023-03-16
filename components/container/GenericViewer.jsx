@@ -19,6 +19,7 @@ import DatePicker from './datePicker';
 import Pagination from './pagination';
 import ForgeViewer from './forgeViewer';
 import PotreeViewer from './potreeViewer';
+import MapboxViewer from './mapboxViewer';
 import {
   getForgeModels,
   getPointCloud,
@@ -26,20 +27,18 @@ import {
   getRealityLayers,
   getRealityLayersPath,
   getDesignMap,
-  getRealityMap,
-  getFloorPlanData,
-  getMapboxLayers,
-} from '../../utils/ViewerDataUtils';
-import { faToggleOff } from '@fortawesome/free-solid-svg-icons';
-import TimelineContainer from './timelineContainer';
-import MapboxViewer from './mapboxViewer';
-
+  getRealityMap, getFloorPlanData,
+} from "../../utils/ViewerDataUtils";
+import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
+import TimeLineComponent from '../divami_components/timeline-container/TimeLineComponent'
 function GenericViewer(props) {
   const genericViewer = 'genericViewer';
   const genericViewerRef = useRef();
   const compareViewer = 'compareViewer';
   const compareViewerRef = useRef();
   let structure = props.structure;
+  let isFullScreenActive=props.isFullScreenActive;
+ 
   let currentStructure = useRef();
 
   let [designList, setDesignList] = useState([]);
@@ -64,7 +63,9 @@ function GenericViewer(props) {
   let [viewMode, setViewMode] = useState(props.viewMode);
   let currentViewMode = useRef(viewMode);
 
-  let viewType = useRef(props.viewType);
+  let viewType = (props.viewType);
+  let currentViewType = useRef(viewType);
+
   let viewLayers = props.viewLayers;
 
   let [isCompare, setIsCompare] = useState(false);
@@ -123,11 +124,12 @@ function GenericViewer(props) {
     switch (currentViewMode.current) {
       case 'Design':
         if (forgeUtils.current) {
-          forgeUtils.current.setType(viewType.current);
+          forgeUtils.current.setType(currentViewType.current);
           forgeUtils.current.refreshData();
         }
         break;
       case 'Reality':
+        console.log(context)
         loadViewerData();
         loadLayerData();
         break;
@@ -142,6 +144,8 @@ function GenericViewer(props) {
         }
         break;
       case 'Reality':
+        loadViewerData();
+        loadLayerData();
         break;
     }
   }
@@ -433,22 +437,23 @@ function GenericViewer(props) {
   };
 
   const initViewer = (viewerId) => {
-    console.log("Inside init viewer: ", viewMode, viewType);
+    console.log("Inside init viewer: ", viewMode, currentViewType.current);
     switch (viewMode ) {
       case 'Design':
         if (forgeUtils.current == undefined) {
           forgeUtils.current = ForgeViewerUtils;
           forgeUtils.current.initializeViewer(viewerId, viewerEventHandler);
-          forgeUtils.current.setType(viewType.current);
+          forgeUtils.current.setType(currentViewType.current);
         }
         break;
       case 'Reality':
-        switch (viewType.current) {
-          case 'OrthoPhoto':
+        console.log("Inside init viewer viewType: ", viewMode, viewType);
+        switch (viewType) {
+          case 'Ortho Photo':
             if (mapboxUtils.current == undefined) {
               mapboxUtils.current = MapboxViewerUtils;
               mapboxUtils.current.initializeViewer(viewerId, {center: [73.913334, 18.533937]}, viewerEventHandler);
-              mapboxUtils.current.setType(viewType.current);
+              mapboxUtils.current.setType(viewType);
             }
             break;
           default:
@@ -475,19 +480,19 @@ function GenericViewer(props) {
             viewerId,
             viewerEventHandler
           );
-          forgeCompareUtils.current.setType(viewType.current);
+          forgeCompareUtils.current.setType(currentViewType.current);
         }
         break;
       case 'Reality':
-        switch (viewType.current) {
-          case 'OrthoPhoto':
+        switch (currentViewType.current) {
+          case 'Ortho Photo':
             if (mapboxCompareUtils.current == undefined) {
               mapboxCompareUtils.current = MapboxViewerUtils;
               mapboxCompareUtils.current.initializeViewer(
                 viewerId,
                 viewerEventHandler
               );
-              mapboxCompareUtils.current.setType(viewType.current);
+              mapboxCompareUtils.current.setType(currentViewType.current);
             }
             break;
           default:
@@ -506,7 +511,7 @@ function GenericViewer(props) {
   };
 
   async function loadViewerData() {
-    console.log("Load Viewer Data", currentViewMode, viewType.current)
+    console.log("Load Viewer Data", currentViewMode, currentViewType.current, mapboxUtils, potreeUtils)
     switch (currentViewMode.current) {
       case 'Design':
         if (forgeUtils.current != undefined) {
@@ -516,17 +521,17 @@ function GenericViewer(props) {
 
         break;
       case 'Reality':
-        switch (viewType.current) {
-          case 'OrthoPhoto':
+        switch (currentViewType.current) {
+          case 'Ortho Photo':
             if (mapboxUtils.current != undefined) {
               mapboxUtils.current.setProject(project);
               mapboxUtils.current.setStructure(structure);
               mapboxUtils.current.setSnapshot(snapshot);
-              let data = await getMapboxLayers(structure, snapshot);
-              console.log(data)
-              setTimeout(() => {
-                mapboxUtils.current.updateData(data, currentContext.current);
-              }, 500);
+              // let data = await getMapboxLayers(structure, snapshot);
+              // console.log(data)
+              // setTimeout(() => {
+              //   mapboxUtils.current.updateData(data, currentContext.current);
+              // }, 500);
             }
             break;
           default:
@@ -545,14 +550,14 @@ function GenericViewer(props) {
         if (forgeUtils.current != undefined) {
           forgeUtils.current.setSnapshot(snapshot);
           forgeUtils.current.updateIssuesData(issuesList);
-          // forgeUtils.current.updateTasksData(tasksList);
+          forgeUtils.current.updateTasksData(tasksList);
           let data = await getRealityLayers(structure, realityMap);
           forgeUtils.current.updateLayersData(data, currentContext.current);
         }
         break;
       case 'Reality':
-        switch (viewType.current) {
-          case "OrthoPhoto":
+        switch (currentViewType.current) {
+          case "Ortho Photo":
             if (mapboxUtils.current != undefined) {
               mapboxUtils.current.updateIssuesData(issuesList);
             }
@@ -561,7 +566,7 @@ function GenericViewer(props) {
             if (potreeUtils.current != undefined) {
               potreeUtils.current.setSnapshot(snapshot);
               potreeUtils.current.updateIssuesData(issuesList);
-              // potreeUtils.current.updateTasksData(tasksList);
+              potreeUtils.current.updateTasksData(tasksList);
               potreeUtils.current.updateData(
                 await getPointCloud(structure, snapshot),
                 getFloorPlanData(designMap)
@@ -664,7 +669,7 @@ function GenericViewer(props) {
   };
 
   function renderViewer(count) {
-    console.log("Generic Viewer Inside render View: ", viewMode, count, viewType.current);
+    console.log("Generic Viewer Inside render View: ", viewMode, count, currentViewType.current, viewType);
     if (count != 1 && !isCompare) {
       return;
     }
@@ -679,7 +684,8 @@ function GenericViewer(props) {
           ></ForgeViewer>
         );
       case 'Reality':
-        if (viewType.current == "OrthoPhoto")
+        console.log("Checking render type", currentViewType.current, currentViewType.current === "Ortho Photo");
+        if (viewType === "Ortho Photo")
           return (
             <MapboxViewer
               viewerCount={count}
@@ -711,6 +717,8 @@ function GenericViewer(props) {
     //Set current design type and pass it to structure page.
     setDesignMap(getDesignMap(designList));
     updateDesignMap(getDesignMap(designList));
+    console.log('----------------------------------')
+    console.log(getDesignMap(designList));
     return designList;
   };
 
@@ -732,19 +740,28 @@ function GenericViewer(props) {
   };
 
   const setCurrentSnapshot = (snapshot) => {
+    if(snapshot){
+
     setSnapshot(snapshot);
     updateSnapshot(snapshot);
     setRealityList(snapshot.reality);
     setRealityMap(getRealityMap(snapshot));
     updateRealityMap(getRealityMap(snapshot));
+    console.log('----------------------------------')
+    console.log(getRealityMap(snapshot));
+  }
+
   };
 
   const setCurrentCompareSnapshot = (snapshot) => {
+    if(snapshot){
+
     setCompareSnapshot(snapshot);
     // updateSnapshot(snapshot);
     setCompareRealityList(snapshot.reality);
     setCompareRealityMap(getRealityMap(snapshot));
     // updateRealityMap(getRealityMap(snapshot));
+    }
   };
 
   const isCompareViewer = (viewerId) => {
@@ -785,8 +802,17 @@ function GenericViewer(props) {
         }
         break;
       case 'Reality':
-        if (potreeUtils.current) {
-          context = potreeUtils.current.getContext();
+        switch (currentViewType.current) {
+          case 'Ortho Photo':
+            if (mapboxUtils.current) {
+              // context = potreeUtils.current.getContext();
+            }
+            break;
+          default:
+            if (potreeUtils.current) {
+              context = potreeUtils.current.getContext();
+            }
+            break;
         }
         break;
     }
@@ -803,8 +829,17 @@ function GenericViewer(props) {
         }
         break;
       case 'Reality':
-        if (potreeUtils.current) {
-          potreeUtils.current.removeData();
+        switch (currentViewType.current) {
+          case 'Ortho Photo':
+            if (mapboxUtils.current) {
+              
+            }
+            break;
+          default:
+            if (potreeUtils.current) {
+              potreeUtils.current.removeData();
+            }
+            break;
         }
         break;
     }
@@ -818,8 +853,17 @@ function GenericViewer(props) {
         }
         break;
       case 'Reality':
-        if (potreeUtils.current) {
-          potreeUtils.current.removeData();
+        switch (currentViewType.current) {
+          case 'Ortho Photo':
+            if (mapboxUtils.current) {
+              
+            }
+            break;
+          default:
+            if (potreeUtils.current) {
+              potreeUtils.current.removeData();
+            }
+            break;
         }
         break;
     }
@@ -833,8 +877,17 @@ function GenericViewer(props) {
         }
         break;
       case 'Reality':
-        if (potreeCompareUtils.current) {
-          potreeCompareUtils.current.removeData();
+        switch (currentViewType.current) {
+          case 'Ortho Photo':
+            if (mapboxCompareUtils.current) {
+              
+            }
+            break;
+          default:
+            if (potreeCompareUtils.current) {
+              potreeCompareUtils.current.removeData();
+            }
+            break;
         }
         break;
     }
@@ -850,12 +903,22 @@ function GenericViewer(props) {
         }
         break;
       case 'Reality':
-        if (potreeUtils.current) {
-          potreeUtils.current.shutdown();
-          potreeCompareUtils.current = undefined;
-          delete potreeUtils.current;
+        switch (currentViewType.current) {
+          case 'Ortho Photo':
+            if (mapboxUtils.current) {
+              // mapboxUtils.current.shutdown();
+              mapboxCompareUtils.current = undefined;
+              delete mapboxUtils.current;
+            }
+            break;
+          default:
+            if (potreeUtils.current) {
+              potreeUtils.current.shutdown();
+              potreeUtils.current = undefined;
+              delete potreeUtils.current;
+            }
+            break;
         }
-        break;
     }
   };
 
@@ -868,10 +931,21 @@ function GenericViewer(props) {
         }
         break;
       case 'Reality':
-        if (potreeCompareUtils.current) {
-          potreeCompareUtils.current.shutdown();
-          potreeCompareUtils.current = undefined;
-          delete potreeCompareUtils.current;
+        switch (currentViewType.current) {
+          case 'Ortho Photo':
+            if (mapboxCompareUtils.current) {
+              // mapboxCompareUtils.current.shutdown();
+              mapboxCompareUtils.current = undefined;
+              delete mapboxCompareUtils.current;
+            }
+            break;
+          default:
+            if (potreeCompareUtils.current) {
+              potreeCompareUtils.current.shutdown();
+              potreeCompareUtils.current = undefined;
+              delete potreeCompareUtils.current;
+            }
+            break;
         }
         break;
     }
@@ -1011,23 +1085,24 @@ function GenericViewer(props) {
   };
 
   useEffect(() => {
-    console.log('Generic Viewer View Type UseEffect', props.viewType);
-    if (viewType.current != props.viewType) {
-      viewType.current = props.viewType;
+    console.log('Generic Viewer View Type UseEffect', viewType, currentViewType.current);
+    if (currentViewType.current != viewType) {
+      currentViewType.current = viewType;
       handleDesignTypeChange();
     }
 
     return cleanUpOnViewTypeChange;
-  }, [props.viewType]);
+  }, [viewType]);
 
   const cleanUpOnViewTypeChange = () => {
     console.log(
       'Generic Viewer View Type Cleanup',
       props.viewType,
-      viewType.current
+      currentViewType.current
     );
     setIsCompare(false);
     getContext();
+    destroyViewer()
   };
 
   useEffect(() => {
@@ -1059,7 +1134,17 @@ function GenericViewer(props) {
   };
 
   return (
-    <div className="fixed calc-w calc-h flex flex-row">
+      <div className="fixed calc-w calc-h flex flex-row">
+        <div id="TheView" className="relative basis-1/2 flex grow shrink">
+          {renderViewer(1)}
+          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimeLineComponent>
+        </div>
+        <div className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
+          {renderViewer(2)}
+          <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
+        </div>
+    {/* 
+    <div className={` ${isFullScreenActive?"w-full h-full":" calc-w calc-h"} fixed flex flex-row`}>
       <div id="TheView" className="relative basis-1/2 flex grow shrink">
         {renderViewer(1)}
         <TimelineContainer
@@ -1076,6 +1161,7 @@ function GenericViewer(props) {
           snapshotHandler={setCurrentCompareSnapshot}
         ></TimelineContainer>
       </div>
+    </div> */}
     </div>
   );
 }

@@ -25,8 +25,9 @@ COPY --from=builder /my-project/public ./public
 COPY --from=builder /my-project/.next ./.next
 COPY --from=builder /my-project/node_modules ./node_modules
 COPY --from=builder /my-project/package.json ./package.json
-RUN npm install -g pm2
-COPY run.sh /my-project/
+#RUN npm install -g pm2
+#COPY run.sh /my-project/
 
 EXPOSE 3000
-CMD ["/my-project/run.sh"]
+#CMD ["/my-project/run.sh"]
+CMD ["npm", "start"]  

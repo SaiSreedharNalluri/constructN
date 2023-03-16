@@ -731,8 +731,10 @@ export const MapboxViewerUtils = (function () {
   const removeData = () => {
     // console.log("Model Before Removed: ", this.model);
     if (_isViewerInitialized) {
-      removeLayers();
-      _viewer.unloadModel(_model);
+      if(_viewer) {
+        removeLayers();
+        _viewer.unloadModel(_model);
+      }
     }
   };
 

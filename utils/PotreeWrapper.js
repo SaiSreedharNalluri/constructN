@@ -24,6 +24,7 @@ export class PotreeInstance {
             parent.removeChild(document.getElementById(viewerId));
             parent.insertBefore(this.instance.viewer.renderArea, parent.firstChild);
         }
+        console.log(this.instance)
         return this.instance;
     }
 
@@ -353,7 +354,7 @@ export class PotreeViewerUtils {
                 break;
             case "Issue":
                 let issue = this._issuesList.find(issue => issue._id === context.id)
-                if(this.snapshot === issue.snapshot) {
+                if(this.snapshot._id === issue.snapshot) {
                     this.goToImageContext(context);
                 } else {
                     this.goToContext(context);
@@ -361,7 +362,7 @@ export class PotreeViewerUtils {
                 break;
             case "Task":
                 let task = this._tasksList.find(task => task._id === context.id)
-                if(this.snapshot === task.snapshot) {
+                if(this.snapshot._id === task.snapshot) {
                     this.goToImageContext(context);
                 } else {
                     this.goToContext(context);
@@ -611,7 +612,7 @@ export class PotreeViewerUtils {
 
     getNearestImage(context) {
         // console.log("Inside getNearest Image: ", context, this.currentMode);
-        if(context.type == "image") {
+        if(this.currentMode === "image") {
             let nearestImage = null;
             let nearestImageDist = 10000;
             // const imagePosition = {
@@ -631,7 +632,7 @@ export class PotreeViewerUtils {
                 this.loadOrientedImages(nearestImage)
 
             }
-        } else {
+        } else if (this.currentMode === "panorama") {
             let nearestImage = null;
             let nearestImageDist = 10000;
             // const imagePosition = {
@@ -668,7 +669,7 @@ export class PotreeViewerUtils {
 
     goToImage(imageName, cameraWithOffset) {
         // console.log("Inside potree utils, going to image: ", imageName);
-        if (this.currentMode == 'panorama') {
+        if (this.currentMode === 'panorama') {
             this.viewer.scene.images360[0].images.forEach(image => {
                 if (image.file.split('/').pop() == imageName) {
                     this.loadPanoImages(image, cameraWithOffset)
@@ -1032,8 +1033,8 @@ export class PotreeViewerUtils {
                     this.unloadOrientedImage()
                     this.sendContext = true;
                 } else {
-                    this.viewer.scene.images360[0].unfocus();
-                    this.pointCloudView(false);
+                    // this.viewer.scene.images360[0].unfocus();
+                    // this.pointCloudView(false);
                 }
                 break;
             case "ArrowUp":
@@ -1516,7 +1517,7 @@ export class PotreeViewerUtils {
             }
             let imageObject = {
                 imagePosition: position,
-                name: this.currentMode === "image" ? curImage.id : curImage.file.split('/').pop()
+                imageName: this.currentMode === "image" ? curImage.id : curImage.file.split('/').pop()
             };
             tag_context_obj.image = imageObject;
         }
@@ -1620,7 +1621,7 @@ export class PotreeViewerUtils {
         }
     }
 
-    showTasks() {
+    showTasks(show) {
         for(let taskId of Object.keys(this.taskSpriteMap)) {
             let annotation = this.taskSpriteMap[taskId].tag;
             annotation._visible = show;

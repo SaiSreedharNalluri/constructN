@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { ChildrenEntity } from '../../models/IStructure';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useState } from "react";
+import { ChildrenEntity } from "../../models/IStructure";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretDown, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 interface IProps {
   tree: ChildrenEntity[];
   getStructureData: (structure: ChildrenEntity) => void;
@@ -40,13 +40,10 @@ const Tree: React.FC<IProps> = ({
         <div>
           <div
             className={`flex ${
-              structure._id === clickedStruct ? 'bg-white' : ''
+              structure._id === clickedStruct ? "bg-white" : ""
             } justify-between border-b border-solid border-gray-400 p-1`}
           >
-            <div
-              className={`flex margin${depth}`}
-             
-            >
+            <div className={`flex margin${depth}`}>
               <div
                 className="hover:bg-gray-300 px-2 hover:rounded-full"
                 onClick={() => {
@@ -58,10 +55,12 @@ const Tree: React.FC<IProps> = ({
               >
                 {getICon()}
               </div>
-              <div  onClick={() => {
-                getStructureData(structure);
-              }}>
-              <p className={`text-sm cursor-pointer `}>{structure.name} </p>
+              <div
+                onClick={() => {
+                  getStructureData(structure);
+                }}
+              >
+                <p className={`text-sm cursor-pointer `}>{structure.name} </p>
               </div>
             </div>
           </div>
