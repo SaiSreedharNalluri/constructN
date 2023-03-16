@@ -59,6 +59,7 @@ const Body = ({
   setIsValidate,
   tagsList,
   issueStatusList,
+  setCanBeDisabled
 }: any) => {
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
@@ -307,6 +308,16 @@ const Body = ({
     ];
     setFormData(updatedFormData);
     handleFormData(updatedFormData);
+
+    let count = 0;
+    formConfig.forEach((item: any) => {
+      console.log(item.isError, "item.isEisError")
+      if (item.isError) {
+        count++
+      }
+    });
+    if (count === 0) { setCanBeDisabled(true) }
+
   }, [formConfig]);
 
   return (
@@ -319,6 +330,7 @@ const Body = ({
           setFormState={setFormState}
           validate={validate}
           setIsValidate={setIsValidate}
+          setCanBeDisabled={setCanBeDisabled}
         />
         <UploadedImagesList formData={formData} />
       </FormElementContainer>
