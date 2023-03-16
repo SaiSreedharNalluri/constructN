@@ -45,7 +45,8 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
       .matches(/[0-9]/, 'Password requires a number')
       .matches(/[a-z]/, 'Password requires a lowercase letter')
       .matches(/[A-Z]/, 'Password requires an uppercase letter')
-      .matches(/[^\w]/, 'Password requires a symbol'),
+      .matches(/[^\w\s]/, 'Password requires a symbol')
+      .matches(/^[^\s].*[^\s]$/, 'Spaces are not allowed in the password'),
     confirmPassword: Yup.string()
       .required('Confirm password is required')
       .oneOf([Yup.ref('password'), null], 'Passwords must match'),
@@ -164,7 +165,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
               )}
             </Form>
           </Formik>
-          <button onClick={()=>router.push('/login')}>Back To Login</button>
+          <button onClick={() => router.push('/login')}>Back To Login</button>
         </div>
       </div>
     </div>

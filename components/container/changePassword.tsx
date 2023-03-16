@@ -17,12 +17,13 @@ const ChangePassword: React.FC = () => {
   const validationSchema = Yup.object().shape({
     currentPassword: Yup.string().required('Current password is required'),
     new_password: Yup.string()
-      .required('New Password is required')
+      .required('Password is required')
       .min(8, 'Minimum 8 characters required')
       .matches(/[0-9]/, 'Password requires a number')
       .matches(/[a-z]/, 'Password requires a lowercase letter')
       .matches(/[A-Z]/, 'Password requires an uppercase letter')
-      .matches(/[^\w]/, 'Password requires a symbol'),
+      .matches(/[^\w\s]/, 'Password requires a symbol')
+      .matches(/^[^\s].*[^\s]$/, 'Spaces are not allowed in the password'),
     confirmPassword: Yup.string()
       .required('Confirm password is required')
       .oneOf([Yup.ref('new_password'), null], 'Passwords must match'),
