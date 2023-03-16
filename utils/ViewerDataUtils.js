@@ -197,5 +197,35 @@ export const getDesignMap = (designs) => {
     return map;
 }
 
+export const applyOffset = (position, offset) => {
+    return {
+        x: position.x - offset[0],
+        y: position.y - offset[1],
+        z: position.z - offset[2],
+    }
+}
+
+export const removeOffset = (position, offset) => {
+    return {
+        x: position.x + offset[0],
+        y: position.y + offset[1],
+        z: position.z + offset[2],
+    }
+}
+
+export const applyTMInverse = (position, tm) => {
+    const a = new THREE.Vector4(position.x, position.y, position.z, 1);
+    const matrixInv = new THREE.Matrix4();
+    matrixInv.copy(tm).invert();
+    a.applyMatrix4(matrixInv);
+    return a;
+}
+
+export const applyTM = (position, tm) => {
+    const a = new THREE.Vector4(position.x, position.y, position.z, 1);
+    a.applyMatrix4(tm);
+    return a;
+}
+
 
 
