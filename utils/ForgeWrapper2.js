@@ -1,5 +1,6 @@
 import { autodeskAuth } from '../services/forgeService';
 import { ForgeDataVisualization } from './ForgeDataVisualizationUtils';
+import { applyTM } from './ViewerDataUtils';
 
 export const ForgeViewerUtils = (function () {
   let _viewerId;
@@ -244,10 +245,12 @@ export const ForgeViewerUtils = (function () {
     _tm = [];
     _globalOffset = globalOff;
     if (tm && tm.tm) {
-      _tm = tm.tm;
-      modelOptions.placementTransform = new THREE.Matrix4()
-        .fromArray(tm.tm)
-        .transpose();
+      _tm = new THREE.Matrix4()
+      .fromArray(tm.tm)
+      .transpose();
+      if (!_manifestNode.is2D()) {
+      modelOptions.placementTransform = _tm;
+      }
       // console.log('BIM TM Loaded', tm);
     }
 
@@ -271,6 +274,8 @@ export const ForgeViewerUtils = (function () {
   const loadLayers = () => {
     // console.log("Passing data to dataViz extension: ", dataVizUtils);
     _dataVizUtils.removeExistingVisualizationData();
+    _dataVizUtils.setIs2D(_manifestNode.is2D());
+    _dataVizUtils.setTM(_tm);
     _dataVizUtils.setOffset(_globalOffset);
     _dataVizUtils.addMediaData(_realityPositionMap);
     _dataVizUtils.addIssuesData(_issuesList);
@@ -383,7 +388,7 @@ export const ForgeViewerUtils = (function () {
           contextObject = {
             id: targetObject.id,
             type: targetObject.type,
-            cameraObject: getCamera(),
+            // cameraObject: getCamera(),
             tag: tagObject,
           };
           } else if (targetObject.type === "Issue") {
@@ -466,16 +471,30 @@ export const ForgeViewerUtils = (function () {
     // console.log("Inside forge get camera: ", globalOffset);
     const state = _viewer.getState({ viewport: true }).viewport;
     let offset = _globalOffset;
+    let eye = {
+      x: state.eye[0],
+      y: state.eye[1],
+      z: state.eye[2]
+    }
+    let target = {
+      x: state.target[0],
+      y: state.target[1],
+      z: state.target[2]
+    }
+    if(_manifestNode.is2D()) {
+      eye = applyTM(eye, _tm);
+      target = applyTM(target, _tm);
+    }
     const cameraPosition = {
-      x: state.eye[0] + offset[0],
-      y: state.eye[1] + offset[1],
-      z: state.eye[2] + offset[2],
+      x: eye.x + offset[0],
+      y: eye.y + offset[1],
+      z: eye.z + offset[2],
     };
 
     const cameraTarget = {
-      x: state.target[0] + offset[0],
-      y: state.target[1] + offset[1],
-      z: state.target[2] + offset[2],
+      x: target.x + offset[0],
+      y: target.y + offset[1],
+      z: target.z + offset[2],
     };
     return { cameraPosition, cameraTarget };
   };
