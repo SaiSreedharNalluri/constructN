@@ -277,7 +277,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       });
       let x = _.omit(iss, "progress", "context");
       let g = _.update(x, "owner", (ass) => {
-        console.log("TEST",ass);
+        //console.log("TEST",ass);
         return ass.firstName;
       
       });
