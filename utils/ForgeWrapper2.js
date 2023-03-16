@@ -362,8 +362,21 @@ export const ForgeViewerUtils = (function () {
           targetObject
         );
         let contextObject;
-        if (_isAddTagActive) {
-          _isAddTagActive = deactivateTool();
+        // if (_isAddTagActive) {
+        //   _isAddTagActive = deactivateTool();
+        //   let tagObject = {
+        //     tagPosition: targetObject.position,
+        //   };
+        //   contextObject = {
+        //     id: targetObject.id,
+        //     type: targetObject.type,
+        //     cameraObject: getCamera(),
+        //     tag: tagObject,
+        //   };
+        // } else {
+          console.log(`Inside Rag Click click: ${targetObject.position.x}`);
+          if (targetObject.id.includes("Temp")) {
+            _isAddTagActive = deactivateTool();
           let tagObject = {
             tagPosition: targetObject.position,
           };
@@ -373,9 +386,7 @@ export const ForgeViewerUtils = (function () {
             cameraObject: getCamera(),
             tag: tagObject,
           };
-        } else {
-          console.log(`Inside Rag Click click: ${targetObject.position.x}`);
-          if (targetObject.type === "Issue") {
+          } else if (targetObject.type === "Issue") {
             let clickedIssue = _issuesList.find(issue => issue._id === targetObject.id)
             contextObject = structuredClone(clickedIssue.context);
             contextObject.id = clickedIssue._id;
@@ -398,7 +409,7 @@ export const ForgeViewerUtils = (function () {
             };
           }
 
-        }
+        // }
         _eventHandler(_viewerId, Object.freeze(contextObject));
 
         break;
@@ -626,6 +637,15 @@ export const ForgeViewerUtils = (function () {
     _eventHandler(_viewerId, { type: 'sync' });
   };
 
+  // const onClickEventOnContainer = (ev) => {
+  //   const result = _viewer.clientToWorld(ev.clientX, ev.clientY);
+  //   if (result) {
+  //     console.log("Click Point", result.point);
+  //     // this.eventHandler('issue',result);
+  //   }
+  //   return false;
+  // }
+
   const setUpEventListeners = () => {
     _viewer.addEventListener(
       Autodesk.Viewing.VIEWER_INITIALIZED,
@@ -664,6 +684,12 @@ export const ForgeViewerUtils = (function () {
     if (viewerElement) {
       viewerElement.addEventListener('mouseenter', onMouseEnter);
     }
+
+    // _viewer.container.addEventListener(
+    //   "click",
+    //   onClickEventOnContainer
+    // );
+
   };
 
   const removeEventListeners = () => {
