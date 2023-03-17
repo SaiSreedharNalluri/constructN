@@ -3,6 +3,7 @@ import { Divider, InputAdornment, ListItemText } from "@mui/material";
 import { SetStateAction, useEffect, useState } from "react";
 import { SelectLayerContainer } from "../select-layers/StyledComponents";
 import { SelectLayerProps } from "../select-layers/Type";
+import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import {
   CloseIconStyled,
   CustomSearchField,
@@ -13,6 +14,7 @@ import {
   ListItemStyled,
   ListStyled,
 } from "./StyledComponents";
+import { CloseIcon } from "../select-layers/StyledComponents";
 import Image from "next/image";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 
@@ -66,7 +68,12 @@ const SelectTypesList = ({
       <DrawerBox>
         <DrawerHeader>
           <DrawerHeaderTitle>{title}</DrawerHeaderTitle>
-          <CloseIconStyled onClick={onCloseHandler} />
+          {/* <CloseIconStyled onClick={onCloseHandler} /> */}
+          <CloseIcon
+            src={closeIcon}
+            onClick={onCloseHandler}
+            alt={"close Icon"}
+          />
         </DrawerHeader>
         <DrawerSearchBar>
           <CustomSearchField
