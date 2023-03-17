@@ -308,7 +308,12 @@ export const AttachmentDescription = styled("div")`
   margin-top: 10px;
   margin-bottom: 15px;
   margin-left: -20px;
-    width: 430px;
+  width: 430px;
+  color: #101F4C;
+  font-size: 14px;
+  line-height: 20px;
+  font-family: "Open Sans";
+  font-weight: 400;
 `;
 
 export const AttachedImageDiv = styled("div")`

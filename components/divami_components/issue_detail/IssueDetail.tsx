@@ -558,7 +558,7 @@ function BasicTabs(props: any) {
             <>
               <AttachmentDiv className={`attachmentsSection`}>
                 <AttachmentTitle>Attachments</AttachmentTitle>
-                <AttachmentDescription style={{ color: "#101F4B" }}>
+                <AttachmentDescription>
                   {/* {console.log(taskState?.TabOne.attachments)} */}
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
@@ -944,7 +944,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           ...each,
         };
       });
-
+    console.log("njdsfjk");
     if (filesArr?.length) {
       createAttachment(issue._id, fileformdata)
         .then((response) => {
@@ -961,6 +961,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
           }
           saveEditDetails(data, projectId);
         });
+    } else {
+      saveEditDetails(data, projectId);
     }
   };
   const issueUpdate = (data: any) => {

@@ -224,17 +224,32 @@ const CustomTaskListDrawer = (props: any) => {
     }
   }, []);
 
-  const getDownloadableTaskList = (issuesList = filteredTaskList) => {
-    let modifiedList = issuesList.map((issue: any) => {
-      let firstNames = issue.assignee
-        ?.split(" ")
-        .map((name: string) => name.trim());
-      return _.omit({ ...issue, assignee: firstNames }, [
-        "progress",
-        "context",
-      ]);
+  const getDownloadableTaskList = (issL = filteredTaskList) => {
+    let myL = issL.map((iss) => {
+      let x = _.omit(iss, "progress", "context");
+      let g = _.update(x, "owner", (ass) => {
+        //console.log("TEST",ass);
+        return ass.firstName;
+      });
+      let y = _.update(g, "assignees", (ass) => {
+        let n = ass.map((o: { firstName: any }) => {
+          return o.firstName;
+        });
+        return n;
+      });
+      let z = _.update(y, "attachments", (att) => {
+        let n = att.map((o: { name: any }) => {
+          return o.name;
+        });
+        let u = att.map((o: { url: any }) => {
+          return o.url;
+        });
+        if (n.length) return n + " : " + u;
+        return "";
+      });
+      return z;
     });
-    return modifiedList;
+    return myL;
   };
 
   // const sortDateOrdering = () => {
@@ -366,7 +381,7 @@ const CustomTaskListDrawer = (props: any) => {
                 <>
                   <SearchGlassIcon
                     src={Search}
-                    data-testid='search-icon'
+                    data-testid="search-icon"
                     alt={"close icon"}
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
@@ -614,7 +629,7 @@ const CustomTaskListDrawer = (props: any) => {
         {sortMenuOptions.map((option) => (
           <>
             <StyledMenu
-            data-testid="sort-menu-item"
+              data-testid="sort-menu-item"
               key={option.label}
               onClick={() => {
                 handleSortMenuClick(option.method);
