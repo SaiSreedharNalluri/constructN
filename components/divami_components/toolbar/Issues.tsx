@@ -90,14 +90,15 @@ const Issues = ({
     setMyProject(currentProject);
     setMyStructure(currentStructure);
     setMySnapshot(currentSnapshot);
-    html2canvas(document.getElementById("forgeViewer_1")|| document.getElementById("potreeViewer_1")|| document.body).then(
+    html2canvas(document.getElementById("forgeViewer_1") || document.getElementById("potreeViewer_1") || document.body).then(
       function (canvas) {
         canvas.toBlob((blob) => {
+          console.log(blob, "blob")
           setImage(blob as Blob);
         }, "image/png");
       }
     );
-  }, [currentProject, currentSnapshot, currentStructure]);
+  }, [currentProject, currentSnapshot, currentStructure, issueOpenDrawer]);
 
   const closeIssueList = () => {
     issueMenuInstance.toolAction = "issueViewClose";
@@ -111,7 +112,7 @@ const Issues = ({
     clickTaskSubmit(formData);
   };
 
-  const clickTaskSubmit = (values: any) => {
+  const clickTaskSubmit = async (values: any) => {
     const userIdList = values
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
@@ -209,7 +210,14 @@ const Issues = ({
       }
       formData.append("attachments", data.attachments![i]);
     }
-    // data.screenshot = image;
+    data.screenshot = image;
+
+
+    // const blob: any = await html2canvas(document.getElementById("forgeViewer_1") || document.getElementById("potreeViewer_1") || document.body)
+    // const blobber: any = await new Blob([blob], { type: "image/png" });
+    // console.log("blobber", blobber, blob);
+
+
     formData.append("screenshot", image as Blob, "imageName.png");
     delete data["screenshot"];
     delete data["attachments"];
@@ -351,9 +359,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => {}}
+            handleOnSort={() => { }}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => {}}
+            clickIssueEditSubmit={() => { }}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}

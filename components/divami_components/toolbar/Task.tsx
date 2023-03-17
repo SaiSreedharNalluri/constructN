@@ -76,14 +76,14 @@ const Task = ({
     setMyProject(currentProject);
     setMyStructure(currentStructure);
     setMySnapshot(currentSnapshot);
-    html2canvas(document.getElementById("forgeViewer_1")|| document.getElementById("potreeViewer_1")|| document.body).then(
+    html2canvas(document.getElementById("forgeViewer_1") || document.getElementById("potreeViewer_1") || document.body).then(
       function (canvas) {
         canvas.toBlob((blob) => {
           setImage(blob as Blob);
         }, "image/png");
       }
     );
-  }, [currentProject, currentSnapshot, currentStructure]);
+  }, [currentProject, currentSnapshot, currentStructure, taskOpenDrawer]);
   const handleViewTaskList = () => {
     setOpenDrawer(true);
   };

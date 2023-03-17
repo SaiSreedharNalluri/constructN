@@ -59,6 +59,7 @@ const Body = ({
   validate,
   setIsValidate,
   tagsList,
+  setCanBeDisabled
 }: any) => {
   console.log(editData, "editData");
   const [formState, setFormState] = useState({ selectedValue: "" });
@@ -307,6 +308,13 @@ const Body = ({
     ];
     setFormData(updatedFormData);
     handleFormData(updatedFormData);
+    let count = 0;
+    formConfig.forEach((item: any) => {
+      if (item.isError) {
+        count++
+      }
+    });
+    if (count === 0) { setCanBeDisabled(true) }
   }, [formConfig]);
 
   useEffect(() => {
@@ -323,6 +331,7 @@ const Body = ({
           setFormState={setFormState}
           setIsValidate={setIsValidate}
           validate={validate}
+          setCanBeDisabled={setCanBeDisabled}
         />
         <UploadedImagesList formData={formData} />
       </FormElementContainer>
