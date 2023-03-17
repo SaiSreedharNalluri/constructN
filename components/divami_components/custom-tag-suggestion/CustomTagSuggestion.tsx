@@ -64,20 +64,23 @@ const CustomTagSuggestion = (props: any) => {
       onChange={(e, newval, reason) => {
         handleChipMaking(newval);
       }}
+      data-testid="custom-tag-suggestion"
       renderInput={(params) => (
         <TextField
           {...params}
           variant="outlined"
           label="filterSelectedOptions"
           placeholder="Add tags separated by commas"
-          // onKeyDown={(e: any) => {
-          //   if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
-          //     setAutoCompleteValue(
-          //       // autoCompleteValue.concat((e.target as HTMLInputElement).value)
-          //       autoCompleteValue.concat(e.target.value)
-          //     );
-          //   }
-          // }}
+          data-testid="custom-tag-suggestion-text-field"
+
+        // onKeyDown={(e: any) => {
+        //   if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
+        //     setAutoCompleteValue(
+        //       // autoCompleteValue.concat((e.target as HTMLInputElement).value)
+        //       autoCompleteValue.concat(e.target.value)
+        //     );
+        //   }
+        // }}
         />
       )}
     />

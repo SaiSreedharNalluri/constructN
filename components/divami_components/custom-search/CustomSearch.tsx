@@ -105,6 +105,7 @@ const CustomSearch = (props: any) => {
           getOptionLabel={(option: any) => option.label}
           value={val}
           multiple={isMultiSelect}
+          data-testid="search"
           renderInput={(params) => (
             <TextField
               placeholder="Enter Name or Teams here ..."
@@ -113,26 +114,26 @@ const CustomSearch = (props: any) => {
               InputProps={
                 val.length
                   ? {
-                      ...params.InputProps,
-                      // startAdornment: (
-                      //   <InputAdornment position="start">
-                      //     <Image width={15} height={15} src={Search} alt="Search" />
-                      //   </InputAdornment>
-                      // ),
-                    }
+                    ...params.InputProps,
+                    // startAdornment: (
+                    //   <InputAdornment position="start">
+                    //     <Image width={15} height={15} src={Search} alt="Search" />
+                    //   </InputAdornment>
+                    // ),
+                  }
                   : {
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Image
-                            width={15}
-                            height={15}
-                            src={Search}
-                            alt="Search"
-                          />
-                        </InputAdornment>
-                      ),
-                    }
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Image
+                          width={15}
+                          height={15}
+                          src={Search}
+                          alt="Search"
+                        />
+                      </InputAdornment>
+                    ),
+                  }
               }
             />
           )}
@@ -144,6 +145,7 @@ const CustomSearch = (props: any) => {
           id="combo-box-demo"
           options={data.listOfEntries}
           value={val}
+          data-testid="search"
           renderInput={(params) => (
             <TextField
               placeholder="Enter Name or Teams here ..."

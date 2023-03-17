@@ -97,6 +97,7 @@ const CustomCalender = (props: any) => {
     hideTextField = false,
     disablePast = false,
     config,
+    dataTestId
   } = props;
 
   console.log("dacta", data, config, hideTextField, disablePast);
@@ -113,7 +114,7 @@ const CustomCalender = (props: any) => {
   console.log("date-data", data);
 
   return (
-    <div data-testid="custom-calender-parent">
+    <div data-testid={`custom-calender-parent-${dataTestId}`}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CustomDatePicker
           className={` ${data?.isError ? "formErrorField" : ""} formField`}
@@ -146,7 +147,7 @@ const CustomCalender = (props: any) => {
                 />
               )
           }
-          data-testid="date-picker"
+          data-testid={dataTestId}
         />
       </LocalizationProvider>
     </div>
