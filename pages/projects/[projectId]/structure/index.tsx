@@ -101,6 +101,7 @@ const Index: React.FC<IProps> = () => {
   const [snapshot, setSnapshot] = useState<ISnapshot>();
   const [designMap, setDesignMap] = useState<IDesignMap>();
   const [activeRealityMap, setActiveRealityMap] = useState<IActiveRealityMap>();
+  const [designAndRealityMaps, setDesignAndRealityMaps] = useState<any>({});
   const [projectutm, setProjectUtm] = useState("");
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
@@ -429,8 +430,8 @@ const Index: React.FC<IProps> = () => {
         project,
         ...getBreadCrumbsData(structure),
       ]);
-    getIssues(structure._id);
-    getTasks(structure._id);
+      getIssues(structure._id);
+      getTasks(structure._id);
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
@@ -462,7 +463,23 @@ const Index: React.FC<IProps> = () => {
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
   };
+  useEffect(() => {
+    const list: any = [];
+    if (activeRealityMap) {
+      for (const key in activeRealityMap) {
+        activeRealityMap[key].forEach((item: any) => {
+          item.realityType?.forEach((each: any) => {
+            if (!list.includes(each)) {
+              list.push(each);
+            }
+          });
+        });
+      }
+    }
+    let realityKeys = list.reduce((a: any, v: any) => ({ ...a, [v]: v }), {});
 
+    setDesignAndRealityMaps({ ...designMap, ...realityKeys });
+  }, [activeRealityMap, designMap]);
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
   };
@@ -1434,7 +1451,7 @@ const Index: React.FC<IProps> = () => {
               currentProject={currentProjectId}
               currentStructure={structure}
               currentSnapshot={snapshot}
-              currentTypesList={designMap}
+              currentTypesList={designAndRealityMaps}
               currentLayersList={activeRealityMap}
               closeFilterOverlay={closeFilterOverlay}
               closeTaskFilterOverlay={closeTaskFilterOverlay}
