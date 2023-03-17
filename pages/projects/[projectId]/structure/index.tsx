@@ -55,6 +55,7 @@ import {
   getTasksPriority,
   getTaskStatus,
 } from "../../../../services/task";
+import { getDesignMap } from "../../../../utils/ViewerDataUtils";
 
 interface IProps {}
 const OpenMenuButton = styled("div")({
@@ -93,13 +94,14 @@ const CloseMenuButton = styled("div")({
 });
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
-  const [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
+  let [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
   const [currentProjectId, setActiveProjectId] = useState("");
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [project, setProject] = useState<IProjects>();
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
-  const [designMap, setDesignMap] = useState<IDesignMap>();
+  const [designMap, setDesignMap] = useState<any>();
+  const [cDesignMap, setcDesignMap] = useState<any>();
   const [activeRealityMap, setActiveRealityMap] = useState<IActiveRealityMap>();
   const [projectutm, setProjectUtm] = useState("");
   const leftOverlayRef: any = useRef();
@@ -474,6 +476,7 @@ const Index: React.FC<IProps> = () => {
   const updatedSnapshot = (snapshot: ISnapshot) => {
     setSnapshot(snapshot);
   };
+
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
     setViewTypes([]);
@@ -561,6 +564,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: ITools) => {
+    console.log('Tool Clicked', toolInstance.toolName)
     let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.toolName) {
       case "viewType":
@@ -568,7 +572,18 @@ const Index: React.FC<IProps> = () => {
         //setClickedTool(toolInstance);
         break;
       case "viewMode":
+        currentViewMode = toolInstance.toolAction
         setViewMode(toolInstance.toolAction);
+        console.log('++++++++++++++')
+        console.log(currentViewMode, toolInstance.toolAction)
+        console.log(designMap, activeRealityMap)
+        if(designMap && activeRealityMap) {
+          if(toolInstance.toolAction === 'Design') {
+            updateDesignMap(designMap)
+          } else {
+            updateDesignMap(activeRealityMap)
+          }
+        }
         break;
       case "issue":
         switch (toolInstance.toolAction) {

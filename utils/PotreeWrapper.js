@@ -24,6 +24,7 @@ export class PotreeInstance {
             parent.removeChild(document.getElementById(viewerId));
             parent.insertBefore(this.instance.viewer.renderArea, parent.firstChild);
         }
+        console.log(this.instance)
         return this.instance;
     }
 

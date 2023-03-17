@@ -1,6 +1,6 @@
 
-import { getPointCloudTM, getRealityImagesPath, getRealityPositions, getRealityPositionsPath } from "../services/reality";
-import { getRealityPath, getDesignPath, getFloormapPath, getFloormapTmPath } from "./S3Utils";
+import { getPointCloudTM, getRealityImagesPath, getRealityPositions, getRealityPositionsPath, getOrthoPhotoLayers } from "../services/reality";
+import { getRealityPath, getDesignPath, getFloormapPath, getFloormapTmPath,  getMapboxLayersPath, getStructurePath } from "./S3Utils";
 
 
 
@@ -81,6 +81,11 @@ export const getPointCloud = async(structure, snapshot) =>{
         offset: tmResponse ? tmResponse.data.offset: []
     }
     return pointCloudData;
+}
+
+export const getMapboxLayers = async(structure, snapshot) =>{
+    const layersList = await getOrthoPhotoLayers(getStructurePath(snapshot.project, structure._id, snapshot._id));
+    return layersList.data;
 }
 
 export const getRealityLayers = async (structure, realityMap) => {
