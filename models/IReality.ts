@@ -4,6 +4,7 @@ export interface IReality {
     capture: string;
     snapshot: string;
     completedDateTime: Date | string;
+    realityType?:string[];
     status: string;
     type: string;
     mode: string;

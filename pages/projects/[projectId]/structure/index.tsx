@@ -55,6 +55,7 @@ import {
   getTasksPriority,
   getTaskStatus,
 } from "../../../../services/task";
+import { getDesignMap } from "../../../../utils/ViewerDataUtils";
 
 interface IProps {}
 const OpenMenuButton = styled("div")({
@@ -93,13 +94,14 @@ const CloseMenuButton = styled("div")({
 });
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
-  const [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
+  let [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
   const [currentProjectId, setActiveProjectId] = useState("");
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [project, setProject] = useState<IProjects>();
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
-  const [designMap, setDesignMap] = useState<IDesignMap>();
+  const [designMap, setDesignMap] = useState<any>();
+  const [cDesignMap, setcDesignMap] = useState<any>();
   const [activeRealityMap, setActiveRealityMap] = useState<IActiveRealityMap>();
   const [designAndRealityMaps, setDesignAndRealityMaps] = useState<any>({});
   const [projectutm, setProjectUtm] = useState("");
@@ -110,6 +112,7 @@ const Index: React.FC<IProps> = () => {
   const rightrefContainer: any = useRef();
   const [viewerTypeState, setViewerType] = useState("forge");
   const [rightNav, setRightNav] = useState(false);
+  const [viewTypes, setViewTypes] = useState<string[]>([]);
   const [currentViewType, setViewType] = useState(""); //plan,elevational,xsectional,bim
   const [currentViewLayers, setViewLayers] = useState<string[]>([]); //360Image, 360Video, phoneImage, droneImage
   const [clickedTool, setClickedTool] = useState<ITools>();
@@ -454,6 +457,17 @@ const Index: React.FC<IProps> = () => {
     Object.keys(realityMap).map((key) => {
       currentViewLayers.push(key);
     });
+    Object.values(realityMap).map((val) => {
+      val.forEach((reality) => {
+        reality.realityType?.forEach((rType) => {
+          if (viewTypes.findIndex((typ) => typ === rType) == -1) {
+            viewTypes.push(rType);
+          }
+        });
+      });
+    });
+    setViewTypes(structuredClone(viewTypes));
+    //console.log("MyViewTypeList-->r",viewTypes);
   };
 
   const updatedSnapshot = (snapshot: ISnapshot) => {
@@ -462,9 +476,19 @@ const Index: React.FC<IProps> = () => {
 
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
+    setViewTypes([]);
+    Object.keys(designMap).map((key) => {
+      if (viewTypes.findIndex((k) => k === key) == -1) {
+        viewTypes.push(key);
+      }
+    });
+    // console.log("MyTypeList-->d",types_list);
+    setViewTypes(viewTypes);
+    //console.log("MyViewTypeList-->d",viewTypes);
   };
   useEffect(() => {
     const list: any = [];
+    const types: any = [];
     if (activeRealityMap) {
       for (const key in activeRealityMap) {
         activeRealityMap[key].forEach((item: any) => {
@@ -478,7 +502,10 @@ const Index: React.FC<IProps> = () => {
     }
     let realityKeys = list.reduce((a: any, v: any) => ({ ...a, [v]: v }), {});
 
-    setDesignAndRealityMaps({ ...designMap, ...realityKeys });
+    Object.keys({ ...designMap, ...realityKeys }).map((key) => {
+      types.push(key);
+    });
+    setDesignAndRealityMaps(types);
   }, [activeRealityMap, designMap]);
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
@@ -554,6 +581,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: ITools) => {
+    console.log("Tool Clicked", toolInstance.toolName);
     let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.toolName) {
       case "viewType":
@@ -561,7 +589,18 @@ const Index: React.FC<IProps> = () => {
         //setClickedTool(toolInstance);
         break;
       case "viewMode":
+        currentViewMode = toolInstance.toolAction;
         setViewMode(toolInstance.toolAction);
+        console.log("++++++++++++++");
+        console.log(currentViewMode, toolInstance.toolAction);
+        console.log(designMap, activeRealityMap);
+        if (designMap && activeRealityMap) {
+          if (toolInstance.toolAction === "Design") {
+            updateDesignMap(designMap);
+          } else {
+            updateDesignMap(activeRealityMap);
+          }
+        }
         break;
       case "issue":
         switch (toolInstance.toolAction) {

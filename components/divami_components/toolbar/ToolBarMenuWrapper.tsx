@@ -114,7 +114,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   const [openSelectLayer, setOpenSelectLayer] = useState(false);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
-  const [myTypesList, setMyTypesList] = useState<IDesignMap>(currentTypesList);
+  const [myTypesList, setMyTypesList] = useState<string[]>(currentTypesList);
   const [myLayersList, setMyLayersList] =
     useState<IActiveRealityMap>(currentLayersList);
   let toolInstance: ITools = { toolName: "", toolAction: "" };
@@ -122,8 +122,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     setIViewMode(viewMode);
   }, [viewMode]);
   useEffect(() => {
-    if (myTypesList && Object.keys(myTypesList)?.length) {
-      setSelectedTypeVal(Object.keys(myTypesList)[0]);
+    if (myTypesList?.length) {
+      setSelectedTypeVal(myTypesList[0]);
     }
   }, [myTypesList]);
   useEffect(() => {
