@@ -201,6 +201,12 @@ jest.mock('../services/project', () => {
   };
 });
 
+jest.mock('cookies-next', () => ({
+  getCookie: () => (JSON.stringify({
+    _id: '12345',
+  })),
+}));
+
 jest.spyOn(API, "getProjectUsers").mockImplementation(() => Promise.resolve({
   success: true, result: [{
     "user": {
@@ -249,11 +255,11 @@ describe('CreateIssue', () => {
     expect(popUp).toBeInTheDocument();
     const cancelBtn = screen.getByTestId('CancelBtn');
     fireEvent.click(cancelBtn, { target: { event: "Cancel" } });
-    // const submitBtn = screen.getByTestId('createButton');
-    // fireEvent.click(submitBtn, { target: { event: "Submit" } });
+    const submitBtn = screen.getByTestId('createButton');
+    fireEvent.click(submitBtn, { target: { event: "Submit" } });
   });
 
-  xit('should render the component', () => {
+  it('should render the component', () => {
     const handleCreateTask = jest.fn();
     const onCancelCreate = jest.fn();
     render(<CreateTask
@@ -262,13 +268,13 @@ describe('CreateIssue', () => {
       currentSnapshot={currentSnapshot}
       currentStructure={currentStructure}
       contextInfo={contextInfo}
-      closeIssueCreate={onCancelCreate}
+      closeTaskCreate={onCancelCreate}
       onCancelCreate={onCancelCreate}
       editData={["siva"]}
     />);
-    const closeIcon = screen.getByTestId('closeIcon');
+    const closeIcon = screen.getByTestId('const-custom-drawer-close-icon');
     fireEvent.click(closeIcon);
-    const popUp = screen.getByText('Are you sure you want to cancel edit issue?');
+    const popUp = screen.getByText('Are you sure you want to cancel edit task?');
     expect(popUp).toBeInTheDocument();
     const cancelBtn = screen.getByTestId('CancelBtn');
     fireEvent.click(cancelBtn, { target: { event: "Cancel" } });

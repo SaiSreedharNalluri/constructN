@@ -13,11 +13,12 @@ const ButtonsContainer = styled(Box)({
 
 const Footer = ({ formHandler, editData }: any) => (
   <ButtonsContainer>
-    <CustomButton type="outlined" label="Cancel" formHandler={formHandler} />
+    <CustomButton type="outlined" label="Cancel" formHandler={formHandler} dataTestId="CancelBtn" />
     <CustomButton
       type="contained"
       label={editData ? "Update" : "Create"}
       formHandler={formHandler}
+      dataTestId="createButton"
     />
   </ButtonsContainer>
 );
