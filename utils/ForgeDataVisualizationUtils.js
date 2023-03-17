@@ -1,4 +1,11 @@
 import { faBreadSlice } from "@fortawesome/free-solid-svg-icons";
+import {
+    applyOffset,
+    removeOffset,
+    applyTMInverse,
+    applyTM
+
+  } from './ViewerDataUtils';
 
 export class ForgeDataVisualization {
     static EXTENSION_ID = "Autodesk.DataVisualization";
@@ -39,6 +46,14 @@ export class ForgeDataVisualization {
 
     setOcclusion(enable) {
         this.dataVizExtn.changeOcclusion(enable);
+    }
+
+    setIs2D(is2D) {
+        this.is2D = is2D;
+    }
+
+    setTM(tm) {
+        this.tm = tm;
     }
 
     setOffset(offset) {
@@ -142,7 +157,9 @@ export class ForgeDataVisualization {
                             dbId: dbId++,
                             type: viewableType,
                             id: positionData,
-                            position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
+                            // position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
+                            position: this.getViewerPosition({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.tm, this.offset),
+                            
                         }
                         this.dbIdArray[dbIdObject.dbId] = dbIdObject;
                         // this.viewableState[viewableType] = true;
@@ -159,7 +176,8 @@ export class ForgeDataVisualization {
                             dbId: dbId++,
                             type: viewableType,
                             id: trackerData._id,
-                            position: this.applyOffset(tag.tagPosition, this.offset),
+                            // position: this.applyOffset(tag.tagPosition, this.offset),
+                            position: this.getViewerPosition(tag.tagPosition, this.tm, this.offset),
                         }
                         this.dbIdArray[dbIdObject.dbId] = dbIdObject;;
                         // this.tagState[viewableType] = true;
@@ -320,7 +338,7 @@ export class ForgeDataVisualization {
             this.dataVizExtn.addViewables(viewableData);
 
 
-            dbIdObject.position = this.removeOffset(dbIdObject.position, this.offset);
+            dbIdObject.position = this.getGlobalPosition(dbIdObject.position, this.tm, this.offset);
             this.handlerFunction(event, dbIdObject);
         }
     }
@@ -399,26 +417,67 @@ export class ForgeDataVisualization {
         // console.log("Inside selected dbId object: ", this.dbIdMap, dbObject);
 
         if (dbObject) {
-            dbObject.position = this.removeOffset(dbObject.position, this.offset);
+            dbObject.position = this.getGlobalPosition(dbObject.position, this.tm, this.offset);
             this.handlerFunction(event, dbObject);
         }
     }
 
-    applyOffset(position, offset) {
-        return {
-            x: position.x - offset[0],
-            y: position.y - offset[1],
-            z: position.z - offset[2],
+    getViewerPosition(position, tm, offset) {
+        console.log("Inside get viewer posistion: ", position, tm, offset);
+        let _position;
+        if(this.is2D) {
+            _position = applyTMInverse(position, tm);
+            _position = applyOffset(_position, offset);
+        } else {
+            _position = applyOffset(position, offset);
         }
+        return _position;
     }
 
-    removeOffset(position, offset) {
-        return {
-            x: position.x + offset[0],
-            y: position.y + offset[1],
-            z: position.z + offset[2],
+    getGlobalPosition(position, tm, offset) {
+        let _position;
+        if(this.is2D) {
+            _position = applyTM(position, tm);
+            _position = removeOffset(_position, offset);
+        } else {
+            _position = removeOffset(position, offset);
         }
+        return _position;
     }
+
+    // applyOffset(position, offset) {
+    //     return {
+    //         x: position.x - offset[0],
+    //         y: position.y - offset[1],
+    //         z: position.z - offset[2],
+    //     }
+    // }
+
+    // removeOffset(position, offset) {
+    //     return {
+    //         x: position.x + offset[0],
+    //         y: position.y + offset[1],
+    //         z: position.z + offset[2],
+    //     }
+    // }
+
+    // worldToimage(position, tm) {
+    //     const a = new THREE.Vector4(position.x, position.y, position.z, 1);
+    //     const matrixInv = new THREE.Matrix4();
+    //     matrixInv.copy(tm).invert();
+    //     a.applyMatrix4(matrixInv);
+    //     // console.log("matrix values: ", tm, matrixInv, a);
+    //     // return [Math.ceil(a.x), Math.ceil(a.y)]
+    //     return a;
+    // }
+
+    // imageToWorld(position, tm) {
+    //     const a = new THREE.Vector4(position.x, position.y, position.z, 1);
+    //     a.applyMatrix4(tm);
+    //     // console.log("matrix values: ", tm, a);
+    //     // return [Math.ceil(a.x), Math.ceil(a.y)]
+    //     return a;
+    // }
 
     removeExistingVisualizationData() {
         if(this.viewableDataMap && Object.keys(this.viewableDataMap).length > 0) {
