@@ -899,6 +899,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
           }
           saveEditDetails(data, projectId);
         });
+    } else {
+      saveEditDetails(data, projectId);
     }
   };
   const taskUpdate = (data: any) => {
