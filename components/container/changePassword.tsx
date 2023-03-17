@@ -23,7 +23,10 @@ const ChangePassword: React.FC = () => {
       .matches(/[a-z]/, 'Password requires a lowercase letter')
       .matches(/[A-Z]/, 'Password requires an uppercase letter')
       .matches(/[^\w\s]/, 'Password requires a symbol')
-      .matches(/^[^\s].*[^\s]$/, 'Spaces are not allowed in the password'),
+      .matches(
+        /^[^\s].*[^\s]$/,
+        'Spaces are not allowed at the beginning, end of the password'
+      ),
     confirmPassword: Yup.string()
       .required('Confirm password is required')
       .oneOf([Yup.ref('new_password'), null], 'Passwords must match'),
@@ -106,7 +109,7 @@ const ChangePassword: React.FC = () => {
                     <ErrorMessage
                       name="currentPassword"
                       component="div"
-                      className="alert alert-danger"
+                      className="alert alert-danger text-red-600"
                     />
                   </div>
                   <div className="relative">
@@ -130,7 +133,7 @@ const ChangePassword: React.FC = () => {
                     <ErrorMessage
                       name="new_password"
                       component="div"
-                      className="alert alert-danger"
+                      className="alert alert-danger  text-red-600"
                     />
                   </div>
 

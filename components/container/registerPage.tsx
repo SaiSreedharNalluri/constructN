@@ -46,7 +46,10 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
       .matches(/[a-z]/, 'Password requires a lowercase letter')
       .matches(/[A-Z]/, 'Password requires an uppercase letter')
       .matches(/[^\w\s]/, 'Password requires a symbol')
-      .matches(/^[^\s].*[^\s]$/, 'Spaces are not allowed in the password'),
+      .matches(
+        /^[^\s].*[^\s]$/,
+        'Spaces are not allowed at the beginning, end of the password'
+      ),
     confirmPassword: Yup.string()
       .required('Confirm password is required')
       .oneOf([Yup.ref('password'), null], 'Passwords must match'),
@@ -84,7 +87,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="firstName"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div>
@@ -96,7 +99,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="lastName"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger  text-red-600"
                 />
               </div>
               <div>
@@ -104,7 +107,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="email"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger  text-red-600"
                 />
               </div>
               <div className="relative">
@@ -124,7 +127,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="password"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger  text-red-600"
                 />
               </div>
 
@@ -150,7 +153,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="confirmPassword"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div className="py-2 grid grid-cols-1 gap-2">
