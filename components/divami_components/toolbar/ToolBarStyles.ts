@@ -163,14 +163,15 @@ export const SelectLayersWrapper = styled('div')(
   (props: selectLayerWrapperProps) => ({
     top: '62px',
     position: 'absolute',
-    // left: props.typeOfWindow === 'type' ? '1px' : '250px',
-    left: props.typeOfWindow === 'type' ? '1px' : '238px',
+    left: props.typeOfWindow === 'type' ? '1px' : '250px',
+    // left: props.typeOfWindow === 'type' ? '1px' : '238px',
 
     // border: '1px solid #D9D9D9',
     boxShadow: '5px 4px 8px rgb(0 0 0 / 24%)',
     background: 'white',
     fontSize: '14px',
     zIndex: -1,
+    width:"250px"
   })
 );
 

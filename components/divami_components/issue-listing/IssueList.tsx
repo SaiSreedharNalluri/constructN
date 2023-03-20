@@ -270,11 +270,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   };
 
   const getDownladableIssueList = (issL = issuesList) => {
-    console.log("issL", issL);
     let myL = issL.map((iss) => {
-      let a = iss.assignees.map((a) => {
-        return a.firstName;
-      });
       let x = _.omit(iss, "progress", "context");
       let g = _.update(x, "owner", (ass) => {
         //console.log("TEST",ass);

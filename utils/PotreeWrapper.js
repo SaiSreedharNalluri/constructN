@@ -564,17 +564,6 @@ export class PotreeViewerUtils {
         let nearestImage = null;
         let nearestImageDist = 10000;
         if (mode == 'image' || mode == '3d') {
-            // if (Array.isArray(cameraInfo.position)) {
-            //     cameraInfo.position = new THREE.Vector3().fromArray(cameraInfo.position);
-            //     cameraInfo.target = new THREE.Vector3().fromArray(cameraInfo.target);
-            // } 
-
-            // const cameraPosition = {
-            //     x: cameraInfo.position[0],
-            //     y: cameraInfo.position[1],
-            //     z: cameraInfo.position[2],
-            // }
-
             this.viewer.scene.orientedImages[0].images.forEach( image => {
                 let curDist = image.position.distanceTo(cameraInfo.cameraPosition);
                 // console.log("Current distance Pano: ", curDist , cameraInfo.position, image.position)
@@ -588,11 +577,6 @@ export class PotreeViewerUtils {
                 this.loadOrientedImages(nearestImage)
             }
         } else {
-            // const cameraPosition = {
-            //     x: cameraInfo.position[0],
-            //     y: cameraInfo.position[1],
-            //     z: cameraInfo.position[2],
-            // }
             let inputPos = new THREE.Vector2().fromArray([cameraInfo.cameraPosition.x, cameraInfo.cameraPosition.y]);
             this.viewer.scene.images360[0].images.forEach( pano => {
                 let curPos = new THREE.Vector2().fromArray([pano.position[0], pano.position[1]]);
@@ -606,6 +590,41 @@ export class PotreeViewerUtils {
             if (nearestImage) {
                 // console.log(nearestImage.file)
                 this.loadPanoImages(nearestImage, cameraInfo)
+            }
+        }
+    }
+
+    getNearestImageToTag(tagInfo, mode) {
+        // console.log("Inside potree utils, getNearestImage: ", cameraInfo);
+        let nearestImage = null;
+        let nearestImageDist = 10000;
+        if (mode == 'image' || mode == '3d') {
+            this.viewer.scene.orientedImages[0].images.forEach( image => {
+                let curDist = image.position.distanceTo(tagInfo.tagPosition);
+                // console.log("Current distance Pano: ", curDist , cameraInfo.position, image.position)
+                if (curDist < nearestImageDist) {
+                    nearestImageDist = curDist;
+                    nearestImage = image;
+                }
+            });
+            if (nearestImage) {
+                // console.log(nearestImage.id)
+                this.loadOrientedImages(nearestImage)
+            }
+        } else {
+            let inputPos = new THREE.Vector2().fromArray([tagInfo.tagPosition.x, tagInfo.tagPosition.y]);
+            this.viewer.scene.images360[0].images.forEach( pano => {
+                let curPos = new THREE.Vector2().fromArray([pano.position[0], pano.position[1]]);
+                let curDist = curPos.distanceTo(inputPos);
+                // console.log("Current distance Pano: ", curDist , inputPos, curPos)
+                if (curDist < nearestImageDist) {
+                    nearestImageDist = curDist;
+                    nearestImage = pano;
+                }
+            });
+            if (nearestImage) {
+                // console.log(nearestImage.file)
+                this.loadPanoImages(nearestImage)
             }
         }
     }
@@ -660,7 +679,9 @@ export class PotreeViewerUtils {
 
         if (context.image) {
             this.getNearestImage(context);
-        } else if (context.type === "image" || context.type === "panorama" || (context.type === "3d") || (context.type === "Task") || (context.type === "Issue")) {
+        } else if ((context.type === "Task") || (context.type === "Issue")) {
+            this.getNearestImageToTag(context.tag, this.currentMode)
+        } else if (context.type === "image" || context.type === "panorama" || (context.type === "3d")) {
             this.getNearestImageToCamera(context.cameraObject, this.currentMode)
         } else {
             this.viewer.scene.view.setView(context.cameraObject.cameraPosition, context.cameraObject.cameraTarget)

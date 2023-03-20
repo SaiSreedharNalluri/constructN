@@ -551,7 +551,7 @@ function BasicTabs(props: any) {
             <>
               <AttachmentDiv className={`attachmentsSection`}>
                 <AttachmentTitle>Attachments</AttachmentTitle>
-                <AttachmentDescription style={{ color: "#101F4B" }}>
+                <AttachmentDescription>
                   {/* {console.log(taskState?.TabOne.attachments)} */}
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
@@ -899,6 +899,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
           }
           saveEditDetails(data, projectId);
         });
+    } else {
+      saveEditDetails(data, projectId);
     }
   };
   const taskUpdate = (data: any) => {

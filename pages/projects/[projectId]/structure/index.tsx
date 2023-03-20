@@ -103,6 +103,7 @@ const Index: React.FC<IProps> = () => {
   const [designMap, setDesignMap] = useState<any>();
   const [cDesignMap, setcDesignMap] = useState<any>();
   const [activeRealityMap, setActiveRealityMap] = useState<IActiveRealityMap>();
+  const [designAndRealityMaps, setDesignAndRealityMaps] = useState<any>({});
   const [projectutm, setProjectUtm] = useState("");
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
@@ -111,7 +112,7 @@ const Index: React.FC<IProps> = () => {
   const rightrefContainer: any = useRef();
   const [viewerTypeState, setViewerType] = useState("forge");
   const [rightNav, setRightNav] = useState(false);
-  const [viewTypes,setViewTypes]=useState<string[]>([]);
+  const [viewTypes, setViewTypes] = useState<string[]>([]);
   const [currentViewType, setViewType] = useState(""); //plan,elevational,xsectional,bim
   const [currentViewLayers, setViewLayers] = useState<string[]>([]); //360Image, 360Video, phoneImage, droneImage
   const [clickedTool, setClickedTool] = useState<ITools>();
@@ -428,14 +429,12 @@ const Index: React.FC<IProps> = () => {
 
   useEffect(() => {
     if (structure && project) {
-
       setBreadCrumbsData((prev: any) => [
         project,
         ...getBreadCrumbsData(structure),
       ]);
-    getIssues(structure._id);
-    getTasks(structure._id);
-    
+      getIssues(structure._id);
+      getTasks(structure._id);
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
@@ -459,15 +458,13 @@ const Index: React.FC<IProps> = () => {
       currentViewLayers.push(key);
     });
     Object.values(realityMap).map((val) => {
-      val.forEach((reality)=>{
-        
-          reality.realityType?.forEach((rType)=>{
-            if(viewTypes.findIndex((typ)=>typ===rType)==-1)
-            {
-              viewTypes.push(rType);
-            }
-          }) 
-      })
+      val.forEach((reality) => {
+        reality.realityType?.forEach((rType) => {
+          if (viewTypes.findIndex((typ) => typ === rType) == -1) {
+            viewTypes.push(rType);
+          }
+        });
+      });
     });
     setViewTypes(structuredClone(viewTypes));
     //console.log("MyViewTypeList-->r",viewTypes);
@@ -480,16 +477,36 @@ const Index: React.FC<IProps> = () => {
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
     setViewTypes([]);
-    Object.keys(designMap).map((key)=>{
-      if(viewTypes.findIndex((k)=>k===key)==-1){
-      viewTypes.push(key)
+    Object.keys(designMap).map((key) => {
+      if (viewTypes.findIndex((k) => k === key) == -1) {
+        viewTypes.push(key);
       }
     });
-   // console.log("MyTypeList-->d",types_list);
-    setViewTypes((viewTypes));
+    // console.log("MyTypeList-->d",types_list);
+    setViewTypes(viewTypes);
     //console.log("MyViewTypeList-->d",viewTypes);
   };
+  useEffect(() => {
+    const list: any = [];
+    const types: any = [];
+    if (activeRealityMap) {
+      for (const key in activeRealityMap) {
+        activeRealityMap[key].forEach((item: any) => {
+          item.realityType?.forEach((each: any) => {
+            if (!list.includes(each)) {
+              list.push(each);
+            }
+          });
+        });
+      }
+    }
+    let realityKeys = list.reduce((a: any, v: any) => ({ ...a, [v]: v }), {});
 
+    Object.keys({ ...designMap, ...realityKeys }).map((key) => {
+      types.push(key);
+    });
+    setDesignAndRealityMaps(types);
+  }, [activeRealityMap, designMap]);
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
   };
@@ -564,7 +581,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: ITools) => {
-    console.log('Tool Clicked', toolInstance.toolName)
+    console.log("Tool Clicked", toolInstance.toolName);
     let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.toolName) {
       case "viewType":
@@ -572,16 +589,16 @@ const Index: React.FC<IProps> = () => {
         //setClickedTool(toolInstance);
         break;
       case "viewMode":
-        currentViewMode = toolInstance.toolAction
+        currentViewMode = toolInstance.toolAction;
         setViewMode(toolInstance.toolAction);
-        console.log('++++++++++++++')
-        console.log(currentViewMode, toolInstance.toolAction)
-        console.log(designMap, activeRealityMap)
-        if(designMap && activeRealityMap) {
-          if(toolInstance.toolAction === 'Design') {
-            updateDesignMap(designMap)
+        console.log("++++++++++++++");
+        console.log(currentViewMode, toolInstance.toolAction);
+        console.log(designMap, activeRealityMap);
+        if (designMap && activeRealityMap) {
+          if (toolInstance.toolAction === "Design") {
+            updateDesignMap(designMap);
           } else {
-            updateDesignMap(activeRealityMap)
+            updateDesignMap(activeRealityMap);
           }
         }
         break;
@@ -1473,7 +1490,7 @@ const Index: React.FC<IProps> = () => {
               currentProject={currentProjectId}
               currentStructure={structure}
               currentSnapshot={snapshot}
-              currentTypesList={viewTypes}
+              currentTypesList={designAndRealityMaps}
               currentLayersList={activeRealityMap}
               closeFilterOverlay={closeFilterOverlay}
               closeTaskFilterOverlay={closeTaskFilterOverlay}
