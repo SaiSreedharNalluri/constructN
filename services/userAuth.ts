@@ -118,3 +118,25 @@ export const changePassword = async (updateInfo: object) => {
       throw error.response.data;
     });
 };
+export const ResendEmailVerificationLink = async (token: string) => {
+  return await instance
+    .get(`${process.env.NEXT_PUBLIC_HOST}/users/resend-verification-link`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
+export const ResendEmailVerification = (token: string) => {
+  return instance
+    .get(`${process.env.NEXT_PUBLIC_HOST}/users/resend-verification/${token}`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};

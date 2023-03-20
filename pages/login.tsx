@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Loginpage from '../components/container/loginpage';
-import { login } from '../services/userAuth';
+import { login, ResendEmailVerificationLink } from '../services/userAuth';
 import { useRouter } from 'next/router';
 import { getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
@@ -10,6 +10,7 @@ const Login: React.FC = () => {
   const [message, setMessage] = useState<string>('');
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [token, setToken] = useState('');
   useEffect(() => {
     const userObj: any = getCookie('user');
     let user = null;
@@ -32,6 +33,7 @@ const Login: React.FC = () => {
             router.push('/projects');
           } else {
             setOpen(true);
+            setToken(response.result.token);
             return;
           }
         }
@@ -48,6 +50,21 @@ const Login: React.FC = () => {
         setMessage(resMessage);
       }
     );
+  };
+  const resendEmail = () => {
+    ResendEmailVerificationLink(token)
+      .then((response) => {
+        if (response.success === true) {
+          setOpen(false);
+          toast.success(response.message);
+          setTimeout(() => {
+            router.reload();
+          }, 3000);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
   return (
     <React.Fragment>
@@ -78,6 +95,12 @@ const Login: React.FC = () => {
             className="px-2 py-1  focus:outline-none bg-gray-500 hover:bg-gray-800 rounded text-gray-200 font-semibold"
           >
             OK
+          </button>
+          <button
+            onClick={resendEmail}
+            className="px-2 py-1  focus:outline-none bg-gray-500 hover:bg-gray-800 rounded text-gray-200 font-semibold"
+          >
+            Resend Email
           </button>
         </div>
       </Modal>
