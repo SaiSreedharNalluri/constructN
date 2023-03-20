@@ -292,7 +292,11 @@ const CustomTaskListDrawer = (props: any) => {
     if (searchTerm) {
       const filteredData = taskList?.filter((eachTask: any) => {
         const taskName = eachTask?.type?.toLowerCase();
-        return taskName.includes(searchTerm.toLowerCase());
+        const sequenceNumber = eachTask?.sequenceNumber.toString();
+        return (
+          taskName.includes(searchTerm.toLowerCase()) ||
+          sequenceNumber.includes(searchTerm.toLowerCase())
+        );
       });
       setFilteredTaskList([...filteredData]);
     } else {

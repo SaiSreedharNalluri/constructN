@@ -39,7 +39,7 @@ export const HotspotGroupIcon = styled('div')({
 
 export const TaskBox = styled('div')({
   border: '1px solid #d9d9d9',
-  borderRight: 'none',
+  // borderRight: 'none',
   display: 'flex',
   alignItems: 'center',
   width: '164px',

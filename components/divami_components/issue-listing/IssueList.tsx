@@ -261,7 +261,11 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     if (searchTerm) {
       const filteredData: any = issueList?.filter((eachIssue: any) => {
         const taskName = eachIssue?.type?.toLowerCase();
-        return taskName.includes(searchTerm.toLowerCase());
+        const sequenceNumber = eachIssue?.sequenceNumber.toString();
+        return (
+          taskName.includes(searchTerm.toLowerCase()) ||
+          sequenceNumber.includes(searchTerm.toLowerCase())
+        );
       });
       setFilteredIssuesList([...filteredData]);
     } else {
