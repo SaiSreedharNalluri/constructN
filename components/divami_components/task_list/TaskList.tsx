@@ -232,18 +232,24 @@ const CustomTaskListDrawer = (props: any) => {
         return ass.firstName;
       });
       let y = _.update(g, "assignees", (ass) => {
-        let n = ass.map((o: { firstName: any }) => {
-          return o.firstName;
-        });
+        let n = ass?.length
+          ? ass.map((o: { firstName: any }) => {
+              return o.firstName;
+            })
+          : "";
         return n;
       });
       let z = _.update(y, "attachments", (att) => {
-        let n = att.map((o: { name: any }) => {
-          return o.name;
-        });
-        let u = att.map((o: { url: any }) => {
-          return o.url;
-        });
+        let n = att?.length
+          ? att.map((o: { name: any }) => {
+              return o.name;
+            })
+          : "";
+        let u = att?.length
+          ? att.map((o: { url: any }) => {
+              return o.url;
+            })
+          : "";
         if (n.length) return n + " : " + u;
         return "";
       });
