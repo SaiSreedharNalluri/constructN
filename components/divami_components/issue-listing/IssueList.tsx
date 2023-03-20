@@ -261,7 +261,11 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     if (searchTerm) {
       const filteredData: any = issueList?.filter((eachIssue: any) => {
         const taskName = eachIssue?.type?.toLowerCase();
-        return taskName.includes(searchTerm.toLowerCase());
+        const sequenceNumber = eachIssue?.sequenceNumber.toString();
+        return (
+          taskName.includes(searchTerm.toLowerCase()) ||
+          sequenceNumber.includes(searchTerm.toLowerCase())
+        );
       });
       setFilteredIssuesList([...filteredData]);
     } else {
@@ -275,24 +279,28 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       let g = _.update(x, "owner", (ass) => {
         //console.log("TEST",ass);
         return ass.firstName;
-      
       });
       let y = _.update(g, "assignees", (ass) => {
-        let n = ass.map((o: { firstName: any }) => {
-          return o.firstName;
-        });
+        let n = ass?.length
+          ? ass.map((o: { firstName: any }) => {
+              return o.firstName;
+            })
+          : "";
         return n;
       });
       let z = _.update(y, "attachments", (att) => {
-        let n = att.map((o: { name: any }) => {
-          return o.name;
-        });
-        let u = att.map((o: { url: any }) => {
-          return o.url;
-        });
-        if(n.length)
-        return n+' : '+u;
-        return '';
+        let n = att?.length
+          ? att.map((o: { name: any }) => {
+              return o.name;
+            })
+          : "";
+        let u = att?.length
+          ? att.map((o: { url: any }) => {
+              return o.url;
+            })
+          : "";
+        if (n.length) return n + " : " + u;
+        return "";
       });
       return z;
     });
