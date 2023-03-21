@@ -96,11 +96,11 @@ export class PotreeViewerUtils {
 
     readyForCompare(mode) {
 
-        if (mode === "Design") {
+        if (mode === "Forge") {
             if (this.currentMode === "image") {
                 this.unloadOrientedImage();
             }
-        } else if (mode === "Reality") {
+        } else if (mode === "Potree") {
         }
 
         if(this.currentMode === "panorama" && this.floorMap) {
