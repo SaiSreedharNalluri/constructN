@@ -105,7 +105,7 @@ const CustomSearch = (props: any) => {
           getOptionLabel={(option: any) => option.label}
           value={val}
           multiple={isMultiSelect}
-          data-testid="search"
+          data-testid="search-auto-complete"
           renderInput={(params) => (
             <TextField
               placeholder="Enter Name or Teams here ..."
