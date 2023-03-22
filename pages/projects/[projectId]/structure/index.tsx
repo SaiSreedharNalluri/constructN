@@ -591,16 +591,6 @@ const Index: React.FC<IProps> = () => {
       case "viewMode":
         currentViewMode = toolInstance.toolAction;
         setViewMode(toolInstance.toolAction);
-        console.log("++++++++++++++");
-        console.log(currentViewMode, toolInstance.toolAction);
-        console.log(designMap, activeRealityMap);
-        if (designMap && activeRealityMap) {
-          if (toolInstance.toolAction === "Design") {
-            updateDesignMap(designMap);
-          } else {
-            updateDesignMap(activeRealityMap);
-          }
-        }
         break;
       case "issue":
         switch (toolInstance.toolAction) {
