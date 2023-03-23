@@ -161,7 +161,6 @@ const Header: React.FC<any> = ({
     toolClicked(toolInstance);
   };
 
-  console.log(isDesignSelected, "isdesignsele");
   return (
     <>
       <HeaderContainer ref={headerRef}>
