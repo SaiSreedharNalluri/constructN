@@ -7,7 +7,7 @@ const ImageItem = styled(Box)({
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: 14,
-  color: "#101F4B",
+  color: "#101F4C",
   marginTop: 10,
 });
 

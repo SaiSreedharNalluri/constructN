@@ -710,6 +710,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [footerState, SetFooterState] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(issue);
   useEffect(() => {
+    console.log("issueissue",issue)
     setSelectedIssue(issue);
   }, [issue]);
 
