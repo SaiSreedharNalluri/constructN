@@ -398,13 +398,15 @@ export const MapboxViewerUtils = () => {
 
   const removeLayers = (models) => {
     console.log('Inside remove layers in forgeWrapper: ');
-    for (let i = 0; i < models.length; i++) {
-      if (models[i].layer) {
-        try {
-          _map.removeLayer(models[i].layer.id);
-          _map.removeSource(models[i].layer.id)
-        } catch (error) {
-          console.log(error)
+    if(models) {
+      for (let i = 0; i < models.length; i++) {
+        if (models[i].layer) {
+          try {
+            _map.removeLayer(models[i].layer.id);
+            _map.removeSource(models[i].layer.id)
+          } catch (error) {
+            console.log(error)
+          }
         }
       }
     }

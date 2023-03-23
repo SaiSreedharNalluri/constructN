@@ -144,9 +144,12 @@ export class PotreeViewerUtils {
 
     updateData(pointCloudData, floormapData) {
         console.log("PointCloud data update: ", pointCloudData, floormapData);
-        if(pointCloudData.tm) {
+        if(pointCloudData.tm && pointCloudData.tm.length > 0) {
             this.tmMatrix = new THREE.Matrix4().fromArray(pointCloudData.tm).transpose();
             this.globalOffset = pointCloudData.offset
+        } else {
+            this.tmMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+            this.globalOffset = [0,0,0];
         }
         
         this.pointCloudPath = pointCloudData.path

@@ -628,14 +628,12 @@ function GenericViewer(props) {
             data.forEach((layer) => {
               if(layer.categories) {
                 layer.categories.forEach((category) => {
-                  const filters = []
-                  layer.categories[0].filters.forEach((filter) => {
-                    map[filter.name] = [filter]
+                  category.filters.forEach((filter) => {
+                    map[filter.name] = [{layer: layer.key, filter: filter.filter}]
                   })
                 })
               }
             })
-            console.log(map)
             setRealityMap(map)
             updateRealityMap(map)
           }
@@ -1085,7 +1083,7 @@ function GenericViewer(props) {
 
   useEffect(() => {
     console.log("Generic Viewer ViewerType UseEffect:", viewerType, currentViewerType.current);
-    if(currentViewerType != viewerType) {
+    if(currentViewerType.current != viewerType) {
       currentViewerType.current = viewerType;
       handleViewerTypeChange();
     }
@@ -1170,6 +1168,24 @@ function GenericViewer(props) {
 
   useEffect(() => {
     console.log("Generic Viewer View Layers UseEffect", viewLayers);
+    const filters = ['any']
+    let layerId;
+    for(let i = 0; i < viewLayers.length; i++) {
+      const layer = viewLayers[i]
+      const map = realityMap[layer][0];
+      if(layer !== 'Drone Image') {
+        filters.push(map.filter)
+        layerId = map.layer
+      }
+    }
+    
+    if(mapboxUtils.current && mapboxUtils.current.isViewerInitialized()) {
+      mapboxUtils.current.getMap().setFilter('progress-stages', filters)
+    }
+
+    if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
+      mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
+    }
     handleRealityTypeChange();
   }, [viewLayers]);
 
@@ -1213,6 +1229,7 @@ function GenericViewer(props) {
           {renderViewer(1)}
           <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimeLineComponent>
         </div>
+        <div className='w-0.5' color='gray'></div>
         <div className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
           {renderViewer(2)}
           <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
