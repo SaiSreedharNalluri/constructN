@@ -15,21 +15,43 @@ import {
   HotspotGroupIcon,
   GroupIcon,
   CameraIcon,
+  // hotspotMenuClicked,
 } from "./ToolBarStyles";
 import { Drawer, Tooltip } from "@mui/material";
 import CustomHotspotListDrawer from "../hotspot-listing/HotspotList";
+import { ITools } from "../../../models/ITools";
 
 const Hotspot = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
+  let hotspotMenuInstance: ITools = { toolName: "hotspot", toolAction: "" };
 
   const handleViewTaskList = () => {
     // console.log("teskssksk trigg");
     setOpenDrawer(true);
   };
+
+  const openHotspotCreateFn = () => {
+    hotspotMenuInstance.toolAction = "issueCreate";
+    // hotspotMenuClicked(hotspotMenuInstance);
+  };
+
   return (
     <>
       <HotspotBox>
         <HotspotTitleDiv>Hotspot:</HotspotTitleDiv>
+        <Tooltip title="Create Issue">
+          <HotspotSectionFileTextImg>
+            <CameraIcon
+              src={plusCircleIcon}
+              alt="Arrow"
+              onClick={() => {
+                openHotspotCreateFn();
+              }}
+              width={12}
+              height={12}
+            />
+          </HotspotSectionFileTextImg>
+        </Tooltip>
         <Tooltip title="Hotspot List">
           <HotspotSectionFileTextImg>
             {/* <Image src={fileTextIcon} width={12} height={12} alt="Arrow" />{" "} */}
