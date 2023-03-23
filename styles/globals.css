@@ -461,3 +461,7 @@ body {
 .top-margin {
   margin-top: 40px;
 }
+
+mapboxgl-popup-close-button {
+  right: 5px !important;
+}

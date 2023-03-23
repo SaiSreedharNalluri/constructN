@@ -67,4 +67,17 @@ export const getOrthoPhotoLayers = async (
   }
 }
 
+export const getMapboxHotspotLayers = async (
+  path: string
+  ) => {
+    try {
+      return await instance.get(
+      `${path}/layers/progress.json`
+    ); 
+  } catch (error) {
+    console.log("Error progress.json:", error);
+  
+  }
+}
+
 

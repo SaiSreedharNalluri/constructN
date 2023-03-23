@@ -521,6 +521,7 @@ const Index: React.FC<IProps> = () => {
             <GenericViewer
               toolRes={toolResponse}
               tools={clickedTool}
+              project={project}
               structure={structure}
               updateSnapshot={updatedSnapshot}
               updateRealityMap={updateRealityMap}
@@ -1469,7 +1470,7 @@ const Index: React.FC<IProps> = () => {
           <div
             ref={rightOverlayRef}
             id="bg-color"
-            className={`fixed  toolbarWidth  ${"visible"} `}
+            className={`fixed drop-shadow  toolbarWidth  ${"visible"} `}
           >
             <ToolBarMenuWrapper
               issuesList={issuesList}

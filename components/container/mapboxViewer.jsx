@@ -9,7 +9,6 @@ function MapboxViewer(props) {
         setMapboxViewerUtils(viewerId);
     }
 
-    console.log('=============================')
     useEffect(() => {
         initViewer();
     }, []);

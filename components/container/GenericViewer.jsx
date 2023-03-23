@@ -27,10 +27,13 @@ import {
   getRealityLayers,
   getRealityLayersPath,
   getDesignMap,
+  getMapboxLayers, getMapboxHotspots,
   getRealityMap, getFloorPlanData,
 } from "../../utils/ViewerDataUtils";
 import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
 import TimeLineComponent from '../divami_components/timeline-container/TimeLineComponent'
+import Hotspots from './hotspots';
+
 function GenericViewer(props) {
   const genericViewer = 'genericViewer';
   const genericViewerRef = useRef();
@@ -104,6 +107,9 @@ function GenericViewer(props) {
   const toggleTimeline = () => {
     setBottomNav(!bottomNav);
   };
+
+  let [hotspots, setHotspots] = useState([]);
+  let [selectedHotspot, setSelectedHotspot] = useState(0);
 
   let [currentViewer, setCurrentViewer] = useState('Forge');
 
@@ -196,8 +202,10 @@ function GenericViewer(props) {
         }
         break;
       case 'Potree':
-        loadViewerData();
-        loadLayerData();
+        // loadViewerData();
+        // loadLayerData();
+        break;
+      case 'Mapbox':
         break;
     }
   }
@@ -248,6 +256,7 @@ function GenericViewer(props) {
         break;
       case 'closeCompare':
         setIsCompare(false);
+        if(mapboxUtils.current && mapboxUtils.current.getMap()) setTimeout(() => mapboxUtils.current.resize(), 100)
         break;
       default:
         break;
@@ -514,8 +523,8 @@ function GenericViewer(props) {
         break;
       case 'Mapbox':
         if (mapboxUtils.current == undefined) {
-          mapboxUtils.current = MapboxViewerUtils;
-          mapboxUtils.current.initializeViewer(viewerId, {center: [73.913334, 18.533937]}, viewerEventHandler);
+          mapboxUtils.current = MapboxViewerUtils();
+          mapboxUtils.current.initializeViewer(viewerId, {center: [77.5657485841588, 15.061798588445253]});
           mapboxUtils.current.setType(viewType);
         }
         break;
@@ -523,7 +532,7 @@ function GenericViewer(props) {
   };
 
   const initCompareViewer = (viewerId) => {
-    console.log("Generic Viewer Init compare viewer: ", compareViewMode, currentCompareViewMode, forgeCompareUtils, potreeCompareUtils);
+    console.log("Generic Viewer Init compare viewer: ", compareViewMode, currentCompareViewMode, forgeCompareUtils, potreeCompareUtils, mapboxCompareUtils);
     switch (compareViewMode) {
       case 'Forge':
         if (forgeCompareUtils.current == undefined) {
@@ -548,12 +557,9 @@ function GenericViewer(props) {
         break;
       case 'Mapbox':
         if (mapboxCompareUtils.current == undefined) {
-          mapboxCompareUtils.current = MapboxViewerUtils;
-          mapboxCompareUtils.current.initializeViewer(
-            viewerId,
-            viewerEventHandler
-          );
-          mapboxCompareUtils.current.setType(currentViewType.current);
+          mapboxCompareUtils.current = MapboxViewerUtils();
+          mapboxCompareUtils.current.initializeViewer(viewerId, {center: [77.5657485841588, 15.061798588445253]}, mapboxUtils.current.getMap());
+          mapboxCompareUtils.current.setType(viewType);          
         }
         break;
     }
@@ -578,12 +584,6 @@ function GenericViewer(props) {
         if (mapboxUtils.current != undefined) {
           mapboxUtils.current.setProject(project);
           mapboxUtils.current.setStructure(structure);
-          mapboxUtils.current.setSnapshot(snapshot);
-          // let data = await getMapboxLayers(structure, snapshot);
-          // console.log(data)
-          // setTimeout(() => {
-          //   mapboxUtils.current.updateData(data, currentContext.current);
-          // }, 500);
         }
         break;
     }
@@ -598,7 +598,7 @@ function GenericViewer(props) {
           forgeUtils.current.updateIssuesData(issuesList);
           forgeUtils.current.updateTasksData(tasksList);
           let data = await getRealityLayers(structure, realityMap);
-          forgeUtils.current.updateLayersData(data, currentContext.current);
+          forgeUtils.current?.updateLayersData(data, currentContext.current);
         }
         break;
       case 'Potree':
@@ -618,6 +618,31 @@ function GenericViewer(props) {
         break;
       case 'Mapbox':
         if (mapboxUtils.current != undefined) {
+          mapboxUtils.current.setSnapshot(snapshot);
+          mapboxUtils.current.setHotspotClick(selectHotspot);
+          let data = await getMapboxLayers(structure, snapshot);
+          const reality = snapshot.reality.find((reality) => { return reality })
+          let hotspots = await getMapboxHotspots(project._id, structure._id, snapshot._id, reality._id)
+          if(data) {
+            const map = getRealityMap(snapshot)
+            data.forEach((layer) => {
+              if(layer.categories) {
+                layer.categories.forEach((category) => {
+                  const filters = []
+                  layer.categories[0].filters.forEach((filter) => {
+                    map[filter.name] = [filter]
+                  })
+                })
+              }
+            })
+            console.log(map)
+            setRealityMap(map)
+            updateRealityMap(map)
+          }
+          setTimeout(() => {
+            mapboxUtils.current.updateData(data, currentContext.current);
+            setHotspots(hotspots.data.features);
+          }, 500);
           mapboxUtils.current.updateIssuesData(issuesList);
         }
         break;
@@ -625,7 +650,7 @@ function GenericViewer(props) {
     currentContext.current = undefined;
   }
 
-  function loadCompareViewerData() {
+  async function loadCompareViewerData() {
     switch (compareViewMode) {
       case 'Forge':
         if (forgeCompareUtils.current != undefined) {
@@ -640,7 +665,10 @@ function GenericViewer(props) {
         }
         break;
       case 'Mapbox':
-
+        if (mapboxCompareUtils.current != undefined) {
+          mapboxCompareUtils.current.setProject(project);
+          mapboxCompareUtils.current.setStructure(structure);
+        }
         break;
     }
   }
@@ -670,9 +698,20 @@ function GenericViewer(props) {
           );
         }
         break;
-      case 'Mapbox':
-
-        break;
+        case 'Mapbox':
+          if (mapboxCompareUtils.current != undefined) {
+            mapboxCompareUtils.current.setSnapshot(snapshot);
+            mapboxCompareUtils.current.setHotspotClick(selectHotspot);
+            let data = await getMapboxLayers(structure, compareSnapshot);
+            const reality = compareSnapshot.reality.find((reality) => { return reality })
+            let hotspots = await getMapboxHotspots(project._id, structure._id, compareSnapshot._id, reality._id)
+            setTimeout(() => {
+              mapboxCompareUtils.current.updateData(data, currentContext.current);
+              setHotspots(hotspots.data.features);
+            }, 500);
+            mapboxCompareUtils.current.updateIssuesData(issuesList);
+          }
+          break;
     }
     currentContext.current = undefined;
   }
@@ -765,7 +804,6 @@ function GenericViewer(props) {
     //Set current design type and pass it to structure page.
     setDesignMap(getDesignMap(designList));
     updateDesignMap(getDesignMap(designList));
-    console.log('----------------------------------')
     console.log(getDesignMap(designList));
     return designList;
   };
@@ -794,8 +832,8 @@ function GenericViewer(props) {
     updateSnapshot(snapshot);
     setRealityList(snapshot.reality);
     setRealityMap(getRealityMap(snapshot));
+    console.log(getRealityMap(snapshot));
     updateRealityMap(getRealityMap(snapshot));
-    console.log('----------------------------------')
     console.log(getRealityMap(snapshot));
   }
 
@@ -943,7 +981,7 @@ function GenericViewer(props) {
         break;
       case 'Mapbox':
         if (mapboxUtils.current) {
-          // mapboxUtils.current.shutdown();
+          mapboxUtils.current.shutdown();
           mapboxCompareUtils.current = undefined;
           delete mapboxUtils.current;
         }
@@ -1056,8 +1094,8 @@ function GenericViewer(props) {
 
   const cleanUpOnViewerTypeChange = () => {
     console.log("Generic Viewer ViewerType Cleanup:", viewerType, currentViewerType.current);
-    setIsCompare(false);
-    // getContext();
+    setIsCompare(false);  
+    getContext();
     destroyViewer();
   };
 
@@ -1131,7 +1169,7 @@ function GenericViewer(props) {
   }, [tool]);
 
   useEffect(() => {
-    // console.log("Generic Viewer View Layers UseEffect", viewLayers);
+    console.log("Generic Viewer View Layers UseEffect", viewLayers);
     handleRealityTypeChange();
   }, [viewLayers]);
 
@@ -1158,6 +1196,17 @@ function GenericViewer(props) {
     destroyCompareViewer();
   };
 
+  const onHotspotClick = (hotspot) => {
+    setSelectedHotspot(hotspot.properties.id)
+    if(mapboxUtils.current) {
+      mapboxUtils.current.onLayerClick(hotspot)
+    }
+  }
+
+  const selectHotspot = (hotspot) => {
+    setSelectedHotspot(hotspot.properties.id)
+  }
+
   return (
       <div className="fixed calc-w calc-h flex flex-row">
         <div id="TheView" className="relative basis-1/2 flex grow shrink">
@@ -1168,6 +1217,11 @@ function GenericViewer(props) {
           {renderViewer(2)}
           <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
         </div>
+        {
+          !isCompare && hotspots && hotspots.length > 0 ?
+          <Hotspots data={hotspots} selected={selectedHotspot} onHotspotClick={onHotspotClick}></Hotspots>
+          : <></>
+        }
     {/* 
     <div className={` ${isFullScreenActive?"w-full h-full":" calc-w calc-h"} fixed flex flex-row`}>
       <div id="TheView" className="relative basis-1/2 flex grow shrink">

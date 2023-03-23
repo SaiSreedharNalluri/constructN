@@ -1,5 +1,5 @@
 
-import { getPointCloudTM, getRealityImagesPath, getRealityPositions, getRealityPositionsPath, getOrthoPhotoLayers } from "../services/reality";
+import { getPointCloudTM, getRealityImagesPath, getRealityPositions, getRealityPositionsPath, getOrthoPhotoLayers, getMapboxHotspotLayers } from "../services/reality";
 import { getRealityPath, getDesignPath, getFloormapPath, getFloormapTmPath,  getMapboxLayersPath, getStructurePath } from "./S3Utils";
 
 
@@ -11,6 +11,12 @@ export const getPointCloudReality = (snapshot) => {
         console.log("Generic Viewer found reality: ", reality)
         return reality
         }
+    });
+}
+
+export const getMapboxReality = (realityList) => {
+    return realityList.find((reality) => {
+        return reality
     });
 }
 
@@ -84,8 +90,14 @@ export const getPointCloud = async(structure, snapshot) =>{
 }
 
 export const getMapboxLayers = async(structure, snapshot) =>{
-    const layersList = await getOrthoPhotoLayers(getStructurePath(snapshot.project, structure._id, snapshot._id));
+    const layersList = await getOrthoPhotoLayers(getStructurePath(snapshot.project, structure._id));
     return layersList.data;
+}
+
+export const getMapboxHotspots = async(projectId, structureId, snapshotId, realityId) =>{
+    console.log(snapshotId, projectId, structureId, realityId)
+    const hotspotsList = await getMapboxHotspotLayers(getRealityPath(projectId, structureId, snapshotId, realityId));
+    return hotspotsList;
 }
 
 export const getRealityLayers = async (structure, realityMap) => {
