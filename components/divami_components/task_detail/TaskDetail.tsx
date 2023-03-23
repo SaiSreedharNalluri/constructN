@@ -95,6 +95,7 @@ import {
 } from "./TaskDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "./ActivityLog";
+import { ActivityLogContainer } from "../issue_detail/IssueDetailStyles";
 
 // const BodyContainer = styled(Box)`
 //   height: calc(100vh - 134px);
@@ -615,36 +616,39 @@ function BasicTabs(props: any) {
               </ProgressEditStateButtonsContainer>
             </AddCommentContainer>
           ) : (
-            <>
-              <AddCommentContainerSecond>
-                {/* <AddCommentInput placeholder="Add Comment"></AddCommentInput> */}
-                {/* {console.log("commenting", comments)} */}
-                <StyledInput
-                  id="standard-basic"
-                  variant="standard"
-                  placeholder="Add Comment"
-                  value={comments}
-                  onChange={(e) => {
-                    setComments(e.target.value);
-                  }}
-                  // error={!comments}
-                  // helperText={!comments ? "Required" : ""}
-                />
-                <AddCommentButtonContainer>
-                  {/* <AttachButton>
-                    <ImageErrorIcon src={Clip} alt="" />
-                  </AttachButton> */}
-                  <SendButton
-                    onClick={() => {
-                      addComment(comments, taskState.TabOne.id);
-                    }}
-                  >
-                    <ImageErrorIcon src={Send} alt="" />
-                    {/* <Image src={Send} alt="" />{" "} */}
-                  </SendButton>
-                </AddCommentButtonContainer>
-              </AddCommentContainerSecond>
-            </>
+            <ActivityLogContainer>
+              <ActivityLog
+                ActivityLog={taskState.TabTwo}
+                comments={backendComments}
+                getComments={getComments}
+              />
+              {backendComments?.length ? (
+                <></>
+              ) : (
+                <>
+                  <AddCommentContainerSecond>
+                    <StyledInput
+                      id="standard-basic"
+                      variant="standard"
+                      placeholder="Add Comment"
+                      value={comments}
+                      onChange={(e) => {
+                        setComments(e.target.value);
+                      }}
+                    />
+                    <AddCommentButtonContainer>
+                      <SendButton
+                        onClick={() => {
+                          addComment(comments, taskState.TabOne.id);
+                        }}
+                      >
+                        <ImageErrorIcon src={Send} alt="" />
+                      </SendButton>
+                    </AddCommentButtonContainer>
+                  </AddCommentContainerSecond>
+                </>
+              )}
+            </ActivityLogContainer>
           )}
         </TabOneDiv>
       </CustomTabPanel>

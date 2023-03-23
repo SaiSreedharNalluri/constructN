@@ -238,7 +238,15 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     )
       setRighttNav(!rightNav);
   };
-
+  const hotspotMenuClicked = (localTool: ITools) => {
+    toolClicked(localTool);
+    if (
+      localTool.toolAction === "hotspotCreateClose" ||
+      localTool.toolAction === "hotspotViewClose" ||
+      localTool.toolAction === "hotspotView"
+    )
+      setRighttNav(!rightNav);
+  };
   return (
     <SectionToolBar viewMode={viewMode}>
       <ToolbarContainer>

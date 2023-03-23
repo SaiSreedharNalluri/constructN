@@ -31,11 +31,10 @@ export const ActivityStatusTitle = styled("span")({
 export const ActivityHeaderDivider = styled("span")({
   margin: "0px 7px",
   color: "#787878",
-
 });
 
 export const ActivityBody = styled("div")({
-  borderLeft: "1px solid #d9d9d9",
+  // borderLeft: "1px solid #d9d9d9",
   marginLeft: "10px",
   marginTop: "6px",
   marginBottom: "10px",
@@ -62,7 +61,7 @@ export const ActivityBodyIssueRaisedCase = styled("div")({
 });
 
 export const ActivityCommentAddedBy = styled("div")({
-  marginLeft: "4px",
+  marginLeft: "5px",
 });
 export const ActivityCommentAddedByMain = styled("span")({
   marginLeft: "4px",
