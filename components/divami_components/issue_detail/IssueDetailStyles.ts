@@ -300,7 +300,7 @@ export const AttachmentDescription = styled("div")`
   margin-bottom: 15px;
   margin-left: -20px;
   width: 430px;
-  color: #101F4C;
+  color: #101f4c;
   font-size: 14px;
   line-height: 20px;
   font-family: "Open Sans";
@@ -467,6 +467,9 @@ export const AddCommentContainerSecond = styled("div")({
 export const AddCommentInput = styled("input")({
   width: "100%",
   paddingLeft: "10px",
+});
+export const ActivityLogContainer = styled("div")({
+  marginBottom: "40px",
 });
 
 export const AddCommentButtonContainer = styled("div")({
