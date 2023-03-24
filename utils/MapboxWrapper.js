@@ -67,10 +67,14 @@ export const MapboxViewerUtils = () => {
     _viewerId = viewerId;
     console.log('Inside Initializer callback', _eventHandler);
     mapboxgl.accessToken = `${process.env.NEXT_PUBLIC_Map_Token}`;
+    const context = options?.context;
+    const center = context ? utmToLatLng(context.cameraTarget, 43) : undefined
+    const bearing = context ? -radianToDegee(context.yaw): 0
     _map = new mapboxgl.Map({
       container: viewerId, // container ID
       style: 'mapbox://styles/mapbox/satellite-v9', // style URL
-      center: options ? options.center : [77.5657485841588, 15.061798588445253], // starting position [lng, lat]
+      center: center ? center : [77.5657485841588, 15.061798588445253], // starting position [lng, lat]
+      bearing: bearing ? bearing : 0,
       zoom: 16 // starting zoom
     });
     _map.on("load", () => {
@@ -188,22 +192,26 @@ export const MapboxViewerUtils = () => {
     }
   };
 
-  const onLayerClick = (e) => {
+  const onLayerClick = (e, hidePopup) => {
     _hotspotClick && _hotspotClick(e);
     let coordinates = e.geometry.type === 'Polygon' ? getCentreOfFeatureCollection(e) : e.geometry.coordinates;
     _map.flyTo({
       center: coordinates,
       essential: true // this animation is considered essential with respect to prefers-reduced-motion
     });
-    if (!_popup) {
-      _popup = new mapboxgl.Popup({ closeOnClick: true })
-        .setLngLat(coordinates)
-        .setHTML(e.properties.htmlInfo ? e.properties.htmlInfo : getHtmlInfo(e))
-        .addTo(_map);
+    if(!hidePopup) {
+      if (!_popup) {
+        _popup = new mapboxgl.Popup({ closeOnClick: true })
+          .setLngLat(coordinates)
+          .setHTML(e.properties.htmlInfo ? e.properties.htmlInfo : getHtmlInfo(e))
+          .addTo(_map);
+      } else {
+        _popup.setLngLat(coordinates)
+          .setHTML(e.properties.htmlInfo ? e.properties.htmlInfo : getHtmlInfo(e))
+          .addTo(_map);
+      }
     } else {
-      _popup.setLngLat(coordinates)
-        .setHTML(e.properties.htmlInfo ? e.properties.htmlInfo : getHtmlInfo(e))
-        .addTo(_map);
+      if(_popup) _popup.remove();
     }
   }
 
@@ -318,7 +326,7 @@ export const MapboxViewerUtils = () => {
 
   const utmToLatLng = (utm, zoneId) => {
 
-    return proj4(`${utmCode}${zoneId}`, latLngCode, [utm[0], utm[1]])
+    return proj4(`${utmCode}${zoneId}`, latLngCode, [utm.x, utm.y])
   }
 
   const showLayers = (layersList) => {
@@ -400,10 +408,11 @@ export const MapboxViewerUtils = () => {
     console.log('Inside remove layers in forgeWrapper: ');
     if(models) {
       for (let i = 0; i < models.length; i++) {
-        if (models[i].layer) {
+        const layer = models[i].layer
+        if (layer) {
           try {
-            _map.removeLayer(models[i].layer.id);
-            _map.removeSource(models[i].layer.id)
+            if(_map.getLayer(layer.id)) _map.removeLayer(layer.id);
+            if(_map.getSource(layer.id)) _map.removeSource(layer.id)
           } catch (error) {
             console.log(error)
           }

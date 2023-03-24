@@ -33,6 +33,7 @@ import {
 import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
 import TimeLineComponent from '../divami_components/timeline-container/TimeLineComponent'
 import Hotspots from './hotspots';
+import HotspotsCompare from './hotspotsCompare';
 
 function GenericViewer(props) {
   const genericViewer = 'genericViewer';
@@ -109,7 +110,10 @@ function GenericViewer(props) {
   };
 
   let [hotspots, setHotspots] = useState([]);
+  let [hotspotsCompare, setHotspotsCompare] = useState([]);
   let [selectedHotspot, setSelectedHotspot] = useState(0);
+  let [selectedHotspotDetails, setSelectedHotspotDetails] = useState();
+  let [selectedHotspotCompareDetails, setSelectedHotspotCompareDetails] = useState();
 
   let [currentViewer, setCurrentViewer] = useState('Forge');
 
@@ -174,7 +178,10 @@ function GenericViewer(props) {
     // );
 
     loadViewerData();
-    loadLayerData();
+
+    if (realityList.length > 0) {
+      loadLayerData();
+    }
   }
 
   function handleDesignTypeChange() {
@@ -185,11 +192,6 @@ function GenericViewer(props) {
           forgeUtils.current.setType(currentViewType.current);
           forgeUtils.current.refreshData();
         }
-        break;
-      case 'Potree':
-        console.log(context)
-        loadViewerData();
-        loadLayerData();
         break;
     }
   }
@@ -524,7 +526,7 @@ function GenericViewer(props) {
       case 'Mapbox':
         if (mapboxUtils.current == undefined) {
           mapboxUtils.current = MapboxViewerUtils();
-          mapboxUtils.current.initializeViewer(viewerId, {center: [77.5657485841588, 15.061798588445253]});
+          mapboxUtils.current.initializeViewer(viewerId, {context: currentContext.current.cameraObject});
           mapboxUtils.current.setType(viewType);
         }
         break;
@@ -558,7 +560,7 @@ function GenericViewer(props) {
       case 'Mapbox':
         if (mapboxCompareUtils.current == undefined) {
           mapboxCompareUtils.current = MapboxViewerUtils();
-          mapboxCompareUtils.current.initializeViewer(viewerId, {center: [77.5657485841588, 15.061798588445253]}, mapboxUtils.current.getMap());
+          mapboxCompareUtils.current.initializeViewer(viewerId, undefined, mapboxUtils.current.getMap());
           mapboxCompareUtils.current.setType(viewType);          
         }
         break;
@@ -566,12 +568,21 @@ function GenericViewer(props) {
   };
 
   async function loadViewerData() {
-    console.log("Generic Viewer Load Viewer Data", viewerType, currentViewType.current, mapboxUtils, potreeUtils)
+    console.log("Generic Viewer Load Viewer Data", viewerType, currentViewType.current, mapboxUtils, potreeUtils, designMap, designMap)
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current != undefined) {
           forgeUtils.current.setStructure(structure);
-          forgeUtils.current.updateData(getForgeModels(designMap));
+          if (designList.length > 0) {
+            forgeUtils.current.updateData(getForgeModels(designMap));
+          } else {
+            pushToolResponse({
+              toolName: 'viewMode',
+              toolAction: 'Reality',
+            });
+            setViewerType('Potree');
+          }
+          
         }
 
         break;
@@ -653,7 +664,14 @@ function GenericViewer(props) {
       case 'Forge':
         if (forgeCompareUtils.current != undefined) {
           forgeCompareUtils.current.setStructure(structure);
-          forgeCompareUtils.current.updateData(getForgeModels(designMap));
+          if (designList.length > 0) {
+            forgeCompareUtils.current.updateData(getForgeModels(designMap));
+          } else {
+            getContext();
+            setCompareViewMode(currentViewerType.current);
+            currentCompareViewMode.current = currentViewerType.current;
+            setIsCompare(true);
+          }
         }
 
         break;
@@ -701,9 +719,12 @@ function GenericViewer(props) {
             mapboxCompareUtils.current.setSnapshot(compareSnapshot);
             mapboxCompareUtils.current.setHotspotClick(selectHotspot);
             let data = await getMapboxLayers(structure, compareSnapshot);
-            console.log(data, compareSnapshot)
+            const reality = compareSnapshot.reality.find((reality) => { return reality })
+            let hotspots = await getMapboxHotspots(project._id, structure._id, compareSnapshot._id, reality._id)
             setTimeout(() => {
               mapboxCompareUtils.current.updateData(data, currentContext.current);
+              hotspots && hotspots.data && (hotspotsCompare = hotspots.data.features);
+              hotspots && hotspots.data && setHotspotsCompare(hotspots.data.features);
             }, 500);
             mapboxCompareUtils.current.updateIssuesData(issuesList);
           }
@@ -754,12 +775,12 @@ function GenericViewer(props) {
   };
 
   function renderViewer(count) {
-    console.log("Generic Viewer Inside render View: ", currentViewerType.current, viewerType, compareViewMode, currentCompareViewMode.current);
+    // console.log("Generic Viewer Inside render View: ", currentViewerType.current, viewerType, compareViewMode, currentCompareViewMode.current);
     if (count != 1 && !isCompare) {
       return;
     }
     let mode = count == 1 ? viewerType : compareViewMode;
-    console.log("Generic Viewer Checking render mode", mode);
+    // console.log("Generic Viewer Checking render mode", mode);
     switch (mode) {
       case 'Forge':
         return (
@@ -828,9 +849,7 @@ function GenericViewer(props) {
     updateSnapshot(snapshot);
     setRealityList(snapshot.reality);
     setRealityMap(getRealityMap(snapshot));
-    console.log(getRealityMap(snapshot));
     updateRealityMap(getRealityMap(snapshot));
-    console.log(getRealityMap(snapshot));
   }
 
   };
@@ -1145,7 +1164,16 @@ function GenericViewer(props) {
   useEffect(() => {
     // console.log("Generic Viewer load: Reality UseEffect", realityList);
     if (realityList.length > 0) {
-      loadLayerData();
+      if (designList.length <= 0 && currentViewerType.current === 'Forge') {
+        pushToolResponse({
+          toolName: 'viewMode',
+          toolAction: 'Reality',
+        });
+        setViewerType('Potree');
+      } else {
+        loadLayerData();
+      }
+      
     }
   }, [realityList]);
 
@@ -1195,8 +1223,15 @@ function GenericViewer(props) {
     }
     if (isCompare === true) {
       updateViewerChanges();
-      loadCompareViewerData();
-      loadCompareLayerData();
+      if(designList.length <=0 && compareViewMode === "Forge") {
+        getContext();
+        setCompareViewMode(currentViewerType.current);
+        currentCompareViewMode.current = currentViewerType.current;
+        setIsCompare(true);
+      } else {
+        loadCompareViewerData();
+        loadCompareLayerData();
+      }
     } else {
       updateViewerChanges();
     }
@@ -1212,8 +1247,16 @@ function GenericViewer(props) {
 
   const onHotspotClick = (hotspot) => {
     setSelectedHotspot(hotspot.properties.id)
+    setSelectedHotspotDetails(hotspot)
+    
+    for(let i = 0; i < hotspotsCompare.length; i++) {
+      if(hotspotsCompare[i].properties.id == hotspot.properties.id) {
+        setSelectedHotspotCompareDetails(hotspotsCompare[i]) 
+        break;
+      }
+    }
     if(mapboxUtils.current) {
-      mapboxUtils.current.onLayerClick(hotspot)
+      mapboxUtils.current.onLayerClick(hotspot, isCompare ? true : false)
     }
   }
 
@@ -1233,8 +1276,18 @@ function GenericViewer(props) {
           <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
         </div>
         {
-          !isCompare && viewMode === 'Reality' && hotspots && hotspots.length > 0 ?
+          viewerType === "Mapbox"  && viewMode === "Reality" && hotspots && hotspots.length > 0 ?
           <Hotspots data={hotspots} selected={selectedHotspot} onHotspotClick={onHotspotClick}></Hotspots>
+          : <></>
+        }
+        {
+          isCompare && viewerType === 'Mapbox' && viewMode === 'Reality' ?
+          <HotspotsCompare
+            snapshot={snapshot}
+            compareSnapshot={compareSnapshot}
+            hotspotDetails={selectedHotspotDetails}
+            hotspotCompareDetails={selectedHotspotCompareDetails}>
+          </HotspotsCompare>
           : <></>
         }
     {/* 
