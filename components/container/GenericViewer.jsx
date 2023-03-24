@@ -174,7 +174,10 @@ function GenericViewer(props) {
     // );
 
     loadViewerData();
-    loadLayerData();
+
+    if (realityList.length > 0) {
+      loadLayerData();
+    }
   }
 
   function handleDesignTypeChange() {
@@ -185,11 +188,6 @@ function GenericViewer(props) {
           forgeUtils.current.setType(currentViewType.current);
           forgeUtils.current.refreshData();
         }
-        break;
-      case 'Potree':
-        console.log(context)
-        loadViewerData();
-        loadLayerData();
         break;
     }
   }
@@ -566,12 +564,21 @@ function GenericViewer(props) {
   };
 
   async function loadViewerData() {
-    console.log("Generic Viewer Load Viewer Data", viewerType, currentViewType.current, mapboxUtils, potreeUtils)
+    console.log("Generic Viewer Load Viewer Data", viewerType, currentViewType.current, mapboxUtils, potreeUtils, designMap, designMap)
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current != undefined) {
           forgeUtils.current.setStructure(structure);
-          forgeUtils.current.updateData(getForgeModels(designMap));
+          if (designList.length > 0) {
+            forgeUtils.current.updateData(getForgeModels(designMap));
+          } else {
+            pushToolResponse({
+              toolName: 'viewMode',
+              toolAction: 'Reality',
+            });
+            setViewerType('Potree');
+          }
+          
         }
 
         break;
@@ -653,7 +660,14 @@ function GenericViewer(props) {
       case 'Forge':
         if (forgeCompareUtils.current != undefined) {
           forgeCompareUtils.current.setStructure(structure);
-          forgeCompareUtils.current.updateData(getForgeModels(designMap));
+          if (designList.length > 0) {
+            forgeCompareUtils.current.updateData(getForgeModels(designMap));
+          } else {
+            getContext();
+            setCompareViewMode(currentViewerType.current);
+            currentCompareViewMode.current = currentViewerType.current;
+            setIsCompare(true);
+          }
         }
 
         break;
@@ -756,12 +770,12 @@ function GenericViewer(props) {
   };
 
   function renderViewer(count) {
-    console.log("Generic Viewer Inside render View: ", currentViewerType.current, viewerType, compareViewMode, currentCompareViewMode.current);
+    // console.log("Generic Viewer Inside render View: ", currentViewerType.current, viewerType, compareViewMode, currentCompareViewMode.current);
     if (count != 1 && !isCompare) {
       return;
     }
     let mode = count == 1 ? viewerType : compareViewMode;
-    console.log("Generic Viewer Checking render mode", mode);
+    // console.log("Generic Viewer Checking render mode", mode);
     switch (mode) {
       case 'Forge':
         return (
@@ -1147,7 +1161,16 @@ function GenericViewer(props) {
   useEffect(() => {
     // console.log("Generic Viewer load: Reality UseEffect", realityList);
     if (realityList.length > 0) {
-      loadLayerData();
+      if (designList.length <= 0 && currentViewerType.current === 'Forge') {
+        pushToolResponse({
+          toolName: 'viewMode',
+          toolAction: 'Reality',
+        });
+        setViewerType('Potree');
+      } else {
+        loadLayerData();
+      }
+      
     }
   }, [realityList]);
 
@@ -1197,8 +1220,15 @@ function GenericViewer(props) {
     }
     if (isCompare === true) {
       updateViewerChanges();
-      loadCompareViewerData();
-      loadCompareLayerData();
+      if(designList.length <=0 && compareViewMode === "Forge") {
+        getContext();
+        setCompareViewMode(currentViewerType.current);
+        currentCompareViewMode.current = currentViewerType.current;
+        setIsCompare(true);
+      } else {
+        loadCompareViewerData();
+        loadCompareLayerData();
+      }
     } else {
       updateViewerChanges();
     }
@@ -1235,7 +1265,7 @@ function GenericViewer(props) {
           <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
         </div>
         {
-          !isCompare && hotspots && hotspots.length > 0 ?
+          !isCompare && viewerType === "Mapbox"  && viewMode === "Reality" && hotspots && hotspots.length > 0 ?
           <Hotspots data={hotspots} selected={selectedHotspot} onHotspotClick={onHotspotClick}></Hotspots>
           : <></>
         }
