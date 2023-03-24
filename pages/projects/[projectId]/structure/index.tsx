@@ -491,7 +491,7 @@ const Index: React.FC<IProps> = () => {
     const types: any = [];
     if (activeRealityMap) {
       for (const key in activeRealityMap) {
-        activeRealityMap[key].forEach((item: any) => {
+        activeRealityMap[key as keyof IActiveRealityMap].forEach((item: any) => {
           item.realityType?.forEach((each: any) => {
             if (!list.includes(each)) {
               list.push(each);
