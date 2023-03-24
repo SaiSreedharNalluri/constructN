@@ -639,7 +639,7 @@ function GenericViewer(props) {
           }
           setTimeout(() => {
             mapboxUtils.current.updateData(data, currentContext.current);
-            setHotspots(hotspots.data.features);
+            hotspots && hotspots.data && setHotspots(hotspots.data.features);
           }, 500);
           mapboxUtils.current.updateIssuesData(issuesList);
         }
@@ -698,14 +698,12 @@ function GenericViewer(props) {
         break;
         case 'Mapbox':
           if (mapboxCompareUtils.current != undefined) {
-            mapboxCompareUtils.current.setSnapshot(snapshot);
+            mapboxCompareUtils.current.setSnapshot(compareSnapshot);
             mapboxCompareUtils.current.setHotspotClick(selectHotspot);
             let data = await getMapboxLayers(structure, compareSnapshot);
-            const reality = compareSnapshot.reality.find((reality) => { return reality })
-            let hotspots = await getMapboxHotspots(project._id, structure._id, compareSnapshot._id, reality._id)
+            console.log(data, compareSnapshot)
             setTimeout(() => {
               mapboxCompareUtils.current.updateData(data, currentContext.current);
-              setHotspots(hotspots.data.features);
             }, 500);
             mapboxCompareUtils.current.updateIssuesData(issuesList);
           }
@@ -915,7 +913,7 @@ function GenericViewer(props) {
         break;
       case 'Mapbox':
         if (mapboxUtils.current) {
-          
+          mapboxUtils.current.removeData();
         }
         break;
     }
@@ -935,7 +933,7 @@ function GenericViewer(props) {
         break;       
       case 'Mapbox':
         if (mapboxUtils.current) {
-          
+          mapboxUtils.current.removeLayers();
         }
         break;
     }
@@ -955,7 +953,7 @@ function GenericViewer(props) {
         break;
       case 'Mapbox':
         if (mapboxCompareUtils.current) {
-          
+          mapboxCompareUtils.current.removeData()
         }
         break;
     }
@@ -1004,7 +1002,7 @@ function GenericViewer(props) {
         break;
       case 'Mapbox':
         if (mapboxCompareUtils.current) {
-          // mapboxCompareUtils.current.shutdown();
+          mapboxCompareUtils.current.shutdown();
           mapboxCompareUtils.current = undefined;
           delete mapboxCompareUtils.current;
         }
@@ -1235,7 +1233,7 @@ function GenericViewer(props) {
           <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
         </div>
         {
-          !isCompare && hotspots && hotspots.length > 0 ?
+          !isCompare && viewMode === 'Reality' && hotspots && hotspots.length > 0 ?
           <Hotspots data={hotspots} selected={selectedHotspot} onHotspotClick={onHotspotClick}></Hotspots>
           : <></>
         }
