@@ -491,13 +491,15 @@ const Index: React.FC<IProps> = () => {
     const types: any = [];
     if (activeRealityMap) {
       for (const key in activeRealityMap) {
-        activeRealityMap[key as keyof IActiveRealityMap].forEach((item: any) => {
-          item.realityType?.forEach((each: any) => {
-            if (!list.includes(each)) {
-              list.push(each);
-            }
-          });
-        });
+        activeRealityMap[key as keyof IActiveRealityMap].forEach(
+          (item: any) => {
+            item.realityType?.forEach((each: any) => {
+              if (!list.includes(each)) {
+                list.push(each);
+              }
+            });
+          }
+        );
       }
     }
     let realityKeys = list.reduce((a: any, v: any) => ({ ...a, [v]: v }), {});
@@ -700,6 +702,43 @@ const Index: React.FC<IProps> = () => {
         break;
     }
   };
+
+  useEffect(() => {
+    if (currentViewMode === "Design" && designAndRealityMaps.length) {
+      if (designAndRealityMaps.includes("Plan Drawings")) {
+        setViewType("Plan Drawings");
+      } else if (designAndRealityMaps.includes("BIM")) {
+        setViewType("BIM");
+      } else {
+        setViewType(
+          Object.keys(designMap)?.length ? Object.keys(designMap)[0] : ""
+        );
+      }
+    } else if (currentViewMode === "Reality" && designAndRealityMaps.length) {
+      if (designAndRealityMaps.includes("pointCloud")) {
+        setViewType("pointCloud");
+      } else if (designAndRealityMaps.includes("orthoPhoto")) {
+        setViewType("orthoPhoto");
+      } else {
+        // setViewType(designAndRealityMaps[0]);
+        const arr =
+          activeRealityMap &&
+          activeRealityMap[
+            `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+          ]?.length &&
+          activeRealityMap[
+            `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+          ][0].realityType?.length
+            ? activeRealityMap[
+                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+              ][0].realityType
+            : [];
+        if (arr && arr.length) {
+          setViewType(arr[0]);
+        }
+      }
+    }
+  }, [currentViewMode]);
   const getIssues = (structureId: string) => {
     if (structureId && router.query.projectId) {
       getIssuesList(router.query.projectId as string, structureId)
