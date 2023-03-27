@@ -125,7 +125,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     if (myTypesList?.length) {
       setSelectedTypeVal(myTypesList[0]);
     }
-  }, [myTypesList]);
+  }, [myTypesList?.length]);
   useEffect(() => {
     setSelectedTypeVal(selectedType);
   }, [selectedType]);

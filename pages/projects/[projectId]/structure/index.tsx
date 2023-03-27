@@ -584,7 +584,6 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: ITools) => {
-    console.log("Tool Clicked", toolInstance.toolName);
     let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.toolName) {
       case "viewType":
@@ -710,9 +709,15 @@ const Index: React.FC<IProps> = () => {
       } else if (designAndRealityMaps.includes("BIM")) {
         setViewType("BIM");
       } else {
-        setViewType(
-          Object.keys(designMap)?.length ? Object.keys(designMap)[0] : ""
-        );
+        const val =
+          designMap && Object.keys(designMap)?.length
+            ? Object.keys(designMap)[0]
+            : "";
+        if (val) {
+          setViewType(val);
+        } else {
+          setViewMode("Reality");
+        }
       }
     } else if (currentViewMode === "Reality" && designAndRealityMaps.length) {
       if (designAndRealityMaps.includes("pointCloud")) {
@@ -735,6 +740,8 @@ const Index: React.FC<IProps> = () => {
             : [];
         if (arr && arr.length) {
           setViewType(arr[0]);
+        } else {
+          setViewMode("Design");
         }
       }
     }
