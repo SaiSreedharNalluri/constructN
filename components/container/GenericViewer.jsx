@@ -307,6 +307,11 @@ function GenericViewer(props) {
           potreeUtils.current.selectTag(tag);
         }
         break;
+      case 'Mapbox':
+        if (mapboxUtils.current) {
+          mapboxUtils.current.selectTag(tag);
+        }
+        break;
     }
   };
 
@@ -320,6 +325,11 @@ function GenericViewer(props) {
       case 'Potree':
         if (potreeUtils.current) {
           potreeUtils.current.showTag(tag, show);
+        }
+        break;
+      case 'Mapbox':
+        if (mapboxUtils.current) {
+          mapboxUtils.current.showTag(tag, show);
         }
         break;
     }
@@ -414,6 +424,15 @@ function GenericViewer(props) {
             potreeUtils.current.updateIssuesData(issuesList);
           } else if (type === 'Task') {
             potreeUtils.current.updateTasksData(tasksList);
+          }
+        }
+        break;
+      case 'Mapbox':
+        if (mapboxUtils.current) {
+          if (type === 'Issue') {
+            mapboxUtils.current.updateIssuesData(issuesList);
+          } else if (type === 'Task') {
+            mapboxUtils.current.updateTasksData(tasksList);
           }
         }
         break;
@@ -526,7 +545,7 @@ function GenericViewer(props) {
       case 'Mapbox':
         if (mapboxUtils.current == undefined) {
           mapboxUtils.current = MapboxViewerUtils();
-          mapboxUtils.current.initializeViewer(viewerId, {context: currentContext.current.cameraObject});
+          mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, {context: currentContext.current.cameraObject});
           mapboxUtils.current.setType(viewType);
         }
         break;
@@ -560,7 +579,7 @@ function GenericViewer(props) {
       case 'Mapbox':
         if (mapboxCompareUtils.current == undefined) {
           mapboxCompareUtils.current = MapboxViewerUtils();
-          mapboxCompareUtils.current.initializeViewer(viewerId, undefined, mapboxUtils.current.getMap());
+          mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, undefined, mapboxUtils.current.getMap());
           mapboxCompareUtils.current.setType(viewType);          
         }
         break;
@@ -651,8 +670,9 @@ function GenericViewer(props) {
           setTimeout(() => {
             mapboxUtils.current.updateData(data, currentContext.current);
             hotspots && hotspots.data && setHotspots(hotspots.data.features);
+            mapboxUtils.current.updateIssuesData(issuesList);
+            mapboxUtils.current.updateTasksData(tasksList);
           }, 500);
-          mapboxUtils.current.updateIssuesData(issuesList);
         }
         break;
     }

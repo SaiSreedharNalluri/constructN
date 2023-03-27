@@ -91,7 +91,7 @@ export const getPointCloud = async(structure, snapshot) =>{
 
 export const getMapboxLayers = async(structure, snapshot) =>{
     const layersList = await getOrthoPhotoLayers(getStructurePath(snapshot.project, structure._id));
-    return layersList.data;
+    return layersList ? layersList.data : undefined;
 }
 
 export const getMapboxHotspots = async(projectId, structureId, snapshotId, realityId) =>{

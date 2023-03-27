@@ -738,7 +738,7 @@ const Editproject: React.FC = () => {
                             toggle(e);
                           }}
                         >
-                          Issue Priortiy{" "}
+                          Issue Priority{" "}
                         </button>
                       </li>
                       <li
@@ -755,7 +755,7 @@ const Editproject: React.FC = () => {
                           id="taskPriority"
                           className="p-2 text-gray-600 text-center text-lg font-medium"
                         >
-                          Task Priortiy
+                          Task Priority
                         </button>
                       </li>
                       <li
