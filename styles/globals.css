@@ -499,3 +499,6 @@ th {
 td {
   padding: 0.5em 1em;
 }
+.fcWidget-chat{
+  padding-left: 30px;
+}
