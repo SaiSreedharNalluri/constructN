@@ -1,4 +1,14 @@
-import { Autocomplete, Box, TextField, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  ListItemIcon,
+  Menu,
+  TextField,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps,
+  Typography,
+} from "@mui/material";
 import { styled } from "@mui/system";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Select } from "@mui/material";
@@ -11,6 +21,8 @@ import Clip from "../../../public/divami_icons/clip.svg";
 import Delete from "../../../public/divami_icons/delete.svg";
 import Edit from "../../../public/divami_icons/edit.svg";
 import Send from "../../../public/divami_icons/send.svg";
+import vectorTool from "../../../public/divami_icons/vectorTool.svg";
+
 import CustomButton from "../custom-button/CustomButton";
 import CustomSelect from "../custom-select/CustomSelect";
 import { toast } from "react-toastify";
@@ -86,6 +98,10 @@ import {
   SendButton,
   StyledInput,
   ActivityLogContainer,
+  StyledMenu,
+  IconContainer,
+  AssigneeList,
+  SecondAssigneeList,
 } from "./IssueDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
@@ -158,6 +174,9 @@ function BasicTabs(props: any) {
   const [comments, setComments] = useState("");
   const [backendComments, setBackendComments] = useState<any>([]);
   const [file, setFile] = useState<File>();
+
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
@@ -278,6 +297,24 @@ function BasicTabs(props: any) {
   };
 
   console.log("taskState.TabOne issue", taskState.TabOne);
+
+  const handleSortMenuClose = () => {
+    setIsSortMenuOpen(false);
+    setAnchorEl(null);
+  };
+
+  const sortMenuOptions = [
+    {
+      label: "Status ( To Do - Completed)",
+      icon: null,
+      method: "status_asc",
+    },
+    {
+      label: "Status ( Completed - To Do)",
+      icon: null,
+      method: "status_desc",
+    },
+  ];
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -408,8 +445,45 @@ function BasicTabs(props: any) {
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType style={{ color: "#101F4B" }}>
-                    {taskState?.TabOne?.assignees}{" "}
-                    <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                    {taskState?.TabOne?.assignees}
+                    <DarkToolTip
+                      arrow
+                      title={
+                        <SecondAssigneeList>
+                          {taskState?.TabOne?.assignessList?.map(
+                            (assignName: any, index: number) => {
+                              return (
+                                <>
+                                  {index !==
+                                  taskState?.TabOne?.assignessList.length - 1
+                                    ? assignName?.firstName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.firstName.slice(1) +
+                                      " " +
+                                      assignName.lastName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.lastName.slice(1) +
+                                      " | "
+                                    : assignName?.firstName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.firstName.slice(1) +
+                                      " " +
+                                      assignName.lastName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.lastName.slice(1)}
+                                </>
+                              );
+                            }
+                          )}
+                        </SecondAssigneeList>
+                      }
+                    >
+                      <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                    </DarkToolTip>
                     {taskState?.TabOne?.assignees ? (
                       <PenIconImage
                         onClick={() => {
@@ -457,8 +531,47 @@ function BasicTabs(props: any) {
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType style={{ color: "#101F4B" }}>
-                    {taskState?.TabOne?.assignees}{" "}
-                    <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                    {taskState?.TabOne?.assignees}
+                    <LightTooltip
+                      arrow
+                      title={
+                        <AssigneeList>
+                          {taskState?.TabOne?.assignessList?.map(
+                            (assignName: any, index: number) => {
+                              console.log("print", taskState);
+                              return (
+                                <>
+                                  {index !==
+                                  taskState?.TabOne?.assignessList.length - 1
+                                    ? assignName?.firstName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.firstName.slice(1) +
+                                      " " +
+                                      assignName.lastName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.lastName.slice(1) +
+                                      " | "
+                                    : assignName?.firstName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.firstName.slice(1) +
+                                      " " +
+                                      assignName.lastName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.lastName.slice(1)}
+                                </>
+                              );
+                            }
+                          )}
+                        </AssigneeList>
+                      }
+                    >
+                      <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                    </LightTooltip>
+
                     {taskState?.TabOne?.assignees ? (
                       <PenIconImage
                         onClick={() => {
@@ -741,6 +854,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
   //     });
   // };
 
+  console.log("selectedIssue", selectedIssue);
+
   const DetailsObj = {
     TabOne: {
       options: [
@@ -797,6 +912,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
 
+  // console.log("taskState22", taskState);
+
   useEffect(() => {
     let tempObj = {
       ...selectedIssue,
@@ -826,6 +943,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       id: selectedIssue?._id,
       tags: selectedIssue?.tags,
       status: selectedIssue?.status,
+      title: selectedIssue?.title,
     };
     setTaskState((prev: any) => {
       return {
@@ -956,7 +1074,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           ...each,
         };
       });
-    console.log("njdsfjk");
+    // console.log("njdsfjk");
     if (filesArr?.length) {
       createAttachment(issue._id, fileformdata)
         .then((response) => {
@@ -1068,7 +1186,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
           open={showPopUp}
           setShowPopUp={setshowPopUp}
           modalTitle={"Delete Issue"}
-          modalmessage={`Are you sure you want to delete this Issue "${selectedIssue.type}(#${selectedIssue._id})"?`}
+          // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue.type}(#${selectedIssue._id})"?`}
+          modalmessage={`Are you sure you want to delete this Issue "${selectedIssue.title}"?`}
           primaryButtonLabel={"Delete"}
           SecondaryButtonlabel={"Cancel"}
           callBackvalue={onDeleteIssue}
@@ -1079,3 +1198,59 @@ const CustomIssueDetailsDrawer = (props: any) => {
 };
 
 export default CustomIssueDetailsDrawer;
+
+const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "white",
+    // color: "rgba(0, 0, 0, 0.87)",
+    fontSize: 11,
+    // position: "absolute",
+    right: 30,
+    borderRadius: "4px",
+    top: 2,
+    // width: "308px",
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    height: "10px !important",
+    left: "38px !important",
+    marginBottom: "0px",
+    "&:before": {
+      background: "#FFFFFF",
+      border: "1px solid #D9D9D9",
+    },
+
+    //  color: 'red',
+  },
+}));
+
+const DarkToolTip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "white",
+    // color: "rgba(0, 0, 0, 0.87)",
+    fontSize: 11,
+    // position: "absolute",
+    right: 30,
+    borderRadius: "4px",
+    top: 2,
+    // width: "308px",
+  },
+
+  "& .MuiTooltip-tooltip": {
+    background: "transparent !important",
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    height: "12px !important",
+    left: "4px !important",
+    marginBottom: "0px",
+    "&:before": {
+      background: "#FFFFFF",
+      border: "1px solid #D9D9D9",
+    },
+
+    //  color: 'red',
+  },
+}));

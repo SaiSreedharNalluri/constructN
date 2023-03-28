@@ -513,6 +513,8 @@ export const ImageErrorIcon = styled(Image)({
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
   color: "blue",
+  width:"100% !important",
+
   "label + &": {
     marginTop: theme.spacing(8),
   },

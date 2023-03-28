@@ -1,6 +1,7 @@
 import {
   Autocomplete,
   Box,
+  Menu,
   Select,
   TextField,
   Typography,
@@ -172,6 +173,9 @@ function BasicTabs(props: any) {
   const [comments, setComments] = useState("");
   const [backendComments, setBackendComments] = useState<any>([]);
 
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
       return {
@@ -274,6 +278,10 @@ function BasicTabs(props: any) {
     }
   }, [taskState]);
 
+  const handleSortMenuClose = () => {
+    setIsSortMenuOpen(false);
+    setAnchorEl(null);
+  };
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
@@ -451,7 +459,97 @@ function BasicTabs(props: any) {
                   <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType style={{ color: "#101F4B" }}>
                     {taskState?.TabOne?.assignees}{" "}
-                    <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                    <MoreText
+                      onClick={(e) => {
+                        setIsSortMenuOpen((prev) => !prev);
+                        // handleSortClick(e);
+                      }}
+                    >
+                      {taskState?.TabOne?.moreText}
+                    </MoreText>
+                    <Menu
+                      anchorEl={anchorEl}
+                      id="account-menu"
+                      open={isSortMenuOpen}
+                      onClose={handleSortMenuClose}
+                      onClick={handleSortMenuClose}
+                      sx={{
+                        "& .MuiPaper-root": {
+                          width: "308px",
+                          height: "86px",
+                          color: "#101F4C",
+                          fontFamily: "Open Sans",
+                          fontStyle: "normal",
+                          fontSize: "14px",
+                          padding: "15px !important",
+                        },
+
+                        "& .MuiPaper-root.MuiMenu-paper": {
+                          // Styles for the Menu's paper element
+                          // ...
+                          // color: "yellow",
+                        },
+                        "& .MuiPaper-root.MuiPopover-paper": {
+                          // Styles for the Popover's paper element
+                          // ...
+                          // top: "382px !important",
+                          // left: "476px !important",
+                        },
+
+                        "& .MuiList-root-MuiMenu-list": {
+                          paddingTop: "15px !important",
+                          paddingLeft: "15px",
+                        },
+                      }}
+                      PaperProps={{
+                        elevation: 0,
+                        sx: {
+                          overflow: "visible",
+                          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                          mt: -14,
+                          mr: 8,
+                          "& .MuiAvatar-root": {
+                            width: 0,
+                            height: 32,
+                            ml: -0.5,
+                            mr: 1,
+                          },
+                          "&:before": {
+                            content: '""',
+                            display: "block",
+                            position: "absolute",
+                            top: 0,
+                            right: 60,
+                            width: 10,
+                            height: 10,
+                            bgcolor: "background.paper",
+                            transform: "translateY(-50%) rotate(45deg)",
+                            zIndex: 0,
+                          },
+                        },
+                      }}
+                      transformOrigin={{ horizontal: "right", vertical: "top" }}
+                      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                    >
+                      {taskState?.TabOne?.assignessList?.map(
+                        (assignName: any, index: number) => {
+                          console.log("print", taskState);
+                          return (
+                            <>
+                              {index !==
+                              taskState?.TabOne?.assignessList.length - 1
+                                ? assignName?.firstName +
+                                  " " +
+                                  assignName.lastName +
+                                  " | "
+                                : assignName?.firstName +
+                                  " " +
+                                  assignName.lastName}
+                            </>
+                          );
+                        }
+                      )}
+                    </Menu>
                     {taskState?.TabOne?.assignees ? (
                       <PenIconImage
                         onClick={() => {
@@ -777,6 +875,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
           : "",
       id: selectedTask._id,
       status: selectedTask.status,
+      title: selectedTask.title,
     };
     setTaskState((prev: any) => {
       return {
@@ -992,7 +1091,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
           open={showPopUp}
           setShowPopUp={setshowPopUp}
           modalTitle={"Delete Task"}
-          modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
+          // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
+          modalmessage={`Are you sure you want to delete this Task "${selectedTask.title}"?`}
           primaryButtonLabel={"Delete"}
           SecondaryButtonlabel={"Cancel"}
           callBackvalue={onDeleteTask}
