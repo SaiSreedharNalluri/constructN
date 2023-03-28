@@ -746,12 +746,26 @@ const Index: React.FC<IProps> = () => {
       }
     }
   }, [currentViewMode]);
-  const getIssues = (structureId: string) => {
+  const getIssues = (structureId: string, isDownload?: boolean) => {
     if (structureId && router.query.projectId) {
       getIssuesList(router.query.projectId as string, structureId)
         .then((response) => {
-          setIssueList(response.result);
-          setIssueFilterList(response.result);
+          if (isDownload) {
+            console.log(isDownload, "isdownload");
+            // response.blob().then((blob: any) => {
+            // Creating new object of PDF file
+            const data = response.result;
+            const fileURL = window.URL.createObjectURL(new Blob(data));
+            // Setting various property values
+            let alink = document.createElement("a");
+            alink.href = fileURL;
+            alink.download = "SamplePDF.pdf";
+            alink.click();
+            // });
+          } else {
+            setIssueList(response.result);
+            setIssueFilterList(response.result);
+          }
         })
         .catch((error) => {
           if (error.success === false) {
@@ -760,6 +774,7 @@ const Index: React.FC<IProps> = () => {
         });
     }
   };
+
   const getIssuesPriorityList = (projId: string) => {
     return getIssuesPriority(router.query.projectId as string)
       .then((response) => {
