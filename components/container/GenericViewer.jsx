@@ -1,6 +1,7 @@
 import Script from 'next/script';
 import Moment from 'moment';
 import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
+import Draggable, {DraggableCore} from "react-draggable";
 import Head from 'next/head';
 import Header from './header';
 import { ForgeViewerUtils } from '../../utils/ForgeWrapper2';
@@ -34,6 +35,7 @@ import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
 import TimeLineComponent from '../divami_components/timeline-container/TimeLineComponent'
 import Hotspots from './hotspots';
 import HotspotsCompare from './hotspotsCompare';
+import MiniMap from './minimap';
 
 function GenericViewer(props) {
   const genericViewer = 'genericViewer';
@@ -1322,6 +1324,12 @@ function GenericViewer(props) {
           </HotspotsCompare>
           : <></>
         }
+        {/* <Draggable handle=".handle">
+          <div style={{border: "24px 2px 2px 2px solid red", height: "25%", width: "30%", "z-index": 100 }}>
+            <div className='handle' style={{width: '100%', height: '24px', background: '#ff0000'}}></div>
+            <MiniMap models={[]} viewerState={{center: [-71.516, 46.437], bearing: 90}}></MiniMap>
+          </div>
+        </Draggable> */}
     {/* 
     <div className={` ${isFullScreenActive?"w-full h-full":" calc-w calc-h"} fixed flex flex-row`}>
       <div id="TheView" className="relative basis-1/2 flex grow shrink">
