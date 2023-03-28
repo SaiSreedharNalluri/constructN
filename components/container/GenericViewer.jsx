@@ -1256,8 +1256,8 @@ function GenericViewer(props) {
     // if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
     //   mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
     // }
-    handleRealityTypeChange();
-  }, [viewLayers]);
+    // handleRealityTypeChange();
+  }, [viewLayers,props.layersUpdated]);
 
   // Triggered when compareViewMode changed
   useEffect(() => {

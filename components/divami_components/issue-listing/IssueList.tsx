@@ -299,38 +299,38 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   };
 
   const getDownladableIssueList = (method: string) => {
-    getIssues(currentStructure._id, true);
-    // const issL = filteredIssuesList;
-    // let myL = issL.map((iss: any) => {
-    //   let x = _.omit(iss, "progress", "context");
-    //   let g = _.update(x, "owner", (ass) => {
-    //     //console.log("TEST",ass);
-    //     return ass.firstName;
-    //   });
-    //   let y = _.update(g, "assignees", (ass) => {
-    //     let n = ass?.length
-    //       ? ass.map((o: { firstName: any }) => {
-    //           return o.firstName;
-    //         })
-    //       : "";
-    //     return n;
-    //   });
-    //   let z = _.update(y, "attachments", (att) => {
-    //     let n = att?.length
-    //       ? att.map((o: { name: any }) => {
-    //           return o.name;
-    //         })
-    //       : "";
-    //     let u = att?.length
-    //       ? att.map((o: { url: any }) => {
-    //           return o.url;
-    //         })
-    //       : "";
-    //     if (n.length) return n + " : " + u;
-    //     return "";
-    //   });
-    //   return z;
-    // });
+    // getIssues(currentStructure._id, true);
+    const issL = filteredIssuesList;
+    let myL = issL.map((iss: any) => {
+      let x = _.omit(iss, "progress", "context");
+      let g = _.update(x, "owner", (ass) => {
+        //console.log("TEST",ass);
+        return ass.firstName;
+      });
+      let y = _.update(g, "assignees", (ass) => {
+        let n = ass?.length
+          ? ass.map((o: { firstName: any }) => {
+              return o.firstName;
+            })
+          : "";
+        return n;
+      });
+      let z = _.update(y, "attachments", (att) => {
+        let n = att?.length
+          ? att.map((o: { name: any }) => {
+              return o.name;
+            })
+          : "";
+        let u = att?.length
+          ? att.map((o: { url: any }) => {
+              return o.url;
+            })
+          : "";
+        if (n.length) return n + " : " + u;
+        return "";
+      });
+      return z;
+    });
     // const link = document.createElement("a");
     // link.id = "download-csv";
     // link.setAttribute(
@@ -357,7 +357,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     //   }
     // );
 
-    // return myL;
+    return myL;
   };
 
   useEffect(() => {
@@ -495,7 +495,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     data-testid="filter"
                   />
 
-                  <Tooltip title="Download Menu">
+                  {/* <Tooltip title="Download Menu">
                     <DownloadIcon
                       src={Download}
                       alt="Arrow"
@@ -504,8 +504,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         handleSortClick(e);
                       }}
                     />
-                  </Tooltip>
-                  {/* <CSVLink
+                  </Tooltip> */}
+                  <CSVLink
                     data={getDownladableIssueList(filteredIssuesList)}
                     filename={"my-issues.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
@@ -513,7 +513,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     data-testid="download"
                   >
                     <DownloadIcon src={Download} alt="Arrow" />
-                  </CSVLink> */}
+                  </CSVLink>
                 </>
               )}
             </MiniSymbolsContainer>

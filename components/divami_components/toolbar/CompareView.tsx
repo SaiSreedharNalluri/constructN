@@ -27,8 +27,12 @@ import {
 } from "./ToolBarStyles";
 import { styled } from "@mui/system";
 
-const CompareView = ({ rightMenuClickHandler, active, designMap }: any) => {
-  console.log(active, "compare view active");
+const CompareView = ({
+  rightMenuClickHandler,
+  active,
+  designMap,
+  selectedType = "",
+}: any) => {
   return (
     <CompareViewBox>
       <CompareViewTitleDiv>Compare Views:</CompareViewTitleDiv>
@@ -47,7 +51,7 @@ const CompareView = ({ rightMenuClickHandler, active, designMap }: any) => {
             />{" "}
           </CompareIcon>
         </Tooltip>
-        {designMap ? (
+        {designMap && selectedType !== "orthoPhoto" ? (
           <Tooltip title="Compare Design">
             <DesignCompareViewIcon
               id="compareDesign"

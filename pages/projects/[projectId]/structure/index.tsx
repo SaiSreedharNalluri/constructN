@@ -124,6 +124,7 @@ const Index: React.FC<IProps> = () => {
   const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
   const [tasksStatusList, setTasksStatusList] = useState<[string]>([""]);
   const [issueTypesList, setIssueTypesList] = useState<[string]>([""]);
+  const [layersUpdated, setLayersUpdated] = useState(false);
 
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
   const [taskFilterList, setTaskFilterList] = useState<ITasks[]>([]);
@@ -144,7 +145,6 @@ const Index: React.FC<IProps> = () => {
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
-
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
   };
@@ -532,8 +532,9 @@ const Index: React.FC<IProps> = () => {
               issuesList={issuesList}
               viewMode={currentViewMode}
               viewType={currentViewType}
-              viewLayers={currentViewLayers}
+              viewLayers={activeRealityMap}
               isFullScreenActive={isFullScreenActive}
+              layersUpdated={layersUpdated}
             ></GenericViewer>
           )
         );
@@ -642,12 +643,13 @@ const Index: React.FC<IProps> = () => {
 
         break;
       case "addViewLayer":
-        newLayers.push(toolInstance.toolAction);
-        setViewLayers(newLayers);
+        // newLayers.push(toolInstance.toolAction);
+        // console.log(newLayers, "newLayesrs");
+        // setViewLayers(newLayers);
         break;
       case "removeViewLayer":
-        newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
-        setViewLayers(newLayers);
+        // newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
+        // setViewLayers(newLayers);
         break;
       case "compareReality":
       case "compareDesign":
@@ -1574,6 +1576,9 @@ const Index: React.FC<IProps> = () => {
               taskSubmit={taskSubmit}
               selectedType={currentViewType}
               deleteTheAttachment={deleteTheAttachment}
+              setActiveRealityMap={setActiveRealityMap}
+              setLayersUpdated={setLayersUpdated}
+              layersUpdated={layersUpdated}
             />
 
             {/* <CustomToaster /> */}
