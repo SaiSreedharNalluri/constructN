@@ -508,7 +508,7 @@ const Index: React.FC<IProps> = () => {
       types.push(key);
     });
     setDesignAndRealityMaps(types);
-  }, [activeRealityMap, designMap]);
+  }, [activeRealityMap, designMap, snapshot?._id]);
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
   };
@@ -1543,6 +1543,7 @@ const Index: React.FC<IProps> = () => {
               currentStructure={structure}
               currentSnapshot={snapshot}
               currentTypesList={designAndRealityMaps}
+              designMap={designMap}
               currentLayersList={activeRealityMap}
               closeFilterOverlay={closeFilterOverlay}
               closeTaskFilterOverlay={closeTaskFilterOverlay}

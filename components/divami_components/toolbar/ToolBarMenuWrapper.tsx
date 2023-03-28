@@ -99,6 +99,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   taskSubmit,
   selectedType,
   deleteTheAttachment,
+  designMap,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -360,6 +361,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           <CompareView
             rightMenuClickHandler={rightMenuClickHandler}
             active={active}
+            designMap={designMap}
           />
         ) : (
           <></>
