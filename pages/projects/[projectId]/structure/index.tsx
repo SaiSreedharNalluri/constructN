@@ -458,7 +458,7 @@ const Index: React.FC<IProps> = () => {
       currentViewLayers.push(key);
     });
     Object.values(realityMap).map((val) => {
-      val.forEach((reality) => {
+      val.realities?.forEach((reality) => {
         reality.realityType?.forEach((rType) => {
           if (viewTypes.findIndex((typ) => typ === rType) == -1) {
             viewTypes.push(rType);
@@ -491,7 +491,7 @@ const Index: React.FC<IProps> = () => {
     const types: any = [];
     if (activeRealityMap) {
       for (const key in activeRealityMap) {
-        activeRealityMap[key as keyof IActiveRealityMap].forEach(
+        activeRealityMap[key as keyof IActiveRealityMap].realities?.forEach(
           (item: any) => {
             item.realityType?.forEach((each: any) => {
               if (!list.includes(each)) {
@@ -730,13 +730,13 @@ const Index: React.FC<IProps> = () => {
           activeRealityMap &&
           activeRealityMap[
             `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-          ]?.length &&
+          ]?.realities?.length &&
           activeRealityMap[
             `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-          ][0].realityType?.length
+          ].realities![0].realityType?.length
             ? activeRealityMap[
                 `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-              ][0].realityType
+              ].realities![0].realityType
             : [];
         if (arr && arr.length) {
           setViewType(arr[0]);
