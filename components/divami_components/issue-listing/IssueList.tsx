@@ -82,6 +82,8 @@ import { getProjectUsers } from "../../../services/project";
 import router from "next/router";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import { toast } from "react-toastify";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 interface IProps {
   closeOverlay: () => void;
@@ -151,6 +153,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [issueList, setIssueList] = useState<any>(issuesList);
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const sortMenuOptions = [
@@ -187,6 +191,19 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     },
   ];
 
+  const downloadMenuOptions = [
+    {
+      label: "Download as CSV",
+      icon: null,
+      method: "csv",
+    },
+    {
+      label: "Download as PDF",
+      icon: null,
+      method: "pdf",
+    },
+  ];
+
   const handleSortClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -196,8 +213,16 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setAnchorEl(null);
   };
 
+  const handleDownloadClose = () => {
+    setIsDownloadMenuOpen(false);
+    setAnchorEl(null);
+  };
+
   const handleSortMenuClick = (sortMethod: string) =>
     handleOnIssueSort(sortMethod);
+
+  const handleDownloadMenuClick = (sortMethod: string) =>
+    getDownladableIssueList(sortMethod);
 
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(issueList);
   const [errorShow, setErrorShow] = useState<any>(issueList);
@@ -273,8 +298,10 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     }
   };
 
-  const getDownladableIssueList = (issL = issuesList) => {
-    let myL = issL.map((iss) => {
+  const getDownladableIssueList = (method: string) => {
+    // getIssues(currentStructure._id, true);
+    const issL = filteredIssuesList;
+    let myL = issL.map((iss: any) => {
       let x = _.omit(iss, "progress", "context");
       let g = _.update(x, "owner", (ass) => {
         //console.log("TEST",ass);
@@ -304,6 +331,32 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       });
       return z;
     });
+    // const link = document.createElement("a");
+    // link.id = "download-csv";
+    // link.setAttribute(
+    //   "href",
+    //   "data:text/plain;charset=utf-8," + encodeURIComponent(myL)
+    // );
+    // link.setAttribute("download", `IssueList.pdf`);
+    // document.body.appendChild(link);
+    // link.click();
+    // myL.blob().then((blob: any) => {
+    //   const fileURL = window.URL.createObjectURL(blob);
+    //   // Setting various property values
+    //   let alink = document.createElement("a");
+    //   alink.href = fileURL;
+    //   alink.download = "SamplePDF.pdf";
+    //   alink.click();
+    // });
+    // html2canvas(document.getElementById("download-test") || document.body).then(
+    //   function (canvas) {
+    //     const imgData = canvas.toDataURL("image/png");
+    //     const pdf = new jsPDF();
+    //     pdf.addImage(imgData, "JPEG", 0, 0);
+    //     pdf.save("download.pdf");
+    //   }
+    // );
+
     return myL;
   };
 
@@ -335,7 +388,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   return (
     <>
       {errorShow.length > 0 ? (
-        <TaskListContainer>
+        <TaskListContainer id="download-test">
           <HeaderContainer>
             <TitleContainer>
               <span>Issue List</span>
@@ -442,6 +495,16 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     data-testid="filter"
                   />
 
+                  {/* <Tooltip title="Download Menu">
+                    <DownloadIcon
+                      src={Download}
+                      alt="Arrow"
+                      onClick={(e) => {
+                        setIsDownloadMenuOpen((prev) => !prev);
+                        handleSortClick(e);
+                      }}
+                    />
+                  </Tooltip> */}
                   <CSVLink
                     data={getDownladableIssueList(filteredIssuesList)}
                     filename={"my-issues.csv"}
@@ -609,6 +672,58 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   key={option.label}
                   onClick={() => handleSortMenuClick(option.method)}
                   data-testid="sort-menu-item"
+                >
+                  {option.label}
+                  {option.icon && (
+                    <ListItemIcon>
+                      <IconContainer src={option.icon} alt={option.label} />
+                    </ListItemIcon>
+                  )}
+                </StyledMenu>
+              </>
+            ))}
+          </Menu>
+          <Menu
+            anchorEl={anchorEl}
+            id="account-menu"
+            open={isDownloadMenuOpen}
+            onClose={handleDownloadClose}
+            onClick={handleDownloadClose}
+            PaperProps={{
+              elevation: 0,
+              sx: {
+                overflow: "visible",
+                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                mt: 1.5,
+                "& .MuiAvatar-root": {
+                  width: 32,
+                  height: 32,
+                  ml: -0.5,
+                  mr: 1,
+                },
+                "&:before": {
+                  content: '""',
+                  display: "block",
+                  position: "absolute",
+                  top: 0,
+                  right: 14,
+                  width: 10,
+                  height: 10,
+                  bgcolor: "background.paper",
+                  transform: "translateY(-50%) rotate(45deg)",
+                  zIndex: 0,
+                },
+              },
+            }}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          >
+            {downloadMenuOptions.map((option) => (
+              <>
+                <StyledMenu
+                  key={option.label}
+                  onClick={() => handleDownloadMenuClick(option.method)}
+                  data-testid="download-menu-item"
                 >
                   {option.label}
                   {option.icon && (
