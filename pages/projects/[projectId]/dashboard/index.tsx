@@ -8,6 +8,7 @@ import { getdashBoardUrls } from '../../../../services/s3Service';
 const Index: React.FC = () => {
   const router = useRouter();
   const [tabIndex, setTabIndex] = useState(0);
+  const [loadData, setLoadData] = useState(false);
   const [urlObj, setUrlObj] = useState<{
     dashboard_url: string;
     report_url: string;
@@ -20,7 +21,7 @@ const Index: React.FC = () => {
           setUrlObj(response);
         })
         .catch((error) => {
-          setUrlObj(undefined);
+          setLoadData(true);
         });
     }
   }, [router.isReady, router.query.projectId]);
@@ -46,7 +47,7 @@ const Index: React.FC = () => {
                   </TabList>
 
                   <TabPanel>
-                    {urlObj ? (
+                    {!loadData ? (
                       <iframe
                         className="w-95 h-93"
                         src={urlObj?.dashboard_url}
@@ -58,7 +59,7 @@ const Index: React.FC = () => {
                     )}
                   </TabPanel>
                   <TabPanel>
-                    {urlObj ? (
+                    {!loadData ? (
                       <iframe className="w-95 h-93" src={urlObj?.report_url} />
                     ) : (
                       <h1 className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300 text-orange-400 ">
