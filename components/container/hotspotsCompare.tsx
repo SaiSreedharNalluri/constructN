@@ -48,38 +48,38 @@ const Hotspots: React.FC<IProps> = ({ hotspotDetails, hotspotCompareDetails, sna
         <tbody>
           <tr>
             <td>Row Clearing</td>
-            <td>{left.row_clearing}</td>
-            <td>{right.row_clearing}</td>
+            <td>{left.row_clearing}%</td>
+            <td>{right.row_clearing}%</td>
           </tr>
           <tr>
             <td>Stringing</td>
-            <td>{left.stringing}</td>
-            <td>{right.stringing}</td>
+            <td>{left.stringing}%</td>
+            <td>{right.stringing}%</td>
           </tr>
           <tr>
             <td>Excavation</td>
-            <td>{left.excavation}</td>
-            <td>{right.excavation}</td>
+            <td>{left.excavation}%</td>
+            <td>{right.excavation}%</td>
           </tr>
           <tr>
             <td>Pipe Laying</td>
-            <td>{left.pipe_laying}</td>
-            <td>{right.pipe_laying}</td>
+            <td>{left.pipe_laying}%</td>
+            <td>{right.pipe_laying}%</td>
           </tr>
           <tr>
             <td>OFC Cabling</td>
-            <td>{left.ofc_cabling}</td>
-            <td>{right.ofc_cabling}</td>
+            <td>{left.ofc_cabling}%</td>
+            <td>{right.ofc_cabling}%</td>
           </tr>
           <tr>
             <td>Mat Laying</td>
-            <td>{left.mat_laying}</td>
-            <td>{right.mat_laying}</td>
+            <td>{left.mat_laying}%</td>
+            <td>{right.mat_laying}%</td>
           </tr>
           <tr>
             <td>Back Filling</td>
-            <td>{left.back_filling}</td>
-            <td>{right.back_filling}</td>
+            <td>{left.back_filling}%</td>
+            <td>{right.back_filling}%</td>
           </tr>
         </tbody>
       </table>

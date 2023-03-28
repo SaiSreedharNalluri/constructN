@@ -17,6 +17,7 @@ const nextConfig = {
       "d2sf0c7876ryty.cloudfront.net",
       "constructn-projects-us.s3.us-west-2.amazonaws.com",
       "constructn-attachments-us.s3.us-west-2.amazonaws.com",
+      "constructnai.freshdesk.com",
     ],
   },
   redirects: async () => {
