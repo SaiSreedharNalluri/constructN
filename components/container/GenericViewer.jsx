@@ -672,7 +672,7 @@ function GenericViewer(props) {
             hotspots && hotspots.data && setHotspots(hotspots.data.features);
             mapboxUtils.current.updateIssuesData(issuesList);
             mapboxUtils.current.updateTasksData(tasksList);
-          }, 500);
+          }, 700);
         }
         break;
     }
@@ -745,8 +745,22 @@ function GenericViewer(props) {
               mapboxCompareUtils.current.updateData(data, currentContext.current);
               hotspots && hotspots.data && (hotspotsCompare = hotspots.data.features);
               hotspots && hotspots.data && setHotspotsCompare(hotspots.data.features);
-            }, 500);
-            mapboxCompareUtils.current.updateIssuesData(issuesList);
+              mapboxCompareUtils.current.updateIssuesData(issuesList);
+              mapboxUtils.current.updateTasksData(tasksList);
+              setTimeout(() => {
+                const filters = ['any']
+                for (let i = 0; i < viewLayers.length; i++) {
+                  const layer = viewLayers[i]
+                  const map = realityMap[layer][0];
+                  if (layer !== 'Drone Image') {
+                    filters.push(map.filter)
+                  }
+                }
+                if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
+                  mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
+                }
+              }, 500)
+            }, 700);
           }
           break;
     }
@@ -1215,13 +1229,11 @@ function GenericViewer(props) {
   useEffect(() => {
     console.log("Generic Viewer View Layers UseEffect", viewLayers);
     const filters = ['any']
-    let layerId;
     for(let i = 0; i < viewLayers.length; i++) {
       const layer = viewLayers[i]
       const map = realityMap[layer][0];
       if(layer !== 'Drone Image') {
         filters.push(map.filter)
-        layerId = map.layer
       }
     }
     
