@@ -202,7 +202,7 @@ function GenericViewer(props) {
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current) {
-          forgeUtils.current.showLayers(viewLayers);
+          viewLayers && forgeUtils.current.showLayers(Object.keys(viewLayers));
         }
         break;
       case 'Potree':
@@ -762,16 +762,18 @@ function GenericViewer(props) {
               mapboxCompareUtils.current.updateIssuesData(issuesList);
               mapboxUtils.current.updateTasksData(tasksList);
               setTimeout(() => {
-                const filters = ['any']
-                for (let i = 0; i < viewLayers.length; i++) {
-                  const layer = viewLayers[i]
-                  const map = realityMap[layer][0];
-                  if (layer !== 'Drone Image') {
-                    filters.push(map.filter)
+                if(viewLayers && viewLayers['Stages']) {
+                  const filters = ['any']
+                  const children = viewLayers['Stages'].children;
+                  for(let i = 0; i < children.length; i++) {
+                    if(children[i].isSelected) {
+                      filters.push(children[i].filters)
+                    }
                   }
-                }
-                if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
-                  mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
+              
+                  if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
+                    mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
+                  }
                 }
               }, 500)
             }, 700);
@@ -1047,6 +1049,9 @@ function GenericViewer(props) {
           mapboxUtils.current.shutdown();
           mapboxCompareUtils.current = undefined;
           delete mapboxUtils.current;
+          realityMap && realityMap['Stages'] && delete realityMap['Stages']
+          setRealityMap(realityMap)
+          updateRealityMap(realityMap)
         }
         break;
     }
@@ -1242,23 +1247,25 @@ function GenericViewer(props) {
 
   useEffect(() => {
     console.log("Generic Viewer View Layers UseEffect", viewLayers);
-    // const filters = ['any']
-    // for(let i = 0; i < viewLayers.length; i++) {
-    //   const layer = viewLayers[i]
-    //   const map = realityMap[layer][0];
-    //   if(layer !== 'Drone Image') {
-    //     filters.push(map.filter)
-    //   }
-    // }
-    
-    // if(mapboxUtils.current && mapboxUtils.current.isViewerInitialized()) {
-    //   mapboxUtils.current.getMap().setFilter('progress-stages', filters)
-    // }
+    if(viewLayers && viewLayers['Stages']) {
+      const filters = ['any']
+      const children = viewLayers['Stages'].children;
+      for(let i = 0; i < children.length; i++) {
+        if(children[i].isSelected) {
+          filters.push(children[i].filters)
+        }
+      }
 
-    // if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
-    //   mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
-    // }
-    // handleRealityTypeChange();
+      if(mapboxUtils.current && mapboxUtils.current.isViewerInitialized()) {
+        mapboxUtils.current.getMap().setFilter('progress-stages', filters)
+      }
+  
+      if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
+        mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
+      }
+    }
+    
+    handleRealityTypeChange();
   }, [viewLayers,props.layersUpdated]);
 
   // Triggered when compareViewMode changed

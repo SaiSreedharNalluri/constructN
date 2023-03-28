@@ -721,7 +721,7 @@ const Index: React.FC<IProps> = () => {
           setViewMode("Reality");
         }
       }
-    } else if (currentViewMode === "Reality" && designAndRealityMaps.length) {
+    } else if (currentViewMode === "Reality" && designAndRealityMaps.length && (currentViewType != 'pointCloud' && currentViewType != 'orthoPhoto')) {
       if (designAndRealityMaps.includes("pointCloud")) {
         setViewType("pointCloud");
       } else if (designAndRealityMaps.includes("orthoPhoto")) {
