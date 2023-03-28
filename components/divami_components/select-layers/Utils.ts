@@ -1,17 +1,46 @@
-import type { RenderTree } from './Type';
+import type { RenderTree } from "./Type";
 
 export const getTreeViewDataForLayers = (optionsList: any) => {
-  if (optionsList) {
-    const treeViewData = Object.keys(optionsList).map((key, index) => {
-      console.log(key, 'key', optionsList[key], 'optionsList[key]');
-      return {
-        id: key + index,
-        name: key,
-        isSelected: true,
-      };
+  // if (optionsList) {
+  //   const treeViewData = Object.keys(optionsList).map((key, index) => {
+  //     console.log(key, 'key', optionsList[key], 'optionsList[key]');
+  //     return {
+  //       id: key + index,
+  //       name: key,
+  //       isSelected: true,
+  //     };
+  //   });
+  //   return treeViewData;
+  // }
+  let arr = [];
+  let index = 0;
+
+  for (const key in optionsList) {
+    arr.push({
+      id: `p${index}`,
+      name: key,
+      isSelected: optionsList[key]?.isSelected,
+      children: [],
     });
-    return treeViewData;
+    index = index + 1;
+    if (
+      optionsList[key].hasOwnProperty("children") &&
+      optionsList[key]["children"]?.length
+    ) {
+      arr[arr.length - 1].children = optionsList[key].children.map(
+        (each: any, childIndex: number) => {
+          return {
+            ...each,
+            id: `p${index}ch${childIndex}`,
+            name: each.name,
+            isSelected: each.isSelected,
+            children: [],
+          };
+        }
+      );
+    }
   }
+  return arr;
 };
 
 export const getSelectedLayers = (

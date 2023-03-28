@@ -124,6 +124,7 @@ const Index: React.FC<IProps> = () => {
   const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
   const [tasksStatusList, setTasksStatusList] = useState<[string]>([""]);
   const [issueTypesList, setIssueTypesList] = useState<[string]>([""]);
+  const [layersUpdated, setLayersUpdated] = useState(false);
 
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
   const [taskFilterList, setTaskFilterList] = useState<ITasks[]>([]);
@@ -144,7 +145,6 @@ const Index: React.FC<IProps> = () => {
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
-
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
   };
@@ -458,7 +458,7 @@ const Index: React.FC<IProps> = () => {
       currentViewLayers.push(key);
     });
     Object.values(realityMap).map((val) => {
-      val.forEach((reality) => {
+      val.realities?.forEach((reality) => {
         reality.realityType?.forEach((rType) => {
           if (viewTypes.findIndex((typ) => typ === rType) == -1) {
             viewTypes.push(rType);
@@ -491,13 +491,15 @@ const Index: React.FC<IProps> = () => {
     const types: any = [];
     if (activeRealityMap) {
       for (const key in activeRealityMap) {
-        activeRealityMap[key as keyof IActiveRealityMap].forEach((item: any) => {
-          item.realityType?.forEach((each: any) => {
-            if (!list.includes(each)) {
-              list.push(each);
-            }
-          });
-        });
+        activeRealityMap[key as keyof IActiveRealityMap].realities?.forEach(
+          (item: any) => {
+            item.realityType?.forEach((each: any) => {
+              if (!list.includes(each)) {
+                list.push(each);
+              }
+            });
+          }
+        );
       }
     }
     let realityKeys = list.reduce((a: any, v: any) => ({ ...a, [v]: v }), {});
@@ -506,7 +508,7 @@ const Index: React.FC<IProps> = () => {
       types.push(key);
     });
     setDesignAndRealityMaps(types);
-  }, [activeRealityMap, designMap]);
+  }, [activeRealityMap, designMap, snapshot?._id]);
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
   };
@@ -530,8 +532,9 @@ const Index: React.FC<IProps> = () => {
               issuesList={issuesList}
               viewMode={currentViewMode}
               viewType={currentViewType}
-              viewLayers={currentViewLayers}
+              viewLayers={activeRealityMap}
               isFullScreenActive={isFullScreenActive}
+              layersUpdated={layersUpdated}
             ></GenericViewer>
           )
         );
@@ -582,7 +585,6 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: ITools) => {
-    console.log("Tool Clicked", toolInstance.toolName);
     let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.toolName) {
       case "viewType":
@@ -641,12 +643,13 @@ const Index: React.FC<IProps> = () => {
 
         break;
       case "addViewLayer":
-        newLayers.push(toolInstance.toolAction);
-        setViewLayers(newLayers);
+        // newLayers.push(toolInstance.toolAction);
+        // console.log(newLayers, "newLayesrs");
+        // setViewLayers(newLayers);
         break;
       case "removeViewLayer":
-        newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
-        setViewLayers(newLayers);
+        // newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
+        // setViewLayers(newLayers);
         break;
       case "compareReality":
       case "compareDesign":
@@ -700,12 +703,71 @@ const Index: React.FC<IProps> = () => {
         break;
     }
   };
-  const getIssues = (structureId: string) => {
+
+  useEffect(() => {
+    if (currentViewMode === "Design" && designAndRealityMaps.length) {
+      if (designAndRealityMaps.includes("Plan Drawings")) {
+        setViewType("Plan Drawings");
+      } else if (designAndRealityMaps.includes("BIM")) {
+        setViewType("BIM");
+      } else {
+        const val =
+          designMap && Object.keys(designMap)?.length
+            ? Object.keys(designMap)[0]
+            : "";
+        if (val) {
+          setViewType(val);
+        } else {
+          setViewMode("Reality");
+        }
+      }
+    } else if (currentViewMode === "Reality" && designAndRealityMaps.length) {
+      if (designAndRealityMaps.includes("pointCloud")) {
+        setViewType("pointCloud");
+      } else if (designAndRealityMaps.includes("orthoPhoto")) {
+        setViewType("orthoPhoto");
+      } else {
+        // setViewType(designAndRealityMaps[0]);
+        const arr =
+          activeRealityMap &&
+          activeRealityMap[
+            `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+          ]?.realities?.length &&
+          activeRealityMap[
+            `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+          ].realities![0].realityType?.length
+            ? activeRealityMap[
+                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+              ].realities![0].realityType
+            : [];
+        if (arr && arr.length) {
+          setViewType(arr[0]);
+        } else {
+          setViewMode("Design");
+        }
+      }
+    }
+  }, [currentViewMode]);
+  const getIssues = (structureId: string, isDownload?: boolean) => {
     if (structureId && router.query.projectId) {
       getIssuesList(router.query.projectId as string, structureId)
         .then((response) => {
-          setIssueList(response.result);
-          setIssueFilterList(response.result);
+          if (isDownload) {
+            console.log(isDownload, "isdownload");
+            // response.blob().then((blob: any) => {
+            // Creating new object of PDF file
+            const data = response.result;
+            const fileURL = window.URL.createObjectURL(new Blob(data));
+            // Setting various property values
+            let alink = document.createElement("a");
+            alink.href = fileURL;
+            alink.download = "SamplePDF.pdf";
+            alink.click();
+            // });
+          } else {
+            setIssueList(response.result);
+            setIssueFilterList(response.result);
+          }
         })
         .catch((error) => {
           if (error.success === false) {
@@ -714,6 +776,7 @@ const Index: React.FC<IProps> = () => {
         });
     }
   };
+
   const getIssuesPriorityList = (projId: string) => {
     return getIssuesPriority(router.query.projectId as string)
       .then((response) => {
@@ -1482,6 +1545,7 @@ const Index: React.FC<IProps> = () => {
               currentStructure={structure}
               currentSnapshot={snapshot}
               currentTypesList={designAndRealityMaps}
+              designMap={designMap}
               currentLayersList={activeRealityMap}
               closeFilterOverlay={closeFilterOverlay}
               closeTaskFilterOverlay={closeTaskFilterOverlay}
@@ -1512,6 +1576,9 @@ const Index: React.FC<IProps> = () => {
               taskSubmit={taskSubmit}
               selectedType={currentViewType}
               deleteTheAttachment={deleteTheAttachment}
+              setActiveRealityMap={setActiveRealityMap}
+              setLayersUpdated={setLayersUpdated}
+              layersUpdated={layersUpdated}
             />
 
             {/* <CustomToaster /> */}
