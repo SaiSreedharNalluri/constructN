@@ -31,7 +31,7 @@ const TimeLineComponent: React.FC<IProps> = ({
   const [oldDate, setOldDate] = useState("");
   const [newDate, setNewDate] = useState("");
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(page == 1 ? 2 : 1);
+    setPage(value);
   };
 
   const toggleTimeline = () => {
@@ -95,8 +95,9 @@ const TimeLineComponent: React.FC<IProps> = ({
           </SelectedTimeLine>
 
           {bottomNav ? (
-            <div data-testid="bottomNav"
-            //  className="absolute flex flex-col items-center z-10 top-0 inset-x-0"
+            <div
+              data-testid="bottomNav"
+              //  className="absolute flex flex-col items-center z-10 top-0 inset-x-0"
             >
               <div
               // className="bg-gray-300 border border-gray-700 rounded duration-300 cursor-pointer"

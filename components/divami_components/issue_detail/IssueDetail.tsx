@@ -85,6 +85,7 @@ import {
   ImageErrorIcon,
   SendButton,
   StyledInput,
+  ActivityLogContainer,
 } from "./IssueDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
@@ -621,32 +622,43 @@ function BasicTabs(props: any) {
               </ProgressEditStateButtonsContainer>
             </AddCommentContainer>
           ) : (
-            <>
-              <AddCommentContainerSecond>
-                <StyledInput
-                  id="standard-basic"
-                  variant="standard"
-                  placeholder="Add Comment"
-                  value={comments}
-                  onChange={(e) => {
-                    setComments(e.target.value);
-                  }}
-                />
-                <AddCommentButtonContainer>
-                  {/* <AttachButton>
+            <ActivityLogContainer>
+              <ActivityLog
+                ActivityLog={taskState.TabTwo}
+                comments={backendComments}
+                getComments={getComments}
+              />
+              {backendComments?.length ? (
+                <></>
+              ) : (
+                <>
+                  <AddCommentContainerSecond>
+                    <StyledInput
+                      id="standard-basic"
+                      variant="standard"
+                      placeholder="Add Comment"
+                      value={comments}
+                      onChange={(e) => {
+                        setComments(e.target.value);
+                      }}
+                    />
+                    <AddCommentButtonContainer>
+                      {/* <AttachButton>
                     <ImageErrorIcon src={Clip} alt="" />
                     <input type="file" onChange={handleFileChange} />
                   </AttachButton> */}
-                  <SendButton
-                    onClick={() => {
-                      addComment(comments, taskState.TabOne.id);
-                    }}
-                  >
-                    <ImageErrorIcon src={Send} alt="" />
-                  </SendButton>
-                </AddCommentButtonContainer>
-              </AddCommentContainerSecond>
-            </>
+                      <SendButton
+                        onClick={() => {
+                          addComment(comments, taskState.TabOne.id);
+                        }}
+                      >
+                        <ImageErrorIcon src={Send} alt="" />
+                      </SendButton>
+                    </AddCommentButtonContainer>
+                  </AddCommentContainerSecond>
+                </>
+              )}
+            </ActivityLogContainer>
           )}
         </TabOneDiv>
       </CustomTabPanel>

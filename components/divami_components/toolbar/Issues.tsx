@@ -90,14 +90,16 @@ const Issues = ({
     setMyProject(currentProject);
     setMyStructure(currentStructure);
     setMySnapshot(currentSnapshot);
-    html2canvas(document.getElementById("forgeViewer_1") || document.getElementById("potreeViewer_1") || document.body).then(
-      function (canvas) {
-        canvas.toBlob((blob) => {
-          console.log(blob, "blob")
-          setImage(blob as Blob);
-        }, "image/png");
-      }
-    );
+    html2canvas(
+      document.getElementById("forgeViewer_1") ||
+        document.getElementById("potreeViewer_1") ||
+        document.body
+    ).then(function (canvas) {
+      canvas.toBlob((blob) => {
+        console.log(blob, "blob");
+        setImage(blob as Blob);
+      }, "image/png");
+    });
   }, [currentProject, currentSnapshot, currentStructure, issueOpenDrawer]);
 
   const closeIssueList = () => {
@@ -119,11 +121,6 @@ const Issues = ({
         return each._id || each.value;
       });
 
-    // if (assignes && assignes.length > 0) {
-    //   assignes.map((user: any) => {
-    //     userIdList.push(user.value);
-    //   });
-    // }
     const formData = new FormData();
     let data: any = {};
 
@@ -132,77 +129,45 @@ const Issues = ({
     data.status = "To Do";
     data.owner = values?.owner;
 
-    // formData.append("structure", currentStructure?._id);
-    // formData.append("snapshot", currentSnapshot?._id);
-    // formData.append("status", "To Do");
-    // formData.append("owner", values?.owner);
     Object.keys(contextInfo).forEach((key) => {
       if (key !== "id") {
         data.context = { ...data.context, [key]: contextInfo[key] };
       }
     });
-    // formData.append("context", data.context);
 
     data.tags = values.filter(
       (item: any) => item.id == "tag-suggestions"
     )[0]?.chipString;
-    // formData.append("tags", data.tags);
+
     data.title = values.filter(
       (item: any) => item.id == "title"
     )[0]?.defaultValue;
-    // formData.append("title", data.title);
+
     data.type = values.filter(
       (item: any) => item.id == "issueType"
     )[0]?.defaultValue;
-    // formData.append("type", data.type);
+
     data.priority = values.filter(
       (item: any) => item.id == "issuePriority"
     )[0]?.defaultValue;
-    // formData.append("priority", data.priority);
     data.description = values.filter(
       (item: any) => item.id == "description"
     )[0]?.defaultValue;
 
-    // formData.append("description", data.description);
     (data.assignees = userIdList), formData.append("assignees", data.assignees);
-    // (data.tags =
-    //   (formData.length
-    //     ? formData
-    //       .filter((item: any) => item.id == "tag-suggestions")[0]
-    //       ?.chipString?.join(";")
-    //     : []) || []),
+
     data.startDate = values
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "start-date")[0]?.defaultValue;
 
-    // formData.append("startDate", data.startDate);
-
     data.dueDate = values
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-    // formData.append("dueDate", data.dueDate);
 
     data.attachments = values.filter(
       (item: any) => item.id === "file-upload"
     )[0].selectedFile;
-    // ?.map((eachSelectedFile: any) => {
-    //   // let reader = new FileReader();
-    //   // let fileUrl: any = '';
-    //   // reader.readAsDataURL(eachSelectedFile)
-    //   // reader.onload = () => {
-    //   //   console.log("CHECK RESULT FILE", reader.result);
-    //   //   fileUrl = reader.result ? reader.result : '';
-    //   // };
-    //   // reader.onerror = function (error) {
-    //   //   console.log('Error: ', error);
-    //   // }
-    //   return {
-    //     name: eachSelectedFile.name,
-    //     url: eachSelectedFile.name,
-    //     entity: "image",
-    //   };
-    // });
-    // formData.append("attachments", data.attachments);
+
     for (let i = 0; i < data.attachments?.length; i++) {
       if (data.attachments![i].size > 50 * 1024 * 1024) {
         toast.error("file size is too large. failed to create issue");
@@ -212,21 +177,13 @@ const Issues = ({
     }
     data.screenshot = image;
 
-
-    // const blob: any = await html2canvas(document.getElementById("forgeViewer_1") || document.getElementById("potreeViewer_1") || document.body)
-    // const blobber: any = await new Blob([blob], { type: "image/png" });
-    // console.log("blobber", blobber, blob);
-
-
     formData.append("screenshot", image as Blob, "imageName.png");
     delete data["screenshot"];
     delete data["attachments"];
     delete data["id"];
     formData.append("jreq", JSON.stringify(data));
     const projectId = values.filter((item: any) => item.projectId)[0].projectId;
-    console.log("formData", formData, data);
     if (data.title && data.type && data.priority) {
-      // console.log(data, data.tags, "sdfdsfsdfs");
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
           if (response.success === true) {
@@ -359,9 +316,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => { }}
+            handleOnSort={() => {}}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => { }}
+            clickIssueEditSubmit={() => {}}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}
