@@ -400,6 +400,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
             active={active}
             designMap={designMap}
             selectedType={selectedType}
+            setActive={setActive}
           />
         ) : (
           <></>

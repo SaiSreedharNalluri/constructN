@@ -131,6 +131,8 @@ const Index: React.FC<IProps> = () => {
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openIssueView, setOpenIssueView] = useState(false);
+  const [selectedDesign, setSelectedDesign] = useState("");
+  const [selectedReality, setSelectedReality] = useState("");
 
   const [currentContext, setCurrentContext] = useState<IToolResponse>({
     type: "Task",
@@ -705,49 +707,90 @@ const Index: React.FC<IProps> = () => {
   };
 
   useEffect(() => {
-    if (currentViewMode === "Design" && designAndRealityMaps.length) {
-      if (designAndRealityMaps.includes("Plan Drawings")) {
-        setViewType("Plan Drawings");
-      } else if (designAndRealityMaps.includes("BIM")) {
-        setViewType("BIM");
+    if (
+      currentViewMode === "Design" &&
+      designAndRealityMaps.length &&
+      currentViewType != "Plan Drawings" &&
+      currentViewType != "BIM"
+    ) {
+      if (selectedDesign) {
+        setViewType(selectedDesign);
       } else {
-        const val =
-          designMap && Object.keys(designMap)?.length
-            ? Object.keys(designMap)[0]
-            : "";
-        if (val) {
-          setViewType(val);
+        if (designAndRealityMaps.includes("Plan Drawings")) {
+          setViewType("Plan Drawings");
+          setSelectedDesign("Plan Drawings");
+        } else if (designAndRealityMaps.includes("BIM")) {
+          setViewType("BIM");
+          setSelectedDesign("BIM");
         } else {
-          setViewMode("Reality");
+          const val =
+            designMap && Object.keys(designMap)?.length
+              ? Object.keys(designMap)[0]
+              : "";
+          if (val) {
+            setViewType(val);
+            setSelectedDesign(val);
+          } else {
+            setViewMode("Reality");
+          }
         }
       }
-    } else if (currentViewMode === "Reality" && designAndRealityMaps.length && (currentViewType != 'pointCloud' && currentViewType != 'orthoPhoto')) {
-      if (designAndRealityMaps.includes("pointCloud")) {
-        setViewType("pointCloud");
-      } else if (designAndRealityMaps.includes("orthoPhoto")) {
-        setViewType("orthoPhoto");
+    } else if (
+      currentViewMode === "Reality" &&
+      designAndRealityMaps.length &&
+      currentViewType != "pointCloud" &&
+      currentViewType != "orthoPhoto"
+    ) {
+      if (selectedReality) {
+        setViewType(selectedReality);
       } else {
-        // setViewType(designAndRealityMaps[0]);
-        const arr =
-          activeRealityMap &&
-          activeRealityMap[
-            `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-          ]?.realities?.length &&
-          activeRealityMap[
-            `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-          ].realities![0].realityType?.length
-            ? activeRealityMap[
-                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-              ].realities![0].realityType
-            : [];
-        if (arr && arr.length) {
-          setViewType(arr[0]);
+        if (designAndRealityMaps.includes("pointCloud")) {
+          setViewType("pointCloud");
+          setSelectedReality("pointCloud");
+        } else if (designAndRealityMaps.includes("orthoPhoto")) {
+          setViewType("orthoPhoto");
+          setSelectedReality("orthoPhoto");
         } else {
-          setViewMode("Design");
+          // setViewType(designAndRealityMaps[0]);
+          const arr =
+            activeRealityMap &&
+            activeRealityMap[
+              `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+            ]?.realities?.length &&
+            activeRealityMap[
+              `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+            ].realities![0].realityType?.length
+              ? activeRealityMap[
+                  `${
+                    Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap
+                  }`
+                ].realities![0].realityType
+              : [];
+          if (arr && arr.length) {
+            setViewType(arr[0]);
+            setSelectedReality(arr[0]);
+          } else {
+            setViewMode("Design");
+          }
         }
       }
     }
   }, [currentViewMode]);
+
+  useEffect(() => {
+    if (
+      designMap &&
+      Object.keys(designMap)?.length &&
+      Object.keys(designMap).includes(currentViewType)
+    ) {
+      if (selectedDesign !== currentViewType)
+        setSelectedDesign(currentViewType);
+    } else {
+      console.log("assds", currentViewType);
+      if (selectedDesign !== currentViewType)
+        setSelectedReality(currentViewType);
+    }
+  }, [currentViewType]);
   const getIssues = (structureId: string, isDownload?: boolean) => {
     if (structureId && router.query.projectId) {
       getIssuesList(router.query.projectId as string, structureId)
