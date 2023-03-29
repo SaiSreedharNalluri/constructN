@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import styles from '../toolbar/toolbar.module.css'
 import Image from "next/image";
 import eyeOffIcon from "../../../public/public/divami_icons/eyeOffIcon.svg";
@@ -32,7 +32,11 @@ const CompareView = ({
   active,
   designMap,
   selectedType = "",
+  setActive,
 }: any) => {
+  useEffect(() => {
+    setActive("hideCompare");
+  }, [selectedType]);
   return (
     <CompareViewBox>
       <CompareViewTitleDiv>Compare Views:</CompareViewTitleDiv>
