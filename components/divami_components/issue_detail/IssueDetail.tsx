@@ -1,4 +1,4 @@
-import { Autocomplete, Box, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Drawer, TextField, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Select } from "@mui/material";
@@ -19,6 +19,7 @@ import CreateIssue from "../create-issue/CreateIssue";
 import { ISSUE_FORM_CONFIG } from "../create-issue/body/Constants";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
+import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import router from "next/router";
 import _ from "lodash";
 import {
@@ -86,9 +87,12 @@ import {
   SendButton,
   StyledInput,
   ActivityLogContainer,
+  ValueContainer,
+  CloseIcon
 } from "./IssueDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
+import Chip from "@mui/material/Chip";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -324,7 +328,7 @@ function BasicTabs(props: any) {
 
             "& .MuiTabs-indicator": {
               background: "blue",
-              width: "45px !important",
+              width: value ? "80px !important" : "47px !important",
             },
           }}
         >
@@ -344,7 +348,14 @@ function BasicTabs(props: any) {
           <Tab
             label="Activity log"
             {...a11yProps(1)}
-            style={{ paddingRight: "0px" }}
+            style={{
+              paddingRight: "0px",
+              color: "#101F4C",
+              fontFamily: "Open Sans",
+              fontStyle: "normal",
+              fontSize: "14px",
+              fontWeight: "400",
+            }}
           />
         </Tabs>
       </Box>
@@ -507,7 +518,10 @@ function BasicTabs(props: any) {
                   };
                 })}
                 sx={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label="" />}
+                renderTags={() => null}
+                renderInput={(params) => (
+                  <TextField {...params} label="Assigned To" />
+                )}
                 onChange={(event, value: any) => {
                   console.log(value);
                   const newSelectedUser = value
@@ -537,6 +551,34 @@ function BasicTabs(props: any) {
                 //   ),
                 // }}
               />
+              <ValueContainer>
+                {formState.selectedUser.map((v) =>
+                  v?.label ? (
+                    <Chip
+                      key={v?.label}
+                      label={v?.label}
+                      variant="outlined"
+                      style={{ marginTop: "10px" }}
+                      deleteIcon={
+                        <CloseIcon
+                          src={closeIcon}
+                          alt=""
+                          style={{ marginLeft: "5px", marginRight: "12px" }}
+                        />
+                      }
+                      onDelete={() => {
+                        const newSelectedUser = formState.selectedUser.filter(
+                          (selected) => selected?.label !== v?.label
+                        );
+                        setFormState({
+                          ...formState,
+                          selectedUser: newSelectedUser,
+                        });
+                      }}
+                    />
+                  ) : null
+                )}
+              </ValueContainer>
             </AssignEditSearchContainer>
           )}
 
@@ -1034,6 +1076,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
+
         <BodyContainer footerState={footerState}>
           <BasicTabs
             taskType={issueType}
@@ -1047,6 +1090,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>
+
       {openCreateTask && (
         <CustomDrawer open>
           <CreateIssue
@@ -1061,6 +1105,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
               setOpenCreateTask(false);
             }}
             issueStatusList={issueStatus}
+            deleteTheAttachment={deleteTheAttachment}
           />
         </CustomDrawer>
       )}

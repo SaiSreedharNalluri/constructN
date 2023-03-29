@@ -83,9 +83,11 @@ const Layers = ({
       <ContainerDiv>
         <LayersWrapper onClick={onListClick}>
           <IconsContainer>
-            {selectedLayersList.length > 0
-              ? getLayersIcons(selectedLayersList)
-              : "Select Layer"}
+            {selectedLayersList.length > 0 ? (
+              <>Layer: {getLayersIcons(selectedLayersList)}</>
+            ) : (
+              "Select Layer"
+            )}
           </IconsContainer>
           <LayerSecondSectionCamImg>
             <DownIcon src={downArrowIcon} alt="Arrow" />

@@ -520,6 +520,16 @@ export const AssigneeCustomSelect = styled("div")({
   marginTop: "20px",
 });
 
+export const ValueContainer = styled('div')(({ theme }) => ({
+  '& > :not(:last-child)': {
+    marginRight: theme.spacing(1),
+  },
+  '& > *': {
+    marginBottom: theme.spacing(1),
+  },
+  marginTop: '15px',
+}));
+
 export const StyledInput = styled(TextField)(({ theme }) => ({
   color: "blue",
   "label + &": {
@@ -542,7 +552,11 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
 
   "& .MuiInputBase-input": {
     "&::placeholder": {
-      color: "#787878",
+       color: "#787878",
+       fontFamily: "Open Sans",
+       fontSize: "14px",
+       lineHeight: "20px",
+       fontWeight: "400"
     },
   },
 }));
