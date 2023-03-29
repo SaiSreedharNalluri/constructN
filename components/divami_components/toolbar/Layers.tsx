@@ -24,6 +24,8 @@ const Layers = ({
   openList,
   setOpenList,
   selectedLayersList,
+  setActiveRealityMap,
+  layersUpdated,
 }: any) => {
   const [layersLabels, setLayersLabels] = useState<any>([]);
 
@@ -88,6 +90,8 @@ const Layers = ({
           optionsList={myLayersList}
           onSelect={LayerChange}
           selectedLayersList={selectedLayersList}
+          setActiveRealityMap={setActiveRealityMap}
+          layersUpdated={layersUpdated}
         />
       </SelectLayersWrapper>
     </>

@@ -42,7 +42,7 @@ export const StyledTreeView = styled(TreeView)({
     padding: "0",
     paddingRight: "10px",
     paddingLeft: "10px",
-    marginRight: "10px",
+    // marginRight: "10px",
     borderBottom: "1px solid #E7E7E7",
     "& .MuiTreeItem-label": {
       fontSize: "14px",
@@ -92,7 +92,7 @@ export const StyledTreeView = styled(TreeView)({
 
 export const SelectLayerContainer = styled(Box)((props: any) => ({
   display: props.openSelectLayer ? "" : "none",
-  width: "250px",
+  // width: "250px",
   // width: "237px",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
 

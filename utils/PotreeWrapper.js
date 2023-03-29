@@ -24,6 +24,7 @@ export class PotreeInstance {
             parent.removeChild(document.getElementById(viewerId));
             parent.insertBefore(this.instance.viewer.renderArea, parent.firstChild);
         }
+        console.log(this.instance)
         return this.instance;
     }
 
@@ -55,6 +56,9 @@ export class PotreeViewerUtils {
         this.isPendingDataToLoad = false;
         this.isPendingLayersToLoad = false;
         this.eventHandler = eventHandler;
+
+        this.tmMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+        this.globalOffset = [0,0,0];
 
         this.fpContainerId = `fpContainer_${this.viewerId.split("_")[1]}`;
         this.fpCanvasId = `floormap_${this.viewerId.split("_")[1]}`;
@@ -95,11 +99,11 @@ export class PotreeViewerUtils {
 
     readyForCompare(mode) {
 
-        if (mode === "Design") {
+        if (mode === "Forge") {
             if (this.currentMode === "image") {
                 this.unloadOrientedImage();
             }
-        } else if (mode === "Reality") {
+        } else if (mode === "Potree") {
         }
 
         if(this.currentMode === "panorama" && this.floorMap) {
@@ -143,9 +147,13 @@ export class PotreeViewerUtils {
 
     updateData(pointCloudData, floormapData) {
         console.log("PointCloud data update: ", pointCloudData, floormapData);
-        if(pointCloudData.tm) {
+
+        if(pointCloudData.tm && pointCloudData.tm.length > 0) {
             this.tmMatrix = new THREE.Matrix4().fromArray(pointCloudData.tm).transpose();
-            this.globalOffset = pointCloudData.offset
+        }
+
+        if(pointCloudData.offset) {
+            this.globalOffset = pointCloudData.offset;
         }
         
         this.pointCloudPath = pointCloudData.path
@@ -214,6 +222,7 @@ export class PotreeViewerUtils {
             material.shape = Potree.PointShape.SQUARE;
             pointcloud.applyMatrix4(this.tmMatrix);
             const assetPosition = pointcloud.position.clone();
+            console.log("Potreewarapper test globaloffcet: ",this.globalOffset);
             pointcloud.position.set(assetPosition.x - this.globalOffset[0], assetPosition.y - this.globalOffset[1], assetPosition.z - this.globalOffset[2]);
             scene.addPointCloud(pointcloud);
             this.viewer.fitToScreen();

@@ -120,7 +120,7 @@
   }
 }
 
-.spinner > circle {
+.spinner>circle {
   fill: transparent;
 }
 
@@ -142,10 +142,12 @@
   visibility: visible;
   content: url("../public/divami_icons/orangeDeleteIcon.svg");
 }
+
 .attachmentsSection .detailsImageDiv:hover {
   background: #fff2eb;
   color: #ff843f;
 }
+
 .MuiDrawer-paper {
   top: auto !important;
   bottom: 0 !important;
@@ -171,8 +173,7 @@ body {
 @font-face {
   font-family: "Open Sans";
   src: local("Lato"),
-    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf")
-      format("opentype");
+    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf") format("opentype");
 }
 
 .white-bg {
@@ -257,7 +258,8 @@ body {
   left: 2px;
   top: 6px;
 }
-.Toastify__toast-body > div:last-child {
+
+.Toastify__toast-body>div:last-child {
   position: relative;
   left: 8px;
 }
@@ -439,14 +441,17 @@ body {
   border: 1px solid #f67c74;
   border-radius: 4px;
 }
+
 .formErrorLabel {
   color: #f67c74;
 }
+
 .formField:focus-visible {
   outline: none;
   border: 1px solid #ff843f !important;
   border-radius: 4px;
 }
+
 .formField.Mui-focused {
   border: 1px solid #ff843f !important;
   border-radius: 4px;
@@ -458,8 +463,41 @@ body {
   padding-right: 20px;
   padding-top: 25px;
 }
+
 .top-margin {
   margin-top: 40px;
+}
+
+mapboxgl-popup-close-button {
+  right: 5px !important;
+}
+
+.compare-details {
+  top: 10%;
+  left: 2.5%;
+  padding: 0.5em 1em 1em 1em;
+  height: fit-content;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  background: white;
+  color: #000;
+}
+
+table,
+th,
+td {
+  border: 1px solid black;
+  font-size: 0.9em;
+}
+
+th {
+  padding: 0.5em 1em;
+}
+
+td {
+  padding: 0.5em 1em;
 }
 .fcWidget-chat{
   padding-left: 30px;
