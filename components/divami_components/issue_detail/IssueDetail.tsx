@@ -1201,7 +1201,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           setShowPopUp={setshowPopUp}
           modalTitle={"Delete Issue"}
           // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue.type}(#${selectedIssue._id})"?`}
-          modalmessage={`Are you sure you want to delete this Issue "${selectedIssue.title}"?`}
+          modalmessage={`Are you sure you want to delete this Issue "${selectedIssue.title}(#${selectedIssue._id})"?`}
           primaryButtonLabel={"Delete"}
           SecondaryButtonlabel={"Cancel"}
           callBackvalue={onDeleteIssue}
