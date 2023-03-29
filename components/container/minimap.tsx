@@ -1,160 +1,267 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import mapboxgl, { LngLat, Map, Popup } from 'mapbox-gl'
-
-mapboxgl.accessToken = `pk.eyJ1Ijoic2hpdmEta3Jpc2huYSIsImEiOiJjbGFqa2dzbjAwZHZ4M3lvMDB0Zmx3c3JpIn0.srnnrsZ8NWbz0u-lwHHiMg`
-
 interface IProps {
 
-    onInit?: Function
+    id: string,
 
-    viewerState?: any
+    onInit?: Function,
 
-    annotations?: any
+    token: string,
 
-    onModelClick?: Function
+    expiry: number,
 
-    models: any[]
+    url?: string,
+
+    model?: any
 }
+
+const viewerConfig = {
+
+    extensions: ['Autodesk.BimWalk', 'Autodesk.DataVisualization'],
+}
+
 
 function MiniMap(props: IProps) {
 
-    const viewerId = 'minimap'
+    const viewerId = props.id
 
-    const _map = useRef<Map>()
+    const _forge = useRef<any>()
 
-    const [_modelsList] = useState<string[]>([])
+    const _manifestNode = useRef<Autodesk.Viewing.BubbleNode>()
 
-    let [annotations, setAnnotations] = useState<any>(props.annotations)
+    const _model = useRef<Autodesk.Viewing.Model>()
 
-    const mCenter: LngLat = new LngLat(
-        props.viewerState && props.viewerState.center ? props.viewerState.center[0] : 0,
-        props.viewerState && props.viewerState.center ? props.viewerState.center[1] : 0
-    )
+    let _tm
+
+    let _globalOffset
 
     const initViewer = function () {
 
-        if (!_map.current) {
+        if (!_forge.current) {
 
-            _map.current = new mapboxgl.Map({
-                container: viewerId,
-                style: 'mapbox://styles/mapbox/satellite-v9',
-                center: mCenter,
-                zoom: props.viewerState && props.viewerState.zoom ? props.viewerState && props.viewerState.zoom : 16,
-                pitch: props.viewerState && props.viewerState.mapPitch ? props.viewerState && props.viewerState.mapPitch : 0,
-                bearing: props.viewerState && props.viewerState.bearing ? props.viewerState && props.viewerState.bearing : 0
-            });
+            const initializerCallBack = () => {
 
-            _map.current?.on('load', async () => {
+                let htmlDiv = document.getElementById(viewerId)
 
-                if (props.onInit) props.onInit(_map)
+                if (htmlDiv) {
 
-                _map.current?.addSource('radar', {
-                    'type': 'image',
-                    'url': 'https://constructn-projects-us.s3.us-west-2.amazonaws.com/PRJ201897/structures/STR147148/designs/DSG992167/floormap.jpg',
-                    'coordinates': [
-                        [-80.425, 46.437],
-                        [-71.516, 46.437],
-                        [-71.516, 37.936],
-                        [-80.425, 37.936]
-                    ]
-                });
-                _map.current?.addLayer({
-                    id: 'radar-layer',
-                    'type': 'raster',
-                    'source': 'radar',
-                    'paint': {
-                        'raster-fade-duration': 0
+                    _forge.current = new Autodesk.Viewing.GuiViewer3D(htmlDiv, viewerConfig)
+
+                    setUpEventListeners()
+
+                    console.log('Initialised.....')
+
+                    let startedCode = _forge.current.start(initializeOptions)
+
+                    _forge.current.canvasId = viewerId
+
+                    if (startedCode > 0) {
+
+                        console.error('Failed to create a Viewer: WebGL not supported.')
+
+                        return
                     }
-                });
 
-                // disable map rotation using right click + drag
-                _map.current?.dragRotate.disable();
+                    if (props.url) {
 
-                // disable map rotation using touch rotation gesture
-                _map.current?.touchZoomRotate.disableRotation();
-            })
+                        console.log('Coming here.....')
+
+                        _forge.current.loadExtension('Autodesk.PDF').then(() => {
+
+                            _forge.current.loadModel(props.url, _forge.current);
+                            
+                            _forge.current.loadExtension("Autodesk.Viewing.MarkupsCore");
+                            
+                            _forge.current.loadExtension("Autodesk.Viewing.MarkupsGui");
+                        });
+                    }
+                }
+            };
+
+            console.log('Initialising')
+
+            Autodesk.Viewing.Initializer(initializeOptions, initializerCallBack)
         }
     }
 
-    useEffect(() => {
+    useEffect(() => { initViewer() }, [])
 
-        initViewer()
+    useEffect(() => { loadModels() }, [props.model])
 
-        return () => {
+    const initializeOptions = {
 
-            _map.current?.remove()
+        
+        useADP: false,
 
-            _map.current = undefined
-        }
+        method: "POST",
+        
+        url: props.url,
 
-    }, [])
+        env: 'AutodeskProduction2',
 
-    useEffect(() => { fly(props.viewerState) }, [props.viewerState])
+        api: 'streamingV2',
 
-    useEffect(() => { loadModels() }, [props.models])
+        getAccessToken: async function (onSuccess: (access_token: string, expity: number) => void) {
 
-    const fly = (viewerState: any) => {
-
-        let center: LngLat = new LngLat(
-            viewerState && viewerState.center ? viewerState.center[0] : 0,
-            viewerState && viewerState.center ? viewerState.center[1] : 0
-        );
-
-        if (!Number.isNaN(center.lat) && !Number.isNaN(center.lng)) {
-
-            _map.current?.flyTo({
-                center: center,
-                zoom: viewerState && viewerState.zoom ? viewerState && viewerState.zoom : 16,
-                pitch: viewerState && viewerState.mapPitch ? viewerState && Math.abs(viewerState.mapPitch) : 0,
-                bearing: viewerState && viewerState.bearing ? viewerState && viewerState.bearing : 0,
-                essential: true
-            });
-        }
+            onSuccess(props.token, props.expiry);
+        },
     }
 
     const loadModels = () => {
 
-        if (_map.current) {
+        if (props.model) {
 
-            for (let i = 0; i < props.models.length; i++) {
+            const document = props.model
 
-                if (props.models[i].layer) {
+            Autodesk.Viewing.Document.load(
+                document.urn,
+                async function (viewerDocument) {
 
-                    if (_modelsList.indexOf(props.models[i].layer.id) == -1) {
+                    _manifestNode.current = viewerDocument.getRoot().getDefaultGeometry();
 
-                        _map.current.addLayer(props.models[i].layer, props.models[i].layer.before ? props.models[i].layer.before : 'Task')
+                    _model.current = await _forge.current.loadDocumentNode(
+                        viewerDocument,
+                        _manifestNode.current,
+                        generateModelOptions(document.tm, _manifestNode.current!!)
+                    )
+                },
 
-                        _modelsList.push(props.models[i].layer.id)
+                function () {
+                    console.error('Failed fetching Forge manifest');
+                }
+            )
 
-                        if (props.models[i].layer.id == "progress") {
+            const generateModelOptions = (tm: any, manifestNode: Autodesk.Viewing.BubbleNode) => {
 
-                            _map.current.on('click', props.models[i].layer.id, (e) => {
+                const modelOptions: Autodesk.Viewing.ViewerConfig = {
+                    applyScaling: 'm'
+                };
 
-                                // if (e.features) onModelClick(e.features[0])
-                            })
+                if (manifestNode.is2D()) {
+                    let leafletOptions = {
+                        fitPaperSize: true,
+                        isPdf: true,
+                    };
 
-                            _map.current.on('mouseenter', props.models[i].layer.id, () => {
+                    modelOptions.page = 1;
+                    modelOptions.leafletOptions = leafletOptions;
+                }
 
-                                _map.current!!.getCanvas().style.cursor = 'pointer'
-                            })
+                modelOptions.globalOffset = { x: 0, y: 0, z: 0 };
+                let globalOff = [0, 0, 0];
 
-                            _map.current.on('mouseleave', props.models[i].layer.id, () => {
+                _tm = []
+                _globalOffset = globalOff
+                if (tm && tm.tm) {
+                    _tm = tm.tm
+                    const _matrix4: any = new THREE.Matrix4()
+                    modelOptions.placementTransform = _matrix4
+                        .fromArray(tm.tm)
+                        .transpose();
+                    // console.log('BIM TM Loaded', tm);
+                }
 
-                                _map.current!!.getCanvas().style.cursor = ''
-                            })
-                        }
-
-                        console.log(_map.current?.getLayer('radar'))
+                if (tm && tm.offset) {
+                    globalOff = tm.offset;
+                    modelOptions.globalOffset = {
+                        x: globalOff[0],
+                        y: globalOff[1],
+                        z: globalOff[2],
+                    };
+                    _globalOffset = tm.offset
+                    if (_manifestNode.current?.is2D()) {
+                        _globalOffset[0] = 0;
+                        _globalOffset[1] = 0;
                     }
                 }
-            }
+                return modelOptions;
+            };
         }
+    }
+
+    const setUpEventListeners = () => {
+        _forge.current.addEventListener(
+            Autodesk.Viewing.VIEWER_INITIALIZED,
+            () => { if (props.onInit) props.onInit(_forge) }
+        );
+        // _forge.current.addEventListener(
+        //   Autodesk.Viewing.VIEWER_UNINITIALIZED,
+        //   onViewerUnInitialized
+        // );
+        // _forge.current.addEventListener(
+        //   Autodesk.Viewing.PROGRESS_UPDATE_EVENT,
+        //   modelLoadProgress
+        // );
+        // _forge.current.addEventListener(
+        //   Autodesk.Viewing.MODEL_LAYERS_LOADED_EVENT,
+        //   onModelLayersLoadedEvent
+        // );
+        // _forge.current.addEventListener(
+        //   Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+        //   onGeometryLoadedEvent
+        // );
+        // _forge.current.addEventListener(
+        //   Autodesk.Viewing.MODEL_UNLOADED_EVENT,
+        //   onModelUnLoadedEvent
+        // );
+        // _forge.current.addEventListener(
+        //   Autodesk.Viewing.EXTENSION_LOADED_EVENT,
+        //   onExtensionLoadedEvent
+        // );
+        // _forge.current.addEventListener(
+        //   Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+        //   onCameraChangeEvent
+        // );
+
+        // let viewerElement = document.getElementById(viewerId);
+        // if (viewerElement) {
+        //   viewerElement.addEventListener('mouseenter', onMouseEnter);
+        // }
+    };
+
+    const removeEventListeners = () => {
+        // _forge.current.removeEventListener(
+        //   Autodesk.Viewing.VIEWER_INITIALIZED,
+        //   onViewerInitialized
+        // );
+        // _forge.current.removeEventListener(
+        //   Autodesk.Viewing.VIEWER_UNINITIALIZED,
+        //   onViewerUnInitialized
+        // );
+        // _forge.current.removeEventListener(
+        //   Autodesk.Viewing.PROGRESS_UPDATE_EVENT,
+        //   modelLoadProgress
+        // );
+        // _forge.current.removeEventListener(
+        //   Autodesk.Viewing.MODEL_LAYERS_LOADED_EVENT,
+        //   onModelLayersLoadedEvent
+        // );
+        // _forge.current.removeEventListener(
+        //   Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+        //   onGeometryLoadedEvent
+        // );
+        // _forge.current.removeEventListener(
+        //   Autodesk.Viewing.MODEL_UNLOADED_EVENT,
+        //   onModelUnLoadedEvent
+        // );
+        // _forge.current.removeEventListener(
+        //   Autodesk.Viewing.EXTENSION_LOADED_EVENT,
+        //   onExtensionLoadedEvent
+        // );
+        // _forge.current.removeEventListener(
+        //   Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+        //   onCameraChangeEvent
+        // );
+
+        // let viewerElement = document.getElementById(viewerId);
+        // if (viewerElement) {
+        //   viewerElement.removeEventListener('mouseenter', onMouseEnter);
+        // }
     };
 
     return (
         <>
-            <div id={viewerId} className='map' style={{height: '100%'}}></div>
+            <div id={viewerId} className='relative w-full h-full z-5'></div>
         </>
     );
 };

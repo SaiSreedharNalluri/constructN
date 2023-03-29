@@ -183,6 +183,7 @@ export const MapboxViewerUtils = () => {
   };
 
   const loadData = (data) => {
+    if(!data) return;
     let realities = _snapshot.reality.map(r => r._id);
     let layersString = JSON.stringify(data);
     layersString = layersString.split('{{PROJECT_ID}}').join(_project._id);
@@ -472,7 +473,7 @@ export const MapboxViewerUtils = () => {
   };
 
   const removeLayers = (models) => {
-    console.log('Inside remove layers in forgeWrapper: ');
+    console.log('Inside remove layers in mapboxWrapper: ');
     if(models) {
       for (let i = 0; i < models.length; i++) {
         const layer = models[i].layer
