@@ -1,7 +1,8 @@
 import "../styles/globals.css";
+import {notifyViewerEvent} from "../utils/GenericViewerTransportLayer"
 import type { AppProps } from "next/app";
 import "mapbox-gl/dist/mapbox-gl.css";
-import React from "react";
+import React, { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -21,6 +22,9 @@ config.autoAddCss = false;
 
 export default function App({ Component, pageProps }: AppProps) {
   mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, {debug: true}); 
+  useEffect(()=>{
+    globalThis.addEventListener('notify-viewer', notifyViewerEvent);
+  },[]);
   return (
     <>
       <Component {...pageProps} />
