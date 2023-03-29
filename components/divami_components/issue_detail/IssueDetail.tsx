@@ -102,6 +102,8 @@ import {
   IconContainer,
   AssigneeList,
   SecondAssigneeList,
+  ExtraLabel,
+  AssignedLabel,
 } from "./IssueDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
@@ -530,6 +532,7 @@ function BasicTabs(props: any) {
               >
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
+
                   <FourthContProgType style={{ color: "#101F4B" }}>
                     {taskState?.TabOne?.assignees}
                     <LightTooltip
@@ -591,6 +594,7 @@ function BasicTabs(props: any) {
 
           {progressEditState ? (
             <ProgressCustomSelect>
+              <ExtraLabel>Progress</ExtraLabel>
               <CustomSelect
                 config={progressOptionsState[0]}
                 data={{
@@ -599,7 +603,7 @@ function BasicTabs(props: any) {
                 }}
                 // defaultValue={progressOptionsState?.options[0].value}
                 id={"issuePriority"}
-                sx={{ minWidth: 120 }}
+                sx={{ minWidth: 120, color: "yellow" }}
                 setFormConfig={setProgressOptionsState}
                 isError={""}
                 label=""
@@ -610,6 +614,7 @@ function BasicTabs(props: any) {
           )}
           {assigneeEditState && (
             <AssignEditSearchContainer>
+              <AssignedLabel>Assigned to</AssignedLabel>
               <Autocomplete
                 disablePortal
                 id="combo-box-demo"
@@ -660,13 +665,17 @@ function BasicTabs(props: any) {
             </CustomSelectContainer>
           </FormElementContainer>
 
-          <DescriptionDiv>
-            <DescriptionTitle>Issue Description</DescriptionTitle>
+          {taskState?.TabOne?.issueDescription?.length > 0 ? (
+            <DescriptionDiv>
+              <DescriptionTitle>Issue Description</DescriptionTitle>
 
-            <DescriptionPara>
-              {taskState.TabOne.issueDescription}
-            </DescriptionPara>
-          </DescriptionDiv>
+              <DescriptionPara>
+                {taskState.TabOne.issueDescription}
+              </DescriptionPara>
+            </DescriptionDiv>
+          ) : (
+            ""
+          )}
 
           {taskState?.TabOne?.attachments?.length > 0 && (
             <>
@@ -703,18 +712,23 @@ function BasicTabs(props: any) {
               </AttachmentDiv>
             </>
           )}
-          <RelatedDiv>
-            <RelatedTagTitle>Related Tags</RelatedTagTitle>
-            <RelatedTagsButton>
-              {taskState?.TabOne.tags?.map((item: any) => {
-                return (
-                  <>
-                    <RelatedSingleButton>{item}</RelatedSingleButton>
-                  </>
-                );
-              })}
-            </RelatedTagsButton>
-          </RelatedDiv>
+          {taskState?.TabOne?.tags?.length > 0 ? (
+            <RelatedDiv>
+              <RelatedTagTitle>Related Tags</RelatedTagTitle>
+              <RelatedTagsButton>
+                {taskState?.TabOne.tags?.map((item: any) => {
+                  return (
+                    <>
+                      <RelatedSingleButton>{item}</RelatedSingleButton>
+                    </>
+                  );
+                })}
+              </RelatedTagsButton>
+            </RelatedDiv>
+          ) : (
+            ""
+          )}
+
           {progressEditState || assigneeEditState ? (
             <AddCommentContainer containerType="float">
               <ProgressEditStateButtonsContainer>

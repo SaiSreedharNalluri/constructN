@@ -1,3 +1,7 @@
+
+import Moment from "moment";
+
+
 export const TASK_FORM_CONFIG = [
   {
     id: "title",
@@ -12,7 +16,7 @@ export const TASK_FORM_CONFIG = [
   {
     id: "tasks",
     type: "select",
-    defaultValue: "",
+    defaultValue: "RFI",
     placeHolder: "Select",
     isReadOnly: false,
     label: "Select the type of task",
@@ -41,13 +45,13 @@ export const TASK_FORM_CONFIG = [
     formLabel: "Tell us more about this task",
     placeholder: "Tell us more about this task",
     isError: false,
-    isReq: false,
+    isReq: true,
     isReadOnly: false,
   },
   {
     id: "taskPriority",
     type: "select",
-    defaultValue: "",
+    defaultValue: "Low",
     placeHolder: "Select",
     label: "Select task priority",
     isLarge: false,
@@ -98,7 +102,7 @@ export const TASK_FORM_CONFIG = [
       {
         id: "start-date",
         type: "datePicker",
-        defaultValue: "",
+        defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
         label: "MM/DD/YYYY",
         formLabel: "Start date",
         isError: false,
@@ -107,7 +111,7 @@ export const TASK_FORM_CONFIG = [
       {
         id: "due-date",
         type: "datePicker",
-        defaultValue: "",
+        defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
         label: "MM/DD/YYYY",
         formLabel: "Due date",
         isError: false,

@@ -625,3 +625,28 @@ export const ParentAssigneeList = styled("div")({
   display: "flex",
   flexDirection: "row",
 });
+
+
+
+export const ExtraLabel = styled("div")`
+  font-family: "Open Sans";
+  color: #787878;
+
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  margin-bottom:10px;
+`;
+
+
+export const AssignedLabel = styled("div")`
+  font-family: "Open Sans";
+  color: #787878;
+
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  margin-bottom:10px;
+`;

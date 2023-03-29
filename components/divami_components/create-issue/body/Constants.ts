@@ -1,3 +1,6 @@
+import Moment from "moment";
+
+
 export const ISSUE_FORM_CONFIG = [
   {
     id: "title",
@@ -12,7 +15,7 @@ export const ISSUE_FORM_CONFIG = [
   {
     id: "issueType",
     type: "select",
-    defaultValue: "",
+    defaultValue: "Safety",
     placeHolder: "Select",
     label: "Material (Optional)",
     isLarge: false,
@@ -41,13 +44,13 @@ export const ISSUE_FORM_CONFIG = [
     formLabel: "Tell us more about this issue",
     placeholder: "Tell us more about this issue",
     isError: false,
-    isReq: false,
+    isReq: true,
     isReadOnly: false,
   },
   {
     id: "issuePriority",
     type: "select",
-    defaultValue: "",
+    defaultValue: "Low",
     placeHolder: "Select issue priority",
     label: "Material (Optional)",
     isLarge: false,
@@ -98,7 +101,7 @@ export const ISSUE_FORM_CONFIG = [
       {
         id: "start-date",
         type: "datePicker",
-        defaultValue: "",
+        defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
         label: "MM/DD/YYYY",
         formLabel: "Start date",
         isError: false,
@@ -107,7 +110,7 @@ export const ISSUE_FORM_CONFIG = [
       {
         id: "due-date",
         type: "datePicker",
-        defaultValue: "",
+        defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
         label: "MM/DD/YYYY",
         formLabel: "Due date",
         isError: false,

@@ -415,7 +415,8 @@ export const AssignEditSearchContainer = styled("div")({
 
 export const BodyContainer = styled(Box)<ContainerProps>`
   height: ${(props) =>
-    props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
+    // props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
+     props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
   overflow-y: scroll;
 `;
 
@@ -539,3 +540,64 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
     },
   },
 }));
+
+
+
+
+export const AssigneeList = styled("div")({
+  // display: "inline-block",
+
+  // background:"#FFFFF"
+  width: "308px",
+  height: "86px",
+  padding: "15px",
+  color: "#101F4C",
+  fontSize: "14px",
+  border: "1px solid #D9D9D9",
+  marginTop: "-3px",
+  boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
+  borderRadius: "4px",
+  // position: "absolute",
+  // right:"10px",
+});
+
+export const SecondAssigneeList = styled("div")({
+  // display: "inline-block",
+
+  background: "white",
+  width: "308px",
+  height: "86px",
+  padding: "15px",
+  color: "#101F4C",
+  fontSize: "14px",
+  border: "1px solid #D9D9D9",
+  // marginTop: '-3px',
+  boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
+  borderRadius: "4px",
+  // position: "absolute",
+  // right:"10px",
+});
+
+
+export const ExtraLabel = styled("div")`
+  font-family: "Open Sans";
+  color: #787878;
+
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  margin-bottom:10px;
+`;
+
+
+export const AssignedLabel = styled("div")`
+  font-family: "Open Sans";
+  color: #787878;
+
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  margin-bottom:10px;
+`;

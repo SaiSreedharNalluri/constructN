@@ -4,6 +4,9 @@ import {
   Menu,
   Select,
   TextField,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps,
   Typography,
 } from "@mui/material";
 import Tab from "@mui/material/Tab";
@@ -41,6 +44,8 @@ import {
   AddCommentContainerSecond,
   ArrowIcon,
   AssignEditSearchContainer,
+  AssignedLabel,
+  AssigneeList,
   AttachButton,
   AttachedImageDiv,
   AttachedImageIcon,
@@ -58,6 +63,7 @@ import {
   DescriptionPara,
   DescriptionTitle,
   EditIcon,
+  ExtraLabel,
   FirstHeaderDiv,
   FourthBodyDiv,
   FourthContAssigned,
@@ -79,6 +85,7 @@ import {
   RelatedTagsButton,
   RelatedTagTitle,
   RightTitleCont,
+  SecondAssigneeList,
   SecondBodyDiv,
   SecondContCapt,
   SecondContPrior,
@@ -410,7 +417,44 @@ function BasicTabs(props: any) {
                   <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType style={{ color: "#101F4B" }}>
                     {taskState?.TabOne?.assignees}{" "}
-                    <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                    <DarkToolTip
+                      arrow
+                      title={
+                        <SecondAssigneeList>
+                          {taskState?.TabOne?.assignessList?.map(
+                            (assignName: any, index: number) => {
+                              return (
+                                <>
+                                  {index !==
+                                  taskState?.TabOne?.assignessList.length - 1
+                                    ? assignName?.firstName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.firstName.slice(1) +
+                                      " " +
+                                      assignName.lastName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.lastName.slice(1) +
+                                      " | "
+                                    : assignName?.firstName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.firstName.slice(1) +
+                                      " " +
+                                      assignName.lastName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.lastName.slice(1)}
+                                </>
+                              );
+                            }
+                          )}
+                        </SecondAssigneeList>
+                      }
+                    >
+                      <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                    </DarkToolTip>
                     {taskState?.TabOne?.assignees ? (
                       <PenIconImage
                         onClick={() => {
@@ -430,7 +474,7 @@ function BasicTabs(props: any) {
             <ProgressStateFalse>
               {" "}
               <ThirdContRight>
-                <ThirdContProg>Progress</ThirdContProg>
+                <ThirdContProg>Progress bar</ThirdContProg>
 
                 <ThirdContProgType style={{ color: "#101F4B" }}>
                   {taskState.TabOne.status}
@@ -459,97 +503,45 @@ function BasicTabs(props: any) {
                   <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType style={{ color: "#101F4B" }}>
                     {taskState?.TabOne?.assignees}{" "}
-                    <MoreText
-                      onClick={(e) => {
-                        setIsSortMenuOpen((prev) => !prev);
-                        // handleSortClick(e);
-                      }}
+                    <LightTooltip
+                      arrow
+                      title={
+                        <AssigneeList>
+                          {taskState?.TabOne?.assignessList?.map(
+                            (assignName: any, index: number) => {
+                              console.log("print", taskState);
+                              return (
+                                <>
+                                  {index !==
+                                  taskState?.TabOne?.assignessList.length - 1
+                                    ? assignName?.firstName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.firstName.slice(1) +
+                                      " " +
+                                      assignName.lastName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.lastName.slice(1) +
+                                      " | "
+                                    : assignName?.firstName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.firstName.slice(1) +
+                                      " " +
+                                      assignName.lastName
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      assignName?.lastName.slice(1)}
+                                </>
+                              );
+                            }
+                          )}
+                        </AssigneeList>
+                      }
                     >
-                      {taskState?.TabOne?.moreText}
-                    </MoreText>
-                    <Menu
-                      anchorEl={anchorEl}
-                      id="account-menu"
-                      open={isSortMenuOpen}
-                      onClose={handleSortMenuClose}
-                      onClick={handleSortMenuClose}
-                      sx={{
-                        "& .MuiPaper-root": {
-                          width: "308px",
-                          height: "86px",
-                          color: "#101F4C",
-                          fontFamily: "Open Sans",
-                          fontStyle: "normal",
-                          fontSize: "14px",
-                          padding: "15px !important",
-                        },
-
-                        "& .MuiPaper-root.MuiMenu-paper": {
-                          // Styles for the Menu's paper element
-                          // ...
-                          // color: "yellow",
-                        },
-                        "& .MuiPaper-root.MuiPopover-paper": {
-                          // Styles for the Popover's paper element
-                          // ...
-                          // top: "382px !important",
-                          // left: "476px !important",
-                        },
-
-                        "& .MuiList-root-MuiMenu-list": {
-                          paddingTop: "15px !important",
-                          paddingLeft: "15px",
-                        },
-                      }}
-                      PaperProps={{
-                        elevation: 0,
-                        sx: {
-                          overflow: "visible",
-                          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                          mt: -14,
-                          mr: 8,
-                          "& .MuiAvatar-root": {
-                            width: 0,
-                            height: 32,
-                            ml: -0.5,
-                            mr: 1,
-                          },
-                          "&:before": {
-                            content: '""',
-                            display: "block",
-                            position: "absolute",
-                            top: 0,
-                            right: 60,
-                            width: 10,
-                            height: 10,
-                            bgcolor: "background.paper",
-                            transform: "translateY(-50%) rotate(45deg)",
-                            zIndex: 0,
-                          },
-                        },
-                      }}
-                      transformOrigin={{ horizontal: "right", vertical: "top" }}
-                      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                    >
-                      {taskState?.TabOne?.assignessList?.map(
-                        (assignName: any, index: number) => {
-                          console.log("print", taskState);
-                          return (
-                            <>
-                              {index !==
-                              taskState?.TabOne?.assignessList.length - 1
-                                ? assignName?.firstName +
-                                  " " +
-                                  assignName.lastName +
-                                  " | "
-                                : assignName?.firstName +
-                                  " " +
-                                  assignName.lastName}
-                            </>
-                          );
-                        }
-                      )}
-                    </Menu>
+                      <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                    </LightTooltip>
                     {taskState?.TabOne?.assignees ? (
                       <PenIconImage
                         onClick={() => {
@@ -569,6 +561,8 @@ function BasicTabs(props: any) {
 
           {progressEditState ? (
             <ProgressCustomSelect>
+              <ExtraLabel>Progress</ExtraLabel>
+
               <CustomSelect
                 config={progressOptionsState[0]}
                 data={{
@@ -587,6 +581,8 @@ function BasicTabs(props: any) {
           )}
           {assigneeEditState && (
             <AssignEditSearchContainer>
+              <AssignedLabel>Assigned to</AssignedLabel>
+
               <Autocomplete
                 disablePortal
                 id="combo-box-demo"
@@ -638,13 +634,17 @@ function BasicTabs(props: any) {
             </CustomSelectContainer>
           </FormElementContainer> */}
 
-          <DescriptionDiv>
-            <DescriptionTitle>RFI Question</DescriptionTitle>
+          {taskState?.TabOne?.issueDescription.length > 0 ? (
+            <DescriptionDiv>
+              <DescriptionTitle>RFI Question</DescriptionTitle>
 
-            <DescriptionPara>
-              {taskState.TabOne.issueDescription}
-            </DescriptionPara>
-          </DescriptionDiv>
+              <DescriptionPara>
+                {taskState.TabOne.issueDescription}
+              </DescriptionPara>
+            </DescriptionDiv>
+          ) : (
+            ""
+          )}
 
           {taskState?.TabOne?.attachments?.length > 0 && (
             <>
@@ -681,19 +681,25 @@ function BasicTabs(props: any) {
               </AttachmentDiv>
             </>
           )}
-          <RelatedDiv>
-            <RelatedTagTitle>Related Tags</RelatedTagTitle>
-            <RelatedTagsButton>
-              {/* {console.log("taskState12", taskState)} */}
-              {taskState?.TabOne.tags?.map((item: any) => {
-                return (
-                  <>
-                    <RelatedSingleButton>{item}</RelatedSingleButton>
-                  </>
-                );
-              })}
-            </RelatedTagsButton>
-          </RelatedDiv>
+
+          {taskState?.TabOne?.tags?.length > 0 ? (
+            <RelatedDiv>
+              <RelatedTagTitle>Related Tags</RelatedTagTitle>
+              <RelatedTagsButton>
+                {/* {console.log("taskState12", taskState)} */}
+                {taskState?.TabOne.tags?.map((item: any) => {
+                  return (
+                    <>
+                      <RelatedSingleButton>{item}</RelatedSingleButton>
+                    </>
+                  );
+                })}
+              </RelatedTagsButton>
+            </RelatedDiv>
+          ) : (
+            ""
+          )}
+
           {progressEditState || assigneeEditState ? (
             <AddCommentContainer containerType="float">
               <ProgressEditStateButtonsContainer>
@@ -1119,3 +1125,59 @@ const CustomTaskDetailsDrawer = (props: any) => {
 };
 
 export default CustomTaskDetailsDrawer;
+
+const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "white",
+    // color: "rgba(0, 0, 0, 0.87)",
+    fontSize: 11,
+    // position: "absolute",
+    right: 30,
+    borderRadius: "4px",
+    top: 2,
+    // width: "308px",
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    height: "10px !important",
+    left: "38px !important",
+    marginBottom: "0px",
+    "&:before": {
+      background: "#FFFFFF",
+      border: "1px solid #D9D9D9",
+    },
+
+    //  color: 'red',
+  },
+}));
+
+const DarkToolTip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "white",
+    // color: "rgba(0, 0, 0, 0.87)",
+    fontSize: 11,
+    // position: "absolute",
+    right: 30,
+    borderRadius: "4px",
+    top: 2,
+    // width: "308px",
+  },
+
+  "& .MuiTooltip-tooltip": {
+    background: "transparent !important",
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    height: "12px !important",
+    left: "4px !important",
+    marginBottom: "0px",
+    "&:before": {
+      background: "#FFFFFF",
+      border: "1px solid #D9D9D9",
+    },
+
+    //  color: 'red',
+  },
+}));
