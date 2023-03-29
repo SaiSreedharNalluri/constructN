@@ -21,10 +21,6 @@ config.autoAddCss = false;
 
 export default function App({ Component, pageProps }: AppProps) {
   mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, {debug: true}); 
-  // mixpanel.identify('krishnateja.t@constructn.ai')
-  // mixpanel.track('Signed Up', {
-  //   'Signup Type': 'Referral',
-  // });
   return (
     <>
       <Component {...pageProps} />

@@ -1,5 +1,6 @@
 import Script from 'next/script';
 import Moment from 'moment';
+import mixpanel from 'mixpanel-browser';
 import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
 import Draggable, {DraggableCore} from "react-draggable";
 import Head from 'next/head';
@@ -202,7 +203,9 @@ function GenericViewer(props) {
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current) {
-          viewLayers && forgeUtils.current.showLayers(Object.keys(viewLayers));
+          viewLayers && forgeUtils.current.showLayers(Object.values(viewLayers).map(v => {
+            if(v.isSelected) return v.name
+          }));
         }
         break;
       case 'Potree':
@@ -552,6 +555,7 @@ function GenericViewer(props) {
         }
         break;
     }
+    mixpanel.time_event('page_viewed')
   };
 
   const initCompareViewer = (viewerId) => {
@@ -1055,6 +1059,7 @@ function GenericViewer(props) {
         }
         break;
     }
+    mixpanel.time_event('page_exit')
   };
 
   const destroyCompareViewer = () => {
@@ -1257,11 +1262,11 @@ function GenericViewer(props) {
       }
 
       if(mapboxUtils.current && mapboxUtils.current.isViewerInitialized()) {
-        mapboxUtils.current.getMap().setFilter('progress-stages', filters)
+        mapboxUtils.current.getMap().getLayer('progress-stages') && mapboxUtils.current.getMap().setFilter('progress-stages', filters)
       }
   
       if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
-        mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
+        mapboxCompareUtils.current.getMap().getLayer('progress-stages') && mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
       }
     }
     

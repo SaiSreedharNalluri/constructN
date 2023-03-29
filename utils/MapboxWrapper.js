@@ -80,6 +80,7 @@ export const MapboxViewerUtils = () => {
     });
     _map.on("load", () => {
       _isViewerInitialized = true;
+      console.log('Map loading is DONE')
       if(map) {
         syncMaps(map, _map)
         map.resize()
@@ -109,13 +110,16 @@ export const MapboxViewerUtils = () => {
         removeData(models)
         loadData(models)
       } else {
-        _map.on('style.data', () => {
+        _map.on('styledata', () => {
           removeData(models)
           loadData(models);
         });
       }
     } else {
-      // initializeViewer();
+      _map.on('load', () => {
+        removeData(models)
+        loadData(models);
+      });
     }
   };
 
@@ -128,10 +132,21 @@ export const MapboxViewerUtils = () => {
     }
     _realityPositionMap = layers;
     _isPendingLayersToLoad = true;
-    if (loadLayersOnDataLoadCompletion()) {
-      // loadLayers(layers);
-      loadIssues();
-      loadTasks();
+    if (_isViewerInitialized) {
+      if(_map.isStyleLoaded()) {
+        removeData(models)
+        loadData(models)
+      } else {
+        _map.on('styledata', () => {
+          removeData(models)
+          loadData(models);
+        });
+      }
+    } else {
+      _map.on('load', () => {
+        removeData(models)
+        loadData(models);
+      });
     }
   };
 
