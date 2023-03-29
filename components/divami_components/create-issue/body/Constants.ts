@@ -15,7 +15,7 @@ export const ISSUE_FORM_CONFIG = [
   {
     id: "issueType",
     type: "select",
-    defaultValue: "Safety",
+    defaultValue: "",
     placeHolder: "Select",
     label: "Material (Optional)",
     isLarge: false,
@@ -50,7 +50,7 @@ export const ISSUE_FORM_CONFIG = [
   {
     id: "issuePriority",
     type: "select",
-    defaultValue: "Low",
+    defaultValue: "",
     placeHolder: "Select issue priority",
     label: "Material (Optional)",
     isLarge: false,
@@ -101,7 +101,7 @@ export const ISSUE_FORM_CONFIG = [
       {
         id: "start-date",
         type: "datePicker",
-        defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
+        defaultValue:"",
         label: "MM/DD/YYYY",
         formLabel: "Start date",
         isError: false,
@@ -110,7 +110,7 @@ export const ISSUE_FORM_CONFIG = [
       {
         id: "due-date",
         type: "datePicker",
-        defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
+        defaultValue:"",
         label: "MM/DD/YYYY",
         formLabel: "Due date",
         isError: false,

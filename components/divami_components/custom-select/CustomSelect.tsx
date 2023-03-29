@@ -82,12 +82,10 @@ const CustomSelect = (props: any) => {
     setVal(data?.defaultValue);
   }, [data?.defaultValue]);
 
-  console.log("defaultvals", data);
   return (
     <CustomSelectContainer>
       <StyledSelect
         value={val}
-        defaultValue="Safety"
         onChange={handlechange}
         id={id}
         readOnly={isReadOnly}

@@ -603,7 +603,7 @@ function BasicTabs(props: any) {
                 }}
                 // defaultValue={progressOptionsState?.options[0].value}
                 id={"issuePriority"}
-                sx={{ minWidth: 120, color: "yellow" }}
+                sx={{ minWidth: 120 }}
                 setFormConfig={setProgressOptionsState}
                 isError={""}
                 label=""
