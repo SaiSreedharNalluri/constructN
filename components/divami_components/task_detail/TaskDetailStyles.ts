@@ -48,6 +48,16 @@ export const DeleteIcon = styled(Image)`
     margin-right: 10px;
 `;
 
+export const ValueContainer = styled('div')(({ theme }) => ({
+  '& > :not(:last-child)': {
+    marginRight: theme.spacing(1),
+  },
+  '& > *': {
+    marginBottom: theme.spacing(1),
+  },
+  marginTop: '15px',
+}));
+
 export const LeftTitleCont = styled("div")`
   display: flex;
   //   margin-top: 10px;
@@ -536,7 +546,11 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
 
    "& .MuiInputBase-input": {
     "&::placeholder": {
-      color: "#787878",
+       color: "#787878",
+       fontFamily: "Open Sans",
+       fontSize: "14px",
+       lineHeight: "20px",
+       fontWeight: "400"
     },
   },
 }));

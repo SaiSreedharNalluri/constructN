@@ -19,6 +19,10 @@ export const HotspotTitleDiv = styled('div')({
 
 });
 
+export const ContainerDiv = styled('div')({
+
+});
+
 export const HotspotImageContainerDiv = styled('div')({
   display: 'flex',
   alignItems: 'center',
