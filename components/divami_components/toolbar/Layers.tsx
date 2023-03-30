@@ -26,6 +26,8 @@ const Layers = ({
   openList,
   setOpenList,
   selectedLayersList,
+  setActiveRealityMap,
+  layersUpdated,
 }: any) => {
   const [layersLabels, setLayersLabels] = useState<any>([]);
 
@@ -56,12 +58,12 @@ const Layers = ({
                 <CameraIcon src={cameraIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-           } else if (label === "Drone Image") {
+          } else if (label === "Drone Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={cameraIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
-            );  
+            );
           } else if (label === "360 Video") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
@@ -103,6 +105,8 @@ const Layers = ({
             optionsList={myLayersList}
             onSelect={LayerChange}
             selectedLayersList={selectedLayersList}
+            setActiveRealityMap={setActiveRealityMap}
+            layersUpdated={layersUpdated}
           />
         </SelectLayersWrapper>
       </ContainerDiv>
