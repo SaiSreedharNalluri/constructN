@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Loginpage from '../components/container/loginpage';
 import { login, ResendEmailVerificationLink } from '../services/userAuth';
-import useRouter from 'next/router';
+import { useRouter } from 'next/router';
 import { getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
 import Modal from 'react-responsive-modal';
