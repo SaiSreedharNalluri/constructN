@@ -125,11 +125,11 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   useEffect(() => {
     setIViewMode(viewMode);
   }, [viewMode]);
-  useEffect(() => {
-    if (myTypesList?.length) {
-      setSelectedTypeVal(myTypesList[0]);
-    }
-  }, [myTypesList?.length]);
+  // useEffect(() => {
+  //   if (myTypesList?.length) {
+  //     setSelectedTypeVal(selectedType);
+  //   }
+  // }, [myTypesList]);
   useEffect(() => {
     setSelectedTypeVal(selectedType);
   }, [selectedType]);
