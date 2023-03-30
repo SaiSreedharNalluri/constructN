@@ -1,4 +1,10 @@
-import { Autocomplete, Box, Drawer, TextField, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Drawer,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { styled } from "@mui/system";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Select } from "@mui/material";
@@ -88,7 +94,7 @@ import {
   StyledInput,
   ActivityLogContainer,
   ValueContainer,
-  CloseIcon
+  CloseIcon,
 } from "./IssueDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
@@ -552,7 +558,7 @@ function BasicTabs(props: any) {
                 // }}
               />
               <ValueContainer>
-                {formState.selectedUser.map((v) =>
+                {formState.selectedUser.map((v: any) =>
                   v?.label ? (
                     <Chip
                       key={v?.label}
@@ -568,7 +574,7 @@ function BasicTabs(props: any) {
                       }
                       onDelete={() => {
                         const newSelectedUser = formState.selectedUser.filter(
-                          (selected) => selected?.label !== v?.label
+                          (selected: any) => selected?.label !== v?.label
                         );
                         setFormState({
                           ...formState,
@@ -764,7 +770,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [footerState, SetFooterState] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(issue);
   useEffect(() => {
-    console.log("issueissue",issue)
+    console.log("issueissue", issue);
     setSelectedIssue(issue);
   }, [issue]);
 

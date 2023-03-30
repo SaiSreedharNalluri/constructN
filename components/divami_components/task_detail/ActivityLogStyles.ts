@@ -10,7 +10,9 @@ export const ActivityCardContainer = styled("div")({
   lineHeight: "19px",
 });
 
-export const ActivityCard = styled("div")({});
+export const ActivityCard = styled("div")({
+
+});
 
 export const CommentsTitle = styled("div")({
   fontFamily: "'Open Sans'",

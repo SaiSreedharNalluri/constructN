@@ -95,7 +95,7 @@ import {
   ThirdContWatch,
   ThirdContWatchName,
   TitleContainer,
-  CloseIcon
+  CloseIcon,
 } from "./TaskDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "./ActivityLog";
@@ -546,19 +546,23 @@ function BasicTabs(props: any) {
                 // }}
               />
               <ValueContainer>
-                {formState.selectedUser.map((v) =>
+                {formState.selectedUser.map((v: any) =>
                   v?.label ? (
                     <Chip
                       key={v?.label}
                       label={v?.label}
                       variant="outlined"
-                      style={{marginTop:"10px"}}
+                      style={{ marginTop: "10px" }}
                       deleteIcon={
-                        <CloseIcon src={closeIcon} alt="" style={{marginLeft:"5px", marginRight:"12px"}} />
+                        <CloseIcon
+                          src={closeIcon}
+                          alt=""
+                          style={{ marginLeft: "5px", marginRight: "12px" }}
+                        />
                       }
                       onDelete={() => {
                         const newSelectedUser = formState.selectedUser.filter(
-                          (selected) => selected?.label !== v?.label
+                          (selected: any) => selected?.label !== v?.label
                         );
                         setFormState({
                           ...formState,

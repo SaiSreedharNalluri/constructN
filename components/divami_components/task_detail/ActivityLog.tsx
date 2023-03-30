@@ -320,7 +320,7 @@ const ActivityLog = (props: any) => {
   console.log(commentsData, "coommmetsss");
   return (
     <ActivityCardContainer data-testid="const-custom-activity-log-issue">
-      {commentsData.length ? <CommentsTitle>Comments</CommentsTitle> : <></>}
+      {commentsData.length ? <CommentsTitle>Comments OK</CommentsTitle> : <></>}
       {commentsData?.map((each: any, index: number) => {
         return (
           <ActivityCard key={index}>
@@ -389,7 +389,7 @@ const ActivityLog = (props: any) => {
               >
                 <CommentTitleName>
                   <ActivityCommentAddedByMain>
-                    {each.by?.firstName}
+                    {each.by?.firstName + " hi"}
                   </ActivityCommentAddedByMain>
                   {/* <ActivityHeaderDivider>{" | "}</ActivityHeaderDivider> */}
                   <ActivityTimeStamp>
@@ -457,143 +457,7 @@ const ActivityLog = (props: any) => {
                 )}
               </CommentTitleWrapper>
             </ActivityHeader>
-            {/* {index === commentsData.length - 1 ? (
-              <ActivityBodyIssueRaisedCase>
-                <ActivityCommentAddedBy>
-                  <>
-                    <ActivityCommentAddedByMain>
-                      {each.by?.firstName}
-                    </ActivityCommentAddedByMain>
-                    <ActivityAddedComment>added a Comment</ActivityAddedComment>
-                    <ActivityCommentDiv>
-                      <ActivityComment>{`${each.comment}`}</ActivityComment>
-                      <CommentActions>
-                        <ReplyButton
-                          onClick={() => {
-                            setAutoFocusState(true);
-                            setCommentInputData((prev: any) => {
-                              return {
-                                ...prev,
-                                isReply: true,
-                                isEdit: false,
-                                data: {
-                                  ...prev.data,
-                                  text: "",
-                                  commentId: each?._id,
-                                },
-                              };
-                            });
-                          }}
-                        >
-                          Reply
-                        </ReplyButton>
-                        <ActivityHeaderDivider>{" | "}</ActivityHeaderDivider>
 
-                        <ReplyButton
-                          onClick={() => {
-                            setCommentInputData((prev: any) => {
-                              return {
-                                ...prev,
-                                isEdit: true,
-                                data: {
-                                  ...prev.data,
-                                  commentId: each?._id,
-                                  text: each.comment,
-                                },
-                                isReply: false,
-                              };
-                            });
-                          }}
-                        >
-                          Edit
-                        </ReplyButton>
-                        <ActivityHeaderDivider>{" | "}</ActivityHeaderDivider>
-
-                        <ReplyButton
-                          onClick={() => {
-                            deleteComments(each?._id);
-                          }}
-                        >
-                          Delete
-                        </ReplyButton>
-                      </CommentActions>
-                      {each.replies?.map((replyObj: any) => {
-                        return (
-                          <RepliesContainer key={`${replyObj._id}`}>
-                            <ActivityCard key={index}>
-                              <ActivityHeader>
-                                <ActivityStatusIcon>
-                                  <Image src={CommentAdded} alt={""} />
-                                </ActivityStatusIcon>
-                                <ActivityStatusTitle>
-                                  Reply Added
-                                </ActivityStatusTitle>
-
-                                <ActivityHeaderDivider>
-                                  {" | "}
-                                </ActivityHeaderDivider>
-                                <ActivityTimeStamp>
-                                  {moment(replyObj?.createdAt).format(
-                                    "DD MMM YY"
-                                  )}
-                                </ActivityTimeStamp>
-                              </ActivityHeader>
-
-                              <ActivityBodyChild>
-                                <ActivityCommentAddedBy>
-                                  <>
-                                    <ActivityCommentAddedByMain>
-                                      {replyObj?.by?.firstName}
-                                    </ActivityCommentAddedByMain>
-                                    <ActivityAddedComment>
-                                      added a reply
-                                    </ActivityAddedComment>
-                                    <ActivityCommentDiv>
-                                      <ActivityComment>{`"${replyObj.reply}"`}</ActivityComment>
-                                    </ActivityCommentDiv>
-                                    <CommentActions>
-                                      <ReplyButton
-                                        onClick={() => {
-                                          setCommentInputData((prev: any) => {
-                                            return {
-                                              ...prev,
-                                              isEditReply: true,
-                                              data: {
-                                                ...prev.data,
-                                                replyId: replyObj?._id,
-                                                text: replyObj?.reply,
-                                                commentId: replyObj?.commentId,
-                                              },
-                                              isReply: false,
-                                            };
-                                          });
-                                        }}
-                                      >
-                                        Edit
-                                      </ReplyButton>
-                                      <ReplyButton
-                                        onClick={() => {
-                                          deleteReplyComments(
-                                            replyObj?.commentId,
-                                            replyObj?._id
-                                          );
-                                        }}
-                                      >
-                                        Delete
-                                      </ReplyButton>
-                                    </CommentActions>
-                                  </>
-                                </ActivityCommentAddedBy>
-                              </ActivityBodyChild>
-                            </ActivityCard>
-                          </RepliesContainer>
-                        );
-                      })}
-                    </ActivityCommentDiv>
-                  </>
-                </ActivityCommentAddedBy>
-              </ActivityBodyIssueRaisedCase>
-            ) : ( */}
             <ActivityBody>
               <ActivityCommentAddedBy>
                 <>
@@ -766,7 +630,7 @@ const ActivityLog = (props: any) => {
                                 </ActivityHeaderDivider> */}
                                 <CommentTitleName>
                                   <ActivityCommentAddedByMain>
-                                    {replyObj?.by?.firstName}
+                                    {replyObj?.by?.firstName + " hi replies"}
                                   </ActivityCommentAddedByMain>
 
                                   <ActivityTimeStamp>
