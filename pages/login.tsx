@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Loginpage from '../components/container/loginpage';
 import { login, ResendEmailVerificationLink } from '../services/userAuth';
-import { useRouter } from 'next/router';
+import useRouter from 'next/router';
 import { getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
 import Modal from 'react-responsive-modal';
+import mixpanel from 'mixpanel-browser';
 const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [token, setToken] = useState('');
+
+  mixpanel.time_event('page_viewed');
+
   useEffect(() => {
     const userObj: any = getCookie('user');
     let user = null;
@@ -25,11 +29,16 @@ const Login: React.FC = () => {
     const { email, password } = formValue;
     setMessage('');
     setLoading(true);
-    login(email, password).then(
-      (response) => {
+    login(email, password)
+      .then((response: any) => {
         if (response.success === true) {
           if (response?.result?.verified === true) {
             toast.success('user logged in sucessfully');
+            mixpanel.identify(email);
+            mixpanel.track('Login', {
+              email: email,
+            });
+            mixpanel.time_event('page_exit');
             router.push('/projects');
           } else {
             setOpen(true);
@@ -37,8 +46,8 @@ const Login: React.FC = () => {
             return;
           }
         }
-      },
-      (error) => {
+      })
+      .catch((error: any) => {
         const resMessage =
           (error.response &&
             error.response.data &&
@@ -48,8 +57,7 @@ const Login: React.FC = () => {
 
         setLoading(false);
         setMessage(resMessage);
-      }
-    );
+      });
   };
   const resendEmail = () => {
     ResendEmailVerificationLink(token)

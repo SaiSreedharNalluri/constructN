@@ -54,9 +54,10 @@ const SelectTypesList = ({
   };
 
   useEffect(() => {
-    if (Object.keys(optionsList)?.length) {
-      setList(Object.keys(optionsList));
-    }
+    // if (Object.keys(optionsList)?.length) {
+    //   setList(Object.keys(optionsList));
+    // }
+    setList(optionsList);
   }, [optionsList]);
   console.log(optionsList, "options", list);
   // const filteredItems = optionsList.filter((item:any) =>
