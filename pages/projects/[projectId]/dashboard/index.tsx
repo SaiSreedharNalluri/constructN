@@ -65,7 +65,7 @@ const Index: React.FC = () => {
                           </div>
                         ) : (
                           <iframe
-                            className="w-95 h-93"
+                            className="w-95 h-80"
                             src={urlObj?.dashboard_url}
                           />
                         )}
