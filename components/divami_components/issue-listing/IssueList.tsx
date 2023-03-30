@@ -64,6 +64,7 @@ import {
   ContentErrorSpan,
   NoMatchDiv,
   CustomBox,
+  LoadMoreText,
 } from "./IssueListStyles";
 
 import _ from "lodash";
@@ -151,6 +152,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [issueList, setIssueList] = useState<any>(issuesList);
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [remainingIssues, setRemainingIssues] = useState(issueList?.length);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const sortMenuOptions = [
@@ -199,7 +201,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const handleSortMenuClick = (sortMethod: string) =>
     handleOnIssueSort(sortMethod);
 
-  const [filteredIssuesList, setFilteredIssuesList] = useState<any>(issueList);
+  const [filteredIssuesList, setFilteredIssuesList] = useState<any>(
+    issueList.slice(0, 10)
+  );
   const [errorShow, setErrorShow] = useState<any>(issueList);
 
   useEffect(() => {
@@ -207,7 +211,11 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   }, [issuesList]);
 
   useEffect(() => {
-    setFilteredIssuesList(issueList);
+    setFilteredIssuesList(issueList.slice(0,10));
+  }, [issueList]);
+
+  useEffect(() => {
+    setRemainingIssues(issueList?.length);
   }, [issueList]);
 
   const closeIssueList = () => {
@@ -267,11 +275,32 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
           sequenceNumber.includes(searchTerm.toLowerCase())
         );
       });
-      setFilteredIssuesList([...filteredData]);
+      setFilteredIssuesList([...filteredData.slice(0, 10)]);
     } else {
-      setFilteredIssuesList(issueList);
+      setFilteredIssuesList(issueList.slice(0, 10));
     }
   };
+
+  const handleLoadMore = () => {
+    const noOfIssuesLoaded = filteredIssuesList.length;
+        if (searchTerm) {
+          const filteredData: any = issueList?.filter((eachIssue: any) => {
+            const taskName = eachIssue?.type?.toLowerCase();
+            const sequenceNumber = eachIssue?.sequenceNumber.toString();
+            return (
+              taskName.includes(searchTerm.toLowerCase()) ||
+              sequenceNumber.includes(searchTerm.toLowerCase())
+            );
+          });
+          setRemainingIssues((filteredData?.length) - (noOfIssuesLoaded + 10));
+          setFilteredIssuesList([
+            ...filteredData.slice(0, noOfIssuesLoaded + 10),
+          ]);
+        } else {
+          setFilteredIssuesList(issueList.slice(0, noOfIssuesLoaded + 10));
+          setRemainingIssues(issueList?.length - (noOfIssuesLoaded + 10));
+        }
+  }
 
   const getDownladableIssueList = (issL = issuesList) => {
     let myL = issL.map((iss) => {
@@ -521,6 +550,15 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   <MessageDivShowErr>No result found</MessageDivShowErr>
                 </NoMatchDiv>
               )}
+              {remainingIssues > 0 ? (
+                <LoadMoreText
+                  onClick={() => {
+                    handleLoadMore();
+                  }}
+                >
+                  Load More
+                </LoadMoreText>
+              ) : null}
             </CustomBox>
           </BodyContainer>
 

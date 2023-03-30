@@ -225,6 +225,17 @@ export const ErrorImageDiv = styled("div")({
   // margin:"auto"
 });
 
+export const LoadMoreText = styled("div")({
+  fontFamily: "Open Sans",
+  fontWeight: 400,
+  fontSize: "16px",
+  lineHeight: "21.79px",
+  textAlign: "center",
+  color: "#FF843F",
+  cursor: "pointer",
+});
+
+
 export const ImageErrorIcon = styled(Image)({
   cursor: "pointer",
   width: "226px",
