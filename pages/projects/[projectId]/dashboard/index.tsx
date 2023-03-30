@@ -17,7 +17,6 @@ const Index: React.FC = () => {
     if (router.isReady) {
       getdashBoardUrls(router.query.projectId as string)
         .then((response) => {
-          console.log('response', response);
           setUrlObj(response);
         })
         .catch((error) => {
@@ -25,6 +24,7 @@ const Index: React.FC = () => {
         });
     }
   }, [router.isReady, router.query.projectId]);
+
   return (
     <React.Fragment>
       <div>
@@ -45,13 +45,31 @@ const Index: React.FC = () => {
                     <Tab>Dash Board</Tab>
                     <Tab>Reports</Tab>
                   </TabList>
-
                   <TabPanel>
                     {!loadData ? (
-                      <iframe
-                        className="w-95 h-93"
-                        src={urlObj?.dashboard_url}
-                      />
+                      <div>
+                        {urlObj?.dashboard_url.split('.').pop() === 'apdf' ? (
+                          <div className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300  ">
+                            <h1>
+                              Click the below button to download your report in
+                              pdf format
+                            </h1>
+                            <button
+                              onClick={() => {
+                                window.open(urlObj.dashboard_url);
+                              }}
+                              className="p-2 bg-orange-500 hover:bg-orange-400  rounded-md text-white "
+                            >
+                              Download
+                            </button>
+                          </div>
+                        ) : (
+                          <iframe
+                            className="w-95 h-93"
+                            src={urlObj?.dashboard_url}
+                          />
+                        )}
+                      </div>
                     ) : (
                       <h1 className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300 text-orange-400 ">
                         There is no data avalible to load the dashboard
@@ -60,7 +78,29 @@ const Index: React.FC = () => {
                   </TabPanel>
                   <TabPanel>
                     {!loadData ? (
-                      <iframe className="w-95 h-93" src={urlObj?.report_url} />
+                      <div>
+                        {urlObj?.report_url.split('.').pop() === 'pdf' ? (
+                          <div className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300  ">
+                            <h1>
+                              Click the below button to download your report in
+                              pdf format
+                            </h1>
+                            <button
+                              onClick={() => {
+                                window.open(urlObj.report_url);
+                              }}
+                              className="p-2 bg-orange-500 hover:bg-orange-400  rounded-md text-white "
+                            >
+                              Download
+                            </button>
+                          </div>
+                        ) : (
+                          <iframe
+                            className="w-95 h-93"
+                            src={urlObj?.report_url}
+                          />
+                        )}
+                      </div>
                     ) : (
                       <h1 className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300 text-orange-400 ">
                         There is no data avalible to load the report
