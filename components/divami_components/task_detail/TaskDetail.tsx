@@ -374,9 +374,9 @@ function BasicTabs(props: any) {
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
-              <PriorityTitle>Title</PriorityTitle>
+              <PriorityTitle>Type</PriorityTitle>
               <PriorityStatus style={{ color: "#101F4B" }}>
-                {taskState.TabOne.title}
+                {taskState.TabOne.type}
               </PriorityStatus>
             </SecondContPrior>
 
@@ -393,7 +393,7 @@ function BasicTabs(props: any) {
               <CaptureTitle>Captured on</CaptureTitle>
               <CaptureStatus style={{ color: "#101F4B" }}>
                 {" "}
-                {Moment(taskState.TabOne.capturedOn).format("DD MMM YY")}
+                {Moment(taskState.TabOne.capturedOn).format("DD MMM YYYY")}
               </CaptureStatus>
             </SecondContCapt>
 
@@ -592,8 +592,12 @@ function BasicTabs(props: any) {
                     label: each.user?.fullName,
                   };
                 })}
-                // sx={{ minWidth: 120 }}
-                sx={{ width: 300 }}
+                sx={{
+                  width: 300,
+                  "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    border: "1px solid #ff843f !important",
+                  },
+                }}
                 renderInput={(params) => <TextField {...params} label="" />}
                 onChange={(event, value: any) => {
                   console.log(value);
@@ -1058,7 +1062,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 alt={"close icon"}
               />
               <SpanTile>
-                {selectedTask?.type} (#{selectedTask?.sequenceNumber})
+                {selectedTask?.title} (#{selectedTask?.sequenceNumber})
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
@@ -1098,7 +1102,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
           setShowPopUp={setshowPopUp}
           modalTitle={"Delete Task"}
           // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
-          modalmessage={`Are you sure you want to delete this Task "${selectedTask.title}(#${selectedTask._id})"?`}
+          modalmessage={`Are you sure you want to delete this Task "${selectedTask.title} (#${selectedTask._id})"?`}
           primaryButtonLabel={"Delete"}
           SecondaryButtonlabel={"Cancel"}
           callBackvalue={onDeleteTask}

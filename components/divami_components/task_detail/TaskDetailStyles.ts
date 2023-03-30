@@ -43,8 +43,8 @@ export const EditIcon = styled(Image)`
 
 export const DeleteIcon = styled(Image)`
   cursor: pointer;
-  width:24px;
-  height:24px;
+  // width:24px;
+  // height:24px;
     margin-right: 10px;
 `;
 
@@ -548,8 +548,8 @@ export const AssigneeList = styled("div")({
   // display: "inline-block",
 
   // background:"#FFFFF"
-  width: "308px",
-  height: "86px",
+  // width: "308px",
+  // height: "86px",
   padding: "15px",
   color: "#101F4C",
   fontSize: "14px",
@@ -565,8 +565,8 @@ export const SecondAssigneeList = styled("div")({
   // display: "inline-block",
 
   background: "white",
-  width: "308px",
-  height: "86px",
+  // width: "308px",
+  // height: "86px",
   padding: "15px",
   color: "#101F4C",
   fontSize: "14px",
