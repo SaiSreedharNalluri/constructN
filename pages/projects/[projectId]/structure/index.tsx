@@ -1092,7 +1092,7 @@ const Index: React.FC<IProps> = () => {
     deleteIssue(router.query.projectId as string, issueObj._id)
       .then((response) => {
         if (response.success === true) {
-          toast(response.message);
+          toast.success(response.message);
           _.remove(issueFilterList, { _id: issueObj._id });
           setIssueList(issueFilterList);
           if (callback) {
