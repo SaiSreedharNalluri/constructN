@@ -15,9 +15,12 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "react-tabs/style/react-tabs.css";
 import { StyledToastContainer } from "../components/divami_components/custom-toaster/CustomToastStyles";
+import mixpanel from 'mixpanel-browser';
+
 config.autoAddCss = false;
 
 export default function App({ Component, pageProps }: AppProps) {
+  mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, {debug: true}); 
   return (
     <>
       <Component {...pageProps} />

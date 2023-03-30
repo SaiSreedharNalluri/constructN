@@ -3,11 +3,14 @@ import { IProjects } from "../../models/IProjects";
 import Moment from "moment";
 import { useRouter } from "next/router";
 import NextImage from "../core/Image";
+import mixpanel from 'mixpanel-browser';
 interface IProps {
   projects: IProjects[];
 }
 let ProjectsList: React.FC<IProps> = ({ projects }) => {
   const router = useRouter();
+
+  mixpanel.time_event('page_viewed')
   return (
     <div className="h-full calc-h overflow-y-auto grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
       {projects &&
@@ -19,6 +22,7 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
                   onClick={() => {
                     window.localStorage.setItem("nodeData", "");
                     window.localStorage.setItem("expandedNodes", "");
+                    mixpanel.time_event('page_exit')
                     router.push(`projects/${pData._id}/structure`);
                   }}
                 >

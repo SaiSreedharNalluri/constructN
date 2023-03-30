@@ -199,7 +199,7 @@ export const ForgeViewerUtils = (function () {
       removeData();
     }
 
-    _documentURNs[getAvailableType()].map((document) => {
+    _documentURNs[getAvailableType()]?.map((document) => {
       Autodesk.Viewing.Document.load(
         document.urn,
         async function (viewerDocument) {
