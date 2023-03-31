@@ -263,7 +263,14 @@ function GenericViewer(props) {
         break;
       case 'closeCompare':
         setIsCompare(false);
-        if(mapboxUtils.current && mapboxUtils.current.getMap()) setTimeout(() => mapboxUtils.current.resize(), 100)
+        if(mapboxUtils.current && mapboxUtils.current.getMap()) {
+          setTimeout(() =>{
+            if(mapboxUtils.current){
+              mapboxUtils.current.resize()
+            }
+          },
+           100)
+        }
         break;
       default:
         break;
@@ -686,10 +693,13 @@ function GenericViewer(props) {
             updateRealityMap(map)
           }
           setTimeout(() => {
-            mapboxUtils.current.updateData(data, currentContext.current);
-            hotspots && hotspots.data && setHotspots(hotspots.data.features);
-            mapboxUtils.current.updateIssuesData(issuesList);
-            mapboxUtils.current.updateTasksData(tasksList);
+            if (mapboxUtils.current != undefined) {
+
+                mapboxUtils.current.updateData(data, currentContext.current);
+                hotspots && hotspots.data && setHotspots(hotspots.data.features);
+                mapboxUtils.current.updateIssuesData(issuesList);
+                mapboxUtils.current.updateTasksData(tasksList);
+            }
           }, 700);
         }
         break;
@@ -760,26 +770,29 @@ function GenericViewer(props) {
             const reality = compareSnapshot.reality.find((reality) => { return reality })
             let hotspots = await getMapboxHotspots(project._id, structure._id, compareSnapshot._id, reality._id)
             setTimeout(() => {
-              mapboxCompareUtils.current.updateData(data, currentContext.current);
-              hotspots && hotspots.data && (hotspotsCompare = hotspots.data.features);
-              hotspots && hotspots.data && setHotspotsCompare(hotspots.data.features);
-              mapboxCompareUtils.current.updateIssuesData(issuesList);
-              mapboxUtils.current.updateTasksData(tasksList);
-              setTimeout(() => {
-                if(viewLayers && viewLayers['Stages']) {
-                  const filters = ['any']
-                  const children = viewLayers['Stages'].children;
-                  for(let i = 0; i < children.length; i++) {
-                    if(children[i].isSelected) {
-                      filters.push(children[i].filters)
+              if (mapboxCompareUtils.current != undefined) {
+                mapboxCompareUtils.current.updateData(data, currentContext.current);
+                hotspots && hotspots.data && (hotspotsCompare = hotspots.data.features);
+                hotspots && hotspots.data && setHotspotsCompare(hotspots.data.features);
+                mapboxCompareUtils.current.updateIssuesData(issuesList);
+                mapboxUtils.current.updateTasksData(tasksList);
+                setTimeout(() => {
+                  
+                  if(viewLayers && viewLayers['Stages']) {
+                    const filters = ['any']
+                    const children = viewLayers['Stages'].children;
+                    for(let i = 0; i < children.length; i++) {
+                      if(children[i].isSelected) {
+                        filters.push(children[i].filters)
+                      }
+                    }
+                
+                    if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
+                      mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
                     }
                   }
-              
-                  if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
-                    mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
-                  }
-                }
-              }, 500)
+                }, 500)
+            }
             }, 700);
           }
           break;
@@ -1054,8 +1067,8 @@ function GenericViewer(props) {
           mapboxCompareUtils.current = undefined;
           delete mapboxUtils.current;
           realityMap && realityMap['Stages'] && delete realityMap['Stages']
-          setRealityMap(realityMap)
-          updateRealityMap(realityMap)
+          // setRealityMap(realityMap)
+          // updateRealityMap(realityMap)
         }
         break;
     }
@@ -1213,14 +1226,14 @@ function GenericViewer(props) {
   };
 
   useEffect(() => {
-    // console.log("Generic Viewer load: Design List UseEffect", designList);
+    console.log("Generic Viewer load: Design List UseEffect", designList);
     if (designList.length > 0) {
       loadViewerData();
     }
   }, [designList]);
 
   useEffect(() => {
-    // console.log("Generic Viewer load: Reality UseEffect", realityList);
+    console.log("Generic Viewer load: Reality UseEffect", realityList);
     if (realityList.length > 0) {
       if (designList.length <= 0 && currentViewerType.current === 'Forge') {
         pushToolResponse({
