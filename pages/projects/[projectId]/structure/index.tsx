@@ -27,7 +27,7 @@ import { deleteAttachment } from "../../../../services/attachments";
 import authHeader from "../../../../services/auth-header";
 import CollapsableMenu from "../../../../components/layout/collapsableMenu";
 import { getProjectDetails } from "../../../../services/project";
-import mixpanel from 'mixpanel-browser';
+import mixpanel from "mixpanel-browser";
 import {
   faCompressArrowsAlt,
   faExpandArrowsAlt,
@@ -511,7 +511,7 @@ const Index: React.FC<IProps> = () => {
       types.push(key);
     });
     setDesignAndRealityMaps(types);
-  }, [activeRealityMap, designMap, snapshot?._id]);
+  }, [activeRealityMap, designMap]);
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
   };
@@ -708,15 +708,31 @@ const Index: React.FC<IProps> = () => {
   };
 
   useEffect(() => {
-    if (
-      currentViewMode === "Design" &&
-      designAndRealityMaps.length &&
-      currentViewType != "Plan Drawings" &&
-      currentViewType != "BIM"
-    ) {
-      if (selectedDesign) {
-        setViewType(selectedDesign);
-      } else {
+    if (currentViewMode === "Design" && designAndRealityMaps.length) {
+      if (currentViewType != "Plan Drawings" && currentViewType != "BIM") {
+        if (designAndRealityMaps.includes(selectedDesign)) {
+          setViewType(selectedDesign);
+        } else {
+          if (designAndRealityMaps.includes("Plan Drawings")) {
+            setViewType("Plan Drawings");
+            setSelectedDesign("Plan Drawings");
+          } else if (designAndRealityMaps.includes("BIM")) {
+            setViewType("BIM");
+            setSelectedDesign("BIM");
+          } else {
+            const val =
+              designMap && Object.keys(designMap)?.length
+                ? Object.keys(designMap)[0]
+                : "";
+            if (val) {
+              setViewType(val);
+              setSelectedDesign(val);
+            } else {
+              setViewMode("Reality");
+            }
+          }
+        }
+      } else if (!designAndRealityMaps.includes(currentViewType)) {
         if (designAndRealityMaps.includes("Plan Drawings")) {
           setViewType("Plan Drawings");
           setSelectedDesign("Plan Drawings");
@@ -736,16 +752,46 @@ const Index: React.FC<IProps> = () => {
           }
         }
       }
-    } else if (
-      currentViewMode === "Reality" &&
-      designAndRealityMaps.length &&
-      currentViewType != "pointCloud" &&
-      currentViewType != "orthoPhoto"
-    ) {
-      if (selectedReality) {
-        setViewType(selectedReality);
-      } else {
+    } else if (currentViewMode === "Reality" && designAndRealityMaps.length) {
+      if (currentViewType != "pointCloud" && currentViewType != "orthoPhoto") {
+        if (designAndRealityMaps.includes(selectedReality)) {
+          setViewType(selectedReality);
+        } else {
+          if (designAndRealityMaps.includes("pointCloud")) {
+            setViewType("pointCloud");
+            setSelectedReality("pointCloud");
+          } else if (designAndRealityMaps.includes("orthoPhoto")) {
+            setViewType("orthoPhoto");
+            setSelectedReality("orthoPhoto");
+          } else {
+            // setViewType(designAndRealityMaps[0]);
+            const arr =
+              activeRealityMap &&
+              activeRealityMap[
+                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+              ]?.realities?.length &&
+              activeRealityMap[
+                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+              ].realities![0].realityType?.length
+                ? activeRealityMap[
+                    `${
+                      Object.keys(
+                        activeRealityMap
+                      )[0] as keyof IActiveRealityMap
+                    }`
+                  ].realities![0].realityType
+                : [];
+            if (arr && arr.length) {
+              setViewType(arr[0]);
+              setSelectedReality(arr[0]);
+            } else {
+              setViewMode("Design");
+            }
+          }
+        }
+      } else if (!designAndRealityMaps.includes(currentViewType)) {
         if (designAndRealityMaps.includes("pointCloud")) {
+          console.log("comingjklj");
           setViewType("pointCloud");
           setSelectedReality("pointCloud");
         } else if (designAndRealityMaps.includes("orthoPhoto")) {
@@ -776,7 +822,7 @@ const Index: React.FC<IProps> = () => {
         }
       }
     }
-  }, [currentViewMode]);
+  }, [currentViewMode, designAndRealityMaps]);
 
   useEffect(() => {
     if (
@@ -786,10 +832,13 @@ const Index: React.FC<IProps> = () => {
     ) {
       if (selectedDesign !== currentViewType)
         setSelectedDesign(currentViewType);
+
+      toolClicked({ toolName: "viewType", toolAction: currentViewType });
     } else {
       console.log("assds", currentViewType);
-      if (selectedDesign !== currentViewType)
+      if (selectedReality !== currentViewType)
         setSelectedReality(currentViewType);
+      toolClicked({ toolName: "viewType", toolAction: currentViewType });
     }
   }, [currentViewType]);
   const getIssues = (structureId: string, isDownload?: boolean) => {
@@ -1623,6 +1672,7 @@ const Index: React.FC<IProps> = () => {
               setActiveRealityMap={setActiveRealityMap}
               setLayersUpdated={setLayersUpdated}
               layersUpdated={layersUpdated}
+              setViewType={setViewType}
             />
 
             {/* <CustomToaster /> */}
