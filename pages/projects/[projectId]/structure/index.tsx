@@ -511,7 +511,7 @@ const Index: React.FC<IProps> = () => {
       types.push(key);
     });
     setDesignAndRealityMaps(types);
-  }, [activeRealityMap, designMap, snapshot?._id]);
+  }, [activeRealityMap, designMap]);
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
   };
@@ -708,7 +708,6 @@ const Index: React.FC<IProps> = () => {
   };
 
   useEffect(() => {
-    console.log("dsfsfsfsdfs");
     if (currentViewMode === "Design" && designAndRealityMaps.length) {
       if (currentViewType != "Plan Drawings" && currentViewType != "BIM") {
         if (designAndRealityMaps.includes(selectedDesign)) {
@@ -824,21 +823,24 @@ const Index: React.FC<IProps> = () => {
       }
     }
   }, [currentViewMode, designAndRealityMaps]);
-  console.log(currentViewType, "currentviewtrtpe");
-  // useEffect(() => {
-  //   if (
-  //     designMap &&
-  //     Object.keys(designMap)?.length &&
-  //     Object.keys(designMap).includes(currentViewType)
-  //   ) {
-  //     if (selectedDesign !== currentViewType)
-  //       setSelectedDesign(currentViewType);
-  //   } else {
-  //     console.log("assds", currentViewType);
-  //     if (selectedReality !== currentViewType)
-  //       setSelectedReality(currentViewType);
-  //   }
-  // }, [currentViewType]);
+
+  useEffect(() => {
+    if (
+      designMap &&
+      Object.keys(designMap)?.length &&
+      Object.keys(designMap).includes(currentViewType)
+    ) {
+      if (selectedDesign !== currentViewType)
+        setSelectedDesign(currentViewType);
+
+      toolClicked({ toolName: "viewType", toolAction: currentViewType });
+    } else {
+      console.log("assds", currentViewType);
+      if (selectedReality !== currentViewType)
+        setSelectedReality(currentViewType);
+      toolClicked({ toolName: "viewType", toolAction: currentViewType });
+    }
+  }, [currentViewType]);
   const getIssues = (structureId: string, isDownload?: boolean) => {
     if (structureId && router.query.projectId) {
       getIssuesList(router.query.projectId as string, structureId)
@@ -1670,6 +1672,7 @@ const Index: React.FC<IProps> = () => {
               setActiveRealityMap={setActiveRealityMap}
               setLayersUpdated={setLayersUpdated}
               layersUpdated={layersUpdated}
+              setViewType={setViewType}
             />
 
             {/* <CustomToaster /> */}
