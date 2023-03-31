@@ -1348,12 +1348,12 @@ function GenericViewer(props) {
           </HotspotsCompare>
           : <></>
         }
-        {/* <Draggable handle=".handle">
-          <div style={{border: "24px 2px 2px 2px solid red", height: "25%", width: "30%", "z-index": 100 }}>
+        <Draggable handle=".handle">
+          <div style={{border: "24px 2px 2px 2px solid red", height: "25%", width: "30%", "zIndex": 100 }}>
             <div className='handle' style={{width: '100%', height: '24px', background: '#ff0000'}}></div>
-            <MiniMap models={[]} viewerState={{center: [-71.516, 46.437], bearing: 90}}></MiniMap>
+            <MiniMap id={`minimap`} map={designMap} model={getForgeModels(designMap)}></MiniMap>
           </div>
-        </Draggable> */}
+        </Draggable>
     {/* 
     <div className={` ${isFullScreenActive?"w-full h-full":" calc-w calc-h"} fixed flex flex-row`}>
       <div id="TheView" className="relative basis-1/2 flex grow shrink">
