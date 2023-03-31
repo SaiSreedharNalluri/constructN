@@ -4,10 +4,14 @@ import { login } from '../services/userAuth';
 import { Router, useRouter } from 'next/router';
 import { getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
+import mixpanel from 'mixpanel-browser';
 const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
   const router = useRouter();
+
+  mixpanel.time_event('page_viewed')
+
   useEffect(() => {
     const userObj: any = getCookie('user');
     let user = null;
@@ -28,6 +32,11 @@ const Login: React.FC = () => {
       (response) => {
         if (response.success === true) {
           toast.success('user logged in sucessfully');
+          mixpanel.identify(email)
+          mixpanel.track('Login', {
+            'email': email,
+          });
+          mixpanel.time_event('page_exit')
           router.push('/projects');
         }
       },
