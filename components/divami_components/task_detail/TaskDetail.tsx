@@ -356,7 +356,7 @@ function BasicTabs(props: any) {
               fontWeight: "400",
             }}
           />
-          <Tab
+          {/* <Tab
             label="Activity log"
             {...a11yProps(1)}
             style={{
@@ -367,7 +367,7 @@ function BasicTabs(props: any) {
               fontSize: "14px",
               fontWeight: "400",
             }}
-          />
+          /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
