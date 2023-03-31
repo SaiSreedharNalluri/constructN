@@ -1,6 +1,6 @@
 import Script from 'next/script';
 import Moment from 'moment';
-import mixpanel from 'mixpanel-browser';
+import { Mixpanel } from '../analytics/mixpanel';
 import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
 import Draggable, {DraggableCore} from "react-draggable";
 import Head from 'next/head';
@@ -555,7 +555,7 @@ function GenericViewer(props) {
         }
         break;
     }
-    mixpanel.time_event('page_viewed')
+    Mixpanel.track('viewer_initialised')
   };
 
   const initCompareViewer = (viewerId) => {
@@ -1059,7 +1059,7 @@ function GenericViewer(props) {
         }
         break;
     }
-    mixpanel.time_event('page_exit')
+    Mixpanel.track('viewer_closed')
   };
 
   const destroyCompareViewer = () => {

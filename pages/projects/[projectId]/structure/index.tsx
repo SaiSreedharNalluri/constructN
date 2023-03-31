@@ -27,7 +27,7 @@ import { deleteAttachment } from "../../../../services/attachments";
 import authHeader from "../../../../services/auth-header";
 import CollapsableMenu from "../../../../components/layout/collapsableMenu";
 import { getProjectDetails } from "../../../../services/project";
-import mixpanel from 'mixpanel-browser';
+
 import {
   faCompressArrowsAlt,
   faExpandArrowsAlt,
