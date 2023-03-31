@@ -330,7 +330,7 @@ const ActivityLog = (props: any) => {
   console.log(commentsData, "coommmetsss");
   return (
     <ActivityCardContainer data-testid="const-custom-activity-log-issue">
-      {commentsData.length ? <CommentsTitle>Comments OK</CommentsTitle> : <></>}
+      {commentsData.length ? <CommentsTitle>Comments</CommentsTitle> : <></>}
       {commentsData?.map((each: any, index: number) => {
         return (
           <ActivityCard key={index}>
@@ -399,7 +399,7 @@ const ActivityLog = (props: any) => {
                 >
                   <CommentTitleName>
                     <ActivityCommentAddedByMain>
-                      {each.by?.firstName + " hi"}
+                      {each.by?.firstName}
                     </ActivityCommentAddedByMain>
                     {/* <ActivityHeaderDivider>{" | "}</ActivityHeaderDivider> */}
                     <ActivityTimeStamp>
@@ -622,7 +622,7 @@ const ActivityLog = (props: any) => {
                                 </ActivityHeaderDivider> */}
                                   <CommentTitleName>
                                     <ActivityCommentAddedByMain>
-                                      {replyObj?.by?.firstName + " hi replies"}
+                                      {replyObj?.by?.firstName + "replies"}
                                     </ActivityCommentAddedByMain>
 
                                     <ActivityTimeStamp>
