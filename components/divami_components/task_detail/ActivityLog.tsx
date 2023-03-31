@@ -487,7 +487,7 @@ const ActivityLog = (props: any) => {
                                       showMoreText:
                                         each._id == item._id
                                           ? !item.showMoreText
-                                          : item.showMoreText,
+                                          : true,
                                     };
                                   }
                                 );
