@@ -8,6 +8,7 @@ export const ActivityCardContainer = styled("div")({
   fontWeight: "400",
   fontSize: "14px",
   lineHeight: "19px",
+  // border:"2px solid yellow"
 });
 
 export const ActivityCard = styled("div")({});
@@ -49,15 +50,45 @@ export const ActivityHeaderDivider = styled("span")({
   color: "#787878",
 });
 
-export const ActivityBody = styled("div")({
-  // borderLeft: "1px solid #d9d9d9",
-  marginLeft: "15px",
-  marginTop: "6px",
-  marginBottom: "10px",
-  paddingLeft: "14px !important",
-  paddingBottom: "15px",
-  color: "#787878",
-});
+interface ContainerProps {
+  searchingOnnew: boolean;
+  currentCommentId: string;
+  commentId: string;
+  textEachMore: string;
+}
+
+// export const ActivityBody = styled("div")({
+//   borderLeft: "1px solid #d9d9d9",
+//   marginLeft: "15px",
+//   marginTop: "6px",
+//   marginBottom: "10px",
+//   paddingLeft: "14px !important",
+//   paddingBottom: "15px",
+//   color: "#787878",
+// });
+export const ActivityBody = styled("div")<ContainerProps>`
+  margin-left: 15px;
+  margin-top: 6px;
+  margin-top: 6px;
+  margin-bottom: 10px;
+  padding-left: 14px !important;
+  padding-bottom: 15px;
+  color: "#787878";
+  position: relative;
+  &:before {
+    content: "";
+    width: 1px;
+    height: ${({ currentCommentId, textEachMore, commentId }) =>
+      !textEachMore && commentId === currentCommentId
+        ? "calc(100% - 46px)"
+        : ""};
+    position: absolute;
+    background: #d9d9d9;
+
+    left: -2px;
+    top: -3px;
+  }
+`;
 
 export const ActivityBodyChild = styled("div")({
   // borderLeft: "1px solid #d9d9d9",
@@ -188,4 +219,22 @@ export const ReplyButton = styled("div")({
 
 export const RepliesContainer = styled("div")({
   marginTop: "16px",
+  position: "relative",
+  "&:before": {
+    position: "absolute",
+    height: "11px",
+    width: "21px",
+    border: "1.33px solid #D9D9D9",
+    borderTop: "none",
+    borderRight: "none",
+    borderRadius: "0 0 0 5px",
+    borderLeft: "none",
+    left: "-19px",
+    content: '""',
+  },
+});
+
+export const ActivityCommentsDiv = styled("div")({
+  // borderLeft: "1px solid #d9d9d9",
+  // border:"2px solid red"
 });

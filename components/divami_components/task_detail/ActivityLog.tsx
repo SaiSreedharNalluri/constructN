@@ -52,6 +52,7 @@ import {
   CommentTitleWrapper,
   EditIconImage,
   DeleteconImage,
+  ActivityCommentsDiv,
 } from "./ActivityLogStyles";
 import moment from "moment";
 import router from "next/router";
@@ -92,6 +93,15 @@ const ActivityLog = (props: any) => {
     },
   });
 
+  const [searchingOn, setSearchingOn] = useState(false);
+  const [searchingOnnew, setSearchingOnnew] = useState(false);
+  const [currentCommentId, setCurrentCommentId] = useState("");
+  const [commentId, setCommentId] = useState("");
+
+  function sayHello(name: string) {
+    setCurrentCommentId(name);
+    // setSearchingOn(!searchingOn);
+  }
   const getTimeText = (createdDate: string) => {
     let text = "";
     const date1: any = new Date(createdDate);
@@ -324,147 +334,122 @@ const ActivityLog = (props: any) => {
       {commentsData?.map((each: any, index: number) => {
         return (
           <ActivityCard key={index}>
-            <ActivityHeader>
-              <ActivityStatusIcon>
-                <ActivityImageAvatar
-                  src={
-                    each?.by?.avatar
-                    // CommentAdded
-                    // each.status === "Issue Raised"
-                    //   ? IssueRaised
-                    //   : each.status === "Issue Updated"
-                    //   ? IssuesUpdated
-                    //   : each.status === "Comment Added"
-                    //   ? CommentAdded
-                    //   : each.status === "RFI Updated"
-                    //   ? RfiUpdated
-                    //   : each.status === "RFI Raised"
-                    //   ? RfiRaised
-                    //   : each.status === "Scan Updated"
-                    //   ? ScanUpdated
-                    //   : ""
-                  }
-                  width={30}
-                  height={30}
-                  alt={""}
-                />
-              </ActivityStatusIcon>
-              {/* <ActivityStatusTitle>{each.status}</ActivityStatusTitle> */}
-              {/* <ActivityStatusTitle>Comment Added</ActivityStatusTitle> */}
-              <CommentTitleWrapper
-                onMouseOver={() => {
-                  setCommentsData((prev: any) => {
-                    return prev.map((item: any) => {
-                      if (item._id == each._id) {
-                        return {
-                          ...item,
-                          showEdit: true,
-                          showDelete: true,
-                        };
-                      } else {
-                        return {
-                          ...item,
-                        };
-                      }
-                    });
-                  });
-                }}
-                onMouseOut={() => {
-                  setCommentsData((prev: any) => {
-                    return prev.map((item: any) => {
-                      if (item._id == each._id) {
-                        return {
-                          ...item,
-                          showEdit: false,
-                          showDelete: false,
-                        };
-                      } else {
-                        return {
-                          ...item,
-                        };
-                      }
-                    });
-                  });
-                }}
-              >
-                <CommentTitleName>
-                  <ActivityCommentAddedByMain>
-                    {each.by?.firstName}
-                  </ActivityCommentAddedByMain>
-                  {/* <ActivityHeaderDivider>{" | "}</ActivityHeaderDivider> */}
-                  <ActivityTimeStamp>
-                    {each.updatedTimeText}
-                    {/* {moment(each.createdAt).format("DD MMM YY")} */}
-                  </ActivityTimeStamp>
-                </CommentTitleName>
-                {each.showEdit && each.showDelete ? (
-                  <CommentEditActions>
-                    <EditIconImage
-                      src={Edit}
-                      alt={"close icon"}
-                      onClick={() => {
-                        setCommentInputData((prev: any) => {
+            <ActivityCommentsDiv>
+              <ActivityHeader>
+                <ActivityStatusIcon>
+                  <ActivityImageAvatar
+                    src={
+                      each?.by?.avatar
+                      // CommentAdded
+                      // each.status === "Issue Raised"
+                      //   ? IssueRaised
+                      //   : each.status === "Issue Updated"
+                      //   ? IssuesUpdated
+                      //   : each.status === "Comment Added"
+                      //   ? CommentAdded
+                      //   : each.status === "RFI Updated"
+                      //   ? RfiUpdated
+                      //   : each.status === "RFI Raised"
+                      //   ? RfiRaised
+                      //   : each.status === "Scan Updated"
+                      //   ? ScanUpdated
+                      //   : ""
+                    }
+                    width={30}
+                    height={30}
+                    alt={""}
+                  />
+                </ActivityStatusIcon>
+
+                <CommentTitleWrapper
+                  onMouseOver={() => {
+                    setCommentsData((prev: any) => {
+                      return prev.map((item: any) => {
+                        if (item._id == each._id) {
                           return {
-                            ...prev,
-                            isEdit: true,
-                            data: {
-                              ...prev.data,
-                              commentId: each?._id,
-                              text: each.comment,
-                            },
-                            isReply: false,
+                            ...item,
+                            showEdit: true,
+                            showDelete: true,
                           };
-                        });
-                      }}
-                    />
-                    {/* <ReplyButton
-                    onClick={() => {
-                      setCommentInputData((prev: any) => {
-                        return {
-                          ...prev,
-                          isEdit: true,
-                          data: {
-                            ...prev.data,
-                            commentId: each?._id,
-                            text: each.comment,
-                          },
-                          isReply: false,
-                        };
+                        } else {
+                          return {
+                            ...item,
+                          };
+                        }
                       });
-                    }}
-                  >
-                   Edit
-             
-                  </ReplyButton> */}
-                    {/* <ActivityHeaderDivider>{" | "}</ActivityHeaderDivider> */}
-                    <DeleteconImage
-                      src={Delete}
-                      alt={"close icon"}
-                      onClick={() => {
-                        deleteComments(each?._id);
-                      }}
-                    />
-                    {/* <ReplyButton
-                    onClick={() => {
-                      deleteComments(each?._id);
-                    }}
-                  >
-                   Delete
-                  </ReplyButton> */}
-                  </CommentEditActions>
-                ) : (
-                  <></>
-                )}
-              </CommentTitleWrapper>
-            </ActivityHeader>
-            {/* {index === commentsData.length - 1 ? (
-              <ActivityBodyIssueRaisedCase>
-                <ActivityCommentAddedBy>
-                  <>
+                    });
+                  }}
+                  onMouseOut={() => {
+                    setCommentsData((prev: any) => {
+                      return prev.map((item: any) => {
+                        if (item._id == each._id) {
+                          return {
+                            ...item,
+                            showEdit: false,
+                            showDelete: false,
+                          };
+                        } else {
+                          return {
+                            ...item,
+                          };
+                        }
+                      });
+                    });
+                  }}
+                >
+                  <CommentTitleName>
                     <ActivityCommentAddedByMain>
                       {each.by?.firstName}
                     </ActivityCommentAddedByMain>
-                    <ActivityAddedComment>added a Comment</ActivityAddedComment>
+                    {/* <ActivityHeaderDivider>{" | "}</ActivityHeaderDivider> */}
+                    <ActivityTimeStamp>
+                      {each.updatedTimeText}
+                      {/* {moment(each.createdAt).format("DD MMM YY")} */}
+                    </ActivityTimeStamp>
+                  </CommentTitleName>
+                  {each.showEdit && each.showDelete ? (
+                    <CommentEditActions>
+                      <EditIconImage
+                        src={Edit}
+                        alt={"close icon"}
+                        onClick={() => {
+                          setCommentInputData((prev: any) => {
+                            return {
+                              ...prev,
+                              isEdit: true,
+                              data: {
+                                ...prev.data,
+                                commentId: each?._id,
+                                text: each.comment,
+                              },
+                              isReply: false,
+                            };
+                          });
+                        }}
+                      />
+
+                      <DeleteconImage
+                        src={Delete}
+                        alt={"close icon"}
+                        onClick={() => {
+                          deleteComments(each?._id);
+                        }}
+                      />
+                    </CommentEditActions>
+                  ) : (
+                    <></>
+                  )}
+                </CommentTitleWrapper>
+              </ActivityHeader>
+
+              <ActivityBody
+                textEachMore={each?.showMoreText}
+                searchingOnnew={searchingOnnew}
+                currentCommentId={currentCommentId}
+                commentId={each?._id}
+              >
+                <ActivityCommentAddedBy>
+                  <>
                     <ActivityCommentDiv>
                       <ActivityComment>{`${each.comment}`}</ActivityComment>
                       <CommentActions>
@@ -483,175 +468,44 @@ const ActivityLog = (props: any) => {
                                 },
                               };
                             });
+                            setReplyToText(`Replying to ${each.by?.firstName}`);
                           }}
                         >
                           Reply
                         </ReplyButton>
-                        <ActivityHeaderDivider>{" | "}</ActivityHeaderDivider>
+                        {each.replies?.length ? (
+                          <>
+                            <ActivityHeaderDivider>
+                              {" | "}
+                            </ActivityHeaderDivider>
+                            <ReplyButton
+                              onClick={() => {
+                                const commentsList = commentsData.map(
+                                  (item: any) => {
+                                    return {
+                                      ...item,
+                                      showMoreText:
+                                        each._id == item._id
+                                          ? !item.showMoreText
+                                          : item.showMoreText,
+                                    };
+                                  }
+                                );
+                                setCommentsData(commentsList);
+                                // setSearchingOn(!searchingOn);
 
-                        <ReplyButton
-                          onClick={() => {
-                            setCommentInputData((prev: any) => {
-                              return {
-                                ...prev,
-                                isEdit: true,
-                                data: {
-                                  ...prev.data,
-                                  commentId: each?._id,
-                                  text: each.comment,
-                                },
-                                isReply: false,
-                              };
-                            });
-                          }}
-                        >
-                          Edit
-                        </ReplyButton>
-                        <ActivityHeaderDivider>{" | "}</ActivityHeaderDivider>
-
-                        <ReplyButton
-                          onClick={() => {
-                            deleteComments(each?._id);
-                          }}
-                        >
-                          Delete
-                        </ReplyButton>
-                      </CommentActions>
-                      {each.replies?.map((replyObj: any) => {
-                        return (
-                          <RepliesContainer key={`${replyObj._id}`}>
-                            <ActivityCard key={index}>
-                              <ActivityHeader>
-                                <ActivityStatusIcon>
-                                  <Image src={CommentAdded} alt={""} />
-                                </ActivityStatusIcon>
-                                <ActivityStatusTitle>
-                                  Reply Added
-                                </ActivityStatusTitle>
-
-                                <ActivityHeaderDivider>
-                                  {" | "}
-                                </ActivityHeaderDivider>
-                                <ActivityTimeStamp>
-                                  {moment(replyObj?.createdAt).format(
-                                    "DD MMM YY"
-                                  )}
-                                </ActivityTimeStamp>
-                              </ActivityHeader>
-
-                              <ActivityBodyChild>
-                                <ActivityCommentAddedBy>
-                                  <>
-                                    <ActivityCommentAddedByMain>
-                                      {replyObj?.by?.firstName}
-                                    </ActivityCommentAddedByMain>
-                                    <ActivityAddedComment>
-                                      added a reply
-                                    </ActivityAddedComment>
-                                    <ActivityCommentDiv>
-                                      <ActivityComment>{`"${replyObj.reply}"`}</ActivityComment>
-                                    </ActivityCommentDiv>
-                                    <CommentActions>
-                                      <ReplyButton
-                                        onClick={() => {
-                                          setCommentInputData((prev: any) => {
-                                            return {
-                                              ...prev,
-                                              isEditReply: true,
-                                              data: {
-                                                ...prev.data,
-                                                replyId: replyObj?._id,
-                                                text: replyObj?.reply,
-                                                commentId: replyObj?.commentId,
-                                              },
-                                              isReply: false,
-                                            };
-                                          });
-                                        }}
-                                      >
-                                        Edit
-                                      </ReplyButton>
-                                      <ReplyButton
-                                        onClick={() => {
-                                          deleteReplyComments(
-                                            replyObj?.commentId,
-                                            replyObj?._id
-                                          );
-                                        }}
-                                      >
-                                        Delete
-                                      </ReplyButton>
-                                    </CommentActions>
-                                  </>
-                                </ActivityCommentAddedBy>
-                              </ActivityBodyChild>
-                            </ActivityCard>
-                          </RepliesContainer>
-                        );
-                      })}
-                    </ActivityCommentDiv>
-                  </>
-                </ActivityCommentAddedBy>
-              </ActivityBodyIssueRaisedCase>
-            ) : ( */}
-            <ActivityBody>
-              <ActivityCommentAddedBy>
-                <>
-                  {/* <ActivityCommentAddedByMain>
-                      {each.by?.firstName}
-                    </ActivityCommentAddedByMain>
-                    <ActivityAddedComment>added a Comment</ActivityAddedComment> */}
-                  <ActivityCommentDiv>
-                    <ActivityComment>{`${each.comment}`}</ActivityComment>
-                    <CommentActions>
-                      <ReplyButton
-                        onClick={() => {
-                          setAutoFocusState(true);
-                          setCommentInputData((prev: any) => {
-                            return {
-                              ...prev,
-                              isReply: true,
-                              isEdit: false,
-                              data: {
-                                ...prev.data,
-                                text: "",
-                                commentId: each?._id,
-                              },
-                            };
-                          });
-                          setReplyToText(`Replying to ${each.by?.firstName}`);
-                        }}
-                      >
-                        Reply
-                      </ReplyButton>
-                      {each.replies?.length ? (
-                        <>
-                          <ActivityHeaderDivider>{" | "}</ActivityHeaderDivider>
-                          <ReplyButton
-                            onClick={() => {
-                              const commentsList = commentsData.map(
-                                (item: any) => {
-                                  return {
-                                    ...item,
-                                    showMoreText:
-                                      each._id == item._id
-                                        ? !item.showMoreText
-                                        : item.showMoreText,
-                                  };
-                                }
-                              );
-                              setCommentsData(commentsList);
-                            }}
-                          >
-                            {each.showMoreText
-                              ? `Show ${each.replies?.length} more replies`
-                              : "Hide Replies"}
-                          </ReplyButton>
-                        </>
-                      ) : (
-                        <></>
-                      )}
-                      {/* <ReplyButton
+                                sayHello(each?._id);
+                              }}
+                            >
+                              {each.showMoreText
+                                ? `Show ${each.replies?.length} more replies`
+                                : "Hide Replies"}
+                            </ReplyButton>
+                          </>
+                        ) : (
+                          <></>
+                        )}
+                        {/* <ReplyButton
                         onClick={() => {
                           setCommentInputData((prev: any) => {
                             return {
@@ -677,155 +531,157 @@ const ActivityLog = (props: any) => {
                       >
                         Delete
                       </ReplyButton> */}
-                    </CommentActions>
-                    {!each.showMoreText &&
-                      each.replies?.map((replyObj: any) => {
-                        return (
-                          <RepliesContainer key={`${replyObj._id}`}>
-                            <ActivityCard key={index}>
-                              <ActivityHeader
-                                onMouseOver={() => {
-                                  setCommentsData((prev: any) => {
-                                    return prev.map((item: any) => {
-                                      if (item._id == each._id) {
-                                        return {
-                                          ...item,
-                                          replies: item.replies.map(
-                                            (replyIter: any) => {
-                                              if (
-                                                replyIter?._id == replyObj?._id
-                                              ) {
-                                                return {
-                                                  ...replyIter,
-                                                  showEdit: true,
-                                                  showDelete: true,
-                                                };
-                                              } else {
-                                                return {
-                                                  ...replyIter,
-                                                };
+                      </CommentActions>
+                      {!each.showMoreText &&
+                        each.replies?.map((replyObj: any) => {
+                          return (
+                            <RepliesContainer key={`${replyObj._id}`}>
+                              <ActivityCard key={index}>
+                                <ActivityHeader
+                                  onMouseOver={() => {
+                                    setCommentsData((prev: any) => {
+                                      return prev.map((item: any) => {
+                                        if (item._id == each._id) {
+                                          return {
+                                            ...item,
+                                            replies: item.replies.map(
+                                              (replyIter: any) => {
+                                                if (
+                                                  replyIter?._id ==
+                                                  replyObj?._id
+                                                ) {
+                                                  return {
+                                                    ...replyIter,
+                                                    showEdit: true,
+                                                    showDelete: true,
+                                                  };
+                                                } else {
+                                                  return {
+                                                    ...replyIter,
+                                                  };
+                                                }
                                               }
-                                            }
-                                          ),
-                                        };
-                                      } else {
-                                        return {
-                                          ...item,
-                                        };
-                                      }
+                                            ),
+                                          };
+                                        } else {
+                                          return {
+                                            ...item,
+                                          };
+                                        }
+                                      });
                                     });
-                                  });
-                                }}
-                                onMouseOut={() => {
-                                  setCommentsData((prev: any) => {
-                                    return prev.map((item: any) => {
-                                      if (item._id == each._id) {
-                                        return {
-                                          ...item,
-                                          replies: item.replies.map(
-                                            (replyIter: any) => {
-                                              if (
-                                                replyIter?._id == replyObj?._id
-                                              ) {
-                                                return {
-                                                  ...replyIter,
-                                                  showEdit: false,
-                                                  showDelete: false,
-                                                };
-                                              } else {
-                                                return {
-                                                  ...replyIter,
-                                                };
+                                  }}
+                                  onMouseOut={() => {
+                                    setCommentsData((prev: any) => {
+                                      return prev.map((item: any) => {
+                                        if (item._id == each._id) {
+                                          return {
+                                            ...item,
+                                            replies: item.replies.map(
+                                              (replyIter: any) => {
+                                                if (
+                                                  replyIter?._id ==
+                                                  replyObj?._id
+                                                ) {
+                                                  return {
+                                                    ...replyIter,
+                                                    showEdit: false,
+                                                    showDelete: false,
+                                                  };
+                                                } else {
+                                                  return {
+                                                    ...replyIter,
+                                                  };
+                                                }
                                               }
-                                            }
-                                          ),
-                                        };
-                                      } else {
-                                        return {
-                                          ...item,
-                                        };
-                                      }
+                                            ),
+                                          };
+                                        } else {
+                                          return {
+                                            ...item,
+                                          };
+                                        }
+                                      });
                                     });
-                                  });
-                                }}
-                              >
-                                <ActivityStatusIcon>
-                                  <ActivityImageAvatar
-                                    src={replyObj?.by?.avatar}
-                                    alt={""}
-                                    width={30}
-                                    height={30}
-                                  />
-                                </ActivityStatusIcon>
-                                {/* <ActivityStatusTitle>
+                                  }}
+                                >
+                                  <ActivityStatusIcon>
+                                    <ActivityImageAvatar
+                                      src={replyObj?.by?.avatar}
+                                      alt={""}
+                                      width={30}
+                                      height={30}
+                                    />
+                                  </ActivityStatusIcon>
+                                  {/* <ActivityStatusTitle>
                                   Reply Added
                                 </ActivityStatusTitle> */}
 
-                                {/* <ActivityHeaderDivider>
+                                  {/* <ActivityHeaderDivider>
                                   {" | "}
                                 </ActivityHeaderDivider> */}
-                                <CommentTitleName>
-                                  <ActivityCommentAddedByMain>
-                                    {replyObj?.by?.firstName}
-                                  </ActivityCommentAddedByMain>
+                                  <CommentTitleName>
+                                    <ActivityCommentAddedByMain>
+                                      {replyObj?.by?.firstName + "replies"}
+                                    </ActivityCommentAddedByMain>
 
-                                  <ActivityTimeStamp>
-                                    {each.updatedTimeText}
+                                    <ActivityTimeStamp>
+                                      {each.updatedTimeText}
 
-                                    {/* {moment(replyObj?.createdAt).format(
+                                      {/* {moment(replyObj?.createdAt).format(
                                     "DD MMM YY"
                                   )} */}
-                                  </ActivityTimeStamp>
-                                </CommentTitleName>
-                                {replyObj.showEdit && replyObj.showDelete ? (
-                                  <CommentEditActions>
-                                    <EditIconImage
-                                      src={Edit}
-                                      alt={"close icon"}
-                                      onClick={() => {
-                                        setCommentInputData((prev: any) => {
-                                          return {
-                                            ...prev,
-                                            isEditReply: true,
-                                            data: {
-                                              ...prev.data,
-                                              replyId: replyObj?._id,
-                                              text: replyObj?.reply,
-                                              commentId: replyObj?.commentId,
-                                            },
-                                            isReply: false,
-                                          };
-                                        });
-                                      }}
-                                    />
+                                    </ActivityTimeStamp>
+                                  </CommentTitleName>
+                                  {replyObj.showEdit && replyObj.showDelete ? (
+                                    <CommentEditActions>
+                                      <EditIconImage
+                                        src={Edit}
+                                        alt={"close icon"}
+                                        onClick={() => {
+                                          setCommentInputData((prev: any) => {
+                                            return {
+                                              ...prev,
+                                              isEditReply: true,
+                                              data: {
+                                                ...prev.data,
+                                                replyId: replyObj?._id,
+                                                text: replyObj?.reply,
+                                                commentId: replyObj?.commentId,
+                                              },
+                                              isReply: false,
+                                            };
+                                          });
+                                        }}
+                                      />
 
-                                    {/* <ActivityHeaderDivider>{" | "}</ActivityHeaderDivider> */}
-                                    <DeleteconImage
-                                      src={Delete}
-                                      alt={"close icon"}
-                                      onClick={() => {
-                                        deleteReplyComments(
-                                          replyObj?.commentId,
-                                          replyObj?._id
-                                        );
-                                      }}
-                                    />
-                                  </CommentEditActions>
-                                ) : (
-                                  <></>
-                                )}
-                              </ActivityHeader>
+                                      {/* <ActivityHeaderDivider>{" | "}</ActivityHeaderDivider> */}
+                                      <DeleteconImage
+                                        src={Delete}
+                                        alt={"close icon"}
+                                        onClick={() => {
+                                          deleteReplyComments(
+                                            replyObj?.commentId,
+                                            replyObj?._id
+                                          );
+                                        }}
+                                      />
+                                    </CommentEditActions>
+                                  ) : (
+                                    <></>
+                                  )}
+                                </ActivityHeader>
 
-                              <ActivityBodyChild>
-                                <ActivityCommentAddedBy>
-                                  <>
-                                    {/* <ActivityAddedComment>
+                                <ActivityBodyChild>
+                                  <ActivityCommentAddedBy>
+                                    <>
+                                      {/* <ActivityAddedComment>
                                       added a reply
                                     </ActivityAddedComment> */}
-                                    <ActivityCommentDiv>
-                                      <ActivityComment>{`${replyObj.reply}`}</ActivityComment>
-                                    </ActivityCommentDiv>
-                                    {/* <CommentActions>
+                                      <ActivityCommentDiv>
+                                        <ActivityComment>{`${replyObj.reply}`}</ActivityComment>
+                                      </ActivityCommentDiv>
+                                      {/* <CommentActions>
                                     <ReplyButton
                                       onClick={() => {
                                         setCommentInputData((prev: any) => {
@@ -859,18 +715,19 @@ const ActivityLog = (props: any) => {
                                       Delete
                                     </ReplyButton>
                                   </CommentActions> */}
-                                  </>
-                                </ActivityCommentAddedBy>
-                              </ActivityBodyChild>
-                            </ActivityCard>
-                          </RepliesContainer>
-                        );
-                      })}
-                  </ActivityCommentDiv>
-                </>
-              </ActivityCommentAddedBy>
-            </ActivityBody>
-            {/* )} */}
+                                    </>
+                                  </ActivityCommentAddedBy>
+                                </ActivityBodyChild>
+                              </ActivityCard>
+                            </RepliesContainer>
+                          );
+                        })}
+                    </ActivityCommentDiv>
+                  </>
+                </ActivityCommentAddedBy>
+              </ActivityBody>
+              {/* )} */}
+            </ActivityCommentsDiv>
           </ActivityCard>
         );
       })}
@@ -902,24 +759,6 @@ const ActivityLog = (props: any) => {
               }}
             />
             <AddCommentButtonContainer>
-              {/* <AttachButton>
-              <ImageErrorIcon src={Clip} alt="" />
-              <input
-                type="file"
-                onChange={(e: any) => {
-                  if (e.target.files) {
-                    setCommentInputData((prev: any) => {
-                      return {
-                        ...prev,
-                        data: {
-                          attachments: e.target.files[0],
-                        },
-                      };
-                    });
-                  }
-                }}
-              />
-            </AttachButton> */}
               <SendButton
                 onClick={() => {
                   if (commentInputData?.isReply) {
