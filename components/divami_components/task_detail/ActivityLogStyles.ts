@@ -2,7 +2,9 @@ import { styled } from "@mui/system";
 import Image from "next/image";
 
 export const ActivityCardContainer = styled("div")({
-  marginTop: "5px",
+  // marginTop: "5px",
+  marginTop: "30px",
+
   fontFamily: "'Open Sans'",
   fontStyle: "normal",
   fontWeight: "400",
@@ -74,14 +76,16 @@ export const ActivityBody = styled("div")<ContainerProps>`
   padding-left: 14px !important;
   padding-bottom: 15px;
   color: "#787878";
+
   position: relative;
   &:before {
     content: "";
     width: 1px;
-    height: ${({ currentCommentId, textEachMore, commentId }) =>
+ height: ${({ currentCommentId, textEachMore, commentId }) =>
       !textEachMore && commentId === currentCommentId
-        ? "calc(100% - 46px)"
-        : ""};
+        ? "calc(100% - 15px)"
+    : ""};
+   
     position: absolute;
     background: #d9d9d9;
 
@@ -163,13 +167,16 @@ export const ActivityAddedComment = styled("span")({
   lineHeight: "20px",
 });
 export const ActivityCommentDiv = styled("div")({
-  marginTop: "5px",
+  // marginTop: "5px",
+  marginTop: "10px",
+
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: "14px",
   color: "#101F4C",
   lineHeight: "20px",
+  wordBreak:"break-all"
 });
 export const ActivityComment = styled("span")({});
 export const ActivityIssueRaisedMain = styled("span")({});
@@ -218,20 +225,20 @@ export const ReplyButton = styled("div")({
 });
 
 export const RepliesContainer = styled("div")({
-  marginTop: "16px",
-  position: "relative",
-  "&:before": {
-    position: "absolute",
-    height: "11px",
-    width: "21px",
-    border: "1.33px solid #D9D9D9",
-    borderTop: "none",
-    borderRight: "none",
-    borderRadius: "0 0 0 5px",
-    borderLeft: "none",
-    left: "-19px",
-    content: '""',
-  },
+  marginTop: "20px",
+  // position: "relative",
+  // "&:before": {
+  //   position: "absolute",
+  //   height: "11px",
+  //   width: "21px",
+  //   border: "1.33px solid #D9D9D9",
+  //   borderTop: "none",
+  //   borderRight: "none",
+  //   borderRadius: "0 0 0 5px",
+  //   borderLeft: "none",
+  //   left: "-19px",
+  //   content: '""',
+  // },
 });
 
 export const ActivityCommentsDiv = styled("div")({

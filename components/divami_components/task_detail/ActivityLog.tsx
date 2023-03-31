@@ -622,7 +622,7 @@ const ActivityLog = (props: any) => {
                                 </ActivityHeaderDivider> */}
                                   <CommentTitleName>
                                     <ActivityCommentAddedByMain>
-                                      {replyObj?.by?.firstName + "replies"}
+                                      {replyObj?.by?.firstName}
                                     </ActivityCommentAddedByMain>
 
                                     <ActivityTimeStamp>
