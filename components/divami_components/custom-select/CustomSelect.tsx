@@ -81,6 +81,7 @@ const CustomSelect = (props: any) => {
   useEffect(() => {
     setVal(data?.defaultValue);
   }, [data?.defaultValue]);
+
   return (
     <CustomSelectContainer>
       <StyledSelect
