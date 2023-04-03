@@ -87,7 +87,7 @@ const TimeLineComponent: React.FC<IProps> = ({
     sx: {
       "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-disabled,.Mui-selected)":
         {
-          backgroundColor: "rgba(0, 0, 0, 0.04)",
+          backgroundColor: "rgba(0, 0, 0, 0.20)",
         },
     },
   };

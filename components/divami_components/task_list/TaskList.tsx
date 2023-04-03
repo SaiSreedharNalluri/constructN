@@ -70,6 +70,7 @@ import {
   TaskListContainer,
   ThirdHeader,
   TitleContainer,
+  LoadMoreText,
 } from "./TaskListStyles";
 import {
   Box,
@@ -126,9 +127,10 @@ const CustomTaskListDrawer = (props: any) => {
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [taskList, setTaskList] = useState([]);
-  const [filteredTaskList, setFilteredTaskList] = useState(taskList);
+  const [filteredTaskList, setFilteredTaskList] = useState(taskList.slice(0,10));
   const [sortOrder, setSortOrder] = useState("asc");
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [remainingTasks, setRemainingtasks] = useState(taskList?.length);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
 
@@ -172,7 +174,11 @@ const CustomTaskListDrawer = (props: any) => {
   }, [tasksList]);
 
   useEffect(() => {
-    setFilteredTaskList(taskList);
+    setFilteredTaskList(taskList.slice(0,10));
+  }, [taskList]);
+
+  useEffect(() => {
+    setRemainingtasks(taskList?.length);
   }, [taskList]);
 
   const handleSortClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -304,11 +310,34 @@ const CustomTaskListDrawer = (props: any) => {
           sequenceNumber.includes(searchTerm.toLowerCase())
         );
       });
-      setFilteredTaskList([...filteredData]);
+      setFilteredTaskList([...filteredData.slice(0, 10)]);
     } else {
-      setFilteredTaskList(taskList);
+      setFilteredTaskList(taskList.slice(0, 10));
     }
   };
+
+    const handleLoadMore = () => {
+      const noOfTasksLoaded = filteredTaskList.length;
+
+          if (searchTerm) {
+            const filteredData = taskList?.filter((eachTask: any) => {
+              const taskName = eachTask?.type?.toLowerCase();
+              const sequenceNumber = eachTask?.sequenceNumber.toString();
+              return (
+                taskName.includes(searchTerm.toLowerCase()) ||
+                sequenceNumber.includes(searchTerm.toLowerCase())
+              );
+            });
+            setRemainingtasks(filteredData?.length - (noOfTasksLoaded + 10));
+            setFilteredTaskList([
+              ...filteredData.slice(0, noOfTasksLoaded + 10),
+            ]);
+          } else {
+              setFilteredTaskList(taskList.slice(0, noOfTasksLoaded + 10));
+              setRemainingtasks(taskList?.length - (noOfTasksLoaded + 10));
+          }
+    };
+
 
   useEffect(() => {
     if (router.isReady) {
@@ -529,6 +558,15 @@ const CustomTaskListDrawer = (props: any) => {
                   <MessageDivShowErr>No result found</MessageDivShowErr>
                 </NoMatchDiv>
               )}
+              {remainingTasks > 0 ? (
+                <LoadMoreText
+                  onClick={() => {
+                    handleLoadMore();
+                  }}
+                >
+                  Load More
+                </LoadMoreText>
+              ) : null}
             </CustomBox>
           </BodyContainer>
           {/* <LoadMoreContainer>
