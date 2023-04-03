@@ -19,14 +19,16 @@ const Login: React.FC = () => {
     const userObj: any = getCookie('user');
     let user = null;
     if (router.isReady) {
-      deleteCookie('user');
       if (userObj) user = JSON.parse(userObj);
       if (user && user.token) {
-        //console.log(router.query.sessionExpired,"TEST")
-        if (router.query.sessionExpired === undefined) router.push('/projects');
+        if (router.query.sessionExpired === undefined) {
+          router.push('/projects');
+        } else {
+          deleteCookie('user');
+        }
       }
     }
-  }, [router.isReady]);
+  }, [router, router.isReady]);
   const handlerLogin = (formValue: { email: string; password: string }) => {
     const { email, password } = formValue;
     setMessage('');
