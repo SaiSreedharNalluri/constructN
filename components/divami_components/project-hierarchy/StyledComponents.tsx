@@ -190,6 +190,10 @@ export const LabelText = styled("div")({
   display: "block",
   paddingTop: "13px",
   paddingLeft: "10px",
+  fontSize: "14px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
 });
 
 export const LabelIcon = styled("div")({
