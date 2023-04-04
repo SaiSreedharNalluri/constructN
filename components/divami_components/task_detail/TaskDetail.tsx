@@ -286,7 +286,7 @@ function BasicTabs(props: any) {
   };
   useEffect(() => {
     if (taskState?.TabOne?.id) {
-      getComments(taskState.TabOne.id);
+      getComments(taskState?.TabOne?.id);
     }
   }, [taskState]);
 
@@ -357,7 +357,7 @@ function BasicTabs(props: any) {
               fontWeight: "400",
             }}
           />
-          <Tab
+          {/* <Tab
             label="Activity log"
             {...a11yProps(1)}
             style={{
@@ -368,7 +368,7 @@ function BasicTabs(props: any) {
               fontSize: "14px",
               fontWeight: "400",
             }}
-          />
+          /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -377,7 +377,9 @@ function BasicTabs(props: any) {
             <div></div>
             <Image
               src={
-                taskState.TabOne.screenshot ? taskState.TabOne.screenshot : ""
+                taskState?.TabOne?.screenshot
+                  ? taskState?.TabOne?.screenshot
+                  : ""
               }
               alt=""
               width={400}
@@ -388,14 +390,14 @@ function BasicTabs(props: any) {
             <SecondContPrior>
               <PriorityTitle>Type</PriorityTitle>
               <PriorityStatus style={{ color: "#101F4B" }}>
-                {taskState.TabOne.type}
+                {taskState?.TabOne?.type}
               </PriorityStatus>
             </SecondContPrior>
 
             <SecondContPriorParal>
               <PriorityTitle>Priority</PriorityTitle>
               <PriorityStatus style={{ color: "#101F4B" }}>
-                {taskState.TabOne.priority}
+                {taskState?.TabOne?.priority}
               </PriorityStatus>
             </SecondContPriorParal>
           </SecondBodyDiv>
@@ -405,7 +407,7 @@ function BasicTabs(props: any) {
               <CaptureTitle>Captured on</CaptureTitle>
               <CaptureStatus style={{ color: "#101F4B" }}>
                 {" "}
-                {Moment(taskState.TabOne.capturedOn).format("DD MMM YYYY")}
+                {Moment(taskState?.TabOne?.capturedOn).format("DD MMM YYYY")}
               </CaptureStatus>
             </SecondContCapt>
 
@@ -413,7 +415,7 @@ function BasicTabs(props: any) {
               <ThirdContWatch>Watcher</ThirdContWatch>
               <ThirdContWatchName style={{ color: "#101F4B" }}>
                 {" "}
-                {taskState.TabOne.creator}
+                {taskState?.TabOne?.creator}
               </ThirdContWatchName>
             </SecondContPriorParal>
           </SecondBodyDiv>
@@ -489,8 +491,8 @@ function BasicTabs(props: any) {
                 <ThirdContProg>Progress bar</ThirdContProg>
 
                 <ThirdContProgType style={{ color: "#101F4B" }}>
-                  {taskState.TabOne.status}
-                  {taskState.TabOne.status ? (
+                  {taskState?.TabOne?.status}
+                  {taskState?.TabOne?.status ? (
                     <PenIconImage
                       onClick={() => {
                         handleEditProgress();
@@ -579,7 +581,7 @@ function BasicTabs(props: any) {
                 config={progressOptionsState[0]}
                 data={{
                   ...progressOptionsState[0],
-                  defaultValue: taskState.TabOne.status,
+                  defaultValue: taskState?.TabOne?.status,
                 }}
                 id={"taskPriority"}
                 sx={{ minWidth: 120 }}
@@ -682,12 +684,12 @@ function BasicTabs(props: any) {
             </CustomSelectContainer>
           </FormElementContainer> */}
 
-          {taskState?.TabOne?.issueDescription.length > 0 ? (
+          {taskState?.TabOne?.issueDescription?.length > 0 ? (
             <DescriptionDiv>
               <DescriptionTitle>RFI Question</DescriptionTitle>
 
               <DescriptionPara>
-                {taskState.TabOne.issueDescription}
+                {taskState?.TabOne?.issueDescription}
               </DescriptionPara>
             </DescriptionDiv>
           ) : (
@@ -804,7 +806,7 @@ function BasicTabs(props: any) {
                     <AddCommentButtonContainer>
                       <SendButton
                         onClick={() => {
-                          addComment(comments, taskState.TabOne.id);
+                          addComment(comments, taskState?.TabOne?.id);
                         }}
                       >
                         <ImageErrorIcon src={Send} alt="" />

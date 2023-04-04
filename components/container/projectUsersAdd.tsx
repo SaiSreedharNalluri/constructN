@@ -91,7 +91,7 @@ const ProjectUserAdd: React.FC<IProps> = ({
                 <ErrorMessage
                   name="email"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div>
