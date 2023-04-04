@@ -235,6 +235,7 @@ const ProjectHierarchy = ({
         <CustomInputField
           id={"search"}
           variant="outlined"
+          autoComplete="off"
           placeholder={"Search"}
           // onChange={(e: any) => {
           //   onSearchChange(e);

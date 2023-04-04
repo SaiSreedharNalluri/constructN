@@ -272,7 +272,7 @@ const Body = ({
                     selected: false,
                   };
                 }),
-                defaultValue: item?.options[0]?.label,
+                defaultValue: item?.options[0]?.label || "Safety",
               };
             }
             if (item.id === "issuePriority") {
@@ -291,7 +291,7 @@ const Body = ({
                     selected: false,
                   };
                 }),
-                defaultValue:hasLowValue ? 'Low' : item?.options[0]?.label,
+                defaultValue: hasLowValue ? "Low" : item?.options[0]?.label,
               };
             }
             if (item.id === "assignedTo") {
