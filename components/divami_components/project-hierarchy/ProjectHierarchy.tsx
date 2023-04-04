@@ -57,11 +57,11 @@ const ProjectHierarchy = ({
     handleNodeExpand(getAllIds(treeViewData));
   };
   console.log(expandedNodes, "fsffs");
-  // useEffect(() => {
-  //   console.log(treeData, "treeData");
+  useEffect(() => {
+    // console.log(treeData, "Robn");
 
-  //   setTreeViewData(treeData);
-  // }, [treeData.length]);
+    setTreeViewData(treeData);
+  }, [treeData.length]);
 
   console.log("treeViewData22", treeViewData);
 
@@ -74,6 +74,15 @@ const ProjectHierarchy = ({
   //     // }
   //   }
   // }, [treeViewData]);
+
+  useEffect(() => {
+    if (window.localStorage.getItem("nodeData")) {
+      let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
+      if (nodeData && getStructureData) {
+        getStructureData(nodeData);
+      }
+    }
+  }, [treeViewData]);
 
   const onLabelClick = (event: any, nodes: any) => {
     {
@@ -133,8 +142,10 @@ const ProjectHierarchy = ({
 
   const handleSearchResult = (e: any) => {
     console.log(e);
-    handleSearch(e);
+    let returnedTree = handleSearch(e);
+    // console.log("robn", returnedTree)
     setSearch(true);
+    setTreeViewData(returnedTree);
   };
 
   const renderTree = (nodes: ChildrenEntity, onLabelClick: any) => (
@@ -159,6 +170,8 @@ const ProjectHierarchy = ({
     setSelectedLayers(layersSelected);
     console.log([...layersSelected], "selectedLayers");
     console.log(search);
+    console.log(selectedNodes);
+
     search ? handleExpand() : null;
   }, [treeViewData]);
 
@@ -223,8 +236,12 @@ const ProjectHierarchy = ({
           id={"search"}
           variant="outlined"
           placeholder={"Search"}
+          // onChange={(e: any) => {
+          //   onSearchChange(e);
+          // }}
+
           onChange={(e: any) => {
-            onSearchChange(e);
+            handleSearchResult(e);
           }}
           data-testid={"search"}
           // InputProps={{
@@ -244,17 +261,24 @@ const ProjectHierarchy = ({
       <TreeViewContainer
         style={{ overflow: "auto", height: `calc(100vh - 300px)` }}
       >
-        <StyledTreeView
-          aria-label="rich object"
-          defaultCollapseIcon={<></>}
-          defaultExpandIcon={<></>}
-          expanded={expandedNodes}
-          selected={selectedNodes}
-          onNodeToggle={handleToggle}
-          onNodeSelect={handleSelect}
-        >
-          {treeViewData.map((eachNode) => renderTree(eachNode, onLabelClick))}
-        </StyledTreeView>
+        {treeViewData.length === 0 ? (
+          <ErrorImageDiv>
+            <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
+            <MessageDivShowErr>No result found</MessageDivShowErr>
+          </ErrorImageDiv>
+        ) : (
+          <StyledTreeView
+            aria-label="rich object"
+            defaultCollapseIcon={<></>}
+            defaultExpandIcon={<></>}
+            expanded={expandedNodes}
+            selected={selectedNodes}
+            onNodeToggle={handleToggle}
+            onNodeSelect={handleSelect}
+          >
+            {treeViewData.map((eachNode) => renderTree(eachNode, onLabelClick))}
+          </StyledTreeView>
+        )}
       </TreeViewContainer>
     </ProjectHierarchyContainer>
   );

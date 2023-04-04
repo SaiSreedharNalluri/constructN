@@ -61,7 +61,6 @@ const LeftOverLay: React.FC<IProps> = ({
         }, [])
       : arr;
   }
-
   // const [selected, setSelected] = useState<string[]>([]);
   // const handleNodeSelection = (nodeIds: any) => {
   //   setSelected(nodeIds);
@@ -101,7 +100,13 @@ const LeftOverLay: React.FC<IProps> = ({
           <ProjectHierarchy
             handleSearch={(event: React.ChangeEvent<HTMLInputElement>) => {
               // setFieldValue("searchQuery", event.target.value);
-              setState(filterBy(stateFilter, event.target.value));
+          //    console.log("Robn", filterBy(treeData, event.target.value))
+              let newData = filterBy(state,event.target.value)
+          //    setState(newData);
+          //    return data
+          //    set
+              
+              return newData
             }}
             title={"Project Hierarchy"}
             onCloseHandler={() => {
