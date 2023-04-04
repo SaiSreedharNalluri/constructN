@@ -233,7 +233,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   }, [issuesList]);
 
   useEffect(() => {
-    setFilteredIssuesList(issueList.slice(0,10));
+    setFilteredIssuesList(issueList.slice(0, 10));
   }, [issueList]);
 
   useEffect(() => {
@@ -305,24 +305,22 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   const handleLoadMore = () => {
     const noOfIssuesLoaded = filteredIssuesList.length;
-        if (searchTerm) {
-          const filteredData: any = issueList?.filter((eachIssue: any) => {
-            const taskName = eachIssue?.type?.toLowerCase();
-            const sequenceNumber = eachIssue?.sequenceNumber.toString();
-            return (
-              taskName.includes(searchTerm.toLowerCase()) ||
-              sequenceNumber.includes(searchTerm.toLowerCase())
-            );
-          });
-          setRemainingIssues((filteredData?.length) - (noOfIssuesLoaded + 10));
-          setFilteredIssuesList([
-            ...filteredData.slice(0, noOfIssuesLoaded + 10),
-          ]);
-        } else {
-          setFilteredIssuesList(issueList.slice(0, noOfIssuesLoaded + 10));
-          setRemainingIssues(issueList?.length - (noOfIssuesLoaded + 10));
-        }
-  }
+    if (searchTerm) {
+      const filteredData: any = issueList?.filter((eachIssue: any) => {
+        const taskName = eachIssue?.type?.toLowerCase();
+        const sequenceNumber = eachIssue?.sequenceNumber.toString();
+        return (
+          taskName.includes(searchTerm.toLowerCase()) ||
+          sequenceNumber.includes(searchTerm.toLowerCase())
+        );
+      });
+      setRemainingIssues(filteredData?.length - (noOfIssuesLoaded + 10));
+      setFilteredIssuesList([...filteredData.slice(0, noOfIssuesLoaded + 10)]);
+    } else {
+      setFilteredIssuesList(issueList.slice(0, noOfIssuesLoaded + 10));
+      setRemainingIssues(issueList?.length - (noOfIssuesLoaded + 10));
+    }
+  };
 
   const getDownladableIssueList = (method: string) => {
     // getIssues(currentStructure._id, true);
@@ -718,7 +716,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               </>
             ))}
           </Menu>
-          <Menu
+          {/* <Menu
             anchorEl={anchorEl}
             id="account-menu"
             open={isDownloadMenuOpen}
@@ -769,7 +767,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 </StyledMenu>
               </>
             ))}
-          </Menu>
+          </Menu> */}
         </TaskListContainer>
       ) : (
         <TaskListContainer>
