@@ -505,44 +505,35 @@ export const ImageErrorIcon = styled(Image)({
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
   color: "blue",
-  width: "100% !important",
+  width:"100% !important",
 
   "label + &": {
     marginTop: theme.spacing(8),
   },
-  // "& .MuiInput-root": {
-  //   "& .MuiInput-underline": {
-  //     // borderBottom: "none",
-  //     color:"1px solid green"
-  //   },
-  // },
+
   "& .MuiInput-root": {
-    " :after": {
-      borderBottom: "2px solid #FF843F",
+    "&:before, :after, :hover:not(.Mui-disabled):before": {
+      borderBottom: 0,
     },
   },
+  "&& .MuiInput-underline": {
+    borderBottom: "none",
+    // borderBottomColor: "none",
+  },
+  "& .MuiInput-underline:after": {
+    borderBottom: "none",
+    // borderBottomColor: "none",
+  },
 
-  // "& .MuiInput-root": {
-  //   "&:before, :after, :hover:not(.Mui-disabled):before": {
-  //     borderBottom: "1px solid #FF843F",
-  //   },
-  // },
-  // "&& .MuiInput-underline": {
-  //   borderBottom: "none",
-  // },
-  // "& .MuiInput-underline:after": {
-  //   borderBottom: "none",
-  // },
-
-  //  "& .MuiInputBase-input": {
-  //   "&::placeholder": {
-  //      color: "#787878",
-  //      fontFamily: "Open Sans",
-  //      fontSize: "14px",
-  //      lineHeight: "20px",
-  //      fontWeight: "400"
-  //   },
-  // },
+   "& .MuiInputBase-input": {
+    "&::placeholder": {
+       color: "#787878",
+       fontFamily: "Open Sans",
+       fontSize: "14px",
+       lineHeight: "20px",
+       fontWeight: "400"
+    },
+  },
 }));
 
 export const AssigneeList = styled("div")({
