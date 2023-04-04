@@ -78,7 +78,11 @@ const CreateTask = ({
         tagsList={tagList}
         setCanBeDisabled={setCanBeDisabled}
       />
-      <Footer formHandler={formHandler} editData={editData} canBeDisabled={canBeDisabled} />
+      <Footer
+        formHandler={formHandler}
+        editData={editData}
+        canBeDisabled={canBeDisabled}
+      />
       {showPopUp && (
         <PopupComponent
           open={showPopUp}

@@ -340,9 +340,9 @@ const Body = ({
         count++;
       }
     });
-    if (count === 0) {
-      setCanBeDisabled(true);
-    }
+    // if (count === 0) {
+    //   setCanBeDisabled(true);
+    // }
   }, [formConfig]);
 
   useEffect(() => {

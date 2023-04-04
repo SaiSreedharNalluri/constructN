@@ -291,7 +291,7 @@ const Body = ({
                     selected: false,
                   };
                 }),
-                defaultValue:hasLowValue ? 'Low' : item?.options[0]?.label,
+                defaultValue: hasLowValue ? "Low" : item?.options[0]?.label,
               };
             }
             if (item.id === "assignedTo") {
@@ -348,9 +348,9 @@ const Body = ({
         count++;
       }
     });
-    if (count === 0) {
-      setCanBeDisabled(true);
-    }
+    // if (count === 0) {
+    //   setCanBeDisabled(true);
+    // }
   }, [formConfig]);
 
   return (

@@ -42,7 +42,6 @@ const CreateIssue = ({
   const [showPopUp, setshowPopUp] = useState(false);
   const [canBeDisabled, setCanBeDisabled] = useState(false);
 
-
   const formHandler = (event: any) => {
     if (event === "Cancel") {
       setshowPopUp(true);
@@ -87,7 +86,12 @@ const CreateIssue = ({
         issueStatusList={issueStatusList}
         setCanBeDisabled={setCanBeDisabled}
       />
-      <Footer formHandler={formHandler} editData={editData} canBeDisabled={canBeDisabled} />
+      <Footer
+        formHandler={formHandler}
+        editData={editData}
+        canBeDisabled={canBeDisabled}
+      />
+
       {showPopUp && (
         <PopupComponent
           open={showPopUp}
