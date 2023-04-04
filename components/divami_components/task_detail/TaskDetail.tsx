@@ -165,6 +165,7 @@ function BasicTabs(props: any) {
     projectUsers,
     taskUpdate,
     deleteTheAttachment,
+    setTaskState,
   } = props;
 
   const [value, setValue] = React.useState(0);
@@ -715,6 +716,19 @@ function BasicTabs(props: any) {
                               alt={"delete icon"}
                               onClick={() => {
                                 deleteTheAttachment(a?._id, "task");
+                                setTaskState((prev: any) => {
+                                  const updatedTabOne = {
+                                    ...prev.TabOne,
+                                    attachments: prev.TabOne.attachments.filter(
+                                      (attachment: any) =>
+                                        attachment._id !== a?._id
+                                    ),
+                                  };
+                                  return {
+                                    ...prev,
+                                    TabOne: updatedTabOne,
+                                  };
+                                });
                               }}
                               className={`deleteIcon`}
                             />
@@ -1136,6 +1150,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             deleteTheAttachment={deleteTheAttachment}
             onClose={onClose}
             taskUpdate={taskUpdate}
+            setTaskState={setTaskState}
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>
@@ -1161,6 +1176,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             currentStructure={currentStructure}
             contextInfo={contextInfo}
             editData={selectedTask}
+            deleteTheAttachment={deleteTheAttachment}
             closeTaskCreate={() => {
               setOpenCreateTask(false);
             }}

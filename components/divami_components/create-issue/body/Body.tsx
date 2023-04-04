@@ -62,6 +62,7 @@ const Body = ({
   tagsList,
   issueStatusList,
   setCanBeDisabled,
+  deleteTheAttachment,
 }: any) => {
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
@@ -291,7 +292,7 @@ const Body = ({
                     selected: false,
                   };
                 }),
-                defaultValue:hasLowValue ? 'Low' : item?.options[0]?.label,
+                defaultValue: hasLowValue ? 'Low' : item?.options[0]?.label,
               };
             }
             if (item.id === "assignedTo") {
@@ -365,7 +366,12 @@ const Body = ({
           setIsValidate={setIsValidate}
           setCanBeDisabled={setCanBeDisabled}
         />
-        <UploadedImagesList formData={formData} />
+        <UploadedImagesList
+          formData={formData}
+          deleteTheAttachment={deleteTheAttachment}
+          formConfig={formConfig}
+          setFormData={setFormData}
+        />
       </FormElementContainer>
       {/* <Box sx={{ marginTop: '15px' }}>
         <CustomLabel label={'Select the Type of Task'} />

@@ -346,6 +346,7 @@ const Issues = ({
             closeIssueCreate={closeIssueCreate}
             issueStatusList={issueStatusList}
             onCancelCreate={onCancelCreate}
+            deleteTheAttachment={deleteTheAttachment}
           />
         </CustomDrawer>
       )}

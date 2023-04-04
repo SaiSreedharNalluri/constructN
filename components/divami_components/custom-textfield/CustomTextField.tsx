@@ -28,21 +28,27 @@ const StyledTextField = styled(TextField)({
   width: "392px !important",
   height: "40px !important",
   // padding: "5px 10px",
-  border: "1px solid #36415d",
+  // border: "1px solid #36415d",
   borderRadius: "4px",
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: 14,
   color: "#101F4B",
-  "& .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input": {
-    padding: 0,
-    height: "40px !important",
-    // border: "1px solid #36415d",
+  // "& .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input": {
+  //   height: "40px !important",
+  //   border: "1px solid #36415d",
+  // },
+  // "& .css-1d3z3hw-MuiOutlinedInput-notchedOutline": {
+  //   borderWidth:0
+  // }
+  "& .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root": {
+    height: "40px",
+    "& fieldset": { border: "1px solid #36415d" },
   },
-  "& .css-1d3z3hw-MuiOutlinedInput-notchedOutline": {
-    borderWidth:0
-  }
+  "&:focus-within fieldset": {
+    border: "1px solid #ff843f !important",
+  },
 });
 
 export const CustomTextField = (props: PropTypes) => {

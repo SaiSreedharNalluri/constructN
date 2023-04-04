@@ -160,6 +160,7 @@ function BasicTabs(props: any) {
     issueUpdate,
     deleteTheAttachment,
     handleFooter,
+    setTaskState,
   } = props;
 
   const [value, setValue] = React.useState(0);
@@ -302,7 +303,7 @@ function BasicTabs(props: any) {
     }
   };
 
-  console.log("taskState.TabOne issue", taskState.TabOne);
+  console.log("taskState.TabOne issue", taskState);
 
   const handleSortMenuClose = () => {
     setIsSortMenuOpen(false);
@@ -746,6 +747,21 @@ function BasicTabs(props: any) {
                               alt={"delete icon"}
                               onClick={() => {
                                 deleteTheAttachment(a?._id, "issue");
+                               setTaskState((prev: any) => {
+                                 const updatedTabOne = {
+                                   ...prev.TabOne,
+                                   attachments: prev.TabOne.attachments.filter(
+                                     (attachment: any) =>
+                                       attachment._id !== a?._id
+                                   ),
+                                 };
+                                 return {
+                                   ...prev,
+                                   TabOne: updatedTabOne,
+                                 };
+                               });
+
+
                               }}
                               className={`deleteIcon`}
                             />
@@ -1224,6 +1240,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             issueUpdate={issueUpdate}
             deleteTheAttachment={deleteTheAttachment}
             handleFooter={SetFooterState}
+            setTaskState={setTaskState}
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>
