@@ -4,6 +4,7 @@ import {
   InputAdornment,
   ListItemIcon,
   Menu,
+  setRef,
   Tooltip,
 } from "@mui/material";
 import Image from "next/image";
@@ -68,7 +69,7 @@ import {
 } from "./IssueListStyles";
 
 import _ from "lodash";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CSVLink } from "react-csv";
 import { Issue } from "../../../models/Issue";
 import { ITools } from "../../../models/ITools";
@@ -85,6 +86,9 @@ import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import { toast } from "react-toastify";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { createPdfFromHtml } from "./CreatePdf";
+import { getIssuesList } from "../../../services/issue";
+import { DownloadTable } from "../toolbar/DownloadTable";
 
 interface IProps {
   closeOverlay: () => void;
@@ -156,9 +160,10 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [remainingIssues, setRemainingIssues] = useState(issueList?.length);
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
-
+  const docRef: any = useRef();
+  const [ref1, setRef1] = useState(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
+  const [downloadList, setDownloadList] = useState(issueList);
   const sortMenuOptions = [
     {
       label: "Status ( To Do - Completed)",
@@ -230,10 +235,11 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   useEffect(() => {
     setIssueList(issuesList);
+    setDownloadList(issuesList);
   }, [issuesList]);
 
   useEffect(() => {
-    setFilteredIssuesList(issueList.slice(0,10));
+    setFilteredIssuesList(issueList.slice(0, 10));
   }, [issueList]);
 
   useEffect(() => {
@@ -297,6 +303,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
           sequenceNumber.includes(searchTerm.toLowerCase())
         );
       });
+      setDownloadList(filteredData);
       setFilteredIssuesList([...filteredData.slice(0, 10)]);
     } else {
       setFilteredIssuesList(issueList.slice(0, 10));
@@ -305,28 +312,54 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   const handleLoadMore = () => {
     const noOfIssuesLoaded = filteredIssuesList.length;
-        if (searchTerm) {
-          const filteredData: any = issueList?.filter((eachIssue: any) => {
-            const taskName = eachIssue?.type?.toLowerCase();
-            const sequenceNumber = eachIssue?.sequenceNumber.toString();
-            return (
-              taskName.includes(searchTerm.toLowerCase()) ||
-              sequenceNumber.includes(searchTerm.toLowerCase())
-            );
-          });
-          setRemainingIssues((filteredData?.length) - (noOfIssuesLoaded + 10));
-          setFilteredIssuesList([
-            ...filteredData.slice(0, noOfIssuesLoaded + 10),
-          ]);
-        } else {
-          setFilteredIssuesList(issueList.slice(0, noOfIssuesLoaded + 10));
-          setRemainingIssues(issueList?.length - (noOfIssuesLoaded + 10));
-        }
-  }
+    if (searchTerm) {
+      const filteredData: any = issueList?.filter((eachIssue: any) => {
+        const taskName = eachIssue?.type?.toLowerCase();
+        const sequenceNumber = eachIssue?.sequenceNumber.toString();
+        return (
+          taskName.includes(searchTerm.toLowerCase()) ||
+          sequenceNumber.includes(searchTerm.toLowerCase())
+        );
+      });
+      setRemainingIssues(filteredData?.length - (noOfIssuesLoaded + 10));
+      setFilteredIssuesList([...filteredData.slice(0, noOfIssuesLoaded + 10)]);
+    } else {
+      setFilteredIssuesList(issueList.slice(0, noOfIssuesLoaded + 10));
+      setRemainingIssues(issueList?.length - (noOfIssuesLoaded + 10));
+    }
+  };
 
-  const getDownladableIssueList = (method: string) => {
+  const downloadData = () => {
+    getIssuesList(router.query.projectId as string, currentStructure._id).then(
+      (res) => {
+        let myL = ["hi", "hlo"];
+        console.log(myL, "dsfsfdsfsdfs");
+        const fileURL = window.URL.createObjectURL(
+          new Blob(myL)
+          // {
+          //   type: "application/pdf",
+          // }
+        );
+        // Setting various property values
+        let alink = document.createElement("a");
+        alink.href = fileURL;
+        alink.download = "SamplePDF.pdf";
+        alink.click();
+        // const link = document.createElement("a");
+        // link.id = "download-csv";
+        // link.setAttribute(
+        //   "href",
+        //   "data:text/plain;charset=utf-8," + encodeURIComponent(res.result)
+        // );
+        // link.setAttribute("download", "KQIMetricData.pdf");
+        // document.body.appendChild(link);
+        // link.click();
+      }
+    );
+  };
+  const getDownladableIssueList = (method?: string) => {
     // getIssues(currentStructure._id, true);
-    const issL = filteredIssuesList;
+    const issL = downloadList;
     let myL = issL.map((iss: any) => {
       let x = _.omit(iss, "progress", "context");
       let g = _.update(x, "owner", (ass) => {
@@ -357,6 +390,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       });
       return z;
     });
+    console.log(myL, "issli");
     // const link = document.createElement("a");
     // link.id = "download-csv";
     // link.setAttribute(
@@ -411,10 +445,18 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     issueMenuInstance.response = { ...issue.context, id: issue._id };
     issueMenuClicked(issueMenuInstance);
   };
+
+  const handleClick = () => {
+    createPdfFromHtml(ref1);
+  };
+
   return (
     <>
       {errorShow.length > 0 ? (
-        <TaskListContainer id="download-test">
+        <TaskListContainer
+          // ref={docRef}
+          id="download-test"
+        >
           <HeaderContainer>
             <TitleContainer>
               <span>Issue List</span>
@@ -531,7 +573,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                       }}
                     />
                   </Tooltip> */}
-                  <CSVLink
+                  {/* <CSVLink
                     data={getDownladableIssueList(filteredIssuesList)}
                     filename={"my-issues.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
@@ -539,14 +581,26 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     data-testid="download"
                   >
                     <DownloadIcon src={Download} alt="Arrow" />
-                  </CSVLink>
+                  </CSVLink> */}
+                  <DownloadIcon
+                    src={Download}
+                    alt="Arrow"
+                    // onClick={handleClick}
+                    onClick={downloadData}
+                  />
+                  <DownloadTable data={getDownladableIssueList()} />
                 </>
               )}
             </MiniSymbolsContainer>
           </MiniHeaderContainer>
 
           <BodyContainer>
-            <CustomBox searchingOn={searchingOn}>
+            <CustomBox
+              searchingOn={searchingOn}
+              ref={(el: any) => {
+                setRef1(el);
+              }}
+            >
               {filteredIssuesList.length ? (
                 filteredIssuesList.map((val: any, index: number) => {
                   return (
