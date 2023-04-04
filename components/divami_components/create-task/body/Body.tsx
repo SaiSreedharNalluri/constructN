@@ -62,6 +62,7 @@ const Body = ({
   setIsValidate,
   tagsList,
   setCanBeDisabled,
+  deleteTheAttachment,
 }: any) => {
   console.log(editData, "editData");
   const [formState, setFormState] = useState({ selectedValue: "" });
@@ -132,14 +133,15 @@ const Body = ({
 
   useEffect(() => {
     if (projectUsers.length && taskPriorities.length && taskTypes.length) {
-      console.log(editData, "editdata", formConfig, "formconfig");
+      // console.log(editData, "editdata", formConfig, "formconfig");
       if (editData) {
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {
             if (item.id === "title") {
+              console.log("itemitem",item)
               return {
                 ...item,
-                defaultValue: editData.title || "",
+                defaultValue: editData?.title || "",
               };
             }
             if (item.id === "tasks") {
@@ -340,9 +342,9 @@ const Body = ({
         count++;
       }
     });
-    if (count === 0) {
-      setCanBeDisabled(true);
-    }
+    // if (count === 0) {
+    //   setCanBeDisabled(true);
+    // }
   }, [formConfig]);
 
   useEffect(() => {
@@ -361,7 +363,12 @@ const Body = ({
           validate={validate}
           setCanBeDisabled={setCanBeDisabled}
         />
-        <UploadedImagesList formData={formData} />
+        <UploadedImagesList
+          formData={formData}
+          deleteTheAttachment={deleteTheAttachment}
+          setFormData={setFormData}
+          formConfig={formConfig}
+        />
       </FormElementContainer>
       {/* <Box sx={{ marginTop: '15px' }}>
         <CustomLabel label={'Select the Type of Task'} />
