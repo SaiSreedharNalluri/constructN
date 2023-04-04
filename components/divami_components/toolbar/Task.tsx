@@ -355,6 +355,7 @@ const Task = ({
             contextInfo={contextInfo}
             closeTaskCreate={closeTaskCreate}
             onCancelCreate={onCancelCreate}
+            deleteTheAttachment={deleteTheAttachment}
           />
         </CustomDrawer>
       )}
