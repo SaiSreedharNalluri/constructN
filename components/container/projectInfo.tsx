@@ -93,7 +93,7 @@ const ProjectInfo: React.FC<IProps> = ({
                 <ErrorMessage
                   name="name"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div>
@@ -131,7 +131,7 @@ const ProjectInfo: React.FC<IProps> = ({
                 <ErrorMessage
                   name="description"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
 
@@ -165,7 +165,7 @@ const ProjectInfo: React.FC<IProps> = ({
                 <ErrorMessage
                   name="description"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div className="grid grid-cols-2  gap-2">
@@ -180,7 +180,7 @@ const ProjectInfo: React.FC<IProps> = ({
                   <ErrorMessage
                     name="latitude"
                     component="div"
-                    className="alert alert-danger"
+                    className="alert alert-danger text-red-600"
                   />
                 </div>
                 <div>
@@ -194,7 +194,7 @@ const ProjectInfo: React.FC<IProps> = ({
                   <ErrorMessage
                     name="latitude"
                     component="div"
-                    className="alert alert-danger"
+                    className="alert alert-danger text-red-600"
                   />
                 </div>
               </div>
