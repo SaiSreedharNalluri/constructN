@@ -64,7 +64,9 @@ export const CustomTextField = (props: PropTypes) => {
     isDisabled = false,
     onBlur,
     isReadOnly = false,
+    onChange,
   } = props;
+
   return (
     <div>
       <StyledTextField
@@ -72,6 +74,7 @@ export const CustomTextField = (props: PropTypes) => {
         className={` ${isError ? "formErrorField" : ""} formField`}
         // placeholder={placeholder}
         defaultValue={defaultValue}
+        value={defaultValue}
         data-testid={dataTestId}
         required={false}
         disabled={isDisabled}
@@ -81,6 +84,7 @@ export const CustomTextField = (props: PropTypes) => {
         onClick={(e) => {
           reff?.current?.focus();
         }}
+        onChange={onChange}
         // readOnly={isReadOnly}
       />
       {/* <ErrorField>{isError ? "Required" : ""}</ErrorField> */}
