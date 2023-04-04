@@ -738,7 +738,7 @@ const ActivityLog = (props: any) => {
             <StyledInput
               id="standard-basic"
               variant="standard"
-              placeholder="Add Comment"
+              placeholder={replyToText ? "Add Reply" : "Add Comment"}
               value={commentInputData?.data?.text}
               // autoFocus={true}
               inputRef={(input) => {
