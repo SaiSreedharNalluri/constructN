@@ -53,6 +53,9 @@ import {
   EditIconImage,
   DeleteconImage,
   ActivityCommentsDiv,
+  ReplyDiv,
+  ReplyDivText,
+  ReplyCancel,
 } from "./ActivityLogStyles";
 import moment from "moment";
 import router from "next/router";
@@ -162,6 +165,19 @@ const ActivityLog = (props: any) => {
     setCommentsData(commentsList);
   }, [comments]);
 
+  const cancelComment = () => {
+    setCommentInputData({
+      isReply: false,
+      isEdit: false,
+      isEditReply: false,
+      data: {
+        text: "",
+        attachments: "",
+        commentId: "",
+        replyId: "",
+      },
+    });
+  };
   const saveRepliedComments = async () => {
     console.log(commentInputData, "kokokok");
     createCommentReply(
@@ -733,12 +749,29 @@ const ActivityLog = (props: any) => {
       })}
       {commentsData.length ? (
         <>
-          {replyToText ? replyToText : ""}
+          {replyToText ? (
+            <ReplyDiv>
+              <ReplyDivText> {replyToText}</ReplyDivText>
+
+              <ReplyCancel
+                onClick={() => {
+                  cancelComment();
+                  setReplyToText("");
+                }}
+              >
+                Cancel
+              </ReplyCancel>
+            </ReplyDiv>
+          ) : (
+            ""
+          )}
+
+          {/* {replyToText ? replyToText : ""} */}
           <AddCommentContainerSecond>
             <StyledInput
               id="standard-basic"
               variant="standard"
-              placeholder="Add Comment"
+              placeholder={replyToText ? "Add Reply" : "Add Comment"}
               value={commentInputData?.data?.text}
               // autoFocus={true}
               inputRef={(input) => {
