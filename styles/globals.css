@@ -120,7 +120,7 @@
   }
 }
 
-.spinner>circle {
+.spinner > circle {
   fill: transparent;
 }
 
@@ -173,7 +173,8 @@ body {
 @font-face {
   font-family: "Open Sans";
   src: local("Lato"),
-    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf") format("opentype");
+    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf")
+      format("opentype");
 }
 
 .white-bg {
@@ -259,7 +260,7 @@ body {
   top: 6px;
 }
 
-.Toastify__toast-body>div:last-child {
+.Toastify__toast-body > div:last-child {
   position: relative;
   left: 8px;
 }
@@ -499,6 +500,10 @@ th {
 td {
   padding: 0.5em 1em;
 }
-.fcWidget-chat{
+.fcWidget-chat {
   padding-left: 30px;
+}
+
+.form-container-child > div:first-child {
+  margin-top: 20px;
 }
