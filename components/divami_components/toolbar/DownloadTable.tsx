@@ -1,30 +1,82 @@
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import { useEffect } from "react";
+import { renderToString } from "react-dom/server";
 
-export const DownloadTable = ({ data }: any) => {
+const styles = {
+  fontFamily: "sans-serif",
+  textAlign: "center",
+};
+const colstyle = {
+  width: "30%",
+};
+const tableStyle = {
+  width: "100%",
+};
+
+export const DownloadTable = ({ data, label, filename, onClick }: any) => {
   const convert = () => {
+    console.log(data, "jkjko");
     var doc: any = new jsPDF();
-    var col = ["Sr. No.", "Details"];
+    var col = data.length ? Object.keys(data[0]) : [];
     var rows: any = [];
 
-    /* The following array of object as response from the API req  */
-
-    var itemNew = [
-      { index: "1", id: "Case Number", name: "101111111" },
-      { index: "2", id: "Patient Name", name: "UAT DR" },
-      { index: "3", id: "Hospital Name", name: "Dr Abcd" },
-    ];
-
     data.forEach((element: any) => {
-      var temp = [element.priority, element.title];
+      let temp: any = [];
+
+      for (const property in element) {
+        temp.push(element[property]);
+      }
+      console.log(temp, "temmp");
       rows.push(temp);
     });
 
-    doc.autoTable(col, rows);
+    // styles: { overflow: 'linebreak', cellWidth: 'wrap', cellPadding: 1, fontSize: 6 },
+    // columnStyles: { text: { cellWidth: 'auto' } }
+    doc.autoTable(col, rows, {
+      // startY: 100,
+      margin: {
+        right: 20,
+        left: 20,
+      },
+      // tableWidth: 700,
+      // overflowColumns: col,
+      styles: {
+        overflow: "linebreak",
+        cellWidth: "wrap",
+        cellPadding: 1,
+        fontSize: 8,
+      },
+      columnStyles: { text: { cellWidth: "auto" } },
+      // styles: {
+      //   overflow: "linebreak",
+      //   columnWidth: "wrap",
+      //   // rowHeight: "wra",
+      //   // lineWidth: 1,
+      // },
+      // columnStyles: {
+      //   // 0: {
+      //   //   columnWidth: 20,
+      //   // },
+      //   // 1: {
+      //   //   columnWidth: 20,
+      //   // },
+      //   columnWidth: "wrap",
+      // },
+      // rowStyles: {
+      //   0: { rowHeight: 150 },
+      // },
 
-    doc.save("Test.pdf");
+      // rowHeight: "wra",
+    });
+
+    doc.save(filename);
+    onClick();
   };
 
-  return <div onClick={convert}>download json</div>;
+  return (
+    <div>
+      <div onClick={convert}>{label}</div>
+    </div>
+  );
 };

@@ -89,6 +89,7 @@ import { jsPDF } from "jspdf";
 import { createPdfFromHtml } from "./CreatePdf";
 import { getIssuesList } from "../../../services/issue";
 import { DownloadTable } from "../toolbar/DownloadTable";
+import { downloadMenuOptions, getDownladableList } from "./Constants";
 
 interface IProps {
   closeOverlay: () => void;
@@ -198,19 +199,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     },
   ];
 
-  const downloadMenuOptions = [
-    {
-      label: "Download as CSV",
-      icon: null,
-      method: "csv",
-    },
-    {
-      label: "Download as PDF",
-      icon: null,
-      method: "pdf",
-    },
-  ];
-
   const handleSortClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -227,6 +215,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   const handleSortMenuClick = (sortMethod: string) =>
     handleOnIssueSort(sortMethod);
+  const handleDownloadMenuClick = () => handleDownloadClose();
 
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(
     issueList.slice(0, 10)
@@ -329,97 +318,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     }
   };
 
-  const downloadData = () => {
-    getIssuesList(router.query.projectId as string, currentStructure._id).then(
-      (res) => {
-        let myL = ["hi", "hlo"];
-        console.log(myL, "dsfsfdsfsdfs");
-        const fileURL = window.URL.createObjectURL(
-          new Blob(myL)
-          // {
-          //   type: "application/pdf",
-          // }
-        );
-        // Setting various property values
-        let alink = document.createElement("a");
-        alink.href = fileURL;
-        alink.download = "SamplePDF.pdf";
-        alink.click();
-        // const link = document.createElement("a");
-        // link.id = "download-csv";
-        // link.setAttribute(
-        //   "href",
-        //   "data:text/plain;charset=utf-8," + encodeURIComponent(res.result)
-        // );
-        // link.setAttribute("download", "KQIMetricData.pdf");
-        // document.body.appendChild(link);
-        // link.click();
-      }
-    );
-  };
-  const getDownladableIssueList = (method?: string) => {
-    // getIssues(currentStructure._id, true);
-    const issL = downloadList;
-    let myL = issL.map((iss: any) => {
-      let x = _.omit(iss, "progress", "context");
-      let g = _.update(x, "owner", (ass) => {
-        //console.log("TEST",ass);
-        return ass.firstName;
-      });
-      let y = _.update(g, "assignees", (ass) => {
-        let n = ass?.length
-          ? ass.map((o: { firstName: any }) => {
-              return o.firstName;
-            })
-          : "";
-        return n;
-      });
-      let z = _.update(y, "attachments", (att) => {
-        let n = att?.length
-          ? att.map((o: { name: any }) => {
-              return o.name;
-            })
-          : "";
-        let u = att?.length
-          ? att.map((o: { url: any }) => {
-              return o.url;
-            })
-          : "";
-        if (n.length) return n + " : " + u;
-        return "";
-      });
-      return z;
-    });
-    console.log(myL, "issli");
-    // const link = document.createElement("a");
-    // link.id = "download-csv";
-    // link.setAttribute(
-    //   "href",
-    //   "data:text/plain;charset=utf-8," + encodeURIComponent(myL)
-    // );
-    // link.setAttribute("download", `IssueList.pdf`);
-    // document.body.appendChild(link);
-    // link.click();
-    // myL.blob().then((blob: any) => {
-    //   const fileURL = window.URL.createObjectURL(blob);
-    //   // Setting various property values
-    //   let alink = document.createElement("a");
-    //   alink.href = fileURL;
-    //   alink.download = "SamplePDF.pdf";
-    //   alink.click();
-    // });
-    // html2canvas(document.getElementById("download-test") || document.body).then(
-    //   function (canvas) {
-    //     const imgData = canvas.toDataURL("image/png");
-    //     const pdf = new jsPDF();
-    //     pdf.addImage(imgData, "JPEG", 0, 0);
-    //     pdf.save("download.pdf");
-    //   }
-    // );
-
-    return myL;
-  };
-
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
@@ -444,10 +342,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     issueMenuInstance.toolAction = "issueSelect";
     issueMenuInstance.response = { ...issue.context, id: issue._id };
     issueMenuClicked(issueMenuInstance);
-  };
-
-  const handleClick = () => {
-    createPdfFromHtml(ref1);
   };
 
   return (
@@ -563,7 +457,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     data-testid="filter"
                   />
 
-                  {/* <Tooltip title="Download Menu">
+                  <Tooltip title="Download Menu">
                     <DownloadIcon
                       src={Download}
                       alt="Arrow"
@@ -572,7 +466,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         handleSortClick(e);
                       }}
                     />
-                  </Tooltip> */}
+                  </Tooltip>
                   {/* <CSVLink
                     data={getDownladableIssueList(filteredIssuesList)}
                     filename={"my-issues.csv"}
@@ -581,14 +475,14 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     data-testid="download"
                   >
                     <DownloadIcon src={Download} alt="Arrow" />
-                  </CSVLink> */}
+                  </CSVLink>
                   <DownloadIcon
                     src={Download}
                     alt="Arrow"
                     // onClick={handleClick}
                     onClick={downloadData}
                   />
-                  <DownloadTable data={getDownladableIssueList()} />
+                  <DownloadTable data={getDownladableIssueList()} /> */}
                 </>
               )}
             </MiniSymbolsContainer>
@@ -772,58 +666,81 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               </>
             ))}
           </Menu>
-          <Menu
-            anchorEl={anchorEl}
-            id="account-menu"
-            open={isDownloadMenuOpen}
-            onClose={handleDownloadClose}
-            onClick={handleDownloadClose}
-            PaperProps={{
-              elevation: 0,
-              sx: {
-                overflow: "visible",
-                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                mt: 1.5,
-                "& .MuiAvatar-root": {
-                  width: 32,
-                  height: 32,
-                  ml: -0.5,
-                  mr: 1,
+          {isDownloadMenuOpen ? (
+            <Menu
+              anchorEl={anchorEl}
+              id="account-menu"
+              open={isDownloadMenuOpen}
+              onClose={handleDownloadClose}
+              onClick={handleDownloadClose}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
                 },
-                "&:before": {
-                  content: '""',
-                  display: "block",
-                  position: "absolute",
-                  top: 0,
-                  right: 14,
-                  width: 10,
-                  height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translateY(-50%) rotate(45deg)",
-                  zIndex: 0,
-                },
-              },
-            }}
-            transformOrigin={{ horizontal: "right", vertical: "top" }}
-            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-          >
-            {downloadMenuOptions.map((option) => (
-              <>
-                <StyledMenu
-                  key={option.label}
-                  onClick={() => handleDownloadMenuClick(option.method)}
-                  data-testid="download-menu-item"
-                >
-                  {option.label}
-                  {option.icon && (
+              }}
+              transformOrigin={{ horizontal: "right", vertical: "top" }}
+              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+              {downloadMenuOptions.map((option) => (
+                <>
+                  <StyledMenu
+                    key={option.label}
+                    // onClick={() => handleDownloadMenuClick()}
+                    data-testid="download-menu-item"
+                  >
+                    {option.label === "Download as CSV" ? (
+                      <CSVLink
+                        data={getDownladableList(downloadList)}
+                        filename={"issues.csv"}
+                        className="text-black btn btn-primary fill-black fa fa-Download "
+                        target="_blank"
+                        data-testid="download"
+                        onClick={() => handleDownloadMenuClick()}
+                      >
+                        {option.label}
+                      </CSVLink>
+                    ) : (
+                      <DownloadTable
+                        data={getDownladableList(downloadList)}
+                        label={option.label}
+                        filename="issues.pdf"
+                        onClick={() => handleDownloadMenuClick()}
+                      />
+                    )}
+
+                    {/* {option.icon && (
                     <ListItemIcon>
                       <IconContainer src={option.icon} alt={option.label} />
                     </ListItemIcon>
-                  )}
-                </StyledMenu>
-              </>
-            ))}
-          </Menu>
+                  )} */}
+                  </StyledMenu>
+                </>
+              ))}
+            </Menu>
+          ) : (
+            <></>
+          )}
         </TaskListContainer>
       ) : (
         <TaskListContainer>
