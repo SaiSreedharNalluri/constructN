@@ -21,12 +21,11 @@ instance.interceptors.response.use(
     return response;
   },
   (error) => {
-    const {
-      config,
-      response: { status },
-    } = error;
-
-    if (status === 401) {
+    if (
+      error?.response?.status === 401 &&
+      error?.response?.data?.userVerificationToken
+    ) {
+    } else if (error?.response?.status === 401) {
       if (typeof window !== 'undefined') {
         removeCookies('user');
         window.location.href = '/login?sessionExpiered=true';
