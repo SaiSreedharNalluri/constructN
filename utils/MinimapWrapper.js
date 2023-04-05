@@ -1,8 +1,13 @@
-import { autodeskAuth } from "../services/forgeService";
-import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
-import { applyTM } from "./ViewerDataUtils";
+import { MinimapDataVisualization } from "./MinimapDataVisualizationUtils";
+import {
+  applyOffset,
+  removeOffset,
+  applyTMInverse,
+  applyTM
 
-export const ForgeViewerUtils = (function () {
+} from './ViewerDataUtils';
+
+export const MinimapUtils = (function () {
   let _viewerId;
   let _eventHandler;
   let _viewer;
@@ -29,6 +34,9 @@ export const ForgeViewerUtils = (function () {
   let _showTag = {};
 
   let _context;
+  let _sphereMesh;
+  let _sceneBuilder;
+  let _modelBuilder;
 
   let _dataVizExtn;
   let _bimWalkExtn;
@@ -81,14 +89,14 @@ export const ForgeViewerUtils = (function () {
   }
 
   const initializeViewer = () => {
-    console.log("Inside Initializer callback", _eventHandler);
+    console.log("Inside minimap Initializer callback", _eventHandler);
     let htmlDiv = document.getElementById(_viewerId);
-    _viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv, viewerConfig);
+    _viewer = new Autodesk.Viewing.Viewer3D(htmlDiv, viewerConfig);
     setUpEventListeners();
     let startedCode = _viewer.start();
     _viewer.canvasId = _viewerId;
     if (startedCode > 0) {
-      console.error("Failed to create a Viewer: WebGL not supported.");
+      console.error("Failed to create a Viewer: WebGL not supported.", 'test');
       return;
     }
 
@@ -97,6 +105,10 @@ export const ForgeViewerUtils = (function () {
       false
     );
     _viewer.navigation.setReverseZoomDirection(true);
+
+    if (_isViewerInitialized) {
+      loadData();
+    }
   };
 
   const setStructure = (structure) => {
@@ -108,7 +120,7 @@ export const ForgeViewerUtils = (function () {
   };
 
   const updateData = (documentURNs) => {
-    console.log("Inside update data: ", documentURNs);
+    console.log("Inside minimap update data: ", documentURNs);
     _documentURNs = documentURNs;
     _isPendingDataToLoad = true;
     if (_isViewerInitialized) {
@@ -119,7 +131,7 @@ export const ForgeViewerUtils = (function () {
   };
 
   const updateLayersData = (realityPositionMap, context) => {
-    console.log("Inside update layers data: ", realityPositionMap, context);
+    console.log("Inside minimap update layers data: ", realityPositionMap, context);
     if (context) {
       _context = context;
     } else {
@@ -181,13 +193,13 @@ export const ForgeViewerUtils = (function () {
   };
 
   const loadData = async () => {
-    // console.log("Inside loadModel: ",documentURNs);
+    console.log("Inside minimap loadModel: ", _documentURNs);
     // console.log("Loading new Model: ", documentURNs);
     if (_isModelLoaded) {
       removeData();
     }
 
-    _documentURNs[getAvailableType()]?.map((document) => {
+    _documentURNs && _documentURNs['Plan Drawings']?.map((document) => {
       Autodesk.Viewing.Document.load(
         document.urn,
         async function (viewerDocument) {
@@ -257,8 +269,12 @@ export const ForgeViewerUtils = (function () {
     return modelOptions;
   };
 
+  const resize = () => {
+    _viewer && _viewer.resize()
+  }
+
   const loadLayers = () => {
-    // console.log("Passing data to dataViz extension: ", dataVizUtils);
+    console.log("Passing data to dataViz extension minimap: ", _dataVizUtils);
     _dataVizUtils.removeExistingVisualizationData();
     _dataVizUtils.setIs2D(_manifestNode.is2D());
     _dataVizUtils.setTM(_tm);
@@ -293,6 +309,102 @@ export const ForgeViewerUtils = (function () {
       _isPendingLayersToLoad = false;
     }
   };
+
+  async function addModel(position, yaw) {
+    if(!_sceneBuilder && !_modelBuilder) {
+      _sceneBuilder = await _viewer.loadExtension('Autodesk.Viewing.SceneBuilder');
+      _modelBuilder = await _sceneBuilder.addNewModel({
+        modelNameOverride: 'Navigator',
+        conserveMemory: false
+      });
+    }
+
+    if (_sphereMesh) {
+      console.log(_sphereMesh, position, yaw)
+      _sphereMesh.matrix = new THREE.Matrix4().compose(
+        new THREE.Vector3(position.x, position.y, 100),
+        new THREE.Quaternion(0, 0, 0, 1),
+        new THREE.Vector3(1, 1, 1)
+      );
+      // _sphereMesh.matrix.makeRotationFromEuler(new THREE.Euler(0, 0, yaw ? yaw : 0, 1))
+      _modelBuilder.updateMesh(_sphereMesh);
+    } else {
+      var texture = new THREE.TextureLoader().load('https://cdn-icons-png.flaticon.com/512/3699/3699532.png');
+      const boxGeometry = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry(1, 1, 1));
+      const boxMaterial = new THREE.MeshPhongMaterial({ color: new THREE.Color(1, 0, 0) });
+
+
+      const square = new THREE.Shape();
+      square.moveTo(0, 2);
+      square.lineTo(-1, 1);
+      square.lineTo(-0.5, 1);
+      square.lineTo(-0.5, -2);
+      square.lineTo(0.5, -2);
+      square.lineTo(0.5, 1);
+      square.lineTo(1, 1);
+      square.lineTo(0, 2);
+  
+      const geometry = new THREE.ShapeGeometry(square);
+
+      const material = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(1, 0, 0),
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+
+      console.log(geometry, "===========")
+  
+      // _sphereMesh = new THREE.Mesh(geometry, material);
+
+      _sphereMesh = new THREE.Mesh(boxGeometry, new THREE.MeshPhongMaterial({map: texture,  color: new THREE.Color(1, 0, 0) }));
+      _sphereMesh.dbId = 12345; // Use this dbId in Viewer APIs as usual
+      _sphereMesh.matrix = new THREE.Matrix4().compose(
+        new THREE.Vector3(position.x, position.y, 100),
+        new THREE.Quaternion(0, 0, 0, 1),
+        new THREE.Vector3(1, 1, 1)
+      );
+      _modelBuilder.addMesh(_sphereMesh);
+    }
+  }
+
+  const createMarker = (position, yaw) => {
+    // console.log(position, yaw)
+    if(!position) return
+    if(!_isModelLoaded) return
+    // _dataVizUtils.refreshViewableData(position, yaw);
+
+
+    const localPos = getViewerPosition(position, _tm, _globalOffset)
+    addModel(localPos, yaw);
+
+    // Create a new mesh
+    // const geometry = new THREE.SphereGeometry(1, 1, 1);
+    // const map = new ThreeDRotation.Sprite
+    // const material = new THREE.SpriteMaterial({ map: map, color: 0x336699 });
+    // const mesh = new THREE.Mesh(geometry, material);
+    // const localPos = getViewerPosition(position, _tm, _globalOffset)
+    // mesh.position.x = localPos.x; mesh.position.y = localPos.y; mesh.position.z = 100;
+    // // Add scene and mesh
+    // if(_viewer.overlays.hasScene('my_scene')) {
+    //   _viewer.overlays.removeMesh([mesh], 'my_scene');
+    // } else {
+    //   _viewer.overlays.addScene('my_scene');
+    // }
+    // _viewer.overlays.addMesh([mesh], 'my_scene');
+
+  }
+
+  const getViewerPosition = (position, tm, offset) => {
+    // console.log("Inside minimap get viewer posistion: ", position, tm, offset);
+    let _position;
+    if(_manifestNode.is2D()) {
+        _position = applyTMInverse(position, tm);
+        _position = applyOffset(_position, offset);
+    } else {
+        _position = applyOffset(position, offset);
+    }
+    return _position;
+  }
 
   const showTag = (tag, show) => {
     _isPendingLayersToLoad = true;
@@ -505,7 +617,7 @@ export const ForgeViewerUtils = (function () {
   };
 
   const updateViewerState = (viewerState) => {
-    if (_isModelLoaded && viewerState) {
+    if (_isModelLoaded && !_manifestNode.is2D() && viewerState) {
       // console.log("Inside update viewer state: ", viewerId, viewerState);
       let position = new THREE.Vector3().fromArray(viewerState.position);
       _viewer.navigation.setPosition(position);
@@ -514,6 +626,7 @@ export const ForgeViewerUtils = (function () {
         _viewer.navigation.setVerticalFov(viewerState.fov, false);
       }
     }
+    _isModelLoaded && viewerState && viewerState.cameraObject && createMarker(viewerState.cameraObject.cameraTarget, viewerState.cameraObject.yaw)
   };
 
   const setNavigation = (context) => {
@@ -574,7 +687,7 @@ export const ForgeViewerUtils = (function () {
   };
 
   const onViewerInitialized = () => {
-    console.log("Viewer Initialized: Loading Model now");
+    console.log("Viewer Initialized minimap: Loading Model now", _isPendingDataToLoad);
     _isViewerInitialized = true;
     loadExtension();
     if (_isPendingDataToLoad) {
@@ -617,14 +730,14 @@ export const ForgeViewerUtils = (function () {
 
   const onExtensionLoadedEvent = (parameter) => {
     // console.log("Inside Extension Loaded Event:", parameter);
-    if (parameter.extensionId === ForgeDataVisualization.EXTENSION_ID) {
+    if (parameter.extensionId === MinimapDataVisualization.EXTENSION_ID) {
       console.log(
         "Inside Extension Loaded Event: Data Visualization",
         parameter
       );
       _dataVizExtn = _viewer.getExtension(parameter.extensionId);
 
-      _dataVizUtils = new ForgeDataVisualization(_viewer, _dataVizExtn);
+      _dataVizUtils = new MinimapDataVisualization(_viewer, _dataVizExtn);
       _dataVizUtils.setHandler(onDataVizHandler.bind(this));
       if (loadLayersOnDataLoadCompletion()) {
         loadLayers();
@@ -771,6 +884,7 @@ export const ForgeViewerUtils = (function () {
     setupViewer: setupViewer,
     initializeViewer: initializeViewer,
     setType: setType,
+    createMarker: createMarker,
     setStructure: setStructure,
     setSnapshot: setSnapshot,
     updateData: updateData,
@@ -789,6 +903,7 @@ export const ForgeViewerUtils = (function () {
     updateContext: updateContext,
     removeData: removeData,
     removeLayers: removeLayers,
+    resize: resize,
     shutdown: shutdown,
   };
 })();

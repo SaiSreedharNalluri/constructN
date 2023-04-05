@@ -24,7 +24,15 @@ const DoubleFieldContainer = styled("div")({
 });
 
 const FormWrapper = (props: any) => {
-  const { config, formState, setFormConfig, validate, setIsValidate, setCanBeDisabled } = props;
+  console.log("formwrapp", props);
+  const {
+    config,
+    formState,
+    setFormConfig,
+    validate,
+    setIsValidate,
+    setCanBeDisabled,
+  } = props;
 
   useEffect(() => {
     if (validate) {
@@ -32,7 +40,7 @@ const FormWrapper = (props: any) => {
       setFormConfig((prev: any) => {
         const newconfig = prev.map((item: any) => {
           if (item.isReq && !item.defaultValue) {
-            setCanBeDisabled(false)
+            setCanBeDisabled(false);
             return {
               ...item,
               isError: true,
@@ -96,13 +104,13 @@ const FormWrapper = (props: any) => {
         if (id === item.id) {
           const newSelectedUser = Array.isArray(value)
             ? value.filter((selected: any, index: number, array: any[]) => {
-              // Remove duplicate values based on label property
-              return (
-                array.findIndex(
-                  (elem: any) => elem.label === selected.label
-                ) === index
-              );
-            })
+                // Remove duplicate values based on label property
+                return (
+                  array.findIndex(
+                    (elem: any) => elem.label === selected.label
+                  ) === index
+                );
+              })
             : [];
           return {
             ...item,

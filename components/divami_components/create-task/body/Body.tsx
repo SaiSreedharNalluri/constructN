@@ -1,6 +1,8 @@
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
+import Moment from "moment";
+
 // import CustomLabel from '../../Common/custom-label/CustomLabel'
 // import FormWrapper from '../../Common/form-wrapper/FormWrapper'
 import {
@@ -59,7 +61,7 @@ const Body = ({
   validate,
   setIsValidate,
   tagsList,
-  setCanBeDisabled
+  setCanBeDisabled,
 }: any) => {
   console.log(editData, "editData");
   const [formState, setFormState] = useState({ selectedValue: "" });
@@ -265,9 +267,14 @@ const Body = ({
                     selected: false,
                   };
                 }),
+                defaultValue: item?.options[0]?.label,
               };
             }
             if (item.id === "taskPriority") {
+              const hasLowValue = item?.options.some(
+                (cont: any) => cont.value === "Low"
+              );
+              console.log("hasLowValue", hasLowValue);
               return {
                 ...item,
                 options: taskPriorities?.map((eachItem: any) => {
@@ -278,6 +285,7 @@ const Body = ({
                     selected: false,
                   };
                 }),
+                defaultValue: hasLowValue ? "Low" : item?.options[0]?.label,
               };
             }
             if (item.id === "assignedTo") {
@@ -289,6 +297,24 @@ const Body = ({
                     label: eachUser?.user?.fullName,
                     value: eachUser?.user?._id,
                   };
+                }),
+              };
+            }
+            if (item.id === "dates") {
+              return {
+                ...item,
+                fields: item.fields.map((each: any) => {
+                  if (each.id == "start-date") {
+                    return {
+                      ...each,
+                      defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
+                    };
+                  } else {
+                    return {
+                      ...each,
+                      defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
+                    };
+                  }
                 }),
               };
             }
@@ -311,10 +337,12 @@ const Body = ({
     let count = 0;
     formConfig.forEach((item: any) => {
       if (item.isError) {
-        count++
+        count++;
       }
     });
-    if (count === 0) { setCanBeDisabled(true) }
+    if (count === 0) {
+      setCanBeDisabled(true);
+    }
   }, [formConfig]);
 
   useEffect(() => {

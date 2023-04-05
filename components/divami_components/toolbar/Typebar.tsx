@@ -7,8 +7,10 @@ import {
   TypeArrowIconDiv,
   SelectLayersWrapper,
   DownIcon,
+  ContainerDiv,
 } from "./ToolBarStyles";
 import SelectTypesList from "../select-types/SelectTypesList";
+import ClickAwayListener from "@mui/base/ClickAwayListener";
 
 // import styles from '../toolbar/toolbar.module.css'
 
@@ -22,26 +24,34 @@ const Typebar = ({
   setOpenList,
 }: any) => {
   return (
-    <>
-      <TypeParentCont onClick={onListClick}>
-        <TypesTitle>{selectedValue ? selectedValue : "Select Type"}</TypesTitle>
-        <TypeArrowIconDiv>
-          {/* <Image src={downArrowIcon} width={12} height={12} alt="Arrow" /> */}
-          <DownIcon src={downArrowIcon} alt="Arrow" />
-        </TypeArrowIconDiv>
-      </TypeParentCont>
-      <SelectLayersWrapper typeOfWindow="type">
-        <SelectTypesList
-          openselectlayer={openList}
-          title={"Select Type"}
-          onCloseHandler={() => {
-            setOpenList(false);
-          }}
-          optionsList={myTypesList}
-          onSelect={typeChange}
-        />
-      </SelectLayersWrapper>
-    </>
+    <ClickAwayListener
+      onClickAway={() => {
+        setOpenList(false);
+      }}
+    >
+      <ContainerDiv>
+        <TypeParentCont onClick={onListClick}>
+          <TypesTitle>
+            {selectedValue ? "Type: " + selectedValue : "Select Type"}
+          </TypesTitle>
+          <TypeArrowIconDiv>
+            {/* <Image src={downArrowIcon} width={12} height={12} alt="Arrow" /> */}
+            <DownIcon src={downArrowIcon} alt="Arrow" />
+          </TypeArrowIconDiv>
+        </TypeParentCont>
+        <SelectLayersWrapper typeOfWindow="type">
+          <SelectTypesList
+            openselectlayer={openList}
+            title={"Select Type"}
+            onCloseHandler={() => {
+              setOpenList(false);
+            }}
+            optionsList={myTypesList}
+            onSelect={typeChange}
+          />
+        </SelectLayersWrapper>
+      </ContainerDiv>
+    </ClickAwayListener>
   );
 };
 

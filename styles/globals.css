@@ -472,6 +472,10 @@ mapboxgl-popup-close-button {
   right: 5px !important;
 }
 
+#minimap .adsk-viewing-viewer {
+  border-radius: 8px !important;
+}
+
 .compare-details {
   top: 10%;
   left: 2.5%;
