@@ -10,7 +10,7 @@ const Register: React.FC = () => {
   const [message, setMessage] = useState<string>('');
   const handleRegister = (formValue: any) => {
     delete formValue.confirmPassword;
-    setMessage('');
+    formValue.email = formValue.email.toLocaleLowerCase();
     setLoading(true);
     registerUser(formValue)
       .then((response) => {
