@@ -7,6 +7,7 @@ const StyledSelect = styled(Select)({
   height: "40px",
   outline: "0px",
   border: "1px solid #36415d",
+
   borderRadius: "4px",
   fontFamily: "Open Sans",
   fontStyle: "normal",
@@ -34,7 +35,6 @@ const CustomSelectContainer = styled("div")({
   fontWeight: 400,
   fontSize: 14,
   color: "#101F4B",
-  
 });
 
 export const ErrorField = styled("div")({
