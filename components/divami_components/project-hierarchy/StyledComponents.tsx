@@ -160,6 +160,7 @@ export const ProjectHierarchyContainer = styled(
   width: "301px",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
   backgroundColor: "#fff",
+  fontSize: "14px !important",
 });
 interface StyledTreeItemProps {
   needClick: boolean;
@@ -172,6 +173,8 @@ export const StyledTreeItem = styled(TreeItem)<StyledTreeItemProps>(
     // '& .MuiTreeItem-iconContainer': {
     //   pointerEvents: "auto",
     // }
+
+    "& .MuiCollapse-root": {},
   })
 ) as any;
 
@@ -188,6 +191,9 @@ export const LabelText = styled("div")({
   paddingTop: "13px",
   paddingLeft: "10px",
   fontFamily: "Open Sans",
+  fontSize: "14px",
+  fontStyle: "normal",
+  fontWeight: "400",
 });
 
 export const LabelIcon = styled("div")({
@@ -224,7 +230,9 @@ export const SearchContainer = styled("div")({
 });
 
 export const HeaderLabel = styled("div")({
-  fontSize: "16px",
+  // fontSize: "16px",
+  fontSize: "14px",
+
   fontWeight: "400",
 });
 export const CloseIcon = styled(Image)({
