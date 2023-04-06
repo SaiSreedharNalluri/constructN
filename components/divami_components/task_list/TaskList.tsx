@@ -89,6 +89,7 @@ import {
   getDownladableList,
 } from "../issue-listing/Constants";
 import { DownloadTable } from "../toolbar/DownloadTable";
+import { MenuOptionLabel } from "../issue-listing/IssueListStyles";
 
 interface IProps {
   closeOverlay: () => void;
@@ -731,7 +732,7 @@ const CustomTaskListDrawer = (props: any) => {
                     data-testid="download"
                     onClick={() => handleDownloadClose()}
                   >
-                    {option.label}
+                    <MenuOptionLabel>{option.label}</MenuOptionLabel>
                   </CSVLink>
                 ) : (
                   <DownloadTable

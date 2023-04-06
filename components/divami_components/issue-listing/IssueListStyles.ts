@@ -208,9 +208,13 @@ export const StyledMenu = styled(MenuItem)({
   lineHeight: "20px",
   color: "#101F4C",
   fontFamily: "Open Sans",
-  fontWeight: "400"
+  fontWeight: "400",
 });
 
+export const MenuOptionLabel = styled(MenuItem)({
+  color: "#101F4C",
+  fontSize: "14px",
+});
 export const ErrorImageDiv = styled("div")({
   // position: "absolute",
   // top: "50%",
@@ -234,7 +238,6 @@ export const LoadMoreText = styled("div")({
   color: "#FF843F",
   cursor: "pointer",
 });
-
 
 export const ImageErrorIcon = styled(Image)({
   cursor: "pointer",

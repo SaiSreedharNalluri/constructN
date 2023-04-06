@@ -66,6 +66,7 @@ import {
   NoMatchDiv,
   CustomBox,
   LoadMoreText,
+  MenuOptionLabel,
 } from "./IssueListStyles";
 
 import _ from "lodash";
@@ -718,7 +719,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         data-testid="download"
                         onClick={() => handleDownloadMenuClick()}
                       >
-                        {option.label}
+                        <MenuOptionLabel>{option.label}</MenuOptionLabel>
                       </CSVLink>
                     ) : (
                       <DownloadTable

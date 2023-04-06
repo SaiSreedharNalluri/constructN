@@ -2,6 +2,7 @@ import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import { useEffect } from "react";
 import { renderToString } from "react-dom/server";
+import { MenuOptionLabel } from "../issue-listing/IssueListStyles";
 
 const styles = {
   fontFamily: "sans-serif",
@@ -76,7 +77,9 @@ export const DownloadTable = ({ data, label, filename, onClick }: any) => {
 
   return (
     <div>
-      <div onClick={convert}>{label}</div>
+      <div onClick={convert}>
+        <MenuOptionLabel>{label}</MenuOptionLabel>
+      </div>
     </div>
   );
 };
