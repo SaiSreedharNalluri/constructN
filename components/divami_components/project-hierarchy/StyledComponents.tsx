@@ -187,6 +187,7 @@ export const LabelText = styled("div")({
   display: "block",
   paddingTop: "13px",
   paddingLeft: "10px",
+  fontFamily: "Open Sans",
 });
 
 export const LabelIcon = styled("div")({

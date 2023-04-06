@@ -1,4 +1,4 @@
-import { MenuItem, Select } from "@mui/material";
+import { MenuItem, Select, ThemeProvider, createTheme } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { styled } from "@mui/system";
 
@@ -17,6 +17,19 @@ const StyledSelect = styled(Select)({
   "& .MuiOutlinedInput-notchedOutline": {
     border: 0,
     offset: 0,
+  },
+});
+
+const theme = createTheme({
+  components: {
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          minWidth: "392px !important",
+          left: "328px !important",
+        },
+      },
+    },
   },
 });
 
@@ -84,28 +97,30 @@ const CustomSelect = (props: any) => {
   }, [data?.defaultValue]);
 
   return (
-    <CustomSelectContainer>
-      <StyledSelect
-        value={val}
-        onChange={handlechange}
-        id={id}
-        readOnly={isReadOnly}
-        className={` ${data?.isError ? "formErrorField" : ""} formField`}
-      >
-        {config.options?.length &&
-          config.options.map((item: any, index: any) => (
-            <StyledMenuItem
-              key={item.value}
-              value={`${item.value}`}
-              id={`select-dropdown${index}`}
-            >
-              {item.label}
-            </StyledMenuItem>
-          ))}
-      </StyledSelect>
+    <ThemeProvider theme={theme}>
+      <CustomSelectContainer>
+        <StyledSelect
+          value={val}
+          onChange={handlechange}
+          id={id}
+          readOnly={isReadOnly}
+          className={` ${data?.isError ? "formErrorField" : ""} formField`}
+        >
+          {config.options?.length &&
+            config.options.map((item: any, index: any) => (
+              <StyledMenuItem
+                key={item.value}
+                value={`${item.value}`}
+                id={`select-dropdown${index}`}
+              >
+                {item.label}
+              </StyledMenuItem>
+            ))}
+        </StyledSelect>
 
-      {/* <ErrorField>{data?.isError ? "Required" : ""}</ErrorField> */}
-    </CustomSelectContainer>
+        {/* <ErrorField>{data?.isError ? "Required" : ""}</ErrorField> */}
+      </CustomSelectContainer>
+    </ThemeProvider>
   );
 };
 
