@@ -45,14 +45,14 @@ const TreeNode: React.FC<IProps> = ({ node, level }) => {
     } else {
       return visibility[node._id] ? (
         <FontAwesomeIcon
-          // style={{ marginLeft: `${level}rem` }}
+          style={{ marginLeft: `${level}rem` }}
           size="1x"
           icon={faAngleUp}
           rotation={180}
         />
       ) : (
         <FontAwesomeIcon
-          //style={{ marginLeft: `${level}rem` }}
+          style={{ marginLeft: `${level}rem` }}
           size="1x"
           icon={faAngleUp}
           rotation={90}
@@ -64,7 +64,7 @@ const TreeNode: React.FC<IProps> = ({ node, level }) => {
     <React.Fragment>
       <tr className=" border bg-pink-50">
         <td
-          className={`border border-slate-50 bg-pink-50 flex flex-col flex-grow `}
+          className={`border border-slate-50 bg-pink-50 flex`}
           onClick={() => {
             setVisibility({
               ...visibility,
@@ -74,13 +74,7 @@ const TreeNode: React.FC<IProps> = ({ node, level }) => {
         >
           {getICon(level)}
         </td>
-        <td
-          className={`border border-slate-200 bg-white w-[calc(20vw-${
-            level * 24
-          }px)]`}
-        >
-          {node.name}
-        </td>
+        <td className={`border border-slate-200 bg-white`}>{node.name}</td>
         <td className="border border-slate-200  bg-white">{node.wbsId}</td>
         <td className="border border-slate-200  bg-white">
           <input type="date" className="w-full" />
