@@ -20,19 +20,6 @@ const StyledSelect = styled(Select)({
   },
 });
 
-const theme = createTheme({
-  components: {
-    MuiPopover: {
-      styleOverrides: {
-        paper: {
-          minWidth: "392px !important",
-          left: "328px !important",
-        },
-      },
-    },
-  },
-});
-
 const StyledMenuItem = styled(MenuItem)({
   fontFamily: "Open Sans",
   fontStyle: "normal",
@@ -97,30 +84,28 @@ const CustomSelect = (props: any) => {
   }, [data?.defaultValue]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <CustomSelectContainer>
-        <StyledSelect
-          value={val}
-          onChange={handlechange}
-          id={id}
-          readOnly={isReadOnly}
-          className={` ${data?.isError ? "formErrorField" : ""} formField`}
-        >
-          {config.options?.length &&
-            config.options.map((item: any, index: any) => (
-              <StyledMenuItem
-                key={item.value}
-                value={`${item.value}`}
-                id={`select-dropdown${index}`}
-              >
-                {item.label}
-              </StyledMenuItem>
-            ))}
-        </StyledSelect>
+    <CustomSelectContainer>
+      <StyledSelect
+        value={val}
+        onChange={handlechange}
+        id={id}
+        readOnly={isReadOnly}
+        className={` ${data?.isError ? "formErrorField" : ""} formField`}
+      >
+        {config.options?.length &&
+          config.options.map((item: any, index: any) => (
+            <StyledMenuItem
+              key={item.value}
+              value={`${item.value}`}
+              id={`select-dropdown${index}`}
+            >
+              {item.label}
+            </StyledMenuItem>
+          ))}
+      </StyledSelect>
 
-        {/* <ErrorField>{data?.isError ? "Required" : ""}</ErrorField> */}
-      </CustomSelectContainer>
-    </ThemeProvider>
+      {/* <ErrorField>{data?.isError ? "Required" : ""}</ErrorField> */}
+    </CustomSelectContainer>
   );
 };
 
