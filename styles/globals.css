@@ -502,3 +502,18 @@ td {
 .fcWidget-chat{
   padding-left: 30px;
 }
+
+::-webkit-scrollbar {
+	width: 5px;
+	background-color: white !important;
+}
+
+::-webkit-scrollbar-track {
+
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #D9D9D9 !important;
+  border-radius: 60px !important;
+}
+

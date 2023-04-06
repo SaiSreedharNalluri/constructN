@@ -131,7 +131,7 @@ const CustomSearch = (props: any) => {
               <TextField
                 placeholder="Enter Name or Teams here ..."
                 {...params}
-                label={data.label}
+                // label={data.label}
                 InputProps={
                   val.length
                     ? {
@@ -204,7 +204,7 @@ const CustomSearch = (props: any) => {
             <TextField
               placeholder="Enter Name or Teams here ..."
               {...params}
-              label={data.label}
+              // label={data.label}
               InputProps={{
                 ...params.InputProps,
                 startAdornment: (

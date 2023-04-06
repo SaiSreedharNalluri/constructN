@@ -65,6 +65,7 @@ import {
   NoMatchDiv,
   CustomBox,
   LoadMoreText,
+  FilterIndication,
 } from "./IssueListStyles";
 
 import _ from "lodash";
@@ -507,9 +508,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     />
                   )}
                   <DueDate>Due Date</DueDate> */}
-
                   <SecondDividerIcon src={DividerIconSVG} alt="" />
-
                   <FunnelIcon
                     src={FilterInActive}
                     alt="Arrow"
@@ -518,7 +517,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     }}
                     data-testid="filter"
                   />
-
+                  {issueFilterState.isFilterApplied ? (
+                    <FilterIndication />
+                  ) : null}
                   {/* <Tooltip title="Download Menu">
                     <DownloadIcon
                       src={Download}

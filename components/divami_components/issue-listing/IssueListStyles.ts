@@ -235,6 +235,16 @@ export const LoadMoreText = styled("div")({
   cursor: "pointer",
 });
 
+export const FilterIndication = styled("span")({
+  height: "8px",
+  width: "8px",
+  backgroundColor: "#FF843F",
+  borderRadius: "50%",
+  display: "inline-block",
+  marginTop: "-16px",
+  marginLeft: "-6px"
+});
+
 
 export const ImageErrorIcon = styled(Image)({
   cursor: "pointer",
