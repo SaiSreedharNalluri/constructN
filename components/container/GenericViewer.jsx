@@ -36,7 +36,6 @@ import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
 import TimeLineComponent from '../divami_components/timeline-container/TimeLineComponent'
 import Hotspots from './hotspots';
 import HotspotsCompare from './hotspotsCompare';
-import MiniMap from './minimap';
 
 function GenericViewer(props) {
   const genericViewer = 'genericViewer';

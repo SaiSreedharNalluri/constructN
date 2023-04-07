@@ -62,6 +62,7 @@ const Body = ({
   setIsValidate,
   tagsList,
   setCanBeDisabled,
+  deleteTheAttachment,
 }: any) => {
   console.log(editData, "editData");
   const [formState, setFormState] = useState({ selectedValue: "" });
@@ -132,17 +133,20 @@ const Body = ({
 
   useEffect(() => {
     if (projectUsers.length && taskPriorities.length && taskTypes.length) {
-      console.log(editData, "editdata", formConfig, "formconfig");
+      // console.log(editData, "editdata", formConfig, "formconfig");
       if (editData) {
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {
             if (item.id === "title") {
+              console.log("itemitem",item)
               return {
                 ...item,
-                defaultValue: editData.title || "",
+                defaultValue: editData?.title || "",
               };
             }
             if (item.id === "tasks") {
+              console.log("ssdsditem", item);
+
               return {
                 ...item,
                 options: taskTypes?.map((eachItem: any) => {
@@ -257,6 +261,7 @@ const Body = ({
         setFormConfig((prev: any) => {
           return prev.map((item: any) => {
             if (item.id === "tasks") {
+              console.log("ssdsditem", item);
               return {
                 ...item,
                 options: taskTypes?.map((eachItem: any) => {
@@ -267,7 +272,7 @@ const Body = ({
                     selected: false,
                   };
                 }),
-                defaultValue: item?.options[0]?.label,
+                defaultValue: item?.options[0]?.label || "Transmittals",
               };
             }
             if (item.id === "taskPriority") {
@@ -340,9 +345,9 @@ const Body = ({
         count++;
       }
     });
-    if (count === 0) {
-      setCanBeDisabled(true);
-    }
+    // if (count === 0) {
+    //   setCanBeDisabled(true);
+    // }
   }, [formConfig]);
 
   useEffect(() => {
@@ -361,7 +366,12 @@ const Body = ({
           validate={validate}
           setCanBeDisabled={setCanBeDisabled}
         />
-        <UploadedImagesList formData={formData} />
+        <UploadedImagesList
+          formData={formData}
+          deleteTheAttachment={deleteTheAttachment}
+          setFormData={setFormData}
+          formConfig={formConfig}
+        />
       </FormElementContainer>
       {/* <Box sx={{ marginTop: '15px' }}>
         <CustomLabel label={'Select the Type of Task'} />

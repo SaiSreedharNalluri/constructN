@@ -26,6 +26,7 @@ const CreateTask = ({
   editData,
   closeTaskCreate,
   onCancelCreate,
+  deleteTheAttachment,
 }: any) => {
   const router = useRouter();
   const [formData, setFormData] = useState(null);
@@ -77,8 +78,13 @@ const CreateTask = ({
         setIsValidate={setValidate}
         tagsList={tagList}
         setCanBeDisabled={setCanBeDisabled}
+        deleteTheAttachment={deleteTheAttachment}
       />
-      <Footer formHandler={formHandler} editData={editData} canBeDisabled={canBeDisabled} />
+      <Footer
+        formHandler={formHandler}
+        editData={editData}
+        canBeDisabled={canBeDisabled}
+      />
       {showPopUp && (
         <PopupComponent
           open={showPopUp}

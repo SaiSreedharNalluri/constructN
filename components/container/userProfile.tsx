@@ -94,7 +94,7 @@ const UserProfile: React.FC<IProps> = ({
                       <ErrorMessage
                         name="firstName"
                         component="div"
-                        className="alert alert-danger"
+                        className="alert alert-danger text-red-600"
                       />
                     </div>
                     <div className="gap-10 px-10 py-2">
@@ -110,7 +110,7 @@ const UserProfile: React.FC<IProps> = ({
                       <ErrorMessage
                         name="lastName"
                         component="div"
-                        className="alert alert-danger"
+                        className="alert alert-danger text-red-600"
                       />
                     </div>
                     <div className=" gap-10 px-10  py-2">
@@ -127,7 +127,7 @@ const UserProfile: React.FC<IProps> = ({
                       <ErrorMessage
                         name="email"
                         component="div"
-                        className="alert alert-danger"
+                        className="alert alert-danger text-red-600"
                       />
                     </div>
                     <div className=" gap-10 px-10 py-2">
@@ -141,7 +141,7 @@ const UserProfile: React.FC<IProps> = ({
                       <ErrorMessage
                         name="date"
                         component="div"
-                        className="alert alert-danger"
+                        className="alert alert-danger text-red-600"
                       />
                     </div>
                   </div>

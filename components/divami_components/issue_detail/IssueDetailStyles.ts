@@ -482,7 +482,9 @@ export const AddCommentInput = styled("input")({
   paddingLeft: "10px",
 });
 export const ActivityLogContainer = styled("div")({
-  marginBottom: "40px",
+  // marginBottom: "40px",
+  marginBottom: "26px",
+
 });
 
 export const AddCommentButtonContainer = styled("div")({

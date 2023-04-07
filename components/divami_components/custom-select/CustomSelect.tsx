@@ -34,6 +34,7 @@ const CustomSelectContainer = styled("div")({
   fontWeight: 400,
   fontSize: 14,
   color: "#101F4B",
+  
 });
 
 export const ErrorField = styled("div")({

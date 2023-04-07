@@ -1,8 +1,7 @@
 import mixpanel from 'mixpanel-browser';
 mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, {debug: true}); 
 
-let env_check = process.env.NODE_ENV === 'development';
-console.log('==================================', process.env.NODE_ENV, mixpanel.has_opted_in_tracking() + ' ----')
+let env_check = process.env.NODE_ENV === 'production';
 
 let actions = {
   identify: (id: string) => {
