@@ -4,7 +4,7 @@ import { login, ResendEmailVerificationLink } from '../services/userAuth';
 import { useRouter } from 'next/router';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
-import { Mixpanel } from '../components/analytics/Mixpanel';
+import { Mixpanel } from '../components/analytics/mixpanel';
 import Modal from 'react-responsive-modal';
 const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
