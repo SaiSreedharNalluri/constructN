@@ -148,6 +148,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
   const [searchingOn, setSearchingOn] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState("");
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
   const [openIssueDetail, setOpenIssueDetail] = useState(false);
@@ -367,7 +368,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             </TitleContainer>
           </HeaderContainer>
 
-          <MiniHeaderContainer>
+          <MiniHeaderContainer searchingOn={searchingOn}>
             <MiniSymbolsContainer>
               {searchingOn ? (
                 <SearchAreaContainer>

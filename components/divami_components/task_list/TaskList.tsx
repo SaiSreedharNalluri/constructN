@@ -364,7 +364,7 @@ const CustomTaskListDrawer = (props: any) => {
             </TitleContainer>
           </HeaderContainer>
 
-          <MiniHeaderContainer>
+          <MiniHeaderContainer searchingOn={searchingOn}>
             <MiniSymbolsContainer>
               {searchingOn ? (
                 <SearchAreaContainer>

@@ -505,3 +505,7 @@ td {
 .fcWidget-chat {
   padding-left: 30px;
 }
+
+.form-container-child > div:first-child {
+  margin-top: 20px;
+}
