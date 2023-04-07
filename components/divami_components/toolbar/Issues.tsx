@@ -244,7 +244,7 @@ const Issues = ({
 
   return (
     <>
-      <DownloadTable />
+      {/* <DownloadTable /> */}
       {/* <PrintPage /> */}
       <IssueBox>
         <IssueTitle>Issues:</IssueTitle>

@@ -17,7 +17,6 @@ const tableStyle = {
 
 export const DownloadTable = ({ data, label, filename, onClick }: any) => {
   const convert = () => {
-    console.log(data, "jkjko");
     var doc: any = new jsPDF();
     var col = data.length ? Object.keys(data[0]) : [];
     var rows: any = [];

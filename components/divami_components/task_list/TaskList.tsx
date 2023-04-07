@@ -464,7 +464,7 @@ const CustomTaskListDrawer = (props: any) => {
                       data-testid="filter"
                     />
                   ) : null}
-                  <Tooltip title="Download Menu">
+                  {/* <Tooltip title="Download Menu">
                     <DownloadIcon
                       src={Download}
                       alt="Arrow"
@@ -473,17 +473,16 @@ const CustomTaskListDrawer = (props: any) => {
                         handleSortClick(e);
                       }}
                     />
-                  </Tooltip>
-                  {/* <CSVLink
-                    data={getDownloadableTaskList(filteredTaskList)}
+                  </Tooltip> */}
+                  <CSVLink
+                    data={getDownladableList(filteredTaskList)}
                     filename={"my-tasks.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
                     target="_blank"
                     data-testid="download"
                   >
-                   
                     <DownloadIcon src={Download} alt="Arrow" />
-                  </CSVLink> */}
+                  </CSVLink>
                 </>
               )}
             </MiniSymbolsContainer>

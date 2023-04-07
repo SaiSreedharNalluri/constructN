@@ -458,7 +458,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     data-testid="filter"
                   />
 
-                  <Tooltip title="Download Menu">
+                  {/* <Tooltip title="Download Menu">
                     <DownloadIcon
                       src={Download}
                       alt="Arrow"
@@ -467,9 +467,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         handleSortClick(e);
                       }}
                     />
-                  </Tooltip>
-                  {/* <CSVLink
-                    data={getDownladableIssueList(filteredIssuesList)}
+                  </Tooltip> */}
+                  <CSVLink
+                    data={getDownladableList(filteredIssuesList)}
                     filename={"my-issues.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
                     target="_blank"
@@ -477,13 +477,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   >
                     <DownloadIcon src={Download} alt="Arrow" />
                   </CSVLink>
-                  <DownloadIcon
-                    src={Download}
-                    alt="Arrow"
-                    // onClick={handleClick}
-                    onClick={downloadData}
-                  />
-                  <DownloadTable data={getDownladableIssueList()} /> */}
                 </>
               )}
             </MiniSymbolsContainer>
