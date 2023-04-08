@@ -103,6 +103,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   setActiveRealityMap,
   setLayersUpdated,
   layersUpdated,
+  setViewType,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -125,19 +126,22 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   useEffect(() => {
     setIViewMode(viewMode);
   }, [viewMode]);
-  useEffect(() => {
-    if (myTypesList?.length) {
-      setSelectedTypeVal(myTypesList[0]);
-    }
-  }, [myTypesList?.length]);
+  // useEffect(() => {
+  //   if (myTypesList?.length) {
+  //     setSelectedTypeVal(selectedType);
+  //   }
+  // }, [myTypesList]);
   useEffect(() => {
     setSelectedTypeVal(selectedType);
   }, [selectedType]);
   const typeChange = (changeOb: any) => {
     setRighttNav(false);
-    toolInstance.toolName = "viewType";
-    toolInstance.toolAction = changeOb.target.value;
-    toolClicked(toolInstance);
+    // toolInstance.toolName = "viewType";
+    // toolInstance.toolAction = changeOb.target.value;
+    // toolClicked(toolInstance);
+    if (setViewType) {
+      setViewType(changeOb.target.value);
+    }
   };
   const LayerChange = (changeOb: any, layerLabel: string, node: any) => {
     let obj: any = myLayersList;
@@ -197,6 +201,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     currentLayersList,
     currentTypesList,
   ]);
+
   const rightMenuClickHandler = (e: any) => {
     console.log(
       e.currentTarget.id,
@@ -400,6 +405,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
             active={active}
             designMap={designMap}
             selectedType={selectedType}
+            setActive={setActive}
           />
         ) : (
           <></>

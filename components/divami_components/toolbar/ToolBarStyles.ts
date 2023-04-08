@@ -18,6 +18,8 @@ export const HotspotTitleDiv = styled("div")({
   fontSize: "12px",
 });
 
+export const ContainerDiv = styled("div")({});
+
 export const HotspotImageContainerDiv = styled("div")({
   display: "flex",
   alignItems: "center",
