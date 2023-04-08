@@ -1,4 +1,5 @@
 export interface IDesign {
+    _id:string;
     type: string;
     name: string;
     project: string;
