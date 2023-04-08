@@ -45,7 +45,7 @@ const CustomButton = (props: any) => {
         <ContainedButton
           data-testid="testing_button"
           variant="contained"
-          onClick={() => { formHandler(label); setButtonClicked(true) }}
+          onClick={() => { formHandler(label); setButtonClicked ? setButtonClicked(true): null; }}
         >
           {label}
         </ContainedButton>
