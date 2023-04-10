@@ -88,7 +88,6 @@ import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import { toast } from "react-toastify";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
-import { createPdfFromHtml } from "./CreatePdf";
 import { getIssuesList } from "../../../services/issue";
 import { DownloadTable } from "../toolbar/DownloadTable";
 import { downloadMenuOptions, getDownladableList } from "./Constants";

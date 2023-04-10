@@ -35,8 +35,6 @@ import { ISnapshot } from "../../../models/ISnapshot";
 import { IStructure } from "../../../models/IStructure";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import html2canvas from "html2canvas";
-import { PrintPage } from "./Print";
-import { DownloadTable } from "./DownloadTable";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
