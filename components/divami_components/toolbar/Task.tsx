@@ -375,6 +375,7 @@ const Task = ({
             currentStructure={currentStructure}
             contextInfo={contextInfo}
             projectUsers={[]}
+            deleteTheAttachment={deleteTheAttachment}
           />
         </Drawer>
       )}

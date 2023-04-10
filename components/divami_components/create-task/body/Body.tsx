@@ -145,6 +145,8 @@ const Body = ({
               };
             }
             if (item.id === "tasks") {
+              console.log("ssdsditem", item);
+
               return {
                 ...item,
                 options: taskTypes?.map((eachItem: any) => {
@@ -259,6 +261,7 @@ const Body = ({
         setFormConfig((prev: any) => {
           return prev.map((item: any) => {
             if (item.id === "tasks") {
+              console.log("ssdsditem", item);
               return {
                 ...item,
                 options: taskTypes?.map((eachItem: any) => {
@@ -269,7 +272,7 @@ const Body = ({
                     selected: false,
                   };
                 }),
-                defaultValue: item?.options[0]?.label,
+                defaultValue: item?.options[0]?.label || "Transmittals",
               };
             }
             if (item.id === "taskPriority") {
