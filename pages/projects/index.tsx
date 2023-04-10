@@ -11,6 +11,7 @@ import _ from 'lodash';
 const Projects: React.FC = () => {
   const router = useRouter();
   const [projects, setProjects] = useState<IProjects[]>([]);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (router.isReady) {
       getProjects()
@@ -35,6 +36,13 @@ const Projects: React.FC = () => {
         .catch((error) => {});
     }
   }, [router.isReady]);
+  useEffect(() => {
+    if (projects.length > 0) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [projects.length]);
   return (
     <React.Fragment>
       <div className="flex-col">
@@ -42,7 +50,7 @@ const Projects: React.FC = () => {
           <Header></Header>
         </div>
         <div className="bg-gray-100 w-screen ">
-          <ProjectsList projects={projects} />
+          <ProjectsList projects={projects} loading={loading} />
         </div>
       </div>
     </React.Fragment>
