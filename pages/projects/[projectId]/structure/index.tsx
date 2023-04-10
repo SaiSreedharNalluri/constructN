@@ -548,6 +548,7 @@ const Index: React.FC<IProps> = () => {
               viewLayers={activeRealityMap}
               isFullScreenActive={isFullScreenActive}
               layersUpdated={layersUpdated}
+              isFullScreen={isFullScreen}
             ></GenericViewer>
           )
         );
