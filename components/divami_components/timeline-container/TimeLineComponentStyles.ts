@@ -2,20 +2,23 @@ import { Pagination } from "@mui/material";
 import PaginationItem from "@mui/material/PaginationItem";
 import { styled } from "@mui/system";
 
-export const TimeLineStyleContainer = styled("div")({
-  //   display: "flex",
-  //   flexDirection: "column",
-  //   width: "400px",
-  //   height: "50px",
-  position: "absolute",
-  width: "400px",
-  margin: "0 auto",
-  left: "0",
-  right: "0",
-  bottom: "20px",
-  height: "56px",
-  zIndex: "1",
-});
+export const TimeLineStyleContainer = styled("div")(
+  ({ isFullScreen }: any) => ({
+    //   display: "flex",
+    //   flexDirection: "column",
+    //   width: "400px",
+    //   height: "50px",
+    position: "absolute",
+    width: "400px",
+    margin: "0 auto",
+    left: "0",
+    right: "0",
+    bottom: isFullScreen ? "0px" : "60px",
+    height: "56px",
+    zIndex: "1",
+    cursor: "pointer",
+  })
+) as any;
 
 export const SelectedTimeLine = styled("div")({
   boxSizing: "border-box",

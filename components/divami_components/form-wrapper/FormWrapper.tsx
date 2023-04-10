@@ -24,7 +24,14 @@ const DoubleFieldContainer = styled("div")({
 });
 
 const FormWrapper = (props: any) => {
-  const { config, formState, setFormConfig, validate, setIsValidate, setCanBeDisabled } = props;
+  const {
+    config,
+    formState,
+    setFormConfig,
+    validate,
+    setIsValidate,
+    setCanBeDisabled,
+  } = props;
 
   useEffect(() => {
     if (validate) {
@@ -32,7 +39,7 @@ const FormWrapper = (props: any) => {
       setFormConfig((prev: any) => {
         const newconfig = prev.map((item: any) => {
           if (item.isReq && !item.defaultValue) {
-            setCanBeDisabled(false)
+            setCanBeDisabled(false);
             return {
               ...item,
               isError: true,
@@ -96,13 +103,13 @@ const FormWrapper = (props: any) => {
         if (id === item.id) {
           const newSelectedUser = Array.isArray(value)
             ? value.filter((selected: any, index: number, array: any[]) => {
-              // Remove duplicate values based on label property
-              return (
-                array.findIndex(
-                  (elem: any) => elem.label === selected.label
-                ) === index
-              );
-            })
+                // Remove duplicate values based on label property
+                return (
+                  array.findIndex(
+                    (elem: any) => elem.label === selected.label
+                  ) === index
+                );
+              })
             : [];
           return {
             ...item,
@@ -167,6 +174,7 @@ const FormWrapper = (props: any) => {
     index: number,
     configObject: any = config
   ) => {
+    console.log("data.type", data);
     switch (data.type) {
       case "select":
         return (
@@ -262,6 +270,7 @@ const FormWrapper = (props: any) => {
               }}
               selectedName={data.selectedName}
               isReadOnly={data.isReadOnly}
+              setFormConfig={setFormConfig}
             />
           </ElementContainer>
         );
@@ -283,6 +292,7 @@ const FormWrapper = (props: any) => {
                 handleChipMaking(chipsString, data.id)
               }
               data={data}
+              setFormConfig={setFormConfig}
             />
           </ElementContainer>
         );
@@ -307,7 +317,7 @@ const FormWrapper = (props: any) => {
   };
 
   return (
-    <div>
+    <div className="form-container-child">
       {config.map((eachConfig: any, index: any) => {
         return (
           <FormElementContainer

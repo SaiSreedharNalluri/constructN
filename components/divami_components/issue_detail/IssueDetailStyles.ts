@@ -1,8 +1,13 @@
 import { styled } from "@mui/system";
 import { Theme } from "../../../styles/globalStyles";
 import Image from "next/image";
-import { Box, Select, TextField, Typography } from "@mui/material";
+import { Box, Select, TextField, Typography, MenuItem } from "@mui/material";
 import { TabPanel } from "@mui/lab";
+import { Height } from "@mui/icons-material";
+// import {  MenuItem } from "@mui/material";
+import * as React from "react";
+import Button from "@mui/material/Button";
+import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -39,12 +44,14 @@ export const ArrowIcon = styled(Image)`
 export const EditIcon = styled(Image)`
   cursor: pointer;
   margin-right: 20px;
+  //   width: 24px;
+  // height: 24px;
 `;
 
 export const DeleteIcon = styled(Image)`
   cursor: pointer;
-  width: 24px;
-  height: 24px;
+  // width: 24px;
+  // height: 24px;
   margin-right: 10px;
 `;
 
@@ -216,12 +223,18 @@ export const PenIconImage = styled(Image)`
   margin-left: 9px;
 `;
 
+export const ToolIconImage = styled(Image)`
+  cursor: pointer;
+  // margin-left: 9px;
+`;
+
 export const MoreText = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
   color: #ff843f;
   margin-left: 5px;
+  cursor: pointer;
 `;
 
 export const FourthContLeft = styled("div")`
@@ -469,7 +482,9 @@ export const AddCommentInput = styled("input")({
   paddingLeft: "10px",
 });
 export const ActivityLogContainer = styled("div")({
-  marginBottom: "40px",
+  // marginBottom: "40px",
+  marginBottom: "26px",
+
 });
 
 export const AddCommentButtonContainer = styled("div")({
@@ -520,10 +535,31 @@ export const AssigneeCustomSelect = styled("div")({
   marginTop: "20px",
 });
 
+export const ValueContainer = styled('div')(({ theme }) => ({
+  '& > :not(:last-child)': {
+    marginRight: theme.spacing(1),
+  },
+  '& > *': {
+    marginBottom: theme.spacing(1),
+  },
+  marginTop: '15px',
+}));
+
 export const StyledInput = styled(TextField)(({ theme }) => ({
   color: "blue",
+  width:"100% !important",
   "label + &": {
     marginTop: theme.spacing(8),
+  },
+
+  "& .MuiFormControl-root-MuiTextField-root": {
+    width: "100%",
+  },
+
+  "& .MuiInputBase-input-MuiInput-input": {
+    ":after": {
+      width: "100%",
+    },
   },
 
   "& .MuiInput-root": {
@@ -542,7 +578,93 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
 
   "& .MuiInputBase-input": {
     "&::placeholder": {
-      color: "#787878",
+       color: "#787878",
+       fontFamily: "Open Sans",
+       fontSize: "14px",
+       lineHeight: "20px",
+       fontWeight: "400"
     },
   },
 }));
+
+export const StyledMenu = styled(MenuItem)({
+  borderBottom: "1px solid #D9D9D9",
+  width: "178px",
+  margin: "0px 20px",
+  "&:hover": {
+    cursor: "pointer",
+  },
+  padding: 0,
+  height: "38px",
+  fontSize: "14px",
+});
+
+export const IconContainer = styled(Image)({
+  cursor: "pointer",
+  marginLeft: "16px",
+});
+
+export const AssigneeList = styled("div")({
+  // display: "inline-block",
+
+  // background:"#FFFFF"
+  // width: "308px",
+  // height: "86px",
+  padding: "15px",
+  color: "#101F4C",
+  fontSize: "14px",
+  border: "1px solid #D9D9D9",
+  marginTop: "-3px",
+  boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
+  borderRadius: "4px",
+  // position: "absolute",
+  // right:"10px",
+});
+
+export const SecondAssigneeList = styled("div")({
+  // display: "inline-block",
+
+  background: "white",
+  // width: "308px",
+  // height: "86px",
+  padding: "15px",
+  color: "#101F4C",
+  fontSize: "14px",
+  border: "1px solid #D9D9D9",
+  // marginTop: '-3px',
+  boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
+  borderRadius: "4px",
+  // position: "absolute",
+  // right:"10px",
+});
+
+export const ParentAssigneeList = styled("div")({
+  // dissplay: "inline-block",
+  display: "flex",
+  flexDirection: "row",
+});
+
+
+
+export const ExtraLabel = styled("div")`
+  font-family: "Open Sans";
+  color: #787878;
+
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  margin-bottom:10px;
+`;
+
+
+export const AssignedLabel = styled("div")`
+  font-family: "Open Sans";
+  color: #787878;
+
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  margin-bottom:10px;
+`;

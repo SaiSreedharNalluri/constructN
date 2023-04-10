@@ -1,4 +1,4 @@
-import { MenuItem, Select } from "@mui/material";
+import { MenuItem, Select, ThemeProvider, createTheme } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { styled } from "@mui/system";
 
@@ -7,6 +7,7 @@ const StyledSelect = styled(Select)({
   height: "40px",
   outline: "0px",
   border: "1px solid #36415d",
+
   borderRadius: "4px",
   fontFamily: "Open Sans",
   fontStyle: "normal",
@@ -81,6 +82,7 @@ const CustomSelect = (props: any) => {
   useEffect(() => {
     setVal(data?.defaultValue);
   }, [data?.defaultValue]);
+
   return (
     <CustomSelectContainer>
       <StyledSelect
