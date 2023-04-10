@@ -24,7 +24,6 @@ const DoubleFieldContainer = styled("div")({
 });
 
 const FormWrapper = (props: any) => {
-  console.log("formwrapp", props);
   const {
     config,
     formState,
@@ -175,6 +174,7 @@ const FormWrapper = (props: any) => {
     index: number,
     configObject: any = config
   ) => {
+    console.log("data.type", data);
     switch (data.type) {
       case "select":
         return (
@@ -270,6 +270,7 @@ const FormWrapper = (props: any) => {
               }}
               selectedName={data.selectedName}
               isReadOnly={data.isReadOnly}
+              setFormConfig={setFormConfig}
             />
           </ElementContainer>
         );
@@ -291,6 +292,7 @@ const FormWrapper = (props: any) => {
                 handleChipMaking(chipsString, data.id)
               }
               data={data}
+              setFormConfig={setFormConfig}
             />
           </ElementContainer>
         );
