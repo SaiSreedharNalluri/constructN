@@ -36,6 +36,7 @@ const BodyContainer = styled(Box)({
   fontWeight: "400",
   fontSize: "14px",
   // overflow: 'scroll',
+  paddingBottom: "60px",
 });
 
 const FormElementContainer = styled(Box)({
@@ -138,7 +139,7 @@ const Body = ({
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {
             if (item.id === "title") {
-              console.log("itemitem",item)
+              console.log("itemitem", item);
               return {
                 ...item,
                 defaultValue: editData?.title || "",

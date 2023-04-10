@@ -42,21 +42,20 @@ const CustomAutoComplete = styled(Autocomplete)({
   },
 });
 
-  const TagsContainer = styled("div")({
-  });
+const TagsContainer = styled("div")({});
 
-  const ValueContainer = styled("div")(({ theme }) => ({
-    "& > :not(:last-child)": {
-      marginRight: theme.spacing(1),
-    },
-    "& > *": {
-      marginBottom: theme.spacing(1),
-    },
-    marginTop: "15px",
-  }));  
-  const CloseIcon = styled(Image)`
-    cursor: pointer;
-  `;  
+const ValueContainer = styled("div")(({ theme }) => ({
+  "& > :not(:last-child)": {
+    marginRight: theme.spacing(1),
+  },
+  "& > *": {
+    marginBottom: theme.spacing(1),
+  },
+  marginTop: "15px",
+}));
+const CloseIcon = styled(Image)`
+  cursor: pointer;
+`;
 
 const CustomTagSuggestion = (props: any) => {
   const { data, handleChipMaking, setFormConfig } = props;
@@ -92,6 +91,26 @@ const CustomTagSuggestion = (props: any) => {
             variant="outlined"
             // label="filterSelectedOptions"
             placeholder="Add tags separated by commas"
+            sx={{
+              "& .MuiInputBase-input": {
+                fontSize: "14px",
+                lineHeight: "20px",
+                fontFamily: "Open Sans",
+                color: "#101F4C",
+                fontWeight: "400",
+                "&::placeholder": {
+                  color: "#787878",
+
+                  fontFamily: "Open Sans",
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  fontWeight: "400",
+                },
+              },
+              "& .MuiOutlinedInput-root": {
+                paddingLeft: "10px !important",
+              },
+            }}
             // onKeyDown={(e: any) => {
             //   if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
             //     setAutoCompleteValue(
@@ -105,7 +124,7 @@ const CustomTagSuggestion = (props: any) => {
       />
       <ValueContainer>
         {autoCompleteValue?.map((v: any) =>
-          v ?  (
+          v ? (
             <Chip
               key={v}
               label={v}

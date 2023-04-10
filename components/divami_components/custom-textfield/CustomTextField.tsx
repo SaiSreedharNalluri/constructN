@@ -70,9 +70,27 @@ export const CustomTextField = (props: PropTypes) => {
   return (
     <div>
       <StyledTextField
+        sx={{
+          "& .MuiInputBase-input": {
+            fontSize: "14px",
+            lineHeight: "20px",
+            fontFamily: "Open Sans",
+            color: "#101F4C",
+            fontWeight: "400",
+            "&::placeholder": {
+              color: "#787878",
+
+              fontFamily: "Open Sans",
+              fontSize: "14px",
+              lineHeight: "20px",
+              fontWeight: "400",
+            },
+          },
+        }}
         id={id}
         className={` ${isError ? "formErrorField" : ""} formField`}
-        // placeholder={placeholder}
+        placeholder={placeholder}
+        // placeholder="Enter Issue..."
         defaultValue={defaultValue}
         value={defaultValue}
         data-testid={dataTestId}

@@ -35,6 +35,7 @@ const BodyContainer = styled(Box)({
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "14px",
+  paddingBottom: "60px",
 });
 
 const FormElementContainer = styled(Box)({
