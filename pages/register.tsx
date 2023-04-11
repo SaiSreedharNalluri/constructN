@@ -7,8 +7,21 @@ import { toast } from 'react-toastify';
 const Register: React.FC = () => {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>('');
-  const handleRegister = (formValue: any) => {
+  interface FormValues {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    confirmPassword?: string;
+  }
+  const handleRegister = (
+    formValue: FormValues,
+    {
+      resetForm,
+    }: {
+      resetForm: (nextValues?: Partial<FormValues>) => void;
+    }
+  ) => {
     delete formValue.confirmPassword;
     formValue.email = formValue.email.toLocaleLowerCase();
     setLoading(true);
@@ -28,15 +41,13 @@ const Register: React.FC = () => {
         if (error?.response?.status === 409) {
           toast.error(error.response.data.message);
         }
+        resetForm();
+        setLoading(false);
       });
   };
   return (
     <React.Fragment>
-      <RegisterPage
-        handleRegister={handleRegister}
-        message={message}
-        loading={loading}
-      />
+      <RegisterPage handleRegister={handleRegister} loading={loading} />
     </React.Fragment>
   );
 };

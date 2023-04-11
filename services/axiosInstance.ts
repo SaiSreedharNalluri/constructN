@@ -21,7 +21,6 @@ instance.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log('error', error.response.config.url.split('/').pop());
     if (
       error?.response?.status === 401 &&
       error?.response?.data?.userVerificationToken
