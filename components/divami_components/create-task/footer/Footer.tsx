@@ -21,9 +21,10 @@ const Footer = ({ formHandler, editData, canBeDisabled }: any) => {
         label={editData ? "Update" : "Create"}
         formHandler={formHandler}
         setButtonClicked={setButtonClicked}
+        dataTestId={"create-issue-button"}
       />
     </ButtonsContainer>
   );
-}
+};
 
 export default Footer;
