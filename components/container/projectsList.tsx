@@ -13,8 +13,8 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
   Mixpanel.track('projects_list_page_open');
   return (
     <div className="h-full calc-h overflow-y-auto grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
-      {projects.length > 0 ? (
-        loading ? (
+      {loading ? (
+        projects.length > 0 ? (
           projects.map((pData) => {
             return (
               <div key={pData._id}>

@@ -31,18 +31,12 @@ const Projects: React.FC = () => {
               })
             );
             setProjects(_.sortBy(tempData, 'LastUpdatedOn'));
+            setLoading(true);
           }
         })
         .catch((error) => {});
     }
   }, [router.isReady]);
-  useEffect(() => {
-    if (projects.length > 0) {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
-  }, [projects.length]);
   return (
     <React.Fragment>
       <div className="flex-col">
