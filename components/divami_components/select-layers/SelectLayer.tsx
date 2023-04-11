@@ -14,6 +14,8 @@ import {
   SelectLayerContainer,
   StyledTreeItem,
   StyledTreeView,
+  TreeItemLabelContainer,
+  TreeLabelContainer,
   TreeViewContainer,
 } from "./StyledComponents";
 import type { RenderTree, SelectLayerProps } from "./Type";
@@ -34,6 +36,8 @@ const SelectLayer = ({
   optionsList,
   onSelect,
   selectedLayersList,
+  setActiveRealityMap,
+  layersUpdated,
 }: SelectLayerProps) => {
   const [treeViewData, setTreeViewData] = useState(
     getTreeViewDataForLayers(optionsList)
@@ -41,39 +45,119 @@ const SelectLayer = ({
   const [filtedTreeViewData, setFilteredTreeViewData] = useState(treeViewData);
   const [selectedLayers, setSelectedLayers] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
-
+  useEffect(() => {
+    setFilteredTreeViewData(treeViewData);
+  }, [treeViewData]);
+  useEffect(() => {
+    setTreeViewData(getTreeViewDataForLayers(optionsList));
+  }, [optionsList, layersUpdated]);
   const renderTreeNode = (node: RenderTree) => (
-    <div>
+    <TreeItemLabelContainer>
       <Checkbox
         icon={<Image src={UnCheckedIcon} alt="" />}
         checkedIcon={<Image src={CheckedIcon} alt="" />}
         size="small"
         onChange={(e) => {
-          const arr = handleSelection(treeViewData, node.id);
-          setTreeViewData([...arr]);
-          onSelect(e, node.name);
+          // const arr = handleSelection(treeViewData, node.id);
+          // setTreeViewData([...arr]);
+          // let obj: any = {};
+          // for (const key in optionsList) {
+          //   obj = optionsList;
+          //   if (optionsList[key]?.name == node.name) {
+          //     obj[key] = {
+          //       ...obj[key],
+          //       isSelected: !obj[key].isSelected,
+          //       children: obj[key].children?.length
+          //         ? obj[key]?.children.map((each: any) => {
+          //             return {
+          //               ...each,
+          //               isSelected: !obj[key].isSelected,
+          //             };
+          //           })
+          //         : [],
+          //     };
+          //   } else if (optionsList[key].children?.length) {
+          //     obj[key] = {
+          //       ...obj[key],
+          //       children: obj[key]?.children.map((each: any) => {
+          //         if (each.name === node.name) {
+          //           return {
+          //             ...each,
+          //             isSelected: !each.isSelected,
+          //           };
+          //         } else {
+          //           return each;
+          //         }
+          //       }),
+          //     };
+          //   }
+          // }
+          // console.log(obj, "dfsfdsactiveRealityMap");
+          // setActiveRealityMap({});
+          // setTreeViewData((prev: any) => {
+          //   const newTreeViewData = prev.map((item: any) => {
+          //     console.log(node, "kjlkjk", item);
+
+          //     if (item.id == node.id) {
+          //       return {
+          //         ...item,
+          //         isSelected: !item.isSelected,
+          //         children: item.children?.length
+          //           ? item.children.map((each: any) => {
+          //               return {
+          //                 ...each,
+          //                 isSelected: !item.isSelected,
+          //               };
+          //             })
+          //           : [],
+          //       };
+          //     } else if (item.children?.length) {
+          //       return {
+          //         ...item,
+          //         children: item.children.map((each: any) => {
+          //           console.log(each.id == node.id, "boolval");
+          //           if (each.id == node.id) {
+          //             return {
+          //               ...each,
+          //               isSelected: !each.isSelected,
+          //             };
+          //           } else {
+          //             return each;
+          //           }
+          //         }),
+          //       };
+          //     } else {
+          //       return item;
+          //     }
+          //   });
+          //   console.log(newTreeViewData, "newtrrreeview");
+          //   return newTreeViewData;
+          // });
+          onSelect(e, node.name, node);
         }}
         checked={
-          selectedLayersList?.length && selectedLayersList.includes(node.name)
-            ? true
-            : false
+          node.isSelected
+          // selectedLayersList?.length && selectedLayersList.includes(node.name)
+          //   ? true
+          //   : false
         }
       />
-      <span>{node.name}</span>
-    </div>
+      <TreeLabelContainer>{node.name}</TreeLabelContainer>
+    </TreeItemLabelContainer>
   );
-
-  const renderTree = (nodes: RenderTree) => (
-    <StyledTreeItem
-      key={nodes.id}
-      nodeId={nodes.id}
-      label={renderTreeNode(nodes)}
-    >
-      {Array.isArray(nodes.children)
-        ? nodes.children.map((node) => renderTree(node))
-        : null}
-    </StyledTreeItem>
-  );
+  const renderTree = (nodes: RenderTree) => {
+    return (
+      <StyledTreeItem
+        key={nodes.id}
+        nodeId={nodes.id}
+        label={renderTreeNode(nodes)}
+      >
+        {Array.isArray(nodes.children)
+          ? nodes.children.map((node) => renderTree(node))
+          : null}
+      </StyledTreeItem>
+    );
+  };
 
   useEffect(() => {
     const layersSelected = treeViewData ? getSelectedLayers(treeViewData) : [];

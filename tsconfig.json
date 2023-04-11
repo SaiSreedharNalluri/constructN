@@ -21,6 +21,6 @@
     "**/*.tsx",
     "pages/forge/index.jsx",
     "components/container/GenericViewer.jsx"
-  ],
+, "components/container/mapboxViewer.jsx"  ],
   "exclude": ["node_modules"]
 }

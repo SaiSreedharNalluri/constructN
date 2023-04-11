@@ -38,11 +38,18 @@ const OulinedButton = styled(StyledButton)({
 });
 
 const CustomButton = (props: any) => {
-  const { type, label, formHandler, dataTestId } = props;
+  const { type, label, formHandler, setButtonClicked, dataTestId } = props;
   if (type === "contained") {
     return (
       <div>
-        <ContainedButton variant="contained" onClick={() => formHandler(label)} data-testid={dataTestId}>
+        <ContainedButton
+          data-testid={dataTestId}
+          variant="contained"
+          onClick={() => {
+            formHandler(label);
+            setButtonClicked ? setButtonClicked(true) : null;
+          }}
+        >
           {label}
         </ContainedButton>
       </div>
@@ -50,7 +57,11 @@ const CustomButton = (props: any) => {
   } else if (type === "outlined") {
     return (
       <div>
-        <OulinedButton variant="outlined" onClick={() => formHandler(label)} data-testid={dataTestId}>
+        <OulinedButton
+          data-testid={dataTestId}
+          variant="outlined"
+          onClick={() => formHandler(label)}
+        >
           {label}
         </OulinedButton>
       </div>
