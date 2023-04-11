@@ -119,6 +119,11 @@ interface TabPanelProps {
   value: number;
 }
 
+interface Issue {
+  _id: string;
+  // Include other properties if needed
+}
+
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;
@@ -919,9 +924,20 @@ const CustomIssueDetailsDrawer = (props: any) => {
     setSelectedIssue(issue);
   }, [issue]);
 
+  const deleteIssueById = (issuesList: Issue[], selectedIssue: Issue) => {
+    const selectedIssueId = selectedIssue._id;
+    const updatedIssuesList = issuesList.filter(
+      (issue) => issue._id !== selectedIssueId
+    );
+    return updatedIssuesList;
+  };
+
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
     deleteTheIssue(selectedIssue, onClose);
+    const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
+    setIssueList(updatedIssuesList);
+
   };
   // const deleteTheAttachment = (attachmentId: string) => {
   //   deleteAttachment(attachmentId)

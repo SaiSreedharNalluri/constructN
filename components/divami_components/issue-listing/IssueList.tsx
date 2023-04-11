@@ -232,7 +232,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   useEffect(() => {
     setIssueList(issuesList);
   }, [issuesList]);
-
+  
   useEffect(() => {
     setFilteredIssuesList(issueList.slice(0, 10));
   }, [issueList]);
@@ -642,6 +642,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 deleteTheIssue={deleteTheIssue}
                 getIssues={getIssues}
                 deleteTheAttachment={deleteTheAttachment}
+                setIssueList={setIssueList}
               />
             </Drawer>
           )}
@@ -781,7 +782,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               onClick={() => {
                 onClose();
                 openIssueCreateFn();
-                toast("Click on the map where you want to create an issue");
+                toast.success(
+                  "Click on the map where you want to create an issue"
+                );
               }}
             >
               Raise Issue

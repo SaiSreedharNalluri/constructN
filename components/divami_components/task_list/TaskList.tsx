@@ -593,6 +593,7 @@ const CustomTaskListDrawer = (props: any) => {
                 contextInfo={contextInfo}
                 getTasks={getTasks}
                 deleteTheAttachment={deleteTheAttachment}
+                setTaskList={setTaskList}
               />
             </Drawer>
           )}
@@ -627,7 +628,7 @@ const CustomTaskListDrawer = (props: any) => {
             onClick={() => {
               onClose();
               openTaskCreateFn();
-              toast("Click on the map where you want to create a task");
+              toast.success("Click on the map where you want to create a task");
             }}
           >
             Raise Task
