@@ -15,6 +15,7 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "react-tabs/style/react-tabs.css";
 import { StyledToastContainer } from "../components/divami_components/custom-toaster/CustomToastStyles";
+
 config.autoAddCss = false;
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -40,7 +41,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
       <StyledToastContainer
         position="bottom-right"
-        autoClose={5000}
+        autoClose={2000}
         hideProgressBar={true}
       />
     </>

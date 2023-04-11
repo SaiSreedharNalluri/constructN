@@ -1,12 +1,12 @@
 import axios from 'axios';
 import authHeader from './auth-header';
 
-export const getjobsInfo = async (projectId: string, context: any) => {
+export const getjobsInfo = async (projectId: string) => {
   try {
     return await axios.get(
       `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs`,
       {
-        headers: authHeader.authCookieHeader(context),
+        headers: authHeader.authHeader(),
       }
     );
   } catch (error) {

@@ -8,6 +8,7 @@ import ImgProfile from "../../../public/divami_icons/ImgProfile.svg";
 
 import Notification from "../../../public/divami_icons/Notification.svg";
 import clip from "../../../public/divami_icons/clip.svg";
+import defaultAvatar from "../../../public/divami_icons/defaultAvatar.svg";
 
 import { useRouter } from "next/router";
 import { getCookie, removeCookies } from "cookies-next";
@@ -32,6 +33,8 @@ import {
   HeaderMenuImageContainer,
   HeaderNotificationImageContainer,
   ProfileImgIcon,
+  ProfileImgSecIcon,
+  ProfileImgIconDefault,
 } from "./HeaderStyles";
 import { ITools } from "../../../models/ITools";
 import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
@@ -158,10 +161,26 @@ const Header: React.FC<any> = ({
     toolClicked(toolInstance);
   };
 
-  console.log(isDesignSelected, "isdesignsele");
   return (
     <>
       <HeaderContainer ref={headerRef}>
+        <div
+          style={{
+             height: "10px",
+             width: "59px",
+             background: "#FFFFFF",
+             position: "absolute",
+             top: "58px",
+            zIndex: "9999999",
+           //   opacity: "1",
+            // width: "59px",
+            // background: "#FFFFFF",
+            // position: "absolute",
+            // z-index: "9999999";
+            // top: "58px";
+            // opacity: "1";
+          }}
+        ></div>
         <HeaderLeftPart>
           <HeaderLogoImageContainer>
             <Image
@@ -225,13 +244,23 @@ const Header: React.FC<any> = ({
               src={ImgProfile}
               alt="Profile Image"
             /> */}
-            <ProfileImgIcon
-              onClick={onProfilePicClick}
-              src={avatar}
-              alt="Profile Image Icon"
-              width={34}
-              height={34}
-            />
+            {avatar ? (
+              <ProfileImgIcon
+                onClick={onProfilePicClick}
+                src={avatar}
+                alt="Profile Image Icon"
+                width={34}
+                height={34}
+              />
+            ) : (
+              <ProfileImgIconDefault
+                onClick={onProfilePicClick}
+                src={defaultAvatar}
+                alt="Profile Image Icon"
+                width={34}
+                height={34}
+              />
+            )}
           </HeaderProfileImageContainer>
           <HeaderNotificationImageContainer>
             <Image src={Notification} alt="Profile Image" />
@@ -248,14 +277,22 @@ const Header: React.FC<any> = ({
                 <div className="flex flex-col items-center justify-center transform transition-colors duration-200">
                   <div className="w-11 h-11 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 border-gray-900">
                     {/* <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> */}
-                    <Image
-                      src={avatar}
+                    {/* <Image
+                      src={avatar || defaultAvatar}
                       alt=""
                       className={`w-full h-full cursor-pointer object-cover `}
                       title={name}
                       height={1920}
                       width={1080}
                       onClick={() => router.push(`/user-account`)}
+                    /> */}
+
+                    <ProfileImgSecIcon
+                      onClick={() => router.push(`/user-account`)}
+                      src={avatar || defaultAvatar}
+                      alt="Profile Image Icon"
+                      width={34}
+                      height={34}
                     />
                   </div>
                   <div className="text-base font-bold">{name}</div>

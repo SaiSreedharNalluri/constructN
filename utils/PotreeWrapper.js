@@ -24,6 +24,7 @@ export class PotreeInstance {
             parent.removeChild(document.getElementById(viewerId));
             parent.insertBefore(this.instance.viewer.renderArea, parent.firstChild);
         }
+        console.log(this.instance)
         return this.instance;
     }
 
@@ -55,6 +56,9 @@ export class PotreeViewerUtils {
         this.isPendingDataToLoad = false;
         this.isPendingLayersToLoad = false;
         this.eventHandler = eventHandler;
+
+        this.tmMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+        this.globalOffset = [0,0,0];
 
         this.fpContainerId = `fpContainer_${this.viewerId.split("_")[1]}`;
         this.fpCanvasId = `floormap_${this.viewerId.split("_")[1]}`;
@@ -95,11 +99,11 @@ export class PotreeViewerUtils {
 
     readyForCompare(mode) {
 
-        if (mode === "Design") {
+        if (mode === "Forge") {
             if (this.currentMode === "image") {
                 this.unloadOrientedImage();
             }
-        } else if (mode === "Reality") {
+        } else if (mode === "Potree") {
         }
 
         if(this.currentMode === "panorama" && this.floorMap) {
@@ -143,9 +147,13 @@ export class PotreeViewerUtils {
 
     updateData(pointCloudData, floormapData) {
         console.log("PointCloud data update: ", pointCloudData, floormapData);
-        if(pointCloudData.tm) {
+
+        if(pointCloudData.tm && pointCloudData.tm.length > 0) {
             this.tmMatrix = new THREE.Matrix4().fromArray(pointCloudData.tm).transpose();
-            this.globalOffset = pointCloudData.offset
+        }
+
+        if(pointCloudData.offset) {
+            this.globalOffset = pointCloudData.offset;
         }
         
         this.pointCloudPath = pointCloudData.path
@@ -214,6 +222,7 @@ export class PotreeViewerUtils {
             material.shape = Potree.PointShape.SQUARE;
             pointcloud.applyMatrix4(this.tmMatrix);
             const assetPosition = pointcloud.position.clone();
+            console.log("Potreewarapper test globaloffcet: ",this.globalOffset);
             pointcloud.position.set(assetPosition.x - this.globalOffset[0], assetPosition.y - this.globalOffset[1], assetPosition.z - this.globalOffset[2]);
             scene.addPointCloud(pointcloud);
             this.viewer.fitToScreen();
@@ -353,7 +362,7 @@ export class PotreeViewerUtils {
                 break;
             case "Issue":
                 let issue = this._issuesList.find(issue => issue._id === context.id)
-                if(this.snapshot === issue.snapshot) {
+                if(this.snapshot._id === issue.snapshot && context.image) {
                     this.goToImageContext(context);
                 } else {
                     this.goToContext(context);
@@ -361,7 +370,7 @@ export class PotreeViewerUtils {
                 break;
             case "Task":
                 let task = this._tasksList.find(task => task._id === context.id)
-                if(this.snapshot === task.snapshot) {
+                if(this.snapshot._id === task.snapshot && context.image) {
                     this.goToImageContext(context);
                 } else {
                     this.goToContext(context);
@@ -563,17 +572,6 @@ export class PotreeViewerUtils {
         let nearestImage = null;
         let nearestImageDist = 10000;
         if (mode == 'image' || mode == '3d') {
-            // if (Array.isArray(cameraInfo.position)) {
-            //     cameraInfo.position = new THREE.Vector3().fromArray(cameraInfo.position);
-            //     cameraInfo.target = new THREE.Vector3().fromArray(cameraInfo.target);
-            // } 
-
-            // const cameraPosition = {
-            //     x: cameraInfo.position[0],
-            //     y: cameraInfo.position[1],
-            //     z: cameraInfo.position[2],
-            // }
-
             this.viewer.scene.orientedImages[0].images.forEach( image => {
                 let curDist = image.position.distanceTo(cameraInfo.cameraPosition);
                 // console.log("Current distance Pano: ", curDist , cameraInfo.position, image.position)
@@ -587,11 +585,6 @@ export class PotreeViewerUtils {
                 this.loadOrientedImages(nearestImage)
             }
         } else {
-            // const cameraPosition = {
-            //     x: cameraInfo.position[0],
-            //     y: cameraInfo.position[1],
-            //     z: cameraInfo.position[2],
-            // }
             let inputPos = new THREE.Vector2().fromArray([cameraInfo.cameraPosition.x, cameraInfo.cameraPosition.y]);
             this.viewer.scene.images360[0].images.forEach( pano => {
                 let curPos = new THREE.Vector2().fromArray([pano.position[0], pano.position[1]]);
@@ -609,9 +602,44 @@ export class PotreeViewerUtils {
         }
     }
 
+    getNearestImageToTag(tagInfo, mode) {
+        // console.log("Inside potree utils, getNearestImage: ", cameraInfo);
+        let nearestImage = null;
+        let nearestImageDist = 10000;
+        if (mode == 'image' || mode == '3d') {
+            this.viewer.scene.orientedImages[0].images.forEach( image => {
+                let curDist = image.position.distanceTo(tagInfo.tagPosition);
+                // console.log("Current distance Pano: ", curDist , cameraInfo.position, image.position)
+                if (curDist < nearestImageDist) {
+                    nearestImageDist = curDist;
+                    nearestImage = image;
+                }
+            });
+            if (nearestImage) {
+                // console.log(nearestImage.id)
+                this.loadOrientedImages(nearestImage)
+            }
+        } else {
+            let inputPos = new THREE.Vector2().fromArray([tagInfo.tagPosition.x, tagInfo.tagPosition.y]);
+            this.viewer.scene.images360[0].images.forEach( pano => {
+                let curPos = new THREE.Vector2().fromArray([pano.position[0], pano.position[1]]);
+                let curDist = curPos.distanceTo(inputPos);
+                // console.log("Current distance Pano: ", curDist , inputPos, curPos)
+                if (curDist < nearestImageDist) {
+                    nearestImageDist = curDist;
+                    nearestImage = pano;
+                }
+            });
+            if (nearestImage) {
+                // console.log(nearestImage.file)
+                this.loadPanoImages(nearestImage)
+            }
+        }
+    }
+
     getNearestImage(context) {
         // console.log("Inside getNearest Image: ", context, this.currentMode);
-        if(context.type == "image") {
+        if(this.currentMode === "image") {
             let nearestImage = null;
             let nearestImageDist = 10000;
             // const imagePosition = {
@@ -631,7 +659,7 @@ export class PotreeViewerUtils {
                 this.loadOrientedImages(nearestImage)
 
             }
-        } else {
+        } else if (this.currentMode === "panorama") {
             let nearestImage = null;
             let nearestImageDist = 10000;
             // const imagePosition = {
@@ -659,6 +687,8 @@ export class PotreeViewerUtils {
 
         if (context.image) {
             this.getNearestImage(context);
+        } else if ((context.type === "Task") || (context.type === "Issue")) {
+            this.getNearestImageToTag(context.tag, this.currentMode)
         } else if (context.type === "image" || context.type === "panorama" || (context.type === "3d")) {
             this.getNearestImageToCamera(context.cameraObject, this.currentMode)
         } else {
@@ -668,7 +698,7 @@ export class PotreeViewerUtils {
 
     goToImage(imageName, cameraWithOffset) {
         // console.log("Inside potree utils, going to image: ", imageName);
-        if (this.currentMode == 'panorama') {
+        if (this.currentMode === 'panorama') {
             this.viewer.scene.images360[0].images.forEach(image => {
                 if (image.file.split('/').pop() == imageName) {
                     this.loadPanoImages(image, cameraWithOffset)
@@ -688,40 +718,6 @@ export class PotreeViewerUtils {
 
         this.goToImage(context.image.imageName, context.cameraObject);
     }
-
-    // goToTask(info) {
-    //     console.log("Inside potree utils, going to task: ", info);
-    //     let offset = this.globalOffset
-    //     let targetValue = info.target ? info.target : info.position;
-    //     let inCamera_withOffset = {
-    //         position: new THREE.Vector3().fromArray([info.position.x-offset[0], info.position.y-offset[1], info.position.z-offset[2]]),
-    //         target: new THREE.Vector3().fromArray([targetValue.x-offset[0], targetValue.y-offset[1], targetValue.z-offset[2]]),
-    //         // pitch: info.rotation ? info.rotation.pitch : null,
-    //         // yaw: info.rotation ? info.rotation.yaw : null
-    //     }
-    //     if (info.image) {
-    //         // isMouseOnV1 = true;
-    //         this.tagToAddOnImageLoad = {
-    //             'info': info,
-    //             'viewer': this.viewer
-    //         }
-
-    //         this.goToImage(info.imageName, inCamera_withOffset);
-    //     } else if (isExterior) {
-    //         console.log('Load 3d tags')
-    //         // viewer_1.controls.elExit.click();
-    //         if (this.viewer.cur_loaded_image) {
-    //             this.viewer.controls.elExit.click();
-    //         }
-    //         setTimeout((() => {
-    //             if (this.viewer.tileset == info.tileset) {
-    //                 // isMouseOnV1 = true; 
-    //                 this.goToContext(info.camera)
-    //                 this.addTag(info, viewer_1)
-    //             }
-    //         }).bind(this), 1000)
-    //     }
-    // }
 
     getContextLocalFromGlobal(globalContext) {
         // console.log("Global offset: ", globalContext, this.globalOffset);
@@ -1032,8 +1028,8 @@ export class PotreeViewerUtils {
                     this.unloadOrientedImage()
                     this.sendContext = true;
                 } else {
-                    this.viewer.scene.images360[0].unfocus();
-                    this.pointCloudView(false);
+                    // this.viewer.scene.images360[0].unfocus();
+                    // this.pointCloudView(false);
                 }
                 break;
             case "ArrowUp":
@@ -1516,7 +1512,7 @@ export class PotreeViewerUtils {
             }
             let imageObject = {
                 imagePosition: position,
-                name: this.currentMode === "image" ? curImage.id : curImage.file.split('/').pop()
+                imageName: this.currentMode === "image" ? curImage.id : curImage.file.split('/').pop()
             };
             tag_context_obj.image = imageObject;
         }
@@ -1620,7 +1616,7 @@ export class PotreeViewerUtils {
         }
     }
 
-    showTasks() {
+    showTasks(show) {
         for(let taskId of Object.keys(this.taskSpriteMap)) {
             let annotation = this.taskSpriteMap[taskId].tag;
             annotation._visible = show;

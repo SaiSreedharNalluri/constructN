@@ -1,11 +1,13 @@
 import { styled } from "@mui/system";
 import { Theme } from "../../../styles/globalStyles";
 import Image from "next/image";
-import { Box, Select, TextField, Typography } from "@mui/material";
+import { Box, Select, TextField, Typography, MenuItem } from "@mui/material";
 import { TabPanel } from "@mui/lab";
-
-
-
+import { Height } from "@mui/icons-material";
+// import {  MenuItem } from "@mui/material";
+import * as React from "react";
+import Button from "@mui/material/Button";
+import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -42,13 +44,15 @@ export const ArrowIcon = styled(Image)`
 export const EditIcon = styled(Image)`
   cursor: pointer;
   margin-right: 20px;
+  //   width: 24px;
+  // height: 24px;
 `;
 
 export const DeleteIcon = styled(Image)`
   cursor: pointer;
-  width:24px;
-  height:24px;
-    margin-right: 10px;
+  // width: 24px;
+  // height: 24px;
+  margin-right: 10px;
 `;
 
 export const LeftTitleCont = styled("div")`
@@ -67,10 +71,6 @@ export const SpanTile = styled("span")`
 
   margin-left: 10px;
 `;
-
-
-
-
 
 export const TabOneDiv = styled("div")`
   //   border: 2px solid pink;
@@ -115,7 +115,7 @@ export const PriorityStatus = styled("div")`
   font-size: 14px;
   line-height: 20px;
   color: #101f4c;
-  margin-top:5px;
+  margin-top: 5px;
 `;
 
 export const TypeStatus = styled("div")`
@@ -136,7 +136,7 @@ export const SecondContPrior = styled("div")`
 
 export const SecondContPriorParal = styled("div")`
   width: 186px;
-  margin-left:auto;
+  margin-left: auto;
 `;
 
 export const SecondContCapt = styled("div")`
@@ -159,7 +159,7 @@ export const CaptureStatus = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  margin-top:5px;
+  margin-top: 5px;
 `;
 
 export const ThirdContWatch = styled("div")`
@@ -178,7 +178,7 @@ export const ThirdContWatchName = styled("div")`
   font-size: 14px;
   line-height: 20px;
   color: #101f4c;
-  margin-top:5px;
+  margin-top: 5px;
 `;
 
 export const ThirdContProg = styled("div")`
@@ -201,7 +201,7 @@ export const ThirdContProgType = styled("div")`
   line-height: 20px;
 
   color: #101f4c;
-  margin-top:5px;
+  margin-top: 5px;
 `;
 
 export const ThirdBodyDiv = styled("div")`
@@ -223,7 +223,10 @@ export const PenIconImage = styled(Image)`
   margin-left: 9px;
 `;
 
-
+export const ToolIconImage = styled(Image)`
+  cursor: pointer;
+  // margin-left: 9px;
+`;
 
 export const MoreText = styled("div")`
   font-weight: 400;
@@ -231,11 +234,12 @@ export const MoreText = styled("div")`
   line-height: 20px;
   color: #ff843f;
   margin-left: 5px;
+  cursor: pointer;
 `;
 
 export const FourthContLeft = styled("div")`
   width: 186px;
-  margin-left:auto;
+  margin-left: auto;
 `;
 
 export const FourthContAssigned = styled("div")`
@@ -246,7 +250,6 @@ export const FourthContAssigned = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
- 
 `;
 
 export const FourthContProgType = styled("div")`
@@ -259,7 +262,7 @@ export const FourthContProgType = styled("div")`
 
   color: #101f4c;
   align-items: center;
-  margin-top:5px;
+  margin-top: 5px;
 `;
 
 export const FormElementContainer = styled(Box)`
@@ -281,16 +284,14 @@ export const DescriptionTitle = styled("div")`
 `;
 
 export const DescriptionPara = styled("div")`
-margin-top: 5px;
-font-family: 'Open Sans';
-font-style: normal;
-font-weight: 400;
-font-size: 14px;
-line-height: 20px;
+  margin-top: 5px;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
 
-
-color: #101F4C;
-
+  color: #101f4c;
 `;
 
 export const AttachmentDiv = styled("div")`
@@ -311,27 +312,32 @@ export const AttachmentDescription = styled("div")`
   margin-top: 10px;
   margin-bottom: 15px;
   margin-left: -20px;
-    width: 430px;
+  width: 430px;
+  color: #101f4c;
+  font-size: 14px;
+  line-height: 20px;
+  font-family: "Open Sans";
+  font-weight: 400;
 `;
 
 export const AttachedImageDiv = styled("div")`
   display: flex;
   justify-content: space-between;
   align-items: center;
-   padding-top: 15px;
+  padding-top: 15px;
   padding-bottom: 15px;
 `;
 
 export const AttachedImageTitle = styled("div")`
-margin-left: 21px;
+  margin-left: 21px;
 `;
 
 export const AttachedImageIcon = styled("div")``;
 
 export const AttachHorizontal = styled("div")`
   border-bottom: 1px solid #d9d9d9;
-//   margin-top: 15px;
-//   margin-bottom: 15px;
+  //   margin-top: 15px;
+  //   margin-bottom: 15px;
 `;
 
 export const RelatedDiv = styled("div")`
@@ -411,16 +417,13 @@ export const AssignEditSearchContainer = styled("div")({
   },
 });
 
-
 export const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;
 
-
 export const CustomSelectContainer = styled("div")`
   width: 398px;
 `;
-
 
 export const StyledSelect = styled(Select)`
   width: 100%;
@@ -434,7 +437,6 @@ export const StyledSelect = styled(Select)`
   }
 `;
 
-
 interface ContainerProps {
   footerState: boolean;
 }
@@ -445,14 +447,10 @@ export const BodyContainer = styled(Box)<ContainerProps>`
   overflow-y: scroll;
 `;
 
-
 export const FourthBodyDiv = styled("div")((props: any) => ({
   display: props.assigneeEditState ? "none" : "flex",
   marginTop: "25px",
 })) as any;
-
-
-
 
 export const AddCommentContainer = styled("div")((props: any) => ({
   // borderTop: `${props.containerType === "float" ? "none" : "1px solid #D9D9D9"}`,
@@ -464,8 +462,6 @@ export const AddCommentContainer = styled("div")((props: any) => ({
   marginLeft: "-24px",
   width: "100%",
 })) as any;
-
-
 
 export const AddCommentContainerSecond = styled("div")({
   height: "50px",
@@ -485,9 +481,11 @@ export const AddCommentInput = styled("input")({
   width: "100%",
   paddingLeft: "10px",
 });
+export const ActivityLogContainer = styled("div")({
+  // marginBottom: "40px",
+  marginBottom: "26px",
 
-
-
+});
 
 export const AddCommentButtonContainer = styled("div")({
   display: "flex",
@@ -537,12 +535,31 @@ export const AssigneeCustomSelect = styled("div")({
   marginTop: "20px",
 });
 
-
+export const ValueContainer = styled('div')(({ theme }) => ({
+  '& > :not(:last-child)': {
+    marginRight: theme.spacing(1),
+  },
+  '& > *': {
+    marginBottom: theme.spacing(1),
+  },
+  marginTop: '15px',
+}));
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
   color: "blue",
+  width:"100% !important",
   "label + &": {
     marginTop: theme.spacing(8),
+  },
+
+  "& .MuiFormControl-root-MuiTextField-root": {
+    width: "100%",
+  },
+
+  "& .MuiInputBase-input-MuiInput-input": {
+    ":after": {
+      width: "100%",
+    },
   },
 
   "& .MuiInput-root": {
@@ -558,4 +575,96 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
     borderBottom: "none",
     // borderBottomColor: "none",
   },
+
+  "& .MuiInputBase-input": {
+    "&::placeholder": {
+       color: "#787878",
+       fontFamily: "Open Sans",
+       fontSize: "14px",
+       lineHeight: "20px",
+       fontWeight: "400"
+    },
+  },
 }));
+
+export const StyledMenu = styled(MenuItem)({
+  borderBottom: "1px solid #D9D9D9",
+  width: "178px",
+  margin: "0px 20px",
+  "&:hover": {
+    cursor: "pointer",
+  },
+  padding: 0,
+  height: "38px",
+  fontSize: "14px",
+});
+
+export const IconContainer = styled(Image)({
+  cursor: "pointer",
+  marginLeft: "16px",
+});
+
+export const AssigneeList = styled("div")({
+  // display: "inline-block",
+
+  // background:"#FFFFF"
+  // width: "308px",
+  // height: "86px",
+  padding: "15px",
+  color: "#101F4C",
+  fontSize: "14px",
+  border: "1px solid #D9D9D9",
+  marginTop: "-3px",
+  boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
+  borderRadius: "4px",
+  // position: "absolute",
+  // right:"10px",
+});
+
+export const SecondAssigneeList = styled("div")({
+  // display: "inline-block",
+
+  background: "white",
+  // width: "308px",
+  // height: "86px",
+  padding: "15px",
+  color: "#101F4C",
+  fontSize: "14px",
+  border: "1px solid #D9D9D9",
+  // marginTop: '-3px',
+  boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
+  borderRadius: "4px",
+  // position: "absolute",
+  // right:"10px",
+});
+
+export const ParentAssigneeList = styled("div")({
+  // dissplay: "inline-block",
+  display: "flex",
+  flexDirection: "row",
+});
+
+
+
+export const ExtraLabel = styled("div")`
+  font-family: "Open Sans";
+  color: #787878;
+
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  margin-bottom:10px;
+`;
+
+
+export const AssignedLabel = styled("div")`
+  font-family: "Open Sans";
+  color: #787878;
+
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  margin-bottom:10px;
+`;
