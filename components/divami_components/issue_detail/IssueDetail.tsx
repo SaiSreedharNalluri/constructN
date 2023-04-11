@@ -755,21 +755,19 @@ function BasicTabs(props: any) {
                               alt={"delete icon"}
                               onClick={() => {
                                 deleteTheAttachment(a?._id, "issue");
-                               setTaskState((prev: any) => {
-                                 const updatedTabOne = {
-                                   ...prev.TabOne,
-                                   attachments: prev.TabOne.attachments.filter(
-                                     (attachment: any) =>
-                                       attachment._id !== a?._id
-                                   ),
-                                 };
-                                 return {
-                                   ...prev,
-                                   TabOne: updatedTabOne,
-                                 };
-                               });
-
-
+                                setTaskState((prev: any) => {
+                                  const updatedTabOne = {
+                                    ...prev.TabOne,
+                                    attachments: prev.TabOne.attachments.filter(
+                                      (attachment: any) =>
+                                        attachment._id !== a?._id
+                                    ),
+                                  };
+                                  return {
+                                    ...prev,
+                                    TabOne: updatedTabOne,
+                                  };
+                                });
                               }}
                               className={`deleteIcon`}
                             />
@@ -934,7 +932,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
-    deleteTheIssue(selectedIssue, onClose);
+    if (deleteTheIssue) deleteTheIssue(selectedIssue, onClose);
     const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
     setIssueList(updatedIssuesList);
 

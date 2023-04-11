@@ -190,8 +190,8 @@ export const LabelText = styled("div")({
   display: "block",
   paddingTop: "13px",
   paddingLeft: "10px",
-  fontSize: "14px",
   fontFamily: "Open Sans",
+  fontSize: "14px",
   fontStyle: "normal",
   fontWeight: "400",
 });
@@ -224,7 +224,8 @@ export const SearchContainer = styled("div")({
   padding: "0px 0px 0px 20px",
   marginBottom: "2px",
   "& .MuiTextField-root": {
-    borderRadius: "4px",
+    borderRadius: "2px",
+    border: "1px solid  #D9D9D9",
   },
 });
 

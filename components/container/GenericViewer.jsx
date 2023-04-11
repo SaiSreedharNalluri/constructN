@@ -1340,7 +1340,7 @@ function GenericViewer(props) {
           {renderViewer(1)}
           <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimeLineComponent>
         </div>
-        <div className='w-0.5' color='gray'></div>
+        <div className={isCompare?'w-0.5':''} color='gray'></div>
         <div className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
           {renderViewer(2)}
           <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>

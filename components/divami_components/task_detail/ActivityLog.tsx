@@ -514,8 +514,17 @@ const ActivityLog = (props: any) => {
                               }}
                             >
                               {each.showMoreText
-                                ? `Show ${each.replies?.length} more replies`
-                                : "Hide Replies"}
+                                ? `Show ${each?.replies?.length} more ${
+                                    each.replies.length >= 2
+                                      ? "replies"
+                                      : "reply"
+                                  } `
+                                : `Hide ${
+                                    each?.replies?.length >= 2
+                                      ? "replies"
+                                      : "reply"
+                                  } `}
+                              {/* "Hide Replies" */}
                             </ReplyButton>
                           </>
                         ) : (

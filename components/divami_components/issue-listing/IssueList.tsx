@@ -4,6 +4,7 @@ import {
   InputAdornment,
   ListItemIcon,
   Menu,
+  setRef,
   Tooltip,
 } from "@mui/material";
 import Image from "next/image";
@@ -66,10 +67,11 @@ import {
   CustomBox,
   LoadMoreText,
   FilterIndication,
+  MenuOptionLabel,
 } from "./IssueListStyles";
 
 import _ from "lodash";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CSVLink } from "react-csv";
 import { Issue } from "../../../models/Issue";
 import { ITools } from "../../../models/ITools";
@@ -86,6 +88,10 @@ import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import { toast } from "react-toastify";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { createPdfFromHtml } from "./CreatePdf";
+import { getIssuesList } from "../../../services/issue";
+import { DownloadTable } from "../toolbar/DownloadTable";
+import { downloadMenuOptions, getDownladableList } from "./Constants";
 
 interface IProps {
   closeOverlay: () => void;
@@ -143,6 +149,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
   const [searchingOn, setSearchingOn] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState("");
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
   const [openIssueDetail, setOpenIssueDetail] = useState(false);
@@ -157,9 +164,10 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [remainingIssues, setRemainingIssues] = useState(issueList?.length);
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
-
+  const docRef: any = useRef();
+  const [ref1, setRef1] = useState(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
+  const [downloadList, setDownloadList] = useState(issueList);
   const sortMenuOptions = [
     {
       label: "Status ( To Do - Completed)",
@@ -194,19 +202,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     },
   ];
 
-  const downloadMenuOptions = [
-    {
-      label: "Download as CSV",
-      icon: null,
-      method: "csv",
-    },
-    {
-      label: "Download as PDF",
-      icon: null,
-      method: "pdf",
-    },
-  ];
-
   const handleSortClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -223,6 +218,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   const handleSortMenuClick = (sortMethod: string) =>
     handleOnIssueSort(sortMethod);
+  const handleDownloadMenuClick = () => handleDownloadClose();
 
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(
     issueList.slice(0, 10)
@@ -231,6 +227,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   useEffect(() => {
     setIssueList(issuesList);
+    setDownloadList(issuesList);
   }, [issuesList]);
   
   useEffect(() => {
@@ -298,6 +295,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
           sequenceNumber.includes(searchTerm.toLowerCase())
         );
       });
+      setDownloadList(filteredData);
       setFilteredIssuesList([...filteredData.slice(0, 10)]);
     } else {
       setFilteredIssuesList(issueList.slice(0, 10));
@@ -321,68 +319,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       setFilteredIssuesList(issueList.slice(0, noOfIssuesLoaded + 10));
       setRemainingIssues(issueList?.length - (noOfIssuesLoaded + 10));
     }
-  };
-
-  const getDownladableIssueList = (method: string) => {
-    // getIssues(currentStructure._id, true);
-    const issL = filteredIssuesList;
-    let myL = issL.map((iss: any) => {
-      let x = _.omit(iss, "progress", "context");
-      let g = _.update(x, "owner", (ass) => {
-        //console.log("TEST",ass);
-        return ass.firstName;
-      });
-      let y = _.update(g, "assignees", (ass) => {
-        let n = ass?.length
-          ? ass.map((o: { firstName: any }) => {
-              return o.firstName;
-            })
-          : "";
-        return n;
-      });
-      let z = _.update(y, "attachments", (att) => {
-        let n = att?.length
-          ? att.map((o: { name: any }) => {
-              return o.name;
-            })
-          : "";
-        let u = att?.length
-          ? att.map((o: { url: any }) => {
-              return o.url;
-            })
-          : "";
-        if (n.length) return n + " : " + u;
-        return "";
-      });
-      return z;
-    });
-    // const link = document.createElement("a");
-    // link.id = "download-csv";
-    // link.setAttribute(
-    //   "href",
-    //   "data:text/plain;charset=utf-8," + encodeURIComponent(myL)
-    // );
-    // link.setAttribute("download", `IssueList.pdf`);
-    // document.body.appendChild(link);
-    // link.click();
-    // myL.blob().then((blob: any) => {
-    //   const fileURL = window.URL.createObjectURL(blob);
-    //   // Setting various property values
-    //   let alink = document.createElement("a");
-    //   alink.href = fileURL;
-    //   alink.download = "SamplePDF.pdf";
-    //   alink.click();
-    // });
-    // html2canvas(document.getElementById("download-test") || document.body).then(
-    //   function (canvas) {
-    //     const imgData = canvas.toDataURL("image/png");
-    //     const pdf = new jsPDF();
-    //     pdf.addImage(imgData, "JPEG", 0, 0);
-    //     pdf.save("download.pdf");
-    //   }
-    // );
-
-    return myL;
   };
 
   useEffect(() => {
@@ -410,10 +346,14 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     issueMenuInstance.response = { ...issue.context, id: issue._id };
     issueMenuClicked(issueMenuInstance);
   };
+
   return (
     <>
       {errorShow.length > 0 ? (
-        <TaskListContainer id="download-test">
+        <TaskListContainer
+          // ref={docRef}
+          id="download-test"
+        >
           <HeaderContainer>
             <TitleContainer>
               <span>Issue List</span>
@@ -429,7 +369,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             </TitleContainer>
           </HeaderContainer>
 
-          <MiniHeaderContainer>
+          <MiniHeaderContainer searchingOn={searchingOn}>
             <MiniSymbolsContainer>
               {searchingOn ? (
                 <SearchAreaContainer>
@@ -531,7 +471,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     />
                   </Tooltip> */}
                   <CSVLink
-                    data={getDownladableIssueList(filteredIssuesList)}
+                    data={getDownladableList(filteredIssuesList)}
                     filename={"my-issues.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
                     target="_blank"
@@ -545,7 +485,12 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
           </MiniHeaderContainer>
 
           <BodyContainer>
-            <CustomBox searchingOn={searchingOn}>
+            <CustomBox
+              searchingOn={searchingOn}
+              ref={(el: any) => {
+                setRef1(el);
+              }}
+            >
               {filteredIssuesList.length ? (
                 filteredIssuesList.map((val: any, index: number) => {
                   return (
@@ -718,58 +663,81 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               </>
             ))}
           </Menu>
-          {/* <Menu
-            anchorEl={anchorEl}
-            id="account-menu"
-            open={isDownloadMenuOpen}
-            onClose={handleDownloadClose}
-            onClick={handleDownloadClose}
-            PaperProps={{
-              elevation: 0,
-              sx: {
-                overflow: "visible",
-                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                mt: 1.5,
-                "& .MuiAvatar-root": {
-                  width: 32,
-                  height: 32,
-                  ml: -0.5,
-                  mr: 1,
+          {isDownloadMenuOpen ? (
+            <Menu
+              anchorEl={anchorEl}
+              id="account-menu"
+              open={isDownloadMenuOpen}
+              onClose={handleDownloadClose}
+              onClick={handleDownloadClose}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
                 },
-                "&:before": {
-                  content: '""',
-                  display: "block",
-                  position: "absolute",
-                  top: 0,
-                  right: 14,
-                  width: 10,
-                  height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translateY(-50%) rotate(45deg)",
-                  zIndex: 0,
-                },
-              },
-            }}
-            transformOrigin={{ horizontal: "right", vertical: "top" }}
-            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-          >
-            {downloadMenuOptions.map((option) => (
-              <>
-                <StyledMenu
-                  key={option.label}
-                  onClick={() => handleDownloadMenuClick(option.method)}
-                  data-testid="download-menu-item"
-                >
-                  {option.label}
-                  {option.icon && (
+              }}
+              transformOrigin={{ horizontal: "right", vertical: "top" }}
+              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+              {downloadMenuOptions.map((option) => (
+                <>
+                  <StyledMenu
+                    key={option.label}
+                    // onClick={() => handleDownloadMenuClick()}
+                    data-testid="download-menu-item"
+                  >
+                    {option.label === "Download as CSV" ? (
+                      <CSVLink
+                        data={getDownladableList(downloadList)}
+                        filename={"issues.csv"}
+                        className="text-black btn btn-primary fill-black fa fa-Download "
+                        target="_blank"
+                        data-testid="download"
+                        onClick={() => handleDownloadMenuClick()}
+                      >
+                        <MenuOptionLabel>{option.label}</MenuOptionLabel>
+                      </CSVLink>
+                    ) : (
+                      <DownloadTable
+                        data={getDownladableList(downloadList)}
+                        label={option.label}
+                        filename="issues.pdf"
+                        onClick={() => handleDownloadMenuClick()}
+                      />
+                    )}
+
+                    {/* {option.icon && (
                     <ListItemIcon>
                       <IconContainer src={option.icon} alt={option.label} />
                     </ListItemIcon>
-                  )}
-                </StyledMenu>
-              </>
-            ))}
-          </Menu> */}
+                  )} */}
+                  </StyledMenu>
+                </>
+              ))}
+            </Menu>
+          ) : (
+            <></>
+          )}
         </TaskListContainer>
       ) : (
         <TaskListContainer>
