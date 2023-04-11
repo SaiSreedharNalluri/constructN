@@ -1,3 +1,6 @@
+import Moment from "moment";
+
+
 export const ISSUE_FORM_CONFIG = [
   {
     id: "title",
@@ -41,7 +44,7 @@ export const ISSUE_FORM_CONFIG = [
     formLabel: "Tell us more about this issue",
     placeholder: "Tell us more about this issue",
     isError: false,
-    isReq: false,
+    isReq: true,
     isReadOnly: false,
   },
   {
@@ -98,7 +101,7 @@ export const ISSUE_FORM_CONFIG = [
       {
         id: "start-date",
         type: "datePicker",
-        defaultValue: "",
+        defaultValue:"",
         label: "MM/DD/YYYY",
         formLabel: "Start date",
         isError: false,
@@ -107,7 +110,7 @@ export const ISSUE_FORM_CONFIG = [
       {
         id: "due-date",
         type: "datePicker",
-        defaultValue: "",
+        defaultValue:"",
         label: "MM/DD/YYYY",
         formLabel: "Due date",
         isError: false,

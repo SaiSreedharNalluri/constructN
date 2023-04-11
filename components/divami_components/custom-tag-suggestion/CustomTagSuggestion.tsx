@@ -2,6 +2,9 @@ import { styled } from "@mui/system";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
+import closeIcon from "../../../public/divami_icons/closeIcon.svg";
+import Image from "next/image";
+import Chip from "@mui/material/Chip";
 
 const CustomAutoComplete = styled(Autocomplete)({
   border: "1px solid #36415d",
@@ -39,13 +42,30 @@ const CustomAutoComplete = styled(Autocomplete)({
   },
 });
 
+  const TagsContainer = styled("div")({
+  });
+
+  const ValueContainer = styled("div")(({ theme }) => ({
+    "& > :not(:last-child)": {
+      marginRight: theme.spacing(1),
+    },
+    "& > *": {
+      marginBottom: theme.spacing(1),
+    },
+    marginTop: "15px",
+  }));  
+  const CloseIcon = styled(Image)`
+    cursor: pointer;
+  `;  
+
 const CustomTagSuggestion = (props: any) => {
-  const { data, handleChipMaking } = props;
+  const { data, handleChipMaking, setFormConfig } = props;
   console.log("data", data);
   const [options, setOptions] = useState(data.chipSuggestions);
   const [autoCompleteValue, setAutoCompleteValue] = useState([]);
 
   useEffect(() => {
+    console.log("data.chipString", data.chipString);
     setAutoCompleteValue(data.chipString);
   }, [data.chipString]);
   useEffect(() => {
@@ -55,32 +75,60 @@ const CustomTagSuggestion = (props: any) => {
 
   console.log("autoCompleteValue", data);
   return (
-    <CustomAutoComplete
-      multiple
-      id="tags-outlined"
-      options={options}
-      value={autoCompleteValue}
-      freeSolo
-      onChange={(e, newval, reason) => {
-        handleChipMaking(newval);
-      }}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          variant="outlined"
-          label="filterSelectedOptions"
-          placeholder="Add tags separated by commas"
-          // onKeyDown={(e: any) => {
-          //   if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
-          //     setAutoCompleteValue(
-          //       // autoCompleteValue.concat((e.target as HTMLInputElement).value)
-          //       autoCompleteValue.concat(e.target.value)
-          //     );
-          //   }
-          // }}
-        />
-      )}
-    />
+    <TagsContainer>
+      <CustomAutoComplete
+        multiple
+        id="tags-outlined"
+        options={options}
+        value={autoCompleteValue}
+        freeSolo
+        onChange={(e, newval, reason) => {
+          handleChipMaking(newval);
+        }}
+        renderTags={() => null}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            // label="filterSelectedOptions"
+            placeholder="Add tags separated by commas"
+            // onKeyDown={(e: any) => {
+            //   if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
+            //     setAutoCompleteValue(
+            //       // autoCompleteValue.concat((e.target as HTMLInputElement).value)
+            //       autoCompleteValue.concat(e.target.value)
+            //     );
+            //   }
+            // }}
+          />
+        )}
+      />
+      <ValueContainer>
+        {autoCompleteValue?.map((v: any) =>
+          v ?  (
+            <Chip
+              key={v}
+              label={v}
+              variant="outlined"
+              style={{ marginTop: "10px" }}
+              deleteIcon={
+                <CloseIcon
+                  src={closeIcon}
+                  alt=""
+                  style={{ marginLeft: "5px", marginRight: "12px" }}
+                />
+              }
+              onDelete={() => {
+                const newValue = autoCompleteValue.filter(
+                  (selected: any) => selected !== v
+                );
+                setAutoCompleteValue(newValue);
+              }}
+            />
+          ) : null
+        )}
+      </ValueContainer>
+    </TagsContainer>
   );
 };
 

@@ -70,6 +70,7 @@ import {
   TaskListContainer,
   ThirdHeader,
   TitleContainer,
+  LoadMoreText,
 } from "./TaskListStyles";
 import {
   Box,
@@ -83,6 +84,12 @@ import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg"
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import { toast } from "react-toastify";
 import { ITools } from "../../../models/ITools";
+import {
+  downloadMenuOptions,
+  getDownladableList,
+} from "../issue-listing/Constants";
+import { DownloadTable } from "../toolbar/DownloadTable";
+import { MenuOptionLabel } from "../issue-listing/IssueListStyles";
 
 interface IProps {
   closeOverlay: () => void;
@@ -126,11 +133,16 @@ const CustomTaskListDrawer = (props: any) => {
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [taskList, setTaskList] = useState([]);
-  const [filteredTaskList, setFilteredTaskList] = useState(taskList);
+  const [filteredTaskList, setFilteredTaskList] = useState(
+    taskList.slice(0, 10)
+  );
   const [sortOrder, setSortOrder] = useState("asc");
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [remainingTasks, setRemainingtasks] = useState(taskList?.length);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
+  const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
+  const [downloadList, setDownloadList] = useState(taskList);
 
   const sortMenuOptions = [
     {
@@ -169,10 +181,15 @@ const CustomTaskListDrawer = (props: any) => {
 
   useEffect(() => {
     setTaskList(tasksList);
+    setDownloadList(tasksList);
   }, [tasksList]);
 
   useEffect(() => {
-    setFilteredTaskList(taskList);
+    setFilteredTaskList(taskList.slice(0, 10));
+  }, [taskList]);
+
+  useEffect(() => {
+    setRemainingtasks(taskList?.length);
   }, [taskList]);
 
   const handleSortClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -181,6 +198,11 @@ const CustomTaskListDrawer = (props: any) => {
 
   const handleSortMenuClose = () => {
     setIsSortMenuOpen(false);
+    setAnchorEl(null);
+  };
+
+  const handleDownloadClose = () => {
+    setIsDownloadMenuOpen(false);
     setAnchorEl(null);
   };
 
@@ -224,19 +246,6 @@ const CustomTaskListDrawer = (props: any) => {
     }
   }, []);
 
-  const getDownloadableTaskList = (issuesList = filteredTaskList) => {
-    let modifiedList = issuesList.map((issue: any) => {
-      let firstNames = issue.assignee
-        ?.split(" ")
-        .map((name: string) => name.trim());
-      return _.omit({ ...issue, assignee: firstNames }, [
-        "progress",
-        "context",
-      ]);
-    });
-    return modifiedList;
-  };
-
   // const sortDateOrdering = () => {
   //   let sorted;
   //   if (sortOrder === "asc") {
@@ -277,11 +286,37 @@ const CustomTaskListDrawer = (props: any) => {
     if (searchTerm) {
       const filteredData = taskList?.filter((eachTask: any) => {
         const taskName = eachTask?.type?.toLowerCase();
-        return taskName.includes(searchTerm.toLowerCase());
+        const sequenceNumber = eachTask?.sequenceNumber.toString();
+        return (
+          taskName.includes(searchTerm.toLowerCase()) ||
+          sequenceNumber.includes(searchTerm.toLowerCase())
+        );
       });
-      setFilteredTaskList([...filteredData]);
+      setDownloadList(filteredData);
+
+      setFilteredTaskList([...filteredData.slice(0, 10)]);
     } else {
-      setFilteredTaskList(taskList);
+      setFilteredTaskList(taskList.slice(0, 10));
+    }
+  };
+
+  const handleLoadMore = () => {
+    const noOfTasksLoaded = filteredTaskList.length;
+
+    if (searchTerm) {
+      const filteredData = taskList?.filter((eachTask: any) => {
+        const taskName = eachTask?.type?.toLowerCase();
+        const sequenceNumber = eachTask?.sequenceNumber.toString();
+        return (
+          taskName.includes(searchTerm.toLowerCase()) ||
+          sequenceNumber.includes(searchTerm.toLowerCase())
+        );
+      });
+      setRemainingtasks(filteredData?.length - (noOfTasksLoaded + 10));
+      setFilteredTaskList([...filteredData.slice(0, noOfTasksLoaded + 10)]);
+    } else {
+      setFilteredTaskList(taskList.slice(0, noOfTasksLoaded + 10));
+      setRemainingtasks(taskList?.length - (noOfTasksLoaded + 10));
     }
   };
 
@@ -329,7 +364,7 @@ const CustomTaskListDrawer = (props: any) => {
             </TitleContainer>
           </HeaderContainer>
 
-          <MiniHeaderContainer>
+          <MiniHeaderContainer searchingOn={searchingOn}>
             <MiniSymbolsContainer>
               {searchingOn ? (
                 <SearchAreaContainer>
@@ -366,7 +401,7 @@ const CustomTaskListDrawer = (props: any) => {
                 <>
                   <SearchGlassIcon
                     src={Search}
-                    data-testid='search-icon'
+                    data-testid="search-icon"
                     alt={"close icon"}
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
@@ -429,18 +464,23 @@ const CustomTaskListDrawer = (props: any) => {
                       data-testid="filter"
                     />
                   ) : null}
-
+                  {/* <Tooltip title="Download Menu">
+                    <DownloadIcon
+                      src={Download}
+                      alt="Arrow"
+                      onClick={(e) => {
+                        setIsDownloadMenuOpen((prev) => !prev);
+                        handleSortClick(e);
+                      }}
+                    />
+                  </Tooltip> */}
                   <CSVLink
-                    data={getDownloadableTaskList(filteredTaskList)}
+                    data={getDownladableList(filteredTaskList)}
                     filename={"my-tasks.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
                     target="_blank"
                     data-testid="download"
                   >
-                    {/* <FontAwesomeIcon
-                  className=" fill-black text-black"
-                  icon={faDownload}
-                ></FontAwesomeIcon> */}
                     <DownloadIcon src={Download} alt="Arrow" />
                   </CSVLink>
                 </>
@@ -504,6 +544,15 @@ const CustomTaskListDrawer = (props: any) => {
                   <MessageDivShowErr>No result found</MessageDivShowErr>
                 </NoMatchDiv>
               )}
+              {remainingTasks > 0 ? (
+                <LoadMoreText
+                  onClick={() => {
+                    handleLoadMore();
+                  }}
+                >
+                  Load More
+                </LoadMoreText>
+              ) : null}
             </CustomBox>
           </BodyContainer>
           {/* <LoadMoreContainer>
@@ -564,7 +613,7 @@ const CustomTaskListDrawer = (props: any) => {
             onClick={() => {
               onClose();
               openTaskCreateFn();
-              toast.info("Click on the map where you want to create a task");
+              toast("Click on the map where you want to create a task");
             }}
           >
             Raise Task
@@ -614,7 +663,7 @@ const CustomTaskListDrawer = (props: any) => {
         {sortMenuOptions.map((option) => (
           <>
             <StyledMenu
-            data-testid="sort-menu-item"
+              data-testid="sort-menu-item"
               key={option.label}
               onClick={() => {
                 handleSortMenuClick(option.method);
@@ -630,6 +679,81 @@ const CustomTaskListDrawer = (props: any) => {
           </>
         ))}
       </Menu>
+      {isDownloadMenuOpen ? (
+        <Menu
+          anchorEl={anchorEl}
+          id="account-menu"
+          open={isDownloadMenuOpen}
+          onClose={handleDownloadClose}
+          onClick={handleDownloadClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              mt: 1.5,
+              "& .MuiAvatar-root": {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              "&:before": {
+                content: '""',
+                display: "block",
+                position: "absolute",
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
+                zIndex: 0,
+              },
+            },
+          }}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        >
+          {downloadMenuOptions.map((option) => (
+            <>
+              <StyledMenu
+                key={option.label}
+                // onClick={() => handleDownloadMenuClick()}
+                data-testid="download-menu-item"
+              >
+                {option.label === "Download as CSV" ? (
+                  <CSVLink
+                    data={getDownladableList(downloadList)}
+                    filename={"tasks.csv"}
+                    className="text-black btn btn-primary fill-black fa fa-Download "
+                    target="_blank"
+                    data-testid="download"
+                    onClick={() => handleDownloadClose()}
+                  >
+                    <MenuOptionLabel>{option.label}</MenuOptionLabel>
+                  </CSVLink>
+                ) : (
+                  <DownloadTable
+                    data={getDownladableList(downloadList)}
+                    label={option.label}
+                    filename="tasks.pdf"
+                    onClick={() => handleDownloadClose()}
+                  />
+                )}
+
+                {/* {option.icon && (
+                    <ListItemIcon>
+                      <IconContainer src={option.icon} alt={option.label} />
+                    </ListItemIcon>
+                  )} */}
+              </StyledMenu>
+            </>
+          ))}
+        </Menu>
+      ) : (
+        <></>
+      )}
     </TaskListContainer>
   );
 };
