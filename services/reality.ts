@@ -54,4 +54,30 @@ export const getRealityImagesPath = (
     return `${path}/images`
 }
 
+export const getOrthoPhotoLayers = async (
+  path: string
+  ) => {
+    try {
+      return await instance.get(
+      `${path}/_layers`
+    ); 
+  } catch (error) {
+    console.log("Error _layers.json:", error);
+  
+  }
+}
+
+export const getMapboxHotspotLayers = async (
+  path: string
+  ) => {
+    try {
+      return await instance.get(
+      `${path}/layers/progress.json`
+    ); 
+  } catch (error) {
+    console.log("Error progress.json:", error);
+  
+  }
+}
+
 

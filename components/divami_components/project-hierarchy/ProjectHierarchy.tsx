@@ -48,17 +48,22 @@ const ProjectHierarchy = ({
   setHierarchy,
 }: ProjectHierarchyProps) => {
   const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>(treeData);
+
+  const [block, setBlock] = useState(treeData);
+
   const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
 
   const handleExpand = () => {
     handleNodeExpand(getAllIds(treeViewData));
   };
   console.log(expandedNodes, "fsffs");
-  // useEffect(() => {
-  //   console.log(treeData, "treeData");
+  useEffect(() => {
+    // console.log(treeData, "Robn");
 
-  //   setTreeViewData(treeData);
-  // }, [treeData.length]);
+    setTreeViewData(treeData);
+  }, [treeData.length]);
+
+  console.log("treeViewData22", treeViewData);
 
   // useEffect(() => {
   //   if (window.localStorage.getItem("nodeData") && getStructureData) {
@@ -69,6 +74,15 @@ const ProjectHierarchy = ({
   //     // }
   //   }
   // }, [treeViewData]);
+
+  useEffect(() => {
+    if (window.localStorage.getItem("nodeData")) {
+      let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
+      if (nodeData && getStructureData) {
+        getStructureData(nodeData);
+      }
+    }
+  }, [treeViewData]);
 
   const onLabelClick = (event: any, nodes: any) => {
     {
@@ -120,10 +134,18 @@ const ProjectHierarchy = ({
   );
 
   const [search, setSearch] = useState(false);
+  const [searchField, setSearchField] = useState("");
+  // const [filterBlock, setFilterBlock] = useState<any>(block);
+
+  console.log("searchFieldString", searchField);
+  console.log("setBlock", block);
+
   const handleSearchResult = (e: any) => {
     console.log(e);
-    handleSearch(e);
+    let returnedTree = handleSearch(e);
+    // console.log("robn", returnedTree)
     setSearch(true);
+    setTreeViewData(returnedTree);
   };
 
   const renderTree = (nodes: ChildrenEntity, onLabelClick: any) => (
@@ -148,8 +170,21 @@ const ProjectHierarchy = ({
     setSelectedLayers(layersSelected);
     console.log([...layersSelected], "selectedLayers");
     console.log(search);
+    console.log(selectedNodes);
+
     search ? handleExpand() : null;
   }, [treeViewData]);
+
+  // useEffect(() => {
+  //   const newFilteredBlocklist = block[0]?.children?.filter((val: any) => {
+  //     // return val;
+  //     // console.log(val.name.toLocaleLowerCase());
+  //     return val?.name?.toLocaleLowerCase().includes(searchField);
+
+  //     console.log("effect firingn");
+  //   });
+  //   setFilterBlock(newFilteredBlocklist);
+  // }, [block, searchField]);
 
   const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
     console.log(nodeIds, "nodeIds");
@@ -159,6 +194,30 @@ const ProjectHierarchy = ({
   const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
     handleNodeSelection(nodeIds);
   };
+
+  const onSearchChange = (event: any) => {
+    let parentArr = [...treeData];
+    const searchFieldString = event.target.value.toLocaleLowerCase();
+    let newObj = [
+      ...parentArr[0]?.children?.filter(
+        (item: any, index: number) =>
+          item.name.toLocaleLowerCase().includes(searchFieldString)
+        //     || item.name.children.filter((item:any,index:number) =>)
+      ),
+    ];
+    console.log("newobjj", newObj);
+    parentArr = [{ ...parentArr[0], children: [...newObj] }];
+    //  parentObj[0].children = newObj
+    setTreeViewData([...parentArr]);
+    console.log(
+      "Robby",
+      searchFieldString,
+      treeData[0].children.length,
+      parentArr[0].children.length
+    );
+  };
+
+  // console.log("hiiii", treeViewData, filterBlock);
 
   return (
     <ProjectHierarchyContainer>
@@ -176,7 +235,12 @@ const ProjectHierarchy = ({
         <CustomInputField
           id={"search"}
           variant="outlined"
+          autoComplete="off"
           placeholder={"Search"}
+          // onChange={(e: any) => {
+          //   onSearchChange(e);
+          // }}
+
           onChange={(e: any) => {
             handleSearchResult(e);
           }}
@@ -199,7 +263,6 @@ const ProjectHierarchy = ({
         style={{ overflow: "auto", height: `calc(100vh - 300px)` }}
       >
         {treeViewData.length === 0 ? (
-          // "No structures found for this project"
           <ErrorImageDiv>
             <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
             <MessageDivShowErr>No result found</MessageDivShowErr>

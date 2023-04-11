@@ -9,7 +9,22 @@ export const TreeViewContainer = styled("div")({
   // width: "252px",
   // width: "252px",
   //
-  marginTop: "28px",
+  marginTop: "10px",
+});
+
+export const TreeItemLabelContainer = styled(Box)({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-start",
+});
+
+export const TreeLabelContainer = styled(Box)({
+  display: "inline",
+  fontSize: "14px",
+  color: "#101F4C",
+  fontWeight: "400",
+  lineHeight: "19px",
+  fontFamily: "Open Sans",
 });
 
 export const StyledTreeView = styled(TreeView)({
@@ -27,7 +42,7 @@ export const StyledTreeView = styled(TreeView)({
     padding: "0",
     paddingRight: "10px",
     paddingLeft: "10px",
-    marginRight: "10px",
+    // marginRight: "10px",
     borderBottom: "1px solid #E7E7E7",
     "& .MuiTreeItem-label": {
       fontSize: "14px",
@@ -78,7 +93,7 @@ export const StyledTreeView = styled(TreeView)({
 export const SelectLayerContainer = styled(Box)((props: any) => ({
   display: props.openSelectLayer ? "" : "none",
   // width: "250px",
-  width: "237px",
+  // width: "237px",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
 
   fontFamily: "Open Sans",
@@ -114,8 +129,13 @@ export const SearchContainer = styled(Box)({
 });
 
 export const HeaderLabel = styled(Typography)({
-  fontSize: "16px",
+  fontSize: "14px",
   fontWeight: "400",
+  color: "#101F4C",
+  fontFamily: "Open Sans",
+  "& .MuiTypography-root": {
+    color: "#101F4C",
+  },
 });
 
 export const CloseIcon = styled(Image)({

@@ -8,6 +8,7 @@ import InputPassword from '../core/Input/inputPassword';
 import InputText from '../core/Input/inputText';
 import NextImage from '../core/Image';
 import Image from 'next/image';
+import router from 'next/router';
 interface IProps {
   loading: boolean;
   message: string;
@@ -44,7 +45,11 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
       .matches(/[0-9]/, 'Password requires a number')
       .matches(/[a-z]/, 'Password requires a lowercase letter')
       .matches(/[A-Z]/, 'Password requires an uppercase letter')
-      .matches(/[^\w]/, 'Password requires a symbol'),
+      .matches(/[^\w\s]/, 'Password requires a symbol')
+      .matches(
+        /^[^\s].*[^\s]$/,
+        'Spaces are not allowed at the beginning, end of the password'
+      ),
     confirmPassword: Yup.string()
       .required('Confirm password is required')
       .oneOf([Yup.ref('password'), null], 'Passwords must match'),
@@ -82,7 +87,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="firstName"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div>
@@ -94,7 +99,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="lastName"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger  text-red-600"
                 />
               </div>
               <div>
@@ -102,7 +107,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="email"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger  text-red-600"
                 />
               </div>
               <div className="relative">
@@ -122,7 +127,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="password"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger  text-red-600"
                 />
               </div>
 
@@ -148,7 +153,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="confirmPassword"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div className="py-2 grid grid-cols-1 gap-2">
@@ -163,6 +168,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
               )}
             </Form>
           </Formik>
+          <button onClick={() => router.push('/login')}>Back To Login</button>
         </div>
       </div>
     </div>

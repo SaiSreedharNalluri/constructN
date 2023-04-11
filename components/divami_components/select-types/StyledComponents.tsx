@@ -45,7 +45,9 @@ export const DrawerBox = styled(Box)({
   lineHeight: "19px",
 });
 
-export const DrawerHeaderTitle = styled("div")({});
+export const DrawerHeaderTitle = styled("div")({
+  color: "#101F4C",
+});
 
 export const CloseIconStyled = styled(CloseIcon)({
   cursor: "pointer",
@@ -69,6 +71,7 @@ export const ListItemStyled = styled(ListItem)({
     color: "#f1742e",
     cursor: "pointer",
   },
+  color: "#101F4C",
 });
 export const ListStyled = styled(List)({
   fontWeight: "400",

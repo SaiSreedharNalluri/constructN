@@ -8,6 +8,7 @@ import ImgProfile from "../../../public/divami_icons/ImgProfile.svg";
 
 import Notification from "../../../public/divami_icons/Notification.svg";
 import clip from "../../../public/divami_icons/clip.svg";
+import defaultAvatar from "../../../public/divami_icons/defaultAvatar.svg";
 
 import { useRouter } from "next/router";
 import { getCookie, removeCookies } from "cookies-next";
@@ -16,6 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
   faCog,
+  faQuestion,
   faRightFromBracket,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -31,6 +33,8 @@ import {
   HeaderMenuImageContainer,
   HeaderNotificationImageContainer,
   ProfileImgIcon,
+  ProfileImgSecIcon,
+  ProfileImgIconDefault,
 } from "./HeaderStyles";
 import { ITools } from "../../../models/ITools";
 import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
@@ -49,7 +53,13 @@ export const DividerIcon = styled(Image)({
   marginRight: "15px",
 });
 
-const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false, breadCrumbData, handleBreadCrumbClick }) => {
+const Header: React.FC<any> = ({
+  toolClicked,
+  viewMode,
+  showBreadcrumbs = false,
+  breadCrumbData,
+  handleBreadCrumbClick,
+}) => {
   const router = useRouter();
   const headerRef: any = React.useRef();
   let [name, setName] = useState<string>("");
@@ -61,18 +71,29 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
   const [isDesignSelected, setIsDesignSelected] = useState(
     iViewMode === "Reality" ? false : true
   );
-
+  let [eMail, setEMail] = useState<string>("");
+  let [avatar, setAvatar] = useState<string>("");
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
+
   useEffect(() => {
     const userObj: any = getCookie("user");
     let user = null;
     if (userObj) user = JSON.parse(userObj);
+    console.log(user, "mnfdss");
+
     if (user?.fullName) {
       setName(user.fullName);
     }
+    if (user?.email) {
+      setEMail(user.email);
+    }
+    if (user?.avatar) {
+      setAvatar(user.avatar);
+    }
   }, [router.query.projectId]);
+
   useEffect(() => {
     setIViewMode(viewMode);
     setIsDesignSelected(viewMode === "Reality" ? false : true);
@@ -107,18 +128,19 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
     } else {
       setLoading(false);
     }
-  }
+  };
 
   const rightMenuClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
-    setIsDesignSelected((prev: any) => !prev);
     setRighttNav(!rightNav);
     if (e.currentTarget.id === "Design") {
       toolInstance.toolName = "viewMode";
       toolInstance.toolAction = "Design";
+      setIsDesignSelected(true);
     } else if (e.currentTarget.id === "Reality") {
       toolInstance.toolName = "viewMode";
       toolInstance.toolAction = "Reality";
+      setIsDesignSelected(false);
     }
     // else if (e.currentTarget.id === "compareDesign") {
     //   toolInstance.toolName = "compareDesign";
@@ -139,10 +161,26 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
     toolClicked(toolInstance);
   };
 
-  console.log(isDesignSelected, "isdesignsele");
   return (
     <>
       <HeaderContainer ref={headerRef}>
+        <div
+          style={{
+             height: "10px",
+             width: "59px",
+             background: "#FFFFFF",
+             position: "absolute",
+             top: "58px",
+            zIndex: "9999999",
+           //   opacity: "1",
+            // width: "59px",
+            // background: "#FFFFFF",
+            // position: "absolute",
+            // z-index: "9999999";
+            // top: "58px";
+            // opacity: "1";
+          }}
+        ></div>
         <HeaderLeftPart>
           <HeaderLogoImageContainer>
             <Image
@@ -153,7 +191,12 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
             />
           </HeaderLogoImageContainer>
           {showBreadcrumbs && <DividerIcon src={headerLogSeparator} alt="" />}
-          {showBreadcrumbs && <CustomBreadcrumbs breadCrumbData={breadCrumbData} handleBreadCrumbClick={handleBreadCrumbClick} />}
+          {showBreadcrumbs && (
+            <CustomBreadcrumbs
+              breadCrumbData={breadCrumbData}
+              handleBreadCrumbClick={handleBreadCrumbClick}
+            />
+          )}
         </HeaderLeftPart>
         <HeaderRightPart>
           {toolClicked ? (
@@ -201,11 +244,23 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
               src={ImgProfile}
               alt="Profile Image"
             /> */}
-            <ProfileImgIcon
-              onClick={onProfilePicClick}
-              src={ImgProfile}
-              alt="Profile Image Icon"
-            />
+            {avatar ? (
+              <ProfileImgIcon
+                onClick={onProfilePicClick}
+                src={avatar}
+                alt="Profile Image Icon"
+                width={34}
+                height={34}
+              />
+            ) : (
+              <ProfileImgIconDefault
+                onClick={onProfilePicClick}
+                src={defaultAvatar}
+                alt="Profile Image Icon"
+                width={34}
+                height={34}
+              />
+            )}
           </HeaderProfileImageContainer>
           <HeaderNotificationImageContainer>
             <Image src={Notification} alt="Profile Image" />
@@ -214,8 +269,81 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
             <Image src={hamburgerMenu} alt="Menu" />
           </HeaderMenuImageContainer>
         </HeaderRightPart>
-        {/* //! This is Open Profile Options */}
+
         {loading && (
+          <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
+            <ul className="text-white p-4 ">
+              <li className="font-medium">
+                <div className="flex flex-col items-center justify-center transform transition-colors duration-200">
+                  <div className="w-11 h-11 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 border-gray-900">
+                    {/* <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> */}
+                    {/* <Image
+                      src={avatar || defaultAvatar}
+                      alt=""
+                      className={`w-full h-full cursor-pointer object-cover `}
+                      title={name}
+                      height={1920}
+                      width={1080}
+                      onClick={() => router.push(`/user-account`)}
+                    /> */}
+
+                    <ProfileImgSecIcon
+                      onClick={() => router.push(`/user-account`)}
+                      src={avatar || defaultAvatar}
+                      alt="Profile Image Icon"
+                      width={34}
+                      height={34}
+                    />
+                  </div>
+                  <div className="text-base font-bold">{name}</div>
+                  <div className="text-xs italic font-thin">{eMail}</div>
+                  <div
+                    className="cursor-pointer font-bold"
+                    onClick={() => router.push(`/user-account`)}
+                  >
+                    Manage Account
+                  </div>
+                </div>
+              </li>
+              <hr className="border-gray-700" />
+              {/* <li className="font-medium cursor-pointer" onClick={() => router.push(`/user-account`)}>
+                      <div className="flex items-center justify-center transform transition-colors duration-200">
+                        <div className="mr-3">
+                          <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                        </div>
+                        Account
+                      </div>
+                    </li> */}
+              <li
+                className="font-medium cursor-pointer"
+                onClick={() => router.push(`/support`)}
+              >
+                <div className="flex items-center justify-center transform transition-colors duration-200 ">
+                  <div className="mr-3">
+                    <FontAwesomeIcon icon={faQuestion} />
+                  </div>
+                  Support
+                </div>
+              </li>
+              <hr className="border-gray-700" />
+              <li
+                className="font-medium cursor-pointer"
+                onClick={() => userLogOut()}
+              >
+                <div className="flex items-center justify-center transform transition-colors duration-200 ">
+                  <div className="mr-3 ">
+                    <FontAwesomeIcon
+                      icon={faRightFromBracket}
+                    ></FontAwesomeIcon>
+                  </div>
+                  Logout
+                </div>
+              </li>
+            </ul>
+          </div>
+        )}
+        {/* //! This is Open Profile Options */}
+        {/* {loading && (
           <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
             <ul className="text-white p-4 ">
               <li className="font-medium cursor-pointer">
@@ -235,11 +363,11 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
                 </div>
               </li>
               <hr className="border-gray-700" />
-              <li
-                className="font-medium cursor-pointer"
-                onClick={userLogOut}
-              >
-                <div className="flex items-center justify-center transform transition-colors duration-200 " data-testid="logout-button">
+              <li className="font-medium cursor-pointer" onClick={userLogOut}>
+                <div
+                  className="flex items-center justify-center transform transition-colors duration-200 "
+                  data-testid="logout-button"
+                >
                   <div className="mr-3 ">
                     <FontAwesomeIcon
                       icon={faRightFromBracket}
@@ -250,7 +378,7 @@ const Header: React.FC<any> = ({ toolClicked, viewMode, showBreadcrumbs = false,
               </li>
             </ul>
           </div>
-        )}
+        )} */}
       </HeaderContainer>
     </>
   );
