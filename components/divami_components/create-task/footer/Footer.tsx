@@ -15,12 +15,19 @@ const Footer = ({ formHandler, editData, canBeDisabled }: any) => {
   const [buttonClicked, setButtonClicked] = useState(false);
   return (
     <ButtonsContainer>
-      <CustomButton type="outlined" label="Cancel" formHandler={formHandler} />
+      <CustomButton
+        type="outlined"
+        label="Cancel"
+        formHandler={formHandler}
+        dataTestId="CancelBtn"
+      />
       <CustomButton
         type={canBeDisabled && buttonClicked ? "disabled" : "contained"}
         label={editData ? "Update" : "Create"}
         formHandler={formHandler}
         setButtonClicked={setButtonClicked}
+        // dataTestId="createButton"
+
         dataTestId={"create-issue-button"}
       />
     </ButtonsContainer>
