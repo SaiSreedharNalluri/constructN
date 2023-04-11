@@ -92,6 +92,8 @@ const CustomTagSuggestion = (props: any) => {
             variant="outlined"
             // label="filterSelectedOptions"
             placeholder="Add tags separated by commas"
+            data-testid="custom-tag-suggestion-text-field"
+
             // onKeyDown={(e: any) => {
             //   if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
             //     setAutoCompleteValue(

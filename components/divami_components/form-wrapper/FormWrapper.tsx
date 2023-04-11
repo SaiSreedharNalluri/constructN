@@ -189,7 +189,7 @@ const FormWrapper = (props: any) => {
               label=""
               data={data}
               isReadOnly={data.isReadOnly}
-              dataTestId="select"
+              dataTestId={`inputSelectField-${data.id}`}
             />
           </ElementContainer>
         );
@@ -208,7 +208,6 @@ const FormWrapper = (props: any) => {
               }}
               defaultValue={data.defaultValue}
               isError={data.isError}
-              dataTestId="inputTextArea"
               isRequired={data.isReq}
               type={data.type}
               minVal={data?.minVal}
@@ -217,6 +216,7 @@ const FormWrapper = (props: any) => {
               isDisabled={data.isDisabled}
               className={undefined}
               isReadOnly={data.isReadOnly}
+              dataTestId={`inputTextAreaField-${data.id}`}
             />
           </ElementContainer>
         );
@@ -257,8 +257,8 @@ const FormWrapper = (props: any) => {
               onChange={(e: any) => {
                 handleDateChange(e, data.id);
               }}
+              dataTestId={`inputDateField-${data.id}`}
               isReadOnly={data.isReadOnly}
-              dataTestId={"datePicker"}
             />
           </ElementContainer>
         );
@@ -283,7 +283,7 @@ const FormWrapper = (props: any) => {
             <CustomFileInput
               handleFileUpload={(e: any) => handleFileUpload(e, data.id)}
               data
-              dataTestId={"fileInput"}
+              dataTestId={`inputFileField-${data.id}`}
             />
           </ElementContainer>
         );
@@ -320,6 +320,8 @@ const FormWrapper = (props: any) => {
         return "";
     }
   };
+
+  console.log(config, "config");
 
   return (
     <div className="form-container-child">
