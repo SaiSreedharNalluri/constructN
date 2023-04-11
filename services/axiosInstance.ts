@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { removeCookies } from 'cookies-next';
 // eslint-disable-next-line react-hooks/rules-of-hooks
-
+let urlExclude = ['signin'];
 const instance = axios.create();
 
 instance.interceptors.request.use(
@@ -21,11 +21,16 @@ instance.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.log('error', error.response.config.url.split('/').pop());
     if (
       error?.response?.status === 401 &&
       error?.response?.data?.userVerificationToken
     ) {
-    } else if (error?.response?.status === 401) {
+    } else if (
+      error?.response?.status === 401 &&
+      urlExclude.includes(error?.response?.config?.url?.split('/')?.pop()) ===
+        false
+    ) {
       if (typeof window !== 'undefined') {
         removeCookies('user');
         window.location.href = '/login?sessionExpiered=true';

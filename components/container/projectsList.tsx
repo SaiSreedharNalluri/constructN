@@ -57,7 +57,7 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
           })
         ) : (
           <div className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300 text-orange-400 ">
-            <h1> There is no project assigned to these user</h1>
+            <h1> There is no project assigned to this user</h1>
           </div>
         )
       ) : (
