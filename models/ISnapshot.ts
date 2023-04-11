@@ -5,13 +5,13 @@ export interface ISnapshot {
   date: string;
   progress: number;
   project: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   __v?: number;
   structure: string;
   status: string;
-  visualization?: [];
-  reality?: [IReality];
+  visualizations?: [];
+  reality?: IReality[];
 }
 
 // export interface ISnapShotDeatils {

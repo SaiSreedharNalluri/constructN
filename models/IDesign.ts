@@ -4,7 +4,7 @@ export interface IDesign {
     name: string;
     project: string;
     structure: string;
-    storage: [IStorage];
+    storage: IStorage[];
     version?: string;
     tm?: tm;
   }

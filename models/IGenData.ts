@@ -9,7 +9,7 @@ export interface IGenData {
 
         project: string,
         structure: IStructure,
-        snapshotList: [ISnapshot],
+        snapshotList: ISnapshot[],
         currentViewMode: string,
         currentViewType: string,
         viewerContext: IViewerContext,

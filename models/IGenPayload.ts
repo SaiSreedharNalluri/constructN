@@ -3,5 +3,5 @@ import { IGenData } from "./IGenData";
 
 export interface IGenPayload{
     action:IGenNotifyViewerAction | IGenNotifyAppAction,
-    data: IGenData
+    data?: IGenData
 }
