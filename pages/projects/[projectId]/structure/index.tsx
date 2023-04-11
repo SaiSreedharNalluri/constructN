@@ -74,7 +74,7 @@ const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   cursor: "pointer",
   background: "#ffffff",
   fontFamily: "Open Sans",
-}));
+})) as any;
 
 const OpenFullScreenButton = styled("div")(
   ({ onClick, isFullScreen }: any) => ({
@@ -548,6 +548,7 @@ const Index: React.FC<IProps> = () => {
               viewLayers={activeRealityMap}
               isFullScreenActive={isFullScreenActive}
               layersUpdated={layersUpdated}
+              isFullScreen={isFullScreen}
             ></GenericViewer>
           )
         );
