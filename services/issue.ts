@@ -1,5 +1,5 @@
-import instance from './axiosInstance';
-import authHeader from './auth-header';
+import instance from "./axiosInstance";
+import authHeader from "./auth-header";
 export const createIssue = (projectId: string, issueObj: object) => {
   return instance
     .post(

@@ -90,7 +90,7 @@ const CustomTagSuggestion = (props: any) => {
           <TextField
             {...params}
             variant="outlined"
-            label="filterSelectedOptions"
+            // label="filterSelectedOptions"
             placeholder="Add tags separated by commas"
             // onKeyDown={(e: any) => {
             //   if (e.key === "Enter" && (e.target as HTMLInputElement).value) {

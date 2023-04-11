@@ -59,27 +59,27 @@ const UploadedImagesList = ({
         })
       );
     } else {
-          setFormData((prev: any) =>
-            prev.map((item: any) => {
-              if (item.id === "file-upload") {
-                return {
-                  ...item,
-                  selectedFile: item.selectedFile.filter(
-                    (file: any) => file.name !== eachSelectedFile?.name
-                  ),
-                };
-              }
-              return item;
-            })
-          );
+      setFormData((prev: any) =>
+        prev.map((item: any) => {
+          if (item.id === "file-upload") {
+            return {
+              ...item,
+              selectedFile: item.selectedFile.filter(
+                (file: any) => file.name !== eachSelectedFile?.name
+              ),
+            };
+          }
+          return item;
+        })
+      );
     }
   };
   return formData && formData.length
     ? formData
         .filter((item: any) => item.id === "file-upload")[0]
-        ?.selectedFile?.map((eachSelectedFile: any) => {
+        ?.selectedFile?.map((eachSelectedFile: any, index: number) => {
           return (
-            <AttachedImageDiv className={`detailsImageDiv`}>
+            <AttachedImageDiv className={`detailsImageDiv`} key={index}>
               {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
               <AttachedImageTitle>{eachSelectedFile?.name}</AttachedImageTitle>
 
