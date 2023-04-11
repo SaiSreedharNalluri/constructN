@@ -5,8 +5,6 @@ import hidePasswordImage from '../../public/icons/hide-password.svg';
 import Image from 'next/image';
 import * as Yup from 'yup';
 import InputPassword from '../core/Input/inputPassword';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { changePassword } from '../../services/userAuth';
 import { toast } from 'react-toastify';
 
@@ -19,12 +17,16 @@ const ChangePassword: React.FC = () => {
   const validationSchema = Yup.object().shape({
     currentPassword: Yup.string().required('Current password is required'),
     new_password: Yup.string()
-      .required('New Password is required')
+      .required('Password is required')
       .min(8, 'Minimum 8 characters required')
       .matches(/[0-9]/, 'Password requires a number')
       .matches(/[a-z]/, 'Password requires a lowercase letter')
       .matches(/[A-Z]/, 'Password requires an uppercase letter')
-      .matches(/[^\w]/, 'Password requires a symbol'),
+      .matches(/[^\w\s]/, 'Password requires a symbol')
+      .matches(
+        /^[^\s].*[^\s]$/,
+        'Spaces are not allowed at the beginning, end of the password'
+      ),
     confirmPassword: Yup.string()
       .required('Confirm password is required')
       .oneOf([Yup.ref('new_password'), null], 'Passwords must match'),
@@ -71,7 +73,7 @@ const ChangePassword: React.FC = () => {
       <div className="mt-3 flex">
         <h1 className="font-bold">ChangePassword</h1>
         <button
-          className="ml-2 p-2 w-1/12 bg-blue-500 hover:bg-gray-400  rounded-md"
+          className="ml-2 p-2 w-1/12 bg-gray-500 hover:bg-gray-400   rounded-md"
           onClick={() => {
             setShow(true);
           }}
@@ -80,9 +82,9 @@ const ChangePassword: React.FC = () => {
         </button>
       </div>
       {show && (
-        <div className="w-full">
-          <div className=" absolute w-full top-0 bg-opacity-50 px-5 h-full 2xl:w-full xl:w-1/3 lg:w-1/4 md:w-1/2 sm:w-1/2   place-items-center ">
-            <div className="grid grid-cols-1 gap-4 border my-48   border-solid place-content-center border-gray-500 rounded-3xl ">
+        <div>
+          <div>
+            <div>
               <h2 className="text-center text-xl font-bold">Change Password</h2>
               <Formik
                 initialValues={initialValues}
@@ -107,7 +109,7 @@ const ChangePassword: React.FC = () => {
                     <ErrorMessage
                       name="currentPassword"
                       component="div"
-                      className="alert alert-danger"
+                      className="alert alert-danger text-red-600"
                     />
                   </div>
                   <div className="relative">
@@ -131,7 +133,7 @@ const ChangePassword: React.FC = () => {
                     <ErrorMessage
                       name="new_password"
                       component="div"
-                      className="alert alert-danger"
+                      className="alert alert-danger  text-red-600"
                     />
                   </div>
 

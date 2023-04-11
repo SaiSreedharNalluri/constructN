@@ -16,4 +16,6 @@ export interface SelectLayerProps {
   optionsList: any;
   onSelect: any;
   selectedLayersList?: string[];
+  setActiveRealityMap?: any;
+  layersUpdated?: boolean;
 }

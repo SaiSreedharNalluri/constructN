@@ -247,6 +247,10 @@ export const StyledMenu = styled(MenuItem)({
   padding: 0,
   height: "38px",
   fontSize: "14px",
+  lineHeight: "20px",
+  color: "#101F4C",
+  fontFamily: "Open Sans",
+  fontWeight: "400"
 });
 
 

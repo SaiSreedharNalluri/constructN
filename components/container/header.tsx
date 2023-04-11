@@ -10,7 +10,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { getCookie, removeCookies } from "cookies-next";
 import DesignRealitySwitch from "./designRealitySwitch";
-
+import { IUser } from "../../models/IUser";
 interface IProps {
   // showDesignRealitySwitch?:boolean;
   // isDesignView?:boolean;
@@ -27,22 +27,14 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
   // }
   const router = useRouter();
   const headerRef: any = React.useRef();
-  let [name, setName] = useState<string>("");
-  let [eMail, setEMail] = useState<string>("");
-  let [avatar, setAvatar] = useState<string>("");
+  let [user, setUser] = useState<IUser>();
   const [breadCrumbString, setBreadCrumbString] = useState(breadCrumb || "");
   useEffect(() => {
     const userObj: any = getCookie("user");
     let user = null;
     if (userObj) user = JSON.parse(userObj);
     if (user?.fullName) {
-      setName(user.fullName);
-    }
-    if (user?.email) {
-      setEMail(user.email);
-    }
-    if (user?.avatar) {
-      setAvatar(user.avatar);
+      setUser(user);
     }
   }, [router.query.projectId, router.isReady]);
 
@@ -84,12 +76,11 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
               <img
                 onClick={goToProjectsList}
                 className=" cursor-pointer h-6"
-                src="https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2Fs3.amazonaws.com%2Fappforest_uf%2Ff1628494605280x954459828257958600%2FArtboard%25201%2520copy%25202%25404x.png?w=512&h=115&auto=compress&fit=crop&dpr=1.25"
+                src="https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp"
                 alt=""
               ></img>
             </div>
             <div className="flex-auto text-sm p-2">{breadCrumbString}</div>
-
             <div className="flex ">
               {/* <div className={`mt-2 mr-2 mb-2 ${showDesignRealitySwitch?'visible':'hidden'}`}>
               <DesignRealitySwitch toggleDesignType={toggleDesignType} designState={isDesignView?true:false}></DesignRealitySwitch>
@@ -108,10 +99,13 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
               >
                 <div className="w-6 h-6 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 border-gray-900">
                   <Image
-                    src={avatar}
+                    src={
+                      user && user.avatar
+                        ? user.avatar
+                        : "https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/user_icon_def_01.png"
+                    }
                     alt=""
                     className={`w-full h-full cursor-pointer object-cover `}
-                    title={name}
                     height={1920}
                     width={1080}
                   />
@@ -126,17 +120,24 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
                         <div className="w-11 h-11 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 border-gray-900">
                           {/* <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> */}
                           <Image
-                            src={avatar}
+                            src={
+                              user && user.avatar
+                                ? user.avatar
+                                : "https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/user_icon_def_01.png"
+                            }
                             alt=""
                             className={`w-full h-full cursor-pointer object-cover `}
-                            title={name}
                             height={1920}
                             width={1080}
                             onClick={() => router.push(`/user-account`)}
                           />
                         </div>
-                        <div className="text-base font-bold">{name}</div>
-                        <div className="text-xs italic font-thin">{eMail}</div>
+                        <div className="text-base font-bold">
+                          {user?.fullName}
+                        </div>
+                        <div className="text-xs italic font-thin">
+                          {user?.email}
+                        </div>
                         <div
                           className="cursor-pointer font-bold"
                           onClick={() => router.push(`/user-account`)}
