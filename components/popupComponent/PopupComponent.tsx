@@ -119,7 +119,9 @@ const PopupComponent = (props: PopupComponentProps) => {
           dividers
           style={{ borderBottom: 0, padding: "30px", paddingBottom: "22px" }}
         >
-          <TextComponent data-testid="popup-message">{modalmessage}</TextComponent>
+          <TextComponent data-testid="popup-message">
+            {modalmessage}
+          </TextComponent>
         </DialogContent>
         <DialogActions sx={{ padding: 0 }}>
           <ButtonDiv>
@@ -135,6 +137,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 marginBottom: "22px",
                 fontFamily: "Open Sans",
               }}
+              data-testid="closePopup"
             >
               {SecondaryButtonlabel}
             </Button>
@@ -152,7 +155,8 @@ const PopupComponent = (props: PopupComponentProps) => {
                 fontFamily: "Open Sans",
                 fontSize: "16px",
               }}
-              data-testid="delete-popup-button"
+              data-testid="closeWindow"
+              // data-testid="delete-popup-button"
             >
               {primaryButtonLabel}
             </Button>

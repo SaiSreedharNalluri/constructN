@@ -58,9 +58,9 @@ const CustomButton = (props: any) => {
     return (
       <div>
         <OulinedButton
-          data-testid={dataTestId}
           variant="outlined"
           onClick={() => formHandler(label)}
+          data-testid={dataTestId}
         >
           {label}
         </OulinedButton>

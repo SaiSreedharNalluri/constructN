@@ -58,7 +58,7 @@ const RedLabel = styled.span`
 const GreyLabel = styled.span`
   color: grey;
 `;
-const CustomFileInput = ({ handleFileUpload, data }: any) => {
+const CustomFileInput = ({ handleFileUpload, data, dataTestId }: any) => {
   const inputRef = useRef<any>(null);
   const handleFileChange = (event: any) => {
     handleFileUpload(event);
@@ -72,7 +72,7 @@ const CustomFileInput = ({ handleFileUpload, data }: any) => {
 
   return (
     <>
-      <FileUploadContainer onClick={handleClick}>
+      <FileUploadContainer onClick={handleClick} >
         <UploadImage />
         <UploadLabelContainer>
           <LabelArea>
@@ -85,6 +85,7 @@ const CustomFileInput = ({ handleFileUpload, data }: any) => {
             onChange={handleFileChange}
             ref={inputRef}
             value={data.defaultValue}
+            data-testid={dataTestId}
           />
         </UploadLabelContainer>
       </FileUploadContainer>
