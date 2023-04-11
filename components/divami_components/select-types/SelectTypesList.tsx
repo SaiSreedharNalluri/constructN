@@ -37,22 +37,35 @@ const SelectTypesList = ({
     "Layout Drawings",
     "Site Plan Drawings",
   ];
-  const handleSearch = (event: {
-    target: { value: SetStateAction<string> };
-  }) => {
-    setSearchTerm(event.target.value);
-    console.log();
-    if (String(event.target.value)?.length) {
-      const searchedList = Object.keys(optionsList).filter((item: any) =>
-        item.toLowerCase().includes(String(event.target.value)?.toLowerCase())
-      );
-      console.log(searchedList);
-      setList(searchedList);
-    } else {
-      setList(Object.keys(optionsList));
-    }
-  };
+  // const handleSearch = (event: {
+  //   target: { value: SetStateAction<string> };
+  // }) => {
+  //   setSearchTerm(event.target.value);
+  //   console.log();
+  //   if (String(event.target.value)?.length) {
+  //     const searchedList = Object.keys(optionsList).filter((item: any) =>
+  //       item.toLowerCase().includes(String(event.target.value)?.toLowerCase())
+  //     );
+  //     console.log(searchedList);
+  //     setList(searchedList);
+  //   } else {
+  //     setList(Object.keys(optionsList));
+  //   }
+  // };
 
+  console.log("optionsList", optionsList);
+
+  const onSearchChange = (event: any) => {
+    let parentList = [...optionsList];
+    console.log("parentList", parentList);
+    const searchFieldString = event.target.value.toLocaleLowerCase();
+    // console.log("searchFieldString", searchFieldString);
+    let newObj = parentList.filter((val: any) => {
+      return val.toLocaleLowerCase().includes(searchFieldString);
+    });
+    // console.log("newobjj", newObj);
+    setList([...newObj]);
+  };
   useEffect(() => {
     // if (Object.keys(optionsList)?.length) {
     //   setList(Object.keys(optionsList));
@@ -80,8 +93,11 @@ const SelectTypesList = ({
           <CustomSearchField
             placeholder="Search"
             variant="outlined"
-            value={searchTerm}
-            onChange={handleSearch}
+            // value={searchTerm}
+            // onChange={handleSearch}
+            onChange={(e: any) => {
+              onSearchChange(e);
+            }}
             InputLabelProps={{ shrink: false }}
             InputProps={{
               startAdornment: (

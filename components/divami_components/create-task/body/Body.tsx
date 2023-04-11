@@ -1,6 +1,8 @@
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
+import Moment from "moment";
+
 // import CustomLabel from '../../Common/custom-label/CustomLabel'
 // import FormWrapper from '../../Common/form-wrapper/FormWrapper'
 import {
@@ -59,7 +61,8 @@ const Body = ({
   validate,
   setIsValidate,
   tagsList,
-  setCanBeDisabled
+  setCanBeDisabled,
+  deleteTheAttachment,
 }: any) => {
   console.log(editData, "editData");
   const [formState, setFormState] = useState({ selectedValue: "" });
@@ -130,17 +133,20 @@ const Body = ({
 
   useEffect(() => {
     if (projectUsers.length && taskPriorities.length && taskTypes.length) {
-      console.log(editData, "editdata", formConfig, "formconfig");
+      // console.log(editData, "editdata", formConfig, "formconfig");
       if (editData) {
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {
             if (item.id === "title") {
+              console.log("itemitem",item)
               return {
                 ...item,
-                defaultValue: editData.title || "",
+                defaultValue: editData?.title || "",
               };
             }
             if (item.id === "tasks") {
+              console.log("ssdsditem", item);
+
               return {
                 ...item,
                 options: taskTypes?.map((eachItem: any) => {
@@ -255,6 +261,7 @@ const Body = ({
         setFormConfig((prev: any) => {
           return prev.map((item: any) => {
             if (item.id === "tasks") {
+              console.log("ssdsditem", item);
               return {
                 ...item,
                 options: taskTypes?.map((eachItem: any) => {
@@ -265,9 +272,14 @@ const Body = ({
                     selected: false,
                   };
                 }),
+                defaultValue: item?.options[0]?.label || "Transmittals",
               };
             }
             if (item.id === "taskPriority") {
+              const hasLowValue = item?.options.some(
+                (cont: any) => cont.value === "Low"
+              );
+              console.log("hasLowValue", hasLowValue);
               return {
                 ...item,
                 options: taskPriorities?.map((eachItem: any) => {
@@ -278,6 +290,7 @@ const Body = ({
                     selected: false,
                   };
                 }),
+                defaultValue: hasLowValue ? "Low" : item?.options[0]?.label,
               };
             }
             if (item.id === "assignedTo") {
@@ -289,6 +302,24 @@ const Body = ({
                     label: eachUser?.user?.fullName,
                     value: eachUser?.user?._id,
                   };
+                }),
+              };
+            }
+            if (item.id === "dates") {
+              return {
+                ...item,
+                fields: item.fields.map((each: any) => {
+                  if (each.id == "start-date") {
+                    return {
+                      ...each,
+                      defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
+                    };
+                  } else {
+                    return {
+                      ...each,
+                      defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
+                    };
+                  }
                 }),
               };
             }
@@ -311,10 +342,12 @@ const Body = ({
     let count = 0;
     formConfig.forEach((item: any) => {
       if (item.isError) {
-        count++
+        count++;
       }
     });
-    if (count === 0) { setCanBeDisabled(true) }
+    // if (count === 0) {
+    //   setCanBeDisabled(true);
+    // }
   }, [formConfig]);
 
   useEffect(() => {
@@ -333,7 +366,12 @@ const Body = ({
           validate={validate}
           setCanBeDisabled={setCanBeDisabled}
         />
-        <UploadedImagesList formData={formData} />
+        <UploadedImagesList
+          formData={formData}
+          deleteTheAttachment={deleteTheAttachment}
+          setFormData={setFormData}
+          formConfig={formConfig}
+        />
       </FormElementContainer>
       {/* <Box sx={{ marginTop: '15px' }}>
         <CustomLabel label={'Select the Type of Task'} />

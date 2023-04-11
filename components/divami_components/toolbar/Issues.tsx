@@ -85,6 +85,7 @@ const Issues = ({
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   const [selectedIssue, setSelectedIssue] = useState({});
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
+  const [enableSubmit, setEnableSubmit] = useState(true);
 
   useEffect(() => {
     setMyProject(currentProject);
@@ -111,7 +112,9 @@ const Issues = ({
   };
 
   const handleCreateTask = (formData: any) => {
-    clickTaskSubmit(formData);
+    if (enableSubmit) {
+      clickTaskSubmit(formData);
+    }
   };
 
   const clickTaskSubmit = async (values: any) => {
@@ -183,19 +186,25 @@ const Issues = ({
     delete data["id"];
     formData.append("jreq", JSON.stringify(data));
     const projectId = values.filter((item: any) => item.projectId)[0].projectId;
-    if (data.title && data.type && data.priority) {
+    if (data.title && data.type && data.priority && data.description) {
+      setEnableSubmit(false);
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
           if (response.success === true) {
             toast.success(" Issue Created Successfully");
+            setEnableSubmit(false);
             issueSubmitFn(response.result);
           } else {
             toast(`Something went wrong`);
+            setEnableSubmit(true);
           }
         })
         .catch((error) => {
           toast(`Something went wrong`);
+          setEnableSubmit(true);
         });
+    } else {
+      setEnableSubmit(true);
     }
   };
   const onCancelCreate = () => {
@@ -218,6 +227,7 @@ const Issues = ({
     issueMenuClicked(issueMenuInstance);
     closeIssueCreate();
     issueSubmit(formdata);
+    setEnableSubmit(true);
   };
   const openIssueCreateFn = () => {
     issueMenuInstance.toolAction = "issueCreate";
@@ -242,6 +252,8 @@ const Issues = ({
 
   return (
     <>
+      {/* <DownloadTable /> */}
+      {/* <PrintPage /> */}
       <IssueBox>
         <IssueTitle>Issues:</IssueTitle>
 
@@ -346,6 +358,7 @@ const Issues = ({
             closeIssueCreate={closeIssueCreate}
             issueStatusList={issueStatusList}
             onCancelCreate={onCancelCreate}
+            deleteTheAttachment={deleteTheAttachment}
           />
         </CustomDrawer>
       )}
@@ -368,6 +381,7 @@ const Issues = ({
             currentSnapshot={currentSnapshot}
             contextInfo={contextInfo}
             setIssueList={setIssueList}
+            deleteTheAttachment={deleteTheAttachment}
           />
         </Drawer>
       )}

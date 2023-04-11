@@ -14,17 +14,20 @@ import {
   TimeLineStyleContainer,
 } from "./TimeLineComponentStyles";
 import dayjs from "dayjs";
+import moment from "moment";
 
 interface IProps {
   currentSnapshot: ISnapshot;
   snapshotList: ISnapshot[];
   snapshotHandler: (snapshotData: ISnapshot) => void;
+  isFullScreen?: boolean;
 }
 
 const TimeLineComponent: React.FC<IProps> = ({
   currentSnapshot,
   snapshotList,
   snapshotHandler,
+  isFullScreen = false,
 }) => {
   const [bottomNav, setBottomNav] = useState(false);
   const [page, setPage] = useState(2);
@@ -32,6 +35,16 @@ const TimeLineComponent: React.FC<IProps> = ({
   const [newDate, setNewDate] = useState("");
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
+  };
+
+  const handleDateChange = (event: any) => {
+    const dateFormatted = moment(new Date(event))
+      .format("YYYY-MM-DD")
+      .toString();
+    const value = snapshotList.findIndex((item) => item?.date == dateFormatted);
+    if (value > -1) {
+      setPage(value + 1);
+    }
   };
 
   const toggleTimeline = () => {
@@ -76,7 +89,7 @@ const TimeLineComponent: React.FC<IProps> = ({
     sx: {
       "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-disabled,.Mui-selected)":
         {
-          backgroundColor: "rgba(0, 0, 0, 0.04)",
+          backgroundColor: "rgba(0, 0, 0, 0.20)",
         },
     },
   };
@@ -85,7 +98,7 @@ const TimeLineComponent: React.FC<IProps> = ({
   return (
     <>
       {snapshotList && snapshotList.length > 0 && (
-        <TimeLineStyleContainer>
+        <TimeLineStyleContainer isFullScreen={isFullScreen}>
           <SelectedTimeLine
             style={{ bottom: bottomNav ? "" : 0 }}
             onClick={toggleTimeline}
@@ -129,7 +142,7 @@ const TimeLineComponent: React.FC<IProps> = ({
                   </div>
                   {!isNaN(page) ? (
                     <CustomCalender
-                      onChange={(e: any) => handleChange(e, 1)}
+                      onChange={handleDateChange}
                       data-testid="calender"
                       shouldDisableDate={disableWeekends}
                       hideTextField

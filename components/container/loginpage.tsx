@@ -49,7 +49,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
             validationSchema={validationSchema}
             onSubmit={handleLogin}
           >
-            <Form className=" grid grid-cols-1 gap-y-4 px-4">
+            <Form method='POST' className=" grid grid-cols-1 gap-y-4 px-4">
               <div>
                 <InputText type="email" placeholderName="Email" name="email" />
                 <ErrorMessage

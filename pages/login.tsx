@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Loginpage from '../components/container/loginpage';
 import { login, ResendEmailVerificationLink } from '../services/userAuth';
 import { useRouter } from 'next/router';
-import { getCookie } from 'cookies-next';
+import { deleteCookie, getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
+import { Mixpanel } from '../components/analytics/mixpanel';
 import Modal from 'react-responsive-modal';
-import mixpanel from 'mixpanel-browser';
 const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
@@ -13,7 +13,7 @@ const Login: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [token, setToken] = useState('');
 
-  mixpanel.time_event('page_viewed');
+  Mixpanel.track('login_page_open');
 
   useEffect(() => {
     const userObj: any = getCookie('user');
@@ -21,10 +21,14 @@ const Login: React.FC = () => {
     if (router.isReady) {
       if (userObj) user = JSON.parse(userObj);
       if (user && user.token) {
-        if (router.query.sessionExpired === undefined) router.push('/projects');
+        if (router.query.sessionExpired === undefined) {
+          router.push('/projects');
+        } else {
+          deleteCookie('user');
+        }
       }
     }
-  }, [router.isReady]);
+  }, [router, router.isReady]);
   const handlerLogin = (formValue: { email: string; password: string }) => {
     const { email, password } = formValue;
     setMessage('');
@@ -34,11 +38,11 @@ const Login: React.FC = () => {
         if (response.success === true) {
           if (response?.result?.verified === true) {
             toast.success('user logged in sucessfully');
-            mixpanel.identify(email);
-            mixpanel.track('Login', {
+            Mixpanel.identify(email);
+            Mixpanel.track('login_success', {
               email: email,
             });
-            mixpanel.time_event('page_exit');
+            Mixpanel.track('login_page_close');
             router.push('/projects');
           } else {
             setOpen(true);
@@ -54,6 +58,10 @@ const Login: React.FC = () => {
             error.response.data.message) ||
           error.message ||
           error.toString();
+
+        Mixpanel.track('login_fail', {
+          email: email,
+        });
 
         setLoading(false);
         setMessage(resMessage);

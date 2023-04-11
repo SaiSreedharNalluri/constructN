@@ -27,7 +27,6 @@ import { deleteAttachment } from "../../../../services/attachments";
 import authHeader from "../../../../services/auth-header";
 import CollapsableMenu from "../../../../components/layout/collapsableMenu";
 import { getProjectDetails } from "../../../../services/project";
-import mixpanel from 'mixpanel-browser';
 import {
   faCompressArrowsAlt,
   faExpandArrowsAlt,
@@ -49,7 +48,6 @@ import {
   getIssuesStatus,
   getIssuesTypes,
 } from "../../../../services/issue";
-
 import {
   deleteTask,
   getTasksList,
@@ -57,9 +55,11 @@ import {
   getTaskStatus,
 } from "../../../../services/task";
 import { getDesignMap } from "../../../../utils/ViewerDataUtils";
+import enterfullscreenIcon from "../../../../public/divami_icons/enterfullscreen.svg";
+import exitfullscreenIcon from "../../../../public/divami_icons/exitfullscreen.svg";
 
 interface IProps {}
-const OpenMenuButton = styled("div")({
+const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
   border: "1px solid #C4C4C4",
   height: "32px",
@@ -69,12 +69,22 @@ const OpenMenuButton = styled("div")({
   justifyContent: "space-evenly",
   alignItems: "center",
   transform: "rotate(270deg)",
-  left: "22px",
+  left: isFullScreen ? "-40px" : "22px",
   bottom: "38px",
   cursor: "pointer",
   background: "#ffffff",
   fontFamily: "Open Sans",
-});
+})) as any;
+
+const OpenFullScreenButton = styled("div")(
+  ({ onClick, isFullScreen }: any) => ({
+    position: "fixed",
+    right: "40px",
+    bottom: "0px",
+    cursor: "pointer",
+  })
+);
+
 const CloseMenuButton = styled("div")({
   height: "38px",
   width: "31px",
@@ -144,7 +154,7 @@ const Index: React.FC<IProps> = () => {
   const [openIssueDetails, setOpenIssueDetails] = useState(false);
   const [openTaskDetails, setOpenTaskDetails] = useState(false);
   const [breadCrumbsData, setBreadCrumbsData] = useState<any>([]);
-
+  const [isFullScreen, setIsFullScreen] = useState(false);
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
@@ -511,7 +521,7 @@ const Index: React.FC<IProps> = () => {
       types.push(key);
     });
     setDesignAndRealityMaps(types);
-  }, [activeRealityMap, designMap, snapshot?._id]);
+  }, [activeRealityMap, designMap]);
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
   };
@@ -538,6 +548,7 @@ const Index: React.FC<IProps> = () => {
               viewLayers={activeRealityMap}
               isFullScreenActive={isFullScreenActive}
               layersUpdated={layersUpdated}
+              isFullScreen={isFullScreen}
             ></GenericViewer>
           )
         );
@@ -708,15 +719,31 @@ const Index: React.FC<IProps> = () => {
   };
 
   useEffect(() => {
-    if (
-      currentViewMode === "Design" &&
-      designAndRealityMaps.length &&
-      currentViewType != "Plan Drawings" &&
-      currentViewType != "BIM"
-    ) {
-      if (selectedDesign) {
-        setViewType(selectedDesign);
-      } else {
+    if (currentViewMode === "Design" && designAndRealityMaps.length) {
+      if (currentViewType != "Plan Drawings" && currentViewType != "BIM") {
+        if (designAndRealityMaps.includes(selectedDesign)) {
+          setViewType(selectedDesign);
+        } else {
+          if (designAndRealityMaps.includes("Plan Drawings")) {
+            setViewType("Plan Drawings");
+            setSelectedDesign("Plan Drawings");
+          } else if (designAndRealityMaps.includes("BIM")) {
+            setViewType("BIM");
+            setSelectedDesign("BIM");
+          } else {
+            const val =
+              designMap && Object.keys(designMap)?.length
+                ? Object.keys(designMap)[0]
+                : "";
+            if (val) {
+              setViewType(val);
+              setSelectedDesign(val);
+            } else {
+              setViewMode("Reality");
+            }
+          }
+        }
+      } else if (!designAndRealityMaps.includes(currentViewType)) {
         if (designAndRealityMaps.includes("Plan Drawings")) {
           setViewType("Plan Drawings");
           setSelectedDesign("Plan Drawings");
@@ -736,16 +763,46 @@ const Index: React.FC<IProps> = () => {
           }
         }
       }
-    } else if (
-      currentViewMode === "Reality" &&
-      designAndRealityMaps.length &&
-      currentViewType != "pointCloud" &&
-      currentViewType != "orthoPhoto"
-    ) {
-      if (selectedReality) {
-        setViewType(selectedReality);
-      } else {
+    } else if (currentViewMode === "Reality" && designAndRealityMaps.length) {
+      if (currentViewType != "pointCloud" && currentViewType != "orthoPhoto") {
+        if (designAndRealityMaps.includes(selectedReality)) {
+          setViewType(selectedReality);
+        } else {
+          if (designAndRealityMaps.includes("pointCloud")) {
+            setViewType("pointCloud");
+            setSelectedReality("pointCloud");
+          } else if (designAndRealityMaps.includes("orthoPhoto")) {
+            setViewType("orthoPhoto");
+            setSelectedReality("orthoPhoto");
+          } else {
+            // setViewType(designAndRealityMaps[0]);
+            const arr =
+              activeRealityMap &&
+              activeRealityMap[
+                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+              ]?.realities?.length &&
+              activeRealityMap[
+                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+              ].realities![0].realityType?.length
+                ? activeRealityMap[
+                    `${
+                      Object.keys(
+                        activeRealityMap
+                      )[0] as keyof IActiveRealityMap
+                    }`
+                  ].realities![0].realityType
+                : [];
+            if (arr && arr.length) {
+              setViewType(arr[0]);
+              setSelectedReality(arr[0]);
+            } else {
+              setViewMode("Design");
+            }
+          }
+        }
+      } else if (!designAndRealityMaps.includes(currentViewType)) {
         if (designAndRealityMaps.includes("pointCloud")) {
+          console.log("comingjklj");
           setViewType("pointCloud");
           setSelectedReality("pointCloud");
         } else if (designAndRealityMaps.includes("orthoPhoto")) {
@@ -776,7 +833,7 @@ const Index: React.FC<IProps> = () => {
         }
       }
     }
-  }, [currentViewMode]);
+  }, [currentViewMode, designAndRealityMaps]);
 
   useEffect(() => {
     if (
@@ -786,10 +843,13 @@ const Index: React.FC<IProps> = () => {
     ) {
       if (selectedDesign !== currentViewType)
         setSelectedDesign(currentViewType);
+
+      toolClicked({ toolName: "viewType", toolAction: currentViewType });
     } else {
       console.log("assds", currentViewType);
-      if (selectedDesign !== currentViewType)
+      if (selectedReality !== currentViewType)
         setSelectedReality(currentViewType);
+      toolClicked({ toolName: "viewType", toolAction: currentViewType });
     }
   }, [currentViewType]);
   const getIssues = (structureId: string, isDownload?: boolean) => {
@@ -1246,7 +1306,7 @@ const Index: React.FC<IProps> = () => {
     deleteIssue(router.query.projectId as string, issueObj._id)
       .then((response) => {
         if (response.success === true) {
-          toast(response.message);
+          toast.success(response.message);
           _.remove(issueFilterList, { _id: issueObj._id });
           setIssueList(issueFilterList);
           if (callback) {
@@ -1390,121 +1450,105 @@ const Index: React.FC<IProps> = () => {
   const [isFullScreenActive, setFullScreenActive] = useState<boolean>(false);
 
   const r: any = useRef();
+
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullScreen(true);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+        setIsFullScreen(false);
+      }
+    }
+  };
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
-        <Header
-          toolClicked={toolClicked}
-          viewMode={currentViewMode}
-          showBreadcrumbs
-          breadCrumbData={breadCrumbsData}
-          handleBreadCrumbClick={handleBreadCrumbClick}
-        />
+        {!isFullScreen && (
+          <Header
+            toolClicked={toolClicked}
+            viewMode={currentViewMode}
+            showBreadcrumbs
+            breadCrumbData={breadCrumbsData}
+            handleBreadCrumbClick={handleBreadCrumbClick}
+          />
+        )}
+
         {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
+
       <div className="flex ">
-        <div ref={leftOverlayRef}>
-          {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
-          <SidePanelMenu onChangeData={onChangeData} />
-        </div>
-        <div>
-          {
-            <div
-              style={{ overflow: "hidden" }}
-              ref={leftRefContainer}
-              className={` ${
-                leftNav ? "visible" : "hidden"
-              }  absolute z-10 border border-gray-300 `}
-            >
-              {/* <div>
-                <>
-                  {console.log(selected, "structureData")}
-                  <LeftOverLay
-                    getStructureData={getStructureData}
-                    handleNodeSelection={handleNodeSelection}
-                    handleNodeExpand={handleNodeExpand}
-                    selectedNodes={selected}
-                    expandedNodes={expanded}
-                    setHierarchy={setHierarchy}
-                    getStructure={(structureData) => {
-                      if (structure === undefined) {
-                        setStructure(
-                          getCurrentStructureFromStructureList(structureData)
-                        );
-
-                        // setStructure(structureData);
-                        getIssues(structureData._id);
-
-                        getTasks(structureData._id);
-                      }
-                    }}
-                  ></LeftOverLay>
-                </>
-              </div> */}
-            </div>
-          }
-        </div>
-        <div id="viewer">{renderSwitch(viewerTypeState)}</div>
-        {hierarchy ? (
-          <div
-            style={{
-              background: "#FFFFFF",
-              border: "1px solid #BDBDBD",
-              boxShadow: "5px 4px 8px rgb(200 200 200 / 10%)",
-              // transform: "matrix(-1, 0, 0, 1, 0, 0)",
-            }}
-          >
-            <CloseMenuButton>
-              <Image
-                src={ChevronLeftIcon}
-                width={17}
-                height={17}
-                alt="Arrow"
-                onClick={() => {
-                  setHierarchy(false);
-                }}
-              />
-            </CloseMenuButton>
-            <div>
-              {
-                <div
-                  style={{ overflow: "hidden" }}
-                  ref={leftRefContainer}
-                  className={`${
-                    hierarchy ? "visible" : "hidden"
-                  }  absolute z-10 border  white-bg projHier `}
-                >
-                  <div>
-                    <LeftOverLay
-                      handleNodeSelection={handleNodeSelection}
-                      selectedNodes={structure?._id}
-                      handleNodeExpand={handleNodeExpand}
-                      expandedNodes={expanded}
-                      getStructureData={getStructureData}
-                      setHierarchy={setHierarchy}
-                      getStructure={(structureData) => {
-                        // if (structure === undefined) {
-                        //   setStructure(
-                        //     getCurrentStructureFromStructureList(structureData)
-                        //   );
-                        //   getIssues(structureData._id);
-                        //   getTasks(structureData._id);
-                        // }
-                      }}
-                      treeData={state}
-                    ></LeftOverLay>
-                  </div>
-                </div>
-              }
-            </div>
+        {!isFullScreen && (
+          <div ref={leftOverlayRef}>
+            {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
+            <SidePanelMenu onChangeData={onChangeData} />
           </div>
-        ) : (
-          <div>
-            {
+        )}
+
+        {/* <FullScreen handle={handle}> */}
+        <div id="test_full_screen">
+          <div id="viewer">{renderSwitch(viewerTypeState)}</div>
+          {hierarchy ? (
+            <div
+              style={{
+                background: "#FFFFFF",
+                border: "1px solid #BDBDBD",
+                boxShadow: "5px 4px 8px rgb(200 200 200 / 10%)",
+                // transform: "matrix(-1, 0, 0, 1, 0, 0)",
+              }}
+            >
+              <CloseMenuButton>
+                <Image
+                  src={ChevronLeftIcon}
+                  width={17}
+                  height={17}
+                  alt="Arrow"
+                  onClick={() => {
+                    setHierarchy(false);
+                  }}
+                />
+              </CloseMenuButton>
+              <div>
+                {
+                  <div
+                    style={{ overflow: "hidden" }}
+                    ref={leftRefContainer}
+                    className={`${
+                      hierarchy ? "visible" : "hidden"
+                    }  absolute z-10 border  white-bg projHier `}
+                  >
+                    <div>
+                      <LeftOverLay
+                        handleNodeSelection={handleNodeSelection}
+                        selectedNodes={structure?._id}
+                        handleNodeExpand={handleNodeExpand}
+                        expandedNodes={expanded}
+                        getStructureData={getStructureData}
+                        setHierarchy={setHierarchy}
+                        getStructure={(structureData) => {
+                          // if (structure === undefined) {
+                          //   setStructure(
+                          //     getCurrentStructureFromStructureList(structureData)
+                          //   );
+                          //   getIssues(structureData._id);
+                          //   getTasks(structureData._id);
+                          // }
+                        }}
+                        treeData={state}
+                      ></LeftOverLay>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          ) : (
+            <div>
               <OpenMenuButton
                 onClick={() => {
                   setHierarchy(!hierarchy);
                 }}
+                isFullScreen={isFullScreen}
               >
                 <Image
                   src={ChevronRightIcon}
@@ -1515,17 +1559,25 @@ const Index: React.FC<IProps> = () => {
                 />
                 <div>Hierarchy</div>
               </OpenMenuButton>
-            }
-          </div>
-        )}
-
-        {/* <ReactFullscreen>
+              <OpenFullScreenButton>
+                <Image
+                  src={isFullScreen ? exitfullscreenIcon : enterfullscreenIcon}
+                  width={40}
+                  height={40}
+                  alt={""}
+                  // onClick={handle.enter}
+                  onClick={() => toggleFullScreen()}
+                />
+              </OpenFullScreenButton>
+            </div>
+          )}
+          {/* <ReactFullscreen>
     {({ ref=r, onRequest, onExit }) => (
       <div
         ref={ref}>
        <div id="viewer" >{renderSwitch(viewerTypeState)}</div> */}
 
-        {/* <div>
+          {/* <div>
             <FontAwesomeIcon
               className={`absolute  ${
                 rightNav && 'rotate-180'
@@ -1537,7 +1589,7 @@ const Index: React.FC<IProps> = () => {
             ></FontAwesomeIcon>
           </div> */}
 
-        {/* <div ref={bottomRefContainer}>
+          {/* <div ref={bottomRefContainer}>
           {viewerTypeState != 'map' ? (
             <p
               className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
@@ -1564,74 +1616,75 @@ const Index: React.FC<IProps> = () => {
              </div>
           </div>
         </div> */}
-        {/* {structure && snapshot && designMap && activeRealityMap && ( */}
-        <div ref={rightrefContainer}>
-          {/* <FontAwesomeIcon
+          {/* {structure && snapshot && designMap && activeRealityMap && ( */}
+          <div ref={rightrefContainer}>
+            {/* <FontAwesomeIcon
             className={`fixed  ${rightNav && "rotate-180"
               } text-lg text-blue-300  ${rightNav ? "right-9" : "right-0"
               }  top-46  cursor-pointer border rounded  p-1 bg-gray-400 z-10 text-white`}
             onClick={rightNavCollapse}
             icon={faLessThan}
           ></FontAwesomeIcon> */}
-          {/* <div className="toolbarcontainer"> */}
-          <div
-            ref={rightOverlayRef}
-            id="bg-color"
-            className={`fixed drop-shadow  toolbarWidth  ${"visible"} `}
-          >
-            <ToolBarMenuWrapper
-              issuesList={issuesList}
-              tasksList={tasksList}
-              toolClicked={toolClicked}
-              viewMode={currentViewMode}
-              handleOnFilter={handleOnIssueFilter}
-              currentProject={currentProjectId}
-              currentStructure={structure}
-              currentSnapshot={snapshot}
-              currentTypesList={designAndRealityMaps}
-              designMap={designMap}
-              currentLayersList={activeRealityMap}
-              closeFilterOverlay={closeFilterOverlay}
-              closeTaskFilterOverlay={closeTaskFilterOverlay}
-              handleOnTaskFilter={handleOnTaskFilter}
-              contextInfo={currentContext}
-              openCreateIssue={openCreateIssue}
-              openCreateTask={openCreateTask}
-              selectedLayersList={currentViewLayers}
-              deleteTheTask={deleteTheTask}
-              issuePriorityList={issuePriorityList}
-              issueStatusList={issueStatusList}
-              issueTypesList={issueTypesList}
-              taskFilterState={taskFilterState}
-              issueFilterState={issueFilterState}
-              closeIssueCreate={closeIssueCreate}
-              closeTaskCreate={closeTaskCreate}
-              deleteTheIssue={deleteTheIssue}
-              openIssueDetails={openIssueDetails}
-              openTaskDetails={openTaskDetails}
-              closeTaskDetails={closeTaskDetails}
-              closeIssueDetails={closeIssueDetails}
-              setIssueList={setIssueList}
-              getIssues={getIssues}
-              getTasks={getTasks}
-              handleOnIssueSort={handleOnIssueSort}
-              handleOnTasksSort={handleOnTasksSort}
-              issueSubmit={issueSubmit}
-              taskSubmit={taskSubmit}
-              selectedType={currentViewType}
-              deleteTheAttachment={deleteTheAttachment}
-              setActiveRealityMap={setActiveRealityMap}
-              setLayersUpdated={setLayersUpdated}
-              layersUpdated={layersUpdated}
-            />
+            {/* <div className="toolbarcontainer"> */}
+            <div
+              ref={rightOverlayRef}
+              id="bg-color"
+              className={`fixed drop-shadow  toolbarWidth  ${"visible"} `}
+            >
+              <ToolBarMenuWrapper
+                issuesList={issuesList}
+                tasksList={tasksList}
+                toolClicked={toolClicked}
+                viewMode={currentViewMode}
+                handleOnFilter={handleOnIssueFilter}
+                currentProject={currentProjectId}
+                currentStructure={structure}
+                currentSnapshot={snapshot}
+                currentTypesList={designAndRealityMaps}
+                designMap={designMap}
+                currentLayersList={activeRealityMap}
+                closeFilterOverlay={closeFilterOverlay}
+                closeTaskFilterOverlay={closeTaskFilterOverlay}
+                handleOnTaskFilter={handleOnTaskFilter}
+                contextInfo={currentContext}
+                openCreateIssue={openCreateIssue}
+                openCreateTask={openCreateTask}
+                selectedLayersList={currentViewLayers}
+                deleteTheTask={deleteTheTask}
+                issuePriorityList={issuePriorityList}
+                issueStatusList={issueStatusList}
+                issueTypesList={issueTypesList}
+                taskFilterState={taskFilterState}
+                issueFilterState={issueFilterState}
+                closeIssueCreate={closeIssueCreate}
+                closeTaskCreate={closeTaskCreate}
+                deleteTheIssue={deleteTheIssue}
+                openIssueDetails={openIssueDetails}
+                openTaskDetails={openTaskDetails}
+                closeTaskDetails={closeTaskDetails}
+                closeIssueDetails={closeIssueDetails}
+                setIssueList={setIssueList}
+                getIssues={getIssues}
+                getTasks={getTasks}
+                handleOnIssueSort={handleOnIssueSort}
+                handleOnTasksSort={handleOnTasksSort}
+                issueSubmit={issueSubmit}
+                taskSubmit={taskSubmit}
+                selectedType={currentViewType}
+                deleteTheAttachment={deleteTheAttachment}
+                setActiveRealityMap={setActiveRealityMap}
+                setLayersUpdated={setLayersUpdated}
+                layersUpdated={layersUpdated}
+                setViewType={setViewType}
+              />
 
-            {/* <CustomToaster /> */}
-            {/* </div> */}
-            {/* <RightFloatingMenu
+              {/* <CustomToaster /> */}
+              {/* </div> */}
+              {/* <RightFloatingMenu
               onClick={rightNavCollapse}
               icon={faLessThan}
             ></FontAwesomeIcon> */}
-            {/* <div
+              {/* <div
               ref={rightOverlayRef}
               id="bg-color"
               className={`${
@@ -1640,7 +1693,7 @@ const Index: React.FC<IProps> = () => {
                 rightNav ? "visible" : ""
               }  bg-gray-200 top-10  rounded-lg  inset-x-1/3 duration-300 z-10 overflow-y-hidden`}
             > */}
-            {/* <div  className='flex w-full '>
+              {/* <div  className='flex w-full '>
               <div className=' w-full'> 
               <RightFloatingMenu
                 issuesList={issuesList}
@@ -1666,7 +1719,7 @@ const Index: React.FC<IProps> = () => {
         )}
               </div>
              </div> */}
-            {/* <IssueCreate
+              {/* <IssueCreate
                 issueToolClicked={toolClicked}
                 handleIssueSubmit={issueSubmit}
                 visibility={openCreateIssue}
@@ -1699,10 +1752,13 @@ const Index: React.FC<IProps> = () => {
                 responseAttachmentData={responseAttachmentData}
                 deleteTheAttachment={deleteTheAttachment}
               ></IssueList>  */}
-            {/* </div> */}
+              {/* </div> */}
+            </div>
+            {/* )} */}
           </div>
-          {/* )} */}
         </div>
+        {/* </FullScreen> */}
+
         {/* )} */}
         {/* </ReactFullscreen> */}
       </div>

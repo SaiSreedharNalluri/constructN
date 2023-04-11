@@ -18,6 +18,8 @@ export const HotspotTitleDiv = styled("div")({
   fontSize: "12px",
 });
 
+export const ContainerDiv = styled("div")({});
+
 export const HotspotImageContainerDiv = styled("div")({
   display: "flex",
   alignItems: "center",
@@ -80,7 +82,9 @@ export const SectionToolBar = styled("div")((props: any) => ({
   fontWeight: "400",
   fontSize: "12px",
   lineHeight: "18px",
-  marginTop: "14px",
+  // marginTop: "14px",
+  marginTop: "10px",
+
   // width: props.viewMode === "Reality" ? "620px" : "772px",
   width: "fit-content",
   display: "block",
