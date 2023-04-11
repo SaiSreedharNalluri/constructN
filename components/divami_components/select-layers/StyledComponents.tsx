@@ -15,7 +15,7 @@ export const TreeViewContainer = styled("div")({
 export const TreeItemLabelContainer = styled(Box)({
   display: "flex",
   alignItems: "center",
-  justifyContent: "flex-start"
+  justifyContent: "flex-start",
 });
 
 export const TreeLabelContainer = styled(Box)({
@@ -42,7 +42,7 @@ export const StyledTreeView = styled(TreeView)({
     padding: "0",
     paddingRight: "10px",
     paddingLeft: "10px",
-    marginRight: "10px",
+    // marginRight: "10px",
     borderBottom: "1px solid #E7E7E7",
     "& .MuiTreeItem-label": {
       fontSize: "14px",
@@ -93,7 +93,7 @@ export const StyledTreeView = styled(TreeView)({
 export const SelectLayerContainer = styled(Box)((props: any) => ({
   display: props.openSelectLayer ? "" : "none",
   // width: "250px",
-  width: "237px",
+  // width: "237px",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
 
   fontFamily: "Open Sans",
@@ -133,9 +133,9 @@ export const HeaderLabel = styled(Typography)({
   fontWeight: "400",
   color: "#101F4C",
   fontFamily: "Open Sans",
-  '& .MuiTypography-root': {
-    color: "#101F4C"
-  }
+  "& .MuiTypography-root": {
+    color: "#101F4C",
+  },
 });
 
 export const CloseIcon = styled(Image)({

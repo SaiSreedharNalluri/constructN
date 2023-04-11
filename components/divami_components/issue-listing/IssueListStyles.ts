@@ -40,19 +40,6 @@ export const CloseIcon = styled(Image)({
   height: "12px",
 });
 
-export const MiniHeaderContainer = styled(Box)({
-  backgroundColor: "white",
-  // height: '51px',
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  width: "100%",
-  marginTop: "20px",
-  marginBottom: "24px",
-  // overflowY: "auto",
-  color: "#36415D",
-});
-
 // border-bottom: 1px solid #d9d9d9;
 
 export const MiniSymbolsContainer = styled(Box)({
@@ -205,8 +192,16 @@ export const StyledMenu = styled(MenuItem)({
   padding: 0,
   height: "38px",
   fontSize: "14px",
+  lineHeight: "20px",
+  color: "#101F4C",
+  fontFamily: "Open Sans",
+  fontWeight: "400",
 });
 
+export const MenuOptionLabel = styled(MenuItem)({
+  color: "#101F4C",
+  fontSize: "14px",
+});
 export const ErrorImageDiv = styled("div")({
   // position: "absolute",
   // top: "50%",
@@ -219,6 +214,26 @@ export const ErrorImageDiv = styled("div")({
   marginTop: "50px",
 
   // margin:"auto"
+});
+
+export const LoadMoreText = styled("div")({
+  fontFamily: "Open Sans",
+  fontWeight: 400,
+  fontSize: "16px",
+  lineHeight: "21.79px",
+  textAlign: "center",
+  color: "#FF843F",
+  cursor: "pointer",
+});
+
+export const FilterIndication = styled("span")({
+  height: "8px",
+  width: "8px",
+  backgroundColor: "#FF843F",
+  borderRadius: "50%",
+  display: "inline-block",
+  marginTop: "-16px",
+  marginLeft: "-6px",
 });
 
 export const ImageErrorIcon = styled(Image)({
@@ -297,6 +312,33 @@ interface ContainerProps {
   searchingOn: boolean;
 }
 
+interface ContainerHeaderProps {
+  searchingOn: boolean;
+}
+
 export const CustomBox = styled(Box)<ContainerProps>`
   margin-top: ${(props) => (props.searchingOn ? "10px" : "")};
 `;
+
+export const MiniHeaderContainer = styled(Box)<ContainerHeaderProps>`
+  margin-bottom: ${(props) => (props.searchingOn ? "24px" : "20px")};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+  color: #36415d;
+`;
+
+// export const MiniHeaderContainer = styled(Box)({
+//   backgroundColor: "white",
+//   // height: '51px',
+//   display: "flex",
+//   justifyContent: "center",
+//   alignItems: "center",
+//   width: "100%",
+//   marginTop: "20px",
+//   marginBottom: "24px",
+//   // overflowY: "auto",
+//   color: "#36415D",
+// });

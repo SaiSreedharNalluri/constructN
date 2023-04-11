@@ -72,7 +72,10 @@ const CustomFileInput = ({ handleFileUpload, data, dataTestId }: any) => {
 
   return (
     <>
-      <FileUploadContainer onClick={handleClick} data-testid={"file-upload-container"}>
+      <FileUploadContainer
+        onClick={handleClick}
+        data-testid={"file-upload-container"}
+      >
         <UploadImage />
         <UploadLabelContainer>
           <LabelArea>

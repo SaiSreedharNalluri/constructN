@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import styles from '../toolbar/toolbar.module.css'
 import Image from "next/image";
 import eyeOffIcon from "../../../public/public/divami_icons/eyeOffIcon.svg";
@@ -27,8 +27,16 @@ import {
 } from "./ToolBarStyles";
 import { styled } from "@mui/system";
 
-const CompareView = ({ rightMenuClickHandler, active }: any) => {
-  console.log(active, "compare view active");
+const CompareView = ({
+  rightMenuClickHandler,
+  active,
+  designMap,
+  selectedType = "",
+  setActive,
+}: any) => {
+  useEffect(() => {
+    setActive("hideCompare");
+  }, [selectedType]);
   return (
     <CompareViewBox>
       <CompareViewTitleDiv>Compare Views:</CompareViewTitleDiv>
@@ -47,24 +55,30 @@ const CompareView = ({ rightMenuClickHandler, active }: any) => {
             />{" "}
           </CompareIcon>
         </Tooltip>
-        <Tooltip title="Compare Design">
-          <DesignCompareViewIcon
-            id="compareDesign"
-            onClick={(e: any) => {
-              rightMenuClickHandler(e);
-            }}
-            active={active}
-          >
-            <Image
-              src={
-                active === "compareDesign" ? designCompare : designCompareLight
-              }
-              width={18}
-              height={18}
-              alt="Arrow"
-            />{" "}
-          </DesignCompareViewIcon>
-        </Tooltip>
+        {designMap && selectedType !== "orthoPhoto" ? (
+          <Tooltip title="Compare Design">
+            <DesignCompareViewIcon
+              id="compareDesign"
+              onClick={(e: any) => {
+                rightMenuClickHandler(e);
+              }}
+              active={active}
+            >
+              <Image
+                src={
+                  active === "compareDesign"
+                    ? designCompare
+                    : designCompareLight
+                }
+                width={18}
+                height={18}
+                alt="Arrow"
+              />{" "}
+            </DesignCompareViewIcon>
+          </Tooltip>
+        ) : (
+          <></>
+        )}
         <Tooltip title="Compare Reality">
           <RealityCompareViewIcon
             id="compareReality"

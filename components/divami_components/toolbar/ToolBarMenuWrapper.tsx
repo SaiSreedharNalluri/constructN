@@ -99,6 +99,11 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   taskSubmit,
   selectedType,
   deleteTheAttachment,
+  designMap,
+  setActiveRealityMap,
+  setLayersUpdated,
+  layersUpdated,
+  setViewType,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -114,40 +119,75 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   const [openSelectLayer, setOpenSelectLayer] = useState(false);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
-  const [myTypesList, setMyTypesList] = useState<IDesignMap>(currentTypesList);
+  const [myTypesList, setMyTypesList] = useState<string[]>(currentTypesList);
   const [myLayersList, setMyLayersList] =
     useState<IActiveRealityMap>(currentLayersList);
   let toolInstance: ITools = { toolName: "", toolAction: "" };
   useEffect(() => {
     setIViewMode(viewMode);
   }, [viewMode]);
-  useEffect(() => {
-    if (myTypesList && Object.keys(myTypesList)?.length) {
-      setSelectedTypeVal(Object.keys(myTypesList)[0]);
-    }
-  }, [myTypesList]);
+  // useEffect(() => {
+  //   if (myTypesList?.length) {
+  //     setSelectedTypeVal(selectedType);
+  //   }
+  // }, [myTypesList]);
   useEffect(() => {
     setSelectedTypeVal(selectedType);
   }, [selectedType]);
   const typeChange = (changeOb: any) => {
     setRighttNav(false);
-    toolInstance.toolName = "viewType";
-    toolInstance.toolAction = changeOb.target.value;
-    toolClicked(toolInstance);
-  };
-
-  const LayerChange = (changeOb: any, layerLabel: string) => {
-    if (changeOb.target.checked == true) {
-      toolInstance.toolName = "addViewLayer";
-      toolInstance.toolAction = layerLabel;
-    } else {
-      toolInstance.toolName = "removeViewLayer";
-      toolInstance.toolAction = layerLabel;
+    // toolInstance.toolName = "viewType";
+    // toolInstance.toolAction = changeOb.target.value;
+    // toolClicked(toolInstance);
+    if (setViewType) {
+      setViewType(changeOb.target.value);
     }
-
-    toolClicked(toolInstance);
   };
+  const LayerChange = (changeOb: any, layerLabel: string, node: any) => {
+    let obj: any = myLayersList;
 
+    for (const key in obj) {
+      if (obj[key]?.name == node.name) {
+        obj[key] = {
+          ...obj[key],
+          isSelected: !obj[key].isSelected,
+          children: obj[key].children?.length
+            ? obj[key]?.children.map((each: any) => {
+                return {
+                  ...each,
+                  isSelected: !obj[key].isSelected,
+                };
+              })
+            : [],
+        };
+      } else if (obj[key].children?.length) {
+        obj[key] = {
+          ...obj[key],
+          children: obj[key]?.children.map((each: any) => {
+            if (each.name === node.name) {
+              return {
+                ...each,
+                isSelected: !each.isSelected,
+              };
+            } else {
+              return each;
+            }
+          }),
+        };
+      }
+    }
+    // if (changeOb.target.checked == true) {
+    //   toolInstance.toolName = "addViewLayer";
+    //   toolInstance.toolAction = layerLabel;
+    // } else {
+    //   toolInstance.toolName = "removeViewLayer";
+    //   toolInstance.toolAction = layerLabel;
+    // }
+
+    // toolClicked(toolInstance);
+    setActiveRealityMap(obj);
+    setLayersUpdated(!layersUpdated);
+  };
   useEffect(() => {
     setMyProject(currentProject);
     setMyStructure(currentStructure);
@@ -161,6 +201,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     currentLayersList,
     currentTypesList,
   ]);
+
   const rightMenuClickHandler = (e: any) => {
     console.log(
       e.currentTarget.id,
@@ -238,7 +279,15 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     )
       setRighttNav(!rightNav);
   };
-
+  const hotspotMenuClicked = (localTool: ITools) => {
+    toolClicked(localTool);
+    if (
+      localTool.toolAction === "hotspotCreateClose" ||
+      localTool.toolAction === "hotspotViewClose" ||
+      localTool.toolAction === "hotspotView"
+    )
+      setRighttNav(!rightNav);
+  };
   return (
     <SectionToolBar viewMode={viewMode}>
       <ToolbarContainer>
@@ -299,6 +348,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
             setOpenSelectLayer(!openSelectLayer);
           }}
           selectedLayersList={selectedLayersList}
+          setActiveRealityMap={setActiveRealityMap}
+          layersUpdated={layersUpdated}
         />
         <Issues
           issuesList={issuesList}
@@ -352,6 +403,9 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           <CompareView
             rightMenuClickHandler={rightMenuClickHandler}
             active={active}
+            designMap={designMap}
+            selectedType={selectedType}
+            setActive={setActive}
           />
         ) : (
           <></>

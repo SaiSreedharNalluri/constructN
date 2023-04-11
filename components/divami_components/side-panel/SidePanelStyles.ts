@@ -12,7 +12,7 @@ export const SideMenuContainer = styled("div")({
   height: "98.5vh",
   transition: "0.3s",
   overflow: "hidden",
-  paddingTop: "35px",
+  // paddingTop: "35px",
   boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.3)",
 });
 
