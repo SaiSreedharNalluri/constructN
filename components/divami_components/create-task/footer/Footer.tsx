@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // import CustomButton from '../../Common/custom-button/CustomButton'
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
@@ -11,16 +11,27 @@ const ButtonsContainer = styled(Box)({
   alignItems: "center",
 });
 
-const Footer = ({ formHandler, editData }: any) => (
-  <ButtonsContainer>
-    <CustomButton type="outlined" label="Cancel" formHandler={formHandler} dataTestId="CancelBtn" />
-    <CustomButton
-      type="contained"
-      label={editData ? "Update" : "Create"}
-      formHandler={formHandler}
-      dataTestId="createButton"
-    />
-  </ButtonsContainer>
-);
+const Footer = ({ formHandler, editData, canBeDisabled }: any) => {
+  const [buttonClicked, setButtonClicked] = useState(false);
+  return (
+    <ButtonsContainer>
+      <CustomButton
+        type="outlined"
+        label="Cancel"
+        formHandler={formHandler}
+        dataTestId="CancelBtn"
+      />
+      <CustomButton
+        type={canBeDisabled && buttonClicked ? "disabled" : "contained"}
+        label={editData ? "Update" : "Create"}
+        formHandler={formHandler}
+        setButtonClicked={setButtonClicked}
+        // dataTestId="createButton"
+
+        dataTestId={"create-issue-button"}
+      />
+    </ButtonsContainer>
+  );
+};
 
 export default Footer;

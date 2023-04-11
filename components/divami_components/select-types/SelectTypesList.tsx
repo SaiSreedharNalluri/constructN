@@ -3,6 +3,7 @@ import { Divider, InputAdornment, ListItemText } from "@mui/material";
 import { SetStateAction, useEffect, useState } from "react";
 import { SelectLayerContainer } from "../select-layers/StyledComponents";
 import { SelectLayerProps } from "../select-layers/Type";
+import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import {
   CloseIconStyled,
   CustomSearchField,
@@ -13,6 +14,7 @@ import {
   ListItemStyled,
   ListStyled,
 } from "./StyledComponents";
+import { CloseIcon } from "../select-layers/StyledComponents";
 import Image from "next/image";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 
@@ -35,26 +37,40 @@ const SelectTypesList = ({
     "Layout Drawings",
     "Site Plan Drawings",
   ];
-  const handleSearch = (event: {
-    target: { value: SetStateAction<string> };
-  }) => {
-    setSearchTerm(event.target.value);
-    console.log();
-    if (String(event.target.value)?.length) {
-      const searchedList = Object.keys(optionsList).filter((item: any) =>
-        item.toLowerCase().includes(String(event.target.value)?.toLowerCase())
-      );
-      console.log(searchedList);
-      setList(searchedList);
-    } else {
-      setList(Object.keys(optionsList));
-    }
-  };
+  // const handleSearch = (event: {
+  //   target: { value: SetStateAction<string> };
+  // }) => {
+  //   setSearchTerm(event.target.value);
+  //   console.log();
+  //   if (String(event.target.value)?.length) {
+  //     const searchedList = Object.keys(optionsList).filter((item: any) =>
+  //       item.toLowerCase().includes(String(event.target.value)?.toLowerCase())
+  //     );
+  //     console.log(searchedList);
+  //     setList(searchedList);
+  //   } else {
+  //     setList(Object.keys(optionsList));
+  //   }
+  // };
 
+  console.log("optionsList", optionsList);
+
+  const onSearchChange = (event: any) => {
+    let parentList = [...optionsList];
+    console.log("parentList", parentList);
+    const searchFieldString = event.target.value.toLocaleLowerCase();
+    // console.log("searchFieldString", searchFieldString);
+    let newObj = parentList.filter((val: any) => {
+      return val.toLocaleLowerCase().includes(searchFieldString);
+    });
+    // console.log("newobjj", newObj);
+    setList([...newObj]);
+  };
   useEffect(() => {
-    if (Object.keys(optionsList)?.length) {
-      setList(Object.keys(optionsList));
-    }
+    // if (Object.keys(optionsList)?.length) {
+    //   setList(Object.keys(optionsList));
+    // }
+    setList(optionsList);
   }, [optionsList]);
   console.log(optionsList, "options", list);
   // const filteredItems = optionsList.filter((item:any) =>
@@ -66,14 +82,22 @@ const SelectTypesList = ({
       <DrawerBox>
         <DrawerHeader>
           <DrawerHeaderTitle>{title}</DrawerHeaderTitle>
-          <CloseIconStyled onClick={onCloseHandler} />
+          {/* <CloseIconStyled onClick={onCloseHandler} /> */}
+          <CloseIcon
+            src={closeIcon}
+            onClick={onCloseHandler}
+            alt={"close Icon"}
+          />
         </DrawerHeader>
         <DrawerSearchBar>
           <CustomSearchField
             placeholder="Search"
             variant="outlined"
-            value={searchTerm}
-            onChange={handleSearch}
+            // value={searchTerm}
+            // onChange={handleSearch}
+            onChange={(e: any) => {
+              onSearchChange(e);
+            }}
             InputLabelProps={{ shrink: false }}
             InputProps={{
               startAdornment: (

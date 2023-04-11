@@ -18,15 +18,16 @@ COPY next.config.js /my-project/
 
 FROM node:14-alpine as runner
 WORKDIR /my-project
-COPY .env.development ./.env
+COPY .env.production ./.env
 # If you are using a custom next.config.js file, uncomment this line.
 COPY --from=builder /my-project/next.config.js ./
 COPY --from=builder /my-project/public ./public
 COPY --from=builder /my-project/.next ./.next
 COPY --from=builder /my-project/node_modules ./node_modules
 COPY --from=builder /my-project/package.json ./package.json
-RUN npm install -g pm2
-COPY run.sh /my-project/
+#RUN npm install -g pm2
+#COPY run.sh /my-project/
 
 EXPOSE 3000
-CMD ["/my-project/run.sh"]
+#CMD ["/my-project/run.sh"]
+CMD ["npm", "start"]  

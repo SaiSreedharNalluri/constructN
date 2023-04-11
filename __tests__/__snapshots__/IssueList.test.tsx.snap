@@ -26,7 +26,7 @@ exports[`renders component with empty issue list 1`] = `
         No Issue has been raised yet. Get a headstart by raising one.
       </div>
       <div
-        class="css-1tivz4q"
+        class="css-1ltns7l"
       >
         Raise Issue
       </div>

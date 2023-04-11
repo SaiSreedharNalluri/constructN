@@ -5,6 +5,7 @@ import hexagonIcon from "../../../public/divami_icons/hexagonIcon.svg";
 import videoRecorderIcon from "../../../public/divami_icons/videoRecorderIcon.svg";
 
 import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
+import ClickAwayListener from "@mui/base/ClickAwayListener";
 import SelectLayer from "../select-layers/SelectLayer";
 import {
   CameraIcon,
@@ -13,6 +14,7 @@ import {
   LayerSecondSectionCamImg,
   LayersWrapper,
   SelectLayersWrapper,
+  ContainerDiv,
 } from "./ToolBarStyles";
 
 const Layers = ({
@@ -24,6 +26,8 @@ const Layers = ({
   openList,
   setOpenList,
   selectedLayersList,
+  setActiveRealityMap,
+  layersUpdated,
 }: any) => {
   const [layersLabels, setLayersLabels] = useState<any>([]);
 
@@ -54,6 +58,12 @@ const Layers = ({
                 <CameraIcon src={cameraIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
+          } else if (label === "Drone Image") {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={cameraIcon} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
           } else if (label === "360 Video") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
@@ -67,30 +77,40 @@ const Layers = ({
   };
 
   return (
-    <>
-      <LayersWrapper onClick={onListClick}>
-        <IconsContainer>
-          {selectedLayersList.length > 0
-            ? getLayersIcons(selectedLayersList)
-            : "Select Layer"}
-        </IconsContainer>
-        <LayerSecondSectionCamImg>
-          <DownIcon src={downArrowIcon} alt="Arrow" />
-        </LayerSecondSectionCamImg>
-      </LayersWrapper>
-      <SelectLayersWrapper typeOfWindow={"layer"}>
-        <SelectLayer
-          openselectlayer={openList}
-          title={"Select Layer"}
-          onCloseHandler={() => {
-            setOpenList(false);
-          }}
-          optionsList={myLayersList}
-          onSelect={LayerChange}
-          selectedLayersList={selectedLayersList}
-        />
-      </SelectLayersWrapper>
-    </>
+    <ClickAwayListener
+      onClickAway={() => {
+        setOpenList(false);
+      }}
+    >
+      <ContainerDiv>
+        <LayersWrapper onClick={onListClick}>
+          <IconsContainer>
+            {selectedLayersList.length > 0 ? (
+              <>Layer: {getLayersIcons(selectedLayersList)}</>
+            ) : (
+              "Select Layer"
+            )}
+          </IconsContainer>
+          <LayerSecondSectionCamImg>
+            <DownIcon src={downArrowIcon} alt="Arrow" />
+          </LayerSecondSectionCamImg>
+        </LayersWrapper>
+        <SelectLayersWrapper typeOfWindow={"layer"} style={{ width: "238px" }}>
+          <SelectLayer
+            openselectlayer={openList}
+            title={"Select Layer"}
+            onCloseHandler={() => {
+              setOpenList(false);
+            }}
+            optionsList={myLayersList}
+            onSelect={LayerChange}
+            selectedLayersList={selectedLayersList}
+            setActiveRealityMap={setActiveRealityMap}
+            layersUpdated={layersUpdated}
+          />
+        </SelectLayersWrapper>
+      </ContainerDiv>
+    </ClickAwayListener>
   );
 };
 
