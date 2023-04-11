@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders component with empty issue list 1`] = `
+<div>
+  <div
+    class="css-e7sl8t"
+  >
+    <div
+      class="css-1tfdt9d"
+    >
+      <img
+        alt="Error Image"
+        class="css-hctw80"
+        data-nimg="1"
+        decoding="async"
+        height="40"
+        loading="lazy"
+        src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+        srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+        style="color: transparent;"
+        width="40"
+      />
+      <div
+        class="css-1rqdy21"
+      >
+        No Issue has been raised yet. Get a headstart by raising one.
+      </div>
+      <div
+        class="css-1ltns7l"
+      >
+        Raise Issue
+      </div>
+      <div
+        class="css-ss5hb"
+      >
+        Check out
+        <span
+          class="css-dbdm06"
+        >
+           How to raise an Issue?
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

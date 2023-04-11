@@ -1,0 +1,435 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders component with empty issue list 1`] = `
+<div>
+  <div
+    class="css-e7sl8t"
+  >
+    <div
+      class="css-mph6fm"
+    >
+      <div
+        class="MuiBox-root css-h9ywjr"
+      >
+        <span>
+          Task List
+        </span>
+        <img
+          alt="close icon"
+          class="css-1op8d0u"
+          data-nimg="1"
+          data-testid="close-icon"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+      </div>
+    </div>
+    <div
+      class="MuiBox-root css-ev3z9q"
+    >
+      <div
+        class="MuiBox-root css-s58x5k"
+      >
+        <img
+          alt="close icon"
+          class="css-4g6ai3"
+          data-nimg="1"
+          data-testid="search-icon"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+        <img
+          alt=""
+          class="css-65i07b"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+        <img
+          alt="Arrow"
+          aria-label="Sort Menu"
+          class=" css-pswt6o"
+          data-mui-internal-clone-element="true"
+          data-nimg="1"
+          data-testid="sort"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+        <img
+          alt=""
+          class="css-1yesrfp"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+        <img
+          alt="Arrow"
+          class="css-pswt6o"
+          data-nimg="1"
+          data-testid="filter"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+        <a
+          class="text-black btn btn-primary fill-black fa fa-Download "
+          data-testid="download"
+          download="my-tasks.csv"
+          href="data:text/csv;charset=utf-8,﻿"_id","title","description","type","status","priority","assignees","owner","project","structure","snapshot","sequenceNumber","tags","createdAt","updatedAt","screenshot","attachments","assignee"
+"TSK557956","task_1","","Transmittals","To Do","High","[object Object],[object Object]","[object Object]","PRJ201897","STR654406","SNP746698","422","","2023-03-02T07:02:37.956Z","2023-03-02T07:02:38.306Z","https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/TSK/TSK557956/1677740557665-screenshot.png","[object Object]",""
+"TSK724881","Task","csdc","Submittals","To Do","Low","[object Object]","[object Object]","PRJ201897","STR654406","SNP746698","425","","2023-03-02T08:12:04.881Z","2023-03-02T08:12:04.881Z","","",""
+"TSK821452","Task","Testing Assign","Submittals","To Do","Low","[object Object]","[object Object]","PRJ201897","STR654406","SNP746698","426","","2023-03-02T08:13:41.452Z","2023-03-02T08:13:41.452Z","","",""
+"TSK975065","Task","description","RFI","To Do","Low","[object Object]","[object Object]","PRJ201897","STR654406","SNP746698","429","","2023-03-02T09:39:35.064Z","2023-03-02T09:39:35.064Z","","",""
+"TSK056780","Task","Description ","RFI","To Do","Low","[object Object]","[object Object]","PRJ201897","STR654406","SNP746698","430","","2023-03-02T09:40:56.779Z","2023-03-02T09:40:56.779Z","","","""
+          target="_self"
+        >
+          <img
+            alt="Arrow"
+            class="css-8k5w76"
+            data-nimg="1"
+            decoding="async"
+            height="40"
+            loading="lazy"
+            src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+            srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+            style="color: transparent;"
+            width="40"
+          />
+        </a>
+      </div>
+    </div>
+    <div
+      class="MuiBox-root css-1t2b8fl"
+    >
+      <div
+        class="MuiBox-root css-w6lgmz"
+      >
+        <div
+          class="css-4g6ai3"
+          data-testid="item-body"
+        >
+          <div
+            class="css-k008qs"
+          >
+            <img
+              alt="Arr"
+              data-nimg="1"
+              decoding="async"
+              height="40"
+              loading="lazy"
+              src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+              srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+              style="color: transparent;"
+              width="40"
+            />
+            <div
+              class="css-1y6ic72"
+            >
+              Transmittals
+               (#
+              422
+              )
+            </div>
+          </div>
+          <div
+            class="css-17nntv"
+          >
+            <div>
+              High
+               Priority
+            </div>
+          </div>
+          <div
+            class="css-joyevq"
+          >
+            <div />
+            <div
+              class="css-lahlre"
+            >
+              Due by 
+              08 Mar '23
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-1vabvql"
+        />
+        <div
+          class="css-4g6ai3"
+          data-testid="item-body"
+        >
+          <div
+            class="css-k008qs"
+          >
+            <img
+              alt="Arr"
+              data-nimg="1"
+              decoding="async"
+              height="40"
+              loading="lazy"
+              src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+              srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+              style="color: transparent;"
+              width="40"
+            />
+            <div
+              class="css-1y6ic72"
+            >
+              Submittals
+               (#
+              425
+              )
+            </div>
+          </div>
+          <div
+            class="css-17nntv"
+          >
+            <div>
+              Low
+               Priority
+            </div>
+          </div>
+          <div
+            class="css-joyevq"
+          >
+            <div />
+            <div
+              class="css-lahlre"
+            >
+              Due by 
+              08 Mar '23
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-1vabvql"
+        />
+        <div
+          class="css-4g6ai3"
+          data-testid="item-body"
+        >
+          <div
+            class="css-k008qs"
+          >
+            <img
+              alt="Arr"
+              data-nimg="1"
+              decoding="async"
+              height="40"
+              loading="lazy"
+              src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+              srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+              style="color: transparent;"
+              width="40"
+            />
+            <div
+              class="css-1y6ic72"
+            >
+              Submittals
+               (#
+              426
+              )
+            </div>
+          </div>
+          <div
+            class="css-17nntv"
+          >
+            <div>
+              Low
+               Priority
+            </div>
+          </div>
+          <div
+            class="css-joyevq"
+          >
+            <div />
+            <div
+              class="css-lahlre"
+            >
+              Due by 
+              08 Mar '23
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-1vabvql"
+        />
+        <div
+          class="css-4g6ai3"
+          data-testid="item-body"
+        >
+          <div
+            class="css-k008qs"
+          >
+            <img
+              alt="Arr"
+              data-nimg="1"
+              decoding="async"
+              height="40"
+              loading="lazy"
+              src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+              srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+              style="color: transparent;"
+              width="40"
+            />
+            <div
+              class="css-1y6ic72"
+            >
+              RFI
+               (#
+              429
+              )
+            </div>
+          </div>
+          <div
+            class="css-17nntv"
+          >
+            <div>
+              Low
+               Priority
+            </div>
+          </div>
+          <div
+            class="css-joyevq"
+          >
+            <div />
+            <div
+              class="css-lahlre"
+            >
+              Due by 
+              08 Mar '23
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-1vabvql"
+        />
+        <div
+          class="css-4g6ai3"
+          data-testid="item-body"
+        >
+          <div
+            class="css-k008qs"
+          >
+            <img
+              alt="Arr"
+              data-nimg="1"
+              decoding="async"
+              height="40"
+              loading="lazy"
+              src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+              srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+              style="color: transparent;"
+              width="40"
+            />
+            <div
+              class="css-1y6ic72"
+            >
+              RFI
+               (#
+              430
+              )
+            </div>
+          </div>
+          <div
+            class="css-17nntv"
+          >
+            <div>
+              Low
+               Priority
+            </div>
+          </div>
+          <div
+            class="css-joyevq"
+          >
+            <div />
+            <div
+              class="css-lahlre"
+            >
+              Due by 
+              08 Mar '23
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-1vabvql"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders component with empty issue list 2`] = `
+<div>
+  <div
+    class="css-e7sl8t"
+  >
+    <div
+      class="css-1tfdt9d"
+    >
+      <img
+        alt="Error Image"
+        class="css-hctw80"
+        data-nimg="1"
+        decoding="async"
+        height="40"
+        loading="lazy"
+        src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+        srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+        style="color: transparent;"
+        width="40"
+      />
+      <div
+        class="css-1rqdy21"
+      >
+        No Task has been raised yet. Get a headstart by raising one.
+      </div>
+      <div
+        class="css-1ltns7l"
+      >
+        Raise Task
+      </div>
+      <div
+        class="css-ss5hb"
+      >
+        Check out
+        <span
+          class="css-dbdm06"
+        >
+           How to raise a Task?
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
