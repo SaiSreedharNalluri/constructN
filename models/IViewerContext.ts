@@ -8,5 +8,5 @@ export interface IViewerContext {
         yaw?: Number;
         fov?: Number;
       },
-    location: [Number]
+    location?: [Number]
   }

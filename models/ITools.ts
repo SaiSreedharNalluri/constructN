@@ -8,11 +8,11 @@ export type IToolResponse = IContext;
 export type IContextType = "Issue" | "Task" | "Progress";
 
 export interface IContext {
-  type: IContextType;
+  type?: string;
   id?: string;
   cameraObject?: {
     cameraPosition: IPosition;
-    caremaTarget: IPosition;
+    cameraTarget?: IPosition;
     pitch?: Number;
     yaw?: Number;
     fov?: Number;

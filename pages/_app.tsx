@@ -1,5 +1,4 @@
 import "../styles/globals.css";
-import {notifyViewerEvent} from "../utils/GenericViewerTransportLayer"
 import type { AppProps } from "next/app";
 import "mapbox-gl/dist/mapbox-gl.css";
 import React, { useEffect } from "react";
@@ -16,14 +15,16 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "react-tabs/style/react-tabs.css";
 import { StyledToastContainer } from "../components/divami_components/custom-toaster/CustomToastStyles";
+import mixpanel from "mixpanel-browser";
+
 
 config.autoAddCss = false;
 
 export default function App({ Component, pageProps }: AppProps) {
   mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, {debug: true}); 
-  useEffect(()=>{
-    globalThis.addEventListener('notify-viewer', notifyViewerEvent);
-  },[]);
+
+
+
   return (
     <>
       <Component {...pageProps} />
