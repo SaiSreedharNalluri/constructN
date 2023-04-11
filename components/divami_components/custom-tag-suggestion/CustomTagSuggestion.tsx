@@ -42,25 +42,24 @@ const CustomAutoComplete = styled(Autocomplete)({
   },
 });
 
-  const TagsContainer = styled("div")({
-  });
+const TagsContainer = styled("div")({});
 
-  const ValueContainer = styled("div")(({ theme }) => ({
-    "& > :not(:last-child)": {
-      marginRight: theme.spacing(1),
-    },
-    "& > *": {
-      marginBottom: theme.spacing(1),
-    },
-    marginTop: "15px",
-  }));  
-  const CloseIcon = styled(Image)`
-    cursor: pointer;
-  `;  
+const ValueContainer = styled("div")(({ theme }) => ({
+  "& > :not(:last-child)": {
+    marginRight: theme.spacing(1),
+  },
+  "& > *": {
+    marginBottom: theme.spacing(1),
+  },
+  marginTop: "15px",
+}));
+const CloseIcon = styled(Image)`
+  cursor: pointer;
+`;
 
 const CustomTagSuggestion = (props: any) => {
   const { data, handleChipMaking, setFormConfig } = props;
-  console.log("data", data);
+  console.log("data222", data);
   const [options, setOptions] = useState(data.chipSuggestions);
   const [autoCompleteValue, setAutoCompleteValue] = useState([]);
 
@@ -105,7 +104,7 @@ const CustomTagSuggestion = (props: any) => {
       />
       <ValueContainer>
         {autoCompleteValue?.map((v: any) =>
-          v ?  (
+          v ? (
             <Chip
               key={v}
               label={v}
