@@ -5,6 +5,7 @@ import Image from 'next/image'
 export const BreadcrumbsLabel = styled(Typography)({
   fontSize: '14px',
   color: "#36415D",
+  fontFamily:"Open Sans",
   '&:hover': {
     cursor: "pointer",
     color: "#F37229"

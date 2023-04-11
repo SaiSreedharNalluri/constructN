@@ -23,6 +23,8 @@ import { IStructure } from "../../../../models/IStructure";
 import { IToolResponse } from "../../../../models/ITools";
 import UploadedImagesList from "../../uploaded-images-list/UploadedImagesList";
 
+import Moment from "moment";
+
 const BodyContainer = styled(Box)({
   paddingLeft: "20px",
   paddingRight: "20px",
@@ -59,6 +61,8 @@ const Body = ({
   setIsValidate,
   tagsList,
   issueStatusList,
+  setCanBeDisabled,
+  deleteTheAttachment,
 }: any) => {
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
@@ -258,8 +262,11 @@ const Body = ({
         setFormConfig((prev: any) => {
           return prev.map((item: any) => {
             if (item.id === "issueType") {
+              console.log("issueTypeitem", item);
+
               return {
                 ...item,
+
                 options: issueTypes?.map((eachItem: any) => {
                   return {
                     label: eachItem,
@@ -267,9 +274,16 @@ const Body = ({
                     selected: false,
                   };
                 }),
+                defaultValue: item?.options[0]?.label || "Safety",
               };
             }
             if (item.id === "issuePriority") {
+              console.log("ssdsditem", item);
+              const hasLowValue = item?.options.some(
+                (cont: any) => cont.value === "Low"
+              );
+              console.log("hasLowValue", hasLowValue);
+
               return {
                 ...item,
                 options: issuePriorities?.map((eachItem: any) => {
@@ -279,6 +293,7 @@ const Body = ({
                     selected: false,
                   };
                 }),
+                defaultValue: hasLowValue ? "Low" : item?.options[0]?.label,
               };
             }
             if (item.id === "assignedTo") {
@@ -293,6 +308,25 @@ const Body = ({
                 }),
               };
             }
+            if (item.id === "dates") {
+              return {
+                ...item,
+                fields: item.fields.map((each: any) => {
+                  if (each.id == "start-date") {
+                    return {
+                      ...each,
+                      defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
+                    };
+                  } else {
+                    return {
+                      ...each,
+                      defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
+                    };
+                  }
+                }),
+              };
+            }
+
             return item;
           });
         });
@@ -308,6 +342,17 @@ const Body = ({
     ];
     setFormData(updatedFormData);
     handleFormData(updatedFormData);
+
+    let count = 0;
+    formConfig.forEach((item: any) => {
+      console.log(item.isError, "item.isEisError");
+      if (item.isError) {
+        count++;
+      }
+    });
+    // if (count === 0) {
+    //   setCanBeDisabled(true);
+    // }
   }, [formConfig]);
 
   return (
@@ -320,8 +365,14 @@ const Body = ({
           setFormState={setFormState}
           validate={validate}
           setIsValidate={setIsValidate}
+          setCanBeDisabled={setCanBeDisabled}
         />
-        <UploadedImagesList formData={formData} />
+        <UploadedImagesList
+          formData={formData}
+          deleteTheAttachment={deleteTheAttachment}
+          formConfig={formConfig}
+          setFormData={setFormData}
+        />
       </FormElementContainer>
     </BodyContainer>
   );

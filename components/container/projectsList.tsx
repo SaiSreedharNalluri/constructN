@@ -3,11 +3,14 @@ import { IProjects } from "../../models/IProjects";
 import Moment from "moment";
 import { useRouter } from "next/router";
 import NextImage from "../core/Image";
+import { Mixpanel } from '../analytics/mixpanel';
 interface IProps {
   projects: IProjects[];
 }
 let ProjectsList: React.FC<IProps> = ({ projects }) => {
   const router = useRouter();
+  
+  Mixpanel.track('projects_list_page_open')
   return (
     <div className="h-full calc-h overflow-y-auto grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
       {projects &&
@@ -19,12 +22,17 @@ let ProjectsList: React.FC<IProps> = ({ projects }) => {
                   onClick={() => {
                     window.localStorage.setItem("nodeData", "");
                     window.localStorage.setItem("expandedNodes", "");
+                    Mixpanel.track('projects_list_page_close')
                     router.push(`projects/${pData._id}/structure`);
                   }}
                 >
                   <NextImage
                     className="h-7 mt-8 cursor-pointer w-1/2 m-auto hover:border border-gray-500 border-solid"
-                    src={pData.coverPhoto?pData.coverPhoto:'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp'}
+                    src={
+                      pData.coverPhoto
+                        ? pData.coverPhoto
+                        : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp'
+                    }
                   />
                 </div>
                 <div>

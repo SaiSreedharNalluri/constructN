@@ -75,12 +75,12 @@ exports[`renders component unchanged 1`] = `
     </div>
     <div
       class="css-1hlpyp9"
-      style="overflow: auto; height: 63vh;"
+      style="overflow: auto; height: calc(100vh - 300px);"
     >
       <ul
         aria-label="rich object"
         aria-multiselectable="false"
-        class="MuiTreeView-root css-vbuvlb-MuiTreeView-root"
+        class="MuiTreeView-root css-da6wdx-MuiTreeView-root"
         id=":r3:"
         role="tree"
         tabindex="0"
@@ -104,14 +104,16 @@ exports[`renders component unchanged 1`] = `
               class="MuiTreeItem-label"
             >
               <div
-                class="css-gg4vpm"
+                class="css-1kxonj9"
                 data-testid="label"
               >
-                <span>
+                <div
+                  class="css-vnkv16"
+                >
                   Adani Koregaon Park
-                </span>
+                </div>
                 <span
-                  class="css-1nd4bm0"
+                  class="css-qfdq3s"
                 >
                   <svg
                     aria-hidden="true"

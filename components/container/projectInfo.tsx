@@ -64,7 +64,11 @@ const ProjectInfo: React.FC<IProps> = ({
           className=" w-3/4 h-25 border border-solid border-black  cursor-pointer"
           width={1080}
           height={1080}
-          src={projectData.coverPhoto ? projectData.coverPhoto : ''}
+          src={
+            projectData.coverPhoto
+              ? projectData.coverPhoto
+              : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp'
+          }
         />
       </div>
       <div className="pl-6">
@@ -89,7 +93,7 @@ const ProjectInfo: React.FC<IProps> = ({
                 <ErrorMessage
                   name="name"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div>
@@ -127,7 +131,7 @@ const ProjectInfo: React.FC<IProps> = ({
                 <ErrorMessage
                   name="description"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
 
@@ -161,7 +165,7 @@ const ProjectInfo: React.FC<IProps> = ({
                 <ErrorMessage
                   name="description"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div className="grid grid-cols-2  gap-2">
@@ -176,7 +180,7 @@ const ProjectInfo: React.FC<IProps> = ({
                   <ErrorMessage
                     name="latitude"
                     component="div"
-                    className="alert alert-danger"
+                    className="alert alert-danger text-red-600"
                   />
                 </div>
                 <div>
@@ -190,7 +194,7 @@ const ProjectInfo: React.FC<IProps> = ({
                   <ErrorMessage
                     name="latitude"
                     component="div"
-                    className="alert alert-danger"
+                    className="alert alert-danger text-red-600"
                   />
                 </div>
               </div>
@@ -200,7 +204,7 @@ const ProjectInfo: React.FC<IProps> = ({
               <button
                 className="bg-gray-500 rounded hover:bg-gray-300 text-white font-bold py-1 px-2 lg:w-2/12 "
                 type="submit"
-               >
+              >
                 Update
               </button>
             </div>
