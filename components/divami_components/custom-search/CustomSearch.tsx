@@ -119,6 +119,7 @@ const CustomSearch = (props: any) => {
           <CustomAutoComplete
             className={"formField"}
             disablePortal
+            data-testid={props.dataTestId || "search-auto-complete"}
             id="combo-box-demo"
             options={data.listOfEntries}
             getOptionLabel={(option: any) => option.label}
@@ -216,6 +217,7 @@ const CustomSearch = (props: any) => {
       ) : (
         <CustomAutoComplete
           disablePortal
+          data-testid={props.dataTestId || "search-auto-complete"}
           id="combo-box-demo"
           options={data.listOfEntries}
           value={val}

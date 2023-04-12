@@ -43,6 +43,7 @@ const Header = ({ closeIssueCreate, editData }: any) => {
           onClick={closeIssueCreate}
           src={closeIcon}
           alt={"close icon"}
+          data-testid="closeIcon"
         />
       </TitleContiner>
     </HeaderContainer>

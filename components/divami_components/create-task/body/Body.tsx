@@ -355,6 +355,8 @@ const Body = ({
     console.log("chii string", formConfig[6].chipString);
   }, [formConfig[6].chipString]);
 
+  console.log("form config", formState);
+
   return (
     <BodyContainer>
       <FormElementContainer>
