@@ -5,7 +5,9 @@ import { styled } from "@mui/system";
 import { InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Search from "../../../public/divami_icons/search.svg";
+import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import Image from "next/image";
+import Chip from "@mui/material/Chip";
 
 const CustomAutoComplete = styled(Autocomplete)({
   border: "1px solid #36415d",
@@ -53,7 +55,25 @@ const CustomAutoComplete = styled(Autocomplete)({
 });
 
 const CustomSearch = (props: any) => {
-  const { data, handleSearchResult } = props;
+
+  const AssignEditSearchContainer = styled("div")({
+  });
+
+  const ValueContainer = styled("div")(({ theme }) => ({
+    "& > :not(:last-child)": {
+      marginRight: theme.spacing(1),
+    },
+    "& > *": {
+      marginBottom: theme.spacing(1),
+    },
+    marginTop: "15px",
+  }));
+
+  const CloseIcon = styled(Image)`
+    cursor: pointer;
+  `;
+  
+  const { data, handleSearchResult, setFormConfig } = props;
   const { isMultiSelect = false } = props.data;
   const [val, setVal] = React.useState<any>([]);
 
@@ -97,47 +117,83 @@ const CustomSearch = (props: any) => {
   return (
     <>
       {isMultiSelect ? (
-        <CustomAutoComplete
-          className={"formField"}
-          disablePortal
-          id="combo-box-demo"
-          options={data.listOfEntries}
-          getOptionLabel={(option: any) => option.label}
-          value={val}
-          multiple={isMultiSelect}
-          renderInput={(params) => (
-            <TextField
-              placeholder="Enter Name or Teams here ..."
-              {...params}
-              label={data.label}
-              InputProps={
-                val.length
-                  ? {
-                      ...params.InputProps,
-                      // startAdornment: (
-                      //   <InputAdornment position="start">
-                      //     <Image width={15} height={15} src={Search} alt="Search" />
-                      //   </InputAdornment>
-                      // ),
-                    }
-                  : {
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Image
-                            width={15}
-                            height={15}
-                            src={Search}
-                            alt="Search"
-                          />
-                        </InputAdornment>
-                      ),
-                    }
-              }
-            />
-          )}
-          onChange={(e, value) => handleSearchResult(e, value, data.id)}
-        />
+        <AssignEditSearchContainer>
+          <CustomAutoComplete
+            className={"formField"}
+            disablePortal
+            id="combo-box-demo"
+            options={data.listOfEntries}
+            getOptionLabel={(option: any) => option.label}
+            value={val}
+            multiple={isMultiSelect}
+            renderTags={() => null}
+            renderInput={(params) => (
+              <TextField
+                placeholder="Enter Name or Teams here ..."
+                {...params}
+                // label={data.label}
+                InputProps={
+                  val.length
+                    ? {
+                        ...params.InputProps,
+                        // startAdornment: (
+                        //   <InputAdornment position="start">
+                        //     <Image width={15} height={15} src={Search} alt="Search" />
+                        //   </InputAdornment>
+                        // ),
+                      }
+                    : {
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Image
+                              width={15}
+                              height={15}
+                              src={Search}
+                              alt="Search"
+                            />
+                          </InputAdornment>
+                        ),
+                      }
+                }
+              />
+            )}
+            onChange={(e, value) => handleSearchResult(e, value, data.id)}
+          />
+          <ValueContainer>
+            {val.map((v: any) =>
+              v?.label ? (
+                <Chip
+                  key={v?.label}
+                  label={v?.label}
+                  variant="outlined"
+                  style={{ marginTop: "10px" }}
+                  deleteIcon={
+                    <CloseIcon
+                      src={closeIcon}
+                      alt=""
+                      style={{ marginLeft: "5px", marginRight: "12px" }}
+                    />
+                  }
+                  onDelete={( id: string) => {
+                    const newSelectedUser = val.filter(
+                      (selected: any) => selected?.label !== v?.label
+                    );
+                    setVal(newSelectedUser);
+                    setFormConfig((prev: any) =>
+                      prev.map((item: any) => {
+                        if (item.id === data.id) {
+                          return { ...item, selectedName: newSelectedUser };
+                        }
+                        return item;
+                      })
+                    );
+                  }}
+                />
+              ) : null
+            )}
+          </ValueContainer>
+        </AssignEditSearchContainer>
       ) : (
         <CustomAutoComplete
           disablePortal
@@ -148,7 +204,7 @@ const CustomSearch = (props: any) => {
             <TextField
               placeholder="Enter Name or Teams here ..."
               {...params}
-              label={data.label}
+              // label={data.label}
               InputProps={{
                 ...params.InputProps,
                 startAdornment: (

@@ -9,12 +9,25 @@ import InputText from '../core/Input/inputText';
 import NextImage from '../core/Image';
 import Image from 'next/image';
 import router from 'next/router';
+interface FormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 interface IProps {
   loading: boolean;
-  message: string;
-  handleRegister: (e: object) => void;
+  handleRegister: (
+    e: FormValues,
+    {
+      resetForm,
+    }: {
+      resetForm: (nextValues?: Partial<FormValues>) => void;
+    }
+  ) => void;
 }
-const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
+const Loginpage: React.FC<IProps> = ({ loading, handleRegister }) => {
   const initialValues: {
     firstName: string;
     lastName: string;
@@ -159,13 +172,6 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
               <div className="py-2 grid grid-cols-1 gap-2">
                 <SubmitButtons buttonName="Register" disabled={loading} />
               </div>
-              {message && (
-                <div className="form-group">
-                  <div className="alert alert-danger" role="alert">
-                    {message}
-                  </div>
-                </div>
-              )}
             </Form>
           </Formik>
           <button onClick={() => router.push('/login')}>Back To Login</button>

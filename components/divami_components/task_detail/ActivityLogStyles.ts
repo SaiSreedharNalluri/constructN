@@ -1,4 +1,5 @@
 import { styled } from "@mui/system";
+import { fontFamily } from "html2canvas/dist/types/css/property-descriptors/font-family";
 import Image from "next/image";
 
 export const ActivityCardContainer = styled("div")({
@@ -81,11 +82,11 @@ export const ActivityBody = styled("div")<ContainerProps>`
   &:before {
     content: "";
     width: 1px;
- height: ${({ currentCommentId, textEachMore, commentId }) =>
+    height: ${({ currentCommentId, textEachMore, commentId }) =>
       !textEachMore && commentId === currentCommentId
         ? "calc(100% - 15px)"
-    : ""};
-   
+        : ""};
+
     position: absolute;
     background: #d9d9d9;
 
@@ -176,7 +177,7 @@ export const ActivityCommentDiv = styled("div")({
   fontSize: "14px",
   color: "#101F4C",
   lineHeight: "20px",
-  wordBreak:"break-all"
+  wordBreak: "break-all",
 });
 export const ActivityComment = styled("span")({});
 export const ActivityIssueRaisedMain = styled("span")({});
@@ -244,4 +245,34 @@ export const RepliesContainer = styled("div")({
 export const ActivityCommentsDiv = styled("div")({
   // borderLeft: "1px solid #d9d9d9",
   // border:"2px solid red"
+});
+
+export const ReplyDiv = styled("div")({
+  width: "430px",
+
+  display: "flex",
+  justifyContent: "space-between",
+  background: "#F4F4F4",
+  marginLeft: "-20px",
+  padding: "10px 20px",
+});
+
+export const ReplyDivText = styled("div")({
+  // width: "430px",
+
+  // background: "#F4F4F4",
+  // marginLeft: "-20px",
+  // padding: "10px 20px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontSize: "14px",
+  color: "#101F4C",
+});
+
+export const ReplyCancel = styled("div")({
+  cursor: "pointer",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontSize: "14px",
+  color: "#FF843F",
 });

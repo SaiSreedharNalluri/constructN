@@ -51,6 +51,7 @@ function GenericViewer(props) {
   const genericViewerRef = useRef();
   const compareViewer = 'compareViewer';
   const compareViewerRef = useRef();
+  const [fullScreenMode, setFullScreenMode] = useState(props.isFullScreen)
   let structure = props.structure;
   let isFullScreenActive = props.isFullScreenActive;
 
@@ -154,6 +155,9 @@ function GenericViewer(props) {
 
   Autodesk.Viewing.Initializer(initializeOptions, initializerCallBack);
 
+  useEffect(()=>{
+    setFullScreenMode(props.isFullScreen)
+  },[props.isFullScreen])
   const getViewerTypeFromViewMode = () => {
     switch (viewMode) {
       case 'Design':
@@ -1557,13 +1561,13 @@ function GenericViewer(props) {
       <div id="TheView" className="relative basis-1/2 flex grow shrink">
         {renderViewer(1)}
         {renderMinimap(1)}
-        <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimeLineComponent>
+        <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
       </div>
-      <div className='w-0.5' color='gray'></div>
+      <div className={isCompare?'w-0.5':''} color='gray'></div>
       <div id="CompareView" className={`relative ${isCompare ? "basis-1/2" : "hidden"}`}>
         {renderViewer(2)}
         {renderMinimap(2)}
-        <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
+        <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
       </div>
       {
         viewerType === "Mapbox" && viewMode === "Reality" && hotspots && hotspots.length > 0 ?
