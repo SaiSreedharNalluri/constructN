@@ -410,7 +410,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
                   <DividerIcon src={DividerIconSVG} alt="" />
-                  {issueFilterState.isFilterApplied ? (
+                  {/* {issueFilterState.isFilterApplied ? (
                     <AppliedFilter>
                       {issueFilterState.numberOfFilters} Filters{" "}
                       <FilterIcon
@@ -421,7 +421,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         }}
                       />
                     </AppliedFilter>
-                  ) : null}
+                  ) : null} */}
                   <Tooltip title="Sort Menu">
                     <IconContainer
                       src={sort}

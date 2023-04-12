@@ -26,6 +26,7 @@ const StyledMenuItem = styled(MenuItem)({
   fontWeight: 400,
   fontSize: 14,
   color: "#101F4B",
+  minWidth:"392px"
 });
 
 const CustomSelectContainer = styled("div")({
