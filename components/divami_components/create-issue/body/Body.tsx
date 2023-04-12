@@ -69,7 +69,7 @@ const Body = ({
   const [issueTypes, setIssueTypes] = useState([]);
   const [issuePriorities, setIssuePriorities] = useState([]);
   const [formData, setFormData] = useState<any>([]);
-  const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
+  const [projectUsers, setProjectUsers] = useState<IProjectUsers[] | null>(null);
   const [loggedInUserId, SetLoggedInUserId] = useState("");
   const router = useRouter();
   console.log(issueStatusList, "issueStatusListjsfskdj");
@@ -121,8 +121,9 @@ const Body = ({
       SetLoggedInUserId(user._id);
     }
   }, [router.isReady, router.query.projectId]);
+
   useEffect(() => {
-    if (projectUsers.length && issuePriorities.length && issueTypes.length) {
+    if (projectUsers?.length && issuePriorities?.length && issueTypes?.length) {
       if (editData) {
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {
@@ -373,60 +374,6 @@ const Body = ({
           setFormData={setFormData}
         />
       </FormElementContainer>
-      {/* <Box sx={{ marginTop: '15px' }}>
-        <CustomLabel label={'Select the Type of Task'} />
-        <FormWrapper
-          config={issueTypeConfig}
-          setFormConfig={setIssueTypeConfig}
-          formState={formState}
-          setFormState={setFormState}
-        />
-      </Box>
-      <FormElementContainer>
-        <CustomLabel label={'Tell us more about this Task'} />
-        <FormWrapper
-          config={issueDescription}
-          setFormConfig={setIssueDescription}
-        />
-      </FormElementContainer>
-      <FormElementContainer>
-        <CustomLabel label={'Select Task Priority'} />
-        <FormWrapper
-          config={issueTypeConfig}
-          setFormConfig={setIssueTypeConfig}
-          formState={formState}
-          setFormState={setFormState}
-        />
-      </FormElementContainer>
-      <FormElementContainer>
-        <CustomLabel label={'Assigned To'} />
-        <FormWrapper config={searchConfig} setFormConfig={setSearchConfig} />
-      </FormElementContainer>
-      <FormElementContainer>
-        <DatePickersContainer>
-          <DatePickerContainer>
-            <CustomLabel label={'Start Date'} />
-            <FormWrapper
-              config={datePickerData}
-              setFormConfig={setDatePickerData}
-            />
-          </DatePickerContainer>
-          <div>
-            <CustomLabel label={'Due Date'} />
-            <FormWrapper
-              config={datePickerData}
-              setFormConfig={setDatePickerData}
-            />
-          </div>
-        </DatePickersContainer>
-      </FormElementContainer>
-      <FormElementContainer>
-        <CustomLabel label={'Enter Some Suggested Tags'} />
-        <FormWrapper config={tagConfig} setFormConfig={setTagConfig} />
-      </FormElementContainer>
-      <FormElementContainerForLastChild>
-        <FormWrapper config={fileConfig} setFormConfig={setFileConfig} />
-      </FormElementContainerForLastChild> */}
     </BodyContainer>
   );
 };
