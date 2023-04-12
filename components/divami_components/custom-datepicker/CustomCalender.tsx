@@ -117,6 +117,7 @@ const CustomCalender = (props: any) => {
     <div data-testid={`custom-calender-parent-${dataTestId}`}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CustomDatePicker
+          data-testid={dataTestId}
           className={` ${data?.isError ? "formErrorField" : ""} formField`}
           components={{
             OpenPickerIcon: calenderIcon,
@@ -125,8 +126,16 @@ const CustomCalender = (props: any) => {
           value={value}
           shouldDisableDate={data.disableDays}
           disablePast={disablePast}
-          minDate={config && config[0] && data.id === "due-date" ? config[0]?.defaultValue : null}
-          maxDate={config && config[1] && data.id === "start-date" ? config[1]?.defaultValue : null}
+          minDate={
+            config && config[0] && data.id === "due-date"
+              ? config[0]?.defaultValue
+              : null
+          }
+          maxDate={
+            config && config[1] && data.id === "start-date"
+              ? config[1]?.defaultValue
+              : null
+          }
           onChange={(newValue: any) => {
             setValue(newValue);
             onChange(newValue);
@@ -135,17 +144,17 @@ const CustomCalender = (props: any) => {
           renderInput={
             hideTextField
               ? ({ inputRef, inputProps, InputProps }) => (
-                <Box ref={inputRef}>{InputProps?.endAdornment}</Box>
-              )
+                  <Box ref={inputRef}>{InputProps?.endAdornment}</Box>
+                )
               : (params) => (
-                <CustomDatePickerInputField
-                  {...params}
-                  value={value}
-                  InputLabelProps={{ shrink: true }}
-                  placeholder="MM/DD/YYYY"
-                  sx={calender}
-                />
-              )
+                  <CustomDatePickerInputField
+                    {...params}
+                    value={value}
+                    InputLabelProps={{ shrink: true }}
+                    placeholder="MM/DD/YYYY"
+                    sx={calender}
+                  />
+                )
           }
           data-testid={dataTestId}
         />

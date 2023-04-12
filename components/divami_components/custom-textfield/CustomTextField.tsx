@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import TextareaAutosize from "@mui/base/TextareaAutosize";
+import TextField from "@mui/material/TextField";
 import { styled } from "@mui/system";
 import { ErrorField } from "../custom-select/CustomSelect";
 
@@ -23,16 +24,31 @@ interface PropTypes {
   isReadOnly?: boolean;
 }
 
-const StyledTextField = styled(TextareaAutosize)({
+const StyledTextField = styled(TextField)({
   width: "392px !important",
-  padding: "5px 10px",
-  border: "1px solid #36415d",
+  height: "40px !important",
+  // padding: "5px 10px",
+  // border: "1px solid #36415d",
   borderRadius: "4px",
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: 14,
   color: "#101F4B",
+  // "& .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input": {
+  //   height: "40px !important",
+  //   border: "1px solid #36415d",
+  // },
+  // "& .css-1d3z3hw-MuiOutlinedInput-notchedOutline": {
+  //   borderWidth:0
+  // }
+  "& .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root": {
+    height: "40px",
+    "& fieldset": { border: "1px solid #36415d" },
+  },
+  "&:focus-within fieldset": {
+    border: "1px solid #ff843f !important",
+  },
 });
 
 export const CustomTextField = (props: PropTypes) => {
@@ -48,7 +64,9 @@ export const CustomTextField = (props: PropTypes) => {
     isDisabled = false,
     onBlur,
     isReadOnly = false,
+    onChange,
   } = props;
+
   return (
     <div>
       <StyledTextField
@@ -56,6 +74,7 @@ export const CustomTextField = (props: PropTypes) => {
         className={` ${isError ? "formErrorField" : ""} formField`}
         // placeholder={placeholder}
         defaultValue={defaultValue}
+        value={defaultValue}
         data-testid={dataTestId}
         required={false}
         disabled={isDisabled}
@@ -65,7 +84,8 @@ export const CustomTextField = (props: PropTypes) => {
         onClick={(e) => {
           reff?.current?.focus();
         }}
-        readOnly={isReadOnly}
+        onChange={onChange}
+        // readOnly={isReadOnly}
       />
       {/* <ErrorField>{isError ? "Required" : ""}</ErrorField> */}
     </div>

@@ -48,16 +48,18 @@ import {
   getIssuesStatus,
   getIssuesTypes,
 } from "../../../../services/issue";
-
 import {
   deleteTask,
   getTasksList,
   getTasksPriority,
   getTaskStatus,
 } from "../../../../services/task";
+import { getDesignMap } from "../../../../utils/ViewerDataUtils";
+import enterfullscreenIcon from "../../../../public/divami_icons/enterfullscreen.svg";
+import exitfullscreenIcon from "../../../../public/divami_icons/exitfullscreen.svg";
 
 interface IProps {}
-const OpenMenuButton = styled("div")({
+const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
   border: "1px solid #C4C4C4",
   height: "32px",
@@ -67,12 +69,22 @@ const OpenMenuButton = styled("div")({
   justifyContent: "space-evenly",
   alignItems: "center",
   transform: "rotate(270deg)",
-  left: "22px",
+  left: isFullScreen ? "-40px" : "22px",
   bottom: "38px",
   cursor: "pointer",
   background: "#ffffff",
   fontFamily: "Open Sans",
-});
+})) as any;
+
+const OpenFullScreenButton = styled("div")(
+  ({ onClick, isFullScreen }: any) => ({
+    position: "fixed",
+    right: "40px",
+    bottom: "0px",
+    cursor: "pointer",
+  })
+);
+
 const CloseMenuButton = styled("div")({
   height: "38px",
   width: "31px",
@@ -93,14 +105,16 @@ const CloseMenuButton = styled("div")({
 });
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
-  const [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
+  let [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
   const [currentProjectId, setActiveProjectId] = useState("");
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [project, setProject] = useState<IProjects>();
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
-  const [designMap, setDesignMap] = useState<IDesignMap>();
+  const [designMap, setDesignMap] = useState<any>();
+  const [cDesignMap, setcDesignMap] = useState<any>();
   const [activeRealityMap, setActiveRealityMap] = useState<IActiveRealityMap>();
+  const [designAndRealityMaps, setDesignAndRealityMaps] = useState<any>({});
   const [projectutm, setProjectUtm] = useState("");
   const leftOverlayRef: any = useRef();
   const [leftNav, setLeftNav] = useState(false);
@@ -109,6 +123,7 @@ const Index: React.FC<IProps> = () => {
   const rightrefContainer: any = useRef();
   const [viewerTypeState, setViewerType] = useState("forge");
   const [rightNav, setRightNav] = useState(false);
+  const [viewTypes, setViewTypes] = useState<string[]>([]);
   const [currentViewType, setViewType] = useState(""); //plan,elevational,xsectional,bim
   const [currentViewLayers, setViewLayers] = useState<string[]>([]); //360Image, 360Video, phoneImage, droneImage
   const [clickedTool, setClickedTool] = useState<ITools>();
@@ -120,12 +135,15 @@ const Index: React.FC<IProps> = () => {
   const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
   const [tasksStatusList, setTasksStatusList] = useState<[string]>([""]);
   const [issueTypesList, setIssueTypesList] = useState<[string]>([""]);
+  const [layersUpdated, setLayersUpdated] = useState(false);
 
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
   const [taskFilterList, setTaskFilterList] = useState<ITasks[]>([]);
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openIssueView, setOpenIssueView] = useState(false);
+  const [selectedDesign, setSelectedDesign] = useState("");
+  const [selectedReality, setSelectedReality] = useState("");
 
   const [currentContext, setCurrentContext] = useState<IToolResponse>({
     type: "Task",
@@ -136,11 +154,10 @@ const Index: React.FC<IProps> = () => {
   const [openIssueDetails, setOpenIssueDetails] = useState(false);
   const [openTaskDetails, setOpenTaskDetails] = useState(false);
   const [breadCrumbsData, setBreadCrumbsData] = useState<any>([]);
-
+  const [isFullScreen, setIsFullScreen] = useState(false);
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
-
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
   };
@@ -429,8 +446,8 @@ const Index: React.FC<IProps> = () => {
         project,
         ...getBreadCrumbsData(structure),
       ]);
-    getIssues(structure._id);
-    getTasks(structure._id);
+      getIssues(structure._id);
+      getTasks(structure._id);
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
@@ -453,6 +470,17 @@ const Index: React.FC<IProps> = () => {
     Object.keys(realityMap).map((key) => {
       currentViewLayers.push(key);
     });
+    Object.values(realityMap).map((val) => {
+      val.realities?.forEach((reality) => {
+        reality.realityType?.forEach((rType) => {
+          if (viewTypes.findIndex((typ) => typ === rType) == -1) {
+            viewTypes.push(rType);
+          }
+        });
+      });
+    });
+    setViewTypes(structuredClone(viewTypes));
+    //console.log("MyViewTypeList-->r",viewTypes);
   };
 
   const updatedSnapshot = (snapshot: ISnapshot) => {
@@ -461,8 +489,39 @@ const Index: React.FC<IProps> = () => {
 
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
+    setViewTypes([]);
+    Object.keys(designMap).map((key) => {
+      if (viewTypes.findIndex((k) => k === key) == -1) {
+        viewTypes.push(key);
+      }
+    });
+    // console.log("MyTypeList-->d",types_list);
+    setViewTypes(viewTypes);
+    //console.log("MyViewTypeList-->d",viewTypes);
   };
+  useEffect(() => {
+    const list: any = [];
+    const types: any = [];
+    if (activeRealityMap) {
+      for (const key in activeRealityMap) {
+        activeRealityMap[key as keyof IActiveRealityMap].realities?.forEach(
+          (item: any) => {
+            item.realityType?.forEach((each: any) => {
+              if (!list.includes(each)) {
+                list.push(each);
+              }
+            });
+          }
+        );
+      }
+    }
+    let realityKeys = list.reduce((a: any, v: any) => ({ ...a, [v]: v }), {});
 
+    Object.keys({ ...designMap, ...realityKeys }).map((key) => {
+      types.push(key);
+    });
+    setDesignAndRealityMaps(types);
+  }, [activeRealityMap, designMap]);
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
   };
@@ -477,6 +536,7 @@ const Index: React.FC<IProps> = () => {
             <GenericViewer
               toolRes={toolResponse}
               tools={clickedTool}
+              project={project}
               structure={structure}
               updateSnapshot={updatedSnapshot}
               updateRealityMap={updateRealityMap}
@@ -485,8 +545,10 @@ const Index: React.FC<IProps> = () => {
               issuesList={issuesList}
               viewMode={currentViewMode}
               viewType={currentViewType}
-              viewLayers={currentViewLayers}
+              viewLayers={activeRealityMap}
               isFullScreenActive={isFullScreenActive}
+              layersUpdated={layersUpdated}
+              isFullScreen={isFullScreen}
             ></GenericViewer>
           )
         );
@@ -544,6 +606,7 @@ const Index: React.FC<IProps> = () => {
         //setClickedTool(toolInstance);
         break;
       case "viewMode":
+        currentViewMode = toolInstance.toolAction;
         setViewMode(toolInstance.toolAction);
         break;
       case "issue":
@@ -594,12 +657,13 @@ const Index: React.FC<IProps> = () => {
 
         break;
       case "addViewLayer":
-        newLayers.push(toolInstance.toolAction);
-        setViewLayers(newLayers);
+        // newLayers.push(toolInstance.toolAction);
+        // console.log(newLayers, "newLayesrs");
+        // setViewLayers(newLayers);
         break;
       case "removeViewLayer":
-        newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
-        setViewLayers(newLayers);
+        // newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
+        // setViewLayers(newLayers);
         break;
       case "compareReality":
       case "compareDesign":
@@ -653,12 +717,161 @@ const Index: React.FC<IProps> = () => {
         break;
     }
   };
-  const getIssues = (structureId: string) => {
+
+  useEffect(() => {
+    if (currentViewMode === "Design" && designAndRealityMaps.length) {
+      if (currentViewType != "Plan Drawings" && currentViewType != "BIM") {
+        if (designAndRealityMaps.includes(selectedDesign)) {
+          setViewType(selectedDesign);
+        } else {
+          if (designAndRealityMaps.includes("Plan Drawings")) {
+            setViewType("Plan Drawings");
+            setSelectedDesign("Plan Drawings");
+          } else if (designAndRealityMaps.includes("BIM")) {
+            setViewType("BIM");
+            setSelectedDesign("BIM");
+          } else {
+            const val =
+              designMap && Object.keys(designMap)?.length
+                ? Object.keys(designMap)[0]
+                : "";
+            if (val) {
+              setViewType(val);
+              setSelectedDesign(val);
+            } else {
+              setViewMode("Reality");
+            }
+          }
+        }
+      } else if (!designAndRealityMaps.includes(currentViewType)) {
+        if (designAndRealityMaps.includes("Plan Drawings")) {
+          setViewType("Plan Drawings");
+          setSelectedDesign("Plan Drawings");
+        } else if (designAndRealityMaps.includes("BIM")) {
+          setViewType("BIM");
+          setSelectedDesign("BIM");
+        } else {
+          const val =
+            designMap && Object.keys(designMap)?.length
+              ? Object.keys(designMap)[0]
+              : "";
+          if (val) {
+            setViewType(val);
+            setSelectedDesign(val);
+          } else {
+            setViewMode("Reality");
+          }
+        }
+      }
+    } else if (currentViewMode === "Reality" && designAndRealityMaps.length) {
+      if (currentViewType != "pointCloud" && currentViewType != "orthoPhoto") {
+        if (designAndRealityMaps.includes(selectedReality)) {
+          setViewType(selectedReality);
+        } else {
+          if (designAndRealityMaps.includes("pointCloud")) {
+            setViewType("pointCloud");
+            setSelectedReality("pointCloud");
+          } else if (designAndRealityMaps.includes("orthoPhoto")) {
+            setViewType("orthoPhoto");
+            setSelectedReality("orthoPhoto");
+          } else {
+            // setViewType(designAndRealityMaps[0]);
+            const arr =
+              activeRealityMap &&
+              activeRealityMap[
+                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+              ]?.realities?.length &&
+              activeRealityMap[
+                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+              ].realities![0].realityType?.length
+                ? activeRealityMap[
+                    `${
+                      Object.keys(
+                        activeRealityMap
+                      )[0] as keyof IActiveRealityMap
+                    }`
+                  ].realities![0].realityType
+                : [];
+            if (arr && arr.length) {
+              setViewType(arr[0]);
+              setSelectedReality(arr[0]);
+            } else {
+              setViewMode("Design");
+            }
+          }
+        }
+      } else if (!designAndRealityMaps.includes(currentViewType)) {
+        if (designAndRealityMaps.includes("pointCloud")) {
+          console.log("comingjklj");
+          setViewType("pointCloud");
+          setSelectedReality("pointCloud");
+        } else if (designAndRealityMaps.includes("orthoPhoto")) {
+          setViewType("orthoPhoto");
+          setSelectedReality("orthoPhoto");
+        } else {
+          // setViewType(designAndRealityMaps[0]);
+          const arr =
+            activeRealityMap &&
+            activeRealityMap[
+              `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+            ]?.realities?.length &&
+            activeRealityMap[
+              `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+            ].realities![0].realityType?.length
+              ? activeRealityMap[
+                  `${
+                    Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap
+                  }`
+                ].realities![0].realityType
+              : [];
+          if (arr && arr.length) {
+            setViewType(arr[0]);
+            setSelectedReality(arr[0]);
+          } else {
+            setViewMode("Design");
+          }
+        }
+      }
+    }
+  }, [currentViewMode, designAndRealityMaps]);
+
+  useEffect(() => {
+    if (
+      designMap &&
+      Object.keys(designMap)?.length &&
+      Object.keys(designMap).includes(currentViewType)
+    ) {
+      if (selectedDesign !== currentViewType)
+        setSelectedDesign(currentViewType);
+
+      toolClicked({ toolName: "viewType", toolAction: currentViewType });
+    } else {
+      console.log("assds", currentViewType);
+      if (selectedReality !== currentViewType)
+        setSelectedReality(currentViewType);
+      toolClicked({ toolName: "viewType", toolAction: currentViewType });
+    }
+  }, [currentViewType]);
+  const getIssues = (structureId: string, isDownload?: boolean) => {
     if (structureId && router.query.projectId) {
       getIssuesList(router.query.projectId as string, structureId)
         .then((response) => {
-          setIssueList(response.result);
-          setIssueFilterList(response.result);
+          if (isDownload) {
+            console.log(isDownload, "isdownload");
+            // response.blob().then((blob: any) => {
+            // Creating new object of PDF file
+            const data = response.result;
+            const fileURL = window.URL.createObjectURL(new Blob(data));
+            // Setting various property values
+            let alink = document.createElement("a");
+            alink.href = fileURL;
+            alink.download = "SamplePDF.pdf";
+            alink.click();
+            // });
+          } else {
+            setIssueList(response.result);
+            setIssueFilterList(response.result);
+          }
         })
         .catch((error) => {
           if (error.success === false) {
@@ -667,6 +880,7 @@ const Index: React.FC<IProps> = () => {
         });
     }
   };
+
   const getIssuesPriorityList = (projId: string) => {
     return getIssuesPriority(router.query.projectId as string)
       .then((response) => {
@@ -1092,7 +1306,7 @@ const Index: React.FC<IProps> = () => {
     deleteIssue(router.query.projectId as string, issueObj._id)
       .then((response) => {
         if (response.success === true) {
-          toast(response.message);
+          toast.success(response.message);
           _.remove(issueFilterList, { _id: issueObj._id });
           setIssueList(issueFilterList);
           if (callback) {
@@ -1236,121 +1450,105 @@ const Index: React.FC<IProps> = () => {
   const [isFullScreenActive, setFullScreenActive] = useState<boolean>(false);
 
   const r: any = useRef();
+
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullScreen(true);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+        setIsFullScreen(false);
+      }
+    }
+  };
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
-        <Header
-          toolClicked={toolClicked}
-          viewMode={currentViewMode}
-          showBreadcrumbs
-          breadCrumbData={breadCrumbsData}
-          handleBreadCrumbClick={handleBreadCrumbClick}
-        />
+        {!isFullScreen && (
+          <Header
+            toolClicked={toolClicked}
+            viewMode={currentViewMode}
+            showBreadcrumbs
+            breadCrumbData={breadCrumbsData}
+            handleBreadCrumbClick={handleBreadCrumbClick}
+          />
+        )}
+
         {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
+
       <div className="flex ">
-        <div ref={leftOverlayRef}>
-          {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
-          <SidePanelMenu onChangeData={onChangeData} />
-        </div>
-        <div>
-          {
-            <div
-              style={{ overflow: "hidden" }}
-              ref={leftRefContainer}
-              className={` ${
-                leftNav ? "visible" : "hidden"
-              }  absolute z-10 border border-gray-300 `}
-            >
-              {/* <div>
-                <>
-                  {console.log(selected, "structureData")}
-                  <LeftOverLay
-                    getStructureData={getStructureData}
-                    handleNodeSelection={handleNodeSelection}
-                    handleNodeExpand={handleNodeExpand}
-                    selectedNodes={selected}
-                    expandedNodes={expanded}
-                    setHierarchy={setHierarchy}
-                    getStructure={(structureData) => {
-                      if (structure === undefined) {
-                        setStructure(
-                          getCurrentStructureFromStructureList(structureData)
-                        );
-
-                        // setStructure(structureData);
-                        getIssues(structureData._id);
-
-                        getTasks(structureData._id);
-                      }
-                    }}
-                  ></LeftOverLay>
-                </>
-              </div> */}
-            </div>
-          }
-        </div>
-        <div id="viewer">{renderSwitch(viewerTypeState)}</div>
-        {hierarchy ? (
-          <div
-            style={{
-              background: "#FFFFFF",
-              border: "1px solid #BDBDBD",
-              boxShadow: "5px 4px 8px rgb(200 200 200 / 10%)",
-              // transform: "matrix(-1, 0, 0, 1, 0, 0)",
-            }}
-          >
-            <CloseMenuButton>
-              <Image
-                src={ChevronLeftIcon}
-                width={17}
-                height={17}
-                alt="Arrow"
-                onClick={() => {
-                  setHierarchy(false);
-                }}
-              />
-            </CloseMenuButton>
-            <div>
-              {
-                <div
-                  style={{ overflow: "hidden" }}
-                  ref={leftRefContainer}
-                  className={`${
-                    hierarchy ? "visible" : "hidden"
-                  }  absolute z-10 border  white-bg projHier `}
-                >
-                  <div>
-                    <LeftOverLay
-                      handleNodeSelection={handleNodeSelection}
-                      selectedNodes={structure?._id}
-                      handleNodeExpand={handleNodeExpand}
-                      expandedNodes={expanded}
-                      getStructureData={getStructureData}
-                      setHierarchy={setHierarchy}
-                      getStructure={(structureData) => {
-                        // if (structure === undefined) {
-                        //   setStructure(
-                        //     getCurrentStructureFromStructureList(structureData)
-                        //   );
-                        //   getIssues(structureData._id);
-                        //   getTasks(structureData._id);
-                        // }
-                      }}
-                      treeData={state}
-                    ></LeftOverLay>
-                  </div>
-                </div>
-              }
-            </div>
+        {!isFullScreen && (
+          <div ref={leftOverlayRef}>
+            {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
+            <SidePanelMenu onChangeData={onChangeData} />
           </div>
-        ) : (
-          <div>
-            {
+        )}
+
+        {/* <FullScreen handle={handle}> */}
+        <div id="test_full_screen">
+          <div id="viewer">{renderSwitch(viewerTypeState)}</div>
+          {hierarchy ? (
+            <div
+              style={{
+                background: "#FFFFFF",
+                border: "1px solid #BDBDBD",
+                boxShadow: "5px 4px 8px rgb(200 200 200 / 10%)",
+                // transform: "matrix(-1, 0, 0, 1, 0, 0)",
+              }}
+            >
+              <CloseMenuButton>
+                <Image
+                  src={ChevronLeftIcon}
+                  width={17}
+                  height={17}
+                  alt="Arrow"
+                  onClick={() => {
+                    setHierarchy(false);
+                  }}
+                />
+              </CloseMenuButton>
+              <div>
+                {
+                  <div
+                    style={{ overflow: "hidden" }}
+                    ref={leftRefContainer}
+                    className={`${
+                      hierarchy ? "visible" : "hidden"
+                    }  absolute z-10 border  white-bg projHier `}
+                  >
+                    <div>
+                      <LeftOverLay
+                        handleNodeSelection={handleNodeSelection}
+                        selectedNodes={structure?._id}
+                        handleNodeExpand={handleNodeExpand}
+                        expandedNodes={expanded}
+                        getStructureData={getStructureData}
+                        setHierarchy={setHierarchy}
+                        getStructure={(structureData) => {
+                          // if (structure === undefined) {
+                          //   setStructure(
+                          //     getCurrentStructureFromStructureList(structureData)
+                          //   );
+                          //   getIssues(structureData._id);
+                          //   getTasks(structureData._id);
+                          // }
+                        }}
+                        treeData={state}
+                      ></LeftOverLay>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          ) : (
+            <div>
               <OpenMenuButton
                 onClick={() => {
                   setHierarchy(!hierarchy);
                 }}
+                isFullScreen={isFullScreen}
               >
                 <Image
                   src={ChevronRightIcon}
@@ -1361,17 +1559,25 @@ const Index: React.FC<IProps> = () => {
                 />
                 <div>Hierarchy</div>
               </OpenMenuButton>
-            }
-          </div>
-        )}
-
-        {/* <ReactFullscreen>
+              <OpenFullScreenButton>
+                <Image
+                  src={isFullScreen ? exitfullscreenIcon : enterfullscreenIcon}
+                  width={40}
+                  height={40}
+                  alt={""}
+                  // onClick={handle.enter}
+                  onClick={() => toggleFullScreen()}
+                />
+              </OpenFullScreenButton>
+            </div>
+          )}
+          {/* <ReactFullscreen>
     {({ ref=r, onRequest, onExit }) => (
       <div
         ref={ref}>
        <div id="viewer" >{renderSwitch(viewerTypeState)}</div> */}
 
-        {/* <div>
+          {/* <div>
             <FontAwesomeIcon
               className={`absolute  ${
                 rightNav && 'rotate-180'
@@ -1383,7 +1589,7 @@ const Index: React.FC<IProps> = () => {
             ></FontAwesomeIcon>
           </div> */}
 
-        {/* <div ref={bottomRefContainer}>
+          {/* <div ref={bottomRefContainer}>
           {viewerTypeState != 'map' ? (
             <p
               className={`left-48  bg-gray-300 rounded absolute duration-300 cursor-pointer ${
@@ -1410,70 +1616,75 @@ const Index: React.FC<IProps> = () => {
              </div>
           </div>
         </div> */}
-        {/* {structure && snapshot && designMap && activeRealityMap && ( */}
-        <div ref={rightrefContainer}>
-          {/* <FontAwesomeIcon
+          {/* {structure && snapshot && designMap && activeRealityMap && ( */}
+          <div ref={rightrefContainer}>
+            {/* <FontAwesomeIcon
             className={`fixed  ${rightNav && "rotate-180"
               } text-lg text-blue-300  ${rightNav ? "right-9" : "right-0"
               }  top-46  cursor-pointer border rounded  p-1 bg-gray-400 z-10 text-white`}
             onClick={rightNavCollapse}
             icon={faLessThan}
           ></FontAwesomeIcon> */}
-          {/* <div className="toolbarcontainer"> */}
-          <div
-            ref={rightOverlayRef}
-            id="bg-color"
-            className={`fixed  toolbarWidth  ${"visible"} `}
-          >
-            <ToolBarMenuWrapper
-              issuesList={issuesList}
-              tasksList={tasksList}
-              toolClicked={toolClicked}
-              viewMode={currentViewMode}
-              handleOnFilter={handleOnIssueFilter}
-              currentProject={currentProjectId}
-              currentStructure={structure}
-              currentSnapshot={snapshot}
-              currentTypesList={designMap}
-              currentLayersList={activeRealityMap}
-              closeFilterOverlay={closeFilterOverlay}
-              closeTaskFilterOverlay={closeTaskFilterOverlay}
-              handleOnTaskFilter={handleOnTaskFilter}
-              contextInfo={currentContext}
-              openCreateIssue={openCreateIssue}
-              openCreateTask={openCreateTask}
-              selectedLayersList={currentViewLayers}
-              deleteTheTask={deleteTheTask}
-              issuePriorityList={issuePriorityList}
-              issueStatusList={issueStatusList}
-              issueTypesList={issueTypesList}
-              taskFilterState={taskFilterState}
-              issueFilterState={issueFilterState}
-              closeIssueCreate={closeIssueCreate}
-              closeTaskCreate={closeTaskCreate}
-              deleteTheIssue={deleteTheIssue}
-              openIssueDetails={openIssueDetails}
-              openTaskDetails={openTaskDetails}
-              closeTaskDetails={closeTaskDetails}
-              closeIssueDetails={closeIssueDetails}
-              setIssueList={setIssueList}
-              getIssues={getIssues}
-              getTasks={getTasks}
-              handleOnIssueSort={handleOnIssueSort}
-              handleOnTasksSort={handleOnTasksSort}
-              issueSubmit={issueSubmit}
-              taskSubmit={taskSubmit}
-              selectedType={currentViewType}
-              deleteTheAttachment={deleteTheAttachment}
-            />
+            {/* <div className="toolbarcontainer"> */}
+            <div
+              ref={rightOverlayRef}
+              id="bg-color"
+              className={`fixed drop-shadow  toolbarWidth  ${"visible"} `}
+            >
+              <ToolBarMenuWrapper
+                issuesList={issuesList}
+                tasksList={tasksList}
+                toolClicked={toolClicked}
+                viewMode={currentViewMode}
+                handleOnFilter={handleOnIssueFilter}
+                currentProject={currentProjectId}
+                currentStructure={structure}
+                currentSnapshot={snapshot}
+                currentTypesList={designAndRealityMaps}
+                designMap={designMap}
+                currentLayersList={activeRealityMap}
+                closeFilterOverlay={closeFilterOverlay}
+                closeTaskFilterOverlay={closeTaskFilterOverlay}
+                handleOnTaskFilter={handleOnTaskFilter}
+                contextInfo={currentContext}
+                openCreateIssue={openCreateIssue}
+                openCreateTask={openCreateTask}
+                selectedLayersList={currentViewLayers}
+                deleteTheTask={deleteTheTask}
+                issuePriorityList={issuePriorityList}
+                issueStatusList={issueStatusList}
+                issueTypesList={issueTypesList}
+                taskFilterState={taskFilterState}
+                issueFilterState={issueFilterState}
+                closeIssueCreate={closeIssueCreate}
+                closeTaskCreate={closeTaskCreate}
+                deleteTheIssue={deleteTheIssue}
+                openIssueDetails={openIssueDetails}
+                openTaskDetails={openTaskDetails}
+                closeTaskDetails={closeTaskDetails}
+                closeIssueDetails={closeIssueDetails}
+                setIssueList={setIssueList}
+                getIssues={getIssues}
+                getTasks={getTasks}
+                handleOnIssueSort={handleOnIssueSort}
+                handleOnTasksSort={handleOnTasksSort}
+                issueSubmit={issueSubmit}
+                taskSubmit={taskSubmit}
+                selectedType={currentViewType}
+                deleteTheAttachment={deleteTheAttachment}
+                setActiveRealityMap={setActiveRealityMap}
+                setLayersUpdated={setLayersUpdated}
+                layersUpdated={layersUpdated}
+                setViewType={setViewType}
+              />
 
-            {/* <CustomToaster /> */}
-            {/* </div> */}
-            {/* <RightFloatingMenu
+              {/* <CustomToaster /> */}
+              {/* </div> */}
+              {/* <RightFloatingMenu
               onClick={rightNavCollapse}
               icon={faLessThan}
             ></FontAwesomeIcon> */}
-            {/* <div
+              {/* <div
               ref={rightOverlayRef}
               id="bg-color"
               className={`${
@@ -1482,7 +1693,7 @@ const Index: React.FC<IProps> = () => {
                 rightNav ? "visible" : ""
               }  bg-gray-200 top-10  rounded-lg  inset-x-1/3 duration-300 z-10 overflow-y-hidden`}
             > */}
-            {/* <div  className='flex w-full '>
+              {/* <div  className='flex w-full '>
               <div className=' w-full'> 
               <RightFloatingMenu
                 issuesList={issuesList}
@@ -1508,7 +1719,7 @@ const Index: React.FC<IProps> = () => {
         )}
               </div>
              </div> */}
-            {/* <IssueCreate
+              {/* <IssueCreate
                 issueToolClicked={toolClicked}
                 handleIssueSubmit={issueSubmit}
                 visibility={openCreateIssue}
@@ -1541,10 +1752,13 @@ const Index: React.FC<IProps> = () => {
                 responseAttachmentData={responseAttachmentData}
                 deleteTheAttachment={deleteTheAttachment}
               ></IssueList>  */}
-            {/* </div> */}
+              {/* </div> */}
+            </div>
+            {/* )} */}
           </div>
-          {/* )} */}
         </div>
+        {/* </FullScreen> */}
+
         {/* )} */}
         {/* </ReactFullscreen> */}
       </div>
