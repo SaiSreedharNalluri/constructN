@@ -55,9 +55,7 @@ const CustomAutoComplete = styled(Autocomplete)({
 });
 
 const CustomSearch = (props: any) => {
-
-  const AssignEditSearchContainer = styled("div")({
-  });
+  const AssignEditSearchContainer = styled("div")({});
 
   const ValueContainer = styled("div")(({ theme }) => ({
     "& > :not(:last-child)": {
@@ -72,7 +70,7 @@ const CustomSearch = (props: any) => {
   const CloseIcon = styled(Image)`
     cursor: pointer;
   `;
-  
+
   const { data, handleSearchResult, setFormConfig } = props;
   const { isMultiSelect = false } = props.data;
   const [val, setVal] = React.useState<any>([]);
@@ -121,6 +119,7 @@ const CustomSearch = (props: any) => {
           <CustomAutoComplete
             className={"formField"}
             disablePortal
+            data-testid={props.dataTestId}
             id="combo-box-demo"
             options={data.listOfEntries}
             getOptionLabel={(option: any) => option.label}
@@ -175,7 +174,7 @@ const CustomSearch = (props: any) => {
                       style={{ marginLeft: "5px", marginRight: "12px" }}
                     />
                   }
-                  onDelete={( id: string) => {
+                  onDelete={(id: string) => {
                     const newSelectedUser = val.filter(
                       (selected: any) => selected?.label !== v?.label
                     );
@@ -197,6 +196,7 @@ const CustomSearch = (props: any) => {
       ) : (
         <CustomAutoComplete
           disablePortal
+          data-testid={props.dataTestId}
           id="combo-box-demo"
           options={data.listOfEntries}
           value={val}

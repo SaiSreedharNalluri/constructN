@@ -202,6 +202,7 @@ const FormWrapper = (props: any) => {
               label=""
               data={data}
               isReadOnly={data.isReadOnly}
+              dataTestId={`inputSelectField-${data.id}`}
             />
           </ElementContainer>
         );
@@ -220,7 +221,6 @@ const FormWrapper = (props: any) => {
               }}
               defaultValue={data.defaultValue}
               isError={data.isError}
-              dataTestId="inputTextField"
               isRequired={data.isReq}
               type={data.type}
               minVal={data?.minVal}
@@ -229,6 +229,7 @@ const FormWrapper = (props: any) => {
               isDisabled={data.isDisabled}
               className={undefined}
               isReadOnly={data.isReadOnly}
+              dataTestId={`inputTextAreaField-${data.id}`}
             />
           </ElementContainer>
         );
@@ -269,6 +270,7 @@ const FormWrapper = (props: any) => {
               onChange={(e: any) => {
                 handleDateChange(e, data.id);
               }}
+              dataTestId={`inputDateField-${data.id}`}
               isReadOnly={data.isReadOnly}
             />
           </ElementContainer>
@@ -283,6 +285,7 @@ const FormWrapper = (props: any) => {
               }}
               selectedName={data.selectedName}
               isReadOnly={data.isReadOnly}
+              dataTestId="searchField"
               setFormConfig={setFormConfig}
             />
           </ElementContainer>
@@ -293,6 +296,7 @@ const FormWrapper = (props: any) => {
             <CustomFileInput
               handleFileUpload={(e: any) => handleFileUpload(e, data.id)}
               data
+              dataTestId={`inputFileField-${data.id}`}
             />
           </ElementContainer>
         );
@@ -305,6 +309,7 @@ const FormWrapper = (props: any) => {
                 handleChipMaking(chipsString, data.id)
               }
               data={data}
+              dataTestId={"chip"}
               setFormConfig={setFormConfig}
             />
           </ElementContainer>
@@ -328,6 +333,8 @@ const FormWrapper = (props: any) => {
         return "";
     }
   };
+
+  console.log(config, "config");
 
   return (
     <div className="form-container-child">

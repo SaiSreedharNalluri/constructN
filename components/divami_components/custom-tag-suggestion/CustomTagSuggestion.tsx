@@ -58,8 +58,8 @@ const CloseIcon = styled(Image)`
 `;
 
 const CustomTagSuggestion = (props: any) => {
-  const { data, handleChipMaking, setFormConfig } = props;
-  console.log("data222", data);
+  const { data, handleChipMaking, setFormConfig, dataTestId } = props;
+  console.log("data", data);
   const [options, setOptions] = useState(data.chipSuggestions);
   const [autoCompleteValue, setAutoCompleteValue] = useState([]);
 
@@ -85,12 +85,15 @@ const CustomTagSuggestion = (props: any) => {
           handleChipMaking(newval);
         }}
         renderTags={() => null}
+        data-testid={dataTestId}
         renderInput={(params) => (
           <TextField
             {...params}
             variant="outlined"
             // label="filterSelectedOptions"
             placeholder="Add tags separated by commas"
+            data-testid="custom-tag-suggestion-text-field"
+
             // onKeyDown={(e: any) => {
             //   if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
             //     setAutoCompleteValue(

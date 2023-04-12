@@ -49,7 +49,7 @@ const CustomSelect = (props: any) => {
     defaultValue,
     id,
     setFormConfig,
-
+    dataTestId,
     isReadOnly = false,
   } = props;
 
@@ -91,6 +91,7 @@ const CustomSelect = (props: any) => {
         id={id}
         readOnly={isReadOnly}
         className={` ${data?.isError ? "formErrorField" : ""} formField`}
+        data-testid={dataTestId}
       >
         {config.options?.length &&
           config.options.map((item: any, index: any) => (
