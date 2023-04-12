@@ -7,7 +7,7 @@ import {
 
 } from './ViewerDataUtils';
 
-export const MinimapUtils = (function () {
+export const MinimapCompareUtils = (function () {
   let _viewerId;
   let _eventHandler;
   let _viewer;

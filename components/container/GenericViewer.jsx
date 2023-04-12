@@ -8,6 +8,7 @@ import Head from 'next/head';
 import Header from './header';
 import { autodeskAuth } from "../../services/forgeService";
 import { MinimapUtils } from '../../utils/MinimapWrapper';
+import { MinimapCompareUtils } from '../../utils/MinimapCompareWrapper';
 import { ForgeViewerUtils } from '../../utils/ForgeWrapper2';
 import { PotreeViewerUtils } from '../../utils/PotreeWrapper';
 import { MapboxViewerUtils } from '../../utils/MapboxWrapper';
@@ -36,6 +37,10 @@ import {
   getMapboxLayers, getMapboxHotspots,
   getRealityMap, getFloorPlanData,
 } from "../../utils/ViewerDataUtils";
+import RemoveIcon from '@mui/icons-material/Remove';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import PictureInPictureIcon from '@mui/icons-material/PictureInPicture';
+import { IconButton } from '@mui/material';
 import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
 import TimeLineComponent from '../divami_components/timeline-container/TimeLineComponent'
 import Hotspots from './hotspots';
@@ -91,6 +96,7 @@ function GenericViewer(props) {
   let pushToolResponse = props.toolRes;
 
   let minimapUtils = useRef();
+  let minimapCompareUtils = useRef();
   let forgeUtils = useRef();
   let potreeUtils = useRef();
   let mapboxUtils = useRef();
@@ -98,6 +104,9 @@ function GenericViewer(props) {
   let potreeCompareUtils = useRef();
   let forgeCompareUtils = useRef();
   let mapboxCompareUtils = useRef();
+
+  let _minimap;
+  let _minimapCompare;
 
   let [context, setContext] = useState({});
   let currentContext = useRef();
@@ -356,6 +365,13 @@ function GenericViewer(props) {
   };
 
   const showTag = (tag, show) => {
+    if (minimapUtils.current) {
+      minimapUtils.current.showTag(tag, show);
+    }
+
+    if (isCompare && minimapCompareUtils.current) {
+      minimapCompareUtils.current.showTag(tag, show);
+    }
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -393,13 +409,24 @@ function GenericViewer(props) {
     // console.log("Inside sync viewer: ", isMouseOnMainViewer.current, syncPotreeEvent, syncForgeEvent)
     if(minimapUtils.current) {
       let minimapState;
-      if(currentViewerType.current === 'Potree') {
+      if(currentViewerType.current === 'Potree' && potreeUtils.current) {
         minimapState = potreeUtils.current.getContext();
-      } else if(currentViewerType.current === 'Forge') {
+      } else if(currentViewerType.current === 'Forge' && forgeUtils.current) {
         minimapState = forgeUtils.current.getContext();
       }
       minimapUtils.current.updateViewerState(minimapState)
     }
+
+    if(isCompare && minimapCompareUtils.current) {
+      let minimapState;
+      if(currentViewerType.current === 'Potree' && potreeCompareUtils.current) {
+        minimapState = potreeCompareUtils.current.getContext();
+      } else if(currentViewerType.current === 'Forge' && forgeCompareUtils.current) {
+        minimapState = forgeCompareUtils.current.getContext();
+      }
+      minimapCompareUtils.current.updateViewerState(minimapState)
+    }
+
     if (currentIsCompare.current == true) {
       if (isMouseOnMainViewer.current == true) {
         if (currentCompareViewMode.current === 'Potree') {
@@ -465,6 +492,15 @@ function GenericViewer(props) {
         minimapUtils.current.updateTasksData(tasksList);
       }
     }
+
+    if (isCompare && minimapCompareUtils.current) {
+      if (type === 'Issue') {
+        minimapCompareUtils.current.updateIssuesData(issuesList);
+      } else if (type === 'Task') {
+        minimapCompareUtils.current.updateTasksData(tasksList);
+      }
+    }
+
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -515,8 +551,10 @@ function GenericViewer(props) {
             //   toolAction: 'Design',
             // });
             // setViewMode('Design');
-          } else {
-
+          } else if (currentViewerType.current == 'Potree') {
+            if(potreeUtils.current) {
+              potreeUtils.current.updateContext(event, false)
+            }
           }
           break;
         case 'Reality':
@@ -582,8 +620,17 @@ function GenericViewer(props) {
     if (minimapUtils.current == undefined) {
       minimapUtils.current = MinimapUtils;
       minimapUtils.current.setupViewer(viewerId, viewerEventHandler);
-      if(forgeInitialised) minimapUtils.current.initializeViewer()
+      if(forgeInitialised) minimapUtils.current.initializeViewer();
       minimapUtils.current.setType(currentViewType.current);
+    }
+  };
+
+  const initMinimapCompare = (viewerId) => {
+    if (minimapCompareUtils.current == undefined) {
+      minimapCompareUtils.current = MinimapCompareUtils
+      minimapCompareUtils.current.setupViewer(viewerId, viewerEventHandler);
+      if(forgeInitialised) minimapCompareUtils.current.initializeViewer();
+      minimapCompareUtils.current.setType(currentViewType.current);
     }
   };
 
@@ -626,10 +673,8 @@ function GenericViewer(props) {
       case 'Forge':
         if (forgeCompareUtils.current == undefined) {
           forgeCompareUtils.current = ForgeViewerUtils;
-          forgeCompareUtils.current.initializeViewer(
-            viewerId,
-            viewerEventHandler
-          );
+          forgeCompareUtils.current.setupViewer(viewerId, viewerEventHandler);
+          if(forgeInitialised) forgeCompareUtils.current.initializeViewer()
           forgeCompareUtils.current.setType(currentViewType.current);
         }
         break;
@@ -659,6 +704,15 @@ function GenericViewer(props) {
       minimapUtils.current.setStructure(structure);
       if (designList.length > 0) {
         minimapUtils.current.updateData(getForgeModels(designMap));
+      }
+    }
+  }
+
+  async function loadMinimapCompareData() {
+    if (minimapCompareUtils.current != undefined) {
+      minimapCompareUtils.current.setStructure(structure);
+      if (designList.length > 0) {
+        minimapCompareUtils.current.updateData(getForgeModels(designMap));
       }
     }
   }
@@ -703,6 +757,17 @@ function GenericViewer(props) {
       minimapUtils.current.updateTasksData(tasksList);
       let data = await getRealityLayers(structure, realityMap);
       minimapUtils.current?.updateLayersData(data, currentContext.current);
+    }
+    currentContext.current = undefined;
+  }
+
+  async function loadMinimapCompareLayerData() {
+    if (minimapCompareUtils.current != undefined) {
+      minimapCompareUtils.current.setSnapshot(snapshot);
+      minimapCompareUtils.current.updateIssuesData(issuesList);
+      minimapCompareUtils.current.updateTasksData(tasksList);
+      let data = await getRealityLayers(structure, realityMap);
+      minimapCompareUtils.current?.updateLayersData(data, currentContext.current);
     }
     currentContext.current = undefined;
   }
@@ -894,6 +959,10 @@ function GenericViewer(props) {
 
   const setMinimapUtils = function (viewerId) {
     initMinimap(viewerId);
+  };
+
+  const setMinimapCompareUtils = function (viewerId) {
+    // initMinimapCompare(viewerId);
   };
 
   const setForgeViewerUtils = function (viewerId) {
@@ -1187,6 +1256,9 @@ function GenericViewer(props) {
     if(minimapUtils.current) {
       minimapUtils.current.initializeViewer();
     }
+    if(minimapCompareUtils.current) {
+      minimapCompareUtils.current.initializeViewer();
+    }
     if(forgeUtils.current) {
       forgeUtils.current.initializeViewer();
     }
@@ -1336,6 +1408,7 @@ function GenericViewer(props) {
         setViewerType('Potree');
       }
       loadMinimapLayerData();
+      if(isCompare) loadMinimapCompareLayerData();
       loadLayerData();
     }
   }, [realityList]);
@@ -1344,6 +1417,7 @@ function GenericViewer(props) {
     // console.log("Generic Viewer load: Reality UseEffect", compareRealityList);
     if (realityList.length > 0 && isCompare) {
       loadCompareLayerData();
+      loadMinimapCompareLayerData();
     }
   }, [compareRealityList]);
 
@@ -1392,6 +1466,8 @@ function GenericViewer(props) {
         currentCompareViewMode.current = currentViewerType.current;
         setIsCompare(true);
       } else {
+        loadMinimapCompareData();
+        loadMinimapCompareLayerData();
         loadCompareViewerData();
         loadCompareLayerData();
       }
@@ -1427,15 +1503,66 @@ function GenericViewer(props) {
     setSelectedHotspot(hotspot.properties.id)
   }
 
+  const renderMinimap = (count) => {
+    return (<Rnd
+      ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
+      minWidth={320}
+      minHeight={32}
+      maxWidth={'99%'}
+      maxHeight={'99%'}
+      bounds={count == 1 ? '#TheView' : '#CompareView'}
+      default={{ x: 20, y: 75, width: 320, height: 320 }}
+      onResize={(e, direction, ref, delta, position) => {
+        count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
+      }}
+      className='z-10 border-4 rounded-lg border-[#F1742E] bg-[#F1742E]'>
+      <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
+        <div className='h-8 bg-[#F1742E] flex'>
+          <div className='text-white flex items-center pl-2 flex-1'>Minimap</div>
+          <IconButton className='text-white' size="small" onClick={() => { resizeMinimap('minimize', count) }}>
+            <RemoveIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton className='text-white' size="small" onClick={() => { resizeMinimap('default', count) }}>
+            <PictureInPictureIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton className='text-white' size="small" onClick={() => { resizeMinimap('fullscreen', count) }}>
+            <FullscreenIcon fontSize="inherit" />
+          </IconButton>
+        </div>
+        <MiniMap count={count} style={{ height: 'calc(100% - 24px)' }} setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}></MiniMap>
+      </div>
+    </Rnd>)
+  }
+
+  const resizeMinimap = (mode, count) => {
+    const minimap = count == 1 ? _minimap : _minimapCompare
+    const utils = count == 1 ? minimapUtils.current : minimapCompareUtils.current
+    switch(mode) {
+      case 'minimize':
+        minimap.updateSize({ width: 320, height: 32 });
+        break;
+      case 'fullscreen':
+        minimap.updateSize({ width: '99%', height: '99%' });
+        minimap.updatePosition({ x: 0, y: 0 });
+        break;
+      default:
+        minimap.updateSize({ width: 320, height: 320 });
+        break;
+    }
+    setTimeout(() => utils?.resize(), 50)
+  }
+
   return (
     <div className="fixed calc-w calc-h flex flex-row">
       <div id="TheView" className="relative basis-1/2 flex grow shrink">
         {renderViewer(1)}
+        {renderMinimap(1)}
         <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimeLineComponent>
       </div>
       <div className='w-0.5' color='gray'></div>
-      <div className={`relative ${isCompare ? "basis-1/2" : "hidden"}`}>
+      <div id="CompareView" className={`relative ${isCompare ? "basis-1/2" : "hidden"}`}>
         {renderViewer(2)}
+        {renderMinimap(2)}
         <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
       </div>
       {
@@ -1453,26 +1580,6 @@ function GenericViewer(props) {
           </HotspotsCompare>
           : <></>
       }
-      <Rnd
-        style={{'padding-top': '24px'}}
-        minWidth={'25%'}
-        minHeight={'25%'}
-        maxWidth={'99%'}
-        maxHeight={'99%'}
-        bounds={'#TheView'}
-        default={{
-          x: 20,
-          y: 75,
-          width: 320,
-          height: 320,
-        }} 
-        onResize={(e, direction, ref, delta, position) => {
-          minimapUtils.current?.resize()
-        }}
-        className='z-10 border-4 rounded-lg border-amber-400 bg-amber-400'>
-        <MiniMap style={{ height: 'calc(100% - 24px)' }} setMinimap={setMinimapUtils}></MiniMap>
-      </Rnd>
-      
       {/* 
     <div className={` ${isFullScreenActive?"w-full h-full":" calc-w calc-h"} fixed flex flex-row`}>
       <div id="TheView" className="relative basis-1/2 flex grow shrink">

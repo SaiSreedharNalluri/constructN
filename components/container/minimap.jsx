@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 function Minimap(props) {
     
-    const viewerId = `minimap`;
+    const viewerId = `minimap-${props.count}`;
     const setMinimapUtils = props.setMinimap;
 
     const initViewer = function() {

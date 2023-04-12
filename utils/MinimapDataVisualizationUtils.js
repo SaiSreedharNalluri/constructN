@@ -6,6 +6,7 @@ import {
     applyTM
 
   } from './ViewerDataUtils';
+import { MathUtils } from "../public/potree/libs/three.js/build/three.module";
 
 export class MinimapDataVisualization {
     static EXTENSION_ID = "Autodesk.DataVisualization";
@@ -143,6 +144,7 @@ export class MinimapDataVisualization {
     }
 
     formatDataMap(visualizationData) {
+        if(!this.offset) this.offset = [0, 0, 0]
         let dbId = this.viewableLength + 1;
         for (const viewableType in visualizationData) {
             delete this.viewableDataMap[viewableType];
@@ -218,20 +220,20 @@ export class MinimapDataVisualization {
                 highlightUrl = "/icons/360VideoWalkInViewer.svg";
             break;
             case '360 Image':
-                iconUrl = "/icons/360ImageInViewer.svg";
-                highlightUrl = "/icons/360ImageInViewer.svg";
+                iconUrl = "/icons/forge360Image.png";
+                highlightUrl = "/icons/forge360Image.png";
                 break;
             case 'Phone Image':
                 iconUrl = "/icons/phoneImageInViewer.svg";
                 highlightUrl = "/icons/phoneImageInViewer.svg";
                 break;
             case 'Issue':
-                iconUrl = "/icons/issuesInViewer.svg";
-                highlightUrl = "/icons/issuesInViewer.svg";
+                iconUrl = "/icons/forgeissue.png";
+                highlightUrl = "/icons/forgeissue.png";
             break;
             case 'Task':
-                iconUrl = "/icons/tasksInViewer.svg";
-                highlightUrl = "/icons/tasksInViewer.svg";
+                iconUrl = "/icons/forgeTask.png";
+                highlightUrl = "/icons/forgeTask.png";
             break
 
         }
@@ -307,28 +309,131 @@ export class MinimapDataVisualization {
     async createMarker(position, yaw) {
        if(!position) return;
        const viewableType = this.dataVizCore.ViewableType.SPRITE;
-       const spriteIconUrl = `https://cdn-icons-png.flaticon.com/512/3699/3699532.png`;
-       const style = new this.dataVizCore.ViewableStyle(viewableType, undefined, spriteIconUrl);
-
-       const viewableData = new this.dataVizCore.ViewableData();
-       viewableData.spriteSize = 24; // Sprites as points of size 24 x 24 pixels
-
+       const spriteIconUrl = `/icons/navigator/0.png`;
        const localPos = this.getViewerPosition(position, this.tm, this.offset)
        localPos.z = 100
-       const viewable = new this.dataVizCore.SpriteViewable(localPos, style, 999999);
-       viewableData.addViewable(viewable);
-       await viewableData.finish(); 
-       this.dataVizExtn.addViewables(viewableData);
+       let animatedUrls = [];
+       for(let i = 0; i <= 360; i = i + 10) {
+        animatedUrls.push(`/icons/navigator/nav-${i}.png`)
+       }
+       if(!this._navStyle) {
+        this._navStyle = new this.dataVizCore.ViewableStyle(viewableType, undefined, spriteIconUrl, undefined, spriteIconUrl, animatedUrls);
+        const viewableData = new this.dataVizCore.ViewableData();
+        viewableData.spriteSize = 24; // Sprites as points of size 24 x 24 pixels
+        this._navViewable = new this.dataVizCore.SpriteViewable(localPos, this._navStyle, 999);
+        viewableData.addViewable(this._navViewable);
+        await viewableData.finish(); 
+        this.dataVizExtn.addViewables(viewableData);
+       } else {
+        this.invalidateViewablesDirect(999, this.dataVizExtn.pointMeshes, this.dataVizExtn.viewableData, (viewable) => {
+            let deg = MathUtils.radToDeg(yaw);
+            if(deg > 0) deg = 360 - deg;
+            else deg = deg * -1;
+            deg = (Math.floor(deg / 10) * 10) % 360;
+            const mUrl = `/icons/navigator/nav-${deg}.png`
+            return {
+                position: localPos,
+                url: mUrl
+            };
+        });
+       }
     }
+
+    invalidateViewablesDirect = (dbIds, meshes, viewableData, callback) => {
+        if (!dbIds || !meshes || !callback) {
+            throw new Error("Parameters of 'invalidateViewables' are mandatory");
+        }
+
+        if (!(dbIds instanceof Array)) {
+            dbIds = [dbIds];
+        }
+
+        const dbIdSet = new Set(dbIds);
+
+        /** @type {Map<number, CustomViewable>} */
+        const viewables = new Map();
+        viewableData.viewables.forEach((v) => viewables.set(v.dbId, v));
+
+        let sceneUpdated = false;
+
+        for(let k = 0; k < meshes.length; k++) {
+            const mesh = meshes[k];
+            const geometry = mesh.geometry;
+            const ids = geometry.attributes["id"].array;
+
+            for (let i = 0; i < ids.length; i += 3) {
+                const dbId = ids[i] + (ids[i + 1] << 8) + (ids[i + 2] << 16);
+                if (!dbIdSet.has(dbId)) {
+                    continue;
+                }
+
+                const updates = callback(viewables.get(dbId));
+                if (!updates) {
+                    continue;
+                }
+
+                const pointIndex = i / 3;
+                if (updates.position) {
+                    const positions = geometry.attributes["position"].array;
+                    geometry.attributes["position"].needsUpdate = true;
+                    positions[pointIndex * 3 + 0] = updates.position.x;
+                    positions[pointIndex * 3 + 1] = updates.position.y;
+                    positions[pointIndex * 3 + 2] = updates.position.z;
+                    
+                    sceneUpdated = true;
+                }
+
+                if (updates.url) {
+                    const uv = viewableData.getSpriteUV(updates.url);
+                    // console.log(updates.url, 'ppppp', uv, this.dataVizExtn.viewableData._spriteAtlas)
+                    if (uv) {
+                        const uvp = geometry.attributes["uvp"].array;
+                        geometry.attributes["uvp"].needsUpdate = true;
+                        uvp[pointIndex * 4 + 0] = uv.x;
+                        uvp[pointIndex * 4 + 1] = uv.y;
+                        uvp[pointIndex * 4 + 2] = uv.w;
+                        uvp[pointIndex * 4 + 3] = uv.h;
+
+                        sceneUpdated = true;
+                    }
+                }
+
+                if (updates.color) {
+                    const colors = geometry.attributes["color"].array;
+                    geometry.attributes["color"].needsUpdate = true;
+                    colors[pointIndex * 3 + 0] = updates.color.r * 255;
+                    colors[pointIndex * 3 + 1] = updates.color.g * 255;
+                    colors[pointIndex * 3 + 2] = updates.color.b * 255;
+
+                    sceneUpdated = true;
+                }
+
+                if (updates.scale !== undefined) {
+                    if (updates.scale > 2.0 || updates.scale < 0) {
+                        const msg = `invalidateViewables: 'scale' of '${updates.scale}' out of range [0, 2]`;
+                        console.warn(msg);
+                    }
+                    const scale = geometry.attributes["pointScale"].array;
+                    geometry.attributes["pointScale"].needsUpdate = true;
+                    scale[pointIndex] = updates.scale;
+
+                    sceneUpdated = true;
+                }
+            }
+        }
+
+        if (sceneUpdated) {
+            this.viewer.impl.invalidate(false, false, true);
+        }
+    };
 
 
     refreshViewableData(position, yaw) {
         this.removeViewableData();
         this.getNewViewableData();
         this.loadViewableData();
-        // this.createMarker(position, yaw);
+        this.createMarker(position, yaw);
     }
-
 
     async createTempViewable(type, event) {
 
