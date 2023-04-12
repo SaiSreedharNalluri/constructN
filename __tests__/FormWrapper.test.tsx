@@ -1,25 +1,30 @@
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
-import FormWrapper from '../components/divami_components/form-wrapper/FormWrapper';
-import { config } from "./Mocks/Formwrapper"
+import { act } from "react-dom/test-utils";
+import FormWrapper from "../components/divami_components/form-wrapper/FormWrapper";
+import { config } from "./Mocks/Formwrapper";
 
 describe("Form Wrapper", () => {
   it("should render the form wrapper", () => {
     let validate = true;
-    const setFormConfig = jest.fn().mockImplementation((callback: any) => { callback(config) })
-    const setFormState = jest.fn()
-    const setIsValidate = jest.fn()
-    const setCanBeDisabled = jest.fn()
-    const formState = { selectedValue: '' }
-    render(<FormWrapper
-      config={config}
-      setFormConfig={setFormConfig}
-      formState={formState}
-      setFormState={setFormState}
-      setIsValidate={setIsValidate}
-      validate={validate}
-      setCanBeDisabled={setCanBeDisabled}
-    />)
+    const setFormConfig = jest.fn().mockImplementation((callback: any) => {
+      callback(config);
+    });
+    const setFormState = jest.fn();
+    const setIsValidate = jest.fn();
+    const setCanBeDisabled = jest.fn();
+    const formState = { selectedValue: "" };
+    render(
+      <FormWrapper
+        config={config}
+        setFormConfig={setFormConfig}
+        formState={formState}
+        setFormState={setFormState}
+        setIsValidate={setIsValidate}
+        validate={validate}
+        setCanBeDisabled={setCanBeDisabled}
+      />
+    );
 
     const input: any = screen.getByTestId("inputSelectField-issuePriority")
     fireEvent.click(input)
@@ -42,9 +47,9 @@ describe("Form Wrapper", () => {
     fireEvent.blur(testAreaInput, { target: { value: "si" } })
     expect(setFormConfig).toBeCalledWith(expect.any(Function))
 
-    const fileInputEl = screen.getByTestId("inputFileField-file-upload")
-    fireEvent.change(fileInputEl, { target: { files: ["file1", "file2"] } })
-    expect(setFormConfig).toBeCalledWith(expect.any(Function))
+    const fileInputEl = screen.getByTestId("inputFileField-file-upload");
+    fireEvent.change(fileInputEl, { target: { files: ["file1", "file2"] } });
+    expect(setFormConfig).toBeCalledWith(expect.any(Function));
 
     const fileContainer = screen.getByTestId("file-upload-container")
     fireEvent.click(fileContainer)
@@ -52,19 +57,24 @@ describe("Form Wrapper", () => {
 
     const customTagSuggestion: any = screen.getByTestId("custom-tag-suggestion").querySelector('input')
     fireEvent.change(customTagSuggestion, { target: { value: "si" } })
+    expect(customTagSuggestion).toHaveDisplayValue('si')
+
     fireEvent.keyDown(customTagSuggestion, { key: 'ArrowDown' })
     fireEvent.keyDown(customTagSuggestion, { key: 'Enter' })
-    // expect(customTagSuggestion).toHaveTextContent('si')
 
-    const searchEl: any = screen.getByTestId("search").querySelector('input')
-    fireEvent.change(searchEl, { target: { value: "si" }, })
-    fireEvent.keyDown(searchEl, { key: 'ArrowDown' })
-    fireEvent.keyDown(searchEl, { key: 'Enter' })
+    const searchEl: any = screen
+      .getByTestId("search-auto-complete")
+      .querySelector("input");
+    fireEvent.change(searchEl, { target: { value: "si" } });
+    fireEvent.keyDown(searchEl, { key: "ArrowDown" });
+    fireEvent.keyDown(searchEl, { key: "Enter" });
+    // expect(searchEl).toBe("si");
 
-    const datePickerEl: any = screen.getByTestId("custom-calender-parent-inputDateField-start-date").querySelector('input');
-    fireEvent.change(datePickerEl, { target: { value: "" } })
-    fireEvent.keyDown(searchEl, { key: 'Enter' })
-
-
-  })
-})
+    const datePickerEl: any = screen
+      .getByTestId("custom-calender-parent-inputDateField-start-date")
+      .querySelector("input");
+    fireEvent.change(datePickerEl, { target: { value: "03/21/2023" } });
+    fireEvent.keyDown(datePickerEl, { key: "Enter" });
+    expect(datePickerEl).toHaveValue("03/21/2023");
+  });
+});
