@@ -17,7 +17,6 @@ export const login = (email: string, password: string) => {
       return response.data;
     })
     .catch((error) => {
-      console.log('error', error);
       throw error;
     });
 };
