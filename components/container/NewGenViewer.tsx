@@ -38,6 +38,8 @@ import MapboxViewer from './mapboxViewer';
 import { IContext } from '../../models/ITools';
 import { IStructure } from '../../models/IStructure';
 import { ISnapshot } from '../../models/ISnapshot';
+import { ITasks } from '../../models/Itask';
+import { Issue } from '../../models/Issue';
 interface IProps {
 data:IGenData;
 updateData?: (newData :IGenData)=> void;
@@ -125,6 +127,11 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           break;
         case 'setStructure':
           newViewerData=action.data as IGenData;
+          removeLayers(getViewerTypefromViewType(oldViewerData.currentViewType));
+          removeData(getViewerTypefromViewType(oldViewerData.currentViewType));
+          removeContext();
+          //setIsCompare(false);
+          cancelAnimationFrame(animationRequestId);
             break;
         case 'syncGenViewer':
           break;
@@ -185,6 +192,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         case 'issueCreate':
           addTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));            
           break;
+        case 'issueCreateSuccess':
+          newViewerData = {...oldViewerData,currentIssueList:{...oldViewerData.currentIssueList,...action.data as Issue}};
+          //addTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));            
+          break;
         case 'issueCreateFail':
           cancelAddTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
@@ -204,6 +215,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           break;
         case 'taskCreate':
           addTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));            
+          break;
+        case 'taskCreateSuccess':
+          //cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
+          newViewerData = {...oldViewerData,currentTaskList:{...oldViewerData.currentTaskList,...action.data as ITasks}};
           break;
         case 'taskCreateFail':
           cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
@@ -228,8 +243,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   
 
   useEffect(()=>{
-  console.log("my Changed Use Effect",incomingPayload.current,isInitReady)
-  console.log("currentViewerData Use Effect",currentViewerData);
+  //console.log("my Changed Use Effect",incomingPayload.current,isInitReady)
+  //console.log("currentViewerData Use Effect",currentViewerData);
   
   //updateData(currentViewerData);
   if(incomingPayload.current){
@@ -282,6 +297,22 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         } 
         animationRequestId = requestAnimationFrame(animationNow);
         break;
+      case 'setStructure':
+        if(currentViewerData?.structure?.designs !==undefined) {
+          loadViewerData();
+          loadLayerData();
+          }
+        
+          // console.log("Generic Viewer load: Structure Changed", structure);
+            
+          animationRequestId = requestAnimationFrame(animationNow);
+        
+        break;
+        case 'issueCreateSuccess':
+          handleTagListChange('Issue',getViewerTypefromViewType(currentViewerData.currentViewType));
+          break;
+        case 'taskCreateSuccess':
+          handleTagListChange('Task',getViewerTypefromViewType(currentViewerData.currentViewType));
     }
 
     incomingPayload.current=undefined;
@@ -514,9 +545,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   };
 
-  const handleTagListChange = (type:string) => {
+  const handleTagListChange = (type:string,viewerType:string) => {
     //console.log('Inside taglist change: ', type, issuesList, tasksList);
-    switch (getViewerTypefromViewType(currentViewerData.currentViewType)) {
+    switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current) {
           if (type === 'Issue') {
@@ -542,37 +573,42 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     console.log("Inside generic viewer: ",viewerId, event, );
     if (event) {
       switch (event.type) {
-        // case '360 Video':
-        //   currentContext.current = event;
-        //   if (currentViewMode.current == 'Design') {
-        //     pushToolResponse({
-        //       toolName: 'viewMode',
-        //       toolAction: 'Reality',
-        //     });
-        //     setViewMode('Reality');
-        //   } else {
-        //     pushToolResponse({
-        //       toolName: 'viewMode',
-        //       toolAction: 'Design',
-        //     });
-        //     setViewMode('Design');
-        //   }
-        //   break;
-        // case 'Reality':
-        //   break;
-        // case 'Task':
-        // case 'Issue':
-        //   if (!incomingPayload.current) {
-        //     incomingPayload.current = undefined;
-        //   }
-        //   activeTool.current.toolName = event.type;
-        //   activeTool.current.toolAction = event.id.includes('Temp')
-        //     ? `create${event.type}`
-        //     : `select${event.type}`;
-        //   activeTool.current.response = event;
-        //   pushToolResponse(activeTool.current);
-        //   console.log('Marked Point========', event);
-        //   break;
+        case '360 Video':
+          currentContext.current = event;
+          if (currentViewerData.currentViewType==='PlanDrawings' || currentViewerData.currentViewType==='BIM')
+          {
+            dispatchChangeViewerData({type:'setViewType',data:'pointCloud'});
+          }
+          else if(currentViewerData.currentViewType==='pointCloud')
+          {
+            dispatchChangeViewerData({type:'setViewType',data:'PlanDrawings'});
+          }
+          // if (currentViewMode.current == 'Design') {
+          //   pushToolResponse({
+          //     toolName: 'viewMode',
+          //     toolAction: 'Reality',
+          //   });
+          //   setViewMode('Reality');
+          // } else {
+          //   pushToolResponse({
+          //     toolName: 'viewMode',
+          //     toolAction: 'Design',
+          //   });
+          //   setViewMode('Design');
+          // }
+          break;
+        case 'Reality':
+          break;
+        case 'Task':
+        case 'Issue':
+          if (!incomingPayload.current) {
+            incomingPayload.current = undefined;
+          }
+          window.dispatchEvent(new CustomEvent('notify-app',{detail:{type:event.id.includes('Temp')
+          ? `create${event.type}`
+          : `select${event.type}`,data:event}}));
+          console.log('Marked Point========', event);
+          break;
         case '3d':
         case 'panorama':
         case 'image':
@@ -622,7 +658,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
   const initViewer = (viewerId:string) => {
     // console.log("Inside init viewer: ", potreeUtils.current, forgeUtils.current);
-    console.log("InitViewer", forgeUtils.current,currentViewerData.currentViewType);
+    //console.log("InitViewer", forgeUtils.current,currentViewerData.currentViewType);
     switch (getViewerTypefromViewType(currentViewerData.currentViewType)) {
       case 'Forge':
         if (forgeUtils.current === undefined) {
@@ -667,7 +703,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   };
 
   const initCompareViewer = (viewerId:string) => {
-    console.log("InitCompareViewer", viewerId,currentContext);
+    //console.log("InitCompareViewer TEST", viewerId,currentContext,currentViewerData.currentCompareMode);
     switch (currentViewerData.currentCompareMode) {
       case 'compareDesign':
         if (forgeCompareUtils.current === undefined) {
@@ -680,13 +716,16 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         }
         break;
       case 'compareReality':
+        //console.log('Compare Reality Init TEST');
         if (potreeCompareUtils.current === undefined) {
           potreeCompareUtils.current = new PotreeViewerUtils(
             viewerId,
             viewerEventHandler
           );
+          console.log('Compare Reality Init TEST');
           if (!potreeCompareUtils.current.isViewerLoaded()) {
             potreeCompareUtils.current.initialize();
+            console.log('Compare Reality Viewer Loaded TEST');
           }
         }
         break;
@@ -758,14 +797,14 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   function loadCompareViewerData(structure:IStructure, compareMode:string) {
     switch (compareMode) {
       case 'compareDesign':
-        if (forgeCompareUtils.current != undefined) {
+        if (forgeCompareUtils.current !== undefined) {
           forgeCompareUtils.current.setStructure(structure);
           forgeCompareUtils.current.updateData(getForgeModels(getDesignMap(structure.designs)));
         }
 
         break;
       case 'compareReality':
-        if (potreeCompareUtils.current != undefined) {
+        if (potreeCompareUtils.current !== undefined) {
           potreeCompareUtils.current.setStructure(structure);
         }
         break;
@@ -773,6 +812,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   }
 
   async function loadCompareLayerData(structure:IStructure,compareSnapshot:ISnapshot,compareMode:string) {
+    //console.log('Compare View Data TEST');
     switch (compareMode) {
       case 'compareDesign':
         if (forgeCompareUtils.current) {
@@ -785,7 +825,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         }
         break;
       case 'compareReality':
-        if (potreeCompareUtils.current) {
+        //console.log('Compare Reality TEST');
+        if (potreeCompareUtils.current!==undefined) {
+          //console.log('Compare Reality TEST');
           potreeCompareUtils.current.setSnapshot(compareSnapshot);
           potreeCompareUtils.current.updateData(
             await getPointCloud(structure, compareSnapshot),
@@ -822,18 +864,19 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
        loadViewerData();
       loadLayerData();
       forgeUtils.current?.refreshData();
-      console.log('trying to reload....forge');
+      //console.log('trying to reload....forge');
       
     } else {
-      console.log('trying to load....compare forge');
+      //console.log('trying to load....compare forge');
       initCompareViewer(viewerId);
     }
   };
 
-  const setpotreeViewerUtils = function (viewerId:string) {
+  const setpotreeViewerUtils = function (viewerId:string) 
+  {
     if (!isCompareViewer(viewerId)) {
       initViewer(viewerId);
-      console.log('trying to reload....potree');
+      //console.log('trying to reload....potree');
        loadViewerData();
        loadLayerData();
     } else {
@@ -850,17 +893,17 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   };
 
   function renderViewer(count:Number) {
-     console.log("Generic Viewer Inside render View: ", currentViewerData.currentViewType, count,currentViewerData.currentCompareMode);
+     //console.log("Generic Viewer Inside render View: ", currentViewerData.currentViewType, count,currentViewerData.currentCompareMode);
     if (count != 1 && (currentViewerData.currentCompareMode==='noCompare')) {
       console.log("Improper mode", currentViewerData.currentCompareMode);
       return;
     }
     let mode = (count == 1) ? getViewerTypefromViewType(currentViewerData.currentViewType) : currentViewerData.currentCompareMode;
-     console.log("Checking render mode", mode);
+     //console.log("Checking render mode", mode);
     switch (mode) {
       case 'Forge':
       case 'compareDesign':
-        console.log('Trial',currentViewerData.currentViewType,getViewerTypefromViewType(currentViewerData.currentViewType));
+        //console.log('Trial',currentViewerData.currentViewType,getViewerTypefromViewType(currentViewerData.currentViewType));
         return (
           <ForgeViewer
             viewerCount={count}
@@ -868,7 +911,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           ></ForgeViewer>
         );
       case 'Potree':
-      case 'CompareReality':
+      case 'compareReality':
         return (
           <PotreeViewer
             viewerCount={count}
@@ -923,28 +966,29 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   //   }
   // };
 
-  // const setCurrentSnapshot = (snapshot) => {
-  //   if(snapshot){
+  const setCurrentSnapshot = (snapshot:ISnapshot) => {
+    if(snapshot){
 
-  //   setSnapshot(snapshot);
-  //   //updateSnapshot(snapshot);
-  //   setRealityList(snapshot.reality);
-  //   setRealityMap(getRealityMap(snapshot));
-  //   //updateRealityMap(getRealityMap(snapshot));
-  // }
 
-  // };
+    // setSnapshot(snapshot);
+    // //updateSnapshot(snapshot);
+    // setRealityList(snapshot.reality);
+    // setRealityMap(getRealityMap(snapshot));
+    // //updateRealityMap(getRealityMap(snapshot));
+  }
 
-  // const setCurrentCompareSnapshot = (snapshot) => {
-  //   if(snapshot){
+  };
 
-  //   setCompareSnapshot(snapshot);
-  //   // updateSnapshot(snapshot);
-  //   setCompareRealityList(snapshot.reality);
-  //   setCompareRealityMap(getRealityMap(snapshot));
-  //   // updateRealityMap(getRealityMap(snapshot));
-  //   }
-  // };
+  const setCurrentCompareSnapshot = (snapshot:ISnapshot) => {
+    if(snapshot){
+
+    // setCompareSnapshot(snapshot);
+    // // updateSnapshot(snapshot);
+    // setCompareRealityList(snapshot.reality);
+    // setCompareRealityMap(getRealityMap(snapshot));
+    // // updateRealityMap(getRealityMap(snapshot));
+    }
+  };
 
   const isCompareViewer = (viewerId:string) => {
     if (viewerId.split('_')[1] === '1') {
@@ -1238,11 +1282,11 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       <div className="fixed calc-w calc-h flex flex-row">
         <div id="TheView" className="relative basis-1/2 flex grow shrink">
           {isInitReady && renderViewer(1)}
-          {/* <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimeLineComponent> */}
+          <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentSnapshot}></TimeLineComponent>
         </div>
         <div className={`relative ${currentViewerData.currentCompareMode!=='noCompare' ? "basis-1/2": "hidden" }`}>
           {isInitReady && isCompareMode && renderViewer(2)}
-          {/* <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent> */}
+          <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotCompare||currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
         </div>
     
     </div>
