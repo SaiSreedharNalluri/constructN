@@ -258,9 +258,7 @@ function BasicTabs(props: any) {
   };
 
   const addComment = (text: string, entityId: string) => {
-    console.log("text", text, "enttit", entityId);
     if (text !== "") {
-      console.log("text", text, "enttit", entityId);
       createComment(router.query.projectId as string, {
         comment: text,
         entity: entityId,
@@ -544,7 +542,6 @@ function BasicTabs(props: any) {
                         <AssigneeList>
                           {taskState?.TabOne?.assignessList?.map(
                             (assignName: any, index: number) => {
-                              console.log("print", taskState);
                               return (
                                 <>
                                   {index !==
@@ -637,11 +634,8 @@ function BasicTabs(props: any) {
                 }}
                 renderTags={() => null}
                 // defaultValue={formState.selectedUser[0]?.user?.fullName}
-                renderInput={(params) => (
-                  <TextField {...params} label="Assigned To" />
-                )}
+                renderInput={(params) => <TextField {...params} />}
                 onChange={(event, value: any) => {
-                  console.log(value);
                   const newSelectedUser = value
                     ? value.filter(
                         (selected: any, index: number, array: any[]) => {
@@ -988,12 +982,11 @@ const CustomTaskDetailsDrawer = (props: any) => {
   };
 
   const handleCreateTask = (formData: any) => {
-    console.log(formData, "form data at home");
     clickTaskSubmit(formData);
   };
 
   const saveEditDetails = async (data: any, projectId: string) => {
-    if (data.title && data.type && data.priority) {
+    if (data.title && data.type && data.priority && data.description) {
       updateTask(projectId, data, selectedTask._id)
         .then((response) => {
           if (response.success === true) {

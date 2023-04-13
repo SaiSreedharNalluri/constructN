@@ -269,7 +269,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
         .then((response: any) => {
           if (response.success === true) {
             setProjectUsers(response.result);
-            console.log(projectUsers);
           }
         })
         .catch();

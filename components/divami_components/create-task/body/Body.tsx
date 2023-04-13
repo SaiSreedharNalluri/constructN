@@ -64,7 +64,6 @@ const Body = ({
   setCanBeDisabled,
   deleteTheAttachment,
 }: any) => {
-  console.log(editData, "editData");
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
   const [taskTypes, setTaskTypes] = useState([]);
@@ -95,7 +94,6 @@ const Body = ({
         if (response.success === true) {
           // response.result.push('Please select the task type');
           setTaskTypes(response.result);
-          console.log(taskTypes);
         }
       });
       getTasksPriority(router.query.projectId as string).then(
@@ -103,7 +101,6 @@ const Body = ({
           if (response.success === true) {
             // response.result.push('Please select the task priority');
             setTaskPriorities(response.result);
-            console.log(taskPriorities);
           }
         }
       );
@@ -111,14 +108,12 @@ const Body = ({
         if (response.success === true) {
           // response.result.push('Please select the task priority');
           setTaskStatusList(response.result);
-          console.log(taskPriorities);
         }
       });
       getProjectUsers(router.query.projectId as string)
         .then((response: any) => {
           if (response.success === true) {
             setProjectUsers(response.result);
-            console.log(projectUsers);
           }
         })
         .catch();
@@ -138,15 +133,12 @@ const Body = ({
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {
             if (item.id === "title") {
-              console.log("itemitem",item)
               return {
                 ...item,
                 defaultValue: editData?.title || "",
               };
             }
             if (item.id === "tasks") {
-              console.log("ssdsditem", item);
-
               return {
                 ...item,
                 options: taskTypes?.map((eachItem: any) => {
@@ -261,7 +253,6 @@ const Body = ({
         setFormConfig((prev: any) => {
           return prev.map((item: any) => {
             if (item.id === "tasks") {
-              console.log("ssdsditem", item);
               return {
                 ...item,
                 options: taskTypes?.map((eachItem: any) => {
@@ -272,25 +263,30 @@ const Body = ({
                     selected: false,
                   };
                 }),
-                defaultValue: item?.options[0]?.label || "Transmittals",
+                defaultValue: taskTypes?.length ? taskTypes[0] : "",
               };
             }
             if (item.id === "taskPriority") {
-              const hasLowValue = item?.options.some(
-                (cont: any) => cont.value === "Low"
+              const hasLowValue = taskPriorities.some(
+                (cont: any) => cont === "Low"
               );
-              console.log("hasLowValue", hasLowValue);
+              let val: string = taskPriorities[0];
+              if (hasLowValue) {
+                val =
+                  taskPriorities.find((cont: any) => cont === "Low") ||
+                  taskPriorities[0];
+              }
+
               return {
                 ...item,
                 options: taskPriorities?.map((eachItem: any) => {
                   return {
-                    // ...eachItem,
                     label: eachItem,
                     value: eachItem,
                     selected: false,
                   };
                 }),
-                defaultValue: hasLowValue ? "Low" : item?.options[0]?.label,
+                defaultValue: val,
               };
             }
             if (item.id === "assignedTo") {
@@ -331,7 +327,6 @@ const Body = ({
   }, [projectUsers, taskPriorities, taskTypes]);
 
   useEffect(() => {
-    console.log(formConfig, "formconfig in effect");
     let updatedFormData = [
       ...formConfig,
       { owner: loggedInUserId },
@@ -349,12 +344,6 @@ const Body = ({
     //   setCanBeDisabled(true);
     // }
   }, [formConfig]);
-
-  useEffect(() => {
-    console.log("chii string", formConfig[6].chipString);
-  }, [formConfig[6].chipString]);
-
-  console.log("form config", formState);
 
   return (
     <BodyContainer>

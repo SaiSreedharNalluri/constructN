@@ -43,8 +43,8 @@ const StyledTextField = styled(TextField)({
   //   borderWidth:0
   // }
   "& .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root": {
-    height: "40px",
-    "& fieldset": { border: "1px solid #36415d" },
+    height: "40px !important",
+    "& fieldset": { border: "1px solid #36415d !important" },
   },
   "&:focus-within fieldset": {
     border: "1px solid #ff843f !important",
