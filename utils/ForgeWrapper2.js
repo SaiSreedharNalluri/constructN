@@ -654,7 +654,7 @@ export const ForgeViewerUtils = (function () {
   };
 
   const onMouseEnter = () => {
-    // console.log("Inside mouse eneter event forge: ", _viewerId);
+     //console.log("Inside mouse eneter event forge: ", _viewerId);
     _eventHandler(_viewerId, { type: "mouse" });
   };
 

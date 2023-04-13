@@ -36,6 +36,8 @@ import { IDesign, IDesignMap } from '../../models/IDesign';
 import { IGenNotifyViewerAction } from '../../models/IGenAction';
 import MapboxViewer from './mapboxViewer';
 import { IContext } from '../../models/ITools';
+import { IStructure } from '../../models/IStructure';
+import { ISnapshot } from '../../models/ISnapshot';
 interface IProps {
 data:IGenData;
 updateData?: (newData :IGenData)=> void;
@@ -86,7 +88,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   },[]);
   //const getViewerTypefromViewType = (viewType:string) :string=> {
     function getViewerTypefromViewType(viewType:string){
-    console.log('Getting ViewerType for ',viewType);
+    //console.log('Getting ViewerType for ',viewType);
     switch(viewType){
       case 'PlanDrawings':
       case 'BIM':
@@ -121,6 +123,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
             console.log('Dispatching Close Viewer with',getViewerTypefromViewType(oldViewerData.currentViewType));
           }
           break;
+        case 'setStructure':
+          newViewerData=action.data as IGenData;
+            break;
         case 'syncGenViewer':
           break;
         case 'setViewMode':
@@ -144,19 +149,32 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           else{
             console.log('Nothing to change ->',oldViewerData.currentViewType);
           }
-
-
-            //newViewerData = {...oldViewerData,currentViewType:action.data as string}
-            //newViewerData.currentViewType = action.data as string;
             console.log('Dispatching ViewType',newViewerData.currentViewType);
             //newViewerData.currentCompareMode="noCompare";
+            //setCompareMode(false);
           return newViewerData;
 
         case 'setCompareMode':
-          if(incomingPayload.current && incomingPayload.current.action.data === 'compareReality'){}
-          else if (incomingPayload.current && incomingPayload.current.action.data === 'compareDesign'){}
-          else if (incomingPayload.current && incomingPayload.current.action.data === 'noCompare'){}
-          break;
+          newViewerData = {...oldViewerData,currentCompareMode:action.data as string}
+          
+          if(incomingPayload.current && incomingPayload.current.action.data === 'compareReality'){
+            getContext(oldViewerData);
+            setCompareMode(true);
+            updateViewerChanges(getViewerTypefromViewType(oldViewerData.currentViewType),'Potree');
+
+          }
+          else if (incomingPayload.current && incomingPayload.current.action.data === 'compareDesign'){
+            getContext(oldViewerData);
+            setCompareMode(true);
+            updateViewerChanges(getViewerTypefromViewType(oldViewerData.currentViewType),'Forge');
+          }
+          else if (incomingPayload.current && incomingPayload.current.action.data === 'noCompare'){
+            removeCompareLayers(oldViewerData.currentCompareMode);
+            destroyCompareViewer(oldViewerData.currentCompareMode);
+            setCompareMode(false);
+          }
+          return newViewerData;
+          
         
         case 'issueShow':
           showTag('Issue',true,getViewerTypefromViewType(oldViewerData.currentViewType));
@@ -217,11 +235,15 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   if(incomingPayload.current){
     switch(incomingPayload.current.action.type){
       case 'loadGenViewer':
+        animationRequestId = requestAnimationFrame(animationNow);
+        break;
+      case 'closeGenViewer':
+        cancelAnimationFrame(animationRequestId);
         break;
       case 'setViewType':
         switch(changeType.current){
           case 'changeType':
-            console.log(currentViewerData.currentViewType,"-->",incomingPayload.current.action.data as string);
+            console.log("Proper Change",currentViewerData.currentViewType,"-->",incomingPayload.current.action.data as string);
             removeLayers(getViewerTypefromViewType(incomingPayload.current.action.data as string));
             removeData(getViewerTypefromViewType(incomingPayload.current.action.data as string));
 
@@ -238,31 +260,37 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
             loadLayerData();
             console.log('Viewer Type Updated');
             break;
+          
+            
 
         }
         console.log("Changed View Type")
         
         changeType.current=undefined;
-        break;  
-  
+        break; 
+      case 'setCompareMode':
+        //cancelAnimationFrame(animationRequestId);
+        if(incomingPayload.current.action.data as string ==='noCompare'){
+          console.log("No Compare Use Effect");
+         
+        }
+        else{
+          
+          loadCompareViewerData(currentViewerData.structure,incomingPayload.current.action.data as string)
+          loadCompareLayerData(currentViewerData.structure,currentViewerData.currentSnapshotCompare|| currentViewerData.currentSnapshotBase,incomingPayload.current.action.data as string);
+          console.log("Compare Use Effect Done");
+        } 
+        animationRequestId = requestAnimationFrame(animationNow);
+        break;
     }
 
     incomingPayload.current=undefined;
   }
   console.log("updated currentViewerData Use Effect",currentViewerData);
-      // }};
+  window.dispatchEvent(new CustomEvent('notify-app',{detail:currentViewerData}));
   return ()=>{
 
-  // if(incomingPayload){
-  //   switch(incomingPayload.action.type){
-  //     case 'setViewType':
         console.log("Changed Use Effect--Return",incomingPayload.current);
-        //handleViewModeChange();
-       // handleDesignTypeChange();
-    //     break;  
-
-
-    // }};
 
     
   }
@@ -349,58 +377,6 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
    }
 
-  // function handleToolChange() {
-  //   // console.log("My new tool=",activeTool);
-  //   switch (
-  //     activeTool.current === undefined ? '' : activeTool.current.toolAction
-  //   ) {
-  //     case 'issueCreate':
-  //       addTag('Issue');
-  //       break;
-  //     case 'issueCreateFail':
-  //       cancelAddTag('Issue');
-  //       break;
-  //     case 'issueSelect':
-  //       selectTag(activeTool.current.response);
-  //       break;
-  //     case 'issueShow':
-  //       showTag('Issue', true);
-  //       break;
-  //     case 'issueHide':
-  //       showTag('Issue', false);
-  //       break;
-  //     case 'taskCreate':
-  //       addTag('Task');
-  //       break;
-  //     case 'taskCreateFail':
-  //       cancelAddTag('Task');
-  //       break;
-  //     case 'taskSelect':
-  //       selectTag(activeTool.current.response);
-  //       break;
-  //     case 'taskShow':
-  //       showTag('Task', true);
-  //       break;
-  //     case 'taskHide':
-  //       showTag('Task', false);
-  //       break;
-  //     case 'showCompare':
-  //       let currentMode = activeTool.current.toolName.endsWith('Design')
-  //         ? 'Design'
-  //         : 'Reality';
-  //       getContext();
-  //       setCompareViewMode(currentMode);
-  //       currentCompareViewMode.current = currentMode;
-  //       setIsCompare(true);
-  //       break;
-  //     case 'closeCompare':
-  //       setIsCompare(false);
-  //       break;
-  //     default:
-  //       break;
-  //   }
-   //}
-
   const addTag = (type:string,viewerType:string) => {
     switch (viewerType) {
       case 'Forge':
@@ -462,77 +438,81 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   }
 
-  // const animationNow = () => {
-  //   // console.log("Inside Animate now: ")
-  //   syncViewer();
-  //   animationRequestId = requestAnimationFrame(animationNow);
-  //   if (potreeUtils.current) {
-  //     potreeUtils.current.updateFloormapAnimation();
-  //   }
+  function animationNow() {
+    // console.log("Inside Animate now: ")
+    syncViewer();
+    animationRequestId = requestAnimationFrame(animationNow);
+    if (potreeUtils.current) {
+      potreeUtils.current.updateFloormapAnimation();
+    }
 
-  //   if(currentViewerData.currentCompareMode==='compareReality'){
-  //   //if (currentIsCompare.current === true && potreeCompareUtils.current) {
-  //     potreeCompareUtils.current?.updateFloormapAnimation();
-  //   }
-  // };
+    if(currentViewerData.currentCompareMode==='compareReality'){
+    //if (currentIsCompare.current === true && potreeCompareUtils.current) {
+      potreeCompareUtils.current?.updateFloormapAnimation();
+    }
+  };
 
-  // const syncViewer = () => {
-  //   // console.log("Inside sync viewer: ", isMouseOnMainViewer.current, syncPotreeEvent, syncForgeEvent)
-  //   if (currentViewerData.currentCompareMode !== 'noCompare') {
-  //     if (isMouseOnMainViewer.current == true) {
-  //       if (currentViewerData.currentCompareMode === 'compareReality') {
-  //         // get from potree utils
-  //         //give to potree compare utile
-  //         if (
-  //           potreeUtils.current != undefined &&
-  //           potreeCompareUtils.current != undefined
-  //         ) {
-  //           let viewerState = potreeUtils.current.getViewerState();
-  //           potreeCompareUtils.current.updateViewerState(viewerState);
-  //         }
-  //       } else if (syncPotreeEvent.current) {
-  //         // }else {
-  //         // get from potree utils
-  //         //give to forge compare utile
-  //         if (
-  //           potreeUtils.current != undefined &&
-  //           forgeCompareUtils.current != undefined
-  //         ) {
-  //           let viewerState = potreeUtils.current.getViewerState();
-  //           forgeCompareUtils.current.updateViewerState(viewerState);
-  //         }
-  //       }
-  //     } else {
-  //       if (currentViewerData.currentCompareMode === 'compareReality') {
-  //         //get from potree compare utils
-  //         // give to potree utils
-  //         if (
-  //           potreeUtils.current != undefined &&
-  //           potreeCompareUtils.current != undefined
-  //         ) {
-  //           let viewerState = potreeCompareUtils.current.getViewerState();
-  //           potreeUtils.current.updateViewerState(viewerState);
-  //         }
-  //       } else if (syncForgeEvent.current) {
-  //         // } else {
-  //         // get from forge compare utils
-  //         // give to potree utils
-  //         if (
-  //           potreeUtils.current != undefined &&
-  //           forgeCompareUtils.current != undefined &&
-  //           forgeCompareUtils.current
-  //         ) {
-  //           let viewerState = forgeCompareUtils.current.getViewerState();
-  //           if (viewerState) {
-  //             potreeUtils.current.updateViewerState(viewerState);
-  //           }
-  //         }
-  //       }
-  //     }
-  //     syncPotreeEvent.current = false;
-  //     syncForgeEvent.current = false;
-  //   }
-  // };
+  function syncViewer  (){
+     //console.log("Inside sync viewer: ", isMouseOnMainViewer.current, syncPotreeEvent, syncForgeEvent,currentViewerData)
+    if (currentViewerData.currentCompareMode !== 'noCompare') {
+      //console.log('Sync My Compare Viewer');
+      if (isMouseOnMainViewer.current === true) {
+        //console.log('Sync My Compare Viewer',syncForgeEvent,syncPotreeEvent);
+        if (currentViewerData.currentCompareMode === 'compareReality') {
+          // get from potree utils
+          //give to potree compare utile
+          if (
+            potreeUtils.current !== undefined &&
+            potreeCompareUtils.current !== undefined
+          ) {
+            let viewerState = potreeUtils.current.getViewerState();
+            potreeCompareUtils.current.updateViewerState(viewerState);
+          }
+        } else if (syncPotreeEvent.current) {
+          
+          // }else {
+          // get from potree utils
+          //give to forge compare utile
+          if (
+            potreeUtils.current !== undefined &&
+            forgeCompareUtils.current !== undefined
+          ) {
+            
+            let viewerState = potreeUtils.current.getViewerState();
+            forgeCompareUtils.current.updateViewerState(viewerState);
+          }
+        }
+      } else {
+        if (currentViewerData.currentCompareMode === 'compareReality') {
+          //get from potree compare utils
+          // give to potree utils
+          if (
+            potreeUtils.current != undefined &&
+            potreeCompareUtils.current != undefined
+          ) {
+            let viewerState = potreeCompareUtils.current.getViewerState();
+            potreeUtils.current.updateViewerState(viewerState);
+          }
+        } else if (syncForgeEvent.current) {
+          // } else {
+          // get from forge compare utils
+          // give to potree utils
+          if (
+            potreeUtils.current != undefined &&
+            forgeCompareUtils.current != undefined &&
+            forgeCompareUtils.current
+          ) {
+            let viewerState = forgeCompareUtils.current.getViewerState();
+            if (viewerState) {
+              potreeUtils.current.updateViewerState(viewerState);
+            }
+          }
+        }
+      }
+      syncPotreeEvent.current = false;
+      syncForgeEvent.current = false;
+    }
+  };
 
   const handleTagListChange = (type:string) => {
     //console.log('Inside taglist change: ', type, issuesList, tasksList);
@@ -558,83 +538,86 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   };
 
-  const viewerEventHandler = (viewerId:string, event:Event) => {
-    // console.log("Inside generic viewer: ", event, );
-    // if (event) {
-    //   switch (event.type) {
-    //     case '360 Video':
-    //       currentContext.current = event;
-    //       if (currentViewMode.current == 'Design') {
-    //         pushToolResponse({
-    //           toolName: 'viewMode',
-    //           toolAction: 'Reality',
-    //         });
-    //         setViewMode('Reality');
-    //       } else {
-    //         pushToolResponse({
-    //           toolName: 'viewMode',
-    //           toolAction: 'Design',
-    //         });
-    //         setViewMode('Design');
-    //       }
-    //       break;
-    //     case 'Reality':
-    //       break;
-    //     case 'Task':
-    //     case 'Issue':
-    //       if (!activeTool.current) {
-    //         activeTool.current = {};
-    //       }
-    //       activeTool.current.toolName = event.type;
-    //       activeTool.current.toolAction = event.id.includes('Temp')
-    //         ? `create${event.type}`
-    //         : `select${event.type}`;
-    //       activeTool.current.response = event;
-    //       pushToolResponse(activeTool.current);
-    //       console.log('Marked Point========', event);
-    //       break;
-    //     case '3d':
-    //     case 'panorama':
-    //     case 'image':
-    //       if (currentIsCompare.current == true) {
-    //         if (isCompareViewer(viewerId)) {
-    //           potreeUtils.current.updateContext(event, false);
-    //         } else {
-    //           if (currentCompareViewMode.current === 'Reality') {
-    //             potreeCompareUtils.current.updateContext(event, false);
-    //           } else {
-    //             forgeCompareUtils.current.updateContext(event, false);
-    //           }
-    //         }
-    //       }
-    //       break;
-    //     case 'sync':
-    //       // console.log("Inside sync event: ", currentIsCompare.current, isRealityViewer(viewerId))
-    //       if (currentIsCompare.current == true) {
-    //         if (isRealityViewer(viewerId)) {
-    //           syncPotreeEvent.current = true;
-    //         } else {
-    //           syncForgeEvent.current = true;
-    //         }
-    //       }
-    //       break;
-    //     case 'zoom':
-    //       // console.log("Sync event handler: ", viewerId);
-    //       if (currentIsCompare.current === true) {
-    //         syncViewer(viewerId);
-    //       }
-    //       break;
-    //     case 'mouse':
-    //       if (currentIsCompare.current === true) {
-    //         if (isCompareViewer(viewerId)) {
-    //           isMouseOnMainViewer.current = false;
-    //         } else {
-    //           isMouseOnMainViewer.current = true;
-    //         }
-    //       }
-    //       break;
-    //   }
-    // }
+  function viewerEventHandler (viewerId:string, event:any){
+    console.log("Inside generic viewer: ",viewerId, event, );
+    if (event) {
+      switch (event.type) {
+        // case '360 Video':
+        //   currentContext.current = event;
+        //   if (currentViewMode.current == 'Design') {
+        //     pushToolResponse({
+        //       toolName: 'viewMode',
+        //       toolAction: 'Reality',
+        //     });
+        //     setViewMode('Reality');
+        //   } else {
+        //     pushToolResponse({
+        //       toolName: 'viewMode',
+        //       toolAction: 'Design',
+        //     });
+        //     setViewMode('Design');
+        //   }
+        //   break;
+        // case 'Reality':
+        //   break;
+        // case 'Task':
+        // case 'Issue':
+        //   if (!incomingPayload.current) {
+        //     incomingPayload.current = undefined;
+        //   }
+        //   activeTool.current.toolName = event.type;
+        //   activeTool.current.toolAction = event.id.includes('Temp')
+        //     ? `create${event.type}`
+        //     : `select${event.type}`;
+        //   activeTool.current.response = event;
+        //   pushToolResponse(activeTool.current);
+        //   console.log('Marked Point========', event);
+        //   break;
+        case '3d':
+        case 'panorama':
+        case 'image':
+          if (currentViewerData.currentCompareMode!== 'noCompare') {
+            if (isCompareViewer(viewerId)) {
+              potreeUtils.current?.updateContext(event, false);
+            } else {
+              if(currentViewerData.currentCompareMode === 'compareReality') {
+                potreeCompareUtils.current?.updateContext(event, false);
+              } else {
+                forgeCompareUtils.current?.updateContext(event, false);
+              }
+            }
+          }
+          break;
+        case 'sync':
+           console.log("Inside sync event: ", isCompareMode, isRealityViewer(viewerId),currentViewerData)
+          //if (currentViewerData.currentCompareMode!== 'noCompare') {
+            if (isRealityViewer(viewerId)) {
+              syncPotreeEvent.current = true;
+            } else {
+              syncForgeEvent.current = true;
+            }
+          //}
+          break;
+        case 'zoom':
+          // console.log("Sync event handler: ", viewerId);
+          if (currentViewerData.currentCompareMode!== 'noCompare') {
+            //syncViewer(viewerId);
+            syncViewer();
+          }
+          break;
+        case 'mouse':
+          console.log("Mouse Event",isCompareViewer(viewerId),viewerId,event)
+          //if (currentViewerData.currentCompareMode!== 'noCompare') {
+            
+            if (isCompareViewer(viewerId)) {
+              isMouseOnMainViewer.current = false;
+            } else {
+              isMouseOnMainViewer.current = true;
+            }
+         // }
+          break;
+      }
+    }
   };
 
   const initViewer = (viewerId:string) => {
@@ -663,7 +646,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         if (potreeUtils.current === undefined) {
           potreeUtils.current = new PotreeViewerUtils(
             viewerId,
-            viewerEventHandler.bind(this)
+            viewerEventHandler
           );
           if (!potreeUtils.current.isViewerLoaded()) {
             potreeUtils.current.initialize();
@@ -684,9 +667,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   };
 
   const initCompareViewer = (viewerId:string) => {
+    console.log("InitCompareViewer", viewerId,currentContext);
     switch (currentViewerData.currentCompareMode) {
       case 'compareDesign':
-        if (forgeCompareUtils.current == undefined) {
+        if (forgeCompareUtils.current === undefined) {
           forgeCompareUtils.current = ForgeViewerUtils;
           forgeCompareUtils.current.initializeViewer(
             viewerId,
@@ -696,10 +680,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         }
         break;
       case 'compareReality':
-        if (potreeCompareUtils.current == undefined) {
+        if (potreeCompareUtils.current === undefined) {
           potreeCompareUtils.current = new PotreeViewerUtils(
             viewerId,
-            viewerEventHandler.bind(this)
+            viewerEventHandler
           );
           if (!potreeCompareUtils.current.isViewerLoaded()) {
             potreeCompareUtils.current.initialize();
@@ -745,7 +729,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           forgeUtils.current.updateIssuesData(currentViewerData.currentIssueList);
           forgeUtils.current.updateTasksData(currentViewerData.currentTaskList);
           let Rdata = await getRealityLayers(currentViewerData.structure, getRealityMap(currentViewerData.currentSnapshotBase));
-          console.log('HERE',Rdata);
+          //console.log('HERE',Rdata);
           forgeUtils.current.updateLayersData(Rdata,currentContext.current);
           forgeUtils.current.showLayers(currentViewerData.currentLayersList);
         }
@@ -771,12 +755,12 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
      currentContext.current = undefined;
   }
 
-  function loadCompareViewerData() {
-    switch (currentViewerData.currentCompareMode) {
+  function loadCompareViewerData(structure:IStructure, compareMode:string) {
+    switch (compareMode) {
       case 'compareDesign':
         if (forgeCompareUtils.current != undefined) {
           forgeCompareUtils.current.setStructure(structure);
-          forgeCompareUtils.current.updateData(getForgeModels(getDesignMap(currentViewerData.structure.designs)));
+          forgeCompareUtils.current.updateData(getForgeModels(getDesignMap(structure.designs)));
         }
 
         break;
@@ -788,45 +772,45 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   }
 
-  async function loadCompareLayerData() {
-    // switch (compareViewMode) {
-    //   case 'Design':
-    //     if (forgeCompareUtils.current) {
-    //       forgeCompareUtils.current.setSnapshot(compareSnapshot);
-    //       let data = await getRealityLayers(structure, compareRealityMap);
-    //       forgeCompareUtils.current.updateLayersData(
-    //         data,
-    //         currentContext.current
-    //       );
-    //     }
-    //     break;
-    //   case 'Reality':
-    //     if (potreeCompareUtils.current) {
-    //       potreeCompareUtils.current.setSnapshot(compareSnapshot);
-    //       potreeCompareUtils.current.updateData(
-    //         await getPointCloud(structure, compareSnapshot),
-    //         getFloorPlanData(designMap)
-    //       );
-    //       potreeCompareUtils.current.updateLayersData(
-    //         getRealityLayersPath(structure, compareRealityMap),
-    //         currentContext.current
-    //       );
-    //     }
+  async function loadCompareLayerData(structure:IStructure,compareSnapshot:ISnapshot,compareMode:string) {
+    switch (compareMode) {
+      case 'compareDesign':
+        if (forgeCompareUtils.current) {
+          forgeCompareUtils.current.setSnapshot(compareSnapshot);
+          let data = await getRealityLayers(structure, getRealityMap(compareSnapshot));
+          forgeCompareUtils.current.updateLayersData(
+            data,
+            currentContext.current
+          );
+        }
+        break;
+      case 'compareReality':
+        if (potreeCompareUtils.current) {
+          potreeCompareUtils.current.setSnapshot(compareSnapshot);
+          potreeCompareUtils.current.updateData(
+            await getPointCloud(structure, compareSnapshot),
+            getFloorPlanData(getDesignMap(structure.designs))
+          );
+          potreeCompareUtils.current.updateLayersData(
+            getRealityLayersPath(structure, getRealityMap(compareSnapshot)),
+            currentContext.current
+          );
+        }
 
-    //     break;
-    // }
-    // currentContext.current = undefined;
+        break;
+    }
+    currentContext.current = undefined;
   }
 
-  function updateViewerChanges() {
-    switch (getViewerTypefromViewType(currentViewerData.currentViewType)) {
+  function updateViewerChanges(viewerType:string,compareViewerType:string) {
+    switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current) {
         }
         break;
       case 'Potree':
         if (potreeUtils.current) {
-          potreeUtils.current.readyForCompare(currentViewerData.currentCompareMode);
+          potreeUtils.current.readyForCompare(compareViewerType);
         }
         break;
     }
@@ -841,6 +825,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       console.log('trying to reload....forge');
       
     } else {
+      console.log('trying to load....compare forge');
       initCompareViewer(viewerId);
     }
   };
@@ -865,11 +850,12 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   };
 
   function renderViewer(count:Number) {
-     console.log("Generic Viewer Inside render View: ", currentViewerData.currentViewType, count);
-    if (count != 1 && (currentViewerData.currentCompareMode!=='noCompare')) {
+     console.log("Generic Viewer Inside render View: ", currentViewerData.currentViewType, count,currentViewerData.currentCompareMode);
+    if (count != 1 && (currentViewerData.currentCompareMode==='noCompare')) {
+      console.log("Improper mode", currentViewerData.currentCompareMode);
       return;
     }
-    let mode = count == 1 ? getViewerTypefromViewType(currentViewerData.currentViewType) : currentViewerData.currentCompareMode;
+    let mode = (count == 1) ? getViewerTypefromViewType(currentViewerData.currentViewType) : currentViewerData.currentCompareMode;
      console.log("Checking render mode", mode);
     switch (mode) {
       case 'Forge':
@@ -1013,14 +999,14 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   };
 
-  const removeCompareLayers = (viewerType:string) => {
+  function removeCompareLayers(viewerType:string){
     switch (viewerType) {
-      case 'Forge':
+      case 'compareDesign':
         if (forgeCompareUtils.current) {
           forgeCompareUtils.current.removeLayers();
         }
         break;
-      case 'Potree':
+      case 'compareReality':
         if (potreeCompareUtils.current) {
           potreeCompareUtils.current.removeData();
         }
@@ -1049,8 +1035,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   };
 
-  const destroyCompareViewer = () => {
-    switch (currentViewerData.currentCompareMode) {
+  function destroyCompareViewer (compareMode:string)  {
+    switch (compareMode) {
       case 'compareDesign':
         if (forgeCompareUtils.current) {
           forgeCompareUtils.current.shutdown();

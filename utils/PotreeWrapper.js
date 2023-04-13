@@ -1130,7 +1130,7 @@ export class PotreeViewerUtils {
     }
 
     onMouseEnter() {
-        console.log("Inside mouse eneter event potree: ", this.viewerId);
+        //console.log("Inside mouse eneter event potree: ", this.viewerId);
         this.eventHandler(this.viewerId, {type: "mouse"});
     }
 
