@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Header from "../../../../components/divami_components/header/Header";
 import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 import NewGenViewer from "../../../../components/container/NewGenViewer";
@@ -7,10 +7,27 @@ import { sampleGenData } from "../../../../utils/constants";
 import { IDesign } from "../../../../models/IDesign";
 import { getDesignTM } from "../../../../services/design";
 import { getDesignPath } from "../../../../utils/S3Utils";
+import { IGenPayload } from "../../../../models/IGenPayload";
 const StructPage: React.FC = () => {
     //const [initData,setInintData] = useState<IGenData>(sampleGenData);
     let temp_list:IDesign[] ;
     sampleGenData.structure.designs&& (temp_list= sampleGenData.structure.designs);
+    let incomingPayload = useRef<IGenPayload>()
+    useEffect(()=>{
+   
+      window.addEventListener('notify-app', notifyAppEvent);
+      return()=>{
+        window.removeEventListener('notify-app', notifyAppEvent);
+      }
+    },[]);
+    const notifyAppEvent =(e:any)=>{
+      let cusEve: CustomEvent =e
+      incomingPayload.current =  cusEve.detail;
+      console.log(
+        'My custom event triggered on APP :',
+        incomingPayload?.current
+        );
+    }
     const fetchTM = //useMemo(
       async ()=>{
       if(temp_list!==undefined)
