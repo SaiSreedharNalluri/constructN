@@ -138,12 +138,10 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
     setAnchorEl(null);
   };
   const handleViewTaskList = () => {
-    console.log("teskssksk trigg");
     setOpenDrawer(true);
   };
 
   const handleViewIssue = (issue: any) => {
-    console.log("hiiifilled");
     filteredHotspotList.forEach((item: any) => {
       if (issue._id === item._id) {
         setViewHotspot(item);

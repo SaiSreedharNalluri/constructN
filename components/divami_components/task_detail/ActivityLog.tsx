@@ -115,7 +115,6 @@ const ActivityLog = (props: any) => {
     const diffMinutes = Math.ceil(diffTime / (1000 * 60));
     const diffSec = Math.ceil(diffTime / 1000);
 
-    console.log(diffMinutes, diffHours, diffDays, "dfjkjflkjlk");
     // if (diffDays > 1) {
     //   text = `${diffDays} days ago`;
     // } else {
@@ -179,7 +178,6 @@ const ActivityLog = (props: any) => {
     });
   };
   const saveRepliedComments = async () => {
-    console.log(commentInputData, "kokokok");
     createCommentReply(
       router.query.projectId as string,
       { reply: commentInputData.data?.text },
@@ -343,7 +341,7 @@ const ActivityLog = (props: any) => {
       });
     }
   };
-  console.log(commentsData, "coommmetsss");
+
   return (
     <ActivityCardContainer data-testid="const-custom-activity-log-issue">
       {commentsData.length ? <CommentsTitle>Comments</CommentsTitle> : <></>}

@@ -211,8 +211,6 @@ const CustomTaskListDrawer = (props: any) => {
   const handleSortMenuClick = (sortMethod: string) =>
     handleOnTasksSort(sortMethod);
 
-  console.log(tasksList, taskList, filteredTaskList, "fsfsdf");
-
   const handleViewTaskList = () => {
     setOpenDrawer(true);
   };

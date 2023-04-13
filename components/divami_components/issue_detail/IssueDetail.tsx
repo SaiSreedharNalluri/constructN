@@ -310,8 +310,6 @@ function BasicTabs(props: any) {
     }
   };
 
-  console.log("taskState.TabOne issue", taskState);
-
   const handleSortMenuClose = () => {
     setIsSortMenuOpen(false);
     setAnchorEl(null);
@@ -584,7 +582,6 @@ function BasicTabs(props: any) {
                         <AssigneeList>
                           {taskState?.TabOne?.assignessList?.map(
                             (assignName: any, index: number) => {
-                              console.log("print", taskState);
                               return (
                                 <>
                                   {index !==
@@ -673,11 +670,8 @@ function BasicTabs(props: any) {
                   },
                 }}
                 renderTags={() => null}
-                renderInput={(params) => (
-                  <TextField {...params} label="Assigned To" />
-                )}
+                renderInput={(params) => <TextField {...params} />}
                 onChange={(event, value: any) => {
-                  console.log(value);
                   const newSelectedUser = value
                     ? value.filter(
                         (selected: any, index: number, array: any[]) => {
@@ -946,7 +940,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [selectedIssue, setSelectedIssue] = useState(issue);
   const router = useRouter();
   useEffect(() => {
-    console.log("issueissue", issue);
     setSelectedIssue(issue);
   }, [issue]);
 
@@ -976,8 +969,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
   //       toast.error(error.message);
   //     });
   // };
-
-  console.log("selectedIssue", selectedIssue);
 
   const DetailsObj = {
     TabOne: {
@@ -1092,12 +1083,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
     // issueMenuClicked(issueMenuInstance);
   };
   const handleCreateTask = (formData: any) => {
-    console.log(formData, "formadata");
     clickTaskSubmit(formData);
   };
 
   const saveEditDetails = async (data: any, projectId: string) => {
-    if (data.title && data.type && data.priority) {
+    if (data.title && data.type && data.priority && data.description) {
       editIssue(projectId, data, selectedIssue._id)
         .then((response) => {
           if (response.success === true) {

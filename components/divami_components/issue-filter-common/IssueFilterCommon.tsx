@@ -85,9 +85,9 @@ const FilterCommon: React.FC<IProps> = ({
   onClose,
   issueFilterState,
 }) => {
-
   useEffect(() => {
-    console.log(visibility,
+    console.log(
+      visibility,
       closeOverlay,
       issuesList,
       handleOnFilter,
@@ -96,8 +96,11 @@ const FilterCommon: React.FC<IProps> = ({
       deleteTheIssue,
       clickIssueEditSubmit,
       onClose,
-      issueFilterState, "ut")
-  }, [visibility,
+      issueFilterState,
+      "ut"
+    );
+  }, [
+    visibility,
     closeOverlay,
     issuesList,
     handleOnFilter,
@@ -106,7 +109,8 @@ const FilterCommon: React.FC<IProps> = ({
     deleteTheIssue,
     clickIssueEditSubmit,
     onClose,
-    issueFilterState]);
+    issueFilterState,
+  ]);
 
   const Filters = [
     {
@@ -169,9 +173,7 @@ const FilterCommon: React.FC<IProps> = ({
   //   onClose(true);
   // };
 
-
   const onFilterApply = () => {
-    console.log(FilterState, "onfilterapply");
     let data: any = {};
     data.issueTypeData = [];
     data.issuePriorityData = [];
@@ -204,7 +206,6 @@ const FilterCommon: React.FC<IProps> = ({
     });
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
-    console.log(data);
     handleOnFilter(data);
   };
   const formHandler = (event: any) => {
@@ -220,25 +221,23 @@ const FilterCommon: React.FC<IProps> = ({
       getIssuesTypes(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskType(response.result);
-          console.log(taskType);
         }
       });
       getIssuesPriority(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskPriority(response.result);
-          console.log(taskPriority);
         }
       });
-      getProjectUsers(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setProjectUsers(response.result);
-          console.log(projectUsers);
-        }
-      })
+      getProjectUsers(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+          }
+        })
+        .catch();
       getIssuesStatus(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskStatus(response.result);
-          console.log(taskStatus);
         }
       });
     }
@@ -554,14 +553,16 @@ const FilterCommon: React.FC<IProps> = ({
     closeFilterOverlay();
     handleClose();
   };
-  console.log("issuesListfooter", issuesList, FilterState,)
+  console.log("issuesListfooter", issuesList, FilterState);
   return (
     <FilterCommonMain>
       <FilterCommonHeader>
         <HeaderContainer>
           <TitleContainer>
             <HeaderLeftSection>
-              <HeaderLeftSectionText data-testid="filter-title">Filters</HeaderLeftSectionText>
+              <HeaderLeftSectionText data-testid="filter-title">
+                Filters
+              </HeaderLeftSectionText>
             </HeaderLeftSection>
             <HeaderRightSection>
               <HeaderRightSectionResetIcon>
@@ -673,7 +674,6 @@ const FilterCommon: React.FC<IProps> = ({
                             src={UnChecked}
                             alt="unchecked checkbox"
                             data-testid="filter-select-each"
-
                           />
                         ) : (
                           ""
