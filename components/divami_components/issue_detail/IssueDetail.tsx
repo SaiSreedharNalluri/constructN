@@ -119,6 +119,11 @@ interface TabPanelProps {
   value: number;
 }
 
+interface Issue {
+  _id: string;
+  // Include other properties if needed
+}
+
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;
@@ -304,8 +309,6 @@ function BasicTabs(props: any) {
       setFile(e.target.files[0]);
     }
   };
-
-  console.log("taskState.TabOne issue", taskState);
 
   const handleSortMenuClose = () => {
     setIsSortMenuOpen(false);
@@ -579,7 +582,6 @@ function BasicTabs(props: any) {
                         <AssigneeList>
                           {taskState?.TabOne?.assignessList?.map(
                             (assignName: any, index: number) => {
-                              console.log("print", taskState);
                               return (
                                 <>
                                   {index !==
@@ -668,11 +670,8 @@ function BasicTabs(props: any) {
                   },
                 }}
                 renderTags={() => null}
-                renderInput={(params) => (
-                  <TextField {...params} label="Assigned To" />
-                )}
+                renderInput={(params) => <TextField {...params} />}
                 onChange={(event, value: any) => {
-                  console.log(value);
                   const newSelectedUser = value
                     ? value.filter(
                         (selected: any, index: number, array: any[]) => {
@@ -941,13 +940,23 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [selectedIssue, setSelectedIssue] = useState(issue);
   const router = useRouter();
   useEffect(() => {
-    console.log("issueissue", issue);
     setSelectedIssue(issue);
   }, [issue]);
+
+  const deleteIssueById = (issuesList: Issue[], selectedIssue: Issue) => {
+    const selectedIssueId = selectedIssue._id;
+    const updatedIssuesList = issuesList.filter(
+      (issue) => issue._id !== selectedIssueId
+    );
+    return updatedIssuesList;
+  };
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
     if (deleteTheIssue) deleteTheIssue(selectedIssue, onClose);
+    const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
+    setIssueList(updatedIssuesList);
+
   };
   // const deleteTheAttachment = (attachmentId: string) => {
   //   deleteAttachment(attachmentId)
@@ -960,8 +969,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
   //       toast.error(error.message);
   //     });
   // };
-
-  console.log("selectedIssue", selectedIssue);
 
   const DetailsObj = {
     TabOne: {
@@ -1076,12 +1083,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
     // issueMenuClicked(issueMenuInstance);
   };
   const handleCreateTask = (formData: any) => {
-    console.log(formData, "formadata");
     clickTaskSubmit(formData);
   };
 
   const saveEditDetails = async (data: any, projectId: string) => {
-    if (data.title && data.type && data.priority) {
+    if (data.title && data.type && data.priority && data.description) {
       editIssue(projectId, data, selectedIssue._id)
         .then((response) => {
           if (response.success === true) {

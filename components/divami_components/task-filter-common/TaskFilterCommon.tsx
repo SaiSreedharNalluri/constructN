@@ -235,7 +235,6 @@ const TaskFilterCommon: React.FC<any> = ({
   }, []);
   useEffect(() => {
     SetFilterState((prev: any) => {
-      console.log("prev", prev);
       return prev.map((item: any) => {
         if (item.code === "taskType") {
           let selectAllStatus = "F";
@@ -411,7 +410,6 @@ const TaskFilterCommon: React.FC<any> = ({
       };
     });
     SetFilterState(temp);
-    console.log(temp);
   };
 
   const handleOptionSelection = (item: any, index: any) => {
@@ -443,7 +441,6 @@ const TaskFilterCommon: React.FC<any> = ({
       });
       setOptionState(item.optionTitle);
       SetFilterState(temp);
-      console.log(temp);
     } else {
       let temp = FilterState?.map((each: any, serial: number) => {
         if (serial === index) {
@@ -471,12 +468,10 @@ const TaskFilterCommon: React.FC<any> = ({
       });
       setOptionState(item.optionTitle);
       SetFilterState(temp);
-      console.log(temp);
     }
   };
 
   const onFilterApply = () => {
-    console.log(FilterState);
     let data: any = {};
     data.taskType = [];
     data.taskPriority = [];
@@ -508,7 +503,6 @@ const TaskFilterCommon: React.FC<any> = ({
     });
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
-    console.log(data);
     handleOnFilter(data);
   };
   useEffect(() => {
@@ -575,7 +569,6 @@ const TaskFilterCommon: React.FC<any> = ({
   };
 
   const formHandler = (event: any) => {
-    console.log("sdf");
     if (event === "Cancel") {
       handleClose();
     } else {

@@ -59,20 +59,16 @@ const CloseIcon = styled(Image)`
 
 const CustomTagSuggestion = (props: any) => {
   const { data, handleChipMaking, setFormConfig, dataTestId } = props;
-  console.log("data", data);
   const [options, setOptions] = useState(data.chipSuggestions);
   const [autoCompleteValue, setAutoCompleteValue] = useState([]);
 
   useEffect(() => {
-    console.log("data.chipString", data.chipString);
     setAutoCompleteValue(data.chipString);
   }, [data.chipString]);
   useEffect(() => {
-    console.log("data-changed", data);
     setOptions(data.chipSuggestions);
   }, [data]);
 
-  console.log("autoCompleteValue", data);
   return (
     <TagsContainer>
       <CustomAutoComplete

@@ -100,7 +100,6 @@ const CustomCalender = (props: any) => {
     dataTestId
   } = props;
 
-  console.log("dacta", data, config, hideTextField, disablePast);
   const [value, setValue] = React.useState<Dayjs | null>(
     dayjs(data?.defaultValue) || null
   );
@@ -110,8 +109,6 @@ const CustomCalender = (props: any) => {
   const calenderIcon = React.forwardRef((props, ref) => (
     <CalenderICon ref={ref} />
   ));
-
-  console.log("date-data", data);
 
   return (
     <div data-testid={`custom-calender-parent-${dataTestId}`}>

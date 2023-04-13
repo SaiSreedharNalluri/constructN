@@ -35,7 +35,6 @@ const FormWrapper = (props: any) => {
 
   useEffect(() => {
     if (validate) {
-      console.log("coming");
       setFormConfig((prev: any) => {
         const newconfig = prev.map((item: any) => {
           if (item.isReq && !item.defaultValue) {
@@ -97,7 +96,6 @@ const FormWrapper = (props: any) => {
   };
 
   const handleSearchResult = (e: any, value: string, id: string) => {
-    console.log(e, value, "sdfsdfsearch");
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
@@ -154,7 +152,6 @@ const FormWrapper = (props: any) => {
   };
 
   const handleChipMaking = (chipsString: any, id: any) => {
-    console.log(chipsString, "chipsString");
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
@@ -174,7 +171,6 @@ const FormWrapper = (props: any) => {
     index: number,
     configObject: any = config
   ) => {
-    console.log("data.type", data);
     switch (data.type) {
       case "select":
         return (

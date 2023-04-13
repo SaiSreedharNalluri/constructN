@@ -77,7 +77,6 @@ const CustomSearch = (props: any) => {
 
   React.useEffect(() => {
     if (isMultiSelect) {
-      console.log(data, "sdrsdfr");
       if (data?.selectedName?.length) {
         setVal(
           data.selectedName?.map((each: any) => {
@@ -110,7 +109,6 @@ const CustomSearch = (props: any) => {
       }
     }
   }, [data.selectedName?.length]);
-  console.log(val, "detailsval");
 
   return (
     <>
