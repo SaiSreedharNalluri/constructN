@@ -88,6 +88,26 @@ const CustomTagSuggestion = (props: any) => {
             variant="outlined"
             // label="filterSelectedOptions"
             placeholder="Add tags separated by commas"
+            sx={{
+              "& .MuiInputBase-input": {
+                fontSize: "14px",
+                lineHeight: "20px",
+                fontFamily: "Open Sans",
+                color: "#101F4C",
+                fontWeight: "400",
+                "&::placeholder": {
+                  color: "#787878",
+
+                  fontFamily: "Open Sans",
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  fontWeight: "400",
+                },
+              },
+              "& .MuiOutlinedInput-root": {
+                paddingLeft: "10px !important",
+              },
+            }}
             data-testid="custom-tag-suggestion-text-field"
 
             // onKeyDown={(e: any) => {

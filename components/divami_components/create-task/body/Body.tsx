@@ -36,6 +36,7 @@ const BodyContainer = styled(Box)({
   fontWeight: "400",
   fontSize: "14px",
   // overflow: 'scroll',
+  paddingBottom: "60px",
 });
 
 const FormElementContainer = styled(Box)({

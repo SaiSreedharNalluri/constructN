@@ -25,6 +25,7 @@ const TitleContiner = styled(Box)({
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "16px",
+  lineHeight: "20px",
 });
 const CloseIcon = styled(Image)({
   cursor: "pointer",
