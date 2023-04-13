@@ -1,34 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../../../components/divami_components/header/Header';
 import { useRouter } from 'next/router';
-import authHeader from '../../../../services/auth-header';
 import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import SidePanelMenu from '../../../../components/divami_components/side-panel/SidePanel';
-import moment from 'moment';
-const GanttChart = require('jsgantt-improved');
+import { MyComponent } from '../../../../utils/ganttView';
 const Index: React.FC = () => {
   const router = useRouter();
   const [tabIndex, setTabIndex] = useState(0);
-  const [data, setData] = useState<any>();
   useEffect(() => {
-    setData([
-      {
-        name: 'Task 1',
-        start: moment('2023-03-20'),
-        end: moment('2023-03-25'),
-      },
-      {
-        name: 'Task 2',
-        start: moment('2023-03-22'),
-        end: moment('2023-03-27'),
-      },
-      {
-        name: 'Task 3',
-        start: moment('2023-03-25'),
-        end: moment('2023-03-29'),
-      },
-    ]);
+    if (typeof window !== undefined) {
+      MyComponent();
+    }
   }, []);
   return (
     <React.Fragment>
@@ -52,17 +35,10 @@ const Index: React.FC = () => {
                   </TabList>
 
                   <TabPanel>
-                    <iframe
-                      className="w-95 h-93"
-                      src={`https://dev.internal.constructn.ai/project-plan?projectId=${
-                        router.query.projectId as string
-                      }&token=${authHeader.getAuthToken()}`}
-                    />
+                    <div className="relative" id="GanttChartDIV"></div>
                   </TabPanel>
                   <TabPanel>
-                    <div>
-                      <GanttChart tasks={data} />
-                    </div>
+                    <div id="GanttChartDIV"></div>
                     {/* <iframe
                       className="w-95 h-93"
                       src={`https://dev.internal.constructn.ai/gantt?projectId=${
