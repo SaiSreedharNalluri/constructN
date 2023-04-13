@@ -77,7 +77,6 @@ const CustomSearch = (props: any) => {
 
   React.useEffect(() => {
     if (isMultiSelect) {
-      console.log(data, "sdrsdfr");
       if (data?.selectedName?.length) {
         setVal(
           data.selectedName?.map((each: any) => {
@@ -110,7 +109,6 @@ const CustomSearch = (props: any) => {
       }
     }
   }, [data.selectedName?.length]);
-  console.log(val, "detailsval");
 
   return (
     <>
@@ -128,6 +126,27 @@ const CustomSearch = (props: any) => {
             renderTags={() => null}
             renderInput={(params) => (
               <TextField
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    paddingRight: "8px !important",
+                    paddingLeft: "10px !important",
+                  },
+                  "& .MuiInputBase-input": {
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    fontFamily: "Open Sans",
+                    color: "#101F4C",
+                    fontWeight: "400",
+                    "&::placeholder": {
+                      color: "#787878",
+
+                      fontFamily: "Open Sans",
+                      fontSize: "14px",
+                      lineHeight: "20px",
+                      fontWeight: "400",
+                    },
+                  },
+                }}
                 placeholder="Enter Name or Teams here ..."
                 {...params}
                 // label={data.label}
@@ -143,7 +162,7 @@ const CustomSearch = (props: any) => {
                       }
                     : {
                         ...params.InputProps,
-                        startAdornment: (
+                        endAdornment: (
                           <InputAdornment position="start">
                             <Image
                               width={15}
@@ -202,13 +221,18 @@ const CustomSearch = (props: any) => {
           value={val}
           renderInput={(params) => (
             <TextField
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  paddingRight: "8px !important",
+                },
+              }}
               placeholder="Enter Name or Teams here ..."
               {...params}
               // label={data.label}
               InputProps={{
                 ...params.InputProps,
-                startAdornment: (
-                  <InputAdornment position="start">
+                endAdornment: (
+                  <InputAdornment position="end">
                     <Image width={15} height={15} src={Search} alt="Search" />
                   </InputAdornment>
                 ),

@@ -165,7 +165,6 @@ const SelectLayer = ({
   useEffect(() => {
     const layersSelected = treeViewData ? getSelectedLayers(treeViewData) : [];
     setSelectedLayers(layersSelected);
-    console.log([...layersSelected], "selectedLayers");
   }, [treeViewData]);
 
   useEffect(() => {

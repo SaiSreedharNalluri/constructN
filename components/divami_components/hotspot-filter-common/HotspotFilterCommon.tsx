@@ -83,7 +83,6 @@ const HotspotFilterCommon: React.FC<IProps> = ({ onClose }) => {
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
   const [dueDate, setDueData] = useState(DATE_PICKER_DATA);
   const formHandler = (event: any) => {
-    console.log("sdf");
     if (event === "Cancel") {
       handleClose();
     } else {

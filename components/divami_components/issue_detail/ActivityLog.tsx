@@ -38,7 +38,6 @@ import {
 const ActivityLog = (props: any) => {
   const { ActivityLog } = props;
 
-  console.log(`ActivityLog`, ActivityLog);
   return (
     <ActivityCardContainer data-testid="const-custom-activity-log-issue">
       {ActivityLog?.map((each: any, index: number) => {

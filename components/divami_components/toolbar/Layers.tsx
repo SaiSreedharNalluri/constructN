@@ -48,12 +48,7 @@ const Layers = ({
     }
   }, [myLayersList]);
 
-  useEffect(() => {
-    console.log(layersLabels, "siva");
-  }, [layersLabels]);
-
   const getLayersIcons = (layersLabels: any) => {
-    console.log(layersLabels, "layersLabels");
     return (
       <>
         {layersLabels.map((label: any, index: number) => {

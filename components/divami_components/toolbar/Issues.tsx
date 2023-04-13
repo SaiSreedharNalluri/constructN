@@ -97,7 +97,6 @@ const Issues = ({
         document.body
     ).then(function (canvas) {
       canvas.toBlob((blob) => {
-        console.log(blob, "blob");
         setImage(blob as Blob);
       }, "image/png");
     });

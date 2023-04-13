@@ -55,6 +55,7 @@ const ProjectUserAdd: React.FC<IProps> = ({
     userInfo: { email: string; role: string },
     { resetForm }: FormikHelpers<{ email: string; role: string }>
   ) => {
+    userInfo.email = userInfo.email.toLocaleLowerCase();
     assignProjectUser(userInfo, router.query.projectId as string)
       .then((response) => {
         if (response?.success === true) {
