@@ -97,7 +97,7 @@ const CustomCalender = (props: any) => {
     hideTextField = false,
     disablePast = false,
     config,
-    dataTestId
+    dataTestId,
   } = props;
 
   const [value, setValue] = React.useState<Dayjs | null>(
@@ -153,7 +153,7 @@ const CustomCalender = (props: any) => {
                   />
                 )
           }
-          data-testid={dataTestId}
+          // data-testid={dataTestId}
         />
       </LocalizationProvider>
     </div>
