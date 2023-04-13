@@ -8,7 +8,6 @@ import Head from 'next/head';
 import Header from './header';
 import { autodeskAuth } from "../../services/forgeService";
 import { MinimapUtils } from '../../utils/MinimapWrapper';
-import { MinimapCompareUtils } from '../../utils/MinimapCompareWrapper';
 import { ForgeViewerUtils } from '../../utils/ForgeWrapper2';
 import { PotreeViewerUtils } from '../../utils/PotreeWrapper';
 import { MapboxViewerUtils } from '../../utils/MapboxWrapper';
@@ -87,6 +86,7 @@ function GenericViewer(props) {
 
   let viewLayers = props.viewLayers;
 
+  let [showMinimap, setShowMinimap] = useState(false);
   let [isCompare, setIsCompare] = useState(false);
   let currentIsCompare = useRef(isCompare);
   let [compareViewMode, setCompareViewMode] = useState({});
@@ -220,6 +220,7 @@ function GenericViewer(props) {
 
     if (realityList.length > 0) {
       loadLayerData();
+      loadMinimapLayerData();
     }
   }
 
@@ -238,6 +239,11 @@ function GenericViewer(props) {
   function handleRealityTypeChange() {
     if (minimapUtils.current) {
       viewLayers && minimapUtils.current.showLayers(Object.values(viewLayers).map(v => {
+        if (v.isSelected) return v.name
+      }));
+    }
+    if (isCompare && minimapCompareUtils.current) {
+      viewLayers && minimapCompareUtils.current.showLayers(Object.values(viewLayers).map(v => {
         if (v.isSelected) return v.name
       }));
     }
@@ -421,12 +427,10 @@ function GenericViewer(props) {
       minimapUtils.current.updateViewerState(minimapState)
     }
 
-    if(isCompare && minimapCompareUtils.current) {
+    if(minimapCompareUtils.current) {
       let minimapState;
-      if(currentViewerType.current === 'Potree' && potreeCompareUtils.current) {
-        minimapState = potreeCompareUtils.current.getContext();
-      } else if(currentViewerType.current === 'Forge' && forgeCompareUtils.current) {
-        minimapState = forgeCompareUtils.current.getContext();
+      if(potreeUtils.current) {
+        minimapState = potreeUtils.current.getContext();
       }
       minimapCompareUtils.current.updateViewerState(minimapState)
     }
@@ -556,8 +560,14 @@ function GenericViewer(props) {
             // });
             // setViewMode('Design');
           } else if (currentViewerType.current == 'Potree') {
-            if(potreeUtils.current) {
-              potreeUtils.current.updateContext(event, false)
+            if(viewerId.indexOf('-1') > 0) {
+              if(potreeUtils.current) {
+                potreeUtils.current.updateContext(event, true)
+              }
+            } else {
+              if(potreeCompareUtils.current) {
+                potreeCompareUtils.current.updateContext(event, true)
+              }
             }
           }
           break;
@@ -592,7 +602,7 @@ function GenericViewer(props) {
           }
           break;
         case 'sync':
-          console.log("Inside sync event: ", currentIsCompare.current, isRealityViewer(viewerId))
+          // console.log("Inside sync event: ", currentIsCompare.current, isRealityViewer(viewerId))
           if (currentIsCompare.current == true) {
             if (isRealityViewer(viewerId)) {
               syncPotreeEvent.current = true;
@@ -622,7 +632,7 @@ function GenericViewer(props) {
 
   const initMinimap = (viewerId) => {
     if (minimapUtils.current == undefined) {
-      minimapUtils.current = MinimapUtils;
+      minimapUtils.current = MinimapUtils();
       minimapUtils.current.setupViewer(viewerId, viewerEventHandler);
       if(forgeInitialised) minimapUtils.current.initializeViewer();
       minimapUtils.current.setType(currentViewType.current);
@@ -631,7 +641,7 @@ function GenericViewer(props) {
 
   const initMinimapCompare = (viewerId) => {
     if (minimapCompareUtils.current == undefined) {
-      minimapCompareUtils.current = MinimapCompareUtils
+      minimapCompareUtils.current = MinimapUtils();
       minimapCompareUtils.current.setupViewer(viewerId, viewerEventHandler);
       if(forgeInitialised) minimapCompareUtils.current.initializeViewer();
       minimapCompareUtils.current.setType(currentViewType.current);
@@ -707,7 +717,13 @@ function GenericViewer(props) {
     if (minimapUtils.current != undefined) {
       minimapUtils.current.setStructure(structure);
       if (designList.length > 0) {
-        minimapUtils.current.updateData(getForgeModels(designMap));
+        const forgeModels = getForgeModels(designMap)
+        if(forgeModels && forgeModels['Plan Drawings']) {
+          setShowMinimap(true);
+          minimapUtils.current.updateData(getForgeModels(designMap)); 
+        } else {
+          setShowMinimap(false);
+        }
       }
     }
   }
@@ -716,7 +732,13 @@ function GenericViewer(props) {
     if (minimapCompareUtils.current != undefined) {
       minimapCompareUtils.current.setStructure(structure);
       if (designList.length > 0) {
-        minimapCompareUtils.current.updateData(getForgeModels(designMap));
+        const forgeModels = getForgeModels(designMap)
+        if(forgeModels && forgeModels['Plan Drawings']) {
+          setShowMinimap(true);
+          minimapCompareUtils.current.updateData(getForgeModels(designMap)); 
+        } else {
+          setShowMinimap(false);
+        }
       }
     }
   }
@@ -767,10 +789,10 @@ function GenericViewer(props) {
 
   async function loadMinimapCompareLayerData() {
     if (minimapCompareUtils.current != undefined) {
-      minimapCompareUtils.current.setSnapshot(snapshot);
+      minimapCompareUtils.current.setSnapshot(compareSnapshot);
       minimapCompareUtils.current.updateIssuesData(issuesList);
       minimapCompareUtils.current.updateTasksData(tasksList);
-      let data = await getRealityLayers(structure, realityMap);
+      let data = await getRealityLayers(structure, compareRealityMap);
       minimapCompareUtils.current?.updateLayersData(data, currentContext.current);
     }
     currentContext.current = undefined;
@@ -966,7 +988,7 @@ function GenericViewer(props) {
   };
 
   const setMinimapCompareUtils = function (viewerId) {
-    // initMinimapCompare(viewerId);
+    initMinimapCompare(viewerId);
   };
 
   const setForgeViewerUtils = function (viewerId) {
@@ -1162,6 +1184,11 @@ function GenericViewer(props) {
     if (minimapUtils.current) {
       minimapUtils.current.removeLayers();
     }
+
+    if (isCompare && minimapCompareUtils.current) {
+      minimapCompareUtils.current.removeLayers();
+    }
+
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -1232,6 +1259,11 @@ function GenericViewer(props) {
   };
 
   const destroyCompareViewer = () => {
+    if(minimapCompareUtils.current) {
+      minimapCompareUtils.current.shutdown();
+      minimapCompareUtils.current = undefined;
+      delete minimapCompareUtils.current;
+    }
     switch (currentCompareViewMode.current) {
       case 'Forge':
         if (forgeCompareUtils.current) {
@@ -1412,7 +1444,6 @@ function GenericViewer(props) {
         setViewerType('Potree');
       }
       loadMinimapLayerData();
-      if(isCompare) loadMinimapCompareLayerData();
       loadLayerData();
     }
   }, [realityList]);
@@ -1508,6 +1539,9 @@ function GenericViewer(props) {
   }
 
   const renderMinimap = (count) => {
+    if (count != 1 && !isCompare) {
+      return;
+    }
     return (<Rnd
       ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
       minWidth={320}
@@ -1519,7 +1553,7 @@ function GenericViewer(props) {
       onResize={(e, direction, ref, delta, position) => {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
       }}
-      className='z-10 border-4 rounded-lg border-[#F1742E] bg-[#F1742E]'>
+      className={`${'z-10 border-4 rounded-lg border-[#F1742E] bg-[#F1742E]'} ${showMinimap ? 'opacity-100' : 'opacity-0'}`}>
       <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
         <div className='h-8 bg-[#F1742E] flex'>
           <div className='text-white flex items-center pl-2 flex-1'>Minimap</div>
@@ -1543,14 +1577,14 @@ function GenericViewer(props) {
     const utils = count == 1 ? minimapUtils.current : minimapCompareUtils.current
     switch(mode) {
       case 'minimize':
-        minimap.updateSize({ width: 320, height: 32 });
+        minimap?.updateSize({ width: 320, height: 32 });
         break;
       case 'fullscreen':
-        minimap.updateSize({ width: '99%', height: '99%' });
-        minimap.updatePosition({ x: 0, y: 0 });
+        minimap?.updateSize({ width: '99%', height: '95%' });
+        minimap?.updatePosition({ x: 0, y: 64 });
         break;
       default:
-        minimap.updateSize({ width: 320, height: 320 });
+        minimap?.updateSize({ width: 320, height: 320 });
         break;
     }
     setTimeout(() => utils?.resize(), 50)

@@ -7,7 +7,7 @@ import {
 
 } from './ViewerDataUtils';
 
-export const MinimapUtils = (function () {
+export const MinimapUtils = () => {
   let _viewerId;
   let _eventHandler;
   let _viewer;
@@ -30,13 +30,10 @@ export const MinimapUtils = (function () {
   let _realityPositionMap = {};
   let _issuesList = [];
   let _tasksList = [];
-  let _showLayersList = [];
+  let _showLayersList
   let _showTag = {};
 
   let _context;
-  let _sphereMesh;
-  let _sceneBuilder;
-  let _modelBuilder;
   let _navPosition;
   let _navRotation;
 
@@ -387,7 +384,7 @@ export const MinimapUtils = (function () {
         //     tag: tagObject,
         //   };
         // } else {
-        console.log(`Inside Rag Click click: ${targetObject.position.x}`);
+        console.log(`Inside Rag Click click: ${targetObject.position.x}`, _viewerId);
         if (targetObject.id.includes("Temp")) {
           _isAddTagActive = deactivateTool();
           let tagObject = {
@@ -528,7 +525,7 @@ export const MinimapUtils = (function () {
 
   const updateViewerState = (viewerState) => {
     if (_isModelLoaded && !_manifestNode.is2D() && viewerState) {
-      // console.log("Inside update viewer state: ", viewerId, viewerState);
+      // console.log("Inside update viewer state: ", _viewerId, viewerState);
       let position = new THREE.Vector3().fromArray(viewerState.position);
       _viewer.navigation.setPosition(position);
       _viewer.navigation.setTarget(viewerState.target);
@@ -775,9 +772,6 @@ export const MinimapUtils = (function () {
     if (_dataVizUtils) {
       _dataVizUtils.removeExistingVisualizationData();
     }
-    _sphereMesh = undefined;
-    _modelBuilder = undefined;
-    _sceneBuilder = undefined;
   };
 
   const shutdown = () => {
@@ -788,9 +782,6 @@ export const MinimapUtils = (function () {
       _viewer.uninitialize();
       _dataVizExtn = undefined;
       _dataVizUtils = undefined;
-      _sphereMesh = undefined;
-      _modelBuilder = undefined;
-      _sceneBuilder = undefined;
       Autodesk.Viewing.shutdown();
     }
     _isViewerInitialized = false;
@@ -822,7 +813,7 @@ export const MinimapUtils = (function () {
     resize: resize,
     shutdown: shutdown,
   };
-})();
+};
 
 const getContextLocalFromGlobal = (context, globalOffset) => {
   // console.log("Global offset: ", context);

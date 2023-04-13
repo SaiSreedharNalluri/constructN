@@ -35,7 +35,6 @@ export class MinimapDataVisualization {
             "Task": true
         };
 
-
         // window.dbIdMap = this.dbIdMap;
 
     
@@ -110,7 +109,7 @@ export class MinimapDataVisualization {
     }
 
     setViewableState(viewableList) {
-        console.log("Inside set Viewable state: ", viewableList)
+        // console.log("Inside set Viewable state: ", viewableList)
         if (!viewableList) {
             return;
         }
@@ -188,7 +187,7 @@ export class MinimapDataVisualization {
             }   
             this.viewableLength = dbId - 1;
         }
-        console.log("Viewable minimap data map: ", this.viewableLength);
+        // console.log("Viewable minimap data map: ", this.viewableLength);
     }
 
     removeDataMap(type) {
@@ -271,6 +270,7 @@ export class MinimapDataVisualization {
     }
 
     getNewViewableData() {
+
         delete this.viewableDataMap;
         this.viewableDataMap = {}
         for(let dbIdObject of this.dbIdArray) {
@@ -292,10 +292,26 @@ export class MinimapDataVisualization {
 
             this.viewableDataMap[dbIdObject.type].viewableData.addViewable(viewable);
         }
-        console.log("Viewable data map minimap: ", this.viewableDataMap);
+        // console.log("Viewable data map minimap: ", this.viewableDataMap);
     }
 
     async loadViewableData() {
+
+         // Viewable for current position ICON
+         let animatedUrls = [];
+         for(let i = 0; i < 360; i = i + 10) {
+             animatedUrls.push(`/icons/navigator/nav-${i}.png`)
+         }
+         const viewableType = this.dataVizCore.ViewableType.SPRITE;
+         const spriteIconUrl = `/icons/navigator/nav-0.png`;
+         this._navStyle = new this.dataVizCore.ViewableStyle(viewableType, undefined, spriteIconUrl, undefined, spriteIconUrl, animatedUrls);
+         this._navViewableData = new this.dataVizCore.ViewableData();
+         this._navViewableData.spriteSize = 24; // Sprites as points of size 24 x 24 pixels
+         this._navViewable = new this.dataVizCore.SpriteViewable({x: 0, y: 0, z: 100}, this._navStyle, 999);
+         this._navViewableData.addViewable(this._navViewable);
+         await this._navViewableData.finish();
+         this.dataVizExtn.addViewables(this._navViewableData);
+
         let combinedState = {...this.viewableState, ...this.tagState}
         for (let viewableType in this.viewableDataMap) {
             if(combinedState[viewableType]) {
@@ -306,26 +322,12 @@ export class MinimapDataVisualization {
         }
     }
 
-    async createMarker(position, yaw) {
+    createMarker(position, yaw) {
        if(!position) return;
-       const viewableType = this.dataVizCore.ViewableType.SPRITE;
-       const spriteIconUrl = `/icons/navigator/0.png`;
+       if(!this._navViewableData) return;
        const localPos = this.getViewerPosition(position, this.tm, this.offset)
        localPos.z = 100
-       let animatedUrls = [];
-       for(let i = 0; i <= 360; i = i + 10) {
-        animatedUrls.push(`/icons/navigator/nav-${i}.png`)
-       }
-       if(!this._navStyle) {
-        this._navStyle = new this.dataVizCore.ViewableStyle(viewableType, undefined, spriteIconUrl, undefined, spriteIconUrl, animatedUrls);
-        const viewableData = new this.dataVizCore.ViewableData();
-        viewableData.spriteSize = 24; // Sprites as points of size 24 x 24 pixels
-        this._navViewable = new this.dataVizCore.SpriteViewable(localPos, this._navStyle, 999);
-        viewableData.addViewable(this._navViewable);
-        await viewableData.finish(); 
-        this.dataVizExtn.addViewables(viewableData);
-       } else {
-        this.invalidateViewablesDirect(999, this.dataVizExtn.pointMeshes, this.dataVizExtn.viewableData, (viewable) => {
+        this.invalidateViewablesDirect(999, this.dataVizExtn.pointMeshes, this._navViewableData, (viewable) => {
             let deg = MathUtils.radToDeg(yaw);
             if(deg > 0) deg = 360 - deg;
             else deg = deg * -1;
@@ -336,7 +338,6 @@ export class MinimapDataVisualization {
                 url: mUrl
             };
         });
-       }
     }
 
     invalidateViewablesDirect = (dbIds, meshes, viewableData, callback) => {
@@ -368,6 +369,7 @@ export class MinimapDataVisualization {
                 }
 
                 const updates = callback(viewables.get(dbId));
+                // console.log(updates, viewables, 'ppp')
                 if (!updates) {
                     continue;
                 }
@@ -428,11 +430,10 @@ export class MinimapDataVisualization {
     };
 
 
-    refreshViewableData(position, yaw) {
+    refreshViewableData() {
         this.removeViewableData();
         this.getNewViewableData();
         this.loadViewableData();
-        this.createMarker(position, yaw);
     }
 
     async createTempViewable(type, event) {
@@ -476,6 +477,12 @@ export class MinimapDataVisualization {
         const targetDbId = event.dbId;
 
         // console.log("Hovering dbId: ", targetDbId);
+
+        // this.invalidateViewablesDirect(targetDbId, this.dataVizExtn.pointMeshes, this.viewableDataMap['360 Video'].viewableData, (viewable) => {
+        //     return {
+        //         scale: event.hovering ? 2 : 1
+        //     };
+        // });
 
         // if (event.hovering) {
         //     console.log(`The mouse hovers over ${this.dbIdMap[targetDbId].name}`);
@@ -617,5 +624,8 @@ export class MinimapDataVisualization {
 
     removeViewableData() {
         this.dataVizExtn.removeAllViewables();
+        this._navStyle = undefined;
+        this._navViewable = undefined;
+        this._navViewableData = undefined;
     }
 }

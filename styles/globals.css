@@ -49,8 +49,8 @@
 }
 
 .calc-w {
-  /* width: calc(100% - 44px); */
-  width: 100%;
+  width: calc(100% - 60px);
+  /* width: 100%; */
 }
 
 .calc-w-compare {
