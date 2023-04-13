@@ -124,6 +124,11 @@ interface TabPanelProps {
   value: number;
 }
 
+interface Task {
+  _id: string;
+  // Include other properties if needed
+}
+
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;
@@ -868,6 +873,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     closeTaskCreate,
     getTasks,
     deleteTheAttachment,
+    setTaskList,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [footerState, SetFooterState] = useState(false);
@@ -976,9 +982,18 @@ const CustomTaskDetailsDrawer = (props: any) => {
     });
   }, [selectedTask]);
 
+  const deletetaskById = (taskList: Task[], selectedTask: Task) => {
+    const selectedTaskId = selectedTask._id;
+    const updatedTaskList = taskList.filter(
+      (task) => task._id !== selectedTaskId
+    );
+    return updatedTaskList;
+  };
   const onDeleteTask = () => {
     setshowPopUp(false);
     deleteTheTask(selectedTask, onClose);
+    const updatedTaskList = deletetaskById(taskList, selectedTask);
+    setTaskList(updatedTaskList);
   };
 
   const handleCreateTask = (formData: any) => {
