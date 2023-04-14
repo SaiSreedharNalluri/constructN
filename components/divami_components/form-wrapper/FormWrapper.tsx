@@ -33,9 +33,10 @@ const FormWrapper = (props: any) => {
     setCanBeDisabled,
   } = props;
 
+  console.log("wrapping", props);
+
   useEffect(() => {
     if (validate) {
-      console.log("coming");
       setFormConfig((prev: any) => {
         const newconfig = prev.map((item: any) => {
           if (item.isReq && !item.defaultValue) {
@@ -97,7 +98,6 @@ const FormWrapper = (props: any) => {
   };
 
   const handleSearchResult = (e: any, value: string, id: string) => {
-    console.log(e, value, "sdfsdfsearch");
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
@@ -154,7 +154,16 @@ const FormWrapper = (props: any) => {
   };
 
   const handleChipMaking = (chipsString: any, id: any) => {
-    console.log(chipsString, "chipsString");
+    // console.log(chipsString, "chipsString");
+    const specialArr = [];
+    // if(chipsString[chipsString.length - 1].includes("@")) return
+    const regex = /^[a-zA-Z ]+$/;
+    if (!regex.test(chipsString[chipsString.length - 1])) {
+      // console.log(chipsString, "chipsString1122");
+
+      return;
+    }
+
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
@@ -174,7 +183,6 @@ const FormWrapper = (props: any) => {
     index: number,
     configObject: any = config
   ) => {
-    console.log("data.type", data);
     switch (data.type) {
       case "select":
         return (
@@ -189,6 +197,7 @@ const FormWrapper = (props: any) => {
               label=""
               data={data}
               isReadOnly={data.isReadOnly}
+              dataTestId={`inputSelectField-${data.id}`}
             />
           </ElementContainer>
         );
@@ -207,7 +216,6 @@ const FormWrapper = (props: any) => {
               }}
               defaultValue={data.defaultValue}
               isError={data.isError}
-              dataTestId="inputTextField"
               isRequired={data.isReq}
               type={data.type}
               minVal={data?.minVal}
@@ -216,6 +224,7 @@ const FormWrapper = (props: any) => {
               isDisabled={data.isDisabled}
               className={undefined}
               isReadOnly={data.isReadOnly}
+              dataTestId={`inputTextAreaField-${data.id}`}
             />
           </ElementContainer>
         );
@@ -243,6 +252,7 @@ const FormWrapper = (props: any) => {
               isDisabled={data.isDisabled}
               className={undefined}
               isReadOnly={data.isReadOnly}
+              // isIssue={true}
             />
           </ElementContainer>
         );
@@ -256,6 +266,7 @@ const FormWrapper = (props: any) => {
               onChange={(e: any) => {
                 handleDateChange(e, data.id);
               }}
+              dataTestId={`inputDateField-${data.id}`}
               isReadOnly={data.isReadOnly}
             />
           </ElementContainer>
@@ -270,6 +281,7 @@ const FormWrapper = (props: any) => {
               }}
               selectedName={data.selectedName}
               isReadOnly={data.isReadOnly}
+              dataTestId="searchField"
               setFormConfig={setFormConfig}
             />
           </ElementContainer>
@@ -280,6 +292,7 @@ const FormWrapper = (props: any) => {
             <CustomFileInput
               handleFileUpload={(e: any) => handleFileUpload(e, data.id)}
               data
+              dataTestId={`inputFileField-${data.id}`}
             />
           </ElementContainer>
         );
@@ -292,6 +305,7 @@ const FormWrapper = (props: any) => {
                 handleChipMaking(chipsString, data.id)
               }
               data={data}
+              dataTestId={"chip"}
               setFormConfig={setFormConfig}
             />
           </ElementContainer>
@@ -315,6 +329,8 @@ const FormWrapper = (props: any) => {
         return "";
     }
   };
+
+  console.log(config, "config");
 
   return (
     <div className="form-container-child">

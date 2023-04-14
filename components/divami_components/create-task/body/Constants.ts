@@ -8,7 +8,7 @@ export const TASK_FORM_CONFIG = [
     type: "textfield",
     defaultValue: "",
     formLabel: "What shall we call this Task?",
-    placeholder: "Title",
+    placeholder: "Enter Task..",
     isReadOnly: false,
     isError: false,
     isReq: true,
