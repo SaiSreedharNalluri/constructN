@@ -15,6 +15,8 @@ const CustomDrawer = (props: any) => {
         anchor={"right"}
         open={true}
         data-testid="const-styled-drawer"
+        // container={document.getElementById("test_full_screen")}
+
         // onClose={() => setOpenDrawer((prev) => !prev)}
       >
         {props.children}

@@ -252,6 +252,8 @@ const Issues = ({
 
   return (
     <>
+      {/* <DownloadTable /> */}
+      {/* <PrintPage /> */}
       <IssueBox>
         <IssueTitle>Issues:</IssueTitle>
 
@@ -379,6 +381,7 @@ const Issues = ({
             currentSnapshot={currentSnapshot}
             contextInfo={contextInfo}
             setIssueList={setIssueList}
+            deleteTheAttachment={deleteTheAttachment}
           />
         </Drawer>
       )}

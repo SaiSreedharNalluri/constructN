@@ -46,7 +46,7 @@ export const DrawerBox = styled(Box)({
 });
 
 export const DrawerHeaderTitle = styled("div")({
-  color: "#101F4C"
+  color: "#101F4C",
 });
 
 export const CloseIconStyled = styled(CloseIcon)({

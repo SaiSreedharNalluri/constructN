@@ -273,7 +273,7 @@ const Body = ({
                     selected: false,
                   };
                 }),
-                defaultValue: item?.options[0]?.label,
+                defaultValue: item?.options[0]?.label || "Safety",
               };
             }
             if (item.id === "issuePriority") {
