@@ -174,7 +174,6 @@ const Task = ({
     formDataObj.append("jreq", JSON.stringify(data));
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
-    console.log("formData", data);
     if (data.title && data.type && data.priority && data.description) {
       setEnableSubmit(false);
 
@@ -207,7 +206,6 @@ const Task = ({
   };
 
   useEffect(() => {
-    console.log("contextinfo", contextInfo, tasksList);
     if (openTaskDetails && contextInfo?.id) {
       const selectedObj = tasksList.find(
         (each: any) => each._id === contextInfo.id
