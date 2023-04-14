@@ -541,7 +541,7 @@ function GenericViewer(props) {
   };
 
   const viewerEventHandler = (viewerId, event) => {
-    // console.log("Inside generic viewer: ", event, );
+    console.log("Inside generic viewer: ", event, );
     if (event) {
       switch (event.type) {
         case '360 Video':
@@ -608,6 +608,13 @@ function GenericViewer(props) {
               syncPotreeEvent.current = true;
             } else {
               syncForgeEvent.current = true;
+            }
+          }
+
+          if(currentViewerType.current === 'Forge') {
+            let con = event.context;
+            if(con && minimapUtils.current) {
+              minimapUtils.current.updateViewerState(con)
             }
           }
           break;

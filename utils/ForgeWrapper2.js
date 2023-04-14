@@ -485,7 +485,7 @@ export const ForgeViewerUtils = (function () {
       y: target.y + offset[1],
       z: target.z + offset[2],
     };
-    return { cameraPosition, cameraTarget };
+    return { cameraPosition, cameraTarget, yaw: state.up[0] };
   };
 
   const getViewerState = () => {
@@ -495,7 +495,7 @@ export const ForgeViewerUtils = (function () {
       );
       const state = _viewer.getState({ viewport: true }).viewport;
       let viewerState = {
-        position: [state.eye[0], state.eye[1], state.eye[2]],
+        position: [state.eye[0], state.eye[1], state.eye[1]],
         target: new THREE.Vector3().fromArray(state.target),
         fov: state.fieldOfView,
       };
@@ -642,7 +642,7 @@ export const ForgeViewerUtils = (function () {
 
   const onCameraChangeEvent = (event) => {
     // console.log("On Camera change event: ", event, typeof(_eventHandler), _viewer);
-    _eventHandler(_viewerId, { type: "sync" });
+    _eventHandler(_viewerId, { type: "sync", context: getContext() });
   };
 
   // const onClickEventOnContainer = (ev) => {
