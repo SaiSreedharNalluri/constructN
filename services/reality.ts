@@ -54,6 +54,12 @@ export const getRealityImagesPath = (
     return `${path}/images`
 }
 
+export const getRealityPointCloudPath = (
+  path: string
+  ) => {
+    return `${path}/pointcloud/cloud.json`
+}
+
 export const getOrthoPhotoLayers = async (
   path: string
   ) => {
