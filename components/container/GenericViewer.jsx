@@ -1,6 +1,6 @@
 import Script from 'next/script';
 import Moment from 'moment';
-import { Mixpanel } from '../analytics/mixpanel';
+import { Mixpanel } from '../analytics/Mixpanel';
 import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
 import Draggable, {DraggableCore} from "react-draggable";
 import Head from 'next/head';
