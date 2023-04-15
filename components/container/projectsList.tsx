@@ -3,7 +3,7 @@ import { IProjects } from '../../models/IProjects';
 import Moment from 'moment';
 import { useRouter } from 'next/router';
 import NextImage from '../core/Image';
-import { Mixpanel } from '../analytics/Mixpanel';
+import { Mixpanel } from '../analytics/mixpanel';
 interface IProps {
   projects: IProjects[];
   loading: boolean;
