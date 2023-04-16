@@ -88,6 +88,7 @@ export const MinimapUtils = () => {
   }
 
   const initializeViewer = () => {
+    if(_viewer) return
     console.log("Inside minimap Initializer callback", _eventHandler);
     let htmlDiv = document.getElementById(_viewerId);
     _viewer = new Autodesk.Viewing.Viewer3D(htmlDiv, viewerConfig);

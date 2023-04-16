@@ -220,7 +220,7 @@ function GenericViewer(props) {
 
     if (realityList.length > 0) {
       loadLayerData();
-      loadMinimapLayerData();
+      // loadMinimapLayerData();
     }
   }
 
