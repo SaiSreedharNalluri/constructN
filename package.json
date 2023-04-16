@@ -58,6 +58,7 @@
     "react-tabs": "^6.0.0",
     "react-tagsinput": "^3.20.0",
     "react-toastify": "^9.1.1",
+    "three": "^0.151.3",
     "yup": "^0.32.11"
   },
   "devDependencies": {
