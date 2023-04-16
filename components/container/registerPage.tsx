@@ -27,7 +27,7 @@ interface IProps {
     }
   ) => void;
 }
-const Loginpage: React.FC<IProps> = ({ loading, handleRegister }) => {
+const Loginpage: React.FC<IProps> = ({ loading, handleRegister }: {loading: any, handleRegister: any}) => {
   const initialValues: {
     firstName: string;
     lastName: string;

@@ -10,6 +10,7 @@
     "test": "jest --coverage --watchAll",
     "docker-image": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype .",
     "docker-image-dev": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:beta .",
+    "docker-image-delta": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:delta .",
     "docker-image-prod-us": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:prod-us ."
   },
   "dependencies": {
@@ -51,6 +52,7 @@
     "react-easyfullscreen": "^1.1.2",
     "react-map-gl": "^7.0.21",
     "react-responsive-modal": "^6.4.1",
+    "react-rnd": "^10.4.1",
     "react-router-dom": "^6.8.1",
     "react-select": "^5.7.0",
     "react-tabs": "^6.0.0",
