@@ -23,8 +23,7 @@
 }
 
 .calc-h {
-  height: 100vh;
-  /* height: calc(100vh - 40px); */
+  height: calc(100vh - 40px);
   /* height: calc(100vh - 116px); */
 }
 
@@ -49,8 +48,7 @@
 }
 
 .calc-w {
-  width: calc(100% - 60px);
-  /* width: 100%; */
+  width: calc(100% - 44px);
 }
 
 .calc-w-compare {
@@ -525,4 +523,14 @@ td {
 
 .form-container-child > div:first-child {
   margin-top: 20px;
+}
+.calc-width-full {
+  width: 100%;
+}
+.calc-height-full {
+  height: 100vh;
+}
+
+.margin-right-55 {
+  margin-right: 55px;
 }

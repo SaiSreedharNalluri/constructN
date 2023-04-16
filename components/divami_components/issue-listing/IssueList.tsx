@@ -228,7 +228,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setIssueList(issuesList);
     setDownloadList(issuesList);
   }, [issuesList]);
-
+  
   useEffect(() => {
     setFilteredIssuesList(issueList.slice(0, 10));
   }, [issueList]);
@@ -269,7 +269,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
         .then((response: any) => {
           if (response.success === true) {
             setProjectUsers(response.result);
-            console.log(projectUsers);
           }
         })
         .catch();
@@ -410,7 +409,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
                   <DividerIcon src={DividerIconSVG} alt="" />
-                  {issueFilterState.isFilterApplied ? (
+                  {/* {issueFilterState.isFilterApplied ? (
                     <AppliedFilter>
                       {issueFilterState.numberOfFilters} Filters{" "}
                       <FilterIcon
@@ -421,7 +420,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         }}
                       />
                     </AppliedFilter>
-                  ) : null}
+                  ) : null} */}
                   <Tooltip title="Sort Menu">
                     <IconContainer
                       src={sort}
@@ -586,6 +585,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 deleteTheIssue={deleteTheIssue}
                 getIssues={getIssues}
                 deleteTheAttachment={deleteTheAttachment}
+                setIssueList={setIssueList}
               />
             </Drawer>
           )}
@@ -748,7 +748,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               onClick={() => {
                 onClose();
                 openIssueCreateFn();
-                toast("Click on the map where you want to create an issue");
+                toast.success(
+                  "Click on the map where you want to create an issue"
+                );
               }}
             >
               Raise Issue
