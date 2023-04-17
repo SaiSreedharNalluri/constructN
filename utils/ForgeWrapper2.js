@@ -750,7 +750,9 @@ export const ForgeViewerUtils = (function () {
     // console.log("Model Before Removed: ", this.model);
     if (_isViewerInitialized) {
       removeLayers();
-      _viewer.unloadModel(_model);
+      try{
+        _viewer.unloadModel(_model);
+      } catch(e) {}
     }
   };
 
@@ -765,7 +767,9 @@ export const ForgeViewerUtils = (function () {
     if (_isViewerInitialized) {
       removeData();
       removeEventListeners();
-      _viewer.tearDown();
+      try{
+        _viewer.tearDown();
+      }catch(e) {}
       _viewer.uninitialize();
       _dataVizExtn = undefined;
       _dataVizUtils = undefined;

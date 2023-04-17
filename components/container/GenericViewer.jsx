@@ -556,17 +556,8 @@ function GenericViewer(props) {
           currentContext.current = event;
           if (currentIsCompare.current == true) {
             const isMinimap = viewerId.indexOf('minimap') > -1;
-            console.log(isMinimap, 'ppp', viewerId)
             if(isMinimap) {
-              if (isMinimapCompareViewer(viewerId)) {
-                potreeUtils.current.updateContext(event, true);
-              } else {
-                if (currentCompareViewMode.current === 'Potree') {
-                  potreeCompareUtils.current.updateContext(event, true);
-                } else {
-                  forgeCompareUtils.current.updateContext(event, true);
-                }
-              }
+              potreeUtils.current.updateContext(event, true);
             } else {
               if (isCompareViewer(viewerId)) {
                 potreeUtils.current.updateContext(event, false);
