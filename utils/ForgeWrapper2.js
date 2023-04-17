@@ -81,6 +81,7 @@ export const ForgeViewerUtils = (function () {
   }
 
   const initializeViewer = () => {
+    if(_viewer) return
     console.log("Inside Initializer callback", _eventHandler);
     let htmlDiv = document.getElementById(_viewerId);
     _viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv, viewerConfig);
