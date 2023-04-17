@@ -602,6 +602,9 @@ export const ForgeViewerUtils = (function () {
     if (!_isModelLoaded && progress.percent == 100) {
       console.log("Inside model load progress: ", progress, state, model);
       _isModelLoaded = true;
+      if (loadLayersOnDataLoadCompletion()) {
+        loadLayers();
+      }
     }
 
     if (progress.percent > 5 && _context) {
@@ -626,6 +629,9 @@ export const ForgeViewerUtils = (function () {
   const onGeometryLoadedEvent = (parameter) => {
     // console.log("Inside Geometry Loaded Event: model: ", parameter.model);
     _isModelLoaded = true;
+    if (loadLayersOnDataLoadCompletion()) {
+      loadLayers();
+    }
   };
 
   const onModelUnLoadedEvent = (model) => {
