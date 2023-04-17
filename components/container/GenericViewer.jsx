@@ -555,13 +555,27 @@ function GenericViewer(props) {
         case '360 Video':
           currentContext.current = event;
           if (currentIsCompare.current == true) {
-            if (isCompareViewer(viewerId)) {
-              potreeUtils.current.updateContext(event, false);
-            } else {
-              if (currentCompareViewMode.current === 'Potree') {
-                potreeCompareUtils.current.updateContext(event, false);
+            const isMinimap = viewerId.indexOf('minimap') > -1;
+            console.log(isMinimap, 'ppp', viewerId)
+            if(isMinimap) {
+              if (isMinimapCompareViewer(viewerId)) {
+                potreeUtils.current.updateContext(event, true);
               } else {
-                forgeCompareUtils.current.updateContext(event, false);
+                if (currentCompareViewMode.current === 'Potree') {
+                  potreeCompareUtils.current.updateContext(event, true);
+                } else {
+                  forgeCompareUtils.current.updateContext(event, true);
+                }
+              }
+            } else {
+              if (isCompareViewer(viewerId)) {
+                potreeUtils.current.updateContext(event, false);
+              } else {
+                if (currentCompareViewMode.current === 'Potree') {
+                  potreeCompareUtils.current.updateContext(event, false);
+                } else {
+                  forgeCompareUtils.current.updateContext(event, false);
+                }
               }
             }
           } else if (currentViewerType.current == 'Forge') {
@@ -801,7 +815,7 @@ function GenericViewer(props) {
       minimapUtils.current.setSnapshot(snapshot);
       minimapUtils.current.updateIssuesData(issuesList);
       minimapUtils.current.updateTasksData(tasksList);
-      let data = await getRealityLayers(structure, realityMap);
+      let data = await getRealityLayersPath(structure, realityMap);
       minimapUtils.current?.updateLayersData(data, currentContext.current);
     }
     currentContext.current = undefined;
@@ -812,7 +826,7 @@ function GenericViewer(props) {
       minimapCompareUtils.current.setSnapshot(compareSnapshot);
       minimapCompareUtils.current.updateIssuesData(issuesList);
       minimapCompareUtils.current.updateTasksData(tasksList);
-      let data = await getRealityLayers(structure, compareRealityMap);
+      let data = await getRealityLayersPath(structure, compareRealityMap);
       minimapCompareUtils.current?.updateLayersData(data, currentContext.current);
     }
     currentContext.current = undefined;
@@ -1128,6 +1142,14 @@ function GenericViewer(props) {
 
   const isCompareViewer = (viewerId) => {
     if (viewerId.split('_')[1] === '1') {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const isMinimapCompareViewer = (viewerId) => {
+    if (viewerId.split('-')[1] === '1') {
       return false;
     } else {
       return true;

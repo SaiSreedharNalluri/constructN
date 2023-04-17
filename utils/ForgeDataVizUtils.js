@@ -51,7 +51,23 @@ export class ForgeDataVizUtils {
 
     loadTasks = async (tasks) => {
 
-        const _viewableData = await this._createViewableData(tasks, ForgeDataVizUtils.TASK)
+        const data = []
+
+        tasks.forEach(task => {
+
+            let tag = task.context.tag;
+
+            data.push({
+
+                id: task._id,
+
+                type: ForgeDataVizUtils.TASK,
+
+                position: tag.position
+            })
+        })
+
+        const _viewableData = await this._createViewableData(data, ForgeDataVizUtils.TASK)
 
         this._viewableDataMap[ForgeDataVizUtils.TASK] = _viewableData
 
@@ -60,7 +76,23 @@ export class ForgeDataVizUtils {
 
     loadIssues = async (issues) => {
 
-        const _viewableData = await this._createViewableData(issues, ForgeDataVizUtils.ISSUE)
+        const data = []
+
+        issues.forEach(issue => {
+
+            let tag = issue.context.tag;
+
+            data.push({
+
+                id: issue._id,
+
+                type: ForgeDataVizUtils.ISSUE,
+
+                position: tag.position
+            })
+        })
+
+        const _viewableData = await this._createViewableData(data, ForgeDataVizUtils.ISSUE)
 
         this._viewableDataMap[ForgeDataVizUtils.ISSUE] = _viewableData
 

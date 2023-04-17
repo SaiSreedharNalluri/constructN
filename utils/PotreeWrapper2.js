@@ -1203,7 +1203,7 @@ export const PotreeViewerUtils = () => {
 
     const updateContext = (context, sendContext) => {
         _sendContext = sendContext;
-        // console.log("Inside update context potree: ", this.sendContext);
+        console.log("Inside update context potree: ppp", sendContext, context);
         if (context) {
             _context = getContextLocalFromGlobal(context);
         } else {

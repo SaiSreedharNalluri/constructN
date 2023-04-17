@@ -150,23 +150,45 @@ export class MinimapDataVisualization {
             this.viewableDataMap[viewableType] = {};
             switch (viewableType) {
                 case "360 Image":
-                case "Phone Image":
                 case "360 Video":
-                    for (const positionData in visualizationData[viewableType]) {
-                        let positionArray = visualizationData[viewableType][positionData].position;
-                        let dbIdObject = {
-                            dbId: dbId++,
-                            type: viewableType,
-                            id: positionData,
-                            // position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
-                            position: this.getViewerPosition({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.tm, this.offset),
-                            
+                    for(const reality of visualizationData[viewableType]) {
+                        for (const positionData in reality.position) {
+                            let positionArray = reality.position[positionData].position;
+                            let dbIdObject = {
+                                dbId: dbId++,
+                                type: viewableType,
+                                id: reality.id,
+                                imageName: positionData,
+                                // position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
+                                position: this.getViewerPosition({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.tm, this.offset),
+                                
+                            }
+                            this.dbIdArray[dbIdObject.dbId] = dbIdObject;
+                            // this.viewableState[viewableType] = true;
                         }
-                        this.dbIdArray[dbIdObject.dbId] = dbIdObject;
-                        // this.viewableState[viewableType] = true;
                     }
                     break;
-                case "Drone Image":
+                // case "Drone Image":
+                case "Phone Image":
+                    for(const reality of visualizationData[viewableType]) {
+                        reality.position["camname"].forEach((imageName, index) => {
+                            let positionArray = [];
+                            positionArray[0] = reality.position["camX"][index];
+                            positionArray[1] = reality.position["camY"][index];
+                            positionArray[2] = reality.position["camZ"][index];
+
+                            let dbIdObject = {
+                                dbId: dbId++,
+                                type: viewableType,
+                                id: reality.id,
+                                imageName: imageName,
+                                // position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
+                                position: this.getViewerPosition({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.tm, this.offset),
+                                
+                            }
+                            this.dbIdArray[dbIdObject.dbId] = dbIdObject;
+                        })
+                    }
                     break;
                 case "Issue":
                 case "Task":

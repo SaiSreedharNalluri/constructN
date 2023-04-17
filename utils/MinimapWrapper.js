@@ -413,7 +413,7 @@ export const MinimapUtils = () => {
           let imageObject = {
             imagePosition: targetObject.position,
             imageRotation: targetObject.rotation,
-            imageName: targetObject.id,
+            imageName: targetObject.imageName,
           };
           contextObject = {
             id: targetObject.id,
@@ -454,6 +454,8 @@ export const MinimapUtils = () => {
         setForgeControls(context.type);
         break;
       case "360 Video":
+        setNavigation(context);
+        setForgeControls(context.type);
         // goToImageContext(context);
         break;
       case "tag":
@@ -563,9 +565,9 @@ export const MinimapUtils = () => {
 
   const setForgeControls = (type) => {
     if (_bimWalkExtn) {
-      if (type === "panorama" || type === "image") {
+      if (type !== "3d") {
         _viewer.navigation.setIsLocked(false);
-        if (isCompareView() && type === "panorama") {
+        if (isCompareView() && (type === "360 Video" || type === "360 Image")) {
           _viewer.navigation.setLockSettings({
             orbit: false,
             pan: false,
