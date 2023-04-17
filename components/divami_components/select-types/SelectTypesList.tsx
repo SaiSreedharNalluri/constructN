@@ -53,11 +53,8 @@ const SelectTypesList = ({
   //   }
   // };
 
-  console.log("optionsList", optionsList);
-
   const onSearchChange = (event: any) => {
     let parentList = [...optionsList];
-    console.log("parentList", parentList);
     const searchFieldString = event.target.value.toLocaleLowerCase();
     // console.log("searchFieldString", searchFieldString);
     let newObj = parentList.filter((val: any) => {
@@ -72,7 +69,6 @@ const SelectTypesList = ({
     // }
     setList(optionsList);
   }, [optionsList]);
-  console.log(optionsList, "options", list);
   // const filteredItems = optionsList.filter((item:any) =>
   //   item.toLowerCase().includes(searchTerm.toLowerCase())
   // );

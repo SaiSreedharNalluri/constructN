@@ -518,7 +518,8 @@ export const ForgeViewerUtils = (function () {
   };
 
   const updateViewerState = (viewerState) => {
-    if (_isModelLoaded && viewerState) {
+    // if (_isModelLoaded && viewerState) {
+      if (viewerState) {
       // console.log("Inside update viewer state: ", viewerId, viewerState);
       let position = new THREE.Vector3().fromArray(viewerState.position);
       _viewer.navigation.setPosition(position);
@@ -597,18 +598,25 @@ export const ForgeViewerUtils = (function () {
 
   const onViewerUnInitialized = () => {};
 
-  const modelLoadProgress = (percent, state, model) => {
-    if (!_isModelLoaded && percent == 100) {
-      console.log("Inside model load progress: ", percent, state, model);
+  const modelLoadProgress = (progress, state, model) => {
+    if (!_isModelLoaded && progress.percent == 100) {
+      console.log("Inside model load progress: ", progress, state, model);
       _isModelLoaded = true;
+      if (loadLayersOnDataLoadCompletion()) {
+        loadLayers();
+      }
+    }
+
+    if (progress.percent > 5 && _context) {
+      updateContext(_context, false);
     }
   };
 
   const onModelLayersLoadedEvent = (parameter) => {
     // console.log("Inside Model Layers loaded Event: model: ",parameter);
-    if (_context) {
-      updateContext(_context, false);
-    }
+    // if (_context) {
+    //   updateContext(_context, false);
+    // }
 
     // loadExtension();
     _isPendingDataToLoad = false;
@@ -621,6 +629,9 @@ export const ForgeViewerUtils = (function () {
   const onGeometryLoadedEvent = (parameter) => {
     // console.log("Inside Geometry Loaded Event: model: ", parameter.model);
     _isModelLoaded = true;
+    if (loadLayersOnDataLoadCompletion()) {
+      loadLayers();
+    }
   };
 
   const onModelUnLoadedEvent = (model) => {

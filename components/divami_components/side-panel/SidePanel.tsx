@@ -86,11 +86,9 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
 
   // const currentUrl = window.location.href;
   // const urlString = currentUrl.split("/")[5];
-  console.log("urlString", router);
   // console.log(currentUrl);
 
   const leftClickHandler = (e: any) => {
-    console.log("e", e.currentTarget.id);
     switch (e.currentTarget.id) {
       case "dashboard":
         router.push(`/projects/${router.query.projectId as string}/dashboard`);

@@ -38,6 +38,7 @@ const SelectLayer = ({
   selectedLayersList,
   setActiveRealityMap,
   layersUpdated,
+  showImageDisplay,
 }: SelectLayerProps) => {
   const [treeViewData, setTreeViewData] = useState(
     getTreeViewDataForLayers(optionsList)
@@ -133,6 +134,8 @@ const SelectLayer = ({
           //   console.log(newTreeViewData, "newtrrreeview");
           //   return newTreeViewData;
           // });
+          //
+          
           onSelect(e, node.name, node);
         }}
         checked={
@@ -162,7 +165,6 @@ const SelectLayer = ({
   useEffect(() => {
     const layersSelected = treeViewData ? getSelectedLayers(treeViewData) : [];
     setSelectedLayers(layersSelected);
-    console.log([...layersSelected], "selectedLayers");
   }, [treeViewData]);
 
   useEffect(() => {

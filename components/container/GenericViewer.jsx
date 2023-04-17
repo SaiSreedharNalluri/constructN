@@ -864,6 +864,8 @@ function GenericViewer(props) {
           <PotreeViewer
             viewerCount={count}
             setPotreeViewer={setpotreeViewerUtils}
+            fullScreenMode={fullScreenMode}
+            isCompare={isCompare}
           ></PotreeViewer>
         );
       case 'Mapbox':
@@ -1339,7 +1341,7 @@ function GenericViewer(props) {
   }
 
   return (
-      <div className="fixed calc-w calc-h flex flex-row">
+      <div className="fixed calc-width-full calc-height-full flex flex-row">
         <div id="TheView" className="relative basis-1/2 flex grow shrink">
           {renderViewer(1)}
           <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
