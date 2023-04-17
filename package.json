@@ -37,7 +37,7 @@
     "formik": "^2.2.9",
     "html2canvas": "^1.4.1",
     "i": "^0.3.7",
-    "jsgantt-improved": "^2.8.5",
+    "jsgantt-improved": "^2.8.1",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.28",
     "mapbox-gl": "^2.13.0",
