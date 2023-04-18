@@ -1,5 +1,4 @@
 import JSGantt from 'jsgantt-improved';
-//import task from '../project-plan-hierarchy.json';
 export function getGanttView(data) {
   const ganttChartDiv = document.getElementById('GanttChartDIV');
 
