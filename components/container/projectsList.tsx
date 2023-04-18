@@ -3,7 +3,7 @@ import { IProjects } from '../../models/IProjects';
 import Moment from 'moment';
 import { useRouter } from 'next/router';
 import NextImage from '../core/Image';
-import { Mixpanel } from '../analytics/Mixpanel';
+import { Mixpanel } from '../analytics/mixpanel';
 interface IProps {
   projects: IProjects[];
   loading: boolean;
@@ -27,12 +27,12 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
                       router.push(`projects/${pData._id}/structure`);
                     }}
                   >
-                    <NextImage
+                    <img
                       className="h-7 mt-8 cursor-pointer w-1/2 m-auto hover:border border-gray-500 border-solid"
                       src={
                         pData.coverPhoto
                           ? pData.coverPhoto
-                          : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/projectCoverPhoto.webp`
+                          : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3_CORE}/defaults/projectCoverPhoto.webp`
                       }
                     />
                   </div>
