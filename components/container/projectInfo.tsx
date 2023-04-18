@@ -67,7 +67,7 @@ const ProjectInfo: React.FC<IProps> = ({
           src={
             projectData.coverPhoto
               ? projectData.coverPhoto
-              : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp'
+              : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/projectCoverPhoto.webp`
           }
         />
       </div>
