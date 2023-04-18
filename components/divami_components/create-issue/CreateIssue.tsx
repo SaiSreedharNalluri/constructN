@@ -33,15 +33,14 @@ const CreateIssue = ({
   editData,
   issueStatusList,
   onCancelCreate,
+  deleteTheAttachment,
 }: any) => {
-  console.log(editData, "esdssditData", issueStatusList);
   const router = useRouter();
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);
   const [tagList, setTagList] = useState<[string]>([""]);
   const [showPopUp, setshowPopUp] = useState(false);
   const [canBeDisabled, setCanBeDisabled] = useState(false);
-
 
   const formHandler = (event: any) => {
     if (event === "Cancel") {
@@ -86,8 +85,13 @@ const CreateIssue = ({
         tagsList={tagList}
         issueStatusList={issueStatusList}
         setCanBeDisabled={setCanBeDisabled}
+        deleteTheAttachment={deleteTheAttachment}
       />
-      <Footer formHandler={formHandler} editData={editData} canBeDisabled={canBeDisabled} />
+      <Footer
+        formHandler={formHandler}
+        editData={editData}
+        canBeDisabled={canBeDisabled}
+      />
       {showPopUp && (
         <PopupComponent
           open={showPopUp}

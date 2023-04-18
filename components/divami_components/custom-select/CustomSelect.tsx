@@ -1,4 +1,4 @@
-import { MenuItem, Select } from "@mui/material";
+import { MenuItem, Select, ThemeProvider, createTheme } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { styled } from "@mui/system";
 
@@ -7,6 +7,7 @@ const StyledSelect = styled(Select)({
   height: "40px",
   outline: "0px",
   border: "1px solid #36415d",
+
   borderRadius: "4px",
   fontFamily: "Open Sans",
   fontStyle: "normal",
@@ -25,6 +26,7 @@ const StyledMenuItem = styled(MenuItem)({
   fontWeight: 400,
   fontSize: 14,
   color: "#101F4B",
+  minWidth:"392px"
 });
 
 const CustomSelectContainer = styled("div")({
@@ -48,7 +50,7 @@ const CustomSelect = (props: any) => {
     defaultValue,
     id,
     setFormConfig,
-
+    dataTestId,
     isReadOnly = false,
   } = props;
 
@@ -90,6 +92,7 @@ const CustomSelect = (props: any) => {
         id={id}
         readOnly={isReadOnly}
         className={` ${data?.isError ? "formErrorField" : ""} formField`}
+        data-testid={dataTestId}
       >
         {config.options?.length &&
           config.options.map((item: any, index: any) => (

@@ -32,8 +32,8 @@ import CreateIssue from "../create-issue/CreateIssue";
 import { ISSUE_FORM_CONFIG } from "../create-issue/body/Constants";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
+import router, { useRouter } from "next/router";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
-import router from "next/router";
 import _ from "lodash";
 import {
   createAttachment,
@@ -119,6 +119,11 @@ interface TabPanelProps {
   value: number;
 }
 
+interface Issue {
+  _id: string;
+  // Include other properties if needed
+}
+
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;
@@ -161,6 +166,7 @@ function BasicTabs(props: any) {
     issueUpdate,
     deleteTheAttachment,
     handleFooter,
+    setTaskState,
   } = props;
 
   const [value, setValue] = React.useState(0);
@@ -184,6 +190,8 @@ function BasicTabs(props: any) {
 
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
@@ -276,13 +284,12 @@ function BasicTabs(props: any) {
 
   useEffect(() => {
     if (taskState?.TabOne?.id) {
-      getComments(taskState.TabOne.id);
+      getComments(taskState?.TabOne?.id);
     }
   }, [taskState]);
 
   const addComment = (text: string, entityId: string) => {
     if (text !== "") {
-      console.log("text", text, "enttit", entityId);
       createComment(router.query.projectId as string, {
         comment: text,
         entity: entityId,
@@ -302,8 +309,6 @@ function BasicTabs(props: any) {
       setFile(e.target.files[0]);
     }
   };
-
-  console.log("taskState.TabOne issue", taskState.TabOne);
 
   const handleSortMenuClose = () => {
     setIsSortMenuOpen(false);
@@ -405,7 +410,9 @@ function BasicTabs(props: any) {
             <div></div>
             <Image
               src={
-                taskState.TabOne.screenshot ? taskState.TabOne.screenshot : ""
+                taskState?.TabOne?.screenshot
+                  ? taskState?.TabOne?.screenshot
+                  : ""
               }
               alt=""
               width={400}
@@ -415,15 +422,21 @@ function BasicTabs(props: any) {
           <SecondBodyDiv>
             <SecondContPrior>
               <PriorityTitle>Type</PriorityTitle>
-              <PriorityStatus style={{ color: "#101F4B" }}>
-                {taskState.TabOne.type}
+              <PriorityStatus
+                style={{ color: "#101F4B" }}
+                data-testid="issue-title"
+              >
+                {taskState?.TabOne?.type}
               </PriorityStatus>
             </SecondContPrior>
 
             <SecondContPriorParal>
               <PriorityTitle>Priority</PriorityTitle>
-              <PriorityStatus style={{ color: "#101F4B" }}>
-                {taskState.TabOne.priority}
+              <PriorityStatus
+                style={{ color: "#101F4B" }}
+                data-testid="issue-priority"
+              >
+                {taskState?.TabOne?.priority}
               </PriorityStatus>
             </SecondContPriorParal>
           </SecondBodyDiv>
@@ -431,17 +444,23 @@ function BasicTabs(props: any) {
           <SecondBodyDiv>
             <SecondContCapt>
               <CaptureTitle>Captured on</CaptureTitle>
-              <CaptureStatus style={{ color: "#101F4B" }}>
+              <CaptureStatus
+                style={{ color: "#101F4B" }}
+                data-testid="issue-captured"
+              >
                 {" "}
-                {Moment(taskState.TabOne.capturedOn).format("DD MMM YYYY")}
+                {Moment(taskState?.TabOne?.capturedOn).format("DD MMM YYYY")}
               </CaptureStatus>
             </SecondContCapt>
 
             <SecondContPriorParal>
               <ThirdContWatch>Watcher</ThirdContWatch>
-              <ThirdContWatchName style={{ color: "#101F4B" }}>
+              <ThirdContWatchName
+                style={{ color: "#101F4B" }}
+                data-testid="issue-watcher"
+              >
                 {" "}
-                {taskState.TabOne.creator}
+                {taskState?.TabOne?.creator}
               </ThirdContWatchName>
             </SecondContPriorParal>
           </SecondBodyDiv>
@@ -458,7 +477,10 @@ function BasicTabs(props: any) {
               >
                 <FourthContLeft>
                   <FourthContAssigned>Assigned to</FourthContAssigned>
-                  <FourthContProgType style={{ color: "#101F4B" }}>
+                  <FourthContProgType
+                    style={{ color: "#101F4B" }}
+                    data-testid="issue-assignees"
+                  >
                     {taskState?.TabOne?.assignees}
                     <DarkToolTip
                       arrow
@@ -500,9 +522,7 @@ function BasicTabs(props: any) {
                     </DarkToolTip>
                     {taskState?.TabOne?.assignees ? (
                       <PenIconImage
-                        onClick={() => {
-                          handleEditAssigne();
-                        }}
+                        onClick={handleEditAssigne}
                         src={Edit}
                         alt={"close icon"}
                       />
@@ -517,17 +537,21 @@ function BasicTabs(props: any) {
             <ProgressStateFalse>
               {" "}
               <ThirdContRight>
-                <ThirdContProg>Progress</ThirdContProg>
+                <ThirdContProg data-testid="progres-label">
+                  Progress
+                </ThirdContProg>
 
-                <ThirdContProgType style={{ color: "#101F4B" }}>
-                  {taskState.TabOne.status}
-                  {taskState.TabOne.status ? (
+                <ThirdContProgType
+                  style={{ color: "#101F4B" }}
+                  data-testid="issue-progress"
+                >
+                  {taskState?.TabOne?.status}
+                  {taskState?.TabOne?.status ? (
                     <PenIconImage
-                      onClick={() => {
-                        handleEditProgress();
-                      }}
+                      onClick={handleEditProgress}
                       src={Edit}
                       alt={"close icon"}
+                      data-testid="issue-progress-edit"
                     />
                   ) : (
                     <></>
@@ -543,9 +567,14 @@ function BasicTabs(props: any) {
                 }}
               >
                 <FourthContLeft>
-                  <FourthContAssigned>Assigned to</FourthContAssigned>
+                  <FourthContAssigned data-testid="assigned-to-label">
+                    Assigned to
+                  </FourthContAssigned>
 
-                  <FourthContProgType style={{ color: "#101F4B" }}>
+                  <FourthContProgType
+                    style={{ color: "#101F4B" }}
+                    data-testid="issue-assignees"
+                  >
                     {taskState?.TabOne?.assignees}
                     <LightTooltip
                       arrow
@@ -553,7 +582,6 @@ function BasicTabs(props: any) {
                         <AssigneeList>
                           {taskState?.TabOne?.assignessList?.map(
                             (assignName: any, index: number) => {
-                              console.log("print", taskState);
                               return (
                                 <>
                                   {index !==
@@ -589,11 +617,10 @@ function BasicTabs(props: any) {
 
                     {taskState?.TabOne?.assignees ? (
                       <PenIconImage
-                        onClick={() => {
-                          handleEditAssigne();
-                        }}
+                        onClick={handleEditAssigne}
                         src={Edit}
                         alt={"close icon"}
+                        data-testid="issue-assignees-edit"
                       />
                     ) : (
                       <></>
@@ -604,14 +631,14 @@ function BasicTabs(props: any) {
             </ProgressStateFalse>
           )}
 
-          {progressEditState ? (
-            <ProgressCustomSelect>
+          {progressEditState && (
+            <ProgressCustomSelect data-testid="progress-options">
               <ExtraLabel>Progress</ExtraLabel>
               <CustomSelect
                 config={progressOptionsState[0]}
                 data={{
                   ...progressOptionsState[0],
-                  defaultValue: taskState.TabOne.status,
+                  defaultValue: taskState?.TabOne?.status,
                 }}
                 // defaultValue={progressOptionsState?.options[0].value}
                 id={"issuePriority"}
@@ -619,15 +646,15 @@ function BasicTabs(props: any) {
                 setFormConfig={setProgressOptionsState}
                 isError={""}
                 label=""
+                data-testid="progress-options"
               />
             </ProgressCustomSelect>
-          ) : (
-            ""
           )}
           {assigneeEditState && (
             <AssignEditSearchContainer>
               <AssignedLabel>Assigned to</AssignedLabel>
               <Autocomplete
+                data-testid="assignee-options"
                 disablePortal
                 id="combo-box-demo"
                 options={projectUsers.map((each: any) => {
@@ -643,11 +670,8 @@ function BasicTabs(props: any) {
                   },
                 }}
                 renderTags={() => null}
-                renderInput={(params) => (
-                  <TextField {...params} label="Assigned To" />
-                )}
+                renderInput={(params) => <TextField {...params} />}
                 onChange={(event, value: any) => {
-                  console.log(value);
                   const newSelectedUser = value
                     ? value.filter(
                         (selected: any, index: number, array: any[]) => {
@@ -717,8 +741,8 @@ function BasicTabs(props: any) {
             <DescriptionDiv>
               <DescriptionTitle>Issue Description</DescriptionTitle>
 
-              <DescriptionPara>
-                {taskState.TabOne.issueDescription}
+              <DescriptionPara data-testid="issue-description">
+                {taskState?.TabOne?.issueDescription}
               </DescriptionPara>
             </DescriptionDiv>
           ) : (
@@ -728,7 +752,9 @@ function BasicTabs(props: any) {
           {taskState?.TabOne?.attachments?.length > 0 && (
             <>
               <AttachmentDiv className={`attachmentsSection`}>
-                <AttachmentTitle>Attachments</AttachmentTitle>
+                <AttachmentTitle data-testid="issue-attachments-label">
+                  Attachments
+                </AttachmentTitle>
                 <AttachmentDescription>
                   {/* {console.log(taskState?.TabOne.attachments)} */}
                   {taskState?.TabOne.attachments?.map(
@@ -747,8 +773,22 @@ function BasicTabs(props: any) {
                               alt={"delete icon"}
                               onClick={() => {
                                 deleteTheAttachment(a?._id, "issue");
+                                setTaskState((prev: any) => {
+                                  const updatedTabOne = {
+                                    ...prev.TabOne,
+                                    attachments: prev.TabOne.attachments.filter(
+                                      (attachment: any) =>
+                                        attachment._id !== a?._id
+                                    ),
+                                  };
+                                  return {
+                                    ...prev,
+                                    TabOne: updatedTabOne,
+                                  };
+                                });
                               }}
                               className={`deleteIcon`}
+                              data-testid="delete-attachment"
                             />
                           </AttachedImageDiv>
                           <AttachHorizontal></AttachHorizontal>
@@ -767,7 +807,9 @@ function BasicTabs(props: any) {
                 {taskState?.TabOne.tags?.map((item: any) => {
                   return (
                     <>
-                      <RelatedSingleButton>{item}</RelatedSingleButton>
+                      <RelatedSingleButton data-testid="chip-button">
+                        {item}
+                      </RelatedSingleButton>
                     </>
                   );
                 })}
@@ -783,16 +825,14 @@ function BasicTabs(props: any) {
                 <CustomButton
                   type="outlined"
                   label="Cancel"
-                  formHandler={() => {
-                    handleClose();
-                  }}
+                  formHandler={handleClose}
+                  dataTestId={"issue-edit-cancel"}
                 />
                 <CustomButton
                   type="contained"
                   label="Update"
-                  formHandler={() => {
-                    handleStateChange();
-                  }}
+                  formHandler={handleStateChange}
+                  dataTestId={"issue-edit-save"}
                 />
               </ProgressEditStateButtonsContainer>
             </AddCommentContainer>
@@ -816,6 +856,7 @@ function BasicTabs(props: any) {
                       onChange={(e) => {
                         setComments(e.target.value);
                       }}
+                      data-testid="issue-comment-input"
                     />
                     <AddCommentButtonContainer>
                       {/* <AttachButton>
@@ -824,8 +865,9 @@ function BasicTabs(props: any) {
                   </AttachButton> */}
                       <SendButton
                         onClick={() => {
-                          addComment(comments, taskState.TabOne.id);
+                          addComment(comments, taskState?.TabOne?.id);
                         }}
+                        data-testid="issue-comment-send-button"
                       >
                         <ImageErrorIcon src={Send} alt="" />
                       </SendButton>
@@ -862,7 +904,7 @@ function BasicTabs(props: any) {
             </AttachButton>
             <SendButton
               onClick={() => {
-                addComment(comments, taskState.TabOne.id);
+                addComment(comments, taskState?.TabOne?.id);
               }}
             >
               <ImageErrorIcon src={Send} alt="" />
@@ -896,14 +938,25 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [showPopUp, setshowPopUp] = useState(false);
   const [footerState, SetFooterState] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(issue);
+  const router = useRouter();
   useEffect(() => {
-    console.log("issueissue", issue);
     setSelectedIssue(issue);
   }, [issue]);
 
+  const deleteIssueById = (issuesList: Issue[], selectedIssue: Issue) => {
+    const selectedIssueId = selectedIssue._id;
+    const updatedIssuesList = issuesList.filter(
+      (issue) => issue._id !== selectedIssueId
+    );
+    return updatedIssuesList;
+  };
+
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
-    deleteTheIssue(selectedIssue, onClose);
+    if (deleteTheIssue) deleteTheIssue(selectedIssue, onClose);
+    const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
+    setIssueList(updatedIssuesList);
+
   };
   // const deleteTheAttachment = (attachmentId: string) => {
   //   deleteAttachment(attachmentId)
@@ -916,8 +969,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
   //       toast.error(error.message);
   //     });
   // };
-
-  console.log("selectedIssue", selectedIssue);
 
   const DetailsObj = {
     TabOne: {
@@ -1032,12 +1083,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
     // issueMenuClicked(issueMenuInstance);
   };
   const handleCreateTask = (formData: any) => {
-    console.log(formData, "form data at home");
     clickTaskSubmit(formData);
   };
 
   const saveEditDetails = async (data: any, projectId: string) => {
-    if (data.title && data.type && data.priority) {
+    if (data.title && data.type && data.priority && data.description) {
       editIssue(projectId, data, selectedIssue._id)
         .then((response) => {
           if (response.success === true) {
@@ -1170,7 +1220,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
         if (response.success === true) {
           toast.success("Issue updated sucessfully");
           getIssues(currentStructure._id);
-        } else {
         }
       })
       .catch((error) => {
@@ -1191,8 +1240,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 }}
                 src={BackArrow}
                 alt={"close icon"}
+                data-testid="back-arrow"
               />
-              <SpanTile>
+              <SpanTile data-testid="issue-detail-header">
                 {selectedIssue?.title} (#{selectedIssue?.sequenceNumber})
               </SpanTile>
             </LeftTitleCont>
@@ -1203,10 +1253,12 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 onClick={() => {
                   setOpenCreateTask(true);
                 }}
+                data-testid="edit-icon"
               />
               <DeleteIcon
                 src={Delete}
                 alt={"close icon"}
+                data-testid="delete-icon"
                 onClick={() => {
                   setshowPopUp(true);
                 }}
@@ -1225,6 +1277,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             issueUpdate={issueUpdate}
             deleteTheAttachment={deleteTheAttachment}
             handleFooter={SetFooterState}
+            setTaskState={setTaskState}
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>

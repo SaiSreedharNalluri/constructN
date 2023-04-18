@@ -67,7 +67,7 @@ const Task = ({
   const [selectedTask, setSelectedTask] = useState({});
   const [image, setImage] = useState<Blob>();
   const [showImage, setShowImage] = useState(false);
-
+  const [enableSubmit, setEnableSubmit] = useState(true);
   const [taskVisbility, setTaskVisibility] = useState(true);
 
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
@@ -76,23 +76,26 @@ const Task = ({
     setMyProject(currentProject);
     setMyStructure(currentStructure);
     setMySnapshot(currentSnapshot);
-    html2canvas(document.getElementById("forgeViewer_1") || document.getElementById("potreeViewer_1") || document.body).then(
-      function (canvas) {
-        canvas.toBlob((blob) => {
-          setImage(blob as Blob);
-        }, "image/png");
-      }
-    );
+    html2canvas(
+      document.getElementById("forgeViewer_1") ||
+        document.getElementById("potreeViewer_1") ||
+        document.body
+    ).then(function (canvas) {
+      canvas.toBlob((blob) => {
+        setImage(blob as Blob);
+      }, "image/png");
+    });
   }, [currentProject, currentSnapshot, currentStructure, taskOpenDrawer]);
   const handleViewTaskList = () => {
     setOpenDrawer(true);
   };
   const handleCreateTask = (formData: any) => {
-    clickTaskSubmit(formData);
+    if (enableSubmit) {
+      clickTaskSubmit(formData);
+    }
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
-
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
@@ -171,21 +174,27 @@ const Task = ({
     formDataObj.append("jreq", JSON.stringify(data));
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
-    console.log("formData", data);
-    if (data.title && data.type && data.priority) {
+    if (data.title && data.type && data.priority && data.description) {
+      setEnableSubmit(false);
+
       createTaskWithAttachments(projectId as string, formDataObj)
         .then((response) => {
           if (response.success === true) {
             toast.success("Task Created sucessfully");
 
+            setEnableSubmit(false);
             taskSubmitFn(response.result);
           } else {
             toast.error(`Something went wrong`);
+            setEnableSubmit(true);
           }
         })
         .catch((error) => {
           toast.error(`Something went wrong`);
+          setEnableSubmit(true);
         });
+    } else {
+      setEnableSubmit(true);
     }
   };
 
@@ -197,7 +206,6 @@ const Task = ({
   };
 
   useEffect(() => {
-    console.log("contextinfo", contextInfo, tasksList);
     if (openTaskDetails && contextInfo?.id) {
       const selectedObj = tasksList.find(
         (each: any) => each._id === contextInfo.id
@@ -212,6 +220,7 @@ const Task = ({
     taskMenuClicked(taskMenuInstance);
     closeTaskCreate();
     taskSubmit(formdata);
+    setEnableSubmit(true);
   };
   const openTaskCreateFn = () => {
     //setCreateOverlay(true);
@@ -344,6 +353,7 @@ const Task = ({
             contextInfo={contextInfo}
             closeTaskCreate={closeTaskCreate}
             onCancelCreate={onCancelCreate}
+            deleteTheAttachment={deleteTheAttachment}
           />
         </CustomDrawer>
       )}
@@ -363,6 +373,7 @@ const Task = ({
             currentStructure={currentStructure}
             contextInfo={contextInfo}
             projectUsers={[]}
+            deleteTheAttachment={deleteTheAttachment}
           />
         </Drawer>
       )}

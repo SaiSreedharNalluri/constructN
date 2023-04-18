@@ -36,6 +36,7 @@ const BodyContainer = styled(Box)({
   fontWeight: "400",
   fontSize: "14px",
   // overflow: 'scroll',
+  paddingBottom: "60px",
 });
 
 const FormElementContainer = styled(Box)({
@@ -62,8 +63,8 @@ const Body = ({
   setIsValidate,
   tagsList,
   setCanBeDisabled,
+  deleteTheAttachment,
 }: any) => {
-  console.log(editData, "editData");
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
   const [taskTypes, setTaskTypes] = useState([]);
@@ -94,7 +95,6 @@ const Body = ({
         if (response.success === true) {
           // response.result.push('Please select the task type');
           setTaskTypes(response.result);
-          console.log(taskTypes);
         }
       });
       getTasksPriority(router.query.projectId as string).then(
@@ -102,7 +102,6 @@ const Body = ({
           if (response.success === true) {
             // response.result.push('Please select the task priority');
             setTaskPriorities(response.result);
-            console.log(taskPriorities);
           }
         }
       );
@@ -110,14 +109,12 @@ const Body = ({
         if (response.success === true) {
           // response.result.push('Please select the task priority');
           setTaskStatusList(response.result);
-          console.log(taskPriorities);
         }
       });
       getProjectUsers(router.query.projectId as string)
         .then((response: any) => {
           if (response.success === true) {
             setProjectUsers(response.result);
-            console.log(projectUsers);
           }
         })
         .catch();
@@ -132,14 +129,14 @@ const Body = ({
 
   useEffect(() => {
     if (projectUsers.length && taskPriorities.length && taskTypes.length) {
-      console.log(editData, "editdata", formConfig, "formconfig");
+      // console.log(editData, "editdata", formConfig, "formconfig");
       if (editData) {
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {
             if (item.id === "title") {
               return {
                 ...item,
-                defaultValue: editData.title || "",
+                defaultValue: editData?.title || "",
               };
             }
             if (item.id === "tasks") {
@@ -267,25 +264,30 @@ const Body = ({
                     selected: false,
                   };
                 }),
-                defaultValue: item?.options[0]?.label,
+                defaultValue: taskTypes?.length ? taskTypes[0] : "",
               };
             }
             if (item.id === "taskPriority") {
-              const hasLowValue = item?.options.some(
-                (cont: any) => cont.value === "Low"
+              const hasLowValue = taskPriorities.some(
+                (cont: any) => cont === "Low"
               );
-              console.log("hasLowValue", hasLowValue);
+              let val: string = taskPriorities[0];
+              if (hasLowValue) {
+                val =
+                  taskPriorities.find((cont: any) => cont === "Low") ||
+                  taskPriorities[0];
+              }
+
               return {
                 ...item,
                 options: taskPriorities?.map((eachItem: any) => {
                   return {
-                    // ...eachItem,
                     label: eachItem,
                     value: eachItem,
                     selected: false,
                   };
                 }),
-                defaultValue: hasLowValue ? "Low" : item?.options[0]?.label,
+                defaultValue: val,
               };
             }
             if (item.id === "assignedTo") {
@@ -326,7 +328,6 @@ const Body = ({
   }, [projectUsers, taskPriorities, taskTypes]);
 
   useEffect(() => {
-    console.log(formConfig, "formconfig in effect");
     let updatedFormData = [
       ...formConfig,
       { owner: loggedInUserId },
@@ -340,14 +341,10 @@ const Body = ({
         count++;
       }
     });
-    if (count === 0) {
-      setCanBeDisabled(true);
-    }
+    // if (count === 0) {
+    //   setCanBeDisabled(true);
+    // }
   }, [formConfig]);
-
-  useEffect(() => {
-    console.log("chii string", formConfig[6].chipString);
-  }, [formConfig[6].chipString]);
 
   return (
     <BodyContainer>
@@ -361,7 +358,12 @@ const Body = ({
           validate={validate}
           setCanBeDisabled={setCanBeDisabled}
         />
-        <UploadedImagesList formData={formData} />
+        <UploadedImagesList
+          formData={formData}
+          deleteTheAttachment={deleteTheAttachment}
+          setFormData={setFormData}
+          formConfig={formConfig}
+        />
       </FormElementContainer>
       {/* <Box sx={{ marginTop: '15px' }}>
         <CustomLabel label={'Select the Type of Task'} />

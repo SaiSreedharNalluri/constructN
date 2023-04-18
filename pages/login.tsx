@@ -4,7 +4,7 @@ import { login, ResendEmailVerificationLink } from '../services/userAuth';
 import { useRouter } from 'next/router';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
-import { Mixpanel } from '../components/analytics/Mixpanel';
+import { Mixpanel } from '../components/analytics/mixpanel';
 import Modal from 'react-responsive-modal';
 const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -33,7 +33,7 @@ const Login: React.FC = () => {
     const { email, password } = formValue;
     setMessage('');
     setLoading(true);
-    login(email, password)
+    login(email?.toLocaleLowerCase(), password)
       .then((response: any) => {
         if (response.success === true) {
           if (response?.result?.verified === true) {

@@ -37,29 +37,38 @@ const SelectTypesList = ({
     "Layout Drawings",
     "Site Plan Drawings",
   ];
-  const handleSearch = (event: {
-    target: { value: SetStateAction<string> };
-  }) => {
-    setSearchTerm(event.target.value);
-    console.log();
-    if (String(event.target.value)?.length) {
-      const searchedList = Object.keys(optionsList).filter((item: any) =>
-        item.toLowerCase().includes(String(event.target.value)?.toLowerCase())
-      );
-      console.log(searchedList);
-      setList(searchedList);
-    } else {
-      setList(Object.keys(optionsList));
-    }
-  };
+  // const handleSearch = (event: {
+  //   target: { value: SetStateAction<string> };
+  // }) => {
+  //   setSearchTerm(event.target.value);
+  //   console.log();
+  //   if (String(event.target.value)?.length) {
+  //     const searchedList = Object.keys(optionsList).filter((item: any) =>
+  //       item.toLowerCase().includes(String(event.target.value)?.toLowerCase())
+  //     );
+  //     console.log(searchedList);
+  //     setList(searchedList);
+  //   } else {
+  //     setList(Object.keys(optionsList));
+  //   }
+  // };
 
+  const onSearchChange = (event: any) => {
+    let parentList = [...optionsList];
+    const searchFieldString = event.target.value.toLocaleLowerCase();
+    // console.log("searchFieldString", searchFieldString);
+    let newObj = parentList.filter((val: any) => {
+      return val.toLocaleLowerCase().includes(searchFieldString);
+    });
+    // console.log("newobjj", newObj);
+    setList([...newObj]);
+  };
   useEffect(() => {
     // if (Object.keys(optionsList)?.length) {
     //   setList(Object.keys(optionsList));
     // }
     setList(optionsList);
   }, [optionsList]);
-  console.log(optionsList, "options", list);
   // const filteredItems = optionsList.filter((item:any) =>
   //   item.toLowerCase().includes(searchTerm.toLowerCase())
   // );
@@ -80,8 +89,11 @@ const SelectTypesList = ({
           <CustomSearchField
             placeholder="Search"
             variant="outlined"
-            value={searchTerm}
-            onChange={handleSearch}
+            // value={searchTerm}
+            // onChange={handleSearch}
+            onChange={(e: any) => {
+              onSearchChange(e);
+            }}
             InputLabelProps={{ shrink: false }}
             InputProps={{
               startAdornment: (

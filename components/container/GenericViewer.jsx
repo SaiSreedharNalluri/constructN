@@ -42,9 +42,10 @@ function GenericViewer(props) {
   const genericViewerRef = useRef();
   const compareViewer = 'compareViewer';
   const compareViewerRef = useRef();
+  const [fullScreenMode, setFullScreenMode] = useState(props.isFullScreen)
   let structure = props.structure;
   let isFullScreenActive=props.isFullScreenActive;
- 
+  
   let currentStructure = useRef();
 
   let [designList, setDesignList] = useState([]);
@@ -121,6 +122,9 @@ function GenericViewer(props) {
 
   let [isMarkerMode, setMarkerMode] = useState(false);
 
+  useEffect(()=>{
+    setFullScreenMode(props.isFullScreen)
+  },[props.isFullScreen])
   const getViewerTypeFromViewMode = () => {
     switch (viewMode) {
       case 'Design':
@@ -860,6 +864,8 @@ function GenericViewer(props) {
           <PotreeViewer
             viewerCount={count}
             setPotreeViewer={setpotreeViewerUtils}
+            fullScreenMode={fullScreenMode}
+            isCompare={isCompare}
           ></PotreeViewer>
         );
       case 'Mapbox':
@@ -1335,15 +1341,15 @@ function GenericViewer(props) {
   }
 
   return (
-      <div className="fixed calc-w calc-h flex flex-row">
+      <div className="fixed calc-width-full calc-height-full flex flex-row">
         <div id="TheView" className="relative basis-1/2 flex grow shrink">
           {renderViewer(1)}
-          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot}></TimeLineComponent>
+          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
         </div>
-        <div className='w-0.5' color='gray'></div>
+        <div className={isCompare?'w-0.5':''} color='gray'></div>
         <div className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
           {renderViewer(2)}
-          <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
+          <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
         </div>
         {
           viewerType === "Mapbox"  && viewMode === "Reality" && hotspots && hotspots.length > 0 ?

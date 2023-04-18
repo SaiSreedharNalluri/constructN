@@ -48,17 +48,19 @@ const ProjectHierarchy = ({
   setHierarchy,
 }: ProjectHierarchyProps) => {
   const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>(treeData);
+
+  const [block, setBlock] = useState(treeData);
+
   const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
 
   const handleExpand = () => {
     handleNodeExpand(getAllIds(treeViewData));
   };
-  console.log(expandedNodes, "fsffs");
-  // useEffect(() => {
-  //   console.log(treeData, "treeData");
+  useEffect(() => {
+    // console.log(treeData, "Robn");
 
-  //   setTreeViewData(treeData);
-  // }, [treeData.length]);
+    setTreeViewData(treeData);
+  }, [treeData.length]);
 
   // useEffect(() => {
   //   if (window.localStorage.getItem("nodeData") && getStructureData) {
@@ -70,9 +72,17 @@ const ProjectHierarchy = ({
   //   }
   // }, [treeViewData]);
 
+  useEffect(() => {
+    if (window.localStorage.getItem("nodeData")) {
+      let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
+      if (nodeData && getStructureData) {
+        getStructureData(nodeData);
+      }
+    }
+  }, [treeViewData]);
+
   const onLabelClick = (event: any, nodes: any) => {
     {
-      console.log("onclickinlable");
       window.localStorage.setItem("nodeData", JSON.stringify(nodes));
       getStructureData ? getStructureData(nodes) : null;
 
@@ -120,10 +130,14 @@ const ProjectHierarchy = ({
   );
 
   const [search, setSearch] = useState(false);
+  const [searchField, setSearchField] = useState("");
+  // const [filterBlock, setFilterBlock] = useState<any>(block);
+
   const handleSearchResult = (e: any) => {
-    console.log(e);
-    handleSearch(e);
+    let returnedTree = handleSearch(e);
+    // console.log("robn", returnedTree)
     setSearch(true);
+    setTreeViewData(returnedTree);
   };
 
   const renderTree = (nodes: ChildrenEntity, onLabelClick: any) => (
@@ -146,19 +160,45 @@ const ProjectHierarchy = ({
   useEffect(() => {
     const layersSelected = getSelectedLayers(treeViewData);
     setSelectedLayers(layersSelected);
-    console.log([...layersSelected], "selectedLayers");
-    console.log(search);
+
     search ? handleExpand() : null;
   }, [treeViewData]);
 
+  // useEffect(() => {
+  //   const newFilteredBlocklist = block[0]?.children?.filter((val: any) => {
+  //     // return val;
+  //     // console.log(val.name.toLocaleLowerCase());
+  //     return val?.name?.toLocaleLowerCase().includes(searchField);
+
+  //     console.log("effect firingn");
+  //   });
+  //   setFilterBlock(newFilteredBlocklist);
+  // }, [block, searchField]);
+
   const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
-    console.log(nodeIds, "nodeIds");
     handleNodeExpand(nodeIds);
   };
 
   const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
     handleNodeSelection(nodeIds);
   };
+
+  const onSearchChange = (event: any) => {
+    let parentArr = [...treeData];
+    const searchFieldString = event.target.value.toLocaleLowerCase();
+    let newObj = [
+      ...parentArr[0]?.children?.filter(
+        (item: any, index: number) =>
+          item.name.toLocaleLowerCase().includes(searchFieldString)
+        //     || item.name.children.filter((item:any,index:number) =>)
+      ),
+    ];
+    parentArr = [{ ...parentArr[0], children: [...newObj] }];
+    //  parentObj[0].children = newObj
+    setTreeViewData([...parentArr]);
+  };
+
+  // console.log("hiiii", treeViewData, filterBlock);
 
   return (
     <ProjectHierarchyContainer>
@@ -176,7 +216,12 @@ const ProjectHierarchy = ({
         <CustomInputField
           id={"search"}
           variant="outlined"
+          autoComplete="off"
           placeholder={"Search"}
+          // onChange={(e: any) => {
+          //   onSearchChange(e);
+          // }}
+
           onChange={(e: any) => {
             handleSearchResult(e);
           }}
@@ -199,7 +244,6 @@ const ProjectHierarchy = ({
         style={{ overflow: "auto", height: `calc(100vh - 300px)` }}
       >
         {treeViewData.length === 0 ? (
-          // "No structures found for this project"
           <ErrorImageDiv>
             <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
             <MessageDivShowErr>No result found</MessageDivShowErr>

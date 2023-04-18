@@ -109,6 +109,7 @@ export const CustomInputField = styled(TextField)({
 export const StyledTreeView = styled(TreeView)({
   "& .Mui-expanded": {
     backgroundColor: "#F4F4F4",
+
     borderColor: "red",
   },
   "& .MuiCollapse-root": {
@@ -129,8 +130,14 @@ export const StyledTreeView = styled(TreeView)({
     },
   },
   "& .MuiTreeItem-content.MuiTreeItem-content.Mui-selected": {
-    backgroundColor: "#FFF2EB",
+    // backgroundColor: "#FFF2EB",
     color: "#F1742E",
+    background: "none !important",
+    // color: "yellow",
+  },
+  "& .MuiTreeItem-content.Mui-selected": {
+    backgroundColor: "none !important",
+    // color: "yellow",
   },
   " & .MuiTreeView-root": {
     "& .MuiTreeItem-content": {
@@ -139,6 +146,7 @@ export const StyledTreeView = styled(TreeView)({
   },
   "& ul": {
     backgroundColor: "#F4F4F4",
+
     "& .MuiTreeItem-label": {
       borderBottom: "0",
     },
@@ -146,9 +154,11 @@ export const StyledTreeView = styled(TreeView)({
       borderLeft: "1px dotted #D9D9D9",
     },
   },
-  // "& .MuiTreeItem-content:hover": {
-  //   background: "none",
-  // },
+  "& .MuiTreeItem-content:hover": {
+    // background: "none",
+    backgroundColor: "#FFF2EB",
+    color: "#F1742E",
+  },
 });
 
 // display: ${(props) => (props.openselectlayer ? null : "none")};
@@ -160,6 +170,7 @@ export const ProjectHierarchyContainer = styled(
   width: "301px",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
   backgroundColor: "#fff",
+  fontSize: "14px !important",
 });
 interface StyledTreeItemProps {
   needClick: boolean;
@@ -172,6 +183,8 @@ export const StyledTreeItem = styled(TreeItem)<StyledTreeItemProps>(
     // '& .MuiTreeItem-iconContainer': {
     //   pointerEvents: "auto",
     // }
+
+    "& .MuiCollapse-root": {},
   })
 ) as any;
 
@@ -187,6 +200,10 @@ export const LabelText = styled("div")({
   display: "block",
   paddingTop: "13px",
   paddingLeft: "10px",
+  fontFamily: "Open Sans",
+  fontSize: "14px",
+  fontStyle: "normal",
+  fontWeight: "400",
 });
 
 export const LabelIcon = styled("div")({
@@ -217,12 +234,15 @@ export const SearchContainer = styled("div")({
   padding: "0px 0px 0px 20px",
   marginBottom: "2px",
   "& .MuiTextField-root": {
-    borderRadius: "4px",
+    borderRadius: "2px",
+    border: "1px solid  #D9D9D9",
   },
 });
 
 export const HeaderLabel = styled("div")({
-  fontSize: "16px",
+  // fontSize: "16px",
+  fontSize: "14px",
+
   fontWeight: "400",
 });
 export const CloseIcon = styled(Image)({

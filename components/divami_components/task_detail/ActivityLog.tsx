@@ -53,6 +53,9 @@ import {
   EditIconImage,
   DeleteconImage,
   ActivityCommentsDiv,
+  ReplyDiv,
+  ReplyDivText,
+  ReplyCancel,
 } from "./ActivityLogStyles";
 import moment from "moment";
 import router from "next/router";
@@ -112,7 +115,6 @@ const ActivityLog = (props: any) => {
     const diffMinutes = Math.ceil(diffTime / (1000 * 60));
     const diffSec = Math.ceil(diffTime / 1000);
 
-    console.log(diffMinutes, diffHours, diffDays, "dfjkjflkjlk");
     // if (diffDays > 1) {
     //   text = `${diffDays} days ago`;
     // } else {
@@ -162,8 +164,20 @@ const ActivityLog = (props: any) => {
     setCommentsData(commentsList);
   }, [comments]);
 
+  const cancelComment = () => {
+    setCommentInputData({
+      isReply: false,
+      isEdit: false,
+      isEditReply: false,
+      data: {
+        text: "",
+        attachments: "",
+        commentId: "",
+        replyId: "",
+      },
+    });
+  };
   const saveRepliedComments = async () => {
-    console.log(commentInputData, "kokokok");
     createCommentReply(
       router.query.projectId as string,
       { reply: commentInputData.data?.text },
@@ -327,7 +341,7 @@ const ActivityLog = (props: any) => {
       });
     }
   };
-  console.log(commentsData, "coommmetsss");
+
   return (
     <ActivityCardContainer data-testid="const-custom-activity-log-issue">
       {commentsData.length ? <CommentsTitle>Comments</CommentsTitle> : <></>}
@@ -498,8 +512,17 @@ const ActivityLog = (props: any) => {
                               }}
                             >
                               {each.showMoreText
-                                ? `Show ${each.replies?.length} more replies`
-                                : "Hide Replies"}
+                                ? `Show ${each?.replies?.length} more ${
+                                    each.replies.length >= 2
+                                      ? "replies"
+                                      : "reply"
+                                  } `
+                                : `Hide ${
+                                    each?.replies?.length >= 2
+                                      ? "replies"
+                                      : "reply"
+                                  } `}
+                              {/* "Hide Replies" */}
                             </ReplyButton>
                           </>
                         ) : (
@@ -733,12 +756,29 @@ const ActivityLog = (props: any) => {
       })}
       {commentsData.length ? (
         <>
-          {replyToText ? replyToText : ""}
+          {replyToText ? (
+            <ReplyDiv>
+              <ReplyDivText> {replyToText}</ReplyDivText>
+
+              <ReplyCancel
+                onClick={() => {
+                  cancelComment();
+                  setReplyToText("");
+                }}
+              >
+                Cancel
+              </ReplyCancel>
+            </ReplyDiv>
+          ) : (
+            ""
+          )}
+
+          {/* {replyToText ? replyToText : ""} */}
           <AddCommentContainerSecond>
             <StyledInput
               id="standard-basic"
               variant="standard"
-              placeholder="Add Comment"
+              placeholder={replyToText ? "Add Reply" : "Add Comment"}
               value={commentInputData?.data?.text}
               // autoFocus={true}
               inputRef={(input) => {
