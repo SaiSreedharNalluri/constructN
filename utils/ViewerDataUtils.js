@@ -200,9 +200,7 @@ export const getRealityLayersPath = (structure, realityMap) => {
 }
 
 export const getRealityMap = (snapshot) => {
-    let map = {
-
-    };
+    let map ={};
     snapshot?.reality?.forEach((reality, i, array) => {
         if (map[reality.mode]) {
             map[reality.mode].realities.push(reality);
