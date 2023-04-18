@@ -16,7 +16,7 @@ export interface IGenData {
         currentSnapshotBase: ISnapshot,
         currentSnapshotCompare?: ISnapshot,
         currentCompareMode: string,
-        currentLayersList: string[],
+        currentLayersList?: string[],
         currentTaskList: ITasks[],
         currentIssueList: Issue[],
         currentHotspotList: IHotspot[],

@@ -26,6 +26,7 @@ import {
   getRealityLayers,
   getRealityLayersPath,
   getDesignMap,
+  getMapboxLayers, getMapboxHotspots,
   getRealityMap, getFloorPlanData,
 } from "../../utils/ViewerDataUtils";
 import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
@@ -40,6 +41,11 @@ import { IStructure } from '../../models/IStructure';
 import { ISnapshot } from '../../models/ISnapshot';
 import { ITasks } from '../../models/Itask';
 import { Issue } from '../../models/Issue';
+import { IActiveReality, IActiveRealityMap, ILayer, IReality } from '../../models/IReality';
+import mapboxgl from 'mapbox-gl';
+import { IMapboxLayer } from '../../models/IMapboxLayer';
+import Hotspots from './hotspots';
+import HotspotsCompare  from './hotspotsCompare';
 interface IProps {
 data:IGenData;
 updateData?: (newData :IGenData)=> void;
@@ -56,9 +62,16 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   let potreeUtils = useRef<PotreeViewerUtils>();
   let mapboxUtils = useRef<typeof MapboxViewerUtils>();
 
+  let [hotspots, setHotspots] = useState([]);
+  let [hotspotsCompare, setHotspotsCompare] = useState<any>([]);
+  let [selectedHotspot, setSelectedHotspot] = useState(0);
+  let [selectedHotspotDetails, setSelectedHotspotDetails] = useState();
+  let [selectedHotspotCompareDetails, setSelectedHotspotCompareDetails] = useState();
+
  //let incomingPayload :IGenPayload;
  let incomingPayload = useRef<IGenPayload>();
  let changeType = useRef<string>();
+ var compareMode = useRef<string>('noCompare');
 
   let multiverseViewer : undefined | PotreeViewerUtils | typeof ForgeViewerUtils | typeof MapboxViewerUtils = undefined ;//forgeUtils.current as typeof ForgeViewerUtils;
 
@@ -115,6 +128,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
               newViewerData = {...oldViewerData,currentViewType:action.data as string}
             }
           //newViewerData = {...oldViewerData,currentViewType:action.data as string}
+          compareMode.current='noCompare';
             console.log('Dispatching Load Viewer with',newViewerData.currentViewType);
           }
           return newViewerData;
@@ -122,11 +136,13 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           if(isInitReady){
             destroyViewer(getViewerTypefromViewType(oldViewerData.currentViewType));
             setInitReady(false);
+            compareMode.current='noCompare';
             console.log('Dispatching Close Viewer with',getViewerTypefromViewType(oldViewerData.currentViewType));
           }
           break;
         case 'setStructure':
           newViewerData=action.data as IGenData;
+          compareMode.current='noCompare';
           removeLayers(getViewerTypefromViewType(oldViewerData.currentViewType));
           removeData(getViewerTypefromViewType(oldViewerData.currentViewType));
           removeContext();
@@ -170,7 +186,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           }
             console.log('Dispatching ViewType',newViewerData.currentViewType);
             //newViewerData.currentCompareMode="noCompare";
-            //setCompareMode(false);
+            setCompareMode(false);
           return newViewerData;
 
         case 'setCompareMode':
@@ -180,17 +196,26 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
             getContext(oldViewerData);
             setCompareMode(true);
             updateViewerChanges(getViewerTypefromViewType(oldViewerData.currentViewType),'Potree');
+            compareMode.current='compareReality';
 
           }
           else if (incomingPayload.current && incomingPayload.current.action.data === 'compareDesign'){
             getContext(oldViewerData);
             setCompareMode(true);
             updateViewerChanges(getViewerTypefromViewType(oldViewerData.currentViewType),'Forge');
+            compareMode.current='compareDesign';
+          }
+          else if (incomingPayload.current && incomingPayload.current.action.data === 'compareMap'){
+            getContext(oldViewerData);
+            setCompareMode(true);
+            updateViewerChanges(getViewerTypefromViewType(oldViewerData.currentViewType),'Mapbox');
+            compareMode.current='compareMap';
           }
           else if (incomingPayload.current && incomingPayload.current.action.data === 'noCompare'){
             removeCompareLayers(oldViewerData.currentCompareMode);
             destroyCompareViewer(oldViewerData.currentCompareMode);
             setCompareMode(false);
+            compareMode.current='noCompare';
           }
           return newViewerData;
           
@@ -508,11 +533,11 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
   function syncViewer  (){
      //console.log("Inside sync viewer: ", isMouseOnMainViewer.current, syncPotreeEvent, syncForgeEvent,currentViewerData)
-    if (currentViewerData.currentCompareMode !== 'noCompare') {
+    if (compareMode.current !== 'noCompare') {
       //console.log('Sync My Compare Viewer');
       if (isMouseOnMainViewer.current === true) {
         //console.log('Sync My Compare Viewer',syncForgeEvent,syncPotreeEvent);
-        if (currentViewerData.currentCompareMode === 'compareReality') {
+        if (compareMode.current === 'compareReality') {
           // get from potree utils
           //give to potree compare utile
           if (
@@ -537,7 +562,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           }
         }
       } else {
-        if (currentViewerData.currentCompareMode === 'compareReality') {
+        if (compareMode.current === 'compareReality') {
           //get from potree compare utils
           // give to potree utils
           if (
@@ -589,11 +614,20 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           }
         }
         break;
+      case 'Mapbox':
+        if (mapboxUtils.current) {
+          if (type === 'Issue') {
+            mapboxUtils.current.updateIssuesData(currentViewerData.currentIssueList);
+          } else if (type === 'Task') {
+            mapboxUtils.current.updateTasksData(currentViewerData.currentTaskList);
+          }
+        }
+        break;
     }
   };
 
   function viewerEventHandler (viewerId:string, event:any){
-    console.log("Inside generic viewer: ",viewerId, event, );
+    //console.log("Inside generic viewer: ",viewerId, event, );
     if (event) {
       switch (event.type) {
         case '360 Video':
@@ -622,11 +656,11 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         case '3d':
         case 'panorama':
         case 'image':
-          if (currentViewerData.currentCompareMode!== 'noCompare') {
+          if (compareMode.current!== 'noCompare') {
             if (isCompareViewer(viewerId)) {
               potreeUtils.current?.updateContext(event, false);
             } else {
-              if(currentViewerData.currentCompareMode === 'compareReality') {
+              if(compareMode.current === 'compareReality') {
                 potreeCompareUtils.current?.updateContext(event, false);
               } else {
                 forgeCompareUtils.current?.updateContext(event, false);
@@ -636,31 +670,31 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           break;
         case 'sync':
            //console.log("Inside sync event: ", isCompareMode, isRealityViewer(viewerId),currentViewerData)
-          //if (currentViewerData.currentCompareMode!== 'noCompare') {
+          if (compareMode.current!== 'noCompare') {
             if (isRealityViewer(viewerId)) {
               syncPotreeEvent.current = true;
             } else {
               syncForgeEvent.current = true;
             }
-          //}
+          }
           break;
         case 'zoom':
           // console.log("Sync event handler: ", viewerId);
-          if (currentViewerData.currentCompareMode!== 'noCompare') {
+          if (compareMode.current!== 'noCompare') {
             //syncViewer(viewerId);
             syncViewer();
           }
           break;
         case 'mouse':
           //console.log("Mouse Event",isCompareViewer(viewerId),viewerId,event)
-          //if (currentViewerData.currentCompareMode!== 'noCompare') {
+          if (compareMode.current!== 'noCompare') {
             
             if (isCompareViewer(viewerId)) {
               isMouseOnMainViewer.current = false;
             } else {
               isMouseOnMainViewer.current = true;
             }
-         // }
+          }
           break;
       }
     }
@@ -739,6 +773,13 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           }
         }
         break;
+      case 'compareMap':
+        if (mapboxCompareUtils.current == undefined) {
+          mapboxCompareUtils.current = MapboxViewerUtils;
+          mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, undefined, mapboxUtils.current?.getMap());
+          mapboxCompareUtils.current.setType(currentViewerData.currentViewType);          
+          }
+          break;
     }
   };
 
@@ -802,45 +843,47 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       case 'Mapbox':
         if (mapboxUtils.current !== undefined) {
           mapboxUtils.current.setSnapshot(currentViewerData.currentSnapshotBase);
-          //mapboxUtils.current.setHotspotClick(selectHotspot);
-          // let data = await getMapboxLayers(structure, snapshot);
-          // const reality = snapshot.reality.find((reality) => { return reality })
-          // let hotspots = await getMapboxHotspots(project._id, structure._id, snapshot._id, reality._id)
-          // if(data) {
-          //   const map = getRealityMap(snapshot)
-          //   const stages = {
-          //     name: 'Stages',
-          //     children: [],
-          //     isSelected: true
-          //   }
-          //   data.forEach((layer) => {
-          //     if(layer.categories) {
-          //       layer.categories.forEach((category) => {
-          //         category.filters.forEach((stage) => {
-          //           const subLayer = {
-          //             name: stage.name,
-          //             children: [],
-          //             isSelected: true,
-          //             filters: stage.filter
-          //           }
-          //           stages.children.push(subLayer)
-          //         })
-          //       })
-          //     }
-          //   })
-          //   map['Stages'] = stages
-          //   setRealityMap(map)
-          //   updateRealityMap(map)
-          // }
-          // setTimeout(() => {
-          //   if (mapboxUtils.current != undefined) {
+          mapboxUtils.current.setHotspotClick(selectHotspot);
+          let data:IMapboxLayer[] = await getMapboxLayers(currentViewerData.structure, currentViewerData.currentSnapshotBase);
+          const reality :IReality| undefined= currentViewerData?.currentSnapshotBase?.reality?.find((reality) => { return reality })
+          let hotspots = await getMapboxHotspots(currentViewerData.project, currentViewerData.structure._id, currentViewerData.currentSnapshotBase._id, reality?._id)
+          if(data) {
+            
+            const stages : ILayer = {
+              name: 'Stages',
+              children: [],
+              isSelected: true
+            }
+            data.forEach((layer) => {
+              if(layer.categories) {
+                layer.categories.forEach((category) => {
+                  category.filters.forEach((stage) => {
+                    const subLayer:ILayer = {
+                      name: stage.name,
+                      children: [],
+                      isSelected: true,
+                      filters: stage.filter
+                    }
+                    stages.children.push(subLayer)
+                  })
+                })
+              }
+            })
+            
+            //var map:IActiveRealityMap  =  getRealityMap(currentViewerData.currentSnapshotBase)
+            //if(map!==undefined && map['Stages'] !==undefined) {map['Stages']= stages}
+            //setRealityMap(map)
+            //updateRealityMap(map)
+          }
+          setTimeout(() => {
+            if (mapboxUtils.current !== undefined) {
 
-          //       mapboxUtils.current.updateData(data, currentContext.current);
-          //       hotspots && hotspots.data && setHotspots(hotspots.data.features);
-          //       mapboxUtils.current.updateIssuesData(issuesList);
-          //       mapboxUtils.current.updateTasksData(tasksList);
-          //   }
-          // }, 700);
+                mapboxUtils.current.updateData(data, currentContext.current);
+                hotspots && hotspots.data && setHotspots(hotspots.data.features);
+                mapboxUtils.current.updateIssuesData(currentViewerData.currentIssueList);
+                mapboxUtils.current.updateTasksData(currentViewerData.currentTaskList);
+            }
+          }, 700);
         }
         break;
     }
@@ -862,7 +905,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           potreeCompareUtils.current.setStructure(structure);
         }
         break;
-        case 'Mapbox':
+        case 'compareMap':
         if (mapboxCompareUtils.current != undefined) {
           mapboxCompareUtils.current.setProject(structure.project);
           mapboxCompareUtils.current.setStructure(structure);
@@ -900,38 +943,39 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         }
 
         break;
-      case 'Mapbox':
+      case 'compareMap':
         if (mapboxCompareUtils.current != undefined) {
           mapboxCompareUtils.current.setSnapshot(compareSnapshot);
-          // mapboxCompareUtils.current.setHotspotClick(selectHotspot);
-          //   let data = await getMapboxLayers(structure, compareSnapshot);
-          //   const reality = compareSnapshot.reality.find((reality) => { return reality })
-          //   let hotspots = await getMapboxHotspots(project._id, structure._id, compareSnapshot._id, reality._id)
-          //   setTimeout(() => {
-          //     if (mapboxCompareUtils.current != undefined) {
-          //       mapboxCompareUtils.current.updateData(data, currentContext.current);
-          //       hotspots && hotspots.data && (hotspotsCompare = hotspots.data.features);
-          //       hotspots && hotspots.data && setHotspotsCompare(hotspots.data.features);
-          //       mapboxCompareUtils.current.updateIssuesData(issuesList);
-          //       mapboxUtils.current.updateTasksData(tasksList);
-          //       setTimeout(() => {
+          mapboxCompareUtils.current.setHotspotClick(selectHotspot);
+          let data = await getMapboxLayers(structure, compareSnapshot);
+          const reality = compareSnapshot?.reality?.find((reality) => { return reality })
+          let hotspots = await getMapboxHotspots(currentViewerData.project, currentViewerData.structure._id, compareSnapshot._id, reality?._id)
+          setTimeout(() => {
+              if (mapboxCompareUtils.current != undefined) {
+                mapboxCompareUtils.current.updateData(data, currentContext.current);
+                hotspots && hotspots.data && (hotspotsCompare = hotspots.data.features);
+                hotspots && hotspots.data && setHotspotsCompare(hotspots.data.features);
+                mapboxCompareUtils.current.updateIssuesData(currentViewerData.currentIssueList);
+                mapboxCompareUtils.current.updateTasksData(currentViewerData.currentTaskList);
+                ///////NEED TO MOVE TO UPDATE MAP
+                // setTimeout(() => {
                   
-          //         if(viewLayers && viewLayers['Stages']) {
-          //           const filters = ['any']
-          //           const children = viewLayers['Stages'].children;
-          //           for(let i = 0; i < children.length; i++) {
-          //             if(children[i].isSelected) {
-          //               filters.push(children[i].filters)
-          //             }
-          //           }
+                //   if(currentViewerData.currentLayersList /*&& viewLayers['Stages']*/) {
+                //   const filters = ['any']
+                //   //const children = viewLayers['Stages'].children;
+                //   //   for(let i = 0; i < children.length; i++) {
+                //   //     if(children[i].isSelected) {
+                //   //       filters.push(children[i].filters)
+                //   //     }
+                //   //   }
                 
-          //           if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
-          //             mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
-          //           }
-          //         }
-          //       }, 500)
-          //   }
-          //   }, 700);
+                //     if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
+                //       mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
+                //     }
+                //   }
+                // }, 500)
+            }
+          }, 700);
           }
           break;
     }
@@ -948,6 +992,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         if (potreeUtils.current) {
           potreeUtils.current.readyForCompare(compareViewerType);
         }
+        break;
+      case 'Mapbox':
         break;
     }
   }
@@ -1025,27 +1071,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   }
 
-  // const modifyDesignList = async (designList:[IDesign]) => {
-  //   console.log('Generic Viewer Inside Modified design List: ', designList);
-  //   for (let design of designList) {
-  //     if (!design.tm) {
-  //       let response :any= await getDesignTM(
-  //         getDesignPath(design.project, design.structure, design._id)
-  //       );
-  //       design.tm = response.data;
-  //     }
-  //   }
-  //   console.log('Generic Viewer design modified: ', designList);
-
-  //   //setDesignList(designList);
-
-  //   //Set current design type and pass it to structure page.
-
-  //   setDesignMap(getDesignMap(designList));
-  //   //updateDesignMap(getDesignMap(designList));
-  //   return designList;
-  // };
-
+  
   // const getSnapshotList = async (projectId, structurId) => {
   //   let list = await getSnapshotsList(projectId, structurId);
 
@@ -1164,7 +1190,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           potreeCompareUtils.current.removeData();
         }
         break;
-      case 'Mapbox':
+      case 'compareMap':
         if (mapboxCompareUtils.current) {
           mapboxCompareUtils.current.removeLayers()//why not layers?
         }
@@ -1218,7 +1244,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           delete potreeCompareUtils.current;
         }
         break;
-      case 'Mapbox':
+      case 'compareMap':
         if (mapboxCompareUtils.current) {
           mapboxCompareUtils.current.shutdown();
           mapboxCompareUtils.current = undefined;
@@ -1228,186 +1254,25 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   };
 
-  // useEffect(() => {
-  //   return cleanUpOnPageChange;
-  // }, []);
-
-  // const cleanUpOnPageChange = () => {
-  //   // console.log("Inside cleanup no dependencies: ");
-  // };
-
-  // useEffect(() => {
-  //   // console.log("Generic Viewer Structure UseEffect:");
-  //   if (currentStructure.current != structure) {
-  //     currentStructure.current = structure;
-  //     if (structure.designs.length > 0) {
-  //       modifyDesignList(structure.designs);
-  //     }
-  //     getSnapshotList(structure.project, structure._id);
-  //     // console.log("Generic Viewer load: Structure Changed", structure);
+  const onHotspotClick = (hotspot:any) => {
+    setSelectedHotspot(hotspot.properties.id)
+    setSelectedHotspotDetails(hotspot)
     
-  //   animationRequestId = requestAnimationFrame(animationNow);
-  //   return cleanUpOnStructureChange;
-  // }, [structure]);
+    for(let i = 0; i < hotspotsCompare.length; i++) {
+      if(hotspotsCompare[i].properties.id == hotspot.properties.id) {
+        setSelectedHotspotCompareDetails(hotspotsCompare[i]) 
+        break;
+      }
+    }
+    if(mapboxUtils.current) {
+      mapboxUtils.current.onLayerClick(hotspot, compareMode.current!=='noCompare' ? true : false)
+    }
+  }
 
-  // const cleanUpOnStructureChange = () => {
-  //   // console.log(
-  //   //   "Generic Viewer Inside cleanup structure cleanup:",
-  //   //   currentStructure.current
-  //   // );
-  //   removeData();
-  //   removeContext();
-  //   setIsCompare(false);
-  //   cancelAnimationFrame(animationRequestId);
-  // };
+  const selectHotspot = (hotspot:any) => {
+    setSelectedHotspot(hotspot.properties.id)
+  }
 
-  // useEffect(() => {
-  //   handleTagListChange('Issue');
-  // }, [issuesList]);
-
-  // useEffect(() => {
-  //   handleTagListChange('Task');
-  // }, [tasksList]);
-
-  // useEffect(() => {
-  //   // console.log("Generic Viewer load: Snapshot UseEffect", snapshot);
-  //   return cleanUpOnSnapshotChange;
-  // }, [snapshot]);
-
-  // const cleanUpOnSnapshotChange = () => {
-  //   // console.log(
-  //   //   "Generic Viewer Inside cleanup: snapshot cleanup",
-  //   //   snapshot
-  //   // );
-  //   getContext();
-  //   removeLayers();
-  // };
-
-  // useEffect(() => {
-  //   // console.log("Generic Viewer load: Compare Snapshot UseEffect", snapshot);
-  //   return cleanUpOnCompareSnapshotChange;
-  // }, [compareSnapshot]);
-
-  // const cleanUpOnCompareSnapshotChange = () => {
-  //   // console.log(
-  //   //   "Generic Viewer Inside cleanup: snapshot cleanup",
-  //   //   compareSnapshot
-  //   // );
-  //   getContext();
-  //   removeCompareLayers();
-  // };
-
-  // useEffect(() => {
-  //   // console.log("Generic Viewer load: Design List UseEffect", designList);
-  //   if (designList.length > 0) {
-  //     loadViewerData();
-  //   }
-  // }, [designList]);
-
-  // useEffect(() => {
-  //   // console.log("Generic Viewer load: Reality UseEffect", realityList);
-  //   if (realityList.length > 0) {
-  //     loadLayerData();
-  //   }
-  // }, [realityList]);
-
-  // useEffect(() => {
-  //   // console.log("Generic Viewer load: Reality UseEffect", compareRealityList);
-  //   if (realityList.length > 0 && isCompare) {
-  //     loadCompareLayerData();
-  //   }
-  // }, [compareRealityList]);
-
-  // useEffect(() => {
-  //   // console.log("Generic Viewer tool UseEffect", tool);
-  //   if (activeTool.current != tool) {
-  //     activeTool.current = tool;
-  //     handleToolChange();
-  //   }
-  // }, [tool]);
-
-  // useEffect(() => {
-  //   // console.log("Generic Viewer View Mode UseEffect", viewMode);
-  //   if (currentViewMode.current != viewMode) {
-  //     currentViewMode.current = viewMode;
-  //     handleViewModeChange();
-  //   }
-  //   return cleanUpOnViewModeChange;
-  // }, [viewMode]);
-
-  // const cleanUpOnViewModeChange = () => {
-  //   // console.log(
-  //   //   "Generic Viewer Inside cleanup: viewmode dependencies",
-  //   //   viewMode
-  //   // );
-  //   setIsCompare(false);
-  //   // getContext();
-  //   destroyViewer();
-  // };
-
-  // useEffect(() => {
-  //   // console.log("Generic Viewer View Mode Parent UseEffect", viewModeParent);
-  //   setViewMode(viewModeParent);
-  //   return cleanUpOnParentViewModeChange;
-  // }, [viewModeParent]);
-
-  // const cleanUpOnParentViewModeChange = () => {
-  //   // console.log(
-  //   //   "Generic Viewer Inside cleanup: parent viewmode dependencies",
-  //   //   viewMode
-  //   // );
-  //   setIsCompare(false);
-  //   getContext();
-  //   destroyViewer();
-  // };
-
-  // useEffect(() => {
-  //   console.log('Generic Viewer View Type UseEffect', props.viewType);
-  //   if (viewType.current != props.viewType) {
-  //     viewType.current = props.viewType;
-  //     handleDesignTypeChange();
-  //   }
-
-  //   return cleanUpOnViewTypeChange;
-  // }, [props.viewType]);
-
-  // const cleanUpOnViewTypeChange = () => {
-  //   console.log(
-  //     'Generic Viewer View Type Cleanup',
-  //     props.viewType,
-  //     viewType.current
-  //   );
-  //   setIsCompare(false);
-  //   getContext();
-  // };
-
-  // useEffect(() => {
-  //   // console.log("Generic Viewer View Layers UseEffect", viewLayers);
-  //   handleRealityTypeChange();
-  // }, [viewLayers]);
-
-  // // Triggered when compareViewMode changed
-  // useEffect(() => {
-  //   // console.log("Inside isCompareMode and isCompare state UseEffect", isCompare, compareViewMode);
-  //   if (currentIsCompare.current != isCompare) {
-  //     currentIsCompare.current = isCompare;
-  //   }
-  //   if (isCompare === true) {
-  //     updateViewerChanges();
-  //     loadCompareViewerData();
-  //     loadCompareLayerData();
-  //   } else {
-  //     updateViewerChanges();
-  //   }
-  //   return cleanUpOnCompareViewModeChange;
-  // }, [isCompare, compareViewMode]);
-
-  // const cleanUpOnCompareViewModeChange = () => {
-  //   // console.log("Inside compare viewMode chnage cleanip", potreeUtils.current, forgeUtils.current);
-  //   // getContext();
-  //   removeCompareLayers();
-  //   destroyCompareViewer();
-  // };
 
   return (
       <div className="fixed calc-w calc-h flex flex-row">
@@ -1419,7 +1284,21 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           {isInitReady && isCompareMode && renderViewer(2)}
           <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotCompare||currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
         </div>
-    
+        {
+          currentViewerData.currentViewType === "Mapbox"  && hotspots && hotspots.length > 0 ?
+          <Hotspots data={hotspots} selected={selectedHotspot} onHotspotClick={onHotspotClick}></Hotspots>
+          : <></>
+        }
+        {
+          currentViewerData.currentCompareMode==='compareMap' && currentViewerData.currentViewType === "Mapbox"?
+          <HotspotsCompare
+            snapshot={currentViewerData.currentSnapshotBase}
+            compareSnapshot={currentViewerData.currentSnapshotCompare|| currentViewerData.currentSnapshotBase}
+            hotspotDetails={selectedHotspotDetails}
+            hotspotCompareDetails={selectedHotspotCompareDetails}/>
+          
+          : <></>
+        }
     </div>
   );
   }
