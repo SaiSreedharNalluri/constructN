@@ -4,15 +4,38 @@ import { useRouter } from 'next/router';
 import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import SidePanelMenu from '../../../../components/divami_components/side-panel/SidePanel';
-import { MyComponent } from '../../../../utils/ganttView';
+import { getGanttView } from '../../../../utils/ganttView';
 import ScheduleView from '../../../../components/container/scheduleView';
-import treeData from '../../../../project-plan-hierarchy.json';
+import {
+  getGanttViewData,
+  getScheduleViewData,
+} from '../../../../services/project';
 const Index: React.FC = () => {
   const router = useRouter();
   const [tabIndex, setTabIndex] = useState(0);
+  const [treeData, setTreeData] = useState<any>();
+  const [ganttData, setGanttData] = useState<any>();
   useEffect(() => {
-    if (typeof window !== undefined && tabIndex === 1) {
-      MyComponent();
+    if (router.isReady) {
+      getScheduleViewData(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setTreeData(response.result);
+          }
+        })
+        .catch();
+      getGanttViewData(router.query.projectId as string)
+        .then((response) => {
+          if (response.success === true) {
+            setGanttData(response.result);
+          }
+        })
+        .catch();
+    }
+  }, [router.isReady, router.query.projectId]);
+  useEffect(() => {
+    if (typeof window !== undefined && tabIndex === 1 && ganttData) {
+      getGanttView(ganttData);
     }
   }, [tabIndex]);
   return (
@@ -36,7 +59,9 @@ const Index: React.FC = () => {
                 </TabList>
                 <TabPanel>
                   <div className="overflow-auto h-93">
-                    <ScheduleView treeData={treeData} />
+                    {treeData && (
+                      <ScheduleView treeData={treeData} key={treeData} />
+                    )}
                   </div>
                 </TabPanel>
                 <TabPanel>

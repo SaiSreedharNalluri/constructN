@@ -133,3 +133,35 @@ export const getProjectTypes = async () => {
       throw error;
     });
 };
+export const getScheduleViewData = async (projectId: string) => {
+  return await instance
+    .get(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/activities/project-plan`,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error', error);
+      throw error;
+    });
+};
+export const getGanttViewData = async (projectId: string) => {
+  return await instance
+    .get(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/activities/gantt`,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error', error);
+      throw error;
+    });
+};

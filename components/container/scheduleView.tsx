@@ -24,7 +24,7 @@ const ScheduleView: React.FC<IProp> = ({ treeData }) => {
         </thead>
         <tbody>
           {treeData.map((node: any) => (
-            <TreeNode key={node.id} node={node} level={0} />
+            <TreeNode key={node.wbsId} node={node} level={0} />
           ))}
         </tbody>
       </table>
@@ -43,7 +43,7 @@ const TreeNode: React.FC<IProps> = ({ node, level }) => {
     if (!hasChild) {
       return;
     } else {
-      return visibility[node._id] ? (
+      return visibility[node.wbsId] ? (
         <FontAwesomeIcon
           style={{ marginLeft: `${level}rem` }}
           size="1x"
@@ -68,7 +68,7 @@ const TreeNode: React.FC<IProps> = ({ node, level }) => {
           onClick={() => {
             setVisibility({
               ...visibility,
-              [node._id]: !visibility[node._id],
+              [node.wbsId]: !visibility[node.wbsId],
             });
           }}
         >
@@ -96,9 +96,9 @@ const TreeNode: React.FC<IProps> = ({ node, level }) => {
         </td>
       </tr>
       {hasChild &&
-        visibility[node._id] &&
-        children.map((child: { id: React.Key | null | undefined }) => (
-          <TreeNode key={child.id} node={child} level={level + 1} />
+        visibility[node.wbsId] &&
+        children.map((child: { wbsId: React.Key | null | undefined }) => (
+          <TreeNode key={child.wbsId} node={child} level={level + 1} />
         ))}
     </React.Fragment>
   );
