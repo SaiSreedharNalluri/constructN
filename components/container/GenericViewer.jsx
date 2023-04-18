@@ -546,7 +546,7 @@ function GenericViewer(props) {
   };
 
   const viewerEventHandler = (viewerId, event) => {
-    console.log("Inside generic viewer: ", event, );
+    console.log("Inside generic viewer: ", event);
     if (event) {
       switch (event.type) {
         case 'Drone Image':
@@ -554,19 +554,38 @@ function GenericViewer(props) {
         case '360 Image':
         case '360 Video':
           currentContext.current = event;
-          if (currentIsCompare.current == true) {
-            const isMinimap = viewerId.indexOf('minimap') > -1;
-            if(isMinimap) {
-              potreeUtils.current.updateContext(event, true);
-            } else {
-              if (isCompareViewer(viewerId)) {
-                potreeUtils.current.updateContext(event, false);
+          const isMinimap = viewerId.indexOf('minimap') > -1;
+          if(isMinimap) {
+            if (isMinimapCompareViewer(viewerId)) {
+              if (currentCompareViewMode.current === 'Potree') {
+                potreeCompareUtils.current.updateContext(event, true);
               } else {
-                if (currentCompareViewMode.current === 'Potree') {
-                  potreeCompareUtils.current.updateContext(event, false);
-                } else {
-                  forgeCompareUtils.current.updateContext(event, false);
-                }
+                potreeUtils.current.updateContext(event, true);
+                // forgeCompareUtils.current.updateContext(event, true);
+              }
+            } else {
+              if (currentViewerType.current == 'Forge') {
+                pushToolResponse({
+                  toolName: 'viewMode',
+                  toolAction: 'Reality',
+                });
+                setViewerType('Potree');
+              }
+              else {
+                potreeUtils.current.updateContext(event, true);
+              }
+            }
+            return;
+          }
+            
+          if (currentIsCompare.current == true) {
+            if (isCompareViewer(viewerId)) {
+              potreeUtils.current.updateContext(event, false);
+            } else {
+              if (currentCompareViewMode.current === 'Potree') {
+                potreeCompareUtils.current.updateContext(event, false);
+              } else {
+                forgeCompareUtils.current.updateContext(event, false);
               }
             }
           } else if (currentViewerType.current == 'Forge') {
@@ -577,21 +596,9 @@ function GenericViewer(props) {
             setViewerType('Potree');
             // setViewMode('Reality');
           } else if (currentViewerType.current == 'Mapbox') {
-            // pushToolResponse({
-            //   toolName: 'viewMode',
-            //   toolAction: 'Design',
-            // });
-            // setViewMode('Design');
+            
           } else if (currentViewerType.current == 'Potree') {
-            if(viewerId.indexOf('-1') > 0) {
-              if(potreeUtils.current) {
-                potreeUtils.current.updateContext(event, true)
-              }
-            } else {
-              if(potreeCompareUtils.current) {
-                potreeCompareUtils.current.updateContext(event, true)
-              }
-            }
+            
           }
           break;
         case 'Reality':

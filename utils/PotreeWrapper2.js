@@ -898,7 +898,7 @@ export const PotreeViewerUtils = () => {
     }
 
     const getContextLocalFromGlobal = (globalContext) => {
-        // console.log("Global offset: ", globalContext, this.globalOffset);
+        // console.log("Global offset: ", globalContext, _globalOffset);
         let context = structuredClone(globalContext);
         let offset = _globalOffset;
         if(context.image && context.image.imagePosition) {
