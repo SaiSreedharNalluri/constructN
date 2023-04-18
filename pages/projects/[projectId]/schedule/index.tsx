@@ -5,7 +5,8 @@ import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import SidePanelMenu from '../../../../components/divami_components/side-panel/SidePanel';
 import { MyComponent } from '../../../../utils/ganttView';
-import authHeader from '../../../../services/auth-header';
+import ScheduleView from '../../../../components/container/scheduleView';
+import treeData from '../../../../project-plan-hierarchy.json';
 const Index: React.FC = () => {
   const router = useRouter();
   const [tabIndex, setTabIndex] = useState(0);
@@ -34,12 +35,9 @@ const Index: React.FC = () => {
                   <Tab>Gantt View</Tab>
                 </TabList>
                 <TabPanel>
-                  <iframe
-                    className="w-100 h-93"
-                    src={`https://dev.internal.constructn.ai/project-plan?projectId=${
-                      router.query.projectId as string
-                    }&token=${authHeader.getAuthToken()}`}
-                  />
+                  <div className="overflow-auto h-93">
+                    <ScheduleView treeData={treeData} />
+                  </div>
                 </TabPanel>
                 <TabPanel>
                   <div className="overflow-auto  h-93 w-96">
