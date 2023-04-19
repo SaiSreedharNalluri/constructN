@@ -1589,6 +1589,7 @@ function GenericViewer(props) {
     if (count != 1 && !isCompare) {
       return;
     }
+    
     return (<Rnd
       ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
       minWidth={320}
@@ -1614,7 +1615,7 @@ function GenericViewer(props) {
             <FullscreenIcon fontSize="inherit" />
           </IconButton>
         </div>
-        <MiniMap count={count} style={{ height: 'calc(100% - 24px)' }} setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}></MiniMap>
+        <MiniMap count={count} style={{ height: 'calc(100% - 24px)' }} compareViewMode={compareViewMode} setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}></MiniMap>
       </div>
     </Rnd>)
   }
@@ -1647,7 +1648,7 @@ function GenericViewer(props) {
       <div className={isCompare?'w-0.5':''} color='gray'></div>
       <div id="CompareView" className={`relative ${isCompare ? "basis-1/2" : "hidden"}`}>
         {renderViewer(2)}
-        {renderMinimap(2)}
+        { renderMinimap(2)}
         <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
       </div>
       {

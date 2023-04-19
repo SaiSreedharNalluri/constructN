@@ -4,14 +4,20 @@ function Minimap(props) {
     
     const viewerId = `minimap-${props.count}`;
     const setMinimapUtils = props.setMinimap;
+    const compareViewMode = props.compareViewMode;
+    const toggle = props.toggle
 
     const initViewer = function() {
         setMinimapUtils(viewerId);
     }
 
     useEffect(() => {
-       initViewer();
+       
     },[]);
+
+    useEffect(() => {
+        initViewer();
+    }, [compareViewMode])
 
 
     return (

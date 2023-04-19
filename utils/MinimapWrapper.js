@@ -34,7 +34,7 @@ export const MinimapUtils = () => {
   let _showTag = {};
 
   let _context;
-  let _navPosition;
+  let _navPosition = [0, 0, 0];
   let _navRotation;
 
   let _dataVizExtn;
@@ -309,6 +309,7 @@ export const MinimapUtils = () => {
     if(!position) return
     if(!_isModelLoaded) return
     if(_navPosition && _navPosition[0] == position[0] && _navPosition[1] == position[1] && _navPosition[2] == position[2] && _navRotation == yaw) return;
+    // console.log('Creating marger', 'ppp')
     _dataVizUtils.createMarker(position, yaw);
     _navPosition = position
     _navRotation = yaw

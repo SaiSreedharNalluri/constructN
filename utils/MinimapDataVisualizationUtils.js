@@ -109,7 +109,6 @@ export class MinimapDataVisualization {
     }
 
     setViewableState(viewableList) {
-        // console.log("Inside set Viewable state: ", viewableList)
         if (!viewableList) {
             return;
         }
