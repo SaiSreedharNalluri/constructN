@@ -7,7 +7,7 @@ export const ISSUE_FORM_CONFIG = [
     type: "textfield",
     defaultValue: "",
     formLabel: "What shall we call this issue?",
-    placeholder: "Enter Issue...",
+    placeholder: "What shall we call this issue?",
     isError: false,
     isReq: true,
     isReadOnly: false,

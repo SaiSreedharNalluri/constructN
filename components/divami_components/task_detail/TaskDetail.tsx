@@ -16,7 +16,7 @@ import { styled } from "@mui/system";
 import _ from "lodash";
 import Moment from "moment";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import router from "next/router";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import BackArrow from "../../../public/divami_icons/backArrow.svg";
@@ -124,11 +124,6 @@ interface TabPanelProps {
   value: number;
 }
 
-interface Task {
-  _id: string;
-  // Include other properties if needed
-}
-
 const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;
@@ -189,7 +184,6 @@ function BasicTabs(props: any) {
   const [list, setList] = useState<any>();
   const [comments, setComments] = useState("");
   const [backendComments, setBackendComments] = useState<any>([]);
-  const router = useRouter();
 
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -263,7 +257,9 @@ function BasicTabs(props: any) {
   };
 
   const addComment = (text: string, entityId: string) => {
+    console.log("text", text, "enttit", entityId);
     if (text !== "") {
+      console.log("text", text, "enttit", entityId);
       createComment(router.query.projectId as string, {
         comment: text,
         entity: entityId,
@@ -393,20 +389,14 @@ function BasicTabs(props: any) {
           <SecondBodyDiv>
             <SecondContPrior>
               <PriorityTitle>Type</PriorityTitle>
-              <PriorityStatus
-                style={{ color: "#101F4B" }}
-                data-testid="task-title"
-              >
+              <PriorityStatus style={{ color: "#101F4B" }}>
                 {taskState?.TabOne?.type}
               </PriorityStatus>
             </SecondContPrior>
 
             <SecondContPriorParal>
               <PriorityTitle>Priority</PriorityTitle>
-              <PriorityStatus
-                style={{ color: "#101F4B" }}
-                data-testid="task-priority"
-              >
+              <PriorityStatus style={{ color: "#101F4B" }}>
                 {taskState?.TabOne?.priority}
               </PriorityStatus>
             </SecondContPriorParal>
@@ -415,10 +405,7 @@ function BasicTabs(props: any) {
           <SecondBodyDiv>
             <SecondContCapt>
               <CaptureTitle>Captured on</CaptureTitle>
-              <CaptureStatus
-                style={{ color: "#101F4B" }}
-                data-testid="task-captured"
-              >
+              <CaptureStatus style={{ color: "#101F4B" }}>
                 {" "}
                 {Moment(taskState?.TabOne?.capturedOn).format("DD MMM YYYY")}
               </CaptureStatus>
@@ -441,9 +428,7 @@ function BasicTabs(props: any) {
                 style={{ marginTop: "0px", color: "#101F4B" }}
               >
                 <FourthContLeft>
-                  <FourthContAssigned data-testid="assigned-to-label">
-                    Assigned to
-                  </FourthContAssigned>
+                  <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType style={{ color: "#101F4B" }}>
                     {taskState?.TabOne?.assignees}{" "}
                     <DarkToolTip
@@ -486,7 +471,6 @@ function BasicTabs(props: any) {
                     </DarkToolTip>
                     {taskState?.TabOne?.assignees ? (
                       <PenIconImage
-                        data-testid="assignees-edit"
                         onClick={() => {
                           handleEditAssigne();
                         }}
@@ -504,14 +488,9 @@ function BasicTabs(props: any) {
             <ProgressStateFalse>
               {" "}
               <ThirdContRight>
-                <ThirdContProg data-testid="progres-label">
-                  Progress bar
-                </ThirdContProg>
+                <ThirdContProg>Progress bar</ThirdContProg>
 
-                <ThirdContProgType
-                  style={{ color: "#101F4B" }}
-                  data-testid="task-progress"
-                >
+                <ThirdContProgType style={{ color: "#101F4B" }}>
                   {taskState?.TabOne?.status}
                   {taskState?.TabOne?.status ? (
                     <PenIconImage
@@ -520,7 +499,6 @@ function BasicTabs(props: any) {
                       }}
                       src={Edit}
                       alt={"close icon"}
-                      data-testid="issue-progress-edit"
                     />
                   ) : (
                     <></>
@@ -536,9 +514,7 @@ function BasicTabs(props: any) {
                 }}
               >
                 <FourthContLeft>
-                  <FourthContAssigned data-testid="assigned-to-label">
-                    Assigned to
-                  </FourthContAssigned>
+                  <FourthContAssigned>Assigned to</FourthContAssigned>
                   <FourthContProgType style={{ color: "#101F4B" }}>
                     {taskState?.TabOne?.assignees}{" "}
                     <LightTooltip
@@ -547,6 +523,7 @@ function BasicTabs(props: any) {
                         <AssigneeList>
                           {taskState?.TabOne?.assignessList?.map(
                             (assignName: any, index: number) => {
+                              console.log("print", taskState);
                               return (
                                 <>
                                   {index !==
@@ -586,7 +563,6 @@ function BasicTabs(props: any) {
                         }}
                         src={Edit}
                         alt={"close icon"}
-                        data-testid="assignees-edit"
                       />
                     ) : (
                       <></>
@@ -598,7 +574,7 @@ function BasicTabs(props: any) {
           )}
 
           {progressEditState ? (
-            <ProgressCustomSelect data-testid="progress-options">
+            <ProgressCustomSelect>
               <ExtraLabel>Progress</ExtraLabel>
 
               <CustomSelect
@@ -622,7 +598,6 @@ function BasicTabs(props: any) {
               <AssignedLabel>Assigned to</AssignedLabel>
 
               <Autocomplete
-                data-testid="assignee-options"
                 disablePortal
                 id="combo-box-demo"
                 options={projectUsers.map((each: any) => {
@@ -639,8 +614,11 @@ function BasicTabs(props: any) {
                 }}
                 renderTags={() => null}
                 // defaultValue={formState.selectedUser[0]?.user?.fullName}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params) => (
+                  <TextField {...params} label="Assigned To" />
+                )}
                 onChange={(event, value: any) => {
+                  console.log(value);
                   const newSelectedUser = value
                     ? value.filter(
                         (selected: any, index: number, array: any[]) => {
@@ -794,7 +772,6 @@ function BasicTabs(props: any) {
                   formHandler={() => {
                     handleClose();
                   }}
-                  dataTestId={"issue-edit-cancel"}
                 />
                 <CustomButton
                   type="contained"
@@ -802,7 +779,6 @@ function BasicTabs(props: any) {
                   formHandler={() => {
                     handleStateChange();
                   }}
-                  dataTestId={"issue-edit-save"}
                 />
               </ProgressEditStateButtonsContainer>
             </AddCommentContainer>
@@ -826,14 +802,12 @@ function BasicTabs(props: any) {
                       onChange={(e) => {
                         setComments(e.target.value);
                       }}
-                      data-testid="issue-comment-input"
                     />
                     <AddCommentButtonContainer>
                       <SendButton
                         onClick={() => {
                           addComment(comments, taskState?.TabOne?.id);
                         }}
-                        data-testid="issue-comment-send-button"
                       >
                         <ImageErrorIcon src={Send} alt="" />
                       </SendButton>
@@ -873,12 +847,10 @@ const CustomTaskDetailsDrawer = (props: any) => {
     closeTaskCreate,
     getTasks,
     deleteTheAttachment,
-    setTaskList,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [footerState, SetFooterState] = useState(false);
   const [selectedTask, setSelectedTask] = useState(task);
-  const router = useRouter();
   const [backendComments, setBackendComments] = useState<any>([]);
   const [file, setFile] = useState<File>();
 
@@ -945,7 +917,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
   useEffect(() => {
     let tempObj = {
       ...selectedTask,
-      title: selectedTask?.title,
       options: selectedTask.options,
       priority: selectedTask.priority,
       sequenceNumber: selectedTask.sequenceNumber,
@@ -973,6 +944,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
           : "",
       id: selectedTask._id,
       status: selectedTask.status,
+      title: selectedTask.title,
     };
     setTaskState((prev: any) => {
       return {
@@ -982,26 +954,18 @@ const CustomTaskDetailsDrawer = (props: any) => {
     });
   }, [selectedTask]);
 
-  const deletetaskById = (taskList: Task[], selectedTask: Task) => {
-    const selectedTaskId = selectedTask._id;
-    const updatedTaskList = taskList.filter(
-      (task) => task._id !== selectedTaskId
-    );
-    return updatedTaskList;
-  };
   const onDeleteTask = () => {
     setshowPopUp(false);
     deleteTheTask(selectedTask, onClose);
-    const updatedTaskList = deletetaskById(taskList, selectedTask);
-    setTaskList(updatedTaskList);
   };
 
   const handleCreateTask = (formData: any) => {
+    console.log(formData, "form data at home");
     clickTaskSubmit(formData);
   };
 
   const saveEditDetails = async (data: any, projectId: string) => {
-    if (data.title && data.type && data.priority && data.description) {
+    if (data.title && data.type && data.priority) {
       updateTask(projectId, data, selectedTask._id)
         .then((response) => {
           if (response.success === true) {
@@ -1155,9 +1119,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 }}
                 src={BackArrow}
                 alt={"close icon"}
-                data-testid="back-arrow"
               />
-              <SpanTile data-testid="task-detail-header">
+              <SpanTile>
                 {selectedTask?.title} (#{selectedTask?.sequenceNumber})
               </SpanTile>
             </LeftTitleCont>
@@ -1168,7 +1131,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 onClick={() => {
                   setOpenCreateTask(true);
                 }}
-                data-testid="edit-icon"
               />
               <DeleteIcon
                 src={Delete}
@@ -1176,7 +1138,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 onClick={() => {
                   setshowPopUp(true);
                 }}
-                data-testid="delete-icon"
               />
             </RightTitleCont>
           </TitleContainer>

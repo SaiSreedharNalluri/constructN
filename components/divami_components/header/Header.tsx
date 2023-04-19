@@ -81,6 +81,7 @@ const Header: React.FC<any> = ({
     const userObj: any = getCookie("user");
     let user = null;
     if (userObj) user = JSON.parse(userObj);
+    console.log(user, "mnfdss");
 
     if (user?.fullName) {
       setName(user.fullName);
@@ -165,13 +166,13 @@ const Header: React.FC<any> = ({
       <HeaderContainer ref={headerRef}>
         <div
           style={{
-            height: "10px",
-            width: "59px",
-            background: "#FFFFFF",
-            position: "absolute",
-            top: "58px",
+             height: "10px",
+             width: "59px",
+             background: "#FFFFFF",
+             position: "absolute",
+             top: "58px",
             zIndex: "9999999",
-            //   opacity: "1",
+           //   opacity: "1",
             // width: "59px",
             // background: "#FFFFFF",
             // position: "absolute",

@@ -189,21 +189,6 @@ export const CustomSearchField = styled(TextField)({
   },
 });
 
-export const FilterIndication = styled("span")({
-  height: "8px",
-  width: "8px",
-  backgroundColor: "#FF843F",
-  borderRadius: "50%",
-  display: "inline-block",
-  marginTop: "-16px",
-  marginLeft: "-6px",
-});
-
-export const FunnelIcon = styled(Image)({
-  cursor: "pointer",
-  marginLeft: "16px",
-});
-
 export const SearchAreaContainer = styled("div")({
   display: "flex",
   justifyContent: "space-between",

@@ -15,8 +15,8 @@ const CalenderICon = (props: any) => {
   return (
     <>
       <svg
-        width="24"
-        height="24"
+        width="16"
+        height="18"
         viewBox="0 0 16 18"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -97,9 +97,9 @@ const CustomCalender = (props: any) => {
     hideTextField = false,
     disablePast = false,
     config,
-    dataTestId,
   } = props;
 
+  console.log("dacta", data, config, hideTextField, disablePast);
   const [value, setValue] = React.useState<Dayjs | null>(
     dayjs(data?.defaultValue) || null
   );
@@ -110,11 +110,12 @@ const CustomCalender = (props: any) => {
     <CalenderICon ref={ref} />
   ));
 
+  console.log("date-data", data);
+
   return (
-    <div data-testid={`custom-calender-parent-${dataTestId}`}>
+    <div data-testid="custom-calender-parent">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CustomDatePicker
-          data-testid={dataTestId}
           className={` ${data?.isError ? "formErrorField" : ""} formField`}
           components={{
             OpenPickerIcon: calenderIcon,
@@ -153,7 +154,7 @@ const CustomCalender = (props: any) => {
                   />
                 )
           }
-          // data-testid={dataTestId}
+          data-testid="date-picker"
         />
       </LocalizationProvider>
     </div>

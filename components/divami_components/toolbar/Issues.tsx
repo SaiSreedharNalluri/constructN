@@ -97,6 +97,7 @@ const Issues = ({
         document.body
     ).then(function (canvas) {
       canvas.toBlob((blob) => {
+        console.log(blob, "blob");
         setImage(blob as Blob);
       }, "image/png");
     });
@@ -327,9 +328,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => { }}
+            handleOnSort={() => {}}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => { }}
+            clickIssueEditSubmit={() => {}}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}
@@ -348,7 +349,6 @@ const Issues = ({
       )}
       {openCreateIssue && (
         <CustomDrawer>
-          {console.log(myProject, currentStructure, contextInfo, issueStatusList, "siva")}
           <CreateIssue
             handleCreateTask={handleCreateTask}
             currentProject={myProject}

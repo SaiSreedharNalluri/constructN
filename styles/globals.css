@@ -23,7 +23,8 @@
 }
 
 .calc-h {
-  height: calc(100vh - 40px);
+  height: 100vh;
+  /* height: calc(100vh - 40px); */
   /* height: calc(100vh - 116px); */
 }
 
@@ -473,6 +474,10 @@ mapboxgl-popup-close-button {
   right: 5px !important;
 }
 
+#minimap .adsk-viewing-viewer {
+  border-radius: 8px !important;
+}
+
 .compare-details {
   top: 10%;
   left: 2.5%;
@@ -519,14 +524,4 @@ td {
 
 .form-container-child > div:first-child {
   margin-top: 20px;
-}
-.calc-width-full {
-  width: 100%;
-}
-.calc-height-full {
-  height: 100vh;
-}
-
-.margin-right-55 {
-  margin-right: 55px;
 }

@@ -235,6 +235,7 @@ const TaskFilterCommon: React.FC<any> = ({
   }, []);
   useEffect(() => {
     SetFilterState((prev: any) => {
+      console.log("prev", prev);
       return prev.map((item: any) => {
         if (item.code === "taskType") {
           let selectAllStatus = "F";
@@ -359,15 +360,14 @@ const TaskFilterCommon: React.FC<any> = ({
       });
     });
   }, [taskTypes, taskStatuss, projectUserss, taskPrioritys]);
-
-  // if (projectUserss?.length > 0) {
-  //   projectUserss?.map((projectUser: any) => {
-  //     // usersList.push({
-  //     //   _id: projectUser?.user?._id,
-  //     //   name: projectUser?.user?.fullName,
-  //     // });
-  //   });
-  // }
+  if (projectUserss?.length > 0) {
+    projectUserss?.map((projectUser: any) => {
+      // usersList.push({
+      //   _id: projectUser?.user?._id,
+      //   name: projectUser?.user?.fullName,
+      // });
+    });
+  }
 
   const [FilterState, SetFilterState] = useState<any>(Filters);
   const [optionState, setOptionState] = useState<any>("clash");
@@ -410,6 +410,7 @@ const TaskFilterCommon: React.FC<any> = ({
       };
     });
     SetFilterState(temp);
+    console.log(temp);
   };
 
   const handleOptionSelection = (item: any, index: any) => {
@@ -441,6 +442,7 @@ const TaskFilterCommon: React.FC<any> = ({
       });
       setOptionState(item.optionTitle);
       SetFilterState(temp);
+      console.log(temp);
     } else {
       let temp = FilterState?.map((each: any, serial: number) => {
         if (serial === index) {
@@ -468,10 +470,12 @@ const TaskFilterCommon: React.FC<any> = ({
       });
       setOptionState(item.optionTitle);
       SetFilterState(temp);
+      console.log(temp);
     }
   };
 
   const onFilterApply = () => {
+    console.log(FilterState);
     let data: any = {};
     data.taskType = [];
     data.taskPriority = [];
@@ -503,6 +507,7 @@ const TaskFilterCommon: React.FC<any> = ({
     });
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
+    console.log(data);
     handleOnFilter(data);
   };
   useEffect(() => {
@@ -569,6 +574,7 @@ const TaskFilterCommon: React.FC<any> = ({
   };
 
   const formHandler = (event: any) => {
+    console.log("sdf");
     if (event === "Cancel") {
       handleClose();
     } else {
@@ -593,7 +599,6 @@ const TaskFilterCommon: React.FC<any> = ({
                   onClick={() => {
                     onReset();
                   }}
-                  data-testid="filter-refresh"
                 />
                 {/* <Image
                   src={ResetIcon}
@@ -634,8 +639,7 @@ const TaskFilterCommon: React.FC<any> = ({
                         handleAllSelection(each, index);
                       }}
                       src={Checked}
-                      alt="checked checkbox"
-                      data-testid="filter-select-all"
+                      alt="reset"
                     />
                     <FilterCardSelectAllText>
                       Select All
@@ -648,8 +652,7 @@ const TaskFilterCommon: React.FC<any> = ({
                         handleAllSelection(each, index);
                       }}
                       src={UnChecked}
-                      alt="unchecked checkbox"
-                      data-testid="filter-select-all"
+                      alt="reset"
                     />
                     <FilterCardSelectAllText>
                       Select All
@@ -663,7 +666,6 @@ const TaskFilterCommon: React.FC<any> = ({
                       }}
                       src={Indeterminate}
                       alt="reset"
-                      data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllText>
                       Select All
@@ -684,8 +686,7 @@ const TaskFilterCommon: React.FC<any> = ({
                               handleOptionSelection(item, index);
                             }}
                             src={Checked}
-                            alt="checked checkbox"
-                            data-testid="filter-select-each"
+                            alt="reset"
                           />
                         ) : item?.optionStatus === "F" ? (
                           <Image
@@ -693,8 +694,7 @@ const TaskFilterCommon: React.FC<any> = ({
                               handleOptionSelection(item, index);
                             }}
                             src={UnChecked}
-                            alt="unchecked checkbox"
-                            data-testid="filter-select-each"
+                            alt=""
                           />
                         ) : (
                           ""
@@ -831,13 +831,11 @@ const TaskFilterCommon: React.FC<any> = ({
             type="outlined"
             label="Cancel"
             formHandler={formHandler}
-            dataTestid="filter-cancel"
           />
           <CustomButton
             type="contained"
             formHandler={formHandler}
             label="Apply"
-            dataTestid="filter-apply"
           />
         </ButtonsContainer>
       </FilterFooter>

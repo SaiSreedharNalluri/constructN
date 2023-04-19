@@ -69,9 +69,9 @@ interface IProps {
   issueFilterState: any;
 }
 
-// const Footer = () => {
-//   return <>Footer</>;
-// };
+const Footer = () => {
+  return <>Footer</>;
+};
 
 const FilterCommon: React.FC<IProps> = ({
   visibility,
@@ -85,33 +85,6 @@ const FilterCommon: React.FC<IProps> = ({
   onClose,
   issueFilterState,
 }) => {
-  useEffect(() => {
-    console.log(
-      visibility,
-      closeOverlay,
-      issuesList,
-      handleOnFilter,
-      handleOnSort,
-      closeFilterOverlay,
-      deleteTheIssue,
-      clickIssueEditSubmit,
-      onClose,
-      issueFilterState,
-      "ut"
-    );
-  }, [
-    visibility,
-    closeOverlay,
-    issuesList,
-    handleOnFilter,
-    handleOnSort,
-    closeFilterOverlay,
-    deleteTheIssue,
-    clickIssueEditSubmit,
-    onClose,
-    issueFilterState,
-  ]);
-
   const Filters = [
     {
       title: "Issue Type",
@@ -172,8 +145,8 @@ const FilterCommon: React.FC<IProps> = ({
   // const handleClose = () => {
   //   onClose(true);
   // };
-
   const onFilterApply = () => {
+    console.log(FilterState);
     let data: any = {};
     data.issueTypeData = [];
     data.issuePriorityData = [];
@@ -206,9 +179,11 @@ const FilterCommon: React.FC<IProps> = ({
     });
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
+    console.log(data);
     handleOnFilter(data);
   };
   const formHandler = (event: any) => {
+    console.log("sdf");
     if (event === "Cancel") {
       handleClose();
     } else {
@@ -221,23 +196,27 @@ const FilterCommon: React.FC<IProps> = ({
       getIssuesTypes(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskType(response.result);
+          console.log(taskType);
         }
       });
       getIssuesPriority(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskPriority(response.result);
+          console.log(taskPriority);
         }
       });
       getProjectUsers(router.query.projectId as string)
         .then((response) => {
           if (response.success === true) {
             setProjectUsers(response.result);
+            console.log(projectUsers);
           }
         })
         .catch();
       getIssuesStatus(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskStatus(response.result);
+          console.log(taskStatus);
         }
       });
     }
@@ -379,7 +358,6 @@ const FilterCommon: React.FC<IProps> = ({
       },
     ]);
   }, [taskType, taskStatus, projectUsers, taskPriority]);
-
   // Select All Handling
   const handleAllSelection = (item: any, index: number) => {
     let temp = FilterState.map((item: any, serial: any) => {
@@ -418,7 +396,6 @@ const FilterCommon: React.FC<IProps> = ({
   };
 
   const handleOptionSelection = (item: any, index: any) => {
-    console.log(item, index, "siva");
     let tempOption;
     if (item?.optionStatus === "T") {
       let temp = FilterState?.map((each: any, serial: number) => {
@@ -553,16 +530,14 @@ const FilterCommon: React.FC<IProps> = ({
     closeFilterOverlay();
     handleClose();
   };
-  console.log("issuesListfooter", issuesList, FilterState);
+  // console.log("issuesListfooter",issuesList)
   return (
     <FilterCommonMain>
       <FilterCommonHeader>
         <HeaderContainer>
           <TitleContainer>
             <HeaderLeftSection>
-              <HeaderLeftSectionText data-testid="filter-title">
-                Filters
-              </HeaderLeftSectionText>
+              <HeaderLeftSectionText>Filters</HeaderLeftSectionText>
             </HeaderLeftSection>
             <HeaderRightSection>
               <HeaderRightSectionResetIcon>
@@ -572,7 +547,6 @@ const FilterCommon: React.FC<IProps> = ({
                   onClick={() => {
                     onReset();
                   }}
-                  data-testid="filter-refresh"
                 />
                 {/* <Image
                   src={ResetIcon}
@@ -613,8 +587,7 @@ const FilterCommon: React.FC<IProps> = ({
                         handleAllSelection(each, index);
                       }}
                       src={Checked}
-                      alt="checked checkbox"
-                      data-testid="filter-select-all"
+                      alt="reset"
                     />
                     <FilterCardSelectAllText>
                       Select All
@@ -627,8 +600,7 @@ const FilterCommon: React.FC<IProps> = ({
                         handleAllSelection(each, index);
                       }}
                       src={UnChecked}
-                      alt="unchecked checkbox"
-                      data-testid="filter-select-all"
+                      alt="reset"
                     />
                     <FilterCardSelectAllText>
                       Select All
@@ -642,7 +614,6 @@ const FilterCommon: React.FC<IProps> = ({
                       }}
                       src={Indeterminate}
                       alt="reset"
-                      data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllText>
                       Select All
@@ -663,8 +634,7 @@ const FilterCommon: React.FC<IProps> = ({
                               handleOptionSelection(item, index);
                             }}
                             src={Checked}
-                            alt="checked checkbox"
-                            data-testid="filter-select-each"
+                            alt="reset"
                           />
                         ) : item?.optionStatus === "F" ? (
                           <Image
@@ -672,8 +642,7 @@ const FilterCommon: React.FC<IProps> = ({
                               handleOptionSelection(item, index);
                             }}
                             src={UnChecked}
-                            alt="unchecked checkbox"
-                            data-testid="filter-select-each"
+                            alt=""
                           />
                         ) : (
                           ""
@@ -810,13 +779,11 @@ const FilterCommon: React.FC<IProps> = ({
             type="outlined"
             label="Cancel"
             formHandler={formHandler}
-            dataTestid="filter-cancel"
           />
           <CustomButton
             type="contained"
             label="Apply"
             formHandler={formHandler}
-            dataTestid="filter-apply"
           />
         </ButtonsContainer>
       </FilterFooter>
@@ -825,3 +792,4 @@ const FilterCommon: React.FC<IProps> = ({
 };
 
 export default FilterCommon;
+// export default Body

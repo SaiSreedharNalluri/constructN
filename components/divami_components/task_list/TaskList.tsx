@@ -71,8 +71,6 @@ import {
   ThirdHeader,
   TitleContainer,
   LoadMoreText,
-  FilterIndication,
-  FunnelIcon
 } from "./TaskListStyles";
 import {
   Box,
@@ -210,6 +208,8 @@ const CustomTaskListDrawer = (props: any) => {
 
   const handleSortMenuClick = (sortMethod: string) =>
     handleOnTasksSort(sortMethod);
+
+  console.log(tasksList, taskList, filteredTaskList, "fsfsdf");
 
   const handleViewTaskList = () => {
     setOpenDrawer(true);
@@ -406,7 +406,7 @@ const CustomTaskListDrawer = (props: any) => {
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
                   <DividerIcon src={DividerSvg} alt="" />
-                  {/* {taskFilterState.isFilterApplied ? (
+                  {taskFilterState.isFilterApplied ? (
                     <AppliedFilter>
                       {taskFilterState.numberOfFilters} Filters{" "}
                       <FilterIcon
@@ -417,7 +417,7 @@ const CustomTaskListDrawer = (props: any) => {
                         }}
                       />
                     </AppliedFilter>
-                  ) : null} */}
+                  ) : null}
                   <Tooltip title="Sort Menu">
                     <IconContainer
                       src={sort}
@@ -454,7 +454,7 @@ const CustomTaskListDrawer = (props: any) => {
 
                   <SecondDividerIcon src={DividerSvg} alt="" />
 
-                  {/* {!taskFilterState.isFilterApplied ? (
+                  {!taskFilterState.isFilterApplied ? (
                     <IconContainer
                       src={FilterInActive}
                       alt="Arrow"
@@ -463,17 +463,6 @@ const CustomTaskListDrawer = (props: any) => {
                       }}
                       data-testid="filter"
                     />
-                  ) : null} */}
-                  <FunnelIcon
-                    src={FilterInActive}
-                    alt="Arrow"
-                    onClick={() => {
-                      handleViewTaskList();
-                    }}
-                    data-testid="filter"
-                  />
-                  {taskFilterState.isFilterApplied ? (
-                    <FilterIndication />
                   ) : null}
                   {/* <Tooltip title="Download Menu">
                     <DownloadIcon
@@ -590,7 +579,6 @@ const CustomTaskListDrawer = (props: any) => {
                 contextInfo={contextInfo}
                 getTasks={getTasks}
                 deleteTheAttachment={deleteTheAttachment}
-                setTaskList={setTaskList}
               />
             </Drawer>
           )}
@@ -625,7 +613,7 @@ const CustomTaskListDrawer = (props: any) => {
             onClick={() => {
               onClose();
               openTaskCreateFn();
-              toast.success("Click on the map where you want to create a task");
+              toast("Click on the map where you want to create a task");
             }}
           >
             Raise Task

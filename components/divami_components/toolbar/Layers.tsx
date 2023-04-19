@@ -17,12 +17,6 @@ import {
   ContainerDiv,
 } from "./ToolBarStyles";
 
-export interface ShowImageDisplay {
-  item1: boolean;
-  item2: boolean;
-  item3: boolean;
-}
-
 const Layers = ({
   rightMenuClickHandler,
   myLayersList,
@@ -36,11 +30,6 @@ const Layers = ({
   layersUpdated,
 }: any) => {
   const [layersLabels, setLayersLabels] = useState<any>([]);
-  const [showImageIcon, setShowImageIcon] = useState<ShowImageDisplay>({
-    item1: true,
-    item2: true,
-    item3: true,
-  });
 
   useEffect(() => {
     if (myLayersList) {
@@ -48,23 +37,28 @@ const Layers = ({
     }
   }, [myLayersList]);
 
+  useEffect(() => {
+    console.log(layersLabels, "siva");
+  }, [layersLabels]);
+
   const getLayersIcons = (layersLabels: any) => {
+    console.log(layersLabels, "layersLabels");
     return (
       <>
         {layersLabels.map((label: any, index: number) => {
-          if (label === "Phone Image" && showImageIcon.item1) {
+          if (label === "Phone Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={hexagonIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-          } else if (label === "360 Image" && showImageIcon.item2) {
+          } else if (label === "360 Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={cameraIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-          } else if (label === "Drone Image" && showImageIcon.item2) {
+          } else if (label === "Drone Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={cameraIcon} alt="Arrow" />
@@ -113,7 +107,6 @@ const Layers = ({
             selectedLayersList={selectedLayersList}
             setActiveRealityMap={setActiveRealityMap}
             layersUpdated={layersUpdated}
-            showImageDisplay={showImageIcon}
           />
         </SelectLayersWrapper>
       </ContainerDiv>

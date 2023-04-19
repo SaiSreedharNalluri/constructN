@@ -2,7 +2,7 @@ import { autodeskAuth } from "../services/forgeService";
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
 import { applyTM } from "./ViewerDataUtils";
 
-export const ForgeViewerUtils = (function () {
+export const ForgeViewerUtils = function () {
   let _viewerId;
   let _eventHandler;
   let _viewer;
@@ -25,7 +25,7 @@ export const ForgeViewerUtils = (function () {
   let _realityPositionMap = {};
   let _issuesList = [];
   let _tasksList = [];
-  let _showLayersList = [];
+  let _showLayersList = undefined;
   let _showTag = {};
 
   let _context;
@@ -71,45 +71,33 @@ export const ForgeViewerUtils = (function () {
     }
   };
 
-  const initializeOptions = {
-    env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
-    api: "streamingV2", // for models uploaded to EMEA change this option to 'derivativeV2_EU'
-    getAccessToken: async function (onSuccess) {
-      const response = await autodeskAuth();
-      console.log("Autodesk auth token:", response.data.result);
-      const res = response.data.result;
-
-      onSuccess(res.access_token, res.expires_in);
-    },
-  };
-
   const viewerConfig = {
     extensions: ["Autodesk.BimWalk", "Autodesk.DataVisualization"],
   };
 
-  const initializeViewer = (viewerId, eventHandler) => {
+  const setupViewer = (viewerId, eventHandler) => {
     _viewerId = viewerId;
     _eventHandler = eventHandler;
-    const initializerCallBack = () => {
-      console.log("Inside Initializer callback", _eventHandler);
-      let htmlDiv = document.getElementById(_viewerId);
-      _viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv, viewerConfig);
-      setUpEventListeners();
-      let startedCode = _viewer.start();
-      _viewer.canvasId = _viewerId;
-      if (startedCode > 0) {
-        console.error("Failed to create a Viewer: WebGL not supported.");
-        return;
-      }
+  }
 
-      _viewer.navigation.setWorldUpVector(
-        new THREE.Vector3().fromArray([0, 0, 1]),
-        false
-      );
-      _viewer.navigation.setReverseZoomDirection(true);
-    };
+  const initializeViewer = () => {
+    // if(_viewer) return
+    console.log("Inside Initializer callback", _eventHandler);
+    let htmlDiv = document.getElementById(_viewerId);
+    _viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv, viewerConfig);
+    setUpEventListeners();
+    let startedCode = _viewer.start();
+    _viewer.canvasId = _viewerId;
+    if (startedCode > 0) {
+      console.error("Failed to create a Viewer: WebGL not supported.");
+      return;
+    }
 
-    Autodesk.Viewing.Initializer(initializeOptions, initializerCallBack);
+    _viewer.navigation.setWorldUpVector(
+      new THREE.Vector3().fromArray([0, 0, 1]),
+      false
+    );
+    _viewer.navigation.setReverseZoomDirection(true);
   };
 
   const setStructure = (structure) => {
@@ -406,7 +394,7 @@ export const ForgeViewerUtils = (function () {
           let imageObject = {
             imagePosition: targetObject.position,
             imageRotation: targetObject.rotation,
-            imageName: targetObject.id,
+            imageName: targetObject.imageName,
           };
           contextObject = {
             id: targetObject.id,
@@ -447,6 +435,8 @@ export const ForgeViewerUtils = (function () {
         setForgeControls(context.type);
         break;
       case "360 Video":
+        setNavigation(context);
+        setForgeControls(context.type);
         // goToImageContext(context);
         break;
       case "tag":
@@ -498,7 +488,7 @@ export const ForgeViewerUtils = (function () {
       y: target.y + offset[1],
       z: target.z + offset[2],
     };
-    return { cameraPosition, cameraTarget };
+    return { cameraPosition, cameraTarget, yaw: state.up[0] };
   };
 
   const getViewerState = () => {
@@ -508,7 +498,7 @@ export const ForgeViewerUtils = (function () {
       );
       const state = _viewer.getState({ viewport: true }).viewport;
       let viewerState = {
-        position: [state.eye[0], state.eye[1], state.eye[2]],
+        position: [state.eye[0], state.eye[1], state.eye[1]],
         target: new THREE.Vector3().fromArray(state.target),
         fov: state.fieldOfView,
       };
@@ -555,10 +545,10 @@ export const ForgeViewerUtils = (function () {
   };
 
   const setForgeControls = (type) => {
-    if (_bimWalkExtn) {
-      if (type === "panorama" || type === "image") {
+    if (_bimWalkExtn && !_manifestNode.is2D()) {
+      if (type !== "3d") {
         _viewer.navigation.setIsLocked(false);
-        if (isCompareView() && type === "panorama") {
+        if (isCompareView() && (type === "360 Video" || type === "360 Image")) {
           _viewer.navigation.setLockSettings({
             orbit: false,
             pan: false,
@@ -666,7 +656,7 @@ export const ForgeViewerUtils = (function () {
 
   const onCameraChangeEvent = (event) => {
     // console.log("On Camera change event: ", event, typeof(_eventHandler), _viewer);
-    _eventHandler(_viewerId, { type: "sync" });
+    _eventHandler(_viewerId, { type: "sync", context: getContext() });
   };
 
   // const onClickEventOnContainer = (ev) => {
@@ -767,7 +757,10 @@ export const ForgeViewerUtils = (function () {
     // console.log("Model Before Removed: ", this.model);
     if (_isViewerInitialized) {
       removeLayers();
-      _viewer.unloadModel(_model);
+      try{
+        _viewer.tearDown();
+        // _viewer.unloadModel(_model);
+      } catch(e) {}
     }
   };
 
@@ -782,7 +775,9 @@ export const ForgeViewerUtils = (function () {
     if (_isViewerInitialized) {
       removeData();
       removeEventListeners();
-      _viewer.tearDown();
+      try{
+        _viewer.tearDown();
+      }catch(e) {}
       _viewer.uninitialize();
       _dataVizExtn = undefined;
       _dataVizUtils = undefined;
@@ -792,6 +787,7 @@ export const ForgeViewerUtils = (function () {
   };
 
   return {
+    setupViewer: setupViewer,
     initializeViewer: initializeViewer,
     setType: setType,
     setStructure: setStructure,
@@ -814,7 +810,7 @@ export const ForgeViewerUtils = (function () {
     removeLayers: removeLayers,
     shutdown: shutdown,
   };
-})();
+};
 
 const getContextLocalFromGlobal = (context, globalOffset) => {
   // console.log("Global offset: ", context);

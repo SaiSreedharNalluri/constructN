@@ -43,8 +43,8 @@ const StyledTextField = styled(TextField)({
   //   borderWidth:0
   // }
   "& .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root": {
-    height: "40px !important",
-    "& fieldset": { border: "1px solid #36415d !important" },
+    height: "40px",
+    "& fieldset": { border: "1px solid #36415d" },
   },
   "&:focus-within fieldset": {
     border: "1px solid #ff843f !important",
@@ -70,27 +70,9 @@ export const CustomTextField = (props: PropTypes) => {
   return (
     <div>
       <StyledTextField
-        sx={{
-          "& .MuiInputBase-input": {
-            fontSize: "14px",
-            lineHeight: "20px",
-            fontFamily: "Open Sans",
-            color: "#101F4C",
-            fontWeight: "400",
-            "&::placeholder": {
-              color: "#787878",
-
-              fontFamily: "Open Sans",
-              fontSize: "14px",
-              lineHeight: "20px",
-              fontWeight: "400",
-            },
-          },
-        }}
         id={id}
         className={` ${isError ? "formErrorField" : ""} formField`}
-        placeholder={placeholder}
-        // placeholder="Enter Issue..."
+        // placeholder={placeholder}
         defaultValue={defaultValue}
         value={defaultValue}
         data-testid={dataTestId}

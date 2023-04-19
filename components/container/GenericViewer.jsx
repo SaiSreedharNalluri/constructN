@@ -1,12 +1,15 @@
 import Script from 'next/script';
 import Moment from 'moment';
+import {Rnd } from 'react-rnd';
 import { Mixpanel } from '../analytics/mixpanel';
 import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
-import Draggable, {DraggableCore} from "react-draggable";
+import Draggable, { DraggableCore } from "react-draggable";
 import Head from 'next/head';
 import Header from './header';
+import { autodeskAuth } from "../../services/forgeService";
+import { MinimapUtils } from '../../utils/MinimapWrapper';
 import { ForgeViewerUtils } from '../../utils/ForgeWrapper2';
-import { PotreeViewerUtils } from '../../utils/PotreeWrapper';
+import { PotreeViewerUtils } from '../../utils/PotreeWrapper2';
 import { MapboxViewerUtils } from '../../utils/MapboxWrapper';
 import {
   getPointCloudTM,
@@ -19,12 +22,14 @@ import { getRealityPath, getDesignPath } from '../../utils/S3Utils';
 import { getStructureDesigns, getDesignTM } from '../../services/design';
 import DatePicker from './datePicker';
 import Pagination from './pagination';
+import MiniMap from './minimap';
 import ForgeViewer from './forgeViewer';
 import PotreeViewer from './potreeViewer';
 import MapboxViewer from './mapboxViewer';
 import {
   getForgeModels,
   getPointCloud,
+  getPointClouds,
   getPointCloudReality,
   getRealityLayers,
   getRealityLayersPath,
@@ -32,6 +37,10 @@ import {
   getMapboxLayers, getMapboxHotspots,
   getRealityMap, getFloorPlanData,
 } from "../../utils/ViewerDataUtils";
+import RemoveIcon from '@mui/icons-material/Remove';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import PictureInPictureIcon from '@mui/icons-material/PictureInPicture';
+import { IconButton } from '@mui/material';
 import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
 import TimeLineComponent from '../divami_components/timeline-container/TimeLineComponent'
 import Hotspots from './hotspots';
@@ -44,8 +53,8 @@ function GenericViewer(props) {
   const compareViewerRef = useRef();
   const [fullScreenMode, setFullScreenMode] = useState(props.isFullScreen)
   let structure = props.structure;
-  let isFullScreenActive=props.isFullScreenActive;
-  
+  let isFullScreenActive = props.isFullScreenActive;
+
   let currentStructure = useRef();
 
   let [designList, setDesignList] = useState([]);
@@ -78,6 +87,7 @@ function GenericViewer(props) {
 
   let viewLayers = props.viewLayers;
 
+  let [showMinimap, setShowMinimap] = useState(false);
   let [isCompare, setIsCompare] = useState(false);
   let currentIsCompare = useRef(isCompare);
   let [compareViewMode, setCompareViewMode] = useState({});
@@ -87,6 +97,8 @@ function GenericViewer(props) {
   let activeTool = useRef(tool);
   let pushToolResponse = props.toolRes;
 
+  let minimapUtils = useRef();
+  let minimapCompareUtils = useRef();
   let forgeUtils = useRef();
   let potreeUtils = useRef();
   let mapboxUtils = useRef();
@@ -94,6 +106,9 @@ function GenericViewer(props) {
   let potreeCompareUtils = useRef();
   let forgeCompareUtils = useRef();
   let mapboxCompareUtils = useRef();
+
+  let _minimap;
+  let _minimapCompare;
 
   let [context, setContext] = useState({});
   let currentContext = useRef();
@@ -117,10 +132,29 @@ function GenericViewer(props) {
   let [selectedHotspot, setSelectedHotspot] = useState(0);
   let [selectedHotspotDetails, setSelectedHotspotDetails] = useState();
   let [selectedHotspotCompareDetails, setSelectedHotspotCompareDetails] = useState();
-
+  let [forgeInitialised, setForgeInitialised] = useState(false);
   let [currentViewer, setCurrentViewer] = useState('Forge');
 
   let [isMarkerMode, setMarkerMode] = useState(false);
+
+  const initializeOptions = {
+    env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
+    api: "streamingV2", // for models uploaded to EMEA change this option to 'derivativeV2_EU'
+    getAccessToken: async function (onSuccess) {
+      const response = await autodeskAuth();
+      // console.log("Autodesk auth token:", response.data.result);
+      const res = response.data.result;
+
+      onSuccess(res.access_token, res.expires_in);
+    },
+  };
+
+  const initializerCallBack = () => {
+    // console.log("Inside Forge Initializer");
+    setForgeInitialised(true)
+  };
+
+  Autodesk.Viewing.Initializer(initializeOptions, initializerCallBack);
 
   useEffect(()=>{
     setFullScreenMode(props.isFullScreen)
@@ -129,17 +163,17 @@ function GenericViewer(props) {
     switch (viewMode) {
       case 'Design':
         return 'Forge';
-      break;
+        break;
       case 'Reality':
         return 'Potree';
-      break;
+        break;
     }
   }
 
   const getViewerTypeFromViewType = () => {
     switch (viewType) {
       case 'pointCloud':
-        if(currentViewMode.current == 'Design') {
+        if (currentViewMode.current == 'Design') {
           currentViewMode.current = 'Reality'
           pushToolResponse({
             toolName: 'viewMode',
@@ -147,9 +181,9 @@ function GenericViewer(props) {
           });
         }
         return 'Potree';
-      break;
+        break;
       case 'orthoPhoto':
-        if(currentViewMode.current == 'Design') {
+        if (currentViewMode.current == 'Design') {
           currentViewMode.current = 'Reality'
           pushToolResponse({
             toolName: 'viewMode',
@@ -157,9 +191,9 @@ function GenericViewer(props) {
           });
         }
         return 'Mapbox';
-      break;
+        break;
       default:
-        if(currentViewMode.current == 'Reality') {
+        if (currentViewMode.current == 'Reality') {
           currentViewMode.current = 'Design'
           pushToolResponse({
             toolName: 'viewMode',
@@ -187,6 +221,7 @@ function GenericViewer(props) {
 
     if (realityList.length > 0) {
       loadLayerData();
+      // loadMinimapLayerData();
     }
   }
 
@@ -203,11 +238,21 @@ function GenericViewer(props) {
   }
 
   function handleRealityTypeChange() {
+    if (minimapUtils.current) {
+      viewLayers && minimapUtils.current.showLayers(Object.values(viewLayers).map(v => {
+        if (v.isSelected) return v.name
+      }));
+    }
+    if (isCompare && minimapCompareUtils.current) {
+      viewLayers && minimapCompareUtils.current.showLayers(Object.values(viewLayers).map(v => {
+        if (v.isSelected) return v.name
+      }));
+    }
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current) {
           viewLayers && forgeUtils.current.showLayers(Object.values(viewLayers).map(v => {
-            if(v.isSelected) return v.name
+            if (v.isSelected) return v.name
           }));
         }
         break;
@@ -266,13 +311,13 @@ function GenericViewer(props) {
         break;
       case 'closeCompare':
         setIsCompare(false);
-        if(mapboxUtils.current && mapboxUtils.current.getMap()) {
-          setTimeout(() =>{
-            if(mapboxUtils.current){
+        if (mapboxUtils.current && mapboxUtils.current.getMap()) {
+          setTimeout(() => {
+            if (mapboxUtils.current) {
               mapboxUtils.current.resize()
             }
           },
-           100)
+            100)
         }
         break;
       default:
@@ -331,6 +376,13 @@ function GenericViewer(props) {
   };
 
   const showTag = (tag, show) => {
+    if (minimapUtils.current) {
+      minimapUtils.current.showTag(tag, show);
+    }
+
+    if (isCompare && minimapCompareUtils.current) {
+      minimapCompareUtils.current.showTag(tag, show);
+    }
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -353,6 +405,7 @@ function GenericViewer(props) {
   const animationNow = () => {
     // console.log("Inside Animate now: ")
     syncViewer();
+    // getContext();
     animationRequestId = requestAnimationFrame(animationNow);
     if (potreeUtils.current) {
       potreeUtils.current.updateFloormapAnimation();
@@ -365,6 +418,24 @@ function GenericViewer(props) {
 
   const syncViewer = () => {
     // console.log("Inside sync viewer: ", isMouseOnMainViewer.current, syncPotreeEvent, syncForgeEvent)
+    if(minimapUtils.current) {
+      let minimapState;
+      if(currentViewerType.current === 'Potree' && potreeUtils.current) {
+        minimapState = potreeUtils.current.getContext();
+      } else if(currentViewerType.current === 'Forge' && forgeUtils.current) {
+        minimapState = forgeUtils.current.getContext();
+      }
+      minimapUtils.current.updateViewerState(minimapState)
+    }
+
+    if(minimapCompareUtils.current) {
+      let minimapState;
+      if(potreeUtils.current) {
+        minimapState = potreeUtils.current.getContext();
+      }
+      minimapCompareUtils.current.updateViewerState(minimapState)
+    }
+
     if (currentIsCompare.current == true) {
       if (isMouseOnMainViewer.current == true) {
         if (currentCompareViewMode.current === 'Potree') {
@@ -377,6 +448,7 @@ function GenericViewer(props) {
             let viewerState = potreeUtils.current.getViewerState();
             potreeCompareUtils.current.updateViewerState(viewerState);
           }
+          syncPotreeEvent.current = false;
         } else if (syncPotreeEvent.current) {
           // }else {
           // get from potree utils
@@ -387,6 +459,7 @@ function GenericViewer(props) {
           ) {
             let viewerState = potreeUtils.current.getViewerState();
             forgeCompareUtils.current.updateViewerState(viewerState);
+            syncForgeEvent.current = false;
           }
         }
       } else {
@@ -399,6 +472,7 @@ function GenericViewer(props) {
           ) {
             let viewerState = potreeCompareUtils.current.getViewerState();
             potreeUtils.current.updateViewerState(viewerState);
+            syncPotreeEvent.current = false;
           }
         } else if (syncForgeEvent.current) {
           // } else {
@@ -413,16 +487,33 @@ function GenericViewer(props) {
             if (viewerState) {
               potreeUtils.current.updateViewerState(viewerState);
             }
+            syncForgeEvent.current = false;
           }
         }
       }
-      syncPotreeEvent.current = false;
-      syncForgeEvent.current = false;
+      // syncPotreeEvent.current = false;
+      // syncForgeEvent.current = false;
     }
   };
 
   const handleTagListChange = (type) => {
     console.log('Inside taglist change: ', type, issuesList, tasksList);
+    if (minimapUtils.current) {
+      if (type === 'Issue') {
+        minimapUtils.current.updateIssuesData(issuesList);
+      } else if (type === 'Task') {
+        minimapUtils.current.updateTasksData(tasksList);
+      }
+    }
+
+    if (isCompare && minimapCompareUtils.current) {
+      if (type === 'Issue') {
+        minimapCompareUtils.current.updateIssuesData(issuesList);
+      } else if (type === 'Task') {
+        minimapCompareUtils.current.updateTasksData(tasksList);
+      }
+    }
+
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -455,12 +546,49 @@ function GenericViewer(props) {
   };
 
   const viewerEventHandler = (viewerId, event) => {
-    // console.log("Inside generic viewer: ", event, );
+    // console.log("Inside generic viewer: ", event);
     if (event) {
       switch (event.type) {
+        case 'Drone Image':
+        case 'Phone Image':
+        case '360 Image':
         case '360 Video':
           currentContext.current = event;
-          if (currentViewerType.current == 'Forge') {
+          const isMinimap = viewerId.indexOf('minimap') > -1;
+          if(isMinimap) {
+            if (isMinimapCompareViewer(viewerId)) {
+              if (currentCompareViewMode.current === 'Potree') {
+                potreeCompareUtils.current.updateContext(event, true);
+              } else {
+                potreeUtils.current.updateContext(event, true);
+                // forgeCompareUtils.current.updateContext(event, true);
+              }
+            } else {
+              if (currentViewerType.current == 'Forge') {
+                pushToolResponse({
+                  toolName: 'viewMode',
+                  toolAction: 'Reality',
+                });
+                setViewerType('Potree');
+              }
+              else {
+                potreeUtils.current.updateContext(event, true);
+              }
+            }
+            return;
+          }
+            
+          if (currentIsCompare.current == true) {
+            if (isCompareViewer(viewerId)) {
+              potreeUtils.current.updateContext(event, false);
+            } else {
+              if (currentCompareViewMode.current === 'Potree') {
+                potreeCompareUtils.current.updateContext(event, false);
+              } else {
+                forgeCompareUtils.current.updateContext(event, false);
+              }
+            }
+          } else if (currentViewerType.current == 'Forge') {
             pushToolResponse({
               toolName: 'viewMode',
               toolAction: 'Reality',
@@ -468,13 +596,9 @@ function GenericViewer(props) {
             setViewerType('Potree');
             // setViewMode('Reality');
           } else if (currentViewerType.current == 'Mapbox') {
-            // pushToolResponse({
-            //   toolName: 'viewMode',
-            //   toolAction: 'Design',
-            // });
-            // setViewMode('Design');
-          } else {
-
+            
+          } else if (currentViewerType.current == 'Potree') {
+            
           }
           break;
         case 'Reality':
@@ -508,12 +632,19 @@ function GenericViewer(props) {
           }
           break;
         case 'sync':
-          console.log("Inside sync event: ", currentIsCompare.current, isRealityViewer(viewerId))
+          // console.log("Inside sync event: ", currentIsCompare.current, isRealityViewer(viewerId))
           if (currentIsCompare.current == true) {
             if (isRealityViewer(viewerId)) {
               syncPotreeEvent.current = true;
             } else {
               syncForgeEvent.current = true;
+            }
+          }
+
+          if(currentViewerType.current === 'Forge') {
+            let con = event.context;
+            if(con && minimapUtils.current) {
+              minimapUtils.current.updateViewerState(con)
             }
           }
           break;
@@ -524,6 +655,7 @@ function GenericViewer(props) {
           }
           break;
         case 'mouse':
+          // console.log("Potree Sync event handler: ", viewerId);
           if (currentIsCompare.current === true) {
             if (isCompareViewer(viewerId)) {
               isMouseOnMainViewer.current = false;
@@ -536,31 +668,47 @@ function GenericViewer(props) {
     }
   };
 
+  const initMinimap = (viewerId) => {
+    if (minimapUtils.current == undefined) {
+      minimapUtils.current = MinimapUtils();
+      minimapUtils.current.setupViewer(viewerId, viewerEventHandler);
+      if(forgeInitialised) minimapUtils.current.initializeViewer();
+      minimapUtils.current.setType(currentViewType.current);
+    }
+  };
+
+  const initMinimapCompare = (viewerId) => {
+    if (minimapCompareUtils.current == undefined) {
+      minimapCompareUtils.current = MinimapUtils();
+      minimapCompareUtils.current.setupViewer(viewerId, viewerEventHandler);
+      if(forgeInitialised) minimapCompareUtils.current.initializeViewer();
+      minimapCompareUtils.current.setType(currentViewType.current);
+    }
+  };
+
   const initViewer = (viewerId) => {
-    console.log("Generic Viewer Inside init viewer: ", viewerType, currentViewerType.current , forgeUtils, potreeUtils, mapboxUtils);
-    switch (viewerType ) {
+    console.log("Generic Viewer Inside init viewer: ", viewerType, currentViewerType.current, forgeUtils, potreeUtils, mapboxUtils);
+    switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current == undefined) {
-          forgeUtils.current = ForgeViewerUtils;
-          forgeUtils.current.initializeViewer(viewerId, viewerEventHandler);
+          forgeUtils.current = ForgeViewerUtils();
+          forgeUtils.current.setupViewer(viewerId, viewerEventHandler);
+          if(forgeInitialised) forgeUtils.current.initializeViewer()
           forgeUtils.current.setType(currentViewType.current);
         }
         break;
       case 'Potree':
         if (potreeUtils.current == undefined) {
-          potreeUtils.current = new PotreeViewerUtils(
-            viewerId,
-            viewerEventHandler.bind(this)
-          );
+          potreeUtils.current = PotreeViewerUtils();
           if (!potreeUtils.current.isViewerLoaded()) {
-            potreeUtils.current.initialize();
+            potreeUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
         }
         break;
       case 'Mapbox':
         if (mapboxUtils.current == undefined) {
           mapboxUtils.current = MapboxViewerUtils();
-          mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, {context: currentContext.current.cameraObject});
+          mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, { context: currentContext.current.cameraObject });
           mapboxUtils.current.setType(viewType);
         }
         break;
@@ -573,22 +721,17 @@ function GenericViewer(props) {
     switch (compareViewMode) {
       case 'Forge':
         if (forgeCompareUtils.current == undefined) {
-          forgeCompareUtils.current = ForgeViewerUtils;
-          forgeCompareUtils.current.initializeViewer(
-            viewerId,
-            viewerEventHandler
-          );
+          forgeCompareUtils.current = ForgeViewerUtils();
+          forgeCompareUtils.current.setupViewer(viewerId, viewerEventHandler);
+          if(forgeInitialised) forgeCompareUtils.current.initializeViewer()
           forgeCompareUtils.current.setType(currentViewType.current);
         }
         break;
       case 'Potree':
         if (potreeCompareUtils.current == undefined) {
-          potreeCompareUtils.current = new PotreeViewerUtils(
-            viewerId,
-            viewerEventHandler.bind(this)
-          );
+          potreeCompareUtils.current = PotreeViewerUtils();
           if (!potreeCompareUtils.current.isViewerLoaded()) {
-            potreeCompareUtils.current.initialize();
+            potreeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
         }
         break;
@@ -596,11 +739,41 @@ function GenericViewer(props) {
         if (mapboxCompareUtils.current == undefined) {
           mapboxCompareUtils.current = MapboxViewerUtils();
           mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, undefined, mapboxUtils.current.getMap());
-          mapboxCompareUtils.current.setType(viewType);          
+          mapboxCompareUtils.current.setType(viewType);
         }
         break;
     }
   };
+
+  async function loadMinimapData() {
+    if (minimapUtils.current != undefined) {
+      minimapUtils.current.setStructure(structure);
+      if (designList.length > 0) {
+        const forgeModels = getForgeModels(designMap)
+        if(forgeModels && forgeModels['Plan Drawings']) {
+          setShowMinimap(true);
+          minimapUtils.current.updateData(getForgeModels(designMap)); 
+        } else {
+          setShowMinimap(false);
+        }
+      }
+    }
+  }
+
+  async function loadMinimapCompareData() {
+    if (minimapCompareUtils.current != undefined) {
+      minimapCompareUtils.current.setStructure(structure);
+      if (designList.length > 0) {
+        const forgeModels = getForgeModels(designMap)
+        if(forgeModels && forgeModels['Plan Drawings']) {
+          setShowMinimap(true);
+          minimapCompareUtils.current.updateData(getForgeModels(designMap)); 
+        } else {
+          setShowMinimap(false);
+        }
+      }
+    }
+  }
 
   async function loadViewerData() {
     console.log("Generic Viewer Load Viewer Data", viewerType, currentViewType.current, mapboxUtils, potreeUtils, designMap, designMap)
@@ -617,7 +790,7 @@ function GenericViewer(props) {
             });
             setViewerType('Potree');
           }
-          
+
         }
 
         break;
@@ -635,7 +808,30 @@ function GenericViewer(props) {
     }
   }
 
+  async function loadMinimapLayerData() {
+    if (minimapUtils.current != undefined) {
+      minimapUtils.current.setSnapshot(snapshot);
+      minimapUtils.current.updateIssuesData(issuesList);
+      minimapUtils.current.updateTasksData(tasksList);
+      let data = await getRealityLayersPath(structure, realityMap);
+      minimapUtils.current?.updateLayersData(data);
+    }
+    // currentContext.current = undefined;
+  }
+
+  async function loadMinimapCompareLayerData() {
+    if (minimapCompareUtils.current != undefined) {
+      minimapCompareUtils.current.setSnapshot(compareSnapshot);
+      minimapCompareUtils.current.updateIssuesData(issuesList);
+      minimapCompareUtils.current.updateTasksData(tasksList);
+      let data = await getRealityLayersPath(structure, compareRealityMap);
+      minimapCompareUtils.current?.updateLayersData(data);
+    }
+    // currentContext.current = undefined;
+  }
+
   async function loadLayerData() {
+    console.log("Testing View mode Change: Inside loadLayerData: ", realityMap);
     console.log('Generic Viewer Load layer data: ', viewerType, currentViewerType.current, currentContext.current, issuesList, tasksList);
     switch (currentViewerType.current) {
       case 'Forge':
@@ -643,7 +839,7 @@ function GenericViewer(props) {
           forgeUtils.current.setSnapshot(snapshot);
           forgeUtils.current.updateIssuesData(issuesList);
           forgeUtils.current.updateTasksData(tasksList);
-          let data = await getRealityLayers(structure, realityMap);
+          let data = await getRealityLayersPath(structure, realityMap);
           forgeUtils.current?.updateLayersData(data, currentContext.current);
         }
         break;
@@ -653,11 +849,11 @@ function GenericViewer(props) {
           potreeUtils.current.updateIssuesData(issuesList);
           potreeUtils.current.updateTasksData(tasksList);
           potreeUtils.current.updateData(
-            await getPointCloud(structure, snapshot),
+            {},
             getFloorPlanData(designMap)
           );
           potreeUtils.current.updateLayersData(
-            getRealityLayersPath(structure, realityMap),
+            await getRealityLayersPath(structure, realityMap),
             currentContext.current
           );
         }
@@ -669,7 +865,7 @@ function GenericViewer(props) {
           let data = await getMapboxLayers(structure, snapshot);
           const reality = snapshot.reality.find((reality) => { return reality })
           let hotspots = await getMapboxHotspots(project._id, structure._id, snapshot._id, reality._id)
-          if(data) {
+          if (data) {
             const map = getRealityMap(snapshot)
             const stages = {
               name: 'Stages',
@@ -677,7 +873,7 @@ function GenericViewer(props) {
               isSelected: true
             }
             data.forEach((layer) => {
-              if(layer.categories) {
+              if (layer.categories) {
                 layer.categories.forEach((category) => {
                   category.filters.forEach((stage) => {
                     const subLayer = {
@@ -698,10 +894,10 @@ function GenericViewer(props) {
           setTimeout(() => {
             if (mapboxUtils.current != undefined) {
 
-                mapboxUtils.current.updateData(data, currentContext.current);
-                hotspots && hotspots.data && setHotspots(hotspots.data.features);
-                mapboxUtils.current.updateIssuesData(issuesList);
-                mapboxUtils.current.updateTasksData(tasksList);
+              mapboxUtils.current.updateData(data, currentContext.current);
+              hotspots && hotspots.data && setHotspots(hotspots.data.features);
+              mapboxUtils.current.updateIssuesData(issuesList);
+              mapboxUtils.current.updateTasksData(tasksList);
             }
           }, 700);
         }
@@ -745,7 +941,7 @@ function GenericViewer(props) {
       case 'Forge':
         if (forgeCompareUtils.current) {
           forgeCompareUtils.current.setSnapshot(compareSnapshot);
-          let data = await getRealityLayers(structure, compareRealityMap);
+          let data = await getRealityLayersPath(structure, compareRealityMap);
           forgeCompareUtils.current.updateLayersData(
             data,
             currentContext.current
@@ -756,49 +952,49 @@ function GenericViewer(props) {
         if (potreeCompareUtils.current) {
           potreeCompareUtils.current.setSnapshot(compareSnapshot);
           potreeCompareUtils.current.updateData(
-            await getPointCloud(structure, compareSnapshot),
+            {},
             getFloorPlanData(designMap)
           );
           potreeCompareUtils.current.updateLayersData(
-            getRealityLayersPath(structure, compareRealityMap),
+            await getRealityLayersPath(structure, compareRealityMap),
             currentContext.current
           );
         }
         break;
-        case 'Mapbox':
-          if (mapboxCompareUtils.current != undefined) {
-            mapboxCompareUtils.current.setSnapshot(compareSnapshot);
-            mapboxCompareUtils.current.setHotspotClick(selectHotspot);
-            let data = await getMapboxLayers(structure, compareSnapshot);
-            const reality = compareSnapshot.reality.find((reality) => { return reality })
-            let hotspots = await getMapboxHotspots(project._id, structure._id, compareSnapshot._id, reality._id)
-            setTimeout(() => {
-              if (mapboxCompareUtils.current != undefined) {
-                mapboxCompareUtils.current.updateData(data, currentContext.current);
-                hotspots && hotspots.data && (hotspotsCompare = hotspots.data.features);
-                hotspots && hotspots.data && setHotspotsCompare(hotspots.data.features);
-                mapboxCompareUtils.current.updateIssuesData(issuesList);
-                mapboxUtils.current.updateTasksData(tasksList);
-                setTimeout(() => {
-                  
-                  if(viewLayers && viewLayers['Stages']) {
-                    const filters = ['any']
-                    const children = viewLayers['Stages'].children;
-                    for(let i = 0; i < children.length; i++) {
-                      if(children[i].isSelected) {
-                        filters.push(children[i].filters)
-                      }
-                    }
-                
-                    if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
-                      mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
+      case 'Mapbox':
+        if (mapboxCompareUtils.current != undefined) {
+          mapboxCompareUtils.current.setSnapshot(compareSnapshot);
+          mapboxCompareUtils.current.setHotspotClick(selectHotspot);
+          let data = await getMapboxLayers(structure, compareSnapshot);
+          const reality = compareSnapshot.reality.find((reality) => { return reality })
+          let hotspots = await getMapboxHotspots(project._id, structure._id, compareSnapshot._id, reality._id)
+          setTimeout(() => {
+            if (mapboxCompareUtils.current != undefined) {
+              mapboxCompareUtils.current.updateData(data, currentContext.current);
+              hotspots && hotspots.data && (hotspotsCompare = hotspots.data.features);
+              hotspots && hotspots.data && setHotspotsCompare(hotspots.data.features);
+              mapboxCompareUtils.current.updateIssuesData(issuesList);
+              mapboxUtils.current.updateTasksData(tasksList);
+              setTimeout(() => {
+
+                if (viewLayers && viewLayers['Stages']) {
+                  const filters = ['any']
+                  const children = viewLayers['Stages'].children;
+                  for (let i = 0; i < children.length; i++) {
+                    if (children[i].isSelected) {
+                      filters.push(children[i].filters)
                     }
                   }
-                }, 500)
+
+                  if (mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
+                    mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
+                  }
+                }
+              }, 500)
             }
-            }, 700);
-          }
-          break;
+          }, 700);
+        }
+        break;
     }
     currentContext.current = undefined;
   }
@@ -819,6 +1015,14 @@ function GenericViewer(props) {
         break;
     }
   }
+
+  const setMinimapUtils = function (viewerId) {
+    initMinimap(viewerId);
+  };
+
+  const setMinimapCompareUtils = function (viewerId) {
+    initMinimapCompare(viewerId);
+  };
 
   const setForgeViewerUtils = function (viewerId) {
     if (!isCompareViewer(viewerId)) {
@@ -864,8 +1068,6 @@ function GenericViewer(props) {
           <PotreeViewer
             viewerCount={count}
             setPotreeViewer={setpotreeViewerUtils}
-            fullScreenMode={fullScreenMode}
-            isCompare={isCompare}
           ></PotreeViewer>
         );
       case 'Mapbox':
@@ -915,30 +1117,38 @@ function GenericViewer(props) {
   };
 
   const setCurrentSnapshot = (snapshot) => {
-    if(snapshot){
+    if (snapshot) {
 
-    setSnapshot(snapshot);
-    updateSnapshot(snapshot);
-    setRealityList(snapshot.reality);
-    setRealityMap(getRealityMap(snapshot));
-    updateRealityMap(getRealityMap(snapshot));
-  }
+      setSnapshot(snapshot);
+      updateSnapshot(snapshot);
+      setRealityList(snapshot.reality);
+      setRealityMap(getRealityMap(snapshot));
+      updateRealityMap(getRealityMap(snapshot));
+    }
 
   };
 
   const setCurrentCompareSnapshot = (snapshot) => {
-    if(snapshot){
+    if (snapshot) {
 
-    setCompareSnapshot(snapshot);
-    // updateSnapshot(snapshot);
-    setCompareRealityList(snapshot.reality);
-    setCompareRealityMap(getRealityMap(snapshot));
-    // updateRealityMap(getRealityMap(snapshot));
+      setCompareSnapshot(snapshot);
+      // updateSnapshot(snapshot);
+      setCompareRealityList(snapshot.reality);
+      setCompareRealityMap(getRealityMap(snapshot));
+      // updateRealityMap(getRealityMap(snapshot));
     }
   };
 
   const isCompareViewer = (viewerId) => {
     if (viewerId.split('_')[1] === '1') {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const isMinimapCompareViewer = (viewerId) => {
+    if (viewerId.split('-')[1] === '1') {
       return false;
     } else {
       return true;
@@ -988,6 +1198,7 @@ function GenericViewer(props) {
     console.log('Generic Viewer getContext: camera ', context);
     // setContext(context);
     currentContext.current = context;
+    // currentContext.current && minimapUtils.current.createMarker(currentContext.current.cameraObject.cameraTarget, currentContext.current.cameraObject.yaw)
   };
 
   const removeData = () => {
@@ -1011,6 +1222,14 @@ function GenericViewer(props) {
   };
 
   const removeLayers = () => {
+    if (minimapUtils.current) {
+      minimapUtils.current.removeLayers();
+    }
+
+    if (isCompare && minimapCompareUtils.current) {
+      minimapCompareUtils.current.removeLayers();
+    }
+
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -1021,7 +1240,7 @@ function GenericViewer(props) {
         if (potreeUtils.current) {
           potreeUtils.current.removeData();
         }
-        break;       
+        break;
       case 'Mapbox':
         if (mapboxUtils.current) {
           mapboxUtils.current.removeLayers();
@@ -1081,6 +1300,11 @@ function GenericViewer(props) {
   };
 
   const destroyCompareViewer = () => {
+    if(minimapCompareUtils.current) {
+      minimapCompareUtils.current.shutdown();
+      minimapCompareUtils.current = undefined;
+      delete minimapCompareUtils.current;
+    }
     switch (currentCompareViewMode.current) {
       case 'Forge':
         if (forgeCompareUtils.current) {
@@ -1104,6 +1328,18 @@ function GenericViewer(props) {
         break;
     }
   };
+
+  useEffect(() => {
+    if(minimapUtils.current) {
+      minimapUtils.current.initializeViewer();
+    }
+    if(minimapCompareUtils.current) {
+      minimapCompareUtils.current.initializeViewer();
+    }
+    if(forgeUtils.current) {
+      forgeUtils.current.initializeViewer();
+    }
+  }, [forgeInitialised]);
 
   // useEffect(() => {
   //   return cleanUpOnPageChange;
@@ -1176,7 +1412,7 @@ function GenericViewer(props) {
 
   useEffect(() => {
     console.log("Generic Viewer ViewerType UseEffect:", viewerType, currentViewerType.current);
-    if(currentViewerType.current != viewerType) {
+    if (currentViewerType.current != viewerType) {
       currentViewerType.current = viewerType;
       handleViewerTypeChange();
     }
@@ -1185,14 +1421,14 @@ function GenericViewer(props) {
 
   const cleanUpOnViewerTypeChange = () => {
     console.log("Generic Viewer ViewerType Cleanup:", viewerType, currentViewerType.current);
-    setIsCompare(false);  
+    setIsCompare(false);
     getContext();
     destroyViewer();
   };
 
   useEffect(() => {
     console.log("Generic Viewer View Mode UseEffect", viewMode, currentViewMode.current);
-    if(currentViewMode.current != viewMode) {
+    if (currentViewMode.current != viewMode) {
       currentViewMode.current = viewMode;
       setViewerType(getViewerTypeFromViewMode());
     }
@@ -1216,7 +1452,7 @@ function GenericViewer(props) {
       // handleDesignTypeChange();
       setViewerType(getViewerTypeFromViewType());
     }
-    
+
     return cleanUpOnViewTypeChange;
   }, [viewType]);
 
@@ -1233,6 +1469,7 @@ function GenericViewer(props) {
   useEffect(() => {
     console.log("Generic Viewer load: Design List UseEffect", designList);
     if (designList.length > 0) {
+      loadMinimapData();
       loadViewerData();
     }
   }, [designList]);
@@ -1246,10 +1483,9 @@ function GenericViewer(props) {
           toolAction: 'Reality',
         });
         setViewerType('Potree');
-      } else {
-        loadLayerData();
       }
-      
+      loadMinimapLayerData();
+      loadLayerData();
     }
   }, [realityList]);
 
@@ -1257,6 +1493,7 @@ function GenericViewer(props) {
     // console.log("Generic Viewer load: Reality UseEffect", compareRealityList);
     if (realityList.length > 0 && isCompare) {
       loadCompareLayerData();
+      loadMinimapCompareLayerData();
     }
   }, [compareRealityList]);
 
@@ -1270,26 +1507,26 @@ function GenericViewer(props) {
 
   useEffect(() => {
     console.log("Generic Viewer View Layers UseEffect", viewLayers);
-    if(viewLayers && viewLayers['Stages']) {
+    if (viewLayers && viewLayers['Stages']) {
       const filters = ['any']
       const children = viewLayers['Stages'].children;
-      for(let i = 0; i < children.length; i++) {
-        if(children[i].isSelected) {
+      for (let i = 0; i < children.length; i++) {
+        if (children[i].isSelected) {
           filters.push(children[i].filters)
         }
       }
 
-      if(mapboxUtils.current && mapboxUtils.current.isViewerInitialized()) {
+      if (mapboxUtils.current && mapboxUtils.current.isViewerInitialized()) {
         mapboxUtils.current.getMap().getLayer('progress-stages') && mapboxUtils.current.getMap().setFilter('progress-stages', filters)
       }
-  
-      if(mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
+
+      if (mapboxCompareUtils.current && mapboxCompareUtils.current.isViewerInitialized()) {
         mapboxCompareUtils.current.getMap().getLayer('progress-stages') && mapboxCompareUtils.current.getMap().setFilter('progress-stages', filters)
       }
     }
-    
+
     handleRealityTypeChange();
-  }, [viewLayers,props.layersUpdated]);
+  }, [viewLayers, props.layersUpdated]);
 
   // Triggered when compareViewMode changed
   useEffect(() => {
@@ -1298,7 +1535,6 @@ function GenericViewer(props) {
       currentIsCompare.current = isCompare;
     }
     if (isCompare === true) {
-      updateViewerChanges();
       if(designList.length <=0 && compareViewMode === "Forge") {
         getContext();
         setCompareViewMode(currentViewerType.current);
@@ -1307,7 +1543,10 @@ function GenericViewer(props) {
       } else {
         loadCompareViewerData();
         loadCompareLayerData();
+        loadMinimapCompareData();
+        loadMinimapCompareLayerData();
       }
+      updateViewerChanges();
     } else {
       updateViewerChanges();
     }
@@ -1324,14 +1563,14 @@ function GenericViewer(props) {
   const onHotspotClick = (hotspot) => {
     setSelectedHotspot(hotspot.properties.id)
     setSelectedHotspotDetails(hotspot)
-    
-    for(let i = 0; i < hotspotsCompare.length; i++) {
-      if(hotspotsCompare[i].properties.id == hotspot.properties.id) {
-        setSelectedHotspotCompareDetails(hotspotsCompare[i]) 
+
+    for (let i = 0; i < hotspotsCompare.length; i++) {
+      if (hotspotsCompare[i].properties.id == hotspot.properties.id) {
+        setSelectedHotspotCompareDetails(hotspotsCompare[i])
         break;
       }
     }
-    if(mapboxUtils.current) {
+    if (mapboxUtils.current) {
       mapboxUtils.current.onLayerClick(hotspot, isCompare ? true : false)
     }
   }
@@ -1340,24 +1579,78 @@ function GenericViewer(props) {
     setSelectedHotspot(hotspot.properties.id)
   }
 
+  const renderMinimap = (count) => {
+    if (count != 1 && !isCompare) {
+      return;
+    }
+    return (<Rnd
+      ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
+      minWidth={320}
+      minHeight={32}
+      maxWidth={'99%'}
+      maxHeight={'99%'}
+      bounds={count == 1 ? '#TheView' : '#CompareView'}
+      default={{ x: 20, y: 75, width: 320, height: 320 }}
+      onResize={(e, direction, ref, delta, position) => {
+        count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
+      }}
+      className={`${'z-10 border-4 rounded-lg border-[#F1742E] bg-[#F1742E]'} ${showMinimap ? 'opacity-100' : 'opacity-0'}`}>
+      <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
+        <div className='h-8 bg-[#F1742E] flex'>
+          <div className='text-white flex items-center pl-2 flex-1'>Minimap</div>
+          <IconButton className='text-white' size="small" onClick={() => { resizeMinimap('minimize', count) }}>
+            <RemoveIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton className='text-white' size="small" onClick={() => { resizeMinimap('default', count) }}>
+            <PictureInPictureIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton className='text-white' size="small" onClick={() => { resizeMinimap('fullscreen', count) }}>
+            <FullscreenIcon fontSize="inherit" />
+          </IconButton>
+        </div>
+        <MiniMap count={count} style={{ height: 'calc(100% - 24px)' }} setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}></MiniMap>
+      </div>
+    </Rnd>)
+  }
+
+  const resizeMinimap = (mode, count) => {
+    const minimap = count == 1 ? _minimap : _minimapCompare
+    const utils = count == 1 ? minimapUtils.current : minimapCompareUtils.current
+    switch(mode) {
+      case 'minimize':
+        minimap?.updateSize({ width: 320, height: 32 });
+        break;
+      case 'fullscreen':
+        minimap?.updateSize({ width: '99%', height: '95%' });
+        minimap?.updatePosition({ x: 0, y: 64 });
+        break;
+      default:
+        minimap?.updateSize({ width: 320, height: 320 });
+        break;
+    }
+    setTimeout(() => utils?.resize(), 50)
+  }
+
   return (
-      <div className="fixed calc-width-full calc-height-full flex flex-row">
-        <div id="TheView" className="relative basis-1/2 flex grow shrink">
-          {renderViewer(1)}
-          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
-        </div>
-        <div className={isCompare?'w-0.5':''} color='gray'></div>
-        <div className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
-          {renderViewer(2)}
-          <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
-        </div>
-        {
-          viewerType === "Mapbox"  && viewMode === "Reality" && hotspots && hotspots.length > 0 ?
+    <div className="fixed calc-w calc-h flex flex-row">
+      <div id="TheView" className="relative basis-1/2 flex grow shrink">
+        {renderViewer(1)}
+        {renderMinimap(1)}
+        <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
+      </div>
+      <div className={isCompare?'w-0.5':''} color='gray'></div>
+      <div id="CompareView" className={`relative ${isCompare ? "basis-1/2" : "hidden"}`}>
+        {renderViewer(2)}
+        {renderMinimap(2)}
+        <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
+      </div>
+      {
+        viewerType === "Mapbox" && viewMode === "Reality" && hotspots && hotspots.length > 0 ?
           <Hotspots data={hotspots} selected={selectedHotspot} onHotspotClick={onHotspotClick}></Hotspots>
           : <></>
-        }
-        {
-          isCompare && viewerType === 'Mapbox' && viewMode === 'Reality' ?
+      }
+      {
+        isCompare && viewerType === 'Mapbox' && viewMode === 'Reality' ?
           <HotspotsCompare
             snapshot={snapshot}
             compareSnapshot={compareSnapshot}
@@ -1365,14 +1658,8 @@ function GenericViewer(props) {
             hotspotCompareDetails={selectedHotspotCompareDetails}>
           </HotspotsCompare>
           : <></>
-        }
-        {/* <Draggable handle=".handle">
-          <div style={{border: "24px 2px 2px 2px solid red", height: "25%", width: "30%", "z-index": 100 }}>
-            <div className='handle' style={{width: '100%', height: '24px', background: '#ff0000'}}></div>
-            <MiniMap models={[]} viewerState={{center: [-71.516, 46.437], bearing: 90}}></MiniMap>
-          </div>
-        </Draggable> */}
-    {/* 
+      }
+      {/* 
     <div className={` ${isFullScreenActive?"w-full h-full":" calc-w calc-h"} fixed flex flex-row`}>
       <div id="TheView" className="relative basis-1/2 flex grow shrink">
         {renderViewer(1)}
