@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../../../components/divami_components/header/Header';
 import { useRouter } from 'next/router';
 import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
 import SidePanelMenu from '../../../../components/divami_components/side-panel/SidePanel';
 import { getGanttView } from '../../../../utils/ganttView';
 import ScheduleView from '../../../../components/container/scheduleView';
@@ -34,7 +33,11 @@ const Index: React.FC = () => {
     }
   }, [router.isReady, router.query.projectId]);
   useEffect(() => {
-    if (typeof window !== undefined && tabIndex === 1 && ganttData) {
+    if (
+      typeof window !== undefined &&
+      tabIndex === 1 &&
+      ganttData?.length > 0
+    ) {
       getGanttView(ganttData);
     }
   }, [tabIndex]);
@@ -66,7 +69,13 @@ const Index: React.FC = () => {
                 </TabPanel>
                 <TabPanel>
                   <div className="overflow-auto  h-93 w-96">
-                    <div id="GanttChartDIV"></div>
+                    {ganttData?.length > 0 ? (
+                      <div id="GanttChartDIV"></div>
+                    ) : (
+                      <h1 className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300 text-orange-400 ">
+                        There is no data avalible to load the ganttview
+                      </h1>
+                    )}
                   </div>
                 </TabPanel>
               </Tabs>

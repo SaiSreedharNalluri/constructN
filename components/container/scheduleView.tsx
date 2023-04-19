@@ -8,26 +8,32 @@ interface IProp {
 const ScheduleView: React.FC<IProp> = ({ treeData }) => {
   return (
     <React.Fragment>
-      <table className="border-separate border  border-slate-50 w-96 font-sans text-xs ">
-        <thead className="sticky top-0">
-          <tr className="border-slate-500 bg-pink-50 ">
-            <th className="border border-slate-50  w-1 bg-pink-50"></th>
-            <th className="border border-slate-50">NAME</th>
-            <th className="border border-slate-50">WBS ID</th>
-            <th className="border border-slate-50">ACTUAL START</th>
-            <th className="border border-slate-50">ACTUAL FINISH</th>
-            <th className="border border-slate-50">PLANNED START</th>
-            <th className="border border-slate-50">PLANNED FINISH</th>
-            <th className="border border-slate-50">DURATION</th>
-            <th className="border border-slate-50">PROGRESS</th>
-          </tr>
-        </thead>
-        <tbody>
-          {treeData.map((node: any) => (
-            <TreeNode key={node.wbsId} node={node} level={0} />
-          ))}
-        </tbody>
-      </table>
+      {treeData?.length > 0 ? (
+        <table className="border-separate border  border-slate-50 w-96 font-sans text-xs ">
+          <thead className="sticky top-0">
+            <tr className="border-slate-500 bg-pink-50 ">
+              <th className="border border-slate-50  w-1 bg-pink-50"></th>
+              <th className="border border-slate-50">NAME</th>
+              <th className="border border-slate-50">WBS ID</th>
+              <th className="border border-slate-50">ACTUAL START</th>
+              <th className="border border-slate-50">ACTUAL FINISH</th>
+              <th className="border border-slate-50">PLANNED START</th>
+              <th className="border border-slate-50">PLANNED FINISH</th>
+              <th className="border border-slate-50">DURATION</th>
+              <th className="border border-slate-50">PROGRESS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {treeData.map((node: any) => (
+              <TreeNode key={node.wbsId} node={node} level={0} />
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <h1 className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300 text-orange-400 ">
+          There is no data avalible to load the scheduleView
+        </h1>
+      )}
     </React.Fragment>
   );
 };
