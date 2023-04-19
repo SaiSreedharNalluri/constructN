@@ -2,7 +2,7 @@ import { autodeskAuth } from "../services/forgeService";
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
 import { applyTM } from "./ViewerDataUtils";
 
-export const ForgeViewerUtils = (function () {
+export const ForgeViewerUtils = function () {
   let _viewerId;
   let _eventHandler;
   let _viewer;
@@ -25,7 +25,7 @@ export const ForgeViewerUtils = (function () {
   let _realityPositionMap = {};
   let _issuesList = [];
   let _tasksList = [];
-  let _showLayersList = [];
+  let _showLayersList = undefined;
   let _showTag = {};
 
   let _context;
@@ -545,7 +545,7 @@ export const ForgeViewerUtils = (function () {
   };
 
   const setForgeControls = (type) => {
-    if (_bimWalkExtn) {
+    if (_bimWalkExtn && !_manifestNode.is2D()) {
       if (type !== "3d") {
         _viewer.navigation.setIsLocked(false);
         if (isCompareView() && (type === "360 Video" || type === "360 Image")) {
@@ -758,7 +758,8 @@ export const ForgeViewerUtils = (function () {
     if (_isViewerInitialized) {
       removeLayers();
       try{
-        _viewer.unloadModel(_model);
+        _viewer.tearDown();
+        // _viewer.unloadModel(_model);
       } catch(e) {}
     }
   };
@@ -809,7 +810,7 @@ export const ForgeViewerUtils = (function () {
     removeLayers: removeLayers,
     shutdown: shutdown,
   };
-})();
+};
 
 const getContextLocalFromGlobal = (context, globalOffset) => {
   // console.log("Global offset: ", context);
