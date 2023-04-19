@@ -27,12 +27,12 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
                       router.push(`projects/${pData._id}/structure`);
                     }}
                   >
-                    <NextImage
+                    <img
                       className="h-7 mt-8 cursor-pointer w-1/2 m-auto hover:border border-gray-500 border-solid"
                       src={
                         pData.coverPhoto
                           ? pData.coverPhoto
-                          : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp'
+                          : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3_CORE}/defaults/projectCoverPhoto.webp`
                       }
                     />
                   </div>
