@@ -264,7 +264,7 @@ export const PotreeViewerUtils = () => {
                     break;
             }
         }
-        isLoadFloormap && await loadFloormap();
+        // isLoadFloormap && await loadFloormap();
         loadPointCloud(pointClouds);
         
         
@@ -408,7 +408,9 @@ export const PotreeViewerUtils = () => {
             _realityLayers[id].loaded = true;
             
             _sendContext = false;
-            loadLayersOnFloorMap(id, _realityLayers[id].type, _realityLayers[id].imagesPath);
+            if(_floorMap){
+                loadLayersOnFloorMap(id, _realityLayers[id].type, _realityLayers[id].imagesPath);
+            }
              if (loadFirstImageOnLayersLoadCompletion() && _imageLoadedOnce == false) {
                 if (_context && _context.type !== "2d") {
                     updateContext(_context, false);
@@ -1050,7 +1052,7 @@ export const PotreeViewerUtils = () => {
             switch (reality.type) {
                 case "360 Video":
                     let inputPos = new THREE.Vector2().fromArray([position.x, position.y]);
-                    _viewer.scene.images360[0].images.forEach( pano => {
+                    _viewer.scene.images360[reality.index].images.forEach( pano => {
                         let curPos = new THREE.Vector2().fromArray([pano.position[0], pano.position[1]]);
                         let curDist = curPos.distanceTo(inputPos);
                         if (curDist < nearestImageDist) {
@@ -1087,7 +1089,7 @@ export const PotreeViewerUtils = () => {
                 case "360 Video":
                 case "360 Image":
                     let inputPos = new THREE.Vector2().fromArray([position.x, position.y]);
-                    _viewer.scene.images360[0].images.forEach( pano => {
+                    _viewer.scene.images360[reality.index].images.forEach( pano => {
                         let curPos = new THREE.Vector2().fromArray([pano.position[0], pano.position[1]]);
                         let curDist = curPos.distanceTo(inputPos);
                         if (curDist < nearestImageDist) {
