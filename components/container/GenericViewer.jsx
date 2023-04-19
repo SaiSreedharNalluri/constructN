@@ -1226,10 +1226,6 @@ function GenericViewer(props) {
       minimapUtils.current.removeLayers();
     }
 
-    if (isCompare && minimapCompareUtils.current) {
-      minimapCompareUtils.current.removeLayers();
-    }
-
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -1250,6 +1246,10 @@ function GenericViewer(props) {
   };
 
   const removeCompareLayers = () => {
+    if (isCompare && minimapCompareUtils.current) {
+      minimapCompareUtils.current.removeLayers();
+    }
+
     switch (currentCompareViewMode.current) {
       case 'Forge':
         if (forgeCompareUtils.current) {
