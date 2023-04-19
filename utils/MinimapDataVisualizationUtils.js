@@ -228,6 +228,12 @@ export class MinimapDataVisualization {
     getViewableStyle(iconType) {
         const viewableType = this.dataVizCore.ViewableType.SPRITE;
         const spriteColor = new THREE.Color(0xffffff);
+        let animatedUrls = [];
+        if(iconType === '360 Video') {
+            for(let i = 0; i < 360; i = i + 10) {
+                animatedUrls.push(`/icons/navigator/nav-${i}.png`)
+            }
+        }
 
         let iconUrl = "";
         let highlightUrl = ""
@@ -238,7 +244,7 @@ export class MinimapDataVisualization {
             break;
             case '360 Video':
                 iconUrl = "/icons/360VideoWalkInViewer.svg";
-                highlightUrl = "/icons/360VideoWalkInViewer.svg";
+                highlightUrl = "/icons/navigator/nav-0.png";
             break;
             case '360 Image':
                 iconUrl = "/icons/forge360Image.png";
@@ -265,7 +271,7 @@ export class MinimapDataVisualization {
             iconUrl,
             spriteColor,
             highlightUrl,
-            []
+            animatedUrls
           );
     }
 
@@ -325,8 +331,9 @@ export class MinimapDataVisualization {
              animatedUrls.push(`/icons/navigator/nav-${i}.png`)
          }
          const viewableType = this.dataVizCore.ViewableType.SPRITE;
+         const spriteColor = new THREE.Color(0xffffff);
          const spriteIconUrl = `/icons/navigator/nav-0.png`;
-         this._navStyle = new this.dataVizCore.ViewableStyle(viewableType, undefined, spriteIconUrl, undefined, spriteIconUrl, animatedUrls);
+         this._navStyle = new this.dataVizCore.ViewableStyle(viewableType, spriteColor, spriteIconUrl, spriteColor, spriteIconUrl, animatedUrls);
          this._navViewableData = new this.dataVizCore.ViewableData();
          this._navViewableData.spriteSize = 24; // Sprites as points of size 24 x 24 pixels
          this._navViewable = new this.dataVizCore.SpriteViewable({x: 0, y: 0, z: 100}, this._navStyle, 999);
@@ -345,21 +352,30 @@ export class MinimapDataVisualization {
     }
 
     createMarker(position, yaw) {
-       if(!position) return;
-       if(!this._navViewableData) return;
-       const localPos = this.getViewerPosition(position, this.tm, this.offset)
-       localPos.z = 100
+        if (!position) return;
+        if (!this._navViewableData) return;
+        const localPos = this.getViewerPosition(position, this.tm, this.offset)
+        localPos.z += 1
+        let deg = MathUtils.radToDeg(yaw) % 360;
+        if (deg > 0) deg = 360 - deg;
+        else deg = deg * -1;
+        deg = (Math.floor(deg / 10) * 10) % 360;
+        const mUrl = `/icons/navigator/nav-${deg}.png`
         this.invalidateViewablesDirect(999, this.dataVizExtn.pointMeshes, this._navViewableData, (viewable) => {
-            let deg = MathUtils.radToDeg(yaw);
-            if(deg > 0) deg = 360 - deg;
-            else deg = deg * -1;
-            deg = (Math.floor(deg / 10) * 10) % 360;
-            const mUrl = `/icons/navigator/nav-${deg}.png`
             return {
                 position: localPos,
                 url: mUrl
             };
         });
+
+        // if (this.currentClicked) {
+        //     this.invalidateViewablesDirect(this.currentClicked, this.dataVizExtn.pointMeshes, this.viewableDataMap['360 Video'].viewableData, (viewable) => {
+        //         return {
+        //             scale: 2,
+        //             url: mUrl
+        //         };
+        //     });
+        // }
     }
 
     invalidateViewablesDirect = (dbIds, meshes, viewableData, callback) => {
@@ -523,7 +539,16 @@ export class MinimapDataVisualization {
         // console.log(`Sprite clicked: ${this.dbIdMap[targetDbId].name}`);
         if (targetDbId > 0) {
             // event.hasStopped = true;
-            // this.handleSelection(event.dbId);
+            this.handleSelection(event.dbId);
+            // if(this.currentClicked) {
+            //     this.invalidateViewablesDirect(this.currentClicked, this.dataVizExtn.pointMeshes, this.viewableDataMap['360 Video'].viewableData, (viewable) => {
+            //         return {
+            //             scale: 1,
+            //             url: '/icons/360VideoWalkInViewer.svg'
+            //         };
+            //     });
+            // }
+            this.currentClicked = event.dbId;
             this.passToViewerHandler(event);
         } else if (this.createTagTool) {
             this.createTempViewable(this.tagType, event);
@@ -532,21 +557,20 @@ export class MinimapDataVisualization {
     }
 
     onSpriteClickedOut(event) {
-        console.log("Inside sprite clicked out selection : ", event.dbId);
+        console.log("Inside sprite clicked out selection : ", event.dbId, this.currentClicked);
         // event.hasStopped = true;
         this.handleSelectionOut(event.dbId);
-    
     }
 
     handleSelectionOut(tagId) {
         const viewablesToUpdate = [tagId];
-        this.dataVizExtn.invalidateViewables(viewablesToUpdate, (viewable) => {
-            console.log("Inside invalidate for selection out : ", viewable);
-            return {
-                scale: 1.0, // Restore the viewable size
-                url: "/icons/issuesInViewer.svg",
-            };
-        });
+        // this.dataVizExtn.invalidateViewables(viewablesToUpdate, (viewable) => {
+        //     console.log("Inside invalidate for selection out : ", viewable);
+        //     return {
+        //         scale: 1.0, // Restore the viewable size
+        //         url: "/icons/issuesInViewer.svg",
+        //     };
+        // });
     }
 
     handleSelection(tagId) {

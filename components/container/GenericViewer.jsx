@@ -1340,9 +1340,15 @@ function GenericViewer(props) {
     }
   }, [forgeInitialised]);
 
-  // useEffect(() => {
-  //   return cleanUpOnPageChange;
-  // }, []);
+  useEffect(() => {
+    // To stop Minimap from accepting keyboard events
+    document.addEventListener(
+      "keydown", (event) => {
+        event.stopPropagation()
+      }, false
+    );
+    // return cleanUpOnPageChange;
+  }, []);
 
   // const cleanUpOnPageChange = () => {
   //   // console.log("Inside cleanup no dependencies: ");
