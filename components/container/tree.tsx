@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { ChildrenEntity } from "../../models/IStructure";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretDown, faCaretRight } from "@fortawesome/free-solid-svg-icons";
+import React, { useEffect, useState } from 'react';
+import { ChildrenEntity } from '../../models/IStructure';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 interface IProps {
   tree: ChildrenEntity[];
   getStructureData: (structure: ChildrenEntity) => void;
@@ -40,7 +40,7 @@ const Tree: React.FC<IProps> = ({
         <div>
           <div
             className={`flex ${
-              structure._id === clickedStruct ? "bg-white" : ""
+              structure._id === clickedStruct ? 'bg-white' : ''
             } justify-between border-b border-solid border-gray-400 p-1`}
           >
             <div className={`flex margin${depth}`}>

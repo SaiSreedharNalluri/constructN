@@ -48,6 +48,9 @@ module.exports = {
         'bg-projectPage': '#e3e3e34d',
         'bg-table-row': ' #e0cbcb',
       },
+      fontSize: {
+        xs: ['0.65rem', '0.65rem'],
+      },
       width: {
         128: '410px',
         112: '470px',

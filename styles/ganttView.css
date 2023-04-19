@@ -1,0 +1,32 @@
+.gtasktable .gantt-inputtable {
+  font-size: 10px !important;
+  width: 100%;
+}
+.gtaskname {
+  max-width: 250px;
+  width: 250px !important;
+}
+.gtaskname .gtaskeditable {
+  font-size: 10px !important;
+}
+.gcomp .gantt-inputtable {
+  pointer-events: none;
+  border: none;
+  text-align: center;
+}
+.gdur .gantt-inputtable {
+  pointer-events: none;
+  border: none;
+  text-align: center;
+}
+.gtaskname .gantt-inputtable {
+  pointer-events: none;
+  border: none;
+}
+.gtaskname,
+.gtaskname div {
+  font-size: 10px;
+}
+.rhscrpad {
+  width: 0% !important;
+}
