@@ -5,7 +5,7 @@ import _ from "lodash";
 import Moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import GenericViewer from "../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../components/container/leftOverLay";
@@ -1449,6 +1449,27 @@ const Index: React.FC<IProps> = () => {
       }
     }
   };
+
+  const escFunction = useCallback((event: any) => {
+    console.log(event.key, "eventkeypress");
+    if (event.key === "Escape") {
+      //Do whatever when esc is pressed
+      setIsFullScreen(false);
+      document.exitFullscreen();
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("fullscreenchange", (event) => {
+      if (document.fullscreenElement) {
+        // We’re going fullscreen
+      } else {
+        // We’re exiting fullscreen
+        setIsFullScreen(false);
+      }
+    });
+  }, []);
+
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
