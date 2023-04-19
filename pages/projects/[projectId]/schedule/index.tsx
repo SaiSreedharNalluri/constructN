@@ -40,7 +40,7 @@ const Index: React.FC = () => {
     ) {
       getGanttView(ganttData);
     }
-  }, [tabIndex]);
+  }, [ganttData, tabIndex]);
   return (
     <React.Fragment>
       <div>
