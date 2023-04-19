@@ -1,19 +1,28 @@
-import { Html, Head, Main, NextScript } from 'next/document'
-import Script from 'next/script'
+import { Html, Head, Main, NextScript } from 'next/document';
+import Script from 'next/script';
 
 export default function Document() {
-    function onScriptLoad() {
-        console.log("Script Loaded From App Component: ");
-    }
+  function onScriptLoad() {
+    console.log('Script Loaded From App Component: ');
+  }
 
-    function onPotreeScriptLoaded() {
-      console.log("Potree Script loaded: ")
-    }
-    
+  function onPotreeScriptLoaded() {
+    console.log('Potree Script loaded: ');
+  }
+
   return (
     <Html>
       <Head>
-        <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.min.css" type="text/css"/>
+        <link
+          rel="stylesheet"
+          href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.min.css"
+          type="text/css"
+        />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/jsgantt-improved@2.8.5/dist/jsgantt.min.css"
+          type="text/css"
+        />
         {/* <link rel="stylesheet" type="text/css" href="../build/potree/potree.css"/>
         <link rel="stylesheet" type="text/css" href="../libs/jquery-ui/jquery-ui.min.css"/>
         <link rel="stylesheet" type="text/css" href="../libs/openlayers3/ol.css"/>
@@ -24,9 +33,10 @@ export default function Document() {
         <Main />
         <NextScript />
         <Script
-          src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js" 
-          onReady={onScriptLoad} 
-          strategy="beforeInteractive"/>
+          src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js"
+          onReady={onScriptLoad}
+          strategy="beforeInteractive"
+        />
         <Script
           src="/potree/libs/jquery/jquery-3.1.1.min.js"
           strategy="beforeInteractive"
@@ -47,10 +57,7 @@ export default function Document() {
           src="/potree/libs/tween/tween.min.js"
           strategy="beforeInteractive"
         />
-        <Script
-          src="/potree/libs/d3/d3.js"
-          strategy="beforeInteractive"
-        />
+        <Script src="/potree/libs/d3/d3.js" strategy="beforeInteractive" />
         <Script
           src="/potree/libs/jquery/jquery-3.1.1.min.js"
           strategy="beforeInteractive"
@@ -80,9 +87,7 @@ export default function Document() {
           src="/potree/libs/plasio/js/laslaz.js"
           strategy="beforeInteractive"
         />
-        <Script
-          id='freshdeskChatWidget'
-          strategy='beforeInteractive'>
+        <Script id="freshdeskChatWidget" strategy="beforeInteractive">
           {`
           function initFreshChat() {
             window.fcWidget.init({
@@ -109,12 +114,12 @@ export default function Document() {
           window.addEventListener?window.addEventListener("load",initiateCall,!1):
           window.attachEvent("load",initiateCall,!1);
           `}
-</Script>
-        <Script 
+        </Script>
+        <Script
           src="https://wchat.freshchat.com/js/widget.js"
           strategy="beforeInteractive"
-          />
+        />
       </body>
     </Html>
-  )
+  );
 }
