@@ -3,7 +3,7 @@ import { IProjects } from '../../models/IProjects';
 import Moment from 'moment';
 import { useRouter } from 'next/router';
 import NextImage from '../core/Image';
-import { Mixpanel } from '../analytics/mixpanel';
+import { Mixpanel } from '../analytics/Mixpanel';
 interface IProps {
   projects: IProjects[];
   loading: boolean;
@@ -32,7 +32,7 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
                       src={
                         pData.coverPhoto
                           ? pData.coverPhoto
-                          : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp'
+                          : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/projectCoverPhoto.webp`
                       }
                     />
                   </div>
