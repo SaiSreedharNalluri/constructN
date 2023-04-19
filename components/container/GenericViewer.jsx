@@ -142,7 +142,7 @@ function GenericViewer(props) {
     api: "streamingV2", // for models uploaded to EMEA change this option to 'derivativeV2_EU'
     getAccessToken: async function (onSuccess) {
       const response = await autodeskAuth();
-      console.log("Autodesk auth token:", response.data.result);
+      // console.log("Autodesk auth token:", response.data.result);
       const res = response.data.result;
 
       onSuccess(res.access_token, res.expires_in);
@@ -150,7 +150,7 @@ function GenericViewer(props) {
   };
 
   const initializerCallBack = () => {
-    console.log("Inside Forge Initializer");
+    // console.log("Inside Forge Initializer");
     setForgeInitialised(true)
   };
 
@@ -546,7 +546,7 @@ function GenericViewer(props) {
   };
 
   const viewerEventHandler = (viewerId, event) => {
-    console.log("Inside generic viewer: ", event);
+    // console.log("Inside generic viewer: ", event);
     if (event) {
       switch (event.type) {
         case 'Drone Image':
@@ -691,7 +691,7 @@ function GenericViewer(props) {
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current == undefined) {
-          forgeUtils.current = ForgeViewerUtils;
+          forgeUtils.current = ForgeViewerUtils();
           forgeUtils.current.setupViewer(viewerId, viewerEventHandler);
           if(forgeInitialised) forgeUtils.current.initializeViewer()
           forgeUtils.current.setType(currentViewType.current);
@@ -721,7 +721,7 @@ function GenericViewer(props) {
     switch (compareViewMode) {
       case 'Forge':
         if (forgeCompareUtils.current == undefined) {
-          forgeCompareUtils.current = ForgeViewerUtils;
+          forgeCompareUtils.current = ForgeViewerUtils();
           forgeCompareUtils.current.setupViewer(viewerId, viewerEventHandler);
           if(forgeInitialised) forgeCompareUtils.current.initializeViewer()
           forgeCompareUtils.current.setType(currentViewType.current);
@@ -814,9 +814,9 @@ function GenericViewer(props) {
       minimapUtils.current.updateIssuesData(issuesList);
       minimapUtils.current.updateTasksData(tasksList);
       let data = await getRealityLayersPath(structure, realityMap);
-      minimapUtils.current?.updateLayersData(data, currentContext.current);
+      minimapUtils.current?.updateLayersData(data);
     }
-    currentContext.current = undefined;
+    // currentContext.current = undefined;
   }
 
   async function loadMinimapCompareLayerData() {
@@ -825,12 +825,13 @@ function GenericViewer(props) {
       minimapCompareUtils.current.updateIssuesData(issuesList);
       minimapCompareUtils.current.updateTasksData(tasksList);
       let data = await getRealityLayersPath(structure, compareRealityMap);
-      minimapCompareUtils.current?.updateLayersData(data, currentContext.current);
+      minimapCompareUtils.current?.updateLayersData(data);
     }
-    currentContext.current = undefined;
+    // currentContext.current = undefined;
   }
 
   async function loadLayerData() {
+    console.log("Testing View mode Change: Inside loadLayerData: ", realityMap);
     console.log('Generic Viewer Load layer data: ', viewerType, currentViewerType.current, currentContext.current, issuesList, tasksList);
     switch (currentViewerType.current) {
       case 'Forge':
@@ -1546,10 +1547,10 @@ function GenericViewer(props) {
         currentCompareViewMode.current = currentViewerType.current;
         setIsCompare(true);
       } else {
-        loadMinimapCompareData();
-        loadMinimapCompareLayerData();
         loadCompareViewerData();
         loadCompareLayerData();
+        loadMinimapCompareData();
+        loadMinimapCompareLayerData();
       }
       updateViewerChanges();
     } else {

@@ -589,7 +589,7 @@ export class MinimapDataVisualization {
 
     passToViewerHandler(event) {
         
-        let dbObject = this.dbIdArray[event.dbId];
+        let dbObject = structuredClone(this.dbIdArray[event.dbId]);
         // console.log("Inside selected dbId object: ", this.dbIdMap, dbObject);
 
         if (dbObject) {
