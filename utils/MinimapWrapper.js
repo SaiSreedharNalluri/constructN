@@ -1,4 +1,5 @@
 import { MinimapDataVisualization } from "./MinimapDataVisualizationUtils";
+import { ForgeLayerUtils } from "./ForgeLayerUtils";
 import {
   applyOffset,
   removeOffset,
@@ -39,7 +40,9 @@ export const MinimapUtils = () => {
 
   let _dataVizExtn;
   let _bimWalkExtn;
+  let _edit2DExtn;
   let _dataVizUtils;
+  let _edit2DUtils;
   let _isAddTagActive = false;
 
   const isCompareView = () => {
@@ -79,7 +82,7 @@ export const MinimapUtils = () => {
   };
 
   const viewerConfig = {
-    extensions: ["Autodesk.BimWalk", "Autodesk.DataVisualization"],
+    extensions: ["Autodesk.BimWalk", "Autodesk.DataVisualization", "Autodesk.Edit2D"],
   };
 
   const setupViewer = (viewerId, eventHandler) => {
@@ -280,6 +283,7 @@ export const MinimapUtils = () => {
     _dataVizUtils.setTagState(_showTag);
     _dataVizUtils.setViewableState(_showLayersList);
     _dataVizUtils.updateData();
+    // _edit2DUtils.addMediaData(_realityPositionMap);
     _isPendingLayersToLoad = false;
   };
 
@@ -594,7 +598,7 @@ export const MinimapUtils = () => {
 
   const loadExtension = async () => {
     _bimWalkExtn = await _viewer.loadExtension("Autodesk.BimWalk");
-
+    _edit2DExtn = await _viewer.loadExtension("Autodesk.Edit2D");
     _dataVizExtn = await _viewer.loadExtension("Autodesk.DataVisualization");
   };
 
@@ -657,6 +661,10 @@ export const MinimapUtils = () => {
     } else if (parameter.extensionId === "Autodesk.BimWalk") {
       console.log("Inside Forge Viewer, Bim Walk loaded:");
       _bimWalkExtn = _viewer.getExtension(parameter.extensionId);
+    } else if (parameter.extensionId === "Autodesk.Edit2D") {
+      console.log("Inside Forge Viewer, Bim Walk loaded:");
+      _edit2DExtn = _viewer.getExtension(parameter.extensionId);
+      // _edit2DUtils = new ForgeLayerUtils(_viewer, _dataVizExtn);
     }
   };
 

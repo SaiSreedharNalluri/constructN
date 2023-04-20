@@ -617,6 +617,9 @@ function GenericViewer(props) {
             : `select${event.type}`;
           activeTool.current.response = event;
           pushToolResponse(activeTool.current);
+          if(potreeUtils.current) {
+            selectTag(event)
+          }
           console.log('Marked Point========', event);
           break;
         case '3d':
@@ -1596,7 +1599,7 @@ function GenericViewer(props) {
     return (<Rnd
       ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
       minWidth={320}
-      minHeight={32}
+      minHeight={28}
       maxWidth={'99%'}
       maxHeight={'99%'}
       bounds={count == 1 ? '#TheView' : '#CompareView'}
@@ -1607,10 +1610,10 @@ function GenericViewer(props) {
       className={`${'z-10 rounded-lg bg-white'} ${showMinimap ? 'opacity-100' : 'opacity-0'}`}>
       <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
         <div className='h-8 rounded-lg bg-white flex'>
-          <IconButton size="small">
+          <IconButton className='cursor-move' size="small">
             <DragIndicatorIcon fontSize="inherit" />
           </IconButton>
-          <div className='flex items-center pl-2 flex-1'>Minimap</div>
+          <div className='flex items-center text-[#F1742E] pl-2 flex-1'>Minimap</div>
           <IconButton size="small" onClick={() => { resizeMinimap('minimize', count) }}>
             <RemoveIcon fontSize="inherit" />
           </IconButton>
@@ -1631,7 +1634,7 @@ function GenericViewer(props) {
     const utils = count == 1 ? minimapUtils.current : minimapCompareUtils.current
     switch(mode) {
       case 'minimize':
-        minimap?.updateSize({ width: 320, height: 32 });
+        minimap?.updateSize({ width: 320, height: 28 });
         break;
       case 'fullscreen':
         minimap?.updateSize({ width: '99%', height: '95%' });
