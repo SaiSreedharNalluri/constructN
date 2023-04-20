@@ -474,8 +474,14 @@ mapboxgl-popup-close-button {
   right: 5px !important;
 }
 
-#minimap .adsk-viewing-viewer {
-  border-radius: 8px !important;
+#minimap-1 .adsk-viewing-viewer {
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+#minimap-2 .adsk-viewing-viewer {
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
 }
 
 .compare-details {

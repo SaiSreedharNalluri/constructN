@@ -37,6 +37,9 @@ import {
   getMapboxLayers, getMapboxHotspots,
   getRealityMap, getFloorPlanData,
 } from "../../utils/ViewerDataUtils";
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import RemoveIcon from '@mui/icons-material/Remove';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import PictureInPictureIcon from '@mui/icons-material/PictureInPicture';
@@ -1601,21 +1604,24 @@ function GenericViewer(props) {
       onResize={(e, direction, ref, delta, position) => {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
       }}
-      className={`${'z-10 border-4 rounded-lg border-[#F1742E] bg-[#F1742E]'} ${showMinimap ? 'opacity-100' : 'opacity-0'}`}>
+      className={`${'z-10 rounded-lg bg-white'} ${showMinimap ? 'opacity-100' : 'opacity-0'}`}>
       <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
-        <div className='h-8 bg-[#F1742E] flex'>
-          <div className='text-white flex items-center pl-2 flex-1'>Minimap</div>
-          <IconButton className='text-white' size="small" onClick={() => { resizeMinimap('minimize', count) }}>
+        <div className='h-8 rounded-lg bg-white flex'>
+          <IconButton size="small">
+            <DragIndicatorIcon fontSize="inherit" />
+          </IconButton>
+          <div className='flex items-center pl-2 flex-1'>Minimap</div>
+          <IconButton size="small" onClick={() => { resizeMinimap('minimize', count) }}>
             <RemoveIcon fontSize="inherit" />
           </IconButton>
-          <IconButton className='text-white' size="small" onClick={() => { resizeMinimap('default', count) }}>
+          <IconButton size="small" onClick={() => { resizeMinimap('default', count) }}>
             <PictureInPictureIcon fontSize="inherit" />
           </IconButton>
-          <IconButton className='text-white' size="small" onClick={() => { resizeMinimap('fullscreen', count) }}>
+          <IconButton size="small" onClick={() => { resizeMinimap('fullscreen', count) }}>
             <FullscreenIcon fontSize="inherit" />
           </IconButton>
         </div>
-        <MiniMap count={count} style={{ height: 'calc(100% - 24px)' }} compareViewMode={compareViewMode} setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}></MiniMap>
+        <MiniMap count={count} style={{ height: 'calc(100%)' }} compareViewMode={compareViewMode} setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}></MiniMap>
       </div>
     </Rnd>)
   }
