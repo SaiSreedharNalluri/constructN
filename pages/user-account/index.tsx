@@ -1,10 +1,9 @@
 import router from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { toast } from 'react-toastify';
 import ChangePassword from '../../components/container/changePassword';
-import Header from '../../components/container/header';
-import Notification from '../../components/container/notification';
+import Header from '../../components/divami_components/header/Header';
 import UserProfile from '../../components/container/userProfile';
 import { IUser } from '../../models/IUser';
 import {
@@ -69,7 +68,7 @@ const Index: React.FC = () => {
         <Header />
       </div>
       <div>
-        <div className="w-full  calc-h overflow-y-auto ">
+        <div className="w-full mt-1  calc-h overflow-y-auto ">
           <Tabs
             selectedIndex={tabIndex}
             onSelect={(index) => {
@@ -79,7 +78,6 @@ const Index: React.FC = () => {
             <TabList>
               <Tab>User Profile</Tab>
               <Tab>change Password</Tab>
-              <Tab>Notifications</Tab>
               <div
                 className="absolute right-0 cursor-pointer font-bold decoration-4"
                 onClick={() => {
@@ -101,9 +99,6 @@ const Index: React.FC = () => {
               </TabPanel>
               <TabPanel>
                 <ChangePassword />
-              </TabPanel>
-              <TabPanel>
-                <Notification />
               </TabPanel>
             </div>
           </Tabs>
