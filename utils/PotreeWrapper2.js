@@ -1836,6 +1836,7 @@ export const PotreeViewerUtils = () => {
             removeFloorMap();
         }
         _isPointCloudLoaded = false;
+        _imageLoadedOnce = false;
         // _currentLoadedImage = null;
 
     }

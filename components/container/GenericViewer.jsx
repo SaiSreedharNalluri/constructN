@@ -1475,8 +1475,8 @@ function GenericViewer(props) {
   useEffect(() => {
     console.log("Generic Viewer load: Design List UseEffect", designList);
     if (designList.length > 0) {
-      loadMinimapData();
       loadViewerData();
+      loadMinimapData();
     }
   }, [designList]);
 
@@ -1490,8 +1490,8 @@ function GenericViewer(props) {
         });
         setViewerType('Potree');
       }
-      loadMinimapLayerData();
       loadLayerData();
+      loadMinimapLayerData();
     }
   }, [realityList]);
 
