@@ -221,6 +221,7 @@ export class MinimapDataVisualization {
         this.getNewViewableData();
         this.loadViewableData();
         this.addListeners();
+        setTimeout(() => this.refreshViewableData(), 500)
     }
 
 

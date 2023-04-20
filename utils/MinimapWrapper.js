@@ -309,10 +309,11 @@ export const MinimapUtils = () => {
     if(!position) return
     if(!_isModelLoaded) return
     if(_navPosition && _navPosition[0] == position[0] && _navPosition[1] == position[1] && _navPosition[2] == position[2] && _navRotation == yaw) return;
-    // console.log('Creating marger', 'ppp')
-    _dataVizUtils.createMarker(position, yaw);
-    _navPosition = position
-    _navRotation = yaw
+    setTimeout(() => {
+      _dataVizUtils.createMarker(position, yaw);
+      _navPosition = position
+      _navRotation = yaw
+    }, (_navPosition[0] == 0 && _navPosition[1] == 0 && _navPosition[2] == 0) ? 1000 : 10)
   }
 
   const showTag = (tag, show) => {
