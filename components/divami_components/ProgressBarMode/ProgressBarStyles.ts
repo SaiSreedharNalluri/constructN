@@ -15,7 +15,7 @@ export const ParentBar = styled("div")({
   backgroundColor: "#e7e7e7",
   width: "80px",
   borderRadius: "15px",
-  height: "10px",
+  height: "5px",
 });
 
 export const ChildBar =styled("div")({
@@ -24,10 +24,15 @@ export const ChildBar =styled("div")({
   textAlign: "right",
     fontSize: "20px",
     borderRadius: "15px",
-  height:"10px"
+  height:"5px"
 });
 
 export const PercentageBar=styled("div")({
- marginLeft:"10%"
+  marginLeft: "10%",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color:"#101F4C"
 });
 

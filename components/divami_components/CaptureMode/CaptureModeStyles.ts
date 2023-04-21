@@ -4,6 +4,7 @@ import Image from "next/image";
 export const ParentComp = styled("div")({
   display: "flex",
   textAlign: "center",
+  justifyContent:"space-between"
 });
 
 export const FirstDiv = styled("div")({
@@ -20,6 +21,16 @@ export const SymbolMode = styled("div")({
 });
 
 export const SecondDiv = styled("div")({
+  display: "flex",
+  marginLeft: "10px",
+});
+
+export const ThirdDiv = styled("div")({
+  display: "flex",
+  marginLeft: "10px",
+});
+
+export const FourthDiv = styled("div")({
   display: "flex",
   marginLeft: "10px",
 });

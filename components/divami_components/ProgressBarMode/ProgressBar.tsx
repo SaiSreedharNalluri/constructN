@@ -6,13 +6,13 @@ import {
   UpperParent,
 } from "./ProgressBarStyles";
 
-const ProgressBar = () => {
+const ProgressBar = (props: any) => {
   return (
     <UpperParent>
       <ParentBar>
         <ChildBar style={{ width: "90%" }}></ChildBar>
-        <PercentageBar>90%</PercentageBar>
       </ParentBar>
+      <PercentageBar>90%</PercentageBar>
     </UpperParent>
   );
 };
