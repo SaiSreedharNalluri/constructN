@@ -1537,6 +1537,16 @@ function GenericViewer(props) {
       }
     }
 
+    if(viewLayers && viewLayers['360 Video']) {
+      if(minimapUtils.current) {
+        minimapUtils.current.showTag('360 Video', viewLayers['360 Video'].isSelected)
+      }
+  
+      if(minimapCompareUtils.current) {
+        minimapCompareUtils.current.showTag('360 Video', viewLayers['360 Video'].isSelected)
+      }
+    }
+
     handleRealityTypeChange();
   }, [viewLayers, props.layersUpdated]);
 

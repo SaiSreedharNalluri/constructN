@@ -1,5 +1,6 @@
 import { MinimapDataVisualization } from "./MinimapDataVisualizationUtils";
 import { ForgeLayerUtils } from "./ForgeLayerUtils";
+import { ForgeDataVizUtils } from "./ForgeDataVizUtils";
 import {
   applyOffset,
   removeOffset,
@@ -273,29 +274,37 @@ export const MinimapUtils = () => {
 
   const loadLayers = () => {
     console.log("Passing data to dataViz extension minimap: ", _dataVizUtils);
-    _dataVizUtils.removeExistingVisualizationData();
-    _dataVizUtils.setIs2D(_manifestNode.is2D());
-    _dataVizUtils.setTM(_tm);
-    _dataVizUtils.setOffset(_globalOffset);
-    _dataVizUtils.addMediaData(_realityPositionMap);
-    _dataVizUtils.addIssuesData(_issuesList);
-    _dataVizUtils.addTasksData(_tasksList);
-    _dataVizUtils.setTagState(_showTag);
-    _dataVizUtils.setViewableState(_showLayersList);
-    _dataVizUtils.updateData();
+    // _dataVizUtils.removeExistingVisualizationData();
+    // _dataVizUtils.setIs2D(_manifestNode.is2D());
+    // _dataVizUtils.setTM(_tm);
+    // _dataVizUtils.setOffset(_globalOffset);
+    // _dataVizUtils.addMediaData(_realityPositionMap);
+    // _dataVizUtils.addIssuesData(_issuesList);
+    // _dataVizUtils.addTasksData(_tasksList);
+    // _dataVizUtils.setTagState(_showTag);
+    // _dataVizUtils.setViewableState(_showLayersList);
+    // _dataVizUtils.updateData();
     // _edit2DUtils.addMediaData(_realityPositionMap);
+
+    _dataVizUtils.setTransform(_tm, _globalOffset)
+    _dataVizUtils.loadMediaData(_realityPositionMap)
+    _dataVizUtils.loadIssues(_issuesList)
+    _dataVizUtils.loadTasks(_tasksList)
+
     _isPendingLayersToLoad = false;
   };
 
   const loadIssues = () => {
-    _dataVizUtils.addIssuesData(_issuesList);
-    _dataVizUtils.refreshViewableData();
+    // _dataVizUtils.addIssuesData(_issuesList);
+    // _dataVizUtils.refreshViewableData();
+    _dataVizUtils.loadIssues(_issuesList)
     _isPendingLayersToLoad = false;
   };
 
   const loadTasks = () => {
-    _dataVizUtils.addTasksData(_tasksList);
-    _dataVizUtils.refreshViewableData();
+    // _dataVizUtils.addTasksData(_tasksList);
+    // _dataVizUtils.refreshViewableData();
+    _dataVizUtils.loadTasks(_tasksList)
     _isPendingLayersToLoad = false;
   };
 
@@ -303,8 +312,8 @@ export const MinimapUtils = () => {
     _isPendingLayersToLoad = true;
     _showLayersList = layersList;
     if (loadLayersOnDataLoadCompletion()) {
-      _dataVizUtils.setViewableState(_showLayersList);
-      _dataVizUtils.refreshViewableData();
+      // _dataVizUtils.setViewableState(_showLayersList);
+      // _dataVizUtils.refreshViewableData();
       _isPendingLayersToLoad = false;
     }
   };
@@ -314,7 +323,8 @@ export const MinimapUtils = () => {
     if(!_isModelLoaded) return
     if(_navPosition && _navPosition[0] == position[0] && _navPosition[1] == position[1] && _navPosition[2] == position[2] && _navRotation == yaw) return;
     setTimeout(() => {
-      _dataVizUtils.createMarker(position, yaw);
+      // _dataVizUtils.createMarker(position, yaw);
+      _dataVizUtils.updateNavigator(position, yaw);
       _navPosition = position
       _navRotation = yaw
     }, (_navPosition[0] == 0 && _navPosition[1] == 0 && _navPosition[2] == 0) ? 1000 : 10)
@@ -325,8 +335,9 @@ export const MinimapUtils = () => {
     _showTag[tag] = show;
     if (_dataVizUtils) {
       if (loadLayersOnDataLoadCompletion()) {
-        _dataVizUtils.setTagState(_showTag);
-        _dataVizUtils.refreshViewableData();
+        // _dataVizUtils.setTagState(_showTag);
+        _dataVizUtils.showTag(tag, show)
+        // _dataVizUtils.refreshViewableData();
         _isPendingLayersToLoad = false;
       }
     }
@@ -334,7 +345,7 @@ export const MinimapUtils = () => {
 
   const activateTool = (type) => {
     if (_dataVizUtils) {
-      _dataVizUtils.activateCreateTagTool(type);
+      // _dataVizUtils.activateCreateTagTool(type);
       return true;
     }
     return false;
@@ -342,7 +353,7 @@ export const MinimapUtils = () => {
 
   const deactivateTool = () => {
     if (_dataVizUtils) {
-      _dataVizUtils.deactivateCreateTagTool();
+      // _dataVizUtils.deactivateCreateTagTool();
       return true;
     }
     return false;
@@ -354,13 +365,13 @@ export const MinimapUtils = () => {
 
   const cancelAddTag = () => {
     if (_dataVizUtils) {
-      _dataVizUtils.refreshViewableData();
+      // _dataVizUtils.refreshViewableData();
     }
   };
 
   const selectTag = (tag) => {
     if (_dataVizUtils) {
-      _dataVizUtils.selectTag(tag);
+      // _dataVizUtils.selectTag(tag);
     }
   };
 
@@ -533,7 +544,7 @@ export const MinimapUtils = () => {
   };
 
   const updateViewerState = (viewerState) => {
-    if (_isModelLoaded && !_manifestNode.is2D() && viewerState) {
+    if (_isModelLoaded && !(_manifestNode && _manifestNode.is2D()) && viewerState && viewerState.position) {
       // console.log("Inside update viewer state: ", _viewerId, viewerState);
       let position = new THREE.Vector3().fromArray(viewerState.position);
       _viewer.navigation.setPosition(position);
@@ -653,8 +664,8 @@ export const MinimapUtils = () => {
       );
       _dataVizExtn = _viewer.getExtension(parameter.extensionId);
 
-      _dataVizUtils = new MinimapDataVisualization(_viewer, _dataVizExtn);
-      _dataVizUtils.setHandler(onDataVizHandler.bind(this));
+      _dataVizUtils = new ForgeDataVizUtils(_viewer, _dataVizExtn, onDataVizHandler);
+      // _dataVizUtils.setHandler(onDataVizHandler.bind(this));
       if (loadLayersOnDataLoadCompletion()) {
         loadLayers();
       }
@@ -783,7 +794,8 @@ export const MinimapUtils = () => {
   const removeLayers = () => {
     console.log("Inside remove layers in forgeWrapper: ", _dataVizUtils);
     if (_dataVizUtils) {
-      _dataVizUtils.removeExistingVisualizationData();
+      // _dataVizUtils.removeExistingVisualizationData();
+      _dataVizUtils.removeLoadedData();
     }
   };
 
