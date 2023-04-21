@@ -6,164 +6,6 @@ import logo from "./logo.svg";
 import ReactDOM from "react-dom";
 import MaterialTable, { MTableToolbar } from "material-table";
 
-const dummyData = [
-  {
-    id: 1,
-    sectionname: "Basement",
-    issues: 150,
-    tasks: 34,
-    captures: 109,
-    progress: "44%",
-    lastupdated: "Today",
-    imageUrl: <ProgressBar />,
-  },
-  {
-    id: 2,
-    sectionname: "Parking",
-    issues: 34,
-    tasks: 12,
-    captures: 50,
-    progress: "44%",
-    lastupdated: "Today",
-    imageUrl: <ProgressBar />,
-    parentId: 1,
-  },
-  {
-    id: 3,
-    sectionname: "Electrical Room",
-    issues: 12,
-    tasks: 43,
-    captures: 50,
-    progress: "44%",
-    lastupdated: "Today",
-    imageUrl: <ProgressBar />,
-    parentId: 1,
-  },
-  {
-    id: 7,
-    sectionname: "Second Floor",
-    issues: 554,
-    tasks: 54,
-    captures: 50,
-    progress: "44%",
-    lastupdated: "Today",
-    imageUrl: <ProgressBar />,
-  },
-  {
-    id: 8,
-    sectionname: "Third Floor",
-    issues: 65,
-    tasks: 14,
-    captures: 50,
-    progress: "44%",
-    lastupdated: "Today",
-    imageUrl: <ProgressBar />,
-  },
-  {
-    id: 9,
-    sectionname: "Fourth Floor",
-    issues: 74,
-    tasks: 655,
-    captures: 50,
-    progress: "44%",
-    lastupdated: "Today",
-    imageUrl: <ProgressBar />,
-  },
-  {
-    id: 10,
-    sectionname: "Fifth Floor",
-    issues: 93,
-    tasks: 89,
-    captures: 50,
-    progress: "44%",
-    lastupdated: "Today",
-    imageUrl: <ProgressBar />,
-  },
-  {
-    id: 11,
-    sectionname: "Sixth Floor",
-    issues: 72,
-    tasks: 894,
-    captures: 50,
-    progress: "44%",
-    lastupdated: "Today",
-    imageUrl: <ProgressBar />,
-  },
-  {
-    id: 12,
-    sectionname: "Seventh Floor",
-    issues: 4,
-    tasks: 345,
-    captures: 50,
-    progress: "44%",
-    lastupdated: "Today",
-    imageUrl: <ProgressBar />,
-  },
-  {
-    id: 13,
-    sectionname: "Lobby",
-    issues: 90,
-    tasks: 23,
-    captures: 50,
-    progress: "44%",
-    lastupdated: "Today",
-    imageUrl: <ProgressBar />,
-  },
-  {
-    id: 14,
-    sectionname: "Lobby",
-    issues: 87,
-    tasks: 52,
-    captures: 50,
-    progress: "44%",
-    lastupdated: "Today",
-    imageUrl: <ProgressBar />,
-  },
-  {
-    id: 15,
-    sectionname: "Raheja",
-    issues: 533,
-    tasks: 149,
-    captures: 50,
-    progress: "44%",
-    lastupdated: "Today",
-    imageUrl: <ProgressBar />,
-  },
-  {
-    id: 4,
-    sectionname: "Ground Floor",
-    issues: 54,
-    tasks: 150,
-    captures: 909,
-    progress: "90%",
-    lastupdated: "3h ago",
-    imageUrl: <ProgressBar />,
-    parentId: 1,
-  },
-  {
-    id: 5,
-
-    sectionname: "First Floor",
-    issues: 90,
-    tasks: 22,
-    captures: 909,
-    progress: "90%",
-    lastupdated: "3h ago",
-  },
-
-  {
-    id: 6,
-
-    sectionname: "Store 01",
-    issues: 24,
-    tasks: 56,
-    captures: 909,
-    progress: "90%",
-    lastupdated: "3h ago",
-    parentId: 3,
-  },
-];
-
 import {
   InputAdornment,
   ThemeProvider,
@@ -214,6 +56,53 @@ import {
   SearchIconStyling,
 } from "./SectionsStyles";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { getStructureHierarchy } from "../../../../services/structure";
+import { AxiosResponse } from "axios";
+import { ChildrenEntity } from "../../../../models/IStructure";
+
+const dummyData: any = [
+  {
+    _id: 1,
+    name: "Basement",
+    // issues: 150,
+    // tasks: 34,
+    // captures: 109,
+    // progress: "44%",
+    // lastupdated: "Today",
+    // imageUrl: <ProgressBar />,
+  },
+  {
+    _id: 2,
+    name: "Parking",
+    // issues: 34,
+    // tasks: 12,
+    // captures: 50,
+    // progress: "44%",
+    // lastupdated: "Today",
+    // imageUrl: <ProgressBar />,
+  },
+  {
+    _id: 3,
+    name: "Electrical Room",
+    // issues: 12,
+    // tasks: 43,
+    // captures: 50,
+    // progress: "44%",
+    // lastupdated: "Today",
+    // imageUrl: <ProgressBar />,
+  },
+  {
+    _id: 7,
+    name: "Second Floor",
+    // issues: 554,
+    // tasks: 54,
+    // captures: 50,
+    // progress: "44%",
+    // lastupdated: "Today",
+    // imageUrl: <ProgressBar />,
+  },
+];
 
 const MyNewTitle = (props: any) => {
   console.log("MyNewTitle", props);
@@ -294,40 +183,126 @@ const tableIcons: any = {
 };
 
 const Index: React.FC = () => {
+  const router = useRouter();
+
   const defaultMaterialTheme = createTheme();
   const [selectedRow, setSelectedRow] = useState(null);
   const [isSearch, setIsSearch] = useState(false);
   const [searchVal, setIsSearchVal] = useState("");
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  // let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
+  const [tableData, setTableData] = useState<any>(
+    // { name: 'Zerya Betül', surname: 'Baran', birthYear: 2017, birthCity: 34 },
+    []
+  );
+
+  const [filterTableData, setFilterTableData] = useState<any>([]);
+
+  let [gridData, setGridData] = useState<any>([]);
+
+  // useEffect(() => {
+  //   handleSearch();
+  // }, [searchTerm]);
+
+  // https://api.dev2.constructn.ai/api/v1/projects/PRJ201897/structures/hierarchy
 
   useEffect(() => {
-    handleSearch();
-  }, [searchTerm]);
+    if (router.isReady) {
+      // if (router.query.structId !== undefined)
+      console.log("Karan");
+      // setSelector(router.query.structId.toString());
+      getStructureHierarchy(router.query.projectId as string)
+        .then((response: AxiosResponse<any>) => {
+          setGridData([...response.data.result]);
+          let removeGrandParent = response.data.result[0].children.map(
+            (item: any, index: number) => {
+              return {
+                ...item,
+                parent: null,
+              };
+            }
+          );
+          massageTree(removeGrandParent, response.data.result[0].id);
+          setTableData([...dummyData]);
+          //   setFilterTableData([...response.data.result[0].children]);
 
-  const handleSearchWindow = () => {
-    if (searchTerm === "") {
-      setSearchingOn(!searchingOn);
-    } else {
-      setSearchTerm("");
+          console.log("Karan", response.data.result[0].children);
+          // if (selector.length < 1) setSelector(response.data.result[0]._id);
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
     }
-  };
+  }, []);
+
+  function massageTree(responseArr: any, grandParent: string) {
+    let resultArr: any = [];
+    console.log("FLAG 1", responseArr, grandParent);
+    responseArr.map((item: any, index: number) => {
+      if (item.parent == null) {
+        // parent
+        resultArr.push(item);
+        if (item.children !== null && item.children.length > 0) {
+          // child exists
+          item.children.map((child: any, inde: number) => {
+            resultArr.push({ ...child, parentId: child.parent });
+            if (child.children !== null && child.children.length > 0) {
+              helperFunction(child.children, resultArr);
+            }
+          });
+          // function
+        }
+      } else {
+        //
+        return item;
+      }
+    });
+
+    console.log("MASSAGED", resultArr);
+    setFilterTableData([...resultArr]);
+  }
+
+  function helperFunction(childArr: any, resultArr: any) {
+    childArr.map((each: any, index: number) => {
+      if (each.children !== null && each.children.length > 0) {
+        resultArr.push({ ...each, parentId: each.parent });
+        helperFunction(each.children, resultArr);
+      } else {
+        resultArr.push({ ...each, parentId: each.parent });
+      }
+    });
+  }
+
+  // useEffect(() => {
+  //   console.log("Robby", tableData);
+  //   setFilterTableData([...tableData]);
+  // }, [tableData]);
+
+  // const handleSearchWindow = () => {
+  //   if (searchTerm === "") {
+  //     setSearchingOn(!searchingOn);
+  //   } else {
+  //     setSearchTerm("");
+  //   }
+  // };
 
   const handleSearch = () => {
-    if (searchTerm.length) {
-      const newTableData = tableData.filter((item) =>
-        item.sectionname.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilterTableData(newTableData);
-    } else {
-      setFilterTableData([...dummyData]);
-    }
+    console.log("TEST");
+    // if (searchTerm.length) {
+    //   const newTableData = tableData.filter((item: any) =>
+    //     item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    //   );
+    //   setFilterTableData(newTableData);
+    // } else {
+    //   setFilterTableData([...dummyData]);
+    // }
   };
 
   const columns = [
     {
       title: "Section Name",
-      field: "sectionname",
+      field: "name",
       sorting: false,
       filtering: false,
       headerStyle: {
@@ -445,13 +420,6 @@ const Index: React.FC = () => {
     // },
   ];
 
-  const [tableData, setTableData] = useState(
-    // { name: 'Zerya Betül', surname: 'Baran', birthYear: 2017, birthCity: 34 },
-    [...dummyData]
-  );
-
-  const [filterTableData, setFilterTableData] = useState([...dummyData]);
-
   return (
     <React.Fragment>
       <div>
@@ -483,9 +451,9 @@ const Index: React.FC = () => {
                         endAdornment: (
                           <InputAdornment position="start">
                             <CloseIcon
-                              onClick={() => {
-                                handleSearchWindow();
-                              }}
+                              // onClick={() => {
+                              //   // handleSearchWindow();
+                              // }}
                               src={CrossIcon}
                               alt={"close icon"}
                               data-testid="search-close"
@@ -582,7 +550,7 @@ const Index: React.FC = () => {
                     //   { icon: tableIcons.Add, tooltip: "Show Surname" },
                     // ]}
                     parentChildData={(row, rows) =>
-                      rows.find((a) => a.id === row.parentId)
+                      rows.find((a) => a._id === row.parentId)
                     }
                   />
 
