@@ -344,7 +344,7 @@ const Index: React.FC = () => {
     {
       title: "Issues",
       field: "issues",
-      sorting: true,
+      sorting: false,
       headerStyle: {
         borderBottom: "1px solid #FF843F",
         fontFamily: "Open Sans",
@@ -359,7 +359,8 @@ const Index: React.FC = () => {
     {
       title: "Tasks",
       field: "tasks",
-      sorting: true,
+      sorting: false,
+
       headerStyle: {
         borderBottom: "1px solid #FF843F",
         fontFamily: "Open Sans",
@@ -375,7 +376,7 @@ const Index: React.FC = () => {
       title: "Captures",
       field: "captures",
       render: (rowData: any) => <CaptureMode />,
-      sorting: true,
+      sorting: false,
       headerStyle: {
         borderBottom: "1px solid #FF843F",
         fontFamily: "Open Sans",
@@ -388,8 +389,10 @@ const Index: React.FC = () => {
       cellStyle: { width: "30%" },
     },
     {
-      title: "Progress",
+      title: "Status & Progress",
       field: "progress",
+      sorting: true,
+
       render: (rowData: any) => <ProgressBar />,
       headerStyle: {
         borderBottom: "1px solid #FF843F",
@@ -400,13 +403,13 @@ const Index: React.FC = () => {
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "15%" },
+      cellStyle: { width: "18%" },
       // sorting: true,
     },
     {
       title: "Last Updated",
       field: "lastupdated",
-      sorting: true,
+      sorting: false,
       headerStyle: {
         borderBottom: "1px solid #FF843F",
         fontFamily: "Open Sans",
