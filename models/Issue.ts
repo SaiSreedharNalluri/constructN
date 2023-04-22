@@ -7,7 +7,7 @@ export interface Issue {
   status: string;
   priority: string;
   screenshot: string;
-  assignees?: [
+  assignees: [
     { _id: string; firstName: string; lastName: string; email: string }
   ];
   owner: string;
@@ -15,7 +15,7 @@ export interface Issue {
   structure: string;
   progress: 0;
   tags: [string];
-  attachments?: [
+  attachments: [
     {
       name: string;
       url: string;
@@ -24,11 +24,11 @@ export interface Issue {
     }
   ];
   sequenceNumber?: number;
-  createdAt?: string;
-  updatedAt?: string;
-  startDate?: string;
-  dueDate?: string;
+  createdAt: string;
+  updatedAt: string;
+  startDate: string;
+  dueDate: string;
   context?: IContext;
   _id: string;
-  __v?: 0;
+  __v: 0;
 }

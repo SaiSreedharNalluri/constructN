@@ -105,7 +105,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     function getViewerTypefromViewType(viewType:string){
     //console.log('Getting ViewerType for ',viewType);
     switch(viewType){
-      case 'PlanDrawings':
+      case 'Plan Drawings':
       case 'BIM':
         return 'Forge';
       case 'pointCloud':
@@ -632,13 +632,13 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       switch (event.type) {
         case '360 Video':
           currentContext.current = event;
-          if (currentViewerData.currentViewType==='PlanDrawings' || currentViewerData.currentViewType==='BIM')
+          if (currentViewerData.currentViewType==='Plan Drawings' || currentViewerData.currentViewType==='BIM')
           {
             dispatchChangeViewerData({type:'setViewType',data:'pointCloud'});
           }
           else if(currentViewerData.currentViewType==='pointCloud')
           {
-            dispatchChangeViewerData({type:'setViewType',data:'PlanDrawings'});
+            dispatchChangeViewerData({type:'setViewType',data:'Plan Drawings'});
           }
           break;
         case 'Reality':
@@ -819,7 +819,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           forgeUtils.current.updateIssuesData(currentViewerData.currentIssueList);
           forgeUtils.current.updateTasksData(currentViewerData.currentTaskList);
           let Rdata = await getRealityLayers(currentViewerData.structure, getRealityMap(currentViewerData.currentSnapshotBase));
-          //console.log('HERE',Rdata);
+          console.log('Reality Layers',Rdata);
           forgeUtils.current.updateLayersData(Rdata,currentContext.current);
           forgeUtils.current.showLayers(currentViewerData.currentLayersList);
         }
@@ -1131,7 +1131,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   };
 
-  const removeContext = () => {
+  function removeContext  (){
     setContext(typeof undefined);
     currentContext.current = undefined;
   };
