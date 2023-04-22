@@ -2,7 +2,7 @@ import instance from "./axiosInstance";
 import authHeader from "./auth-header";
 export const getGenViewerData = async (projectId: string, structureId: string) => {
     return await instance
-      .put(
+      .get(
         `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/structures/${structureId}/gen-data`,
         {
           headers: authHeader.authHeader(),
