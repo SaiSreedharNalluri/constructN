@@ -31,7 +31,7 @@ export class ForgeDataVizUtils {
 
         this._offset = [0, 0, 0]
 
-        this._createNavigator()
+        // this._createNavigator()
 
         // this._createModelBuilder()
     }
@@ -149,7 +149,7 @@ export class ForgeDataVizUtils {
 
         const viewableData = this._viewableDataMap[type]
 
-        if(viewableData) {
+        if (viewableData) {
 
             const dbIds = viewableData.viewables.map(v => { return v.dbId })
 
@@ -174,62 +174,57 @@ export class ForgeDataVizUtils {
         this._existingImages = []
 
         this._existingTags = []
-
-        this._createNavigator()
     }
 
     updateNavigator = (position, yaw) => {
 
+        this._lastUpdated = Date.now()
+
         const localPos = this._toLocalPosition(position)
 
-        localPos.z += 1
+        localPos.z += 10
 
-        if (this.currentClicked) {
+        if(!this._dbMap[1]) {
 
-            // if (this._viewableDataMap[ForgeDataVizUtils.NAVIGATOR]) {
+            this._createNavigator(localPos, yaw)
+        }
 
-            //     this._invalidateViewables(1, this._dataVizExtn.pointMeshes, this._viewableDataMap[ForgeDataVizUtils.NAVIGATOR], (viewable) => {
+        setTimeout(() => {
 
-            //         return {
+            if(Date.now() - this._lastUpdated > 100) {
 
-            //             position: {x: -100, y: -100, z: -100}
-            //         }
-            //     })
-            // }
+                if(this._dbMap[1]) {
 
-            this._invalidateViewables(this.currentClicked, this._dataVizExtn.pointMeshes, this._viewableDataMap['360 Video'], (viewable) => {
+                    for (let k = 0; k < this._dataVizExtn.pointMeshes.length; k++) {
 
-                let deg = MathUtils.radToDeg(yaw) % 360
+                        const mesh = this._dataVizExtn.pointMeshes[k]
+            
+                        if (mesh.geometry.dbIds.indexOf(1) > -1) {
 
-                if (deg > 0) deg = 360 - deg
+                            this._dbMap[1] = undefined
+            
+                            this._viewer.overlays.removeMesh(mesh, 'DataVizDots')
 
-                else deg = deg * -1
+                            break
+                        }
+                    }
 
-                deg = (Math.floor(deg / 10) * 10) % 360
+                    this._createNavigator(localPos, yaw)
 
-                const mUrl = `/icons/navigator/nav-${deg}.png`
+                    this._lastUpdated = undefined
 
-                const pos = structuredClone(viewable.position)
+                    this._locations = []
 
-                pos.z += 100
+                } else {
 
-                return {
-
-                    scale: 2.0,
-
-                    position: pos,
-
-                    url: mUrl
+                    this._createNavigator(localPos, yaw)
                 }
-            })
-        } else {
-
-            if (this._viewableDataMap[ForgeDataVizUtils.NAVIGATOR]) {
+            } else {
 
                 this._invalidateViewables(1, this._dataVizExtn.pointMeshes, this._viewableDataMap[ForgeDataVizUtils.NAVIGATOR], (viewable) => {
 
                     let deg = MathUtils.radToDeg(yaw) % 360
-
+                    
                     if (deg > 0) deg = 360 - deg
 
                     else deg = deg * -1
@@ -246,7 +241,7 @@ export class ForgeDataVizUtils {
                     }
                 })
             }
-        }
+        }, 300)
     }
 
     updateNavigator1 = (position, yaw) => {
@@ -267,11 +262,13 @@ export class ForgeDataVizUtils {
         }
     }
 
-    _createNavigator = async () => {
+    _createNavigator = async (pos, yaw) => {
 
         if (!this._dbMap[1]) {
 
-            const _viewableData = await this._createViewableData([{ position: { x: -100, y: -100, z: 100 }, type: ForgeDataVizUtils.NAVIGATOR }], ForgeDataVizUtils.NAVIGATOR)
+            const _viewableData = await this._createViewableData(
+                [{ position: pos, type: ForgeDataVizUtils.NAVIGATOR }],
+                ForgeDataVizUtils.NAVIGATOR, yaw)
 
             this._viewableDataMap[ForgeDataVizUtils.NAVIGATOR] = _viewableData
 
@@ -279,9 +276,9 @@ export class ForgeDataVizUtils {
         }
     }
 
-    _createViewableData = async (data, type) => {
+    _createViewableData = async (data, type, yaw) => {
 
-        const _spriteConfig = this._spriteConfigForType(type)
+        const _spriteConfig = this._spriteConfigForType(type, yaw)
 
         const _viewableData = new Autodesk.DataVisualization.Core.ViewableData()
 
@@ -309,7 +306,7 @@ export class ForgeDataVizUtils {
 
         let animatedUrls = []
 
-        if (dbId >= 1500 || dbId == 1) {
+        if (dbId == 1) {
 
             for (let i = 0; i < 360; i = i + 10) {
 
@@ -328,17 +325,35 @@ export class ForgeDataVizUtils {
         return _viewable
     }
 
-    _spriteConfigForType = (type) => {
+    _spriteConfigForType = (type, yaw) => {
 
         switch (type) {
 
-            case ForgeDataVizUtils.NAVIGATOR: return {
+            case ForgeDataVizUtils.NAVIGATOR: {
 
-                icon: '/icons/navigator/nav-0.png',
+                let deg = 0
 
-                size: 24,
+                if (yaw) {
 
-                offset: 1
+                    deg = MathUtils.radToDeg(yaw) % 360
+
+                    if (deg > 0) deg = 360 - deg
+
+                    else deg = deg * -1
+
+                    deg = (Math.floor(deg / 10) * 10) % 360
+                }
+
+                const sprite = `/icons/navigator/nav-${deg}.png`
+
+                return {
+
+                    icon: sprite,
+
+                    size: 24,
+
+                    offset: 1
+                }
             }
 
             case 'Drone Image': return {
@@ -476,34 +491,11 @@ export class ForgeDataVizUtils {
 
         this._dataVizExtn.clearHighlightedViewables()
 
-        if (event.dbId > 1500) {
-
-            if (this.currentClicked) {
-
-                this._invalidateViewables(this.currentClicked, this._dataVizExtn.pointMeshes, this._viewableDataMap['360 Video'], (viewable) => {
-
-                    const pos = structuredClone(viewable.position)
-
-                    return {
-
-                        scale: 1.0,
-
-                        position: pos,
-
-                        url: viewable.style.url
-                    }
-                })
-            }
-
-            this.currentClicked = event.dbId
-        } else {
-
-            this._dataVizExtn.clearHighlightedViewables()
-        }
-
-        let dbObject = structuredClone(this._dbMap[event.dbId]);
+        let dbObject = structuredClone(this._dbMap[event.dbId])
 
         if (dbObject) {
+
+            this.currentClicked = dbObject.position
 
             dbObject.position = this._toGlobalPosition(dbObject.position)
 

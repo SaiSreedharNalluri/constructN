@@ -327,7 +327,7 @@ export const MinimapUtils = () => {
       _dataVizUtils.updateNavigator(position, yaw);
       _navPosition = position
       _navRotation = yaw
-    }, (_navPosition[0] == 0 && _navPosition[1] == 0 && _navPosition[2] == 0) ? 1000 : 10)
+    }, 10)
   }
 
   const showTag = (tag, show) => {
@@ -403,6 +403,7 @@ export const MinimapUtils = () => {
         //   };
         // } else {
         console.log(`Inside Rag Click click: ${targetObject.position.x}`, _viewerId);
+        if(!targetObject.id) return
         if (targetObject.id.includes("Temp")) {
           _isAddTagActive = deactivateTool();
           let tagObject = {
