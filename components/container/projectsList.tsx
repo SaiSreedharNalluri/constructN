@@ -12,7 +12,7 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
   const router = useRouter();
   Mixpanel.track('projects_list_page_open');
   return (
-    <div className="h-full calc-h overflow-y-auto grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
+    <div className=" calc-h overflow-y-auto overflow-x-hidden grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
       {loading ? (
         projects.length > 0 ? (
           projects.map((pData) => {

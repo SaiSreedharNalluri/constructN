@@ -36,7 +36,7 @@ import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
 import TimeLineComponent from '../divami_components/timeline-container/TimeLineComponent'
 import Hotspots from './hotspots';
 import HotspotsCompare from './hotspotsCompare';
-
+import styles from "../../styles/GenericViewer.module.css"
 function GenericViewer(props) {
   const genericViewer = 'genericViewer';
   const genericViewerRef = useRef();
@@ -45,6 +45,7 @@ function GenericViewer(props) {
   const [fullScreenMode, setFullScreenMode] = useState(props.isFullScreen)
   let structure = props.structure;
   let isFullScreenActive=props.isFullScreenActive;
+  let isFullScreens=props.isFullScreen;
   
   let currentStructure = useRef();
 
@@ -1341,8 +1342,8 @@ function GenericViewer(props) {
   }
 
   return (
-      <div className="fixed calc-width-full calc-height-full flex flex-row">
-        <div id="TheView" className="relative basis-1/2 flex grow shrink">
+      <div className={` ${fullScreenMode?"w-full h-full":`${styles.calcWidth} ${styles.calcHeight}`} fixed flex flex-row`}>
+        <div id="TheView" className="relative  basis-1/2 flex grow shrink">
           {renderViewer(1)}
           <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
         </div>
