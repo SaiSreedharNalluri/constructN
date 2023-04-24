@@ -24,6 +24,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
   "& .MuiDialogActions-root": {
     padding: theme.spacing(1),
+    display: "flex",
+    justifyContent: "center",
   },
   "& .MuiPaper-root.MuiDialog-paper": {
     width: "493px",
