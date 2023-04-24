@@ -767,9 +767,6 @@ function BasicTabs(props: any) {
                             {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
                             <AttachedImageTitle>{a?.name}</AttachedImageTitle>
 
-                            {/* <AttachedImageIcon>
-                              <Image src={""} alt="" />
-                            </AttachedImageIcon> */}
                             <DeleteIcon
                               src={Delete}
                               alt={"delete icon"}
