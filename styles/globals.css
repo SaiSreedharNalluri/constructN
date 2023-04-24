@@ -145,7 +145,7 @@
 
 .attachmentsSection .detailsImageDiv:hover {
   background: #fff2eb;
-  color: #ff843f;
+  color: #f1742e;
 }
 
 .MuiDrawer-paper {
@@ -449,12 +449,12 @@ body {
 
 .formField:focus-visible {
   outline: none;
-  border: 1px solid #ff843f !important;
+  border: 1px solid #f1742e !important;
   border-radius: 4px;
 }
 
 .formField.Mui-focused {
-  border: 1px solid #ff843f !important;
+  border: 1px solid #f1742e !important;
   border-radius: 4px;
 }
 

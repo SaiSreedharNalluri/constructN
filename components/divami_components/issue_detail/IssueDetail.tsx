@@ -333,7 +333,7 @@ function BasicTabs(props: any) {
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
         <Tabs
           TabIndicatorProps={{
-            style: { background: "#FF843F", height: "3px", color: "black" },
+            style: { background: "#F1742E", height: "3px", color: "black" },
           }}
           value={value}
           onChange={handleChange}
@@ -666,7 +666,7 @@ function BasicTabs(props: any) {
                 sx={{
                   width: 300,
                   "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    border: "1px solid #ff843f !important",
+                    border: "1px solid #F1742E !important",
                   },
                 }}
                 renderTags={() => null}

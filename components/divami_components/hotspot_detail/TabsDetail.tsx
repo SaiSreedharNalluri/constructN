@@ -66,7 +66,7 @@ export const BasicTabs = (props: any) => {
         {" "}
         <Tabs
           TabIndicatorProps={{
-            style: { background: "#FF843F", height: "3px" },
+            style: { background: "#F1742E", height: "3px" },
           }}
           value={value}
           onChange={handleChange}

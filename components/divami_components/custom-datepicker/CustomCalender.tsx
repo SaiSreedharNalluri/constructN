@@ -69,7 +69,7 @@ const CustomDatePicker = styled(DatePicker)({
     textTransform: "uppercase",
   },
   "& .MuiFormLabel-root.MuiInputLabel-root.Mui-focused": {
-    border: "1px solid #ff843f !important",
+    border: "1px solid #F1742E !important",
     borderRadius: "4px",
   },
 });
