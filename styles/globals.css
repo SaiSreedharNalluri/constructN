@@ -23,7 +23,7 @@
 }
 
 .calc-h {
-  height: calc(100vh - 40px);
+  height: calc(100vh - 60px);
   /* height: calc(100vh - 116px); */
 }
 
@@ -182,8 +182,9 @@ body {
 }
 
 .adsk-viewing-viewer .adsk-toolbar {
-  bottom: 30px;
-  left: calc(100% - 60px);
+  bottom: 110px;
+  left: unset !important;
+  right: 30px;
   pointer-events: none;
   position: absolute;
   text-align: center;
@@ -193,7 +194,7 @@ body {
 
 .adsk-viewing-viewer .adsk-toolbar .adsk-button .toolbar-vertical-group {
   bottom: -20px;
-  left: -50px;
+  /* left: -50px; */
   margin: 0;
   position: absolute;
   display: grid;
