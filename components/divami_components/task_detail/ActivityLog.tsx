@@ -11,6 +11,8 @@ import Clip from "../../../public/divami_icons/clip.svg";
 import Send from "../../../public/divami_icons/send.svg";
 import Delete from "../../../public/divami_icons/delete.svg";
 import Edit from "../../../public/divami_icons/edit.svg";
+import { debounce } from "lodash";
+
 import {
   EditIcon,
   DeleteIcon,
@@ -100,6 +102,8 @@ const ActivityLog = (props: any) => {
   const [searchingOnnew, setSearchingOnnew] = useState(false);
   const [currentCommentId, setCurrentCommentId] = useState("");
   const [commentId, setCommentId] = useState("");
+
+  const [isSaving, setIsSaving] = useState(false);
 
   function sayHello(name: string) {
     setCurrentCommentId(name);
@@ -260,28 +264,28 @@ const ActivityLog = (props: any) => {
     }
   };
 
-  const saveAddedComments = async () => {
-    if (commentsData?.length && commentInputData?.data?.text) {
+  const saveAddedComments = async (commentObj: any) => {
+    if (commentObj?.length && commentObj?.data?.text) {
       createComment(router.query.projectId as string, {
-        comment: commentInputData.data?.text,
-        entity: commentsData[0]?.entity,
+        comment: commentObj.data?.text,
+        entity: commentObj[0]?.entity,
       }).then((response: any) => {
         if (response.success === true) {
           toast.success("Comment added sucessfully");
-          getComments(commentsData[0]?.entity);
+          getComments(commentObj[0]?.entity);
         }
 
-        setCommentInputData({
-          isReply: false,
-          isEdit: false,
-          isEditReply: false,
-          data: {
-            text: "",
-            attachments: "",
-            commentId: "",
-            replyId: "",
-          },
-        });
+        // setCommentInputData({
+        //   isReply: false,
+        //   isEdit: false,
+        //   isEditReply: false,
+        //   data: {
+        //     text: "",
+        //     attachments: "",
+        //     commentId: "",
+        //     replyId: "",
+        //   },
+        // });
       });
     }
   };
@@ -341,6 +345,8 @@ const ActivityLog = (props: any) => {
       });
     }
   };
+
+  console.log("commentInputData", commentInputData);
 
   return (
     <ActivityCardContainer data-testid="const-custom-activity-log-issue">
@@ -797,18 +803,49 @@ const ActivityLog = (props: any) => {
                   };
                 });
               }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  // const commentText = commentInputData?.data?.text?.trim();
+                  // if (commentText) {
+                  //   if (commentInputData?.isReply) {
+                  //     saveRepliedComments();
+                  //   } else if (commentInputData?.isEdit) {
+                  //     saveEditComment();
+                  //   } else if (commentInputData?.isEditReply) {
+                  //     saveEditRepliedComments();
+                  //   } else {
+                  //     saveAddedComments();
+                  //   }
+                  // }
+                }
+              }}
             />
             <AddCommentButtonContainer>
               <SendButton
                 onClick={() => {
-                  if (commentInputData?.isReply) {
-                    saveRepliedComments();
-                  } else if (commentInputData?.isEdit) {
-                    saveEditComment();
-                  } else if (commentInputData?.isEditReply) {
-                    saveEditRepliedComments();
-                  } else {
-                    saveAddedComments();
+                  let commentText = commentInputData?.data?.text?.trim();
+                  let newObj = { ...commentInputData };
+                  setCommentInputData({
+                    isReply: false,
+                    isEdit: false,
+                    isEditReply: false,
+                    data: {
+                      text: "",
+                      attachments: "",
+                      commentId: "",
+                      replyId: "",
+                    },
+                  });
+                  if (commentText) {
+                    if (commentInputData?.isReply) {
+                      saveRepliedComments();
+                    } else if (commentInputData?.isEdit) {
+                      saveEditComment();
+                    } else if (commentInputData?.isEditReply) {
+                      saveEditRepliedComments();
+                    } else {
+                      saveAddedComments(newObj);
+                    }
                   }
                 }}
               >
