@@ -265,14 +265,16 @@ const ActivityLog = (props: any) => {
   };
 
   const saveAddedComments = async (commentObj: any) => {
-    if (commentObj?.length && commentObj?.data?.text) {
+    console.log("Karan", commentObj);
+    if (commentsData?.length && commentObj?.data?.text) {
+      console.log("Rohan", commentObj);
       createComment(router.query.projectId as string, {
         comment: commentObj.data?.text,
-        entity: commentObj[0]?.entity,
+        entity: commentsData[0]?.entity,
       }).then((response: any) => {
         if (response.success === true) {
           toast.success("Comment added sucessfully");
-          getComments(commentObj[0]?.entity);
+          getComments(commentsData[0]?.entity);
         }
 
         // setCommentInputData({
