@@ -54,7 +54,7 @@ const UserProfile: React.FC<IProps> = ({
                       src={
                         userDetails?.avatar
                           ? userDetails?.avatar
-                          : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/user_icon_def_01.png'
+                          : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/user_icon_def_01.png`
                       }
                       alt=""
                       width={720}

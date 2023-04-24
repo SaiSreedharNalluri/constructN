@@ -1,0 +1,7 @@
+.calcWidth {
+    width: calc(100% - 59px);
+  }
+  .calcHeight {
+    height: calc(100% - 60px);
+  }
+  
