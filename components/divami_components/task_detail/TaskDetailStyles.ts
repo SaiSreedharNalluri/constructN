@@ -352,7 +352,7 @@ export const RelatedTagTitle = styled("div")`
 export const RelatedTagsButton = styled("div")`
   display: flex;
   justify-content: flex-start;
-  margin-top: 8px;
+  margin-top: 10px;
   flex-wrap: wrap;
 `;
 
