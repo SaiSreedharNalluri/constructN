@@ -189,6 +189,21 @@ export const CustomSearchField = styled(TextField)({
   },
 });
 
+export const FilterIndication = styled("span")({
+  height: "8px",
+  width: "8px",
+  backgroundColor: "#F1742E",
+  borderRadius: "50%",
+  display: "inline-block",
+  marginTop: "-16px",
+  marginLeft: "-6px",
+});
+
+export const FunnelIcon = styled(Image)({
+  cursor: "pointer",
+  marginLeft: "16px",
+});
+
 export const SearchAreaContainer = styled("div")({
   display: "flex",
   justifyContent: "space-between",
@@ -225,7 +240,7 @@ export const LoadMoreText = styled("div")({
   fontSize: "16px",
   lineHeight: "21.79px",
   textAlign: "center",
-  color: "#FF843F",
+  color: "#F1742E",
   cursor: "pointer",
 });
 
@@ -275,7 +290,7 @@ export const RaiseButtonDiv = styled("div")({
   textAlign: "center",
   color: "#FFFFFF",
   marginTop: "20px",
-  background: "#FF843F",
+  background: "#F1742E",
   borderRadius: "4px",
   display: "flex",
   justifyContent: "center",

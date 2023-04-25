@@ -133,7 +133,6 @@ const Body = ({
 
   useEffect(() => {
     if (projectUsers.length && taskPriorities.length && taskTypes.length) {
-      // console.log(editData, "editdata", formConfig, "formconfig");
       if (editData) {
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {

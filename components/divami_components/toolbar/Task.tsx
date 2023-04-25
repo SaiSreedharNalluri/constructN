@@ -31,6 +31,7 @@ import { ITools } from "../../../models/ITools";
 import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
 import Tooltip from "@mui/material/Tooltip";
 import html2canvas from "html2canvas";
+import moment from "moment";
 
 const Task = ({
   rightMenuClickHandler,
@@ -133,9 +134,11 @@ const Task = ({
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
+    data.startdate = moment(data.startdate).format("YYYY-MM-DD");
     data.duedate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
+    data.duedate = moment(data.duedate).format("YYYY-MM-DD");
     data.attachments = formData.filter(
       (item: any) => item.id === "file-upload"
     )[0].selectedFile;

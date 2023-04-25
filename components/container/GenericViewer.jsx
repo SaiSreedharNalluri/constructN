@@ -1659,7 +1659,7 @@ function GenericViewer(props) {
   }
 
   return (
-      <div className={` ${fullScreenMode?"w-full h-full":`${styles.calcWidth} ${styles.calcHeight}`} fixed flex flex-row`}>
+      <div className={` ${fullScreenMode?"w-full h-full":`${styles.calcWidth} ${styles.calcHeight}`} fixed flex flex-row overflow-hidden`}>
         <div id="TheView" className="relative  basis-1/2 flex grow shrink">
           {renderViewer(1)}
           <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
