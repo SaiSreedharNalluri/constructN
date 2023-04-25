@@ -327,7 +327,7 @@ function BasicTabs(props: any) {
       method: "status_desc",
     },
   ];
-
+  console.log("formState", formState);
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
@@ -490,31 +490,21 @@ function BasicTabs(props: any) {
                         <SecondAssigneeList>
                           {taskState?.TabOne?.assignessList?.map(
                             (assignName: any, index: number) => {
-                              return (
-                                <>
-                                  {index !==
-                                  taskState?.TabOne?.assignessList.length - 1
-                                    ? assignName?.firstName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.firstName.slice(1) +
-                                      " " +
-                                      assignName.lastName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.lastName.slice(1) +
-                                      " | "
-                                    : assignName?.firstName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.firstName.slice(1) +
-                                      " " +
-                                      assignName.lastName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.lastName.slice(1)}
-                                </>
-                              );
+                              if (index !== 0) {
+                                return (
+                                  <>
+                                    {index !==
+                                    taskState?.TabOne?.assignessList.length - 1
+                                      ? assignName?.firstName +
+                                        assignName.lastName
+                                          .charAt(0)
+                                          .toUpperCase() +
+                                        " | "
+                                      : assignName?.firstName +
+                                        assignName.lastName}
+                                  </>
+                                );
+                              }
                             }
                           )}
                         </SecondAssigneeList>
@@ -584,31 +574,21 @@ function BasicTabs(props: any) {
                         <AssigneeList>
                           {taskState?.TabOne?.assignessList?.map(
                             (assignName: any, index: number) => {
-                              return (
-                                <>
-                                  {index !==
-                                  taskState?.TabOne?.assignessList.length - 1
-                                    ? assignName?.firstName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.firstName.slice(1) +
-                                      " " +
-                                      assignName.lastName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.lastName.slice(1) +
-                                      " | "
-                                    : assignName?.firstName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.firstName.slice(1) +
-                                      " " +
-                                      assignName.lastName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.lastName.slice(1)}
-                                </>
-                              );
+                              if (index !== 0) {
+                                return (
+                                  <>
+                                    {index !==
+                                    taskState?.TabOne?.assignessList.length - 1
+                                      ? assignName?.firstName +
+                                        " " +
+                                        assignName.lastName +
+                                        " | "
+                                      : assignName?.firstName +
+                                        " " +
+                                        assignName.lastName}
+                                  </>
+                                );
+                              }
                             }
                           )}
                         </AssigneeList>
@@ -713,7 +693,10 @@ function BasicTabs(props: any) {
                         <CloseIcon
                           src={closeIcon}
                           alt=""
-                          style={{ marginLeft: "5px", marginRight: "12px" }}
+                          style={{
+                            marginLeft: "5px",
+                            marginRight: "12px",
+                          }}
                         />
                       }
                       onDelete={() => {

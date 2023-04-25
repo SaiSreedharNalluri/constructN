@@ -152,11 +152,11 @@ export const DueDateDiv = styled("div")({
 });
 
 export const HorizontalLine = styled("div")({
-  backgroundColor: "#d9d9d9",
+ backgroundColor: "#d9d9d9",
   borderBottom: "1px solid #d9d9d9",
   width: "398x",
-  marginTop: "18px",
-  marginBottom: "20px",
+  marginTop: "17px",
+  marginBottom: "17px",
 });
 
 export const LoadMoreContainer = styled("div")({

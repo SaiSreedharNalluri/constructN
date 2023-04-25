@@ -104,6 +104,7 @@ import { jsPDF } from "jspdf";
 import { getIssuesList } from "../../../services/issue";
 import { DownloadTable } from "../toolbar/DownloadTable";
 import { downloadMenuOptions, getDownladableList } from "./Constants";
+import CompletedIconTask from "../../../public/divami_icons/CompletedIconTask.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -523,6 +524,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                                 ? todoIcon
                                 : val.status === "Blocked"
                                 ? blockedFrame
+                                : val.status === "Completed"
+                                ? CompletedIconTask
                                 : ""
                             }
                             alt="Arrow"
@@ -566,30 +569,32 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                               <AssigneeList>
                                 {val?.assignees?.map(
                                   (assignName: any, index: number) => {
-                                    return (
-                                      <>
-                                        {index !== val?.assignees?.length - 1
-                                          ? assignName?.firstName
-                                              .charAt(0)
-                                              .toUpperCase() +
-                                            assignName?.firstName.slice(1) +
-                                            " " +
-                                            assignName.lastName
-                                              .charAt(0)
-                                              .toUpperCase() +
-                                            assignName?.lastName.slice(1) +
-                                            " | "
-                                          : assignName?.firstName
-                                              .charAt(0)
-                                              .toUpperCase() +
-                                            assignName?.firstName.slice(1) +
-                                            " " +
-                                            assignName.lastName
-                                              .charAt(0)
-                                              .toUpperCase() +
-                                            assignName?.lastName.slice(1)}
-                                      </>
-                                    );
+                                    if (index != 0) {
+                                      return (
+                                        <>
+                                          {index !== val?.assignees?.length - 1
+                                            ? assignName?.firstName
+                                                .charAt(0)
+                                                .toUpperCase() +
+                                              assignName?.firstName.slice(1) +
+                                              " " +
+                                              assignName.lastName
+                                                .charAt(0)
+                                                .toUpperCase() +
+                                              assignName?.lastName.slice(1) +
+                                              " | "
+                                            : assignName?.firstName
+                                                .charAt(0)
+                                                .toUpperCase() +
+                                              assignName?.firstName.slice(1) +
+                                              " " +
+                                              assignName.lastName
+                                                .charAt(0)
+                                                .toUpperCase() +
+                                              assignName?.lastName.slice(1)}
+                                        </>
+                                      );
+                                    }
                                   }
                                 )}
                               </AssigneeList>
