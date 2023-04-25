@@ -1609,6 +1609,7 @@ function GenericViewer(props) {
     
     return (<Rnd
       ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
+      style={{left: '84px'}}
       minWidth={320}
       minHeight={28}
       maxWidth={'99%'}
@@ -1662,11 +1663,13 @@ function GenericViewer(props) {
       <div className={` ${fullScreenMode?"w-full h-full":`${styles.calcWidth} ${styles.calcHeight}`} fixed flex flex-row overflow-hidden`}>
         <div id="TheView" className="relative  basis-1/2 flex grow shrink">
           {renderViewer(1)}
+          {renderMinimap(1)}
           <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
         </div>
         <div className={isCompare?'w-0.5':''} color='gray'></div>
         <div className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
           {renderViewer(2)}
+          {renderMinimap(2)}
           <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
         </div>
         {
