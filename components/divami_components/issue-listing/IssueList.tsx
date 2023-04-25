@@ -228,13 +228,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setIssueList(issuesList);
     setDownloadList(issuesList);
   }, [issuesList]);
-  
+
   useEffect(() => {
     setFilteredIssuesList(issueList.slice(0, 10));
   }, [issueList]);
 
   useEffect(() => {
-    setRemainingIssues(issueList?.length);
+    setRemainingIssues(issueList?.length > 10 ? issueList.length : 0);
   }, [issueList]);
 
   const closeIssueList = () => {
@@ -295,8 +295,10 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       });
       setDownloadList(filteredData);
       setFilteredIssuesList([...filteredData.slice(0, 10)]);
+      setRemainingIssues(filteredData.length > 10 ? filteredData.length : 0);
     } else {
       setFilteredIssuesList(issueList.slice(0, 10));
+      setRemainingIssues(issueList.length > 10 ? issueList.length : 0);
     }
   };
 
