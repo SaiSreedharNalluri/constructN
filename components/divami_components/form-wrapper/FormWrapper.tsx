@@ -33,8 +33,6 @@ const FormWrapper = (props: any) => {
     setCanBeDisabled,
   } = props;
 
-  console.log("wrapping", props);
-
   useEffect(() => {
     if (validate) {
       setFormConfig((prev: any) => {
@@ -154,13 +152,10 @@ const FormWrapper = (props: any) => {
   };
 
   const handleChipMaking = (chipsString: any, id: any) => {
-    // console.log(chipsString, "chipsString");
     const specialArr = [];
     // if(chipsString[chipsString.length - 1].includes("@")) return
     const regex = /^[a-zA-Z ]+$/;
     if (!regex.test(chipsString[chipsString.length - 1])) {
-      // console.log(chipsString, "chipsString1122");
-
       return;
     }
 

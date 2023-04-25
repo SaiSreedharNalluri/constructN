@@ -1,6 +1,7 @@
 import { Pagination } from "@mui/material";
 import PaginationItem from "@mui/material/PaginationItem";
 import { styled } from "@mui/system";
+import Image from "next/image";
 
 export const TimeLineStyleContainer = styled("div")(
   ({ isFullScreen }: any) => ({
@@ -9,21 +10,42 @@ export const TimeLineStyleContainer = styled("div")(
     //   width: "400px",
     //   height: "50px",
     position: "absolute",
-    width: "400px",
+    maxWidth: "400px",
     margin: "0 auto",
     left: "0",
     right: "0",
-    bottom: isFullScreen ? "0px" : "0px",
-    height: "56px",
+    bottom: "40px",
+    height: 0,
+    // bottom: "40px",
+    // height: "56px",
     zIndex: "1",
     cursor: "pointer",
   })
 ) as any;
 
+export const TimelineDots = styled("div")({
+  maxWidth: "170px",
+  display: "flex",
+  overflow: "hidden",
+});
+
+export const TimelineNavigation = styled("div")({
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  background: "white",
+  border: "1px solid #888888",
+  boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
+  padding: "8px 15px",
+  borderTopLeftRadius: "4px",
+  borderTopRightRadius: "4px",
+  justifyContent: "center",
+
+  // bottom: "0",
+});
 export const SelectedTimeLine = styled("div")({
   boxSizing: "border-box",
   width: "158px",
-  height: "24px",
   background: "#FFFFFF",
   border: "1px solid #B5B5B5",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
@@ -33,6 +55,30 @@ export const SelectedTimeLine = styled("div")({
   left: "120px",
   borderBottomLeftRadius: 0,
   borderBottomRightRadius: 0,
+  fontSize: "12px",
+  color: "#101F4C",
+  padding: "6px 0",
+});
+
+export const CircleIcon = styled("div")(({ active }: any) => ({
+  display: "block",
+  width: "12px",
+  height: "12px",
+  border: "1px solid #101F4C",
+  borderRadius: "50%",
+  background: active ? "#101F4C" : "white",
+  marginRight: "15px",
+  color: "transparent",
+})) as any;
+
+export const DateText = styled("div")(({ active }: any) => ({
+  marginRight: "10px",
+  fontSize: "12px",
+  color: "#101F4C",
+}));
+
+export const LeftIconImage = styled(Image)({
+  marginRight: "10px",
 });
 
 export const TimeLinePagination = styled("div")({

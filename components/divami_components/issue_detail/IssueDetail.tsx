@@ -112,6 +112,7 @@ import {
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
 import Chip from "@mui/material/Chip";
+import moment from "moment";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -1147,9 +1148,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
+    data.startdate = moment(data.startdate).format("YYYY-MM-DD");
+
     data.duedate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
+    data.duedate = moment(data.duedate).format("YYYY-MM-DD");
+
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     const fileformdata = new FormData();
@@ -1194,8 +1199,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
     issueData.assignees = data.selectedUser.map((user: any) => {
       return user._id || user.user._id;
     });
+
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
+    issueData.startDate = moment(issueData.startDate).format("YYYY-MM-DD");
+    issueData.dueDate = moment(issueData.dueDate).format("YYYY-MM-DD");
     editIssue(projectId as string, issueData, selectedIssue._id)
       .then((response) => {
         if (response.success === true) {

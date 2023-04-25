@@ -108,6 +108,7 @@ import {
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "./ActivityLog";
 import { ActivityLogContainer } from "../issue_detail/IssueDetailStyles";
+import moment from "moment";
 
 // const BodyContainer = styled(Box)`
 //   height: calc(100vh - 134px);
@@ -1048,9 +1049,12 @@ const CustomTaskDetailsDrawer = (props: any) => {
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
+    data.startdate = moment(data.startdate).format("YYYY-MM-DD");
+
     data.duedate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
+    data.duedate = moment(data.duedate).format("YYYY-MM-DD");
 
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
@@ -1098,6 +1102,9 @@ const CustomTaskDetailsDrawer = (props: any) => {
     });
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
+
+    issueData.startDate = moment(issueData.startDate).format("YYYY-MM-DD");
+    issueData.dueDate = moment(issueData.dueDate).format("YYYY-MM-DD");
     updateTask(projectId as string, issueData, selectedTask._id)
       .then((response) => {
         if (response.success === true) {
