@@ -194,12 +194,12 @@ const Issues = ({
             setEnableSubmit(false);
             issueSubmitFn(response.result);
           } else {
-            toast(`Something went wrong`);
+            toast.error(`Something went wrong`);
             setEnableSubmit(true);
           }
         })
         .catch((error) => {
-          toast(`Something went wrong`);
+          toast.error(`Something went wrong`);
           setEnableSubmit(true);
         });
     } else {
@@ -327,9 +327,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => { }}
+            handleOnSort={() => {}}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => { }}
+            clickIssueEditSubmit={() => {}}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}
@@ -348,7 +348,13 @@ const Issues = ({
       )}
       {openCreateIssue && (
         <CustomDrawer>
-          {console.log(myProject, currentStructure, contextInfo, issueStatusList, "siva")}
+          {console.log(
+            myProject,
+            currentStructure,
+            contextInfo,
+            issueStatusList,
+            "siva"
+          )}
           <CreateIssue
             handleCreateTask={handleCreateTask}
             currentProject={myProject}
