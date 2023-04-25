@@ -24,6 +24,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
   "& .MuiDialogActions-root": {
     padding: theme.spacing(1),
+    display: "flex",
+    justifyContent: "center",
   },
   "& .MuiPaper-root.MuiDialog-paper": {
     width: "493px",
@@ -130,7 +132,7 @@ const PopupComponent = (props: PopupComponentProps) => {
               autoFocus
               onClick={handleClose}
               style={{
-                color: "#FF843F",
+                color: "#F1742E",
                 width: "180px",
                 height: "40px",
                 textTransform: "none",
@@ -146,7 +148,7 @@ const PopupComponent = (props: PopupComponentProps) => {
               variant="contained"
               onClick={() => callBackvalue("Delete")}
               style={{
-                backgroundColor: "#FF843F",
+                backgroundColor: "#F1742E",
                 width: "180px",
                 height: "40px",
                 marginBottom: "22px",
