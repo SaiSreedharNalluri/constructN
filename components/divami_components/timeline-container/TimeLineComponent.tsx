@@ -156,6 +156,7 @@ const TimeLineComponent: React.FC<IProps> = ({
               {snapshotList.map((item: any, index: number) => {
                 return (
                   <CircleIcon
+                    key={index}
                     active={index === activeCircleIndex}
                     onClick={(e: any) => handleChange(e, index)}
                   >
