@@ -25,6 +25,8 @@ import sort from "../../../public/divami_icons/sort.svg";
 import SubmittalList from "../../../public/divami_icons/submittalList.svg";
 import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
 import UpArrow from "../../../public/divami_icons/upArrow.svg";
+import sortUp from "../../../public/divami_icons/sortUp.svg";
+
 import { getProjectUsers } from "../../../services/project";
 import {
   getTasksPriority,
@@ -437,7 +439,7 @@ const CustomTaskListDrawer = (props: any) => {
                   ) : null} */}
                   <Tooltip title="Sort Menu">
                     <IconContainer
-                      src={sort}
+                      src={sortUp}
                       alt="Arrow"
                       onClick={(e) => {
                         setIsSortMenuOpen((prev) => !prev);

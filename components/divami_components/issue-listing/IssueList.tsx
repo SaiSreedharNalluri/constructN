@@ -105,6 +105,8 @@ import { getIssuesList } from "../../../services/issue";
 import { DownloadTable } from "../toolbar/DownloadTable";
 import { downloadMenuOptions, getDownladableList } from "./Constants";
 import CompletedIconTask from "../../../public/divami_icons/CompletedIconTask.svg";
+import sortUp from "../../../public/divami_icons/sortUp.svg";
+
 
 interface IProps {
   closeOverlay: () => void;
@@ -437,7 +439,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   ) : null} */}
                   <Tooltip title="Sort Menu">
                     <IconContainer
-                      src={sort}
+                      src={sortUp}
                       alt="Arrow"
                       onClick={(e) => {
                         setIsSortMenuOpen((prev) => !prev);
