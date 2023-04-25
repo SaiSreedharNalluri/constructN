@@ -13,7 +13,7 @@ export const TimeLineStyleContainer = styled("div")(
     margin: "0 auto",
     left: "0",
     right: "0",
-    bottom: isFullScreen ? "0px" : "60px",
+    bottom: isFullScreen ? "0px" : "0px",
     height: "56px",
     zIndex: "1",
     cursor: "pointer",

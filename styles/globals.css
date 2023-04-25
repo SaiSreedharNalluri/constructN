@@ -23,8 +23,7 @@
 }
 
 .calc-h {
-  height: 100vh;
-  /* height: calc(100vh - 40px); */
+  height: calc(100vh - 60px);
   /* height: calc(100vh - 116px); */
 }
 
@@ -474,16 +473,6 @@ mapboxgl-popup-close-button {
   right: 5px !important;
 }
 
-#minimap-1 .adsk-viewing-viewer {
-  border-bottom-left-radius: 8px !important;
-  border-bottom-right-radius: 8px !important;
-}
-
-#minimap-2 .adsk-viewing-viewer {
-  border-bottom-left-radius: 8px !important;
-  border-bottom-right-radius: 8px !important;
-}
-
 .compare-details {
   top: 10%;
   left: 2.5%;
@@ -530,4 +519,14 @@ td {
 
 .form-container-child > div:first-child {
   margin-top: 20px;
+}
+.calc-width-full {
+  width: 100%;
+}
+.calc-height-full {
+  height: 100vh;
+}
+
+.margin-right-55 {
+  margin-right: 55px;
 }
