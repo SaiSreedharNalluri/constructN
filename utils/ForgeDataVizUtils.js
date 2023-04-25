@@ -217,7 +217,7 @@ export class ForgeDataVizUtils {
 
                 } else {
 
-                    this._createNavigator(localPos, yaw)
+                    // this._createNavigator(localPos, yaw)
                 }
             } else {
 
@@ -241,7 +241,7 @@ export class ForgeDataVizUtils {
                     }
                 })
             }
-        }, 300)
+        }, 200)
     }
 
     updateNavigator1 = (position, yaw) => {
