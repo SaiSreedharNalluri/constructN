@@ -547,9 +547,12 @@ export const AssigneeList = styled("div")({
   // background:"#FFFFF"
   // width: "308px",
   // height: "86px",
+  fontFamily: "Open Sans",
+
+  fontStyle: "normal",
+  fontSize: "14px",
   padding: "15px",
   color: "#101F4C",
-  fontSize: "14px",
   border: "1px solid #D9D9D9",
   marginTop: "-3px",
   boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
