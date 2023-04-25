@@ -112,6 +112,7 @@ import {
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
 import Chip from "@mui/material/Chip";
+import moment from "moment";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -333,7 +334,7 @@ function BasicTabs(props: any) {
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
         <Tabs
           TabIndicatorProps={{
-            style: { background: "#FF843F", height: "3px", color: "black" },
+            style: { background: "#F1742E", height: "3px", color: "black" },
           }}
           value={value}
           onChange={handleChange}
@@ -408,16 +409,18 @@ function BasicTabs(props: any) {
         <TabOneDiv>
           <FirstHeaderDiv>
             <div></div>
-            <Image
-              src={
-                taskState?.TabOne?.screenshot
-                  ? taskState?.TabOne?.screenshot
-                  : ""
-              }
-              alt=""
-              width={400}
-              height={400}
-            />
+            {taskState?.TabOne?.screenshot && (
+              <Image
+                src={
+                  taskState?.TabOne?.screenshot
+                    ? taskState?.TabOne?.screenshot
+                    : ""
+                }
+                alt=""
+                width={400}
+                height={400}
+              />
+            )}
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
@@ -666,7 +669,7 @@ function BasicTabs(props: any) {
                 sx={{
                   width: 300,
                   "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    border: "1px solid #ff843f !important",
+                    border: "1px solid #F1742E !important",
                   },
                 }}
                 renderTags={() => null}
@@ -765,9 +768,6 @@ function BasicTabs(props: any) {
                             {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
                             <AttachedImageTitle>{a?.name}</AttachedImageTitle>
 
-                            <AttachedImageIcon>
-                              <Image src={""} alt="" />
-                            </AttachedImageIcon>
                             <DeleteIcon
                               src={Delete}
                               alt={"delete icon"}
@@ -956,7 +956,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
     if (deleteTheIssue) deleteTheIssue(selectedIssue, onClose);
     const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
     setIssueList(updatedIssuesList);
-
   };
   // const deleteTheAttachment = (attachmentId: string) => {
   //   deleteAttachment(attachmentId)
@@ -1166,9 +1165,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
+    data.startdate = moment(data.startdate).format("YYYY-MM-DD");
+
     data.duedate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
+    data.duedate = moment(data.duedate).format("YYYY-MM-DD");
+
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     const fileformdata = new FormData();
@@ -1213,8 +1216,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
     issueData.assignees = data.selectedUser.map((user: any) => {
       return user._id || user.user._id;
     });
+
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
+    issueData.startDate = moment(issueData.startDate).format("YYYY-MM-DD");
+    issueData.dueDate = moment(issueData.dueDate).format("YYYY-MM-DD");
     editIssue(projectId as string, issueData, selectedIssue._id)
       .then((response) => {
         if (response.success === true) {

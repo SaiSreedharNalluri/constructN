@@ -35,6 +35,7 @@ import { ISnapshot } from "../../../models/ISnapshot";
 import { IStructure } from "../../../models/IStructure";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import html2canvas from "html2canvas";
+import moment from "moment";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
@@ -161,11 +162,11 @@ const Issues = ({
     data.startDate = values
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "start-date")[0]?.defaultValue;
-
+    data.startDate = moment(data.startDate).format("YYYY-MM-DD");
     data.dueDate = values
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-
+    data.dueDate = moment(data.dueDate).format("YYYY-MM-DD");
     data.attachments = values.filter(
       (item: any) => item.id === "file-upload"
     )[0].selectedFile;
@@ -327,9 +328,9 @@ const Issues = ({
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
-            handleOnSort={() => { }}
+            handleOnSort={() => {}}
             deleteTheIssue={deleteTheIssue}
-            clickIssueEditSubmit={() => { }}
+            clickIssueEditSubmit={() => {}}
             issuePriorityList={issuePriorityList}
             issueStatusList={issueStatusList}
             currentStructure={currentStructure}
@@ -348,7 +349,6 @@ const Issues = ({
       )}
       {openCreateIssue && (
         <CustomDrawer>
-          {console.log(myProject, currentStructure, contextInfo, issueStatusList, "siva")}
           <CreateIssue
             handleCreateTask={handleCreateTask}
             currentProject={myProject}

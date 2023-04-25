@@ -72,14 +72,14 @@ const ProjectHierarchy = ({
   //   }
   // }, [treeViewData]);
 
-  useEffect(() => {
-    if (window.localStorage.getItem("nodeData")) {
-      let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
-      if (nodeData && getStructureData) {
-        getStructureData(nodeData);
-      }
-    }
-  }, [treeViewData]);
+  // useEffect(() => {
+  //   if (window.localStorage.getItem("nodeData")) {
+  //     let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
+  //     if (nodeData && getStructureData) {
+  //       getStructureData(nodeData);
+  //     }
+  //   }
+  // }, [treeViewData]);
 
   const onLabelClick = (event: any, nodes: any) => {
     {

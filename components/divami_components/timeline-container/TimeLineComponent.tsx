@@ -8,13 +8,21 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import { ISnapshot } from "../../../models/ISnapshot";
 import CustomCalender from "../custom-datepicker/CustomCalender";
 import {
+  CircleIcon,
+  DateText,
+  LeftIconImage,
   PaginationStyle,
   SelectedTimeLine,
+  TimelineDots,
+  TimelineNavigation,
   TimeLinePagination,
   TimeLineStyleContainer,
 } from "./TimeLineComponentStyles";
 import dayjs from "dayjs";
 import moment from "moment";
+import Image from "next/image";
+import LeftIcon from "../../../public/divami_icons/leftIcon.svg";
+import RightIcon from "../../../public/divami_icons/rightIcon.svg";
 
 interface IProps {
   currentSnapshot: ISnapshot;
@@ -30,9 +38,10 @@ const TimeLineComponent: React.FC<IProps> = ({
   isFullScreen = false,
 }) => {
   const [bottomNav, setBottomNav] = useState(false);
-  const [page, setPage] = useState(2);
+  const [page, setPage] = useState(0);
   const [oldDate, setOldDate] = useState("");
   const [newDate, setNewDate] = useState("");
+  const [activeCircleIndex, setActiveCircleIndex] = useState(0);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
@@ -41,9 +50,12 @@ const TimeLineComponent: React.FC<IProps> = ({
     const dateFormatted = moment(new Date(event))
       .format("YYYY-MM-DD")
       .toString();
-    const value = snapshotList.findIndex((item) => item?.date == dateFormatted);
+    const value = snapshotList.findIndex(
+      (item) =>
+        moment(item?.date).format("YYYY-MM-DD").toString() == dateFormatted
+    );
     if (value > -1) {
-      setPage(value + 1);
+      setPage(value);
     }
   };
 
@@ -55,6 +67,17 @@ const TimeLineComponent: React.FC<IProps> = ({
     snapshotHandler(snapshot);
   };
 
+  const setPrevPage = () => {
+    if (page >= 1) {
+      setPage(page - 1);
+    }
+  };
+
+  const setNextPage = () => {
+    if (page < snapshotList.length - 1) {
+      setPage(page + 1);
+    }
+  };
   // const getSnapshotDate = () => {
   //   if (currentSnapshot) {
   //     return Moment(currentSnapshot.date).format("Do MMM YYYY");
@@ -64,14 +87,19 @@ const TimeLineComponent: React.FC<IProps> = ({
   // };
 
   useEffect(() => {
-    setCurrentSnapshot(snapshotList[page - 1]);
+    setCurrentSnapshot(snapshotList[page]);
+    if (page >= 6) {
+      setActiveCircleIndex(6);
+    } else {
+      setActiveCircleIndex(page);
+    }
   }, [page]);
 
   useEffect(() => {
     if (snapshotList.length > 0) {
       setOldDate(snapshotList[0].date);
       setNewDate(snapshotList[snapshotList.length - 1].date);
-      setPage(snapshotList.length);
+      setPage(snapshotList.length - 1);
     }
   }, [snapshotList]);
 
@@ -97,7 +125,82 @@ const TimeLineComponent: React.FC<IProps> = ({
   // console.log(snapshotList, "snaphsot listt");
   return (
     <>
-      {snapshotList && snapshotList.length > 0 && (
+      <TimeLineStyleContainer isFullScreen={isFullScreen}>
+        <SelectedTimeLine
+          style={{ bottom: bottomNav ? (isFullScreen ? 0 : "0") : "unset" }}
+          onClick={toggleTimeline}
+          data-testid={"selected-timeline"}
+        >
+          {Moment(currentSnapshot?.date).format("DD MMM YYYY")}
+        </SelectedTimeLine>
+        {bottomNav ? (
+          <TimelineNavigation>
+            <LeftIconImage
+              src={LeftIcon}
+              alt=""
+              onClick={() => {
+                setPrevPage();
+              }}
+            />
+            <DateText>
+              <p
+                onClick={() => {
+                  setPage(0);
+                }}
+              >
+                {oldDate && Moment(oldDate).format("DD MMM YY")}
+              </p>
+            </DateText>
+
+            <TimelineDots>
+              {snapshotList.map((item: any, index: number) => {
+                return (
+                  <CircleIcon
+                    key={index}
+                    active={index === activeCircleIndex}
+                    onClick={(e: any) => handleChange(e, index)}
+                  >
+                    3
+                  </CircleIcon>
+                );
+              })}
+            </TimelineDots>
+
+            <DateText>
+              <p
+                onClick={() => {
+                  setPage(snapshotList.length - 1);
+                }}
+              >
+                {newDate && Moment(newDate).format("DD MMM YY")}{" "}
+              </p>
+            </DateText>
+            <Image
+              src={RightIcon}
+              alt=""
+              onClick={() => {
+                setNextPage();
+              }}
+            />
+            <CustomCalender
+              onChange={handleDateChange}
+              data-testid="calender"
+              shouldDisableDate={disableWeekends}
+              hideTextField
+              data={{
+                disableAll: true,
+                defaultValue: currentSnapshot?.date,
+                // defaultValue: page === 2 ? newDate : oldDate,
+                disableDays: disableWeekends,
+                styles: calenderStyles,
+              }}
+            />
+          </TimelineNavigation>
+        ) : (
+          <></>
+        )}
+      </TimeLineStyleContainer>
+      {/* {snapshotList && snapshotList.length > 0 && (
         <TimeLineStyleContainer isFullScreen={isFullScreen}>
           <SelectedTimeLine
             style={{ bottom: bottomNav ? "" : 0 }}
@@ -110,12 +213,9 @@ const TimeLineComponent: React.FC<IProps> = ({
           {bottomNav ? (
             <div
               data-testid="bottomNav"
-              //  className="absolute flex flex-col items-center z-10 top-0 inset-x-0"
             >
               <div
-              // className="bg-gray-300 border border-gray-700 rounded duration-300 cursor-pointer"
               >
-                {/* <p onClick={toggleTimeline}>{getSnapshotDate()}</p> */}
               </div>
               {snapshotList && currentSnapshot && (
                 <TimeLinePagination>
@@ -149,7 +249,6 @@ const TimeLineComponent: React.FC<IProps> = ({
                       data={{
                         disableAll: true,
                         defaultValue: currentSnapshot?.date,
-                        // defaultValue: page === 2 ? newDate : oldDate,
                         disableDays: disableWeekends,
                         styles: calenderStyles,
                       }}
@@ -160,7 +259,7 @@ const TimeLineComponent: React.FC<IProps> = ({
             </div>
           ) : null}
         </TimeLineStyleContainer>
-      )}
+      )} */}
     </>
   );
 };

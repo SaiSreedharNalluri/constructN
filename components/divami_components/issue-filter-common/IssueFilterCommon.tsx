@@ -85,21 +85,7 @@ const FilterCommon: React.FC<IProps> = ({
   onClose,
   issueFilterState,
 }) => {
-  useEffect(() => {
-    console.log(
-      visibility,
-      closeOverlay,
-      issuesList,
-      handleOnFilter,
-      handleOnSort,
-      closeFilterOverlay,
-      deleteTheIssue,
-      clickIssueEditSubmit,
-      onClose,
-      issueFilterState,
-      "ut"
-    );
-  }, [
+  useEffect(() => {}, [
     visibility,
     closeOverlay,
     issuesList,
@@ -418,7 +404,6 @@ const FilterCommon: React.FC<IProps> = ({
   };
 
   const handleOptionSelection = (item: any, index: any) => {
-    console.log(item, index, "siva");
     let tempOption;
     if (item?.optionStatus === "T") {
       let temp = FilterState?.map((each: any, serial: number) => {
@@ -553,7 +538,7 @@ const FilterCommon: React.FC<IProps> = ({
     closeFilterOverlay();
     handleClose();
   };
-  console.log("issuesListfooter", issuesList, FilterState);
+
   return (
     <FilterCommonMain>
       <FilterCommonHeader>

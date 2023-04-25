@@ -11,6 +11,8 @@ import Clip from "../../../public/divami_icons/clip.svg";
 import Send from "../../../public/divami_icons/send.svg";
 import Delete from "../../../public/divami_icons/delete.svg";
 import Edit from "../../../public/divami_icons/edit.svg";
+import { debounce } from "lodash";
+
 import {
   EditIcon,
   DeleteIcon,
@@ -101,6 +103,8 @@ const ActivityLog = (props: any) => {
   const [currentCommentId, setCurrentCommentId] = useState("");
   const [commentId, setCommentId] = useState("");
 
+  const [isSaving, setIsSaving] = useState(false);
+
   function sayHello(name: string) {
     setCurrentCommentId(name);
     // setSearchingOn(!searchingOn);
@@ -177,39 +181,29 @@ const ActivityLog = (props: any) => {
       },
     });
   };
-  const saveRepliedComments = async () => {
-    createCommentReply(
-      router.query.projectId as string,
-      { reply: commentInputData.data?.text },
-      commentInputData?.data?.commentId
-    ).then((response) => {
-      if (response.success === true) {
-        toast.success("Reply added sucessfully");
-        getComments(commentsData[0]?.entity);
-        setReplyToText("");
-      }
-    });
-
-    setCommentInputData({
-      isReply: false,
-      isEdit: false,
-      isEditReply: false,
-      data: {
-        text: "",
-        attachments: "",
-        commentId: "",
-        replyId: "",
-      },
-    });
+  const saveRepliedComments = async (commentObj: any) => {
+    if (commentsData?.length && commentObj?.data?.text) {
+      createCommentReply(
+        router.query.projectId as string,
+        { reply: commentObj.data?.text },
+        commentObj?.data?.commentId
+      ).then((response) => {
+        if (response.success === true) {
+          toast.success("Reply added sucessfully");
+          getComments(commentsData[0]?.entity);
+          setReplyToText("");
+        }
+      });
+    }
   };
 
-  const saveEditRepliedComments = async () => {
-    if (commentsData?.length && commentInputData?.data?.text) {
+  const saveEditRepliedComments = async (commentObj: any) => {
+    if (commentsData?.length && commentObj?.data?.text) {
       editCommentReply(
         router.query.projectId as string,
-        { reply: commentInputData.data?.text },
-        commentInputData.data?.commentId,
-        commentInputData.data?.replyId
+        { reply: commentObj.data?.text },
+        commentObj.data?.commentId,
+        commentObj.data?.replyId
       ).then((response) => {
         if (response.success === true) {
           toast.success("Reply updated sucessfully");
@@ -217,27 +211,16 @@ const ActivityLog = (props: any) => {
           setReplyToText("");
         }
       });
-      setCommentInputData({
-        isReply: false,
-        isEdit: false,
-        isEditReply: false,
-        data: {
-          text: "",
-          attachments: "",
-          commentId: "",
-          replyId: "",
-        },
-      });
     }
   };
 
-  const saveEditComment = () => {
-    if (commentsData?.length && commentInputData?.data?.text) {
+  const saveEditComment = (commentObj: any) => {
+    if (commentsData?.length && commentObj?.data?.text) {
       editComment(
         router.query.projectId as string,
-        commentInputData?.data?.commentId,
+        commentObj?.data?.commentId,
         {
-          comment: commentInputData.data?.text,
+          comment: commentObj.data?.text,
         }
       ).then((response) => {
         if (response.success === true) {
@@ -245,43 +228,19 @@ const ActivityLog = (props: any) => {
           getComments(commentsData[0]?.entity);
         }
       });
-
-      setCommentInputData({
-        isReply: false,
-        isEdit: false,
-        isEditReply: false,
-        data: {
-          text: "",
-          attachments: "",
-          commentId: "",
-          replyId: "",
-        },
-      });
     }
   };
 
-  const saveAddedComments = async () => {
-    if (commentsData?.length && commentInputData?.data?.text) {
+  const saveAddedComments = async (commentObj: any) => {
+    if (commentsData?.length && commentObj?.data?.text) {
       createComment(router.query.projectId as string, {
-        comment: commentInputData.data?.text,
+        comment: commentObj.data?.text,
         entity: commentsData[0]?.entity,
       }).then((response: any) => {
         if (response.success === true) {
           toast.success("Comment added sucessfully");
           getComments(commentsData[0]?.entity);
         }
-
-        setCommentInputData({
-          isReply: false,
-          isEdit: false,
-          isEditReply: false,
-          data: {
-            text: "",
-            attachments: "",
-            commentId: "",
-            replyId: "",
-          },
-        });
       });
     }
   };
@@ -341,6 +300,8 @@ const ActivityLog = (props: any) => {
       });
     }
   };
+
+  console.log("commentInputData", commentInputData);
 
   return (
     <ActivityCardContainer data-testid="const-custom-activity-log-issue">
@@ -797,18 +758,63 @@ const ActivityLog = (props: any) => {
                   };
                 });
               }}
+              onKeyDown={(e) => {
+                console.log("Test");
+                if (e.key == "Enter") {
+                  console.log("Test");
+                  let commentText = commentInputData?.data?.text?.trim();
+                  let newObj = { ...commentInputData };
+                  setCommentInputData({
+                    isReply: false,
+                    isEdit: false,
+                    isEditReply: false,
+                    data: {
+                      text: "",
+                      attachments: "",
+                      commentId: "",
+                      replyId: "",
+                    },
+                  });
+                  if (commentText) {
+                    if (commentInputData?.isReply) {
+                      saveRepliedComments(newObj);
+                    } else if (commentInputData?.isEdit) {
+                      saveEditComment(newObj);
+                    } else if (commentInputData?.isEditReply) {
+                      saveEditRepliedComments(newObj);
+                    } else {
+                      saveAddedComments(newObj);
+                    }
+                  }
+                }
+              }}
             />
             <AddCommentButtonContainer>
               <SendButton
                 onClick={() => {
-                  if (commentInputData?.isReply) {
-                    saveRepliedComments();
-                  } else if (commentInputData?.isEdit) {
-                    saveEditComment();
-                  } else if (commentInputData?.isEditReply) {
-                    saveEditRepliedComments();
-                  } else {
-                    saveAddedComments();
+                  let commentText = commentInputData?.data?.text?.trim();
+                  let newObj = { ...commentInputData };
+                  setCommentInputData({
+                    isReply: false,
+                    isEdit: false,
+                    isEditReply: false,
+                    data: {
+                      text: "",
+                      attachments: "",
+                      commentId: "",
+                      replyId: "",
+                    },
+                  });
+                  if (commentText) {
+                    if (commentInputData?.isReply) {
+                      saveRepliedComments(newObj);
+                    } else if (commentInputData?.isEdit) {
+                      saveEditComment(newObj);
+                    } else if (commentInputData?.isEditReply) {
+                      saveEditRepliedComments(newObj);
+                    } else {
+                      saveAddedComments(newObj);
+                    }
                   }
                 }}
               >
