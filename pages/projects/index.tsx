@@ -18,6 +18,7 @@ const Projects: React.FC = () => {
         .then(async (response) => {
           if (response?.data?.success === true) {
             let tempData: IProjects[] = [];
+            let temp: IProjects[] = [];
             await Promise.all(
               response.data.result.map(async (pData: IProjects) => {
                 const jobResp: any = await getjobsInfo(pData._id);
@@ -27,16 +28,26 @@ const Projects: React.FC = () => {
                       new Date(b.date).getTime() - new Date(a.date).getTime()
                   )[0].updatedAt;
                 }
-                tempData.push(pData);
+                if (pData.LastUpdatedOn) {
+                  tempData.push(pData);
+                } else {
+                  temp.push(pData);
+                }
               })
             );
-            setProjects(_.sortBy(tempData, 'LastUpdatedOn'));
+            tempData = tempData.sort(
+              (a: any, b: any) =>
+                new Date(b.LastUpdatedOn).getTime() -
+                new Date(a.LastUpdatedOn).getTime()
+            );
+            setProjects(tempData.concat(temp));
             setLoading(true);
           }
         })
         .catch((error) => {});
     }
   }, [router.isReady]);
+  console.log('projects', projects);
   return (
     <React.Fragment>
       <div className="flex-col">
