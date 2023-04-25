@@ -232,7 +232,7 @@ export const MoreText = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  color: #ff843f;
+  color: #F1742E;
   margin-left: 5px;
   cursor: pointer;
 `;
