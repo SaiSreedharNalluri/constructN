@@ -408,16 +408,18 @@ function BasicTabs(props: any) {
         <TabOneDiv>
           <FirstHeaderDiv>
             <div></div>
-            <Image
-              src={
-                taskState?.TabOne?.screenshot
-                  ? taskState?.TabOne?.screenshot
-                  : ""
-              }
-              alt=""
-              width={400}
-              height={400}
-            />
+            {taskState?.TabOne?.screenshot && (
+              <Image
+                src={
+                  taskState?.TabOne?.screenshot
+                    ? taskState?.TabOne?.screenshot
+                    : ""
+                }
+                alt=""
+                width={400}
+                height={400}
+              />
+            )}
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
@@ -765,9 +767,6 @@ function BasicTabs(props: any) {
                             {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
                             <AttachedImageTitle>{a?.name}</AttachedImageTitle>
 
-                            <AttachedImageIcon>
-                              <Image src={""} alt="" />
-                            </AttachedImageIcon>
                             <DeleteIcon
                               src={Delete}
                               alt={"delete icon"}
@@ -956,7 +955,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
     if (deleteTheIssue) deleteTheIssue(selectedIssue, onClose);
     const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
     setIssueList(updatedIssuesList);
-
   };
   // const deleteTheAttachment = (attachmentId: string) => {
   //   deleteAttachment(attachmentId)
