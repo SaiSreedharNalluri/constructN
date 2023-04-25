@@ -58,7 +58,7 @@ export const HeaderRightSectionResetText = styled.div({
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",
-  color: " #ff843f",
+  color: " #F1742E",
 });
 
 export const HeaderRightSectionCancel = styled.div({});

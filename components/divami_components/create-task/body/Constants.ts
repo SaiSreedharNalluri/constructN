@@ -1,6 +1,4 @@
-
 import Moment from "moment";
-
 
 export const TASK_FORM_CONFIG = [
   {
@@ -25,18 +23,7 @@ export const TASK_FORM_CONFIG = [
     isReq: true,
     isflex: false,
     formLabel: "Select the type of task",
-    options: [
-      {
-        label: "Plastic",
-        value: "plastic",
-        selected: false,
-      },
-      {
-        label: "Metalic",
-        value: "metalic",
-        selected: false,
-      },
-    ],
+    options: [],
   },
   {
     id: "description",
@@ -60,18 +47,7 @@ export const TASK_FORM_CONFIG = [
     isflex: false,
     isReadOnly: false,
     formLabel: "Select task priority",
-    options: [
-      {
-        label: "Plastic",
-        value: "plastic",
-        selected: false,
-      },
-      {
-        label: "Metalic",
-        value: "metalic",
-        selected: false,
-      },
-    ],
+    options: [],
   },
   {
     id: "assignedTo",
@@ -102,7 +78,7 @@ export const TASK_FORM_CONFIG = [
       {
         id: "start-date",
         type: "datePicker",
-        defaultValue:"",
+        defaultValue: "",
         label: "MM/DD/YYYY",
         formLabel: "Start date",
         isError: false,
@@ -111,7 +87,7 @@ export const TASK_FORM_CONFIG = [
       {
         id: "due-date",
         type: "datePicker",
-        defaultValue:"",
+        defaultValue: "",
         label: "MM/DD/YYYY",
         formLabel: "Due date",
         isError: false,
@@ -150,18 +126,7 @@ export const TYPES_OF_ISSUES = [
     isError: false,
     isReq: false,
     isflex: false,
-    options: [
-      {
-        label: "Plastic",
-        value: "plastic",
-        selected: false,
-      },
-      {
-        label: "Metalic",
-        value: "metalic",
-        selected: false,
-      },
-    ],
+    options: [],
   },
 ];
 

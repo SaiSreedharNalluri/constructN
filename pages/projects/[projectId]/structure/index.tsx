@@ -5,7 +5,7 @@ import _ from "lodash";
 import Moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import GenericViewer from "../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../components/container/leftOverLay";
@@ -79,13 +79,13 @@ const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
 const OpenFullScreenButton = styled("div")(
   ({ onClick, isFullScreen }: any) => ({
     position: "fixed",
-    right: "40px",
-    bottom: "0px",
+    right: "6px",
+    bottom: "6px",
     cursor: "pointer",
   })
 );
 
-const CloseMenuButton = styled("div")({
+const CloseMenuButton = styled("div")(({ isFullScreen }: any) => ({
   height: "38px",
   width: "31px",
   // border: "1px solid #BDBDBD",
@@ -102,7 +102,21 @@ const CloseMenuButton = styled("div")({
   border: "1px solid rgb(189, 189, 189)",
   boxShadow: "rgb(200 200 200 / 10%) 5px 4px 8px",
   transform: "matrix(-1, 0, 0, 1, 0, 0)",
-});
+  marginLeft: isFullScreen ? 0 : "58px",
+})) as any;
+
+const SidePanelContainer = styled("div")(({ onClick, isFullScreen }: any) => ({
+  position: "absolute",
+  left: 0,
+  zIndex: 1,
+  background: "white",
+}));
+
+const LeftOverLayContainer = styled("div")(({ isFullScreen }: any) => ({
+  marginLeft: "58px",
+  zIndex: 0,
+}));
+
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   let [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
@@ -1449,6 +1463,18 @@ const Index: React.FC<IProps> = () => {
       }
     }
   };
+
+  useEffect(() => {
+    document.addEventListener("fullscreenchange", (event) => {
+      if (document.fullscreenElement) {
+        // We’re going fullscreen
+      } else {
+        // We’re exiting fullscreen
+        setIsFullScreen(false);
+      }
+    });
+  }, []);
+
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -1467,10 +1493,10 @@ const Index: React.FC<IProps> = () => {
 
       <div className="flex ">
         {!isFullScreen && (
-          <div ref={leftOverlayRef}>
+          <SidePanelContainer ref={leftOverlayRef}>
             {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
             <SidePanelMenu onChangeData={onChangeData} />
-          </div>
+          </SidePanelContainer>
         )}
 
         {/* <FullScreen handle={handle}> */}
@@ -1485,7 +1511,7 @@ const Index: React.FC<IProps> = () => {
                 // transform: "matrix(-1, 0, 0, 1, 0, 0)",
               }}
             >
-              <CloseMenuButton>
+              <CloseMenuButton isFullScreen={isFullScreen}>
                 <Image
                   src={ChevronLeftIcon}
                   width={17}
@@ -1499,7 +1525,11 @@ const Index: React.FC<IProps> = () => {
               <div>
                 {
                   <div
-                    style={{ overflow: "hidden" }}
+                    style={{
+                      overflow: "hidden",
+                      marginLeft: isFullScreen ? "0" : "58px",
+                      zIndex: 0,
+                    }}
                     ref={leftRefContainer}
                     className={`${
                       hierarchy ? "visible" : "hidden"

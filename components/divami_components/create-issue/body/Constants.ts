@@ -1,6 +1,5 @@
 import Moment from "moment";
 
-
 export const ISSUE_FORM_CONFIG = [
   {
     id: "title",
@@ -24,18 +23,7 @@ export const ISSUE_FORM_CONFIG = [
     isflex: false,
     isReadOnly: false,
     formLabel: "Select the type of issue",
-    options: [
-      {
-        label: "Plastic",
-        value: "plastic",
-        selected: false,
-      },
-      {
-        label: "Metalic",
-        value: "metalic",
-        selected: false,
-      },
-    ],
+    options: [],
   },
   {
     id: "description",
@@ -60,18 +48,7 @@ export const ISSUE_FORM_CONFIG = [
     isReadOnly: false,
 
     formLabel: "Select issue priority",
-    options: [
-      {
-        label: "Plastic",
-        value: "plastic",
-        selected: false,
-      },
-      {
-        label: "Metalic",
-        value: "metalic",
-        selected: false,
-      },
-    ],
+    options: [],
   },
   {
     id: "assignedTo",
@@ -101,7 +78,7 @@ export const ISSUE_FORM_CONFIG = [
       {
         id: "start-date",
         type: "datePicker",
-        defaultValue:"",
+        defaultValue: "",
         label: "MM/DD/YYYY",
         formLabel: "Start date",
         isError: false,
@@ -110,7 +87,7 @@ export const ISSUE_FORM_CONFIG = [
       {
         id: "due-date",
         type: "datePicker",
-        defaultValue:"",
+        defaultValue: "",
         label: "MM/DD/YYYY",
         formLabel: "Due date",
         isError: false,
@@ -147,18 +124,7 @@ export const TYPES_OF_ISSUES = [
     isError: false,
     isReq: false,
     isflex: false,
-    options: [
-      {
-        label: "Plastic",
-        value: "plastic",
-        selected: false,
-      },
-      {
-        label: "Metalic",
-        value: "metalic",
-        selected: false,
-      },
-    ],
+    options: [],
   },
 ];
 

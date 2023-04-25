@@ -221,7 +221,7 @@ export const CommentActions = styled("div")({
 
 export const ReplyButton = styled("div")({
   // marginRight: "20px",
-  color: "#FF843F",
+  color: "#F1742E",
   cursor: "pointer",
 });
 
@@ -274,5 +274,5 @@ export const ReplyCancel = styled("div")({
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontSize: "14px",
-  color: "#FF843F",
+  color: "#F1742E",
 });
