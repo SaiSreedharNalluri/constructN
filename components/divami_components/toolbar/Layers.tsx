@@ -47,24 +47,21 @@ const Layers = ({
       setLayersLabels(Object.keys(myLayersList));
     }
   }, [myLayersList]);
+  useEffect(() => {
+    console.log(layersLabels, "siva");
+  }, [layersLabels]);
 
   const getLayersIcons = (layersLabels: any) => {
     return (
       <>
         {layersLabels.map((label: any, index: number) => {
-          if (label === "Phone Image" && showImageIcon.item1) {
+          if (label === "Phone Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={hexagonIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-          } else if (label === "360 Image" && showImageIcon.item2) {
-            return (
-              <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={cameraIcon} alt="Arrow" />
-              </LayerSecondSectionCamImg>
-            );
-          } else if (label === "Drone Image" && showImageIcon.item2) {
+          } else if (label === "360 Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={cameraIcon} alt="Arrow" />
@@ -74,6 +71,12 @@ const Layers = ({
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={videoRecorderIcon} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          } else if (label === "Drone Image") {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={cameraIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           }
