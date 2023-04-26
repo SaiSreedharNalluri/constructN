@@ -110,6 +110,7 @@ interface IProps {
   contextInfo: any;
   issueTypesList?: any;
   issueFilterState?: any;
+  setIssueFilterState?: any;
   getIssues?: any;
   handleOnIssueSort?: any;
   deleteTheAttachment?: any;
@@ -135,6 +136,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   contextInfo,
   issueTypesList,
   issueFilterState,
+  setIssueFilterState,
   getIssues,
   handleOnIssueSort,
   deleteTheAttachment,
@@ -228,7 +230,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setIssueList(issuesList);
     setDownloadList(issuesList);
   }, [issuesList]);
-  
+
   useEffect(() => {
     setFilteredIssuesList(issueList.slice(0, 10));
   }, [issueList]);
@@ -344,7 +346,34 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     issueMenuInstance.response = { ...issue.context, id: issue._id };
     issueMenuClicked(issueMenuInstance);
   };
-
+  console.log("issueFilterState", issueFilterState);
+  const [abc, setAbc] = useState(false);
+  const checkIsFilter = () => {
+    if (issueFilterState?.filterData) {
+      const {
+        assigneesData,
+        fromDate,
+        issuePriorityData,
+        issueStatusData,
+        issueTypeData,
+        toDate,
+      } = issueFilterState.filterData;
+      if (
+        (issuePriorityData?.length === 0 &&
+          issueStatusData?.length == 0 &&
+          issueTypeData?.length == 0 &&
+          toDate === "" &&
+          assigneesData === null) ||
+        undefined
+      ) {
+        setAbc(true);
+        setIssueFilterState({
+          ...issueFilterState,
+          isFilterApplied: false,
+        });
+      }
+    }
+  };
   return (
     <>
       {errorShow.length > 0 ? (
@@ -606,6 +635,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 deleteTheIssue={() => {}}
                 clickIssueEditSubmit={() => {}}
                 issueFilterState={issueFilterState}
+                setIssueFilterState={setIssueFilterState}
+                checkIsFilter={checkIsFilter}
               />
             </Drawer>
           )}

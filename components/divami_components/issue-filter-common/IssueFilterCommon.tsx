@@ -67,6 +67,8 @@ interface IProps {
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
   onClose: any;
   issueFilterState: any;
+  setIssueFilterState: any;
+  checkIsFilter: any;
 }
 
 // const Footer = () => {
@@ -84,6 +86,7 @@ const FilterCommon: React.FC<IProps> = ({
   clickIssueEditSubmit,
   onClose,
   issueFilterState,
+  setIssueFilterState,
 }) => {
   useEffect(() => {}, [
     visibility,
@@ -96,6 +99,7 @@ const FilterCommon: React.FC<IProps> = ({
     clickIssueEditSubmit,
     onClose,
     issueFilterState,
+    setIssueFilterState,
   ]);
 
   const Filters = [
@@ -202,6 +206,38 @@ const FilterCommon: React.FC<IProps> = ({
       handleClose();
     }
   };
+  console.log("setIssueFilterState", setIssueFilterState.isFilterApplied);
+  const checkIsFilter = () => {
+    if (issueFilterState?.filterData) {
+      const {
+        assigneesData,
+        fromDate,
+        issuePriorityData,
+        issueStatusData,
+        issueTypeData,
+        toDate,
+      } = issueFilterState.filterData;
+      console.log(issuePriorityData?.length === 0, "issuePriorityData");
+      console.log(issueStatusData.length === 0, "issueStatusData");
+      console.log(issueTypeData.length === 0, "issueTypeData");
+      console.log(toDate === "", "toDate");
+      console.log(fromDate === "", "fromDate");
+      console.log(assigneesData, "assigneesData");
+      if (
+        issuePriorityData.length === 0 &&
+        issueStatusData?.length == 0 &&
+        issueTypeData?.length == 0 &&
+        toDate === "" &&
+        fromDate === "" &&
+        assigneesData === null
+      ) {
+        setIssueFilterState.isFilterApplied(false);
+      }
+    }
+  };
+  useEffect(() => {
+    checkIsFilter();
+  }, [issueFilterState]);
   useEffect(() => {
     if (router.isReady) {
       getIssuesTypes(router.query.projectId as string).then((response) => {

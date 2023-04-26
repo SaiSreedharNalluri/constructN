@@ -1673,6 +1673,7 @@ const Index: React.FC<IProps> = () => {
                 issueTypesList={issueTypesList}
                 taskFilterState={taskFilterState}
                 issueFilterState={issueFilterState}
+                setIssueFilterState={setIssueFilterState}
                 closeIssueCreate={closeIssueCreate}
                 closeTaskCreate={closeTaskCreate}
                 deleteTheIssue={deleteTheIssue}
