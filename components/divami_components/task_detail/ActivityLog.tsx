@@ -110,7 +110,6 @@ const ActivityLog = (props: any) => {
     // setSearchingOn(!searchingOn);
   }
   const getTimeText = (createdDate: string) => {
-    console.log("createdDateback", createdDate);
     let text = "";
     const date1: any = new Date(createdDate);
     const date2: any = new Date();
@@ -148,7 +147,6 @@ const ActivityLog = (props: any) => {
   };
   useEffect(() => {
     // setCommentsData(comments);
-    console.log(comments, "comments__");
     const commentsList = comments.map((each: any) => {
       return {
         ...each,
@@ -762,7 +760,6 @@ const ActivityLog = (props: any) => {
               }}
               onKeyDown={(e) => {
                 if (e.key == "Enter") {
-                  console.log("Test");
                   let commentText = commentInputData?.data?.text?.trim();
                   let newObj = { ...commentInputData };
                   setCommentInputData({
