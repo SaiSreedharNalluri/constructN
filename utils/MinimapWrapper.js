@@ -8,6 +8,7 @@ import {
   applyTM
 
 } from './ViewerDataUtils';
+import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
 
 export const MinimapUtils = () => {
   let _viewerId;
@@ -40,11 +41,7 @@ export const MinimapUtils = () => {
   let _navRotation;
 
   let _dataVizExtn;
-  let _bimWalkExtn;
-  let _edit2DExtn;
   let _dataVizUtils;
-  let _edit2DUtils;
-  let _isAddTagActive = false;
 
   const isCompareView = () => {
     if (_viewerId.split("_")[1] === "1") {
@@ -125,7 +122,7 @@ export const MinimapUtils = () => {
   };
 
   const updateData = (documentURNs) => {
-    console.log("Inside minimap update data: ", documentURNs);
+    console.log("Inside minimap update data: ", documentURNs, _isViewerInitialized);
     _documentURNs = documentURNs;
     _isPendingDataToLoad = true;
     if (_isViewerInitialized) {
@@ -609,8 +606,6 @@ export const MinimapUtils = () => {
   };
 
   const loadExtension = async () => {
-    _bimWalkExtn = await _viewer.loadExtension("Autodesk.BimWalk");
-    _edit2DExtn = await _viewer.loadExtension("Autodesk.Edit2D");
     _dataVizExtn = await _viewer.loadExtension("Autodesk.DataVisualization");
   };
 
@@ -658,7 +653,7 @@ export const MinimapUtils = () => {
 
   const onExtensionLoadedEvent = (parameter) => {
     // console.log("Inside Extension Loaded Event:", parameter);
-    if (parameter.extensionId === MinimapDataVisualization.EXTENSION_ID) {
+    if (parameter.extensionId === ForgeDataVisualization.EXTENSION_ID) {
       console.log(
         "Inside Extension Loaded Event: Data Visualization",
         parameter
@@ -670,13 +665,6 @@ export const MinimapUtils = () => {
       if (loadLayersOnDataLoadCompletion()) {
         loadLayers();
       }
-    } else if (parameter.extensionId === "Autodesk.BimWalk") {
-      console.log("Inside Forge Viewer, Bim Walk loaded:");
-      _bimWalkExtn = _viewer.getExtension(parameter.extensionId);
-    } else if (parameter.extensionId === "Autodesk.Edit2D") {
-      console.log("Inside Forge Viewer, Bim Walk loaded:");
-      _edit2DExtn = _viewer.getExtension(parameter.extensionId);
-      // _edit2DUtils = new ForgeLayerUtils(_viewer, _dataVizExtn);
     }
   };
 

@@ -242,16 +242,19 @@ function GenericViewer(props) {
   }
 
   function handleRealityTypeChange() {
-    if (minimapUtils.current) {
-      viewLayers && minimapUtils.current.showLayers(Object.values(viewLayers).map(v => {
-        if (v.isSelected) return v.name
-      }));
+
+    if (viewLayers) {
+      Object.keys(viewLayers).forEach(type => {
+        if (minimapUtils.current) {
+          minimapUtils.current.showTag(type, viewLayers[type].isSelected)
+        }
+
+        if (minimapCompareUtils.current) {
+          minimapCompareUtils.current.showTag(type, viewLayers[type].isSelected)
+        }
+      })
     }
-    if (isCompare && minimapCompareUtils.current) {
-      viewLayers && minimapCompareUtils.current.showLayers(Object.values(viewLayers).map(v => {
-        if (v.isSelected) return v.name
-      }));
-    }
+    
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -618,7 +621,7 @@ function GenericViewer(props) {
             : `select${event.type}`;
           activeTool.current.response = event;
           pushToolResponse(activeTool.current);
-          if(potreeUtils.current) {
+          if(event.id.includes('select') && potreeUtils.current) {
             selectTag(event)
           }
           console.log('Marked Point========', event);
@@ -759,7 +762,7 @@ function GenericViewer(props) {
         const forgeModels = getForgeModels(designMap)
         if(forgeModels && forgeModels['Plan Drawings']) {
           setShowMinimap(true);
-          minimapUtils.current.updateData(getForgeModels(designMap)); 
+          minimapUtils.current.updateData(forgeModels); 
         } else {
           setShowMinimap(false);
         }
@@ -1538,16 +1541,6 @@ function GenericViewer(props) {
       }
     }
 
-    if(viewLayers && viewLayers['360 Video']) {
-      if(minimapUtils.current) {
-        minimapUtils.current.showTag('360 Video', viewLayers['360 Video'].isSelected)
-      }
-  
-      if(minimapCompareUtils.current) {
-        minimapCompareUtils.current.showTag('360 Video', viewLayers['360 Video'].isSelected)
-      }
-    }
-
     handleRealityTypeChange();
   }, [viewLayers, props.layersUpdated]);
 
@@ -1615,7 +1608,7 @@ function GenericViewer(props) {
       maxWidth={'99%'}
       maxHeight={'99%'}
       bounds={count == 1 ? '#TheView' : '#CompareView'}
-      default={{ x: 20, y: 75, width: 320, height: 320 }}
+      default={{ x: 84, y: 75, width: 320, height: 320 }}
       onResize={(e, direction, ref, delta, position) => {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
       }}
@@ -1650,7 +1643,7 @@ function GenericViewer(props) {
         break;
       case 'fullscreen':
         minimap?.updateSize({ width: '99%', height: '95%' });
-        minimap?.updatePosition({ x: 0, y: 64 });
+        minimap?.updatePosition({ x: 64, y: 64 });
         break;
       default:
         minimap?.updateSize({ width: 320, height: 320 });

@@ -113,13 +113,53 @@ export class ForgeDataVizUtils {
 
             realities.forEach(reality => {
 
-                const images = Object.keys(reality['position'])
+                let images
+
+                switch (type) {
+
+                    case '360 Image':
+
+                    case '360 Video': 
+
+                        images = Object.keys(reality['position'])
+
+                        break
+
+                    case 'Phone Image':
+                        
+                        images = reality['position']['camname']
+
+                        break
+                }
 
                 for (let i = 0; i < images.length; i++) {
 
-                    const item = reality['position'][images[i]]
-
                     if (this._existingImages.indexOf(images[i] == -1)) {
+
+                        let mPosition = [];
+
+                        let mRotation = reality['position'][images[i]] ? reality['position'][images[i]].rotation : 0
+
+                        switch (type) {
+
+                            case '360 Image':
+        
+                            case '360 Video': 
+        
+                                mPosition = reality['position'][images[i]].position
+        
+                                break
+        
+                            case 'Phone Image':
+                                
+                                mPosition[0] = reality.position['camX'][i]
+                                
+                                mPosition[1] = reality.position['camY'][i]
+                                    
+                                mPosition[2] = reality.position['camZ'][i]
+        
+                                break
+                        }
 
                         data.push({
 
@@ -127,9 +167,9 @@ export class ForgeDataVizUtils {
 
                             imageName: images[i],
 
-                            position: this._toLocalPosition({ x: item.position[0], y: item.position[1], z: item.position[2] }),
+                            position: this._toLocalPosition({ x: mPosition[0], y: mPosition[1], z: mPosition[2] }),
 
-                            rotation: item.rotation,
+                            rotation: mRotation,
 
                             type: type
                         })
@@ -488,6 +528,8 @@ export class ForgeDataVizUtils {
     }
 
     _onSpriteClick = (event) => {
+
+        console.log(event, 'ppp')
 
         this._dataVizExtn.clearHighlightedViewables()
 
