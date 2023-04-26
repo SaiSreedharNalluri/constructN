@@ -35,6 +35,7 @@ const Layers = ({
   setActiveRealityMap,
   layersUpdated,
 }: any) => {
+  console.log("selectedLayersList11", selectedLayersList);
   const [layersLabels, setLayersLabels] = useState<any>([]);
   const [showImageIcon, setShowImageIcon] = useState<ShowImageDisplay>({
     item1: true,
@@ -43,10 +44,25 @@ const Layers = ({
   });
 
   useEffect(() => {
-    if (myLayersList) {
-      setLayersLabels(Object.keys(myLayersList));
+    let arr: any = [];
+    let obj: any = { ...myLayersList };
+
+    console.log("myLayersList11", myLayersList);
+    for (const key in obj) {
+      if (obj[key]?.isSelected) {
+        // console.log("objkeey", obj[key]);
+        arr.push(obj[key].name);
+      }
     }
-  }, [myLayersList]);
+    console.log("arr22", arr);
+    //for loop
+    //if is selected
+    //arr.push
+    //end of
+
+    // setLayersLabels(Object.keys(myLayersList));
+    setLayersLabels(arr);
+  }, [layersLabels]);
   useEffect(() => {
     console.log(layersLabels, "siva");
   }, [layersLabels]);
@@ -94,8 +110,8 @@ const Layers = ({
       <ContainerDiv>
         <LayersWrapper onClick={onListClick}>
           <IconsContainer>
-            {selectedLayersList.length > 0 ? (
-              <>Layer: {getLayersIcons(selectedLayersList)}</>
+            {layersLabels.length > 0 ? (
+              <>Layer: {getLayersIcons(layersLabels)}</>
             ) : (
               "Select Layer"
             )}
