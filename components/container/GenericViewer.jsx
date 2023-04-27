@@ -1361,14 +1361,16 @@ function GenericViewer(props) {
   };
 
   useEffect(() => {
-    if(minimapUtils.current) {
-      minimapUtils.current.initializeViewer();
-    }
-    if(minimapCompareUtils.current) {
-      minimapCompareUtils.current.initializeViewer();
-    }
-    if(forgeUtils.current) {
-      forgeUtils.current.initializeViewer();
+    if (forgeInitialised) {
+      if(minimapUtils.current) {
+        minimapUtils.current.initializeViewer();
+      }
+      if(minimapCompareUtils.current) {
+        minimapCompareUtils.current.initializeViewer();
+      }
+      if(forgeUtils.current) {
+        forgeUtils.current.initializeViewer();
+      }
     }
   }, [forgeInitialised]);
 
