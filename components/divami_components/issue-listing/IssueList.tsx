@@ -470,7 +470,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   ) : null} */}
                   <Tooltip title="Sort Menu">
                     <IconContainer
-                      src={sortUp}
+                      src={sort}
                       alt="Arrow"
                       onClick={(e) => {
                         setIsSortMenuOpen((prev) => !prev);
@@ -480,7 +480,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     />
                   </Tooltip>
 
-                  <DueDateHeader>Due Date</DueDateHeader>
+                  {/* <DueDateHeader>Due Date</DueDateHeader> */}
                   {/* {sortOrder === "asc" ? (
                     <ArrowUpIcon
                       onClick={sortDateOrdering}

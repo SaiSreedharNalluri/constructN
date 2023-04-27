@@ -439,17 +439,17 @@ const CustomTaskListDrawer = (props: any) => {
                   ) : null} */}
                   <Tooltip title="Sort Menu">
                     <IconContainer
-                      src={sortUp}
+                      src={sort}
                       alt="Arrow"
                       onClick={(e) => {
                         setIsSortMenuOpen((prev) => !prev);
                         handleSortClick(e);
                       }}
-                      data-testid="sort"
+                      // data-testid="sort"
                     />
                   </Tooltip>
 
-                  <DueDateHeader>Due Date</DueDateHeader>
+                  {/* <DueDateHeader>Due Date</DueDateHeader> */}
 
                   {/* {sortOrder === "asc" ? (
                     <>
