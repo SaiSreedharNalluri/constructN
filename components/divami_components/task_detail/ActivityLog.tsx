@@ -80,6 +80,7 @@ import {
   deleteComment,
   deleteCommentReply,
 } from "../../../services/comments";
+import PopupComponent from "../../popupComponent/PopupComponent";
 
 const ActivityLog = (props: any) => {
   const { ActivityLog, comments, getComments } = props;
@@ -102,6 +103,9 @@ const ActivityLog = (props: any) => {
   const [searchingOnnew, setSearchingOnnew] = useState(false);
   const [currentCommentId, setCurrentCommentId] = useState("");
   const [commentId, setCommentId] = useState("");
+
+  const [commentPopUp, setCommentPopup] = useState(false);
+  const [commentReplyPopUp, setcommentReplyPopup] = useState(false);
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -272,6 +276,10 @@ const ActivityLog = (props: any) => {
     }
   };
 
+  const deletePopup = async (commentId: string) => {
+    console.log("deletePopup", commentId);
+  };
+
   const deleteReplyComments = async (commentId: string, replyId: string) => {
     if (commentId && replyId) {
       deleteCommentReply(
@@ -407,9 +415,26 @@ const ActivityLog = (props: any) => {
                         src={Delete}
                         alt={"close icon"}
                         onClick={() => {
-                          deleteComments(each?._id);
+                          // deleteComments(each?._id);
+                          // deletePopup(each?._id);
+                          setCommentPopup(true);
                         }}
                       />
+                      {commentPopUp && (
+                        <PopupComponent
+                          open={commentPopUp}
+                          setShowPopUp={setCommentPopup}
+                          modalTitle={"Delete Comment"}
+                          // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
+                          modalmessage={`Are you sure you want to delete this comment "${each._id} "?`}
+                          primaryButtonLabel={"Delete"}
+                          SecondaryButtonlabel={"Cancel"}
+                          callBackvalue={() => {
+                            setCommentPopup(false);
+                            deleteComments(each?._id);
+                          }}
+                        />
+                      )}
                     </CommentEditActions>
                   ) : (
                     <></>
@@ -644,12 +669,33 @@ const ActivityLog = (props: any) => {
                                         src={Delete}
                                         alt={"close icon"}
                                         onClick={() => {
-                                          deleteReplyComments(
-                                            replyObj?.commentId,
-                                            replyObj?._id
-                                          );
+                                          // deleteReplyComments(
+                                          //   replyObj?.commentId,
+                                          //   replyObj?._id
+                                          // );
+
+                                          setcommentReplyPopup(true);
                                         }}
                                       />
+
+                                      {commentReplyPopUp && (
+                                        <PopupComponent
+                                          open={commentReplyPopUp}
+                                          setShowPopUp={setcommentReplyPopup}
+                                          modalTitle={"Delete Comment"}
+                                          // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
+                                          modalmessage={`Are you sure you want to delete this comment "${replyObj?._id} "?`}
+                                          primaryButtonLabel={"Delete"}
+                                          SecondaryButtonlabel={"Cancel"}
+                                          callBackvalue={() => {
+                                            setcommentReplyPopup(false);
+                                            deleteReplyComments(
+                                              replyObj?.commentId,
+                                              replyObj?._id
+                                            );
+                                          }}
+                                        />
+                                      )}
                                     </CommentEditActions>
                                   ) : (
                                     <></>

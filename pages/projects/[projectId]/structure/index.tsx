@@ -1330,7 +1330,7 @@ const Index: React.FC<IProps> = () => {
     deleteTask(router.query.projectId as string, taskObj._id)
       .then((response) => {
         if (response.success === true) {
-          toast(response.message);
+          toast.success(response.message);
           _.remove(taskFilterList, { _id: taskObj._id });
           setTasksList(taskFilterList);
           if (callback) {
