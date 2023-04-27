@@ -36,12 +36,24 @@ const Layers = ({
   layersUpdated,
 }: any) => {
   console.log("selectedLayersList11", selectedLayersList);
+  const [selectedArr, setSelectedArr] = useState<any>([]);
   const [layersLabels, setLayersLabels] = useState<any>([]);
   const [showImageIcon, setShowImageIcon] = useState<ShowImageDisplay>({
     item1: true,
     item2: true,
     item3: true,
   });
+
+  useEffect(() => {
+    let newLayersArr = [];
+    if (myLayersList != undefined) {
+      for (const key in myLayersList) {
+        newLayersArr.push(myLayersList[key].name);
+      }
+    }
+    setSelectedArr(newLayersArr);
+  }, [myLayersList]);
+  console.log("selectedArr", selectedArr);
 
   useEffect(() => {
     let arr: any = [];
@@ -62,7 +74,7 @@ const Layers = ({
 
     // setLayersLabels(Object.keys(myLayersList));
     setLayersLabels(arr);
-  }, [layersLabels]);
+  }, [layersUpdated, selectedArr.length]);
   useEffect(() => {
     console.log(layersLabels, "siva");
   }, [layersLabels]);
