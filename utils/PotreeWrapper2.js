@@ -31,6 +31,8 @@ export const PotreeViewerUtils = () => {
     let _tagType;
     let _isAddTagActive = false;
 
+    let currentTag;
+    let currentTagType;
     let _tagMap = {};
     let _issueSpriteMap = {};
     let _taskSpriteMap = {};
@@ -527,6 +529,7 @@ export const PotreeViewerUtils = () => {
 
     const loadImage = (reality, image, cameraWithOffset) => {
         unloadAllImages();
+        removeTagFromScene();
 
         _currentMode = reality.type;
         _currentReality = reality;
@@ -593,7 +596,7 @@ export const PotreeViewerUtils = () => {
     }
 
     const loadPanoImages = (image, index = 0, cameraInfo = null) => {
-        console.log("potree Load pano images: ", image, index);
+        console.log("potree Load pano images: ", image, index, cameraInfo);
         // if (this.currentLoadedImage === image.file.split('/').pop()) {
         //     return;
         // }
@@ -637,6 +640,7 @@ export const PotreeViewerUtils = () => {
                 context: context,
                 tag: sprite
             }
+            sprite._visible = false;
             // this.viewer.scene.scene.add(sprite);
             _viewer.scene.annotations.add(sprite);
         }
@@ -656,6 +660,7 @@ export const PotreeViewerUtils = () => {
                 context: context,
                 tag: sprite
             }
+            sprite._visible = false;
             // this.viewer.scene.scene.add(sprite);
             _viewer.scene.annotations.add(sprite);
         }
@@ -678,14 +683,63 @@ export const PotreeViewerUtils = () => {
     const initiateAddTag = (type) => {
         _tagType = type;
         _isAddTagActive = activateCreateTagTool();
+        removeTagFromScene();
     }
 
     const cancelAddTag = () => {
         _viewer.scene.annotations.remove(_tempTag);
     }
 
+    const finishAddTag = (tag) => {
+        // console.log("Potree Inside finishAddTag: ", tag);
+        _viewer.scene.annotations.remove(_tempTag);
+        addTagToScene(tag);
+    }
+
     const selectTag = (tag) => {
         updateContext(tag, true); 
+        addTagToScene(tag);
+    }
+
+    const addTagToScene = (tag) => {
+        // console.log("Potree tag Inside add tag scene: ", tag);
+        switch(tag.type) {
+            case "Issue":
+                if (_issueSpriteMap.hasOwnProperty(tag.id)) {
+                    let annotation = _issueSpriteMap[tag.id].tag;
+                    // console.log("Potree tag Inside add tag scene, if condition: ", tag, _issueSpriteMap.hasOwnProperty(tag.id), _issueSpriteMap[tag.id].tag);
+                    // _viewer.scene.annotations.add(annotation);
+        
+                    annotation._visible = true;
+                    // annotation._display = true;
+                    currentTag = annotation;
+                    currentTagType = tag.type;
+                }
+                break;
+            case "Task":
+                if (_taskSpriteMap.hasOwnProperty(tag.id)) {
+                    let annotation = _taskSpriteMap[tag.id].tag;
+                    // console.log("Potree tag Inside add tag scene, if condition: ", tag, _taskSpriteMap.hasOwnProperty(tag.id), _taskSpriteMap[tag.id].tag);
+                    // _viewer.scene.annotations.add(annotation);
+        
+                    annotation._visible = true;
+                    // annotation._display = true;
+                    currentTag = annotation;
+                    currentTagType = tag.type;
+                }
+                break;
+        }
+    }
+
+    const removeTagFromScene = () => {
+        // console.log("Potree tag removeTagFrom Scene: ", currentTag);
+        if (currentTag) {
+            currentTag._visible = false;
+            // _viewer.scene.annotations.remove(currentTag);
+            // currentTag.dispose();
+            currentTag = undefined;
+            currentTagType = undefined;
+        }
     }
 
     const showTag = (tag, show) => {
@@ -1068,7 +1122,7 @@ export const PotreeViewerUtils = () => {
         }
     }
 
-    const goToNearestImageInAllRealities = (position) => {
+    const goToNearestImageInAllRealities = (position, cameraWithOffset) => {
         let nearestImage = null;
         let nearestImageDist = 10000; 
         let nearestReality;
@@ -1103,7 +1157,7 @@ export const PotreeViewerUtils = () => {
         }
 
         if(nearestImage) {
-            loadImage(nearestReality, nearestImage);
+            loadImage(nearestReality, nearestImage, cameraWithOffset);
         }
     }
 
@@ -1159,7 +1213,7 @@ export const PotreeViewerUtils = () => {
         if (context.image) {
             goToNearestImageInAllRealities(context.image.imagePosition);
         } else if ((context.type === "Task") || (context.type === "Issue")) {
-            goToNearestImageInAllRealities(context.tag.tagPosition);
+            goToNearestImageInAllRealities(context.tag.tagPosition, context.cameraObject);
         } else if (context.type === "3d") {
             goToNearestImageInAllRealities(context.cameraObject.cameraPosition);
         } else {
@@ -1889,6 +1943,7 @@ export const PotreeViewerUtils = () => {
         updateLayersData: updateLayersData,
         initiateAddTag: initiateAddTag,
         cancelAddTag: cancelAddTag,
+        finishAddTag: finishAddTag,
         selectTag: selectTag,
         showTag: showTag,
         getContext: getContext,
