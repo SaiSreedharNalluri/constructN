@@ -487,7 +487,7 @@ const CustomTaskListDrawer = (props: any) => {
                     />
                   ) : null} */}
                   <FunnelIcon
-                    src={filterElip}
+                    src={FilterInActive}
                     alt="Arrow"
                     onClick={() => {
                       handleViewTaskList();
@@ -587,29 +587,17 @@ const CustomTaskListDrawer = (props: any) => {
                               <AssigneeList>
                                 {val?.assignees?.map(
                                   (assignName: any, index: number) => {
-                                    if (index !== 0) {
+                                    if (index != 0) {
                                       return (
                                         <>
                                           {index !== val?.assignees?.length - 1
-                                            ? assignName?.firstName
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                              assignName?.firstName.slice(1) +
+                                            ? assignName?.firstName +
                                               " " +
-                                              assignName.lastName
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                              assignName?.lastName.slice(1) +
+                                              assignName.lastName +
                                               " | "
-                                            : assignName?.firstName
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                              assignName?.firstName.slice(1) +
+                                            : assignName?.firstName +
                                               " " +
-                                              assignName.lastName
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                              assignName?.lastName.slice(1)}
+                                              assignName.lastName}
                                         </>
                                       );
                                     }

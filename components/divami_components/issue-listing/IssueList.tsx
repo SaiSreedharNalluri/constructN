@@ -107,7 +107,6 @@ import { downloadMenuOptions, getDownladableList } from "./Constants";
 import CompletedIconTask from "../../../public/divami_icons/CompletedIconTask.svg";
 import sortUp from "../../../public/divami_icons/sortUp.svg";
 
-
 interface IProps {
   closeOverlay: () => void;
   issuesList: Issue[];
@@ -498,7 +497,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   <DueDate>Due Date</DueDate> */}
                   <SecondDividerIcon src={DividerIconSVG} alt="" />
                   <FunnelIcon
-                    src={filterElip}
+                    src={FilterInActive}
                     alt="Arrow"
                     onClick={() => {
                       handleViewTaskList();
@@ -607,25 +606,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                                       return (
                                         <>
                                           {index !== val?.assignees?.length - 1
-                                            ? assignName?.firstName
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                              assignName?.firstName.slice(1) +
+                                            ? assignName?.firstName +
                                               " " +
-                                              assignName.lastName
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                              assignName?.lastName.slice(1) +
+                                              assignName.lastName +
                                               " | "
-                                            : assignName?.firstName
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                              assignName?.firstName.slice(1) +
+                                            : assignName?.firstName +
                                               " " +
-                                              assignName.lastName
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                              assignName?.lastName.slice(1)}
+                                              assignName.lastName}
                                         </>
                                       );
                                     }

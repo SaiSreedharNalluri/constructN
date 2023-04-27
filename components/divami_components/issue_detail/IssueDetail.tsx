@@ -497,9 +497,7 @@ function BasicTabs(props: any) {
                                     {index !==
                                     taskState?.TabOne?.assignessList.length - 1
                                       ? assignName?.firstName +
-                                        assignName.lastName
-                                          .charAt(0)
-                                          .toUpperCase() +
+                                        assignName.lastName +
                                         " | "
                                       : assignName?.firstName +
                                         assignName.lastName}
