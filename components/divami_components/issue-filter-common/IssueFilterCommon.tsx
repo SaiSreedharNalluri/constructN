@@ -196,7 +196,21 @@ const FilterCommon: React.FC<IProps> = ({
     });
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
-    handleOnFilter(data);
+
+    const { issuePriorityData, issueStatusData, issueTypeData, ...restObj } =
+      data;
+    const isArrEmpty: Boolean =
+      issuePriorityData?.length === 0 &&
+      issueStatusData?.length === 0 &&
+      issueTypeData?.length === 0;
+    const isEmpty = Object.values(restObj).every((x) => x === null || x === "");
+
+    if (isArrEmpty && isEmpty) {
+      onReset();
+      handleClose();
+    } else {
+      handleOnFilter(data);
+    }
   };
   const formHandler = (event: any) => {
     if (event === "Cancel") {
@@ -205,39 +219,42 @@ const FilterCommon: React.FC<IProps> = ({
       onFilterApply();
       handleClose();
     }
+
+    console.log("test", issueFilterState, FilterState);
   };
+
+  // const formHandler = (event: any) => {
+  //   if (event === "Cancel") {
+  //     handleClose();
+  //   } else {
+  //     const { issuePriorityData, issueStatusData, issueTypeData, ...restObj } =
+  //       issueFilterState.filterData;
+  //     const isArrEmpty: Boolean =
+  //       (issuePriorityData == undefined || issuePriorityData?.length === 0) &&
+  //       (issueStatusData !== undefined || issueStatusData?.length === 0) &&
+  //       (issueTypeData !== undefined || issueTypeData?.length === 0);
+  //     const isEmpty = Object.values(restObj).every(
+  //       (x) => x === null || x === "" || x === undefined
+  //     );
+
+  //     console.log(
+  //       "Test",
+  //       issuePriorityData,
+  //       issueStatusData,
+  //       issueTypeData,
+  //       issueFilterState
+  //     );
+  //     if (isEmpty && isArrEmpty) {
+  //       alert("TEST");
+  //     } else {
+  //       onFilterApply();
+  //       handleClose();
+  //     }
+  //   }
+  // };
+
   console.log("setIssueFilterState", setIssueFilterState.isFilterApplied);
-  const checkIsFilter = () => {
-    if (issueFilterState?.filterData) {
-      const {
-        assigneesData,
-        fromDate,
-        issuePriorityData,
-        issueStatusData,
-        issueTypeData,
-        toDate,
-      } = issueFilterState.filterData;
-      console.log(issuePriorityData?.length === 0, "issuePriorityData");
-      console.log(issueStatusData.length === 0, "issueStatusData");
-      console.log(issueTypeData.length === 0, "issueTypeData");
-      console.log(toDate === "", "toDate");
-      console.log(fromDate === "", "fromDate");
-      console.log(assigneesData, "assigneesData");
-      if (
-        issuePriorityData.length === 0 &&
-        issueStatusData?.length == 0 &&
-        issueTypeData?.length == 0 &&
-        toDate === "" &&
-        fromDate === "" &&
-        assigneesData === null
-      ) {
-        setIssueFilterState.isFilterApplied(false);
-      }
-    }
-  };
-  useEffect(() => {
-    checkIsFilter();
-  }, [issueFilterState]);
+
   useEffect(() => {
     if (router.isReady) {
       getIssuesTypes(router.query.projectId as string).then((response) => {
@@ -573,6 +590,7 @@ const FilterCommon: React.FC<IProps> = ({
     SetFilterState(temp);
     closeFilterOverlay();
     handleClose();
+    console.log("karan reset");
   };
 
   return (

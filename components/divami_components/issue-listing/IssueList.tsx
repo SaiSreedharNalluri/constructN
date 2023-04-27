@@ -346,7 +346,10 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     issueMenuInstance.response = { ...issue.context, id: issue._id };
     issueMenuClicked(issueMenuInstance);
   };
-  console.log("issueFilterState", issueFilterState);
+
+  useEffect(() => {
+    console.log("issueFilterState", issueFilterState);
+  }, [issueFilterState]);
   const [abc, setAbc] = useState(false);
   const checkIsFilter = () => {
     if (issueFilterState?.filterData) {
