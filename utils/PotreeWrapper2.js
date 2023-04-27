@@ -754,17 +754,25 @@ export const PotreeViewerUtils = () => {
     }
 
     const showIssues = (show) => {
-        for(let issueId of Object.keys(_issueSpriteMap)) {
-            let annotation = _issueSpriteMap[issueId].tag;
-            annotation._visible = show;
+        if (currentTag) {
+            currentTag._visible = show;
         }
+
+        // for(let issueId of Object.keys(_issueSpriteMap)) {
+        //     let annotation = _issueSpriteMap[issueId].tag;
+        //     annotation._visible = show;
+        // }
     }
 
     const showTasks = (show) => {
-        for(let taskId of Object.keys(_taskSpriteMap)) {
-            let annotation = _taskSpriteMap[taskId].tag;
-            annotation._visible = show;
+        if (currentTag) {
+            currentTag._visible = show;
         }
+
+        // for(let taskId of Object.keys(_taskSpriteMap)) {
+        //     let annotation = _taskSpriteMap[taskId].tag;
+        //     annotation._visible = show;
+        // }
     }
 
     const getMousePointCloudIntersection = (mouse, camera, viewer, pointclouds, params = {}) => {
