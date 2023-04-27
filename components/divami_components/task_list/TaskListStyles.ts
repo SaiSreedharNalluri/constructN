@@ -6,6 +6,8 @@ import { Box, MenuItem, TextField } from "@mui/material";
 export const TaskListContainer = styled("div")({
   width: "438px",
   height: "calc(100vh - 60px)",
+  paddingLeft: "20px",
+  paddingRight: "20px",
 });
 
 export const HeaderContainer = styled("div")({
@@ -22,8 +24,6 @@ export const TitleContainer = styled(Box)({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  paddingLeft: "20px",
-  paddingRight: "20px",
 
   color: "#36415D",
   fontFamily: "Open Sans",
@@ -34,11 +34,9 @@ export const TitleContainer = styled(Box)({
 
 export const CloseIcon = styled(Image)({
   cursor: "pointer",
-  width: "12px",
-  height: "12px",
+  width: "24px",
+  height: "24px",
 });
-
-
 
 // border-bottom: 1px solid #d9d9d9;
 
@@ -47,9 +45,11 @@ export const MiniSymbolsContainer = styled(Box)({
   display: "flex",
   justifyContent: "flex-end",
   alignItems: "center",
-  paddingLeft: "20px",
-  paddingRight: "20px",
+  marginRight: "5px",
+  //   paddingLeft: "20px",
+  //   paddingRight: "20px",
 });
+
 
 export const SearchGlassIcon = styled(Image)({
   cursor: "pointer",
@@ -57,8 +57,9 @@ export const SearchGlassIcon = styled(Image)({
 
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
-  marginLeft: "21px",
+  marginLeft: "15px",
 });
+
 export const SecondDividerIcon = styled(Image)({
   cursor: "pointer",
   marginLeft: "15px",
@@ -76,7 +77,7 @@ export const DownloadIcon = styled(Image)({
 
 export const IconContainer = styled(Image)({
   cursor: "pointer",
-  marginLeft: "16px",
+  marginLeft: "14px",
 });
 
 export const FilterIcon = styled(Image)({
@@ -104,12 +105,14 @@ export const DueDate = styled(Box)({
 });
 
 export const BodyContainer = styled(Box)`
+ //   border: 2px solid red;
   height: calc(100vh - 200px);
-  padding-left: 20px;
-  padding-right: 20px;
+  //   padding-left: 20px;
+  //   padding-right: 20px;
   margin-top: 16px;
   overflow-y: auto;
-  margin-top: 16px;
+  // margin-top: 10px;
+  margin-top: -5px;
   color: #101f4c;
   padding-bottom: 20px;
   // overflow: scroll;
@@ -128,14 +131,43 @@ export const BodyContTitle = styled("div")({
 });
 
 export const SecondHeader = styled("div")({
-  marginLeft: "35px",
+ display: "flex",
+  //   border: "1px solid aqua",
+  marginLeft: "34px",
+  marginTop: "5px",
 });
 
 export const ThirdHeader = styled("div")({
   display: "flex",
-  marginLeft: "35px",
-  marginTop: "6px",
-  justifyContent: "space-between",
+  //   border: "1px solid aqua",
+  marginLeft: "34px",
+  marginTop: "5px",
+});
+
+export const Watcher = styled("div")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  color: "#FF843F",
+  marginLeft: "5px",
+});
+
+export const AssigneeList = styled("div")({
+  // display: "inline-block",
+
+  // background:"#FFFFF"
+  // width: "308px",
+  // height: "86px",
+  padding: "15px",
+  color: "#101F4C",
+  fontSize: "14px",
+  border: "1px solid #D9D9D9",
+  marginTop: "-3px",
+  boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
+  borderRadius: "4px",
+  // position: "absolute",
+  // right:"10px",
 });
 
 export const DueDateDiv = styled("div")({
@@ -153,11 +185,11 @@ export const ArrowDownIcon = styled(Image)({
 });
 
 export const HorizontalLine = styled("div")({
-  backgroundColor: "#d9d9d9",
+ backgroundColor: "#d9d9d9",
   borderBottom: "1px solid #d9d9d9",
   width: "398x",
-  marginTop: "18px",
-  marginBottom: "20px",
+  marginTop: "17px",
+  marginBottom: "17px",
 });
 
 export const LoadMoreContainer = styled("div")({
@@ -231,7 +263,7 @@ export const StyledMenu = styled(MenuItem)({
   lineHeight: "20px",
   color: "#101F4C",
   fontFamily: "Open Sans",
-  fontWeight: "400"
+  fontWeight: "400",
 });
 
 export const LoadMoreText = styled("div")({
@@ -341,8 +373,6 @@ export const CustomBox = styled(Box)<ContainerProps>`
   margin-top: ${(props) => (props.searchingOn ? "10px" : "")};
 `;
 
-
-
 export const MiniHeaderContainer = styled(Box)<ContainerHeaderProps>`
   margin-bottom: ${(props) => (props.searchingOn ? "24px" : "20px")};
   display: flex;
@@ -352,3 +382,47 @@ export const MiniHeaderContainer = styled(Box)<ContainerHeaderProps>`
   margin-top: 20px;
   color: #36415d;
 `;
+
+
+export const DueDateHeader = styled("div")({
+  color: "#36415D",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  marginLeft: "2px",
+});
+
+
+
+export const TicketName = styled("div")({
+  //   display: "flex",
+  marginLeft: "10px",
+  color: "#101F4C",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "500",
+  fontSize: "16px",
+});
+
+export const ProgressChild = styled("div")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  color: "#787878",
+});
+
+export const SmallDivider = styled(Image)({
+  //   cursor: "pointer",
+  marginLeft: "10px",
+});
+
+export const PriorityChild = styled("div")({
+  marginLeft: "10px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  color: "#787878",
+});

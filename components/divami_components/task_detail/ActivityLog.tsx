@@ -309,7 +309,7 @@ const ActivityLog = (props: any) => {
     }
   };
 
-  console.log("commentInputData", commentInputData);
+  console.log("commentsData", commentsData);
 
   return (
     <ActivityCardContainer data-testid="const-custom-activity-log-issue">
@@ -635,7 +635,7 @@ const ActivityLog = (props: any) => {
                                     </ActivityCommentAddedByMain>
 
                                     <ActivityTimeStamp>
-                                      {each.updatedTimeText}
+                                      {replyObj.updatedTimeText}
 
                                       {/* {moment(replyObj?.createdAt).format(
                                     "DD MMM YY"
@@ -805,9 +805,7 @@ const ActivityLog = (props: any) => {
                 });
               }}
               onKeyDown={(e) => {
-                console.log("Test");
                 if (e.key == "Enter") {
-                  console.log("Test");
                   let commentText = commentInputData?.data?.text?.trim();
                   let newObj = { ...commentInputData };
                   setCommentInputData({
