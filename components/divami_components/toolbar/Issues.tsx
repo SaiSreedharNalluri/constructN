@@ -196,12 +196,12 @@ const Issues = ({
             setEnableSubmit(false);
             issueSubmitFn(response.result);
           } else {
-            toast(`Something went wrong`);
+            toast.error(`Something went wrong`);
             setEnableSubmit(true);
           }
         })
         .catch((error) => {
-          toast(`Something went wrong`);
+          toast.error(`Something went wrong`);
           setEnableSubmit(true);
         });
     } else {
@@ -351,6 +351,13 @@ const Issues = ({
       )}
       {openCreateIssue && (
         <CustomDrawer>
+          {console.log(
+            myProject,
+            currentStructure,
+            contextInfo,
+            issueStatusList,
+            "siva"
+          )}
           <CreateIssue
             handleCreateTask={handleCreateTask}
             currentProject={myProject}
