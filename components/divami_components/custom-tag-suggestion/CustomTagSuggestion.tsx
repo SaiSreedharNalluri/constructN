@@ -96,9 +96,10 @@ const CustomTagSuggestion = (props: any) => {
                 color: "#101F4C",
                 fontWeight: "400",
                 "&::placeholder": {
-                  color: "#787878",
+                  color: "#888888",
 
                   fontFamily: "Open Sans",
+                  fontStyle: "normal",
                   fontSize: "14px",
                   lineHeight: "20px",
                   fontWeight: "400",
