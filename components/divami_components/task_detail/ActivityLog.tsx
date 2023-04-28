@@ -1,47 +1,19 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import IssuesUpdated from "../../../public/divami_icons/issueUpdated.svg";
-import CommentAdded from "../../../public/divami_icons/commentAdded.svg";
-import IssueRaised from "../../../public/divami_icons/issueRaised.svg";
-import RfiRaised from "../../../public/divami_icons/rfiRaised.svg";
-import RfiUpdated from "../../../public/divami_icons/rfiUpdated.svg";
-import ScanUpdated from "../../../public/divami_icons/scanUpdated.svg";
-import ImageScreenShot from "../../../public/divami_icons/imageScreenShot.svg";
-import Clip from "../../../public/divami_icons/clip.svg";
 import Send from "../../../public/divami_icons/send.svg";
 import Delete from "../../../public/divami_icons/delete.svg";
 import Edit from "../../../public/divami_icons/edit.svg";
-import { debounce } from "lodash";
-
-import {
-  EditIcon,
-  DeleteIcon,
-} from "../../divami_components/issue_detail/IssueDetailStyles";
 import {
   ActivityCardContainer,
   ActivityCard,
   ActivityHeader,
   ActivityStatusIcon,
-  ActivityStatusTitle,
   ActivityHeaderDivider,
   ActivityTimeStamp,
-  ActivityBodyIssueRaisedCase,
   ActivityCommentAddedBy,
   ActivityCommentAddedByMain,
   ActivityAddedComment,
   ActivityCommentDiv,
   ActivityComment,
-  ActivityIssueRaisedMain,
-  ActivityCreated,
-  ActivityIssueType,
-  ActivityFor,
-  IssuesDescription,
-  ActivityScanUploadBox,
-  ActivityIssueRaisedMainProfile,
-  ActivityCurrentProgress,
-  ActivityImageSection,
-  ActivityImage,
-  ActivityScreenShotIconContainer,
   CommentActions,
   ReplyButton,
   RepliesContainer,
@@ -59,9 +31,7 @@ import {
   ReplyDivText,
   ReplyCancel,
 } from "./ActivityLogStyles";
-import moment from "moment";
 import router from "next/router";
-
 import {
   AddCommentContainerSecond,
   StyledInput,
@@ -70,7 +40,6 @@ import {
   ImageErrorIcon,
   SendButton,
 } from "./TaskDetailStyles";
-import { text } from "@fortawesome/fontawesome-svg-core";
 import { toast } from "react-toastify";
 import {
   createCommentReply,
@@ -80,6 +49,7 @@ import {
   deleteComment,
   deleteCommentReply,
 } from "../../../services/comments";
+import { useAppContext } from "../../src/context/ContextComponent";
 
 const ActivityLog = (props: any) => {
   const { ActivityLog, comments, getComments } = props;
@@ -97,7 +67,6 @@ const ActivityLog = (props: any) => {
       replyId: "",
     },
   });
-
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchingOnnew, setSearchingOnnew] = useState(false);
   const [currentCommentId, setCurrentCommentId] = useState("");
@@ -147,12 +116,18 @@ const ActivityLog = (props: any) => {
   };
   useEffect(() => {
     // setCommentsData(comments);
+    const localStorageData = localStorage.getItem("userInfo");
+    let userName = localStorageData ? localStorageData : "";
     const commentsList = comments.map((each: any) => {
       return {
         ...each,
         updatedTimeText: getTimeText(each.createdAt),
         showMoreText: true,
         showEdit: false,
+        isEditAvailable: each.by?.fullName === userName,
+        isDeleteAvailable: each.by?.fullName === userName,
+        // isEditAvailable: each?.by?.fullName === user?.fullName,
+        // isDeleteAvailable: each?.by?.fullName === user?.fullName,
         showDelete: false,
         replies: each.replies.map((item: any) => {
           return {
@@ -161,10 +136,13 @@ const ActivityLog = (props: any) => {
             showMoreText: true,
             showEdit: false,
             showDelete: false,
+            isEditAvailable: each?.by?.fullName === userName,
+            isDeleteAvailable: each?.by?.fullName === userName,
           };
         }),
       };
     });
+
     setCommentsData(commentsList);
   }, [comments]);
 
@@ -301,8 +279,6 @@ const ActivityLog = (props: any) => {
     }
   };
 
-  console.log("commentInputData", commentInputData);
-
   return (
     <ActivityCardContainer data-testid="const-custom-activity-log-issue">
       {commentsData.length ? <CommentsTitle>Comments</CommentsTitle> : <></>}
@@ -313,23 +289,7 @@ const ActivityLog = (props: any) => {
               <ActivityHeader>
                 <ActivityStatusIcon>
                   <ActivityImageAvatar
-                    src={
-                      each?.by?.avatar
-                      // CommentAdded
-                      // each.status === "Issue Raised"
-                      //   ? IssueRaised
-                      //   : each.status === "Issue Updated"
-                      //   ? IssuesUpdated
-                      //   : each.status === "Comment Added"
-                      //   ? CommentAdded
-                      //   : each.status === "RFI Updated"
-                      //   ? RfiUpdated
-                      //   : each.status === "RFI Raised"
-                      //   ? RfiRaised
-                      //   : each.status === "Scan Updated"
-                      //   ? ScanUpdated
-                      //   : ""
-                    }
+                    src={each?.by?.avatar}
                     width={30}
                     height={30}
                     alt={""}
@@ -343,8 +303,8 @@ const ActivityLog = (props: any) => {
                         if (item._id == each._id) {
                           return {
                             ...item,
-                            showEdit: true,
-                            showDelete: true,
+                            showEdit: item.isEditAvailable,
+                            showDelete: item.isDeleteAvailable,
                           };
                         } else {
                           return {
@@ -382,7 +342,10 @@ const ActivityLog = (props: any) => {
                       {/* {moment(each.createdAt).format("DD MMM YY")} */}
                     </ActivityTimeStamp>
                   </CommentTitleName>
-                  {each.showEdit && each.showDelete ? (
+                  {each.isEditAvailable &&
+                  each.isDeleteAvailable &&
+                  each.showEdit &&
+                  each.showDelete ? (
                     <CommentEditActions>
                       <EditIconImage
                         src={Edit}
@@ -536,8 +499,10 @@ const ActivityLog = (props: any) => {
                                                 ) {
                                                   return {
                                                     ...replyIter,
-                                                    showEdit: true,
-                                                    showDelete: true,
+                                                    showEdit:
+                                                      replyObj.isEditAvailable,
+                                                    showDelete:
+                                                      replyObj.isDeleteAvailable,
                                                   };
                                                 } else {
                                                   return {
@@ -617,7 +582,10 @@ const ActivityLog = (props: any) => {
                                   )} */}
                                     </ActivityTimeStamp>
                                   </CommentTitleName>
-                                  {replyObj.showEdit && replyObj.showDelete ? (
+                                  {replyObj.showEdit &&
+                                  replyObj.showDelete &&
+                                  replyObj.isEditAvailable &&
+                                  replyObj.isDeleteAvailable ? (
                                     <CommentEditActions>
                                       <EditIconImage
                                         src={Edit}
@@ -759,9 +727,7 @@ const ActivityLog = (props: any) => {
                 });
               }}
               onKeyDown={(e) => {
-                console.log("Test");
                 if (e.key == "Enter") {
-                  console.log("Test");
                   let commentText = commentInputData?.data?.text?.trim();
                   let newObj = { ...commentInputData };
                   setCommentInputData({
@@ -786,6 +752,8 @@ const ActivityLog = (props: any) => {
                       saveAddedComments(newObj);
                     }
                   }
+                } else if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+                  e.stopPropagation();
                 }
               }}
             />

@@ -72,7 +72,7 @@ import {
   TitleContainer,
   LoadMoreText,
   FilterIndication,
-  FunnelIcon
+  FunnelIcon,
 } from "./TaskListStyles";
 import {
   Box,
@@ -124,11 +124,11 @@ const CustomTaskListDrawer = (props: any) => {
     handleOnTasksSort,
     deleteTheAttachment,
     openTaskCreateFn,
+    projectUsers,
+    taskPriority,
+    taskStatus,
   } = props;
   const [taskType, setTaskType] = useState<[string]>();
-  const [taskPriority, setTaskPriority] = useState<[string]>();
-  const [projectUsers, setProjectUsers] = useState([]);
-  const [taskStatus, setTaskStatus] = useState<[string]>();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [viewTask, setViewTask] = useState<any>({});
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
@@ -145,7 +145,7 @@ const CustomTaskListDrawer = (props: any) => {
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
   const [downloadList, setDownloadList] = useState(taskList);
-
+  console.log(tasksList, "tasksList");
   const sortMenuOptions = [
     {
       label: "Status ( To Do - Completed)",
@@ -226,23 +226,6 @@ const CustomTaskListDrawer = (props: any) => {
           setTaskType(response.result);
         }
       });
-      getTasksPriority(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskPriority(response.result);
-        }
-      });
-      getProjectUsers(router.query.projectId as string)
-        .then((response) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
-      getTaskStatus(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskStatus(response.result);
-        }
-      });
     }
   }, []);
 
@@ -321,30 +304,18 @@ const CustomTaskListDrawer = (props: any) => {
   };
 
   useEffect(() => {
-    if (router.isReady) {
-      getProjectUsers(router.query.projectId as string)
-        .then((response: any) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
-    }
-  }, [router.isReady, router.query.projectId]);
-
-  useEffect(() => {
     handleSearch();
   }, [searchTerm]);
 
   useEffect(() => {
     if (viewTask?._id) {
-      filteredTaskList.forEach((item: any) => {
+      taskList.forEach((item: any) => {
         if (viewTask._id === item._id) {
           setViewTask(item);
         }
       });
     }
-  }, [filteredTaskList]);
+  }, [taskList]);
 
   return (
     <TaskListContainer>
@@ -538,7 +509,7 @@ const CustomTaskListDrawer = (props: any) => {
                         <ThirdHeader>
                           <div>{val.assignee}</div>
                           <DueDateDiv>
-                            Due by {Moment(val.due_date).format("DD MMM 'YY")}
+                            Due by {Moment(val.dueDate).format("DD MMM 'YY")}
                           </DueDateDiv>
                         </ThirdHeader>
                       </BodyInfo>

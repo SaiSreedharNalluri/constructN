@@ -115,6 +115,7 @@ interface IProps {
   deleteTheAttachment?: any;
   openIssueCreateFn?: any;
   issueMenuClicked?: any;
+  projectUsers?: any;
 }
 
 const CustomIssueListDrawer: React.FC<IProps> = ({
@@ -140,6 +141,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   deleteTheAttachment,
   openIssueCreateFn,
   issueMenuClicked,
+  projectUsers,
 }) => {
   const handleClose = () => {
     onClose(true);
@@ -154,7 +156,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [openIssueDetail, setOpenIssueDetail] = useState(false);
   const [issueType, setIssueType] = useState<[string]>();
   const [issuePriority, setIssuePriority] = useState<[string]>();
-  const [projectUsers, setProjectUsers] = useState([]);
   const [issueStatus, setIssueStatus] = useState<[string]>();
   const [dateSortState, setDateSortState] = useState("ascending");
   const [viewIssue, setViewIssue] = useState<any>({});
@@ -228,7 +229,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setIssueList(issuesList);
     setDownloadList(issuesList);
   }, [issuesList]);
-  
+
   useEffect(() => {
     setFilteredIssuesList(issueList.slice(0, 10));
   }, [issueList]);
@@ -263,17 +264,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   //   }
   //   setFilteredIssuesList(sorted);
   // };
-  useEffect(() => {
-    if (router.isReady) {
-      getProjectUsers(router.query.projectId as string)
-        .then((response: any) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
-    }
-  }, [router.isReady, router.query.projectId]);
 
   const handleSearchWindow = () => {
     if (searchTerm === "") {
@@ -325,14 +315,15 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   useEffect(() => {
     if (viewIssue?._id) {
-      filteredIssuesList.forEach((item: any) => {
+      issueList.forEach((item: any) => {
         if (viewIssue._id === item._id) {
           setViewIssue(item);
         }
       });
     }
-  }, [filteredIssuesList]);
+  }, [issueList]);
 
+  console.log(filteredIssuesList, viewIssue, "viewIssue");
   const handleViewIssue = (issue: any) => {
     filteredIssuesList.forEach((item: any) => {
       if (issue._id === item._id) {

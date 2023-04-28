@@ -328,7 +328,6 @@ function BasicTabs(props: any) {
       method: "status_desc",
     },
   ];
-
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
@@ -857,6 +856,16 @@ function BasicTabs(props: any) {
                         setComments(e.target.value);
                       }}
                       data-testid="issue-comment-input"
+                      onKeyDown={(e: any) => {
+                        if (e.key == "Enter") {
+                          addComment(e.target?.value, taskState?.TabOne?.id);
+                        } else if (
+                          e.key === "ArrowRight" ||
+                          e.key === "ArrowLeft"
+                        ) {
+                          e.stopPropagation();
+                        }
+                      }}
                     />
                     <AddCommentButtonContainer>
                       {/* <AttachButton>
@@ -1160,18 +1169,23 @@ const CustomIssueDetailsDrawer = (props: any) => {
               .filter((item: any) => item.id == "tag-suggestions")[0]
               ?.chipString?.join(";")
           : []) || []),
-      (data.startdate = formData
+      (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
-    data.startdate = moment(data.startdate).format("YYYY-MM-DD");
+    data.startDate = moment(data.startDate).format("YYYY-MM-DD");
 
-    data.duedate = formData
+    data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-    data.duedate = moment(data.duedate).format("YYYY-MM-DD");
-
+    data.dueDate = moment(data.dueDate).format("YYYY-MM-DD");
+    if (!data.startDate) {
+      data = _.omit(data, "startDate");
+    }
+    if (!data.dueDate) {
+      data = _.omit(data, "dueDate");
+    }
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     const fileformdata = new FormData();
@@ -1212,15 +1226,16 @@ const CustomIssueDetailsDrawer = (props: any) => {
     }
   };
   const issueUpdate = (data: any) => {
-    const issueData = _.cloneDeep(selectedIssue);
+    // const issueData = _.cloneDeep(selectedIssue);
+    let issueData: any = {};
     issueData.assignees = data.selectedUser.map((user: any) => {
       return user._id || user.user._id;
     });
 
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
-    issueData.startDate = moment(issueData.startDate).format("YYYY-MM-DD");
-    issueData.dueDate = moment(issueData.dueDate).format("YYYY-MM-DD");
+    // issueData.startDate = moment(issueData.startDate).format("YYYY-MM-DD");
+    // issueData.dueDate = moment(issueData.dueDate).format("YYYY-MM-DD");
     editIssue(projectId as string, issueData, selectedIssue._id)
       .then((response) => {
         if (response.success === true) {
