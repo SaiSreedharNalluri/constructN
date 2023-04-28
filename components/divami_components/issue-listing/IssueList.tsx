@@ -740,6 +740,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             {sortMenuOptions.map((option) => (
               <>
                 <StyledMenu
+                  className="custom-styled-menu"
                   key={option.label}
                   onClick={() => handleSortMenuClick(option.method)}
                   data-testid="sort-menu-item"

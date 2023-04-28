@@ -725,6 +725,7 @@ const CustomTaskListDrawer = (props: any) => {
             {sortMenuOptions.map((option) => (
               <>
                 <StyledMenu
+                  className="custom-styled-menu"
                   data-testid="sort-menu-item"
                   key={option.label}
                   onClick={() => {
