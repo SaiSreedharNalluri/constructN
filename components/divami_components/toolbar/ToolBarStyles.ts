@@ -163,7 +163,9 @@ interface selectLayerWrapperProps {
 }
 export const SelectLayersWrapper = styled("div")(
   (props: selectLayerWrapperProps) => ({
-    top: "62px",
+    // top: "62px",
+    top: "58px",
+
     position: "absolute",
     left: props.typeOfWindow === "type" ? "1px" : "250px",
     // left: props.typeOfWindow === 'type' ? '1px' : '238px',

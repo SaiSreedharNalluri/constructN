@@ -61,6 +61,7 @@ const Issues = ({
   issueStatusList,
   issueTypesList,
   issueFilterState,
+  setIssueFilterState,
   closeIssueCreate,
   deleteTheIssue,
   openIssueDetails,
@@ -195,12 +196,12 @@ const Issues = ({
             setEnableSubmit(false);
             issueSubmitFn(response.result);
           } else {
-            toast(`Something went wrong`);
+            toast.error(`Something went wrong`);
             setEnableSubmit(true);
           }
         })
         .catch((error) => {
-          toast(`Something went wrong`);
+          toast.error(`Something went wrong`);
           setEnableSubmit(true);
         });
     } else {
@@ -339,6 +340,7 @@ const Issues = ({
             currentProject={currentProject}
             issueTypesList={issueTypesList}
             issueFilterState={issueFilterState}
+            setIssueFilterState={setIssueFilterState}
             getIssues={getIssues}
             handleOnIssueSort={handleOnIssueSort}
             deleteTheAttachment={deleteTheAttachment}
@@ -349,6 +351,13 @@ const Issues = ({
       )}
       {openCreateIssue && (
         <CustomDrawer>
+          {console.log(
+            myProject,
+            currentStructure,
+            contextInfo,
+            issueStatusList,
+            "siva"
+          )}
           <CreateIssue
             handleCreateTask={handleCreateTask}
             currentProject={myProject}

@@ -194,6 +194,7 @@ function BasicTabs(props: any) {
 
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [attachmentPopup, setAttachmentPopup] = useState(false);
 
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
@@ -453,31 +454,21 @@ function BasicTabs(props: any) {
                         <SecondAssigneeList>
                           {taskState?.TabOne?.assignessList?.map(
                             (assignName: any, index: number) => {
-                              return (
-                                <>
-                                  {index !==
-                                  taskState?.TabOne?.assignessList.length - 1
-                                    ? assignName?.firstName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.firstName.slice(1) +
-                                      " " +
-                                      assignName.lastName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.lastName.slice(1) +
-                                      " | "
-                                    : assignName?.firstName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.firstName.slice(1) +
-                                      " " +
-                                      assignName.lastName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.lastName.slice(1)}
-                                </>
-                              );
+                              if (index !== 0) {
+                                return (
+                                  <>
+                                    {index !==
+                                    taskState?.TabOne?.assignessList.length - 1
+                                      ? assignName?.firstName +
+                                        " " +
+                                        assignName?.lastName +
+                                        " | "
+                                      : assignName?.firstName +
+                                        " " +
+                                        assignName.lastName}
+                                  </>
+                                );
+                              }
                             }
                           )}
                         </SecondAssigneeList>
@@ -548,31 +539,21 @@ function BasicTabs(props: any) {
                         <AssigneeList>
                           {taskState?.TabOne?.assignessList?.map(
                             (assignName: any, index: number) => {
-                              return (
-                                <>
-                                  {index !==
-                                  taskState?.TabOne?.assignessList.length - 1
-                                    ? assignName?.firstName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.firstName.slice(1) +
-                                      " " +
-                                      assignName.lastName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.lastName.slice(1) +
-                                      " | "
-                                    : assignName?.firstName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.firstName.slice(1) +
-                                      " " +
-                                      assignName.lastName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.lastName.slice(1)}
-                                </>
-                              );
+                              if (index !== 0) {
+                                return (
+                                  <>
+                                    {index !==
+                                    taskState?.TabOne?.assignessList.length - 1
+                                      ? assignName?.firstName +
+                                        " " +
+                                        assignName?.lastName +
+                                        " | "
+                                      : assignName?.firstName +
+                                        " " +
+                                        assignName.lastName}
+                                  </>
+                                );
+                              }
                             }
                           )}
                         </AssigneeList>
@@ -740,23 +721,54 @@ function BasicTabs(props: any) {
                               src={Delete}
                               alt={"delete icon"}
                               onClick={() => {
-                                deleteTheAttachment(a?._id, "task");
-                                setTaskState((prev: any) => {
-                                  const updatedTabOne = {
-                                    ...prev.TabOne,
-                                    attachments: prev.TabOne.attachments.filter(
-                                      (attachment: any) =>
-                                        attachment._id !== a?._id
-                                    ),
-                                  };
-                                  return {
-                                    ...prev,
-                                    TabOne: updatedTabOne,
-                                  };
-                                });
+                                setAttachmentPopup(true);
+                                // deleteTheAttachment(a?._id, "task");
+                                // setTaskState((prev: any) => {
+                                //   const updatedTabOne = {
+                                //     ...prev.TabOne,
+                                //     attachments: prev.TabOne.attachments.filter(
+                                //       (attachment: any) =>
+                                //         attachment._id !== a?._id
+                                //     ),
+                                //   };
+                                //   return {
+                                //     ...prev,
+                                //     TabOne: updatedTabOne,
+                                //   };
+                                // });
                               }}
                               className={`deleteIcon`}
                             />
+
+                            {attachmentPopup && (
+                              <PopupComponent
+                                open={attachmentPopup}
+                                setShowPopUp={setAttachmentPopup}
+                                modalTitle={"Delete Attachment"}
+                                // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
+                                modalmessage={`Are you sure you want to delete this attachment "${a?._id} "?`}
+                                primaryButtonLabel={"Delete"}
+                                SecondaryButtonlabel={"Cancel"}
+                                callBackvalue={() => {
+                                  setAttachmentPopup(false);
+                                  deleteTheAttachment(a?._id, "task");
+                                  setTaskState((prev: any) => {
+                                    const updatedTabOne = {
+                                      ...prev.TabOne,
+                                      attachments:
+                                        prev.TabOne.attachments.filter(
+                                          (attachment: any) =>
+                                            attachment._id !== a?._id
+                                        ),
+                                    };
+                                    return {
+                                      ...prev,
+                                      TabOne: updatedTabOne,
+                                    };
+                                  });
+                                }}
+                              />
+                            )}
                           </AttachedImageDiv>
                           <AttachHorizontal></AttachHorizontal>
                         </>
