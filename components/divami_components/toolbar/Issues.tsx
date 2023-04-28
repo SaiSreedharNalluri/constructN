@@ -61,6 +61,7 @@ const Issues = ({
   issueStatusList,
   issueTypesList,
   issueFilterState,
+  setIssueFilterState,
   closeIssueCreate,
   deleteTheIssue,
   openIssueDetails,
@@ -344,6 +345,7 @@ const Issues = ({
             currentProject={currentProject}
             issueTypesList={issueTypesList}
             issueFilterState={issueFilterState}
+            setIssueFilterState={setIssueFilterState}
             getIssues={getIssues}
             handleOnIssueSort={handleOnIssueSort}
             deleteTheAttachment={deleteTheAttachment}
@@ -355,6 +357,13 @@ const Issues = ({
       )}
       {openCreateIssue && (
         <CustomDrawer>
+          {console.log(
+            myProject,
+            currentStructure,
+            contextInfo,
+            issueStatusList,
+            "siva"
+          )}
           <CreateIssue
             handleCreateTask={handleCreateTask}
             currentProject={myProject}
