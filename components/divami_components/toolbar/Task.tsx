@@ -221,6 +221,7 @@ const Task = ({
   const taskSubmitFn = (formdata: any) => {
     // tasksList.push(formdata);
     taskMenuInstance.toolAction = "taskCreateSuccess";
+    taskMenuInstance.response = { ...formdata.context, id: formdata._id };;
     // setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);
     closeTaskCreate();

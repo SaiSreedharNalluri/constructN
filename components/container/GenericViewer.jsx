@@ -280,6 +280,9 @@ function GenericViewer(props) {
       case 'issueCreate':
         addTag('Issue');
         break;
+      case 'issueCreateSuccess':
+        finishAddTag(activeTool.current.response);
+        break;
       case 'issueCreateFail':
         cancelAddTag('Issue');
         break;
@@ -294,6 +297,9 @@ function GenericViewer(props) {
         break;
       case 'taskCreate':
         addTag('Task');
+        break;
+      case 'taskCreateSuccess':
+        finishAddTag(activeTool.current.response);
         break;
       case 'taskCreateFail':
         cancelAddTag('Task');
@@ -357,6 +363,21 @@ function GenericViewer(props) {
       case 'Potree':
         if (potreeUtils.current) {
           potreeUtils.current.cancelAddTag();
+        }
+        break;
+    }
+  };
+
+  const finishAddTag = (tag) => {
+    switch (currentViewerType.current) {
+      case 'Forge':
+        // if (forgeUtils.current) {
+        //   forgeUtils.current.finishAddTag();
+        // }
+        break;
+      case 'Potree':
+        if (potreeUtils.current) {
+          potreeUtils.current.finishAddTag(tag);
         }
         break;
     }
@@ -621,7 +642,7 @@ function GenericViewer(props) {
             : `select${event.type}`;
           activeTool.current.response = event;
           pushToolResponse(activeTool.current);
-          if(event.id.includes('select') && potreeUtils.current) {
+          if(!event.id.includes('Temp') && potreeUtils.current) {
             selectTag(event)
           }
           console.log('Marked Point========', event);
@@ -1340,14 +1361,16 @@ function GenericViewer(props) {
   };
 
   useEffect(() => {
-    if(minimapUtils.current) {
-      minimapUtils.current.initializeViewer();
-    }
-    if(minimapCompareUtils.current) {
-      minimapCompareUtils.current.initializeViewer();
-    }
-    if(forgeUtils.current) {
-      forgeUtils.current.initializeViewer();
+    if (forgeInitialised) {
+      if(minimapUtils.current) {
+        minimapUtils.current.initializeViewer();
+      }
+      if(minimapCompareUtils.current) {
+        minimapCompareUtils.current.initializeViewer();
+      }
+      if(forgeUtils.current) {
+        forgeUtils.current.initializeViewer();
+      }
     }
   }, [forgeInitialised]);
 

@@ -182,7 +182,7 @@ const Support: React.FC<IProps> = ({}) => {
               </button>
             </div>
           </div>
-          <div className="p-5 align-middle">
+          {/* <div className="p-5 align-middle">
             <h2 className="text-center text-xl font-bold">My Tickets</h2>
             <ul className="border-solid border-spacing-1 border-2">
               <div className="grid grid-cols-5 divide-y-2 divide-x-2">
@@ -206,7 +206,7 @@ const Support: React.FC<IProps> = ({}) => {
                   })}
               </div>
             </ul>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
