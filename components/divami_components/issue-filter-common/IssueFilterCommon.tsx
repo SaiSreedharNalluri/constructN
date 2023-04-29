@@ -67,6 +67,8 @@ interface IProps {
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
   onClose: any;
   issueFilterState: any;
+  setIssueFilterState: any;
+  checkIsFilter: any;
 }
 
 // const Footer = () => {
@@ -84,6 +86,7 @@ const FilterCommon: React.FC<IProps> = ({
   clickIssueEditSubmit,
   onClose,
   issueFilterState,
+  setIssueFilterState,
 }) => {
   useEffect(() => {}, [
     visibility,
@@ -96,6 +99,7 @@ const FilterCommon: React.FC<IProps> = ({
     clickIssueEditSubmit,
     onClose,
     issueFilterState,
+    setIssueFilterState,
   ]);
 
   const Filters = [
@@ -192,7 +196,21 @@ const FilterCommon: React.FC<IProps> = ({
     });
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
-    handleOnFilter(data);
+
+    const { issuePriorityData, issueStatusData, issueTypeData, ...restObj } =
+      data;
+    const isArrEmpty: Boolean =
+      issuePriorityData?.length === 0 &&
+      issueStatusData?.length === 0 &&
+      issueTypeData?.length === 0;
+    const isEmpty = Object.values(restObj).every((x) => x === null || x === "");
+
+    if (isArrEmpty && isEmpty) {
+      onReset();
+      handleClose();
+    } else {
+      handleOnFilter(data);
+    }
   };
   const formHandler = (event: any) => {
     if (event === "Cancel") {
@@ -201,7 +219,42 @@ const FilterCommon: React.FC<IProps> = ({
       onFilterApply();
       handleClose();
     }
+
+    console.log("test", issueFilterState, FilterState);
   };
+
+  // const formHandler = (event: any) => {
+  //   if (event === "Cancel") {
+  //     handleClose();
+  //   } else {
+  //     const { issuePriorityData, issueStatusData, issueTypeData, ...restObj } =
+  //       issueFilterState.filterData;
+  //     const isArrEmpty: Boolean =
+  //       (issuePriorityData == undefined || issuePriorityData?.length === 0) &&
+  //       (issueStatusData !== undefined || issueStatusData?.length === 0) &&
+  //       (issueTypeData !== undefined || issueTypeData?.length === 0);
+  //     const isEmpty = Object.values(restObj).every(
+  //       (x) => x === null || x === "" || x === undefined
+  //     );
+
+  //     console.log(
+  //       "Test",
+  //       issuePriorityData,
+  //       issueStatusData,
+  //       issueTypeData,
+  //       issueFilterState
+  //     );
+  //     if (isEmpty && isArrEmpty) {
+  //       alert("TEST");
+  //     } else {
+  //       onFilterApply();
+  //       handleClose();
+  //     }
+  //   }
+  // };
+
+  console.log("setIssueFilterState", setIssueFilterState.isFilterApplied);
+
   useEffect(() => {
     if (router.isReady) {
       getIssuesTypes(router.query.projectId as string).then((response) => {
@@ -537,6 +590,7 @@ const FilterCommon: React.FC<IProps> = ({
     SetFilterState(temp);
     closeFilterOverlay();
     handleClose();
+    console.log("karan reset");
   };
 
   return (

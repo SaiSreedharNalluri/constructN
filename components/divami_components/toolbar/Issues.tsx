@@ -61,6 +61,7 @@ const Issues = ({
   issueStatusList,
   issueTypesList,
   issueFilterState,
+  setIssueFilterState,
   closeIssueCreate,
   deleteTheIssue,
   openIssueDetails,
@@ -70,6 +71,7 @@ const Issues = ({
   handleOnIssueSort,
   issueSubmit,
   deleteTheAttachment,
+  projectUsers,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -195,12 +197,16 @@ const Issues = ({
             setEnableSubmit(false);
             issueSubmitFn(response.result);
           } else {
-            toast(`Something went wrong`);
+            toast.error(`Something went wrong`);
             setEnableSubmit(true);
           }
         })
         .catch((error) => {
-          toast(`Something went wrong`);
+          if (error.message == "Forbidden Access") {
+            toast(`You can't create an issue. Ask the Project Admin for help`);
+          } else {
+            toast.error(`Something went wrong`);
+          }
           setEnableSubmit(true);
         });
     } else {
@@ -220,7 +226,7 @@ const Issues = ({
       );
       setSelectedIssue(selectedObj);
     }
-  }, [openIssueDetails, contextInfo?.id]);
+  }, [openIssueDetails, contextInfo?.id, issuesList]);
 
   const issueSubmitFn = (formdata: any) => {
     issueMenuInstance.toolAction = "issueCreateSuccess";
@@ -339,16 +345,25 @@ const Issues = ({
             currentProject={currentProject}
             issueTypesList={issueTypesList}
             issueFilterState={issueFilterState}
+            setIssueFilterState={setIssueFilterState}
             getIssues={getIssues}
             handleOnIssueSort={handleOnIssueSort}
             deleteTheAttachment={deleteTheAttachment}
             openIssueCreateFn={openIssueCreateFn}
             issueMenuClicked={issueMenuClicked}
+            projectUsers={projectUsers}
           />
         </Drawer>
       )}
       {openCreateIssue && (
         <CustomDrawer>
+          {console.log(
+            myProject,
+            currentStructure,
+            contextInfo,
+            issueStatusList,
+            "siva"
+          )}
           <CreateIssue
             handleCreateTask={handleCreateTask}
             currentProject={myProject}
@@ -375,13 +390,15 @@ const Issues = ({
             issueType={issueTypesList}
             issuePriority={issuePriorityList}
             issueStatus={issueStatusList}
-            projectUsers={[]}
+            projectUsers={projectUsers}
             currentProject={currentProject}
             currentStructure={currentStructure}
             currentSnapshot={currentSnapshot}
             contextInfo={contextInfo}
             setIssueList={setIssueList}
             deleteTheAttachment={deleteTheAttachment}
+            getIssues={getIssues}
+            issuesList={issuesList}
           />
         </Drawer>
       )}
