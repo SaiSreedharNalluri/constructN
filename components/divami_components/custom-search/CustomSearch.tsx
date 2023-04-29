@@ -55,9 +55,7 @@ const CustomAutoComplete = styled(Autocomplete)({
 });
 
 const CustomSearch = (props: any) => {
-
-  const AssignEditSearchContainer = styled("div")({
-  });
+  const AssignEditSearchContainer = styled("div")({});
 
   const ValueContainer = styled("div")(({ theme }) => ({
     "& > :not(:last-child)": {
@@ -72,14 +70,13 @@ const CustomSearch = (props: any) => {
   const CloseIcon = styled(Image)`
     cursor: pointer;
   `;
-  
+
   const { data, handleSearchResult, setFormConfig } = props;
   const { isMultiSelect = false } = props.data;
   const [val, setVal] = React.useState<any>([]);
 
   React.useEffect(() => {
     if (isMultiSelect) {
-      console.log(data, "sdrsdfr");
       if (data?.selectedName?.length) {
         setVal(
           data.selectedName?.map((each: any) => {
@@ -112,7 +109,6 @@ const CustomSearch = (props: any) => {
       }
     }
   }, [data.selectedName?.length]);
-  console.log(val, "detailsval");
 
   return (
     <>
@@ -121,6 +117,7 @@ const CustomSearch = (props: any) => {
           <CustomAutoComplete
             className={"formField"}
             disablePortal
+            data-testid={props.dataTestId || "search-auto-complete"}
             id="combo-box-demo"
             options={data.listOfEntries}
             getOptionLabel={(option: any) => option.label}
@@ -129,6 +126,29 @@ const CustomSearch = (props: any) => {
             renderTags={() => null}
             renderInput={(params) => (
               <TextField
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    paddingRight: "8px !important",
+                    paddingLeft: "10px !important",
+                  },
+                  "& .MuiInputBase-input": {
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    fontFamily: "Open Sans",
+                    color: "#101F4C",
+                    fontWeight: "400",
+                    "&::placeholder": {
+                      color: "#787878",
+
+                      fontFamily: "Open Sans",
+                      fontStyle: "normal",
+
+                      fontSize: "14px",
+                      lineHeight: "20px",
+                      fontWeight: "400",
+                    },
+                  },
+                }}
                 placeholder="Enter Name or Teams here ..."
                 {...params}
                 // label={data.label}
@@ -144,7 +164,7 @@ const CustomSearch = (props: any) => {
                       }
                     : {
                         ...params.InputProps,
-                        startAdornment: (
+                        endAdornment: (
                           <InputAdornment position="start">
                             <Image
                               width={15}
@@ -175,7 +195,7 @@ const CustomSearch = (props: any) => {
                       style={{ marginLeft: "5px", marginRight: "12px" }}
                     />
                   }
-                  onDelete={( id: string) => {
+                  onDelete={(id: string) => {
                     const newSelectedUser = val.filter(
                       (selected: any) => selected?.label !== v?.label
                     );
@@ -197,18 +217,24 @@ const CustomSearch = (props: any) => {
       ) : (
         <CustomAutoComplete
           disablePortal
+          data-testid={props.dataTestId || "search-auto-complete"}
           id="combo-box-demo"
           options={data.listOfEntries}
           value={val}
           renderInput={(params) => (
             <TextField
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  paddingRight: "8px !important",
+                },
+              }}
               placeholder="Enter Name or Teams here ..."
               {...params}
               // label={data.label}
               InputProps={{
                 ...params.InputProps,
-                startAdornment: (
-                  <InputAdornment position="start">
+                endAdornment: (
+                  <InputAdornment position="end">
                     <Image width={15} height={15} src={Search} alt="Search" />
                   </InputAdornment>
                 ),

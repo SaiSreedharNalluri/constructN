@@ -1,49 +1,49 @@
-import React, { useEffect, useState } from 'react';
-import Loginpage from '../components/container/loginpage';
-import { login, ResendEmailVerificationLink } from '../services/userAuth';
-import { useRouter } from 'next/router';
-import { deleteCookie, getCookie } from 'cookies-next';
-import { toast } from 'react-toastify';
-import { Mixpanel } from '../components/analytics/mixpanel';
-import Modal from 'react-responsive-modal';
+import React, { useContext, useEffect, useState } from "react";
+import Loginpage from "../components/container/loginpage";
+import { login, ResendEmailVerificationLink } from "../services/userAuth";
+import { useRouter } from "next/router";
+import { deleteCookie, getCookie } from "cookies-next";
+import { toast } from "react-toastify";
+import { Mixpanel } from "../components/analytics/mixpanel";
+import Modal from "react-responsive-modal";
 const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [token, setToken] = useState('');
-
-  Mixpanel.track('login_page_open');
+  const [token, setToken] = useState("");
+  Mixpanel.track("login_page_open");
 
   useEffect(() => {
-    const userObj: any = getCookie('user');
+    const userObj: any = getCookie("user");
     let user = null;
     if (router.isReady) {
       if (userObj) user = JSON.parse(userObj);
       if (user && user.token) {
         if (router.query.sessionExpired === undefined) {
-          router.push('/projects');
+          router.push("/projects");
         } else {
-          deleteCookie('user');
+          deleteCookie("user");
         }
       }
     }
   }, [router, router.isReady]);
   const handlerLogin = (formValue: { email: string; password: string }) => {
     const { email, password } = formValue;
-    setMessage('');
+    setMessage("");
     setLoading(true);
     login(email?.toLocaleLowerCase(), password)
       .then((response: any) => {
         if (response.success === true) {
           if (response?.result?.verified === true) {
-            toast.success('user logged in sucessfully');
+            localStorage.setItem("userInfo", response.result?.fullName);
+            toast.success("user logged in sucessfully");
             Mixpanel.identify(email);
-            Mixpanel.track('login_success', {
+            Mixpanel.track("login_success", {
               email: email,
             });
-            Mixpanel.track('login_page_close');
-            router.push('/projects');
+            Mixpanel.track("login_page_close");
+            router.push("/projects");
           } else {
             setOpen(true);
             setToken(response.result.token);
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
           error.message ||
           error.toString();
 
-        Mixpanel.track('login_fail', {
+        Mixpanel.track("login_fail", {
           email: email,
         });
 
@@ -88,7 +88,7 @@ const Login: React.FC = () => {
         message={message}
         loading={loading}
         handleLogin={handlerLogin}
-        buttonName={''}
+        buttonName={""}
       />
       <Modal
         open={open}

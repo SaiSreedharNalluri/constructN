@@ -325,8 +325,6 @@ const FormWrapper = (props: any) => {
     }
   };
 
-  console.log(config, "config");
-
   return (
     <div className="form-container-child">
       {config.map((eachConfig: any, index: any) => {

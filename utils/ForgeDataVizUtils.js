@@ -443,7 +443,7 @@ export class ForgeDataVizUtils {
 
             case ForgeDataVizUtils.TASK: return {
 
-                icon: '/icons/forgeTask.png',
+                icon: '/icons/tasksInViewer.svg',
 
                 size: 48,
 
@@ -563,6 +563,7 @@ export class ForgeDataVizUtils {
 
         /** @type {Map<number, CustomViewable>} */
         const viewables = new Map();
+        if(!viewableData || !viewableData.viewables || viewableData.viewables.length == 0) return
         viewableData.viewables.forEach((v) => viewables.set(v.dbId, v));
 
         let sceneUpdated = false;

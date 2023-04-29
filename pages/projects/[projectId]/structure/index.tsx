@@ -26,7 +26,10 @@ import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
 import { deleteAttachment } from "../../../../services/attachments";
 import authHeader from "../../../../services/auth-header";
 import CollapsableMenu from "../../../../components/layout/collapsableMenu";
-import { getProjectDetails } from "../../../../services/project";
+import {
+  getProjectDetails,
+  getProjectUsers,
+} from "../../../../services/project";
 import {
   faCompressArrowsAlt,
   faExpandArrowsAlt,
@@ -124,6 +127,8 @@ const Index: React.FC<IProps> = () => {
   const [currentProjectId, setActiveProjectId] = useState("");
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [project, setProject] = useState<IProjects>();
+  const [projectUsers, setProjectUsers] = useState<IProjects>();
+
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
   const [designMap, setDesignMap] = useState<any>();
@@ -195,7 +200,11 @@ const Index: React.FC<IProps> = () => {
   };
   const issueSubmit = (formdata: Issue) => {
     issuesList.push(formdata);
-    setIssueList(structuredClone(issuesList));
+    if (structure) {
+      getIssues(structure._id);
+    }
+
+    // setIssueList(structuredClone(issuesList));
     // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
     // toolClicked(myTool);
     closeIssueCreate();
@@ -218,7 +227,10 @@ const Index: React.FC<IProps> = () => {
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
     let myTool: ITools = { toolName: "task", toolAction: "taskCreated" };
-    setTasksList(structuredClone(tasksList));
+    // setTasksList(structuredClone(tasksList));
+    if (structure) {
+      getTasks(structure._id);
+    }
     // toolClicked(myTool);
     closeTaskCreate();
   };
@@ -366,6 +378,15 @@ const Index: React.FC<IProps> = () => {
         .catch((error) => {
           toast.error("failed to load data");
         });
+
+      getProjectUsers(router.query.projectId as string)
+        .then((response: any) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+          }
+        })
+        .catch();
+
       const userObj: any = getCookie("user");
       let user = null;
       if (userObj) user = JSON.parse(userObj);
@@ -1344,7 +1365,7 @@ const Index: React.FC<IProps> = () => {
     deleteTask(router.query.projectId as string, taskObj._id)
       .then((response) => {
         if (response.success === true) {
-          toast(response.message);
+          toast.success(response.message);
           _.remove(taskFilterList, { _id: taskObj._id });
           setTasksList(taskFilterList);
           if (callback) {
@@ -1724,8 +1745,11 @@ const Index: React.FC<IProps> = () => {
                 issuePriorityList={issuePriorityList}
                 issueStatusList={issueStatusList}
                 issueTypesList={issueTypesList}
+                taskPriorityList={tasksPriotityList}
+                taskStatusList={tasksStatusList}
                 taskFilterState={taskFilterState}
                 issueFilterState={issueFilterState}
+                setIssueFilterState={setIssueFilterState}
                 closeIssueCreate={closeIssueCreate}
                 closeTaskCreate={closeTaskCreate}
                 deleteTheIssue={deleteTheIssue}
@@ -1746,6 +1770,7 @@ const Index: React.FC<IProps> = () => {
                 setLayersUpdated={setLayersUpdated}
                 layersUpdated={layersUpdated}
                 setViewType={setViewType}
+                projectUsers={projectUsers}
               />
 
               {/* <CustomToaster /> */}
