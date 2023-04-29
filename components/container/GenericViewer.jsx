@@ -235,10 +235,11 @@ function GenericViewer(props) {
       case 'Forge':
         if (forgeUtils.current) {
           forgeUtils.current.setType(currentViewType.current);
-          forgeUtils.current.refreshData();
+          forgeUtils.current.refreshData(currentContext.current);
         }
         break;
     }
+    currentContext.current = undefined;
   }
 
   function handleRealityTypeChange() {
@@ -591,6 +592,7 @@ function GenericViewer(props) {
                 potreeUtils.current.updateContext(event, true);
                 // forgeCompareUtils.current.updateContext(event, true);
               }
+              currentContext.current = undefined;
             } else {
               if (currentViewerType.current == 'Forge') {
                 pushToolResponse({
@@ -601,6 +603,7 @@ function GenericViewer(props) {
               }
               else {
                 potreeUtils.current.updateContext(event, true);
+                currentContext.current = undefined;
               }
             }
             return;
@@ -616,6 +619,7 @@ function GenericViewer(props) {
                 forgeCompareUtils.current.updateContext(event, false);
               }
             }
+            currentContext.current = undefined;
           } else if (currentViewerType.current == 'Forge') {
             pushToolResponse({
               toolName: 'viewMode',
@@ -813,6 +817,7 @@ function GenericViewer(props) {
         if (forgeUtils.current != undefined) {
           forgeUtils.current.setStructure(structure);
           if (designList.length > 0) {
+            forgeUtils.current.setType(currentViewType.current);
             forgeUtils.current.updateData(getForgeModels(designMap));
           } else {
             pushToolResponse({
@@ -1465,24 +1470,24 @@ function GenericViewer(props) {
     destroyViewer();
   };
 
-  useEffect(() => {
-    console.log("Generic Viewer View Mode UseEffect", viewMode, currentViewMode.current);
-    if (currentViewMode.current != viewMode) {
-      currentViewMode.current = viewMode;
-      setViewerType(getViewerTypeFromViewMode());
-    }
-    return cleanUpOnViewModeChange;
-  }, [viewMode]);
+  // useEffect(() => {
+  //   console.log("Generic Viewer View Mode UseEffect", viewMode, currentViewMode.current);
+  //   if (currentViewMode.current != viewMode) {
+  //     currentViewMode.current = viewMode;
+  //     setViewerType(getViewerTypeFromViewMode());
+  //   }
+  //   return cleanUpOnViewModeChange;
+  // }, [viewMode]);
 
-  const cleanUpOnViewModeChange = () => {
-    console.log(
-      "Generic Viewer Inside cleanup: viewmode dependencies",
-      viewMode
-    );
-    setIsCompare(false);
-    getContext();
-    // destroyViewer();
-  };
+  // const cleanUpOnViewModeChange = () => {
+  //   console.log(
+  //     "Generic Viewer Inside cleanup: viewmode dependencies",
+  //     viewMode
+  //   );
+  //   setIsCompare(false);
+  //   getContext();
+  //   // destroyViewer();
+  // };
 
   useEffect(() => {
     console.log('Generic Viewer View Type UseEffect', viewType, currentViewType.current);

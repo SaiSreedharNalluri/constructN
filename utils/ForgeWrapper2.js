@@ -157,7 +157,13 @@ export const ForgeViewerUtils = function () {
     _progressData = progress;
   };
 
-  const refreshData = () => {
+  const refreshData = (context) => {
+    if (context) {
+      _context = context;
+    } else {
+      _context = null;
+    }
+
     _isPendingDataToLoad = true;
     _isPendingLayersToLoad = true;
     if (_isViewerInitialized) {
@@ -545,6 +551,25 @@ export const ForgeViewerUtils = function () {
   };
 
   const setForgeControls = (type) => {
+    console.log("2DTest inside setForgeControls: ", type, _manifestNode.is2D(),)
+    if (_manifestNode.is2D()) {
+      _viewer.navigation.setLockSettings({
+        orbit: false,
+        pan: true,
+        zoom: true,
+        roll: true,
+        fov: true,
+      });
+      _viewer.navigation.setIsLocked(true);
+      return;
+
+
+      // let value = _viewer.setActiveNavigationTool("pan");
+      // let value2 = _viewer.toolController.activateTool("pan");
+      // let value3 = _viewer.activateDefaultNavigationTools(_manifestNode.is2D());
+      // console.log("2DTest inside setForgeControls, is 2D, set to pan tool state: ", value, value2, value3, _viewer.getActiveNavigationTool());
+    }
+    
     if (_bimWalkExtn && !_manifestNode.is2D()) {
       if (type !== "3d") {
         _viewer.navigation.setIsLocked(false);
@@ -593,7 +618,7 @@ export const ForgeViewerUtils = function () {
       console.log("Inside model load progress: ", progress, state, model);
       _isModelLoaded = true;
       if (loadLayersOnDataLoadCompletion()) {
-        loadLayers();
+        // loadLayers();
       }
     }
 
@@ -758,9 +783,13 @@ export const ForgeViewerUtils = function () {
     if (_isViewerInitialized) {
       removeLayers();
       try{
-        _viewer.tearDown();
-        // _viewer.unloadModel(_model);
-      } catch(e) {}
+        // _viewer.tearDown();
+        // _dataVizExtn = undefined;
+        // _dataVizUtils = undefined;
+        _viewer.unloadModel(_model);
+      } catch(e) {
+        console.log("tearDown error: ", e);
+      }
     }
   };
 
