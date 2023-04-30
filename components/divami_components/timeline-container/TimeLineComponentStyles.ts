@@ -14,7 +14,7 @@ export const TimeLineStyleContainer = styled("div")(
     margin: "0 auto",
     left: "0",
     right: "0",
-    bottom: "40px",
+    bottom: "30px",
     height: 0,
     // bottom: "40px",
     // height: "56px",
@@ -62,12 +62,12 @@ export const SelectedTimeLine = styled("div")({
 
 export const CircleIcon = styled("div")(({ active }: any) => ({
   display: "block",
-  width: "12px",
-  height: "12px",
+  width: "7px",
+  height: "7px",
   border: "1px solid #101F4C",
   borderRadius: "50%",
   background: active ? "#101F4C" : "white",
-  marginRight: "15px",
+  marginRight: "10px",
   color: "transparent",
 })) as any;
 

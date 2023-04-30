@@ -745,7 +745,7 @@ function BasicTabs(props: any) {
                                 open={attachmentPopup}
                                 setShowPopUp={setAttachmentPopup}
                                 modalTitle={"Delete Attachment"}
-                                // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
+                                // modalmessage={`Are you sure you want to delete this Task "${selectedTask?.type}(#${selectedTask?._id})"?`}
                                 modalmessage={`Are you sure you want to delete this attachment "${a?._id} "?`}
                                 primaryButtonLabel={"Delete"}
                                 SecondaryButtonlabel={"Cancel"}
@@ -969,33 +969,33 @@ const CustomTaskDetailsDrawer = (props: any) => {
     let tempObj = {
       ...selectedTask,
       title: selectedTask?.title,
-      options: selectedTask.options,
-      priority: selectedTask.priority,
-      sequenceNumber: selectedTask.sequenceNumber,
+      options: selectedTask?.options,
+      priority: selectedTask?.priority,
+      sequenceNumber: selectedTask?.sequenceNumber,
 
-      capturedOn: selectedTask.createdAt,
+      capturedOn: selectedTask?.createdAt,
       creator: selectedTask?.owner?.fullName,
-      issueDescription: selectedTask.description,
+      issueDescription: selectedTask?.description,
       screenshot: selectedTask?.screenshot as string,
-      attachments: selectedTask.attachments,
-      relatedTags: selectedTask.tags,
-      assignees: selectedTask.assignees?.length
-        ? `${selectedTask.assignees[0].fullName}`
+      attachments: selectedTask?.attachments,
+      relatedTags: selectedTask?.tags,
+      assignees: selectedTask?.assignees?.length
+        ? `${selectedTask?.assignees[0].fullName}`
         : "",
-      assigneeName: selectedTask.assignees?.length
-        ? selectedTask.assignees[0].fullName
+      assigneeName: selectedTask?.assignees?.length
+        ? selectedTask?.assignees[0].fullName
         : "",
-      assignessList: selectedTask.assignees?.length
-        ? selectedTask.assignees?.map((item: any) => {
+      assignessList: selectedTask?.assignees?.length
+        ? selectedTask?.assignees?.map((item: any) => {
             return { ...item, label: item.fullName };
           })
         : [],
       moreText:
-        selectedTask.assignees?.length > 1
-          ? `+${selectedTask.assignees?.length - 1} more`
+        selectedTask?.assignees?.length > 1
+          ? `+${selectedTask?.assignees?.length - 1} more`
           : "",
-      id: selectedTask._id,
-      status: selectedTask.status,
+      id: selectedTask?._id,
+      status: selectedTask?.status,
     };
     setTaskState((prev: any) => {
       return {
@@ -1006,7 +1006,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
   }, [selectedTask]);
 
   const deletetaskById = (taskList: Task[], selectedTask: Task) => {
-    const selectedTaskId = selectedTask._id;
+    const selectedTaskId = selectedTask?._id;
     const updatedTaskList = taskList.filter(
       (task) => task._id !== selectedTaskId
     );
@@ -1015,8 +1015,10 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const onDeleteTask = () => {
     setshowPopUp(false);
     deleteTheTask(selectedTask, onClose);
-    const updatedTaskList = deletetaskById(taskList, selectedTask);
-    setTaskList(updatedTaskList);
+    if (setTaskList) {
+      const updatedTaskList = deletetaskById(taskList, selectedTask);
+      setTaskList(updatedTaskList);
+    }
   };
 
   const handleCreateTask = (formData: any) => {
@@ -1025,7 +1027,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
   const saveEditDetails = async (data: any, projectId: string) => {
     if (data.title && data.type && data.priority && data.description) {
-      updateTask(projectId, data, selectedTask._id)
+      updateTask(projectId, data, selectedTask?._id)
         .then((response) => {
           if (response.success === true) {
             toast.success("Task updated sucessfully");
@@ -1160,7 +1162,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
     // issueData.startDate = moment(issueData.startDate).format("YYYY-MM-DD");
     // issueData.dueDate = moment(issueData.dueDate).format("YYYY-MM-DD");
-    updateTask(projectId as string, issueData, selectedTask._id)
+    updateTask(projectId as string, issueData, selectedTask?._id)
       .then((response) => {
         if (response.success === true) {
           toast.success("Task updated sucessfully");
@@ -1242,8 +1244,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
           open={showPopUp}
           setShowPopUp={setshowPopUp}
           modalTitle={"Delete Task"}
-          // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
-          modalmessage={`Are you sure you want to delete this Task "${selectedTask.title} (#${selectedTask._id})"?`}
+          // modalmessage={`Are you sure you want to delete this Task "${selectedTask?.type}(#${selectedTask?._id})"?`}
+          modalmessage={`Are you sure you want to delete this Task "${selectedTask?.title} (#${selectedTask?._id})"?`}
           primaryButtonLabel={"Delete"}
           SecondaryButtonlabel={"Cancel"}
           callBackvalue={onDeleteTask}

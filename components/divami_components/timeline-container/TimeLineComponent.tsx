@@ -29,6 +29,9 @@ interface IProps {
   snapshotList: ISnapshot[];
   snapshotHandler: (snapshotData: ISnapshot) => void;
   isFullScreen?: boolean;
+  getSnapshotList: any;
+  totalSnaphotsCount: any;
+  structure: any;
 }
 
 const TimeLineComponent: React.FC<IProps> = ({
@@ -36,12 +39,24 @@ const TimeLineComponent: React.FC<IProps> = ({
   snapshotList,
   snapshotHandler,
   isFullScreen = false,
+  getSnapshotList,
+  totalSnaphotsCount = 0,
+  structure,
 }) => {
   const [bottomNav, setBottomNav] = useState(false);
   const [page, setPage] = useState(0);
+  const [offset, setOffset] = useState(1);
+
   const [oldDate, setOldDate] = useState("");
   const [newDate, setNewDate] = useState("");
   const [activeCircleIndex, setActiveCircleIndex] = useState(0);
+  const [totalPages, setTotalPages] = useState(
+    Math.ceil(totalSnaphotsCount / 10)
+  );
+  const pageSize = 10;
+  useEffect(() => {
+    setTotalPages(Math.ceil(totalSnaphotsCount / 10));
+  }, [totalSnaphotsCount]);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
@@ -68,14 +83,26 @@ const TimeLineComponent: React.FC<IProps> = ({
   };
 
   const setPrevPage = () => {
-    if (page >= 1) {
-      setPage(page - 1);
+    // if (page >= 1) {
+    //   setPage(page - 1);
+    // }
+    if (offset < totalPages) {
+      getSnapshotList(structure.project, structure._id, offset + 1, pageSize);
+      setOffset(offset + 1);
+      setPage(0);
     }
   };
 
   const setNextPage = () => {
-    if (page < snapshotList.length - 1) {
-      setPage(page + 1);
+    // if (page < snapshotList.length - 1) {
+    //   setPage(page + 1);
+    // }
+
+    if (offset > 1) {
+      getSnapshotList(structure.project, structure._id, offset - 1, pageSize);
+
+      setOffset(offset - 1);
+      setPage(0);
     }
   };
   // const getSnapshotDate = () => {
@@ -85,14 +112,15 @@ const TimeLineComponent: React.FC<IProps> = ({
   //     return "No Reality";
   //   }
   // };
-
+  console.log(snapshotList, "snapjhos");
   useEffect(() => {
     setCurrentSnapshot(snapshotList[page]);
-    if (page >= 6) {
-      setActiveCircleIndex(6);
-    } else {
-      setActiveCircleIndex(page);
-    }
+    // if (page >= 6) {
+    //   setActiveCircleIndex(6);
+    // } else {
+    //   setActiveCircleIndex(page);
+    // }
+    setActiveCircleIndex(page);
   }, [page]);
 
   useEffect(() => {
@@ -117,8 +145,88 @@ const TimeLineComponent: React.FC<IProps> = ({
     sx: {
       "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-disabled,.Mui-selected)":
         {
-          backgroundColor: "rgba(0, 0, 0, 0.20)",
+          backgroundColor: "#FFF5EF",
+          paddingRight: "5px",
+          color: "#101F4C",
+          fontSize: "14px",
+          fontWeight: 400,
+          fontFamily: "Open Sans",
+
+          "&:after": {
+            content: '""',
+            display: "block",
+            width: "4px",
+            height: "4px",
+            background: "#FF843F",
+            border: "1px solid red",
+            borderRadius: "50%",
+            marginTop: "22px",
+            marginLeft: "-7px",
+          },
         },
+      "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root.Mui-selected:hover":
+        {
+          backgroundColor: "#FF843F",
+          color: "#FFFFFF",
+        },
+      " .css-7jfl2q-MuiPopper-root-MuiPickersPopper-root .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root.Mui-selected":
+        {
+          backgroundColor: "#FF843F",
+          color: "#FFFFFF",
+        },
+      "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root.Mui-selected": {
+        backgroundColor: "#FF843F",
+        color: "#FFFFFF",
+        fontSize: "14px",
+        fontWeight: 400,
+        fontFamily: "Open Sans",
+      },
+      "& .css-195y93z-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-selected) ":
+        {
+          border: "1px solid #FF843F",
+          borderRadius: "50%",
+          fontSize: "14px",
+          fontWeight: 400,
+          fontFamily: "Open Sans",
+        },
+      "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root.Mui-disabled": {
+        fontSize: "14px",
+        fontWeight: 400,
+        color: "#888888",
+        fontFamily: "Open Sans",
+      },
+      "& .css-raiqh1-MuiTypography-root-MuiDayPicker-weekDayLabel": {
+        color: "#888888",
+        fontSize: "14px",
+        fontWeight: 400,
+        fontFamily: "Open Sans",
+      },
+      "& .css-dplwbx-MuiPickersCalendarHeader-label": {
+        color: "#36415D",
+        fontWeight: 500,
+        fontFamily: "Open Sans",
+        fontSize: "14px",
+      },
+      "& .css-1ae9t7h-MuiButtonBase-root-MuiIconButton-root-MuiPickersArrowSwitcher-button":
+        {
+          border: "1px solid #9D9D9D",
+          borderRadius: "4px",
+          width: "24px",
+          height: "24px",
+          marginTop: "3px",
+        },
+      "& .css-jro82b-MuiButtonBase-root-MuiIconButton-root-MuiPickersArrowSwitcher-button":
+        {
+          border: "1px solid #9D9D9D",
+          borderRadius: "4px",
+          width: "24px",
+          height: "24px",
+          marginTop: "3px",
+        },
+      "& .css-nk89i7-MuiPickersCalendarHeader-root ": {
+        borderBottom: "1px solid #9D9D9D",
+        paddingBottom: "15px",
+      },
     },
   };
 
@@ -135,13 +243,17 @@ const TimeLineComponent: React.FC<IProps> = ({
         </SelectedTimeLine>
         {bottomNav ? (
           <TimelineNavigation>
-            <LeftIconImage
-              src={LeftIcon}
-              alt=""
-              onClick={() => {
-                setPrevPage();
-              }}
-            />
+            {offset !== totalPages ? (
+              <LeftIconImage
+                src={LeftIcon}
+                alt=""
+                onClick={() => {
+                  setPrevPage();
+                }}
+              />
+            ) : (
+              <></>
+            )}
             <DateText>
               <p
                 onClick={() => {
@@ -175,13 +287,17 @@ const TimeLineComponent: React.FC<IProps> = ({
                 {newDate && Moment(newDate).format("DD MMM YY")}{" "}
               </p>
             </DateText>
-            <Image
-              src={RightIcon}
-              alt=""
-              onClick={() => {
-                setNextPage();
-              }}
-            />
+            {offset > 1 ? (
+              <Image
+                src={RightIcon}
+                alt=""
+                onClick={() => {
+                  setNextPage();
+                }}
+              />
+            ) : (
+              <></>
+            )}
             <CustomCalender
               onChange={handleDateChange}
               data-testid="calender"

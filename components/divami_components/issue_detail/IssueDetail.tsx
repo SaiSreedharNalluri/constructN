@@ -934,7 +934,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   }, [issue]);
 
   const deleteIssueById = (issuesList: Issue[], selectedIssue: Issue) => {
-    const selectedIssueId = selectedIssue._id;
+    const selectedIssueId = selectedIssue?._id;
     const updatedIssuesList = issuesList.filter(
       (issue) => issue._id !== selectedIssueId
     );
@@ -944,8 +944,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
     if (deleteTheIssue) deleteTheIssue(selectedIssue, onClose);
-    const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
-    setIssueList(updatedIssuesList);
+    if (setIssueList) {
+      const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
+
+      setIssueList(updatedIssuesList);
+    }
   };
   // const deleteTheAttachment = (attachmentId: string) => {
   //   deleteAttachment(attachmentId)
@@ -1027,20 +1030,20 @@ const CustomIssueDetailsDrawer = (props: any) => {
       issueDescription: selectedIssue?.description,
       screenshot: selectedIssue?.screenshot as string,
       attachments: selectedIssue?.attachments,
-      assignees: selectedIssue.assignees?.length
-        ? `${selectedIssue.assignees[0].fullName}`
+      assignees: selectedIssue?.assignees?.length
+        ? `${selectedIssue?.assignees[0].fullName}`
         : "",
-      assigneeName: selectedIssue.assignees?.length
-        ? selectedIssue.assignees[0].fullName
+      assigneeName: selectedIssue?.assignees?.length
+        ? selectedIssue?.assignees[0].fullName
         : "",
-      assignessList: selectedIssue.assignees?.length
-        ? selectedIssue.assignees?.map((item: any) => {
+      assignessList: selectedIssue?.assignees?.length
+        ? selectedIssue?.assignees?.map((item: any) => {
             return { ...item, label: item.fullName };
           })
         : [],
       moreText:
-        selectedIssue.assignees?.length > 1
-          ? `+${selectedIssue.assignees?.length - 1} more`
+        selectedIssue?.assignees?.length > 1
+          ? `+${selectedIssue?.assignees?.length - 1} more`
           : "",
       relatedTags: selectedIssue?.tags,
       id: selectedIssue?._id,
@@ -1077,7 +1080,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const saveEditDetails = async (data: any, projectId: string) => {
     if (data.title && data.type && data.priority && data.description) {
-      editIssue(projectId, data, selectedIssue._id)
+      editIssue(projectId, data, selectedIssue?._id)
         .then((response) => {
           if (response.success === true) {
             toast.success("Issue updated sucessfully");
@@ -1217,7 +1220,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     const projectId = router.query.projectId;
     // issueData.startDate = moment(issueData.startDate).format("YYYY-MM-DD");
     // issueData.dueDate = moment(issueData.dueDate).format("YYYY-MM-DD");
-    editIssue(projectId as string, issueData, selectedIssue._id)
+    editIssue(projectId as string, issueData, selectedIssue?._id)
       .then((response) => {
         if (response.success === true) {
           toast.success("Issue updated sucessfully");
@@ -1307,8 +1310,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
           open={showPopUp}
           setShowPopUp={setshowPopUp}
           modalTitle={"Delete Issue"}
-          // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue.type}(#${selectedIssue._id})"?`}
-          modalmessage={`Are you sure you want to delete this Issue "${selectedIssue.title} (#${selectedIssue._id})"?`}
+          // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
+          modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.title} (#${selectedIssue?._id})"?`}
           primaryButtonLabel={"Delete"}
           SecondaryButtonlabel={"Cancel"}
           callBackvalue={onDeleteIssue}
