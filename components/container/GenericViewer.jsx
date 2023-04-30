@@ -1130,9 +1130,11 @@ function GenericViewer(props) {
     return designList;
   };
 
-  const getSnapshotList = async (projectId, structurId) => {
-    let list = await getSnapshotsList(projectId, structurId);
+  const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0)
 
+  const getSnapshotList = async (projectId, structurId,offset,limit) => {
+    let list = await getSnapshotsList(projectId, structurId,offset||1,limit||10);
+    setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
     list = list.data.result.mSnapshots.sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
@@ -1680,13 +1682,13 @@ function GenericViewer(props) {
         <div id="TheView" className="relative  basis-1/2 flex grow shrink">
           {renderViewer(1)}
           {renderMinimap(1)}
-          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
+          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}></TimeLineComponent>
         </div>
         <div className={isCompare?'w-0.5':''} color='gray'></div>
         <div className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
           {renderViewer(2)}
           {renderMinimap(2)}
-          <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
+          <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}></TimeLineComponent>
         </div>
         {
           viewerType === "Mapbox"  && viewMode === "Reality" && hotspots && hotspots.length > 0 ?

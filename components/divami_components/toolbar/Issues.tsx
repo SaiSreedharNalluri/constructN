@@ -401,6 +401,7 @@ const Issues = ({
             deleteTheAttachment={deleteTheAttachment}
             getIssues={getIssues}
             issuesList={issuesList}
+            deleteTheIssue={deleteTheIssue}
           />
         </Drawer>
       )}
