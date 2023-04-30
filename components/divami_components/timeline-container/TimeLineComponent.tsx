@@ -86,10 +86,9 @@ const TimeLineComponent: React.FC<IProps> = ({
     // if (page >= 1) {
     //   setPage(page - 1);
     // }
-    if (offset > 1) {
-      getSnapshotList(structure.project, structure._id, offset - 1, pageSize);
-
-      setOffset(offset - 1);
+    if (offset < totalPages) {
+      getSnapshotList(structure.project, structure._id, offset + 1, pageSize);
+      setOffset(offset + 1);
       setPage(0);
     }
   };
@@ -98,9 +97,11 @@ const TimeLineComponent: React.FC<IProps> = ({
     // if (page < snapshotList.length - 1) {
     //   setPage(page + 1);
     // }
-    if (offset < totalPages) {
-      getSnapshotList(structure.project, structure._id, offset + 1, pageSize);
-      setOffset(offset + 1);
+
+    if (offset > 1) {
+      getSnapshotList(structure.project, structure._id, offset - 1, pageSize);
+
+      setOffset(offset - 1);
       setPage(0);
     }
   };
@@ -160,8 +161,18 @@ const TimeLineComponent: React.FC<IProps> = ({
             border: "1px solid red",
             borderRadius: "50%",
             marginTop: "22px",
-            marginLeft: "-10px",
+            marginLeft: "-7px",
           },
+        },
+      "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root.Mui-selected:hover":
+        {
+          backgroundColor: "#FF843F",
+          color: "#FFFFFF",
+        },
+      " .css-7jfl2q-MuiPopper-root-MuiPickersPopper-root .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root.Mui-selected":
+        {
+          backgroundColor: "#FF843F",
+          color: "#FFFFFF",
         },
       "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root.Mui-selected": {
         backgroundColor: "#FF843F",
@@ -232,13 +243,17 @@ const TimeLineComponent: React.FC<IProps> = ({
         </SelectedTimeLine>
         {bottomNav ? (
           <TimelineNavigation>
-            <LeftIconImage
-              src={LeftIcon}
-              alt=""
-              onClick={() => {
-                setPrevPage();
-              }}
-            />
+            {offset !== totalPages ? (
+              <LeftIconImage
+                src={LeftIcon}
+                alt=""
+                onClick={() => {
+                  setPrevPage();
+                }}
+              />
+            ) : (
+              <></>
+            )}
             <DateText>
               <p
                 onClick={() => {
@@ -272,13 +287,17 @@ const TimeLineComponent: React.FC<IProps> = ({
                 {newDate && Moment(newDate).format("DD MMM YY")}{" "}
               </p>
             </DateText>
-            <Image
-              src={RightIcon}
-              alt=""
-              onClick={() => {
-                setNextPage();
-              }}
-            />
+            {offset > 1 ? (
+              <Image
+                src={RightIcon}
+                alt=""
+                onClick={() => {
+                  setNextPage();
+                }}
+              />
+            ) : (
+              <></>
+            )}
             <CustomCalender
               onChange={handleDateChange}
               data-testid="calender"
