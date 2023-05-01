@@ -528,7 +528,7 @@ function BasicTabs(props: any) {
               {" "}
               <ThirdContRight>
                 <ThirdContProg data-testid="progres-label">
-                  Progress
+                  Status
                 </ThirdContProg>
 
                 <ThirdContProgType
