@@ -1629,20 +1629,26 @@ function GenericViewer(props) {
     if (count != 1 && !isCompare) {
       return;
     }
+
+    if(count == 2) {
+      setTimeout(() => {
+        resizeMinimap('minimize', count)
+      }, 3000)
+    }
     
     return (<Rnd
       ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
-      style={{left: '84px'}}
+      style={{left: count == 1 ? '84px' : '0px'}}
       minWidth={320}
       minHeight={28}
       maxWidth={'99%'}
       maxHeight={'99%'}
       bounds={count == 1 ? '#TheView' : '#CompareView'}
-      default={{ x: 84, y: 75, width: 320, height: 320 }}
+      default={{ x: count == 1 ? 84 : 24, y: 75, width: 320, height: 320 }}
       onResize={(e, direction, ref, delta, position) => {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
       }}
-      className={`${'z-10 rounded-lg bg-white'} ${showMinimap ? 'opacity-100' : 'opacity-0'}`}>
+      className={`${'z-10 rounded-lg bg-white'} ${showMinimap && ((count == 1 && viewerType === "Potree") || (count == 2 &&  compareViewMode === "Potree")) ? 'opacity-100' : 'opacity-0'}`}>
       <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
         <div className='h-8 rounded-lg bg-white flex'>
           <IconButton className='cursor-move' size="small">
@@ -1672,8 +1678,8 @@ function GenericViewer(props) {
         minimap?.updateSize({ width: 320, height: 28 });
         break;
       case 'fullscreen':
-        minimap?.updateSize({ width: '99%', height: '95%' });
-        minimap?.updatePosition({ x: 64, y: 64 });
+        minimap?.updateSize({ width: '95%', height: '90%' });
+        minimap?.updatePosition({ x: count == 1 ? 24 : 24, y: 84 });
         break;
       default:
         minimap?.updateSize({ width: 320, height: 320 });
@@ -1690,7 +1696,7 @@ function GenericViewer(props) {
           <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}></TimeLineComponent>
         </div>
         <div className={isCompare?'w-0.5':''} color='gray'></div>
-        <div className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
+        <div id="CompareView" className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
           {renderViewer(2)}
           {renderMinimap(2)}
           <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}></TimeLineComponent>

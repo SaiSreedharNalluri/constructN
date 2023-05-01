@@ -154,7 +154,7 @@ const TaskFilterCommon: React.FC<any> = ({
 
   const Filters = [
     {
-      title: "Task Type",
+      title: "Type",
       code: "taskType",
       selectAllStatus: "T",
       options: [
@@ -166,7 +166,7 @@ const TaskFilterCommon: React.FC<any> = ({
       ],
     },
     {
-      title: "Task Priority",
+      title: "Priority",
       code: "taskPriority",
       selectAllStatus: "T",
       options: [
@@ -176,7 +176,7 @@ const TaskFilterCommon: React.FC<any> = ({
       ],
     },
     {
-      title: "Task Status",
+      title: "Status",
       code: "taskStatus",
       selectAllStatus: "T",
       options: [

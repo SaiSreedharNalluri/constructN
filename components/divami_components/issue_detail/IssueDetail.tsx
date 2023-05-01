@@ -528,7 +528,7 @@ function BasicTabs(props: any) {
               {" "}
               <ThirdContRight>
                 <ThirdContProg data-testid="progres-label">
-                  Progress
+                  Status
                 </ThirdContProg>
 
                 <ThirdContProgType
@@ -722,7 +722,7 @@ function BasicTabs(props: any) {
 
           {taskState?.TabOne?.issueDescription?.length > 0 ? (
             <DescriptionDiv>
-              <DescriptionTitle>Issue Description</DescriptionTitle>
+              <DescriptionTitle>Description</DescriptionTitle>
 
               <DescriptionPara data-testid="issue-description">
                 {taskState?.TabOne?.issueDescription}

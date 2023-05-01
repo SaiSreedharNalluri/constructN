@@ -23,6 +23,10 @@ import moment from "moment";
 import Image from "next/image";
 import LeftIcon from "../../../public/divami_icons/leftIcon.svg";
 import RightIcon from "../../../public/divami_icons/rightIcon.svg";
+import { Tooltip } from "@mui/material";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
 
 interface IProps {
   currentSnapshot: ISnapshot;
@@ -254,6 +258,8 @@ const TimeLineComponent: React.FC<IProps> = ({
             ) : (
               <></>
             )}
+            {/* <Image src={downArrowIcon} alt="" width={12} height={12} /> */}
+
             <DateText>
               <p
                 onClick={() => {
@@ -267,13 +273,15 @@ const TimeLineComponent: React.FC<IProps> = ({
             <TimelineDots>
               {snapshotList.map((item: any, index: number) => {
                 return (
-                  <CircleIcon
-                    key={index}
-                    active={index === activeCircleIndex}
-                    onClick={(e: any) => handleChange(e, index)}
-                  >
-                    3
-                  </CircleIcon>
+                  <Tooltip title={Moment(item.date).format("DD MMM YYYY")}>
+                    <CircleIcon
+                      key={index}
+                      active={index === activeCircleIndex}
+                      onClick={(e: any) => handleChange(e, index)}
+                    >
+                      3
+                    </CircleIcon>
+                  </Tooltip>
                 );
               })}
             </TimelineDots>
@@ -287,6 +295,7 @@ const TimeLineComponent: React.FC<IProps> = ({
                 {newDate && Moment(newDate).format("DD MMM YY")}{" "}
               </p>
             </DateText>
+            {/* <Image src={downArrowIcon} alt="" width={12} height={12} /> */}
             {offset > 1 ? (
               <Image
                 src={RightIcon}
@@ -298,6 +307,7 @@ const TimeLineComponent: React.FC<IProps> = ({
             ) : (
               <></>
             )}
+
             <CustomCalender
               onChange={handleDateChange}
               data-testid="calender"
