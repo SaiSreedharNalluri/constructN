@@ -1,5 +1,5 @@
 import instance from './axiosInstance';
-import { setCookie } from 'cookies-next';
+import { setCookie,getCookie } from 'cookies-next';
 import authHeader from './auth-header';
 export const login = (email: string, password: string) => {
   return instance
@@ -86,6 +86,18 @@ export const updateUserProfile = async (updateInfo: object) => {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
+      const userObj: any = getCookie("user");
+      let user = null;
+      if (userObj) {
+        user = JSON.parse(userObj)
+        //user.avatar = response.data.avatar;
+        user.firstName = response.data.result.firstName;
+        user.lastName = response.data.result.lastName;
+        user.fullName = response.data.result.fullName;
+        user.dob = response.data.result.dob;
+        setCookie('user', JSON.stringify(user));
+      };
+
       return response.data;
     })
     .catch((error) => {
@@ -99,6 +111,14 @@ export const updateProfileAvatar = async (file: any) => {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
+      const userObj: any = getCookie("user");
+      let user = null;
+      if (userObj) {
+        user = JSON.parse(userObj)
+        user.avatar = response.data.result.avatar;
+        setCookie('user', JSON.stringify(user));
+      };
+
       return response.data;
     })
     .catch((error) => {

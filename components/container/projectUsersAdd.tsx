@@ -131,10 +131,9 @@ const ProjectUserAdd: React.FC<IProps> = ({
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200  text-gray-500 uppercase ">
                       <th className="px-6 py-3 text-left font-medium">Name</th>
+                      <th className="px-6 py-3 text-left font-medium">Email</th>
                       <th className="px-6 py-3 text-left font-medium">Role</th>
-                      <th className="px-6 py-3 text-left font-medium">
-                        Delete
-                      </th>
+                      <th className="px-6 py-3 text-left font-medium">Delete</th>
                       <th className="px-6 py-3 text-left font-medium">Edit</th>
                     </tr>
                   </thead>
@@ -161,6 +160,11 @@ const ProjectUserAdd: React.FC<IProps> = ({
                                 <div className="mt-2">
                                   {pUserData.user.fullName}
                                 </div>
+                              </div>
+                            </td>
+                            <td className="px-6  border-b border-gray-200">
+                              <div className="flex  text-gray-900">
+                                    {pUserData.user.email}
                               </div>
                             </td>
                             <td className="px-6  border-b border-gray-200">
@@ -258,7 +262,7 @@ const ProjectUserAdd: React.FC<IProps> = ({
           }}
         >
           <h1 className=" font-bold">Delete confirmation</h1>
-          <p className="mt-2">Are you sure you want to delete this item?</p>
+          <p className="mt-2">Are you sure you want to delete this User?</p>
           <div className="grid grid-cols-2 gap-x-4 mt-4">
             <button
               onClick={() => {

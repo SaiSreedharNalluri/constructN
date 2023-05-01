@@ -76,6 +76,7 @@ const Header: React.FC<any> = ({
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const userObj: any = getCookie("user");
@@ -92,7 +93,7 @@ const Header: React.FC<any> = ({
     if (user?.avatar) {
       setAvatar(user.avatar);
     }
-  }, [router.query.projectId]);
+  }, [router.query,loading]);
 
   useEffect(() => {
     setIViewMode(viewMode);
@@ -102,7 +103,7 @@ const Header: React.FC<any> = ({
     //     document.removeEventListener('click', closeStructurePages);
     //   };
   }, [viewMode]);
-  const [loading, setLoading] = useState<boolean>(false);
+  
   useEffect(() => {
     const closePopup = (e: any) => {
       if (!headerRef?.current?.contains(e.target)) {
@@ -271,7 +272,7 @@ const Header: React.FC<any> = ({
         </HeaderRightPart>
 
         {loading && (
-          <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
+          <div className="absolute top-14 right-0 z-50 bg-gray-800 rounded-lg shadow border">
             <ul className="text-white p-4 ">
               <li className="font-medium">
                 <div className="flex flex-col items-center justify-center transform transition-colors duration-200">
