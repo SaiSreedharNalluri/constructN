@@ -77,10 +77,11 @@ const Header: React.FC<any> = ({
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
 
+  const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
   useEffect(() => {
     const userObj: any = getCookie("user");
     let user = null;
-    if (userObj) user = JSON.parse(userObj);
+    if (userObjState) user = JSON.parse(userObjState);
     console.log(user, "mnfdss");
 
     if (user?.fullName) {
@@ -92,7 +93,7 @@ const Header: React.FC<any> = ({
     if (user?.avatar) {
       setAvatar(user.avatar);
     }
-  }, [router.query.projectId]);
+  }, [userObjState]);
 
   useEffect(() => {
     setIViewMode(viewMode);
@@ -166,13 +167,13 @@ const Header: React.FC<any> = ({
       <HeaderContainer ref={headerRef}>
         <div
           style={{
-             height: "10px",
-             width: "59px",
-             background: "#FFFFFF",
-             position: "absolute",
-             top: "58px",
+            height: "10px",
+            width: "59px",
+            background: "#FFFFFF",
+            position: "absolute",
+            top: "58px",
             zIndex: "9999999",
-           //   opacity: "1",
+            //   opacity: "1",
             // width: "59px",
             // background: "#FFFFFF",
             // position: "absolute",
