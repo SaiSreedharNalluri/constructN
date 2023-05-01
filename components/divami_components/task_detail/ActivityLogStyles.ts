@@ -177,7 +177,7 @@ export const ActivityCommentDiv = styled("div")({
   fontSize: "14px",
   color: "#101F4C",
   lineHeight: "20px",
-  wordBreak: "break-all",
+  wordBreak: "break-word",
 });
 export const ActivityComment = styled("span")({});
 export const ActivityIssueRaisedMain = styled("span")({});
