@@ -10,7 +10,7 @@ export const TimeLineStyleContainer = styled("div")(
     //   width: "400px",
     //   height: "50px",
     position: "absolute",
-    maxWidth: "400px",
+    maxWidth: "420px",
     margin: "0 auto",
     left: "0",
     right: "0",
@@ -78,6 +78,10 @@ export const DateText = styled("div")(({ active }: any) => ({
 }));
 
 export const LeftIconImage = styled(Image)({
+  marginRight: "10px",
+});
+
+export const RightIconImage = styled(Image)({
   marginRight: "10px",
 });
 

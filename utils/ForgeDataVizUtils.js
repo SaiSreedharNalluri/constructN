@@ -68,7 +68,14 @@ export class ForgeDataVizUtils {
 
             const _viewableData = await this._createViewableData(data, ForgeDataVizUtils.TASK)
 
-            this._viewableDataMap[ForgeDataVizUtils.TASK] = _viewableData
+            if(this._viewableDataMap[ForgeDataVizUtils.TASK]) {
+                
+                this._viewableDataMap[ForgeDataVizUtils.TASK].push(_viewableData)
+
+            } else {
+
+                this._viewableDataMap[ForgeDataVizUtils.TASK] = [_viewableData]                
+            }
 
             this._dataVizExtn.addViewables(_viewableData)
         }
@@ -99,7 +106,14 @@ export class ForgeDataVizUtils {
 
             const _viewableData = await this._createViewableData(data, ForgeDataVizUtils.ISSUE)
 
-            this._viewableDataMap[ForgeDataVizUtils.ISSUE] = _viewableData
+            if(this._viewableDataMap[ForgeDataVizUtils.ISSUE]) {
+                
+                this._viewableDataMap[ForgeDataVizUtils.ISSUE].push(_viewableData)
+
+            } else {
+
+                this._viewableDataMap[ForgeDataVizUtils.ISSUE] = [_viewableData]                
+            }
 
             this._dataVizExtn.addViewables(_viewableData)
         }
@@ -179,7 +193,14 @@ export class ForgeDataVizUtils {
 
             const _viewableData = await this._createViewableData(data, type)
 
-            this._viewableDataMap[type] = _viewableData
+            if(this._viewableDataMap[type]) {
+                
+                this._viewableDataMap[type].push(_viewableData)
+
+            } else {
+
+                this._viewableDataMap[type] = [_viewableData]                
+            }
 
             this._dataVizExtn.addViewables(_viewableData)
         }
@@ -187,19 +208,27 @@ export class ForgeDataVizUtils {
 
     showTag = (type, show) => {
 
-        const viewableData = this._viewableDataMap[type]
+        const viewableDatas = this._viewableDataMap[type]
 
-        if (viewableData) {
+        if(viewableDatas) {
 
-            const dbIds = viewableData.viewables.map(v => { return v.dbId })
+            for(let i = 0; i < viewableDatas.length; i++) {
 
-            this._invalidateViewables(dbIds, this._dataVizExtn.pointMeshes, viewableData, () => {
+                const viewableData = viewableDatas[i]
 
-                return {
+                if (viewableData) {
 
-                    scale: show ? 1 : 0
+                    const dbIds = viewableData.viewables.map(v => { return v.dbId })
+        
+                    this._invalidateViewables(dbIds, this._dataVizExtn.pointMeshes, viewableData, () => {
+        
+                        return {
+        
+                            scale: show ? 1 : 0
+                        }
+                    })
                 }
-            })
+            }
         }
     }
 
@@ -432,7 +461,7 @@ export class ForgeDataVizUtils {
 
             case ForgeDataVizUtils.ISSUE: return {
 
-                icon: '/icons/forgeissue.png',
+                icon: '/icons/issuesInViewer.svg',
 
                 size: 48,
 

@@ -372,6 +372,7 @@ const FilterCommon: React.FC<IProps> = ({
           }
           return {
             ...item,
+            selectAllStatus: selectAllStatus,
             options: taskStatus?.map((eachItem: any) => {
               if (issueFilterState.isFilterApplied) {
                 if (

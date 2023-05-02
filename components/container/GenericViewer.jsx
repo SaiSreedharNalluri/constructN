@@ -140,6 +140,13 @@ function GenericViewer(props) {
   let [currentViewer, setCurrentViewer] = useState('Forge');
 
   let [isMarkerMode, setMarkerMode] = useState(false);
+  const [offset, setOffset] = useState(1);
+  const pageSize = 10;
+  const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0)
+
+  const [totalPages, setTotalPages] = useState(
+    Math.ceil(totalSnaphotsCount / 10)
+  );
 
   const initializeOptions = {
     env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
@@ -1135,7 +1142,6 @@ function GenericViewer(props) {
     return designList;
   };
 
-  const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0)
 
   const getSnapshotList = async (projectId, structurId,offset,limit) => {
     let list = await getSnapshotsList(projectId, structurId,offset||1,limit||10);
@@ -1383,11 +1389,11 @@ function GenericViewer(props) {
 
   useEffect(() => {
     // To stop Minimap from accepting keyboard events
-    document.addEventListener(
-      "keydown", (event) => {
-        event.stopPropagation()
-      }, false
-    );
+    // document.addEventListener(
+    //   "keydown", (event) => {
+    //     event.stopPropagation()
+    //   }, false
+    // );
     // return cleanUpOnPageChange;
   }, []);
 
@@ -1649,7 +1655,7 @@ function GenericViewer(props) {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
       }}
       className={`${'z-10 rounded-lg bg-white'} ${showMinimap && ((count == 1 && viewerType === "Potree") || (count == 2 &&  compareViewMode === "Potree")) ? 'opacity-100' : 'opacity-0'}`}>
-      <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
+      <div className='flex flex-col h-full'>
         <div className='h-8 rounded-lg bg-white flex'>
           <IconButton className='cursor-move' size="small">
             <DragIndicatorIcon fontSize="inherit" />
@@ -1665,7 +1671,13 @@ function GenericViewer(props) {
             <FullscreenIcon fontSize="inherit" />
           </IconButton>
         </div>
-        <MiniMap count={count} style={{ height: 'calc(100%)' }} compareViewMode={compareViewMode} setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}></MiniMap>
+        <MiniMap
+          count={count} 
+          style={{ height: 'calc(100%)' }} 
+          compareViewMode={compareViewMode} 
+          setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}>
+            
+          </MiniMap>
       </div>
     </Rnd>)
   }
@@ -1688,18 +1700,48 @@ function GenericViewer(props) {
     setTimeout(() => utils?.resize(), 50)
   }
 
+  useEffect(() => {
+    setTotalPages(Math.ceil(totalSnaphotsCount / 10));
+  }, [totalSnaphotsCount]);
+
+  const setPrevList = () => {
+    if (offset < totalPages) {
+      getSnapshotList(structure.project, structure._id, offset + 1, pageSize);
+      setOffset(offset + 1);
+      // setPage(0);
+    }
+  };
+
+  const setNextList = () => {
+    if (offset > 1) {
+      getSnapshotList(structure.project, structure._id, offset - 1, pageSize);
+
+      setOffset(offset - 1);
+      // setPage(0);
+    }
+  };
   return (
       <div className={` ${fullScreenMode?"w-full h-full":`${styles.calcWidth} ${styles.calcHeight}`} fixed flex flex-row overflow-hidden`}>
         <div id="TheView" className="relative  basis-1/2 flex grow shrink">
           {renderViewer(1)}
           {renderMinimap(1)}
-          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}></TimeLineComponent>
+          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+            setPrevList={setPrevList}
+            setNextList={setNextList}
+            totalPages={totalPages}
+           offset={offset}
+          ></TimeLineComponent>
         </div>
         <div className={isCompare?'w-0.5':''} color='gray'></div>
         <div id="CompareView" className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
           {renderViewer(2)}
           {compareViewMode === 'Potree' ? renderMinimap(2) : <></>}
-          <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}></TimeLineComponent>
+          <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+           setPrevList={setPrevList}
+           setNextList={setNextList}
+           totalPages={totalPages}
+           offset={offset}
+          ></TimeLineComponent>
         </div>
         {
           viewerType === "Mapbox"  && viewMode === "Reality" && hotspots && hotspots.length > 0 ?
