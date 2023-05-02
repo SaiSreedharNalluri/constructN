@@ -9,7 +9,7 @@ import {
   updateProjectInfo,
   updateProjectUserRole,
 } from '../../../../services/project';
-import { IProjects, IProjectUsers } from '../../../../models/IProjects';
+import { IProjects, IProjectUsers,IProjectUserList } from '../../../../models/IProjects';
 import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
 import CollapsableMenu from '../../../../components/layout/collapsableMenu';
 import { ChildrenEntity } from '../../../../models/IStructure';
@@ -60,7 +60,7 @@ import SidePanelMenu from '../../../../components/divami_components/side-panel/S
 const regex = /^[a-zA-Z ]*$/;
 const Editproject: React.FC = () => {
   const router = useRouter();
-  const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
+  const [projectUsers, setProjectUsers] = useState<IProjectUserList[]>([]);
   const [tabIndex, setTabIndex] = useState(0);
   let [state, setState] = useState<ChildrenEntity[]>([]);
   const [selector, setSelector] = useState('');
