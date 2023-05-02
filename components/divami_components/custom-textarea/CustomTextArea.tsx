@@ -67,6 +67,7 @@ export const CustomTextArea = (props: PropTypes) => {
           reff?.current?.focus();
         }}
         readOnly={isReadOnly}
+        style={{ resize: "none" }}
       />
       {/* {isError && (
                 <div className={classes.error_message}>This is required</div>

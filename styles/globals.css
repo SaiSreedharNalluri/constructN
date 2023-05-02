@@ -541,3 +541,7 @@ td {
 .overflow-hidden {
   overflow: hidden;
 }
+
+.custom-styled-menu:last-child {
+  border-bottom: none;
+}

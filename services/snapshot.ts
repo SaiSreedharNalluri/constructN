@@ -1,11 +1,18 @@
-import instance from './axiosInstance';
-import authHeader from './auth-header';
+import instance from "./axiosInstance";
+import authHeader from "./auth-header";
 export const getSnapshotsList = async (
   projectId: string,
-  structureId: string
+  structureId: string,
+  offset?: any,
+  limit?: any
 ) => {
   return await instance.get(
-    `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/structures/${structureId}/snapshots`,
+    `${
+      process.env.NEXT_PUBLIC_HOST
+    }/projects/${projectId}/structures/${structureId}/snapshots?limit=${
+      limit || 10
+    }&offset=${offset || 1}`,
+    // `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/structures/${structureId}/snapshots`,
     {
       headers: authHeader.authHeader(),
     }
