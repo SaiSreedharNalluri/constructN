@@ -1828,74 +1828,84 @@ export const PotreeViewerUtils = () => {
     }
 
     const removeAssets = () => {
-        // console.log("Inside remove assets potree");
+        // console.log("removeTest Potree inside remove assets2: ", _realityLayers, _viewer.scene.scene.children);
+
+        let childIndex = -1;
+
+        unloadAllImages();
         for(let pointCloud of _viewer.scene.pointclouds) {
             _viewer.scene.scenePointCloud.remove(pointCloud);
         }
-        // _viewer.scene.scenePointCloud.remove(_viewer.scene.pointclouds[0]);
-       _viewer.scene.pointclouds = [];
+        _viewer.scene.pointclouds = [];
 
-       for(let orientedImage of _viewer.scene.orientedImages) {
-        console.log("potree remove assets: ", orientedImage, _viewer.scene.scene.children.indexOf(orientedImage));
-                
-        // orientedImage.release();
-            // orientedImage.images.forEach(image => {
-            //     orientedImage.remove(image.mesh);
-            //     orientedImage.remove(image.line);
-            //  });
-            //  _viewer.scene.scene.remove(_viewer.scene.scene.children[0]);
-             _viewer.scene.removeOrientedImages(orientedImage);
-       }   
+        for (const realityKey in _realityLayers ) {
+            let reality = _realityLayers[realityKey];
+            switch (reality.type) {
+                case "Drone Image":
+                case "Phone Image":
+                    console.log("removeTest inside remove assets2 swicth case : ", reality,  _viewer.scene.scene.children.indexOf(_viewer.scene.orientedImages[reality.index].node));
+                    childIndex = _viewer.scene.scene.children.indexOf(_viewer.scene.orientedImages[reality.index].node);
+                    if (_viewer.scene.orientedImages[reality.index]) {
+                        _viewer.scene.orientedImages[reality.index].images.forEach(image => {
+                            _viewer.scene.scene.children[childIndex].remove(image.mesh);
+                            _viewer.scene.scene.children[childIndex].remove(image.line);
+                         });
 
-       if (_viewer.scene.annotations.children && _viewer.scene.annotations.children.length > 0) {
+                         delete _viewer.scene.orientedImages[reality.index].images;
+                        // _viewer.scene.scene.remove(_viewer.scene.scene.children[childIndex]);
+                        // _viewer.scene.removeOrientedImages(_viewer.scene.orientedImages[reality.index]);
+                     }
+                    break;
+                case "360 Video":
+                case "360 Image":
+                    console.log("removeTest inside remove assets2 swicth case : ", reality,  _viewer.scene.scene.children.indexOf(_viewer.scene.images360[reality.index].node));
+                    childIndex = _viewer.scene.scene.children.indexOf(_viewer.scene.images360[reality.index].node);
+                    if (_viewer.scene.images360[reality.index]) {
+                        _viewer.scene.images360[reality.index].images.forEach(image => {
+                            _viewer.scene.scene.children[childIndex].remove(image.mesh);
+                         });
+                        _viewer.scene.scene.children[childIndex].remove(_viewer.scene.images360[reality.index].sphere);
+
+                        delete _viewer.scene.images360[reality.index].images;
+                        // delete _viewer.scene.images360[reality.index].sphere;
+                        // _viewer.scene.scene.remove(_viewer.scene.scene.children[childIndex]);
+                        // _viewer.scene.remove360Images(_viewer.scene.images360[reality.index]);
+                     }
+                    break;
+            }
+        }
+
+        let orientedImagesLength = _viewer.scene.orientedImages.length;
+        for (let i = 0; i < orientedImagesLength; i++) {
+            _viewer.scene.scene.remove(_viewer.scene.orientedImages[i].node);
+            _viewer.scene.removeOrientedImages(_viewer.scene.orientedImages[i]);
+            delete _viewer.scene.orientedImages[i];
+        }
+        _viewer.scene.orientedImages = [];
+
+        let image360Length = _viewer.scene.images360.length;
+        for (let i = 0; i < image360Length; i++) {
+            _viewer.scene.scene.remove(_viewer.scene.images360[i].node);
+            _viewer.scene.remove360Images(_viewer.scene.images360[i]);
+            delete _viewer.scene.images360[i]
+        }
+        _viewer.scene.images360 = []
+
+        for (let children of _viewer.scene.scene.children) {
+            _viewer.scene.scene.remove(children);
+            children = null;
+        }
+        _viewer.scene.scene.children = []
+
+        if (_viewer.scene.annotations.children && _viewer.scene.annotations.children.length > 0) {
             for(let annotation of _viewer.scene.annotations.children) {
                 _viewer.scene.annotations.remove(annotation);
                 annotation.dispose();
             }
         }
+        // _viewer.scene.annotations = [];
 
-       for(let image360 of _viewer.scene.images360) {
-            image360.unfocus(false);
-            // image360.images.forEach(image => {
-            //     _viewer.scene.scene.children[0].remove(image.mesh);
-            // });
-            // _viewer.scene.scene.children[0].remove(image360.sphere);
-            // _viewer.scene.scene.remove(_viewer.scene.scene.children[0]);
-            _viewer.scene.remove360Images(image360);
-        }   
-
-        for (let children of _viewer.scene.scene.children) {
-            _viewer.scene.scene.remove(children);
-        }
-       
-        // _viewer.scene.scenePointCloud.remove(_viewer.scene.pointclouds[0]);
-        // _viewer.scene.pointclouds = [];
-        // if (_viewer.scene.orientedImages.length && _viewer.scene.orientedImages[0]) {
-        //    _viewer.scene.orientedImages[0].release();
-        //    _viewer.scene.orientedImages[0].images.forEach(image => {
-        //        _viewer.scene.scene.children[0].remove(image.mesh);
-        //        _viewer.scene.scene.children[0].remove(image.line);
-        //     });
-        //    _viewer.scene.scene.remove(_viewer.scene.scene.children[0]);
-        //    _viewer.scene.removeOrientedImages(_viewer.scene.orientedImages[0]);
-        // }
-
-        // if (_viewer.scene.annotations.children && _viewer.scene.annotations.children.length > 0) {
-        //     for(let annotation of _viewer.scene.annotations.children) {
-        //         _viewer.scene.annotations.remove(annotation);
-        //         annotation.dispose();
-        //     }
-        // }
-
-        // if (_viewer.scene.images360.length && _viewer.scene.images360[0]) {
-        //    _viewer.scene.images360[0].unfocus(false);
-        //    _viewer.scene.images360[0].images.forEach(image => {
-        //        _viewer.scene.scene.children[0].remove(image.mesh);
-        //     });
-        //    _viewer.scene.scene.children[0].remove(_viewer.scene.images360[0].sphere);
-        //    _viewer.scene.scene.remove(_viewer.scene.scene.children[0]);
-        //    _viewer.scene.remove360Images(_viewer.scene.images360[0]);
-        // }
+        _realityLayers = {};
 
         if (_floorMap) {
             removeFloorMap();
@@ -1903,7 +1913,6 @@ export const PotreeViewerUtils = () => {
         _isPointCloudLoaded = false;
         _imageLoadedOnce = false;
         // _currentLoadedImage = null;
-
     }
 
     const removeFloorMap = () => {

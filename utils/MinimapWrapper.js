@@ -618,7 +618,10 @@ export const MinimapUtils = () => {
     }
   };
 
-  const onViewerUnInitialized = () => {};
+  const onViewerUnInitialized = () => {
+    console.log("Forge Viewer UnInitialized: ");
+    _isViewerInitialized = false;
+  };
 
   const modelLoadProgress = (percent, state, model) => {
     if (!_isModelLoaded && percent == 100) {
@@ -720,6 +723,10 @@ export const MinimapUtils = () => {
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       onCameraChangeEvent
     );
+    _viewer.addEventListener(
+      Autodesk.Viewing.VIEWER_UNINITIALIZED,
+      onViewerUnInitialized
+    );
 
     let viewerElement = document.getElementById(_viewerId);
     if (viewerElement) {
@@ -765,6 +772,10 @@ export const MinimapUtils = () => {
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       onCameraChangeEvent
     );
+    _viewer.removeEventListener(
+      Autodesk.Viewing.VIEWER_UNINITIALIZED,
+      onViewerUnInitialized
+    );
 
     let viewerElement = document.getElementById(_viewerId);
     if (viewerElement) {
@@ -792,8 +803,8 @@ export const MinimapUtils = () => {
     if (_isViewerInitialized) {
       removeData();
       removeEventListeners();
-      _viewer.tearDown();
-      _viewer.uninitialize();
+      _viewer.finish();
+      _viewer = null;
       _dataVizExtn = undefined;
       _dataVizUtils = undefined;
       Autodesk.Viewing.shutdown();
