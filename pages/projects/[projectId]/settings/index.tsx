@@ -870,13 +870,13 @@ const Editproject: React.FC = () => {
                                     setAddIssuePriorityType([e.target.value]);
                                   }
                                 }}
-                                placeholder="Enter Issue priority"
+                                placeholder="Enter Value"
                                 className=" border border-gray-600 focus:outline-none w-full text-sm rounded  p-2"
                               ></input>
                             </div>
                             <div className="">
                               <button className="px-2 py-1 mt-2 bg-red-500 hover:bg-red-800   rounded text-gray-200 font-semibold ">
-                                add
+                                Add
                               </button>
                             </div>
                           </form>
