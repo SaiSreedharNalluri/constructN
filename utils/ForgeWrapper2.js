@@ -611,7 +611,10 @@ export const ForgeViewerUtils = function () {
     }
   };
 
-  const onViewerUnInitialized = () => {};
+  const onViewerUnInitialized = () => {
+    console.log("Forge Viewer UnInitialized: ");
+    _isViewerInitialized = false;
+  };
 
   const modelLoadProgress = (progress, state, model) => {
     if (!_isModelLoaded && progress.percent == 100) {
@@ -726,6 +729,10 @@ export const ForgeViewerUtils = function () {
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       onCameraChangeEvent
     );
+    _viewer.addEventListener(
+      Autodesk.Viewing.VIEWER_UNINITIALIZED,
+      onViewerUnInitialized
+    );
 
     let viewerElement = document.getElementById(_viewerId);
     if (viewerElement) {
@@ -771,6 +778,10 @@ export const ForgeViewerUtils = function () {
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       onCameraChangeEvent
     );
+    _viewer.removeEventListener(
+      Autodesk.Viewing.VIEWER_UNINITIALIZED,
+      onViewerUnInitialized
+    );
 
     let viewerElement = document.getElementById(_viewerId);
     if (viewerElement) {
@@ -804,10 +815,8 @@ export const ForgeViewerUtils = function () {
     if (_isViewerInitialized) {
       removeData();
       removeEventListeners();
-      try{
-        _viewer.tearDown();
-      }catch(e) {}
-      _viewer.uninitialize();
+      _viewer.finish();
+      _viewer = null;
       _dataVizExtn = undefined;
       _dataVizUtils = undefined;
       Autodesk.Viewing.shutdown();
