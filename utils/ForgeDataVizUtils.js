@@ -244,8 +244,6 @@ export class ForgeDataVizUtils {
                             this._dbMap[1] = undefined
             
                             this._viewer.overlays.removeMesh(mesh, 'DataVizDots')
-
-                            break
                         }
                     }
 
@@ -269,9 +267,9 @@ export class ForgeDataVizUtils {
 
                     else deg = deg * -1
 
-                    deg = (Math.floor(deg / 10) * 10) % 360
+                    deg = (Math.floor(deg / 5) * 5) % 360
 
-                    const mUrl = `/icons/navigator/nav-${deg}.png`
+                    const mUrl = `/icons/navigator/loc-${deg}.png`
 
                     return {
 
@@ -348,9 +346,9 @@ export class ForgeDataVizUtils {
 
         if (dbId == 1) {
 
-            for (let i = 0; i < 360; i = i + 10) {
+            for (let i = 0; i < 360; i = i + 5) {
 
-                animatedUrls.push(`/icons/navigator/nav-${i}.png`)
+                animatedUrls.push(`/icons/navigator/loc-${i}.png`)
             }
         }
 
@@ -381,16 +379,16 @@ export class ForgeDataVizUtils {
 
                     else deg = deg * -1
 
-                    deg = (Math.floor(deg / 10) * 10) % 360
+                    deg = (Math.floor(deg / 5) * 5) % 360
                 }
 
-                const sprite = `/icons/navigator/nav-${deg}.png`
+                const sprite = `/icons/navigator/loc-${deg}.png`
 
                 return {
 
                     icon: sprite,
 
-                    size: 24,
+                    size: 28,
 
                     offset: 1
                 }
