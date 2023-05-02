@@ -210,7 +210,7 @@ const CustomTaskListDrawer = (props: any) => {
   }, [taskList]);
 
   useEffect(() => {
-    setRemainingtasks(taskList?.length);
+    setRemainingtasks(taskList?.length > 10 ? taskList.length : 0);
   }, [taskList]);
 
   const handleSortClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -295,17 +295,18 @@ const CustomTaskListDrawer = (props: any) => {
         );
       });
       setDownloadList(filteredData);
-
+      setRemainingtasks(filteredData.length > 10 ? filteredData.length : 0);
       setFilteredTaskList([...filteredData.slice(0, 10)]);
     } else {
       setFilteredTaskList(taskList.slice(0, 10));
+      setRemainingtasks(taskList.length > 10 ? taskList.length : 0);
     }
   };
 
   const handleLoadMore = () => {
     const noOfTasksLoaded = filteredTaskList.length;
 
-    if (searchTerm) {
+    if (searchTerm.length > 0) {
       const filteredData = taskList?.filter((eachTask: any) => {
         const taskName = eachTask?.type?.toLowerCase();
         const sequenceNumber = eachTask?.sequenceNumber.toString();
