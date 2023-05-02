@@ -330,6 +330,7 @@ export const AttachedImageDiv = styled("div")`
 
 export const AttachedImageTitle = styled("div")`
   margin-left: 21px;
+  cursor: pointer;
 `;
 
 export const AttachedImageIcon = styled("div")``;
@@ -362,7 +363,7 @@ export const RelatedTagsButton = styled("div")`
 `;
 
 export const RelatedSingleButton = styled("div")`
-  border: 1px solid #101F4C;
+  border: 1px solid #101f4c;
   padding: 8px 22px;
   border-radius: 40px;
   height: 32px;
@@ -370,9 +371,8 @@ export const RelatedSingleButton = styled("div")`
   font-size: 12px;
   margin-right: 10px;
   margin-bottom: 10px;
-  font-family:Open Sans;
+  font-family: Open Sans;
   font-style: normal;
-  
 `;
 
 export const StyledLabel = styled(Typography)`
