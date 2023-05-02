@@ -5,7 +5,10 @@ import {
   ListItemIcon,
   Menu,
   setRef,
+  styled,
   Tooltip,
+  tooltipClasses,
+  TooltipProps,
 } from "@mui/material";
 import Image from "next/image";
 
@@ -29,6 +32,12 @@ import sort from "../../../public/divami_icons/sort.svg";
 import DownArrow from "../../../public/divami_icons/downArrow.svg";
 import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
+import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
+import filterElip from "../../../public/divami_icons/filterElip.svg";
+import progressHour from "../../../public/divami_icons/progressHour.svg";
+import todoIcon from "../../../public/divami_icons/todoIcon.svg";
+import blockedFrame from "../../../public/divami_icons/blockedFrame.svg";
+import smallDivider from "../../../public/divami_icons/smallDivider.svg";
 
 import {
   AppliedFilter,
@@ -68,6 +77,14 @@ import {
   LoadMoreText,
   FilterIndication,
   MenuOptionLabel,
+  SearchAreaContainer,
+  DueDateHeader,
+  TicketName,
+  ProgressChild,
+  SmallDivider,
+  PriorityChild,
+  AssigneeList,
+  Watcher,
 } from "./IssueListStyles";
 
 import _ from "lodash";
@@ -76,11 +93,7 @@ import { CSVLink } from "react-csv";
 import { Issue } from "../../../models/Issue";
 import { ITools } from "../../../models/ITools";
 import FilterCommon from "../issue-filter-common/IssueFilterCommon";
-import {
-  CustomSearchField,
-  IconContainer,
-  SearchAreaContainer,
-} from "../task_list/TaskListStyles";
+import { CustomSearchField, IconContainer } from "../task_list/TaskListStyles";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import { getProjectUsers } from "../../../services/project";
 import router from "next/router";
@@ -91,6 +104,8 @@ import { jsPDF } from "jspdf";
 import { getIssuesList } from "../../../services/issue";
 import { DownloadTable } from "../toolbar/DownloadTable";
 import { downloadMenuOptions, getDownladableList } from "./Constants";
+import CompletedIconTask from "../../../public/divami_icons/CompletedIconTask.svg";
+import sortUp from "../../../public/divami_icons/sortUp.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -110,11 +125,13 @@ interface IProps {
   contextInfo: any;
   issueTypesList?: any;
   issueFilterState?: any;
+  setIssueFilterState?: any;
   getIssues?: any;
   handleOnIssueSort?: any;
   deleteTheAttachment?: any;
   openIssueCreateFn?: any;
   issueMenuClicked?: any;
+  projectUsers?: any;
 }
 
 const CustomIssueListDrawer: React.FC<IProps> = ({
@@ -135,11 +152,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   contextInfo,
   issueTypesList,
   issueFilterState,
+  setIssueFilterState,
   getIssues,
   handleOnIssueSort,
   deleteTheAttachment,
   openIssueCreateFn,
   issueMenuClicked,
+  projectUsers,
 }) => {
   const handleClose = () => {
     onClose(true);
@@ -154,7 +173,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [openIssueDetail, setOpenIssueDetail] = useState(false);
   const [issueType, setIssueType] = useState<[string]>();
   const [issuePriority, setIssuePriority] = useState<[string]>();
-  const [projectUsers, setProjectUsers] = useState([]);
   const [issueStatus, setIssueStatus] = useState<[string]>();
   const [dateSortState, setDateSortState] = useState("ascending");
   const [viewIssue, setViewIssue] = useState<any>({});
@@ -263,17 +281,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   //   }
   //   setFilteredIssuesList(sorted);
   // };
-  useEffect(() => {
-    if (router.isReady) {
-      getProjectUsers(router.query.projectId as string)
-        .then((response: any) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
-    }
-  }, [router.isReady, router.query.projectId]);
 
   const handleSearchWindow = () => {
     if (searchTerm === "") {
@@ -327,14 +334,15 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   useEffect(() => {
     if (viewIssue?._id) {
-      filteredIssuesList.forEach((item: any) => {
+      issueList.forEach((item: any) => {
         if (viewIssue._id === item._id) {
           setViewIssue(item);
         }
       });
     }
-  }, [filteredIssuesList]);
+  }, [issueList]);
 
+  console.log(filteredIssuesList, viewIssue, "viewIssue");
   const handleViewIssue = (issue: any) => {
     filteredIssuesList.forEach((item: any) => {
       if (issue._id === item._id) {
@@ -347,6 +355,36 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     issueMenuClicked(issueMenuInstance);
   };
 
+  useEffect(() => {
+    console.log("issueFilterState", issueFilterState);
+  }, [issueFilterState]);
+  const [abc, setAbc] = useState(false);
+  const checkIsFilter = () => {
+    if (issueFilterState?.filterData) {
+      const {
+        assigneesData,
+        fromDate,
+        issuePriorityData,
+        issueStatusData,
+        issueTypeData,
+        toDate,
+      } = issueFilterState.filterData;
+      if (
+        (issuePriorityData?.length === 0 &&
+          issueStatusData?.length == 0 &&
+          issueTypeData?.length == 0 &&
+          toDate === "" &&
+          assigneesData === null) ||
+        undefined
+      ) {
+        setAbc(true);
+        setIssueFilterState({
+          ...issueFilterState,
+          isFilterApplied: false,
+        });
+      }
+    }
+  };
   return (
     <>
       {errorShow.length > 0 ? (
@@ -362,7 +400,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 onClick={() => {
                   handleClose();
                 }}
-                src={CrossIcon}
+                src={closeWithCircle}
                 alt={"close icon"}
                 data-testid="close-icon"
               />
@@ -434,6 +472,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                       data-testid="sort"
                     />
                   </Tooltip>
+
+                  {/* <DueDateHeader>Due Date</DueDateHeader> */}
                   {/* {sortOrder === "asc" ? (
                     <ArrowUpIcon
                       onClick={sortDateOrdering}
@@ -504,40 +544,82 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         <FirstHeader>
                           <Image
                             src={
-                              val.type === "RFI"
-                                ? RFIList
-                                : val.type === "Safety"
-                                ? HourglassIcon
-                                : val.type === "Transmittals"
-                                ? TransmittalList
-                                : val.type === "Clash"
-                                ? SubmittalList
-                                : val.type === "Commissioning"
-                                ? commission
-                                : val.type === "Building code"
-                                ? HourglassIcon
-                                : val.type === "Design"
-                                ? designIcon
-                                : val.type === "Submittals"
-                                ? SubmittalList
+                              val?.status === "In Progress"
+                                ? progressHour
+                                : val.status === "To Do"
+                                ? todoIcon
+                                : val.status === "Blocked"
+                                ? blockedFrame
+                                : val.status === "Completed"
+                                ? CompletedIconTask
                                 : ""
                             }
                             alt="Arrow"
                           />
-                          <BodyContTitle>
-                            {val.type} (#{val.sequenceNumber})
-                          </BodyContTitle>
+                          <TicketName>
+                            {" "}
+                            {val?.type} (#{val?.sequenceNumber})
+                          </TicketName>
                         </FirstHeader>
 
                         <SecondHeader>
-                          <div>{val.priority} Priority</div>
+                          <ProgressChild>{val?.status}</ProgressChild>
+
+                          <SmallDivider src={smallDivider} alt="progress" />
+
+                          <PriorityChild>
+                            {val?.priority} Priority{" "}
+                          </PriorityChild>
                         </SecondHeader>
 
                         <ThirdHeader>
-                          <div>{val.assignees[0].firstName}</div>
-                          <DueDateDiv>
+                          <ProgressChild>
                             Due by {Moment(val.dueDate).format("DD MMM 'YY")}
-                          </DueDateDiv>
+                          </ProgressChild>
+                          <SmallDivider src={smallDivider} alt="progress" />
+
+                          <PriorityChild>
+                            {val?.assignees[0]?.firstName
+                              .charAt(0)
+                              .toUpperCase()}
+                            {val?.assignees[0]?.firstName.slice(1)}{" "}
+                            {val?.assignees[0]?.lastName
+                              .charAt(0)
+                              .toUpperCase()}
+                            {val?.assignees[0]?.lastName.slice(1)}
+                          </PriorityChild>
+
+                          <LightTooltip
+                            arrow
+                            title={
+                              <AssigneeList>
+                                {val?.assignees?.map(
+                                  (assignName: any, index: number) => {
+                                    if (index != 0) {
+                                      return (
+                                        <>
+                                          {index !== val?.assignees?.length - 1
+                                            ? assignName?.firstName +
+                                              " " +
+                                              assignName.lastName +
+                                              " | "
+                                            : assignName?.firstName +
+                                              " " +
+                                              assignName.lastName}
+                                        </>
+                                      );
+                                    }
+                                  }
+                                )}
+                              </AssigneeList>
+                            }
+                          >
+                            <Watcher>
+                              {val?.assignees.length - 1 > 0
+                                ? `+${val?.assignees.length - 1}`
+                                : ""}
+                            </Watcher>
+                          </LightTooltip>
                         </ThirdHeader>
                       </BodyInfo>
                       <HorizontalLine></HorizontalLine>
@@ -554,7 +636,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   <MessageDivShowErr>No result found</MessageDivShowErr>
                 </NoMatchDiv>
               )}
-              {remainingIssues > 0 ? (
+              {remainingIssues > 1 && filteredIssuesList.length > 1 ? (
                 <LoadMoreText
                   onClick={() => {
                     handleLoadMore();
@@ -608,6 +690,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 deleteTheIssue={() => {}}
                 clickIssueEditSubmit={() => {}}
                 issueFilterState={issueFilterState}
+                setIssueFilterState={setIssueFilterState}
+                checkIsFilter={checkIsFilter}
               />
             </Drawer>
           )}
@@ -649,6 +733,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             {sortMenuOptions.map((option) => (
               <>
                 <StyledMenu
+                  className="custom-styled-menu"
                   key={option.label}
                   onClick={() => handleSortMenuClick(option.method)}
                   data-testid="sort-menu-item"
@@ -770,3 +855,29 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 };
 
 export default CustomIssueListDrawer;
+
+const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "white",
+    // color: "rgba(0, 0, 0, 0.87)",
+    fontSize: 11,
+    // position: "absolute",
+    right: 30,
+    borderRadius: "4px",
+    top: 2,
+    // width: "308px",
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    height: "10px !important",
+    left: "30px !important",
+    marginBottom: "0px",
+    "&:before": {
+      background: "#FFFFFF",
+      border: "1px solid #D9D9D9",
+    },
+
+    //  color: 'red',
+  },
+}));

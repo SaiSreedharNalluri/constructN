@@ -141,6 +141,8 @@ const CustomSearch = (props: any) => {
                       color: "#787878",
 
                       fontFamily: "Open Sans",
+                      fontStyle: "normal",
+
                       fontSize: "14px",
                       lineHeight: "20px",
                       fontWeight: "400",
