@@ -12,6 +12,7 @@ import {
   DateText,
   LeftIconImage,
   PaginationStyle,
+  RightIconImage,
   SelectedTimeLine,
   TimelineDots,
   TimelineNavigation,
@@ -23,6 +24,8 @@ import moment from "moment";
 import Image from "next/image";
 import LeftIcon from "../../../public/divami_icons/leftIcon.svg";
 import RightIcon from "../../../public/divami_icons/rightIcon.svg";
+import LeftSingleArrow from "../../../public/divami_icons/LeftSingleArrow.png";
+import RightSingleArrow from "../../../public/divami_icons/RightSingleArrow.png";
 
 interface IProps {
   currentSnapshot: ISnapshot;
@@ -32,6 +35,10 @@ interface IProps {
   getSnapshotList: any;
   totalSnaphotsCount: any;
   structure: any;
+  setPrevList: any;
+  setNextList: any;
+  totalPages: any;
+  offset: any;
 }
 
 const TimeLineComponent: React.FC<IProps> = ({
@@ -42,21 +49,25 @@ const TimeLineComponent: React.FC<IProps> = ({
   getSnapshotList,
   totalSnaphotsCount = 0,
   structure,
+  setPrevList,
+  setNextList,
+  totalPages,
+  offset,
 }) => {
   const [bottomNav, setBottomNav] = useState(false);
-  const [page, setPage] = useState(0);
-  const [offset, setOffset] = useState(1);
+  const [page, setPage] = useState<any>();
+  // const [offset, setOffset] = useState(1);
 
   const [oldDate, setOldDate] = useState("");
   const [newDate, setNewDate] = useState("");
-  const [activeCircleIndex, setActiveCircleIndex] = useState(0);
-  const [totalPages, setTotalPages] = useState(
-    Math.ceil(totalSnaphotsCount / 10)
-  );
-  const pageSize = 10;
-  useEffect(() => {
-    setTotalPages(Math.ceil(totalSnaphotsCount / 10));
-  }, [totalSnaphotsCount]);
+  const [activeCircleIndex, setActiveCircleIndex] = useState<any>();
+  // const [totalPages, setTotalPages] = useState(
+  //   Math.ceil(totalSnaphotsCount / 10)
+  // );
+  // const pageSize = 10;
+  // useEffect(() => {
+  //   setTotalPages(Math.ceil(totalSnaphotsCount / 10));
+  // }, [totalSnaphotsCount]);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
@@ -83,26 +94,13 @@ const TimeLineComponent: React.FC<IProps> = ({
   };
 
   const setPrevPage = () => {
-    // if (page >= 1) {
-    //   setPage(page - 1);
-    // }
-    if (offset < totalPages) {
-      getSnapshotList(structure.project, structure._id, offset + 1, pageSize);
-      setOffset(offset + 1);
-      setPage(0);
+    if (page >= 1) {
+      setPage(page - 1);
     }
   };
-
   const setNextPage = () => {
-    // if (page < snapshotList.length - 1) {
-    //   setPage(page + 1);
-    // }
-
-    if (offset > 1) {
-      getSnapshotList(structure.project, structure._id, offset - 1, pageSize);
-
-      setOffset(offset - 1);
-      setPage(0);
+    if (page < snapshotList.length - 1) {
+      setPage(page + 1);
     }
   };
   // const getSnapshotDate = () => {
@@ -114,20 +112,27 @@ const TimeLineComponent: React.FC<IProps> = ({
   // };
   console.log(snapshotList, "snapjhos");
   useEffect(() => {
-    setCurrentSnapshot(snapshotList[page]);
-    // if (page >= 6) {
-    //   setActiveCircleIndex(6);
-    // } else {
-    //   setActiveCircleIndex(page);
-    // }
-    setActiveCircleIndex(page);
+    if (page || page == 0) {
+      setCurrentSnapshot(snapshotList[page]);
+      // if (page >= 6) {
+      //   setActiveCircleIndex(6);
+      // } else {
+      //   setActiveCircleIndex(page);
+      // }
+      setActiveCircleIndex(page);
+    }
   }, [page]);
 
   useEffect(() => {
     if (snapshotList.length > 0) {
       setOldDate(snapshotList[0].date);
       setNewDate(snapshotList[snapshotList.length - 1].date);
-      setPage(snapshotList.length - 1);
+      console.log(currentSnapshot, snapshotList, "currentSnap");
+      const snapshotIndex = snapshotList.findIndex(
+        (item) => item.date === currentSnapshot.date
+      );
+      setPage(snapshotIndex);
+      // setPage(snapshotList.length - 1);
     }
   }, [snapshotList]);
 
@@ -248,12 +253,19 @@ const TimeLineComponent: React.FC<IProps> = ({
                 src={LeftIcon}
                 alt=""
                 onClick={() => {
-                  setPrevPage();
+                  setPrevList();
                 }}
               />
             ) : (
               <></>
             )}
+            <LeftIconImage
+              src={RightSingleArrow}
+              alt=""
+              onClick={() => {
+                setPrevPage();
+              }}
+            />
             <DateText>
               <p
                 onClick={() => {
@@ -287,12 +299,19 @@ const TimeLineComponent: React.FC<IProps> = ({
                 {newDate && Moment(newDate).format("DD MMM YY")}{" "}
               </p>
             </DateText>
+            <RightIconImage
+              src={LeftSingleArrow}
+              alt=""
+              onClick={() => {
+                setNextPage();
+              }}
+            />
             {offset > 1 ? (
               <Image
                 src={RightIcon}
                 alt=""
                 onClick={() => {
-                  setNextPage();
+                  setNextList();
                 }}
               />
             ) : (
