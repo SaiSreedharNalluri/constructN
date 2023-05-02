@@ -273,7 +273,7 @@ const TimeLineComponent: React.FC<IProps> = ({
             <TimelineDots>
               {snapshotList.map((item: any, index: number) => {
                 return (
-                  <Tooltip title={Moment(item.date).format("DD MMM YYYY")}>
+                  <Tooltip title={Moment(item.date).format("DD MMM YYYY")} key={Moment(item.date).format("DD MMM YYYY")}>
                     <CircleIcon
                       key={index}
                       active={index === activeCircleIndex}

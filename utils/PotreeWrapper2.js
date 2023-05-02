@@ -534,25 +534,28 @@ export const PotreeViewerUtils = () => {
         _currentMode = reality.type;
         _currentReality = reality;
 
-        switch(reality.type) {
-            case "360 Video":
-            case "360 Image":
-                _imageLoadedOnce = true;
-                loadPanoImages(image ? image : _viewer.scene.images360[reality.index].images[0], reality.index, cameraWithOffset);
-                break;
-            case "Phone Image":
-                _imageLoadedOnce = true;
-                loadOrientedImages(image ? image : _viewer.scene.orientedImages[reality.index].images[0], reality.index);
-                break;
-            case "Drone Image":
-                _imageLoadedOnce = true;
-                loadOrientedImages(image ? image : _viewer.scene.orientedImages[reality.index].images[0], reality.index);
-                break;
-
+        try {
+            switch(reality.type) {
+                case "360 Video":
+                case "360 Image":
+                    _imageLoadedOnce = true;
+                    loadPanoImages(image ? image : _viewer.scene.images360[reality.index].images[0], reality.index, cameraWithOffset);
+                    break;
+                case "Phone Image":
+                    _imageLoadedOnce = true;
+                    loadOrientedImages(image ? image : _viewer.scene.orientedImages[reality.index].images[0], reality.index);
+                    break;
+                case "Drone Image":
+                    _imageLoadedOnce = true;
+                    loadOrientedImages(image ? image : _viewer.scene.orientedImages[reality.index].images[0], reality.index);
+                    break;
+    
+            }
+        } catch(e) {
+            console.log(e)
+        } finally {
+            pointCloudView(true);
         }
-
-
-        pointCloudView(true);
     }   
 
     const unLoadImage = () => {

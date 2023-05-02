@@ -1698,7 +1698,7 @@ function GenericViewer(props) {
         <div className={isCompare?'w-0.5':''} color='gray'></div>
         <div id="CompareView" className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
           {renderViewer(2)}
-          {renderMinimap(2)}
+          {compareViewMode === 'Potree' ? renderMinimap(2) : <></>}
           <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}></TimeLineComponent>
         </div>
         {
