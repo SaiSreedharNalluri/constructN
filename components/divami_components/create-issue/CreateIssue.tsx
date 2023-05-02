@@ -46,8 +46,19 @@ const CreateIssue = ({
     if (event === "Cancel") {
       setshowPopUp(true);
     } else {
-      setValidate(true);
-      handleCreateTask(formData);
+      const dateIndex = formData.findIndex((ele: any) => ele.id === "dates");
+      if (dateIndex !== -1) {
+        if (
+          !formData[dateIndex].fields[0].isError &&
+          !formData[dateIndex].fields[0].isError
+        ) {
+          setValidate(true);
+          handleCreateTask(formData);
+        }
+      } else {
+        setValidate(true);
+        handleCreateTask(formData);
+      }
     }
   };
 
