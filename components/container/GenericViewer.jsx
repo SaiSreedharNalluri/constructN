@@ -483,8 +483,8 @@ function GenericViewer(props) {
           ) {
             let viewerState = potreeUtils.current.getViewerState();
             potreeCompareUtils.current.updateViewerState(viewerState);
+            syncPotreeEvent.current = false;
           }
-          syncPotreeEvent.current = false;
         } else if (syncPotreeEvent.current) {
           // }else {
           // get from potree utils
@@ -495,7 +495,7 @@ function GenericViewer(props) {
           ) {
             let viewerState = potreeUtils.current.getViewerState();
             forgeCompareUtils.current.updateViewerState(viewerState);
-            syncForgeEvent.current = false;
+            syncPotreeEvent.current = false;
           }
         }
       } else {
@@ -508,6 +508,15 @@ function GenericViewer(props) {
           ) {
             let viewerState = potreeCompareUtils.current.getViewerState();
             potreeUtils.current.updateViewerState(viewerState);
+            syncPotreeEvent.current = false;
+          }
+        } else if (syncPotreeEvent.current) {
+          if (
+            potreeUtils.current != undefined &&
+            forgeCompareUtils.current != undefined
+          ) {
+            let viewerState = potreeUtils.current.getViewerState();
+            forgeCompareUtils.current.updateViewerState(viewerState);
             syncPotreeEvent.current = false;
           }
         } else if (syncForgeEvent.current) {
