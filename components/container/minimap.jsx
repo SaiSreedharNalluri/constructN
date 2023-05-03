@@ -22,11 +22,12 @@ function Minimap(props) {
 
     return (
         <React.Fragment>
-            <div
-            id={viewerId}
-            className="relative w-full h-full z-5"
-          >
-          </div>
+            <div className="relative w-full h-full z-5">
+                <div
+                id={viewerId}
+                className="relative w-full h-full z-6"
+                ></div>
+            </div>
         </React.Fragment>
     );
 };

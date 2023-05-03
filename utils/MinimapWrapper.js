@@ -10,7 +10,55 @@ import {
 } from './ViewerDataUtils';
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
 
+export class ForgeMinimapInstance {
+
+  constructor(viewerId) {
+    // console.log("Inside Potree Initializer: ")
+    let viewerConfig = {
+      extensions: ["Autodesk.BimWalk", "Autodesk.DataVisualization", "Autodesk.Edit2D"],
+    };
+    let htmlDiv = document.getElementById(viewerId);
+    this.viewer = new Autodesk.Viewing.Viewer3D(htmlDiv, viewerConfig);
+    this.newInstance = true;
+  }
+
+  static getInstance(viewerId) {
+      if (!this.instance) {
+          this.instance = new ForgeMinimapInstance(viewerId);
+          delete this.instance.constructor;
+      } else {
+        let child = document.getElementById(viewerId);
+        console.log("ForgeMinimapInstanceTest inside getInstance: ", child);
+        
+        let parent = child.parentElement;
+        parent.removeChild(document.getElementById(viewerId));
+        parent.appendChild(this.instance.viewer.clientContainer);
+        // parent.insertBefore(this.instance.viewer.clientContainer, parent.firstChild);
+        this.instance.newInstance = false;
+      }
+      console.log("ForgeMinimapInstanceTest inside getInstance: ", this.instance);
+      return this.instance;
+  }
+
+  static getCompareInstance(viewerId) {
+      if (!this.compareInstance) {
+          this.compareInstance = new ForgeMinimapInstance(viewerId);
+          delete this.compareInstance.constructor;
+      } else {
+          let child = document.getElementById(viewerId);
+          console.log("ForgeMinimapInstanceTest inside getCompareInstance: ", child);
+          let parent = child.parentElement;
+          parent.removeChild(document.getElementById(viewerId));
+          parent.appendChild(this.compareInstance.viewer.clientContainer);
+          // parent.insertBefore(this.compareInstance.viewer.clientContainer, parent.firstChild);
+          this.compareInstance.newInstance = false;
+      }
+      return this.compareInstance;
+  }
+}
+
 export const MinimapUtils = () => {
+  let _instance;
   let _viewerId;
   let _eventHandler;
   let _viewer;
@@ -44,7 +92,7 @@ export const MinimapUtils = () => {
   let _dataVizUtils;
 
   const isCompareView = () => {
-    if (_viewerId.split("_")[1] === "1") {
+    if (_viewerId.split("-")[1] === "1") {
       return false;
     } else {
       return true;
@@ -89,6 +137,45 @@ export const MinimapUtils = () => {
   }
 
   const initializeViewer = () => {
+    console.log("ForgeMinimapInstanceTest Inside Initializer callback: ", );
+
+    if (isCompareView()) {
+      _instance = ForgeMinimapInstance.getCompareInstance(_viewerId);
+      _viewer = _instance.viewer;
+    } else {
+      _instance = ForgeMinimapInstance.getInstance(_viewerId);
+      _viewer = _instance.viewer;
+    }
+
+    setUpEventListeners();
+
+    let startedCode = _viewer.start();
+    _viewer.canvasId = _viewerId;
+
+    if (startedCode > 0) {
+      console.error("ForgeMinimapInstanceTest Failed to create a Viewer: WebGL not supported.");
+      return;
+    } else {
+      console.log("ForgeMinimapInstanceTest inside startCode check: ", _instance.newInstance);
+      if (!_instance.newInstance) {
+        onViewerInitialized();
+      }
+    }
+
+    _viewer.navigation.setWorldUpVector(
+      new THREE.Vector3().fromArray([0, 0, 1]),
+      false
+    );
+    _viewer.navigation.setReverseZoomDirection(true);
+
+    _viewer.disableHighlight(true)
+    _viewer.disableHighlight(true)
+    if (_isViewerInitialized) {
+      loadData();
+    }
+  }
+
+  const initializeViewer2 = () => {
     // if(_viewer) return
     console.log("Inside minimap Initializer callback", _eventHandler);
     let htmlDiv = document.getElementById(_viewerId);
@@ -803,11 +890,12 @@ export const MinimapUtils = () => {
     if (_isViewerInitialized) {
       removeData();
       removeEventListeners();
-      _viewer.finish();
-      _viewer = null;
+      _viewer.unloadExtension(ForgeDataVisualization.EXTENSION_ID);
+      // _viewer.finish();
+      // _viewer = null;
       _dataVizExtn = undefined;
       _dataVizUtils = undefined;
-      Autodesk.Viewing.shutdown();
+      // Autodesk.Viewing.shutdown();
     }
     _isViewerInitialized = false;
   };
