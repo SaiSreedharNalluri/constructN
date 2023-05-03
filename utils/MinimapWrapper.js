@@ -293,6 +293,9 @@ export const MinimapUtils = () => {
             _manifestNode,
             generateModelOptions(document.tm, _manifestNode)
           );
+          // setInterval(() => {
+          //   _viewer.fitToView(undefined, _model)
+          // }, 200)
         },
         function () {
           console.error("Failed fetching Forge manifest");
@@ -651,6 +654,12 @@ export const MinimapUtils = () => {
     }
   };
 
+  const fitToView = () => {
+    if(_isViewerInitialized && _isModelLoaded) {
+      _viewer.fitToView(undefined, _model)
+    }
+  }
+
   const setPivotPoint = () => {
     if (!_manifestNode.is2D() && _isModelLoaded) {
       let fuzzy_box = _viewer.model.getFuzzyBox();
@@ -917,6 +926,7 @@ export const MinimapUtils = () => {
     cancelAddTag: cancelAddTag,
     selectTag: selectTag,
     showTag: showTag,
+    fitToView: fitToView,
     getContext: getContext,
     getViewerState: getViewerState,
     updateViewerState: updateViewerState,

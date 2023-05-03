@@ -1382,6 +1382,8 @@ function GenericViewer(props) {
     }
   };
 
+  
+
   useEffect(() => {
     if (forgeInitialised) {
       if(minimapUtils.current) {
@@ -1398,11 +1400,12 @@ function GenericViewer(props) {
 
   useEffect(() => {
     // To stop Minimap from accepting keyboard events
-    // document.addEventListener(
-    //   "keydown", (event) => {
-    //     event.stopPropagation()
-    //   }, true
-    // );
+    document.addEventListener(
+      "keydown", (event) => {
+        const forgeAvailable = document.getElementById('forgeViewer_1')
+        if(!forgeAvailable) event.stopPropagation()
+      }, false
+    );
     // return cleanUpOnPageChange;
   }, []);
 
@@ -1477,6 +1480,8 @@ function GenericViewer(props) {
       currentViewerType.current = viewerType;
       handleViewerTypeChange();
     }
+    if(minimapUtils.current) minimapUtils.current.fitToView()
+    if(minimapCompareUtils.current) minimapCompareUtils.current.fitToView()
     return cleanUpOnViewerTypeChange;
   }, [viewerType])
 
