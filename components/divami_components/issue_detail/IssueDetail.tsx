@@ -116,6 +116,7 @@ import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
 import Chip from "@mui/material/Chip";
 import moment from "moment";
+import { showImagePreview } from "../../../utils/IssueTaskUtils";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -331,6 +332,7 @@ function BasicTabs(props: any) {
       method: "status_desc",
     },
   ];
+
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
@@ -707,7 +709,13 @@ function BasicTabs(props: any) {
                         <>
                           <AttachedImageDiv className={`detailsImageDiv`}>
                             {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
-                            <AttachedImageTitle>{a?.name}</AttachedImageTitle>
+                            <AttachedImageTitle
+                              onClick={() => {
+                                showImagePreview(a);
+                              }}
+                            >
+                              {a?.name}
+                            </AttachedImageTitle>
 
                             <DeleteIcon
                               src={Delete}
@@ -1278,6 +1286,18 @@ const CustomIssueDetailsDrawer = (props: any) => {
           callBackvalue={onDeleteIssue}
         />
       )}
+      {/* {showImagePreviewPopup && (
+        <PopupComponent
+          open={showImagePreviewPopup}
+          setShowPopUp={setShowImagePreviewPopup}
+          modalTitle={"Preview"}
+          // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
+          modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.title} (#${selectedIssue?._id})"?`}
+          primaryButtonLabel={"Delete"}
+          SecondaryButtonlabel={"Cancel"}
+          callBackvalue={onDeleteIssue}
+        />
+      )} */}
     </>
   );
 };

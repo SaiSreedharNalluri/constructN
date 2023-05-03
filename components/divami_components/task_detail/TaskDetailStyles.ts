@@ -248,7 +248,7 @@ export const MoreText = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  color: #F1742E;
+  color: #f1742e;
   margin-left: 5px;
 `;
 
@@ -358,6 +358,7 @@ export const AttachedImageDiv = styled("div")`
 
 export const AttachedImageTitle = styled("div")`
   margin-left: 21px;
+  cursor: pointer;
 `;
 
 export const AttachedImageIcon = styled("div")``;
@@ -541,7 +542,7 @@ export const ImageErrorIcon = styled(Image)({
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
   color: "blue",
-  width:"100% !important",
+  width: "100% !important",
 
   "label + &": {
     marginTop: theme.spacing(8),
@@ -568,11 +569,11 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
     color: "#101F4C",
     fontWeight: "400",
     "&::placeholder": {
-       color: "#787878",
-       fontFamily: "Open Sans",
-       fontSize: "14px",
-       lineHeight: "20px",
-       fontWeight: "400"
+      color: "#787878",
+      fontFamily: "Open Sans",
+      fontSize: "14px",
+      lineHeight: "20px",
+      fontWeight: "400",
     },
   },
 }));

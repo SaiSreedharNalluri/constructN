@@ -521,6 +521,13 @@ td {
 .form-container-child > div:first-child {
   margin-top: 20px;
 }
+
+.date-error{
+  color: #f67c74;
+  font-size: 14px;
+  margin-top: 3px;
+}
+
 .calc-width-full {
   width: 100%;
 }

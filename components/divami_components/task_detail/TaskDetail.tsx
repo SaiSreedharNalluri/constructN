@@ -112,6 +112,7 @@ import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "./ActivityLog";
 import { ActivityLogContainer } from "../issue_detail/IssueDetailStyles";
 import moment from "moment";
+import { showImagePreview } from "../../../utils/IssueTaskUtils";
 
 // const BodyContainer = styled(Box)`
 //   height: calc(100vh - 134px);
@@ -821,7 +822,13 @@ function BasicTabs(props: any) {
                         <>
                           <AttachedImageDiv className={`detailsImageDiv`}>
                             {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
-                            <AttachedImageTitle>{a?.name}</AttachedImageTitle>
+                            <AttachedImageTitle
+                              onClick={() => {
+                                showImagePreview(a);
+                              }}
+                            >
+                              {a?.name}
+                            </AttachedImageTitle>
 
                             <AttachedImageIcon>
                               <Image src={""} alt="" />

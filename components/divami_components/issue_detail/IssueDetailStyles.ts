@@ -364,6 +364,7 @@ export const AttachedImageDiv = styled("div")`
 
 export const AttachedImageTitle = styled("div")`
   margin-left: 21px;
+  cursor: pointer;
 `;
 
 export const AttachedImageIcon = styled("div")``;

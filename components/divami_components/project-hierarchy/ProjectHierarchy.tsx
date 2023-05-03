@@ -241,7 +241,10 @@ const ProjectHierarchy = ({
         />
       </SearchContainer>
       <TreeViewContainer
-        style={{ overflow: "auto", height: `calc(100vh - 300px)` }}
+        style={{
+          overflow: "auto",
+          height: `calc(100vh - 300px)`,
+        }}
       >
         {treeViewData.length === 0 ? (
           <ErrorImageDiv>

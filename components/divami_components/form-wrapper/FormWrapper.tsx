@@ -43,6 +43,17 @@ const FormWrapper = (props: any) => {
               ...item,
               isError: true,
             };
+          } else if (item.id === "dates") {
+            const startDate = item?.fields[0].defaultValue;
+            const endDate = item?.fields[1].defaultValue;
+            if (startDate && endDate) {
+              if (
+                new Date(startDate)?.getTime() > new Date(endDate).getTime()
+              ) {
+                return { ...item, isError: true };
+              }
+            }
+            return { ...item, isError: false };
           } else {
             return { ...item, isError: false };
           }
@@ -68,6 +79,7 @@ const FormWrapper = (props: any) => {
   };
 
   const handleDateChange = (e: any, id: string) => {
+    let fieldHasValue = e !== null ? e["$D"] + e["$M"] + e["$y"] : null;
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (item.id === "dates") {
@@ -76,6 +88,11 @@ const FormWrapper = (props: any) => {
             fields: item.fields.map((eachField: any) => {
               return {
                 ...eachField,
+                isError:
+                  (isNaN(fieldHasValue) && fieldHasValue !== null) ||
+                  (JSON.stringify(e) == "null" &&
+                    !isNaN(fieldHasValue) &&
+                    fieldHasValue !== null),
                 defaultValue:
                   eachField.id == id
                     ? JSON.parse(JSON.stringify(e))
@@ -329,15 +346,26 @@ const FormWrapper = (props: any) => {
     <div className="form-container-child">
       {config.map((eachConfig: any, index: any) => {
         return (
-          <FormElementContainer
-            key={eachConfig.id}
-            className={` ${eachConfig.isError ? "formErrorLabel" : ""}`}
-          >
-            {eachConfig.formLabel ?? (
-              <CustomLabel label={eachConfig.formLabel} />
-            )}
-            {renderHTML(eachConfig, false, index)}
-          </FormElementContainer>
+          <>
+            <FormElementContainer
+              key={eachConfig.id}
+              className={` ${eachConfig?.isError ? "formErrorLabel" : ""}`}
+            >
+              {eachConfig?.formLabel ?? (
+                <CustomLabel label={eachConfig.formLabel} />
+              )}
+              {renderHTML(eachConfig, false, index)}
+
+              {eachConfig.id == "dates" &&
+                (eachConfig.fields[0].isError ||
+                  eachConfig.fields[1].isError ||
+                  eachConfig.isError == true) && (
+                  <div className="date-error">
+                    Please enter the date in correct format
+                  </div>
+                )}
+            </FormElementContainer>
+          </>
         );
       })}
     </div>
