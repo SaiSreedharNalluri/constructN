@@ -1033,7 +1033,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
   };
 
   const saveEditDetails = async (data: any, projectId: string) => {
-    if (data.title && data.type && data.priority && data.description) {
+    if (data.title && data.type && data.priority) {
       updateTask(projectId, data, selectedTask?._id)
         .then((response) => {
           if (response.success === true) {

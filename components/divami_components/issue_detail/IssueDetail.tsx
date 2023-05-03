@@ -1087,7 +1087,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const saveEditDetails = async (data: any, projectId: string) => {
-    if (data.title && data.type && data.priority && data.description) {
+    if (data.title && data.type && data.priority) {
       editIssue(projectId, data, selectedIssue?._id)
         .then((response) => {
           if (response.success === true) {
