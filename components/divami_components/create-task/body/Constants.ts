@@ -32,7 +32,7 @@ export const TASK_FORM_CONFIG = [
     formLabel: "Tell us more about this task",
     placeholder: "Tell us more about this task",
     isError: false,
-    isReq: true,
+    isReq: false,
     isReadOnly: false,
   },
   {

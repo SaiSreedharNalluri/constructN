@@ -180,8 +180,7 @@ const Task = ({
     formDataObj.append("jreq", JSON.stringify(data));
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
-    console.log("formData", data);
-    if (data.title && data.type && data.priority && data.description) {
+    if (data.title && data.type && data.priority) {
       setEnableSubmit(false);
 
       createTaskWithAttachments(projectId as string, formDataObj)

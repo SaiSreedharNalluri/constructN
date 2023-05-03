@@ -43,6 +43,7 @@ interface IProps {
   setNextList: any;
   totalPages: any;
   offset: any;
+  tools?: any;
 }
 
 const TimeLineComponent: React.FC<IProps> = ({
@@ -57,6 +58,7 @@ const TimeLineComponent: React.FC<IProps> = ({
   setNextList,
   totalPages,
   offset,
+  tools,
 }) => {
   const [bottomNav, setBottomNav] = useState(false);
   const [page, setPage] = useState<any>();
@@ -114,7 +116,7 @@ const TimeLineComponent: React.FC<IProps> = ({
   //     return "No Reality";
   //   }
   // };
-  console.log(snapshotList, "snapjhos");
+  console.log(snapshotList, "snapjhos", tools);
   useEffect(() => {
     if (page || page == 0) {
       setCurrentSnapshot(snapshotList[page]);
@@ -242,43 +244,44 @@ const TimeLineComponent: React.FC<IProps> = ({
   // console.log(snapshotList, "snaphsot listt");
   return (
     <>
-      <TimeLineStyleContainer isFullScreen={isFullScreen}>
-        <SelectedTimeLine
-          style={{ bottom: bottomNav ? (isFullScreen ? 0 : "0") : "unset" }}
-          onClick={toggleTimeline}
-          data-testid={"selected-timeline"}
-        >
-          {Moment(currentSnapshot?.date).format("DD MMM YYYY")}
-        </SelectedTimeLine>
-        {bottomNav ? (
-          <TimelineNavigation>
-            {offset !== totalPages ? (
+      {tools?.toolName !== "compareDesign" ? (
+        <TimeLineStyleContainer isFullScreen={isFullScreen}>
+          <SelectedTimeLine
+            style={{ bottom: bottomNav ? (isFullScreen ? 0 : "0") : "unset" }}
+            onClick={toggleTimeline}
+            data-testid={"selected-timeline"}
+          >
+            {Moment(currentSnapshot?.date).format("DD MMM YYYY")}
+          </SelectedTimeLine>
+          {bottomNav ? (
+            <TimelineNavigation>
+              {offset !== totalPages ? (
+                <LeftIconImage
+                  src={LeftIcon}
+                  alt=""
+                  onClick={() => {
+                    setPrevList();
+                  }}
+                />
+              ) : (
+                <></>
+              )}
               <LeftIconImage
-                src={LeftIcon}
+                src={RightSingleArrow}
                 alt=""
                 onClick={() => {
-                  setPrevList();
+                  setPrevPage();
                 }}
               />
-            ) : (
-              <></>
-            )}
-            <LeftIconImage
-              src={RightSingleArrow}
-              alt=""
-              onClick={() => {
-                setPrevPage();
-              }}
-            />
-            <DateText>
-              <p
-                onClick={() => {
-                  setPage(0);
-                }}
-              >
-                {oldDate && Moment(oldDate).format("DD MMM YY")}
-              </p>
-            </DateText>
+              <DateText>
+                <p
+                  onClick={() => {
+                    setPage(0);
+                  }}
+                >
+                  {oldDate && Moment(oldDate).format("DD MMM YY")}
+                </p>
+              </DateText>
 
             <TimelineDots>
               {snapshotList.map((item: any, index: number) => {
@@ -296,52 +299,54 @@ const TimeLineComponent: React.FC<IProps> = ({
               })}
             </TimelineDots>
 
-            <DateText>
-              <p
-                onClick={() => {
-                  setPage(snapshotList.length - 1);
-                }}
-              >
-                {newDate && Moment(newDate).format("DD MMM YY")}{" "}
-              </p>
-            </DateText>
-            <RightIconImage
-              src={LeftSingleArrow}
-              alt=""
-              onClick={() => {
-                setNextPage();
-              }}
-            />
-            {offset > 1 ? (
-              <Image
-                src={RightIcon}
+              <DateText>
+                <p
+                  onClick={() => {
+                    setPage(snapshotList.length - 1);
+                  }}
+                >
+                  {newDate && Moment(newDate).format("DD MMM YY")}{" "}
+                </p>
+              </DateText>
+              <RightIconImage
+                src={LeftSingleArrow}
                 alt=""
                 onClick={() => {
-                  setNextList();
+                  setNextPage();
                 }}
               />
-            ) : (
-              <></>
-            )}
-
-            <CustomCalender
-              onChange={handleDateChange}
-              data-testid="calender"
-              shouldDisableDate={disableWeekends}
-              hideTextField
-              data={{
-                disableAll: true,
-                defaultValue: currentSnapshot?.date,
-                // defaultValue: page === 2 ? newDate : oldDate,
-                disableDays: disableWeekends,
-                styles: calenderStyles,
-              }}
-            />
-          </TimelineNavigation>
-        ) : (
-          <></>
-        )}
-      </TimeLineStyleContainer>
+              {offset > 1 ? (
+                <Image
+                  src={RightIcon}
+                  alt=""
+                  onClick={() => {
+                    setNextList();
+                  }}
+                />
+              ) : (
+                <></>
+              )}
+              <CustomCalender
+                onChange={handleDateChange}
+                data-testid="calender"
+                shouldDisableDate={disableWeekends}
+                hideTextField
+                data={{
+                  disableAll: true,
+                  defaultValue: currentSnapshot?.date,
+                  // defaultValue: page === 2 ? newDate : oldDate,
+                  disableDays: disableWeekends,
+                  styles: calenderStyles,
+                }}
+              />
+            </TimelineNavigation>
+          ) : (
+            <></>
+          )}
+        </TimeLineStyleContainer>
+      ) : (
+        <></>
+      )}
       {/* {snapshotList && snapshotList.length > 0 && (
         <TimeLineStyleContainer isFullScreen={isFullScreen}>
           <SelectedTimeLine

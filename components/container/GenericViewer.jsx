@@ -1730,6 +1730,7 @@ function GenericViewer(props) {
             setNextList={setNextList}
             totalPages={totalPages}
            offset={offset}
+
           ></TimeLineComponent>
         </div>
         <div className={isCompare?'w-0.5':''} color='gray'></div>
@@ -1741,6 +1742,8 @@ function GenericViewer(props) {
            setNextList={setNextList}
            totalPages={totalPages}
            offset={offset}
+           tools={props?.tools}
+
           ></TimeLineComponent>
         </div>
         {

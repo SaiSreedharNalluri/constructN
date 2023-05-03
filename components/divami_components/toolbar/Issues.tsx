@@ -189,7 +189,7 @@ const Issues = ({
     delete data["id"];
     formData.append("jreq", JSON.stringify(data));
     const projectId = values.filter((item: any) => item.projectId)[0].projectId;
-    if (data.title && data.type && data.priority && data.description) {
+    if (data.title && data.type && data.priority) {
       setEnableSubmit(false);
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
