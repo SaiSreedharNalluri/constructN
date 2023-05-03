@@ -273,6 +273,8 @@ export class ForgeDataVizUtils {
                             this._dbMap[1] = undefined
             
                             this._viewer.overlays.removeMesh(mesh, 'DataVizDots')
+
+                            break;
                         }
                     }
 
@@ -555,8 +557,6 @@ export class ForgeDataVizUtils {
     }
 
     _onSpriteClick = (event) => {
-
-        console.log(event, 'ppp')
 
         this._dataVizExtn.clearHighlightedViewables()
 

@@ -1392,7 +1392,7 @@ function GenericViewer(props) {
     // document.addEventListener(
     //   "keydown", (event) => {
     //     event.stopPropagation()
-    //   }, false
+    //   }, true
     // );
     // return cleanUpOnPageChange;
   }, []);
@@ -1655,7 +1655,7 @@ function GenericViewer(props) {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
       }}
       className={`${'z-10 rounded-lg bg-white'} ${showMinimap && ((count == 1 && viewerType === "Potree") || (count == 2 &&  compareViewMode === "Potree")) ? 'opacity-100' : 'opacity-0'}`}>
-      <div className='flex flex-col h-full'>
+      <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
         <div className='h-8 rounded-lg bg-white flex'>
           <IconButton className='cursor-move' size="small">
             <DragIndicatorIcon fontSize="inherit" />
@@ -1671,7 +1671,7 @@ function GenericViewer(props) {
             <FullscreenIcon fontSize="inherit" />
           </IconButton>
         </div>
-        <MiniMap
+        <MiniMap 
           count={count} 
           style={{ height: 'calc(100%)' }} 
           compareViewMode={compareViewMode} 
