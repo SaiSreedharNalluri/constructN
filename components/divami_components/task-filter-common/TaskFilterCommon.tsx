@@ -77,6 +77,7 @@ import {
   ButtonsContainer,
   FilterCardSecondContainer,
   FilterFooter,
+  FilterCardSelectAllTextHeader,
 } from "./StyledComponent";
 import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
@@ -624,7 +625,7 @@ const TaskFilterCommon: React.FC<any> = ({
           return each.code === "taskType" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
-                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+                {/* <FilterCardTitleText>{each?.title}</FilterCardTitleText> */}
               </FilterCardTitle>
               <FilterCardSelectAll>
                 {each?.selectAllStatus === "T" ? (
@@ -637,9 +638,9 @@ const TaskFilterCommon: React.FC<any> = ({
                       alt="checked checkbox"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
                   <FilterCardSelectAllSpan>
@@ -651,9 +652,9 @@ const TaskFilterCommon: React.FC<any> = ({
                       alt="unchecked checkbox"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
                   <FilterCardSelectAllSpan>
@@ -665,9 +666,9 @@ const TaskFilterCommon: React.FC<any> = ({
                       alt="reset"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
                   ""
@@ -712,7 +713,7 @@ const TaskFilterCommon: React.FC<any> = ({
           ) : (
             <FilterCardSecondContainer key={index}>
               <FilterCardTitle>
-                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+                {/* <FilterCardTitleText>{each?.title}</FilterCardTitleText> */}
               </FilterCardTitle>
               <FilterCardSelectAll>
                 {each?.selectAllStatus === "T" ? (
@@ -724,9 +725,9 @@ const TaskFilterCommon: React.FC<any> = ({
                       src={Checked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
                   <FilterCardSelectAllSpan>
@@ -737,9 +738,9 @@ const TaskFilterCommon: React.FC<any> = ({
                       src={UnChecked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
                   <FilterCardSelectAllSpan>

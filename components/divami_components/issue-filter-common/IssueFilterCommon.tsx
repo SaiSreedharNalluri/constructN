@@ -39,6 +39,7 @@ import {
   DatePickerContainer,
   FilterFooter,
   FilterCardSecondContainer,
+  FilterCardSelectAllTextHeader,
 } from "./IssueStyledComponent";
 import { Issue } from "../../../models/Issue";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
@@ -643,7 +644,7 @@ const FilterCommon: React.FC<IProps> = ({
           return each.title === "Issue Type" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
-                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+                {/* <FilterCardTitleText>{each?.title}</FilterCardTitleText> */}
               </FilterCardTitle>
               <FilterCardSelectAll>
                 {each?.selectAllStatus === "T" ? (
@@ -656,9 +657,9 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="checked checkbox"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
                   <FilterCardSelectAllSpan>
@@ -670,9 +671,9 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="unchecked checkbox"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
                   <FilterCardSelectAllSpan>
@@ -684,9 +685,9 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="reset"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
                   ""
@@ -731,7 +732,7 @@ const FilterCommon: React.FC<IProps> = ({
           ) : (
             <FilterCardSecondContainer key={index}>
               <FilterCardTitle>
-                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+                {/* <FilterCardTitleText>{each?.title} hii</FilterCardTitleText> */}
               </FilterCardTitle>
               <FilterCardSelectAll>
                 {each?.selectAllStatus === "T" ? (
@@ -743,9 +744,9 @@ const FilterCommon: React.FC<IProps> = ({
                       src={Checked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each?.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
                   <FilterCardSelectAllSpan>
@@ -756,9 +757,9 @@ const FilterCommon: React.FC<IProps> = ({
                       src={UnChecked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each?.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
                   <FilterCardSelectAllSpan>
@@ -769,9 +770,9 @@ const FilterCommon: React.FC<IProps> = ({
                       src={Indeterminate}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each?.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
                   ""
