@@ -32,7 +32,7 @@ export const ISSUE_FORM_CONFIG = [
     formLabel: "Tell us more about this issue",
     placeholder: "Tell us more about this issue",
     isError: false,
-    isReq: true,
+    isReq: false,
     isReadOnly: false,
   },
   {
