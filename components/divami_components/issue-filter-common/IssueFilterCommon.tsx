@@ -40,6 +40,8 @@ import {
   FilterFooter,
   FilterCardSecondContainer,
   FilterCardSelectAllTextHeader,
+  RefreshIcon,
+  CloseIcon,
 } from "./IssueStyledComponent";
 import { Issue } from "../../../models/Issue";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
@@ -56,6 +58,7 @@ import {
   getIssuesTypes,
 } from "../../../services/issue";
 import { getProjectUsers } from "../../../services/project";
+import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -566,17 +569,7 @@ const FilterCommon: React.FC<IProps> = ({
   const handleClose = () => {
     onClose(true);
   };
-  const CloseIcon = styled(Image)({
-    cursor: "pointer",
-    width: "24px",
-    height: "24px",
-  });
 
-  const RefreshIcon = styled(Image)({
-    cursor: "pointer",
-    width: "18px",
-    height: "15px",
-  });
   const onReset = () => {
     let temp = FilterState?.map((each: any, serial: number) => {
       return { ...each };
@@ -631,7 +624,7 @@ const FilterCommon: React.FC<IProps> = ({
                 onClick={() => {
                   handleClose();
                 }}
-                src={NotificationNewIcon}
+                src={closeWithCircle}
                 alt={"close icon"}
                 data-testid="filter-close"
               />
@@ -641,6 +634,11 @@ const FilterCommon: React.FC<IProps> = ({
       </FilterCommonHeader>
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
+          console.log("each", each);
+
+          const newTitle = each.title.split(" ");
+          const finalTitle = newTitle[1];
+          // console.log(narr[1]);
           return each.title === "Issue Type" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
@@ -658,7 +656,8 @@ const FilterCommon: React.FC<IProps> = ({
                       data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {each.title}
+                      {/* {each.title} */}
+                      {finalTitle}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
@@ -672,7 +671,8 @@ const FilterCommon: React.FC<IProps> = ({
                       data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {each.title}
+                      {/* {each.title} */}
+                      {finalTitle}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
@@ -686,7 +686,8 @@ const FilterCommon: React.FC<IProps> = ({
                       data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {each.title}
+                      {/* {each.title} */}
+                      {finalTitle}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
@@ -745,7 +746,8 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {each?.title}
+                      {/* {each?.title} */}
+                      {finalTitle}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
@@ -758,7 +760,8 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {each?.title}
+                      {/* {each?.title} */}
+                      {finalTitle}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
@@ -771,7 +774,8 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {each?.title}
+                      {/* {each?.title} */}
+                      {finalTitle}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (

@@ -10,6 +10,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import NotificationNewIcon from "../../../public/divami_icons/NotificationNewIcon.svg";
 import newRefreshIcon from "../../../public/divami_icons/newRefreshIcon.svg";
+import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 
 const CustomAutoComplete = styled(Autocomplete)({
   border: "1px solid #36415d",
@@ -613,7 +614,7 @@ const TaskFilterCommon: React.FC<any> = ({
                   handleClose();
                 }}
                 data-testid="filter-close"
-                src={NotificationNewIcon}
+                src={closeWithCircle}
                 alt={"close icon"}
               />
             </HeaderRightSection>
@@ -622,6 +623,8 @@ const TaskFilterCommon: React.FC<any> = ({
       </FilterCommonHeader>
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
+          const newTitle = each.title.split(" ");
+          const finalTitle = newTitle[1];
           return each.code === "taskType" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
@@ -639,7 +642,8 @@ const TaskFilterCommon: React.FC<any> = ({
                       data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {each.title}
+                      {/* {each.title} */}
+                      {finalTitle}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
@@ -653,7 +657,8 @@ const TaskFilterCommon: React.FC<any> = ({
                       data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {each.title}
+                      {/* {each.title} */}
+                      {finalTitle}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
@@ -667,7 +672,8 @@ const TaskFilterCommon: React.FC<any> = ({
                       data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {each.title}
+                      {/* {each.title} */}
+                      {finalTitle}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
@@ -726,7 +732,8 @@ const TaskFilterCommon: React.FC<any> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {each.title}
+                      {/* {each.title} */}
+                      {finalTitle}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
@@ -739,7 +746,8 @@ const TaskFilterCommon: React.FC<any> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {each.title}
+                      {/* {each.title} */}
+                      {finalTitle}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
@@ -751,9 +759,9 @@ const TaskFilterCommon: React.FC<any> = ({
                       src={Indeterminate}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {finalTitle}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
                   ""

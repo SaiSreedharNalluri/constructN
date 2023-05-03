@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import Image from "next/image";
 
 export const FilterCommonMain = styled("div")({
   width: "438px",
@@ -107,6 +108,16 @@ export const FilterCardSelectAll = styled.div`
   margin-right: 20px;
   // border-bottom: 1px solid #d9d9d9;
 `;
+export const RefreshIcon = styled(Image)({
+  cursor: "pointer",
+  width: "18px",
+  height: "15px",
+});
+export const CloseIcon = styled(Image)({
+  cursor: "pointer",
+  width: "24px",
+  height: "24px",
+});
 
 export const FilterCardSelectAllSpan = styled.span`
   display: flex;
