@@ -114,7 +114,6 @@ export const CustomInputField = styled(TextField)({
 export const StyledTreeView = styled(TreeView)({
   "& .Mui-expanded": {
     backgroundColor: "#F4F4F4",
-
     borderColor: "red",
   },
   "& .MuiCollapse-root": {
@@ -135,14 +134,8 @@ export const StyledTreeView = styled(TreeView)({
     },
   },
   "& .MuiTreeItem-content.MuiTreeItem-content.Mui-selected": {
-    // backgroundColor: "#FFF2EB",
+    backgroundColor: "#FFF2EB",
     color: "#F1742E",
-    background: "none !important",
-    // color: "yellow",
-  },
-  "& .MuiTreeItem-content.Mui-selected": {
-    backgroundColor: "none !important",
-    // color: "yellow",
   },
   " & .MuiTreeView-root": {
     "& .MuiTreeItem-content": {
@@ -151,7 +144,6 @@ export const StyledTreeView = styled(TreeView)({
   },
   "& ul": {
     backgroundColor: "#F4F4F4",
-
     "& .MuiTreeItem-label": {
       borderBottom: "0",
     },
@@ -159,11 +151,9 @@ export const StyledTreeView = styled(TreeView)({
       borderLeft: "1px dotted #D9D9D9",
     },
   },
-  "& .MuiTreeItem-content:hover": {
-    // background: "none",
-    backgroundColor: "#FFF2EB",
-    color: "#F1742E",
-  },
+  // "& .MuiTreeItem-content:hover": {
+  //   background: "none",
+  // },
 });
 
 // display: ${(props) => (props.openselectlayer ? null : "none")};

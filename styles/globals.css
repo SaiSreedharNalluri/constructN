@@ -360,6 +360,10 @@ body {
   top: -6px;
 }
 
+.adsk-viewing-viewer .explode-submenu.visible {
+  display: none;
+}
+
 .css-1wg4ruk-MuiList-root {
   padding-bottom: 0px;
 }

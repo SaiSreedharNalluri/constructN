@@ -100,6 +100,7 @@ const Issues = ({
         document.body
     ).then(function (canvas) {
       canvas.toBlob((blob) => {
+        console.log(blob, "blob");
         setImage(blob as Blob);
       }, "image/png");
     });
@@ -230,6 +231,7 @@ const Issues = ({
 
   const issueSubmitFn = (formdata: any) => {
     issueMenuInstance.toolAction = "issueCreateSuccess";
+    issueMenuInstance.response = { ...formdata.context, id: formdata._id };
     issueMenuClicked(issueMenuInstance);
     closeIssueCreate();
     issueSubmit(formdata);

@@ -60,6 +60,7 @@ import {
 import { getDesignMap } from "../../../../utils/ViewerDataUtils";
 import enterfullscreenIcon from "../../../../public/divami_icons/enterfullscreen.svg";
 import exitfullscreenIcon from "../../../../public/divami_icons/exitfullscreen.svg";
+import { useSearchParams } from 'next/navigation';
 
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -306,6 +307,7 @@ const Index: React.FC<IProps> = () => {
             if (router.query.structId !== undefined) {
               setStructure(
                 structs.find((e) => {
+                  console.log("finding structure: ", e._id);
                   if (e._id === router.query.structId) {
                     return e;
                   }
@@ -325,6 +327,7 @@ const Index: React.FC<IProps> = () => {
                   "expandedNodes",
                   JSON.stringify(nodes)
                 );
+                console.log(nodes, "noddfses");
                 setExpanded(nodes);
               }
             } else {
@@ -348,6 +351,7 @@ const Index: React.FC<IProps> = () => {
                   "expandedNodes",
                   JSON.stringify(nodes)
                 );
+                console.log(nodes, "okokokoj");
 
                 setExpanded(nodes);
               } else {
@@ -357,6 +361,7 @@ const Index: React.FC<IProps> = () => {
                   "expandedNodes",
                   JSON.stringify(nodes)
                 );
+                console.log(nodes, "yutrye");
 
                 setExpanded(nodes);
                 // window.localStorage.setItem(
@@ -435,7 +440,11 @@ const Index: React.FC<IProps> = () => {
     const dataB: any[] = [];
     const getBreadCrumbs = (NodeData: any) => {
       dataB.unshift(NodeData?._id);
-
+      console.log(
+        NodeData,
+        getNodeDataById(NodeData.parent, list),
+        "dsfdfsfsd"
+      );
       const struct = NodeData.parent
         ? getNodeDataById(NodeData.parent, list)
         : null;
@@ -444,6 +453,7 @@ const Index: React.FC<IProps> = () => {
       }
     };
     getBreadCrumbs(structure);
+    console.log(dataB, "Fsdfsd");
     return dataB;
   };
 
@@ -828,6 +838,7 @@ const Index: React.FC<IProps> = () => {
         }
       } else if (!designAndRealityMaps.includes(currentViewType)) {
         if (designAndRealityMaps.includes("pointCloud")) {
+          console.log("comingjklj");
           setViewType("pointCloud");
           setSelectedReality("pointCloud");
         } else if (designAndRealityMaps.includes("orthoPhoto")) {
@@ -871,6 +882,7 @@ const Index: React.FC<IProps> = () => {
 
       toolClicked({ toolName: "viewType", toolAction: currentViewType });
     } else {
+      console.log("assds", currentViewType);
       if (selectedReality !== currentViewType)
         setSelectedReality(currentViewType);
       toolClicked({ toolName: "viewType", toolAction: currentViewType });
@@ -881,6 +893,7 @@ const Index: React.FC<IProps> = () => {
       getIssuesList(router.query.projectId as string, structureId)
         .then((response) => {
           if (isDownload) {
+            console.log(isDownload, "isdownload");
             // response.blob().then((blob: any) => {
             // Creating new object of PDF file
             const data = response.result;
@@ -1062,6 +1075,7 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       default:
+        console.log("Not Sorted");
         break;
     }
   };
@@ -1460,6 +1474,45 @@ const Index: React.FC<IProps> = () => {
         });
     }
   }, [router.isReady, router.query.projectId, router.query.structId]);
+
+
+  //To Be used by Shivram
+  
+  // const searchParams = useSearchParams();
+  // useEffect(()=>{
+  //   //const currentParams = Object.fromEntries([...searchParams]);
+  //   //console.log(currentParams);
+  //   console.log("structure=",searchParams.get('structure'),"task=",searchParams.get('task'),"type=",searchParams.get('type'));
+  //   if(searchParams.get('type')!==null&&searchParams.get('type')!==currentViewType)
+  //   {
+  //     console.log('Must Change ViewType',searchParams.get('type'));
+  //     //setClickedTool({toolAction:searchParams.get('type')||'',toolName:'viewType'});
+  //     setViewType(searchParams.get('type')||'');
+  //     //setClickedTool({toolAction:'issueHide',toolName:'issue'});
+  //   }
+  //   if(searchParams.get('structure')!==null&&searchParams.get('structure')!==structure?._id)
+  //   {
+  //     console.log('Must Change Structure',searchParams.get('structure'));
+      
+  //     const temp_str=structuresList.find((str)=> searchParams.get('structure')===str._id)
+  //     temp_str&&setStructure(temp_str);
+      
+  //   }
+  //   if(searchParams.get('task')!==null)
+  //   {
+  //     console.log('Must Load Task',searchParams.get('task'));
+  //     setClickedTool({toolAction:'taskSelect',toolName:'task',response:tasksList.find((t)=>t._id===searchParams.get('task'))});
+  //     setCurrentContext(tasksList.find((t)=>t._id===searchParams.get('task'))?.context||{type:'Task'});
+  //     setOpenTaskDetails(true);
+  //   }
+  //   else if(searchParams.get('issue')!==null)
+  //   {
+  //     console.log('Must Load Issue',searchParams.get('issue'));
+  //     setClickedTool({toolAction:'issueSelect',toolName:'issue',response:tasksList.find((t)=>t._id===searchParams.get('issue'))});
+  //     setCurrentContext(issuesList.find((t)=>t._id===searchParams.get('issue'))?.context||{type:'Issue'});
+  //     setOpenIssueDetails(true);
+  //   }
+  // },[searchParams,structure,currentViewType]);
 
   const getBreadCrumbs = () => {
     //let structTemp :IStructure = structure;

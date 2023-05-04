@@ -1,5 +1,5 @@
 
-import { getPointCloudTM, getRealityImagesPath, getRealityPositions, getRealityPositionsPath, getOrthoPhotoLayers, getMapboxHotspotLayers } from "../services/reality";
+import { getRealityPointCloudPath, getPointCloudTM, getRealityImagesPath, getRealityPositions, getRealityPositionsPath, getOrthoPhotoLayers, getMapboxHotspotLayers } from "../services/reality";
 import { getRealityPath, getDesignPath, getFloormapPath, getFloormapTmPath,  getMapboxLayersPath, getStructurePath } from "./S3Utils";
 
 
@@ -88,6 +88,43 @@ export const getPointCloud = async(structure, snapshot) =>{
     return pointCloudData;
 }
 
+export const getPointClouds = async(structure, realityMap) => {
+    let pointCloudMap = {};
+    for (const mode in realityMap) {
+        switch (mode) {
+            case "360 Video":
+                let videoWalkPointClouds = [];
+                for (let reality of realityMap[mode].realities) {
+                    const tmResponse = await getPointCloudTM(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
+                    const pointCloudData = {
+                        id: reality._id,
+                        path: `${getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)}/pointcloud/cloud.json`,
+                        tm: tmResponse ? tmResponse.data.tm : [],
+                        offset: tmResponse ? tmResponse.data.offset: []
+                    }
+                    videoWalkPointClouds.push(pointCloudData)
+                }
+                pointCloudMap[mode] = videoWalkPointClouds;
+                break;
+            case "Drone Image":
+                let dronePointClouds = [];
+                for (let reality of realityMap[mode].realities) {
+                    const tmResponse = await getPointCloudTM(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
+                    const pointCloudData = {
+                        id: reality._id,
+                        path: `${getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)}/pointcloud/cloud.json`,
+                        tm: tmResponse ? tmResponse.data.tm : [],
+                        offset: tmResponse ? tmResponse.data.offset: []
+                    }
+                    dronePointClouds.push(pointCloudData)
+                }
+                pointCloudMap[mode] = dronePointClouds;
+                break;
+        }
+    }
+    return pointCloudMap
+}
+
 export const getMapboxLayers = async(structure, snapshot) =>{
     const layersList = await getOrthoPhotoLayers(getStructurePath(snapshot.project, structure._id));
     return layersList ? layersList.data : undefined;
@@ -147,33 +184,72 @@ export const getRealityLayers = async (structure, realityMap) => {
     return realityPositionMap;
 }
 
-export const getRealityLayersPath = (structure, realityMap) => {
+export const getRealityLayersPath = async (structure, realityMap) => {
     let realityPositionMap = {}
     for (const mode in realityMap) {
         switch (mode) {
         case "360 Video":
             let position360VideoPath = [];
             for (let reality of realityMap[mode].realities) {
-            let paths = {
-                images: getRealityImagesPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
-                position: getRealityPositionsPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id))
-            }
-            position360VideoPath.push(paths)
+                const tmResponse = await getPointCloudTM(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
+                let realityResponse = await getRealityPositions(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
+                let paths = {
+                    id: reality._id,
+                    pointCloud: getRealityPointCloudPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
+                    tm: tmResponse ? tmResponse.data.tm : [],
+                    offset: tmResponse ? tmResponse.data.offset: [],
+                    position: realityResponse.data,
+                    imagesPath: getRealityImagesPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
+                    positionPath: getRealityPositionsPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id))
+                }
+                position360VideoPath.push(paths)
             }
             realityPositionMap[mode] = position360VideoPath;
             break;
         case "360 Image":
+            let position360ImagePath = [];
+            for (let reality of realityMap[mode].realities) {
+                let realityResponse = await getRealityPositions(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
+                let paths = {
+                    id: reality._id,
+                    position: realityResponse.data,
+                    imagesPath: getRealityImagesPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
+                    positionPath: getRealityPositionsPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id))
+
+                }
+                position360ImagePath.push(paths)
+            }
+            realityPositionMap[mode] = position360ImagePath;
             break;
         case "Phone Image":
+            let positionPhoneImagePath = [];
+            for (let reality of realityMap[mode].realities) {
+                let realityResponse = await getRealityPositions(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
+                let paths = {
+                    id: reality._id,
+                    position: realityResponse.data,
+                    imagesPath: getRealityImagesPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
+                    positionPath: getRealityPositionsPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id))
+                }
+                positionPhoneImagePath.push(paths)
+            }
+            realityPositionMap[mode] = positionPhoneImagePath;
             break;
         case "Drone Image":
             let positionDroneImagePath = [];
             for (let reality of realityMap[mode].realities) {
-            let paths = {
-                images: getRealityImagesPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
-                position: getRealityPositionsPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id))
-            }
-            positionDroneImagePath.push(paths)
+                const tmResponse = await getPointCloudTM(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
+                let realityResponse = await getRealityPositions(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
+                let paths = {
+                    id: reality._id,
+                    pointCloud: getRealityPointCloudPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
+                    tm: tmResponse ? tmResponse.data.tm : [],
+                    offset: tmResponse ? tmResponse.data.offset: [],
+                    position: realityResponse.data,
+                    imagesPath: getRealityImagesPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
+                    positionPath: getRealityPositionsPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id))
+                }
+                positionDroneImagePath.push(paths)
             }
             realityPositionMap[mode] = positionDroneImagePath;
             break;

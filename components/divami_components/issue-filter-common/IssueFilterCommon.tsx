@@ -104,7 +104,7 @@ const FilterCommon: React.FC<IProps> = ({
 
   const Filters = [
     {
-      title: "Issue Type",
+      title: "Type",
       selectAllStatus: "T",
       options: [
         { optionTitle: "Safety", optionStatus: "T" },
@@ -115,7 +115,7 @@ const FilterCommon: React.FC<IProps> = ({
       ],
     },
     {
-      title: "Issue Priority",
+      title: "Priority",
       selectAllStatus: "T",
       options: [
         { optionTitle: "Low", optionStatus: "T" },
@@ -124,7 +124,7 @@ const FilterCommon: React.FC<IProps> = ({
       ],
     },
     {
-      title: "Issue Status",
+      title: "Status",
       selectAllStatus: "T",
       options: [
         { optionTitle: "In Progress", optionStatus: "T" },

@@ -24,6 +24,10 @@ import moment from "moment";
 import Image from "next/image";
 import LeftIcon from "../../../public/divami_icons/leftIcon.svg";
 import RightIcon from "../../../public/divami_icons/rightIcon.svg";
+import { Tooltip } from "@mui/material";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
 import LeftSingleArrow from "../../../public/divami_icons/LeftSingleArrow.png";
 import RightSingleArrow from "../../../public/divami_icons/RightSingleArrow.png";
 
@@ -278,9 +282,10 @@ const TimeLineComponent: React.FC<IProps> = ({
                 </p>
               </DateText>
 
-              <TimelineDots>
-                {snapshotList.map((item: any, index: number) => {
-                  return (
+            <TimelineDots>
+              {snapshotList.map((item: any, index: number) => {
+                return (
+                  <Tooltip title={Moment(item.date).format("DD MMM YYYY")} key={Moment(item.date).format("DD MMM YYYY")}>
                     <CircleIcon
                       key={index}
                       active={index === activeCircleIndex}
@@ -288,9 +293,10 @@ const TimeLineComponent: React.FC<IProps> = ({
                     >
                       3
                     </CircleIcon>
-                  );
-                })}
-              </TimelineDots>
+                  </Tooltip>
+                );
+              })}
+            </TimelineDots>
 
               <DateText>
                 <p
