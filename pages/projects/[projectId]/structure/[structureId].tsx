@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Header from "../../../../components/divami_components/header/Header";
 import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
-//import NewGenViewer from "../../../../components/container/NewGenViewer";
-//import { IGenData } from "../../../../models/IGenData";
+import NewGenViewer from "../../../../components/container/NewGenViewer";
+import { IGenData } from "../../../../models/IGenData";
 //import * as AAA from "multiverse-viewer";
-import {NewGenViewer, IGenData} from "multiverse-viewer/lib/cjs";
+//import {NewGenViewer, IGenData} from "multiverse-viewer/lib/cjs";
 import { IDesign } from "../../../../models/IDesign";
 import { getDesignTM } from "../../../../services/design";
 import { getDesignPath } from "../../../../utils/S3Utils";
