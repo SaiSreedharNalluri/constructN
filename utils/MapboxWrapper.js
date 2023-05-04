@@ -7,7 +7,7 @@ const utmCode = "+proj=utm +ellps=GRS80 +datum=nad83 +units=m +no_defs +zone=";
 const latLngCode =
   "+proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees +no_defs";
 
-export const MapboxViewerUtils = () => {
+export const MapboxViewerUtils = (function() {
   let _viewerId;
   let _eventHandler;
   let _viewer;
@@ -584,4 +584,4 @@ export const MapboxViewerUtils = () => {
     setHotspotClick: setHotspotClick,
     shutdown: shutdown,
   };
-};
+})();
