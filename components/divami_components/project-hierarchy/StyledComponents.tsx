@@ -9,6 +9,11 @@ import type { SelectLayerContainerProps } from "./Type";
 export const TreeViewContainer = styled("div")({
   width: "301px",
   margin: "28px 0 0 0",
+  "&::-webkit-scrollbar": {
+    background: "#D9D9D9",
+    borderRadius: "60px",
+    width: "5px",
+  },
 });
 export const CustomInputField = styled(TextField)({
   fontFamily: "Open Sans",

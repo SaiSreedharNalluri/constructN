@@ -232,7 +232,7 @@ export const MoreText = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  color: #ff843f;
+  color: #f1742e;
   margin-left: 5px;
   cursor: pointer;
 `;
@@ -330,6 +330,7 @@ export const AttachedImageDiv = styled("div")`
 
 export const AttachedImageTitle = styled("div")`
   margin-left: 21px;
+  cursor: pointer;
 `;
 
 export const AttachedImageIcon = styled("div")``;
@@ -357,12 +358,12 @@ export const RelatedTagTitle = styled("div")`
 export const RelatedTagsButton = styled("div")`
   display: flex;
   justify-content: flex-start;
-  margin-top: 8px;
+  margin-top: 10px;
   flex-wrap: wrap;
 `;
 
 export const RelatedSingleButton = styled("div")`
-  border: 1px solid black;
+  border: 1px solid #101f4c;
   padding: 8px 22px;
   border-radius: 40px;
   height: 32px;
@@ -370,6 +371,8 @@ export const RelatedSingleButton = styled("div")`
   font-size: 12px;
   margin-right: 10px;
   margin-bottom: 10px;
+  font-family: Open Sans;
+  font-style: normal;
 `;
 
 export const StyledLabel = styled(Typography)`
@@ -484,7 +487,6 @@ export const AddCommentInput = styled("input")({
 export const ActivityLogContainer = styled("div")({
   // marginBottom: "40px",
   marginBottom: "26px",
-
 });
 
 export const AddCommentButtonContainer = styled("div")({
@@ -535,19 +537,19 @@ export const AssigneeCustomSelect = styled("div")({
   marginTop: "20px",
 });
 
-export const ValueContainer = styled('div')(({ theme }) => ({
-  '& > :not(:last-child)': {
+export const ValueContainer = styled("div")(({ theme }) => ({
+  "& > :not(:last-child)": {
     marginRight: theme.spacing(1),
   },
-  '& > *': {
+  "& > *": {
     marginBottom: theme.spacing(1),
   },
-  marginTop: '15px',
+  marginTop: "15px",
 }));
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
   color: "blue",
-  width:"100% !important",
+  width: "100% !important",
   "label + &": {
     marginTop: theme.spacing(8),
   },
@@ -578,11 +580,11 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
 
   "& .MuiInputBase-input": {
     "&::placeholder": {
-       color: "#787878",
-       fontFamily: "Open Sans",
-       fontSize: "14px",
-       lineHeight: "20px",
-       fontWeight: "400"
+      color: "#787878",
+      fontFamily: "Open Sans",
+      fontSize: "14px",
+      lineHeight: "20px",
+      fontWeight: "400",
     },
   },
 }));
@@ -610,9 +612,12 @@ export const AssigneeList = styled("div")({
   // background:"#FFFFF"
   // width: "308px",
   // height: "86px",
+  fontFamily: "Open Sans",
+
+  fontStyle: "normal",
+  fontSize: "14px",
   padding: "15px",
   color: "#101F4C",
-  fontSize: "14px",
   border: "1px solid #D9D9D9",
   marginTop: "-3px",
   boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
@@ -644,8 +649,6 @@ export const ParentAssigneeList = styled("div")({
   flexDirection: "row",
 });
 
-
-
 export const ExtraLabel = styled("div")`
   font-family: "Open Sans";
   color: #787878;
@@ -654,9 +657,8 @@ export const ExtraLabel = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 `;
-
 
 export const AssignedLabel = styled("div")`
   font-family: "Open Sans";
@@ -666,5 +668,5 @@ export const AssignedLabel = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 `;

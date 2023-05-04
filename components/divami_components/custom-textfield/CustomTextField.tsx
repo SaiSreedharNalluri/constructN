@@ -47,7 +47,7 @@ const StyledTextField = styled(TextField)({
     "& fieldset": { border: "1px solid #36415d" },
   },
   "&:focus-within fieldset": {
-    border: "1px solid #ff843f !important",
+    border: "1px solid #F1742E !important",
   },
 });
 

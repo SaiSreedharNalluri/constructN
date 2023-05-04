@@ -5,7 +5,7 @@ import _ from "lodash";
 import Moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import GenericViewer from "../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../components/container/leftOverLay";
@@ -26,7 +26,10 @@ import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
 import { deleteAttachment } from "../../../../services/attachments";
 import authHeader from "../../../../services/auth-header";
 import CollapsableMenu from "../../../../components/layout/collapsableMenu";
-import { getProjectDetails } from "../../../../services/project";
+import {
+  getProjectDetails,
+  getProjectUsers,
+} from "../../../../services/project";
 import {
   faCompressArrowsAlt,
   faExpandArrowsAlt,
@@ -57,6 +60,7 @@ import {
 import { getDesignMap } from "../../../../utils/ViewerDataUtils";
 import enterfullscreenIcon from "../../../../public/divami_icons/enterfullscreen.svg";
 import exitfullscreenIcon from "../../../../public/divami_icons/exitfullscreen.svg";
+import { useSearchParams } from 'next/navigation';
 
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -79,13 +83,13 @@ const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
 const OpenFullScreenButton = styled("div")(
   ({ onClick, isFullScreen }: any) => ({
     position: "fixed",
-    right: "40px",
-    bottom: "0px",
+    right: "6px",
+    bottom: "6px",
     cursor: "pointer",
   })
 );
 
-const CloseMenuButton = styled("div")({
+const CloseMenuButton = styled("div")(({ isFullScreen }: any) => ({
   height: "38px",
   width: "31px",
   // border: "1px solid #BDBDBD",
@@ -102,13 +106,29 @@ const CloseMenuButton = styled("div")({
   border: "1px solid rgb(189, 189, 189)",
   boxShadow: "rgb(200 200 200 / 10%) 5px 4px 8px",
   transform: "matrix(-1, 0, 0, 1, 0, 0)",
-});
+  marginLeft: isFullScreen ? 0 : "58px",
+})) as any;
+
+const SidePanelContainer = styled("div")(({ onClick, isFullScreen }: any) => ({
+  position: "absolute",
+  left: 0,
+  zIndex: 1,
+  background: "white",
+}));
+
+const LeftOverLayContainer = styled("div")(({ isFullScreen }: any) => ({
+  marginLeft: "58px",
+  zIndex: 0,
+}));
+
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   let [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
   const [currentProjectId, setActiveProjectId] = useState("");
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [project, setProject] = useState<IProjects>();
+  const [projectUsers, setProjectUsers] = useState<IProjects>();
+
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
   const [designMap, setDesignMap] = useState<any>();
@@ -180,7 +200,11 @@ const Index: React.FC<IProps> = () => {
   };
   const issueSubmit = (formdata: Issue) => {
     issuesList.push(formdata);
-    setIssueList(structuredClone(issuesList));
+    if (structure) {
+      getIssues(structure._id);
+    }
+
+    // setIssueList(structuredClone(issuesList));
     // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
     // toolClicked(myTool);
     closeIssueCreate();
@@ -203,7 +227,10 @@ const Index: React.FC<IProps> = () => {
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
     let myTool: ITools = { toolName: "task", toolAction: "taskCreated" };
-    setTasksList(structuredClone(tasksList));
+    // setTasksList(structuredClone(tasksList));
+    if (structure) {
+      getTasks(structure._id);
+    }
     // toolClicked(myTool);
     closeTaskCreate();
   };
@@ -351,6 +378,15 @@ const Index: React.FC<IProps> = () => {
         .catch((error) => {
           toast.error("failed to load data");
         });
+
+      getProjectUsers(router.query.projectId as string)
+        .then((response: any) => {
+          if (response.success === true) {
+            setProjectUsers(response.result);
+          }
+        })
+        .catch();
+
       const userObj: any = getCookie("user");
       let user = null;
       if (userObj) user = JSON.parse(userObj);
@@ -1329,7 +1365,7 @@ const Index: React.FC<IProps> = () => {
     deleteTask(router.query.projectId as string, taskObj._id)
       .then((response) => {
         if (response.success === true) {
-          toast(response.message);
+          toast.success(response.message);
           _.remove(taskFilterList, { _id: taskObj._id });
           setTasksList(taskFilterList);
           if (callback) {
@@ -1439,6 +1475,45 @@ const Index: React.FC<IProps> = () => {
     }
   }, [router.isReady, router.query.projectId, router.query.structId]);
 
+
+  //To Be used by Shivram
+  
+  // const searchParams = useSearchParams();
+  // useEffect(()=>{
+  //   //const currentParams = Object.fromEntries([...searchParams]);
+  //   //console.log(currentParams);
+  //   console.log("structure=",searchParams.get('structure'),"task=",searchParams.get('task'),"type=",searchParams.get('type'));
+  //   if(searchParams.get('type')!==null&&searchParams.get('type')!==currentViewType)
+  //   {
+  //     console.log('Must Change ViewType',searchParams.get('type'));
+  //     //setClickedTool({toolAction:searchParams.get('type')||'',toolName:'viewType'});
+  //     setViewType(searchParams.get('type')||'');
+  //     //setClickedTool({toolAction:'issueHide',toolName:'issue'});
+  //   }
+  //   if(searchParams.get('structure')!==null&&searchParams.get('structure')!==structure?._id)
+  //   {
+  //     console.log('Must Change Structure',searchParams.get('structure'));
+      
+  //     const temp_str=structuresList.find((str)=> searchParams.get('structure')===str._id)
+  //     temp_str&&setStructure(temp_str);
+      
+  //   }
+  //   if(searchParams.get('task')!==null)
+  //   {
+  //     console.log('Must Load Task',searchParams.get('task'));
+  //     setClickedTool({toolAction:'taskSelect',toolName:'task',response:tasksList.find((t)=>t._id===searchParams.get('task'))});
+  //     setCurrentContext(tasksList.find((t)=>t._id===searchParams.get('task'))?.context||{type:'Task'});
+  //     setOpenTaskDetails(true);
+  //   }
+  //   else if(searchParams.get('issue')!==null)
+  //   {
+  //     console.log('Must Load Issue',searchParams.get('issue'));
+  //     setClickedTool({toolAction:'issueSelect',toolName:'issue',response:tasksList.find((t)=>t._id===searchParams.get('issue'))});
+  //     setCurrentContext(issuesList.find((t)=>t._id===searchParams.get('issue'))?.context||{type:'Issue'});
+  //     setOpenIssueDetails(true);
+  //   }
+  // },[searchParams,structure,currentViewType]);
+
   const getBreadCrumbs = () => {
     //let structTemp :IStructure = structure;
     // let outputSting : string = structure?.name || '';
@@ -1462,6 +1537,18 @@ const Index: React.FC<IProps> = () => {
       }
     }
   };
+
+  useEffect(() => {
+    document.addEventListener("fullscreenchange", (event) => {
+      if (document.fullscreenElement) {
+        // We’re going fullscreen
+      } else {
+        // We’re exiting fullscreen
+        setIsFullScreen(false);
+      }
+    });
+  }, []);
+
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -1480,10 +1567,10 @@ const Index: React.FC<IProps> = () => {
 
       <div className="flex ">
         {!isFullScreen && (
-          <div ref={leftOverlayRef}>
+          <SidePanelContainer ref={leftOverlayRef}>
             {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
             <SidePanelMenu onChangeData={onChangeData} />
-          </div>
+          </SidePanelContainer>
         )}
 
         {/* <FullScreen handle={handle}> */}
@@ -1498,7 +1585,7 @@ const Index: React.FC<IProps> = () => {
                 // transform: "matrix(-1, 0, 0, 1, 0, 0)",
               }}
             >
-              <CloseMenuButton>
+              <CloseMenuButton isFullScreen={isFullScreen}>
                 <Image
                   src={ChevronLeftIcon}
                   width={17}
@@ -1512,7 +1599,11 @@ const Index: React.FC<IProps> = () => {
               <div>
                 {
                   <div
-                    style={{ overflow: "hidden" }}
+                    style={{
+                      overflow: "hidden",
+                      marginLeft: isFullScreen ? "0" : "58px",
+                      zIndex: 0,
+                    }}
                     ref={leftRefContainer}
                     className={`${
                       hierarchy ? "visible" : "hidden"
@@ -1654,8 +1745,11 @@ const Index: React.FC<IProps> = () => {
                 issuePriorityList={issuePriorityList}
                 issueStatusList={issueStatusList}
                 issueTypesList={issueTypesList}
+                taskPriorityList={tasksPriotityList}
+                taskStatusList={tasksStatusList}
                 taskFilterState={taskFilterState}
                 issueFilterState={issueFilterState}
+                setIssueFilterState={setIssueFilterState}
                 closeIssueCreate={closeIssueCreate}
                 closeTaskCreate={closeTaskCreate}
                 deleteTheIssue={deleteTheIssue}
@@ -1676,6 +1770,7 @@ const Index: React.FC<IProps> = () => {
                 setLayersUpdated={setLayersUpdated}
                 layersUpdated={layersUpdated}
                 setViewType={setViewType}
+                projectUsers={projectUsers}
               />
 
               {/* <CustomToaster /> */}

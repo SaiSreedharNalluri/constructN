@@ -23,8 +23,7 @@
 }
 
 .calc-h {
-  height: 100vh;
-  /* height: calc(100vh - 40px); */
+  height: calc(100vh - 60px);
   /* height: calc(100vh - 116px); */
 }
 
@@ -49,8 +48,7 @@
 }
 
 .calc-w {
-  /* width: calc(100% - 44px); */
-  width: 100%;
+  width: calc(100% - 44px);
 }
 
 .calc-w-compare {
@@ -147,7 +145,7 @@
 
 .attachmentsSection .detailsImageDiv:hover {
   background: #fff2eb;
-  color: #ff843f;
+  color: #f1742e;
 }
 
 .MuiDrawer-paper {
@@ -184,8 +182,9 @@ body {
 }
 
 .adsk-viewing-viewer .adsk-toolbar {
-  bottom: 30px;
-  left: calc(100% - 60px);
+  bottom: 110px;
+  left: unset !important;
+  right: 30px;
   pointer-events: none;
   position: absolute;
   text-align: center;
@@ -195,7 +194,7 @@ body {
 
 .adsk-viewing-viewer .adsk-toolbar .adsk-button .toolbar-vertical-group {
   bottom: -20px;
-  left: -50px;
+  /* left: -50px; */
   margin: 0;
   position: absolute;
   display: grid;
@@ -361,6 +360,10 @@ body {
   top: -6px;
 }
 
+.adsk-viewing-viewer .explode-submenu.visible {
+  display: none;
+}
+
 .css-1wg4ruk-MuiList-root {
   padding-bottom: 0px;
 }
@@ -451,12 +454,12 @@ body {
 
 .formField:focus-visible {
   outline: none;
-  border: 1px solid #ff843f !important;
+  border: 1px solid #f1742e !important;
   border-radius: 4px;
 }
 
 .formField.Mui-focused {
-  border: 1px solid #ff843f !important;
+  border: 1px solid #f1742e !important;
   border-radius: 4px;
 }
 
@@ -521,4 +524,28 @@ td {
 
 .form-container-child > div:first-child {
   margin-top: 20px;
+}
+
+.date-error{
+  color: #f67c74;
+  font-size: 14px;
+  margin-top: 3px;
+}
+
+.calc-width-full {
+  width: 100%;
+}
+.calc-height-full {
+  height: 100vh;
+}
+
+.margin-right-55 {
+  margin-right: 55px;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.custom-styled-menu:last-child {
+  border-bottom: none;
 }

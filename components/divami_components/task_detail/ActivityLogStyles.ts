@@ -177,7 +177,7 @@ export const ActivityCommentDiv = styled("div")({
   fontSize: "14px",
   color: "#101F4C",
   lineHeight: "20px",
-  wordBreak: "break-all",
+  wordBreak: "break-word",
 });
 export const ActivityComment = styled("span")({});
 export const ActivityIssueRaisedMain = styled("span")({});
@@ -221,7 +221,7 @@ export const CommentActions = styled("div")({
 
 export const ReplyButton = styled("div")({
   // marginRight: "20px",
-  color: "#FF843F",
+  color: "#F1742E",
   cursor: "pointer",
 });
 
@@ -274,5 +274,5 @@ export const ReplyCancel = styled("div")({
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontSize: "14px",
-  color: "#FF843F",
+  color: "#F1742E",
 });

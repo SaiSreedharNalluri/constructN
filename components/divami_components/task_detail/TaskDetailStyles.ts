@@ -228,7 +228,7 @@ export const MoreText = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  color: #ff843f;
+  color: #f1742e;
   margin-left: 5px;
 `;
 
@@ -325,6 +325,7 @@ export const AttachedImageDiv = styled("div")`
 
 export const AttachedImageTitle = styled("div")`
   margin-left: 21px;
+  cursor: pointer;
 `;
 
 export const AttachedImageIcon = styled("div")``;
@@ -352,7 +353,7 @@ export const RelatedTagTitle = styled("div")`
 export const RelatedTagsButton = styled("div")`
   display: flex;
   justify-content: flex-start;
-  margin-top: 8px;
+  margin-top: 10px;
   flex-wrap: wrap;
 `;
 
@@ -505,7 +506,7 @@ export const ImageErrorIcon = styled(Image)({
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
   color: "blue",
-  width:"100% !important",
+  width: "100% !important",
 
   "label + &": {
     marginTop: theme.spacing(8),
@@ -532,11 +533,11 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
     color: "#101F4C",
     fontWeight: "400",
     "&::placeholder": {
-       color: "#787878",
-       fontFamily: "Open Sans",
-       fontSize: "14px",
-       lineHeight: "20px",
-       fontWeight: "400"
+      color: "#787878",
+      fontFamily: "Open Sans",
+      fontSize: "14px",
+      lineHeight: "20px",
+      fontWeight: "400",
     },
   },
 }));
@@ -547,9 +548,12 @@ export const AssigneeList = styled("div")({
   // background:"#FFFFF"
   // width: "308px",
   // height: "86px",
+  fontFamily: "Open Sans",
+
+  fontStyle: "normal",
+  fontSize: "14px",
   padding: "15px",
   color: "#101F4C",
-  fontSize: "14px",
   border: "1px solid #D9D9D9",
   marginTop: "-3px",
   boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",

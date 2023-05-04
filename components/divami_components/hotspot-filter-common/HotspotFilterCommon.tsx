@@ -64,18 +64,7 @@ const HotspotFilterCommon: React.FC<IProps> = ({ onClose }) => {
     isflex: false,
     isReadOnly: false,
     // formLabel: "Select task priority",
-    options: [
-      {
-        label: "Plastic",
-        value: "plastic",
-        selected: false,
-      },
-      {
-        label: "Metalic",
-        value: "metalic",
-        selected: false,
-      },
-    ],
+    options: [],
   };
   const [assignee, setAssignees] = useState([assignees]);
   const [selectPrior, setSelectPrior] = useState([selectPriority]);

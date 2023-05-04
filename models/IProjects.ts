@@ -38,6 +38,24 @@ export interface IProjectUsers {
   fullName: string;
   age: number;
 }
+
+export interface IProjectUserList {
+  user:{
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  contact: Contact;
+  dob: string;
+  createdAt: string;
+  updatedAt: string;
+  fullName: string;
+  age: number;
+  avatar:string;
+  
+  };
+  role:string;
+}
 export interface Contact {
   code: string;
   number: number;
