@@ -1658,7 +1658,7 @@ function GenericViewer(props) {
     
     return (<Rnd
       ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
-      style={{left: count == 1 ? '84px' : '0px'}}
+      style={{ top:count == 1 ? '0px' : '0px'   }}
       minWidth={320}
       minHeight={28}
       maxWidth={'99%'}
@@ -1735,8 +1735,9 @@ function GenericViewer(props) {
     }
   };
   return (
-      <div className={` ${fullScreenMode?"w-full h-full":`${styles.calcWidth} ${styles.calcHeight}`} fixed flex flex-row overflow-hidden`}>
-        <div id="TheView" className="relative  basis-1/2 flex grow shrink">
+    <div className={` ${fullScreenMode?"w-full h-full":`${styles.calcWidth} ${styles.calcHeight}`} fixed flex flex-row overflow-hidden`}>
+       <div className={`flex relative ${fullScreenMode?"left-0 w-full":"left-59 calc-width"}  `}>
+    <div id="TheView" className={`calc-width-half  relative flex grow shrink`}>
           {renderViewer(1)}
           {renderMinimap(1)}
           <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
@@ -1747,8 +1748,8 @@ function GenericViewer(props) {
 
           ></TimeLineComponent>
         </div>
-        <div className={isCompare?'w-0.5':''} color='gray'></div>
-        <div id="CompareView" className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
+      <div className={isCompare?'w-0.5':''} color='gray'></div>
+    <div id="CompareView" className={`relative basis-1/2  flex grow shrink  ${isCompare ? "calc-whalf ": "hidden " }`}>
           {renderViewer(2)}
           {compareViewMode === 'Potree' ? renderMinimap(2) : <></>}
           <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
@@ -1775,6 +1776,7 @@ function GenericViewer(props) {
           </HotspotsCompare>
           : <></>
       }
+      </div>
       {/* 
     <div className={` ${isFullScreenActive?"w-full h-full":" calc-w calc-h"} fixed flex flex-row`}>
       <div id="TheView" className="relative basis-1/2 flex grow shrink">
