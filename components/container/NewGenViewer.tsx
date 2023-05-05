@@ -6,6 +6,7 @@ import Header from './header';
 import { ForgeViewerUtils } from '../../utils/ForgeWrapper2';
 import { PotreeViewerUtils } from '../../utils/PotreeWrapper';
 import { MapboxViewerUtils } from '../../utils/MapboxWrapper';
+import { autodeskAuth } from "../../services/forgeService";
 import {
   getPointCloudTM,
   getRealityImagesPath,
@@ -67,6 +68,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   let [selectedHotspot, setSelectedHotspot] = useState(0);
   let [selectedHotspotDetails, setSelectedHotspotDetails] = useState();
   let [selectedHotspotCompareDetails, setSelectedHotspotCompareDetails] = useState();
+  let [isFullScreenMode, setFullScreenMode] = useState(false);
+  let [forgeInitialised, setForgeInitialised] = useState(false);
 
  //let incomingPayload :IGenPayload;
  let incomingPayload = useRef<IGenPayload>();
@@ -93,6 +96,40 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   const toggleTimeline = () => {
     setBottomNav(!bottomNav);
   };
+
+  const initializeOptions = {
+    env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
+    api: "streamingV2", // for models uploaded to EMEA change this option to 'derivativeV2_EU'
+    getAccessToken: async function (onSuccess:any) {
+      const response = await autodeskAuth();
+      // console.log("Autodesk auth token:", response.data.result);
+      const res = response.data.result;
+
+      onSuccess(res.access_token, res.expires_in);
+    },
+  };
+
+  const initializerCallBack = () => {
+    // console.log("Inside Forge Initializer");
+    setForgeInitialised(true)
+  };
+
+  Autodesk.Viewing.Initializer(initializeOptions, initializerCallBack);
+
+
+  useEffect(() => {
+    if (forgeInitialised) {
+      // if(minimapUtils.current) {
+      //   minimapUtils.current.initializeViewer();
+      // }
+      // if(minimapCompareUtils.current) {
+      //   minimapCompareUtils.current.initializeViewer();
+      // }
+      if(forgeUtils.current) {
+        forgeUtils.current.initializeViewer();
+      }
+    }
+  }, [forgeInitialised]);
 
   useEffect(()=>{
    
@@ -139,6 +176,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
             compareMode.current='noCompare';
             console.log('Dispatching Close Viewer with',getViewerTypefromViewType(oldViewerData.currentViewType));
           }
+          break;
+        case 'setFullScreenMode':
+          setFullScreenMode(action.data==='true'?true:false);
           break;
         case 'setStructure':
           newViewerData=action.data as IGenData;
@@ -707,9 +747,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       case 'Forge':
         if (forgeUtils.current === undefined) {
           
-          forgeUtils.current = ForgeViewerUtils;
+          forgeUtils.current =  ForgeViewerUtils;
           console.log("InitViewer", forgeUtils.current);
-          forgeUtils.current.initializeViewer(viewerId, viewerEventHandler);
+          forgeUtils.current.setupViewer(viewerId, viewerEventHandler);
+          if(forgeInitialised)forgeUtils.current.initializeViewer();
           if(incomingPayload.current?.action.type==='setViewType')
           {
             console.log("InitViewer", forgeUtils.current);
@@ -752,10 +793,11 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       case 'compareDesign':
         if (forgeCompareUtils.current === undefined) {
           forgeCompareUtils.current = ForgeViewerUtils;
-          forgeCompareUtils.current.initializeViewer(
+          forgeCompareUtils.current.setupViewer(
             viewerId,
             viewerEventHandler
           );
+          if(forgeInitialised)forgeCompareUtils.current.initializeViewer();
           forgeCompareUtils.current.setType(currentViewerData.currentViewType);
         }
         break;
@@ -818,7 +860,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           forgeUtils.current.setSnapshot(currentViewerData.currentSnapshotBase);
           forgeUtils.current.updateIssuesData(currentViewerData.currentIssueList);
           forgeUtils.current.updateTasksData(currentViewerData.currentTaskList);
-          let Rdata = await getRealityLayers(currentViewerData.structure, getRealityMap(currentViewerData.currentSnapshotBase));
+          let Rdata = await getRealityLayersPath(currentViewerData.structure, getRealityMap(currentViewerData.currentSnapshotBase));
           console.log('Reality Layers',Rdata);
           forgeUtils.current.updateLayersData(Rdata,currentContext.current);
           forgeUtils.current.showLayers(currentViewerData.currentLayersList);
@@ -1278,11 +1320,11 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       <div className="fixed calc-w calc-h flex flex-row">
         <div id="TheView" className="relative basis-1/2 flex grow shrink">
           {isInitReady && renderViewer(1)}
-          <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentSnapshot}></TimeLineComponent>
+          {/* <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode}></TimeLineComponent> */}
         </div>
         <div className={`relative ${currentViewerData.currentCompareMode!=='noCompare' ? "basis-1/2": "hidden" }`}>
           {isInitReady && isCompareMode && renderViewer(2)}
-          <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotCompare||currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentCompareSnapshot}></TimeLineComponent>
+          {/* <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotCompare||currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode}></TimeLineComponent> */}
         </div>
         {
           currentViewerData.currentViewType === "Mapbox"  && hotspots && hotspots.length > 0 ?
