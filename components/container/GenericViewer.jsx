@@ -1,7 +1,7 @@
 import Script from 'next/script';
 import Moment from 'moment';
 import {Rnd } from 'react-rnd';
-import { Mixpanel } from '../analytics/mixpanel';
+import { Mixpanel } from '../analytics/Mixpanel';
 import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
 import Draggable, { DraggableCore } from "react-draggable";
 import Head from 'next/head';
@@ -742,7 +742,7 @@ function GenericViewer(props) {
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current == undefined) {
-          forgeUtils.current = ForgeViewerUtils();
+          forgeUtils.current = ForgeViewerUtils;
           forgeUtils.current.setupViewer(viewerId, viewerEventHandler);
           if(forgeInitialised) forgeUtils.current.initializeViewer()
           forgeUtils.current.setType(currentViewType.current);
@@ -772,7 +772,7 @@ function GenericViewer(props) {
     switch (compareViewMode) {
       case 'Forge':
         if (forgeCompareUtils.current == undefined) {
-          forgeCompareUtils.current = ForgeViewerUtils();
+          forgeCompareUtils.current = ForgeViewerUtils;
           forgeCompareUtils.current.setupViewer(viewerId, viewerEventHandler);
           if(forgeInitialised) forgeCompareUtils.current.initializeViewer()
           forgeCompareUtils.current.setType(currentViewType.current);
@@ -1740,7 +1740,7 @@ function GenericViewer(props) {
           {renderViewer(1)}
           {renderMinimap(1)}
           <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
-            setPrevList={setPrevList}
+            setPrevList={setPrevList}   
             setNextList={setNextList}
             totalPages={totalPages}
            offset={offset}

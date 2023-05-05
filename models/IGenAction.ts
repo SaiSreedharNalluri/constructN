@@ -9,7 +9,8 @@ export interface IGenNotifyViewerAction {
     type: "loadGenViewer" | "syncGenViewer" | "setViewMode" | "setViewType" | "setViewerContext" | "addViewLayer" | "removeViewLayer" | "setCompareMode" | 'closeGenViewer' | 'setStructure'| 'setBaseSnapshot' | 'setCompareSnapshot' |
     "issueView" | "issueCreate" | "issueCreateSuccess" | "issueCreateFail" | "issueSelect" | "issueShow" | "issueHide" | "issueRemoved" |
     "taskView" | "taskCreate" | "taskCreateSuccess" | "taskCreateFail" | "taskSelect" | "taskShow" | "taskHide" | "taskRemoved" |
-    "hotspotView" | "hotspotCreate" | "hotspotCreateSuccess" | "hotspotCreateFail" | "hotspotSelect" | "hotspotShow" | "hotspotHide" | "hotspotRemoved"
+    "hotspotView" | "hotspotCreate" | "hotspotCreateSuccess" | "hotspotCreateFail" | "hotspotSelect" | "hotspotShow" | "hotspotHide" | "hotspotRemoved" |
+    "setFullScreenMode"
     ,
     
     data? :string |[string] | [ITasks] | [Issue] | [IHotspot] | IViewerContext | IGenData | ISnapshot
