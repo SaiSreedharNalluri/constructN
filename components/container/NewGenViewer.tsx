@@ -4,7 +4,7 @@ import React, { useEffect, useState, memo, useRef, useCallback, useReducer } fro
 import Head from 'next/head';
 import Header from './header';
 import { ForgeViewerUtils } from '../../utils/ForgeWrapper2';
-import { PotreeViewerUtils } from '../../utils/PotreeWrapper';
+import { PotreeViewerUtils } from '../../utils/PotreeWrapper2';
 import { MapboxViewerUtils } from '../../utils/MapboxWrapper';
 import { autodeskAuth } from "../../services/forgeService";
 import {
@@ -60,7 +60,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   const [isCompareMode,setCompareMode] = useState<boolean>(false);
 
   let forgeUtils = useRef<typeof ForgeViewerUtils>();
-  let potreeUtils = useRef<PotreeViewerUtils>();
+  let potreeUtils = useRef<typeof PotreeViewerUtils>();
   let mapboxUtils = useRef<typeof MapboxViewerUtils>();
 
   let [hotspots, setHotspots] = useState([]);
@@ -76,9 +76,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
  let changeType = useRef<string>();
  var compareMode = useRef<string>('noCompare');
 
-  let multiverseViewer : undefined | PotreeViewerUtils | typeof ForgeViewerUtils | typeof MapboxViewerUtils = undefined ;//forgeUtils.current as typeof ForgeViewerUtils;
+  let multiverseViewer : undefined |typeof PotreeViewerUtils | typeof ForgeViewerUtils | typeof MapboxViewerUtils = undefined ;//forgeUtils.current as typeof ForgeViewerUtils;
 
-  let potreeCompareUtils = useRef<PotreeViewerUtils>();
+  let potreeCompareUtils = useRef<typeof PotreeViewerUtils>();
   let forgeCompareUtils = useRef<typeof ForgeViewerUtils>();
   let mapboxCompareUtils = useRef<typeof MapboxViewerUtils>();
 
@@ -271,6 +271,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           break;
         case 'issueCreateSuccess':
           newViewerData = {...oldViewerData,currentIssueList:{...oldViewerData.currentIssueList,...action.data as Issue}};
+          finishAddTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));
           //addTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));            
           break;
         case 'issueCreateFail':
@@ -296,6 +297,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         case 'taskCreateSuccess':
           //cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
           newViewerData = {...oldViewerData,currentTaskList:{...oldViewerData.currentTaskList,...action.data as ITasks}};
+          finishAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
         case 'taskCreateFail':
           cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
@@ -511,6 +513,21 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   };
 
+  const finishAddTag = (type:string,viewerType:string) => {
+    switch (viewerType) {
+      case 'Forge':
+        // if (forgeUtils.current) {
+        //   forgeUtils.current.finishAddTag();
+        // }
+        break;
+      case 'Potree':
+        if (potreeUtils.current) {
+          potreeUtils.current.finishAddTag(type);
+        }
+        break;
+    }
+  };
+
   const cancelAddTag = (type:string,viewerType:string) => {
     switch (viewerType) {
       case 'Forge':
@@ -678,7 +695,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           }
           else if(currentViewerData.currentViewType==='pointCloud')
           {
-            dispatchChangeViewerData({type:'setViewType',data:'Plan Drawings'});
+            //dispatchChangeViewerData({type:'setViewType',data:'Plan Drawings'});
           }
           break;
         case 'Reality':
@@ -765,12 +782,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         break;
       case 'Potree':
         if (potreeUtils.current === undefined) {
-          potreeUtils.current = new PotreeViewerUtils(
-            viewerId,
-            viewerEventHandler
-          );
+          potreeUtils.current = PotreeViewerUtils;
           if (!potreeUtils.current.isViewerLoaded()) {
-            potreeUtils.current.initialize();
+            potreeUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
           console.log("InitViewer", potreeUtils.current);
           multiverseViewer = potreeUtils.current;
@@ -804,14 +818,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       case 'compareReality':
         //console.log('Compare Reality Init TEST');
         if (potreeCompareUtils.current === undefined) {
-          potreeCompareUtils.current = new PotreeViewerUtils(
-            viewerId,
-            viewerEventHandler
-          );
-          console.log('Compare Reality Init TEST');
+          potreeCompareUtils.current = PotreeViewerUtils;
           if (!potreeCompareUtils.current.isViewerLoaded()) {
-            potreeCompareUtils.current.initialize();
-            console.log('Compare Reality Viewer Loaded TEST');
+            potreeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
         }
         break;
@@ -872,12 +881,13 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           potreeUtils.current.updateIssuesData(currentViewerData.currentIssueList);
           potreeUtils.current.updateTasksData(currentViewerData.currentTaskList);
           potreeUtils.current.updateData(
-            await getPointCloud(currentViewerData.structure, currentViewerData.currentSnapshotBase),
+            // await getPointCloud(currentViewerData.structure, currentViewerData.currentSnapshotBase),
+            {},
             getFloorPlanData(getDesignMap(currentViewerData.structure.designs))
           );
           //console.log("ContextVariable",currentContext.current);
           potreeUtils.current.updateLayersData(
-            getRealityLayersPath(currentViewerData.structure, getRealityMap(currentViewerData.currentSnapshotBase)),
+            await getRealityLayersPath(currentViewerData.structure, getRealityMap(currentViewerData.currentSnapshotBase)),
             currentContext.current//currentViewerData.viewerContext// was here
           );
         }

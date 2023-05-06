@@ -750,7 +750,7 @@ function GenericViewer(props) {
         break;
       case 'Potree':
         if (potreeUtils.current == undefined) {
-          potreeUtils.current = PotreeViewerUtils();
+          potreeUtils.current = PotreeViewerUtils;
           if (!potreeUtils.current.isViewerLoaded()) {
             potreeUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
@@ -780,7 +780,7 @@ function GenericViewer(props) {
         break;
       case 'Potree':
         if (potreeCompareUtils.current == undefined) {
-          potreeCompareUtils.current = PotreeViewerUtils();
+          potreeCompareUtils.current = PotreeViewerUtils;
           if (!potreeCompareUtils.current.isViewerLoaded()) {
             potreeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
