@@ -71,10 +71,6 @@ interface IProps {
   checkIsFilter: any;
 }
 
-// const Footer = () => {
-//   return <>Footer</>;
-// };
-
 const FilterCommon: React.FC<IProps> = ({
   visibility,
   closeOverlay,
@@ -105,30 +101,30 @@ const FilterCommon: React.FC<IProps> = ({
   const Filters = [
     {
       title: "Type",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "Safety", optionStatus: "T" },
-        { optionTitle: "BuildingCode", optionStatus: "T" },
+        { optionTitle: "Safety", optionStatus: "F" },
+        { optionTitle: "BuildingCode", optionStatus: "F" },
         { optionTitle: "Clash", optionStatus: "F" },
-        { optionTitle: "Commissioning", optionStatus: "T" },
+        { optionTitle: "Commissioning", optionStatus: "F" },
         { optionTitle: "Design", optionStatus: "F" },
       ],
     },
     {
       title: "Priority",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "Low", optionStatus: "T" },
-        { optionTitle: "Medium", optionStatus: "T" },
+        { optionTitle: "Low", optionStatus: "F" },
+        { optionTitle: "Medium", optionStatus: "F" },
         { optionTitle: "High", optionStatus: "F" },
       ],
     },
     {
       title: "Status",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "In Progress", optionStatus: "T" },
-        { optionTitle: "Blocked", optionStatus: "T" },
+        { optionTitle: "In Progress", optionStatus: "F" },
+        { optionTitle: "Blocked", optionStatus: "F" },
         { optionTitle: "To-do", optionStatus: "F" },
         { optionTitle: "Completed", optionStatus: "F" },
       ],
@@ -163,6 +159,12 @@ const FilterCommon: React.FC<IProps> = ({
   //   onClose(true);
   // };
 
+  React.useEffect(() => {
+    // console.log("Karan", assignees, assignee);
+    console.log("Karan A", issueFilterState);
+    console.log("Karan A", assignee);
+  }, []);
+
   const onFilterApply = () => {
     let data: any = {};
     data.issueTypeData = [];
@@ -170,22 +172,23 @@ const FilterCommon: React.FC<IProps> = ({
     data.issueStatusData = [];
 
     data.assigneesData = assignee[0]?.selectedName;
+
     FilterState.forEach((item: any) => {
-      if (item.title == "Issue Type") {
+      if (item.title == "Type") {
         const x = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
         x.forEach((element: any) => {
           data.issueTypeData.push(element.optionTitle);
         });
-      } else if (item.title == "Issue Priority") {
+      } else if (item.title == "Priority") {
         const z = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
         z.forEach((element: any) => {
           data.issuePriorityData.push(element.optionTitle);
         });
-      } else if (item.title == "Issue Status") {
+      } else if (item.title == "Status") {
         const y = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
@@ -219,41 +222,7 @@ const FilterCommon: React.FC<IProps> = ({
       onFilterApply();
       handleClose();
     }
-
-    console.log("test", issueFilterState, FilterState);
   };
-
-  // const formHandler = (event: any) => {
-  //   if (event === "Cancel") {
-  //     handleClose();
-  //   } else {
-  //     const { issuePriorityData, issueStatusData, issueTypeData, ...restObj } =
-  //       issueFilterState.filterData;
-  //     const isArrEmpty: Boolean =
-  //       (issuePriorityData == undefined || issuePriorityData?.length === 0) &&
-  //       (issueStatusData !== undefined || issueStatusData?.length === 0) &&
-  //       (issueTypeData !== undefined || issueTypeData?.length === 0);
-  //     const isEmpty = Object.values(restObj).every(
-  //       (x) => x === null || x === "" || x === undefined
-  //     );
-
-  //     console.log(
-  //       "Test",
-  //       issuePriorityData,
-  //       issueStatusData,
-  //       issueTypeData,
-  //       issueFilterState
-  //     );
-  //     if (isEmpty && isArrEmpty) {
-  //       alert("TEST");
-  //     } else {
-  //       onFilterApply();
-  //       handleClose();
-  //     }
-  //   }
-  // };
-
-  console.log("setIssueFilterState", setIssueFilterState.isFilterApplied);
 
   useEffect(() => {
     if (router.isReady) {
@@ -264,7 +233,12 @@ const FilterCommon: React.FC<IProps> = ({
       });
       getIssuesPriority(router.query.projectId as string).then((response) => {
         if (response.success === true) {
-          setTaskPriority(response.result);
+          setTaskPriority(
+            response.result.filter(
+              (item: any) =>
+                item === "High" || item === "Low" || item === "Medium"
+            )
+          );
         }
       });
       getProjectUsers(router.query.projectId as string)
@@ -286,7 +260,7 @@ const FilterCommon: React.FC<IProps> = ({
   useEffect(() => {
     SetFilterState((prev: any) => {
       return prev.map((item: any) => {
-        if (item.title === "Issue Type") {
+        if (item.title === "Type") {
           let selectAllStatus = "F";
           if (issueFilterState.isFilterApplied) {
             if (
@@ -321,7 +295,7 @@ const FilterCommon: React.FC<IProps> = ({
             }),
           };
         }
-        if (item.title === "Issue Priority") {
+        if (item.title === "Priority") {
           let selectAllStatus = "F";
           if (issueFilterState.isFilterApplied) {
             if (
@@ -358,7 +332,7 @@ const FilterCommon: React.FC<IProps> = ({
             }),
           };
         }
-        if (item.title === "Issue Status") {
+        if (item.title === "Status") {
           let selectAllStatus = "F";
           if (issueFilterState.isFilterApplied) {
             if (
@@ -591,7 +565,6 @@ const FilterCommon: React.FC<IProps> = ({
     SetFilterState(temp);
     closeFilterOverlay();
     handleClose();
-    console.log("karan reset");
   };
 
   return (
