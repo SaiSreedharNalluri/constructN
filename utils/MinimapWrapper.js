@@ -159,6 +159,23 @@ export const MinimapUtils = () => {
       console.log("ForgeMinimapInstanceTest inside startCode check: ", _instance.newInstance);
       if (!_instance.newInstance) {
         onViewerInitialized();
+
+        const aecProfileSettings = Autodesk.Viewing.ProfileSettings.AEC;
+        const customAecProfileSettings = Autodesk.Viewing.ProfileSettings.clone(aecProfileSettings);
+        customAecProfileSettings.settings.envMapBackground = false;
+
+        const customAecLightPreset = {};
+        Autodesk.Viewing.Private.copyLightPreset(
+          Autodesk.Viewing.Private.LightPresets.find(preset => preset.name == customAecProfileSettings.settings.lightPreset),
+          customAecLightPreset
+        );
+        customAecLightPreset.bgColorGradient = [255, 226, 110, 219, 219, 219];
+        Autodesk.Viewing.Private.LightPresets.push(customAecLightPreset);
+        customAecProfileSettings.settings.backgroundColorPreset = JSON.stringify(customAecLightPreset.bgColorGradient);
+        customAecProfileSettings.settings.lightPreset = customAecLightPreset.name;
+        const customAecProfile = new Autodesk.Viewing.Profile(customAecProfileSettings);
+        
+        _viewer.setProfile(customAecProfile);
       }
     }
 
@@ -166,7 +183,7 @@ export const MinimapUtils = () => {
       new THREE.Vector3().fromArray([0, 0, 1]),
       false
     );
-    _viewer.navigation.setReverseZoomDirection(true);
+    _viewer.navigation.setReverseZoomDirection(true);    
 
     _viewer.disableHighlight(true)
     _viewer.disableHighlight(true)
@@ -293,9 +310,6 @@ export const MinimapUtils = () => {
             _manifestNode,
             generateModelOptions(document.tm, _manifestNode)
           );
-          // setInterval(() => {
-          //   _viewer.fitToView(undefined, _model)
-          // }, 200)
         },
         function () {
           console.error("Failed fetching Forge manifest");
@@ -743,6 +757,8 @@ export const MinimapUtils = () => {
   const onGeometryLoadedEvent = (parameter) => {
     // console.log("Inside Geometry Loaded Event: model: ", parameter.model);
     _isModelLoaded = true;
+    _viewer.setEnvMapBackground(false)
+    _viewer.setBackgroundColor(255, 255, 255, 255, 255, 255)
   };
 
   const onModelUnLoadedEvent = (model) => {

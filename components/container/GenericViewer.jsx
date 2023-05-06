@@ -467,7 +467,7 @@ function GenericViewer(props) {
     if(minimapCompareUtils.current) {
       let minimapState;
       if(potreeUtils.current) {
-        minimapState = potreeUtils.current.getContext();
+        minimapState = potreeCompareUtils.current.getContext();
       }
       minimapCompareUtils.current.updateViewerState(minimapState)
     }

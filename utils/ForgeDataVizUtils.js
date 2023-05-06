@@ -49,18 +49,21 @@ export class ForgeDataVizUtils {
 
         tasks.forEach(task => {
 
-            let tag = task.context.tag;
+            if(task.context) {
 
-            if (this._existingTags.indexOf(task._id) == -1) {
+                let tag = task.context.tag;
 
-                data.push({
+                if (this._existingTags.indexOf(task._id) == -1) {
 
-                    id: task._id,
+                    data.push({
 
-                    type: ForgeDataVizUtils.TASK,
+                        id: task._id,
 
-                    position: this._toLocalPosition(tag.tagPosition)
-                })
+                        type: ForgeDataVizUtils.TASK,
+
+                        position: this._toLocalPosition(tag.tagPosition)
+                    })
+                }
             }
         })
 
@@ -68,13 +71,13 @@ export class ForgeDataVizUtils {
 
             const _viewableData = await this._createViewableData(data, ForgeDataVizUtils.TASK)
 
-            if(this._viewableDataMap[ForgeDataVizUtils.TASK]) {
-                
+            if (this._viewableDataMap[ForgeDataVizUtils.TASK]) {
+
                 this._viewableDataMap[ForgeDataVizUtils.TASK].push(_viewableData)
 
             } else {
 
-                this._viewableDataMap[ForgeDataVizUtils.TASK] = [_viewableData]                
+                this._viewableDataMap[ForgeDataVizUtils.TASK] = [_viewableData]
             }
 
             this._dataVizExtn.addViewables(_viewableData)
@@ -87,18 +90,21 @@ export class ForgeDataVizUtils {
 
         issues.forEach(issue => {
 
-            let tag = issue.context.tag;
+            if(issues.context) {
 
-            if (this._existingTags.indexOf(issue._id) == -1) {
+                let tag = issue.context.tag;
 
-                data.push({
+                if (this._existingTags.indexOf(issue._id) == -1) {
 
-                    id: issue._id,
+                    data.push({
 
-                    type: ForgeDataVizUtils.ISSUE,
+                        id: issue._id,
 
-                    position: this._toLocalPosition(tag.tagPosition)
-                })
+                        type: ForgeDataVizUtils.ISSUE,
+
+                        position: this._toLocalPosition(tag.tagPosition)
+                    })
+                }
             }
         })
 
@@ -106,13 +112,13 @@ export class ForgeDataVizUtils {
 
             const _viewableData = await this._createViewableData(data, ForgeDataVizUtils.ISSUE)
 
-            if(this._viewableDataMap[ForgeDataVizUtils.ISSUE]) {
-                
+            if (this._viewableDataMap[ForgeDataVizUtils.ISSUE]) {
+
                 this._viewableDataMap[ForgeDataVizUtils.ISSUE].push(_viewableData)
 
             } else {
 
-                this._viewableDataMap[ForgeDataVizUtils.ISSUE] = [_viewableData]                
+                this._viewableDataMap[ForgeDataVizUtils.ISSUE] = [_viewableData]
             }
 
             this._dataVizExtn.addViewables(_viewableData)
@@ -127,79 +133,84 @@ export class ForgeDataVizUtils {
 
             realities.forEach(reality => {
 
-                let images
+                if (reality['position']) {
 
-                switch (type) {
+                    console.log(reality)
 
-                    case '360 Image':
+                    let images
 
-                    case '360 Video': 
+                    switch (type) {
 
-                        images = Object.keys(reality['position'])
+                        case '360 Image':
 
-                        break
+                        case '360 Video':
 
-                    case 'Phone Image':
-                        
-                        images = reality['position']['camname']
+                            images = Object.keys(reality['position'])
 
-                        break
-                }
+                            break
 
-                for (let i = 0; i < images.length; i++) {
+                        case 'Phone Image':
 
-                    if (this._existingImages.indexOf(images[i] == -1)) {
+                            images = reality['position']['camname']
 
-                        let mPosition = [];
+                            break
+                    }
 
-                        let mRotation = reality['position'][images[i]] ? reality['position'][images[i]].rotation : 0
+                    for (let i = 0; i < images.length; i++) {
 
-                        switch (type) {
+                        if (this._existingImages.indexOf(images[i] == -1)) {
 
-                            case '360 Image':
-        
-                            case '360 Video': 
-        
-                                mPosition = reality['position'][images[i]].position
-        
-                                break
-        
-                            case 'Phone Image':
-                                
-                                mPosition[0] = reality.position['camX'][i]
-                                
-                                mPosition[1] = reality.position['camY'][i]
-                                    
-                                mPosition[2] = reality.position['camZ'][i]
-        
-                                break
+                            let mPosition = [];
+
+                            let mRotation = reality['position'][images[i]] ? reality['position'][images[i]].rotation : 0
+
+                            switch (type) {
+
+                                case '360 Image':
+
+                                case '360 Video':
+
+                                    mPosition = reality['position'][images[i]].position
+
+                                    break
+
+                                case 'Phone Image':
+
+                                    mPosition[0] = reality.position['camX'][i]
+
+                                    mPosition[1] = reality.position['camY'][i]
+
+                                    mPosition[2] = reality.position['camZ'][i]
+
+                                    break
+                            }
+
+                            data.push({
+
+                                id: reality.id,
+
+                                imageName: images[i],
+
+                                position: this._toLocalPosition({ x: mPosition[0], y: mPosition[1], z: mPosition[2] }),
+
+                                rotation: mRotation,
+
+                                type: type
+                            })
                         }
-
-                        data.push({
-
-                            id: reality.id,
-
-                            imageName: images[i],
-
-                            position: this._toLocalPosition({ x: mPosition[0], y: mPosition[1], z: mPosition[2] }),
-
-                            rotation: mRotation,
-
-                            type: type
-                        })
                     }
                 }
             })
 
             const _viewableData = await this._createViewableData(data, type)
 
-            if(this._viewableDataMap[type]) {
-                
+            if (this._viewableDataMap[type]) {
+
                 this._viewableDataMap[type].push(_viewableData)
 
             } else {
 
-                this._viewableDataMap[type] = [_viewableData]                
+                this._viewableDataMap[type] = [_viewableData]
             }
 
             this._dataVizExtn.addViewables(_viewableData)
@@ -210,20 +221,20 @@ export class ForgeDataVizUtils {
 
         const viewableDatas = this._viewableDataMap[type]
 
-        if(viewableDatas) {
+        if (viewableDatas) {
 
-            for(let i = 0; i < viewableDatas.length; i++) {
+            for (let i = 0; i < viewableDatas.length; i++) {
 
                 const viewableData = viewableDatas[i]
 
                 if (viewableData) {
 
                     const dbIds = viewableData.viewables.map(v => { return v.dbId })
-        
+
                     this._invalidateViewables(dbIds, this._dataVizExtn.pointMeshes, viewableData, () => {
-        
+
                         return {
-        
+
                             scale: show ? 1 : 0
                         }
                     })
@@ -253,25 +264,25 @@ export class ForgeDataVizUtils {
 
         localPos.z += 10
 
-        if(!this._dbMap[1]) {
+        if (!this._dbMap[1]) {
 
             this._createNavigator(localPos, yaw)
         }
 
         setTimeout(() => {
 
-            if(Date.now() - this._lastUpdated > 100) {
+            if (Date.now() - this._lastUpdated > 100) {
 
-                if(this._dbMap[1]) {
+                if (this._dbMap[1]) {
 
                     for (let k = 0; k < this._dataVizExtn.pointMeshes.length; k++) {
 
                         const mesh = this._dataVizExtn.pointMeshes[k]
-            
+
                         if (mesh.geometry.dbIds.indexOf(1) > -1) {
 
                             this._dbMap[1] = undefined
-            
+
                             this._viewer.overlays.removeMesh(mesh, 'DataVizDots')
 
                             break;
@@ -293,7 +304,7 @@ export class ForgeDataVizUtils {
                 this._invalidateViewables(1, this._dataVizExtn.pointMeshes, this._viewableDataMap[ForgeDataVizUtils.NAVIGATOR], (viewable) => {
 
                     let deg = MathUtils.radToDeg(yaw) % 360
-                    
+
                     if (deg > 0) deg = 360 - deg
 
                     else deg = deg * -1
@@ -590,7 +601,7 @@ export class ForgeDataVizUtils {
 
         /** @type {Map<number, CustomViewable>} */
         const viewables = new Map();
-        if(!viewableData || !viewableData.viewables || viewableData.viewables.length == 0) return
+        if (!viewableData || !viewableData.viewables || viewableData.viewables.length == 0) return
         viewableData.viewables.forEach((v) => viewables.set(v.dbId, v));
 
         let sceneUpdated = false;
