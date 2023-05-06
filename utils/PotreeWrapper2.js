@@ -2,7 +2,7 @@
 import * as THREE from "three"
 import { PotreeInstance } from "./PotreeWrapper";
 
-export const PotreeViewerUtils = () => {
+export const PotreeViewerUtils = (() => {
 
     let _viewerId;
     let _eventHandler;
@@ -1974,4 +1974,4 @@ export const PotreeViewerUtils = () => {
         removeData: removeData,
         shutdown: shutdown,
     };
-};
+})();
