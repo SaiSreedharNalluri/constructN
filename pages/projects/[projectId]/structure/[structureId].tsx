@@ -80,12 +80,12 @@ const StructPage: React.FC = () => {
   return (
     <React.Fragment>
       <div className="h-screen flex flex-col">
-        <div>
+        {/* <div>
           <Header />
-        </div>
+        </div>*/}
         <div className="flex flex-row left-0">
           {/* <CollapsableMenu onChangeData={() => {}} /> */}
-          <div><SidePanelMenu onChangeData={() => {}} /></div>
+          {/* <div><SidePanelMenu onChangeData={() => {}} /></div>  */}
          
           {
             initData&& <div><NewGenViewer data={initData} updateData={updateData}></NewGenViewer> </div>
