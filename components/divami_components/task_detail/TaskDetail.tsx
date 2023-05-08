@@ -610,7 +610,7 @@ function BasicTabs(props: any) {
               {" "}
               <ThirdContRight>
                 <ThirdContProg data-testid="progres-label">
-                  Progress bar
+                  Status
                 </ThirdContProg>
 
                 <ThirdContProgType
@@ -800,7 +800,7 @@ function BasicTabs(props: any) {
 
           {taskState?.TabOne?.issueDescription?.length > 0 ? (
             <DescriptionDiv>
-              <DescriptionTitle>RFI Question</DescriptionTitle>
+              <DescriptionTitle>Description</DescriptionTitle>
 
               <DescriptionPara>
                 {taskState?.TabOne?.issueDescription}
@@ -1142,7 +1142,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
   };
 
   const saveEditDetails = async (data: any, projectId: string) => {
-    if (data.title && data.type && data.priority && data.description) {
+    if (data.title && data.type && data.priority) {
       updateTask(projectId, data, selectedTask?._id)
         .then((response) => {
           if (response.success === true) {

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../../../components/divami_components/header/Header';
 import { useRouter } from 'next/router';
 import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
 import SidePanelMenu from '../../../../components/divami_components/side-panel/SidePanel';
 import { getdashBoardUrls } from '../../../../services/s3Service';
 const Index: React.FC = () => {

@@ -28,11 +28,11 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
                     }}
                   >
                     <img
-                      className="h-7 mt-8 cursor-pointer w-1/2 m-auto hover:border border-gray-500 border-solid"
+                      className="h-7 mt-8 cursor-pointer w-95 m-auto hover:border border-gray-500 border-solid object-contain"
                       src={
                         pData.coverPhoto
                           ? pData.coverPhoto
-                          : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3_CORE}/defaults/projectCoverPhoto.webp`
+                          : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/projectCoverPhoto.webp`
                       }
                     />
                   </div>

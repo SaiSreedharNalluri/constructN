@@ -2,7 +2,55 @@ import { autodeskAuth } from "../services/forgeService";
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
 import { applyTM } from "./ViewerDataUtils";
 
-export const ForgeViewerUtils = (function () {
+export class ForgeInstance {
+
+  constructor(viewerId) {
+    // console.log("Inside Potree Initializer: ")
+    let viewerConfig = {
+      extensions: ["Autodesk.BimWalk", "Autodesk.DataVisualization"],
+    };
+    let htmlDiv = document.getElementById(viewerId);
+    this.viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv, viewerConfig);
+    this.newInstance = true;
+  }
+
+  static getInstance(viewerId) {
+      if (!this.instance) {
+          this.instance = new ForgeInstance(viewerId);
+          delete this.instance.constructor;
+      } else {
+        let child = document.getElementById(viewerId);
+        console.log("ForgeInstanceTest inside getInstance: ", child);
+        
+        let parent = child.parentElement;
+        parent.removeChild(document.getElementById(viewerId));
+        // parent.appendChild(this.instance.viewer.clientContainer);
+        parent.insertBefore(this.instance.viewer.clientContainer, parent.firstChild);
+        this.instance.newInstance = false;
+      }
+      console.log("ForgeInstanceTest inside getInstance: ", this.instance);
+      return this.instance;
+  }
+
+  static getCompareInstance(viewerId) {
+      if (!this.compareInstance) {
+          this.compareInstance = new ForgeInstance(viewerId);
+          delete this.compareInstance.constructor;
+      } else {
+          let child = document.getElementById(viewerId);
+          console.log("ForgeInstanceTest inside getCompareInstance: ", child);
+          let parent = child.parentElement;
+          parent.removeChild(document.getElementById(viewerId));
+          // parent.appendChild(this.instance.viewer.clientContainer);
+          parent.insertBefore(this.compareInstance.viewer.clientContainer, parent.firstChild);
+          this.compareInstance.newInstance = false;
+      }
+      return this.compareInstance;
+  }
+}
+
+export const ForgeViewerUtils = function () {
+  let _instance;
   let _viewerId;
   let _eventHandler;
   let _viewer;
@@ -25,7 +73,7 @@ export const ForgeViewerUtils = (function () {
   let _realityPositionMap = {};
   let _issuesList = [];
   let _tasksList = [];
-  let _showLayersList = [];
+  let _showLayersList = undefined;
   let _showTag = {};
 
   let _context;
@@ -71,45 +119,66 @@ export const ForgeViewerUtils = (function () {
     }
   };
 
-  const initializeOptions = {
-    env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
-    api: "streamingV2", // for models uploaded to EMEA change this option to 'derivativeV2_EU'
-    getAccessToken: async function (onSuccess) {
-      const response = await autodeskAuth();
-      console.log("Autodesk auth token:", response.data.result);
-      const res = response.data.result;
-
-      onSuccess(res.access_token, res.expires_in);
-    },
-  };
-
   const viewerConfig = {
     extensions: ["Autodesk.BimWalk", "Autodesk.DataVisualization"],
   };
 
-  const initializeViewer = (viewerId, eventHandler) => {
+  const setupViewer = (viewerId, eventHandler) => {
     _viewerId = viewerId;
     _eventHandler = eventHandler;
-    const initializerCallBack = () => {
-      console.log("Inside Initializer callback", _eventHandler);
-      let htmlDiv = document.getElementById(_viewerId);
-      _viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv, viewerConfig);
-      setUpEventListeners();
-      let startedCode = _viewer.start();
-      _viewer.canvasId = _viewerId;
-      if (startedCode > 0) {
-        console.error("Failed to create a Viewer: WebGL not supported.");
-        return;
+  }
+
+  const initializeViewer = () => {
+    console.log("ForgeInstanceTest Inside Initializer callback: ", );
+
+    if (isCompareView()) {
+      _instance = ForgeInstance.getCompareInstance(_viewerId);
+      _viewer = _instance.viewer;
+    } else {
+      _instance = ForgeInstance.getInstance(_viewerId);
+      _viewer = _instance.viewer;
+    }
+
+    setUpEventListeners();
+
+    let startedCode = _viewer.start();
+    _viewer.canvasId = _viewerId;
+
+    if (startedCode > 0) {
+      console.error("ForgeInstanceTest Failed to create a Viewer: WebGL not supported.");
+      return;
+    } else {
+      console.log("ForgeInstanceTest inside startCode check: ", _instance.newInstance);
+      if (!_instance.newInstance) {
+        onViewerInitialized();
       }
+    }
 
-      _viewer.navigation.setWorldUpVector(
-        new THREE.Vector3().fromArray([0, 0, 1]),
-        false
-      );
-      _viewer.navigation.setReverseZoomDirection(true);
-    };
+    _viewer.navigation.setWorldUpVector(
+      new THREE.Vector3().fromArray([0, 0, 1]),
+      false
+    );
+    _viewer.navigation.setReverseZoomDirection(true);
+  }
 
-    Autodesk.Viewing.Initializer(initializeOptions, initializerCallBack);
+  const initializeViewer2 = () => {
+    // if(_viewer) return
+    console.log("Inside Initializer callback", _eventHandler);
+    let htmlDiv = document.getElementById(_viewerId);
+    _viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv, viewerConfig);
+    setUpEventListeners();
+    let startedCode = _viewer.start();
+    _viewer.canvasId = _viewerId;
+    if (startedCode > 0) {
+      console.error("Failed to create a Viewer: WebGL not supported.");
+      return;
+    }
+
+    _viewer.navigation.setWorldUpVector(
+      new THREE.Vector3().fromArray([0, 0, 1]),
+      false
+    );
+    _viewer.navigation.setReverseZoomDirection(true);
   };
 
   const setStructure = (structure) => {
@@ -169,7 +238,13 @@ export const ForgeViewerUtils = (function () {
     _progressData = progress;
   };
 
-  const refreshData = () => {
+  const refreshData = (context) => {
+    if (context) {
+      _context = context;
+    } else {
+      _context = null;
+    }
+
     _isPendingDataToLoad = true;
     _isPendingLayersToLoad = true;
     if (_isViewerInitialized) {
@@ -179,7 +254,7 @@ export const ForgeViewerUtils = (function () {
 
   const loadLayersOnDataLoadCompletion = () => {
     console.log(
-      "Inside loadlayers On data load complete: ",
+      "ForgeInstanceTest Inside loadlayers On data load complete: ",
       _isPendingLayersToLoad,
       _isModelLoaded,
       _dataVizUtils
@@ -406,7 +481,7 @@ export const ForgeViewerUtils = (function () {
           let imageObject = {
             imagePosition: targetObject.position,
             imageRotation: targetObject.rotation,
-            imageName: targetObject.id,
+            imageName: targetObject.imageName,
           };
           contextObject = {
             id: targetObject.id,
@@ -447,6 +522,8 @@ export const ForgeViewerUtils = (function () {
         setForgeControls(context.type);
         break;
       case "360 Video":
+        setNavigation(context);
+        setForgeControls(context.type);
         // goToImageContext(context);
         break;
       case "tag":
@@ -498,7 +575,7 @@ export const ForgeViewerUtils = (function () {
       y: target.y + offset[1],
       z: target.z + offset[2],
     };
-    return { cameraPosition, cameraTarget };
+    return { cameraPosition, cameraTarget, yaw: state.up[0] };
   };
 
   const getViewerState = () => {
@@ -508,7 +585,7 @@ export const ForgeViewerUtils = (function () {
       );
       const state = _viewer.getState({ viewport: true }).viewport;
       let viewerState = {
-        position: [state.eye[0], state.eye[1], state.eye[2]],
+        position: [state.eye[0], state.eye[1], state.eye[1]],
         target: new THREE.Vector3().fromArray(state.target),
         fov: state.fieldOfView,
       };
@@ -555,10 +632,29 @@ export const ForgeViewerUtils = (function () {
   };
 
   const setForgeControls = (type) => {
-    if (_bimWalkExtn) {
-      if (type === "panorama" || type === "image") {
+    console.log("2DTest inside setForgeControls: ", type, _manifestNode.is2D(),)
+    if (_manifestNode.is2D()) {
+      _viewer.navigation.setLockSettings({
+        orbit: false,
+        pan: true,
+        zoom: true,
+        roll: true,
+        fov: true,
+      });
+      _viewer.navigation.setIsLocked(true);
+      return;
+
+
+      // let value = _viewer.setActiveNavigationTool("pan");
+      // let value2 = _viewer.toolController.activateTool("pan");
+      // let value3 = _viewer.activateDefaultNavigationTools(_manifestNode.is2D());
+      // console.log("2DTest inside setForgeControls, is 2D, set to pan tool state: ", value, value2, value3, _viewer.getActiveNavigationTool());
+    }
+    
+    if (_bimWalkExtn && !_manifestNode.is2D()) {
+      if (type !== "3d") {
         _viewer.navigation.setIsLocked(false);
-        if (isCompareView() && type === "panorama") {
+        if (isCompareView() && (type === "360 Video" || type === "360 Image")) {
           _viewer.navigation.setLockSettings({
             orbit: false,
             pan: false,
@@ -588,7 +684,7 @@ export const ForgeViewerUtils = (function () {
   };
 
   const onViewerInitialized = () => {
-    console.log("Viewer Initialized: Loading Model now");
+    console.log("ForgeInstanceTest Viewer Initialized: Loading Model now");
     _isViewerInitialized = true;
     loadExtension();
     if (_isPendingDataToLoad) {
@@ -596,14 +692,17 @@ export const ForgeViewerUtils = (function () {
     }
   };
 
-  const onViewerUnInitialized = () => {};
+  const onViewerUnInitialized = () => {
+    console.log("Forge Viewer UnInitialized: ");
+    _isViewerInitialized = false;
+  };
 
   const modelLoadProgress = (progress, state, model) => {
     if (!_isModelLoaded && progress.percent == 100) {
       console.log("Inside model load progress: ", progress, state, model);
       _isModelLoaded = true;
       if (loadLayersOnDataLoadCompletion()) {
-        loadLayers();
+        // loadLayers();
       }
     }
 
@@ -643,7 +742,7 @@ export const ForgeViewerUtils = (function () {
     // console.log("Inside Extension Loaded Event:", parameter);
     if (parameter.extensionId === ForgeDataVisualization.EXTENSION_ID) {
       console.log(
-        "Inside Extension Loaded Event: Data Visualization",
+        "ForgeInstanceTest Inside Extension Loaded Event: Data Visualization",
         parameter
       );
       _dataVizExtn = _viewer.getExtension(parameter.extensionId);
@@ -654,7 +753,7 @@ export const ForgeViewerUtils = (function () {
         loadLayers();
       }
     } else if (parameter.extensionId === "Autodesk.BimWalk") {
-      console.log("Inside Forge Viewer, Bim Walk loaded:");
+      console.log("ForgeInstanceTest Inside Forge Viewer, Bim Walk loaded:");
       _bimWalkExtn = _viewer.getExtension(parameter.extensionId);
     }
   };
@@ -666,7 +765,7 @@ export const ForgeViewerUtils = (function () {
 
   const onCameraChangeEvent = (event) => {
     // console.log("On Camera change event: ", event, typeof(_eventHandler), _viewer);
-    _eventHandler(_viewerId, { type: "sync" });
+    _eventHandler(_viewerId, { type: "sync", context: getContext() });
   };
 
   // const onClickEventOnContainer = (ev) => {
@@ -710,6 +809,10 @@ export const ForgeViewerUtils = (function () {
     _viewer.addEventListener(
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       onCameraChangeEvent
+    );
+    _viewer.addEventListener(
+      Autodesk.Viewing.VIEWER_UNINITIALIZED,
+      onViewerUnInitialized
     );
 
     let viewerElement = document.getElementById(_viewerId);
@@ -756,6 +859,10 @@ export const ForgeViewerUtils = (function () {
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       onCameraChangeEvent
     );
+    _viewer.removeEventListener(
+      Autodesk.Viewing.VIEWER_UNINITIALIZED,
+      onViewerUnInitialized
+    );
 
     let viewerElement = document.getElementById(_viewerId);
     if (viewerElement) {
@@ -767,7 +874,14 @@ export const ForgeViewerUtils = (function () {
     // console.log("Model Before Removed: ", this.model);
     if (_isViewerInitialized) {
       removeLayers();
-      _viewer.unloadModel(_model);
+      try{
+        // _viewer.tearDown();
+        // _dataVizExtn = undefined;
+        // _dataVizUtils = undefined;
+        _viewer.unloadModel(_model);
+      } catch(e) {
+        console.log("tearDown error: ", e);
+      }
     }
   };
 
@@ -782,16 +896,19 @@ export const ForgeViewerUtils = (function () {
     if (_isViewerInitialized) {
       removeData();
       removeEventListeners();
-      _viewer.tearDown();
-      _viewer.uninitialize();
+      _viewer.unloadExtension(ForgeDataVisualization.EXTENSION_ID);
+      _viewer.unloadExtension("Autodesk.BimWalk");
+      // _viewer.finish();
+      // _viewer = null;
       _dataVizExtn = undefined;
       _dataVizUtils = undefined;
-      Autodesk.Viewing.shutdown();
+      // Autodesk.Viewing.shutdown();
     }
     _isViewerInitialized = false;
   };
 
   return {
+    setupViewer: setupViewer,
     initializeViewer: initializeViewer,
     setType: setType,
     setStructure: setStructure,
@@ -814,7 +931,7 @@ export const ForgeViewerUtils = (function () {
     removeLayers: removeLayers,
     shutdown: shutdown,
   };
-})();
+};
 
 const getContextLocalFromGlobal = (context, globalOffset) => {
   // console.log("Global offset: ", context);

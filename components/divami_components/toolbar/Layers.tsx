@@ -144,7 +144,6 @@ const Layers = ({
             selectedLayersList={selectedLayersList}
             setActiveRealityMap={setActiveRealityMap}
             layersUpdated={layersUpdated}
-            showImageDisplay={showImageIcon}
           />
         </SelectLayersWrapper>
       </ContainerDiv>

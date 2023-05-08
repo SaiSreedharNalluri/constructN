@@ -180,7 +180,7 @@ const Task = ({
     formDataObj.append("jreq", JSON.stringify(data));
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
-    if (data.title && data.type && data.priority && data.description) {
+    if (data.title && data.type && data.priority) {
       setEnableSubmit(false);
 
       createTaskWithAttachments(projectId as string, formDataObj)
@@ -216,6 +216,7 @@ const Task = ({
   };
 
   useEffect(() => {
+    console.log("contextinfo", contextInfo, tasksList);
     if (openTaskDetails && contextInfo?.id) {
       const selectedObj = tasksList.find(
         (each: any) => each._id === contextInfo.id
@@ -226,6 +227,7 @@ const Task = ({
   const taskSubmitFn = (formdata: any) => {
     // tasksList.push(formdata);
     taskMenuInstance.toolAction = "taskCreateSuccess";
+    taskMenuInstance.response = { ...formdata.context, id: formdata._id };;
     // setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);
     closeTaskCreate();

@@ -106,7 +106,6 @@ import { DownloadTable } from "../toolbar/DownloadTable";
 import { downloadMenuOptions, getDownladableList } from "./Constants";
 import CompletedIconTask from "../../../public/divami_icons/CompletedIconTask.svg";
 import sortUp from "../../../public/divami_icons/sortUp.svg";
-import CustomIssueDetailsDrawerTwo from "../issue-detail-2/IssueDetail2";
 
 interface IProps {
   closeOverlay: () => void;
@@ -672,8 +671,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 deleteTheAttachment={deleteTheAttachment}
                 setIssueList={setIssueList}
               />
-
-           
             </Drawer>
           )}
           {openDrawer && (

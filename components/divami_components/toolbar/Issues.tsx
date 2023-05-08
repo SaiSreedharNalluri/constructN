@@ -100,6 +100,7 @@ const Issues = ({
         document.body
     ).then(function (canvas) {
       canvas.toBlob((blob) => {
+        console.log(blob, "blob");
         setImage(blob as Blob);
       }, "image/png");
     });
@@ -188,7 +189,7 @@ const Issues = ({
     delete data["id"];
     formData.append("jreq", JSON.stringify(data));
     const projectId = values.filter((item: any) => item.projectId)[0].projectId;
-    if (data.title && data.type && data.priority && data.description) {
+    if (data.title && data.type && data.priority) {
       setEnableSubmit(false);
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
@@ -230,6 +231,7 @@ const Issues = ({
 
   const issueSubmitFn = (formdata: any) => {
     issueMenuInstance.toolAction = "issueCreateSuccess";
+    issueMenuInstance.response = { ...formdata.context, id: formdata._id };
     issueMenuClicked(issueMenuInstance);
     closeIssueCreate();
     issueSubmit(formdata);
