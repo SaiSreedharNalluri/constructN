@@ -3,11 +3,13 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 
 
 
-export const FilterCommonMain  = styled("div")({
+export const FilterCommonMain = styled("div")({
   width: "438px",
   // height: "100%",
-   display: "block",
+  display: "block",
   height: "calc(100vh - 60px)",
+  paddingLeft: "20px",
+  paddingRight: "20px",
 });
 export const HeaderContainer = styled("div")({
   backgroundColor: "white",
@@ -24,8 +26,8 @@ export const TitleContainer = styled(Box)({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  paddingLeft: "20px",
-  paddingRight: "20px",
+  // paddingLeft: "20px",
+  // paddingRight: "20px",
 });
 
 
@@ -63,19 +65,21 @@ export const FilterCardContainer = styled.div`
   margin-top: 20px;
 `
 
-export const FilterCardSecondContainer = styled.div`
-  margin-top: 30px;
-`;
+export const FilterCardSecondContainer = styled.div({
+  marginTop: "50px",
+});
 
-export const FilterCardTitle = styled.div`
-  padding-left: 20px;
-`
 
-export const FormElementContainer = styled(Box)`
-  margin-top: 30px;
-  padding-left: 20px;
-  padding-right: 20px;
-`
+export const FilterCardTitle = styled.div({
+  // paddingLeft: "20px",
+});
+
+
+export const FormElementContainer = styled(Box)({
+  marginTop: "30px",
+  // paddingLeft: "20px",
+  // paddingRight: "20px",
+});
 
 export const StyledLabel = styled(Typography)`
   font-weight: 400;
@@ -98,11 +102,11 @@ export const FilterCardSelectAll = styled.div`
   display: flex;
   align-items: center;
   margin-top: 15px;
-  padding-bottom: 15px;
-  margin-left: 20px;
+  padding-bottom: 5px;
+  // margin-left: 20px;
   margin-right: 20px;
-  border-bottom: 1px solid #d9d9d9;
-`
+  // border-bottom: 1px solid #d9d9d9;
+`;
 
 export const FilterCardSelectAllSpan = styled.span`
   display: flex;
@@ -120,11 +124,22 @@ export const FilterCardSelectAllText = styled.div`
   // line-height: 19px;
 `
 
+export const FilterCardSelectAllTextHeader = styled.div`
+  margin-left: 10px;
+  color: #101f4c;
+
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  // line-height: 19px;
+`;
+
 export const FilterCardOptions = styled.div`
   display: flex;
   flex-wrap: wrap;
-  padding: 0px 20px;
-  margin-top: 5px;
+  // padding: 0px 20px;
+  // margin-top: 5px;
 
 `
 
@@ -134,8 +149,8 @@ export const FilterCardOptionContainer = styled.div`
 
 export const FilterCardOptionSpan = styled.span`
   display: flex;
-  margin-top: 10px;
-`
+  margin-top: 20px;
+`;
 
 
 
@@ -187,8 +202,8 @@ export const SearchContainer = styled(Box)({
 
 
 export const ButtonsContainer = styled(Box)`
-  padding-left: 20px;
-  padding-right: 20px;
+  // padding-left: 20px;
+  // padding-right: 20px;
   height: 80px;
   display: flex;
   justify-content: space-between;

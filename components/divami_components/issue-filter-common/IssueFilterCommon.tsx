@@ -39,6 +39,9 @@ import {
   DatePickerContainer,
   FilterFooter,
   FilterCardSecondContainer,
+  FilterCardSelectAllTextHeader,
+  RefreshIcon,
+  CloseIcon,
 } from "./IssueStyledComponent";
 import { Issue } from "../../../models/Issue";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
@@ -55,6 +58,7 @@ import {
   getIssuesTypes,
 } from "../../../services/issue";
 import { getProjectUsers } from "../../../services/project";
+import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -526,17 +530,7 @@ const FilterCommon: React.FC<IProps> = ({
   const handleClose = () => {
     onClose(true);
   };
-  const CloseIcon = styled(Image)({
-    cursor: "pointer",
-    width: "24px",
-    height: "24px",
-  });
 
-  const RefreshIcon = styled(Image)({
-    cursor: "pointer",
-    width: "18px",
-    height: "15px",
-  });
   const onReset = () => {
     let temp = FilterState?.map((each: any, serial: number) => {
       return { ...each };
@@ -590,7 +584,7 @@ const FilterCommon: React.FC<IProps> = ({
                 onClick={() => {
                   handleClose();
                 }}
-                src={NotificationNewIcon}
+                src={closeWithCircle}
                 alt={"close icon"}
                 data-testid="filter-close"
               />
@@ -600,10 +594,15 @@ const FilterCommon: React.FC<IProps> = ({
       </FilterCommonHeader>
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
+          console.log("each", each);
+
+          const newTitle = each.title.split(" ");
+          const finalTitle = newTitle[1];
+          // console.log(narr[1]);
           return each.title === "Issue Type" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
-                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+                {/* <FilterCardTitleText>{each?.title}</FilterCardTitleText> */}
               </FilterCardTitle>
               <FilterCardSelectAll>
                 {each?.selectAllStatus === "T" ? (
@@ -616,9 +615,10 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="checked checkbox"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {/* {each.title} */}
+                      {finalTitle}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
                   <FilterCardSelectAllSpan>
@@ -630,9 +630,10 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="unchecked checkbox"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {/* {each.title} */}
+                      {finalTitle}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
                   <FilterCardSelectAllSpan>
@@ -644,9 +645,10 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="reset"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {/* {each.title} */}
+                      {finalTitle}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
                   ""
@@ -691,7 +693,7 @@ const FilterCommon: React.FC<IProps> = ({
           ) : (
             <FilterCardSecondContainer key={index}>
               <FilterCardTitle>
-                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+                {/* <FilterCardTitleText>{each?.title} hii</FilterCardTitleText> */}
               </FilterCardTitle>
               <FilterCardSelectAll>
                 {each?.selectAllStatus === "T" ? (
@@ -703,9 +705,10 @@ const FilterCommon: React.FC<IProps> = ({
                       src={Checked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {/* {each?.title} */}
+                      {finalTitle}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
                   <FilterCardSelectAllSpan>
@@ -716,9 +719,10 @@ const FilterCommon: React.FC<IProps> = ({
                       src={UnChecked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {/* {each?.title} */}
+                      {finalTitle}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
                   <FilterCardSelectAllSpan>
@@ -729,9 +733,10 @@ const FilterCommon: React.FC<IProps> = ({
                       src={Indeterminate}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {/* {each?.title} */}
+                      {finalTitle}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
                   ""
