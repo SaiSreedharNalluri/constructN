@@ -1,27 +1,38 @@
 import React, { useEffect, useState } from "react";
-
 import Drawer from "@mui/material/Drawer";
+
+// import styles from '../toolbar/toolbar.module.css'
 import Image from "next/image";
-
-import styles from "../toolbar/toolbar.module.css";
-
+import {
+  CreateOptionTask,
+  CreateTaskDiv,
+  HorizontalLineOpt,
+  MoreOptionBox,
+  MoreOptionContainer,
+  OptionCameraIcon,
+  OptionHotspotContainer,
+  OptionListContainer,
+  OptionSectionPlusImg,
+  OptionTaskContainer,
+  StyledOptionMenu,
+  SwitchDiv,
+  SwitchText,
+  TaskHeader,
+  TaskListDiv,
+  TaskMarkupDiv,
+  TaskOptionContainer,
+} from "./ToolBarStyles";
+import moreOptionCont from "../../../public/divami_icons/moreOptionCont.svg";
+import { Menu, Switch } from "@mui/material";
 import plusCircleIcon from "../../../public/divami_icons/plusCircleIcon.svg";
 import fileTextIcon from "../../../public/divami_icons/fileTextIcon.svg";
-import triWarnIcon from "../../../public/divami_icons/triWarnIcon.svg";
-import clipboardIcon from "../../../public/divami_icons/clipboardIcon.svg";
 import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIcon.svg";
-import clipboardTask from "../../../public/divami_icons/clipboardTask.svg";
+import markupTask from "../../../public/divami_icons/markupTask.svg";
+import hotspotCircleIcon from "../../../public/divami_icons/hotspotCircleIcon.svg";
 import taskToogleIcon from "../../../public/divami_icons/taskToogleIcon.svg";
+import clipboardTask from "../../../public/divami_icons/clipboardTask.svg";
+// Task List Imports
 
-import {
-  TaskBox,
-  TaskTitleDiv,
-  IssuesSectionPlusImg,
-  IssuesSectionFileImg,
-  IssuesSectionClipImg,
-  TaskTitle,
-  CameraIcon,
-} from "./ToolBarStyles";
 import TaskList from "../task_list/TaskList";
 import CreateTask from "../create-task/CreateTask";
 import CustomDrawer from "../custom-drawer/custom-drawer";
@@ -32,8 +43,8 @@ import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
 import Tooltip from "@mui/material/Tooltip";
 import html2canvas from "html2canvas";
 import moment from "moment";
-
-const Task = ({
+// Task List Imports
+const MoreOptionTool = ({
   rightMenuClickHandler,
   tasksList,
   currentProject,
@@ -60,6 +71,7 @@ const Task = ({
   taskStatusList,
   taskPriorityList,
 }: any) => {
+  // Task List code
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
   const [myProject, setMyProject] = useState(currentProject);
@@ -233,7 +245,7 @@ const Task = ({
     setEnableSubmit(true);
   };
   const openTaskCreateFn = () => {
-    console.log("boss");
+    console.log("Hello ji");
     //setCreateOverlay(true);
     taskMenuInstance.toolAction = "taskCreate";
     taskMenuClicked(taskMenuInstance);
@@ -253,8 +265,10 @@ const Task = ({
     taskMenuInstance.toolAction = "taskViewClose";
     taskMenuClicked(taskMenuInstance);
   };
-  const toggleTaskVisibility = () => {
+  const toggleTaskVisibility = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
     setTaskVisibility(!taskVisbility);
+
     if (taskVisbility) taskMenuInstance.toolAction = "taskHide";
     else taskMenuInstance.toolAction = "taskShow";
     taskMenuClicked(taskMenuInstance);
@@ -267,68 +281,193 @@ const Task = ({
   useEffect(() => {
     setOpenCreateTask(taskOpenDrawer);
   }, [taskOpenDrawer]);
+  // Task List code
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleSortClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleSortMenuClose = () => {
+    setIsSortMenuOpen(false);
+    setAnchorEl(null);
+  };
+
+  // switch button code
+  const [checked, setChecked] = React.useState(true);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
+  // switch button code
   return (
-    <TaskBox>
-      <TaskTitle>Task: </TaskTitle>
+    <MoreOptionBox>
+      <MoreOptionContainer>
+        <Image
+          src={moreOptionCont}
+          width={18}
+          height={18}
+          alt="Arrow"
+          onClick={(e) => {
+            setIsSortMenuOpen((prev) => !prev);
+            handleSortClick(e);
+          }}
+        />{" "}
+        <Menu
+          anchorEl={anchorEl}
+          id="account-menu"
+          open={isSortMenuOpen}
+          onClose={handleSortMenuClose}
+          onClick={handleSortMenuClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              mt: 1.5,
+              "& .MuiAvatar-root": {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              "&:before": {
+                content: '""',
+                display: "block",
+                position: "absolute",
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
+                zIndex: 0,
+              },
+            },
+          }}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        >
+          <StyledOptionMenu>
+            <OptionListContainer>
+              <OptionTaskContainer>
+                <TaskHeader>Task</TaskHeader>
+                <TaskOptionContainer>
+                  <CreateTaskDiv
+                    onClick={() => {
+                      openTaskCreateFn();
+                    }}
+                  >
+                    <OptionSectionPlusImg>
+                      <OptionCameraIcon
+                        src={plusCircleIcon}
+                        alt="Arrow"
 
-      <Tooltip title="Create Task">
-        <IssuesSectionPlusImg>
-          <CameraIcon
-            onClick={() => {
-              openTaskCreateFn();
+                        // width={24}
+                        // height={24}
+                      />
+                    </OptionSectionPlusImg>
 
-              // setOpenCreateTask(true);
-            }}
-            src={plusCircleIcon}
-            // onClick={props.rightMenuClickHandler}
-            width={12}
-            height={12}
-            alt="Arrow"
-          />
-        </IssuesSectionPlusImg>
-      </Tooltip>
+                    <CreateOptionTask>Create Task</CreateOptionTask>
+                  </CreateTaskDiv>
+                  <HorizontalLineOpt></HorizontalLineOpt>
 
-      <Tooltip title="Task List">
-        <IssuesSectionFileImg>
-          <CameraIcon
-            onClick={() => {
-              handleViewTaskList();
-            }}
-            src={fileTextIcon}
-            width={12}
-            height={12}
-            alt="Arrow"
-          />
-        </IssuesSectionFileImg>
-      </Tooltip>
+                  <TaskListDiv>
+                    <OptionSectionPlusImg>
+                      <OptionCameraIcon
+                        src={fileTextIcon}
+                        alt="Arrow"
+                        onClick={() => {
+                          handleViewTaskList();
+                        }}
+                        // width={24}
+                        // height={24}
+                      />
+                    </OptionSectionPlusImg>
 
-      <Tooltip title={taskVisbility ? "Show Tasks" : "Hide Tasks"}>
-        <IssuesSectionClipImg>
-          {taskVisbility && (
-            <CameraIcon
-              width={12}
-              height={12}
-              src={taskToogleIcon}
-              alt="Arrow"
-              onClick={() => {
-                toggleTaskVisibility();
-              }}
-            />
-          )}
+                    <CreateOptionTask>Task List</CreateOptionTask>
+                  </TaskListDiv>
+                  <HorizontalLineOpt></HorizontalLineOpt>
+                  <TaskMarkupDiv>
+                    <OptionSectionPlusImg>
+                      {taskVisbility && (
+                        <OptionCameraIcon
+                          src={taskToogleIcon}
+                          alt="Arrow"
+                          width={18}
+                          height={18}
+                        />
+                      )}
 
-          {!taskVisbility && (
-            <CameraIcon
-              width={12}
-              height={12}
-              src={clipboardTask}
-              alt="Arrow"
-              onClick={() => {
-                toggleTaskVisibility();
-              }}
-            />
-          )}
-        </IssuesSectionClipImg>
-      </Tooltip>
+                      {!taskVisbility && (
+                        <OptionCameraIcon
+                          src={clipboardTask}
+                          alt="Arrow"
+                          width={18}
+                          height={18}
+                        />
+                      )}
+                    </OptionSectionPlusImg>
+
+                    <CreateOptionTask>Task Markups</CreateOptionTask>
+
+                    <SwitchDiv>
+                      <SwitchText>Show</SwitchText>
+                      <Switch
+                        checked={checked}
+                        onChange={toggleTaskVisibility}
+                        size="small"
+                      />
+                    </SwitchDiv>
+                  </TaskMarkupDiv>
+                </TaskOptionContainer>
+              </OptionTaskContainer>
+
+              <OptionHotspotContainer>
+                <TaskHeader>Hotspot</TaskHeader>
+                <TaskOptionContainer>
+                  <TaskListDiv>
+                    <OptionSectionPlusImg>
+                      <OptionCameraIcon
+                        src={fileTextIcon}
+                        alt="Arrow"
+                        onClick={() => {
+                          //   openIssueCreateFn();
+                        }}
+                        // width={24}
+                        // height={24}
+                      />
+                    </OptionSectionPlusImg>
+
+                    <CreateOptionTask>Hotspot List</CreateOptionTask>
+                  </TaskListDiv>
+                  <HorizontalLineOpt></HorizontalLineOpt>
+                  <TaskMarkupDiv>
+                    <OptionSectionPlusImg>
+                      <OptionCameraIcon
+                        src={hotspotCircleIcon}
+                        alt="Arrow"
+                        onClick={() => {
+                          //   openIssueCreateFn();
+                        }}
+                        width={18}
+                        height={18}
+                      />
+                    </OptionSectionPlusImg>
+
+                    <CreateOptionTask>Hotspot Markups</CreateOptionTask>
+
+                    <SwitchDiv>
+                      <SwitchText>Show</SwitchText>
+                      <Switch defaultChecked size="small" />
+                    </SwitchDiv>
+                  </TaskMarkupDiv>
+                </TaskOptionContainer>
+              </OptionHotspotContainer>
+            </OptionListContainer>
+          </StyledOptionMenu>
+        </Menu>
+      </MoreOptionContainer>
       {openDrawer && (
         <Drawer
           anchor={"right"}
@@ -395,8 +534,8 @@ const Task = ({
           />
         </Drawer>
       )}
-    </TaskBox>
+    </MoreOptionBox>
   );
 };
 
-export default Task;
+export default MoreOptionTool;
