@@ -412,6 +412,23 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               {searchingOn ? (
                 <SearchAreaContainer>
                   <CustomSearchField
+                    sx={{
+                      "& .MuiInputBase-input": {
+                        fontSize: "14px",
+                        lineHeight: "20px",
+                        fontFamily: "Open Sans",
+                        color: "#101F4C",
+                        fontWeight: "400",
+                        "&::placeholder": {
+                          color: "#787878",
+
+                          fontFamily: "Open Sans",
+                          fontSize: "14px",
+                          lineHeight: "20px",
+                          fontWeight: "400",
+                        },
+                      },
+                    }}
                     placeholder="Search"
                     variant="outlined"
                     value={searchTerm}
