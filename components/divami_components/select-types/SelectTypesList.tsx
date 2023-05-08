@@ -109,6 +109,7 @@ const SelectTypesList = ({
             list.map((item: any, index: number) => (
               <>
                 <ListItemStyled
+                  className="custom-list-styled"
                   key={item}
                   onClick={() => {
                     onSelect({ target: { value: item } });
@@ -117,7 +118,7 @@ const SelectTypesList = ({
                 >
                   <ListItemText primary={item} />
                 </ListItemStyled>
-                <Divider></Divider>
+                {index !== list.length - 1 && <Divider></Divider>}
               </>
             ))}
         </ListStyled>
