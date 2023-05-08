@@ -143,27 +143,14 @@ const FilterCommon: React.FC<IProps> = ({
   const assignees = {
     id: "assignes",
     type: "search",
-    listOfEntries: [
-      { label: "The Shawshank Redemption", year: 1994 },
-      { label: "The Godfather", year: 1972 },
-      { label: "The Godfather: Part II", year: 1974 },
-      { label: "The Dark Knight", year: 2008 },
-      { label: "12 Angry Men", year: 1957 },
-      { label: "Schindler's List", year: 1993 },
-    ],
-    selectedName: null,
+    listOfEntries: [],
+    selectedName: issueFilterState?.filterData?.assigneesData?.user || null,
     label: "Select Name or Team",
   };
   const [assignee, setAssignees] = useState([assignees]);
   // const handleClose = () => {
   //   onClose(true);
   // };
-
-  React.useEffect(() => {
-    // console.log("Karan", assignees, assignee);
-    console.log("Karan A", issueFilterState);
-    console.log("Karan A", assignee);
-  }, []);
 
   const onFilterApply = () => {
     let data: any = {};

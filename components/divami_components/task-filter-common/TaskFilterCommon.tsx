@@ -241,7 +241,8 @@ const TaskFilterCommon: React.FC<any> = ({
           let selectAllStatus = "F";
           if (taskFilterState.isFilterApplied) {
             if (
-              item.options.length === taskFilterState.filterData.taskType.length
+              item?.options?.length ===
+              taskFilterState.filterData.taskType.length
             ) {
               selectAllStatus = "T";
             } else if (taskFilterState.filterData?.taskType?.length) {
@@ -254,7 +255,7 @@ const TaskFilterCommon: React.FC<any> = ({
             options: taskTypes?.map((eachItem: any) => {
               if (taskFilterState.isFilterApplied) {
                 if (
-                  item.options.length === taskFilterState.filterData.taskType
+                  item?.options?.length === taskFilterState.filterData.taskType
                 ) {
                   selectAllStatus: "T";
                 }
