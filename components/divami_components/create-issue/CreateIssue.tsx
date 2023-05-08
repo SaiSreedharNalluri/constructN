@@ -35,6 +35,7 @@ const CreateIssue = ({
   onCancelCreate,
   deleteTheAttachment,
 }: any) => {
+  console.log(editData, "esdssditData", issueStatusList);
   const router = useRouter();
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);

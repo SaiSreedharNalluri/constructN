@@ -139,8 +139,8 @@ const ActivityLog = (props: any) => {
             showMoreText: true,
             showEdit: false,
             showDelete: false,
-            isEditAvailable: each?.by?.fullName === userName,
-            isDeleteAvailable: each?.by?.fullName === userName,
+            isEditAvailable: item?.by?.fullName === userName,
+            isDeleteAvailable: item?.by?.fullName === userName,
           };
         }),
       };

@@ -1,5 +1,3 @@
-import { ShowImageDisplay } from "../toolbar/Layers";
-
 export interface RenderTree {
   id: string;
   name: string;
@@ -20,6 +18,4 @@ export interface SelectLayerProps {
   selectedLayersList?: string[];
   setActiveRealityMap?: any;
   layersUpdated?: boolean;
-
-  showImageDisplay?: ShowImageDisplay;
 }

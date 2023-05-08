@@ -25,7 +25,6 @@ const TitleContiner = styled(Box)({
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "16px",
-  lineHeight: "20px",
 });
 const CloseIcon = styled(Image)({
   cursor: "pointer",
@@ -43,7 +42,6 @@ const Header = ({ closeIssueCreate, editData }: any) => {
           onClick={closeIssueCreate}
           src={closeIcon}
           alt={"close icon"}
-          data-testid="closeIcon"
         />
       </TitleContiner>
     </HeaderContainer>

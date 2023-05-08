@@ -1,4 +1,3 @@
-import { faBreadSlice } from "@fortawesome/free-solid-svg-icons";
 import {
     applyOffset,
     removeOffset,
@@ -109,7 +108,7 @@ export class ForgeDataVisualization {
     }
 
     setViewableState(viewableList) {
-        console.log("Inside set Viewable state: ", viewableList)
+        console.log("ForgeDataVisualization Inside set Viewable state: ", viewableList)
         if (!viewableList) {
             return;
         }
@@ -149,28 +148,50 @@ export class ForgeDataVisualization {
             this.viewableDataMap[viewableType] = {};
             switch (viewableType) {
                 case "360 Image":
-                case "Phone Image":
                 case "360 Video":
-                    for (const positionData in visualizationData[viewableType]) {
-                        let positionArray = visualizationData[viewableType][positionData].position;
-                        let dbIdObject = {
-                            dbId: dbId++,
-                            type: viewableType,
-                            id: positionData,
-                            // position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
-                            position: this.getViewerPosition({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.tm, this.offset),
-                            
+                    for(const reality of visualizationData[viewableType]) {
+                        for (const positionData in reality.position) {
+                            let positionArray = reality.position[positionData].position;
+                            let dbIdObject = {
+                                dbId: dbId++,
+                                type: viewableType,
+                                id: reality.id,
+                                imageName: positionData,
+                                // position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
+                                position: this.getViewerPosition({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.tm, this.offset),
+                                
+                            }
+                            this.dbIdArray[dbIdObject.dbId] = dbIdObject;
+                            // this.viewableState[viewableType] = true;
                         }
-                        this.dbIdArray[dbIdObject.dbId] = dbIdObject;
-                        // this.viewableState[viewableType] = true;
                     }
                     break;
-                case "Drone Image":
+                // case "Drone Image":
+                case "Phone Image":
+                    for(const reality of visualizationData[viewableType]) {
+                        reality.position["camname"].forEach((imageName, index) => {
+                            let positionArray = [];
+                            positionArray[0] = reality.position["camX"][index];
+                            positionArray[1] = reality.position["camY"][index];
+                            positionArray[2] = reality.position["camZ"][index];
+
+                            let dbIdObject = {
+                                dbId: dbId++,
+                                type: viewableType,
+                                id: reality.id,
+                                imageName: imageName,
+                                // position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
+                                position: this.getViewerPosition({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.tm, this.offset),
+                                
+                            }
+                            this.dbIdArray[dbIdObject.dbId] = dbIdObject;
+                        })
+                    }
                     break;
                 case "Issue":
                 case "Task":
                     for (const trackerData of visualizationData[viewableType]) {
-                        console.log("Inside data visualization: ", trackerData);
+                        // console.log("Inside data visualization: ", trackerData);
                         let tag = trackerData.context.tag;
                         let dbIdObject = {
                             dbId: dbId++,
@@ -186,7 +207,7 @@ export class ForgeDataVisualization {
             }   
             this.viewableLength = dbId - 1;
         }
-        console.log("Viewable data map: ", this.viewableLength);
+        console.log("ForgeDataVisualization Viewable data map: ", this.viewableLength);
     }
 
     removeDataMap(type) {
@@ -290,16 +311,20 @@ export class ForgeDataVisualization {
 
             this.viewableDataMap[dbIdObject.type].viewableData.addViewable(viewable);
         }
-        console.log("Viewable data map: ", this.viewableDataMap);
+        console.log(" ForgeDataVisualization Viewable data map: ", this.viewableDataMap);
     }
 
     async loadViewableData() {
         let combinedState = {...this.viewableState, ...this.tagState}
         for (let viewableType in this.viewableDataMap) {
             if(combinedState[viewableType]) {
-                console.log("Awaiting viewable data finish: ", viewableType);
-                await this.viewableDataMap[viewableType].viewableData.finish(); 
-                this.dataVizExtn.addViewables(this.viewableDataMap[viewableType].viewableData);
+                try{
+                    console.log(" ForgeDataVisualization Awaiting viewable data finish: ", viewableType);
+                    await this.viewableDataMap[viewableType].viewableData.finish(); 
+                    this.dataVizExtn.addViewables(this.viewableDataMap[viewableType].viewableData);
+                } catch(e) {
+                    console.log(e)
+                }
             }
         }
     }
@@ -380,7 +405,7 @@ export class ForgeDataVisualization {
     }
 
     onSpriteClickedOut(event) {
-        console.log("Inside sprite clicked out selection : ", event.dbId);
+        // console.log("Inside sprite clicked out selection : ", event.dbId);
         // event.hasStopped = true;
         this.handleSelectionOut(event.dbId);
     
@@ -389,7 +414,7 @@ export class ForgeDataVisualization {
     handleSelectionOut(tagId) {
         const viewablesToUpdate = [tagId];
         this.dataVizExtn.invalidateViewables(viewablesToUpdate, (viewable) => {
-            console.log("Inside invalidate for selection out : ", viewable);
+            // console.log("Inside invalidate for selection out : ", viewable);
             return {
                 scale: 1.0, // Restore the viewable size
                 url: "/icons/issuesInViewer.svg",
@@ -398,7 +423,7 @@ export class ForgeDataVisualization {
     }
 
     handleSelection(tagId) {
-        console.log("Inside handle selection : ", tagId);
+        // console.log("Inside handle selection : ", tagId);
         this.dataVizExtn.clearHighlightedViewables();
         this.dataVizExtn.highlightViewables(tagId);
         // const viewablesToUpdate = [tagId];
@@ -413,7 +438,7 @@ export class ForgeDataVisualization {
 
     passToViewerHandler(event) {
         
-        let dbObject = this.dbIdArray[event.dbId];
+        let dbObject = structuredClone(this.dbIdArray[event.dbId]);
         // console.log("Inside selected dbId object: ", this.dbIdMap, dbObject);
 
         if (dbObject) {
@@ -423,7 +448,7 @@ export class ForgeDataVisualization {
     }
 
     getViewerPosition(position, tm, offset) {
-        console.log("Inside get viewer posistion: ", position, tm, offset);
+        // console.log("Inside get viewer posistion: ", position, tm, offset);
         let _position;
         if(this.is2D) {
             _position = applyTMInverse(position, tm);
@@ -484,7 +509,7 @@ export class ForgeDataVisualization {
             console.log("Inside remove layers in dataviz layer: ");
             this.removeViewableData();
             this.viewableDataMap = {};
-            this.dbIdArray = [];
+            this.dbIdArray.length = 0;
             this.viewableLength = 0;
             console.log("Inside remove layers in dataviz layer: ", this.viewableDataMap, this.dbIdArray, this.viewableLength);
         }
