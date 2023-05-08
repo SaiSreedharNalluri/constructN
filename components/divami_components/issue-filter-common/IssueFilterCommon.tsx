@@ -596,9 +596,6 @@ const FilterCommon: React.FC<IProps> = ({
         {FilterState?.map((each: any, index: any) => {
           console.log("each", each);
 
-          const newTitle = each.title.split(" ");
-          const finalTitle = newTitle[1];
-          // console.log(narr[1]);
           return each.title === "Issue Type" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
@@ -616,8 +613,7 @@ const FilterCommon: React.FC<IProps> = ({
                       data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {/* {each.title} */}
-                      {finalTitle}
+                      {each.title}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
@@ -631,8 +627,7 @@ const FilterCommon: React.FC<IProps> = ({
                       data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {/* {each.title} */}
-                      {finalTitle}
+                      {each.title}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
@@ -646,8 +641,7 @@ const FilterCommon: React.FC<IProps> = ({
                       data-testid="filter-select-all"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {/* {each.title} */}
-                      {finalTitle}
+                      {each.title}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
@@ -706,8 +700,7 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {/* {each?.title} */}
-                      {finalTitle}
+                      {each?.title}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
@@ -720,8 +713,7 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {/* {each?.title} */}
-                      {finalTitle}
+                      {each?.title}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
@@ -734,8 +726,7 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {/* {each?.title} */}
-                      {finalTitle}
+                      {each?.title}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (

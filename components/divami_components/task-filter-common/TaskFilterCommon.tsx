@@ -629,8 +629,6 @@ const TaskFilterCommon: React.FC<any> = ({
       </FilterCommonHeader>
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
-          const newTitle = each.title.split(" ");
-          const finalTitle = newTitle[1];
           return each.code === "taskType" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
@@ -647,8 +645,7 @@ const TaskFilterCommon: React.FC<any> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {/* {each.title} */}
-                      {finalTitle}
+                      {each.title}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
@@ -661,8 +658,7 @@ const TaskFilterCommon: React.FC<any> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {/* {each.title} */}
-                      {finalTitle}
+                      {each.title}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
@@ -675,8 +671,7 @@ const TaskFilterCommon: React.FC<any> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {/* {each.title} */}
-                      {finalTitle}
+                      {each.title}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
@@ -733,8 +728,7 @@ const TaskFilterCommon: React.FC<any> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {/* {each.title} */}
-                      {finalTitle}
+                      {each.title}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
@@ -747,8 +741,7 @@ const TaskFilterCommon: React.FC<any> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {/* {each.title} */}
-                      {finalTitle}
+                      {each.title}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
@@ -761,7 +754,7 @@ const TaskFilterCommon: React.FC<any> = ({
                       alt="reset"
                     />
                     <FilterCardSelectAllTextHeader>
-                      {finalTitle}
+                      {each.title}
                     </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
