@@ -1,5 +1,7 @@
 
 import { getRealityPointCloudPath, getPointCloudTM, getRealityImagesPath, getRealityPositions, getRealityPositionsPath, getOrthoPhotoLayers, getMapboxHotspotLayers } from "../services/reality";
+import { type } from "os";
+
 import { getRealityPath, getDesignPath, getFloormapPath, getFloormapTmPath,  getMapboxLayersPath, getStructurePath } from "./S3Utils";
 
 
@@ -20,30 +22,45 @@ export const getMapboxReality = (realityList) => {
 }
 
 export const getForgeModels = (designMap) => {
+    console.log("Found U",designMap);
     let forgeDocumentMap = {}
+    let document = {};
     for (const type in designMap) {
         switch (type) {
             case "BIM":
                 let bimArray = [];
-                for (let design of designMap[type]) {
-                    let document = {};
+                console.log('Found Wierd',designMap[type],type);
+                for (var design of designMap[type]) {
+                    document = {};
+                    let  g = design.tm;
+                    document.tm =  design.tm;
+                    console.log("Found design",design,document,design.tm,g);
                     let storage = design.storage.find(storage => storage.provider === "autodesk-oss");
+                    //console.log("Found storage",storage);
                     if (storage) {
                     document.urn = `urn:${storage.pathId}`;
-                    document.tm = design.tm;
+                    //document.tm = design.tm;
+                    console.log("Found document",document,design.tm);
                     bimArray.push(document);
                     }
                 }
+                
                 forgeDocumentMap[type] = bimArray;
                 break;
             case "Plan Drawings":
                 let planDrawingsArray = [];
-                for (let design of designMap[type]) {
-                    let document = {};
+                console.log('Found Wierd',designMap[type]);
+                for (var design of designMap[type]) {
+                    document = {};
+                    
+                    document.tm = design.tm;
+                    console.log("Found design",design,document,design.tm);
                     let storage = design.storage.find(storage => storage.provider === "autodesk-oss");
+                    console.log("Found storage",storage);
                     if (storage) {
                     document.urn = `urn:${storage.pathId}`;
-                    document.tm = design.tm;
+                    //document.tm = design.tm;
+                    console.log("Found document",document,design.tm);
                     planDrawingsArray.push(document);
                     }
                 }
@@ -52,6 +69,7 @@ export const getForgeModels = (designMap) => {
 
         }
     }
+    console.log('Found ForgeDocumentMap:',forgeDocumentMap);
     return forgeDocumentMap;
 }
 
@@ -259,9 +277,7 @@ export const getRealityLayersPath = async (structure, realityMap) => {
 }
 
 export const getRealityMap = (snapshot) => {
-    let map = {
-
-    };
+    let map ={};
     snapshot?.reality?.forEach((reality, i, array) => {
         if (map[reality.mode]) {
             map[reality.mode].realities.push(reality);

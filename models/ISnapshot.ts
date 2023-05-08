@@ -10,7 +10,7 @@ export interface ISnapshot {
   __v?: number;
   structure: string;
   status: string;
-  visualization?: [];
+  visualizations?: [];
   reality?: [IReality];
 }
 

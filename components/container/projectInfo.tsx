@@ -82,6 +82,14 @@ const ProjectInfo: React.FC<IProps> = ({
         {({ isSubmitting }) => (
           <Form>
             <div className="grid grid-cols-2 gap-4 px-6">
+            <div>
+                <label className=" text-sm font-bold ">{'Created On : '+projectData.createdAt.toString().split('T')[0]}</label>
+              
+              </div>
+              <div>
+                <label className=" text-sm font-bold ">{'Created By : '+projectData.email}</label>
+              
+              </div>
               <div>
                 <label className=" text-sm font-bold ">Project Name</label>
                 <Field

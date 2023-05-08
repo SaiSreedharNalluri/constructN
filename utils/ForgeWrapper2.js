@@ -49,7 +49,7 @@ export class ForgeInstance {
   }
 }
 
-export const ForgeViewerUtils = function () {
+export const ForgeViewerUtils = (function () {
   let _instance;
   let _viewerId;
   let _eventHandler;
@@ -193,7 +193,9 @@ export const ForgeViewerUtils = function () {
     console.log("Inside update data: ", documentURNs);
     _documentURNs = documentURNs;
     _isPendingDataToLoad = true;
+    console.log("LoadingMyData",_isViewerInitialized);
     if (_isViewerInitialized) {
+      
       loadData();
     } else {
       // initializeViewer();
@@ -276,6 +278,8 @@ export const ForgeViewerUtils = function () {
     }
 
     _documentURNs[getAvailableType()]?.map((document) => {
+     console.log("Inside loadData:", document);
+
       Autodesk.Viewing.Document.load(
         document.urn,
         async function (viewerDocument) {
@@ -295,7 +299,7 @@ export const ForgeViewerUtils = function () {
   };
 
   const generateModelOptions = (tm, manifestNode) => {
-    // console.log("Inside modeloptions:", tm);
+     console.log("Inside modeloptions:", tm);
     // console.log("Inside modeloptions, isModel 2D: ", manifestNode.is2D());
 
     const modelOptions = {
@@ -534,10 +538,10 @@ export const ForgeViewerUtils = function () {
 
   const getContext = () => {
     // console.log("Inside forge get context: ", globalOffset);
-    let contextObject;
+    let contextObject ={};
     if (_isViewerInitialized && _isModelLoaded) {
       contextObject = {
-        id: new Date().getTime(),
+        id: new Date().getTime().toString(),
         type: _manifestNode.is2D() ? "2d" : "3d",
         cameraObject: getCamera(),
       };
@@ -750,6 +754,7 @@ export const ForgeViewerUtils = function () {
       _dataVizUtils = new ForgeDataVisualization(_viewer, _dataVizExtn);
       _dataVizUtils.setHandler(onDataVizHandler.bind(this));
       if (loadLayersOnDataLoadCompletion()) {
+
         loadLayers();
       }
     } else if (parameter.extensionId === "Autodesk.BimWalk") {
@@ -759,7 +764,7 @@ export const ForgeViewerUtils = function () {
   };
 
   const onMouseEnter = () => {
-    // console.log("Inside mouse eneter event forge: ", _viewerId);
+     //console.log("Inside mouse eneter event forge: ", _viewerId);
     _eventHandler(_viewerId, { type: "mouse" });
   };
 
@@ -931,7 +936,7 @@ export const ForgeViewerUtils = function () {
     removeLayers: removeLayers,
     shutdown: shutdown,
   };
-};
+})();
 
 const getContextLocalFromGlobal = (context, globalOffset) => {
   // console.log("Global offset: ", context);

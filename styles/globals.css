@@ -6,6 +6,7 @@
   background: white;
 }
 
+
 .unselectedClass {
   background-color: gray;
 }
@@ -548,4 +549,19 @@ td {
 
 .custom-styled-menu:last-child {
   border-bottom: none;
+}
+
+
+.calc-width-half{
+  width: calc(50%);
+}
+.left-59{
+  left: 59px;
+}
+.calcLeft{
+  width: calc(50% - 59px);
+}
+
+.calc-width {
+  width: calc(100% - 58.9px);
 }
