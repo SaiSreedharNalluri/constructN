@@ -53,8 +53,11 @@ const SelectTypesList = ({
   //   }
   // };
 
+  console.log("optionsList", optionsList);
+
   const onSearchChange = (event: any) => {
     let parentList = [...optionsList];
+    console.log("parentList", parentList);
     const searchFieldString = event.target.value.toLocaleLowerCase();
     // console.log("searchFieldString", searchFieldString);
     let newObj = parentList.filter((val: any) => {
@@ -69,6 +72,7 @@ const SelectTypesList = ({
     // }
     setList(optionsList);
   }, [optionsList]);
+  console.log(optionsList, "options", list);
   // const filteredItems = optionsList.filter((item:any) =>
   //   item.toLowerCase().includes(searchTerm.toLowerCase())
   // );
@@ -77,7 +81,7 @@ const SelectTypesList = ({
     <SelectLayerContainer openSelectLayer={openselectlayer}>
       <DrawerBox>
         <DrawerHeader>
-          <DrawerHeaderTitle>{title}</DrawerHeaderTitle>
+          <DrawerHeaderTitle>{title} </DrawerHeaderTitle>
           {/* <CloseIconStyled onClick={onCloseHandler} /> */}
           <CloseIcon
             src={closeIcon}
@@ -105,10 +109,11 @@ const SelectTypesList = ({
           />
         </DrawerSearchBar>
         <ListStyled>
-          {list?.length &&
+          {list?.length > 0 &&
             list.map((item: any, index: number) => (
               <>
                 <ListItemStyled
+                  className="custom-list-styled"
                   key={item}
                   onClick={() => {
                     onSelect({ target: { value: item } });
@@ -117,7 +122,7 @@ const SelectTypesList = ({
                 >
                   <ListItemText primary={item} />
                 </ListItemStyled>
-                <Divider></Divider>
+                {index !== list.length - 1 && <Divider></Divider>}
               </>
             ))}
         </ListStyled>

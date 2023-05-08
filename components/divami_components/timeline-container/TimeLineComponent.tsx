@@ -8,19 +8,42 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import { ISnapshot } from "../../../models/ISnapshot";
 import CustomCalender from "../custom-datepicker/CustomCalender";
 import {
+  CircleIcon,
+  DateText,
+  LeftIconImage,
   PaginationStyle,
+  RightIconImage,
   SelectedTimeLine,
+  TimelineDots,
+  TimelineNavigation,
   TimeLinePagination,
   TimeLineStyleContainer,
 } from "./TimeLineComponentStyles";
 import dayjs from "dayjs";
 import moment from "moment";
+import Image from "next/image";
+import LeftIcon from "../../../public/divami_icons/leftIcon.svg";
+import RightIcon from "../../../public/divami_icons/rightIcon.svg";
+import { Tooltip } from "@mui/material";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
+import LeftSingleArrow from "../../../public/divami_icons/LeftSingleArrow.png";
+import RightSingleArrow from "../../../public/divami_icons/RightSingleArrow.png";
 
 interface IProps {
   currentSnapshot: ISnapshot;
   snapshotList: ISnapshot[];
   snapshotHandler: (snapshotData: ISnapshot) => void;
   isFullScreen?: boolean;
+  getSnapshotList: any;
+  totalSnaphotsCount: any;
+  structure: any;
+  setPrevList: any;
+  setNextList: any;
+  totalPages: any;
+  offset: any;
+  tools?: any;
 }
 
 const TimeLineComponent: React.FC<IProps> = ({
@@ -28,11 +51,29 @@ const TimeLineComponent: React.FC<IProps> = ({
   snapshotList,
   snapshotHandler,
   isFullScreen = false,
+  getSnapshotList,
+  totalSnaphotsCount = 0,
+  structure,
+  setPrevList,
+  setNextList,
+  totalPages,
+  offset,
+  tools,
 }) => {
   const [bottomNav, setBottomNav] = useState(false);
-  const [page, setPage] = useState(2);
+  const [page, setPage] = useState<any>();
+  // const [offset, setOffset] = useState(1);
+
   const [oldDate, setOldDate] = useState("");
   const [newDate, setNewDate] = useState("");
+  const [activeCircleIndex, setActiveCircleIndex] = useState<any>();
+  // const [totalPages, setTotalPages] = useState(
+  //   Math.ceil(totalSnaphotsCount / 10)
+  // );
+  // const pageSize = 10;
+  // useEffect(() => {
+  //   setTotalPages(Math.ceil(totalSnaphotsCount / 10));
+  // }, [totalSnaphotsCount]);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
@@ -41,9 +82,12 @@ const TimeLineComponent: React.FC<IProps> = ({
     const dateFormatted = moment(new Date(event))
       .format("YYYY-MM-DD")
       .toString();
-    const value = snapshotList.findIndex((item) => item?.date == dateFormatted);
+    const value = snapshotList.findIndex(
+      (item) =>
+        moment(item?.date).format("YYYY-MM-DD").toString() == dateFormatted
+    );
     if (value > -1) {
-      setPage(value + 1);
+      setPage(value);
     }
   };
 
@@ -55,6 +99,16 @@ const TimeLineComponent: React.FC<IProps> = ({
     snapshotHandler(snapshot);
   };
 
+  const setPrevPage = () => {
+    if (page >= 1) {
+      setPage(page - 1);
+    }
+  };
+  const setNextPage = () => {
+    if (page < snapshotList.length - 1) {
+      setPage(page + 1);
+    }
+  };
   // const getSnapshotDate = () => {
   //   if (currentSnapshot) {
   //     return Moment(currentSnapshot.date).format("Do MMM YYYY");
@@ -62,16 +116,29 @@ const TimeLineComponent: React.FC<IProps> = ({
   //     return "No Reality";
   //   }
   // };
-
+  console.log(snapshotList, "snapjhos", tools);
   useEffect(() => {
-    setCurrentSnapshot(snapshotList[page - 1]);
+    if (page || page == 0) {
+      setCurrentSnapshot(snapshotList[page]);
+      // if (page >= 6) {
+      //   setActiveCircleIndex(6);
+      // } else {
+      //   setActiveCircleIndex(page);
+      // }
+      setActiveCircleIndex(page);
+    }
   }, [page]);
 
   useEffect(() => {
     if (snapshotList.length > 0) {
       setOldDate(snapshotList[0].date);
       setNewDate(snapshotList[snapshotList.length - 1].date);
-      setPage(snapshotList.length);
+      console.log(currentSnapshot, snapshotList, "currentSnap");
+      const snapshotIndex = snapshotList.findIndex(
+        (item) => item.date === currentSnapshot.date
+      );
+      setPage(snapshotIndex);
+      // setPage(snapshotList.length - 1);
     }
   }, [snapshotList]);
 
@@ -85,19 +152,200 @@ const TimeLineComponent: React.FC<IProps> = ({
     return timelineDates.indexOf(dayjs(date).format("YYYY-MM-DD")) < 0;
   };
 
-  const calenderStyles = {
-    sx: {
-      "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-disabled,.Mui-selected)":
-        {
-          backgroundColor: "rgba(0, 0, 0, 0.20)",
-        },
-    },
-  };
+  // const calenderStyles = {
+  //   sx: {
+  //     "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-disabled,.Mui-selected)":
+  //       {
+  //         backgroundColor: "#FFF5EF",
+  //         paddingRight: "5px",
+  //         color: "#101F4C",
+  //         fontSize: "14px",
+  //         fontWeight: 400,
+  //         fontFamily: "Open Sans",
 
+  //         "&:after": {
+  //           content: '""',
+  //           display: "block",
+  //           width: "4px",
+  //           height: "4px",
+  //           background: "#FF843F",
+  //           border: "1px solid red",
+  //           borderRadius: "50%",
+  //           marginTop: "22px",
+  //           marginLeft: "-7px",
+  //         },
+  //       },
+  //     "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root.Mui-selected:hover":
+  //       {
+  //         backgroundColor: "#FF843F",
+  //         color: "#FFFFFF",
+  //       },
+  //     " .css-7jfl2q-MuiPopper-root-MuiPickersPopper-root .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root.Mui-selected":
+  //       {
+  //         backgroundColor: "#FF843F",
+  //         color: "#FFFFFF",
+  //       },
+  //     "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root.Mui-selected": {
+  //       backgroundColor: "#FF843F",
+  //       color: "#FFFFFF",
+  //       fontSize: "14px",
+  //       fontWeight: 400,
+  //       fontFamily: "Open Sans",
+  //     },
+  //     "& .css-195y93z-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-selected) ":
+  //       {
+  //         border: "1px solid #FF843F",
+  //         borderRadius: "50%",
+  //         fontSize: "14px",
+  //         fontWeight: 400,
+  //         fontFamily: "Open Sans",
+  //       },
+  //     "& .css-bkrceb-MuiButtonBase-root-MuiPickersDay-root.Mui-disabled": {
+  //       fontSize: "14px",
+  //       fontWeight: 400,
+  //       color: "#888888",
+  //       fontFamily: "Open Sans",
+  //     },
+  //     "& .css-raiqh1-MuiTypography-root-MuiDayPicker-weekDayLabel": {
+  //       color: "#888888",
+  //       fontSize: "14px",
+  //       fontWeight: 400,
+  //       fontFamily: "Open Sans",
+  //     },
+  //     "& .css-dplwbx-MuiPickersCalendarHeader-label": {
+  //       color: "#36415D",
+  //       fontWeight: 500,
+  //       fontFamily: "Open Sans",
+  //       fontSize: "14px",
+  //     },
+  //     "& .css-1ae9t7h-MuiButtonBase-root-MuiIconButton-root-MuiPickersArrowSwitcher-button":
+  //       {
+  //         border: "1px solid #9D9D9D",
+  //         borderRadius: "4px",
+  //         width: "24px",
+  //         height: "24px",
+  //         marginTop: "3px",
+  //       },
+  //     "& .css-jro82b-MuiButtonBase-root-MuiIconButton-root-MuiPickersArrowSwitcher-button":
+  //       {
+  //         border: "1px solid #9D9D9D",
+  //         borderRadius: "4px",
+  //         width: "24px",
+  //         height: "24px",
+  //         marginTop: "3px",
+  //       },
+  //     "& .css-nk89i7-MuiPickersCalendarHeader-root ": {
+  //       borderBottom: "1px solid #9D9D9D",
+  //       paddingBottom: "15px",
+  //     },
+  //   },
+  // };
   // console.log(snapshotList, "snaphsot listt");
   return (
     <>
-      {snapshotList && snapshotList.length > 0 && (
+      {tools?.toolName !== "compareDesign" ? (
+        <TimeLineStyleContainer isFullScreen={isFullScreen}>
+          <SelectedTimeLine
+            style={{ bottom: bottomNav ? (isFullScreen ? 0 : "0") : "unset" }}
+            onClick={toggleTimeline}
+            data-testid={"selected-timeline"}
+          >
+            {Moment(currentSnapshot?.date).format("DD MMM YYYY")}
+          </SelectedTimeLine>
+          {bottomNav ? (
+            <TimelineNavigation>
+              {offset !== totalPages ? (
+                <LeftIconImage
+                  src={LeftIcon}
+                  alt=""
+                  onClick={() => {
+                    setPrevList();
+                  }}
+                />
+              ) : (
+                <></>
+              )}
+              <LeftIconImage
+                src={RightSingleArrow}
+                alt=""
+                onClick={() => {
+                  setPrevPage();
+                }}
+              />
+              <DateText>
+                <p
+                  onClick={() => {
+                    setPage(0);
+                  }}
+                >
+                  {oldDate && Moment(oldDate).format("DD MMM YY")}
+                </p>
+              </DateText>
+
+            <TimelineDots>
+              {snapshotList.map((item: any, index: number) => {
+                return (
+                  <Tooltip title={Moment(item.date).format("DD MMM YYYY")} key={Moment(item.date).format("DD MMM YYYY")}>
+                    <CircleIcon
+                      key={index}
+                      active={index === activeCircleIndex}
+                      onClick={(e: any) => handleChange(e, index)}
+                    >
+                      3
+                    </CircleIcon>
+                  </Tooltip>
+                );
+              })}
+            </TimelineDots>
+
+              <DateText>
+                <p
+                  onClick={() => {
+                    setPage(snapshotList.length - 1);
+                  }}
+                >
+                  {newDate && Moment(newDate).format("DD MMM YY")}{" "}
+                </p>
+              </DateText>
+              <RightIconImage
+                src={LeftSingleArrow}
+                alt=""
+                onClick={() => {
+                  setNextPage();
+                }}
+              />
+              {offset > 1 ? (
+                <Image
+                  src={RightIcon}
+                  alt=""
+                  onClick={() => {
+                    setNextList();
+                  }}
+                />
+              ) : (
+                <></>
+              )}
+              <CustomCalender
+                onChange={handleDateChange}
+                data-testid="calender"
+                shouldDisableDate={disableWeekends}
+                hideTextField
+                data={{
+                  disableAll: true,
+                  defaultValue: currentSnapshot?.date,
+                  // defaultValue: page === 2 ? newDate : oldDate,
+                  disableDays: disableWeekends,
+                }}
+              />
+            </TimelineNavigation>
+          ) : (
+            <></>
+          )}
+        </TimeLineStyleContainer>
+      ) : (
+        <></>
+      )}
+      {/* {snapshotList && snapshotList.length > 0 && (
         <TimeLineStyleContainer isFullScreen={isFullScreen}>
           <SelectedTimeLine
             style={{ bottom: bottomNav ? "" : 0 }}
@@ -110,12 +358,9 @@ const TimeLineComponent: React.FC<IProps> = ({
           {bottomNav ? (
             <div
               data-testid="bottomNav"
-              //  className="absolute flex flex-col items-center z-10 top-0 inset-x-0"
             >
               <div
-              // className="bg-gray-300 border border-gray-700 rounded duration-300 cursor-pointer"
               >
-                {/* <p onClick={toggleTimeline}>{getSnapshotDate()}</p> */}
               </div>
               {snapshotList && currentSnapshot && (
                 <TimeLinePagination>
@@ -149,7 +394,6 @@ const TimeLineComponent: React.FC<IProps> = ({
                       data={{
                         disableAll: true,
                         defaultValue: currentSnapshot?.date,
-                        // defaultValue: page === 2 ? newDate : oldDate,
                         disableDays: disableWeekends,
                         styles: calenderStyles,
                       }}
@@ -160,7 +404,7 @@ const TimeLineComponent: React.FC<IProps> = ({
             </div>
           ) : null}
         </TimeLineStyleContainer>
-      )}
+      )} */}
     </>
   );
 };

@@ -77,6 +77,8 @@ export const ListStyled = styled(List)({
   fontWeight: "400",
   fontSize: "14px",
   fontFamily: "Open Sans",
+  color: "#101F4C",
+
   "& .MuiListItem-root": {
     height: "38px",
   },
@@ -86,5 +88,7 @@ export const ListStyled = styled(List)({
   "& .css-10hburv-MuiTypography-root": {
     fontSize: "14px",
     fontFamily: "Open Sans",
+    fontStyle: "normal",
+    
   },
 });

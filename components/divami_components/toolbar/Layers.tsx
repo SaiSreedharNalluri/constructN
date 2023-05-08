@@ -35,6 +35,8 @@ const Layers = ({
   setActiveRealityMap,
   layersUpdated,
 }: any) => {
+  console.log("selectedLayersList11", selectedLayersList);
+  const [selectedArr, setSelectedArr] = useState<any>([]);
   const [layersLabels, setLayersLabels] = useState<any>([]);
   const [showImageIcon, setShowImageIcon] = useState<ShowImageDisplay>({
     item1: true,
@@ -43,28 +45,51 @@ const Layers = ({
   });
 
   useEffect(() => {
-    if (myLayersList) {
-      setLayersLabels(Object.keys(myLayersList));
+    let newLayersArr = [];
+    if (myLayersList != undefined) {
+      for (const key in myLayersList) {
+        newLayersArr.push(myLayersList[key].name);
+      }
     }
+    setSelectedArr(newLayersArr);
   }, [myLayersList]);
+  console.log("selectedArr", selectedArr);
+
+  useEffect(() => {
+    let arr: any = [];
+    let obj: any = { ...myLayersList };
+
+    console.log("myLayersList11", myLayersList);
+    for (const key in obj) {
+      if (obj[key]?.isSelected) {
+        // console.log("objkeey", obj[key]);
+        arr.push(obj[key].name);
+      }
+    }
+    console.log("arr22", arr);
+    //for loop
+    //if is selected
+    //arr.push
+    //end of
+
+    // setLayersLabels(Object.keys(myLayersList));
+    setLayersLabels(arr);
+  }, [layersUpdated, selectedArr.length]);
+  useEffect(() => {
+    console.log(layersLabels, "siva");
+  }, [layersLabels]);
 
   const getLayersIcons = (layersLabels: any) => {
     return (
       <>
         {layersLabels.map((label: any, index: number) => {
-          if (label === "Phone Image" && showImageIcon.item1) {
+          if (label === "Phone Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={hexagonIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-          } else if (label === "360 Image" && showImageIcon.item2) {
-            return (
-              <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={cameraIcon} alt="Arrow" />
-              </LayerSecondSectionCamImg>
-            );
-          } else if (label === "Drone Image" && showImageIcon.item2) {
+          } else if (label === "360 Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={cameraIcon} alt="Arrow" />
@@ -74,6 +99,12 @@ const Layers = ({
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={videoRecorderIcon} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          } else if (label === "Drone Image") {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={cameraIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           }
@@ -91,8 +122,8 @@ const Layers = ({
       <ContainerDiv>
         <LayersWrapper onClick={onListClick}>
           <IconsContainer>
-            {selectedLayersList.length > 0 ? (
-              <>Layer: {getLayersIcons(selectedLayersList)}</>
+            {layersLabels.length > 0 ? (
+              <>Layer: {getLayersIcons(layersLabels)}</>
             ) : (
               "Select Layer"
             )}
@@ -113,7 +144,6 @@ const Layers = ({
             selectedLayersList={selectedLayersList}
             setActiveRealityMap={setActiveRealityMap}
             layersUpdated={layersUpdated}
-            showImageDisplay={showImageIcon}
           />
         </SelectLayersWrapper>
       </ContainerDiv>

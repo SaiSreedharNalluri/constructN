@@ -23,7 +23,7 @@
 }
 
 .calc-h {
-  height: calc(100vh - 40px);
+  height: calc(100vh - 60px);
   /* height: calc(100vh - 116px); */
 }
 
@@ -145,7 +145,7 @@
 
 .attachmentsSection .detailsImageDiv:hover {
   background: #fff2eb;
-  color: #ff843f;
+  color: #f1742e;
 }
 
 .MuiDrawer-paper {
@@ -182,8 +182,9 @@ body {
 }
 
 .adsk-viewing-viewer .adsk-toolbar {
-  bottom: 30px;
-  left: calc(100% - 60px);
+  bottom: 110px;
+  left: unset !important;
+  right: 30px;
   pointer-events: none;
   position: absolute;
   text-align: center;
@@ -193,7 +194,7 @@ body {
 
 .adsk-viewing-viewer .adsk-toolbar .adsk-button .toolbar-vertical-group {
   bottom: -20px;
-  left: -50px;
+  /* left: -50px; */
   margin: 0;
   position: absolute;
   display: grid;
@@ -359,6 +360,10 @@ body {
   top: -6px;
 }
 
+.adsk-viewing-viewer .explode-submenu.visible {
+  display: none;
+}
+
 .css-1wg4ruk-MuiList-root {
   padding-bottom: 0px;
 }
@@ -449,19 +454,19 @@ body {
 
 .formField:focus-visible {
   outline: none;
-  border: 1px solid #ff843f !important;
+  border: 1px solid #f1742e !important;
   border-radius: 4px;
 }
 
 .formField.Mui-focused {
-  border: 1px solid #ff843f !important;
+  border: 1px solid #f1742e !important;
   border-radius: 4px;
 }
 
 .css-19kzrtu {
-  /* padding: 0px; */
-  padding-left: 20px;
-  padding-right: 20px;
+  /* padding: 0px ; */
+  padding-left: 0px !important;
+  padding-right: 0px !important;
   padding-top: 25px;
 }
 
@@ -520,6 +525,13 @@ td {
 .form-container-child > div:first-child {
   margin-top: 20px;
 }
+
+.date-error {
+  color: #f67c74;
+  font-size: 14px;
+  margin-top: 3px;
+}
+
 .calc-width-full {
   width: 100%;
 }
@@ -531,11 +543,6 @@ td {
   margin-right: 55px;
 }
 
-.sections_table {
-  width: 100%;
-  margin: 0 auto;
-  position: relative;
-}
 .me {
   color: #ecf0f1;
   background: #e74c3c;
@@ -576,4 +583,31 @@ td {
 .me2 span:last-child {
   left: 50% !important;
   right: 50% !important;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.custom-styled-menu:last-child {
+  border-bottom: none;
+}
+
+.calc-width-half {
+  width: calc(50%);
+}
+.left-59 {
+  left: 59px;
+}
+.calcLeft {
+  width: calc(50% - 59px);
+}
+
+.calc-width {
+  width: calc(100% - 58.9px);
+}
+
+.sections_table {
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
 }

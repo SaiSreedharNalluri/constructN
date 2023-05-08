@@ -31,6 +31,7 @@ import { ITools } from "../../../models/ITools";
 import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
 import Tooltip from "@mui/material/Tooltip";
 import html2canvas from "html2canvas";
+import moment from "moment";
 
 const Task = ({
   rightMenuClickHandler,
@@ -55,6 +56,9 @@ const Task = ({
   handleOnTasksSort,
   taskSubmit,
   deleteTheAttachment,
+  projectUsers,
+  taskStatusList,
+  taskPriorityList,
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -128,14 +132,16 @@ const Task = ({
         (item: any) => item.id == "description"
       )[0]?.defaultValue),
       (data.assignees = userIdList),
-      (data.startdate = formData
+      (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
-    data.duedate = formData
+    data.startDate = moment(data.startDate).format("YYYY-MM-DD");
+    data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
+    data.dueDate = moment(data.dueDate).format("YYYY-MM-DD");
     data.attachments = formData.filter(
       (item: any) => item.id === "file-upload"
     )[0].selectedFile;
@@ -174,7 +180,7 @@ const Task = ({
     formDataObj.append("jreq", JSON.stringify(data));
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
-    if (data.title && data.type && data.priority && data.description) {
+    if (data.title && data.type && data.priority) {
       setEnableSubmit(false);
 
       createTaskWithAttachments(projectId as string, formDataObj)
@@ -190,7 +196,11 @@ const Task = ({
           }
         })
         .catch((error) => {
-          toast.error(`Something went wrong`);
+          if (error.message == "Forbidden Access") {
+            toast(`You can't create a task. Ask the Project Admin for help`);
+          } else {
+            toast.error(`Something went wrong`);
+          }
           setEnableSubmit(true);
         });
     } else {
@@ -206,16 +216,18 @@ const Task = ({
   };
 
   useEffect(() => {
+    console.log("contextinfo", contextInfo, tasksList);
     if (openTaskDetails && contextInfo?.id) {
       const selectedObj = tasksList.find(
         (each: any) => each._id === contextInfo.id
       );
       setSelectedTask(selectedObj);
     }
-  }, [openTaskDetails, contextInfo?.id]);
+  }, [openTaskDetails, contextInfo?.id, tasksList]);
   const taskSubmitFn = (formdata: any) => {
     // tasksList.push(formdata);
     taskMenuInstance.toolAction = "taskCreateSuccess";
+    taskMenuInstance.response = { ...formdata.context, id: formdata._id };;
     // setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);
     closeTaskCreate();
@@ -223,6 +235,7 @@ const Task = ({
     setEnableSubmit(true);
   };
   const openTaskCreateFn = () => {
+    console.log("boss");
     //setCreateOverlay(true);
     taskMenuInstance.toolAction = "taskCreate";
     taskMenuClicked(taskMenuInstance);
@@ -340,6 +353,10 @@ const Task = ({
             handleOnTasksSort={handleOnTasksSort}
             deleteTheAttachment={deleteTheAttachment}
             openTaskCreateFn={openTaskCreateFn}
+            projectUsers={projectUsers}
+            taskType={currentTypesList}
+            taskPriority={taskPriorityList}
+            taskStatus={taskStatusList}
           />
         </Drawer>
       )}
@@ -372,8 +389,11 @@ const Task = ({
             currentSnapshot={currentSnapshot}
             currentStructure={currentStructure}
             contextInfo={contextInfo}
-            projectUsers={[]}
+            projectUsers={projectUsers}
             deleteTheAttachment={deleteTheAttachment}
+            getTasks={getTasks}
+            taskPriority={taskPriorityList}
+            taskStatus={taskStatusList}
           />
         </Drawer>
       )}

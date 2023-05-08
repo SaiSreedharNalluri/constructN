@@ -22,16 +22,23 @@ export const HeaderContainer = styled(Box)`
   align-items: center;
   width: 100%;
   border-bottom: 1px solid #d9d9d9;
+   
 `;
 
-export const TitleContainer = styled(Box)`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-left: 20px;
-  padding-right: 20px;
-`;
+export const TitleContainer = styled(Box)({
+  width: "100%",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+
+  color: "#36415D",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "16px",
+
+  // position:"fixed"
+});
 
 export const CloseIcon = styled(Image)`
   cursor: pointer;
@@ -52,7 +59,8 @@ export const DeleteIcon = styled(Image)`
   cursor: pointer;
   // width: 24px;
   // height: 24px;
-  margin-right: 10px;
+  margin-right: 25px;
+  
 `;
 
 export const LeftTitleCont = styled("div")`
@@ -85,11 +93,13 @@ export const FirstHeaderDiv = styled("div")`
 `;
 
 export const SecondBodyDiv = styled("div")`
-  display: flex;
+  //   display: flex;
   margin-top: 25px;
 `;
 
 export const PriorityTitle = styled("div")`
+ width: 88px;
+  margin-right: 130px;
   font-family: "Open Sans";
   color: #787878;
 
@@ -130,20 +140,28 @@ export const SecondContType = styled("div")`
   width: 186px;
 `;
 
-export const SecondContPrior = styled("div")`
-  width: 186px;
-`;
+export const SecondContPrior = styled("div")({
+  display: "flex",
+  // justifyContent:"space-between",
+  // width: "210px",
+  // border:"1px solid red"
+});
 
-export const SecondContPriorParal = styled("div")`
-  width: 186px;
-  margin-left: auto;
-`;
+export const SecondContPriorParal = styled("div")({
+  display: "flex",
+  // justifyContent:"space-between",
+  // width: "210px",
+});
 
-export const SecondContCapt = styled("div")`
-  width: 186px;
-`;
+export const SecondContCapt = styled("div")({
+  display: "flex",
+  // justifyContent:"space-between",
+  // width: "210px",
+});
 
 export const CaptureTitle = styled("div")`
+  width: 88px;
+  margin-right: 130px;
   font-family: "Open Sans";
   color: #787878;
 
@@ -163,6 +181,8 @@ export const CaptureStatus = styled("div")`
 `;
 
 export const ThirdContWatch = styled("div")`
+width: 88px;
+  margin-right: 130px;
   font-family: "Open Sans";
   font-style: normal;
   font-weight: 400;
@@ -182,6 +202,8 @@ export const ThirdContWatchName = styled("div")`
 `;
 
 export const ThirdContProg = styled("div")`
+  width: 88px;
+  margin-right: 130px;
   font-family: "Open Sans";
   color: #787878;
 
@@ -201,7 +223,7 @@ export const ThirdContProgType = styled("div")`
   line-height: 20px;
 
   color: #101f4c;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 
 export const ThirdBodyDiv = styled("div")`
@@ -213,10 +235,9 @@ export const ThirdContLeft = styled("div")`
   margin-right: 100px;
 `;
 
-export const ThirdContRight = styled("div")`
-  // flex: 1;
-  width: 186px;
-`;
+export const ThirdContRight = styled("div")({
+  display:"flex"
+})
 
 export const PenIconImage = styled(Image)`
   cursor: pointer;
@@ -232,17 +253,19 @@ export const MoreText = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  color: #ff843f;
-  margin-left: 5px;
+  color: #f1742e;
+  // margin-left: 5px;
   cursor: pointer;
+ 
 `;
 
-export const FourthContLeft = styled("div")`
-  width: 186px;
-  margin-left: auto;
-`;
+export const FourthContLeft = styled("div")({
+  display:"flex"
+})
 
 export const FourthContAssigned = styled("div")`
+ width: 88px;
+  margin-right: 130px;
   font-family: "Open Sans";
   color: #787878;
 
@@ -251,6 +274,17 @@ export const FourthContAssigned = styled("div")`
   font-size: 14px;
   line-height: 19px;
 `;
+export const FourthContMoreText = styled("div")({
+  
+  
+  marginTop:"1px"
+})
+export const MoreTextDiv = styled("div")({
+  
+})
+export const ParentFourthContMoreText = styled("div")({
+  display:"flex"
+})
 
 export const FourthContProgType = styled("div")`
   display: flex;
@@ -262,7 +296,7 @@ export const FourthContProgType = styled("div")`
 
   color: #101f4c;
   align-items: center;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 
 export const FormElementContainer = styled(Box)`
@@ -330,6 +364,7 @@ export const AttachedImageDiv = styled("div")`
 
 export const AttachedImageTitle = styled("div")`
   margin-left: 21px;
+  cursor: pointer;
 `;
 
 export const AttachedImageIcon = styled("div")``;
@@ -357,12 +392,12 @@ export const RelatedTagTitle = styled("div")`
 export const RelatedTagsButton = styled("div")`
   display: flex;
   justify-content: flex-start;
-  margin-top: 8px;
+  margin-top: 10px;
   flex-wrap: wrap;
 `;
 
 export const RelatedSingleButton = styled("div")`
-  border: 1px solid black;
+  border: 1px solid #101f4c;
   padding: 8px 22px;
   border-radius: 40px;
   height: 32px;
@@ -370,6 +405,8 @@ export const RelatedSingleButton = styled("div")`
   font-size: 12px;
   margin-right: 10px;
   margin-bottom: 10px;
+  font-family: Open Sans;
+  font-style: normal;
 `;
 
 export const StyledLabel = styled(Typography)`
@@ -379,10 +416,13 @@ export const StyledLabel = styled(Typography)`
   margin-bottom: 8px;
 `;
 
-export const CustomTaskDrawerContainer = styled("div")`
-  width: 438px;
-  height: calc(100vh - 61px);
-`;
+export const CustomTaskDrawerContainer = styled("div")({
+  width: "438px",
+  height: "calc(100vh - 60px)",
+  paddingLeft: "20px",
+  paddingRight: "20px",
+  // border: "2px solid blue",
+});
 
 export const ProgressEditStateButtonsContainer = styled("div")`
   display: flex;
@@ -484,7 +524,6 @@ export const AddCommentInput = styled("input")({
 export const ActivityLogContainer = styled("div")({
   // marginBottom: "40px",
   marginBottom: "26px",
-
 });
 
 export const AddCommentButtonContainer = styled("div")({
@@ -518,7 +557,7 @@ export const SendButton = styled("button")({
 });
 
 export const ProgressStateFalse = styled("div")({
-  display: "flex",
+  // display: "flex",
   marginTop: "20px",
 });
 
@@ -535,19 +574,19 @@ export const AssigneeCustomSelect = styled("div")({
   marginTop: "20px",
 });
 
-export const ValueContainer = styled('div')(({ theme }) => ({
-  '& > :not(:last-child)': {
+export const ValueContainer = styled("div")(({ theme }) => ({
+  "& > :not(:last-child)": {
     marginRight: theme.spacing(1),
   },
-  '& > *': {
+  "& > *": {
     marginBottom: theme.spacing(1),
   },
-  marginTop: '15px',
+  marginTop: "15px",
 }));
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
   color: "blue",
-  width:"100% !important",
+  width: "100% !important",
   "label + &": {
     marginTop: theme.spacing(8),
   },
@@ -578,11 +617,11 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
 
   "& .MuiInputBase-input": {
     "&::placeholder": {
-       color: "#787878",
-       fontFamily: "Open Sans",
-       fontSize: "14px",
-       lineHeight: "20px",
-       fontWeight: "400"
+      color: "#787878",
+      fontFamily: "Open Sans",
+      fontSize: "14px",
+      lineHeight: "20px",
+      fontWeight: "400",
     },
   },
 }));
@@ -610,9 +649,12 @@ export const AssigneeList = styled("div")({
   // background:"#FFFFF"
   // width: "308px",
   // height: "86px",
+  fontFamily: "Open Sans",
+
+  fontStyle: "normal",
+  fontSize: "14px",
   padding: "15px",
   color: "#101F4C",
-  fontSize: "14px",
   border: "1px solid #D9D9D9",
   marginTop: "-3px",
   boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
@@ -644,8 +686,6 @@ export const ParentAssigneeList = styled("div")({
   flexDirection: "row",
 });
 
-
-
 export const ExtraLabel = styled("div")`
   font-family: "Open Sans";
   color: #787878;
@@ -654,9 +694,8 @@ export const ExtraLabel = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 `;
-
 
 export const AssignedLabel = styled("div")`
   font-family: "Open Sans";
@@ -666,5 +705,5 @@ export const AssignedLabel = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 `;

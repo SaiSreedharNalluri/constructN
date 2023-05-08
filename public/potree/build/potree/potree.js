@@ -77611,6 +77611,7 @@ ENDSEC
 			this.sphere.visible = false;
 
 			this.load(image360).then( () => {
+				console.log("Potree texture loading onFocus: ", image360);
 				this.sphere.visible = true;
 				this.sphere.material.map = image360.texture;
 				this.sphere.material.needsUpdate = true;
@@ -77674,7 +77675,7 @@ ENDSEC
 			this.selectingEnabled = true;
 			this.viewer.setEDLOpacity(1);
 			for(let image of this.images){
-				image.mesh.visible = true;
+				image.mesh.visible = false;
 			}
 
 			let image = this.focusedImage;
@@ -77687,6 +77688,7 @@ ENDSEC
 			this.sphere.material.map = null;
 			this.sphere.material.needsUpdate = true;
 			this.sphere.visible = false;
+			this.sphere.position.set(this.sphere.position - [...this.images[0].position]);
 
 			let pos = this.viewer.scene.view.position;
 			let target = this.viewer.scene.view.getPivot();
@@ -77736,6 +77738,7 @@ ENDSEC
 				} else {
 					new TextureLoader().load(image360.thumbnail,
 						texture => {
+							console.log("potree thumbnail loading:", texture);
 							// if (image360.file == this.focusedImage.file) {
 								image360.texture = texture;
 								resolved = true;
@@ -77745,12 +77748,14 @@ ENDSEC
 						},
 						undefined,
 						err => {
+							console.log("potree error loading thumbnail:", texture);
 							loadOrgImage.bind(this)();
 						});
 					let loadOrgImage = function () {
 
 						new TextureLoader().load(image360.file,
 							texture => {
+								console.log("potree imgae loading:", texture);
 								// if (image360.file == this.focusedImage.file) {
 									image360.texture = texture;
 									this.sphere.visible = true;
@@ -77760,6 +77765,10 @@ ENDSEC
 										resolve(null);
 									}
 								// }
+							},
+							undefined,
+							err => {
+								console.log("potree error loading image:",err);
 							});
 					};
 
@@ -77913,7 +77922,9 @@ ENDSEC
 				mesh.position.set(longitude, latitude, altitude);
 				mesh.scale.set(1, 1, 1);
 				mesh.material.transparent = true;
+				mesh.visible = false;
 				mesh.material.opacity = 0.75;
+
 				mesh.image360 = image360;
 
 				{ // orientation

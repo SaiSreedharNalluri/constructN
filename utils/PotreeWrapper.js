@@ -766,7 +766,7 @@ export class PotreeViewerUtils {
     }
 
     getContext(justLoadedImage = null){
-        let context = undefined;
+        let context = {};
         // console.log("Inside potree getcamera: ", this.viewerId, this.isPointCloudLoaded, justLoadedImage, this.currentLoadedImage);
         if (this.isPointCloudLoaded) {
             let camObject = undefined;
@@ -838,7 +838,7 @@ export class PotreeViewerUtils {
 
     updateContext(context, sendContext) {
         this.sendContext = sendContext;
-        // console.log("Inside update context potree: ", this.sendContext);
+        console.log("Inside update context potree: ", this.sendContext);
         if (context) {
             this.context = this.getContextLocalFromGlobal(context);
         } else {
@@ -1130,7 +1130,7 @@ export class PotreeViewerUtils {
     }
 
     onMouseEnter() {
-        console.log("Inside mouse eneter event potree: ", this.viewerId);
+        //console.log("Inside mouse eneter event potree: ", this.viewerId);
         this.eventHandler(this.viewerId, {type: "mouse"});
     }
 

@@ -3,7 +3,7 @@ import { IProjects } from '../../models/IProjects';
 import Moment from 'moment';
 import { useRouter } from 'next/router';
 import NextImage from '../core/Image';
-import { Mixpanel } from '../analytics/Mixpanel';
+import { Mixpanel } from '../analytics/mixpanel';
 interface IProps {
   projects: IProjects[];
   loading: boolean;
@@ -12,7 +12,7 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
   const router = useRouter();
   Mixpanel.track('projects_list_page_open');
   return (
-    <div className="h-full calc-h overflow-y-auto grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
+    <div className=" calc-h overflow-y-auto overflow-x-hidden grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
       {loading ? (
         projects.length > 0 ? (
           projects.map((pData) => {
@@ -27,12 +27,12 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
                       router.push(`projects/${pData._id}/structure`);
                     }}
                   >
-                    <NextImage
-                      className="h-7 mt-8 cursor-pointer w-1/2 m-auto hover:border border-gray-500 border-solid"
+                    <img
+                      className="h-7 mt-8 cursor-pointer w-95 m-auto hover:border border-gray-500 border-solid object-contain"
                       src={
                         pData.coverPhoto
                           ? pData.coverPhoto
-                          : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp'
+                          : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/projectCoverPhoto.webp`
                       }
                     />
                   </div>

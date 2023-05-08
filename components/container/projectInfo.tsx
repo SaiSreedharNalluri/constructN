@@ -59,7 +59,7 @@ const ProjectInfo: React.FC<IProps> = ({
   return (
     <React.Fragment>
       <div className="w-full row-span-2 overflow">
-        <Image
+        <img
           alt=""
           className=" w-3/4 h-25 border border-solid border-black  cursor-pointer"
           width={1080}
@@ -67,7 +67,7 @@ const ProjectInfo: React.FC<IProps> = ({
           src={
             projectData.coverPhoto
               ? projectData.coverPhoto
-              : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp'
+              : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/projectCoverPhoto.webp`
           }
         />
       </div>
@@ -82,6 +82,14 @@ const ProjectInfo: React.FC<IProps> = ({
         {({ isSubmitting }) => (
           <Form>
             <div className="grid grid-cols-2 gap-4 px-6">
+            <div>
+                <label className=" text-sm font-bold ">{'Created On : '+projectData.createdAt.toString().split('T')[0]}</label>
+              
+              </div>
+              <div>
+                <label className=" text-sm font-bold ">{'Created By : '+projectData.email}</label>
+              
+              </div>
               <div>
                 <label className=" text-sm font-bold ">Project Name</label>
                 <Field

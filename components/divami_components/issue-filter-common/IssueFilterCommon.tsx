@@ -39,6 +39,9 @@ import {
   DatePickerContainer,
   FilterFooter,
   FilterCardSecondContainer,
+  FilterCardSelectAllTextHeader,
+  RefreshIcon,
+  CloseIcon,
 } from "./IssueStyledComponent";
 import { Issue } from "../../../models/Issue";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
@@ -55,6 +58,7 @@ import {
   getIssuesTypes,
 } from "../../../services/issue";
 import { getProjectUsers } from "../../../services/project";
+import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -67,11 +71,9 @@ interface IProps {
   clickIssueEditSubmit: (editObj: object, issueObj: object) => void;
   onClose: any;
   issueFilterState: any;
+  setIssueFilterState: any;
+  checkIsFilter: any;
 }
-
-// const Footer = () => {
-//   return <>Footer</>;
-// };
 
 const FilterCommon: React.FC<IProps> = ({
   visibility,
@@ -84,22 +86,9 @@ const FilterCommon: React.FC<IProps> = ({
   clickIssueEditSubmit,
   onClose,
   issueFilterState,
+  setIssueFilterState,
 }) => {
-  useEffect(() => {
-    console.log(
-      visibility,
-      closeOverlay,
-      issuesList,
-      handleOnFilter,
-      handleOnSort,
-      closeFilterOverlay,
-      deleteTheIssue,
-      clickIssueEditSubmit,
-      onClose,
-      issueFilterState,
-      "ut"
-    );
-  }, [
+  useEffect(() => {}, [
     visibility,
     closeOverlay,
     issuesList,
@@ -110,35 +99,36 @@ const FilterCommon: React.FC<IProps> = ({
     clickIssueEditSubmit,
     onClose,
     issueFilterState,
+    setIssueFilterState,
   ]);
 
   const Filters = [
     {
-      title: "Issue Type",
-      selectAllStatus: "T",
+      title: "Type",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "Safety", optionStatus: "T" },
-        { optionTitle: "BuildingCode", optionStatus: "T" },
+        { optionTitle: "Safety", optionStatus: "F" },
+        { optionTitle: "BuildingCode", optionStatus: "F" },
         { optionTitle: "Clash", optionStatus: "F" },
-        { optionTitle: "Commissioning", optionStatus: "T" },
+        { optionTitle: "Commissioning", optionStatus: "F" },
         { optionTitle: "Design", optionStatus: "F" },
       ],
     },
     {
-      title: "Issue Priority",
-      selectAllStatus: "T",
+      title: "Priority",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "Low", optionStatus: "T" },
-        { optionTitle: "Medium", optionStatus: "T" },
+        { optionTitle: "Low", optionStatus: "F" },
+        { optionTitle: "Medium", optionStatus: "F" },
         { optionTitle: "High", optionStatus: "F" },
       ],
     },
     {
-      title: "Issue Status",
-      selectAllStatus: "T",
+      title: "Status",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "In Progress", optionStatus: "T" },
-        { optionTitle: "Blocked", optionStatus: "T" },
+        { optionTitle: "In Progress", optionStatus: "F" },
+        { optionTitle: "Blocked", optionStatus: "F" },
         { optionTitle: "To-do", optionStatus: "F" },
         { optionTitle: "Completed", optionStatus: "F" },
       ],
@@ -157,15 +147,8 @@ const FilterCommon: React.FC<IProps> = ({
   const assignees = {
     id: "assignes",
     type: "search",
-    listOfEntries: [
-      { label: "The Shawshank Redemption", year: 1994 },
-      { label: "The Godfather", year: 1972 },
-      { label: "The Godfather: Part II", year: 1974 },
-      { label: "The Dark Knight", year: 2008 },
-      { label: "12 Angry Men", year: 1957 },
-      { label: "Schindler's List", year: 1993 },
-    ],
-    selectedName: null,
+    listOfEntries: [],
+    selectedName: issueFilterState?.filterData?.assigneesData?.user || null,
     label: "Select Name or Team",
   };
   const [assignee, setAssignees] = useState([assignees]);
@@ -180,22 +163,23 @@ const FilterCommon: React.FC<IProps> = ({
     data.issueStatusData = [];
 
     data.assigneesData = assignee[0]?.selectedName;
+
     FilterState.forEach((item: any) => {
-      if (item.title == "Issue Type") {
+      if (item.title == "Type") {
         const x = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
         x.forEach((element: any) => {
           data.issueTypeData.push(element.optionTitle);
         });
-      } else if (item.title == "Issue Priority") {
+      } else if (item.title == "Priority") {
         const z = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
         z.forEach((element: any) => {
           data.issuePriorityData.push(element.optionTitle);
         });
-      } else if (item.title == "Issue Status") {
+      } else if (item.title == "Status") {
         const y = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
@@ -206,7 +190,21 @@ const FilterCommon: React.FC<IProps> = ({
     });
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
-    handleOnFilter(data);
+
+    const { issuePriorityData, issueStatusData, issueTypeData, ...restObj } =
+      data;
+    const isArrEmpty: Boolean =
+      issuePriorityData?.length === 0 &&
+      issueStatusData?.length === 0 &&
+      issueTypeData?.length === 0;
+    const isEmpty = Object.values(restObj).every((x) => x === null || x === "");
+
+    if (isArrEmpty && isEmpty) {
+      onReset();
+      handleClose();
+    } else {
+      handleOnFilter(data);
+    }
   };
   const formHandler = (event: any) => {
     if (event === "Cancel") {
@@ -216,6 +214,7 @@ const FilterCommon: React.FC<IProps> = ({
       handleClose();
     }
   };
+
   useEffect(() => {
     if (router.isReady) {
       getIssuesTypes(router.query.projectId as string).then((response) => {
@@ -225,7 +224,12 @@ const FilterCommon: React.FC<IProps> = ({
       });
       getIssuesPriority(router.query.projectId as string).then((response) => {
         if (response.success === true) {
-          setTaskPriority(response.result);
+          setTaskPriority(
+            response.result.filter(
+              (item: any) =>
+                item === "High" || item === "Low" || item === "Medium"
+            )
+          );
         }
       });
       getProjectUsers(router.query.projectId as string)
@@ -247,7 +251,7 @@ const FilterCommon: React.FC<IProps> = ({
   useEffect(() => {
     SetFilterState((prev: any) => {
       return prev.map((item: any) => {
-        if (item.title === "Issue Type") {
+        if (item.title === "Type") {
           let selectAllStatus = "F";
           if (issueFilterState.isFilterApplied) {
             if (
@@ -282,7 +286,7 @@ const FilterCommon: React.FC<IProps> = ({
             }),
           };
         }
-        if (item.title === "Issue Priority") {
+        if (item.title === "Priority") {
           let selectAllStatus = "F";
           if (issueFilterState.isFilterApplied) {
             if (
@@ -319,7 +323,7 @@ const FilterCommon: React.FC<IProps> = ({
             }),
           };
         }
-        if (item.title === "Issue Status") {
+        if (item.title === "Status") {
           let selectAllStatus = "F";
           if (issueFilterState.isFilterApplied) {
             if (
@@ -333,6 +337,7 @@ const FilterCommon: React.FC<IProps> = ({
           }
           return {
             ...item,
+            selectAllStatus: selectAllStatus,
             options: taskStatus?.map((eachItem: any) => {
               if (issueFilterState.isFilterApplied) {
                 if (
@@ -418,7 +423,6 @@ const FilterCommon: React.FC<IProps> = ({
   };
 
   const handleOptionSelection = (item: any, index: any) => {
-    console.log(item, index, "siva");
     let tempOption;
     if (item?.optionStatus === "T") {
       let temp = FilterState?.map((each: any, serial: number) => {
@@ -526,17 +530,7 @@ const FilterCommon: React.FC<IProps> = ({
   const handleClose = () => {
     onClose(true);
   };
-  const CloseIcon = styled(Image)({
-    cursor: "pointer",
-    width: "24px",
-    height: "24px",
-  });
 
-  const RefreshIcon = styled(Image)({
-    cursor: "pointer",
-    width: "18px",
-    height: "15px",
-  });
   const onReset = () => {
     let temp = FilterState?.map((each: any, serial: number) => {
       return { ...each };
@@ -553,7 +547,7 @@ const FilterCommon: React.FC<IProps> = ({
     closeFilterOverlay();
     handleClose();
   };
-  console.log("issuesListfooter", issuesList, FilterState);
+
   return (
     <FilterCommonMain>
       <FilterCommonHeader>
@@ -590,7 +584,7 @@ const FilterCommon: React.FC<IProps> = ({
                 onClick={() => {
                   handleClose();
                 }}
-                src={NotificationNewIcon}
+                src={closeWithCircle}
                 alt={"close icon"}
                 data-testid="filter-close"
               />
@@ -600,10 +594,12 @@ const FilterCommon: React.FC<IProps> = ({
       </FilterCommonHeader>
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
+          console.log("each", each);
+
           return each.title === "Issue Type" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
-                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+                {/* <FilterCardTitleText>{each?.title}</FilterCardTitleText> */}
               </FilterCardTitle>
               <FilterCardSelectAll>
                 {each?.selectAllStatus === "T" ? (
@@ -616,9 +612,9 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="checked checkbox"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
                   <FilterCardSelectAllSpan>
@@ -630,9 +626,9 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="unchecked checkbox"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
                   <FilterCardSelectAllSpan>
@@ -644,9 +640,9 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="reset"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
                   ""
@@ -691,7 +687,7 @@ const FilterCommon: React.FC<IProps> = ({
           ) : (
             <FilterCardSecondContainer key={index}>
               <FilterCardTitle>
-                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+                {/* <FilterCardTitleText>{each?.title} hii</FilterCardTitleText> */}
               </FilterCardTitle>
               <FilterCardSelectAll>
                 {each?.selectAllStatus === "T" ? (
@@ -703,9 +699,9 @@ const FilterCommon: React.FC<IProps> = ({
                       src={Checked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each?.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
                   <FilterCardSelectAllSpan>
@@ -716,9 +712,9 @@ const FilterCommon: React.FC<IProps> = ({
                       src={UnChecked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each?.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
                   <FilterCardSelectAllSpan>
@@ -729,9 +725,9 @@ const FilterCommon: React.FC<IProps> = ({
                       src={Indeterminate}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each?.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
                   ""

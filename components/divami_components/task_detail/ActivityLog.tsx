@@ -1,45 +1,19 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import IssuesUpdated from "../../../public/divami_icons/issueUpdated.svg";
-import CommentAdded from "../../../public/divami_icons/commentAdded.svg";
-import IssueRaised from "../../../public/divami_icons/issueRaised.svg";
-import RfiRaised from "../../../public/divami_icons/rfiRaised.svg";
-import RfiUpdated from "../../../public/divami_icons/rfiUpdated.svg";
-import ScanUpdated from "../../../public/divami_icons/scanUpdated.svg";
-import ImageScreenShot from "../../../public/divami_icons/imageScreenShot.svg";
-import Clip from "../../../public/divami_icons/clip.svg";
 import Send from "../../../public/divami_icons/send.svg";
 import Delete from "../../../public/divami_icons/delete.svg";
 import Edit from "../../../public/divami_icons/edit.svg";
-import {
-  EditIcon,
-  DeleteIcon,
-} from "../../divami_components/issue_detail/IssueDetailStyles";
 import {
   ActivityCardContainer,
   ActivityCard,
   ActivityHeader,
   ActivityStatusIcon,
-  ActivityStatusTitle,
   ActivityHeaderDivider,
   ActivityTimeStamp,
-  ActivityBodyIssueRaisedCase,
   ActivityCommentAddedBy,
   ActivityCommentAddedByMain,
   ActivityAddedComment,
   ActivityCommentDiv,
   ActivityComment,
-  ActivityIssueRaisedMain,
-  ActivityCreated,
-  ActivityIssueType,
-  ActivityFor,
-  IssuesDescription,
-  ActivityScanUploadBox,
-  ActivityIssueRaisedMainProfile,
-  ActivityCurrentProgress,
-  ActivityImageSection,
-  ActivityImage,
-  ActivityScreenShotIconContainer,
   CommentActions,
   ReplyButton,
   RepliesContainer,
@@ -57,9 +31,7 @@ import {
   ReplyDivText,
   ReplyCancel,
 } from "./ActivityLogStyles";
-import moment from "moment";
 import router from "next/router";
-
 import {
   AddCommentContainerSecond,
   StyledInput,
@@ -68,7 +40,6 @@ import {
   ImageErrorIcon,
   SendButton,
 } from "./TaskDetailStyles";
-import { text } from "@fortawesome/fontawesome-svg-core";
 import { toast } from "react-toastify";
 import {
   createCommentReply,
@@ -78,6 +49,7 @@ import {
   deleteComment,
   deleteCommentReply,
 } from "../../../services/comments";
+import PopupComponent from "../../popupComponent/PopupComponent";
 
 const ActivityLog = (props: any) => {
   const { ActivityLog, comments, getComments } = props;
@@ -95,11 +67,15 @@ const ActivityLog = (props: any) => {
       replyId: "",
     },
   });
-
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchingOnnew, setSearchingOnnew] = useState(false);
   const [currentCommentId, setCurrentCommentId] = useState("");
   const [commentId, setCommentId] = useState("");
+
+  const [commentPopUp, setCommentPopup] = useState(false);
+  const [commentReplyPopUp, setcommentReplyPopup] = useState(false);
+
+  const [isSaving, setIsSaving] = useState(false);
 
   function sayHello(name: string) {
     setCurrentCommentId(name);
@@ -143,12 +119,18 @@ const ActivityLog = (props: any) => {
   };
   useEffect(() => {
     // setCommentsData(comments);
+    const localStorageData = localStorage.getItem("userInfo");
+    let userName = localStorageData ? localStorageData : "";
     const commentsList = comments.map((each: any) => {
       return {
         ...each,
         updatedTimeText: getTimeText(each.createdAt),
         showMoreText: true,
         showEdit: false,
+        isEditAvailable: each.by?.fullName === userName,
+        isDeleteAvailable: each.by?.fullName === userName,
+        // isEditAvailable: each?.by?.fullName === user?.fullName,
+        // isDeleteAvailable: each?.by?.fullName === user?.fullName,
         showDelete: false,
         replies: each.replies.map((item: any) => {
           return {
@@ -157,10 +139,13 @@ const ActivityLog = (props: any) => {
             showMoreText: true,
             showEdit: false,
             showDelete: false,
+            isEditAvailable: item?.by?.fullName === userName,
+            isDeleteAvailable: item?.by?.fullName === userName,
           };
         }),
       };
     });
+
     setCommentsData(commentsList);
   }, [comments]);
 
@@ -177,39 +162,29 @@ const ActivityLog = (props: any) => {
       },
     });
   };
-  const saveRepliedComments = async () => {
-    createCommentReply(
-      router.query.projectId as string,
-      { reply: commentInputData.data?.text },
-      commentInputData?.data?.commentId
-    ).then((response) => {
-      if (response.success === true) {
-        toast.success("Reply added sucessfully");
-        getComments(commentsData[0]?.entity);
-        setReplyToText("");
-      }
-    });
-
-    setCommentInputData({
-      isReply: false,
-      isEdit: false,
-      isEditReply: false,
-      data: {
-        text: "",
-        attachments: "",
-        commentId: "",
-        replyId: "",
-      },
-    });
+  const saveRepliedComments = async (commentObj: any) => {
+    if (commentsData?.length && commentObj?.data?.text) {
+      createCommentReply(
+        router.query.projectId as string,
+        { reply: commentObj.data?.text },
+        commentObj?.data?.commentId
+      ).then((response) => {
+        if (response.success === true) {
+          toast.success("Reply added sucessfully");
+          getComments(commentsData[0]?.entity);
+          setReplyToText("");
+        }
+      });
+    }
   };
 
-  const saveEditRepliedComments = async () => {
-    if (commentsData?.length && commentInputData?.data?.text) {
+  const saveEditRepliedComments = async (commentObj: any) => {
+    if (commentsData?.length && commentObj?.data?.text) {
       editCommentReply(
         router.query.projectId as string,
-        { reply: commentInputData.data?.text },
-        commentInputData.data?.commentId,
-        commentInputData.data?.replyId
+        { reply: commentObj.data?.text },
+        commentObj.data?.commentId,
+        commentObj.data?.replyId
       ).then((response) => {
         if (response.success === true) {
           toast.success("Reply updated sucessfully");
@@ -217,27 +192,16 @@ const ActivityLog = (props: any) => {
           setReplyToText("");
         }
       });
-      setCommentInputData({
-        isReply: false,
-        isEdit: false,
-        isEditReply: false,
-        data: {
-          text: "",
-          attachments: "",
-          commentId: "",
-          replyId: "",
-        },
-      });
     }
   };
 
-  const saveEditComment = () => {
-    if (commentsData?.length && commentInputData?.data?.text) {
+  const saveEditComment = (commentObj: any) => {
+    if (commentsData?.length && commentObj?.data?.text) {
       editComment(
         router.query.projectId as string,
-        commentInputData?.data?.commentId,
+        commentObj?.data?.commentId,
         {
-          comment: commentInputData.data?.text,
+          comment: commentObj.data?.text,
         }
       ).then((response) => {
         if (response.success === true) {
@@ -245,43 +209,19 @@ const ActivityLog = (props: any) => {
           getComments(commentsData[0]?.entity);
         }
       });
-
-      setCommentInputData({
-        isReply: false,
-        isEdit: false,
-        isEditReply: false,
-        data: {
-          text: "",
-          attachments: "",
-          commentId: "",
-          replyId: "",
-        },
-      });
     }
   };
 
-  const saveAddedComments = async () => {
-    if (commentsData?.length && commentInputData?.data?.text) {
+  const saveAddedComments = async (commentObj: any) => {
+    if (commentsData?.length && commentObj?.data?.text) {
       createComment(router.query.projectId as string, {
-        comment: commentInputData.data?.text,
+        comment: commentObj.data?.text,
         entity: commentsData[0]?.entity,
       }).then((response: any) => {
         if (response.success === true) {
           toast.success("Comment added sucessfully");
           getComments(commentsData[0]?.entity);
         }
-
-        setCommentInputData({
-          isReply: false,
-          isEdit: false,
-          isEditReply: false,
-          data: {
-            text: "",
-            attachments: "",
-            commentId: "",
-            replyId: "",
-          },
-        });
       });
     }
   };
@@ -311,6 +251,10 @@ const ActivityLog = (props: any) => {
         }
       );
     }
+  };
+
+  const deletePopup = async (commentId: string) => {
+    console.log("deletePopup", commentId);
   };
 
   const deleteReplyComments = async (commentId: string, replyId: string) => {
@@ -352,23 +296,7 @@ const ActivityLog = (props: any) => {
               <ActivityHeader>
                 <ActivityStatusIcon>
                   <ActivityImageAvatar
-                    src={
-                      each?.by?.avatar
-                      // CommentAdded
-                      // each.status === "Issue Raised"
-                      //   ? IssueRaised
-                      //   : each.status === "Issue Updated"
-                      //   ? IssuesUpdated
-                      //   : each.status === "Comment Added"
-                      //   ? CommentAdded
-                      //   : each.status === "RFI Updated"
-                      //   ? RfiUpdated
-                      //   : each.status === "RFI Raised"
-                      //   ? RfiRaised
-                      //   : each.status === "Scan Updated"
-                      //   ? ScanUpdated
-                      //   : ""
-                    }
+                    src={each?.by?.avatar}
                     width={30}
                     height={30}
                     alt={""}
@@ -382,8 +310,8 @@ const ActivityLog = (props: any) => {
                         if (item._id == each._id) {
                           return {
                             ...item,
-                            showEdit: true,
-                            showDelete: true,
+                            showEdit: item.isEditAvailable,
+                            showDelete: item.isDeleteAvailable,
                           };
                         } else {
                           return {
@@ -421,7 +349,10 @@ const ActivityLog = (props: any) => {
                       {/* {moment(each.createdAt).format("DD MMM YY")} */}
                     </ActivityTimeStamp>
                   </CommentTitleName>
-                  {each.showEdit && each.showDelete ? (
+                  {each.isEditAvailable &&
+                  each.isDeleteAvailable &&
+                  each.showEdit &&
+                  each.showDelete ? (
                     <CommentEditActions>
                       <EditIconImage
                         src={Edit}
@@ -446,9 +377,26 @@ const ActivityLog = (props: any) => {
                         src={Delete}
                         alt={"close icon"}
                         onClick={() => {
-                          deleteComments(each?._id);
+                          // deleteComments(each?._id);
+                          // deletePopup(each?._id);
+                          setCommentPopup(true);
                         }}
                       />
+                      {commentPopUp && (
+                        <PopupComponent
+                          open={commentPopUp}
+                          setShowPopUp={setCommentPopup}
+                          modalTitle={"Delete Comment"}
+                          // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
+                          modalmessage={`Are you sure you want to delete this comment "${each._id} "?`}
+                          primaryButtonLabel={"Delete"}
+                          SecondaryButtonlabel={"Cancel"}
+                          callBackvalue={() => {
+                            setCommentPopup(false);
+                            deleteComments(each?._id);
+                          }}
+                        />
+                      )}
                     </CommentEditActions>
                   ) : (
                     <></>
@@ -575,8 +523,10 @@ const ActivityLog = (props: any) => {
                                                 ) {
                                                   return {
                                                     ...replyIter,
-                                                    showEdit: true,
-                                                    showDelete: true,
+                                                    showEdit:
+                                                      replyObj.isEditAvailable,
+                                                    showDelete:
+                                                      replyObj.isDeleteAvailable,
                                                   };
                                                 } else {
                                                   return {
@@ -649,14 +599,17 @@ const ActivityLog = (props: any) => {
                                     </ActivityCommentAddedByMain>
 
                                     <ActivityTimeStamp>
-                                      {each.updatedTimeText}
+                                      {replyObj.updatedTimeText}
 
                                       {/* {moment(replyObj?.createdAt).format(
                                     "DD MMM YY"
                                   )} */}
                                     </ActivityTimeStamp>
                                   </CommentTitleName>
-                                  {replyObj.showEdit && replyObj.showDelete ? (
+                                  {replyObj.showEdit &&
+                                  replyObj.showDelete &&
+                                  replyObj.isEditAvailable &&
+                                  replyObj.isDeleteAvailable ? (
                                     <CommentEditActions>
                                       <EditIconImage
                                         src={Edit}
@@ -683,12 +636,33 @@ const ActivityLog = (props: any) => {
                                         src={Delete}
                                         alt={"close icon"}
                                         onClick={() => {
-                                          deleteReplyComments(
-                                            replyObj?.commentId,
-                                            replyObj?._id
-                                          );
+                                          // deleteReplyComments(
+                                          //   replyObj?.commentId,
+                                          //   replyObj?._id
+                                          // );
+
+                                          setcommentReplyPopup(true);
                                         }}
                                       />
+
+                                      {commentReplyPopUp && (
+                                        <PopupComponent
+                                          open={commentReplyPopUp}
+                                          setShowPopUp={setcommentReplyPopup}
+                                          modalTitle={"Delete Comment"}
+                                          // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
+                                          modalmessage={`Are you sure you want to delete this comment "${replyObj?._id} "?`}
+                                          primaryButtonLabel={"Delete"}
+                                          SecondaryButtonlabel={"Cancel"}
+                                          callBackvalue={() => {
+                                            setcommentReplyPopup(false);
+                                            deleteReplyComments(
+                                              replyObj?.commentId,
+                                              replyObj?._id
+                                            );
+                                          }}
+                                        />
+                                      )}
                                     </CommentEditActions>
                                   ) : (
                                     <></>
@@ -797,18 +771,63 @@ const ActivityLog = (props: any) => {
                   };
                 });
               }}
+              onKeyDown={(e) => {
+                if (e.key == "Enter") {
+                  let commentText = commentInputData?.data?.text?.trim();
+                  let newObj = { ...commentInputData };
+                  setCommentInputData({
+                    isReply: false,
+                    isEdit: false,
+                    isEditReply: false,
+                    data: {
+                      text: "",
+                      attachments: "",
+                      commentId: "",
+                      replyId: "",
+                    },
+                  });
+                  if (commentText) {
+                    if (commentInputData?.isReply) {
+                      saveRepliedComments(newObj);
+                    } else if (commentInputData?.isEdit) {
+                      saveEditComment(newObj);
+                    } else if (commentInputData?.isEditReply) {
+                      saveEditRepliedComments(newObj);
+                    } else {
+                      saveAddedComments(newObj);
+                    }
+                  }
+                } else if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+                  e.stopPropagation();
+                }
+              }}
             />
             <AddCommentButtonContainer>
               <SendButton
                 onClick={() => {
-                  if (commentInputData?.isReply) {
-                    saveRepliedComments();
-                  } else if (commentInputData?.isEdit) {
-                    saveEditComment();
-                  } else if (commentInputData?.isEditReply) {
-                    saveEditRepliedComments();
-                  } else {
-                    saveAddedComments();
+                  let commentText = commentInputData?.data?.text?.trim();
+                  let newObj = { ...commentInputData };
+                  setCommentInputData({
+                    isReply: false,
+                    isEdit: false,
+                    isEditReply: false,
+                    data: {
+                      text: "",
+                      attachments: "",
+                      commentId: "",
+                      replyId: "",
+                    },
+                  });
+                  if (commentText) {
+                    if (commentInputData?.isReply) {
+                      saveRepliedComments(newObj);
+                    } else if (commentInputData?.isEdit) {
+                      saveEditComment(newObj);
+                    } else if (commentInputData?.isEditReply) {
+                      saveEditRepliedComments(newObj);
+                    } else {
+                      saveAddedComments(newObj);
+                    }
                   }
                 }}
               >

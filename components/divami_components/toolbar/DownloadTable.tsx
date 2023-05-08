@@ -27,6 +27,7 @@ export const DownloadTable = ({ data, label, filename, onClick }: any) => {
       for (const property in element) {
         temp.push(element[property]);
       }
+      console.log(temp, "temmp");
       rows.push(temp);
     });
 

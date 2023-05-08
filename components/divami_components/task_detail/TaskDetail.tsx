@@ -104,10 +104,15 @@ import {
   ThirdContWatchName,
   TitleContainer,
   CloseIcon,
+  MoreTextDiv,
+  ParentFourthContMoreText,
+  FourthContMoreText,
 } from "./TaskDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "./ActivityLog";
 import { ActivityLogContainer } from "../issue_detail/IssueDetailStyles";
+import moment from "moment";
+import { showImagePreview } from "../../../utils/IssueTaskUtils";
 
 // const BodyContainer = styled(Box)`
 //   height: calc(100vh - 134px);
@@ -193,6 +198,7 @@ function BasicTabs(props: any) {
 
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [attachmentPopup, setAttachmentPopup] = useState(false);
 
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
@@ -303,14 +309,14 @@ function BasicTabs(props: any) {
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
         <Tabs
           TabIndicatorProps={{
-            style: { background: "#FF843F", height: "3px" },
+            style: { background: "#F1742E", height: "3px" },
           }}
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
           sx={{
             "& .MuiTabs-scroller": {
-              padding: "0px 20px",
+              // padding: "0px 20px",
             },
             "& .MuiBox-root": {
               border: "1px solid red",
@@ -400,7 +406,9 @@ function BasicTabs(props: any) {
                 {taskState?.TabOne?.type}
               </PriorityStatus>
             </SecondContPrior>
+          </SecondBodyDiv>
 
+          <SecondBodyDiv>
             <SecondContPriorParal>
               <PriorityTitle>Priority</PriorityTitle>
               <PriorityStatus
@@ -423,7 +431,9 @@ function BasicTabs(props: any) {
                 {Moment(taskState?.TabOne?.capturedOn).format("DD MMM YYYY")}
               </CaptureStatus>
             </SecondContCapt>
+          </SecondBodyDiv>
 
+          <SecondBodyDiv>
             <SecondContPriorParal>
               <ThirdContWatch>Watcher</ThirdContWatch>
               <ThirdContWatchName style={{ color: "#101F4B" }}>
@@ -433,7 +443,112 @@ function BasicTabs(props: any) {
             </SecondContPriorParal>
           </SecondBodyDiv>
 
+          <SecondBodyDiv>
+            <ThirdContRight>
+              <ThirdContProg data-testid="progres-label">
+                Progress
+              </ThirdContProg>
+
+              <ThirdContProgType
+                style={{ color: "#101F4B" }}
+                data-testid="task-progress"
+              >
+                {taskState?.TabOne?.status}
+                {taskState?.TabOne?.status ? (
+                  <PenIconImage
+                    onClick={() => {
+                      handleEditProgress();
+                    }}
+                    src={Edit}
+                    alt={"close icon"}
+                    data-testid="issue-progress-edit"
+                  />
+                ) : (
+                  <></>
+                )}
+              </ThirdContProgType>
+            </ThirdContRight>
+          </SecondBodyDiv>
           {progressEditState ? (
+            <ProgressCustomSelect data-testid="progress-options">
+              {/* <ExtraLabel>Progress</ExtraLabel> */}
+
+              <CustomSelect
+                config={progressOptionsState[0]}
+                data={{
+                  ...progressOptionsState[0],
+                  defaultValue: taskState?.TabOne?.status,
+                }}
+                id={"taskPriority"}
+                sx={{ minWidth: 120 }}
+                setFormConfig={setProgressOptionsState}
+                isError={""}
+                label=""
+              />
+            </ProgressCustomSelect>
+          ) : (
+            ""
+          )}
+
+          <SecondBodyDiv>
+            <FourthContLeft>
+              <FourthContAssigned data-testid="assigned-to-label">
+                Assigned to
+              </FourthContAssigned>
+              <MoreTextDiv>
+                {" "}
+                <ParentFourthContMoreText>
+                  <FourthContProgType style={{ color: "#101F4B" }}>
+                    {taskState?.TabOne?.assignees}{" "}
+                    {taskState?.TabOne?.assignees ? (
+                      <PenIconImage
+                        data-testid="assignees-edit"
+                        onClick={() => {
+                          handleEditAssigne();
+                        }}
+                        src={Edit}
+                        alt={"close icon"}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </FourthContProgType>
+                </ParentFourthContMoreText>
+                <FourthContMoreText>
+                  <LightTooltip
+                    arrow
+                    title={
+                      <SecondAssigneeList>
+                        {taskState?.TabOne?.assignessList?.map(
+                          (assignName: any, index: number) => {
+                            if (index !== 0) {
+                              return (
+                                <>
+                                  {index !==
+                                  taskState?.TabOne?.assignessList.length - 1
+                                    ? assignName?.firstName +
+                                      " " +
+                                      assignName?.lastName +
+                                      " | "
+                                    : assignName?.firstName +
+                                      " " +
+                                      assignName.lastName}
+                                </>
+                              );
+                            }
+                          }
+                        )}
+                      </SecondAssigneeList>
+                    }
+                  >
+                    <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                  </LightTooltip>
+                </FourthContMoreText>
+              </MoreTextDiv>
+            </FourthContLeft>
+          </SecondBodyDiv>
+
+          {/* {progressEditState ? (
             <ProgressStateTrue>
               {" "}
               <FourthBodyDiv
@@ -452,31 +567,21 @@ function BasicTabs(props: any) {
                         <SecondAssigneeList>
                           {taskState?.TabOne?.assignessList?.map(
                             (assignName: any, index: number) => {
-                              return (
-                                <>
-                                  {index !==
-                                  taskState?.TabOne?.assignessList.length - 1
-                                    ? assignName?.firstName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.firstName.slice(1) +
-                                      " " +
-                                      assignName.lastName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.lastName.slice(1) +
-                                      " | "
-                                    : assignName?.firstName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.firstName.slice(1) +
-                                      " " +
-                                      assignName.lastName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.lastName.slice(1)}
-                                </>
-                              );
+                              if (index !== 0) {
+                                return (
+                                  <>
+                                    {index !==
+                                    taskState?.TabOne?.assignessList.length - 1
+                                      ? assignName?.firstName +
+                                        " " +
+                                        assignName?.lastName +
+                                        " | "
+                                      : assignName?.firstName +
+                                        " " +
+                                        assignName.lastName}
+                                  </>
+                                );
+                              }
                             }
                           )}
                         </SecondAssigneeList>
@@ -505,7 +610,7 @@ function BasicTabs(props: any) {
               {" "}
               <ThirdContRight>
                 <ThirdContProg data-testid="progres-label">
-                  Progress bar
+                  Status
                 </ThirdContProg>
 
                 <ThirdContProgType
@@ -547,31 +652,21 @@ function BasicTabs(props: any) {
                         <AssigneeList>
                           {taskState?.TabOne?.assignessList?.map(
                             (assignName: any, index: number) => {
-                              return (
-                                <>
-                                  {index !==
-                                  taskState?.TabOne?.assignessList.length - 1
-                                    ? assignName?.firstName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.firstName.slice(1) +
-                                      " " +
-                                      assignName.lastName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.lastName.slice(1) +
-                                      " | "
-                                    : assignName?.firstName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.firstName.slice(1) +
-                                      " " +
-                                      assignName.lastName
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      assignName?.lastName.slice(1)}
-                                </>
-                              );
+                              if (index !== 0) {
+                                return (
+                                  <>
+                                    {index !==
+                                    taskState?.TabOne?.assignessList.length - 1
+                                      ? assignName?.firstName +
+                                        " " +
+                                        assignName?.lastName +
+                                        " | "
+                                      : assignName?.firstName +
+                                        " " +
+                                        assignName.lastName}
+                                  </>
+                                );
+                              }
                             }
                           )}
                         </AssigneeList>
@@ -595,31 +690,11 @@ function BasicTabs(props: any) {
                 </FourthContLeft>
               </FourthBodyDiv>
             </ProgressStateFalse>
-          )}
+          )} */}
 
-          {progressEditState ? (
-            <ProgressCustomSelect data-testid="progress-options">
-              <ExtraLabel>Progress</ExtraLabel>
-
-              <CustomSelect
-                config={progressOptionsState[0]}
-                data={{
-                  ...progressOptionsState[0],
-                  defaultValue: taskState?.TabOne?.status,
-                }}
-                id={"taskPriority"}
-                sx={{ minWidth: 120 }}
-                setFormConfig={setProgressOptionsState}
-                isError={""}
-                label=""
-              />
-            </ProgressCustomSelect>
-          ) : (
-            ""
-          )}
           {assigneeEditState && (
             <AssignEditSearchContainer>
-              <AssignedLabel>Assigned to</AssignedLabel>
+              {/* <AssignedLabel>Assigned to</AssignedLabel> */}
 
               <Autocomplete
                 data-testid="assignee-options"
@@ -634,7 +709,7 @@ function BasicTabs(props: any) {
                 sx={{
                   width: 300,
                   "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    border: "1px solid #ff843f !important",
+                    border: "1px solid #F1742E !important",
                   },
                 }}
                 renderTags={() => null}
@@ -699,6 +774,23 @@ function BasicTabs(props: any) {
             </AssignEditSearchContainer>
           )}
 
+          {progressEditState ? (
+            <ProgressStateTrue>
+              {" "}
+              <FourthBodyDiv
+                assigneeEditState={assigneeEditState}
+                style={{
+                  marginTop: "0px",
+                  color: "#101F4B",
+                }}
+              >
+                <FourthContLeft></FourthContLeft>
+              </FourthBodyDiv>
+            </ProgressStateTrue>
+          ) : (
+            ""
+          )}
+
           {/* <FormElementContainer>
             <CustomSelectContainer>
               <SelectVariants options={DetailsObj.TabOne[0].options} />
@@ -708,7 +800,7 @@ function BasicTabs(props: any) {
 
           {taskState?.TabOne?.issueDescription?.length > 0 ? (
             <DescriptionDiv>
-              <DescriptionTitle>RFI Question</DescriptionTitle>
+              <DescriptionTitle>Description</DescriptionTitle>
 
               <DescriptionPara>
                 {taskState?.TabOne?.issueDescription}
@@ -730,7 +822,13 @@ function BasicTabs(props: any) {
                         <>
                           <AttachedImageDiv className={`detailsImageDiv`}>
                             {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
-                            <AttachedImageTitle>{a?.name}</AttachedImageTitle>
+                            <AttachedImageTitle
+                              onClick={() => {
+                                showImagePreview(a);
+                              }}
+                            >
+                              {a?.name}
+                            </AttachedImageTitle>
 
                             <AttachedImageIcon>
                               <Image src={""} alt="" />
@@ -739,23 +837,54 @@ function BasicTabs(props: any) {
                               src={Delete}
                               alt={"delete icon"}
                               onClick={() => {
-                                deleteTheAttachment(a?._id, "task");
-                                setTaskState((prev: any) => {
-                                  const updatedTabOne = {
-                                    ...prev.TabOne,
-                                    attachments: prev.TabOne.attachments.filter(
-                                      (attachment: any) =>
-                                        attachment._id !== a?._id
-                                    ),
-                                  };
-                                  return {
-                                    ...prev,
-                                    TabOne: updatedTabOne,
-                                  };
-                                });
+                                setAttachmentPopup(true);
+                                // deleteTheAttachment(a?._id, "task");
+                                // setTaskState((prev: any) => {
+                                //   const updatedTabOne = {
+                                //     ...prev.TabOne,
+                                //     attachments: prev.TabOne.attachments.filter(
+                                //       (attachment: any) =>
+                                //         attachment._id !== a?._id
+                                //     ),
+                                //   };
+                                //   return {
+                                //     ...prev,
+                                //     TabOne: updatedTabOne,
+                                //   };
+                                // });
                               }}
                               className={`deleteIcon`}
                             />
+
+                            {attachmentPopup && (
+                              <PopupComponent
+                                open={attachmentPopup}
+                                setShowPopUp={setAttachmentPopup}
+                                modalTitle={"Delete Attachment"}
+                                // modalmessage={`Are you sure you want to delete this Task "${selectedTask?.type}(#${selectedTask?._id})"?`}
+                                modalmessage={`Are you sure you want to delete this attachment "${a?._id} "?`}
+                                primaryButtonLabel={"Delete"}
+                                SecondaryButtonlabel={"Cancel"}
+                                callBackvalue={() => {
+                                  setAttachmentPopup(false);
+                                  deleteTheAttachment(a?._id, "task");
+                                  setTaskState((prev: any) => {
+                                    const updatedTabOne = {
+                                      ...prev.TabOne,
+                                      attachments:
+                                        prev.TabOne.attachments.filter(
+                                          (attachment: any) =>
+                                            attachment._id !== a?._id
+                                        ),
+                                    };
+                                    return {
+                                      ...prev,
+                                      TabOne: updatedTabOne,
+                                    };
+                                  });
+                                }}
+                              />
+                            )}
                           </AttachedImageDiv>
                           <AttachHorizontal></AttachHorizontal>
                         </>
@@ -827,6 +956,16 @@ function BasicTabs(props: any) {
                         setComments(e.target.value);
                       }}
                       data-testid="issue-comment-input"
+                      onKeyDown={(e: any) => {
+                        if (e.key == "Enter") {
+                          addComment(e.target?.value, taskState?.TabOne?.id);
+                        } else if (
+                          e.key === "ArrowRight" ||
+                          e.key === "ArrowLeft"
+                        ) {
+                          e.stopPropagation();
+                        }
+                      }}
                     />
                     <AddCommentButtonContainer>
                       <SendButton
@@ -946,33 +1085,33 @@ const CustomTaskDetailsDrawer = (props: any) => {
     let tempObj = {
       ...selectedTask,
       title: selectedTask?.title,
-      options: selectedTask.options,
-      priority: selectedTask.priority,
-      sequenceNumber: selectedTask.sequenceNumber,
+      options: selectedTask?.options,
+      priority: selectedTask?.priority,
+      sequenceNumber: selectedTask?.sequenceNumber,
 
-      capturedOn: selectedTask.createdAt,
+      capturedOn: selectedTask?.createdAt,
       creator: selectedTask?.owner?.fullName,
-      issueDescription: selectedTask.description,
+      issueDescription: selectedTask?.description,
       screenshot: selectedTask?.screenshot as string,
-      attachments: selectedTask.attachments,
-      relatedTags: selectedTask.tags,
-      assignees: selectedTask.assignees?.length
-        ? `${selectedTask.assignees[0].fullName}`
+      attachments: selectedTask?.attachments,
+      relatedTags: selectedTask?.tags,
+      assignees: selectedTask?.assignees?.length
+        ? `${selectedTask?.assignees[0].fullName}`
         : "",
-      assigneeName: selectedTask.assignees?.length
-        ? selectedTask.assignees[0].fullName
+      assigneeName: selectedTask?.assignees?.length
+        ? selectedTask?.assignees[0].fullName
         : "",
-      assignessList: selectedTask.assignees?.length
-        ? selectedTask.assignees?.map((item: any) => {
+      assignessList: selectedTask?.assignees?.length
+        ? selectedTask?.assignees?.map((item: any) => {
             return { ...item, label: item.fullName };
           })
         : [],
       moreText:
-        selectedTask.assignees?.length > 1
-          ? `+${selectedTask.assignees?.length - 1} more`
+        selectedTask?.assignees?.length > 1
+          ? `+${selectedTask?.assignees?.length - 1} more`
           : "",
-      id: selectedTask._id,
-      status: selectedTask.status,
+      id: selectedTask?._id,
+      status: selectedTask?.status,
     };
     setTaskState((prev: any) => {
       return {
@@ -983,7 +1122,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
   }, [selectedTask]);
 
   const deletetaskById = (taskList: Task[], selectedTask: Task) => {
-    const selectedTaskId = selectedTask._id;
+    const selectedTaskId = selectedTask?._id;
     const updatedTaskList = taskList.filter(
       (task) => task._id !== selectedTaskId
     );
@@ -992,8 +1131,10 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const onDeleteTask = () => {
     setshowPopUp(false);
     deleteTheTask(selectedTask, onClose);
-    const updatedTaskList = deletetaskById(taskList, selectedTask);
-    setTaskList(updatedTaskList);
+    if (setTaskList) {
+      const updatedTaskList = deletetaskById(taskList, selectedTask);
+      setTaskList(updatedTaskList);
+    }
   };
 
   const handleCreateTask = (formData: any) => {
@@ -1001,8 +1142,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
   };
 
   const saveEditDetails = async (data: any, projectId: string) => {
-    if (data.title && data.type && data.priority && data.description) {
-      updateTask(projectId, data, selectedTask._id)
+    if (data.title && data.type && data.priority) {
+      updateTask(projectId, data, selectedTask?._id)
         .then((response) => {
           if (response.success === true) {
             toast.success("Task updated sucessfully");
@@ -1063,14 +1204,28 @@ const CustomTaskDetailsDrawer = (props: any) => {
               .filter((item: any) => item.id == "tag-suggestions")[0]
               ?.chipString?.join(";")
           : []) || []),
-      (data.startdate = formData
+      (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
-    data.duedate = formData
+    data.startDate = data.startDate
+      ? moment(data.startDate).format("YYYY-MM-DD")
+      : "";
+
+    data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
+    data.dueDate = data.dueDate
+      ? moment(data.dueDate).format("YYYY-MM-DD")
+      : "";
+
+    if (!data.startDate) {
+      data = _.omit(data, "startDate");
+    }
+    if (!data.dueDate) {
+      data = _.omit(data, "dueDate");
+    }
 
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
@@ -1112,13 +1267,18 @@ const CustomTaskDetailsDrawer = (props: any) => {
     }
   };
   const taskUpdate = (data: any) => {
-    const issueData = _.cloneDeep(selectedTask);
+    // const issueData = _.cloneDeep(selectedTask);
+    let issueData: any = {};
+
     issueData.assignees = data.selectedUser.map((user: any) => {
       return user._id || user.user._id;
     });
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
-    updateTask(projectId as string, issueData, selectedTask._id)
+
+    // issueData.startDate = moment(issueData.startDate).format("YYYY-MM-DD");
+    // issueData.dueDate = moment(issueData.dueDate).format("YYYY-MM-DD");
+    updateTask(projectId as string, issueData, selectedTask?._id)
       .then((response) => {
         if (response.success === true) {
           toast.success("Task updated sucessfully");
@@ -1200,8 +1360,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
           open={showPopUp}
           setShowPopUp={setshowPopUp}
           modalTitle={"Delete Task"}
-          // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
-          modalmessage={`Are you sure you want to delete this Task "${selectedTask.title} (#${selectedTask._id})"?`}
+          // modalmessage={`Are you sure you want to delete this Task "${selectedTask?.type}(#${selectedTask?._id})"?`}
+          modalmessage={`Are you sure you want to delete this Task "${selectedTask?.title} (#${selectedTask?._id})"?`}
           primaryButtonLabel={"Delete"}
           SecondaryButtonlabel={"Cancel"}
           callBackvalue={onDeleteTask}
@@ -1245,7 +1405,7 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
   [`& .${tooltipClasses.arrow}`]: {
     height: "10px !important",
-    left: "38px !important",
+    left: "10px !important",
     marginBottom: "0px",
     "&:before": {
       background: "#FFFFFF",

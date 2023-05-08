@@ -25,6 +25,7 @@ import { SectionToolBar, ToolbarContainer } from "./ToolBarStyles";
 import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
 import CompareView from "./CompareView";
+import MoreOptionTool from "./MoreOptionTool";
 
 // import TOOLBARMENU from '../../config/appConstant'
 
@@ -53,6 +54,8 @@ interface IProps {
   issueTypesList?: any;
   taskFilterState?: any;
   issueFilterState?: any;
+  setIssueFilterState?: any;
+
   deleteTheIssue?: any;
   deleteTheAttachment?: any;
 }
@@ -104,6 +107,10 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   setLayersUpdated,
   layersUpdated,
   setViewType,
+  projectUsers,
+  taskPriorityList,
+  taskStatusList,
+  setIssueFilterState,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -203,6 +210,13 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   ]);
 
   const rightMenuClickHandler = (e: any) => {
+    console.log(
+      e.currentTarget.id,
+      "cureid",
+      isCompareReality,
+      isCompareDesign
+    );
+
     setActive(e.currentTarget.id);
     setRighttNav(!rightNav);
     if (e.currentTarget.id === "Reality") {
@@ -359,6 +373,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           issueStatusList={issueStatusList}
           issueTypesList={issueTypesList}
           issueFilterState={issueFilterState}
+          setIssueFilterState={setIssueFilterState}
           closeIssueCreate={closeIssueCreate}
           deleteTheIssue={deleteTheIssue}
           openIssueDetails={openIssueDetails}
@@ -368,29 +383,37 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           handleOnIssueSort={handleOnIssueSort}
           issueSubmit={issueSubmit}
           deleteTheAttachment={deleteTheAttachment}
+          projectUsers={projectUsers}
         />
 
-        <Task
-          tasksList={tasksList}
-          taskMenuClicked={taskMenuClicked}
-          currentProject={currentProject}
-          currentSnapshot={currentSnapshot}
-          currentStructure={currentStructure}
-          contextInfo={contextInfo}
-          closeTaskFilterOverlay={closeTaskFilterOverlay}
-          handleOnTaskFilter={handleOnTaskFilter}
-          rightMenuClickHandler={rightMenuClickHandler}
-          taskOpenDrawer={openCreateTask}
-          deleteTheTask={deleteTheTask}
-          taskFilterState={taskFilterState}
-          closeTaskCreate={closeTaskCreate}
-          openTaskDetails={openTaskDetails}
-          closeTaskDetails={closeTaskDetails}
-          getTasks={getTasks}
-          handleOnTasksSort={handleOnTasksSort}
-          taskSubmit={taskSubmit}
-          deleteTheAttachment={deleteTheAttachment}
-        />
+        {viewMode === "Reality" ? (
+          ""
+        ) : (
+          <Task
+            tasksList={tasksList}
+            taskMenuClicked={taskMenuClicked}
+            currentProject={currentProject}
+            currentSnapshot={currentSnapshot}
+            currentStructure={currentStructure}
+            contextInfo={contextInfo}
+            closeTaskFilterOverlay={closeTaskFilterOverlay}
+            handleOnTaskFilter={handleOnTaskFilter}
+            rightMenuClickHandler={rightMenuClickHandler}
+            taskOpenDrawer={openCreateTask}
+            deleteTheTask={deleteTheTask}
+            taskFilterState={taskFilterState}
+            closeTaskCreate={closeTaskCreate}
+            openTaskDetails={openTaskDetails}
+            closeTaskDetails={closeTaskDetails}
+            getTasks={getTasks}
+            handleOnTasksSort={handleOnTasksSort}
+            taskSubmit={taskSubmit}
+            deleteTheAttachment={deleteTheAttachment}
+            projectUsers={projectUsers}
+            taskPriorityList={taskPriorityList}
+            taskStatusList={taskStatusList}
+          />
+        )}
 
         {viewMode === "Reality" ? (
           <CompareView
@@ -399,6 +422,34 @@ const ToolBarMenuWrapper: React.FC<any> = ({
             designMap={designMap}
             selectedType={selectedType}
             setActive={setActive}
+          />
+        ) : (
+          <></>
+        )}
+        {viewMode === "Reality" ? (
+          <MoreOptionTool
+            tasksList={tasksList}
+            taskMenuClicked={taskMenuClicked}
+            currentProject={currentProject}
+            currentSnapshot={currentSnapshot}
+            currentStructure={currentStructure}
+            contextInfo={contextInfo}
+            closeTaskFilterOverlay={closeTaskFilterOverlay}
+            handleOnTaskFilter={handleOnTaskFilter}
+            rightMenuClickHandler={rightMenuClickHandler}
+            taskOpenDrawer={openCreateTask}
+            deleteTheTask={deleteTheTask}
+            taskFilterState={taskFilterState}
+            closeTaskCreate={closeTaskCreate}
+            openTaskDetails={openTaskDetails}
+            closeTaskDetails={closeTaskDetails}
+            getTasks={getTasks}
+            handleOnTasksSort={handleOnTasksSort}
+            taskSubmit={taskSubmit}
+            deleteTheAttachment={deleteTheAttachment}
+            projectUsers={projectUsers}
+            taskPriorityList={taskPriorityList}
+            taskStatusList={taskStatusList}
           />
         ) : (
           <></>
