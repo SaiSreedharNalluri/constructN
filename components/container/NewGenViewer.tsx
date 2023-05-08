@@ -1327,7 +1327,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
 
   return (
-      <div className="fixed calc-w calc-h flex flex-row">
+      <div className="fixed  h-full w-full flex flex-row">
         <div id="TheView" className="relative basis-1/2 flex grow shrink">
           {isInitReady && renderViewer(1)}
           {/* <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode}></TimeLineComponent> */}
