@@ -22,16 +22,23 @@ export const HeaderContainer = styled(Box)`
   align-items: center;
   width: 100%;
   border-bottom: 1px solid #d9d9d9;
+   
 `;
 
-export const TitleContainer = styled(Box)`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-left: 20px;
-  padding-right: 20px;
-`;
+export const TitleContainer = styled(Box)({
+  width: "100%",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+
+  color: "#36415D",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "16px",
+
+  // position:"fixed"
+});
 
 export const CloseIcon = styled(Image)`
   cursor: pointer;
@@ -52,7 +59,8 @@ export const DeleteIcon = styled(Image)`
   cursor: pointer;
   // width: 24px;
   // height: 24px;
-  margin-right: 10px;
+  margin-right: 25px;
+  
 `;
 
 export const LeftTitleCont = styled("div")`
@@ -85,11 +93,13 @@ export const FirstHeaderDiv = styled("div")`
 `;
 
 export const SecondBodyDiv = styled("div")`
-  display: flex;
+  //   display: flex;
   margin-top: 25px;
 `;
 
 export const PriorityTitle = styled("div")`
+ width: 88px;
+  margin-right: 130px;
   font-family: "Open Sans";
   color: #787878;
 
@@ -130,20 +140,28 @@ export const SecondContType = styled("div")`
   width: 186px;
 `;
 
-export const SecondContPrior = styled("div")`
-  width: 186px;
-`;
+export const SecondContPrior = styled("div")({
+  display: "flex",
+  // justifyContent:"space-between",
+  // width: "210px",
+  // border:"1px solid red"
+});
 
-export const SecondContPriorParal = styled("div")`
-  width: 186px;
-  margin-left: auto;
-`;
+export const SecondContPriorParal = styled("div")({
+  display: "flex",
+  // justifyContent:"space-between",
+  // width: "210px",
+});
 
-export const SecondContCapt = styled("div")`
-  width: 186px;
-`;
+export const SecondContCapt = styled("div")({
+  display: "flex",
+  // justifyContent:"space-between",
+  // width: "210px",
+});
 
 export const CaptureTitle = styled("div")`
+  width: 88px;
+  margin-right: 130px;
   font-family: "Open Sans";
   color: #787878;
 
@@ -163,6 +181,8 @@ export const CaptureStatus = styled("div")`
 `;
 
 export const ThirdContWatch = styled("div")`
+width: 88px;
+  margin-right: 130px;
   font-family: "Open Sans";
   font-style: normal;
   font-weight: 400;
@@ -182,6 +202,8 @@ export const ThirdContWatchName = styled("div")`
 `;
 
 export const ThirdContProg = styled("div")`
+  width: 88px;
+  margin-right: 130px;
   font-family: "Open Sans";
   color: #787878;
 
@@ -201,7 +223,7 @@ export const ThirdContProgType = styled("div")`
   line-height: 20px;
 
   color: #101f4c;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 
 export const ThirdBodyDiv = styled("div")`
@@ -213,10 +235,9 @@ export const ThirdContLeft = styled("div")`
   margin-right: 100px;
 `;
 
-export const ThirdContRight = styled("div")`
-  // flex: 1;
-  width: 186px;
-`;
+export const ThirdContRight = styled("div")({
+  display:"flex"
+})
 
 export const PenIconImage = styled(Image)`
   cursor: pointer;
@@ -233,16 +254,18 @@ export const MoreText = styled("div")`
   font-size: 14px;
   line-height: 20px;
   color: #f1742e;
-  margin-left: 5px;
+  // margin-left: 5px;
   cursor: pointer;
+ 
 `;
 
-export const FourthContLeft = styled("div")`
-  width: 186px;
-  margin-left: auto;
-`;
+export const FourthContLeft = styled("div")({
+  display:"flex"
+})
 
 export const FourthContAssigned = styled("div")`
+ width: 88px;
+  margin-right: 130px;
   font-family: "Open Sans";
   color: #787878;
 
@@ -251,6 +274,17 @@ export const FourthContAssigned = styled("div")`
   font-size: 14px;
   line-height: 19px;
 `;
+export const FourthContMoreText = styled("div")({
+  
+  
+  marginTop:"1px"
+})
+export const MoreTextDiv = styled("div")({
+  
+})
+export const ParentFourthContMoreText = styled("div")({
+  display:"flex"
+})
 
 export const FourthContProgType = styled("div")`
   display: flex;
@@ -262,7 +296,7 @@ export const FourthContProgType = styled("div")`
 
   color: #101f4c;
   align-items: center;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 
 export const FormElementContainer = styled(Box)`
@@ -382,10 +416,13 @@ export const StyledLabel = styled(Typography)`
   margin-bottom: 8px;
 `;
 
-export const CustomTaskDrawerContainer = styled("div")`
-  width: 438px;
-  height: calc(100vh - 61px);
-`;
+export const CustomTaskDrawerContainer = styled("div")({
+  width: "438px",
+  height: "calc(100vh - 60px)",
+  paddingLeft: "20px",
+  paddingRight: "20px",
+  // border: "2px solid blue",
+});
 
 export const ProgressEditStateButtonsContainer = styled("div")`
   display: flex;
@@ -520,7 +557,7 @@ export const SendButton = styled("button")({
 });
 
 export const ProgressStateFalse = styled("div")({
-  display: "flex",
+  // display: "flex",
   marginTop: "20px",
 });
 

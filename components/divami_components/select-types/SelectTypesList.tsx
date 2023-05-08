@@ -81,7 +81,7 @@ const SelectTypesList = ({
     <SelectLayerContainer openSelectLayer={openselectlayer}>
       <DrawerBox>
         <DrawerHeader>
-          <DrawerHeaderTitle>{title}</DrawerHeaderTitle>
+          <DrawerHeaderTitle>{title} </DrawerHeaderTitle>
           {/* <CloseIconStyled onClick={onCloseHandler} /> */}
           <CloseIcon
             src={closeIcon}
@@ -109,10 +109,11 @@ const SelectTypesList = ({
           />
         </DrawerSearchBar>
         <ListStyled>
-          {list?.length &&
+          {list?.length > 0 &&
             list.map((item: any, index: number) => (
               <>
                 <ListItemStyled
+                  className="custom-list-styled"
                   key={item}
                   onClick={() => {
                     onSelect({ target: { value: item } });
@@ -121,7 +122,7 @@ const SelectTypesList = ({
                 >
                   <ListItemText primary={item} />
                 </ListItemStyled>
-                <Divider></Divider>
+                {index !== list.length - 1 && <Divider></Divider>}
               </>
             ))}
         </ListStyled>

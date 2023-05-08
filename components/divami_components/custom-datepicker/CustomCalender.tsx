@@ -72,6 +72,10 @@ const CustomDatePicker = styled(DatePicker)({
     border: "1px solid #F1742E !important",
     borderRadius: "4px",
   },
+  "& .MuiDayPicker-weekContainer": {
+    color: "red",
+    backgroundColor: "red",
+  },
 });
 
 const CustomDatePickerInputField = styled(TextField)({
@@ -119,6 +123,92 @@ const CustomCalender = (props: any) => {
           components={{
             OpenPickerIcon: calenderIcon,
           }}
+          PopperProps={
+            hideTextField
+              ? {
+                  sx: {
+                    "& .MuiPickersDay-root:not(.Mui-disabled,.Mui-selected)": {
+                      backgroundColor: "#FFF5EF",
+                      paddingRight: "5px",
+                      color: "#101F4C",
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      fontFamily: "Open Sans",
+
+                      "&::after": {
+                        content: '""',
+                        display: "block",
+                        width: "4px",
+                        height: "4px",
+                        background: "#FF843F",
+                        border: "1px solid red",
+                        borderRadius: "50%",
+                        marginTop: "22px",
+                        marginLeft: "-7px",
+                      },
+                    },
+                    "& .Mui-selected:hover": {
+                      backgroundColor: "#FF843F",
+                      color: "#FFFFFF",
+                    },
+
+                    "& .MuiButtonBase-root.MuiPickersDay-root.Mui-selected": {
+                      backgroundColor: "#FF843F",
+                      color: "#FFFFFF",
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      fontFamily: "Open Sans",
+                    },
+
+                    // "& .MuiButtonBase-root.MuiPickersDay-root:not(.Mui-selected)":
+                    //   {
+                    //     border: "1px solid #FF843F",
+                    //     borderRadius: "50%",
+                    //     fontSize: "14px",
+                    //     fontWeight: 400,
+                    //     fontFamily: "Open Sans",
+                    //   },
+                    "&  .MuiButtonBase-root.Mui-disabled": {
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      color: "#888888",
+                      fontFamily: "Open Sans",
+                    },
+                    "& .MuiDayPicker-weekDayLabel": {
+                      color: "#888888",
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      fontFamily: "Open Sans",
+                    },
+                    "& .MuiPickersCalendarHeader-label": {
+                      color: "#36415D",
+                      fontWeight: 500,
+                      fontFamily: "Open Sans",
+                      fontSize: "14px",
+                    },
+                    "& .MuiPickersArrowSwitcher-button": {
+                      border: "1px solid #9D9D9D",
+                      borderRadius: "4px",
+                      width: "24px",
+                      height: "24px",
+                      marginTop: "3px",
+                    },
+                    "& .MuiPickersCalendarHeader-root ": {
+                      borderBottom: "1px solid #9D9D9D",
+                      paddingBottom: "15px",
+                      margin: "20px",
+                    },
+                    "& .MuiPickersArrowSwitcher-root": {
+                      marginRight: "-10px",
+                      marginTop: "-7px",
+                    },
+                    "& .MuiPickersCalendarHeader-labelContainer": {
+                      marginLeft: "-20px",
+                    },
+                  },
+                }
+              : {}
+          }
           label={"MM/DD/YYYY"}
           value={value}
           shouldDisableDate={data.disableDays}
@@ -137,7 +227,7 @@ const CustomCalender = (props: any) => {
             setValue(newValue);
             onChange(newValue);
           }}
-          PopperProps={data.styles ? data.styles : null}
+          // PopperProps={data.styles ? data.styles : null}
           renderInput={
             hideTextField
               ? ({ inputRef, inputProps, InputProps }) => (
