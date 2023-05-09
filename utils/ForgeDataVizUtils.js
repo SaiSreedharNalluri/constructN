@@ -135,8 +135,6 @@ export class ForgeDataVizUtils {
 
                 if (reality['position']) {
 
-                    console.log(reality)
-
                     let images
 
                     switch (type) {
@@ -324,24 +322,6 @@ export class ForgeDataVizUtils {
         }, 200)
     }
 
-    updateNavigator1 = (position, yaw) => {
-
-        if (this._sphereMesh) {
-
-            const localPos = this._toLocalPosition(position)
-
-            this._sphereMesh.matrix = new THREE.Matrix4().compose(
-                new THREE.Vector3(localPos.x, localPos.y, 100),
-                new THREE.Quaternion(0, 0, 0, 1),
-                new THREE.Vector3(1, 1, 1)
-            );
-
-            this._sphereMesh.matrix.makeRotationFromEuler(new THREE.Euler(0, 0, yaw ? yaw : 0, 1))
-
-            this._modelBuilder.updateMesh(this._sphereMesh)
-        }
-    }
-
     _createNavigator = async (pos, yaw) => {
 
         if (!this._dbMap[1]) {
@@ -492,56 +472,6 @@ export class ForgeDataVizUtils {
 
             default: return '/icons/forge360Image.png'
         }
-    }
-
-    _createModelBuilder = async () => {
-
-        this._sceneBuilder = await this._viewer.loadExtension('Autodesk.Viewing.SceneBuilder')
-
-        this._modelBuilder = await this._sceneBuilder.addNewModel({
-            modelNameOverride: 'Navigator',
-            conserveMemory: false
-        })
-
-        const square = new THREE.Shape()
-
-        square.moveTo(0, 1)
-
-        square.lineTo(-0.5, 0.5)
-
-        square.lineTo(-0.25, 0.5)
-
-        square.lineTo(-0.25, -1)
-
-        square.lineTo(0.25, -1)
-
-        square.lineTo(0.25, 0.5)
-
-        square.lineTo(0.5, 0.5)
-
-        square.lineTo(0, 1)
-
-        const geometry = new THREE.ShapeGeometry(square)
-
-        const material = new THREE.MeshBasicMaterial({
-            color: new THREE.Color(1, 0, 0),
-            side: THREE.DoubleSide,
-            depthWrite: false
-        })
-
-        this._sphereMesh = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(geometry), material);
-
-        this._sphereMesh.dbId = 12345
-
-        this._sphereMesh.matrix = new THREE.Matrix4().compose(
-            new THREE.Vector3(0, 0, 10),
-            new THREE.Quaternion(0, 0, 0, 1),
-            new THREE.Vector3(1, 1, 1)
-        )
-
-        console.log(geometry, "===========", this._sphereMesh)
-
-        this._modelBuilder.addMesh(this._sphereMesh)
     }
 
     _toLocalPosition = (position) => {

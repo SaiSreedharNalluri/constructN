@@ -159,23 +159,6 @@ export const MinimapUtils = () => {
       console.log("ForgeMinimapInstanceTest inside startCode check: ", _instance.newInstance);
       if (!_instance.newInstance) {
         onViewerInitialized();
-
-        const aecProfileSettings = Autodesk.Viewing.ProfileSettings.AEC;
-        const customAecProfileSettings = Autodesk.Viewing.ProfileSettings.clone(aecProfileSettings);
-        customAecProfileSettings.settings.envMapBackground = false;
-
-        const customAecLightPreset = {};
-        Autodesk.Viewing.Private.copyLightPreset(
-          Autodesk.Viewing.Private.LightPresets.find(preset => preset.name == customAecProfileSettings.settings.lightPreset),
-          customAecLightPreset
-        );
-        customAecLightPreset.bgColorGradient = [255, 226, 110, 219, 219, 219];
-        Autodesk.Viewing.Private.LightPresets.push(customAecLightPreset);
-        customAecProfileSettings.settings.backgroundColorPreset = JSON.stringify(customAecLightPreset.bgColorGradient);
-        customAecProfileSettings.settings.lightPreset = customAecLightPreset.name;
-        const customAecProfile = new Autodesk.Viewing.Profile(customAecProfileSettings);
-        
-        _viewer.setProfile(customAecProfile);
       }
     }
 
@@ -746,6 +729,8 @@ export const MinimapUtils = () => {
       updateContext(_context, false);
     }
 
+    _viewer.setBackgroundColor(255, 255, 255, 255, 255, 255)
+
     // loadExtension();
     _isPendingDataToLoad = false;
     _isModelLoaded = true;
@@ -757,8 +742,6 @@ export const MinimapUtils = () => {
   const onGeometryLoadedEvent = (parameter) => {
     // console.log("Inside Geometry Loaded Event: model: ", parameter.model);
     _isModelLoaded = true;
-    _viewer.setEnvMapBackground(false)
-    _viewer.setBackgroundColor(255, 255, 255, 255, 255, 255)
   };
 
   const onModelUnLoadedEvent = (model) => {
