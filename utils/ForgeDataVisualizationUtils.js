@@ -449,6 +449,8 @@ export class ForgeDataVisualization {
 
     getViewerPosition(position, tm, offset) {
         // console.log("Inside get viewer posistion: ", position, tm, offset);
+
+
         let _position;
         if(this.is2D) {
             _position = applyTMInverse(position, tm);

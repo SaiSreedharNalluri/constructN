@@ -39,6 +39,9 @@ import {
   DatePickerContainer,
   FilterFooter,
   FilterCardSecondContainer,
+  FilterCardSelectAllTextHeader,
+  RefreshIcon,
+  CloseIcon,
 } from "./IssueStyledComponent";
 import { Issue } from "../../../models/Issue";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
@@ -55,6 +58,7 @@ import {
   getIssuesTypes,
 } from "../../../services/issue";
 import { getProjectUsers } from "../../../services/project";
+import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -70,10 +74,6 @@ interface IProps {
   setIssueFilterState: any;
   checkIsFilter: any;
 }
-
-// const Footer = () => {
-//   return <>Footer</>;
-// };
 
 const FilterCommon: React.FC<IProps> = ({
   visibility,
@@ -105,30 +105,30 @@ const FilterCommon: React.FC<IProps> = ({
   const Filters = [
     {
       title: "Type",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "Safety", optionStatus: "T" },
-        { optionTitle: "BuildingCode", optionStatus: "T" },
+        { optionTitle: "Safety", optionStatus: "F" },
+        { optionTitle: "BuildingCode", optionStatus: "F" },
         { optionTitle: "Clash", optionStatus: "F" },
-        { optionTitle: "Commissioning", optionStatus: "T" },
+        { optionTitle: "Commissioning", optionStatus: "F" },
         { optionTitle: "Design", optionStatus: "F" },
       ],
     },
     {
       title: "Priority",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "Low", optionStatus: "T" },
-        { optionTitle: "Medium", optionStatus: "T" },
+        { optionTitle: "Low", optionStatus: "F" },
+        { optionTitle: "Medium", optionStatus: "F" },
         { optionTitle: "High", optionStatus: "F" },
       ],
     },
     {
       title: "Status",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "In Progress", optionStatus: "T" },
-        { optionTitle: "Blocked", optionStatus: "T" },
+        { optionTitle: "In Progress", optionStatus: "F" },
+        { optionTitle: "Blocked", optionStatus: "F" },
         { optionTitle: "To-do", optionStatus: "F" },
         { optionTitle: "Completed", optionStatus: "F" },
       ],
@@ -147,15 +147,8 @@ const FilterCommon: React.FC<IProps> = ({
   const assignees = {
     id: "assignes",
     type: "search",
-    listOfEntries: [
-      { label: "The Shawshank Redemption", year: 1994 },
-      { label: "The Godfather", year: 1972 },
-      { label: "The Godfather: Part II", year: 1974 },
-      { label: "The Dark Knight", year: 2008 },
-      { label: "12 Angry Men", year: 1957 },
-      { label: "Schindler's List", year: 1993 },
-    ],
-    selectedName: null,
+    listOfEntries: [],
+    selectedName: issueFilterState?.filterData?.assigneesData?.user || null,
     label: "Select Name or Team",
   };
   const [assignee, setAssignees] = useState([assignees]);
@@ -170,22 +163,23 @@ const FilterCommon: React.FC<IProps> = ({
     data.issueStatusData = [];
 
     data.assigneesData = assignee[0]?.selectedName;
+
     FilterState.forEach((item: any) => {
-      if (item.title == "Issue Type") {
+      if (item.title == "Type") {
         const x = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
         x.forEach((element: any) => {
           data.issueTypeData.push(element.optionTitle);
         });
-      } else if (item.title == "Issue Priority") {
+      } else if (item.title == "Priority") {
         const z = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
         z.forEach((element: any) => {
           data.issuePriorityData.push(element.optionTitle);
         });
-      } else if (item.title == "Issue Status") {
+      } else if (item.title == "Status") {
         const y = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
@@ -219,41 +213,7 @@ const FilterCommon: React.FC<IProps> = ({
       onFilterApply();
       handleClose();
     }
-
-    console.log("test", issueFilterState, FilterState);
   };
-
-  // const formHandler = (event: any) => {
-  //   if (event === "Cancel") {
-  //     handleClose();
-  //   } else {
-  //     const { issuePriorityData, issueStatusData, issueTypeData, ...restObj } =
-  //       issueFilterState.filterData;
-  //     const isArrEmpty: Boolean =
-  //       (issuePriorityData == undefined || issuePriorityData?.length === 0) &&
-  //       (issueStatusData !== undefined || issueStatusData?.length === 0) &&
-  //       (issueTypeData !== undefined || issueTypeData?.length === 0);
-  //     const isEmpty = Object.values(restObj).every(
-  //       (x) => x === null || x === "" || x === undefined
-  //     );
-
-  //     console.log(
-  //       "Test",
-  //       issuePriorityData,
-  //       issueStatusData,
-  //       issueTypeData,
-  //       issueFilterState
-  //     );
-  //     if (isEmpty && isArrEmpty) {
-  //       alert("TEST");
-  //     } else {
-  //       onFilterApply();
-  //       handleClose();
-  //     }
-  //   }
-  // };
-
-  console.log("setIssueFilterState", setIssueFilterState.isFilterApplied);
 
   useEffect(() => {
     if (router.isReady) {
@@ -264,7 +224,12 @@ const FilterCommon: React.FC<IProps> = ({
       });
       getIssuesPriority(router.query.projectId as string).then((response) => {
         if (response.success === true) {
-          setTaskPriority(response.result);
+          setTaskPriority(
+            response.result.filter(
+              (item: any) =>
+                item === "High" || item === "Low" || item === "Medium"
+            )
+          );
         }
       });
       getProjectUsers(router.query.projectId as string)
@@ -286,7 +251,7 @@ const FilterCommon: React.FC<IProps> = ({
   useEffect(() => {
     SetFilterState((prev: any) => {
       return prev.map((item: any) => {
-        if (item.title === "Issue Type") {
+        if (item.title === "Type") {
           let selectAllStatus = "F";
           if (issueFilterState.isFilterApplied) {
             if (
@@ -321,7 +286,7 @@ const FilterCommon: React.FC<IProps> = ({
             }),
           };
         }
-        if (item.title === "Issue Priority") {
+        if (item.title === "Priority") {
           let selectAllStatus = "F";
           if (issueFilterState.isFilterApplied) {
             if (
@@ -358,7 +323,7 @@ const FilterCommon: React.FC<IProps> = ({
             }),
           };
         }
-        if (item.title === "Issue Status") {
+        if (item.title === "Status") {
           let selectAllStatus = "F";
           if (issueFilterState.isFilterApplied) {
             if (
@@ -565,17 +530,7 @@ const FilterCommon: React.FC<IProps> = ({
   const handleClose = () => {
     onClose(true);
   };
-  const CloseIcon = styled(Image)({
-    cursor: "pointer",
-    width: "24px",
-    height: "24px",
-  });
 
-  const RefreshIcon = styled(Image)({
-    cursor: "pointer",
-    width: "18px",
-    height: "15px",
-  });
   const onReset = () => {
     let temp = FilterState?.map((each: any, serial: number) => {
       return { ...each };
@@ -591,7 +546,6 @@ const FilterCommon: React.FC<IProps> = ({
     SetFilterState(temp);
     closeFilterOverlay();
     handleClose();
-    console.log("karan reset");
   };
 
   return (
@@ -630,7 +584,7 @@ const FilterCommon: React.FC<IProps> = ({
                 onClick={() => {
                   handleClose();
                 }}
-                src={NotificationNewIcon}
+                src={closeWithCircle}
                 alt={"close icon"}
                 data-testid="filter-close"
               />
@@ -640,10 +594,12 @@ const FilterCommon: React.FC<IProps> = ({
       </FilterCommonHeader>
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
+          console.log("each", each);
+
           return each.title === "Issue Type" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
-                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+                {/* <FilterCardTitleText>{each?.title}</FilterCardTitleText> */}
               </FilterCardTitle>
               <FilterCardSelectAll>
                 {each?.selectAllStatus === "T" ? (
@@ -656,9 +612,9 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="checked checkbox"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
                   <FilterCardSelectAllSpan>
@@ -670,9 +626,9 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="unchecked checkbox"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
                   <FilterCardSelectAllSpan>
@@ -684,9 +640,9 @@ const FilterCommon: React.FC<IProps> = ({
                       alt="reset"
                       data-testid="filter-select-all"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
                   ""
@@ -731,7 +687,7 @@ const FilterCommon: React.FC<IProps> = ({
           ) : (
             <FilterCardSecondContainer key={index}>
               <FilterCardTitle>
-                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+                {/* <FilterCardTitleText>{each?.title} hii</FilterCardTitleText> */}
               </FilterCardTitle>
               <FilterCardSelectAll>
                 {each?.selectAllStatus === "T" ? (
@@ -743,9 +699,9 @@ const FilterCommon: React.FC<IProps> = ({
                       src={Checked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each?.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
                   <FilterCardSelectAllSpan>
@@ -756,9 +712,9 @@ const FilterCommon: React.FC<IProps> = ({
                       src={UnChecked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each?.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
                   <FilterCardSelectAllSpan>
@@ -769,9 +725,9 @@ const FilterCommon: React.FC<IProps> = ({
                       src={Indeterminate}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each?.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
                   ""

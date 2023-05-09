@@ -10,6 +10,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import NotificationNewIcon from "../../../public/divami_icons/NotificationNewIcon.svg";
 import newRefreshIcon from "../../../public/divami_icons/newRefreshIcon.svg";
+import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 
 const CustomAutoComplete = styled(Autocomplete)({
   border: "1px solid #36415d",
@@ -77,6 +78,7 @@ import {
   ButtonsContainer,
   FilterCardSecondContainer,
   FilterFooter,
+  FilterCardSelectAllTextHeader,
 } from "./StyledComponent";
 import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
@@ -241,7 +243,8 @@ const TaskFilterCommon: React.FC<any> = ({
           let selectAllStatus = "F";
           if (taskFilterState.isFilterApplied) {
             if (
-              item.options.length === taskFilterState.filterData.taskType.length
+              item?.options?.length ===
+              taskFilterState.filterData.taskType.length
             ) {
               selectAllStatus = "T";
             } else if (taskFilterState.filterData?.taskType?.length) {
@@ -254,7 +257,7 @@ const TaskFilterCommon: React.FC<any> = ({
             options: taskTypes?.map((eachItem: any) => {
               if (taskFilterState.isFilterApplied) {
                 if (
-                  item.options.length === taskFilterState.filterData.taskType
+                  item?.options?.length === taskFilterState.filterData.taskType
                 ) {
                   selectAllStatus: "T";
                 }
@@ -617,7 +620,7 @@ const TaskFilterCommon: React.FC<any> = ({
                   handleClose();
                 }}
                 data-testid="filter-close"
-                src={NotificationNewIcon}
+                src={closeWithCircle}
                 alt={"close icon"}
               />
             </HeaderRightSection>
@@ -629,7 +632,7 @@ const TaskFilterCommon: React.FC<any> = ({
           return each.code === "taskType" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
-                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+                {/* <FilterCardTitleText>{each?.title}</FilterCardTitleText> */}
               </FilterCardTitle>
               <FilterCardSelectAll>
                 {each?.selectAllStatus === "T" ? (
@@ -641,9 +644,9 @@ const TaskFilterCommon: React.FC<any> = ({
                       src={Checked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
                   <FilterCardSelectAllSpan>
@@ -654,9 +657,9 @@ const TaskFilterCommon: React.FC<any> = ({
                       src={UnChecked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
                   <FilterCardSelectAllSpan>
@@ -667,9 +670,9 @@ const TaskFilterCommon: React.FC<any> = ({
                       src={Indeterminate}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
                   ""
@@ -712,7 +715,7 @@ const TaskFilterCommon: React.FC<any> = ({
           ) : (
             <FilterCardSecondContainer key={index}>
               <FilterCardTitle>
-                <FilterCardTitleText>{each?.title}</FilterCardTitleText>
+                {/* <FilterCardTitleText>{each?.title}</FilterCardTitleText> */}
               </FilterCardTitle>
               <FilterCardSelectAll>
                 {each?.selectAllStatus === "T" ? (
@@ -724,9 +727,9 @@ const TaskFilterCommon: React.FC<any> = ({
                       src={Checked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "F" ? (
                   <FilterCardSelectAllSpan>
@@ -737,9 +740,9 @@ const TaskFilterCommon: React.FC<any> = ({
                       src={UnChecked}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : each?.selectAllStatus === "I" ? (
                   <FilterCardSelectAllSpan>
@@ -750,9 +753,9 @@ const TaskFilterCommon: React.FC<any> = ({
                       src={Indeterminate}
                       alt="reset"
                     />
-                    <FilterCardSelectAllText>
-                      Select All
-                    </FilterCardSelectAllText>
+                    <FilterCardSelectAllTextHeader>
+                      {each.title}
+                    </FilterCardSelectAllTextHeader>
                   </FilterCardSelectAllSpan>
                 ) : (
                   ""

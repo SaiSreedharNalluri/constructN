@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
+import { ISnapshot } from '../../models/ISnapshot';
 
 interface IProps {
-  hotspotDetails: any
-  hotspotCompareDetails: any
-  snapshot: any
-  compareSnapshot: any
+  hotspotDetails: any|undefined,
+  hotspotCompareDetails: any| undefined,
+  snapshot: ISnapshot,
+  compareSnapshot: ISnapshot
 }
 
-const Hotspots: React.FC<IProps> = ({ hotspotDetails, hotspotCompareDetails, snapshot, compareSnapshot }) => {
+const HotspotsCompare: React.FC<IProps> = ({ hotspotDetails, hotspotCompareDetails, snapshot, compareSnapshot }) => {
 
   const [show, setShow] = useState<boolean>(true)
 
@@ -102,4 +103,4 @@ const Hotspots: React.FC<IProps> = ({ hotspotDetails, hotspotCompareDetails, sna
     )
   } else return (<></>)
 };
-export default Hotspots;
+export default HotspotsCompare;
