@@ -279,13 +279,13 @@ const Index: React.FC = () => {
   //   setFilterTableData([...tableData]);
   // }, [tableData]);
 
-  // const handleSearchWindow = () => {
-  //   if (searchTerm === "") {
-  //     setSearchingOn(!searchingOn);
-  //   } else {
-  //     setSearchTerm("");
-  //   }
-  // };
+  const handleSearchWindow = () => {
+    if (searchTerm === "") {
+      setSearchingOn(!searchingOn);
+    } else {
+      setSearchTerm("");
+    }
+  };
 
   const handleSearch = () => {
     console.log("TEST");
@@ -451,9 +451,9 @@ const Index: React.FC = () => {
                         endAdornment: (
                           <InputAdornment position="start">
                             <CloseIcon
-                              // onClick={() => {
-                              //   // handleSearchWindow();
-                              // }}
+                              onClick={() => {
+                                handleSearchWindow();
+                              }}
                               src={CrossIcon}
                               alt={"close icon"}
                               data-testid="search-close"
