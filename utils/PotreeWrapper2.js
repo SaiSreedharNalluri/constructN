@@ -31,6 +31,8 @@ export const PotreeViewerUtils = () => {
     let _tagType;
     let _isAddTagActive = false;
 
+    let currentTag;
+    let currentTagType;
     let _tagMap = {};
     let _issueSpriteMap = {};
     let _taskSpriteMap = {};
@@ -527,29 +529,33 @@ export const PotreeViewerUtils = () => {
 
     const loadImage = (reality, image, cameraWithOffset) => {
         unloadAllImages();
+        removeTagFromScene();
 
         _currentMode = reality.type;
         _currentReality = reality;
 
-        switch(reality.type) {
-            case "360 Video":
-            case "360 Image":
-                _imageLoadedOnce = true;
-                loadPanoImages(image ? image : _viewer.scene.images360[reality.index].images[0], reality.index, cameraWithOffset);
-                break;
-            case "Phone Image":
-                _imageLoadedOnce = true;
-                loadOrientedImages(image ? image : _viewer.scene.orientedImages[reality.index].images[0], reality.index);
-                break;
-            case "Drone Image":
-                _imageLoadedOnce = true;
-                loadOrientedImages(image ? image : _viewer.scene.orientedImages[reality.index].images[0], reality.index);
-                break;
-
+        try {
+            switch(reality.type) {
+                case "360 Video":
+                case "360 Image":
+                    _imageLoadedOnce = true;
+                    loadPanoImages(image ? image : _viewer.scene.images360[reality.index].images[0], reality.index, cameraWithOffset);
+                    break;
+                case "Phone Image":
+                    _imageLoadedOnce = true;
+                    loadOrientedImages(image ? image : _viewer.scene.orientedImages[reality.index].images[0], reality.index);
+                    break;
+                case "Drone Image":
+                    _imageLoadedOnce = true;
+                    loadOrientedImages(image ? image : _viewer.scene.orientedImages[reality.index].images[0], reality.index);
+                    break;
+    
+            }
+        } catch(e) {
+            console.log(e)
+        } finally {
+            pointCloudView(true);
         }
-
-
-        pointCloudView(true);
     }   
 
     const unLoadImage = () => {
@@ -593,7 +599,7 @@ export const PotreeViewerUtils = () => {
     }
 
     const loadPanoImages = (image, index = 0, cameraInfo = null) => {
-        console.log("potree Load pano images: ", image, index);
+        console.log("potree Load pano images: ", image, index, cameraInfo);
         // if (this.currentLoadedImage === image.file.split('/').pop()) {
         //     return;
         // }
@@ -637,6 +643,7 @@ export const PotreeViewerUtils = () => {
                 context: context,
                 tag: sprite
             }
+            sprite._visible = false;
             // this.viewer.scene.scene.add(sprite);
             _viewer.scene.annotations.add(sprite);
         }
@@ -656,6 +663,7 @@ export const PotreeViewerUtils = () => {
                 context: context,
                 tag: sprite
             }
+            sprite._visible = false;
             // this.viewer.scene.scene.add(sprite);
             _viewer.scene.annotations.add(sprite);
         }
@@ -678,14 +686,63 @@ export const PotreeViewerUtils = () => {
     const initiateAddTag = (type) => {
         _tagType = type;
         _isAddTagActive = activateCreateTagTool();
+        removeTagFromScene();
     }
 
     const cancelAddTag = () => {
         _viewer.scene.annotations.remove(_tempTag);
     }
 
+    const finishAddTag = (tag) => {
+        // console.log("Potree Inside finishAddTag: ", tag);
+        _viewer.scene.annotations.remove(_tempTag);
+        addTagToScene(tag);
+    }
+
     const selectTag = (tag) => {
         updateContext(tag, true); 
+        addTagToScene(tag);
+    }
+
+    const addTagToScene = (tag) => {
+        // console.log("Potree tag Inside add tag scene: ", tag);
+        switch(tag.type) {
+            case "Issue":
+                if (_issueSpriteMap.hasOwnProperty(tag.id)) {
+                    let annotation = _issueSpriteMap[tag.id].tag;
+                    // console.log("Potree tag Inside add tag scene, if condition: ", tag, _issueSpriteMap.hasOwnProperty(tag.id), _issueSpriteMap[tag.id].tag);
+                    // _viewer.scene.annotations.add(annotation);
+        
+                    annotation._visible = true;
+                    // annotation._display = true;
+                    currentTag = annotation;
+                    currentTagType = tag.type;
+                }
+                break;
+            case "Task":
+                if (_taskSpriteMap.hasOwnProperty(tag.id)) {
+                    let annotation = _taskSpriteMap[tag.id].tag;
+                    // console.log("Potree tag Inside add tag scene, if condition: ", tag, _taskSpriteMap.hasOwnProperty(tag.id), _taskSpriteMap[tag.id].tag);
+                    // _viewer.scene.annotations.add(annotation);
+        
+                    annotation._visible = true;
+                    // annotation._display = true;
+                    currentTag = annotation;
+                    currentTagType = tag.type;
+                }
+                break;
+        }
+    }
+
+    const removeTagFromScene = () => {
+        // console.log("Potree tag removeTagFrom Scene: ", currentTag);
+        if (currentTag) {
+            currentTag._visible = false;
+            // _viewer.scene.annotations.remove(currentTag);
+            // currentTag.dispose();
+            currentTag = undefined;
+            currentTagType = undefined;
+        }
     }
 
     const showTag = (tag, show) => {
@@ -700,17 +757,25 @@ export const PotreeViewerUtils = () => {
     }
 
     const showIssues = (show) => {
-        for(let issueId of Object.keys(_issueSpriteMap)) {
-            let annotation = _issueSpriteMap[issueId].tag;
-            annotation._visible = show;
+        if (currentTag) {
+            currentTag._visible = show;
         }
+
+        // for(let issueId of Object.keys(_issueSpriteMap)) {
+        //     let annotation = _issueSpriteMap[issueId].tag;
+        //     annotation._visible = show;
+        // }
     }
 
     const showTasks = (show) => {
-        for(let taskId of Object.keys(_taskSpriteMap)) {
-            let annotation = _taskSpriteMap[taskId].tag;
-            annotation._visible = show;
+        if (currentTag) {
+            currentTag._visible = show;
         }
+
+        // for(let taskId of Object.keys(_taskSpriteMap)) {
+        //     let annotation = _taskSpriteMap[taskId].tag;
+        //     annotation._visible = show;
+        // }
     }
 
     const getMousePointCloudIntersection = (mouse, camera, viewer, pointclouds, params = {}) => {
@@ -1068,7 +1133,7 @@ export const PotreeViewerUtils = () => {
         }
     }
 
-    const goToNearestImageInAllRealities = (position) => {
+    const goToNearestImageInAllRealities = (position, cameraWithOffset) => {
         let nearestImage = null;
         let nearestImageDist = 10000; 
         let nearestReality;
@@ -1103,7 +1168,7 @@ export const PotreeViewerUtils = () => {
         }
 
         if(nearestImage) {
-            loadImage(nearestReality, nearestImage);
+            loadImage(nearestReality, nearestImage, cameraWithOffset);
         }
     }
 
@@ -1159,7 +1224,7 @@ export const PotreeViewerUtils = () => {
         if (context.image) {
             goToNearestImageInAllRealities(context.image.imagePosition);
         } else if ((context.type === "Task") || (context.type === "Issue")) {
-            goToNearestImageInAllRealities(context.tag.tagPosition);
+            goToNearestImageInAllRealities(context.tag.tagPosition, context.cameraObject);
         } else if (context.type === "3d") {
             goToNearestImageInAllRealities(context.cameraObject.cameraPosition);
         } else {
@@ -1763,74 +1828,84 @@ export const PotreeViewerUtils = () => {
     }
 
     const removeAssets = () => {
-        // console.log("Inside remove assets potree");
+        // console.log("removeTest Potree inside remove assets2: ", _realityLayers, _viewer.scene.scene.children);
+
+        let childIndex = -1;
+
+        unloadAllImages();
         for(let pointCloud of _viewer.scene.pointclouds) {
             _viewer.scene.scenePointCloud.remove(pointCloud);
         }
-        // _viewer.scene.scenePointCloud.remove(_viewer.scene.pointclouds[0]);
-       _viewer.scene.pointclouds = [];
+        _viewer.scene.pointclouds = [];
 
-       for(let orientedImage of _viewer.scene.orientedImages) {
-        console.log("potree remove assets: ", orientedImage, _viewer.scene.scene.children.indexOf(orientedImage));
-                
-        // orientedImage.release();
-            // orientedImage.images.forEach(image => {
-            //     orientedImage.remove(image.mesh);
-            //     orientedImage.remove(image.line);
-            //  });
-            //  _viewer.scene.scene.remove(_viewer.scene.scene.children[0]);
-             _viewer.scene.removeOrientedImages(orientedImage);
-       }   
+        for (const realityKey in _realityLayers ) {
+            let reality = _realityLayers[realityKey];
+            switch (reality.type) {
+                case "Drone Image":
+                case "Phone Image":
+                    console.log("removeTest inside remove assets2 swicth case : ", reality,  _viewer.scene.scene.children.indexOf(_viewer.scene.orientedImages[reality.index].node));
+                    childIndex = _viewer.scene.scene.children.indexOf(_viewer.scene.orientedImages[reality.index].node);
+                    if (_viewer.scene.orientedImages[reality.index]) {
+                        _viewer.scene.orientedImages[reality.index].images.forEach(image => {
+                            _viewer.scene.scene.children[childIndex].remove(image.mesh);
+                            _viewer.scene.scene.children[childIndex].remove(image.line);
+                         });
 
-       if (_viewer.scene.annotations.children && _viewer.scene.annotations.children.length > 0) {
+                         delete _viewer.scene.orientedImages[reality.index].images;
+                        // _viewer.scene.scene.remove(_viewer.scene.scene.children[childIndex]);
+                        // _viewer.scene.removeOrientedImages(_viewer.scene.orientedImages[reality.index]);
+                     }
+                    break;
+                case "360 Video":
+                case "360 Image":
+                    console.log("removeTest inside remove assets2 swicth case : ", reality,  _viewer.scene.scene.children.indexOf(_viewer.scene.images360[reality.index].node));
+                    childIndex = _viewer.scene.scene.children.indexOf(_viewer.scene.images360[reality.index].node);
+                    if (_viewer.scene.images360[reality.index]) {
+                        _viewer.scene.images360[reality.index].images.forEach(image => {
+                            _viewer.scene.scene.children[childIndex].remove(image.mesh);
+                         });
+                        _viewer.scene.scene.children[childIndex].remove(_viewer.scene.images360[reality.index].sphere);
+
+                        delete _viewer.scene.images360[reality.index].images;
+                        // delete _viewer.scene.images360[reality.index].sphere;
+                        // _viewer.scene.scene.remove(_viewer.scene.scene.children[childIndex]);
+                        // _viewer.scene.remove360Images(_viewer.scene.images360[reality.index]);
+                     }
+                    break;
+            }
+        }
+
+        let orientedImagesLength = _viewer.scene.orientedImages.length;
+        for (let i = 0; i < orientedImagesLength; i++) {
+            _viewer.scene.scene.remove(_viewer.scene.orientedImages[i].node);
+            _viewer.scene.removeOrientedImages(_viewer.scene.orientedImages[i]);
+            delete _viewer.scene.orientedImages[i];
+        }
+        _viewer.scene.orientedImages = [];
+
+        let image360Length = _viewer.scene.images360.length;
+        for (let i = 0; i < image360Length; i++) {
+            _viewer.scene.scene.remove(_viewer.scene.images360[i].node);
+            _viewer.scene.remove360Images(_viewer.scene.images360[i]);
+            delete _viewer.scene.images360[i]
+        }
+        _viewer.scene.images360 = []
+
+        for (let children of _viewer.scene.scene.children) {
+            _viewer.scene.scene.remove(children);
+            children = null;
+        }
+        _viewer.scene.scene.children = []
+
+        if (_viewer.scene.annotations.children && _viewer.scene.annotations.children.length > 0) {
             for(let annotation of _viewer.scene.annotations.children) {
                 _viewer.scene.annotations.remove(annotation);
                 annotation.dispose();
             }
         }
+        // _viewer.scene.annotations = [];
 
-       for(let image360 of _viewer.scene.images360) {
-            image360.unfocus(false);
-            // image360.images.forEach(image => {
-            //     _viewer.scene.scene.children[0].remove(image.mesh);
-            // });
-            // _viewer.scene.scene.children[0].remove(image360.sphere);
-            // _viewer.scene.scene.remove(_viewer.scene.scene.children[0]);
-            _viewer.scene.remove360Images(image360);
-        }   
-
-        for (let children of _viewer.scene.scene.children) {
-            _viewer.scene.scene.remove(children);
-        }
-       
-        // _viewer.scene.scenePointCloud.remove(_viewer.scene.pointclouds[0]);
-        // _viewer.scene.pointclouds = [];
-        // if (_viewer.scene.orientedImages.length && _viewer.scene.orientedImages[0]) {
-        //    _viewer.scene.orientedImages[0].release();
-        //    _viewer.scene.orientedImages[0].images.forEach(image => {
-        //        _viewer.scene.scene.children[0].remove(image.mesh);
-        //        _viewer.scene.scene.children[0].remove(image.line);
-        //     });
-        //    _viewer.scene.scene.remove(_viewer.scene.scene.children[0]);
-        //    _viewer.scene.removeOrientedImages(_viewer.scene.orientedImages[0]);
-        // }
-
-        // if (_viewer.scene.annotations.children && _viewer.scene.annotations.children.length > 0) {
-        //     for(let annotation of _viewer.scene.annotations.children) {
-        //         _viewer.scene.annotations.remove(annotation);
-        //         annotation.dispose();
-        //     }
-        // }
-
-        // if (_viewer.scene.images360.length && _viewer.scene.images360[0]) {
-        //    _viewer.scene.images360[0].unfocus(false);
-        //    _viewer.scene.images360[0].images.forEach(image => {
-        //        _viewer.scene.scene.children[0].remove(image.mesh);
-        //     });
-        //    _viewer.scene.scene.children[0].remove(_viewer.scene.images360[0].sphere);
-        //    _viewer.scene.scene.remove(_viewer.scene.scene.children[0]);
-        //    _viewer.scene.remove360Images(_viewer.scene.images360[0]);
-        // }
+        _realityLayers = {};
 
         if (_floorMap) {
             removeFloorMap();
@@ -1838,7 +1913,6 @@ export const PotreeViewerUtils = () => {
         _isPointCloudLoaded = false;
         _imageLoadedOnce = false;
         // _currentLoadedImage = null;
-
     }
 
     const removeFloorMap = () => {
@@ -1889,6 +1963,7 @@ export const PotreeViewerUtils = () => {
         updateLayersData: updateLayersData,
         initiateAddTag: initiateAddTag,
         cancelAddTag: cancelAddTag,
+        finishAddTag: finishAddTag,
         selectTag: selectTag,
         showTag: showTag,
         getContext: getContext,

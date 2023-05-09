@@ -75,14 +75,14 @@ const ProjectHierarchy = ({
   //   }
   // }, [treeViewData]);
 
-  useEffect(() => {
-    if (window.localStorage.getItem("nodeData")) {
-      let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
-      if (nodeData && getStructureData) {
-        getStructureData(nodeData);
-      }
-    }
-  }, [treeViewData]);
+  // useEffect(() => {
+  //   if (window.localStorage.getItem("nodeData")) {
+  //     let nodeData = JSON.parse(window.localStorage.getItem("nodeData") || "");
+  //     if (nodeData && getStructureData) {
+  //       getStructureData(nodeData);
+  //     }
+  //   }
+  // }, [treeViewData]);
 
   const onLabelClick = (event: any, nodes: any) => {
     {
@@ -260,7 +260,10 @@ const ProjectHierarchy = ({
         />
       </SearchContainer>
       <TreeViewContainer
-        style={{ overflow: "auto", height: `calc(100vh - 300px)` }}
+        style={{
+          overflow: "auto",
+          height: `calc(100vh - 300px)`,
+        }}
       >
         {treeViewData.length === 0 ? (
           <ErrorImageDiv>

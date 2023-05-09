@@ -35,6 +35,7 @@ import { ISnapshot } from "../../../models/ISnapshot";
 import { IStructure } from "../../../models/IStructure";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import html2canvas from "html2canvas";
+import moment from "moment";
 
 const StyledDrawer = styled(Drawer)`
   & .MuiPaper-root {
@@ -60,6 +61,7 @@ const Issues = ({
   issueStatusList,
   issueTypesList,
   issueFilterState,
+  setIssueFilterState,
   closeIssueCreate,
   deleteTheIssue,
   openIssueDetails,
@@ -69,6 +71,7 @@ const Issues = ({
   handleOnIssueSort,
   issueSubmit,
   deleteTheAttachment,
+  projectUsers,
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -162,11 +165,11 @@ const Issues = ({
     data.startDate = values
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "start-date")[0]?.defaultValue;
-
+    data.startDate = moment(data.startDate).format("YYYY-MM-DD");
     data.dueDate = values
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-
+    data.dueDate = moment(data.dueDate).format("YYYY-MM-DD");
     data.attachments = values.filter(
       (item: any) => item.id === "file-upload"
     )[0].selectedFile;
@@ -186,7 +189,7 @@ const Issues = ({
     delete data["id"];
     formData.append("jreq", JSON.stringify(data));
     const projectId = values.filter((item: any) => item.projectId)[0].projectId;
-    if (data.title && data.type && data.priority && data.description) {
+    if (data.title && data.type && data.priority) {
       setEnableSubmit(false);
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
@@ -195,12 +198,16 @@ const Issues = ({
             setEnableSubmit(false);
             issueSubmitFn(response.result);
           } else {
-            toast(`Something went wrong`);
+            toast.error(`Something went wrong`);
             setEnableSubmit(true);
           }
         })
         .catch((error) => {
-          toast(`Something went wrong`);
+          if (error.message == "Forbidden Access") {
+            toast(`You can't create an issue. Ask the Project Admin for help`);
+          } else {
+            toast.error(`Something went wrong`);
+          }
           setEnableSubmit(true);
         });
     } else {
@@ -220,10 +227,11 @@ const Issues = ({
       );
       setSelectedIssue(selectedObj);
     }
-  }, [openIssueDetails, contextInfo?.id]);
+  }, [openIssueDetails, contextInfo?.id, issuesList]);
 
   const issueSubmitFn = (formdata: any) => {
     issueMenuInstance.toolAction = "issueCreateSuccess";
+    issueMenuInstance.response = { ...formdata.context, id: formdata._id };
     issueMenuClicked(issueMenuInstance);
     closeIssueCreate();
     issueSubmit(formdata);
@@ -339,16 +347,25 @@ const Issues = ({
             currentProject={currentProject}
             issueTypesList={issueTypesList}
             issueFilterState={issueFilterState}
+            setIssueFilterState={setIssueFilterState}
             getIssues={getIssues}
             handleOnIssueSort={handleOnIssueSort}
             deleteTheAttachment={deleteTheAttachment}
             openIssueCreateFn={openIssueCreateFn}
             issueMenuClicked={issueMenuClicked}
+            projectUsers={projectUsers}
           />
         </Drawer>
       )}
       {openCreateIssue && (
         <CustomDrawer>
+          {console.log(
+            myProject,
+            currentStructure,
+            contextInfo,
+            issueStatusList,
+            "siva"
+          )}
           <CreateIssue
             handleCreateTask={handleCreateTask}
             currentProject={myProject}
@@ -375,13 +392,16 @@ const Issues = ({
             issueType={issueTypesList}
             issuePriority={issuePriorityList}
             issueStatus={issueStatusList}
-            projectUsers={[]}
+            projectUsers={projectUsers}
             currentProject={currentProject}
             currentStructure={currentStructure}
             currentSnapshot={currentSnapshot}
             contextInfo={contextInfo}
             setIssueList={setIssueList}
             deleteTheAttachment={deleteTheAttachment}
+            getIssues={getIssues}
+            issuesList={issuesList}
+            deleteTheIssue={deleteTheIssue}
           />
         </Drawer>
       )}

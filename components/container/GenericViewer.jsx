@@ -48,7 +48,7 @@ import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
 import TimeLineComponent from '../divami_components/timeline-container/TimeLineComponent'
 import Hotspots from './hotspots';
 import HotspotsCompare from './hotspotsCompare';
-
+import styles from "../../styles/GenericViewer.module.css"
 function GenericViewer(props) {
   const genericViewer = 'genericViewer';
   const genericViewerRef = useRef();
@@ -56,8 +56,9 @@ function GenericViewer(props) {
   const compareViewerRef = useRef();
   const [fullScreenMode, setFullScreenMode] = useState(props.isFullScreen)
   let structure = props.structure;
-  let isFullScreenActive = props.isFullScreenActive;
-
+  let isFullScreenActive=props.isFullScreenActive;
+  let isFullScreens=props.isFullScreen;
+  
   let currentStructure = useRef();
 
   let [designList, setDesignList] = useState([]);
@@ -139,6 +140,13 @@ function GenericViewer(props) {
   let [currentViewer, setCurrentViewer] = useState('Forge');
 
   let [isMarkerMode, setMarkerMode] = useState(false);
+  const [offset, setOffset] = useState(1);
+  const pageSize = 10;
+  const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0)
+
+  const [totalPages, setTotalPages] = useState(
+    Math.ceil(totalSnaphotsCount / 10)
+  );
 
   const initializeOptions = {
     env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
@@ -234,23 +242,27 @@ function GenericViewer(props) {
       case 'Forge':
         if (forgeUtils.current) {
           forgeUtils.current.setType(currentViewType.current);
-          forgeUtils.current.refreshData();
+          forgeUtils.current.refreshData(currentContext.current);
         }
         break;
     }
+    currentContext.current = undefined;
   }
 
   function handleRealityTypeChange() {
-    if (minimapUtils.current) {
-      viewLayers && minimapUtils.current.showLayers(Object.values(viewLayers).map(v => {
-        if (v.isSelected) return v.name
-      }));
+
+    if (viewLayers) {
+      Object.keys(viewLayers).forEach(type => {
+        if (minimapUtils.current) {
+          minimapUtils.current.showTag(type, viewLayers[type].isSelected)
+        }
+
+        if (minimapCompareUtils.current) {
+          minimapCompareUtils.current.showTag(type, viewLayers[type].isSelected)
+        }
+      })
     }
-    if (isCompare && minimapCompareUtils.current) {
-      viewLayers && minimapCompareUtils.current.showLayers(Object.values(viewLayers).map(v => {
-        if (v.isSelected) return v.name
-      }));
-    }
+    
     switch (currentViewerType.current) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -276,6 +288,9 @@ function GenericViewer(props) {
       case 'issueCreate':
         addTag('Issue');
         break;
+      case 'issueCreateSuccess':
+        finishAddTag(activeTool.current.response);
+        break;
       case 'issueCreateFail':
         cancelAddTag('Issue');
         break;
@@ -290,6 +305,9 @@ function GenericViewer(props) {
         break;
       case 'taskCreate':
         addTag('Task');
+        break;
+      case 'taskCreateSuccess':
+        finishAddTag(activeTool.current.response);
         break;
       case 'taskCreateFail':
         cancelAddTag('Task');
@@ -353,6 +371,21 @@ function GenericViewer(props) {
       case 'Potree':
         if (potreeUtils.current) {
           potreeUtils.current.cancelAddTag();
+        }
+        break;
+    }
+  };
+
+  const finishAddTag = (tag) => {
+    switch (currentViewerType.current) {
+      case 'Forge':
+        // if (forgeUtils.current) {
+        //   forgeUtils.current.finishAddTag();
+        // }
+        break;
+      case 'Potree':
+        if (potreeUtils.current) {
+          potreeUtils.current.finishAddTag(tag);
         }
         break;
     }
@@ -450,8 +483,8 @@ function GenericViewer(props) {
           ) {
             let viewerState = potreeUtils.current.getViewerState();
             potreeCompareUtils.current.updateViewerState(viewerState);
+            syncPotreeEvent.current = false;
           }
-          syncPotreeEvent.current = false;
         } else if (syncPotreeEvent.current) {
           // }else {
           // get from potree utils
@@ -462,7 +495,7 @@ function GenericViewer(props) {
           ) {
             let viewerState = potreeUtils.current.getViewerState();
             forgeCompareUtils.current.updateViewerState(viewerState);
-            syncForgeEvent.current = false;
+            syncPotreeEvent.current = false;
           }
         }
       } else {
@@ -475,6 +508,15 @@ function GenericViewer(props) {
           ) {
             let viewerState = potreeCompareUtils.current.getViewerState();
             potreeUtils.current.updateViewerState(viewerState);
+            syncPotreeEvent.current = false;
+          }
+        } else if (syncPotreeEvent.current) {
+          if (
+            potreeUtils.current != undefined &&
+            forgeCompareUtils.current != undefined
+          ) {
+            let viewerState = potreeUtils.current.getViewerState();
+            forgeCompareUtils.current.updateViewerState(viewerState);
             syncPotreeEvent.current = false;
           }
         } else if (syncForgeEvent.current) {
@@ -566,6 +608,7 @@ function GenericViewer(props) {
                 potreeUtils.current.updateContext(event, true);
                 // forgeCompareUtils.current.updateContext(event, true);
               }
+              currentContext.current = undefined;
             } else {
               if (currentViewerType.current == 'Forge') {
                 pushToolResponse({
@@ -576,6 +619,7 @@ function GenericViewer(props) {
               }
               else {
                 potreeUtils.current.updateContext(event, true);
+                currentContext.current = undefined;
               }
             }
             return;
@@ -591,6 +635,7 @@ function GenericViewer(props) {
                 forgeCompareUtils.current.updateContext(event, false);
               }
             }
+            currentContext.current = undefined;
           } else if (currentViewerType.current == 'Forge') {
             pushToolResponse({
               toolName: 'viewMode',
@@ -617,7 +662,7 @@ function GenericViewer(props) {
             : `select${event.type}`;
           activeTool.current.response = event;
           pushToolResponse(activeTool.current);
-          if(potreeUtils.current) {
+          if(!event.id.includes('Temp') && potreeUtils.current) {
             selectTag(event)
           }
           console.log('Marked Point========', event);
@@ -758,7 +803,7 @@ function GenericViewer(props) {
         const forgeModels = getForgeModels(designMap)
         if(forgeModels && forgeModels['Plan Drawings']) {
           setShowMinimap(true);
-          minimapUtils.current.updateData(getForgeModels(designMap)); 
+          minimapUtils.current.updateData(forgeModels); 
         } else {
           setShowMinimap(false);
         }
@@ -788,6 +833,7 @@ function GenericViewer(props) {
         if (forgeUtils.current != undefined) {
           forgeUtils.current.setStructure(structure);
           if (designList.length > 0) {
+            forgeUtils.current.setType(currentViewType.current);
             forgeUtils.current.updateData(getForgeModels(designMap));
           } else {
             pushToolResponse({
@@ -1105,9 +1151,10 @@ function GenericViewer(props) {
     return designList;
   };
 
-  const getSnapshotList = async (projectId, structurId) => {
-    let list = await getSnapshotsList(projectId, structurId);
 
+  const getSnapshotList = async (projectId, structurId,offset,limit) => {
+    let list = await getSnapshotsList(projectId, structurId,offset||1,limit||10);
+    setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
     list = list.data.result.mSnapshots.sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
@@ -1335,15 +1382,19 @@ function GenericViewer(props) {
     }
   };
 
+  
+
   useEffect(() => {
-    if(minimapUtils.current) {
-      minimapUtils.current.initializeViewer();
-    }
-    if(minimapCompareUtils.current) {
-      minimapCompareUtils.current.initializeViewer();
-    }
-    if(forgeUtils.current) {
-      forgeUtils.current.initializeViewer();
+    if (forgeInitialised) {
+      if(minimapUtils.current) {
+        minimapUtils.current.initializeViewer();
+      }
+      if(minimapCompareUtils.current) {
+        minimapCompareUtils.current.initializeViewer();
+      }
+      if(forgeUtils.current) {
+        forgeUtils.current.initializeViewer();
+      }
     }
   }, [forgeInitialised]);
 
@@ -1351,7 +1402,8 @@ function GenericViewer(props) {
     // To stop Minimap from accepting keyboard events
     document.addEventListener(
       "keydown", (event) => {
-        event.stopPropagation()
+        const forgeAvailable = document.getElementById('forgeViewer_1')
+        if(!forgeAvailable) event.stopPropagation()
       }, false
     );
     // return cleanUpOnPageChange;
@@ -1428,6 +1480,8 @@ function GenericViewer(props) {
       currentViewerType.current = viewerType;
       handleViewerTypeChange();
     }
+    if(minimapUtils.current) minimapUtils.current.fitToView()
+    if(minimapCompareUtils.current) minimapCompareUtils.current.fitToView()
     return cleanUpOnViewerTypeChange;
   }, [viewerType])
 
@@ -1438,24 +1492,24 @@ function GenericViewer(props) {
     destroyViewer();
   };
 
-  useEffect(() => {
-    console.log("Generic Viewer View Mode UseEffect", viewMode, currentViewMode.current);
-    if (currentViewMode.current != viewMode) {
-      currentViewMode.current = viewMode;
-      setViewerType(getViewerTypeFromViewMode());
-    }
-    return cleanUpOnViewModeChange;
-  }, [viewMode]);
+  // useEffect(() => {
+  //   console.log("Generic Viewer View Mode UseEffect", viewMode, currentViewMode.current);
+  //   if (currentViewMode.current != viewMode) {
+  //     currentViewMode.current = viewMode;
+  //     setViewerType(getViewerTypeFromViewMode());
+  //   }
+  //   return cleanUpOnViewModeChange;
+  // }, [viewMode]);
 
-  const cleanUpOnViewModeChange = () => {
-    console.log(
-      "Generic Viewer Inside cleanup: viewmode dependencies",
-      viewMode
-    );
-    setIsCompare(false);
-    getContext();
-    // destroyViewer();
-  };
+  // const cleanUpOnViewModeChange = () => {
+  //   console.log(
+  //     "Generic Viewer Inside cleanup: viewmode dependencies",
+  //     viewMode
+  //   );
+  //   setIsCompare(false);
+  //   getContext();
+  //   // destroyViewer();
+  // };
 
   useEffect(() => {
     console.log('Generic Viewer View Type UseEffect', viewType, currentViewType.current);
@@ -1595,19 +1649,26 @@ function GenericViewer(props) {
     if (count != 1 && !isCompare) {
       return;
     }
+
+    if(count == 2) {
+      setTimeout(() => {
+        resizeMinimap('minimize', count)
+      }, 3000)
+    }
     
     return (<Rnd
       ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
+      style={{left: count == 1 ? '84px' : '0px'}}
       minWidth={320}
       minHeight={28}
       maxWidth={'99%'}
       maxHeight={'99%'}
       bounds={count == 1 ? '#TheView' : '#CompareView'}
-      default={{ x: 20, y: 75, width: 320, height: 320 }}
+      default={{ x: count == 1 ? 84 : 24, y: 75, width: 320, height: 320 }}
       onResize={(e, direction, ref, delta, position) => {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
       }}
-      className={`${'z-10 rounded-lg bg-white'} ${showMinimap ? 'opacity-100' : 'opacity-0'}`}>
+      className={`${'z-10 rounded-lg bg-white'} ${showMinimap && ((count == 1 && viewerType === "Potree") || (count == 2 &&  compareViewMode === "Potree")) ? 'opacity-100' : 'opacity-0'}`}>
       <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
         <div className='h-8 rounded-lg bg-white flex'>
           <IconButton className='cursor-move' size="small">
@@ -1624,7 +1685,13 @@ function GenericViewer(props) {
             <FullscreenIcon fontSize="inherit" />
           </IconButton>
         </div>
-        <MiniMap count={count} style={{ height: 'calc(100%)' }} compareViewMode={compareViewMode} setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}></MiniMap>
+        <MiniMap 
+          count={count} 
+          style={{ height: 'calc(100%)' }} 
+          compareViewMode={compareViewMode} 
+          setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}>
+            
+          </MiniMap>
       </div>
     </Rnd>)
   }
@@ -1637,8 +1704,8 @@ function GenericViewer(props) {
         minimap?.updateSize({ width: 320, height: 28 });
         break;
       case 'fullscreen':
-        minimap?.updateSize({ width: '99%', height: '95%' });
-        minimap?.updatePosition({ x: 0, y: 64 });
+        minimap?.updateSize({ width: '95%', height: '90%' });
+        minimap?.updatePosition({ x: count == 1 ? 24 : 24, y: 84 });
         break;
       default:
         minimap?.updateSize({ width: 320, height: 320 });
@@ -1647,21 +1714,54 @@ function GenericViewer(props) {
     setTimeout(() => utils?.resize(), 50)
   }
 
+  useEffect(() => {
+    setTotalPages(Math.ceil(totalSnaphotsCount / 10));
+  }, [totalSnaphotsCount]);
+
+  const setPrevList = () => {
+    if (offset < totalPages) {
+      getSnapshotList(structure.project, structure._id, offset + 1, pageSize);
+      setOffset(offset + 1);
+      // setPage(0);
+    }
+  };
+
+  const setNextList = () => {
+    if (offset > 1) {
+      getSnapshotList(structure.project, structure._id, offset - 1, pageSize);
+
+      setOffset(offset - 1);
+      // setPage(0);
+    }
+  };
   return (
-    <div className="fixed calc-w calc-h flex flex-row">
-      <div id="TheView" className="relative basis-1/2 flex grow shrink">
-        {renderViewer(1)}
-        {renderMinimap(1)}
-        <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
-      </div>
-      <div className={isCompare?'w-0.5':''} color='gray'></div>
-      <div id="CompareView" className={`relative ${isCompare ? "basis-1/2" : "hidden"}`}>
-        {renderViewer(2)}
-        { renderMinimap(2)}
-        <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode}></TimeLineComponent>
-      </div>
-      {
-        viewerType === "Mapbox" && viewMode === "Reality" && hotspots && hotspots.length > 0 ?
+      <div className={` ${fullScreenMode?"w-full h-full":`${styles.calcWidth} ${styles.calcHeight}`} fixed flex flex-row overflow-hidden`}>
+        <div id="TheView" className="relative  basis-1/2 flex grow shrink">
+          {renderViewer(1)}
+          {renderMinimap(1)}
+          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+            setPrevList={setPrevList}
+            setNextList={setNextList}
+            totalPages={totalPages}
+           offset={offset}
+
+          ></TimeLineComponent>
+        </div>
+        <div className={isCompare?'w-0.5':''} color='gray'></div>
+        <div id="CompareView" className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
+          {renderViewer(2)}
+          {compareViewMode === 'Potree' ? renderMinimap(2) : <></>}
+          <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+           setPrevList={setPrevList}
+           setNextList={setNextList}
+           totalPages={totalPages}
+           offset={offset}
+           tools={props?.tools}
+
+          ></TimeLineComponent>
+        </div>
+        {
+          viewerType === "Mapbox"  && viewMode === "Reality" && hotspots && hotspots.length > 0 ?
           <Hotspots data={hotspots} selected={selectedHotspot} onHotspotClick={onHotspotClick}></Hotspots>
           : <></>
       }

@@ -25,6 +25,8 @@ import sort from "../../../public/divami_icons/sort.svg";
 import SubmittalList from "../../../public/divami_icons/submittalList.svg";
 import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
 import UpArrow from "../../../public/divami_icons/upArrow.svg";
+import sortUp from "../../../public/divami_icons/sortUp.svg";
+
 import { getProjectUsers } from "../../../services/project";
 import {
   getTasksPriority,
@@ -71,6 +73,15 @@ import {
   ThirdHeader,
   TitleContainer,
   LoadMoreText,
+  FilterIndication,
+  FunnelIcon,
+  DueDateHeader,
+  TicketName,
+  ProgressChild,
+  SmallDivider,
+  PriorityChild,
+  AssigneeList,
+  Watcher,
 } from "./TaskListStyles";
 import {
   Box,
@@ -79,6 +90,9 @@ import {
   InputAdornment,
   ListItemIcon,
   Tooltip,
+  TooltipProps,
+  styled,
+  tooltipClasses,
 } from "@mui/material";
 import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
@@ -90,6 +104,13 @@ import {
 } from "../issue-listing/Constants";
 import { DownloadTable } from "../toolbar/DownloadTable";
 import { MenuOptionLabel } from "../issue-listing/IssueListStyles";
+import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
+import filterElip from "../../../public/divami_icons/filterElip.svg";
+import progressHour from "../../../public/divami_icons/progressHour.svg";
+import todoIcon from "../../../public/divami_icons/todoIcon.svg";
+import blockedFrame from "../../../public/divami_icons/blockedFrame.svg";
+import CompletedIconTask from "../../../public/divami_icons/CompletedIconTask.svg";
+import smallDivider from "../../../public/divami_icons/smallDivider.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -122,11 +143,11 @@ const CustomTaskListDrawer = (props: any) => {
     handleOnTasksSort,
     deleteTheAttachment,
     openTaskCreateFn,
+    projectUsers,
+    taskPriority,
+    taskStatus,
   } = props;
   const [taskType, setTaskType] = useState<[string]>();
-  const [taskPriority, setTaskPriority] = useState<[string]>();
-  const [projectUsers, setProjectUsers] = useState([]);
-  const [taskStatus, setTaskStatus] = useState<[string]>();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [viewTask, setViewTask] = useState<any>({});
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
@@ -143,7 +164,7 @@ const CustomTaskListDrawer = (props: any) => {
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
   const [downloadList, setDownloadList] = useState(taskList);
-
+  console.log(tasksList, "tasksList");
   const sortMenuOptions = [
     {
       label: "Status ( To Do - Completed)",
@@ -189,7 +210,7 @@ const CustomTaskListDrawer = (props: any) => {
   }, [taskList]);
 
   useEffect(() => {
-    setRemainingtasks(taskList?.length);
+    setRemainingtasks(taskList?.length > 10 ? taskList.length : 0);
   }, [taskList]);
 
   const handleSortClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -209,8 +230,6 @@ const CustomTaskListDrawer = (props: any) => {
   const handleSortMenuClick = (sortMethod: string) =>
     handleOnTasksSort(sortMethod);
 
-  console.log(tasksList, taskList, filteredTaskList, "fsfsdf");
-
   const handleViewTaskList = () => {
     setOpenDrawer(true);
   };
@@ -224,23 +243,6 @@ const CustomTaskListDrawer = (props: any) => {
       getTasksTypes(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskType(response.result);
-        }
-      });
-      getTasksPriority(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskPriority(response.result);
-        }
-      });
-      getProjectUsers(router.query.projectId as string)
-        .then((response) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
-      getTaskStatus(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskStatus(response.result);
         }
       });
     }
@@ -293,17 +295,18 @@ const CustomTaskListDrawer = (props: any) => {
         );
       });
       setDownloadList(filteredData);
-
+      setRemainingtasks(filteredData.length > 10 ? filteredData.length : 0);
       setFilteredTaskList([...filteredData.slice(0, 10)]);
     } else {
       setFilteredTaskList(taskList.slice(0, 10));
+      setRemainingtasks(taskList.length > 10 ? taskList.length : 0);
     }
   };
 
   const handleLoadMore = () => {
     const noOfTasksLoaded = filteredTaskList.length;
 
-    if (searchTerm) {
+    if (searchTerm.length > 0) {
       const filteredData = taskList?.filter((eachTask: any) => {
         const taskName = eachTask?.type?.toLowerCase();
         const sequenceNumber = eachTask?.sequenceNumber.toString();
@@ -321,35 +324,23 @@ const CustomTaskListDrawer = (props: any) => {
   };
 
   useEffect(() => {
-    if (router.isReady) {
-      getProjectUsers(router.query.projectId as string)
-        .then((response: any) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
-    }
-  }, [router.isReady, router.query.projectId]);
-
-  useEffect(() => {
     handleSearch();
   }, [searchTerm]);
 
   useEffect(() => {
     if (viewTask?._id) {
-      filteredTaskList.forEach((item: any) => {
+      taskList.forEach((item: any) => {
         if (viewTask._id === item._id) {
           setViewTask(item);
         }
       });
     }
-  }, [filteredTaskList]);
+  }, [taskList]);
 
   return (
-    <TaskListContainer>
+    <>
       {errorShow.length > 0 ? (
-        <>
+        <TaskListContainer>
           <HeaderContainer>
             <TitleContainer>
               <span>Task List</span>
@@ -357,7 +348,7 @@ const CustomTaskListDrawer = (props: any) => {
                 onClick={() => {
                   handleClose();
                 }}
-                src={CrossIcon}
+                src={closeWithCircle}
                 alt={"close icon"}
                 data-testid="close-icon"
               />
@@ -406,7 +397,7 @@ const CustomTaskListDrawer = (props: any) => {
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
                   <DividerIcon src={DividerSvg} alt="" />
-                  {taskFilterState.isFilterApplied ? (
+                  {/* {taskFilterState.isFilterApplied ? (
                     <AppliedFilter>
                       {taskFilterState.numberOfFilters} Filters{" "}
                       <FilterIcon
@@ -417,7 +408,7 @@ const CustomTaskListDrawer = (props: any) => {
                         }}
                       />
                     </AppliedFilter>
-                  ) : null}
+                  ) : null} */}
                   <Tooltip title="Sort Menu">
                     <IconContainer
                       src={sort}
@@ -426,9 +417,12 @@ const CustomTaskListDrawer = (props: any) => {
                         setIsSortMenuOpen((prev) => !prev);
                         handleSortClick(e);
                       }}
-                      data-testid="sort"
+                      // data-testid="sort"
                     />
                   </Tooltip>
+
+                  {/* <DueDateHeader>Due Date</DueDateHeader> */}
+
                   {/* {sortOrder === "asc" ? (
                     <>
                       <ArrowUpIcon
@@ -454,7 +448,7 @@ const CustomTaskListDrawer = (props: any) => {
 
                   <SecondDividerIcon src={DividerSvg} alt="" />
 
-                  {!taskFilterState.isFilterApplied ? (
+                  {/* {!taskFilterState.isFilterApplied ? (
                     <IconContainer
                       src={FilterInActive}
                       alt="Arrow"
@@ -463,6 +457,17 @@ const CustomTaskListDrawer = (props: any) => {
                       }}
                       data-testid="filter"
                     />
+                  ) : null} */}
+                  <FunnelIcon
+                    src={FilterInActive}
+                    alt="Arrow"
+                    onClick={() => {
+                      handleViewTaskList();
+                    }}
+                    data-testid="filter"
+                  />
+                  {taskFilterState.isFilterApplied ? (
+                    <FilterIndication />
                   ) : null}
                   {/* <Tooltip title="Download Menu">
                     <DownloadIcon
@@ -503,32 +508,82 @@ const CustomTaskListDrawer = (props: any) => {
                         <FirstHeader>
                           <Image
                             src={
-                              val.type === "RFI"
-                                ? RFIList
-                                : val.type === "Transmittals"
-                                ? TransmittalList
-                                : val.type === "Submittals"
-                                ? SubmittalList
-                                : val.type === "Transmittals"
-                                ? TransmittalList
-                                : val.type === "Transmittals"
-                                ? TransmittalList
+                              val?.status === "In Progress"
+                                ? progressHour
+                                : val.status === "To Do"
+                                ? todoIcon
+                                : val.status === "Blocked"
+                                ? blockedFrame
+                                : val.status === "Completed"
+                                ? CompletedIconTask
                                 : ""
                             }
                             alt="Arr"
                           />
-                          <BodyContTitle>
-                            {val.type} (#{val.sequenceNumber})
-                          </BodyContTitle>
+                          <TicketName>
+                            {" "}
+                            {val?.type} (#{val?.sequenceNumber})
+                          </TicketName>
                         </FirstHeader>
                         <SecondHeader>
-                          <div>{val.priority} Priority</div>
+                          <ProgressChild>{val?.status}</ProgressChild>
+
+                          <SmallDivider src={smallDivider} alt="progress" />
+
+                          <PriorityChild>
+                            {val?.priority} Priority{" "}
+                          </PriorityChild>
                         </SecondHeader>
                         <ThirdHeader>
-                          <div>{val.assignee}</div>
-                          <DueDateDiv>
-                            Due by {Moment(val.due_date).format("DD MMM 'YY")}
-                          </DueDateDiv>
+                          <ProgressChild>
+                            {" "}
+                            Due by {Moment(val.dueDate).format("DD MMM 'YY")}
+                          </ProgressChild>
+
+                          <SmallDivider src={smallDivider} alt="progress" />
+
+                          <PriorityChild>
+                            {" "}
+                            {val?.assignees[0]?.firstName
+                              .charAt(0)
+                              .toUpperCase()}
+                            {val?.assignees[0]?.firstName.slice(1)}{" "}
+                            {val?.assignees[0]?.lastName
+                              .charAt(0)
+                              .toUpperCase()}
+                            {val?.assignees[0]?.lastName.slice(1)}
+                          </PriorityChild>
+                          <LightTooltip
+                            arrow
+                            title={
+                              <AssigneeList>
+                                {val?.assignees?.map(
+                                  (assignName: any, index: number) => {
+                                    if (index != 0) {
+                                      return (
+                                        <>
+                                          {index !== val?.assignees?.length - 1
+                                            ? assignName?.firstName +
+                                              " " +
+                                              assignName.lastName +
+                                              " | "
+                                            : assignName?.firstName +
+                                              " " +
+                                              assignName.lastName}
+                                        </>
+                                      );
+                                    }
+                                  }
+                                )}
+                              </AssigneeList>
+                            }
+                          >
+                            <Watcher>
+                              {val?.assignees.length - 1 > 0
+                                ? `+${val?.assignees.length - 1}`
+                                : ""}
+                            </Watcher>
+                          </LightTooltip>
                         </ThirdHeader>
                       </BodyInfo>
                       <HorizontalLine></HorizontalLine>
@@ -544,7 +599,7 @@ const CustomTaskListDrawer = (props: any) => {
                   <MessageDivShowErr>No result found</MessageDivShowErr>
                 </NoMatchDiv>
               )}
-              {remainingTasks > 0 ? (
+              {remainingTasks > 1 && filteredTaskList.length > 1 ? (
                 <LoadMoreText
                   onClick={() => {
                     handleLoadMore();
@@ -579,6 +634,7 @@ const CustomTaskListDrawer = (props: any) => {
                 contextInfo={contextInfo}
                 getTasks={getTasks}
                 deleteTheAttachment={deleteTheAttachment}
+                setTaskList={setTaskList}
               />
             </Drawer>
           )}
@@ -602,160 +658,191 @@ const CustomTaskListDrawer = (props: any) => {
               />
             </Drawer>
           )}
-        </>
-      ) : (
-        <ErrorImageDiv>
-          <ImageErrorIcon src={listingErrorIcon} alt="Error Image" />
-          <MessageDivShowErr>
-            No Task has been raised yet. Get a headstart by raising one.
-          </MessageDivShowErr>
-          <RaiseButtonDiv
-            onClick={() => {
-              onClose();
-              openTaskCreateFn();
-              toast("Click on the map where you want to create a task");
+
+          <Menu
+            anchorEl={anchorEl}
+            id="account-menu"
+            open={isSortMenuOpen}
+            onClose={handleSortMenuClose}
+            onClick={handleSortMenuClose}
+            PaperProps={{
+              elevation: 0,
+              sx: {
+                overflow: "visible",
+                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                mt: 1.5,
+                "& .MuiAvatar-root": {
+                  width: 32,
+                  height: 32,
+                  ml: -0.5,
+                  mr: 1,
+                },
+                "&:before": {
+                  content: '""',
+                  display: "block",
+                  position: "absolute",
+                  top: 0,
+                  right: 14,
+                  width: 10,
+                  height: 10,
+                  bgcolor: "background.paper",
+                  transform: "translateY(-50%) rotate(45deg)",
+                  zIndex: 0,
+                },
+              },
             }}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
-            Raise Task
-          </RaiseButtonDiv>
-
-          <ContentError>
-            Check out
-            <ContentErrorSpan> How to raise a Task?</ContentErrorSpan>
-          </ContentError>
-        </ErrorImageDiv>
-      )}
-      <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={isSortMenuOpen}
-        onClose={handleSortMenuClose}
-        onClick={handleSortMenuClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: "visible",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 1.5,
-            "& .MuiAvatar-root": {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
-            },
-            "&:before": {
-              content: '""',
-              display: "block",
-              position: "absolute",
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: "background.paper",
-              transform: "translateY(-50%) rotate(45deg)",
-              zIndex: 0,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
-        {sortMenuOptions.map((option) => (
-          <>
-            <StyledMenu
-              data-testid="sort-menu-item"
-              key={option.label}
-              onClick={() => {
-                handleSortMenuClick(option.method);
+            {sortMenuOptions.map((option) => (
+              <>
+                <StyledMenu
+                  className="custom-styled-menu"
+                  data-testid="sort-menu-item"
+                  key={option.label}
+                  onClick={() => {
+                    handleSortMenuClick(option.method);
+                  }}
+                >
+                  {option.label}
+                  {option.icon && (
+                    <ListItemIcon>
+                      <IconContainer src={option.icon} alt={option.label} />
+                    </ListItemIcon>
+                  )}
+                </StyledMenu>
+              </>
+            ))}
+          </Menu>
+          {isDownloadMenuOpen ? (
+            <Menu
+              anchorEl={anchorEl}
+              id="account-menu"
+              open={isDownloadMenuOpen}
+              onClose={handleDownloadClose}
+              onClick={handleDownloadClose}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
               }}
+              transformOrigin={{ horizontal: "right", vertical: "top" }}
+              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              {option.label}
-              {option.icon && (
-                <ListItemIcon>
-                  <IconContainer src={option.icon} alt={option.label} />
-                </ListItemIcon>
-              )}
-            </StyledMenu>
-          </>
-        ))}
-      </Menu>
-      {isDownloadMenuOpen ? (
-        <Menu
-          anchorEl={anchorEl}
-          id="account-menu"
-          open={isDownloadMenuOpen}
-          onClose={handleDownloadClose}
-          onClick={handleDownloadClose}
-          PaperProps={{
-            elevation: 0,
-            sx: {
-              overflow: "visible",
-              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-              mt: 1.5,
-              "& .MuiAvatar-root": {
-                width: 32,
-                height: 32,
-                ml: -0.5,
-                mr: 1,
-              },
-              "&:before": {
-                content: '""',
-                display: "block",
-                position: "absolute",
-                top: 0,
-                right: 14,
-                width: 10,
-                height: 10,
-                bgcolor: "background.paper",
-                transform: "translateY(-50%) rotate(45deg)",
-                zIndex: 0,
-              },
-            },
-          }}
-          transformOrigin={{ horizontal: "right", vertical: "top" }}
-          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-        >
-          {downloadMenuOptions.map((option) => (
-            <>
-              <StyledMenu
-                key={option.label}
-                // onClick={() => handleDownloadMenuClick()}
-                data-testid="download-menu-item"
-              >
-                {option.label === "Download as CSV" ? (
-                  <CSVLink
-                    data={getDownladableList(downloadList)}
-                    filename={"tasks.csv"}
-                    className="text-black btn btn-primary fill-black fa fa-Download "
-                    target="_blank"
-                    data-testid="download"
-                    onClick={() => handleDownloadClose()}
+              {downloadMenuOptions.map((option) => (
+                <>
+                  <StyledMenu
+                    key={option.label}
+                    // onClick={() => handleDownloadMenuClick()}
+                    data-testid="download-menu-item"
                   >
-                    <MenuOptionLabel>{option.label}</MenuOptionLabel>
-                  </CSVLink>
-                ) : (
-                  <DownloadTable
-                    data={getDownladableList(downloadList)}
-                    label={option.label}
-                    filename="tasks.pdf"
-                    onClick={() => handleDownloadClose()}
-                  />
-                )}
+                    {option.label === "Download as CSV" ? (
+                      <CSVLink
+                        data={getDownladableList(downloadList)}
+                        filename={"tasks.csv"}
+                        className="text-black btn btn-primary fill-black fa fa-Download "
+                        target="_blank"
+                        data-testid="download"
+                        onClick={() => handleDownloadClose()}
+                      >
+                        <MenuOptionLabel>{option.label}</MenuOptionLabel>
+                      </CSVLink>
+                    ) : (
+                      <DownloadTable
+                        data={getDownladableList(downloadList)}
+                        label={option.label}
+                        filename="tasks.pdf"
+                        onClick={() => handleDownloadClose()}
+                      />
+                    )}
 
-                {/* {option.icon && (
+                    {/* {option.icon && (
                     <ListItemIcon>
                       <IconContainer src={option.icon} alt={option.label} />
                     </ListItemIcon>
                   )} */}
-              </StyledMenu>
-            </>
-          ))}
-        </Menu>
+                  </StyledMenu>
+                </>
+              ))}
+            </Menu>
+          ) : (
+            <></>
+          )}
+        </TaskListContainer>
       ) : (
-        <></>
+        <TaskListContainer>
+          <ErrorImageDiv>
+            <ImageErrorIcon src={listingErrorIcon} alt="Error Image" />
+            <MessageDivShowErr>
+              No Task has been raised yet. Get a headstart by raising one.
+            </MessageDivShowErr>
+            <RaiseButtonDiv
+              onClick={() => {
+                onClose();
+                openTaskCreateFn();
+                toast.success(
+                  "Click on the map where you want to create a task"
+                );
+              }}
+            >
+              Raise Task
+            </RaiseButtonDiv>
+
+            <ContentError>
+              Check out
+              <ContentErrorSpan> How to raise a Task?</ContentErrorSpan>
+            </ContentError>
+          </ErrorImageDiv>
+        </TaskListContainer>
       )}
-    </TaskListContainer>
+    </>
   );
 };
 
 export default CustomTaskListDrawer;
+const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "white",
+    // color: "rgba(0, 0, 0, 0.87)",
+    fontSize: 11,
+    // position: "absolute",
+    right: 30,
+    borderRadius: "4px",
+    top: 2,
+    // width: "308px",
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    height: "10px !important",
+    left: "30px !important",
+    marginBottom: "0px",
+    "&:before": {
+      background: "#FFFFFF",
+      border: "1px solid #D9D9D9",
+    },
+
+    //  color: 'red',
+  },
+}));

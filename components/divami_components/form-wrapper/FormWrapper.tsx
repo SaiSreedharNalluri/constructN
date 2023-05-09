@@ -35,7 +35,6 @@ const FormWrapper = (props: any) => {
 
   useEffect(() => {
     if (validate) {
-      console.log("coming");
       setFormConfig((prev: any) => {
         const newconfig = prev.map((item: any) => {
           if (item.isReq && !item.defaultValue) {
@@ -44,6 +43,17 @@ const FormWrapper = (props: any) => {
               ...item,
               isError: true,
             };
+          } else if (item.id === "dates") {
+            const startDate = item?.fields[0].defaultValue;
+            const endDate = item?.fields[1].defaultValue;
+            if (startDate && endDate) {
+              if (
+                new Date(startDate)?.getTime() > new Date(endDate).getTime()
+              ) {
+                return { ...item, isError: true };
+              }
+            }
+            return { ...item, isError: false };
           } else {
             return { ...item, isError: false };
           }
@@ -69,6 +79,7 @@ const FormWrapper = (props: any) => {
   };
 
   const handleDateChange = (e: any, id: string) => {
+    let fieldHasValue = e !== null ? e["$D"] + e["$M"] + e["$y"] : null;
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (item.id === "dates") {
@@ -77,6 +88,11 @@ const FormWrapper = (props: any) => {
             fields: item.fields.map((eachField: any) => {
               return {
                 ...eachField,
+                isError:
+                  (isNaN(fieldHasValue) && fieldHasValue !== null) ||
+                  (JSON.stringify(e) == "null" &&
+                    !isNaN(fieldHasValue) &&
+                    fieldHasValue !== null),
                 defaultValue:
                   eachField.id == id
                     ? JSON.parse(JSON.stringify(e))
@@ -97,7 +113,6 @@ const FormWrapper = (props: any) => {
   };
 
   const handleSearchResult = (e: any, value: string, id: string) => {
-    console.log(e, value, "sdfsdfsearch");
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
@@ -154,7 +169,13 @@ const FormWrapper = (props: any) => {
   };
 
   const handleChipMaking = (chipsString: any, id: any) => {
-    console.log(chipsString, "chipsString");
+    const specialArr = [];
+    // if(chipsString[chipsString.length - 1].includes("@")) return
+    const regex = /^[a-zA-Z ]+$/;
+    if (!regex.test(chipsString[chipsString.length - 1])) {
+      return;
+    }
+
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
@@ -174,7 +195,6 @@ const FormWrapper = (props: any) => {
     index: number,
     configObject: any = config
   ) => {
-    console.log("data.type", data);
     switch (data.type) {
       case "select":
         return (
@@ -189,6 +209,7 @@ const FormWrapper = (props: any) => {
               label=""
               data={data}
               isReadOnly={data.isReadOnly}
+              dataTestId={`inputSelectField-${data.id}`}
             />
           </ElementContainer>
         );
@@ -207,7 +228,6 @@ const FormWrapper = (props: any) => {
               }}
               defaultValue={data.defaultValue}
               isError={data.isError}
-              dataTestId="inputTextField"
               isRequired={data.isReq}
               type={data.type}
               minVal={data?.minVal}
@@ -216,6 +236,7 @@ const FormWrapper = (props: any) => {
               isDisabled={data.isDisabled}
               className={undefined}
               isReadOnly={data.isReadOnly}
+              dataTestId={`inputTextAreaField-${data.id}`}
             />
           </ElementContainer>
         );
@@ -243,6 +264,7 @@ const FormWrapper = (props: any) => {
               isDisabled={data.isDisabled}
               className={undefined}
               isReadOnly={data.isReadOnly}
+              // isIssue={true}
             />
           </ElementContainer>
         );
@@ -256,6 +278,7 @@ const FormWrapper = (props: any) => {
               onChange={(e: any) => {
                 handleDateChange(e, data.id);
               }}
+              dataTestId={`inputDateField-${data.id}`}
               isReadOnly={data.isReadOnly}
             />
           </ElementContainer>
@@ -270,6 +293,7 @@ const FormWrapper = (props: any) => {
               }}
               selectedName={data.selectedName}
               isReadOnly={data.isReadOnly}
+              dataTestId="searchField"
               setFormConfig={setFormConfig}
             />
           </ElementContainer>
@@ -280,6 +304,7 @@ const FormWrapper = (props: any) => {
             <CustomFileInput
               handleFileUpload={(e: any) => handleFileUpload(e, data.id)}
               data
+              dataTestId={`inputFileField-${data.id}`}
             />
           </ElementContainer>
         );
@@ -292,6 +317,7 @@ const FormWrapper = (props: any) => {
                 handleChipMaking(chipsString, data.id)
               }
               data={data}
+              dataTestId={"chip"}
               setFormConfig={setFormConfig}
             />
           </ElementContainer>
@@ -320,15 +346,26 @@ const FormWrapper = (props: any) => {
     <div className="form-container-child">
       {config.map((eachConfig: any, index: any) => {
         return (
-          <FormElementContainer
-            key={eachConfig.id}
-            className={` ${eachConfig.isError ? "formErrorLabel" : ""}`}
-          >
-            {eachConfig.formLabel ?? (
-              <CustomLabel label={eachConfig.formLabel} />
-            )}
-            {renderHTML(eachConfig, false, index)}
-          </FormElementContainer>
+          <>
+            <FormElementContainer
+              key={eachConfig.id}
+              className={` ${eachConfig?.isError ? "formErrorLabel" : ""}`}
+            >
+              {eachConfig?.formLabel ?? (
+                <CustomLabel label={eachConfig.formLabel} />
+              )}
+              {renderHTML(eachConfig, false, index)}
+
+              {eachConfig.id == "dates" &&
+                (eachConfig.fields[0].isError ||
+                  eachConfig.fields[1].isError ||
+                  eachConfig.isError == true) && (
+                  <div className="date-error">
+                    Please enter the date in correct format
+                  </div>
+                )}
+            </FormElementContainer>
+          </>
         );
       })}
     </div>

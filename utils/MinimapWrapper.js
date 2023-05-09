@@ -1,5 +1,6 @@
 import { MinimapDataVisualization } from "./MinimapDataVisualizationUtils";
 import { ForgeLayerUtils } from "./ForgeLayerUtils";
+import { ForgeDataVizUtils } from "./ForgeDataVizUtils";
 import {
   applyOffset,
   removeOffset,
@@ -7,8 +8,57 @@ import {
   applyTM
 
 } from './ViewerDataUtils';
+import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
+
+export class ForgeMinimapInstance {
+
+  constructor(viewerId) {
+    // console.log("Inside Potree Initializer: ")
+    let viewerConfig = {
+      extensions: ["Autodesk.BimWalk", "Autodesk.DataVisualization", "Autodesk.Edit2D"],
+    };
+    let htmlDiv = document.getElementById(viewerId);
+    this.viewer = new Autodesk.Viewing.Viewer3D(htmlDiv, viewerConfig);
+    this.newInstance = true;
+  }
+
+  static getInstance(viewerId) {
+      if (!this.instance) {
+          this.instance = new ForgeMinimapInstance(viewerId);
+          delete this.instance.constructor;
+      } else {
+        let child = document.getElementById(viewerId);
+        console.log("ForgeMinimapInstanceTest inside getInstance: ", child);
+        
+        let parent = child.parentElement;
+        parent.removeChild(document.getElementById(viewerId));
+        parent.appendChild(this.instance.viewer.clientContainer);
+        // parent.insertBefore(this.instance.viewer.clientContainer, parent.firstChild);
+        this.instance.newInstance = false;
+      }
+      console.log("ForgeMinimapInstanceTest inside getInstance: ", this.instance);
+      return this.instance;
+  }
+
+  static getCompareInstance(viewerId) {
+      if (!this.compareInstance) {
+          this.compareInstance = new ForgeMinimapInstance(viewerId);
+          delete this.compareInstance.constructor;
+      } else {
+          let child = document.getElementById(viewerId);
+          console.log("ForgeMinimapInstanceTest inside getCompareInstance: ", child);
+          let parent = child.parentElement;
+          parent.removeChild(document.getElementById(viewerId));
+          parent.appendChild(this.compareInstance.viewer.clientContainer);
+          // parent.insertBefore(this.compareInstance.viewer.clientContainer, parent.firstChild);
+          this.compareInstance.newInstance = false;
+      }
+      return this.compareInstance;
+  }
+}
 
 export const MinimapUtils = () => {
+  let _instance;
   let _viewerId;
   let _eventHandler;
   let _viewer;
@@ -39,14 +89,10 @@ export const MinimapUtils = () => {
   let _navRotation;
 
   let _dataVizExtn;
-  let _bimWalkExtn;
-  let _edit2DExtn;
   let _dataVizUtils;
-  let _edit2DUtils;
-  let _isAddTagActive = false;
 
   const isCompareView = () => {
-    if (_viewerId.split("_")[1] === "1") {
+    if (_viewerId.split("-")[1] === "1") {
       return false;
     } else {
       return true;
@@ -91,7 +137,46 @@ export const MinimapUtils = () => {
   }
 
   const initializeViewer = () => {
-    if(_viewer) return
+    console.log("ForgeMinimapInstanceTest Inside Initializer callback: ", );
+
+    if (isCompareView()) {
+      _instance = ForgeMinimapInstance.getCompareInstance(_viewerId);
+      _viewer = _instance.viewer;
+    } else {
+      _instance = ForgeMinimapInstance.getInstance(_viewerId);
+      _viewer = _instance.viewer;
+    }
+
+    setUpEventListeners();
+
+    let startedCode = _viewer.start();
+    _viewer.canvasId = _viewerId;
+
+    if (startedCode > 0) {
+      console.error("ForgeMinimapInstanceTest Failed to create a Viewer: WebGL not supported.");
+      return;
+    } else {
+      console.log("ForgeMinimapInstanceTest inside startCode check: ", _instance.newInstance);
+      if (!_instance.newInstance) {
+        onViewerInitialized();
+      }
+    }
+
+    _viewer.navigation.setWorldUpVector(
+      new THREE.Vector3().fromArray([0, 0, 1]),
+      false
+    );
+    _viewer.navigation.setReverseZoomDirection(true);
+
+    _viewer.disableHighlight(true)
+    _viewer.disableHighlight(true)
+    if (_isViewerInitialized) {
+      loadData();
+    }
+  }
+
+  const initializeViewer2 = () => {
+    // if(_viewer) return
     console.log("Inside minimap Initializer callback", _eventHandler);
     let htmlDiv = document.getElementById(_viewerId);
     _viewer = new Autodesk.Viewing.Viewer3D(htmlDiv, viewerConfig);
@@ -124,7 +209,7 @@ export const MinimapUtils = () => {
   };
 
   const updateData = (documentURNs) => {
-    console.log("Inside minimap update data: ", documentURNs);
+    console.log("Inside minimap update data: ", documentURNs, _isViewerInitialized);
     _documentURNs = documentURNs;
     _isPendingDataToLoad = true;
     if (_isViewerInitialized) {
@@ -208,6 +293,9 @@ export const MinimapUtils = () => {
             _manifestNode,
             generateModelOptions(document.tm, _manifestNode)
           );
+          // setInterval(() => {
+          //   _viewer.fitToView(undefined, _model)
+          // }, 200)
         },
         function () {
           console.error("Failed fetching Forge manifest");
@@ -273,29 +361,37 @@ export const MinimapUtils = () => {
 
   const loadLayers = () => {
     console.log("Passing data to dataViz extension minimap: ", _dataVizUtils);
-    _dataVizUtils.removeExistingVisualizationData();
-    _dataVizUtils.setIs2D(_manifestNode.is2D());
-    _dataVizUtils.setTM(_tm);
-    _dataVizUtils.setOffset(_globalOffset);
-    _dataVizUtils.addMediaData(_realityPositionMap);
-    _dataVizUtils.addIssuesData(_issuesList);
-    _dataVizUtils.addTasksData(_tasksList);
-    _dataVizUtils.setTagState(_showTag);
-    _dataVizUtils.setViewableState(_showLayersList);
-    _dataVizUtils.updateData();
+    // _dataVizUtils.removeExistingVisualizationData();
+    // _dataVizUtils.setIs2D(_manifestNode.is2D());
+    // _dataVizUtils.setTM(_tm);
+    // _dataVizUtils.setOffset(_globalOffset);
+    // _dataVizUtils.addMediaData(_realityPositionMap);
+    // _dataVizUtils.addIssuesData(_issuesList);
+    // _dataVizUtils.addTasksData(_tasksList);
+    // _dataVizUtils.setTagState(_showTag);
+    // _dataVizUtils.setViewableState(_showLayersList);
+    // _dataVizUtils.updateData();
     // _edit2DUtils.addMediaData(_realityPositionMap);
+
+    _dataVizUtils.setTransform(_tm, _globalOffset)
+    _dataVizUtils.loadMediaData(_realityPositionMap)
+    _dataVizUtils.loadIssues(_issuesList)
+    _dataVizUtils.loadTasks(_tasksList)
+
     _isPendingLayersToLoad = false;
   };
 
   const loadIssues = () => {
-    _dataVizUtils.addIssuesData(_issuesList);
-    _dataVizUtils.refreshViewableData();
+    // _dataVizUtils.addIssuesData(_issuesList);
+    // _dataVizUtils.refreshViewableData();
+    _dataVizUtils.loadIssues(_issuesList)
     _isPendingLayersToLoad = false;
   };
 
   const loadTasks = () => {
-    _dataVizUtils.addTasksData(_tasksList);
-    _dataVizUtils.refreshViewableData();
+    // _dataVizUtils.addTasksData(_tasksList);
+    // _dataVizUtils.refreshViewableData();
+    _dataVizUtils.loadTasks(_tasksList)
     _isPendingLayersToLoad = false;
   };
 
@@ -303,8 +399,8 @@ export const MinimapUtils = () => {
     _isPendingLayersToLoad = true;
     _showLayersList = layersList;
     if (loadLayersOnDataLoadCompletion()) {
-      _dataVizUtils.setViewableState(_showLayersList);
-      _dataVizUtils.refreshViewableData();
+      // _dataVizUtils.setViewableState(_showLayersList);
+      // _dataVizUtils.refreshViewableData();
       _isPendingLayersToLoad = false;
     }
   };
@@ -314,10 +410,11 @@ export const MinimapUtils = () => {
     if(!_isModelLoaded) return
     if(_navPosition && _navPosition[0] == position[0] && _navPosition[1] == position[1] && _navPosition[2] == position[2] && _navRotation == yaw) return;
     setTimeout(() => {
-      _dataVizUtils.createMarker(position, yaw);
+      // _dataVizUtils.createMarker(position, yaw);
+      _dataVizUtils.updateNavigator(position, yaw);
       _navPosition = position
       _navRotation = yaw
-    }, (_navPosition[0] == 0 && _navPosition[1] == 0 && _navPosition[2] == 0) ? 1000 : 10)
+    }, 10)
   }
 
   const showTag = (tag, show) => {
@@ -325,8 +422,9 @@ export const MinimapUtils = () => {
     _showTag[tag] = show;
     if (_dataVizUtils) {
       if (loadLayersOnDataLoadCompletion()) {
-        _dataVizUtils.setTagState(_showTag);
-        _dataVizUtils.refreshViewableData();
+        // _dataVizUtils.setTagState(_showTag);
+        _dataVizUtils.showTag(tag, show)
+        // _dataVizUtils.refreshViewableData();
         _isPendingLayersToLoad = false;
       }
     }
@@ -334,7 +432,7 @@ export const MinimapUtils = () => {
 
   const activateTool = (type) => {
     if (_dataVizUtils) {
-      _dataVizUtils.activateCreateTagTool(type);
+      // _dataVizUtils.activateCreateTagTool(type);
       return true;
     }
     return false;
@@ -342,7 +440,7 @@ export const MinimapUtils = () => {
 
   const deactivateTool = () => {
     if (_dataVizUtils) {
-      _dataVizUtils.deactivateCreateTagTool();
+      // _dataVizUtils.deactivateCreateTagTool();
       return true;
     }
     return false;
@@ -354,13 +452,13 @@ export const MinimapUtils = () => {
 
   const cancelAddTag = () => {
     if (_dataVizUtils) {
-      _dataVizUtils.refreshViewableData();
+      // _dataVizUtils.refreshViewableData();
     }
   };
 
   const selectTag = (tag) => {
     if (_dataVizUtils) {
-      _dataVizUtils.selectTag(tag);
+      // _dataVizUtils.selectTag(tag);
     }
   };
 
@@ -392,6 +490,7 @@ export const MinimapUtils = () => {
         //   };
         // } else {
         console.log(`Inside Rag Click click: ${targetObject.position.x}`, _viewerId);
+        if(!targetObject.id) return
         if (targetObject.id.includes("Temp")) {
           _isAddTagActive = deactivateTool();
           let tagObject = {
@@ -533,7 +632,7 @@ export const MinimapUtils = () => {
   };
 
   const updateViewerState = (viewerState) => {
-    if (_isModelLoaded && !_manifestNode.is2D() && viewerState) {
+    if (_isModelLoaded && !(_manifestNode && _manifestNode.is2D()) && viewerState && viewerState.position) {
       // console.log("Inside update viewer state: ", _viewerId, viewerState);
       let position = new THREE.Vector3().fromArray(viewerState.position);
       _viewer.navigation.setPosition(position);
@@ -554,6 +653,12 @@ export const MinimapUtils = () => {
       _viewer.navigation.setVerticalFov(camera.fov, false);
     }
   };
+
+  const fitToView = () => {
+    if(_isViewerInitialized && _isModelLoaded) {
+      _viewer.fitToView(undefined, _model)
+    }
+  }
 
   const setPivotPoint = () => {
     if (!_manifestNode.is2D() && _isModelLoaded) {
@@ -597,8 +702,6 @@ export const MinimapUtils = () => {
   };
 
   const loadExtension = async () => {
-    _bimWalkExtn = await _viewer.loadExtension("Autodesk.BimWalk");
-    _edit2DExtn = await _viewer.loadExtension("Autodesk.Edit2D");
     _dataVizExtn = await _viewer.loadExtension("Autodesk.DataVisualization");
   };
 
@@ -611,7 +714,10 @@ export const MinimapUtils = () => {
     }
   };
 
-  const onViewerUnInitialized = () => {};
+  const onViewerUnInitialized = () => {
+    console.log("Forge Viewer UnInitialized: ");
+    _isViewerInitialized = false;
+  };
 
   const modelLoadProgress = (percent, state, model) => {
     if (!_isModelLoaded && percent == 100) {
@@ -646,25 +752,18 @@ export const MinimapUtils = () => {
 
   const onExtensionLoadedEvent = (parameter) => {
     // console.log("Inside Extension Loaded Event:", parameter);
-    if (parameter.extensionId === MinimapDataVisualization.EXTENSION_ID) {
+    if (parameter.extensionId === ForgeDataVisualization.EXTENSION_ID) {
       console.log(
         "Inside Extension Loaded Event: Data Visualization",
         parameter
       );
       _dataVizExtn = _viewer.getExtension(parameter.extensionId);
 
-      _dataVizUtils = new MinimapDataVisualization(_viewer, _dataVizExtn);
-      _dataVizUtils.setHandler(onDataVizHandler.bind(this));
+      _dataVizUtils = new ForgeDataVizUtils(_viewer, _dataVizExtn, onDataVizHandler);
+      // _dataVizUtils.setHandler(onDataVizHandler.bind(this));
       if (loadLayersOnDataLoadCompletion()) {
         loadLayers();
       }
-    } else if (parameter.extensionId === "Autodesk.BimWalk") {
-      console.log("Inside Forge Viewer, Bim Walk loaded:");
-      _bimWalkExtn = _viewer.getExtension(parameter.extensionId);
-    } else if (parameter.extensionId === "Autodesk.Edit2D") {
-      console.log("Inside Forge Viewer, Bim Walk loaded:");
-      _edit2DExtn = _viewer.getExtension(parameter.extensionId);
-      // _edit2DUtils = new ForgeLayerUtils(_viewer, _dataVizExtn);
     }
   };
 
@@ -720,6 +819,10 @@ export const MinimapUtils = () => {
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       onCameraChangeEvent
     );
+    _viewer.addEventListener(
+      Autodesk.Viewing.VIEWER_UNINITIALIZED,
+      onViewerUnInitialized
+    );
 
     let viewerElement = document.getElementById(_viewerId);
     if (viewerElement) {
@@ -765,6 +868,10 @@ export const MinimapUtils = () => {
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       onCameraChangeEvent
     );
+    _viewer.removeEventListener(
+      Autodesk.Viewing.VIEWER_UNINITIALIZED,
+      onViewerUnInitialized
+    );
 
     let viewerElement = document.getElementById(_viewerId);
     if (viewerElement) {
@@ -783,7 +890,8 @@ export const MinimapUtils = () => {
   const removeLayers = () => {
     console.log("Inside remove layers in forgeWrapper: ", _dataVizUtils);
     if (_dataVizUtils) {
-      _dataVizUtils.removeExistingVisualizationData();
+      // _dataVizUtils.removeExistingVisualizationData();
+      _dataVizUtils.removeLoadedData();
     }
   };
 
@@ -791,11 +899,12 @@ export const MinimapUtils = () => {
     if (_isViewerInitialized) {
       removeData();
       removeEventListeners();
-      _viewer.tearDown();
-      _viewer.uninitialize();
+      _viewer.unloadExtension(ForgeDataVisualization.EXTENSION_ID);
+      // _viewer.finish();
+      // _viewer = null;
       _dataVizExtn = undefined;
       _dataVizUtils = undefined;
-      Autodesk.Viewing.shutdown();
+      // Autodesk.Viewing.shutdown();
     }
     _isViewerInitialized = false;
   };
@@ -817,6 +926,7 @@ export const MinimapUtils = () => {
     cancelAddTag: cancelAddTag,
     selectTag: selectTag,
     showTag: showTag,
+    fitToView: fitToView,
     getContext: getContext,
     getViewerState: getViewerState,
     updateViewerState: updateViewerState,

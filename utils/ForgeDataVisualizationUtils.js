@@ -318,9 +318,13 @@ export class ForgeDataVisualization {
         let combinedState = {...this.viewableState, ...this.tagState}
         for (let viewableType in this.viewableDataMap) {
             if(combinedState[viewableType]) {
-                console.log(" ForgeDataVisualization Awaiting viewable data finish: ", viewableType);
-                await this.viewableDataMap[viewableType].viewableData.finish(); 
-                this.dataVizExtn.addViewables(this.viewableDataMap[viewableType].viewableData);
+                try{
+                    console.log(" ForgeDataVisualization Awaiting viewable data finish: ", viewableType);
+                    await this.viewableDataMap[viewableType].viewableData.finish(); 
+                    this.dataVizExtn.addViewables(this.viewableDataMap[viewableType].viewableData);
+                } catch(e) {
+                    console.log(e)
+                }
             }
         }
     }

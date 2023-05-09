@@ -1,23 +1,23 @@
-import Box from '@mui/material/Box';
-import Image from 'next/image';
-import React, { useEffect, useRef, useState } from 'react';
-import constructnLogo from '../../../public/divami_icons/constructnLogo.svg';
-import hamburgerMenu from '../../../public/divami_icons/hamburgerMenu.svg';
-import profileImageHeader from '../../../public/divami_icons/profileImageHeader.svg';
-import ImgProfile from '../../../public/divami_icons/ImgProfile.svg';
+import Box from "@mui/material/Box";
+import Image from "next/image";
+import React, { useEffect, useRef, useState } from "react";
+import constructnLogo from "../../../public/divami_icons/constructnLogo.svg";
+import hamburgerMenu from "../../../public/divami_icons/hamburgerMenu.svg";
+import profileImageHeader from "../../../public/divami_icons/profileImageHeader.svg";
+import ImgProfile from "../../../public/divami_icons/ImgProfile.svg";
 
-import Notification from '../../../public/divami_icons/Notification.svg';
-import clip from '../../../public/divami_icons/clip.svg';
-import defaultAvatar from '../../../public/divami_icons/defaultAvatar.svg';
+import Notification from "../../../public/divami_icons/Notification.svg";
+import clip from "../../../public/divami_icons/clip.svg";
+import defaultAvatar from "../../../public/divami_icons/defaultAvatar.svg";
 
-import { useRouter } from 'next/router';
-import { getCookie, removeCookies } from 'cookies-next';
-import DesignRealitySwitch from '../../container/designRealitySwitch';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRouter } from "next/router";
+import { getCookie, removeCookies } from "cookies-next";
+import DesignRealitySwitch from "../../container/designRealitySwitch";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faQuestion,
   faRightFromBracket,
-} from '@fortawesome/free-solid-svg-icons';
+} from "@fortawesome/free-solid-svg-icons";
 
 import {
   HeaderContainer,
@@ -32,17 +32,17 @@ import {
   ProfileImgIcon,
   ProfileImgSecIcon,
   ProfileImgIconDefault,
-} from './HeaderStyles';
-import { ITools } from '../../../models/ITools';
-import CustomBreadcrumbs from '../custom-breadcrumbs/CustomBreadcrumbs';
-import headerLogSeparator from '../../..//public/divami_icons/headerLogSeparator.svg';
-import { styled } from '@mui/system';
-import UserNotification from '../../container/userNotification';
-import { IUserNotification } from '../../../models/IUserNotification';
+} from "./HeaderStyles";
+import { ITools } from "../../../models/ITools";
+import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
+import headerLogSeparator from "../../..//public/divami_icons/headerLogSeparator.svg";
+import { styled } from "@mui/system";
+import UserNotification from "../../container/userNotification";
+import { IUserNotification } from "../../../models/IUserNotification";
 import {
   getAllUserNotifications,
   updateUserNotifications,
-} from '../../../services/userNotifications';
+} from "../../../services/userNotifications";
 
 interface IProps {
   // showDesignRealitySwitch?:boolean;
@@ -50,10 +50,10 @@ interface IProps {
 }
 
 export const DividerIcon = styled(Image)({
-  cursor: 'pointer',
-  height: '20px',
-  marginLeft: '15px',
-  marginRight: '15px',
+  cursor: "pointer",
+  height: "20px",
+  marginLeft: "15px",
+  marginRight: "15px",
 });
 
 const Header: React.FC<any> = ({
@@ -65,17 +65,17 @@ const Header: React.FC<any> = ({
 }) => {
   const router = useRouter();
   const headerRef: any = React.useRef();
-  let [name, setName] = useState<string>('');
-  let toolInstance: ITools = { toolName: '', toolAction: '' };
+  let [name, setName] = useState<string>("");
+  let toolInstance: ITools = { toolName: "", toolAction: "" };
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
   const [isCompareReality, setIsCompareReality] = useState(false);
   const [iViewMode, setIViewMode] = useState(viewMode);
   const [isDesignSelected, setIsDesignSelected] = useState(
-    iViewMode === 'Reality' ? false : true
+    iViewMode === "Reality" ? false : true
   );
-  let [eMail, setEMail] = useState<string>('');
-  let [avatar, setAvatar] = useState<string>('');
+  let [eMail, setEMail] = useState<string>("");
+  let [avatar, setAvatar] = useState<string>("");
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
@@ -83,11 +83,14 @@ const Header: React.FC<any> = ({
   const [notifications, setNotifications] = useState<IUserNotification[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalNotifications, setTotalNotifications] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
   useEffect(() => {
-    const userObj: any = getCookie('user');
+    const userObj: any = getCookie("user");
     let user = null;
-    if (userObj) user = JSON.parse(userObj);
-    console.log(user, 'mnfdss');
+    if (userObjState) user = JSON.parse(userObjState);
+    console.log(user, "mnfdss");
 
     if (user?.fullName) {
       setName(user.fullName);
@@ -103,13 +106,13 @@ const Header: React.FC<any> = ({
 
   useEffect(() => {
     setIViewMode(viewMode);
-    setIsDesignSelected(viewMode === 'Reality' ? false : true);
+    setIsDesignSelected(viewMode === "Reality" ? false : true);
     //   document.addEventListener('click', closeStructurePages);
     //   return () => {
     //     document.removeEventListener('click', closeStructurePages);
     //   };
   }, [viewMode]);
-  const [loading, setLoading] = useState<boolean>(false);
+
   useEffect(() => {
     const closePopup = (e: any) => {
       if (!headerRef?.current?.contains(e.target)) {
@@ -117,17 +120,17 @@ const Header: React.FC<any> = ({
         setOpen(false);
       }
     };
-    document.addEventListener('click', closePopup);
+    document.addEventListener("click", closePopup);
     return () => {
-      document.removeEventListener('click', closePopup);
+      document.removeEventListener("click", closePopup);
     };
   }, []);
   const userLogOut = () => {
-    removeCookies('user');
-    router.push('/login');
+    removeCookies("user");
+    router.push("/login");
   };
   const goToProjectsList = () => {
-    router.push('/projects');
+    router.push("/projects");
   };
 
   const onProfilePicClick = () => {
@@ -141,13 +144,13 @@ const Header: React.FC<any> = ({
   const rightMenuClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
     setRighttNav(!rightNav);
-    if (e.currentTarget.id === 'Design') {
-      toolInstance.toolName = 'viewMode';
-      toolInstance.toolAction = 'Design';
+    if (e.currentTarget.id === "Design") {
+      toolInstance.toolName = "viewMode";
+      toolInstance.toolAction = "Design";
       setIsDesignSelected(true);
-    } else if (e.currentTarget.id === 'Reality') {
-      toolInstance.toolName = 'viewMode';
-      toolInstance.toolAction = 'Reality';
+    } else if (e.currentTarget.id === "Reality") {
+      toolInstance.toolName = "viewMode";
+      toolInstance.toolAction = "Reality";
       setIsDesignSelected(false);
     }
     // else if (e.currentTarget.id === "compareDesign") {
@@ -203,12 +206,12 @@ const Header: React.FC<any> = ({
       <HeaderContainer ref={headerRef}>
         <div
           style={{
-            height: '10px',
-            width: '59px',
-            background: '#FFFFFF',
-            position: 'absolute',
-            top: '58px',
-            zIndex: '9999999',
+            height: "10px",
+            width: "59px",
+            background: "#FFFFFF",
+            position: "absolute",
+            top: "58px",
+            zIndex: "9999999",
             //   opacity: "1",
             // width: "59px",
             // background: "#FFFFFF",
@@ -319,7 +322,7 @@ const Header: React.FC<any> = ({
                     <p
                       className="font-bold text-blue-700"
                       onClick={() => {
-                        router.push('/user-account/user-notifications');
+                        router.push("/user-account/user-notifications");
                       }}
                     >
                       GoToNotificatrion
@@ -340,7 +343,7 @@ const Header: React.FC<any> = ({
         </HeaderRightPart>
 
         {loading && (
-          <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
+          <div className="absolute top-14 right-0 z-50 bg-gray-800 rounded-lg shadow border">
             <ul className="text-white p-4 ">
               <li className="font-medium">
                 <div className="flex flex-col items-center justify-center transform transition-colors duration-200">

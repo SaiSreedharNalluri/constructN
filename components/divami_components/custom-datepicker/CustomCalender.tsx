@@ -15,8 +15,8 @@ const CalenderICon = (props: any) => {
   return (
     <>
       <svg
-        width="16"
-        height="18"
+        width="14"
+        height="15"
         viewBox="0 0 16 18"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -69,7 +69,7 @@ const CustomDatePicker = styled(DatePicker)({
     textTransform: "uppercase",
   },
   "& .MuiFormLabel-root.MuiInputLabel-root.Mui-focused": {
-    border: "1px solid #ff843f !important",
+    border: "1px solid #F1742E !important",
     borderRadius: "4px",
   },
 });
@@ -97,9 +97,9 @@ const CustomCalender = (props: any) => {
     hideTextField = false,
     disablePast = false,
     config,
+    dataTestId,
   } = props;
 
-  console.log("dacta", data, config, hideTextField, disablePast);
   const [value, setValue] = React.useState<Dayjs | null>(
     dayjs(data?.defaultValue) || null
   );
@@ -110,12 +110,11 @@ const CustomCalender = (props: any) => {
     <CalenderICon ref={ref} />
   ));
 
-  console.log("date-data", data);
-
   return (
-    <div data-testid="custom-calender-parent">
+    <div data-testid={`custom-calender-parent-${dataTestId}`}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CustomDatePicker
+          data-testid={dataTestId}
           className={` ${data?.isError ? "formErrorField" : ""} formField`}
           components={{
             OpenPickerIcon: calenderIcon,
@@ -154,7 +153,7 @@ const CustomCalender = (props: any) => {
                   />
                 )
           }
-          data-testid="date-picker"
+          // data-testid={dataTestId}
         />
       </LocalizationProvider>
     </div>
