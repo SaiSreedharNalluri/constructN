@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
-import Header from '../../components/divami_components/header/Header';
-import { IUserNotification } from '../../models/IUserNotification';
-import Notification from '../../components/container/userNotification';
+import React, { useEffect, useState } from "react";
+import Header from "../../components/divami_components/header/Header";
+import { IUserNotification } from "../../models/IUserNotification";
+import Notification from "../../components/container/userNotification";
 import {
   getAllUserNotifications,
   updateUserNotifications,
-} from '../../services/userNotifications';
-import router from 'next/router';
-import { userNotificationData } from '../../utils/constants';
+} from "../../services/userNotifications";
+import router from "next/router";
+import { userNotificationData } from "../../utils/constants";
 const UserNotification: React.FC = () => {
   const [notifications, setNotifications] = useState<IUserNotification[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -62,19 +62,19 @@ const UserNotification: React.FC = () => {
         <Header />
       </div>
       <div
-        className="ml-1 mt-1 font-bold text-blue-700"
+        className="ml-1 mt-1 p-2 font-bold text-blue-700"
         onClick={() => {
           router.back();
         }}
       >
         Back
       </div>
-      <label className="font-bold">Notifications</label>
+      <label className="font-bold text-lg p-2">Notifications</label>
       <select
         id="options"
         defaultValue={defaultValue}
         onChange={handleOptionChange}
-        className="ml-2 border border-solid border-gray-500 w-1/4 px-2 py-1.5 rounded"
+        className=" mr-3 right-0 p-2 absolute border border-solid border-gray-500  px-2 py-1.5 rounded"
       >
         {userNotificationData.map((noticationOptions) => {
           return (
@@ -84,7 +84,7 @@ const UserNotification: React.FC = () => {
           );
         })}
       </select>
-      <div className="w-1/2 overflow-y-auto h-87">
+      <div className="w-full overflow-y-auto h-87 pl-10 pr-10">
         <Notification
           notifications={notifications}
           loadMoreData={loadMoreData}
