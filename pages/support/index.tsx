@@ -1,46 +1,46 @@
-import React, { useEffect, useState } from 'react';
-import Header from '../../components/divami_components/header/Header';
-import * as Yup from 'yup';
-import { ErrorMessage, Form, Formik } from 'formik';
-import InputText from '../../components/core/Input/inputText';
-import SubmitButtons from '../../components/core/buttons/submitButton';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { getCookie } from 'cookies-next';
-import { useRouter } from 'next/router';
+import React, { useEffect, useState } from "react";
+import Header from "../../components/divami_components/header/Header";
+import * as Yup from "yup";
+import { ErrorMessage, Form, Formik } from "formik";
+import InputText from "../../components/core/Input/inputText";
+import SubmitButtons from "../../components/core/buttons/submitButton";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { getCookie } from "cookies-next";
+import { useRouter } from "next/router";
 interface IProps {}
 
 const Support: React.FC<IProps> = ({}) => {
   const router = useRouter();
 
-  let [eMail, setEMail] = useState<string>('');
+  let [eMail, setEMail] = useState<string>("");
   const [ticketList, setTicketList] = useState<any>([]);
-  const token = 'jes6pOiqBm0pJC8s3DYC:X';
-  const encodedToken = Buffer.from(token).toString('base64');
+  const token = "jes6pOiqBm0pJC8s3DYC:X";
+  const encodedToken = Buffer.from(token).toString("base64");
   const fresh_headers = {
-    Authorization: 'Basic ' + encodedToken,
+    Authorization: "Basic " + encodedToken,
   };
   useEffect(() => {
-    const userObj: any = getCookie('user');
+    const userObj: any = getCookie("user");
     let user = null;
     if (userObj) user = JSON.parse(userObj);
-    if (user.email) setEMail(user.email);
+    if (user?.email) setEMail(user.email);
   }, [router.isReady]);
 
   useEffect(() => {
-    if (eMail !== '')
+    if (eMail !== "")
       getMyTickets()
         .then((response) => {
           setTicketList(response);
         })
         .catch((error) => {
-          toast.error('failed to load data');
+          toast.error("failed to load data");
         });
   }, [eMail]);
 
   const validationSchema = Yup.object().shape({
-    subject: Yup.string().required('Subject is required'),
-    description: Yup.string().required('Description is required'),
+    subject: Yup.string().required("Subject is required"),
+    description: Yup.string().required("Description is required"),
   });
 
   const initialValues: {
@@ -52,8 +52,8 @@ const Support: React.FC<IProps> = ({}) => {
     source: number;
   } = {
     email: eMail,
-    description: '',
-    subject: '',
+    description: "",
+    subject: "",
     priority: 1,
     status: 2,
     source: 2,
@@ -95,11 +95,11 @@ const Support: React.FC<IProps> = ({}) => {
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={(values, action) => {
-                console.log('FormValues', values);
+                console.log("FormValues", values);
                 values.email = eMail;
                 axios
                   .post(
-                    'https://constructnai.freshdesk.com/api/v2/tickets',
+                    "https://constructnai.freshdesk.com/api/v2/tickets",
                     {
                       email: values.email,
                       subject: values.subject,
@@ -110,14 +110,14 @@ const Support: React.FC<IProps> = ({}) => {
                     { headers: fresh_headers }
                   )
                   .then((response) => {
-                    console.log('Ticket Response', response);
+                    console.log("Ticket Response", response);
                     if (response.data)
-                      toast.success('Ticket Created sucessfully');
+                      toast.success("Ticket Created sucessfully");
                     setEMail(eMail);
                     return response.data;
                   })
                   .catch((error) => {
-                    console.log('error', error);
+                    console.log("error", error);
                     throw error;
                   });
               }}
