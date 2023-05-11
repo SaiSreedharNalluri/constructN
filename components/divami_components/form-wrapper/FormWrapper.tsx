@@ -10,6 +10,13 @@ import { CustomTextArea } from "../custom-textarea/CustomTextArea";
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
 import { useEffect } from "react";
+import { FormText } from "../sign-in/SignInPageStyle";
+import { Checkbox, InputAdornment, TextField } from "@mui/material";
+import Checked from "../../../public/divami_icons/checked.svg";
+import UnChecked from "../../../public/divami_icons/unchecked.svg";
+import Mail from "../../../public/divami_icons/Mail.svg";
+import lock from "../../../public/divami_icons/lock.svg";
+import Image from "next/image";
 
 const FormElementContainer = styled(Box)({
   marginTop: "30px",
@@ -31,6 +38,7 @@ const FormWrapper = (props: any) => {
     validate,
     setIsValidate,
     setCanBeDisabled,
+    loginField,
   } = props;
 
   useEffect(() => {
@@ -240,7 +248,9 @@ const FormWrapper = (props: any) => {
             />
           </ElementContainer>
         );
+
       case "textfield":
+      case "password":
         return (
           <ElementContainer>
             <CustomTextField
@@ -250,6 +260,10 @@ const FormWrapper = (props: any) => {
               onChange={(e: any) => {
                 handleTextChange(e, data.id, data);
               }}
+              // onChange={(e: any) => {
+              //   console.log(e, "Fdsfdsfdsf");
+              //   // handleTextChange(e, data.id, data);
+              // }}
               onBlur={(e: any) => {
                 handleTextChange(e, data.id, data);
               }}
@@ -258,16 +272,20 @@ const FormWrapper = (props: any) => {
               dataTestId="inputTextField"
               isRequired={data.isReq}
               type={data.type}
-              minVal={data?.minVal}
-              maxVal={data?.maxVal}
-              showRangeError={data.showRangeError}
+              // minVal={data?.minVal}
+              // maxVal={data?.maxVal}
+              // showRangeError={data.showRangeError}
               isDisabled={data.isDisabled}
               className={undefined}
               isReadOnly={data.isReadOnly}
+              loginField={loginField}
+              imageIcon={data?.imageIcon}
+
               // isIssue={true}
             />
           </ElementContainer>
         );
+
       case "datePicker":
         return (
           <ElementContainer>
@@ -337,6 +355,7 @@ const FormWrapper = (props: any) => {
             })}
           </DoubleFieldContainer>
         );
+
       default:
         return "";
     }

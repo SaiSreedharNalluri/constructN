@@ -36,6 +36,7 @@ import Checked from "../../../public/divami_icons/checked.svg";
 import UnChecked from "../../../public/divami_icons/unchecked.svg";
 
 import Image from "next/image";
+import FormBody from "./FormBody";
 
 const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -53,6 +54,19 @@ const SignInPage = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
+
+  // form wrapper code
+  const [formData, setFormData] = useState<any>(null);
+  const [validate, setValidate] = useState(false);
+  const [tagList, setTagList] = useState<[string]>([""]);
+  const [showPopUp, setshowPopUp] = useState(false);
+  const [canBeDisabled, setCanBeDisabled] = useState(false);
+
+  const handleFormData = (data: any) => {
+    setFormData(data);
+  };
+  // form wrapper code
+
   return (
     <SectionShowcase>
       <HeaderContainer>
@@ -64,105 +78,50 @@ const SignInPage = () => {
       <Overlay></Overlay>
 
       <FormDiv>
-        {/* <h2>Never Stop</h2>
-        <h3>Exploring The World</h3>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque
-          voluptatibus, fuga nobis ratione laudantium itaque fugiat voluptate
-          corporis libero tempore?
-        </p> */}
-
         <FormContainerSign>
           <SignInHeader>Sign In</SignInHeader>
-          <FormText>
-            <form>
-              {" "}
-              <StyledTextField
-                variant="outlined"
-                type="email"
-                placeholder={"Email ID"}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Image width={24} height={24} src={Mail} alt="Search" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <StyledPasswordField
-                variant="outlined"
-                placeholder={"Enter Password"}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Image width={24} height={24} src={lock} alt="Search" />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {showPassword ? (
-                        //   <VisibilityOffIcon onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} />
-                        <ShowHideDiv
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                        >
-                          Hide
-                        </ShowHideDiv>
-                      ) : (
-                        //   <VisibilityIcon onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} />
-                        <ShowHideDiv
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                        >
-                          Show
-                        </ShowHideDiv>
-                      )}
-                    </InputAdornment>
-                  ),
-                }}
-                type={showPassword ? "text" : "password"}
-              />
-              <ExtraTickDiv>
-                <ParentTickDiv>
-                  <CheckTickDiv>
-                    <CheckTickBox
-                      sx={{ padding: 0 }}
-                      icon={
-                        <Image
-                          width={24}
-                          height={24}
-                          src={UnChecked}
-                          alt="Search"
-                        />
-                      }
-                      checkedIcon={
-                        <Image
-                          width={24}
-                          height={24}
-                          src={Checked}
-                          alt="Search"
-                        />
-                      }
-                      onChange={handleChange}
-                      inputProps={{ "aria-label": "controlled" }}
+          <FormBody
+            handleFormData={handleFormData}
+            validate={validate}
+            setIsValidate={setValidate}
+            tagsList={tagList}
+            setCanBeDisabled={setCanBeDisabled}
+            loginField={true}
+          />
+          <ExtraTickDiv>
+            <ParentTickDiv>
+              <CheckTickDiv>
+                <CheckTickBox
+                  sx={{ padding: 0 }}
+                  icon={
+                    <Image
+                      width={24}
+                      height={24}
+                      src={UnChecked}
+                      alt="Search"
                     />
-                  </CheckTickDiv>
+                  }
+                  checkedIcon={
+                    <Image width={24} height={24} src={Checked} alt="Search" />
+                  }
+                  onChange={handleChange}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              </CheckTickDiv>
 
-                  <RememberDiv>Remember me</RememberDiv>
-                </ParentTickDiv>
+              <RememberDiv>Remember me</RememberDiv>
+            </ParentTickDiv>
 
-                <ForgotDiv>Forgot password?</ForgotDiv>
-              </ExtraTickDiv>
-              <ButtonSection>
-                <SignInContainedButton variant="outlined">
-                  Sign In
-                </SignInContainedButton>
-              </ButtonSection>
-              <NewUserDiv>
-                New User? <NewUserSpan>Signup</NewUserSpan>
-              </NewUserDiv>
-            </form>
-          </FormText>
+            <ForgotDiv>Forgot password?</ForgotDiv>
+          </ExtraTickDiv>
+          <ButtonSection>
+            <SignInContainedButton variant="outlined">
+              Sign In
+            </SignInContainedButton>
+          </ButtonSection>
+          <NewUserDiv>
+            New User? <NewUserSpan>Signup</NewUserSpan>
+          </NewUserDiv>
         </FormContainerSign>
       </FormDiv>
     </SectionShowcase>

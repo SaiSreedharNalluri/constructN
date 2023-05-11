@@ -25,7 +25,7 @@ export const HeaderContainer = styled("header")({
   width: "100%",
   zIndex: "1000",
   paddingTop: "23px",
-  paddingLeft: "40px",
+  paddingLeft: "30px",
 });
 
 export const HeaderImageLogo = styled(Image)({});
@@ -80,7 +80,7 @@ export const SignInHeader = styled("div")({
 });
 
 export const FormText = styled("div")({
-  marginTop: "22px",
+  marginTop: "21px",
 });
 
 // export const StyledTextField = styled(TextField)({
@@ -177,7 +177,7 @@ export const ShowHideDiv = styled("div")({
 });
 
 export const ExtraTickDiv = styled("div")({
-  marginTop: "20px",
+  marginTop: "19px",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
