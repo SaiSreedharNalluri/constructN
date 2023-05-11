@@ -226,11 +226,11 @@ export const CompareViewBox = styled("div")({
   // paddingRight: '35px',
   paddingRight: "20px",
 
-  // borderRight: "transparent",
+  borderRight: "transparent",
   // width: '270px',
   width: "230px",
-  // borderTopRightRadius: "4px",
-  // borderBottomRightRadius: "4px",
+  borderTopRightRadius: "4px",
+  borderBottomRightRadius: "4px",
 });
 
 export const CompareIcon = styled("div")((props: any) => ({
