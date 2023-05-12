@@ -30,6 +30,7 @@ import Mail from "../../../public/divami_icons/Mail.svg";
 import lock from "../../../public/divami_icons/lock.svg";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
+import { useRouter } from "next/router";
 
 import { Checkbox, InputAdornment, TextField } from "@mui/material";
 import Checked from "../../../public/divami_icons/checked.svg";
@@ -37,8 +38,15 @@ import UnChecked from "../../../public/divami_icons/unchecked.svg";
 
 import Image from "next/image";
 import FormBody from "./FormBody";
+import FooterSignIn from "./FooterSignIn";
+import { CollectionsOutlined } from "@mui/icons-material";
+import { login } from "../../../services/userAuth";
+import { Mixpanel } from "../../analytics/Mixpanel";
+import { toast } from "react-toastify";
 
 const SignInPage = () => {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => {
@@ -61,10 +69,75 @@ const SignInPage = () => {
   const [tagList, setTagList] = useState<[string]>([""]);
   const [showPopUp, setshowPopUp] = useState(false);
   const [canBeDisabled, setCanBeDisabled] = useState(false);
+  const [token, setToken] = useState("");
 
   const handleFormData = (data: any) => {
     setFormData(data);
   };
+
+  const handleForm = () => {
+    console.log("hello form");
+    // formHandler();
+  };
+  const formHandler = (event: any) => {
+    console.log("formData", formData);
+    const email = formData[0].defaultValue;
+    const password = formData[1].defaultValue;
+    console.log(email, password);
+
+    setValidate(true);
+    handlerLogin(email, password);
+  };
+
+  const handlerLogin = (email: string, password: string) => {
+    login(email?.toLocaleLowerCase(), password)
+      .then((response: any) => {
+        if (response.success === true) {
+          if (response?.result?.verified === true) {
+            localStorage.setItem("userInfo", response.result?.fullName);
+            toast.success("user logged in sucessfully");
+            Mixpanel.identify(email);
+            Mixpanel.track("login_success", {
+              email: email,
+            });
+            Mixpanel.track("login_page_close");
+            router.push("/projects");
+          } else {
+            // setOpen(true);
+            setToken(response.result.token);
+            return;
+          }
+        }
+      })
+      .catch((error: any) => {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+
+        toast.error("Invalid User Credentials");
+
+        console.log("errorlogin", error.response.data.message);
+
+        Mixpanel.track("login_fail", {
+          email: email,
+        });
+
+        // setLoading(false);
+        // setMessage(resMessage);
+      });
+  };
+
+  function isValidEmail(email: any) {
+    if (/\S+@\S+\.\S+/.test(email)) {
+      console.log("true");
+    } else {
+      console.log("false");
+    }
+    // return /\S+@\S+\.\S+/.test(email);
+  }
   // form wrapper code
 
   return (
@@ -76,7 +149,6 @@ const SignInPage = () => {
       <IllustrationBackground src={Illustration} alt="construct" />
 
       <Overlay></Overlay>
-
       <FormDiv>
         <FormContainerSign>
           <SignInHeader>Sign In</SignInHeader>
@@ -115,10 +187,17 @@ const SignInPage = () => {
             <ForgotDiv>Forgot password?</ForgotDiv>
           </ExtraTickDiv>
           <ButtonSection>
-            <SignInContainedButton variant="outlined">
+            {/* <SignInContainedButton variant="outlined">
               Sign In
-            </SignInContainedButton>
+            </SignInContainedButton> */}
+
+            <FooterSignIn
+              formHandler={formHandler}
+              canBeDisabled={canBeDisabled}
+              loginField={true}
+            />
           </ButtonSection>
+
           <NewUserDiv>
             New User? <NewUserSpan>Signup</NewUserSpan>
           </NewUserDiv>

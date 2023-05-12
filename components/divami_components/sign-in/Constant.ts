@@ -7,8 +7,11 @@ export const SIGN_IN_FORM_CONFIG = [
     placeholder: "Email ID",
     isError: false,
     isReq: true,
+    isValidField:false,
     isReadOnly: false,
     imageIcon: "emailIcon",
+    errorMsg: "",
+    showErrorMsg:false
   },
     {
     id: "password",
@@ -19,7 +22,13 @@ export const SIGN_IN_FORM_CONFIG = [
     isError: false,
     isReq: true,
     isReadOnly: false,
-    imageIcon: "passwordIcon",
+      imageIcon: "passwordIcon",
+      errorMsg: "",
+    showErrorMsg:false
+    
+
+
+    
   },
 
   //   {

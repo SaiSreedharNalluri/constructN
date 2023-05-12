@@ -50,6 +50,8 @@ const FormWrapper = (props: any) => {
             return {
               ...item,
               isError: true,
+              errorMsg: "Required *",
+              showErrorMsg: item.showErrorMsg === false ? true : false,
             };
           } else if (item.id === "dates") {
             const startDate = item?.fields[0].defaultValue;
@@ -62,6 +64,14 @@ const FormWrapper = (props: any) => {
               }
             }
             return { ...item, isError: false };
+          } else if (item.isValidField === false) {
+            setCanBeDisabled(false);
+            return {
+              ...item,
+              isError: true,
+              errorMsg: "Invalid User Email",
+              showErrorMsg: true,
+            };
           } else {
             return { ...item, isError: false };
           }
@@ -197,6 +207,36 @@ const FormWrapper = (props: any) => {
     );
   };
 
+  function isValidEmail(email: any, id: any) {
+    console.log("lol");
+    if (/\S+@\S+\.\S+/.test(email)) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: true,
+            };
+          }
+          return item;
+        })
+      );
+    } else {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+            };
+          }
+          return item;
+        })
+      );
+    }
+    // return /\S+@\S+\.\S+/.test(email);
+  }
+
   const renderHTML = (
     data: any,
     isDisabled: boolean,
@@ -265,6 +305,12 @@ const FormWrapper = (props: any) => {
               //   // handleTextChange(e, data.id, data);
               // }}
               onBlur={(e: any) => {
+                if (data.id === "email") {
+                  console.log("email aaya");
+                  isValidEmail(data?.defaultValue, data.id);
+                  return;
+                }
+
                 handleTextChange(e, data.id, data);
               }}
               defaultValue={data.defaultValue}
@@ -280,6 +326,9 @@ const FormWrapper = (props: any) => {
               isReadOnly={data.isReadOnly}
               loginField={loginField}
               imageIcon={data?.imageIcon}
+              isValidField={data?.isValidField}
+              errorMsg={data?.errorMsg}
+              showErrorMsg={data?.showErrorMsg}
 
               // isIssue={true}
             />

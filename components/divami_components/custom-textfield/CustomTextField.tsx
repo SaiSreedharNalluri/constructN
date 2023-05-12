@@ -30,6 +30,9 @@ interface PropTypes {
   isReadOnly?: boolean;
   loginField?: boolean;
   imageIcon?: string;
+  isValidField: boolean;
+  errorMsg: string;
+  showErrorMsg: boolean;
 }
 
 const StyledTextField = styled(TextField)((props: any) => ({
@@ -57,7 +60,7 @@ const StyledTextField = styled(TextField)((props: any) => ({
   "& .MuiInputBase-input.MuiOutlinedInput-input": {
     height: "7px",
   },
-}));
+})) as any;
 
 // const StyledTextField = styled(TextField)({
 //   width: "392px !important",
@@ -95,9 +98,12 @@ export const CustomTextField = (props: PropTypes) => {
     onChange,
     className,
     imageIcon,
-    ...rest
+    loginField,
+    isValidField,
+    errorMsg,
+    showErrorMsg,
   } = props;
-  console.log("imageIcon", imageIcon, placeholder);
+  // console.log("loginField", loginField);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -108,12 +114,25 @@ export const CustomTextField = (props: PropTypes) => {
   const handleMouseDownPassword = (event: any) => {
     event.preventDefault();
   };
+
+  console.log("showerrot", type);
   return (
     <div>
       <StyledTextField
+        autoComplete="off"
         id={id}
         className={` ${isError ? "formErrorField" : ""} formField`}
-        type={type}
+        //  type={showPassword ? "text" : "password"}
+
+        type={
+          type === "password"
+            ? showPassword
+              ? "text"
+              : "password"
+            : type === "textfield"
+            ? type
+            : ""
+        }
         placeholder={props.loginField ? placeholder : ""}
         defaultValue={defaultValue}
         value={defaultValue}
@@ -123,10 +142,11 @@ export const CustomTextField = (props: PropTypes) => {
         onWheel={(e: any) => e.target?.blur()}
         onBlur={onBlur}
         ref={reff}
-        onClick={(e) => {
+        onClick={(e: any) => {
           reff?.current?.focus();
         }}
         onChange={onChange}
+        loginField={loginField}
         // variant="outlined"
         // {...rest}
         InputProps={
@@ -170,6 +190,7 @@ export const CustomTextField = (props: PropTypes) => {
             : {}
         }
       />
+      {isError && showErrorMsg ? <div>{errorMsg}</div> : ""}
     </div>
   );
 };
