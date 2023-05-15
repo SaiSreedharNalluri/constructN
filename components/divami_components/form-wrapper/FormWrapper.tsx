@@ -19,7 +19,7 @@ import lock from "../../../public/divami_icons/lock.svg";
 import Image from "next/image";
 
 const FormElementContainer = styled(Box)({
-  marginTop: "30px",
+  marginTop: "40px",
 });
 const ElementContainer = styled("div")({
   marginTop: "8px",

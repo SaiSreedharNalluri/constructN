@@ -47,19 +47,27 @@ const CustomButton = (props: any) => {
   if (type === "contained") {
     return (
       <div>
-        <form>
-          <ContainedButton
-            data-testid="testing_button"
-            variant="contained"
-            onClick={() => {
+        <ContainedButton
+          data-testid="testing_button"
+          variant="contained"
+          onClick={() => {
+            console.log("bbbb");
+            formHandler(label);
+            setButtonClicked ? setButtonClicked(true) : null;
+          }}
+          onKeyDown={(e: any) => {
+            if (e.key === "Enter") {
+              console.log("hellooo");
               formHandler(label);
               setButtonClicked ? setButtonClicked(true) : null;
-            }}
-            loginField={loginField}
-          >
-            {label}
-          </ContainedButton>
-        </form>
+            } else if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+              e.stopPropagation();
+            } 
+          }}
+          loginField={loginField}
+        >
+          {label}
+        </ContainedButton>
       </div>
     );
   } else if (type === "outlined") {

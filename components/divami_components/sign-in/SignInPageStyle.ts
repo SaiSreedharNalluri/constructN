@@ -177,7 +177,7 @@ export const ShowHideDiv = styled("div")({
 });
 
 export const ExtraTickDiv = styled("div")({
-  marginTop: "19px",
+  marginTop: "20px",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
@@ -249,7 +249,7 @@ export const ButtonSection = styled("div")({
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  marginTop: "90px",
+  marginTop: "110px",
 
   // margin:"auto"
 });
