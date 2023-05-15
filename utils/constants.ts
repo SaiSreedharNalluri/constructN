@@ -11,7 +11,3 @@ export const roleData = [
   { id: "collaborator", name: "Collaborator" },
   { id: "viewer", name: "Viewer" },
 ];
-export const userNotificationData = [
-  { id: 1, name: "Unread" },
-  { id: 2, name: "All" },
-];

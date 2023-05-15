@@ -1,7 +1,7 @@
 import Script from 'next/script';
 import Moment from 'moment';
 import {Rnd } from 'react-rnd';
-import { Mixpanel } from '../analytics/Mixpanel';
+import { Mixpanel } from '../analytics/mixpanel';
 import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
 import Draggable, { DraggableCore } from "react-draggable";
 import Head from 'next/head';
@@ -467,7 +467,7 @@ function GenericViewer(props) {
     if(minimapCompareUtils.current) {
       let minimapState;
       if(potreeUtils.current) {
-        minimapState = potreeUtils.current.getContext();
+        minimapState = potreeCompareUtils.current.getContext();
       }
       minimapCompareUtils.current.updateViewerState(minimapState)
     }

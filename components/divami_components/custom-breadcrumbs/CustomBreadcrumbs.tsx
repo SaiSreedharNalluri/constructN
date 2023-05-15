@@ -18,11 +18,11 @@ const CustomBreadcrumbs: React.FC<any> = ({ breadCrumbData, handleBreadCrumbClic
           separator={<ArrowIcon alt="arrow" src={breadcrumbsArrow} />}
           aria-label="breadcrumb"
         >
-          <Link href="/projects">
+          {/* <Link href="/projects">
             <BreadcrumbsLabel color="text.primary">
               {breadcrumbsConfig[0]?.name}
             </BreadcrumbsLabel>
-          </Link>
+          </Link> */}
           {breadcrumbsConfig.length > 0 && breadcrumbsConfig.slice(1).map((breadcrumb: any, index: number) =>
             <BreadcrumbsLabel key={breadcrumb + index} color="text.primary" onClick={() => handleBreadCrumbClick(breadcrumb, index)}>
               {breadcrumb?.name}
