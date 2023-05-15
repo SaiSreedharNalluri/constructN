@@ -35,9 +35,9 @@ const StructPage: React.FC = () => {
 
     useEffect(()=>{
    
-      window.addEventListener('notify-app', notifyAppEvent);
+      window.addEventListener('notifyApp', notifyAppEvent);
       return()=>{
-        window.removeEventListener('notify-app', notifyAppEvent);
+        window.removeEventListener('notifyApp', notifyAppEvent);
       }
     },[]);
     const notifyAppEvent =(e:any)=>{

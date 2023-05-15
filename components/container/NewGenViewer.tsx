@@ -47,6 +47,58 @@ import mapboxgl from 'mapbox-gl';
 import { IMapboxLayer } from '../../models/IMapboxLayer';
 import Hotspots from './hotspots';
 import HotspotsCompare  from './hotspotsCompare';
+
+type ForgeViewerUtilsType = {
+  setupViewer: Function,
+  initializeViewer: Function,
+  setType: Function,
+  setStructure: Function,
+  setSnapshot: Function,
+  updateData: Function,
+  updateLayersData: Function,
+  updateIssuesData: Function,
+  updateTasksData: Function,
+  refreshData: Function,
+  showLayers: Function,
+  initiateAddTag: Function,
+  cancelAddTag: Function,
+  selectTag: Function,
+  showTag: Function,
+  getContext: Function,
+  getViewerState: Function,
+  updateViewerState: Function,
+  updateContext: Function,
+  removeData: Function,
+  removeLayers: Function,
+  shutdown: Function,
+}
+
+type PotreeViewerUtilsType = {
+  initializeViewer: Function,
+  isViewerLoaded: Function,
+  isCompareView: Function,
+  readyForCompare: Function,
+  finishForCompare: Function,
+  setStructure: Function,
+  setSnapshot: Function,
+  updateIssuesData: Function,
+  updateTasksData: Function,
+  updateProgressData: Function,
+  updateData: Function,
+  updateLayersData: Function,
+  initiateAddTag: Function,
+  cancelAddTag: Function,
+  finishAddTag: Function,
+  selectTag: Function,
+  showTag: Function,
+  getContext: Function,
+  updateContext: Function,
+  getViewerState: Function,
+  updateViewerState: Function,
+  updateFloormapAnimation: Function,
+  removeData: Function,
+  shutdown: Function,
+}
 interface IProps {
 data:IGenData;
 updateData?: (newData :IGenData)=> void;
@@ -59,8 +111,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   const [isInitReady,setInitReady] = useState<boolean>(false);
   const [isCompareMode,setCompareMode] = useState<boolean>(false);
 
-  let forgeUtils = useRef<typeof ForgeViewerUtils>();
-  let potreeUtils = useRef<typeof PotreeViewerUtils>();
+  let forgeUtils = useRef<ForgeViewerUtilsType>();
+  let potreeUtils = useRef<PotreeViewerUtilsType>();
   let mapboxUtils = useRef<typeof MapboxViewerUtils>();
 
   let [hotspots, setHotspots] = useState([]);
@@ -78,8 +130,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
   let multiverseViewer : undefined |typeof PotreeViewerUtils | typeof ForgeViewerUtils | typeof MapboxViewerUtils = undefined ;//forgeUtils.current as typeof ForgeViewerUtils;
 
-  let potreeCompareUtils = useRef<typeof PotreeViewerUtils>();
-  let forgeCompareUtils = useRef<typeof ForgeViewerUtils>();
+  let potreeCompareUtils = useRef<PotreeViewerUtilsType>();
+  let forgeCompareUtils = useRef<ForgeViewerUtilsType>();
   let mapboxCompareUtils = useRef<typeof MapboxViewerUtils>();
 
   let [context, setContext] = useState({});
@@ -133,9 +185,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
   useEffect(()=>{
    
-    window.addEventListener('notify-viewer', notifyViewerEvent);
+    window.addEventListener('notifyViewer', notifyViewerEvent);
     return()=>{
-      window.removeEventListener('notify-viewer', notifyViewerEvent);
+      window.removeEventListener('notifyViewer', notifyViewerEvent);
     }
   },[]);
   //const getViewerTypefromViewType = (viewType:string) :string=> {
@@ -408,7 +460,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     incomingPayload.current=undefined;
   }
   console.log("updated currentViewerData Use Effect",currentViewerData);
-  window.dispatchEvent(new CustomEvent('notify-app',{detail:currentViewerData}));
+  window.dispatchEvent(new CustomEvent('notifyApp',{detail:currentViewerData}));
   return ()=>{
 
         console.log("Changed Use Effect--Return",incomingPayload.current);
@@ -705,7 +757,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           if (!incomingPayload.current) {
             incomingPayload.current = undefined;
           }
-          window.dispatchEvent(new CustomEvent('notify-app',{detail:{type:event.id.includes('Temp')
+          window.dispatchEvent(new CustomEvent('',{detail:{type:event.id.includes('Temp')
           ? `create${event.type}`
           : `select${event.type}`,data:event}}));
           console.log('Marked Point========', event);
@@ -764,7 +816,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       case 'Forge':
         if (forgeUtils.current === undefined) {
           
-          forgeUtils.current =  ForgeViewerUtils;
+          forgeUtils.current = ForgeViewerUtils();
           console.log("InitViewer", forgeUtils.current);
           forgeUtils.current.setupViewer(viewerId, viewerEventHandler);
           if(forgeInitialised)forgeUtils.current.initializeViewer();
@@ -777,17 +829,17 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           forgeUtils.current.setType(currentViewerData.currentViewType);
 
           console.log("InitViewer", forgeUtils.current);
-          multiverseViewer = forgeUtils.current;
+          // multiverseViewer = forgeUtils.current;
         }
         break;
       case 'Potree':
         if (potreeUtils.current === undefined) {
-          potreeUtils.current = PotreeViewerUtils;
+          potreeUtils.current = PotreeViewerUtils();
           if (!potreeUtils.current.isViewerLoaded()) {
             potreeUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
           console.log("InitViewer", potreeUtils.current);
-          multiverseViewer = potreeUtils.current;
+          // multiverseViewer = potreeUtils.current;
         }
         break;
         case 'Mapbox':
@@ -806,7 +858,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     switch (currentViewerData.currentCompareMode) {
       case 'compareDesign':
         if (forgeCompareUtils.current === undefined) {
-          forgeCompareUtils.current = ForgeViewerUtils;
+          forgeCompareUtils.current = ForgeViewerUtils();
           forgeCompareUtils.current.setupViewer(
             viewerId,
             viewerEventHandler
@@ -818,7 +870,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       case 'compareReality':
         //console.log('Compare Reality Init TEST');
         if (potreeCompareUtils.current === undefined) {
-          potreeCompareUtils.current = PotreeViewerUtils;
+          potreeCompareUtils.current = PotreeViewerUtils();
           if (!potreeCompareUtils.current.isViewerLoaded()) {
             potreeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
@@ -972,7 +1024,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       case 'compareDesign':
         if (forgeCompareUtils.current) {
           forgeCompareUtils.current.setSnapshot(compareSnapshot);
-          let data = await getRealityLayers(structure, getRealityMap(compareSnapshot));
+          let data = await getRealityLayersPath(structure, getRealityMap(compareSnapshot));
           forgeCompareUtils.current.updateLayersData(
             data,
             currentContext.current
@@ -985,11 +1037,11 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           //console.log('Compare Reality TEST');
           potreeCompareUtils.current.setSnapshot(compareSnapshot);
           potreeCompareUtils.current.updateData(
-            await getPointCloud(structure, compareSnapshot),
+            {},
             getFloorPlanData(getDesignMap(structure.designs))
           );
           potreeCompareUtils.current.updateLayersData(
-            getRealityLayersPath(structure, getRealityMap(compareSnapshot)),
+            await getRealityLayersPath(structure, getRealityMap(compareSnapshot)),
             currentContext.current
           );
         }
