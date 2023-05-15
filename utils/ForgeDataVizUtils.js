@@ -90,7 +90,7 @@ export class ForgeDataVizUtils {
 
         issues.forEach(issue => {
 
-            if(issues.context) {
+            if(issue.context) {
 
                 let tag = issue.context.tag;
 
@@ -156,7 +156,7 @@ export class ForgeDataVizUtils {
 
                     for (let i = 0; i < images.length; i++) {
 
-                        if (this._existingImages.indexOf(images[i] == -1)) {
+                        if (this._existingImages.indexOf(images[i]) == -1) {
 
                             let mPosition = [];
 
