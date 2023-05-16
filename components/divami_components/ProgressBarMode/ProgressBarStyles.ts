@@ -3,19 +3,18 @@ import { Theme } from "../../../styles/globalStyles";
 import Image from "next/image";
 import { Box, MenuItem, TextField } from "@mui/material";
 
-export const UpperParent = styled("div")({
+export const ProgressBarContainer = styled("div")({
   display: "flex",
-  /* justify-content: space-between; */
   textAlign: "center",
 
   alignItems: "center",
 });
 
-export const ImageBar = styled("div")({
+export const ImageSection = styled("div")({
 
 })
 
-export const ParentBar = styled("div")({
+export const ScrollProgressCont = styled("div")({
   backgroundColor: "#e7e7e7",
   width: "80px",
   borderRadius: "15px",
@@ -23,7 +22,7 @@ export const ParentBar = styled("div")({
   marginLeft:"15px"
 });
 
-export const ChildBar =styled("div")({
+export const ScrollProgressChild =styled("div")({
   backgroundColor: "rgb(116, 194, 92)",
   color: "white",
   textAlign: "right",
@@ -45,17 +44,12 @@ export const PercentageBar=styled("div")({
 
 export const ImageIcon = styled(Image)({
   cursor: "pointer",
-  // width: "12px",
-  // height: "12px",
+ 
 });
 
 
-export const AssigneeList = styled("div")({
-  // display: "inline-block",
-
-  // background:"#FFFFF"
-  // width: "308px",
-  // height: "86px",
+export const AssigneeListContainer = styled("div")({
+ 
   padding: "15px",
   color: "#101F4C",
   fontSize: "14px",
@@ -63,15 +57,14 @@ export const AssigneeList = styled("div")({
   marginTop: "-3px",
   boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
   borderRadius: "4px",
-  // position: "absolute",
-  // right:"10px",
+
 });
 
-export const ParentToolDiv = styled("div")({
+export const ToolTipParentContainer = styled("div")({
   display: "flex",
   textAlign:"center"
 })
-export const ToolImg = styled("div")({
+export const ToolImgContainer = styled("div")({
 
 })
 
@@ -82,6 +75,5 @@ export const ToolImgDiv = styled("div")({
 
 export const ToolImageIcon = styled(Image)({
   cursor: "pointer",
-  // width: "12px",
-  // height: "12px",
+
 });

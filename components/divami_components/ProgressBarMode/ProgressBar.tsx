@@ -1,16 +1,16 @@
 import React from "react";
 import {
-  AssigneeList,
-  ChildBar,
-  ImageBar,
+  AssigneeListContainer,
+  ScrollProgressChild,
+  ImageSection,
   ImageIcon,
-  ParentBar,
-  ParentToolDiv,
+  ScrollProgressCont,
+  ToolTipParentContainer,
   PercentageBar,
   ToolImageIcon,
-  ToolImg,
+  ToolImgContainer,
   ToolImgDiv,
-  UpperParent,
+  ProgressBarContainer,
 } from "./ProgressBarStyles";
 import completedIcon from "../../../public/divami_icons/completedIcon.svg";
 import { styled } from "@mui/system";
@@ -18,29 +18,29 @@ import { Tooltip, TooltipProps, tooltipClasses } from "@mui/material";
 
 const ProgressBar = (props: any) => {
   return (
-    <UpperParent>
+    <ProgressBarContainer>
       <LightTooltip
         arrow
         title={
-          <AssigneeList>
-            <ParentToolDiv>
-              <ToolImg>
+          <AssigneeListContainer>
+            <ToolTipParentContainer>
+              <ToolImgContainer>
                 <ToolImageIcon src={completedIcon} alt="" />
-              </ToolImg>
+              </ToolImgContainer>
               <ToolImgDiv>Completed</ToolImgDiv>
-            </ParentToolDiv>
-          </AssigneeList>
+            </ToolTipParentContainer>
+          </AssigneeListContainer>
         }
       >
-        <ImageBar>
+        <ImageSection>
           <ImageIcon src={completedIcon} alt="completed" />
-        </ImageBar>
+        </ImageSection>
       </LightTooltip>
-      <ParentBar>
-        <ChildBar style={{ width: "90%" }}></ChildBar>
-      </ParentBar>
+      <ScrollProgressCont>
+        <ScrollProgressChild style={{ width: "90%" }}></ScrollProgressChild>
+      </ScrollProgressCont>
       <PercentageBar>90%</PercentageBar>
-    </UpperParent>
+    </ProgressBarContainer>
   );
 };
 

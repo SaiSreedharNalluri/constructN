@@ -37,7 +37,6 @@ import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import { forwardRef } from "react";
 import CaptureMode from "../../../../components/divami_components/CaptureMode/CaptureMode";
-import TestIcon from "./test_icon";
 import { useTheme } from "@material-ui/core/styles";
 import searchTable from "../../../../public/divami_icons/searchTable.svg";
 import filterTable from "../../../../public/divami_icons/filterTable.svg";
@@ -208,14 +207,15 @@ const Index: React.FC = () => {
   // https://api.dev2.constructn.ai/api/v1/projects/PRJ201897/structures/hierarchy
 
   useEffect(() => {
+    console.log("router?.query?.projectId", router);
+
     if (router.isReady) {
       // if (router.query.structId !== undefined)
-      console.log("Karan");
       // setSelector(router.query.structId.toString());
-      getStructureHierarchy(router.query.projectId as string)
+      getStructureHierarchy(router?.query?.projectId as string)
         .then((response: AxiosResponse<any>) => {
-          setGridData([...response.data.result]);
-          let removeGrandParent = response.data.result[0].children.map(
+          setGridData([...response?.data?.result]);
+          let removeGrandParent = response?.data?.result[0]?.children?.map(
             (item: any, index: number) => {
               return {
                 ...item,
@@ -223,18 +223,18 @@ const Index: React.FC = () => {
               };
             }
           );
-          massageTree(removeGrandParent, response.data.result[0].id);
+          massageTree(removeGrandParent, response?.data?.result[0]?.id);
           setTableData([...dummyData]);
           //   setFilterTableData([...response.data.result[0].children]);
 
-          console.log("Karan", response.data.result[0].children);
+          console.log("secondcall", response?.data?.result[0]?.children);
           // if (selector.length < 1) setSelector(response.data.result[0]._id);
         })
         .catch((error) => {
           console.log("error", error);
         });
     }
-  }, []);
+  }, [router.query.projectId]);
 
   function massageTree(responseArr: any, grandParent: string) {
     let resultArr: any = [];

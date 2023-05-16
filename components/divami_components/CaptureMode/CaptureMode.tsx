@@ -7,54 +7,54 @@ import lidarScan from "../../../public/divami_icons/lidarScan.svg";
 
 import {
   ArrowIcon,
-  FirstDiv,
-  FourthDiv,
-  ParentComp,
-  SecondDiv,
-  SpareDiv,
-  SymbolMode,
-  ThirdDiv,
+  CaptureModeFirstChild,
+  CaptureModeFourthChild,
+  CaptureModeParent,
+  CaptureModeSecondChild,
+  BlockElem,
+  SymbolContainer,
+  CaptureModeThirdChild,
 } from "./CaptureModeStyles";
 
 const CaptureMode = () => {
   return (
-    <ParentComp>
-      <FirstDiv>
-        <SpareDiv>
+    <CaptureModeParent>
+      <CaptureModeFirstChild>
+        <BlockElem>
           <ArrowIcon src={phoneImage} alt={"close icon"} />
-        </SpareDiv>
-        <SymbolMode>
-          <SpareDiv>109</SpareDiv>
-        </SymbolMode>
-      </FirstDiv>
+        </BlockElem>
+        <SymbolContainer>
+          <BlockElem>109</BlockElem>
+        </SymbolContainer>
+      </CaptureModeFirstChild>
 
-      <SecondDiv>
-        <SpareDiv>
+      <CaptureModeSecondChild>
+        <BlockElem>
           <ArrowIcon src={hotspotImg} alt={"close icon"} />
-        </SpareDiv>
-        <SymbolMode>
-          <SpareDiv>109</SpareDiv>
-        </SymbolMode>
-      </SecondDiv>
+        </BlockElem>
+        <SymbolContainer>
+          <BlockElem>109</BlockElem>
+        </SymbolContainer>
+      </CaptureModeSecondChild>
 
-      <ThirdDiv>
-        <SpareDiv>
+      <CaptureModeThirdChild>
+        <BlockElem>
           <ArrowIcon src={videoWalk} alt={"close icon"} />
-        </SpareDiv>
-        <SymbolMode>
-          <SpareDiv>109</SpareDiv>
-        </SymbolMode>
-      </ThirdDiv>
+        </BlockElem>
+        <SymbolContainer>
+          <BlockElem>109</BlockElem>
+        </SymbolContainer>
+      </CaptureModeThirdChild>
 
-      <FourthDiv>
-        <SpareDiv>
+      <CaptureModeFourthChild>
+        <BlockElem>
           <ArrowIcon src={lidarScan} alt={"close icon"} />
-        </SpareDiv>
-        <SymbolMode>
-          <SpareDiv>109</SpareDiv>
-        </SymbolMode>
-      </FourthDiv>
-    </ParentComp>
+        </BlockElem>
+        <SymbolContainer>
+          <BlockElem>109</BlockElem>
+        </SymbolContainer>
+      </CaptureModeFourthChild>
+    </CaptureModeParent>
   );
 };
 

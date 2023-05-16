@@ -1,36 +1,36 @@
 import { styled } from "@mui/system";
 import Image from "next/image";
 
-export const ParentComp = styled("div")({
+export const CaptureModeParent = styled("div")({
   display: "flex",
   textAlign: "center",
   justifyContent:"space-between"
 });
 
-export const FirstDiv = styled("div")({
+export const CaptureModeFirstChild = styled("div")({
   display: "flex",
 });
 
-export const SpareDiv =styled("div")({
+export const BlockElem =styled("div")({
   // display: "flex",
 });
 
 
-export const SymbolMode = styled("div")({
+export const SymbolContainer = styled("div")({
   marginLeft: "5px",
 });
 
-export const SecondDiv = styled("div")({
+export const CaptureModeSecondChild = styled("div")({
   display: "flex",
   marginLeft: "10px",
 });
 
-export const ThirdDiv = styled("div")({
+export const CaptureModeThirdChild = styled("div")({
   display: "flex",
   marginLeft: "10px",
 });
 
-export const FourthDiv = styled("div")({
+export const CaptureModeFourthChild = styled("div")({
   display: "flex",
   marginLeft: "10px",
 });
