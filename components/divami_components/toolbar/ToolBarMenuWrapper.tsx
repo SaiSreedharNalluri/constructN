@@ -25,6 +25,7 @@ import { SectionToolBar, ToolbarContainer } from "./ToolBarStyles";
 import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
 import CompareView from "./CompareView";
+import MoreOptionTool from "./MoreOptionTool";
 
 // import TOOLBARMENU from '../../config/appConstant'
 
@@ -421,6 +422,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         ) : (
           <></>
         )}
+
         {/* <Hotspot /> */}
       </ToolbarContainer>
     </SectionToolBar>

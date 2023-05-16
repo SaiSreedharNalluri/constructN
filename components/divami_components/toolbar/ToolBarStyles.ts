@@ -1,3 +1,4 @@
+import { MenuItem } from "@mui/material";
 import { styled } from "@mui/system";
 import Image from "next/image";
 
@@ -269,3 +270,144 @@ export const CompareContainer = styled("div")({
   display: "flex",
   marginLeft: "6px",
 }) as any;
+
+
+
+
+export const MoreOptionBox = styled("div")({
+  display: "flex",
+  alignItems: "center",
+  border: "1px solid #d9d9d9",
+  padding: "0 20px",
+  // paddingRight: '35px',
+  paddingRight: "20px",
+
+  borderRight: "transparent",
+  // width: '270px',
+  width: "175px",
+  borderTopRightRadius: "4px",
+  borderBottomRightRadius: "4px",
+});
+
+export const MoreOptionContainer = styled("div")({
+ cursor:"pointer"
+});
+
+
+export const StyledOptionMenu = styled("div")({
+  // borderBottom: "1px solid #D9D9D9",
+  width: "293px",
+  // margin: "0px 20px",
+  "&:hover": {
+    cursor: "pointer",
+    backgroundColor:"tranparent !important"
+    
+  },
+  padding: 0,
+  // height: "38px",
+  // fontSize: "14px",
+  // lineHeight: "20px",
+  // color: "#101F4C",
+  // fontFamily: "Open Sans",
+  // fontWeight: "400",
+});
+
+export const OptionListContainer = styled("div")({
+  paddingLeft: "20px",
+  paddingRight: "20px",
+  paddingTop: "20px",
+  paddingBottom:"20px",
+  // border: "2px solid blue",
+});
+
+export const OptionTaskContainer = styled("div")({
+
+})
+
+export const TaskHeader = styled("div")({
+//   font-family: 'Open Sans';
+// font-style: normal;
+// font-weight: 500;
+// font-size: 16px;
+// line-height: 20px;
+  
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 500,
+  fontSize: "16px",
+  color:"#101F4C"
+})
+
+export const TaskOptionContainer = styled("div")({
+
+})
+
+
+export const CreateTaskDiv = styled("div")({
+  display: "flex",
+  marginTop: "18px",
+  alignItems:"center"
+})
+
+
+export const OptionSectionPlusImg = styled("div")({
+  // width: '12px',
+  // height: '12px',
+  // marginLeft: '8px',
+  // margin: '0 6px'
+});
+
+
+export const OptionCameraIcon = styled(Image)({
+  width: "24px",
+  height: "24px",
+  cursor: "pointer",
+  // margin: "0 7px",
+});
+
+export const CreateOptionTask = styled("div")({
+  marginLeft:"13px",
+fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color:"#101F4C"
+});
+
+
+export const HorizontalLineOpt = styled("div")({
+  border: "1px solid #D9D9D9",
+  marginTop:"20px"
+});
+
+export const TaskListDiv = styled("div")({
+  display: "flex",
+  marginTop: "18px",
+  alignItems:"center"
+})
+
+export const TaskMarkupDiv = styled("div")({
+  display: "flex",
+  marginTop: "18px",
+  alignItems:"center"
+})
+
+export const SwitchDiv = styled("div")({
+ display: "flex",
+  alignItems: "center",
+  marginLeft:"auto"
+})
+
+export const SwitchText = styled("div")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color:"#101F4C"
+
+})
+
+
+export const OptionHotspotContainer = styled("div")({
+marginTop:"30px"
+})

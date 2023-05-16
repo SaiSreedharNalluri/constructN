@@ -192,16 +192,18 @@ export class ForgeDataVisualization {
                 case "Task":
                     for (const trackerData of visualizationData[viewableType]) {
                         // console.log("Inside data visualization: ", trackerData);
-                        let tag = trackerData.context.tag;
-                        let dbIdObject = {
-                            dbId: dbId++,
-                            type: viewableType,
-                            id: trackerData._id,
-                            // position: this.applyOffset(tag.tagPosition, this.offset),
-                            position: this.getViewerPosition(tag.tagPosition, this.tm, this.offset),
+                        if(trackerData.context) {
+                            let tag = trackerData.context.tag;
+                            let dbIdObject = {
+                                dbId: dbId++,
+                                type: viewableType,
+                                id: trackerData._id,
+                                // position: this.applyOffset(tag.tagPosition, this.offset),
+                                position: this.getViewerPosition(tag.tagPosition, this.tm, this.offset),
+                            }
+                            this.dbIdArray[dbIdObject.dbId] = dbIdObject;;
+                            // this.tagState[viewableType] = true;
                         }
-                        this.dbIdArray[dbIdObject.dbId] = dbIdObject;;
-                        // this.tagState[viewableType] = true;
                     }
                     break;
             }   

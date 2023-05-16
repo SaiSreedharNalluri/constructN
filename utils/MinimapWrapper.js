@@ -166,7 +166,7 @@ export const MinimapUtils = () => {
       new THREE.Vector3().fromArray([0, 0, 1]),
       false
     );
-    _viewer.navigation.setReverseZoomDirection(true);
+    _viewer.navigation.setReverseZoomDirection(true);    
 
     _viewer.disableHighlight(true)
     _viewer.disableHighlight(true)
@@ -293,9 +293,6 @@ export const MinimapUtils = () => {
             _manifestNode,
             generateModelOptions(document.tm, _manifestNode)
           );
-          // setInterval(() => {
-          //   _viewer.fitToView(undefined, _model)
-          // }, 200)
         },
         function () {
           console.error("Failed fetching Forge manifest");
@@ -731,6 +728,8 @@ export const MinimapUtils = () => {
     if (_context) {
       updateContext(_context, false);
     }
+
+    _viewer.setBackgroundColor(255, 255, 255, 255, 255, 255)
 
     // loadExtension();
     _isPendingDataToLoad = false;

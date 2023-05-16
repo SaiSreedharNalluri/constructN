@@ -824,7 +824,7 @@ const Editproject: React.FC = () => {
                           }}
                           className="p-2   text-gray-600 text-lg font-medium"
                         >
-                          Issue Status{' '}
+                          Task Status{' '}
                         </button>
                       </li>
                       <li

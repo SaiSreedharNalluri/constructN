@@ -1,7 +1,7 @@
 import Script from 'next/script';
 import Moment from 'moment';
 import {Rnd } from 'react-rnd';
-import { Mixpanel } from '../analytics/Mixpanel';
+import { Mixpanel } from '../analytics/mixpanel';
 import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
 import Draggable, { DraggableCore } from "react-draggable";
 import Head from 'next/head';
@@ -467,7 +467,7 @@ function GenericViewer(props) {
     if(minimapCompareUtils.current) {
       let minimapState;
       if(potreeUtils.current) {
-        minimapState = potreeUtils.current.getContext();
+        minimapState = potreeCompareUtils.current.getContext();
       }
       minimapCompareUtils.current.updateViewerState(minimapState)
     }
@@ -742,7 +742,7 @@ function GenericViewer(props) {
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current == undefined) {
-          forgeUtils.current = ForgeViewerUtils;
+          forgeUtils.current = ForgeViewerUtils();
           forgeUtils.current.setupViewer(viewerId, viewerEventHandler);
           if(forgeInitialised) forgeUtils.current.initializeViewer()
           forgeUtils.current.setType(currentViewType.current);
@@ -750,7 +750,7 @@ function GenericViewer(props) {
         break;
       case 'Potree':
         if (potreeUtils.current == undefined) {
-          potreeUtils.current = PotreeViewerUtils;
+          potreeUtils.current = PotreeViewerUtils();
           if (!potreeUtils.current.isViewerLoaded()) {
             potreeUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
@@ -772,7 +772,7 @@ function GenericViewer(props) {
     switch (compareViewMode) {
       case 'Forge':
         if (forgeCompareUtils.current == undefined) {
-          forgeCompareUtils.current = ForgeViewerUtils;
+          forgeCompareUtils.current = ForgeViewerUtils();
           forgeCompareUtils.current.setupViewer(viewerId, viewerEventHandler);
           if(forgeInitialised) forgeCompareUtils.current.initializeViewer()
           forgeCompareUtils.current.setType(currentViewType.current);
@@ -780,7 +780,7 @@ function GenericViewer(props) {
         break;
       case 'Potree':
         if (potreeCompareUtils.current == undefined) {
-          potreeCompareUtils.current = PotreeViewerUtils;
+          potreeCompareUtils.current = PotreeViewerUtils();
           if (!potreeCompareUtils.current.isViewerLoaded()) {
             potreeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
@@ -1658,7 +1658,7 @@ function GenericViewer(props) {
     
     return (<Rnd
       ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
-      style={{left: count == 1 ? '84px' : '0px'}}
+      style={{ top:count == 1 ? '0px' : '0px'   }}
       minWidth={320}
       minHeight={28}
       maxWidth={'99%'}
@@ -1735,8 +1735,9 @@ function GenericViewer(props) {
     }
   };
   return (
-      <div className={` ${fullScreenMode?"w-full h-full":`${styles.calcWidth} ${styles.calcHeight}`} fixed flex flex-row overflow-hidden`}>
-        <div id="TheView" className="relative  basis-1/2 flex grow shrink">
+    <div className={` ${fullScreenMode?"w-full h-full":`${styles.calcWidth} ${styles.calcHeight}`} fixed flex flex-row overflow-hidden`}>
+       <div className={`flex relative ${fullScreenMode?"left-0 w-full":"left-59 calc-width"}  `}>
+    <div id="TheView" className={`calc-width-half  relative flex grow shrink`}>
           {renderViewer(1)}
           {renderMinimap(1)}
           <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
@@ -1747,8 +1748,8 @@ function GenericViewer(props) {
 
           ></TimeLineComponent>
         </div>
-        <div className={isCompare?'w-0.5':''} color='gray'></div>
-        <div id="CompareView" className={`relative ${isCompare ? "basis-1/2": "hidden" }`}>
+      <div className={isCompare?'w-0.5':''} color='gray'></div>
+    <div id="CompareView" className={`relative basis-1/2  flex grow shrink  ${isCompare ? "calc-whalf ": "hidden " }`}>
           {renderViewer(2)}
           {compareViewMode === 'Potree' ? renderMinimap(2) : <></>}
           <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
@@ -1775,6 +1776,7 @@ function GenericViewer(props) {
           </HotspotsCompare>
           : <></>
       }
+      </div>
       {/* 
     <div className={` ${isFullScreenActive?"w-full h-full":" calc-w calc-h"} fixed flex flex-row`}>
       <div id="TheView" className="relative basis-1/2 flex grow shrink">

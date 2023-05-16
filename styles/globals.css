@@ -6,6 +6,7 @@
   background: white;
 }
 
+
 .unselectedClass {
   background-color: gray;
 }
@@ -464,9 +465,9 @@ body {
 }
 
 .css-19kzrtu {
-  /* padding: 0px; */
-  padding-left: 20px;
-  padding-right: 20px;
+  /* padding: 0px ; */
+  padding-left: 0px !important;
+  padding-right: 0px !important;
   padding-top: 25px;
 }
 
@@ -526,7 +527,7 @@ td {
   margin-top: 20px;
 }
 
-.date-error{
+.date-error {
   color: #f67c74;
   font-size: 14px;
   margin-top: 3px;
@@ -548,4 +549,19 @@ td {
 
 .custom-styled-menu:last-child {
   border-bottom: none;
+}
+
+
+.calc-width-half{
+  width: calc(50%);
+}
+.left-59{
+  left: 59px;
+}
+.calcLeft{
+  width: calc(50% - 59px);
+}
+
+.calc-width {
+  width: calc(100% - 58.9px);
 }

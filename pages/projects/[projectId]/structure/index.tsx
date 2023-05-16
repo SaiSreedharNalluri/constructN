@@ -60,7 +60,8 @@ import {
 import { getDesignMap } from "../../../../utils/ViewerDataUtils";
 import enterfullscreenIcon from "../../../../public/divami_icons/enterfullscreen.svg";
 import exitfullscreenIcon from "../../../../public/divami_icons/exitfullscreen.svg";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from "next/navigation";
+import { IUser } from "../../../../models/IUser";
 
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -388,11 +389,11 @@ const Index: React.FC<IProps> = () => {
         .catch();
 
       const userObj: any = getCookie("user");
-      let user = null;
-      if (userObj) user = JSON.parse(userObj);
+      let user: IUser;
+      if (userObj) {user = JSON.parse(userObj);
       if (user?._id) {
         SetLoggedInUserId(user._id);
-      }
+      }}
 
       // if (window.localStorage.getItem("expandedNodes")) {
       //   setExpanded(
@@ -1229,8 +1230,8 @@ const Index: React.FC<IProps> = () => {
         (formData?.issueStatusData?.includes(item.status) ||
           formData?.issueStatusData.length == 0) &&
         (item.assignees.filter(
-          (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
-        ) ||
+          (userInfo) => userInfo._id === formData.assigneesData?.user?._id
+        ).length ||
           formData?.assigneesData?.length == 0 ||
           !formData?.assigneesData) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
@@ -1475,9 +1476,8 @@ const Index: React.FC<IProps> = () => {
     }
   }, [router.isReady, router.query.projectId, router.query.structId]);
 
-
   //To Be used by Shivram
-  
+
   // const searchParams = useSearchParams();
   // useEffect(()=>{
   //   //const currentParams = Object.fromEntries([...searchParams]);
@@ -1493,10 +1493,10 @@ const Index: React.FC<IProps> = () => {
   //   if(searchParams.get('structure')!==null&&searchParams.get('structure')!==structure?._id)
   //   {
   //     console.log('Must Change Structure',searchParams.get('structure'));
-      
+
   //     const temp_str=structuresList.find((str)=> searchParams.get('structure')===str._id)
   //     temp_str&&setStructure(temp_str);
-      
+
   //   }
   //   if(searchParams.get('task')!==null)
   //   {

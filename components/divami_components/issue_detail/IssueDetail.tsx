@@ -108,6 +108,9 @@ import {
   AssignedLabel,
   ValueContainer,
   CloseIcon,
+  FourthContMoreText,
+  ParentFourthContMoreText,
+  MoreTextDiv,
 } from "./IssueDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
@@ -342,7 +345,7 @@ function BasicTabs(props: any) {
           aria-label="basic tabs example"
           sx={{
             "& .MuiTabs-scroller": {
-              padding: "0px 20px",
+              // padding: "0px 20px",
             },
             "& .MuiBox-root": {
               border: "1px solid red",
@@ -433,7 +436,8 @@ function BasicTabs(props: any) {
                 {taskState?.TabOne?.type}
               </PriorityStatus>
             </SecondContPrior>
-
+          </SecondBodyDiv>
+          <SecondBodyDiv>
             <SecondContPriorParal>
               <PriorityTitle>Priority</PriorityTitle>
               <PriorityStatus
@@ -456,7 +460,9 @@ function BasicTabs(props: any) {
                 {Moment(taskState?.TabOne?.capturedOn).format("DD MMM YYYY")}
               </CaptureStatus>
             </SecondContCapt>
+          </SecondBodyDiv>
 
+          <SecondBodyDiv>
             <SecondContPriorParal>
               <ThirdContWatch>Watcher</ThirdContWatch>
               <ThirdContWatchName
@@ -469,153 +475,33 @@ function BasicTabs(props: any) {
             </SecondContPriorParal>
           </SecondBodyDiv>
 
-          {progressEditState ? (
-            <ProgressStateTrue>
-              {" "}
-              <FourthBodyDiv
-                assigneeEditState={assigneeEditState}
-                style={{
-                  marginTop: "0px",
-                  color: "#101F4B",
-                }}
+          <SecondBodyDiv>
+            <ThirdContRight>
+              <ThirdContProg data-testid="progres-label">
+                Progress
+              </ThirdContProg>
+
+              <ThirdContProgType
+                style={{ color: "#101F4B" }}
+                data-testid="issue-progress"
               >
-                <FourthContLeft>
-                  <FourthContAssigned>Assigned to</FourthContAssigned>
-                  <FourthContProgType
-                    style={{ color: "#101F4B" }}
-                    data-testid="issue-assignees"
-                  >
-                    {taskState?.TabOne?.assignees}
-                    <DarkToolTip
-                      arrow
-                      title={
-                        <SecondAssigneeList>
-                          {taskState?.TabOne?.assignessList?.map(
-                            (assignName: any, index: number) => {
-                              if (index !== 0) {
-                                return (
-                                  <>
-                                    {index !==
-                                    taskState?.TabOne?.assignessList.length - 1
-                                      ? assignName?.firstName +
-                                        assignName.lastName +
-                                        " | "
-                                      : assignName?.firstName +
-                                        assignName.lastName}
-                                  </>
-                                );
-                              }
-                            }
-                          )}
-                        </SecondAssigneeList>
-                      }
-                    >
-                      <MoreText>{taskState?.TabOne?.moreText}</MoreText>
-                    </DarkToolTip>
-                    {taskState?.TabOne?.assignees ? (
-                      <PenIconImage
-                        onClick={handleEditAssigne}
-                        src={Edit}
-                        alt={"close icon"}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </FourthContProgType>
-                </FourthContLeft>
-              </FourthBodyDiv>
-            </ProgressStateTrue>
-          ) : (
-            <ProgressStateFalse>
-              {" "}
-              <ThirdContRight>
-                <ThirdContProg data-testid="progres-label">
-                  Status
-                </ThirdContProg>
-
-                <ThirdContProgType
-                  style={{ color: "#101F4B" }}
-                  data-testid="issue-progress"
-                >
-                  {taskState?.TabOne?.status}
-                  {taskState?.TabOne?.status ? (
-                    <PenIconImage
-                      onClick={handleEditProgress}
-                      src={Edit}
-                      alt={"close icon"}
-                      data-testid="issue-progress-edit"
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </ThirdContProgType>
-              </ThirdContRight>
-              <FourthBodyDiv
-                assigneeEditState={assigneeEditState}
-                style={{
-                  marginTop: "0px",
-                  color: "#101F4B",
-                  marginLeft: "auto",
-                }}
-              >
-                <FourthContLeft>
-                  <FourthContAssigned data-testid="assigned-to-label">
-                    Assigned to
-                  </FourthContAssigned>
-
-                  <FourthContProgType
-                    style={{ color: "#101F4B" }}
-                    data-testid="issue-assignees"
-                  >
-                    {taskState?.TabOne?.assignees}
-                    <LightTooltip
-                      arrow
-                      title={
-                        <AssigneeList>
-                          {taskState?.TabOne?.assignessList?.map(
-                            (assignName: any, index: number) => {
-                              if (index !== 0) {
-                                return (
-                                  <>
-                                    {index !==
-                                    taskState?.TabOne?.assignessList.length - 1
-                                      ? assignName?.firstName +
-                                        " " +
-                                        assignName.lastName +
-                                        " | "
-                                      : assignName?.firstName +
-                                        " " +
-                                        assignName.lastName}
-                                  </>
-                                );
-                              }
-                            }
-                          )}
-                        </AssigneeList>
-                      }
-                    >
-                      <MoreText>{taskState?.TabOne?.moreText}</MoreText>
-                    </LightTooltip>
-
-                    {taskState?.TabOne?.assignees ? (
-                      <PenIconImage
-                        onClick={handleEditAssigne}
-                        src={Edit}
-                        alt={"close icon"}
-                        data-testid="issue-assignees-edit"
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </FourthContProgType>
-                </FourthContLeft>
-              </FourthBodyDiv>
-            </ProgressStateFalse>
-          )}
-
+                {taskState?.TabOne?.status}
+                {taskState?.TabOne?.status ? (
+                  <PenIconImage
+                    onClick={handleEditProgress}
+                    src={Edit}
+                    alt={"close icon"}
+                    data-testid="issue-progress-edit"
+                  />
+                ) : (
+                  <></>
+                )}
+              </ThirdContProgType>
+            </ThirdContRight>
+          </SecondBodyDiv>
           {progressEditState && (
             <ProgressCustomSelect data-testid="progress-options">
-              <ExtraLabel>Progress</ExtraLabel>
+              {/* <ExtraLabel>Progress</ExtraLabel> */}
               <CustomSelect
                 config={progressOptionsState[0]}
                 data={{
@@ -632,9 +518,67 @@ function BasicTabs(props: any) {
               />
             </ProgressCustomSelect>
           )}
+
+          <SecondBodyDiv>
+            <FourthContLeft>
+              <FourthContAssigned>Assigned to</FourthContAssigned>
+              <MoreTextDiv>
+                <ParentFourthContMoreText>
+                  <FourthContProgType
+                    style={{ color: "#101F4B" }}
+                    data-testid="issue-assignees"
+                  >
+                    {taskState?.TabOne?.assignees}
+                  </FourthContProgType>
+                  {taskState?.TabOne?.assignees ? (
+                    <PenIconImage
+                      onClick={handleEditAssigne}
+                      src={Edit}
+                      alt={"close icon"}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </ParentFourthContMoreText>
+                <FourthContMoreText>
+                  <LightTooltip
+                    arrow
+                    title={
+                      <SecondAssigneeList>
+                        {taskState?.TabOne?.assignessList?.map(
+                          (assignName: any, index: number) => {
+                            if (index !== 0) {
+                              return (
+                                <>
+                                  {index !==
+                                  taskState?.TabOne?.assignessList.length - 1
+                                    ? assignName?.firstName +
+                                      " " +
+                                      assignName.lastName +
+                                      " | "
+                                    : assignName?.firstName +
+                                      " " +
+                                      assignName.lastName}
+                                </>
+                              );
+                            }
+                          }
+                        )}
+                      </SecondAssigneeList>
+                    }
+                  >
+                    <MoreText>{taskState?.TabOne?.moreText}</MoreText>
+                  </LightTooltip>
+                </FourthContMoreText>
+              </MoreTextDiv>
+            </FourthContLeft>
+          </SecondBodyDiv>
+          {/* <ParentFourthContMoreText>
+          
+          </ParentFourthContMoreText> */}
           {assigneeEditState && (
             <AssignEditSearchContainer>
-              <AssignedLabel>Assigned to</AssignedLabel>
+              {/* <AssignedLabel>Assigned to</AssignedLabel> */}
               <Autocomplete
                 data-testid="assignee-options"
                 disablePortal
@@ -713,6 +657,23 @@ function BasicTabs(props: any) {
                 )}
               </ValueContainer>
             </AssignEditSearchContainer>
+          )}
+
+          {progressEditState ? (
+            <ProgressStateTrue>
+              {" "}
+              <FourthBodyDiv
+                assigneeEditState={assigneeEditState}
+                style={{
+                  marginTop: "0px",
+                  color: "#101F4B",
+                }}
+              >
+                <FourthContLeft></FourthContLeft>
+              </FourthBodyDiv>
+            </ProgressStateTrue>
+          ) : (
+            ""
           )}
 
           <FormElementContainer>
@@ -1358,7 +1319,7 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
   [`& .${tooltipClasses.arrow}`]: {
     height: "10px !important",
-    left: "38px !important",
+    left: "10px !important",
     marginBottom: "0px",
     "&:before": {
       background: "#FFFFFF",
@@ -1377,7 +1338,7 @@ const DarkToolTip = styled(({ className, ...props }: TooltipProps) => (
     // color: "rgba(0, 0, 0, 0.87)",
     fontSize: 11,
     // position: "absolute",
-    right: 30,
+    right: 5,
     borderRadius: "4px",
     top: 2,
     // width: "308px",
