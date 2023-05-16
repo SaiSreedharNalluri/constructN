@@ -386,34 +386,30 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           projectUsers={projectUsers}
         />
 
-        {viewMode === "Reality" ? (
-          ""
-        ) : (
-          <Task
-            tasksList={tasksList}
-            taskMenuClicked={taskMenuClicked}
-            currentProject={currentProject}
-            currentSnapshot={currentSnapshot}
-            currentStructure={currentStructure}
-            contextInfo={contextInfo}
-            closeTaskFilterOverlay={closeTaskFilterOverlay}
-            handleOnTaskFilter={handleOnTaskFilter}
-            rightMenuClickHandler={rightMenuClickHandler}
-            taskOpenDrawer={openCreateTask}
-            deleteTheTask={deleteTheTask}
-            taskFilterState={taskFilterState}
-            closeTaskCreate={closeTaskCreate}
-            openTaskDetails={openTaskDetails}
-            closeTaskDetails={closeTaskDetails}
-            getTasks={getTasks}
-            handleOnTasksSort={handleOnTasksSort}
-            taskSubmit={taskSubmit}
-            deleteTheAttachment={deleteTheAttachment}
-            projectUsers={projectUsers}
-            taskPriorityList={taskPriorityList}
-            taskStatusList={taskStatusList}
-          />
-        )}
+        <Task
+          tasksList={tasksList}
+          taskMenuClicked={taskMenuClicked}
+          currentProject={currentProject}
+          currentSnapshot={currentSnapshot}
+          currentStructure={currentStructure}
+          contextInfo={contextInfo}
+          closeTaskFilterOverlay={closeTaskFilterOverlay}
+          handleOnTaskFilter={handleOnTaskFilter}
+          rightMenuClickHandler={rightMenuClickHandler}
+          taskOpenDrawer={openCreateTask}
+          deleteTheTask={deleteTheTask}
+          taskFilterState={taskFilterState}
+          closeTaskCreate={closeTaskCreate}
+          openTaskDetails={openTaskDetails}
+          closeTaskDetails={closeTaskDetails}
+          getTasks={getTasks}
+          handleOnTasksSort={handleOnTasksSort}
+          taskSubmit={taskSubmit}
+          deleteTheAttachment={deleteTheAttachment}
+          projectUsers={projectUsers}
+          taskPriorityList={taskPriorityList}
+          taskStatusList={taskStatusList}
+        />
 
         {viewMode === "Reality" ? (
           <CompareView
@@ -426,34 +422,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         ) : (
           <></>
         )}
-        {viewMode === "Reality" ? (
-          <MoreOptionTool
-            tasksList={tasksList}
-            taskMenuClicked={taskMenuClicked}
-            currentProject={currentProject}
-            currentSnapshot={currentSnapshot}
-            currentStructure={currentStructure}
-            contextInfo={contextInfo}
-            closeTaskFilterOverlay={closeTaskFilterOverlay}
-            handleOnTaskFilter={handleOnTaskFilter}
-            rightMenuClickHandler={rightMenuClickHandler}
-            taskOpenDrawer={openCreateTask}
-            deleteTheTask={deleteTheTask}
-            taskFilterState={taskFilterState}
-            closeTaskCreate={closeTaskCreate}
-            openTaskDetails={openTaskDetails}
-            closeTaskDetails={closeTaskDetails}
-            getTasks={getTasks}
-            handleOnTasksSort={handleOnTasksSort}
-            taskSubmit={taskSubmit}
-            deleteTheAttachment={deleteTheAttachment}
-            projectUsers={projectUsers}
-            taskPriorityList={taskPriorityList}
-            taskStatusList={taskStatusList}
-          />
-        ) : (
-          <></>
-        )}
+
         {/* <Hotspot /> */}
       </ToolbarContainer>
     </SectionToolBar>
