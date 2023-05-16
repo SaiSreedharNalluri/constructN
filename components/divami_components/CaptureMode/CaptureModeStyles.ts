@@ -7,11 +7,11 @@ export const CaptureModeParent = styled("div")({
   justifyContent:"space-between"
 });
 
-export const CaptureModeFirstChild = styled("div")({
+export const PhoneImgCount = styled("div")({
   display: "flex",
 });
 
-export const BlockElem =styled("div")({
+export const CountElem =styled("div")({
   // display: "flex",
 });
 
@@ -20,17 +20,17 @@ export const SymbolContainer = styled("div")({
   marginLeft: "5px",
 });
 
-export const CaptureModeSecondChild = styled("div")({
+export const HotspotImgCount = styled("div")({
   display: "flex",
   marginLeft: "10px",
 });
 
-export const CaptureModeThirdChild = styled("div")({
+export const VideoWalkCount = styled("div")({
   display: "flex",
   marginLeft: "10px",
 });
 
-export const CaptureModeFourthChild = styled("div")({
+export const LidarScanCount = styled("div")({
   display: "flex",
   marginLeft: "10px",
 });

@@ -1,16 +1,15 @@
 import React from "react";
 import {
-  AssigneeListContainer,
-  ScrollProgressChild,
-  ImageSection,
+  ToolTipContainer,
+  ProgressBarStyling,
+  StatusSymbolSection,
   ImageIcon,
-  ScrollProgressCont,
-  ToolTipParentContainer,
-  PercentageBar,
+  ToolTipChild,
+  PercentageText,
   ToolImageIcon,
-  ToolImgContainer,
-  ToolImgDiv,
+  ToolTipText,
   ProgressBarContainer,
+  ScrollBarSection,
 } from "./ProgressBarStyles";
 import completedIcon from "../../../public/divami_icons/completedIcon.svg";
 import { styled } from "@mui/system";
@@ -22,24 +21,22 @@ const ProgressBar = (props: any) => {
       <LightTooltip
         arrow
         title={
-          <AssigneeListContainer>
-            <ToolTipParentContainer>
-              <ToolImgContainer>
-                <ToolImageIcon src={completedIcon} alt="" />
-              </ToolImgContainer>
-              <ToolImgDiv>Completed</ToolImgDiv>
-            </ToolTipParentContainer>
-          </AssigneeListContainer>
+          <ToolTipContainer>
+            <ToolTipChild>
+              <ToolImageIcon src={completedIcon} alt="" />
+              <ToolTipText>Completed</ToolTipText>
+            </ToolTipChild>
+          </ToolTipContainer>
         }
       >
-        <ImageSection>
+        <StatusSymbolSection>
           <ImageIcon src={completedIcon} alt="completed" />
-        </ImageSection>
+        </StatusSymbolSection>
       </LightTooltip>
-      <ScrollProgressCont>
-        <ScrollProgressChild style={{ width: "90%" }}></ScrollProgressChild>
-      </ScrollProgressCont>
-      <PercentageBar>90%</PercentageBar>
+      <ScrollBarSection>
+        <ProgressBarStyling style={{ width: "90%" }}></ProgressBarStyling>
+      </ScrollBarSection>
+      <PercentageText>90%</PercentageText>
     </ProgressBarContainer>
   );
 };

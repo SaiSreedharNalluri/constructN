@@ -10,11 +10,11 @@ export const ProgressBarContainer = styled("div")({
   alignItems: "center",
 });
 
-export const ImageSection = styled("div")({
+export const StatusSymbolSection = styled("div")({
 
 })
 
-export const ScrollProgressCont = styled("div")({
+export const ScrollBarSection = styled("div")({
   backgroundColor: "#e7e7e7",
   width: "80px",
   borderRadius: "15px",
@@ -22,7 +22,7 @@ export const ScrollProgressCont = styled("div")({
   marginLeft:"15px"
 });
 
-export const ScrollProgressChild =styled("div")({
+export const ProgressBarStyling =styled("div")({
   backgroundColor: "rgb(116, 194, 92)",
   color: "white",
   textAlign: "right",
@@ -31,7 +31,7 @@ export const ScrollProgressChild =styled("div")({
   height:"5px"
 });
 
-export const PercentageBar=styled("div")({
+export const PercentageText=styled("div")({
   marginLeft: "10%",
   fontFamily: "Open Sans",
   fontStyle: "normal",
@@ -48,7 +48,7 @@ export const ImageIcon = styled(Image)({
 });
 
 
-export const AssigneeListContainer = styled("div")({
+export const ToolTipContainer = styled("div")({
  
   padding: "15px",
   color: "#101F4C",
@@ -60,15 +60,16 @@ export const AssigneeListContainer = styled("div")({
 
 });
 
-export const ToolTipParentContainer = styled("div")({
+export const ToolTipChild = styled("div")({
+  
   display: "flex",
   textAlign:"center"
 })
-export const ToolImgContainer = styled("div")({
+// export const ToolImgContainer = styled("div")({
 
-})
+// })
 
-export const ToolImgDiv = styled("div")({
+export const ToolTipText = styled("div")({
   marginLeft: "10px",
   marginTop:"1px"
 })

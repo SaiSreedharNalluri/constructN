@@ -7,53 +7,53 @@ import lidarScan from "../../../public/divami_icons/lidarScan.svg";
 
 import {
   ArrowIcon,
-  CaptureModeFirstChild,
-  CaptureModeFourthChild,
+  PhoneImgCount,
+  LidarScanCount,
   CaptureModeParent,
-  CaptureModeSecondChild,
-  BlockElem,
+  HotspotImgCount,
+  CountElem,
   SymbolContainer,
-  CaptureModeThirdChild,
+  VideoWalkCount,
 } from "./CaptureModeStyles";
 
 const CaptureMode = () => {
   return (
     <CaptureModeParent>
-      <CaptureModeFirstChild>
-        <BlockElem>
+      <PhoneImgCount>
+        <CountElem>
           <ArrowIcon src={phoneImage} alt={"close icon"} />
-        </BlockElem>
+        </CountElem>
         <SymbolContainer>
-          <BlockElem>109</BlockElem>
+          <CountElem>109</CountElem>
         </SymbolContainer>
-      </CaptureModeFirstChild>
+      </PhoneImgCount>
 
-      <CaptureModeSecondChild>
-        <BlockElem>
+      <HotspotImgCount>
+        <CountElem>
           <ArrowIcon src={hotspotImg} alt={"close icon"} />
-        </BlockElem>
+        </CountElem>
         <SymbolContainer>
-          <BlockElem>109</BlockElem>
+          <CountElem>109</CountElem>
         </SymbolContainer>
-      </CaptureModeSecondChild>
+      </HotspotImgCount>
 
-      <CaptureModeThirdChild>
-        <BlockElem>
+      <VideoWalkCount>
+        <CountElem>
           <ArrowIcon src={videoWalk} alt={"close icon"} />
-        </BlockElem>
+        </CountElem>
         <SymbolContainer>
-          <BlockElem>109</BlockElem>
+          <CountElem>109</CountElem>
         </SymbolContainer>
-      </CaptureModeThirdChild>
+      </VideoWalkCount>
 
-      <CaptureModeFourthChild>
-        <BlockElem>
+      <LidarScanCount>
+        <CountElem>
           <ArrowIcon src={lidarScan} alt={"close icon"} />
-        </BlockElem>
+        </CountElem>
         <SymbolContainer>
-          <BlockElem>109</BlockElem>
+          <CountElem>109</CountElem>
         </SymbolContainer>
-      </CaptureModeFourthChild>
+      </LidarScanCount>
     </CaptureModeParent>
   );
 };

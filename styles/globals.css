@@ -543,47 +543,6 @@ td {
   margin-right: 55px;
 }
 
-.me {
-  color: #ecf0f1;
-  background: #e74c3c;
-  width: 50px;
-  height: 50px;
-  border: 0;
-  font-size: 1.5em;
-  position: relative;
-}
-
-.me span {
-  position: absolute;
-  transition: 300ms;
-  background: rgb(34, 26, 26);
-  border-radius: 2px;
-}
-
-/* Create the "+" shape by positioning the spans absolutely */
-.me span:first-child {
-  top: 25%;
-  bottom: 25%;
-  width: 10%;
-  left: 45%;
-}
-
-.me span:last-child {
-  left: 25%;
-  right: 25%;
-  height: 10%;
-  top: 45%;
-}
-
-/* Morph the shape when the button is hovered over */
-.me2 span {
-  transform: none !important;
-}
-
-.me2 span:last-child {
-  left: 50% !important;
-  right: 50% !important;
-}
 .overflow-hidden {
   overflow: hidden;
 }
