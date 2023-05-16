@@ -76,7 +76,7 @@ const UserNotification: React.FC = () => {
         onChange={handleOptionChange}
         className=" mr-3 right-0 p-2 absolute border border-solid border-gray-500  px-2 py-1.5 rounded"
       >
-        {userNotificationData.map((noticationOptions) => {
+        {userNotificationData?.map((noticationOptions) => {
           return (
             <option value={noticationOptions.id} key={noticationOptions.id}>
               {noticationOptions.name}

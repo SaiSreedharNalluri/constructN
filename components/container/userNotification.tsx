@@ -24,6 +24,20 @@ const UserNotification: React.FC<IProps> = ({
     result[date].push(notifications[i]);
   }
   notifications = result;
+  const getNotifiCationTime = (olderTime: any) => {
+    const date: any = new Date(olderTime);
+    const currentDate: any = new Date();
+
+    const diffInMilliseconds = currentDate - date;
+    const diffInMinutes = Math.round(diffInMilliseconds / (1000 * 60));
+    const diffInHours = Math.floor(diffInMinutes / 60);
+
+    const formattedTimeDifference =
+      diffInHours > 0
+        ? `${diffInHours} hours ago`
+        : `${diffInMinutes} minutes ago`;
+    return formattedTimeDifference;
+  };
   return (
     <React.Fragment>
       <div>
@@ -43,11 +57,15 @@ const UserNotification: React.FC<IProps> = ({
                                 <div className="ml-1">
                                   {notificationObj.message}
                                 </div>
-                                <div className="mr-2">
-                                  {Moment(notificationObj?.createdAt).format(
-                                    "hh:mm A"
-                                  )}
-                                </div>
+                                {date === "Today" ? (
+                                  <div className="mr-2"></div>
+                                ) : (
+                                  <div className="mr-2">
+                                    {Moment(notificationObj?.createdAt).format(
+                                      "hh:mm A"
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             ) : (
                               <div
@@ -59,11 +77,19 @@ const UserNotification: React.FC<IProps> = ({
                                 <div className="ml-1 p-2">
                                   {notificationObj.message}
                                 </div>
-                                <div className="mr-2 p-2">
-                                  {Moment(notificationObj?.createdAt).format(
-                                    "hh:mm A"
-                                  )}
-                                </div>
+                                {date === "Today" ? (
+                                  <div className="mr-2">
+                                    {getNotifiCationTime(
+                                      notificationObj?.createdAt
+                                    )}
+                                  </div>
+                                ) : (
+                                  <div className="mr-2">
+                                    {Moment(notificationObj?.createdAt).format(
+                                      "hh:mm A"
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>
