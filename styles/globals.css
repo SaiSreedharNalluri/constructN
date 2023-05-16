@@ -6,7 +6,6 @@
   background: white;
 }
 
-
 .unselectedClass {
   background-color: gray;
 }
@@ -176,6 +175,12 @@ body {
   src: local("Lato"),
     url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf")
       format("opentype");
+}
+
+@font-face {
+  font-family: "Nunito Sans";
+  src: url("./fonts/Nunito_Sans/NunitoSans-VariableFont_YTLC\,opsz\,wdth\,wght.ttf")
+    format("truetype");
 }
 
 .white-bg {
@@ -551,14 +556,13 @@ td {
   border-bottom: none;
 }
 
-
-.calc-width-half{
+.calc-width-half {
   width: calc(50%);
 }
-.left-59{
+.left-59 {
   left: 59px;
 }
-.calcLeft{
+.calcLeft {
   width: calc(50% - 59px);
 }
 

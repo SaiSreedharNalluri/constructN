@@ -1,60 +1,47 @@
 import React, { useState } from "react";
+
 import {
+  ButtonSection,
+  CheckTickBox,
+  CheckTickDiv,
+  ExtraTickDiv,
+  ForgotDiv,
   FormContainerSign,
   FormDiv,
-  FormText,
   HeaderContainer,
   HeaderImageLogo,
   IllustrationBackground,
-  Overlay,
-  SectionShowcase,
-  SignInHeader,
-  StyledPasswordField,
-  StyledTextField,
-  ShowHideDiv,
-  ExtraTickDiv,
-  CheckTickDiv,
-  CheckTickBox,
-  RememberDiv,
-  ParentTickDiv,
-  ForgotDiv,
-  SignInContainedButton,
-  ButtonSection,
   NewUserDiv,
   NewUserSpan,
-} from "./SignInPageStyle";
-
+  Overlay,
+  ParentTickDiv,
+  RememberDiv,
+  SectionShowcase,
+  SignInHeader,
+} from "./SignUpPageStyles";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Logo from "../../../public/divami_icons/Logo.svg";
 import Mail from "../../../public/divami_icons/Mail.svg";
 import lock from "../../../public/divami_icons/lock.svg";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
-import { useRouter } from "next/router";
-
-import { Checkbox, InputAdornment, TextField } from "@mui/material";
-import Checked from "../../../public/divami_icons/checked.svg";
-import UnChecked from "../../../public/divami_icons/unchecked.svg";
-
-import Image from "next/image";
 import FormBody from "./FormBody";
-import FooterSignIn from "./FooterSignIn";
-import { CollectionsOutlined } from "@mui/icons-material";
-import { login } from "../../../services/userAuth";
-import { Mixpanel } from "../../analytics/Mixpanel";
-import { toast } from "react-toastify";
+import Image from "next/image";
+import UnChecked from "../../../public/divami_icons/unchecked.svg";
+import Checked from "../../../public/divami_icons/checked.svg";
+import FooterSignIn from "../sign-in/FooterSignIn";
 
-const SignInPage = () => {
-  const router = useRouter();
-
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleMouseDownPassword = (event: any) => {
-    event.preventDefault();
+const SignUpPage = () => {
+  const [buttonSearch, setButtonSearch] = useState(true);
+  // form wrapper code
+  const [formData, setFormData] = useState<any>(null);
+  const [validate, setValidate] = useState(false);
+  const [tagList, setTagList] = useState<[string]>([""]);
+  const [showPopUp, setshowPopUp] = useState(false);
+  const [canBeDisabled, setCanBeDisabled] = useState(false);
+  const [token, setToken] = useState("");
+  const handleFormData = (data: any) => {
+    setFormData(data);
   };
 
   const [checked, setChecked] = React.useState(true);
@@ -63,22 +50,6 @@ const SignInPage = () => {
     setChecked(event.target.checked);
   };
 
-  // form wrapper code
-  const [formData, setFormData] = useState<any>(null);
-  const [validate, setValidate] = useState(false);
-  const [tagList, setTagList] = useState<[string]>([""]);
-  const [showPopUp, setshowPopUp] = useState(false);
-  const [canBeDisabled, setCanBeDisabled] = useState(false);
-  const [token, setToken] = useState("");
-
-  const handleFormData = (data: any) => {
-    setFormData(data);
-  };
-
-  const handleForm = () => {
-    console.log("hello form");
-    // formHandler();
-  };
   const formHandler = (event: any) => {
     console.log("formData", formData);
     const email = formData[0].defaultValue;
@@ -86,58 +57,8 @@ const SignInPage = () => {
     console.log(email, password);
 
     setValidate(true);
-    handlerLogin(email, password);
+    // handlerLogin(email, password);
   };
-
-  const handlerLogin = (email: string, password: string) => {
-    login(email?.toLocaleLowerCase(), password)
-      .then((response: any) => {
-        if (response.success === true) {
-          if (response?.result?.verified === true) {
-            localStorage.setItem("userInfo", response.result?.fullName);
-            toast.success("user logged in sucessfully");
-            Mixpanel.identify(email);
-            Mixpanel.track("login_success", {
-              email: email,
-            });
-            Mixpanel.track("login_page_close");
-            router.push("/projects");
-          } else {
-            // setOpen(true);
-            setToken(response.result.token);
-            return;
-          }
-        }
-      })
-      .catch((error: any) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-
-        toast.error("Invalid User Credentials");
-
-        console.log("errorlogin", error.response.data.message);
-
-        Mixpanel.track("login_fail", {
-          email: email,
-        });
-
-        // setLoading(false);
-        // setMessage(resMessage);
-      });
-  };
-
-  function isValidEmail(email: any) {
-    if (/\S+@\S+\.\S+/.test(email)) {
-      console.log("true");
-    } else {
-      console.log("false");
-    }
-    // return /\S+@\S+\.\S+/.test(email);
-  }
   // form wrapper code
 
   return (
@@ -145,13 +66,12 @@ const SignInPage = () => {
       <HeaderContainer>
         <HeaderImageLogo src={Logo} alt="logo" />
       </HeaderContainer>
-
       <IllustrationBackground src={Illustration} alt="construct" />
 
       <Overlay></Overlay>
       <FormDiv>
         <FormContainerSign>
-          <SignInHeader>Sign In</SignInHeader>
+          <SignInHeader>Signup</SignInHeader>
           <FormBody
             handleFormData={handleFormData}
             validate={validate}
@@ -186,7 +106,7 @@ const SignInPage = () => {
 
             <ForgotDiv>Forgot password?</ForgotDiv>
           </ExtraTickDiv>
-          <ButtonSection>
+          <ButtonSection buttonSearch={buttonSearch}>
             {/* <SignInContainedButton variant="outlined">
               Sign In
             </SignInContainedButton> */}
@@ -195,12 +115,12 @@ const SignInPage = () => {
               formHandler={formHandler}
               canBeDisabled={canBeDisabled}
               loginField={true}
-              // customLabel={true}
+              customLabel={true}
             />
           </ButtonSection>
 
           <NewUserDiv>
-            New User? <NewUserSpan>Signup</NewUserSpan>
+            Already a User? <NewUserSpan>Sign in</NewUserSpan>
           </NewUserDiv>
         </FormContainerSign>
       </FormDiv>
@@ -208,4 +128,4 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default SignUpPage;

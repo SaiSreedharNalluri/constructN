@@ -64,12 +64,21 @@ const FormWrapper = (props: any) => {
               }
             }
             return { ...item, isError: false };
-          } else if (item.isValidField === false) {
+          } else if (item.isValidField === false && item.id === "email") {
             setCanBeDisabled(false);
             return {
               ...item,
               isError: true,
               errorMsg: "Invalid User Email",
+              showErrorMsg: true,
+            };
+          } else if (item.isValidField === false && item.id === "password") {
+            setCanBeDisabled(false);
+            return {
+              ...item,
+              isError: true,
+              errorMsg:
+                "Password should be between 8 to 15 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character",
               showErrorMsg: true,
             };
           } else {
@@ -237,6 +246,37 @@ const FormWrapper = (props: any) => {
     // return /\S+@\S+\.\S+/.test(email);
   }
 
+  function checkPassword(str: any, id: any) {
+    let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    let passwordTru = rePass.test(str);
+
+    if (passwordTru) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: true,
+            };
+          }
+          return item;
+        })
+      );
+    } else {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+            };
+          }
+          return item;
+        })
+      );
+    }
+  }
+
   const renderHTML = (
     data: any,
     isDisabled: boolean,
@@ -291,6 +331,7 @@ const FormWrapper = (props: any) => {
 
       case "textfield":
       case "password":
+      case "create_password":
         return (
           <ElementContainer>
             <CustomTextField
@@ -308,6 +349,11 @@ const FormWrapper = (props: any) => {
                 if (data.id === "email") {
                   console.log("email aaya");
                   isValidEmail(data?.defaultValue, data.id);
+                  return;
+                } else if (data.id === "password") {
+                  console.log("password aya");
+
+                  checkPassword(data?.defaultValue, data.id);
                   return;
                 }
 

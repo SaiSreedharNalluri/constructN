@@ -10,12 +10,17 @@ const ButtonsContainer = styled(Box)({
   justifyContent: "space-between",
   alignItems: "center",
 });
-const FooterSignIn = ({ formHandler, canBeDisabled, loginField }: any) => {
+const FooterSignIn = ({
+  formHandler,
+  canBeDisabled,
+  loginField,
+  customLabel,
+}: any) => {
   const [buttonClicked, setButtonClicked] = useState(false);
   return (
     <CustomButton
       type={canBeDisabled && buttonClicked ? "disabled" : "contained"}
-      label={"Sign In"}
+      label={customLabel ? "Create Account" : "Sign In"}
       formHandler={formHandler}
       setButtonClicked={setButtonClicked}
       loginField={loginField}
