@@ -408,7 +408,7 @@ export const MinimapUtils = () => {
     if(_navPosition && _navPosition[0] == position[0] && _navPosition[1] == position[1] && _navPosition[2] == position[2] && _navRotation == yaw) return;
     setTimeout(() => {
       // _dataVizUtils.createMarker(position, yaw);
-      _dataVizUtils.updateNavigator(position, yaw);
+      if(_dataVizUtils) _dataVizUtils.updateNavigator(position, yaw);
       _navPosition = position
       _navRotation = yaw
     }, 10)
