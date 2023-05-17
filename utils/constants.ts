@@ -15,3 +15,11 @@ export const userNotificationData = [
   { id: 1, name: "Unread" },
   { id: 2, name: "All" },
 ];
+export const userNotificationTypes = [
+  { id: "All", name: "All" },
+  { id: "Project", name: "Project" },
+  { id: "Issue", name: "Issue" },
+  { id: "Task", name: "Task" },
+  { id: "Snapshot", name: "Snapshot" },
+  { id: "Tag", name: "Tag" },
+];

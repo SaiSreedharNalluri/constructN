@@ -1,12 +1,13 @@
-import instance from './axiosInstance';
-import authHeader from './auth-header';
+import instance from "./axiosInstance";
+import authHeader from "./auth-header";
 export const getAllUserNotifications = async (
   condition: number,
-  pageNo: number
+  pageNo: number,
+  eventEmitter: string
 ) => {
   return await instance
     .get(
-      `${process.env.NEXT_PUBLIC_HOST}/user-notifications?condition=${condition}&offset=${pageNo}`,
+      `${process.env.NEXT_PUBLIC_HOST}/user-notifications?condition=${condition}&offset=${pageNo}&eventEmitter=${eventEmitter}`,
       {
         headers: authHeader.authHeader(),
       }

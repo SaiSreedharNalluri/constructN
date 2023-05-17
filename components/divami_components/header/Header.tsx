@@ -172,7 +172,7 @@ const Header: React.FC<any> = ({
     toolClicked(toolInstance);
   };
   const getUserNotifications = (condition = 1) => {
-    getAllUserNotifications(condition, currentPage)
+    getAllUserNotifications(condition, currentPage, "")
       .then((response) => {
         if (notifications.length > 0 && currentPage > 1) {
           setNotifications(notifications.concat(response.result));
@@ -315,7 +315,7 @@ const Header: React.FC<any> = ({
               }}
             />
             {open && (
-              <div className="absolute top-10 right-0 z-50 bg-gray-200 rounded-lg shadow border overflow-y-auto h-93">
+              <div className="absolute top-10 right-0 z-50 bg-gray-50 rounded-lg shadow border overflow-y-auto h-93">
                 <div className="w-full h-full mt-2 mr-2 mb-2 font-medium overflow-auto">
                   <div className="flex">
                     <h1 className="ml-2">Notifications:-</h1>
