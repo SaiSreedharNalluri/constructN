@@ -6,7 +6,6 @@
   background: white;
 }
 
-
 .unselectedClass {
   background-color: gray;
 }
@@ -492,20 +491,20 @@ mapboxgl-popup-close-button {
   color: #000;
 }
 
-table,
+/* table,
 th,
 td {
   border: 1px solid black;
   font-size: 0.9em;
-}
+} */
 
-th {
+/* th {
   padding: 0.5em 1em;
 }
 
 td {
   padding: 0.5em 1em;
-}
+} */
 .fcWidget-chat {
   padding-left: 30px;
 }
@@ -543,6 +542,7 @@ td {
 .margin-right-55 {
   margin-right: 55px;
 }
+
 .overflow-hidden {
   overflow: hidden;
 }
@@ -551,17 +551,22 @@ td {
   border-bottom: none;
 }
 
-
-.calc-width-half{
+.calc-width-half {
   width: calc(50%);
 }
-.left-59{
+.left-59 {
   left: 59px;
 }
-.calcLeft{
+.calcLeft {
   width: calc(50% - 59px);
 }
 
 .calc-width {
   width: calc(100% - 58.9px);
+}
+
+.sections_table {
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
 }
