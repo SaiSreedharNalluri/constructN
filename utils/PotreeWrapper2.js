@@ -656,16 +656,18 @@ export const PotreeViewerUtils = () => {
         for(let task of _tasksList) {
             // console.log("Inside issue create reality: ", task);
             let context = getContextLocalFromGlobal(task.context);
-            context.id = task._id;
-            // let sprite = this.createSprite(context);
-            let sprite = createAnnotation(context);
-            _taskSpriteMap[context.id] = {
-                context: context,
-                tag: sprite
+            if(context) {
+                context.id = task._id;
+                // let sprite = this.createSprite(context);
+                let sprite = createAnnotation(context);
+                _taskSpriteMap[context.id] = {
+                    context: context,
+                    tag: sprite
+                }
+                sprite._visible = false;
+                // this.viewer.scene.scene.add(sprite);
+                _viewer.scene.annotations.add(sprite);
             }
-            sprite._visible = false;
-            // this.viewer.scene.scene.add(sprite);
-            _viewer.scene.annotations.add(sprite);
         }
     }
 
@@ -968,7 +970,7 @@ export const PotreeViewerUtils = () => {
         // console.log("Global offset: ", globalContext, _globalOffset);
         let context = structuredClone(globalContext);
         let offset = _globalOffset;
-        if(context.image && context.image.imagePosition) {
+        if(context && context.image && context.image.imagePosition) {
             // console.log("Context has image: ", context.image);
             let pos = context.image.imagePosition;
             context.image.imagePosition = {
@@ -978,7 +980,7 @@ export const PotreeViewerUtils = () => {
             }
         }
 
-        if (context.cameraObject && context.cameraObject.cameraPosition) {
+        if (context && context.cameraObject && context.cameraObject.cameraPosition) {
             // console.log("Context has camera: ", context.cameraObject);
             // We use threejs position and target because potree useses threejs clone method
             let pos = context.cameraObject.cameraPosition;
@@ -997,7 +999,7 @@ export const PotreeViewerUtils = () => {
             // console.log("Inside context has camera : ", context);
         }
 
-        if (context.tag && context.tag.tagPosition) {
+        if (context && context.tag && context.tag.tagPosition) {
             // console.log("Context has tag: ", context.tag);
             let pos = context.tag.tagPosition;
             context.tag.tagPosition = {

@@ -807,6 +807,7 @@ function GenericViewer(props) {
         } else {
           setShowMinimap(false);
         }
+        resizeMinimap('default', 1)
       }
     }
   }
