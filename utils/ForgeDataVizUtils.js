@@ -177,6 +177,11 @@ export class ForgeDataVizUtils {
                                         break
 
                                     case 'Drone Image':
+                                        mPosition[0] = reality.position['camX'][i]
+    
+                                        mPosition[1] = reality.position['camY'][i]
+    
+                                        mPosition[2] = 0
 
                                     case 'Phone Image':
     
@@ -426,9 +431,9 @@ export class ForgeDataVizUtils {
 
             case 'Drone Image': return {
 
-                icon: 'https://img.icons8.com/material-outlined/24/null/new-moon.png',
+                icon: '/icons/360VideoWalkInViewer.svg',
 
-                size: 24,
+                size: 12,
 
                 offset: 1000
             }
