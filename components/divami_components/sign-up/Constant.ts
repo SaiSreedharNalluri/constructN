@@ -54,6 +54,7 @@ export const SIGN_UP_FORM_CONFIG = [
     errorMsg: "",
     showErrorMsg: false,
     isValidField: false,
+    checkPasswordStrength:true
   },
 
   {
@@ -61,7 +62,7 @@ export const SIGN_UP_FORM_CONFIG = [
     type: "password",
     defaultValue: "",
     // formLabel: "What shall we call this issue?",
-    placeholder: "Create Password",
+    placeholder: "Confirm password",
     isError: false,
     isReq: true,
     isReadOnly: false,

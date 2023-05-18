@@ -338,6 +338,7 @@ export const ChangeSignDiv = styled("div")({
   lineHeight: "24px",
   textAlign: "center",
   marginTop: "40px",
+  cursor:"pointer"
   // marginLeft: "12px",
 });
 

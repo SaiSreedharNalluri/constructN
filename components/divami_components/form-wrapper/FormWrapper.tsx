@@ -90,8 +90,7 @@ const FormWrapper = (props: any) => {
             return {
               ...item,
               isError: true,
-              errorMsg:
-                "Password should be between 8 to 15 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character",
+              errorMsg: "Weak Password",
               showErrorMsg: true,
             };
           } else if (
@@ -104,7 +103,6 @@ const FormWrapper = (props: any) => {
               isError: true,
               errorMsg: "Password should Match",
               showErrorMsg: true,
-             
             };
           } else {
             return { ...item, isError: false };
@@ -407,7 +405,7 @@ const FormWrapper = (props: any) => {
                   console.log("email aaya");
                   isValidEmail(data?.defaultValue, data.id);
                   return;
-                } else if (data.id === "password") {
+                } else if (data.id === "password" && data.checkPasswordStrength) {
                   console.log("password aya");
 
                   checkPassword(data?.defaultValue, data.id);

@@ -50,6 +50,8 @@ const SignUpPage = () => {
   };
 
   const [checked, setChecked] = React.useState(true);
+  const [formInfo, setFormInfo] = useState<any>({});
+  const [errorExist, setErrorExist] = useState<any>(true);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
@@ -66,6 +68,16 @@ const SignUpPage = () => {
     console.log("formValues", formValues);
     console.log("formData", formData);
 
+    let errorObjects = formData.filter(function (obj: any) {
+      // return obj.isError === true;
+      if (obj.isError === true) {
+      }
+    });
+
+    errorObjects.forEach(function (obj: any) {
+      // console.log(obj.id + " has isError = true");
+    });
+
     // const email = formData[0].defaultValue;
     // const password = formData[1].defaultValue;
     // console.log(email, password);
@@ -76,14 +88,23 @@ const SignUpPage = () => {
       (value) => value === ""
     );
 
-    if (hasEmptyValue) {
+    let hasError = formData.some(function (obj: any) {
+      return obj.isError === true;
+      // console.log(obj)
+    });
+
+    // const isErrorExist = formData.some
+
+    if (hasEmptyValue || hasError) {
       console.log("Form has empty values. Aborting registration.");
       return; // Stop execution here
     }
     delete formValues.confirm_password;
+    setFormInfo(formValues);
+
     handleRegister(formValues);
   };
-  const handleRegister = (formValue: Object) => {
+  const handleRegister = (formValue: any) => {
     // formValue.email = formValue.email.toLocaleLowerCase();
 
     console.log("hiii");
@@ -93,14 +114,22 @@ const SignUpPage = () => {
       .then((response) => {
         if (response.success === true) {
           toast.success("User Registeration completed in sucessfully");
-          toast.info("Redirecting ... ");
+          // toast.info("Redirecting ... ");
+          console.log("formInfo", formValue);
 
-          setTimeout(() => {
-            toast.info("Please check your e-mail to verify the account");
-            // router.push("/login");
-            // router.push("/signin");
-            router.push("verify_page");
-          }, 5000);
+          // setTimeout(() => {
+          //   toast.info("Please check your e-mail to verify the account");
+          // router.push("/login");
+          // router.push("/signin");
+          // router.push("verify_page");
+          router.push(
+            {
+              pathname: "/verify_page",
+              query: { email: formValue.email }, // Pass the email as a query parameter
+            },
+            "/verify_page"
+          );
+          // }, 5000);
         }
       })
       .catch((error) => {
@@ -172,7 +201,14 @@ const SignUpPage = () => {
           </ButtonSection>
 
           <NewUserDiv>
-            Already a User? <NewUserSpan>Sign in</NewUserSpan>
+            Already a User?{" "}
+            <NewUserSpan
+              onClick={() => {
+                router.push("/signin");
+              }}
+            >
+              Sign in
+            </NewUserSpan>
           </NewUserDiv>
         </FormContainerSign>
       </FormDiv>

@@ -206,7 +206,7 @@ const SignInPage = () => {
           </ButtonSection>
 
           <NewUserDiv>
-            New User?{" "}
+            New User?{"   "}
             <NewUserSpan
               onClick={() => {
                 router.push("/signup");

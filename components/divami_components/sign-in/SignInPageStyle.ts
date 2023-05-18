@@ -249,18 +249,20 @@ export const ButtonSection = styled("div")({
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  marginTop: "110px",
+  marginTop: "40px",
 
   // margin:"auto"
 });
 
 export const NewUserDiv = styled("div")({
-  marginTop: "90px",
+  marginTop: "160px",
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "14px",
   color: "#36415D",
+  display: "flex",
+  justifyContent:"center"
 });
 
 export const NewUserSpan = styled("span")({
@@ -269,5 +271,6 @@ export const NewUserSpan = styled("span")({
   fontWeight: "400",
   fontSize: "14px",
   color: "#F1742E",
-  cursor:"pointer"
+  cursor: "pointer",
+  paddingLeft:"4px"
 });

@@ -1,11 +1,21 @@
-import React from "react";
-
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import VerifyUser from "../components/divami_components/verify-user/VerifyUser";
-
+interface QueryParams {
+  email: string;
+}
 const VerifyPage = () => {
+  const router = useRouter();
+  const [queryMail, setQueryMail] = useState<any>("");
+  console.log("query", router.query);
+
+  useEffect(() => {
+    setQueryMail(router.query.email);
+  }, []);
+
   return (
     <div>
-      <VerifyUser />
+      <VerifyUser queryMail={queryMail} />
     </div>
   );
 };
