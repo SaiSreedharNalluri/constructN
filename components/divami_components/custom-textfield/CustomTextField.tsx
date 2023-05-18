@@ -6,6 +6,8 @@ import { ErrorField } from "../custom-select/CustomSelect";
 import { InputAdornment } from "@mui/material";
 import Image from "next/image";
 import Mail from "../../../public/divami_icons/Mail.svg";
+import name from "../../../public/divami_icons/name.svg";
+
 import lock from "../../../public/divami_icons/lock.svg";
 import { ShowHideDiv } from "../sign-in/SignInPageStyle";
 import { text } from "stream/consumers";
@@ -155,6 +157,14 @@ export const CustomTextField = (props: PropTypes) => {
                 startAdornment: (
                   <InputAdornment position="start">
                     <Image width={24} height={24} src={Mail} alt="Search" />
+                  </InputAdornment>
+                ),
+              }
+            : imageIcon === "nameIcon"
+            ? {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Image width={24} height={24} src={name} alt="Search" />
                   </InputAdornment>
                 ),
               }

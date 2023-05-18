@@ -86,6 +86,12 @@ const SignInPage = () => {
     console.log(email, password);
 
     setValidate(true);
+
+    if (email === "" || password === "") {
+      console.log("Email and password are empty. Aborting login.");
+      return; // Stop execution here
+    }
+
     handlerLogin(email, password);
   };
 
@@ -200,7 +206,14 @@ const SignInPage = () => {
           </ButtonSection>
 
           <NewUserDiv>
-            New User? <NewUserSpan>Signup</NewUserSpan>
+            New User?{" "}
+            <NewUserSpan
+              onClick={() => {
+                router.push("/signup");
+              }}
+            >
+              Signup
+            </NewUserSpan>
           </NewUserDiv>
         </FormContainerSign>
       </FormDiv>

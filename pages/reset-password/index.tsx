@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { resetPasswordInit } from '../../services/userAuth';
-import { toast } from 'react-toastify';
-import CheckingEmail from '../../components/container/checkingEmail';
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { resetPasswordInit } from "../../services/userAuth";
+import { toast } from "react-toastify";
+import CheckingEmail from "../../components/container/checkingEmail";
 const Index: React.FC = () => {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
   const handleEmail = (formValue: any) => {
-    setMessage('');
+    setMessage("");
     setLoading(true);
     formValue.email = formValue.email.toLocaleLowerCase();
     resetPasswordInit(formValue)
       .then((response) => {
         if (response.success === true) {
-          toast.info('Redirecting ... ');
+          toast.info("Redirecting ... ");
           setTimeout(() => {
-            toast.info('Please check your e-mail to reset password');
+            toast.info("Please check your e-mail to reset password");
             // router.push(`/reset-password/${response.token}`);
-            router.push('/login');
+            // router.push('/login');
+            router.push("/signin");
           }, 5000);
         }
       })

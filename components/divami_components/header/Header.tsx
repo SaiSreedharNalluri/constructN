@@ -94,7 +94,7 @@ const Header: React.FC<any> = ({
     if (user?.avatar) {
       setAvatar(user.avatar);
     }
-  }, [router.query,loading]);
+  }, [router.query, loading]);
 
   useEffect(() => {
     setIViewMode(viewMode);
@@ -104,7 +104,7 @@ const Header: React.FC<any> = ({
     //     document.removeEventListener('click', closeStructurePages);
     //   };
   }, [viewMode]);
-  
+
   useEffect(() => {
     const closePopup = (e: any) => {
       if (!headerRef?.current?.contains(e.target)) {
@@ -118,7 +118,8 @@ const Header: React.FC<any> = ({
   }, []);
   const userLogOut = () => {
     removeCookies("user");
-    router.push("/login");
+    // router.push("/login");
+    router.push("/signin");
   };
   const goToProjectsList = () => {
     router.push("/projects");

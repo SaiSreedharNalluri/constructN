@@ -1,5 +1,33 @@
 export const SIGN_UP_FORM_CONFIG = [
   {
+    id: "firstName",
+    type: "textfield",
+    defaultValue: "",
+    // formLabel: "What shall we call this issue?",
+    placeholder: "First Name",
+    isError: false,
+    isReq: true,
+    isValidField: false,
+    isReadOnly: false,
+    imageIcon: "nameIcon",
+    errorMsg: "",
+    showErrorMsg: false,
+  },
+  {
+    id: "lastName",
+    type: "textfield",
+    defaultValue: "",
+    // formLabel: "What shall we call this issue?",
+    placeholder: "Last Name",
+    isError: false,
+    isReq: true,
+    isValidField: false,
+    isReadOnly: false,
+    imageIcon: "nameIcon",
+    errorMsg: "",
+    showErrorMsg: false,
+  },
+  {
     id: "email",
     type: "textfield",
     defaultValue: "",
@@ -29,7 +57,7 @@ export const SIGN_UP_FORM_CONFIG = [
   },
 
   {
-    id: "create_password",
+    id: "confirm_password",
     type: "password",
     defaultValue: "",
     // formLabel: "What shall we call this issue?",
@@ -42,14 +70,4 @@ export const SIGN_UP_FORM_CONFIG = [
     showErrorMsg: false,
     isValidField: false,
   },
-
-  //   {
-  //     id: "title",
-  //     type: "loginPasswordField",
-  //     defaultValue: "",
-  //     placeholder: "Enter Password",
-  //     isError: false,
-  //     isReq: true,
-  //     isReadOnly: false,
-  //   }
 ];

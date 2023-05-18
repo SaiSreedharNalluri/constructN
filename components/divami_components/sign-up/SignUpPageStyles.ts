@@ -68,7 +68,7 @@ export const FormContainerSign = styled("div")({
 
   paddingLeft: "60px",
   paddingRight: "60px",
-  paddingTop: "68px",
+  paddingTop: "30px",
 });
 
 export const SignInHeader = styled("div")({
@@ -177,7 +177,7 @@ export const ShowHideDiv = styled("div")({
 });
 
 export const ExtraTickDiv = styled("div")({
-  marginTop: "20px",
+  marginTop: "18px",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
@@ -249,7 +249,7 @@ interface ContainerProps {
 // `;
 
 export const ButtonSection = styled("div")<ContainerProps>`
-  margin-top: ${(props) => (props.buttonSearch ? "40px" : "110px")};
+  margin-top: ${(props) => (props.buttonSearch ? "21px" : "110px")};
   flex-direction: coloumn;
   justify-content: center;
   align-items: center;
@@ -265,7 +265,7 @@ export const ButtonSection = styled("div")<ContainerProps>`
 // });
 
 export const NewUserDiv = styled("div")({
-  marginTop: "90px",
+  marginTop: "17px",
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",

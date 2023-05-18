@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Form, Formik, ErrorMessage } from 'formik';
-import NextImage from '../../components/core/Image';
-import InputText from '../../components/core/Input/inputText';
-import SubmitButtons from '../../components/core/buttons/submitButton';
-import * as Yup from 'yup';
-import router from 'next/router';
-import OkButton from '../core/buttons/okButton';
+import React, { useState } from "react";
+import { Form, Formik, ErrorMessage } from "formik";
+import NextImage from "../../components/core/Image";
+import InputText from "../../components/core/Input/inputText";
+import SubmitButtons from "../../components/core/buttons/submitButton";
+import * as Yup from "yup";
+import router from "next/router";
+import OkButton from "../core/buttons/okButton";
 interface IProps {
   loading: boolean;
   message: string;
@@ -15,10 +15,10 @@ const CheckingEmail: React.FC<IProps> = ({ handleEmail, message, loading }) => {
   const initialValues: {
     email: string;
   } = {
-    email: '',
+    email: "",
   };
   const validationSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email').required('Email is required'),
+    email: Yup.string().email("Invalid email").required("Email is required"),
   });
   return (
     <div className=" w-full   ">
@@ -50,7 +50,8 @@ const CheckingEmail: React.FC<IProps> = ({ handleEmail, message, loading }) => {
                   buttonName="Go login page"
                   disabled={false}
                   clickTheOkButton={() => {
-                    router.push('/login');
+                    // router.push('/login');
+                    router.push("/signin");
                   }}
                 />
               </div>

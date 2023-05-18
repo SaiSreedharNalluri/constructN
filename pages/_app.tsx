@@ -26,14 +26,16 @@ export default function App({ Component, pageProps }: AppProps) {
   mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, { debug: true });
   const router = useRouter();
   const openRoutes = [
-    "/register",
+    // "/register",
+    "/signup",
     "/reset-password",
     "/verify-account/[token]",
   ];
   useEffect(() => {
     const userObj: any = getCookie("user");
     if (userObj === undefined && !openRoutes.includes(router.asPath)) {
-      router.push("/login");
+      // router.push("/login");
+      router.push("/signin");
     }
   }, []);
 

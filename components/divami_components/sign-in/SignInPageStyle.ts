@@ -269,4 +269,5 @@ export const NewUserSpan = styled("span")({
   fontWeight: "400",
   fontSize: "14px",
   color: "#F1742E",
+  cursor:"pointer"
 });

@@ -18,7 +18,9 @@ const ResetPasswords: React.FC = () => {
                 toast.info('Redirecting ... ');
                 setTimeout(() => {
                     toast.info(' reset password completed');
-                    router.push('/login');
+                    // router.push('/login');
+                    router.push("/signin");
+
                 }, 5000);
             }
         }).catch((error) => {

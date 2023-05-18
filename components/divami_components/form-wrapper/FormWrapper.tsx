@@ -9,7 +9,7 @@ import { CustomTextArea } from "../custom-textarea/CustomTextArea";
 
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FormText } from "../sign-in/SignInPageStyle";
 import { Checkbox, InputAdornment, TextField } from "@mui/material";
 import Checked from "../../../public/divami_icons/checked.svg";
@@ -18,9 +18,15 @@ import Mail from "../../../public/divami_icons/Mail.svg";
 import lock from "../../../public/divami_icons/lock.svg";
 import Image from "next/image";
 
-const FormElementContainer = styled(Box)({
-  marginTop: "40px",
-});
+interface ContainerProps {
+  loginField: boolean;
+}
+// const FormElementContainer = styled(Box)({
+//   marginTop: "40px",
+// });
+const FormElementContainer = styled(Box)<ContainerProps>`
+  margin-top: ${(props) => (props.loginField ? "30px" : "40px")};
+`;
 const ElementContainer = styled("div")({
   marginTop: "8px",
 });
@@ -40,6 +46,13 @@ const FormWrapper = (props: any) => {
     setCanBeDisabled,
     loginField,
   } = props;
+
+  console.log("formState", formState);
+
+  const [userPassword, setUserPassword] = useState("");
+  useEffect(() => {
+    console.log("userpassword", userPassword);
+  }, [userPassword]);
 
   useEffect(() => {
     if (validate) {
@@ -80,6 +93,18 @@ const FormWrapper = (props: any) => {
               errorMsg:
                 "Password should be between 8 to 15 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character",
               showErrorMsg: true,
+            };
+          } else if (
+            item.isValidField === false &&
+            item.id === "confirm_password"
+          ) {
+            setCanBeDisabled(false);
+            return {
+              ...item,
+              isError: true,
+              errorMsg: "Password should Match",
+              showErrorMsg: true,
+             
             };
           } else {
             return { ...item, isError: false };
@@ -259,6 +284,38 @@ const FormWrapper = (props: any) => {
               isValidField: true,
             };
           }
+
+          return item;
+        })
+      );
+      setUserPassword(str);
+    } else {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+            };
+          }
+          return item;
+        })
+      );
+    }
+  }
+
+  function matchpassword(str: any, id: any) {
+    console.log("matching", str, userPassword);
+    if (str !== userPassword) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+            };
+          }
+
           return item;
         })
       );
@@ -268,7 +325,7 @@ const FormWrapper = (props: any) => {
           if (id === item.id) {
             return {
               ...item,
-              isValidField: false,
+              isValidField: true,
             };
           }
           return item;
@@ -331,7 +388,7 @@ const FormWrapper = (props: any) => {
 
       case "textfield":
       case "password":
-      case "create_password":
+      case "confirm_password":
         return (
           <ElementContainer>
             <CustomTextField
@@ -354,6 +411,9 @@ const FormWrapper = (props: any) => {
                   console.log("password aya");
 
                   checkPassword(data?.defaultValue, data.id);
+                  return;
+                } else if (data.id === "confirm_password") {
+                  matchpassword(data?.defaultValue, data.id);
                   return;
                 }
 
@@ -462,6 +522,7 @@ const FormWrapper = (props: any) => {
         return (
           <>
             <FormElementContainer
+              loginField={loginField}
               key={eachConfig.id}
               className={` ${eachConfig?.isError ? "formErrorLabel" : ""}`}
             >
