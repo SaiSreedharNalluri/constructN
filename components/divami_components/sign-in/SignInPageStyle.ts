@@ -255,14 +255,18 @@ export const ButtonSection = styled("div")({
 });
 
 export const NewUserDiv = styled("div")({
-  marginTop: "160px",
+  // marginTop: "160px",
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "14px",
   color: "#36415D",
   display: "flex",
-  justifyContent:"center"
+  justifyContent: "center",
+  position: "absolute",
+    bottom: "8%",
+    right: "50%",
+    transform: "translateX(50%)"
 });
 
 export const NewUserSpan = styled("span")({

@@ -18,6 +18,7 @@ import {
   RememberDiv,
   SectionShowcase,
   SignInHeader,
+  ErrorSectonDiv,
 } from "./SignUpPageStyles";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Logo from "../../../public/divami_icons/Logo.svg";
@@ -45,6 +46,7 @@ const SignUpPage = () => {
   const [showPopUp, setshowPopUp] = useState(false);
   const [canBeDisabled, setCanBeDisabled] = useState(false);
   const [token, setToken] = useState("");
+  const [showError, setShowError] = useState<boolean>(false);
   const handleFormData = (data: any) => {
     setFormData(data);
   };
@@ -95,8 +97,12 @@ const SignUpPage = () => {
 
     // const isErrorExist = formData.some
 
-    if (hasEmptyValue || hasError) {
+    if (hasEmptyValue) {
+      setShowError(true);
       console.log("Form has empty values. Aborting registration.");
+      return; // Stop execution here
+    }
+    if (hasError) {
       return; // Stop execution here
     }
     delete formValues.confirm_password;
@@ -153,6 +159,12 @@ const SignUpPage = () => {
       <FormDiv>
         <FormContainerSign>
           <SignInHeader>Signup</SignInHeader>
+          {/* {showError ? (
+            <ErrorSectonDiv>All fields are required*</ErrorSectonDiv>
+          ) : (
+            ""
+          )} */}
+
           <FormBody
             handleFormData={handleFormData}
             validate={validate}

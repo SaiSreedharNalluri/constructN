@@ -405,7 +405,10 @@ const FormWrapper = (props: any) => {
                   console.log("email aaya");
                   isValidEmail(data?.defaultValue, data.id);
                   return;
-                } else if (data.id === "password" && data.checkPasswordStrength) {
+                } else if (
+                  data.id === "password" &&
+                  data.checkPasswordStrength
+                ) {
                   console.log("password aya");
 
                   checkPassword(data?.defaultValue, data.id);

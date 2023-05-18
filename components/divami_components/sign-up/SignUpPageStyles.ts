@@ -281,3 +281,14 @@ export const NewUserSpan = styled("span")({
   color: "#F1742E",
   cursor:"pointer"
 });
+
+
+
+export const ErrorSectonDiv =  styled("div")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  paddingTop:'12px',
+  fontSize: "14px",
+  color: "#f67c74",
+});
