@@ -99,6 +99,35 @@ type PotreeViewerUtilsType = {
   removeData: Function,
   shutdown: Function,
 }
+
+type MapboxViewerUtilsType = {
+    initializeViewer: Function,
+    setType: Function,
+    setProject: Function,
+    setStructure: Function,
+    setSnapshot: Function,
+    isViewerInitialized: Function,
+    updateData: Function,
+    updateLayersData: Function,
+    updateIssuesData: Function,
+    updateTasksData: Function,
+    refreshData: Function,
+    showLayers: Function,
+    initiateAddTag: Function,
+    cancelAddTag: Function,
+    selectTag: Function,
+    showTag: Function,
+    onLayerClick: Function,
+    getContext: Function,
+    getMap: Function,
+    resize: Function,
+    updateContext: Function,
+    removeData: Function,
+    removeLayers: Function,
+    setHotspotClick: Function,
+    shutdown: Function,
+}
+
 interface IProps {
 data:IGenData;
 updateData?: (newData :IGenData)=> void;
@@ -113,7 +142,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
   let forgeUtils = useRef<ForgeViewerUtilsType>();
   let potreeUtils = useRef<PotreeViewerUtilsType>();
-  let mapboxUtils = useRef<typeof MapboxViewerUtils>();
+  let mapboxUtils = useRef<MapboxViewerUtilsType>();
 
   let [hotspots, setHotspots] = useState([]);
   let [hotspotsCompare, setHotspotsCompare] = useState<any>([]);
@@ -132,7 +161,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
   let potreeCompareUtils = useRef<PotreeViewerUtilsType>();
   let forgeCompareUtils = useRef<ForgeViewerUtilsType>();
-  let mapboxCompareUtils = useRef<typeof MapboxViewerUtils>();
+  let mapboxCompareUtils = useRef<MapboxViewerUtilsType>();
 
   let [context, setContext] = useState({});
   let currentContext = useRef<IContext>();
@@ -844,10 +873,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         break;
         case 'Mapbox':
           if (mapboxUtils.current === undefined) {
-             mapboxUtils.current = MapboxViewerUtils;
+             mapboxUtils.current = MapboxViewerUtils();
             mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, {context: currentContext.current?.cameraObject});
             mapboxUtils.current.setType(incomingPayload.current?.action.data);
-            multiverseViewer = mapboxUtils.current;
+            // multiverseViewer = mapboxUtils.current;
           }
           break;
     }
@@ -878,7 +907,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         break;
       case 'compareMap':
         if (mapboxCompareUtils.current == undefined) {
-          mapboxCompareUtils.current = MapboxViewerUtils;
+          mapboxCompareUtils.current = MapboxViewerUtils();
           mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, undefined, mapboxUtils.current?.getMap());
           mapboxCompareUtils.current.setType(currentViewerData.currentViewType);          
           }
