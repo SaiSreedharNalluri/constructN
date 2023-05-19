@@ -15,7 +15,8 @@ const VerifyEmail: React.FC = () => {
             toast.info("Redirecting ... ");
             setTimeout(() => {
               // router.push('/login');
-              router.push("/signin");
+              // router.push("/signin");
+              router.push("/account_success");
             }, 5000);
           }
         })

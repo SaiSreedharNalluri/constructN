@@ -11,7 +11,7 @@ const VerifyPage = () => {
 
   useEffect(() => {
     setQueryMail(router.query.email);
-  }, []);
+  }, [router.query.email]);
 
   return (
     <div>

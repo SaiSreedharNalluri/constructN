@@ -24,6 +24,7 @@ import Mail from "../../../public/divami_icons/Mail.svg";
 import lock from "../../../public/divami_icons/lock.svg";
 
 const VerifyUser = ({ queryMail }) => {
+  console.log("queryMail", queryMail);
   // const maskedEmail = queryMail.replace(/.(?=.*?@)/g, "*");
   const [maskedMail, setMaskedMail] = useState("");
   const router = useRouter();
@@ -67,8 +68,8 @@ const VerifyUser = ({ queryMail }) => {
             <MessageDivShow>Verify your account</MessageDivShow>
 
             <SentDivShow>
-              We've sent an email to {maskedMail} to verify your email address
-              and activate your account.
+              We've sent an email to {maskedMail} verify your email address and
+              activate your account.
             </SentDivShow>
 
             <LinkExpireDiv>
@@ -77,7 +78,9 @@ const VerifyUser = ({ queryMail }) => {
 
             <ChangeSignDiv
               onClick={() => {
-                router.push("/signup");
+                // router.push("/signup");
+                // router.push("/signup");
+                router.push("/verify-block/xyz123456");
               }}
             >
               Change Signed Up Email

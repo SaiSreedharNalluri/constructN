@@ -70,6 +70,7 @@ const SignInPage = () => {
   const [showPopUp, setshowPopUp] = useState(false);
   const [canBeDisabled, setCanBeDisabled] = useState(false);
   const [token, setToken] = useState("");
+  const [userEmail, setUserEmail] = useState<any>("");
 
   const handleFormData = (data: any) => {
     setFormData(data);
@@ -92,6 +93,8 @@ const SignInPage = () => {
       return; // Stop execution here
     }
 
+    setUserEmail(email);
+
     handlerLogin(email, password);
   };
 
@@ -99,7 +102,7 @@ const SignInPage = () => {
     login(email?.toLocaleLowerCase(), password)
       .then((response: any) => {
         if (response.success === true) {
-          if (response?.result?.verified === true) {
+          if (response?.result?.verified) {
             localStorage.setItem("userInfo", response.result?.fullName);
             toast.success("user logged in sucessfully");
             Mixpanel.identify(email);
@@ -110,7 +113,16 @@ const SignInPage = () => {
             router.push("/projects");
           } else {
             // setOpen(true);
-            setToken(response.result.token);
+            // router.push("/verify_page");
+
+            router.push(
+              {
+                pathname: "/verify_page",
+                query: { email: email }, // Pass the email as a query parameter
+              },
+              "/verify_page"
+            );
+            // setToken(response.result.token);
             return;
           }
         }
