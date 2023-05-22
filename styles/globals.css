@@ -450,7 +450,7 @@ body {
 }
 
 .formErrorField {
-  border: 1px solid #f67c74;
+  /* border: 1px solid #f67c74; */
   border-radius: 4px;
 }
 
