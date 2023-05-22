@@ -1,4 +1,4 @@
-import { createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, InputAdornment, ThemeProvider } from "@mui/material";
 
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -28,6 +28,14 @@ import { Paper } from "@material-ui/core";
 import CustomButton from "../custom-button/CustomButton";
 import { toast } from "react-toastify";
 import { MTableBodyRow, MTableEditRow } from "material-table";
+import {
+  CloseIcon,
+  CustomSearchField,
+  SearchAreaContainer,
+} from "../../../pages/projects/[projectId]/sections/SectionsStyles";
+import SidePanelMenu from "../side-panel/SidePanel";
+import SearchBoxIcon from "../../../public/divami_icons/search.svg";
+import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
 
 export const ProjectUsersList = () => {
   const [tableData, setTableData] = useState<any>([]);
@@ -106,33 +114,35 @@ export const ProjectUsersList = () => {
         return <>{moment(rowData.updatedAt).format("DD MMM YYYY")}</>;
       },
     },
-    // {
-    //   title: "",
-    //   field: "",
-    //   headerStyle: {
-    //     borderBottom: "1px solid #FF843F",
-    //     fontFamily: "Open Sans",
-    //     fontStyle: "normal",
-    //     fontWeight: "500",
-    //     fontSize: "14px",
-    //     lineHeight: "8px",
-    //     color: "#101F4C",
-    //   },
-    //   render: (rowData: any) => {
-    //     return (
-    //       <ImageButtons>
-    //         <RemoveIconImage src={ChatIcon} alt="" />
-    //         <Image
-    //           src={RemoveIcon}
-    //           alt=""
-    //           onClick={() => {
-    //             deleteUser(rowData);
-    //           }}
-    //         />
-    //       </ImageButtons>
-    //     );
-    //   },
-    // },
+    {
+      title: "",
+      field: "",
+      headerStyle: {
+        borderBottom: "1px solid #FF843F",
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "500",
+        fontSize: "14px",
+        lineHeight: "8px",
+        color: "#101F4C",
+      },
+      render: (rowData: any) => {
+        return hoveringOver ? (
+          <ImageButtons hoveringOver={hoveringOver}>
+            <RemoveIconImage src={ChatIcon} alt="" />
+            <Image
+              src={RemoveIcon}
+              alt=""
+              onClick={() => {
+                deleteUser(rowData);
+              }}
+            />
+          </ImageButtons>
+        ) : (
+          <></>
+        );
+      },
+    },
 
     // { title: "Phone Number", field: "phone", sorting: false },
     // {
@@ -215,14 +225,14 @@ export const ProjectUsersList = () => {
     }
   }, [router.isReady, router.query.projectId]);
   const [hoveringOver, setHoveringOver] = useState("");
-
+  console.log(hoveringOver, "hoveringover");
   // This is the only downside.. very hacky
   const [, setForceUpdate] = useState(0);
   const forceUpdate = () => setForceUpdate((old) => old + 1);
 
-  const handleRowHover = (event, propsData) =>
-    setHoveringOver(propsData.data.tableData.id);
-  const handleRowHoverLeave = (event, propsData) => setHoveringOver("");
+  // const handleRowHover = (event, propsData) =>
+  //   setHoveringOver(`${propsData.data.tableData.id}`);
+  // const handleRowHoverLeave = (event, propsData) => setHoveringOver("");
 
   const formHandler = (event: any) => {};
   const handleEditClick = (event, rowData) => {
@@ -247,12 +257,74 @@ export const ProjectUsersList = () => {
     ];
   };
 
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchTableData, setSearchTableData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const handleSearchWindow = () => {
+    setSearchTableData(tableData);
+    if (searchTerm === "") {
+      setIsSearching(!isSearching);
+    } else {
+      setSearchTerm("");
+    }
+  };
+
+  useEffect(() => {
+    setSearchTableData(tableData);
+  }, [tableData]);
+
   return (
     <ProjectUsersListContainer>
       <TableHeader>
         <Header>Manage Users</Header>
         <HeaderActions>
-          <HeaderImage src={searchIcon} alt="" width={24} height={24} />
+          {isSearching ? (
+            <SearchAreaContainer marginRight>
+              <CustomSearchField
+                placeholder="Search"
+                variant="outlined"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setSearchTableData(
+                    tableData.filter((each: any) =>
+                      each.fullName.includes(e.target?.value)
+                    )
+                  );
+                }}
+                InputLabelProps={{ shrink: false }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Image src={SearchBoxIcon} alt="" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <CloseIcon
+                        onClick={() => {
+                          handleSearchWindow();
+                        }}
+                        src={CrossIcon}
+                        alt={"close icon"}
+                        data-testid="search-close"
+                      />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </SearchAreaContainer>
+          ) : (
+            <HeaderImage
+              src={searchIcon}
+              alt=""
+              width={24}
+              height={24}
+              onClick={() => {
+                setIsSearching(true);
+              }}
+            />
+          )}
           <HeaderImage src={UserFilterIcon} alt="" width={24} height={24} />
           <CustomButton
             type={"contained"}
@@ -261,6 +333,7 @@ export const ProjectUsersList = () => {
           />
         </HeaderActions>
       </TableHeader>
+
       <ThemeProvider theme={defaultMaterialTheme}>
         <StyledTable
           // components={{
@@ -270,45 +343,52 @@ export const ProjectUsersList = () => {
           // }}
           components={{
             Container: (props) => <Paper {...props} elevation={0} />,
-            Row: (props) => {
-              return (
-                <MTableBodyRow
-                  {...props}
-                  onMouseEnter={(e: any) => handleRowHover(e, props)}
-                  onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
-                />
-              );
-            },
-            EditRow: (props) => {
-              return (
-                <MTableEditRow
-                  {...props}
-                  onEditingApproved={(mode, newData, oldData) => {
-                    if (oldData.tableData.editing === "delete") {
-                      // deleteUser(
-                      //   tableData.find(
-                      //     (each) => each.tableData.id == oldData.tableData.id
-                      //   )
-                      // );
-                      // const dataCopy = [...data];
-                      // dataCopy.splice(oldData.tableData.id, 1);
-                      // setData(dataCopy);
-                    }
-                  }}
-                />
-              );
-            },
+            // Row: (props) => {
+            //   return (
+            //     <MTableBodyRow
+            //       {...props}
+            //       onMouseEnter={(e: any) => handleRowHover(e, props)}
+            //       onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
+            //     />
+            //   );
+            // },
+
+            // EditRow: (props) => {
+            //   return (
+            //     <MTableEditRow
+            //       {...props}
+            //       // onEditingApproved={(mode, newData, oldData) => {
+            //       //   if (oldData.tableData.editing === "delete") {
+            //       //     // deleteUser(
+            //       //     //   tableData.find(
+            //       //     //     (each) => each.tableData.id == oldData.tableData.id
+            //       //     //   )
+            //       //     // );
+            //       //     // const dataCopy = [...data];
+            //       //     // dataCopy.splice(oldData.tableData.id, 1);
+            //       //     // setData(dataCopy);
+            //       //   }
+            //       // }}
+            //     />
+            //   );
+            // },
           }}
           columns={columns}
-          data={tableData ? tableData : []}
-          actions={[
-            (rowData: any) => {
-              return hoveringOver !== "" &&
-                rowData.tableData.id === hoveringOver
-                ? { icon: RemoveIcon, hidden: false, onClick: handleEditClick }
-                : { hidden: true };
-            },
-          ]}
+          data={searchTableData ? searchTableData : []}
+          // actions={[
+          //   {
+          //     icon: RemoveIcon,
+          //     tooltip: "Delete User",
+          //     onClick: (event, rowData) => alert("You want to delete "),
+          //   },
+          // ]}
+          // actions={[
+          //   (rowData: any) => {
+          //     return hoveringOver && rowData.tableData.id === hoveringOver
+          //       ? { icon: RemoveIcon, hidden: false, onClick: handleEditClick }
+          //       : { icon: RemoveIcon, hidden: true, onClick: handleEditClick };
+          //   },
+          // ]}
           title={
             ""
             // <TableHeader>

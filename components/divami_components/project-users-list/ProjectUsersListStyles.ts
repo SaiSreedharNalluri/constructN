@@ -2,13 +2,18 @@ import { styled } from "@mui/system";
 import MaterialTable, { MTableToolbar } from "material-table";
 import Image from "next/image";
 
-export const ImageButtons = styled("div")({
-  display: "flex",
+export const ImageButtons = styled("div")((props: any) => ({
+  display: props.hoveringOver ? "flex" : "none",
+  // display: "flex",
+
   justifyContent: "center",
-});
+  "& :hover": {
+    display: "flex",
+  },
+})) as any;
 
 export const RemoveIconImage = styled(Image)({
-  marginRight: "25px",
+  marginRight: "22px",
 });
 
 export const UserNameText = styled("div")({
@@ -45,6 +50,7 @@ export const UserName = styled("div")({
 
 export const ProjectUsersListContainer = styled("div")({
   padding: "20px",
+  width: "100%",
 });
 
 export const TableHeader = styled("div")({

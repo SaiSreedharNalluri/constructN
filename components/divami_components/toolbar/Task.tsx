@@ -137,7 +137,9 @@ const Task = ({
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
+
     data.startDate = moment(data.startDate).format("YYYY-MM-DD");
+    // data.startDate = `${moment(data.startDate).toISOString()}`;
     data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
@@ -227,7 +229,7 @@ const Task = ({
   const taskSubmitFn = (formdata: any) => {
     // tasksList.push(formdata);
     taskMenuInstance.toolAction = "taskCreateSuccess";
-    taskMenuInstance.response = { ...formdata.context, id: formdata._id };;
+    taskMenuInstance.response = { ...formdata.context, id: formdata._id };
     // setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);
     closeTaskCreate();
