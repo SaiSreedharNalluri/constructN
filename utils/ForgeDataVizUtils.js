@@ -146,6 +146,8 @@ export class ForgeDataVizUtils {
                             images = Object.keys(reality['position'])
 
                             break
+                        
+                        case 'Drone Image':
 
                         case 'Phone Image':
 
@@ -154,48 +156,59 @@ export class ForgeDataVizUtils {
                             break
                     }
 
-                    for (let i = 0; i < images.length; i++) {
+                    if(images) {
 
-                        if (this._existingImages.indexOf(images[i]) == -1) {
+                        for (let i = 0; i < images.length; i++) {
 
-                            let mPosition = [];
+                            if (this._existingImages.indexOf(images[i]) == -1) {
+    
+                                let mPosition = [];
+    
+                                let mRotation = reality['position'][images[i]] ? reality['position'][images[i]].rotation : 0
+    
+                                switch (type) {
+    
+                                    case '360 Image':
 
-                            let mRotation = reality['position'][images[i]] ? reality['position'][images[i]].rotation : 0
+                                    case '360 Video':
 
-                            switch (type) {
+                                        mPosition = reality['position'][images[i]].position
 
-                                case '360 Image':
+                                        break
 
-                                case '360 Video':
+                                    case 'Drone Image':
+                                        mPosition[0] = reality.position['camX'][i]
+    
+                                        mPosition[1] = reality.position['camY'][i]
+    
+                                        mPosition[2] = 0
 
-                                    mPosition = reality['position'][images[i]].position
-
-                                    break
-
-                                case 'Phone Image':
-
-                                    mPosition[0] = reality.position['camX'][i]
-
-                                    mPosition[1] = reality.position['camY'][i]
-
-                                    mPosition[2] = reality.position['camZ'][i]
-
-                                    break
+                                    case 'Phone Image':
+    
+                                        mPosition[0] = reality.position['camX'][i]
+    
+                                        mPosition[1] = reality.position['camY'][i]
+    
+                                        mPosition[2] = reality.position['camZ'][i]
+    
+                                        break
+                                }
+    
+                                data.push({
+    
+                                    id: reality.id,
+    
+                                    imageName: images[i],
+    
+                                    position: this._toLocalPosition({ x: mPosition[0], y: mPosition[1], z: mPosition[2] }),
+    
+                                    rotation: mRotation,
+    
+                                    type: type
+                                })
                             }
-
-                            data.push({
-
-                                id: reality.id,
-
-                                imageName: images[i],
-
-                                position: this._toLocalPosition({ x: mPosition[0], y: mPosition[1], z: mPosition[2] }),
-
-                                rotation: mRotation,
-
-                                type: type
-                            })
                         }
+                        
                     }
                 }
             })
@@ -418,9 +431,9 @@ export class ForgeDataVizUtils {
 
             case 'Drone Image': return {
 
-                icon: 'https://img.icons8.com/material-outlined/24/null/new-moon.png',
+                icon: '/icons/360VideoWalkInViewer.svg',
 
-                size: 24,
+                size: 12,
 
                 offset: 1000
             }

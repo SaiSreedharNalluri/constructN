@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import { ISnapshot } from '../../models/ISnapshot';
+import moment from 'moment';
 
 interface IProps {
   hotspotDetails: any|undefined,
@@ -42,8 +43,8 @@ const HotspotsCompare: React.FC<IProps> = ({ hotspotDetails, hotspotCompareDetai
         <thead>
           <tr>
             <th>Dates</th>
-            <th>{snapshot._id}</th>
-            <th>{compareSnapshot._id}</th>
+            <th>{moment(snapshot.date).format('MMM DD, YYYY')}</th>
+            <th>{moment(compareSnapshot.date).format('MMM DD, YYYY')}</th>
           </tr>
         </thead>
         <tbody>
