@@ -33,11 +33,25 @@ export default function App({ Component, pageProps }: AppProps) {
   ];
   useEffect(() => {
     const userObj: any = getCookie("user");
+    console.log("coming here", userObj);
+
     if (userObj === undefined && !openRoutes.includes(router.asPath)) {
       // router.push("/login");
       router.push("/signin");
+    } else {
+      // router.push("/projects");
     }
   }, []);
+
+  // useEffect(() => {
+  //   const userObj: any = getCookie("userProfile");
+  //   if (userObj === undefined && !openRoutes.includes(router.asPath)) {
+  //     // router.push("/login");
+  //     router.push("/signin");
+  //   } else {
+  //     router.push("/projects");
+  //   }
+  // }, []);
 
   return (
     <>

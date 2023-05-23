@@ -215,6 +215,7 @@ export const ForgotDiv = styled("div")({
   fontSize: "14px",
   color: "#36415D",
   marginLeft: "3px",
+  cursor:"pointer"
 });
 
 export const CustomSignInButton = styled(Button)({

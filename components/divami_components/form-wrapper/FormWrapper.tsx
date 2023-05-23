@@ -58,7 +58,16 @@ const FormWrapper = (props: any) => {
     if (validate) {
       setFormConfig((prev: any) => {
         const newconfig = prev.map((item: any) => {
-          if (item.isReq && !item.defaultValue) {
+          if (item.isReq && !item.defaultValue && item.singleMsg) {
+            setCanBeDisabled(false);
+            return {
+              ...item,
+              isError: true,
+              errorMsg: "Required *",
+              showErrorMsg: item.showErrorMsg === false ? true : false,
+            };
+          }
+          if (item.isReq && !item.defaultValue && item.singleMsg === false) {
             setCanBeDisabled(false);
             return {
               ...item,

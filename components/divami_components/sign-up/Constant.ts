@@ -12,6 +12,7 @@ export const SIGN_UP_FORM_CONFIG = [
     imageIcon: "nameIcon",
     errorMsg: "",
     showErrorMsg: false,
+    singleMsg:"true"
   },
   {
     id: "lastName",
@@ -26,6 +27,8 @@ export const SIGN_UP_FORM_CONFIG = [
     imageIcon: "nameIcon",
     errorMsg: "",
     showErrorMsg: false,
+    singleMsg:"true"
+
   },
   {
     id: "email",
@@ -40,6 +43,8 @@ export const SIGN_UP_FORM_CONFIG = [
     imageIcon: "emailIcon",
     errorMsg: "",
     showErrorMsg: false,
+    singleMsg:"true"
+
   },
   {
     id: "password",
@@ -54,7 +59,9 @@ export const SIGN_UP_FORM_CONFIG = [
     errorMsg: "",
     showErrorMsg: false,
     isValidField: false,
-    checkPasswordStrength:true
+    checkPasswordStrength: true,
+    singleMsg:"true"
+    
   },
 
   {
@@ -70,5 +77,7 @@ export const SIGN_UP_FORM_CONFIG = [
     errorMsg: "",
     showErrorMsg: false,
     isValidField: false,
+    singleMsg:"true"
+
   },
 ];

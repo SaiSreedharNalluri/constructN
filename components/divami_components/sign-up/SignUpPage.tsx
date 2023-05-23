@@ -159,11 +159,11 @@ const SignUpPage = () => {
       <FormDiv>
         <FormContainerSign>
           <SignInHeader>Signup</SignInHeader>
-          {/* {showError ? (
+          {showError ? (
             <ErrorSectonDiv>All fields are required*</ErrorSectonDiv>
           ) : (
             ""
-          )} */}
+          )}
 
           <FormBody
             handleFormData={handleFormData}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FormContainerSign,
   FormDiv,
@@ -43,11 +43,13 @@ import { CollectionsOutlined } from "@mui/icons-material";
 import { login } from "../../../services/userAuth";
 import { Mixpanel } from "../../analytics/Mixpanel";
 import { toast } from "react-toastify";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
 
 const SignInPage = () => {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -62,6 +64,22 @@ const SignInPage = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
+
+  // useEffect(() => {
+  //   const userObj: any = getCookie("user");
+  //   console.log("userObj", userObj, router);
+  //   let user = null;
+  //   if (router.isReady) {
+  //     if (userObj) user = JSON.parse(userObj);
+  //     if (user && user.token) {
+  //       if (router.query.sessionExpired === undefined) {
+  //         // router.push("/projects");
+  //       } else {
+  //         deleteCookie("user");
+  //       }
+  //     }
+  //   }
+  // }, [router, router.isReady]);
 
   // form wrapper code
   const [formData, setFormData] = useState<any>(null);
@@ -95,21 +113,31 @@ const SignInPage = () => {
 
     setUserEmail(email);
 
-    handlerLogin(email, password);
+    handlerLogin(email, password, rememberMe);
   };
 
-  const handlerLogin = (email: string, password: string) => {
+  const handlerLogin = (
+    email: string,
+    password: string,
+    rememberMe: boolean
+  ) => {
     login(email?.toLocaleLowerCase(), password)
       .then((response: any) => {
         if (response.success === true) {
+          console.log("response", response);
           if (response?.result?.verified) {
             localStorage.setItem("userInfo", response.result?.fullName);
+            if (rememberMe) {
+              // setCookie("userProfile", response.result);
+              // setCookie("user", response.result);
+              setCookie("user", JSON.stringify(response?.result));
+            }
             toast.success("user logged in sucessfully");
-            Mixpanel.identify(email);
-            Mixpanel.track("login_success", {
-              email: email,
-            });
-            Mixpanel.track("login_page_close");
+            // Mixpanel.identify(email);
+            // Mixpanel.track("login_success", {
+            //   email: email,
+            // });
+            // Mixpanel.track("login_page_close");
             router.push("/projects");
           } else {
             // setOpen(true);
@@ -194,7 +222,9 @@ const SignInPage = () => {
                   checkedIcon={
                     <Image width={24} height={24} src={Checked} alt="Search" />
                   }
-                  onChange={handleChange}
+                  checked={rememberMe}
+                  // onChange={handleChange}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   inputProps={{ "aria-label": "controlled" }}
                 />
               </CheckTickDiv>
@@ -202,7 +232,13 @@ const SignInPage = () => {
               <RememberDiv>Remember me</RememberDiv>
             </ParentTickDiv>
 
-            <ForgotDiv>Forgot password?</ForgotDiv>
+            <ForgotDiv
+              onClick={() => {
+                router.push("/forgot_password");
+              }}
+            >
+              Forgot password?
+            </ForgotDiv>
           </ExtraTickDiv>
           <ButtonSection>
             {/* <SignInContainedButton variant="outlined">
