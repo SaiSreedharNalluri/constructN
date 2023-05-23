@@ -493,7 +493,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           if(viewerData.current!==undefined){
             loadViewerData(viewerData.current);
            loadLayerData(viewerData.current);
+           
            }
+           
           }
         
           console.log("Generic Viewer load: Structure Changed", currentViewerData);
@@ -699,7 +701,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       potreeUtils.current.updateFloormapAnimation();
     }
 
-    if(currentViewerData.currentCompareMode==='compareReality'){
+    if(viewerData.current&&viewerData.current.currentCompareMode==='compareReality'){
     //if (currentIsCompare.current === true && potreeCompareUtils.current) {
       potreeCompareUtils.current?.updateFloormapAnimation();
     }
@@ -981,7 +983,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
   async function loadLayerData(myViewerData:IGenData) {
     //console.log('Load layer data: ', issuesList, tasksList);
-    switch (getViewerTypefromViewType(currentViewerData.currentViewType)) {
+    switch (getViewerTypefromViewType(myViewerData.currentViewType)) {
       case 'Forge':
         if (forgeUtils.current != undefined) {
           forgeUtils.current.setSnapshot(myViewerData.currentSnapshotBase);
@@ -1004,6 +1006,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
             getFloorPlanData(getDesignMap(myViewerData.structure.designs))
           );
           //console.log("ContextVariable",currentContext.current);
+          //getContext(myViewerData);
           potreeUtils.current.updateLayersData(
             await getRealityLayersPath(myViewerData.structure, getRealityMap(myViewerData.currentSnapshotBase)),
             currentContext.current//currentViewerData.viewerContext// was here
