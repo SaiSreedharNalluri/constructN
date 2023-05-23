@@ -36,12 +36,19 @@ import {
 import SidePanelMenu from "../side-panel/SidePanel";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
+import UsersFilter from "../usersList/UsersFilter";
+import CustomDrawer from "../custom-drawer/custom-drawer";
 
 export const ProjectUsersList = () => {
   const [tableData, setTableData] = useState<any>([]);
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
-
+  const [roles, setRoles] = useState<string[] | []>([]);
+  const [taskFilterState, setTaskFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {},
+    numberOfFilters: 0,
+  });
   const columns = [
     {
       title: "User Name",
@@ -190,27 +197,13 @@ export const ProjectUsersList = () => {
         }
       });
   };
-  const MyNewTitle = (props: any) => {
-    return (
-      <div
-        style={{
-          fontFamily: "Open Sans",
-          fontStyle: "normal",
-          fontWeight: "400",
-          fontSize: "18px",
-          color: "#101F4C",
-        }}
-      >
-        {props.sections}
-      </div>
-    );
-  };
 
   useEffect(() => {
     if (router.isReady && router.query.projectId) {
       getProjectUsers(router.query.projectId as string).then(
         (response: any) => {
           if (response.success === true) {
+            let rolesArr: string[] = [];
             setTableData(
               response.result.map((each: any) => {
                 return {
@@ -219,13 +212,16 @@ export const ProjectUsersList = () => {
                 };
               })
             );
+            response?.result.forEach((item: any) => {
+              if (!rolesArr.includes(item.role)) rolesArr.push(item?.role);
+            });
+            setRoles(rolesArr);
           }
         }
       );
     }
   }, [router.isReady, router.query.projectId]);
   const [hoveringOver, setHoveringOver] = useState("");
-  console.log(hoveringOver, "hoveringover");
   // This is the only downside.. very hacky
   const [, setForceUpdate] = useState(0);
   const forceUpdate = () => setForceUpdate((old) => old + 1);
@@ -258,6 +254,8 @@ export const ProjectUsersList = () => {
   };
 
   const [isSearching, setIsSearching] = useState(false);
+  const [openFilter, setOpenFilter] = useState(false);
+
   const [searchTableData, setSearchTableData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const handleSearchWindow = () => {
@@ -325,7 +323,15 @@ export const ProjectUsersList = () => {
               }}
             />
           )}
-          <HeaderImage src={UserFilterIcon} alt="" width={24} height={24} />
+          <HeaderImage
+            src={UserFilterIcon}
+            alt=""
+            width={24}
+            height={24}
+            onClick={() => {
+              setOpenFilter(true);
+            }}
+          />
           <CustomButton
             type={"contained"}
             label={"Add User"}
@@ -389,16 +395,7 @@ export const ProjectUsersList = () => {
           //       : { icon: RemoveIcon, hidden: true, onClick: handleEditClick };
           //   },
           // ]}
-          title={
-            ""
-            // <TableHeader>
-            //   <Header>Manage Users</Header>
-            //   <HeaderActions>
-            //     <HeaderImage src={searchIcon} alt="" />
-            //     <HeaderImage src={filterIcon} alt="" />
-            //   </HeaderActions>
-            // </TableHeader>
-          }
+          title={""}
           options={{
             search: false,
             paging: false,
@@ -421,6 +418,20 @@ export const ProjectUsersList = () => {
           }}
         />
       </ThemeProvider>
+      {openFilter && (
+        <CustomDrawer open>
+          <UsersFilter
+            setTaskFilterState={setTaskFilterState}
+            taskFilterState={taskFilterState}
+            tableData={tableData}
+            setSearchTableData={setSearchTableData}
+            roles={roles}
+            onClose={() => {
+              setOpenFilter(false);
+            }}
+          />
+        </CustomDrawer>
+      )}
     </ProjectUsersListContainer>
   );
 };

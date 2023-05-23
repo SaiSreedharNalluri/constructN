@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from "react";
-import ResetIcon from "../../../public/divami_icons/reset.svg";
 import Checked from "../../../public/divami_icons/checked.svg";
 import Indeterminate from "../../../public/divami_icons/indeterminate.svg";
 import UnChecked from "../../../public/divami_icons/unchecked.svg";
-import { InputAdornment, TextField } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/system";
-import Autocomplete from "@mui/material/Autocomplete";
-import closeIcon from "../../../public/divami_icons/closeIcon.svg";
-import NotificationNewIcon from "../../../public/divami_icons/NotificationNewIcon.svg";
 import newRefreshIcon from "../../../public/divami_icons/newRefreshIcon.svg";
 import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 import Image from "next/image";
@@ -19,10 +13,8 @@ import {
   HeaderRightSection,
   HeaderRightSectionResetIcon,
   HeaderRightSectionResetText,
-  HeaderRightSectionCancel,
   FilterCardContainer,
   FilterCardTitle,
-  FilterCardTitleText,
   FilterCardSelectAll,
   FilterCardSelectAllSpan,
   FilterCardSelectAllText,
@@ -32,11 +24,8 @@ import {
   FilterCommonMain,
   FilterCommonHeader,
   FilterCommonBody,
-  FilterCommonFooter,
   TitleContainer,
   FormElementContainer,
-  StyledLabel,
-  DrawerSearchBar,
   DatePickersContainer,
   DatePickerContainer,
   ButtonsContainer,
@@ -44,26 +33,11 @@ import {
   FilterFooter,
   FilterCardSelectAllTextHeader,
 } from "../../divami_components/task-filter-common/StyledComponent";
-import { Issue } from "../../../models/Issue";
-import { ITasks } from "../../../models/Itask";
-import {
-  getTasksList,
-  getTasksPriority,
-  getTaskStatus,
-  getTasksTypes,
-} from "../../../services/task";
-import { CustomSearchField } from "../select-types/StyledComponents";
-import CustomSearch from "../custom-search/CustomSearch";
-import { mockData } from "../project-hierarchy/mockData";
-import { SearchContainer } from "../project-hierarchy/StyledComponents";
 import CustomLabel from "../custom-label/CustomLabel";
-import FormWrapper from "../form-wrapper/FormWrapper";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
 import CustomButton from "../custom-button/CustomButton";
-import router from "next/router";
 import TaskFilterFormWrapper from "../task-filter-common/TaskFilterWrapper";
-import { IProjectUsers } from "../../../models/IProjects";
-import { getProjectUsers } from "../../../services/project";
+import moment from "moment";
 
 const CloseIcon = styled(Image)({
   cursor: "pointer",
@@ -78,27 +52,25 @@ const RefreshIcon = styled(Image)({
 });
 const UsersFilter: React.FC<any> = ({
   onClose,
-  closeTaskFilterOverlay,
-  handleOnFilter,
+  tableData,
+  setTaskFilterState,
+  setSearchTableData,
+  roles,
   taskFilterState,
 }) => {
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
   const [dueDate, setDueData] = useState(DATE_PICKER_DATA);
-  const [taskTypes, setTaskType] = useState<[string]>();
-  const [taskPrioritys, setTaskPriority] = useState<[string]>();
-  const [projectUserss, setProjectUsers] = useState<IProjectUsers[]>([]);
-  const [taskStatuss, setTaskStatus] = useState<[string]>();
 
   const Filters = [
     {
       title: "Select a role",
-      code: "taskType",
+      code: "roleType",
       selectAllStatus: "T",
-      options: [
-        { optionTitle: "System Admin", optionStatus: "T" },
-        { optionTitle: "VDC Manager", optionStatus: "T" },
-        { optionTitle: "Field Level Engineer", optionStatus: "F" },
-      ],
+      // options: [
+      //   { optionTitle: "System Admin", optionStatus: "F" },
+      //   { optionTitle: "VDC Manager", optionStatus: "F" },
+      //   { optionTitle: "Field Level Engineer", optionStatus: "F" },
+      // ],
     },
   ];
 
@@ -106,93 +78,71 @@ const UsersFilter: React.FC<any> = ({
     onClose(true);
   };
 
-  useEffect(() => {
-    if (router.isReady) {
-      getTasksTypes(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskType(response.result);
-        }
-      });
-      getTasksPriority(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskPriority(response.result);
-        }
-      });
-      getProjectUsers(router.query.projectId as string)
-        .then((response) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
-      getTaskStatus(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskStatus(response.result);
-        }
-      });
-    }
-  }, []);
-  useEffect(() => {
-    SetFilterState((prev: any) => {
-      console.log("prev", prev);
-      return prev.map((item: any) => {
-        if (item.code === "taskType") {
-          let selectAllStatus = "F";
-          if (taskFilterState.isFilterApplied) {
-            if (
-              item?.options?.length ===
-              taskFilterState.filterData.taskType.length
-            ) {
-              selectAllStatus = "T";
-            } else if (taskFilterState.filterData?.taskType?.length) {
-              selectAllStatus = "I";
-            }
-          }
-          return {
-            ...item,
-            selectAllStatus: selectAllStatus,
-            options: taskTypes?.map((eachItem: any) => {
-              if (taskFilterState.isFilterApplied) {
-                if (
-                  item?.options?.length === taskFilterState.filterData.taskType
-                ) {
-                  selectAllStatus: "T";
-                }
-                if (taskFilterState.filterData.taskType.includes(eachItem)) {
-                  return {
-                    ...eachItem,
-                    optionTitle: eachItem,
-                    optionStatus: "T",
-                  };
-                }
-              }
-              return {
-                ...eachItem,
-                optionTitle: eachItem,
-                optionStatus: "F",
-              };
-            }),
-          };
-        }
-
-        return item;
-      });
-    });
-  }, [taskTypes, taskStatuss, projectUserss, taskPrioritys]);
-  if (projectUserss?.length > 0) {
-    projectUserss?.map((projectUser: any) => {
-      // usersList.push({
-      //   _id: projectUser?.user?._id,
-      //   name: projectUser?.user?.fullName,
-      // });
-    });
-  }
-
   const [FilterState, SetFilterState] = useState<any>(Filters);
-  const [optionState, setOptionState] = useState<any>("clash");
-  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [treeViewData, setTreeViewData] = useState<any>(mockData);
+
+  useEffect(() => {
+    SetFilterState([
+      {
+        title: "Select a role",
+        code: "roleType",
+        selectAllStatus: "T",
+        options: roles.map((each: any) => {
+          return {
+            optionTitle: each,
+            optionStatus: taskFilterState?.filterData?.roleType?.includes(each)
+              ? "T"
+              : "F",
+          };
+        }),
+      },
+    ]);
+    setStartData((prev: any) => {
+      return prev.map((each: any) => {
+        return {
+          ...each,
+          defaultValue: taskFilterState?.filterData?.fromDate
+            ? taskFilterState?.filterData?.fromDate
+            : "",
+        };
+      });
+    });
+    setDueData((prev: any) => {
+      return prev.map((each: any) => {
+        return {
+          ...each,
+          defaultValue: taskFilterState?.filterData?.toDate
+            ? taskFilterState?.filterData?.toDate
+            : "",
+        };
+      });
+    });
+  }, [roles]);
+
+  const handleOnTaskFilter = (formData: any) => {
+    const result = tableData.filter(
+      (item: any) =>
+        formData.roleType?.includes(item.role) ||
+        (formData.roleType?.length == 0 &&
+          (item.updatedAt >= formData.fromDate || !formData.fromDate) &&
+          (item.updatedAt <= formData.toDate || !formData.toDate))
+    );
+    let count = formData?.roleType?.length;
+
+    if (formData?.toDate) {
+      count = count + 1;
+    }
+    if (formData?.fromDate) {
+      count = count + 1;
+    }
+
+    setSearchTableData(result);
+
+    setTaskFilterState({
+      isFilterApplied: true,
+      filterData: formData,
+      numberOfFilters: count,
+    });
+  };
 
   // Select All Handling
   const handleAllSelection = (item: any, index: number) => {
@@ -229,7 +179,6 @@ const UsersFilter: React.FC<any> = ({
       };
     });
     SetFilterState(temp);
-    console.log(temp);
   };
 
   const handleOptionSelection = (item: any, index: any) => {
@@ -259,9 +208,7 @@ const UsersFilter: React.FC<any> = ({
           };
         }
       });
-      setOptionState(item.optionTitle);
       SetFilterState(temp);
-      console.log(temp);
     } else {
       let temp = FilterState?.map((each: any, serial: number) => {
         if (serial === index) {
@@ -287,78 +234,28 @@ const UsersFilter: React.FC<any> = ({
           };
         }
       });
-      setOptionState(item.optionTitle);
       SetFilterState(temp);
-      console.log(temp);
     }
   };
 
   const onFilterApply = () => {
-    console.log(FilterState);
-    let data: any = {};
-    data.taskType = [];
-    data.taskPriority = [];
-    data.taskStatus = [];
+    let data: any = {
+      roleType: [],
+    };
     FilterState.forEach((item: any) => {
-      if (item.code == "taskType") {
+      if (item.code == "roleType") {
         const x = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
         x.forEach((element: any) => {
-          data.taskType.push(element.optionTitle);
+          data?.roleType?.push(element.optionTitle);
         });
       }
     });
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
-    console.log(data);
-    handleOnFilter(data);
+    handleOnTaskFilter(data);
   };
-  useEffect(() => {
-    let flag = false;
-    for (const [i, outerObject] of FilterState.entries()) {
-      for (const innerObject of outerObject.options) {
-        if (innerObject.optionTitle === optionState) {
-          setSelectedCategoryIndex(i);
-          setOptionState(outerObject);
-          flag = true;
-          break;
-        }
-      }
-      if (flag) {
-        break;
-      }
-    }
-    let count;
-    let temp = FilterState.map((each: any, index: any) => {
-      if (selectedCategoryIndex === index || selectedCategoryIndex === null) {
-        count = each?.options?.filter((obj: any) => obj?.optionStatus === "T");
-        if (count?.length !== 0 && count?.length !== each?.options?.length) {
-          return {
-            ...each,
-            selectAllStatus: "I",
-          };
-        } else {
-          if (count.length === 0) {
-            return {
-              ...each,
-              selectAllStatus: "F",
-            };
-          } else if (count.length === each.options?.length) {
-            return {
-              ...each,
-              selectAllStatus: "T",
-            };
-          }
-        }
-      } else {
-        return {
-          ...each,
-        };
-      }
-    });
-    SetFilterState(temp);
-  }, [optionState]);
 
   const onReset = () => {
     let temp = FilterState?.map((each: any, serial: number) => {
@@ -371,10 +268,9 @@ const UsersFilter: React.FC<any> = ({
     });
     setStartData(DATE_PICKER_DATA);
     setDueData(DATE_PICKER_DATA);
-    setAssignees([assignees]);
     SetFilterState(temp);
-    closeTaskFilterOverlay();
-    handleClose();
+    // closeTaskFilterOverlay();
+    // handleClose();
   };
 
   const formHandler = (event: any) => {
@@ -430,7 +326,7 @@ const UsersFilter: React.FC<any> = ({
       </FilterCommonHeader>
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
-          return each.code === "taskType" ? (
+          return each.code === "roleType" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>
                 {/* <FilterCardTitleText>{each?.title}</FilterCardTitleText> */}
@@ -570,7 +466,7 @@ const UsersFilter: React.FC<any> = ({
           <DatePickersContainer>
             <DatePickerContainer>
               <div>
-                <CustomLabel label={"Start date"} />
+                <CustomLabel label={"From"} />
                 <TaskFilterFormWrapper
                   config={startDate}
                   setFormConfig={setStartData}
@@ -578,7 +474,7 @@ const UsersFilter: React.FC<any> = ({
               </div>
             </DatePickerContainer>
             <div>
-              <CustomLabel label={"Due date"} />
+              <CustomLabel label={"To"} />
               <TaskFilterFormWrapper
                 config={dueDate}
                 setFormConfig={setDueData}
