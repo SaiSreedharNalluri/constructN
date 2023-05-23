@@ -18,8 +18,10 @@ const StructPage: React.FC = () => {
     let temp_list:IDesign[] ;
     //sampleGenData.structure.designs&& (temp_list= sampleGenData.structure.designs);
     let incomingPayload = useRef<IGenPayload>()
+    let myProject = useRef<string>();
     useEffect(() => {
       if (router.isReady && router.query?.projectId) {
+        myProject.current=router.query.projectId as string;
         getGenViewerData(router.query.projectId as string,router.query.structureId as string)
           .then((response) => {
             if (response.success === true) {
@@ -47,6 +49,23 @@ const StructPage: React.FC = () => {
         'My custom event triggered on APP :',
         incomingPayload?.current
         );
+        switch(incomingPayload.current?.action?.type){
+          case 'setStructure':
+            console.log('App Set structure', myProject.current);
+            getGenViewerData(myProject.current as string,incomingPayload.current.action.data as string)
+          .then((response) => {
+            if (response.success === true) {
+              console.log('IGendata API Response',response.result);
+              setInintData(response.result);
+            }
+          })
+          .catch((error) => {
+            toast.error("failed to load data");
+          });
+
+            break;
+
+        }
     }
   //   const fetchTM = //useMemo(
   //     async ()=>{
