@@ -17,6 +17,7 @@ import UnChecked from "../../../public/divami_icons/unchecked.svg";
 import Mail from "../../../public/divami_icons/Mail.svg";
 import lock from "../../../public/divami_icons/lock.svg";
 import Image from "next/image";
+import PasswordRequired from "../password-field/PasswordRequired";
 
 interface ContainerProps {
   loginField: boolean;
@@ -45,6 +46,8 @@ const FormWrapper = (props: any) => {
     setIsValidate,
     setCanBeDisabled,
     loginField,
+    signUpMsg,
+    signInMsg,
   } = props;
 
   console.log("formState", formState);
@@ -58,16 +61,7 @@ const FormWrapper = (props: any) => {
     if (validate) {
       setFormConfig((prev: any) => {
         const newconfig = prev.map((item: any) => {
-          if (item.isReq && !item.defaultValue && item.singleMsg) {
-            setCanBeDisabled(false);
-            return {
-              ...item,
-              isError: true,
-              errorMsg: "Required *",
-              showErrorMsg: item.showErrorMsg === false ? true : false,
-            };
-          }
-          if (item.isReq && !item.defaultValue && item.singleMsg === false) {
+          if (item.isReq && !item.defaultValue && signUpMsg === true) {
             setCanBeDisabled(false);
             return {
               ...item,
@@ -99,7 +93,7 @@ const FormWrapper = (props: any) => {
             return {
               ...item,
               isError: true,
-              errorMsg: "Weak Password",
+              errorMsg: <PasswordRequired />,
               showErrorMsg: true,
             };
           } else if (

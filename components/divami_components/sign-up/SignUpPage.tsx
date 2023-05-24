@@ -47,6 +47,7 @@ const SignUpPage = () => {
   const [canBeDisabled, setCanBeDisabled] = useState(false);
   const [token, setToken] = useState("");
   const [showError, setShowError] = useState<boolean>(false);
+  const [signUpMsg, setSignUpMsg] = useState<boolean>(false);
   const handleFormData = (data: any) => {
     setFormData(data);
   };
@@ -102,18 +103,20 @@ const SignUpPage = () => {
       console.log("Form has empty values. Aborting registration.");
       return; // Stop execution here
     }
+
     if (hasError) {
       return; // Stop execution here
     }
     delete formValues.confirm_password;
     setFormInfo(formValues);
-
+    setSignUpMsg(true);
     handleRegister(formValues);
   };
   const handleRegister = (formValue: any) => {
     // formValue.email = formValue.email.toLocaleLowerCase();
 
     console.log("hiii");
+
     // return;
     // setLoading(true);
     registerUser(formValue)
@@ -172,6 +175,7 @@ const SignUpPage = () => {
             tagsList={tagList}
             setCanBeDisabled={setCanBeDisabled}
             loginField={true}
+            signUpMsg={signUpMsg}
           />
           {/* <ExtraTickDiv>
             <ParentTickDiv>

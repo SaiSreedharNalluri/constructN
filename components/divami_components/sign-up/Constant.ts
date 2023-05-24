@@ -38,7 +38,7 @@ export const SIGN_UP_FORM_CONFIG = [
     placeholder: "Email ID",
     isError: false,
     isReq: true,
-    isValidField: false,
+    isValidField: true,
     isReadOnly: false,
     imageIcon: "emailIcon",
     errorMsg: "",
@@ -58,7 +58,7 @@ export const SIGN_UP_FORM_CONFIG = [
     imageIcon: "passwordIcon",
     errorMsg: "",
     showErrorMsg: false,
-    isValidField: false,
+    isValidField: true,
     checkPasswordStrength: true,
     singleMsg:"true"
     
@@ -76,7 +76,7 @@ export const SIGN_UP_FORM_CONFIG = [
     imageIcon: "passwordIcon",
     errorMsg: "",
     showErrorMsg: false,
-    isValidField: false,
+    isValidField: true,
     singleMsg:"true"
 
   },

@@ -205,6 +205,7 @@ const SignInPage = () => {
             tagsList={tagList}
             setCanBeDisabled={setCanBeDisabled}
             loginField={true}
+            signUpMsg={true}
           />
           <ExtraTickDiv>
             <ParentTickDiv>
