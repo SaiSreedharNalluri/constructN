@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
-import Treelist from '../../../../components/container/treeList';
+import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import Treelist from "../../../../components/container/treeList";
 import {
   getProjectDetails,
   getProjectUsers,
@@ -8,16 +8,20 @@ import {
   updateProjectCover,
   updateProjectInfo,
   updateProjectUserRole,
-} from '../../../../services/project';
-import { IProjects, IProjectUsers,IProjectUserList } from '../../../../models/IProjects';
-import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
-import CollapsableMenu from '../../../../components/layout/collapsableMenu';
-import { ChildrenEntity } from '../../../../models/IStructure';
-import { AxiosResponse } from 'axios';
-import { getStructureHierarchy } from '../../../../services/structure';
-import ProjectInfo from '../../../../components/container/projectInfo';
-import ProjectUserAdd from '../../../../components/container/projectUsersAdd';
-import { toast } from 'react-toastify';
+} from "../../../../services/project";
+import {
+  IProjects,
+  IProjectUsers,
+  IProjectUserList,
+} from "../../../../models/IProjects";
+import { Tabs, TabList, Tab, TabPanel } from "react-tabs";
+import CollapsableMenu from "../../../../components/layout/collapsableMenu";
+import { ChildrenEntity } from "../../../../models/IStructure";
+import { AxiosResponse } from "axios";
+import { getStructureHierarchy } from "../../../../services/structure";
+import ProjectInfo from "../../../../components/container/projectInfo";
+import ProjectUserAdd from "../../../../components/container/projectUsersAdd";
+import { toast } from "react-toastify";
 import {
   addIssuePriorityApi,
   addIssueStatusApi,
@@ -31,10 +35,10 @@ import {
   updateIssuePriorityListApi,
   updateIssueStatusListApi,
   updateIssueTypeListApi,
-} from '../../../../services/issue';
+} from "../../../../services/issue";
 // import { updateIssuesPriority } from '../../../../services/issue';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import {
   addTaskStatusApi,
   addTaskTypeListsApi,
@@ -48,22 +52,22 @@ import {
   updateTaskPriorityListApi,
   updateTaskStatusListApi,
   updateTaskTypeListApi,
-} from '../../../../services/task';
+} from "../../../../services/task";
 import {
   addTagsListApi,
   deleteTagsListApi,
   getTagsList,
   updateTagsListApi,
-} from '../../../../services/tags';
-import Header from '../../../../components/divami_components/header/Header';
-import SidePanelMenu from '../../../../components/divami_components/side-panel/SidePanel';
+} from "../../../../services/tags";
+import Header from "../../../../components/divami_components/header/Header";
+import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 const regex = /^[a-zA-Z ]*$/;
 const Editproject: React.FC = () => {
   const router = useRouter();
   const [projectUsers, setProjectUsers] = useState<IProjectUserList[]>([]);
   const [tabIndex, setTabIndex] = useState(0);
   let [state, setState] = useState<ChildrenEntity[]>([]);
-  const [selector, setSelector] = useState('');
+  const [selector, setSelector] = useState("");
   let [structureData, setStructureData] = useState<ChildrenEntity>();
   let [projectData, setProjectData] = useState<IProjects>();
   let [issuePriorityList, setIssuePriorityList] = useState<any>();
@@ -74,14 +78,14 @@ const Editproject: React.FC = () => {
   let [taskTypeList, setTaskTypeList] = useState<any>();
   let [taskStatusList, setTaskStatusList] = useState<any>();
   let [tags, setTags] = useState<any>();
-  let [addIssue, setAddIssue] = useState<any>('');
-  let [addIssuePriorityType, setAddIssuePriorityType] = useState<any>('');
-  let [addTaskType, setAddTaskType] = useState<any>('');
-  let [addTaskTypelist, setAddTaskTypeList] = useState<any>('');
-  let [addIssueStatuslist, setAddIssueStatusList] = useState<any>('');
-  let [addTaskStatuslist, setAddTaskStatusList] = useState<any>('');
-  let [addTagslist, setAddTagsList] = useState<any>('');
-  const [isActive, setIsActive] = useState('issuePriority');
+  let [addIssue, setAddIssue] = useState<any>("");
+  let [addIssuePriorityType, setAddIssuePriorityType] = useState<any>("");
+  let [addTaskType, setAddTaskType] = useState<any>("");
+  let [addTaskTypelist, setAddTaskTypeList] = useState<any>("");
+  let [addIssueStatuslist, setAddIssueStatusList] = useState<any>("");
+  let [addTaskStatuslist, setAddTaskStatusList] = useState<any>("");
+  let [addTagslist, setAddTagsList] = useState<any>("");
+  const [isActive, setIsActive] = useState("issuePriority");
   const toggle = (e: any) => {
     setIsActive(e.target.id);
   };
@@ -101,7 +105,7 @@ const Editproject: React.FC = () => {
           setSelector(response.data.result[0]._id);
         })
         .catch((error) => {
-          console.log('error', error);
+          console.log("error", error);
         });
       getProjectDetails(router.query.projectId as string)
         .then((response) => {
@@ -164,7 +168,7 @@ const Editproject: React.FC = () => {
     updateProjectInfo(projectInfo, router.query.projectId as string)
       .then((response) => {
         if (response.success === true) {
-          toast.success('Project details updated sucessfully');
+          toast.success("Project details updated sucessfully");
           setProjectData(response.result);
         }
       })
@@ -191,16 +195,16 @@ const Editproject: React.FC = () => {
   };
   const handleImageUPload = (e: any) => {
     const formData = new FormData();
-    formData.append('file', e.file);
+    formData.append("file", e.file);
     updateProjectCover(formData, router.query.projectId as string)
       .then((response) => {
         if (response?.success === true) {
-          toast.success('Project cover photo updated sucessfully');
+          toast.success("Project cover photo updated sucessfully");
           const fileInput = document.getElementById(
-            'file-upload'
+            "file-upload"
           ) as HTMLInputElement;
           if (fileInput) {
-            fileInput.value = '';
+            fileInput.value = "";
           }
 
           setProjectData(response.result);
@@ -392,7 +396,7 @@ const Editproject: React.FC = () => {
   };
   let handleIssueTypeSubmit = (e: any) => {
     e.preventDefault();
-    setAddIssue('');
+    setAddIssue("");
     addIssueTypeApi(router.query.projectId as string, addIssue)
       .then((response) => {
         if (response?.success === true) {
@@ -408,7 +412,7 @@ const Editproject: React.FC = () => {
   };
   let handleIssuePrioritySubmit = (e: any) => {
     e.preventDefault();
-    setAddIssuePriorityType('');
+    setAddIssuePriorityType("");
     addIssuePriorityApi(router.query.projectId as string, addIssuePriorityType)
       .then((response) => {
         if (response?.success === true) {
@@ -424,7 +428,7 @@ const Editproject: React.FC = () => {
   };
   let handleTaskPriortySumbit = (e: any) => {
     e.preventDefault();
-    setAddTaskType('');
+    setAddTaskType("");
     addTaskTypesApi(router.query.projectId as string, addTaskType)
       .then((response) => {
         if (response?.success === true) {
@@ -494,7 +498,7 @@ const Editproject: React.FC = () => {
   };
   let handleTaskTypeListSumbit = (e: any) => {
     e.preventDefault();
-    setAddTaskTypeList('');
+    setAddTaskTypeList("");
     addTaskTypeListsApi(router.query.projectId as string, addTaskTypelist)
       .then((response) => {
         if (response.success === true) {
@@ -510,7 +514,7 @@ const Editproject: React.FC = () => {
   };
   let handleIssueStatusListSubmit = (e: any) => {
     e.preventDefault();
-    setAddIssueStatusList('');
+    setAddIssueStatusList("");
     addIssueStatusApi(router.query.projectId as string, addIssueStatuslist)
       .then((response) => {
         if (response?.success === true) {
@@ -526,7 +530,7 @@ const Editproject: React.FC = () => {
   };
   let handleTaskStatusListSubmit = (e: any) => {
     e.preventDefault();
-    setAddTaskStatusList('');
+    setAddTaskStatusList("");
     addTaskStatusApi(router.query.projectId as string, addTaskStatuslist)
       .then((response) => {
         if (response?.success === true) {
@@ -543,7 +547,7 @@ const Editproject: React.FC = () => {
 
   let handleTagsListSubmit = (e: any) => {
     e.preventDefault();
-    setAddTagsList('');
+    setAddTagsList("");
     addTagsListApi(router.query.projectId as string, addTagslist)
       .then((response) => {
         if (response?.success === true) {
@@ -673,7 +677,7 @@ const Editproject: React.FC = () => {
                     className={` lg:w-1/4 sm:w-1/3 2xl:w-1/5  calc-h78   min-w-fit  overflow-y-auto  overflow-x-hidden bg-gray-200`}
                   >
                     {state.length === 0 ? (
-                      'no structures found for this project'
+                      "no structures found for this project"
                     ) : (
                       <Treelist
                         treeList={state}
@@ -699,19 +703,19 @@ const Editproject: React.FC = () => {
                         <tbody>
                           <tr>
                             <td className="border-b p-1.5 text-center border-gray-300">
-                              {' '}
+                              {" "}
                               {structureData?._id}
                             </td>
                             <td className="border-b text-center border-gray-200">
-                              {' '}
+                              {" "}
                               {structureData?.name}
                             </td>
                             <td className="border-b text-center border-gray-200">
-                              {' '}
+                              {" "}
                               {structureData?.type}
                             </td>
                             <td className="border-b  text-center border-gray-200">
-                              {' '}
+                              {" "}
                               {structureData?.parent}
                             </td>
                           </tr>
@@ -727,9 +731,9 @@ const Editproject: React.FC = () => {
                     <ul>
                       <li
                         className={
-                          isActive === 'issuePriority'
-                            ? 'bg-gray-400  '
-                            : ' hover:bg-slate-200'
+                          isActive === "issuePriority"
+                            ? "bg-gray-400  "
+                            : " hover:bg-slate-200"
                         }
                       >
                         <button
@@ -739,14 +743,14 @@ const Editproject: React.FC = () => {
                             toggle(e);
                           }}
                         >
-                          Issue Priority{' '}
+                          Issue Priority{" "}
                         </button>
                       </li>
                       <li
                         className={
-                          isActive === 'taskPriority'
-                            ? 'bg-gray-400  '
-                            : '  hover:bg-slate-200'
+                          isActive === "taskPriority"
+                            ? "bg-gray-400  "
+                            : "  hover:bg-slate-200"
                         }
                       >
                         <button
@@ -761,9 +765,9 @@ const Editproject: React.FC = () => {
                       </li>
                       <li
                         className={
-                          isActive === 'issueType'
-                            ? 'bg-gray-400  '
-                            : '  hover:bg-slate-200'
+                          isActive === "issueType"
+                            ? "bg-gray-400  "
+                            : "  hover:bg-slate-200"
                         }
                       >
                         <button
@@ -773,14 +777,14 @@ const Editproject: React.FC = () => {
                             toggle(e);
                           }}
                         >
-                          Issue Type{' '}
-                        </button>{' '}
+                          Issue Type{" "}
+                        </button>{" "}
                       </li>
                       <li
                         className={
-                          isActive === 'taskType'
-                            ? 'bg-gray-400  '
-                            : '  hover:bg-slate-200'
+                          isActive === "taskType"
+                            ? "bg-gray-400  "
+                            : "  hover:bg-slate-200"
                         }
                       >
                         <button
@@ -790,14 +794,14 @@ const Editproject: React.FC = () => {
                             toggle(e);
                           }}
                         >
-                          Task Type{' '}
-                        </button>{' '}
+                          Task Type{" "}
+                        </button>{" "}
                       </li>
                       <li
                         className={
-                          isActive === 'issueStatus'
-                            ? 'bg-gray-400  '
-                            : ' hover:bg-slate-200'
+                          isActive === "issueStatus"
+                            ? "bg-gray-400  "
+                            : " hover:bg-slate-200"
                         }
                       >
                         <button
@@ -807,14 +811,14 @@ const Editproject: React.FC = () => {
                           }}
                           className="p-2 text-gray-600 text-center text-lg font-medium"
                         >
-                          Issue Status{' '}
+                          Issue Status{" "}
                         </button>
                       </li>
                       <li
                         className={
-                          isActive === 'taskStatus'
-                            ? 'bg-gray-400  '
-                            : ' hover:bg-slate-200'
+                          isActive === "taskStatus"
+                            ? "bg-gray-400  "
+                            : " hover:bg-slate-200"
                         }
                       >
                         <button
@@ -824,14 +828,14 @@ const Editproject: React.FC = () => {
                           }}
                           className="p-2   text-gray-600 text-lg font-medium"
                         >
-                          Task Status{' '}
+                          Task Status{" "}
                         </button>
                       </li>
                       <li
                         className={
-                          isActive === 'tags'
-                            ? 'bg-gray-400 '
-                            : ' hover:bg-slate-200 '
+                          isActive === "tags"
+                            ? "bg-gray-400 "
+                            : " hover:bg-slate-200 "
                         }
                       >
                         <button
@@ -841,7 +845,7 @@ const Editproject: React.FC = () => {
                             toggle(e);
                           }}
                         >
-                          Tags{' '}
+                          Tags{" "}
                         </button>
                       </li>
                     </ul>
@@ -849,9 +853,9 @@ const Editproject: React.FC = () => {
                   <div className="w-3/4">
                     <div
                       className={
-                        isActive === 'issuePriority'
+                        isActive === "issuePriority"
                           ? `issuePriority`
-                          : ' hidden'
+                          : " hidden"
                       }
                     >
                       <div>
@@ -948,9 +952,9 @@ const Editproject: React.FC = () => {
                     </div>
                     <div
                       className={
-                        isActive === 'taskPriority'
+                        isActive === "taskPriority"
                           ? `taskPriority`
-                          : '  hidden'
+                          : "  hidden"
                       }
                     >
                       <div>
@@ -1043,7 +1047,7 @@ const Editproject: React.FC = () => {
 
                     <div
                       className={
-                        isActive === 'issueType' ? `issueType` : ' hidden'
+                        isActive === "issueType" ? `issueType` : " hidden"
                       }
                     >
                       <div>
@@ -1124,7 +1128,7 @@ const Editproject: React.FC = () => {
                     </div>
                     <div
                       className={
-                        isActive === 'taskType' ? `taskType ` : '  hidden'
+                        isActive === "taskType" ? `taskType ` : "  hidden"
                       }
                     >
                       <div>
@@ -1205,7 +1209,7 @@ const Editproject: React.FC = () => {
                     </div>
                     <div
                       className={
-                        isActive === 'issueStatus' ? `issueStatus` : '  hidden'
+                        isActive === "issueStatus" ? `issueStatus` : "  hidden"
                       }
                     >
                       <div>
@@ -1291,7 +1295,7 @@ const Editproject: React.FC = () => {
                     </div>
                     <div
                       className={
-                        isActive === 'taskStatus' ? `taskStatus` : '  hidden'
+                        isActive === "taskStatus" ? `taskStatus` : "  hidden"
                       }
                     >
                       <div>
@@ -1371,7 +1375,7 @@ const Editproject: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <div className={isActive === 'tags' ? `tags` : '  hidden'}>
+                    <div className={isActive === "tags" ? `tags` : "  hidden"}>
                       <div>
                         <div className="px-4">
                           <form

@@ -417,6 +417,15 @@ const MoreOptionTool = ({
                         checked={checked}
                         onChange={toggleTaskVisibility}
                         size="small"
+                        sx={{
+                          "&.MuiSwitch-root .MuiSwitch-switchBase": {
+                            color: "#36415D",
+                          },
+
+                          "&.MuiSwitch-root .Mui-checked": {
+                            color: "#36415D",
+                          },
+                        }}
                       />
                     </SwitchDiv>
                   </TaskMarkupDiv>
@@ -459,7 +468,19 @@ const MoreOptionTool = ({
 
                     <SwitchDiv>
                       <SwitchText>Show</SwitchText>
-                      <Switch defaultChecked size="small" />
+                      <Switch
+                        defaultChecked
+                        size="small"
+                        sx={{
+                          "&.MuiSwitch-root .MuiSwitch-switchBase": {
+                            color: "#36415D",
+                          },
+
+                          "&.MuiSwitch-root .Mui-checked": {
+                            color: "#36415D",
+                          },
+                        }}
+                      />
                     </SwitchDiv>
                   </TaskMarkupDiv>
                 </TaskOptionContainer>
