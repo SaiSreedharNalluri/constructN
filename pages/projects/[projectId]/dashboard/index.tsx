@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Header from '../../../../components/divami_components/header/Header';
-import { useRouter } from 'next/router';
-import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
-import SidePanelMenu from '../../../../components/divami_components/side-panel/SidePanel';
-import { getdashBoardUrls } from '../../../../services/s3Service';
+import React, { useEffect, useState } from "react";
+import Header from "../../../../components/divami_components/header/Header";
+import { useRouter } from "next/router";
+import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
+import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
+import { getdashBoardUrls } from "../../../../services/s3Service";
 const Index: React.FC = () => {
   const router = useRouter();
   const [tabIndex, setTabIndex] = useState(0);
@@ -37,7 +37,7 @@ const Index: React.FC = () => {
               <Tabs
                 selectedIndex={tabIndex}
                 onSelect={(index) => setTabIndex(index)}
-                style={{ marginLeft: '1px' }}
+                style={{ marginLeft: "1px" }}
               >
                 <Tabs>
                   <TabList>
@@ -47,7 +47,7 @@ const Index: React.FC = () => {
                   <TabPanel>
                     {!loadData ? (
                       <div>
-                        {urlObj?.dashboard_url.split('.').pop() === 'apdf' ? (
+                        {urlObj?.dashboard_url?.split(".").pop() === "apdf" ? (
                           <div className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300  ">
                             <h1>
                               Click the below button to download your report in
@@ -63,10 +63,19 @@ const Index: React.FC = () => {
                             </button>
                           </div>
                         ) : (
-                          <iframe
-                            className="w-95 h-80"
-                            src={urlObj?.dashboard_url}
-                          />
+                          <div>
+                            {urlObj?.dashboard_url != "" &&
+                            urlObj?.dashboard_url != undefined ? (
+                              <iframe
+                                className="w-95 h-80"
+                                src={urlObj?.dashboard_url}
+                              />
+                            ) : (
+                              <h1 className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300 text-orange-400 ">
+                                There is no data avalible to load the dashboard
+                              </h1>
+                            )}
+                          </div>
                         )}
                       </div>
                     ) : (
@@ -78,7 +87,7 @@ const Index: React.FC = () => {
                   <TabPanel>
                     {!loadData ? (
                       <div>
-                        {urlObj?.report_url.split('.').pop() === 'pdf' ? (
+                        {urlObj?.report_url?.split(".").pop() === "pdf" ? (
                           <div className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300  ">
                             <h1>
                               Click the below button to download your report in
@@ -94,10 +103,19 @@ const Index: React.FC = () => {
                             </button>
                           </div>
                         ) : (
-                          <iframe
-                            className="w-95 h-93"
-                            src={urlObj?.report_url}
-                          />
+                          <div>
+                            {urlObj?.report_url != undefined &&
+                            urlObj.report_url != "" ? (
+                              <iframe
+                                className="w-95 h-93"
+                                src={urlObj?.report_url}
+                              />
+                            ) : (
+                              <h1 className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300 text-orange-400 ">
+                                There is no data avalible to load the report
+                              </h1>
+                            )}
+                          </div>
                         )}
                       </div>
                     ) : (

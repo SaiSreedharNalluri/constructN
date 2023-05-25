@@ -47,6 +47,87 @@ import mapboxgl from 'mapbox-gl';
 import { IMapboxLayer } from '../../models/IMapboxLayer';
 import Hotspots from './hotspots';
 import HotspotsCompare  from './hotspotsCompare';
+
+type ForgeViewerUtilsType = {
+  setupViewer: Function,
+  initializeViewer: Function,
+  setType: Function,
+  setStructure: Function,
+  setSnapshot: Function,
+  updateData: Function,
+  updateLayersData: Function,
+  updateIssuesData: Function,
+  updateTasksData: Function,
+  refreshData: Function,
+  showLayers: Function,
+  initiateAddTag: Function,
+  cancelAddTag: Function,
+  selectTag: Function,
+  showTag: Function,
+  getContext: Function,
+  getViewerState: Function,
+  updateViewerState: Function,
+  updateContext: Function,
+  removeData: Function,
+  removeLayers: Function,
+  shutdown: Function,
+}
+
+type PotreeViewerUtilsType = {
+  initializeViewer: Function,
+  isViewerLoaded: Function,
+  isCompareView: Function,
+  readyForCompare: Function,
+  finishForCompare: Function,
+  setStructure: Function,
+  setSnapshot: Function,
+  updateIssuesData: Function,
+  updateTasksData: Function,
+  updateProgressData: Function,
+  updateData: Function,
+  updateLayersData: Function,
+  initiateAddTag: Function,
+  cancelAddTag: Function,
+  finishAddTag: Function,
+  selectTag: Function,
+  showTag: Function,
+  getContext: Function,
+  updateContext: Function,
+  getViewerState: Function,
+  updateViewerState: Function,
+  updateFloormapAnimation: Function,
+  removeData: Function,
+  shutdown: Function,
+}
+
+type MapboxViewerUtilsType = {
+    initializeViewer: Function,
+    setType: Function,
+    setProject: Function,
+    setStructure: Function,
+    setSnapshot: Function,
+    isViewerInitialized: Function,
+    updateData: Function,
+    updateLayersData: Function,
+    updateIssuesData: Function,
+    updateTasksData: Function,
+    refreshData: Function,
+    showLayers: Function,
+    initiateAddTag: Function,
+    cancelAddTag: Function,
+    selectTag: Function,
+    showTag: Function,
+    onLayerClick: Function,
+    getContext: Function,
+    getMap: Function,
+    resize: Function,
+    updateContext: Function,
+    removeData: Function,
+    removeLayers: Function,
+    setHotspotClick: Function,
+    shutdown: Function,
+}
+
 interface IProps {
 data:IGenData;
 updateData?: (newData :IGenData)=> void;
@@ -59,9 +140,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   const [isInitReady,setInitReady] = useState<boolean>(false);
   const [isCompareMode,setCompareMode] = useState<boolean>(false);
 
-  let forgeUtils = useRef<typeof ForgeViewerUtils>();
-  let potreeUtils = useRef<typeof PotreeViewerUtils>();
-  let mapboxUtils = useRef<typeof MapboxViewerUtils>();
+  let forgeUtils = useRef<ForgeViewerUtilsType>();
+  let potreeUtils = useRef<PotreeViewerUtilsType>();
+  let mapboxUtils = useRef<MapboxViewerUtilsType>();
 
   let [hotspots, setHotspots] = useState([]);
   let [hotspotsCompare, setHotspotsCompare] = useState<any>([]);
@@ -73,14 +154,15 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
  //let incomingPayload :IGenPayload;
  let incomingPayload = useRef<IGenPayload>();
+ let viewerData = useRef<IGenData>();
  let changeType = useRef<string>();
  var compareMode = useRef<string>('noCompare');
 
   let multiverseViewer : undefined |typeof PotreeViewerUtils | typeof ForgeViewerUtils | typeof MapboxViewerUtils = undefined ;//forgeUtils.current as typeof ForgeViewerUtils;
 
-  let potreeCompareUtils = useRef<typeof PotreeViewerUtils>();
-  let forgeCompareUtils = useRef<typeof ForgeViewerUtils>();
-  let mapboxCompareUtils = useRef<typeof MapboxViewerUtils>();
+  let potreeCompareUtils = useRef<PotreeViewerUtilsType>();
+  let forgeCompareUtils = useRef<ForgeViewerUtilsType>();
+  let mapboxCompareUtils = useRef<MapboxViewerUtilsType>();
 
   let [context, setContext] = useState({});
   let currentContext = useRef<IContext>();
@@ -96,6 +178,12 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   const toggleTimeline = () => {
     setBottomNav(!bottomNav);
   };
+
+  const [offset, setOffset] = useState(1);
+  const pageSize = 10;
+  const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0)
+
+  const [totalPages, setTotalPages] = useState(Math.ceil(totalSnaphotsCount / pageSize));
 
   const initializeOptions = {
     env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
@@ -133,16 +221,23 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
   useEffect(()=>{
    
-    window.addEventListener('notify-viewer', notifyViewerEvent);
+    window.addEventListener('notifyViewer', notifyViewerEvent);
     return()=>{
-      window.removeEventListener('notify-viewer', notifyViewerEvent);
+      window.removeEventListener('notifyViewer', notifyViewerEvent);
     }
   },[]);
+  useEffect(() => {
+    if(isInitReady===true){
+    incomingPayload.current={action:{type:'setStructure',data:data}}
+    dispatchChangeViewerData(incomingPayload.current?.action);
+    }
+  }, [data]);
   //const getViewerTypefromViewType = (viewType:string) :string=> {
     function getViewerTypefromViewType(viewType:string){
     //console.log('Getting ViewerType for ',viewType);
     switch(viewType){
       case 'Plan Drawings':
+      case 'PlanDrawings':
       case 'BIM':
         return 'Forge';
       case 'pointCloud':
@@ -168,7 +263,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           compareMode.current='noCompare';
             console.log('Dispatching Load Viewer with',newViewerData.currentViewType);
           }
-          return newViewerData;
+          break;//return newViewerData;
         case 'closeGenViewer':
           if(isInitReady){
             destroyViewer(getViewerTypefromViewType(oldViewerData.currentViewType));
@@ -182,7 +277,12 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           break;
         case 'setStructure':
           newViewerData=action.data as IGenData;
+          newViewerData = {...newViewerData,currentViewType:oldViewerData.currentViewType};
+          removeCompareLayers(oldViewerData.currentCompareMode);
+          destroyCompareViewer(oldViewerData.currentCompareMode);
+          setCompareMode(false);
           compareMode.current='noCompare';
+
           removeLayers(getViewerTypefromViewType(oldViewerData.currentViewType));
           removeData(getViewerTypefromViewType(oldViewerData.currentViewType));
           removeContext();
@@ -194,7 +294,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           getContext(oldViewerData);
           removeLayers(getViewerTypefromViewType(oldViewerData.currentViewType));
           console.log("setBaseSnapshot",action.data);
-          return newViewerData;
+          break;//return newViewerData;
           
         case 'setCompareSnapshot':
           newViewerData = {...oldViewerData,currentSnapshotCompare:action.data as ISnapshot};
@@ -212,12 +312,12 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
               destroyViewer(getViewerTypefromViewType(oldViewerData.currentViewType));
               changeType.current='changeViewerAndType';
               console.log('Viewer Type Changed',getViewerTypefromViewType(oldViewerData.currentViewType),getViewerTypefromViewType(action.data as string));
-              newViewerData = {...oldViewerData,currentViewType:action.data as string}
+              newViewerData = {...oldViewerData,currentViewType:action.data as string,currentCompareMode:'noCompare'}
             }
             else{
               console.log('Viewer Type NOT Changed',getViewerTypefromViewType(oldViewerData.currentViewType),getViewerTypefromViewType(action.data as string));
               changeType.current='changeType';
-              newViewerData = {...oldViewerData,currentViewType:action.data as string}
+              newViewerData = {...oldViewerData,currentViewType:action.data as string,currentCompareMode:'noCompare'}
               
             }
           }
@@ -226,8 +326,14 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           }
             console.log('Dispatching ViewType',newViewerData.currentViewType);
             //newViewerData.currentCompareMode="noCompare";
+
+            removeCompareLayers(oldViewerData.currentCompareMode);
+            destroyCompareViewer(oldViewerData.currentCompareMode);
+            //newViewerData = {...oldViewerData,currentCompareMode:'noCompare'};
             setCompareMode(false);
-          return newViewerData;
+            compareMode.current='noCompare';
+          //return newViewerData;
+          break;
 
         case 'setCompareMode':
           newViewerData = {...oldViewerData,currentCompareMode:action.data as string}
@@ -257,7 +363,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
             setCompareMode(false);
             compareMode.current='noCompare';
           }
-          return newViewerData;
+          //return newViewerData;
+          break;
           
         
         case 'issueShow':
@@ -316,6 +423,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
       }
       console.log("Change is,",action,newViewerData.currentViewType);
+      viewerData.current=newViewerData;
     return newViewerData
   }
 
@@ -346,12 +454,16 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
             else
             handleRealityTypeChange(getViewerTypefromViewType(currentViewerData.currentViewType));
 
-            loadViewerData();
-            loadLayerData();
+            if(viewerData.current!==undefined){
+              loadViewerData(viewerData.current);
+             loadLayerData(viewerData.current);
+             }
             break;
           case 'changeViewerAndType':
-            loadViewerData();
-            loadLayerData();
+            if(viewerData.current!==undefined){
+              loadViewerData(viewerData.current);
+             loadLayerData(viewerData.current);
+             }
             console.log('Viewer Type Updated');
             break;
           
@@ -378,11 +490,15 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         break;
       case 'setStructure':
         if(currentViewerData?.structure?.designs !==undefined) {
-          loadViewerData();
-          loadLayerData();
+          if(viewerData.current!==undefined){
+            loadViewerData(viewerData.current);
+           loadLayerData(viewerData.current);
+           
+           }
+           
           }
         
-          // console.log("Generic Viewer load: Structure Changed", structure);
+          console.log("Generic Viewer load: Structure Changed", currentViewerData);
             
           animationRequestId = requestAnimationFrame(animationNow);
         
@@ -395,7 +511,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         break;
       case 'setBaseSnapshot':
         console.log('asdf',currentViewerData);
-        loadLayerData();
+        if(viewerData.current!==undefined){
+          //loadViewerData(viewerData.current);
+         loadLayerData(viewerData.current);
+         }
         break;
       case 'setCompareSnapshot':
         if(currentViewerData.currentCompareMode==='compareReality'){
@@ -408,7 +527,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     incomingPayload.current=undefined;
   }
   console.log("updated currentViewerData Use Effect",currentViewerData);
-  window.dispatchEvent(new CustomEvent('notify-app',{detail:currentViewerData}));
+  window.dispatchEvent(new CustomEvent('notifyApp',{detail:currentViewerData}));
   return ()=>{
 
         console.log("Changed Use Effect--Return",incomingPayload.current);
@@ -582,7 +701,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       potreeUtils.current.updateFloormapAnimation();
     }
 
-    if(currentViewerData.currentCompareMode==='compareReality'){
+    if(viewerData.current&&viewerData.current.currentCompareMode==='compareReality'){
     //if (currentIsCompare.current === true && potreeCompareUtils.current) {
       potreeCompareUtils.current?.updateFloormapAnimation();
     }
@@ -705,7 +824,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           if (!incomingPayload.current) {
             incomingPayload.current = undefined;
           }
-          window.dispatchEvent(new CustomEvent('notify-app',{detail:{type:event.id.includes('Temp')
+          window.dispatchEvent(new CustomEvent('notifyApp',{detail:{type:event.id.includes('Temp')
           ? `create${event.type}`
           : `select${event.type}`,data:event}}));
           console.log('Marked Point========', event);
@@ -764,7 +883,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       case 'Forge':
         if (forgeUtils.current === undefined) {
           
-          forgeUtils.current =  ForgeViewerUtils;
+          forgeUtils.current = ForgeViewerUtils();
           console.log("InitViewer", forgeUtils.current);
           forgeUtils.current.setupViewer(viewerId, viewerEventHandler);
           if(forgeInitialised)forgeUtils.current.initializeViewer();
@@ -777,25 +896,25 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           forgeUtils.current.setType(currentViewerData.currentViewType);
 
           console.log("InitViewer", forgeUtils.current);
-          multiverseViewer = forgeUtils.current;
+          // multiverseViewer = forgeUtils.current;
         }
         break;
       case 'Potree':
         if (potreeUtils.current === undefined) {
-          potreeUtils.current = PotreeViewerUtils;
+          potreeUtils.current = PotreeViewerUtils();
           if (!potreeUtils.current.isViewerLoaded()) {
             potreeUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
           console.log("InitViewer", potreeUtils.current);
-          multiverseViewer = potreeUtils.current;
+          // multiverseViewer = potreeUtils.current;
         }
         break;
         case 'Mapbox':
           if (mapboxUtils.current === undefined) {
-             mapboxUtils.current = MapboxViewerUtils;
+             mapboxUtils.current = MapboxViewerUtils();
             mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, {context: currentContext.current?.cameraObject});
             mapboxUtils.current.setType(incomingPayload.current?.action.data);
-            multiverseViewer = mapboxUtils.current;
+            // multiverseViewer = mapboxUtils.current;
           }
           break;
     }
@@ -806,7 +925,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     switch (currentViewerData.currentCompareMode) {
       case 'compareDesign':
         if (forgeCompareUtils.current === undefined) {
-          forgeCompareUtils.current = ForgeViewerUtils;
+          forgeCompareUtils.current = ForgeViewerUtils();
           forgeCompareUtils.current.setupViewer(
             viewerId,
             viewerEventHandler
@@ -818,7 +937,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       case 'compareReality':
         //console.log('Compare Reality Init TEST');
         if (potreeCompareUtils.current === undefined) {
-          potreeCompareUtils.current = PotreeViewerUtils;
+          potreeCompareUtils.current = PotreeViewerUtils();
           if (!potreeCompareUtils.current.isViewerLoaded()) {
             potreeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
@@ -826,7 +945,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         break;
       case 'compareMap':
         if (mapboxCompareUtils.current == undefined) {
-          mapboxCompareUtils.current = MapboxViewerUtils;
+          mapboxCompareUtils.current = MapboxViewerUtils();
           mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, undefined, mapboxUtils.current?.getMap());
           mapboxCompareUtils.current.setType(currentViewerData.currentViewType);          
           }
@@ -834,13 +953,14 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   };
 
-  async function loadViewerData() {
-    switch (getViewerTypefromViewType(currentViewerData.currentViewType)) {
+  async function loadViewerData(myViewerData:IGenData) {
+    console.log('Load Viewer Data');
+    switch (getViewerTypefromViewType(myViewerData.currentViewType)) {
       case 'Forge':
-        if (forgeUtils.current != undefined) {
-          forgeUtils.current.setStructure(currentViewerData.structure);
-          console.log("MyViewerStructData",currentViewerData.structure.designs);
-          let dMaps=getDesignMap(currentViewerData.structure.designs)
+        if (forgeUtils.current !== undefined ) {
+          forgeUtils.current.setStructure(myViewerData.structure);
+          console.log("MyViewerStructData",myViewerData.structure.designs);
+          let dMaps=getDesignMap(myViewerData.structure.designs)
           let fModels=getForgeModels(dMaps)
           forgeUtils.current.updateData(fModels);
 
@@ -849,56 +969,57 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         break;
       case 'Potree':
         if (potreeUtils.current !== undefined) {
-          potreeUtils.current.setStructure(currentViewerData.structure);
+          potreeUtils.current.setStructure(myViewerData.structure);
         }
         break;
         case 'Mapbox':
           if (mapboxUtils.current !== undefined) {
-            mapboxUtils.current.setProject(currentViewerData.project);
-            mapboxUtils.current.setStructure(currentViewerData.structure);
+            mapboxUtils.current.setProject(myViewerData.project);
+            mapboxUtils.current.setStructure(myViewerData.structure);
           }
           break;
     }
   }
 
-  async function loadLayerData() {
+  async function loadLayerData(myViewerData:IGenData) {
     //console.log('Load layer data: ', issuesList, tasksList);
-    switch (getViewerTypefromViewType(currentViewerData.currentViewType)) {
+    switch (getViewerTypefromViewType(myViewerData.currentViewType)) {
       case 'Forge':
         if (forgeUtils.current != undefined) {
-          forgeUtils.current.setSnapshot(currentViewerData.currentSnapshotBase);
-          forgeUtils.current.updateIssuesData(currentViewerData.currentIssueList);
-          forgeUtils.current.updateTasksData(currentViewerData.currentTaskList);
-          let Rdata = await getRealityLayersPath(currentViewerData.structure, getRealityMap(currentViewerData.currentSnapshotBase));
+          forgeUtils.current.setSnapshot(myViewerData.currentSnapshotBase);
+          forgeUtils.current.updateIssuesData(myViewerData.currentIssueList);
+          forgeUtils.current.updateTasksData(myViewerData.currentTaskList);
+          let Rdata = await getRealityLayersPath(myViewerData.structure, getRealityMap(myViewerData.currentSnapshotBase));
           console.log('Reality Layers',Rdata);
           forgeUtils.current.updateLayersData(Rdata,currentContext.current);
-          forgeUtils.current.showLayers(currentViewerData.currentLayersList);
+          forgeUtils.current.showLayers(myViewerData.currentLayersList);
         }
         break;
       case 'Potree':
         if (potreeUtils.current != undefined) {
-          potreeUtils.current.setSnapshot(currentViewerData.currentSnapshotBase);
-          potreeUtils.current.updateIssuesData(currentViewerData.currentIssueList);
-          potreeUtils.current.updateTasksData(currentViewerData.currentTaskList);
+          potreeUtils.current.setSnapshot(myViewerData.currentSnapshotBase);
+          potreeUtils.current.updateIssuesData(myViewerData.currentIssueList);
+          potreeUtils.current.updateTasksData(myViewerData.currentTaskList);
           potreeUtils.current.updateData(
             // await getPointCloud(currentViewerData.structure, currentViewerData.currentSnapshotBase),
             {},
-            getFloorPlanData(getDesignMap(currentViewerData.structure.designs))
+            getFloorPlanData(getDesignMap(myViewerData.structure.designs))
           );
           //console.log("ContextVariable",currentContext.current);
+          //getContext(myViewerData);
           potreeUtils.current.updateLayersData(
-            await getRealityLayersPath(currentViewerData.structure, getRealityMap(currentViewerData.currentSnapshotBase)),
+            await getRealityLayersPath(myViewerData.structure, getRealityMap(myViewerData.currentSnapshotBase)),
             currentContext.current//currentViewerData.viewerContext// was here
           );
         }
         break;
       case 'Mapbox':
         if (mapboxUtils.current !== undefined) {
-          mapboxUtils.current.setSnapshot(currentViewerData.currentSnapshotBase);
+          mapboxUtils.current.setSnapshot(myViewerData.currentSnapshotBase);
           mapboxUtils.current.setHotspotClick(selectHotspot);
-          let data:IMapboxLayer[] = await getMapboxLayers(currentViewerData.structure, currentViewerData.currentSnapshotBase);
-          const reality :IReality| undefined= currentViewerData?.currentSnapshotBase?.reality?.find((reality) => { return reality })
-          let hotspots = await getMapboxHotspots(currentViewerData.project, currentViewerData.structure._id, currentViewerData.currentSnapshotBase._id, reality?._id)
+          let data:IMapboxLayer[] = await getMapboxLayers(myViewerData.structure, myViewerData.currentSnapshotBase);
+          const reality :IReality| undefined= myViewerData?.currentSnapshotBase?.reality?.find((reality) => { return reality })
+          let hotspots = await getMapboxHotspots(myViewerData.project, myViewerData.structure._id, myViewerData.currentSnapshotBase._id, reality?._id)
           if(data) {
             
             const stages : ILayer = {
@@ -932,8 +1053,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
                 mapboxUtils.current.updateData(data, currentContext.current);
                 hotspots && hotspots.data && setHotspots(hotspots.data.features);
-                mapboxUtils.current.updateIssuesData(currentViewerData.currentIssueList);
-                mapboxUtils.current.updateTasksData(currentViewerData.currentTaskList);
+                mapboxUtils.current.updateIssuesData(myViewerData.currentIssueList);
+                mapboxUtils.current.updateTasksData(myViewerData.currentTaskList);
             }
           }, 700);
         }
@@ -972,7 +1093,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       case 'compareDesign':
         if (forgeCompareUtils.current) {
           forgeCompareUtils.current.setSnapshot(compareSnapshot);
-          let data = await getRealityLayers(structure, getRealityMap(compareSnapshot));
+          let data = await getRealityLayersPath(structure, getRealityMap(compareSnapshot));
           forgeCompareUtils.current.updateLayersData(
             data,
             currentContext.current
@@ -985,11 +1106,11 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           //console.log('Compare Reality TEST');
           potreeCompareUtils.current.setSnapshot(compareSnapshot);
           potreeCompareUtils.current.updateData(
-            await getPointCloud(structure, compareSnapshot),
+            {},
             getFloorPlanData(getDesignMap(structure.designs))
           );
           potreeCompareUtils.current.updateLayersData(
-            getRealityLayersPath(structure, getRealityMap(compareSnapshot)),
+            await getRealityLayersPath(structure, getRealityMap(compareSnapshot)),
             currentContext.current
           );
         }
@@ -1053,8 +1174,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   const setForgeViewerUtils = function (viewerId:string) {
     if (!isCompareViewer(viewerId)) {
       initViewer(viewerId);
-       loadViewerData();
-      loadLayerData();
+      if(viewerData.current!==undefined){
+       loadViewerData(viewerData.current);
+      loadLayerData(viewerData.current);
+      }
       forgeUtils.current?.refreshData();
       //console.log('trying to reload....forge');
       
@@ -1069,8 +1192,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     if (!isCompareViewer(viewerId)) {
       initViewer(viewerId);
       //console.log('trying to reload....potree');
-       loadViewerData();
-       loadLayerData();
+      if(viewerData.current!==undefined){
+        loadViewerData(viewerData.current);
+       loadLayerData(viewerData.current);
+       }
     } else {
       initCompareViewer(viewerId);
     }
@@ -1079,8 +1204,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   const setMapboxViewerUtils = function (viewerId:string) {
     if (!isCompareViewer(viewerId)) {
       initViewer(viewerId);
-      loadViewerData();
-      loadLayerData();
+      if(viewerData.current!==undefined){
+        loadViewerData(viewerData.current);
+       loadLayerData(viewerData.current);
+       }
     } else {
       initCompareViewer(viewerId);
     }
@@ -1124,22 +1251,6 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   }
 
   
-  // const getSnapshotList = async (projectId, structurId) => {
-  //   let list = await getSnapshotsList(projectId, structurId);
-
-  //   list = list.data.result.mSnapshots.sort(
-  //     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  //   );
-  //   if (list.length > 0) {
-  //     setSnapshotList(list);
-  //     setCurrentSnapshot(list[list.length - 1]);
-  //     if (list.length > 1) {
-  //       setCurrentCompareSnapshot(list[list.length - 2]);
-  //     } else {
-  //       setCurrentCompareSnapshot(list[list.length - 1]);
-  //     }
-  //   }
-  // };
 
   const setCurrentSnapshot = (snapshot:ISnapshot) => {
     if(snapshot){
@@ -1324,13 +1435,54 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   const selectHotspot = (hotspot:any) => {
     setSelectedHotspot(hotspot.properties.id)
   }
+  const getSnapshotList = async (projectId:string, structurId:string,offset:Number,limit:Number) => {
+    let list= await getSnapshotsList(projectId, structurId,offset||1,limit||10);
+    setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
+    //let list:ISnapshot[];
+    let snapList:ISnapshot[] = list.data.result.mSnapshots.sort(
+      (a:ISnapshot, b:ISnapshot) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+    if (snapList.length > 0) {
+      //setSnapshotList(list);
+      //dispatchChangeViewerData();
+      setCurrentSnapshot(snapList[snapList.length - 1]);
+      if (snapList.length > 1) {
+        setCurrentCompareSnapshot(snapList[snapList.length - 2]);
+      } else {
+        setCurrentCompareSnapshot(snapList[snapList.length - 1]);
+      }
+    }
+  };
 
+  useEffect(() => {
+    setTotalPages(Math.ceil(totalSnaphotsCount / 10));
+  }, [totalSnaphotsCount]);
+
+  const setPrevList = () => {
+    if (offset < totalPages) {
+      getSnapshotList(structure.project, structure._id, offset + 1, pageSize);
+      setOffset(offset + 1);
+      // setPage(0);
+    }
+  };
+
+  const setNextList = () => {
+    if (offset > 1) {
+      getSnapshotList(structure.project, structure._id, offset - 1, pageSize);
+
+      setOffset(offset - 1);
+      // setPage(0);
+    }
+  };
 
   return (
-      <div className="fixed  h-full w-full flex flex-row">
+      <div className="fixed  h-full w-full flex flex-col">
         <div id="TheView" className="relative basis-1/2 flex grow shrink">
           {isInitReady && renderViewer(1)}
-          {/* <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode}></TimeLineComponent> */}
+          {/* <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
+        setNextList={setNextList}
+        totalPages={totalPages}
+        offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={currentViewerData.structure}></TimeLineComponent> */}
         </div>
         <div className={`relative ${currentViewerData.currentCompareMode!=='noCompare' ? "basis-1/2": "hidden" }`}>
           {isInitReady && isCompareMode && renderViewer(2)}
