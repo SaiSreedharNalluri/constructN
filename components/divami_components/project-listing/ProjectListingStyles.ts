@@ -135,6 +135,132 @@ export const ListProgressCountContainer = styled("div")({
 
 export const CompanyLogoContainer = styled("div")({});
 
-export const CompanyLogo = styled(Image)({});
+export const CompanyLogo = styled(Image)({
+  height: "45px !important",
+  width: "242px",
+});
 
 export const MoreMenuIcon = styled(Image)({});
+
+export const ProjectCardsContainer = styled("div")({
+  display: "flex",
+  flexWrap: "wrap",
+  overflow: "auto",
+  height: "calc(100vh - 70px)",
+  padding: "0 20px",
+  paddingBottom: "70px",
+  paddingTop: "8px",
+});
+export const ProjectCard = styled("div")({
+  width: "300px",
+  background: "#FFFFFF",
+  border: "1px solid #888888",
+  padding: "20px",
+  marginRight: "36px",
+  marginBottom: "30px",
+  color: "#101F4C",
+  fontSize: "14px",
+  fontFamily: "Open Sans",
+  position: "relative",
+});
+
+export const ProjectTopLeftBg = styled("div")({
+  position: "absolute",
+  borderBottom: "1px solid #888888",
+  top: "-1px",
+  left: "-8px",
+  width: "314px",
+});
+
+export const ProjectTopRightBg = styled("div")({
+  position: "absolute",
+  borderRight: "1px solid #888888",
+  bottom: "-8px",
+  right: "-1px",
+  height: "414px",
+});
+
+export const ProjectBottomLeftBg = styled("div")({
+  position: "absolute",
+  borderLeft: "1px solid #888888",
+  bottom: "-8px",
+  left: "-1px",
+  height: "414px",
+});
+
+export const ProjectBottomRightBg = styled("div")({
+  position: "absolute",
+  borderBottom: "1px solid #888888",
+  bottom: "-1px",
+  left: "-8px",
+  width: "314px",
+});
+
+export const ProjectLogo = styled(Image)({
+  height: "45px !important",
+  width: "unset !important",
+});
+export const ProjectNameTitle = styled("div")({
+  fontSize: "18px",
+  marginBottom: "-8px",
+});
+export const UsersCountContainer = styled("div")({ display: "flex" });
+export const UsersCountText = styled("div")({
+  fontSize: "14px",
+  marginLeft: "7px",
+  color: "#515151",
+});
+
+export const UpdatedAtContainer = styled("div")({
+  display: "flex",
+  alignItems: "baseline",
+});
+export const CapturesText = styled("div")({
+  marginTop: "26px",
+  color: "#101F4C",
+  fontSize: "14px",
+});
+export const CaptureImageContainer = styled("div")({
+  display: "flex",
+  paddingTop: "17px",
+  color: "#515151",
+  fontSize: "14px",
+});
+export const CaptureImageIcon = styled(Image)({
+  marginRight: "7px",
+});
+export const CaptureName = styled("div")({
+  marginRight: "5px",
+});
+export const CaptureCount = styled("div")({});
+export const ListDivider = styled("div")({
+  display: "block",
+  width: "1px",
+  height: "20px",
+  background: "#D9D9D9",
+  margin: "0 10px",
+});
+export const ListVerticalDivider = styled("div")({
+  display: "block",
+  width: "1px",
+  height: "20px",
+  background: "#D9D9D9",
+  margin: "0 10px",
+});
+export const ListHorizontalDivider = styled("div")({
+  display: "block",
+  height: "1px",
+  width: "100%",
+  background: "#D9D9D9",
+  padding: "0 20px",
+  marginTop: "6px",
+  marginBottom: "10px",
+});
+
+export const CapturesField = styled("div")({
+  display: "flex",
+});
+
+export const CapturesFieldContainer = styled("div")({
+  display: "flex",
+});

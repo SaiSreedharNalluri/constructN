@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { IJobs } from "../../../models/IJobs";
 import { IProjects } from "../../../models/IProjects";
 import { getjobsInfo } from "../../../services/jobs";
-import { getProjects } from "../../../services/project";
+import { getProjects, getProjectsList } from "../../../services/project";
 import { Menu, MenuItem, ListItemIcon } from "@mui/material";
 import {
   CaptureProgress,
@@ -44,7 +44,7 @@ import sectionsIcon from "../../../public/divami_icons/sectionsIcon.svg";
 import logoimage from "../../../public/divami_icons/logoimage.svg";
 import moremenu from "../../../public/divami_icons/moremenu.svg";
 import { StyledMenu } from "../issue-listing/IssueListStyles";
-import SemiCircleProgressBar from "react-progressbar-semicircle";
+// import SemiCircleProgressBar from "react-progressbar-semicircle";
 
 export const ProjectListing = () => {
   const router = useRouter();
@@ -69,7 +69,7 @@ export const ProjectListing = () => {
   ];
   useEffect(() => {
     if (router.isReady) {
-      getProjects()
+      getProjectsList()
         .then(async (response) => {
           if (response?.data?.success === true) {
             let tempData: IProjects[] = [];
@@ -135,7 +135,7 @@ export const ProjectListing = () => {
           <ProjectsListItemContainer>
             <ProjectNameContainer>
               <CompanyLogoContainer>
-                <CompanyLogo src={logoimage} alt=""></CompanyLogo>
+                <CompanyLogo src={logoimage} alt="" height={45} width={242} />
               </CompanyLogoContainer>
               <Divider orientation="horizontal" />
               <ProjectName>{each?.name}</ProjectName>
@@ -220,14 +220,14 @@ export const ProjectListing = () => {
                 </ListProgressItemContainer>
                 <ListProgressItemContainer>
                   {/* <ProgressBar></ProgressBar> */}
-                  <SemiCircleProgressBar
+                  {/* <SemiCircleProgressBar
                     percentage={33}
                     showPercentValue={false}
                     diameter={"100"}
                     background="#D9D9D9"
                     stroke="#F1742E"
                     strokeWidth="7"
-                  />
+                  /> */}
                   <PercentageDelay>
                     10
                     <PercentageSymbol>%</PercentageSymbol>

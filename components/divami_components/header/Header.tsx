@@ -59,6 +59,7 @@ const Header: React.FC<any> = ({
   showBreadcrumbs = false,
   breadCrumbData,
   handleBreadCrumbClick,
+  hideSidePanel,
 }) => {
   const router = useRouter();
   const headerRef: any = React.useRef();
@@ -166,23 +167,25 @@ const Header: React.FC<any> = ({
   return (
     <>
       <HeaderContainer ref={headerRef}>
-        <div
-          style={{
-            height: "10px",
-            width: "59px",
-            background: "#FFFFFF",
-            position: "absolute",
-            top: "58px",
-            zIndex: "9999999",
-            //   opacity: "1",
-            // width: "59px",
-            // background: "#FFFFFF",
-            // position: "absolute",
-            // z-index: "9999999";
-            // top: "58px";
-            // opacity: "1";
-          }}
-        ></div>
+        {!hideSidePanel && (
+          <div
+            style={{
+              height: "10px",
+              width: "59px",
+              background: "#FFFFFF",
+              position: "absolute",
+              top: "58px",
+              zIndex: "9999999",
+              //   opacity: "1",
+              // width: "59px",
+              // background: "#FFFFFF",
+              // position: "absolute",
+              // z-index: "9999999";
+              // top: "58px";
+              // opacity: "1";
+            }}
+          ></div>
+        )}
         <HeaderLeftPart>
           <HeaderLogoImageContainer>
             <Image
