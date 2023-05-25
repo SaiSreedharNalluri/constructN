@@ -12,6 +12,8 @@ import drawing from "../../../public/divami_icons/drawing.svg";
 import tasks from "../../../public/divami_icons/tasks.svg";
 import tasksHighlighted from "../../../public/divami_icons/tasksHighlighted.svg";
 import branchHighlighted from "../../../public/divami_icons/branchHighlightedIcon.svg";
+import userIcon from "../../../public/divami_icons/userIcon.svg";
+import userHighlighted from "../../../public/divami_icons/userHighlighted.svg";
 
 // tasksHighlighted
 import branch from "../../../public/divami_icons/branch.svg";
@@ -62,6 +64,14 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       activeIcon: calendarHighlighted,
       isActive: false,
       toolTipMsg: "Schedule",
+    },
+
+    {
+      id: "sections",
+      icon: userIcon,
+      activeIcon: userHighlighted,
+      isActive: false,
+      toolTipMsg: "Sections",
     },
 
     {
