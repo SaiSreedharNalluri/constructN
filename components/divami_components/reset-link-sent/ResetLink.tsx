@@ -45,13 +45,14 @@ const ResetLink = ({ queryMail }: any) => {
         if (response?.success) {
           toast.success(response?.message);
 
-          router.push(
-            {
-              pathname: "/reset_link",
-              query: { email: email }, // Pass the email as a query parameter
-            },
-            "/reset_link"
-          );
+          // router.push(
+          //   {
+          //     pathname: "/reset_link",
+          //     query: { email: email }, // Pass the email as a query parameter
+          //   },
+          //   "/reset_link"
+          // );
+          router.push("/reset_pass_word/xyz123456");
         }
       })
       .catch((error: any) => {
@@ -97,7 +98,8 @@ const ResetLink = ({ queryMail }: any) => {
               onClick={() => {
                 // router.push("/signup");
                 // router.push("/signup");
-                router.push("/forgot_password");
+                // router.push("/signup");
+                router.push("/reset_pass_word/xyz123456");
               }}
             >
               Change Email
@@ -110,6 +112,7 @@ const ResetLink = ({ queryMail }: any) => {
                   // router.push("/signup");
                   // router.push("/signup");
                   handleForgotPassword(maskedMail);
+                  // router.push("/reset_pass_word/xyz123456");
                 }}
               >
                 Click to resend

@@ -22,7 +22,7 @@ import { resetPasswordToken } from "../../../services/userAuth";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
-const ResetPassword = () => {
+const ResetPassword = ({ uniqueToken }: any) => {
   const router = useRouter();
 
   // form wrapper code
@@ -77,7 +77,7 @@ const ResetPassword = () => {
   const handleResetPassword = (formPassword: any) => {
     resetPasswordToken(
       // router.query.token as string,
-      dummyToken,
+      uniqueToken,
       formPassword.password as string
     )
       .then((response) => {
@@ -86,14 +86,20 @@ const ResetPassword = () => {
           toast.info("Redirecting ... ");
           setTimeout(() => {
             toast.info(" reset password completed");
+            return;
             // router.push('/login');
             // router.push("/signin");
+            router.push("/reset_completed");
           }, 5000);
         }
       })
       .catch((error) => {
         if (error.success === false) {
           toast.error(error.message);
+
+          router.push("/reset_completed");
+
+          return;
           // setCheckResponse(error.success);
         }
       });
