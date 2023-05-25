@@ -84,13 +84,8 @@ const ResetPassword = ({ uniqueToken }: any) => {
         console.log("tokenresponse", response);
         if (response.success === true) {
           toast.info("Redirecting ... ");
-          setTimeout(() => {
-            toast.info(" reset password completed");
-            return;
-            // router.push('/login');
-            // router.push("/signin");
-            router.push("/reset_completed");
-          }, 5000);
+
+          router.push("/reset_completed");
         }
       })
       .catch((error) => {
