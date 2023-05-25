@@ -119,9 +119,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       case "tasks":
         router.push(`/projects/${router.query.projectId as string}/tasks`);
         break;
-      case "sections":
-        router.push(`/projects/${router.query.projectId as string}/sections`);
-        break;
       default:
         router.push(`/projects/${router.query.projectId as string}/structure`);
     }
