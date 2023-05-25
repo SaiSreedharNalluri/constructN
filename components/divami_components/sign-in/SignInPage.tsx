@@ -106,7 +106,12 @@ const SignInPage = () => {
 
     setValidate(true);
 
-    if (email === "" || password === "") {
+    if (
+      email === "" ||
+      password === "" ||
+      formData[0].isError 
+      
+    ) {
       console.log("Email and password are empty. Aborting login.");
       return; // Stop execution here
     }

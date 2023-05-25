@@ -34,6 +34,7 @@ import FooterSignIn from "../sign-in/FooterSignIn";
 import { registerUser } from "../../../services/userAuth";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import FooterSignUp from "./FooterSignUp";
 
 const SignUpPage = () => {
   const router = useRouter();
@@ -44,7 +45,7 @@ const SignUpPage = () => {
   const [validate, setValidate] = useState(false);
   const [tagList, setTagList] = useState<[string]>([""]);
   const [showPopUp, setshowPopUp] = useState(false);
-  const [canBeDisabled, setCanBeDisabled] = useState(false);
+  const [canBeDisabled, setCanBeDisabled] = useState(true);
   const [token, setToken] = useState("");
   const [showError, setShowError] = useState<boolean>(false);
   const [signUpMsg, setSignUpMsg] = useState<boolean>(false);
@@ -162,11 +163,11 @@ const SignUpPage = () => {
       <FormDiv>
         <FormContainerSign>
           <SignInHeader>Signup</SignInHeader>
-          {showError ? (
+          {/* {showError ? (
             <ErrorSectonDiv>All fields are required*</ErrorSectonDiv>
           ) : (
             ""
-          )}
+          )} */}
 
           <FormBody
             handleFormData={handleFormData}
@@ -176,6 +177,7 @@ const SignUpPage = () => {
             setCanBeDisabled={setCanBeDisabled}
             loginField={true}
             signUpMsg={signUpMsg}
+            errorStylingSignup={true}
           />
           {/* <ExtraTickDiv>
             <ParentTickDiv>
@@ -208,7 +210,7 @@ const SignUpPage = () => {
               Sign In
             </SignInContainedButton> */}
 
-            <FooterSignIn
+            <FooterSignUp
               formHandler={formHandler}
               canBeDisabled={canBeDisabled}
               loginField={true}

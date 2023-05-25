@@ -48,6 +48,7 @@ const FormWrapper = (props: any) => {
     loginField,
     signUpMsg,
     signInMsg,
+    errorStylingSignup,
   } = props;
 
   console.log("formState", formState);
@@ -56,6 +57,10 @@ const FormWrapper = (props: any) => {
   useEffect(() => {
     console.log("userpassword", userPassword);
   }, [userPassword]);
+
+  useEffect(() => {
+    checkDataisEmpty();
+  }, [config]);
 
   useEffect(() => {
     if (validate) {
@@ -93,7 +98,8 @@ const FormWrapper = (props: any) => {
             return {
               ...item,
               isError: true,
-              errorMsg: <PasswordRequired />,
+              // errorMsg: <PasswordRequired showPasswordMenu={true} />,
+              errorMsg: "Password is weak",
               showErrorMsg: true,
             };
           } else if (
@@ -125,6 +131,24 @@ const FormWrapper = (props: any) => {
             ...item,
             defaultValue: e.target.value,
           };
+        }
+        return item;
+      })
+    );
+  };
+
+  const handlePasswordChange = (e: any, id: string, data?: any) => {
+    console.log("handlething", id, data);
+    setFormConfig((prev: any) =>
+      prev.map((item: any) => {
+        // console.log("handlePasswordChange", item);
+        if (item.id === "password") {
+          // return {
+          //   ...item,
+          //   defaultValue: e.target.value,
+          // };
+          // setIsValidate(true);
+          checkPassword(e.target.value, id);
         }
         return item;
       })
@@ -241,9 +265,13 @@ const FormWrapper = (props: any) => {
       })
     );
   };
+  function checkDataisEmpty() {
+    const isEmptyField = config.some((val: any) => !val.defaultValue);
 
+    setCanBeDisabled(isEmptyField);
+  }
   function isValidEmail(email: any, id: any) {
-    console.log("lol");
+    // console.log("lol");
     if (/\S+@\S+\.\S+/.test(email)) {
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
@@ -251,6 +279,7 @@ const FormWrapper = (props: any) => {
             return {
               ...item,
               isValidField: true,
+              isError: false,
             };
           }
           return item;
@@ -263,6 +292,7 @@ const FormWrapper = (props: any) => {
             return {
               ...item,
               isValidField: false,
+              isError: true,
             };
           }
           return item;
@@ -275,6 +305,7 @@ const FormWrapper = (props: any) => {
   function checkPassword(str: any, id: any) {
     let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     let passwordTru = rePass.test(str);
+    console.log("typepass", passwordTru);
 
     if (passwordTru) {
       setFormConfig((prev: any) =>
@@ -283,6 +314,7 @@ const FormWrapper = (props: any) => {
             return {
               ...item,
               isValidField: true,
+              isError: false,
             };
           }
 
@@ -297,6 +329,7 @@ const FormWrapper = (props: any) => {
             return {
               ...item,
               isValidField: false,
+              isError: true,
             };
           }
           return item;
@@ -314,6 +347,7 @@ const FormWrapper = (props: any) => {
             return {
               ...item,
               isValidField: false,
+              isError: true,
             };
           }
 
@@ -327,6 +361,7 @@ const FormWrapper = (props: any) => {
             return {
               ...item,
               isValidField: true,
+              isError: false,
             };
           }
           return item;

@@ -20,13 +20,15 @@ import zIndex from "@mui/material/styles/zIndex";
 // });
 
 export const StyledMenu = styled(MenuItem)({
-  
+  padding: 0,
 });
 export const PasswordFieldSection = styled("div")({
   //   border: "2px solid blue",
 //   width: "100%",
-  width: "342px",
-
+//  width: "342px",
+  
+  // marginTop:"30px",
+  // position:"relative",
   paddingTop: "20px",
   paddingLeft: "20px",
     paddingRight: "18px",
@@ -43,7 +45,8 @@ export const InstructionsHeader = styled("div")({
   fontWeight: "400",
   fontSize: "14px",
   color: "#101F4C",
-});
+  wordWrap:"break-word"
+}) as any;
 
 export const InstructionsSections = styled("div")({
   //   border: "2px solid blue",

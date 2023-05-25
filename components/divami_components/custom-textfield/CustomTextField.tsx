@@ -7,10 +7,12 @@ import { InputAdornment, Menu } from "@mui/material";
 import Image from "next/image";
 import Mail from "../../../public/divami_icons/Mail.svg";
 import name from "../../../public/divami_icons/name.svg";
+import Blocked from "../../../public/divami_icons/Blocked.svg";
 
 import lock from "../../../public/divami_icons/lock.svg";
 import { ShowHideDiv } from "../sign-in/SignInPageStyle";
 import { text } from "stream/consumers";
+// import { ErrorShowcase } from "./CustomTextFieldStyles";
 
 interface PropTypes {
   id: any;
@@ -63,6 +65,18 @@ const StyledTextField = styled(TextField)((props: any) => ({
     height: "7px",
   },
 })) as any;
+const ErrorShowcase = styled("div")({
+  // border: "2px solid blue",
+  paddingTop: "6px",
+  display: "flex",
+  alignItems: "center",
+  // background: "blue",
+});
+const HeaderImageLogo = styled(Image)({});
+const ErrorShowText = styled("div")({
+  marginLeft: "4px",
+  // border: "2px solid blue",
+});
 
 // const StyledTextField = styled(TextField)({
 //   width: "392px !important",
@@ -200,7 +214,15 @@ export const CustomTextField = (props: PropTypes) => {
             : {}
         }
       />
-      {isError && showErrorMsg ? <div>{errorMsg}</div> : ""}
+      {isError && showErrorMsg ? (
+        <ErrorShowcase>
+          <HeaderImageLogo src={Blocked} alt="blocked" />
+          <ErrorShowText>{errorMsg}</ErrorShowText>
+        </ErrorShowcase>
+      ) : (
+        // <div style={{ height: "30px" }}></div>
+        ""
+      )}
     </div>
   );
 };

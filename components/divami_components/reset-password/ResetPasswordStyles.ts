@@ -28,7 +28,9 @@ export const HeaderContainer = styled("header")({
   paddingLeft: "30px",
 });
 
-export const HeaderImageLogo = styled(Image)({});
+export const HeaderImageLogo = styled(Image)({
+  cursor:"pointer"
+});
 
 export const IllustrationBackground = styled(Image)({
   position: "absolute",
@@ -77,6 +79,8 @@ export const SignInHeader = styled("div")({
   fontWeight: "400",
   fontSize: "22px",
   color: "#36415D",
+  marginLeft:"10px"
+
 });
 
 export const UserText = styled("div")({
@@ -101,4 +105,11 @@ export const ButtonSection = styled("div")({
   marginTop: "40px",
 
   // margin:"auto"
+});
+
+
+
+export const FormHeader = styled("div")({
+    display: "flex",
+    // justifyContent:"center"
 });

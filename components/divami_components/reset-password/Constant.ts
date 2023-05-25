@@ -5,7 +5,7 @@ export const RESET_FORM_CONFIG = [
     type: "password",
     defaultValue: "",
     // formLabel: "What shall we call this issue?",
-    placeholder: "Enter new Password",
+    placeholder: "Enter new password",
     isError: false,
     isReq: true,
     isReadOnly: false,

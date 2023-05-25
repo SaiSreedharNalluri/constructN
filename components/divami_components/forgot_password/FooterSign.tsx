@@ -19,7 +19,8 @@ const FooterSignIn = ({
   const [buttonClicked, setButtonClicked] = useState(false);
   return (
     <CustomButton
-      type={canBeDisabled && buttonClicked ? "disabled" : "contained"}
+      // type={canBeDisabled && buttonClicked ? "disabled" : "contained"}
+      type={canBeDisabled ? "disabled" : "contained"}
       label={customLabel ? "Create Account" : "Send Reset Link"}
       formHandler={formHandler}
       setButtonClicked={setButtonClicked}

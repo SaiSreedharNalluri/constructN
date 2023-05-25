@@ -48,6 +48,7 @@ const FormBody = ({
   setCanBeDisabled,
   loginField,
   signUpMsg,
+  errorStylingSignup,
 }: any) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -177,6 +178,7 @@ const FormBody = ({
         setCanBeDisabled={setCanBeDisabled}
         loginField={true}
         signUpMsg={signUpMsg}
+        errorStylingSignup={true}
       />
     </>
   );

@@ -3,6 +3,7 @@ import {
   ButtonSection,
   FormContainerSign,
   FormDiv,
+  FormHeader,
   HeaderContainer,
   HeaderImageLogo,
   IllustrationBackground,
@@ -13,6 +14,8 @@ import {
 } from "./ResetPasswordStyles";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Logo from "../../../public/divami_icons/Logo.svg";
+import backIcon from "../../../public/divami_icons/backIcon.svg";
+
 import FormBody from "./FormBody";
 import FooterSignIn from "./FooterSign";
 import { resetPasswordToken } from "../../../services/userAuth";
@@ -59,7 +62,7 @@ const ResetPassword = () => {
 
     // const isErrorExist = formData.some
 
-    if (hasEmptyValue) {
+    if (hasEmptyValue || formData[0].isError || formData[1].isError) {
       setShowError(true);
       console.log("Form has empty values. Aborting registration.");
       return; // Stop execution here
@@ -107,7 +110,17 @@ const ResetPassword = () => {
       <Overlay></Overlay>
       <FormDiv>
         <FormContainerSign>
-          <SignInHeader>Reset Password</SignInHeader>
+          <FormHeader>
+            <HeaderImageLogo
+              onClick={() => {
+                router.push("/signin");
+              }}
+              src={backIcon}
+              alt="logo"
+            />
+
+            <SignInHeader>Reset Password</SignInHeader>
+          </FormHeader>
 
           <UserText>
             Hi User, kindly create a new password. <br></br>Your new password

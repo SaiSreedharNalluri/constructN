@@ -18,7 +18,7 @@ export const SIGN_IN_FORM_CONFIG = [
     type: "password",
     defaultValue: "",
     // formLabel: "What shall we call this issue?",
-    placeholder: "Enter Password",
+    placeholder: "Password",
     isError: false,
     isReq: true,
     isReadOnly: false,

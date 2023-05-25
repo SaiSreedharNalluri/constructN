@@ -11,6 +11,13 @@ const StyledButton = styled(Button)((props: any) => ({
   width: props.loginField ? "340px" : "180px !important",
   height: "40px",
   textTransform: "none",
+  backgroundColor: "#888888 !important",
+  color: "#ffffff !important",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "16px",
+  lineHeight: "16px",
 })) as any;
 
 const ContainedButton = styled(StyledButton)({
@@ -62,7 +69,7 @@ const CustomButton = (props: any) => {
               setButtonClicked ? setButtonClicked(true) : null;
             } else if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
               e.stopPropagation();
-            } 
+            }
           }}
           loginField={loginField}
         >
