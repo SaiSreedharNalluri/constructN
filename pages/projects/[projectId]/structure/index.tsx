@@ -390,10 +390,12 @@ const Index: React.FC<IProps> = () => {
 
       const userObj: any = getCookie("user");
       let user: IUser;
-      if (userObj) {user = JSON.parse(userObj);
-      if (user?._id) {
-        SetLoggedInUserId(user._id);
-      }}
+      if (userObj) {
+        user = JSON.parse(userObj);
+        if (user?._id) {
+          SetLoggedInUserId(user._id);
+        }
+      }
 
       // if (window.localStorage.getItem("expandedNodes")) {
       //   setExpanded(

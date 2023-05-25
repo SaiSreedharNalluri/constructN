@@ -2,7 +2,7 @@ import { createTheme, InputAdornment, ThemeProvider } from "@mui/material";
 
 import moment from "moment";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { IProjects } from "../../../models/IProjects";
 import { getProjectUsers, removeProjectUser } from "../../../services/project";
 import RemoveIcon from "../../../public/divami_icons/RemoveIcon.svg";
@@ -17,6 +17,7 @@ import {
   RemoveIconImage,
   StyledTable,
   TableHeader,
+  TableWrapper,
   UserDefaultIcon,
   UserImage,
   UserName,
@@ -38,8 +39,10 @@ import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
 import UsersFilter from "../usersList/UsersFilter";
 import CustomDrawer from "../custom-drawer/custom-drawer";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
-export const ProjectUsersList = () => {
+export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [tableData, setTableData] = useState<any>([]);
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
@@ -62,6 +65,7 @@ export const ProjectUsersList = () => {
         lineHeight: "20px",
         color: "#101F4C",
       },
+      sorting: false,
       render: (rowData: any) => {
         return (
           <UserName>
@@ -95,6 +99,8 @@ export const ProjectUsersList = () => {
     {
       title: "Role",
       field: "role",
+      sorting: false,
+
       headerStyle: {
         borderBottom: "1px solid #FF843F",
         fontFamily: "Open Sans",
@@ -117,6 +123,7 @@ export const ProjectUsersList = () => {
         lineHeight: "8px",
         color: "#101F4C",
       },
+
       render: (rowData: any) => {
         return <>{moment(rowData.updatedAt).format("DD MMM YYYY")}</>;
       },
@@ -230,7 +237,9 @@ export const ProjectUsersList = () => {
   //   setHoveringOver(`${propsData.data.tableData.id}`);
   // const handleRowHoverLeave = (event, propsData) => setHoveringOver("");
 
-  const formHandler = (event: any) => {};
+  const formHandler = (event: any) => {
+    setShowEmptyState(true);
+  };
   const handleEditClick = (event, rowData) => {
     rowData.tableData.editing = "delete";
     forceUpdate();
@@ -341,82 +350,91 @@ export const ProjectUsersList = () => {
       </TableHeader>
 
       <ThemeProvider theme={defaultMaterialTheme}>
-        <StyledTable
-          // components={{
-          //   Toolbar: (props) => (
-          //     <MTableToolbar {...props} style={{ width: "100%" }} sx={{}} />
-          //   ),
-          // }}
-          components={{
-            Container: (props) => <Paper {...props} elevation={0} />,
-            // Row: (props) => {
-            //   return (
-            //     <MTableBodyRow
-            //       {...props}
-            //       onMouseEnter={(e: any) => handleRowHover(e, props)}
-            //       onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
-            //     />
-            //   );
-            // },
+        <TableWrapper>
+          <StyledTable
+            // components={{
+            //   Toolbar: (props) => (
+            //     <MTableToolbar {...props} style={{ width: "100%" }} sx={{}} />
+            //   ),
+            // }}
+            icons={{
+              SortArrow: forwardRef((props, ref) => (
+                <ArrowDropUpIcon {...props} ref={ref} />
+              )),
+            }}
+            components={{
+              Container: (props) => <Paper {...props} elevation={0} />,
+              // Row: (props) => {
+              //   return (
+              //     <MTableBodyRow
+              //       {...props}
+              //       onMouseEnter={(e: any) => handleRowHover(e, props)}
+              //       onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
+              //     />
+              //   );
+              // },
 
-            // EditRow: (props) => {
-            //   return (
-            //     <MTableEditRow
-            //       {...props}
-            //       // onEditingApproved={(mode, newData, oldData) => {
-            //       //   if (oldData.tableData.editing === "delete") {
-            //       //     // deleteUser(
-            //       //     //   tableData.find(
-            //       //     //     (each) => each.tableData.id == oldData.tableData.id
-            //       //     //   )
-            //       //     // );
-            //       //     // const dataCopy = [...data];
-            //       //     // dataCopy.splice(oldData.tableData.id, 1);
-            //       //     // setData(dataCopy);
-            //       //   }
-            //       // }}
-            //     />
-            //   );
-            // },
-          }}
-          columns={columns}
-          data={searchTableData ? searchTableData : []}
-          // actions={[
-          //   {
-          //     icon: RemoveIcon,
-          //     tooltip: "Delete User",
-          //     onClick: (event, rowData) => alert("You want to delete "),
-          //   },
-          // ]}
-          // actions={[
-          //   (rowData: any) => {
-          //     return hoveringOver && rowData.tableData.id === hoveringOver
-          //       ? { icon: RemoveIcon, hidden: false, onClick: handleEditClick }
-          //       : { icon: RemoveIcon, hidden: true, onClick: handleEditClick };
-          //   },
-          // ]}
-          title={""}
-          options={{
-            search: false,
-            paging: false,
-            exportButton: false,
-            exportFileName: "tableData",
-            selection: false,
-            showTitle: true,
-            toolbar: false,
-            rowStyle: {
-              fontFamily: "Open Sans",
-              fontStyle: "normal",
-              fontWeight: "400",
-              fontSize: "14px",
-              color: "#101F4C",
-            },
-            headerStyle: {
-              padding: "6px 16px",
-              fontFamily: "Open Sans",
-            },
-          }}
-        />
+              // EditRow: (props) => {
+              //   return (
+              //     <MTableEditRow
+              //       {...props}
+              //       // onEditingApproved={(mode, newData, oldData) => {
+              //       //   if (oldData.tableData.editing === "delete") {
+              //       //     // deleteUser(
+              //       //     //   tableData.find(
+              //       //     //     (each) => each.tableData.id == oldData.tableData.id
+              //       //     //   )
+              //       //     // );
+              //       //     // const dataCopy = [...data];
+              //       //     // dataCopy.splice(oldData.tableData.id, 1);
+              //       //     // setData(dataCopy);
+              //       //   }
+              //       // }}
+              //     />
+              //   );
+              // },
+            }}
+            columns={columns}
+            data={searchTableData ? searchTableData : []}
+            // actions={[
+            //   {
+            //     icon: RemoveIcon,
+            //     tooltip: "Delete User",
+            //     onClick: (event, rowData) => alert("You want to delete "),
+            //   },
+            // ]}
+            // actions={[
+            //   (rowData: any) => {
+            //     return hoveringOver && rowData.tableData.id === hoveringOver
+            //       ? { icon: RemoveIcon, hidden: false, onClick: handleEditClick }
+            //       : { icon: RemoveIcon, hidden: true, onClick: handleEditClick };
+            //   },
+            // ]}
+            title={""}
+            options={{
+              search: false,
+              paging: false,
+              exportButton: false,
+              exportFileName: "tableData",
+              selection: false,
+              showTitle: true,
+              toolbar: false,
+              maxBodyHeight: 550,
+              thirdSortClick: false,
+              rowStyle: {
+                fontFamily: "Open Sans",
+                fontStyle: "normal",
+                fontWeight: "400",
+                fontSize: "14px",
+                color: "#101F4C",
+              },
+              headerStyle: {
+                padding: "6px 16px",
+                fontFamily: "Open Sans",
+              },
+            }}
+          />
+        </TableWrapper>
       </ThemeProvider>
       {openFilter && (
         <CustomDrawer open>

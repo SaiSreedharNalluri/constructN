@@ -9,7 +9,9 @@ export const UsersListing = () => {
       {showEmptyState ? (
         <EmptyUsersList></EmptyUsersList>
       ) : (
-        <ProjectUsersList></ProjectUsersList>
+        <ProjectUsersList
+          setShowEmptyState={setShowEmptyState}
+        ></ProjectUsersList>
       )}
     </>
   );

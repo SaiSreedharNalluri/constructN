@@ -2,7 +2,7 @@ import { useState } from "react";
 import Header from "../../../../components/divami_components/header/Header";
 import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 import { UsersListing } from "../../../../components/divami_components/usersList/UsersListing";
-import { Content } from "./usersListStyles";
+import { Content, SidePanelMenuContainer } from "./usersListStyles";
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -18,7 +18,7 @@ const Index: React.FC<any> = () => {
         {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
       <Content>
-        <SidePanelMenu onChangeData={() => {}} />
+        <SidePanelMenuContainer onChangeData={() => {}} />
         <UsersListing />
       </Content>
     </div>

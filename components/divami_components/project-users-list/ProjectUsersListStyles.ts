@@ -103,6 +103,10 @@ export const HeaderImage = styled(Image)({
 
 export const StyledTable = styled(MaterialTable)({});
 
+export const TableWrapper = styled("div")({
+  marginBottom: "50px",
+});
+
 export const ToggleButtonContainer = styled("div")({ display: "flex" });
 
 export const GridViewButton = styled("div")((props: any) => ({

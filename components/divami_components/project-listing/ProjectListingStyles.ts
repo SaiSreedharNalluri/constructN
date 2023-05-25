@@ -157,7 +157,8 @@ export const ProjectCard = styled("div")({
   border: "1px solid #888888",
   padding: "20px",
   marginRight: "36px",
-  marginBottom: "30px",
+
+  marginBottom: "36px",
   color: "#101F4C",
   fontSize: "14px",
   fontFamily: "Open Sans",
