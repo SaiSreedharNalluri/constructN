@@ -213,7 +213,7 @@ export const ForgotDiv = styled("div")({
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "14px",
-  color: "#36415D",
+  color: "#F1742E",
   marginLeft: "3px",
   cursor:"pointer"
 });
