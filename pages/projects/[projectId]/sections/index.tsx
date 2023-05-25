@@ -124,62 +124,62 @@ const customToolbarStyle = {
   padding: "10px", // change the padding value as per your requirement
 };
 
-const tableIcons: any = {
-  Add: forwardRef<SVGSVGElement>((props, ref) => (
-    <AddBox {...props} ref={ref} />
-  )),
-  Check: forwardRef<SVGSVGElement>((props, ref) => (
-    <Check {...props} ref={ref} />
-  )),
-  Clear: forwardRef<SVGSVGElement>((props, ref) => (
-    <Clear {...props} ref={ref} />
-  )),
-  Delete: forwardRef<SVGSVGElement>((props, ref) => (
-    <DeleteOutline {...props} ref={ref} />
-  )),
-  DetailPanel: forwardRef<SVGSVGElement>((props, ref) => (
-    // console.log("addingtodo", props), (<TestIcon props={props} />)
-    <Add {...props} ref={ref} />
+// const tableIcons: any = {
+//   Add: forwardRef<SVGSVGElement>((props, ref) => (
+//     <AddBox {...props} ref={ref} />
+//   )),
+//   Check: forwardRef<SVGSVGElement>((props, ref) => (
+//     <Check {...props} ref={ref} />
+//   )),
+//   Clear: forwardRef<SVGSVGElement>((props, ref) => (
+//     <Clear {...props} ref={ref} />
+//   )),
+//   Delete: forwardRef<SVGSVGElement>((props, ref) => (
+//     <DeleteOutline {...props} ref={ref} />
+//   )),
+//   DetailPanel: forwardRef<SVGSVGElement>((props, ref) => (
+//     // console.log("addingtodo", props), (<TestIcon props={props} />)
+//     <Add {...props} ref={ref} />
 
-    //<TestIcon />
-  )),
-  Edit: forwardRef<SVGSVGElement>((props, ref) => (
-    <Edit {...props} ref={ref} />
-  )),
-  Export: forwardRef<SVGSVGElement>((props, ref) => (
-    <SaveAlt {...props} ref={ref} />
-  )),
-  Filter: forwardRef<SVGSVGElement>((props, ref) => (
-    <FilterList {...props} ref={ref} />
-  )),
-  FirstPage: forwardRef<SVGSVGElement>((props, ref) => (
-    <FirstPage {...props} ref={ref} />
-  )),
-  LastPage: forwardRef<SVGSVGElement>((props, ref) => (
-    <LastPage {...props} ref={ref} />
-  )),
-  NextPage: forwardRef<SVGSVGElement>((props, ref) => (
-    <Add {...props} ref={ref} />
-  )),
-  PreviousPage: forwardRef<SVGSVGElement>((props, ref) => (
-    <ChevronLeft {...props} ref={ref} />
-  )),
-  ResetSearch: forwardRef<SVGSVGElement>((props, ref) => (
-    <Clear {...props} ref={ref} />
-  )),
-  Search: forwardRef<SVGSVGElement>((props, ref) => (
-    <Search {...props} ref={ref} />
-  )),
-  SortArrow: forwardRef<SVGSVGElement>((props, ref) => (
-    <ArrowDownward {...props} ref={ref} />
-  )),
-  ThirdStateCheck: forwardRef<SVGSVGElement>((props, ref) => (
-    <Remove {...props} ref={ref} />
-  )),
-  ViewColumn: forwardRef<SVGSVGElement>((props, ref) => (
-    <Add {...props} ref={ref} />
-  )),
-};
+//     //<TestIcon />
+//   )),
+//   Edit: forwardRef<SVGSVGElement>((props, ref) => (
+//     <Edit {...props} ref={ref} />
+//   )),
+//   Export: forwardRef<SVGSVGElement>((props, ref) => (
+//     <SaveAlt {...props} ref={ref} />
+//   )),
+//   Filter: forwardRef<SVGSVGElement>((props, ref) => (
+//     <FilterList {...props} ref={ref} />
+//   )),
+//   FirstPage: forwardRef<SVGSVGElement>((props, ref) => (
+//     <FirstPage {...props} ref={ref} />
+//   )),
+//   LastPage: forwardRef<SVGSVGElement>((props, ref) => (
+//     <LastPage {...props} ref={ref} />
+//   )),
+//   NextPage: forwardRef<SVGSVGElement>((props, ref) => (
+//     <Add {...props} ref={ref} />
+//   )),
+//   PreviousPage: forwardRef<SVGSVGElement>((props, ref) => (
+//     <ChevronLeft {...props} ref={ref} />
+//   )),
+//   ResetSearch: forwardRef<SVGSVGElement>((props, ref) => (
+//     <Clear {...props} ref={ref} />
+//   )),
+//   Search: forwardRef<SVGSVGElement>((props, ref) => (
+//     <Search {...props} ref={ref} />
+//   )),
+//   SortArrow: forwardRef<SVGSVGElement>((props, ref) => (
+//     <ArrowDownward {...props} ref={ref} />
+//   )),
+//   ThirdStateCheck: forwardRef<SVGSVGElement>((props, ref) => (
+//     <Remove {...props} ref={ref} />
+//   )),
+//   ViewColumn: forwardRef<SVGSVGElement>((props, ref) => (
+//     <Add {...props} ref={ref} />
+//   )),
+// };
 
 const Index: React.FC = () => {
   const router = useRouter();
@@ -545,7 +545,7 @@ const Index: React.FC = () => {
                         padding: "6px",
                       },
                     }}
-                    icons={tableIcons}
+                    // icons={tableIcons}
                     // detailPanel={[
                     //   { icon: tableIcons.Add, tooltip: "Show Surname" },
                     // ]}
