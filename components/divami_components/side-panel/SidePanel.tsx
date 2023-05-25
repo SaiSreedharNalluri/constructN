@@ -20,6 +20,8 @@ import calendarHighlighted from "../../../public/divami_icons/calendarHighlighte
 
 import people from "../../../public/divami_icons/people.svg";
 import peopleHighlighted from "../../../public/divami_icons/peopleHighlighted.svg";
+import ScheduleIcon from "../../../public/divami_icons/ScheduleIcon.svg";
+import ScheduleHighlight from "../../../public/divami_icons/ScheduleHighlight.svg";
 
 import {
   HighlightedSytledImage,
@@ -116,6 +118,9 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         break;
       case "tasks":
         router.push(`/projects/${router.query.projectId as string}/tasks`);
+        break;
+      case "sections":
+        router.push(`/projects/${router.query.projectId as string}/sections`);
         break;
       default:
         router.push(`/projects/${router.query.projectId as string}/structure`);

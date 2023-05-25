@@ -1209,16 +1209,18 @@ const CustomTaskDetailsDrawer = (props: any) => {
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
-    data.startDate = data.startDate
-      ? moment(data.startDate).format("YYYY-MM-DD")
-      : "";
+    // data.startDate = data.startDate
+    //   ? moment(data.startDate).format("YYYY-MM-DD")
+    //   : "";
+    data.startDate = `${moment(data.startDate).toISOString()}`;
 
     data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-    data.dueDate = data.dueDate
-      ? moment(data.dueDate).format("YYYY-MM-DD")
-      : "";
+    // data.dueDate = data.dueDate
+    //   ? moment(data.dueDate).format("YYYY-MM-DD")
+    //   : "";
+    data.dueDate = `${moment(data.dueDate).toISOString()}`;
 
     if (!data.startDate) {
       data = _.omit(data, "startDate");
