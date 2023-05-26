@@ -367,54 +367,54 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           break;
           
         
-        case 'issueShow':
+        case 'showIssue':
           showTag('Issue',true,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'issueHide':
+        case 'hideIssue':
           showTag('Issue',false,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'issueCreate':
+        case 'createIssue':
           addTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));            
           break;
-        case 'issueCreateSuccess':
+        case 'createSuccessIssue':
           newViewerData = {...oldViewerData,currentIssueList:{...oldViewerData.currentIssueList,...action.data as Issue}};
-          finishAddTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));
+          finishAddTag(action.data as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           //addTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));            
           break;
-        case 'issueCreateFail':
+        case 'createFailIssue':
           cancelAddTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'issueRemoved':
+        case 'removedIssue':
           //issue obj needed
           cancelAddTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'issueSelect':
-          selectTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));
+        case 'selectIssue':
+          selectTag(action.data as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           //issue obj needed to jump to context
           break;
-        case 'taskShow':
+        case 'showTask':
           showTag('Task',true,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'taskHide':
+        case 'hideTask':
           showTag('Task',false,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'taskCreate':
+        case 'createTask':
           addTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));            
           break;
-        case 'taskCreateSuccess':
+        case 'createSuccessTask':
           //cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
           newViewerData = {...oldViewerData,currentTaskList:{...oldViewerData.currentTaskList,...action.data as ITasks}};
-          finishAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
+          finishAddTag(action.data as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'taskCreateFail':
+        case 'createFailTask':
           cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'taskRemoved':
+        case 'removedTask':
           //task obj needed
           cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'taskSelect':
-          selectTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
+        case 'selectTask':
+          selectTag(action.data as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           //task obj needed to jump to context
           break;
 
@@ -503,10 +503,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           animationRequestId = requestAnimationFrame(animationNow);
         
         break;
-      case 'issueCreateSuccess':
+      case 'createSuccessIssue':
         handleTagListChange('Issue',getViewerTypefromViewType(currentViewerData.currentViewType));
         break;
-      case 'taskCreateSuccess':
+      case 'createSuccessTask':
         handleTagListChange('Task',getViewerTypefromViewType(currentViewerData.currentViewType));
         break;
       case 'setBaseSnapshot':
@@ -632,7 +632,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   };
 
-  const finishAddTag = (type:string,viewerType:string) => {
+  const finishAddTag = (type:IContext,viewerType:string) => {
     switch (viewerType) {
       case 'Forge':
         // if (forgeUtils.current) {
@@ -662,7 +662,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   };
 
-  const selectTag = (tag:string,viewerType:string) => {
+  const selectTag = (tag:IContext,viewerType:string) => {
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current) {
