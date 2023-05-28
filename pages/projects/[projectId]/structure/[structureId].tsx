@@ -75,28 +75,16 @@ const StructPage: React.FC = () => {
           });
 
             break;
+          case 'syncGenViewer':
+            //if(incomingPayload.current?.action?.data){ setInintData(incomingPayload.current?.action?.data as IGenData)}
+            break;
+
 
         }
-    }
-  //   const fetchTM = //useMemo(
-  //     async ()=>{
-  //     if(temp_list!==undefined)
-  //      for (let design of temp_list) {
-  //     if (!design.tm) {
-  //       let response :any= await getDesignTM(
-  //         getDesignPath(design.project, design.structure, design._id)
-  //       );
-  //       design.tm = response.data;
-        
-  //     }
 
-  //   }
-  //   sampleGenData.structure.designs=temp_list;
-  //   console.log('My Comp Parent Refetch')
-    
-  // };
-  // //,[sampleGenData]);
-  // fetchTM();//useMemo
+
+    }
+  
   const updateData= (newData:IGenData):void=>{
     console.log('My comp updated',newData);
     setInintData(newData);
@@ -175,15 +163,24 @@ const getSnapshotList = async (projectId:string, structurId:string,offset:Number
           {/* <div><SidePanelMenu onChangeData={() => {}} /></div>  */}
          
           {
-            initData&& <div><NewGenViewer data={initData} updateData={updateData}></NewGenViewer> </div>
+            initData&& <div><NewGenViewer 
+            tmcBase={<TimeLineComponent currentSnapshot={initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
+            setNextList={setNextList}
+            totalPages={totalPages}
+            offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
+            tmcCompare={<TimeLineComponent currentSnapshot={initData.currentSnapshotCompare||initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
+            setNextList={setNextList}
+            totalPages={totalPages}
+            offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
+            data={initData} updateData={updateData}></NewGenViewer> </div>
             
           }
-          {initData&&<div className=""><TimeLineComponent currentSnapshot={initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
+          {/* {initData&&<div className=""><TimeLineComponent currentSnapshot={initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
         setNextList={setNextList}
         totalPages={totalPages}
         offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent> </div>
         
-        }
+        } */}
         </div>
       </div>
     </React.Fragment>
