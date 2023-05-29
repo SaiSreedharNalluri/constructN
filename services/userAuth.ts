@@ -41,6 +41,19 @@ export const verifyEmail = (token: string) => {
     });
 };
 
+export const verifyResendEmail = (email:string) => {
+ return instance
+    .put(`${process.env.NEXT_PUBLIC_HOST}/users/resend-verification-link`, {
+      email,
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
+
 export const resetPasswordToken = (token: string, password: string) => {
   return instance
     .put(`${process.env.NEXT_PUBLIC_HOST}/users/reset-password/${token}`, {

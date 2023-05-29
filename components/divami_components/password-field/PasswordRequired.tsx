@@ -23,7 +23,7 @@ const PasswordRequired = ({ showPasswordMenu }: any) => {
   return (
     <Menu
       anchorEl={anchorEl}
-      id="account-menu"
+      id="password-menu"
       open={isSortMenuOpen}
       onClose={handleSortMenuClose}
       onClick={handleSortMenuClose}

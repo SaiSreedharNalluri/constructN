@@ -99,7 +99,7 @@ const FormWrapper = (props: any) => {
               ...item,
               isError: true,
               // errorMsg: <PasswordRequired showPasswordMenu={true} />,
-              errorMsg: "Password is weak",
+              errorMsg: <PasswordRequired />,
               showErrorMsg: true,
             };
           } else if (
