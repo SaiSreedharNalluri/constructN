@@ -177,6 +177,12 @@ body {
       format("opentype");
 }
 
+@font-face {
+  font-family: "Nunito Sans";
+  src: url("./fonts/Nunito_Sans/NunitoSans-VariableFont_YTLC\,opsz\,wdth\,wght.ttf")
+    format("truetype");
+}
+
 .white-bg {
   background: white !important;
 }
@@ -452,7 +458,7 @@ body {
 }
 
 .formErrorField {
-  border: 1px solid #f67c74;
+  /* border: 1px solid #f67c74; */
   border-radius: 4px;
 }
 

@@ -58,7 +58,9 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
   }, []);
   const userLogOut = () => {
     removeCookies("user");
-    router.push("/login");
+
+    // router.push("/login");
+    router.push("/signin");
   };
   const goToProjectsList = () => {
     router.push("/projects");
