@@ -7,12 +7,16 @@ import React from "react";
 //   height: "40px",
 //   textTransform: "none",
 // });
+
+interface ContainerProps {
+  loginField: boolean;
+}
 const StyledButton = styled(Button)((props: any) => ({
   width: props.loginField ? "340px" : "180px !important",
   height: "40px",
   textTransform: "none",
-  backgroundColor: "#888888 !important",
-  color: "#ffffff !important",
+  backgroundColor: props.loginField ? "#888888 !important" : "",
+  color: props.loginField ? "#ffffff !important" : "",
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",
