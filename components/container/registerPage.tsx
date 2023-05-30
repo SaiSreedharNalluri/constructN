@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import * as Yup from 'yup';
-import { Formik, Form, ErrorMessage } from 'formik';
-import showPwdImg from '../../public/icons/show-password.svg';
-import hidePwdImg from '../../public/icons/hide-password.svg';
-import SubmitButtons from '../core/buttons/submitButton';
-import InputPassword from '../core/Input/inputPassword';
-import InputText from '../core/Input/inputText';
-import NextImage from '../core/Image';
-import Image from 'next/image';
-import router from 'next/router';
+import React, { useState } from "react";
+import * as Yup from "yup";
+import { Formik, Form, ErrorMessage } from "formik";
+import showPwdImg from "../../public/icons/show-password.svg";
+import hidePwdImg from "../../public/icons/hide-password.svg";
+import SubmitButtons from "../core/buttons/submitButton";
+import InputPassword from "../core/Input/inputPassword";
+import InputText from "../core/Input/inputText";
+import NextImage from "../core/Image";
+import Image from "next/image";
+import router from "next/router";
 interface FormValues {
   firstName: string;
   lastName: string;
@@ -41,41 +41,41 @@ const Registerpage: React.FC<IProps> = ({
     password: string;
     confirmPassword: string;
   } = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   };
 
   const validationSchema = Yup.object().shape({
     firstName: Yup.string()
-      .required('First name is required')
-      .matches(/[a-zA-Z]/, 'Atleast one letter is reqired')
-      .matches(/^[^0-9]+$/, 'Number is not allowed'),
+      .required("First name is required")
+      .matches(/[a-zA-Z]/, "Atleast one letter is reqired")
+      .matches(/^[^0-9]+$/, "Number is not allowed"),
     lastName: Yup.string()
-      .required('Last name is required')
-      .matches(/[a-zA-Z]/, 'Atleast one letter is reqired')
-      .matches(/^([^0-9]*)$/, 'Number is not allowed'),
-    email: Yup.string().email('Invalid email').required('Email is required'),
+      .required("Last name is required")
+      .matches(/[a-zA-Z]/, "Atleast one letter is reqired")
+      .matches(/^([^0-9]*)$/, "Number is not allowed"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string()
-      .required('Password is required')
-      .min(8, 'Minimum 8 characters required')
-      .matches(/[0-9]/, 'Password requires a number')
-      .matches(/[a-z]/, 'Password requires a lowercase letter')
-      .matches(/[A-Z]/, 'Password requires an uppercase letter')
-      .matches(/[^\w\s]/, 'Password requires a symbol')
+      .required("Password is required")
+      .min(8, "Minimum 8 characters required")
+      .matches(/[0-9]/, "Password requires a number")
+      .matches(/[a-z]/, "Password requires a lowercase letter")
+      .matches(/[A-Z]/, "Password requires an uppercase letter")
+      .matches(/[^\w\s]/, "Password requires a symbol")
       .matches(
         /^[^\s].*[^\s]$/,
-        'Spaces are not allowed at the beginning, end of the password'
+        "Spaces are not allowed at the beginning, end of the password"
       ),
     confirmPassword: Yup.string()
-      .required('Confirm password is required')
-      .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+      .required("Confirm password is required")
+      .oneOf([Yup.ref("password"), null], "Passwords must match"),
   });
   const [isRevealPwd, setIsRevealPwd] = useState(false);
   const [isCRevealPwd, setIsCRevealPwd] = useState(false);
-  const [active, setActive] = useState('');
+  const [active, setActive] = useState("");
   const h = (e: any) => {
     setIsRevealPwd(!isRevealPwd);
     setActive(e.target.id);
@@ -138,7 +138,7 @@ const Registerpage: React.FC<IProps> = ({
                 <div className="absolute p-3 inset-y-0 right-0">
                   <Image
                     alt=""
-                    title={isRevealPwd ? 'Hide password' : 'Show password'}
+                    title={isRevealPwd ? "Hide password" : "Show password"}
                     src={isRevealPwd ? hidePwdImg : showPwdImg}
                     onClick={() => setIsRevealPwd((prevState) => !prevState)}
                   />
@@ -158,13 +158,13 @@ const Registerpage: React.FC<IProps> = ({
                 />
                 <div
                   className={`${
-                    active === 'confirm password'
+                    active === "confirm password"
                   } absolute p-3 inset-y-0 right-0`}
                   id="confirm password"
                 >
                   <Image
                     alt=""
-                    title={isCRevealPwd ? 'Hide password' : 'Show password'}
+                    title={isCRevealPwd ? "Hide password" : "Show password"}
                     src={isCRevealPwd ? hidePwdImg : showPwdImg}
                     onClick={() => setIsCRevealPwd((prevState) => !prevState)}
                   />
@@ -180,7 +180,14 @@ const Registerpage: React.FC<IProps> = ({
               </div>
             </Form>
           </Formik>
-          <button onClick={() => router.push('/login')}>Back To Login</button>
+          <button
+            onClick={() =>
+              // router.push('/login')
+              router.push("/signin")
+            }
+          >
+            Back To Login
+          </button>
         </div>
       </div>
     </div>

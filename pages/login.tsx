@@ -4,7 +4,7 @@ import { login, ResendEmailVerificationLink } from "../services/userAuth";
 import { useRouter } from "next/router";
 import { deleteCookie, getCookie } from "cookies-next";
 import { toast } from "react-toastify";
-import { Mixpanel } from "../components/analytics/Mixpanel";
+import { Mixpanel } from "../components/analytics/mixpanel";
 import Modal from "react-responsive-modal";
 const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -21,7 +21,7 @@ const Login: React.FC = () => {
       if (userObj) user = JSON.parse(userObj);
       if (user && user.token) {
         if (router.query.sessionExpired === undefined) {
-          router.push("/projects");
+          // router.push("/projects");
         } else {
           deleteCookie("user");
         }

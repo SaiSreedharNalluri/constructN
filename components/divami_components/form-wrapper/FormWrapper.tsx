@@ -9,11 +9,25 @@ import { CustomTextArea } from "../custom-textarea/CustomTextArea";
 
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { FormText } from "../sign-in/SignInPageStyle";
+import { Checkbox, InputAdornment, TextField } from "@mui/material";
+import Checked from "../../../public/divami_icons/checked.svg";
+import UnChecked from "../../../public/divami_icons/unchecked.svg";
+import Mail from "../../../public/divami_icons/Mail.svg";
+import lock from "../../../public/divami_icons/lock.svg";
+import Image from "next/image";
+import PasswordRequired from "../password-field/PasswordRequired";
 
-const FormElementContainer = styled(Box)({
-  marginTop: "30px",
-});
+interface ContainerProps {
+  loginField: boolean;
+}
+// const FormElementContainer = styled(Box)({
+//   marginTop: "40px",
+// });
+const FormElementContainer = styled(Box)<ContainerProps>`
+  margin-top: ${(props) => (props.loginField ? "30px" : "40px")};
+`;
 const ElementContainer = styled("div")({
   marginTop: "8px",
 });
@@ -21,6 +35,7 @@ const DoubleFieldContainer = styled("div")({
   display: "flex",
   flexDirection: "row",
   justifyContent: "space-between",
+  alignItems: "end",
 });
 
 const FormWrapper = (props: any) => {
@@ -31,17 +46,34 @@ const FormWrapper = (props: any) => {
     validate,
     setIsValidate,
     setCanBeDisabled,
+    loginField,
+    signUpMsg,
+    signInMsg,
+    errorStylingSignup,
   } = props;
+
+  console.log("formState", formState);
+
+  const [userPassword, setUserPassword] = useState("");
+  useEffect(() => {
+    console.log("userpassword", userPassword);
+  }, [userPassword]);
+
+  useEffect(() => {
+    checkDataisEmpty();
+  }, [config]);
 
   useEffect(() => {
     if (validate) {
       setFormConfig((prev: any) => {
         const newconfig = prev.map((item: any) => {
-          if (item.isReq && !item.defaultValue) {
-            setCanBeDisabled(false);
+          if (item.isReq && !item.defaultValue && signUpMsg === true) {
+            if (setCanBeDisabled) setCanBeDisabled(false);
             return {
               ...item,
               isError: true,
+              errorMsg: "Required *",
+              showErrorMsg: item.showErrorMsg === false ? true : false,
             };
           } else if (item.id === "dates") {
             const startDate = item?.fields[0].defaultValue;
@@ -54,6 +86,34 @@ const FormWrapper = (props: any) => {
               }
             }
             return { ...item, isError: false };
+          } else if (item.isValidField === false && item.id === "email") {
+            if (setCanBeDisabled) setCanBeDisabled(false);
+            return {
+              ...item,
+              isError: true,
+              errorMsg: "Invalid User Email",
+              showErrorMsg: true,
+            };
+          } else if (item.isValidField === false && item.id === "password") {
+            if (setCanBeDisabled) setCanBeDisabled(false);
+            return {
+              ...item,
+              isError: true,
+              // errorMsg: <PasswordRequired showPasswordMenu={true} />,
+              errorMsg: "Password is weak",
+              showErrorMsg: true,
+            };
+          } else if (
+            item.isValidField === false &&
+            item.id === "confirm_password"
+          ) {
+            if (setCanBeDisabled) setCanBeDisabled(false);
+            return {
+              ...item,
+              isError: true,
+              errorMsg: "Password should Match",
+              showErrorMsg: true,
+            };
           } else {
             return { ...item, isError: false };
           }
@@ -72,6 +132,24 @@ const FormWrapper = (props: any) => {
             ...item,
             defaultValue: e.target.value,
           };
+        }
+        return item;
+      })
+    );
+  };
+
+  const handlePasswordChange = (e: any, id: string, data?: any) => {
+    console.log("handlething", id, data);
+    setFormConfig((prev: any) =>
+      prev.map((item: any) => {
+        // console.log("handlePasswordChange", item);
+        if (item.id === "password") {
+          // return {
+          //   ...item,
+          //   defaultValue: e.target.value,
+          // };
+          // setIsValidate(true);
+          checkPassword(e.target.value, id);
         }
         return item;
       })
@@ -188,6 +266,109 @@ const FormWrapper = (props: any) => {
       })
     );
   };
+  function checkDataisEmpty() {
+    const isEmptyField = config.some((val: any) => !val.defaultValue);
+    if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
+  }
+  function isValidEmail(email: any, id: any) {
+    // console.log("lol");
+    if (/\S+@\S+\.\S+/.test(email)) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: true,
+              isError: false,
+            };
+          }
+          return item;
+        })
+      );
+    } else {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+            };
+          }
+          return item;
+        })
+      );
+    }
+    // return /\S+@\S+\.\S+/.test(email);
+  }
+
+  function checkPassword(str: any, id: any) {
+    let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    let passwordTru = rePass.test(str);
+    console.log("typepass", passwordTru);
+
+    if (passwordTru) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: true,
+              isError: false,
+            };
+          }
+
+          return item;
+        })
+      );
+      setUserPassword(str);
+    } else {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+            };
+          }
+          return item;
+        })
+      );
+    }
+  }
+
+  function matchpassword(str: any, id: any) {
+    console.log("matching", str, userPassword);
+    if (str !== userPassword) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+            };
+          }
+
+          return item;
+        })
+      );
+    } else {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: true,
+              isError: false,
+            };
+          }
+          return item;
+        })
+      );
+    }
+  }
 
   const renderHTML = (
     data: any,
@@ -207,9 +388,9 @@ const FormWrapper = (props: any) => {
               setFormConfig={setFormConfig}
               isError={data.isError}
               label=""
-              data={data}
               isReadOnly={data.isReadOnly}
               dataTestId={`inputSelectField-${data.id}`}
+              width={data.width || ""}
             />
           </ElementContainer>
         );
@@ -240,7 +421,10 @@ const FormWrapper = (props: any) => {
             />
           </ElementContainer>
         );
+
       case "textfield":
+      case "password":
+      case "confirm_password":
         return (
           <ElementContainer>
             <CustomTextField
@@ -250,7 +434,28 @@ const FormWrapper = (props: any) => {
               onChange={(e: any) => {
                 handleTextChange(e, data.id, data);
               }}
+              // onChange={(e: any) => {
+              //   console.log(e, "Fdsfdsfdsf");
+              //   // handleTextChange(e, data.id, data);
+              // }}
               onBlur={(e: any) => {
+                if (data.id === "email") {
+                  console.log("email aaya");
+                  isValidEmail(data?.defaultValue, data.id);
+                  return;
+                } else if (
+                  data.id === "password" &&
+                  data.checkPasswordStrength
+                ) {
+                  console.log("password aya");
+
+                  checkPassword(data?.defaultValue, data.id);
+                  return;
+                } else if (data.id === "confirm_password") {
+                  matchpassword(data?.defaultValue, data.id);
+                  return;
+                }
+
                 handleTextChange(e, data.id, data);
               }}
               defaultValue={data.defaultValue}
@@ -258,16 +463,23 @@ const FormWrapper = (props: any) => {
               dataTestId="inputTextField"
               isRequired={data.isReq}
               type={data.type}
-              minVal={data?.minVal}
-              maxVal={data?.maxVal}
-              showRangeError={data.showRangeError}
+              // minVal={data?.minVal}
+              // maxVal={data?.maxVal}
+              // showRangeError={data.showRangeError}
               isDisabled={data.isDisabled}
               className={undefined}
               isReadOnly={data.isReadOnly}
+              loginField={loginField}
+              imageIcon={data?.imageIcon}
+              isValidField={data?.isValidField}
+              errorMsg={data?.errorMsg}
+              showErrorMsg={data?.showErrorMsg}
+              width={data.width || ""}
               // isIssue={true}
             />
           </ElementContainer>
         );
+
       case "datePicker":
         return (
           <ElementContainer>
@@ -337,6 +549,7 @@ const FormWrapper = (props: any) => {
             })}
           </DoubleFieldContainer>
         );
+
       default:
         return "";
     }
@@ -348,6 +561,7 @@ const FormWrapper = (props: any) => {
         return (
           <>
             <FormElementContainer
+              loginField={loginField}
               key={eachConfig.id}
               className={` ${eachConfig?.isError ? "formErrorLabel" : ""}`}
             >

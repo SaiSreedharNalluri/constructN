@@ -1,7 +1,7 @@
 import Script from 'next/script';
 import Moment from 'moment';
 import {Rnd } from 'react-rnd';
-import { Mixpanel } from '../analytics/Mixpanel';
+import { Mixpanel } from '../analytics/mixpanel';
 import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
 import Draggable, { DraggableCore } from "react-draggable";
 import Head from 'next/head';
@@ -467,7 +467,7 @@ function GenericViewer(props) {
     if(minimapCompareUtils.current) {
       let minimapState;
       if(potreeUtils.current) {
-        minimapState = potreeUtils.current.getContext();
+        minimapState = potreeCompareUtils.current.getContext();
       }
       minimapCompareUtils.current.updateViewerState(minimapState)
     }
@@ -742,7 +742,7 @@ function GenericViewer(props) {
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current == undefined) {
-          forgeUtils.current = ForgeViewerUtils;
+          forgeUtils.current = ForgeViewerUtils();
           forgeUtils.current.setupViewer(viewerId, viewerEventHandler);
           if(forgeInitialised) forgeUtils.current.initializeViewer()
           forgeUtils.current.setType(currentViewType.current);
@@ -750,7 +750,7 @@ function GenericViewer(props) {
         break;
       case 'Potree':
         if (potreeUtils.current == undefined) {
-          potreeUtils.current = PotreeViewerUtils;
+          potreeUtils.current = PotreeViewerUtils();
           if (!potreeUtils.current.isViewerLoaded()) {
             potreeUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
@@ -772,7 +772,7 @@ function GenericViewer(props) {
     switch (compareViewMode) {
       case 'Forge':
         if (forgeCompareUtils.current == undefined) {
-          forgeCompareUtils.current = ForgeViewerUtils;
+          forgeCompareUtils.current = ForgeViewerUtils();
           forgeCompareUtils.current.setupViewer(viewerId, viewerEventHandler);
           if(forgeInitialised) forgeCompareUtils.current.initializeViewer()
           forgeCompareUtils.current.setType(currentViewType.current);
@@ -780,7 +780,7 @@ function GenericViewer(props) {
         break;
       case 'Potree':
         if (potreeCompareUtils.current == undefined) {
-          potreeCompareUtils.current = PotreeViewerUtils;
+          potreeCompareUtils.current = PotreeViewerUtils();
           if (!potreeCompareUtils.current.isViewerLoaded()) {
             potreeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler);
           }
@@ -807,6 +807,7 @@ function GenericViewer(props) {
         } else {
           setShowMinimap(false);
         }
+        resizeMinimap('default', 1)
       }
     }
   }

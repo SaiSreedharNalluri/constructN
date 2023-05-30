@@ -1,5 +1,5 @@
 import router from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { toast } from 'react-toastify';
 import ChangePassword from '../../components/container/changePassword';
@@ -68,7 +68,7 @@ const Index: React.FC = () => {
         <Header />
       </div>
       <div>
-        <div className="w-full  calc-h overflow-y-auto ">
+        <div className="w-full mt-1  calc-h overflow-y-auto ">
           <Tabs
             selectedIndex={tabIndex}
             onSelect={(index) => {

@@ -2,8 +2,8 @@ import { MenuItem, Select, ThemeProvider, createTheme } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { styled } from "@mui/system";
 
-const StyledSelect = styled(Select)({
-  width: "100%",
+const StyledSelect = styled(Select)((props: any) => ({
+  width: props.width ? props.width : "100%",
   height: "40px",
   outline: "0px",
   border: "1px solid #36415d",
@@ -18,7 +18,7 @@ const StyledSelect = styled(Select)({
     border: 0,
     offset: 0,
   },
-});
+})) as any;
 
 const StyledMenuItem = styled(MenuItem)({
   fontFamily: "Open Sans",
@@ -43,17 +43,9 @@ export const ErrorField = styled("div")({
 });
 
 const CustomSelect = (props: any) => {
-  const {
-    config,
-    data,
-    defaultValue,
-    id,
-    setFormConfig,
+  const { config, defaultValue, id, setFormConfig, isReadOnly = false } = props;
 
-    isReadOnly = false,
-  } = props;
-
-  const [val, setVal] = useState(data?.defaultValue);
+  const [val, setVal] = useState(config?.defaultValue);
 
   const handlechange = (e: any) => {
     setVal(e.target.value);
@@ -80,8 +72,8 @@ const CustomSelect = (props: any) => {
   };
 
   useEffect(() => {
-    setVal(data?.defaultValue);
-  }, [data?.defaultValue]);
+    setVal(config?.defaultValue);
+  }, [config?.defaultValue]);
 
   return (
     <CustomSelectContainer>
@@ -90,7 +82,8 @@ const CustomSelect = (props: any) => {
         onChange={handlechange}
         id={id}
         readOnly={isReadOnly}
-        className={` ${data?.isError ? "formErrorField" : ""} formField`}
+        className={` ${config?.isError ? "formErrorField" : ""} formField`}
+        width={props.width || ""}
       >
         {config.options?.length &&
           config.options.map((item: any, index: any) => (

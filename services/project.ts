@@ -1,5 +1,5 @@
-import instance from './axiosInstance';
-import authHeader from './auth-header';
+import instance from "./axiosInstance";
+import authHeader from "./auth-header";
 export const getProjects = async () => {
   try {
     return await instance.get(`${process.env.NEXT_PUBLIC_HOST}/projects`, {
@@ -9,6 +9,20 @@ export const getProjects = async () => {
     throw error;
   }
 };
+
+export const getProjectsList = async () => {
+  try {
+    return await instance.get(
+      `${process.env.NEXT_PUBLIC_HOST}/views/web/projectlist`,
+      {
+        headers: authHeader.authHeader(),
+      }
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getProjectDetails = async (projectId: string) => {
   try {
     return await instance.get(
@@ -18,7 +32,7 @@ export const getProjectDetails = async (projectId: string) => {
       }
     );
   } catch (error) {
-    console.log('error', error);
+    console.log("error", error);
     throw error;
   }
 };
@@ -31,7 +45,7 @@ export const getProjectUsers = async (projectId: string) => {
       return response.data;
     })
     .catch((error) => {
-      console.log('error', error);
+      console.log("error", error);
       throw error;
     });
 };
@@ -129,7 +143,7 @@ export const getProjectTypes = async () => {
       return response.data;
     })
     .catch((error) => {
-      console.log('error', error);
+      console.log("error", error);
       throw error;
     });
 };
@@ -145,7 +159,7 @@ export const getScheduleViewData = async (projectId: string) => {
       return response.data;
     })
     .catch((error) => {
-      console.log('error', error);
+      console.log("error", error);
       throw error;
     });
 };
@@ -161,7 +175,7 @@ export const getGanttViewData = async (projectId: string) => {
       return response.data;
     })
     .catch((error) => {
-      console.log('error', error);
+      console.log("error", error);
       throw error;
     });
 };

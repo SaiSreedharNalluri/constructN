@@ -1,8 +1,8 @@
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import NextImage from '../../components/core/Image';
-import { ResendEmailVerification, verifyEmail } from '../../services/userAuth';
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import NextImage from "../../components/core/Image";
+import { ResendEmailVerification, verifyEmail } from "../../services/userAuth";
 const VerifyEmail: React.FC = () => {
   const router = useRouter();
   const [checkResponse, setCheckResponse] = useState<any>();
@@ -12,9 +12,11 @@ const VerifyEmail: React.FC = () => {
         .then((response) => {
           if (response.success === true) {
             toast.success(response.message);
-            toast.info('Redirecting ... ');
+            toast.info("Redirecting ... ");
             setTimeout(() => {
-              router.push('/login');
+              // router.push('/login');
+              // router.push("/signin");
+              router.push("/account_success");
             }, 5000);
           }
         })
@@ -29,9 +31,10 @@ const VerifyEmail: React.FC = () => {
       .then((response) => {
         if (response.success === true) {
           toast.success(response.message);
-          toast.info('Redirecting ... ');
+          toast.info("Redirecting ... ");
           setTimeout(() => {
-            router.push('/login');
+            // router.push("/login");
+            router.push("/signin");
           }, 5000);
         }
       })
@@ -53,7 +56,7 @@ const VerifyEmail: React.FC = () => {
               {checkResponse?.success === false ? (
                 <div>
                   <p className="text-orange-400">{checkResponse.message}</p>
-                  {checkResponse.userVerificationToken === 'expired' && (
+                  {checkResponse.userVerificationToken === "expired" && (
                     <div>
                       <button
                         onClick={resendEmail}
@@ -65,7 +68,7 @@ const VerifyEmail: React.FC = () => {
                   )}
                 </div>
               ) : (
-                ''
+                ""
               )}
             </div>
           </div>

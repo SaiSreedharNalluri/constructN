@@ -2,34 +2,32 @@ import { styled } from "@mui/system";
 import Image from "next/image";
 import { Box, MenuItem, TextField } from "@mui/material";
 
-
 export const ArrowIcon = styled(Image)`
   cursor: pointer;
-  position:absolute;
-  z-index:1;
-  top:10px;
-  right:55px
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  right: 55px;
   //   margin-right: 10px;
 `;
 
-
 export const SearchIconStyling = styled("div")({
-   position:"absolute",
-  zIndex:1,
-  top:"20px",
-  right:"85px"
+  position: "absolute",
+  zIndex: 1,
+  top: "20px",
+  right: "85px",
   // marginTop:"30px"
 });
 
-
-export const SearchAreaContainer = styled("div")({
+export const SearchAreaContainer = styled("div")((props: any) => ({
   display: "flex",
   justifyContent: "space-between",
   width: "100%",
   gap: "10px",
+  height: "24px",
+  marginRight: props.marginRight ? "22px" : "",
   // marginTop:"30px"
-});
-
+})) as any;
 
 export const CustomSearchField = styled(TextField)({
   width: "100%",
@@ -43,7 +41,7 @@ export const CustomSearchField = styled(TextField)({
     height: "40px",
     paddingLeft: "16px",
     paddingRight: "8px",
-    bottom:"8px"
+    bottom: "8px",
   },
 });
 
@@ -57,14 +55,11 @@ export const SearchGlassIcon = styled(Image)({
   cursor: "pointer",
 });
 
-
-
-
 export const FunnelIcon = styled(Image)({
   cursor: "pointer",
   marginLeft: "16px",
   position: "absolute",
-   zIndex:1,
-  top:"20px",
-  right:"35px"
+  zIndex: 1,
+  top: "20px",
+  right: "35px",
 });

@@ -19,7 +19,7 @@ export const getDownladableList = (downloadList: any) => {
   let myL = issL.map((iss: any) => {
     let x = _.omit(iss, "progress", "context");
     let g = _.update(x, "owner", (ass) => {
-      return ass.firstName;
+      return ass?.firstName;
     });
     let y = _.update(g, "assignees", (ass) => {
       let n = ass?.length
@@ -32,7 +32,7 @@ export const getDownladableList = (downloadList: any) => {
     let z = _.update(y, "attachments", (att) => {
       let n = att?.length
         ? att.map((o: { name: any }) => {
-            return o.name;
+            return o?.name;
           })
         : "";
       let u = att?.length

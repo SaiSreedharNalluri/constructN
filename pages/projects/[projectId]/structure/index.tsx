@@ -61,6 +61,7 @@ import { getDesignMap } from "../../../../utils/ViewerDataUtils";
 import enterfullscreenIcon from "../../../../public/divami_icons/enterfullscreen.svg";
 import exitfullscreenIcon from "../../../../public/divami_icons/exitfullscreen.svg";
 import { useSearchParams } from "next/navigation";
+import { IUser } from "../../../../models/IUser";
 
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -388,10 +389,12 @@ const Index: React.FC<IProps> = () => {
         .catch();
 
       const userObj: any = getCookie("user");
-      let user = null;
-      if (userObj) user = JSON.parse(userObj);
-      if (user?._id) {
-        SetLoggedInUserId(user._id);
+      let user: IUser;
+      if (userObj) {
+        user = JSON.parse(userObj);
+        if (user?._id) {
+          SetLoggedInUserId(user._id);
+        }
       }
 
       // if (window.localStorage.getItem("expandedNodes")) {

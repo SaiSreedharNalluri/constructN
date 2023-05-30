@@ -12,6 +12,7 @@ const Projects: React.FC = () => {
   const router = useRouter();
   const [projects, setProjects] = useState<IProjects[]>([]);
   const [loading, setLoading] = useState(false);
+  
   useEffect(() => {
     if (router.isReady) {
       getProjects()

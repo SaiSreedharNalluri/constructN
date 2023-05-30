@@ -15,11 +15,8 @@ import { getCookie, removeCookies } from "cookies-next";
 import DesignRealitySwitch from "../../container/designRealitySwitch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faBell,
-  faCog,
   faQuestion,
   faRightFromBracket,
-  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -40,6 +37,12 @@ import { ITools } from "../../../models/ITools";
 import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
 import headerLogSeparator from "../../..//public/divami_icons/headerLogSeparator.svg";
 import { styled } from "@mui/system";
+import UserNotification from "../../container/userNotification";
+import { IUserNotification } from "../../../models/IUserNotification";
+import {
+  getAllUserNotifications,
+  updateUserNotifications,
+} from "../../../services/userNotifications";
 
 interface IProps {
   // showDesignRealitySwitch?:boolean;
@@ -59,6 +62,7 @@ const Header: React.FC<any> = ({
   showBreadcrumbs = false,
   breadCrumbData,
   handleBreadCrumbClick,
+  hideSidePanel,
 }) => {
   const router = useRouter();
   const headerRef: any = React.useRef();
@@ -76,6 +80,10 @@ const Header: React.FC<any> = ({
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
+  const [open, setOpen] = useState(false);
+  const [notifications, setNotifications] = useState<IUserNotification[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalNotifications, setTotalNotifications] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
   const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
@@ -94,7 +102,8 @@ const Header: React.FC<any> = ({
     if (user?.avatar) {
       setAvatar(user.avatar);
     }
-  }, [router.query,loading]);
+    getUserNotifications();
+  }, [router.query.projectId]);
 
   useEffect(() => {
     setIViewMode(viewMode);
@@ -104,11 +113,12 @@ const Header: React.FC<any> = ({
     //     document.removeEventListener('click', closeStructurePages);
     //   };
   }, [viewMode]);
-  
+
   useEffect(() => {
     const closePopup = (e: any) => {
       if (!headerRef?.current?.contains(e.target)) {
         setLoading(false);
+        setOpen(false);
       }
     };
     document.addEventListener("click", closePopup);
@@ -118,7 +128,8 @@ const Header: React.FC<any> = ({
   }, []);
   const userLogOut = () => {
     removeCookies("user");
-    router.push("/login");
+    // router.push("/login");
+    router.push("/signin");
   };
   const goToProjectsList = () => {
     router.push("/projects");
@@ -162,27 +173,58 @@ const Header: React.FC<any> = ({
 
     toolClicked(toolInstance);
   };
-
+  const getUserNotifications = (condition = 1) => {
+    getAllUserNotifications(condition, currentPage, "")
+      .then((response) => {
+        if (notifications.length > 0 && currentPage > 1) {
+          setNotifications(notifications.concat(response.result));
+          setTotalNotifications(response.totalUserNotifications);
+        } else {
+          setNotifications(response.result);
+          setTotalNotifications(response.totalUserNotifications);
+        }
+      })
+      .catch((error) => {});
+  };
+  const loadMoreData = () => {
+    if (currentPage < totalNotifications / 10) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+  useEffect(() => {
+    getUserNotifications();
+  }, [currentPage]);
+  const updateNotifications = (notificationId: string) => {
+    updateUserNotifications([notificationId]).then((response) => {
+      if (response.success === true) {
+        setNotifications(notifications.splice(0, notifications.length));
+        getUserNotifications();
+        setCurrentPage(1);
+      }
+    });
+  };
   return (
     <>
       <HeaderContainer ref={headerRef}>
-        <div
-          style={{
-            height: "10px",
-            width: "59px",
-            background: "#FFFFFF",
-            position: "absolute",
-            top: "58px",
-            zIndex: "9999999",
-            //   opacity: "1",
-            // width: "59px",
-            // background: "#FFFFFF",
-            // position: "absolute",
-            // z-index: "9999999";
-            // top: "58px";
-            // opacity: "1";
-          }}
-        ></div>
+        {!hideSidePanel && (
+          <div
+            style={{
+              height: "10px",
+              width: "59px",
+              background: "#FFFFFF",
+              position: "absolute",
+              top: "58px",
+              zIndex: "9999999",
+              //   opacity: "1",
+              // width: "59px",
+              // background: "#FFFFFF",
+              // position: "absolute",
+              // z-index: "9999999";
+              // top: "58px";
+              // opacity: "1";
+            }}
+          ></div>
+        )}
         <HeaderLeftPart>
           <HeaderLogoImageContainer>
             <Image
@@ -196,7 +238,9 @@ const Header: React.FC<any> = ({
           {showBreadcrumbs && (
             <CustomBreadcrumbs
               breadCrumbData={breadCrumbData}
-              handleBreadCrumbClick={handleBreadCrumbClick}
+              handleBreadCrumbClick={
+                handleBreadCrumbClick ? handleBreadCrumbClick : () => {}
+              }
             />
           )}
         </HeaderLeftPart>
@@ -265,7 +309,39 @@ const Header: React.FC<any> = ({
             )}
           </HeaderProfileImageContainer>
           <HeaderNotificationImageContainer>
-            <Image src={Notification} alt="Profile Image" />
+            <Image
+              src={Notification}
+              alt="Profile Image"
+              onClick={() => {
+                if (open) {
+                  setOpen(false);
+                } else {
+                  setOpen(true);
+                }
+              }}
+            />
+            {open && (
+              <div className="absolute top-10 right-0 z-50 bg-gray-50 rounded-lg shadow border overflow-y-auto h-93">
+                <div className="w-full h-full mt-2 mr-2 mb-2 font-medium overflow-auto">
+                  <div className="flex">
+                    <h1 className="ml-2">Notifications:-</h1>
+                    <p
+                      className="font-bold text-blue-700"
+                      onClick={() => {
+                        router.push("/user-account/user-notifications");
+                      }}
+                    >
+                      GoToNotificatrion
+                    </p>
+                  </div>
+                  <UserNotification
+                    notifications={notifications}
+                    loadMoreData={loadMoreData}
+                    updateNotifications={updateNotifications}
+                  />
+                </div>
+              </div>
+            )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
             <Image src={hamburgerMenu} alt="Menu" />
