@@ -99,7 +99,7 @@ const FormWrapper = (props: any) => {
               ...item,
               isError: true,
               // errorMsg: <PasswordRequired showPasswordMenu={true} />,
-              errorMsg: <PasswordRequired />,
+              errorMsg: "Password is weak",
               showErrorMsg: true,
             };
           } else if (
@@ -370,6 +370,10 @@ const FormWrapper = (props: any) => {
     }
   }
 
+  const handlePasswordField = () => {
+    return <div>Hello</div>;
+  };
+
   const renderHTML = (
     data: any,
     isDisabled: boolean,
@@ -433,6 +437,10 @@ const FormWrapper = (props: any) => {
               placeholder={data?.placeholder}
               onChange={(e: any) => {
                 handleTextChange(e, data.id, data);
+
+                if (data.id === "password" && data.checkPasswordStrength) {
+                  handlePasswordField();
+                }
               }}
               // onChange={(e: any) => {
               //   console.log(e, "Fdsfdsfdsf");

@@ -8,12 +8,12 @@ export const login = (email: string, password: string) => {
       password,
     })
     .then((response) => {
-      if (
-        response.data.success === true &&
-        response.data.result.verified === true
-      ) {
-        setCookie("user", JSON.stringify(response.data.result));
-      }
+      // if (
+      //   response.data.success === true &&
+      //   response.data.result.verified === true
+      // ) {
+      //   setCookie("user", JSON.stringify(response.data.result));
+      // }
       return response.data;
     })
     .catch((error) => {

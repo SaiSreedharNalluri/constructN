@@ -12,6 +12,7 @@ import {
 import iconCompleted from "../../../public/divami_icons/iconCompleted.svg";
 import PasswordError from "../../../public/divami_icons/PasswordError.svg";
 import { Menu } from "@mui/material";
+import Popover from "@mui/material";
 
 const PasswordRequired = ({ showPasswordMenu }: any) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -27,30 +28,32 @@ const PasswordRequired = ({ showPasswordMenu }: any) => {
       open={isSortMenuOpen}
       onClose={handleSortMenuClose}
       onClick={handleSortMenuClose}
-      sx={{
-        top: "5px",
-        left: "-43px",
-      }}
-      PaperProps={{
-        elevation: 0,
-        sx: {
-          overflow: "visible",
-          width: "342px",
+      // sx={{
+      //   top: "5px",
+      //   left: "-43px",
+      // }}
+      // PaperProps={{
+      //   elevation: 0,
+      //   sx: {
+      //     overflow: "visible",
+      //     width: "342px",
 
-          "& .MuiMenu-list": {
-            padding: "0px",
-          },
+      //     "& .MuiMenu-list": {
+      //       padding: "0px",
+      //     },
 
-          "& .MuiAvatar-root": {
-            width: 32,
-            height: 32,
-            ml: -0.5,
-            mr: 1,
-          },
-        },
+      //     "& .MuiAvatar-root": {
+      //       width: 32,
+      //       height: 32,
+      //       ml: -0.5,
+      //       mr: 1,
+      //     },
+      //   },
+      // }}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "left",
       }}
-      // transformOrigin={{ horizontal: "center", vertical: "top" }}
-      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
       {/* <StyledMenu> */}
       <PasswordFieldSection>

@@ -54,6 +54,9 @@ const SignInPage = () => {
   // const handleClickShowPassword = () => {
   //   setShowPassword(!showPassword);
   // };
+  useEffect(() => {
+    console.log("rememberMe", rememberMe);
+  }, [rememberMe]);
 
   // const handleMouseDownPassword = (event: any) => {
   //   event.preventDefault();
@@ -89,6 +92,7 @@ const SignInPage = () => {
   const [canBeDisabled, setCanBeDisabled] = useState(false);
   const [token, setToken] = useState("");
   const [userEmail, setUserEmail] = useState<any>("");
+  const [newProp, setNewProp] = useState<any>({});
 
   const handleFormData = (data: any) => {
     setFormData(data);
@@ -127,17 +131,26 @@ const SignInPage = () => {
           console.log("response", response);
           if (response?.result?.verified) {
             localStorage.setItem("userInfo", response.result?.fullName);
-            if (rememberMe) {
-              // setCookie("userProfile", response.result);
-              // setCookie("user", response.result);
-              setCookie("user", JSON.stringify(response?.result));
-            }
+            // if (rememberMe) {
+            // let newProperty = response?.result;
+            // let userProfileObj = {
+            //   rememberMe: rememberMe ? "T" : "",
+            //   ...response?.result,
+            // };
+
+            let userProfileObj = {
+              rememberMe: rememberMe,
+              ...response?.result,
+            };
+            // {...newProp,rememberMe}
+            console.log("remember", rememberMe);
+            // setCookie("user", JSON.stringify(response?.result));
+            // setCookie("user", JSON.stringify(userProfileObj));
+            setCookie("user", userProfileObj);
+
+            // }
             toast.success("user logged in sucessfully");
-            // Mixpanel.identify(email);
-            // Mixpanel.track("login_success", {
-            //   email: email,
-            // });
-            // Mixpanel.track("login_page_close");
+
             router.push("/projects");
           } else {
             // setOpen(true);
