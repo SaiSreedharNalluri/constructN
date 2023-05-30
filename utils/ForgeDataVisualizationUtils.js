@@ -166,7 +166,7 @@ export class ForgeDataVisualization {
                         }
                     }
                     break;
-                // case "Drone Image":
+                case "Drone Image":
                 case "Phone Image":
                     for(const reality of visualizationData[viewableType]) {
                         reality.position["camname"].forEach((imageName, index) => {
@@ -192,16 +192,18 @@ export class ForgeDataVisualization {
                 case "Task":
                     for (const trackerData of visualizationData[viewableType]) {
                         // console.log("Inside data visualization: ", trackerData);
-                        let tag = trackerData.context.tag;
-                        let dbIdObject = {
-                            dbId: dbId++,
-                            type: viewableType,
-                            id: trackerData._id,
-                            // position: this.applyOffset(tag.tagPosition, this.offset),
-                            position: this.getViewerPosition(tag.tagPosition, this.tm, this.offset),
+                        if(trackerData.context) {
+                            let tag = trackerData.context.tag;
+                            let dbIdObject = {
+                                dbId: dbId++,
+                                type: viewableType,
+                                id: trackerData._id,
+                                // position: this.applyOffset(tag.tagPosition, this.offset),
+                                position: this.getViewerPosition(tag.tagPosition, this.tm, this.offset),
+                            }
+                            this.dbIdArray[dbIdObject.dbId] = dbIdObject;;
+                            // this.tagState[viewableType] = true;
                         }
-                        this.dbIdArray[dbIdObject.dbId] = dbIdObject;;
-                        // this.tagState[viewableType] = true;
                     }
                     break;
             }   
@@ -231,9 +233,6 @@ export class ForgeDataVisualization {
         let highlightUrl = ""
         switch (iconType) {
             case 'Drone Image':
-                iconUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
-                highlightUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
-            break;
             case '360 Video':
                 iconUrl = "/icons/360VideoWalkInViewer.svg";
                 highlightUrl = "/icons/360VideoWalkInViewer.svg";
@@ -273,6 +272,7 @@ export class ForgeDataVisualization {
             case '360 Image':
                 viewableData.spriteSize = 48;
                 break;
+            case 'Drone Image':
             case '360 Video':
                 viewableData.spriteSize = 12;
                 break;

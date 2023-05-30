@@ -21,6 +21,6 @@
     "**/*.tsx",
     "pages/forge/index.jsx",
     "components/container/GenericViewer.jsx"
-, "utils/GenericViewerTransportLayer.js", "components/container/mapboxViewer.jsx"  ],
+, "utils/GenericViewerTransportLayer.js", "components/container/mapboxViewer.jsx", "pages/error-boundary.jsx"  ],
   "exclude": ["node_modules"]
 }

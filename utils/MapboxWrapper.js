@@ -7,7 +7,7 @@ const utmCode = "+proj=utm +ellps=GRS80 +datum=nad83 +units=m +no_defs +zone=";
 const latLngCode =
   "+proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees +no_defs";
 
-export const MapboxViewerUtils = (function() {
+export const MapboxViewerUtils = () => {
   let _viewerId;
   let _eventHandler;
   let _viewer;
@@ -423,22 +423,24 @@ export const MapboxViewerUtils = (function() {
   const annotationToFeature = (annotation) => {
     console.log(annotation, "annotation");
     const context = annotation.context;
-    const tagPosition = context.tag.tagPosition;
-    console.log(tagPosition, "tagposttion", annotation._id);
-    const lngLat = utmToLatLng(tagPosition, 43);
-    return {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: lngLat,
-      },
-      properties: {
-        context,
-        type: annotation.type,
-        title: annotation.description,
-        id: annotation._id,
-      },
-    };
+    if(context) {
+      const tagPosition = context.tag.tagPosition;
+      console.log(tagPosition, "tagposttion", annotation._id);
+      const lngLat = utmToLatLng(tagPosition, 43);
+      return {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: lngLat,
+        },
+        properties: {
+          context,
+          type: annotation.type,
+          title: annotation.description,
+          id: annotation._id,
+        },
+      };
+    }
   };
 
   const latLngToUtm = (latLng, zoneId) => {
@@ -562,8 +564,7 @@ export const MapboxViewerUtils = (function() {
     setProject: setProject,
     setStructure: setStructure,
     setSnapshot: setSnapshot,
-    isViewerInitialized,
-    isViewerInitialized,
+    isViewerInitialized: isViewerInitialized,
     updateData: updateData,
     updateLayersData: updateLayersData,
     updateIssuesData: updateIssuesData,
@@ -584,4 +585,4 @@ export const MapboxViewerUtils = (function() {
     setHotspotClick: setHotspotClick,
     shutdown: shutdown,
   };
-})();
+};

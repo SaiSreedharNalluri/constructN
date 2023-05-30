@@ -49,7 +49,7 @@ export class ForgeInstance {
   }
 }
 
-export const ForgeViewerUtils = (function () {
+export const ForgeViewerUtils = function () {
   let _instance;
   let _viewerId;
   let _eventHandler;
@@ -936,7 +936,7 @@ export const ForgeViewerUtils = (function () {
     removeLayers: removeLayers,
     shutdown: shutdown,
   };
-})();
+};
 
 const getContextLocalFromGlobal = (context, globalOffset) => {
   // console.log("Global offset: ", context);
