@@ -37,6 +37,7 @@ interface PropTypes {
   isValidField: boolean;
   errorMsg: string;
   showErrorMsg: boolean;
+  onFocus?: any;
 }
 
 const StyledTextField = styled(TextField)((props: any) => ({
@@ -118,6 +119,7 @@ export const CustomTextField = (props: PropTypes) => {
     isValidField,
     errorMsg,
     showErrorMsg,
+    onFocus,
   } = props;
   // console.log("loginField", loginField);
 

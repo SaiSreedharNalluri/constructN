@@ -31,11 +31,14 @@ export const PasswordFieldSection = styled("div")({
   // position:"relative",
   paddingTop: "20px",
   paddingLeft: "20px",
-    paddingRight: "18px",
+    paddingRight: "15px",
   paddingBottom:"20px",
   background: "#FFFFFF",
     boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
-  borderRadius:"4px"
+  borderRadius: "4px",
+  width: "345px",
+  whiteSpace: "initial",
+
 });
 
 export const InstructionsHeader = styled("div")({
