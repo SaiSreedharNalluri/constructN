@@ -370,9 +370,9 @@ const FormWrapper = (props: any) => {
     }
   }
 
-  const handlePasswordField = () => {
-    return <div>Hello</div>;
-  };
+  // const handlePasswordField = () => {
+  //   return <div>Hello</div>;
+  // };
 
   const renderHTML = (
     data: any,
@@ -438,9 +438,9 @@ const FormWrapper = (props: any) => {
               onChange={(e: any) => {
                 handleTextChange(e, data.id, data);
 
-                if (data.id === "password" && data.checkPasswordStrength) {
-                  handlePasswordField();
-                }
+                // if (data.id === "password" && data.checkPasswordStrength) {
+                //   handlePasswordField();
+                // }
               }}
               // onChange={(e: any) => {
               //   console.log(e, "Fdsfdsfdsf");
