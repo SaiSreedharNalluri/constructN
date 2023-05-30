@@ -35,6 +35,7 @@ const DoubleFieldContainer = styled("div")({
   display: "flex",
   flexDirection: "row",
   justifyContent: "space-between",
+  alignItems: "end",
 });
 
 const FormWrapper = (props: any) => {
@@ -67,7 +68,7 @@ const FormWrapper = (props: any) => {
       setFormConfig((prev: any) => {
         const newconfig = prev.map((item: any) => {
           if (item.isReq && !item.defaultValue && signUpMsg === true) {
-            setCanBeDisabled(false);
+            if (setCanBeDisabled) setCanBeDisabled(false);
             return {
               ...item,
               isError: true,
@@ -86,7 +87,7 @@ const FormWrapper = (props: any) => {
             }
             return { ...item, isError: false };
           } else if (item.isValidField === false && item.id === "email") {
-            setCanBeDisabled(false);
+            if (setCanBeDisabled) setCanBeDisabled(false);
             return {
               ...item,
               isError: true,
@@ -94,7 +95,7 @@ const FormWrapper = (props: any) => {
               showErrorMsg: true,
             };
           } else if (item.isValidField === false && item.id === "password") {
-            setCanBeDisabled(false);
+            if (setCanBeDisabled) setCanBeDisabled(false);
             return {
               ...item,
               isError: true,
@@ -106,7 +107,7 @@ const FormWrapper = (props: any) => {
             item.isValidField === false &&
             item.id === "confirm_password"
           ) {
-            setCanBeDisabled(false);
+            if (setCanBeDisabled) setCanBeDisabled(false);
             return {
               ...item,
               isError: true,
@@ -267,8 +268,7 @@ const FormWrapper = (props: any) => {
   };
   function checkDataisEmpty() {
     const isEmptyField = config.some((val: any) => !val.defaultValue);
-
-    setCanBeDisabled(isEmptyField);
+    if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
   }
   function isValidEmail(email: any, id: any) {
     // console.log("lol");
@@ -388,9 +388,9 @@ const FormWrapper = (props: any) => {
               setFormConfig={setFormConfig}
               isError={data.isError}
               label=""
-              data={data}
               isReadOnly={data.isReadOnly}
               dataTestId={`inputSelectField-${data.id}`}
+              width={data.width || ""}
             />
           </ElementContainer>
         );
@@ -474,7 +474,7 @@ const FormWrapper = (props: any) => {
               isValidField={data?.isValidField}
               errorMsg={data?.errorMsg}
               showErrorMsg={data?.showErrorMsg}
-
+              width={data.width || ""}
               // isIssue={true}
             />
           </ElementContainer>

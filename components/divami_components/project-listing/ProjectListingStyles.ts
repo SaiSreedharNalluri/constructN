@@ -151,51 +151,53 @@ export const ProjectCardsContainer = styled("div")({
   paddingBottom: "70px",
   paddingTop: "8px",
 });
-export const ProjectCard = styled("div")({
-  width: "300px",
+export const ProjectCard = styled("div")((props: any) => ({
+  width: props.active ? "320px" : "300px",
+  height: props.active ? "418px" : "398px",
   background: "#FFFFFF",
   border: "1px solid #888888",
   padding: "20px",
   marginRight: "36px",
-
+  boxShadow: props.active ? "0px 4px 15px rgba(0, 0, 0, 0.25)" : "",
   marginBottom: "36px",
   color: "#101F4C",
   fontSize: "14px",
   fontFamily: "Open Sans",
   position: "relative",
-});
+  marginTop: props.active ? "-10px" : "",
+})) as any;
 
-export const ProjectTopLeftBg = styled("div")({
+export const ProjectTopLeftBg = styled("div")((props: any) => ({
   position: "absolute",
-  borderBottom: "1px solid #888888",
+  borderBottom: props.active ? "1px solid #F1742E" : "1px solid #888888",
   top: "-1px",
   left: "-8px",
   width: "314px",
-});
+})) as any;
 
-export const ProjectTopRightBg = styled("div")({
+export const ProjectTopRightBg = styled("div")((props: any) => ({
   position: "absolute",
-  borderRight: "1px solid #888888",
+  borderRight: props.active ? "1px solid #F1742E" : "1px solid #888888",
   bottom: "-8px",
   right: "-1px",
   height: "414px",
-});
+})) as any;
 
-export const ProjectBottomLeftBg = styled("div")({
+export const ProjectBottomLeftBg = styled("div")((props: any) => ({
   position: "absolute",
-  borderLeft: "1px solid #888888",
+  borderLeft: props.active ? "1px solid #F1742E" : "1px solid #888888",
   bottom: "-8px",
   left: "-1px",
   height: "414px",
-});
+})) as any;
 
-export const ProjectBottomRightBg = styled("div")({
+export const ProjectBottomRightBg = styled("div")((props: any) => ({
   position: "absolute",
-  borderBottom: "1px solid #888888",
+  borderBottom: props.active ? "1px solid #F1742E" : "1px solid #888888",
   bottom: "-1px",
   left: "-8px",
   width: "314px",
-});
+})) as any;
 
 export const ProjectLogo = styled(Image)({
   height: "45px !important",
@@ -229,11 +231,17 @@ export const CaptureImageContainer = styled("div")({
 });
 export const CaptureImageIcon = styled(Image)({
   marginRight: "7px",
+  // width: "12px",
+  // height: "12px",
 });
 export const CaptureName = styled("div")({
   marginRight: "5px",
 });
 export const CaptureCount = styled("div")({});
+export const OtherUsersCount = styled("div")({
+  color: "#FF843F",
+});
+
 export const ListDivider = styled("div")({
   display: "block",
   width: "1px",
@@ -248,20 +256,36 @@ export const ListVerticalDivider = styled("div")({
   background: "#D9D9D9",
   margin: "0 10px",
 });
-export const ListHorizontalDivider = styled("div")({
+export const ListHorizontalDivider = styled("div")((props: any) => ({
   display: "block",
   height: "1px",
   width: "100%",
-  background: "#D9D9D9",
+  background: props.active ? "#F1742E" : "#D9D9D9",
   padding: "0 20px",
-  marginTop: "6px",
-  marginBottom: "10px",
-});
+  marginTop: props.active ? "10px" : "6px",
+  marginBottom: props.active ? "20px" : "10px",
+}));
 
 export const CapturesField = styled("div")({
   display: "flex",
+  marginRight: "18px",
+  alignItems: "center",
+  justifyContent: "center",
 });
 
 export const CapturesFieldContainer = styled("div")({
   display: "flex",
+});
+
+export const ProjectActionsContainer = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  // borderTop: "1px solid #F1742E",
+});
+
+export const ProjectActionItem = styled("div")({
+  fontSize: "14px",
+  color: "#101F4C",
+  padding: " 12px 0",
+  borderBottom: "1px solid #D9D9D9",
 });

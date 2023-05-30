@@ -23,6 +23,8 @@ import {
   ProjectBottomRightBg,
   ProjectTopLeftBg,
   ProjectTopRightBg,
+  ProjectActionItem,
+  ProjectActionsContainer,
 } from "./ProjectListingStyles";
 import Image from "next/image";
 import capture360Image from "../../../public/divami_icons/capture360Image.svg";
@@ -31,15 +33,85 @@ import phoneImage from "../../../public/divami_icons/phoneImage.svg";
 import videoWalk from "../../../public/divami_icons/videoWalk.svg";
 import moment from "moment";
 
-export const ProjectListCardView = ({ projects }: any) => {
+export const ProjectListCardView = ({ projects, projectActions }: any) => {
   const router = useRouter();
-
-  console.log("ffsfdssfsdfdsf", projects);
+  const [showActions, setShowActions] = useState(false);
+  const [projectsData, setProjectsData] = useState(
+    projects?.length
+      ? projects.map((each: any) => {
+          return {
+            ...each,
+            showActionsCard: false,
+          };
+        })
+      : []
+  );
   return (
     <ProjectCardsContainer>
-      {projects.map((each: any) => {
-        return (
-          <ProjectCard>
+      {projectsData.map((each: any) => {
+        return each.showActionsCard ? (
+          <ProjectCard
+            active
+            onMouseLeave={() => {
+              setProjectsData((prev: any) =>
+                prev.map((item: any) => {
+                  return {
+                    ...item,
+                    showActionsCard: false,
+                  };
+                })
+              );
+            }}
+          >
+            <ProjectTopLeftBg active />
+            <ProjectTopRightBg active />
+            <ProjectBottomLeftBg active />
+            <ProjectBottomRightBg active />
+
+            <ProjectLogo
+              src={each.companyLogo}
+              alt={""}
+              width={242}
+              height={45}
+            />
+
+            <ListHorizontalDivider active />
+            <ProjectActionsContainer>
+              {projectActions.map((each: any) => {
+                return <ProjectActionItem>{each.label}</ProjectActionItem>;
+              })}
+            </ProjectActionsContainer>
+          </ProjectCard>
+        ) : (
+          <ProjectCard
+            onMouseEnter={() => {
+              setProjectsData((prev: any) =>
+                prev.map((item: any) => {
+                  if (each._id === item._id) {
+                    return {
+                      ...item,
+                      showActionsCard: true,
+                    };
+                  } else {
+                    return {
+                      ...item,
+                      showActionsCard: false,
+                    };
+                  }
+                })
+              );
+            }}
+            onMouseLeave={() => {
+              setProjectsData((prev: any) =>
+                prev.map((item: any) => {
+                  return {
+                    ...item,
+                    showActionsCard: false,
+                  };
+                })
+              );
+            }}
+          >
             <ProjectTopLeftBg />
             <ProjectTopRightBg />
             <ProjectBottomLeftBg />

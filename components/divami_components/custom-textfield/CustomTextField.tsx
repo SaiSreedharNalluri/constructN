@@ -37,10 +37,15 @@ interface PropTypes {
   isValidField: boolean;
   errorMsg: string;
   showErrorMsg: boolean;
+  width?: string;
 }
 
 const StyledTextField = styled(TextField)((props: any) => ({
-  width: props.loginField ? "340px" : "392px !important",
+  width: props.width
+    ? props.width
+    : props.loginField
+    ? "340px"
+    : "392px !important",
   height: "40px !important",
   borderRadius: "4px",
   fontFamily: "Open Sans",
@@ -135,6 +140,7 @@ export const CustomTextField = (props: PropTypes) => {
   return (
     <div>
       <StyledTextField
+        width={props.width ? props.width : ""}
         autoComplete="off"
         id={id}
         className={` ${isError ? "formErrorField" : ""} formField`}

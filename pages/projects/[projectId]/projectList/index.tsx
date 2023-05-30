@@ -40,6 +40,8 @@ import moment from "moment";
 import { getProjectsList } from "../../../../services/project";
 import unselectGridIcon from "../../../../public/divami_icons/unselectGridIcon.svg";
 import selectListIcon from "../../../../public/divami_icons/selectListIcon.svg";
+import CustomDrawer from "../../../../components/divami_components/custom-drawer/custom-drawer";
+import ProjectListFilter from "../../../../components/divami_components/project-listing/ProjectListFilter";
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -51,7 +53,11 @@ const Index: React.FC<any> = () => {
   const [searchTableData, setSearchTableData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isGridView, setIsGridView] = useState(true);
-
+  const [taskFilterState, setTaskFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {},
+    numberOfFilters: 0,
+  });
   const handleSearchWindow = () => {
     setSearchTableData(tableData);
     if (searchTerm === "") {
@@ -61,6 +67,30 @@ const Index: React.FC<any> = () => {
     }
   };
   const [projects, setProjects] = useState<any[]>([]);
+
+  const [projectActions, setProjectActions] = useState([
+    {
+      label: "View Project Summary",
+      action: () => {},
+    },
+    {
+      label: "Project Configuration",
+      action: () => {},
+    },
+    {
+      label: "Project Details",
+      action: () => {},
+    },
+    {
+      label: "Add Users",
+      action: () => {},
+    },
+    {
+      label: "Archive Project",
+      action: () => {},
+    },
+  ]);
+
   useEffect(() => {
     if (router.isReady) {
       getProjectsList()
@@ -72,7 +102,7 @@ const Index: React.FC<any> = () => {
                 companyLogo: each.coverPhoto,
                 projectName: each.name,
                 userName: each.userName,
-                numberOfUsers: each.usersCount,
+                numberOfUsers: `${each.usersCount}`,
                 updatedAt: moment(each.lastUpdated).format("DD MMM YY"),
                 capture360Count: each?.captures["360 Image"]
                   ? `${each?.captures["360 Image"]}`
@@ -213,9 +243,26 @@ const Index: React.FC<any> = () => {
             </HeaderActions>
           </ProjectsHeader>
           {isGridView ? (
-            <ProjectListCardView projects={projects} />
+            <ProjectListCardView
+              projects={projects}
+              projectActions={projectActions}
+            />
           ) : (
-            <ProjectListFlatView projects={projects} />
+            <ProjectListFlatView
+              projects={projects}
+              projectActions={projectActions}
+            />
+          )}
+          {openFilter && (
+            <CustomDrawer open>
+              <ProjectListFilter
+                setTaskFilterState={setTaskFilterState}
+                taskFilterState={taskFilterState}
+                onClose={() => {
+                  setOpenFilter(false);
+                }}
+              />
+            </CustomDrawer>
           )}
         </ProjectsListContainer>
       </Content>
