@@ -46,6 +46,10 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
         })
       : []
   );
+
+  useEffect(() => {
+    setProjectsData(projects);
+  }, [projects]);
   return (
     <ProjectCardsContainer>
       {projectsData.map((each: any) => {
