@@ -85,7 +85,8 @@ const FormWrapper = (props: any) => {
     if (validate) {
       setFormConfig((prev: any) => {
         const newconfig = prev.map((item: any) => {
-          if (item.isReq && !item.defaultValue) {
+          if (item.isReq && !item.defaultValue && signUpMsg) {
+            console.log("callingd", signUpMsg);
             setCanBeDisabled(false);
             return {
               ...item,
