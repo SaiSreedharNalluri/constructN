@@ -41,12 +41,7 @@ export const IllustrationBackground = styled(Image)({
 });
 
 export const Overlay = styled("div")({
-  //   position: "absolute",
-  //   top: "0",
-  //   left: "0",
-  //   width: "100%",
-  //     height: "100%",
-  //   mixBlendMode: "overlay",
+
 });
 
 export const FormDiv = styled("div")({
@@ -55,10 +50,7 @@ export const FormDiv = styled("div")({
   height: "100%",
   zIndex: "10",
   background: "white",
-  //   border: "2px solid blue",
 
-  // border: "2px solid blue",
-  //   boxShadow:"rgba(0, 0, 0, 0.25)"
   filter: "drop-shadow(0px -4px 4px rgba(0, 0, 0, 0.25))",
 });
 
@@ -83,32 +75,7 @@ export const FormText = styled("div")({
   marginTop: "21px",
 });
 
-// export const StyledTextField = styled(TextField)({
-//   width: "340px",
-//   height: "40px",
 
-//   borderRadius: "4px",
-//   fontFamily: "Open Sans",
-//   fontStyle: "normal",
-//   fontWeight: 400,
-//   fontSize: 14,
-//   color: "#101F4B",
-//   "& .MuiOutlinedInput-notchedOutline": {
-//     border: "1px solid #36415d",
-//   },
-
-//   "& .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root": {
-//     height: "40px",
-//     "& fieldset": { border: "1px solid #36415d" },
-//   },
-//   "&:focus-within fieldset": {
-//     border: "1px solid #F1742E !important",
-//   },
-//   ".css-1o9s3wi-MuiInputBase-input-MuiOutlinedInput-input": {
-//     // background: 'red',
-//     height: "7px",
-//   },
-// });
 export const StyledTextField = styled(TextField)({
   width: "340px",
   height: "40px",
@@ -162,9 +129,7 @@ export const StyledPasswordField = styled(TextField)({
     // background: 'red',
     height: "7px",
   },
-  //   ".css-152mnda-MuiInputBase-input-MuiOutlinedInput-input": {
-  //     padding: "8.5px 14px !important",
-  //   },
+
 });
 
 export const ShowHideDiv = styled("div")({
@@ -244,9 +209,7 @@ interface ContainerProps {
   buttonSearch: boolean;
 }
 
-// export const CustomBox = styled(Box)<ContainerProps>`
-//   margin-top: ${(props) => (props.searchingOn ? "10px" : "")};
-// `;
+
 
 export const ButtonSection = styled("div")<ContainerProps>`
   margin-top: ${(props) => (props.buttonSearch ? "21px" : "110px")};
@@ -254,15 +217,7 @@ export const ButtonSection = styled("div")<ContainerProps>`
   justify-content: center;
   align-items: center;
 `;
-// export const ButtonSection = styled("div")({
 
-//   display: "flex",
-//   flexDirection: "column",
-//   justifyContent: "center",
-//   alignItems: "center",
-//   marginTop: "110px",
-
-// });
 
 export const NewUserDiv = styled("div")({
   marginTop: "17px",

@@ -1,30 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-// import {
-//   FormContainerSign,
-//   FormDiv,
-//   FormText,
-//   HeaderContainer,
-//   HeaderImageLogo,
-//   IllustrationBackground,
-//   Overlay,
-//   SectionShowcase,
-//   SignInHeader,
-//   StyledPasswordField,
-//   StyledTextField,
-//   ShowHideDiv,
-//   ExtraTickDiv,
-//   CheckTickDiv,
-//   CheckTickBox,
-//   RememberDiv,
-//   ParentTickDiv,
-//   ForgotDiv,
-//   SignInContainedButton,
-//   ButtonSection,
-//   NewUserDiv,
-//   NewUserSpan,
-// } from "./SignInPageStyle";
-
 import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Logo from "../../../public/divami_icons/Logo.svg";
 import Mail from "../../../public/divami_icons/Mail.svg";
@@ -83,90 +58,6 @@ const FormBody = ({
   }, [formConfig]);
   return (
     <>
-      {/* <FormText>
-        <form>
-          {" "}
-          <StyledTextField
-            variant="outlined"
-            type="email"
-            placeholder={"Email ID"}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Image width={24} height={24} src={Mail} alt="Search" />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <StyledPasswordField
-            variant="outlined"
-            placeholder={"Enter Password"}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Image width={24} height={24} src={lock} alt="Search" />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  {showPassword ? (
-                    //   <VisibilityOffIcon onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} />
-                    <ShowHideDiv
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      Hide
-                    </ShowHideDiv>
-                  ) : (
-                    //   <VisibilityIcon onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} />
-                    <ShowHideDiv
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      Show
-                    </ShowHideDiv>
-                  )}
-                </InputAdornment>
-              ),
-            }}
-            type={showPassword ? "text" : "password"}
-          />
-          <ExtraTickDiv>
-            <ParentTickDiv>
-              <CheckTickDiv>
-                <CheckTickBox
-                  sx={{ padding: 0 }}
-                  icon={
-                    <Image
-                      width={24}
-                      height={24}
-                      src={UnChecked}
-                      alt="Search"
-                    />
-                  }
-                  checkedIcon={
-                    <Image width={24} height={24} src={Checked} alt="Search" />
-                  }
-                  onChange={handleChange}
-                  inputProps={{ "aria-label": "controlled" }}
-                />
-              </CheckTickDiv>
-
-              <RememberDiv>Remember me</RememberDiv>
-            </ParentTickDiv>
-
-            <ForgotDiv>Forgot password?</ForgotDiv>
-          </ExtraTickDiv>
-          <ButtonSection>
-            <SignInContainedButton variant="outlined">
-              Sign In
-            </SignInContainedButton>
-          </ButtonSection>
-          <NewUserDiv>
-            New User? <NewUserSpan>Signup</NewUserSpan>
-          </NewUserDiv>
-        </form>
-      </FormText> */}
       <FormWrapper
         config={formConfig}
         setFormConfig={setFormConfig}

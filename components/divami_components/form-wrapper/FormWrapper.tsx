@@ -85,7 +85,7 @@ const FormWrapper = (props: any) => {
     if (validate) {
       setFormConfig((prev: any) => {
         const newconfig = prev.map((item: any) => {
-          if (item.isReq && !item.defaultValue && signUpMsg === true) {
+          if (item.isReq && !item.defaultValue) {
             setCanBeDisabled(false);
             return {
               ...item,
@@ -150,24 +150,6 @@ const FormWrapper = (props: any) => {
             ...item,
             defaultValue: e.target.value,
           };
-        }
-        return item;
-      })
-    );
-  };
-
-  const handlePasswordChange = (e: any, id: string, data?: any) => {
-    console.log("handlething", id, data);
-    setFormConfig((prev: any) =>
-      prev.map((item: any) => {
-        // console.log("handlePasswordChange", item);
-        if (item.id === "password") {
-          // return {
-          //   ...item,
-          //   defaultValue: e.target.value,
-          // };
-          // setIsValidate(true);
-          // checkPassword(e.target.value, id);
         }
         return item;
       })

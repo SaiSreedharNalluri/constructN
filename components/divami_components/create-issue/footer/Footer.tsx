@@ -24,6 +24,6 @@ const Footer = ({ formHandler, editData, canBeDisabled }: any) => {
       />
     </ButtonsContainer>
   );
-}
+};
 
 export default Footer;

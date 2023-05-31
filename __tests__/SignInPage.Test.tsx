@@ -56,36 +56,4 @@ describe("SignInPage", () => {
 
     expect(remember_button).toBeChecked();
   });
-  //   it("handles form submission correctly", () => {
-  //     render(<SignInPage />);
-
-  //     // Fill in the email and password fields
-  //     fireEvent.change(screen.getByLabelText("Email ID"), {
-  //       target: { value: "test@example.com" },
-  //     });
-  //     fireEvent.change(screen.getByLabelText("Password"), {
-  //       target: { value: "password123" },
-  //     });
-
-  //     // Submit the form
-  //     fireEvent.click(screen.getByText("Sign In"));
-
-  //     // Verify that the form submission was handled correctly
-  //     // You may need to mock the API calls or dependencies for proper testing
-  //     // For example, you can use Jest's `jest.mock` to mock the `login` function
-  //     // and test if it was called with the correct arguments
-  //     // Also, you can use `waitFor` from React Testing Library to handle asynchronous actions
-  //     // and assertions.
-
-  //     // Example:
-  //     // - Mock the login function
-  //     // jest.mock("../../../services/userAuth", () => ({
-  //     //   login: jest.fn(),
-  //     // }));
-
-  //     // - Verify that the login function was called with the correct arguments
-  //     // expect(login).toHaveBeenCalledWith("test@example.com", "password123");
-  //   });
-
-  // Add more tests to cover other functionality and edge cases
 });

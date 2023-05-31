@@ -2,12 +2,6 @@ import { styled } from "@mui/system";
 import { Button } from "@mui/material";
 import React from "react";
 
-// const StyledButton = styled(Button)({
-//   width: "180px",
-//   height: "40px",
-//   textTransform: "none",
-// });
-
 interface ContainerProps {
   loginField: boolean;
 }

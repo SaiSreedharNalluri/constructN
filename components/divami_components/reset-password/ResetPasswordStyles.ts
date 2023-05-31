@@ -15,7 +15,6 @@ export const SectionShowcase = styled("section")({
   alignItems: "center",
   zIndex: "2",
 
-  // border: "2px solid blue",
 });
 
 export const HeaderContainer = styled("header")({
@@ -43,12 +42,7 @@ export const IllustrationBackground = styled(Image)({
 });
 
 export const Overlay = styled("div")({
-  //   position: "absolute",
-  //   top: "0",
-  //   left: "0",
-  //   width: "100%",
-  //     height: "100%",
-  //   mixBlendMode: "overlay",
+
 });
 
 export const FormDiv = styled("div")({
@@ -57,10 +51,7 @@ export const FormDiv = styled("div")({
   height: "100%",
   zIndex: "10",
   background: "white",
-  //   border: "2px solid blue",
 
-  // border: "2px solid blue",
-  //   boxShadow:"rgba(0, 0, 0, 0.25)"
   filter: "drop-shadow(0px -4px 4px rgba(0, 0, 0, 0.25))",
 });
 
@@ -94,17 +85,13 @@ export const UserText = styled("div")({
 
 
 export const ButtonSection = styled("div")({
-  // position: "absolute",
-  // top: "50%",
-  // left: "50%",
-  // transform: "translate(-50%, -50%)",
+ 
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
   marginTop: "40px",
 
-  // margin:"auto"
 });
 
 
