@@ -44,6 +44,13 @@ import SearchBoxIcon from "../../../../public/divami_icons/search.svg";
 import CrossIcon from "../../../../public/divami_icons/crossIcon.svg";
 import SearchMag from "../../../../public/divami_icons/search.svg";
 import FilterInActive from "../../../../public/divami_icons/filterInactive.svg";
+import phoneImage from "../../../../public/divami_icons/phoneImage.svg";
+import hotspotImg from "../../../../public/divami_icons/hotspotImg.svg";
+import videoWalk from "../../../../public/divami_icons/videoWalk.svg";
+import lidarScan from "../../../../public/divami_icons/lidarScan.svg";
+import capture360Image from "../../../../public/divami_icons/capture360Image.svg";
+import captureLidarIcon from "../../../../public/divami_icons/captureLidarIcon.svg";
+import DroneImage from "../../../../public/divami_icons/DroneImage.svg";
 
 import {
   ArrowIcon,
@@ -59,12 +66,27 @@ import { useRouter } from "next/router";
 import { getStructureHierarchy } from "../../../../services/structure";
 import { AxiosResponse } from "axios";
 import { ChildrenEntity } from "../../../../models/IStructure";
+import { getSectionsList } from "../../../../services/sections";
+import {
+  CaptureModeParent,
+  CountElem,
+  HotspotImgCount,
+  LidarScanCount,
+  PhoneImgCount,
+  SymbolContainer,
+  VideoWalkCount,
+  CapturesFieldContainer,
+  CapturesField,
+  CaptureImageIcon,
+  CaptureCount,
+} from "../../../../components/divami_components/CaptureMode/CaptureModeStyles";
+import moment from "moment";
 
 const dummyData: any = [
   {
     _id: 1,
     name: "Basement",
-    // issues: 150,
+    issues: 150,
     // tasks: 34,
     // captures: 109,
     // progress: "44%",
@@ -74,7 +96,7 @@ const dummyData: any = [
   {
     _id: 2,
     name: "Parking",
-    // issues: 34,
+    issues: 34,
     // tasks: 12,
     // captures: 50,
     // progress: "44%",
@@ -84,7 +106,7 @@ const dummyData: any = [
   {
     _id: 3,
     name: "Electrical Room",
-    // issues: 12,
+    issues: 12,
     // tasks: 43,
     // captures: 50,
     // progress: "44%",
@@ -94,7 +116,7 @@ const dummyData: any = [
   {
     _id: 7,
     name: "Second Floor",
-    // issues: 554,
+    issues: 554,
     // tasks: 54,
     // captures: 50,
     // progress: "44%",
@@ -207,15 +229,44 @@ const Index: React.FC = () => {
   // https://api.dev2.constructn.ai/api/v1/projects/PRJ201897/structures/hierarchy
 
   useEffect(() => {
+    console.log("griddata", gridData);
+  }, [gridData]);
+
+  useEffect(() => {
+    console.log("filterTableData", filterTableData);
+  }, [filterTableData]);
+
+  useEffect(() => {
     console.log("router?.query?.projectId", router);
 
     if (router.isReady) {
       // if (router.query.structId !== undefined)
       // setSelector(router.query.structId.toString());
-      getStructureHierarchy(router?.query?.projectId as string)
+      // getStructureHierarchy(router?.query?.projectId as string)
+      //   .then((response: AxiosResponse<any>) => {
+      //     console.log("respjali", response);
+      //     setGridData([...response?.data?.result]);
+      //     let removeGrandParent = response?.data?.result[0]?.children?.map(
+      //       (item: any, index: number) => {
+      //         return {
+      //           ...item,
+      //           parent: null,
+      //         };
+      //       }
+      //     );
+      //     console.log("removeGrandParent", removeGrandParent);
+      //     massageTree(removeGrandParent, response?.data?.result[0]?.id);
+      //     setTableData([...dummyData]);
+      //     console.log("secondcall", response?.data?.result[0]?.children);
+      //   })
+      //   .catch((error) => {
+      //     console.log("error", error);
+      //   });
+      getSectionsList(router?.query?.projectId as string)
         .then((response: AxiosResponse<any>) => {
-          setGridData([...response?.data?.result]);
-          let removeGrandParent = response?.data?.result[0]?.children?.map(
+          console.log("respjali", response);
+          setGridData([response?.data?.result]);
+          let removeGrandParent = response?.data?.result?.children?.map(
             (item: any, index: number) => {
               return {
                 ...item,
@@ -223,20 +274,40 @@ const Index: React.FC = () => {
               };
             }
           );
-          massageTree(removeGrandParent, response?.data?.result[0]?.id);
+          console.log("removeGrandParent", removeGrandParent);
+          massageTree(removeGrandParent, response?.data?.result?.id);
           setTableData([...dummyData]);
-          //   setFilterTableData([...response.data.result[0].children]);
-
           console.log("secondcall", response?.data?.result[0]?.children);
-          // if (selector.length < 1) setSelector(response.data.result[0]._id);
         })
         .catch((error) => {
           console.log("error", error);
         });
+      // getSectionsList(router?.query?.projectId as string)
+      //   .then((response: AxiosResponse<any>) => {
+      //     setGridData([...response?.data?.result]);
+      //     let removeGrandParent = response?.data?.result[0]?.children?.map(
+      //       (item: any, index: number) => {
+      //         return {
+      //           ...item,
+      //           parent: null,
+      //         };
+      //       }
+      //     );
+      //     console.log("removeparent", removeGrandParent);
+      //     massageTree(removeGrandParent, response?.data?.result[0]?.id);
+      //     setTableData([...dummyData]);
+      //     console.log("secondcall", response?.data?.result[0]?.children);
+      //   })
+      //   .catch((error) => {
+      //     console.log("error", error);
+      //   });
     }
   }, [router.query.projectId]);
 
   function massageTree(responseArr: any, grandParent: string) {
+    console.log("responseArr", responseArr);
+    console.log("grandParent", grandParent);
+
     let resultArr: any = [];
     console.log("FLAG 1", responseArr, grandParent);
     responseArr.map((item: any, index: number) => {
@@ -318,7 +389,7 @@ const Index: React.FC = () => {
     },
     {
       title: "Issues",
-      field: "issues",
+      field: "issueCount",
       sorting: false,
       headerStyle: {
         borderBottom: "1px solid #FF843F",
@@ -333,7 +404,7 @@ const Index: React.FC = () => {
     },
     {
       title: "Tasks",
-      field: "tasks",
+      field: "taskCount",
       sorting: false,
 
       headerStyle: {
@@ -350,8 +421,6 @@ const Index: React.FC = () => {
     {
       title: "Captures",
       field: "captures",
-      render: (rowData: any) => <CaptureMode />,
-      sorting: false,
       headerStyle: {
         borderBottom: "1px solid #FF843F",
         fontFamily: "Open Sans",
@@ -362,25 +431,106 @@ const Index: React.FC = () => {
         color: "#101F4C",
       },
       cellStyle: { width: "30%" },
-    },
-    {
-      title: "Status & Progress",
-      field: "progress",
-      sorting: true,
+      render: (rowData: any) => {
+        console.log("rowData", rowData);
+        return (
+          <CapturesFieldContainer>
+            <CapturesField>
+              <CaptureImageIcon
+                // src={capture360Image}
+                src={phoneImage}
+                alt={""}
+                // width={13}
+                // height={13}
+              />
+              <CaptureCount>
+                {" "}
+                {/* {rowData.capture360Count?.length > 1
+                  ? rowData.capture360Count
+                  : `0${rowData.capture360Count}`} */}
+                {rowData.capture["Phone Image"]
+                  ? rowData.capture["Phone Image"]
+                  : 0}
+              </CaptureCount>
+            </CapturesField>
+            <CapturesField>
+              <CaptureImageIcon
+                // src={videoWalk}
+                src={capture360Image}
+                alt={""}
+                // width={16}
+                // height={16}
+              />
+              {/* 360 Video */}
+              <CaptureCount>
+                {rowData.capture["360 Image"]
+                  ? rowData.capture["360 Image"]
+                  : 0}
+              </CaptureCount>
+            </CapturesField>
+            <CapturesField>
+              <CaptureImageIcon
+                src={videoWalk}
+                alt={""}
+                // width={15}
+                // height={15}
+              />
+              <CaptureCount>
+                {/* {rowData.capturePhoneCount?.length > 1
+                  ? rowData.capturePhoneCount
+                  : `0${rowData.capturePhoneCount}`}
+                   */}
 
-      render: (rowData: any) => <ProgressBar />,
-      headerStyle: {
-        borderBottom: "1px solid #FF843F",
-        fontFamily: "Open Sans",
-        fontStyle: "normal",
-        fontWeight: "500",
-        fontSize: "14px",
-        lineHeight: "20px",
-        color: "#101F4C",
+                {rowData.capture["360 Video"]
+                  ? rowData.capture["360 Video"]
+                  : 0}
+              </CaptureCount>
+            </CapturesField>
+            <CapturesField>
+              <CaptureImageIcon
+                src={captureLidarIcon}
+                alt={""}
+                // width={14}
+                // height={14}
+              />
+              <CaptureCount>0</CaptureCount>
+            </CapturesField>
+            <CapturesField>
+              <CaptureImageIcon
+                src={DroneImage}
+                alt={""}
+                // width={13}
+                // height={13}
+              ></CaptureImageIcon>
+              <CaptureCount>
+                {rowData.capture["Drone Image"]
+                  ? rowData.capture["Drone Image"]
+                  : 0}
+              </CaptureCount>
+            </CapturesField>
+          </CapturesFieldContainer>
+        );
       },
-      cellStyle: { width: "18%" },
-      // sorting: true,
+      sorting: false,
     },
+    // {
+    //   title: "Status & Progress",
+    //   field: "progress",
+    //   sorting: true,
+
+    //   render: (rowData: any) => <ProgressBar />,
+    //   headerStyle: {
+    //     borderBottom: "1px solid #FF843F",
+    //     fontFamily: "Open Sans",
+    //     fontStyle: "normal",
+    //     fontWeight: "500",
+    //     fontSize: "14px",
+    //     lineHeight: "20px",
+    //     color: "#101F4C",
+    //   },
+    //   cellStyle: { width: "18%" },
+    //   // sorting: true,
+    // },
     {
       title: "Last Updated",
       field: "lastupdated",
@@ -393,6 +543,9 @@ const Index: React.FC = () => {
         fontSize: "14px",
         lineHeight: "20px",
         color: "#101F4C",
+      },
+      render: (rowData: any) => {
+        return <>{moment(rowData.updatedAt).format("DD MMM YYYY")}</>;
       },
     },
 
