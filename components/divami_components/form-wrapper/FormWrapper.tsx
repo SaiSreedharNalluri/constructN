@@ -469,9 +469,9 @@ const FormWrapper = (props: any) => {
               onChange={(e: any) => {
                 handleTextChange(e, data.id, data);
 
-                if (data.id === "password" && data.checkPasswordStrength) {
-                  checkPassword(data?.defaultValue, data.id, e);
-                }
+                // if (data.id === "password" && data.checkPasswordStrength) {
+                //   checkPassword(data?.defaultValue, data.id, e);
+                // }
               }}
               onBlur={(e: any) => {
                 if (data.id === "email") {
@@ -482,6 +482,8 @@ const FormWrapper = (props: any) => {
                   data.id === "password" &&
                   data.checkPasswordStrength
                 ) {
+                  checkPassword(data?.defaultValue, data.id, e);
+
                   console.log("password aya");
                 } else if (data.id === "confirm_password") {
                   matchpassword(data?.defaultValue, data.id);
@@ -551,9 +553,9 @@ const FormWrapper = (props: any) => {
                 <PasswordRequired />
               </MenuItem>
             </Menu> */}
-            {showMessage && (
+            {/* {showMessage && (
               <p>Password is weak. Please choose a stronger password.</p>
-            )}
+            )} */}
           </ElementContainer>
         );
 

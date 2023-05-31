@@ -60,9 +60,11 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
     verifyResendEmail(email)
       .then((response) => {
         console.log("Response of email", response);
+        toast.success(response.message);
         return;
       })
       .catch((error) => {
+        toast.error(error.message);
         return;
         // resetForm();
         // setLoading(false);
@@ -95,8 +97,8 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
             <ChangeSignDiv
               onClick={() => {
                 // router.push("/signup");
-                // router.push("/signup");
-                router.push("/verify-block/xyz123456");
+                router.push("/signup");
+                // router.push("/verify-block/xyz123456");
               }}
             >
               Change Signed Up Email
