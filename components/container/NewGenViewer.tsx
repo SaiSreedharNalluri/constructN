@@ -1,7 +1,7 @@
 import Script from 'next/script';
 import Moment from 'moment';
 import {Rnd } from 'react-rnd';
-import React, { useEffect, useState, memo, useRef, useCallback, useReducer, ReactElement } from 'react';
+import React, { useEffect, useState, memo, useRef, useCallback, useReducer, ReactElement, KeyboardEvent } from 'react';
 import Head from 'next/head';
 import Header from './header';
 import { ForgeViewerUtils } from '../../utils/ForgeWrapper2';
@@ -278,12 +278,28 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
       }
     }
   }, [forgeInitialised]);
+  
 
   useEffect(()=>{
    
     window.addEventListener('notifyViewer', notifyViewerEvent);
+    // To stop Minimap from accepting keyboard events
+    document.addEventListener(
+      "keydown", (event) => {
+        const forgeAvailable = document.getElementById('forgeViewer_1')
+        if(!forgeAvailable) event.stopPropagation()
+      }, false
+    );
+    
     return()=>{
       window.removeEventListener('notifyViewer', notifyViewerEvent);
+      document.removeEventListener(
+        "keydown", (event) => {
+          const forgeAvailable = document.getElementById('forgeViewer_1')
+          if(!forgeAvailable) event.stopPropagation()
+        }, false
+      );
+
     }
   },[]);
   useEffect(() => {
@@ -440,8 +456,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           addTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));            
           break;
         case 'createSuccessIssue':
-          newViewerData = {...oldViewerData,currentIssueList:{...oldViewerData.currentIssueList,...action.data as Issue}};
-          finishAddTag(action.data as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
+          let myNewIssue:Issue = action.data as Issue;
+          newViewerData = {...oldViewerData,currentIssueList:{...oldViewerData.currentIssueList,...myNewIssue}};
+          finishAddTag(myNewIssue.context as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           //addTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));            
           break;
         case 'createFailIssue':
@@ -466,8 +483,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           break;
         case 'createSuccessTask':
           //cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
-          newViewerData = {...oldViewerData,currentTaskList:{...oldViewerData.currentTaskList,...action.data as ITasks}};
-          finishAddTag(action.data as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
+          let myNewTask:ITasks = action.data as ITasks;
+          newViewerData = {...oldViewerData,currentTaskList:{...oldViewerData.currentTaskList,...myNewTask}};
+          finishAddTag(myNewTask.context as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
         case 'createFailTask':
           cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
