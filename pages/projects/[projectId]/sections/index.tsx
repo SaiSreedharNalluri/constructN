@@ -60,6 +60,7 @@ import {
   SearchAreaContainer,
   SearchGlassIcon,
   SearchIconStyling,
+  SectionsListContainer,
 } from "./SectionsStyles";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -641,7 +642,7 @@ const Index: React.FC = () => {
                   setIsSearch(true);
                 }}
               /> */}
-              <div>
+              <SectionsListContainer>
                 {/* <h1>React Table</h1> */}
                 <ThemeProvider theme={defaultMaterialTheme}>
                   <MaterialTable
@@ -709,7 +710,7 @@ const Index: React.FC = () => {
 
                   {/* <BasicTreeData/> */}
                 </ThemeProvider>
-              </div>
+              </SectionsListContainer>
             </div>
           </div>
         </div>

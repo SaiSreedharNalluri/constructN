@@ -2,6 +2,16 @@ import { styled } from "@mui/system";
 import Image from "next/image";
 import { Box, MenuItem, TextField } from "@mui/material";
 
+
+
+
+export const SectionsListContainer = styled("div")({
+  // padding: "20px",
+  paddingTop:"1px",
+  paddingLeft:"1px",
+  width: "100%",
+  boxShadow:"0px 2px 3px rgba(0, 0, 0, 0.3)"
+});
 export const ArrowIcon = styled(Image)`
   cursor: pointer;
   position: absolute;
