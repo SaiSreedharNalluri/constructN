@@ -33,14 +33,23 @@ export default function App({ Component, pageProps }: AppProps) {
   ];
   useEffect(() => {
     const userObj: any = getCookie("user");
-    console.log("coming here", userObj);
+    // let convertUserObj = JSON.parse(userObj);
+    let user = null;
+    if (userObj) user = JSON.parse(userObj);
+    // console.log(
+    //   "convertUserObj",
+    //   typeof convertUserObj,
+    //   convertUserObj["rememberMe"]
+    // );
+    console.log("router", router.asPath);
 
-    if (userObj === undefined && !openRoutes.includes(router.asPath)) {
-      // router.push("/login");
+    if (!user?.rememberMe && !openRoutes.includes(router.asPath)) {
       router.push("/signin");
-    } else {
-      // router.push("/projects");
     }
+    // else if (router.asPath == "/signin" && userObj.rememberMe) {
+    //   console.log("coming to projects");
+    //   router.push("/projects");
+    // }
   }, []);
 
   // useEffect(() => {

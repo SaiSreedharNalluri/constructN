@@ -51,19 +51,22 @@ const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  // const handleClickShowPassword = () => {
+  //   setShowPassword(!showPassword);
+  // };
+  useEffect(() => {
+    console.log("rememberMe", rememberMe);
+  }, [rememberMe]);
 
-  const handleMouseDownPassword = (event: any) => {
-    event.preventDefault();
-  };
+  // const handleMouseDownPassword = (event: any) => {
+  //   event.preventDefault();
+  // };
 
   const [checked, setChecked] = React.useState(true);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked);
-  };
+  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setChecked(event.target.checked);
+  // };
 
   // useEffect(() => {
   //   const userObj: any = getCookie("user");
@@ -89,6 +92,7 @@ const SignInPage = () => {
   const [canBeDisabled, setCanBeDisabled] = useState(false);
   const [token, setToken] = useState("");
   const [userEmail, setUserEmail] = useState<any>("");
+  const [newProp, setNewProp] = useState<any>({});
 
   const handleFormData = (data: any) => {
     setFormData(data);
@@ -127,17 +131,26 @@ const SignInPage = () => {
           console.log("response", response);
           if (response?.result?.verified) {
             localStorage.setItem("userInfo", response.result?.fullName);
-            if (rememberMe) {
-              // setCookie("userProfile", response.result);
-              // setCookie("user", response.result);
-              setCookie("user", JSON.stringify(response?.result));
-            }
+            // if (rememberMe) {
+            // let newProperty = response?.result;
+            // let userProfileObj = {
+            //   rememberMe: rememberMe ? "T" : "",
+            //   ...response?.result,
+            // };
+
+            let userProfileObj = {
+              rememberMe: rememberMe,
+              ...response?.result,
+            };
+            // {...newProp,rememberMe}
+            console.log("remember", rememberMe);
+            // setCookie("user", JSON.stringify(response?.result));
+            // setCookie("user", JSON.stringify(userProfileObj));
+            setCookie("user", userProfileObj);
+
+            // }
             toast.success("user logged in sucessfully");
-            // Mixpanel.identify(email);
-            // Mixpanel.track("login_success", {
-            //   email: email,
-            // });
-            // Mixpanel.track("login_page_close");
+
             router.push("/projects");
           } else {
             // setOpen(true);
@@ -176,14 +189,6 @@ const SignInPage = () => {
       });
   };
 
-  function isValidEmail(email: any) {
-    if (/\S+@\S+\.\S+/.test(email)) {
-      console.log("true");
-    } else {
-      console.log("false");
-    }
-    // return /\S+@\S+\.\S+/.test(email);
-  }
   // form wrapper code
 
   return (
@@ -197,7 +202,7 @@ const SignInPage = () => {
       <Overlay></Overlay>
       <FormDiv>
         <FormContainerSign>
-          <SignInHeader>Sign In</SignInHeader>
+          <SignInHeader data-testid="SignInHeading">Sign In</SignInHeader>
           <FormBody
             handleFormData={handleFormData}
             validate={validate}
@@ -227,6 +232,7 @@ const SignInPage = () => {
                   // onChange={handleChange}
                   onChange={(e) => setRememberMe(e.target.checked)}
                   inputProps={{ "aria-label": "controlled" }}
+                  data-testid="rememeberClick"
                 />
               </CheckTickDiv>
 
@@ -237,6 +243,7 @@ const SignInPage = () => {
               onClick={() => {
                 router.push("/forgot_password");
               }}
+              data-testid="forgotPasswordClick"
             >
               Forgot password?
             </ForgotDiv>
@@ -260,6 +267,7 @@ const SignInPage = () => {
               onClick={() => {
                 router.push("/signup");
               }}
+              data-testid="signUpRoute"
             >
               Signup
             </NewUserSpan>

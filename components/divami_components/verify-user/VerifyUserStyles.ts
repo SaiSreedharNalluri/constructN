@@ -366,4 +366,5 @@ export const SpanResend  = styled("span")({
   fontSize: "14px",
   lineHeight: "19px",
   textAlign: "center",
+  cursor:"pointer"
 });

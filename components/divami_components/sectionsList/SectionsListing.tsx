@@ -1,22 +1,27 @@
-import React, { useEffect, useState } from "react";
-
-import Header from "../../../../components/divami_components/header/Header";
-import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
-import logo from "./logo.svg";
-import ReactDOM from "react-dom";
-import MaterialTable, { MTableToolbar } from "material-table";
-
+import React, { useState, useEffect } from "react";
+import {
+  ArrowIcon,
+  CloseIcon,
+  CustomSearchField,
+  FunnelIcon,
+  Header,
+  HeaderActions,
+  HeaderImage,
+  SearchAreaContainer,
+  SearchGlassIcon,
+  SearchIconStyling,
+  SectionsListContainer,
+  StyledTable,
+  TableHeader,
+  TableWrapper,
+} from "./SectionsListingStyles";
 import {
   InputAdornment,
   ThemeProvider,
   Typography,
   createTheme,
 } from "@mui/material";
-// import "./App.css";
-// import BasicTreeData from "./components/Tree";
-import ProgressBar from "../../../../components/divami_components/ProgressBarMode/ProgressBar";
-// import ProgressBar from "./components/progressBar/ProgressBar";
-// import CaptureMode from "./components/CaptureMode/CaptureMode";
+import moment from "moment";
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import Add from "@material-ui/icons/Add";
@@ -24,6 +29,7 @@ import Check from "@material-ui/icons/Check";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import ChevronRight from "@material-ui/icons/ChevronRight";
 import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
+import searchIcon from "../../../public/divami_icons/search.svg";
 
 import Clear from "@material-ui/icons/Clear";
 import DeleteOutline from "@material-ui/icons/DeleteOutline";
@@ -35,40 +41,26 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
-import { forwardRef } from "react";
-import CaptureMode from "../../../../components/divami_components/CaptureMode/CaptureMode";
-import { useTheme } from "@material-ui/core/styles";
-import searchTable from "../../../../public/divami_icons/searchTable.svg";
-import filterTable from "../../../../public/divami_icons/filterTable.svg";
-import SearchBoxIcon from "../../../../public/divami_icons/search.svg";
-import CrossIcon from "../../../../public/divami_icons/crossIcon.svg";
-import SearchMag from "../../../../public/divami_icons/search.svg";
-import FilterInActive from "../../../../public/divami_icons/filterInactive.svg";
-import phoneImage from "../../../../public/divami_icons/phoneImage.svg";
-import hotspotImg from "../../../../public/divami_icons/hotspotImg.svg";
-import videoWalk from "../../../../public/divami_icons/videoWalk.svg";
-import lidarScan from "../../../../public/divami_icons/lidarScan.svg";
-import capture360Image from "../../../../public/divami_icons/capture360Image.svg";
-import captureLidarIcon from "../../../../public/divami_icons/captureLidarIcon.svg";
-import DroneImage from "../../../../public/divami_icons/DroneImage.svg";
 
-import {
-  ArrowIcon,
-  CloseIcon,
-  Content,
-  CustomSearchField,
-  FunnelIcon,
-  SearchAreaContainer,
-  SearchGlassIcon,
-  SearchIconStyling,
-  SectionsListContainer,
-} from "./SectionsStyles";
+import phoneImage from "../../../public/divami_icons/phoneImage.svg";
+import hotspotImg from "../../../public/divami_icons/hotspotImg.svg";
+import videoWalk from "../../../public/divami_icons/videoWalk.svg";
+import lidarScan from "../../../public/divami_icons/lidarScan.svg";
+import capture360Image from "../../../public/divami_icons/capture360Image.svg";
+import captureLidarIcon from "../../../public/divami_icons/captureLidarIcon.svg";
+import DroneImage from "../../../public/divami_icons/DroneImage.svg";
+import SearchBoxIcon from "../../../public/divami_icons/search.svg";
+import CrossIcon from "../../../public/divami_icons/CrossIcon.svg";
+import FilterInActive from "../../../public/divami_icons/FilterInActive.svg";
+import SearchMag from "../../../public/divami_icons/search.svg";
+import UserFilterIcon from "../../../public/divami_icons/UserFilterIcon.svg";
+
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { getStructureHierarchy } from "../../../../services/structure";
+import { getStructureHierarchy } from "../../../services/structure";
 import { AxiosResponse } from "axios";
-import { ChildrenEntity } from "../../../../models/IStructure";
-import { getSectionsList } from "../../../../services/sections";
+import { ChildrenEntity } from "../../../models/IStructure";
+import { getSectionsList } from "../../../services/sections";
 import {
   CaptureModeParent,
   CountElem,
@@ -81,9 +73,11 @@ import {
   CapturesField,
   CaptureImageIcon,
   CaptureCount,
-} from "../../../../components/divami_components/CaptureMode/CaptureModeStyles";
-import moment from "moment";
-import SectionsListing from "../../../../components/divami_components/sectionsList/SectionsListing";
+} from "../CaptureMode/CaptureModeStyles";
+import { forwardRef } from "react";
+
+import MaterialTable, { MTableToolbar } from "material-table";
+import CustomButton from "../custom-button/CustomButton";
 
 const dummyData: any = [
   {
@@ -127,28 +121,6 @@ const dummyData: any = [
     // imageUrl: <ProgressBar />,
   },
 ];
-
-const MyNewTitle = (props: any) => {
-  console.log("MyNewTitle", props);
-  return (
-    <div
-      style={{
-        fontFamily: "Open Sans",
-        fontStyle: "normal",
-        fontWeight: "400",
-        fontSize: "18px",
-        color: "#101F4C",
-      }}
-    >
-      {props.sections}
-    </div>
-  );
-};
-
-const customToolbarStyle = {
-  padding: "10px", // change the padding value as per your requirement
-};
-
 const tableIcons: any = {
   Add: forwardRef<SVGSVGElement>((props, ref) => (
     <AddBox {...props} ref={ref} />
@@ -206,7 +178,27 @@ const tableIcons: any = {
   )),
 };
 
-const Index: React.FC = () => {
+const MyNewTitle = (props: any) => {
+  console.log("MyNewTitle", props);
+  return (
+    <div
+      style={{
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontSize: "18px",
+        color: "#101F4C",
+      }}
+    >
+      {props.sections}
+    </div>
+  );
+};
+const customToolbarStyle = {
+  padding: "10px", // change the padding value as per your requirement
+};
+
+const SectionsListing = () => {
   const router = useRouter();
 
   const defaultMaterialTheme = createTheme();
@@ -224,7 +216,12 @@ const Index: React.FC = () => {
   const [filterTableData, setFilterTableData] = useState<any>([]);
 
   let [gridData, setGridData] = useState<any>([]);
-
+  const [isSearching, setIsSearching] = useState(false);
+  const [openFilter, setOpenFilter] = useState(false);
+  const [searchTableData, setSearchTableData] = useState([]);
+  const formHandler = (event: any) => {
+    // setShowEmptyState(true);
+  };
   // useEffect(() => {
   //   handleSearch();
   // }, [searchTerm]);
@@ -575,26 +572,191 @@ const Index: React.FC = () => {
     //   currencySetting: { currencyCode: "INR", minimumFractionDigits: 0 },
     // },
   ];
-
   return (
-    <React.Fragment>
-      <div>
-        <div>
-          <Header />
-          <div className="flex w-screen fixed">
-            <div>
-              <Content>
-                <SidePanelMenu onChangeData={() => {}} />
-                <SectionsListing />
-              </Content>
-              {/* <CollapsableMenu onChangeData={() => {}} /> */}
-            </div>
-            <div></div>
-          </div>
-        </div>
-      </div>
-    </React.Fragment>
+    <div className="sections_table">
+      {/* <SearchIconStyling>
+        {searchingOn ? (
+          <SearchAreaContainer>
+            <CustomSearchField
+              placeholder="Search"
+              variant="outlined"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
+              InputLabelProps={{ shrink: false }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Image src={SearchBoxIcon} alt="" />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <CloseIcon
+                      onClick={() => {
+                        handleSearchWindow();
+                      }}
+                      src={CrossIcon}
+                      alt={"close icon"}
+                      data-testid="search-close"
+                    />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </SearchAreaContainer>
+        ) : (
+          <>
+            <SearchGlassIcon
+              src={SearchMag}
+              data-testid="search-icon"
+              alt={"close icon"}
+              onClick={() => setSearchingOn((prev) => !prev)}
+            />
+          </>
+        )}
+      </SearchIconStyling> */}
+
+      {/* <FunnelIcon src={FilterInActive} alt="Arrow" data-testid="filter" /> */}
+      <TableHeader>
+        <Header>Sections</Header>
+        <HeaderActions>
+          {isSearching ? (
+            <SearchAreaContainer marginRight>
+              <CustomSearchField
+                placeholder="Search"
+                variant="outlined"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setSearchTableData(
+                    tableData.filter((each: any) =>
+                      each.fullName.includes(e.target?.value)
+                    )
+                  );
+                }}
+                InputLabelProps={{ shrink: false }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Image src={SearchBoxIcon} alt="" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <CloseIcon
+                        onClick={() => {
+                          handleSearchWindow();
+                        }}
+                        src={CrossIcon}
+                        alt={"close icon"}
+                        data-testid="search-close"
+                      />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </SearchAreaContainer>
+          ) : (
+            <HeaderImage
+              src={searchIcon}
+              alt=""
+              width={24}
+              height={24}
+              onClick={() => {
+                setIsSearching(true);
+              }}
+            />
+          )}
+          <HeaderImage
+            src={UserFilterIcon}
+            alt=""
+            width={24}
+            height={24}
+            onClick={() => {
+              setOpenFilter(true);
+            }}
+          />
+        </HeaderActions>
+      </TableHeader>
+
+      {/* <ArrowIcon
+                src={searchTable}
+                alt="search"
+                onClick={() => {
+                  setIsSearch(true);
+                }}
+              /> */}
+      <SectionsListContainer>
+        {/* <h1>React Table</h1> */}
+        <ThemeProvider theme={defaultMaterialTheme}>
+          <TableWrapper>
+            <StyledTable
+              // icons={tableIcons.Search}
+              components={{
+                Toolbar: (props) => <MTableToolbar {...props} />,
+              }}
+              columns={columns}
+              data={filterTableData ? filterTableData : []}
+              // title={<MyNewTitle sections="Sections" />}
+              title={""}
+              //onSearchChange={setIsSearchVal}
+              options={{
+                sorting: true,
+                thirdSortClick: false,
+                // searchFieldStyle: {
+                //   width: 100,
+                // },
+
+                // searchFieldVariant: "outlined",
+                // filtering: true,
+                // searchText: searchVal,
+                search: false,
+                paging: false,
+                // pageSizeOptions: [5, 10, 20, 25, 50, 100],
+
+                // by default it should give 5 rows
+                // pageSize: 5,
+                // paginationType:"stepped",
+                // showFirstLastPageButtons
+                // paginationPosition
+
+                exportButton: false,
+                maxBodyHeight: 700,
+                // export all data
+                exportFileName: "TableData",
+                selection: false,
+                showTitle: true,
+
+                rowStyle: {
+                  fontFamily: "Open Sans",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  fontSize: "14px",
+                  // lineHeight: "20px",
+                  color: "#101F4C",
+                },
+                headerStyle: {
+                  padding: "6px 16px",
+                  fontFamily: "Open Sans",
+                },
+              }}
+              icons={tableIcons}
+              // detailPanel={[
+              //   { icon: tableIcons.Add, tooltip: "Show Surname" },
+              // ]}
+              parentChildData={(row, rows) =>
+                rows.find((a) => a._id === row.parentId)
+              }
+            />
+
+            {/* <BasicTreeData/> */}
+          </TableWrapper>
+        </ThemeProvider>
+      </SectionsListContainer>
+    </div>
   );
 };
 
-export default Index;
+export default SectionsListing;

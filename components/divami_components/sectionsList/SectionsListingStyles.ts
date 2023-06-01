@@ -2,15 +2,16 @@ import { styled } from "@mui/system";
 import Image from "next/image";
 import { Box, MenuItem, TextField } from "@mui/material";
 
+import MaterialTable, { MTableToolbar } from "material-table";
 
 
 
 export const SectionsListContainer = styled("div")({
   // padding: "20px",
-  paddingTop:"1px",
-  paddingLeft:"1px",
-  width: "100%",
-  boxShadow:"0px 2px 3px rgba(0, 0, 0, 0.3)"
+  // paddingTop:"1px",
+  // paddingLeft:"1px",
+  // width: "100%",
+  // boxShadow:"0px 2px 3px rgba(0, 0, 0, 0.3)"
 });
 export const ArrowIcon = styled(Image)`
   cursor: pointer;
@@ -75,7 +76,36 @@ export const FunnelIcon = styled(Image)({
 });
 
 
-
-export const Content = styled("div")({
+export const TableHeader = styled("div")({
   display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  width: "100%",
+  paddingBottom: "10px",
+  fontSize: "18px",
+  fontWeight: 400,
+  fontFamily: "Open Sans",
 });
+
+export const Header = styled("div")({
+  flexGrow: "1",
+});
+
+export const HeaderActions = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  maxHeight: "68px",
+});
+
+export const HeaderImage = styled(Image)({
+  marginRight: "20px",
+  width: "24px",
+  height: "24px",
+});
+
+export const TableWrapper = styled("div")({
+  marginBottom: "50px",
+});
+
+export const StyledTable = styled(MaterialTable)({});
