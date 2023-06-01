@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import * as Yup from 'yup';
-import { Formik, Form, ErrorMessage } from 'formik';
-import showPwdImg from '../../public/icons/show-password.svg';
-import hidePwdImg from '../../public/icons/hide-password.svg';
-import SubmitButtons from '../core/buttons/submitButton';
-import InputPassword from '../core/Input/inputPassword';
-import InputText from '../core/Input/inputText';
-import InputCheckBox from '../core/Input/inputCheckBox';
-import NextImage from '../core/Image';
-import Image from 'next/image';
-import OkButton from '../core/buttons/okButton';
-import { useRouter } from 'next/router';
+import React, { useState } from "react";
+import * as Yup from "yup";
+import { Formik, Form, ErrorMessage } from "formik";
+import showPwdImg from "../../public/icons/show-password.svg";
+import hidePwdImg from "../../public/icons/hide-password.svg";
+import SubmitButtons from "../core/buttons/submitButton";
+import InputPassword from "../core/Input/inputPassword";
+import InputText from "../core/Input/inputText";
+import InputCheckBox from "../core/Input/inputCheckBox";
+import NextImage from "../core/Image";
+import Image from "next/image";
+import OkButton from "../core/buttons/okButton";
+import { useRouter } from "next/router";
 interface IProps {
   loading: boolean;
   buttonName: string;
@@ -24,12 +24,12 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
     email: string;
     password: string;
   } = {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   };
   const validationSchema = Yup.object().shape({
-    email: Yup.string().required('Please Enter The Email !'),
-    password: Yup.string().required('Please Enter The Password!'),
+    email: Yup.string().required("Please Enter The Email !"),
+    password: Yup.string().required("Please Enter The Password!"),
   });
   const [isRevealPwd, setIsRevealPwd] = useState(false);
   return (
@@ -67,7 +67,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                 <div className="absolute p-3 inset-y-0 right-0">
                   <Image
                     alt=""
-                    title={isRevealPwd ? 'Hide password' : 'Show password'}
+                    title={isRevealPwd ? "Hide password" : "Show password"}
                     src={isRevealPwd ? hidePwdImg : showPwdImg}
                     onClick={() => setIsRevealPwd((prevState) => !prevState)}
                   />
@@ -82,7 +82,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                 <div
                   className="text-gray-500 cursor-pointer ml-4 lg:ml-0"
                   onClick={() => {
-                    router.push('reset-password');
+                    router.push("reset-password");
                   }}
                 >
                   Forgot Password
@@ -95,7 +95,8 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                   buttonName="Register"
                   disabled={false}
                   clickTheOkButton={() => {
-                    router.push('/register');
+                    // router.push('/register');
+                    router.push("/signup");
                   }}
                 />
               </div>

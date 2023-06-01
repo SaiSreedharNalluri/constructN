@@ -26,16 +26,41 @@ export default function App({ Component, pageProps }: AppProps) {
   mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, { debug: true });
   const router = useRouter();
   const openRoutes = [
-    "/register",
+    // "/register",
+    "/signup",
     "/reset-password",
     "/verify-account/[token]",
   ];
   useEffect(() => {
     const userObj: any = getCookie("user");
-    if (userObj === undefined && !openRoutes.includes(router.asPath)) {
-      router.push("/login");
+    // let convertUserObj = JSON.parse(userObj);
+    let user = null;
+    if (userObj) user = JSON.parse(userObj);
+    // console.log(
+    //   "convertUserObj",
+    //   typeof convertUserObj,
+    //   convertUserObj["rememberMe"]
+    // );
+    console.log("router", router.asPath);
+
+    if (!user?.rememberMe && !openRoutes.includes(router.asPath)) {
+      router.push("/signin");
     }
+    // else if (router.asPath == "/signin" && userObj.rememberMe) {
+    //   console.log("coming to projects");
+    //   router.push("/projects");
+    // }
   }, []);
+
+  // useEffect(() => {
+  //   const userObj: any = getCookie("userProfile");
+  //   if (userObj === undefined && !openRoutes.includes(router.asPath)) {
+  //     // router.push("/login");
+  //     router.push("/signin");
+  //   } else {
+  //     router.push("/projects");
+  //   }
+  // }, []);
 
   return (
     <>
