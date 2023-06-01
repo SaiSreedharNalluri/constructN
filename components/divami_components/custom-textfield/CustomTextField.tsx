@@ -84,7 +84,7 @@ const ErrorShowText = styled("div")({
   // border: "2px solid blue",
 });
 
-export const CustomTextField = (props: PropTypes) => {
+export const CustomTextField = (props: any) => {
   const reff = useRef<any>(null);
   const {
     id,

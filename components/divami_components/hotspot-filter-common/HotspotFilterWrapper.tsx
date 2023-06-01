@@ -139,6 +139,9 @@ const HotspotFilterFormWrapper = (props: any) => {
             showRangeError={data.showRangeError}
             isDisabled={data.isDisabled}
             className={undefined}
+            isValidField={false}
+            errorMsg={""}
+            showErrorMsg={false}
           />
         );
       case "datePicker":

@@ -240,7 +240,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const formHandler = (event: any) => {
     setShowEmptyState(true);
   };
-  const handleEditClick = (event, rowData) => {
+  const handleEditClick = (event: any, rowData: any) => {
     rowData.tableData.editing = "delete";
     forceUpdate();
   };

@@ -1,9 +1,21 @@
 import Image from "next/image";
 import { useState } from "react";
-import { Menu } from "@mui/material";
-import { StyledMenu } from "../issue-listing/IssueListStyles";
+import { ListItemIcon, Menu } from "@mui/material";
+import {
+  MenuOptionIcon,
+  MenuOptionLabel,
+  MenuOptionLabelField,
+  StyledMenu,
+} from "../issue-listing/IssueListStyles";
+import { IconContainer } from "../task_list/TaskListStyles";
 
-export const CustomMenu = ({ imageSrc, menuOptions }) => {
+export const CustomMenu = ({
+  imageSrc,
+  menuOptions,
+  width,
+  height,
+  right,
+}: any) => {
   const [showMoreActions, setShowMoreActions] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -16,9 +28,10 @@ export const CustomMenu = ({ imageSrc, menuOptions }) => {
       <Image
         src={imageSrc}
         alt=""
-        width={20}
-        height={20}
-        onClick={(e) => {
+        width={width ? width : "20px"}
+        height={height ? height : "20px"}
+        style={right ? { marginRight: right } : {}}
+        onClick={(e: any) => {
           setShowMoreActions(true);
           setAnchorEl(e.target);
         }}
@@ -72,6 +85,11 @@ export const CustomMenu = ({ imageSrc, menuOptions }) => {
               data-testid="sort-menu-item"
             >
               {option.label}
+              {option.icon && (
+                <ListItemIcon>
+                  <IconContainer src={option.icon} alt={option.label} />
+                </ListItemIcon>
+              )}
             </StyledMenu>
           </>
         ))}
