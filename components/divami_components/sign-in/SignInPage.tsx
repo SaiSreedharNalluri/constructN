@@ -41,7 +41,7 @@ import FormBody from "./FormBody";
 import FooterSignIn from "./FooterSignIn";
 import { CollectionsOutlined } from "@mui/icons-material";
 import { login } from "../../../services/userAuth";
-import { Mixpanel } from "../../analytics/Mixpanel";
+import { Mixpanel } from "../../analytics/mixpanel";
 import { toast } from "react-toastify";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 
