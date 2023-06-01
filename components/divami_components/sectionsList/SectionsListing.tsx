@@ -354,8 +354,40 @@ const SectionsListing = () => {
       ]);
 
       //   myTableRef.onTreeExpandChanged();
+      expandAllRows();
     } else {
       setFilterTableData([...tableData]);
+      collapseAllRows();
+    }
+  };
+
+  const expandAllRows = () => {
+    if (myTableRef.current) {
+      const tableData = myTableRef.current.dataManager.data;
+
+      tableData.forEach((row: any) => {
+        row.tableData.isTreeExpanded = true;
+      });
+
+      myTableRef.current.setState((prevState: any) => ({
+        ...prevState,
+        data: tableData,
+      }));
+    }
+  };
+
+  const collapseAllRows = () => {
+    if (myTableRef.current) {
+      const tableData = myTableRef.current.dataManager.data;
+
+      tableData.forEach((row: any) => {
+        row.tableData.isTreeExpanded = false;
+      });
+
+      myTableRef.current.setState((prevState: any) => ({
+        ...prevState,
+        data: tableData,
+      }));
     }
   };
 
