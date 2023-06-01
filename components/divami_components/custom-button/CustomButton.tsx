@@ -4,8 +4,24 @@ import React from "react";
 
 interface ContainerProps {
   loginField: boolean;
+  createIssueForm: boolean;
 }
+const StyledButtonDisable = styled(Button)((props: any) => ({
+  width: "180px !important",
+  height: "40px",
+  textTransform: "none",
+  backgroundColor: "#888888 !important",
+  color: "#ffffff !important",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "16px",
+  lineHeight: "16px",
+})) as any;
+
 const StyledButton = styled(Button)((props: any) => ({
+  // border: "2px solid red",
+
   width: props.loginField ? "340px" : "180px !important",
   height: "40px",
   textTransform: "none",
@@ -48,7 +64,15 @@ const OulinedButton = styled(StyledButton)({
 });
 
 const CustomButton = (props: any) => {
-  const { type, label, formHandler, setButtonClicked, loginField } = props;
+  const {
+    type,
+    label,
+    formHandler,
+    setButtonClicked,
+    loginField,
+    disabledButton,
+  } = props;
+  console.log("loginFieldButton", loginField, type);
   if (type === "contained") {
     return (
       <div>
@@ -90,14 +114,24 @@ const CustomButton = (props: any) => {
   } else if (type === "disabled") {
     return (
       <div>
-        <StyledButton
-          data-testid="testing_button"
-          variant="outlined"
-          disabled
-          loginField={loginField}
-        >
-          {label}
-        </StyledButton>
+        {loginField ? (
+          <StyledButton
+            data-testid="testing_button"
+            variant="outlined"
+            disabled
+            loginField={loginField}
+          >
+            {label}
+          </StyledButton>
+        ) : (
+          <StyledButtonDisable
+            data-testid="testing_button"
+            variant="outlined"
+            disabled
+          >
+            {label}
+          </StyledButtonDisable>
+        )}
       </div>
     );
   } else {

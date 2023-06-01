@@ -17,13 +17,14 @@ const Footer = ({ formHandler, editData, canBeDisabled }: any) => {
     <ButtonsContainer>
       <CustomButton type="outlined" label="Cancel" formHandler={formHandler} />
       <CustomButton
-        type={canBeDisabled && buttonClicked ? "disabled" : "contained"}
+        // type={canBeDisabled && buttonClicked ? "disabled" : "contained"}
+        type={canBeDisabled ? "disabled" : "contained"}
         label={editData ? "Update" : "Create"}
         formHandler={formHandler}
         setButtonClicked={setButtonClicked}
       />
     </ButtonsContainer>
   );
-}
+};
 
 export default Footer;

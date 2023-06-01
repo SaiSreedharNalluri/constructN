@@ -268,7 +268,9 @@ const FormWrapper = (props: any) => {
     );
   };
   function checkDataisEmpty() {
-    const isEmptyField = config.some((val: any) => !val.defaultValue);
+    const isEmptyField = config.some(
+      (val: any) => !val.defaultValue && val.isReq
+    );
 
     setCanBeDisabled(isEmptyField);
   }
