@@ -1,11 +1,13 @@
 import Script from 'next/script';
 import Moment from 'moment';
-import React, { useEffect, useState, memo, useRef, useCallback, useReducer } from 'react';
+import {Rnd } from 'react-rnd';
+import React, { useEffect, useState, memo, useRef, useCallback, useReducer, ReactElement, KeyboardEvent } from 'react';
 import Head from 'next/head';
 import Header from './header';
 import { ForgeViewerUtils } from '../../utils/ForgeWrapper2';
 import { PotreeViewerUtils } from '../../utils/PotreeWrapper2';
 import { MapboxViewerUtils } from '../../utils/MapboxWrapper';
+import { MinimapUtils } from '../../utils/MinimapWrapper';
 import { autodeskAuth } from "../../services/forgeService";
 import {
   getPointCloudTM,
@@ -20,6 +22,7 @@ import DatePicker from './datePicker';
 import Pagination from './pagination';
 import ForgeViewer from './forgeViewer';
 import PotreeViewer from './potreeViewer';
+import MiniMap from './minimap';
 import {
   getForgeModels,
   getPointCloud,
@@ -47,6 +50,26 @@ import mapboxgl from 'mapbox-gl';
 import { IMapboxLayer } from '../../models/IMapboxLayer';
 import Hotspots from './hotspots';
 import HotspotsCompare  from './hotspotsCompare';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import RemoveIcon from '@mui/icons-material/Remove';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import PictureInPictureIcon from '@mui/icons-material/PictureInPicture';
+import { IconButton } from '@mui/material';
+
+type TMCIProps ={
+  currentSnapshot: ISnapshot;
+  snapshotList: ISnapshot[];
+  snapshotHandler: (snapshotData: ISnapshot) => void;
+  isFullScreen?: boolean;
+  getSnapshotList: any;
+  totalSnaphotsCount: any;
+  structure: any;
+  setPrevList: any;
+  setNextList: any;
+  totalPages: any;
+  offset: any;
+  tools?: any;
+}
 
 type ForgeViewerUtilsType = {
   setupViewer: Function,
@@ -127,12 +150,40 @@ type MapboxViewerUtilsType = {
     setHotspotClick: Function,
     shutdown: Function,
 }
-
+type MinimapViewerUtilsType ={
+  setupViewer: Function,
+    initializeViewer: Function,
+    setType: Function,
+    createMarker: Function,
+    setStructure: Function,
+    setSnapshot: Function,
+    updateData: Function,
+    updateLayersData: Function,
+    updateIssuesData: Function,
+    updateTasksData: Function,
+    refreshData: Function,
+    showLayers: Function,
+    initiateAddTag: Function,
+    cancelAddTag: Function,
+    selectTag: Function,
+    showTag: Function,
+    fitToView: Function,
+    getContext: Function,
+    getViewerState: Function,
+    updateViewerState: Function,
+    updateContext: Function,
+    removeData: Function,
+    removeLayers: Function,
+    resize: Function,
+    shutdown: Function,
+}
 interface IProps {
 data:IGenData;
 updateData?: (newData :IGenData)=> void;
+tmcBase?:ReactElement<TMCIProps>
+tmcCompare?:ReactElement<TMCIProps>
 }
-const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
+const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare }) => {
 
 
   let structure = data.structure;
@@ -144,6 +195,12 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   let potreeUtils = useRef<PotreeViewerUtilsType>();
   let mapboxUtils = useRef<MapboxViewerUtilsType>();
 
+  let minimapUtils = useRef<MinimapViewerUtilsType>();
+
+  let _minimap:any;
+  let _minimapCompare:any;
+
+
   let [hotspots, setHotspots] = useState([]);
   let [hotspotsCompare, setHotspotsCompare] = useState<any>([]);
   let [selectedHotspot, setSelectedHotspot] = useState(0);
@@ -151,6 +208,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   let [selectedHotspotCompareDetails, setSelectedHotspotCompareDetails] = useState();
   let [isFullScreenMode, setFullScreenMode] = useState(false);
   let [forgeInitialised, setForgeInitialised] = useState(false);
+  let [showMinimap, setShowMinimap] = useState(false);
 
  //let incomingPayload :IGenPayload;
  let incomingPayload = useRef<IGenPayload>();
@@ -163,6 +221,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   let potreeCompareUtils = useRef<PotreeViewerUtilsType>();
   let forgeCompareUtils = useRef<ForgeViewerUtilsType>();
   let mapboxCompareUtils = useRef<MapboxViewerUtilsType>();
+
+  let minimapCompareUtils = useRef<MinimapViewerUtilsType>();
 
   let [context, setContext] = useState({});
   let currentContext = useRef<IContext>();
@@ -218,12 +278,28 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       }
     }
   }, [forgeInitialised]);
+  
 
   useEffect(()=>{
    
     window.addEventListener('notifyViewer', notifyViewerEvent);
+    // To stop Minimap from accepting keyboard events
+    document.addEventListener(
+      "keydown", (event) => {
+        const forgeAvailable = document.getElementById('forgeViewer_1')
+        if(!forgeAvailable) event.stopPropagation()
+      }, false
+    );
+    
     return()=>{
       window.removeEventListener('notifyViewer', notifyViewerEvent);
+      document.removeEventListener(
+        "keydown", (event) => {
+          const forgeAvailable = document.getElementById('forgeViewer_1')
+          if(!forgeAvailable) event.stopPropagation()
+        }, false
+      );
+
     }
   },[]);
   useEffect(() => {
@@ -236,12 +312,15 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     function getViewerTypefromViewType(viewType:string){
     //console.log('Getting ViewerType for ',viewType);
     switch(viewType){
+      case 'compareDesign':
       case 'Plan Drawings':
       case 'PlanDrawings':
       case 'BIM':
         return 'Forge';
+      case 'compareReality':
       case 'pointCloud':
         return 'Potree';
+      case 'compareMap':
       case 'orthoPhoto':
         return 'Mapbox';
     }
@@ -367,54 +446,56 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           break;
           
         
-        case 'issueShow':
+        case 'showIssue':
           showTag('Issue',true,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'issueHide':
+        case 'hideIssue':
           showTag('Issue',false,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'issueCreate':
+        case 'createIssue':
           addTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));            
           break;
-        case 'issueCreateSuccess':
-          newViewerData = {...oldViewerData,currentIssueList:{...oldViewerData.currentIssueList,...action.data as Issue}};
-          finishAddTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));
+        case 'createSuccessIssue':
+          let myNewIssue:Issue = action.data as Issue;
+          newViewerData = {...oldViewerData,currentIssueList:{...oldViewerData.currentIssueList,...myNewIssue}};
+          finishAddTag(myNewIssue.context as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           //addTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));            
           break;
-        case 'issueCreateFail':
+        case 'createFailIssue':
           cancelAddTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'issueRemoved':
+        case 'removedIssue':
           //issue obj needed
           cancelAddTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'issueSelect':
-          selectTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));
+        case 'selectIssue':
+          selectTag(action.data as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           //issue obj needed to jump to context
           break;
-        case 'taskShow':
+        case 'showTask':
           showTag('Task',true,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'taskHide':
+        case 'hideTask':
           showTag('Task',false,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'taskCreate':
+        case 'createTask':
           addTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));            
           break;
-        case 'taskCreateSuccess':
+        case 'createSuccessTask':
           //cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
-          newViewerData = {...oldViewerData,currentTaskList:{...oldViewerData.currentTaskList,...action.data as ITasks}};
-          finishAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
+          let myNewTask:ITasks = action.data as ITasks;
+          newViewerData = {...oldViewerData,currentTaskList:{...oldViewerData.currentTaskList,...myNewTask}};
+          finishAddTag(myNewTask.context as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'taskCreateFail':
+        case 'createFailTask':
           cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'taskRemoved':
+        case 'removedTask':
           //task obj needed
           cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
-        case 'taskSelect':
-          selectTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
+        case 'selectTask':
+          selectTag(action.data as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           //task obj needed to jump to context
           break;
 
@@ -467,8 +548,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
             console.log('Viewer Type Updated');
             break;
           
-            
-
+        }
+        if(viewerData.current!==undefined){
+        loadMinimapData(viewerData.current)
+        loadMinimapLayerData(viewerData.current);
         }
         console.log("Changed View Type")
         
@@ -484,6 +567,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           
           loadCompareViewerData(currentViewerData.structure,incomingPayload.current.action.data as string)
           loadCompareLayerData(currentViewerData.structure,currentViewerData.currentSnapshotCompare|| currentViewerData.currentSnapshotBase,incomingPayload.current.action.data as string);
+          loadMinimapCompareData(currentViewerData);
+          loadMinimapCompareLayerData(currentViewerData);
           console.log("Compare Use Effect Done");
         } 
         animationRequestId = requestAnimationFrame(animationNow);
@@ -493,6 +578,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           if(viewerData.current!==undefined){
             loadViewerData(viewerData.current);
            loadLayerData(viewerData.current);
+           loadMinimapData(viewerData.current)
+           loadMinimapLayerData(viewerData.current);
            
            }
            
@@ -503,10 +590,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
           animationRequestId = requestAnimationFrame(animationNow);
         
         break;
-      case 'issueCreateSuccess':
+      case 'createSuccessIssue':
         handleTagListChange('Issue',getViewerTypefromViewType(currentViewerData.currentViewType));
         break;
-      case 'taskCreateSuccess':
+      case 'createSuccessTask':
         handleTagListChange('Task',getViewerTypefromViewType(currentViewerData.currentViewType));
         break;
       case 'setBaseSnapshot':
@@ -514,11 +601,15 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         if(viewerData.current!==undefined){
           //loadViewerData(viewerData.current);
          loadLayerData(viewerData.current);
+         loadMinimapLayerData(viewerData.current)
          }
         break;
       case 'setCompareSnapshot':
         if(currentViewerData.currentCompareMode==='compareReality'){
+          if(viewerData.current!==undefined){
           loadCompareLayerData(currentViewerData.structure,currentViewerData.currentSnapshotCompare|| currentViewerData.currentSnapshotBase,'compareReality');
+          loadMinimapCompareLayerData(viewerData.current)
+          }
         }
         
         break;
@@ -527,7 +618,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     incomingPayload.current=undefined;
   }
   console.log("updated currentViewerData Use Effect",currentViewerData);
-  window.dispatchEvent(new CustomEvent('notifyApp',{detail:currentViewerData}));
+  window.dispatchEvent(new CustomEvent('notifyApp',{detail:{type:'syncGenViewer',data:currentViewerData}}));
   return ()=>{
 
         console.log("Changed Use Effect--Return",incomingPayload.current);
@@ -617,7 +708,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
    }
 
-  const addTag = (type:string,viewerType:string) => {
+  function addTag (type:string,viewerType:string) {
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -626,13 +717,14 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         break;
       case 'Potree':
         if (potreeUtils.current) {
+          console.log('TAG ADD');
           potreeUtils.current.initiateAddTag(type);
         }
         break;
     }
   };
 
-  const finishAddTag = (type:string,viewerType:string) => {
+  function finishAddTag (type:IContext,viewerType:string){
     switch (viewerType) {
       case 'Forge':
         // if (forgeUtils.current) {
@@ -647,7 +739,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   };
 
-  const cancelAddTag = (type:string,viewerType:string) => {
+  function cancelAddTag  (type:string,viewerType:string) {
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -662,7 +754,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
     }
   };
 
-  const selectTag = (tag:string,viewerType:string) => {
+  function selectTag  (tag:IContext,viewerType:string)  {
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -708,6 +800,26 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   };
 
   function syncViewer  (){
+    if(minimapUtils.current) {
+      let minimapState;
+      if( viewerData.current?.currentViewType && getViewerTypefromViewType(viewerData.current?.currentViewType) === 'Potree' && potreeUtils.current) {
+        minimapState = potreeUtils.current.getContext();
+      } else if(viewerData.current?.currentViewType && getViewerTypefromViewType(viewerData.current?.currentViewType) === 'Forge' && forgeUtils.current) {
+        minimapState = forgeUtils.current.getContext();
+      }
+      minimapUtils.current.updateViewerState(minimapState)
+    }
+
+    if(minimapCompareUtils.current) {
+      let minimapState;
+      if(potreeUtils.current && potreeCompareUtils.current) {
+        minimapState = potreeCompareUtils.current.getContext();
+      }
+      minimapCompareUtils.current.updateViewerState(minimapState)
+    }
+
+
+
      //console.log("Inside sync viewer: ", isMouseOnMainViewer.current, syncPotreeEvent, syncForgeEvent,currentViewerData)
     if (compareMode.current !== 'noCompare') {
       //console.log('Sync My Compare Viewer');
@@ -771,6 +883,13 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
 
   const handleTagListChange = (type:string,viewerType:string) => {
     //console.log('Inside taglist change: ', type, issuesList, tasksList);
+    if (minimapUtils.current) {
+      if (type === 'Issue') {
+        minimapUtils.current.updateIssuesData(currentViewerData.currentIssueList);
+      } else if (type === 'Task') {
+        minimapUtils.current.updateTasksData(currentViewerData.currentTaskList);
+      }
+    }
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -875,6 +994,152 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       }
     }
   };
+  const initMinimap = (viewerId:string) => {
+    if (minimapUtils.current == undefined) {
+      minimapUtils.current = MinimapUtils();
+      minimapUtils.current.setupViewer(viewerId, viewerEventHandler);
+      if(forgeInitialised) minimapUtils.current.initializeViewer();
+      minimapUtils.current.setType(viewerData.current?.currentViewType);
+    }
+  };
+
+  const initMinimapCompare = (viewerId:string) => {
+    if (minimapCompareUtils.current == undefined) {
+      minimapCompareUtils.current = MinimapUtils();
+      minimapCompareUtils.current.setupViewer(viewerId, viewerEventHandler);
+      if(forgeInitialised) minimapCompareUtils.current.initializeViewer();
+      minimapCompareUtils.current.setType(viewerData.current?.currentViewType);
+    }
+  };
+  async function loadMinimapData(myViewerData:IGenData) {
+    if (minimapUtils.current !== undefined && myViewerData) {
+      minimapUtils.current.setStructure(myViewerData.structure);
+      if(myViewerData.structure.designs){
+        let dMaps=getDesignMap(myViewerData.structure.designs)
+        let forgeModels=getForgeModels(dMaps)
+        if(forgeModels && (Object.keys(forgeModels).find(k=>k==='Plan Drawings'))){
+          setShowMinimap(true);
+          minimapUtils.current.updateData(forgeModels); 
+        } else {
+          setShowMinimap(false);
+        }
+        resizeMinimap('default', 1)
+      }
+
+        
+      
+    }
+  }
+
+  async function loadMinimapCompareData(myViewerData:IGenData) {
+    if (minimapCompareUtils.current !== undefined && myViewerData) {
+      minimapCompareUtils.current.setStructure(myViewerData.structure);
+      if(myViewerData.structure.designs){
+        let dMaps=getDesignMap(myViewerData.structure.designs)
+        let forgeModels=getForgeModels(dMaps)
+        if(forgeModels && (Object.keys(forgeModels).find(k=>k==='Plan Drawings'))){
+          setShowMinimap(true);
+          minimapCompareUtils.current.updateData(forgeModels); 
+        } else {
+          setShowMinimap(false);
+        }
+        resizeMinimap('default', 1)
+      }
+    }
+  }
+
+  async function loadMinimapLayerData(myViewerData:IGenData) {
+    if (minimapUtils.current !== undefined) {
+      minimapUtils.current.setSnapshot(myViewerData.currentSnapshotBase);
+      minimapUtils.current.updateIssuesData(myViewerData.currentIssueList);
+      minimapUtils.current.updateTasksData(myViewerData.currentTaskList);
+      let data = await getRealityLayersPath(myViewerData.structure, getRealityMap(myViewerData.currentSnapshotBase));
+      minimapUtils.current?.updateLayersData(data);
+    }
+    // currentContext.current = undefined;
+  }
+
+  async function loadMinimapCompareLayerData(myViewerData:IGenData) {
+    if (minimapCompareUtils.current != undefined) {
+      minimapCompareUtils.current.setSnapshot(myViewerData.currentSnapshotCompare);
+      minimapCompareUtils.current.updateIssuesData(myViewerData.currentIssueList);
+      minimapCompareUtils.current.updateTasksData(myViewerData.currentTaskList);
+      let data = await getRealityLayersPath(structure, getRealityMap(myViewerData.currentSnapshotCompare));
+      minimapCompareUtils.current?.updateLayersData(data);
+    }
+    // currentContext.current = undefined;
+  }
+
+
+  function renderMinimap  (count:number)  {
+    if (count !== 1 && !isCompareMode) {
+      return;
+    }
+
+    if(count == 2) {
+      setTimeout(() => {
+        resizeMinimap('minimize', count)
+      }, 3000)
+    }
+    
+    return (<Rnd
+      ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
+      style={{ top:count == 1 ? '0px' : '0px'   }}
+      minWidth={320}
+      minHeight={28}
+      maxWidth={'99%'}
+      maxHeight={'99%'}
+      bounds={count == 1 ? '#TheView' : '#CompareView'}
+      default={{ x: count == 1 ? 84 : 24, y: 75, width: 320, height: 320 }}
+      onResize={(e, direction, ref, delta, position) => {
+        count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
+      }}
+      className={`${'z-10 rounded-lg bg-white'} ${showMinimap && ((count == 1 && (getViewerTypefromViewType(viewerData.current?.currentViewType||'') === "Potree")) || (count == 2 &&  (getViewerTypefromViewType(viewerData.current?.currentCompareMode||'') === "Potree"))) ? 'opacity-100' : 'opacity-0'}`}>
+      <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
+        <div className='h-8 rounded-lg bg-white flex'>
+          <IconButton className='cursor-move' size="small">
+            <DragIndicatorIcon fontSize="inherit" />
+          </IconButton>
+          <div className='flex items-center text-[#F1742E] pl-2 flex-1'>Minimap</div>
+          <IconButton size="small" onClick={() => { resizeMinimap('minimize', count) }}>
+            <RemoveIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton size="small" onClick={() => { resizeMinimap('default', count) }}>
+            <PictureInPictureIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton size="small" onClick={() => { resizeMinimap('fullscreen', count) }}>
+            <FullscreenIcon fontSize="inherit" />
+          </IconButton>
+        </div>
+        <MiniMap 
+          count={count} 
+          style={{ height: 'calc(100%)' }} 
+          compareViewMode={getViewerTypefromViewType(viewerData.current?.currentCompareMode||'')} 
+          setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}>
+            
+          </MiniMap>
+      </div>
+    </Rnd>)
+  }
+
+  function resizeMinimap  (mode:string, count:number)  {
+    const minimap = count == 1 ? _minimap : _minimapCompare
+    const utils = count == 1 ? minimapUtils.current : minimapCompareUtils.current
+    switch(mode) {
+      case 'minimize':
+        minimap?.updateSize({ width: 320, height: 28 });
+        break;
+      case 'fullscreen':
+        minimap?.updateSize({ width: '95%', height: '90%' });
+        minimap?.updatePosition({ x: count == 1 ? 24 : 24, y: 84 });
+        break;
+      default:
+        minimap?.updateSize({ width: 320, height: 320 });
+        break;
+    }
+    setTimeout(() => utils?.resize(), 50)
+  }
+
 
   const initViewer = (viewerId:string) => {
     // console.log("Inside init viewer: ", potreeUtils.current, forgeUtils.current);
@@ -1170,7 +1435,21 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         break;
     }
   }
+  const setMinimapUtils = function (viewerId:string) {
+    initMinimap(viewerId);
+    if(viewerData.current!==undefined){
+      loadMinimapData(viewerData.current);
+      loadMinimapLayerData(viewerData.current);
+    }
+  };
 
+  const setMinimapCompareUtils = function (viewerId:string) {
+    initMinimapCompare(viewerId);
+    if(viewerData.current!==undefined && viewerData.current.currentCompareMode!=='noCompare'){
+      loadMinimapCompareData(viewerData.current);
+      loadMinimapCompareLayerData(viewerData.current);
+    }
+  };
   const setForgeViewerUtils = function (viewerId:string) {
     if (!isCompareViewer(viewerId)) {
       initViewer(viewerId);
@@ -1393,6 +1672,11 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
   };
 
   function destroyCompareViewer (compareMode:string)  {
+    if(minimapCompareUtils.current) {
+      minimapCompareUtils.current.shutdown();
+      minimapCompareUtils.current = undefined;
+      delete minimapCompareUtils.current;
+    }
     switch (compareMode) {
       case 'compareDesign':
         if (forgeCompareUtils.current) {
@@ -1479,6 +1763,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
       <div className="fixed  h-full w-full flex flex-col">
         <div id="TheView" className="relative basis-1/2 flex grow shrink">
           {isInitReady && renderViewer(1)}
+          {isInitReady && renderMinimap(1)}
+          {tmcBase}
           {/* <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
         setNextList={setNextList}
         totalPages={totalPages}
@@ -1486,6 +1772,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData }) => {
         </div>
         <div className={`relative ${currentViewerData.currentCompareMode!=='noCompare' ? "basis-1/2": "hidden" }`}>
           {isInitReady && isCompareMode && renderViewer(2)}
+          {(currentViewerData.currentCompareMode==='compareReality')?renderMinimap(2):<></>}
+          {tmcCompare}
           {/* <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotCompare||currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode}></TimeLineComponent> */}
         </div>
         {

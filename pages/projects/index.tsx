@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import Header from '../../components/divami_components/header/Header';
-import ProjectsList from '../../components/container/projectsList';
-import { IProjects } from '../../models/IProjects';
-import { getProjects } from '../../services/project';
-import { useRouter } from 'next/router';
-import { getjobsInfo } from '../../services/jobs';
-import { IJobs } from '../../models/IJobs';
-import _ from 'lodash';
+import React, { useEffect, useState } from "react";
+import Header from "../../components/divami_components/header/Header";
+import ProjectsList from "../../components/container/projectsList";
+import { IProjects } from "../../models/IProjects";
+import { getProjects } from "../../services/project";
+import { useRouter } from "next/router";
+import { getjobsInfo } from "../../services/jobs";
+import { IJobs } from "../../models/IJobs";
+import _ from "lodash";
 
 const Projects: React.FC = () => {
   const router = useRouter();
   const [projects, setProjects] = useState<IProjects[]>([]);
   const [loading, setLoading] = useState(false);
-  
+
   useEffect(() => {
     if (router.isReady) {
       getProjects()
@@ -48,7 +48,7 @@ const Projects: React.FC = () => {
         .catch((error) => {});
     }
   }, [router.isReady]);
-  console.log('projects', projects);
+
   return (
     <React.Fragment>
       <div className="flex-col">

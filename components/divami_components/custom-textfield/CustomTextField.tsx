@@ -38,6 +38,7 @@ interface PropTypes {
   errorMsg: string;
   showErrorMsg: boolean;
   width?: string;
+  onFocus?: any;
 }
 
 const StyledTextField = styled(TextField)((props: any) => ({
@@ -83,26 +84,6 @@ const ErrorShowText = styled("div")({
   // border: "2px solid blue",
 });
 
-// const StyledTextField = styled(TextField)({
-//   width: "392px !important",
-//   height: "40px !important",
-
-//   borderRadius: "4px",
-//   fontFamily: "Open Sans",
-//   fontStyle: "normal",
-//   fontWeight: 400,
-//   fontSize: 14,
-//   color: "#101F4B",
-
-//   "& .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root": {
-//     height: "40px",
-//     "& fieldset": { border: "1px solid #36415d" },
-//   },
-//   "&:focus-within fieldset": {
-//     border: "1px solid #F1742E !important",
-//   },
-// });
-
 export const CustomTextField = (props: PropTypes) => {
   const reff = useRef<any>(null);
   const {
@@ -123,6 +104,7 @@ export const CustomTextField = (props: PropTypes) => {
     isValidField,
     errorMsg,
     showErrorMsg,
+    onFocus,
   } = props;
   // console.log("loginField", loginField);
 

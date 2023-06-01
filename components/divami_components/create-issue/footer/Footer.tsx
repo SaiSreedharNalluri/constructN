@@ -13,17 +13,20 @@ const ButtonsContainer = styled(Box)({
 
 const Footer = ({ formHandler, editData, canBeDisabled }: any) => {
   const [buttonClicked, setButtonClicked] = useState(false);
+  console.log("customDisable", canBeDisabled);
   return (
     <ButtonsContainer>
       <CustomButton type="outlined" label="Cancel" formHandler={formHandler} />
       <CustomButton
-        type={canBeDisabled && buttonClicked ? "disabled" : "contained"}
+        // type={canBeDisabled && buttonClicked ? "disabled" : "contained"}
+        type={canBeDisabled ? "disabled" : "contained"}
         label={editData ? "Update" : "Create"}
         formHandler={formHandler}
         setButtonClicked={setButtonClicked}
+        disabledButton={canBeDisabled}
       />
     </ButtonsContainer>
   );
-}
+};
 
 export default Footer;

@@ -8,8 +8,8 @@ import { CustomTextField } from "../custom-textfield/CustomTextField";
 import { CustomTextArea } from "../custom-textarea/CustomTextArea";
 
 import { styled } from "@mui/system";
-import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, Menu, MenuItem } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { FormText } from "../sign-in/SignInPageStyle";
 import { Checkbox, InputAdornment, TextField } from "@mui/material";
 import Checked from "../../../public/divami_icons/checked.svg";
@@ -62,6 +62,25 @@ const FormWrapper = (props: any) => {
   useEffect(() => {
     checkDataisEmpty();
   }, [config]);
+
+  // Menu Code
+  const [passwordChar, setPasswordChar] = useState("");
+  const [isWeakPassword, setIsWeakPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState("");
+
+  const [showMessage, setShowMessage] = useState(false);
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    console.log("handleclick", event.currentTarget);
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Menu Code
 
   useEffect(() => {
     if (validate) {
@@ -132,24 +151,6 @@ const FormWrapper = (props: any) => {
             ...item,
             defaultValue: e.target.value,
           };
-        }
-        return item;
-      })
-    );
-  };
-
-  const handlePasswordChange = (e: any, id: string, data?: any) => {
-    console.log("handlething", id, data);
-    setFormConfig((prev: any) =>
-      prev.map((item: any) => {
-        // console.log("handlePasswordChange", item);
-        if (item.id === "password") {
-          // return {
-          //   ...item,
-          //   defaultValue: e.target.value,
-          // };
-          // setIsValidate(true);
-          checkPassword(e.target.value, id);
         }
         return item;
       })
@@ -267,7 +268,9 @@ const FormWrapper = (props: any) => {
     );
   };
   function checkDataisEmpty() {
-    const isEmptyField = config.some((val: any) => !val.defaultValue);
+    const isEmptyField = config.some(
+      (val: any) => !val.defaultValue && val.isReq
+    );
     if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
   }
   function isValidEmail(email: any, id: any) {
@@ -302,10 +305,16 @@ const FormWrapper = (props: any) => {
     // return /\S+@\S+\.\S+/.test(email);
   }
 
-  function checkPassword(str: any, id: any) {
+  function checkPassword(
+    str: any,
+    id: any,
+    event: React.MouseEvent<HTMLButtonElement>
+  ) {
     let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     let passwordTru = rePass.test(str);
     console.log("typepass", passwordTru);
+
+    setShowMessage(!passwordTru);
 
     if (passwordTru) {
       setFormConfig((prev: any) =>
@@ -321,6 +330,7 @@ const FormWrapper = (props: any) => {
           return item;
         })
       );
+      setAnchorEl(event.currentTarget);
       setUserPassword(str);
     } else {
       setFormConfig((prev: any) =>
@@ -369,6 +379,10 @@ const FormWrapper = (props: any) => {
       );
     }
   }
+
+  // const handlePasswordField = () => {
+  //   return <div>Hello</div>;
+  // };
 
   const renderHTML = (
     data: any,
@@ -428,16 +442,21 @@ const FormWrapper = (props: any) => {
         return (
           <ElementContainer>
             <CustomTextField
+              // id="basic-button"
+              aria-controls={open ? "basic-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              // onClick={handleClick}
               id={data.id}
               variant="outlined"
               placeholder={data?.placeholder}
               onChange={(e: any) => {
                 handleTextChange(e, data.id, data);
+
+                // if (data.id === "password" && data.checkPasswordStrength) {
+                //   checkPassword(data?.defaultValue, data.id, e);
+                // }
               }}
-              // onChange={(e: any) => {
-              //   console.log(e, "Fdsfdsfdsf");
-              //   // handleTextChange(e, data.id, data);
-              // }}
               onBlur={(e: any) => {
                 if (data.id === "email") {
                   console.log("email aaya");
@@ -447,10 +466,9 @@ const FormWrapper = (props: any) => {
                   data.id === "password" &&
                   data.checkPasswordStrength
                 ) {
-                  console.log("password aya");
+                  checkPassword(data?.defaultValue, data.id, e);
 
-                  checkPassword(data?.defaultValue, data.id);
-                  return;
+                  console.log("password aya");
                 } else if (data.id === "confirm_password") {
                   matchpassword(data?.defaultValue, data.id);
                   return;
@@ -477,6 +495,51 @@ const FormWrapper = (props: any) => {
               width={data.width || ""}
               // isIssue={true}
             />
+
+            {/* <Menu
+              sx={{
+                top: "5px",
+                left: "-40px",
+
+                "&.Mui-selected": {
+                  backgroundColor: "red",
+                },
+                "& .MuiMenu-list": {
+                  padding: "0px",
+                  boxShadow: "none",
+                },
+              }}
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              PaperProps={{
+                elevation: 0,
+
+                sx: {
+                  boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
+
+                  "& .MuiMenu-list": {
+                    padding: "0px",
+                  },
+                },
+              }}
+              MenuListProps={{
+                "aria-labelledby": "password",
+              }}
+            >
+              <MenuItem
+                onClick={handleClose}
+                sx={{
+                  padding: "0px",
+                }}
+              >
+                <PasswordRequired />
+              </MenuItem>
+            </Menu> */}
+            {/* {showMessage && (
+              <p>Password is weak. Please choose a stronger password.</p>
+            )} */}
           </ElementContainer>
         );
 

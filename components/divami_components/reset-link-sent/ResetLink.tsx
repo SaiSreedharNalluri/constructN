@@ -52,7 +52,7 @@ const ResetLink = ({ queryMail }: any) => {
           //   },
           //   "/reset_link"
           // );
-          router.push("/reset_pass_word/xyz123456");
+          // router.push("/reset_pass_word/xyz123456");
         }
       })
       .catch((error: any) => {

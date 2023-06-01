@@ -22,8 +22,10 @@ import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Logo from "../../../public/divami_icons/Logo.svg";
 import Mail from "../../../public/divami_icons/Mail.svg";
 import lock from "../../../public/divami_icons/lock.svg";
+import { verifyResendEmail } from "../../../services/userAuth";
+import { toast } from "react-toastify";
 
-const VerifyUser = ({ queryMail }) => {
+const VerifyUser = ({ queryMail }: { queryMail: string }) => {
   console.log("queryMail", queryMail);
   // const maskedEmail = queryMail.replace(/.(?=.*?@)/g, "*");
   const [maskedMail, setMaskedMail] = useState("");
@@ -35,7 +37,7 @@ const VerifyUser = ({ queryMail }) => {
     }
   }, [queryMail]);
 
-  function convertEmail(email) {
+  function convertEmail(email: string) {
     let parts = email.split("@");
     let username = parts[0];
     let domain = parts[1];
@@ -53,6 +55,22 @@ const VerifyUser = ({ queryMail }) => {
 
     return;
   }
+
+  const handleEmailVerification = (email: string) => {
+    verifyResendEmail(email)
+      .then((response) => {
+        console.log("Response of email", response);
+        toast.success(response.message);
+        return;
+      })
+      .catch((error) => {
+        toast.error(error.message);
+        return;
+        // resetForm();
+        // setLoading(false);
+      });
+  };
+
   return (
     <SectionShowcase>
       <HeaderContainer>
@@ -79,15 +97,23 @@ const VerifyUser = ({ queryMail }) => {
             <ChangeSignDiv
               onClick={() => {
                 // router.push("/signup");
-                // router.push("/signup");
-                router.push("/verify-block/xyz123456");
+                router.push("/signup");
+                // router.push("/verify-block/xyz123456");
               }}
             >
               Change Signed Up Email
             </ChangeSignDiv>
 
             <ResendMailDiv>
-              Didn’t recieve the email?<SpanResend> Click to resend</SpanResend>{" "}
+              Didn’t recieve the email?
+              <SpanResend
+                onClick={() => {
+                  handleEmailVerification(queryMail);
+                }}
+              >
+                {" "}
+                Click to resend
+              </SpanResend>{" "}
             </ResendMailDiv>
           </VerifyUserDiv>
         </FormContainerSign>

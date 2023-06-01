@@ -63,6 +63,7 @@ const Header: React.FC<any> = ({
   breadCrumbData,
   handleBreadCrumbClick,
   hideSidePanel,
+  fromUsersList,
 }) => {
   const router = useRouter();
   const headerRef: any = React.useRef();
@@ -209,8 +210,10 @@ const Header: React.FC<any> = ({
         {!hideSidePanel && (
           <div
             style={{
-              height: "10px",
-              width: "59px",
+              height: fromUsersList ? "8px" : "10px",
+              width: fromUsersList ? "56px" : "59px",
+              // height: "10px",
+              // width: "59px",
               background: "#FFFFFF",
               position: "absolute",
               top: "58px",
