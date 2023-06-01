@@ -46,9 +46,9 @@ const Index: React.FC<any> = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [openFilter, setOpenFilter] = useState(false);
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any>([]);
   const router = useRouter();
-  const [searchTableData, setSearchTableData] = useState<any[]>([]);
+  const [searchTableData, setSearchTableData] = useState<any>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isGridView, setIsGridView] = useState(true);
 
@@ -84,7 +84,9 @@ const Index: React.FC<any> = () => {
         // const sortedData = projects.sort((a, b) => a.usersCount - b.usersCount);
         // console.log(sortedData, "Fsdfd");
         setSearchTableData(
-          [].concat(projects).sort((a, b) => a.usersCount - b.usersCount)
+          []
+            .concat(projects)
+            .sort((a: any, b: any) => a.usersCount - b.usersCount)
         );
       },
     },
@@ -95,7 +97,9 @@ const Index: React.FC<any> = () => {
       method: "userDesc",
       onClick: () => {
         setSearchTableData(
-          [].concat(projects).sort((a, b) => b.usersCount - a.usersCount)
+          []
+            .concat(projects)
+            .sort((a: any, b: any) => b.usersCount - a.usersCount)
         );
       },
     },
@@ -109,7 +113,7 @@ const Index: React.FC<any> = () => {
           []
             .concat(projects)
             .sort(
-              (a, b) =>
+              (a: any, b: any) =>
                 Number(new Date(a.lastUpdated)) -
                 Number(new Date(b.lastUpdated))
             )
@@ -125,7 +129,7 @@ const Index: React.FC<any> = () => {
           []
             .concat(projects)
             .sort(
-              (a, b) =>
+              (a: any, b: any) =>
                 Number(new Date(b.lastUpdated)) -
                 Number(new Date(a.lastUpdated))
             )

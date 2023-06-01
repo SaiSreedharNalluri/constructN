@@ -31,7 +31,7 @@ export const CustomMenu = ({
         width={width ? width : "20px"}
         height={height ? height : "20px"}
         style={right ? { marginRight: right } : {}}
-        onClick={(e) => {
+        onClick={(e: any) => {
           setShowMoreActions(true);
           setAnchorEl(e.target);
         }}
