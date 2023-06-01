@@ -5,6 +5,12 @@ export const ProjectsContainer = styled("div")({
   flexDirection: "column",
 });
 
+export const StyledFilterText = styled("div")({
+  fontSize: "16px",
+  color: "#101F4C",
+  marginTop: "20px",
+});
+
 export const ProjectsListItemContainer = styled("div")({
   display: "flex",
   flexDirection: "row",

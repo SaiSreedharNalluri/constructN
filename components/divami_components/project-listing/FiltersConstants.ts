@@ -12,6 +12,7 @@ export const projectConfig = [
         formLabel: "From",
         isError: false,
         isReq: false,
+        fromFilters: true,
       },
       {
         id: "due-date",
@@ -21,6 +22,7 @@ export const projectConfig = [
         formLabel: "To",
         isError: false,
         isReq: false,
+        fromFilters: true,
       },
     ],
   },
