@@ -12,7 +12,11 @@ const Index: React.FC<any> = () => {
     <div className=" w-full  h-full">
       <div className="w-full">
         {!isFullScreen && (
-          <Header showBreadcrumbs breadCrumbData={breadCrumbsData} />
+          <Header
+            showBreadcrumbs
+            breadCrumbData={breadCrumbsData}
+            fromUsersList
+          />
         )}
 
         {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}

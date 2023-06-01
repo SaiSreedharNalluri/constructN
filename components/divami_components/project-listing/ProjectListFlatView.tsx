@@ -4,6 +4,7 @@ import {
   Menu,
   Paper,
   ThemeProvider,
+  Tooltip,
 } from "@mui/material";
 import moment from "moment";
 import router, { useRouter } from "next/router";
@@ -35,6 +36,9 @@ import {
   CapturesField,
   CapturesFieldContainer,
   OtherUsersCount,
+  UserMonogram,
+  UserPic,
+  UsersInfo,
 } from "./ProjectListingStyles";
 import capture360Image from "../../../public/divami_icons/capture360Image.svg";
 import captureLidarIcon from "../../../public/divami_icons/captureLidarIcon.svg";
@@ -55,11 +59,6 @@ export const ProjectListFlatView = ({ projects }: any) => {
   const [sortObj, setSortObj] = useState(true);
 
   const [showMoreActions, setShowMoreActions] = useState<boolean>(false);
-  const [taskFilterState, setTaskFilterState] = useState({
-    isFilterApplied: false,
-    filterData: {},
-    numberOfFilters: 0,
-  });
 
   const [projectsState, setProjectsState] = useState(projects);
 
@@ -75,6 +74,18 @@ export const ProjectListFlatView = ({ projects }: any) => {
     }
     setSortObj(!sortObj);
     // return a.numberOfUsers - b.numberOfUsers;
+  };
+
+  const getFullName = (name: string) => {
+    if (name) {
+      const nameArr = name.split(" ");
+      if (nameArr.length > 1) {
+        return `${nameArr[0].charAt(0).toUpperCase}${
+          nameArr[1].charAt(0).toUpperCase
+        }`;
+      }
+    }
+    return `DD`;
   };
 
   const columns: any = [
@@ -195,12 +206,96 @@ export const ProjectListFlatView = ({ projects }: any) => {
       customSort: (a: any, b: any) => sortBy(a, b, "numberOfUsers"),
       render: (rowData: any) => {
         return (
-          <OtherUsersCount>
-            +
-            {rowData.numberOfUsers?.length > 1
-              ? rowData.numberOfUsers
-              : `0${rowData.numberOfUsers}`}
-          </OtherUsersCount>
+          <UsersInfo>
+            <UsersInfo>
+              {rowData.users.slice(0, 2)?.map((each: any) => {
+                return each.url ? (
+                  <UserPic src={each.url} alt={""}></UserPic>
+                ) : (
+                  <UserMonogram>{getFullName(each.fullName)}</UserMonogram>
+                );
+              })}
+            </UsersInfo>
+
+            {Number(rowData.numberOfUsers) > 2 ? (
+              <OtherUsersCount
+                onMouseEnter={(e: any) => {
+                  // setAnchorEl(e.target);
+                  setShowMenu(true);
+                }}
+              >
+                +
+                {rowData.numberOfUsers - 2 > 9
+                  ? rowData.numberOfUsers
+                  : `0${rowData.numberOfUsers - 2}`}
+              </OtherUsersCount>
+            ) : (
+              <></>
+            )}
+            {/* {showMenu ? (
+              <Menu
+                anchorEl={anchorEl}
+                id="account-menu"
+                open={showMoreActions}
+                onClose={() => {}}
+                onClick={(e) => {
+                  setShowMoreActions(false);
+                  setAnchorEl(null);
+                }}
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    overflow: "visible",
+                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                    mt: 1.5,
+                    "& .MuiAvatar-root": {
+                      width: 32,
+                      height: 32,
+                      ml: -0.5,
+                      mr: 1,
+                    },
+                    "&:before": {
+                      content: '""',
+                      display: "block",
+                      position: "absolute",
+                      top: 0,
+                      right: 14,
+                      width: 10,
+                      height: 10,
+                      bgcolor: "background.paper",
+                      transform: "translateY(-50%) rotate(45deg)",
+                      zIndex: 0,
+                    },
+                  },
+                }}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+              >
+                {rowData?.users?.splice(2, 5).map((option: any) => (
+                  <>
+                    <StyledMenu
+                      className="custom-styled-menu"
+                      key={option.label}
+                      onClick={() => option.onClick()}
+                      data-testid="sort-menu-item"
+                    >
+                      {option.fullName}
+                    </StyledMenu>
+                  </>
+                ))}
+                <StyledMenu
+                  className="custom-styled-menu"
+                  key={"viewmore"}
+                  onClick={() => {}}
+                  data-testid="sort-menu-item"
+                >
+                  View More
+                </StyledMenu>
+              </Menu>
+            ) : (
+              <></>
+            )} */}
+          </UsersInfo>
         );
       },
     },
@@ -224,30 +319,12 @@ export const ProjectListFlatView = ({ projects }: any) => {
   ];
   const [isSearching, setIsSearching] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const [searchTableData, setSearchTableData] = useState(
-    projects.length ? projects : []
-  );
-  const [searchTerm, setSearchTerm] = useState("");
-  const handleSearchWindow = () => {
-    setSearchTableData(projects);
-    if (searchTerm === "") {
-      setIsSearching(!isSearching);
-    } else {
-      setSearchTerm("");
-    }
-  };
+  const [showMenu, setShowMenu] = useState<boolean>(false);
 
   const handleMenuClose = () => {
     setAnchorEl(null);
     setShowMoreActions(false);
   };
-
-  useEffect(() => {
-    if (projects.length) {
-      setSearchTableData(projects);
-    }
-  }, [projects]);
 
   const formHandler = (event: any) => {};
 
@@ -307,7 +384,6 @@ export const ProjectListFlatView = ({ projects }: any) => {
                 <SortDescIcon
                   {...props}
                   ref={ref}
-
                   // onClick={() => {
                   //   setSortObj(!sortObj);
                   // }}

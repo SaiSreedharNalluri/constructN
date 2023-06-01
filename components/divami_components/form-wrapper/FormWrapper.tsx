@@ -86,9 +86,8 @@ const FormWrapper = (props: any) => {
     if (validate) {
       setFormConfig((prev: any) => {
         const newconfig = prev.map((item: any) => {
-          if (item.isReq && !item.defaultValue && signUpMsg) {
-            console.log("callingd", signUpMsg);
-            setCanBeDisabled(false);
+          if (item.isReq && !item.defaultValue && signUpMsg === true) {
+            if (setCanBeDisabled) setCanBeDisabled(false);
             return {
               ...item,
               isError: true,
@@ -274,6 +273,7 @@ const FormWrapper = (props: any) => {
     );
 
     setCanBeDisabled(isEmptyField);
+    if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
   }
   function isValidEmail(email: any, id: any) {
     // console.log("lol");

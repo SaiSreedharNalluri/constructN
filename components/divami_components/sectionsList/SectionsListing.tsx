@@ -17,6 +17,7 @@ import {
 } from "./SectionsListingStyles";
 import {
   InputAdornment,
+  Paper,
   ThemeProvider,
   Typography,
   createTheme,
@@ -222,9 +223,6 @@ const SectionsListing = () => {
   const formHandler = (event: any) => {
     // setShowEmptyState(true);
   };
-  // useEffect(() => {
-  //   handleSearch();
-  // }, [searchTerm]);
 
   // https://api.dev2.constructn.ai/api/v1/projects/PRJ201897/structures/hierarchy
 
@@ -232,36 +230,22 @@ const SectionsListing = () => {
     console.log("griddata", gridData);
   }, [gridData]);
 
+  // useEffect(() => {
+  //   console.log("gridData", gridData);
+  // }, [gridData]);
+
   useEffect(() => {
     console.log("filterTableData", filterTableData);
   }, [filterTableData]);
 
   useEffect(() => {
+    console.log("tableData", tableData);
+  }, []);
+
+  useEffect(() => {
     console.log("router?.query?.projectId", router);
 
     if (router.isReady) {
-      // if (router.query.structId !== undefined)
-      // setSelector(router.query.structId.toString());
-      // getStructureHierarchy(router?.query?.projectId as string)
-      //   .then((response: AxiosResponse<any>) => {
-      //     console.log("respjali", response);
-      //     setGridData([...response?.data?.result]);
-      //     let removeGrandParent = response?.data?.result[0]?.children?.map(
-      //       (item: any, index: number) => {
-      //         return {
-      //           ...item,
-      //           parent: null,
-      //         };
-      //       }
-      //     );
-      //     console.log("removeGrandParent", removeGrandParent);
-      //     massageTree(removeGrandParent, response?.data?.result[0]?.id);
-      //     setTableData([...dummyData]);
-      //     console.log("secondcall", response?.data?.result[0]?.children);
-      //   })
-      //   .catch((error) => {
-      //     console.log("error", error);
-      //   });
       getSectionsList(router?.query?.projectId as string)
         .then((response: AxiosResponse<any>) => {
           console.log("respjali", response);
@@ -276,31 +260,12 @@ const SectionsListing = () => {
           );
           console.log("removeGrandParent", removeGrandParent);
           massageTree(removeGrandParent, response?.data?.result?.id);
-          setTableData([...dummyData]);
+          //  setTableData([...dummyData]);
           console.log("secondcall", response?.data?.result[0]?.children);
         })
         .catch((error) => {
           console.log("error", error);
         });
-      // getSectionsList(router?.query?.projectId as string)
-      //   .then((response: AxiosResponse<any>) => {
-      //     setGridData([...response?.data?.result]);
-      //     let removeGrandParent = response?.data?.result[0]?.children?.map(
-      //       (item: any, index: number) => {
-      //         return {
-      //           ...item,
-      //           parent: null,
-      //         };
-      //       }
-      //     );
-      //     console.log("removeparent", removeGrandParent);
-      //     massageTree(removeGrandParent, response?.data?.result[0]?.id);
-      //     setTableData([...dummyData]);
-      //     console.log("secondcall", response?.data?.result[0]?.children);
-      //   })
-      //   .catch((error) => {
-      //     console.log("error", error);
-      //   });
     }
   }, [router.query.projectId]);
 
@@ -332,6 +297,7 @@ const SectionsListing = () => {
 
     console.log("MASSAGED", resultArr);
     setFilterTableData([...resultArr]);
+    setTableData([...resultArr]);
   }
 
   function helperFunction(childArr: any, resultArr: any) {
@@ -351,23 +317,61 @@ const SectionsListing = () => {
   // }, [tableData]);
 
   const handleSearchWindow = () => {
+    //   setFilterTableData(tableData);
     if (searchTerm === "") {
+      setIsSearching(!isSearching);
       setSearchingOn(!searchingOn);
     } else {
       setSearchTerm("");
     }
   };
+  // useEffect(() => {
+  //   console.log("setSearchTerm", searchTerm);
+  // }, [searchTerm]);
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm]);
 
   const handleSearch = () => {
-    console.log("TEST");
-    // if (searchTerm.length) {
-    //   const newTableData = tableData.filter((item: any) =>
-    //     item.name.toLowerCase().includes(searchTerm.toLowerCase())
-    //   );
-    //   setFilterTableData(newTableData);
-    // } else {
-    //   setFilterTableData([...dummyData]);
-    // }
+    console.log("TEST A");
+    if (searchTerm.length) {
+      console.log("TEST B");
+      const newTableData = tableData.filter((item: any) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      const tableWithParentData: any[] = [];
+      newTableData.forEach((item: any) => {
+        // if (item.parent !== null) {
+        //   let bool = tableWithParentData.some(
+        //     (ele: any) => ele._id === item.parentId
+        //   );
+        //   if (!bool) {
+        //     console.log("CHECK 123", item);
+        //     tableWithParentData.push(item);
+        //   }
+        // }
+        if (item.parent !== null && item.parent.length > 0) {
+          let parentItem = tableData.find(
+            (ele: any) => ele._id === item.parent
+          );
+
+          console.log("KARNA", parentItem);
+
+          tableWithParentData.push(parentItem);
+        }
+      });
+      console.log("FINAL SEARCH", tableWithParentData, newTableData);
+      //   console.log("TEST B DATA", newTableData);
+      setFilterTableData([
+        ...newTableData,
+        ...tableWithParentData.filter(
+          (item, index) => tableWithParentData.indexOf(item) === index
+        ),
+      ]);
+    } else {
+      console.log("TEST C");
+      setFilterTableData([...tableData]);
+    }
   };
 
   const columns = [
@@ -448,7 +452,7 @@ const SectionsListing = () => {
                 {/* {rowData.capture360Count?.length > 1
                   ? rowData.capture360Count
                   : `0${rowData.capture360Count}`} */}
-                {rowData.capture["Phone Image"]
+                {rowData.capture && rowData.capture["Phone Image"]
                   ? rowData.capture["Phone Image"]
                   : 0}
               </CaptureCount>
@@ -463,7 +467,7 @@ const SectionsListing = () => {
               />
               {/* 360 Video */}
               <CaptureCount>
-                {rowData.capture["360 Image"]
+                {rowData.capture && rowData.capture["360 Image"]
                   ? rowData.capture["360 Image"]
                   : 0}
               </CaptureCount>
@@ -481,7 +485,7 @@ const SectionsListing = () => {
                   : `0${rowData.capturePhoneCount}`}
                    */}
 
-                {rowData.capture["360 Video"]
+                {rowData.capture && rowData.capture["360 Video"]
                   ? rowData.capture["360 Video"]
                   : 0}
               </CaptureCount>
@@ -503,7 +507,7 @@ const SectionsListing = () => {
                 // height={13}
               ></CaptureImageIcon>
               <CaptureCount>
-                {rowData.capture["Drone Image"]
+                {rowData.capture && rowData.capture["Drone Image"]
                   ? rowData.capture["Drone Image"]
                   : 0}
               </CaptureCount>
@@ -574,67 +578,17 @@ const SectionsListing = () => {
   ];
   return (
     <div className="sections_table">
-      {/* <SearchIconStyling>
-        {searchingOn ? (
-          <SearchAreaContainer>
-            <CustomSearchField
-              placeholder="Search"
-              variant="outlined"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-              }}
-              InputLabelProps={{ shrink: false }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Image src={SearchBoxIcon} alt="" />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <CloseIcon
-                      onClick={() => {
-                        handleSearchWindow();
-                      }}
-                      src={CrossIcon}
-                      alt={"close icon"}
-                      data-testid="search-close"
-                    />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </SearchAreaContainer>
-        ) : (
-          <>
-            <SearchGlassIcon
-              src={SearchMag}
-              data-testid="search-icon"
-              alt={"close icon"}
-              onClick={() => setSearchingOn((prev) => !prev)}
-            />
-          </>
-        )}
-      </SearchIconStyling> */}
-
-      {/* <FunnelIcon src={FilterInActive} alt="Arrow" data-testid="filter" /> */}
       <TableHeader>
         <Header>Sections</Header>
         <HeaderActions>
-          {isSearching ? (
-            <SearchAreaContainer marginRight>
+          {searchingOn ? (
+            <SearchAreaContainer>
               <CustomSearchField
                 placeholder="Search"
                 variant="outlined"
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
-                  setSearchTableData(
-                    tableData.filter((each: any) =>
-                      each.fullName.includes(e.target?.value)
-                    )
-                  );
                 }}
                 InputLabelProps={{ shrink: false }}
                 InputProps={{
@@ -659,43 +613,29 @@ const SectionsListing = () => {
               />
             </SearchAreaContainer>
           ) : (
-            <HeaderImage
-              src={searchIcon}
-              alt=""
-              width={24}
-              height={24}
-              onClick={() => {
-                setIsSearching(true);
-              }}
-            />
+            <>
+              <SearchGlassIcon
+                src={SearchMag}
+                data-testid="search-icon"
+                alt={"close icon"}
+                onClick={() => setSearchingOn((prev) => !prev)}
+              />
+            </>
           )}
-          <HeaderImage
-            src={UserFilterIcon}
-            alt=""
-            width={24}
-            height={24}
-            onClick={() => {
-              setOpenFilter(true);
-            }}
-          />
         </HeaderActions>
       </TableHeader>
 
-      {/* <ArrowIcon
-                src={searchTable}
-                alt="search"
-                onClick={() => {
-                  setIsSearch(true);
-                }}
-              /> */}
       <SectionsListContainer>
         {/* <h1>React Table</h1> */}
         <ThemeProvider theme={defaultMaterialTheme}>
           <TableWrapper>
             <StyledTable
               // icons={tableIcons.Search}
+              // components={{
+              //   Toolbar: (props) => <MTableToolbar {...props} />,
+              // }}
               components={{
-                Toolbar: (props) => <MTableToolbar {...props} />,
+                Container: (props) => <Paper {...props} elevation={0} />,
               }}
               columns={columns}
               data={filterTableData ? filterTableData : []}
@@ -703,38 +643,20 @@ const SectionsListing = () => {
               title={""}
               //onSearchChange={setIsSearchVal}
               options={{
-                sorting: true,
-                thirdSortClick: false,
-                // searchFieldStyle: {
-                //   width: 100,
-                // },
-
-                // searchFieldVariant: "outlined",
-                // filtering: true,
-                // searchText: searchVal,
                 search: false,
                 paging: false,
-                // pageSizeOptions: [5, 10, 20, 25, 50, 100],
-
-                // by default it should give 5 rows
-                // pageSize: 5,
-                // paginationType:"stepped",
-                // showFirstLastPageButtons
-                // paginationPosition
-
                 exportButton: false,
-                maxBodyHeight: 700,
-                // export all data
-                exportFileName: "TableData",
+                exportFileName: "tableData",
                 selection: false,
                 showTitle: true,
-
+                toolbar: false,
+                maxBodyHeight: 700,
+                thirdSortClick: false,
                 rowStyle: {
                   fontFamily: "Open Sans",
                   fontStyle: "normal",
                   fontWeight: "400",
                   fontSize: "14px",
-                  // lineHeight: "20px",
                   color: "#101F4C",
                 },
                 headerStyle: {
@@ -746,6 +668,10 @@ const SectionsListing = () => {
               // detailPanel={[
               //   { icon: tableIcons.Add, tooltip: "Show Surname" },
               // ]}
+              // parentChildData={(row: any, rows: any) =>
+              //   rows.find((a: any) => a.id === row.parentId)
+              // }
+
               parentChildData={(row, rows) =>
                 rows.find((a) => a._id === row.parentId)
               }

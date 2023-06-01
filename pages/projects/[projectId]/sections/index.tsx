@@ -575,25 +575,45 @@ const Index: React.FC = () => {
     //   currencySetting: { currencyCode: "INR", minimumFractionDigits: 0 },
     // },
   ];
+  const breadCrumbsData = [{ label: "Manage Users" }];
+
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   return (
-    <React.Fragment>
-      <div>
-        <div>
-          <Header />
-          <div className="flex w-screen fixed">
-            <div>
-              <Content>
-                <SidePanelMenu onChangeData={() => {}} />
-                <SectionsListing />
-              </Content>
-              {/* <CollapsableMenu onChangeData={() => {}} /> */}
-            </div>
-            <div></div>
-          </div>
-        </div>
+    // <React.Fragment>
+    //   <div>
+    //     <div>
+    //       <Header />
+    //       <div className="flex w-screen fixed">
+    //         <div>
+    //           <Content>
+    //             <SidePanelMenu onChangeData={() => {}} />
+    //             <SectionsListing />
+    //           </Content>
+    //         </div>
+    //         <div></div>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </React.Fragment>
+    <div className=" w-full  h-full">
+      <div className="w-full">
+        {!isFullScreen && (
+          <Header
+            showBreadcrumbs
+            breadCrumbData={breadCrumbsData}
+            fromUsersList
+          />
+        )}
+
+        {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
-    </React.Fragment>
+      <Content>
+        <SidePanelMenu onChangeData={() => {}} />
+        {/* <SidePanelMenuContainer onChangeData={() => {}} /> */}
+        <SectionsListing />
+      </Content>
+    </div>
   );
 };
 
