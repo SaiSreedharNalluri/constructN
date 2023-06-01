@@ -38,10 +38,10 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
   const [showActions, setShowActions] = useState(false);
   const [projectsData, setProjectsData] = useState(
     projects?.length
-      ? projects.map((each: any) => {
+      ? projects.map((each: any, index: number) => {
           return {
             ...each,
-            showActionsCard: false,
+            showActionsCard: index == 1 ? true : false,
           };
         })
       : []
@@ -81,8 +81,12 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
 
             <ListHorizontalDivider active />
             <ProjectActionsContainer>
-              {projectActions.map((each: any) => {
-                return <ProjectActionItem>{each.label}</ProjectActionItem>;
+              {projectActions.map((each: any, index: number) => {
+                return (
+                  <ProjectActionItem key={index}>
+                    {each.label}
+                  </ProjectActionItem>
+                );
               })}
             </ProjectActionsContainer>
           </ProjectCard>

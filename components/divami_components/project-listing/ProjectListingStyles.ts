@@ -149,7 +149,7 @@ export const ProjectCardsContainer = styled("div")({
   height: "calc(100vh - 70px)",
   padding: "0 20px",
   paddingBottom: "70px",
-  paddingTop: "8px",
+  paddingTop: "18px",
 });
 export const ProjectCard = styled("div")((props: any) => ({
   width: props.active ? "320px" : "300px",
@@ -164,7 +164,7 @@ export const ProjectCard = styled("div")((props: any) => ({
   fontSize: "14px",
   fontFamily: "Open Sans",
   position: "relative",
-  marginTop: props.active ? "0" : "",
+  marginTop: props.active ? "-10px" : "",
 })) as any;
 
 export const ProjectTopLeftBg = styled("div")((props: any) => ({
@@ -278,14 +278,18 @@ export const ListVerticalDivider = styled("div")({
   margin: "0 10px",
 });
 export const ListHorizontalDivider = styled("div")((props: any) => ({
-  display: "block",
-  height: "1px",
-  width: "100%",
-  background: props.active ? "#F1742E" : "#D9D9D9",
+  display: props.active ? "block" : "",
+  width: props.active ? "322px" : "100%",
+  height: props.active ? "12px" : "1px",
+  background: props.active ? "#FFFFFF" : "#D9D9D9",
   padding: "0 20px",
   marginTop: props.active ? "10px" : "6px",
-  marginBottom: props.active ? "20px" : "10px",
-}));
+  marginBottom: props.active ? "12px" : "10px",
+  borderTop: props.active ? "1px solid #F1742E" : "",
+  borderTopLeftRadius: props.active ? "12px" : "",
+  borderTopRightRadius: props.active ? "12px" : "",
+  marginLeft: props.active ? "-22px" : "",
+})) as any;
 
 export const CapturesField = styled("div")({
   display: "flex",
@@ -309,4 +313,7 @@ export const ProjectActionItem = styled("div")({
   color: "#101F4C",
   padding: " 12px 0",
   borderBottom: "1px solid #D9D9D9",
+  "&: last-child": {
+    borderBottom: "none",
+  },
 });
