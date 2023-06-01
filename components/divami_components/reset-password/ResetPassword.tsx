@@ -89,14 +89,12 @@ const ResetPassword = ({ uniqueToken }: any) => {
         }
       })
       .catch((error) => {
-        if (error.success === false) {
-          toast.error(error.message);
+        toast.error(error.message);
 
-          router.push("/reset_completed");
+        router.push("/reset_completed");
 
-          return;
-          // setCheckResponse(error.success);
-        }
+        return;
+        // setCheckResponse(error.success);
       });
   };
   // form wrapper code

@@ -98,8 +98,8 @@ const ResetLink = ({ queryMail }: any) => {
               onClick={() => {
                 // router.push("/signup");
                 // router.push("/signup");
-                // router.push("/signup");
-                router.push("/reset_pass_word/xyz123456");
+                router.push("/signup");
+                // router.push("/reset_pass_word/xyz123456");
               }}
             >
               Change Email

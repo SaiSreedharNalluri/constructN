@@ -1,0 +1,76 @@
+export const projectConfig = [
+  {
+    id: "dates",
+    type: "doubleField",
+    isReadOnly: false,
+    fields: [
+      {
+        id: "start-date",
+        type: "datePicker",
+        defaultValue: "",
+        label: "MM/DD/YYYY",
+        formLabel: "From",
+        isError: false,
+        isReq: false,
+      },
+      {
+        id: "due-date",
+        type: "datePicker",
+        defaultValue: "",
+        label: "MM/DD/YYYY",
+        formLabel: "To",
+        isError: false,
+        isReq: false,
+      },
+    ],
+  },
+  {
+    id: "numberOfMembersField",
+    type: "doubleField",
+    isReadOnly: false,
+    fields: [
+      {
+        id: "numberOfMembersSelect",
+        type: "select",
+        defaultValue: "",
+        placeHolder: "Enter number of members",
+        label: "",
+        isLarge: false,
+        isError: false,
+        isReq: true,
+        isflex: false,
+        isReadOnly: false,
+        width: "199px !important",
+        formLabel: "",
+        options: [
+          {
+            label: "Greater Than",
+            value: "greaterThan",
+            selected: false,
+          },
+          {
+            label: "Less Than",
+            value: "lessThan",
+            selected: false,
+          },
+          {
+            label: "Equal To",
+            value: "equalTo",
+            selected: false,
+          },
+        ],
+      },
+      {
+        id: "numberOfMembersValue",
+        type: "textfield",
+        defaultValue: "",
+        width: "199px !important",
+        formLabel: "",
+        placeholder: "",
+        isError: false,
+        isReq: false,
+        isReadOnly: false,
+      },
+    ],
+  },
+];
