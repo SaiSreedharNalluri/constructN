@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ArrowIcon,
   CloseIcon,
@@ -201,7 +201,7 @@ const customToolbarStyle = {
 
 const SectionsListing = () => {
   const router = useRouter();
-
+  const myTableRef = useRef<any>(null);
   const defaultMaterialTheme = createTheme();
   const [selectedRow, setSelectedRow] = useState(null);
   const [isSearch, setIsSearch] = useState(false);
@@ -227,7 +227,7 @@ const SectionsListing = () => {
   // https://api.dev2.constructn.ai/api/v1/projects/PRJ201897/structures/hierarchy
 
   useEffect(() => {
-    console.log("griddata", gridData);
+    // console.log("griddata", gridData);
   }, [gridData]);
 
   // useEffect(() => {
@@ -235,11 +235,11 @@ const SectionsListing = () => {
   // }, [gridData]);
 
   useEffect(() => {
-    console.log("filterTableData", filterTableData);
+    // console.log("filterTableData", filterTableData);
   }, [filterTableData]);
 
   useEffect(() => {
-    console.log("tableData", tableData);
+    // console.log("tableData", tableData);
   }, []);
 
   useEffect(() => {
@@ -248,7 +248,7 @@ const SectionsListing = () => {
     if (router.isReady) {
       getSectionsList(router?.query?.projectId as string)
         .then((response: AxiosResponse<any>) => {
-          console.log("respjali", response);
+          // console.log("respjali", response);
           setGridData([response?.data?.result]);
           let removeGrandParent = response?.data?.result?.children?.map(
             (item: any, index: number) => {
@@ -312,7 +312,6 @@ const SectionsListing = () => {
   }
 
   // useEffect(() => {
-  //   console.log("Robby", tableData);
   //   setFilterTableData([...tableData]);
   // }, [tableData]);
 
@@ -333,43 +332,29 @@ const SectionsListing = () => {
   }, [searchTerm]);
 
   const handleSearch = () => {
-    console.log("TEST A");
     if (searchTerm.length) {
-      console.log("TEST B");
       const newTableData = tableData.filter((item: any) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       const tableWithParentData: any[] = [];
       newTableData.forEach((item: any) => {
-        // if (item.parent !== null) {
-        //   let bool = tableWithParentData.some(
-        //     (ele: any) => ele._id === item.parentId
-        //   );
-        //   if (!bool) {
-        //     console.log("CHECK 123", item);
-        //     tableWithParentData.push(item);
-        //   }
-        // }
         if (item.parent !== null && item.parent.length > 0) {
           let parentItem = tableData.find(
             (ele: any) => ele._id === item.parent
           );
 
-          console.log("KARNA", parentItem);
-
           tableWithParentData.push(parentItem);
         }
       });
-      console.log("FINAL SEARCH", tableWithParentData, newTableData);
-      //   console.log("TEST B DATA", newTableData);
       setFilterTableData([
         ...newTableData,
         ...tableWithParentData.filter(
           (item, index) => tableWithParentData.indexOf(item) === index
         ),
       ]);
+
+      //   myTableRef.onTreeExpandChanged();
     } else {
-      console.log("TEST C");
       setFilterTableData([...tableData]);
     }
   };
@@ -436,7 +421,6 @@ const SectionsListing = () => {
       },
       cellStyle: { width: "30%" },
       render: (rowData: any) => {
-        console.log("rowData", rowData);
         return (
           <CapturesFieldContainer>
             <CapturesField>
@@ -630,6 +614,7 @@ const SectionsListing = () => {
         <ThemeProvider theme={defaultMaterialTheme}>
           <TableWrapper>
             <StyledTable
+              tableRef={myTableRef}
               // icons={tableIcons.Search}
               // components={{
               //   Toolbar: (props) => <MTableToolbar {...props} />,
@@ -642,6 +627,7 @@ const SectionsListing = () => {
               // title={<MyNewTitle sections="Sections" />}
               title={""}
               //onSearchChange={setIsSearchVal}
+
               options={{
                 search: false,
                 paging: false,
