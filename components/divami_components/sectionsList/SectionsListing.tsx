@@ -636,7 +636,7 @@ const SectionsListing = () => {
                 selection: false,
                 showTitle: true,
                 toolbar: false,
-                maxBodyHeight: 700,
+                maxBodyHeight: 500,
                 thirdSortClick: false,
                 rowStyle: {
                   fontFamily: "Open Sans",
