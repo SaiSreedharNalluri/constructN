@@ -164,7 +164,7 @@ export const ProjectCard = styled("div")((props: any) => ({
   fontSize: "14px",
   fontFamily: "Open Sans",
   position: "relative",
-  marginTop: props.active ? "-10px" : "",
+  marginTop: props.active ? "0" : "",
 })) as any;
 
 export const ProjectTopLeftBg = styled("div")((props: any) => ({
@@ -172,7 +172,7 @@ export const ProjectTopLeftBg = styled("div")((props: any) => ({
   borderBottom: props.active ? "1px solid #F1742E" : "1px solid #888888",
   top: "-1px",
   left: "-8px",
-  width: "314px",
+  width: props.active ? "334px" : "314px",
 })) as any;
 
 export const ProjectTopRightBg = styled("div")((props: any) => ({
@@ -180,7 +180,7 @@ export const ProjectTopRightBg = styled("div")((props: any) => ({
   borderRight: props.active ? "1px solid #F1742E" : "1px solid #888888",
   bottom: "-8px",
   right: "-1px",
-  height: "414px",
+  height: props.active ? "434px" : "414px",
 })) as any;
 
 export const ProjectBottomLeftBg = styled("div")((props: any) => ({
@@ -188,7 +188,7 @@ export const ProjectBottomLeftBg = styled("div")((props: any) => ({
   borderLeft: props.active ? "1px solid #F1742E" : "1px solid #888888",
   bottom: "-8px",
   left: "-1px",
-  height: "414px",
+  height: props.active ? "434px" : "414px",
 })) as any;
 
 export const ProjectBottomRightBg = styled("div")((props: any) => ({
@@ -196,7 +196,7 @@ export const ProjectBottomRightBg = styled("div")((props: any) => ({
   borderBottom: props.active ? "1px solid #F1742E" : "1px solid #888888",
   bottom: "-1px",
   left: "-8px",
-  width: "314px",
+  width: props.active ? "334px" : "314px",
 })) as any;
 
 export const ProjectLogo = styled(Image)({
@@ -240,6 +240,27 @@ export const CaptureName = styled("div")({
 export const CaptureCount = styled("div")({});
 export const OtherUsersCount = styled("div")({
   color: "#FF843F",
+});
+
+export const UsersInfo = styled("div")({
+  display: "flex",
+  alignItems: "center",
+});
+
+export const UserPic = styled(Image)({});
+
+export const UserMonogram = styled("div")({
+  border: "1px solid #F1742E",
+  borderRadius: "50%",
+  width: "24px",
+  height: "24px",
+  textAlign: "center",
+  fontSize: "12px",
+  color: "#101F4C",
+  alignItems: "center",
+  display: "flex",
+  justifyContent: "center",
+  marginRight: "5px",
 });
 
 export const ListDivider = styled("div")({

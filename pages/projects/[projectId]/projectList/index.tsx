@@ -48,9 +48,9 @@ const Index: React.FC<any> = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [openFilter, setOpenFilter] = useState(false);
-  const [tableData, setTableData] = useState<any>([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const router = useRouter();
-  const [searchTableData, setSearchTableData] = useState([]);
+  const [searchTableData, setSearchTableData] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isGridView, setIsGridView] = useState(true);
   const [taskFilterState, setTaskFilterState] = useState({
@@ -59,14 +59,13 @@ const Index: React.FC<any> = () => {
     numberOfFilters: 0,
   });
   const handleSearchWindow = () => {
-    setSearchTableData(tableData);
+    setSearchTableData(projects);
     if (searchTerm === "") {
       setIsSearching(!isSearching);
     } else {
       setSearchTerm("");
     }
   };
-  const [projects, setProjects] = useState<any[]>([]);
 
   const [projectActions, setProjectActions] = useState([
     {
@@ -102,7 +101,7 @@ const Index: React.FC<any> = () => {
                 companyLogo: each.coverPhoto,
                 projectName: each.name,
                 userName: each.userName,
-                numberOfUsers: `${each.usersCount}`,
+                numberOfUsers: each.usersCount,
                 updatedAt: moment(each.lastUpdated).format("DD MMM YY"),
                 capture360Count: each?.captures["360 Image"]
                   ? `${each?.captures["360 Image"]}`
@@ -129,6 +128,10 @@ const Index: React.FC<any> = () => {
     }
   }, [router.isReady]);
   const formHandler = (event: any) => {};
+
+  useEffect(() => {
+    setSearchTableData(projects);
+  }, [projects]);
 
   return (
     <div className=" w-full  h-full">
@@ -158,8 +161,8 @@ const Index: React.FC<any> = () => {
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
                       setSearchTableData(
-                        tableData.filter((each: any) =>
-                          each.fullName.includes(e.target?.value)
+                        projects.filter((each: any) =>
+                          each?.projectName?.includes(e.target?.value)
                         )
                       );
                     }}
@@ -196,15 +199,19 @@ const Index: React.FC<any> = () => {
                   }}
                 />
               )}
-              <HeaderImage
-                src={sortIcon}
-                alt=""
-                width={24}
-                height={24}
-                onClick={() => {
-                  setOpenFilter(true);
-                }}
-              />
+              {isGridView ? (
+                <HeaderImage
+                  src={sortIcon}
+                  alt=""
+                  width={24}
+                  height={24}
+                  onClick={() => {
+                    setOpenFilter(true);
+                  }}
+                />
+              ) : (
+                <></>
+              )}
               <HeaderImage
                 src={UserFilterIcon}
                 alt=""
@@ -244,12 +251,12 @@ const Index: React.FC<any> = () => {
           </ProjectsHeader>
           {isGridView ? (
             <ProjectListCardView
-              projects={projects}
+              projects={searchTableData}
               projectActions={projectActions}
             />
           ) : (
             <ProjectListFlatView
-              projects={projects}
+              projects={searchTableData}
               projectActions={projectActions}
             />
           )}
