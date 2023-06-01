@@ -22,6 +22,7 @@ import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
 import CustomButton from "../custom-button/CustomButton";
 import FormWrapper from "../form-wrapper/FormWrapper";
 import { projectConfig } from "./FiltersConstants";
+import { StyledFilterText } from "./ProjectListingStyles";
 
 const CloseIcon = styled(Image)({
   cursor: "pointer",
@@ -135,7 +136,7 @@ const ProjectListFilter: React.FC<any> = ({
         </HeaderContainer>
       </FilterCommonHeader>
       <FilterCommonBody>
-        <FilterText>Last Updated Time</FilterText>
+        <StyledFilterText>Last Updated Time</StyledFilterText>
         <FormWrapper
           config={formConfig}
           setFormConfig={setFormConfig}

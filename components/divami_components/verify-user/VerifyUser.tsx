@@ -86,8 +86,8 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
             <MessageDivShow>Verify your account</MessageDivShow>
 
             <SentDivShow>
-              We've sent an email to {maskedMail} verify your email address and
-              activate your account.
+              We&apos;ve sent an email to {maskedMail} verify your email address
+              and activate your account.
             </SentDivShow>
 
             <LinkExpireDiv>

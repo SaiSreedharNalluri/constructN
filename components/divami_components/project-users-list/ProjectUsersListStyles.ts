@@ -1,6 +1,7 @@
 import { styled } from "@mui/system";
 import MaterialTable, { MTableToolbar } from "material-table";
 import Image from "next/image";
+import { CustomMenu } from "../custom-menu/CustomMenu";
 
 export const ImageButtons = styled("div")((props: any) => ({
   display: props.hoveringOver ? "flex" : "none",
@@ -81,6 +82,7 @@ export const ProjectsHeader = styled("div")({
   paddingLeft: "20px",
   paddingRight: "20px",
   height: "60px",
+  marginTop: "8px",
 });
 
 export const HeaderLabel = styled("div")({
@@ -101,6 +103,12 @@ export const HeaderImage = styled(Image)({
   height: "24px",
 });
 
+export const StyledCustomMenu = styled(CustomMenu)({
+  marginRight: "20px",
+  width: "24px",
+  height: "24px",
+});
+
 export const StyledTable = styled(MaterialTable)({});
 
 export const TableWrapper = styled("div")({
@@ -115,12 +123,13 @@ export const GridViewButton = styled("div")((props: any) => ({
   cursor: "pointer",
   color: !props?.toggleStatus ? "#36415D" : "#FFFFFF",
   padding: "10px",
-  height: "30px",
   display: "flex",
   alignItems: "center",
   border: "1px solid #F1742E",
   borderTopLeftRadius: "2px",
   borderBottomLeftRadius: "2px",
+  height: "40px",
+  width: "40px",
 })) as any;
 
 export const GridViewButtonRight = styled("div")((props: any) => ({
@@ -129,17 +138,18 @@ export const GridViewButtonRight = styled("div")((props: any) => ({
   cursor: "pointer",
   color: !props?.toggleStatus ? "#36415D" : "#FFFFFF",
   padding: "10px",
-  height: "30px",
   display: "flex",
   alignItems: "center",
   border: "1px solid #F1742E",
   borderTopRightRadius: "2px",
   borderBottomRightRadius: "2px",
+  height: "40px",
+  width: "40px",
 })) as any;
 
 export const GridButton = styled(Image)((props: any) => ({
-  width: "18px",
-  height: "18px",
+  width: "18px !important",
+  height: "18px !important",
 }));
 
 export const ListViewButton = styled("div")({});

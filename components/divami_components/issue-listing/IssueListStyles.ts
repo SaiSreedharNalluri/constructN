@@ -214,6 +214,11 @@ export const MenuOptionLabel = styled(MenuItem)({
   color: "#101F4C",
   fontSize: "14px",
 });
+export const MenuOptionLabelField = styled("div")({
+  display: "flex",
+  alignItems: "center",
+});
+export const MenuOptionIcon = styled(Image)({});
 export const ErrorImageDiv = styled("div")({
   // position: "absolute",
   // top: "50%",

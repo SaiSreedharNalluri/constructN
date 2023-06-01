@@ -1,17 +1,12 @@
 import { ProjectListing } from "../../../../components/divami_components/project-listing/ProjectListing";
 import { useEffect, useState } from "react";
 import Header from "../../../../components/divami_components/header/Header";
-import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
-import { UsersListing } from "../../../../components/divami_components/usersList/UsersListing";
 import { Content, ProjectsListContainer } from "../usersList/usersListStyles";
-import { InputAdornment } from "@mui/material";
-import CustomButton from "../../../../components/divami_components/custom-button/CustomButton";
+import { InputAdornment, Menu } from "@mui/material";
 import {
-  TableHeader,
   HeaderActions,
   HeaderImage,
   GridViewButton,
-  ListViewButton,
   ToggleButtonContainer,
   GridButton,
   HeaderLabel,
@@ -42,6 +37,9 @@ import unselectGridIcon from "../../../../public/divami_icons/unselectGridIcon.s
 import selectListIcon from "../../../../public/divami_icons/selectListIcon.svg";
 import CustomDrawer from "../../../../components/divami_components/custom-drawer/custom-drawer";
 import ProjectListFilter from "../../../../components/divami_components/project-listing/ProjectListFilter";
+import { CustomMenu } from "../../../../components/divami_components/custom-menu/CustomMenu";
+import UpArrow from "../../../../public/divami_icons/upArrow.svg";
+import DownArrow from "../../../../public/divami_icons/downArrow.svg";
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -53,6 +51,7 @@ const Index: React.FC<any> = () => {
   const [searchTableData, setSearchTableData] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isGridView, setIsGridView] = useState(true);
+
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
     filterData: {},
@@ -66,6 +65,74 @@ const Index: React.FC<any> = () => {
       setSearchTerm("");
     }
   };
+
+  const sortMenuOptions = [
+    {
+      label: "Sort by User",
+      icon: UpArrow,
+      method: "userAsc",
+      onClick: () => {
+        // const sortedData = projects.sort((a, b) => {
+        //   if (Number(a.usersCount) < Number(b.usersCount)) {
+        //     return -1;
+        //   } else if (Number(a.usersCount) < Number(b.usersCount)) {
+        //     return 1;
+        //   } else {
+        //     return 0;
+        //   }
+        // });
+        // const sortedData = projects.sort((a, b) => a.usersCount - b.usersCount);
+        // console.log(sortedData, "Fsdfd");
+        setSearchTableData(
+          [].concat(projects).sort((a, b) => a.usersCount - b.usersCount)
+        );
+      },
+    },
+    {
+      label: "Sort by User",
+      icon: DownArrow,
+
+      method: "userDesc",
+      onClick: () => {
+        setSearchTableData(
+          [].concat(projects).sort((a, b) => b.usersCount - a.usersCount)
+        );
+      },
+    },
+
+    {
+      label: "Sort by Last Updated",
+      icon: UpArrow,
+      method: "updatedAsc",
+      onClick: () => {
+        setSearchTableData(
+          []
+            .concat(projects)
+            .sort(
+              (a, b) =>
+                Number(new Date(a.lastUpdated)) -
+                Number(new Date(b.lastUpdated))
+            )
+        );
+      },
+    },
+    {
+      label: "Sort by Last Updated",
+      icon: DownArrow,
+      method: "updatedDesc",
+      onClick: () => {
+        setSearchTableData(
+          []
+            .concat(projects)
+            .sort(
+              (a, b) =>
+                Number(new Date(b.lastUpdated)) -
+                Number(new Date(a.lastUpdated))
+            )
+        );
+      },
+    },
+  ];
 
   const [projectActions, setProjectActions] = useState([
     {
@@ -127,7 +194,6 @@ const Index: React.FC<any> = () => {
         .catch((error) => {});
     }
   }, [router.isReady]);
-  const formHandler = (event: any) => {};
 
   useEffect(() => {
     setSearchTableData(projects);
@@ -137,17 +203,10 @@ const Index: React.FC<any> = () => {
     <div className=" w-full  h-full">
       <div className="w-full">
         {!isFullScreen && (
-          <Header
-            showBreadcrumbs
-            breadCrumbData={breadCrumbsData}
-            hideSidePanel
-          />
+          <Header breadCrumbData={breadCrumbsData} hideSidePanel />
         )}
-
-        {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
       <Content>
-        {/* <SidePanelMenu onChangeData={() => {}} /> */}
         <ProjectsListContainer>
           <ProjectsHeader>
             <HeaderLabel>Project(s) </HeaderLabel>
@@ -200,14 +259,12 @@ const Index: React.FC<any> = () => {
                 />
               )}
               {isGridView ? (
-                <HeaderImage
-                  src={sortIcon}
-                  alt=""
-                  width={24}
-                  height={24}
-                  onClick={() => {
-                    setOpenFilter(true);
-                  }}
+                <CustomMenu
+                  width={"24px"}
+                  height={"24px"}
+                  right="20px"
+                  imageSrc={sortIcon}
+                  menuOptions={sortMenuOptions}
                 />
               ) : (
                 <></>

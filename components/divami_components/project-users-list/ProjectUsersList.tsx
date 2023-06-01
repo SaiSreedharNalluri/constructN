@@ -357,11 +357,11 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
             //     <MTableToolbar {...props} style={{ width: "100%" }} sx={{}} />
             //   ),
             // }}
-            icons={{
-              SortArrow: forwardRef((props, ref) => (
-                <ArrowDropUpIcon {...props} ref={ref} />
-              )),
-            }}
+            // icons={{
+            //   SortArrow: forwardRef((props, ref) => (
+            //     <ArrowDropUpIcon {...props} ref={ref} />
+            //   )),
+            // }}
             components={{
               Container: (props) => <Paper {...props} elevation={0} />,
               // Row: (props) => {
@@ -453,3 +453,4 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     </ProjectUsersListContainer>
   );
 };
+ProjectUsersList.displayName = "ProjectUsersList";
