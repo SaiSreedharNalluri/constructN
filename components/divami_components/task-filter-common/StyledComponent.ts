@@ -1,7 +1,5 @@
-import styled from '@emotion/styled'
-import { Box, Button, TextField, Typography } from '@mui/material';
-
-
+import styled from "@emotion/styled";
+import { Box, Button, TextField, Typography } from "@mui/material";
 
 export const FilterCommonMain = styled("div")({
   width: "438px",
@@ -29,7 +27,6 @@ export const TitleContainer = styled(Box)({
   // paddingLeft: "20px",
   // paddingRight: "20px",
 });
-
 
 export const HeaderLeftSection = styled.div({});
 
@@ -63,17 +60,15 @@ export const HeaderRightSectionCancel = styled.div({});
 
 export const FilterCardContainer = styled.div`
   margin-top: 20px;
-`
+`;
 
 export const FilterCardSecondContainer = styled.div({
   marginTop: "50px",
 });
 
-
 export const FilterCardTitle = styled.div({
   // paddingLeft: "20px",
 });
-
 
 export const FormElementContainer = styled(Box)({
   marginTop: "30px",
@@ -86,17 +81,17 @@ export const StyledLabel = styled(Typography)`
   line-height: 20px;
   font-size: 14px;
   margin-bottom: 8px;
-`
+`;
 
 export const FilterCardTitleText = styled.div`
-color: #101f4c;
+  color: #101f4c;
 
   font-family: "Open Sans";
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
-`
+`;
 
 export const FilterCardSelectAll = styled.div`
   display: flex;
@@ -110,7 +105,7 @@ export const FilterCardSelectAll = styled.div`
 
 export const FilterCardSelectAllSpan = styled.span`
   display: flex;
-`
+`;
 
 export const FilterCardSelectAllText = styled.div`
   margin-left: 10px;
@@ -122,7 +117,7 @@ export const FilterCardSelectAllText = styled.div`
   font-weight: 400;
   font-size: 14px;
   // line-height: 19px;
-`
+`;
 
 export const FilterCardSelectAllTextHeader = styled.div`
   margin-left: 10px;
@@ -140,23 +135,20 @@ export const FilterCardOptions = styled.div`
   flex-wrap: wrap;
   // padding: 0px 20px;
   // margin-top: 5px;
-
-`
+`;
 
 export const FilterCardOptionContainer = styled.div`
   width: 50%;
-`
+`;
 
 export const FilterCardOptionSpan = styled.span`
   display: flex;
   margin-top: 20px;
 `;
 
-
-
 export const FilterCommonHeader = styled.div`
   height: 52px;
-`
+`;
 
 export const FilterCommonBody = styled.div({
   // marginBottom: "50px",
@@ -164,10 +156,14 @@ export const FilterCommonBody = styled.div({
   height: "calc(100% - 130px)",
 });
 
+export const FilterText = styled.div({
+  fontSize: "16px",
+  color: "#101F4C",
+});
+
 export const FilterCommonFooter = styled.div`
   // border: 1px solid blue;
-`
-
+`;
 
 export const CustomSearchField = styled(TextField)({
   "&:focus-within fieldset": {
@@ -193,13 +189,12 @@ export const DrawerSearchBar = styled("div")({
 });
 
 export const SearchContainer = styled(Box)({
-  width:" 100%",
-    height: "40px",
-    outline: "none",
-    padding: "8px 20px 0px 20px",
-    marginBottom: "2px",
+  width: " 100%",
+  height: "40px",
+  outline: "none",
+  padding: "8px 20px 0px 20px",
+  marginBottom: "2px",
 });
-
 
 export const ButtonsContainer = styled(Box)`
   // padding-left: 20px;
@@ -209,14 +204,13 @@ export const ButtonsContainer = styled(Box)`
   justify-content: space-between;
   align-items: center;
   // margin-top: 50px;
-`
-
+`;
 
 export const StyledButton = styled(Button)`
   width: 180px;
   height: 40px;
   text-transform: none;
-`
+`;
 
 export const ContainedButton = styled(StyledButton)`
   background-color: #f1742e;
@@ -225,7 +219,7 @@ export const ContainedButton = styled(StyledButton)`
     background-color: #f1742e;
     color: #ffffff;
   }
-`
+`;
 
 export const OulinedButton = styled(StyledButton)`
   background-color: #ffffff;
@@ -235,18 +229,17 @@ export const OulinedButton = styled(StyledButton)`
     background-color: #ffffff;
     border-color: #f1742e;
   }
-`
+`;
 
 export const DatePickersContainer = styled(Box)`
   display: flex;
   justify-content: space-between;
-`
+`;
 
 export const DatePickerContainer = styled(Box)`
   display: flex;
   flex-direction: column;
-`
-
+`;
 
 export const FilterFooter = styled.div`
   // height: calc(100% - 50px);

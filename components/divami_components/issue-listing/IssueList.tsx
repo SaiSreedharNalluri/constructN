@@ -235,6 +235,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   const handleSortMenuClick = (sortMethod: string) =>
     handleOnIssueSort(sortMethod);
+
   const handleDownloadMenuClick = () => handleDownloadClose();
 
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(
@@ -723,6 +724,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               sx: {
                 overflow: "visible",
                 filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                width: "342px",
                 mt: 1.5,
                 "& .MuiAvatar-root": {
                   width: 32,
@@ -730,6 +732,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   ml: -0.5,
                   mr: 1,
                 },
+
                 "&:before": {
                   content: '""',
                   display: "block",

@@ -1,6 +1,6 @@
-import instance from './axiosInstance';
-import { setCookie,getCookie } from 'cookies-next';
-import authHeader from './auth-header';
+import instance from "./axiosInstance";
+import { setCookie, getCookie } from "cookies-next";
+import authHeader from "./auth-header";
 export const login = (email: string, password: string) => {
   return instance
     .post(`${process.env.NEXT_PUBLIC_HOST}/users/signin`, {
@@ -8,12 +8,12 @@ export const login = (email: string, password: string) => {
       password,
     })
     .then((response) => {
-      if (
-        response.data.success === true &&
-        response.data.result.verified === true
-      ) {
-        setCookie('user', JSON.stringify(response.data.result));
-      }
+      // if (
+      //   response.data.success === true &&
+      //   response.data.result.verified === true
+      // ) {
+      //   setCookie("user", JSON.stringify(response.data.result));
+      // }
       return response.data;
     })
     .catch((error) => {
@@ -41,6 +41,19 @@ export const verifyEmail = (token: string) => {
     });
 };
 
+export const verifyResendEmail = (email:string) => {
+ return instance
+    .put(`${process.env.NEXT_PUBLIC_HOST}/users/resend-verification-link`, {
+      email,
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
+
 export const resetPasswordToken = (token: string, password: string) => {
   return instance
     .put(`${process.env.NEXT_PUBLIC_HOST}/users/reset-password/${token}`, {
@@ -54,12 +67,11 @@ export const resetPasswordToken = (token: string, password: string) => {
     });
 };
 
-export const resetPasswordInit = (resetUserEmail: string) => {
+export const resetPasswordInit = (email: string) => {
   return instance
-    .put(
-      `${process.env.NEXT_PUBLIC_HOST}/users/reset-password-init`,
-      resetUserEmail
-    )
+    .put(`${process.env.NEXT_PUBLIC_HOST}/users/reset-password-init`, {
+      email,
+    })
     .then((response) => {
       return response.data;
     })
@@ -89,14 +101,14 @@ export const updateUserProfile = async (updateInfo: object) => {
       const userObj: any = getCookie("user");
       let user = null;
       if (userObj) {
-        user = JSON.parse(userObj)
+        user = JSON.parse(userObj);
         //user.avatar = response.data.avatar;
         user.firstName = response.data.result.firstName;
         user.lastName = response.data.result.lastName;
         user.fullName = response.data.result.fullName;
         user.dob = response.data.result.dob;
-        setCookie('user', JSON.stringify(user));
-      };
+        setCookie("user", JSON.stringify(user));
+      }
 
       return response.data;
     })
@@ -114,10 +126,10 @@ export const updateProfileAvatar = async (file: any) => {
       const userObj: any = getCookie("user");
       let user = null;
       if (userObj) {
-        user = JSON.parse(userObj)
+        user = JSON.parse(userObj);
         user.avatar = response.data.result.avatar;
-        setCookie('user', JSON.stringify(user));
-      };
+        setCookie("user", JSON.stringify(user));
+      }
 
       return response.data;
     })

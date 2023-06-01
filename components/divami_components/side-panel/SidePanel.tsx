@@ -18,6 +18,9 @@ import branch from "../../../public/divami_icons/branch.svg";
 import calendar from "../../../public/divami_icons/calendarIcon.svg";
 import calendarHighlighted from "../../../public/divami_icons/calendarHighlightedIcon.svg";
 
+import usersSelected from "../../../public/divami_icons/usersSelectionIcon.svg";
+import usersUnselected from "../../../public/divami_icons/usersUnselectedIcon.svg";
+
 import people from "../../../public/divami_icons/people.svg";
 import peopleHighlighted from "../../../public/divami_icons/peopleHighlighted.svg";
 import ScheduleIcon from "../../../public/divami_icons/ScheduleIcon.svg";
@@ -63,7 +66,13 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       isActive: false,
       toolTipMsg: "Schedule",
     },
-
+    {
+      id: "usersList",
+      icon: usersUnselected,
+      activeIcon: usersSelected,
+      isActive: false,
+      toolTipMsg: "Users",
+    },
     {
       id: "settings",
       icon: people,
@@ -118,6 +127,17 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         break;
       case "tasks":
         router.push(`/projects/${router.query.projectId as string}/tasks`);
+        break;
+      case "sections":
+        router.push(`/projects/${router.query.projectId as string}/sections`);
+        break;
+      case "projectList":
+        router.push(
+          `/projects/${router.query.projectId as string}/projectList`
+        );
+        break;
+      case "usersList":
+        router.push(`/projects/${router.query.projectId as string}/usersList`);
         break;
       default:
         router.push(`/projects/${router.query.projectId as string}/structure`);

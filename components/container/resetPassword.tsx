@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import * as Yup from 'yup';
-import { Formik, Form, ErrorMessage } from 'formik';
-import SubmitButton from '../core/buttons/submitButton';
-import InputPassword from '../core/Input/inputPassword';
-import showPasswordImage from '../../public/icons/show-password.svg';
-import hidePasswordImage from '../../public/icons/hide-password.svg';
-import NextImage from '../core/Image';
-import Image from 'next/image';
-import router from 'next/router';
-import OkButton from '../core/buttons/okButton';
+import React, { useState } from "react";
+import * as Yup from "yup";
+import { Formik, Form, ErrorMessage } from "formik";
+import SubmitButton from "../core/buttons/submitButton";
+import InputPassword from "../core/Input/inputPassword";
+import showPasswordImage from "../../public/icons/show-password.svg";
+import hidePasswordImage from "../../public/icons/hide-password.svg";
+import NextImage from "../core/Image";
+import Image from "next/image";
+import router from "next/router";
+import OkButton from "../core/buttons/okButton";
 interface IProps {
   message: string;
   loading: boolean;
@@ -23,28 +23,28 @@ const ResetPassword: React.FC<IProps> = ({
     password: string;
     confirmPassword: string;
   } = {
-    password: '',
-    confirmPassword: '',
+    password: "",
+    confirmPassword: "",
   };
   const validationSchema = Yup.object().shape({
     password: Yup.string()
-      .required('Password is required')
-      .min(8, 'Minimum 8 characters required')
-      .matches(/[0-9]/, 'Password requires a number')
-      .matches(/[a-z]/, 'Password requires a lowercase letter')
-      .matches(/[A-Z]/, 'Password requires an uppercase letter')
-      .matches(/[^\w\s]/, 'Password requires a symbol')
+      .required("Password is required")
+      .min(8, "Minimum 8 characters required")
+      .matches(/[0-9]/, "Password requires a number")
+      .matches(/[a-z]/, "Password requires a lowercase letter")
+      .matches(/[A-Z]/, "Password requires an uppercase letter")
+      .matches(/[^\w\s]/, "Password requires a symbol")
       .matches(
         /^[^\s].*[^\s]$/,
-        'Spaces are not allowed at the beginning, end of the password'
+        "Spaces are not allowed at the beginning, end of the password"
       ),
     confirmPassword: Yup.string()
-      .required('Confirm password is required')
-      .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+      .required("Confirm password is required")
+      .oneOf([Yup.ref("password"), null], "Passwords must match"),
   });
   const [isRevealPwd, setIsRevealPwd] = useState(false);
   const [isCRevealPwd, setIsCRevealPwd] = useState(false);
-  const [active, setActive] = useState('');
+  const [active, setActive] = useState("");
   return (
     <div>
       <div className=" w-full  ">
@@ -71,7 +71,7 @@ const ResetPassword: React.FC<IProps> = ({
                   <div className="absolute p-3 inset-y-0 right-0">
                     <Image
                       alt=""
-                      title={isRevealPwd ? 'Hide password' : 'Show password'}
+                      title={isRevealPwd ? "Hide password" : "Show password"}
                       src={isRevealPwd ? hidePasswordImage : showPasswordImage}
                       onClick={() => setIsRevealPwd((prevState) => !prevState)}
                     />
@@ -91,13 +91,13 @@ const ResetPassword: React.FC<IProps> = ({
                   />
                   <div
                     className={`${
-                      active === 'confirm password'
+                      active === "confirm password"
                     } absolute p-3 inset-y-0 right-0`}
                     id="confirm password"
                   >
                     <Image
                       alt=""
-                      title={isCRevealPwd ? 'Hide password' : 'Show password'}
+                      title={isCRevealPwd ? "Hide password" : "Show password"}
                       src={isCRevealPwd ? hidePasswordImage : showPasswordImage}
                       onClick={() => setIsCRevealPwd((prevState) => !prevState)}
                     />
@@ -114,7 +114,8 @@ const ResetPassword: React.FC<IProps> = ({
                     buttonName="Go login page"
                     disabled={false}
                     clickTheOkButton={() => {
-                      router.push('/login');
+                      // router.push('/login');
+                      router.push("/signin");
                     }}
                   />
                 </div>

@@ -32,7 +32,10 @@ instance.interceptors.response.use(
     ) {
       if (typeof window !== 'undefined') {
         removeCookies('user');
-        window.location.href = '/login';
+        // window.location.href = '/login';
+        window.location.href = '/signin';
+
+        
       }
     }
     // Do something with response error

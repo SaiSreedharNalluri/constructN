@@ -21,7 +21,7 @@ const Login: React.FC = () => {
       if (userObj) user = JSON.parse(userObj);
       if (user && user.token) {
         if (router.query.sessionExpired === undefined) {
-          router.push("/projects");
+          // router.push("/projects");
         } else {
           deleteCookie("user");
         }

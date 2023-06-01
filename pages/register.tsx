@@ -1,8 +1,8 @@
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-import RegisterPage from '../components/container/registerPage';
-import { registerUser } from '../services/userAuth';
-import { toast } from 'react-toastify';
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import RegisterPage from "../components/container/registerPage";
+import { registerUser } from "../services/userAuth";
+import { toast } from "react-toastify";
 
 const Register: React.FC = () => {
   const router = useRouter();
@@ -28,12 +28,13 @@ const Register: React.FC = () => {
     registerUser(formValue)
       .then((response) => {
         if (response.success === true) {
-          toast.success('User Registeration completed in sucessfully');
-          toast.info('Redirecting ... ');
+          toast.success("User Registeration completed in sucessfully");
+          toast.info("Redirecting ... ");
 
           setTimeout(() => {
-            toast.info('Please check your e-mail to verify the account');
-            router.push('/login');
+            toast.info("Please check your e-mail to verify the account");
+            // router.push('/login');
+            router.push("/signin");
           }, 5000);
         }
       })
