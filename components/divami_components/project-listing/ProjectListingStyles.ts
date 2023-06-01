@@ -289,7 +289,7 @@ export const ListHorizontalDivider = styled("div")((props: any) => ({
   borderTopLeftRadius: props.active ? "12px" : "",
   borderTopRightRadius: props.active ? "12px" : "",
   marginLeft: props.active ? "-22px" : "",
-}));
+})) as any;
 
 export const CapturesField = styled("div")({
   display: "flex",

@@ -220,7 +220,7 @@ export const ProjectListFlatView = ({ projects }: any) => {
             {Number(rowData.numberOfUsers) > 2 ? (
               <OtherUsersCount
                 onMouseEnter={(e: any) => {
-                  // setAnchorEl(e.target);
+                  setAnchorEl(e.target);
                   setShowMenu(true);
                 }}
               >
@@ -376,21 +376,21 @@ export const ProjectListFlatView = ({ projects }: any) => {
             },
           ]}
           title={""}
-          icons={{
-            SortArrow: forwardRef((props, ref) => {
-              return sortObj ? (
-                <SortAscIcon {...props} ref={ref} />
-              ) : (
-                <SortDescIcon
-                  {...props}
-                  ref={ref}
-                  // onClick={() => {
-                  //   setSortObj(!sortObj);
-                  // }}
-                />
-              );
-            }),
-          }}
+          // icons={{
+          //   SortArrow: forwardRef((props, ref) => {
+          //     return sortObj ? (
+          //       <SortAscIcon {...props} ref={ref} />
+          //     ) : (
+          //       <SortDescIcon
+          //         {...props}
+          //         ref={ref}
+          //         // onClick={() => {
+          //         //   setSortObj(!sortObj);
+          //         // }}
+          //       />
+          //     );
+          //   }),
+          // }}
           options={{
             search: false,
             paging: false,

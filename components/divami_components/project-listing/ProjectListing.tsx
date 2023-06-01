@@ -130,9 +130,9 @@ export const ProjectListing = () => {
 
   return (
     <ProjectsContainer>
-      {projects.map((each: any) => {
+      {projects.map((each: any, index: number) => {
         return (
-          <ProjectsListItemContainer>
+          <ProjectsListItemContainer key={index}>
             <ProjectNameContainer>
               <CompanyLogoContainer>
                 <CompanyLogo src={logoimage} alt="" height={45} width={242} />
