@@ -1,7 +1,10 @@
 import { ProjectListing } from "../../../../components/divami_components/project-listing/ProjectListing";
 import { useEffect, useState } from "react";
 import Header from "../../../../components/divami_components/header/Header";
-import { Content, ProjectsListContainer } from "../usersList/usersListStyles";
+import {
+  Content,
+  ProjectsListContainer,
+} from "../../../../components/divami_components/project-users-list/usersListStyles";
 import { InputAdornment, Menu } from "@mui/material";
 import {
   HeaderActions,
@@ -17,7 +20,7 @@ import {
   SearchAreaContainer,
   CustomSearchField,
   CloseIcon,
-} from "../sections/SectionsStyles";
+} from "../../../../components/divami_components/project-listing/SectionsStyles";
 import { useRouter } from "next/router";
 import SearchBoxIcon from "../../../../public/divami_icons/search.svg";
 import Image from "next/image";
