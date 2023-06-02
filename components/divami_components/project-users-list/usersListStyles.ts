@@ -1,5 +1,5 @@
 import { styled } from "@mui/system";
-import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
+import SidePanelMenu from "../side-panel/SidePanel";
 
 export const Content = styled("div")({
   display: "flex",
