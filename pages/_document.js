@@ -1,6 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document';
 import Script from 'next/script';
-import * as newrelic from 'newrelic'
 
 export default function Document() {
   
@@ -30,7 +29,6 @@ export default function Document() {
         <link rel="stylesheet" type="text/css" href="../libs/openlayers3/ol.css"/>
         <link rel="stylesheet" type="text/css" href="../libs/spectrum/spectrum.css"/>
         <link rel="stylesheet" type="text/css" href="../libs/jstree/themes/mixed/style.css"/> */}
-        <script async type="text/javascript" src="/js/newrelic.js" />
       </Head>
       <body>
         <Main />

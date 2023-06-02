@@ -177,11 +177,14 @@ export class ForgeDataVizUtils {
                                         break
 
                                     case 'Drone Image':
+
                                         mPosition[0] = reality.position['camX'][i]
     
                                         mPosition[1] = reality.position['camY'][i]
     
                                         mPosition[2] = 0
+
+                                        break
 
                                     case 'Phone Image':
     

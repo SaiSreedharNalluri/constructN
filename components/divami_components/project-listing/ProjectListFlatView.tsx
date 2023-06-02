@@ -361,10 +361,10 @@ export const ProjectListFlatView = ({ projects }: any) => {
       <ThemeProvider theme={defaultMaterialTheme}>
         <StyledTable
           components={{
-            Action: (props) => (
+            Action: (props: any) => (
               <CustomMenu imageSrc={MoreActions} menuOptions={rowMenuOptions} />
             ),
-            Container: (props) => <Paper {...props} elevation={0} />,
+            Container: (props: any) => <Paper {...props} elevation={0} />,
           }}
           columns={columns}
           data={projectsState ? projectsState : []}
@@ -372,7 +372,7 @@ export const ProjectListFlatView = ({ projects }: any) => {
             {
               icon: ArrowDropUpIcon,
               tooltip: "More",
-              onClick: (event, rowData) => setShowMoreActions(true),
+              onClick: (event: any, rowData: any) => setShowMoreActions(true),
             },
           ]}
           title={""}
