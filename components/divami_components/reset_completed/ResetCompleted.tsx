@@ -42,7 +42,7 @@ const ResetCompleted = () => {
             <ProceedText>Your password has been reset successfully</ProceedText>
             <LoginButton
               onClick={() => {
-                router.push("/signin");
+                router.push("/login");
               }}
             >
               Log In

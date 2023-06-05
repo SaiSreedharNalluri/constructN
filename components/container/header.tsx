@@ -60,7 +60,7 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
     removeCookies("user");
 
     // router.push("/login");
-    router.push("/signin");
+    router.push("/login");
   };
   const goToProjectsList = () => {
     router.push("/projects");
