@@ -143,9 +143,9 @@ const Index: React.FC<any> = () => {
 
   const [projectActions, setProjectActions] = useState([
     {
-      label: "View Project Summary hello",
+      label: "View Project Summary",
       action: (id?: string) => {
-        router.push(`/projects/${id}/structure`);
+        router.push(`/projects/${id}/sections`);
       },
     },
     {

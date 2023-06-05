@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { IProjects } from '../../models/IProjects';
-import Moment from 'moment';
-import { useRouter } from 'next/router';
-import NextImage from '../core/Image';
-import { Mixpanel } from '../analytics/mixpanel';
+import React, { useEffect, useState } from "react";
+import { IProjects } from "../../models/IProjects";
+import Moment from "moment";
+import { useRouter } from "next/router";
+import NextImage from "../core/Image";
+import { Mixpanel } from "../analytics/mixpanel";
 interface IProps {
   projects: IProjects[];
   loading: boolean;
 }
 let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
   const router = useRouter();
-  Mixpanel.track('projects_list_page_open');
+  Mixpanel.track("projects_list_page_open");
   return (
     <div className=" calc-h overflow-y-auto overflow-x-hidden grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
       {loading ? (
@@ -21,9 +21,9 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
                 <div className="m-auto  border p-2 border-gray-900 border-solid h-11/12 w-11/12 mt-6 rounded-2xl  text-center  bg-white">
                   <div
                     onClick={() => {
-                      window.localStorage.setItem('nodeData', '');
-                      window.localStorage.setItem('expandedNodes', '');
-                      Mixpanel.track('projects_list_page_close');
+                      window.localStorage.setItem("nodeData", "");
+                      window.localStorage.setItem("expandedNodes", "");
+                      Mixpanel.track("projects_list_page_close");
                       router.push(`projects/${pData._id}/structure`);
                     }}
                   >
@@ -43,7 +43,7 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
                     <p className="mt-6">last capture:</p>
                     {pData.LastUpdatedOn ? (
                       <h4 className="mt-2">
-                        {Moment(pData.LastUpdatedOn).format('MMM Do YYYY')}
+                        {Moment(pData.LastUpdatedOn).format("MMM Do YYYY")}
                       </h4>
                     ) : (
                       <div className="mt-2">

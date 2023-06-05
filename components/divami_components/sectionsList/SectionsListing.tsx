@@ -407,6 +407,19 @@ const SectionsListing = () => {
         color: "#101F4C",
       },
       cellStyle: { width: "15%" },
+      render: (rowData: any) => {
+        console.log("rowData", rowData);
+        // router.push(`/projects/${id}/sections`);
+        return (
+          <CaptureCount
+            onClick={() => {
+              router.push(`/projects/${rowData.project as string}/structure`);
+            }}
+          >
+            {rowData?.name}
+          </CaptureCount>
+        );
+      },
     },
     {
       title: "Issues",
