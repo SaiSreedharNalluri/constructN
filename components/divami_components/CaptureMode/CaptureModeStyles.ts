@@ -279,7 +279,13 @@ export const CaptureImageIcon = styled(Image)({
 export const CaptureName = styled("div")({
   marginRight: "5px",
 });
-export const CaptureCount = styled("div")({});
+export const CaptureCount = styled("div")({
+  cursor:"pointer"
+});
+
+export const FloorName = styled("div")({
+  cursor:"pointer"
+});
 export const OtherUsersCount = styled("div")({
   color: "#FF843F",
 });

@@ -74,6 +74,7 @@ import {
   CapturesField,
   CaptureImageIcon,
   CaptureCount,
+  FloorName,
 } from "../CaptureMode/CaptureModeStyles";
 import { forwardRef } from "react";
 
@@ -407,6 +408,19 @@ const SectionsListing = () => {
         color: "#101F4C",
       },
       cellStyle: { width: "15%" },
+      render: (rowData: any) => {
+        console.log("rowData", rowData);
+        // router.push(`/projects/${id}/sections`);
+        return (
+          <FloorName
+            onClick={() => {
+              router.push(`/projects/${rowData.project as string}/structure`);
+            }}
+          >
+            {rowData?.name}
+          </FloorName>
+        );
+      },
     },
     {
       title: "Issues",
