@@ -24,7 +24,7 @@ const VerifyUserEmail = () => {
             setCheckPage(true);
             setTimeout(() => {
               // router.push('/login');
-              // router.push("/signin");
+              // router.push("/login");
               router.push("/account_success");
             }, 5000);
           }

@@ -36,6 +36,7 @@ import droneImage from "../../../public/divami_icons/droneImage.svg";
 import moment from "moment";
 
 export const ProjectListCardView = ({ projects, projectActions }: any) => {
+  console.log("projectActions", projectActions);
   const router = useRouter();
   const [showActions, setShowActions] = useState(false);
   const [projectsData, setProjectsData] = useState(
@@ -83,10 +84,15 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
 
             <ListHorizontalDivider active />
             <ProjectActionsContainer>
-              {projectActions.map((each: any, index: number) => {
+              {projectActions.map((item: any, index: number) => {
                 return (
-                  <ProjectActionItem key={index}>
-                    {each.label}
+                  <ProjectActionItem
+                    key={index}
+                    onClick={() => {
+                      item.action(each._id);
+                    }}
+                  >
+                    {item.label}
                   </ProjectActionItem>
                 );
               })}

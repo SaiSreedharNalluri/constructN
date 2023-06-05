@@ -115,8 +115,6 @@ const SignInPage = () => {
       return; // Stop execution here
     }
 
-    setUserEmail(email);
-
     handlerLogin(email, password, rememberMe);
   };
 

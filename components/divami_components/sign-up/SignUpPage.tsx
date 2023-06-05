@@ -130,7 +130,7 @@ const SignUpPage = () => {
           // setTimeout(() => {
           //   toast.info("Please check your e-mail to verify the account");
           // router.push("/login");
-          // router.push("/signin");
+          // router.push("/login");
           // router.push("verify_page");
           router.push(
             {
@@ -222,7 +222,7 @@ const SignUpPage = () => {
             Already a User?{" "}
             <NewUserSpan
               onClick={() => {
-                router.push("/signin");
+                router.push("/login");
               }}
             >
               Sign in
