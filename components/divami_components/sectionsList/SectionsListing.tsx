@@ -704,8 +704,8 @@ const SectionsListing = () => {
               //   rows.find((a: any) => a.id === row.parentId)
               // }
 
-              parentChildData={(row, rows) =>
-                rows.find((a) => a._id === row.parentId)
+              parentChildData={(row: any, rows) =>
+                rows.find((a: any) => a._id === row.parentId)
               }
             />
 
