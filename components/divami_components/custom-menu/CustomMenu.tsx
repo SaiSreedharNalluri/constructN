@@ -28,8 +28,8 @@ export const CustomMenu = ({
       <Image
         src={imageSrc}
         alt=""
-        width={width ? width : "20px"}
-        height={height ? height : "20px"}
+        width={width ? width : 20}
+        height={height ? height : 20}
         style={right ? { marginRight: right } : {}}
         onClick={(e) => {
           setShowMoreActions(true);

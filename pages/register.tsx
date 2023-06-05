@@ -34,7 +34,7 @@ const Register: React.FC = () => {
           setTimeout(() => {
             toast.info("Please check your e-mail to verify the account");
             // router.push('/login');
-            router.push("/signin");
+            router.push("/login");
           }, 5000);
         }
       })

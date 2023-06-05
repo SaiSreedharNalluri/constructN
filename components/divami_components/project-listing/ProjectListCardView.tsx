@@ -85,7 +85,12 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
             <ProjectActionsContainer>
               {projectActions.map((each: any, index: number) => {
                 return (
-                  <ProjectActionItem key={index}>
+                  <ProjectActionItem
+                    key={index}
+                    onClick={() => {
+                      each.action();
+                    }}
+                  >
                     {each.label}
                   </ProjectActionItem>
                 );

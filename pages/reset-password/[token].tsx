@@ -23,7 +23,7 @@
 //           setTimeout(() => {
 //             toast.info(" reset password completed");
 //             // router.push('/login');
-//             router.push("/signin");
+//             router.push("/login");
 //           }, 5000);
 //         }
 //       })

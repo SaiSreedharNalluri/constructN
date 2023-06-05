@@ -15,7 +15,7 @@
 //             toast.info("Redirecting ... ");
 //             setTimeout(() => {
 //               // router.push('/login');
-//               // router.push("/signin");
+//               // router.push("/login");
 //               router.push("/account_success");
 //             }, 5000);
 //           }
@@ -34,7 +34,7 @@
 //           toast.info("Redirecting ... ");
 //           setTimeout(() => {
 //             // router.push("/login");
-//             router.push("/signin");
+//             router.push("/login");
 //           }, 5000);
 //         }
 //       })
@@ -105,7 +105,7 @@ const VerifyUserEmail = () => {
             setCheckPage(true);
             // setTimeout(() => {
             // router.push('/login');
-            // router.push("/signin");
+            // router.push("/login");
             router.push("/account_success");
             // }, 5000);
           }

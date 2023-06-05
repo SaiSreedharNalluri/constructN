@@ -32,7 +32,7 @@ const AccountNotVerify = (props: any) => {
           toast.info("Redirecting ... ");
           setTimeout(() => {
             // router.push("/login");
-            router.push("/signin");
+            router.push("/login");
           }, 5000);
         }
       })
@@ -66,7 +66,7 @@ const AccountNotVerify = (props: any) => {
             </ResendText>
             {/* <LoginButton
               onClick={() => {
-                router.push("/signin");
+                router.push("/login");
               }}
             >
               Log In

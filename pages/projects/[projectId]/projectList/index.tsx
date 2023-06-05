@@ -149,7 +149,9 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Add Users",
-      action: () => {},
+      action: () => {
+        router.push(`/projects/PRJ201897/usersList`);
+      },
     },
     {
       label: "Archive Project",
@@ -260,8 +262,8 @@ const Index: React.FC<any> = () => {
               )}
               {isGridView ? (
                 <CustomMenu
-                  width={"24px"}
-                  height={"24px"}
+                  width={24}
+                  height={24}
                   right="20px"
                   imageSrc={sortIcon}
                   menuOptions={sortMenuOptions}
@@ -312,20 +314,22 @@ const Index: React.FC<any> = () => {
               projectActions={projectActions}
             />
           ) : (
-            <ProjectListFlatView
-              projects={searchTableData}
-              projectActions={projectActions}
-            />
+            <></>
+            // <ProjectListFlatView
+            //   projects={searchTableData}
+            //   projectActions={projectActions}
+            // />
           )}
           {openFilter && (
             <CustomDrawer open>
-              <ProjectListFilter
+              <></>
+              {/* <ProjectListFilter
                 setTaskFilterState={setTaskFilterState}
                 taskFilterState={taskFilterState}
                 onClose={() => {
                   setOpenFilter(false);
                 }}
-              />
+              /> */}
             </CustomDrawer>
           )}
         </ProjectsListContainer>
