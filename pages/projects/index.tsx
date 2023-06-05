@@ -43,6 +43,7 @@ import ProjectListFilter from "../../components/divami_components/project-listin
 import { CustomMenu } from "../../components/divami_components/custom-menu/CustomMenu";
 import UpArrow from "../../public/divami_icons/upArrow.svg";
 import DownArrow from "../../public/divami_icons/downArrow.svg";
+import PopupComponent from "../../components/popupComponent/PopupComponent";
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -54,6 +55,8 @@ const Index: React.FC<any> = () => {
   const [searchTableData, setSearchTableData] = useState<any>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isGridView, setIsGridView] = useState(true);
+
+  const [showPopUp, setshowPopUp] = useState(false);
 
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
@@ -150,7 +153,9 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Project Configuration",
-      action: () => {},
+      action: () => {
+        setshowPopUp(true);
+      },
     },
     {
       label: "Project Details",
@@ -209,6 +214,10 @@ const Index: React.FC<any> = () => {
   useEffect(() => {
     setSearchTableData(projects);
   }, [projects]);
+
+  const onDeleteIssue = (status: any) => {
+    setshowPopUp(false);
+  };
 
   return (
     <div className=" w-full  h-full">
@@ -339,6 +348,18 @@ const Index: React.FC<any> = () => {
                 }}
               />
             </CustomDrawer>
+          )}
+          {showPopUp && (
+            <PopupComponent
+              open={showPopUp}
+              setShowPopUp={setshowPopUp}
+              modalTitle={"Project Configuration"}
+              // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
+              modalmessage={`Are you sure you want to delete this Issue ?`}
+              primaryButtonLabel={"Delete"}
+              SecondaryButtonlabel={"Cancel"}
+              callBackvalue={onDeleteIssue}
+            />
           )}
         </ProjectsListContainer>
       </Content>

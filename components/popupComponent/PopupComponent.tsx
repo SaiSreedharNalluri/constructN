@@ -10,6 +10,7 @@ import { IconButton } from "@mui/material";
 import { fontSize } from "@mui/system";
 import CrossIcon from "../../public/divami_icons/crossIcon.svg";
 import Image from "next/image";
+import ProjectConfig from "../divami_components/project_config/ProjectConfig";
 
 export const CloseIcon = styled(Image)({
   cursor: "pointer",
@@ -105,61 +106,65 @@ const PopupComponent = (props: PopupComponentProps) => {
   };
 
   return (
-    <div>
-      <BootstrapDialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-      >
-        <BootstrapDialogTitle
-          id="customized-dialog-title"
-          onClose={handleClose}
-        >
-          <TextComponent>{modalTitle}</TextComponent>
-        </BootstrapDialogTitle>
-        <DialogContent
-          dividers
-          style={{ borderBottom: 0, padding: "30px", paddingBottom: "22px" }}
-        >
-          <TextComponent>{modalmessage}</TextComponent>
-        </DialogContent>
-        <DialogActions sx={{ padding: 0 }}>
-          <ButtonDiv>
-            <Button
-              variant="text"
-              autoFocus
-              onClick={handleClose}
-              style={{
-                color: "#F1742E",
-                width: "180px",
-                height: "40px",
-                textTransform: "none",
-                marginBottom: "22px",
-                fontFamily: "Open Sans",
-              }}
-            >
-              {SecondaryButtonlabel}
-            </Button>
+    // <div>
+    //   <BootstrapDialog
+    //     onClose={handleClose}
+    //     aria-labelledby="customized-dialog-title"
+    //     open={open}
+    //   >
+    //     <BootstrapDialogTitle
+    //       id="customized-dialog-title"
+    //       onClose={handleClose}
+    //     >
+    //       <TextComponent>{modalTitle}</TextComponent>
+    //     </BootstrapDialogTitle>
+    //     <DialogContent
+    //       dividers
+    //       style={{ borderBottom: 0, padding: "30px", paddingBottom: "22px" }}
+    //     >
+    //       <TextComponent>{modalmessage}</TextComponent>
+    //     </DialogContent>
+    //     <DialogActions sx={{ padding: 0 }}>
+    //       <ButtonDiv>
+    //         <Button
+    //           variant="text"
+    //           autoFocus
+    //           onClick={handleClose}
+    //           style={{
+    //             color: "#F1742E",
+    //             width: "180px",
+    //             height: "40px",
+    //             textTransform: "none",
+    //             marginBottom: "22px",
+    //             fontFamily: "Open Sans",
+    //           }}
+    //         >
+    //           {SecondaryButtonlabel}
+    //         </Button>
 
-            <Button
-              variant="contained"
-              onClick={() => callBackvalue("Delete")}
-              style={{
-                backgroundColor: "#F1742E",
-                width: "180px",
-                height: "40px",
-                marginBottom: "22px",
-                marginRight: "22px",
-                textTransform: "none",
-                fontFamily: "Open Sans",
-                fontSize: "16px",
-              }}
-            >
-              {primaryButtonLabel}
-            </Button>
-          </ButtonDiv>
-        </DialogActions>
-      </BootstrapDialog>
+    //         <Button
+    //           variant="contained"
+    //           onClick={() => callBackvalue("Delete")}
+    //           style={{
+    //             backgroundColor: "#F1742E",
+    //             width: "180px",
+    //             height: "40px",
+    //             marginBottom: "22px",
+    //             marginRight: "22px",
+    //             textTransform: "none",
+    //             fontFamily: "Open Sans",
+    //             fontSize: "16px",
+    //           }}
+    //         >
+    //           {primaryButtonLabel}
+    //         </Button>
+    //       </ButtonDiv>
+    //     </DialogActions>
+    //   </BootstrapDialog>
+    // </div>
+
+    <div>
+      <ProjectConfig />
     </div>
   );
 };
