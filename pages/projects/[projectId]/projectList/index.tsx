@@ -286,7 +286,7 @@ const Index: React.FC<any> = () => {
                 width={24}
                 height={24}
                 onClick={() => {
-                  setOpenFilter(true);
+                  // setOpenFilter(true);
                 }}
               />
               <ToggleButtonContainer>
@@ -331,14 +331,13 @@ const Index: React.FC<any> = () => {
           )}
           {openFilter && (
             <CustomDrawer open>
-              <></>
-              {/* <ProjectListFilter
+              <ProjectListFilter
                 setTaskFilterState={setTaskFilterState}
                 taskFilterState={taskFilterState}
                 onClose={() => {
                   setOpenFilter(false);
                 }}
-              /> */}
+              />
             </CustomDrawer>
           )}
         </ProjectsListContainer>

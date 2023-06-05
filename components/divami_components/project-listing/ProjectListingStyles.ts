@@ -318,6 +318,7 @@ export const ProjectActionItem = styled("div")({
   fontSize: "14px",
   color: "#101F4C",
   padding: " 12px 0",
+  cursor: "pointer",
   borderBottom: "1px solid #D9D9D9",
   "&: last-child": {
     borderBottom: "none",
