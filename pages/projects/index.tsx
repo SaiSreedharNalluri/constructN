@@ -148,7 +148,7 @@ const Index: React.FC<any> = () => {
     {
       label: "View Project Summary",
       action: (id?: string) => {
-        router.push(`/projects/${id}/structure`);
+        router.push(`/projects/${id}/sections`);
       },
     },
     {
