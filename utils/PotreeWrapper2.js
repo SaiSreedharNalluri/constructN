@@ -331,6 +331,7 @@ export const PotreeViewerUtils = () => {
                             id: pathObject.id,
                             type: realityType,
                             index: undefined,
+                            sceneIndex: undefined,
                             loaded: false,
                             imagesPath: pathObject.positionPath,
                             position: pathObject.position
@@ -347,6 +348,7 @@ export const PotreeViewerUtils = () => {
                             id: pathObject.id,
                             type: realityType,
                             index: undefined,
+                            sceneIndex: undefined,
                             loaded: false,
                             imagesPath: pathObject.positionPath,
                             position: pathObject.position
@@ -364,6 +366,7 @@ export const PotreeViewerUtils = () => {
                             id: pathObject.id,
                             type: realityType,
                             index: undefined,
+                            sceneIndex: undefined,
                             loaded: false,
                             imagesPath: pathObject.positionPath,
                             position: pathObject.position
@@ -381,7 +384,8 @@ export const PotreeViewerUtils = () => {
     const loadDroneImages = (tm, offset, id, imagePositionsPath, imagesPath) => {
         let tmData = { tm: tm, offset: offset};
         Potree.OrientedImageLoader.load(imagePositionsPath, imagesPath, _viewer, tmData).then(images => {
-             _viewer.scene.addOrientedImages(images);
+            _viewer.scene.addOrientedImages(images);
+            _realityLayers[id].sceneIndex = getSceneChildrenLength() - 1;
             _realityLayers[id].index = getOrientedImagesLength() - 1;
             _realityLayers[id].loaded = true;
             
@@ -406,6 +410,7 @@ export const PotreeViewerUtils = () => {
         let tmData = { tm: tm, offset: offset};
         Potree.Images360Loader.load(imagePositionsPath, imagesPath, _viewer, tmData).then(images => {
             _viewer.scene.add360Images(images);
+            _realityLayers[id].sceneIndex = getSceneChildrenLength() - 1;
             _realityLayers[id].index = getSphericalImagesLength() - 1;
             _realityLayers[id].loaded = true;
             
@@ -422,6 +427,10 @@ export const PotreeViewerUtils = () => {
                
             }
         });
+    }
+
+    const getSceneChildrenLength = () => {
+        return _viewer.scene.scene.children.length
     }
 
     const getOrientedImagesLength = () => {
@@ -832,7 +841,32 @@ export const PotreeViewerUtils = () => {
                 point: closestPoint
             };
         } else {
-            return null;
+            let objects;
+            if (_currentMode == 'Drone Image' || _currentMode == 'Phone Image') {
+                objects = [_viewer.scene.scene.children[_currentReality.sceneIndex]];
+                return null
+            } else if (_currentMode == '360 Image' || _currentMode == '360 Video') {
+                objects = [_viewer.scene.scene.children[_currentReality.sceneIndex].children[0]];
+                const intersectedObjects = raycaster.intersectObjects(objects, true);
+                if(intersectedObjects.length) {
+                    console.log("Testing Tag creation: ", intersectedObjects);
+                    var fractionOfTotal = 3 / intersectedObjects[0].distance;
+                    var xDist = intersectedObjects[0].point.x - camera.position.x;
+                    var yDist = intersectedObjects[0].point.y - camera.position.y;
+                    var zDist = intersectedObjects[0].point.z - camera.position.z;
+                    var p = {
+                        x: camera.position.x + xDist * fractionOfTotal,
+                        y: camera.position.y + yDist * fractionOfTotal,
+                        z: camera.position.z + zDist * fractionOfTotal,
+                    }
+                    console.log("Testing Tag creation: ", camera.position, xDist, yDist, zDist, fractionOfTotal, p);
+                    return {
+                        location: p
+                    };
+                }
+                return null;
+            }
+
         }
     }
 
