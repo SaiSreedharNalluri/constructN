@@ -52,17 +52,6 @@ import capture360Image from "../../../../public/divami_icons/capture360Image.svg
 import captureLidarIcon from "../../../../public/divami_icons/captureLidarIcon.svg";
 import DroneImage from "../../../../public/divami_icons/DroneImage.svg";
 
-import {
-  ArrowIcon,
-  CloseIcon,
-  Content,
-  CustomSearchField,
-  FunnelIcon,
-  SearchAreaContainer,
-  SearchGlassIcon,
-  SearchIconStyling,
-  SectionsListContainer,
-} from "./SectionsStyles";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { getStructureHierarchy } from "../../../../services/structure";
@@ -84,6 +73,7 @@ import {
 } from "../../../../components/divami_components/CaptureMode/CaptureModeStyles";
 import moment from "moment";
 import SectionsListing from "../../../../components/divami_components/sectionsList/SectionsListing";
+import { Content } from "../../../../components/divami_components/project-listing/SectionsStyles";
 
 const dummyData: any = [
   {
