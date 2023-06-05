@@ -9,10 +9,7 @@ import {
 import moment from "moment";
 import router, { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
-import {
-  CustomSearchField,
-  SearchAreaContainer,
-} from "../../../pages/projects/[projectId]/sections/SectionsStyles";
+import { CustomSearchField, SearchAreaContainer } from "./SectionsStyles";
 import CustomButton from "../custom-button/CustomButton";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import { CloseIcon } from "../hotspot-filter-common/HotspotFilterStyled";

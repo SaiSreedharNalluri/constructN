@@ -1,7 +1,10 @@
 import { ProjectListing } from "../../../../components/divami_components/project-listing/ProjectListing";
 import { useEffect, useState } from "react";
 import Header from "../../../../components/divami_components/header/Header";
-import { Content, ProjectsListContainer } from "../usersList/usersListStyles";
+import {
+  Content,
+  ProjectsListContainer,
+} from "../../../../components/divami_components/project-users-list/usersListStyles";
 import { InputAdornment, Menu } from "@mui/material";
 import {
   HeaderActions,
@@ -17,7 +20,7 @@ import {
   SearchAreaContainer,
   CustomSearchField,
   CloseIcon,
-} from "../sections/SectionsStyles";
+} from "../../../../components/divami_components/project-listing/SectionsStyles";
 import { useRouter } from "next/router";
 import SearchBoxIcon from "../../../../public/divami_icons/search.svg";
 import Image from "next/image";
@@ -46,9 +49,9 @@ const Index: React.FC<any> = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [openFilter, setOpenFilter] = useState(false);
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any>([]);
   const router = useRouter();
-  const [searchTableData, setSearchTableData] = useState<any[]>([]);
+  const [searchTableData, setSearchTableData] = useState<any>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isGridView, setIsGridView] = useState(true);
 
@@ -84,7 +87,9 @@ const Index: React.FC<any> = () => {
         // const sortedData = projects.sort((a, b) => a.usersCount - b.usersCount);
         // console.log(sortedData, "Fsdfd");
         setSearchTableData(
-          [].concat(projects).sort((a, b) => a.usersCount - b.usersCount)
+          []
+            .concat(projects)
+            .sort((a: any, b: any) => a.usersCount - b.usersCount)
         );
       },
     },
@@ -95,7 +100,9 @@ const Index: React.FC<any> = () => {
       method: "userDesc",
       onClick: () => {
         setSearchTableData(
-          [].concat(projects).sort((a, b) => b.usersCount - a.usersCount)
+          []
+            .concat(projects)
+            .sort((a: any, b: any) => b.usersCount - a.usersCount)
         );
       },
     },
@@ -109,7 +116,7 @@ const Index: React.FC<any> = () => {
           []
             .concat(projects)
             .sort(
-              (a, b) =>
+              (a: any, b: any) =>
                 Number(new Date(a.lastUpdated)) -
                 Number(new Date(b.lastUpdated))
             )
@@ -125,7 +132,7 @@ const Index: React.FC<any> = () => {
           []
             .concat(projects)
             .sort(
-              (a, b) =>
+              (a: any, b: any) =>
                 Number(new Date(b.lastUpdated)) -
                 Number(new Date(a.lastUpdated))
             )
@@ -137,7 +144,9 @@ const Index: React.FC<any> = () => {
   const [projectActions, setProjectActions] = useState([
     {
       label: "View Project Summary",
-      action: () => {},
+      action: (id?: string) => {
+        router.push(`/projects/${id}/structure`);
+      },
     },
     {
       label: "Project Configuration",

@@ -168,12 +168,12 @@ export const NoMatchDiv = styled("div")({
   // margin:"auto"
 });
 
-export const ImageErrorIcon = styled(Image)({
+export const ImageErrorIcon = styled(Image)((props: any) => ({
   cursor: "pointer",
   width: "226px",
   height: "201px",
   // marginLeft: '27px',
-});
+})) as any;
 
 export const MessageDivShowErr = styled("div")({
   width: "200px",
@@ -250,16 +250,12 @@ export const StyledMenu = styled(MenuItem)({
   lineHeight: "20px",
   color: "#101F4C",
   fontFamily: "Open Sans",
-  fontWeight: "400"
+  fontWeight: "400",
 });
-
-
-
 
 interface ContainerProps {
   searchingOn: boolean;
 }
-
 
 export const CustomBox = styled(Box)<ContainerProps>`
   margin-top: ${(props) => (props.searchingOn ? "10px" : "")};

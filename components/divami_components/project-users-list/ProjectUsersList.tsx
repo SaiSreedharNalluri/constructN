@@ -33,7 +33,7 @@ import {
   CloseIcon,
   CustomSearchField,
   SearchAreaContainer,
-} from "../../../pages/projects/[projectId]/sections/SectionsStyles";
+} from "../../divami_components/project-listing/SectionsStyles";
 import SidePanelMenu from "../side-panel/SidePanel";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
@@ -240,7 +240,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const formHandler = (event: any) => {
     setShowEmptyState(true);
   };
-  const handleEditClick = (event, rowData) => {
+  const handleEditClick = (event: any, rowData: any) => {
     rowData.tableData.editing = "delete";
     forceUpdate();
   };
