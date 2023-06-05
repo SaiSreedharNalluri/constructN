@@ -74,6 +74,7 @@ import {
   CapturesField,
   CaptureImageIcon,
   CaptureCount,
+  FloorName,
 } from "../CaptureMode/CaptureModeStyles";
 import { forwardRef } from "react";
 
@@ -411,13 +412,13 @@ const SectionsListing = () => {
         console.log("rowData", rowData);
         // router.push(`/projects/${id}/sections`);
         return (
-          <CaptureCount
+          <FloorName
             onClick={() => {
               router.push(`/projects/${rowData.project as string}/structure`);
             }}
           >
             {rowData?.name}
-          </CaptureCount>
+          </FloorName>
         );
       },
     },

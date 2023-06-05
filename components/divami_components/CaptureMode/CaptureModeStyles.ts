@@ -282,6 +282,10 @@ export const CaptureName = styled("div")({
 export const CaptureCount = styled("div")({
   cursor:"pointer"
 });
+
+export const FloorName = styled("div")({
+  cursor:"pointer"
+});
 export const OtherUsersCount = styled("div")({
   color: "#FF843F",
 });
