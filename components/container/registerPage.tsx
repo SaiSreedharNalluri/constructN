@@ -183,7 +183,7 @@ const Registerpage: React.FC<IProps> = ({
           <button
             onClick={() =>
               // router.push('/login')
-              router.push("/signin")
+              router.push("/login")
             }
           >
             Back To Login

@@ -115,7 +115,7 @@ const ResetPassword: React.FC<IProps> = ({
                     disabled={false}
                     clickTheOkButton={() => {
                       // router.push('/login');
-                      router.push("/signin");
+                      router.push("/login");
                     }}
                   />
                 </div>

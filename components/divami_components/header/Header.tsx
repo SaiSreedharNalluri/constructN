@@ -130,7 +130,7 @@ const Header: React.FC<any> = ({
   const userLogOut = () => {
     removeCookies("user");
     // router.push("/login");
-    router.push("/signin");
+    router.push("/login");
   };
   const goToProjectsList = () => {
     router.push("/projects");
