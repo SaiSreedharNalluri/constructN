@@ -106,22 +106,26 @@ const FormWrapper = (props: any) => {
             }
             return { ...item, isError: false };
           } else if (item.isValidField === false && item.id === "email") {
-            if (setCanBeDisabled) setCanBeDisabled(false);
-            return {
-              ...item,
-              isError: true,
-              errorMsg: "Invalid User Email",
-              showErrorMsg: true,
-            };
+            if (!isValidEmail(item.defaultValue, item.id)) {
+              if (setCanBeDisabled) setCanBeDisabled(false);
+              return {
+                ...item,
+                isError: true,
+                errorMsg: "Invalid User Email",
+                showErrorMsg: true,
+              };
+            }
           } else if (item.isValidField === false && item.id === "password") {
-            if (setCanBeDisabled) setCanBeDisabled(false);
-            return {
-              ...item,
-              isError: true,
-              // errorMsg: <PasswordRequired showPasswordMenu={true} />,
-              errorMsg: "Password is weak",
-              showErrorMsg: true,
-            };
+            if (!checkPassword(item.defaultValue, item.id)) {
+              if (setCanBeDisabled) setCanBeDisabled(false);
+              return {
+                ...item,
+                isError: true,
+                // errorMsg: <PasswordRequired showPasswordMenu={true} />,
+                errorMsg: "Password is weak",
+                showErrorMsg: true,
+              };
+            }
           } else if (
             item.isValidField === false &&
             item.id === "confirm_password"
@@ -271,11 +275,15 @@ const FormWrapper = (props: any) => {
     const isEmptyField = config.some(
       (val: any) => !val.defaultValue && val.isReq
     );
+
+    setCanBeDisabled(isEmptyField);
     if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
   }
   function isValidEmail(email: any, id: any) {
     // console.log("lol");
+    let isValid = false;
     if (/\S+@\S+\.\S+/.test(email)) {
+      isValid = true;
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
           if (id === item.id) {
@@ -302,21 +310,18 @@ const FormWrapper = (props: any) => {
         })
       );
     }
+    return isValid;
     // return /\S+@\S+\.\S+/.test(email);
   }
 
-  function checkPassword(
-    str: any,
-    id: any,
-    event: React.MouseEvent<HTMLButtonElement>
-  ) {
+  function checkPassword(str: any, id: any) {
     let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     let passwordTru = rePass.test(str);
-    console.log("typepass", passwordTru);
-
+    let isValid = false;
     setShowMessage(!passwordTru);
 
     if (passwordTru) {
+      isValid = true;
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
           if (id === item.id) {
@@ -330,7 +335,6 @@ const FormWrapper = (props: any) => {
           return item;
         })
       );
-      setAnchorEl(event.currentTarget);
       setUserPassword(str);
     } else {
       setFormConfig((prev: any) =>
@@ -346,6 +350,7 @@ const FormWrapper = (props: any) => {
         })
       );
     }
+    return isValid;
   }
 
   function matchpassword(str: any, id: any) {
@@ -459,16 +464,13 @@ const FormWrapper = (props: any) => {
               }}
               onBlur={(e: any) => {
                 if (data.id === "email") {
-                  console.log("email aaya");
                   isValidEmail(data?.defaultValue, data.id);
                   return;
                 } else if (
                   data.id === "password" &&
                   data.checkPasswordStrength
                 ) {
-                  checkPassword(data?.defaultValue, data.id, e);
-
-                  console.log("password aya");
+                  checkPassword(data?.defaultValue, data.id);
                 } else if (data.id === "confirm_password") {
                   matchpassword(data?.defaultValue, data.id);
                   return;

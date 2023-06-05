@@ -44,7 +44,7 @@ const AccountVerify = () => {
             <ProceedText>You can proceed and login to your account</ProceedText>
             <LoginButton
               onClick={() => {
-                router.push("/signin");
+                router.push("/login");
               }}
             >
               Log In

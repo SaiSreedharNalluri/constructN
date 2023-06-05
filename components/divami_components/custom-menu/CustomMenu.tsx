@@ -28,9 +28,11 @@ export const CustomMenu = ({
       <Image
         src={imageSrc}
         alt=""
-        width={width ? width : "20px"}
-        height={height ? height : "20px"}
-        style={right ? { marginRight: right } : {}}
+        width={width ? width : 20}
+        height={height ? height : 20}
+        style={
+          right ? { marginRight: right, width: width, height: height } : {}
+        }
         onClick={(e: any) => {
           setShowMoreActions(true);
           setAnchorEl(e.target);

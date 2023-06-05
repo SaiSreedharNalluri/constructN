@@ -19,7 +19,7 @@ const Index: React.FC = () => {
             toast.info("Please check your e-mail to reset password");
             // router.push(`/reset-password/${response.token}`);
             // router.push('/login');
-            router.push("/signin");
+            router.push("/login");
           }, 5000);
         }
       })

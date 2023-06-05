@@ -112,7 +112,7 @@ const ResetPassword = ({ uniqueToken }: any) => {
           <FormHeader>
             <HeaderImageLogo
               onClick={() => {
-                router.push("/signin");
+                router.push("/login");
               }}
               src={backIcon}
               alt="logo"

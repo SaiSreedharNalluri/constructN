@@ -51,7 +51,7 @@ const CheckingEmail: React.FC<IProps> = ({ handleEmail, message, loading }) => {
                   disabled={false}
                   clickTheOkButton={() => {
                     // router.push('/login');
-                    router.push("/signin");
+                    router.push("/login");
                   }}
                 />
               </div>

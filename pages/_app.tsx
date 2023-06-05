@@ -25,6 +25,7 @@ config.autoAddCss = false;
 export default function App({ Component, pageProps }: AppProps) {
   mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, { debug: true });
   const router = useRouter();
+  const signInRoutes = ["/login"];
   const openRoutes = [
     // "/register",
     "/signup",
@@ -43,10 +44,12 @@ export default function App({ Component, pageProps }: AppProps) {
     // );
     console.log("router", router.asPath);
 
-    if (!user?.rememberMe && !openRoutes.includes(router.asPath)) {
-      router.push("/signin");
+    if (!user?.rememberMe && signInRoutes.includes(router.asPath)) {
+      router.push("/login");
+    } else if (user?.rememberMe && signInRoutes.includes(router.asPath)) {
+      router.push("/projects");
     }
-    // else if (router.asPath == "/signin" && userObj.rememberMe) {
+    // else if (router.asPath == "/login" && userObj.rememberMe) {
     //   console.log("coming to projects");
     //   router.push("/projects");
     // }
@@ -56,7 +59,7 @@ export default function App({ Component, pageProps }: AppProps) {
   //   const userObj: any = getCookie("userProfile");
   //   if (userObj === undefined && !openRoutes.includes(router.asPath)) {
   //     // router.push("/login");
-  //     router.push("/signin");
+  //     router.push("/login");
   //   } else {
   //     router.push("/projects");
   //   }
