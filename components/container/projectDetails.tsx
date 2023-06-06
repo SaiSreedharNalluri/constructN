@@ -8,11 +8,20 @@ import { Map, Marker } from 'react-map-gl';
 import { getCookie } from 'cookies-next';
 import router from 'next/router';
 import { IUser } from '../../models/IUser';
+import EditProject from '../divami_components/edit-project/EditProject';
+import CustomDrawer from '../divami_components/custom-drawer/custom-drawer';
 interface IProps {
     projectData: IProjects;
 }
 const ProjectDetails:React.FC<IProps>=({projectData})=> {
   let [user, setUser] = useState<IUser>();
+  const[openProjectEditOpen,setOpenProjectEdit]=useState(false);
+  const handleEditOpen=()=>{
+    setOpenProjectEdit(true)
+  }
+  const handleEditClose=()=>{
+    setOpenProjectEdit(false)
+  }
     useEffect(() => {
         const userObj: any = getCookie("user");
         let user = null;
@@ -32,19 +41,11 @@ const ProjectDetails:React.FC<IProps>=({projectData})=> {
     <div>
       <h1 className='text-[#101F4C]'>Project Details</h1>
     </div>
-    <div className=' text-[#F1742E] cursor-pointer'>
+    <div className=' text-[#F1742E] cursor-pointer' onClick={()=>handleEditOpen()}>
       <p>Edit Details</p>
     </div>
    </div>
-   {/* <div className='flex border-2 border-gray-300 mx-4 rounded-md'>
-    <div className='w-1/2'>
-kjmklmj
-    </div>
-    <div className=''></div>
-    <div className='w-1/2'>
-,lkrml
-    </div>
-   </div> */}
+
        <div className='grid grid-cols-2 divide-x-2 border-2 border-gray-300 mx-4 rounded-md'>
         <div className='grid grid-rows-3'>
             <div className=' border-b border-black mx-4 py-1'>
@@ -123,6 +124,11 @@ kjmklmj
                 </div>
             </div>
         </div>
+        {openProjectEditOpen&&
+      <CustomDrawer>
+        <EditProject handleEditClose={handleEditClose}></EditProject>
+      </CustomDrawer>
+      }
        </div>
    
 
