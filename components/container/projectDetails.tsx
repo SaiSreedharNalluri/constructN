@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { IProjects } from "../../models/IProjects";
-import Image from "next/image";
 import Moment from "moment";
-import edit from "../../public/divami_icons/edit.svg";
-import deleteIcon from "../../public/divami_icons/delete.svg";
 import { Map, Marker } from "react-map-gl";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { IUser } from "../../models/IUser";
 import EditProject from "../divami_components/edit-project/EditProject";
 import CustomDrawer from "../divami_components/custom-drawer/custom-drawer";
-import { getProjectDetails, updateProjectInfo } from "../../services/project";
+import {
+  getProjectDetails,
+  updateProjectCover,
+  updateProjectInfo,
+} from "../../services/project";
 import { toast } from "react-toastify";
+import ChangeIcon from "./changeIcon";
 
 const ProjectDetails: React.FC = () => {
   let [projectData, setProjectData] = useState<IProjects>();
@@ -80,9 +82,32 @@ const ProjectDetails: React.FC = () => {
         }
       });
   };
+  const handleImageUPload = (e: any) => {
+    const formData = new FormData();
+    formData.append("file", e.file);
+    updateProjectCover(formData, router.query.projectId as string)
+      .then((response) => {
+        if (response?.success === true) {
+          toast.success("Project cover photo updated sucessfully");
+          const fileInput = document.getElementById(
+            "file-upload"
+          ) as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = "";
+          }
+
+          setProjectData(response.result);
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
   return (
     <div>
-      {projectData && (
+      {projectData ? (
         <div>
           <div className="flex justify-between px-4 py-4">
             <div>
@@ -107,16 +132,21 @@ const ProjectDetails: React.FC = () => {
                   src={projectData?.coverPhoto}
                 />
                 <div className="flex  justify-end">
-                  <Image src={edit} alt="" className="h-4 w-4"></Image>
-                  <Image src={deleteIcon} alt="" className="h-4 w-4"></Image>
+                  <ChangeIcon handleImageUPload={handleImageUPload} />
                 </div>
               </div>
               <div className=" border-b border-[#F1742E]">
-                <div className="grid grid-cols-3  px-6  py-4">
+                <div className="grid grid-cols-4  px-6  py-4">
                   <div>
                     <p className="text-[#101F4C]">{projectData?.name}</p>
                     <label className="  text-sm text-[#787878]">
                       Project Name
+                    </label>
+                  </div>
+                  <div>
+                    <p className="text-[#101F4C]">{projectData?.description}</p>
+                    <label className="  text-sm text-[#787878]">
+                      Project Description
                     </label>
                   </div>
                   <div>
@@ -192,6 +222,17 @@ const ProjectDetails: React.FC = () => {
               ></EditProject>
             </CustomDrawer>
           )}
+        </div>
+      ) : (
+        <div className="flex justify-center items-center h-screen w-screen">
+          <div
+            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+            role="status"
+          >
+            <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+              Loading...
+            </span>
+          </div>
         </div>
       )}
     </div>
