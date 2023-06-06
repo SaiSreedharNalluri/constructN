@@ -133,7 +133,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         router.push(`/projects/${router.query.projectId as string}/lineChart`);
         break;
       case "settings":
-        router.push(`/projects/${router.query.projectId as string}/settings`);
+        router.push(`/projects/${router.query.projectId as string}/settings/newSettings`);
         break;
       case "tasks":
         router.push(`/projects/${router.query.projectId as string}/tasks`);
