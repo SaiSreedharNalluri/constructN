@@ -18,6 +18,10 @@ const nextConfig = {
       "constructn-projects-us.s3.us-west-2.amazonaws.com",
       "constructn-attachments-us.s3.us-west-2.amazonaws.com",
       "constructnai.freshdesk.com",
+      "constructncorp.freshchat.com",
+      "apps.apple.com",
+      "ajax.googleapis.com",
+
     ],
   },
   redirects: async () => {
