@@ -28,7 +28,7 @@ const ChangeIcon: React.FC<IProps> = ({ handleImageUPload }) => {
         {({ values, setFieldValue }) => (
           <Form>
             <div className="flex w-full mt-2">
-              <div className="w-1/2">
+              <div className="w-full">
                 <input
                   id="file-upload"
                   type="file"

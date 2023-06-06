@@ -131,12 +131,12 @@ const ProjectDetails: React.FC = () => {
                   height={1080}
                   src={projectData?.coverPhoto}
                 />
-                <div className="flex  justify-end">
+                <div>
                   <ChangeIcon handleImageUPload={handleImageUPload} />
                 </div>
               </div>
               <div className=" border-b border-[#F1742E]">
-                <div className="grid grid-cols-4  px-6  py-4">
+                <div className="grid grid-cols-3  px-6  py-4">
                   <div>
                     <p className="text-[#101F4C]">{projectData?.name}</p>
                     <label className="  text-sm text-[#787878]">
@@ -144,19 +144,13 @@ const ProjectDetails: React.FC = () => {
                     </label>
                   </div>
                   <div>
-                    <p className="text-[#101F4C]">{projectData?.description}</p>
-                    <label className="  text-sm text-[#787878]">
-                      Project Description
-                    </label>
-                  </div>
-                  <div>
                     <p className="text-[#101F4C]">{projectData?.type}</p>
                     <label className=" text-[#787878] text-sm">
                       Project Type
-                    </label>{" "}
+                    </label>
                   </div>
-                  <div className="text-[#101F4C]">
-                    <p>{user?.fullName}</p>
+                  <div className=" text-[#101F4C]">
+                    <p className="">{user?.fullName}</p>
                     <label className="  text-sm text-[#787878]">
                       Project Owner
                     </label>
@@ -178,6 +172,12 @@ const ProjectDetails: React.FC = () => {
                   </div>
                 </div>
               </div>
+              <div className="px-4">
+                    <p className="text-[#101F4C]">{projectData?.description}</p>
+                    <label className="  text-sm text-[#787878]">
+                      Project Description
+                    </label>
+                  </div>
             </div>
             <div className=" grid grid-rows-3">
               <div className="px-4 py-4">
