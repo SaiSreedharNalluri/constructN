@@ -36,11 +36,6 @@ export const EDIT_PROJECT_FORM_CONFIG = [
     isReadOnly: false,
   },
   {
-    id: "location",
-    formLabel: "Location",
-    className: "text-black",
-  },
-  {
     id: "utm",
     type: "textfield",
     defaultValue: "",
@@ -71,5 +66,3 @@ export const EDIT_PROJECT_FORM_CONFIG = [
     isReadOnly: false,
   },
 ];
-
-

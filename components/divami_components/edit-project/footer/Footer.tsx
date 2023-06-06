@@ -8,14 +8,13 @@ const ButtonsContainer = styled(Box)({
   justifyContent: "space-between",
   alignItems: "center",
 });
-const Footer = ({ formHandler,  canBeDisabled ,handleEditClose}: any) => {
-  console.log("customDisable", canBeDisabled);
+const Footer = ({ formHandler, canBeDisabled, handleEditClose }: any) => {
   return (
     <ButtonsContainer>
       <CustomButton type="outlined" label="Cancel" formHandler={formHandler} />
       <CustomButton
         type={canBeDisabled ? "disabled" : "contained"}
-        label={ "Update"}
+        label={"Update"}
         formHandler={formHandler}
         setButtonClicked={handleEditClose}
         disabledButton={canBeDisabled}

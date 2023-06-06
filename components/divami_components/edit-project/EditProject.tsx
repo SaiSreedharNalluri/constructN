@@ -1,4 +1,4 @@
-import React, {useState } from "react";
+import React, { useState } from "react";
 import Body from "./body/Body";
 import Footer from "./footer/Footer";
 import Header from "./header/Header";
@@ -10,7 +10,9 @@ const StyledDiv = styled("span")({
   height: "calc(100vh - 60px)",
 });
 const EditProject = ({
-  handleEditClose
+  projectData,
+  handleEditClose,
+  handleUpdateProject,
 }: any) => {
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);
@@ -19,9 +21,13 @@ const EditProject = ({
   const formHandler = (event: any) => {
     if (event === "Cancel") {
       setshowPopUp(true);
-    } 
+    } else {
+      setValidate(true);
+      handleUpdateProject(formData);
+    }
   };
   const handleFormData = (data: any) => {
+    console.log("data123", data);
     setFormData(data);
   };
   return (
@@ -33,21 +39,18 @@ const EditProject = ({
       />
       <Body
         handleFormData={handleFormData}
+        editData={projectData}
         validate={validate}
         setIsValidate={setValidate}
         setCanBeDisabled={setCanBeDisabled}
       />
-      <Footer
-        formHandler={formHandler}
-        canBeDisabled={canBeDisabled}
-      />
+      <Footer formHandler={formHandler} canBeDisabled={canBeDisabled} />
       {showPopUp && (
         <PopupComponent
           open={showPopUp}
           setShowPopUp={setshowPopUp}
           modalTitle={"Cancel"}
-          modalmessage={
-             `Are you sure you want to cancel edit project? `}
+          modalmessage={`Are you sure you want to cancel edit project? `}
           primaryButtonLabel={"Yes"}
           SecondaryButtonlabel={"No"}
           callBackvalue={handleEditClose}
