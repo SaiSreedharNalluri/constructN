@@ -18,6 +18,10 @@ const StyledSelect = styled(Select)((props: any) => ({
     border: 0,
     offset: 0,
   },
+  // "& .MuiInputBase-root": {
+  //   border: "none !important",
+  //   background: "red",
+  // },
 })) as any;
 
 const StyledMenuItem = styled(MenuItem)({
@@ -79,11 +83,22 @@ const CustomSelect = (props: any) => {
     <CustomSelectContainer>
       <StyledSelect
         value={val}
-        onChange={handlechange}
+        onChange={props.onChangeHandler ? props.onChangeHandler : handlechange}
         id={id}
         readOnly={isReadOnly}
         className={` ${config?.isError ? "formErrorField" : ""} formField`}
         width={props.width || ""}
+        // sx={{
+        //   boxShadow: "none",
+        //   ".MuiOutlinedInput-notchedOutline": { border: 0 },
+        //   "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
+        //     border: 0,
+        //   },
+        //   "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+        //     {
+        //       border: 0,
+        //     },
+        // }}
       >
         {config.options?.length &&
           config.options.map((item: any, index: any) => (

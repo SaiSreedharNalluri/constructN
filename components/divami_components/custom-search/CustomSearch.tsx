@@ -178,6 +178,11 @@ const CustomSearch = (props: any) => {
                 }
               />
             )}
+            placeholder={
+              props.placeholder
+                ? props.placeholder
+                : "Enter Name or Teams here ..."
+            }
             onChange={(e, value) => handleSearchResult(e, value, data.id)}
           />
           <ValueContainer>
@@ -228,7 +233,11 @@ const CustomSearch = (props: any) => {
                   paddingRight: "8px !important",
                 },
               }}
-              placeholder="Enter Name or Teams here ..."
+              placeholder={
+                props.placeholder
+                  ? props.placeholder
+                  : "Enter Name or Teams here ..."
+              }
               {...params}
               // label={data.label}
               InputProps={{
@@ -238,6 +247,12 @@ const CustomSearch = (props: any) => {
                     <Image width={15} height={15} src={Search} alt="Search" />
                   </InputAdornment>
                 ),
+              }}
+              onKeyDown={(e: any) => {
+                if (e.keyCode === 13 && props.handleEnterResult) {
+                  console.log("ereresrs", e, e.target.value);
+                  props.handleEnterResult(e.target.value);
+                }
               }}
             />
           )}

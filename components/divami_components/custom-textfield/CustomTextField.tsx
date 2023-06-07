@@ -39,6 +39,7 @@ interface PropTypes {
   showErrorMsg: boolean;
   width?: string;
   onFocus?: any;
+  callback?: any;
 }
 
 const StyledTextField = styled(TextField)((props: any) => ({
@@ -127,7 +128,6 @@ export const CustomTextField = (props: any) => {
         id={id}
         className={` ${isError ? "formErrorField" : ""} formField`}
         //  type={showPassword ? "text" : "password"}
-
         type={
           type === "password"
             ? showPassword
@@ -151,6 +151,9 @@ export const CustomTextField = (props: any) => {
         }}
         onChange={onChange}
         loginField={loginField}
+        onKeyDown={(e) => {
+          if (e.keyCode === 13 && props.callback) props.callback();
+        }}
         // variant="outlined"
         // {...rest}
         InputProps={

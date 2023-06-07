@@ -73,3 +73,34 @@ export const Divider = styled("div")((props: any) => ({
   height: "285px",
   background: "#888888",
 })) as any;
+
+export const AddUserEmailContainer = styled("div")((props: any) => ({
+  width: props?.overlay ? "535px" : "100%",
+  marginTop: props.overlay ? "30px" : "",
+})) as any;
+
+export const BulkUserUploadContainer = styled("div")({});
+
+export const ClickHereText = styled("div")({
+  fontSize: "14px",
+  color: "#787878",
+  fontWeight: 400,
+});
+
+export const DownloadText = styled("div")({
+  fontSize: "14px",
+  color: "#F1742E",
+  fontWeight: 400,
+});
+
+export const OrText = styled("div")({});
+
+export const BulkImage = styled(Image)({
+  width: "68px",
+  height: "68px",
+});
+
+export const BulkUserText = styled("div")({
+  fontSize: "14px",
+  color: "#78787",
+});

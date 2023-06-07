@@ -276,7 +276,6 @@ const FormWrapper = (props: any) => {
       (val: any) => !val.defaultValue && val.isReq
     );
 
-    setCanBeDisabled(isEmptyField);
     if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
   }
   function isValidEmail(email: any, id: any) {
@@ -455,6 +454,7 @@ const FormWrapper = (props: any) => {
               id={data.id}
               variant="outlined"
               placeholder={data?.placeholder}
+              callback={data.callback ? data.callback : () => {}}
               onChange={(e: any) => {
                 handleTextChange(e, data.id, data);
 

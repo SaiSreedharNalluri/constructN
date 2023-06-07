@@ -46,6 +46,8 @@ export interface PopupComponentProps {
   callBackvalue?: any;
   setShowPopUp: (value: boolean) => void;
   open: boolean;
+  modalContent?: any;
+  hideButtons?: boolean;
 }
 function BootstrapDialogTitle(props: DialogTitleProps) {
   const { children, onClose, ...other } = props;
@@ -93,11 +95,13 @@ const PopupComponent = (props: PopupComponentProps) => {
   const {
     modalTitle,
     modalmessage,
+    modalContent,
     primaryButtonLabel,
     SecondaryButtonlabel,
     callBackvalue,
     setShowPopUp,
     open,
+    hideButtons = false,
   } = props;
 
   const handleClose = () => {
@@ -115,49 +119,57 @@ const PopupComponent = (props: PopupComponentProps) => {
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          <TextComponent>{modalTitle}</TextComponent>
+          {modalTitle}
         </BootstrapDialogTitle>
         <DialogContent
           dividers
           style={{ borderBottom: 0, padding: "30px", paddingBottom: "22px" }}
         >
-          <TextComponent>{modalmessage}</TextComponent>
+          {modalContent ? (
+            modalContent
+          ) : (
+            <TextComponent>{modalmessage}</TextComponent>
+          )}
         </DialogContent>
         <DialogActions sx={{ padding: 0 }}>
-          <ButtonDiv>
-            <Button
-              variant="text"
-              autoFocus
-              onClick={handleClose}
-              style={{
-                color: "#F1742E",
-                width: "180px",
-                height: "40px",
-                textTransform: "none",
-                marginBottom: "22px",
-                fontFamily: "Open Sans",
-              }}
-            >
-              {SecondaryButtonlabel}
-            </Button>
+          {!hideButtons ? (
+            <ButtonDiv>
+              <Button
+                variant="text"
+                autoFocus
+                onClick={handleClose}
+                style={{
+                  color: "#F1742E",
+                  width: "180px",
+                  height: "40px",
+                  textTransform: "none",
+                  marginBottom: "22px",
+                  fontFamily: "Open Sans",
+                }}
+              >
+                {SecondaryButtonlabel}
+              </Button>
 
-            <Button
-              variant="contained"
-              onClick={() => callBackvalue("Delete")}
-              style={{
-                backgroundColor: "#F1742E",
-                width: "180px",
-                height: "40px",
-                marginBottom: "22px",
-                marginRight: "22px",
-                textTransform: "none",
-                fontFamily: "Open Sans",
-                fontSize: "16px",
-              }}
-            >
-              {primaryButtonLabel}
-            </Button>
-          </ButtonDiv>
+              <Button
+                variant="contained"
+                onClick={() => callBackvalue("Delete")}
+                style={{
+                  backgroundColor: "#F1742E",
+                  width: "180px",
+                  height: "40px",
+                  marginBottom: "22px",
+                  marginRight: "22px",
+                  textTransform: "none",
+                  fontFamily: "Open Sans",
+                  fontSize: "16px",
+                }}
+              >
+                {primaryButtonLabel}
+              </Button>
+            </ButtonDiv>
+          ) : (
+            <></>
+          )}
         </DialogActions>
       </BootstrapDialog>
     </div>

@@ -363,13 +363,6 @@ const Issues = ({
       )}
       {openCreateIssue && (
         <CustomDrawer>
-          {console.log(
-            myProject,
-            currentStructure,
-            contextInfo,
-            issueStatusList,
-            "siva"
-          )}
           <CreateIssue
             handleCreateTask={handleCreateTask}
             currentProject={myProject}
