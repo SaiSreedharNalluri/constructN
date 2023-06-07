@@ -1,0 +1,17 @@
+{
+   "webcredentials": {
+       "apps": ["D37Z3463DJ.ai.constructn.platform"]
+   },
+   "applinks":
+   {
+      "apps": [],
+      "details": [
+         {
+            "appID": "D37Z3463DJ.ai.constructn.platform",
+            "paths": [
+                 "*" 
+            ]
+         }
+        ]
+   }
+}
