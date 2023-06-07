@@ -122,7 +122,7 @@ export default function Document() {
           strategy="beforeInteractive"
         />
         <Script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"/>
-        <Script type="text/javascript">
+        <Script id="deeplink_ios" strategy="beforeInteractive">
           {`window.onload = function() {
         var userAgent = navigator.userAgent || navigator.vendor || window.opera;
         var g = document.getElementById("google_play");
