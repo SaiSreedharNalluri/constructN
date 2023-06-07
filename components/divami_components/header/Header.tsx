@@ -43,12 +43,8 @@ import {
   getAllUserNotifications,
   updateUserNotifications,
 } from "../../../services/userNotifications";
-
-interface IProps {
-  // showDesignRealitySwitch?:boolean;
-  // isDesignView?:boolean;
-}
-
+import CustomDrawer from "../custom-drawer/custom-drawer";
+import Notifications from "../notifications/Notifications";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -81,7 +77,7 @@ const Header: React.FC<any> = ({
   const rightOverlayRef: any = useRef();
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
-  const [open, setOpen] = useState(false);
+  const [openNotification, setOpenNotication] = useState(false);
   const [notifications, setNotifications] = useState<IUserNotification[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalNotifications, setTotalNotifications] = useState<number>(0);
@@ -115,18 +111,7 @@ const Header: React.FC<any> = ({
     //   };
   }, [viewMode]);
 
-  useEffect(() => {
-    const closePopup = (e: any) => {
-      if (!headerRef?.current?.contains(e.target)) {
-        setLoading(false);
-        setOpen(false);
-      }
-    };
-    document.addEventListener("click", closePopup);
-    return () => {
-      document.removeEventListener("click", closePopup);
-    };
-  }, []);
+ 
   const userLogOut = () => {
     removeCookies("user");
     // router.push("/login");
@@ -174,8 +159,22 @@ const Header: React.FC<any> = ({
 
     toolClicked(toolInstance);
   };
-  const getUserNotifications = (condition = 1) => {
-    getAllUserNotifications(condition, currentPage, "")
+
+  const [defaultValue, setDefaultValue] = useState(2);
+  const [filterValue, setFilterValue] = useState("All");
+  useEffect(() => {
+    if (router.isReady) {
+      getUserNotifications();
+    }
+  }, []);
+  const getUserNotifications = (
+    condition = defaultValue,
+    eventEmitter = filterValue
+  ) => {
+    if (eventEmitter === "All") {
+      eventEmitter = "";
+    }
+    getAllUserNotifications(condition, currentPage, eventEmitter)
       .then((response) => {
         if (notifications.length > 0 && currentPage > 1) {
           setNotifications(notifications.concat(response.result));
@@ -187,23 +186,41 @@ const Header: React.FC<any> = ({
       })
       .catch((error) => {});
   };
+
+  const handleOptionChange = (event: any) => {
+    setNotifications(notifications.splice(0, notifications.length));
+    getUserNotifications(event.target.value);
+    setDefaultValue(event.target.value);
+    setCurrentPage(1);
+    setFilterValue("All");
+  };
   const loadMoreData = () => {
     if (currentPage < totalNotifications / 10) {
       setCurrentPage(currentPage + 1);
     }
   };
   useEffect(() => {
-    getUserNotifications();
-  }, [currentPage]);
+    getUserNotifications(defaultValue);
+  }, [currentPage, defaultValue]);
   const updateNotifications = (notificationId: string) => {
     updateUserNotifications([notificationId]).then((response) => {
       if (response.success === true) {
         setNotifications(notifications.splice(0, notifications.length));
-        getUserNotifications();
+        getUserNotifications(defaultValue);
         setCurrentPage(1);
       }
     });
   };
+  const filterNotificationData = (filterData: any) => {
+    setFilterValue(filterData);
+    setCurrentPage(1);
+  };
+  useEffect(() => {
+    getUserNotifications(defaultValue, filterValue);
+  }, [filterValue]);
+  const handleNotificationClose=()=>{
+    setOpenNotication(false)
+  }
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -316,34 +333,31 @@ const Header: React.FC<any> = ({
               src={Notification}
               alt="Profile Image"
               onClick={() => {
-                if (open) {
-                  setOpen(false);
+                if (openNotification) {
+                  setOpenNotication(false)
                 } else {
-                  setOpen(true);
+                  setOpenNotication(true);
                 }
               }}
             />
-            {open && (
-              <div className="absolute top-10 right-0 z-50 bg-gray-50 rounded-lg shadow border overflow-y-auto h-93">
-                <div className="w-full h-full mt-2 mr-2 mb-2 font-medium overflow-auto">
-                  <div className="flex">
-                    <h1 className="ml-2">Notifications:-</h1>
-                    <p
-                      className="font-bold text-blue-700"
-                      onClick={() => {
-                        router.push("/user-account/user-notifications");
-                      }}
-                    >
-                      GoToNotificatrion
-                    </p>
-                  </div>
-                  <UserNotification
-                    notifications={notifications}
+            
+            {openNotification&& (
+              <div>
+                 <CustomDrawer>
+             <Notifications  notifications={notifications}
                     loadMoreData={loadMoreData}
-                    updateNotifications={updateNotifications}
-                  />
-                </div>
+                    updateNotifications={updateNotifications} filterValue={filterValue} filterNotificationData={filterNotificationData} handleNotificationClose={handleNotificationClose}>
+                </Notifications> 
+             <div>
+                   
+             </div>
+             </CustomDrawer>
+           
+        
               </div>
+             
+      
+             
             )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>

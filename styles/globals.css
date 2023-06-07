@@ -552,7 +552,9 @@ td {
 .calc-height-full {
   height: 100vh;
 }
-
+.calc-h110 {
+  height: calc(100vh - 112px);
+}
 .margin-right-55 {
   margin-right: 55px;
 }
