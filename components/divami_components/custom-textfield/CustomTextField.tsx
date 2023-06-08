@@ -135,7 +135,7 @@ export const CustomTextField = (props: any) => {
             ? type
             : ""
         }
-        placeholder={props.loginField ? placeholder : ""}
+        placeholder={props.loginField || placeholder ? placeholder : ""}
         defaultValue={defaultValue}
         value={defaultValue}
         data-testid={dataTestId}

@@ -18,7 +18,6 @@ export const CustomMenu = ({
 }: any) => {
   const [showMoreActions, setShowMoreActions] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
   const handleClose = () => {
     setShowMoreActions(false);
     setAnchorEl(null);
@@ -83,7 +82,12 @@ export const CustomMenu = ({
             <StyledMenu
               className="custom-styled-menu"
               key={option.label}
-              onClick={() => option.onClick()}
+              onClick={() => {
+                if (option.onClick) option.onClick();
+                else if (option.action) {
+                  option.action();
+                }
+              }}
               data-testid="sort-menu-item"
             >
               {option.label}

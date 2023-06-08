@@ -251,6 +251,7 @@ export const OtherUsersCount = styled("div")({
 export const UsersInfo = styled("div")({
   display: "flex",
   alignItems: "center",
+  cursor: "pointer",
 });
 
 export const UserPic = styled(Image)({

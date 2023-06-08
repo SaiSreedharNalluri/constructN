@@ -6,7 +6,7 @@ const StyledSelect = styled(Select)((props: any) => ({
   width: props.width ? props.width : "100%",
   height: "40px",
   outline: "0px",
-  border: "1px solid #36415d",
+  border: props.hideBorder ? "none !important" : "1px solid #36415d",
 
   borderRadius: "4px",
   fontFamily: "Open Sans",
@@ -17,6 +17,12 @@ const StyledSelect = styled(Select)((props: any) => ({
   "& .MuiOutlinedInput-notchedOutline": {
     border: 0,
     offset: 0,
+  },
+  "& .MuiSelect-icon": {
+    color: "#101F4C",
+  },
+  "& .Mui-focused": {
+    border: "none",
   },
   // "& .MuiInputBase-root": {
   //   border: "none !important",
@@ -47,7 +53,14 @@ export const ErrorField = styled("div")({
 });
 
 const CustomSelect = (props: any) => {
-  const { config, defaultValue, id, setFormConfig, isReadOnly = false } = props;
+  const {
+    config,
+    defaultValue,
+    id,
+    setFormConfig,
+    isReadOnly = false,
+    hideBorder = false,
+  } = props;
 
   const [val, setVal] = useState(config?.defaultValue);
 
@@ -99,6 +112,7 @@ const CustomSelect = (props: any) => {
         //       border: 0,
         //     },
         // }}
+        hideBorder={hideBorder}
       >
         {config.options?.length &&
           config.options.map((item: any, index: any) => (

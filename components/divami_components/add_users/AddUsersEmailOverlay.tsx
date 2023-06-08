@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import removeIcon from "../../../public/divami_icons/RemoveIcon.svg";
 import {
   addUserRoles,
+  checkUserRegistered,
   getProjectUsers,
   getUserRoles,
 } from "../../../services/project";
@@ -40,6 +41,8 @@ import {
 import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 import { render } from "@testing-library/react";
 import CustomSelect from "../custom-select/CustomSelect";
+import { CustomTextField } from "../custom-textfield/CustomTextField";
+import ProjectInfo from "../../container/projectInfo";
 
 export const AddUsersEmailOverlay = ({
   form,
@@ -47,13 +50,17 @@ export const AddUsersEmailOverlay = ({
   responseData,
   options,
   roles,
+  selectedProjectId,
 }: any) => {
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
   const [addedUsers, setAddedUsers] = useState<any>([]);
+  const [searchVal, setSearchVal] = useState("");
 
   useEffect(() => {
-    setAddedUsers([...addedUsers, form]);
+    if (/\S+@\S+\.\S+/.test(form.email)) checkRegisterUser(form.email);
+
+    // setAddedUsers([...addedUsers, form]);
   }, form);
 
   const columns = [
@@ -70,7 +77,7 @@ export const AddUsersEmailOverlay = ({
       //     color: "#101F4C",
       //   },
       sorting: false,
-      cellStyle: { width: "60%" },
+      cellStyle: { width: "70%" },
       render: (rowData: any) => {
         return (
           <UserEmailText>
@@ -103,6 +110,8 @@ export const AddUsersEmailOverlay = ({
                 ? roles[0].value
                 : "",
             }}
+            hideBorder
+            width={"unset"}
             id={rowData.id}
             setFormConfig={() => {}}
             sx={{ minWidth: 120 }}
@@ -128,7 +137,7 @@ export const AddUsersEmailOverlay = ({
           />
         );
       },
-      cellStyle: { width: "30%" },
+      cellStyle: { width: "20%" },
     },
     {
       title: "",
@@ -150,7 +159,7 @@ export const AddUsersEmailOverlay = ({
             alt={"remove"}
             onClick={() => {
               setAddedUsers(
-                addedUsers.filter((each: any) => each._id !== rowData._id)
+                addedUsers.filter((each: any) => each.email !== rowData.email)
               );
             }}
           />
@@ -160,54 +169,16 @@ export const AddUsersEmailOverlay = ({
     },
   ];
 
-  useEffect(() => {
-    if (router.isReady && router.query.projectId) {
-      //   getProjectUsers(router.query.projectId as string).then(
-      //     (response: any) => {
-      //       if (response.success === true) {
-      //         let rolesArr: string[] = [];
-      //         setResponseData(
-      //           response.result.map((each: any) => {
-      //             return {
-      //               ...each,
-      //               ...each.user,
-      //             };
-      //           })
-      //         );
-      //         const userData = response.result.map((each: any) => {
-      //           return {
-      //             ...each,
-      //             label: each.user.email,
-      //             id: each.user._id,
-      //           };
-      //         });
-      //         setOptions({
-      //           listOfEntries: userData,
-      //         });
-      //       }
-      //     }
-      //   );
-      //   getUserRoles().then((res: any) => {
-      //     const rolesData = res.result.map((each: any) => {
-      //       return {
-      //         label: each,
-      //         value: each,
-      //       };
-      //     });
-      //     setRoles(rolesData);
-      //   });
-    }
-  }, [router.isReady, router.query.projectId]);
-
   const onAddUser = () => {
     const projectInfo = {
       users: addedUsers.map((each: any) => {
         return { role: each.role, email: each.email };
       }),
     };
-    addUserRoles(projectInfo, router?.query?.projectId)
+    addUserRoles(projectInfo, selectedProjectId)
       .then((res: any) => {
         toast.success("User Added successfully");
+        setOpenDrawer(false);
       })
       .catch((err) => {
         toast.error(err.message);
@@ -216,6 +187,35 @@ export const AddUsersEmailOverlay = ({
 
   const onClickBack = () => {
     setOpenDrawer(false);
+  };
+
+  const checkRegisterUser = (val: string) => {
+    checkUserRegistered({ email: val })
+      .then((res: any) => {
+        if (!res.result?.isRegistered) {
+          setAddedUsers([
+            {
+              email: val,
+              role: roles[0].value,
+              isNewUser: true,
+            },
+            ...addedUsers,
+          ]);
+        } else {
+          setAddedUsers([
+            {
+              email: val,
+              role: roles[0].value,
+              isNewUser: false,
+            },
+            ...addedUsers,
+          ]);
+        }
+        setSearchVal("");
+      })
+      .catch((err) => {
+        toast.error(err.message);
+      });
   };
 
   return (
@@ -239,7 +239,29 @@ export const AddUsersEmailOverlay = ({
           {/* <SearchAreaContainer marginRight> */}
 
           <AddUserEmailContainer overlay>
-            <CustomSearch
+            <CustomTextField
+              id={"search"}
+              variant="outlined"
+              placeholder={"Search User By Email ID"}
+              onChange={(e: any) => {
+                setSearchVal(e.target?.value);
+              }}
+              onBlur={(e: any) => {
+                setSearchVal(e.target?.value);
+              }}
+              defaultValue={searchVal}
+              type={"email"}
+              callback={() => {
+                if (
+                  /\S+@\S+\.\S+/.test(searchVal) &&
+                  !addedUsers.some((iter: any) => iter.email == searchVal)
+                ) {
+                  checkRegisterUser(searchVal);
+                }
+              }}
+              className={undefined}
+            />
+            {/* <CustomSearch
               data={options}
               handleSearchResult={(e: any, value: any, id: any) => {
                 if (value?.id) {
@@ -278,7 +300,7 @@ export const AddUsersEmailOverlay = ({
                   }
                 }
               }}
-            />
+            /> */}
           </AddUserEmailContainer>
 
           {/* </SearchAreaContainer> */}

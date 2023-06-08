@@ -21,6 +21,7 @@ import {
   HeaderActions,
   HeaderImage,
   StyledTable,
+  SortIconStyled,
 } from "../project-users-list/ProjectUsersListStyles";
 import MoreActions from "../../../public/divami_icons/MoreActions.svg";
 import Image from "next/image";
@@ -43,8 +44,10 @@ import { CustomMenu } from "../custom-menu/CustomMenu";
 import { LightTooltip } from "../task_list/TaskList";
 import { UsersListTooltip } from "./UsersListTooltip";
 import { UserInfoTooltip } from "./UserInfoToolTip";
+import { SortAscIcon } from "./SortAscIcon";
+import { SortDescIcon } from "./SortDescIcon";
 
-export const ProjectListFlatView = ({ projects }: any) => {
+export const ProjectListFlatView = ({ projects, projectActions }: any) => {
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
   const [sortObj, setSortObj] = useState(true);
@@ -52,6 +55,10 @@ export const ProjectListFlatView = ({ projects }: any) => {
   const [showMoreActions, setShowMoreActions] = useState<boolean>(false);
 
   const [projectsState, setProjectsState] = useState(projects);
+
+  useEffect(() => {
+    setProjectsState(projects);
+  }, [projects]);
 
   const sortBy = (a: any, b: any, field: string) => {
     if (sortObj) {
@@ -83,9 +90,7 @@ export const ProjectListFlatView = ({ projects }: any) => {
       title: "Project Name",
       field: "projectName",
       sorting: false,
-
       headerStyle: {
-        borderBottom: "1px solid #FF843F",
         fontFamily: "Open Sans",
         fontStyle: "normal",
         fontWeight: "500",
@@ -93,13 +98,13 @@ export const ProjectListFlatView = ({ projects }: any) => {
         lineHeight: "20px",
         color: "#101F4C",
       },
+      cellStyle: { width: "20%" },
     },
     {
       title: "Captures",
       field: "email",
       sorting: false,
       headerStyle: {
-        borderBottom: "1px solid #FF843F",
         fontFamily: "Open Sans",
         fontStyle: "normal",
         fontWeight: "500",
@@ -180,12 +185,12 @@ export const ProjectListFlatView = ({ projects }: any) => {
           </CapturesFieldContainer>
         );
       },
+      cellStyle: { width: "25%" },
     },
     {
       title: "Users",
       field: "numberOfUsers",
       headerStyle: {
-        borderBottom: "1px solid #FF843F",
         fontFamily: "Open Sans",
         fontStyle: "normal",
         fontWeight: "500",
@@ -193,6 +198,8 @@ export const ProjectListFlatView = ({ projects }: any) => {
         lineHeight: "20px",
         color: "#101F4C",
       },
+      cellStyle: { width: "10%" },
+
       customSort: (a: any, b: any) => sortBy(a, b, "numberOfUsers"),
       render: (rowData: any) => {
         return (
@@ -338,6 +345,8 @@ export const ProjectListFlatView = ({ projects }: any) => {
         lineHeight: "8px",
         color: "#101F4C",
       },
+      cellStyle: { width: "45%" },
+
       customSort: (a: any, b: any) => sortBy(a, b, "updatedAt"),
       render: (rowData: any) => {
         return <>{moment(rowData.updatedAt).format("DD MMM YYYY")}</>;
@@ -347,13 +356,6 @@ export const ProjectListFlatView = ({ projects }: any) => {
   const [isSearching, setIsSearching] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showMenu, setShowMenu] = useState<boolean>(false);
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    setShowMoreActions(false);
-  };
-
-  const formHandler = (event: any) => {};
 
   const rowMenuOptions = [
     {
@@ -384,12 +386,16 @@ export const ProjectListFlatView = ({ projects }: any) => {
   ];
 
   return (
-    <ProjectUsersListContainer>
+    <ProjectUsersListContainer noTopPadding>
       <ThemeProvider theme={defaultMaterialTheme}>
         <StyledTable
           components={{
             Action: (props) => (
-              <CustomMenu imageSrc={MoreActions} menuOptions={rowMenuOptions} />
+              <CustomMenu
+                imageSrc={MoreActions}
+                menuOptions={projectActions}
+                // data={...props}
+              />
             ),
             Container: (props) => <Paper {...props} elevation={0} />,
           }}
@@ -406,7 +412,7 @@ export const ProjectListFlatView = ({ projects }: any) => {
           // icons={{
           //   SortArrow: forwardRef((props, ref) => {
           //     return sortObj ? (
-          //       <SortAscIcon {...props} ref={ref} />
+          //       <SortIconStyled {...props} ref={ref} />
           //     ) : (
           //       <SortDescIcon
           //         {...props}
@@ -439,8 +445,14 @@ export const ProjectListFlatView = ({ projects }: any) => {
             headerStyle: {
               padding: "6px 16px",
               fontFamily: "Open Sans",
+              borderBottom: "1px solid #FF843F",
             },
             actionsColumnIndex: -1,
+          }}
+          localization={{
+            header: {
+              actions: " ",
+            },
           }}
         />
       </ThemeProvider>
