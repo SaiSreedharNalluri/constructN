@@ -37,6 +37,13 @@ const BootstrapDialog = styled(Dialog)(
       width: width ? width : "493px",
       height: height ? height : "",
     },
+    "&.MuiBackdrop-root": {
+      // height: calc(100% - 60px);
+      // top: auto !important;
+      width: "100% !important",
+      // right: 0 !important;
+      // left: auto !important;
+    },
   })
 ) as any;
 const ButtonDiv = styled("div")({});
@@ -168,7 +175,7 @@ const PopupComponent = (props: PopupComponentProps) => {
             <ButtonDiv>
               <Button
                 variant={paddingStyle ? "outlined" : "text"}
-                autoFocus
+                // autoFocus
                 onClick={handleClose}
                 style={{
                   color: "#F1742E",
@@ -177,7 +184,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                   textTransform: "none",
                   marginBottom: "22px",
                   fontFamily: "Open Sans",
-                  border: paddingStyle ? "1px solid #F1742E" : "",
+                  border: paddingStyle ? "1px solid #F1742E" : "0px",
                 }}
               >
                 {SecondaryButtonlabel}

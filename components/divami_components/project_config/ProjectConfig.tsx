@@ -128,15 +128,11 @@ const ProjectConfig = ({
       fetchPriorityList();
     }
   }, [projectId, selectedOption]);
-  console.log("formValues1", formValues);
+
   useEffect(() => {
     if (priorityArr) {
       console.log("priorit", priorityArr);
     }
-  }, []);
-
-  useEffect(() => {
-    console.log("formvalues", formValues);
   }, []);
 
   // setFormValues({ respTextFields });
@@ -297,7 +293,7 @@ const ProjectConfig = ({
 
                               {hoveredIndex === index && (
                                 <>
-                                  {formValues.priority.length > 1 && (
+                                  {formValues.priority.length > 1 ? (
                                     <RemoveButton
                                       onClick={() => handleDeleteField(index)}
                                     >
@@ -306,6 +302,8 @@ const ProjectConfig = ({
                                         alt="remove"
                                       />
                                     </RemoveButton>
+                                  ) : (
+                                    <div style={{ width: "24px" }}></div>
                                   )}
 
                                   <AddButton
@@ -318,6 +316,11 @@ const ProjectConfig = ({
 
                               {/* </AddButtonContainer> */}
                             </TextFieldContainer>
+                            {index == formValues?.priority?.length - 1 ? (
+                              <div
+                                style={{ height: "40px", width: "100%" }}
+                              ></div>
+                            ) : null}
                           </div>
                         );
                       }

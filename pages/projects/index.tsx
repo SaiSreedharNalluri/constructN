@@ -64,7 +64,7 @@ const Index: React.FC<any> = () => {
   const [searchTableData, setSearchTableData] = useState<any>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isGridView, setIsGridView] = useState(true);
-  const [selectedOption, setSelectedOption] = useState("Issue Priority");
+  const [selectedOption, setSelectedOption] = useState("issuePriority");
 
   const [formValues, setFormValues]: any = useState({ priority: [] });
   const [showPopUp, setshowPopUp] = useState(false);

@@ -67,10 +67,21 @@ const StyledTextField = styled(TextField)((props: any) => ({
     backgroundColor: props?.backgroundColor ? props.backgroundColor : "",
   },
 
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "0",
+    padding: "0",
+    fontFamily: "Open Sans",
+    fontStyle: "normal",
+    fontWeight: 400,
+    fontSize: 14,
+    color: "#101F4B",
+  },
+
   "& .MuiOutlinedInput-notchedOutline": {
-    border: props?.hoveredIndex
-      ? "1px solid #F1742E !important"
-      : "1px solid #36415d",
+    border:
+      props?.hoveredIndex >= 0
+        ? "1px solid #F1742E !important"
+        : "1px solid #36415d",
   },
 
   "&:focus-within .MuiOutlinedInput-notchedOutline": {
