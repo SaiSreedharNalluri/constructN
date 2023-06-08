@@ -138,7 +138,7 @@ const Body = ({
                               onClick={() => {
                                 updateNotifications(notificationObj.id);
                               }}
-                              className="py-4 px-4  border-gray-400 bg-gray-500 border-t mx-4 "
+                              className="py-4 px-4  border-gray-400 bg-gray-100 border-t mx-4 "
 
                             >
                               <div className="flex">
