@@ -39,6 +39,7 @@ interface PropTypes {
   showErrorMsg: boolean;
   width?: string;
   onFocus?: any;
+  backgroundColor?: any;
 }
 
 const StyledTextField = styled(TextField)((props: any) => ({
@@ -54,9 +55,12 @@ const StyledTextField = styled(TextField)((props: any) => ({
   fontWeight: 400,
   fontSize: 14,
   color: "#101F4B",
+  marginTop: props.marginTop ? props.marginTop : "",
+  marginLeft: props.marginLeft ? props.marginLeft : "",
 
   "& .MuiInputBase-root.MuiOutlinedInput-root": {
     height: "40px",
+    backgroundColor: props?.backgroundColor ? props.backgroundColor : "",
   },
 
   "& .MuiOutlinedInput-notchedOutline": {
@@ -105,6 +109,11 @@ export const CustomTextField = (props: any) => {
     errorMsg,
     showErrorMsg,
     onFocus,
+    width,
+    backgroundColor,
+    marginTop,
+    paddingTop,
+    marginLeft,
   } = props;
   // console.log("loginField", loginField);
 
@@ -123,6 +132,10 @@ export const CustomTextField = (props: any) => {
     <div>
       <StyledTextField
         width={props.width ? props.width : ""}
+        backgroundColor={props.backgroundColor ? props.backgroundColor : ""}
+        // paddingTop={props.marginTop ? props.marginTop : ""}
+        marginTop={props.marginTop ? props.marginTop : ""}
+        marginLeft={props.marginLeft ? props.marginLeft : ""}
         autoComplete="off"
         id={id}
         className={` ${isError ? "formErrorField" : ""} formField`}

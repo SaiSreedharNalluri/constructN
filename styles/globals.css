@@ -585,3 +585,11 @@ td {
   /* margin: 0 auto;
   position: relative; */
 }
+/* 
+.activeProjectConfig {
+  background-color: yellow;
+} */
+
+.project_config_active:first-child {
+  margin-top: none;
+}
