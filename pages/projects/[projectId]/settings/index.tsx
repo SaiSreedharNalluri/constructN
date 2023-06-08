@@ -104,9 +104,7 @@ const Editproject: React.FC = () => {
           setStructureData(response.data.result[0]);
           setSelector(response.data.result[0]._id);
         })
-        .catch((error) => {
-          console.log("error", error);
-        });
+        .catch((error) => {});
       getProjectDetails(router.query.projectId as string)
         .then((response) => {
           if (response?.data?.success === true) {

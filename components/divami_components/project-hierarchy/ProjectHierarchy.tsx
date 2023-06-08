@@ -56,14 +56,9 @@ const ProjectHierarchy = ({
   const handleExpand = () => {
     handleNodeExpand(getAllIds(treeViewData));
   };
-  console.log(expandedNodes, "fsffs");
   useEffect(() => {
-    // console.log(treeData, "Robn");
-
     setTreeViewData(treeData);
   }, [treeData.length]);
-
-  console.log("treeViewData22", treeViewData);
 
   // useEffect(() => {
   //   if (window.localStorage.getItem("nodeData") && getStructureData) {
@@ -87,7 +82,6 @@ const ProjectHierarchy = ({
   const onLabelClick = (event: any, nodes: any) => {
     {
       console.log("onclickinlable");
-
       window.localStorage.setItem("nodeData", JSON.stringify(nodes));
       getStructureData ? getStructureData(nodes) : null;
 
@@ -138,11 +132,7 @@ const ProjectHierarchy = ({
   const [searchField, setSearchField] = useState("");
   // const [filterBlock, setFilterBlock] = useState<any>(block);
 
-  console.log("searchFieldString", searchField);
-  console.log("setBlock", block);
-
   const handleSearchResult = (e: any) => {
-    console.log(e);
     let returnedTree = handleSearch(e);
     // console.log("robn", returnedTree)
     setSearch(true);
@@ -169,9 +159,6 @@ const ProjectHierarchy = ({
   useEffect(() => {
     const layersSelected = getSelectedLayers(treeViewData);
     setSelectedLayers(layersSelected);
-    console.log([...layersSelected], "selectedLayers");
-    console.log(search);
-    console.log(selectedNodes);
 
     search ? handleExpand() : null;
   }, [treeViewData]);
@@ -188,7 +175,6 @@ const ProjectHierarchy = ({
   // }, [block, searchField]);
 
   const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
-    console.log(nodeIds, "nodeIds");
     handleNodeExpand(nodeIds);
   };
 
@@ -206,7 +192,6 @@ const ProjectHierarchy = ({
         //     || item.name.children.filter((item:any,index:number) =>)
       ),
     ];
-    console.log("newobjj", newObj);
     parentArr = [{ ...parentArr[0], children: [...newObj] }];
     //  parentObj[0].children = newObj
     setTreeViewData([...parentArr]);

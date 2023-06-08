@@ -79,7 +79,6 @@ export const ProjectListing = () => {
                 new Date().getTime() - new Date(each.updatedAt).getTime();
 
               const daydiff = diff / (1000 * 60 * 60 * 24);
-              console.log(daydiff, "daydiff");
               return {
                 ...each,
                 numOfDays: `${Math.ceil(daydiff)}d`,

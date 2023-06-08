@@ -36,7 +36,6 @@ import droneImage from "../../../public/divami_icons/droneImage.svg";
 import moment from "moment";
 
 export const ProjectListCardView = ({ projects, projectActions }: any) => {
-  console.log("projectActions", projectActions);
   const router = useRouter();
   const [showActions, setShowActions] = useState(false);
   const [projectsData, setProjectsData] = useState(

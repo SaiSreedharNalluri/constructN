@@ -274,7 +274,6 @@ const UsersFilter: React.FC<any> = ({
   };
 
   const formHandler = (event: any) => {
-    console.log("sdf");
     if (event === "Cancel") {
       handleClose();
     } else {

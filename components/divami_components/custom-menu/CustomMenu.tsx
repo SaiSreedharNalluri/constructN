@@ -19,6 +19,8 @@ export const CustomMenu = ({
   const [showMoreActions, setShowMoreActions] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
+  console.log("menuOptions", menuOptions);
+
   const handleClose = () => {
     setShowMoreActions(false);
     setAnchorEl(null);
@@ -86,7 +88,9 @@ export const CustomMenu = ({
               onClick={() => option.onClick()}
               data-testid="sort-menu-item"
             >
+              {/* {option.label} */}
               {option.label}
+             */}
               {option.icon && (
                 <ListItemIcon>
                   <IconContainer src={option.icon} alt={option.label} />

@@ -267,9 +267,7 @@ const SectionsListing = () => {
           massageTree(removeGrandParent, response?.data?.result?.id);
           //  setTableData([...dummyData]);
         })
-        .catch((error) => {
-          console.log("error", error);
-        });
+        .catch((error) => {});
     }
   }, [router.query.projectId]);
 

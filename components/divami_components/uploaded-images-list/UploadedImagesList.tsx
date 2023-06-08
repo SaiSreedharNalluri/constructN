@@ -40,8 +40,6 @@ const UploadedImagesList = ({
   formConfig,
   setFormData,
 }: any) => {
-  console.log("formConfigk", formConfig);
-
   const handleDeleteAttachment = (eachSelectedFile: any) => {
     if (eachSelectedFile?._id) {
       deleteTheAttachment(eachSelectedFile?._id, "issue");

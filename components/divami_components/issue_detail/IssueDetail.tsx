@@ -702,7 +702,6 @@ function BasicTabs(props: any) {
                   Attachments
                 </AttachmentTitle>
                 <AttachmentDescription>
-                  {/* {console.log(taskState?.TabOne.attachments)} */}
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
                       return (
@@ -987,8 +986,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
 
-  // console.log("taskState22", taskState);
-
   useEffect(() => {
     let tempObj = {
       ...selectedIssue,
@@ -1160,7 +1157,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
           ...each,
         };
       });
-    // console.log("njdsfjk");
     if (filesArr?.length) {
       createAttachment(issue._id, fileformdata)
         .then((response) => {

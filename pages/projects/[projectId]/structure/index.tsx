@@ -308,7 +308,6 @@ const Index: React.FC<IProps> = () => {
             if (router.query.structId !== undefined) {
               setStructure(
                 structs.find((e) => {
-                  console.log("finding structure: ", e._id);
                   if (e._id === router.query.structId) {
                     return e;
                   }
@@ -329,7 +328,6 @@ const Index: React.FC<IProps> = () => {
                   "expandedNodes",
                   JSON.stringify(nodes)
                 );
-                console.log(nodes, "noddfses");
                 setExpanded(nodes);
               }
             } else {
@@ -362,7 +360,6 @@ const Index: React.FC<IProps> = () => {
                   "expandedNodes",
                   JSON.stringify(nodes)
                 );
-                console.log(nodes, "yutrye");
 
                 setExpanded(nodes);
                 // window.localStorage.setItem(
@@ -443,11 +440,7 @@ const Index: React.FC<IProps> = () => {
     const dataB: any[] = [];
     const getBreadCrumbs = (NodeData: any) => {
       dataB.unshift(NodeData?._id);
-      console.log(
-        NodeData,
-        getNodeDataById(NodeData.parent, list),
-        "dsfdfsfsd"
-      );
+
       const struct = NodeData.parent
         ? getNodeDataById(NodeData.parent, list)
         : null;
@@ -456,7 +449,6 @@ const Index: React.FC<IProps> = () => {
       }
     };
     getBreadCrumbs(structure);
-    console.log(dataB, "Fsdfsd");
     return dataB;
   };
 
@@ -841,7 +833,6 @@ const Index: React.FC<IProps> = () => {
         }
       } else if (!designAndRealityMaps.includes(currentViewType)) {
         if (designAndRealityMaps.includes("pointCloud")) {
-          console.log("comingjklj");
           setViewType("pointCloud");
           setSelectedReality("pointCloud");
         } else if (designAndRealityMaps.includes("orthoPhoto")) {
@@ -885,7 +876,6 @@ const Index: React.FC<IProps> = () => {
 
       toolClicked({ toolName: "viewType", toolAction: currentViewType });
     } else {
-      console.log("assds", currentViewType);
       if (selectedReality !== currentViewType)
         setSelectedReality(currentViewType);
       toolClicked({ toolName: "viewType", toolAction: currentViewType });
@@ -896,7 +886,6 @@ const Index: React.FC<IProps> = () => {
       getIssuesList(router.query.projectId as string, structureId)
         .then((response) => {
           if (isDownload) {
-            console.log(isDownload, "isdownload");
             // response.blob().then((blob: any) => {
             // Creating new object of PDF file
             const data = response.result;
@@ -1078,7 +1067,6 @@ const Index: React.FC<IProps> = () => {
         setIssueList(issueFilterList);
         break;
       default:
-        console.log("Not Sorted");
         break;
     }
   };
@@ -1359,9 +1347,7 @@ const Index: React.FC<IProps> = () => {
           toolClicked(issueMenuInstance);
         }
       })
-      .catch((error) => {
-        console.log("error", error);
-      });
+      .catch((error) => {});
   };
 
   const deleteTheTask = (taskObj: any, callback?: any) => {

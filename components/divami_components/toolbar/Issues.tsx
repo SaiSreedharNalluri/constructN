@@ -100,7 +100,6 @@ const Issues = ({
         document.body
     ).then(function (canvas) {
       canvas.toBlob((blob) => {
-        console.log(blob, "blob");
         setImage(blob as Blob);
       }, "image/png");
     });
@@ -363,13 +362,6 @@ const Issues = ({
       )}
       {openCreateIssue && (
         <CustomDrawer>
-          {console.log(
-            myProject,
-            currentStructure,
-            contextInfo,
-            issueStatusList,
-            "siva"
-          )}
           <CreateIssue
             handleCreateTask={handleCreateTask}
             currentProject={myProject}

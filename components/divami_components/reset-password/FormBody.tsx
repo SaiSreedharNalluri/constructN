@@ -50,7 +50,6 @@ const FormBody = ({
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(RESET_FORM_CONFIG);
   useEffect(() => {
-    console.log(formConfig, "formconfig in effect");
     let updatedFormData = [...formConfig];
     handleFormData(updatedFormData);
     let count = 0;

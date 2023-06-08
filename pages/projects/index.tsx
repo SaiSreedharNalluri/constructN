@@ -43,6 +43,16 @@ import ProjectListFilter from "../../components/divami_components/project-listin
 import { CustomMenu } from "../../components/divami_components/custom-menu/CustomMenu";
 import UpArrow from "../../public/divami_icons/upArrow.svg";
 import DownArrow from "../../public/divami_icons/downArrow.svg";
+import PopupComponent from "../../components/popupComponent/PopupComponent";
+import ProjectConfig from "../../components/divami_components/project_config/ProjectConfig";
+import {
+  updateIssuePriorityList,
+  updateIssueStatusList,
+  updateTagList,
+  updateTaskPriorityList,
+  updateTaskStatusList,
+} from "../../services/projectConfigApi";
+import { toast } from "react-toastify";
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -54,12 +64,19 @@ const Index: React.FC<any> = () => {
   const [searchTableData, setSearchTableData] = useState<any>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isGridView, setIsGridView] = useState(true);
+  const [selectedOption, setSelectedOption] = useState("issuePriority");
+
+  const [formValues, setFormValues]: any = useState({ priority: [] });
+  const [showPopUp, setshowPopUp] = useState(false);
 
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
     filterData: {},
     numberOfFilters: 0,
   });
+
+  const [projectId, setProjectId] = useState<any>("");
+
   const handleSearchWindow = () => {
     setSearchTableData(projects);
     if (searchTerm === "") {
@@ -150,7 +167,10 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Project Configuration",
-      action: () => {},
+      action: (id?: string) => {
+        setshowPopUp(true);
+        setProjectId(id);
+      },
     },
     {
       label: "Project Details",
@@ -168,6 +188,9 @@ const Index: React.FC<any> = () => {
     },
   ]);
 
+  useEffect(() => {
+    console.log("projectsData", projects);
+  }, [projects]);
   useEffect(() => {
     if (router.isReady) {
       getProjectsList()
@@ -209,6 +232,58 @@ const Index: React.FC<any> = () => {
   useEffect(() => {
     setSearchTableData(projects);
   }, [projects]);
+
+  const onDeleteIssue = (status: any) => {
+    setshowPopUp(false);
+  };
+
+  const handleSubmit = async () => {
+    console.log("formaaaa", formValues);
+
+    const containsEmptyString = formValues.priority.some(
+      (item: any) => item.length === 0
+    );
+
+    if (containsEmptyString) {
+      toast.error("Fields cannot be empty");
+      console.log("The array contains empty strings.");
+      return;
+    }
+    try {
+      // Call the appropriate API based on the selected option and pass the updated values
+      if (selectedOption === "issuePriority") {
+        // await updateIssuePriorityList(projectId, formValues.priority);
+        await updateIssuePriorityList(projectId, {
+          issuePriorityList: [...formValues.priority],
+        });
+        toast.success("Issue priority list updated successfully");
+      } else if (selectedOption === "taskPriority") {
+        await updateTaskPriorityList(projectId, {
+          taskPriorityList: [...formValues.priority],
+        });
+        toast.success("Task priority list updated successfully");
+      } else if (selectedOption === "issueStatus") {
+        await updateIssueStatusList(projectId, {
+          issueStatusList: [...formValues.priority],
+        });
+        toast.success("Issue status list updated successfully");
+      } else if (selectedOption === "taskStatus") {
+        await updateTaskStatusList(projectId, {
+          taskStatusList: [...formValues.priority],
+        });
+        toast.success("Task status list updated successfully");
+      } else if (selectedOption === "tag") {
+        await updateTagList(projectId, {
+          tagList: [...formValues.priority],
+        });
+        toast.success("Tag list updated successfully");
+      }
+
+      // setSubmittedValues(formValues);
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
 
   return (
     <div className=" w-full  h-full">
@@ -323,11 +398,10 @@ const Index: React.FC<any> = () => {
               projectActions={projectActions}
             />
           ) : (
-            <></>
-            // <ProjectListFlatView
-            //   projects={searchTableData}
-            //   projectActions={projectActions}
-            // />
+            <ProjectListFlatView
+              projects={searchTableData}
+              projectActions={projectActions}
+            />
           )}
           {openFilter && (
             <CustomDrawer open>
@@ -339,6 +413,31 @@ const Index: React.FC<any> = () => {
                 }}
               />
             </CustomDrawer>
+          )}
+          {showPopUp && (
+            <PopupComponent
+              open={showPopUp}
+              width={"585px"}
+              // height={"360px"}
+              paddingStyle={true}
+              setShowPopUp={setshowPopUp}
+              modalTitle={"Project Configuration"}
+              modalContent={
+                <ProjectConfig
+                  projectId={projectId}
+                  selectedOption={selectedOption}
+                  setSelectedOption={setSelectedOption}
+                  formValues={formValues}
+                  setFormValues={setFormValues}
+                />
+              }
+              // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
+              modalmessage={`Are you sure you want to delete this Issue ?`}
+              primaryButtonLabel={"Update"}
+              SecondaryButtonlabel={"Cancel"}
+              callBackvalue={handleSubmit}
+              projectId={projectId}
+            />
           )}
         </ProjectsListContainer>
       </Content>

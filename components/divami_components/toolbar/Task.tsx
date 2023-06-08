@@ -221,7 +221,6 @@ const Task = ({
   };
 
   useEffect(() => {
-    console.log("contextinfo", contextInfo, tasksList);
     if (openTaskDetails && contextInfo?.id) {
       const selectedObj = tasksList.find(
         (each: any) => each._id === contextInfo.id
@@ -240,7 +239,6 @@ const Task = ({
     setEnableSubmit(true);
   };
   const openTaskCreateFn = () => {
-    console.log("boss");
     //setCreateOverlay(true);
     taskMenuInstance.toolAction = "taskCreate";
     taskMenuClicked(taskMenuInstance);
