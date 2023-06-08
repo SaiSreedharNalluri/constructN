@@ -27,7 +27,6 @@ import { resetPasswordInit } from "../../../services/userAuth";
 import { toast } from "react-toastify";
 
 const ResetLink = ({ queryMail }: any) => {
-  console.log("queryMail", queryMail);
   // const maskedEmail = queryMail.replace(/.(?=.*?@)/g, "*");
   const [maskedMail, setMaskedMail] = useState("");
   const router = useRouter();
@@ -41,7 +40,6 @@ const ResetLink = ({ queryMail }: any) => {
   const handleForgotPassword = (email: string) => {
     resetPasswordInit(email?.toLocaleLowerCase())
       .then((response: any) => {
-        console.log("response", response);
         if (response?.success) {
           toast.success(response?.message);
 

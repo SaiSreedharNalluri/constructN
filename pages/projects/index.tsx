@@ -323,11 +323,10 @@ const Index: React.FC<any> = () => {
               projectActions={projectActions}
             />
           ) : (
-            <></>
-            // <ProjectListFlatView
-            //   projects={searchTableData}
-            //   projectActions={projectActions}
-            // />
+            <ProjectListFlatView
+              projects={searchTableData}
+              projectActions={projectActions}
+            />
           )}
           {openFilter && (
             <CustomDrawer open>

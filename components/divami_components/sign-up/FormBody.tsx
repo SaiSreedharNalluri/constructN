@@ -69,7 +69,6 @@ const FormBody = ({
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(SIGN_UP_FORM_CONFIG);
   useEffect(() => {
-    console.log(formConfig, "formconfig in effect");
     let updatedFormData = [...formConfig];
     handleFormData(updatedFormData);
     let count = 0;

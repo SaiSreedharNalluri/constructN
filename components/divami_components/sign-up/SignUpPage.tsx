@@ -69,8 +69,6 @@ const SignUpPage = () => {
       password: formData[3].defaultValue,
       confirm_password: formData[4].defaultValue,
     };
-    console.log("formValues", formValues);
-    console.log("formData", formData);
 
     let errorObjects = formData.filter(function (obj: any) {
       // return obj.isError === true;
@@ -101,7 +99,6 @@ const SignUpPage = () => {
 
     if (hasEmptyValue) {
       setShowError(true);
-      console.log("Form has empty values. Aborting registration.");
       return; // Stop execution here
     }
 
@@ -116,8 +113,6 @@ const SignUpPage = () => {
   const handleRegister = (formValue: any) => {
     // formValue.email = formValue.email.toLocaleLowerCase();
 
-    console.log("hiii");
-
     // return;
     // setLoading(true);
     registerUser(formValue)
@@ -125,7 +120,6 @@ const SignUpPage = () => {
         if (response.success === true) {
           toast.success("User Registeration completed in sucessfully");
           // toast.info("Redirecting ... ");
-          console.log("formInfo", formValue);
 
           // setTimeout(() => {
           //   toast.info("Please check your e-mail to verify the account");

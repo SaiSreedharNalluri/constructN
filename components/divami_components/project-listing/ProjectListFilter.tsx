@@ -85,7 +85,6 @@ const ProjectListFilter: React.FC<any> = ({
   const onReset = () => {};
 
   const formHandler = (event: any) => {
-    console.log("sdf");
     if (event === "Cancel") {
       handleClose();
     } else {

@@ -54,9 +54,7 @@ const SignInPage = () => {
   // const handleClickShowPassword = () => {
   //   setShowPassword(!showPassword);
   // };
-  useEffect(() => {
-    console.log("rememberMe", rememberMe);
-  }, [rememberMe]);
+  useEffect(() => {}, [rememberMe]);
 
   // const handleMouseDownPassword = (event: any) => {
   //   event.preventDefault();
@@ -99,19 +97,15 @@ const SignInPage = () => {
   };
 
   const handleForm = () => {
-    console.log("hello form");
     // formHandler();
   };
   const formHandler = (event: any) => {
-    console.log("formData", formData);
     const email = formData[0].defaultValue;
     const password = formData[1].defaultValue;
-    console.log(email, password);
 
     setValidate(true);
 
     if (email === "" || password === "" || formData[0].isError) {
-      console.log("Email and password are empty. Aborting login.");
       return; // Stop execution here
     }
 
@@ -126,7 +120,6 @@ const SignInPage = () => {
     login(email?.toLocaleLowerCase(), password)
       .then((response: any) => {
         if (response.success === true) {
-          console.log("response", response);
           if (response?.result?.verified) {
             localStorage.setItem("userInfo", response.result?.fullName);
             // if (rememberMe) {
@@ -141,7 +134,6 @@ const SignInPage = () => {
               ...response?.result,
             };
             // {...newProp,rememberMe}
-            console.log("remember", rememberMe);
             // setCookie("user", JSON.stringify(response?.result));
             // setCookie("user", JSON.stringify(userProfileObj));
             setCookie("user", userProfileObj);
@@ -175,8 +167,6 @@ const SignInPage = () => {
           error.toString();
 
         toast.error("Invalid User Credentials");
-
-        console.log("errorlogin", error.response.data.message);
 
         Mixpanel.track("login_fail", {
           email: email,

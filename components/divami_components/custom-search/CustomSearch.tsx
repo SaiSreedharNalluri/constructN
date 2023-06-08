@@ -250,7 +250,6 @@ const CustomSearch = (props: any) => {
               }}
               onKeyDown={(e: any) => {
                 if (e.keyCode === 13 && props.handleEnterResult) {
-                  console.log("ereresrs", e, e.target.value);
                   props.handleEnterResult(e.target.value);
                 }
               }}

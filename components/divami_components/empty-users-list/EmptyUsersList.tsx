@@ -123,6 +123,7 @@ export const EmptyUsersList = () => {
           primaryButtonLabel={"Yes"}
           SecondaryButtonlabel={"No"}
           callBackvalue={() => {}}
+          width={"458px"}
         />
       ) : (
         <></>

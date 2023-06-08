@@ -594,8 +594,6 @@ const FilterCommon: React.FC<IProps> = ({
       </FilterCommonHeader>
       <FilterCommonBody>
         {FilterState?.map((each: any, index: any) => {
-          console.log("each", each);
-
           return each.title === "Issue Type" ? (
             <FilterCardContainer key={index}>
               <FilterCardTitle>

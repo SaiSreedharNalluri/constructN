@@ -107,7 +107,6 @@ export const CustomTextField = (props: any) => {
     showErrorMsg,
     onFocus,
   } = props;
-  // console.log("loginField", loginField);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -119,7 +118,6 @@ export const CustomTextField = (props: any) => {
     event.preventDefault();
   };
 
-  console.log("showerrot", type);
   return (
     <div>
       <StyledTextField

@@ -36,13 +36,11 @@ const ForgotPassword = () => {
   const router = useRouter();
 
   const formHandler = (event: any) => {
-    console.log("formData", formData);
     const email = formData[0].defaultValue;
     const checkError = formData[0].isError;
     setValidate(true);
 
     if (!email || checkError) {
-      console.log("Email and password are empty. Aborting login.");
       return; // Stop execution here
     }
 
@@ -50,10 +48,8 @@ const ForgotPassword = () => {
   };
 
   const handleForgotPassword = (email: string) => {
-    console.log(email, "fdfsfdlkk");
     resetPasswordInit(email?.toLocaleLowerCase())
       .then((response: any) => {
-        console.log("response", response);
         if (response?.success) {
           toast.success(response?.message);
 

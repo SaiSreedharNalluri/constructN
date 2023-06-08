@@ -15,7 +15,7 @@ export const CloseIcon = styled(Image)({
   cursor: "pointer",
 });
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+const BootstrapDialog = styled(Dialog)(({ theme, width }: any) => ({
   fontWeight: "900",
   fontFamily: "Open Sans",
 
@@ -28,9 +28,9 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     justifyContent: "center",
   },
   "& .MuiPaper-root.MuiDialog-paper": {
-    width: "493px",
+    width: width ? width : "493px",
   },
-}));
+})) as any;
 const ButtonDiv = styled("div")({});
 
 export interface DialogTitleProps {
@@ -48,6 +48,7 @@ export interface PopupComponentProps {
   open: boolean;
   modalContent?: any;
   hideButtons?: boolean;
+  width?: string;
 }
 function BootstrapDialogTitle(props: DialogTitleProps) {
   const { children, onClose, ...other } = props;
@@ -115,6 +116,7 @@ const PopupComponent = (props: PopupComponentProps) => {
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
+        width={props.width}
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
