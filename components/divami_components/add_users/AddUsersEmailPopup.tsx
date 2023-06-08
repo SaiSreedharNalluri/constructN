@@ -8,6 +8,7 @@ import {
   BulkUserUploadContainer,
   ClickHereText,
   DownloadText,
+  LabelContainer,
   OrText,
 } from "../empty-users-list/EmptyUsersListStyles";
 import bulkIcon from "../../../public/divami_icons/bulkUpload.svg";
@@ -15,6 +16,7 @@ import { push } from "mixpanel-browser";
 import { AddUsersEmailOverlay } from "./AddUsersEmailOverlay";
 import { Drawer } from "@mui/material";
 import CustomSearch from "../custom-search/CustomSearch";
+import CustomLabel from "../custom-label/CustomLabel";
 
 export const AddUsersEmailPopup = ({
   showEmailOverlay,
@@ -33,6 +35,9 @@ export const AddUsersEmailPopup = ({
         formState={formState}
         setFormState={setFormState}
       /> */}
+      <LabelContainer>
+        <CustomLabel label="Add User By Their Email ID"></CustomLabel>
+      </LabelContainer>
       <CustomSearch
         data={options}
         handleSearchResult={(e: any, value: any, id: any) => {
@@ -45,7 +50,7 @@ export const AddUsersEmailPopup = ({
         }}
         placeholder="Enter Email ID"
       />
-      <OrText></OrText>
+      <OrText>OR</OrText>
       <BulkUserUploadContainer>
         <BulkImage width={68} height={68} src={bulkIcon} alt=""></BulkImage>
         <BulkUserText>Bulk Users Upload</BulkUserText>

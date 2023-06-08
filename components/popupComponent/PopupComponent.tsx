@@ -62,6 +62,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        color: "#101F4C",
       }}
     >
       {children}

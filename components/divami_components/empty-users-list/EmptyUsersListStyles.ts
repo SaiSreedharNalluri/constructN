@@ -79,21 +79,38 @@ export const AddUserEmailContainer = styled("div")((props: any) => ({
   marginTop: props.overlay ? "30px" : "",
 })) as any;
 
-export const BulkUserUploadContainer = styled("div")({});
+export const BulkUserUploadContainer = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  color: "#787878",
+  fontWeight: 400,
+  border: "1px dashed #F1742E",
+  padding: "20px",
+});
 
 export const ClickHereText = styled("div")({
   fontSize: "14px",
   color: "#787878",
   fontWeight: 400,
+  display: "flex",
+  paddingTop: "20px",
 });
 
 export const DownloadText = styled("div")({
   fontSize: "14px",
   color: "#F1742E",
   fontWeight: 400,
+  padding: "0 5px",
 });
 
-export const OrText = styled("div")({});
+export const OrText = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  color: "#787878",
+  fontWeight: 400,
+  padding: "20px 0",
+});
 
 export const BulkImage = styled(Image)({
   width: "68px",
@@ -102,5 +119,10 @@ export const BulkImage = styled(Image)({
 
 export const BulkUserText = styled("div")({
   fontSize: "14px",
-  color: "#78787",
+  color: "#787878",
+  paddingTop: "10px",
+});
+
+export const LabelContainer = styled("div")({
+  paddingBottom: "8px",
 });
