@@ -252,7 +252,7 @@ const Index: React.FC<any> = () => {
     try {
       // Call the appropriate API based on the selected option and pass the updated values
       if (selectedOption === "issuePriority") {
-        // await pushIssuePriorityList(projectId, formValues.priority);
+        // await updateIssuePriorityList(projectId, formValues.priority);
         await updateIssuePriorityList(projectId, {
           issuePriorityList: [...formValues.priority],
         });
