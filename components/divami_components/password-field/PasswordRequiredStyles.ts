@@ -15,7 +15,7 @@ export const PasswordFieldSection = styled("div")({
   background: "#FFFFFF",
   boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
   borderRadius: "4px",
-  width: "345px",
+  width: "340px",
   whiteSpace: "initial",
 });
 

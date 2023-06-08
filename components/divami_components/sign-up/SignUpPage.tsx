@@ -19,6 +19,7 @@ import {
   SectionShowcase,
   SignInHeader,
   ErrorSectonDiv,
+  PasswordPopupContainer,
 } from "./SignUpPageStyles";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Logo from "../../../public/divami_icons/Logo.svg";
@@ -35,6 +36,7 @@ import { registerUser } from "../../../services/userAuth";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import FooterSignUp from "./FooterSignUp";
+import PasswordRequired from "../password-field/PasswordRequired";
 
 const SignUpPage = () => {
   const router = useRouter();
@@ -51,6 +53,11 @@ const SignUpPage = () => {
   const [signUpMsg, setSignUpMsg] = useState<boolean>(false);
   const handleFormData = (data: any) => {
     setFormData(data);
+  };
+  const [childData, setChildData] = useState<string>("");
+
+  const handleChildData = (data: string) => {
+    setChildData(data);
   };
 
   const [checked, setChecked] = React.useState(true);
@@ -113,11 +120,18 @@ const SignUpPage = () => {
     setSignUpMsg(true);
     handleRegister(formValues);
   };
+
+  function checkPassword(str: any) {
+    if (str.length > 0) {
+      let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,14}$/;
+      let passwordTru = rePass.test(str);
+      return !passwordTru;
+    } else {
+      return false;
+    }
+  }
   const handleRegister = (formValue: any) => {
     // formValue.email = formValue.email.toLocaleLowerCase();
-
-    console.log("hiii");
-
     // return;
     // setLoading(true);
     registerUser(formValue)
@@ -168,17 +182,25 @@ const SignUpPage = () => {
           ) : (
             ""
           )} */}
+          <div style={{ position: "relative" }}>
+            <FormBody
+              handleFormData={handleFormData}
+              validate={validate}
+              setIsValidate={setValidate}
+              tagsList={tagList}
+              setCanBeDisabled={setCanBeDisabled}
+              loginField={true}
+              signUpMsg={signUpMsg}
+              errorStylingSignup={true}
+              onData={handleChildData}
+            />
+            {checkPassword(childData) ? (
+              <PasswordPopupContainer>
+                <PasswordRequired passwordString={childData} />
+              </PasswordPopupContainer>
+            ) : null}
+          </div>
 
-          <FormBody
-            handleFormData={handleFormData}
-            validate={validate}
-            setIsValidate={setValidate}
-            tagsList={tagList}
-            setCanBeDisabled={setCanBeDisabled}
-            loginField={true}
-            signUpMsg={signUpMsg}
-            errorStylingSignup={true}
-          />
           {/* <ExtraTickDiv>
             <ParentTickDiv>
               <CheckTickDiv>

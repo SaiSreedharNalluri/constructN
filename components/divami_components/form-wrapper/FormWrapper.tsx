@@ -50,6 +50,7 @@ const FormWrapper = (props: any) => {
     signUpMsg,
     signInMsg,
     errorStylingSignup,
+    onData,
   } = props;
 
   console.log("formState", formState);
@@ -159,6 +160,14 @@ const FormWrapper = (props: any) => {
         return item;
       })
     );
+  };
+
+  // callback function passed from the parent
+  const sendDataToParent = (e: any) => {
+    if (onData) {
+      //   onData(inputValue);
+      onData(e.target.value);
+    }
   };
 
   const handleDateChange = (e: any, id: string) => {
@@ -315,7 +324,7 @@ const FormWrapper = (props: any) => {
   }
 
   function checkPassword(str: any, id: any) {
-    let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,14}$/;
     let passwordTru = rePass.test(str);
     let isValid = false;
     setShowMessage(!passwordTru);
@@ -457,7 +466,9 @@ const FormWrapper = (props: any) => {
               placeholder={data?.placeholder}
               onChange={(e: any) => {
                 handleTextChange(e, data.id, data);
-
+                if (data.id === "password") {
+                  sendDataToParent(e);
+                }
                 // if (data.id === "password" && data.checkPasswordStrength) {
                 //   checkPassword(data?.defaultValue, data.id, e);
                 // }

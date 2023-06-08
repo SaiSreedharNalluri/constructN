@@ -43,7 +43,14 @@ export const ErrorField = styled("div")({
 });
 
 const CustomSelect = (props: any) => {
-  const { config, defaultValue, id, setFormConfig, isReadOnly = false } = props;
+  const {
+    config,
+    defaultValue,
+    id,
+    setFormConfig,
+    isReadOnly = false,
+    customClass,
+  } = props;
 
   const [val, setVal] = useState(config?.defaultValue);
 
@@ -82,7 +89,9 @@ const CustomSelect = (props: any) => {
         onChange={handlechange}
         id={id}
         readOnly={isReadOnly}
-        className={` ${config?.isError ? "formErrorField" : ""} formField`}
+        className={` ${config?.isError ? "formErrorField" : ""} formField ${
+          customClass ? customClass : null
+        }`}
         width={props.width || ""}
       >
         {config.options?.length &&

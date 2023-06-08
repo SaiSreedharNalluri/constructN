@@ -87,6 +87,7 @@ const ProjectHierarchy = ({
   const onLabelClick = (event: any, nodes: any) => {
     {
       console.log("onclickinlable");
+
       window.localStorage.setItem("nodeData", JSON.stringify(nodes));
       getStructureData ? getStructureData(nodes) : null;
 
@@ -209,12 +210,6 @@ const ProjectHierarchy = ({
     parentArr = [{ ...parentArr[0], children: [...newObj] }];
     //  parentObj[0].children = newObj
     setTreeViewData([...parentArr]);
-    console.log(
-      "Robby",
-      searchFieldString,
-      treeData[0].children.length,
-      parentArr[0].children.length
-    );
   };
 
   // console.log("hiiii", treeViewData, filterBlock);
