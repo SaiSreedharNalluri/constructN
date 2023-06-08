@@ -119,7 +119,6 @@ const dummyData: any = [
 ];
 
 const MyNewTitle = (props: any) => {
-  console.log("MyNewTitle", props);
   return (
     <div
       style={{
@@ -221,17 +220,11 @@ const Index: React.FC = () => {
 
   // https://api.dev2.constructn.ai/api/v1/projects/PRJ201897/structures/hierarchy
 
-  useEffect(() => {
-    console.log("griddata", gridData);
-  }, [gridData]);
+  useEffect(() => {}, [gridData]);
+
+  useEffect(() => {}, [filterTableData]);
 
   useEffect(() => {
-    console.log("filterTableData", filterTableData);
-  }, [filterTableData]);
-
-  useEffect(() => {
-    console.log("router?.query?.projectId", router);
-
     if (router.isReady) {
       // if (router.query.structId !== undefined)
       // setSelector(router.query.structId.toString());
@@ -257,7 +250,6 @@ const Index: React.FC = () => {
       //   });
       getSectionsList(router?.query?.projectId as string)
         .then((response: AxiosResponse<any>) => {
-          console.log("respjali", response);
           setGridData([response?.data?.result]);
           let removeGrandParent = response?.data?.result?.children?.map(
             (item: any, index: number) => {
@@ -267,14 +259,10 @@ const Index: React.FC = () => {
               };
             }
           );
-          console.log("removeGrandParent", removeGrandParent);
           massageTree(removeGrandParent, response?.data?.result?.id);
           setTableData([...dummyData]);
-          console.log("secondcall", response?.data?.result[0]?.children);
         })
-        .catch((error) => {
-          console.log("error", error);
-        });
+        .catch((error) => {});
       // getSectionsList(router?.query?.projectId as string)
       //   .then((response: AxiosResponse<any>) => {
       //     setGridData([...response?.data?.result]);
@@ -298,11 +286,7 @@ const Index: React.FC = () => {
   }, [router.query.projectId]);
 
   function massageTree(responseArr: any, grandParent: string) {
-    console.log("responseArr", responseArr);
-    console.log("grandParent", grandParent);
-
     let resultArr: any = [];
-    console.log("FLAG 1", responseArr, grandParent);
     responseArr.map((item: any, index: number) => {
       if (item.parent == null) {
         // parent
@@ -323,7 +307,6 @@ const Index: React.FC = () => {
       }
     });
 
-    console.log("MASSAGED", resultArr);
     setFilterTableData([...resultArr]);
   }
 
@@ -352,7 +335,6 @@ const Index: React.FC = () => {
   };
 
   const handleSearch = () => {
-    console.log("TEST");
     // if (searchTerm.length) {
     //   const newTableData = tableData.filter((item: any) =>
     //     item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -425,7 +407,6 @@ const Index: React.FC = () => {
       },
       cellStyle: { width: "30%" },
       render: (rowData: any) => {
-        console.log("rowData", rowData);
         return (
           <CapturesFieldContainer>
             <CapturesField>

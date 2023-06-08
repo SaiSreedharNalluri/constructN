@@ -210,13 +210,6 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   ]);
 
   const rightMenuClickHandler = (e: any) => {
-    console.log(
-      e.currentTarget.id,
-      "cureid",
-      isCompareReality,
-      isCompareDesign
-    );
-
     setActive(e.currentTarget.id);
     setRighttNav(!rightNav);
     if (e.currentTarget.id === "Reality") {

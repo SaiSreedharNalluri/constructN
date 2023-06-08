@@ -253,7 +253,16 @@ export const UsersInfo = styled("div")({
   alignItems: "center",
 });
 
-export const UserPic = styled(Image)({});
+export const UserPic = styled(Image)({
+  border: "1px solid #F1742E",
+  borderRadius: "50%",
+  width: "24px",
+  height: "24px",
+  alignItems: "center",
+  display: "flex",
+  justifyContent: "center",
+  marginRight: "5px",
+});
 
 export const UserMonogram = styled("div")({
   border: "1px solid #F1742E",
@@ -266,6 +275,21 @@ export const UserMonogram = styled("div")({
   alignItems: "center",
   display: "flex",
   justifyContent: "center",
+  marginRight: "5px",
+});
+
+export const EmailIconContainer = styled("div")({
+  width: "24px",
+  height: "24px",
+  alignItems: "center",
+  display: "flex",
+  justifyContent: "center",
+  marginRight: "5px",
+});
+
+export const EmailIcon = styled(Image)({
+  width: "24px",
+  height: "24px",
   marginRight: "5px",
 });
 
@@ -323,4 +347,31 @@ export const ProjectActionItem = styled("div")({
   "&: last-child": {
     borderBottom: "none",
   },
+});
+
+export const UsersList = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  padding: "20px",
+  background: "#FFFFFF",
+  border: "1px solid #D9D9D9",
+  boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
+  borderRadius: "4px",
+  minWidth: "200px",
+});
+
+export const UsersListItem = styled("div")((props: any) => ({
+  display: "flex",
+  borderBottom: props.hideLastStyle ? "none" : "1px solid #D9D9D9",
+  paddingBottom: "10px",
+  paddingTop: props.hideFirstStyle ? "" : "10px",
+  color: "#101F4C",
+  fontSize: "14px",
+})) as any;
+
+export const ShowMore = styled("div")({
+  color: "#F1742E",
+  fontSize: "14px",
+  cursor: "pointer",
+  textAlign: "end",
 });

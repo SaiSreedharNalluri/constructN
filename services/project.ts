@@ -49,6 +49,39 @@ export const getProjectUsers = async (projectId: string) => {
       throw error;
     });
 };
+
+export const getUserRoles = async () => {
+  return await instance
+    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/get-project-roles`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log("error", error);
+      throw error;
+    });
+};
+
+export const addUserRoles = async (projectInfo: Object, projectId: string) => {
+  return await instance
+    .put(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/multiple-user-assign`,
+      projectInfo,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log("error", error);
+      throw error;
+    });
+};
+
 export const updateProjectInfo = async (
   projectInfo: Object,
   projectId: string
@@ -64,6 +97,7 @@ export const updateProjectInfo = async (
       throw error.response.data;
     });
 };
+
 export const assignProjectUser = async (
   newProjectUser: Object,
   projectId: string

@@ -1,6 +1,7 @@
 import { styled } from "@mui/system";
 import MaterialTable, { MTableToolbar } from "material-table";
 import Image from "next/image";
+import CustomButton from "../custom-button/CustomButton";
 import { CustomMenu } from "../custom-menu/CustomMenu";
 
 export const ImageButtons = styled("div")((props: any) => ({
@@ -54,6 +55,42 @@ export const ProjectUsersListContainer = styled("div")({
   width: "100%",
 });
 
+export const ProjectAddUsersListContainer = styled("div")({
+  padding: "0 20px",
+  width: "575px",
+});
+
+export const UnregistedUsersText = styled("div")({
+  fontSize: "16px",
+  color: "#101F4C",
+});
+
+export const UnregisteredIcon = styled(Image)({
+  width: "18px",
+  height: "18px",
+  marginRight: "8px",
+});
+
+export const FooterWrapper = styled("div")({
+  position: "absolute",
+  bottom: 0,
+  marginBottom: "20px",
+  width: "535px",
+});
+
+export const UnregisteredContainer = styled("div")({
+  display: "flex",
+  marginBottom: "30px",
+  alignItems: "center",
+  fontSize: "16px",
+  color: "#101F4C",
+});
+
+export const UserEmailText = styled("div")({
+  fontSize: "14px",
+  color: "#101F4C",
+});
+
 export const TableHeader = styled("div")({
   display: "flex",
   justifyContent: "space-between",
@@ -63,6 +100,15 @@ export const TableHeader = styled("div")({
   fontSize: "18px",
   fontWeight: 400,
   fontFamily: "Open Sans",
+});
+
+export const ButtonWrapper = styled("div")({
+  display: "flex",
+  justifyContent: "end",
+});
+
+export const BackButton = styled("div")({
+  marginRight: "38px",
 });
 
 export const Header = styled("div")({
@@ -111,9 +157,12 @@ export const StyledCustomMenu = styled(CustomMenu)({
 
 export const StyledTable = styled(MaterialTable)({});
 
-export const TableWrapper = styled("div")({
-  marginBottom: "50px",
-});
+export const TableWrapper = styled("div")((props: any) => ({
+  marginBottom: props.hideHeader ? "0" : "50px",
+  "& .MuiTableHead-root": {
+    display: props.hideHeader ? "none" : "",
+  },
+})) as any;
 
 export const ToggleButtonContainer = styled("div")({ display: "flex" });
 

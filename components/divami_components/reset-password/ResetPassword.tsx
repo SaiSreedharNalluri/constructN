@@ -42,12 +42,10 @@ const ResetPassword = ({ uniqueToken }: any) => {
     setFormData(data);
   };
   const formHandler = (event: any) => {
-    console.log("formData", formData);
     const formValues = {
       password: formData[0].defaultValue,
       confirm_password: formData[1].defaultValue,
     };
-    console.log("formValues", formValues);
 
     setValidate(true);
 
@@ -64,7 +62,6 @@ const ResetPassword = ({ uniqueToken }: any) => {
 
     if (hasEmptyValue || formData[0].isError || formData[1].isError) {
       setShowError(true);
-      console.log("Form has empty values. Aborting registration.");
       return; // Stop execution here
     }
     if (hasError) {
@@ -81,7 +78,6 @@ const ResetPassword = ({ uniqueToken }: any) => {
       formPassword.password as string
     )
       .then((response) => {
-        console.log("tokenresponse", response);
         if (response.success === true) {
           toast.info("Redirecting ... ");
 

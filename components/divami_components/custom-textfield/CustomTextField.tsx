@@ -19,6 +19,8 @@ interface PropTypes {
   variant: "outlined" | "standard" | "filled";
   placeholder: any;
   onChange: any;
+  onMouseEnter: any;
+  onMouseLeave: any;
   className: any;
   defaultValue: any;
   isError: any;
@@ -40,6 +42,8 @@ interface PropTypes {
   width?: string;
   onFocus?: any;
   backgroundColor?: any;
+  callback?: any;
+  hoveredIndex?: any;
 }
 
 const StyledTextField = styled(TextField)((props: any) => ({
@@ -64,7 +68,9 @@ const StyledTextField = styled(TextField)((props: any) => ({
   },
 
   "& .MuiOutlinedInput-notchedOutline": {
-    border: "1px solid #36415d",
+    border: props?.hoveredIndex
+      ? "1px solid #F1742E !important"
+      : "1px solid #36415d",
   },
 
   "&:focus-within .MuiOutlinedInput-notchedOutline": {
@@ -102,6 +108,7 @@ export const CustomTextField = (props: any) => {
     onBlur,
     isReadOnly = false,
     onChange,
+
     className,
     imageIcon,
     loginField,
@@ -114,8 +121,10 @@ export const CustomTextField = (props: any) => {
     marginTop,
     paddingTop,
     marginLeft,
+    onMouseEnter,
+    onMouseLeave,
+    hoveredIndex,
   } = props;
-  // console.log("loginField", loginField);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -127,7 +136,6 @@ export const CustomTextField = (props: any) => {
     event.preventDefault();
   };
 
-  console.log("showerrot", type);
   return (
     <div>
       <StyledTextField
@@ -136,11 +144,11 @@ export const CustomTextField = (props: any) => {
         // paddingTop={props.marginTop ? props.marginTop : ""}
         marginTop={props.marginTop ? props.marginTop : ""}
         marginLeft={props.marginLeft ? props.marginLeft : ""}
+        hoveredIndex={props?.hoveredIndex ? props?.hoveredIndex : ""}
         autoComplete="off"
         id={id}
         className={` ${isError ? "formErrorField" : ""} formField`}
         //  type={showPassword ? "text" : "password"}
-
         type={
           type === "password"
             ? showPassword
@@ -163,7 +171,12 @@ export const CustomTextField = (props: any) => {
           reff?.current?.focus();
         }}
         onChange={onChange}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         loginField={loginField}
+        onKeyDown={(e: any) => {
+          if (e.keyCode === 13 && props.callback) props.callback();
+        }}
         // variant="outlined"
         // {...rest}
         InputProps={

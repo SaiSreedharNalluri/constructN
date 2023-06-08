@@ -398,11 +398,10 @@ const Index: React.FC<any> = () => {
               projectActions={projectActions}
             />
           ) : (
-            <></>
-            // <ProjectListFlatView
-            //   projects={searchTableData}
-            //   projectActions={projectActions}
-            // />
+            <ProjectListFlatView
+              projects={searchTableData}
+              projectActions={projectActions}
+            />
           )}
           {openFilter && (
             <CustomDrawer open>
@@ -418,6 +417,9 @@ const Index: React.FC<any> = () => {
           {showPopUp && (
             <PopupComponent
               open={showPopUp}
+              width={"585px"}
+              // height={"360px"}
+              paddingStyle={true}
               setShowPopUp={setshowPopUp}
               modalTitle={"Project Configuration"}
               modalContent={

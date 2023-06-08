@@ -52,12 +52,8 @@ const FormWrapper = (props: any) => {
     errorStylingSignup,
   } = props;
 
-  console.log("formState", formState);
-
   const [userPassword, setUserPassword] = useState("");
-  useEffect(() => {
-    console.log("userpassword", userPassword);
-  }, [userPassword]);
+  useEffect(() => {}, [userPassword]);
 
   useEffect(() => {
     checkDataisEmpty();
@@ -73,7 +69,6 @@ const FormWrapper = (props: any) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    console.log("handleclick", event.currentTarget);
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
@@ -276,11 +271,9 @@ const FormWrapper = (props: any) => {
       (val: any) => !val.defaultValue && val.isReq
     );
 
-    setCanBeDisabled(isEmptyField);
     if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
   }
   function isValidEmail(email: any, id: any) {
-    // console.log("lol");
     let isValid = false;
     if (/\S+@\S+\.\S+/.test(email)) {
       isValid = true;
@@ -354,7 +347,6 @@ const FormWrapper = (props: any) => {
   }
 
   function matchpassword(str: any, id: any) {
-    console.log("matching", str, userPassword);
     if (str !== userPassword) {
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
@@ -455,6 +447,7 @@ const FormWrapper = (props: any) => {
               id={data.id}
               variant="outlined"
               placeholder={data?.placeholder}
+              callback={data.callback ? data.callback : () => {}}
               onChange={(e: any) => {
                 handleTextChange(e, data.id, data);
 

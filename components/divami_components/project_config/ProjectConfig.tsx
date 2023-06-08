@@ -85,6 +85,11 @@ const ProjectConfig = ({
 
   // const [formValues, setFormValues]: any = useState({ priority: [] });
   const [priorityArr, setPriorityArr] = useState([]);
+  const [hoveredIndex, setHoveredIndex] = useState(-1);
+
+  const handleHover = (index: any) => {
+    setHoveredIndex(index);
+  };
 
   useEffect(() => {
     const userObj: any = getCookie("user");
@@ -135,23 +140,6 @@ const ProjectConfig = ({
   }, []);
 
   // setFormValues({ respTextFields });
-
-  // const handleOptionClick = (id: any) => {
-  //   const updatedConfig = config.map((option: any) => {
-  //     if (option.id === id) {
-  //       return {
-  //         ...option,
-  //         isActive: true,
-  //       };
-  //     } else {
-  //       return {
-  //         ...option,
-  //         isActive: false,
-  //       };
-  //     }
-  //   });
-  //   setConfig(updatedConfig);
-  // };
 
   const handleOptionClick = (id: any) => {
     setSelectedOption(id);
@@ -244,7 +232,7 @@ const ProjectConfig = ({
         <SideMenuConfig>
           {config.map((item: any, index: any) => {
             return (
-              <MenuOuterOptionContainer>
+              <MenuOuterOptionContainer isActive={item.isActive}>
                 <MenuOptionContainer
                   key={item.id}
                   isActive={item.isActive}
@@ -274,12 +262,20 @@ const ProjectConfig = ({
                         console.log("elementasas", element);
                         return (
                           <div>
-                            <TextFieldContainer>
+                            <TextFieldContainer
+                              onMouseEnter={() => handleHover(index)}
+                              onMouseLeave={() => handleHover(-1)}
+                              isHovered={hoveredIndex === index}
+                            >
                               {/* <input type="text" name="name" /> */}
+
                               <CustomTextField
+                                hoveredIndex={hoveredIndex}
                                 width={"380px"}
                                 height={"44px"}
-                                backgroundColor={"white"}
+                                backgroundColor={
+                                  hoveredIndex === index ? "#FFF5EF" : "white"
+                                }
                                 marginTop={"20px"}
                                 paddingTop={"20px"}
                                 marginLeft={"20px"}
@@ -299,28 +295,29 @@ const ProjectConfig = ({
                                 }}
                               />
 
-                              {formValues.priority.length > 1 && (
-                                <RemoveButton
-                                  onClick={() => handleDeleteField(index)}
-                                >
-                                  <RemoveLogo src={removeButton} alt="remove" />
-                                </RemoveButton>
+                              {hoveredIndex === index && (
+                                <>
+                                  {formValues.priority.length > 1 && (
+                                    <RemoveButton
+                                      onClick={() => handleDeleteField(index)}
+                                    >
+                                      <RemoveLogo
+                                        src={removeButton}
+                                        alt="remove"
+                                      />
+                                    </RemoveButton>
+                                  )}
+
+                                  <AddButton
+                                    onClick={() => handleAddField(index)}
+                                  >
+                                    <AddLogo src={addButton} alt="remove" />
+                                  </AddButton>
+                                </>
                               )}
 
-                              {/* <AddButtonContainer> */}
-                              <AddButton onClick={() => handleAddField(index)}>
-                                <AddLogo src={addButton} alt="remove" />
-                              </AddButton>
                               {/* </AddButtonContainer> */}
                             </TextFieldContainer>
-                            {/* <Button onClick={() => handleAddField(index)}>
-                            Add Field
-                          </Button>
-                          {formValues.priority.length > 1 && (
-                            <Button onClick={() => handleDeleteField(index)}>
-                              Delete Field
-                            </Button>
-                          )} */}
                           </div>
                         );
                       }

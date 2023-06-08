@@ -263,7 +263,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   };
 
   const handleViewTaskList = () => {
-    // console.log("teskssksk trigg");
     setOpenDrawer(true);
   };
 
@@ -343,7 +342,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     }
   }, [issueList]);
 
-  console.log(filteredIssuesList, viewIssue, "viewIssue");
   const handleViewIssue = (issue: any) => {
     filteredIssuesList.forEach((item: any) => {
       if (issue._id === item._id) {
@@ -356,9 +354,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     issueMenuClicked(issueMenuInstance);
   };
 
-  useEffect(() => {
-    console.log("issueFilterState", issueFilterState);
-  }, [issueFilterState]);
+  useEffect(() => {}, [issueFilterState]);
   const [abc, setAbc] = useState(false);
   const checkIsFilter = () => {
     if (issueFilterState?.filterData) {

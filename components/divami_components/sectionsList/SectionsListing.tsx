@@ -181,7 +181,6 @@ const tableIcons: any = {
 };
 
 const MyNewTitle = (props: any) => {
-  console.log("MyNewTitle", props);
   return (
     <div
       style={{
@@ -244,8 +243,6 @@ const SectionsListing = () => {
   }, []);
 
   useEffect(() => {
-    console.log("router?.query?.projectId", router);
-
     if (router.isReady) {
       getSectionsList(router?.query?.projectId as string)
         .then((response: AxiosResponse<any>) => {
@@ -259,23 +256,15 @@ const SectionsListing = () => {
               };
             }
           );
-          console.log("removeGrandParent", removeGrandParent);
           massageTree(removeGrandParent, response?.data?.result?.id);
           //  setTableData([...dummyData]);
-          console.log("secondcall", response?.data?.result[0]?.children);
         })
-        .catch((error) => {
-          console.log("error", error);
-        });
+        .catch((error) => {});
     }
   }, [router.query.projectId]);
 
   function massageTree(responseArr: any, grandParent: string) {
-    console.log("responseArr", responseArr);
-    console.log("grandParent", grandParent);
-
     let resultArr: any = [];
-    console.log("FLAG 1", responseArr, grandParent);
     responseArr.map((item: any, index: number) => {
       if (item.parent == null) {
         // parent
@@ -296,7 +285,6 @@ const SectionsListing = () => {
       }
     });
 
-    console.log("MASSAGED", resultArr);
     setFilterTableData([...resultArr]);
     setTableData([...resultArr]);
   }

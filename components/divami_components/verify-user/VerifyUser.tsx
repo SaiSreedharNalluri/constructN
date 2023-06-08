@@ -26,7 +26,6 @@ import { verifyResendEmail } from "../../../services/userAuth";
 import { toast } from "react-toastify";
 
 const VerifyUser = ({ queryMail }: { queryMail: string }) => {
-  console.log("queryMail", queryMail);
   // const maskedEmail = queryMail.replace(/.(?=.*?@)/g, "*");
   const [maskedMail, setMaskedMail] = useState("");
   const router = useRouter();
@@ -59,7 +58,6 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
   const handleEmailVerification = (email: string) => {
     verifyResendEmail(email)
       .then((response) => {
-        console.log("Response of email", response);
         toast.success(response.message);
         return;
       })

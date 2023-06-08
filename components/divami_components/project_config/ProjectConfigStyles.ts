@@ -5,42 +5,36 @@ import { Box, Button, Checkbox, MenuItem, TextField } from "@mui/material";
 import zIndex from "@mui/material/styles/zIndex";
 import { fontStyle } from "html2canvas/dist/types/css/property-descriptors/font-style";
 import { display } from "html2canvas/dist/types/css/property-descriptors/display";
+import { Height } from "@mui/icons-material";
 
 export const ConfigurationBox = styled("div")({
   display: "flex",
-  width:"585px",
-  height: "360px",
+  // width:"585px",
+  // height: "360px",
 });
 
 export const SideMenuConfig = styled("div")({
+  position:"sticky",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  // borderRight: "1px solid black",
+  
   width: "140px",
   marginTop: "17px",
-  //   height:"auto",
-  // height: "98.5vh",
-  //   transition: "0.3s",
-  //   overflow: "hidden",
-  // paddingTop: "35px",
-  //   boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.3)",
+ 
 });
 
-export const MenuOuterOptionContainer = styled("div")({
-  paddingLeft: "13px",
-  marginBottom: "21px",
-});
 
-interface ContainerProps {
-  issActive: boolean;
-}
+export const MenuOuterOptionContainer = styled("div")((props: any) => ({
+  paddingLeft: props.isActive ? "13px" :"20px",
+  marginBottom: props.isActive ? "17px" :"25px",
+})) as any;
+
 export const MenuOptionContainer = styled("div")((props: any) => ({
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: "14px",
-  //   color: "#101F4C",
   cursor: "pointer",
   borderRadius: props.isActive ? "30px" : "",
   border: props.isActive ? "3px solid #ECECEC" : "",
@@ -65,14 +59,13 @@ export const MenuOptionSelected = styled("div")((props: any) => ({
 
   paddingBottom: props.isActive ? "3px" : "",
 
-  //   background: props.isActive ? "red" : "blue",
 })) as any;
 
 export const ProjectConfigContent = styled("div")({
   background: "#E7E7E7",
   width: "100%",
-  height: "auto",
-  // overflowY:"scroll"
+  height: "330px",
+  overflowY:"scroll"
 });
 
 export const AvailableStateHeader = styled("div")({
@@ -103,11 +96,11 @@ export const StyledTextField = styled(TextField)((props: any) => ({
   },
 
   "& .MuiOutlinedInput-notchedOutline": {
-    border: "1px solid #36415d",
+    border: props?.isHovered ? "1px solid #F1742E !important" : "1px solid #36415d",
   },
 
   "&:focus-within .MuiOutlinedInput-notchedOutline": {
-    border: "1px solid #F1742E !important",
+    border: props?.isHovered ? "1px solid #F1742E !important"  : "1px solid #36415d",
   },
 
   "& .MuiInputBase-input.MuiOutlinedInput-input": {
@@ -115,8 +108,14 @@ export const StyledTextField = styled(TextField)((props: any) => ({
   },
 })) as any;
 
-export const TextFieldContainer = styled("div")({
-  // border: "2px solid blue",
+
+interface ContainerTextFieldProps {
+  isHovered: boolean;
+}
+
+
+
+export const TextFieldContainer = styled("div")<ContainerTextFieldProps>({
   display: "flex",
   alignItems: "center",
 });
@@ -128,7 +127,10 @@ export const RemoveButton = styled("div")({
   top: "10px",
 });
 
-export const RemoveLogo = styled(Image)({});
+export const RemoveLogo = styled(Image)({
+  width: "24px",
+  height:"24px"
+});
 
 export const AddButton = styled("div")({
   cursor: "pointer",
@@ -138,10 +140,10 @@ export const AddButton = styled("div")({
 });
 
 export const AddButtonContainer = styled("div")({
-  // cursor: "pointer",
-  // position: "relative",
-  // left:"-30px",
-  // top:"10px"
+ 
 });
 
-export const AddLogo = styled(Image)({});
+export const AddLogo = styled(Image)({
+   width: "24px",
+  height:"24px"
+});

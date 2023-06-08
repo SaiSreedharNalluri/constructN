@@ -22,9 +22,6 @@ import {
   HeaderImage,
   StyledTable,
 } from "../project-users-list/ProjectUsersListStyles";
-import UsersFilter from "../usersList/UsersFilter";
-import searchIcon from "../../../public/divami_icons/search.svg";
-import UserFilterIcon from "../../../public/divami_icons/UserFilterIcon.svg";
 import MoreActions from "../../../public/divami_icons/MoreActions.svg";
 import Image from "next/image";
 import {
@@ -34,7 +31,6 @@ import {
   CapturesFieldContainer,
   OtherUsersCount,
   UserMonogram,
-  UserPic,
   UsersInfo,
 } from "./ProjectListingStyles";
 import capture360Image from "../../../public/divami_icons/capture360Image.svg";
@@ -44,11 +40,9 @@ import videoWalk from "../../../public/divami_icons/videoWalk.svg";
 import { StyledMenu } from "../issue-listing/IssueListStyles";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import { CustomMenu } from "../custom-menu/CustomMenu";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { SortDescIcon } from "./SortDescIcon";
-import { SortAscIcon } from "./SortAscIcon";
-import ProjectListFilter from "./ProjectListFilter";
+import { LightTooltip } from "../task_list/TaskList";
+import { UsersListTooltip } from "./UsersListTooltip";
+import { UserInfoTooltip } from "./UserInfoToolTip";
 
 export const ProjectListFlatView = ({ projects }: any) => {
   const router = useRouter();
@@ -73,16 +67,15 @@ export const ProjectListFlatView = ({ projects }: any) => {
     // return a.numberOfUsers - b.numberOfUsers;
   };
 
-  const getFullName = (name: string) => {
-    if (name) {
-      const nameArr = name.split(" ");
-      if (nameArr.length > 1) {
-        return `${nameArr[0].charAt(0).toUpperCase}${
-          nameArr[1].charAt(0).toUpperCase
-        }`;
-      }
-    }
-    return `DD`;
+  const getFullName = (fName: string, lName: string) => {
+    if (fName && lName)
+      return `${fName.charAt(0).toUpperCase()}${lName.charAt(0).toUpperCase()}`;
+    else if (fName)
+      return `${fName.charAt(0).toUpperCase()}${fName.charAt(1).toUpperCase()}`;
+    else if (lName)
+      return `${lName.charAt(0).toUpperCase()}${lName.charAt(1).toUpperCase()}`;
+
+    return `--`;
   };
 
   const columns: any = [
@@ -206,26 +199,63 @@ export const ProjectListFlatView = ({ projects }: any) => {
           <UsersInfo>
             <UsersInfo>
               {rowData.users.slice(0, 2)?.map((each: any) => {
-                return each.url ? (
-                  <UserPic src={each.url} alt={""}></UserPic>
-                ) : (
-                  <UserMonogram>{getFullName(each.fullName)}</UserMonogram>
+                return (
+                  <LightTooltip
+                    arrow
+                    title={
+                      <UserInfoTooltip
+                        userData={each}
+                        getFullName={getFullName}
+                      />
+                    }
+                  >
+                    <UserMonogram>
+                      {getFullName(each.user.firstName, each.user.lastName)}
+                    </UserMonogram>
+                  </LightTooltip>
                 );
+                // return each.user?.avatar ? (
+                //   <LightTooltip
+                //     arrow
+                //     title={<UserInfoTooltip userData={each} />}
+                //   >
+                //     <UserPic
+                //       src={each.user.avatar}
+                //       alt={""}
+                //       width={24}
+                //       height={24}
+                //     />
+                //   </LightTooltip>
+                // ) : (
+                //   <LightTooltip
+                //     arrow
+                //     title={<UserInfoTooltip userData={each} />}
+                //   >
+                //     <UserMonogram>
+                //       {getFullName(each.user.firstName, each.user.lastName)}
+                //     </UserMonogram>
+                //   </LightTooltip>
+                // );
               })}
             </UsersInfo>
 
             {Number(rowData.numberOfUsers) > 2 ? (
-              <OtherUsersCount
-                onMouseEnter={(e: any) => {
-                  setAnchorEl(e.target);
-                  setShowMenu(true);
-                }}
+              <LightTooltip
+                arrow
+                title={
+                  <UsersListTooltip
+                    list={rowData.users.slice(2, 5)}
+                    showMoreText={Number(rowData.numberOfUsers) > 5}
+                  />
+                }
               >
-                +
-                {rowData.numberOfUsers - 2 > 9
-                  ? rowData.numberOfUsers
-                  : `0${rowData.numberOfUsers - 2}`}
-              </OtherUsersCount>
+                <OtherUsersCount>
+                  +
+                  {rowData.numberOfUsers - 2 > 9
+                    ? rowData.numberOfUsers
+                    : `0${rowData.numberOfUsers - 2}`}
+                </OtherUsersCount>
+              </LightTooltip>
             ) : (
               <></>
             )}
