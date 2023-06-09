@@ -66,6 +66,8 @@ const Index: React.FC<any> = () => {
   const [isGridView, setIsGridView] = useState(true);
   const [selectedOption, setSelectedOption] = useState("issuePriority");
 
+  const [showButton, setShowbutton] = useState(false);
+
   const [formValues, setFormValues]: any = useState({ priority: [] });
   const [showPopUp, setshowPopUp] = useState(false);
 
@@ -278,6 +280,7 @@ const Index: React.FC<any> = () => {
         });
         toast.success("Tag list updated successfully");
       }
+      setShowbutton(false);
 
       // setSubmittedValues(formValues);
     } catch (error) {
@@ -429,6 +432,7 @@ const Index: React.FC<any> = () => {
                   setSelectedOption={setSelectedOption}
                   formValues={formValues}
                   setFormValues={setFormValues}
+                  setShowbutton={setShowbutton}
                 />
               }
               // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
@@ -437,6 +441,8 @@ const Index: React.FC<any> = () => {
               SecondaryButtonlabel={"Cancel"}
               callBackvalue={handleSubmit}
               projectId={projectId}
+              showButton={showButton}
+              setShowbutton={setShowbutton}
             />
           )}
         </ProjectsListContainer>

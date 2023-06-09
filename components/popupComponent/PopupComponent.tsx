@@ -18,7 +18,7 @@ export const CloseIcon = styled(Image)({
 });
 
 const BootstrapDialog = styled(Dialog)(
-  ({ theme, width, height, paddingStyle }: any) => ({
+  ({ theme, width, height, paddingStyle, showButton }: any) => ({
     fontWeight: "900",
     fontFamily: "Open Sans",
 
@@ -28,7 +28,7 @@ const BootstrapDialog = styled(Dialog)(
     },
     "& .MuiDialogActions-root": {
       padding: paddingStyle ? "" : theme.spacing(1),
-      paddingTop: paddingStyle ? "13px" : "",
+      paddingTop: showButton ? "30px" : "",
       display: "flex",
 
       justifyContent: paddingStyle ? "end" : "center",
@@ -67,6 +67,9 @@ export interface PopupComponentProps {
   width?: string;
   height?: string;
   paddingStyle?: boolean;
+  showButton?: boolean;
+
+  setShowbutton?: any;
 }
 
 function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -130,11 +133,14 @@ const PopupComponent = (props: PopupComponentProps) => {
     hideButtons = false,
     paddingStyle,
     width,
+    showButton,
+    setShowbutton,
   } = props;
 
   console.log("paddingStyle", paddingStyle);
   const handleClose = () => {
     setShowPopUp(false);
+    setShowbutton(false);
   };
 
   return (
@@ -146,6 +152,7 @@ const PopupComponent = (props: PopupComponentProps) => {
         width={props.width}
         height={props.height}
         paddingStyle={props.paddingStyle}
+        showButton={props.showButton}
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
@@ -169,9 +176,11 @@ const PopupComponent = (props: PopupComponentProps) => {
           )}
         </DialogContent>
         <DialogActions
-          sx={paddingStyle ? { height: "70px", padding: 0 } : { padding: 0 }}
+          sx={
+            showButton ? { height: "70px", paddingTop: "13px" } : { padding: 0 }
+          }
         >
-          {!hideButtons ? (
+          {showButton ? (
             <ButtonDiv>
               <Button
                 variant={paddingStyle ? "outlined" : "text"}
