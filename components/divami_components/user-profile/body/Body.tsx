@@ -100,7 +100,7 @@ const Body= ( {userDetails,updateProfileInfo}:any) => {
                   </div>
           <div className="py-4 flex">
           <Image src={task} alt="" ></Image>
-          <p className="text-[#101F4C]" ><span className="text-[#F1742E] ml-1" onClick={handlePasswordChange}> Click here</span>  to change password</p>
+          <p className="text-[#101F4C]" ><span className="text-[#F1742E] cursor-pointer ml-1" onClick={handlePasswordChange}> Click here</span>  to change password</p>
           </div>  
            
         </div>

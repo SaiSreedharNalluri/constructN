@@ -30,12 +30,12 @@ const EditProject = ({
     console.log("data123", data);
     setFormData(data);
   };
+  
+  
   return (
     <StyledDiv>
       <Header
-        closeEditProject={() => {
-          setshowPopUp(true);
-        }}
+        closeEditProject={handleEditClose}
       />
       <Body
         handleFormData={handleFormData}
