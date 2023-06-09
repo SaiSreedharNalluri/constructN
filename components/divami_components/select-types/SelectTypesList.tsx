@@ -69,7 +69,6 @@ const SelectTypesList = ({
     // }
     setList(optionsList);
   }, [optionsList]);
-  console.log(optionsList, "options", list);
   // const filteredItems = optionsList.filter((item:any) =>
   //   item.toLowerCase().includes(searchTerm.toLowerCase())
   // );

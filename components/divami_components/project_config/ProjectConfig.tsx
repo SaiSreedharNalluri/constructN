@@ -40,7 +40,6 @@ const ProjectConfig = ({
   setFormValues,
   setShowbutton,
 }: any) => {
-  console.log("congifurationid", projectId);
   const [config, setConfig]: any = React.useState([
     {
       id: "issuePriority",
@@ -94,7 +93,6 @@ const ProjectConfig = ({
 
   useEffect(() => {
     const userObj: any = getCookie("user");
-    console.log("userObj", userObj);
   }, []);
 
   useEffect(() => {
@@ -129,12 +127,6 @@ const ProjectConfig = ({
       fetchPriorityList();
     }
   }, [projectId, selectedOption]);
-
-  useEffect(() => {
-    if (priorityArr) {
-      console.log("priorit", priorityArr);
-    }
-  }, []);
 
   // setFormValues({ respTextFields });
 
@@ -187,7 +179,6 @@ const ProjectConfig = ({
   };
 
   const handleSubmit = async () => {
-    console.log("formaaaa", formValues);
     try {
       // Call the appropriate API based on the selected option and pass the updated values
       if (selectedOption === "issuePriority") {
@@ -259,7 +250,6 @@ const ProjectConfig = ({
                   <form>
                     {formValues?.priority?.map(
                       (element: any, index: number) => {
-                        console.log("elementasas", element);
                         return (
                           <div>
                             <TextFieldContainer

@@ -150,8 +150,6 @@ const FormWrapper = (props: any) => {
     type?: string,
     parentId?: string
   ) => {
-    console.log(e, id, type, parentId, "okokom");
-
     if (type === "doubleField") {
       setFormConfig((prev: any) => {
         return prev.map((each: any) => {
@@ -203,7 +201,6 @@ const FormWrapper = (props: any) => {
     type?: string,
     parentId?: string
   ) => {
-    console.log(e, id, type, parentId, "fdsfdsfsd");
     let fieldHasValue = e !== null ? e["$D"] + e["$M"] + e["$y"] : null;
     if (type === "doubleField") {
       setFormConfig((prev: any) => {

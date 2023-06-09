@@ -81,7 +81,6 @@ const ProjectHierarchy = ({
 
   const onLabelClick = (event: any, nodes: any) => {
     {
-      console.log("onclickinlable");
       window.localStorage.setItem("nodeData", JSON.stringify(nodes));
       getStructureData ? getStructureData(nodes) : null;
 
