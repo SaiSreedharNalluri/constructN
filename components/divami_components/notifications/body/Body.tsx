@@ -105,13 +105,13 @@ const Body = ({
                           {notificationObj?.readAt ? (
                           
                           <div className="px-4 py-4   border-gray-400 mx-4 border-b">
-                            <div className="flex">
-                              <div > 
+                            <div className="grid grid-cols-8 gap-4">
+                              <div className="col-span-1"> 
                               {notificationObj.notificationType === "Project" ? (
                                       <Image src={project} className="h-8 w-8 mt-2" alt="" />
                                     ) : notificationObj.notificationType==="Issue"   ? <Image src={issueIcon} className="h-8 w-8 mt-2" alt="" />:notificationObj.notificationType=== "Task" ? <Image src={task} className="h-8 w-8 mt-2" alt="" />:notificationObj.notificationType=== "Snapshot" ? <Image src={cameraIcon} className="h-8 w-8 mt-2" alt="" />:""}
                                </div> 
-                              <div className="flex-col">
+                              <div className="col-span-7">
                               <div className="ml-2"> {notificationObj.message} </div>
                               <div>   {date === "TODAY" ? (
                             <div className="ml-2 mt-2">
@@ -138,17 +138,17 @@ const Body = ({
                               onClick={() => {
                                 updateNotifications(notificationObj.id);
                               }}
-                              className="py-4 px-4  border-gray-400 bg-gray-500 border-t mx-4 "
+                              className="py-4 px-4  border-gray-400 bg-gray-100 border-t mx-4 "
 
                             >
-                              <div className="flex">
-                                <div>
+                              <div className="grid grid-cols-8 gap-4">
+                                <div className="col-span-1">
                                 {notificationObj.notificationType === "Project" ? (
                                       <Image src={project} className="h-8 w-8 mt-2" alt="" />
                                     ) : notificationObj.notificationType==="Issue"   ? <Image src={issueIcon} className="h-8 w-8 mt-2" alt="" />:notificationObj.notificationType=== "Task" ? <Image src={task} className="h-8 w-8 mt-2" alt="" />:notificationObj.notificationType=== "Snapshot" ? <Image src={cameraIcon} className="h-8 w-8 mt-2" alt="" />:""}  
                                 </div>
                             
-                              <div className="flex-col ">
+                              <div className="col-span-7 ">
                                <div className="ml-2"> {notificationObj.message}</div> 
                                <div>     {date === "TODAY" ? (
                                 <div className="ml-2 mt-2">

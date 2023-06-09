@@ -45,6 +45,7 @@ import {
 } from "../../../services/userNotifications";
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import Notifications from "../notifications/Notifications";
+import UserProfile from "../user-profile/UserProfile";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -82,8 +83,8 @@ const Header: React.FC<any> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [totalNotifications, setTotalNotifications] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-
   const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
+  const [openProfile, setOpenProfile] = useState(false);
   useEffect(() => {
     const userObj: any = getCookie("user");
     let user = null;
@@ -111,6 +112,7 @@ const Header: React.FC<any> = ({
   }, [viewMode]);
 
  
+  
   const userLogOut = () => {
     removeCookies("user");
     // router.push("/login");
@@ -121,11 +123,7 @@ const Header: React.FC<any> = ({
   };
 
   const onProfilePicClick = () => {
-    if (!loading) {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
+    if(!openProfile){setOpenProfile(true)}else{setOpenProfile(false)}
   };
 
   const rightMenuClickHandler = (e: any) => {
@@ -220,6 +218,9 @@ const Header: React.FC<any> = ({
   const handleNotificationClose=()=>{
     setOpenNotication(false)
   }
+  const handleProfileClose=()=>{
+    setOpenProfile(false)
+  }
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -286,29 +287,9 @@ const Header: React.FC<any> = ({
           ) : (
             <></>
           )}
+         
           <HeaderProfileImageContainer>
-            {/* <Image
-              onClick={() => {
-                if (!loading) {
-                  setLoading(true);
-                } else {
-                  setLoading(false);
-                }
-              }}
-              src={profileImageHeader}
-              alt="Profile Image"
-            /> */}
-            {/* <Image
-              onClick={() => {
-                if (!loading) {
-                  setLoading(true);
-                } else {
-                  setLoading(false);
-                }
-              }}
-              src={ImgProfile}
-              alt="Profile Image"
-            /> */}
+  
             {avatar ? (
               <ProfileImgIcon
                 onClick={onProfilePicClick}
@@ -326,6 +307,9 @@ const Header: React.FC<any> = ({
                 height={34}
               />
             )}
+             {openProfile?<CustomDrawer>
+              <UserProfile handleProfileClose={handleProfileClose} ></UserProfile>
+             </CustomDrawer>:''}
           </HeaderProfileImageContainer>
           <HeaderNotificationImageContainer>
             <Image
@@ -364,78 +348,7 @@ const Header: React.FC<any> = ({
           </HeaderMenuImageContainer>
         </HeaderRightPart>
 
-        {loading && (
-          <div className="absolute top-14 right-0 z-50 bg-gray-800 rounded-lg shadow border">
-            <ul className="text-white p-4 ">
-              <li className="font-medium">
-                <div className="flex flex-col items-center justify-center transform transition-colors duration-200">
-                  <div className="w-11 h-11 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 border-gray-900">
-                    {/* <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> */}
-                    {/* <Image
-                      src={avatar || defaultAvatar}
-                      alt=""
-                      className={`w-full h-full cursor-pointer object-cover `}
-                      title={name}
-                      height={1920}
-                      width={1080}
-                      onClick={() => router.push(`/user-account`)}
-                    /> */}
-
-                    <ProfileImgSecIcon
-                      onClick={() => router.push(`/user-account`)}
-                      src={avatar || defaultAvatar}
-                      alt="Profile Image Icon"
-                      width={34}
-                      height={34}
-                    />
-                  </div>
-                  <div className="text-base font-bold">{name}</div>
-                  <div className="text-xs italic font-thin">{eMail}</div>
-                  <div
-                    className="cursor-pointer font-bold"
-                    onClick={() => router.push(`/user-account`)}
-                  >
-                    Manage Account
-                  </div>
-                </div>
-              </li>
-              <hr className="border-gray-700" />
-              {/* <li className="font-medium cursor-pointer" onClick={() => router.push(`/user-account`)}>
-                      <div className="flex items-center justify-center transform transition-colors duration-200">
-                        <div className="mr-3">
-                          <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-                        </div>
-                        Account
-                      </div>
-                    </li> */}
-              <li
-                className="font-medium cursor-pointer"
-                onClick={() => router.push(`/support`)}
-              >
-                <div className="flex items-center justify-center transform transition-colors duration-200 ">
-                  <div className="mr-3">
-                    <FontAwesomeIcon icon={faQuestion} />
-                  </div>
-                  Support
-                </div>
-              </li>
-              <hr className="border-gray-700" />
-              <li
-                className="font-medium cursor-pointer"
-                onClick={() => userLogOut()}
-              >
-                <div className="flex items-center justify-center transform transition-colors duration-200 ">
-                  <div className="mr-3 ">
-                    <FontAwesomeIcon
-                      icon={faRightFromBracket}
-                    ></FontAwesomeIcon>
-                  </div>
-                  Logout
-                </div>
-              </li>
-            </ul>
-          </div>
-        )}
+      
         {/* //! This is Open Profile Options */}
         {/* {loading && (
           <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">

@@ -54,9 +54,7 @@ const Notifications = ({
   return (
     <StyledDiv>
       <Header
-        closeNotifications={() => {
-          setshowPopUp(true);
-        }}
+        closeNotifications={handleNotificationClose}
       />
       <Body
         handleFormData={handleFormData}
