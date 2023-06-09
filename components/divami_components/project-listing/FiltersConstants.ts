@@ -5,7 +5,7 @@ export const projectConfig = [
     isReadOnly: false,
     fields: [
       {
-        id: "start-date",
+        id: "startDate",
         type: "datePicker",
         defaultValue: "",
         label: "MM/DD/YYYY",
@@ -15,7 +15,7 @@ export const projectConfig = [
         fromFilters: true,
       },
       {
-        id: "due-date",
+        id: "dueDate",
         type: "datePicker",
         defaultValue: "",
         label: "MM/DD/YYYY",
@@ -29,26 +29,28 @@ export const projectConfig = [
   {
     id: "numberOfMembersField",
     type: "doubleField",
+    label: "Number of Members",
     isReadOnly: false,
     fields: [
       {
         id: "numberOfMembersSelect",
         type: "select",
-        defaultValue: "",
+        defaultValue: "greaterThan",
         placeHolder: "Enter number of members",
-        label: "",
+        label: "Number of Members",
         isLarge: false,
         isError: false,
         isReq: true,
         isflex: false,
         isReadOnly: false,
         width: "199px !important",
-        formLabel: "",
+        formLabel: "Number of Members",
+
         options: [
           {
             label: "Greater Than",
             value: "greaterThan",
-            selected: false,
+            selected: true,
           },
           {
             label: "Less Than",
@@ -61,6 +63,11 @@ export const projectConfig = [
             selected: false,
           },
         ],
+        styles: {
+          borderTopRightRadius: "0",
+          borderBottomRightRadius: "0",
+          borderRight: "1px solid white",
+        },
       },
       {
         id: "numberOfMembersValue",
@@ -68,10 +75,14 @@ export const projectConfig = [
         defaultValue: "",
         width: "199px !important",
         formLabel: "",
-        placeholder: "",
+        placeholder: "Enter number of member",
         isError: false,
         isReq: false,
         isReadOnly: false,
+        styles: {
+          borderTopLeftRadius: "0",
+          borderBottomLeftRadius: "0",
+        },
       },
     ],
   },

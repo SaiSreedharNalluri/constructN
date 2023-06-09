@@ -82,6 +82,24 @@ export const addUserRoles = async (projectInfo: Object, projectId: string) => {
     });
 };
 
+export const checkUserRegistered = async (projectInfo: Object) => {
+  return await instance
+    .put(
+      `${process.env.NEXT_PUBLIC_HOST}/users/is-user-registered`,
+      projectInfo,
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log("error", error);
+      throw error;
+    });
+};
+
 export const updateProjectInfo = async (
   projectInfo: Object,
   projectId: string

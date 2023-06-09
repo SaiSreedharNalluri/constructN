@@ -17,6 +17,7 @@ import { AddUsersEmailOverlay } from "./AddUsersEmailOverlay";
 import { Drawer } from "@mui/material";
 import CustomSearch from "../custom-search/CustomSearch";
 import CustomLabel from "../custom-label/CustomLabel";
+import { CustomTextField } from "../custom-textfield/CustomTextField";
 
 export const AddUsersEmailPopup = ({
   showEmailOverlay,
@@ -26,7 +27,7 @@ export const AddUsersEmailPopup = ({
   const [formConfig, setFormConfig] = useState(AddUserConfig);
   const [formState, setFormState] = useState({});
   const [openDrawer, setOpenDrawer] = useState(false);
-
+  const [searchVal, setSearchVal] = useState("");
   return (
     <AddUserEmailContainer>
       {/* <FormWrapper
@@ -38,7 +39,7 @@ export const AddUsersEmailPopup = ({
       <LabelContainer>
         <CustomLabel label="Add User By Their Email ID"></CustomLabel>
       </LabelContainer>
-      <CustomSearch
+      {/* <CustomSearch
         data={options}
         handleSearchResult={(e: any, value: any, id: any) => {
           if (value?.id) {
@@ -49,6 +50,25 @@ export const AddUsersEmailPopup = ({
           }
         }}
         placeholder="Enter Email ID"
+      /> */}
+      <CustomTextField
+        id={"search"}
+        variant="outlined"
+        placeholder={"Enter Email ID"}
+        onChange={(e: any) => {
+          setSearchVal(e.target?.value);
+        }}
+        onBlur={(e: any) => {
+          setSearchVal(e.target?.value);
+        }}
+        defaultValue={searchVal}
+        type={"email"}
+        callback={() => {
+          if (searchVal) {
+            showEmailOverlay({ email: searchVal, role: "" });
+          }
+        }}
+        className={undefined}
       />
       <OrText>OR</OrText>
       <BulkUserUploadContainer>

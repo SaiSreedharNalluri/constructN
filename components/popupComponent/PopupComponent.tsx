@@ -18,7 +18,7 @@ export const CloseIcon = styled(Image)({
 });
 
 const BootstrapDialog = styled(Dialog)(
-  ({ theme, width, height, paddingStyle }: any) => ({
+  ({ theme, width, height, paddingStyle, backdropWidth }: any) => ({
     fontWeight: "900",
     fontFamily: "Open Sans",
 
@@ -41,7 +41,10 @@ const BootstrapDialog = styled(Dialog)(
     ".MuiBackdrop-root": {
       height: "calc(100% - 60px)",
       top: "auto !important",
-      width: paddingStyle ? "calc(100%) !important" : "",
+      width:
+        paddingStyle || backdropWidth
+          ? "calc(100%) !important"
+          : "calc(100% -59px)",
       right: "0 !important",
       left: "auto !important",
     },
@@ -62,12 +65,12 @@ export interface PopupComponentProps {
   callBackvalue?: any;
   setShowPopUp: (value: boolean) => void;
   open: boolean;
-  projectId: string;
   modalContent?: any;
   hideButtons?: boolean;
   width?: string;
   height?: string;
   paddingStyle?: boolean;
+  backdropWidth?: boolean;
 }
 
 function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -127,10 +130,10 @@ const PopupComponent = (props: PopupComponentProps) => {
     setShowPopUp,
     open,
     modalContent,
-    projectId,
     hideButtons = false,
     paddingStyle,
     width,
+    backdropWidth,
   } = props;
 
   console.log("paddingStyle", paddingStyle);
@@ -147,6 +150,7 @@ const PopupComponent = (props: PopupComponentProps) => {
         width={props.width}
         height={props.height}
         paddingStyle={props.paddingStyle}
+        backdropWidth={props.backdropWidth}
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"

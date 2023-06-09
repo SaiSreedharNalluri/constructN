@@ -128,10 +128,6 @@ export const CustomTextField = (props: any) => {
     showErrorMsg,
     onFocus,
     width,
-    backgroundColor,
-    marginTop,
-    paddingTop,
-    marginLeft,
     onMouseEnter,
     onMouseLeave,
     hoveredIndex,
@@ -152,14 +148,12 @@ export const CustomTextField = (props: any) => {
       <StyledTextField
         width={props.width ? props.width : ""}
         backgroundColor={props.backgroundColor ? props.backgroundColor : ""}
-        // paddingTop={props.marginTop ? props.marginTop : ""}
         marginTop={props.marginTop ? props.marginTop : ""}
         marginLeft={props.marginLeft ? props.marginLeft : ""}
         hoveredIndex={props?.hoveredIndex ? props?.hoveredIndex : ""}
         autoComplete="off"
         id={id}
         className={` ${isError ? "formErrorField" : ""} formField`}
-        //  type={showPassword ? "text" : "password"}
         type={
           type === "password"
             ? showPassword
@@ -169,7 +163,7 @@ export const CustomTextField = (props: any) => {
             ? type
             : ""
         }
-        placeholder={props.loginField ? placeholder : ""}
+        placeholder={props.loginField || placeholder ? placeholder : ""}
         defaultValue={defaultValue}
         value={defaultValue}
         data-testid={dataTestId}

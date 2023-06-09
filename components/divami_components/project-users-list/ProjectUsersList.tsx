@@ -291,7 +291,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                 placeholder="Search"
                 variant="outlined"
                 value={searchTerm}
-                onChange={(e) => {
+                onChange={(e: any) => {
                   setSearchTerm(e.target.value);
                   setSearchTableData(
                     tableData.filter((each: any) =>
