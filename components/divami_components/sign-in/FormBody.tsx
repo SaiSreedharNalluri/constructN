@@ -48,6 +48,7 @@ const FormBody = ({
   setCanBeDisabled,
   loginField,
   signUpMsg,
+  handleKeyPress,
 }: any) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -92,6 +93,7 @@ const FormBody = ({
         setCanBeDisabled={setCanBeDisabled}
         loginField={true}
         signUpMsg={signUpMsg}
+        handleKeyPress={handleKeyPress}
       />
     </>
   );

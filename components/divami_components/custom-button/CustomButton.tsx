@@ -71,6 +71,7 @@ const CustomButton = (props: any) => {
     setButtonClicked,
     loginField,
     disabledButton,
+    ref,
   } = props;
   if (type === "contained") {
     return (
@@ -91,6 +92,7 @@ const CustomButton = (props: any) => {
             }
           }}
           loginField={loginField}
+          ref={ref}
         >
           {label}
         </ContainedButton>

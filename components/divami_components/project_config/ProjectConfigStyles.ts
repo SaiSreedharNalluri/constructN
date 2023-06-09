@@ -14,20 +14,20 @@ export const ConfigurationBox = styled("div")({
 });
 
 export const SideMenuConfig = styled("div")({
-  position:"sticky",
+  position: "sticky",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  
+
   width: "140px",
   marginTop: "17px",
- 
 });
 
-
 export const MenuOuterOptionContainer = styled("div")((props: any) => ({
-  paddingLeft: props.isActive ? "13px" :"20px",
-  marginBottom: props.isActive ? "17px" :"25px",
+  paddingLeft: props.isActive ? "23px" : "20px",
+  marginBottom: props.isActive ? "25px" : "25px",
+  borderRadius: props.isActive ? "30px" : "",
+  borderRight: props.isActive ? "5px solid white" : "", // Add this line
 })) as any;
 
 export const MenuOptionContainer = styled("div")((props: any) => ({
@@ -38,6 +38,7 @@ export const MenuOptionContainer = styled("div")((props: any) => ({
   cursor: "pointer",
   borderRadius: props.isActive ? "30px" : "",
   border: props.isActive ? "3px solid #ECECEC" : "",
+
   padding: props.isActive ? "1px" : "",
 })) as any;
 
@@ -58,14 +59,13 @@ export const MenuOptionSelected = styled("div")((props: any) => ({
   paddingTop: props.isActive ? "4px" : "",
 
   paddingBottom: props.isActive ? "3px" : "",
-
 })) as any;
 
 export const ProjectConfigContent = styled("div")({
   background: "#E7E7E7",
   width: "100%",
   height: "330px",
-  overflowY:"scroll"
+  overflowY: "scroll",
 });
 
 export const AvailableStateHeader = styled("div")({
@@ -96,11 +96,15 @@ export const StyledTextField = styled(TextField)((props: any) => ({
   },
 
   "& .MuiOutlinedInput-notchedOutline": {
-    border: props?.isHovered ? "1px solid #F1742E !important" : "1px solid #36415d",
+    border: props?.isHovered
+      ? "1px solid #F1742E !important"
+      : "1px solid #36415d",
   },
 
   "&:focus-within .MuiOutlinedInput-notchedOutline": {
-    border: props?.isHovered ? "1px solid #F1742E !important"  : "1px solid #36415d",
+    border: props?.isHovered
+      ? "1px solid #F1742E !important"
+      : "1px solid #36415d",
   },
 
   "& .MuiInputBase-input.MuiOutlinedInput-input": {
@@ -108,12 +112,9 @@ export const StyledTextField = styled(TextField)((props: any) => ({
   },
 })) as any;
 
-
 interface ContainerTextFieldProps {
   isHovered: boolean;
 }
-
-
 
 export const TextFieldContainer = styled("div")<ContainerTextFieldProps>({
   display: "flex",
@@ -129,7 +130,7 @@ export const RemoveButton = styled("div")({
 
 export const RemoveLogo = styled(Image)({
   width: "24px",
-  height:"24px"
+  height: "24px",
 });
 
 export const AddButton = styled("div")({
@@ -139,11 +140,9 @@ export const AddButton = styled("div")({
   top: "10px",
 });
 
-export const AddButtonContainer = styled("div")({
- 
-});
+export const AddButtonContainer = styled("div")({});
 
 export const AddLogo = styled(Image)({
-   width: "24px",
-  height:"24px"
+  width: "24px",
+  height: "24px",
 });

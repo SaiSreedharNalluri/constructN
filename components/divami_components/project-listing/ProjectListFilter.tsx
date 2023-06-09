@@ -112,7 +112,7 @@ const ProjectListFilter: React.FC<any> = ({
               if (item.id === "numberOfMembersSelect") {
                 return {
                   ...item,
-                  defaultValue: taskFilterState.compareText || "",
+                  defaultValue: taskFilterState.compareText || "greaterThan",
                 };
               } else if (item.id == "numberOfMembersValue") {
                 return {

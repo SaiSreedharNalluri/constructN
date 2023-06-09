@@ -464,6 +464,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           SecondaryButtonlabel={"No"}
           callBackvalue={() => {}}
           width={"458px"}
+          showButton={false}
         />
       ) : (
         <></>

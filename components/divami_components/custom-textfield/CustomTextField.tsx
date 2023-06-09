@@ -62,6 +62,13 @@ const StyledTextField = styled(TextField)((props: any) => ({
   marginTop: props.marginTop ? props.marginTop : "",
   marginLeft: props.marginLeft ? props.marginLeft : "",
 
+  "& .MuiInputBase-input": {
+    fontFamily: "Open Sans",
+    fontSize: "14px",
+    color: "#101F4C",
+    fontStyle: "regular",
+  },
+
   "& .MuiInputBase-root.MuiOutlinedInput-root": {
     height: "40px",
     backgroundColor: props?.backgroundColor ? props.backgroundColor : "",
@@ -73,17 +80,16 @@ const StyledTextField = styled(TextField)((props: any) => ({
     // fontFamily: "Open Sans",
     // fontStyle: "normal",
     //  fontWeight: 400,
-    fontSize: 14,
+    // fontSize: 14,
+    // border: "1px solid black",
     // color: "#101F4B",
   },
-
-  // "& .MuiOutlinedInput-notchedOutline": {
-  //   border:
-  //     props?.hoveredIndex >= 0
-  //       ? "1px solid #F1742E !important"
-  //       : "1px solid #36415d",
-  // },
-
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: "black",
+  },
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: "#F1742E !important",
+  },
   "&:focus-within .MuiOutlinedInput-notchedOutline": {
     border: "1px solid #F1742E !important",
   },
@@ -180,7 +186,7 @@ export const CustomTextField = (props: any) => {
         onMouseLeave={onMouseLeave}
         loginField={loginField}
         onKeyDown={(e: any) => {
-          if (e.keyCode === 13 && props.callback) props.callback();
+          if (e.keyCode === 13 && props.callback) props.callback(e);
         }}
         // variant="outlined"
         // {...rest}

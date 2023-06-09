@@ -509,6 +509,7 @@ const Index: React.FC<any> = () => {
           SecondaryButtonlabel={"No"}
           callBackvalue={() => {}}
           width={"458px"}
+          showButton={false}
         />
       ) : (
         <></>

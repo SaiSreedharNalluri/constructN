@@ -51,6 +51,7 @@ const FormWrapper = (props: any) => {
     signInMsg,
     errorStylingSignup,
     onData,
+    handleKeyPress,
   } = props;
 
   const [userPassword, setUserPassword] = useState("");
@@ -450,7 +451,6 @@ const FormWrapper = (props: any) => {
   // const handlePasswordField = () => {
   //   return <div>Hello</div>;
   // };
-
   const renderHTML = (
     data: any,
     isDisabled: boolean,
@@ -519,7 +519,13 @@ const FormWrapper = (props: any) => {
               id={data.id}
               variant="outlined"
               placeholder={data?.placeholder}
-              callback={data.callback ? data.callback : () => {}}
+              callback={
+                data.callback
+                  ? data.callback
+                  : props.handleKeyPress
+                  ? props.handleKeyPress
+                  : () => {}
+              }
               onChange={(e: any) => {
                 handleTextChange(e, data.id, parentType, parentId);
                 if (data.id === "password") {

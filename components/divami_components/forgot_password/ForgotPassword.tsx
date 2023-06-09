@@ -91,7 +91,13 @@ const ForgotPassword = () => {
       <FormDiv>
         <FormContainerSign>
           <FormHeader>
-            <HeaderImageLogo src={backIcon} alt="logo" />
+            <HeaderImageLogo
+              src={backIcon}
+              alt="logo"
+              onClick={() => {
+                router.push("/login");
+              }}
+            />
 
             <SignInHeader>Forgot Password</SignInHeader>
           </FormHeader>

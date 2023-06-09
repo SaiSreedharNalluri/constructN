@@ -15,6 +15,7 @@ const FooterSignIn = ({
   canBeDisabled,
   loginField,
   customLabel,
+  ref,
 }: any) => {
   const [buttonClicked, setButtonClicked] = useState(false);
   return (
@@ -25,6 +26,7 @@ const FooterSignIn = ({
       formHandler={formHandler}
       setButtonClicked={setButtonClicked}
       loginField={loginField}
+      ref={ref}
     />
   );
 };
