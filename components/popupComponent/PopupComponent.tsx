@@ -101,7 +101,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
             // top: 15,
             top: 6,
             color: (theme) => theme.palette.grey[500],
-            marginRight: "22px",
+            marginRight: "4px",
           }}
         >
           {/* <CloseIcon src={CrossIcon} alt={"close icon"} /> */}
@@ -133,14 +133,15 @@ const PopupComponent = (props: PopupComponentProps) => {
     hideButtons = false,
     paddingStyle,
     width,
-    showButton,
+    showButton = true,
     setShowbutton,
   } = props;
 
-  console.log("paddingStyle", paddingStyle);
   const handleClose = () => {
     setShowPopUp(false);
-    setShowbutton(false);
+    if (setShowbutton) {
+      setShowbutton(false);
+    }
   };
 
   return (
