@@ -37,12 +37,13 @@ const BootstrapDialog = styled(Dialog)(
       width: width ? width : "493px",
       height: height ? height : "",
     },
-    "&.MuiBackdrop-root": {
-      // height: calc(100% - 60px);
-      // top: auto !important;
-      width: "100% !important",
-      // right: 0 !important;
-      // left: auto !important;
+
+    ".MuiBackdrop-root": {
+      height: "calc(100% - 60px)",
+      top: "auto !important",
+      width: paddingStyle ? "calc(100%) !important" : "",
+      right: "0 !important",
+      left: "auto !important",
     },
   })
 ) as any;

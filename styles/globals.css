@@ -593,3 +593,11 @@ td {
 .project_config_active:first-child {
   margin-top: none;
 }
+
+.grid-background{
+ background-image: url('../public/divami_icons/gridBackgroundImage.svg'); 
+  height:100vh;
+  width: 100%;
+  background-repeat: no;
+  
+}

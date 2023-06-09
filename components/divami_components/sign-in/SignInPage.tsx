@@ -1,87 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  ButtonSection,
+  CheckTickBox,
+  CheckTickDiv,
+  ExtraTickDiv,
+  ForgotDiv,
   FormContainerSign,
   FormDiv,
-  FormText,
   HeaderContainer,
   HeaderImageLogo,
   IllustrationBackground,
-  Overlay,
-  SectionShowcase,
-  SignInHeader,
-  StyledPasswordField,
-  StyledTextField,
-  ShowHideDiv,
-  ExtraTickDiv,
-  CheckTickDiv,
-  CheckTickBox,
-  RememberDiv,
-  ParentTickDiv,
-  ForgotDiv,
-  SignInContainedButton,
-  ButtonSection,
   NewUserDiv,
   NewUserSpan,
+  Overlay,
+  ParentTickDiv,
+  RememberDiv,
+  SectionShowcase,
+  SignInHeader,
 } from "./SignInPageStyle";
 
+import { useRouter } from "next/router";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Logo from "../../../public/divami_icons/Logo.svg";
-import Mail from "../../../public/divami_icons/Mail.svg";
-import lock from "../../../public/divami_icons/lock.svg";
-import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
-import Favorite from "@mui/icons-material/Favorite";
-import { useRouter } from "next/router";
 
-import { Checkbox, InputAdornment, TextField } from "@mui/material";
 import Checked from "../../../public/divami_icons/checked.svg";
 import UnChecked from "../../../public/divami_icons/unchecked.svg";
 
+import { setCookie } from "cookies-next";
 import Image from "next/image";
-import FormBody from "./FormBody";
-import FooterSignIn from "./FooterSignIn";
-import { CollectionsOutlined } from "@mui/icons-material";
+import { toast } from "react-toastify";
 import { login } from "../../../services/userAuth";
 import { Mixpanel } from "../../analytics/mixpanel";
-import { toast } from "react-toastify";
-import { deleteCookie, getCookie, setCookie } from "cookies-next";
+import FooterSignIn from "./FooterSignIn";
+import FormBody from "./FormBody";
 
 const SignInPage = () => {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-
-  // const handleClickShowPassword = () => {
-  //   setShowPassword(!showPassword);
-  // };
   useEffect(() => {}, [rememberMe]);
-
-  // const handleMouseDownPassword = (event: any) => {
-  //   event.preventDefault();
-  // };
-
   const [checked, setChecked] = React.useState(true);
-
-  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setChecked(event.target.checked);
-  // };
-
-  // useEffect(() => {
-  //   const userObj: any = getCookie("user");
-  //   console.log("userObj", userObj, router);
-  //   let user = null;
-  //   if (router.isReady) {
-  //     if (userObj) user = JSON.parse(userObj);
-  //     if (user && user.token) {
-  //       if (router.query.sessionExpired === undefined) {
-  //         // router.push("/projects");
-  //       } else {
-  //         deleteCookie("user");
-  //       }
-  //     }
-  //   }
-  // }, [router, router.isReady]);
-
   // form wrapper code
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);
@@ -91,15 +50,15 @@ const SignInPage = () => {
   const [token, setToken] = useState("");
   const [userEmail, setUserEmail] = useState<any>("");
   const [newProp, setNewProp] = useState<any>({});
+  const submitButtonRef: any = useRef(null);
 
   const handleFormData = (data: any) => {
     setFormData(data);
   };
 
-  const handleForm = () => {
-    // formHandler();
-  };
   const formHandler = (event: any) => {
+    // alert("TEST");
+    // console.log("TEST HERE");
     const email = formData[0].defaultValue;
     const password = formData[1].defaultValue;
 
@@ -177,6 +136,13 @@ const SignInPage = () => {
       });
   };
 
+  const handleKeyPress = (event: any) => {
+    if (event.code === "Enter") {
+      event.preventDefault();
+      formHandler(event);
+    }
+  };
+
   // form wrapper code
 
   return (
@@ -199,6 +165,7 @@ const SignInPage = () => {
             setCanBeDisabled={setCanBeDisabled}
             loginField={true}
             signUpMsg={true}
+            handleKeyPress={handleKeyPress}
           />
           <ExtraTickDiv>
             <ParentTickDiv>
@@ -245,6 +212,7 @@ const SignInPage = () => {
               formHandler={formHandler}
               canBeDisabled={canBeDisabled}
               loginField={true}
+              ref={submitButtonRef}
               // customLabel={true}
             />
           </ButtonSection>
