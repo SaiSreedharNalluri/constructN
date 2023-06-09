@@ -58,9 +58,7 @@ const UserProfile = ({handleProfileClose,projectUsers}:any) => {
   return (
     <StyledDiv>
       <Header
-        closeEditProject={() => {
-          setshowPopUp(true);
-        }}
+        closeEditProject={handleProfileClose}
       />
       <Body
         handleFormData={handleFormData}
