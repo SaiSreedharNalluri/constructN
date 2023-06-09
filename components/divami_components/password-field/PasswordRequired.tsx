@@ -15,8 +15,6 @@ import { Menu } from "@mui/material";
 import Popover from "@mui/material";
 
 const PasswordRequired = ({ passwordString }: { passwordString: string }) => {
-  //   console.log("KaranT", passwordString);
-
   const renderIcon = (fieldType: String) => {
     if (passwordString.length === 0) {
       return PasswordError;

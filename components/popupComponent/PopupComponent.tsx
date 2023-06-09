@@ -18,7 +18,7 @@ export const CloseIcon = styled(Image)({
 });
 
 const BootstrapDialog = styled(Dialog)(
-  ({ theme, width, height, paddingStyle, backdropWidth }: any) => ({
+  ({ theme, width, height, paddingStyle, backdropWidth, showButton }: any) => ({
     fontWeight: "900",
     fontFamily: "Open Sans",
 
@@ -28,7 +28,7 @@ const BootstrapDialog = styled(Dialog)(
     },
     "& .MuiDialogActions-root": {
       padding: paddingStyle ? "" : theme.spacing(1),
-      paddingTop: paddingStyle ? "13px" : "",
+      paddingTop: showButton ? "30px" : "",
       display: "flex",
 
       justifyContent: paddingStyle ? "end" : "center",
@@ -71,6 +71,10 @@ export interface PopupComponentProps {
   height?: string;
   paddingStyle?: boolean;
   backdropWidth?: boolean;
+  showButton?: boolean;
+
+  setShowbutton?: any;
+  projectId?: string;
 }
 
 function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -102,7 +106,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
             // top: 15,
             top: 6,
             color: (theme) => theme.palette.grey[500],
-            marginRight: "22px",
+            marginRight: "4px",
           }}
         >
           {/* <CloseIcon src={CrossIcon} alt={"close icon"} /> */}
@@ -134,11 +138,16 @@ const PopupComponent = (props: PopupComponentProps) => {
     paddingStyle,
     width,
     backdropWidth,
+    showButton = true,
+    setShowbutton,
+    projectId,
   } = props;
 
-  console.log("paddingStyle", paddingStyle);
   const handleClose = () => {
     setShowPopUp(false);
+    if (setShowbutton) {
+      setShowbutton(false);
+    }
   };
 
   return (
@@ -151,6 +160,7 @@ const PopupComponent = (props: PopupComponentProps) => {
         height={props.height}
         paddingStyle={props.paddingStyle}
         backdropWidth={props.backdropWidth}
+        showButton={props.showButton}
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
@@ -174,9 +184,11 @@ const PopupComponent = (props: PopupComponentProps) => {
           )}
         </DialogContent>
         <DialogActions
-          sx={paddingStyle ? { height: "70px", padding: 0 } : { padding: 0 }}
+          sx={
+            showButton ? { height: "70px", paddingTop: "13px" } : { padding: 0 }
+          }
         >
-          {!hideButtons ? (
+          {showButton ? (
             <ButtonDiv>
               <Button
                 variant={paddingStyle ? "outlined" : "text"}

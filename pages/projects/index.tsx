@@ -87,6 +87,8 @@ const Index: React.FC<any> = () => {
   });
   const [selectedOption, setSelectedOption] = useState("issuePriority");
 
+  const [showButton, setShowbutton] = useState(false);
+
   const [formValues, setFormValues]: any = useState({ priority: [] });
   const [showPopUp, setshowPopUp] = useState(false);
 
@@ -250,7 +252,7 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Add Users",
-      action: (id?: string) => {
+      action: (id: string) => {
         // getUsersData(id);
         setSelectedProjectId(id);
         setShowAddUser(true);
@@ -359,6 +361,7 @@ const Index: React.FC<any> = () => {
         });
         toast.success("Tag list updated successfully");
       }
+      setShowbutton(false);
 
       // setSubmittedValues(formValues);
     } catch (error) {
@@ -500,30 +503,6 @@ const Index: React.FC<any> = () => {
                 />
               </CustomDrawer>
             )}
-            {showPopUp && (
-              <PopupComponent
-                open={showPopUp}
-                width={"585px"}
-                // height={"360px"}
-                paddingStyle={true}
-                setShowPopUp={setshowPopUp}
-                modalTitle={"Project Configuration"}
-                modalContent={
-                  <ProjectConfig
-                    projectId={projectId}
-                    selectedOption={selectedOption}
-                    setSelectedOption={setSelectedOption}
-                    formValues={formValues}
-                    setFormValues={setFormValues}
-                  />
-                }
-                // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
-                modalmessage={`Are you sure you want to delete this Issue ?`}
-                primaryButtonLabel={"Update"}
-                SecondaryButtonlabel={"Cancel"}
-                callBackvalue={handleSubmit}
-              />
-            )}
           </ProjectsListContainer>
         </Content>
       </div>
@@ -546,6 +525,36 @@ const Index: React.FC<any> = () => {
           callBackvalue={() => {}}
           width={"458px"}
           backdropWidth
+        />
+      ) : (
+        <></>
+      )}
+      {showPopUp ? (
+        <PopupComponent
+          open={showPopUp}
+          width={"585px"}
+          // height={"360px"}
+          paddingStyle={true}
+          setShowPopUp={setshowPopUp}
+          modalTitle={"Project Configuration"}
+          modalContent={
+            <ProjectConfig
+              projectId={projectId}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              formValues={formValues}
+              setFormValues={setFormValues}
+              setShowbutton={setShowbutton}
+            />
+          }
+          // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
+          modalmessage={`Are you sure you want to delete this Issue ?`}
+          primaryButtonLabel={"Update"}
+          SecondaryButtonlabel={"Cancel"}
+          callBackvalue={handleSubmit}
+          projectId={projectId}
+          showButton={showButton}
+          setShowbutton={setShowbutton}
         />
       ) : (
         <></>

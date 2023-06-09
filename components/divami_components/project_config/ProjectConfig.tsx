@@ -38,6 +38,7 @@ const ProjectConfig = ({
   setSelectedOption,
   formValues,
   setFormValues,
+  setShowbutton,
 }: any) => {
   console.log("congifurationid", projectId);
   const [config, setConfig]: any = React.useState([
@@ -168,6 +169,8 @@ const ProjectConfig = ({
     const updatedSubmittedValues: any = { ...submittedValues };
     updatedSubmittedValues.priority = priorityArray;
     setSubmittedValues(updatedSubmittedValues);
+    // Check if the value is empty or not and set setShowbutton accordingly
+    setShowbutton(value.trim().length > 0);
   };
 
   const handleAddField = (index: any) => {
@@ -177,6 +180,7 @@ const ProjectConfig = ({
   };
 
   const handleDeleteField = (index: any) => {
+    setShowbutton(true);
     const updatedFormValues: any = { ...formValues };
     updatedFormValues.priority.splice(index, 1);
     setFormValues(updatedFormValues);
