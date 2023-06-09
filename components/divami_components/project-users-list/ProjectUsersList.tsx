@@ -380,8 +380,8 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
             //   )),
             // }}
             components={{
-              Container: (props) => <Paper {...props} elevation={0} />,
-              Row: (props) => {
+              Container: (props: any) => <Paper {...props} elevation={0} />,
+              Row: (props: any) => {
                 return (
                   <MTableBodyRow
                     {...props}
@@ -419,7 +419,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
               toolbar: false,
               maxBodyHeight: "80vh",
               thirdSortClick: false,
-              rowStyle: (rowData) => ({
+              rowStyle: (rowData: any) => ({
                 fontFamily: "Open Sans",
                 fontStyle: "normal",
                 fontWeight: "400",

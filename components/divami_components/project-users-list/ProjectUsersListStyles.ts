@@ -166,7 +166,7 @@ export const StyledTable = styled(MaterialTable)({
     //   marginLeft: "20px",
     // },
   },
-});
+}) as any;
 
 export const CustomColumnTitle = styled("p")({
   paddingRight: "8px",
@@ -174,7 +174,7 @@ export const CustomColumnTitle = styled("p")({
 
 export const SortIconStyled = styled(SortAscIcon)({
   marginLeft: "20px",
-});
+}) as any;
 
 export const TableWrapper = styled("div")((props: any) => ({
   marginBottom: props.hideHeader ? "0" : "50px",

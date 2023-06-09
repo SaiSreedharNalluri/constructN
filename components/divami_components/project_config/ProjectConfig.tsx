@@ -223,7 +223,7 @@ const ProjectConfig = ({
         <SideMenuConfig>
           {config.map((item: any, index: any) => {
             return (
-              <MenuOuterOptionContainer isActive={item.isActive}>
+              <MenuOuterOptionContainer isActive={item.isActive} key={index}>
                 <MenuOptionContainer
                   key={item.id}
                   isActive={item.isActive}
@@ -251,7 +251,7 @@ const ProjectConfig = ({
                     {formValues?.priority?.map(
                       (element: any, index: number) => {
                         return (
-                          <div>
+                          <div key={index}>
                             <TextFieldContainer
                               onMouseEnter={() => handleHover(index)}
                               onMouseLeave={() => handleHover(-1)}

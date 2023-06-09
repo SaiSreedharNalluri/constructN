@@ -321,8 +321,8 @@ export const AddUsersEmailOverlay = ({
         <TableWrapper hideHeader>
           <StyledTable
             components={{
-              Container: (props) => <Paper {...props} elevation={0} />,
-              Row: (props) => {
+              Container: (props: any) => <Paper {...props} elevation={0} />,
+              Row: (props: any) => {
                 return (
                   <MTableBodyRow
                     {...props}
@@ -345,7 +345,7 @@ export const AddUsersEmailOverlay = ({
               toolbar: false,
               maxBodyHeight: 700,
               thirdSortClick: false,
-              rowStyle: (rowData) => ({
+              rowStyle: (rowData: any) => ({
                 fontFamily: "Open Sans",
                 fontStyle: "normal",
                 fontWeight: "400",

@@ -187,7 +187,7 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Add Users",
-      action: (id?: string) => {
+      action: (id: string) => {
         // getUsersData(id);
         setSelectedProjectId(id);
         setShowAddUser(true);
