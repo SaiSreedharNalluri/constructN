@@ -43,12 +43,11 @@ import { render } from "@testing-library/react";
 import CustomSelect from "../custom-select/CustomSelect";
 import { CustomTextField } from "../custom-textfield/CustomTextField";
 import ProjectInfo from "../../container/projectInfo";
+import { MTableBodyRow } from "material-table";
 
 export const AddUsersEmailOverlay = ({
   form,
   setOpenDrawer,
-  responseData,
-  options,
   roles,
   selectedProjectId,
 }: any) => {
@@ -56,26 +55,25 @@ export const AddUsersEmailOverlay = ({
   const defaultMaterialTheme = createTheme();
   const [addedUsers, setAddedUsers] = useState<any>([]);
   const [searchVal, setSearchVal] = useState("");
-
+  const [hoveringOver, setHoveringOver] = useState("");
   useEffect(() => {
     if (/\S+@\S+\.\S+/.test(form.email)) checkRegisterUser(form.email);
 
     // setAddedUsers([...addedUsers, form]);
   }, form);
-
   const columns = [
     {
       title: "",
       field: "email",
-      //   headerStyle: {
-      //     borderBottom: "1px solid #FF843F",
-      //     fontFamily: "Open Sans",
-      //     fontStyle: "normal",
-      //     fontWeight: "500",
-      //     fontSize: "14px",
-      //     lineHeight: "20px",
-      //     color: "#101F4C",
-      //   },
+      headerStyle: {
+        borderBottom: "1px solid #FF843F",
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "500",
+        fontSize: "14px",
+        lineHeight: "20px",
+        color: "#101F4C",
+      },
       sorting: false,
       cellStyle: { width: "70%" },
       render: (rowData: any) => {
@@ -90,15 +88,15 @@ export const AddUsersEmailOverlay = ({
       title: "",
       field: "role",
       sorting: false,
-      //   headerStyle: {
-      //     borderBottom: "1px solid #FF843F",
-      //     fontFamily: "Open Sans",
-      //     fontStyle: "normal",
-      //     fontWeight: "500",
-      //     fontSize: "14px",
-      //     lineHeight: "20px",
-      //     color: "#101F4C",
-      //   },
+      headerStyle: {
+        borderBottom: "1px solid #FF843F",
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "500",
+        fontSize: "14px",
+        lineHeight: "20px",
+        color: "#101F4C",
+      },
       render: (rowData: any) => {
         return (
           <CustomSelect
@@ -107,7 +105,9 @@ export const AddUsersEmailOverlay = ({
               defaultValue: rowData?.role
                 ? rowData.role
                 : roles.length
-                ? roles[0].value
+                ? roles.some((each: any) => each.value == "viewer")
+                  ? "viewer"
+                  : roles[0].value
                 : "",
             }}
             hideBorder
@@ -143,17 +143,17 @@ export const AddUsersEmailOverlay = ({
       title: "",
       field: "role",
       sorting: false,
-      //   headerStyle: {
-      //     borderBottom: "1px solid #FF843F",
-      //     fontFamily: "Open Sans",
-      //     fontStyle: "normal",
-      //     fontWeight: "500",
-      //     fontSize: "14px",
-      //     lineHeight: "20px",
-      //     color: "#101F4C",
-      //   },
+      headerStyle: {
+        borderBottom: "1px solid #FF843F",
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "500",
+        fontSize: "14px",
+        lineHeight: "20px",
+        color: "#101F4C",
+      },
       render: (rowData: any) => {
-        return (
+        return hoveringOver == rowData.tableData.id ? (
           <Image
             src={removeIcon}
             alt={"remove"}
@@ -163,11 +163,19 @@ export const AddUsersEmailOverlay = ({
               );
             }}
           />
+        ) : (
+          <></>
         );
       },
       cellStyle: { width: "10%" },
     },
   ];
+
+  const handleRowHover = (event: any, propsData: any) =>
+    setHoveringOver(`${propsData.index}`);
+
+  const handleRowHoverLeave = (event: any, propsData: any) =>
+    setHoveringOver("");
 
   const onAddUser = () => {
     const projectInfo = {
@@ -190,13 +198,14 @@ export const AddUsersEmailOverlay = ({
   };
 
   const checkRegisterUser = (val: string) => {
+    const isViewer = roles.some((each: any) => each.value === "viewer");
     checkUserRegistered({ email: val })
       .then((res: any) => {
         if (!res.result?.isRegistered) {
           setAddedUsers([
             {
               email: val,
-              role: roles[0].value,
+              role: isViewer ? "viewer" : roles[0].value,
               isNewUser: true,
             },
             ...addedUsers,
@@ -205,7 +214,7 @@ export const AddUsersEmailOverlay = ({
           setAddedUsers([
             {
               email: val,
-              role: roles[0].value,
+              role: isViewer ? "viewer" : roles[0].value,
               isNewUser: false,
             },
             ...addedUsers,
@@ -313,6 +322,15 @@ export const AddUsersEmailOverlay = ({
           <StyledTable
             components={{
               Container: (props) => <Paper {...props} elevation={0} />,
+              Row: (props) => {
+                return (
+                  <MTableBodyRow
+                    {...props}
+                    onMouseEnter={(e: any) => handleRowHover(e, props)}
+                    onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
+                  />
+                );
+              },
             }}
             columns={columns}
             data={addedUsers ? addedUsers : []}
@@ -327,13 +345,15 @@ export const AddUsersEmailOverlay = ({
               toolbar: false,
               maxBodyHeight: 700,
               thirdSortClick: false,
-              rowStyle: {
+              rowStyle: (rowData) => ({
                 fontFamily: "Open Sans",
                 fontStyle: "normal",
                 fontWeight: "400",
                 fontSize: "14px",
                 color: "#101F4C",
-              },
+                backgroundColor:
+                  rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
+              }),
               headerStyle: {
                 padding: "6px 16px",
                 fontFamily: "Open Sans",

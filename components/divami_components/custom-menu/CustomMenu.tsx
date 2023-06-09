@@ -15,6 +15,7 @@ export const CustomMenu = ({
   width,
   height,
   right,
+  data,
 }: any) => {
   const [showMoreActions, setShowMoreActions] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -84,8 +85,8 @@ export const CustomMenu = ({
               key={option.label}
               onClick={() => {
                 if (option.onClick) option.onClick();
-                else if (option.action) {
-                  option.action();
+                else if (option.action && data) {
+                  option.action(data?._id);
                 }
               }}
               data-testid="sort-menu-item"

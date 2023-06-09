@@ -37,6 +37,7 @@ const ProjectListFilter: React.FC<any> = ({
   taskFilterState,
   onClose,
   handleOnApplyFilter,
+  setTaskFilterState,
 }) => {
   const [formState, setFormState] = useState<any>({});
   const [formConfig, setFormConfig] = useState<any>(projectConfig);
@@ -45,19 +46,35 @@ const ProjectListFilter: React.FC<any> = ({
     onClose(true);
   };
 
-  console.log(formState, "fdommm", formConfig);
-
   const onFilterApply = () => {
     const data: any = {
-      startDate: formState.startDate || "",
-      dueDate: formState.dueDate || "",
-      compareText: formState.numberOfMembersSelect || "",
-      numOfMem: formState?.numberOfMembersValue || "",
+      startDate:
+        formConfig
+          .find((each: any) => each.id == "dates")
+          ?.fields.find((each: any) => each.id == "startDate").defaultValue ||
+        "",
+      dueDate:
+        formConfig
+          .find((each: any) => each.id == "dates")
+          ?.fields.find((each: any) => each.id == "dueDate").defaultValue || "",
+      compareText:
+        formConfig
+          .find((each: any) => each.id == "numberOfMembersField")
+          ?.fields.find((each: any) => each.id == "numberOfMembersSelect")
+          .defaultValue || "",
+      numOfMem:
+        formConfig
+          .find((each: any) => each.id == "numberOfMembersField")
+          ?.fields.find((each: any) => each.id == "numberOfMembersValue")
+          .defaultValue || "",
     };
     handleOnApplyFilter(data);
   };
 
-  const onReset = () => {};
+  const onReset = () => {
+    setFormConfig(projectConfig);
+    setTaskFilterState({ isFilterApplied: false });
+  };
 
   const formHandler = (event: any) => {
     if (event === "Cancel") {
@@ -78,12 +95,12 @@ const ProjectListFilter: React.FC<any> = ({
               if (item.id === "startDate") {
                 return {
                   ...item,
-                  defaultValue: taskFilterState.startDate,
+                  defaultValue: taskFilterState.startDate || "",
                 };
               } else if (item.id == "dueDate") {
                 return {
                   ...item,
-                  defaultValue: taskFilterState.dueDate,
+                  defaultValue: taskFilterState.dueDate || "",
                 };
               }
             }),
@@ -95,12 +112,12 @@ const ProjectListFilter: React.FC<any> = ({
               if (item.id === "numberOfMembersSelect") {
                 return {
                   ...item,
-                  defaultValue: taskFilterState.numberOfMembersSelect,
+                  defaultValue: taskFilterState.compareText || "",
                 };
               } else if (item.id == "numberOfMembersValue") {
                 return {
                   ...item,
-                  defaultValue: taskFilterState.numberOfMembersValue,
+                  defaultValue: taskFilterState.numOfMem || "",
                 };
               }
             }),

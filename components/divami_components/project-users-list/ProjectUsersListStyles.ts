@@ -161,11 +161,15 @@ export const StyledCustomMenu = styled(CustomMenu)({
 });
 
 export const StyledTable = styled(MaterialTable)({
-  "& .MuiTableSortLabel-root": {
-    "& svg": {
-      marginLeft: "20px",
-    },
+  "& .MuiTableCell-root": {
+    // "& svg": {
+    //   marginLeft: "20px",
+    // },
   },
+});
+
+export const CustomColumnTitle = styled("p")({
+  paddingRight: "8px",
 });
 
 export const SortIconStyled = styled(SortAscIcon)({

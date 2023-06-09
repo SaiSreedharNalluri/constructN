@@ -613,7 +613,7 @@ const FormWrapper = (props: any) => {
               data={data}
               config={configObject}
               onChange={(e: any) => {
-                handleDateChange(e, data.id, data.type, parentId);
+                handleDateChange(e, data.id, parentType, parentId);
               }}
               dataTestId={`inputDateField-${data.id}`}
               isReadOnly={data.isReadOnly}
@@ -674,7 +674,7 @@ const FormWrapper = (props: any) => {
                     false,
                     index,
                     data.fields,
-                    parentType,
+                    data.type,
                     data.id
                   )}
                 </Box>

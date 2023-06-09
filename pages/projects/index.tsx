@@ -92,46 +92,9 @@ const Index: React.FC<any> = () => {
 
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
-    filterData: {},
-    numberOfFilters: 0,
   });
 
   const [projectId, setProjectId] = useState<any>("");
-
-  const handleSearchWindow = () => {
-    setSearchTableData(projects);
-    if (searchTerm === "") {
-      setIsSearching(!isSearching);
-    } else {
-      setSearchTerm("");
-    }
-  };
-
-  const handleFilter = (formState: any) => {
-    setTaskFilterState(formState);
-    setSearchTableData(
-      projects.filter(
-        (each: any) =>
-          (Moment(each.fromDate).format("YYYY-MM-DD") >= formState.dueDate ||
-            !formState.dueDate) &&
-          (Moment(each.dueDate).format("YYYY-MM-DD") <= formState.dueDate ||
-            !formState.dueDate) &&
-          (!formState.numberOfMembersSelect ||
-            (formState.numberOfMembersSelect === "greaterThan"
-              ? each.numberOfUsers > formState.numberOfMembersValue
-              : formState.numberOfMembersSelect === "lessThan"
-              ? each.numberOfUsers < formState.numberOfMembersValue
-              : each.numberOfUsers == formState.numberOfMembersValue))
-      )
-    );
-  };
-
-  const showEmailOverlay = (formState: any) => {
-    setShowAddUser(false);
-    setOpenDrawer(true);
-    setForm(formState);
-  };
-
   const sortMenuOptions = [
     {
       label: "Sort by User",
@@ -204,33 +167,7 @@ const Index: React.FC<any> = () => {
     },
   ];
 
-  const getUsersData = (id: string) => {
-    getProjectUsers(id).then((response: any) => {
-      if (response.success === true) {
-        let rolesArr: string[] = [];
-        setResponseData(
-          response.result.map((each: any) => {
-            return {
-              ...each,
-              ...each.user,
-            };
-          })
-        );
-        const userData = response.result.map((each: any) => {
-          return {
-            ...each,
-            label: each.user.email,
-            id: each.user._id,
-          };
-        });
-        setOptions({
-          listOfEntries: userData,
-        });
-      }
-    });
-  };
-
-  const [projectActions, setProjectActions] = useState([
+  const projectActions = [
     {
       label: "View Project Summary",
       action: (id?: string) => {
@@ -261,11 +198,42 @@ const Index: React.FC<any> = () => {
       label: "Archive Project",
       action: () => {},
     },
-  ]);
+  ];
 
-  useEffect(() => {
-    console.log("projectsData", projects);
-  }, [projects]);
+  const handleSearchWindow = () => {
+    setSearchTableData(projects);
+    if (searchTerm === "") {
+      setIsSearching(!isSearching);
+    } else {
+      setSearchTerm("");
+    }
+  };
+
+  const handleFilter = (formState: any) => {
+    setTaskFilterState({ ...formState, isFilterApplied: true });
+    setSearchTableData(
+      projects.filter(
+        (each: any) =>
+          (Moment(each.updatedAt).format("YYYY-MM-DD") >= formState.startDate ||
+            !formState.startDate) &&
+          (Moment(each.updatedAt).format("YYYY-MM-DD") <= formState.dueDate ||
+            !formState.dueDate) &&
+          (!formState.compareText ||
+            (formState.compareText === "greaterThan"
+              ? each.numberOfUsers > formState.numOfMem
+              : formState.compareText === "lessThan"
+              ? each.numberOfUsers < formState.numOfMem
+              : each.numberOfUsers == formState.numOfMem))
+      )
+    );
+  };
+
+  const showEmailOverlay = (formState: any) => {
+    setShowAddUser(false);
+    setOpenDrawer(true);
+    setForm(formState);
+  };
+
   useEffect(() => {
     if (router.isReady) {
       getProjectsList()
@@ -279,6 +247,7 @@ const Index: React.FC<any> = () => {
                 userName: each.userName,
                 numberOfUsers: each.usersCount,
                 updatedAt: moment(each.lastUpdated).format("DD MMM YY"),
+                lastUpdated: new Date(each.lastUpdated),
                 capture360Count: each?.captures["360 Image"]
                   ? `${each?.captures["360 Image"]}`
                   : "0",
@@ -496,6 +465,7 @@ const Index: React.FC<any> = () => {
                 handleOnApplyFilter={(formState: any) =>
                   handleFilter(formState)
                 }
+                setTaskFilterState={setTaskFilterState}
               />
             </CustomDrawer>
           )}
@@ -532,11 +502,7 @@ const Index: React.FC<any> = () => {
           setShowPopUp={setShowAddUser}
           modalTitle={"Add users to the project"}
           modalContent={
-            <AddUsersEmailPopup
-              showEmailOverlay={showEmailOverlay}
-              options={options}
-              responseData={responseData}
-            />
+            <AddUsersEmailPopup showEmailOverlay={showEmailOverlay} />
           }
           modalmessage={""}
           primaryButtonLabel={"Yes"}
@@ -556,8 +522,6 @@ const Index: React.FC<any> = () => {
       >
         <AddUsersEmailOverlay
           form={form}
-          options={options}
-          responseData={responseData}
           setOpenDrawer={setOpenDrawer}
           roles={roles}
           selectedProjectId={selectedProjectId}
