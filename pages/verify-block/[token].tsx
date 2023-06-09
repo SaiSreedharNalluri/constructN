@@ -13,7 +13,6 @@ const VerifyUserEmail = () => {
   const [uniqueToken, setUniqueToken] = useState<any>("");
   useEffect(() => {
     if (router.isReady) {
-      console.log("routerquery", router);
       setUniqueToken(router.query.token);
       //   return;
       verifyEmail(router.query.token as string)

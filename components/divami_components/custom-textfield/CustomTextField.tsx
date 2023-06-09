@@ -19,6 +19,8 @@ interface PropTypes {
   variant: "outlined" | "standard" | "filled";
   placeholder: any;
   onChange: any;
+  onMouseEnter: any;
+  onMouseLeave: any;
   className: any;
   defaultValue: any;
   isError: any;
@@ -39,6 +41,9 @@ interface PropTypes {
   showErrorMsg: boolean;
   width?: string;
   onFocus?: any;
+  backgroundColor?: any;
+  callback?: any;
+  hoveredIndex?: any;
 }
 
 const StyledTextField = styled(TextField)((props: any) => ({
@@ -54,15 +59,37 @@ const StyledTextField = styled(TextField)((props: any) => ({
   fontWeight: 400,
   fontSize: 14,
   color: "#101F4B",
+  marginTop: props.marginTop ? props.marginTop : "",
+  marginLeft: props.marginLeft ? props.marginLeft : "",
+
+  "& .MuiInputBase-input": {
+    fontFamily: "Open Sans",
+    fontSize: "14px",
+    color: "#101F4C",
+    fontStyle: "regular",
+  },
 
   "& .MuiInputBase-root.MuiOutlinedInput-root": {
     height: "40px",
+    backgroundColor: props?.backgroundColor ? props.backgroundColor : "",
   },
 
+  "& .MuiOutlinedInput-root": {
+    // borderRadius: "0",
+    // padding: "0",
+    // fontFamily: "Open Sans",
+    // fontStyle: "normal",
+    //  fontWeight: 400,
+    // fontSize: 14,
+    // border: "1px solid black",
+    // color: "#101F4B",
+  },
   "& .MuiOutlinedInput-notchedOutline": {
-    border: "1px solid #36415d",
+    borderColor: "black",
   },
-
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: "#F1742E !important",
+  },
   "&:focus-within .MuiOutlinedInput-notchedOutline": {
     border: "1px solid #F1742E !important",
   },
@@ -98,6 +125,7 @@ export const CustomTextField = (props: any) => {
     onBlur,
     isReadOnly = false,
     onChange,
+
     className,
     imageIcon,
     loginField,
@@ -105,8 +133,11 @@ export const CustomTextField = (props: any) => {
     errorMsg,
     showErrorMsg,
     onFocus,
+    width,
+    onMouseEnter,
+    onMouseLeave,
+    hoveredIndex,
   } = props;
-  // console.log("loginField", loginField);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -118,16 +149,17 @@ export const CustomTextField = (props: any) => {
     event.preventDefault();
   };
 
-  console.log("showerrot", type);
   return (
     <div>
       <StyledTextField
         width={props.width ? props.width : ""}
+        backgroundColor={props.backgroundColor ? props.backgroundColor : ""}
+        marginTop={props.marginTop ? props.marginTop : ""}
+        marginLeft={props.marginLeft ? props.marginLeft : ""}
+        hoveredIndex={props?.hoveredIndex ? props?.hoveredIndex : ""}
         autoComplete="off"
         id={id}
         className={` ${isError ? "formErrorField" : ""} formField`}
-        //  type={showPassword ? "text" : "password"}
-
         type={
           type === "password"
             ? showPassword
@@ -137,7 +169,7 @@ export const CustomTextField = (props: any) => {
             ? type
             : ""
         }
-        placeholder={props.loginField ? placeholder : ""}
+        placeholder={props.loginField || placeholder ? placeholder : ""}
         defaultValue={defaultValue}
         value={defaultValue}
         data-testid={dataTestId}
@@ -150,7 +182,12 @@ export const CustomTextField = (props: any) => {
           reff?.current?.focus();
         }}
         onChange={onChange}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         loginField={loginField}
+        onKeyDown={(e: any) => {
+          if (e.keyCode === 13 && props.callback) props.callback(e);
+        }}
         // variant="outlined"
         // {...rest}
         InputProps={

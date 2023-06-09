@@ -7,7 +7,6 @@ interface QueryParams {
 const VerifyPage = () => {
   const router = useRouter();
   const [queryMail, setQueryMail] = useState<any>("");
-  console.log("query", router.query);
 
   useEffect(() => {
     setQueryMail(router.query.email);

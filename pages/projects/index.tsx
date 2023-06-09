@@ -5,7 +5,7 @@ import {
   Content,
   ProjectsListContainer,
 } from "../../components/divami_components/project-users-list/usersListStyles";
-import { InputAdornment, Menu } from "@mui/material";
+import { Drawer, InputAdornment, Menu } from "@mui/material";
 import {
   HeaderActions,
   HeaderImage,
@@ -35,7 +35,11 @@ import { ProjectCardsContainer } from "../../components/divami_components/projec
 import { ProjectListCardView } from "../../components/divami_components/project-listing/ProjectListCardView";
 import { ProjectListFlatView } from "../../components/divami_components/project-listing/ProjectListFlatView";
 import moment from "moment";
-import { getProjectsList } from "../../services/project";
+import {
+  getProjectsList,
+  getProjectUsers,
+  getUserRoles,
+} from "../../services/project";
 import unselectGridIcon from "../../public/divami_icons/unselectGridIcon.svg";
 import selectListIcon from "../../public/divami_icons/selectListIcon.svg";
 import CustomDrawer from "../../components/divami_components/custom-drawer/custom-drawer";
@@ -43,6 +47,19 @@ import ProjectListFilter from "../../components/divami_components/project-listin
 import { CustomMenu } from "../../components/divami_components/custom-menu/CustomMenu";
 import UpArrow from "../../public/divami_icons/upArrow.svg";
 import DownArrow from "../../public/divami_icons/downArrow.svg";
+import { AddUsersEmailOverlay } from "../../components/divami_components/add_users/AddUsersEmailOverlay";
+import { AddUsersEmailPopup } from "../../components/divami_components/add_users/AddUsersEmailPopup";
+import PopupComponent from "../../components/popupComponent/PopupComponent";
+import ProjectConfig from "../../components/divami_components/project_config/ProjectConfig";
+import {
+  updateIssuePriorityList,
+  updateIssueStatusList,
+  updateTagList,
+  updateTaskPriorityList,
+  updateTaskStatusList,
+} from "../../services/projectConfigApi";
+import { toast } from "react-toastify";
+import Moment from "moment";
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -54,21 +71,30 @@ const Index: React.FC<any> = () => {
   const [searchTableData, setSearchTableData] = useState<any>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isGridView, setIsGridView] = useState(true);
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [form, setForm] = useState({});
+  const [selectedProjectId, setSelectedProjectId] = useState("");
+  const [responseData, setResponseData] = useState<any>([]);
+  const [roles, setRoles] = useState<string[] | []>([]);
+  const [options, setOptions] = useState<any>({
+    listOfEntries: [
+      {
+        label: "",
+        value: "",
+      },
+    ],
+  });
+  const [selectedOption, setSelectedOption] = useState("issuePriority");
+
+  const [formValues, setFormValues]: any = useState({ priority: [] });
+  const [showPopUp, setshowPopUp] = useState(false);
 
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
-    filterData: {},
-    numberOfFilters: 0,
   });
-  const handleSearchWindow = () => {
-    setSearchTableData(projects);
-    if (searchTerm === "") {
-      setIsSearching(!isSearching);
-    } else {
-      setSearchTerm("");
-    }
-  };
 
+  const [projectId, setProjectId] = useState<any>("");
   const sortMenuOptions = [
     {
       label: "Sort by User",
@@ -141,7 +167,7 @@ const Index: React.FC<any> = () => {
     },
   ];
 
-  const [projectActions, setProjectActions] = useState([
+  const projectActions = [
     {
       label: "View Project Summary",
       action: (id?: string) => {
@@ -150,7 +176,10 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Project Configuration",
-      action: () => {},
+      action: (id?: string) => {
+        setshowPopUp(true);
+        setProjectId(id);
+      },
     },
     {
       label: "Project Details",
@@ -158,15 +187,52 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Add Users",
-      action: () => {
-        router.push(`/projects/PRJ201897/usersList`);
+      action: (id?: string) => {
+        // getUsersData(id);
+        setSelectedProjectId(id);
+        setShowAddUser(true);
+        // router.push(`/projects/${id}/usersList`);
       },
     },
     {
       label: "Archive Project",
       action: () => {},
     },
-  ]);
+  ];
+
+  const handleSearchWindow = () => {
+    setSearchTableData(projects);
+    if (searchTerm === "") {
+      setIsSearching(!isSearching);
+    } else {
+      setSearchTerm("");
+    }
+  };
+
+  const handleFilter = (formState: any) => {
+    setTaskFilterState({ ...formState, isFilterApplied: true });
+    setSearchTableData(
+      projects.filter(
+        (each: any) =>
+          (Moment(each.updatedAt).format("YYYY-MM-DD") >= formState.startDate ||
+            !formState.startDate) &&
+          (Moment(each.updatedAt).format("YYYY-MM-DD") <= formState.dueDate ||
+            !formState.dueDate) &&
+          (!formState.compareText ||
+            (formState.compareText === "greaterThan"
+              ? each.numberOfUsers > formState.numOfMem
+              : formState.compareText === "lessThan"
+              ? each.numberOfUsers < formState.numOfMem
+              : each.numberOfUsers == formState.numOfMem))
+      )
+    );
+  };
+
+  const showEmailOverlay = (formState: any) => {
+    setShowAddUser(false);
+    setOpenDrawer(true);
+    setForm(formState);
+  };
 
   useEffect(() => {
     if (router.isReady) {
@@ -181,6 +247,7 @@ const Index: React.FC<any> = () => {
                 userName: each.userName,
                 numberOfUsers: each.usersCount,
                 updatedAt: moment(each.lastUpdated).format("DD MMM YY"),
+                lastUpdated: new Date(each.lastUpdated),
                 capture360Count: each?.captures["360 Image"]
                   ? `${each?.captures["360 Image"]}`
                   : "0",
@@ -203,12 +270,70 @@ const Index: React.FC<any> = () => {
           }
         })
         .catch((error) => {});
+      getUserRoles().then((res: any) => {
+        const rolesData = res.result.map((each: any) => {
+          return {
+            label: each,
+            value: each,
+          };
+        });
+        setRoles(rolesData);
+      });
     }
   }, [router.isReady]);
 
   useEffect(() => {
     setSearchTableData(projects);
   }, [projects]);
+
+  const onDeleteIssue = (status: any) => {
+    setshowPopUp(false);
+  };
+
+  const handleSubmit = async () => {
+    const containsEmptyString = formValues.priority.some(
+      (item: any) => item.length === 0
+    );
+
+    if (containsEmptyString) {
+      toast.error("Fields cannot be empty");
+      return;
+    }
+    try {
+      // Call the appropriate API based on the selected option and pass the updated values
+      if (selectedOption === "issuePriority") {
+        // await updateIssuePriorityList(projectId, formValues.priority);
+        await updateIssuePriorityList(projectId, {
+          issuePriorityList: [...formValues.priority],
+        });
+        toast.success("Issue priority list updated successfully");
+      } else if (selectedOption === "taskPriority") {
+        await updateTaskPriorityList(projectId, {
+          taskPriorityList: [...formValues.priority],
+        });
+        toast.success("Task priority list updated successfully");
+      } else if (selectedOption === "issueStatus") {
+        await updateIssueStatusList(projectId, {
+          issueStatusList: [...formValues.priority],
+        });
+        toast.success("Issue status list updated successfully");
+      } else if (selectedOption === "taskStatus") {
+        await updateTaskStatusList(projectId, {
+          taskStatusList: [...formValues.priority],
+        });
+        toast.success("Task status list updated successfully");
+      } else if (selectedOption === "tag") {
+        await updateTagList(projectId, {
+          tagList: [...formValues.priority],
+        });
+        toast.success("Tag list updated successfully");
+      }
+
+      // setSubmittedValues(formValues);
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
 
   return (
     <div className=" w-full  h-full">
@@ -232,7 +357,9 @@ const Index: React.FC<any> = () => {
                       setSearchTerm(e.target.value);
                       setSearchTableData(
                         projects.filter((each: any) =>
-                          each?.projectName?.includes(e.target?.value)
+                          each?.projectName
+                            ?.toLowerCase()
+                            ?.includes(e.target?.value?.toLowerCase())
                         )
                       );
                     }}
@@ -286,7 +413,7 @@ const Index: React.FC<any> = () => {
                 width={24}
                 height={24}
                 onClick={() => {
-                  // setOpenFilter(true);
+                  setOpenFilter(true);
                 }}
               />
               <ToggleButtonContainer>
@@ -323,25 +450,84 @@ const Index: React.FC<any> = () => {
               projectActions={projectActions}
             />
           ) : (
-            <></>
-            // <ProjectListFlatView
-            //   projects={searchTableData}
-            //   projectActions={projectActions}
-            // />
+            <ProjectListFlatView
+              projects={searchTableData}
+              projectActions={projectActions}
+            />
           )}
           {openFilter && (
             <CustomDrawer open>
               <ProjectListFilter
-                setTaskFilterState={setTaskFilterState}
                 taskFilterState={taskFilterState}
                 onClose={() => {
                   setOpenFilter(false);
                 }}
+                handleOnApplyFilter={(formState: any) =>
+                  handleFilter(formState)
+                }
+                setTaskFilterState={setTaskFilterState}
               />
             </CustomDrawer>
           )}
+          {showPopUp && (
+            <PopupComponent
+              open={showPopUp}
+              width={"585px"}
+              // height={"360px"}
+              paddingStyle={true}
+              setShowPopUp={setshowPopUp}
+              modalTitle={"Project Configuration"}
+              modalContent={
+                <ProjectConfig
+                  projectId={projectId}
+                  selectedOption={selectedOption}
+                  setSelectedOption={setSelectedOption}
+                  formValues={formValues}
+                  setFormValues={setFormValues}
+                />
+              }
+              // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
+              modalmessage={`Are you sure you want to delete this Issue ?`}
+              primaryButtonLabel={"Update"}
+              SecondaryButtonlabel={"Cancel"}
+              callBackvalue={handleSubmit}
+            />
+          )}
         </ProjectsListContainer>
       </Content>
+      {showAddUser ? (
+        <PopupComponent
+          open={showAddUser}
+          hideButtons
+          setShowPopUp={setShowAddUser}
+          modalTitle={"Add users to the project"}
+          modalContent={
+            <AddUsersEmailPopup showEmailOverlay={showEmailOverlay} />
+          }
+          modalmessage={""}
+          primaryButtonLabel={"Yes"}
+          SecondaryButtonlabel={"No"}
+          callBackvalue={() => {}}
+          width={"458px"}
+          showButton={false}
+        />
+      ) : (
+        <></>
+      )}
+      <Drawer
+        anchor={"right"}
+        open={openDrawer}
+        onClose={() => {
+          setOpenDrawer(false);
+        }}
+      >
+        <AddUsersEmailOverlay
+          form={form}
+          setOpenDrawer={setOpenDrawer}
+          roles={roles}
+          selectedProjectId={selectedProjectId}
+        />
+      </Drawer>
     </div>
   );
 };

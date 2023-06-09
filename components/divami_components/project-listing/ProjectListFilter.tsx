@@ -16,9 +16,7 @@ import {
   TitleContainer,
   ButtonsContainer,
   FilterFooter,
-  FilterText,
 } from "../../divami_components/task-filter-common/StyledComponent";
-import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
 import CustomButton from "../custom-button/CustomButton";
 import FormWrapper from "../form-wrapper/FormWrapper";
 import { projectConfig } from "./FiltersConstants";
@@ -36,56 +34,49 @@ const RefreshIcon = styled(Image)({
   height: "15px",
 });
 const ProjectListFilter: React.FC<any> = ({
+  taskFilterState,
   onClose,
-  tableData,
+  handleOnApplyFilter,
   setTaskFilterState,
-  setSearchTableData,
 }) => {
-  const [formState, setFormState] = useState({});
-  const [formConfig, setFormConfig] = useState(projectConfig);
+  const [formState, setFormState] = useState<any>({});
+  const [formConfig, setFormConfig] = useState<any>(projectConfig);
 
   const handleClose = () => {
     onClose(true);
   };
 
-  const handleOnTaskFilter = (formData: any) => {
-    const result = tableData.filter(
-      (item: any) =>
-        formData.roleType?.includes(item.role) ||
-        (formData.roleType?.length == 0 &&
-          (item.updatedAt >= formData.fromDate || !formData.fromDate) &&
-          (item.updatedAt <= formData.toDate || !formData.toDate))
-    );
-    let count = formData?.roleType?.length;
-
-    if (formData?.toDate) {
-      count = count + 1;
-    }
-    if (formData?.fromDate) {
-      count = count + 1;
-    }
-
-    setSearchTableData(result);
-
-    setTaskFilterState({
-      isFilterApplied: true,
-      filterData: formData,
-      numberOfFilters: count,
-    });
-  };
-
   const onFilterApply = () => {
-    let data: any = {
-      roleType: [],
+    const data: any = {
+      startDate:
+        formConfig
+          .find((each: any) => each.id == "dates")
+          ?.fields.find((each: any) => each.id == "startDate").defaultValue ||
+        "",
+      dueDate:
+        formConfig
+          .find((each: any) => each.id == "dates")
+          ?.fields.find((each: any) => each.id == "dueDate").defaultValue || "",
+      compareText:
+        formConfig
+          .find((each: any) => each.id == "numberOfMembersField")
+          ?.fields.find((each: any) => each.id == "numberOfMembersSelect")
+          .defaultValue || "",
+      numOfMem:
+        formConfig
+          .find((each: any) => each.id == "numberOfMembersField")
+          ?.fields.find((each: any) => each.id == "numberOfMembersValue")
+          .defaultValue || "",
     };
-
-    handleOnTaskFilter(data);
+    handleOnApplyFilter(data);
   };
 
-  const onReset = () => {};
+  const onReset = () => {
+    setFormConfig(projectConfig);
+    setTaskFilterState({ isFilterApplied: false });
+  };
 
   const formHandler = (event: any) => {
-    console.log("sdf");
     if (event === "Cancel") {
       handleClose();
     } else {
@@ -93,6 +84,48 @@ const ProjectListFilter: React.FC<any> = ({
       onFilterApply();
     }
   };
+
+  useEffect(() => {
+    setFormConfig((prev: any) => {
+      return prev.map((each: any) => {
+        if (each.id === "dates") {
+          return {
+            ...each,
+            fields: each.fields.map((item: any) => {
+              if (item.id === "startDate") {
+                return {
+                  ...item,
+                  defaultValue: taskFilterState.startDate || "",
+                };
+              } else if (item.id == "dueDate") {
+                return {
+                  ...item,
+                  defaultValue: taskFilterState.dueDate || "",
+                };
+              }
+            }),
+          };
+        } else if (each.id === "numberOfMembersField") {
+          return {
+            ...each,
+            fields: each.fields.map((item: any) => {
+              if (item.id === "numberOfMembersSelect") {
+                return {
+                  ...item,
+                  defaultValue: taskFilterState.compareText || "greaterThan",
+                };
+              } else if (item.id == "numberOfMembersValue") {
+                return {
+                  ...item,
+                  defaultValue: taskFilterState.numOfMem || "",
+                };
+              }
+            }),
+          };
+        }
+      });
+    });
+  }, [taskFilterState]);
 
   return (
     <FilterCommonMain>

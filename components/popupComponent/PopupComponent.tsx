@@ -10,27 +10,46 @@ import { IconButton } from "@mui/material";
 import { fontSize } from "@mui/system";
 import CrossIcon from "../../public/divami_icons/crossIcon.svg";
 import Image from "next/image";
+import ProjectConfig from "../divami_components/project_config/ProjectConfig";
+import closeWithCircle from "../../public/divami_icons/closeWithCircle.svg";
 
 export const CloseIcon = styled(Image)({
   cursor: "pointer",
 });
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  fontWeight: "900",
-  fontFamily: "Open Sans",
+const BootstrapDialog = styled(Dialog)(
+  ({ theme, width, height, paddingStyle, backdropWidth, showButton }: any) => ({
+    fontWeight: "900",
+    fontFamily: "Open Sans",
 
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1),
-    display: "flex",
-    justifyContent: "center",
-  },
-  "& .MuiPaper-root.MuiDialog-paper": {
-    width: "493px",
-  },
-}));
+    "& .MuiDialogContent-root": {
+      // padding: theme.spacing(2),
+      padding: "0px",
+    },
+    "& .MuiDialogActions-root": {
+      padding: paddingStyle ? "" : theme.spacing(1),
+      paddingTop: showButton ? "30px" : "",
+      display: "flex",
+
+      justifyContent: paddingStyle ? "end" : "center",
+    },
+    "& .MuiPaper-root.MuiDialog-paper": {
+      width: width ? width : "493px",
+      height: height ? height : "",
+    },
+
+    ".MuiBackdrop-root": {
+      height: "calc(100% - 60px)",
+      top: "auto !important",
+      width:
+        paddingStyle || backdropWidth
+          ? "calc(100%) !important"
+          : "calc(100% -59px)",
+      right: "0 !important",
+      left: "auto !important",
+    },
+  })
+) as any;
 const ButtonDiv = styled("div")({});
 
 export interface DialogTitleProps {
@@ -46,7 +65,18 @@ export interface PopupComponentProps {
   callBackvalue?: any;
   setShowPopUp: (value: boolean) => void;
   open: boolean;
+  modalContent?: any;
+  hideButtons?: boolean;
+  width?: string;
+  height?: string;
+  paddingStyle?: boolean;
+  backdropWidth?: boolean;
+  showButton?: boolean;
+
+  setShowbutton?: any;
+  projectId?: string;
 }
+
 function BootstrapDialogTitle(props: DialogTitleProps) {
   const { children, onClose, ...other } = props;
 
@@ -56,10 +86,13 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
       {...other}
       style={{
         fontSize: "16px",
-        padding: "16px 0px 16px 30px",
+        // padding: "16px 0px 16px 30px",
+        padding: "15px 0px 15px 20px",
+
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        color: "#101F4C",
       }}
     >
       {children}
@@ -70,12 +103,14 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
           sx={{
             position: "absolute",
             right: 8,
-            top: 15,
+            // top: 15,
+            top: 6,
             color: (theme) => theme.palette.grey[500],
-            marginRight: "22px",
+            marginRight: "4px",
           }}
         >
-          <CloseIcon src={CrossIcon} alt={"close icon"} />
+          {/* <CloseIcon src={CrossIcon} alt={"close icon"} /> */}
+          <CloseIcon src={closeWithCircle} alt={"close icon"} />
         </IconButton>
       ) : null}
     </DialogTitle>
@@ -98,10 +133,21 @@ const PopupComponent = (props: PopupComponentProps) => {
     callBackvalue,
     setShowPopUp,
     open,
+    modalContent,
+    hideButtons = false,
+    paddingStyle,
+    width,
+    backdropWidth,
+    showButton = true,
+    setShowbutton,
+    projectId,
   } = props;
 
   const handleClose = () => {
     setShowPopUp(false);
+    if (setShowbutton) {
+      setShowbutton(false);
+    }
   };
 
   return (
@@ -110,54 +156,78 @@ const PopupComponent = (props: PopupComponentProps) => {
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
+        width={props.width}
+        height={props.height}
+        paddingStyle={props.paddingStyle}
+        backdropWidth={props.backdropWidth}
+        showButton={props.showButton}
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          <TextComponent>{modalTitle}</TextComponent>
+          {modalTitle}
         </BootstrapDialogTitle>
+
         <DialogContent
           dividers
-          style={{ borderBottom: 0, padding: "30px", paddingBottom: "22px" }}
+          style={
+            paddingStyle
+              ? {}
+              : { borderBottom: 0, padding: "30px", paddingBottom: "22px" }
+          }
         >
-          <TextComponent>{modalmessage}</TextComponent>
+          {modalContent ? (
+            modalContent
+          ) : (
+            <TextComponent>{modalmessage}</TextComponent>
+          )}
         </DialogContent>
-        <DialogActions sx={{ padding: 0 }}>
-          <ButtonDiv>
-            <Button
-              variant="text"
-              autoFocus
-              onClick={handleClose}
-              style={{
-                color: "#F1742E",
-                width: "180px",
-                height: "40px",
-                textTransform: "none",
-                marginBottom: "22px",
-                fontFamily: "Open Sans",
-              }}
-            >
-              {SecondaryButtonlabel}
-            </Button>
+        <DialogActions
+          sx={
+            showButton ? { height: "70px", paddingTop: "13px" } : { padding: 0 }
+          }
+        >
+          {showButton ? (
+            <ButtonDiv>
+              <Button
+                variant={paddingStyle ? "outlined" : "text"}
+                // autoFocus
+                onClick={handleClose}
+                style={{
+                  color: "#F1742E",
+                  width: "180px",
+                  height: "40px",
+                  textTransform: "none",
+                  marginBottom: "22px",
+                  fontFamily: "Open Sans",
+                  border: paddingStyle ? "1px solid #F1742E" : "0px",
+                }}
+              >
+                {SecondaryButtonlabel}
+              </Button>
 
-            <Button
-              variant="contained"
-              onClick={() => callBackvalue("Delete")}
-              style={{
-                backgroundColor: "#F1742E",
-                width: "180px",
-                height: "40px",
-                marginBottom: "22px",
-                marginRight: "22px",
-                textTransform: "none",
-                fontFamily: "Open Sans",
-                fontSize: "16px",
-              }}
-            >
-              {primaryButtonLabel}
-            </Button>
-          </ButtonDiv>
+              <Button
+                variant="contained"
+                onClick={() => callBackvalue("Delete")}
+                style={{
+                  backgroundColor: "#F1742E",
+                  width: "180px",
+                  height: "40px",
+                  marginBottom: "22px",
+                  marginRight: "22px",
+                  textTransform: "none",
+                  fontFamily: "Open Sans",
+                  fontSize: "16px",
+                  marginLeft: paddingStyle ? "20px" : "",
+                }}
+              >
+                {primaryButtonLabel}
+              </Button>
+            </ButtonDiv>
+          ) : (
+            <></>
+          )}
         </DialogActions>
       </BootstrapDialog>
     </div>

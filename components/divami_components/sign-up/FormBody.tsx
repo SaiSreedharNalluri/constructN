@@ -49,6 +49,7 @@ const FormBody = ({
   loginField,
   signUpMsg,
   errorStylingSignup,
+  onData,
 }: any) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -66,10 +67,16 @@ const FormBody = ({
     setChecked(event.target.checked);
   };
 
+  // callback to send data to parent
+  const handleChildData = (data: string) => {
+    if (onData) {
+      onData(data);
+    }
+  };
+
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(SIGN_UP_FORM_CONFIG);
   useEffect(() => {
-    console.log(formConfig, "formconfig in effect");
     let updatedFormData = [...formConfig];
     handleFormData(updatedFormData);
     let count = 0;
@@ -179,6 +186,7 @@ const FormBody = ({
         loginField={true}
         signUpMsg={signUpMsg}
         errorStylingSignup={true}
+        onData={handleChildData}
       />
     </>
   );

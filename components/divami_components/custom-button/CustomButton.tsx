@@ -71,8 +71,8 @@ const CustomButton = (props: any) => {
     setButtonClicked,
     loginField,
     disabledButton,
+    ref,
   } = props;
-  console.log("loginFieldButton", loginField, type);
   if (type === "contained") {
     return (
       <div>
@@ -80,13 +80,11 @@ const CustomButton = (props: any) => {
           data-testid="testing_button"
           variant="contained"
           onClick={() => {
-            console.log("bbbb");
             formHandler(label);
             setButtonClicked ? setButtonClicked(true) : null;
           }}
           onKeyDown={(e: any) => {
             if (e.key === "Enter") {
-              console.log("hellooo");
               formHandler(label);
               setButtonClicked ? setButtonClicked(true) : null;
             } else if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
@@ -94,6 +92,7 @@ const CustomButton = (props: any) => {
             }
           }}
           loginField={loginField}
+          ref={ref}
         >
           {label}
         </ContainedButton>

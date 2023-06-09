@@ -50,14 +50,12 @@ const FormWrapper = (props: any) => {
     signUpMsg,
     signInMsg,
     errorStylingSignup,
+    onData,
+    handleKeyPress,
   } = props;
 
-  console.log("formState", formState);
-
   const [userPassword, setUserPassword] = useState("");
-  useEffect(() => {
-    console.log("userpassword", userPassword);
-  }, [userPassword]);
+  useEffect(() => {}, [userPassword]);
 
   useEffect(() => {
     checkDataisEmpty();
@@ -73,7 +71,6 @@ const FormWrapper = (props: any) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    console.log("handleclick", event.currentTarget);
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
@@ -147,52 +144,118 @@ const FormWrapper = (props: any) => {
     }
   }, [validate]);
 
-  const handleTextChange = (e: any, id: string, data?: any) => {
-    setFormConfig((prev: any) =>
-      prev.map((item: any) => {
-        if (id === item.id) {
-          return {
-            ...item,
-            defaultValue: e.target.value,
-          };
-        }
-        return item;
-      })
-    );
+  const handleTextChange = (
+    e: any,
+    id: string,
+    type?: string,
+    parentId?: string
+  ) => {
+    if (type === "doubleField") {
+      setFormConfig((prev: any) => {
+        return prev.map((each: any) => {
+          if (each.id === parentId) {
+            return {
+              ...each,
+              fields: each.fields.map((item: any) => {
+                if (item.id == id) {
+                  return {
+                    ...item,
+                    defaultValue: e.target.value,
+                  };
+                } else {
+                  return item;
+                }
+              }),
+            };
+          } else {
+            return each;
+          }
+        });
+      });
+    } else {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              defaultValue: e.target.value,
+            };
+          }
+          return item;
+        })
+      );
+    }
   };
 
-  const handleDateChange = (e: any, id: string) => {
-    let fieldHasValue = e !== null ? e["$D"] + e["$M"] + e["$y"] : null;
-    setFormConfig((prev: any) =>
-      prev.map((item: any) => {
-        if (item.id === "dates") {
-          return {
-            ...item,
-            fields: item.fields.map((eachField: any) => {
-              return {
-                ...eachField,
-                isError:
-                  (isNaN(fieldHasValue) && fieldHasValue !== null) ||
-                  (JSON.stringify(e) == "null" &&
-                    !isNaN(fieldHasValue) &&
-                    fieldHasValue !== null),
-                defaultValue:
-                  eachField.id == id
-                    ? JSON.parse(JSON.stringify(e))
-                    : eachField.defaultValue,
-              };
-            }),
-          };
-        } else if (id === item.id) {
-          return {
-            ...item,
-            defaultValue: JSON.parse(JSON.stringify(e)),
-          };
-        }
+  // callback function passed from the parent
+  const sendDataToParent = (e: any) => {
+    if (onData) {
+      //   onData(inputValue);
+      onData(e.target.value);
+    }
+  };
 
-        return item;
-      })
-    );
+  const handleDateChange = (
+    e: any,
+    id: string,
+    type?: string,
+    parentId?: string
+  ) => {
+    let fieldHasValue = e !== null ? e["$D"] + e["$M"] + e["$y"] : null;
+    if (type === "doubleField") {
+      setFormConfig((prev: any) => {
+        return prev.map((each: any) => {
+          if (each.id === parentId) {
+            return {
+              ...each,
+              fields: each.fields.map((item: any) => {
+                if (item.id == id) {
+                  return {
+                    ...item,
+                    defaultValue: JSON.parse(JSON.stringify(e)),
+                  };
+                } else {
+                  return item;
+                }
+              }),
+            };
+          } else {
+            return each;
+          }
+        });
+      });
+    } else {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (item.id === "dates") {
+            return {
+              ...item,
+              fields: item.fields.map((eachField: any) => {
+                return {
+                  ...eachField,
+                  isError:
+                    (isNaN(fieldHasValue) && fieldHasValue !== null) ||
+                    (JSON.stringify(e) == "null" &&
+                      !isNaN(fieldHasValue) &&
+                      fieldHasValue !== null),
+                  defaultValue:
+                    eachField.id == id
+                      ? JSON.parse(JSON.stringify(e))
+                      : eachField.defaultValue,
+                };
+              }),
+            };
+          } else if (id === item.id) {
+            return {
+              ...item,
+              defaultValue: JSON.parse(JSON.stringify(e)),
+            };
+          }
+
+          return item;
+        })
+      );
+    }
   };
 
   const handleSearchResult = (e: any, value: string, id: string) => {
@@ -276,11 +339,9 @@ const FormWrapper = (props: any) => {
       (val: any) => !val.defaultValue && val.isReq
     );
 
-    setCanBeDisabled(isEmptyField);
     if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
   }
   function isValidEmail(email: any, id: any) {
-    // console.log("lol");
     let isValid = false;
     if (/\S+@\S+\.\S+/.test(email)) {
       isValid = true;
@@ -315,7 +376,7 @@ const FormWrapper = (props: any) => {
   }
 
   function checkPassword(str: any, id: any) {
-    let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,14}$/;
     let passwordTru = rePass.test(str);
     let isValid = false;
     setShowMessage(!passwordTru);
@@ -354,7 +415,6 @@ const FormWrapper = (props: any) => {
   }
 
   function matchpassword(str: any, id: any) {
-    console.log("matching", str, userPassword);
     if (str !== userPassword) {
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
@@ -388,12 +448,13 @@ const FormWrapper = (props: any) => {
   // const handlePasswordField = () => {
   //   return <div>Hello</div>;
   // };
-
   const renderHTML = (
     data: any,
     isDisabled: boolean,
     index: number,
-    configObject: any = config
+    configObject: any = config,
+    parentType?: string,
+    parentId?: string
   ) => {
     switch (data.type) {
       case "select":
@@ -410,6 +471,8 @@ const FormWrapper = (props: any) => {
               isReadOnly={data.isReadOnly}
               dataTestId={`inputSelectField-${data.id}`}
               width={data.width || ""}
+              parentId={parentId}
+              parentType={parentType}
             />
           </ElementContainer>
         );
@@ -421,10 +484,10 @@ const FormWrapper = (props: any) => {
               variant="outlined"
               placeholder={data?.placeholder}
               onChange={(e: any) => {
-                handleTextChange(e, data.id, data);
+                handleTextChange(e, data.id, parentType, parentId);
               }}
               onBlur={(e: any) => {
-                handleTextChange(e, data.id, data);
+                handleTextChange(e, data.id, parentType, parentId);
               }}
               defaultValue={data.defaultValue}
               isError={data.isError}
@@ -447,20 +510,24 @@ const FormWrapper = (props: any) => {
         return (
           <ElementContainer>
             <CustomTextField
-              // id="basic-button"
               aria-controls={open ? "basic-menu" : undefined}
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
-              // onClick={handleClick}
               id={data.id}
               variant="outlined"
               placeholder={data?.placeholder}
+              callback={
+                data.callback
+                  ? data.callback
+                  : props.handleKeyPress
+                  ? props.handleKeyPress
+                  : () => {}
+              }
               onChange={(e: any) => {
-                handleTextChange(e, data.id, data);
-
-                // if (data.id === "password" && data.checkPasswordStrength) {
-                //   checkPassword(data?.defaultValue, data.id, e);
-                // }
+                handleTextChange(e, data.id, parentType, parentId);
+                if (data.id === "password") {
+                  sendDataToParent(e);
+                }
               }}
               onBlur={(e: any) => {
                 if (data.id === "email") {
@@ -475,17 +542,13 @@ const FormWrapper = (props: any) => {
                   matchpassword(data?.defaultValue, data.id);
                   return;
                 }
-
-                handleTextChange(e, data.id, data);
+                handleTextChange(e, data.id, parentType, parentId);
               }}
               defaultValue={data.defaultValue}
               isError={data.isError}
               dataTestId="inputTextField"
               isRequired={data.isReq}
               type={data.type}
-              // minVal={data?.minVal}
-              // maxVal={data?.maxVal}
-              // showRangeError={data.showRangeError}
               isDisabled={data.isDisabled}
               className={undefined}
               isReadOnly={data.isReadOnly}
@@ -495,7 +558,7 @@ const FormWrapper = (props: any) => {
               errorMsg={data?.errorMsg}
               showErrorMsg={data?.showErrorMsg}
               width={data.width || ""}
-              // isIssue={true}
+              config={data}
             />
 
             {/* <Menu
@@ -553,7 +616,7 @@ const FormWrapper = (props: any) => {
               data={data}
               config={configObject}
               onChange={(e: any) => {
-                handleDateChange(e, data.id);
+                handleDateChange(e, data.id, parentType, parentId);
               }}
               dataTestId={`inputDateField-${data.id}`}
               isReadOnly={data.isReadOnly}
@@ -602,13 +665,21 @@ const FormWrapper = (props: any) => {
       case "doubleField":
         return (
           <DoubleFieldContainer>
+            {/* {data?.label ?? <CustomLabel label={data.label} />} */}
             {data.fields?.map((eachConfig: any, index: number) => {
               return (
                 <Box key={eachConfig.id}>
                   {eachConfig.formLabel ?? (
                     <CustomLabel label={eachConfig.formLabel} />
                   )}
-                  {renderHTML(eachConfig, false, index, data.fields)}
+                  {renderHTML(
+                    eachConfig,
+                    false,
+                    index,
+                    data.fields,
+                    data.type,
+                    data.id
+                  )}
                 </Box>
               );
             })}

@@ -72,9 +72,7 @@ const Body = ({
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [loggedInUserId, SetLoggedInUserId] = useState("");
   const router = useRouter();
-  console.log(issueStatusList, "issueStatusListjsfskdj");
   useEffect(() => {
-    console.log(formConfig, " formConfig", tagsList, "tagsList");
     const tempFormData = formConfig.map((item: any) => {
       if (item.id === "tag-suggestions") {
         return {
@@ -93,7 +91,6 @@ const Body = ({
         if (response.success === true) {
           // response.result.push("Please select the issue type");
           setIssueTypes(response.result);
-          console.log(issueTypes);
         }
       });
       getIssuesPriority(router.query.projectId as string).then(
@@ -101,7 +98,6 @@ const Body = ({
           if (response.success === true) {
             // response.result.push("Please select the issue priority");
             setIssuePriorities(response.result);
-            console.log(issuePriorities);
           }
         }
       );
@@ -109,7 +105,6 @@ const Body = ({
         .then((response: any) => {
           if (response.success === true) {
             setProjectUsers(response.result);
-            console.log(projectUsers);
           }
         })
         .catch();
@@ -261,8 +256,6 @@ const Body = ({
         setFormConfig((prev: any) => {
           return prev.map((item: any) => {
             if (item.id === "issueType") {
-              console.log("issueTypeitem", item);
-
               return {
                 ...item,
 
@@ -277,11 +270,9 @@ const Body = ({
               };
             }
             if (item.id === "issuePriority") {
-              console.log("ssdsditem", item);
               const hasLowValue = item?.options.some(
                 (cont: any) => cont.value === "Low"
               );
-              console.log("hasLowValue", hasLowValue);
 
               return {
                 ...item,
@@ -344,7 +335,6 @@ const Body = ({
 
     let count = 0;
     formConfig.forEach((item: any) => {
-      console.log(item.isError, "item.isEisError");
       if (item.isError) {
         count++;
       }

@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 const ResetPage = () => {
   const router = useRouter();
   const [queryMail, setQueryMail] = useState<any>("");
-  console.log("query", router.query);
 
   useEffect(() => {
     setQueryMail(router.query.email);

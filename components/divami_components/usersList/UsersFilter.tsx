@@ -261,20 +261,32 @@ const UsersFilter: React.FC<any> = ({
     let temp = FilterState?.map((each: any, serial: number) => {
       return { ...each };
     });
-    temp.forEach((element: any) => {
-      element?.options?.forEach((obj: any) => {
-        obj.optionStatus = "F";
-      });
-    });
+    SetFilterState([
+      {
+        title: "Select a role",
+        code: "roleType",
+        selectAllStatus: "F",
+        options: roles.map((each: any) => {
+          return {
+            optionTitle: each,
+            optionStatus: "F",
+          };
+        }),
+      },
+    ]);
     setStartData(DATE_PICKER_DATA);
     setDueData(DATE_PICKER_DATA);
-    SetFilterState(temp);
+
+    setTaskFilterState({
+      isFilterApplied: false,
+      filterData: {},
+      numberOfFilters: 0,
+    });
     // closeTaskFilterOverlay();
     // handleClose();
   };
 
   const formHandler = (event: any) => {
-    console.log("sdf");
     if (event === "Cancel") {
       handleClose();
     } else {
@@ -410,55 +422,7 @@ const UsersFilter: React.FC<any> = ({
               </FilterCardOptions>
             </FilterCardContainer>
           ) : (
-            <FilterCardSecondContainer key={index}>
-              <FilterCardTitle>
-                {/* <FilterCardTitleText>{each?.title}</FilterCardTitleText> */}
-              </FilterCardTitle>
-              <FilterCardSelectAll>
-                {each?.selectAllStatus === "T" ? (
-                  <FilterCardSelectAllSpan>
-                    <Image
-                      onClick={() => {
-                        handleAllSelection(each, index);
-                      }}
-                      src={Checked}
-                      alt="reset"
-                    />
-                    <FilterCardSelectAllTextHeader>
-                      {each.title}
-                    </FilterCardSelectAllTextHeader>
-                  </FilterCardSelectAllSpan>
-                ) : each?.selectAllStatus === "F" ? (
-                  <FilterCardSelectAllSpan>
-                    <Image
-                      onClick={() => {
-                        handleAllSelection(each, index);
-                      }}
-                      src={UnChecked}
-                      alt="reset"
-                    />
-                    <FilterCardSelectAllTextHeader>
-                      {each.title}
-                    </FilterCardSelectAllTextHeader>
-                  </FilterCardSelectAllSpan>
-                ) : each?.selectAllStatus === "I" ? (
-                  <FilterCardSelectAllSpan>
-                    <Image
-                      onClick={() => {
-                        handleAllSelection(each, index);
-                      }}
-                      src={Indeterminate}
-                      alt="reset"
-                    />
-                    <FilterCardSelectAllTextHeader>
-                      {each.title}
-                    </FilterCardSelectAllTextHeader>
-                  </FilterCardSelectAllSpan>
-                ) : (
-                  ""
-                )}
-              </FilterCardSelectAll>
-            </FilterCardSecondContainer>
+            <></>
           );
         })}
 
