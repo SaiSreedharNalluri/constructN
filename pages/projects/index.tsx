@@ -519,6 +519,7 @@ const Index: React.FC<any> = () => {
               responseData={responseData}
             />
           }
+          showButton={false}
           modalmessage={""}
           primaryButtonLabel={"Yes"}
           SecondaryButtonlabel={"No"}
