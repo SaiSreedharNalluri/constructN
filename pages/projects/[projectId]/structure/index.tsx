@@ -313,6 +313,7 @@ const Index: React.FC<IProps> = () => {
                   }
                 })
               );
+
               // setDefaultBreadcrumb()
             } else if (nodeData) {
               const selNode = structs.find((e) => {

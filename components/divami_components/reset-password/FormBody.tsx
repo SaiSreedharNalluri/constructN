@@ -22,6 +22,7 @@ const FormBody = ({
   issueStatusList,
   setCanBeDisabled,
   loginField,
+  onData,
 }: any) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -37,6 +38,13 @@ const FormBody = ({
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
+  };
+
+  // callback to send data to parent
+  const handleChildData = (data: string) => {
+    if (onData) {
+      onData(data);
+    }
   };
 
   const [formState, setFormState] = useState({ selectedValue: "" });
@@ -65,6 +73,7 @@ const FormBody = ({
         setIsValidate={setIsValidate}
         setCanBeDisabled={setCanBeDisabled}
         loginField={true}
+        onData={handleChildData}
       />
     </>
   );

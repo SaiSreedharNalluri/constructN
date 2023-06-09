@@ -14,6 +14,7 @@ import {
   StyledTable,
   TableHeader,
   TableWrapper,
+  FilterSectionIcon,
 } from "./SectionsListingStyles";
 import {
   InputAdornment,
@@ -31,7 +32,7 @@ import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import ChevronRight from "@material-ui/icons/ChevronRight";
 import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 import searchIcon from "../../../public/divami_icons/search.svg";
-
+import CustomDrawer from "../custom-drawer/custom-drawer";
 import Clear from "@material-ui/icons/Clear";
 import DeleteOutline from "@material-ui/icons/DeleteOutline";
 import Edit from "@material-ui/icons/Edit";
@@ -55,6 +56,7 @@ import CrossIcon from "../../../public/divami_icons/CrossIcon.svg";
 import FilterInActive from "../../../public/divami_icons/FilterInActive.svg";
 import SearchMag from "../../../public/divami_icons/search.svg";
 import UserFilterIcon from "../../../public/divami_icons/UserFilterIcon.svg";
+import filterActive from "../../../public/divami_icons/filterActive.svg";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -77,6 +79,7 @@ import {
   FloorName,
 } from "../CaptureMode/CaptureModeStyles";
 import { forwardRef } from "react";
+import SectionFilter from "./SectionFilter";
 
 import MaterialTable, { MTableToolbar } from "material-table";
 import CustomButton from "../custom-button/CustomButton";
@@ -208,6 +211,8 @@ const SectionsListing = () => {
   const [searchVal, setIsSearchVal] = useState("");
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [roles, setRoles] = useState<string[] | []>([]);
+
   // let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   const [tableData, setTableData] = useState<any>(
     // { name: 'Zerya Betül', surname: 'Baran', birthYear: 2017, birthCity: 34 },
@@ -218,35 +223,38 @@ const SectionsListing = () => {
 
   let [gridData, setGridData] = useState<any>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [openFilter, setOpenFilter] = useState(false);
+  const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [searchTableData, setSearchTableData] = useState([]);
   const formHandler = (event: any) => {
     // setShowEmptyState(true);
   };
 
-  // https://api.dev2.constructn.ai/api/v1/projects/PRJ201897/structures/hierarchy
+  const [taskFilterState, setTaskFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {
+      roleType: [
+        { optionTitle: "In Progress", optionStatus: "F" },
+        { optionTitle: "Not Started", optionStatus: "F" },
+        { optionTitle: "Completed", optionStatus: "F" },
+        { optionTitle: "On Hold", optionStatus: "F" },
+      ],
+    },
+    numberOfFilters: 0,
+  });
 
   useEffect(() => {
-    // console.log("griddata", gridData);
-  }, [gridData]);
-
-  // useEffect(() => {
-  //   console.log("gridData", gridData);
-  // }, [gridData]);
-
-  useEffect(() => {
-    // console.log("filterTableData", filterTableData);
-  }, [filterTableData]);
-
-  useEffect(() => {
-    // console.log("tableData", tableData);
-  }, []);
+    if (taskFilterState.numberOfFilters > 0) {
+      applySectionFilter(taskFilterState);
+    } else {
+      setFilterTableData([...tableData]);
+      collapseAllRows();
+    }
+  }, [taskFilterState]);
 
   useEffect(() => {
     if (router.isReady) {
       getSectionsList(router?.query?.projectId as string)
         .then((response: AxiosResponse<any>) => {
-          // console.log("respjali", response);
           setGridData([response?.data?.result]);
           let removeGrandParent = response?.data?.result?.children?.map(
             (item: any, index: number) => {
@@ -313,9 +321,7 @@ const SectionsListing = () => {
       setSearchTerm("");
     }
   };
-  // useEffect(() => {
-  //   console.log("setSearchTerm", searchTerm);
-  // }, [searchTerm]);
+
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
@@ -349,6 +355,83 @@ const SectionsListing = () => {
       collapseAllRows();
     }
   };
+
+  const applySectionFilter = (filters: any) => {
+    let status = filters?.filterData?.roleType
+      .filter((ele: any, index: number) => ele.optionStatus === "T")
+      .map((item: any) => item.optionTitle);
+    let tempData = [...tableData];
+    if (status.length > 0) {
+      const newArr = [
+        ...tempData.filter((item: any) => status.includes(item.status)),
+      ];
+      tempData = [...newArr];
+    }
+    if (
+      filters?.filterData &&
+      filters?.filterData?.fromDate &&
+      filters?.filterData?.fromDate.length > 0
+    ) {
+      const newArr = [
+        ...tempData.filter((item: any) => {
+          // if (isValidDate(item.lastUpdated)) {
+          //   return false;
+          // }
+
+          let fromDateOnly = new Date(filters?.filterData?.fromDate).getTime();
+          let lastUpdateDateOnly = new Date(item.lastUpdated).getTime();
+          if (lastUpdateDateOnly >= fromDateOnly) {
+            return true;
+          } else {
+            return false;
+          }
+        }),
+      ];
+      tempData = [...newArr];
+    }
+
+    if (
+      filters?.filterData &&
+      filters?.filterData.toDate &&
+      filters?.filterData?.toDate.length > 0
+    ) {
+      const newArr = [
+        ...tempData.filter((item: any) => {
+          if (isValidDate(item.lastUpdated)) {
+            return false;
+          }
+          let toDateOnly = new Date(filters?.filterData?.toDate).getTime();
+          let lastUpdateDateOnly = new Date(item.lastUpdated).getTime();
+          if (lastUpdateDateOnly <= toDateOnly) {
+            return true;
+          } else {
+            return false;
+          }
+        }),
+      ];
+      tempData = [...newArr];
+    }
+    const tableWithParentData: any[] = [];
+    tempData.forEach((item: any) => {
+      if (item.parent !== null && item.parent.length > 0) {
+        let parentItem = tableData.find((ele: any) => ele._id === item.parent);
+
+        tableWithParentData.push(parentItem);
+      }
+    });
+    setFilterTableData([
+      ...tempData,
+      ...tableWithParentData.filter(
+        (item, index) => tableWithParentData.indexOf(item) === index
+      ),
+    ]);
+  };
+
+  function isValidDate(dateString: string): boolean {
+    const date = new Date(dateString);
+
+    return !isNaN(date as any);
+  }
 
   const expandAllRows = () => {
     if (myTableRef.current) {
@@ -397,12 +480,14 @@ const SectionsListing = () => {
       },
       cellStyle: { width: "15%" },
       render: (rowData: any) => {
-        console.log("rowData", rowData);
         // router.push(`/projects/${id}/sections`);
         return (
           <FloorName
             onClick={() => {
-              router.push(`/projects/${rowData.project as string}/structure`);
+              router.push({
+                pathname: `/projects/${rowData.project as string}/structure`,
+                query: { structId: rowData._id },
+              });
             }}
           >
             {rowData?.name}
@@ -594,8 +679,9 @@ const SectionsListing = () => {
     //   currencySetting: { currencyCode: "INR", minimumFractionDigits: 0 },
     // },
   ];
+
   return (
-    <div className="sections_table">
+    <div style={{ overflow: "scroll" }} className="sections_table">
       <TableHeader>
         <Header>Sections</Header>
         <HeaderActions>
@@ -640,6 +726,18 @@ const SectionsListing = () => {
               />
             </>
           )}
+
+          <FilterSectionIcon
+            src={
+              taskFilterState.numberOfFilters <= 0
+                ? UserFilterIcon
+                : filterActive
+            }
+            // src={FilterInActive}
+            data-testid="filter-icon"
+            alt={"close icon"}
+            onClick={() => setOpenFilter(!openFilter)}
+          />
         </HeaderActions>
       </TableHeader>
 
@@ -670,7 +768,7 @@ const SectionsListing = () => {
                 selection: false,
                 showTitle: true,
                 toolbar: false,
-                maxBodyHeight: 500,
+                maxBodyHeight: "80vh",
                 thirdSortClick: false,
                 rowStyle: {
                   fontFamily: "Open Sans",
@@ -692,8 +790,8 @@ const SectionsListing = () => {
               //   rows.find((a: any) => a.id === row.parentId)
               // }
 
-              parentChildData={(row, rows) =>
-                rows.find((a) => a._id === row.parentId)
+              parentChildData={(row: any, rows) =>
+                rows.find((a: any) => a._id === row.parentId)
               }
             />
 
@@ -701,6 +799,21 @@ const SectionsListing = () => {
           </TableWrapper>
         </ThemeProvider>
       </SectionsListContainer>
+
+      {openFilter && (
+        <CustomDrawer open>
+          <SectionFilter
+            setTaskFilterState={setTaskFilterState}
+            taskFilterState={taskFilterState}
+            tableData={tableData}
+            setSearchTableData={setSearchTableData}
+            roles={["In Progress", "Not Started", "Completed", "On Hold"]}
+            onClose={() => {
+              setOpenFilter(false);
+            }}
+          />
+        </CustomDrawer>
+      )}
     </div>
   );
 };

@@ -28,6 +28,12 @@ export const HeaderContainer = styled("header")({
   paddingLeft: "30px",
 });
 
+export const PasswordPopupContainer = styled("div")({
+  position: "absolute",
+  bottom: "-187px",
+  zIndex: 999,
+});
+
 export const HeaderImageLogo = styled(Image)({});
 
 export const IllustrationBackground = styled(Image)({
@@ -40,9 +46,7 @@ export const IllustrationBackground = styled(Image)({
   //   opacity: "0.8",
 });
 
-export const Overlay = styled("div")({
-
-});
+export const Overlay = styled("div")({});
 
 export const FormDiv = styled("div")({
   position: "absolute",
@@ -74,7 +78,6 @@ export const SignInHeader = styled("div")({
 export const FormText = styled("div")({
   marginTop: "21px",
 });
-
 
 export const StyledTextField = styled(TextField)({
   width: "340px",
@@ -129,7 +132,6 @@ export const StyledPasswordField = styled(TextField)({
     // background: 'red',
     height: "7px",
   },
-
 });
 
 export const ShowHideDiv = styled("div")({
@@ -209,15 +211,12 @@ interface ContainerProps {
   buttonSearch: boolean;
 }
 
-
-
 export const ButtonSection = styled("div")<ContainerProps>`
   margin-top: ${(props) => (props.buttonSearch ? "21px" : "110px")};
   flex-direction: coloumn;
   justify-content: center;
   align-items: center;
 `;
-
 
 export const NewUserDiv = styled("div")({
   marginTop: "17px",
@@ -234,16 +233,14 @@ export const NewUserSpan = styled("span")({
   fontWeight: "400",
   fontSize: "14px",
   color: "#F1742E",
-  cursor:"pointer"
+  cursor: "pointer",
 });
 
-
-
-export const ErrorSectonDiv =  styled("div")({
+export const ErrorSectonDiv = styled("div")({
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",
-  paddingTop:'12px',
+  paddingTop: "12px",
   fontSize: "14px",
   color: "#f67c74",
 });

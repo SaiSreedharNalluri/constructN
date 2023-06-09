@@ -10,27 +10,42 @@ import { IconButton } from "@mui/material";
 import { fontSize } from "@mui/system";
 import CrossIcon from "../../public/divami_icons/crossIcon.svg";
 import Image from "next/image";
+import ProjectConfig from "../divami_components/project_config/ProjectConfig";
+import closeWithCircle from "../../public/divami_icons/closeWithCircle.svg";
 
 export const CloseIcon = styled(Image)({
   cursor: "pointer",
 });
 
-const BootstrapDialog = styled(Dialog)(({ theme, width }: any) => ({
-  fontWeight: "900",
-  fontFamily: "Open Sans",
+const BootstrapDialog = styled(Dialog)(
+  ({ theme, width, height, paddingStyle }: any) => ({
+    fontWeight: "900",
+    fontFamily: "Open Sans",
 
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1),
-    display: "flex",
-    justifyContent: "center",
-  },
-  "& .MuiPaper-root.MuiDialog-paper": {
-    width: width ? width : "493px",
-  },
-})) as any;
+    "& .MuiDialogContent-root": {
+      // padding: theme.spacing(2),
+      padding: "0px",
+    },
+    "& .MuiDialogActions-root": {
+      padding: paddingStyle ? "" : theme.spacing(1),
+      paddingTop: paddingStyle ? "13px" : "",
+      display: "flex",
+
+      justifyContent: paddingStyle ? "end" : "center",
+    },
+    "& .MuiPaper-root.MuiDialog-paper": {
+      width: width ? width : "493px",
+      height: height ? height : "",
+    },
+    "&.MuiBackdrop-root": {
+      // height: calc(100% - 60px);
+      // top: auto !important;
+      width: "100% !important",
+      // right: 0 !important;
+      // left: auto !important;
+    },
+  })
+) as any;
 const ButtonDiv = styled("div")({});
 
 export interface DialogTitleProps {
@@ -49,7 +64,10 @@ export interface PopupComponentProps {
   modalContent?: any;
   hideButtons?: boolean;
   width?: string;
+  height?: string;
+  paddingStyle?: boolean;
 }
+
 function BootstrapDialogTitle(props: DialogTitleProps) {
   const { children, onClose, ...other } = props;
 
@@ -59,7 +77,9 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
       {...other}
       style={{
         fontSize: "16px",
-        padding: "16px 0px 16px 30px",
+        // padding: "16px 0px 16px 30px",
+        padding: "15px 0px 15px 20px",
+
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -74,12 +94,14 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
           sx={{
             position: "absolute",
             right: 8,
-            top: 15,
+            // top: 15,
+            top: 6,
             color: (theme) => theme.palette.grey[500],
             marginRight: "22px",
           }}
         >
-          <CloseIcon src={CrossIcon} alt={"close icon"} />
+          {/* <CloseIcon src={CrossIcon} alt={"close icon"} /> */}
+          <CloseIcon src={closeWithCircle} alt={"close icon"} />
         </IconButton>
       ) : null}
     </DialogTitle>
@@ -97,15 +119,18 @@ const PopupComponent = (props: PopupComponentProps) => {
   const {
     modalTitle,
     modalmessage,
-    modalContent,
     primaryButtonLabel,
     SecondaryButtonlabel,
     callBackvalue,
     setShowPopUp,
     open,
+    modalContent,
     hideButtons = false,
+    paddingStyle,
+    width,
   } = props;
 
+  console.log("paddingStyle", paddingStyle);
   const handleClose = () => {
     setShowPopUp(false);
   };
@@ -117,6 +142,8 @@ const PopupComponent = (props: PopupComponentProps) => {
         aria-labelledby="customized-dialog-title"
         open={open}
         width={props.width}
+        height={props.height}
+        paddingStyle={props.paddingStyle}
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
@@ -124,9 +151,14 @@ const PopupComponent = (props: PopupComponentProps) => {
         >
           {modalTitle}
         </BootstrapDialogTitle>
+
         <DialogContent
           dividers
-          style={{ borderBottom: 0, padding: "30px", paddingBottom: "22px" }}
+          style={
+            paddingStyle
+              ? {}
+              : { borderBottom: 0, padding: "30px", paddingBottom: "22px" }
+          }
         >
           {modalContent ? (
             modalContent
@@ -134,12 +166,14 @@ const PopupComponent = (props: PopupComponentProps) => {
             <TextComponent>{modalmessage}</TextComponent>
           )}
         </DialogContent>
-        <DialogActions sx={{ padding: 0 }}>
+        <DialogActions
+          sx={paddingStyle ? { height: "70px", padding: 0 } : { padding: 0 }}
+        >
           {!hideButtons ? (
             <ButtonDiv>
               <Button
-                variant="text"
-                autoFocus
+                variant={paddingStyle ? "outlined" : "text"}
+                // autoFocus
                 onClick={handleClose}
                 style={{
                   color: "#F1742E",
@@ -148,6 +182,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                   textTransform: "none",
                   marginBottom: "22px",
                   fontFamily: "Open Sans",
+                  border: paddingStyle ? "1px solid #F1742E" : "0px",
                 }}
               >
                 {SecondaryButtonlabel}
@@ -165,6 +200,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                   textTransform: "none",
                   fontFamily: "Open Sans",
                   fontSize: "16px",
+                  marginLeft: paddingStyle ? "20px" : "",
                 }}
               >
                 {primaryButtonLabel}

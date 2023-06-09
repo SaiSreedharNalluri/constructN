@@ -56,6 +56,15 @@ export const HeaderRightSectionResetText = styled.div({
   color: " #F1742E",
 });
 
+export const FilterHeader = styled.div({
+  fontWeight: "500",
+  color: "#101F4C",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontSize: "16px",
+  marginTop: "20px",
+});
+
 export const HeaderRightSectionCancel = styled.div({});
 
 export const FilterCardContainer = styled.div`

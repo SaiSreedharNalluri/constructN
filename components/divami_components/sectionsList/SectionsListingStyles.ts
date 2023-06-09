@@ -4,8 +4,6 @@ import { Box, MenuItem, TextField } from "@mui/material";
 
 import MaterialTable, { MTableToolbar } from "material-table";
 
-
-
 export const SectionsListContainer = styled("div")({
   // padding: "20px",
   // paddingTop:"1px",
@@ -66,6 +64,11 @@ export const SearchGlassIcon = styled(Image)({
   cursor: "pointer",
 });
 
+export const FilterSectionIcon = styled(Image)({
+  cursor: "pointer",
+  marginLeft: "18px",
+});
+
 export const FunnelIcon = styled(Image)({
   cursor: "pointer",
   marginLeft: "16px",
@@ -74,7 +77,6 @@ export const FunnelIcon = styled(Image)({
   top: "20px",
   right: "35px",
 });
-
 
 export const TableHeader = styled("div")({
   display: "flex",
@@ -108,4 +110,15 @@ export const TableWrapper = styled("div")({
   marginBottom: "50px",
 });
 
+export const FilterProgressContainer = styled("div")({
+  display: "flex",
+  flexDirection: "row",
+  width: "100%",
+});
+
 export const StyledTable = styled(MaterialTable)({});
+
+export const customDropdown = {
+  backgroundColor: "red !important",
+  border: "none !important",
+};

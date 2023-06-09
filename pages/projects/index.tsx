@@ -50,6 +50,16 @@ import DownArrow from "../../public/divami_icons/downArrow.svg";
 import { AddUsersEmailOverlay } from "../../components/divami_components/add_users/AddUsersEmailOverlay";
 import { AddUsersEmailPopup } from "../../components/divami_components/add_users/AddUsersEmailPopup";
 import PopupComponent from "../../components/popupComponent/PopupComponent";
+import ProjectConfig from "../../components/divami_components/project_config/ProjectConfig";
+import {
+  updateIssuePriorityList,
+  updateIssueStatusList,
+  updateTagList,
+  updateTaskPriorityList,
+  updateTaskStatusList,
+} from "../../services/projectConfigApi";
+import { toast } from "react-toastify";
+import Moment from "moment";
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -75,11 +85,19 @@ const Index: React.FC<any> = () => {
       },
     ],
   });
+  const [selectedOption, setSelectedOption] = useState("issuePriority");
+
+  const [formValues, setFormValues]: any = useState({ priority: [] });
+  const [showPopUp, setshowPopUp] = useState(false);
+
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
     filterData: {},
     numberOfFilters: 0,
   });
+
+  const [projectId, setProjectId] = useState<any>("");
+
   const handleSearchWindow = () => {
     setSearchTableData(projects);
     if (searchTerm === "") {
@@ -87,6 +105,25 @@ const Index: React.FC<any> = () => {
     } else {
       setSearchTerm("");
     }
+  };
+
+  const handleFilter = (formState: any) => {
+    setTaskFilterState(formState);
+    setSearchTableData(
+      projects.filter(
+        (each: any) =>
+          (Moment(each.fromDate).format("YYYY-MM-DD") >= formState.dueDate ||
+            !formState.dueDate) &&
+          (Moment(each.dueDate).format("YYYY-MM-DD") <= formState.dueDate ||
+            !formState.dueDate) &&
+          (!formState.numberOfMembersSelect ||
+            (formState.numberOfMembersSelect === "greaterThan"
+              ? each.numberOfUsers > formState.numberOfMembersValue
+              : formState.numberOfMembersSelect === "lessThan"
+              ? each.numberOfUsers < formState.numberOfMembersValue
+              : each.numberOfUsers == formState.numberOfMembersValue))
+      )
+    );
   };
 
   const showEmailOverlay = (formState: any) => {
@@ -202,7 +239,10 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Project Configuration",
-      action: () => {},
+      action: (id?: string) => {
+        setshowPopUp(true);
+        setProjectId(id);
+      },
     },
     {
       label: "Project Details",
@@ -223,6 +263,9 @@ const Index: React.FC<any> = () => {
     },
   ]);
 
+  useEffect(() => {
+    console.log("projectsData", projects);
+  }, [projects]);
   useEffect(() => {
     if (router.isReady) {
       getProjectsList()
@@ -273,6 +316,55 @@ const Index: React.FC<any> = () => {
   useEffect(() => {
     setSearchTableData(projects);
   }, [projects]);
+
+  const onDeleteIssue = (status: any) => {
+    setshowPopUp(false);
+  };
+
+  const handleSubmit = async () => {
+    const containsEmptyString = formValues.priority.some(
+      (item: any) => item.length === 0
+    );
+
+    if (containsEmptyString) {
+      toast.error("Fields cannot be empty");
+      return;
+    }
+    try {
+      // Call the appropriate API based on the selected option and pass the updated values
+      if (selectedOption === "issuePriority") {
+        // await updateIssuePriorityList(projectId, formValues.priority);
+        await updateIssuePriorityList(projectId, {
+          issuePriorityList: [...formValues.priority],
+        });
+        toast.success("Issue priority list updated successfully");
+      } else if (selectedOption === "taskPriority") {
+        await updateTaskPriorityList(projectId, {
+          taskPriorityList: [...formValues.priority],
+        });
+        toast.success("Task priority list updated successfully");
+      } else if (selectedOption === "issueStatus") {
+        await updateIssueStatusList(projectId, {
+          issueStatusList: [...formValues.priority],
+        });
+        toast.success("Issue status list updated successfully");
+      } else if (selectedOption === "taskStatus") {
+        await updateTaskStatusList(projectId, {
+          taskStatusList: [...formValues.priority],
+        });
+        toast.success("Task status list updated successfully");
+      } else if (selectedOption === "tag") {
+        await updateTagList(projectId, {
+          tagList: [...formValues.priority],
+        });
+        toast.success("Tag list updated successfully");
+      }
+
+      // setSubmittedValues(formValues);
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
 
   return (
     <div className=" w-full  h-full">
@@ -352,7 +444,7 @@ const Index: React.FC<any> = () => {
                 width={24}
                 height={24}
                 onClick={() => {
-                  // setOpenFilter(true);
+                  setOpenFilter(true);
                 }}
               />
               <ToggleButtonContainer>
@@ -397,13 +489,39 @@ const Index: React.FC<any> = () => {
           {openFilter && (
             <CustomDrawer open>
               <ProjectListFilter
-                setTaskFilterState={setTaskFilterState}
                 taskFilterState={taskFilterState}
                 onClose={() => {
                   setOpenFilter(false);
                 }}
+                handleOnApplyFilter={(formState: any) =>
+                  handleFilter(formState)
+                }
               />
             </CustomDrawer>
+          )}
+          {showPopUp && (
+            <PopupComponent
+              open={showPopUp}
+              width={"585px"}
+              // height={"360px"}
+              paddingStyle={true}
+              setShowPopUp={setshowPopUp}
+              modalTitle={"Project Configuration"}
+              modalContent={
+                <ProjectConfig
+                  projectId={projectId}
+                  selectedOption={selectedOption}
+                  setSelectedOption={setSelectedOption}
+                  formValues={formValues}
+                  setFormValues={setFormValues}
+                />
+              }
+              // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
+              modalmessage={`Are you sure you want to delete this Issue ?`}
+              primaryButtonLabel={"Update"}
+              SecondaryButtonlabel={"Cancel"}
+              callBackvalue={handleSubmit}
+            />
           )}
         </ProjectsListContainer>
       </Content>

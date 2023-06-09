@@ -260,6 +260,7 @@ export const AddUsersEmailOverlay = ({
                 }
               }}
               className={undefined}
+              width={"100% !important"}
             />
             {/* <CustomSearch
               data={options}
