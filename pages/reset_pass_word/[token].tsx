@@ -10,7 +10,6 @@ const ResetPasswordPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      console.log("routerquery", router);
       setUniqueToken(router.query.token);
       //   return;
     }

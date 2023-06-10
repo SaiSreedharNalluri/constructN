@@ -89,7 +89,6 @@ const Header: React.FC<any> = ({
     const userObj: any = getCookie("user");
     let user = null;
     if (userObjState) user = JSON.parse(userObjState);
-    console.log(user, "mnfdss");
 
     if (user?.fullName) {
       setName(user.fullName);

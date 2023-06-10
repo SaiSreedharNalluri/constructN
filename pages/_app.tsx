@@ -42,7 +42,6 @@ export default function App({ Component, pageProps }: AppProps) {
     //   typeof convertUserObj,
     //   convertUserObj["rememberMe"]
     // );
-    console.log("router", router.asPath);
 
     if (!user?.rememberMe && signInRoutes.includes(router.asPath)) {
       router.push("/login");

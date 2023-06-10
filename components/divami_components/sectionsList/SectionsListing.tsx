@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import { IconButton } from "@material-ui/core";
+import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import {
   ArrowIcon,
   CloseIcon,
@@ -14,6 +16,7 @@ import {
   StyledTable,
   TableHeader,
   TableWrapper,
+  FilterSectionIcon,
 } from "./SectionsListingStyles";
 import {
   InputAdornment,
@@ -31,7 +34,7 @@ import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import ChevronRight from "@material-ui/icons/ChevronRight";
 import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 import searchIcon from "../../../public/divami_icons/search.svg";
-
+import CustomDrawer from "../custom-drawer/custom-drawer";
 import Clear from "@material-ui/icons/Clear";
 import DeleteOutline from "@material-ui/icons/DeleteOutline";
 import Edit from "@material-ui/icons/Edit";
@@ -55,6 +58,7 @@ import CrossIcon from "../../../public/divami_icons/CrossIcon.svg";
 import FilterInActive from "../../../public/divami_icons/FilterInActive.svg";
 import SearchMag from "../../../public/divami_icons/search.svg";
 import UserFilterIcon from "../../../public/divami_icons/UserFilterIcon.svg";
+import filterActive from "../../../public/divami_icons/filterActive.svg";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -77,9 +81,11 @@ import {
   FloorName,
 } from "../CaptureMode/CaptureModeStyles";
 import { forwardRef } from "react";
+import SectionFilter from "./SectionFilter";
 
-import MaterialTable, { MTableToolbar } from "material-table";
+import MaterialTable, { MTableToolbar, MTableBodyRow } from "material-table";
 import CustomButton from "../custom-button/CustomButton";
+import { SvgIconProps } from "@material-ui/core";
 
 const dummyData: any = [
   {
@@ -123,65 +129,16 @@ const dummyData: any = [
     // imageUrl: <ProgressBar />,
   },
 ];
-const tableIcons: any = {
-  Add: forwardRef<SVGSVGElement>((props, ref) => (
-    <AddBox {...props} ref={ref} />
-  )),
-  Check: forwardRef<SVGSVGElement>((props, ref) => (
-    <Check {...props} ref={ref} />
-  )),
-  Clear: forwardRef<SVGSVGElement>((props, ref) => (
-    <Clear {...props} ref={ref} />
-  )),
-  Delete: forwardRef<SVGSVGElement>((props, ref) => (
-    <DeleteOutline {...props} ref={ref} />
-  )),
-  DetailPanel: forwardRef<SVGSVGElement>((props, ref) => (
-    // console.log("addingtodo", props), (<TestIcon props={props} />)
-    <Add {...props} ref={ref} />
 
-    //<TestIcon />
-  )),
-  Edit: forwardRef<SVGSVGElement>((props, ref) => (
-    <Edit {...props} ref={ref} />
-  )),
-  Export: forwardRef<SVGSVGElement>((props, ref) => (
-    <SaveAlt {...props} ref={ref} />
-  )),
-  Filter: forwardRef<SVGSVGElement>((props, ref) => (
-    <FilterList {...props} ref={ref} />
-  )),
-  FirstPage: forwardRef<SVGSVGElement>((props, ref) => (
-    <FirstPage {...props} ref={ref} />
-  )),
-  LastPage: forwardRef<SVGSVGElement>((props, ref) => (
-    <LastPage {...props} ref={ref} />
-  )),
-  NextPage: forwardRef<SVGSVGElement>((props, ref) => (
-    <Add {...props} ref={ref} />
-  )),
-  PreviousPage: forwardRef<SVGSVGElement>((props, ref) => (
-    <ChevronLeft {...props} ref={ref} />
-  )),
-  ResetSearch: forwardRef<SVGSVGElement>((props, ref) => (
-    <Clear {...props} ref={ref} />
-  )),
-  Search: forwardRef<SVGSVGElement>((props, ref) => (
-    <Search {...props} ref={ref} />
-  )),
-  SortArrow: forwardRef<SVGSVGElement>((props, ref) => (
-    <ArrowDownward {...props} ref={ref} />
-  )),
-  ThirdStateCheck: forwardRef<SVGSVGElement>((props, ref) => (
-    <Remove {...props} ref={ref} />
-  )),
-  ViewColumn: forwardRef<SVGSVGElement>((props, ref) => (
-    <Add {...props} ref={ref} />
-  )),
-};
+interface RowData {
+  tableData: { id: number };
+}
+
+interface ExpandedRows {
+  [id: number]: boolean;
+}
 
 const MyNewTitle = (props: any) => {
-  console.log("MyNewTitle", props);
   return (
     <div
       style={{
@@ -209,6 +166,8 @@ const SectionsListing = () => {
   const [searchVal, setIsSearchVal] = useState("");
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [roles, setRoles] = useState<string[] | []>([]);
+
   // let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   const [tableData, setTableData] = useState<any>(
     // { name: 'Zerya Betül', surname: 'Baran', birthYear: 2017, birthCity: 34 },
@@ -219,37 +178,102 @@ const SectionsListing = () => {
 
   let [gridData, setGridData] = useState<any>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [openFilter, setOpenFilter] = useState(false);
+  const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [searchTableData, setSearchTableData] = useState([]);
   const formHandler = (event: any) => {
     // setShowEmptyState(true);
   };
 
-  // https://api.dev2.constructn.ai/api/v1/projects/PRJ201897/structures/hierarchy
+  const [taskFilterState, setTaskFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {
+      roleType: [
+        { optionTitle: "In Progress", optionStatus: "F" },
+        { optionTitle: "Not Started", optionStatus: "F" },
+        { optionTitle: "Completed", optionStatus: "F" },
+        { optionTitle: "On Hold", optionStatus: "F" },
+      ],
+    },
+    numberOfFilters: 0,
+  });
 
   useEffect(() => {
-    // console.log("griddata", gridData);
-  }, [gridData]);
+    if (taskFilterState.numberOfFilters > 0) {
+      applySectionFilter(taskFilterState);
+    } else {
+      setFilterTableData([...tableData]);
+      collapseAllRows();
+    }
+  }, [taskFilterState]);
 
-  // useEffect(() => {
-  //   console.log("gridData", gridData);
-  // }, [gridData]);
+  const tableIcons = {
+    Add: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <AddBox {...props} ref={ref} />
+    )),
+    Check: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <Check {...props} ref={ref} />
+    )),
+    Clear: forwardRef<SVGSVGElement>((props, ref) => (
+      <Clear {...props} ref={ref} />
+    )),
+    Delete: forwardRef<SVGSVGElement>((props, ref) => (
+      <DeleteOutline {...props} ref={ref} />
+    )),
+    DetailPanel: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => {
+      // console.log("addingtodo", props), (<TestIcon props={props} />)
+
+      return <ChevronRight {...props} ref={ref} />;
+
+      //<TestIcon />
+    }),
+
+    // DetailPanel: (props: { rowData: RowData }, ref) => {
+    //   const isExpanded = expandedRows[props.rowData.tableData.id];
+    //   return <DeleteOutline {...props} />;
+    // },
+    //   DetailPanel: (props: any) => <DeleteOutline {...props} />,
+    Edit: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <Edit {...props} ref={ref} />
+    )),
+    Export: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <SaveAlt {...props} ref={ref} />
+    )),
+    Filter: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <FilterList {...props} ref={ref} />
+    )),
+    FirstPage: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <FirstPage {...props} ref={ref} />
+    )),
+    LastPage: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <LastPage {...props} ref={ref} />
+    )),
+    NextPage: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <Add {...props} ref={ref} />
+    )),
+    PreviousPage: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <ChevronLeft {...props} ref={ref} />
+    )),
+    ResetSearch: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <Clear {...props} ref={ref} />
+    )),
+    Search: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <Search {...props} ref={ref} />
+    )),
+    SortArrow: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <ArrowDownward {...props} ref={ref} />
+    )),
+    ThirdStateCheck: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <Remove {...props} ref={ref} />
+    )),
+    ViewColumn: forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+      <Add {...props} ref={ref} />
+    )),
+  };
 
   useEffect(() => {
-    // console.log("filterTableData", filterTableData);
-  }, [filterTableData]);
-
-  useEffect(() => {
-    // console.log("tableData", tableData);
-  }, []);
-
-  useEffect(() => {
-    console.log("router?.query?.projectId", router);
-
     if (router.isReady) {
       getSectionsList(router?.query?.projectId as string)
         .then((response: AxiosResponse<any>) => {
-          // console.log("respjali", response);
           setGridData([response?.data?.result]);
           let removeGrandParent = response?.data?.result?.children?.map(
             (item: any, index: number) => {
@@ -259,23 +283,15 @@ const SectionsListing = () => {
               };
             }
           );
-          console.log("removeGrandParent", removeGrandParent);
           massageTree(removeGrandParent, response?.data?.result?.id);
           //  setTableData([...dummyData]);
-          console.log("secondcall", response?.data?.result[0]?.children);
         })
-        .catch((error) => {
-          console.log("error", error);
-        });
+        .catch((error) => {});
     }
   }, [router.query.projectId]);
 
   function massageTree(responseArr: any, grandParent: string) {
-    console.log("responseArr", responseArr);
-    console.log("grandParent", grandParent);
-
     let resultArr: any = [];
-    console.log("FLAG 1", responseArr, grandParent);
     responseArr.map((item: any, index: number) => {
       if (item.parent == null) {
         // parent
@@ -296,7 +312,6 @@ const SectionsListing = () => {
       }
     });
 
-    console.log("MASSAGED", resultArr);
     setFilterTableData([...resultArr]);
     setTableData([...resultArr]);
   }
@@ -325,9 +340,7 @@ const SectionsListing = () => {
       setSearchTerm("");
     }
   };
-  // useEffect(() => {
-  //   console.log("setSearchTerm", searchTerm);
-  // }, [searchTerm]);
+
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
@@ -361,6 +374,83 @@ const SectionsListing = () => {
       collapseAllRows();
     }
   };
+
+  const applySectionFilter = (filters: any) => {
+    let status = filters?.filterData?.roleType
+      .filter((ele: any, index: number) => ele.optionStatus === "T")
+      .map((item: any) => item.optionTitle);
+    let tempData = [...tableData];
+    if (status.length > 0) {
+      const newArr = [
+        ...tempData.filter((item: any) => status.includes(item.status)),
+      ];
+      tempData = [...newArr];
+    }
+    if (
+      filters?.filterData &&
+      filters?.filterData?.fromDate &&
+      filters?.filterData?.fromDate.length > 0
+    ) {
+      const newArr = [
+        ...tempData.filter((item: any) => {
+          // if (isValidDate(item.lastUpdated)) {
+          //   return false;
+          // }
+
+          let fromDateOnly = new Date(filters?.filterData?.fromDate).getTime();
+          let lastUpdateDateOnly = new Date(item.lastUpdated).getTime();
+          if (lastUpdateDateOnly >= fromDateOnly) {
+            return true;
+          } else {
+            return false;
+          }
+        }),
+      ];
+      tempData = [...newArr];
+    }
+
+    if (
+      filters?.filterData &&
+      filters?.filterData.toDate &&
+      filters?.filterData?.toDate.length > 0
+    ) {
+      const newArr = [
+        ...tempData.filter((item: any) => {
+          if (isValidDate(item.lastUpdated)) {
+            return false;
+          }
+          let toDateOnly = new Date(filters?.filterData?.toDate).getTime();
+          let lastUpdateDateOnly = new Date(item.lastUpdated).getTime();
+          if (lastUpdateDateOnly <= toDateOnly) {
+            return true;
+          } else {
+            return false;
+          }
+        }),
+      ];
+      tempData = [...newArr];
+    }
+    const tableWithParentData: any[] = [];
+    tempData.forEach((item: any) => {
+      if (item.parent !== null && item.parent.length > 0) {
+        let parentItem = tableData.find((ele: any) => ele._id === item.parent);
+
+        tableWithParentData.push(parentItem);
+      }
+    });
+    setFilterTableData([
+      ...tempData,
+      ...tableWithParentData.filter(
+        (item, index) => tableWithParentData.indexOf(item) === index
+      ),
+    ]);
+  };
+
+  function isValidDate(dateString: string): boolean {
+    const date = new Date(dateString);
+
+    return !isNaN(date as any);
+  }
 
   const expandAllRows = () => {
     if (myTableRef.current) {
@@ -409,12 +499,14 @@ const SectionsListing = () => {
       },
       cellStyle: { width: "15%" },
       render: (rowData: any) => {
-        console.log("rowData", rowData);
         // router.push(`/projects/${id}/sections`);
         return (
           <FloorName
             onClick={() => {
-              router.push(`/projects/${rowData.project as string}/structure`);
+              router.push({
+                pathname: `/projects/${rowData.project as string}/structure`,
+                query: { structId: rowData._id },
+              });
             }}
           >
             {rowData?.name}
@@ -547,24 +639,7 @@ const SectionsListing = () => {
       },
       sorting: false,
     },
-    // {
-    //   title: "Status & Progress",
-    //   field: "progress",
-    //   sorting: true,
 
-    //   render: (rowData: any) => <ProgressBar />,
-    //   headerStyle: {
-    //     borderBottom: "1px solid #FF843F",
-    //     fontFamily: "Open Sans",
-    //     fontStyle: "normal",
-    //     fontWeight: "500",
-    //     fontSize: "14px",
-    //     lineHeight: "20px",
-    //     color: "#101F4C",
-    //   },
-    //   cellStyle: { width: "18%" },
-    //   // sorting: true,
-    // },
     {
       title: "Last Updated",
       field: "lastupdated",
@@ -579,35 +654,13 @@ const SectionsListing = () => {
         color: "#101F4C",
       },
       render: (rowData: any) => {
-        return <>{moment(rowData.updatedAt).format("DD MMM YYYY")}</>;
+        return <>{moment(rowData.lastUpdated).format("DD MMM YYYY")}</>;
       },
     },
-
-    // { title: "Phone Number", field: "phone", sorting: false },
-    // {
-    //   title: "Age",
-    //   field: "age",
-    //   emptyValue: () => <em>null</em>,
-    // },
-    // {
-    //   title: "Gender",
-    //   field: "gender",
-    //   lookup: { M: "Male", F: "Female" },
-    // },
-    // {
-    //   title: "City",
-    //   field: "city",
-    //   sorting: false,
-    // },
-    // {
-    //   title: "School Fee",
-    //   field: "fee",
-    //   type: "currency",
-    //   currencySetting: { currencyCode: "INR", minimumFractionDigits: 0 },
-    // },
   ];
+
   return (
-    <div className="sections_table">
+    <div style={{ overflow: "scroll" }} className="sections_table">
       <TableHeader>
         <Header>Sections</Header>
         <HeaderActions>
@@ -652,6 +705,18 @@ const SectionsListing = () => {
               />
             </>
           )}
+
+          <FilterSectionIcon
+            src={
+              taskFilterState.numberOfFilters <= 0
+                ? UserFilterIcon
+                : filterActive
+            }
+            // src={FilterInActive}
+            data-testid="filter-icon"
+            alt={"close icon"}
+            onClick={() => setOpenFilter(!openFilter)}
+          />
         </HeaderActions>
       </TableHeader>
 
@@ -661,19 +726,12 @@ const SectionsListing = () => {
           <TableWrapper>
             <StyledTable
               tableRef={myTableRef}
-              // icons={tableIcons.Search}
-              // components={{
-              //   Toolbar: (props) => <MTableToolbar {...props} />,
-              // }}
               components={{
                 Container: (props) => <Paper {...props} elevation={0} />,
               }}
               columns={columns}
               data={filterTableData ? filterTableData : []}
-              // title={<MyNewTitle sections="Sections" />}
               title={""}
-              //onSearchChange={setIsSearchVal}
-
               options={{
                 search: false,
                 paging: false,
@@ -682,7 +740,7 @@ const SectionsListing = () => {
                 selection: false,
                 showTitle: true,
                 toolbar: false,
-                maxBodyHeight: 500,
+                maxBodyHeight: "80vh",
                 thirdSortClick: false,
                 rowStyle: {
                   fontFamily: "Open Sans",
@@ -697,13 +755,6 @@ const SectionsListing = () => {
                 },
               }}
               icons={tableIcons}
-              // detailPanel={[
-              //   { icon: tableIcons.Add, tooltip: "Show Surname" },
-              // ]}
-              // parentChildData={(row: any, rows: any) =>
-              //   rows.find((a: any) => a.id === row.parentId)
-              // }
-
               parentChildData={(row: any, rows) =>
                 rows.find((a: any) => a._id === row.parentId)
               }
@@ -713,6 +764,21 @@ const SectionsListing = () => {
           </TableWrapper>
         </ThemeProvider>
       </SectionsListContainer>
+
+      {openFilter && (
+        <CustomDrawer open>
+          <SectionFilter
+            setTaskFilterState={setTaskFilterState}
+            taskFilterState={taskFilterState}
+            tableData={tableData}
+            setSearchTableData={setSearchTableData}
+            roles={["In Progress", "Not Started", "Completed", "On Hold"]}
+            onClose={() => {
+              setOpenFilter(false);
+            }}
+          />
+        </CustomDrawer>
+      )}
     </div>
   );
 };

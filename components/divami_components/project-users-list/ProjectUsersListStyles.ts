@@ -1,7 +1,9 @@
 import { styled } from "@mui/system";
 import MaterialTable, { MTableToolbar } from "material-table";
 import Image from "next/image";
+import CustomButton from "../custom-button/CustomButton";
 import { CustomMenu } from "../custom-menu/CustomMenu";
+import { SortAscIcon } from "../project-listing/SortAscIcon";
 
 export const ImageButtons = styled("div")((props: any) => ({
   display: props.hoveringOver ? "flex" : "none",
@@ -49,9 +51,49 @@ export const UserName = styled("div")({
   marginLeft: "-15px",
 });
 
-export const ProjectUsersListContainer = styled("div")({
+export const ProjectUsersListContainer = styled("div")((props: any) => ({
   padding: "20px",
+  paddingTop: props.noTopPadding ? "0" : "20px",
   width: "100%",
+})) as any;
+
+export const ProjectAddUsersListContainer = styled("div")({
+  padding: "0 20px",
+  width: "575px",
+});
+
+export const UnregistedUsersText = styled("div")({
+  fontSize: "16px",
+  color: "#101F4C",
+});
+
+export const UnregisteredIcon = styled(Image)({
+  width: "18px",
+  height: "18px",
+  marginRight: "8px",
+});
+
+export const FooterWrapper = styled("div")({
+  position: "absolute",
+  bottom: 0,
+  width: "575px",
+  boxShadow: "0px -2px 3px rgba(0, 0, 0, 0.3)",
+  height: "130px",
+  marginLeft: "-20px",
+  padding: "0 20px",
+});
+
+export const UnregisteredContainer = styled("div")({
+  display: "flex",
+  margin: "15px 0 30px 0",
+  alignItems: "center",
+  fontSize: "16px",
+  color: "#101F4C",
+});
+
+export const UserEmailText = styled("div")({
+  fontSize: "14px",
+  color: "#101F4C",
 });
 
 export const TableHeader = styled("div")({
@@ -63,6 +105,15 @@ export const TableHeader = styled("div")({
   fontSize: "18px",
   fontWeight: 400,
   fontFamily: "Open Sans",
+});
+
+export const ButtonWrapper = styled("div")({
+  display: "flex",
+  justifyContent: "end",
+});
+
+export const BackButton = styled("div")({
+  marginRight: "38px",
 });
 
 export const Header = styled("div")({
@@ -109,11 +160,28 @@ export const StyledCustomMenu = styled(CustomMenu)({
   height: "24px",
 });
 
-export const StyledTable = styled(MaterialTable)({});
+export const StyledTable = styled(MaterialTable)({
+  "& .MuiTableCell-root": {
+    // "& svg": {
+    //   marginLeft: "20px",
+    // },
+  },
+}) as any;
 
-export const TableWrapper = styled("div")({
-  marginBottom: "50px",
+export const CustomColumnTitle = styled("p")({
+  paddingRight: "8px",
 });
+
+export const SortIconStyled = styled(SortAscIcon)({
+  marginLeft: "20px",
+}) as any;
+
+export const TableWrapper = styled("div")((props: any) => ({
+  marginBottom: props.hideHeader ? "0" : "50px",
+  "& .MuiTableHead-root": {
+    display: props.hideHeader ? "none" : "",
+  },
+})) as any;
 
 export const ToggleButtonContainer = styled("div")({ display: "flex" });
 

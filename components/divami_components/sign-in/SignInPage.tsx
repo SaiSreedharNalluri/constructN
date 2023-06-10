@@ -1,89 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  ButtonSection,
+  CheckTickBox,
+  CheckTickDiv,
+  ExtraTickDiv,
+  ForgotDiv,
   FormContainerSign,
   FormDiv,
-  FormText,
   HeaderContainer,
   HeaderImageLogo,
   IllustrationBackground,
-  Overlay,
-  SectionShowcase,
-  SignInHeader,
-  StyledPasswordField,
-  StyledTextField,
-  ShowHideDiv,
-  ExtraTickDiv,
-  CheckTickDiv,
-  CheckTickBox,
-  RememberDiv,
-  ParentTickDiv,
-  ForgotDiv,
-  SignInContainedButton,
-  ButtonSection,
   NewUserDiv,
   NewUserSpan,
+  Overlay,
+  ParentTickDiv,
+  RememberDiv,
+  SectionShowcase,
+  SignInHeader,
 } from "./SignInPageStyle";
 
+import { useRouter } from "next/router";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Logo from "../../../public/divami_icons/Logo.svg";
-import Mail from "../../../public/divami_icons/Mail.svg";
-import lock from "../../../public/divami_icons/lock.svg";
-import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
-import Favorite from "@mui/icons-material/Favorite";
-import { useRouter } from "next/router";
 
-import { Checkbox, InputAdornment, TextField } from "@mui/material";
 import Checked from "../../../public/divami_icons/checked.svg";
 import UnChecked from "../../../public/divami_icons/unchecked.svg";
 
+import { setCookie } from "cookies-next";
 import Image from "next/image";
-import FormBody from "./FormBody";
-import FooterSignIn from "./FooterSignIn";
-import { CollectionsOutlined } from "@mui/icons-material";
+import { toast } from "react-toastify";
 import { login } from "../../../services/userAuth";
 import { Mixpanel } from "../../analytics/mixpanel";
-import { toast } from "react-toastify";
-import { deleteCookie, getCookie, setCookie } from "cookies-next";
+import FooterSignIn from "./FooterSignIn";
+import FormBody from "./FormBody";
 
 const SignInPage = () => {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-
-  // const handleClickShowPassword = () => {
-  //   setShowPassword(!showPassword);
-  // };
-  useEffect(() => {
-    console.log("rememberMe", rememberMe);
-  }, [rememberMe]);
-
-  // const handleMouseDownPassword = (event: any) => {
-  //   event.preventDefault();
-  // };
-
+  useEffect(() => {}, [rememberMe]);
   const [checked, setChecked] = React.useState(true);
-
-  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setChecked(event.target.checked);
-  // };
-
-  // useEffect(() => {
-  //   const userObj: any = getCookie("user");
-  //   console.log("userObj", userObj, router);
-  //   let user = null;
-  //   if (router.isReady) {
-  //     if (userObj) user = JSON.parse(userObj);
-  //     if (user && user.token) {
-  //       if (router.query.sessionExpired === undefined) {
-  //         // router.push("/projects");
-  //       } else {
-  //         deleteCookie("user");
-  //       }
-  //     }
-  //   }
-  // }, [router, router.isReady]);
-
   // form wrapper code
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);
@@ -93,25 +50,21 @@ const SignInPage = () => {
   const [token, setToken] = useState("");
   const [userEmail, setUserEmail] = useState<any>("");
   const [newProp, setNewProp] = useState<any>({});
+  const submitButtonRef: any = useRef(null);
 
   const handleFormData = (data: any) => {
     setFormData(data);
   };
 
-  const handleForm = () => {
-    console.log("hello form");
-    // formHandler();
-  };
   const formHandler = (event: any) => {
-    console.log("formData", formData);
+    // alert("TEST");
+    // console.log("TEST HERE");
     const email = formData[0].defaultValue;
     const password = formData[1].defaultValue;
-    console.log(email, password);
 
     setValidate(true);
 
     if (email === "" || password === "" || formData[0].isError) {
-      console.log("Email and password are empty. Aborting login.");
       return; // Stop execution here
     }
 
@@ -126,7 +79,6 @@ const SignInPage = () => {
     login(email?.toLocaleLowerCase(), password)
       .then((response: any) => {
         if (response.success === true) {
-          console.log("response", response);
           if (response?.result?.verified) {
             localStorage.setItem("userInfo", response.result?.fullName);
             // if (rememberMe) {
@@ -141,7 +93,6 @@ const SignInPage = () => {
               ...response?.result,
             };
             // {...newProp,rememberMe}
-            console.log("remember", rememberMe);
             // setCookie("user", JSON.stringify(response?.result));
             // setCookie("user", JSON.stringify(userProfileObj));
             setCookie("user", userProfileObj);
@@ -176,8 +127,6 @@ const SignInPage = () => {
 
         toast.error("Invalid User Credentials");
 
-        console.log("errorlogin", error.response.data.message);
-
         Mixpanel.track("login_fail", {
           email: email,
         });
@@ -185,6 +134,13 @@ const SignInPage = () => {
         // setLoading(false);
         // setMessage(resMessage);
       });
+  };
+
+  const handleKeyPress = (event: any) => {
+    if (event.code === "Enter") {
+      event.preventDefault();
+      formHandler(event);
+    }
   };
 
   // form wrapper code
@@ -209,6 +165,7 @@ const SignInPage = () => {
             setCanBeDisabled={setCanBeDisabled}
             loginField={true}
             signUpMsg={true}
+            handleKeyPress={handleKeyPress}
           />
           <ExtraTickDiv>
             <ParentTickDiv>
@@ -255,6 +212,7 @@ const SignInPage = () => {
               formHandler={formHandler}
               canBeDisabled={canBeDisabled}
               loginField={true}
+              ref={submitButtonRef}
               // customLabel={true}
             />
           </ButtonSection>

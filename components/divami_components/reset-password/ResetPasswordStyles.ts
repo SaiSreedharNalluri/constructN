@@ -14,7 +14,6 @@ export const SectionShowcase = styled("section")({
   justifyContent: "space-between",
   alignItems: "center",
   zIndex: "2",
-
 });
 
 export const HeaderContainer = styled("header")({
@@ -28,7 +27,7 @@ export const HeaderContainer = styled("header")({
 });
 
 export const HeaderImageLogo = styled(Image)({
-  cursor:"pointer"
+  cursor: "pointer",
 });
 
 export const IllustrationBackground = styled(Image)({
@@ -41,9 +40,7 @@ export const IllustrationBackground = styled(Image)({
   //   opacity: "0.8",
 });
 
-export const Overlay = styled("div")({
-
-});
+export const Overlay = styled("div")({});
 
 export const FormDiv = styled("div")({
   position: "absolute",
@@ -70,8 +67,7 @@ export const SignInHeader = styled("div")({
   fontWeight: "400",
   fontSize: "22px",
   color: "#36415D",
-  marginLeft:"10px"
-
+  marginLeft: "10px",
 });
 
 export const UserText = styled("div")({
@@ -83,20 +79,20 @@ export const UserText = styled("div")({
   color: "#36415D",
 });
 
-
 export const ButtonSection = styled("div")({
- 
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
   marginTop: "40px",
-
 });
 
-
+export const PasswordPopupContainer = styled("div")({
+  position: "absolute",
+  bottom: "-187px",
+  zIndex: 10,
+});
 
 export const FormHeader = styled("div")({
-    display: "flex",
-    // justifyContent:"center"
+  display: "flex",
 });

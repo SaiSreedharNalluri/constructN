@@ -116,7 +116,6 @@ const TimeLineComponent: React.FC<IProps> = ({
   //     return "No Reality";
   //   }
   // };
-  console.log(snapshotList, "snapjhos", tools);
   useEffect(() => {
     if (page || page == 0) {
       setCurrentSnapshot(snapshotList[page]);
@@ -133,7 +132,6 @@ const TimeLineComponent: React.FC<IProps> = ({
     if (snapshotList.length > 0) {
       setOldDate(snapshotList[0].date);
       setNewDate(snapshotList[snapshotList.length - 1].date);
-      console.log(currentSnapshot, snapshotList, "currentSnap");
       const snapshotIndex = snapshotList.findIndex(
         (item) => item.date === currentSnapshot.date
       );
@@ -282,21 +280,24 @@ const TimeLineComponent: React.FC<IProps> = ({
                 </p>
               </DateText>
 
-            <TimelineDots>
-              {snapshotList.map((item: any, index: number) => {
-                return (
-                  <Tooltip title={Moment(item.date).format("DD MMM YYYY")} key={Moment(item.date).format("DD MMM YYYY")}>
-                    <CircleIcon
-                      key={index}
-                      active={index === activeCircleIndex}
-                      onClick={(e: any) => handleChange(e, index)}
+              <TimelineDots>
+                {snapshotList.map((item: any, index: number) => {
+                  return (
+                    <Tooltip
+                      title={Moment(item.date).format("DD MMM YYYY")}
+                      key={Moment(item.date).format("DD MMM YYYY")}
                     >
-                      3
-                    </CircleIcon>
-                  </Tooltip>
-                );
-              })}
-            </TimelineDots>
+                      <CircleIcon
+                        key={index}
+                        active={index === activeCircleIndex}
+                        onClick={(e: any) => handleChange(e, index)}
+                      >
+                        3
+                      </CircleIcon>
+                    </Tooltip>
+                  );
+                })}
+              </TimelineDots>
 
               <DateText>
                 <p

@@ -49,6 +49,7 @@ export const CustomSearchField = styled(TextField)({
     paddingLeft: "16px",
     paddingRight: "8px",
     bottom: "8px",
+    background: "#FFF",
   },
 });
 

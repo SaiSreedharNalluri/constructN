@@ -182,3 +182,24 @@ export const TAG_CONFIG = [
     chipString: [],
   },
 ];
+
+export const SECTION_FILTER_PROGRESS_CONFIG = [
+  {
+    id: "issueType",
+    type: "select",
+    defaultValue: ">",
+    placeHolder: "Select",
+    label: "",
+    isLarge: false,
+    isError: false,
+    isReq: false,
+    isflex: false,
+    isReadOnly: false,
+    formLabel: "",
+    options: [
+      { label: "Greater than", value: ">" },
+      { label: "Equal To", value: "=" },
+      { label: "Less than", value: "<" },
+    ],
+  },
+];

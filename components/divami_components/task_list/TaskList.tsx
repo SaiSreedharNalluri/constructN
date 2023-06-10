@@ -164,7 +164,6 @@ const CustomTaskListDrawer = (props: any) => {
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
   const [downloadList, setDownloadList] = useState(taskList);
-  console.log(tasksList, "tasksList");
   const sortMenuOptions = [
     {
       label: "Status ( To Do - Completed)",
@@ -838,7 +837,7 @@ const CustomTaskListDrawer = (props: any) => {
 };
 
 export default CustomTaskListDrawer;
-const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+export const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
