@@ -60,6 +60,7 @@ import {
 } from "../../services/projectConfigApi";
 import { toast } from "react-toastify";
 import Moment from "moment";
+import CustomLoader from "../../components/divami_components/custom_loader/CustomLoader";
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -86,6 +87,8 @@ const Index: React.FC<any> = () => {
     ],
   });
   const [selectedOption, setSelectedOption] = useState("issuePriority");
+
+  const [showLoading, setShowLoading] = useState(true);
 
   const [formValues, setFormValues]: any = useState({ priority: [] });
   const [showPopUp, setshowPopUp] = useState(false);
@@ -268,6 +271,7 @@ const Index: React.FC<any> = () => {
 
             setProjects(projectsData);
           }
+          setShowLoading(false);
         })
         .catch((error) => {});
       getUserRoles().then((res: any) => {
@@ -445,7 +449,9 @@ const Index: React.FC<any> = () => {
                 </ToggleButtonContainer>
               </HeaderActions>
             </ProjectsHeader>
-            {isGridView ? (
+            {showLoading ? (
+              <CustomLoader />
+            ) : isGridView ? (
               <ProjectListCardView
                 projects={searchTableData}
                 projectActions={projectActions}
@@ -456,6 +462,7 @@ const Index: React.FC<any> = () => {
                 projectActions={projectActions}
               />
             )}
+
             {openFilter && (
               <CustomDrawer open>
                 <ProjectListFilter

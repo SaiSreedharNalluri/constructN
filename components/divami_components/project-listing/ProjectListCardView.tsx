@@ -38,10 +38,12 @@ import droneImage from "../../../public/divami_icons/droneImage.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 
 import moment from "moment";
+import CustomLoader from "../custom_loader/CustomLoader";
 
 export const ProjectListCardView = ({ projects, projectActions }: any) => {
   const router = useRouter();
   const [showActions, setShowActions] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
   const [projectsData, setProjectsData] = useState(
     projects?.length
       ? projects.map((each: any, index: number) => {
