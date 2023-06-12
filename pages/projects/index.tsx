@@ -183,7 +183,9 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Project Details",
-      action: () => {},
+      action: (id?: string) => {
+        router.push(`/projects/${id}/settings`);
+      },
     },
     {
       label: "Add Users",
