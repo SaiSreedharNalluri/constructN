@@ -46,6 +46,7 @@ import {
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import Notifications from "../notifications/Notifications";
 import UserProfile from "../user-profile/UserProfile";
+import PopupComponent from "../../popupComponent/PopupComponent";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -159,6 +160,7 @@ const Header: React.FC<any> = ({
 
   const [defaultValue, setDefaultValue] = useState(2);
   const [filterValue, setFilterValue] = useState("All");
+  const [showPopUp, setshowPopUp] = useState(false);
   useEffect(() => {
     if (router.isReady) {
       getUserNotifications();
@@ -221,6 +223,7 @@ const Header: React.FC<any> = ({
   const handleProfileClose=()=>{
     setOpenProfile(false)
   }
+  
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -344,11 +347,44 @@ const Header: React.FC<any> = ({
             )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
-            <Image src={hamburgerMenu} alt="Menu" />
+            <Image src={hamburgerMenu} alt="Menu"      onClick={() => {
+                if (!loading) {
+                  setLoading(true);
+                } else {
+                  setLoading(false);
+                }
+              }}/>
           </HeaderMenuImageContainer>
         </HeaderRightPart>
 
+        {loading && (
+          <div className="absolute top-[60px]  shadow-sm right-0 bg-gray-50 z-10  border mx-0.5">
+            <ul className="text-[#101F4C] p-2">
+              <li
+                className="font-medium cursor-pointer"
+             
+              >
+                <div className="flex items-center justify-center "    onClick={()=>{setshowPopUp(true)}}>
+                  Logout
+                </div>
+              </li>
+            </ul>
+            {showPopUp && (
+        <PopupComponent
+          open={showPopUp}
+          setShowPopUp={setshowPopUp}
+          modalTitle={"Cancel"}
+          modalmessage={`Are you sure you want to logout? `}
+          primaryButtonLabel={"Yes"}
+          SecondaryButtonlabel={"No"}
+          callBackvalue={userLogOut}
+        />
+      )}
+          </div>
+          
+        )}
       
+
         {/* //! This is Open Profile Options */}
         {/* {loading && (
           <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
