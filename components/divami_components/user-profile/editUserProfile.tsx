@@ -56,7 +56,7 @@ const EditUserProfile = ({
                 height={65}
                 className="rounded-full border "
               />
-              <div className="absolute bg-[#F1742E] rounded-full mt-10 ml-8 top-0">
+              <div className="relative bg-[#F1742E] rounded-full bottom-4 left-4">
                 <Image
                   src={editIcon}
                   onClick={() => {
@@ -112,7 +112,7 @@ const EditUserProfile = ({
                       />
                     </div>
                   </div>
-                  <Footer save="Save" formHandler={closeEditProfile}></Footer>
+                  <Footer save="Save" formHandler={closeEditProfile} />
                 </Form>
               </Formik>
             </div>
