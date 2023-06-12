@@ -86,6 +86,7 @@ import SectionFilter from "./SectionFilter";
 import MaterialTable, { MTableToolbar, MTableBodyRow } from "material-table";
 import CustomButton from "../custom-button/CustomButton";
 import { SvgIconProps } from "@material-ui/core";
+import CustomLoader from "../custom_loader/CustomLoader";
 
 const dummyData: any = [
   {
@@ -167,6 +168,7 @@ const SectionsListing = () => {
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [roles, setRoles] = useState<string[] | []>([]);
+  const [showLoader, setShowLoader]: any = useState(true);
 
   // let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   const [tableData, setTableData] = useState<any>(
@@ -285,6 +287,7 @@ const SectionsListing = () => {
           );
           massageTree(removeGrandParent, response?.data?.result?.id);
           //  setTableData([...dummyData]);
+          // setShowLoader(false);
         })
         .catch((error) => {});
     }
@@ -734,6 +737,7 @@ const SectionsListing = () => {
               title={""}
               options={{
                 search: false,
+
                 paging: false,
                 exportButton: false,
                 exportFileName: "tableData",
@@ -759,6 +763,8 @@ const SectionsListing = () => {
                 rows.find((a: any) => a._id === row.parentId)
               }
             />
+
+            {showLoader && <CustomLoader />}
 
             {/* <BasicTreeData/> */}
           </TableWrapper>

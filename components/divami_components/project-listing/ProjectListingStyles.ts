@@ -156,6 +156,8 @@ export const ProjectCardsContainer = styled("div")({
   padding: "0 20px",
   paddingBottom: "70px",
   paddingTop: "18px",
+  // border: "2px solid black",
+  position:"relative"
 });
 export const ProjectCard = styled("div")((props: any) => ({
   width: props.active ? "320px" : "300px",
@@ -373,4 +375,30 @@ export const ShowMore = styled("div")({
   fontSize: "14px",
   cursor: "pointer",
   textAlign: "end",
+});
+
+
+export const ShowErrorContainer= styled("div")({
+
+});
+
+
+export const CenteredErrorImage = styled(Image)({
+  position: "absolute",
+  top: "30%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+});
+
+export const NoResultText = styled("div")({
+ fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
+  textAlign: "center",
+  color: "#101F4C",
+   position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
 });

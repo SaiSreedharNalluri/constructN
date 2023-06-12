@@ -74,6 +74,7 @@ import {
 import moment from "moment";
 import SectionsListing from "../../../../components/divami_components/sectionsList/SectionsListing";
 import { Content } from "../../../../components/divami_components/project-listing/SectionsStyles";
+import CustomLoader from "../../../../components/divami_components/custom_loader/CustomLoader";
 
 const dummyData: any = [
   {
@@ -583,6 +584,7 @@ const Index: React.FC = () => {
         <SidePanelMenu onChangeData={() => {}} />
         {/* <SidePanelMenuContainer onChangeData={() => {}} /> */}
         <SectionsListing />
+        <CustomLoader />
       </Content>
     </div>
   );
