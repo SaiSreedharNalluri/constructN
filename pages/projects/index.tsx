@@ -61,6 +61,7 @@ import {
 import { toast } from "react-toastify";
 import Moment from "moment";
 import CustomLoader from "../../components/divami_components/custom_loader/CustomLoader";
+import LocalSearch from "../../components/divami_components/local_component/LocalSearch";
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -98,6 +99,7 @@ const Index: React.FC<any> = () => {
   });
 
   const [projectId, setProjectId] = useState<any>("");
+
   const sortMenuOptions = [
     {
       label: "Sort by User",
@@ -337,6 +339,12 @@ const Index: React.FC<any> = () => {
     } catch (error) {
       console.log("Error:", error);
     }
+  };
+
+  const localizationOptions = {
+    body: {
+      emptyDataSourceMessage: <LocalSearch />,
+    },
   };
 
   return (

@@ -33,6 +33,7 @@ import { UsersListTooltip } from "./UsersListTooltip";
 import { UserInfoTooltip } from "./UserInfoToolTip";
 import { MTableBodyRow } from "material-table";
 import { SortDescIcon } from "./SortDescIcon";
+import LocalSearch from "../local_component/LocalSearch";
 
 export const ProjectListFlatView = ({ projects, projectActions }: any) => {
   const router = useRouter();
@@ -78,7 +79,11 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
 
     return `--`;
   };
-
+  const localizationOptions = {
+    body: {
+      emptyDataSourceMessage: <LocalSearch />,
+    },
+  };
   const columns: any = [
     {
       title: "Project Name",
@@ -325,6 +330,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
             //   />
             // ),
             Container: (props) => <Paper {...props} elevation={0} />,
+
             Row: (props) => {
               return (
                 <MTableBodyRow
@@ -335,6 +341,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
               );
             },
           }}
+          localization={localizationOptions}
           columns={columns}
           data={projectsState ? projectsState : []}
           // actions={[

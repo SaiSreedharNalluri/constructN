@@ -60,6 +60,8 @@ import SearchMag from "../../../public/divami_icons/search.svg";
 import UserFilterIcon from "../../../public/divami_icons/UserFilterIcon.svg";
 import filterActive from "../../../public/divami_icons/filterActive.svg";
 
+import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
+
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { getStructureHierarchy } from "../../../services/structure";
@@ -87,6 +89,7 @@ import MaterialTable, { MTableToolbar, MTableBodyRow } from "material-table";
 import CustomButton from "../custom-button/CustomButton";
 import { SvgIconProps } from "@material-ui/core";
 import CustomLoader from "../custom_loader/CustomLoader";
+import LocalSearch from "../local_component/LocalSearch";
 
 const dummyData: any = [
   {
@@ -168,7 +171,7 @@ const SectionsListing = () => {
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [roles, setRoles] = useState<string[] | []>([]);
-  const [showLoader, setShowLoader]: any = useState(true);
+  // const [showLoader, setShowLoader]: any = useState(true);
 
   // let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   const [tableData, setTableData] = useState<any>(
@@ -292,6 +295,12 @@ const SectionsListing = () => {
         .catch((error) => {});
     }
   }, [router.query.projectId]);
+
+  const localizationOptions = {
+    body: {
+      emptyDataSourceMessage: <LocalSearch />,
+    },
+  };
 
   function massageTree(responseArr: any, grandParent: string) {
     let resultArr: any = [];
@@ -732,6 +741,7 @@ const SectionsListing = () => {
               components={{
                 Container: (props) => <Paper {...props} elevation={0} />,
               }}
+              localization={localizationOptions}
               columns={columns}
               data={filterTableData ? filterTableData : []}
               title={""}
@@ -764,7 +774,7 @@ const SectionsListing = () => {
               }
             />
 
-            {showLoader && <CustomLoader />}
+            {/* {showLoader && <CustomLoader />} */}
 
             {/* <BasicTreeData/> */}
           </TableWrapper>

@@ -584,7 +584,7 @@ const Index: React.FC = () => {
         <SidePanelMenu onChangeData={() => {}} />
         {/* <SidePanelMenuContainer onChangeData={() => {}} /> */}
         <SectionsListing />
-        <CustomLoader />
+        {/* <CustomLoader /> */}
       </Content>
     </div>
   );

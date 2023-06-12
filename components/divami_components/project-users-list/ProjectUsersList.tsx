@@ -52,6 +52,7 @@ import { SortDescIcon } from "../project-listing/SortDescIcon";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { AddUsersEmailOverlay } from "../add_users/AddUsersEmailOverlay";
 import { AddUsersEmailPopup } from "../add_users/AddUsersEmailPopup";
+import LocalSearch from "../local_component/LocalSearch";
 
 export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [tableData, setTableData] = useState<any>([]);
@@ -296,6 +297,11 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     setOpenDrawer(true);
     setForm(formState);
   };
+  const localizationOptions = {
+    body: {
+      emptyDataSourceMessage: <LocalSearch />,
+    },
+  };
 
   return (
     <ProjectUsersListContainer>
@@ -391,6 +397,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                 );
               },
             }}
+            localization={localizationOptions}
             columns={columns}
             data={searchTableData ? searchTableData : []}
             title={""}
