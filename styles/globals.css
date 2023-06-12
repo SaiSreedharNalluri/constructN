@@ -599,3 +599,7 @@ td {
   height:100vh;
   width: 100%;
 }
+
+.user-card:hover{
+  transform: scaleX(1.12);
+}
