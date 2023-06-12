@@ -457,8 +457,11 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           break;
         case 'createSuccessIssue':
           let myNewIssue:Issue = action.data as Issue;
-          newViewerData = {...oldViewerData,currentIssueList:{...oldViewerData.currentIssueList,...myNewIssue}};
-          finishAddTag(myNewIssue.context as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
+          let tempIssueContext:IContext = myNewIssue.context as IContext;
+          tempIssueContext.id=myNewIssue._id;
+          newViewerData = {...oldViewerData,currentIssueList:[...oldViewerData.currentIssueList,myNewIssue]};
+          handleTagListChange('Issue',getViewerTypefromViewType(oldViewerData.currentViewType),newViewerData);
+          finishAddTag(tempIssueContext as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           //addTag('Issue',getViewerTypefromViewType(oldViewerData.currentViewType));            
           break;
         case 'createFailIssue':
@@ -484,8 +487,11 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         case 'createSuccessTask':
           //cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
           let myNewTask:ITasks = action.data as ITasks;
-          newViewerData = {...oldViewerData,currentTaskList:{...oldViewerData.currentTaskList,...myNewTask}};
-          finishAddTag(myNewTask.context as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
+          let tempTaskContext:IContext = myNewTask.context as IContext;
+          tempTaskContext.id=myNewTask._id;
+          newViewerData = {...oldViewerData,currentTaskList:[...oldViewerData.currentTaskList,myNewTask]};
+          handleTagListChange('Task',getViewerTypefromViewType(oldViewerData.currentViewType),newViewerData);
+          finishAddTag(tempTaskContext as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
         case 'createFailTask':
           cancelAddTag('Task',getViewerTypefromViewType(oldViewerData.currentViewType));
@@ -497,6 +503,16 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         case 'selectTask':
           selectTag(action.data as IContext,getViewerTypefromViewType(oldViewerData.currentViewType));
           //task obj needed to jump to context
+          break;
+        case 'setFilteredIssueList':
+          let myNewIssueList:Issue[] = action.data as Issue[];
+          newViewerData = {...oldViewerData,currentIssueList:myNewIssueList};
+          handleTagListChange('Issue',getViewerTypefromViewType(oldViewerData.currentViewType),newViewerData);
+          break;
+        case 'setFilteredTaskList':
+          let myNewTaskList:ITasks[] = action.data as ITasks[];
+          newViewerData = {...oldViewerData,currentTaskList:myNewTaskList};
+          handleTagListChange('Task',getViewerTypefromViewType(oldViewerData.currentViewType),newViewerData);
           break;
 
 
@@ -591,10 +607,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         
         break;
       case 'createSuccessIssue':
-        handleTagListChange('Issue',getViewerTypefromViewType(currentViewerData.currentViewType));
+        //handleTagListChange('Issue',getViewerTypefromViewType(currentViewerData.currentViewType));
         break;
       case 'createSuccessTask':
-        handleTagListChange('Task',getViewerTypefromViewType(currentViewerData.currentViewType));
+        //handleTagListChange('Task',getViewerTypefromViewType(currentViewerData.currentViewType));
         break;
       case 'setBaseSnapshot':
         console.log('asdf',currentViewerData);
@@ -881,40 +897,42 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
     }
   };
 
-  const handleTagListChange = (type:string,viewerType:string) => {
+  function handleTagListChange (type:string,viewerType:string,thisViewerData:IGenData)  {
     //console.log('Inside taglist change: ', type, issuesList, tasksList);
     if (minimapUtils.current) {
       if (type === 'Issue') {
-        minimapUtils.current.updateIssuesData(currentViewerData.currentIssueList);
+        minimapUtils.current.updateIssuesData(thisViewerData.currentIssueList);
       } else if (type === 'Task') {
-        minimapUtils.current.updateTasksData(currentViewerData.currentTaskList);
+        minimapUtils.current.updateTasksData(thisViewerData.currentTaskList);
       }
     }
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current) {
           if (type === 'Issue') {
-            forgeUtils.current.updateIssuesData(currentViewerData.currentIssueList);
+            forgeUtils.current.updateIssuesData(thisViewerData.currentIssueList);
           } else if (type === 'Task') {
-            forgeUtils.current.updateTasksData(currentViewerData.currentTaskList);
+            forgeUtils.current.updateTasksData(thisViewerData.currentTaskList);
           }
         }
         break;
       case 'Potree':
         if (potreeUtils.current) {
           if (type === 'Issue') {
-            potreeUtils.current.updateIssuesData(currentViewerData.currentIssueList);
+            console.log("TEST ISSUELIST",thisViewerData.currentIssueList);
+            potreeUtils.current.updateIssuesData(thisViewerData.currentIssueList);
+            
           } else if (type === 'Task') {
-            potreeUtils.current.updateTasksData(currentViewerData.currentTaskList);
+            potreeUtils.current.updateTasksData(thisViewerData.currentTaskList);
           }
         }
         break;
       case 'Mapbox':
         if (mapboxUtils.current) {
           if (type === 'Issue') {
-            mapboxUtils.current.updateIssuesData(currentViewerData.currentIssueList);
+            mapboxUtils.current.updateIssuesData(thisViewerData.currentIssueList);
           } else if (type === 'Task') {
-            mapboxUtils.current.updateTasksData(currentViewerData.currentTaskList);
+            mapboxUtils.current.updateTasksData(thisViewerData.currentTaskList);
           }
         }
         break;
