@@ -5,23 +5,27 @@ import { styled } from "@mui/system";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import router from "next/router";
 import { toast } from "react-toastify";
-import { getUserProfile, updateProfileAvatar, updateUserProfile } from "../../../services/userAuth";
+import {
+  getUserProfile,
+  updateProfileAvatar,
+  updateUserProfile,
+} from "../../../services/userAuth";
 import { IUser } from "../../../models/IUser";
 const StyledDiv = styled("span")({
   fontFamily: '"Open Sans"',
   display: "block",
   height: "calc(100vh - 60px)",
 });
-const UserProfile = ({handleProfileClose,projectUsers}:any) => {
+const UserProfile = ({ handleProfileClose, projectUsers }: any) => {
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
   const [canBeDisabled, setCanBeDisabled] = useState(false);
-  const [userDetails, setUserDetails] = useState<IUser>();  
+  const [userDetails, setUserDetails] = useState<IUser>();
   const handleFormData = (data: any) => {
     setFormData(data);
   };
-
+  const [isUserProfileDrawerOpen, setIsUserProfileDrawerOpen] = useState(false);
   useEffect(() => {
     if (router.isReady) {
       getUserProfile()
@@ -31,11 +35,11 @@ const UserProfile = ({handleProfileClose,projectUsers}:any) => {
           }
         })
         .catch((error) => {
-          toast.error('unable to load the data');
+          toast.error("unable to load the data");
         });
     }
   }, []);
- 
+
   const updateProfileInfo = (updateInfo: {
     firstName: string;
     lastName: string;
@@ -46,7 +50,8 @@ const UserProfile = ({handleProfileClose,projectUsers}:any) => {
       .then((response) => {
         if (response?.success === true) {
           setUserDetails(response?.result);
-          toast.success('user profile updated successfully');
+          setIsUserProfileDrawerOpen(false);
+          toast.success("user profile updated successfully");
         }
       })
       .catch((error) => {
@@ -55,11 +60,26 @@ const UserProfile = ({handleProfileClose,projectUsers}:any) => {
         }
       });
   };
+  const handleImageUPload = (e: any) => {
+    const formData = new FormData();
+    formData.append("file", e.file);
+    updateProfileAvatar(formData).then((response) => {
+      if (response.success === true) {
+        toast.success("user profile pic updated successfully");
+        setUserDetails(response?.result);
+        setIsUserProfileDrawerOpen(false);
+        const fileInput = document.getElementById(
+          "file-upload"
+        ) as HTMLInputElement;
+        if (fileInput) {
+          fileInput.value = "";
+        }
+      }
+    });
+  };
   return (
     <StyledDiv>
-      <Header
-        closeEditProject={handleProfileClose}
-      />
+      <Header closeEditProject={handleProfileClose} />
       <Body
         handleFormData={handleFormData}
         userDetails={userDetails as IUser}
@@ -67,6 +87,9 @@ const UserProfile = ({handleProfileClose,projectUsers}:any) => {
         validate={validate}
         setIsValidate={setValidate}
         setCanBeDisabled={setCanBeDisabled}
+        isUserProfileDrawerOpen={isUserProfileDrawerOpen}
+        setIsUserProfileDrawerOpen={setIsUserProfileDrawerOpen}
+        handleImageUPload={handleImageUPload}
       />
       {showPopUp && (
         <PopupComponent

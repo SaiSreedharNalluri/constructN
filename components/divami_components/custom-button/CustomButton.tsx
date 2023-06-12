@@ -98,6 +98,18 @@ const CustomButton = (props: any) => {
         </ContainedButton>
       </div>
     );
+  } else if (type === "formik") {
+    return (
+      <div>
+        <ContainedButton
+          data-testid="testing_button"
+          type="submit"
+          variant="contained"
+        >
+          {label}
+        </ContainedButton>
+      </div>
+    );
   } else if (type === "outlined") {
     return (
       <div>
