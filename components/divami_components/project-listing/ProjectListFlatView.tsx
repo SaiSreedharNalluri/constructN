@@ -124,9 +124,13 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
               />
               <CaptureCount>
                 {" "}
-                {rowData.capture360Count?.length > 1
+                {/* {rowData.capture360Count?.length > 1
                   ? rowData.capture360Count
-                  : `0${rowData.capture360Count}`}
+                  : `0${rowData.capture360Count}`} */}
+                {/* {rowData.capture360Count == 0 ? "-" : rowData.capture360Count} */}
+                {rowData.captures && rowData.captures["360 Video"]
+                  ? rowData.captures["360 Video"]
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
@@ -138,9 +142,12 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
               />
 
               <CaptureCount>
-                {rowData.captureVideoWalkCount?.length > 1
+                {/* {rowData.captureVideoWalkCount?.length > 1
                   ? rowData.captureVideoWalkCount
-                  : `0${rowData.captureVideoWalkCount}`}
+                  : `0${rowData.captureVideoWalkCount}`} */}
+                {rowData.captures && rowData.captures["360 Image"]
+                  ? rowData.captures["360 Image"]
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
@@ -151,9 +158,13 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                 height={15}
               />
               <CaptureCount>
-                {rowData.capturePhoneCount?.length > 1
+                {/* {rowData.capturePhoneCount?.length > 1
                   ? rowData.capturePhoneCount
-                  : `0${rowData.capturePhoneCount}`}
+                  : `0${rowData.capturePhoneCount}`} */}
+
+                {rowData.captures && rowData.captures["Phone Image"]
+                  ? rowData.captures["Phone Image"]
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
@@ -164,9 +175,13 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                 height={14}
               />
               <CaptureCount>
-                {rowData.captureLidarCount?.length > 1
+                {/* {rowData.captureLidarCount?.length > 1
                   ? rowData.captureLidarCount
-                  : `0${rowData.captureLidarCount}`}
+                  : `0${rowData.captureLidarCount}`} */}
+
+                {rowData.captures && rowData.captures["LiDAR Scan"]
+                  ? rowData.captures["LiDAR Scan"]
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
@@ -177,9 +192,13 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                 height={13}
               ></CaptureImageIcon>
               <CaptureCount>
-                {rowData.captureDroneCount?.length > 1
+                {/* {rowData.captureDroneCount?.length > 1
                   ? rowData.captureDroneCount
-                  : `0${rowData.captureDroneCount}`}
+                  : `0${rowData.captureDroneCount}`} */}
+
+                {rowData.captures && rowData.captures["Drone Image"]
+                  ? rowData.captures["Drone Image"]
+                  : "-"}
               </CaptureCount>
             </CapturesField>
           </CapturesFieldContainer>
