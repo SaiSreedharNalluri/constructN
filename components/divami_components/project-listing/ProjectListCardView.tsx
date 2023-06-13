@@ -34,7 +34,8 @@ import capture360Image from "../../../public/divami_icons/capture360Image.svg";
 import captureLidarIcon from "../../../public/divami_icons/captureLidarIcon.svg";
 import phoneImage from "../../../public/divami_icons/phoneImage.svg";
 import videoWalk from "../../../public/divami_icons/videoWalk.svg";
-import droneImage from "../../../public/divami_icons/droneImage.svg";
+// import droneImage from "../../../public/divami_icons/droneImage.svg";
+import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 
 import moment from "moment";
@@ -226,7 +227,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
                   </CaptureCount>
                 </CaptureImageContainer>
                 <CaptureImageContainer>
-                  <CaptureImageIcon src={droneImage} alt=""></CaptureImageIcon>
+                  <CaptureImageIcon src={DroneImage} alt=""></CaptureImageIcon>
                   <CaptureName>Drone - </CaptureName>
                   <CaptureCount>
                     {each.captureDroneCount?.length > 1

@@ -34,6 +34,7 @@ import { UserInfoTooltip } from "./UserInfoToolTip";
 import { MTableBodyRow } from "material-table";
 import { SortDescIcon } from "./SortDescIcon";
 import LocalSearch from "../local_component/LocalSearch";
+import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 
 export const ProjectListFlatView = ({ projects, projectActions }: any) => {
   const router = useRouter();
@@ -170,7 +171,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
             </CapturesField>
             <CapturesField>
               <CaptureImageIcon
-                src={capture360Image}
+                src={DroneImage}
                 alt={""}
                 width={13}
                 height={13}

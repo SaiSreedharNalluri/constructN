@@ -54,7 +54,7 @@ import capture360Image from "../../../public/divami_icons/capture360Image.svg";
 import captureLidarIcon from "../../../public/divami_icons/captureLidarIcon.svg";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
-import CrossIcon from "../../../public/divami_icons/CrossIcon.svg";
+import crossIcon from "../../../public/divami_icons/crossIcon.svg";
 import FilterInActive from "../../../public/divami_icons/FilterInActive.svg";
 import SearchMag from "../../../public/divami_icons/search.svg";
 import UserFilterIcon from "../../../public/divami_icons/UserFilterIcon.svg";
@@ -540,6 +540,10 @@ const SectionsListing = () => {
         color: "#101F4C",
       },
       cellStyle: { width: "10%" },
+      render: (rowData: any) => {
+        console.log("issueCount", rowData);
+        return <>{rowData?.issueCount == 0 ? "-" : rowData?.issueCount}</>;
+      },
     },
     {
       title: "Tasks",
@@ -556,6 +560,10 @@ const SectionsListing = () => {
         color: "#101F4C",
       },
       cellStyle: { width: "10%" },
+
+      render: (rowData: any) => {
+        return <>{rowData?.taskCount == 0 ? "-" : rowData?.taskCount}</>;
+      },
     },
     {
       title: "Captures",
@@ -588,7 +596,7 @@ const SectionsListing = () => {
                   : `0${rowData.capture360Count}`} */}
                 {rowData.capture && rowData.capture["Phone Image"]
                   ? rowData.capture["Phone Image"]
-                  : 0}
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
@@ -603,7 +611,7 @@ const SectionsListing = () => {
               <CaptureCount>
                 {rowData.capture && rowData.capture["360 Image"]
                   ? rowData.capture["360 Image"]
-                  : 0}
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
@@ -621,7 +629,7 @@ const SectionsListing = () => {
 
                 {rowData.capture && rowData.capture["360 Video"]
                   ? rowData.capture["360 Video"]
-                  : 0}
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
@@ -631,7 +639,7 @@ const SectionsListing = () => {
                 // width={14}
                 // height={14}
               />
-              <CaptureCount>0</CaptureCount>
+              <CaptureCount>-</CaptureCount>
             </CapturesField>
             <CapturesField>
               <CaptureImageIcon
@@ -643,7 +651,7 @@ const SectionsListing = () => {
               <CaptureCount>
                 {rowData.capture && rowData.capture["Drone Image"]
                   ? rowData.capture["Drone Image"]
-                  : 0}
+                  : "-"}
               </CaptureCount>
             </CapturesField>
           </CapturesFieldContainer>
@@ -692,13 +700,26 @@ const SectionsListing = () => {
                       <Image src={SearchBoxIcon} alt="" />
                     </InputAdornment>
                   ),
+                  // endAdornment: (
+                  //   <InputAdornment position="start">
+                  //     <CloseIcon
+                  //       onClick={() => {
+                  //         handleSearchWindow();
+                  //       }}
+                  //       src={CrossIcon}
+                  //       alt={"close icon"}
+                  //       data-testid="search-close"
+                  //     />
+                  //   </InputAdornment>
+                  // ),
+
                   endAdornment: (
                     <InputAdornment position="start">
                       <CloseIcon
                         onClick={() => {
                           handleSearchWindow();
                         }}
-                        src={CrossIcon}
+                        src={crossIcon}
                         alt={"close icon"}
                         data-testid="search-close"
                       />
