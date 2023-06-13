@@ -119,8 +119,8 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
               <CaptureImageIcon
                 src={capture360Image}
                 alt={""}
-                width={13}
-                height={13}
+                // width={16}
+                // height={16}
               />
               <CaptureCount>
                 {" "}
@@ -137,8 +137,8 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
               <CaptureImageIcon
                 src={videoWalk}
                 alt={""}
-                width={16}
-                height={16}
+                // width={16}
+                // height={16}
               />
 
               <CaptureCount>
@@ -154,8 +154,8 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
               <CaptureImageIcon
                 src={phoneImage}
                 alt={""}
-                width={15}
-                height={15}
+                // width={16}
+                // height={16}
               />
               <CaptureCount>
                 {/* {rowData.capturePhoneCount?.length > 1
@@ -171,8 +171,8 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
               <CaptureImageIcon
                 src={captureLidarIcon}
                 alt={""}
-                width={14}
-                height={14}
+                // width={16}
+                // height={16}
               />
               <CaptureCount>
                 {/* {rowData.captureLidarCount?.length > 1
@@ -188,8 +188,8 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
               <CaptureImageIcon
                 src={DroneImage}
                 alt={""}
-                width={13}
-                height={13}
+                // width={16}
+                // height={16}
               ></CaptureImageIcon>
               <CaptureCount>
                 {/* {rowData.captureDroneCount?.length > 1

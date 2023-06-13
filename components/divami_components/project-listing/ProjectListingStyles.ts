@@ -157,7 +157,7 @@ export const ProjectCardsContainer = styled("div")({
   paddingBottom: "70px",
   paddingTop: "18px",
   // border: "2px solid black",
-  position:"relative"
+  position: "relative",
 });
 export const ProjectCard = styled("div")((props: any) => ({
   width: props.active ? "320px" : "300px",
@@ -237,13 +237,15 @@ export const CaptureImageContainer = styled("div")({
 });
 export const CaptureImageIcon = styled(Image)({
   marginRight: "7px",
-  // width: "12px",
-  // height: "12px",
+  width: "16px",
+  height: "16px",
 });
 export const CaptureName = styled("div")({
   marginRight: "5px",
 });
-export const CaptureCount = styled("div")({});
+export const CaptureCount = styled("div")({
+  width: "48px",
+});
 export const OtherUsersCount = styled("div")({
   color: "#FF843F",
 });
@@ -377,11 +379,7 @@ export const ShowMore = styled("div")({
   textAlign: "end",
 });
 
-
-export const ShowErrorContainer= styled("div")({
-
-});
-
+export const ShowErrorContainer = styled("div")({});
 
 export const CenteredErrorImage = styled(Image)({
   position: "absolute",
@@ -391,13 +389,13 @@ export const CenteredErrorImage = styled(Image)({
 });
 
 export const NoResultText = styled("div")({
- fontStyle: "normal",
+  fontStyle: "normal",
   fontWeight: "400",
   fontSize: "14px",
   lineHeight: "19px",
   textAlign: "center",
   color: "#101F4C",
-   position: "absolute",
+  position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
