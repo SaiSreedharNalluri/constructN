@@ -104,7 +104,7 @@ const Body = ({
                         <div className=" ">
                           {notificationObj?.readAt ? (
                           
-                          <div className="px-4 py-4   border-gray-400 mx-4 border-b">
+                          <div className="px-4 py-4   border-gray-400  border-b">
                             <div className="grid grid-cols-8 gap-4">
                               <div className="col-span-1"> 
                               {notificationObj.notificationType === "Project" ? (
@@ -138,7 +138,7 @@ const Body = ({
                               onClick={() => {
                                 updateNotifications(notificationObj.id);
                               }}
-                              className="py-4 px-4  border-gray-400 bg-gray-100 border-t mx-4 "
+                              className="py-4 px-4  border-gray-400 bg-gray-100 border-t "
 
                             >
                               <div className="grid grid-cols-8 gap-4">

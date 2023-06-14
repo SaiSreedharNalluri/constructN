@@ -16,7 +16,7 @@ const StyledDiv = styled("span")({
   display: "block",
   height: "calc(100vh - 60px)",
 });
-const UserProfile = ({ handleProfileClose, projectUsers }: any) => {
+const UserProfile = ({ handleProfileClose, projectUsers ,closeProfileRef,handleClickOutsideProfileDrawer}: any) => {
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
@@ -90,6 +90,8 @@ const UserProfile = ({ handleProfileClose, projectUsers }: any) => {
         isUserProfileDrawerOpen={isUserProfileDrawerOpen}
         setIsUserProfileDrawerOpen={setIsUserProfileDrawerOpen}
         handleImageUPload={handleImageUPload}
+        closeProfileRef={closeProfileRef}
+        handleClickOutsideProfileDrawer={handleClickOutsideProfileDrawer}
       />
       {showPopUp && (
         <PopupComponent

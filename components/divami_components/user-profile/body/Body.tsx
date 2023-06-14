@@ -1,7 +1,7 @@
 import Image from "next/image";
 import editIcon from "../../../../public/divami_icons/edit.svg";
 import React, { useEffect, useState } from "react";
-import { getProjects } from "../../../../services/project";
+import { getProjectsList } from "../../../../services/project";
 import router from "next/router";
 import Moment from "moment";
 import task from "../../../../public/divami_icons/fileTextIcon.svg";
@@ -15,19 +15,22 @@ const Body = ({
   isUserProfileDrawerOpen,
   setIsUserProfileDrawerOpen,
   handleImageUPload,
+  closeProfileRef
 }: any) => {
   const [projectDetails, setProjectDetails] = useState<any>();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     if (router.isReady) {
-      getProjects().then((response) => {
+      getProjectsList().then((response) => {
         if (response.status === 200) {
           setProjectDetails(response.data.result);
         }
       });
     }
   }, []);
+  console.log(projectDetails,"pr");
+  
   const handlePasswordChange = () => {
     setIsDrawerOpen(true);
   };
@@ -41,7 +44,7 @@ const Body = ({
     setIsUserProfileDrawerOpen(false);
   };
   return (
-    <div className="px-2">
+    <div className="px-3 calc-h119 overflow-y-auto">
       <div className="flex mt-4 ">
         <div className="relative rounded-full ">
           <Image
@@ -93,21 +96,24 @@ const Body = ({
                   />
                   <div>
                     <div className=" px-2 py-1 ">
-                      <p className="text-center text-sm  font-medium">
-                        {" "}
+                      <p className="text-sm overflow-hidden font-semibold text-center" style={{
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+          }}>
                         {pData.name}
                       </p>
                     </div>
-                    <div className="   ">
-                      <p className="text-sm px-2 py-0.5">
-                        Assigned Date :{" "}
-                        {Moment(pData?.createdAt)
-                          .subtract(10, "days")
-                          .calendar()}
-                      </p>
+                    <div>
+                      <p className="text-sm px-2 py-0.5 text-center"> {pData?.role}</p>
                     </div>
-                    <div className="  ">
-                      <p className="text-sm px-2 py-0.5">Role : </p>
+                    <div>
+                      <p className="text-sm px-2 py-0.5  ">
+                        Member Since {" "}
+                      <span className="text-sm text-[#F1742E]">{Moment(pData?.createdAt)
+                          .subtract(10, "days")
+                          .calendar()} </span>  
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -137,12 +143,15 @@ const Body = ({
       )}
       {isUserProfileDrawerOpen && (
         <CustomDrawer>
-          <EditUserProfile
+           <div ref={closeProfileRef} className="h-full">
+           <EditUserProfile
             userDetails={userDetails}
             closeEditProfile={closeEditProfile}
             updateProfileInfo={updateProfileInfo}
             handleImageUPload={handleImageUPload}
           ></EditUserProfile>
+           </div>
+        
         </CustomDrawer>
       )}
     </div>

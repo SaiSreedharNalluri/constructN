@@ -161,9 +161,22 @@
 .MuiBackdrop-root {
   height: calc(100% - 60px);
   top: auto !important;
-  width: calc(100% - 59px);
+  width: calc(100%);
   right: 0 !important;
   left: auto !important;
+}
+
+
+.logout-button::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: rgb(249 250 251 );
+  transform: translateY(-50%) rotate(45deg);
 }
 
 body {
@@ -562,6 +575,12 @@ td {
   margin-right: 55px;
 }
 
+.calc-h119 {
+  height: calc(100vh - 119px);
+}
+.calc-h191{
+  height: calc(100vh - 191px)
+}
 .overflow-hidden {
   overflow: hidden;
 }
