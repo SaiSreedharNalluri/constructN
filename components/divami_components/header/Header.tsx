@@ -124,7 +124,11 @@ const Header: React.FC<any> = ({
   };
 
   const onProfilePicClick = () => {
-    if(!openProfile){setOpenProfile(true)}else{setOpenProfile(false)}
+    if(!openProfile){
+      setOpenProfile(true)
+      setLoading(false);
+      setOpenNotication(false);
+    }else{setOpenProfile(false)}
   };
 
   const rightMenuClickHandler = (e: any) => {
@@ -330,6 +334,9 @@ const Header: React.FC<any> = ({
                   setOpenNotication(false)
                 } else {
                   setOpenNotication(true);
+                  setLoading(false);
+                  setOpenProfile(false);
+                  
                 }
               }}
             />
@@ -357,9 +364,11 @@ const Header: React.FC<any> = ({
             )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
-            <Image src={hamburgerMenu} alt="Menu"      onClick={() => {
+            <Image src={hamburgerMenu} alt="Menu"    onClick={() => {
                 if (!loading) {
                   setLoading(true);
+                  setOpenNotication(false);
+                  setOpenProfile(false);
                 } else {
                   setLoading(false);
                 }
