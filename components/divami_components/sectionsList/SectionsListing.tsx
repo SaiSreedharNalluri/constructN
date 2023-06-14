@@ -185,6 +185,7 @@ const SectionsListing = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [searchTableData, setSearchTableData] = useState([]);
+  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
   const formHandler = (event: any) => {
     // setShowEmptyState(true);
   };
@@ -291,6 +292,7 @@ const SectionsListing = () => {
           massageTree(removeGrandParent, response?.data?.result?.id);
           //  setTableData([...dummyData]);
           // setShowLoader(false);
+          setDataLoaded(true);
         })
         .catch((error) => {});
     }
@@ -757,43 +759,47 @@ const SectionsListing = () => {
         {/* <h1>React Table</h1> */}
         <ThemeProvider theme={defaultMaterialTheme}>
           <TableWrapper>
-            <StyledTable
-              tableRef={myTableRef}
-              components={{
-                Container: (props) => <Paper {...props} elevation={0} />,
-              }}
-              localization={localizationOptions}
-              columns={columns}
-              data={filterTableData ? filterTableData : []}
-              title={""}
-              options={{
-                search: false,
+            {dataLoaded ? (
+              <StyledTable
+                tableRef={myTableRef}
+                components={{
+                  Container: (props) => <Paper {...props} elevation={0} />,
+                }}
+                localization={localizationOptions}
+                columns={columns}
+                data={filterTableData ? filterTableData : []}
+                title={""}
+                options={{
+                  search: false,
 
-                paging: false,
-                exportButton: false,
-                exportFileName: "tableData",
-                selection: false,
-                showTitle: true,
-                toolbar: false,
-                maxBodyHeight: "80vh",
-                thirdSortClick: false,
-                rowStyle: {
-                  fontFamily: "Open Sans",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  fontSize: "14px",
-                  color: "#101F4C",
-                },
-                headerStyle: {
-                  padding: "6px 16px",
-                  fontFamily: "Open Sans",
-                },
-              }}
-              icons={tableIcons}
-              parentChildData={(row: any, rows) =>
-                rows.find((a: any) => a._id === row.parentId)
-              }
-            />
+                  paging: false,
+                  exportButton: false,
+                  exportFileName: "tableData",
+                  selection: false,
+                  showTitle: true,
+                  toolbar: false,
+                  maxBodyHeight: "80vh",
+                  thirdSortClick: false,
+                  rowStyle: {
+                    fontFamily: "Open Sans",
+                    fontStyle: "normal",
+                    fontWeight: "400",
+                    fontSize: "14px",
+                    color: "#101F4C",
+                  },
+                  headerStyle: {
+                    padding: "6px 16px",
+                    fontFamily: "Open Sans",
+                  },
+                }}
+                icons={tableIcons}
+                parentChildData={(row: any, rows) =>
+                  rows.find((a: any) => a._id === row.parentId)
+                }
+              />
+            ) : (
+              <CustomLoader />
+            )}
 
             {/* {showLoader && <CustomLoader />} */}
 
