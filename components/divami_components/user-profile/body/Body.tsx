@@ -15,7 +15,6 @@ const Body = ({
   isUserProfileDrawerOpen,
   setIsUserProfileDrawerOpen,
   handleImageUPload,
-  closeProfileRef
 }: any) => {
   const [projectDetails, setProjectDetails] = useState<any>();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -143,7 +142,7 @@ const Body = ({
       )}
       {isUserProfileDrawerOpen && (
         <CustomDrawer>
-           <div ref={closeProfileRef} className="h-full">
+           <div  className="h-full">
            <EditUserProfile
             userDetails={userDetails}
             closeEditProfile={closeEditProfile}

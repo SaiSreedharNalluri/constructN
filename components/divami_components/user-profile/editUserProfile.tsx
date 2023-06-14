@@ -19,8 +19,6 @@ const EditUserProfile = ({
   closeEditProfile,
   updateProfileInfo,
   handleImageUPload,
-  drawerRef
-  
 }: any) => {
   const initialValues: {
     firstName: string;
