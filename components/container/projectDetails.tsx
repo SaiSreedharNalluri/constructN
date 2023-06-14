@@ -106,7 +106,7 @@ const ProjectDetails: React.FC = () => {
       });
   };
   return (
-    <div>
+    <div className="overflow-x-hidden">
       {projectData ? (
         <div>
           <div className="flex justify-between px-4 py-4">

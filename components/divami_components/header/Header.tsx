@@ -224,6 +224,9 @@ const Header: React.FC<any> = ({
     setOpenProfile(false)
   }
   
+
+
+  
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -310,9 +313,13 @@ const Header: React.FC<any> = ({
                 height={34}
               />
             )}
-             {openProfile?<CustomDrawer>
-              <UserProfile handleProfileClose={handleProfileClose} ></UserProfile>
-             </CustomDrawer>:''}
+             {openProfile?
+             <CustomDrawer paddingStyle={true}>
+              <div  >
+              <UserProfile handleProfileClose={handleProfileClose}   ></UserProfile>
+              </div>
+              </CustomDrawer>:''
+             }
           </HeaderProfileImageContainer>
           <HeaderNotificationImageContainer>
             <Image
@@ -330,10 +337,13 @@ const Header: React.FC<any> = ({
             {openNotification&& (
               <div>
                  <CustomDrawer>
-             <Notifications  notifications={notifications}
+                  <div >
+                  <Notifications  notifications={notifications}
                     loadMoreData={loadMoreData}
                     updateNotifications={updateNotifications} filterValue={filterValue} filterNotificationData={filterNotificationData} handleNotificationClose={handleNotificationClose}>
                 </Notifications> 
+                  </div>
+        
              <div>
                    
              </div>
@@ -358,17 +368,13 @@ const Header: React.FC<any> = ({
         </HeaderRightPart>
 
         {loading && (
-          <div className="absolute top-[60px]  shadow-sm right-0 bg-gray-50 z-10  border mx-0.5">
-            <ul className="text-[#101F4C] p-2">
-              <li
-                className="font-medium cursor-pointer"
-             
-              >
-                <div className="flex items-center justify-center "    onClick={()=>{setshowPopUp(true)}}>
-                  Logout
+          <div className="absolute top-[64px]  shadow-md right-0 bg-gray-50   z-10  border mx-0.5">
+          
+    
+                <div className="flex items-center justify-center cursor-pointer p-2  "    onClick={()=>{setshowPopUp(true)}}>
+                 <p className="logout-button w-[150px] px-10 text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm">Logout</p> 
                 </div>
-              </li>
-            </ul>
+
             {showPopUp && (
         <PopupComponent
           open={showPopUp}

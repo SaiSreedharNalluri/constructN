@@ -42,7 +42,7 @@ const EditUserProfile = ({
     <div>
       <div>
         <Header editUser="editUser" closeEditProject={closeEditProfile} />
-        <div>
+        <div className="calc-h191  overflow-y-auto">
           {show ? (
             <div className="flex relative rounded-full flex-col items-center justify-center py-4">
               <Image
@@ -112,7 +112,7 @@ const EditUserProfile = ({
                       />
                     </div>
                   </div>
-                  <Footer save="Save" formHandler={closeEditProfile} />
+                  <Footer save="Save" formHandler={closeEditProfile} />               
                 </Form>
               </Formik>
             </div>

@@ -73,6 +73,7 @@ const Index: React.FC<any> = () => {
   const [isGridView, setIsGridView] = useState(true);
   const [showAddUser, setShowAddUser] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
+  const[showArchiveProject,setShowArchiveProject]=useState(false);
   const [form, setForm] = useState({});
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [responseData, setResponseData] = useState<any>([]);
@@ -198,7 +199,10 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Archive Project",
-      action: () => {},
+      action: () => {
+        setShowArchiveProject(true)
+      },
+     
     },
   ];
 
@@ -471,7 +475,7 @@ const Index: React.FC<any> = () => {
               />
             </CustomDrawer>
           )}
-          {showPopUp && (
+        {showPopUp && (
             <PopupComponent
               open={showPopUp}
               width={"585px"}
@@ -497,21 +501,21 @@ const Index: React.FC<any> = () => {
           )}
         </ProjectsListContainer>
       </Content>
-      {showAddUser ? (
+      {showAddUser || showArchiveProject ? (
         <PopupComponent
-          open={showAddUser}
+          open={showAddUser?showAddUser:showArchiveProject}
           hideButtons
-          setShowPopUp={setShowAddUser}
-          modalTitle={"Add users to the project"}
+          setShowPopUp={showAddUser?setShowAddUser:setShowArchiveProject}
+          modalTitle={showAddUser?"Add users to the project":"Project Archive"}
           modalContent={
-            <AddUsersEmailPopup showEmailOverlay={showEmailOverlay} />
+            showAddUser? <AddUsersEmailPopup showEmailOverlay={showEmailOverlay} />:""
           }
-          modalmessage={""}
-          primaryButtonLabel={"Yes"}
-          SecondaryButtonlabel={"No"}
-          callBackvalue={() => {}}
+          modalmessage={showAddUser?"":"Are you sure you want to deassign user?"}
+          primaryButtonLabel={showAddUser?"Yes":"Yes"}
+          SecondaryButtonlabel={showAddUser?"No":"No"}
+          callBackvalue={showAddUser?() => {}:()=>{setShowArchiveProject(false)}}
           width={"458px"}
-          showButton={false}
+          showButton={showAddUser?false:true}
         />
       ) : (
         <></>
