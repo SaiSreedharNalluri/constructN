@@ -223,31 +223,9 @@ const Header: React.FC<any> = ({
   const handleProfileClose=()=>{
     setOpenProfile(false)
   }
-  const  closeNotificationRef = useRef<HTMLDivElement>(null);
-  const  closeProfileRef = useRef<HTMLDivElement>(null);
-  const handleClickOutsideDrawer = (event: any) => {
-    if (closeNotificationRef.current && !closeNotificationRef.current.contains(event.target)) {
-      handleNotificationClose();
-    }
-  };
+  
 
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutsideDrawer);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutsideDrawer);
-    };
-  }, []);
-  const handleClickOutsideProfileDrawer = (event: any) => {
-    if (closeProfileRef.current && !closeProfileRef.current.contains(event.target)) {
-      handleProfileClose();
-    }
-  };
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutsideProfileDrawer);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutsideProfileDrawer);
-    };
-  }, []);
+
   
   return (
     <>
@@ -337,8 +315,8 @@ const Header: React.FC<any> = ({
             )}
              {openProfile?
              <CustomDrawer paddingStyle={true}>
-              <div ref={closeProfileRef} >
-              <UserProfile handleProfileClose={handleProfileClose} closeProfileRef={closeProfileRef} handleClickOutsideProfileDrawer={handleClickOutsideProfileDrawer} ></UserProfile>
+              <div  >
+              <UserProfile handleProfileClose={handleProfileClose}   ></UserProfile>
               </div>
               </CustomDrawer>:''
              }
@@ -359,7 +337,7 @@ const Header: React.FC<any> = ({
             {openNotification&& (
               <div>
                  <CustomDrawer>
-                  <div ref={closeNotificationRef}>
+                  <div >
                   <Notifications  notifications={notifications}
                     loadMoreData={loadMoreData}
                     updateNotifications={updateNotifications} filterValue={filterValue} filterNotificationData={filterNotificationData} handleNotificationClose={handleNotificationClose}>
