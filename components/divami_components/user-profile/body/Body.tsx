@@ -79,11 +79,11 @@ const Body = ({
       <div>
         <h3 className="py-2">Project Assigned</h3>
 
-        <div className="grid grid-cols-2 h-full w-full">
+        <div className="grid grid-cols-2  gap-2 h-full w-full">
           {projectDetails?.map((pData: any) => {
             return (
               <div key={pData._id}>
-                <div className="my-1 mx-1 border  border-gray-100 shadow-md border-solid rounded  bg-white">
+                <div className="my-1 mx-1 border h-full  border-gray-100 shadow-md border-solid rounded  bg-white">
                   <img
                     className="h-7 mt-2 cursor-pointer w-11/12  object-contain"
                     src={
@@ -95,7 +95,7 @@ const Body = ({
                   />
                   <div>
                     <div className=" px-2 py-1 ">
-                      <p className="text-sm overflow-hidden font-semibold text-center" style={{
+                      <p className="text-sm overflow-hidden h-[36px] font-semibold  text-center" style={{
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
