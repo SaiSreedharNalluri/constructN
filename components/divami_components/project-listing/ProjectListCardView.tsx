@@ -182,7 +182,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
                   {/* {each.projectName + "technology and pvt limited"} */}
                   {/* <TruncatedString text={each.projectName} maxLength={20} /> */}
                   <TruncatedString
-                    text="Shobha Infra technology and pvt Limited"
+                    text={each.projectName}
                     maxLength={20}
                     suffixLength={7}
                   />
