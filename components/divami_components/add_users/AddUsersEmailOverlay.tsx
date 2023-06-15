@@ -44,6 +44,7 @@ import CustomSelect from "../custom-select/CustomSelect";
 import { CustomTextField } from "../custom-textfield/CustomTextField";
 import ProjectInfo from "../../container/projectInfo";
 import { MTableBodyRow } from "material-table";
+import { role } from "../../../utils/constants";
 
 export const AddUsersEmailOverlay = ({
   form,
@@ -57,6 +58,7 @@ export const AddUsersEmailOverlay = ({
   const [searchVal, setSearchVal] = useState("");
   const [hoveringOver, setHoveringOver] = useState("");
   useEffect(() => {
+    console.log("roles", roles);
     if (/\S+@\S+\.\S+/.test(form.email)) checkRegisterUser(form.email);
 
     // setAddedUsers([...addedUsers, form]);
@@ -98,6 +100,7 @@ export const AddUsersEmailOverlay = ({
         color: "#101F4C",
       },
       render: (rowData: any) => {
+        console.log("rowdating", rowData);
         return (
           <CustomSelect
             config={{

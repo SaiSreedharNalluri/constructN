@@ -46,6 +46,8 @@ import {
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import Notifications from "../notifications/Notifications";
 import UserProfile from "../user-profile/UserProfile";
+import CustomSelect from "../custom-select/CustomSelect";
+import { getProjectsList } from "../../../services/project";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -85,6 +87,10 @@ const Header: React.FC<any> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
   const [openProfile, setOpenProfile] = useState(false);
+
+  // const [config, setConfig] = useState<any>([]);
+  const [projects, setProjects] = useState<any>([]);
+
   useEffect(() => {
     const userObj: any = getCookie("user");
     let user = null;
@@ -111,19 +117,41 @@ const Header: React.FC<any> = ({
     //   };
   }, [viewMode]);
 
- 
-  
   const userLogOut = () => {
     removeCookies("user");
     // router.push("/login");
     router.push("/login");
   };
+  useEffect(() => {
+    console.log("what");
+    console.log("projectoccurs", projects);
+  }, []);
+  useEffect(() => {
+    if (router.isReady) {
+      getProjectsList()
+        .then(async (response) => {
+          if (response?.data?.success === true) {
+            setProjects(response.data.result);
+
+            // setConfig([response.data.result]);
+
+            console.log("headerResponse", response);
+          }
+        })
+        .catch((error) => {});
+    }
+  }, [router?.isReady]);
+
   const goToProjectsList = () => {
     router.push("/projects");
   };
 
   const onProfilePicClick = () => {
-    if(!openProfile){setOpenProfile(true)}else{setOpenProfile(false)}
+    if (!openProfile) {
+      setOpenProfile(true);
+    } else {
+      setOpenProfile(false);
+    }
   };
 
   const rightMenuClickHandler = (e: any) => {
@@ -215,12 +243,12 @@ const Header: React.FC<any> = ({
   useEffect(() => {
     getUserNotifications(defaultValue, filterValue);
   }, [filterValue]);
-  const handleNotificationClose=()=>{
-    setOpenNotication(false)
-  }
-  const handleProfileClose=()=>{
-    setOpenProfile(false)
-  }
+  const handleNotificationClose = () => {
+    setOpenNotication(false);
+  };
+  const handleProfileClose = () => {
+    setOpenProfile(false);
+  };
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -265,6 +293,26 @@ const Header: React.FC<any> = ({
           )}
         </HeaderLeftPart>
         <HeaderRightPart>
+          <CustomSelect
+            config={{
+              options: projects?.length ? projects : [],
+              defaultValue: projects?.name
+                ? projects.name
+                : projects.length
+                ? projects.some((each: any) => each.value == "name")
+                  ? "name"
+                  : projects[0].name
+                : "",
+              label: projects?.name,
+            }}
+            defaultValue=""
+            id=""
+            sx={{ minWidth: 120 }}
+            setFormConfig=""
+            isError={false}
+            label=""
+          />
+
           {toolClicked ? (
             <HeaderToggle>
               <HeaderToggleButtonOne
@@ -287,9 +335,8 @@ const Header: React.FC<any> = ({
           ) : (
             <></>
           )}
-         
+
           <HeaderProfileImageContainer>
-  
             {avatar ? (
               <ProfileImgIcon
                 onClick={onProfilePicClick}
@@ -307,9 +354,15 @@ const Header: React.FC<any> = ({
                 height={34}
               />
             )}
-             {openProfile?<CustomDrawer>
-              <UserProfile handleProfileClose={handleProfileClose} ></UserProfile>
-             </CustomDrawer>:''}
+            {openProfile ? (
+              <CustomDrawer>
+                <UserProfile
+                  handleProfileClose={handleProfileClose}
+                ></UserProfile>
+              </CustomDrawer>
+            ) : (
+              ""
+            )}
           </HeaderProfileImageContainer>
           <HeaderNotificationImageContainer>
             <Image
@@ -317,30 +370,27 @@ const Header: React.FC<any> = ({
               alt="Profile Image"
               onClick={() => {
                 if (openNotification) {
-                  setOpenNotication(false)
+                  setOpenNotication(false);
                 } else {
                   setOpenNotication(true);
                 }
               }}
             />
-            
-            {openNotification&& (
+
+            {openNotification && (
               <div>
-                 <CustomDrawer>
-             <Notifications  notifications={notifications}
+                <CustomDrawer>
+                  <Notifications
+                    notifications={notifications}
                     loadMoreData={loadMoreData}
-                    updateNotifications={updateNotifications} filterValue={filterValue} filterNotificationData={filterNotificationData} handleNotificationClose={handleNotificationClose}>
-                </Notifications> 
-             <div>
-                   
-             </div>
-             </CustomDrawer>
-           
-        
+                    updateNotifications={updateNotifications}
+                    filterValue={filterValue}
+                    filterNotificationData={filterNotificationData}
+                    handleNotificationClose={handleNotificationClose}
+                  ></Notifications>
+                  <div></div>
+                </CustomDrawer>
               </div>
-             
-      
-             
             )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
@@ -348,7 +398,6 @@ const Header: React.FC<any> = ({
           </HeaderMenuImageContainer>
         </HeaderRightPart>
 
-      
         {/* //! This is Open Profile Options */}
         {/* {loading && (
           <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
