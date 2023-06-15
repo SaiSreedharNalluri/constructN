@@ -758,7 +758,7 @@ const SectionsListing = () => {
       <SectionsListContainer>
         {/* <h1>React Table</h1> */}
         <ThemeProvider theme={defaultMaterialTheme}>
-          <TableWrapper style={{ position: "sticky" }}>
+          <TableWrapper>
             {dataLoaded ? (
               <StyledTable
                 tableRef={myTableRef}

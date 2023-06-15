@@ -337,6 +337,7 @@ const Index: React.FC<any> = () => {
         toast.success("Tag list updated successfully");
       }
       setShowbutton(false);
+      // setSelectedOption("issuePriority");
       // setSubmittedValues(formValues);
     } catch (error) {
       console.log("Error:", error);
@@ -513,6 +514,7 @@ const Index: React.FC<any> = () => {
                 projectId={projectId}
                 showButton={showButton}
                 setShowbutton={setShowbutton}
+                setSelectedOption={setSelectedOption}
               />
             ) : (
               <></>
