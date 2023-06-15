@@ -318,7 +318,7 @@ const Header: React.FC<any> = ({
               />
             )}
              {openProfile?
-             <CustomDrawer paddingStyle={true}>
+             <CustomDrawer paddingStyle={true} variant="persistent">
               <div  >
               <UserProfile handleProfileClose={handleProfileClose}   ></UserProfile>
               </div>
@@ -343,7 +343,7 @@ const Header: React.FC<any> = ({
             
             {openNotification&& (
               <div>
-                 <CustomDrawer>
+                 <CustomDrawer variant="persistent">
                   <div >
                   <Notifications  notifications={notifications}
                     loadMoreData={loadMoreData}

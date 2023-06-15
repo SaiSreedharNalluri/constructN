@@ -766,7 +766,7 @@ const SectionsListing = () => {
       </SectionsListContainer>
 
       {openFilter && (
-        <CustomDrawer open>
+        <CustomDrawer  variant="persistent" open>
           <SectionFilter
             setTaskFilterState={setTaskFilterState}
             taskFilterState={taskFilterState}

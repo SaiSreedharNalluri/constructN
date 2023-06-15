@@ -79,6 +79,9 @@ const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   cursor: "pointer",
   background: "#ffffff",
   fontFamily: "Open Sans",
+  "&:hover": {
+    background: '#EEEEEE'
+  },
 })) as any;
 
 const OpenFullScreenButton = styled("div")(

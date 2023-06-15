@@ -1256,7 +1256,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       </CustomTaskDrawerContainer>
 
       {openCreateTask && (
-        <CustomDrawer open>
+        <CustomDrawer open variant="temporary">
           <CreateIssue
             handleCreateTask={handleCreateTask}
             setOpenCreateTask={setOpenCreateTask}

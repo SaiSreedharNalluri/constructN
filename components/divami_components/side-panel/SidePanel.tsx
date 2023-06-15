@@ -232,7 +232,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         </SideMenuOptionContainer>
       ))}
        {supportItemsConfig.map((item, index) => (
-        <SideMenuOptionContainer  className="fixed inset-x-0 bottom-0" key={index}>
+        <SideMenuOptionContainer  className="fixed bottom-0" key={index}>
           <SideMenuOption
           // onClick={() =>
           //   item.label === "settings" ? handleClick(item) : null
