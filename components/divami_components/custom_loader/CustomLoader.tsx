@@ -19,12 +19,6 @@ const CustomLoader = () => {
   const { View: lottie } = useLottie(defaultOptions);
   return (
     <>
-      {/* <div style={{ width: "100px" }}>
-        <LoaderContainer ref={animationContainerRef}> */}
-      {/* <LoaderImage src={closeIcon} alt="" /> */}
-      {/* </LoaderContainer>
-      </div> */}
-
       <div>
         <LoaderContainer> {lottie}</LoaderContainer>
       </div>

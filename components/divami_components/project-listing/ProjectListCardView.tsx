@@ -79,7 +79,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
             <div
               style={{
                 width: "336px",
-                // background: index % 3 ? "red" : "blue",
+
                 minHeight: "432px",
               }}
             >
@@ -176,8 +176,6 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
 
                 <ListHorizontalDivider />
                 <ProjectNameTitle>
-                  {/* {each.projectName + "technology and pvt limited"} */}
-                  {/* <TruncatedString text={each.projectName} maxLength={20} /> */}
                   <TruncatedString
                     text={each.projectName}
                     maxLength={20}

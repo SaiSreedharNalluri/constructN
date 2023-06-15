@@ -337,8 +337,6 @@ const Index: React.FC<any> = () => {
         toast.success("Tag list updated successfully");
       }
       setShowbutton(false);
-      // setSelectedOption("issuePriority");
-      // setSubmittedValues(formValues);
     } catch (error) {
       console.log("Error:", error);
     }
@@ -506,7 +504,6 @@ const Index: React.FC<any> = () => {
                     setShowbutton={setShowbutton}
                   />
                 }
-                // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
                 modalmessage={`Are you sure you want to delete this Issue ?`}
                 primaryButtonLabel={"Update"}
                 SecondaryButtonlabel={"Cancel"}

@@ -380,16 +380,6 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
         <TableWrapper>
           {dataLoaded ? (
             <StyledTable
-              // components={{
-              //   Toolbar: (props) => (
-              //     <MTableToolbar {...props} style={{ width: "100%" }} sx={{}} />
-              //   ),
-              // }}
-              // icons={{
-              //   SortArrow: forwardRef((props, ref) => (
-              //     <ArrowDropUpIcon {...props} ref={ref} />
-              //   )),
-              // }}
               components={{
                 Container: (props: any) => <Paper {...props} elevation={0} />,
                 Row: (props: any) => {

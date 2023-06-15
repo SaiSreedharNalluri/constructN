@@ -76,7 +76,7 @@ import SectionsListing from "../../../../components/divami_components/sectionsLi
 import { Content } from "../../../../components/divami_components/project-listing/SectionsStyles";
 import CustomLoader from "../../../../components/divami_components/custom_loader/CustomLoader";
 
-const dummyData: any = [
+const backupData: any = [
   {
     _id: 1,
     name: "Basement",
@@ -261,7 +261,7 @@ const Index: React.FC = () => {
             }
           );
           massageTree(removeGrandParent, response?.data?.result?.id);
-          setTableData([...dummyData]);
+          setTableData([...backupData]);
         })
         .catch((error) => {});
       // getSectionsList(router?.query?.projectId as string)
@@ -433,8 +433,6 @@ const Index: React.FC = () => {
                 // src={videoWalk}
                 src={capture360Image}
                 alt={""}
-                // width={16}
-                // height={16}
               />
               {/* 360 Video */}
               <CaptureCount>

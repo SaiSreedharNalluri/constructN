@@ -116,86 +116,42 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
         return (
           <CapturesFieldContainer>
             <CapturesField>
-              <CaptureImageIcon
-                src={capture360Image}
-                alt={""}
-                // width={16}
-                // height={16}
-              />
+              <CaptureImageIcon src={capture360Image} alt={""} />
               <CaptureCount>
                 {" "}
-                {/* {rowData.capture360Count?.length > 1
-                  ? rowData.capture360Count
-                  : `0${rowData.capture360Count}`} */}
-                {/* {rowData.capture360Count == 0 ? "-" : rowData.capture360Count} */}
                 {rowData.captures && rowData.captures["360 Video"]
                   ? rowData.captures["360 Video"]
                   : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
-              <CaptureImageIcon
-                src={videoWalk}
-                alt={""}
-                // width={16}
-                // height={16}
-              />
+              <CaptureImageIcon src={videoWalk} alt={""} />
 
               <CaptureCount>
-                {/* {rowData.captureVideoWalkCount?.length > 1
-                  ? rowData.captureVideoWalkCount
-                  : `0${rowData.captureVideoWalkCount}`} */}
                 {rowData.captures && rowData.captures["360 Image"]
                   ? rowData.captures["360 Image"]
                   : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
-              <CaptureImageIcon
-                src={phoneImage}
-                alt={""}
-                // width={16}
-                // height={16}
-              />
+              <CaptureImageIcon src={phoneImage} alt={""} />
               <CaptureCount>
-                {/* {rowData.capturePhoneCount?.length > 1
-                  ? rowData.capturePhoneCount
-                  : `0${rowData.capturePhoneCount}`} */}
-
                 {rowData.captures && rowData.captures["Phone Image"]
                   ? rowData.captures["Phone Image"]
                   : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
-              <CaptureImageIcon
-                src={captureLidarIcon}
-                alt={""}
-                // width={16}
-                // height={16}
-              />
+              <CaptureImageIcon src={captureLidarIcon} alt={""} />
               <CaptureCount>
-                {/* {rowData.captureLidarCount?.length > 1
-                  ? rowData.captureLidarCount
-                  : `0${rowData.captureLidarCount}`} */}
-
                 {rowData.captures && rowData.captures["LiDAR Scan"]
                   ? rowData.captures["LiDAR Scan"]
                   : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
-              <CaptureImageIcon
-                src={DroneImage}
-                alt={""}
-                // width={16}
-                // height={16}
-              ></CaptureImageIcon>
+              <CaptureImageIcon src={DroneImage} alt={""}></CaptureImageIcon>
               <CaptureCount>
-                {/* {rowData.captureDroneCount?.length > 1
-                  ? rowData.captureDroneCount
-                  : `0${rowData.captureDroneCount}`} */}
-
                 {rowData.captures && rowData.captures["Drone Image"]
                   ? rowData.captures["Drone Image"]
                   : "-"}

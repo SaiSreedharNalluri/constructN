@@ -91,49 +91,6 @@ import { SvgIconProps } from "@material-ui/core";
 import CustomLoader from "../custom_loader/CustomLoader";
 import LocalSearch from "../local_component/LocalSearch";
 
-const dummyData: any = [
-  {
-    _id: 1,
-    name: "Basement",
-    issues: 150,
-    // tasks: 34,
-    // captures: 109,
-    // progress: "44%",
-    // lastupdated: "Today",
-    // imageUrl: <ProgressBar />,
-  },
-  {
-    _id: 2,
-    name: "Parking",
-    issues: 34,
-    // tasks: 12,
-    // captures: 50,
-    // progress: "44%",
-    // lastupdated: "Today",
-    // imageUrl: <ProgressBar />,
-  },
-  {
-    _id: 3,
-    name: "Electrical Room",
-    issues: 12,
-    // tasks: 43,
-    // captures: 50,
-    // progress: "44%",
-    // lastupdated: "Today",
-    // imageUrl: <ProgressBar />,
-  },
-  {
-    _id: 7,
-    name: "Second Floor",
-    issues: 554,
-    // tasks: 54,
-    // captures: 50,
-    // progress: "44%",
-    // lastupdated: "Today",
-    // imageUrl: <ProgressBar />,
-  },
-];
-
 interface RowData {
   tableData: { id: number };
 }
@@ -290,7 +247,7 @@ const SectionsListing = () => {
             }
           );
           massageTree(removeGrandParent, response?.data?.result?.id);
-          //  setTableData([...dummyData]);
+
           // setShowLoader(false);
           setDataLoaded(true);
         })
@@ -543,7 +500,7 @@ const SectionsListing = () => {
       },
       cellStyle: { width: "10%" },
       render: (rowData: any) => {
-        return <>{rowData?.issueCount == 0 ? "-" : rowData?.issueCount}</>;
+        return <>{rowData?.issueCount ? rowData.issueCount : "-"}</>;
       },
     },
     {
@@ -563,7 +520,7 @@ const SectionsListing = () => {
       cellStyle: { width: "10%" },
 
       render: (rowData: any) => {
-        return <>{rowData?.taskCount == 0 ? "-" : rowData?.taskCount}</>;
+        return <>{rowData?.taskCount ? rowData.taskCount : "-"}</>;
       },
     },
     {
@@ -605,8 +562,6 @@ const SectionsListing = () => {
                 // src={videoWalk}
                 src={capture360Image}
                 alt={""}
-                // width={16}
-                // height={16}
               />
               {/* 360 Video */}
               <CaptureCount>
@@ -701,18 +656,6 @@ const SectionsListing = () => {
                       <Image src={SearchBoxIcon} alt="" />
                     </InputAdornment>
                   ),
-                  // endAdornment: (
-                  //   <InputAdornment position="start">
-                  //     <CloseIcon
-                  //       onClick={() => {
-                  //         handleSearchWindow();
-                  //       }}
-                  //       src={CrossIcon}
-                  //       alt={"close icon"}
-                  //       data-testid="search-close"
-                  //     />
-                  //   </InputAdornment>
-                  // ),
 
                   endAdornment: (
                     <InputAdornment position="start">

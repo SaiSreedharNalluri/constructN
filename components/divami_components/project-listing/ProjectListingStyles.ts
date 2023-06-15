@@ -157,7 +157,6 @@ export const ProjectCardsContainer = styled("div")({
   padding: "0 20px",
   paddingBottom: "70px",
   paddingTop: "18px",
-  // border: "2px solid black",
   position: "relative",
 });
 export const ProjectCard = styled("div")((props: any) => ({
@@ -179,7 +178,6 @@ export const ProjectTopLeftBg = styled("div")((props: any) => ({
   borderBottom: props.active ? "1px solid #F1742E" : "1px solid #888888",
   top: "-1px",
   left: "-8px",
-  // width: props.active ? "334px" : "314px",
   width: props.active ? "319px" : "314px",
 
 })) as any;
@@ -217,7 +215,6 @@ export const ProjectLogo = styled(Image)({
 export const ProjectNameTitle = styled("div")({
   fontSize: "18px",
   marginBottom: "-8px",
-  // border:"2px solid blue"
 });
 export const UsersCountContainer = styled("div")({ display: "flex" });
 export const UsersCountText = styled("div")({
@@ -318,7 +315,6 @@ export const ListVerticalDivider = styled("div")({
 });
 export const ListHorizontalDivider = styled("div")((props: any) => ({
   display: props.active ? "block" : "",
-  // width: props.active ? "322px" : "100%",
   width: props.active ? "300px" : "100%",
 
   height: props.active ? "12px" : "1px",
