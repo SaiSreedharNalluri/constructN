@@ -60,9 +60,6 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
     setProjectsData(projects);
   }, [projects]);
 
-  useEffect(() => {
-    console.log("projectsData", projectsData);
-  }, [projectsData]);
   const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
     let truncatedText = text;
 

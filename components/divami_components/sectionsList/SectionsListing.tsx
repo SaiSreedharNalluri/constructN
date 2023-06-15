@@ -543,7 +543,6 @@ const SectionsListing = () => {
       },
       cellStyle: { width: "10%" },
       render: (rowData: any) => {
-        console.log("issueCount", rowData);
         return <>{rowData?.issueCount == 0 ? "-" : rowData?.issueCount}</>;
       },
     },

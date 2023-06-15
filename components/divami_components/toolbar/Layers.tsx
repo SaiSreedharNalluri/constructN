@@ -75,7 +75,6 @@ const Layers = ({
   useEffect(() => {}, [layersLabels]);
 
   const getLayersIcons = (layersLabels: any) => {
-    console.log("layersLabels12", layersLabels);
     return (
       <>
         {layersLabels.map((label: any, index: number) => {

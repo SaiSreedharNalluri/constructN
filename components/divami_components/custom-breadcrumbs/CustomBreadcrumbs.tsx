@@ -20,10 +20,6 @@ const CustomBreadcrumbs: React.FC<any> = ({
     setBreadcrumbsConfig(breadCrumbData);
   }, [breadCrumbData]);
 
-  useEffect(() => {
-    console.log("breadcrumbsConfig", breadcrumbsConfig);
-  }, [breadcrumbsConfig]);
-
   return (
     <div>
       <Stack spacing={2}>
