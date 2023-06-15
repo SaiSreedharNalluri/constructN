@@ -213,11 +213,19 @@ body {
 
 .adsk-viewing-viewer .adsk-toolbar .adsk-button .toolbar-vertical-group {
   bottom: -20px;
-  /* left: -50px; */
+  left: -50px; 
   margin: 0;
   position: absolute;
   display: grid;
   transition: all 0.2s ease;
+  z-index: 15;
+}
+
+.adsk-viewing-viewer .adsk-toolbar .adsk-button .adsk-control-tooltip {
+  left: -60px; 
+  position: absolute;
+  display: flex;
+
   z-index: 15;
 }
 
@@ -383,7 +391,7 @@ body {
 
 .adsk-button-arrow {
   position: absolute;
-  right: -6px;
+  right: 12px;
   top: -6px;
 }
 

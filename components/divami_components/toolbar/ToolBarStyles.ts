@@ -163,7 +163,7 @@ export const LayersWrapper = styled("div")({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: "15px 20px 14px 20px",
+  padding: "8px 20px 7px 20px",
 });
 
 export const IconsContainer = styled("div")({

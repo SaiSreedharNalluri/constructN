@@ -462,7 +462,7 @@ const Index: React.FC<any> = () => {
             />
           )}
           {openFilter && (
-            <CustomDrawer open>
+            <CustomDrawer open variant="persistent">
               <ProjectListFilter
                 taskFilterState={taskFilterState}
                 onClose={() => {
