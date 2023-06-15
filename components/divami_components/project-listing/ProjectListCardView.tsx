@@ -63,7 +63,17 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
   useEffect(() => {
     console.log("projectsData", projectsData);
   }, [projectsData]);
+  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
+    let truncatedText = text;
 
+    if (text.length > maxLength) {
+      const prefix = text.substring(0, maxLength - suffixLength);
+      const suffix = text.substring(text.length - suffixLength);
+      truncatedText = prefix + "..." + suffix;
+    }
+
+    return truncatedText;
+  };
   return (
     <ProjectCardsContainer>
       {projectsData.length ? (
@@ -168,7 +178,15 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
                 />
 
                 <ListHorizontalDivider />
-                <ProjectNameTitle>{each.projectName}</ProjectNameTitle>
+                <ProjectNameTitle>
+                  {/* {each.projectName + "technology and pvt limited"} */}
+                  {/* <TruncatedString text={each.projectName} maxLength={20} /> */}
+                  <TruncatedString
+                    text="Shobha Infra technology and pvt Limited"
+                    maxLength={20}
+                    suffixLength={7}
+                  />
+                </ProjectNameTitle>
                 <UpdatedAtContainer>
                   <UsersCountContainer>
                     <Image src={userCount} alt="" width={14} height={15} />
