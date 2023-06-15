@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import * as Yup from 'yup';
-import { Form, Formik } from 'formik';
-const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
+import React from "react";
+import * as Yup from "yup";
+import { Form, Formik } from "formik";
+const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
 interface IProps {
   handleImageUPload: (e: object) => void;
 }
@@ -10,10 +10,10 @@ const ChangeIcon: React.FC<IProps> = ({ handleImageUPload }) => {
   const validationSchema = Yup.object().shape({
     file: Yup.mixed()
       .nullable()
-      .required('A file is required')
+      .required("A file is required")
       .test(
-        'format',
-        'upload file',
+        "format",
+        "upload file",
         (value) => !value || (value && SUPPORTED_FORMATS.includes(value.type))
       ),
   });
@@ -21,19 +21,20 @@ const ChangeIcon: React.FC<IProps> = ({ handleImageUPload }) => {
   return (
     <React.Fragment>
       <Formik
-        initialValues={{ file: '' }}
+        initialValues={{ file: "" }}
         validationSchema={validationSchema}
         onSubmit={handleImageUPload}
       >
         {({ values, setFieldValue }) => (
           <Form>
             <div className="flex w-full mt-2">
-              <div className="w-1/2">
+              <div className="w-full">
                 <input
                   id="file-upload"
                   type="file"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setFieldValue('file', e.target.files![0]);
+                    console.log("dvhildns;", e.target.files![0]);
+                    setFieldValue("file", e.target.files![0]);
                   }}
                 />
                 <button

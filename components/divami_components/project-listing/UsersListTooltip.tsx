@@ -9,6 +9,7 @@ export const UsersListTooltip = ({ list, showMoreText = false }: any) => {
       {list.map((each: any, index: number) => {
         return (
           <UsersListItem
+            key={index}
             hideFirstStyle={index === 0}
             hideLastStyle={index === list.length - 1}
           >

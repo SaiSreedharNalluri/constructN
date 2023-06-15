@@ -224,10 +224,11 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
         return (
           <UsersInfo>
             <UsersInfo>
-              {rowData.users.slice(0, 2)?.map((each: any) => {
+              {rowData.users.slice(0, 2)?.map((each: any, index: number) => {
                 return (
                   <LightTooltip
                     arrow
+                    key={index}
                     title={
                       <UserInfoTooltip
                         userData={each}
@@ -349,9 +350,8 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
             //     // data={...props}
             //   />
             // ),
-            Container: (props) => <Paper {...props} elevation={0} />,
-
-            Row: (props) => {
+            Container: (props: any) => <Paper {...props} elevation={0} />,
+            Row: (props: any) => {
               return (
                 <MTableBodyRow
                   {...props}
@@ -373,7 +373,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
           // ]}
           title={""}
           icons={{
-            SortArrow: forwardRef((props, ref) => {
+            SortArrow: forwardRef((props, ref: any) => {
               return sortObj ? (
                 <SortIconStyled {...props} ref={ref} />
               ) : (
@@ -385,7 +385,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                   // }}
                 />
               );
-            }),
+            }) as any,
           }}
           options={{
             search: false,
@@ -398,7 +398,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
             toolbar: false,
             maxBodyHeight: "100vh",
             overflowY: "auto",
-            rowStyle: (rowData) => ({
+            rowStyle: (rowData: any) => ({
               fontFamily: "Open Sans",
               fontStyle: "normal",
               fontWeight: "400",

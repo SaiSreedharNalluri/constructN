@@ -1,4 +1,4 @@
-export const SortDescIcon = () => {
+export const SortDescIcon = (props: any) => {
   return (
     <svg
       width="7"

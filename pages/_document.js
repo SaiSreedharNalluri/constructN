@@ -1,6 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document';
 import Script from 'next/script';
-import * as newrelic from 'newrelic'
 
 export default function Document() {
   
@@ -25,12 +24,12 @@ export default function Document() {
           href="https://cdn.jsdelivr.net/npm/jsgantt-improved@2.8.5/dist/jsgantt.min.css"
           type="text/css"
         />
+        <meta name="apple-itunes-app" content="app-id= 6449701613, app-argument=https://apps.apple.com/us/app/constructn/id6449701613"></meta>
         {/* <link rel="stylesheet" type="text/css" href="../build/potree/potree.css"/>
         <link rel="stylesheet" type="text/css" href="../libs/jquery-ui/jquery-ui.min.css"/>
         <link rel="stylesheet" type="text/css" href="../libs/openlayers3/ol.css"/>
         <link rel="stylesheet" type="text/css" href="../libs/spectrum/spectrum.css"/>
         <link rel="stylesheet" type="text/css" href="../libs/jstree/themes/mixed/style.css"/> */}
-        <script async type="text/javascript" src="/js/newrelic.js" />
       </Head>
       <body>
         <Main />
@@ -122,6 +121,17 @@ export default function Document() {
           src="https://wchat.freshchat.com/js/widget.js"
           strategy="beforeInteractive"
         />
+        <Script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"/>
+        <Script id="deeplink_ios" strategy="beforeInteractive">
+          {`window.onload = function() {
+        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        var g = document.getElementById("google_play");
+        var a = document.getElementById("app_store");
+
+        if (userAgent.includes("iPhone")) {
+            window.location.replace("https://apps.apple.com/us/app/constructn/id6449701613");
+        }`}
+        </Script>
       </body>
     </Html>
   );
