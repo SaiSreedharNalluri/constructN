@@ -33,6 +33,7 @@ export const ProjectName = styled("div")({
   marginBottom: "18px",
   color: "#101F4C",
   marginTop: "10px",
+
 });
 
 export const ProjectDetailsContainer = styled("div")({
@@ -156,9 +157,10 @@ export const ProjectCardsContainer = styled("div")({
   padding: "0 20px",
   paddingBottom: "70px",
   paddingTop: "18px",
+  position: "relative",
 });
 export const ProjectCard = styled("div")((props: any) => ({
-  width: props.active ? "320px" : "300px",
+  width: props.active ? "300px" : "300px",
   height: props.active ? "418px" : "398px",
   background: "#FFFFFF",
   border: "1px solid #888888",
@@ -176,7 +178,8 @@ export const ProjectTopLeftBg = styled("div")((props: any) => ({
   borderBottom: props.active ? "1px solid #F1742E" : "1px solid #888888",
   top: "-1px",
   left: "-8px",
-  width: props.active ? "334px" : "314px",
+  width: props.active ? "319px" : "314px",
+
 })) as any;
 
 export const ProjectTopRightBg = styled("div")((props: any) => ({
@@ -200,7 +203,9 @@ export const ProjectBottomRightBg = styled("div")((props: any) => ({
   borderBottom: props.active ? "1px solid #F1742E" : "1px solid #888888",
   bottom: "-1px",
   left: "-8px",
-  width: props.active ? "334px" : "314px",
+  // width: props.active ? "334px" : "314px",
+  width: props.active ? "318px" : "314px",
+
 })) as any;
 
 export const ProjectLogo = styled(Image)({
@@ -235,13 +240,15 @@ export const CaptureImageContainer = styled("div")({
 });
 export const CaptureImageIcon = styled(Image)({
   marginRight: "7px",
-  // width: "12px",
-  // height: "12px",
+  width: "16px",
+  height: "16px",
 });
 export const CaptureName = styled("div")({
   marginRight: "5px",
 });
-export const CaptureCount = styled("div")({});
+export const CaptureCount = styled("div")({
+  width: "48px",
+});
 export const OtherUsersCount = styled("div")({
   color: "#FF843F",
 });
@@ -308,7 +315,8 @@ export const ListVerticalDivider = styled("div")({
 });
 export const ListHorizontalDivider = styled("div")((props: any) => ({
   display: props.active ? "block" : "",
-  width: props.active ? "322px" : "100%",
+  width: props.active ? "300px" : "100%",
+
   height: props.active ? "12px" : "1px",
   background: props.active ? "#FFFFFF" : "#D9D9D9",
   padding: "0 20px",
@@ -373,4 +381,26 @@ export const ShowMore = styled("div")({
   fontSize: "14px",
   cursor: "pointer",
   textAlign: "end",
+});
+
+export const ShowErrorContainer = styled("div")({});
+
+export const CenteredErrorImage = styled(Image)({
+  position: "absolute",
+  top: "30%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+});
+
+export const NoResultText = styled("div")({
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
+  textAlign: "center",
+  color: "#101F4C",
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
 });

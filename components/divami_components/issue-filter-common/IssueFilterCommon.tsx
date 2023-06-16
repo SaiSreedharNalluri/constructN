@@ -224,12 +224,7 @@ const FilterCommon: React.FC<IProps> = ({
       });
       getIssuesPriority(router.query.projectId as string).then((response) => {
         if (response.success === true) {
-          setTaskPriority(
-            response.result.filter(
-              (item: any) =>
-                item === "High" || item === "Low" || item === "Medium"
-            )
-          );
+          setTaskPriority(response.result);
         }
       });
       getProjectUsers(router.query.projectId as string)
