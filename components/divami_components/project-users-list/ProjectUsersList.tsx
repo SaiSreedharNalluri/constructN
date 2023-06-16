@@ -187,8 +187,8 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
               src={Edit}
               alt=""
               onClick={() => {
-                setShowEdit(true);
-                setSelectedRowData(rowData);
+                // setShowEdit(true);
+                // setSelectedRowData(rowData);
               }}
             />
           </ImageButtons>
