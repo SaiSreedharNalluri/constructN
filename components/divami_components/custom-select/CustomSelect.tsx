@@ -152,8 +152,8 @@ const CustomSelect = (props: any) => {
         // }}
         hideBorder={hideBorder}
       >
-        {config.options?.length &&
-          config.options.map((item: any, index: any) => (
+        {config?.options?.length ? (
+          config?.options?.map((item: any, index: any) => (
             <StyledMenuItem
               key={item.value}
               value={`${item.value}`}
@@ -161,7 +161,10 @@ const CustomSelect = (props: any) => {
             >
               {item.label}
             </StyledMenuItem>
-          ))}
+          ))
+        ) : (
+          <></>
+        )}
       </StyledSelect>
 
       {/* <ErrorField>{data?.isError ? "Required" : ""}</ErrorField> */}

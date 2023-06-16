@@ -102,3 +102,9 @@ export const HeaderNotificationImageContainer = styled('div')({
     background: '#EEEEEE'
   },
 });
+
+
+export const ProjectSelectorContainer= styled('div')({
+  marginRight: '15px',
+  cursor: 'pointer',
+});
