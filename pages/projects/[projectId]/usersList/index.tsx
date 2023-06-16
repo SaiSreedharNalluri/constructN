@@ -8,7 +8,7 @@ import {
 } from "../../../../components/divami_components/project-users-list/usersListStyles";
 
 const Index: React.FC<any> = () => {
-  const breadCrumbsData = [{ label: "Manage Users" }];
+  const breadCrumbsData = [{ name: "Manage Users" }];
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   return (
@@ -19,6 +19,7 @@ const Index: React.FC<any> = () => {
             showBreadcrumbs
             breadCrumbData={breadCrumbsData}
             fromUsersList
+            showFirstElement={true}
           />
         )}
 

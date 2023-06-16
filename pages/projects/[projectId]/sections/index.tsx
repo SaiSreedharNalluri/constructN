@@ -546,27 +546,11 @@ const Index: React.FC = () => {
     //   currencySetting: { currencyCode: "INR", minimumFractionDigits: 0 },
     // },
   ];
-  const breadCrumbsData = [{ label: "Manage Users" }];
+  const breadCrumbsData = [{ name: "Sections" }];
 
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   return (
-    // <React.Fragment>
-    //   <div>
-    //     <div>
-    //       <Header />
-    //       <div className="flex w-screen fixed">
-    //         <div>
-    //           <Content>
-    //             <SidePanelMenu onChangeData={() => {}} />
-    //             <SectionsListing />
-    //           </Content>
-    //         </div>
-    //         <div></div>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </React.Fragment>
     <div className=" w-full  h-full">
       <div className="w-full">
         {!isFullScreen && (
@@ -574,14 +558,12 @@ const Index: React.FC = () => {
             showBreadcrumbs
             breadCrumbData={breadCrumbsData}
             fromUsersList
+            showFirstElement={true}
           />
         )}
-
-        {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
       <Content>
         <SidePanelMenu onChangeData={() => {}} />
-        {/* <SidePanelMenuContainer onChangeData={() => {}} /> */}
         <SectionsListing />
       </Content>
     </div>

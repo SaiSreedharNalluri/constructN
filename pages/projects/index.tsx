@@ -15,6 +15,7 @@ import {
   HeaderLabel,
   ProjectsHeader,
   GridViewButtonRight,
+  FilterIndicator,
 } from "../../components/divami_components/project-users-list/ProjectUsersListStyles";
 import {
   SearchAreaContainer,
@@ -77,6 +78,7 @@ const Index: React.FC<any> = () => {
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [responseData, setResponseData] = useState<any>([]);
   const [roles, setRoles] = useState<string[] | []>([]);
+  const [isFilterApplied, setIsFilterApplied] = useState<boolean>(false);
   const [options, setOptions] = useState<any>({
     listOfEntries: [
       {
@@ -90,9 +92,7 @@ const Index: React.FC<any> = () => {
   const [formValues, setFormValues]: any = useState({ priority: [] });
   const [showPopUp, setshowPopUp] = useState(false);
 
-  const [taskFilterState, setTaskFilterState] = useState({
-    isFilterApplied: false,
-  });
+  const [taskFilterState, setTaskFilterState] = useState({});
 
   const [projectId, setProjectId] = useState<any>("");
   const sortMenuOptions = [
@@ -101,17 +101,6 @@ const Index: React.FC<any> = () => {
       icon: UpArrow,
       method: "userAsc",
       onClick: () => {
-        // const sortedData = projects.sort((a, b) => {
-        //   if (Number(a.usersCount) < Number(b.usersCount)) {
-        //     return -1;
-        //   } else if (Number(a.usersCount) < Number(b.usersCount)) {
-        //     return 1;
-        //   } else {
-        //     return 0;
-        //   }
-        // });
-        // const sortedData = projects.sort((a, b) => a.usersCount - b.usersCount);
-        // console.log(sortedData, "Fsdfd");
         setSearchTableData(
           []
             .concat(projects)
@@ -362,6 +351,8 @@ const Index: React.FC<any> = () => {
                             ?.includes(e.target?.value?.toLowerCase())
                         )
                       );
+                      setIsFilterApplied(false);
+                      setTaskFilterState({});
                     }}
                     InputLabelProps={{ shrink: false }}
                     InputProps={{
@@ -416,6 +407,7 @@ const Index: React.FC<any> = () => {
                   setOpenFilter(true);
                 }}
               />
+              {isFilterApplied ? <FilterIndicator /> : <></>}
               <ToggleButtonContainer>
                 <GridViewButton
                   onClick={() => {
@@ -466,6 +458,8 @@ const Index: React.FC<any> = () => {
                   handleFilter(formState)
                 }
                 setTaskFilterState={setTaskFilterState}
+                setIsFilterApplied={setIsFilterApplied}
+                setSearchTerm={setSearchTerm}
               />
             </CustomDrawer>
           )}

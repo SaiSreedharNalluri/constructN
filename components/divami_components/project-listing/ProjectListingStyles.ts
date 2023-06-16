@@ -157,6 +157,7 @@ export const ProjectCardsContainer = styled("div")({
   paddingBottom: "70px",
   paddingTop: "18px",
 });
+
 export const ProjectCard = styled("div")((props: any) => ({
   width: props.active ? "320px" : "300px",
   height: props.active ? "418px" : "398px",

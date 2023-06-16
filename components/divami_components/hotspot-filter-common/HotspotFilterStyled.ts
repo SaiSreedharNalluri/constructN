@@ -23,17 +23,16 @@ export const HeaderContainer = styled("div")({
   borderBottom: "1px solid #d9d9d9",
 });
 
-export const TitleContainer = styled(Box)({
+export const TitleContainer = styled(Box)((props: any) => ({
   width: "100%",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  paddingLeft: "20px",
-  paddingRight: "20px",
-});
+  paddingLeft: props.noPadding ? "0" : "20px",
+  paddingRight: props.noPadding ? "0" : "20px",
+}));
 
 export const HeaderLeftSection = styled.div({});
-
 
 export const HeaderLeftSectionText = styled.div({
   fontFamily: "Open Sans",
@@ -63,50 +62,45 @@ export const HeaderRightSectionResetText = styled.div({
 
 export const HeaderRightSectionCancel = styled.div({});
 
-
-  
- export const FilterCommonBody = styled.div({
+export const FilterCommonBody = styled.div({
   // marginBottom: "50px",
   overflowY: "auto",
   height: "calc(100% - 130px)",
- });
+});
 
- export const FilterCardContainer = styled.div({
+export const FilterCardContainer = styled.div({
   marginTop: "20px",
- });
+});
 
- export const FormElementContainer = styled(Box)({
-//   marginTop: "30px",
+export const FormElementContainer = styled(Box)({
+  //   marginTop: "30px",
   paddingLeft: "20px",
   paddingRight: "20px",
- });
+});
 
-  export const ElementDivCardContainer = styled.div({
+export const ElementDivCardContainer = styled.div({
   marginTop: "30px",
-  });
- 
-    export const ElementDivCardDateContainer = styled.div({
+});
+
+export const ElementDivCardDateContainer = styled.div({
   marginTop: "10px",
- });
+});
 
 export const HorizontalLine = styled.div({
-    borderBottom: "1px solid #d9d9d9",
-    marginTop:"5px"
+  borderBottom: "1px solid #d9d9d9",
+  marginTop: "5px",
 });
- 
-
 
 export const DatePickersContainer = styled(Box)({
   display: "flex",
-  justifyContent:"space-between"
-})
+  justifyContent: "space-between",
+});
 export const DatePickerContainer = styled(Box)({
   display: "flex",
-  flexDirection:"column"
-})
+  flexDirection: "column",
+});
 
-export const FilterFooter = styled.div({})
-
+export const FilterFooter = styled.div({});
 
 // export const FilterFooter = styled.div`
 //   // height: calc(100% - 50px);
@@ -121,10 +115,7 @@ export const ButtonsContainer = styled(Box)({
   justifyContent: "space-between",
   alignItems: "center",
   // marginTop:"50px"
-})
-
-
-
+});
 
 export const RefreshIcon = styled(Image)({
   cursor: "pointer",
@@ -132,13 +123,11 @@ export const RefreshIcon = styled(Image)({
   height: "15px",
 });
 
-
 export const CloseIcon = styled(Image)({
   cursor: "pointer",
   width: "24px",
   height: "24px",
 });
-
 
 export const FormElementContainerWrapper = styled(Box)({
   marginTop: "8px",

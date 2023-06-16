@@ -9,6 +9,7 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
 import {
+  addUserRoles,
   getProjectUsers,
   getUserRoles,
   removeProjectUser,
@@ -18,6 +19,7 @@ import ChatIcon from "../../../public/divami_icons/ChatIcon.svg";
 import Image from "next/image";
 import {
   CustomColumnTitle,
+  FilterIndicator,
   Header,
   HeaderActions,
   HeaderImage,
@@ -52,6 +54,8 @@ import { SortDescIcon } from "../project-listing/SortDescIcon";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { AddUsersEmailOverlay } from "../add_users/AddUsersEmailOverlay";
 import { AddUsersEmailPopup } from "../add_users/AddUsersEmailPopup";
+import Edit from "../../../public/divami_icons/edit.svg";
+import { EditRoleOverlay } from "./EditRoleOverlay";
 
 export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [tableData, setTableData] = useState<any>([]);
@@ -64,7 +68,9 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [form, setForm] = useState({});
   const [searchTableData, setSearchTableData] = useState([]);
   const [rolesArr, setRolesArr] = useState<string[] | []>([]);
-
+  const [isFilterApplied, setIsFilterApplied] = useState<boolean>(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [selectedRowData, setSelectedRowData] = useState({});
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
     filterData: {},
@@ -166,19 +172,26 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       cellStyle: { width: "10%" },
       sorting: false,
       render: (rowData: any) => {
-        return hoveringOver == rowData.tableData.id ? (
-          <ImageButtons hoveringOver={hoveringOver}>
+        return (
+          <ImageButtons hoveringOver={hoveringOver} id={"rowActions"}>
             <RemoveIconImage src={ChatIcon} alt="" />
-            <Image
+            <RemoveIconImage
               src={RemoveIcon}
               alt=""
               onClick={() => {
                 deleteUser(rowData);
               }}
             />
+
+            <Image
+              src={Edit}
+              alt=""
+              onClick={() => {
+                setShowEdit(true);
+                setSelectedRowData(rowData);
+              }}
+            />
           </ImageButtons>
-        ) : (
-          <></>
         );
       },
     },
@@ -198,6 +211,23 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     // return a.numberOfUsers - b.numberOfUsers;
   };
 
+  const changeUserRole = () => {
+    const projectInfo = {
+      users: tableData
+        .filter((each: any) => each.isRoleUpdated)
+        .map((each: any) => {
+          return { role: each.role, email: each.email };
+        }),
+    };
+    addUserRoles(projectInfo, router.query.projectId as string)
+      .then((res: any) => {
+        toast.success("User Added successfully");
+        setOpenDrawer(false);
+      })
+      .catch((err) => {
+        toast.error(err.message);
+      });
+  };
   const deleteUser = (rowData: any) => {
     const email = rowData.email.toLocaleLowerCase();
     removeProjectUser(email, router.query.projectId as string)
@@ -285,12 +315,6 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     setSearchTableData(tableData);
   }, [tableData]);
 
-  const handleRowHover = (event: any, propsData: any) =>
-    setHoveringOver(`${propsData.index}`);
-
-  const handleRowHoverLeave = (event: any, propsData: any) =>
-    setHoveringOver("");
-
   const showEmailOverlay = (formState: any) => {
     setShowAddUser(false);
     setOpenDrawer(true);
@@ -310,9 +334,20 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                 value={searchTerm}
                 onChange={(e: any) => {
                   setSearchTerm(e.target.value);
+                  setTaskFilterState({
+                    isFilterApplied: false,
+                    filterData: {},
+                    numberOfFilters: 0,
+                  });
                   setSearchTableData(
-                    tableData.filter((each: any) =>
-                      each.fullName.includes(e.target?.value)
+                    tableData.filter(
+                      (each: any) =>
+                        each.fullName
+                          ?.toLowerCase()
+                          .includes(e.target?.value?.toLowerCase()) ||
+                        each.email
+                          ?.toLowerCase()
+                          .includes(e.target?.value?.toLowerCase())
                     )
                   );
                 }}
@@ -358,6 +393,8 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
               setOpenFilter(true);
             }}
           />
+          {taskFilterState.numberOfFilters ? <FilterIndicator /> : <></>}
+
           <CustomButton
             type={"contained"}
             label={"Add User"}
@@ -381,15 +418,6 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
             // }}
             components={{
               Container: (props: any) => <Paper {...props} elevation={0} />,
-              Row: (props: any) => {
-                return (
-                  <MTableBodyRow
-                    {...props}
-                    onMouseEnter={(e: any) => handleRowHover(e, props)}
-                    onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
-                  />
-                );
-              },
             }}
             columns={columns}
             data={searchTableData ? searchTableData : []}
@@ -425,8 +453,6 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                 fontWeight: "400",
                 fontSize: "14px",
                 color: "#101F4C",
-                backgroundColor:
-                  rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
               }),
               headerStyle: {
                 padding: "6px 16px",
@@ -447,6 +473,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
             onClose={() => {
               setOpenFilter(false);
             }}
+            setSearchTerm={setSearchTerm}
           />
         </CustomDrawer>
       )}
@@ -481,6 +508,21 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           setOpenDrawer={setOpenDrawer}
           roles={rolesArr}
           selectedProjectId={router.query.projectId}
+        />
+      </Drawer>
+
+      <Drawer
+        anchor={"right"}
+        open={showEdit}
+        onClose={() => {
+          setShowEdit(false);
+        }}
+      >
+        <EditRoleOverlay
+          onClose={() => {
+            setShowEdit(false);
+          }}
+          userData={selectedRowData}
         />
       </Drawer>
     </ProjectUsersListContainer>

@@ -57,6 +57,7 @@ const UsersFilter: React.FC<any> = ({
   setSearchTableData,
   roles,
   taskFilterState,
+  setSearchTerm,
 }) => {
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
   const [dueDate, setDueData] = useState(DATE_PICKER_DATA);
@@ -85,7 +86,9 @@ const UsersFilter: React.FC<any> = ({
       {
         title: "Select a role",
         code: "roleType",
-        selectAllStatus: "T",
+        selectAllStatus: taskFilterState?.filterData?.roleType?.length
+          ? "T"
+          : "F",
         options: roles.map((each: any) => {
           return {
             optionTitle: each,
@@ -136,6 +139,7 @@ const UsersFilter: React.FC<any> = ({
     }
 
     setSearchTableData(result);
+    setSearchTerm("");
 
     setTaskFilterState({
       isFilterApplied: true,
@@ -303,27 +307,22 @@ const UsersFilter: React.FC<any> = ({
             <HeaderLeftSection>
               <HeaderLeftSectionText>Filters</HeaderLeftSectionText>
             </HeaderLeftSection>
-            <HeaderRightSection>
+            <HeaderRightSection
+              onClick={() => {
+                onReset();
+              }}
+            >
               <HeaderRightSectionResetIcon>
-                <RefreshIcon
-                  src={newRefreshIcon}
-                  alt="reset"
-                  onClick={() => {
-                    onReset();
-                  }}
-                />
-                {/* <Image
-                  src={ResetIcon}
-                  alt="reset"
-                  onClick={() => {
-                    onReset();
-                  }}
-                /> */}
+                <RefreshIcon src={newRefreshIcon} alt="reset" />
               </HeaderRightSectionResetIcon>
-              <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
-              {/* <Image src={closeIcon} alt="reset"   onClick={() => {
-              handleClose();
-              }} /> */}
+              <HeaderRightSectionResetText
+                onClick={() => {
+                  onReset();
+                }}
+              >
+                Reset
+              </HeaderRightSectionResetText>
+
               <CloseIcon
                 onClick={() => {
                   handleClose();

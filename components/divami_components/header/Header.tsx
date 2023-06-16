@@ -61,6 +61,7 @@ const Header: React.FC<any> = ({
   handleBreadCrumbClick,
   hideSidePanel,
   fromUsersList,
+  showFirstElement,
 }) => {
   const router = useRouter();
   const headerRef: any = React.useRef();
@@ -111,8 +112,6 @@ const Header: React.FC<any> = ({
     //   };
   }, [viewMode]);
 
- 
-  
   const userLogOut = () => {
     removeCookies("user");
     // router.push("/login");
@@ -123,7 +122,11 @@ const Header: React.FC<any> = ({
   };
 
   const onProfilePicClick = () => {
-    if(!openProfile){setOpenProfile(true)}else{setOpenProfile(false)}
+    if (!openProfile) {
+      setOpenProfile(true);
+    } else {
+      setOpenProfile(false);
+    }
   };
 
   const rightMenuClickHandler = (e: any) => {
@@ -215,12 +218,12 @@ const Header: React.FC<any> = ({
   useEffect(() => {
     getUserNotifications(defaultValue, filterValue);
   }, [filterValue]);
-  const handleNotificationClose=()=>{
-    setOpenNotication(false)
-  }
-  const handleProfileClose=()=>{
-    setOpenProfile(false)
-  }
+  const handleNotificationClose = () => {
+    setOpenNotication(false);
+  };
+  const handleProfileClose = () => {
+    setOpenProfile(false);
+  };
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -261,6 +264,7 @@ const Header: React.FC<any> = ({
               handleBreadCrumbClick={
                 handleBreadCrumbClick ? handleBreadCrumbClick : () => {}
               }
+              showFirstElement={showFirstElement}
             />
           )}
         </HeaderLeftPart>
@@ -287,9 +291,8 @@ const Header: React.FC<any> = ({
           ) : (
             <></>
           )}
-         
+
           <HeaderProfileImageContainer>
-  
             {avatar ? (
               <ProfileImgIcon
                 onClick={onProfilePicClick}
@@ -307,9 +310,15 @@ const Header: React.FC<any> = ({
                 height={34}
               />
             )}
-             {openProfile?<CustomDrawer>
-              <UserProfile handleProfileClose={handleProfileClose} ></UserProfile>
-             </CustomDrawer>:''}
+            {openProfile ? (
+              <CustomDrawer>
+                <UserProfile
+                  handleProfileClose={handleProfileClose}
+                ></UserProfile>
+              </CustomDrawer>
+            ) : (
+              ""
+            )}
           </HeaderProfileImageContainer>
           <HeaderNotificationImageContainer>
             <Image
@@ -317,30 +326,27 @@ const Header: React.FC<any> = ({
               alt="Profile Image"
               onClick={() => {
                 if (openNotification) {
-                  setOpenNotication(false)
+                  setOpenNotication(false);
                 } else {
                   setOpenNotication(true);
                 }
               }}
             />
-            
-            {openNotification&& (
+
+            {openNotification && (
               <div>
-                 <CustomDrawer>
-             <Notifications  notifications={notifications}
+                <CustomDrawer>
+                  <Notifications
+                    notifications={notifications}
                     loadMoreData={loadMoreData}
-                    updateNotifications={updateNotifications} filterValue={filterValue} filterNotificationData={filterNotificationData} handleNotificationClose={handleNotificationClose}>
-                </Notifications> 
-             <div>
-                   
-             </div>
-             </CustomDrawer>
-           
-        
+                    updateNotifications={updateNotifications}
+                    filterValue={filterValue}
+                    filterNotificationData={filterNotificationData}
+                    handleNotificationClose={handleNotificationClose}
+                  ></Notifications>
+                  <div></div>
+                </CustomDrawer>
               </div>
-             
-      
-             
             )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
@@ -348,7 +354,6 @@ const Header: React.FC<any> = ({
           </HeaderMenuImageContainer>
         </HeaderRightPart>
 
-      
         {/* //! This is Open Profile Options */}
         {/* {loading && (
           <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
