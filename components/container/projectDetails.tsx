@@ -106,7 +106,7 @@ const ProjectDetails: React.FC = () => {
       });
   };
   return (
-    <div>
+    <div className="overflow-x-hidden">
       {projectData ? (
         <div>
           <div className="flex justify-between px-4 py-4">
@@ -173,10 +173,10 @@ const ProjectDetails: React.FC = () => {
                 </div>
               </div>
               <div className="px-4">
-                    <p className="text-[#101F4C]">{projectData?.description}</p>
                     <label className="  text-sm text-[#787878]">
                       Project Description
                     </label>
+                    <p className="text-[#101F4C]">{projectData?.description}</p>
                   </div>
             </div>
             <div className=" grid grid-rows-3">

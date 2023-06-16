@@ -75,6 +75,8 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [selectedRowData, setSelectedRowData] = useState({});
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
+  const [showPopUp, setshowPopUp] = useState(false);
+  const [emailId, setEmailId] = useState<any>();
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
     filterData: {},
@@ -183,7 +185,8 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
               src={RemoveIcon}
               alt=""
               onClick={() => {
-                deleteUser(rowData);
+                setshowPopUp(true);
+                setEmailId(rowData);
               }}
             />
 
@@ -492,22 +495,34 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           />
         </CustomDrawer>
       )}
-      {showAddUser ? (
+      {showAddUser || showPopUp ? (
         <PopupComponent
-          open={showAddUser}
+          open={showAddUser ? showAddUser : showPopUp}
           hideButtons
-          setShowPopUp={setShowAddUser}
-          modalTitle={"Add users to the project"}
+          setShowPopUp={showAddUser ? setShowAddUser : setshowPopUp}
+          modalTitle={showAddUser ? "Add users to the project" : "Delete user"}
           modalContent={
-            <AddUsersEmailPopup showEmailOverlay={showEmailOverlay} />
+            showAddUser ? (
+              <AddUsersEmailPopup showEmailOverlay={showEmailOverlay} />
+            ) : (
+              ""
+            )
           }
-          modalmessage={""}
-          primaryButtonLabel={"Yes"}
-          SecondaryButtonlabel={"No"}
-          callBackvalue={() => {}}
+          modalmessage={
+            showAddUser ? "" : "Are you sure you want to Deassign user? "
+          }
+          primaryButtonLabel={showAddUser ? "" : "Yes"}
+          SecondaryButtonlabel={showAddUser ? "" : "No"}
+          callBackvalue={
+            showAddUser
+              ? () => {}
+              : () => {
+                  deleteUser(emailId), setshowPopUp(false);
+                }
+          }
           width={"458px"}
-          showButton={false}
           backdropWidth={true}
+          showButton={showAddUser ? false : true}
         />
       ) : (
         <></>

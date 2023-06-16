@@ -172,6 +172,7 @@ export const ProjectCard = styled("div")((props: any) => ({
   fontFamily: "Open Sans",
   position: "relative",
   marginTop: props.active ? "-10px" : "",
+   
 })) as any;
 
 export const ProjectTopLeftBg = styled("div")((props: any) => ({
@@ -349,11 +350,14 @@ export const ProjectActionsContainer = styled("div")({
 export const ProjectActionItem = styled("div")({
   fontSize: "14px",
   color: "#101F4C",
-  padding: " 12px 0",
+  padding: " 12px 10px",
   cursor: "pointer",
   borderBottom: "1px solid #D9D9D9",
   "&: last-child": {
     borderBottom: "none",
+  },
+  "&:hover": {
+    background: '#EEEEEE' ,
   },
 });
 

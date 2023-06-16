@@ -45,6 +45,11 @@ export const SideMenuOptionImageContainer = styled("div")({
   alignItems: "center",
   width: "59px",
   height: "59px",
+  borderBottomRightRadius:'50%',
+  borderTopRightRadius:'50%',
+  '&:hover': {
+    background: '#EEEEEE'
+  },
 });
 
 export const TooltipText = styled(Tooltip)({});

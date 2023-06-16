@@ -8,8 +8,8 @@ import { ITasks } from "./Itask";
 
 export interface IGenNotifyViewerAction {
     type: "loadGenViewer" | "syncGenViewer" | "setViewMode" | "setViewType" | "setViewerContext" | "addViewLayer" | "removeViewLayer" | "setCompareMode" | 'closeGenViewer' | 'setStructure'| 'setBaseSnapshot' | 'setCompareSnapshot' |
-    "viewIssue" | "createIssue" | "createSuccessIssue" | "createFailIssue" | "selectIssue" | "showIssue" | "hideIssue" | "removedIssue" |
-    "viewTask" | "createTask" | "createSuccessTask" | "createFailTask" | "selectTask" | "showTask" | "hideTask" | "removedTask" |
+    "viewIssue" | "createIssue" | "createSuccessIssue" | "createFailIssue" | "selectIssue" | "showIssue" | "hideIssue" | "removedIssue" | 'setFilteredIssueList' |
+    "viewTask" | "createTask" | "createSuccessTask" | "createFailTask" | "selectTask" | "showTask" | "hideTask" | "removedTask" | 'setFilteredTaskList' |
     "viewHotspot" | "createHotspot" | "createSuccessHotspot" | "createFailHotspot" | "selectHotspot" | "showHotspot" | "hideHotspot" | "removedHotspot" |
     "setFullScreenMode"
     ,

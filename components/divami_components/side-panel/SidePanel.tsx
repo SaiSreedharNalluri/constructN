@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import dashboardProgress from "../../../public/divami_icons/dashboardProgress.svg";
 import dashboardProgressHighlight from "../../../public/divami_icons/dashboardProgressHighlight.svg";
 
@@ -14,6 +14,9 @@ import tasksHighlighted from "../../../public/divami_icons/tasksHighlighted.svg"
 import branchHighlighted from "../../../public/divami_icons/branchHighlightedIcon.svg";
 import userIcon from "../../../public/divami_icons/userIcon.svg";
 import userHighlighted from "../../../public/divami_icons/userHighlighted.svg";
+
+import chatOpen from "../../../public/divami_icons/chat_open.svg";
+import chatClose from "../../../public/divami_icons/chat_close.svg";
 
 // tasksHighlighted
 import branch from "../../../public/divami_icons/branch.svg";
@@ -39,10 +42,13 @@ import {
   TooltipText,
 } from "./SidePanelStyles";
 import { Tooltip } from "@mui/material";
+import { getCookie } from "cookies-next";
 interface IProps {
   onChangeData: () => void;
 }
 const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
+  let [eMail, setEMail] = useState<string>("");
+  const [isChatActive,setChatStatus] = React.useState(false);
   const [config, setConfig] = React.useState([
     {
       id: "dashboard",
@@ -90,8 +96,23 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       activeIcon: peopleHighlighted,
       toolTipMsg: "Settings",
     },
+    // {
+    //   id:"chatSupport",
+    //   icon:chatOpen,
+    //   isActive:false,
+    //   activeIcon:chatClose,
+    //   toolTipMsg:"Chat Support",
+    // },
   ]);
-
+  const [supportItemsConfig, setSupportItemsConfig] = React.useState([
+    {
+      id:"chatSupport",
+      icon:chatOpen,
+      isActive:false,
+      activeIcon:chatClose,
+      toolTipMsg:"Chat Support",
+    },
+  ]);
   // const handleClick = (id: any) => {
   //   setConfig((prevConfig) =>
   //     prevConfig.map((item) =>
@@ -108,6 +129,13 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   // const currentUrl = window.location.href;
   // const urlString = currentUrl.split("/")[5];
   // console.log(currentUrl);
+
+  useEffect(() => {
+    const userObj: any = getCookie("user");
+    let user = null;
+    if (userObj) user = JSON.parse(userObj);
+    if (user?.email) setEMail(user.email);
+  }, [router.isReady]);
 
   const leftClickHandler = (e: any) => {
     switch (e.currentTarget.id) {
@@ -142,11 +170,31 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       case "usersList":
         router.push(`/projects/${router.query.projectId as string}/usersList`);
         break;
+      case "chatSupport":
+        //add open Chat code
+        //isChatActive?closeChat():openChat();
+        openChat();
+        setChatStatus(!isChatActive);
+        break;
       default:
         router.push(`/projects/${router.query.projectId as string}/structure`);
     }
     setActive(router.pathname.split("/").pop());
   };
+  function openChat(): void {
+    {
+      eval(`globalThis.fcWidget.user.setEmail("${eMail}");`);
+    }
+    {
+      eval(`globalThis.fcWidget.open()`);
+    }
+  }
+  function closeChat(): void {
+    
+    {
+      eval(`globalThis.fcWidget.close()`);
+    }
+  }
 
   return (
     <SideMenuContainer data-testid="const-custom-sidepanel">
@@ -182,6 +230,49 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           </SideMenuOption>
         </SideMenuOptionContainer>
       ))}
+       {supportItemsConfig.map((item, index) => (
+        <SideMenuOptionContainer  className="fixed bottom-0" key={index}>
+          <SideMenuOption
+          // onClick={() =>
+          //   item.label === "settings" ? handleClick(item) : null
+          // }
+          // onClick={() => handleClick(item.id)}
+          >
+             <TooltipText title={item.toolTipMsg} placement="right">
+             {/* <SideMenuOptionSupportImageContainer> <StyledImage
+                    src={item.icon}
+                    alt={item.id}
+                    id={item.id}
+                    onClick={leftClickHandler}
+                  /></SideMenuOptionSupportImageContainer> */}
+             <SideMenuOptionImageContainer id="custom_fc_button" >
+                {isChatActive ? (
+                 
+                    <StyledImage
+                      // src={item.activeIcon}
+                      src={item.icon}
+                      width={40}
+                      height={40}
+                      alt={item.id}
+                      id={item.id}
+                      onClick={leftClickHandler}
+                    />
+                 
+                ) : (
+                  <StyledImage
+                    src={item.icon}
+                    width={40}
+                    height={40}
+                    alt={item.id}
+                    id={item.id}
+                    onClick={leftClickHandler}
+                  />
+                )}
+              </SideMenuOptionImageContainer>
+            </TooltipText> 
+          </SideMenuOption>
+        </SideMenuOptionContainer>
+      ))} 
     </SideMenuContainer>
   );
 };

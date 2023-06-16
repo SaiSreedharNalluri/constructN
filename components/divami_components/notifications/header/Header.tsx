@@ -23,11 +23,18 @@ const TitleContiner = styled(Box)({
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "16px",
+  
 });
 const CloseIcon = styled(Image)({
   cursor: "pointer",
-  width: "12px",
-  height: "12px",
+  width: "20px",
+  height: "20px",
+  padding:"4px",
+  borderRadius: "50%", 
+  "&:hover": {
+    background: '#EEEEEE'
+    
+  },
 });
 const Header = ({ closeNotifications }: any) => {
   const title =  "Notifications";

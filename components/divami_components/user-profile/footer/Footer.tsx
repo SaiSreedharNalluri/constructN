@@ -8,16 +8,15 @@ const ButtonsContainer = styled(Box)({
   justifyContent: "space-between",
   alignItems: "center",
 });
-const Footer = ({ formHandler, canBeDisabled, handleEditClose,save,formHandler2 }: any) => {
+const Footer = ({ formHandler, canBeDisabled, handleEditClose, save }: any) => {
   return (
     <ButtonsContainer>
       <CustomButton type="outlined" label="Cancel" formHandler={formHandler} />
       <CustomButton
-        type={canBeDisabled ? "disabled" : "contained"}
-        label={save==="Save"? "Save":""}
-        formHandler={formHandler2}
+        type="formik"
+        label={save === "Save" ? "Save" : ""}
+        formHandler={formHandler}
         setButtonClicked={handleEditClose}
-        disabledButton={canBeDisabled}
       />
     </ButtonsContainer>
   );
