@@ -75,6 +75,7 @@ const Index: React.FC<any> = () => {
   const [isGridView, setIsGridView] = useState(true);
   const [showAddUser, setShowAddUser] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [showArchiveProject, setShowArchiveProject] = useState(false);
   const [form, setForm] = useState({});
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [responseData, setResponseData] = useState<any>([]);
@@ -175,7 +176,9 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Project Details",
-      action: () => {},
+      action: (id?: string) => {
+        router.push(`/projects/${id}/settings`);
+      },
     },
     {
       label: "Add Users",
@@ -188,7 +191,9 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Archive Project",
-      action: () => {},
+      action: () => {
+        setShowArchiveProject(true);
+      },
     },
   ];
 
@@ -455,7 +460,7 @@ const Index: React.FC<any> = () => {
               />
             )}
             {openFilter && (
-              <CustomDrawer open>
+              <CustomDrawer open variant="persistent">
                 <ProjectListFilter
                   taskFilterState={taskFilterState}
                   onClose={() => {
@@ -503,22 +508,36 @@ const Index: React.FC<any> = () => {
         </Content>
       </div>
 
-      {showAddUser ? (
+      {showAddUser || showArchiveProject ? (
         <PopupComponent
-          open={showAddUser}
+          open={showAddUser ? showAddUser : showArchiveProject}
           hideButtons
-          setShowPopUp={setShowAddUser}
-          modalTitle={"Add users to the project"}
-          modalContent={
-            <AddUsersEmailPopup showEmailOverlay={showEmailOverlay} />
+          setShowPopUp={showAddUser ? setShowAddUser : setShowArchiveProject}
+          modalTitle={
+            showAddUser ? "Add users to the project" : "Project Archive"
           }
-          modalmessage={""}
-          primaryButtonLabel={"Yes"}
-          SecondaryButtonlabel={"No"}
-          callBackvalue={() => {}}
+          modalContent={
+            showAddUser ? (
+              <AddUsersEmailPopup showEmailOverlay={showEmailOverlay} />
+            ) : (
+              ""
+            )
+          }
+          modalmessage={
+            showAddUser ? "" : "Are you sure you want to deassign user?"
+          }
+          primaryButtonLabel={showAddUser ? "Yes" : "Yes"}
+          SecondaryButtonlabel={showAddUser ? "No" : "No"}
+          callBackvalue={
+            showAddUser
+              ? () => {}
+              : () => {
+                  setShowArchiveProject(false);
+                }
+          }
           width={"458px"}
-          showButton={false}
           backdropWidth={true}
+          showButton={showAddUser ? false : true}
         />
       ) : (
         <></>

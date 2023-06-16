@@ -14,6 +14,7 @@ const CustomDrawer = (props: any) => {
       <StyledDrawer
         anchor={"right"}
         open={true}
+        variant={props.variant?props.variant:"temporary"}
         data-testid="const-styled-drawer"
         // container={document.getElementById("test_full_screen")}
 

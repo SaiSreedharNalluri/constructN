@@ -46,6 +46,7 @@ import {
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import Notifications from "../notifications/Notifications";
 import UserProfile from "../user-profile/UserProfile";
+import PopupComponent from "../../popupComponent/PopupComponent";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -124,6 +125,8 @@ const Header: React.FC<any> = ({
   const onProfilePicClick = () => {
     if (!openProfile) {
       setOpenProfile(true);
+      setLoading(false);
+      setOpenNotication(false);
     } else {
       setOpenProfile(false);
     }
@@ -162,6 +165,7 @@ const Header: React.FC<any> = ({
 
   const [defaultValue, setDefaultValue] = useState(2);
   const [filterValue, setFilterValue] = useState("All");
+  const [showPopUp, setshowPopUp] = useState(false);
   useEffect(() => {
     if (router.isReady) {
       getUserNotifications();
@@ -224,6 +228,7 @@ const Header: React.FC<any> = ({
   const handleProfileClose = () => {
     setOpenProfile(false);
   };
+
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -311,10 +316,12 @@ const Header: React.FC<any> = ({
               />
             )}
             {openProfile ? (
-              <CustomDrawer>
-                <UserProfile
-                  handleProfileClose={handleProfileClose}
-                ></UserProfile>
+              <CustomDrawer paddingStyle={true} variant="persistent">
+                <div>
+                  <UserProfile
+                    handleProfileClose={handleProfileClose}
+                  ></UserProfile>
+                </div>
               </CustomDrawer>
             ) : (
               ""
@@ -329,30 +336,74 @@ const Header: React.FC<any> = ({
                   setOpenNotication(false);
                 } else {
                   setOpenNotication(true);
+                  setLoading(false);
+                  setOpenProfile(false);
                 }
               }}
             />
 
             {openNotification && (
               <div>
-                <CustomDrawer>
-                  <Notifications
-                    notifications={notifications}
-                    loadMoreData={loadMoreData}
-                    updateNotifications={updateNotifications}
-                    filterValue={filterValue}
-                    filterNotificationData={filterNotificationData}
-                    handleNotificationClose={handleNotificationClose}
-                  ></Notifications>
+                <CustomDrawer variant="persistent">
+                  <div>
+                    <Notifications
+                      notifications={notifications}
+                      loadMoreData={loadMoreData}
+                      updateNotifications={updateNotifications}
+                      filterValue={filterValue}
+                      filterNotificationData={filterNotificationData}
+                      handleNotificationClose={handleNotificationClose}
+                    ></Notifications>
+                  </div>
+
                   <div></div>
                 </CustomDrawer>
               </div>
             )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
-            <Image src={hamburgerMenu} alt="Menu" />
+            <Image
+              src={hamburgerMenu}
+              alt="Menu"
+              onClick={() => {
+                if (!loading) {
+                  setLoading(true);
+                  setOpenNotication(false);
+                  setOpenProfile(false);
+                } else {
+                  setLoading(false);
+                }
+              }}
+            />
           </HeaderMenuImageContainer>
         </HeaderRightPart>
+
+        {loading && (
+          <div className="absolute top-[64px]  shadow-md right-0 bg-gray-50   z-10  border mx-0.5">
+            <div
+              className="flex items-center justify-center cursor-pointer p-2  "
+              onClick={() => {
+                setshowPopUp(true);
+              }}
+            >
+              <p className="logout-button w-[150px] px-10 text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm">
+                Logout
+              </p>
+            </div>
+
+            {showPopUp && (
+              <PopupComponent
+                open={showPopUp}
+                setShowPopUp={setshowPopUp}
+                modalTitle={"Cancel"}
+                modalmessage={`Are you sure you want to logout? `}
+                primaryButtonLabel={"Yes"}
+                SecondaryButtonlabel={"No"}
+                callBackvalue={userLogOut}
+              />
+            )}
+          </div>
+        )}
 
         {/* //! This is Open Profile Options */}
         {/* {loading && (

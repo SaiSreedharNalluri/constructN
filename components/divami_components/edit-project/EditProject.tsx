@@ -27,16 +27,11 @@ const EditProject = ({
     }
   };
   const handleFormData = (data: any) => {
-    console.log("data123", data);
     setFormData(data);
   };
-  
-  
   return (
     <StyledDiv>
-      <Header
-        closeEditProject={handleEditClose}
-      />
+      <Header closeEditProject={handleEditClose} />
       <Body
         handleFormData={handleFormData}
         editData={projectData}

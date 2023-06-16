@@ -49,7 +49,7 @@ export const TaskBox = styled("div")({
   borderTopRightRadius: "4px",
   borderBottomRightRadius: "4px",
   // padding: '15px 20px 14px 20px',
-  padding: "15px 7px 14px 15px",
+  padding: "0px 7px 0px 7px",
   "& .MuiDrawer-paper": {
     height: "calc(100% - 60px)",
   },
@@ -62,18 +62,31 @@ export const IssuesSectionPlusImg = styled("div")({
   // height: '12px',
   // marginLeft: '8px',
   // margin: '0 6px'
+  borderRadius:"50%",
+  "&:hover": {
+    background: '#EEEEEE'
+  },
+  
 });
 
 export const IssuesSectionFileImg = styled("div")({
   // width: '12px',
   // height: '12px',
   // margin: '0 6px',
+  borderRadius:"50%",
+  "&:hover": {
+    background: '#EEEEEE'
+  },
 });
 
 export const IssuesSectionClipImg = styled("div")({
   // width: '12px',
   // height: '12px',
   // margin: '0 6px',
+   borderRadius:"50%",
+  "&:hover": {
+    background: '#EEEEEE'
+  },
 });
 
 export const SectionToolBar = styled("div")((props: any) => ({
@@ -131,7 +144,7 @@ export const IssueBox = styled("div")({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  padding: "15px 7px 14px 15px",
+  padding: "0px 7px 0px 7px",
   width: "167px",
 });
 
@@ -150,7 +163,7 @@ export const LayersWrapper = styled("div")({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: "15px 20px 14px 20px",
+  padding: "8px 20px 7px 20px",
 });
 
 export const IconsContainer = styled("div")({
@@ -204,7 +217,8 @@ export const CameraIcon = styled(Image)({
   width: "18px",
   height: "18px",
   cursor: "pointer",
-  margin: "0 7px",
+  margin: "7px 7px",
+ 
 });
 
 export const GroupIcon = styled(Image)({

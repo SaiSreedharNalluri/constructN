@@ -683,7 +683,7 @@ const SectionsListing = () => {
             </>
           )}
 
-          <FilterSectionIcon
+          {/* <FilterSectionIcon
             src={
               taskFilterState.numberOfFilters <= 0
                 ? UserFilterIcon
@@ -693,7 +693,7 @@ const SectionsListing = () => {
             data-testid="filter-icon"
             alt={"close icon"}
             onClick={() => setOpenFilter(!openFilter)}
-          />
+          /> */}
         </HeaderActions>
       </TableHeader>
 
@@ -751,7 +751,7 @@ const SectionsListing = () => {
       </SectionsListContainer>
 
       {openFilter && (
-        <CustomDrawer open>
+        <CustomDrawer  variant="persistent" open>
           <SectionFilter
             setTaskFilterState={setTaskFilterState}
             taskFilterState={taskFilterState}

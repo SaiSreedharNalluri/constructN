@@ -242,6 +242,13 @@ export const HeaderLabel = styled("div")({
 });
 export const CloseIcon = styled(Image)({
   cursor: "pointer",
+  width: "20px",
+  height: "20px",
+  padding:"4px",
+  borderRadius: "50%", 
+  "&:hover": {
+    background: '#EEEEEE'
+  },
 });
 
 export const MessageContainer = styled("div")({

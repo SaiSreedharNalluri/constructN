@@ -1370,7 +1370,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
         />
       )}
       {openCreateTask && (
-        <CustomDrawer open>
+        <CustomDrawer variant="temporary" open>
           <CreateTask
             handleCreateTask={handleCreateTask}
             setOpenCreateTask={setOpenCreateTask}
