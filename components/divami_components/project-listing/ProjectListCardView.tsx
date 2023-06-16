@@ -218,6 +218,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
 
                 minHeight: "432px",
               }}
+              key={index}
             >
               <Card each={each} />
             </div>
