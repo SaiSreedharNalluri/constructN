@@ -246,7 +246,12 @@ const SectionsListing = () => {
               };
             }
           );
-          massageTree(removeGrandParent, response?.data?.result?.id);
+
+          massageTree(
+            removeGrandParent,
+            response?.data?.result?.id,
+            response?.data?.result
+          );
 
           // setShowLoader(false);
           setDataLoaded(true);
@@ -261,7 +266,11 @@ const SectionsListing = () => {
     },
   };
 
-  function massageTree(responseArr: any, grandParent: string) {
+  function massageTree(
+    responseArr: any,
+    grandParent: string,
+    responseObj: any
+  ) {
     let resultArr: any = [];
     responseArr.map((item: any, index: number) => {
       if (item.parent == null) {
@@ -283,9 +292,28 @@ const SectionsListing = () => {
       }
     });
 
-    setFilterTableData([...resultArr]);
-    setTableData([...resultArr]);
+    let finalTableData = [
+      { ...responseObj, parent: null },
+      ...resultArr.map((item: any) => {
+        if (item.parentId == null) {
+          // here add parent adani
+          return { ...item, parentId: responseObj["_id"] };
+        } else {
+          return item;
+        }
+      }),
+    ];
+
+    setFilterTableData([...finalTableData]);
+    setTableData([...finalTableData]);
+
+    // test();
   }
+
+  React.useEffect(() => {
+    expandFirstRow();
+    //  expandAllRows();
+  }, [tableData]);
 
   function helperFunction(childArr: any, resultArr: any) {
     childArr.map((each: any, index: number) => {
@@ -435,6 +463,14 @@ const SectionsListing = () => {
         ...prevState,
         data: tableData,
       }));
+    }
+  };
+
+  const expandFirstRow = () => {
+    if (myTableRef.current) {
+      const tableData = myTableRef.current.dataManager.data;
+
+      tableData[0].tableData.isTreeExpanded = true;
     }
   };
 

@@ -139,7 +139,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       case "sections":
         router.push(`/projects/${router.query.projectId as string}/sections`);
         break;
-
       case "usersList":
         router.push(`/projects/${router.query.projectId as string}/usersList`);
         break;
