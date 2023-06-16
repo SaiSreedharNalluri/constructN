@@ -25,16 +25,27 @@ import {
   ProjectTopRightBg,
   ProjectActionItem,
   ProjectActionsContainer,
+  ShowErrorContainer,
+  CenteredErrorImage,
+  NoResultText,
 } from "./ProjectListingStyles";
 import Image from "next/image";
 import capture360Image from "../../../public/divami_icons/capture360Image.svg";
 import captureLidarIcon from "../../../public/divami_icons/captureLidarIcon.svg";
 import phoneImage from "../../../public/divami_icons/phoneImage.svg";
 import videoWalk from "../../../public/divami_icons/videoWalk.svg";
-import droneImage from "../../../public/divami_icons/droneImage.svg";
+// import droneImage from "../../../public/divami_icons/droneImage.svg";
+import DroneImage from "../../../public/divami_icons/DroneImage.svg";
+import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import ReactCardFlip from "react-card-flip";
 
+import moment from "moment";
+import CustomLoader from "../custom_loader/CustomLoader";
+
 export const ProjectListCardView = ({ projects, projectActions }: any) => {
+  const router = useRouter();
+  const [showActions, setShowActions] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
   const [projectsData, setProjectsData] = useState(
     projects?.length
       ? projects.map((each: any, index: number) => {
@@ -49,6 +60,18 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
   useEffect(() => {
     setProjectsData(projects);
   }, [projects]);
+
+  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
+    let truncatedText = text;
+
+    if (text.length > maxLength) {
+      const prefix = text.substring(0, maxLength - suffixLength);
+      const suffix = text.substring(text.length - suffixLength);
+      truncatedText = prefix + "..." + suffix;
+    }
+
+    return truncatedText;
+  };
 
   const Card = ({ each }: any) => {
     const [isFlipped, setIsFlipped] = useState(true);
@@ -77,6 +100,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
           />
 
           <ListHorizontalDivider active />
+
           <ProjectActionsContainer>
             {projectActions.map((item: any, index: number) => {
               return (
@@ -114,7 +138,13 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
           />
 
           <ListHorizontalDivider />
-          <ProjectNameTitle>{each.projectName}</ProjectNameTitle>
+          <ProjectNameTitle>
+            <TruncatedString
+              text={each.projectName}
+              maxLength={20}
+              suffixLength={7}
+            />
+          </ProjectNameTitle>
           <UpdatedAtContainer>
             <UsersCountContainer>
               <Image src={userCount} alt="" width={14} height={15} />
@@ -165,7 +195,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
             </CaptureCount>
           </CaptureImageContainer>
           <CaptureImageContainer>
-            <CaptureImageIcon src={droneImage} alt=""></CaptureImageIcon>
+            <CaptureImageIcon src={DroneImage} alt=""></CaptureImageIcon>
             <CaptureName>Drone - </CaptureName>
             <CaptureCount>
               {each.captureDroneCount?.length > 1
@@ -179,9 +209,27 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
   };
   return (
     <ProjectCardsContainer>
-      {projectsData.map((each: any, index: number) => {
-        return <Card each={each} />;
-      })}
+      {projectsData.length ? (
+        projectsData.map((each: any, index: number) => {
+          return (
+            <div
+              style={{
+                width: "336px",
+
+                minHeight: "432px",
+              }}
+            >
+              <Card each={each} />
+            </div>
+          );
+        })
+      ) : (
+        <ShowErrorContainer>
+          <CenteredErrorImage src={projectHierIcon} alt="" />
+
+          <NoResultText>No Result Found</NoResultText>
+        </ShowErrorContainer>
+      )}
     </ProjectCardsContainer>
   );
 };

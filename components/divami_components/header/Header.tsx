@@ -234,7 +234,7 @@ const Header: React.FC<any> = ({
               width: fromUsersList ? "56px" : "59px",
               // height: "10px",
               // width: "59px",
-              background: "#FFFFFF",
+              // background: "#FFFFFF",
               position: "absolute",
               top: "58px",
               zIndex: "9999999",

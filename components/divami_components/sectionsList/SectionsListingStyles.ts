@@ -108,6 +108,13 @@ export const HeaderImage = styled(Image)({
 
 export const TableWrapper = styled("div")({
   marginBottom: "50px",
+  // border:"8px solid blue"
+   "& .MuiTableRow-root": {
+    borderBottom: "none",
+   
+   
+}
+
 });
 
 export const FilterProgressContainer = styled("div")({
@@ -116,7 +123,18 @@ export const FilterProgressContainer = styled("div")({
   width: "100%",
 });
 
-export const StyledTable = styled(MaterialTable)({});
+export const StyledTable = styled(MaterialTable)({
+ "& .MuiTableRow-root": {
+    borderBottom: "none",
+   
+   
+  },
+  
+  "& td": {
+    borderBottom: "none",
+    border:"2px solid red"
+    },
+});
 
 export const customDropdown = {
   backgroundColor: "red !important",

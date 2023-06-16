@@ -56,6 +56,8 @@ import { AddUsersEmailOverlay } from "../add_users/AddUsersEmailOverlay";
 import { AddUsersEmailPopup } from "../add_users/AddUsersEmailPopup";
 import Edit from "../../../public/divami_icons/edit.svg";
 import { EditRoleOverlay } from "./EditRoleOverlay";
+import LocalSearch from "../local_component/LocalSearch";
+import CustomLoader from "../custom_loader/CustomLoader";
 
 export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [tableData, setTableData] = useState<any>([]);
@@ -71,6 +73,8 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [isFilterApplied, setIsFilterApplied] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState({});
+  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
+
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
     filterData: {},
@@ -271,6 +275,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
               if (!rolesArr.includes(item.role)) rolesArr.push(item?.role);
             });
             setRoles(rolesArr);
+            setDataLoaded(true);
           }
         }
       );
@@ -282,6 +287,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           };
         });
         setRolesArr(rolesData);
+        // setDataLoaded(true);
       });
     }
   }, [router.isReady, router.query.projectId]);
@@ -319,6 +325,11 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     setShowAddUser(false);
     setOpenDrawer(true);
     setForm(formState);
+  };
+  const localizationOptions = {
+    body: {
+      emptyDataSourceMessage: <LocalSearch />,
+    },
   };
 
   return (
@@ -405,61 +416,65 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
 
       <ThemeProvider theme={defaultMaterialTheme}>
         <TableWrapper>
-          <StyledTable
-            // components={{
-            //   Toolbar: (props) => (
-            //     <MTableToolbar {...props} style={{ width: "100%" }} sx={{}} />
-            //   ),
-            // }}
-            // icons={{
-            //   SortArrow: forwardRef((props, ref) => (
-            //     <ArrowDropUpIcon {...props} ref={ref} />
-            //   )),
-            // }}
-            components={{
-              Container: (props: any) => <Paper {...props} elevation={0} />,
-            }}
-            columns={columns}
-            data={searchTableData ? searchTableData : []}
-            title={""}
-            icons={{
-              SortArrow: forwardRef((props, ref) => {
-                return sortObj ? (
-                  <SortIconStyled {...props} ref={ref} />
-                ) : (
-                  <SortDescIcon
-                    {...props}
-                    ref={ref}
-                    // onClick={() => {
-                    //   setSortObj(!sortObj);
-                    // }}
-                  />
-                );
-              }),
-            }}
-            options={{
-              search: false,
-              paging: false,
-              exportButton: false,
-              exportFileName: "tableData",
-              selection: false,
-              showTitle: true,
-              toolbar: false,
-              maxBodyHeight: "80vh",
-              thirdSortClick: false,
-              rowStyle: (rowData: any) => ({
-                fontFamily: "Open Sans",
-                fontStyle: "normal",
-                fontWeight: "400",
-                fontSize: "14px",
-                color: "#101F4C",
-              }),
-              headerStyle: {
-                padding: "6px 16px",
-                fontFamily: "Open Sans",
-              },
-            }}
-          />
+          {dataLoaded ? (
+            <StyledTable
+              // components={{
+              //   Toolbar: (props) => (
+              //     <MTableToolbar {...props} style={{ width: "100%" }} sx={{}} />
+              //   ),
+              // }}
+              // icons={{
+              //   SortArrow: forwardRef((props, ref) => (
+              //     <ArrowDropUpIcon {...props} ref={ref} />
+              //   )),
+              // }}
+              components={{
+                Container: (props: any) => <Paper {...props} elevation={0} />,
+              }}
+              columns={columns}
+              data={searchTableData ? searchTableData : []}
+              title={""}
+              icons={{
+                SortArrow: forwardRef((props, ref) => {
+                  return sortObj ? (
+                    <SortIconStyled {...props} ref={ref} />
+                  ) : (
+                    <SortDescIcon
+                      {...props}
+                      ref={ref}
+                      // onClick={() => {
+                      //   setSortObj(!sortObj);
+                      // }}
+                    />
+                  );
+                }),
+              }}
+              options={{
+                search: false,
+                paging: false,
+                exportButton: false,
+                exportFileName: "tableData",
+                selection: false,
+                showTitle: true,
+                toolbar: false,
+                maxBodyHeight: "80vh",
+                thirdSortClick: false,
+                rowStyle: (rowData: any) => ({
+                  fontFamily: "Open Sans",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  fontSize: "14px",
+                  color: "#101F4C",
+                }),
+                headerStyle: {
+                  padding: "6px 16px",
+                  fontFamily: "Open Sans",
+                },
+              }}
+            />
+          ) : (
+            <CustomLoader />
+          )}
         </TableWrapper>
       </ThemeProvider>
       {openFilter && (
@@ -492,6 +507,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           callBackvalue={() => {}}
           width={"458px"}
           showButton={false}
+          backdropWidth={true}
         />
       ) : (
         <></>

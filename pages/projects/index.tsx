@@ -61,6 +61,7 @@ import {
 } from "../../services/projectConfigApi";
 import { toast } from "react-toastify";
 import Moment from "moment";
+import CustomLoader from "../../components/divami_components/custom_loader/CustomLoader";
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -93,8 +94,10 @@ const Index: React.FC<any> = () => {
   const [showPopUp, setshowPopUp] = useState(false);
 
   const [taskFilterState, setTaskFilterState] = useState({});
-
+  const [showButton, setShowbutton] = useState(false);
   const [projectId, setProjectId] = useState<any>("");
+  const [showLoading, setShowLoading] = useState(true);
+
   const sortMenuOptions = [
     {
       label: "Sort by User",
@@ -257,6 +260,7 @@ const Index: React.FC<any> = () => {
 
             setProjects(projectsData);
           }
+          setShowLoading(false);
         })
         .catch((error) => {});
       getUserRoles().then((res: any) => {
@@ -317,7 +321,7 @@ const Index: React.FC<any> = () => {
         });
         toast.success("Tag list updated successfully");
       }
-
+      setShowbutton(false);
       // setSubmittedValues(formValues);
     } catch (error) {
       console.log("Error:", error);
@@ -331,164 +335,174 @@ const Index: React.FC<any> = () => {
           <Header breadCrumbData={breadCrumbsData} hideSidePanel />
         )}
       </div>
-      <Content>
-        <ProjectsListContainer>
-          <ProjectsHeader>
-            <HeaderLabel>Project(s) </HeaderLabel>
-            <HeaderActions>
-              {isSearching ? (
-                <SearchAreaContainer marginRight>
-                  <CustomSearchField
-                    placeholder="Search"
-                    variant="outlined"
-                    value={searchTerm}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      setSearchTableData(
-                        projects.filter((each: any) =>
-                          each?.projectName
-                            ?.toLowerCase()
-                            ?.includes(e.target?.value?.toLowerCase())
-                        )
-                      );
-                      setIsFilterApplied(false);
-                      setTaskFilterState({});
-                    }}
-                    InputLabelProps={{ shrink: false }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Image src={SearchBoxIcon} alt="" />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="start">
-                          <CloseIcon
-                            onClick={() => {
-                              handleSearchWindow();
-                            }}
-                            src={CrossIcon}
-                            alt={"close icon"}
-                            data-testid="search-close"
-                          />
-                        </InputAdornment>
-                      ),
+      <div className={`${isGridView ? "grid-background" : ""}`}>
+        <Content>
+          <ProjectsListContainer>
+            <ProjectsHeader>
+              <HeaderLabel>Project(s) </HeaderLabel>
+              <HeaderActions>
+                {isSearching ? (
+                  <SearchAreaContainer marginRight>
+                    <CustomSearchField
+                      placeholder="Search"
+                      variant="outlined"
+                      value={searchTerm}
+                      onChange={(e) => {
+                        setSearchTerm(e.target.value);
+                        setSearchTableData(
+                          projects.filter((each: any) =>
+                            each?.projectName
+                              ?.toLowerCase()
+                              ?.includes(e.target?.value?.toLowerCase())
+                          )
+                        );
+                        setIsFilterApplied(false);
+                        setTaskFilterState({});
+                      }}
+                      InputLabelProps={{ shrink: false }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Image src={SearchBoxIcon} alt="" />
+                          </InputAdornment>
+                        ),
+                        endAdornment: (
+                          <InputAdornment position="start">
+                            <CloseIcon
+                              onClick={() => {
+                                handleSearchWindow();
+                              }}
+                              src={CrossIcon}
+                              alt={"close icon"}
+                              data-testid="search-close"
+                            />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </SearchAreaContainer>
+                ) : (
+                  <HeaderImage
+                    src={searchIcon}
+                    alt=""
+                    width={24}
+                    height={24}
+                    onClick={() => {
+                      setIsSearching(true);
                     }}
                   />
-                </SearchAreaContainer>
-              ) : (
+                )}
+                {isGridView ? (
+                  <CustomMenu
+                    width={24}
+                    height={24}
+                    right="20px"
+                    imageSrc={sortIcon}
+                    menuOptions={sortMenuOptions}
+                  />
+                ) : (
+                  <></>
+                )}
                 <HeaderImage
-                  src={searchIcon}
+                  src={UserFilterIcon}
                   alt=""
                   width={24}
                   height={24}
                   onClick={() => {
-                    setIsSearching(true);
+                    setOpenFilter(true);
                   }}
                 />
-              )}
-              {isGridView ? (
-                <CustomMenu
-                  width={24}
-                  height={24}
-                  right="20px"
-                  imageSrc={sortIcon}
-                  menuOptions={sortMenuOptions}
-                />
-              ) : (
-                <></>
-              )}
-              <HeaderImage
-                src={UserFilterIcon}
-                alt=""
-                width={24}
-                height={24}
-                onClick={() => {
-                  setOpenFilter(true);
-                }}
+                {isFilterApplied ? <FilterIndicator /> : <></>}
+                <ToggleButtonContainer>
+                  <GridViewButton
+                    onClick={() => {
+                      setIsGridView(true);
+                    }}
+                    toggleStatus={isGridView}
+                    data-testid="design-button"
+                  >
+                    <GridButton
+                      src={isGridView ? selectGridViewIcon : unselectGridIcon}
+                      alt=""
+                    />
+                  </GridViewButton>
+                  <GridViewButtonRight
+                    onClick={() => {
+                      setIsGridView(false);
+                    }}
+                    toggleStatus={!isGridView}
+                    data-testid="design-button"
+                  >
+                    <GridButton
+                      src={isGridView ? listViewIcon : selectListIcon}
+                      alt=""
+                    />
+                  </GridViewButtonRight>
+                </ToggleButtonContainer>
+              </HeaderActions>
+            </ProjectsHeader>
+            {showLoading ? (
+              <CustomLoader />
+            ) : isGridView ? (
+              <ProjectListCardView
+                projects={searchTableData}
+                projectActions={projectActions}
               />
-              {isFilterApplied ? <FilterIndicator /> : <></>}
-              <ToggleButtonContainer>
-                <GridViewButton
-                  onClick={() => {
-                    setIsGridView(true);
+            ) : (
+              <ProjectListFlatView
+                projects={searchTableData}
+                projectActions={projectActions}
+              />
+            )}
+            {openFilter && (
+              <CustomDrawer open>
+                <ProjectListFilter
+                  taskFilterState={taskFilterState}
+                  onClose={() => {
+                    setOpenFilter(false);
                   }}
-                  toggleStatus={isGridView}
-                  data-testid="design-button"
-                >
-                  <GridButton
-                    src={isGridView ? selectGridViewIcon : unselectGridIcon}
-                    alt=""
+                  handleOnApplyFilter={(formState: any) =>
+                    handleFilter(formState)
+                  }
+                  setTaskFilterState={setTaskFilterState}
+                  setIsFilterApplied={setIsFilterApplied}
+                  setSearchTerm={setSearchTerm}
+                />
+              </CustomDrawer>
+            )}
+            {showPopUp && (
+              <PopupComponent
+                open={showPopUp}
+                width={"585px"}
+                // height={"360px"}
+                paddingStyle={true}
+                setShowPopUp={setshowPopUp}
+                modalTitle={"Project Configuration"}
+                modalContent={
+                  <ProjectConfig
+                    projectId={projectId}
+                    selectedOption={selectedOption}
+                    setSelectedOption={setSelectedOption}
+                    formValues={formValues}
+                    setFormValues={setFormValues}
+                    setShowbutton={setShowbutton}
                   />
-                </GridViewButton>
-                <GridViewButtonRight
-                  onClick={() => {
-                    setIsGridView(false);
-                  }}
-                  toggleStatus={!isGridView}
-                  data-testid="design-button"
-                >
-                  <GridButton
-                    src={isGridView ? listViewIcon : selectListIcon}
-                    alt=""
-                  />
-                </GridViewButtonRight>
-              </ToggleButtonContainer>
-            </HeaderActions>
-          </ProjectsHeader>
-          {isGridView ? (
-            <ProjectListCardView
-              projects={searchTableData}
-              projectActions={projectActions}
-            />
-          ) : (
-            <ProjectListFlatView
-              projects={searchTableData}
-              projectActions={projectActions}
-            />
-          )}
-          {openFilter && (
-            <CustomDrawer open>
-              <ProjectListFilter
-                taskFilterState={taskFilterState}
-                onClose={() => {
-                  setOpenFilter(false);
-                }}
-                handleOnApplyFilter={(formState: any) =>
-                  handleFilter(formState)
                 }
-                setTaskFilterState={setTaskFilterState}
-                setIsFilterApplied={setIsFilterApplied}
-                setSearchTerm={setSearchTerm}
+                // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
+                modalmessage={`Are you sure you want to delete this Issue ?`}
+                primaryButtonLabel={"Update"}
+                SecondaryButtonlabel={"Cancel"}
+                callBackvalue={handleSubmit}
+                projectId={projectId}
+                showButton={showButton}
+                setShowbutton={setShowbutton}
+                setSelectedOption={setSelectedOption}
               />
-            </CustomDrawer>
-          )}
-          {showPopUp && (
-            <PopupComponent
-              open={showPopUp}
-              width={"585px"}
-              // height={"360px"}
-              paddingStyle={true}
-              setShowPopUp={setshowPopUp}
-              modalTitle={"Project Configuration"}
-              modalContent={
-                <ProjectConfig
-                  projectId={projectId}
-                  selectedOption={selectedOption}
-                  setSelectedOption={setSelectedOption}
-                  formValues={formValues}
-                  setFormValues={setFormValues}
-                />
-              }
-              // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
-              modalmessage={`Are you sure you want to delete this Issue ?`}
-              primaryButtonLabel={"Update"}
-              SecondaryButtonlabel={"Cancel"}
-              callBackvalue={handleSubmit}
-            />
-          )}
-        </ProjectsListContainer>
-      </Content>
+            )}
+          </ProjectsListContainer>
+        </Content>
+      </div>
+
       {showAddUser ? (
         <PopupComponent
           open={showAddUser}
@@ -504,6 +518,7 @@ const Index: React.FC<any> = () => {
           callBackvalue={() => {}}
           width={"458px"}
           showButton={false}
+          backdropWidth={true}
         />
       ) : (
         <></>
