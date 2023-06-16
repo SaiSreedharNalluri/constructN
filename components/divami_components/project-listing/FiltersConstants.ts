@@ -53,11 +53,6 @@ export const projectConfig = [
             selected: false,
           },
           {
-            label: "Greater Than",
-            value: "greaterThan",
-            selected: false,
-          },
-          {
             label: "Less Than",
             value: "lessThan",
             selected: false,
