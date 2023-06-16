@@ -178,45 +178,6 @@ const ProjectConfig = ({
     setFormValues(updatedFormValues);
   };
 
-  const handleSubmit = async () => {
-    try {
-      // Call the appropriate API based on the selected option and pass the updated values
-      if (selectedOption === "issuePriority") {
-        // await pushIssuePriorityList(projectId, formValues.priority);
-        await updateIssuePriorityList(projectId, {
-          issuePriorityList: [...formValues.priority],
-        });
-      } else if (selectedOption === "taskPriority") {
-        await updateTaskPriorityList(projectId, {
-          taskPriorityList: [...formValues.priority],
-        });
-      } else if (selectedOption === "issueStatus") {
-        await updateIssueStatusList(projectId, {
-          issueStatusList: [...formValues.priority],
-        });
-      } else if (selectedOption === "taskStatus") {
-        await updateTaskStatusList(projectId, {
-          taskStatusList: [...formValues.priority],
-        });
-      } else if (selectedOption === "tag") {
-        await updateTagList(projectId, {
-          tagList: [...formValues.priority],
-        });
-      }
-      // else if (selectedOption === "issueStatus") {
-      //    await updateIssueStatus(projectId, formValues.priority);
-      //  } else if (selectedOption === "taskStatus") {
-      //    await updateTaskStatus(projectId, formValues.priority);
-      //  } else if (selectedOption === "tag") {
-      //    await updateTags(projectId, formValues.priority);
-      //  }
-
-      // Update the submitted values state with the current form values
-      setSubmittedValues(formValues);
-    } catch (error) {
-      console.log("Error:", error);
-    }
-  };
   return (
     <div>
       <ConfigurationBox>

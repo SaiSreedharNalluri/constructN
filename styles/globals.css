@@ -599,8 +599,16 @@ td {
   margin-top: none;
 }
 
-.grid-background{
- background-image: url('../public/divami_icons/gridBackgroundImage.svg'); 
-  height:100vh;
+.grid-background {
+  background-image: url("../public/divami_icons/gridBackgroundImage.svg");
+  height: 100vh;
   width: 100%;
+}
+
+.user-card:hover {
+  transform: scaleX(1.12);
+}
+
+.css-1ex1afd-MuiTableCell-root {
+  /* border-bottom: none; */
 }

@@ -52,6 +52,8 @@ import { SortDescIcon } from "../project-listing/SortDescIcon";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { AddUsersEmailOverlay } from "../add_users/AddUsersEmailOverlay";
 import { AddUsersEmailPopup } from "../add_users/AddUsersEmailPopup";
+import LocalSearch from "../local_component/LocalSearch";
+import CustomLoader from "../custom_loader/CustomLoader";
 
 export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [tableData, setTableData] = useState<any>([]);
@@ -64,6 +66,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [form, setForm] = useState({});
   const [searchTableData, setSearchTableData] = useState([]);
   const [rolesArr, setRolesArr] = useState<string[] | []>([]);
+  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
@@ -241,6 +244,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
               if (!rolesArr.includes(item.role)) rolesArr.push(item?.role);
             });
             setRoles(rolesArr);
+            setDataLoaded(true);
           }
         }
       );
@@ -252,6 +256,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           };
         });
         setRolesArr(rolesData);
+        // setDataLoaded(true);
       });
     }
   }, [router.isReady, router.query.projectId]);
@@ -295,6 +300,11 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     setShowAddUser(false);
     setOpenDrawer(true);
     setForm(formState);
+  };
+  const localizationOptions = {
+    body: {
+      emptyDataSourceMessage: <LocalSearch />,
+    },
   };
 
   return (
@@ -368,72 +378,67 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
 
       <ThemeProvider theme={defaultMaterialTheme}>
         <TableWrapper>
-          <StyledTable
-            // components={{
-            //   Toolbar: (props) => (
-            //     <MTableToolbar {...props} style={{ width: "100%" }} sx={{}} />
-            //   ),
-            // }}
-            // icons={{
-            //   SortArrow: forwardRef((props, ref) => (
-            //     <ArrowDropUpIcon {...props} ref={ref} />
-            //   )),
-            // }}
-            components={{
-              Container: (props: any) => <Paper {...props} elevation={0} />,
-              Row: (props: any) => {
-                return (
-                  <MTableBodyRow
-                    {...props}
-                    onMouseEnter={(e: any) => handleRowHover(e, props)}
-                    onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
-                  />
-                );
-              },
-            }}
-            columns={columns}
-            data={searchTableData ? searchTableData : []}
-            title={""}
-            icons={{
-              SortArrow: forwardRef((props, ref) => {
-                return sortObj ? (
-                  <SortIconStyled {...props} ref={ref} />
-                ) : (
-                  <SortDescIcon
-                    {...props}
-                    ref={ref}
-                    // onClick={() => {
-                    //   setSortObj(!sortObj);
-                    // }}
-                  />
-                );
-              }),
-            }}
-            options={{
-              search: false,
-              paging: false,
-              exportButton: false,
-              exportFileName: "tableData",
-              selection: false,
-              showTitle: true,
-              toolbar: false,
-              maxBodyHeight: "80vh",
-              thirdSortClick: false,
-              rowStyle: (rowData: any) => ({
-                fontFamily: "Open Sans",
-                fontStyle: "normal",
-                fontWeight: "400",
-                fontSize: "14px",
-                color: "#101F4C",
-                backgroundColor:
-                  rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
-              }),
-              headerStyle: {
-                padding: "6px 16px",
-                fontFamily: "Open Sans",
-              },
-            }}
-          />
+          {dataLoaded ? (
+            <StyledTable
+              components={{
+                Container: (props: any) => <Paper {...props} elevation={0} />,
+                Row: (props: any) => {
+                  return (
+                    <MTableBodyRow
+                      {...props}
+                      onMouseEnter={(e: any) => handleRowHover(e, props)}
+                      onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
+                    />
+                  );
+                },
+              }}
+              localization={localizationOptions}
+              columns={columns}
+              data={searchTableData ? searchTableData : []}
+              title={""}
+              icons={{
+                SortArrow: forwardRef((props, ref) => {
+                  return sortObj ? (
+                    <SortIconStyled {...props} ref={ref} />
+                  ) : (
+                    <SortDescIcon
+                      {...props}
+                      ref={ref}
+                      // onClick={() => {
+                      //   setSortObj(!sortObj);
+                      // }}
+                    />
+                  );
+                }),
+              }}
+              options={{
+                search: false,
+                paging: false,
+                exportButton: false,
+                exportFileName: "tableData",
+                selection: false,
+                showTitle: true,
+                toolbar: false,
+                maxBodyHeight: "80vh",
+                thirdSortClick: false,
+                rowStyle: (rowData: any) => ({
+                  fontFamily: "Open Sans",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  fontSize: "14px",
+                  color: "#101F4C",
+                  backgroundColor:
+                    rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
+                }),
+                headerStyle: {
+                  padding: "6px 16px",
+                  fontFamily: "Open Sans",
+                },
+              }}
+            />
+          ) : (
+            <CustomLoader />
+          )}
         </TableWrapper>
       </ThemeProvider>
       {openFilter && (
