@@ -16,7 +16,9 @@ export const HeaderLeftPart = styled('div')({
 });
 
 export const HeaderLogoImageContainer = styled('div')({
-  padding: '0px 0px 0px 20px',
+  padding: '0px 0px 0px 15px',
+  
+  width:'175px',
   cursor: 'pointer',
 });
 
