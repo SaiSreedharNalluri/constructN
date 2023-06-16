@@ -87,3 +87,9 @@ export const HeaderNotificationImageContainer = styled('div')({
   marginRight: '15px',
   cursor: 'pointer',
 });
+
+
+export const ProjectSelectorContainer= styled('div')({
+  marginRight: '15px',
+  cursor: 'pointer',
+});

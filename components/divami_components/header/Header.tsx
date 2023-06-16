@@ -32,6 +32,7 @@ import {
   ProfileImgIcon,
   ProfileImgSecIcon,
   ProfileImgIconDefault,
+  ProjectSelectorContainer,
 } from "./HeaderStyles";
 import { ITools } from "../../../models/ITools";
 import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
@@ -64,6 +65,7 @@ const Header: React.FC<any> = ({
   hideSidePanel,
   fromUsersList,
 }) => {
+  console.log("breadCrumbData11", handleBreadCrumbClick);
   const router = useRouter();
   const headerRef: any = React.useRef();
   let [name, setName] = useState<string>("");
@@ -90,7 +92,10 @@ const Header: React.FC<any> = ({
 
   // const [config, setConfig] = useState<any>([]);
   const [projects, setProjects] = useState<any>([]);
+  const [currentProject, setCurrentProject] = useState("");
+  const [projectId, setProjectId] = useState<any>("");
 
+  console.log(projectId, "fdssf", projects);
   useEffect(() => {
     const userObj: any = getCookie("user");
     let user = null;
@@ -104,6 +109,10 @@ const Header: React.FC<any> = ({
     }
     if (user?.avatar) {
       setAvatar(user.avatar);
+    }
+    if (router.isReady && router.query.projectId) {
+      // console.log("getrouter", router);
+      setProjectId(router.query.projectId);
     }
     getUserNotifications();
   }, [router.query.projectId]);
@@ -122,25 +131,6 @@ const Header: React.FC<any> = ({
     // router.push("/login");
     router.push("/login");
   };
-  useEffect(() => {
-    console.log("what");
-    console.log("projectoccurs", projects);
-  }, []);
-  useEffect(() => {
-    if (router.isReady) {
-      getProjectsList()
-        .then(async (response) => {
-          if (response?.data?.success === true) {
-            setProjects(response.data.result);
-
-            // setConfig([response.data.result]);
-
-            console.log("headerResponse", response);
-          }
-        })
-        .catch((error) => {});
-    }
-  }, [router?.isReady]);
 
   const goToProjectsList = () => {
     router.push("/projects");
@@ -188,9 +178,30 @@ const Header: React.FC<any> = ({
   const [defaultValue, setDefaultValue] = useState(2);
   const [filterValue, setFilterValue] = useState("All");
   useEffect(() => {
-    if (router.isReady) {
-      getUserNotifications();
-    }
+    getUserNotifications();
+    getProjectsList()
+      .then(async (response) => {
+        if (response?.data?.success === true) {
+          // setProjects(response.data.result);
+          const rolesData = response.data.result.map((each: any) => {
+            console.log("datarole", each);
+            return {
+              label: each.name,
+              value: each._id,
+              selected: false,
+            };
+          });
+
+          // setConfig([response.data.result]);
+
+          setProjects(rolesData);
+
+          // setCurrentProject()
+
+          console.log("headerResponse", response);
+        }
+      })
+      .catch((error) => {});
   }, []);
   const getUserNotifications = (
     condition = defaultValue,
@@ -293,25 +304,45 @@ const Header: React.FC<any> = ({
           )}
         </HeaderLeftPart>
         <HeaderRightPart>
-          <CustomSelect
-            config={{
-              options: projects?.length ? projects : [],
-              defaultValue: projects?.name
-                ? projects.name
-                : projects.length
-                ? projects.some((each: any) => each.value == "name")
-                  ? "name"
-                  : projects[0].name
-                : "",
-              label: projects?.name,
-            }}
-            defaultValue=""
-            id=""
-            sx={{ minWidth: 120 }}
-            setFormConfig=""
-            isError={false}
-            label=""
-          />
+          {projectId ? (
+            <ProjectSelectorContainer>
+              <CustomSelect
+                config={{
+                  options: projects?.length ? projects : [],
+                  defaultValue: projectId ? projectId : "",
+                }}
+                hideBorder
+                width={"unset"}
+                id=""
+                sx={{ minWidth: 120 }}
+                setFormConfig={() => {}}
+                isError={false}
+                label=""
+                onChangeHandler={(e: any) => {
+                  // console.log("onchange", e.target.value);
+                  const selectedProjectId = e.target.value;
+                  const currentRoute = router.route;
+                  // console.log("onchange", currentRoute);
+
+                  //  router.push(
+                  //    `/projects/${router.query.projectId as string}/sections`
+                  //  );
+
+                  const dynamicRoute = currentRoute.replace(
+                    "[projectId]",
+                    selectedProjectId as string
+                  );
+                  // console.log("onchange", dynamicRoute);
+
+                  // router.push(dynamicRoute);
+
+                  window.location.href = dynamicRoute;
+                }}
+              />
+            </ProjectSelectorContainer>
+          ) : (
+            ""
+          )}
 
           {toolClicked ? (
             <HeaderToggle>
