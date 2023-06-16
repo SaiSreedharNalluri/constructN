@@ -273,14 +273,15 @@ export const CaptureImageContainer = styled("div")({
 });
 export const CaptureImageIcon = styled(Image)({
   marginRight: "7px",
-  // width: "12px",
-  // height: "12px",
+  width: "18px",
+  height: "18px",
 });
 export const CaptureName = styled("div")({
   marginRight: "5px",
 });
 export const CaptureCount = styled("div")({
-  cursor:"pointer"
+  cursor: "pointer",
+  width: "48px"
 });
 
 export const FloorName = styled("div")({
@@ -316,7 +317,7 @@ export const ListHorizontalDivider = styled("div")((props: any) => ({
 
 export const CapturesField = styled("div")({
   display: "flex",
-  marginRight: "28px",
+  marginRight: "32px",
   alignItems: "center",
   justifyContent: "center",
 });

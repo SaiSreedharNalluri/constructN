@@ -74,8 +74,9 @@ import {
 import moment from "moment";
 import SectionsListing from "../../../../components/divami_components/sectionsList/SectionsListing";
 import { Content } from "../../../../components/divami_components/project-listing/SectionsStyles";
+import CustomLoader from "../../../../components/divami_components/custom_loader/CustomLoader";
 
-const dummyData: any = [
+const backupData: any = [
   {
     _id: 1,
     name: "Basement",
@@ -260,7 +261,7 @@ const Index: React.FC = () => {
             }
           );
           massageTree(removeGrandParent, response?.data?.result?.id);
-          setTableData([...dummyData]);
+          setTableData([...backupData]);
         })
         .catch((error) => {});
       // getSectionsList(router?.query?.projectId as string)
@@ -432,8 +433,6 @@ const Index: React.FC = () => {
                 // src={videoWalk}
                 src={capture360Image}
                 alt={""}
-                // width={16}
-                // height={16}
               />
               {/* 360 Video */}
               <CaptureCount>
@@ -546,27 +545,11 @@ const Index: React.FC = () => {
     //   currencySetting: { currencyCode: "INR", minimumFractionDigits: 0 },
     // },
   ];
-  const breadCrumbsData = [{ label: "Manage Users" }];
+  const breadCrumbsData = [{ name: "Sections" }];
 
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   return (
-    // <React.Fragment>
-    //   <div>
-    //     <div>
-    //       <Header />
-    //       <div className="flex w-screen fixed">
-    //         <div>
-    //           <Content>
-    //             <SidePanelMenu onChangeData={() => {}} />
-    //             <SectionsListing />
-    //           </Content>
-    //         </div>
-    //         <div></div>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </React.Fragment>
     <div className=" w-full  h-full">
       <div className="w-full">
         {!isFullScreen && (
@@ -574,15 +557,14 @@ const Index: React.FC = () => {
             showBreadcrumbs
             breadCrumbData={breadCrumbsData}
             fromUsersList
+            showFirstElement={true}
           />
         )}
-
-        {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
       <Content>
         <SidePanelMenu onChangeData={() => {}} />
-        {/* <SidePanelMenuContainer onChangeData={() => {}} /> */}
         <SectionsListing />
+        {/* <CustomLoader /> */}
       </Content>
     </div>
   );

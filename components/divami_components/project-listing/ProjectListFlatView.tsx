@@ -11,6 +11,8 @@ import {
   ImageButtons,
   RemoveIconImage,
   CustomColumnTitle,
+  TableWrapper,
+  RowActionWrapper,
 } from "../project-users-list/ProjectUsersListStyles";
 import MoreActions from "../../../public/divami_icons/MoreActions.svg";
 import Image from "next/image";
@@ -33,6 +35,8 @@ import { UsersListTooltip } from "./UsersListTooltip";
 import { UserInfoTooltip } from "./UserInfoToolTip";
 import { MTableBodyRow } from "material-table";
 import { SortDescIcon } from "./SortDescIcon";
+import LocalSearch from "../local_component/LocalSearch";
+import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 
 export const ProjectListFlatView = ({ projects, projectActions }: any) => {
   const router = useRouter();
@@ -45,7 +49,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
   const [projectsState, setProjectsState] = useState(projects);
 
   useEffect(() => {
-    setProjectsState(projects);
+    setProjectsState([...projects, ...projects, ...projects, ...projects]);
   }, [projects]);
 
   const sortBy = (a: any, b: any, field: string) => {
@@ -78,7 +82,11 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
 
     return `--`;
   };
-
+  const localizationOptions = {
+    body: {
+      emptyDataSourceMessage: <LocalSearch />,
+    },
+  };
   const columns: any = [
     {
       title: "Project Name",
@@ -110,70 +118,45 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
         return (
           <CapturesFieldContainer>
             <CapturesField>
-              <CaptureImageIcon
-                src={capture360Image}
-                alt={""}
-                width={13}
-                height={13}
-              />
+              <CaptureImageIcon src={capture360Image} alt={""} />
               <CaptureCount>
                 {" "}
-                {rowData.capture360Count?.length > 1
-                  ? rowData.capture360Count
-                  : `0${rowData.capture360Count}`}
+                {rowData.captures && rowData.captures["360 Video"]
+                  ? rowData.captures["360 Video"]
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
-              <CaptureImageIcon
-                src={videoWalk}
-                alt={""}
-                width={16}
-                height={16}
-              />
+              <CaptureImageIcon src={videoWalk} alt={""} />
 
               <CaptureCount>
-                {rowData.captureVideoWalkCount?.length > 1
-                  ? rowData.captureVideoWalkCount
-                  : `0${rowData.captureVideoWalkCount}`}
+                {rowData.captures && rowData.captures["360 Image"]
+                  ? rowData.captures["360 Image"]
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
-              <CaptureImageIcon
-                src={phoneImage}
-                alt={""}
-                width={15}
-                height={15}
-              />
+              <CaptureImageIcon src={phoneImage} alt={""} />
               <CaptureCount>
-                {rowData.capturePhoneCount?.length > 1
-                  ? rowData.capturePhoneCount
-                  : `0${rowData.capturePhoneCount}`}
+                {rowData.captures && rowData.captures["Phone Image"]
+                  ? rowData.captures["Phone Image"]
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
-              <CaptureImageIcon
-                src={captureLidarIcon}
-                alt={""}
-                width={14}
-                height={14}
-              />
+              <CaptureImageIcon src={captureLidarIcon} alt={""} />
               <CaptureCount>
-                {rowData.captureLidarCount?.length > 1
-                  ? rowData.captureLidarCount
-                  : `0${rowData.captureLidarCount}`}
+                {rowData.captures && rowData.captures["LiDAR Scan"]
+                  ? rowData.captures["LiDAR Scan"]
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
-              <CaptureImageIcon
-                src={capture360Image}
-                alt={""}
-                width={13}
-                height={13}
-              ></CaptureImageIcon>
+              <CaptureImageIcon src={DroneImage} alt={""}></CaptureImageIcon>
               <CaptureCount>
-                {rowData.captureDroneCount?.length > 1
-                  ? rowData.captureDroneCount
-                  : `0${rowData.captureDroneCount}`}
+                {rowData.captures && rowData.captures["Drone Image"]
+                  ? rowData.captures["Drone Image"]
+                  : "-"}
               </CaptureCount>
             </CapturesField>
           </CapturesFieldContainer>
@@ -299,15 +282,14 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
       cellStyle: { width: "15%" },
       sorting: false,
       render: (rowData: any) => {
-        return hoveringOver == rowData.tableData.id ? (
+        return (
           <CustomMenu
             hoveringOver={hoveringOver}
             imageSrc={MoreActions}
             menuOptions={projectActions}
             data={rowData}
+            id="rowMenu"
           />
-        ) : (
-          <></>
         );
       },
     },
@@ -316,84 +298,87 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
   return (
     <ProjectUsersListContainer noTopPadding>
       <ThemeProvider theme={defaultMaterialTheme}>
-        <StyledTable
-          components={{
-            // Action: (props) => (
-            //   <CustomMenu
-            //     imageSrc={MoreActions}
-            //     menuOptions={projectActions}
-            //     // data={...props}
-            //   />
-            // ),
-            Container: (props: any) => <Paper {...props} elevation={0} />,
-            Row: (props: any) => {
-              return (
-                <MTableBodyRow
-                  {...props}
-                  onMouseEnter={(e: any) => handleRowHover(e, props)}
-                  onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
-                />
-              );
-            },
-          }}
-          columns={columns}
-          data={projectsState ? projectsState : []}
-          // actions={[
-          //   {
-          //     icon: ArrowDropUpIcon,
-          //     tooltip: "More",
-          //     onClick: (event, rowData) => setShowMoreActions(true),
-          //   },
-          // ]}
-          title={""}
-          icons={{
-            SortArrow: forwardRef((props, ref: any) => {
-              return sortObj ? (
-                <SortIconStyled {...props} ref={ref} />
-              ) : (
-                <SortDescIcon
-                  {...props}
-                  ref={ref}
-                  // onClick={() => {
-                  //   setSortObj(!sortObj);
-                  // }}
-                />
-              );
-            }) as any,
-          }}
-          options={{
-            search: false,
-            paging: false,
-            exportButton: false,
-            exportFileName: "tableData",
-            selection: false,
-            showTitle: true,
-            thirdSortClick: false,
-            toolbar: false,
-            maxBodyHeight: "100vh",
-            overflowY: "auto",
-            rowStyle: (rowData: any) => ({
-              fontFamily: "Open Sans",
-              fontStyle: "normal",
-              fontWeight: "400",
-              fontSize: "14px",
-              color: "#101F4C",
-              backgroundColor:
-                rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
-            }),
-            headerStyle: {
-              padding: "6px 16px",
-              fontFamily: "Open Sans",
-              borderBottom: "1px solid #FF843F",
-            },
-            actionsColumnIndex: -1,
-          }}
-          // localization={{
-          //   header: {
-          //     actions: " ",
-          //   },
-          // }}
-        />
+        <TableWrapper>
+          <StyledTable
+            components={{
+              // Action: (props) => (
+              //   <CustomMenu
+              //     imageSrc={MoreActions}
+              //     menuOptions={projectActions}
+              //     // data={...props}
+              //   />
+              // ),
+              Container: (props: any) => <Paper {...props} elevation={0} />,
+              // Row: (props: any) => {
+              //   return (
+              //     <MTableBodyRow
+              //       {...props}
+              //       onMouseEnter={(e: any) => handleRowHover(e, props)}
+              //       onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
+              //     />
+              //   );
+              // },
+            }}
+            localization={localizationOptions}
+            columns={columns}
+            data={projectsState ? projectsState : []}
+            // actions={[
+            //   {
+            //     icon: ArrowDropUpIcon,
+            //     tooltip: "More",
+            //     onClick: (event, rowData) => setShowMoreActions(true),
+            //   },
+            // ]}
+            title={""}
+            icons={{
+              SortArrow: forwardRef((props, ref: any) => {
+                return sortObj ? (
+                  <SortIconStyled {...props} ref={ref} />
+                ) : (
+                  <SortDescIcon
+                    {...props}
+                    ref={ref}
+                    // onClick={() => {
+                    //   setSortObj(!sortObj);
+                    // }}
+                  />
+                );
+              }) as any,
+            }}
+            options={{
+              search: false,
+              paging: false,
+              exportButton: false,
+              exportFileName: "tableData",
+              selection: false,
+              showTitle: true,
+              thirdSortClick: false,
+              toolbar: false,
+              maxBodyHeight: "100vh",
+              overflowY: "auto",
+              rowStyle: (rowData: any) => ({
+                fontFamily: "Open Sans",
+                fontStyle: "normal",
+                fontWeight: "400",
+                fontSize: "14px",
+                color: "#101F4C",
+                backgroundColor:
+                  rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
+              }),
+              headerStyle: {
+                padding: "6px 16px",
+                fontFamily: "Open Sans",
+                borderBottom: "1px solid #FF843F",
+              },
+              actionsColumnIndex: -1,
+            }}
+            // localization={{
+            //   header: {
+            //     actions: " ",
+            //   },
+            // }}
+          />
+        </TableWrapper>
       </ThemeProvider>
     </ProjectUsersListContainer>
   );

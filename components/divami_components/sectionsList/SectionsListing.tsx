@@ -54,11 +54,13 @@ import capture360Image from "../../../public/divami_icons/capture360Image.svg";
 import captureLidarIcon from "../../../public/divami_icons/captureLidarIcon.svg";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
-import CrossIcon from "../../../public/divami_icons/CrossIcon.svg";
+import crossIcon from "../../../public/divami_icons/crossIcon.svg";
 import FilterInActive from "../../../public/divami_icons/FilterInActive.svg";
 import SearchMag from "../../../public/divami_icons/search.svg";
 import UserFilterIcon from "../../../public/divami_icons/UserFilterIcon.svg";
 import filterActive from "../../../public/divami_icons/filterActive.svg";
+
+import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -86,49 +88,8 @@ import SectionFilter from "./SectionFilter";
 import MaterialTable, { MTableToolbar, MTableBodyRow } from "material-table";
 import CustomButton from "../custom-button/CustomButton";
 import { SvgIconProps } from "@material-ui/core";
-
-const dummyData: any = [
-  {
-    _id: 1,
-    name: "Basement",
-    issues: 150,
-    // tasks: 34,
-    // captures: 109,
-    // progress: "44%",
-    // lastupdated: "Today",
-    // imageUrl: <ProgressBar />,
-  },
-  {
-    _id: 2,
-    name: "Parking",
-    issues: 34,
-    // tasks: 12,
-    // captures: 50,
-    // progress: "44%",
-    // lastupdated: "Today",
-    // imageUrl: <ProgressBar />,
-  },
-  {
-    _id: 3,
-    name: "Electrical Room",
-    issues: 12,
-    // tasks: 43,
-    // captures: 50,
-    // progress: "44%",
-    // lastupdated: "Today",
-    // imageUrl: <ProgressBar />,
-  },
-  {
-    _id: 7,
-    name: "Second Floor",
-    issues: 554,
-    // tasks: 54,
-    // captures: 50,
-    // progress: "44%",
-    // lastupdated: "Today",
-    // imageUrl: <ProgressBar />,
-  },
-];
+import CustomLoader from "../custom_loader/CustomLoader";
+import LocalSearch from "../local_component/LocalSearch";
 
 interface RowData {
   tableData: { id: number };
@@ -167,6 +128,7 @@ const SectionsListing = () => {
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [roles, setRoles] = useState<string[] | []>([]);
+  // const [showLoader, setShowLoader]: any = useState(true);
 
   // let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   const [tableData, setTableData] = useState<any>(
@@ -180,6 +142,7 @@ const SectionsListing = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [searchTableData, setSearchTableData] = useState([]);
+  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
   const formHandler = (event: any) => {
     // setShowEmptyState(true);
   };
@@ -283,14 +246,31 @@ const SectionsListing = () => {
               };
             }
           );
-          massageTree(removeGrandParent, response?.data?.result?.id);
-          //  setTableData([...dummyData]);
+
+          massageTree(
+            removeGrandParent,
+            response?.data?.result?.id,
+            response?.data?.result
+          );
+
+          // setShowLoader(false);
+          setDataLoaded(true);
         })
         .catch((error) => {});
     }
   }, [router.query.projectId]);
 
-  function massageTree(responseArr: any, grandParent: string) {
+  const localizationOptions = {
+    body: {
+      emptyDataSourceMessage: <LocalSearch />,
+    },
+  };
+
+  function massageTree(
+    responseArr: any,
+    grandParent: string,
+    responseObj: any
+  ) {
     let resultArr: any = [];
     responseArr.map((item: any, index: number) => {
       if (item.parent == null) {
@@ -312,9 +292,28 @@ const SectionsListing = () => {
       }
     });
 
-    setFilterTableData([...resultArr]);
-    setTableData([...resultArr]);
+    let finalTableData = [
+      { ...responseObj, parent: null },
+      ...resultArr.map((item: any) => {
+        if (item.parentId == null) {
+          // here add parent adani
+          return { ...item, parentId: responseObj["_id"] };
+        } else {
+          return item;
+        }
+      }),
+    ];
+
+    setFilterTableData([...finalTableData]);
+    setTableData([...finalTableData]);
+
+    // test();
   }
+
+  React.useEffect(() => {
+    expandFirstRow();
+    //  expandAllRows();
+  }, [tableData]);
 
   function helperFunction(childArr: any, resultArr: any) {
     childArr.map((each: any, index: number) => {
@@ -467,6 +466,14 @@ const SectionsListing = () => {
     }
   };
 
+  const expandFirstRow = () => {
+    if (myTableRef.current) {
+      const tableData = myTableRef.current.dataManager.data;
+
+      tableData[0].tableData.isTreeExpanded = true;
+    }
+  };
+
   const collapseAllRows = () => {
     if (myTableRef.current) {
       const tableData = myTableRef.current.dataManager.data;
@@ -528,6 +535,9 @@ const SectionsListing = () => {
         color: "#101F4C",
       },
       cellStyle: { width: "10%" },
+      render: (rowData: any) => {
+        return <>{rowData?.issueCount ? rowData.issueCount : "-"}</>;
+      },
     },
     {
       title: "Tasks",
@@ -544,6 +554,10 @@ const SectionsListing = () => {
         color: "#101F4C",
       },
       cellStyle: { width: "10%" },
+
+      render: (rowData: any) => {
+        return <>{rowData?.taskCount ? rowData.taskCount : "-"}</>;
+      },
     },
     {
       title: "Captures",
@@ -576,7 +590,7 @@ const SectionsListing = () => {
                   : `0${rowData.capture360Count}`} */}
                 {rowData.capture && rowData.capture["Phone Image"]
                   ? rowData.capture["Phone Image"]
-                  : 0}
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
@@ -584,14 +598,12 @@ const SectionsListing = () => {
                 // src={videoWalk}
                 src={capture360Image}
                 alt={""}
-                // width={16}
-                // height={16}
               />
               {/* 360 Video */}
               <CaptureCount>
                 {rowData.capture && rowData.capture["360 Image"]
                   ? rowData.capture["360 Image"]
-                  : 0}
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
@@ -609,7 +621,7 @@ const SectionsListing = () => {
 
                 {rowData.capture && rowData.capture["360 Video"]
                   ? rowData.capture["360 Video"]
-                  : 0}
+                  : "-"}
               </CaptureCount>
             </CapturesField>
             <CapturesField>
@@ -619,7 +631,7 @@ const SectionsListing = () => {
                 // width={14}
                 // height={14}
               />
-              <CaptureCount>0</CaptureCount>
+              <CaptureCount>-</CaptureCount>
             </CapturesField>
             <CapturesField>
               <CaptureImageIcon
@@ -631,7 +643,7 @@ const SectionsListing = () => {
               <CaptureCount>
                 {rowData.capture && rowData.capture["Drone Image"]
                   ? rowData.capture["Drone Image"]
-                  : 0}
+                  : "-"}
               </CaptureCount>
             </CapturesField>
           </CapturesFieldContainer>
@@ -680,13 +692,14 @@ const SectionsListing = () => {
                       <Image src={SearchBoxIcon} alt="" />
                     </InputAdornment>
                   ),
+
                   endAdornment: (
                     <InputAdornment position="start">
                       <CloseIcon
                         onClick={() => {
                           handleSearchWindow();
                         }}
-                        src={CrossIcon}
+                        src={crossIcon}
                         alt={"close icon"}
                         data-testid="search-close"
                       />
@@ -724,41 +737,49 @@ const SectionsListing = () => {
         {/* <h1>React Table</h1> */}
         <ThemeProvider theme={defaultMaterialTheme}>
           <TableWrapper>
-            <StyledTable
-              tableRef={myTableRef}
-              components={{
-                Container: (props) => <Paper {...props} elevation={0} />,
-              }}
-              columns={columns}
-              data={filterTableData ? filterTableData : []}
-              title={""}
-              options={{
-                search: false,
-                paging: false,
-                exportButton: false,
-                exportFileName: "tableData",
-                selection: false,
-                showTitle: true,
-                toolbar: false,
-                maxBodyHeight: "80vh",
-                thirdSortClick: false,
-                rowStyle: {
-                  fontFamily: "Open Sans",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  fontSize: "14px",
-                  color: "#101F4C",
-                },
-                headerStyle: {
-                  padding: "6px 16px",
-                  fontFamily: "Open Sans",
-                },
-              }}
-              icons={tableIcons}
-              parentChildData={(row: any, rows) =>
-                rows.find((a: any) => a._id === row.parentId)
-              }
-            />
+            {dataLoaded ? (
+              <StyledTable
+                tableRef={myTableRef}
+                components={{
+                  Container: (props) => <Paper {...props} elevation={0} />,
+                }}
+                localization={localizationOptions}
+                columns={columns}
+                data={filterTableData ? filterTableData : []}
+                title={""}
+                options={{
+                  search: false,
+
+                  paging: false,
+                  exportButton: false,
+                  exportFileName: "tableData",
+                  selection: false,
+                  showTitle: true,
+                  toolbar: false,
+                  maxBodyHeight: "75vh",
+                  thirdSortClick: false,
+                  rowStyle: {
+                    fontFamily: "Open Sans",
+                    fontStyle: "normal",
+                    fontWeight: "400",
+                    fontSize: "14px",
+                    color: "#101F4C",
+                  },
+                  headerStyle: {
+                    padding: "6px 16px",
+                    fontFamily: "Open Sans",
+                  },
+                }}
+                icons={tableIcons}
+                parentChildData={(row: any, rows) =>
+                  rows.find((a: any) => a._id === row.parentId)
+                }
+              />
+            ) : (
+              <CustomLoader />
+            )}
+
+            {/* {showLoader && <CustomLoader />} */}
 
             {/* <BasicTreeData/> */}
           </TableWrapper>

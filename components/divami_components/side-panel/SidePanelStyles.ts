@@ -30,7 +30,7 @@ export const OvershowImg = styled("div")({
   borderRadius: "100%",
   position: "absolute",
   left: "10px",
-  zIndex: "1500",
+  zIndex: "1200",
   backgroundColor: "white",
   // borderRight: "1px solid #D9D9D9",
   borderTopWidth: "0",
@@ -65,7 +65,7 @@ export const HighlightedSytledImage = styled(Image)`
   margin-top: 6px;
   width: 54px;
   height: 54px;
-  z-index: 1500;
+  z-index: 1200;
   // box-shadow:3px 0px 4px rgba(0, 0, 0, 0.25);
 `;
 

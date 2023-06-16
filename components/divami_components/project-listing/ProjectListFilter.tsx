@@ -38,6 +38,8 @@ const ProjectListFilter: React.FC<any> = ({
   onClose,
   handleOnApplyFilter,
   setTaskFilterState,
+  setIsFilterApplied,
+  setSearchTerm,
 }) => {
   const [formState, setFormState] = useState<any>({});
   const [formConfig, setFormConfig] = useState<any>(projectConfig);
@@ -47,6 +49,17 @@ const ProjectListFilter: React.FC<any> = ({
   };
 
   const onFilterApply = () => {
+    let numberOfAppliedFilters = formConfig.some((each: any) =>
+      each.fields.some((item: any) => item.defaultValue)
+    );
+
+    if (numberOfAppliedFilters) {
+      setIsFilterApplied(true);
+    } else {
+      setIsFilterApplied(false);
+    }
+    setSearchTerm("");
+
     const data: any = {
       startDate:
         formConfig
@@ -112,7 +125,7 @@ const ProjectListFilter: React.FC<any> = ({
               if (item.id === "numberOfMembersSelect") {
                 return {
                   ...item,
-                  defaultValue: taskFilterState.compareText || "greaterThan",
+                  defaultValue: taskFilterState.compareText || "",
                 };
               } else if (item.id == "numberOfMembersValue") {
                 return {
@@ -136,26 +149,21 @@ const ProjectListFilter: React.FC<any> = ({
               <HeaderLeftSectionText>Filter</HeaderLeftSectionText>
             </HeaderLeftSection>
             <HeaderRightSection>
-              <HeaderRightSectionResetIcon>
-                <RefreshIcon
-                  src={newRefreshIcon}
-                  alt="reset"
-                  onClick={() => {
-                    onReset();
-                  }}
-                />
-                {/* <Image
-                  src={ResetIcon}
-                  alt="reset"
-                  onClick={() => {
-                    onReset();
-                  }}
-                /> */}
+              <HeaderRightSectionResetIcon
+                onClick={() => {
+                  onReset();
+                }}
+              >
+                <RefreshIcon src={newRefreshIcon} alt="reset" />
               </HeaderRightSectionResetIcon>
-              <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
-              {/* <Image src={closeIcon} alt="reset"   onClick={() => {
-              handleClose();
-              }} /> */}
+              <HeaderRightSectionResetText
+                onClick={() => {
+                  onReset();
+                }}
+              >
+                Reset
+              </HeaderRightSectionResetText>
+
               <CloseIcon
                 onClick={() => {
                   handleClose();

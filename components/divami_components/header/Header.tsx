@@ -32,6 +32,7 @@ import {
   ProfileImgIcon,
   ProfileImgSecIcon,
   ProfileImgIconDefault,
+  ProjectSelectorContainer,
 } from "./HeaderStyles";
 import { ITools } from "../../../models/ITools";
 import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
@@ -46,6 +47,8 @@ import {
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import Notifications from "../notifications/Notifications";
 import UserProfile from "../user-profile/UserProfile";
+import CustomSelect from "../custom-select/CustomSelect";
+import { getProjectsList } from "../../../services/project";
 import PopupComponent from "../../popupComponent/PopupComponent";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
@@ -62,6 +65,7 @@ const Header: React.FC<any> = ({
   handleBreadCrumbClick,
   hideSidePanel,
   fromUsersList,
+  showFirstElement,
 }) => {
   const router = useRouter();
   const headerRef: any = React.useRef();
@@ -86,6 +90,12 @@ const Header: React.FC<any> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
   const [openProfile, setOpenProfile] = useState(false);
+
+  // const [config, setConfig] = useState<any>([]);
+  const [projects, setProjects] = useState<any>([]);
+  const [currentProject, setCurrentProject] = useState("");
+  const [projectId, setProjectId] = useState<any>("");
+
   useEffect(() => {
     const userObj: any = getCookie("user");
     let user = null;
@@ -100,6 +110,9 @@ const Header: React.FC<any> = ({
     if (user?.avatar) {
       setAvatar(user.avatar);
     }
+    if (router.isReady && router.query.projectId) {
+      setProjectId(router.query.projectId);
+    }
     getUserNotifications();
   }, [router.query.projectId]);
 
@@ -112,23 +125,24 @@ const Header: React.FC<any> = ({
     //   };
   }, [viewMode]);
 
- 
-  
   const userLogOut = () => {
     removeCookies("user");
     // router.push("/login");
     router.push("/login");
   };
+
   const goToProjectsList = () => {
     router.push("/projects");
   };
 
   const onProfilePicClick = () => {
-    if(!openProfile){
-      setOpenProfile(true)
+    if (!openProfile) {
+      setOpenProfile(true);
       setLoading(false);
       setOpenNotication(false);
-    }else{setOpenProfile(false)}
+    } else {
+      setOpenProfile(false);
+    }
   };
 
   const rightMenuClickHandler = (e: any) => {
@@ -166,9 +180,27 @@ const Header: React.FC<any> = ({
   const [filterValue, setFilterValue] = useState("All");
   const [showPopUp, setshowPopUp] = useState(false);
   useEffect(() => {
-    if (router.isReady) {
-      getUserNotifications();
-    }
+    getUserNotifications();
+    getProjectsList()
+      .then(async (response) => {
+        if (response?.data?.success === true) {
+          // setProjects(response.data.result);
+          const rolesData = response.data.result.map((each: any) => {
+            return {
+              label: each.name,
+              value: each._id,
+              selected: false,
+            };
+          });
+
+          // setConfig([response.data.result]);
+
+          setProjects(rolesData);
+
+          // setCurrentProject()
+        }
+      })
+      .catch((error) => {});
   }, []);
   const getUserNotifications = (
     condition = defaultValue,
@@ -221,16 +253,13 @@ const Header: React.FC<any> = ({
   useEffect(() => {
     getUserNotifications(defaultValue, filterValue);
   }, [filterValue]);
-  const handleNotificationClose=()=>{
-    setOpenNotication(false)
-  }
-  const handleProfileClose=()=>{
-    setOpenProfile(false)
-  }
-  
+  const handleNotificationClose = () => {
+    setOpenNotication(false);
+  };
+  const handleProfileClose = () => {
+    setOpenProfile(false);
+  };
 
-
-  
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -241,7 +270,7 @@ const Header: React.FC<any> = ({
               width: fromUsersList ? "56px" : "59px",
               // height: "10px",
               // width: "59px",
-              background: "#FFFFFF",
+              // background: "#FFFFFF",
               position: "absolute",
               top: "58px",
               zIndex: "9999999",
@@ -271,10 +300,46 @@ const Header: React.FC<any> = ({
               handleBreadCrumbClick={
                 handleBreadCrumbClick ? handleBreadCrumbClick : () => {}
               }
+              showFirstElement={showFirstElement}
             />
           )}
         </HeaderLeftPart>
         <HeaderRightPart>
+          {projectId ? (
+            <ProjectSelectorContainer>
+              <CustomSelect
+                config={{
+                  options: projects?.length ? projects : [],
+                  defaultValue: projectId ? projectId : "",
+                }}
+                hideBorder
+                width={"unset"}
+                id=""
+                sx={{ minWidth: 120 }}
+                setFormConfig={() => {}}
+                isError={false}
+                label=""
+                onChangeHandler={(e: any) => {
+                  const selectedProjectId = e.target.value;
+                  const currentRoute = router.route;
+
+                  //  router.push(
+                  //    `/projects/${router.query.projectId as string}/sections`
+                  //  );
+
+                  const dynamicRoute = currentRoute.replace(
+                    "[projectId]",
+                    selectedProjectId as string
+                  );
+
+                  window.location.href = dynamicRoute;
+                }}
+              />
+            </ProjectSelectorContainer>
+          ) : (
+            ""
+          )}
+
           {toolClicked ? (
             <HeaderToggle>
               <HeaderToggleButtonOne
@@ -297,9 +362,8 @@ const Header: React.FC<any> = ({
           ) : (
             <></>
           )}
-         
+
           <HeaderProfileImageContainer>
-  
             {avatar ? (
               <ProfileImgIcon
                 onClick={onProfilePicClick}
@@ -317,13 +381,17 @@ const Header: React.FC<any> = ({
                 height={34}
               />
             )}
-             {openProfile?
-             <CustomDrawer paddingStyle={true} variant="persistent">
-              <div  >
-              <UserProfile handleProfileClose={handleProfileClose}   ></UserProfile>
-              </div>
-              </CustomDrawer>:''
-             }
+            {openProfile ? (
+              <CustomDrawer paddingStyle={true} variant="persistent">
+                <div>
+                  <UserProfile
+                    handleProfileClose={handleProfileClose}
+                  ></UserProfile>
+                </div>
+              </CustomDrawer>
+            ) : (
+              ""
+            )}
           </HeaderProfileImageContainer>
           <HeaderNotificationImageContainer>
             <Image
@@ -331,40 +399,39 @@ const Header: React.FC<any> = ({
               alt="Profile Image"
               onClick={() => {
                 if (openNotification) {
-                  setOpenNotication(false)
+                  setOpenNotication(false);
                 } else {
                   setOpenNotication(true);
                   setLoading(false);
                   setOpenProfile(false);
-                  
                 }
               }}
             />
-            
-            {openNotification&& (
+
+            {openNotification && (
               <div>
-                 <CustomDrawer variant="persistent">
-                  <div >
-                  <Notifications  notifications={notifications}
-                    loadMoreData={loadMoreData}
-                    updateNotifications={updateNotifications} filterValue={filterValue} filterNotificationData={filterNotificationData} handleNotificationClose={handleNotificationClose}>
-                </Notifications> 
+                <CustomDrawer variant="persistent">
+                  <div>
+                    <Notifications
+                      notifications={notifications}
+                      loadMoreData={loadMoreData}
+                      updateNotifications={updateNotifications}
+                      filterValue={filterValue}
+                      filterNotificationData={filterNotificationData}
+                      handleNotificationClose={handleNotificationClose}
+                    ></Notifications>
                   </div>
-        
-             <div>
-                   
-             </div>
-             </CustomDrawer>
-           
-        
+
+                  <div></div>
+                </CustomDrawer>
               </div>
-             
-      
-             
             )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
-            <Image src={hamburgerMenu} alt="Menu"    onClick={() => {
+            <Image
+              src={hamburgerMenu}
+              alt="Menu"
+              onClick={() => {
                 if (!loading) {
                   setLoading(true);
                   setOpenNotication(false);
@@ -372,33 +439,37 @@ const Header: React.FC<any> = ({
                 } else {
                   setLoading(false);
                 }
-              }}/>
+              }}
+            />
           </HeaderMenuImageContainer>
         </HeaderRightPart>
 
         {loading && (
           <div className="absolute top-[64px]  shadow-md right-0 bg-gray-50   z-10  border mx-0.5">
-          
-    
-                <div className="flex items-center justify-center cursor-pointer p-2  "    onClick={()=>{setshowPopUp(true)}}>
-                 <p className="logout-button w-[150px] px-10 text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm">Logout</p> 
-                </div>
+            <div
+              className="flex items-center justify-center cursor-pointer p-2  "
+              onClick={() => {
+                setshowPopUp(true);
+              }}
+            >
+              <p className="logout-button w-[150px] px-10 text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm">
+                Logout
+              </p>
+            </div>
 
             {showPopUp && (
-        <PopupComponent
-          open={showPopUp}
-          setShowPopUp={setshowPopUp}
-          modalTitle={"Cancel"}
-          modalmessage={`Are you sure you want to logout? `}
-          primaryButtonLabel={"Yes"}
-          SecondaryButtonlabel={"No"}
-          callBackvalue={userLogOut}
-        />
-      )}
+              <PopupComponent
+                open={showPopUp}
+                setShowPopUp={setshowPopUp}
+                modalTitle={"Cancel"}
+                modalmessage={`Are you sure you want to logout? `}
+                primaryButtonLabel={"Yes"}
+                SecondaryButtonlabel={"No"}
+                callBackvalue={userLogOut}
+              />
+            )}
           </div>
-          
         )}
-      
 
         {/* //! This is Open Profile Options */}
         {/* {loading && (

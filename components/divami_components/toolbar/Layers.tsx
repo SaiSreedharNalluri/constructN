@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import cameraIcon from "../../../public/divami_icons/cameraIcon.svg";
 import hexagonIcon from "../../../public/divami_icons/hexagonIcon.svg";
 import videoRecorderIcon from "../../../public/divami_icons/videoRecorderIcon.svg";
+import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 
 import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
 import ClickAwayListener from "@mui/base/ClickAwayListener";
@@ -98,7 +99,7 @@ const Layers = ({
           } else if (label === "Drone Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={cameraIcon} alt="Arrow" />
+                <CameraIcon src={DroneImage} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           }

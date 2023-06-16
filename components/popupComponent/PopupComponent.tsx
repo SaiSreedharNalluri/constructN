@@ -72,6 +72,7 @@ export interface PopupComponentProps {
   paddingStyle?: boolean;
   backdropWidth?: boolean;
   showButton?: boolean;
+  setSelectedOption?: any;
 
   setShowbutton?: any;
   projectId?: string;
@@ -141,10 +142,14 @@ const PopupComponent = (props: PopupComponentProps) => {
     showButton = true,
     setShowbutton,
     projectId,
+    setSelectedOption,
   } = props;
 
   const handleClose = () => {
     setShowPopUp(false);
+    if (setSelectedOption) {
+      setSelectedOption("issuePriority");
+    }
     if (setShowbutton) {
       setShowbutton(false);
     }
