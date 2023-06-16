@@ -66,7 +66,6 @@ const Header: React.FC<any> = ({
   fromUsersList,
   showFirstElement,
 }) => {
-  console.log("breadCrumbData11", handleBreadCrumbClick);
   const router = useRouter();
   const headerRef: any = React.useRef();
   let [name, setName] = useState<string>("");
@@ -96,7 +95,6 @@ const Header: React.FC<any> = ({
   const [currentProject, setCurrentProject] = useState("");
   const [projectId, setProjectId] = useState<any>("");
 
-  console.log(projectId, "fdssf", projects);
   useEffect(() => {
     const userObj: any = getCookie("user");
     let user = null;
@@ -112,7 +110,6 @@ const Header: React.FC<any> = ({
       setAvatar(user.avatar);
     }
     if (router.isReady && router.query.projectId) {
-      // console.log("getrouter", router);
       setProjectId(router.query.projectId);
     }
     getUserNotifications();
@@ -185,7 +182,6 @@ const Header: React.FC<any> = ({
         if (response?.data?.success === true) {
           // setProjects(response.data.result);
           const rolesData = response.data.result.map((each: any) => {
-            console.log("datarole", each);
             return {
               label: each.name,
               value: each._id,
@@ -198,8 +194,6 @@ const Header: React.FC<any> = ({
           setProjects(rolesData);
 
           // setCurrentProject()
-
-          console.log("headerResponse", response);
         }
       })
       .catch((error) => {});
@@ -321,10 +315,8 @@ const Header: React.FC<any> = ({
                 isError={false}
                 label=""
                 onChangeHandler={(e: any) => {
-                  // console.log("onchange", e.target.value);
                   const selectedProjectId = e.target.value;
                   const currentRoute = router.route;
-                  // console.log("onchange", currentRoute);
 
                   //  router.push(
                   //    `/projects/${router.query.projectId as string}/sections`
@@ -334,9 +326,6 @@ const Header: React.FC<any> = ({
                     "[projectId]",
                     selectedProjectId as string
                   );
-                  // console.log("onchange", dynamicRoute);
-
-                  // router.push(dynamicRoute);
 
                   window.location.href = dynamicRoute;
                 }}

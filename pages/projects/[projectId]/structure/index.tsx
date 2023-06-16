@@ -473,7 +473,6 @@ const Index: React.FC<IProps> = () => {
 
   useEffect(() => {
     if (structure && project) {
-      console.log("yougotproj", project);
       setBreadCrumbsData((prev: any) => [
         project,
         ...getBreadCrumbsData(structure),

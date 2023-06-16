@@ -52,14 +52,12 @@ export const AddUsersEmailOverlay = ({
   roles,
   selectedProjectId,
 }: any) => {
-  console.log("rolespeg", roles);
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
   const [addedUsers, setAddedUsers] = useState<any>([]);
   const [searchVal, setSearchVal] = useState("");
   const [hoveringOver, setHoveringOver] = useState("");
   useEffect(() => {
-    console.log("roles", roles);
     if (/\S+@\S+\.\S+/.test(form.email)) checkRegisterUser(form.email);
 
     // setAddedUsers([...addedUsers, form]);
@@ -101,7 +99,6 @@ export const AddUsersEmailOverlay = ({
         color: "#101F4C",
       },
       render: (rowData: any) => {
-        console.log("rowdating", rowData);
         return (
           <CustomSelect
             config={{
