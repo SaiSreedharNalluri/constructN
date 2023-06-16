@@ -64,6 +64,7 @@ const Header: React.FC<any> = ({
   handleBreadCrumbClick,
   hideSidePanel,
   fromUsersList,
+  showFirstElement,
 }) => {
   console.log("breadCrumbData11", handleBreadCrumbClick);
   const router = useRouter();
@@ -300,6 +301,7 @@ const Header: React.FC<any> = ({
               handleBreadCrumbClick={
                 handleBreadCrumbClick ? handleBreadCrumbClick : () => {}
               }
+              showFirstElement={showFirstElement}
             />
           )}
         </HeaderLeftPart>

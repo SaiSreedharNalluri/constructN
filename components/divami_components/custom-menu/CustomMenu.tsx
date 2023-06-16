@@ -8,6 +8,7 @@ import {
   StyledMenu,
 } from "../issue-listing/IssueListStyles";
 import { IconContainer } from "../task_list/TaskListStyles";
+import { MenuWrapper } from "../project-users-list/ProjectUsersListStyles";
 
 export const CustomMenu = ({
   imageSrc,
@@ -16,6 +17,7 @@ export const CustomMenu = ({
   height,
   right,
   data,
+  id,
 }: any) => {
   const [showMoreActions, setShowMoreActions] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -23,8 +25,9 @@ export const CustomMenu = ({
     setShowMoreActions(false);
     setAnchorEl(null);
   };
+  const [isActive, setIsActive] = useState(false);
   return (
-    <>
+    <MenuWrapper className={`${id} ${isActive ? "active" : ""}`}>
       <Image
         src={imageSrc}
         alt=""
@@ -36,6 +39,7 @@ export const CustomMenu = ({
         onClick={(e: any) => {
           setShowMoreActions(true);
           setAnchorEl(e.target);
+          setIsActive(true);
         }}
       />
       <Menu
@@ -44,10 +48,12 @@ export const CustomMenu = ({
         open={showMoreActions}
         onClose={() => {
           handleClose();
+          setIsActive(false);
         }}
         onClick={(e) => {
           setShowMoreActions(false);
           setAnchorEl(null);
+          setIsActive(false);
         }}
         PaperProps={{
           elevation: 0,
@@ -101,6 +107,6 @@ export const CustomMenu = ({
           </>
         ))}
       </Menu>
-    </>
+    </MenuWrapper>
   );
 };

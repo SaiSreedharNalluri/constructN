@@ -11,6 +11,8 @@ import {
   ImageButtons,
   RemoveIconImage,
   CustomColumnTitle,
+  TableWrapper,
+  RowActionWrapper,
 } from "../project-users-list/ProjectUsersListStyles";
 import MoreActions from "../../../public/divami_icons/MoreActions.svg";
 import Image from "next/image";
@@ -47,7 +49,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
   const [projectsState, setProjectsState] = useState(projects);
 
   useEffect(() => {
-    setProjectsState(projects);
+    setProjectsState([...projects, ...projects, ...projects, ...projects]);
   }, [projects]);
 
   const sortBy = (a: any, b: any, field: string) => {
@@ -280,15 +282,14 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
       cellStyle: { width: "15%" },
       sorting: false,
       render: (rowData: any) => {
-        return hoveringOver == rowData.tableData.id ? (
+        return (
           <CustomMenu
             hoveringOver={hoveringOver}
             imageSrc={MoreActions}
             menuOptions={projectActions}
             data={rowData}
+            id="rowMenu"
           />
-        ) : (
-          <></>
         );
       },
     },
@@ -297,85 +298,87 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
   return (
     <ProjectUsersListContainer noTopPadding>
       <ThemeProvider theme={defaultMaterialTheme}>
-        <StyledTable
-          components={{
-            // Action: (props) => (
-            //   <CustomMenu
-            //     imageSrc={MoreActions}
-            //     menuOptions={projectActions}
-            //     // data={...props}
-            //   />
-            // ),
-            Container: (props: any) => <Paper {...props} elevation={0} />,
-            Row: (props: any) => {
-              return (
-                <MTableBodyRow
-                  {...props}
-                  onMouseEnter={(e: any) => handleRowHover(e, props)}
-                  onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
-                />
-              );
-            },
-          }}
-          localization={localizationOptions}
-          columns={columns}
-          data={projectsState ? projectsState : []}
-          // actions={[
-          //   {
-          //     icon: ArrowDropUpIcon,
-          //     tooltip: "More",
-          //     onClick: (event, rowData) => setShowMoreActions(true),
-          //   },
-          // ]}
-          title={""}
-          icons={{
-            SortArrow: forwardRef((props, ref: any) => {
-              return sortObj ? (
-                <SortIconStyled {...props} ref={ref} />
-              ) : (
-                <SortDescIcon
-                  {...props}
-                  ref={ref}
-                  // onClick={() => {
-                  //   setSortObj(!sortObj);
-                  // }}
-                />
-              );
-            }) as any,
-          }}
-          options={{
-            search: false,
-            paging: false,
-            exportButton: false,
-            exportFileName: "tableData",
-            selection: false,
-            showTitle: true,
-            thirdSortClick: false,
-            toolbar: false,
-            maxBodyHeight: "100vh",
-            overflowY: "auto",
-            rowStyle: (rowData: any) => ({
-              fontFamily: "Open Sans",
-              fontStyle: "normal",
-              fontWeight: "400",
-              fontSize: "14px",
-              color: "#101F4C",
-              backgroundColor:
-                rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
-            }),
-            headerStyle: {
-              padding: "6px 16px",
-              fontFamily: "Open Sans",
-              borderBottom: "1px solid #FF843F",
-            },
-            actionsColumnIndex: -1,
-          }}
-          // localization={{
-          //   header: {
-          //     actions: " ",
-          //   },
-          // }}
-        />
+        <TableWrapper>
+          <StyledTable
+            components={{
+              // Action: (props) => (
+              //   <CustomMenu
+              //     imageSrc={MoreActions}
+              //     menuOptions={projectActions}
+              //     // data={...props}
+              //   />
+              // ),
+              Container: (props: any) => <Paper {...props} elevation={0} />,
+              // Row: (props: any) => {
+              //   return (
+              //     <MTableBodyRow
+              //       {...props}
+              //       onMouseEnter={(e: any) => handleRowHover(e, props)}
+              //       onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
+              //     />
+              //   );
+              // },
+            }}
+            localization={localizationOptions}
+            columns={columns}
+            data={projectsState ? projectsState : []}
+            // actions={[
+            //   {
+            //     icon: ArrowDropUpIcon,
+            //     tooltip: "More",
+            //     onClick: (event, rowData) => setShowMoreActions(true),
+            //   },
+            // ]}
+            title={""}
+            icons={{
+              SortArrow: forwardRef((props, ref: any) => {
+                return sortObj ? (
+                  <SortIconStyled {...props} ref={ref} />
+                ) : (
+                  <SortDescIcon
+                    {...props}
+                    ref={ref}
+                    // onClick={() => {
+                    //   setSortObj(!sortObj);
+                    // }}
+                  />
+                );
+              }) as any,
+            }}
+            options={{
+              search: false,
+              paging: false,
+              exportButton: false,
+              exportFileName: "tableData",
+              selection: false,
+              showTitle: true,
+              thirdSortClick: false,
+              toolbar: false,
+              maxBodyHeight: "100vh",
+              overflowY: "auto",
+              rowStyle: (rowData: any) => ({
+                fontFamily: "Open Sans",
+                fontStyle: "normal",
+                fontWeight: "400",
+                fontSize: "14px",
+                color: "#101F4C",
+                backgroundColor:
+                  rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
+              }),
+              headerStyle: {
+                padding: "6px 16px",
+                fontFamily: "Open Sans",
+                borderBottom: "1px solid #FF843F",
+              },
+              actionsColumnIndex: -1,
+            }}
+            // localization={{
+            //   header: {
+            //     actions: " ",
+            //   },
+            // }}
+          />
+        </TableWrapper>
       </ThemeProvider>
     </ProjectUsersListContainer>
   );

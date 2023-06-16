@@ -37,6 +37,7 @@ import videoWalk from "../../../public/divami_icons/videoWalk.svg";
 // import droneImage from "../../../public/divami_icons/droneImage.svg";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
+import ReactCardFlip from "react-card-flip";
 
 import moment from "moment";
 import CustomLoader from "../custom_loader/CustomLoader";
@@ -71,11 +72,146 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
 
     return truncatedText;
   };
+
+  const Card = ({ each }: any) => {
+    const [isFlipped, setIsFlipped] = useState(true);
+
+    return (
+      <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
+        <ProjectCard
+          onClick={() => {
+            router.push(`/projects/${each._id}/sections`);
+          }}
+          active
+          onMouseLeave={() => {
+            setIsFlipped((prev) => !prev);
+          }}
+        >
+          <ProjectTopLeftBg active />
+          <ProjectTopRightBg active />
+          <ProjectBottomLeftBg active />
+          <ProjectBottomRightBg active />
+
+          <ProjectLogo
+            src={each.companyLogo}
+            alt={""}
+            width={242}
+            height={45}
+          />
+
+          <ListHorizontalDivider active />
+
+          <ProjectActionsContainer>
+            {projectActions.map((item: any, index: number) => {
+              return (
+                <ProjectActionItem
+                  key={index}
+                  onClick={(e: any) => {
+                    e.stopPropagation();
+                    item.action(each._id);
+                  }}
+                >
+                  {item.label}
+                </ProjectActionItem>
+              );
+            })}
+          </ProjectActionsContainer>
+        </ProjectCard>
+        <ProjectCard
+          onClick={() => {
+            router.push(`/projects/${each._id}/sections`);
+          }}
+          onMouseEnter={() => {
+            setIsFlipped((prev) => !prev);
+          }}
+        >
+          <ProjectTopLeftBg />
+          <ProjectTopRightBg />
+          <ProjectBottomLeftBg />
+          <ProjectBottomRightBg />
+
+          <ProjectLogo
+            src={each.companyLogo}
+            alt={""}
+            width={242}
+            height={45}
+          />
+
+          <ListHorizontalDivider />
+          <ProjectNameTitle>
+            <TruncatedString
+              text={each.projectName}
+              maxLength={20}
+              suffixLength={7}
+            />
+          </ProjectNameTitle>
+          <UpdatedAtContainer>
+            <UsersCountContainer>
+              <Image src={userCount} alt="" width={14} height={15} />
+              <UsersCountText>{each.numberOfUsers}</UsersCountText>
+            </UsersCountContainer>
+            <ListDivider />
+            <CaptureImageContainer>
+              <Image src={updatedAtIcon} alt="" width={14} height={15} />
+              <UsersCountText>Updated on - {each.updatedAt}</UsersCountText>
+            </CaptureImageContainer>
+          </UpdatedAtContainer>
+
+          <CapturesText>Captures so far</CapturesText>
+          <CaptureImageContainer>
+            <CaptureImageIcon src={capture360Image} alt=""></CaptureImageIcon>
+            <CaptureName>360 photo - </CaptureName>
+            <CaptureCount>
+              {each.capture360Count?.length > 1
+                ? each.capture360Count
+                : `0${each.capture360Count}`}
+            </CaptureCount>
+          </CaptureImageContainer>
+          <CaptureImageContainer>
+            <CaptureImageIcon src={videoWalk} alt=""></CaptureImageIcon>
+            <CaptureName>Video Walk - </CaptureName>
+            <CaptureCount>
+              {each.captureVideoWalkCount?.length > 1
+                ? each.captureVideoWalkCount
+                : `0${each.captureVideoWalkCount}`}
+            </CaptureCount>
+          </CaptureImageContainer>
+          <CaptureImageContainer>
+            <CaptureImageIcon src={phoneImage} alt=""></CaptureImageIcon>
+            <CaptureName>Phone capture - </CaptureName>
+            <CaptureCount>
+              {each.capturePhoneCount?.length > 1
+                ? each.capturePhoneCount
+                : `0${each.capturePhoneCount}`}
+            </CaptureCount>
+          </CaptureImageContainer>
+          <CaptureImageContainer>
+            <CaptureImageIcon src={captureLidarIcon} alt=""></CaptureImageIcon>
+            <CaptureName>LiDAR - </CaptureName>
+            <CaptureCount>
+              {each.captureLidarCount?.length > 1
+                ? each.captureLidarCount
+                : `0${each.captureLidarCount}`}
+            </CaptureCount>
+          </CaptureImageContainer>
+          <CaptureImageContainer>
+            <CaptureImageIcon src={DroneImage} alt=""></CaptureImageIcon>
+            <CaptureName>Drone - </CaptureName>
+            <CaptureCount>
+              {each.captureDroneCount?.length > 1
+                ? each.captureDroneCount
+                : `0${each.captureDroneCount}`}
+            </CaptureCount>
+          </CaptureImageContainer>
+        </ProjectCard>
+      </ReactCardFlip>
+    );
+  };
   return (
     <ProjectCardsContainer>
       {projectsData.length ? (
         projectsData.map((each: any, index: number) => {
-          return each.showActionsCard ? (
+          return (
             <div
               style={{
                 width: "336px",
@@ -83,172 +219,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
                 minHeight: "432px",
               }}
             >
-              <ProjectCard
-                active
-                onMouseLeave={() => {
-                  setProjectsData((prev: any) =>
-                    prev.map((item: any) => {
-                      return {
-                        ...item,
-                        showActionsCard: false,
-                      };
-                    })
-                  );
-                }}
-              >
-                <ProjectTopLeftBg active />
-                <ProjectTopRightBg active />
-                <ProjectBottomLeftBg active />
-                <ProjectBottomRightBg active />
-
-                <ProjectLogo
-                  src={each.companyLogo}
-                  alt={""}
-                  width={242}
-                  height={45}
-                />
-
-                <ListHorizontalDivider active />
-                <ProjectActionsContainer>
-                  {projectActions.map((item: any, index: number) => {
-                    return (
-                      <ProjectActionItem
-                        key={index}
-                        onClick={() => {
-                          item.action(each._id);
-                        }}
-                      >
-                        {item.label}
-                      </ProjectActionItem>
-                    );
-                  })}
-                </ProjectActionsContainer>
-              </ProjectCard>
-            </div>
-          ) : (
-            <div
-              style={{
-                width: "336px",
-                //   background: index % 2 ? "red" : "blue",
-                minHeight: "432px",
-              }}
-            >
-              <ProjectCard
-                onMouseEnter={() => {
-                  setProjectsData((prev: any) =>
-                    prev.map((item: any) => {
-                      if (each._id === item._id) {
-                        return {
-                          ...item,
-                          showActionsCard: true,
-                        };
-                      } else {
-                        return {
-                          ...item,
-                          showActionsCard: false,
-                        };
-                      }
-                    })
-                  );
-                }}
-                onMouseLeave={() => {
-                  setProjectsData((prev: any) =>
-                    prev.map((item: any) => {
-                      return {
-                        ...item,
-                        showActionsCard: false,
-                      };
-                    })
-                  );
-                }}
-              >
-                <ProjectTopLeftBg />
-                <ProjectTopRightBg />
-                <ProjectBottomLeftBg />
-                <ProjectBottomRightBg />
-
-                <ProjectLogo
-                  src={each.companyLogo}
-                  alt={""}
-                  width={242}
-                  height={45}
-                />
-
-                <ListHorizontalDivider />
-                <ProjectNameTitle>
-                  <TruncatedString
-                    text={each.projectName}
-                    maxLength={20}
-                    suffixLength={7}
-                  />
-                </ProjectNameTitle>
-                <UpdatedAtContainer>
-                  <UsersCountContainer>
-                    <Image src={userCount} alt="" width={14} height={15} />
-                    <UsersCountText>{each.numberOfUsers}</UsersCountText>
-                  </UsersCountContainer>
-                  <ListDivider />
-                  <CaptureImageContainer>
-                    <Image src={updatedAtIcon} alt="" width={14} height={15} />
-                    <UsersCountText>
-                      Updated on - {each.updatedAt}
-                    </UsersCountText>
-                  </CaptureImageContainer>
-                </UpdatedAtContainer>
-
-                <CapturesText>Captures so far</CapturesText>
-                <CaptureImageContainer>
-                  <CaptureImageIcon
-                    src={capture360Image}
-                    alt=""
-                  ></CaptureImageIcon>
-                  <CaptureName>360 photo - </CaptureName>
-                  <CaptureCount>
-                    {each.capture360Count?.length > 1
-                      ? each.capture360Count
-                      : `0${each.capture360Count}`}
-                  </CaptureCount>
-                </CaptureImageContainer>
-                <CaptureImageContainer>
-                  <CaptureImageIcon src={videoWalk} alt=""></CaptureImageIcon>
-                  <CaptureName>Video Walk - </CaptureName>
-                  <CaptureCount>
-                    {each.captureVideoWalkCount?.length > 1
-                      ? each.captureVideoWalkCount
-                      : `0${each.captureVideoWalkCount}`}
-                  </CaptureCount>
-                </CaptureImageContainer>
-                <CaptureImageContainer>
-                  <CaptureImageIcon src={phoneImage} alt=""></CaptureImageIcon>
-                  <CaptureName>Phone capture - </CaptureName>
-                  <CaptureCount>
-                    {each.capturePhoneCount?.length > 1
-                      ? each.capturePhoneCount
-                      : `0${each.capturePhoneCount}`}
-                  </CaptureCount>
-                </CaptureImageContainer>
-                <CaptureImageContainer>
-                  <CaptureImageIcon
-                    src={captureLidarIcon}
-                    alt=""
-                  ></CaptureImageIcon>
-                  <CaptureName>LiDAR - </CaptureName>
-                  <CaptureCount>
-                    {each.captureLidarCount?.length > 1
-                      ? each.captureLidarCount
-                      : `0${each.captureLidarCount}`}
-                  </CaptureCount>
-                </CaptureImageContainer>
-                <CaptureImageContainer>
-                  <CaptureImageIcon src={DroneImage} alt=""></CaptureImageIcon>
-                  <CaptureName>Drone - </CaptureName>
-                  <CaptureCount>
-                    {each.captureDroneCount?.length > 1
-                      ? each.captureDroneCount
-                      : `0${each.captureDroneCount}`}
-                  </CaptureCount>
-                </CaptureImageContainer>
-              </ProjectCard>
+              <Card each={each} />
             </div>
           );
         })

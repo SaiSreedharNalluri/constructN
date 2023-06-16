@@ -35,12 +35,12 @@ export const projectConfig = [
       {
         id: "numberOfMembersSelect",
         type: "select",
-        defaultValue: "greaterThan",
-        placeHolder: "Enter number of members",
+        defaultValue: "",
+        placeHolder: "Select condition",
         label: "Number of Members",
         isLarge: false,
         isError: false,
-        isReq: true,
+        isReq: false,
         isflex: false,
         isReadOnly: false,
         width: "199px !important",
@@ -50,7 +50,12 @@ export const projectConfig = [
           {
             label: "Greater Than",
             value: "greaterThan",
-            selected: true,
+            selected: false,
+          },
+          {
+            label: "Greater Than",
+            value: "greaterThan",
+            selected: false,
           },
           {
             label: "Less Than",

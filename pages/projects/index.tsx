@@ -15,6 +15,7 @@ import {
   HeaderLabel,
   ProjectsHeader,
   GridViewButtonRight,
+  FilterIndicator,
 } from "../../components/divami_components/project-users-list/ProjectUsersListStyles";
 import {
   SearchAreaContainer,
@@ -61,7 +62,6 @@ import {
 import { toast } from "react-toastify";
 import Moment from "moment";
 import CustomLoader from "../../components/divami_components/custom_loader/CustomLoader";
-import LocalSearch from "../../components/divami_components/local_component/LocalSearch";
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -79,6 +79,7 @@ const Index: React.FC<any> = () => {
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [responseData, setResponseData] = useState<any>([]);
   const [roles, setRoles] = useState<string[] | []>([]);
+  const [isFilterApplied, setIsFilterApplied] = useState<boolean>(false);
   const [options, setOptions] = useState<any>({
     listOfEntries: [
       {
@@ -89,18 +90,13 @@ const Index: React.FC<any> = () => {
   });
   const [selectedOption, setSelectedOption] = useState("issuePriority");
 
-  const [showButton, setShowbutton] = useState(false);
-
-  const [showLoading, setShowLoading] = useState(true);
-
   const [formValues, setFormValues]: any = useState({ priority: [] });
   const [showPopUp, setshowPopUp] = useState(false);
 
-  const [taskFilterState, setTaskFilterState] = useState({
-    isFilterApplied: false,
-  });
-
+  const [taskFilterState, setTaskFilterState] = useState({});
+  const [showButton, setShowbutton] = useState(false);
   const [projectId, setProjectId] = useState<any>("");
+  const [showLoading, setShowLoading] = useState(true);
 
   const sortMenuOptions = [
     {
@@ -108,17 +104,6 @@ const Index: React.FC<any> = () => {
       icon: UpArrow,
       method: "userAsc",
       onClick: () => {
-        // const sortedData = projects.sort((a, b) => {
-        //   if (Number(a.usersCount) < Number(b.usersCount)) {
-        //     return -1;
-        //   } else if (Number(a.usersCount) < Number(b.usersCount)) {
-        //     return 1;
-        //   } else {
-        //     return 0;
-        //   }
-        // });
-        // const sortedData = projects.sort((a, b) => a.usersCount - b.usersCount);
-        // console.log(sortedData, "Fsdfd");
         setSearchTableData(
           []
             .concat(projects)
@@ -337,15 +322,10 @@ const Index: React.FC<any> = () => {
         toast.success("Tag list updated successfully");
       }
       setShowbutton(false);
+      // setSubmittedValues(formValues);
     } catch (error) {
       console.log("Error:", error);
     }
-  };
-
-  const localizationOptions = {
-    body: {
-      emptyDataSourceMessage: <LocalSearch />,
-    },
   };
 
   return (
@@ -355,7 +335,7 @@ const Index: React.FC<any> = () => {
           <Header breadCrumbData={breadCrumbsData} hideSidePanel />
         )}
       </div>
-      <div className="grid-background">
+      <div className={`${isGridView ? "grid-background" : ""}`}>
         <Content>
           <ProjectsListContainer>
             <ProjectsHeader>
@@ -376,6 +356,8 @@ const Index: React.FC<any> = () => {
                               ?.includes(e.target?.value?.toLowerCase())
                           )
                         );
+                        setIsFilterApplied(false);
+                        setTaskFilterState({});
                       }}
                       InputLabelProps={{ shrink: false }}
                       InputProps={{
@@ -430,6 +412,7 @@ const Index: React.FC<any> = () => {
                     setOpenFilter(true);
                   }}
                 />
+                {isFilterApplied ? <FilterIndicator /> : <></>}
                 <ToggleButtonContainer>
                   <GridViewButton
                     onClick={() => {
@@ -471,7 +454,6 @@ const Index: React.FC<any> = () => {
                 projectActions={projectActions}
               />
             )}
-
             {openFilter && (
               <CustomDrawer open>
                 <ProjectListFilter
@@ -483,10 +465,12 @@ const Index: React.FC<any> = () => {
                     handleFilter(formState)
                   }
                   setTaskFilterState={setTaskFilterState}
+                  setIsFilterApplied={setIsFilterApplied}
+                  setSearchTerm={setSearchTerm}
                 />
               </CustomDrawer>
             )}
-            {showPopUp ? (
+            {showPopUp && (
               <PopupComponent
                 open={showPopUp}
                 width={"585px"}
@@ -504,6 +488,7 @@ const Index: React.FC<any> = () => {
                     setShowbutton={setShowbutton}
                   />
                 }
+                // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
                 modalmessage={`Are you sure you want to delete this Issue ?`}
                 primaryButtonLabel={"Update"}
                 SecondaryButtonlabel={"Cancel"}
@@ -513,12 +498,11 @@ const Index: React.FC<any> = () => {
                 setShowbutton={setShowbutton}
                 setSelectedOption={setSelectedOption}
               />
-            ) : (
-              <></>
             )}
           </ProjectsListContainer>
         </Content>
       </div>
+
       {showAddUser ? (
         <PopupComponent
           open={showAddUser}
@@ -534,6 +518,7 @@ const Index: React.FC<any> = () => {
           callBackvalue={() => {}}
           width={"458px"}
           showButton={false}
+          backdropWidth={true}
         />
       ) : (
         <></>

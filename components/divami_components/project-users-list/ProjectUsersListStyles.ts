@@ -166,6 +166,9 @@ export const StyledTable = styled(MaterialTable)({
     //   marginLeft: "20px",
     // },
   },
+  "&.MuiTableBody-root": {
+    backgroundColor: "#FFF2EB",
+  },
 }) as any;
 
 export const CustomColumnTitle = styled("p")({
@@ -176,14 +179,57 @@ export const SortIconStyled = styled(SortAscIcon)({
   marginLeft: "20px",
 }) as any;
 
+export const RowActionWrapper = styled("div")({
+  width: "200px",
+});
+
 export const TableWrapper = styled("div")((props: any) => ({
   marginBottom: props.hideHeader ? "0" : "50px",
   "& .MuiTableHead-root": {
     display: props.hideHeader ? "none" : "",
   },
+  "& .MuiTableRow-root": {
+    "& td:last-child": {
+      "#rowActions": {
+        display: "none",
+      },
+      ".rowMenu": {
+        visibility: "hidden",
+      },
+      ".active": {
+        visibility: "visible",
+      },
+    },
+    ":hover": {
+      "& td:last-child": {
+        "#rowActions": {
+          display: "flex",
+        },
+        ".rowMenu": {
+          visibility: "visible",
+        },
+      },
+      backgroundColor: "#FFF2EB",
+    },
+  },
+})) as any;
+
+export const MenuWrapper = styled("div")((props: any) => ({
+  // display: props.id == "rowMenu" ? "block" : "none",
 })) as any;
 
 export const ToggleButtonContainer = styled("div")({ display: "flex" });
+
+export const FilterIndicator = styled("div")({
+  display: "block",
+  width: "8px",
+  height: "8px",
+  background: "#FF843F",
+  borderRadius: "100%",
+  marginLeft: "-27px",
+  marginRight: "20px",
+  marginTop: "-18px",
+});
 
 export const GridViewButton = styled("div")((props: any) => ({
   background: !props?.toggleStatus ? "none" : "#F1742E",

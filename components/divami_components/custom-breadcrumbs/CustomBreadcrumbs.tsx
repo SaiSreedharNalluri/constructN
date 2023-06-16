@@ -11,6 +11,7 @@ import {
 const CustomBreadcrumbs: React.FC<any> = ({
   breadCrumbData,
   handleBreadCrumbClick,
+  showFirstElement = false,
 }) => {
   const [breadcrumbsConfig, setBreadcrumbsConfig] = useState<any>([
     breadCrumbData,
@@ -32,7 +33,17 @@ const CustomBreadcrumbs: React.FC<any> = ({
               {breadcrumbsConfig[0]?.name}
             </BreadcrumbsLabel>
           </Link> */}
-          {breadcrumbsConfig.length > 0 &&
+          {showFirstElement && breadcrumbsConfig.length ? (
+            breadcrumbsConfig.map((breadcrumb: any, index: number) => (
+              <BreadcrumbsLabel
+                key={breadcrumb + index}
+                color="text.primary"
+                onClick={() => handleBreadCrumbClick(breadcrumb, index)}
+              >
+                {breadcrumb?.name}
+              </BreadcrumbsLabel>
+            ))
+          ) : !showFirstElement && breadcrumbsConfig.length ? (
             breadcrumbsConfig.slice(1).map((breadcrumb: any, index: number) => (
               <BreadcrumbsLabel
                 key={breadcrumb + index}
@@ -41,7 +52,10 @@ const CustomBreadcrumbs: React.FC<any> = ({
               >
                 {breadcrumb?.name}
               </BreadcrumbsLabel>
-            ))}
+            ))
+          ) : (
+            <></>
+          )}
         </CustomizedBreadcrumbs>
       </Stack>
     </div>

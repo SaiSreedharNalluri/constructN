@@ -54,6 +54,7 @@ export const HeaderRightSectionResetText = styled.div({
   fontStyle: "normal",
   fontWeight: "400",
   color: " #F1742E",
+  cursor: "pointer",
 });
 
 export const FilterHeader = styled.div({
