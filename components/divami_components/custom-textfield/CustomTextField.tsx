@@ -211,7 +211,15 @@ export const CustomTextField = (props: any) => {
             ? {
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Image width={24} height={24} src={name} alt="Search" />
+                    <Image
+                      style={{
+                        width: "35px",
+                        height: "35px",
+                        marginLeft: "-7px",
+                      }}
+                      src={name}
+                      alt="Search"
+                    />
                   </InputAdornment>
                 ),
               }

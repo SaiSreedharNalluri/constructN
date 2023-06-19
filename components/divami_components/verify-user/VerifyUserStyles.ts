@@ -71,7 +71,7 @@ export const FormContainerSign = styled("div")({
 
   paddingLeft: "60px",
   paddingRight: "60px",
-  paddingTop: "68px",
+  paddingTop: "89px",
 });
 
 export const SignInHeader = styled("div")({
@@ -322,7 +322,7 @@ export const LinkExpireDiv = styled("div")({
   fontSize: "14px",
   lineHeight: "20px",
   textAlign: "center",
-  marginTop: "20px",
+  marginTop: "10px",
   // marginLeft: "12px",
 });
 
@@ -353,7 +353,7 @@ export const ResendMailDiv  = styled("div")({
   fontSize: "14px",
   lineHeight: "19px",
   textAlign: "center",
-  marginTop: "140px",
+  marginTop: "280px",
   // marginLeft:"9px"
 });
 
