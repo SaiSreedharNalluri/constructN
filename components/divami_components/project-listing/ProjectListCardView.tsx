@@ -142,7 +142,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
             <TruncatedString
               text={each.projectName}
               maxLength={20}
-              suffixLength={7}
+              suffixLength={0}
             />
           </ProjectNameTitle>
           <UpdatedAtContainer>

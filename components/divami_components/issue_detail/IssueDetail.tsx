@@ -111,6 +111,9 @@ import {
   FourthContMoreText,
   ParentFourthContMoreText,
   MoreTextDiv,
+  DueDateTitle,
+  SecondContDueDate,
+  ThirdContDueDate,
 } from "./IssueDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
@@ -474,7 +477,18 @@ function BasicTabs(props: any) {
               </ThirdContWatchName>
             </SecondContPriorParal>
           </SecondBodyDiv>
-
+          <SecondBodyDiv>
+            <SecondContDueDate>
+              <DueDateTitle>Due date</DueDateTitle>
+              <ThirdContDueDate
+                style={{ color: "#101F4B" }}
+                data-testid="issue-duedate"
+              >
+                {" "}
+            {Moment(taskState?.TabOne?.dueDate).format("DD MMM 'YY")}
+              </ThirdContDueDate>
+            </SecondContDueDate>
+          </SecondBodyDiv>
           <SecondBodyDiv>
             <ThirdContRight>
               <ThirdContProg data-testid="progres-label">

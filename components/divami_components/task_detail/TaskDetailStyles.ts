@@ -101,7 +101,17 @@ export const PriorityTitle = styled("div")`
   margin-right: 130px;
   font-family: "Open Sans";
   color: #787878;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+`;
 
+export const DueDateTitle = styled("div")`
+ width: 88px;
+  margin-right: 130px;
+  font-family: "Open Sans";
+  color: #787878;
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
@@ -158,7 +168,9 @@ export const SecondContCapt = styled("div")({
   // justifyContent:"space-between",
   // width: "210px",
 });
-
+export const SecondContDueDate=styled("div")({
+  display: "flex",
+});
 export const CaptureTitle = styled("div")`
   width: 88px;
   margin-right: 130px;
@@ -192,6 +204,16 @@ width: 88px;
 `;
 
 export const ThirdContWatchName = styled("div")`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #101f4c;
+  margin-top: 5px;
+`;
+
+export const ThirdContDueDate = styled("div")`
   font-family: "Open Sans";
   font-style: normal;
   font-weight: 400;
