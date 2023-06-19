@@ -107,15 +107,15 @@ export const FilterFooter = styled.div({});
 //   // margin-top: 72px;
 // `;
 
-export const ButtonsContainer = styled(Box)({
-  paddingLeft: "20px",
-  paddingRight: "20px",
+export const ButtonsContainer = styled(Box)((props: any) => ({
+  paddingLeft: props.noPaddingLeftRight ? 0 : "20px",
+  paddingRight: props.noPaddingLeftRight ? 0 : "20px",
   height: "80px",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
   // marginTop:"50px"
-});
+})) as any;
 
 export const RefreshIcon = styled(Image)({
   cursor: "pointer",

@@ -1,5 +1,4 @@
 import CustomButton from "../custom-button/CustomButton";
-import FormWrapper from "../form-wrapper/FormWrapper";
 import {
   TitleContainer,
   HeaderLeftSection,
@@ -9,10 +8,7 @@ import {
   ButtonsContainer,
   FilterCommonHeader,
 } from "../hotspot-filter-common/HotspotFilterStyled";
-import { StyledFilterText } from "../project-listing/ProjectListingStyles";
 import {
-  EditRoleContainer,
-  EditRoleHeader,
   EditRoleBody,
   EditRoleFooter,
   UserAvatarContainer,
@@ -29,14 +25,29 @@ import {
   HeaderContainer,
 } from "../task-filter-common/StyledComponent";
 import moment from "moment";
+import CustomSelect from "../custom-select/CustomSelect";
+import { useState } from "react";
 
-export const EditRoleOverlay = ({ onClose, userData }: any) => {
+export const EditRoleOverlay = ({
+  onClose,
+  userData,
+  roles,
+  updateRole,
+}: any) => {
   const handleClose = () => {
     onClose();
   };
-  const formHandler = () => {};
+  const cancelCallback = () => {
+    onClose();
+  };
+
+  const applyCallback = () => {
+    updateRole(selectedRole, userData);
+  };
+
+  const [selectedRole, setSelectedRole] = useState(userData?.role || "");
   return (
-    <FilterCommonMain>
+    <FilterCommonMain isFlex={true}>
       <FilterCommonHeader>
         <HeaderContainer>
           <TitleContainer noPadding>
@@ -58,7 +69,12 @@ export const EditRoleOverlay = ({ onClose, userData }: any) => {
       </FilterCommonHeader>
       <EditRoleBody>
         <UserAvatarContainer>
-          <UserAvatarImage src={userData?.avatar} alt=""></UserAvatarImage>
+          <UserAvatarImage
+            src={userData?.avatar}
+            alt=""
+            width={58}
+            height={58}
+          ></UserAvatarImage>
           <UserInfoContainer>
             <UserName>{userData?.fullName}</UserName>
             <UserEmail>{userData?.email}</UserEmail>
@@ -69,18 +85,35 @@ export const EditRoleOverlay = ({ onClose, userData }: any) => {
         <AssignedValue>
           {moment(userData.updatedAt).format("DD MMM YYYY")}
         </AssignedValue>
+        <AssignedLabel bottom>Role</AssignedLabel>
+        <CustomSelect
+          config={{
+            options: roles?.length ? roles : [],
+            defaultValue: selectedRole,
+          }}
+          id={"select"}
+          setFormConfig={() => {}}
+          sx={{ minWidth: 120 }}
+          onChangeHandler={(e: any) => {
+            setSelectedRole(e.target?.value);
+          }}
+          isError={false}
+          label="Role"
+          dataTestId={`inputSelectField`}
+        />
       </EditRoleBody>
 
       <EditRoleFooter>
-        <ButtonsContainer>
+        <ButtonsContainer noPaddingLeftRight>
           <CustomButton
             type="outlined"
             label="Cancel"
-            formHandler={formHandler}
+            formHandler={cancelCallback}
           />
+
           <CustomButton
             type="contained"
-            formHandler={formHandler}
+            formHandler={applyCallback}
             label="Apply"
           />
         </ButtonsContainer>
