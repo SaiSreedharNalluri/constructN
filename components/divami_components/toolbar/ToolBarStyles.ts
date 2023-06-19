@@ -163,7 +163,9 @@ export const LayersWrapper = styled("div")({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: "8px 20px 7px 20px",
+  // padding: "8px 20px 7px 20px",
+    padding: "15px 20px 14px 20px",
+
 });
 
 export const IconsContainer = styled("div")({
@@ -181,7 +183,7 @@ export const SelectLayersWrapper = styled("div")(
     top: "58px",
 
     position: "absolute",
-    left: props.typeOfWindow === "type" ? "1px" : "250px",
+    left: props.typeOfWindow === "type" ? "1px" : "251px",
     // left: props.typeOfWindow === 'type' ? '1px' : '238px',
 
     // border: '1px solid #D9D9D9',
@@ -190,6 +192,7 @@ export const SelectLayersWrapper = styled("div")(
     fontSize: "14px",
     zIndex: -1,
     width: "250px",
+  
   })
 );
 
