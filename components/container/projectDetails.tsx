@@ -150,7 +150,7 @@ const ProjectDetails: React.FC = () => {
                     </label>
                   </div>
                   <div className=" text-[#101F4C]">
-                    <p className="">{user?.fullName}</p>
+                    <p className="">{projectData?.email}</p>
                     <label className="  text-sm text-[#787878]">
                       Project Owner
                     </label>
