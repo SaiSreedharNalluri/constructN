@@ -185,6 +185,8 @@ export const RowActionWrapper = styled("div")({
 
 export const TableWrapper = styled("div")((props: any) => ({
   marginBottom: props.hideHeader ? "0" : "50px",
+  height:"calc(100vh - 130px)",
+  overflow:"auto",
   "& .MuiTableHead-root": {
     display: props.hideHeader ? "none" : "",
   },

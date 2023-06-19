@@ -354,7 +354,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
               showTitle: true,
               thirdSortClick: false,
               toolbar: false,
-              maxBodyHeight: "100vh",
+              // maxBodyHeight: "50px",
               overflowY: "auto",
               rowStyle: (rowData: any) => ({
                 fontFamily: "Open Sans",

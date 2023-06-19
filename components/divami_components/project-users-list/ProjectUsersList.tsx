@@ -450,7 +450,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                 selection: false,
                 showTitle: true,
                 toolbar: false,
-                maxBodyHeight: "80vh",
+                // maxBodyHeight: "80vh",
                 thirdSortClick: false,
                 rowStyle: (rowData: any) => ({
                   fontFamily: "Open Sans",

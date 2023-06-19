@@ -135,7 +135,7 @@ const ProjectDetails: React.FC = () => {
                   <ChangeIcon handleImageUPload={handleImageUPload} />
                 </div>
               </div>
-              <div className=" border-b border-[#F1742E]">
+              <div>
                 <div className="grid grid-cols-3  px-6  py-4">
                   <div>
                     <p className="text-[#101F4C]">{projectData?.name}</p>
@@ -200,7 +200,7 @@ const ProjectDetails: React.FC = () => {
                 </div>
               </div>
 
-              <div className=" grid row-span-2 border-2 border-[#F1742E]">
+              <div className=" grid row-span-2 border-2 border-gray-400">
                 <Map
                   latitude={latitude}
                   longitude={longitude}

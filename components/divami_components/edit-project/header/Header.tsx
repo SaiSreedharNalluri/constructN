@@ -2,7 +2,7 @@ import React from "react";
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
 import Image from "next/image";
-import closeIcon from "../../../../public/divami_icons/closeIcon.svg";
+import closeIconCircle from "../../../../public/divami_icons/closeWithCircle.svg";
 const HeaderContainer = styled(Box)({
   backgroundColor: "white",
   height: "51px",
@@ -38,7 +38,7 @@ const Header = ({ closeEditProject }: any) => {
         <span>{title}</span>
         <CloseIcon
           onClick={closeEditProject}
-          src={closeIcon}
+          src={closeIconCircle}
           alt={"close icon"}
         />
       </TitleContiner>

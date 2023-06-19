@@ -152,6 +152,7 @@ export const MoreMenuIcon = styled(Image)({});
 export const ProjectCardsContainer = styled("div")({
   display: "flex",
   flexWrap: "wrap",
+  justifyContent:"center",
   overflow: "auto",
   height: "calc(100vh - 70px)",
   padding: "0 20px",
@@ -172,7 +173,7 @@ export const ProjectCard = styled("div")((props: any) => ({
   fontFamily: "Open Sans",
   position: "relative",
   marginTop: props.active ? "-10px" : "",
-   
+  
 })) as any;
 
 export const ProjectTopLeftBg = styled("div")((props: any) => ({
