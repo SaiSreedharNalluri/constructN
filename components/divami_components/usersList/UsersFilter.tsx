@@ -66,7 +66,7 @@ const UsersFilter: React.FC<any> = ({
     {
       title: "Select a role",
       code: "roleType",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       // options: [
       //   { optionTitle: "System Admin", optionStatus: "F" },
       //   { optionTitle: "VDC Manager", optionStatus: "F" },
@@ -91,8 +91,10 @@ const UsersFilter: React.FC<any> = ({
           : "F",
         options: roles.map((each: any) => {
           return {
-            optionTitle: each,
-            optionStatus: taskFilterState?.filterData?.roleType?.includes(each)
+            optionTitle: each.label,
+            optionStatus: taskFilterState?.filterData?.roleType?.includes(
+              each.value
+            )
               ? "T"
               : "F",
           };
@@ -186,9 +188,10 @@ const UsersFilter: React.FC<any> = ({
   };
 
   const handleOptionSelection = (item: any, index: any) => {
-    let tempOption;
+    let tempOption,
+      temp = FilterState;
     if (item?.optionStatus === "T") {
-      let temp = FilterState?.map((each: any, serial: number) => {
+      temp = FilterState?.map((each: any, serial: number) => {
         if (serial === index) {
           tempOption = each?.options?.map((obj: any) => {
             if (obj?.optionTitle === item?.optionTitle) {
@@ -212,9 +215,8 @@ const UsersFilter: React.FC<any> = ({
           };
         }
       });
-      SetFilterState(temp);
     } else {
-      let temp = FilterState?.map((each: any, serial: number) => {
+      temp = FilterState?.map((each: any, serial: number) => {
         if (serial === index) {
           tempOption = each?.options?.map((obj: any) => {
             if (obj?.optionTitle === item?.optionTitle) {
@@ -238,7 +240,34 @@ const UsersFilter: React.FC<any> = ({
           };
         }
       });
-      SetFilterState(temp);
+    }
+    if (temp[0].options.every((each: any) => each.optionStatus == "T")) {
+      SetFilterState(
+        temp.map((each: any) => {
+          return {
+            ...each,
+            selectAllStatus: "T",
+          };
+        })
+      );
+    } else if (temp[0].options.some((each: any) => each.optionStatus == "T")) {
+      SetFilterState(
+        temp.map((each: any) => {
+          return {
+            ...each,
+            selectAllStatus: "I",
+          };
+        })
+      );
+    } else {
+      SetFilterState(
+        temp.map((each: any) => {
+          return {
+            ...each,
+            selectAllStatus: "F",
+          };
+        })
+      );
     }
   };
 
@@ -272,7 +301,7 @@ const UsersFilter: React.FC<any> = ({
         selectAllStatus: "F",
         options: roles.map((each: any) => {
           return {
-            optionTitle: each,
+            optionTitle: each.label,
             optionStatus: "F",
           };
         }),

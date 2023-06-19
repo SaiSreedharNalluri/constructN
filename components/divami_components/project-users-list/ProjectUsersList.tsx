@@ -13,6 +13,7 @@ import {
   getProjectUsers,
   getUserRoles,
   removeProjectUser,
+  updateProjectUserRole,
 } from "../../../services/project";
 import RemoveIcon from "../../../public/divami_icons/RemoveIcon.svg";
 import ChatIcon from "../../../public/divami_icons/ChatIcon.svg";
@@ -63,7 +64,6 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [tableData, setTableData] = useState<any>([]);
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
-  const [roles, setRoles] = useState<string[] | []>([]);
   const [sortObj, setSortObj] = useState(true);
   const [showAddUser, setShowAddUser] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -279,14 +279,10 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   };
   const updateRole = (selectedRole: string, rowData: any) => {
     const projectInfo = {
-      users: [
-        {
-          role: selectedRole,
-          email: rowData.email,
-        },
-      ],
+      role: selectedRole,
+      email: rowData.email,
     };
-    addUserRoles(projectInfo, router.query.projectId as string)
+    updateProjectUserRole(projectInfo, router.query.projectId as string)
       .then((res: any) => {
         toast.success("User role is updated");
         setShowEdit(false);
@@ -411,16 +407,6 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
         <TableWrapper>
           {dataLoaded ? (
             <StyledTable
-              // components={{
-              //   Toolbar: (props) => (
-              //     <MTableToolbar {...props} style={{ width: "100%" }} sx={{}} />
-              //   ),
-              // }}
-              // icons={{
-              //   SortArrow: forwardRef((props, ref) => (
-              //     <ArrowDropUpIcon {...props} ref={ref} />
-              //   )),
-              // }}
               components={{
                 Container: (props: any) => <Paper {...props} elevation={0} />,
               }}
@@ -477,7 +463,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
             taskFilterState={taskFilterState}
             tableData={tableData}
             setSearchTableData={setSearchTableData}
-            roles={roles}
+            roles={rolesArr}
             onClose={() => {
               setOpenFilter(false);
             }}
