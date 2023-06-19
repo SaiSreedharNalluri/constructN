@@ -59,6 +59,14 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       toolTipMsg: "Dashboard & Reports",
     },
     {
+      id: "sections",
+      icon: ScheduleIcon,
+      activeIcon: ScheduleHighlight,
+      isActive: false,
+      toolTipMsg: "Sections",
+    },
+
+    {
       id: "structure",
       icon: drawing,
       activeIcon: drawingInactive,
@@ -81,14 +89,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       isActive: false,
       toolTipMsg: "Users",
     },
-    {
-      id: "sections",
-      icon: ScheduleIcon,
-      activeIcon: ScheduleHighlight,
-      isActive: false,
-      toolTipMsg: "Sections",
-    },
-
     {
       id: "settings",
       icon: people,

@@ -1,7 +1,8 @@
 import Box from "@mui/material/Box";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import constructnLogo from "../../../public/divami_icons/constructnLogo.svg";
+//import constructnLogo from "../../../public/divami_icons/constructnLogo.svg";
+import constructnLogo from "../../../public/icons/logoYellowBlack.png";
 import hamburgerMenu from "../../../public/divami_icons/hamburgerMenu.svg";
 import profileImageHeader from "../../../public/divami_icons/profileImageHeader.svg";
 import ImgProfile from "../../../public/divami_icons/ImgProfile.svg";

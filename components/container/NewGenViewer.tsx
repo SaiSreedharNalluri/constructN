@@ -543,18 +543,18 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         switch(changeType.current){
           case 'changeType':
             console.log("Proper Change",currentViewerData.currentViewType,"-->",incomingPayload.current.action.data as string);
-            removeLayers(getViewerTypefromViewType(incomingPayload.current.action.data as string));
-            removeData(getViewerTypefromViewType(incomingPayload.current.action.data as string));
+            // removeLayers(getViewerTypefromViewType(incomingPayload.current.action.data as string));
+            // removeData(getViewerTypefromViewType(incomingPayload.current.action.data as string));
 
             if(getViewerTypefromViewType(incomingPayload.current.action.data as string)==='Forge')
             handleDesignTypeChange(getViewerTypefromViewType(currentViewerData.currentViewType));
             else
             handleRealityTypeChange(getViewerTypefromViewType(currentViewerData.currentViewType));
 
-            if(viewerData.current!==undefined){
-              loadViewerData(viewerData.current);
-             loadLayerData(viewerData.current);
-             }
+            // if(viewerData.current!==undefined){
+            //   loadViewerData(viewerData.current);
+            //  loadLayerData(viewerData.current);
+            //  }
             break;
           case 'changeViewerAndType':
             if(viewerData.current!==undefined){
@@ -914,6 +914,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           } else if (type === 'Task') {
             forgeUtils.current.updateTasksData(thisViewerData.currentTaskList);
           }
+          //forgeUtils.current.refreshData();
         }
         break;
       case 'Potree':
@@ -1472,10 +1473,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
     if (!isCompareViewer(viewerId)) {
       initViewer(viewerId);
       if(viewerData.current!==undefined){
-       loadViewerData(viewerData.current);
+      loadViewerData(viewerData.current);
       loadLayerData(viewerData.current);
       }
-      forgeUtils.current?.refreshData();
+      //forgeUtils.current?.refreshData();
       //console.log('trying to reload....forge');
       
     } else {
