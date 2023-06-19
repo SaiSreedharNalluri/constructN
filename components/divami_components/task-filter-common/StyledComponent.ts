@@ -1,14 +1,16 @@
 import styled from "@emotion/styled";
 import { Box, Button, TextField, Typography } from "@mui/material";
 
-export const FilterCommonMain = styled("div")({
+export const FilterCommonMain = styled("div")((props: any) => ({
   width: "438px",
   // height: "100%",
-  display: "block",
+  display: props.isFlex ? "flex" : "block",
   height: "calc(100vh - 60px)",
   paddingLeft: "20px",
   paddingRight: "20px",
-});
+  flexDirection: "column",
+})) as any;
+
 export const HeaderContainer = styled("div")({
   backgroundColor: "white",
   height: "51px",

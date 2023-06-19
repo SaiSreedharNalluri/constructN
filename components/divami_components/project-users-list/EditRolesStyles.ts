@@ -7,7 +7,7 @@ export const EditRoleContainer = styled("div")({
 
 export const EditRoleHeader = styled("div")({});
 
-export const EditRoleBody = styled("div")({});
+export const EditRoleBody = styled("div")({ flexGrow: "1" });
 
 export const EditRoleFooter = styled("div")({});
 
@@ -30,18 +30,21 @@ export const UserInfoContainer = styled("div")({
 });
 
 export const UserName = styled("div")({
-  width: "",
+  fontSize: "18px",
 });
 
 export const UserEmail = styled("div")({
   width: "",
 });
 
-export const AssignedLabel = styled("div")({
+export const AssignedLabel = styled("div")((props: any) => ({
   color: "#787878",
   fontSize: "14px",
-});
+  marginBottom: props.bottom ? "5px" : "",
+})) as any;
+
 export const AssignedValue = styled("div")({
   color: "#101F4C",
   fontSize: "14px",
+  marginBottom: "20px",
 });

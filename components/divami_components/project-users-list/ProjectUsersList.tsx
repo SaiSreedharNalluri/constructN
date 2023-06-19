@@ -179,7 +179,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       sorting: false,
       render: (rowData: any) => {
         return (
-          <ImageButtons hoveringOver={hoveringOver} id={"rowActions"}>
+          <ImageButtons id={"rowActions"}>
             <RemoveIconImage src={ChatIcon} alt="" />
             <RemoveIconImage
               src={RemoveIcon}
@@ -194,8 +194,8 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
               src={Edit}
               alt=""
               onClick={() => {
-                // setShowEdit(true);
-                // setSelectedRowData(rowData);
+                setShowEdit(true);
+                setSelectedRowData(rowData);
               }}
             />
           </ImageButtons>
@@ -218,23 +218,6 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     // return a.numberOfUsers - b.numberOfUsers;
   };
 
-  const changeUserRole = () => {
-    const projectInfo = {
-      users: tableData
-        .filter((each: any) => each.isRoleUpdated)
-        .map((each: any) => {
-          return { role: each.role, email: each.email };
-        }),
-    };
-    addUserRoles(projectInfo, router.query.projectId as string)
-      .then((res: any) => {
-        toast.success("User Added successfully");
-        setOpenDrawer(false);
-      })
-      .catch((err) => {
-        toast.error(err.message);
-      });
-  };
   const deleteUser = (rowData: any) => {
     const email = rowData.email.toLocaleLowerCase();
     removeProjectUser(email, router.query.projectId as string)
@@ -259,29 +242,25 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       });
   };
 
+  const getUsersList = () => {
+    getProjectUsers(router.query.projectId as string).then((response: any) => {
+      if (response.success) {
+        setTableData(
+          response.result.map((each: any) => {
+            return {
+              ...each,
+              ...each.user,
+              updatedAt: new Date(each.user?.updatedAt),
+            };
+          })
+        );
+        setDataLoaded(true);
+      }
+    });
+  };
   useEffect(() => {
     if (router.isReady && router.query.projectId) {
-      getProjectUsers(router.query.projectId as string).then(
-        (response: any) => {
-          if (response.success === true) {
-            let rolesArr: string[] = [];
-            setTableData(
-              response.result.map((each: any) => {
-                return {
-                  ...each,
-                  ...each.user,
-                  updatedAt: new Date(each.user?.updatedAt),
-                };
-              })
-            );
-            response?.result.forEach((item: any) => {
-              if (!rolesArr.includes(item.role)) rolesArr.push(item?.role);
-            });
-            setRoles(rolesArr);
-            setDataLoaded(true);
-          }
-        }
-      );
+      getUsersList();
       getUserRoles().then((res: any) => {
         const rolesData = res.result.map((each: any) => {
           return {
@@ -294,17 +273,28 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       });
     }
   }, [router.isReady, router.query.projectId]);
-  const [hoveringOver, setHoveringOver] = useState("");
-  // This is the only downside.. very hacky
-  const [, setForceUpdate] = useState(0);
-  const forceUpdate = () => setForceUpdate((old) => old + 1);
 
   const formHandler = (event: any) => {
     setShowAddUser(true);
   };
-  const handleEditClick = (event: any, rowData: any) => {
-    rowData.tableData.editing = "delete";
-    forceUpdate();
+  const updateRole = (selectedRole: string, rowData: any) => {
+    const projectInfo = {
+      users: [
+        {
+          role: selectedRole,
+          email: rowData.email,
+        },
+      ],
+    };
+    addUserRoles(projectInfo, router.query.projectId as string)
+      .then((res: any) => {
+        toast.success("User role is updated");
+        setShowEdit(false);
+        getUsersList();
+      })
+      .catch((err) => {
+        toast.error(err.message);
+      });
   };
 
   const [isSearching, setIsSearching] = useState(false);
@@ -554,6 +544,8 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
             setShowEdit(false);
           }}
           userData={selectedRowData}
+          roles={rolesArr}
+          updateRole={updateRole}
         />
       </Drawer>
     </ProjectUsersListContainer>
