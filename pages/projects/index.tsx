@@ -571,7 +571,7 @@ const Index: React.FC<any> = () => {
           hideButtons
           setShowPopUp={showAddUser ? setShowAddUser : setShowArchiveProject}
           modalTitle={
-            showAddUser ? "Add users to the project" : "Project Archive"
+            showAddUser ? "Add users to the project" : "Archive Project"
           }
           modalContent={
             showAddUser ? (
@@ -581,7 +581,7 @@ const Index: React.FC<any> = () => {
             )
           }
           modalmessage={
-            showAddUser ? "" : "Are you sure you want to deassign user?"
+            showAddUser ? "" : "Are you sure you want to Archive Project?"
           }
           primaryButtonLabel={showAddUser ? "Yes" : "Yes"}
           SecondaryButtonlabel={showAddUser ? "No" : "No"}

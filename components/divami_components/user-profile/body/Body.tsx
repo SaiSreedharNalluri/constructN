@@ -42,7 +42,7 @@ const Body = ({
   const closeEditProfile = () => {
     setIsUserProfileDrawerOpen(false);
   };
-  return (
+  return (userDetails&&
     <div className="px-3 calc-h119 overflow-y-auto">
       <div className="flex mt-4 ">
         <div className="relative rounded-full ">
@@ -77,7 +77,7 @@ const Body = ({
         </div>
       </div>
       <div>
-        <h3 className="py-2">Project Assigned</h3>
+        {/* <h3 className="py-2">Project Assigned</h3>
 
         <div className="grid grid-cols-2  gap-2 h-full w-full">
           {projectDetails?.map((pData: any) => {
@@ -119,7 +119,7 @@ const Body = ({
               </div>
             );
           })}
-        </div>
+        </div> */}
         <div className="py-4 flex">
           <Image src={task} alt=""></Image>
           <p className="text-[#101F4C]">
