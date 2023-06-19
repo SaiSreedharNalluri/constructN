@@ -53,9 +53,11 @@ const Notifications = ({
   
   return (
     <StyledDiv>
+      <div className="px-4">
       <Header
         closeNotifications={handleNotificationClose}
       />
+      </div>
       <Body
         handleFormData={handleFormData}
         validate={validate}

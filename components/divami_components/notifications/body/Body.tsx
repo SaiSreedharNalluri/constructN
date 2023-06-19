@@ -14,7 +14,7 @@ const Body = ({
   updateNotifications,getNotifiCationTime,filterNotificationData,filterValue
 }: any) => {  
   return (
-    <div className="calc-h110 overflow-y-auto"> 
+    <div > 
       {userNotificationTypes.map((notificationObj: any) => {
            let icon = null;
 
@@ -70,7 +70,7 @@ const Body = ({
       return (
         <button
           type="button"
-          className={`${"ml-4 font-semibold  inline-block"} `}
+          className={`${"ml-4 font-semibold  inline-block"} sticky top-0 pt-3 `}
           key={notificationObj.id}
           onClick={() => {
             filterNotificationData(notificationObj.id);
@@ -78,7 +78,7 @@ const Body = ({
         >
 <div className={`${
             filterValue === notificationObj.id
-              ? "text-[#F1742E] py-1 border-b-2 border-[#F1742E]"
+              ? "text-[#F1742E] py-1 border-b-2 border-[#F1742E] rounded-b-[2px]"
               : "border-gray-400 text-gray-700"
           } flex`}>
   <div> {icon}</div>
@@ -88,31 +88,37 @@ const Body = ({
         </button>
       );
     })}
-    <div className="">
+    <div className="calc-h154  overflow-y-auto">
         {Object.keys(notifications).length > 0 &&
           Object.keys(notifications).map((date: any) => (
             <div key={date} className="  ">
-              <div className="flex w-full bg-gray-200">
-              <h3 className="text-base w-3/12 font-bold  px-4 py-4">{date}</h3>
-              <div className="h-0.5 w-9/12 my-auto bg-gray-400 mx-1"></div>
+              <div className="flex w-full bg-gray-100">
+              <h3 className="text-base  font-bold  ml-3 mt-8 mb-3">{date}</h3>
+              <div className="h-0.5 flex-grow bg-gray-300 ml-3 mt-11 mx-4 "></div>
               </div>  
               <ul>
                 {notifications[date].map(
-                  (notificationObj: IUserNotification) => {
+                  (notificationObj: IUserNotification,index:any) => {
+                     const lastChild = index === notifications[date].length - 1;
                     return (
                       <div key={notificationObj.id}>
-                        <div className=" ">
+                        <div className={`${lastChild ? '' : 'border-gray-400  border-b '} `}>
                           {notificationObj?.readAt ? (
                           
-                          <div className="px-4 py-4   border-gray-400  border-b">
+                          <div className="px-4 py-4">
                             <div className="grid grid-cols-8 gap-4">
-                              <div className="col-span-1"> 
+                              <div className="col-span-1 "> 
                               {notificationObj.notificationType === "Project" ? (
                                       <Image src={project} className="h-8 w-8 mt-2" alt="" />
                                     ) : notificationObj.notificationType==="Issue"   ? <Image src={issueIcon} className="h-8 w-8 mt-2" alt="" />:notificationObj.notificationType=== "Task" ? <Image src={task} className="h-8 w-8 mt-2" alt="" />:notificationObj.notificationType=== "Snapshot" ? <Image src={cameraIcon} className="h-8 w-8 mt-2" alt="" />:""}
                                </div> 
                               <div className="col-span-7">
-                              <div className="ml-2"> {notificationObj.message} </div>
+                              <div className="ml-2"><p className="text-sm overflow-hidden" style={{
+    wordWrap: 'break-word',
+    display: '-webkit-box',
+    WebkitLineClamp: 4,
+    WebkitBoxOrient: 'vertical',
+  }} >{notificationObj?.message}</p>  </div>
                               <div>   {date === "TODAY" ? (
                             <div className="ml-2 mt-2">
                               {getNotifiCationTime(
@@ -138,10 +144,9 @@ const Body = ({
                               onClick={() => {
                                 updateNotifications(notificationObj.id);
                               }}
-                              className="py-4 px-4  border-gray-400 bg-gray-100 border-t "
-
-                            >
-                              <div className="grid grid-cols-8 gap-4">
+                              className={`${lastChild ? '' : 'border-gray-400  border-b '}  `}
+                           >
+                              <div className="grid grid-cols-8 gap-4 py-4 px-4 bg-gray-100">
                                 <div className="col-span-1">
                                 {notificationObj.notificationType === "Project" ? (
                                       <Image src={project} className="h-8 w-8 mt-2" alt="" />
@@ -149,7 +154,12 @@ const Body = ({
                                 </div>
                             
                               <div className="col-span-7 ">
-                               <div className="ml-2"> {notificationObj.message}</div> 
+                               <div className="ml-2"><p className="text-sm overflow-hidden" style={{
+    wordWrap: 'break-word',
+    display: '-webkit-box',
+    WebkitLineClamp: 4,
+    WebkitBoxOrient: 'vertical',
+  }}>{notificationObj.message}</p> </div> 
                                <div>     {date === "TODAY" ? (
                                 <div className="ml-2 mt-2">
                                   {getNotifiCationTime(

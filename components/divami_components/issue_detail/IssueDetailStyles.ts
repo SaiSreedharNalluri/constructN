@@ -153,6 +153,12 @@ export const SecondContPriorParal = styled("div")({
   // width: "210px",
 });
 
+export const SecondContDueDate = styled("div")({
+  display: "flex",
+  // justifyContent:"space-between",
+  // width: "210px",
+});
+
 export const SecondContCapt = styled("div")({
   display: "flex",
   // justifyContent:"space-between",
@@ -190,8 +196,26 @@ width: 88px;
   line-height: 19px;
   color: #787878;
 `;
-
+export const DueDateTitle = styled("div")`
+width: 88px;
+  margin-right: 130px;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  color: #787878;
+`;
 export const ThirdContWatchName = styled("div")`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #101f4c;
+  margin-top: 5px;
+`;
+export const ThirdContDueDate = styled("div")`
   font-family: "Open Sans";
   font-style: normal;
   font-weight: 400;

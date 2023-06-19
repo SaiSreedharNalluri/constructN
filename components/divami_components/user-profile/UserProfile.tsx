@@ -79,7 +79,9 @@ const UserProfile = ({ handleProfileClose, projectUsers }: any) => {
   };
   return (
     <StyledDiv>
+      <div className="px-4">
       <Header closeEditProject={handleProfileClose} />
+      </div>
       <Body
         handleFormData={handleFormData}
         userDetails={userDetails as IUser}

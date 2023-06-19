@@ -62,7 +62,9 @@ import {
 import { toast } from "react-toastify";
 import Moment from "moment";
 import CustomLoader from "../../components/divami_components/custom_loader/CustomLoader";
-
+import React from "react";
+import chatOpen from "../../public/divami_icons/chat_open.svg";
+import chatClose from "../../public/divami_icons/chat_close.svg";
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -98,6 +100,7 @@ const Index: React.FC<any> = () => {
   const [showButton, setShowbutton] = useState(false);
   const [projectId, setProjectId] = useState<any>("");
   const [showLoading, setShowLoading] = useState(true);
+  let [eMail, setEMail] = useState<string>("");
 
   const sortMenuOptions = [
     {
@@ -225,6 +228,26 @@ const Index: React.FC<any> = () => {
     );
   };
 
+  const handleOpenChat = (e: any) => {
+        openChat();
+        setChatStatus(!isChatActive);
+  
+  }
+  function openChat(): void {
+    {
+      eval(`globalThis.fcWidget.user.setEmail("${eMail}");`);
+    }
+    {
+      eval(`globalThis.fcWidget.open()`);
+    }
+  }
+  function closeChat(): void {
+    
+    {
+      eval(`globalThis.fcWidget.close()`);
+    }
+  }
+
   const showEmailOverlay = (formState: any) => {
     setShowAddUser(false);
     setOpenDrawer(true);
@@ -332,7 +355,16 @@ const Index: React.FC<any> = () => {
       console.log("Error:", error);
     }
   };
-
+  const [isChatActive,setChatStatus] = React.useState(false);
+  const [supportItemsConfig, setSupportItemsConfig] = React.useState([
+    {
+      id:"chatSupport",
+      icon:chatOpen,
+      isActive:false,
+      activeIcon:chatClose,
+      toolTipMsg:"Chat Support",
+    },
+  ]);
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -446,6 +478,30 @@ const Index: React.FC<any> = () => {
                 </ToggleButtonContainer>
               </HeaderActions>
             </ProjectsHeader>
+            <div className="fixed bottom-0 left-2 z-10 cursor-pointer"> 
+            {isChatActive ? (
+                 
+                 <Image
+                   
+                   src={chatOpen}
+                   width={60}
+                   height={60}
+                   alt=""
+                   onClick={handleOpenChat}
+                 />
+              
+             ) : (
+               <Image
+                 src={chatOpen}
+                 width={60}
+                 height={60}
+                 alt=""
+                 onClick={handleOpenChat}
+               />
+             )}
+            </div>
+
+   
             {showLoading ? (
               <CustomLoader />
             ) : isGridView ? (
@@ -504,6 +560,7 @@ const Index: React.FC<any> = () => {
                 setSelectedOption={setSelectedOption}
               />
             )}
+            
           </ProjectsListContainer>
         </Content>
       </div>
@@ -556,6 +613,7 @@ const Index: React.FC<any> = () => {
           selectedProjectId={selectedProjectId}
         />
       </Drawer>
+      
     </div>
   );
 };
