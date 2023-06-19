@@ -174,14 +174,23 @@ const SignInPage = () => {
                   sx={{ padding: 0 }}
                   icon={
                     <Image
-                      width={24}
-                      height={24}
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                      }}
                       src={UnChecked}
                       alt="Search"
                     />
                   }
                   checkedIcon={
-                    <Image width={24} height={24} src={Checked} alt="Search" />
+                    <Image
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                      }}
+                      src={Checked}
+                      alt="Search"
+                    />
                   }
                   checked={rememberMe}
                   // onChange={handleChange}
