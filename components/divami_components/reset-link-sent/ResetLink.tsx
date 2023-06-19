@@ -77,7 +77,13 @@ const ResetLink = ({ queryMail }: any) => {
       <FormDiv>
         <FormContainerSign>
           <FormHeader>
-            <HeaderImageLogo src={backIcon} alt="logo" />
+            <HeaderImageLogo
+              src={backIcon}
+              alt="logo"
+              onClick={() => {
+                router.push("/forgot_password");
+              }}
+            />
 
             <SignInHeader>Reset Link Sent</SignInHeader>
           </FormHeader>

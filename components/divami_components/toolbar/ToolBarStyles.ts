@@ -62,20 +62,19 @@ export const IssuesSectionPlusImg = styled("div")({
   // height: '12px',
   // marginLeft: '8px',
   // margin: '0 6px'
-  borderRadius:"50%",
+  borderRadius: "50%",
   "&:hover": {
-    background: '#EEEEEE'
+    background: "#EEEEEE",
   },
-  
 });
 
 export const IssuesSectionFileImg = styled("div")({
   // width: '12px',
   // height: '12px',
   // margin: '0 6px',
-  borderRadius:"50%",
+  borderRadius: "50%",
   "&:hover": {
-    background: '#EEEEEE'
+    background: "#EEEEEE",
   },
 });
 
@@ -83,9 +82,9 @@ export const IssuesSectionClipImg = styled("div")({
   // width: '12px',
   // height: '12px',
   // margin: '0 6px',
-   borderRadius:"50%",
+  borderRadius: "50%",
   "&:hover": {
-    background: '#EEEEEE'
+    background: "#EEEEEE",
   },
 });
 
@@ -163,9 +162,7 @@ export const LayersWrapper = styled("div")({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  // padding: "8px 20px 7px 20px",
-    padding: "15px 20px 14px 20px",
-
+  padding: "8px 20px 7px 20px",
 });
 
 export const IconsContainer = styled("div")({
@@ -183,7 +180,7 @@ export const SelectLayersWrapper = styled("div")(
     top: "58px",
 
     position: "absolute",
-    left: props.typeOfWindow === "type" ? "1px" : "251px",
+    left: props.typeOfWindow === "type" ? "1px" : "250px",
     // left: props.typeOfWindow === 'type' ? '1px' : '238px',
 
     // border: '1px solid #D9D9D9',
@@ -192,7 +189,6 @@ export const SelectLayersWrapper = styled("div")(
     fontSize: "14px",
     zIndex: -1,
     width: "250px",
-  
   })
 );
 
@@ -221,7 +217,6 @@ export const CameraIcon = styled(Image)({
   height: "18px",
   cursor: "pointer",
   margin: "7px 7px",
- 
 });
 
 export const GroupIcon = styled(Image)({
@@ -288,9 +283,6 @@ export const CompareContainer = styled("div")({
   marginLeft: "6px",
 }) as any;
 
-
-
-
 export const MoreOptionBox = styled("div")({
   display: "flex",
   alignItems: "center",
@@ -307,9 +299,8 @@ export const MoreOptionBox = styled("div")({
 });
 
 export const MoreOptionContainer = styled("div")({
- cursor:"pointer"
+  cursor: "pointer",
 });
-
 
 export const StyledOptionMenu = styled("div")({
   // borderBottom: "1px solid #D9D9D9",
@@ -317,8 +308,7 @@ export const StyledOptionMenu = styled("div")({
   // margin: "0px 20px",
   "&:hover": {
     cursor: "pointer",
-    backgroundColor:"tranparent !important"
-    
+    backgroundColor: "tranparent !important",
   },
   padding: 0,
   // height: "38px",
@@ -333,39 +323,33 @@ export const OptionListContainer = styled("div")({
   paddingLeft: "20px",
   paddingRight: "20px",
   paddingTop: "20px",
-  paddingBottom:"20px",
+  paddingBottom: "20px",
   // border: "2px solid blue",
 });
 
-export const OptionTaskContainer = styled("div")({
-
-})
+export const OptionTaskContainer = styled("div")({});
 
 export const TaskHeader = styled("div")({
-//   font-family: 'Open Sans';
-// font-style: normal;
-// font-weight: 500;
-// font-size: 16px;
-// line-height: 20px;
-  
+  //   font-family: 'Open Sans';
+  // font-style: normal;
+  // font-weight: 500;
+  // font-size: 16px;
+  // line-height: 20px;
+
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: 500,
   fontSize: "16px",
-  color:"#101F4C"
-})
+  color: "#101F4C",
+});
 
-export const TaskOptionContainer = styled("div")({
-
-})
-
+export const TaskOptionContainer = styled("div")({});
 
 export const CreateTaskDiv = styled("div")({
   display: "flex",
   marginTop: "18px",
-  alignItems:"center"
-})
-
+  alignItems: "center",
+});
 
 export const OptionSectionPlusImg = styled("div")({
   // width: '12px',
@@ -373,7 +357,6 @@ export const OptionSectionPlusImg = styled("div")({
   // marginLeft: '8px',
   // margin: '0 6px'
 });
-
 
 export const OptionCameraIcon = styled(Image)({
   width: "24px",
@@ -383,48 +366,45 @@ export const OptionCameraIcon = styled(Image)({
 });
 
 export const CreateOptionTask = styled("div")({
-  marginLeft:"13px",
-fontFamily: "Open Sans",
+  marginLeft: "13px",
+  fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: "14px",
-  color:"#101F4C"
+  color: "#101F4C",
 });
-
 
 export const HorizontalLineOpt = styled("div")({
   border: "1px solid #D9D9D9",
-  marginTop:"20px"
+  marginTop: "20px",
 });
 
 export const TaskListDiv = styled("div")({
   display: "flex",
   marginTop: "18px",
-  alignItems:"center"
-})
+  alignItems: "center",
+});
 
 export const TaskMarkupDiv = styled("div")({
   display: "flex",
   marginTop: "18px",
-  alignItems:"center"
-})
+  alignItems: "center",
+});
 
 export const SwitchDiv = styled("div")({
- display: "flex",
+  display: "flex",
   alignItems: "center",
-  marginLeft:"auto"
-})
+  marginLeft: "auto",
+});
 
 export const SwitchText = styled("div")({
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: "14px",
-  color:"#101F4C"
-
-})
-
+  color: "#101F4C",
+});
 
 export const OptionHotspotContainer = styled("div")({
-marginTop:"30px"
-})
+  marginTop: "30px",
+});

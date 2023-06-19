@@ -130,6 +130,7 @@ const SignInPage = () => {
           error.toString();
 
         toast.error("Invalid User Credentials");
+        setLoading(false);
 
         Mixpanel.track("login_fail", {
           email: email,
