@@ -27,6 +27,7 @@ import {
 import moment from "moment";
 import CustomSelect from "../custom-select/CustomSelect";
 import { useState } from "react";
+import { UserDefaultIcon } from "./ProjectUsersListStyles";
 
 export const EditRoleOverlay = ({
   onClose,
@@ -69,12 +70,19 @@ export const EditRoleOverlay = ({
       </FilterCommonHeader>
       <EditRoleBody>
         <UserAvatarContainer>
-          <UserAvatarImage
-            src={userData?.avatar}
-            alt=""
-            width={58}
-            height={58}
-          ></UserAvatarImage>
+          {userData.avatar ? (
+            <UserAvatarImage
+              src={userData?.avatar}
+              alt=""
+              width={58}
+              height={58}
+            />
+          ) : (
+            <UserDefaultIcon fromProfile>
+              {userData.firstName.charAt(0)?.toUpperCase()}
+              {userData.lastName.charAt(0)?.toUpperCase()}
+            </UserDefaultIcon>
+          )}
           <UserInfoContainer>
             <UserName>{userData?.fullName}</UserName>
             <UserEmail>{userData?.email}</UserEmail>

@@ -31,19 +31,19 @@ export const UserImage = styled(Image)({
   marginRight: "5px",
 });
 
-export const UserDefaultIcon = styled("div")({
+export const UserDefaultIcon = styled("div")((props: any) => ({
   borderRadius: "100%",
-  width: "24px",
-  height: "24px",
-  border: "1px solid #F1742E",
+  width: props.fromProfile ? "58px" : "24px",
+  height: props.fromProfile ? "58px" : "24px",
+  border: props.fromProfile ? "1px solid #101F4C" : "1px solid #F1742E",
   background: "white",
   color: "#101F4C",
   display: "flex",
-  fontSize: "12px",
+  fontSize: props.fromProfile ? "24px" : "12px",
   alignItems: "center",
   justifyContent: "center",
   marginRight: "5px",
-});
+})) as any;
 
 export const UserName = styled("div")({
   display: "flex",

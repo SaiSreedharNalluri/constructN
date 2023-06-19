@@ -11,42 +11,6 @@ import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import NotificationNewIcon from "../../../public/divami_icons/NotificationNewIcon.svg";
 import newRefreshIcon from "../../../public/divami_icons/newRefreshIcon.svg";
 import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
-
-const CustomAutoComplete = styled(Autocomplete)({
-  border: "1px solid #36415d",
-  borderRadius: "6px",
-  "& .MuiAutocomplete-root": {
-    width: "398px",
-    height: "40px",
-  },
-  "& .MuiAutocomplete-endAdornment": {
-    display: "none",
-  },
-  "& .MuiFormLabel-root.MuiInputLabel-root.Mui-focused": {
-    border: 0,
-    display: "none",
-    offset: "none",
-  },
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "0",
-    padding: "0",
-  },
-  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-    border: 0,
-    ouline: "none",
-    offset: 0,
-  },
-  "& .MuiFormLabel-root.MuiInputLabel-root": {
-    display: "none",
-  },
-  "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-    ouline: "none",
-  },
-  "& .MuiInputAdornment-root": {
-    paddingLeft: "15px",
-  },
-});
-
 import Image from "next/image";
 import {
   HeaderContainer,
@@ -80,8 +44,6 @@ import {
   FilterFooter,
   FilterCardSelectAllTextHeader,
 } from "./StyledComponent";
-import { Issue } from "../../../models/Issue";
-import { ITasks } from "../../../models/Itask";
 import {
   getTasksList,
   getTasksPriority,
@@ -98,7 +60,6 @@ import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
 import CustomButton from "../custom-button/CustomButton";
 import router from "next/router";
 import TaskFilterFormWrapper from "./TaskFilterWrapper";
-
 import { IProjectUsers } from "../../../models/IProjects";
 import { getProjectUsers } from "../../../services/project";
 interface IProps {
@@ -132,16 +93,7 @@ const RefreshIcon = styled(Image)({
   height: "15px",
 });
 const TaskFilterCommon: React.FC<any> = ({
-  tasksList,
   onClose,
-  taskType,
-  taskPriority,
-  taskStatus,
-  projectUsers,
-  // taskMenuClicked,
-  // currentProject,
-  // currentStructure,
-  // currentSnapshot,
   closeTaskFilterOverlay,
   handleOnFilter,
   taskFilterState,
