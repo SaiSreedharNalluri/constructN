@@ -214,9 +214,9 @@ const Index: React.FC<any> = () => {
     setSearchTableData(
       projects.filter(
         (each: any) =>
-          (Moment(each.updatedAt).format("YYYY-MM-DD") >= formState.startDate ||
+          (Moment(each.updatedAt).isSameOrAfter(formState.startDate) || //.format("YYYY-MM-DD") >= formState.startDate ||
             !formState.startDate) &&
-          (Moment(each.updatedAt).format("YYYY-MM-DD") <= formState.dueDate ||
+          (Moment(each.updatedAt).isSameOrBefore(formState.dueDate) ||//.format("YYYY-MM-DD") <= formState.dueDate ||
             !formState.dueDate) &&
           (!formState.compareText ||
             (formState.compareText === "greaterThan"
