@@ -94,7 +94,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       icon: people,
       isActive: false,
       activeIcon: peopleHighlighted,
-      toolTipMsg: "Settings",
+      toolTipMsg: "Project Details",
     },
     // {
     //   id:"chatSupport",

@@ -14,6 +14,7 @@ import {
 } from "../../services/project";
 import { toast } from "react-toastify";
 import ChangeIcon from "./changeIcon";
+import { TooltipText } from "../divami_components/side-panel/SidePanelStyles";
 
 const ProjectDetails: React.FC = () => {
   let [projectData, setProjectData] = useState<IProjects>();
@@ -105,8 +106,19 @@ const ProjectDetails: React.FC = () => {
         }
       });
   };
+  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
+    let truncatedText = text;
+
+    if (text.length > maxLength) {
+      const prefix = text.substring(0, maxLength - suffixLength);
+      const suffix = text.substring(text.length - suffixLength);
+      truncatedText = prefix + "..." + suffix;
+    }
+
+    return truncatedText;
+  };
   return (
-    <div className="overflow-x-hidden">
+    <div className="">
       {projectData ? (
         <div>
           <div className="flex justify-between px-4 py-4">
@@ -120,10 +132,10 @@ const ProjectDetails: React.FC = () => {
               <p>Edit Details</p>
             </div>
           </div>
-          {}
-          <div className="grid grid-cols-2 divide-x-2 border-2 border-gray-300 mx-4 rounded-md">
-            <div className="grid grid-rows-3">
-              <div className=" border-b border-black mx-4 py-1">
+          <div className=" px-4 " >
+          <div className="w-full  flex border-2 border-gray-400 rounded-md">
+          <div className=" w-1/2">
+          <div className=" border-b border-black mx-4 py-2">
                 <img
                   alt=""
                   className=" w-3/4 h-20"
@@ -134,31 +146,33 @@ const ProjectDetails: React.FC = () => {
                 <div>
                   <ChangeIcon handleImageUPload={handleImageUPload} />
                 </div>
-              </div>
-              <div>
-                <div className="grid grid-cols-3  px-6  py-4">
-                  <div>
-                    <p className="text-[#101F4C]">{projectData?.name}</p>
+          </div>
+          <div className="py-2">
+                <div className="flex gap-8  justify-between px-4  py-2">
+                  <div className="w-1/3">
+                   
+                    <p className="text-[#101F4C]" data-tip={utm === " " ? "NA" : utm}>
+                      <TruncatedString text={projectData?.name}  maxLength={20}
+              suffixLength={0}></TruncatedString> </p>
                     <label className="  text-sm text-[#787878]">
                       Project Name
                     </label>
                   </div>
-                  <div>
-                    <p className="text-[#101F4C]">{projectData?.type}</p>
+                  <div className="w-1/3">
+                  <p className="text-[#101F4C] ">{projectData?.type}</p>
                     <label className=" text-[#787878] text-sm">
                       Project Type
                     </label>
                   </div>
-                  <div className=" text-[#101F4C]">
-                    <p className="">{projectData?.email}</p>
+                  <div className="  w-1/3">
+                    <p className="text-[#101F4C]">{projectData?.email}</p>
                     <label className="  text-sm text-[#787878]">
                       Project Owner
                     </label>
                   </div>
                 </div>
-                <div className="grid grid-cols-3  px-6 ">
-                  <div>
-                    {" "}
+                <div className="flex gap-8  justify-between    py-2 ">
+                  <div className="w-1/3 pl-4">
                     <p className="text-[#101F4C]">
                       {Moment(projectData?.createdAt).format("MMM Do YYYY")}
                     </p>
@@ -166,25 +180,41 @@ const ProjectDetails: React.FC = () => {
                       Created On
                     </label>
                   </div>
-                  <div>
+                  <div className="w-2/3 mr-[24px] ">
                     <p className="text-[#101F4C]">{projectData?.email}</p>
                     <label className=" text-sm text-[#787878]">Email Id</label>
                   </div>
                 </div>
-              </div>
-              <div className="px-4">
-                    <label className="  text-sm text-[#787878]">
+          </div>
+          <div className="px-4  py-4">
+                    <label className="  text-sm w-full h-full text-[#787878]">
                       Project Description
                     </label>
-                    <p className="text-[#101F4C]">{projectData?.description}</p>
+                    <p className="text-[#101F4C]  " style={{
+    wordWrap: 'break-word',
+    display: '-webkit-box',
+    // WebkitLineClamp: 20,
+    WebkitBoxOrient: 'vertical',
+  }}>{projectData?.description}</p>
                   </div>
-            </div>
-            <div className=" grid grid-rows-3">
+           
+          </div>
+      <div className="border-r border-gray-900 px-1"></div>
+         
+          <div className="w-1/2 flex flex-col">
               <div className="px-4 py-4">
-                <div className=" ">Location</div>
-                <div className="grid grid-cols-3 py-2">
-                  <div>
-                    <p className="text-[#101F4C]">{utm}</p>
+                <div className=" py-2 text-base font-normal text-[#101F4C]">Location</div>
+                <div className="flex justify-between  ">
+                <div>
+                <TooltipText title={utm===" "?"NOT AVAILABLE":utm} placement="right"> 
+                    <p className="text-[#101F4C] " >
+                   
+                      <TruncatedString text={utm===" "?"NA":utm} maxLength={3}
+              suffixLength={0} ></TruncatedString> 
+                      
+                </p>
+                </TooltipText>
+
                     <label className="text-[#787878]  text-sm">UTM</label>
                   </div>
                   <div>
@@ -198,9 +228,10 @@ const ProjectDetails: React.FC = () => {
                     </label>
                   </div>
                 </div>
+               
+               
               </div>
-
-              <div className=" grid row-span-2 border-2 border-gray-400">
+              <div className=" h-full border-2 border-gray-400">
                 <Map
                   latitude={latitude}
                   longitude={longitude}
@@ -211,7 +242,8 @@ const ProjectDetails: React.FC = () => {
                   <Marker latitude={latitude} longitude={longitude}></Marker>
                 </Map>
               </div>
-            </div>
+          </div>
+          </div>
           </div>
           {openProjectEditOpen && (
             <CustomDrawer>
