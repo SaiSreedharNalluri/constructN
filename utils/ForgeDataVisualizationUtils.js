@@ -104,7 +104,7 @@ export class ForgeDataVisualization {
 
     addMediaData(visualizationData) {
         this.mediaMap = visualizationData;
-        this.formatDataMap(this.mediaMap);
+        // this.formatDataMap(this.mediaMap);
     }
 
     setViewableState(viewableList) {
@@ -124,12 +124,12 @@ export class ForgeDataVisualization {
 
     addIssuesData(issuesList) {
         this.tagMap["Issue"] = issuesList;
-        this.formatDataMap(this.tagMap);
+        // this.formatDataMap(this.tagMap);
     }
 
     addTasksData(tasksList) {
         this.tagMap["Task"] = tasksList;
-        this.formatDataMap(this.tagMap);
+        // this.formatDataMap(this.tagMap);
     }
 
     setTagState(state) {
@@ -139,6 +139,11 @@ export class ForgeDataVisualization {
         for (const tagType in state) {
             this.tagState[tagType] = state[tagType];
         }
+    }
+
+    updateDataMap() {
+        this.formatDataMap(this.mediaMap);
+        this.formatDataMap(this.tagMap);
     }
 
     formatDataMap(visualizationData) {
@@ -219,6 +224,7 @@ export class ForgeDataVisualization {
     
     updateData() {
         this.removeViewableData();
+        this.updateDataMap();
         this.getNewViewableData();
         this.loadViewableData();
         this.addListeners();
@@ -332,6 +338,8 @@ export class ForgeDataVisualization {
 
     refreshViewableData() {
         this.removeViewableData();
+        this.removeExistingVisualizationData();
+        this.updateDataMap();
         this.getNewViewableData();
         this.loadViewableData();
     }
@@ -515,8 +523,7 @@ export class ForgeDataVisualization {
             this.viewableLength = 0;
             console.log("Inside remove layers in dataviz layer: ", this.viewableDataMap, this.dbIdArray, this.viewableLength);
         }
-        this.removeListeners();
-        
+        // this.removeListeners(); 
     }
 
     removeViewableData() {

@@ -1318,7 +1318,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
     let truncatedText = text;
 
-    if (text.length > maxLength) {
+    if (text?.length > maxLength) {
       const prefix = text.substring(0, maxLength - suffixLength);
       const suffix = text.substring(text.length - suffixLength);
       truncatedText = prefix + "..." + suffix;

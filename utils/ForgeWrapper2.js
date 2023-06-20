@@ -894,6 +894,7 @@ export const ForgeViewerUtils = function () {
     console.log("Inside remove layers in forgeWrapper: ", _dataVizUtils);
     if (_dataVizUtils) {
       _dataVizUtils.removeExistingVisualizationData();
+      _dataVizUtils.removeListeners();
     }
   };
 
