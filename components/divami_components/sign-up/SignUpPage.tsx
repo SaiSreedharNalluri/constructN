@@ -69,9 +69,28 @@ const SignUpPage = () => {
   };
 
   const formHandler = (event: any) => {
+    const firstName = formData[0].defaultValue;
+    const lastName = formData[1].defaultValue;
+
+    const nameRegex = /^[A-Za-z]+$/; // Regular expression to match alphabetic characters
+
+    if (
+      firstName.trim() === "" ||
+      lastName.trim() === "" ||
+      !nameRegex.test(firstName) ||
+      !nameRegex.test(lastName)
+    ) {
+      // Display error or handle empty first name or last name
+      // For example:
+      // setErrorMsg('Please provide both first name and last name.');\
+      toast.error("Invalid input for first name or last name");
+      return;
+    }
+
     const formValues = {
-      firstName: formData[0].defaultValue,
-      lastName: formData[1].defaultValue,
+      firstName: firstName,
+      lastName: lastName,
+
       email: formData[2].defaultValue.toLocaleLowerCase(),
       password: formData[3].defaultValue,
       confirm_password: formData[4].defaultValue,
@@ -128,6 +147,8 @@ const SignUpPage = () => {
     }
   }
   const handleRegister = (formValue: any) => {
+    // console.log("aagya yha pe");
+    // return;
     registerUser(formValue)
       .then((response) => {
         if (response.success === true) {
