@@ -44,36 +44,52 @@ const Body = ({
   };
   return (userDetails&&
     <div className="px-3 calc-h119 overflow-y-auto">
-      <div className="flex mt-4 ">
-        <div className="relative rounded-full ">
-          <Image
-            src={
-              userDetails?.avatar
-                ? userDetails?.avatar
-                : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/user_icon_def_01.png`
-            }
-            alt=""
-            width={50}
-            height={50}
-            className="rounded-full border border-gray-500 "
-          />
-          <div className="absolute bottom-0 right-0 bg-[#F1742E] rounded-full">
-            <Image
-              src={editIcon}
-              onClick={handleEditUserProfile}
-              alt=""
-              width={25}
-              height={25}
-              className=" p-1 cursor-pointer "
-              style={{ filter: "brightness(0) invert(1)" }}
-            />
-          </div>
+      <div className="mt-4 ">
+      <div className="flex relative rounded-full flex-col items-center justify-center py-4">
+        <div className="rounded-full">
+        <Image
+                src={
+                  userDetails?.avatar
+                    ? userDetails?.avatar
+                    : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/user_icon_def_01.png`
+                }
+                alt=""
+                width={75}
+                height={75}
+                className="rounded-full h-[75px] border border-gray-500"
+              />
         </div>
-        <div className="flex-col ml-4">
-          <div className=" text-lg text-[#101F4C] font-semibold">
-            {userDetails?.firstName + " " + userDetails?.lastName}
-          </div>
-          <div>{userDetails?.email}</div>
+           
+              <div className="relative bg-[#F1742E] rounded-full bottom-4 left-4">
+                <Image
+                  src={editIcon}
+                  onClick={handleEditUserProfile}
+                  alt=""
+                  width={25}
+                  height={25}
+                  className="p-1 cursor-pointer "
+                  style={{ filter: "brightness(0) invert(1)" }}
+                />
+              </div>
+              <p className="text-lg font-semibold text-[#101F4C]">
+                {userDetails?.firstName + " " + userDetails?.lastName}
+              </p>
+              <div>{userDetails?.email}</div>
+            </div>
+        <div className="flex justify-between px-4 ">
+        <div className=" pl-4">
+                    <p className="text-[#101F4C] text-base font-medium">
+                      {userDetails?.firstName}
+                    </p>
+                    <label className="  text-sm text-[#787878]">
+                      First Name
+                    </label>
+                  </div>
+                  <div className=" mr-[24px] ">
+                    <p className="text-[#101F4C] text-base font-medium">{userDetails?.lastName}</p>
+                    <label className=" text-sm text-[#787878]">Last Name</label>
+                  </div>
+            
         </div>
       </div>
       <div>
@@ -120,7 +136,7 @@ const Body = ({
             );
           })}
         </div> */}
-        <div className="py-4 flex">
+        <div className="py-4 flex fixed bottom-0  px-4">
           <Image src={task} alt=""></Image>
           <p className="text-[#101F4C]">
             <span

@@ -26,8 +26,8 @@ const TitleContiner = styled(Box)({
 });
 const CloseIcon = styled(Image)({
   cursor: "pointer",
-  width: "12px",
-  height: "12px",
+  width: "20px",
+  height: "20px",
 });
 
 const Header = ({ closeEditProject }: any) => {

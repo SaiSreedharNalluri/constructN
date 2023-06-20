@@ -41,7 +41,10 @@ const EditUserProfile = ({
   return (
     <div>
       <div>
+        <div className="px-4">
         <Header editUser="editUser" closeEditProject={closeEditProfile} />
+
+        </div>
         <div className="calc-h191  overflow-y-auto">
           {show ? (
             <div className="flex relative rounded-full flex-col items-center justify-center py-4">
@@ -52,9 +55,9 @@ const EditUserProfile = ({
                     : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/user_icon_def_01.png`
                 }
                 alt=""
-                width={65}
-                height={65}
-                className="rounded-full border "
+                width={75}
+                height={75}
+                className="rounded-full h-[75px] border border-gray-500"
               />
               <div className="relative bg-[#F1742E] rounded-full bottom-4 left-4">
                 <Image
@@ -69,7 +72,7 @@ const EditUserProfile = ({
                   style={{ filter: "brightness(0) invert(1)" }}
                 />
               </div>
-              <p className="text-lg font-medium text-[#101F4C]">
+              <p className="text-lg font-semibold text-[#101F4C]">
                 {userDetails?.firstName + " " + userDetails?.lastName}
               </p>
               <Formik
