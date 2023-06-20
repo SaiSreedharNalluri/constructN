@@ -68,7 +68,15 @@ export const MapboxViewerUtils = () => {
     console.log("Inside Initializer callback", _eventHandler);
     mapboxgl.accessToken = `${process.env.NEXT_PUBLIC_Map_Token}`;
     const context = options?.context;
-    const center = context ? utmToLatLng(context.cameraTarget, 43) : undefined;
+    let utm = options?.utm
+    try {
+      utm = parseInt(utm)
+    } catch (error) {
+      utm = 43
+    }
+    console.log(utm, options)
+    const center = context ? utmToLatLng(context.cameraTarget, utm ? utm : 43) : undefined;
+    console.log(center)
     const bearing = context ? -radianToDegee(context.yaw) : 0;
     _map = new mapboxgl.Map({
       container: viewerId, // container ID

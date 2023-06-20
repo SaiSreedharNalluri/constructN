@@ -759,7 +759,7 @@ function GenericViewer(props) {
       case 'Mapbox':
         if (mapboxUtils.current == undefined) {
           mapboxUtils.current = MapboxViewerUtils();
-          mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, { context: currentContext.current.cameraObject });
+          mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, { utm: project.utm, context: currentContext.current.cameraObject });
           mapboxUtils.current.setType(viewType);
         }
         break;
@@ -789,7 +789,7 @@ function GenericViewer(props) {
       case 'Mapbox':
         if (mapboxCompareUtils.current == undefined) {
           mapboxCompareUtils.current = MapboxViewerUtils();
-          mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, undefined, mapboxUtils.current.getMap());
+          mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, {utm: project.utm}, mapboxUtils.current.getMap());
           mapboxCompareUtils.current.setType(viewType);
         }
         break;
