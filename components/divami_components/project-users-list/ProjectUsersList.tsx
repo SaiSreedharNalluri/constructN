@@ -36,6 +36,8 @@ import {
   UserImage,
   UserName,
   UserNameText,
+  // ChatIconImage,
+  EditIconImage,
 } from "./ProjectUsersListStyles";
 import searchIcon from "../../../public/divami_icons/search.svg";
 import UserFilterIcon from "../../../public/divami_icons/UserFilterIcon.svg";
@@ -60,6 +62,7 @@ import Edit from "../../../public/divami_icons/edit.svg";
 import { EditRoleOverlay } from "./EditRoleOverlay";
 import LocalSearch from "../local_component/LocalSearch";
 import CustomLoader from "../custom_loader/CustomLoader";
+import { TooltipText } from "../side-panel/SidePanelStyles";
 
 export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [tableData, setTableData] = useState<any>([]);
@@ -104,8 +107,8 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
               <UserImage src={rowData.avatar} alt={""} width={24} height={24} />
             ) : (
               <UserDefaultIcon>
-                {rowData.firstName.charAt(0)?.toUpperCase()}
-                {rowData.lastName.charAt(0)?.toUpperCase()}
+                {rowData.firstName?.charAt(0)?.toUpperCase()}
+                {rowData.lastName?.charAt(0)?.toUpperCase()}
               </UserDefaultIcon>
             )}
             <UserNameText>{rowData.fullName}</UserNameText>
@@ -181,29 +184,36 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       render: (rowData: any) => {
         return (
           <ImageButtons id={"rowActions"}>
-            <Tooltip title="Chat">
-              <RemoveIconImage src={ChatIcon} alt="" />
-            </Tooltip>
-            <Tooltip title="Remove">
-              <RemoveIconImage
-                src={RemoveIcon}
-                alt=""
-                onClick={() => {
-                  setshowPopUp(true);
-                  setEmailId(rowData);
-                }}
-              />
-            </Tooltip>
-            <Tooltip title="Edit">
-              <Image
-                src={Edit}
-                alt=""
-                onClick={() => {
-                  setShowEdit(true);
-                  setSelectedRowData(rowData);
-                }}
-              />
-            </Tooltip>
+            {/* <TooltipText title="chat" > 
+             <div className="flex" >
+             <ChatIconImage src={ChatIcon} alt="" />
+             </div>
+            </TooltipText> */}
+            <TooltipText title="delete">
+              <div className="flex ">
+                <RemoveIconImage
+                  src={RemoveIcon}
+                  alt=""
+                  onClick={() => {
+                    setshowPopUp(true);
+                    setEmailId(rowData);
+                  }}
+                />
+              </div>
+            </TooltipText>
+            <TooltipText title="edit">
+              <div className="flex ">
+                <EditIconImage
+                  src={Edit}
+                  alt=""
+                  onClick={() => {
+                    setShowEdit(true);
+                    setSelectedRowData(rowData);
+                  }}
+                  className="cursor-pointer"
+                />
+              </div>
+            </TooltipText>
           </ImageButtons>
         );
       },
@@ -443,7 +453,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                 selection: false,
                 showTitle: true,
                 toolbar: false,
-                maxBodyHeight: "80vh",
+                // maxBodyHeight: "80vh",
                 thirdSortClick: false,
                 rowStyle: (rowData: any) => ({
                   fontFamily: "Open Sans",
@@ -483,7 +493,9 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           open={showAddUser ? showAddUser : showPopUp}
           hideButtons
           setShowPopUp={showAddUser ? setShowAddUser : setshowPopUp}
-          modalTitle={showAddUser ? "Add users to the project" : "Delete user"}
+          modalTitle={
+            showAddUser ? "Add users to the project" : "Deassign user"
+          }
           modalContent={
             showAddUser ? (
               <AddUsersEmailPopup showEmailOverlay={showEmailOverlay} />

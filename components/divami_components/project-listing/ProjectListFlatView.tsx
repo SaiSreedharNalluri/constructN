@@ -37,6 +37,7 @@ import { MTableBodyRow } from "material-table";
 import { SortDescIcon } from "./SortDescIcon";
 import LocalSearch from "../local_component/LocalSearch";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
+import { TooltipText } from "../side-panel/SidePanelStyles";
 
 export const ProjectListFlatView = ({ projects, projectActions }: any) => {
   const router = useRouter();
@@ -101,7 +102,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "20%" },
+      cellStyle: { width: "30%" },
     },
     {
       title: "Captures",
@@ -118,59 +119,75 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
       render: (rowData: any) => {
         return (
           <CapturesFieldContainer>
-            <Tooltip title={"360 Video"}>
-              <CapturesField>
-                <CaptureImageIcon src={capture360Image} alt={""} />
+            <CapturesField>
+              <TooltipText title="360 Video">
+                <div>
+                  <CaptureImageIcon src={capture360Image} alt={""} />
+                </div>
+              </TooltipText>
+              <CaptureCount>
+                {" "}
+                {rowData.captures && rowData.captures["360 Video"]
+                  ? rowData.captures["360 Video"]
+                  : "-"}
+              </CaptureCount>
+            </CapturesField>
 
-                <CaptureCount>
-                  {" "}
-                  {rowData.captures && rowData.captures["360 Video"]
-                    ? rowData.captures["360 Video"]
-                    : "-"}
-                </CaptureCount>
-              </CapturesField>
-            </Tooltip>
-            <Tooltip title={"360 Image"}>
-              <CapturesField>
-                <CaptureImageIcon src={videoWalk} alt={""} />
+            <CapturesField>
+              <TooltipText title="360° Video Walk">
+                <div>
+                  <CaptureImageIcon src={videoWalk} alt={""} />
+                </div>
+              </TooltipText>
+              <CaptureCount>
+                {rowData.captures && rowData.captures["360 Image"]
+                  ? rowData.captures["360 Image"]
+                  : "-"}
+              </CaptureCount>
+            </CapturesField>
 
-                <CaptureCount>
-                  {rowData.captures && rowData.captures["360 Image"]
-                    ? rowData.captures["360 Image"]
-                    : "-"}
-                </CaptureCount>
-              </CapturesField>
-            </Tooltip>
-            <Tooltip title={"Phone Image"}>
-              <CapturesField>
-                <CaptureImageIcon src={phoneImage} alt={""} />
-                <CaptureCount>
-                  {rowData.captures && rowData.captures["Phone Image"]
-                    ? rowData.captures["Phone Image"]
-                    : "-"}
-                </CaptureCount>
-              </CapturesField>
-            </Tooltip>
-            <Tooltip title={"LiDAR Scan"}>
-              <CapturesField>
-                <CaptureImageIcon src={captureLidarIcon} alt={""} />
-                <CaptureCount>
-                  {rowData.captures && rowData.captures["LiDAR Scan"]
-                    ? rowData.captures["LiDAR Scan"]
-                    : "-"}
-                </CaptureCount>
-              </CapturesField>
-            </Tooltip>
-            <Tooltip title={"Drone Image"}>
-              <CapturesField>
-                <CaptureImageIcon src={DroneImage} alt={""}></CaptureImageIcon>
-                <CaptureCount>
-                  {rowData.captures && rowData.captures["Drone Image"]
-                    ? rowData.captures["Drone Image"]
-                    : "-"}
-                </CaptureCount>
-              </CapturesField>
-            </Tooltip>
+            <CapturesField>
+              <TooltipText title="Phone Image">
+                <div className="">
+                  <CaptureImageIcon src={phoneImage} alt={""} />
+                </div>
+              </TooltipText>
+
+              <CaptureCount>
+                {rowData.captures && rowData.captures["Phone Image"]
+                  ? rowData.captures["Phone Image"]
+                  : "-"}
+              </CaptureCount>
+            </CapturesField>
+
+            <CapturesField>
+              <TooltipText title="Phone Video Walk">
+                <div>
+                  <CaptureImageIcon src={captureLidarIcon} alt={""} />
+                </div>
+              </TooltipText>
+              <CaptureCount>
+                {rowData.captures && rowData.captures["LiDAR Scan"]
+                  ? rowData.captures["LiDAR Scan"]
+                  : "-"}
+              </CaptureCount>
+            </CapturesField>
+
+            <CapturesField>
+              <TooltipText title="Drone Image">
+                <div>
+                  <CaptureImageIcon
+                    src={DroneImage}
+                    alt={""}
+                  ></CaptureImageIcon>
+                </div>
+              </TooltipText>
+              <CaptureCount>
+                {rowData.captures && rowData.captures["Drone Image"]
+                  ? rowData.captures["Drone Image"]
+                  : "-"}
+              </CaptureCount>
+            </CapturesField>
           </CapturesFieldContainer>
         );
       },
@@ -273,7 +290,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
         lineHeight: "8px",
         color: "#101F4C",
       },
-      cellStyle: { width: "40%" },
+      cellStyle: { width: "30%" },
 
       customSort: (a: any, b: any) => sortBy(a, b, "lastUpdated"),
       render: (rowData: any) => {
@@ -367,7 +384,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
               showTitle: true,
               thirdSortClick: false,
               toolbar: false,
-              maxBodyHeight: "100vh",
+              // maxBodyHeight: "50px",
               overflowY: "auto",
               rowStyle: (rowData: any) => ({
                 fontFamily: "Open Sans",
@@ -375,8 +392,8 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                 fontWeight: "400",
                 fontSize: "14px",
                 color: "#101F4C",
-                backgroundColor:
-                  rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
+                // backgroundColor:
+                //   rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
               }),
               headerStyle: {
                 padding: "6px 16px",

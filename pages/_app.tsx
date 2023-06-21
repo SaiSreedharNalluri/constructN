@@ -19,6 +19,8 @@ import "../styles/ganttView.css";
 import mixpanel from "mixpanel-browser";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
+import { firebaseapp } from "../components/analytics/firebase";
+import { getAnalytics, isSupported, logEvent } from "firebase/analytics";
 
 config.autoAddCss = false;
 
@@ -32,6 +34,29 @@ export default function App({ Component, pageProps }: AppProps) {
     "/reset-password",
     "/verify-account/[token]",
   ];
+
+  const setupFirebase = async () => {
+    const analytics = await isSupported().then(yes => yes ? getAnalytics(firebaseapp) : null);
+    // if (process.env.NODE_ENV === 'production') {
+      const logScreenEvent = (url: string) => {
+
+        if(analytics) analytics.app.automaticDataCollectionEnabled = true
+        analytics && logEvent(analytics, 'page_view', {
+          url
+        });
+      };
+
+      router.events.on('routeChangeComplete', logScreenEvent);
+      //For First Page
+      logScreenEvent(window.location.pathname);
+
+      //Remvove Event Listener after un-mount
+      return () => {
+        router.events.off('routeChangeComplete', logScreenEvent);
+      };
+    // }
+  }
+
   useEffect(() => {
     const userObj: any = getCookie("user");
     // let convertUserObj = JSON.parse(userObj);
@@ -52,6 +77,10 @@ export default function App({ Component, pageProps }: AppProps) {
     //   console.log("coming to projects");
     //   router.push("/projects");
     // }
+
+
+    setupFirebase()
+
   }, []);
 
   // useEffect(() => {

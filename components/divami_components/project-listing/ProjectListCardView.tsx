@@ -186,7 +186,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
           </CaptureImageContainer>
           <CaptureImageContainer>
             <CaptureImageIcon src={videoWalk} alt=""></CaptureImageIcon>
-            <CaptureName>Video Walk - </CaptureName>
+            <CaptureName>360° Video Walk - </CaptureName>
             <CaptureCount>
               {each.captureVideoWalkCount?.length > 1
                 ? each.captureVideoWalkCount
@@ -204,7 +204,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
           </CaptureImageContainer>
           <CaptureImageContainer>
             <CaptureImageIcon src={captureLidarIcon} alt=""></CaptureImageIcon>
-            <CaptureName>LiDAR - </CaptureName>
+            <CaptureName>Phone Video Walk - </CaptureName>
             <CaptureCount>
               {each.captureLidarCount?.length > 1
                 ? each.captureLidarCount

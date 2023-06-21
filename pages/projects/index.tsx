@@ -62,7 +62,9 @@ import {
 import { toast } from "react-toastify";
 import Moment from "moment";
 import CustomLoader from "../../components/divami_components/custom_loader/CustomLoader";
-
+import React from "react";
+import chatOpen from "../../public/divami_icons/chat_open.svg";
+import chatClose from "../../public/divami_icons/chat_close.svg";
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -98,6 +100,7 @@ const Index: React.FC<any> = () => {
   const [showButton, setShowbutton] = useState(false);
   const [projectId, setProjectId] = useState<any>("");
   const [showLoading, setShowLoading] = useState(true);
+  let [eMail, setEMail] = useState<string>("");
 
   const sortMenuOptions = [
     {
@@ -181,16 +184,13 @@ const Index: React.FC<any> = () => {
       },
     },
     {
-      label: "Add Users",
+      label: "Manage Users",
       action: (id: string) => {
-        // getUsersData(id);
-        setSelectedProjectId(id);
-        setShowAddUser(true);
-        // router.push(`/projects/${id}/usersList`);
+        router.push(`/projects/${id}/usersList`);
       },
     },
     {
-      label: "Archive Project",
+      label: "Deassign Project",
       action: () => {
         setShowArchiveProject(true);
       },
@@ -211,9 +211,9 @@ const Index: React.FC<any> = () => {
     setSearchTableData(
       projects.filter(
         (each: any) =>
-          (Moment(each.updatedAt).format("YYYY-MM-DD") >= formState.startDate ||
+          (Moment(each.updatedAt).isSameOrAfter(formState.startDate) || //.format("YYYY-MM-DD") >= formState.startDate ||
             !formState.startDate) &&
-          (Moment(each.updatedAt).format("YYYY-MM-DD") <= formState.dueDate ||
+          (Moment(each.updatedAt).isSameOrBefore(formState.dueDate) ||//.format("YYYY-MM-DD") <= formState.dueDate ||
             !formState.dueDate) &&
           (!formState.compareText ||
             (formState.compareText === "greaterThan"
@@ -224,6 +224,26 @@ const Index: React.FC<any> = () => {
       )
     );
   };
+
+  const handleOpenChat = (e: any) => {
+        openChat();
+        setChatStatus(!isChatActive);
+  
+  }
+  function openChat(): void {
+    {
+      eval(`globalThis.fcWidget.user.setEmail("${eMail}");`);
+    }
+    {
+      eval(`globalThis.fcWidget.open()`);
+    }
+  }
+  function closeChat(): void {
+    
+    {
+      eval(`globalThis.fcWidget.close()`);
+    }
+  }
 
   const showEmailOverlay = (formState: any) => {
     setShowAddUser(false);
@@ -332,7 +352,16 @@ const Index: React.FC<any> = () => {
       console.log("Error:", error);
     }
   };
-
+  const [isChatActive,setChatStatus] = React.useState(false);
+  const [supportItemsConfig, setSupportItemsConfig] = React.useState([
+    {
+      id:"chatSupport",
+      icon:chatOpen,
+      isActive:false,
+      activeIcon:chatClose,
+      toolTipMsg:"Chat Support",
+    },
+  ]);
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -450,6 +479,30 @@ const Index: React.FC<any> = () => {
                 </ToggleButtonContainer>
               </HeaderActions>
             </ProjectsHeader>
+            <div className="fixed bottom-0 left-2 z-10 cursor-pointer"> 
+            {isChatActive ? (
+                 
+                 <Image
+                   
+                   src={chatOpen}
+                   width={60}
+                   height={60}
+                   alt=""
+                   onClick={handleOpenChat}
+                 />
+              
+             ) : (
+               <Image
+                 src={chatOpen}
+                 width={60}
+                 height={60}
+                 alt=""
+                 onClick={handleOpenChat}
+               />
+             )}
+            </div>
+
+   
             {showLoading ? (
               <CustomLoader />
             ) : isGridView ? (
@@ -508,6 +561,7 @@ const Index: React.FC<any> = () => {
                 setSelectedOption={setSelectedOption}
               />
             )}
+            
           </ProjectsListContainer>
         </Content>
       </div>
@@ -518,7 +572,7 @@ const Index: React.FC<any> = () => {
           hideButtons
           setShowPopUp={showAddUser ? setShowAddUser : setShowArchiveProject}
           modalTitle={
-            showAddUser ? "Add users to the project" : "Project Archive"
+            showAddUser ? "Add users to the project" : "Deassign Project"
           }
           modalContent={
             showAddUser ? (
@@ -528,7 +582,7 @@ const Index: React.FC<any> = () => {
             )
           }
           modalmessage={
-            showAddUser ? "" : "Are you sure you want to deassign user?"
+            showAddUser ? "" : "Are you sure you want to deassign yourself from this project?"
           }
           primaryButtonLabel={showAddUser ? "Yes" : "Yes"}
           SecondaryButtonlabel={showAddUser ? "No" : "No"}
@@ -560,6 +614,7 @@ const Index: React.FC<any> = () => {
           selectedProjectId={selectedProjectId}
         />
       </Drawer>
+      
     </div>
   );
 };

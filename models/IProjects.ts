@@ -3,7 +3,7 @@ export interface IProjects {
   type: string;
   name: string;
   description?: string;
-  company?: null;
+  company?: any;
   email: string;
   contact: Contact;
   address: Address;

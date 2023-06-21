@@ -759,7 +759,7 @@ function GenericViewer(props) {
       case 'Mapbox':
         if (mapboxUtils.current == undefined) {
           mapboxUtils.current = MapboxViewerUtils();
-          mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, { context: currentContext.current.cameraObject });
+          mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, { utm: project.utm, context: currentContext.current.cameraObject });
           mapboxUtils.current.setType(viewType);
         }
         break;
@@ -789,7 +789,7 @@ function GenericViewer(props) {
       case 'Mapbox':
         if (mapboxCompareUtils.current == undefined) {
           mapboxCompareUtils.current = MapboxViewerUtils();
-          mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, undefined, mapboxUtils.current.getMap());
+          mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, {utm: project.utm}, mapboxUtils.current.getMap());
           mapboxCompareUtils.current.setType(viewType);
         }
         break;
@@ -1669,7 +1669,7 @@ function GenericViewer(props) {
       onResize={(e, direction, ref, delta, position) => {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
       }}
-      className={`${'z-10 rounded-lg bg-white'} ${showMinimap && ((count == 1 && viewerType === "Potree") || (count == 2 &&  compareViewMode === "Potree")) ? 'opacity-100' : 'opacity-0'}`}>
+      className={`${'z-10 rounded-lg bg-white'} ${showMinimap && ((count == 1 && viewerType === "Potree") || (count == 2 &&  compareViewMode === "Potree")) ? 'z-10' : 'z-0'}`}>
       <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
         <div className='h-8 rounded-lg bg-white flex'>
           <IconButton className='cursor-move' size="small">

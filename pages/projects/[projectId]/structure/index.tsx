@@ -318,7 +318,7 @@ const Index: React.FC<IProps> = () => {
               );
 
               // setDefaultBreadcrumb()
-            } else if (nodeData) {
+            } else if (nodeData.project===router.query.projectId) {
               const selNode = structs.find((e) => {
                 if (e._id === nodeData?._id) {
                   return e;

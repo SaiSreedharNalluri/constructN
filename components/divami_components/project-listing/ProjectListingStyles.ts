@@ -151,6 +151,7 @@ export const MoreMenuIcon = styled(Image)({});
 export const ProjectCardsContainer = styled("div")({
   display: "flex",
   flexWrap: "wrap",
+  justifyContent: "center",
   overflow: "auto",
   height: "calc(100vh - 70px)",
   padding: "0 20px",

@@ -8,7 +8,6 @@ import { SortAscIcon } from "../project-listing/SortAscIcon";
 export const ImageButtons = styled("div")((props: any) => ({
   display: props.hoveringOver ? "flex" : "none",
   // display: "flex",
-
   justifyContent: "center",
   "& :hover": {
     display: "flex",
@@ -17,6 +16,15 @@ export const ImageButtons = styled("div")((props: any) => ({
 
 export const RemoveIconImage = styled(Image)({
   marginRight: "22px",
+  cursor:"pointer",
+});
+export const ChatIconImage = styled(Image) ({
+  marginRight: "22px",
+  cursor:"pointer",
+})
+export const EditIconImage = styled(Image)({
+  marginRight: "22px",
+  cursor:"pointer",
 });
 
 export const UserNameText = styled("div")({
@@ -189,6 +197,8 @@ export const RowActionWrapper = styled("div")({
 
 export const TableWrapper = styled("div")((props: any) => ({
   marginBottom: props.hideHeader ? "0" : "50px",
+  height:"calc(100vh - 130px)",
+  overflow:"auto",
   "& .MuiTableHead-root": {
     display: props.hideHeader ? "none" : "",
   },

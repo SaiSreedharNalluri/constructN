@@ -107,6 +107,9 @@ import {
   MoreTextDiv,
   ParentFourthContMoreText,
   FourthContMoreText,
+  DueDateTitle,
+  SecondContDueDate,
+  ThirdContDueDate,
 } from "./TaskDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "./ActivityLog";
@@ -442,7 +445,14 @@ function BasicTabs(props: any) {
               </ThirdContWatchName>
             </SecondContPriorParal>
           </SecondBodyDiv>
-
+          <SecondBodyDiv>
+            <SecondContDueDate>
+              <DueDateTitle>Due date</DueDateTitle>
+              <ThirdContDueDate style={{ color: "#101F4B" }}>
+              {Moment(taskState?.TabOne?.dueDate).format("DD MMM 'YY")}
+              </ThirdContDueDate>
+            </SecondContDueDate>
+          </SecondBodyDiv>
           <SecondBodyDiv>
             <ThirdContRight>
               <ThirdContProg data-testid="progres-label">
@@ -1305,6 +1315,17 @@ const CustomTaskDetailsDrawer = (props: any) => {
   //       toast.error(error.message);
   //     });
   // };
+  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
+    let truncatedText = text;
+
+    if (text?.length > maxLength) {
+      const prefix = text.substring(0, maxLength - suffixLength);
+      const suffix = text.substring(text.length - suffixLength);
+      truncatedText = prefix + "..." + suffix;
+    }
+
+    return truncatedText;
+  };
   return (
     <>
       <CustomTaskDrawerContainer>
@@ -1320,7 +1341,12 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 data-testid="back-arrow"
               />
               <SpanTile data-testid="task-detail-header">
-                {selectedTask?.title} (#{selectedTask?.sequenceNumber})
+              <TruncatedString text={selectedTask?.title}  maxLength={20}
+              suffixLength={0}></TruncatedString>
+           (#{selectedTask?.sequenceNumber})
+             
+             
+          
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
