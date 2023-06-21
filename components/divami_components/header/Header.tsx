@@ -313,6 +313,8 @@ const Header: React.FC<any> = ({
                 config={{
                   options: projects?.length ? projects : [],
                   defaultValue: projectId ? projectId : "",
+                  textAlign:"right",
+                  maxWidth:"220px",
                 }}
                 hideBorder
                 width={"unset"}
