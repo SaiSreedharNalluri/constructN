@@ -28,6 +28,8 @@ import {
   ShowErrorContainer,
   CenteredErrorImage,
   NoResultText,
+  ProjectCardFlipIcon,
+  HorizontalSeparator,
 } from "./ProjectListingStyles";
 import Image from "next/image";
 import capture360Image from "../../../public/divami_icons/capture360Image.svg";
@@ -38,9 +40,11 @@ import videoWalk from "../../../public/divami_icons/videoWalk.svg";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import ReactCardFlip from "react-card-flip";
+import cardMenu from "../../../public/divami_icons/cardMenu.svg";
 
 import moment from "moment";
 import CustomLoader from "../custom_loader/CustomLoader";
+import { Tooltip } from "@material-ui/core";
 
 export const ProjectListCardView = ({ projects, projectActions }: any) => {
   const router = useRouter();
@@ -65,9 +69,10 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
     let truncatedText = text;
 
     if (text.length > maxLength) {
-      const prefix = text.substring(0, maxLength - suffixLength);
-      const suffix = text.substring(text.length - suffixLength);
-      truncatedText = prefix + "..." + suffix;
+      // const prefix = text.substring(0, maxLength - suffixLength);
+      // const suffix = text.substring(text.length - suffixLength);
+      const prefix = text.substring(0, maxLength);
+      truncatedText = prefix + "...";
     }
 
     return truncatedText;
@@ -91,13 +96,26 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
           <ProjectTopRightBg active />
           <ProjectBottomLeftBg active />
           <ProjectBottomRightBg active />
-
-          <ProjectLogo
+          {/* <ProjectLogo
             src={each.companyLogo}
             alt={""}
             width={242}
             height={45}
-          />
+          /> */}
+          <Tooltip
+            title={each.projectName?.length > 50 ? each.projectName : ""}
+          >
+            <ProjectNameTitle>
+              <TruncatedString
+                text={each.projectName}
+                maxLength={50}
+                suffixLength={7}
+              />
+            </ProjectNameTitle>
+          </Tooltip>
+
+          <HorizontalSeparator />
+          {/* <ListHorizontalDivider /> */}
 
           <ListHorizontalDivider active />
 
@@ -118,17 +136,23 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
           </ProjectActionsContainer>
         </ProjectCard>
         <ProjectCard
-          onClick={() => {
+          onClick={(e: any) => {
+            e.stopPropagation();
             router.push(`/projects/${each._id}/sections`);
-          }}
-          onMouseEnter={() => {
-            setIsFlipped((prev) => !prev);
           }}
         >
           <ProjectTopLeftBg />
           <ProjectTopRightBg />
           <ProjectBottomLeftBg />
           <ProjectBottomRightBg />
+          <ProjectCardFlipIcon
+            src={cardMenu}
+            alt=""
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsFlipped((prev) => !prev);
+            }}
+          />
 
           <ProjectLogo
             src={each.companyLogo}
@@ -138,24 +162,17 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
           />
 
           <ListHorizontalDivider />
-          <ProjectNameTitle>
-            <TruncatedString
-              text={each.projectName}
-              maxLength={20}
-              suffixLength={0}
-            />
-          </ProjectNameTitle>
-          <UpdatedAtContainer>
-            <UsersCountContainer>
-              <Image src={userCount} alt="" width={14} height={15} />
-              <UsersCountText>{each.numberOfUsers}</UsersCountText>
-            </UsersCountContainer>
-            <ListDivider />
-            <CaptureImageContainer>
-              <Image src={updatedAtIcon} alt="" width={14} height={15} />
-              <UsersCountText>Updated on - {each.updatedAt}</UsersCountText>
-            </CaptureImageContainer>
-          </UpdatedAtContainer>
+          <Tooltip
+            title={each.projectName?.length > 50 ? each.projectName : ""}
+          >
+            <ProjectNameTitle>
+              <TruncatedString
+                text={each.projectName}
+                maxLength={50}
+                suffixLength={7}
+              />
+            </ProjectNameTitle>
+          </Tooltip>
 
           <CapturesText>Captures so far</CapturesText>
           <CaptureImageContainer>
@@ -203,6 +220,18 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
                 : `0${each.captureDroneCount}`}
             </CaptureCount>
           </CaptureImageContainer>
+          <ListHorizontalDivider />
+          <UpdatedAtContainer>
+            <UsersCountContainer>
+              <Image src={userCount} alt="" width={14} height={15} />
+              <UsersCountText>{each.numberOfUsers}</UsersCountText>
+            </UsersCountContainer>
+            <ListDivider />
+            <CaptureImageContainer>
+              <Image src={updatedAtIcon} alt="" width={14} height={15} />
+              <UsersCountText>Updated on - {each.updatedAt}</UsersCountText>
+            </CaptureImageContainer>
+          </UpdatedAtContainer>
         </ProjectCard>
       </ReactCardFlip>
     );

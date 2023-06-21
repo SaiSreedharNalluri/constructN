@@ -102,7 +102,39 @@ const FormWrapper = (props: any) => {
               }
             }
             return { ...item, isError: false };
-          } else if (item.isValidField === false && item.id === "email") {
+          } else if (item.isValidField === false && item.id === "firstName") {
+            if (!namesCharLimit(item.defaultValue, item.id)) {
+              if (setCanBeDisabled) setCanBeDisabled(false);
+              return {
+                ...item,
+                isError: true,
+                // errorMsg: "First Name should be less than 30 characters",
+                showErrorMsg: true,
+              };
+            }
+          } else if (item.isValidField === false && item.id === "lastName") {
+            if (!namesCharLimit(item.defaultValue, item.id)) {
+              if (setCanBeDisabled) setCanBeDisabled(false);
+              return {
+                ...item,
+                isError: true,
+                // errorMsg: "First Name should be less than 30 characters",
+                showErrorMsg: true,
+              };
+            }
+          }
+          // else if (item.isValidField === false && item.id === "title") {
+          //   if (!namesCharLimit(item.defaultValue, item.id)) {
+          //     if (setCanBeDisabled) setCanBeDisabled(false);
+          //     return {
+          //       ...item,
+          //       isError: true,
+          //       // errorMsg: "First Name should be less than 30 characters",
+          //       showErrorMsg: true,
+          //     };
+          //   }
+          // }
+          else if (item.isValidField === false && item.id === "email") {
             if (!isValidEmail(item.defaultValue, item.id)) {
               if (setCanBeDisabled) setCanBeDisabled(false);
               return {
@@ -335,12 +367,105 @@ const FormWrapper = (props: any) => {
     );
   };
   function checkDataisEmpty() {
-    const isEmptyField = config.some(
-      (val: any) => !val.defaultValue && val.isReq
-    );
+    // const isEmptyField = config.some(
+    //   (val: any) => !val.defaultValue && val.isReq
+    // );
+    //  if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
 
-    if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
+    const regex = /^[^\s][^\s]*$/;
+    const maxLimit = 20; // Maximum character limit for firstName and lastName fields
+
+    const isEmptyField = config.some((val: any) => {
+      if (val.isReq) {
+        if (val.id === "firstName" || val.id === "lastName") {
+          // Check if it is firstName or lastName field
+          const defaultValue = val.defaultValue.trim();
+
+          return !(defaultValue && regex.test(defaultValue));
+        } else {
+          // For other fields, check if defaultValue is empty
+          return !val.defaultValue;
+        }
+      }
+      return false;
+    });
+
+    if (setCanBeDisabled) {
+      setCanBeDisabled(isEmptyField);
+    }
   }
+
+  function namesCharLimit(titleName: any, id: any) {
+    // return;
+    let isValid = false;
+
+    const maxLimits: { [key: string]: number } = {
+      firstName: 30,
+      lastName: 30,
+      // title: 30,
+      // description: 100,
+    };
+
+    const maxLimit = maxLimits[id];
+
+    const regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?0-9]/;
+
+    if (titleName.length > maxLimit) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            let fieldName;
+            if (id === "firstName") {
+              fieldName = "First name";
+            } else if (id === "lastName") {
+              fieldName = "Last name";
+            } else if (id === "title") {
+              fieldName = "Title";
+            } else {
+              fieldName = id;
+            }
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+              // errorMsg: "Name should be less than 30 characters",
+              errorMsg: `${fieldName} should be less than ${maxLimit} characters`,
+            };
+          }
+          return item;
+        })
+      );
+    } else if (regex.test(titleName)) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+              errorMsg: "Special Characters and Numbers are not allowed",
+            };
+          }
+          return item;
+        })
+      );
+    } else {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: true,
+              isError: false,
+            };
+          }
+          return item;
+        })
+      );
+    }
+    return isValid;
+  }
+
   function isValidEmail(email: any, id: any) {
     let isValid = false;
     if (/\S+@\S+\.\S+/.test(email)) {
@@ -456,7 +581,7 @@ const FormWrapper = (props: any) => {
     parentType?: string,
     parentId?: string
   ) => {
-    switch (data.type) {
+    switch (data?.type) {
       case "select":
         return (
           <ElementContainer>
@@ -525,12 +650,24 @@ const FormWrapper = (props: any) => {
               }
               onChange={(e: any) => {
                 handleTextChange(e, data.id, parentType, parentId);
+
                 if (data.id === "password") {
                   sendDataToParent(e);
                 }
               }}
               onBlur={(e: any) => {
-                if (data.id === "email") {
+                if (data.id === "firstName") {
+                  namesCharLimit(data?.defaultValue, data.id);
+                  return;
+                } else if (data.id === "lastName") {
+                  namesCharLimit(data?.defaultValue, data.id);
+                  return;
+                }
+                // else if (data.id === "title") {
+                //   namesCharLimit(data?.defaultValue, data.id);
+                //   return;
+                // }
+                else if (data.id === "email") {
                   isValidEmail(data?.defaultValue, data.id);
                   return;
                 } else if (
@@ -560,51 +697,6 @@ const FormWrapper = (props: any) => {
               width={data.width || ""}
               config={data}
             />
-
-            {/* <Menu
-              sx={{
-                top: "5px",
-                left: "-40px",
-
-                "&.Mui-selected": {
-                  backgroundColor: "red",
-                },
-                "& .MuiMenu-list": {
-                  padding: "0px",
-                  boxShadow: "none",
-                },
-              }}
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              PaperProps={{
-                elevation: 0,
-
-                sx: {
-                  boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
-
-                  "& .MuiMenu-list": {
-                    padding: "0px",
-                  },
-                },
-              }}
-              MenuListProps={{
-                "aria-labelledby": "password",
-              }}
-            >
-              <MenuItem
-                onClick={handleClose}
-                sx={{
-                  padding: "0px",
-                }}
-              >
-                <PasswordRequired />
-              </MenuItem>
-            </Menu> */}
-            {/* {showMessage && (
-              <p>Password is weak. Please choose a stronger password.</p>
-            )} */}
           </ElementContainer>
         );
 
@@ -668,9 +760,9 @@ const FormWrapper = (props: any) => {
             {/* {data?.label ?? <CustomLabel label={data.label} />} */}
             {data.fields?.map((eachConfig: any, index: number) => {
               return (
-                <Box key={eachConfig.id}>
-                  {eachConfig.formLabel ?? (
-                    <CustomLabel label={eachConfig.formLabel} />
+                <Box key={eachConfig?.id}>
+                  {eachConfig?.formLabel ?? (
+                    <CustomLabel label={eachConfig?.formLabel} />
                   )}
                   {renderHTML(
                     eachConfig,
@@ -702,11 +794,11 @@ const FormWrapper = (props: any) => {
               className={` ${eachConfig?.isError ? "formErrorLabel" : ""}`}
             >
               {eachConfig?.formLabel ?? (
-                <CustomLabel label={eachConfig.formLabel} />
+                <CustomLabel label={eachConfig?.formLabel} />
               )}
               {renderHTML(eachConfig, false, index)}
 
-              {eachConfig.id == "dates" &&
+              {eachConfig?.id == "dates" &&
                 (eachConfig.fields[0].isError ||
                   eachConfig.fields[1].isError ||
                   eachConfig.isError == true) && (

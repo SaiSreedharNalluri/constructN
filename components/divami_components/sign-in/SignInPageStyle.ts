@@ -177,7 +177,7 @@ export const ShowHideDiv = styled("div")({
 });
 
 export const ExtraTickDiv = styled("div")({
-  marginTop: "20px",
+  marginTop: "16px",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
@@ -206,6 +206,8 @@ export const RememberDiv = styled("div")({
   fontSize: "14px",
   color: "#36415D",
   marginLeft: "10px",
+  marginTop:"2px"
+  
 });
 
 export const ForgotDiv = styled("div")({
@@ -234,7 +236,7 @@ export const SignInContainedButton = styled(CustomSignInButton)({
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "16px",
-  lineHeight: "16px",
+  // lineHeight: "16px",
   "&:hover": {
     backgroundColor: "#f1742e",
     color: "#ffffff",

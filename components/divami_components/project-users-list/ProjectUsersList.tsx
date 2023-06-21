@@ -3,6 +3,7 @@ import {
   Drawer,
   InputAdornment,
   ThemeProvider,
+  Tooltip,
 } from "@mui/material";
 
 import moment from "moment";
@@ -36,7 +37,7 @@ import {
   UserName,
   UserNameText,
   // ChatIconImage,
-  EditIconImage
+  EditIconImage,
 } from "./ProjectUsersListStyles";
 import searchIcon from "../../../public/divami_icons/search.svg";
 import UserFilterIcon from "../../../public/divami_icons/UserFilterIcon.svg";
@@ -183,38 +184,36 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       render: (rowData: any) => {
         return (
           <ImageButtons id={"rowActions"}>
-             {/* <TooltipText title="chat" > 
+            {/* <TooltipText title="chat" > 
              <div className="flex" >
              <ChatIconImage src={ChatIcon} alt="" />
              </div>
             </TooltipText> */}
             <TooltipText title="delete">
               <div className="flex ">
-              <RemoveIconImage
-              src={RemoveIcon}
-              alt=""
-              onClick={() => {
-                setshowPopUp(true);
-                setEmailId(rowData);
-              }}
-            />
-
+                <RemoveIconImage
+                  src={RemoveIcon}
+                  alt=""
+                  onClick={() => {
+                    setshowPopUp(true);
+                    setEmailId(rowData);
+                  }}
+                />
               </div>
             </TooltipText>
-              <TooltipText title="edit">
-<div className="flex ">
-<EditIconImage
-              src={Edit}
-              alt=""
-              onClick={() => {
-                setShowEdit(true);
-                setSelectedRowData(rowData);
-              }}
-              className="cursor-pointer"
-            />
-</div>
-              </TooltipText>
-       
+            <TooltipText title="edit">
+              <div className="flex ">
+                <EditIconImage
+                  src={Edit}
+                  alt=""
+                  onClick={() => {
+                    setShowEdit(true);
+                    setSelectedRowData(rowData);
+                  }}
+                  className="cursor-pointer"
+                />
+              </div>
+            </TooltipText>
           </ImageButtons>
         );
       },
@@ -368,6 +367,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                     )
                   );
                 }}
+                autoFocus={true}
                 InputLabelProps={{ shrink: false }}
                 InputProps={{
                   startAdornment: (
@@ -493,7 +493,9 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           open={showAddUser ? showAddUser : showPopUp}
           hideButtons
           setShowPopUp={showAddUser ? setShowAddUser : setshowPopUp}
-          modalTitle={showAddUser ? "Add users to the project" : "Deassign user"}
+          modalTitle={
+            showAddUser ? "Add users to the project" : "Deassign user"
+          }
           modalContent={
             showAddUser ? (
               <AddUsersEmailPopup showEmailOverlay={showEmailOverlay} />

@@ -27,7 +27,9 @@ export const HeaderContainer = styled("header")({
   paddingLeft: "30px",
 });
 
-export const HeaderImageLogo = styled(Image)({});
+export const HeaderImageLogo = styled(Image)({
+  cursor:"pointer"
+});
 
 export const IllustrationBackground = styled(Image)({
   position: "absolute",
@@ -59,7 +61,7 @@ export const FormContainerSign = styled("div")({
 
   paddingLeft: "60px",
   paddingRight: "60px",
-  paddingTop: "68px",
+  paddingTop: "62px",
 });
 
 export const FormHeader = styled("div")({
@@ -84,7 +86,7 @@ export const TextContainer = styled("div")({
     fontSize: "14px",
   lineHeight:"20px",
     color: "##222222",
-    marginTop:"30px"
+    marginTop:"26px"
 });
 
 export const FormText = styled("div")({

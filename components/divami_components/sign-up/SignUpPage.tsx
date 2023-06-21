@@ -68,6 +68,74 @@ const SignUpPage = () => {
     setChecked(event.target.checked);
   };
 
+  // const formHandler = (event: any) => {
+  //   const firstName = formData[0].defaultValue;
+  //   const lastName = formData[1].defaultValue;
+
+  //   const nameRegex = /^[A-Za-z]+$/; // Regular expression to match alphabetic characters
+
+  //   if (
+  //     firstName.trim() === "" ||
+  //     lastName.trim() === "" ||
+  //     !nameRegex.test(firstName) ||
+  //     !nameRegex.test(lastName)
+  //   ) {
+  //     // Display error or handle empty first name or last name
+  //     // For example:
+  //     // setErrorMsg('Please provide both first name and last name.');\
+  //     toast.error("Invalid input for first name or last name");
+  //     return;
+  //   }
+
+  //   const formValues = {
+  //     firstName: firstName,
+  //     lastName: lastName,
+
+  //     email: formData[2].defaultValue.toLocaleLowerCase(),
+  //     password: formData[3].defaultValue,
+  //     confirm_password: formData[4].defaultValue,
+  //   };
+
+  //   let errorObjects = formData.filter(function (obj: any) {
+  //     // return obj.isError === true;
+  //     if (obj.isError === true) {
+  //     }
+  //   });
+
+  //   errorObjects.forEach(function (obj: any) {
+  //     // console.log(obj.id + " has isError = true");
+  //   });
+
+  //   // const email = formData[0].defaultValue;
+  //   // const password = formData[1].defaultValue;
+  //   // console.log(email, password);
+
+  //   setValidate(true);
+
+  //   const hasEmptyValue = Object.values(formValues).some(
+  //     (value) => value === ""
+  //   );
+
+  //   let hasError = formData.some(function (obj: any) {
+  //     return obj.isError === true;
+  //     // console.log(obj)
+  //   });
+
+  //   // const isErrorExist = formData.some
+
+  //   if (hasEmptyValue) {
+  //     setShowError(true);
+  //     return; // Stop execution here
+  //   }
+
+  //   if (hasError) {
+  //     return; // Stop execution here
+  //   }
+  //   delete formValues.confirm_password;
+  //   setFormInfo(formValues);
+  //   setSignUpMsg(true);
+  //   handleRegister(formValues);
+  // };
   const formHandler = (event: any) => {
     const formValues = {
       firstName: formData[0].defaultValue,
@@ -128,6 +196,8 @@ const SignUpPage = () => {
     }
   }
   const handleRegister = (formValue: any) => {
+    // console.log("aagya yha pe");
+    // return;
     registerUser(formValue)
       .then((response) => {
         if (response.success === true) {

@@ -1,4 +1,4 @@
-import { createTheme, Paper, ThemeProvider } from "@mui/material";
+import { createTheme, Paper, ThemeProvider, Tooltip } from "@mui/material";
 import moment from "moment";
 import router, { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
@@ -50,7 +50,8 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
   const [projectsState, setProjectsState] = useState(projects);
 
   useEffect(() => {
-    setProjectsState([...projects, ...projects, ...projects, ...projects]);
+    // setProjectsState([...projects]);
+    setProjectsState([...projects]);
   }, [projects]);
 
   const sortBy = (a: any, b: any, field: string) => {
@@ -101,7 +102,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "20%" },
+      cellStyle: { width: "30%" },
     },
     {
       title: "Captures",
@@ -119,10 +120,10 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
         return (
           <CapturesFieldContainer>
             <CapturesField>
-            <TooltipText title="360 Video" >
-              <div>
-              <CaptureImageIcon src={capture360Image} alt={""} />
-              </div>
+              <TooltipText title="360 Video">
+                <div>
+                  <CaptureImageIcon src={capture360Image} alt={""} />
+                </div>
               </TooltipText>
               <CaptureCount>
                 {" "}
@@ -131,13 +132,12 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                   : "-"}
               </CaptureCount>
             </CapturesField>
-     
 
             <CapturesField>
-            <TooltipText title="360° Video Walk"  >
-              <div>
-              <CaptureImageIcon src={videoWalk} alt={""} />
-              </div>
+              <TooltipText title="360° Video Walk">
+                <div>
+                  <CaptureImageIcon src={videoWalk} alt={""} />
+                </div>
               </TooltipText>
               <CaptureCount>
                 {rowData.captures && rowData.captures["360 Image"]
@@ -145,13 +145,13 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                   : "-"}
               </CaptureCount>
             </CapturesField>
-         
+
             <CapturesField>
-            <TooltipText title="Phone Image"  >
-              <div className="">
-              <CaptureImageIcon src={phoneImage} alt={""}  />
-              </div>
-            </TooltipText  >
+              <TooltipText title="Phone Image">
+                <div className="">
+                  <CaptureImageIcon src={phoneImage} alt={""} />
+                </div>
+              </TooltipText>
 
               <CaptureCount>
                 {rowData.captures && rowData.captures["Phone Image"]
@@ -160,12 +160,11 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
               </CaptureCount>
             </CapturesField>
 
-          
             <CapturesField>
-            <TooltipText title="Phone Video Walk"  >
-              <div>
-              <CaptureImageIcon src={captureLidarIcon} alt={""} />
-              </div>
+              <TooltipText title="Phone Video Walk">
+                <div>
+                  <CaptureImageIcon src={captureLidarIcon} alt={""} />
+                </div>
               </TooltipText>
               <CaptureCount>
                 {rowData.captures && rowData.captures["LiDAR Scan"]
@@ -173,13 +172,15 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                   : "-"}
               </CaptureCount>
             </CapturesField>
-        
-            
+
             <CapturesField>
-            <TooltipText title="Drone Image"  >
-              <div >
-              <CaptureImageIcon src={DroneImage} alt={""}></CaptureImageIcon>
-              </div>
+              <TooltipText title="Drone Image">
+                <div>
+                  <CaptureImageIcon
+                    src={DroneImage}
+                    alt={""}
+                  ></CaptureImageIcon>
+                </div>
               </TooltipText>
               <CaptureCount>
                 {rowData.captures && rowData.captures["Drone Image"]
@@ -187,7 +188,6 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                   : "-"}
               </CaptureCount>
             </CapturesField>
-           
           </CapturesFieldContainer>
         );
       },
@@ -260,6 +260,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                   <UsersListTooltip
                     list={rowData.users.slice(2, 5)}
                     showMoreText={Number(rowData.numberOfUsers) > 5}
+                    rowData={rowData}
                   />
                 }
               >
@@ -289,7 +290,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
         lineHeight: "8px",
         color: "#101F4C",
       },
-      cellStyle: { width: "40%" },
+      cellStyle: { width: "30%" },
 
       customSort: (a: any, b: any) => sortBy(a, b, "lastUpdated"),
       render: (rowData: any) => {
@@ -391,8 +392,8 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                 fontWeight: "400",
                 fontSize: "14px",
                 color: "#101F4C",
-                backgroundColor:
-                  rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
+                // backgroundColor:
+                //   rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
               }),
               headerStyle: {
                 padding: "6px 16px",
