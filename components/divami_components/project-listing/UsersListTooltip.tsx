@@ -1,7 +1,11 @@
 import { useRouter } from "next/router";
 import { ShowMore, UsersList, UsersListItem } from "./ProjectListingStyles";
 
-export const UsersListTooltip = ({ list, showMoreText = false }: any) => {
+export const UsersListTooltip = ({
+  list,
+  showMoreText = false,
+  rowData,
+}: any) => {
   const router = useRouter();
 
   return (
@@ -20,7 +24,7 @@ export const UsersListTooltip = ({ list, showMoreText = false }: any) => {
       {showMoreText && (
         <ShowMore
           onClick={() => {
-            router.push(`/projects/PRJ201897/usersList`);
+            router.push(`/projects/${rowData._id}/usersList`);
           }}
         >
           View More Users

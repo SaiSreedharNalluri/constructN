@@ -14,10 +14,12 @@ import {
 import bulkIcon from "../../../public/divami_icons/bulkUpload.svg";
 import { push } from "mixpanel-browser";
 import { AddUsersEmailOverlay } from "./AddUsersEmailOverlay";
-import { Drawer } from "@mui/material";
+import { Drawer, InputAdornment } from "@mui/material";
 import CustomSearch from "../custom-search/CustomSearch";
 import CustomLabel from "../custom-label/CustomLabel";
 import { CustomTextField } from "../custom-textfield/CustomTextField";
+import BackArrow from "../../../public/divami_icons/backArrow.svg";
+import Image from "next/image";
 
 export const AddUsersEmailPopup = ({
   showEmailOverlay,
@@ -67,6 +69,13 @@ export const AddUsersEmailPopup = ({
           if (searchVal) {
             showEmailOverlay({ email: searchVal, role: "" });
           }
+        }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <Image width={24} height={24} src={BackArrow} alt="" />
+            </InputAdornment>
+          ),
         }}
         className={undefined}
       />

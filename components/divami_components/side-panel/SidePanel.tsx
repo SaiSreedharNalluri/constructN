@@ -48,7 +48,7 @@ interface IProps {
 }
 const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   let [eMail, setEMail] = useState<string>("");
-  const [isChatActive,setChatStatus] = React.useState(false);
+  const [isChatActive, setChatStatus] = React.useState(false);
   const [config, setConfig] = React.useState([
     {
       id: "dashboard",
@@ -66,14 +66,14 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       toolTipMsg: "Sections",
     },
 
-    {
-      id: "structure",
-      icon: drawing,
-      activeIcon: drawingInactive,
-      isActive: false,
-      nextPage: "",
-      toolTipMsg: "Drawings",
-    },
+    // {
+    //   id: "structure",
+    //   icon: drawing,
+    //   activeIcon: drawingInactive,
+    //   isActive: false,
+    //   nextPage: "",
+    //   toolTipMsg: "Drawings",
+    // },
 
     {
       id: "schedule",
@@ -106,11 +106,11 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   ]);
   const [supportItemsConfig, setSupportItemsConfig] = React.useState([
     {
-      id:"chatSupport",
-      icon:chatOpen,
-      isActive:false,
-      activeIcon:chatClose,
-      toolTipMsg:"Chat Support",
+      id: "chatSupport",
+      icon: chatOpen,
+      isActive: false,
+      activeIcon: chatClose,
+      toolTipMsg: "Chat Support",
     },
   ]);
   // const handleClick = (id: any) => {
@@ -190,7 +190,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     }
   }
   function closeChat(): void {
-    
     {
       eval(`globalThis.fcWidget.close()`);
     }
@@ -230,34 +229,32 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           </SideMenuOption>
         </SideMenuOptionContainer>
       ))}
-       {supportItemsConfig.map((item, index) => (
-        <SideMenuOptionContainer  className="fixed bottom-0" key={index}>
+      {supportItemsConfig.map((item, index) => (
+        <SideMenuOptionContainer className="fixed bottom-0" key={index}>
           <SideMenuOption
           // onClick={() =>
           //   item.label === "settings" ? handleClick(item) : null
           // }
           // onClick={() => handleClick(item.id)}
           >
-             <TooltipText title={item.toolTipMsg} placement="right">
-             {/* <SideMenuOptionSupportImageContainer> <StyledImage
+            <TooltipText title={item.toolTipMsg} placement="right">
+              {/* <SideMenuOptionSupportImageContainer> <StyledImage
                     src={item.icon}
                     alt={item.id}
                     id={item.id}
                     onClick={leftClickHandler}
                   /></SideMenuOptionSupportImageContainer> */}
-             <SideMenuOptionImageContainer id="custom_fc_button" >
+              <SideMenuOptionImageContainer id="custom_fc_button">
                 {isChatActive ? (
-                 
-                    <StyledImage
-                      // src={item.activeIcon}
-                      src={item.icon}
-                      width={40}
-                      height={40}
-                      alt={item.id}
-                      id={item.id}
-                      onClick={leftClickHandler}
-                    />
-                 
+                  <StyledImage
+                    // src={item.activeIcon}
+                    src={item.icon}
+                    width={40}
+                    height={40}
+                    alt={item.id}
+                    id={item.id}
+                    onClick={leftClickHandler}
+                  />
                 ) : (
                   <StyledImage
                     src={item.icon}
@@ -269,10 +266,10 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
                   />
                 )}
               </SideMenuOptionImageContainer>
-            </TooltipText> 
+            </TooltipText>
           </SideMenuOption>
         </SideMenuOptionContainer>
-      ))} 
+      ))}
     </SideMenuContainer>
   );
 };
