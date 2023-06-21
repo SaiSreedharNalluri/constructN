@@ -89,6 +89,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
         fontFamily: "Open Sans",
         fontSize: "16px",
 
+       
         // padding: "16px 0px 16px 30px",
         padding: "15px 0px 15px 20px",
 

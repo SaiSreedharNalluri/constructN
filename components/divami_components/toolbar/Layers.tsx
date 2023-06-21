@@ -115,7 +115,10 @@ const Layers = ({
       }}
     >
       <ContainerDiv>
-        <LayersWrapper onClick={onListClick}>
+        <LayersWrapper
+          onClick={onListClick}
+          // style={{ border: "2px solid blue" }}
+        >
           <IconsContainer>
             {layersLabels.length > 0 ? (
               <>Layer: {getLayersIcons(layersLabels)}</>
