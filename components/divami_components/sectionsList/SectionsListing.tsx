@@ -90,6 +90,7 @@ import CustomButton from "../custom-button/CustomButton";
 import { SvgIconProps } from "@material-ui/core";
 import CustomLoader from "../custom_loader/CustomLoader";
 import LocalSearch from "../local_component/LocalSearch";
+import { TooltipText } from "../side-panel/SidePanelStyles";
 
 interface RowData {
   tableData: { id: number };
@@ -576,6 +577,8 @@ const SectionsListing = () => {
         return (
           <CapturesFieldContainer>
             <CapturesField>
+            <TooltipText title="Phone Image">
+                <div>
               <CaptureImageIcon
                 // src={capture360Image}
                 src={phoneImage}
@@ -583,6 +586,8 @@ const SectionsListing = () => {
                 // width={13}
                 // height={13}
               />
+              </div>
+              </TooltipText>
               <CaptureCount>
                 {" "}
                 {/* {rowData.capture360Count?.length > 1
@@ -594,11 +599,15 @@ const SectionsListing = () => {
               </CaptureCount>
             </CapturesField>
             <CapturesField>
+            <TooltipText title="360 Image">
+                <div>
               <CaptureImageIcon
                 // src={videoWalk}
                 src={capture360Image}
                 alt={""}
               />
+              </div>
+              </TooltipText>
               {/* 360 Video */}
               <CaptureCount>
                 {rowData.capture && rowData.capture["360 Image"]
@@ -607,12 +616,16 @@ const SectionsListing = () => {
               </CaptureCount>
             </CapturesField>
             <CapturesField>
+            <TooltipText title="360° Video Walk">
+                <div>
               <CaptureImageIcon
                 src={videoWalk}
                 alt={""}
                 // width={15}
                 // height={15}
               />
+              </div>
+              </TooltipText>
               <CaptureCount>
                 {/* {rowData.capturePhoneCount?.length > 1
                   ? rowData.capturePhoneCount
@@ -625,21 +638,28 @@ const SectionsListing = () => {
               </CaptureCount>
             </CapturesField>
             <CapturesField>
-              <CaptureImageIcon
+              <TooltipText title="Phone Video Walk">
+                <div>
+                <CaptureImageIcon
                 src={captureLidarIcon}
                 alt={""}
-                // width={14}
-                // height={14}
-              />
+              />   
+                </div>
+              </TooltipText>
+       
               <CaptureCount>-</CaptureCount>
             </CapturesField>
             <CapturesField>
+            <TooltipText title="Drone Image">
+                <div>
               <CaptureImageIcon
                 src={DroneImage}
                 alt={""}
                 // width={13}
                 // height={13}
               ></CaptureImageIcon>
+              </div>
+              </TooltipText>
               <CaptureCount>
                 {rowData.capture && rowData.capture["Drone Image"]
                   ? rowData.capture["Drone Image"]

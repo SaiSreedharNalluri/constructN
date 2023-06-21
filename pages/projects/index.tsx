@@ -184,16 +184,13 @@ const Index: React.FC<any> = () => {
       },
     },
     {
-      label: "Add Users",
+      label: "Manage Users",
       action: (id: string) => {
-        // getUsersData(id);
-        setSelectedProjectId(id);
-        setShowAddUser(true);
-        // router.push(`/projects/${id}/usersList`);
+        router.push(`/projects/${id}/usersList`);
       },
     },
     {
-      label: "Archive Project",
+      label: "Deassign Project",
       action: () => {
         setShowArchiveProject(true);
       },
@@ -571,7 +568,7 @@ const Index: React.FC<any> = () => {
           hideButtons
           setShowPopUp={showAddUser ? setShowAddUser : setShowArchiveProject}
           modalTitle={
-            showAddUser ? "Add users to the project" : "Archive Project"
+            showAddUser ? "Add users to the project" : "Deassign Project"
           }
           modalContent={
             showAddUser ? (
@@ -581,7 +578,7 @@ const Index: React.FC<any> = () => {
             )
           }
           modalmessage={
-            showAddUser ? "" : "Are you sure you want to Archive Project?"
+            showAddUser ? "" : "Are you sure you want to deassign yourself from this project?"
           }
           primaryButtonLabel={showAddUser ? "Yes" : "Yes"}
           SecondaryButtonlabel={showAddUser ? "No" : "No"}

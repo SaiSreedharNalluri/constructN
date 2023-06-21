@@ -203,7 +203,7 @@ const ProjectConfig = ({
           })}
         </SideMenuConfig>
         <ProjectConfigContent>
-          <AvailableStateHeader>Available States</AvailableStateHeader>
+          <AvailableStateHeader>Available Options</AvailableStateHeader>
           {config.map(
             (option: any) =>
               option.isActive && (

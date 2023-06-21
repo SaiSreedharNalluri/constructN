@@ -72,7 +72,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       activeIcon: drawingInactive,
       isActive: false,
       nextPage: "",
-      toolTipMsg: "Drawings",
+      toolTipMsg: "Views",
     },
 
     {

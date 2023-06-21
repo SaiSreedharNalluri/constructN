@@ -18,6 +18,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faQuestion,
   faRightFromBracket,
+  faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -448,13 +449,14 @@ const Header: React.FC<any> = ({
         {loading && (
           <div className="absolute top-[64px]  shadow-md right-0 bg-gray-50   z-10  border mx-0.5">
             <div
-              className="flex items-center justify-center cursor-pointer p-2  "
+              className="flex items-center  cursor-pointer p-2  w-[150px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
               onClick={() => {
                 setshowPopUp(true);
               }}
             >
-              <p className="logout-button w-[150px] px-10 text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm">
-                Logout
+              <FontAwesomeIcon icon={faSignOut}></FontAwesomeIcon>
+              <p className="logout-button px-4 py-1">
+                Sign out
               </p>
             </div>
 
