@@ -1,4 +1,4 @@
-import { createTheme, Paper, ThemeProvider } from "@mui/material";
+import { createTheme, Paper, ThemeProvider, Tooltip } from "@mui/material";
 import moment from "moment";
 import router, { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
@@ -49,7 +49,8 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
   const [projectsState, setProjectsState] = useState(projects);
 
   useEffect(() => {
-    setProjectsState([...projects, ...projects, ...projects, ...projects]);
+    // setProjectsState([...projects]);
+    setProjectsState([...projects]);
   }, [projects]);
 
   const sortBy = (a: any, b: any, field: string) => {
@@ -117,48 +118,59 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
       render: (rowData: any) => {
         return (
           <CapturesFieldContainer>
-            <CapturesField>
-              <CaptureImageIcon src={capture360Image} alt={""} />
-              <CaptureCount>
-                {" "}
-                {rowData.captures && rowData.captures["360 Video"]
-                  ? rowData.captures["360 Video"]
-                  : "-"}
-              </CaptureCount>
-            </CapturesField>
-            <CapturesField>
-              <CaptureImageIcon src={videoWalk} alt={""} />
+            <Tooltip title={"360 Video"}>
+              <CapturesField>
+                <CaptureImageIcon src={capture360Image} alt={""} />
 
-              <CaptureCount>
-                {rowData.captures && rowData.captures["360 Image"]
-                  ? rowData.captures["360 Image"]
-                  : "-"}
-              </CaptureCount>
-            </CapturesField>
-            <CapturesField>
-              <CaptureImageIcon src={phoneImage} alt={""} />
-              <CaptureCount>
-                {rowData.captures && rowData.captures["Phone Image"]
-                  ? rowData.captures["Phone Image"]
-                  : "-"}
-              </CaptureCount>
-            </CapturesField>
-            <CapturesField>
-              <CaptureImageIcon src={captureLidarIcon} alt={""} />
-              <CaptureCount>
-                {rowData.captures && rowData.captures["LiDAR Scan"]
-                  ? rowData.captures["LiDAR Scan"]
-                  : "-"}
-              </CaptureCount>
-            </CapturesField>
-            <CapturesField>
-              <CaptureImageIcon src={DroneImage} alt={""}></CaptureImageIcon>
-              <CaptureCount>
-                {rowData.captures && rowData.captures["Drone Image"]
-                  ? rowData.captures["Drone Image"]
-                  : "-"}
-              </CaptureCount>
-            </CapturesField>
+                <CaptureCount>
+                  {" "}
+                  {rowData.captures && rowData.captures["360 Video"]
+                    ? rowData.captures["360 Video"]
+                    : "-"}
+                </CaptureCount>
+              </CapturesField>
+            </Tooltip>
+            <Tooltip title={"360 Image"}>
+              <CapturesField>
+                <CaptureImageIcon src={videoWalk} alt={""} />
+
+                <CaptureCount>
+                  {rowData.captures && rowData.captures["360 Image"]
+                    ? rowData.captures["360 Image"]
+                    : "-"}
+                </CaptureCount>
+              </CapturesField>
+            </Tooltip>
+            <Tooltip title={"Phone Image"}>
+              <CapturesField>
+                <CaptureImageIcon src={phoneImage} alt={""} />
+                <CaptureCount>
+                  {rowData.captures && rowData.captures["Phone Image"]
+                    ? rowData.captures["Phone Image"]
+                    : "-"}
+                </CaptureCount>
+              </CapturesField>
+            </Tooltip>
+            <Tooltip title={"LiDAR Scan"}>
+              <CapturesField>
+                <CaptureImageIcon src={captureLidarIcon} alt={""} />
+                <CaptureCount>
+                  {rowData.captures && rowData.captures["LiDAR Scan"]
+                    ? rowData.captures["LiDAR Scan"]
+                    : "-"}
+                </CaptureCount>
+              </CapturesField>
+            </Tooltip>
+            <Tooltip title={"Drone Image"}>
+              <CapturesField>
+                <CaptureImageIcon src={DroneImage} alt={""}></CaptureImageIcon>
+                <CaptureCount>
+                  {rowData.captures && rowData.captures["Drone Image"]
+                    ? rowData.captures["Drone Image"]
+                    : "-"}
+                </CaptureCount>
+              </CapturesField>
+            </Tooltip>
           </CapturesFieldContainer>
         );
       },
@@ -231,6 +243,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                   <UsersListTooltip
                     list={rowData.users.slice(2, 5)}
                     showMoreText={Number(rowData.numberOfUsers) > 5}
+                    rowData={rowData}
                   />
                 }
               >

@@ -3,6 +3,7 @@ import {
   Drawer,
   InputAdornment,
   ThemeProvider,
+  Tooltip,
 } from "@mui/material";
 
 import moment from "moment";
@@ -180,24 +181,29 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       render: (rowData: any) => {
         return (
           <ImageButtons id={"rowActions"}>
-            <RemoveIconImage src={ChatIcon} alt="" />
-            <RemoveIconImage
-              src={RemoveIcon}
-              alt=""
-              onClick={() => {
-                setshowPopUp(true);
-                setEmailId(rowData);
-              }}
-            />
-
-            <Image
-              src={Edit}
-              alt=""
-              onClick={() => {
-                setShowEdit(true);
-                setSelectedRowData(rowData);
-              }}
-            />
+            <Tooltip title="Chat">
+              <RemoveIconImage src={ChatIcon} alt="" />
+            </Tooltip>
+            <Tooltip title="Remove">
+              <RemoveIconImage
+                src={RemoveIcon}
+                alt=""
+                onClick={() => {
+                  setshowPopUp(true);
+                  setEmailId(rowData);
+                }}
+              />
+            </Tooltip>
+            <Tooltip title="Edit">
+              <Image
+                src={Edit}
+                alt=""
+                onClick={() => {
+                  setShowEdit(true);
+                  setSelectedRowData(rowData);
+                }}
+              />
+            </Tooltip>
           </ImageButtons>
         );
       },
@@ -351,6 +357,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                     )
                   );
                 }}
+                autoFocus={true}
                 InputLabelProps={{ shrink: false }}
                 InputProps={{
                   startAdornment: (

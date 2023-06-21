@@ -352,6 +352,7 @@ const Index: React.FC<any> = () => {
                       placeholder="Search"
                       variant="outlined"
                       value={searchTerm}
+                      autoFocus={true}
                       onChange={(e) => {
                         setSearchTerm(e.target.value);
                         setSearchTableData(
@@ -384,6 +385,9 @@ const Index: React.FC<any> = () => {
                           </InputAdornment>
                         ),
                       }}
+                      // inputProps={{
+                      //   autoFocus: true,
+                      // }}
                     />
                   </SearchAreaContainer>
                 ) : (
