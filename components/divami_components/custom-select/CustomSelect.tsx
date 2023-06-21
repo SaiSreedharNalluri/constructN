@@ -6,13 +6,14 @@ const StyledSelect = styled(Select)((props: any) => ({
   width: props.width ? props.width : "100%",
   height: "40px",
   outline: "0px",
+  maxWidth:props.maxWidth,
   border: props.hideBorder ? "none !important" : "1px solid #36415d",
-
   borderRadius: "4px",
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: 14,
+  textAlign:props.textAlign,
   color: "#101F4B",
   "& .MuiOutlinedInput-notchedOutline": {
     border: 0,
@@ -133,11 +134,13 @@ const CustomSelect = (props: any) => {
         value={val}
         onChange={props.onChangeHandler ? props.onChangeHandler : handlechange}
         id={id}
+        textAlign={config?.textAlign}
         readOnly={isReadOnly}
         className={` ${config?.isError ? "formErrorField" : ""} formField ${
           customClass ? customClass : null
         }`}
         width={props.width || ""}
+        maxWidth={config.maxWidth||""}
         styles={config.styles ? config.styles : {}}
         // sx={{
         //   boxShadow: "none",
