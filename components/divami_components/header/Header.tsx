@@ -306,7 +306,7 @@ const Header: React.FC<any> = ({
           )}
         </HeaderLeftPart>
         <HeaderRightPart>
-          {projectId ? (
+          {/* {projectId ? (
             <ProjectSelectorContainer>
               <CustomSelect
                 config={{
@@ -339,7 +339,7 @@ const Header: React.FC<any> = ({
             </ProjectSelectorContainer>
           ) : (
             ""
-          )}
+          )} */}
 
           {toolClicked ? (
             <HeaderToggle>

@@ -61,8 +61,8 @@ const ResetPassword = ({ uniqueToken }: any) => {
 
   const formHandler = (event: any) => {
     const formValues = {
-      password: formData[0].defaultValue,
-      confirm_password: formData[1].defaultValue,
+      password: formData[0].defaultValue.trim(),
+      confirm_password: formData[1].defaultValue.trim(),
     };
 
     setValidate(true);
@@ -97,7 +97,7 @@ const ResetPassword = ({ uniqueToken }: any) => {
     )
       .then((response) => {
         if (response.success === true) {
-          toast.info("Redirecting ... ");
+          toast.success(response?.message);
 
           router.push("/reset_completed");
         }
