@@ -152,7 +152,7 @@ const ProjectDetails: React.FC = () => {
                 <div className="flex gap-8  justify-between px-4  py-2">
                   <div className="w-1/3">
                    
-                    <p className="text-[#101F4C]" data-tip={utm === " " ? "NA" : utm}>
+                    <p className="text-[#101F4C]" >
                       <TruncatedString text={projectData?.name}  maxLength={20}
               suffixLength={0}></TruncatedString> </p>
                     <label className="  text-sm text-[#787878]">

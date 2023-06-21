@@ -37,6 +37,7 @@ import { MTableBodyRow } from "material-table";
 import { SortDescIcon } from "./SortDescIcon";
 import LocalSearch from "../local_component/LocalSearch";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
+import { TooltipText } from "../side-panel/SidePanelStyles";
 
 export const ProjectListFlatView = ({ projects, projectActions }: any) => {
   const router = useRouter();
@@ -118,7 +119,11 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
         return (
           <CapturesFieldContainer>
             <CapturesField>
+            <TooltipText title="360 Video" >
+              <div>
               <CaptureImageIcon src={capture360Image} alt={""} />
+              </div>
+              </TooltipText>
               <CaptureCount>
                 {" "}
                 {rowData.captures && rowData.captures["360 Video"]
@@ -126,39 +131,63 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
                   : "-"}
               </CaptureCount>
             </CapturesField>
-            <CapturesField>
-              <CaptureImageIcon src={videoWalk} alt={""} />
+     
 
+            <CapturesField>
+            <TooltipText title="360° Video Walk"  >
+              <div>
+              <CaptureImageIcon src={videoWalk} alt={""} />
+              </div>
+              </TooltipText>
               <CaptureCount>
                 {rowData.captures && rowData.captures["360 Image"]
                   ? rowData.captures["360 Image"]
                   : "-"}
               </CaptureCount>
             </CapturesField>
+         
             <CapturesField>
-              <CaptureImageIcon src={phoneImage} alt={""} />
+            <TooltipText title="Phone Image"  >
+              <div className="">
+              <CaptureImageIcon src={phoneImage} alt={""}  />
+              </div>
+            </TooltipText  >
+
               <CaptureCount>
                 {rowData.captures && rowData.captures["Phone Image"]
                   ? rowData.captures["Phone Image"]
                   : "-"}
               </CaptureCount>
             </CapturesField>
+
+          
             <CapturesField>
+            <TooltipText title="Phone Video Walk"  >
+              <div>
               <CaptureImageIcon src={captureLidarIcon} alt={""} />
+              </div>
+              </TooltipText>
               <CaptureCount>
                 {rowData.captures && rowData.captures["LiDAR Scan"]
                   ? rowData.captures["LiDAR Scan"]
                   : "-"}
               </CaptureCount>
             </CapturesField>
+        
+            
             <CapturesField>
+            <TooltipText title="Drone Image"  >
+              <div >
               <CaptureImageIcon src={DroneImage} alt={""}></CaptureImageIcon>
+              </div>
+              </TooltipText>
               <CaptureCount>
                 {rowData.captures && rowData.captures["Drone Image"]
                   ? rowData.captures["Drone Image"]
                   : "-"}
               </CaptureCount>
             </CapturesField>
+           
           </CapturesFieldContainer>
         );
       },
