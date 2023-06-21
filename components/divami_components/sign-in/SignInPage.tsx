@@ -33,6 +33,7 @@ import { login } from "../../../services/userAuth";
 import { Mixpanel } from "../../analytics/mixpanel";
 import FooterSignIn from "./FooterSignIn";
 import FormBody from "./FormBody";
+import CustomLoader from "../custom_loader/CustomLoader";
 
 const SignInPage = () => {
   const router = useRouter();
@@ -50,6 +51,7 @@ const SignInPage = () => {
   const [token, setToken] = useState("");
   const [userEmail, setUserEmail] = useState<any>("");
   const [newProp, setNewProp] = useState<any>({});
+  const [loading, setLoading] = useState(false); // Loading state for the button click
   const submitButtonRef: any = useRef(null);
 
   const handleFormData = (data: any) => {
@@ -67,7 +69,9 @@ const SignInPage = () => {
     if (email === "" || password === "" || formData[0].isError) {
       return; // Stop execution here
     }
+    setLoading(true); // Set loading state to true
 
+    // handlerLogin(email, password, rememberMe);
     handlerLogin(email, password, rememberMe);
   };
 
@@ -126,6 +130,7 @@ const SignInPage = () => {
           error.toString();
 
         toast.error("Invalid User Credentials");
+        setLoading(false);
 
         Mixpanel.track("login_fail", {
           email: email,
@@ -146,91 +151,107 @@ const SignInPage = () => {
   // form wrapper code
 
   return (
-    <SectionShowcase>
-      <HeaderContainer>
-        <HeaderImageLogo src={Logo} alt="logo" />
-      </HeaderContainer>
+    <>
+      {loading ? (
+        <CustomLoader />
+      ) : (
+        <SectionShowcase>
+          <HeaderContainer>
+            <HeaderImageLogo src={Logo} alt="logo" />
+          </HeaderContainer>
 
-      <IllustrationBackground src={Illustration} alt="construct" />
+          <IllustrationBackground src={Illustration} alt="construct" />
 
-      <Overlay></Overlay>
-      <FormDiv>
-        <FormContainerSign>
-          <SignInHeader data-testid="SignInHeading">Sign In</SignInHeader>
-          <FormBody
-            handleFormData={handleFormData}
-            validate={validate}
-            setIsValidate={setValidate}
-            tagsList={tagList}
-            setCanBeDisabled={setCanBeDisabled}
-            loginField={true}
-            signUpMsg={true}
-            handleKeyPress={handleKeyPress}
-          />
-          <ExtraTickDiv>
-            <ParentTickDiv>
-              <CheckTickDiv>
-                <CheckTickBox
-                  sx={{ padding: 0 }}
-                  icon={
-                    <Image
-                      width={24}
-                      height={24}
-                      src={UnChecked}
-                      alt="Search"
+          <Overlay></Overlay>
+          <FormDiv>
+            <FormContainerSign>
+              <SignInHeader data-testid="SignInHeading">Sign In</SignInHeader>
+              <FormBody
+                handleFormData={handleFormData}
+                validate={validate}
+                setIsValidate={setValidate}
+                tagsList={tagList}
+                setCanBeDisabled={setCanBeDisabled}
+                loginField={true}
+                signUpMsg={true}
+                handleKeyPress={handleKeyPress}
+              />
+              <ExtraTickDiv>
+                <ParentTickDiv>
+                  <CheckTickDiv>
+                    <CheckTickBox
+                      sx={{ padding: 0 }}
+                      icon={
+                        <Image
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                          }}
+                          src={UnChecked}
+                          alt="Search"
+                        />
+                      }
+                      checkedIcon={
+                        <Image
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                          }}
+                          src={Checked}
+                          alt="Search"
+                        />
+                      }
+                      checked={rememberMe}
+                      // onChange={handleChange}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      inputProps={{ "aria-label": "controlled" }}
+                      data-testid="rememeberClick"
                     />
-                  }
-                  checkedIcon={
-                    <Image width={24} height={24} src={Checked} alt="Search" />
-                  }
-                  checked={rememberMe}
-                  // onChange={handleChange}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  inputProps={{ "aria-label": "controlled" }}
-                  data-testid="rememeberClick"
-                />
-              </CheckTickDiv>
+                  </CheckTickDiv>
 
-              <RememberDiv>Remember me</RememberDiv>
-            </ParentTickDiv>
+                  <RememberDiv>Remember me</RememberDiv>
+                </ParentTickDiv>
 
-            <ForgotDiv
-              onClick={() => {
-                router.push("/forgot_password");
-              }}
-              data-testid="forgotPasswordClick"
-            >
-              Forgot password?
-            </ForgotDiv>
-          </ExtraTickDiv>
-          <ButtonSection>
-            {/* <SignInContainedButton variant="outlined">
+                <ForgotDiv
+                  onClick={() => {
+                    router.push("/forgot_password");
+                  }}
+                  data-testid="forgotPasswordClick"
+                >
+                  Forgot password?
+                </ForgotDiv>
+              </ExtraTickDiv>
+              <ButtonSection>
+                {/* <SignInContainedButton variant="outlined">
               Sign In
             </SignInContainedButton> */}
+                <FooterSignIn
+                  formHandler={formHandler}
+                  canBeDisabled={canBeDisabled}
+                  loginField={true}
+                  ref={submitButtonRef}
+                  // customLabel={true}
+                />
 
-            <FooterSignIn
-              formHandler={formHandler}
-              canBeDisabled={canBeDisabled}
-              loginField={true}
-              ref={submitButtonRef}
-              // customLabel={true}
-            />
-          </ButtonSection>
+                {/* Render the loader if loading state is true */}
+              </ButtonSection>
 
-          <NewUserDiv>
-            New User?{"   "}
-            <NewUserSpan
-              onClick={() => {
-                router.push("/signup");
-              }}
-              data-testid="signUpRoute"
-            >
-              Signup
-            </NewUserSpan>
-          </NewUserDiv>
-        </FormContainerSign>
-      </FormDiv>
-    </SectionShowcase>
+              <NewUserDiv>
+                New User?{"   "}
+                <NewUserSpan
+                  onClick={() => {
+                    router.push("/signup");
+                  }}
+                  data-testid="signUpRoute"
+                >
+                  Signup
+                </NewUserSpan>
+              </NewUserDiv>
+            </FormContainerSign>
+          </FormDiv>
+        </SectionShowcase>
+      )}
+    </>
   );
 };
 
