@@ -10,6 +10,9 @@ export const ISSUE_FORM_CONFIG = [
     isError: false,
     isReq: true,
     isReadOnly: false,
+     isValidField: true,
+   
+
   },
   {
     id: "issueType",

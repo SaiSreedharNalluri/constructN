@@ -7,7 +7,7 @@ export const SIGN_UP_FORM_CONFIG = [
     placeholder: "First name",
     isError: false,
     isReq: true,
-    isValidField: false,
+     isValidField: true,
     isReadOnly: false,
     imageIcon: "nameIcon",
     errorMsg: "",
