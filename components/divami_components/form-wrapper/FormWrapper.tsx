@@ -173,6 +173,7 @@ const FormWrapper = (props: any) => {
         });
       });
     } else {
+      console.log("bolna");
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
           if (id === item.id) {
@@ -335,11 +336,32 @@ const FormWrapper = (props: any) => {
     );
   };
   function checkDataisEmpty() {
-    const isEmptyField = config.some(
-      (val: any) => !val.defaultValue && val.isReq
-    );
+    console.log("config", config);
+    // const isEmptyField = config.some(
+    //   (val: any) => !val.defaultValue && val.isReq
+    // );
+    //  if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
 
-    if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
+    const regex = /^[A-Za-z]+$/;
+    const maxLimit = 20; // Maximum character limit for firstName and lastName fields
+
+    const isEmptyField = config.some((val: any) => {
+      if (val.isReq) {
+        if (val.id === "firstName" || val.id === "lastName") {
+          // Check if it is firstName or lastName field
+          const defaultValue = val.defaultValue.trim();
+          return !(defaultValue && regex.test(defaultValue));
+        } else {
+          // For other fields, check if defaultValue is empty
+          return !val.defaultValue;
+        }
+      }
+      return false;
+    });
+
+    if (setCanBeDisabled) {
+      setCanBeDisabled(isEmptyField);
+    }
   }
   function isValidEmail(email: any, id: any) {
     let isValid = false;
@@ -560,51 +582,6 @@ const FormWrapper = (props: any) => {
               width={data.width || ""}
               config={data}
             />
-
-            {/* <Menu
-              sx={{
-                top: "5px",
-                left: "-40px",
-
-                "&.Mui-selected": {
-                  backgroundColor: "red",
-                },
-                "& .MuiMenu-list": {
-                  padding: "0px",
-                  boxShadow: "none",
-                },
-              }}
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              PaperProps={{
-                elevation: 0,
-
-                sx: {
-                  boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
-
-                  "& .MuiMenu-list": {
-                    padding: "0px",
-                  },
-                },
-              }}
-              MenuListProps={{
-                "aria-labelledby": "password",
-              }}
-            >
-              <MenuItem
-                onClick={handleClose}
-                sx={{
-                  padding: "0px",
-                }}
-              >
-                <PasswordRequired />
-              </MenuItem>
-            </Menu> */}
-            {/* {showMessage && (
-              <p>Password is weak. Please choose a stronger password.</p>
-            )} */}
           </ElementContainer>
         );
 

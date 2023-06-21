@@ -27,7 +27,9 @@ export const HeaderContainer = styled("header")({
   paddingLeft: "30px",
 });
 
-export const HeaderImageLogo = styled(Image)({});
+export const HeaderImageLogo = styled(Image)({
+  cursor:"pointer"
+});
 
 export const IllustrationBackground = styled(Image)({
   position: "absolute",
