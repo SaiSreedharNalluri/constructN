@@ -69,6 +69,7 @@ const ProjectDetails: React.FC = () => {
       formData.filter((item: any) => item.id == "latitude")[0]?.defaultValue,
       formData.filter((item: any) => item.id == "longitude")[0]?.defaultValue,
     ];
+    //projectInfo.name = (projectInfo.name as string).substring(0,100);
     updateProjectInfo(projectInfo, router.query.projectId as string)
       .then((response) => {
         if (response.success === true) {
@@ -123,7 +124,7 @@ const ProjectDetails: React.FC = () => {
         <div>
           <div className="flex justify-between px-4 py-4">
             <div>
-              <h1 className="text-[#101F4C]">Project Details</h1>
+              <h1 className="text-[#101F4C] font-normal font-sans text-lg">Project Details</h1>
             </div>
             <div
               className=" text-[#F1742E] cursor-pointer"
@@ -165,9 +166,9 @@ const ProjectDetails: React.FC = () => {
                     </label>
                   </div>
                   <div className="  w-1/3">
-                    <p className="text-[#101F4C]">{projectData?.email}</p>
+                    <p className="text-[#101F4C]">{projectData?.company?.name || "NA"}</p>
                     <label className="  text-sm text-[#787878]">
-                      Project Owner
+                      Company Name
                     </label>
                   </div>
                 </div>
@@ -182,7 +183,7 @@ const ProjectDetails: React.FC = () => {
                   </div>
                   <div className="w-2/3 mr-[24px] ">
                     <p className="text-[#101F4C]">{projectData?.email}</p>
-                    <label className=" text-sm text-[#787878]">Email Id</label>
+                    <label className=" text-sm text-[#787878]">Email ID</label>
                   </div>
                 </div>
           </div>

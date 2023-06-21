@@ -158,6 +158,7 @@ export const IssueTitle = styled("div")({
 export const LayersWrapper = styled("div")({
   // minWidth: '250px !important',
   minWidth: "238px !important",
+  minHeight:'49px',
   border: "1px solid #d9d9d9",
   borderRight: "none",
   display: "flex",
@@ -168,6 +169,7 @@ export const LayersWrapper = styled("div")({
 
 export const IconsContainer = styled("div")({
   // minWidth: '108px',
+  
   display: "flex",
   alignItems: "center",
 });
@@ -179,7 +181,7 @@ export const SelectLayersWrapper = styled("div")(
   (props: selectLayerWrapperProps) => ({
     // top: "62px",
     top: "58px",
-
+    
     position: "absolute",
     left: props.typeOfWindow === "type" ? "1px" : "250px",
     // left: props.typeOfWindow === 'type' ? '1px' : '238px',
