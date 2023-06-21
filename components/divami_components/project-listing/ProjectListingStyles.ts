@@ -175,6 +175,7 @@ export const ProjectCard = styled("div")((props: any) => ({
   fontFamily: "Open Sans",
   position: "relative",
   marginBottom: "35px",
+  cursor: "pointer",
 })) as any;
 
 export const ProjectTopLeftBg = styled("div")((props: any) => ({
