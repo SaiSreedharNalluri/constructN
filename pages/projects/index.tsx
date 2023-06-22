@@ -487,7 +487,7 @@ const Index: React.FC<any> = () => {
                   }}
                 />
                 {isFilterApplied ? <FilterIndicator /> : <></>}
-                <ToggleButtonContainer>
+                <ToggleButtonContainer id="view-options">
                   <GridViewButton
                     onClick={() => {
                       setIsGridView(true);

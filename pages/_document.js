@@ -30,10 +30,32 @@ export default function Document() {
         <link rel="stylesheet" type="text/css" href="../libs/openlayers3/ol.css"/>
         <link rel="stylesheet" type="text/css" href="../libs/spectrum/spectrum.css"/>
         <link rel="stylesheet" type="text/css" href="../libs/jstree/themes/mixed/style.css"/> */}
+        {/* <Script
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{
+                __html: `
+                console.log('---------------------');
+                (function (w, d, s) {
+                  var a = d.getElementsByTagName('head')[0];
+                  var r = d.createElement('script');
+                  r.async = 1;
+                  r.src = s;
+                  r.setAttribute('id', 'usetifulScript');
+                  r.dataset.token = "d6456ea63c3883fef420f8af5232530b";
+                                      a.appendChild(r);
+                })(window, document, "https://www.usetiful.com/dist/usetiful.js");`,
+            }}
+        /> */}
       </Head>
       <body>
         <Main />
         <NextScript />
+        <Script
+          src="https://www.usetiful.com/dist/usetiful.js"
+          id="usetifulScript"
+          data-token="d6456ea63c3883fef420f8af5232530b"
+          strategy="beforeInteractive"
+        />
         <Script
           src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js"
           onReady={onScriptLoad}
