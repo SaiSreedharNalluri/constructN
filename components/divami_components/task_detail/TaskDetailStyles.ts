@@ -42,14 +42,14 @@ export const ArrowIcon = styled(Image)`
 
 export const EditIcon = styled(Image)`
   cursor: pointer;
-  margin-right: 20px;
+  // margin-right: 20px;
 `;
 
 export const DeleteIcon = styled(Image)`
   cursor: pointer;
   // width:24px;
   // height:24px;
-  margin-right: 25px;
+  // margin-right: 25px;
 `;
 
 export const ValueContainer = styled("div")(({ theme }) => ({
@@ -65,6 +65,7 @@ export const ValueContainer = styled("div")(({ theme }) => ({
 export const LeftTitleCont = styled("div")`
   display: flex;
   //   margin-top: 10px;
+
 `;
 
 export const RightTitleCont = styled("div")`
@@ -134,7 +135,7 @@ export const PriorityStatus = styled("div")`
   font-size: 14px;
   line-height: 20px;
   color: #101f4c;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 
 export const TypeStatus = styled("div")`
@@ -189,7 +190,7 @@ export const CaptureStatus = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 
 export const ThirdContWatch = styled("div")`
@@ -210,7 +211,7 @@ export const ThirdContWatchName = styled("div")`
   font-size: 14px;
   line-height: 20px;
   color: #101f4c;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 
 export const ThirdContDueDate = styled("div")`
@@ -220,7 +221,7 @@ export const ThirdContDueDate = styled("div")`
   font-size: 14px;
   line-height: 20px;
   color: #101f4c;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 
 export const ThirdContProg = styled("div")`
@@ -245,7 +246,7 @@ export const ThirdContProgType = styled("div")`
   line-height: 20px;
 
   color: #101f4c;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 
 export const ThirdBodyDiv = styled("div")`
@@ -300,7 +301,7 @@ export const FourthContProgType = styled("div")`
 
   color: #101f4c;
   align-items: center;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 export const MoreTextDiv = styled("div")({
   
@@ -436,6 +437,7 @@ export const CustomTaskDrawerContainer = styled("div")({
   paddingLeft: "20px",
   paddingRight: "20px",
   // border: "2px solid blue",
+  overflowY:"hidden"
 });
 
 export const ProgressEditStateButtonsContainer = styled("div")`

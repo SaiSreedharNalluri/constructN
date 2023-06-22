@@ -36,6 +36,7 @@ const BootstrapDialog = styled(Dialog)(
     "& .MuiPaper-root.MuiDialog-paper": {
       width: width ? width : "493px",
       height: height ? height : "",
+      overflow:"hidden"
     },
 
     ".MuiBackdrop-root": {

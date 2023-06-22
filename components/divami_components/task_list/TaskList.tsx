@@ -343,6 +343,7 @@ const CustomTaskListDrawer = (props: any) => {
           <HeaderContainer>
             <TitleContainer>
               <span>Task List</span>
+              <div className="rounded-full p-1 hover:bg-[#EEEEEE]">
               <CloseIcon
                 onClick={() => {
                   handleClose();
@@ -351,6 +352,7 @@ const CustomTaskListDrawer = (props: any) => {
                 alt={"close icon"}
                 data-testid="close-icon"
               />
+              </div>
             </TitleContainer>
           </HeaderContainer>
 

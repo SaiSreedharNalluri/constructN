@@ -34,12 +34,14 @@ const Header = ({ closeTaskCreate, editData }: any) => {
     <HeaderContainer>
       <TitleContiner>
         <span>{title}</span>
+        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE]">
         <CloseIcon
           onClick={closeTaskCreate}
           src={closeIcon}
           alt={"close icon"}
           data-testid="const-custom-drawer-close-icon"
         />
+        </div>
       </TitleContiner>
     </HeaderContainer>
   );

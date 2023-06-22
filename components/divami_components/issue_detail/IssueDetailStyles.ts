@@ -50,7 +50,7 @@ export const ArrowIcon = styled(Image)`
 
 export const EditIcon = styled(Image)`
   cursor: pointer;
-  margin-right: 20px;
+  // margin-right: 20px;
   //   width: 24px;
   // height: 24px;
 `;
@@ -59,7 +59,7 @@ export const DeleteIcon = styled(Image)`
   cursor: pointer;
   // width: 24px;
   // height: 24px;
-  margin-right: 25px;
+  // margin-right: 25px;
   
 `;
 
@@ -125,7 +125,7 @@ export const PriorityStatus = styled("div")`
   font-size: 14px;
   line-height: 20px;
   color: #101f4c;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 
 export const TypeStatus = styled("div")`
@@ -183,7 +183,7 @@ export const CaptureStatus = styled("div")`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 
 export const ThirdContWatch = styled("div")`
@@ -213,7 +213,7 @@ export const ThirdContWatchName = styled("div")`
   font-size: 14px;
   line-height: 20px;
   color: #101f4c;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 export const ThirdContDueDate = styled("div")`
   font-family: "Open Sans";
@@ -222,7 +222,7 @@ export const ThirdContDueDate = styled("div")`
   font-size: 14px;
   line-height: 20px;
   color: #101f4c;
-  margin-top: 5px;
+  // margin-top: 5px;
 `;
 
 export const ThirdContProg = styled("div")`
@@ -446,6 +446,7 @@ export const CustomTaskDrawerContainer = styled("div")({
   paddingLeft: "20px",
   paddingRight: "20px",
   // border: "2px solid blue",
+  overflow:"hidden"
 });
 
 export const ProgressEditStateButtonsContainer = styled("div")`
