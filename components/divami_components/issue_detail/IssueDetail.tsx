@@ -467,7 +467,7 @@ function BasicTabs(props: any) {
 
           <SecondBodyDiv>
             <SecondContPriorParal>
-              <ThirdContWatch>Watcher</ThirdContWatch>
+              <ThirdContWatch>Created By</ThirdContWatch>
               <ThirdContWatchName
                 style={{ color: "#101F4B" }}
                 data-testid="issue-watcher"
@@ -492,7 +492,7 @@ function BasicTabs(props: any) {
           <SecondBodyDiv>
             <ThirdContRight>
               <ThirdContProg data-testid="progres-label">
-                Progress
+              Status
               </ThirdContProg>
 
               <ThirdContProgType
@@ -1215,12 +1215,24 @@ const CustomIssueDetailsDrawer = (props: any) => {
         }
       });
   };
+  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
+    let truncatedText = text;
+
+    if (text?.length > maxLength) {
+      const prefix = text.substring(0, maxLength - suffixLength);
+      const suffix = text.substring(text.length - suffixLength);
+      truncatedText = prefix + "..." + suffix;
+    }
+
+    return truncatedText;
+  };
   return (
     <>
       <CustomTaskDrawerContainer>
         <HeaderContainer>
           <TitleContainer>
             <LeftTitleCont>
+        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] ">
               <ArrowIcon
                 onClick={() => {
                   onClose(true);
@@ -1229,11 +1241,14 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 alt={"close icon"}
                 data-testid="back-arrow"
               />
+              </div>
               <SpanTile data-testid="issue-detail-header">
-                {selectedIssue?.title} (#{selectedIssue?.sequenceNumber})
+              <TruncatedString text={selectedIssue?.title}  maxLength={20}
+              suffixLength={0}></TruncatedString>   (#{selectedIssue?.sequenceNumber})
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
+        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
               <EditIcon
                 src={Edit}
                 alt={"close icon"}
@@ -1242,6 +1257,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 }}
                 data-testid="edit-icon"
               />
+              </div>
+        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
               <DeleteIcon
                 src={Delete}
                 alt={"close icon"}
@@ -1250,6 +1267,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
                   setshowPopUp(true);
                 }}
               />
+              </div>
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>

@@ -8,10 +8,14 @@ interface IProps {
   projectData: IProjects;
 }
 const Index: React.FC<IProps> = () => {
+  const breadCrumbsData = [{ name: "Project Details" }];
   return (
     <div>
       <div>
-        <Header></Header>
+        <Header  showBreadcrumbs
+            breadCrumbData={breadCrumbsData}
+            showFirstElement={true}>
+        </Header>
       </div>
       <div className="flex w-full fixed">
         <div>
