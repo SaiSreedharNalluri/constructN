@@ -108,14 +108,15 @@
 	background-color: red;
 }
 
-#potree_description{
-	position: absolute; 
-	top: 10px; 
-	left: 50%; 
-	transform: translateX(-50%); 
+#potree_description {
+	position: fixed;
+	bottom: 5%;
+	right: 2%;
+	transform: translateX(-50%);
+	color: rgb(255, 102, 0);
 	text-align: center;
-	z-index:	1000;
-}
+	z-index: 1000;
+  }
 
 .potree_sidebar_brand{
 	margin:			1px 20px;

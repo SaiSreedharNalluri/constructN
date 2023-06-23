@@ -93,7 +93,9 @@ const HotspotsCompare: React.FC<IProps> = ({ hotspotDetails, hotspotCompareDetai
           show ? <div id="mapbox-hotspot-compare" className='compare-details'>
             <div className='flex'>
               <h4 className='mb-2 flex-1'>{left.name} ({left.length.toFixed(0)} mts.)</h4>
-              <IconButton size="small" className='w-3 h-3 mt-1 text-xs' aria-label="delete" onClick={() => setShow(false)}>
+              <IconButton size="small" className='w-3 h-3 mt-1 text-xs' aria-label="delete" onClick={() => setShow(false)} onTouchEnd={() => {
+                  setShow(false);
+                }}>
                 X
               </IconButton>
             </div>
