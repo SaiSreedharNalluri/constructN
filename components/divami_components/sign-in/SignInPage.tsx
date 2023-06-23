@@ -152,105 +152,103 @@ const SignInPage = () => {
 
   return (
     <>
-      {loading ? (
-        <CustomLoader />
-      ) : (
-        <SectionShowcase>
-          <HeaderContainer>
-            <HeaderImageLogo src={Logo} alt="logo" />
-          </HeaderContainer>
+      {loading && <CustomLoader />}
 
-          <IllustrationBackground src={Illustration} alt="construct" />
+      <SectionShowcase style={{ visibility: loading ? "hidden" : undefined }}>
+        <HeaderContainer>
+          <HeaderImageLogo src={Logo} alt="logo" />
+        </HeaderContainer>
 
-          <Overlay></Overlay>
-          <FormDiv>
-            <FormContainerSign>
-              <SignInHeader data-testid="SignInHeading">Sign In</SignInHeader>
-              <FormBody
-                handleFormData={handleFormData}
-                validate={validate}
-                setIsValidate={setValidate}
-                tagsList={tagList}
-                setCanBeDisabled={setCanBeDisabled}
-                loginField={true}
-                signUpMsg={true}
-                handleKeyPress={handleKeyPress}
-              />
-              <ExtraTickDiv>
-                <ParentTickDiv>
-                  <CheckTickDiv>
-                    <CheckTickBox
-                      sx={{ padding: 0 }}
-                      icon={
-                        <Image
-                          style={{
-                            width: "20px",
-                            height: "20px",
-                          }}
-                          src={UnChecked}
-                          alt="Search"
-                        />
-                      }
-                      checkedIcon={
-                        <Image
-                          style={{
-                            width: "20px",
-                            height: "20px",
-                          }}
-                          src={Checked}
-                          alt="Search"
-                        />
-                      }
-                      checked={rememberMe}
-                      // onChange={handleChange}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      inputProps={{ "aria-label": "controlled" }}
-                      data-testid="rememeberClick"
-                    />
-                  </CheckTickDiv>
+        <IllustrationBackground src={Illustration} alt="construct" />
 
-                  <RememberDiv>Remember me</RememberDiv>
-                </ParentTickDiv>
+        <Overlay></Overlay>
+        <FormDiv>
+          <FormContainerSign>
+            <SignInHeader data-testid="SignInHeading">Sign In</SignInHeader>
+            <FormBody
+              handleFormData={handleFormData}
+              validate={validate}
+              setIsValidate={setValidate}
+              tagsList={tagList}
+              setCanBeDisabled={setCanBeDisabled}
+              loginField={true}
+              signUpMsg={true}
+              handleKeyPress={handleKeyPress}
+            />
+            <ExtraTickDiv>
+              <ParentTickDiv>
+                <CheckTickDiv>
+                  <CheckTickBox
+                    sx={{ padding: 0 }}
+                    icon={
+                      <Image
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                        }}
+                        src={UnChecked}
+                        alt="Search"
+                      />
+                    }
+                    checkedIcon={
+                      <Image
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                        }}
+                        src={Checked}
+                        alt="Search"
+                      />
+                    }
+                    checked={rememberMe}
+                    // onChange={handleChange}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    inputProps={{ "aria-label": "controlled" }}
+                    data-testid="rememeberClick"
+                  />
+                </CheckTickDiv>
 
-                <ForgotDiv
-                  onClick={() => {
-                    router.push("/forgot_password");
-                  }}
-                  data-testid="forgotPasswordClick"
-                >
-                  Forgot password?
-                </ForgotDiv>
-              </ExtraTickDiv>
-              <ButtonSection>
-                {/* <SignInContainedButton variant="outlined">
+                <RememberDiv>Remember me</RememberDiv>
+              </ParentTickDiv>
+
+              <ForgotDiv
+                onClick={() => {
+                  router.push("/forgot_password");
+                }}
+                data-testid="forgotPasswordClick"
+              >
+                Forgot password?
+              </ForgotDiv>
+            </ExtraTickDiv>
+            <ButtonSection>
+              {/* <SignInContainedButton variant="outlined">
               Sign In
             </SignInContainedButton> */}
-                <FooterSignIn
-                  formHandler={formHandler}
-                  canBeDisabled={canBeDisabled}
-                  loginField={true}
-                  ref={submitButtonRef}
-                  // customLabel={true}
-                />
+              <FooterSignIn
+                formHandler={formHandler}
+                canBeDisabled={canBeDisabled}
+                loginField={true}
+                ref={submitButtonRef}
+                // customLabel={true}
+              />
 
-                {/* Render the loader if loading state is true */}
-              </ButtonSection>
+              {/* Render the loader if loading state is true */}
+            </ButtonSection>
 
-              <NewUserDiv>
-                New User?{"   "}
-                <NewUserSpan
-                  onClick={() => {
-                    router.push("/signup");
-                  }}
-                  data-testid="signUpRoute"
-                >
-                  Signup
-                </NewUserSpan>
-              </NewUserDiv>
-            </FormContainerSign>
-          </FormDiv>
-        </SectionShowcase>
-      )}
+            <NewUserDiv>
+              New User?{"   "}
+              <NewUserSpan
+                onClick={() => {
+                  router.push("/signup");
+                }}
+                data-testid="signUpRoute"
+              >
+                Signup
+              </NewUserSpan>
+            </NewUserDiv>
+          </FormContainerSign>
+        </FormDiv>
+      </SectionShowcase>
     </>
   );
 };

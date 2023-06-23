@@ -180,7 +180,8 @@ const FormWrapper = (props: any) => {
     e: any,
     id: string,
     type?: string,
-    parentId?: string
+    parentId?: string,
+    maxLength?: number
   ) => {
     if (type === "doubleField") {
       setFormConfig((prev: any) => {
@@ -210,7 +211,9 @@ const FormWrapper = (props: any) => {
           if (id === item.id) {
             return {
               ...item,
-              defaultValue: e.target.value,
+              defaultValue: !maxLength
+                ? e.target.value
+                : e.target.value.slice(0, maxLength),
             };
           }
           return item;
@@ -619,7 +622,7 @@ const FormWrapper = (props: any) => {
               isRequired={data.isReq}
               type={data.type}
               minVal={data?.minVal}
-              maxVal={data?.maxVal}
+              maxVal={data?.maxLength}
               showRangeError={data.showRangeError}
               isDisabled={data.isDisabled}
               className={undefined}
@@ -649,7 +652,13 @@ const FormWrapper = (props: any) => {
                   : () => {}
               }
               onChange={(e: any) => {
-                handleTextChange(e, data.id, parentType, parentId);
+                handleTextChange(
+                  e,
+                  data.id,
+                  parentType,
+                  parentId,
+                  parseInt(data.maxLength)
+                );
 
                 if (data.id === "password") {
                   sendDataToParent(e);

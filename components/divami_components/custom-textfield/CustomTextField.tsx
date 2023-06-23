@@ -138,6 +138,7 @@ export const CustomTextField = (props: any) => {
     onMouseLeave,
     hoveredIndex,
     InputProps,
+    maxValue,
   } = props;
 
   const [showPassword, setShowPassword] = useState(false);

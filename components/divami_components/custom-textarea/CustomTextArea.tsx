@@ -49,6 +49,7 @@ export const CustomTextArea = (props: PropTypes) => {
     isDisabled = false,
     onBlur,
     isReadOnly = false,
+    maxVal,
   } = props;
   return (
     <div>
@@ -56,6 +57,7 @@ export const CustomTextArea = (props: PropTypes) => {
         className={` ${isError ? "formErrorField" : ""} formField`}
         id={id}
         // placeholder={placeholder}
+        maxLength={maxVal && maxVal}
         defaultValue={defaultValue}
         data-testid={dataTestId}
         required={false}
