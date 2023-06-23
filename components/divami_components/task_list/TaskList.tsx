@@ -378,6 +378,7 @@ const CustomTaskListDrawer = (props: any) => {
                     }}
                     placeholder="Search"
                     variant="outlined"
+                    autoFocus={true}
                     value={searchTerm}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
@@ -395,6 +396,7 @@ const CustomTaskListDrawer = (props: any) => {
                             onClick={() => {
                               handleSearchWindow();
                             }}
+                            isSmall={true}
                             src={CrossIcon}
                             alt={"close icon"}
                             data-testid="search-close"
@@ -532,7 +534,7 @@ const CustomTaskListDrawer = (props: any) => {
                                 ? blockedFrame
                                 : val.status === "Completed"
                                 ? CompletedIconTask
-                                : ""
+                                : todoIcon
                             }
                             alt="Arr"
                           />

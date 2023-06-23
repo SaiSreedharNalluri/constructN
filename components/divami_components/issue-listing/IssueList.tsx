@@ -46,7 +46,6 @@ import {
   BodyContainer,
   BodyContTitle,
   BodyInfo,
-  CloseIcon,
   DividerIcon,
   DownloadIcon,
   DueDate,
@@ -93,7 +92,11 @@ import { CSVLink } from "react-csv";
 import { Issue } from "../../../models/Issue";
 import { ITools } from "../../../models/ITools";
 import FilterCommon from "../issue-filter-common/IssueFilterCommon";
-import { CustomSearchField, IconContainer } from "../task_list/TaskListStyles";
+import {
+  CloseIcon,
+  CustomSearchField,
+  IconContainer,
+} from "../task_list/TaskListStyles";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import { getProjectUsers } from "../../../services/project";
 import router from "next/router";
@@ -429,6 +432,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     placeholder="Search"
                     variant="outlined"
                     value={searchTerm}
+                    autoFocus={true}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
                     }}
@@ -445,6 +449,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                             onClick={() => {
                               handleSearchWindow();
                             }}
+                            isSmall={true}
                             src={CrossIcon}
                             alt={"close icon"}
                             data-testid="search-close"
@@ -566,7 +571,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                                 ? blockedFrame
                                 : val.status === "Completed"
                                 ? CompletedIconTask
-                                : ""
+                                : todoIcon
                             }
                             alt="Arrow"
                           />

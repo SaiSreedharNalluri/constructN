@@ -179,19 +179,29 @@ export const AddUsersEmailOverlay = ({
     setHoveringOver("");
 
   const onAddUser = () => {
-    const projectInfo = {
-      users: addedUsers.map((each: any) => {
-        return { role: each.role, email: each.email };
-      }),
-    };
-    addUserRoles(projectInfo, selectedProjectId)
-      .then((res: any) => {
-        toast.success("User Added successfully");
-        setOpenDrawer(false);
-      })
-      .catch((err) => {
-        toast.error(err.message);
-      });
+    if (addedUsers?.length) {
+      const projectInfo = {
+        users: addedUsers.map((each: any) => {
+          return { role: each.role, email: each.email };
+        }),
+      };
+      const newUsers: number = addedUsers.filter(
+        (each: any) => each.isNewUser
+      )?.length;
+
+      addUserRoles(projectInfo, selectedProjectId)
+        .then((res: any) => {
+          toast.success(
+            `${
+              addedUsers.length - newUsers
+            } have been added to the project successfully & ${newUsers} users have been sent invite to register`
+          );
+          setOpenDrawer(false);
+        })
+        .catch((err) => {
+          toast.error(err.message);
+        });
+    }
   };
 
   const onClickBack = () => {

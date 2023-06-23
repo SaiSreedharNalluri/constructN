@@ -39,7 +39,11 @@ import LocalSearch from "../local_component/LocalSearch";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 
-export const ProjectListFlatView = ({ projects, projectActions }: any) => {
+export const ProjectListFlatView = ({
+  projects,
+  projectActions,
+  truncateString,
+}: any) => {
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
   const [sortObj, setSortObj] = useState(true);
@@ -67,12 +71,6 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
     setSortObj(!sortObj);
     // return a.numberOfUsers - b.numberOfUsers;
   };
-
-  const handleRowHover = (event: any, propsData: any) =>
-    setHoveringOver(`${propsData.index}`);
-
-  const handleRowHoverLeave = (event: any, propsData: any) =>
-    setHoveringOver("");
 
   const getFullName = (fName: string, lName: string) => {
     if (fName && lName)
@@ -102,7 +100,10 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "30%" },
+      cellStyle: { width: "32%" },
+      render: (rowData: any) => {
+        return <>{truncateString(rowData.projectName, 50)}</>;
+      },
     },
     {
       title: "Captures",
@@ -290,7 +291,7 @@ export const ProjectListFlatView = ({ projects, projectActions }: any) => {
         lineHeight: "8px",
         color: "#101F4C",
       },
-      cellStyle: { width: "30%" },
+      cellStyle: { width: "28%" },
 
       customSort: (a: any, b: any) => sortBy(a, b, "lastUpdated"),
       render: (rowData: any) => {

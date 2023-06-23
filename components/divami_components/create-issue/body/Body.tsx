@@ -89,14 +89,12 @@ const Body = ({
     if (router.isReady) {
       getIssuesTypes(router.query.projectId as string).then((response: any) => {
         if (response.success === true) {
-          // response.result.push("Please select the issue type");
           setIssueTypes(response.result);
         }
       });
       getIssuesPriority(router.query.projectId as string).then(
         (response: any) => {
           if (response.success === true) {
-            // response.result.push("Please select the issue priority");
             setIssuePriorities(response.result);
           }
         }

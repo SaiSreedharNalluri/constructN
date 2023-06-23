@@ -36,12 +36,6 @@ export const TitleContainer = styled(Box)({
   // position:"fixed"
 });
 
-export const CloseIcon = styled(Image)({
-  cursor: "pointer",
-  width: "24px",
-  height: "24px",
-});
-
 // border-bottom: 1px solid #d9d9d9;
 
 export const MiniSymbolsContainer = styled(Box)({

@@ -11,16 +11,7 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 const StyledDiv = styled("span")({
   fontFamily: '"Open Sans"',
   display: "block",
-  // color: "#888888",
-  // fontStyle: "italic",
-  // fontWeight: "400",
-  // fontSize: "14px",
-  // lineHeight: "19px",
-  // background: '#FFFFFF',
   height: "calc(100vh - 60px)",
-  //   paddingLeft: '20px',
-  //   paddingRight: '20px',
-  // overflow: 'scroll'
 });
 const CreateIssue = ({
   handleCreateTask,
@@ -35,7 +26,6 @@ const CreateIssue = ({
   onCancelCreate,
   deleteTheAttachment,
 }: any) => {
-  console.log(editData, "esdssditData", issueStatusList);
   const router = useRouter();
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);

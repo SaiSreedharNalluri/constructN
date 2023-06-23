@@ -32,11 +32,11 @@ export const TitleContainer = styled(Box)({
   fontSize: "16px",
 });
 
-export const CloseIcon = styled(Image)({
+export const CloseIcon = styled(Image)((props: any) => ({
   cursor: "pointer",
-  width: "24px",
-  height: "24px",
-});
+  width: props.isSmall ? "15px" : "24px",
+  height: props.isSmall ? "17px" : "24px",
+})) as any;
 
 // border-bottom: 1px solid #d9d9d9;
 

@@ -21,22 +21,20 @@ const nextConfig = {
       "constructncorp.freshchat.com",
       "apps.apple.com",
       "ajax.googleapis.com",
-
     ],
   },
-   async headers() {
-      return [
-        {
-          source: "/.well-known/apple-app-site-association",
-          headers: [{ key: "content-type", value: "application/json" }]
-        },
-        {
-          source: "/apple-app-site-association",
-          headers: [{ key: "content-type", value: "application/json" }]
-        }
-      ];
-    }
-  ,
+  async headers() {
+    return [
+      {
+        source: "/.well-known/apple-app-site-association",
+        headers: [{ key: "content-type", value: "application/json" }],
+      },
+      {
+        source: "/apple-app-site-association",
+        headers: [{ key: "content-type", value: "application/json" }],
+      },
+    ];
+  },
   redirects: async () => {
     return [
       {
@@ -49,4 +47,3 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
-

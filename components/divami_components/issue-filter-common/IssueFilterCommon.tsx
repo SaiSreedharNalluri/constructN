@@ -527,7 +527,7 @@ const FilterCommon: React.FC<IProps> = ({
   };
 
   const onReset = () => {
-    let temp = FilterState?.map((each: any, serial: number) => {
+    let temp = FilterState?.map((each: any) => {
       return { ...each };
     });
     temp.forEach((element: any) => {
@@ -539,8 +539,6 @@ const FilterCommon: React.FC<IProps> = ({
     setDueData(DATE_PICKER_DATA);
     setAssignees([assignees]);
     SetFilterState(temp);
-    closeFilterOverlay();
-    handleClose();
   };
 
   return (

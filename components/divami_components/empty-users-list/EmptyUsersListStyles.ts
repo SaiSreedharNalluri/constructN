@@ -126,3 +126,10 @@ export const BulkUserText = styled("div")({
 export const LabelContainer = styled("div")({
   paddingBottom: "8px",
 });
+
+export const EnterIcon = styled(Image)({
+  transform: "rotate(180deg)",
+  width: "18px",
+  height: "18px",
+  cursor: "pointer",
+});

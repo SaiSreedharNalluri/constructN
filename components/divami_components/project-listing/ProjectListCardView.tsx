@@ -46,10 +46,13 @@ import moment from "moment";
 import CustomLoader from "../custom_loader/CustomLoader";
 import { Tooltip } from "@material-ui/core";
 
-export const ProjectListCardView = ({ projects, projectActions }: any) => {
+export const ProjectListCardView = ({
+  projects,
+  projectActions,
+  truncateString,
+}: any) => {
   const router = useRouter();
-  const [showActions, setShowActions] = useState(false);
-  const [showLoading, setShowLoading] = useState(false);
+
   const [projectsData, setProjectsData] = useState(
     projects?.length
       ? projects.map((each: any, index: number) => {
@@ -64,19 +67,6 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
   useEffect(() => {
     setProjectsData(projects);
   }, [projects]);
-
-  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
-    let truncatedText = text;
-
-    if (text.length > maxLength) {
-      // const prefix = text.substring(0, maxLength - suffixLength);
-      // const suffix = text.substring(text.length - suffixLength);
-      const prefix = text.substring(0, maxLength);
-      truncatedText = prefix + "...";
-    }
-
-    return truncatedText;
-  };
 
   const Card = ({ each }: any) => {
     const [isFlipped, setIsFlipped] = useState(true);
@@ -106,11 +96,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
             title={each.projectName?.length > 50 ? each.projectName : ""}
           >
             <ProjectNameTitle>
-              <TruncatedString
-                text={each.projectName}
-                maxLength={50}
-                suffixLength={7}
-              />
+              {truncateString(each.projectName, 50)}
             </ProjectNameTitle>
           </Tooltip>
 
@@ -166,11 +152,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
             title={each.projectName?.length > 50 ? each.projectName : ""}
           >
             <ProjectNameTitle>
-              <TruncatedString
-                text={each.projectName}
-                maxLength={50}
-                suffixLength={7}
-              />
+              {truncateString(each.projectName, 50)}
             </ProjectNameTitle>
           </Tooltip>
 
@@ -257,7 +239,7 @@ export const ProjectListCardView = ({ projects, projectActions }: any) => {
         <ShowErrorContainer>
           <CenteredErrorImage src={projectHierIcon} alt="" />
 
-          <NoResultText>No Result Found</NoResultText>
+          <NoResultText>No Projects Found</NoResultText>
         </ShowErrorContainer>
       )}
     </ProjectCardsContainer>
