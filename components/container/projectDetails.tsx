@@ -151,15 +151,18 @@ const ProjectDetails: React.FC = () => {
           <div className="py-2">
                 <div className="flex gap-8  justify-between px-4  py-2">
                   <div className="w-1/3">
-                   
-                    <p className="text-[#101F4C]" >
-                      <TruncatedString text={projectData?.name}  maxLength={20}
-              suffixLength={0}></TruncatedString> </p>
-                    <label className="  text-sm text-[#787878]">
-                      Project Name
-                    </label>
-                  </div>
-                  <div className="w-1/3">
+                 <div className="flex ">
+          <TooltipText title={projectData?.name} placement="right">
+          <span className="text-[#101F4C]">
+            <TruncatedString text={projectData?.name} maxLength={20} suffixLength={0}></TruncatedString>
+          </span>
+        </TooltipText>
+      </div>
+    <label className="text-sm text-[#787878] ">
+      Project Name
+    </label>
+  </div>
+ <div className="w-1/3">
                   <p className="text-[#101F4C] ">{projectData?.type}</p>
                     <label className=" text-[#787878] text-sm">
                       Project Type

@@ -395,7 +395,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
           <HeaderContainer>
             <TitleContainer>
               <span>Issue List</span>
-
+              <div className="rounded-full p-1 hover:bg-[#EEEEEE]">
               <CloseIcon
                 onClick={() => {
                   handleClose();
@@ -404,6 +404,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 alt={"close icon"}
                 data-testid="close-icon"
               />
+              </div>
             </TitleContainer>
           </HeaderContainer>
 

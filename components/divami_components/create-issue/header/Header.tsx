@@ -38,11 +38,13 @@ const Header = ({ closeIssueCreate, editData }: any) => {
     <HeaderContainer>
       <TitleContiner>
         <span>{title}</span>
+        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE]">
         <CloseIcon
           onClick={closeIssueCreate}
           src={closeIcon}
           alt={"close icon"}
         />
+        </div>
       </TitleContiner>
     </HeaderContainer>
   );

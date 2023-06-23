@@ -109,7 +109,7 @@ export const HeaderNotificationImageContainer = styled('div')({
 export const ProjectSelectorContainer= styled('div')({
   marginRight: '15px',
   cursor: 'pointer',
-  borderRadius: '5%' ,
+  borderRadius: '28' ,
   '&:hover': {
     background: '#EEEEEE'
   },

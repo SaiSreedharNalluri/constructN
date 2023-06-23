@@ -40,6 +40,7 @@ import {
   getProjectsList,
   getProjectUsers,
   getUserRoles,
+  removeProjectUser,
 } from "../../services/project";
 import unselectGridIcon from "../../public/divami_icons/unselectGridIcon.svg";
 import selectListIcon from "../../public/divami_icons/selectListIcon.svg";
@@ -65,6 +66,10 @@ import CustomLoader from "../../components/divami_components/custom_loader/Custo
 import React from "react";
 import chatOpen from "../../public/divami_icons/chat_open.svg";
 import chatClose from "../../public/divami_icons/chat_close.svg";
+
+import { getCookie } from "cookies-next";
+
+
 export const truncateString = (text: string, maxLength: number) => {
   let truncatedText = text;
 
@@ -76,6 +81,9 @@ export const truncateString = (text: string, maxLength: number) => {
   }
   return truncatedText;
 };
+
+
+
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -202,8 +210,9 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Deassign Project",
-      action: () => {
+      action: (id:string) => {
         setShowArchiveProject(true);
+        setProjectId(id);
       },
     },
   ];
@@ -306,6 +315,12 @@ const Index: React.FC<any> = () => {
         });
         setRoles(rolesData);
       });
+      
+        const userObj: any = getCookie("user");
+        let user = null;
+        if (userObj) user = JSON.parse(userObj);
+        if (user?.email) setEMail(user.email);
+      
     }
   }, [router.isReady]);
 
@@ -371,6 +386,33 @@ const Index: React.FC<any> = () => {
       toolTipMsg: "Chat Support",
     },
   ]);
+  const deleteUser = (rowData: any) => {
+    const email = rowData.email.toLocaleLowerCase();
+    removeProjectUser(email, rowData.projectId as string)
+      .then((response) => {
+        if (response?.success === true) {
+          toast.success(response?.message);
+          //update current proj list
+           
+          projects.splice(projects.findIndex(
+            (prj:any)=>{
+              if(prj._id===projectId)
+              return true;
+
+            }
+          ),1);
+          //setProjects([].concat(updateProjectsList))
+          setSearchTableData([].concat(projects));
+          
+          console.log("Clicked Yes",response);
+        }
+      })
+      .catch((error) => {
+        if (error.success === false) {
+          toast.error(error?.message);
+        }
+      });
+  };
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -460,7 +502,7 @@ const Index: React.FC<any> = () => {
                   }}
                 />
                 {isFilterApplied ? <FilterIndicator /> : <></>}
-                <ToggleButtonContainer>
+                <ToggleButtonContainer id="view-options">
                   <GridViewButton
                     onClick={() => {
                       setIsGridView(true);
@@ -597,7 +639,8 @@ const Index: React.FC<any> = () => {
           callBackvalue={
             showAddUser
               ? () => {}
-              : () => {
+              : () => {console.log("Clicked YES");
+              deleteUser({email:eMail,projectId:projectId})
                   setShowArchiveProject(false);
                 }
           }

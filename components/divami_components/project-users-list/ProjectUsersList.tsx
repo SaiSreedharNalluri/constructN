@@ -190,7 +190,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
              <ChatIconImage src={ChatIcon} alt="" />
              </div>
             </TooltipText> */}
-            <TooltipText title="delete">
+            <TooltipText title="Deassign">
               <div className="flex ">
                 <RemoveIconImage
                   src={RemoveIcon}
@@ -202,7 +202,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                 />
               </div>
             </TooltipText>
-            <TooltipText title="edit">
+            <TooltipText title="Edit">
               <div className="flex ">
                 <EditIconImage
                   src={Edit}

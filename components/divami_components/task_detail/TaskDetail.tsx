@@ -438,7 +438,7 @@ function BasicTabs(props: any) {
 
           <SecondBodyDiv>
             <SecondContPriorParal>
-              <ThirdContWatch>Watcher</ThirdContWatch>
+              <ThirdContWatch>Created By</ThirdContWatch>
               <ThirdContWatchName style={{ color: "#101F4B" }}>
                 {" "}
                 {taskState?.TabOne?.creator}
@@ -456,7 +456,7 @@ function BasicTabs(props: any) {
           <SecondBodyDiv>
             <ThirdContRight>
               <ThirdContProg data-testid="progres-label">
-                Progress
+              Status
               </ThirdContProg>
 
               <ThirdContProgType
@@ -1330,6 +1330,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
         <HeaderContainer>
           <TitleContainer>
             <LeftTitleCont>
+        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] ">
               <ArrowIcon
                 onClick={() => {
                   onClose(true);
@@ -1338,6 +1339,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 alt={"close icon"}
                 data-testid="back-arrow"
               />
+              </div>
               <SpanTile data-testid="task-detail-header">
                 <TruncatedString
                   text={selectedTask?.title}
@@ -1348,6 +1350,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
+        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
               <EditIcon
                 src={Edit}
                 alt={"close icon"}
@@ -1356,7 +1359,9 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 }}
                 data-testid="edit-icon"
               />
-              <DeleteIcon
+              </div>
+        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
+          <DeleteIcon
                 src={Delete}
                 alt={"close icon"}
                 onClick={() => {
@@ -1364,6 +1369,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 }}
                 data-testid="delete-icon"
               />
+          </div>
+            
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
