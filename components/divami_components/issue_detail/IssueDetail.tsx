@@ -485,7 +485,7 @@ function BasicTabs(props: any) {
                 data-testid="issue-duedate"
               >
                 {" "}
-            {Moment(taskState?.TabOne?.dueDate).format("DD MMM 'YY")}
+                {Moment(taskState?.TabOne?.dueDate).format("DD MMM 'YY")}
               </ThirdContDueDate>
             </SecondContDueDate>
           </SecondBodyDiv>
@@ -1174,9 +1174,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     if (filesArr?.length) {
       createAttachment(issue._id, fileformdata)
         .then((response) => {
-          if (response.success === true) {
-            toast.success("Attachments uploaded sucessfully");
-          } else {
+          if (!response.success) {
             toast.error("Error uploading attachments");
           }
           saveEditDetails(data, projectId);

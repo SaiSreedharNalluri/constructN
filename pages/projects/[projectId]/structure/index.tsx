@@ -80,7 +80,7 @@ const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   background: "#ffffff",
   fontFamily: "Open Sans",
   "&:hover": {
-    background: '#EEEEEE'
+    background: "#EEEEEE",
   },
 })) as any;
 
@@ -318,7 +318,7 @@ const Index: React.FC<IProps> = () => {
               );
 
               // setDefaultBreadcrumb()
-            } else if (nodeData.project===router.query.projectId) {
+            } else if (nodeData.project === router.query.projectId) {
               const selNode = structs.find((e) => {
                 if (e._id === nodeData?._id) {
                   return e;
@@ -1764,7 +1764,6 @@ const Index: React.FC<IProps> = () => {
                 projectUsers={projectUsers}
               />
 
-              {/* <CustomToaster /> */}
               {/* </div> */}
               {/* <RightFloatingMenu
               onClick={rightNavCollapse}

@@ -137,6 +137,8 @@ export const CustomTextField = (props: any) => {
     onMouseEnter,
     onMouseLeave,
     hoveredIndex,
+    InputProps,
+    maxValue,
   } = props;
 
   const [showPassword, setShowPassword] = useState(false);
@@ -191,7 +193,9 @@ export const CustomTextField = (props: any) => {
         // variant="outlined"
         // {...rest}
         InputProps={
-          imageIcon === "emailIcon"
+          InputProps
+            ? InputProps
+            : imageIcon === "emailIcon"
             ? {
                 startAdornment: (
                   <InputAdornment position="start">

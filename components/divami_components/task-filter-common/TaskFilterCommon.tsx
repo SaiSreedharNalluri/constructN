@@ -518,8 +518,6 @@ const TaskFilterCommon: React.FC<any> = ({
     setDueData(DATE_PICKER_DATA);
     setAssignees([assignees]);
     SetFilterState(temp);
-    closeTaskFilterOverlay();
-    handleClose();
   };
 
   const formHandler = (event: any) => {

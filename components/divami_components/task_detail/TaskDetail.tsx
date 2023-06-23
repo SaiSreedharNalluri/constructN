@@ -449,7 +449,7 @@ function BasicTabs(props: any) {
             <SecondContDueDate>
               <DueDateTitle>Due date</DueDateTitle>
               <ThirdContDueDate style={{ color: "#101F4B" }}>
-              {Moment(taskState?.TabOne?.dueDate).format("DD MMM 'YY")}
+                {Moment(taskState?.TabOne?.dueDate).format("DD MMM 'YY")}
               </ThirdContDueDate>
             </SecondContDueDate>
           </SecondBodyDiv>
@@ -1261,9 +1261,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     if (filesArr?.length) {
       createAttachment(task._id, fileformdata)
         .then((response) => {
-          if (response.success === true) {
-            toast.success("Attachments uploaded sucessfully");
-          } else {
+          if (!response.success) {
             toast.error("Error uploading attachments");
           }
           saveEditDetails(data, projectId);
@@ -1343,12 +1341,12 @@ const CustomTaskDetailsDrawer = (props: any) => {
               />
               </div>
               <SpanTile data-testid="task-detail-header">
-              <TruncatedString text={selectedTask?.title}  maxLength={20}
-              suffixLength={0}></TruncatedString>
-           (#{selectedTask?.sequenceNumber})
-             
-             
-          
+                <TruncatedString
+                  text={selectedTask?.title}
+                  maxLength={20}
+                  suffixLength={0}
+                ></TruncatedString>
+                (#{selectedTask?.sequenceNumber})
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>

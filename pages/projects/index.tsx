@@ -66,7 +66,24 @@ import CustomLoader from "../../components/divami_components/custom_loader/Custo
 import React from "react";
 import chatOpen from "../../public/divami_icons/chat_open.svg";
 import chatClose from "../../public/divami_icons/chat_close.svg";
+
 import { getCookie } from "cookies-next";
+
+
+export const truncateString = (text: string, maxLength: number) => {
+  let truncatedText = text;
+
+  if (text?.length > maxLength) {
+    // const prefix = text.substring(0, maxLength - suffixLength);
+    // const suffix = text.substring(text.length - suffixLength);
+    const prefix = text.substring(0, maxLength);
+    truncatedText = prefix + "...";
+  }
+  return truncatedText;
+};
+
+
+
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -216,7 +233,7 @@ const Index: React.FC<any> = () => {
         (each: any) =>
           (Moment(each.updatedAt).isSameOrAfter(formState.startDate) || //.format("YYYY-MM-DD") >= formState.startDate ||
             !formState.startDate) &&
-          (Moment(each.updatedAt).isSameOrBefore(formState.dueDate) ||//.format("YYYY-MM-DD") <= formState.dueDate ||
+          (Moment(each.updatedAt).isSameOrBefore(formState.dueDate) || //.format("YYYY-MM-DD") <= formState.dueDate ||
             !formState.dueDate) &&
           (!formState.compareText ||
             (formState.compareText === "greaterThan"
@@ -229,10 +246,9 @@ const Index: React.FC<any> = () => {
   };
 
   const handleOpenChat = (e: any) => {
-        openChat();
-        setChatStatus(!isChatActive);
-  
-  }
+    openChat();
+    setChatStatus(!isChatActive);
+  };
   function openChat(): void {
     {
       eval(`globalThis.fcWidget.user.setEmail("${eMail}");`);
@@ -242,7 +258,6 @@ const Index: React.FC<any> = () => {
     }
   }
   function closeChat(): void {
-    
     {
       eval(`globalThis.fcWidget.close()`);
     }
@@ -361,14 +376,14 @@ const Index: React.FC<any> = () => {
       console.log("Error:", error);
     }
   };
-  const [isChatActive,setChatStatus] = React.useState(false);
+  const [isChatActive, setChatStatus] = React.useState(false);
   const [supportItemsConfig, setSupportItemsConfig] = React.useState([
     {
-      id:"chatSupport",
-      icon:chatOpen,
-      isActive:false,
-      activeIcon:chatClose,
-      toolTipMsg:"Chat Support",
+      id: "chatSupport",
+      icon: chatOpen,
+      isActive: false,
+      activeIcon: chatClose,
+      toolTipMsg: "Chat Support",
     },
   ]);
   const deleteUser = (rowData: any) => {
@@ -515,41 +530,39 @@ const Index: React.FC<any> = () => {
                 </ToggleButtonContainer>
               </HeaderActions>
             </ProjectsHeader>
-            <div className="fixed bottom-0 left-2 z-10 cursor-pointer"> 
-            {isChatActive ? (
-                 
-                 <Image
-                   
-                   src={chatOpen}
-                   width={60}
-                   height={60}
-                   alt=""
-                   onClick={handleOpenChat}
-                 />
-              
-             ) : (
-               <Image
-                 src={chatOpen}
-                 width={60}
-                 height={60}
-                 alt=""
-                 onClick={handleOpenChat}
-               />
-             )}
+            <div className="fixed bottom-0 left-2 z-10 cursor-pointer">
+              {isChatActive ? (
+                <Image
+                  src={chatOpen}
+                  width={60}
+                  height={60}
+                  alt=""
+                  onClick={handleOpenChat}
+                />
+              ) : (
+                <Image
+                  src={chatOpen}
+                  width={60}
+                  height={60}
+                  alt=""
+                  onClick={handleOpenChat}
+                />
+              )}
             </div>
 
-   
             {showLoading ? (
               <CustomLoader />
             ) : isGridView ? (
               <ProjectListCardView
                 projects={searchTableData}
                 projectActions={projectActions}
+                truncateString={truncateString}
               />
             ) : (
               <ProjectListFlatView
                 projects={searchTableData}
                 projectActions={projectActions}
+                truncateString={truncateString}
               />
             )}
             {openFilter && (
@@ -597,7 +610,6 @@ const Index: React.FC<any> = () => {
                 setSelectedOption={setSelectedOption}
               />
             )}
-            
           </ProjectsListContainer>
         </Content>
       </div>
@@ -618,7 +630,9 @@ const Index: React.FC<any> = () => {
             )
           }
           modalmessage={
-            showAddUser ? "" : "Are you sure you want to deassign yourself from this project?"
+            showAddUser
+              ? ""
+              : "Are you sure you want to deassign yourself from this project?"
           }
           primaryButtonLabel={showAddUser ? "Yes" : "Yes"}
           SecondaryButtonlabel={showAddUser ? "No" : "No"}
@@ -651,7 +665,6 @@ const Index: React.FC<any> = () => {
           selectedProjectId={selectedProjectId}
         />
       </Drawer>
-      
     </div>
   );
 };

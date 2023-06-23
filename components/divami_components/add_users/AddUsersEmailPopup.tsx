@@ -8,6 +8,7 @@ import {
   BulkUserUploadContainer,
   ClickHereText,
   DownloadText,
+  EnterIcon,
   LabelContainer,
   OrText,
 } from "../empty-users-list/EmptyUsersListStyles";
@@ -72,8 +73,15 @@ export const AddUsersEmailPopup = ({
         }}
         InputProps={{
           endAdornment: (
-            <InputAdornment position="end">
-              <Image width={24} height={24} src={BackArrow} alt="" />
+            <InputAdornment
+              position="end"
+              onClick={() => {
+                if (searchVal) {
+                  showEmailOverlay({ email: searchVal, role: "" });
+                }
+              }}
+            >
+              <EnterIcon width={18} height={18} src={BackArrow} alt="" />
             </InputAdornment>
           ),
         }}

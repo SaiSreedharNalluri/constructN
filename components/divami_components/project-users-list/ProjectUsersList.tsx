@@ -63,6 +63,7 @@ import { EditRoleOverlay } from "./EditRoleOverlay";
 import LocalSearch from "../local_component/LocalSearch";
 import CustomLoader from "../custom_loader/CustomLoader";
 import { TooltipText } from "../side-panel/SidePanelStyles";
+import { CustomToast } from "../custom-toaster/CustomToast";
 
 export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [tableData, setTableData] = useState<any>([]);
@@ -301,11 +302,12 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     updateProjectUserRole(projectInfo, router.query.projectId as string)
       .then((res: any) => {
         toast.success("User role is updated");
+        CustomToast("User role is updated", "success");
         setShowEdit(false);
         getUsersList();
       })
       .catch((err) => {
-        toast.error(err.message);
+        CustomToast(err.message, "error");
       });
   };
 

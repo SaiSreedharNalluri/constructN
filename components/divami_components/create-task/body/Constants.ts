@@ -10,6 +10,7 @@ export const TASK_FORM_CONFIG = [
     isReadOnly: false,
     isError: false,
     isReq: true,
+    maxLength:30,
   },
   {
     id: "tasks",
@@ -34,6 +35,7 @@ export const TASK_FORM_CONFIG = [
     isError: false,
     isReq: false,
     isReadOnly: false,
+        maxLength:150,
   },
   {
     id: "taskPriority",

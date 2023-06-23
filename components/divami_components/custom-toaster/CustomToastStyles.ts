@@ -29,13 +29,7 @@ export const ToasFirstHalf = styled("div")({
   alignItems: "center",
 });
 
-export const ToastImgContainer = styled("div")({
-  //   width: "438px",
-  //   height: "100%",
-  // paddingTop: "18px",
-  // paddingLeft: "15px",
-  // paddingBottom: "18px",
-});
+export const ToastImgContainer = styled("div")({});
 
 export const ToasterIcon = styled(Image)({
   //   cursor: "pointer",
@@ -44,11 +38,6 @@ export const ToasterIcon = styled(Image)({
 });
 
 export const ToastTitleContainer = styled("div")({
-  //   width: "438px",
-  //   height: "100%",
-  //  paddingTop: "24px",
-  // paddingBottom: "24px",
-  // paddingLeft: "10px",
   marginLeft: "10px",
 });
 
@@ -59,12 +48,6 @@ export const ToastTitle = styled("div")({
 });
 
 export const ToastImgCloseCont = styled("div")({
-  //   width: "438px",
-  //   height: "100%",
-  //   paddingTop: "10px",
-  //  paddingRight: "10px",
-  // position: "relative",
-  // left:"87px"
   marginLeft: "auto",
   paddingRight: "10px",
   marginTop: "-5px",
@@ -74,24 +57,4 @@ export const ToasterCloseIcon = styled(Image)({
   cursor: "pointer",
 });
 
-export const StyledToastContainer = styled(ToastContainer)`
-  // .Toastify__toast--success {
-  //   background-color: green;
-  // }
-
-  // .Toastify__toast--error {
-  //   background-color: red;
-  // }
-
-  // .Toastify__progress-bar--success {
-  //   background-color: yellow;
-  // }
-
-  // .Toastify__progress-bar--error {
-  //   background-color: orange;
-  // }
-
-  // .Toastify__toast-body {
-  //   font-size: 18px;
-  // }
-`;
+export const StyledToastContainer = styled(ToastContainer)``;

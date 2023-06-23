@@ -21,6 +21,7 @@ import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { firebaseapp } from "../components/analytics/firebase";
 import { getAnalytics, isSupported, logEvent } from "firebase/analytics";
+import toastClose from "../public/divami_icons/toastClose.svg";
 
 config.autoAddCss = false;
 
@@ -36,26 +37,28 @@ export default function App({ Component, pageProps }: AppProps) {
   ];
 
   const setupFirebase = async () => {
-    const analytics = await isSupported().then(yes => yes ? getAnalytics(firebaseapp) : null);
+    const analytics = await isSupported().then((yes) =>
+      yes ? getAnalytics(firebaseapp) : null
+    );
     // if (process.env.NODE_ENV === 'production') {
-      const logScreenEvent = (url: string) => {
-
-        if(analytics) analytics.app.automaticDataCollectionEnabled = true
-        analytics && logEvent(analytics, 'page_view', {
-          url
+    const logScreenEvent = (url: string) => {
+      if (analytics) analytics.app.automaticDataCollectionEnabled = true;
+      analytics &&
+        logEvent(analytics, "page_view", {
+          url,
         });
-      };
+    };
 
-      router.events.on('routeChangeComplete', logScreenEvent);
-      //For First Page
-      logScreenEvent(window.location.pathname);
+    router.events.on("routeChangeComplete", logScreenEvent);
+    //For First Page
+    logScreenEvent(window.location.pathname);
 
-      //Remvove Event Listener after un-mount
-      return () => {
-        router.events.off('routeChangeComplete', logScreenEvent);
-      };
+    //Remvove Event Listener after un-mount
+    return () => {
+      router.events.off("routeChangeComplete", logScreenEvent);
+    };
     // }
-  }
+  };
 
   useEffect(() => {
     const userObj: any = getCookie("user");
@@ -78,9 +81,7 @@ export default function App({ Component, pageProps }: AppProps) {
     //   router.push("/projects");
     // }
 
-
-    setupFirebase()
-
+    setupFirebase();
   }, []);
 
   // useEffect(() => {
@@ -115,8 +116,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
       <StyledToastContainer
         position="bottom-right"
-        autoClose={2000}
+        autoClose={false}
         hideProgressBar={true}
+        closeButton={toastClose}
       />
     </>
   );

@@ -10,7 +10,8 @@ export const ISSUE_FORM_CONFIG = [
     isError: false,
     isReq: true,
     isReadOnly: false,
-     isValidField: true,
+    isValidField: true,
+     maxLength:30,
    
 
   },
@@ -37,6 +38,7 @@ export const ISSUE_FORM_CONFIG = [
     isError: false,
     isReq: false,
     isReadOnly: false,
+     maxLength:150,
   },
   {
     id: "issuePriority",
