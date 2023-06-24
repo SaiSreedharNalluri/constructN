@@ -77325,15 +77325,7 @@ ENDSEC
 				// 	download.abort();
 				// });
 				// onGoingDownlads = [];
-				if (sendEvent) {
-					const event = new CustomEvent("imageLoad", {
-						detail: {
-							viewer: viewer.canvasId,
-							image
-						}
-					});
-					document.dispatchEvent(event);
-				}
+
 
 				const mesh = image.mesh;
 				const target = image;
@@ -77346,6 +77338,15 @@ ENDSEC
 				// });
 				viewer.scene.view.setView(newCamPos, newCamTarget);
 				
+				if (sendEvent) {
+					const event = new CustomEvent("imageLoad", {
+						detail: {
+							viewer: viewer.canvasId,
+							image
+						}
+					});
+					document.dispatchEvent(event);
+				}
 
 				function checkVisibility(object) {
 					return new Promise((resolve, reject) => {
@@ -77613,7 +77614,7 @@ ENDSEC
 			this.load(image360).then( () => {
 				console.log("Potree texture loading onFocus: ", image360);
 				this.sphere.visible = true;
-				this.sphere.material.map = image360.texture;
+				this.sphere.material = image360.texture;
 				this.sphere.material.needsUpdate = true;
 			});
 
@@ -77740,7 +77741,8 @@ ENDSEC
 						texture => {
 							console.log("potree thumbnail loading:", texture);
 							// if (image360.file == this.focusedImage.file) {
-								image360.texture = texture;
+								var sphereMaterial = new MeshBasicMaterial({ map: texture, side: DoubleSide });
+								image360.texture = sphereMaterial;
 								resolved = true;
 								resolve(null);
 								loadOrgImage.bind(this)();
@@ -77757,9 +77759,10 @@ ENDSEC
 							texture => {
 								console.log("potree imgae loading:", texture);
 								// if (image360.file == this.focusedImage.file) {
-									image360.texture = texture;
+									var sphereMaterial = new MeshBasicMaterial({ map: texture, side: DoubleSide });
+									image360.texture = sphereMaterial;
 									this.sphere.visible = true;
-									this.sphere.material.map = image360.texture;
+									this.sphere.material = image360.texture;
 									this.sphere.material.needsUpdate = true;
 									if (!resolved) {
 										resolve(null);
