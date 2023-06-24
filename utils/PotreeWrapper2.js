@@ -1,6 +1,7 @@
 // import * as THREE from "../public/potree/libs/three.js/build/three.module.js";
 import * as THREE from "three"
 import { PotreeInstance } from "./PotreeWrapper";
+import { isMobile } from "./ViewerDataUtils";
 
 export const PotreeViewerUtils = () => {
 
@@ -83,6 +84,12 @@ export const PotreeViewerUtils = () => {
         }
         _viewer.canvasId = _viewerId; //Used by potree
         _viewer.loadGUI(loadGUICallback);
+        if (isMobile()) {
+            var button = document.getElementById("myButton");
+            button?.addEventListener("click", function () {
+              nextPanoImage(_viewer);
+            });
+          }
         addEventListeners();
     }
 
@@ -684,7 +691,8 @@ export const PotreeViewerUtils = () => {
         _createTagTool = true;
         
         setTimeout((() => {
-            _viewer.renderArea.addEventListener('click',  onClickHandler);
+            _viewer.renderArea.addEventListener("click", onClickHandler);
+            _viewer.renderArea.addEventListener("touchstart", onClickHandler);
         }), 1)
         return true;
     }
@@ -815,24 +823,22 @@ export const PotreeViewerUtils = () => {
         let closestDistance = Infinity;
         let closestIntersection = null;
         let closestPoint = null;
-
-        for(let pointcloud of pointclouds){
-            let point = pointcloud.pick(viewer, camera, ray, pickParams);
-
+        if (!isMobile()) {
+            for(let pointcloud of pointclouds){
+                let point = pointcloud.pick(viewer, camera, ray, pickParams);
             if(!point){
                 continue;
             }
+             let distance = camera.position.distanceTo(point.position);
 
-            let distance = camera.position.distanceTo(point.position);
-
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                selectedPointcloud = pointcloud;
-                closestIntersection = point.position;
-                closestPoint = point;
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    selectedPointcloud = pointcloud;
+                    closestIntersection = point.position;
+                    closestPoint = point;
+                }
             }
         }
-
         if (selectedPointcloud) {
             return {
                 location: closestIntersection,
@@ -873,8 +879,8 @@ export const PotreeViewerUtils = () => {
     const onClickHandler = (event) => {
         const rect = _viewer.renderArea.getBoundingClientRect();
         let pos = {
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top,
+            x:isMobile()? event.touches[0].clientX - rect.left : event.clientX - rect.left,
+            y:isMobile()?event.touches[0].clientY - rect.top : event.clientY - rect.top,
         };
         
         const intersectedObjects = getMousePointCloudIntersection(pos, _viewer.scene.cameraP, _viewer, _viewer.scene.pointclouds);
@@ -883,9 +889,15 @@ export const PotreeViewerUtils = () => {
             processTag(click_point);
             console.log("Event clicked : ", pos, event, click_point);
         }
-        _viewer.renderArea.removeEventListener('click',  onClickHandler);
+        if(isMobile)
+        {
+            _viewer.renderArea.removeEventListener('touchstart',  onClickHandler);
+        }
+        else{
+            _viewer.renderArea.removeEventListener('click',  onClickHandler);
+        }
+        
     }
-
     const processTag = (click_point) => {
         _isAddTagActive = deactivateCreateTagTool();
         let offset = _globalOffset;

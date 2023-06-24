@@ -1120,13 +1120,13 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
             <DragIndicatorIcon fontSize="inherit" />
           </IconButton>
           <div className='flex items-center text-[#F1742E] pl-2 flex-1'>Minimap</div>
-          <IconButton size="small" onClick={() => { resizeMinimap('minimize', count) }}>
+          <IconButton size="small" onClick={() => { resizeMinimap('minimize', count) }} onTouchEnd={() => { resizeMinimap('minimize', count) }}>
             <RemoveIcon fontSize="inherit" />
           </IconButton>
-          <IconButton size="small" onClick={() => { resizeMinimap('default', count) }}>
+          <IconButton size="small" onClick={() => { resizeMinimap('default', count) }} onTouchEnd={() => { resizeMinimap('default', count) }}>
             <PictureInPictureIcon fontSize="inherit" />
           </IconButton>
-          <IconButton size="small" onClick={() => { resizeMinimap('fullscreen', count) }}>
+          <IconButton size="small" onClick={() => { resizeMinimap('fullscreen', count) }} onTouchEnd={() => { resizeMinimap('fullscreen', count) }}>
             <FullscreenIcon fontSize="inherit" />
           </IconButton>
         </div>

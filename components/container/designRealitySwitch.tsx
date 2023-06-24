@@ -21,7 +21,7 @@ const DesignRealitySwitch: React.FC<IProps> = ({designState,toggleDesignType}) =
     //    toogleDesignType();
     // };
     return (
-        <div onClick={() => toggleDesignType()} className='p-1 rounded-lg  bg-gray-300 flex gap-1 cursor-pointer'>
+        <div onClick={() => toggleDesignType()} onTouchEnd={() => toggleDesignType()} className='p-1 rounded-lg  bg-gray-300 flex gap-1 cursor-pointer'>
          <div className={`p-1 rounded-lg text-[8px] ${iDesignState?'selectedClass':'unSelectedClass'}`}><p>Design</p></div>
          <div className={`p-1 rounded-lg text-[8px] ${iDesignState?'unSelectedClass':'selectedClass'}`}><p>Reality</p></div>
         </div >

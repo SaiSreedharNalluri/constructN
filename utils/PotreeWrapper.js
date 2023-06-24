@@ -1,4 +1,5 @@
 import * as THREE from "../public/potree/libs/three.js/build/three.module.js";
+import { isMobile } from "./ViewerDataUtils.js";
 
 export class PotreeInstance {
     constructor(viewerId) {
@@ -9,8 +10,9 @@ export class PotreeInstance {
         this.viewer.setPointBudget(1 * 1000 * 1000);
         this.viewer.setEDLEnabled(false);
         this.viewer.setBackground("gradient"); // ["skybox", "gradient", "black", "white"];
-        this.viewer.setDescription(``);
-        // this.viewer.loadSettingsFromURL();
+        if (isMobile()) {
+            this.viewer.setDescription(`<button id="myButton">Next Image</button> `);
+          }
     }
 
 
