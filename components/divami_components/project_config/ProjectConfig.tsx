@@ -31,6 +31,7 @@ import { CustomTextField } from "../custom-textfield/CustomTextField";
 import { Button } from "@mui/material";
 import removeButton from "../../../public/divami_icons/removeButton.svg";
 import addButton from "../../../public/divami_icons/addButton.svg";
+import { toast } from "react-toastify";
 
 const ProjectConfig = ({
   projectId,
@@ -46,6 +47,8 @@ const ProjectConfig = ({
       title: "Issue Priority",
       isActive: true,
       nextPage: "",
+      isError: false,
+      errorMessageText: "",
       //   toolTipMsg: "Dashboard & Reports",
     },
     {
@@ -55,6 +58,8 @@ const ProjectConfig = ({
       isActive: false,
       nextPage: "",
       toolTipMsg: "Drawings",
+      isError: false,
+      errorMessageText: "",
     },
 
     {
@@ -63,6 +68,8 @@ const ProjectConfig = ({
 
       isActive: false,
       toolTipMsg: "Schedule",
+      isError: false,
+      errorMessageText: "",
     },
     {
       id: "taskStatus",
@@ -70,6 +77,8 @@ const ProjectConfig = ({
 
       isActive: false,
       toolTipMsg: "Users",
+      isError: false,
+      errorMessageText: "",
     },
     {
       id: "tag",
@@ -77,6 +86,8 @@ const ProjectConfig = ({
 
       isActive: false,
       toolTipMsg: "Users",
+      isError: false,
+      errorMessageText: "",
     },
   ]);
 
@@ -86,6 +97,8 @@ const ProjectConfig = ({
   // const [formValues, setFormValues]: any = useState({ priority: [] });
   const [priorityArr, setPriorityArr] = useState([]);
   const [hoveredIndex, setHoveredIndex] = useState(-1);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [errorIndex, setErrorIndex] = useState(-1);
 
   const handleHover = (index: any) => {
     setHoveredIndex(index);
@@ -138,8 +151,37 @@ const ProjectConfig = ({
     }));
     setConfig(updatedConfig);
   };
+  const getErrorMessage = (e: any, index: any) => {
+    const value = e;
+
+    // Check for empty value
+    if (value.trim().length === 0) {
+      return "Field cannot be empty";
+    } else if (value.trim().length > 15) {
+      return "Field cannot exceed 15 characters";
+    } else if (!/^(?:[a-zA-Z]+|\d+|[a-zA-Z0-9\s]+)$/.test(value)) {
+      return "Field can only contain alphabets or numerics";
+    } else {
+      return "";
+    }
+  };
   const handleTextChange = (e: any, id: any, element: any, index: any) => {
     const { value } = e.target;
+    const trimmedValue = value.trim();
+
+    // Check for empty value
+    if (trimmedValue.trim().length === 0) {
+      // setErrorMsg("Field cannot be empty");
+      setErrorIndex(index);
+    } else if (trimmedValue.trim().length > 30) {
+      // setErrorMsg("Field cannot exceed 30 characters");
+      return "Field can only contain alphabets or numerics";
+    } else {
+      // setErrorMsg("");
+      setErrorIndex(-1);
+    }
+
+    //setErrorMsg(""); // Clear the error if input is not empty
 
     // Create a copy of the formvalues object
     const updatedFormValues: any = { ...formValues };
@@ -162,7 +204,11 @@ const ProjectConfig = ({
     updatedSubmittedValues.priority = priorityArray;
     setSubmittedValues(updatedSubmittedValues);
     // Check if the value is empty or not and set setShowbutton accordingly
-    setShowbutton(value.trim().length > 0);
+    setShowbutton(
+      value.trim().length > 0 &&
+        value.trim().length < 15 &&
+        /^(?:[a-zA-Z]+|\d+|[a-zA-Z0-9\s]+)$/.test(value)
+    );
   };
 
   const handleAddField = (index: any) => {
@@ -244,13 +290,19 @@ const ProjectConfig = ({
                                   //   checkPassword(data?.defaultValue, data.id, e);
                                   // }
                                 }}
+                                errorPriority={getErrorMessage(element, index)}
                               />
+                              {/* {error && <span>{error}</span>} */}
 
                               {hoveredIndex === index && (
                                 <>
                                   {formValues.priority.length > 1 ? (
                                     <RemoveButton
                                       onClick={() => handleDeleteField(index)}
+                                      errorPriority={getErrorMessage(
+                                        element,
+                                        index
+                                      )}
                                     >
                                       <RemoveLogo
                                         src={removeButton}
@@ -263,6 +315,10 @@ const ProjectConfig = ({
 
                                   <AddButton
                                     onClick={() => handleAddField(index)}
+                                    errorPriority={getErrorMessage(
+                                      element,
+                                      index
+                                    )}
                                   >
                                     <AddLogo src={addButton} alt="remove" />
                                   </AddButton>
