@@ -66,14 +66,14 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       toolTipMsg: "Sections",
     },
 
-    // {
-    //   id: "structure",
-    //   icon: drawing,
-    //   activeIcon: drawingInactive,
-    //   isActive: false,
-    //   nextPage: "",
-    //   toolTipMsg: "Drawings",
-    // },
+    {
+      id: "structure",
+      icon: drawing,
+      activeIcon: drawingInactive,
+      isActive: false,
+      nextPage: "",
+      toolTipMsg: "Drawings",
+    },
 
     {
       id: "schedule",

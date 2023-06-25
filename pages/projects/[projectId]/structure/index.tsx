@@ -1407,6 +1407,7 @@ const Index: React.FC<IProps> = () => {
     setIssueList(issueFilterList);
   };
   const deleteTheAttachment = (attachmentId: string, entity?: string) => {
+    console.log("KARAN", attachmentId)
     deleteAttachment(attachmentId)
       .then((response) => {
         if (response.success === true) {

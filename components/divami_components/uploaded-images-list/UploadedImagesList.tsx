@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
 import Image from "next/image";
 import Delete from "../../../public/divami_icons/delete.svg";
+import PopupComponent from "../../popupComponent/PopupComponent";
 
 const ImageItem = styled(Box)({
   fontFamily: "Open Sans",
@@ -40,7 +41,23 @@ const UploadedImagesList = ({
   formConfig,
   setFormData,
 }: any) => {
-  const handleDeleteAttachment = (eachSelectedFile: any) => {
+  const [showPopUp, setshowPopUp] = useState(false);
+  const [delAttach, setDelAttach] = useState({
+    _id: "",
+    name: "",
+  });
+
+  // const hidePopup = () => {
+  //   setshowPopUp()
+  // }
+
+  const handleDeleteAttachment = (props: any) => {
+    //   console.log("deleting");
+    // console.log("KARAN", eachSelectedFile);
+    let eachSelectedFile = { ...delAttach };
+    //   console.log()
+    console.log("KARAN", eachSelectedFile);
+    //  return;
     if (eachSelectedFile?._id) {
       deleteTheAttachment(eachSelectedFile?._id, "issue");
       setFormData((prev: any) =>
@@ -77,22 +94,43 @@ const UploadedImagesList = ({
         .filter((item: any) => item.id === "file-upload")[0]
         ?.selectedFile?.map((eachSelectedFile: any, index: number) => {
           return (
-            <AttachedImageDiv className={`detailsImageDiv`} key={index}>
-              {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
-              <AttachedImageTitle>{eachSelectedFile?.name}</AttachedImageTitle>
+            <>
+              <AttachedImageDiv className={`detailsImageDiv`} key={index}>
+                {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
+                <AttachedImageTitle>
+                  {eachSelectedFile?.name}
+                </AttachedImageTitle>
 
-              {/* <AttachedImageIcon>
-                <Image src={""} alt="" />
-              </AttachedImageIcon> */}
-              <DeleteIcon
-                src={Delete}
-                alt={"delete icon"}
-                onClick={() => {
-                  handleDeleteAttachment(eachSelectedFile);
-                }}
-                className={`deleteIcon`}
-              />
-            </AttachedImageDiv>
+                {/* <AttachedImageIcon>
+              <Image src={""} alt="" />
+            </AttachedImageIcon> */}
+                <DeleteIcon
+                  src={Delete}
+                  alt={"delete icon"}
+                  onClick={() => {
+                    // handleDeleteAttachment(eachSelectedFile);
+                    setshowPopUp(true);
+                    setDelAttach({
+                      _id: eachSelectedFile?.name,
+                      name: eachSelectedFile?._id,
+                    });
+                  }}
+                  className={`deleteIcon`}
+                />
+              </AttachedImageDiv>
+
+              {showPopUp && (
+                <PopupComponent
+                  open={showPopUp}
+                  setShowPopUp={setshowPopUp}
+                  modalTitle={"Delete Issue"}
+                  modalmessage={`Are you sure you want to delete this attachemnt ${delAttach?._id}"?`}
+                  primaryButtonLabel={"Delete"}
+                  SecondaryButtonlabel={"Cancel"}
+                  callBackvalue={handleDeleteAttachment}
+                />
+              )}
+            </>
           );
         })
     : null;
