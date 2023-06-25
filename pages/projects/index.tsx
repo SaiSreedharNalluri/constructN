@@ -317,6 +317,11 @@ const Index: React.FC<any> = () => {
     setshowPopUp(false);
   };
 
+  const containsRepeated = (a:[string]) => {
+    const noDups = new Set(a);
+    return a.length !== noDups.size;
+  }
+
   const handleSubmit = async () => {
     const containsEmptyString = formValues.priority.some(
       (item: any) => item.length === 0
@@ -326,6 +331,12 @@ const Index: React.FC<any> = () => {
       toast.error("Fields cannot be empty");
       return;
     }
+    
+   if(containsRepeated(formValues.priority.map((item:string) => item.trim()))){
+    toast.error("Fields cannot be repeated");
+    return;
+   }
+
     try {
       // Call the appropriate API based on the selected option and pass the updated values
       if (selectedOption === "issuePriority") {

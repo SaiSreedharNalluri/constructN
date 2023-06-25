@@ -367,12 +367,14 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
         issuePriorityData,
         issueStatusData,
         issueTypeData,
+        issueTagData,
         toDate,
       } = issueFilterState.filterData;
       if (
         (issuePriorityData?.length === 0 &&
           issueStatusData?.length == 0 &&
-          issueTypeData?.length == 0 &&
+          issueTypeData?.length == 0 && 
+          issueTagData?.length == 0 &&
           toDate === "" &&
           assigneesData === null) ||
         undefined

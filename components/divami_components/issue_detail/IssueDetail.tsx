@@ -597,6 +597,7 @@ function BasicTabs(props: any) {
                 data-testid="assignee-options"
                 disablePortal
                 id="combo-box-demo"
+                disableClearable
                 options={projectUsers.map((each: any) => {
                   return {
                     ...each,
@@ -1183,7 +1184,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           if (error.success === false) {
             toast.error(error?.message);
           }
-          saveEditDetails(data, projectId);
+        
         });
     } else {
       saveEditDetails(data, projectId);

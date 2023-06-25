@@ -139,12 +139,17 @@ const FormWrapper = (props: any) => {
               if (setCanBeDisabled) setCanBeDisabled(false);
               return {
                 ...item,
-                isError: true,
-                errorMsg: "Invalid User Email",
-                showErrorMsg: true,
+               isError: true,
+               errorMsg: "Invalid User Email",
+               showErrorMsg: true,
               };
             }
-          } else if (item.isValidField === false && item.id === "password") {
+            else {
+              return { ...item, isError: false };
+            }
+          }
+          
+          else if (item.isValidField === false && item.id === "password") {
             if (!checkPassword(item.defaultValue, item.id)) {
               if (setCanBeDisabled) setCanBeDisabled(false);
               return {

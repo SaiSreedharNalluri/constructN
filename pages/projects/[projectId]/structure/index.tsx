@@ -1222,6 +1222,13 @@ const Index: React.FC<IProps> = () => {
           formData?.issuePriorityData?.length == 0) &&
         (formData?.issueStatusData?.includes(item.status) ||
           formData?.issueStatusData.length == 0) &&
+
+        (item.tags.filter(
+          (tag) => formData?.issueTagData?.includes(tag)
+        ).length ||
+        formData?.issueTagData?.length == 0 ||
+        !formData?.issueTagData)
+          &&
         (item.assignees.filter(
           (userInfo) => userInfo._id === formData.assigneesData?.user?._id
         ).length ||
@@ -1235,7 +1242,8 @@ const Index: React.FC<IProps> = () => {
     let count =
       formData?.issueTypeData?.length +
       formData?.issuePriorityData?.length +
-      formData?.issueStatusData?.length;
+      formData?.issueStatusData?.length + 
+      formData?.issueTagData?.length;
     if (formData?.assigneesData) {
       count = count + 1;
     }
@@ -1292,6 +1300,12 @@ const Index: React.FC<IProps> = () => {
           formData?.taskPriority?.length == 0) &&
         (formData?.taskStatus?.includes(item.status) ||
           formData?.taskStatus.length == 0) &&
+        (item.tags.filter(
+          (tag) => formData?.taskTag?.includes(tag)
+        ).length ||
+        formData?.taskTag?.length == 0 ||
+        !formData?.taskTag)
+          &&
         (item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
         ) ||
@@ -1306,7 +1320,8 @@ const Index: React.FC<IProps> = () => {
     let count =
       formData?.taskType?.length +
       formData?.taskPriority?.length +
-      formData?.taskStatus?.length;
+      formData?.taskStatus?.length +
+      formData?.taskTag?.length;
     if (formData?.assigneesData) {
       count = count + 1;
     }
@@ -1407,6 +1422,9 @@ const Index: React.FC<IProps> = () => {
     setIssueList(issueFilterList);
   };
   const deleteTheAttachment = (attachmentId: string, entity?: string) => {
+
+    console.log("KARAN", attachmentId)
+
     deleteAttachment(attachmentId)
       .then((response) => {
         if (response.success === true) {

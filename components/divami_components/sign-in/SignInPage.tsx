@@ -26,7 +26,7 @@ import Logo from "../../../public/divami_icons/Logo.svg";
 import Checked from "../../../public/divami_icons/checked.svg";
 import UnChecked from "../../../public/divami_icons/unchecked.svg";
 
-import { setCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { login } from "../../../services/userAuth";
@@ -40,7 +40,6 @@ const SignInPage = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  useEffect(() => {}, [rememberMe]);
   const [checked, setChecked] = React.useState(true);
   // form wrapper code
   const [formData, setFormData] = useState<any>(null);
@@ -95,7 +94,10 @@ const SignInPage = () => {
             let userProfileObj = {
               rememberMe: rememberMe,
               ...response?.result,
+              password: rememberMe ? password : '',
+              email: rememberMe ? email : '',
             };
+            localStorage.setItem("userCredentials", JSON.stringify(userProfileObj))
             // {...newProp,rememberMe}
             // setCookie("user", JSON.stringify(response?.result));
             // setCookie("user", JSON.stringify(userProfileObj));

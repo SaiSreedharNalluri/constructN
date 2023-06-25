@@ -716,6 +716,7 @@ function BasicTabs(props: any) {
                     label: each.user?.fullName,
                   };
                 })}
+                disableClearable
                 sx={{
                   width: 300,
                   "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
@@ -1270,7 +1271,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
           if (error.success === false) {
             toast.error(error?.message);
           }
-          saveEditDetails(data, projectId);
         });
     } else {
       saveEditDetails(data, projectId);

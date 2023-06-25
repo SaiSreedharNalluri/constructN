@@ -257,7 +257,9 @@ const SectionsListing = () => {
           // setShowLoader(false);
           setDataLoaded(true);
         })
-        .catch((error) => {});
+        .catch((error) => {
+          setDataLoaded(true)
+        });
     }
   }, [router.query.projectId]);
 
