@@ -1184,6 +1184,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           if (error.success === false) {
             toast.error(error?.message);
           }
+          // FIX ME - SAVE EDIT EDET saveEditDetails(data, projectId);
         
         });
     } else {

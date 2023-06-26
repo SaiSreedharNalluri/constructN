@@ -428,3 +428,10 @@ export const Watcher = styled("div")({
   color: "#FF843F",
   marginLeft: "5px",
 });
+
+
+export const CloseIcon = styled(Image)((props: any) => ({
+  cursor: "pointer",
+  width: props.isSmall ? "15px" : "24px",
+  height: props.isSmall ? "17px" : "24px",
+})) as any;

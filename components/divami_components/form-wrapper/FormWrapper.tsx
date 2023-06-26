@@ -122,7 +122,22 @@ const FormWrapper = (props: any) => {
                 showErrorMsg: true,
               };
             }
+          }else if (item.isValidField == false && item.id === "title" && item.maxLength){
+         
+            if(!textMaxLength(item.defaultValue, item.id)){
+              if(setCanBeDisabled) setCanBeDisabled(false);
+              return{
+                ...item,
+                isError: true,
+                showErrorMsg: true,
+              }
+            }else{
+              return {
+                ...item, isError: false
+              }
+            }
           }
+
           // else if (item.isValidField === false && item.id === "title") {
           //   if (!namesCharLimit(item.defaultValue, item.id)) {
           //     if (setCanBeDisabled) setCanBeDisabled(false);
@@ -186,8 +201,8 @@ const FormWrapper = (props: any) => {
     id: string,
     type?: string,
     parentId?: string,
-    maxLength?: number
-  ) => {
+ //   maxLength?: number
+  ) => { 
     if (type === "doubleField") {
       setFormConfig((prev: any) => {
         return prev.map((each: any) => {
@@ -216,9 +231,10 @@ const FormWrapper = (props: any) => {
           if (id === item.id) {
             return {
               ...item,
-              defaultValue: !maxLength
-                ? e.target.value
-                : e.target.value.slice(0, maxLength),
+              // defaultValue: !maxLength
+              //   ? e.target.value
+              //   : e.target.value.slice(0, maxLength),
+              defaultValue: e.target.value,
             };
           }
           return item;
@@ -474,6 +490,73 @@ const FormWrapper = (props: any) => {
     return isValid;
   }
 
+
+  function textMaxLength(textLength:string, id:string){
+    let isValid = false    
+    const maxLimit = 30;
+    const regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?0-9]/;
+    console.log("STEP 1", textLength, id)
+    if(textLength.length > maxLimit){
+
+      console.log("STEP 3", textLength, id)
+      setFormConfig((prev: any) =>
+      prev.map((item: any) => {
+        if (id === item.id) {
+          let fieldName;
+          console.log("STEP 3a", textLength, id)
+          if (id === "firstName") {
+            fieldName = "First name";
+          } else if (id === "lastName") {
+            fieldName = "Last name";
+          } else if (id === "title") {
+            fieldName = "Title" || "title";
+          } else {
+            fieldName = id;
+          }
+          return {
+            ...item,
+            isValidField: false,
+            isError: true,
+            // errorMsg: "Name should be less than 30 characters",
+            errorMsg: `${fieldName} should not be greater than ${maxLimit} characters`,
+          };
+        }
+        return item;
+      })
+    );
+    } else if (regex.test(textLength)) {
+      console.log("STEP 4", textLength, id)
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+              errorMsg: "Special Characters and Numbers are not allowed",
+            };
+          }
+          return item;  
+        })
+      );
+    } else {
+      console.log("STEP 5", textLength, id)
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: true,
+              isError: false,
+            };
+          }
+          return item;
+        })
+      );
+    }
+    return isValid
+  }
+
   function isValidEmail(email: any, id: any) {
     let isValid = false;
     if (/\S+@\S+\.\S+/.test(email)) {
@@ -662,7 +745,7 @@ const FormWrapper = (props: any) => {
                   data.id,
                   parentType,
                   parentId,
-                  parseInt(data.maxLength)
+                  // parseInt(data.maxLength)
                 );
 
                 if (data.id === "password") {
@@ -692,6 +775,10 @@ const FormWrapper = (props: any) => {
                 } else if (data.id === "confirm_password") {
                   matchpassword(data?.defaultValue, data.id);
                   return;
+                } else if (data.maxLength === 30){
+                //  alert("TEST2")
+                  textMaxLength(data?.defaultValue, data.id)
+                  return
                 }
                 handleTextChange(e, data.id, parentType, parentId);
               }}

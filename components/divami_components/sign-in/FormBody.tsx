@@ -119,36 +119,6 @@ const FormBody = ({
 
   },[])
 
-
-
-
-  // useEffect(() => {
-  //   console.log("TEST",userCredentials)
-  // },[])
-
-  // useEffect(() => {
-  //   //  let data = getCookie("user")
-  //     let newData = JSON.parse(localStorage.getItem("userCredentials") || "")
-  //     console.log("Karan S", newData)
-  //     if(newData ){
-  //       setFormConfig(
-  //         [
-  //           {...formConfig[0], defaultValue: (newData?.email.length > 0 ? newData.email : "")},
-  //           {
-  //             ...formConfig[1], defaultValue: (newData?.password.length > 0 ? newData.pasword: "")
-  //           }
-  //         ]
-  
-  //       )
-
-  //     }
-  // },[])
-
-  // useEffect(() => {
-  //   console.log("Karan",formConfig)
-  // },[formConfig])
-
-
   return (
     <>
       <FormWrapper
