@@ -5,6 +5,9 @@ import {
   ThemeProvider,
   Tooltip,
 } from "@mui/material";
+import { styled } from "@mui/system";
+
+import { tooltipClasses, TooltipProps } from "@mui/material";
 
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -87,6 +90,18 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     filterData: {},
     numberOfFilters: 0,
   });
+  const SecondAssigneeList = styled("div")({
+    background: "white",
+
+    padding: "15px",
+    color: "#101F4C",
+    fontSize: "14px",
+    border: "1px solid #D9D9D9",
+    fontStyle: "Open Sans",
+
+    boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
+    borderRadius: "4px",
+  });
   const columns = [
     {
       title: "User Name",
@@ -112,7 +127,22 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                 {rowData.lastName?.charAt(0)?.toUpperCase()}
               </UserDefaultIcon>
             )}
-            <UserNameText>{rowData.fullName}</UserNameText>
+
+            <LightTooltip
+              title={
+                <SecondAssigneeList>{rowData.fullName}</SecondAssigneeList>
+              }
+            >
+              <UserNameText>
+                {rowData.fullName.length > 40
+                  ? `${rowData.fullName
+                      .substring(0, 7)
+                      .charAt(0)
+                      .toUpperCase()}${rowData.fullName.substring(1, 7)}...`
+                  : rowData.fullName.charAt(0).toUpperCase() +
+                    rowData.fullName.slice(1)}
+              </UserNameText>
+            </LightTooltip>
           </UserName>
         );
       },
@@ -559,3 +589,60 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   );
 };
 ProjectUsersList.displayName = "ProjectUsersList";
+
+const DarkToolTip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "white",
+    // color: "rgba(0, 0, 0, 0.87)",
+    fontSize: 11,
+    // position: "absolute",
+    right: 5,
+    borderRadius: "4px",
+    top: 2,
+    // width: "308px",
+  },
+
+  "& .MuiTooltip-tooltip": {
+    background: "transparent !important",
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    height: "12px !important",
+    left: "4px !important",
+    marginBottom: "0px",
+    "&:before": {
+      background: "#FFFFFF",
+      border: "1px solid #D9D9D9",
+    },
+
+    //  color: 'red',
+  },
+}));
+
+const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "white",
+    // color: "rgba(0, 0, 0, 0.87)",
+    fontSize: 11,
+    // position: "absolute",
+    right: 30,
+    borderRadius: "4px",
+    top: 2,
+
+    // width: "308px",
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    height: "10px !important",
+    left: "10px !important",
+    marginBottom: "0px",
+    "&:before": {
+      background: "#FFFFFF",
+      border: "1px solid #D9D9D9",
+    },
+
+    //  color: 'red',
+  },
+}));
