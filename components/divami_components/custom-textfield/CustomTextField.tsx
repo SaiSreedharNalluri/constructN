@@ -44,6 +44,7 @@ interface PropTypes {
   backgroundColor?: any;
   callback?: any;
   hoveredIndex?: any;
+  errorPriority?: any;
 }
 
 const StyledTextField = styled(TextField)((props: any) => ({
@@ -105,12 +106,28 @@ const ErrorShowcase = styled("div")({
   alignItems: "center",
   // background: "blue",
 });
+
+const ErrorShowPrioritycase = styled("div")({
+  // border: "2px solid blue",
+  paddingTop: "6px",
+  marginLeft: "18px",
+  display: "flex",
+  alignItems: "center",
+  // background: "blue",
+});
 const HeaderImageLogo = styled(Image)({});
 const ErrorShowText = styled("div")({
   marginLeft: "4px",
   // border: "2px solid blue",
 });
-
+const ErrorShowPriorityText = styled("div")({
+  marginLeft: "4px",
+  fontFamily: "Open Sans",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "rgba(236, 52, 52, 1)",
+  // border: "2px solid blue",
+});
 export const CustomTextField = (props: any) => {
   const reff = useRef<any>(null);
   const {
@@ -139,6 +156,7 @@ export const CustomTextField = (props: any) => {
     hoveredIndex,
     InputProps,
     maxValue,
+    errorPriority,
   } = props;
 
   const [showPassword, setShowPassword] = useState(false);
@@ -272,6 +290,16 @@ export const CustomTextField = (props: any) => {
           <HeaderImageLogo src={Blocked} alt="blocked" />
           <ErrorShowText>{errorMsg}</ErrorShowText>
         </ErrorShowcase>
+      ) : (
+        // <div style={{ height: "30px" }}></div>
+        ""
+      )}
+
+      {errorPriority && errorPriority.length > 5 ? (
+        <ErrorShowPrioritycase>
+          <HeaderImageLogo src={Blocked} alt="blocked" />
+          <ErrorShowPriorityText>{errorPriority}</ErrorShowPriorityText>
+        </ErrorShowPrioritycase>
       ) : (
         // <div style={{ height: "30px" }}></div>
         ""

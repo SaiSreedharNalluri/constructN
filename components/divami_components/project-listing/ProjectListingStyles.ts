@@ -260,8 +260,8 @@ export const CaptureImageContainer = styled("div")({
 });
 export const CaptureImageIcon = styled(Image)({
   marginRight: "7px",
-  width: "16px",
-  height: "16px",
+  width: "20px",
+  height: "20px",
 });
 export const CaptureName = styled("div")({
   marginRight: "5px",

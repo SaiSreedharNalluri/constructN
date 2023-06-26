@@ -34,6 +34,7 @@ import { Mixpanel } from "../../analytics/mixpanel";
 import FooterSignIn from "./FooterSignIn";
 import FormBody from "./FormBody";
 import CustomLoader from "../custom_loader/CustomLoader";
+import { CustomToast } from "../custom-toaster/CustomToast";
 
 const SignInPage = () => {
   const router = useRouter();
@@ -105,6 +106,7 @@ const SignInPage = () => {
 
             // }
             toast.success("user logged in sucessfully");
+            CustomToast("User logged in sucessfully", "success");
 
             router.push("/projects");
           } else {
@@ -131,7 +133,9 @@ const SignInPage = () => {
           error.message ||
           error.toString();
 
-        toast.error("Invalid User Credentials");
+        // toast.error(error.response.data.message);
+        CustomToast(error.response.data.message, "error");
+
         setLoading(false);
 
         Mixpanel.track("login_fail", {
