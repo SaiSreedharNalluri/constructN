@@ -128,11 +128,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
               </UserDefaultIcon>
             )}
 
-            <LightTooltip
-              title={
-                <SecondAssigneeList>{rowData.fullName}</SecondAssigneeList>
-              }
-            >
+            <TooltipText title={rowData.fullName}>
               <UserNameText>
                 {rowData.fullName.length > 40
                   ? `${rowData.fullName
@@ -142,7 +138,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                   : rowData.fullName.charAt(0).toUpperCase() +
                     rowData.fullName.slice(1)}
               </UserNameText>
-            </LightTooltip>
+            </TooltipText>
           </UserName>
         );
       },
@@ -590,59 +586,59 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
 };
 ProjectUsersList.displayName = "ProjectUsersList";
 
-const DarkToolTip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} arrow classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: "white",
-    // color: "rgba(0, 0, 0, 0.87)",
-    fontSize: 11,
-    // position: "absolute",
-    right: 5,
-    borderRadius: "4px",
-    top: 2,
-    // width: "308px",
-  },
+// const DarkToolTip = styled(({ className, ...props }: TooltipProps) => (
+//   <Tooltip {...props} arrow classes={{ popper: className }} />
+// ))(({ theme }) => ({
+//   [`& .${tooltipClasses.tooltip}`]: {
+//     backgroundColor: "white",
+//     // color: "rgba(0, 0, 0, 0.87)",
+//     fontSize: 11,
+//     // position: "absolute",
+//     right: 5,
+//     borderRadius: "4px",
+//     top: 2,
+//     // width: "308px",
+//   },
 
-  "& .MuiTooltip-tooltip": {
-    background: "transparent !important",
-  },
-  [`& .${tooltipClasses.arrow}`]: {
-    height: "12px !important",
-    left: "4px !important",
-    marginBottom: "0px",
-    "&:before": {
-      background: "#FFFFFF",
-      border: "1px solid #D9D9D9",
-    },
+//   "& .MuiTooltip-tooltip": {
+//     background: "transparent !important",
+//   },
+//   [`& .${tooltipClasses.arrow}`]: {
+//     height: "12px !important",
+//     left: "4px !important",
+//     marginBottom: "0px",
+//     "&:before": {
+//       background: "#FFFFFF",
+//       border: "1px solid #D9D9D9",
+//     },
 
-    //  color: 'red',
-  },
-}));
+//     //  color: 'red',
+//   },
+// }));
 
-const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} arrow classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: "white",
-    // color: "rgba(0, 0, 0, 0.87)",
-    fontSize: 11,
-    // position: "absolute",
-    right: 30,
-    borderRadius: "4px",
-    top: 2,
+// const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+//   <Tooltip {...props} arrow classes={{ popper: className }} />
+// ))(({ theme }) => ({
+//   [`& .${tooltipClasses.tooltip}`]: {
+//     backgroundColor: "white",
+//     // color: "rgba(0, 0, 0, 0.87)",
+//     fontSize: 11,
+//     // position: "absolute",
+//     right: 30,
+//     borderRadius: "4px",
+//     top: 2,
 
-    // width: "308px",
-  },
-  [`& .${tooltipClasses.arrow}`]: {
-    height: "10px !important",
-    left: "10px !important",
-    marginBottom: "0px",
-    "&:before": {
-      background: "#FFFFFF",
-      border: "1px solid #D9D9D9",
-    },
+//     // width: "308px",
+//   },
+//   [`& .${tooltipClasses.arrow}`]: {
+//     height: "10px !important",
+//     left: "10px !important",
+//     marginBottom: "0px",
+//     "&:before": {
+//       background: "#FFFFFF",
+//       border: "1px solid #D9D9D9",
+//     },
 
-    //  color: 'red',
-  },
-}));
+//     //  color: 'red',
+//   },
+// }));
