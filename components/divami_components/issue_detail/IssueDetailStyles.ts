@@ -697,6 +697,7 @@ export const SecondAssigneeList = styled("div")({
   color: "#101F4C",
   fontSize: "14px",
   border: "1px solid #D9D9D9",
+  fontStyle:"Open Sans",
   // marginTop: '-3px',
   boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
   borderRadius: "4px",

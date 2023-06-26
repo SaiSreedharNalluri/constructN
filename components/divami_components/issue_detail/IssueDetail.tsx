@@ -34,6 +34,7 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
 import router, { useRouter } from "next/router";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
+
 import _ from "lodash";
 import {
   createAttachment,
@@ -1227,9 +1228,21 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 alt={"close icon"}
                 data-testid="back-arrow"
               />
-              <SpanTile data-testid="issue-detail-header">
-                {selectedIssue?.title} (#{selectedIssue?.sequenceNumber})
-              </SpanTile>
+              <DarkToolTip
+                title={
+                  <SecondAssigneeList>
+                    {selectedIssue?.title}
+                  </SecondAssigneeList>
+                }
+              >
+                <SpanTile data-testid="issue-detail-header">
+                  {/* {selectedIssue?.title} (#{selectedIssue?.sequenceNumber}) */}
+                  {selectedIssue?.title.length > 20
+                    ? `${selectedIssue?.title.substring(0, 9)}...`
+                    : `${selectedIssue?.title}`}{" "}
+                  (#{selectedIssue?.sequenceNumber})
+                </SpanTile>
+              </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
               <EditIcon

@@ -8,7 +8,7 @@ import {
   Paragraph,
 } from "../components/divami_components/custom_loader/NoResultFoundStyles";
 
-import NoRoute from "../public/divami_icons/NoRoute.svg";
+import ErrorNotFound from "../public/divami_icons/ErrorNotFound.svg";
 import { LoaderImage } from "../components/divami_components/custom_loader/NoResultFoundStyles";
 
 const NoResultFound = () => {
@@ -16,7 +16,7 @@ const NoResultFound = () => {
     <>
       <Container>
         <GifContainer>
-          <LoaderImage src={NoRoute} alt="noimage" />
+          <LoaderImage src={ErrorNotFound} alt="noimage" />
         </GifContainer>
 
         <Content>

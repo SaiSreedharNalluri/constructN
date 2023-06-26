@@ -132,14 +132,15 @@ export const BodyContTitle = styled("div")({
 export const SecondHeader = styled("div")({
   display: "flex",
   //   border: "1px solid aqua",
-  marginLeft: "34px",
+  marginLeft: "10px",
   marginTop: "5px",
 });
 
 export const ThirdHeader = styled("div")({
   display: "flex",
   //   border: "1px solid aqua",
-  marginLeft: "34px",
+  marginLeft: "10px",
+
   marginTop: "5px",
 });
 
