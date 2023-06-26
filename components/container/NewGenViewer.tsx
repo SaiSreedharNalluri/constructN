@@ -445,7 +445,12 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           //return newViewerData;
           break;
           
-        
+        case 'setViewLayers':
+          break;
+        case 'addViewLayer':
+          break;
+        case 'removeViewLayer':
+          break;
         case 'showIssue':
           showTag('Issue',true,getViewerTypefromViewType(oldViewerData.currentViewType));
           break;
@@ -1196,7 +1201,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         case 'Mapbox':
           if (mapboxUtils.current === undefined) {
              mapboxUtils.current = MapboxViewerUtils();
-            mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, {context: currentContext.current?.cameraObject});
+            mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, {utm: currentViewerData.projectUTM, context: currentContext.current?.cameraObject});
             mapboxUtils.current.setType(incomingPayload.current?.action.data);
             // multiverseViewer = mapboxUtils.current;
           }
@@ -1230,7 +1235,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
       case 'compareMap':
         if (mapboxCompareUtils.current == undefined) {
           mapboxCompareUtils.current = MapboxViewerUtils();
-          mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, undefined, mapboxUtils.current?.getMap());
+          mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, {utm: currentViewerData.projectUTM}, mapboxUtils.current?.getMap());
           mapboxCompareUtils.current.setType(currentViewerData.currentViewType);          
           }
           break;
@@ -1321,7 +1326,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
                       isSelected: true,
                       filters: stage.filter
                     }
-                    stages.children.push(subLayer)
+                    stages.children?.push(subLayer)
                   })
                 })
               }
