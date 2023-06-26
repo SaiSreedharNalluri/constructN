@@ -691,7 +691,7 @@ const SectionsListing = () => {
   return (
     <div style={{ overflow: "scroll" }} className="sections_table">
       <TableHeader>
-        <Header>Sections</Header>
+        <Header>Sections </Header>
         <HeaderActions>
           {searchingOn ? (
             <SearchAreaContainer>
