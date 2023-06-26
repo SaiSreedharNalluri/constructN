@@ -45,10 +45,13 @@ export const SideMenuOptionImageContainer = styled("div")({
   alignItems: "center",
   width: "59px",
   height: "59px",
-  borderBottomRightRadius:'50%',
-  borderTopRightRadius:'50%',
+  // borderBottomRightRadius:'50%',
+  // borderTopRightRadius:'50%',
+  borderRadius:'50%',
+  
   '&:hover': {
-    background: '#EEEEEE'
+    background: '#EEEEEE',
+    border: "7px solid  #ffffff"
   },
 });
 

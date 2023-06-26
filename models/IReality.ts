@@ -21,7 +21,7 @@ type RealityMode = "360 Video" | "360 Image" | "Phone Image" | "Drone Image" | "
 export interface ILayer {
     name: string,
     isSelected: boolean,
-    children: ILayer[],
+    children?: ILayer[],
     realities?: IReality[],
     filters?: any[]
 }
