@@ -495,15 +495,11 @@ const FormWrapper = (props: any) => {
     let isValid = false    
     const maxLimit = 30;
     const regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?0-9]/;
-    console.log("STEP 1", textLength, id)
     if(textLength.length > maxLimit){
-
-      console.log("STEP 3", textLength, id)
       setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
           let fieldName;
-          console.log("STEP 3a", textLength, id)
           if (id === "firstName") {
             fieldName = "First name";
           } else if (id === "lastName") {
@@ -525,7 +521,6 @@ const FormWrapper = (props: any) => {
       })
     );
     } else if (regex.test(textLength)) {
-      console.log("STEP 4", textLength, id)
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
           if (id === item.id) {
@@ -540,7 +535,6 @@ const FormWrapper = (props: any) => {
         })
       );
     } else {
-      console.log("STEP 5", textLength, id)
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
           if (id === item.id) {
@@ -591,12 +585,13 @@ const FormWrapper = (props: any) => {
     // return /\S+@\S+\.\S+/.test(email);
   }
 
+ 
+
   function checkPassword(str: any, id: any) {
-    let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,14}$/;
+    let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])(?!\s).{8,14}(?<!\s)$/;;
     let passwordTru = rePass.test(str);
     let isValid = false;
     setShowMessage(!passwordTru);
-
     if (passwordTru) {
       isValid = true;
       setFormConfig((prev: any) =>

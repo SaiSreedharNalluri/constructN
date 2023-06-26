@@ -342,27 +342,27 @@ const Index: React.FC<any> = () => {
       if (selectedOption === "issuePriority") {
         // await updateIssuePriorityList(projectId, formValues.priority);
         await updateIssuePriorityList(projectId, {
-          issuePriorityList: [...formValues.priority],
+          issuePriorityList: [...formValues.priority.map((ele:string) => ele.trim())],
         });
         toast.success("Issue priority list updated successfully");
       } else if (selectedOption === "taskPriority") {
         await updateTaskPriorityList(projectId, {
-          taskPriorityList: [...formValues.priority],
+          taskPriorityList: [...formValues.priority.map((ele:string) => ele.trim())],
         });
         toast.success("Task priority list updated successfully");
       } else if (selectedOption === "issueStatus") {
         await updateIssueStatusList(projectId, {
-          issueStatusList: [...formValues.priority],
+          issueStatusList: [...formValues.priority.map((ele:string) => ele.trim())],
         });
         toast.success("Issue status list updated successfully");
       } else if (selectedOption === "taskStatus") {
         await updateTaskStatusList(projectId, {
-          taskStatusList: [...formValues.priority],
+          taskStatusList: [...formValues.priority.map((ele:string) => ele.trim())],
         });
         toast.success("Task status list updated successfully");
       } else if (selectedOption === "tag") {
         await updateTagList(projectId, {
-          tagList: [...formValues.priority],
+          tagList: [...formValues.priority.map((ele:string) => ele.trim())],
         });
         toast.success("Tag list updated successfully");
       }

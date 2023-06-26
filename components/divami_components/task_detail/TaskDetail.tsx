@@ -1139,13 +1139,21 @@ const CustomTaskDetailsDrawer = (props: any) => {
     );
     return updatedTaskList;
   };
+
+  const onDeleteCallback = () => {
+    onClose()
+     if (setTaskList) {
+      const updatedIssuesList = deletetaskById(taskList, selectedTask);
+
+      setTaskList(updatedIssuesList);
+    }
+
+  }
+
+
   const onDeleteTask = () => {
     setshowPopUp(false);
-    deleteTheTask(selectedTask, onClose);
-    if (setTaskList) {
-      const updatedTaskList = deletetaskById(taskList, selectedTask);
-      setTaskList(updatedTaskList);
-    }
+    deleteTheTask(selectedTask, onDeleteCallback);
   };
 
   const handleCreateTask = (formData: any) => {

@@ -207,6 +207,7 @@ const ProjectConfig = ({
     setShowbutton(
       value.trim().length > 0 &&
         value.trim().length < 15 &&
+        
         /^(?:[a-zA-Z]+|\d+|[a-zA-Z0-9\s]+)$/.test(value)
     );
   };

@@ -1350,11 +1350,12 @@ const Index: React.FC<IProps> = () => {
   const deleteTheIssue = (issueObj: any, callback?: any) => {
     deleteIssue(router.query.projectId as string, issueObj._id)
       .then((response) => {
-        if (response.success === true) {
+      
+        if (response.success === true && response.status === 200) {
           toast.success(response.message);
           _.remove(issueFilterList, { _id: issueObj._id });
           setIssueList(issueFilterList);
-          if (callback) {
+          if (callback && response.message !== "Failed to delete Issue") {
             callback();
           }
           const issueMenuInstance: ITools = {
@@ -1364,18 +1365,26 @@ const Index: React.FC<IProps> = () => {
 
           toolClicked(issueMenuInstance);
         }
+
+        if(!response.success && response.status === 403){
+          toast.error("You can't delete an issue. Ask the Project Admin for help")
+        }else{
+          toast.error("Issue could not be deleted")
+        }
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.log(error)
+      });
   };
 
   const deleteTheTask = (taskObj: any, callback?: any) => {
     deleteTask(router.query.projectId as string, taskObj._id)
       .then((response) => {
-        if (response.success === true) {
+        if (response.success === true && response.status === 200) {
           toast.success(response.message);
           _.remove(taskFilterList, { _id: taskObj._id });
           setTasksList(taskFilterList);
-          if (callback) {
+          if (callback && response.message !== "Failed to delete Issue") {
             callback();
           }
           const taskMenuInstance: ITools = {
@@ -1384,6 +1393,12 @@ const Index: React.FC<IProps> = () => {
           };
 
           toolClicked(taskMenuInstance);
+        }
+
+        if(!response.success && response.status === 403){
+          toast.error("You can't delete an issue. Ask the Project Admin for help")
+        }else{
+          toast.error("Issue could not be deleted")
         }
       })
       .catch((error) => {

@@ -42,6 +42,10 @@ const PasswordRequired = ({ passwordString }: { passwordString: string }) => {
         if (hasSpecialCharacters(passwordString)) {
           return iconCompleted;
         } else return PasswordError;
+      case "empty-spaces":
+        if(calculateEmptySpaces(passwordString)){
+          return iconCompleted;
+        }else return PasswordError;
       default:
         return PasswordError;
       // code block
@@ -60,6 +64,14 @@ const PasswordRequired = ({ passwordString }: { passwordString: string }) => {
 
   function hasSpecialCharacters(str: string): boolean {
     return /[!@#$%^&*]/.test(str);
+  }
+
+  function calculateEmptySpaces(string:string) {
+    if(string.length === 0) return [0,0]
+    const leftSpaces = string.length - string.trimStart().length;
+    const rightSpaces = string.length - string.trimEnd().length;
+    return leftSpaces + rightSpaces == 0
+  //  return leftSpaces + rightSpaces > 0
   }
 
   return (
@@ -91,6 +103,11 @@ const PasswordRequired = ({ passwordString }: { passwordString: string }) => {
         <InstructionsElements>
           <PasswordImageLogo src={renderIcon("special-character")} alt="logo" />
           <PasswordInstrcutions>A special character</PasswordInstrcutions>
+        </InstructionsElements>
+
+        <InstructionsElements>
+          <PasswordImageLogo src={renderIcon("empty-spaces")} alt="logo" />
+          <PasswordInstrcutions>No leading or trailing spaces</PasswordInstrcutions>
         </InstructionsElements>
       </InstructionsSections>
     </PasswordFieldSection>

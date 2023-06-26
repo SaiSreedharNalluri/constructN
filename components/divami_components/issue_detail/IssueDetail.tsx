@@ -925,27 +925,35 @@ const CustomIssueDetailsDrawer = (props: any) => {
     return updatedIssuesList;
   };
 
-  const onDeleteIssue = (status: any) => {
-    setshowPopUp(false);
-    if (deleteTheIssue) deleteTheIssue(selectedIssue, onClose);
-    if (setIssueList) {
+  const onDeleteCallback = () => {
+    onClose()
+     if (setIssueList) {
       const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
 
       setIssueList(updatedIssuesList);
     }
-  };
-  // const deleteTheAttachment = (attachmentId: string) => {
-  //   deleteAttachment(attachmentId)
-  //     .then((response) => {
-  //       if (response.success === true) {
-  //         toast(response.message);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       toast.error(error.message);
-  //     });
-  // };
 
+  }
+
+  const onDeleteIssue = (status: any) => {
+    setshowPopUp(false);
+    if (deleteTheIssue) deleteTheIssue(selectedIssue, onDeleteCallback);
+
+     const deleteTheAttachment = (attachmentId: string) => {
+    deleteAttachment(attachmentId)
+      .then((response) => {
+        if (response.success === true) {
+          toast(response.message);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
+
+   
+  };
+ 
   const DetailsObj = {
     TabOne: {
       options: [

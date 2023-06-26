@@ -30,7 +30,7 @@ export const HeaderContainer = styled("header")({
 
 export const PasswordPopupContainer = styled("div")({
   position: "absolute",
-  bottom: "-187px",
+  bottom: "-221px",
   zIndex: 999,
 });
 
