@@ -237,8 +237,10 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setAnchorEl(null);
   };
 
-  const handleSortMenuClick = (sortMethod: string) =>
+  const handleSortMenuClick = (sortMethod: string) => {
+    console.log("sortmethod", sortMethod);
     handleOnIssueSort(sortMethod);
+  };
 
   const handleDownloadMenuClick = () => handleDownloadClose();
 
@@ -269,8 +271,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const handleViewTaskList = () => {
     setOpenDrawer(true);
   };
-
- 
 
   const handleSearchWindow = () => {
     if (searchTerm === "") {
@@ -360,7 +360,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       if (
         (issuePriorityData?.length === 0 &&
           issueStatusData?.length == 0 &&
-          issueTypeData?.length == 0 && 
+          issueTypeData?.length == 0 &&
           issueTagData?.length == 0 &&
           toDate === "" &&
           assigneesData === null) ||
@@ -377,21 +377,19 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   return (
     <>
       {errorShow.length > 0 ? (
-        <TaskListContainer
-          id="download-test"
-        >
+        <TaskListContainer id="download-test">
           <HeaderContainer>
             <TitleContainer>
               <span>Issue List</span>
               <div className="rounded-full p-1 hover:bg-[#EEEEEE]">
-              <CloseIcon
-                onClick={() => {
-                  handleClose();
-                }}
-                src={closeWithCircle}
-                alt={"close icon"}
-                data-testid="close-icon"
-              />
+                <CloseIcon
+                  onClick={() => {
+                    handleClose();
+                  }}
+                  src={closeWithCircle}
+                  alt={"close icon"}
+                  data-testid="close-icon"
+                />
               </div>
             </TitleContainer>
           </HeaderContainer>
@@ -550,7 +548,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         }}
                       >
                         <FirstHeader>
-                         
                           <TicketName>
                             {" "}
                             {val?.type} (#{val?.sequenceNumber})

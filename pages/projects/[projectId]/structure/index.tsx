@@ -938,6 +938,7 @@ const Index: React.FC<IProps> = () => {
     }
   };
   const handleOnIssueSort = (sortMethod: string) => {
+    console.log("cominghere", sortMethod);
     switch (sortMethod) {
       case "Last Updated":
         setIssueFilterList(issuesList);

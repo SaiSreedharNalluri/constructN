@@ -353,7 +353,23 @@ export const ResendMailDiv  = styled("div")({
   fontSize: "14px",
   lineHeight: "19px",
   textAlign: "center",
-  marginTop: "280px",
+  marginTop: "20px",
+  // marginLeft:"9px"
+});
+
+export const SignupContainer  = styled("div")({
+  color: "#36415D",
+  width: "259px",
+  height: "19px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
+  textAlign: "center",
+  marginTop: "20px",
+  position: "relative",
+  top:"100px"
   // marginLeft:"9px"
 });
 

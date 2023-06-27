@@ -17,6 +17,7 @@ import {
   ChangeSignDiv,
   ResendMailDiv,
   SpanResend,
+  SignupContainer,
 } from "./VerifyUserStyles";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Logo from "../../../public/divami_icons/Logo.svg";
@@ -113,6 +114,18 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
                 Click to resend
               </SpanResend>{" "}
             </ResendMailDiv>
+
+            <SignupContainer>
+              Already a User?{" "}
+              <SpanResend
+                onClick={() => {
+                  router.push("/login");
+                }}
+              >
+                {" "}
+                Sign in
+              </SpanResend>{" "}
+            </SignupContainer>
           </VerifyUserDiv>
         </FormContainerSign>
       </FormDiv>
