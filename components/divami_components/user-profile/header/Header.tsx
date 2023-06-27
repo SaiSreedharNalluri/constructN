@@ -35,11 +35,13 @@ const Header = ({ closeEditProject }: any) => {
     <HeaderContainer>
       <TitleContiner>
         <span>{title}</span>
+        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE]">
         <CloseIcon
           onClick={closeEditProject}
           src={closeIconCircle}
           alt={"close icon"}
         />
+        </div>
       </TitleContiner>
     </HeaderContainer>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Formik, Form, ErrorMessage, FormikHelpers } from 'formik';
+import { Formik, Form, ErrorMessage, FormikHelpers, Field } from 'formik';
 import showPasswordImage from '../../../public/icons/show-password.svg';
 import hidePasswordImage from '../../../public/icons/hide-password.svg';
 import Image from 'next/image';
@@ -18,6 +18,7 @@ const ChangePassword = ({closeDrawer}:any) => {
     new_password: Yup.string()
       .required('New password is required')
       .min(8, 'Minimum 8 characters required')
+      .max(14, 'Maximum 14 characters exceeded')
       .matches(/[0-9]/, 'Password requires a number')
       .matches(/[a-z]/, 'Password requires a lowercase letter')
       .matches(/[A-Z]/, 'Password requires an uppercase letter')
@@ -124,10 +125,11 @@ const ChangePassword = ({closeDrawer}:any) => {
                 <Form className=" grid grid-cols-1 gap-y-2 px-4">
                   <div className="relative ">
                     <div className='text-[#101f4C] py-2'>Current password</div>
-                    <InputPassword
+                    <Field
                       name="currentPassword"
-                      type={revealPwd}
-                      placeholderName="Current Password"
+                      type={revealPwd?"text":"password"}
+                      placeholder="Current Password"
+                      className='w-full p-3 rounded border border-[black] outline-[#F1742E]'
                     />
                     <div className="absolute p-3 inset-y-[34px] right-0">
                       <Image
@@ -145,10 +147,11 @@ const ChangePassword = ({closeDrawer}:any) => {
                   </div>
                   <div className="relative">
                   <div className='text-[#101f4C] py-2'>New password</div>
-                    <InputPassword
+                    <Field
                       name="new_password"
-                      type={isRevealPwd}
-                      placeholderName="New Password"
+                      type={isRevealPwd?"text":"password"}
+                      placeholder="New Password"
+                      className='w-full p-3 rounded border border-[black] outline-[#F1742E]'
                     />
                     <div className="absolute p-3 inset-y-[34px] right-0">
                       <Image
@@ -171,10 +174,11 @@ const ChangePassword = ({closeDrawer}:any) => {
 
                   <div className="relative">
                   <div className='text-[#101f4C] py-2'>Confirm new password</div>
-                    <InputPassword
+                    <Field
                       name="confirmPassword"
-                      type={isCRevealPwd}
-                      placeholderName="Confirm Password"
+                      type={isCRevealPwd?"text":"password"}
+                      placeholder="Confirm Password"
+                      className='w-full p-3 rounded border border-[black] outline-[#F1742E]'
                     />
                     <div
                       className="absolute p-3 inset-y-[34px] right-0"
