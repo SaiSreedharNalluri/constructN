@@ -51,7 +51,9 @@ const ResetPassword = ({ uniqueToken }: any) => {
 
   function checkPassword(str: any) {
     if (str.length > 0) {
-      let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,14}$/;
+   
+      let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])(?!\s).{8,14}(?<!\s)$/;
+
       let passwordTru = rePass.test(str);
       return !passwordTru;
     } else {

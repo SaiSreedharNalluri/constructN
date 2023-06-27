@@ -37,21 +37,29 @@ const CreateIssue = ({
     if (event === "Cancel") {
       setshowPopUp(true);
     } else {
-      const dateIndex = formData.findIndex((ele: any) => ele.id === "dates");
+      setValidate(true);
+      let isError = 0;
+
+      const dateIndex = formData?.findIndex((ele: any) => ele.id === "dates");
       if (dateIndex !== -1) {
-        if (
-          !formData[dateIndex].fields[0].isError &&
-          !formData[dateIndex].fields[0].isError
-        ) {
-          setValidate(true);
-          handleCreateTask(formData);
+        if (formData[dateIndex].fields[0].isError && formData[dateIndex].fields[0].isError){
+            isError++
         }
-      } else {
+      }
+      for(let i = 0; i < formData.length; i++){
+        if(formData[i].isReq === true && formData[i].isError === true){
+          isError++;
+        }
+      }
+
+      if(isError == 0){
         setValidate(true);
         handleCreateTask(formData);
       }
     }
   };
+
+ 
 
   const onCancelEdit = () => {
     closeIssueCreate();

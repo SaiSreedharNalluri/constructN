@@ -332,6 +332,11 @@ const Index: React.FC<any> = () => {
     setshowPopUp(false);
   };
 
+  const containsRepeated = (a:[string]) => {
+    const noDups = new Set(a);
+    return a.length !== noDups.size;
+  }
+
   const handleSubmit = async () => {
     const containsEmptyString = formValues.priority.some(
       (item: any) => item.length === 0
@@ -341,32 +346,38 @@ const Index: React.FC<any> = () => {
       toast.error("Fields cannot be empty");
       return;
     }
+    
+   if(containsRepeated(formValues.priority.map((item:string) => item.trim()))){
+    toast.error("Fields cannot be repeated");
+    return;
+   }
+
     try {
       // Call the appropriate API based on the selected option and pass the updated values
       if (selectedOption === "issuePriority") {
         // await updateIssuePriorityList(projectId, formValues.priority);
         await updateIssuePriorityList(projectId, {
-          issuePriorityList: [...formValues.priority],
+          issuePriorityList: [...formValues.priority.map((ele:string) => ele.trim())],
         });
         toast.success("Issue priority list updated successfully");
       } else if (selectedOption === "taskPriority") {
         await updateTaskPriorityList(projectId, {
-          taskPriorityList: [...formValues.priority],
+          taskPriorityList: [...formValues.priority.map((ele:string) => ele.trim())],
         });
         toast.success("Task priority list updated successfully");
       } else if (selectedOption === "issueStatus") {
         await updateIssueStatusList(projectId, {
-          issueStatusList: [...formValues.priority],
+          issueStatusList: [...formValues.priority.map((ele:string) => ele.trim())],
         });
         toast.success("Issue status list updated successfully");
       } else if (selectedOption === "taskStatus") {
         await updateTaskStatusList(projectId, {
-          taskStatusList: [...formValues.priority],
+          taskStatusList: [...formValues.priority.map((ele:string) => ele.trim())],
         });
         toast.success("Task status list updated successfully");
       } else if (selectedOption === "tag") {
         await updateTagList(projectId, {
-          tagList: [...formValues.priority],
+          tagList: [...formValues.priority.map((ele:string) => ele.trim())],
         });
         toast.success("Tag list updated successfully");
       }

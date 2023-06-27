@@ -30,6 +30,8 @@ import people from "../../../public/divami_icons/people.svg";
 import peopleHighlighted from "../../../public/divami_icons/peopleHighlighted.svg";
 import ScheduleIcon from "../../../public/divami_icons/ScheduleIcon.svg";
 import ScheduleHighlight from "../../../public/divami_icons/ScheduleHighlight.svg";
+import projectDetails from "../../../public/divami_icons/projectDetails.svg";
+import projectDetailsHighlighted from "../../../public/divami_icons/projectDetailsHighlighted.svg";
 
 import {
   HighlightedSytledImage,
@@ -66,14 +68,14 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       toolTipMsg: "Views",
     },
 
-    // {
-    //   id: "structure",
-    //   icon: drawing,
-    //   activeIcon: drawingInactive,
-    //   isActive: false,
-    //   nextPage: "",
-    //   toolTipMsg: "Drawings",
-    // },
+    {
+      id: "structure",
+      icon: drawing,
+      activeIcon: drawingInactive,
+      isActive: false,
+      nextPage: "",
+      toolTipMsg: "Drawings",
+    },
 
     {
       id: "schedule",
@@ -89,11 +91,19 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       isActive: false,
       toolTipMsg: "Users",
     },
+    // {
+    //   id: "settings",
+    //   icon: people,
+    //   isActive: false,
+    //   activeIcon: peopleHighlighted,
+    //   toolTipMsg: "Project Details",
+    // },
+
     {
       id: "settings",
-      icon: people,
+      icon: projectDetails,
       isActive: false,
-      activeIcon: peopleHighlighted,
+      activeIcon: projectDetailsHighlighted,
       toolTipMsg: "Project Details",
     },
     // {

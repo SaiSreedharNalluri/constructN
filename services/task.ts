@@ -99,6 +99,21 @@ export const getTaskStatus = async (projectId: string) => {
       throw error.response.data;
     });
 };
+
+export const getTaskTags = async (projectId: string) => {
+ 
+  return await instance
+  .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tags`, {
+    headers: authHeader.authHeader(),
+  })
+  .then((response) => {
+    return response.data;
+  })
+  .catch((error) => {
+    throw error.response.data;
+  });
+};
+
 export const deleteTask = async (projectId: string, taskId: string) => {
   return await instance
     .delete(

@@ -257,7 +257,9 @@ const SectionsListing = () => {
           // setShowLoader(false);
           setDataLoaded(true);
         })
-        .catch((error) => {});
+        .catch((error) => {
+          setDataLoaded(true)
+        });
     }
   }, [router.query.projectId]);
 
@@ -577,16 +579,16 @@ const SectionsListing = () => {
         return (
           <CapturesFieldContainer>
             <CapturesField>
-            <TooltipText title="Phone Image">
+              <TooltipText title="Phone Image">
                 <div>
-              <CaptureImageIcon
-                // src={capture360Image}
-                src={phoneImage}
-                alt={""}
-                // width={13}
-                // height={13}
-              />
-              </div>
+                  <CaptureImageIcon
+                    // src={capture360Image}
+                    src={phoneImage}
+                    alt={""}
+                    // width={13}
+                    // height={13}
+                  />
+                </div>
               </TooltipText>
               <CaptureCount>
                 {" "}
@@ -599,14 +601,14 @@ const SectionsListing = () => {
               </CaptureCount>
             </CapturesField>
             <CapturesField>
-            <TooltipText title="360 Image">
+              <TooltipText title="360 Image">
                 <div>
-              <CaptureImageIcon
-                // src={videoWalk}
-                src={capture360Image}
-                alt={""}
-              />
-              </div>
+                  <CaptureImageIcon
+                    // src={videoWalk}
+                    src={capture360Image}
+                    alt={""}
+                  />
+                </div>
               </TooltipText>
               {/* 360 Video */}
               <CaptureCount>
@@ -616,15 +618,15 @@ const SectionsListing = () => {
               </CaptureCount>
             </CapturesField>
             <CapturesField>
-            <TooltipText title="360° Video Walk">
+              <TooltipText title="360° Video Walk">
                 <div>
-              <CaptureImageIcon
-                src={videoWalk}
-                alt={""}
-                // width={15}
-                // height={15}
-              />
-              </div>
+                  <CaptureImageIcon
+                    src={videoWalk}
+                    alt={""}
+                    // width={15}
+                    // height={15}
+                  />
+                </div>
               </TooltipText>
               <CaptureCount>
                 {/* {rowData.capturePhoneCount?.length > 1
@@ -640,25 +642,22 @@ const SectionsListing = () => {
             <CapturesField>
               <TooltipText title="Phone Video Walk">
                 <div>
-                <CaptureImageIcon
-                src={captureLidarIcon}
-                alt={""}
-              />   
+                  <CaptureImageIcon src={captureLidarIcon} alt={""} />
                 </div>
               </TooltipText>
-       
+
               <CaptureCount>-</CaptureCount>
             </CapturesField>
             <CapturesField>
-            <TooltipText title="Drone Image">
+              <TooltipText title="Drone Image">
                 <div>
-              <CaptureImageIcon
-                src={DroneImage}
-                alt={""}
-                // width={13}
-                // height={13}
-              ></CaptureImageIcon>
-              </div>
+                  <CaptureImageIcon
+                    src={DroneImage}
+                    alt={""}
+                    // width={13}
+                    // height={13}
+                  ></CaptureImageIcon>
+                </div>
               </TooltipText>
               <CaptureCount>
                 {rowData.capture && rowData.capture["Drone Image"]
@@ -694,7 +693,7 @@ const SectionsListing = () => {
   return (
     <div style={{ overflow: "scroll" }} className="sections_table">
       <TableHeader>
-        <Header>Sections</Header>
+        <Header>Sections </Header>
         <HeaderActions>
           {searchingOn ? (
             <SearchAreaContainer>

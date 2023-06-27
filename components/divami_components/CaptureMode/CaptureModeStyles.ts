@@ -281,7 +281,8 @@ export const CaptureName = styled("div")({
 });
 export const CaptureCount = styled("div")({
   cursor: "pointer",
-  width: "48px"
+  width: "48px",
+  marginLeft:"7px"
 });
 
 export const FloorName = styled("div")({

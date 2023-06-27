@@ -49,6 +49,7 @@ const FormBody = ({
   loginField,
   signUpMsg,
   handleKeyPress,
+  
 }: any) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -66,6 +67,8 @@ const FormBody = ({
     setChecked(event.target.checked);
   };
 
+  
+
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(SIGN_IN_FORM_CONFIG);
   useEffect(() => {
@@ -81,6 +84,41 @@ const FormBody = ({
     //   setCanBeDisabled(true);
     // }
   }, [formConfig]);
+
+ 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Perform localStorage action
+      let storedCredentials =  localStorage.getItem("userCredentials")
+      let userCredentials = null
+   //   let userCredentials = JSON.parse(localStorage.getItem("userCredentials"))
+       if(storedCredentials){
+        try{
+          userCredentials = JSON.parse(storedCredentials)
+          let newConfig = [
+            {
+              ...SIGN_IN_FORM_CONFIG[0], defaultValue:  userCredentials && userCredentials?.email ? userCredentials.email : ""
+            },
+            {
+              ...SIGN_IN_FORM_CONFIG[1], defaultValue:  userCredentials && userCredentials?.password ? userCredentials.password : ""
+            }
+            
+          ]
+    
+          setFormConfig(newConfig)
+    
+        }catch(error){
+          console.log("Error parsing stored object:",error)
+        }
+       }
+      //  console.log("CREDENTIALS",userCredentials)
+   
+      // console.log("TEST",userCredentials, userCredentials.password)
+     
+    }
+
+  },[])
+
   return (
     <>
       <FormWrapper

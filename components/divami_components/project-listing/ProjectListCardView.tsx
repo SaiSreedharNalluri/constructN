@@ -33,11 +33,19 @@ import {
 } from "./ProjectListingStyles";
 import Image from "next/image";
 import capture360Image from "../../../public/divami_icons/capture360Image.svg";
+import Capture360photo from "../../../public/divami_icons/Capture360photo.svg";
+
 import captureLidarIcon from "../../../public/divami_icons/captureLidarIcon.svg";
 import phoneImage from "../../../public/divami_icons/phoneImage.svg";
+import PhoneImageNewCapture from "../../../public/divami_icons/PhoneImageNewCapture.svg";
+
 import videoWalk from "../../../public/divami_icons/videoWalk.svg";
+import CaptureVideoWalk from "../../../public/divami_icons/CaptureVideoWalk.svg";
+import LidarWalk from "../../../public/divami_icons/LidarWalk.svg";
 // import droneImage from "../../../public/divami_icons/droneImage.svg";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
+import DroneImageNew from "../../../public/divami_icons/DroneImageNew.svg";
+
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import ReactCardFlip from "react-card-flip";
 import cardMenu from "../../../public/divami_icons/cardMenu.svg";
@@ -158,7 +166,7 @@ export const ProjectListCardView = ({
 
           <CapturesText>Captures so far</CapturesText>
           <CaptureImageContainer>
-            <CaptureImageIcon src={capture360Image} alt=""></CaptureImageIcon>
+            <CaptureImageIcon src={Capture360photo} alt=""></CaptureImageIcon>
             <CaptureName>360 photo - </CaptureName>
             <CaptureCount>
               {each.capture360Count?.length > 1
@@ -167,7 +175,7 @@ export const ProjectListCardView = ({
             </CaptureCount>
           </CaptureImageContainer>
           <CaptureImageContainer>
-            <CaptureImageIcon src={videoWalk} alt=""></CaptureImageIcon>
+            <CaptureImageIcon src={CaptureVideoWalk} alt=""></CaptureImageIcon>
             <CaptureName>360° Video Walk - </CaptureName>
             <CaptureCount>
               {each.captureVideoWalkCount?.length > 1
@@ -176,7 +184,10 @@ export const ProjectListCardView = ({
             </CaptureCount>
           </CaptureImageContainer>
           <CaptureImageContainer>
-            <CaptureImageIcon src={phoneImage} alt=""></CaptureImageIcon>
+            <CaptureImageIcon
+              src={PhoneImageNewCapture}
+              alt=""
+            ></CaptureImageIcon>
             <CaptureName>Phone capture - </CaptureName>
             <CaptureCount>
               {each.capturePhoneCount?.length > 1
@@ -185,7 +196,7 @@ export const ProjectListCardView = ({
             </CaptureCount>
           </CaptureImageContainer>
           <CaptureImageContainer>
-            <CaptureImageIcon src={captureLidarIcon} alt=""></CaptureImageIcon>
+            <CaptureImageIcon src={LidarWalk} alt=""></CaptureImageIcon>
             <CaptureName>Phone Video Walk - </CaptureName>
             <CaptureCount>
               {each.captureLidarCount?.length > 1
@@ -194,7 +205,7 @@ export const ProjectListCardView = ({
             </CaptureCount>
           </CaptureImageContainer>
           <CaptureImageContainer>
-            <CaptureImageIcon src={DroneImage} alt=""></CaptureImageIcon>
+            <CaptureImageIcon src={DroneImageNew} alt=""></CaptureImageIcon>
             <CaptureName>Drone - </CaptureName>
             <CaptureCount>
               {each.captureDroneCount?.length > 1

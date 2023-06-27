@@ -3,6 +3,7 @@ import Image from "next/image";
 export const ProjectsContainer = styled("div")({
   display: "flex",
   flexDirection: "column",
+
 });
 
 export const StyledFilterText = styled("div")({
@@ -151,7 +152,7 @@ export const MoreMenuIcon = styled(Image)({});
 export const ProjectCardsContainer = styled("div")({
   display: "flex",
   flexWrap: "wrap",
-  justifyContent: "center",
+  justifyContent: "flex-start",
   overflow: "auto",
   height: "calc(100vh - 70px)",
   padding: "0 20px",
@@ -261,8 +262,8 @@ export const CaptureImageContainer = styled("div")({
 });
 export const CaptureImageIcon = styled(Image)({
   marginRight: "7px",
-  width: "16px",
-  height: "16px",
+  width: "20px",
+  height: "20px",
 });
 export const CaptureName = styled("div")({
   marginRight: "5px",

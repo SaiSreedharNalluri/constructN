@@ -716,6 +716,7 @@ function BasicTabs(props: any) {
                     label: each.user?.fullName,
                   };
                 })}
+                disableClearable
                 sx={{
                   width: 300,
                   "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
@@ -1138,13 +1139,21 @@ const CustomTaskDetailsDrawer = (props: any) => {
     );
     return updatedTaskList;
   };
+
+  const onDeleteCallback = () => {
+    onClose()
+     if (setTaskList) {
+      const updatedIssuesList = deletetaskById(taskList, selectedTask);
+
+      setTaskList(updatedIssuesList);
+    }
+
+  }
+
+
   const onDeleteTask = () => {
     setshowPopUp(false);
-    deleteTheTask(selectedTask, onClose);
-    if (setTaskList) {
-      const updatedTaskList = deletetaskById(taskList, selectedTask);
-      setTaskList(updatedTaskList);
-    }
+    deleteTheTask(selectedTask, onDeleteCallback);
   };
 
   const handleCreateTask = (formData: any) => {
@@ -1270,7 +1279,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
           if (error.success === false) {
             toast.error(error?.message);
           }
-          saveEditDetails(data, projectId);
+          // FIX ME - saveEditDetails(data, projectId);
         });
     } else {
       saveEditDetails(data, projectId);

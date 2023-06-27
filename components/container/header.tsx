@@ -34,6 +34,7 @@ const Header: React.FC<IProps> = ({ breadCrumb }) => {
     let user = null;
     if (userObj) user = JSON.parse(userObj);
     if (user?.fullName) {
+      // FIX ME - REALITY
       setUser(user);
     }
   }, [router.query.projectId, router.isReady]);

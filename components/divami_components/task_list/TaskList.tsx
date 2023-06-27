@@ -111,6 +111,7 @@ import todoIcon from "../../../public/divami_icons/todoIcon.svg";
 import blockedFrame from "../../../public/divami_icons/blockedFrame.svg";
 import CompletedIconTask from "../../../public/divami_icons/CompletedIconTask.svg";
 import smallDivider from "../../../public/divami_icons/smallDivider.svg";
+import Task from "../../../public/divami_icons/Task.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -526,20 +527,7 @@ const CustomTaskListDrawer = (props: any) => {
                         }}
                       >
                         <FirstHeader>
-                          <Image
-                            src={
-                              val?.status === "In Progress"
-                                ? progressHour
-                                : val.status === "To Do"
-                                ? todoIcon
-                                : val.status === "Blocked"
-                                ? blockedFrame
-                                : val.status === "Completed"
-                                ? CompletedIconTask
-                                : todoIcon
-                            }
-                            alt="Arr"
-                          />
+                          {/* <Image src={Task} alt="Arr" /> */}
                           <TicketName>
                             {" "}
                             {val?.type} (#{val?.sequenceNumber})

@@ -34,6 +34,7 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
 import router, { useRouter } from "next/router";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
+
 import _ from "lodash";
 import {
   createAttachment,
@@ -597,6 +598,7 @@ function BasicTabs(props: any) {
                 data-testid="assignee-options"
                 disablePortal
                 id="combo-box-demo"
+                disableClearable
                 options={projectUsers.map((each: any) => {
                   return {
                     ...each,
@@ -923,27 +925,35 @@ const CustomIssueDetailsDrawer = (props: any) => {
     return updatedIssuesList;
   };
 
-  const onDeleteIssue = (status: any) => {
-    setshowPopUp(false);
-    if (deleteTheIssue) deleteTheIssue(selectedIssue, onClose);
-    if (setIssueList) {
+  const onDeleteCallback = () => {
+    onClose()
+     if (setIssueList) {
       const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
 
       setIssueList(updatedIssuesList);
     }
-  };
-  // const deleteTheAttachment = (attachmentId: string) => {
-  //   deleteAttachment(attachmentId)
-  //     .then((response) => {
-  //       if (response.success === true) {
-  //         toast(response.message);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       toast.error(error.message);
-  //     });
-  // };
 
+  }
+
+  const onDeleteIssue = (status: any) => {
+    setshowPopUp(false);
+    if (deleteTheIssue) deleteTheIssue(selectedIssue, onDeleteCallback);
+
+     const deleteTheAttachment = (attachmentId: string) => {
+    deleteAttachment(attachmentId)
+      .then((response) => {
+        if (response.success === true) {
+          toast(response.message);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
+
+   
+  };
+ 
   const DetailsObj = {
     TabOne: {
       options: [
@@ -1183,7 +1193,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
           if (error.success === false) {
             toast.error(error?.message);
           }
-          saveEditDetails(data, projectId);
+          // FIX ME - SAVE EDIT EDET saveEditDetails(data, projectId);
+        
         });
     } else {
       saveEditDetails(data, projectId);
@@ -1240,10 +1251,22 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 data-testid="back-arrow"
               />
               </div>
-              <SpanTile data-testid="issue-detail-header">
-              <TruncatedString text={selectedIssue?.title}  maxLength={20}
-              suffixLength={0}></TruncatedString>   (#{selectedIssue?.sequenceNumber})
-              </SpanTile>
+            
+              <DarkToolTip
+                title={
+                  <SecondAssigneeList>
+                    {selectedIssue?.title}
+                  </SecondAssigneeList>
+                }
+              >
+                <SpanTile data-testid="issue-detail-header">
+                  {/* {selectedIssue?.title} (#{selectedIssue?.sequenceNumber}) */}
+                  {selectedIssue?.title.length > 20
+                    ? `${selectedIssue?.title.substring(0, 9)}...`
+                    : `${selectedIssue?.title}`}{" "}
+                  (#{selectedIssue?.sequenceNumber})
+                </SpanTile>
+              </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
         <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">

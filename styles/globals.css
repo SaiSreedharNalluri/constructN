@@ -166,16 +166,15 @@
   left: auto !important;
 }
 
-
 .logout-button::before {
-  content: '';
+  content: "";
   display: block;
   position: absolute;
   top: 0;
   right: 0;
   width: 10px;
   height: 10px;
-  background-color: rgb(249 250 251 );
+  background-color: rgb(249 250 251);
   transform: translateY(-50%) rotate(45deg);
 }
 
@@ -213,7 +212,7 @@ body {
 
 .adsk-viewing-viewer .adsk-toolbar .adsk-button .toolbar-vertical-group {
   bottom: -20px;
-  left: -50px; 
+  left: -50px;
   margin: 0;
   position: absolute;
   display: grid;
@@ -222,7 +221,7 @@ body {
 }
 
 .adsk-viewing-viewer .adsk-toolbar .adsk-button .adsk-control-tooltip {
-  left: -60px; 
+  left: -60px;
   position: absolute;
   display: flex;
 
@@ -304,7 +303,9 @@ body {
 }
 
 .Toastify__toast--error::before {
-  content: url("../public/divami_icons/toastError.svg");
+  /* content: url("../public/divami_icons/toastError.svg"); */
+  content: url("../public/divami_icons/Unsuccessful.svg");
+
   /* content: none; */
   position: relative;
   z-index: 100;
@@ -589,8 +590,8 @@ td {
 .calc-h119 {
   height: calc(100vh - 119px);
 }
-.calc-h191{
-  height: calc(100vh - 191px)
+.calc-h191 {
+  height: calc(100vh - 191px);
 }
 .overflow-hidden {
   overflow: hidden;

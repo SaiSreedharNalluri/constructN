@@ -25,6 +25,8 @@ const EditProject = ({
       setValidate(true);
       handleUpdateProject(formData);
     }
+
+    
   };
   const handleFormData = (data: any) => {
     setFormData(data);

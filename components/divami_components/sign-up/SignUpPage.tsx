@@ -137,6 +137,7 @@ const SignUpPage = () => {
   //   handleRegister(formValues);
   // };
   const formHandler = (event: any) => {
+ 
     const formValues = {
       firstName: formData[0].defaultValue,
       lastName: formData[1].defaultValue,
@@ -188,7 +189,7 @@ const SignUpPage = () => {
 
   function checkPassword(str: any) {
     if (str.length > 0) {
-      let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,14}$/;
+      let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])(?!\s).{8,14}(?<!\s)$/;
       let passwordTru = rePass.test(str);
       return !passwordTru;
     } else {
@@ -220,9 +221,11 @@ const SignUpPage = () => {
         }
       })
       .catch((error) => {
-        if (error?.response?.status === 409) {
-          toast.error(error.response.data.message);
-        }
+        // if (error?.response?.status === 409) {
+        //   toast.error(error.response.data.message);
+        // }
+        toast.error(error.response.data.message);
+
         // resetForm();
         // setLoading(false);
       });

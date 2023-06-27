@@ -38,6 +38,7 @@ import progressHour from "../../../public/divami_icons/progressHour.svg";
 import todoIcon from "../../../public/divami_icons/todoIcon.svg";
 import blockedFrame from "../../../public/divami_icons/blockedFrame.svg";
 import smallDivider from "../../../public/divami_icons/smallDivider.svg";
+import issue from "../../../public/divami_icons/issue.svg";
 
 import {
   AppliedFilter,
@@ -367,12 +368,14 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
         issuePriorityData,
         issueStatusData,
         issueTypeData,
+        issueTagData,
         toDate,
       } = issueFilterState.filterData;
       if (
         (issuePriorityData?.length === 0 &&
           issueStatusData?.length == 0 &&
-          issueTypeData?.length == 0 &&
+          issueTypeData?.length == 0 && 
+          issueTagData?.length == 0 &&
           toDate === "" &&
           assigneesData === null) ||
         undefined
@@ -562,20 +565,11 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         }}
                       >
                         <FirstHeader>
-                          <Image
-                            src={
-                              val?.status === "In Progress"
-                                ? progressHour
-                                : val.status === "To Do"
-                                ? todoIcon
-                                : val.status === "Blocked"
-                                ? blockedFrame
-                                : val.status === "Completed"
-                                ? CompletedIconTask
-                                : todoIcon
-                            }
+                          {/* <Image
+                            style={{ visibility: "hidden" }}
+                            src={issue}
                             alt="Arrow"
-                          />
+                          /> */}
                           <TicketName>
                             {" "}
                             {val?.type} (#{val?.sequenceNumber})

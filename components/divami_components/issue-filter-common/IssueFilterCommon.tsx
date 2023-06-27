@@ -53,6 +53,7 @@ import CustomButton from "../custom-button/CustomButton";
 import router from "next/router";
 import { IProjectUsers } from "../../../models/IProjects";
 import {
+  getIssueTags,
   getIssuesPriority,
   getIssuesStatus,
   getIssuesTypes,
@@ -133,6 +134,15 @@ const FilterCommon: React.FC<IProps> = ({
         { optionTitle: "Completed", optionStatus: "F" },
       ],
     },
+    {
+      title: "Tags",
+      selectAllStatus: "F",
+      options: [
+        { optionTitle: "civil engineering", optionStatus: "F" },
+        { optionTitle: "architecture", optionStatus: "F" },
+        { optionTitle: "structural", optionStatus: "F" },
+      ],
+    },
   ];
 
   const [FilterState, SetFilterState] = useState<any>(Filters);
@@ -144,6 +154,7 @@ const FilterCommon: React.FC<IProps> = ({
   const [taskPriority, setTaskPriority] = useState<[string]>();
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [taskStatus, setTaskStatus] = useState<[string]>();
+  const [tagStatus, setTagStatus] = useState<[string]>();
   const assignees = {
     id: "assignes",
     type: "search",
@@ -161,6 +172,7 @@ const FilterCommon: React.FC<IProps> = ({
     data.issueTypeData = [];
     data.issuePriorityData = [];
     data.issueStatusData = [];
+    data.issueTagData = []
 
     data.assigneesData = assignee[0]?.selectedName;
 
@@ -186,17 +198,25 @@ const FilterCommon: React.FC<IProps> = ({
         y.forEach((element: any) => {
           data.issueStatusData.push(element.optionTitle);
         });
+      }else if (item.title == "Tags"){
+        const k = item.options.filter(
+          (option: any) => option.optionStatus == "T"
+        );
+        k.forEach((element: any) => {
+          data.issueTagData.push(element.optionTitle);
+        });
       }
     });
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
 
-    const { issuePriorityData, issueStatusData, issueTypeData, ...restObj } =
+    const { issuePriorityData, issueStatusData, issueTypeData, issueTagData, ...restObj } =
       data;
     const isArrEmpty: Boolean =
       issuePriorityData?.length === 0 &&
       issueStatusData?.length === 0 &&
-      issueTypeData?.length === 0;
+      issueTypeData?.length === 0 &&
+      issueTagData?.length === 0;
     const isEmpty = Object.values(restObj).every((x) => x === null || x === "");
 
     if (isArrEmpty && isEmpty) {
@@ -237,7 +257,17 @@ const FilterCommon: React.FC<IProps> = ({
       getIssuesStatus(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskStatus(response.result);
+        
         }
+      getIssueTags(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          let newArr = [...response.result[0].tagList]
+          setTagStatus(response.result[0].tagList);
+         
+        }
+      })
+
+
       });
     }
     // const filterArray =
@@ -353,6 +383,42 @@ const FilterCommon: React.FC<IProps> = ({
             }),
           };
         }
+        
+        if (item.title === "Tags"){
+          let selectAllStatus = "F";
+          if (issueFilterState.isFilterApplied) {
+            if (
+              item.options?.length ===
+              issueFilterState.filterData.issueTagData?.length
+            ) {
+              selectAllStatus = "T";
+            } else if (issueFilterState.filterData?.issueTagData?.length) {
+              selectAllStatus = "I";
+            }
+          }
+          return {
+            ...item,
+            selectAllStatus: selectAllStatus,
+            options: tagStatus?.map((eachItem: any) => {
+              if (issueFilterState.isFilterApplied) {
+                if (
+                  issueFilterState.filterData.issueTagData.includes(eachItem)
+                ) {
+                  return {
+                    ...eachItem,
+                    optionTitle: eachItem,
+                    optionStatus: "T",
+                  };
+                }
+              }
+              return {
+                ...eachItem,
+                optionTitle: eachItem,
+                optionStatus: "F",
+              };
+            }),
+          };
+        }
         return item;
       });
     });
@@ -378,7 +444,7 @@ const FilterCommon: React.FC<IProps> = ({
         defaultValue: issueFilterState.filterData.fromDate,
       },
     ]);
-  }, [taskType, taskStatus, projectUsers, taskPriority]);
+  }, [taskType, taskStatus, tagStatus, projectUsers, taskPriority]);
 
   // Select All Handling
   const handleAllSelection = (item: any, index: number) => {
