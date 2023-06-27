@@ -121,6 +121,7 @@ import ActivityLog from "../task_detail/ActivityLog";
 import Chip from "@mui/material/Chip";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
+import { CustomToast } from "../custom-toaster/CustomToast";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -1186,12 +1187,14 @@ const CustomIssueDetailsDrawer = (props: any) => {
         .then((response) => {
           if (!response.success) {
             toast.error("Error uploading attachments");
+          
           }
           saveEditDetails(data, projectId);
         })
         .catch((error) => {
           if (error.success === false) {
-            toast.error(error?.message);
+            
+            CustomToast(error?.message, "error", 3000);
           }
         
         });

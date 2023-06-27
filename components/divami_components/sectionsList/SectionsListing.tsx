@@ -685,7 +685,11 @@ const SectionsListing = () => {
         color: "#101F4C",
       },
       render: (rowData: any) => {
-        return <>{moment(rowData.lastUpdated).format("DD MMM YYYY")}</>;
+        return <>{
+          rowData?.lastUpdated ?
+          moment(rowData.lastUpdated).format("DD MMM YYYY")
+          : "-"
+          }</>;
       },
     },
   ];
