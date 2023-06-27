@@ -420,7 +420,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     variant="outlined"
                     value={searchTerm}
                     autoFocus={true}
-                    onChange={(e) => {
+                    onChange={(e: any) => {
                       setSearchTerm(e.target.value);
                     }}
                     InputLabelProps={{ shrink: false }}
