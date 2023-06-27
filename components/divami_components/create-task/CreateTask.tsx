@@ -29,7 +29,7 @@ const CreateTask = ({
   deleteTheAttachment,
 }: any) => {
   const router = useRouter();
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);
   const [tagList, setTagList] = useState<[string]>([""]);
   const [showPopUp, setshowPopUp] = useState(false);
@@ -40,7 +40,23 @@ const CreateTask = ({
       setshowPopUp(true);
     } else {
       setValidate(true);
-      handleCreateTask(formData);
+      let isError = 0;
+
+      const dateIndex = formData?.findIndex((ele: any) => ele.id === "dates");
+      if (dateIndex !== -1) {
+        if (formData[dateIndex].fields[0].isError && formData[dateIndex].fields[0].isError){
+            isError++
+        }
+      }
+      for(let i = 0; i < formData.length; i++){
+        if(formData[i].isReq === true && formData[i].isError === true){
+          isError++;
+        }
+      }
+      if(isError == 0){
+        setValidate(true);
+        handleCreateTask(formData);
+      }
     }
   };
 

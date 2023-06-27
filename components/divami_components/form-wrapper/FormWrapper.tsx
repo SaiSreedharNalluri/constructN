@@ -22,9 +22,7 @@ import PasswordRequired from "../password-field/PasswordRequired";
 interface ContainerProps {
   loginField: boolean;
 }
-// const FormElementContainer = styled(Box)({
-//   marginTop: "40px",
-// });
+
 const FormElementContainer = styled(Box)<ContainerProps>`
   margin-top: ${(props) => (props.loginField ? "30px" : "40px")};
 `;
@@ -108,7 +106,7 @@ const FormWrapper = (props: any) => {
               return {
                 ...item,
                 isError: true,
-                // errorMsg: "First Name should be less than 30 characters",
+               
                 showErrorMsg: true,
               };
             }
@@ -118,39 +116,48 @@ const FormWrapper = (props: any) => {
               return {
                 ...item,
                 isError: true,
-                // errorMsg: "First Name should be less than 30 characters",
+               
                 showErrorMsg: true,
               };
             }
+          }else if (item.isValidField == false && item.id === "title" && item.maxLength){
+         
+            if(!textMaxLength(item.defaultValue, item.id)){
+              if(setCanBeDisabled) setCanBeDisabled(false);
+              return{
+                ...item,
+                isError: true,
+                showErrorMsg: true,
+              }
+            }else{
+              return {
+                ...item, isError: false
+              }
+            }
           }
-          // else if (item.isValidField === false && item.id === "title") {
-          //   if (!namesCharLimit(item.defaultValue, item.id)) {
-          //     if (setCanBeDisabled) setCanBeDisabled(false);
-          //     return {
-          //       ...item,
-          //       isError: true,
-          //       // errorMsg: "First Name should be less than 30 characters",
-          //       showErrorMsg: true,
-          //     };
-          //   }
-          // }
+
+         
           else if (item.isValidField === false && item.id === "email") {
             if (!isValidEmail(item.defaultValue, item.id)) {
               if (setCanBeDisabled) setCanBeDisabled(false);
               return {
                 ...item,
-                isError: true,
-                errorMsg: "Invalid User Email",
-                showErrorMsg: true,
+               isError: true,
+               errorMsg: "Invalid User Email",
+               showErrorMsg: true,
               };
             }
-          } else if (item.isValidField === false && item.id === "password") {
+            else {
+              return { ...item, isError: false };
+            }
+          }
+          
+          else if (item.isValidField === false && item.id === "password") {
             if (!checkPassword(item.defaultValue, item.id)) {
               if (setCanBeDisabled) setCanBeDisabled(false);
               return {
                 ...item,
                 isError: true,
-                // errorMsg: <PasswordRequired showPasswordMenu={true} />,
                 errorMsg: "Password is weak",
                 showErrorMsg: true,
               };
@@ -181,8 +188,7 @@ const FormWrapper = (props: any) => {
     id: string,
     type?: string,
     parentId?: string,
-    maxLength?: number
-  ) => {
+  ) => { 
     if (type === "doubleField") {
       setFormConfig((prev: any) => {
         return prev.map((each: any) => {
@@ -211,9 +217,7 @@ const FormWrapper = (props: any) => {
           if (id === item.id) {
             return {
               ...item,
-              defaultValue: !maxLength
-                ? e.target.value
-                : e.target.value.slice(0, maxLength),
+              defaultValue: e.target.value,
             };
           }
           return item;
@@ -225,7 +229,6 @@ const FormWrapper = (props: any) => {
   // callback function passed from the parent
   const sendDataToParent = (e: any) => {
     if (onData) {
-      //   onData(inputValue);
       onData(e.target.value);
     }
   };
@@ -370,10 +373,7 @@ const FormWrapper = (props: any) => {
     );
   };
   function checkDataisEmpty() {
-    // const isEmptyField = config.some(
-    //   (val: any) => !val.defaultValue && val.isReq
-    // );
-    //  if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
+  
 
     const regex = /^[^\s][^\s]*$/;
     const maxLimit = 20; // Maximum character limit for firstName and lastName fields
@@ -468,6 +468,88 @@ const FormWrapper = (props: any) => {
     }
     return isValid;
   }
+  
+  function calculateEmptySpaces(string:string) {
+    if(string.length === 0) return [0,0]
+    const leftSpaces = string.length - string.trimStart().length;
+    const rightSpaces = string.length - string.trimEnd().length;
+    return leftSpaces + rightSpaces == 0
+  }
+
+
+  function textMaxLength(textLength:string, id:string){
+    let isValid = false    
+    const maxLimit = 30;
+    const regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?0-9]/;
+    if(textLength.length > maxLimit){
+      setFormConfig((prev: any) =>
+      prev.map((item: any) => {
+        if (id === item.id) {
+          let fieldName;
+          if (id === "firstName") {
+            fieldName = "First name";
+          } else if (id === "lastName") {
+            fieldName = "Last name";
+          } else if (id === "title") {
+            fieldName = "Title" || "title";
+          } else {
+            fieldName = id;
+          }
+          return {
+            ...item,
+            isValidField: false,
+            isError: true,
+            errorMsg: `${fieldName} should not be greater than ${maxLimit} characters`,
+          };
+        }
+        return item;
+      })
+    );
+    } else if (regex.test(textLength)) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+              errorMsg: "Special Characters and Numbers are not allowed",
+            };
+          }
+          return item;  
+        })
+      );
+    }else if (!calculateEmptySpaces(textLength)){
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+              errorMsg: "No leading or trailing spaces are allowed",
+            };
+          }
+          return item;  
+        })
+      );
+    }
+    else {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: true,
+              isError: false,
+            };
+          }
+          return item;
+        })
+      );
+    }
+    return isValid
+  }
 
   function isValidEmail(email: any, id: any) {
     let isValid = false;
@@ -500,15 +582,15 @@ const FormWrapper = (props: any) => {
       );
     }
     return isValid;
-    // return /\S+@\S+\.\S+/.test(email);
   }
 
+ 
+
   function checkPassword(str: any, id: any) {
-    let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,14}$/;
+    let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])(?!\s).{8,14}(?<!\s)$/;;
     let passwordTru = rePass.test(str);
     let isValid = false;
     setShowMessage(!passwordTru);
-
     if (passwordTru) {
       isValid = true;
       setFormConfig((prev: any) =>
@@ -573,9 +655,7 @@ const FormWrapper = (props: any) => {
     }
   }
 
-  // const handlePasswordField = () => {
-  //   return <div>Hello</div>;
-  // };
+  
   const renderHTML = (
     data: any,
     isDisabled: boolean,
@@ -657,7 +737,7 @@ const FormWrapper = (props: any) => {
                   data.id,
                   parentType,
                   parentId,
-                  parseInt(data.maxLength)
+                   
                 );
 
                 if (data.id === "password") {
@@ -672,10 +752,7 @@ const FormWrapper = (props: any) => {
                   namesCharLimit(data?.defaultValue, data.id);
                   return;
                 }
-                // else if (data.id === "title") {
-                //   namesCharLimit(data?.defaultValue, data.id);
-                //   return;
-                // }
+              
                 else if (data.id === "email") {
                   isValidEmail(data?.defaultValue, data.id);
                   return;
@@ -687,6 +764,9 @@ const FormWrapper = (props: any) => {
                 } else if (data.id === "confirm_password") {
                   matchpassword(data?.defaultValue, data.id);
                   return;
+                } else if (data.maxLength === 30){
+                  textMaxLength(data?.defaultValue, data.id)
+                  return
                 }
                 handleTextChange(e, data.id, parentType, parentId);
               }}

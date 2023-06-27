@@ -52,6 +52,7 @@ export const SearchGlassIcon = styled(Image)({
   cursor: "pointer",
 });
 
+
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   marginLeft: "15px",
@@ -125,14 +126,18 @@ export const BodyContTitle = styled("div")({
 export const SecondHeader = styled("div")({
   display: "flex",
   //   border: "1px solid aqua",
-  marginLeft: "34px",
+  // marginLeft: "34px",
+  marginLeft: "10px",
+
   marginTop: "5px",
 });
 
 export const ThirdHeader = styled("div")({
   display: "flex",
   //   border: "1px solid aqua",
-  marginLeft: "34px",
+  // marginLeft: "34px",
+  marginLeft: "10px",
+
   marginTop: "5px",
 });
 
@@ -428,3 +433,10 @@ export const Watcher = styled("div")({
   color: "#FF843F",
   marginLeft: "5px",
 });
+
+
+export const CloseIcon = styled(Image)((props: any) => ({
+  cursor: "pointer",
+  width: props.isSmall ? "15px" : "24px",
+  height: props.isSmall ? "17px" : "24px",
+})) as any;

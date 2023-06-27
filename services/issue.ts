@@ -73,6 +73,21 @@ export const getIssuesStatus = async (projectId: string) => {
       throw error.response.data;
     });
 };
+
+export const getIssueTags = async (projectId: string) => {
+ 
+    return await instance
+    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tags`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
+
 export const deleteIssue = async (projectId: string, IssueId: string) => {
   return await instance
     .delete(

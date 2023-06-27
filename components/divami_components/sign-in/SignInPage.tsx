@@ -26,7 +26,7 @@ import Logo from "../../../public/divami_icons/Logo.svg";
 import Checked from "../../../public/divami_icons/checked.svg";
 import UnChecked from "../../../public/divami_icons/unchecked.svg";
 
-import { setCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { login } from "../../../services/userAuth";
@@ -34,13 +34,13 @@ import { Mixpanel } from "../../analytics/mixpanel";
 import FooterSignIn from "./FooterSignIn";
 import FormBody from "./FormBody";
 import CustomLoader from "../custom_loader/CustomLoader";
+import { CustomToast } from "../custom-toaster/CustomToast";
 
 const SignInPage = () => {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  useEffect(() => {}, [rememberMe]);
   const [checked, setChecked] = React.useState(true);
   // form wrapper code
   const [formData, setFormData] = useState<any>(null);
@@ -85,29 +85,20 @@ const SignInPage = () => {
         if (response.success === true) {
           if (response?.result?.verified) {
             localStorage.setItem("userInfo", response.result?.fullName);
-            // if (rememberMe) {
-            // let newProperty = response?.result;
-            // let userProfileObj = {
-            //   rememberMe: rememberMe ? "T" : "",
-            //   ...response?.result,
-            // };
+           
 
             let userProfileObj = {
               rememberMe: rememberMe,
               ...response?.result,
+              password: rememberMe ? password : '',
+              email: rememberMe ? email : '',
             };
-            // {...newProp,rememberMe}
-            // setCookie("user", JSON.stringify(response?.result));
-            // setCookie("user", JSON.stringify(userProfileObj));
+            localStorage.setItem("userCredentials", JSON.stringify(userProfileObj))
             setCookie("user", userProfileObj);
-
-            // }
-            toast.success("user logged in sucessfully");
-
+            CustomToast("User logged in successfully", "success");
             router.push("/projects");
           } else {
-            // setOpen(true);
-            // router.push("/verify_page");
+     
 
             router.push(
               {
@@ -129,7 +120,9 @@ const SignInPage = () => {
           error.message ||
           error.toString();
 
-        toast.error("Invalid User Credentials");
+        // toast.error(error.response.data.message);
+        CustomToast(error.response.data.message, "error");
+
         setLoading(false);
 
         Mixpanel.track("login_fail", {

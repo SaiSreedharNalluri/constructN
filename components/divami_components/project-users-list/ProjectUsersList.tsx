@@ -5,6 +5,9 @@ import {
   ThemeProvider,
   Tooltip,
 } from "@mui/material";
+import { styled } from "@mui/system";
+
+import { tooltipClasses, TooltipProps } from "@mui/material";
 
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -87,6 +90,18 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     filterData: {},
     numberOfFilters: 0,
   });
+  const SecondAssigneeList = styled("div")({
+    background: "white",
+
+    padding: "15px",
+    color: "#101F4C",
+    fontSize: "14px",
+    border: "1px solid #D9D9D9",
+    fontStyle: "Open Sans",
+
+    boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
+    borderRadius: "4px",
+  });
   const columns = [
     {
       title: "User Name",
@@ -112,7 +127,18 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                 {rowData.lastName?.charAt(0)?.toUpperCase()}
               </UserDefaultIcon>
             )}
-            <UserNameText>{rowData.fullName}</UserNameText>
+
+            <TooltipText title={rowData.fullName}>
+              <UserNameText>
+                {rowData.fullName.length > 40
+                  ? `${rowData.fullName
+                      .substring(0, 7)
+                      .charAt(0)
+                      .toUpperCase()}${rowData.fullName.substring(1, 7)}...`
+                  : rowData.fullName.charAt(0).toUpperCase() +
+                    rowData.fullName.slice(1)}
+              </UserNameText>
+            </TooltipText>
           </UserName>
         );
       },

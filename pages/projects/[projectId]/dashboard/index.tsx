@@ -8,6 +8,7 @@ const Index: React.FC = () => {
   const router = useRouter();
   const [tabIndex, setTabIndex] = useState(0);
   const [loadData, setLoadData] = useState(false);
+  const breadCrumbsData = [{ name: "Dashboard" }];
   const [urlObj, setUrlObj] = useState<{
     dashboard_url: string;
     report_url: string;
@@ -28,7 +29,12 @@ const Index: React.FC = () => {
     <React.Fragment>
       <div>
         <div>
-          <Header />
+          <Header
+            showBreadcrumbs
+            breadCrumbData={breadCrumbsData}
+            fromUsersList
+            showFirstElement={true}
+          />
           <div className="flex w-screen fixed">
             <div>
               <SidePanelMenu onChangeData={() => {}} />

@@ -45,6 +45,7 @@ import {
   FilterCardSelectAllTextHeader,
 } from "./StyledComponent";
 import {
+  getTaskTags,
   getTasksList,
   getTasksPriority,
   getTaskStatus,
@@ -75,6 +76,7 @@ interface IProps {
   taskType: any;
   taskPriority: any;
   taskStatus: any;
+  taskTag:any;
   projectUsers: any;
 }
 
@@ -105,6 +107,8 @@ const TaskFilterCommon: React.FC<any> = ({
   const [taskPrioritys, setTaskPriority] = useState<[string]>();
   const [projectUserss, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [taskStatuss, setTaskStatus] = useState<[string]>();
+  const [tagStatus, setTagStatus] = useState<[string]>();
+
 
   const Filters = [
     {
@@ -138,6 +142,16 @@ const TaskFilterCommon: React.FC<any> = ({
         { optionTitle: "Blocked", optionStatus: "T" },
         { optionTitle: "To-do", optionStatus: "F" },
         { optionTitle: "Completed", optionStatus: "F" },
+      ],
+    },
+    {
+      title: "Tags",
+      code:"taskTag",
+      selectAllStatus: "F",
+      options: [
+        { optionTitle: "civil engineering", optionStatus: "F" },
+        { optionTitle: "architecture", optionStatus: "F" },
+        { optionTitle: "structural", optionStatus: "F" },
       ],
     },
   ];
@@ -183,6 +197,13 @@ const TaskFilterCommon: React.FC<any> = ({
       getTaskStatus(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskStatus(response.result);
+        }
+      });
+      getTaskTags(router.query.projectId as string).then((response) => {
+        if (response.success === true) {
+          let newArr = [...response.result[0].tagList]
+          setTagStatus(response.result[0].tagList);
+         
         }
       });
     }
@@ -296,6 +317,42 @@ const TaskFilterCommon: React.FC<any> = ({
             }),
           };
         }
+        if (item.code === "taskTag"){
+          let selectAllStatus = "F";
+          if (taskFilterState.isFilterApplied) {
+            if (
+              item.options?.length ===
+              taskFilterState.filterData.taskTag?.length
+            ) {
+              selectAllStatus = "T";
+            } else if (taskFilterState.filterData?.taskTag?.length) {
+              selectAllStatus = "I";
+            }
+          }
+          return {
+            ...item,
+            selectAllStatus: selectAllStatus,
+            options: tagStatus?.map((eachItem: any) => {
+              if (taskFilterState.isFilterApplied) {
+                if (
+                  taskFilterState.filterData.taskTag.includes(eachItem)
+                ) {
+                  return {
+                    ...eachItem,
+                    optionTitle: eachItem,
+                    optionStatus: "T",
+                  };
+                }
+              }
+              return {
+                ...eachItem,
+                optionTitle: eachItem,
+                optionStatus: "F",
+              };
+            }),
+          };
+        }
+        
         return item;
       });
     });
@@ -313,7 +370,7 @@ const TaskFilterCommon: React.FC<any> = ({
         };
       });
     });
-  }, [taskTypes, taskStatuss, projectUserss, taskPrioritys]);
+  }, [taskTypes, taskStatuss, projectUserss, taskPrioritys, tagStatus]);
   if (projectUserss?.length > 0) {
     projectUserss?.map((projectUser: any) => {
       // usersList.push({
@@ -430,6 +487,8 @@ const TaskFilterCommon: React.FC<any> = ({
     data.taskType = [];
     data.taskPriority = [];
     data.taskStatus = [];
+    data.taskTag = []
+
     data.assigneesData = assignee[0]?.selectedName;
     FilterState.forEach((item: any) => {
       if (item.code == "taskType") {
@@ -452,6 +511,13 @@ const TaskFilterCommon: React.FC<any> = ({
         );
         y.forEach((element: any) => {
           data.taskStatus.push(element.optionTitle);
+        });
+      }else if (item.code == "taskTag"){
+        const k = item.options.filter(
+          (option: any) => option.optionStatus == "T"
+        );
+        k.forEach((element: any) => {
+          data.taskTag.push(element.optionTitle);
         });
       }
     });
