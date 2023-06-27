@@ -85,12 +85,7 @@ const SignInPage = () => {
         if (response.success === true) {
           if (response?.result?.verified) {
             localStorage.setItem("userInfo", response.result?.fullName);
-            // if (rememberMe) {
-            // let newProperty = response?.result;
-            // let userProfileObj = {
-            //   rememberMe: rememberMe ? "T" : "",
-            //   ...response?.result,
-            // };
+           
 
             let userProfileObj = {
               rememberMe: rememberMe,
@@ -99,19 +94,11 @@ const SignInPage = () => {
               email: rememberMe ? email : '',
             };
             localStorage.setItem("userCredentials", JSON.stringify(userProfileObj))
-            // {...newProp,rememberMe}
-            // setCookie("user", JSON.stringify(response?.result));
-            // setCookie("user", JSON.stringify(userProfileObj));
             setCookie("user", userProfileObj);
-
-            // }
-           
-            CustomToast("User logged in sucessfully", "success");
-
+            CustomToast("User logged in successfully", "success");
             router.push("/projects");
           } else {
-            // setOpen(true);
-            // router.push("/verify_page");
+     
 
             router.push(
               {

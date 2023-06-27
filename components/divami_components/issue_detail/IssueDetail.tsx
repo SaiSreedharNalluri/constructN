@@ -1259,10 +1259,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 }
               >
                 <SpanTile data-testid="issue-detail-header">
-                  {/* {selectedIssue?.title} (#{selectedIssue?.sequenceNumber}) */}
-                  {selectedIssue?.title.length > 20
-                    ? `${selectedIssue?.title.substring(0, 9)}...`
-                    : `${selectedIssue?.title}`}{" "}
+                  {
+                    selectedIssue?.title ?
+                    ( selectedIssue?.title?.length >= 20 ?
+                      `${selectedIssue?.title.substring(0, 16)}...`
+                      : `${selectedIssue?.title}`
+                    ): ""
+                  }
                   (#{selectedIssue?.sequenceNumber})
                 </SpanTile>
               </DarkToolTip>

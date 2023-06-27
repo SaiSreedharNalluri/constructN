@@ -337,6 +337,7 @@ const Index: React.FC<any> = () => {
     return a.length !== noDups.size;
   }
 
+  // project configuration handlesubmit
   const handleSubmit = async () => {
     const containsEmptyString = formValues.priority.some(
       (item: any) => item.length === 0
@@ -382,9 +383,16 @@ const Index: React.FC<any> = () => {
         toast.success("Tag list updated successfully");
       }
       setShowbutton(false);
-      // setSubmittedValues(formValues);
-    } catch (error) {
-      console.log("Error:", error);
+    } catch (error:any) {
+    
+        if(error && error?.success === false){
+          if(error.message === 'Forbidden Access'){
+             toast.error("Not authorized. Ask the Project Admin for help")
+          }else{
+            toast.error("Project Config could not be updated")
+          }
+          
+        }
     }
   };
   const [isChatActive, setChatStatus] = React.useState(false);

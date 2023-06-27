@@ -1366,14 +1366,14 @@ const Index: React.FC<IProps> = () => {
           toolClicked(issueMenuInstance);
         }
 
-        if(!response.success && response.status === 403){
-          toast.error("You can't delete an issue. Ask the Project Admin for help")
-        }else{
-          toast.error("Issue could not be deleted")
-        }
+     
       })
       .catch((error) => {
-        console.log(error)
+        if(!error.success && error.message === "Forbidden Access"){
+          toast.error("You can't delete a task. Ask the Project Admin for help")
+        }else{
+          toast.error("Task could not be deleted")
+        }
       });
   };
 
@@ -1394,15 +1394,13 @@ const Index: React.FC<IProps> = () => {
 
           toolClicked(taskMenuInstance);
         }
-
-        if(!response.success && response.status === 403){
-          toast.error("You can't delete an issue. Ask the Project Admin for help")
-        }else{
-          toast.error("Issue could not be deleted")
-        }
       })
       .catch((error) => {
-        console.log("error", error);
+        if(!error.success && error.message === "Forbidden Access"){
+          toast.error("You can't delete a task. Ask the Project Admin for help")
+        }else{
+          toast.error("Task could not be deleted")
+        }
       });
   };
 
