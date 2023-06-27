@@ -71,7 +71,6 @@ const PasswordRequired = ({ passwordString }: { passwordString: string }) => {
     const leftSpaces = string.length - string.trimStart().length;
     const rightSpaces = string.length - string.trimEnd().length;
     return leftSpaces + rightSpaces == 0
-  //  return leftSpaces + rightSpaces > 0
   }
 
   return (

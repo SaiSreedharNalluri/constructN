@@ -9,8 +9,7 @@ import { Height } from "@mui/icons-material";
 
 export const ConfigurationBox = styled("div")({
   display: "flex",
-  // width:"585px",
-  // height: "360px",
+  
 });
 
 export const SideMenuConfig = styled("div")({
@@ -121,18 +120,11 @@ export const TextFieldContainer = styled("div")<ContainerTextFieldProps>({
   alignItems: "center",
 });
 
-// export const RemoveButton = styled("div")((props) => => ({
-//    cursor: "pointer",
-//   position: "relative",
-//   left: "-30px",
-//   top: "10px",
-// })
-  
+
 export const RemoveButton = styled("div")((props: any) => ({
    cursor: "pointer",
   position: "relative",
   left: "-30px",
-  // top: "10px",
   top: props.errorPriority ? "-3px" : "10px", 
 })) as any;
 
@@ -140,15 +132,11 @@ export const RemoveLogo = styled(Image)({
   width: "24px",
   height: "24px",
 });
- // cursor: "pointer",
-  // position: "relative",
-  // left: "-10px",
-  // top: "10px",
+
 export const AddButton = styled("div")((props: any) => ({
  cursor: "pointer",
   position: "relative",
   left: "-10px",
-  // top: "10px",
   top: props.errorPriority ? "-3px" : "10px", 
 })) as any;
 

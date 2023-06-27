@@ -36,12 +36,6 @@ const CreateTask = ({
   const [canBeDisabled, setCanBeDisabled] = useState(false);
 
   const formHandler = (event: any) => {
-    // if (event === "Cancel") {
-    //   setshowPopUp(true);
-    // } else {
-    //   setValidate(true);
-    //   handleCreateTask(formData);
-    // }
     if (event === "Cancel") {
       setshowPopUp(true);
     } else {

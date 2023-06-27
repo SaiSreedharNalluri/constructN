@@ -270,21 +270,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setOpenDrawer(true);
   };
 
-  // const sortDateOrdering = () => {
-  //   let sorted;
-  //   if (sortOrder === "asc") {
-  //     sorted = filteredIssuesList.sort((a: any, b: any) => {
-  //       return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
-  //     });
-  //     setSortOrder("desc");
-  //   } else {
-  //     sorted = filteredIssuesList.sort((a: any, b: any) => {
-  //       return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
-  //     });
-  //     setSortOrder("asc");
-  //   }
-  //   setFilteredIssuesList(sorted);
-  // };
+ 
 
   const handleSearchWindow = () => {
     if (searchTerm === "") {
@@ -392,7 +378,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     <>
       {errorShow.length > 0 ? (
         <TaskListContainer
-          // ref={docRef}
           id="download-test"
         >
           <HeaderContainer>
@@ -565,11 +550,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         }}
                       >
                         <FirstHeader>
-                          {/* <Image
-                            style={{ visibility: "hidden" }}
-                            src={issue}
-                            alt="Arrow"
-                          /> */}
+                         
                           <TicketName>
                             {" "}
                             {val?.type} (#{val?.sequenceNumber})

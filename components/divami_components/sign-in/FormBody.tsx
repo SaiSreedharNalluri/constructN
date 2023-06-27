@@ -111,9 +111,7 @@ const FormBody = ({
           console.log("Error parsing stored object:",error)
         }
        }
-      //  console.log("CREDENTIALS",userCredentials)
-   
-      // console.log("TEST",userCredentials, userCredentials.password)
+     
      
     }
 

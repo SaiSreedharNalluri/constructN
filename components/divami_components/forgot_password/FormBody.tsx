@@ -51,9 +51,7 @@ const FormBody = ({
         count++;
       }
     });
-    // if (count === 0) {
-    //   setCanBeDisabled(true);
-    // }
+ 
   }, [formConfig]);
   return (
     <>

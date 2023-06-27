@@ -1279,7 +1279,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
           if (error.success === false) {
             toast.error(error?.message);
           }
-          // FIX ME - saveEditDetails(data, projectId);
         });
     } else {
       saveEditDetails(data, projectId);

@@ -527,7 +527,6 @@ const CustomTaskListDrawer = (props: any) => {
                         }}
                       >
                         <FirstHeader>
-                          {/* <Image src={Task} alt="Arr" /> */}
                           <TicketName>
                             {" "}
                             {val?.type} (#{val?.sequenceNumber})

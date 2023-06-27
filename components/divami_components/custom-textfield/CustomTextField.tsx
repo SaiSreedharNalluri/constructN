@@ -100,25 +100,20 @@ const StyledTextField = styled(TextField)((props: any) => ({
   },
 })) as any;
 const ErrorShowcase = styled("div")({
-  // border: "2px solid blue",
   paddingTop: "6px",
   display: "flex",
   alignItems: "center",
-  // background: "blue",
 });
 
 const ErrorShowPrioritycase = styled("div")({
-  // border: "2px solid blue",
   paddingTop: "6px",
   marginLeft: "18px",
   display: "flex",
   alignItems: "center",
-  // background: "blue",
 });
 const HeaderImageLogo = styled(Image)({});
 const ErrorShowText = styled("div")({
   marginLeft: "4px",
-  // border: "2px solid blue",
 });
 const ErrorShowPriorityText = styled("div")({
   marginLeft: "4px",
@@ -126,7 +121,6 @@ const ErrorShowPriorityText = styled("div")({
   fontWeight: 400,
   fontSize: "14px",
   color: "rgba(236, 52, 52, 1)",
-  // border: "2px solid blue",
 });
 export const CustomTextField = (props: any) => {
   const reff = useRef<any>(null);
@@ -291,7 +285,7 @@ export const CustomTextField = (props: any) => {
           <ErrorShowText>{errorMsg}</ErrorShowText>
         </ErrorShowcase>
       ) : (
-        // <div style={{ height: "30px" }}></div>
+        
         ""
       )}
 
@@ -301,7 +295,7 @@ export const CustomTextField = (props: any) => {
           <ErrorShowPriorityText>{errorPriority}</ErrorShowPriorityText>
         </ErrorShowPrioritycase>
       ) : (
-        // <div style={{ height: "30px" }}></div>
+        
         ""
       )}
     </div>

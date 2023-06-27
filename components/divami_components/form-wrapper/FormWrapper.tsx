@@ -22,9 +22,7 @@ import PasswordRequired from "../password-field/PasswordRequired";
 interface ContainerProps {
   loginField: boolean;
 }
-// const FormElementContainer = styled(Box)({
-//   marginTop: "40px",
-// });
+
 const FormElementContainer = styled(Box)<ContainerProps>`
   margin-top: ${(props) => (props.loginField ? "30px" : "40px")};
 `;
@@ -108,7 +106,7 @@ const FormWrapper = (props: any) => {
               return {
                 ...item,
                 isError: true,
-                // errorMsg: "First Name should be less than 30 characters",
+               
                 showErrorMsg: true,
               };
             }
@@ -118,7 +116,7 @@ const FormWrapper = (props: any) => {
               return {
                 ...item,
                 isError: true,
-                // errorMsg: "First Name should be less than 30 characters",
+               
                 showErrorMsg: true,
               };
             }
@@ -138,17 +136,7 @@ const FormWrapper = (props: any) => {
             }
           }
 
-          // else if (item.isValidField === false && item.id === "title") {
-          //   if (!namesCharLimit(item.defaultValue, item.id)) {
-          //     if (setCanBeDisabled) setCanBeDisabled(false);
-          //     return {
-          //       ...item,
-          //       isError: true,
-          //       // errorMsg: "First Name should be less than 30 characters",
-          //       showErrorMsg: true,
-          //     };
-          //   }
-          // }
+         
           else if (item.isValidField === false && item.id === "email") {
             if (!isValidEmail(item.defaultValue, item.id)) {
               if (setCanBeDisabled) setCanBeDisabled(false);
@@ -170,7 +158,6 @@ const FormWrapper = (props: any) => {
               return {
                 ...item,
                 isError: true,
-                // errorMsg: <PasswordRequired showPasswordMenu={true} />,
                 errorMsg: "Password is weak",
                 showErrorMsg: true,
               };
@@ -201,7 +188,6 @@ const FormWrapper = (props: any) => {
     id: string,
     type?: string,
     parentId?: string,
- //   maxLength?: number
   ) => { 
     if (type === "doubleField") {
       setFormConfig((prev: any) => {
@@ -231,9 +217,6 @@ const FormWrapper = (props: any) => {
           if (id === item.id) {
             return {
               ...item,
-              // defaultValue: !maxLength
-              //   ? e.target.value
-              //   : e.target.value.slice(0, maxLength),
               defaultValue: e.target.value,
             };
           }
@@ -246,7 +229,6 @@ const FormWrapper = (props: any) => {
   // callback function passed from the parent
   const sendDataToParent = (e: any) => {
     if (onData) {
-      //   onData(inputValue);
       onData(e.target.value);
     }
   };
@@ -391,10 +373,7 @@ const FormWrapper = (props: any) => {
     );
   };
   function checkDataisEmpty() {
-    // const isEmptyField = config.some(
-    //   (val: any) => !val.defaultValue && val.isReq
-    // );
-    //  if (setCanBeDisabled) setCanBeDisabled(isEmptyField);
+  
 
     const regex = /^[^\s][^\s]*$/;
     const maxLimit = 20; // Maximum character limit for firstName and lastName fields
@@ -495,7 +474,6 @@ const FormWrapper = (props: any) => {
     const leftSpaces = string.length - string.trimStart().length;
     const rightSpaces = string.length - string.trimEnd().length;
     return leftSpaces + rightSpaces == 0
-  //  return leftSpaces + rightSpaces > 0
   }
 
 
@@ -521,7 +499,6 @@ const FormWrapper = (props: any) => {
             ...item,
             isValidField: false,
             isError: true,
-            // errorMsg: "Name should be less than 30 characters",
             errorMsg: `${fieldName} should not be greater than ${maxLimit} characters`,
           };
         }
@@ -605,7 +582,6 @@ const FormWrapper = (props: any) => {
       );
     }
     return isValid;
-    // return /\S+@\S+\.\S+/.test(email);
   }
 
  
@@ -679,9 +655,7 @@ const FormWrapper = (props: any) => {
     }
   }
 
-  // const handlePasswordField = () => {
-  //   return <div>Hello</div>;
-  // };
+  
   const renderHTML = (
     data: any,
     isDisabled: boolean,
@@ -763,7 +737,7 @@ const FormWrapper = (props: any) => {
                   data.id,
                   parentType,
                   parentId,
-                  // parseInt(data.maxLength)
+                   
                 );
 
                 if (data.id === "password") {
@@ -778,10 +752,7 @@ const FormWrapper = (props: any) => {
                   namesCharLimit(data?.defaultValue, data.id);
                   return;
                 }
-                // else if (data.id === "title") {
-                //   namesCharLimit(data?.defaultValue, data.id);
-                //   return;
-                // }
+              
                 else if (data.id === "email") {
                   isValidEmail(data?.defaultValue, data.id);
                   return;
@@ -794,7 +765,6 @@ const FormWrapper = (props: any) => {
                   matchpassword(data?.defaultValue, data.id);
                   return;
                 } else if (data.maxLength === 30){
-                //  alert("TEST2")
                   textMaxLength(data?.defaultValue, data.id)
                   return
                 }
