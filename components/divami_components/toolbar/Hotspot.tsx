@@ -47,6 +47,9 @@ const Hotspot = () => {
               onClick={() => {
                 openHotspotCreateFn();
               }}
+              onTouchEnd={() => {
+                openHotspotCreateFn();
+              }}
               width={12}
               height={12}
             />
@@ -59,6 +62,10 @@ const Hotspot = () => {
               src={fileTextIcon}
               alt="Arrow"
               onClick={() => {
+                // openIssueListFn();
+                handleViewTaskList();
+              }}
+              onTouchEnd={() => {
                 // openIssueListFn();
                 handleViewTaskList();
               }}

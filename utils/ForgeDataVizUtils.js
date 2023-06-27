@@ -1,4 +1,4 @@
-import { applyOffset, applyTM, applyTMInverse, removeOffset } from './ViewerDataUtils';
+import { applyOffset, applyTM, applyTMInverse, isMobile, removeOffset } from './ViewerDataUtils';
 import { MathUtils } from "../public/potree/libs/three.js/build/three.module";
 
 export class ForgeDataVizUtils {
@@ -436,7 +436,7 @@ export class ForgeDataVizUtils {
 
                 icon: '/icons/360VideoWalkInViewer.svg',
 
-                size: 12,
+                size: isMobile() ? 25: 12,
 
                 offset: 1000
             }
@@ -463,7 +463,7 @@ export class ForgeDataVizUtils {
 
                 icon: '/icons/360VideoWalkInViewer.svg',
 
-                size: 12,
+                size: isMobile() ? 25: 12,
 
                 offset: 1500
             }

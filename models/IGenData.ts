@@ -22,5 +22,6 @@ export interface IGenData {
         currentHotspotList: IHotspot[],
         selectedTask?: ITasks,
         selectedIssue?: Issue,
-        selectedHotspot?: IHotspot
+        selectedHotspot?: IHotspot,
+        projectUTM?:string,
       }

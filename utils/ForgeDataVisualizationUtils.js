@@ -2,7 +2,8 @@ import {
     applyOffset,
     removeOffset,
     applyTMInverse,
-    applyTM
+    applyTM,
+    isMobile
 
   } from './ViewerDataUtils';
 
@@ -280,7 +281,11 @@ export class ForgeDataVisualization {
                 break;
             case 'Drone Image':
             case '360 Video':
-                viewableData.spriteSize = 12;
+                if (isMobile()) {
+                    viewableData.spriteSize = 25;
+                  } else {
+                    viewableData.spriteSize = 12;
+                  }
                 break;
             case 'Phone Image':
                 viewableData.spriteSize = 48;
@@ -348,8 +353,8 @@ export class ForgeDataVisualization {
     async createTempViewable(type, event) {
 
         let viewport = this.viewer.container.getBoundingClientRect();
-        let canvasX = event.originalEvent.clientX - viewport.left;
-        let canvasY = event.originalEvent.clientY - viewport.top;
+        let canvasX = isMobile() ? event.originalEvent.pointers[0].pageX - viewport.left : event.originalEvent.clientX - viewport.left;
+        let canvasY = isMobile() ? event.originalEvent.pointers[0].pageY - viewport.top: event.originalEvent.clientY - viewport.top;
         let result = this.viewer.clientToWorld(canvasX, canvasY);
 
         if (result) {
@@ -375,7 +380,6 @@ export class ForgeDataVisualization {
             this.handlerFunction(event, dbIdObject);
         }
     }
-
     clearTempViewables() {
         this.removeViewableData();
         this.getNewViewableData();

@@ -526,6 +526,7 @@ export const ForgeViewerUtils = function () {
         setForgeControls(context.type);
         break;
       case "360 Video":
+      case "Drone Image":
         setNavigation(context);
         setForgeControls(context.type);
         // goToImageContext(context);

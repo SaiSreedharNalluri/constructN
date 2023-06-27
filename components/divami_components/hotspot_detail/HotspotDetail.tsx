@@ -25,6 +25,9 @@ const CustomHotspotDetailsDrawer = (props: any) => {
                 onClick={() => {
                   onClose(true);
                 }}
+                onTouchEnd={() => {
+                  onClose(true);
+                }}
                 src={BackArrow}
                 alt={"close icon"}
               />
