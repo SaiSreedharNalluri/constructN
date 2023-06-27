@@ -51,12 +51,15 @@ const CreateIssue = ({
           isError++;
         }
       }
+
       if(isError == 0){
         setValidate(true);
         handleCreateTask(formData);
       }
     }
   };
+
+ 
 
   const onCancelEdit = () => {
     closeIssueCreate();

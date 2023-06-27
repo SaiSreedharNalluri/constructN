@@ -489,6 +489,14 @@ const FormWrapper = (props: any) => {
     }
     return isValid;
   }
+  
+  function calculateEmptySpaces(string:string) {
+    if(string.length === 0) return [0,0]
+    const leftSpaces = string.length - string.trimStart().length;
+    const rightSpaces = string.length - string.trimEnd().length;
+    return leftSpaces + rightSpaces == 0
+  //  return leftSpaces + rightSpaces > 0
+  }
 
 
   function textMaxLength(textLength:string, id:string){
@@ -534,7 +542,22 @@ const FormWrapper = (props: any) => {
           return item;  
         })
       );
-    } else {
+    }else if (!calculateEmptySpaces(textLength)){
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+              errorMsg: "No leading or trailing spaces are allowed",
+            };
+          }
+          return item;  
+        })
+      );
+    }
+    else {
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
           if (id === item.id) {

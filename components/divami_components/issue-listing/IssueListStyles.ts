@@ -52,9 +52,6 @@ export const SearchGlassIcon = styled(Image)({
   cursor: "pointer",
 });
 
-export const CloseIcon = styled(Image)({
-  cursor: "pointer",
-});
 
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
