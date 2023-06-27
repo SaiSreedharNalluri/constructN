@@ -1,5 +1,6 @@
-import { applyOffset, applyTM, applyTMInverse, isMobile, removeOffset } from './ViewerDataUtils';
-import { MathUtils } from "../public/potree/libs/three.js/build/three.module";
+import { applyOffset, applyTM, applyTMInverse, isMobile, removeOffset } from './ViewerDataUtils'
+
+import { MathUtils } from "../public/potree/libs/three.js/build/three.module"
 
 export class ForgeDataVizUtils {
 
@@ -31,6 +32,8 @@ export class ForgeDataVizUtils {
 
         this._offset = [0, 0, 0]
 
+        this._lastUpdated = Date.now()
+
         // this._createNavigator()
 
         // this._createModelBuilder()
@@ -49,7 +52,7 @@ export class ForgeDataVizUtils {
 
         tasks.forEach(task => {
 
-            if(task.context) {
+            if (task.context) {
 
                 let tag = task.context.tag;
 
@@ -90,7 +93,7 @@ export class ForgeDataVizUtils {
 
         issues.forEach(issue => {
 
-            if(issue.context) {
+            if (issue.context) {
 
                 let tag = issue.context.tag;
 
@@ -146,7 +149,7 @@ export class ForgeDataVizUtils {
                             images = Object.keys(reality['position'])
 
                             break
-                        
+
                         case 'Drone Image':
 
                         case 'Phone Image':
@@ -156,18 +159,18 @@ export class ForgeDataVizUtils {
                             break
                     }
 
-                    if(images) {
+                    if (images) {
 
                         for (let i = 0; i < images.length; i++) {
 
                             if (this._existingImages.indexOf(images[i]) == -1) {
-    
+
                                 let mPosition = [];
-    
+
                                 let mRotation = reality['position'][images[i]] ? reality['position'][images[i]].rotation : 0
-    
+
                                 switch (type) {
-    
+
                                     case '360 Image':
 
                                     case '360 Video':
@@ -179,39 +182,39 @@ export class ForgeDataVizUtils {
                                     case 'Drone Image':
 
                                         mPosition[0] = reality.position['camX'][i]
-    
+
                                         mPosition[1] = reality.position['camY'][i]
-    
+
                                         mPosition[2] = 0
 
                                         break
 
                                     case 'Phone Image':
-    
+
                                         mPosition[0] = reality.position['camX'][i]
-    
+
                                         mPosition[1] = reality.position['camY'][i]
-    
+
                                         mPosition[2] = reality.position['camZ'][i]
-    
+
                                         break
                                 }
-    
+
                                 data.push({
-    
+
                                     id: reality.id,
-    
+
                                     imageName: images[i],
-    
+
                                     position: this._toLocalPosition({ x: mPosition[0], y: mPosition[1], z: mPosition[2] }),
-    
+
                                     rotation: mRotation,
-    
+
                                     type: type
                                 })
                             }
                         }
-                        
+
                     }
                 }
             })
@@ -257,6 +260,52 @@ export class ForgeDataVizUtils {
         }
     }
 
+    updateTags = (type, list) => {
+
+        console.log(type, list)
+
+        const viewableDatas = this._viewableDataMap[type]
+
+        if (viewableDatas) {
+
+            for (let i = 0; i < viewableDatas.length; i++) {
+
+                const viewableData = viewableDatas[i]
+
+                if (viewableData) {
+
+                    const tagIds = list.map(t => { return t._id })
+
+                    const filteredIds = []
+
+                    const dbIds = viewableData.viewables.map(v => { return v.dbId })
+
+                    for (const [Key, Value] of Object.entries(this._dbMap)) {
+
+                        if (Value && Value.id && tagIds.indexOf(Value.id) > -1) {
+
+                            filteredIds.push(parseInt(Key))
+
+                        }
+
+                    }
+
+                    console.log(tagIds, dbIds, filteredIds)
+
+                    this._invalidateViewables(dbIds, this._dataVizExtn.pointMeshes, viewableData, (dbId) => {
+
+                        console.log(dbIds, filteredIds, dbId)
+
+                        return {
+
+                            scale: filteredIds.indexOf(dbId) > -1 ? 1 : 0
+                        }
+                    })
+                }
+            }
+        }
+    }
+
     removeLoadedData = () => {
 
         this._dataVizExtn.removeAllViewables()
@@ -270,9 +319,7 @@ export class ForgeDataVizUtils {
         this._existingTags = []
     }
 
-    updateNavigator = (position, yaw) => {
-
-        this._lastUpdated = Date.now()
+    updateNavigator = async (position, yaw) => {
 
         const localPos = this._toLocalPosition(position)
 
@@ -281,61 +328,66 @@ export class ForgeDataVizUtils {
         if (!this._dbMap[1]) {
 
             this._createNavigator(localPos, yaw)
+
         }
 
-        setTimeout(() => {
+        this._invalidateViewables(1, this._dataVizExtn.pointMeshes, this._viewableDataMap[ForgeDataVizUtils.NAVIGATOR], () => {
 
-            if (Date.now() - this._lastUpdated > 100) {
+            let deg = MathUtils.radToDeg(yaw) % 360
 
-                if (this._dbMap[1]) {
+            if (deg > 0) deg = 360 - deg
 
-                    for (let k = 0; k < this._dataVizExtn.pointMeshes.length; k++) {
+            else deg = deg * -1
 
-                        const mesh = this._dataVizExtn.pointMeshes[k]
+            deg = (Math.floor(deg / 5) * 5) % 360
 
-                        if (mesh.geometry.dbIds.indexOf(1) > -1) {
+            const mUrl = `/icons/navigator/loc-${deg}.png`
 
-                            this._dbMap[1] = undefined
+            return {
 
-                            this._viewer.overlays.removeMesh(mesh, 'DataVizDots')
+                position: localPos,
 
-                            break;
-                        }
-                    }
-
-                    this._createNavigator(localPos, yaw)
-
-                    this._lastUpdated = undefined
-
-                    this._locations = []
-
-                } else {
-
-                    // this._createNavigator(localPos, yaw)
-                }
-            } else {
-
-                this._invalidateViewables(1, this._dataVizExtn.pointMeshes, this._viewableDataMap[ForgeDataVizUtils.NAVIGATOR], (viewable) => {
-
-                    let deg = MathUtils.radToDeg(yaw) % 360
-
-                    if (deg > 0) deg = 360 - deg
-
-                    else deg = deg * -1
-
-                    deg = (Math.floor(deg / 5) * 5) % 360
-
-                    const mUrl = `/icons/navigator/loc-${deg}.png`
-
-                    return {
-
-                        position: localPos,
-
-                        url: mUrl
-                    }
-                })
+                url: mUrl
             }
-        }, 200)
+        })
+
+        if (Date.now() - this._lastUpdated < 50) {
+
+            this._navTimer && clearTimeout(this._navTimer)
+
+            this._lastUpdated = Date.now()
+
+            this._navTimer = setTimeout(() => {
+
+                for (let k = this._dataVizExtn.pointMeshes.length - 1; k > -1; k--) {
+
+                    const mesh = this._dataVizExtn.pointMeshes[k]
+
+                    console.log(mesh)
+
+                    if (mesh.geometry.dbIds.indexOf(1) > -1) {
+
+                        this._viewer.overlays.removeMesh(mesh, 'DataVizDots')
+
+                        this._dataVizExtn.pointMeshes.splice(k, 1)
+
+                        this._dbMap[1] = undefined
+                    }
+                }
+
+                this._lastUpdated = Date.now()
+
+                this._navTimer = undefined
+
+                this._createNavigator(localPos, yaw)
+
+            }, 200)
+
+        } else {
+
+            this._lastUpdated = Date.now()
+
+        }
     }
 
     _createNavigator = async (pos, yaw) => {
@@ -436,7 +488,7 @@ export class ForgeDataVizUtils {
 
                 icon: '/icons/360VideoWalkInViewer.svg',
 
-                size: isMobile() ? 25: 12,
+                size: isMobile() ? 25 : 12,
 
                 offset: 1000
             }
@@ -463,7 +515,7 @@ export class ForgeDataVizUtils {
 
                 icon: '/icons/360VideoWalkInViewer.svg',
 
-                size: isMobile() ? 25: 12,
+                size: isMobile() ? 25 : 12,
 
                 offset: 1500
             }
@@ -563,7 +615,7 @@ export class ForgeDataVizUtils {
                     continue;
                 }
 
-                const updates = callback(viewables.get(dbId));
+                const updates = callback(dbId);
                 // console.log(updates, viewables, 'ppp')
                 if (!updates) {
                     continue;

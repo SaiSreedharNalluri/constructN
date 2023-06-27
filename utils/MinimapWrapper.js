@@ -240,7 +240,8 @@ export const MinimapUtils = () => {
     _issuesList = list;
     _isPendingLayersToLoad = true;
     if (loadLayersOnDataLoadCompletion()) {
-      loadIssues();
+      // loadIssues();
+      _dataVizUtils.updateTags(ForgeDataVizUtils.ISSUE, _issuesList)
     }
   };
 
@@ -249,7 +250,8 @@ export const MinimapUtils = () => {
     _tasksList = list;
     _isPendingLayersToLoad = true;
     if (loadLayersOnDataLoadCompletion()) {
-      loadTasks();
+      // loadTasks();
+      _dataVizUtils.updateTags(ForgeDataVizUtils.TASK, _tasksList)
     }
   };
 
