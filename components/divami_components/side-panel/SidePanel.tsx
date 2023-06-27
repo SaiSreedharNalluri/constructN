@@ -51,6 +51,7 @@ interface IProps {
 const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   let [eMail, setEMail] = useState<string>("");
   const [isChatActive, setChatStatus] = React.useState(false);
+  const router = useRouter();
   const [config, setConfig] = React.useState([
     {
       id: "dashboard",
@@ -64,18 +65,18 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       id: "sections",
       icon: ScheduleIcon,
       activeIcon: ScheduleHighlight,
-      isActive: false,
+      isActive: router.pathname.includes("structure"),
       toolTipMsg: "Views",
     },
 
-    {
-      id: "structure",
-      icon: drawing,
-      activeIcon: drawingInactive,
-      isActive: false,
-      nextPage: "",
-      toolTipMsg: "Drawings",
-    },
+    // {
+    //   id: "structure",
+    //   icon: drawing,
+    //   activeIcon: drawingInactive,
+    //   isActive: false,
+    //   nextPage: "",
+    //   toolTipMsg: "Drawings",
+    // },
 
     {
       id: "schedule",
@@ -133,7 +134,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   //   );
   // };
 
-  const router = useRouter();
+
   const [active, setActive] = useState(router.pathname.split("/").pop());
 
   // const currentUrl = window.location.href;
@@ -155,10 +156,10 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         break;
       case "views":
 
-      case "structure":
-        router.push(`/projects/${router.query.projectId as string}/structure`);
+      // case "structure":
+      //   router.push(`/projects/${router.query.projectId as string}/structure`);
 
-        break;
+      //   break;
       case "issue":
         router.push(`/projects/${router.query.projectId as string}/issue`);
         break;
@@ -217,7 +218,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           >
             <TooltipText title={item.toolTipMsg} placement="right">
               <SideMenuOptionImageContainer>
-                {router.pathname.includes(item.id) ? (
+                {router.pathname.includes(item.id) || item.isActive ? (
                   <OvershowImg>
                     <HighlightedSytledImage
                       src={item.activeIcon}

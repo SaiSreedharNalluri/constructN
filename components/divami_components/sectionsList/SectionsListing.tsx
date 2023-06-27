@@ -494,7 +494,7 @@ const SectionsListing = () => {
 
   const columns = [
     {
-      title: "Section Name",
+      title: "View Name",
       field: "name",
       sorting: false,
       filtering: false,
@@ -693,7 +693,7 @@ const SectionsListing = () => {
   return (
     <div style={{ overflow: "scroll" }} className="sections_table">
       <TableHeader>
-        <Header>Sections </Header>
+        <Header>Views </Header>
         <HeaderActions>
           {searchingOn ? (
             <SearchAreaContainer>

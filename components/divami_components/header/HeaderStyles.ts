@@ -51,10 +51,10 @@ export const HeaderProfileImageContainer = styled('div')({
   marginRight: '10px',
   cursor: 'pointer',
   borderRadius: '50%' ,
-  padding:'4px',
-  '&:hover': {
-    background: '#EEEEEE'
-  },
+  // padding:'4px',
+  // '&:hover': {
+  //   background: '#EEEEEE'
+  // },
   // border: "1.5px solid #36415D",
   // borderRadius: "50%",
   // boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.2)",
@@ -89,20 +89,14 @@ export const HeaderMenuImageContainer = styled('div')({
   marginRight: '10px',
   cursor: 'pointer',
   borderRadius: '50%' ,
-  padding:'4px',
-  '&:hover': {
-    background: '#EEEEEE'
-  },
 });
 
 export const HeaderNotificationImageContainer = styled('div')({
   marginRight: '10px',
   cursor: 'pointer',
   borderRadius: '50%' ,
-  padding:'7px',
-  '&:hover': {
-    background: '#EEEEEE'
-  },
+ 
+
 });
 
 

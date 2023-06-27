@@ -34,11 +34,13 @@ const Header = ({ closeNotifications }: any) => {
     <HeaderContainer>
       <TitleContiner>
         <span>{title}</span>
+        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE]">
         <CloseIcon
           onClick={closeNotifications}
           src={closeIconCircle}
           alt={"close icon"}
         />
+        </div>
       </TitleContiner>
     </HeaderContainer>
   );

@@ -52,6 +52,7 @@ import UserProfile from "../user-profile/UserProfile";
 import CustomSelect from "../custom-select/CustomSelect";
 import { getProjectsList } from "../../../services/project";
 import PopupComponent from "../../popupComponent/PopupComponent";
+import { TooltipText } from "../side-panel/SidePanelStyles";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -366,17 +367,23 @@ const Header: React.FC<any> = ({
           ) : (
             <></>
           )}
-
           <HeaderProfileImageContainer>
             {avatar ? (
-              <ProfileImgIcon
+          <TooltipText title="My Profile">
+
+              <div className="hover:bg-[#E7E7E7] p-[4px] rounded-full">
+                       <ProfileImgIcon
                 onClick={onProfilePicClick}
                 src={avatar}
                 alt="Profile Image Icon"
                 width={34}
                 height={34}
               />
+              </div>
+</TooltipText>       
             ) : (
+          <TooltipText title="My Profile">
+            <div className="hover:bg-[#E7E7E7] p-[4px] rounded-full">
               <ProfileImgIconDefault
                 onClick={onProfilePicClick}
                 src={defaultAvatar}
@@ -384,6 +391,8 @@ const Header: React.FC<any> = ({
                 width={34}
                 height={34}
               />
+              </div>
+              </TooltipText>
             )}
             {openProfile ? (
               <CustomDrawer paddingStyle={true} variant="persistent">
@@ -397,7 +406,10 @@ const Header: React.FC<any> = ({
               ""
             )}
           </HeaderProfileImageContainer>
+       
           <HeaderNotificationImageContainer>
+          <TooltipText title="Notifications">
+            <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full">
             <Image
               src={Notification}
               alt="Profile Image"
@@ -411,9 +423,12 @@ const Header: React.FC<any> = ({
                 }
               }}
             />
+            </div>
+    
+            </TooltipText>
 
             {openNotification && (
-              <div>
+              <div >
                 <CustomDrawer variant="persistent">
                   <div>
                     <Notifications
@@ -432,6 +447,8 @@ const Header: React.FC<any> = ({
             )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
+          <TooltipText title="Menu">
+            <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
             <Image
               src={hamburgerMenu}
               alt="Menu"
@@ -445,6 +462,8 @@ const Header: React.FC<any> = ({
                 }
               }}
             />
+            </div>
+            </TooltipText>
           </HeaderMenuImageContainer>
         </HeaderRightPart>
 
