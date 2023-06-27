@@ -57,6 +57,7 @@ export const AddUsersEmailOverlay = ({
   const [addedUsers, setAddedUsers] = useState<any>([]);
   const [searchVal, setSearchVal] = useState("");
   const [hoveringOver, setHoveringOver] = useState("");
+  const [enableAddUser, setEnableAddUser] = useState(false);
   useEffect(() => {
     if (/\S+@\S+\.\S+/.test(form.email)) checkRegisterUser(form.email);
 
@@ -179,29 +180,35 @@ export const AddUsersEmailOverlay = ({
     setHoveringOver("");
 
   const onAddUser = () => {
-    if (addedUsers?.length) {
-      const projectInfo = {
-        users: addedUsers.map((each: any) => {
-          return { role: each.role, email: each.email };
-        }),
-      };
-      const newUsers: number = addedUsers.filter(
-        (each: any) => each.isNewUser
-      )?.length;
+    if(enableAddUser){
+      setEnableAddUser(false);
+   
+      if (addedUsers?.length) { 
+        const projectInfo = {
+          users: addedUsers.map((each: any) => {
+            return { role: each.role, email: each.email };
+          }),
+        };
+        const newUsers: number = addedUsers.filter(
+          (each: any) => each.isNewUser
+        )?.length;
 
-      addUserRoles(projectInfo, selectedProjectId)
-        .then((res: any) => {
-          toast.success(
-            `${
-              addedUsers.length - newUsers
-            } have been added to the project successfully & ${newUsers} users have been sent invite to register`
-          );
-          setOpenDrawer(false);
-        })
-        .catch((err) => {
-          toast.error(err.message);
-        });
-    }
+        addUserRoles(projectInfo, selectedProjectId)
+          .then((res: any) => {
+            toast.success(
+              `${
+                addedUsers.length - newUsers
+              } have been added to the project successfully & ${newUsers} users have been sent invite to register`
+            );
+            setOpenDrawer(false);
+            setEnableAddUser(true)
+          })
+          .catch((err) => {
+            toast.error(err.message);
+            setEnableAddUser(true)
+          });
+      }
+  }
   };
 
   const onClickBack = () => {

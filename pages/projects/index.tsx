@@ -119,6 +119,7 @@ const Index: React.FC<any> = () => {
   const [showButton, setShowbutton] = useState(false);
   const [projectId, setProjectId] = useState<any>("");
   const [showLoading, setShowLoading] = useState(true);
+  const [configEnabled, setConfigEnabled] = useState(true);
   let [eMail, setEMail] = useState<string>("");
 
   const sortMenuOptions = [
@@ -339,61 +340,65 @@ const Index: React.FC<any> = () => {
 
   // project configuration handlesubmit
   const handleSubmit = async () => {
-    const containsEmptyString = formValues.priority.some(
-      (item: any) => item.length === 0
-    );
+    if(configEnabled){
+      setConfigEnabled(false)
+      const containsEmptyString = formValues.priority.some(
+        (item: any) => item.length === 0
+      );
 
-    if (containsEmptyString) {
-      toast.error("Fields cannot be empty");
+      if (containsEmptyString) {
+        toast.error("Fields cannot be empty");
+        return;
+      }
+      
+    if(containsRepeated(formValues.priority.map((item:string) => item.trim()))){
+      toast.error("Fields cannot be repeated");
       return;
     }
-    
-   if(containsRepeated(formValues.priority.map((item:string) => item.trim()))){
-    toast.error("Fields cannot be repeated");
-    return;
-   }
 
-    try {
-      // Call the appropriate API based on the selected option and pass the updated values
-      if (selectedOption === "issuePriority") {
-        // await updateIssuePriorityList(projectId, formValues.priority);
-        await updateIssuePriorityList(projectId, {
-          issuePriorityList: [...formValues.priority.map((ele:string) => ele.trim())],
-        });
-        toast.success("Issue priority list updated successfully");
-      } else if (selectedOption === "taskPriority") {
-        await updateTaskPriorityList(projectId, {
-          taskPriorityList: [...formValues.priority.map((ele:string) => ele.trim())],
-        });
-        toast.success("Task priority list updated successfully");
-      } else if (selectedOption === "issueStatus") {
-        await updateIssueStatusList(projectId, {
-          issueStatusList: [...formValues.priority.map((ele:string) => ele.trim())],
-        });
-        toast.success("Issue status list updated successfully");
-      } else if (selectedOption === "taskStatus") {
-        await updateTaskStatusList(projectId, {
-          taskStatusList: [...formValues.priority.map((ele:string) => ele.trim())],
-        });
-        toast.success("Task status list updated successfully");
-      } else if (selectedOption === "tag") {
-        await updateTagList(projectId, {
-          tagList: [...formValues.priority.map((ele:string) => ele.trim())],
-        });
-        toast.success("Tag list updated successfully");
-      }
-      setShowbutton(false);
-    } catch (error:any) {
-    
-        if(error && error?.success === false){
-          if(error.message === 'Forbidden Access'){
-             toast.error("Not authorized. Ask the Project Admin for help")
-          }else{
-            toast.error("Project Config could not be updated")
-          }
-          
+      try {
+        // Call the appropriate API based on the selected option and pass the updated values
+        if (selectedOption === "issuePriority") {
+          // await updateIssuePriorityList(projectId, formValues.priority);
+          await updateIssuePriorityList(projectId, {
+            issuePriorityList: [...formValues.priority.map((ele:string) => ele.trim())],
+          });
+          toast.success("Issue priority list updated successfully");
+        } else if (selectedOption === "taskPriority") {
+          await updateTaskPriorityList(projectId, {
+            taskPriorityList: [...formValues.priority.map((ele:string) => ele.trim())],
+          });
+          toast.success("Task priority list updated successfully");
+        } else if (selectedOption === "issueStatus") {
+          await updateIssueStatusList(projectId, {
+            issueStatusList: [...formValues.priority.map((ele:string) => ele.trim())],
+          });
+          toast.success("Issue status list updated successfully");
+        } else if (selectedOption === "taskStatus") {
+          await updateTaskStatusList(projectId, {
+            taskStatusList: [...formValues.priority.map((ele:string) => ele.trim())],
+          });
+          toast.success("Task status list updated successfully");
+        } else if (selectedOption === "tag") {
+          await updateTagList(projectId, {
+            tagList: [...formValues.priority.map((ele:string) => ele.trim())],
+          });
+          toast.success("Tag list updated successfully");
         }
-    }
+        setConfigEnabled(true)
+        setShowbutton(false);
+      } catch (error:any) {
+      
+          if(error && error?.success === false){
+            if(error.message === 'Forbidden Access'){
+              toast.error("Not authorized. Ask the Project Admin for help")
+            }else{
+              toast.error("Project Config could not be updated")
+            }
+            setConfigEnabled(true)
+          }
+      }
+  }
   };
   const [isChatActive, setChatStatus] = React.useState(false);
   const [supportItemsConfig, setSupportItemsConfig] = React.useState([

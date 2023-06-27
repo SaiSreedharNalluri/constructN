@@ -99,6 +99,7 @@ const Task = ({
     }
   };
   const clickTaskSubmit = (formData: any) => {
+    setEnableSubmit(false);
     let data: any = {};
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
@@ -186,14 +187,14 @@ const Task = ({
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     if (data.title && data.type && data.priority) {
-      setEnableSubmit(false);
+      
 
       createTaskWithAttachments(projectId as string, formDataObj)
         .then((response) => {
           if (response.success === true) {
             toast.success("Task Created sucessfully");
 
-            setEnableSubmit(false);
+            setEnableSubmit(true);
             taskSubmitFn(response.result);
           } else {
             toast.error(`Something went wrong`);
