@@ -26,6 +26,7 @@ import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
 import CompareView from "./CompareView";
 import MoreOptionTool from "./MoreOptionTool";
+import { type } from "os";
 
 // import TOOLBARMENU from '../../config/appConstant'
 
@@ -126,6 +127,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   const [openSelectLayer, setOpenSelectLayer] = useState(false);
   const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
   const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
+  // var typesL:string[] = currentTypesList as string[];
+
   const [myTypesList, setMyTypesList] = useState<string[]>(currentTypesList);
   const [myLayersList, setMyLayersList] =
     useState<IActiveRealityMap>(currentLayersList);
@@ -133,13 +136,40 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   useEffect(() => {
     setIViewMode(viewMode);
   }, [viewMode]);
-  // useEffect(() => {
-  //   if (myTypesList?.length) {
-  //     setSelectedTypeVal(selectedType);
-  //   }
-  // }, [myTypesList]);
   useEffect(() => {
-    setSelectedTypeVal(selectedType);
+    
+    console.log("Testing array map" ,currentTypesList.constructor.name)
+    switch(currentTypesList.constructor.name){
+      case 'Array':
+        setMyTypesList(currentTypesList.map(
+          (typeData:string)=>{
+            switch(typeData){
+              case 'pointCloud':
+                return 'Reality';
+              case 'orthoPhoto':
+                return 'Orthophoto';
+              default:
+                return typeData;
+
+            }
+          }
+        ))
+        break;
+
+    }
+  }, [currentTypesList]);
+  useEffect(() => {
+    switch(selectedType){
+      case 'pointCloud':
+        setSelectedTypeVal('Reality');
+        break;
+      case 'orthoPhoto':
+        setSelectedTypeVal('Orthophoto');
+        break;
+      default:
+        setSelectedTypeVal(selectedType);
+    }
+    
   }, [selectedType]);
   const typeChange = (changeOb: any) => {
     setRighttNav(false);
@@ -147,7 +177,18 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     // toolInstance.toolAction = changeOb.target.value;
     // toolClicked(toolInstance);
     if (setViewType) {
-      setViewType(changeOb.target.value);
+      switch(changeOb.target.value as string){
+        case 'Reality':
+          setViewType('pointCloud');
+          break;
+        case 'Orthophoto':
+          setViewType('orthoPhoto');
+          break;
+        default:
+          setViewType(changeOb.target.value);
+
+      }
+      
     }
   };
   const LayerChange = (changeOb: any, layerLabel: string, node: any) => {
@@ -199,7 +240,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     setMyProject(currentProject);
     setMyStructure(currentStructure);
     setMySnapshot(currentSnapshot);
-    setMyTypesList(currentTypesList);
+    //setMyTypesList(currentTypesList);
     setMyLayersList(currentLayersList);
   }, [
     currentProject,

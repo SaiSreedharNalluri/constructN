@@ -4,6 +4,7 @@ import { IViewerContext } from "./IViewerContext"
 import { IHotspot } from "./IHotspot"
 import { Issue } from "./Issue"
 import { ITasks } from "./Itask"
+import { ILayer } from "./IReality"
 
 export interface IGenData {
 
@@ -16,7 +17,7 @@ export interface IGenData {
         currentSnapshotBase: ISnapshot,
         currentSnapshotCompare?: ISnapshot,
         currentCompareMode: string,
-        currentLayersList?: string[],
+        currentLayersList?: ILayer[],
         currentTaskList: ITasks[],
         currentIssueList: Issue[],
         currentHotspotList: IHotspot[],
