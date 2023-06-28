@@ -379,8 +379,8 @@ const FormWrapper = (props: any) => {
     const maxLimit = 20; // Maximum character limit for firstName and lastName fields
 
     const isEmptyField = config.some((val: any) => {
-      if (val.isReq) {
-        if (val.id === "firstName" || val.id === "lastName") {
+      if (val?.isReq) {
+        if (val?.id === "firstName" || val?.id === "lastName") {
           // Check if it is firstName or lastName field
           const defaultValue = val.defaultValue.trim();
 
@@ -879,7 +879,7 @@ const FormWrapper = (props: any) => {
           <>
             <FormElementContainer
               loginField={loginField}
-              key={eachConfig.id}
+              key={eachConfig?.id}
               className={` ${eachConfig?.isError ? "formErrorLabel" : ""}`}
             >
               {eachConfig?.formLabel ?? (

@@ -249,21 +249,21 @@ const Index: React.FC = () => {
       //   .catch((error) => {
       //     console.log("error", error);
       //   });
-      getSectionsList(router?.query?.projectId as string)
-        .then((response: AxiosResponse<any>) => {
-          setGridData([response?.data?.result]);
-          let removeGrandParent = response?.data?.result?.children?.map(
-            (item: any, index: number) => {
-              return {
-                ...item,
-                parent: null,
-              };
-            }
-          );
-          massageTree(removeGrandParent, response?.data?.result?.id);
-          setTableData([...backupData]);
-        })
-        .catch((error) => {});
+      // getSectionsList(router?.query?.projectId as string)
+      //   .then((response: AxiosResponse<any>) => {
+      //     setGridData([response?.data?.result]);
+      //     let removeGrandParent = response?.data?.result?.children?.map(
+      //       (item: any, index: number) => {
+      //         return {
+      //           ...item,
+      //           parent: null,
+      //         };
+      //       }
+      //     );
+      //     massageTree(removeGrandParent, response?.data?.result?.id);
+      //     setTableData([...backupData]);
+      //   })
+      //   .catch((error) => {});
       // getSectionsList(router?.query?.projectId as string)
       //   .then((response: AxiosResponse<any>) => {
       //     setGridData([...response?.data?.result]);

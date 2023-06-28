@@ -514,7 +514,7 @@ const SectionsListing = () => {
           <FloorName
             onClick={() => {
               router.push({
-                pathname: `/projects/${rowData.project as string}/structure`,
+                pathname: `/projects/${router?.query?.projectId as string}/structure`,
                 query: { structId: rowData._id },
               });
             }}
