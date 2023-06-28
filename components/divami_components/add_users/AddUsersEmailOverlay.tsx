@@ -203,7 +203,7 @@ export const AddUsersEmailOverlay = ({
         })
         .catch((err) => {
           // toast.error(err.message);
-          toast.error("You don't have permission. Contact Admin");
+           toast.error("You do not have access,Contact Admin");
         });
       console.log("addeduser", addedUsers, projectInfo);
     }
