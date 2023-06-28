@@ -235,7 +235,7 @@ const SectionsListing = () => {
   };
 
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady &&(!dataLoaded)) {
       getSectionsList(router?.query?.projectId as string)
         .then((response: AxiosResponse<any>) => {
           setGridData([response?.data?.result]);
