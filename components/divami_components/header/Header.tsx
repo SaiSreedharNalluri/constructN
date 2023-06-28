@@ -95,9 +95,9 @@ const Header: React.FC<any> = ({
   const [openProfile, setOpenProfile] = useState(false);
 
   // const [config, setConfig] = useState<any>([]);
-  const [projects, setProjects] = useState<any>([]);
-  const [currentProject, setCurrentProject] = useState("");
-  const [projectId, setProjectId] = useState<any>("");
+  // const [projects, setProjects] = useState<any>([]);
+  // const [currentProject, setCurrentProject] = useState("");
+  // const [projectId, setProjectId] = useState<any>("");
 
   useEffect(() => {
     const userObj: any = getCookie("user");
@@ -113,11 +113,11 @@ const Header: React.FC<any> = ({
     if (user?.avatar) {
       setAvatar(user.avatar);
     }
-    if (router.isReady && router.query.projectId) {
-      setProjectId(router.query.projectId);
-    }
-    getUserNotifications();
-  }, [router.query.projectId]);
+    // if (router.isReady && router.query.projectId) {
+    //   setProjectId(router.query.projectId);
+    // }
+    //getUserNotifications();
+  }, [router.isReady]);
 
   useEffect(() => {
     setIViewMode(viewMode);
@@ -182,29 +182,29 @@ const Header: React.FC<any> = ({
   const [defaultValue, setDefaultValue] = useState(2);
   const [filterValue, setFilterValue] = useState("All");
   const [showPopUp, setshowPopUp] = useState(false);
-  useEffect(() => {
-    getUserNotifications();
-    getProjectsList()
-      .then(async (response) => {
-        if (response?.data?.success === true) {
-          // setProjects(response.data.result);
-          const rolesData = response.data.result.map((each: any) => {
-            return {
-              label: each.name,
-              value: each._id,
-              selected: false,
-            };
-          });
+  // useEffect(() => {
+  //   getUserNotifications();
+  //   getProjectsList()
+  //     .then(async (response) => {
+  //       if (response?.data?.success === true) {
+  //         // setProjects(response.data.result);
+  //         const rolesData = response.data.result.map((each: any) => {
+  //           return {
+  //             label: each.name,
+  //             value: each._id,
+  //             selected: false,
+  //           };
+  //         });
 
-          // setConfig([response.data.result]);
+  //         // setConfig([response.data.result]);
 
-          setProjects(rolesData);
+  //         setProjects(rolesData);
 
-          // setCurrentProject()
-        }
-      })
-      .catch((error) => {});
-  }, []);
+  //         // setCurrentProject()
+  //       }
+  //     })
+  //     .catch((error) => {});
+  // }, []);
   const getUserNotifications = (
     condition = defaultValue,
     eventEmitter = filterValue
@@ -237,9 +237,9 @@ const Header: React.FC<any> = ({
       setCurrentPage(currentPage + 1);
     }
   };
-  useEffect(() => {
-    getUserNotifications(defaultValue);
-  }, [currentPage, defaultValue]);
+  // useEffect(() => {
+  //   getUserNotifications(defaultValue);
+  // }, [currentPage, defaultValue]);
   const updateNotifications = (notificationId: string) => {
     updateUserNotifications([notificationId]).then((response) => {
       if (response.success === true) {
@@ -255,7 +255,7 @@ const Header: React.FC<any> = ({
   };
   useEffect(() => {
     getUserNotifications(defaultValue, filterValue);
-  }, [filterValue]);
+  }, [filterValue,currentPage, defaultValue]);
   const handleNotificationClose = () => {
     setOpenNotication(false);
   };
