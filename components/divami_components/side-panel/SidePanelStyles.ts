@@ -50,7 +50,7 @@ export const SideMenuOptionImageContainer = styled("div")({
   borderRadius:'50%',
   
   '&:hover': {
-    background: '#EEEEEE',
+    background: '#E7E7E7',
     border: "7px solid  #ffffff"
   },
 });

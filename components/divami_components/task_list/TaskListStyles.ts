@@ -275,6 +275,14 @@ export const LoadMoreText = styled("div")({
   color: "#F1742E",
   cursor: "pointer",
 });
+export const  TopButton= styled("div")({
+  fontFamily: "Open Sans",
+  fontWeight: 400,
+  fontSize: "16px",
+  lineHeight: "21.79px",
+  color: "#F1742E",
+  cursor: "pointer",
+});
 
 export const ErrorImageDiv = styled("div")({
   // position: "absolute",

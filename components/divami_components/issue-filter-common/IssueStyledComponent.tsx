@@ -9,6 +9,7 @@ export const FilterCommonMain = styled("div")({
   height: "calc(100vh - 60px)",
   paddingLeft: "20px",
   paddingRight: "20px",
+  overflowY:"hidden"
 });
 export const HeaderContainer = styled("div")({
   backgroundColor: "white",

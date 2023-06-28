@@ -95,7 +95,7 @@ const SignInPage = () => {
             };
             localStorage.setItem("userCredentials", JSON.stringify(userProfileObj))
             setCookie("user", userProfileObj);
-            CustomToast("User logged in successfully", "success");
+            CustomToast("User logged in successfully", "success",2000);
             router.push("/projects");
           } else {
      
