@@ -1,6 +1,6 @@
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // ../styles/Home.module.css
 import Image from "next/image";
 // import dividerIcon from "../../../public/images/dividerIcon.svg";
@@ -82,6 +82,7 @@ import {
   PriorityChild,
   AssigneeList,
   Watcher,
+  TopButton,
 } from "./TaskListStyles";
 import {
   Box,
@@ -336,6 +337,13 @@ const CustomTaskListDrawer = (props: any) => {
       });
     }
   }, [taskList]);
+  const taskContRef = useRef<any>(null);
+  const scrollTop = () => {
+ 
+    if (taskContRef.current) {
+      taskContRef.current.scrollTop = 0;
+    }
+  };
 
   return (
     <>
@@ -514,7 +522,7 @@ const CustomTaskListDrawer = (props: any) => {
             </MiniSymbolsContainer>
           </MiniHeaderContainer>
 
-          <BodyContainer>
+          <BodyContainer ref={taskContRef}>
             <CustomBox searchingOn={searchingOn}>
               {filteredTaskList.length > 0 ? (
                 filteredTaskList.map((val: any) => {
@@ -606,6 +614,7 @@ const CustomTaskListDrawer = (props: any) => {
                   <MessageDivShowErr>No result found</MessageDivShowErr>
                 </NoMatchDiv>
               )}
+              <div className="flex justify-between px-1">
               {remainingTasks > 1 && filteredTaskList.length > 1 ? (
                 <LoadMoreText
                   onClick={() => {
@@ -615,6 +624,14 @@ const CustomTaskListDrawer = (props: any) => {
                   Load More
                 </LoadMoreText>
               ) : null}
+              <div></div>
+              {filteredTaskList.length >= 10 &&
+                            <TopButton onClick={scrollTop}>
+                            Top
+                          </TopButton>
+              }
+
+              </div>
             </CustomBox>
           </BodyContainer>
           {/* <LoadMoreContainer>
@@ -853,3 +870,5 @@ export const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
     //  color: 'red',
   },
 }));
+
+

@@ -33,7 +33,7 @@ const EditUserProfile = ({
       .matches(/[a-zA-Z]/, "Atleast one letter is reqired")
       .matches(/^[^0-9]+$/, "Number is not allowed")
       .min(3, 'Minimum 3 characters required')
-      .max(14,'Maximum 14 characters Exceeded')
+      .max(30,'Maximum 30 characters Exceeded')
       .matches(
         /^[^\s].*[^\s]$/,
         'Spaces are not allowed at the beginning, end of the firstname'
@@ -42,8 +42,8 @@ const EditUserProfile = ({
       .required("Last name is required")
       .matches(/[a-zA-Z]/, "Atleast one letter is reqired")
       .matches(/^[^0-9]+$/, "Number is not allowed")
-      .min(3, 'Minimum 3 characters required')
-      .max(14,'Maximum 14 characters Exceeded')
+      .min(1, 'Minimum 1 characters required')
+      .max(30,'Maximum 30 characters Exceeded')
       .matches(
         /^[^\s].*[^\s]$/,
         'Spaces are not allowed at the beginning, end of the lastname'

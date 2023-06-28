@@ -349,7 +349,7 @@ const Index: React.FC<any> = () => {
     }
     
    if(containsRepeated(formValues.priority.map((item:string) => item.trim()))){
-    toast.error("Fields cannot be repeated");
+    toast.error("Duplicates Name(s) not allowed");
     return;
    }
 

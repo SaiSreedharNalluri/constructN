@@ -237,11 +237,18 @@ export const LoadMoreText = styled("div")({
   fontWeight: 400,
   fontSize: "16px",
   lineHeight: "21.79px",
-  textAlign: "center",
+  // textAlign: "center",
   color: "#F1742E",
   cursor: "pointer",
 });
-
+export const  TopButton= styled("div")({
+  fontFamily: "Open Sans",
+  fontWeight: 400,
+  fontSize: "16px",
+  lineHeight: "21.79px",
+  color: "#F1742E",
+  cursor: "pointer",
+});
 export const FilterIndication = styled("span")({
   height: "8px",
   width: "8px",

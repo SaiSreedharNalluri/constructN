@@ -195,15 +195,15 @@ const Body = ({
             </div>
           ))}
         {Object.keys(notifications).length > 0 ? (
-          <div className="flex justify-between px-2">
+          <div className="flex justify-between px-2 py-2">
 
             <div className="">
-            <a className="font-bold text-orange-400 hover:text-black" onClick={loadMoreData}>
+            <a className="font-normal  text-base leading-[21.79px]  text-[#F1742E]  hover:text-black" onClick={loadMoreData}>
               Load More
             </a>
           </div>
           <div className="">
-          <a className="font-bold text-orange-400 hover:text-black"   onClick={scrollTop}>
+          <a className="font-normal  text-base leading-[21.79px]  text-[#F1742E]  hover:text-black"   onClick={scrollTop}>
               Top
             </a>
           </div>

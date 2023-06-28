@@ -85,6 +85,7 @@ import {
   PriorityChild,
   AssigneeList,
   Watcher,
+  TopButton,
 } from "./IssueListStyles";
 
 import _ from "lodash";
@@ -374,6 +375,14 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       }
     }
   };
+  const issueContRef = useRef<any>(null);
+  const scrollTop = () => {
+ 
+    if (issueContRef.current) {
+      issueContRef.current.scrollTop = 0;
+    }
+  };
+  
   return (
     <>
       {errorShow.length > 0 ? (
@@ -532,17 +541,18 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             </MiniSymbolsContainer>
           </MiniHeaderContainer>
 
-          <BodyContainer>
+          <BodyContainer ref={issueContRef}>
             <CustomBox
               searchingOn={searchingOn}
               ref={(el: any) => {
                 setRef1(el);
               }}
+              
             >
               {filteredIssuesList.length ? (
                 filteredIssuesList.map((val: any, index: number) => {
                   return (
-                    <div key={index}>
+                    <div key={index} >
                       <BodyInfo
                         data-testid="item-body"
                         onClick={() => {
@@ -631,7 +641,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   <MessageDivShowErr>No result found</MessageDivShowErr>
                 </NoMatchDiv>
               )}
+             <div className="flex justify-between px-1">
               {remainingIssues > 1 && filteredIssuesList.length > 1 ? (
+               
                 <LoadMoreText
                   onClick={() => {
                     handleLoadMore();
@@ -639,7 +651,14 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 >
                   Load More
                 </LoadMoreText>
+               
               ) : null}
+              <div></div>
+              {filteredIssuesList.length >= 10  &&
+                 <TopButton onClick={scrollTop}>
+                  Top
+                </TopButton>}
+                </div>
             </CustomBox>
           </BodyContainer>
 
