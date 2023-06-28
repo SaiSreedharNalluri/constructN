@@ -130,13 +130,13 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
 
             <TooltipText title={rowData.fullName}>
               <UserNameText>
-                {rowData.fullName.length > 40
-                  ? `${rowData.fullName
+                {rowData?.fullName?.length > 40
+                  ? `${rowData?.fullName
                       .substring(0, 7)
                       .charAt(0)
-                      .toUpperCase()}${rowData.fullName.substring(1, 7)}...`
-                  : rowData.fullName.charAt(0).toUpperCase() +
-                    rowData.fullName.slice(1)}
+                      .toUpperCase()}${rowData?.fullName?.substring(1, 7)}...`
+                  : rowData?.fullName?.charAt(0)?.toUpperCase() +
+                    rowData?.fullName?.slice(1)}
               </UserNameText>
             </TooltipText>
           </UserName>
@@ -262,7 +262,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   };
 
   const deleteUser = (rowData: any) => {
-    const email = rowData.email.toLocaleLowerCase();
+    const email = rowData?.email?.toLocaleLowerCase();
     removeProjectUser(email, router.query.projectId as string)
       .then((response) => {
         if (response?.success === true) {
@@ -276,30 +276,63 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
               };
             })
           );
+          setDataLoaded(true);
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+          // toast.error(error?.message);
+          toast.error("You  don't have permission. Contact Admin");
+
+          setDataLoaded(true);
         }
       });
   };
 
   const getUsersList = () => {
-    getProjectUsers(router.query.projectId as string).then((response: any) => {
-      if (response.success) {
-        setTableData(
-          response.result.map((each: any) => {
-            return {
-              ...each,
-              ...each.user,
-              updatedAt: new Date(each.user?.updatedAt),
-            };
-          })
-        );
-        setDataLoaded(true);
-      }
-    });
+    getProjectUsers(router.query.projectId as string)
+      .then((response: any) => {
+        if (response.success) {
+          console.log("responsegetuser", response);
+          setTableData(
+            response.result.map((each: any) => {
+              return {
+                ...each,
+                ...each.user,
+                updatedAt: new Date(each.user?.updatedAt),
+              };
+            })
+          );
+          setDataLoaded(true);
+        }
+      })
+      .catch((err: any) => setDataLoaded(true));
+  };
+
+  const appendToTable = (bool: boolean) => {
+    // console.log("append", data, tableData);
+    // return;
+    // setTableData([...tableData, data]);
+    if (bool) {
+      //    if (router.isReady && router.query.projectId) {
+      setDataLoaded(false);
+      //  setTimeout(() => {
+      getUsersList();
+      //  }, 0);
+
+      // getUserRoles().then((res: any) => {
+      //   const rolesData = res.result.map((each: any) => {
+      //     return {
+      //       label: each,
+      //       value: each,
+      //     };
+      //   });
+      //   console.log("CHECK",res.result)
+      //   setRolesArr(rolesData);
+      //   // setDataLoaded(true);
+      // });
+      //  }
+    }
   };
   useEffect(() => {
     if (router.isReady && router.query.projectId) {
@@ -318,6 +351,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   }, [router.isReady, router.query.projectId]);
 
   const formHandler = (event: any) => {
+    console.log("first step");
     setShowAddUser(true);
   };
   const updateRole = (selectedRole: string, rowData: any) => {
@@ -351,10 +385,13 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   };
 
   useEffect(() => {
+    console.log("tableData", tableData);
     setSearchTableData(tableData);
   }, [tableData]);
 
   const showEmailOverlay = (formState: any) => {
+    console.log("formState", formState);
+
     setShowAddUser(false);
     setOpenDrawer(true);
     setForm(formState);
@@ -540,6 +577,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
             showAddUser
               ? () => {}
               : () => {
+                  setDataLoaded(false);
                   deleteUser(emailId), setshowPopUp(false);
                 }
           }
@@ -562,6 +600,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           setOpenDrawer={setOpenDrawer}
           roles={rolesArr}
           selectedProjectId={router.query.projectId}
+          appendToTable={appendToTable}
         />
       </Drawer>
 

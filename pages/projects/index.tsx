@@ -58,6 +58,7 @@ import { AddUsersEmailPopup } from "../../components/divami_components/add_users
 import PopupComponent from "../../components/popupComponent/PopupComponent";
 import ProjectConfig from "../../components/divami_components/project_config/ProjectConfig";
 import projectHierIcon from "../../public/divami_icons/projectHierIcon.svg";
+import { Tooltip } from "@material-ui/core";
 
 import {
   updateIssuePriorityList,
@@ -360,7 +361,7 @@ const Index: React.FC<any> = () => {
     if (
       containsRepeated(formValues.priority.map((item: string) => item.trim()))
     ) {
-      toast.error("Fields cannot be repeated");
+      toast.error("Duplicate are not allowed");
       return;
     }
 
@@ -423,7 +424,7 @@ const Index: React.FC<any> = () => {
     },
   ]);
   const deleteUser = (rowData: any) => {
-    const email = rowData.email.toLocaleLowerCase();
+    const email = rowData?.email?.toLocaleLowerCase();
     removeProjectUser(email, rowData.projectId as string)
       .then((response) => {
         if (response?.success === true) {
@@ -444,7 +445,8 @@ const Index: React.FC<any> = () => {
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+          // toast.error(error?.message);
+          toast.error("You  don't have permission. Contact Admin");
         }
       });
   };
@@ -538,30 +540,35 @@ const Index: React.FC<any> = () => {
                 />
                 {isFilterApplied ? <FilterIndicator /> : <></>}
                 <ToggleButtonContainer id="view-options">
-                  <GridViewButton
-                    onClick={() => {
-                      setIsGridView(true);
-                    }}
-                    toggleStatus={isGridView}
-                    data-testid="design-button"
-                  >
-                    <GridButton
-                      src={isGridView ? selectGridViewIcon : unselectGridIcon}
-                      alt=""
-                    />
-                  </GridViewButton>
-                  <GridViewButtonRight
-                    onClick={() => {
-                      setIsGridView(false);
-                    }}
-                    toggleStatus={!isGridView}
-                    data-testid="design-button"
-                  >
-                    <GridButton
-                      src={isGridView ? listViewIcon : selectListIcon}
-                      alt=""
-                    />
-                  </GridViewButtonRight>
+                  <Tooltip title={"Grid View"}>
+                    <GridViewButton
+                      onClick={() => {
+                        setIsGridView(true);
+                      }}
+                      toggleStatus={isGridView}
+                      data-testid="design-button"
+                    >
+                      <GridButton
+                        src={isGridView ? selectGridViewIcon : unselectGridIcon}
+                        alt=""
+                      />
+                    </GridViewButton>
+                  </Tooltip>
+
+                  <Tooltip title={"List View"}>
+                    <GridViewButtonRight
+                      onClick={() => {
+                        setIsGridView(false);
+                      }}
+                      toggleStatus={!isGridView}
+                      data-testid="design-button"
+                    >
+                      <GridButton
+                        src={isGridView ? listViewIcon : selectListIcon}
+                        alt=""
+                      />
+                    </GridViewButtonRight>
+                  </Tooltip>
                 </ToggleButtonContainer>
               </HeaderActions>
             </ProjectsHeader>

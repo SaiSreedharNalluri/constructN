@@ -51,6 +51,7 @@ export const AddUsersEmailOverlay = ({
   setOpenDrawer,
   roles,
   selectedProjectId,
+  appendToTable,
 }: any) => {
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
@@ -185,6 +186,7 @@ export const AddUsersEmailOverlay = ({
           return { role: each.role, email: each.email };
         }),
       };
+
       const newUsers: number = addedUsers.filter(
         (each: any) => each.isNewUser
       )?.length;
@@ -197,10 +199,13 @@ export const AddUsersEmailOverlay = ({
             } have been added to the project successfully & ${newUsers} users have been sent invite to register`
           );
           setOpenDrawer(false);
+          appendToTable(true);
         })
         .catch((err) => {
-          toast.error(err.message);
+          // toast.error(err.message);
+          toast.error("You don't have permission. Contact Admin");
         });
+      console.log("addeduser", addedUsers, projectInfo);
     }
   };
 
