@@ -132,6 +132,8 @@ export class ForgeDataVizUtils {
 
         for (const [type, realities] of Object.entries(mediaData)) {
 
+            this._removeViewableData(type)
+
             const data = []
 
             realities.forEach(reality => {
@@ -262,8 +264,6 @@ export class ForgeDataVizUtils {
 
     updateTags = (type, list) => {
 
-        console.log(type, list)
-
         const viewableDatas = this._viewableDataMap[type]
 
         if (viewableDatas) {
@@ -285,16 +285,10 @@ export class ForgeDataVizUtils {
                         if (Value && Value.id && tagIds.indexOf(Value.id) > -1) {
 
                             filteredIds.push(parseInt(Key))
-
                         }
-
                     }
 
-                    console.log(tagIds, dbIds, filteredIds)
-
                     this._invalidateViewables(dbIds, this._dataVizExtn.pointMeshes, viewableData, (dbId) => {
-
-                        console.log(dbIds, filteredIds, dbId)
 
                         return {
 
@@ -304,6 +298,30 @@ export class ForgeDataVizUtils {
                 }
             }
         }
+    }
+
+    _removeViewableData = (type) => {
+
+        for (let k = 0; k < this._dataVizExtn.pointMeshes.length; k++) {
+
+            const mesh = this._dataVizExtn.pointMeshes[k]
+
+            const dbIds = mesh.geometry.dbIds
+
+            if (dbIds.length > 0 && dbIds[0] == 1500) {
+
+                this._viewer.overlays.removeMesh(mesh, 'DataVizDots')
+
+                this._dataVizExtn.pointMeshes.splice(k, 1)
+
+                dbIds.forEach(id => this._dbMap[id] = undefined)
+
+                this._viewer.impl.invalidate(false, false, true)
+            }
+        }
+
+        this._viewableDataMap[type] = []
+
     }
 
     removeLoadedData = () => {
@@ -325,9 +343,9 @@ export class ForgeDataVizUtils {
 
         localPos.z += 10
 
-        if (!this._dbMap[1]) {
+        if (!this._dbMap[1] && yaw != 0) {
 
-            this._createNavigator(localPos, yaw)
+            await this._createNavigator(localPos, yaw)
 
         }
 
@@ -351,7 +369,7 @@ export class ForgeDataVizUtils {
             }
         })
 
-        if (Date.now() - this._lastUpdated < 50) {
+        if (Date.now() - this._lastUpdated < 100) {
 
             this._navTimer && clearTimeout(this._navTimer)
 
@@ -362,8 +380,6 @@ export class ForgeDataVizUtils {
                 for (let k = this._dataVizExtn.pointMeshes.length - 1; k > -1; k--) {
 
                     const mesh = this._dataVizExtn.pointMeshes[k]
-
-                    console.log(mesh)
 
                     if (mesh.geometry.dbIds.indexOf(1) > -1) {
 
@@ -379,9 +395,9 @@ export class ForgeDataVizUtils {
 
                 this._navTimer = undefined
 
-                this._createNavigator(localPos, yaw)
+                this._createNavigator(localPos, yaw).then(() => this._viewer.resize)
 
-            }, 200)
+            }, 100)
 
         } else {
 
