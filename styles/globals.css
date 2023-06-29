@@ -580,6 +580,9 @@ td {
 .calc-h154 {
   height: calc(100vh - 154px);
 }
+.calc-h319 {
+  height: calc(100vh - 319px);
+}
 .calc-h177 {
   height: calc(100vh - 147px);
 }

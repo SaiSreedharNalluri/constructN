@@ -188,14 +188,28 @@ export const AddUsersEmailOverlay = ({
       const newUsers: number = addedUsers.filter(
         (each: any) => each.isNewUser
       )?.length;
-
+    
       addUserRoles(projectInfo, selectedProjectId)
-        .then((res: any) => {
-          toast.success(
-            `${
-              addedUsers.length - newUsers
-            } have been added to the project successfully & ${newUsers} users have been sent invite to register`
-          );
+        .then((res: any) => {  
+         if(newUsers===0){
+            toast.success(
+              `${
+                addedUsers?.length - newUsers > 1 ?`${addedUsers?.length - newUsers} Users`:`${addedUsers?.length - newUsers} User` 
+              } have been added to the project successfully   `
+            );
+            }
+            else if(addedUsers?.length - newUsers >= 1 ){
+              toast.success(
+                `${
+                  addedUsers?.length - newUsers > 1 ?`${addedUsers?.length - newUsers} Users`:`${addedUsers?.length - newUsers} User` 
+                } have been added to the project successfully & ${newUsers>1?` ${newUsers} Users`:`${newUsers} User`} have been sent invite to register `
+              );
+            }
+            else{
+              toast.success(
+                ` ${newUsers>1?` ${newUsers} Users`:`${newUsers} User`} have been sent invite to register `
+              );
+            }
           setOpenDrawer(false);
         })
         .catch((err) => {
@@ -327,9 +341,9 @@ export const AddUsersEmailOverlay = ({
           {/* </SearchAreaContainer> */}
         </HeaderActions>
       </TableHeader>
-
+      <div className=" calc-h319 overflow-y-auto overflow-x-hidden  ">
       <ThemeProvider theme={defaultMaterialTheme}>
-        <TableWrapper hideHeader>
+        <TableWrapper hideHeader id="addUserList">
           <StyledTable
             components={{
               Container: (props: any) => <Paper {...props} elevation={0} />,
@@ -354,7 +368,7 @@ export const AddUsersEmailOverlay = ({
               selection: false,
               showTitle: true,
               toolbar: false,
-              maxBodyHeight: 700,
+              // maxBodyHeight: 700,
               thirdSortClick: false,
               rowStyle: (rowData: any) => ({
                 fontFamily: "Open Sans",
@@ -373,8 +387,8 @@ export const AddUsersEmailOverlay = ({
           />
         </TableWrapper>
       </ThemeProvider>
-
-      <FooterWrapper>
+    </div>
+    <FooterWrapper>
         <UnregisteredContainer>
           <UnregisteredIcon src={infoicon} alt=""></UnregisteredIcon>
           <UnregistedUsersText>
