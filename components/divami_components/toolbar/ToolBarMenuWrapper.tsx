@@ -3,19 +3,6 @@ import Typebar from "./Typebar";
 import Layers from "./Layers";
 import Issues from "./Issues";
 import Task from "./Task";
-import Hotspot from "./Hotspot";
-// import styles from '../toolbar/toolbar.module.css'
-import Image from "next/image";
-import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
-import hexagonIcon from "../../../public/divami_icons/hexagonIcon.svg";
-import cameraIcon from "../../../public/divami_icons/cameraIcon.svg";
-import videoRecorderIcon from "../../../public/divami_icons/videoRecorderIcon.svg";
-import plusCircleIcon from "../../../public/divami_icons/plusCircleIcon.svg";
-import fileTextIcon from "../../../public/divami_icons/fileTextIcon.svg";
-import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIcon.svg";
-import clipboardTaskIcon from "../../../public/divami_icons/clipboardTaskIcon.svg";
-import hotspotCircleIcon from "../../../public/divami_icons/hotspotCircleIcon.svg";
-import groupSpotIcon from "../../../public/divami_icons/groupSpotIcon.svg";
 import { IDesignMap } from "../../../models/IDesign";
 import { IActiveRealityMap } from "../../../models/IReality";
 import { ISnapshot } from "../../../models/ISnapshot";
@@ -25,10 +12,6 @@ import { SectionToolBar, ToolbarContainer } from "./ToolBarStyles";
 import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
 import CompareView from "./CompareView";
-import MoreOptionTool from "./MoreOptionTool";
-import { type } from "os";
-
-// import TOOLBARMENU from '../../config/appConstant'
 
 interface IProps {
   toolClicked: (a: ITools) => void;
@@ -114,6 +97,10 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   setIssueFilterState,
   issueLoader,
   setIssueLoader,
+  setShowIssueMarkups,
+  showIssueMarkups,
+  setShowTaskMarkups,
+  showTaskMarkups,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -139,39 +126,34 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     setIViewMode(viewMode);
   }, [viewMode]);
   useEffect(() => {
-    
-    console.log("Testing array map" ,currentTypesList.constructor.name)
-    switch(currentTypesList.constructor.name){
-      case 'Array':
-        setMyTypesList(currentTypesList.map(
-          (typeData:string)=>{
-            switch(typeData){
-              case 'pointCloud':
-                return 'Reality';
-              case 'orthoPhoto':
-                return 'Orthophoto';
+    switch (currentTypesList.constructor.name) {
+      case "Array":
+        setMyTypesList(
+          currentTypesList.map((typeData: string) => {
+            switch (typeData) {
+              case "pointCloud":
+                return "Reality";
+              case "orthoPhoto":
+                return "Orthophoto";
               default:
                 return typeData;
-
             }
-          }
-        ))
+          })
+        );
         break;
-
     }
   }, [currentTypesList]);
   useEffect(() => {
-    switch(selectedType){
-      case 'pointCloud':
-        setSelectedTypeVal('Reality');
+    switch (selectedType) {
+      case "pointCloud":
+        setSelectedTypeVal("Reality");
         break;
-      case 'orthoPhoto':
-        setSelectedTypeVal('Orthophoto');
+      case "orthoPhoto":
+        setSelectedTypeVal("Orthophoto");
         break;
       default:
         setSelectedTypeVal(selectedType);
     }
-    
   }, [selectedType]);
   const typeChange = (changeOb: any) => {
     setRighttNav(false);
@@ -179,18 +161,16 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     // toolInstance.toolAction = changeOb.target.value;
     // toolClicked(toolInstance);
     if (setViewType) {
-      switch(changeOb.target.value as string){
-        case 'Reality':
-          setViewType('pointCloud');
+      switch (changeOb.target.value as string) {
+        case "Reality":
+          setViewType("pointCloud");
           break;
-        case 'Orthophoto':
-          setViewType('orthoPhoto');
+        case "Orthophoto":
+          setViewType("orthoPhoto");
           break;
         default:
           setViewType(changeOb.target.value);
-
       }
-      
     }
   };
   const LayerChange = (changeOb: any, layerLabel: string, node: any) => {
@@ -226,15 +206,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         };
       }
     }
-    // if (changeOb.target.checked == true) {
-    //   toolInstance.toolName = "addViewLayer";
-    //   toolInstance.toolAction = layerLabel;
-    // } else {
-    //   toolInstance.toolName = "removeViewLayer";
-    //   toolInstance.toolAction = layerLabel;
-    // }
 
-    // toolClicked(toolInstance);
     setActiveRealityMap(obj);
     setLayersUpdated(!layersUpdated);
   };
@@ -422,6 +394,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           projectUsers={projectUsers}
           issueLoader={issueLoader}
           setIssueLoader={setIssueLoader}
+          setShowIssueMarkups={setShowIssueMarkups}
+          showIssueMarkups={showIssueMarkups}
         />
 
         <Task
@@ -448,6 +422,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           projectUsers={projectUsers}
           taskPriorityList={taskPriorityList}
           taskStatusList={taskStatusList}
+          setShowTaskMarkups={setShowTaskMarkups}
+          showTaskMarkups={showTaskMarkups}
         />
 
         {viewMode === "Reality" ? (

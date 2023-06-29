@@ -31,18 +31,9 @@ import {
   getProjectUsers,
 } from "../../../../services/project";
 import {
-  faCompressArrowsAlt,
-  faExpandArrowsAlt,
-  faGreaterThan,
-  faLessThan,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import RightFloatingMenu from "../../../../components/container/rightFloatingMenu/rightFloatingMenu";
-import {
   getStructureHierarchy,
   getStructureList,
 } from "../../../../services/structure";
-import ReactFullscreen from "react-easyfullscreen";
 import {
   deleteIssue,
   editIssue,
@@ -132,6 +123,8 @@ const Index: React.FC<IProps> = () => {
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [project, setProject] = useState<IProjects>();
   const [projectUsers, setProjectUsers] = useState<IProjects>();
+  const [showIssueMarkups, setShowIssueMarkups] = useState(true);
+  const [showTaskMarkups, setShowTaskMarkups] = useState(true);
 
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
@@ -517,7 +510,7 @@ const Index: React.FC<IProps> = () => {
     setViewTypes(structuredClone(viewTypes));
     //console.log("MyViewTypeList-->r",viewTypes);
   };
-
+  console.log("fsdf", activeRealityMap);
   const updatedSnapshot = (snapshot: ISnapshot) => {
     setSnapshot(snapshot);
   };
@@ -867,6 +860,8 @@ const Index: React.FC<IProps> = () => {
         }
       }
     }
+    setShowIssueMarkups(true);
+    setShowTaskMarkups(true);
   }, [currentViewMode, designAndRealityMaps]);
 
   useEffect(() => {
@@ -885,8 +880,43 @@ const Index: React.FC<IProps> = () => {
       toolClicked({ toolName: "viewType", toolAction: currentViewType });
     }
   }, [currentViewType]);
+
+  useEffect(() => {
+    let obj: any = activeRealityMap;
+
+    for (const key in obj) {
+      if (obj[key].children?.length) {
+        obj[key] = {
+          ...obj[key],
+          children: obj[key]?.children.map((each: any) => {
+            return {
+              ...each,
+              isSelected: true,
+            };
+          }),
+        };
+      } else {
+        obj[key] = {
+          ...obj[key],
+          isSelected: true,
+          children: obj[key].children?.length
+            ? obj[key]?.children.map((each: any) => {
+                return {
+                  ...each,
+                  isSelected: true,
+                };
+              })
+            : [],
+        };
+      }
+    }
+
+    setActiveRealityMap(obj);
+    setLayersUpdated(!layersUpdated);
+  }, [currentViewMode, currentViewType]);
+
   const getIssues = (structureId: string, isDownload?: boolean) => {
-   // setIssueLoader(true)
+    // setIssueLoader(true)
     if (structureId && router.query.projectId) {
       getIssuesList(router.query.projectId as string, structureId)
         .then((response) => {
@@ -901,15 +931,14 @@ const Index: React.FC<IProps> = () => {
             alink.download = "SamplePDF.pdf";
             alink.click();
             // });
-           
           } else {
             setIssueList(response.result);
             // setIssueFilterList(response.result);
           }
-        //  setIssueLoader(false)
+          //  setIssueLoader(false)
         })
         .catch((error) => {
-        //  setIssueLoader(false)
+          //  setIssueLoader(false)
           if (error.success === false) {
             toast.error(error?.message);
           }
@@ -969,33 +998,63 @@ const Index: React.FC<IProps> = () => {
           })
         );
       case "Asc DueDate":
-        setIssueList(
-          [...issuesList.sort((a: any, b: any) => {
+        setIssueList([
+          ...issuesList.sort((a: any, b: any) => {
             return (
               new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf()
             );
-          })]
-        );
+          }),
+        ]);
         break;
       case "Dsc DueDate":
-      setIssueList( [...issuesList.sort((a: any, b: any) => {
-        return (
-          new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
-        );
-      })]);
+        setIssueList([
+          ...issuesList.sort((a: any, b: any) => {
+            return (
+              new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
+            );
+          }),
+        ]);
         break;
       case "Asc Priority":
-        setIssueList([...issuesList.sort((a:any,b:any) =>  a.priority.trim().toLowerCase().localeCompare(b.priority.trim().toLowerCase()))])
+        setIssueList([
+          ...issuesList.sort((a: any, b: any) =>
+            a.priority
+              .trim()
+              .toLowerCase()
+              .localeCompare(b.priority.trim().toLowerCase())
+          ),
+        ]);
         break;
       case "Dsc Priority":
-        setIssueList([...issuesList.sort((a:any,b:any) =>  b.priority.trim().toLowerCase().localeCompare(a.priority.trim().toLowerCase()))])
+        setIssueList([
+          ...issuesList.sort((a: any, b: any) =>
+            b.priority
+              .trim()
+              .toLowerCase()
+              .localeCompare(a.priority.trim().toLowerCase())
+          ),
+        ]);
         break;
       case "status_asc":
-        setIssueList([...issuesList.sort((a:any,b:any) =>  a.status.trim().toLowerCase().localeCompare(b.status.trim().toLowerCase()))])
+        setIssueList([
+          ...issuesList.sort((a: any, b: any) =>
+            a.status
+              .trim()
+              .toLowerCase()
+              .localeCompare(b.status.trim().toLowerCase())
+          ),
+        ]);
 
         break;
       case "status_desc":
-        setIssueList([...issuesList.sort((a:any,b:any) =>  b.status.trim().toLowerCase().localeCompare(a.status.trim().toLowerCase()))])
+        setIssueList([
+          ...issuesList.sort((a: any, b: any) =>
+            b.status
+              .trim()
+              .toLowerCase()
+              .localeCompare(a.status.trim().toLowerCase())
+          ),
+        ]);
 
         break;
       default:
@@ -1029,35 +1088,63 @@ const Index: React.FC<IProps> = () => {
           })
         );
       case "Asc DueDate":
-        setTasksList(
-          [...tasksList.sort((a: any, b: any) => {
+        setTasksList([
+          ...tasksList.sort((a: any, b: any) => {
             return (
               new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf()
             );
-          })]
-        );
+          }),
+        ]);
         break;
       case "Dsc DueDate":
-      setTasksList( [...tasksList.sort((a: any, b: any) => {
-        return (
-          new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
-        );
-      })]);
+        setTasksList([
+          ...tasksList.sort((a: any, b: any) => {
+            return (
+              new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
+            );
+          }),
+        ]);
         break;
       case "Asc Priority":
-        setTasksList([...tasksList.sort((a:any,b:any) =>  a.priority.trim().toLowerCase().localeCompare(b.priority.trim().toLowerCase()))])
+        setTasksList([
+          ...tasksList.sort((a: any, b: any) =>
+            a.priority
+              .trim()
+              .toLowerCase()
+              .localeCompare(b.priority.trim().toLowerCase())
+          ),
+        ]);
         break;
       case "Dsc Priority":
-     
-     setTasksList([...tasksList.sort((a:any,b:any) =>  b.priority.trim().toLowerCase().localeCompare(a.priority.trim().toLowerCase()))])
+        setTasksList([
+          ...tasksList.sort((a: any, b: any) =>
+            b.priority
+              .trim()
+              .toLowerCase()
+              .localeCompare(a.priority.trim().toLowerCase())
+          ),
+        ]);
         break;
       case "status_asc":
-       
-        setTasksList([...tasksList.sort((a:any,b:any) =>  a.status.trim().toLowerCase().localeCompare(b.status.trim().toLowerCase()))])
+        setTasksList([
+          ...tasksList.sort((a: any, b: any) =>
+            a.status
+              .trim()
+              .toLowerCase()
+              .localeCompare(b.status.trim().toLowerCase())
+          ),
+        ]);
 
         break;
       case "status_desc":
-        setTasksList([...tasksList.sort((a:any,b:any) =>  b.status.trim().toLowerCase().localeCompare(a.status.trim().toLowerCase()))])
+        setTasksList([
+          ...tasksList.sort((a: any, b: any) =>
+            b.status
+              .trim()
+              .toLowerCase()
+              .localeCompare(a.status.trim().toLowerCase())
+          ),
+        ]);
 
         break;
       default:
@@ -1636,6 +1723,10 @@ const Index: React.FC<IProps> = () => {
                 projectUsers={projectUsers}
                 issueLoader={issueLoader}
                 setIssueLoader={setIssueLoader}
+                setShowIssueMarkups={setShowIssueMarkups}
+                setShowTaskMarkups={setShowTaskMarkups}
+                showIssueMarkups={showIssueMarkups}
+                showTaskMarkups={showTaskMarkups}
               />
 
               {/* </div> */}
