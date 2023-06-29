@@ -48,10 +48,8 @@ import {
   getTasksPriority,
   getTaskStatus,
 } from "../../../../services/task";
-import { getDesignMap } from "../../../../utils/ViewerDataUtils";
 import enterfullscreenIcon from "../../../../public/divami_icons/enterfullscreen.svg";
 import exitfullscreenIcon from "../../../../public/divami_icons/exitfullscreen.svg";
-import { useSearchParams } from "next/navigation";
 import { IUser } from "../../../../models/IUser";
 
 interface IProps {}
@@ -359,14 +357,7 @@ const Index: React.FC<IProps> = () => {
                 );
 
                 setExpanded(nodes);
-                // window.localStorage.setItem(
-                //   "expandedNodes",
-                //   JSON.stringify([response.data.result[0]?._id])
-                // );
-
-                // setExpanded([response.data.result[0]?._id]);
               }
-              //console.log("first struct=",index);
             }
           }
         })
@@ -391,26 +382,6 @@ const Index: React.FC<IProps> = () => {
         }
       }
 
-      // if (window.localStorage.getItem("expandedNodes")) {
-      //   setExpanded(
-      //     JSON.parse(window.localStorage.getItem("expandedNodes") || "") || []
-      //   );
-      // }
-      // if (window.localStorage.getItem("nodeData")) {
-      //   let nodeData = JSON.parse(
-      //     window.localStorage.getItem("nodeData") || ""
-      //   );
-      //   if (nodeData) {
-      //     console.log("fdsfsf", nodeData, structuresList);
-      //     getStructureData(nodeData);
-      //     setExpanded(
-      //       JSON.parse(window.localStorage.getItem("expandedNodes") || "") || []
-      //     );
-      //     setSelected(nodeData?._id || "");
-      //   }
-      // }
-
-      const handler = document.addEventListener("click", closeStructurePage);
       return () => {
         document.removeEventListener("click", closeStructurePage);
       };
@@ -510,7 +481,6 @@ const Index: React.FC<IProps> = () => {
     setViewTypes(structuredClone(viewTypes));
     //console.log("MyViewTypeList-->r",viewTypes);
   };
-  console.log("fsdf", activeRealityMap);
   const updatedSnapshot = (snapshot: ISnapshot) => {
     setSnapshot(snapshot);
   };
@@ -1202,28 +1172,6 @@ const Index: React.FC<IProps> = () => {
       numberOfFilters: 0,
     });
   };
-  // const handleOnTaskFilter = (formData: any) => {
-  //   console.log(formData, "taskfilterdata");
-  //   console.log(taskFilterList);
-  //   const result = taskFilterList.filter(
-  //     (item: ITasks) =>
-  //       formData.taskType.includes(item.type) &&
-  //       formData?.taskPriority?.includes(item.priority) &&
-  //       formData?.taskStatus?.includes(item.status) &&
-  //       // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
-  //       //   formData.fromDate == "") &&
-  //       // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
-  //       //   formData.toDate == "") &&
-  //       item.assignees.filter(
-  //         (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
-  //       )
-  //   );
-  //   setTasksList(result);
-  //   setTaskFilterState({
-  //     isFilterApplied: true,
-  //     filterData: formData,
-  //   });
-  // };
 
   const handleOnTaskFilter = (formData: any) => {
     const result = taskFilterList.filter(

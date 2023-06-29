@@ -339,7 +339,7 @@ function BasicTabs(props: any) {
   ];
 
   return (
-    <Box sx={{ width: "100%", height:"100%" }}>
+    <Box sx={{ width: "100%", height: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
         <Tabs
           TabIndicatorProps={{
@@ -400,18 +400,6 @@ function BasicTabs(props: any) {
               fontWeight: "400",
             }}
           />
-          {/* <Tab
-            label="Activity log"
-            {...a11yProps(1)}
-            style={{
-              paddingRight: "0px",
-              color: "#101F4C",
-              fontFamily: "Open Sans",
-              fontStyle: "normal",
-              fontSize: "14px",
-              fontWeight: "400",
-            }}
-          /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -632,13 +620,6 @@ function BasicTabs(props: any) {
                 }}
                 value={formState.selectedUser}
                 multiple={true}
-                // InputProps={{
-                //   startAdornment: (
-                //     <InputAdornment position="start">
-                //       <SearchIcon />
-                //     </InputAdornment>
-                //   ),
-                // }}
               />
               <ValueContainer>
                 {formState.selectedUser.map((v: any) =>
@@ -1047,21 +1028,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
     });
   }, [selectedIssue]);
 
-  const taskSubmit = (formData: any) => {
-    // const updatedList = issuesList.map((item: any) => {
-    //   if (item._id == formData._id){
-    //     return formData;
-    //   }else{
-    //     return {
-    //       ...item
-    //     }
-    //   }
-    // })
-    // issuesList.push(formdata);
-    // issueMenuInstance.toolAction = "issueCreated";
-    // setCreateOverlay(false);
-    // issueMenuClicked(issueMenuInstance);
-  };
   const handleCreateTask = (formData: any) => {
     clickTaskSubmit(formData);
   };
@@ -1072,7 +1038,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         .then((response) => {
           if (response.success === true) {
             toast.success("Issue updated sucessfully");
-            getIssues(currentStructure._id)
+            getIssues(currentStructure._id);
           } else {
             toast.error("Error updating the issue");
           }
@@ -1093,34 +1059,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
       ?.selectedName?.map((each: any) => {
         return each._id || each.value;
       });
-    // let userIdList: any[] = [];
-    // const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
-    //   ?.selectedName;
-    // if (assignes && assignes.length > 0) {
-    //   assignes.map((user: any) => {
-    //     userIdList?.push(user.value);
-    //   });
-    // }
-    // if (assignes?.value) {
-    //   userIdList.push(assignes.value);
-    // }
-    // const userIdList = formData
-    //   .find((item: any) => item.id == "assignedTo")
-    //   ?.map((each: any) => {
-    //     return each.value;
-    //   });
 
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
     data.status = formData.filter(
       (item: any) => item.id == "issueStatus"
     )[0]?.defaultValue;
-    // data.context = contextInfo;
-    // Object.keys(contextInfo).forEach((key) => {
-    //   if (key !== "id") {
-    //     data.context = { ...data.context, [key]: contextInfo[key] };
-    //   }
-    // });
+
     data.title = formData.filter(
       (item: any) => item.id == "title"
     )[0]?.defaultValue;
@@ -1146,13 +1091,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
-    // data.startDate = moment(data.startDate).format("YYYY-MM-DD");
     data.startDate = `${moment(data.startDate).toISOString()}`;
 
     data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-    // data.dueDate = moment(data.dueDate).format("YYYY-MM-DD");
     data.dueDate = `${moment(data.dueDate).toISOString()}`;
 
     if (!data.startDate) {
@@ -1184,13 +1127,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
         .then((response) => {
           if (!response.success) {
             toast.error("Error uploading attachments");
-          
           }
           saveEditDetails(data, projectId);
         })
         .catch((error) => {
           if (error.success === false) {
-            
             CustomToast(error?.message, "error", 3000);
           }
         });
@@ -1199,7 +1140,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
     }
   };
   const issueUpdate = (data: any) => {
-    // const issueData = _.cloneDeep(selectedIssue);
     let issueData: any = {};
     issueData.assignees = data.selectedUser.map((user: any) => {
       return user._id || user.user._id;
@@ -1207,8 +1147,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
-    // issueData.startDate = moment(issueData.startDate).format("YYYY-MM-DD");
-    // issueData.dueDate = moment(issueData.dueDate).format("YYYY-MM-DD");
     editIssue(projectId as string, issueData, selectedIssue?._id)
       .then((response) => {
         if (response.success === true) {
@@ -1222,17 +1160,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         }
       });
   };
-  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
-    let truncatedText = text;
 
-    if (text?.length > maxLength) {
-      const prefix = text.substring(0, maxLength - suffixLength);
-      const suffix = text.substring(text.length - suffixLength);
-      truncatedText = prefix + "..." + suffix;
-    }
-
-    return truncatedText;
-  };
   return (
     <>
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
@@ -1291,29 +1219,27 @@ const CustomIssueDetailsDrawer = (props: any) => {
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-      {
-        issueLoader ?
+        {issueLoader ? (
           <div className="mini-loader-parent">
-          <CustomMiniLoader></CustomMiniLoader>
+            <CustomMiniLoader></CustomMiniLoader>
           </div>
-          
-        :
-        <>
-          <BodyContainer footerState={footerState}>
-            <BasicTabs
-              taskType={issueType}
-              taskPriority={issuePriority}
-              taskStatus={issueStatus}
-              projectUsers={projectUsers}
-              taskState={taskState}
-              issueUpdate={issueUpdate}
-              deleteTheAttachment={deleteTheAttachment}
-              handleFooter={SetFooterState}
-              setTaskState={setTaskState}
-            />
-          </BodyContainer>
-        </>
-      }   
+        ) : (
+          <>
+            <BodyContainer footerState={footerState}>
+              <BasicTabs
+                taskType={issueType}
+                taskPriority={issuePriority}
+                taskStatus={issueStatus}
+                projectUsers={projectUsers}
+                taskState={taskState}
+                issueUpdate={issueUpdate}
+                deleteTheAttachment={deleteTheAttachment}
+                handleFooter={SetFooterState}
+                setTaskState={setTaskState}
+              />
+            </BodyContainer>
+          </>
+        )}
       </CustomTaskDrawerContainer>
 
       {openCreateTask && (

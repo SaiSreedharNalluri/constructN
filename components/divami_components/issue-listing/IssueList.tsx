@@ -6,7 +6,7 @@ import {
   styled,
   Tooltip,
   tooltipClasses,
-  TooltipProps
+  TooltipProps,
 } from "@mui/material";
 import Moment from "moment";
 import Image from "next/image";
@@ -23,13 +23,6 @@ import Search from "../../../public/divami_icons/search.svg";
 import smallDivider from "../../../public/divami_icons/smallDivider.svg";
 import sort from "../../../public/divami_icons/sort.svg";
 import UpArrow from "../../../public/divami_icons/upArrow.svg";
-import {
-  getIssuesPriority,
-  getIssuesStatus,
-  getIssuesTypes,
-  getIssueTags,
-} from "../../../services/issue";
-
 
 import {
   BodyContainer,
@@ -70,7 +63,6 @@ import {
   TopButton,
 } from "./IssueListStyles";
 
-import router from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { CSVLink } from "react-csv";
 import { toast } from "react-toastify";
@@ -115,19 +107,18 @@ interface IProps {
   projectUsers?: any;
 }
 
-
 export interface IFilterProps {
-    taskType: string[];
-    taskPriority: string[];
-    projectUsers: IProjectUsers[];
-    taskStatus:string[];
-    tagStatus:string[];
-    loading:boolean;
+  taskType: string[];
+  taskPriority: string[];
+  projectUsers: IProjectUsers[];
+  taskStatus: string[];
+  tagStatus: string[];
+  loading: boolean;
 }
 
 export interface ISortProps {
-  sortStatus: string[],
-  sortPriority: string[],
+  sortStatus: string[];
+  sortPriority: string[];
 }
 
 const CustomIssueListDrawer: React.FC<IProps> = ({
@@ -158,13 +149,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 }) => {
   const handleClose = () => {
     onClose(true);
-    setIssueList(
-      [...issuesList.sort((a: any, b: any) => {
+    setIssueList([
+      ...issuesList.sort((a: any, b: any) => {
         return (
           new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf()
         );
-      })]
-    );
+      }),
+    ]);
   };
   const [sortOrder, setSortOrder] = useState("asc");
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -189,18 +180,18 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [downloadList, setDownloadList] = useState(issueList);
   const [filterRsp, setFilterRsp] = useState<IFilterProps>({
-      taskType: [],
-      taskPriority:[],
-      projectUsers:[],
-      taskStatus:[],
-      tagStatus:[],
-      loading:true
-  })
+    taskType: [],
+    taskPriority: [],
+    projectUsers: [],
+    taskStatus: [],
+    tagStatus: [],
+    loading: true,
+  });
 
   const [sortRsp, setSortRsp] = useState<ISortProps>({
     sortPriority: [],
     sortStatus: [],
-  })
+  });
   const sortMenuOptions = [
     {
       label: "Status  (A - Z)",
@@ -244,7 +235,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setAnchorEl(null);
   };
 
-
   const handleDownloadClose = () => {
     setIsDownloadMenuOpen(false);
     setAnchorEl(null);
@@ -275,9 +265,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   }, [issueList]);
 
   const closeIssueList = () => {
-    //setListOverlay(false);
     issueMenuInstance.toolAction = "issueViewClose";
-    // issueMenuClicked(issueMenuInstance);
   };
 
   const handleViewTaskList = () => {
@@ -388,12 +376,11 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   };
   const issueContRef = useRef<any>(null);
   const scrollTop = () => {
- 
     if (issueContRef.current) {
       issueContRef.current.scrollTop = 0;
     }
   };
-  
+
   return (
     <>
       {errorShow.length > 0 ? (
@@ -475,18 +462,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
                   <DividerIcon src={DividerIconSVG} alt="" />
-                  {/* {issueFilterState.isFilterApplied ? (
-                    <AppliedFilter>
-                      {issueFilterState.numberOfFilters} Filters{" "}
-                      <FilterIcon
-                        src={AppliedFilterIcon}
-                        alt="Arrow"
-                        onClick={() => {
-                          handleViewTaskList();
-                        }}
-                      />
-                    </AppliedFilter>
-                  ) : null} */}
+
                   <Tooltip title="Sort Menu">
                     <IconContainer
                       src={sort}
@@ -499,21 +475,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     />
                   </Tooltip>
 
-                  {/* <DueDateHeader>Due Date</DueDateHeader> */}
-                  {/* {sortOrder === "asc" ? (
-                    <ArrowUpIcon
-                      onClick={sortDateOrdering}
-                      src={UpArrow}
-                      alt="Arrow"
-                    />
-                  ) : (
-                    <ArrowDownIcon
-                      onClick={sortDateOrdering}
-                      src={downArrow}
-                      alt="Arrow"
-                    />
-                  )}
-                  <DueDate>Due Date</DueDate> */}
                   <SecondDividerIcon src={DividerIconSVG} alt="" />
                   <FunnelIcon
                     src={FilterInActive}
@@ -523,19 +484,11 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     }}
                     data-testid="filter"
                   />
-                  {issueFilterState.isFilterApplied && issueFilterState.numberOfFilters > 0 ? (
+                  {issueFilterState.isFilterApplied &&
+                  issueFilterState.numberOfFilters > 0 ? (
                     <FilterIndication />
                   ) : null}
-                  {/* <Tooltip title="Download Menu">
-                    <DownloadIcon
-                      src={Download}
-                      alt="Arrow"
-                      onClick={(e) => {
-                        setIsDownloadMenuOpen((prev) => !prev);
-                        handleSortClick(e);
-                      }}
-                    />
-                  </Tooltip> */}
+
                   <CSVLink
                     data={getDownladableList(filteredIssuesList)}
                     filename={"my-issues.csv"}
@@ -556,12 +509,11 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               ref={(el: any) => {
                 setRef1(el);
               }}
-              
             >
               {filteredIssuesList.length ? (
                 filteredIssuesList.map((val: any, index: number) => {
                   return (
-                    <div key={index} >
+                    <div key={index}>
                       <BodyInfo
                         data-testid="item-body"
                         onClick={() => {
@@ -640,33 +592,26 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   );
                 })
               ) : (
-                // <MessageDiv>
-                //   <p>No issue matches the search</p>
-                // </MessageDiv>
-
                 <NoMatchDiv>
                   <ImageErrorIcon src={projectHierIcon} alt="Error Image" />
                   <MessageDivShowErr>No result found</MessageDivShowErr>
                 </NoMatchDiv>
               )}
-             <div className="flex justify-between px-1">
-              {remainingIssues > 1 && filteredIssuesList.length > 1 ? (
-               
-                <LoadMoreText
-                  onClick={() => {
-                    handleLoadMore();
-                  }}
-                >
-                  Load More
-                </LoadMoreText>
-               
-              ) : null}
-              <div></div>
-              {filteredIssuesList.length >= 10  &&
-                 <TopButton onClick={scrollTop}>
-                  Top
-                </TopButton>}
-                </div>
+              <div className="flex justify-between px-1">
+                {remainingIssues > 1 && filteredIssuesList.length > 1 ? (
+                  <LoadMoreText
+                    onClick={() => {
+                      handleLoadMore();
+                    }}
+                  >
+                    Load More
+                  </LoadMoreText>
+                ) : null}
+                <div></div>
+                {filteredIssuesList.length >= 10 && (
+                  <TopButton onClick={scrollTop}>Top</TopButton>
+                )}
+              </div>
             </CustomBox>
           </BodyContainer>
 
@@ -679,9 +624,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               <CustomIssueDetailsDrawer
                 issuesList={issueList}
                 issue={viewIssue}
-                onClose={() =>{
+                onClose={() => {
                   setOpenIssueDetail((prev: any) => !prev);
-                } }
+                }}
                 issueType={issueTypesList}
                 issuePriority={issuePriorityList}
                 issueStatus={issueStatusList}
@@ -716,7 +661,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 issueFilterState={issueFilterState}
                 setIssueFilterState={setIssueFilterState}
                 checkIsFilter={checkIsFilter}
-                filterRsp = {filterRsp}
+                filterRsp={filterRsp}
               />
             </Drawer>
           )}
@@ -888,13 +833,10 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: "white",
-    // color: "rgba(0, 0, 0, 0.87)",
     fontSize: 11,
-    // position: "absolute",
     right: 30,
     borderRadius: "4px",
     top: 2,
-    // width: "308px",
   },
   [`& .${tooltipClasses.arrow}`]: {
     height: "10px !important",
@@ -904,7 +846,5 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
       background: "#FFFFFF",
       border: "1px solid #D9D9D9",
     },
-
-    //  color: 'red',
   },
 }));

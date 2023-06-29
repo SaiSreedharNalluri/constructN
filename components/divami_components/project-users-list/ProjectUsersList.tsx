@@ -309,7 +309,6 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   };
 
   const appendToTable = (bool: boolean) => {
- 
     if (bool) {
       setDataLoaded(false);
       getUsersList();
@@ -365,13 +364,10 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   };
 
   useEffect(() => {
-    console.log("tableData", tableData);
     setSearchTableData(tableData);
   }, [tableData]);
 
   const showEmailOverlay = (formState: any) => {
-    console.log("formState", formState);
-
     setShowAddUser(false);
     setOpenDrawer(true);
     setForm(formState);

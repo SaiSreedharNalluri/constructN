@@ -117,11 +117,6 @@ import { ActivityLogContainer } from "../issue_detail/IssueDetailStyles";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
 
-// const BodyContainer = styled(Box)`
-//   height: calc(100vh - 134px);
-//   //   border: 2px solid black;
-//   // overflow: scroll;
-// `;
 interface ContainerProps {
   footerState: boolean;
 }
@@ -134,7 +129,6 @@ interface TabPanelProps {
 
 interface Task {
   _id: string;
-  // Include other properties if needed
 }
 
 const CustomTabPanel = styled(TabPanel)`
@@ -370,18 +364,6 @@ function BasicTabs(props: any) {
               fontWeight: "400",
             }}
           />
-          {/* <Tab
-            label="Activity log"
-            {...a11yProps(1)}
-            style={{
-              paddingRight: "0px",
-              color: "#101F4C",
-              fontFamily: "Open Sans",
-              fontStyle: "normal",
-              fontSize: "14px",
-              fontWeight: "400",
-            }}
-          /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -455,9 +437,7 @@ function BasicTabs(props: any) {
           </SecondBodyDiv>
           <SecondBodyDiv>
             <ThirdContRight>
-              <ThirdContProg data-testid="progres-label">
-              Status
-              </ThirdContProg>
+              <ThirdContProg data-testid="progres-label">Status</ThirdContProg>
 
               <ThirdContProgType
                 style={{ color: "#101F4B" }}
@@ -558,150 +538,6 @@ function BasicTabs(props: any) {
             </FourthContLeft>
           </SecondBodyDiv>
 
-          {/* {progressEditState ? (
-            <ProgressStateTrue>
-              {" "}
-              <FourthBodyDiv
-                assigneeEditState={assigneeEditState}
-                style={{ marginTop: "0px", color: "#101F4B" }}
-              >
-                <FourthContLeft>
-                  <FourthContAssigned data-testid="assigned-to-label">
-                    Assigned to
-                  </FourthContAssigned>
-                  <FourthContProgType style={{ color: "#101F4B" }}>
-                    {taskState?.TabOne?.assignees}{" "}
-                    <DarkToolTip
-                      arrow
-                      title={
-                        <SecondAssigneeList>
-                          {taskState?.TabOne?.assignessList?.map(
-                            (assignName: any, index: number) => {
-                              if (index !== 0) {
-                                return (
-                                  <>
-                                    {index !==
-                                    taskState?.TabOne?.assignessList.length - 1
-                                      ? assignName?.firstName +
-                                        " " +
-                                        assignName?.lastName +
-                                        " | "
-                                      : assignName?.firstName +
-                                        " " +
-                                        assignName.lastName}
-                                  </>
-                                );
-                              }
-                            }
-                          )}
-                        </SecondAssigneeList>
-                      }
-                    >
-                      <MoreText>{taskState?.TabOne?.moreText}</MoreText>
-                    </DarkToolTip>
-                    {taskState?.TabOne?.assignees ? (
-                      <PenIconImage
-                        data-testid="assignees-edit"
-                        onClick={() => {
-                          handleEditAssigne();
-                        }}
-                        src={Edit}
-                        alt={"close icon"}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </FourthContProgType>
-                </FourthContLeft>
-              </FourthBodyDiv>
-            </ProgressStateTrue>
-          ) : (
-            <ProgressStateFalse>
-              {" "}
-              <ThirdContRight>
-                <ThirdContProg data-testid="progres-label">
-                  Status
-                </ThirdContProg>
-
-                <ThirdContProgType
-                  style={{ color: "#101F4B" }}
-                  data-testid="task-progress"
-                >
-                  {taskState?.TabOne?.status}
-                  {taskState?.TabOne?.status ? (
-                    <PenIconImage
-                      onClick={() => {
-                        handleEditProgress();
-                      }}
-                      src={Edit}
-                      alt={"close icon"}
-                      data-testid="issue-progress-edit"
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </ThirdContProgType>
-              </ThirdContRight>
-              <FourthBodyDiv
-                assigneeEditState={assigneeEditState}
-                style={{
-                  marginTop: "0px",
-                  color: "#101F4B",
-                  marginLeft: "auto",
-                }}
-              >
-                <FourthContLeft>
-                  <FourthContAssigned data-testid="assigned-to-label">
-                    Assigned to
-                  </FourthContAssigned>
-                  <FourthContProgType style={{ color: "#101F4B" }}>
-                    {taskState?.TabOne?.assignees}{" "}
-                    <LightTooltip
-                      arrow
-                      title={
-                        <AssigneeList>
-                          {taskState?.TabOne?.assignessList?.map(
-                            (assignName: any, index: number) => {
-                              if (index !== 0) {
-                                return (
-                                  <>
-                                    {index !==
-                                    taskState?.TabOne?.assignessList.length - 1
-                                      ? assignName?.firstName +
-                                        " " +
-                                        assignName?.lastName +
-                                        " | "
-                                      : assignName?.firstName +
-                                        " " +
-                                        assignName.lastName}
-                                  </>
-                                );
-                              }
-                            }
-                          )}
-                        </AssigneeList>
-                      }
-                    >
-                      <MoreText>{taskState?.TabOne?.moreText}</MoreText>
-                    </LightTooltip>
-                    {taskState?.TabOne?.assignees ? (
-                      <PenIconImage
-                        onClick={() => {
-                          handleEditAssigne();
-                        }}
-                        src={Edit}
-                        alt={"close icon"}
-                        data-testid="assignees-edit"
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </FourthContProgType>
-                </FourthContLeft>
-              </FourthBodyDiv>
-            </ProgressStateFalse>
-          )} */}
-
           {assigneeEditState && (
             <AssignEditSearchContainer>
               {/* <AssignedLabel>Assigned to</AssignedLabel> */}
@@ -801,13 +637,6 @@ function BasicTabs(props: any) {
           ) : (
             ""
           )}
-
-          {/* <FormElementContainer>
-            <CustomSelectContainer>
-              <SelectVariants options={DetailsObj.TabOne[0].options} />
-              <BasicSelect options={DetailsObj.TabOne[0].options} />
-            </CustomSelectContainer>
-          </FormElementContainer> */}
 
           {taskState?.TabOne?.issueDescription?.length > 0 ? (
             <DescriptionDiv>
@@ -1141,15 +970,13 @@ const CustomTaskDetailsDrawer = (props: any) => {
   };
 
   const onDeleteCallback = () => {
-    onClose()
-     if (setTaskList) {
+    onClose();
+    if (setTaskList) {
       const updatedIssuesList = deletetaskById(taskList, selectedTask);
 
       setTaskList(updatedIssuesList);
     }
-
-  }
-
+  };
 
   const onDeleteTask = () => {
     setshowPopUp(false);
@@ -1338,15 +1165,15 @@ const CustomTaskDetailsDrawer = (props: any) => {
         <HeaderContainer>
           <TitleContainer>
             <LeftTitleCont>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] ">
-              <ArrowIcon
-                onClick={() => {
-                  onClose(true);
-                }}
-                src={BackArrow}
-                alt={"close icon"}
-                data-testid="back-arrow"
-              />
+              <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] ">
+                <ArrowIcon
+                  onClick={() => {
+                    onClose(true);
+                  }}
+                  src={BackArrow}
+                  alt={"close icon"}
+                  data-testid="back-arrow"
+                />
               </div>
               <SpanTile data-testid="task-detail-header">
                 <TruncatedString
@@ -1358,27 +1185,26 @@ const CustomTaskDetailsDrawer = (props: any) => {
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
-              <EditIcon
-                src={Edit}
-                alt={"close icon"}
-                onClick={() => {
-                  setOpenCreateTask(true);
-                }}
-                data-testid="edit-icon"
-              />
+              <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
+                <EditIcon
+                  src={Edit}
+                  alt={"close icon"}
+                  onClick={() => {
+                    setOpenCreateTask(true);
+                  }}
+                  data-testid="edit-icon"
+                />
               </div>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
-          <DeleteIcon
-                src={Delete}
-                alt={"close icon"}
-                onClick={() => {
-                  setshowPopUp(true);
-                }}
-                data-testid="delete-icon"
-              />
-          </div>
-            
+              <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
+                <DeleteIcon
+                  src={Delete}
+                  alt={"close icon"}
+                  onClick={() => {
+                    setshowPopUp(true);
+                  }}
+                  data-testid="delete-icon"
+                />
+              </div>
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>

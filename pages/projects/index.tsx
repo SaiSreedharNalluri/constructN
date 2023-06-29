@@ -160,15 +160,13 @@ const Index: React.FC<any> = () => {
       icon: UpArrow,
       method: "updatedAsc",
       onClick: () => {
-        setSearchTableData(       
-          [...projects.sort((a: any, b: any) => {
+        setSearchTableData([
+          ...projects.sort((a: any, b: any) => {
             return (
               new Date(a.updatedAt).valueOf() - new Date(b.updatedAt).valueOf()
             );
-          })]
-
-          );
-       
+          }),
+        ]);
       },
     },
     {
@@ -176,13 +174,13 @@ const Index: React.FC<any> = () => {
       icon: DownArrow,
       method: "updatedDesc",
       onClick: () => {
-        setSearchTableData(
-          [...projects.sort((a: any, b: any) => {
+        setSearchTableData([
+          ...projects.sort((a: any, b: any) => {
             return (
               new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf()
             );
-          })]
-        );
+          }),
+        ]);
       },
     },
   ];
@@ -348,8 +346,8 @@ const Index: React.FC<any> = () => {
 
   // project configuration handlesubmit
   const handleSubmit = async () => {
-    if(configEnabled){
-      setConfigEnabled(false)
+    if (configEnabled) {
+      setConfigEnabled(false);
       const containsEmptyString = formValues.priority.some(
         (item: any) => item.length === 0
       );
@@ -359,55 +357,63 @@ const Index: React.FC<any> = () => {
         return;
       }
 
- 
-   if(containsRepeated(formValues.priority.map((item:string) => item.trim()))){
-    toast.error("Duplicate Name(s) not allowed");
-    return;
-   }
+      if (
+        containsRepeated(formValues.priority.map((item: string) => item.trim()))
+      ) {
+        toast.error("Duplicate Name(s) not allowed");
+        return;
+      }
 
       try {
         // Call the appropriate API based on the selected option and pass the updated values
         if (selectedOption === "issuePriority") {
           // await updateIssuePriorityList(projectId, formValues.priority);
           await updateIssuePriorityList(projectId, {
-            issuePriorityList: [...formValues.priority.map((ele:string) => ele.trim())],
+            issuePriorityList: [
+              ...formValues.priority.map((ele: string) => ele.trim()),
+            ],
           });
           toast.success("Issue priority list updated successfully");
         } else if (selectedOption === "taskPriority") {
           await updateTaskPriorityList(projectId, {
-            taskPriorityList: [...formValues.priority.map((ele:string) => ele.trim())],
+            taskPriorityList: [
+              ...formValues.priority.map((ele: string) => ele.trim()),
+            ],
           });
           toast.success("Task priority list updated successfully");
         } else if (selectedOption === "issueStatus") {
           await updateIssueStatusList(projectId, {
-            issueStatusList: [...formValues.priority.map((ele:string) => ele.trim())],
+            issueStatusList: [
+              ...formValues.priority.map((ele: string) => ele.trim()),
+            ],
           });
           toast.success("Issue status list updated successfully");
         } else if (selectedOption === "taskStatus") {
           await updateTaskStatusList(projectId, {
-            taskStatusList: [...formValues.priority.map((ele:string) => ele.trim())],
+            taskStatusList: [
+              ...formValues.priority.map((ele: string) => ele.trim()),
+            ],
           });
           toast.success("Task status list updated successfully");
         } else if (selectedOption === "tag") {
           await updateTagList(projectId, {
-            tagList: [...formValues.priority.map((ele:string) => ele.trim())],
+            tagList: [...formValues.priority.map((ele: string) => ele.trim())],
           });
           toast.success("Tag list updated successfully");
         }
-        setConfigEnabled(true)
+        setConfigEnabled(true);
         setShowbutton(false);
-      } catch (error:any) {
-      
-          if(error && error?.success === false){
-            if(error.message === 'Forbidden Access'){
-              toast.error("Not authorized. Ask the Project Admin for help")
-            }else{
-              toast.error("Project Config could not be updated")
-            }
-            setConfigEnabled(true)
+      } catch (error: any) {
+        if (error && error?.success === false) {
+          if (error.message === "Forbidden Access") {
+            toast.error("Not authorized. Ask the Project Admin for help");
+          } else {
+            toast.error("Project Config could not be updated");
           }
+          setConfigEnabled(true);
+        }
       }
-  }
+    }
   };
   const [isChatActive, setChatStatus] = React.useState(false);
   const [supportItemsConfig, setSupportItemsConfig] = React.useState([
@@ -435,8 +441,6 @@ const Index: React.FC<any> = () => {
           );
           //setProjects([].concat(updateProjectsList))
           setSearchTableData([].concat(projects));
-
-          console.log("Clicked Yes", response);
         }
       })
       .catch((error) => {
@@ -687,7 +691,6 @@ const Index: React.FC<any> = () => {
             showAddUser
               ? () => {}
               : () => {
-                  console.log("Clicked YES");
                   deleteUser({ email: eMail, projectId: projectId });
                   setShowArchiveProject(false);
                 }
@@ -717,4 +720,3 @@ const Index: React.FC<any> = () => {
   );
 };
 export default Index;
-
