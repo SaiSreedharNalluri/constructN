@@ -90,6 +90,11 @@ export const HeaderMenuImageContainer = styled('div')({
   cursor: 'pointer',
   borderRadius: '50%' ,
 });
+export const HeaderSupportImageContainer = styled('div')({
+  
+  cursor: 'pointer',
+  borderRadius: '50%' ,
+});
 
 export const HeaderNotificationImageContainer = styled('div')({
   marginRight: '10px',
