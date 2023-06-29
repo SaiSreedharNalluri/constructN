@@ -82,6 +82,7 @@ const CustomFileInput = ({ handleFileUpload, data }: any) => {
           <HiddenInputField
             type="file"
             multiple
+            accept=".jpeg, .jpg, .png, .pdf, .doc, .docx, .xls, .xlsx, .mp3, .mp4"
             onChange={handleFileChange}
             ref={inputRef}
             value={data.defaultValue}

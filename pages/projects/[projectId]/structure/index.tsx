@@ -904,12 +904,12 @@ const Index: React.FC<IProps> = () => {
            
           } else {
             setIssueList(response.result);
-            // setIssueFilterList(response.result);
+            setIssueFilterList(response.result);
           }
-        //  setIssueLoader(false)
+
         })
         .catch((error) => {
-        //  setIssueLoader(false)
+
           if (error.success === false) {
             toast.error(error?.message);
           }
@@ -1069,20 +1069,26 @@ const Index: React.FC<IProps> = () => {
     const result = issueFilterList.filter(
       (item: Issue) =>
         (formData.issueTypeData.includes(item.type) ||
-          formData.issueTypeData.length == 0) &&
+          formData.issueTypeData.length == 0)
+           &&
         (formData?.issuePriorityData?.includes(item.priority) ||
-          formData?.issuePriorityData?.length == 0) &&
+          formData?.issuePriorityData?.length == 0) 
+        &&
         (formData?.issueStatusData?.includes(item.status) ||
-          formData?.issueStatusData.length == 0) &&
+          formData?.issueStatusData.length == 0) 
+        
+        &&
         (item.tags.filter((tag) => formData?.issueTagData?.includes(tag))
           .length ||
           formData?.issueTagData?.length == 0 ||
-          !formData?.issueTagData) &&
+          !formData?.issueTagData) 
+        &&
         (item.assignees.filter(
           (userInfo) => userInfo._id === formData.assigneesData?.user?._id
         ).length ||
           formData?.assigneesData?.length == 0 ||
-          !formData?.assigneesData) &&
+          !formData?.assigneesData)
+        &&
         (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
           !formData.fromDate) &&
         (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||

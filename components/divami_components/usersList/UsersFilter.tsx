@@ -128,9 +128,10 @@ const UsersFilter: React.FC<any> = ({
       (item: any) =>
         formData.roleType?.includes(item.role) ||
         (formData.roleType?.length == 0 &&
-          (item.updatedAt >= formData.fromDate || !formData.fromDate) &&
-          (item.updatedAt <= formData.toDate || !formData.toDate))
+          (item.updatedAt >= new Date(formData.fromDate) || !formData.fromDate) &&
+          (item.updatedAt <= new Date(formData.toDate) || !formData.toDate))
     );
+
     let count = formData?.roleType?.length;
 
     if (formData?.toDate) {
