@@ -933,12 +933,10 @@ const Index: React.FC<IProps> = () => {
             // });
           } else {
             setIssueList(response.result);
-            // setIssueFilterList(response.result);
+            setIssueFilterList(response.result);
           }
-          //  setIssueLoader(false)
         })
         .catch((error) => {
-          //  setIssueLoader(false)
           if (error.success === false) {
             toast.error(error?.message);
           }

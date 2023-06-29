@@ -91,6 +91,7 @@ const ProjectHierarchy = ({
         pathname: pathname,
         query: { ...router.query, structId: newQueryParamValue },
       });
+      
       if (
         !(
           nodes.children &&

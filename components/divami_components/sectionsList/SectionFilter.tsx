@@ -138,6 +138,7 @@ const SectionFilter: React.FC<any> = ({
   }, []);
 
   const handleOnTaskFilter = (formData: any) => {
+    
     const result = tableData.filter(
       (item: any) =>
         formData.roleType?.includes(item.role) ||

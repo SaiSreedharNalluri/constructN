@@ -125,6 +125,8 @@ const FilterCommon: React.FC<IProps> = ({
     },
   ];
 
+
+
   const [FilterState, SetFilterState] = useState<any>(Filters);
   const [optionState, setOptionState] = useState<any>("clash");
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
@@ -203,6 +205,7 @@ const FilterCommon: React.FC<IProps> = ({
 
     handleOnFilter(data);
     handleClose();
+  
   };
   const formHandler = (event: any) => {
     if (event === "Cancel") {
