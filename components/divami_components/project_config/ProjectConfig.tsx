@@ -82,7 +82,7 @@ const ProjectConfig = ({
     },
     {
       id: "tag",
-      title: "Tag",
+      title: "Tags",
 
       isActive: false,
       toolTipMsg: "Users",
