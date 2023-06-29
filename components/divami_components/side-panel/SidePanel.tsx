@@ -59,7 +59,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       activeIcon: dashboardProgressHighlight,
       isActive: false,
       nextPage: "",
-      toolTipMsg: "Dashboard & Reports",
+      toolTipMsg: "Dashboards & Reports",
     },
     {
       id: "sections",
