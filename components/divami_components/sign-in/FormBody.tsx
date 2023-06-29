@@ -76,7 +76,7 @@ const FormBody = ({
     handleFormData(updatedFormData);
     let count = 0;
     formConfig.forEach((item: any) => {
-      if (item.isError) {
+      if (item?.isError) {
         count++;
       }
     });

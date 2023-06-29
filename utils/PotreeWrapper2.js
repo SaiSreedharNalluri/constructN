@@ -691,8 +691,13 @@ export const PotreeViewerUtils = () => {
         _createTagTool = true;
         
         setTimeout((() => {
-            _viewer.renderArea.addEventListener("click", onClickHandler);
-            _viewer.renderArea.addEventListener("touchstart", onClickHandler);
+            if(isMobile())
+            {
+                _viewer.renderArea.addEventListener("touchstart", onClickHandler);
+            }
+            else{
+                _viewer.renderArea.addEventListener("click", onClickHandler);
+            }
         }), 1)
         return true;
     }
@@ -889,7 +894,7 @@ export const PotreeViewerUtils = () => {
             processTag(click_point);
             console.log("Event clicked : ", pos, event, click_point);
         }
-        if(isMobile)
+        if(isMobile())
         {
             _viewer.renderArea.removeEventListener('touchstart',  onClickHandler);
         }

@@ -121,7 +121,7 @@ export const ProjectListFlatView = ({
         return (
           <CapturesFieldContainer>
             <CapturesField>
-              <TooltipText title="360 Video">
+              <TooltipText title="360 Image">
                 <div>
                   <CaptureImageIcon src={capture360Image} alt={""} />
                 </div>

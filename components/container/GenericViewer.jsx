@@ -1659,7 +1659,7 @@ function GenericViewer(props) {
     
     return (<Rnd
       ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
-      style={{ top:count == 1 ? '0px' : '0px'   }}
+      style={{ top:count == 1 ? '0px' : '0px', zIndex: showMinimap && ((count == 1 && viewerType === "Potree") || (count == 2 &&  compareViewMode === "Potree")) ? 10 : -1}}
       minWidth={320}
       minHeight={28}
       maxWidth={'99%'}
@@ -1669,7 +1669,7 @@ function GenericViewer(props) {
       onResize={(e, direction, ref, delta, position) => {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
       }}
-      className={`${'z-10 rounded-lg bg-white'} ${showMinimap && ((count == 1 && viewerType === "Potree") || (count == 2 &&  compareViewMode === "Potree")) ? 'z-10' : 'z-0'}`}>
+      className={`${'rounded-lg bg-white'}`}>
       <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
         <div className='h-8 rounded-lg bg-white flex'>
           <IconButton className='cursor-move' size="small">

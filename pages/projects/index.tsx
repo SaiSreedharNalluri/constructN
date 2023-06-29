@@ -359,12 +359,11 @@ const Index: React.FC<any> = () => {
         return;
       }
 
-    if (
-      containsRepeated(formValues.priority.map((item: string) => item.trim()))
-    ) {
-      toast.error("Duplicate are not allowed");
-      return;
-    }
+ 
+   if(containsRepeated(formValues.priority.map((item:string) => item.trim()))){
+    toast.error("Duplicate Name(s) not allowed");
+    return;
+   }
 
       try {
         // Call the appropriate API based on the selected option and pass the updated values

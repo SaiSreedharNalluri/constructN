@@ -2,28 +2,19 @@ import React, { useEffect, useState } from "react";
 
 import Header from "../../../../components/divami_components/header/Header";
 import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
-import logo from "./logo.svg";
-import ReactDOM from "react-dom";
-import MaterialTable, { MTableToolbar } from "material-table";
 
 import {
-  InputAdornment,
-  ThemeProvider,
-  Typography,
-  createTheme,
+  createTheme
 } from "@mui/material";
 // import "./App.css";
 // import BasicTreeData from "./components/Tree";
-import ProgressBar from "../../../../components/divami_components/ProgressBarMode/ProgressBar";
 // import ProgressBar from "./components/progressBar/ProgressBar";
 // import CaptureMode from "./components/CaptureMode/CaptureMode";
+import Add from "@material-ui/icons/Add";
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
-import Add from "@material-ui/icons/Add";
 import Check from "@material-ui/icons/Check";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
-import ChevronRight from "@material-ui/icons/ChevronRight";
-import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 
 import Clear from "@material-ui/icons/Clear";
 import DeleteOutline from "@material-ui/icons/DeleteOutline";
@@ -34,47 +25,25 @@ import LastPage from "@material-ui/icons/LastPage";
 import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
-import ViewColumn from "@material-ui/icons/ViewColumn";
 import { forwardRef } from "react";
-import CaptureMode from "../../../../components/divami_components/CaptureMode/CaptureMode";
-import { useTheme } from "@material-ui/core/styles";
-import searchTable from "../../../../public/divami_icons/searchTable.svg";
-import filterTable from "../../../../public/divami_icons/filterTable.svg";
-import SearchBoxIcon from "../../../../public/divami_icons/search.svg";
-import CrossIcon from "../../../../public/divami_icons/crossIcon.svg";
-import SearchMag from "../../../../public/divami_icons/search.svg";
-import FilterInActive from "../../../../public/divami_icons/filterInactive.svg";
-import phoneImage from "../../../../public/divami_icons/phoneImage.svg";
-import hotspotImg from "../../../../public/divami_icons/hotspotImg.svg";
-import videoWalk from "../../../../public/divami_icons/videoWalk.svg";
-import lidarScan from "../../../../public/divami_icons/lidarScan.svg";
+import DroneImage from "../../../../public/divami_icons/DroneImage.svg";
 import capture360Image from "../../../../public/divami_icons/capture360Image.svg";
 import captureLidarIcon from "../../../../public/divami_icons/captureLidarIcon.svg";
-import DroneImage from "../../../../public/divami_icons/DroneImage.svg";
+import phoneImage from "../../../../public/divami_icons/phoneImage.svg";
+import videoWalk from "../../../../public/divami_icons/videoWalk.svg";
 
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { getStructureHierarchy } from "../../../../services/structure";
 import { AxiosResponse } from "axios";
-import { ChildrenEntity } from "../../../../models/IStructure";
-import { getSectionsList } from "../../../../services/sections";
-import {
-  CaptureModeParent,
-  CountElem,
-  HotspotImgCount,
-  LidarScanCount,
-  PhoneImgCount,
-  SymbolContainer,
-  VideoWalkCount,
-  CapturesFieldContainer,
-  CapturesField,
-  CaptureImageIcon,
-  CaptureCount,
-} from "../../../../components/divami_components/CaptureMode/CaptureModeStyles";
 import moment from "moment";
-import SectionsListing from "../../../../components/divami_components/sectionsList/SectionsListing";
+import { useRouter } from "next/router";
+import {
+  CaptureCount,
+  CaptureImageIcon,
+  CapturesField,
+  CapturesFieldContainer
+} from "../../../../components/divami_components/CaptureMode/CaptureModeStyles";
 import { Content } from "../../../../components/divami_components/project-listing/SectionsStyles";
-import CustomLoader from "../../../../components/divami_components/custom_loader/CustomLoader";
+import SectionsListing from "../../../../components/divami_components/sectionsList/SectionsListing";
+import { getSectionsList } from "../../../../services/sections";
 
 const backupData: any = [
   {
@@ -221,9 +190,9 @@ const Index: React.FC = () => {
 
   // https://api.dev2.constructn.ai/api/v1/projects/PRJ201897/structures/hierarchy
 
-  useEffect(() => {}, [gridData]);
+  // useEffect(() => {}, [gridData]);
 
-  useEffect(() => {}, [filterTableData]);
+  // useEffect(() => {}, [filterTableData]);
 
   useEffect(() => {
     if (router.isReady) {
@@ -249,21 +218,21 @@ const Index: React.FC = () => {
       //   .catch((error) => {
       //     console.log("error", error);
       //   });
-      getSectionsList(router?.query?.projectId as string)
-        .then((response: AxiosResponse<any>) => {
-          setGridData([response?.data?.result]);
-          let removeGrandParent = response?.data?.result?.children?.map(
-            (item: any, index: number) => {
-              return {
-                ...item,
-                parent: null,
-              };
-            }
-          );
-          massageTree(removeGrandParent, response?.data?.result?.id);
-          setTableData([...backupData]);
-        })
-        .catch((error) => {});
+      // getSectionsList(router?.query?.projectId as string)
+      //   .then((response: AxiosResponse<any>) => {
+      //     setGridData([response?.data?.result]);
+      //     let removeGrandParent = response?.data?.result?.children?.map(
+      //       (item: any, index: number) => {
+      //         return {
+      //           ...item,
+      //           parent: null,
+      //         };
+      //       }
+      //     );
+      //     massageTree(removeGrandParent, response?.data?.result?.id);
+      //     setTableData([...backupData]);
+      //   })
+      //   .catch((error) => {});
       // getSectionsList(router?.query?.projectId as string)
       //   .then((response: AxiosResponse<any>) => {
       //     setGridData([...response?.data?.result]);

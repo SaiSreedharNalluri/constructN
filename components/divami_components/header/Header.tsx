@@ -52,6 +52,7 @@ import UserProfile from "../user-profile/UserProfile";
 import CustomSelect from "../custom-select/CustomSelect";
 import { getProjectsList } from "../../../services/project";
 import PopupComponent from "../../popupComponent/PopupComponent";
+import { TooltipText } from "../side-panel/SidePanelStyles";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -94,9 +95,9 @@ const Header: React.FC<any> = ({
   const [openProfile, setOpenProfile] = useState(false);
 
   // const [config, setConfig] = useState<any>([]);
-  const [projects, setProjects] = useState<any>([]);
-  const [currentProject, setCurrentProject] = useState("");
-  const [projectId, setProjectId] = useState<any>("");
+  // const [projects, setProjects] = useState<any>([]);
+  // const [currentProject, setCurrentProject] = useState("");
+  // const [projectId, setProjectId] = useState<any>("");
 
   useEffect(() => {
     const userObj: any = getCookie("user");
@@ -112,11 +113,11 @@ const Header: React.FC<any> = ({
     if (user?.avatar) {
       setAvatar(user.avatar);
     }
-    if (router.isReady && router.query.projectId) {
-      setProjectId(router.query.projectId);
-    }
-    getUserNotifications();
-  }, [router.query.projectId]);
+    // if (router.isReady && router.query.projectId) {
+    //   setProjectId(router.query.projectId);
+    // }
+    //getUserNotifications();
+  }, [router.isReady]);
 
   useEffect(() => {
     setIViewMode(viewMode);
@@ -181,29 +182,29 @@ const Header: React.FC<any> = ({
   const [defaultValue, setDefaultValue] = useState(2);
   const [filterValue, setFilterValue] = useState("All");
   const [showPopUp, setshowPopUp] = useState(false);
-  useEffect(() => {
-    getUserNotifications();
-    getProjectsList()
-      .then(async (response) => {
-        if (response?.data?.success === true) {
-          // setProjects(response.data.result);
-          const rolesData = response.data.result.map((each: any) => {
-            return {
-              label: each.name,
-              value: each._id,
-              selected: false,
-            };
-          });
+  // useEffect(() => {
+  //   getUserNotifications();
+  //   getProjectsList()
+  //     .then(async (response) => {
+  //       if (response?.data?.success === true) {
+  //         // setProjects(response.data.result);
+  //         const rolesData = response.data.result.map((each: any) => {
+  //           return {
+  //             label: each.name,
+  //             value: each._id,
+  //             selected: false,
+  //           };
+  //         });
 
-          // setConfig([response.data.result]);
+  //         // setConfig([response.data.result]);
 
-          setProjects(rolesData);
+  //         setProjects(rolesData);
 
-          // setCurrentProject()
-        }
-      })
-      .catch((error) => {});
-  }, []);
+  //         // setCurrentProject()
+  //       }
+  //     })
+  //     .catch((error) => {});
+  // }, []);
   const getUserNotifications = (
     condition = defaultValue,
     eventEmitter = filterValue
@@ -236,9 +237,9 @@ const Header: React.FC<any> = ({
       setCurrentPage(currentPage + 1);
     }
   };
-  useEffect(() => {
-    getUserNotifications(defaultValue);
-  }, [currentPage, defaultValue]);
+  // useEffect(() => {
+  //   getUserNotifications(defaultValue);
+  // }, [currentPage, defaultValue]);
   const updateNotifications = (notificationId: string) => {
     updateUserNotifications([notificationId]).then((response) => {
       if (response.success === true) {
@@ -254,7 +255,7 @@ const Header: React.FC<any> = ({
   };
   useEffect(() => {
     getUserNotifications(defaultValue, filterValue);
-  }, [filterValue]);
+  }, [filterValue,currentPage, defaultValue]);
   const handleNotificationClose = () => {
     setOpenNotication(false);
   };
@@ -366,17 +367,23 @@ const Header: React.FC<any> = ({
           ) : (
             <></>
           )}
-
           <HeaderProfileImageContainer>
             {avatar ? (
-              <ProfileImgIcon
+          <TooltipText title="My Profile">
+
+              <div className="hover:bg-[#E7E7E7] p-[4px] rounded-full">
+                       <ProfileImgIcon
                 onClick={onProfilePicClick}
                 src={avatar}
                 alt="Profile Image Icon"
                 width={34}
                 height={34}
               />
+              </div>
+</TooltipText>       
             ) : (
+          <TooltipText title="My Profile">
+            <div className="hover:bg-[#E7E7E7] p-[4px] rounded-full">
               <ProfileImgIconDefault
                 onClick={onProfilePicClick}
                 src={defaultAvatar}
@@ -384,6 +391,8 @@ const Header: React.FC<any> = ({
                 width={34}
                 height={34}
               />
+              </div>
+              </TooltipText>
             )}
             {openProfile ? (
               <CustomDrawer paddingStyle={true} variant="persistent">
@@ -397,7 +406,10 @@ const Header: React.FC<any> = ({
               ""
             )}
           </HeaderProfileImageContainer>
+       
           <HeaderNotificationImageContainer>
+          <TooltipText title="Notifications">
+            <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full">
             <Image
               src={Notification}
               alt="Profile Image"
@@ -411,9 +423,12 @@ const Header: React.FC<any> = ({
                 }
               }}
             />
+            </div>
+    
+            </TooltipText>
 
             {openNotification && (
-              <div>
+              <div >
                 <CustomDrawer variant="persistent">
                   <div>
                     <Notifications
@@ -432,6 +447,8 @@ const Header: React.FC<any> = ({
             )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
+          <TooltipText title="Menu">
+            <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
             <Image
               src={hamburgerMenu}
               alt="Menu"
@@ -445,6 +462,8 @@ const Header: React.FC<any> = ({
                 }
               }}
             />
+            </div>
+            </TooltipText>
           </HeaderMenuImageContainer>
         </HeaderRightPart>
 

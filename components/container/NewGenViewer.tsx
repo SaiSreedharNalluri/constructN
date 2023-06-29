@@ -446,6 +446,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           break;
           
         case 'setViewLayers':
+          let myNewLayersList:ILayer[]= action.data as ILayer[];
+          newViewerData = {...oldViewerData,currentLayersList:myNewLayersList};
+
           break;
         case 'addViewLayer':
           break;
@@ -625,6 +628,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
          loadMinimapLayerData(viewerData.current)
          }
         break;
+      case 'setViewLayers':
+        handleRealityTypeChange(getViewerTypefromViewType(currentViewerData.currentViewType));
+        break;
       case 'setCompareSnapshot':
         if(currentViewerData.currentCompareMode==='compareReality'){
           if(viewerData.current!==undefined){
@@ -704,7 +710,12 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current) {
-          forgeUtils.current.showLayers(currentViewerData.currentLayersList);
+          forgeUtils.current.showLayers(currentViewerData.currentLayersList?.map(
+            (layer)=>{if(layer.isSelected){
+              return layer.name
+            }
+            }
+          ));
         }
         break;
       case 'Potree':
@@ -1281,7 +1292,12 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           let Rdata = await getRealityLayersPath(myViewerData.structure, getRealityMap(myViewerData.currentSnapshotBase));
           console.log('Reality Layers',Rdata);
           forgeUtils.current.updateLayersData(Rdata,currentContext.current);
-          forgeUtils.current.showLayers(myViewerData.currentLayersList);
+          forgeUtils.current.showLayers(myViewerData.currentLayersList?.map(
+            (layer)=>{if(layer.isSelected){
+              return layer.name
+            }
+            }
+          ));
         }
         break;
       case 'Potree':

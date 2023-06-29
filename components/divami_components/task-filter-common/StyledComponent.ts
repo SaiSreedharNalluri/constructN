@@ -9,6 +9,7 @@ export const FilterCommonMain = styled("div")((props: any) => ({
   paddingLeft: "20px",
   paddingRight: "20px",
   flexDirection: "column",
+  overflowY:"hidden"
 })) as any;
 
 export const HeaderContainer = styled("div")({

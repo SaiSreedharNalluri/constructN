@@ -149,8 +149,8 @@ const ProjectConfig = ({
     // Check for empty value
     if (value.trim().length === 0) {
       return "Field cannot be empty";
-    } else if (value.trim().length > 15) {
-      return "Field cannot exceed 15 characters";
+    } else if (value.trim().length > 14) {
+      return "Field cannot exceed 14 characters";
     } else if (!/^(?:[a-zA-Z]+|\d+|[a-zA-Z0-9\s]+)$/.test(value)) {
       return "Field can only contain alphabets or numerics";
     } else {

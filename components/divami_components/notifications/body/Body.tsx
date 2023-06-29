@@ -7,12 +7,19 @@ import project from "../../../../public/divami_icons/clipboardIcon.svg"
 import task from "../../../../public/divami_icons/fileTextIcon.svg"
 import issueIcon from "../../../../public/divami_icons/issuesIcon.svg"
 import cameraIcon from "../../../../public/divami_icons/cameraIcon.svg"
+import { useRef} from "react";
 
 const Body = ({
   notifications,
   loadMoreData,
   updateNotifications,getNotifiCationTime,filterNotificationData,filterValue
 }: any) => {  
+  const notificationsContRef = useRef<any>(null);
+  const scrollTop = () => {
+    if (notificationsContRef.current) {
+      notificationsContRef.current.scrollTop = 0;
+    }
+  };
   return (
     <div > 
       {userNotificationTypes.map((notificationObj: any) => {
@@ -88,7 +95,7 @@ const Body = ({
         </button>
       );
     })}
-    <div className="calc-h154  overflow-y-auto">
+    <div className="calc-h154  overflow-y-auto" ref={notificationsContRef}>
         {Object.keys(notifications).length > 0 &&
           Object.keys(notifications).map((date: any) => (
             <div key={date} className="  ">
@@ -188,10 +195,18 @@ const Body = ({
             </div>
           ))}
         {Object.keys(notifications).length > 0 ? (
-          <div className="text-center">
-            <a className="font-bold text-orange-400" onClick={loadMoreData}>
-              load More
+          <div className="flex justify-between px-2 py-2">
+
+            <div className="">
+            <a className="font-normal  text-base leading-[21.79px]  text-[#F1742E]  hover:text-black" onClick={loadMoreData}>
+              Load More
             </a>
+          </div>
+          <div className="">
+          <a className="font-normal  text-base leading-[21.79px]  text-[#F1742E]  hover:text-black"   onClick={scrollTop}>
+              Top
+            </a>
+          </div>
           </div>
         ) : (
           <div>

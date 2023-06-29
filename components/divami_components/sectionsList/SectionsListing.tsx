@@ -235,7 +235,7 @@ const SectionsListing = () => {
   };
 
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady &&(!dataLoaded)) {
       getSectionsList(router?.query?.projectId as string)
         .then((response: AxiosResponse<any>) => {
           setGridData([response?.data?.result]);
@@ -494,7 +494,7 @@ const SectionsListing = () => {
 
   const columns = [
     {
-      title: "Section Name",
+      title: "View Name",
       field: "name",
       sorting: false,
       filtering: false,
@@ -514,7 +514,7 @@ const SectionsListing = () => {
           <FloorName
             onClick={() => {
               router.push({
-                pathname: `/projects/${rowData.project as string}/structure`,
+                pathname: `/projects/${router?.query?.projectId as string}/structure`,
                 query: { structId: rowData._id },
               });
             }}
@@ -697,7 +697,7 @@ const SectionsListing = () => {
   return (
     <div style={{ overflow: "scroll" }} className="sections_table">
       <TableHeader>
-        <Header>Sections </Header>
+        <Header>Views </Header>
         <HeaderActions>
           {searchingOn ? (
             <SearchAreaContainer>

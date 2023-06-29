@@ -139,6 +139,8 @@ export const ProjectListCardView = ({
           <ProjectTopRightBg />
           <ProjectBottomLeftBg />
           <ProjectBottomRightBg />
+          <Tooltip title="Project Menu" placement="bottom">
+          <div className="float-right">
           <ProjectCardFlipIcon
             src={cardMenu}
             alt=""
@@ -147,7 +149,8 @@ export const ProjectListCardView = ({
               setIsFlipped((prev) => !prev);
             }}
           />
-
+          </div>
+          </Tooltip>
           <ProjectLogo
             src={each.companyLogo}
             alt={""}

@@ -31,12 +31,35 @@ const EditUserProfile = ({
     firstName: Yup.string()
       .required("First name is required")
       .matches(/[a-zA-Z]/, "Atleast one letter is reqired")
-      .matches(/^[^0-9]+$/, "Number is not allowed"),
+      .matches(/^[^0-9]+$/, "Number is not allowed")
+      .min(3, 'Minimum 3 characters required')
+      .max(30,'Maximum 30 characters Exceeded')
+      .matches(
+        /^[^\s].*[^\s]$/,
+        'Spaces are not allowed at the beginning, end of the firstname'
+      ),
     lastName: Yup.string()
       .required("Last name is required")
       .matches(/[a-zA-Z]/, "Atleast one letter is reqired")
-      .matches(/^([^0-9]*)$/, "Number is not allowed"),
+      .matches(/^[^0-9]+$/, "Number is not allowed")
+      .min(1, 'Minimum 1 characters required')
+      .max(30,'Maximum 30 characters Exceeded')
+      .matches(
+        /^[^\s].*[^\s]$/,
+        'Spaces are not allowed at the beginning, end of the lastname'
+      ),
   });
+  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
+    let truncatedText = text;
+
+    if (text.length > maxLength) {
+      const prefix = text.substring(0, maxLength - suffixLength);
+      const suffix = text.substring(text.length - suffixLength);
+      truncatedText = prefix + "..." + suffix;
+    }
+
+    return truncatedText;
+  };
   const [show, setShow] = useState(true);
   return (
     <div>
@@ -45,7 +68,7 @@ const EditUserProfile = ({
         <Header editUser="editUser" closeEditProject={closeEditProfile} />
 
         </div>
-        <div className="calc-h191  overflow-y-auto">
+        <div className="calc-h191  overflow-y-auto ">
           {show ? (
             <div className="flex relative rounded-full flex-col items-center justify-center py-4">
               <Image
@@ -73,7 +96,7 @@ const EditUserProfile = ({
                 />
               </div>
               <p className="text-lg font-semibold text-[#101F4C]">
-                {userDetails?.firstName + " " + userDetails?.lastName}
+            <TruncatedString text={userDetails?.firstName + " " + userDetails?.lastName} maxLength={30} suffixLength={0}></TruncatedString>
               </p>
               <Formik
                 initialValues={initialValues}
@@ -95,7 +118,7 @@ const EditUserProfile = ({
                       <ErrorMessage
                         name="firstName"
                         component="div"
-                        className="alert alert-danger text-red-600"
+                        className="alert alert-danger text-[#F1742E]"
                       />
                     </div>
                     <div className="gap-10 px-10 py-2">
@@ -111,7 +134,7 @@ const EditUserProfile = ({
                       <ErrorMessage
                         name="lastName"
                         component="div"
-                        className="alert alert-danger text-red-600"
+                        className="alert alert-danger text-[#F1742E]"
                       />
                     </div>
                   </div>
@@ -139,9 +162,9 @@ const EditUserProfile = ({
                       : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/user_icon_def_01.png`
                   }
                   alt=""
-                  width={65}
-                  height={65}
-                  className="rounded-full border "
+                  width={75}
+                  height={75}
+                  className="rounded-full border h-[75px] "
                 />
                 <p className="text-lg font-medium text-[#101F4C]">
                   {userDetails?.firstName + " " + userDetails?.lastName}

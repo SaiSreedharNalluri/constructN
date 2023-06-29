@@ -11,7 +11,8 @@
     "docker-image": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype .",
     "docker-image-dev": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:beta .",
     "docker-image-delta": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:delta .",
-    "docker-image-prod-us": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:prod-us ."
+    "docker-image-prod-us": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:prod-us .",
+    "docker-image-qa-us": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:qa-us ."
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
