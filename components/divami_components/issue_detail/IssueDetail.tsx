@@ -493,9 +493,7 @@ function BasicTabs(props: any) {
           </SecondBodyDiv>
           <SecondBodyDiv>
             <ThirdContRight>
-              <ThirdContProg data-testid="progres-label">
-              Status
-              </ThirdContProg>
+              <ThirdContProg data-testid="progres-label">Status</ThirdContProg>
 
               <ThirdContProgType
                 style={{ color: "#101F4B" }}
@@ -929,34 +927,31 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const onDeleteCallback = () => {
-    onClose()
-     if (setIssueList) {
+    onClose();
+    if (setIssueList) {
       const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
 
       setIssueList(updatedIssuesList);
     }
-
-  }
+  };
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
     if (deleteTheIssue) deleteTheIssue(selectedIssue, onDeleteCallback);
 
-     const deleteTheAttachment = (attachmentId: string) => {
-    deleteAttachment(attachmentId)
-      .then((response) => {
-        if (response.success === true) {
-          toast(response.message);
-        }
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      });
+    const deleteTheAttachment = (attachmentId: string) => {
+      deleteAttachment(attachmentId)
+        .then((response) => {
+          if (response.success === true) {
+            toast(response.message);
+          }
+        })
+        .catch((error) => {
+          toast.error(error.message);
+        });
+    };
   };
 
-   
-  };
- 
   const DetailsObj = {
     TabOne: {
       options: [
@@ -1198,7 +1193,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
             
             CustomToast(error?.message, "error", 3000);
           }
-        
         });
     } else {
       saveEditDetails(data, projectId);
@@ -1245,17 +1239,17 @@ const CustomIssueDetailsDrawer = (props: any) => {
         <HeaderContainer>
           <TitleContainer>
             <LeftTitleCont>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] ">
-              <ArrowIcon
-                onClick={() => {
-                  onClose(true);
-                }}
-                src={BackArrow}
-                alt={"close icon"}
-                data-testid="back-arrow"
-              />
+              <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] ">
+                <ArrowIcon
+                  onClick={() => {
+                    onClose(true);
+                  }}
+                  src={BackArrow}
+                  alt={"close icon"}
+                  data-testid="back-arrow"
+                />
               </div>
-            
+
               <DarkToolTip
                 title={
                   <SecondAssigneeList>
@@ -1264,37 +1258,35 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 }
               >
                 <SpanTile data-testid="issue-detail-header">
-                  {
-                    selectedIssue?.title ?
-                    ( selectedIssue?.title?.length >= 20 ?
-                      `${selectedIssue?.title.substring(0, 16)}...`
+                  {selectedIssue?.title
+                    ? selectedIssue?.title?.length >= 20
+                      ? `${selectedIssue?.title.substring(0, 16)}...`
                       : `${selectedIssue?.title}`
-                    ): ""
-                  }
+                    : ""}
                   (#{selectedIssue?.sequenceNumber})
                 </SpanTile>
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
-              <EditIcon
-                src={Edit}
-                alt={"close icon"}
-                onClick={() => {
-                  setOpenCreateTask(true);
-                }}
-                data-testid="edit-icon"
-              />
+              <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
+                <EditIcon
+                  src={Edit}
+                  alt={"close icon"}
+                  onClick={() => {
+                    setOpenCreateTask(true);
+                  }}
+                  data-testid="edit-icon"
+                />
               </div>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
-              <DeleteIcon
-                src={Delete}
-                alt={"close icon"}
-                data-testid="delete-icon"
-                onClick={() => {
-                  setshowPopUp(true);
-                }}
-              />
+              <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
+                <DeleteIcon
+                  src={Delete}
+                  alt={"close icon"}
+                  data-testid="delete-icon"
+                  onClick={() => {
+                    setshowPopUp(true);
+                  }}
+                />
               </div>
             </RightTitleCont>
           </TitleContainer>

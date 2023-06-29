@@ -177,7 +177,7 @@ const ProjectListFilter: React.FC<any> = ({
         </HeaderContainer>
       </FilterCommonHeader>
       <FilterCommonBody>
-        <StyledFilterText>Last Updated Time</StyledFilterText>
+        <StyledFilterText>Last Updated Date</StyledFilterText>
         <FormWrapper
           config={formConfig}
           setFormConfig={setFormConfig}

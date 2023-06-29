@@ -250,7 +250,7 @@ export const ProjectListCardView = ({
         <ShowErrorContainer>
           <CenteredErrorImage src={projectHierIcon} alt="" />
 
-          <NoResultText>No Projects Found</NoResultText>
+          <NoResultText>No Results Found</NoResultText>
         </ShowErrorContainer>
       )}
     </ProjectCardsContainer>

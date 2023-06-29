@@ -85,17 +85,18 @@ const SignInPage = () => {
         if (response.success === true) {
           if (response?.result?.verified) {
             localStorage.setItem("userInfo", response.result?.fullName);
-            
-
             let userProfileObj = {
               rememberMe: rememberMe,
               ...response?.result,
-              password: rememberMe ? password : '',
-              email: rememberMe ? email : '',
+              password: rememberMe ? password : "",
+              email: rememberMe ? email : "",
             };
-            localStorage.setItem("userCredentials", JSON.stringify(userProfileObj))
+            localStorage.setItem(
+              "userCredentials",
+              JSON.stringify(userProfileObj)
+            );
             setCookie("user", userProfileObj);
-            CustomToast("User logged in successfully", "success");
+            CustomToast("Logged Successfully", "success");
             router.push("/projects");
             setLoginEnable(true)
           } else {

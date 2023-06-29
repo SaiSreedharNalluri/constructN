@@ -32,7 +32,11 @@ import selectGridViewIcon from "../../public/divami_icons/gridViewicon.svg";
 import updatedIcon from "../../public/divami_icons/updatedAtIcon.svg";
 import sortIcon from "../../public/divami_icons/sortIcon.svg";
 import listViewIcon from "../../public/divami_icons/listViewicon.svg";
-import { ProjectCardsContainer } from "../../components/divami_components/project-listing/ProjectListingStyles";
+import {
+  CenteredErrorImage,
+  NoResultText,
+  ProjectCardsContainer,
+} from "../../components/divami_components/project-listing/ProjectListingStyles";
 import { ProjectListCardView } from "../../components/divami_components/project-listing/ProjectListCardView";
 import { ProjectListFlatView } from "../../components/divami_components/project-listing/ProjectListFlatView";
 import moment from "moment";
@@ -53,6 +57,9 @@ import { AddUsersEmailOverlay } from "../../components/divami_components/add_use
 import { AddUsersEmailPopup } from "../../components/divami_components/add_users/AddUsersEmailPopup";
 import PopupComponent from "../../components/popupComponent/PopupComponent";
 import ProjectConfig from "../../components/divami_components/project_config/ProjectConfig";
+import projectHierIcon from "../../public/divami_icons/projectHierIcon.svg";
+import { Tooltip } from "@material-ui/core";
+
 import {
   updateIssuePriorityList,
   updateIssueStatusList,
@@ -68,7 +75,7 @@ import chatOpen from "../../public/divami_icons/chat_open.svg";
 import chatClose from "../../public/divami_icons/chat_close.svg";
 
 import { getCookie } from "cookies-next";
-
+import { ShowErrorContainer } from "../../components/divami_components/project-listing/ProjectListingStyles";
 
 export const truncateString = (text: string, maxLength: number) => {
   let truncatedText = text;
@@ -81,8 +88,6 @@ export const truncateString = (text: string, maxLength: number) => {
   }
   return truncatedText;
 };
-
-
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -120,6 +125,7 @@ const Index: React.FC<any> = () => {
   const [projectId, setProjectId] = useState<any>("");
   const [showLoading, setShowLoading] = useState(true);
   const [configEnabled, setConfigEnabled] = useState(true);
+  const [showWelcomMessage, setShowWelcomeMessage] = useState(false);
   let [eMail, setEMail] = useState<string>("");
 
   const sortMenuOptions = [
@@ -209,7 +215,7 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Deassign Project",
-      action: (id:string) => {
+      action: (id: string) => {
         setShowArchiveProject(true);
         setProjectId(id);
       },
@@ -273,6 +279,9 @@ const Index: React.FC<any> = () => {
       getProjectsList()
         .then(async (response) => {
           if (response?.data?.success === true) {
+            if (response?.data?.result.length == 0) {
+              setShowWelcomeMessage(true);
+            }
             const projectsData = response?.data?.result.map((each: any) => {
               return {
                 ...each,
@@ -304,7 +313,9 @@ const Index: React.FC<any> = () => {
           }
           setShowLoading(false);
         })
-        .catch((error) => {});
+        .catch((error) => {
+          setShowWelcomeMessage(true);
+        });
       getUserRoles().then((res: any) => {
         const rolesData = res.result.map((each: any) => {
           return {
@@ -314,12 +325,11 @@ const Index: React.FC<any> = () => {
         });
         setRoles(rolesData);
       });
-      
-        const userObj: any = getCookie("user");
-        let user = null;
-        if (userObj) user = JSON.parse(userObj);
-        if (user?.email) setEMail(user.email);
-      
+
+      const userObj: any = getCookie("user");
+      let user = null;
+      if (userObj) user = JSON.parse(userObj);
+      if (user?.email) setEMail(user.email);
     }
   }, [router.isReady]);
 
@@ -331,10 +341,10 @@ const Index: React.FC<any> = () => {
     setshowPopUp(false);
   };
 
-  const containsRepeated = (a:[string]) => {
+  const containsRepeated = (a: [string]) => {
     const noDups = new Set(a);
     return a.length !== noDups.size;
-  }
+  };
 
   // project configuration handlesubmit
   const handleSubmit = async () => {
@@ -348,9 +358,11 @@ const Index: React.FC<any> = () => {
         toast.error("Fields cannot be empty");
         return;
       }
-      
-    if(containsRepeated(formValues.priority.map((item:string) => item.trim()))){
-      toast.error("Fields cannot be repeated");
+
+    if (
+      containsRepeated(formValues.priority.map((item: string) => item.trim()))
+    ) {
+      toast.error("Duplicate are not allowed");
       return;
     }
 
@@ -409,29 +421,29 @@ const Index: React.FC<any> = () => {
     },
   ]);
   const deleteUser = (rowData: any) => {
-    const email = rowData.email.toLocaleLowerCase();
+    const email = rowData?.email?.toLocaleLowerCase();
     removeProjectUser(email, rowData.projectId as string)
       .then((response) => {
         if (response?.success === true) {
           toast.success(response?.message);
           //update current proj list
-           
-          projects.splice(projects.findIndex(
-            (prj:any)=>{
-              if(prj._id===projectId)
-              return true;
 
-            }
-          ),1);
+          projects.splice(
+            projects.findIndex((prj: any) => {
+              if (prj._id === projectId) return true;
+            }),
+            1
+          );
           //setProjects([].concat(updateProjectsList))
           setSearchTableData([].concat(projects));
-          
-          console.log("Clicked Yes",response);
+
+          console.log("Clicked Yes", response);
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+          // toast.error(error?.message);
+          toast.error("You  don't have permission. Contact Admin");
         }
       });
   };
@@ -525,30 +537,35 @@ const Index: React.FC<any> = () => {
                 />
                 {isFilterApplied ? <FilterIndicator /> : <></>}
                 <ToggleButtonContainer id="view-options">
-                  <GridViewButton
-                    onClick={() => {
-                      setIsGridView(true);
-                    }}
-                    toggleStatus={isGridView}
-                    data-testid="design-button"
-                  >
-                    <GridButton
-                      src={isGridView ? selectGridViewIcon : unselectGridIcon}
-                      alt=""
-                    />
-                  </GridViewButton>
-                  <GridViewButtonRight
-                    onClick={() => {
-                      setIsGridView(false);
-                    }}
-                    toggleStatus={!isGridView}
-                    data-testid="design-button"
-                  >
-                    <GridButton
-                      src={isGridView ? listViewIcon : selectListIcon}
-                      alt=""
-                    />
-                  </GridViewButtonRight>
+                  <Tooltip title={"Grid View"}>
+                    <GridViewButton
+                      onClick={() => {
+                        setIsGridView(true);
+                      }}
+                      toggleStatus={isGridView}
+                      data-testid="design-button"
+                    >
+                      <GridButton
+                        src={isGridView ? selectGridViewIcon : unselectGridIcon}
+                        alt=""
+                      />
+                    </GridViewButton>
+                  </Tooltip>
+
+                  <Tooltip title={"List View"}>
+                    <GridViewButtonRight
+                      onClick={() => {
+                        setIsGridView(false);
+                      }}
+                      toggleStatus={!isGridView}
+                      data-testid="design-button"
+                    >
+                      <GridButton
+                        src={isGridView ? listViewIcon : selectListIcon}
+                        alt=""
+                      />
+                    </GridViewButtonRight>
+                  </Tooltip>
                 </ToggleButtonContainer>
               </HeaderActions>
             </ProjectsHeader>
@@ -571,9 +588,18 @@ const Index: React.FC<any> = () => {
                 />
               )}
             </div>
-
             {showLoading ? (
               <CustomLoader />
+            ) : showWelcomMessage ? (
+              <ProjectCardsContainer>
+                <ShowErrorContainer>
+                  <CenteredErrorImage src={projectHierIcon} alt="" />
+
+                  <NoResultText>
+                    No Project Has Been Assigned To You
+                  </NoResultText>
+                </ShowErrorContainer>
+              </ProjectCardsContainer>
             ) : isGridView ? (
               <ProjectListCardView
                 projects={searchTableData}
@@ -661,8 +687,9 @@ const Index: React.FC<any> = () => {
           callBackvalue={
             showAddUser
               ? () => {}
-              : () => {console.log("Clicked YES");
-              deleteUser({email:eMail,projectId:projectId})
+              : () => {
+                  console.log("Clicked YES");
+                  deleteUser({ email: eMail, projectId: projectId });
                   setShowArchiveProject(false);
                 }
           }
@@ -691,3 +718,4 @@ const Index: React.FC<any> = () => {
   );
 };
 export default Index;
+

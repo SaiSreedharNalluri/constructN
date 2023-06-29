@@ -275,7 +275,7 @@ const Header: React.FC<any> = ({
               background: "#FFFFFF",
               position: "absolute",
               top: "58px",
-              zIndex: "1500",
+              // zIndex: "1500",
               opacity: "1",
               // width: "59px",
               // background: "#FFFFFF",
@@ -457,9 +457,7 @@ const Header: React.FC<any> = ({
               }}
             >
               <FontAwesomeIcon icon={faSignOut}></FontAwesomeIcon>
-              <p className="logout-button px-4 py-1">
-                Sign out
-              </p>
+              <p className="logout-button px-4 py-1">Sign out</p>
             </div>
 
             {showPopUp && (

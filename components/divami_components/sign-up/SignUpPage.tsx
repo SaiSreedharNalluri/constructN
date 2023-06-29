@@ -139,14 +139,14 @@ const SignUpPage = () => {
   //   handleRegister(formValues);
   // };
   const formHandler = (event: any) => {
- 
     const formValues = {
-      firstName: formData[0].defaultValue,
-      lastName: formData[1].defaultValue,
+      firstName: formData[0].defaultValue.trim(),
+      lastName: formData[1].defaultValue.trim(),
       email: formData[2].defaultValue.toLocaleLowerCase(),
       password: formData[3].defaultValue,
       confirm_password: formData[4].defaultValue,
     };
+
 
     let errorObjects = formData.filter(function (obj: any) {
       // return obj.isError === true;
@@ -191,7 +191,8 @@ const SignUpPage = () => {
 
   function checkPassword(str: any) {
     if (str.length > 0) {
-      let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])(?!\s).{8,14}(?<!\s)$/;
+      let rePass =
+        /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])(?!\s).{8,14}(?<!\s)$/;
       let passwordTru = rePass.test(str);
       return !passwordTru;
     } else {

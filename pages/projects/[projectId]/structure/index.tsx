@@ -1074,13 +1074,10 @@ const Index: React.FC<IProps> = () => {
           formData?.issuePriorityData?.length == 0) &&
         (formData?.issueStatusData?.includes(item.status) ||
           formData?.issueStatusData.length == 0) &&
-
-        (item.tags.filter(
-          (tag) => formData?.issueTagData?.includes(tag)
-        ).length ||
-        formData?.issueTagData?.length == 0 ||
-        !formData?.issueTagData)
-          &&
+        (item.tags.filter((tag) => formData?.issueTagData?.includes(tag))
+          .length ||
+          formData?.issueTagData?.length == 0 ||
+          !formData?.issueTagData) &&
         (item.assignees.filter(
           (userInfo) => userInfo._id === formData.assigneesData?.user?._id
         ).length ||
@@ -1094,7 +1091,7 @@ const Index: React.FC<IProps> = () => {
     let count =
       formData?.issueTypeData?.length +
       formData?.issuePriorityData?.length +
-      formData?.issueStatusData?.length + 
+      formData?.issueStatusData?.length +
       formData?.issueTagData?.length;
     if (formData?.assigneesData) {
       count = count + 1;
@@ -1152,12 +1149,9 @@ const Index: React.FC<IProps> = () => {
           formData?.taskPriority?.length == 0) &&
         (formData?.taskStatus?.includes(item.status) ||
           formData?.taskStatus.length == 0) &&
-        (item.tags.filter(
-          (tag) => formData?.taskTag?.includes(tag)
-        ).length ||
-        formData?.taskTag?.length == 0 ||
-        !formData?.taskTag)
-          &&
+        (item.tags.filter((tag) => formData?.taskTag?.includes(tag)).length ||
+          formData?.taskTag?.length == 0 ||
+          !formData?.taskTag) &&
         (item.assignees.filter(
           (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
         ) ||
@@ -1202,8 +1196,7 @@ const Index: React.FC<IProps> = () => {
   const deleteTheIssue = (issueObj: any, callback?: any) => {
     deleteIssue(router.query.projectId as string, issueObj._id)
       .then((response) => {
-      
-        if (response.success === true && response.status === 200) {
+        if (response.success === true) {
           toast.success(response.message);
           _.remove(issueFilterList, { _id: issueObj._id });
           setIssueList(issueFilterList);
@@ -1217,14 +1210,12 @@ const Index: React.FC<IProps> = () => {
 
           toolClicked(issueMenuInstance);
         }
-
-     
       })
       .catch((error) => {
-        if(!error.success && error.message === "Forbidden Access"){
-          toast.error("You can't delete a task. Ask the Project Admin for help")
-        }else{
-          toast.error("Task could not be deleted")
+        if (!error.success && error.message === "Forbidden Access") {
+          toast.error("You do not have access,Contact Admin");
+        } else {
+          toast.error("Task could not be deleted");
         }
       });
   };
@@ -1232,7 +1223,7 @@ const Index: React.FC<IProps> = () => {
   const deleteTheTask = (taskObj: any, callback?: any) => {
     deleteTask(router.query.projectId as string, taskObj._id)
       .then((response) => {
-        if (response.success === true && response.status === 200) {
+        if (response.success === true) {
           toast.success(response.message);
           _.remove(taskFilterList, { _id: taskObj._id });
           setTasksList(taskFilterList);
@@ -1248,10 +1239,10 @@ const Index: React.FC<IProps> = () => {
         }
       })
       .catch((error) => {
-        if(!error.success && error.message === "Forbidden Access"){
-          toast.error("You can't delete a task. Ask the Project Admin for help")
-        }else{
-          toast.error("Task could not be deleted")
+        if (!error.success && error.message === "Forbidden Access") {
+          toast.error("You do not have access,Contact Admin");
+        } else {
+          toast.error("Task could not be deleted");
         }
       });
   };
@@ -1287,7 +1278,6 @@ const Index: React.FC<IProps> = () => {
     setIssueList(issueFilterList);
   };
   const deleteTheAttachment = (attachmentId: string, entity?: string) => {
-   
     deleteAttachment(attachmentId)
       .then((response) => {
         if (response.success === true) {

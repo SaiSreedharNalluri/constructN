@@ -51,6 +51,7 @@ export const AddUsersEmailOverlay = ({
   setOpenDrawer,
   roles,
   selectedProjectId,
+  appendToTable,
 }: any) => {
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
@@ -180,34 +181,38 @@ export const AddUsersEmailOverlay = ({
     setHoveringOver("");
 
   const onAddUser = () => {
-    if(enableAddUser){
-      setEnableAddUser(false);
-   
-      if (addedUsers?.length) { 
-        const projectInfo = {
-          users: addedUsers.map((each: any) => {
-            return { role: each.role, email: each.email };
-          }),
-        };
-        const newUsers: number = addedUsers.filter(
-          (each: any) => each.isNewUser
-        )?.length;
 
-        addUserRoles(projectInfo, selectedProjectId)
-          .then((res: any) => {
-            toast.success(
-              `${
-                addedUsers.length - newUsers
-              } have been added to the project successfully & ${newUsers} users have been sent invite to register`
-            );
-            setOpenDrawer(false);
-            setEnableAddUser(true)
-          })
-          .catch((err) => {
-            toast.error(err.message);
-            setEnableAddUser(true)
-          });
-      }
+  if(enableAddUser){
+    setEnableAddUser(false);
+    if (addedUsers?.length) {
+      const projectInfo = {
+        users: addedUsers.map((each: any) => {
+          return { role: each.role, email: each.email };
+        }),
+      };
+
+      const newUsers: number = addedUsers.filter(
+        (each: any) => each.isNewUser
+      )?.length;
+
+      addUserRoles(projectInfo, selectedProjectId)
+        .then((res: any) => {
+          toast.success(
+            `${
+              addedUsers.length - newUsers
+            } have been added to the project successfully & ${newUsers} users have been sent invite to register`
+          );
+          setOpenDrawer(false);
+          appendToTable(true);
+          setEnableAddUser(true)
+        })
+        .catch((err) => {
+          // toast.error(err.message);
+           toast.error("You do not have access,Contact Admin");
+           setEnableAddUser(true)
+        });
+      console.log("addeduser", addedUsers, projectInfo);
+    }
   }
   };
 

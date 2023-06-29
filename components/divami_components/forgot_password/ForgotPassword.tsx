@@ -74,7 +74,7 @@ const ForgotPassword = () => {
           error.message ||
           error.toString();
 
-        toast.error("Invalid User Credentials");
+        toast.error("Invalid Credentials");
       });
     }
    
