@@ -10,9 +10,9 @@ export class PotreeInstance {
         this.viewer.setPointBudget(1 * 1000 * 1000);
         this.viewer.setEDLEnabled(false);
         this.viewer.setBackground("gradient"); // ["skybox", "gradient", "black", "white"];
-        if (isMobile()) {
-            this.viewer.setDescription(`<button id="myButton">Next Image</button> `);
-          }
+        // if (isMobile()) {
+        //     this.viewer.setDescription(`<button id="myButton">Next Image</button> `);
+        //   }
     }
 
 

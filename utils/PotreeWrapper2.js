@@ -84,12 +84,12 @@ export const PotreeViewerUtils = () => {
         }
         _viewer.canvasId = _viewerId; //Used by potree
         _viewer.loadGUI(loadGUICallback);
-        if (isMobile()) {
-            var button = document.getElementById("myButton");
-            button?.addEventListener("click", function () {
-              nextPanoImage(_viewer);
-            });
-          }
+        // if (isMobile()) {
+        //     var button = document.getElementById("myButton");
+        //     button?.addEventListener("click", function () {
+        //       nextPanoImage(_viewer);
+        //     });
+        // }
         addEventListeners();
     }
 
