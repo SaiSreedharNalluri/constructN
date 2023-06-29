@@ -2,8 +2,9 @@ import Box from "@mui/material/Box";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 //import constructnLogo from "../../../public/divami_icons/constructnLogo.svg";
-import constructnLogo from "../../../public/icons/logoBlack.png";
+import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 import hamburgerMenu from "../../../public/divami_icons/hamburgerMenu.svg";
+import helpIcon from "../../../public/divami_icons/Help.svg";
 import profileImageHeader from "../../../public/divami_icons/profileImageHeader.svg";
 import ImgProfile from "../../../public/divami_icons/ImgProfile.svg";
 
@@ -19,6 +20,10 @@ import {
   faQuestion,
   faRightFromBracket,
   faSignOut,
+  faLifeRing,
+  faTicket,
+  faInfoCircle,
+  faClone,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -35,6 +40,7 @@ import {
   ProfileImgSecIcon,
   ProfileImgIconDefault,
   ProjectSelectorContainer,
+  HeaderSupportImageContainer,
 } from "./HeaderStyles";
 import { ITools } from "../../../models/ITools";
 import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
@@ -53,6 +59,8 @@ import CustomSelect from "../custom-select/CustomSelect";
 import { getProjectsList } from "../../../services/project";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { TooltipText } from "../side-panel/SidePanelStyles";
+import Link from "next/link";
+import { Circle, Rectangle } from "@mui/icons-material";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -90,7 +98,8 @@ const Header: React.FC<any> = ({
   const [notifications, setNotifications] = useState<IUserNotification[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalNotifications, setTotalNotifications] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [menuloading, setMenuLoading] = useState<boolean>(false);
+  const [supportMenu, setSupportMenu] = useState<boolean>(false);
   const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
   const [openProfile, setOpenProfile] = useState(false);
 
@@ -141,7 +150,8 @@ const Header: React.FC<any> = ({
   const onProfilePicClick = () => {
     if (!openProfile) {
       setOpenProfile(true);
-      setLoading(false);
+      setMenuLoading(false);
+      setSupportMenu(false);
       setOpenNotication(false);
     } else {
       setOpenProfile(false);
@@ -255,7 +265,7 @@ const Header: React.FC<any> = ({
   };
   useEffect(() => {
     getUserNotifications(defaultValue, filterValue);
-  }, [filterValue,currentPage, defaultValue]);
+  }, [filterValue, currentPage, defaultValue]);
   const handleNotificationClose = () => {
     setOpenNotication(false);
   };
@@ -273,11 +283,13 @@ const Header: React.FC<any> = ({
               width: fromUsersList ? "56px" : "59px",
               // height: "10px",
               // width: "59px",
-              background: "#FFFFFF",
+
+              background: "#ffffff",
               position: "absolute",
               top: "58px",
-              // zIndex: "1500",
+              zIndex: "1000",
               opacity: "1",
+              //clipPath:  'polygon(66% 27%, 81% 35%, 100% 30%, 100% 100%, 0 100%, 0 0, 57% 0, 56% 11%)',
               // width: "59px",
               // background: "#FFFFFF",
               // position: "absolute",
@@ -369,29 +381,28 @@ const Header: React.FC<any> = ({
           )}
           <HeaderProfileImageContainer>
             {avatar ? (
-          <TooltipText title="My Profile">
-
-              <div className="hover:bg-[#E7E7E7] p-[4px] rounded-full">
-                       <ProfileImgIcon
-                onClick={onProfilePicClick}
-                src={avatar}
-                alt="Profile Image Icon"
-                width={34}
-                height={34}
-              />
-              </div>
-</TooltipText>       
+              <TooltipText title="My Profile">
+                <div className="hover:bg-[#E7E7E7] p-[4px] rounded-full">
+                  <ProfileImgIcon
+                    onClick={onProfilePicClick}
+                    src={avatar}
+                    alt="Profile Image Icon"
+                    width={34}
+                    height={34}
+                  />
+                </div>
+              </TooltipText>
             ) : (
-          <TooltipText title="My Profile">
-            <div className="hover:bg-[#E7E7E7] p-[4px] rounded-full">
-              <ProfileImgIconDefault
-                onClick={onProfilePicClick}
-                src={defaultAvatar}
-                alt="Profile Image Icon"
-                width={34}
-                height={34}
-              />
-              </div>
+              <TooltipText title="My Profile">
+                <div className="hover:bg-[#E7E7E7] p-[4px] rounded-full">
+                  <ProfileImgIconDefault
+                    onClick={onProfilePicClick}
+                    src={defaultAvatar}
+                    alt="Profile Image Icon"
+                    width={34}
+                    height={34}
+                  />
+                </div>
               </TooltipText>
             )}
             {openProfile ? (
@@ -406,29 +417,50 @@ const Header: React.FC<any> = ({
               ""
             )}
           </HeaderProfileImageContainer>
-       
+          <HeaderSupportImageContainer>
+            <TooltipText title="Support">
+              <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
+                <Image
+                  height="30"
+                  src={helpIcon}
+                  alt="Support"
+                  onClick={() => {
+                    if (!supportMenu) {
+                      setSupportMenu(true);
+                      setMenuLoading(false);
+                      setOpenNotication(false);
+                      setOpenProfile(false);
+                    } else {
+                      setSupportMenu(false);
+                    }
+                  }}
+                />
+              </div>
+            </TooltipText>
+          </HeaderSupportImageContainer>
+
           <HeaderNotificationImageContainer>
-          <TooltipText title="Notifications">
-            <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full">
-            <Image
-              src={Notification}
-              alt="Profile Image"
-              onClick={() => {
-                if (openNotification) {
-                  setOpenNotication(false);
-                } else {
-                  setOpenNotication(true);
-                  setLoading(false);
-                  setOpenProfile(false);
-                }
-              }}
-            />
-            </div>
-    
+            <TooltipText title="Notifications">
+              <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full">
+                <Image
+                  src={Notification}
+                  alt="Profile Image"
+                  onClick={() => {
+                    if (openNotification) {
+                      setOpenNotication(false);
+                    } else {
+                      setOpenNotication(true);
+                      setMenuLoading(false);
+                      setSupportMenu(false);
+                      setOpenProfile(false);
+                    }
+                  }}
+                />
+              </div>
             </TooltipText>
 
             {openNotification && (
-              <div >
+              <div>
                 <CustomDrawer variant="persistent">
                   <div>
                     <Notifications
@@ -447,27 +479,28 @@ const Header: React.FC<any> = ({
             )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
-          <TooltipText title="Menu">
-            <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
-            <Image
-              src={hamburgerMenu}
-              alt="Menu"
-              onClick={() => {
-                if (!loading) {
-                  setLoading(true);
-                  setOpenNotication(false);
-                  setOpenProfile(false);
-                } else {
-                  setLoading(false);
-                }
-              }}
-            />
-            </div>
+            <TooltipText title="Menu">
+              <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
+                <Image
+                  src={hamburgerMenu}
+                  alt="Menu"
+                  onClick={() => {
+                    if (!menuloading) {
+                      setMenuLoading(true);
+                      setOpenNotication(false);
+                      setSupportMenu(false);
+                      setOpenProfile(false);
+                    } else {
+                      setMenuLoading(false);
+                    }
+                  }}
+                />
+              </div>
             </TooltipText>
           </HeaderMenuImageContainer>
         </HeaderRightPart>
 
-        {loading && (
+        {menuloading && (
           <div className="absolute top-[64px]  shadow-md right-0 bg-gray-50   z-10  border mx-0.5">
             <div
               className="flex items-center  cursor-pointer p-2  w-[150px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
@@ -490,6 +523,71 @@ const Header: React.FC<any> = ({
                 callBackvalue={userLogOut}
               />
             )}
+          </div>
+        )}
+
+        {supportMenu && (
+          <div className="absolute top-[64px]  shadow-md right-[97px] bg-gray-50   z-[1500]  border mx-0.5">
+            <Link href="https://constructnai.freshdesk.com/support/home">
+              <div
+                className="flex items-center  cursor-pointer p-2  w-[175px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
+                onClick={() => {
+                  //setshowPopUp(true);
+                  //router.push("https://constructnai.freshdesk.com/support/home")
+                }}
+              >
+                <FontAwesomeIcon icon={faLifeRing}></FontAwesomeIcon>
+                <p className="logout-button px-4 py-1">Support</p>
+              </div>
+            </Link>
+
+            <Link href="https://constructnai.freshdesk.com/support/solutions">
+              <div
+                className="flex items-center  cursor-pointer p-2  w-[175px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
+                onClick={() => {
+                  //setshowPopUp(true);
+                }}
+              >
+                <FontAwesomeIcon icon={faInfoCircle}></FontAwesomeIcon>
+                <p className="logout-button px-4 py-1">Knowledge Base</p>
+              </div>
+            </Link>
+
+            <Link href="https://constructnai.freshdesk.com/support/tickets">
+              <div
+                className="flex items-center  cursor-pointer p-2  w-[175px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
+                onClick={() => {
+                  //setshowPopUp(true);
+                }}
+              >
+                <FontAwesomeIcon icon={faClone}></FontAwesomeIcon>
+                <p className="logout-button px-4 py-1">View Tickets</p>
+              </div>
+            </Link>
+
+            <Link href="https://constructnai.freshdesk.com/support/tickets/new">
+              <div
+                className="flex items-center  cursor-pointer p-2  w-[175px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
+                onClick={() => {
+                  //setshowPopUp(true);
+                }}
+              >
+                <FontAwesomeIcon icon={faTicket}></FontAwesomeIcon>
+                <p className="logout-button px-4 py-1">Raise Ticket</p>
+              </div>
+            </Link>
+
+            {/* {showPopUp && (
+              <PopupComponent
+                open={showPopUp}
+                setShowPopUp={setshowPopUp}
+                modalTitle={"Cancel"}
+                modalmessage={`Are you sure you want to Sign out? `}
+                primaryButtonLabel={"Yes"}
+                SecondaryButtonlabel={"No"}
+                callBackvalue={userLogOut}
+              />
+            )} */}
           </div>
         )}
 

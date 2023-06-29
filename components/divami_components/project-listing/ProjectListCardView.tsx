@@ -191,7 +191,7 @@ export const ProjectListCardView = ({
               src={PhoneImageNewCapture}
               alt=""
             ></CaptureImageIcon>
-            <CaptureName>Phone capture - </CaptureName>
+            <CaptureName>Phone Image - </CaptureName>
             <CaptureCount>
               {each.capturePhoneCount?.length > 1
                 ? each.capturePhoneCount
