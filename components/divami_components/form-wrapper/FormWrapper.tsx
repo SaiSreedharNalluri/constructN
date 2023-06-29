@@ -18,6 +18,7 @@ import Mail from "../../../public/divami_icons/Mail.svg";
 import lock from "../../../public/divami_icons/lock.svg";
 import Image from "next/image";
 import PasswordRequired from "../password-field/PasswordRequired";
+import { CustomToast } from "../custom-toaster/CustomToast";
 
 interface ContainerProps {
   loginField: boolean;
@@ -320,10 +321,25 @@ const FormWrapper = (props: any) => {
 
   const handleFileUpload = (e: any, id: any) => {
     let arr: any[] = [];
+    let sizeCheckArr: any[] = [];
+
+    // handle file size
+    const maxSize = 50 * 1024 * 1024; // 50 MB in bytes
+    for(let i = 0; i < e.target.files.length; i++){
+      const file = e.target.files[i];
+      if (file.size > maxSize) {
+        CustomToast("Please upload a file under 50 MB in size.", "error", 2000);
+      } else {
+        sizeCheckArr.push(file)
+      }
+    }
+    
+
+
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
-          let files: any = e.target.files;
+          let files: any = sizeCheckArr;
           if (item.selectedFile?.length) {
             const filesnames = item.selectedFile.map((each: any) => each.name);
             Object.keys(files).forEach((eachkey) => {
