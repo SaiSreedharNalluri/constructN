@@ -360,6 +360,12 @@ export const MinimapUtils = () => {
 
   const loadLayers = () => {
     console.log("Passing data to dataViz extension minimap: ", _dataVizUtils);
+    
+    if(_snapshot) {
+      const snapshotRealities = _snapshot.reality.map(r => {return r._id})
+      const realityMapRealities = _realityPositionMap[Object.keys(_realityPositionMap)[0]].map(r => {return r.id})
+      if(snapshotRealities.indexOf(realityMapRealities[0]) == -1) return
+    }
     // _dataVizUtils.removeExistingVisualizationData();
     // _dataVizUtils.setIs2D(_manifestNode.is2D());
     // _dataVizUtils.setTM(_tm);
@@ -373,6 +379,7 @@ export const MinimapUtils = () => {
     // _edit2DUtils.addMediaData(_realityPositionMap);
 
     _dataVizUtils.setTransform(_tm, _globalOffset)
+    _dataVizUtils.removeLoadedData()
     _dataVizUtils.loadMediaData(_realityPositionMap)
     _dataVizUtils.loadIssues(_issuesList)
     _dataVizUtils.loadTasks(_tasksList)
