@@ -334,16 +334,19 @@ export const DescriptionTitle = styled("div")`
   line-height: 19px;
 `;
 
-export const DescriptionPara = styled("div")`
-  margin-top: 5px;
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
 
-  color: #101f4c;
-`;
+export const DescriptionPara = styled("div")({
+  marginTop: "5px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  lineHeight: "20px",
+  color: "#101f4c",
+
+   wordWrap:"break-word"
+ 
+});
 
 export const AttachmentDiv = styled("div")`
   margin-top: 25px;

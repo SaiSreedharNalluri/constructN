@@ -1,7 +1,17 @@
+import { getCookie } from "cookies-next";
 import React, { useEffect, useState } from "react";
+import addButton from "../../../public/divami_icons/addButton.svg";
+import removeButton from "../../../public/divami_icons/removeButton.svg";
+import {
+  getIssuePriorityList,
+  getIssueStatusList,
+  getTagsList,
+  getTaskPriorityList,
+  getTaskStatusList
+} from "../../../services/projectConfigApi";
+import { CustomTextField } from "../custom-textfield/CustomTextField";
 import {
   AddButton,
-  AddButtonContainer,
   AddLogo,
   AvailableStateHeader,
   ConfigurationBox,
@@ -12,26 +22,8 @@ import {
   RemoveButton,
   RemoveLogo,
   SideMenuConfig,
-  TextFieldContainer,
+  TextFieldContainer
 } from "./ProjectConfigStyles";
-import { getCookie } from "cookies-next";
-import {
-  getIssuePriorityList,
-  getIssueStatusList,
-  getTagsList,
-  getTaskPriorityList,
-  getTaskStatusList,
-  updateIssuePriorityList,
-  updateIssueStatusList,
-  updateTagList,
-  updateTaskPriorityList,
-  updateTaskStatusList,
-} from "../../../services/projectConfigApi";
-import { CustomTextField } from "../custom-textfield/CustomTextField";
-import { Button } from "@mui/material";
-import removeButton from "../../../public/divami_icons/removeButton.svg";
-import addButton from "../../../public/divami_icons/addButton.svg";
-import { toast } from "react-toastify";
 
 const ProjectConfig = ({
   projectId,
@@ -206,8 +198,7 @@ const ProjectConfig = ({
     // Check if the value is empty or not and set setShowbutton accordingly
     setShowbutton(
       value.trim().length > 0 &&
-        value.trim().length < 15 &&
-        
+        value.trim().length <= 15 &&
         /^(?:[a-zA-Z]+|\d+|[a-zA-Z0-9\s]+)$/.test(value)
     );
   };

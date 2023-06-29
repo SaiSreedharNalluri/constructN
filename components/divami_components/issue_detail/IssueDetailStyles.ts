@@ -22,7 +22,6 @@ export const HeaderContainer = styled(Box)`
   align-items: center;
   width: 100%;
   border-bottom: 1px solid #d9d9d9;
-   
 `;
 
 export const TitleContainer = styled(Box)({
@@ -60,7 +59,6 @@ export const DeleteIcon = styled(Image)`
   // width: 24px;
   // height: 24px;
   // margin-right: 25px;
-  
 `;
 
 export const LeftTitleCont = styled("div")`
@@ -98,7 +96,7 @@ export const SecondBodyDiv = styled("div")`
 `;
 
 export const PriorityTitle = styled("div")`
- width: 88px;
+  width: 88px;
   margin-right: 130px;
   font-family: "Open Sans";
   color: #787878;
@@ -187,7 +185,7 @@ export const CaptureStatus = styled("div")`
 `;
 
 export const ThirdContWatch = styled("div")`
-width: 88px;
+  width: 88px;
   margin-right: 130px;
   font-family: "Open Sans";
   font-style: normal;
@@ -197,7 +195,7 @@ width: 88px;
   color: #787878;
 `;
 export const DueDateTitle = styled("div")`
-width: 88px;
+  width: 88px;
   margin-right: 130px;
   font-family: "Open Sans";
   font-style: normal;
@@ -260,8 +258,8 @@ export const ThirdContLeft = styled("div")`
 `;
 
 export const ThirdContRight = styled("div")({
-  display:"flex"
-})
+  display: "flex",
+});
 
 export const PenIconImage = styled(Image)`
   cursor: pointer;
@@ -280,15 +278,14 @@ export const MoreText = styled("div")`
   color: #f1742e;
   // margin-left: 5px;
   cursor: pointer;
- 
 `;
 
 export const FourthContLeft = styled("div")({
-  display:"flex"
-})
+  display: "flex",
+});
 
 export const FourthContAssigned = styled("div")`
- width: 88px;
+  width: 88px;
   margin-right: 130px;
   font-family: "Open Sans";
   color: #787878;
@@ -299,16 +296,12 @@ export const FourthContAssigned = styled("div")`
   line-height: 19px;
 `;
 export const FourthContMoreText = styled("div")({
-  
-  
-  marginTop:"1px"
-})
-export const MoreTextDiv = styled("div")({
-  
-})
+  marginTop: "1px",
+});
+export const MoreTextDiv = styled("div")({});
 export const ParentFourthContMoreText = styled("div")({
-  display:"flex"
-})
+  display: "flex",
+});
 
 export const FourthContProgType = styled("div")`
   display: flex;
@@ -327,9 +320,10 @@ export const FormElementContainer = styled(Box)`
   margin-top: 25px;
 `;
 
-export const DescriptionDiv = styled("div")`
-  margin-top: 25px;
-`;
+export const DescriptionDiv = styled("div")({
+  marginTop: "25px",
+ 
+})
 
 export const DescriptionTitle = styled("div")`
   font-family: "Open Sans";
@@ -341,16 +335,18 @@ export const DescriptionTitle = styled("div")`
   line-height: 19px;
 `;
 
-export const DescriptionPara = styled("div")`
-  margin-top: 5px;
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
+export const DescriptionPara = styled("div")({
+  marginTop: "5px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  lineHeight: "20px",
+  color: "#101f4c",
 
-  color: #101f4c;
-`;
+   wordWrap:"break-word"
+ 
+});
 
 export const AttachmentDiv = styled("div")`
   margin-top: 25px;
@@ -440,14 +436,20 @@ export const StyledLabel = styled(Typography)`
   margin-bottom: 8px;
 `;
 
-export const CustomTaskDrawerContainer = styled("div")({
+
+interface ICustomTaskDrawerContainer {
+  loader: boolean;
+}
+
+export const CustomTaskDrawerContainer = styled("div")((props: any) => ({
   width: "438px",
   height: "calc(100vh - 60px)",
   paddingLeft: "20px",
   paddingRight: "20px",
   // border: "2px solid blue",
-  overflow:"hidden"
-});
+  overflowY: !props.loader ? "scroll" : "hidden",
+})) as any;
+
 
 export const ProgressEditStateButtonsContainer = styled("div")`
   display: flex;
@@ -509,7 +511,6 @@ interface ContainerProps {
 export const BodyContainer = styled(Box)<ContainerProps>`
   height: ${(props) =>
     props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
-  overflow-y: scroll;
 `;
 
 export const FourthBodyDiv = styled("div")((props: any) => ({
@@ -698,7 +699,7 @@ export const SecondAssigneeList = styled("div")({
   color: "#101F4C",
   fontSize: "14px",
   border: "1px solid #D9D9D9",
-  fontStyle:"Open Sans",
+  fontStyle: "Open Sans",
   // marginTop: '-3px',
   boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.16)",
   borderRadius: "4px",

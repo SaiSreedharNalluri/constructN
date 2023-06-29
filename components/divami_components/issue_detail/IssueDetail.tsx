@@ -34,6 +34,7 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
 import router, { useRouter } from "next/router";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
+import CustomMiniLoader from "../custom_loader/CustomMiniLoader";
 
 import _ from "lodash";
 import {
@@ -121,6 +122,7 @@ import ActivityLog from "../task_detail/ActivityLog";
 import Chip from "@mui/material/Chip";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
+import { CustomToast } from "../custom-toaster/CustomToast";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -196,7 +198,6 @@ function BasicTabs(props: any) {
   const [comments, setComments] = useState("");
   const [backendComments, setBackendComments] = useState<any>([]);
   const [file, setFile] = useState<File>();
-
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -338,7 +339,7 @@ function BasicTabs(props: any) {
   ];
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", height: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
         <Tabs
           TabIndicatorProps={{
@@ -399,18 +400,6 @@ function BasicTabs(props: any) {
               fontWeight: "400",
             }}
           />
-          {/* <Tab
-            label="Activity log"
-            {...a11yProps(1)}
-            style={{
-              paddingRight: "0px",
-              color: "#101F4C",
-              fontFamily: "Open Sans",
-              fontStyle: "normal",
-              fontSize: "14px",
-              fontWeight: "400",
-            }}
-          /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -492,9 +481,7 @@ function BasicTabs(props: any) {
           </SecondBodyDiv>
           <SecondBodyDiv>
             <ThirdContRight>
-              <ThirdContProg data-testid="progres-label">
-              Status
-              </ThirdContProg>
+              <ThirdContProg data-testid="progres-label">Status</ThirdContProg>
 
               <ThirdContProgType
                 style={{ color: "#101F4B" }}
@@ -633,13 +620,6 @@ function BasicTabs(props: any) {
                 }}
                 value={formState.selectedUser}
                 multiple={true}
-                // InputProps={{
-                //   startAdornment: (
-                //     <InputAdornment position="start">
-                //       <SearchIcon />
-                //     </InputAdornment>
-                //   ),
-                // }}
               />
               <ValueContainer>
                 {formState.selectedUser.map((v: any) =>
@@ -907,6 +887,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
     setIssueList,
     getIssues,
     deleteTheAttachment,
+    issueLoader,
+    setIssueLoader,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
@@ -926,34 +908,31 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const onDeleteCallback = () => {
-    onClose()
-     if (setIssueList) {
+    onClose();
+    if (setIssueList) {
       const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
 
       setIssueList(updatedIssuesList);
     }
-
-  }
+  };
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
     if (deleteTheIssue) deleteTheIssue(selectedIssue, onDeleteCallback);
 
-     const deleteTheAttachment = (attachmentId: string) => {
-    deleteAttachment(attachmentId)
-      .then((response) => {
-        if (response.success === true) {
-          toast(response.message);
-        }
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      });
+    const deleteTheAttachment = (attachmentId: string) => {
+      deleteAttachment(attachmentId)
+        .then((response) => {
+          if (response.success === true) {
+            toast(response.message);
+          }
+        })
+        .catch((error) => {
+          toast.error(error.message);
+        });
+    };
   };
 
-   
-  };
- 
   const DetailsObj = {
     TabOne: {
       options: [
@@ -1049,21 +1028,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
     });
   }, [selectedIssue]);
 
-  const taskSubmit = (formData: any) => {
-    // const updatedList = issuesList.map((item: any) => {
-    //   if (item._id == formData._id){
-    //     return formData;
-    //   }else{
-    //     return {
-    //       ...item
-    //     }
-    //   }
-    // })
-    // issuesList.push(formdata);
-    // issueMenuInstance.toolAction = "issueCreated";
-    // setCreateOverlay(false);
-    // issueMenuClicked(issueMenuInstance);
-  };
   const handleCreateTask = (formData: any) => {
     clickTaskSubmit(formData);
   };
@@ -1095,34 +1059,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
       ?.selectedName?.map((each: any) => {
         return each._id || each.value;
       });
-    // let userIdList: any[] = [];
-    // const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
-    //   ?.selectedName;
-    // if (assignes && assignes.length > 0) {
-    //   assignes.map((user: any) => {
-    //     userIdList?.push(user.value);
-    //   });
-    // }
-    // if (assignes?.value) {
-    //   userIdList.push(assignes.value);
-    // }
-    // const userIdList = formData
-    //   .find((item: any) => item.id == "assignedTo")
-    //   ?.map((each: any) => {
-    //     return each.value;
-    //   });
 
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
     data.status = formData.filter(
       (item: any) => item.id == "issueStatus"
     )[0]?.defaultValue;
-    // data.context = contextInfo;
-    // Object.keys(contextInfo).forEach((key) => {
-    //   if (key !== "id") {
-    //     data.context = { ...data.context, [key]: contextInfo[key] };
-    //   }
-    // });
+
     data.title = formData.filter(
       (item: any) => item.id == "title"
     )[0]?.defaultValue;
@@ -1148,13 +1091,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
-    // data.startDate = moment(data.startDate).format("YYYY-MM-DD");
     data.startDate = `${moment(data.startDate).toISOString()}`;
 
     data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-    // data.dueDate = moment(data.dueDate).format("YYYY-MM-DD");
     data.dueDate = `${moment(data.dueDate).toISOString()}`;
 
     if (!data.startDate) {
@@ -1191,16 +1132,14 @@ const CustomIssueDetailsDrawer = (props: any) => {
         })
         .catch((error) => {
           if (error.success === false) {
-            toast.error(error?.message);
+            CustomToast(error?.message, "error", 3000);
           }
-        
         });
     } else {
       saveEditDetails(data, projectId);
     }
   };
   const issueUpdate = (data: any) => {
-    // const issueData = _.cloneDeep(selectedIssue);
     let issueData: any = {};
     issueData.assignees = data.selectedUser.map((user: any) => {
       return user._id || user.user._id;
@@ -1208,8 +1147,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
-    // issueData.startDate = moment(issueData.startDate).format("YYYY-MM-DD");
-    // issueData.dueDate = moment(issueData.dueDate).format("YYYY-MM-DD");
     editIssue(projectId as string, issueData, selectedIssue?._id)
       .then((response) => {
         if (response.success === true) {
@@ -1223,34 +1160,24 @@ const CustomIssueDetailsDrawer = (props: any) => {
         }
       });
   };
-  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
-    let truncatedText = text;
 
-    if (text?.length > maxLength) {
-      const prefix = text.substring(0, maxLength - suffixLength);
-      const suffix = text.substring(text.length - suffixLength);
-      truncatedText = prefix + "..." + suffix;
-    }
-
-    return truncatedText;
-  };
   return (
     <>
-      <CustomTaskDrawerContainer>
+      <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
           <TitleContainer>
             <LeftTitleCont>
-        <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] ">
-              <ArrowIcon
-                onClick={() => {
-                  onClose(true);
-                }}
-                src={BackArrow}
-                alt={"close icon"}
-                data-testid="back-arrow"
-              />
+              <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] ">
+                <ArrowIcon
+                  onClick={() => {
+                    onClose(true);
+                  }}
+                  src={BackArrow}
+                  alt={"close icon"}
+                  data-testid="back-arrow"
+                />
               </div>
-            
+
               <DarkToolTip
                 title={
                   <SecondAssigneeList>
@@ -1259,55 +1186,60 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 }
               >
                 <SpanTile data-testid="issue-detail-header">
-                  {
-                    selectedIssue?.title ?
-                    ( selectedIssue?.title?.length >= 20 ?
-                      `${selectedIssue?.title.substring(0, 16)}...`
+                  {selectedIssue?.title
+                    ? selectedIssue?.title?.length >= 20
+                      ? `${selectedIssue?.title.substring(0, 16)}...`
                       : `${selectedIssue?.title}`
-                    ): ""
-                  }
+                    : ""}
                   (#{selectedIssue?.sequenceNumber})
                 </SpanTile>
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
-        <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
-              <EditIcon
-                src={Edit}
-                alt={"close icon"}
-                onClick={() => {
-                  setOpenCreateTask(true);
-                }}
-                data-testid="edit-icon"
-              />
+              <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
+                <EditIcon
+                  src={Edit}
+                  alt={"close icon"}
+                  onClick={() => {
+                    setOpenCreateTask(true);
+                  }}
+                  data-testid="edit-icon"
+                />
               </div>
-        <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
-              <DeleteIcon
-                src={Delete}
-                alt={"close icon"}
-                data-testid="delete-icon"
-                onClick={() => {
-                  setshowPopUp(true);
-                }}
-              />
+              <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
+                <DeleteIcon
+                  src={Delete}
+                  alt={"close icon"}
+                  data-testid="delete-icon"
+                  onClick={() => {
+                    setshowPopUp(true);
+                  }}
+                />
               </div>
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-
-        <BodyContainer footerState={footerState}>
-          <BasicTabs
-            taskType={issueType}
-            taskPriority={issuePriority}
-            taskStatus={issueStatus}
-            projectUsers={projectUsers}
-            taskState={taskState}
-            issueUpdate={issueUpdate}
-            deleteTheAttachment={deleteTheAttachment}
-            handleFooter={SetFooterState}
-            setTaskState={setTaskState}
-          />
-        </BodyContainer>
+        {issueLoader ? (
+          <div className="mini-loader-parent">
+            <CustomMiniLoader></CustomMiniLoader>
+          </div>
+        ) : (
+          <>
+            <BodyContainer footerState={footerState}>
+              <BasicTabs
+                taskType={issueType}
+                taskPriority={issuePriority}
+                taskStatus={issueStatus}
+                projectUsers={projectUsers}
+                taskState={taskState}
+                issueUpdate={issueUpdate}
+                deleteTheAttachment={deleteTheAttachment}
+                handleFooter={SetFooterState}
+                setTaskState={setTaskState}
+              />
+            </BodyContainer>
+          </>
+        )}
       </CustomTaskDrawerContainer>
 
       {openCreateTask && (

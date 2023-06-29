@@ -18,6 +18,7 @@ import Mail from "../../../public/divami_icons/Mail.svg";
 import lock from "../../../public/divami_icons/lock.svg";
 import Image from "next/image";
 import PasswordRequired from "../password-field/PasswordRequired";
+import { CustomToast } from "../custom-toaster/CustomToast";
 
 interface ContainerProps {
   loginField: boolean;
@@ -106,7 +107,6 @@ const FormWrapper = (props: any) => {
               return {
                 ...item,
                 isError: true,
-               
                 showErrorMsg: true,
               };
             }
@@ -116,7 +116,6 @@ const FormWrapper = (props: any) => {
               return {
                 ...item,
                 isError: true,
-               
                 showErrorMsg: true,
               };
             }
@@ -322,10 +321,25 @@ const FormWrapper = (props: any) => {
 
   const handleFileUpload = (e: any, id: any) => {
     let arr: any[] = [];
+    let sizeCheckArr: any[] = [];
+
+    // handle file size
+    const maxSize = 50 * 1024 * 1024; // 50 MB in bytes
+    for(let i = 0; i < e.target.files.length; i++){
+      const file = e.target.files[i];
+      if (file.size > maxSize) {
+        CustomToast("Please upload a file under 50 MB in size.", "error", 2000);
+      } else {
+        sizeCheckArr.push(file)
+      }
+    }
+    
+
+
     setFormConfig((prev: any) =>
       prev.map((item: any) => {
         if (id === item.id) {
-          let files: any = e.target.files;
+          let files: any = sizeCheckArr;
           if (item.selectedFile?.length) {
             const filesnames = item.selectedFile.map((each: any) => each.name);
             Object.keys(files).forEach((eachkey) => {
@@ -373,8 +387,6 @@ const FormWrapper = (props: any) => {
     );
   };
   function checkDataisEmpty() {
-  
-
     const regex = /^[^\s][^\s]*$/;
     const maxLimit = 20; // Maximum character limit for firstName and lastName fields
 
@@ -655,7 +667,6 @@ const FormWrapper = (props: any) => {
     }
   }
 
-  
   const renderHTML = (
     data: any,
     isDisabled: boolean,
@@ -737,7 +748,6 @@ const FormWrapper = (props: any) => {
                   data.id,
                   parentType,
                   parentId,
-                   
                 );
 
                 if (data.id === "password") {
@@ -752,7 +762,6 @@ const FormWrapper = (props: any) => {
                   namesCharLimit(data?.defaultValue, data.id);
                   return;
                 }
-              
                 else if (data.id === "email") {
                   isValidEmail(data?.defaultValue, data.id);
                   return;

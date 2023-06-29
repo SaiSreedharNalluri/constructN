@@ -37,14 +37,6 @@ import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import html2canvas from "html2canvas";
 import moment from "moment";
 
-const StyledDrawer = styled(Drawer)`
-  & .MuiPaper-root {
-    width: 438px;
-  }
-`;
-
-const ToasterIconMessage = styled("div")({});
-
 const Issues = ({
   rightMenuClickHandler,
   issuesList,
@@ -72,28 +64,24 @@ const Issues = ({
   issueSubmit,
   deleteTheAttachment,
   projectUsers,
+  issueLoader,
+  setIssueLoader,
+  setShowIssueMarkups,
+  showIssueMarkups,
 }: any) => {
-  const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showImage, setShowImage] = useState(false);
   const [image, setImage] = useState<Blob>();
 
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
-  const [issueVisbility, setIssueVisibility] = useState(true);
-  let toolInstance: ITools = { toolName: "issue", toolAction: "issueCreate" };
+  // const [issueVisbility, setIssueVisibility] = useState(showIssueMarkups);
   const [myProject, setMyProject] = useState(currentProject);
-  const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
-  const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
   const [selectedIssue, setSelectedIssue] = useState({});
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
   const [enableSubmit, setEnableSubmit] = useState(true);
 
   useEffect(() => {
     setMyProject(currentProject);
-    setMyStructure(currentStructure);
-    setMySnapshot(currentSnapshot);
     html2canvas(
       document.getElementById("forgeViewer_1") ||
         document.getElementById("potreeViewer_1") ||
@@ -120,6 +108,7 @@ const Issues = ({
   };
 
   const clickTaskSubmit = async (values: any) => {
+    setEnableSubmit(false);
     const userIdList = values
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
@@ -193,12 +182,11 @@ const Issues = ({
     formData.append("jreq", JSON.stringify(data));
     const projectId = values.filter((item: any) => item.projectId)[0].projectId;
     if (data.title && data.type && data.priority) {
-      setEnableSubmit(false);
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
           if (response.success === true) {
             toast.success(" Issue Created Successfully");
-            setEnableSubmit(false);
+            setEnableSubmit(true);
             issueSubmitFn(response.result);
           } else {
             toast.error(`Something went wrong`);
@@ -251,10 +239,10 @@ const Issues = ({
   };
 
   const toggleIssueVisibility = () => {
-    if (issueVisbility) issueMenuInstance.toolAction = "issueHide";
+    if (showIssueMarkups) issueMenuInstance.toolAction = "issueHide";
     else issueMenuInstance.toolAction = "issueShow";
     issueMenuClicked(issueMenuInstance);
-    setIssueVisibility(!issueVisbility);
+    setShowIssueMarkups(!showIssueMarkups);
   };
 
   useEffect(() => {
@@ -297,9 +285,9 @@ const Issues = ({
           </IssuesSectionFileImg>
         </Tooltip>
 
-        <Tooltip title={issueVisbility ? "Show Issues" : "Hide Issues"}>
+        <Tooltip title={showIssueMarkups ? "Show Issues" : "Hide Issues"}>
           <IssuesSectionClipImg>
-            {issueVisbility && (
+            {showIssueMarkups && (
               <CameraIcon
                 width={12}
                 height={12}
@@ -311,7 +299,7 @@ const Issues = ({
               />
             )}
 
-            {!issueVisbility && (
+            {!showIssueMarkups && (
               <CameraIcon
                 width={12}
                 height={12}
@@ -330,7 +318,17 @@ const Issues = ({
         <Drawer
           anchor={"right"}
           open={openDrawer}
-          onClose={() => setOpenDrawer((prev: any) => !prev)}
+          onClose={() => {
+            setIssueList([
+              ...issuesList.sort((a: any, b: any) => {
+                return (
+                  new Date(b.createdAt).valueOf() -
+                  new Date(a.createdAt).valueOf()
+                );
+              }),
+            ]);
+            setOpenDrawer((prev: any) => !prev);
+          }}
         >
           <CustomIssueListDrawer
             closeFilterOverlay={closeFilterOverlay}
@@ -398,6 +396,8 @@ const Issues = ({
             getIssues={getIssues}
             issuesList={issuesList}
             deleteTheIssue={deleteTheIssue}
+            issueLoader={issueLoader}
+            setIssueLoader={setIssueLoader}
           />
         </Drawer>
       )}

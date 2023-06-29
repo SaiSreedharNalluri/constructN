@@ -59,15 +59,20 @@ export const AddUsersEmailPopup = ({
         variant="outlined"
         placeholder={"Enter Email ID"}
         onChange={(e: any) => {
+         
           setSearchVal(e.target?.value);
         }}
         onBlur={(e: any) => {
+         
+
           setSearchVal(e.target?.value);
         }}
         defaultValue={searchVal}
         type={"email"}
         callback={() => {
           if (searchVal) {
+          
+
             showEmailOverlay({ email: searchVal, role: "" });
           }
         }}

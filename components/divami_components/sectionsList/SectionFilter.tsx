@@ -138,6 +138,7 @@ const SectionFilter: React.FC<any> = ({
   }, []);
 
   const handleOnTaskFilter = (formData: any) => {
+    
     const result = tableData.filter(
       (item: any) =>
         formData.roleType?.includes(item.role) ||
@@ -328,7 +329,6 @@ const SectionFilter: React.FC<any> = ({
       operator: progressDropdown[0]?.defaultValue,
       progressValue: progressPercent,
     };
-    //    alert("APPLY");
     handleOnTaskFilter(data);
   };
 

@@ -32,6 +32,7 @@ const ForgotPassword = () => {
   const [tagList, setTagList] = useState<[string]>([""]);
   const [showPopUp, setshowPopUp] = useState(false);
   const [canBeDisabled, setCanBeDisabled] = useState(false);
+  const [resetPasswordEnable, setResetPasswordEnable] = useState(true)
   const [token, setToken] = useState("");
   const router = useRouter();
 
@@ -48,11 +49,13 @@ const ForgotPassword = () => {
   };
 
   const handleForgotPassword = (email: string) => {
-    resetPasswordInit(email?.toLocaleLowerCase())
+    if(resetPasswordEnable){
+      setResetPasswordEnable(false)
+      resetPasswordInit(email?.toLocaleLowerCase())
       .then((response: any) => {
         if (response?.success) {
           toast.success(response?.message);
-
+          setResetPasswordEnable(true)
           router.push(
             {
               pathname: "/reset_link",
@@ -63,6 +66,7 @@ const ForgotPassword = () => {
         }
       })
       .catch((error: any) => {
+        setResetPasswordEnable(true)
         const resMessage =
           (error.response &&
             error.response.data &&
@@ -70,8 +74,10 @@ const ForgotPassword = () => {
           error.message ||
           error.toString();
 
-        toast.error("Invalid User Credentials");
+        toast.error("Invalid Credentials");
       });
+    }
+   
   };
 
   const handleFormData = (data: any) => {

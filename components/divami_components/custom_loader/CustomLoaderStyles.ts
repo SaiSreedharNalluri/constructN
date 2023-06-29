@@ -16,6 +16,15 @@ export const LoaderContainer = styled("div")({
 });
 
 
+export const MiniLoaderContainer = styled("div")({
+  height: "100%",
+  width:"100%",
+  display:"flex",
+  justifyContent:"center",
+  alignItems:"center",
+
+})
+
 export const LoaderImage = styled(Image)({
 
 });

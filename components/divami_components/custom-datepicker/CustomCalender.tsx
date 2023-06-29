@@ -105,6 +105,7 @@ const CustomCalender = (props: any) => {
   } = props;
 
   const [value, setValue] = React.useState<Dayjs | null>(
+    
     dayjs(data?.defaultValue) || null
   );
   useEffect(() => {

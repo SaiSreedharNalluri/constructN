@@ -571,12 +571,15 @@ td {
 .calc-width-full {
   width: 100%;
 }
+
 .calc-height-full {
   height: 100vh;
 }
+
 .calc-h110 {
   height: calc(100vh - 112px);
 }
+
 .calc-h154 {
   height: calc(100vh - 154px);
 }
@@ -596,9 +599,11 @@ td {
 .calc-h119 {
   height: calc(100vh - 119px);
 }
+
 .calc-h191 {
   height: calc(100vh - 191px);
 }
+
 .overflow-hidden {
   overflow: hidden;
 }
@@ -610,9 +615,11 @@ td {
 .calc-width-half {
   width: calc(50%);
 }
+
 .left-59 {
   left: 59px;
 }
+
 .calcLeft {
   width: calc(50% - 59px);
 }
@@ -627,6 +634,7 @@ td {
   /* margin: 0 auto;
   position: relative; */
 }
+
 /* 
 .activeProjectConfig {
   background-color: yellow;
@@ -648,4 +656,13 @@ td {
 
 .css-1ex1afd-MuiTableCell-root {
   /* border-bottom: none; */
+}
+
+.mini-loader-parent {
+  width: 100%;
+  /* //z height: 100%; */
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

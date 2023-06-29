@@ -32,7 +32,11 @@ import selectGridViewIcon from "../../public/divami_icons/gridViewicon.svg";
 import updatedIcon from "../../public/divami_icons/updatedAtIcon.svg";
 import sortIcon from "../../public/divami_icons/sortIcon.svg";
 import listViewIcon from "../../public/divami_icons/listViewicon.svg";
-import { ProjectCardsContainer } from "../../components/divami_components/project-listing/ProjectListingStyles";
+import {
+  CenteredErrorImage,
+  NoResultText,
+  ProjectCardsContainer,
+} from "../../components/divami_components/project-listing/ProjectListingStyles";
 import { ProjectListCardView } from "../../components/divami_components/project-listing/ProjectListCardView";
 import { ProjectListFlatView } from "../../components/divami_components/project-listing/ProjectListFlatView";
 import moment from "moment";
@@ -53,6 +57,9 @@ import { AddUsersEmailOverlay } from "../../components/divami_components/add_use
 import { AddUsersEmailPopup } from "../../components/divami_components/add_users/AddUsersEmailPopup";
 import PopupComponent from "../../components/popupComponent/PopupComponent";
 import ProjectConfig from "../../components/divami_components/project_config/ProjectConfig";
+import projectHierIcon from "../../public/divami_icons/projectHierIcon.svg";
+import { Tooltip } from "@material-ui/core";
+
 import {
   updateIssuePriorityList,
   updateIssueStatusList,
@@ -68,7 +75,7 @@ import chatOpen from "../../public/divami_icons/chat_open.svg";
 import chatClose from "../../public/divami_icons/chat_close.svg";
 
 import { getCookie } from "cookies-next";
-
+import { ShowErrorContainer } from "../../components/divami_components/project-listing/ProjectListingStyles";
 
 export const truncateString = (text: string, maxLength: number) => {
   let truncatedText = text;
@@ -81,8 +88,6 @@ export const truncateString = (text: string, maxLength: number) => {
   }
   return truncatedText;
 };
-
-
 
 const Index: React.FC<any> = () => {
   const breadCrumbsData = [{ label: "Manage Users" }];
@@ -119,6 +124,8 @@ const Index: React.FC<any> = () => {
   const [showButton, setShowbutton] = useState(false);
   const [projectId, setProjectId] = useState<any>("");
   const [showLoading, setShowLoading] = useState(true);
+  const [configEnabled, setConfigEnabled] = useState(true);
+  const [showWelcomMessage, setShowWelcomeMessage] = useState(false);
   let [eMail, setEMail] = useState<string>("");
 
   const sortMenuOptions = [
@@ -153,15 +160,13 @@ const Index: React.FC<any> = () => {
       icon: UpArrow,
       method: "updatedAsc",
       onClick: () => {
-        setSearchTableData(
-          []
-            .concat(projects)
-            .sort(
-              (a: any, b: any) =>
-                Number(new Date(a.lastUpdated)) -
-                Number(new Date(b.lastUpdated))
-            )
-        );
+        setSearchTableData([
+          ...projects.sort((a: any, b: any) => {
+            return (
+              new Date(a.updatedAt).valueOf() - new Date(b.updatedAt).valueOf()
+            );
+          }),
+        ]);
       },
     },
     {
@@ -169,15 +174,13 @@ const Index: React.FC<any> = () => {
       icon: DownArrow,
       method: "updatedDesc",
       onClick: () => {
-        setSearchTableData(
-          []
-            .concat(projects)
-            .sort(
-              (a: any, b: any) =>
-                Number(new Date(b.lastUpdated)) -
-                Number(new Date(a.lastUpdated))
-            )
-        );
+        setSearchTableData([
+          ...projects.sort((a: any, b: any) => {
+            return (
+              new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf()
+            );
+          }),
+        ]);
       },
     },
   ];
@@ -210,7 +213,7 @@ const Index: React.FC<any> = () => {
     },
     {
       label: "Deassign Project",
-      action: (id:string) => {
+      action: (id: string) => {
         setShowArchiveProject(true);
         setProjectId(id);
       },
@@ -274,6 +277,9 @@ const Index: React.FC<any> = () => {
       getProjectsList()
         .then(async (response) => {
           if (response?.data?.success === true) {
+            if (response?.data?.result.length == 0) {
+              setShowWelcomeMessage(true);
+            }
             const projectsData = response?.data?.result.map((each: any) => {
               return {
                 ...each,
@@ -305,7 +311,9 @@ const Index: React.FC<any> = () => {
           }
           setShowLoading(false);
         })
-        .catch((error) => {});
+        .catch((error) => {
+          setShowWelcomeMessage(true);
+        });
       getUserRoles().then((res: any) => {
         const rolesData = res.result.map((each: any) => {
           return {
@@ -315,12 +323,11 @@ const Index: React.FC<any> = () => {
         });
         setRoles(rolesData);
       });
-      
-        const userObj: any = getCookie("user");
-        let user = null;
-        if (userObj) user = JSON.parse(userObj);
-        if (user?.email) setEMail(user.email);
-      
+
+      const userObj: any = getCookie("user");
+      let user = null;
+      if (userObj) user = JSON.parse(userObj);
+      if (user?.email) setEMail(user.email);
     }
   }, [router.isReady]);
 
@@ -332,67 +339,80 @@ const Index: React.FC<any> = () => {
     setshowPopUp(false);
   };
 
-  const containsRepeated = (a:[string]) => {
+  const containsRepeated = (a: [string]) => {
     const noDups = new Set(a);
     return a.length !== noDups.size;
-  }
+  };
 
   // project configuration handlesubmit
   const handleSubmit = async () => {
-    const containsEmptyString = formValues.priority.some(
-      (item: any) => item.length === 0
-    );
+    if (configEnabled) {
+      setConfigEnabled(false);
+      const containsEmptyString = formValues.priority.some(
+        (item: any) => item.length === 0
+      );
 
-    if (containsEmptyString) {
-      toast.error("Fields cannot be empty");
-      return;
-    }
-    
-   if(containsRepeated(formValues.priority.map((item:string) => item.trim()))){
-    toast.error("Duplicate Name(s) not allowed");
-    return;
-   }
-
-    try {
-      // Call the appropriate API based on the selected option and pass the updated values
-      if (selectedOption === "issuePriority") {
-        // await updateIssuePriorityList(projectId, formValues.priority);
-        await updateIssuePriorityList(projectId, {
-          issuePriorityList: [...formValues.priority.map((ele:string) => ele.trim())],
-        });
-        toast.success("Issue priority list updated successfully");
-      } else if (selectedOption === "taskPriority") {
-        await updateTaskPriorityList(projectId, {
-          taskPriorityList: [...formValues.priority.map((ele:string) => ele.trim())],
-        });
-        toast.success("Task priority list updated successfully");
-      } else if (selectedOption === "issueStatus") {
-        await updateIssueStatusList(projectId, {
-          issueStatusList: [...formValues.priority.map((ele:string) => ele.trim())],
-        });
-        toast.success("Issue status list updated successfully");
-      } else if (selectedOption === "taskStatus") {
-        await updateTaskStatusList(projectId, {
-          taskStatusList: [...formValues.priority.map((ele:string) => ele.trim())],
-        });
-        toast.success("Task status list updated successfully");
-      } else if (selectedOption === "tag") {
-        await updateTagList(projectId, {
-          tagList: [...formValues.priority.map((ele:string) => ele.trim())],
-        });
-        toast.success("Tag list updated successfully");
+      if (containsEmptyString) {
+        toast.error("Fields cannot be empty");
+        return;
       }
-      setShowbutton(false);
-    } catch (error:any) {
-    
-        if(error && error?.success === false){
-          if(error.message === 'Forbidden Access'){
-             toast.error("Not authorized. Ask the Project Admin for help")
-          }else{
-            toast.error("Project Config could not be updated")
-          }
-          
+
+      if (
+        containsRepeated(formValues.priority.map((item: string) => item.trim()))
+      ) {
+        toast.error("Duplicate Name(s) not allowed");
+        return;
+      }
+
+      try {
+        // Call the appropriate API based on the selected option and pass the updated values
+        if (selectedOption === "issuePriority") {
+          // await updateIssuePriorityList(projectId, formValues.priority);
+          await updateIssuePriorityList(projectId, {
+            issuePriorityList: [
+              ...formValues.priority.map((ele: string) => ele.trim()),
+            ],
+          });
+          toast.success("Issue priority list updated successfully");
+        } else if (selectedOption === "taskPriority") {
+          await updateTaskPriorityList(projectId, {
+            taskPriorityList: [
+              ...formValues.priority.map((ele: string) => ele.trim()),
+            ],
+          });
+          toast.success("Task priority list updated successfully");
+        } else if (selectedOption === "issueStatus") {
+          await updateIssueStatusList(projectId, {
+            issueStatusList: [
+              ...formValues.priority.map((ele: string) => ele.trim()),
+            ],
+          });
+          toast.success("Issue status list updated successfully");
+        } else if (selectedOption === "taskStatus") {
+          await updateTaskStatusList(projectId, {
+            taskStatusList: [
+              ...formValues.priority.map((ele: string) => ele.trim()),
+            ],
+          });
+          toast.success("Task status list updated successfully");
+        } else if (selectedOption === "tag") {
+          await updateTagList(projectId, {
+            tagList: [...formValues.priority.map((ele: string) => ele.trim())],
+          });
+          toast.success("Tag list updated successfully");
         }
+        setConfigEnabled(true);
+        setShowbutton(false);
+      } catch (error: any) {
+        if (error && error?.success === false) {
+          if (error.message === "Forbidden Access") {
+            toast.error("Not authorized. Ask the Project Admin for help");
+          } else {
+            toast.error("Project Config could not be updated");
+          }
+          setConfigEnabled(true);
+        }
+      }
     }
   };
   const [isChatActive, setChatStatus] = React.useState(false);
@@ -406,29 +426,27 @@ const Index: React.FC<any> = () => {
     },
   ]);
   const deleteUser = (rowData: any) => {
-    const email = rowData.email.toLocaleLowerCase();
+    const email = rowData?.email?.toLocaleLowerCase();
     removeProjectUser(email, rowData.projectId as string)
       .then((response) => {
         if (response?.success === true) {
           toast.success(response?.message);
           //update current proj list
-           
-          projects.splice(projects.findIndex(
-            (prj:any)=>{
-              if(prj._id===projectId)
-              return true;
 
-            }
-          ),1);
+          projects.splice(
+            projects.findIndex((prj: any) => {
+              if (prj._id === projectId) return true;
+            }),
+            1
+          );
           //setProjects([].concat(updateProjectsList))
           setSearchTableData([].concat(projects));
-          
-          console.log("Clicked Yes",response);
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+          // toast.error(error?.message);
+          toast.error("You  don't have permission. Contact Admin");
         }
       });
   };
@@ -522,30 +540,35 @@ const Index: React.FC<any> = () => {
                 />
                 {isFilterApplied ? <FilterIndicator /> : <></>}
                 <ToggleButtonContainer id="view-options">
-                  <GridViewButton
-                    onClick={() => {
-                      setIsGridView(true);
-                    }}
-                    toggleStatus={isGridView}
-                    data-testid="design-button"
-                  >
-                    <GridButton
-                      src={isGridView ? selectGridViewIcon : unselectGridIcon}
-                      alt=""
-                    />
-                  </GridViewButton>
-                  <GridViewButtonRight
-                    onClick={() => {
-                      setIsGridView(false);
-                    }}
-                    toggleStatus={!isGridView}
-                    data-testid="design-button"
-                  >
-                    <GridButton
-                      src={isGridView ? listViewIcon : selectListIcon}
-                      alt=""
-                    />
-                  </GridViewButtonRight>
+                  <Tooltip title={"Grid View"}>
+                    <GridViewButton
+                      onClick={() => {
+                        setIsGridView(true);
+                      }}
+                      toggleStatus={isGridView}
+                      data-testid="design-button"
+                    >
+                      <GridButton
+                        src={isGridView ? selectGridViewIcon : unselectGridIcon}
+                        alt=""
+                      />
+                    </GridViewButton>
+                  </Tooltip>
+
+                  <Tooltip title={"List View"}>
+                    <GridViewButtonRight
+                      onClick={() => {
+                        setIsGridView(false);
+                      }}
+                      toggleStatus={!isGridView}
+                      data-testid="design-button"
+                    >
+                      <GridButton
+                        src={isGridView ? listViewIcon : selectListIcon}
+                        alt=""
+                      />
+                    </GridViewButtonRight>
+                  </Tooltip>
                 </ToggleButtonContainer>
               </HeaderActions>
             </ProjectsHeader>
@@ -568,9 +591,18 @@ const Index: React.FC<any> = () => {
                 />
               )}
             </div>
-
             {showLoading ? (
               <CustomLoader />
+            ) : showWelcomMessage ? (
+              <ProjectCardsContainer>
+                <ShowErrorContainer>
+                  <CenteredErrorImage src={projectHierIcon} alt="" />
+
+                  <NoResultText>
+                    No Project Has Been Assigned To You
+                  </NoResultText>
+                </ShowErrorContainer>
+              </ProjectCardsContainer>
             ) : isGridView ? (
               <ProjectListCardView
                 projects={searchTableData}
@@ -658,8 +690,8 @@ const Index: React.FC<any> = () => {
           callBackvalue={
             showAddUser
               ? () => {}
-              : () => {console.log("Clicked YES");
-              deleteUser({email:eMail,projectId:projectId})
+              : () => {
+                  deleteUser({ email: eMail, projectId: projectId });
                   setShowArchiveProject(false);
                 }
           }

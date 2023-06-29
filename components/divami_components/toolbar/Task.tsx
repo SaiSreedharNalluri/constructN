@@ -36,6 +36,7 @@ import moment from "moment";
 const Task = ({
   rightMenuClickHandler,
   tasksList,
+  setTasksList,
   currentProject,
   currentSnapshot,
   currentStructure,
@@ -59,6 +60,8 @@ const Task = ({
   projectUsers,
   taskStatusList,
   taskPriorityList,
+  setShowTaskMarkups,
+  showTaskMarkups,
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -72,7 +75,6 @@ const Task = ({
   const [image, setImage] = useState<Blob>();
   const [showImage, setShowImage] = useState(false);
   const [enableSubmit, setEnableSubmit] = useState(true);
-  const [taskVisbility, setTaskVisibility] = useState(true);
 
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
 
@@ -99,6 +101,7 @@ const Task = ({
     }
   };
   const clickTaskSubmit = (formData: any) => {
+    setEnableSubmit(false);
     let data: any = {};
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
@@ -186,14 +189,12 @@ const Task = ({
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
     if (data.title && data.type && data.priority) {
-      setEnableSubmit(false);
-
       createTaskWithAttachments(projectId as string, formDataObj)
         .then((response) => {
           if (response.success === true) {
             toast.success("Task Created sucessfully");
 
-            setEnableSubmit(false);
+            setEnableSubmit(true);
             taskSubmitFn(response.result);
           } else {
             toast.error(`Something went wrong`);
@@ -259,8 +260,8 @@ const Task = ({
     taskMenuClicked(taskMenuInstance);
   };
   const toggleTaskVisibility = () => {
-    setTaskVisibility(!taskVisbility);
-    if (taskVisbility) taskMenuInstance.toolAction = "taskHide";
+    setShowTaskMarkups(!showTaskMarkups);
+    if (showTaskMarkups) taskMenuInstance.toolAction = "taskHide";
     else taskMenuInstance.toolAction = "taskShow";
     taskMenuClicked(taskMenuInstance);
   };
@@ -307,9 +308,9 @@ const Task = ({
         </IssuesSectionFileImg>
       </Tooltip>
 
-      <Tooltip title={taskVisbility ? "Show Tasks" : "Hide Tasks"}>
+      <Tooltip title={showTaskMarkups ? "Show Tasks" : "Hide Tasks"}>
         <IssuesSectionClipImg>
-          {taskVisbility && (
+          {showTaskMarkups && (
             <CameraIcon
               width={12}
               height={12}
@@ -321,7 +322,7 @@ const Task = ({
             />
           )}
 
-          {!taskVisbility && (
+          {!showTaskMarkups && (
             <CameraIcon
               width={12}
               height={12}
@@ -338,7 +339,18 @@ const Task = ({
         <Drawer
           anchor={"right"}
           open={openDrawer}
-          onClose={() => setOpenDrawer((prev: any) => !prev)}
+          onClose={() => {
+            setTasksList([
+              ...tasksList.sort((a: any, b: any) => {
+                return (
+                  new Date(b.createdAt).valueOf() -
+                  new Date(a.createdAt).valueOf()
+                );
+              }),
+            ]);
+
+            setOpenDrawer((prev: any) => !prev);
+          }}
         >
           <TaskList
             tasksList={tasksList}

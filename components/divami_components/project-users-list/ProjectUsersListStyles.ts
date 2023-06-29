@@ -258,6 +258,7 @@ export const GridViewButton = styled("div")((props: any) => ({
   borderBottomLeftRadius: "2px",
   height: "40px",
   width: "40px",
+  
 })) as any;
 
 export const GridViewButtonRight = styled("div")((props: any) => ({
