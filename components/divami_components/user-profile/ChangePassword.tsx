@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import InputPassword from '../../../components/core/Input/inputPassword';
 import { changePassword } from '../../../services/userAuth';
 import { toast } from 'react-toastify';
+import Header from "./header/Header";
 const ChangePassword = ({closeDrawer}:any) => {
   const initialValues = {
     currentPassword: '',
@@ -74,11 +75,12 @@ const ChangePassword = ({closeDrawer}:any) => {
     <div className=''>
       {show && (
         <div>
-          <div>
-            <div className='border border-solid border-[#d9d9d9] '>
-            <p className='w-full flex items-center p-2 text-[#101F4C]  font-normal text-base'>Change Password</p>
-            </div>
-            <div className='calc-h177 overflow-y-auto'>
+          
+            <div className="px-4">
+      <Header id="ChangePassword" closeEditProject={closeDrawer} />
+      </div>
+          
+            <div className='calc-h159 overflow-y-auto'>
             <div>
                 <p className='text-[#101F4C]  px-4 py-1'>Use the instructions to make your password strong </p>
             </div>
@@ -222,7 +224,7 @@ const ChangePassword = ({closeDrawer}:any) => {
             </div>
  
           </div>
-        </div>
+    
       )}
           
     </div>

@@ -1240,7 +1240,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         <HeaderContainer>
           <TitleContainer>
             <LeftTitleCont>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] ">
+        <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] ">
               <ArrowIcon
                 onClick={() => {
                   onClose(true);
@@ -1271,7 +1271,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
+        <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
               <EditIcon
                 src={Edit}
                 alt={"close icon"}
@@ -1281,7 +1281,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 data-testid="edit-icon"
               />
               </div>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
+        <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
               <DeleteIcon
                 src={Delete}
                 alt={"close icon"}
