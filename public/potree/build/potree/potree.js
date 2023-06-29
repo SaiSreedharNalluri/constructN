@@ -77391,6 +77391,7 @@ ENDSEC
 				viewer.scene.orientedImages[0].focused = image;
 			
 				const tmpImagePath = `${Potree.resourcePath}/images/loading.jpg`;
+				// const tmpImagePath = `${imagesPath}/thumbnails/${target.id}`;
 				let texture = await loadImageTexture(tmpImagePath);
 				updateTexture(texture);
 				setTimeout(() => {
@@ -77526,8 +77527,8 @@ ENDSEC
 				target: null,
 			};
 			this.raycaster = new Raycaster();
-			this.hoverMaterial = new MeshBasicMaterial({side: BackSide, color: 0xff0000});
-			this.sm = new MeshBasicMaterial({side: BackSide});
+			this.hoverMaterial = new MeshBasicMaterial({side: DoubleSide});
+			this.sm = new MeshBasicMaterial({side: DoubleSide,color:'#FF843F'});
 
 			// let elUnfocus = document.createElement("input");
 			// elUnfocus.type = "button";
@@ -77550,6 +77551,12 @@ ENDSEC
 			viewer.inputHandler.addInputListener(this);
 
 			this.addEventListener("mousedown", () => {
+				if(this.currentlyHovered && this.currentlyHovered.image360){
+					this.focus(this.currentlyHovered.image360);
+				}
+			});
+
+			this.addEventListener("touchend", () => {
 				if(this.currentlyHovered && this.currentlyHovered.image360){
 					this.focus(this.currentlyHovered.image360);
 				}
@@ -77607,14 +77614,47 @@ ENDSEC
 				image.mesh.visible = false;
 			}
 
-			this.selectingEnabled = false;
+			// if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth <= 768)){
+				let index = this.images.findIndex( element => {
+				if (element.file === image360.file) {
+					return true;
+				}
+				});
+
+				if(index != 0) {
+					let i = index - 1;
+					let current = new Vector3(this.images[index].position[0], this.images[index].position[1], this.images[index].position[2]);
+					let next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
+					let dist = current.distanceTo(next);
+					console.log("Distance between cicles: ", dist);
+					while(dist < 3 && i > -1) {
+						i--;
+						next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
+						dist = current.distanceTo(next);
+					}
+					if(i > -1) this.images[i].mesh.visible = true;
+				}
+				let i = index + 1;
+				let current = new Vector3(this.images[index].position[0], this.images[index].position[1], this.images[index].position[2]);
+				let next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
+				let dist = current.distanceTo(next);
+				while(dist < 3 && i < this.images.length) {
+					i++;
+					next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
+					dist = current.distanceTo(next);
+				}
+				if(i < this.images.length) this.images[i].mesh.visible = true;
+
+				this.selectingEnabled = true;
+			// } else {
+			// 	this.selectingEnabled = false;
+			// }
 
 			this.sphere.visible = false;
 
 			this.load(image360).then( () => {
-				console.log("Potree texture loading onFocus: ", image360);
 				this.sphere.visible = true;
-				this.sphere.material = image360.texture;
+				this.sphere.material.map = image360.texture;
 				this.sphere.material.needsUpdate = true;
 			});
 
@@ -77739,10 +77779,10 @@ ENDSEC
 				} else {
 					new TextureLoader().load(image360.thumbnail,
 						texture => {
-							console.log("potree thumbnail loading:", texture);
 							// if (image360.file == this.focusedImage.file) {
-								var sphereMaterial = new MeshBasicMaterial({ map: texture, side: DoubleSide });
-								image360.texture = sphereMaterial;
+								//var sphereMaterial = new MeshBasicMaterial({ map: texture, side: DoubleSide });
+	                            //image360.texture = sphereMaterial;
+								image360.texture = texture;
 								resolved = true;
 								resolve(null);
 								loadOrgImage.bind(this)();
@@ -77757,12 +77797,12 @@ ENDSEC
 
 						new TextureLoader().load(image360.file,
 							texture => {
-								console.log("potree imgae loading:", texture);
 								// if (image360.file == this.focusedImage.file) {
-									var sphereMaterial = new MeshBasicMaterial({ map: texture, side: DoubleSide });
-									image360.texture = sphereMaterial;
+									//var sphereMaterial = new MeshBasicMaterial({ map: texture, side: DoubleSide });
+	                            	//image360.texture = sphereMaterial;
+									image360.texture = texture;
 									this.sphere.visible = true;
-									this.sphere.material = image360.texture;
+									this.sphere.material.map = image360.texture;
 									this.sphere.material.needsUpdate = true;
 									if (!resolved) {
 										resolve(null);
@@ -77789,7 +77829,15 @@ ENDSEC
 
 			// let tStart = performance.now();
 			this.raycaster.ray.copy(ray);
-			let intersections = this.raycaster.intersectObjects(this.node.children);
+			let newArray = this.images !== undefined ? this.images.filter(image =>{
+				if (image.mesh.visible === true) {
+					return image.mesh
+				}
+			}) : [];
+			// console.log("testing selected meshes: ", newArray);
+			let intersections = this.raycaster.intersectObjects(newArray.map(image =>{
+					return image.mesh
+			}));
 
 			if(intersections.length === 0){
 				// label.visible = false;
@@ -77798,8 +77846,10 @@ ENDSEC
 			}
 
 			let intersection = intersections[0];
-			this.currentlyHovered = intersection.object;
-			this.currentlyHovered.material = this.hoverMaterial;
+			if(intersection.object.image360.mesh.visible === true) {
+				this.currentlyHovered = intersection.object;
+				this.currentlyHovered.material = this.hoverMaterial;
+			}
 
 			//label.visible = true;
 			//label.setText(currentlyHovered.image360.file);
@@ -77908,10 +77958,27 @@ ENDSEC
 			// 	images360.images.push(image360);
 			// }
 
-			Images360Loader.createSceneNodes(images360, params.transform);
+			images360.images.sort(function (a, b) {
+				const getFileNumber = (file) => {
+					const numberPattern = /\d+/g;
+					const numbers = file.match(numberPattern);
+					if (numbers) {
+					return numbers.map((num) => num.padStart(10, '0')).join('');
+					}
+					return file;
+				};
+
+				const fileANumber = getFileNumber(a.file);
+				const fileBNumber = getFileNumber(b.file);
+				return fileANumber.localeCompare(fileBNumber);
+			});
+
+			
+			// if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth <= 768)) {
+				Images360Loader.createSceneNodes(images360, params.transform);
+			// }
 
 			return images360;
-
 		}
 
 		static createSceneNodes(images360, transform){
@@ -77920,34 +77987,20 @@ ENDSEC
 				let {longitude, latitude, altitude} = image360;
 				// let xy = transform.forward([longitude, latitude]);
 
-				let mesh = new Mesh(new SphereGeometry(0.1, 8, 8), new MeshBasicMaterial({side: BackSide}));
-				// mesh.position.set(...xy, altitude);
-				mesh.position.set(longitude, latitude, altitude);
+				let mesh = new Mesh(new RingGeometry( 0.35, .5, 32 ), new MeshBasicMaterial({side: DoubleSide, color:'#FF843F'}));
+				mesh.position.set(longitude, latitude, altitude - 2.0);
 				mesh.scale.set(1, 1, 1);
 				mesh.material.transparent = true;
-				mesh.visible = false;
+				// mesh.visible = false;
 				mesh.material.opacity = 0.75;
 
 				mesh.image360 = image360;
-
-				{ // orientation
-					var {course, pitch, roll} = image360;
-					mesh.rotation.set(
-						MathUtils.degToRad(+roll + 90),
-						MathUtils.degToRad(-pitch),
-						MathUtils.degToRad(-course + 90),
-						"ZYX"
-					);
-				}
 
 				images360.node.add(mesh);
 
 				image360.mesh = mesh;
 			}
 		}
-
-		
-
 	};
 
 	// This is a generated file. Do not edit.
@@ -82064,6 +82117,12 @@ ENDSEC
 
 				yaw -= progression * this.yawDelta;
 				pitch -= progression * this.pitchDelta;
+
+				if(pitch < -1 * 0.3) {
+					pitch= -1 * 0.3;
+				} else if(pitch > 1.3) {
+					pitch = 1.3;
+				}
 
 				view.yaw = yaw;
 				view.pitch = pitch;
