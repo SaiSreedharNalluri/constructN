@@ -23,6 +23,39 @@ export interface ShowImageDisplay {
   item2: boolean;
   item3: boolean;
 }
+const LayerIcons = ({iconsList}:any)=>{
+  const [myIconsList,setIconsList]= useState<any>(iconsList);
+  useEffect(()=>{setIconsList(iconsList)},[iconsList])
+  return(<>
+{myIconsList.map((label: any, index: number) => {
+          if (label === "Phone Image") {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={hexagonIcon} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          } else if (label === "360 Image") {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={cameraIcon} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          } else if (label === "360 Video") {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={videoRecorderIcon} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          } else if (label === "Drone Image") {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={DroneImage} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          }
+        })}
+</>
+)};
 
 const Layers = ({
   rightMenuClickHandler,
@@ -64,49 +97,43 @@ const Layers = ({
         arr.push(obj[key].name);
       }
     }
-    //for loop
-    //if is selected
-    //arr.push
-    //end of
-
-    // setLayersLabels(Object.keys(myLayersList));
     setLayersLabels(arr);
-  }, [layersUpdated, selectedArr.length]);
-  useEffect(() => {}, [layersLabels]);
+  }, [layersUpdated,selectedArr]);
+ // useEffect(() => {}, [layersLabels]);
 
-  const getLayersIcons = (layersLabels: any) => {
-    return (
-      <>
-        {layersLabels.map((label: any, index: number) => {
-          if (label === "Phone Image") {
-            return (
-              <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={hexagonIcon} alt="Arrow" />
-              </LayerSecondSectionCamImg>
-            );
-          } else if (label === "360 Image") {
-            return (
-              <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={cameraIcon} alt="Arrow" />
-              </LayerSecondSectionCamImg>
-            );
-          } else if (label === "360 Video") {
-            return (
-              <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={videoRecorderIcon} alt="Arrow" />
-              </LayerSecondSectionCamImg>
-            );
-          } else if (label === "Drone Image") {
-            return (
-              <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={DroneImage} alt="Arrow" />
-              </LayerSecondSectionCamImg>
-            );
-          }
-        })}
-      </>
-    );
-  };
+  // const getLayersIcons = (layersLabels: any) => {
+  //   return (
+  //     <>
+  //       {layersLabels.map((label: any, index: number) => {
+  //         if (label === "Phone Image") {
+  //           return (
+  //             <LayerSecondSectionCamImg key={label + index}>
+  //               <CameraIcon src={hexagonIcon} alt="Arrow" />
+  //             </LayerSecondSectionCamImg>
+  //           );
+  //         } else if (label === "360 Image") {
+  //           return (
+  //             <LayerSecondSectionCamImg key={label + index}>
+  //               <CameraIcon src={cameraIcon} alt="Arrow" />
+  //             </LayerSecondSectionCamImg>
+  //           );
+  //         } else if (label === "360 Video") {
+  //           return (
+  //             <LayerSecondSectionCamImg key={label + index}>
+  //               <CameraIcon src={videoRecorderIcon} alt="Arrow" />
+  //             </LayerSecondSectionCamImg>
+  //           );
+  //         } else if (label === "Drone Image") {
+  //           return (
+  //             <LayerSecondSectionCamImg key={label + index}>
+  //               <CameraIcon src={DroneImage} alt="Arrow" />
+  //             </LayerSecondSectionCamImg>
+  //           );
+  //         }
+  //       })}
+  //     </>
+  //   );
+  // };
 
   return (
     <ClickAwayListener
@@ -120,8 +147,9 @@ const Layers = ({
           // style={{ border: "2px solid blue" }}
         >
           <IconsContainer>
-            {layersLabels.length > 0 ? (
-              <>Layer: {getLayersIcons(layersLabels)}</>
+            {(layersLabels&&(layersLabels.length > 0 ))? (
+              <>Layer:  <LayerIcons iconsList={layersLabels}></LayerIcons>
+              </>
             ) : (
               "Select Layer"
             )}
