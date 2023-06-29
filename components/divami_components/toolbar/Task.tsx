@@ -36,6 +36,7 @@ import moment from "moment";
 const Task = ({
   rightMenuClickHandler,
   tasksList,
+  setTasksList,
   currentProject,
   currentSnapshot,
   currentStructure,
@@ -339,7 +340,17 @@ const Task = ({
         <Drawer
           anchor={"right"}
           open={openDrawer}
-          onClose={() => setOpenDrawer((prev: any) => !prev)}
+          onClose={() => {
+            setTasksList(
+              [...tasksList.sort((a: any, b: any) => {
+                return (
+                  new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf()
+                );
+              })]
+            );
+            
+            setOpenDrawer((prev: any) => !prev)}
+          }
         >
           <TaskList
             tasksList={tasksList}

@@ -57,7 +57,7 @@ export const AddUsersEmailOverlay = ({
   const [addedUsers, setAddedUsers] = useState<any>([]);
   const [searchVal, setSearchVal] = useState("");
   const [hoveringOver, setHoveringOver] = useState("");
-  const [enableAddUser, setEnableAddUser] = useState(false);
+  const [enableAddUser, setEnableAddUser] = useState(true);
   useEffect(() => {
     if (/\S+@\S+\.\S+/.test(form.email)) checkRegisterUser(form.email);
 

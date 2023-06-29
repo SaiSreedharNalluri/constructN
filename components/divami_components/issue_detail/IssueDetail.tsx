@@ -34,6 +34,7 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
 import router, { useRouter } from "next/router";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
+import CustomMiniLoader from "../custom_loader/CustomMiniLoader";
 
 import _ from "lodash";
 import {
@@ -197,7 +198,6 @@ function BasicTabs(props: any) {
   const [comments, setComments] = useState("");
   const [backendComments, setBackendComments] = useState<any>([]);
   const [file, setFile] = useState<File>();
-
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -339,7 +339,7 @@ function BasicTabs(props: any) {
   ];
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", height:"100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
         <Tabs
           TabIndicatorProps={{
@@ -908,6 +908,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
     setIssueList,
     getIssues,
     deleteTheAttachment,
+    issueLoader,
+    setIssueLoader,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
@@ -1075,7 +1077,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         .then((response) => {
           if (response.success === true) {
             toast.success("Issue updated sucessfully");
-            getIssues(currentStructure._id);
+            getIssues(currentStructure._id)
           } else {
             toast.error("Error updating the issue");
           }
@@ -1239,7 +1241,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
   return (
     <>
-      <CustomTaskDrawerContainer>
+      <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
           <TitleContainer>
             <LeftTitleCont>
@@ -1297,20 +1299,29 @@ const CustomIssueDetailsDrawer = (props: any) => {
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-
-        <BodyContainer footerState={footerState}>
-          <BasicTabs
-            taskType={issueType}
-            taskPriority={issuePriority}
-            taskStatus={issueStatus}
-            projectUsers={projectUsers}
-            taskState={taskState}
-            issueUpdate={issueUpdate}
-            deleteTheAttachment={deleteTheAttachment}
-            handleFooter={SetFooterState}
-            setTaskState={setTaskState}
-          />
-        </BodyContainer>
+      {
+        issueLoader ?
+          <div className="mini-loader-parent">
+          <CustomMiniLoader></CustomMiniLoader>
+          </div>
+          
+        :
+        <>
+          <BodyContainer footerState={footerState}>
+            <BasicTabs
+              taskType={issueType}
+              taskPriority={issuePriority}
+              taskStatus={issueStatus}
+              projectUsers={projectUsers}
+              taskState={taskState}
+              issueUpdate={issueUpdate}
+              deleteTheAttachment={deleteTheAttachment}
+              handleFooter={SetFooterState}
+              setTaskState={setTaskState}
+            />
+          </BodyContainer>
+        </>
+      }   
       </CustomTaskDrawerContainer>
 
       {openCreateTask && (

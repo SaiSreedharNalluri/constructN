@@ -154,7 +154,7 @@ const CustomTaskListDrawer = (props: any) => {
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [taskList, setTaskList] = useState([]);
+  const [taskList, setTaskList] = useState<any>([]);
   const [filteredTaskList, setFilteredTaskList] = useState(
     taskList.slice(0, 10)
   );
@@ -167,33 +167,33 @@ const CustomTaskListDrawer = (props: any) => {
   const [downloadList, setDownloadList] = useState(taskList);
   const sortMenuOptions = [
     {
-      label: "Status ( To Do - Completed)",
+      label: "Status  (A - Z)",
       icon: null,
       method: "status_asc",
     },
     {
-      label: "Status ( Completed - To Do)",
+      label: "Status   (Z - A)",
       icon: null,
       method: "status_desc",
     },
 
     {
-      label: "Priotity ( High - Low)",
-      icon: null,
-      method: "Dsc Priority",
-    },
-    {
-      label: "Priotity ( Low - High)",
+      label: "Priority (A - Z)",
       icon: null,
       method: "Asc Priority",
     },
     {
-      label: "Due Date ",
+      label: "Priority (Z - A)",
+      icon: null,
+      method: "Dsc Priority",
+    },
+    {
+      label: "Due Date",
       icon: UpArrow,
       method: "Dsc DueDate",
     },
     {
-      label: "Due Date ",
+      label: "Due Date",
       icon: DownArrow,
       method: "Asc DueDate",
     },
@@ -236,6 +236,13 @@ const CustomTaskListDrawer = (props: any) => {
 
   const handleClose = () => {
     onClose(true);
+    setTaskList(
+      [...tasksList.sort((a: any, b: any) => {
+        return (
+          new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf()
+        );
+      })]
+    );
   };
 
   useEffect(() => {
@@ -487,7 +494,7 @@ const CustomTaskListDrawer = (props: any) => {
                     }}
                     data-testid="filter"
                   />
-                  {taskFilterState.isFilterApplied ? (
+                  {taskFilterState.isFilterApplied && taskFilterState.numberOfFilters ? (
                     <FilterIndication />
                   ) : null}
                   {/* <Tooltip title="Download Menu">

@@ -55,7 +55,6 @@ interface IProps {
   taskFilterState?: any;
   issueFilterState?: any;
   setIssueFilterState?: any;
-
   deleteTheIssue?: any;
   deleteTheAttachment?: any;
 }
@@ -67,6 +66,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   viewTypes,
   issuesList,
   tasksList,
+  setTasksList,
   handleOnFilter,
   currentProject,
   currentSnapshot,
@@ -111,6 +111,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   taskPriorityList,
   taskStatusList,
   setIssueFilterState,
+  issueLoader,
+  setIssueLoader,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -377,10 +379,13 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           issueSubmit={issueSubmit}
           deleteTheAttachment={deleteTheAttachment}
           projectUsers={projectUsers}
+          issueLoader={issueLoader}
+          setIssueLoader={setIssueLoader}
         />
 
         <Task
           tasksList={tasksList}
+          setTasksList={setTasksList}
           taskMenuClicked={taskMenuClicked}
           currentProject={currentProject}
           currentSnapshot={currentSnapshot}

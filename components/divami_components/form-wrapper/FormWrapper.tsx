@@ -106,7 +106,6 @@ const FormWrapper = (props: any) => {
               return {
                 ...item,
                 isError: true,
-               
                 showErrorMsg: true,
               };
             }
@@ -116,7 +115,6 @@ const FormWrapper = (props: any) => {
               return {
                 ...item,
                 isError: true,
-               
                 showErrorMsg: true,
               };
             }
@@ -373,8 +371,6 @@ const FormWrapper = (props: any) => {
     );
   };
   function checkDataisEmpty() {
-  
-
     const regex = /^[^\s][^\s]*$/;
     const maxLimit = 20; // Maximum character limit for firstName and lastName fields
 
@@ -655,7 +651,6 @@ const FormWrapper = (props: any) => {
     }
   }
 
-  
   const renderHTML = (
     data: any,
     isDisabled: boolean,
@@ -737,7 +732,6 @@ const FormWrapper = (props: any) => {
                   data.id,
                   parentType,
                   parentId,
-                   
                 );
 
                 if (data.id === "password") {
@@ -752,7 +746,6 @@ const FormWrapper = (props: any) => {
                   namesCharLimit(data?.defaultValue, data.id);
                   return;
                 }
-              
                 else if (data.id === "email") {
                   isValidEmail(data?.defaultValue, data.id);
                   return;

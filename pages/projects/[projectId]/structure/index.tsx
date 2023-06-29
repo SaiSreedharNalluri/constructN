@@ -179,6 +179,7 @@ const Index: React.FC<IProps> = () => {
   const [openTaskDetails, setOpenTaskDetails] = useState(false);
   const [breadCrumbsData, setBreadCrumbsData] = useState<any>([]);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [issueLoader, setIssueLoader] = useState(false);
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
@@ -885,6 +886,7 @@ const Index: React.FC<IProps> = () => {
     }
   }, [currentViewType]);
   const getIssues = (structureId: string, isDownload?: boolean) => {
+   // setIssueLoader(true)
     if (structureId && router.query.projectId) {
       getIssuesList(router.query.projectId as string, structureId)
         .then((response) => {
@@ -899,12 +901,15 @@ const Index: React.FC<IProps> = () => {
             alink.download = "SamplePDF.pdf";
             alink.click();
             // });
+           
           } else {
             setIssueList(response.result);
-            setIssueFilterList(response.result);
+            // setIssueFilterList(response.result);
           }
+        //  setIssueLoader(false)
         })
         .catch((error) => {
+        //  setIssueLoader(false)
           if (error.success === false) {
             toast.error(error?.message);
           }
@@ -937,12 +942,12 @@ const Index: React.FC<IProps> = () => {
         });
     }
   };
+
   const handleOnIssueSort = (sortMethod: string) => {
     switch (sortMethod) {
       case "Last Updated":
-        setIssueFilterList(issuesList);
-        setIssueFilterList(
-          issueFilterList.sort((a, b) => {
+        setIssueList(
+          issuesList.sort((a, b) => {
             if (a.updatedAt > b.updatedAt) {
               return 1;
             } else if (b.updatedAt > a.updatedAt) {
@@ -951,12 +956,10 @@ const Index: React.FC<IProps> = () => {
             return 0;
           })
         );
-        setIssueList(issueFilterList);
         break;
       case "First Updated":
-        setIssueFilterList(issuesList);
-        setIssueFilterList(
-          issueFilterList.sort((a, b) => {
+        setIssueList(
+          issuesList.sort((a, b) => {
             if (a.updatedAt > b.updatedAt) {
               return -1;
             } else if (b.updatedAt > a.updatedAt) {
@@ -965,109 +968,35 @@ const Index: React.FC<IProps> = () => {
             return 0;
           })
         );
-        setIssueList(issueFilterList);
-        break;
       case "Asc DueDate":
-        setIssueFilterList(issuesList);
-        setIssueFilterList(
-          issueFilterList.sort((a: any, b: any) => {
+        setIssueList(
+          [...issuesList.sort((a: any, b: any) => {
             return (
               new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf()
             );
-          })
+          })]
         );
-        setIssueList(issueFilterList);
         break;
       case "Dsc DueDate":
-        setIssueFilterList(issuesList);
-        setIssueFilterList(
-          issueFilterList.sort((a: any, b: any) => {
-            return (
-              new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
-            );
-          })
+      setIssueList( [...issuesList.sort((a: any, b: any) => {
+        return (
+          new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
         );
-        setIssueList(issueFilterList);
+      })]);
         break;
       case "Asc Priority":
-        setIssueFilterList(issuesList);
-        setIssueFilterList(
-          issueFilterList.sort((a, b) => {
-            if (
-              issuePriorityList?.indexOf(a.priority) >
-              issuePriorityList?.indexOf(b.priority)
-            ) {
-              return 1;
-            } else if (
-              issuePriorityList?.indexOf(b.priority) >
-              issuePriorityList?.indexOf(a.priority)
-            ) {
-              return -1;
-            }
-            return 0;
-          })
-        );
-        setIssueList(issueFilterList);
+        setIssueList([...issuesList.sort((a:any,b:any) =>  a.priority.trim().toLowerCase().localeCompare(b.priority.trim().toLowerCase()))])
         break;
       case "Dsc Priority":
-        setIssueFilterList(issuesList);
-        setIssueFilterList(
-          issueFilterList.sort((a, b) => {
-            if (
-              issuePriorityList?.indexOf(a.priority) >
-              issuePriorityList?.indexOf(b.priority)
-            ) {
-              return -1;
-            } else if (
-              issuePriorityList?.indexOf(b.priority) >
-              issuePriorityList?.indexOf(a.priority)
-            ) {
-              return 1;
-            }
-            return 0;
-          })
-        );
-        setIssueList(issueFilterList);
+        setIssueList([...issuesList.sort((a:any,b:any) =>  b.priority.trim().toLowerCase().localeCompare(a.priority.trim().toLowerCase()))])
         break;
       case "status_asc":
-        setIssueFilterList(issuesList);
-        setIssueFilterList(
-          issueFilterList.sort((a, b) => {
-            if (
-              issueStatusList?.indexOf(a.priority) >
-              issueStatusList?.indexOf(b.priority)
-            ) {
-              return -1;
-            } else if (
-              issueStatusList?.indexOf(b.priority) >
-              issueStatusList?.indexOf(a.priority)
-            ) {
-              return 1;
-            }
-            return 0;
-          })
-        );
-        setIssueList(issueFilterList);
+        setIssueList([...issuesList.sort((a:any,b:any) =>  a.status.trim().toLowerCase().localeCompare(b.status.trim().toLowerCase()))])
+
         break;
       case "status_desc":
-        setIssueFilterList(issuesList);
-        setIssueFilterList(
-          issueFilterList.sort((b, a) => {
-            if (
-              issueStatusList?.indexOf(a.priority) >
-              issueStatusList?.indexOf(b.priority)
-            ) {
-              return -1;
-            } else if (
-              issueStatusList?.indexOf(b.priority) >
-              issueStatusList?.indexOf(a.priority)
-            ) {
-              return 1;
-            }
-            return 0;
-          })
-        );
-        setIssueList(issueFilterList);
+        setIssueList([...issuesList.sort((a:any,b:any) =>  b.status.trim().toLowerCase().localeCompare(a.status.trim().toLowerCase()))])
+
         break;
       default:
         break;
@@ -1077,9 +1006,8 @@ const Index: React.FC<IProps> = () => {
   const handleOnTasksSort = (sortMethod: string) => {
     switch (sortMethod) {
       case "Last Updated":
-        setTaskFilterList(tasksList);
-        setTaskFilterList(
-          taskFilterList.sort((a, b) => {
+        setIssueList(
+          issuesList.sort((a, b) => {
             if (a.updatedAt > b.updatedAt) {
               return 1;
             } else if (b.updatedAt > a.updatedAt) {
@@ -1088,12 +1016,10 @@ const Index: React.FC<IProps> = () => {
             return 0;
           })
         );
-        setTasksList(taskFilterList);
         break;
       case "First Updated":
-        setTaskFilterList(tasksList);
-        setTaskFilterList(
-          taskFilterList.sort((a, b) => {
+        setIssueList(
+          issuesList.sort((a, b) => {
             if (a.updatedAt > b.updatedAt) {
               return -1;
             } else if (b.updatedAt > a.updatedAt) {
@@ -1102,111 +1028,37 @@ const Index: React.FC<IProps> = () => {
             return 0;
           })
         );
-        setTasksList(taskFilterList);
-        break;
       case "Asc DueDate":
-        setTaskFilterList(tasksList);
-        setTaskFilterList(
-          taskFilterList.sort((a: any, b: any) => {
+        setTasksList(
+          [...tasksList.sort((a: any, b: any) => {
             return (
               new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf()
             );
-          })
+          })]
         );
-        setTasksList(taskFilterList);
         break;
       case "Dsc DueDate":
-        setTaskFilterList(tasksList);
-        setTaskFilterList(
-          taskFilterList.sort((a: any, b: any) => {
-            return (
-              new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
-            );
-          })
+      setTasksList( [...tasksList.sort((a: any, b: any) => {
+        return (
+          new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
         );
-        setTasksList(taskFilterList);
+      })]);
         break;
       case "Asc Priority":
-        setTaskFilterList(tasksList);
-        setTaskFilterList(
-          taskFilterList.sort((a, b) => {
-            if (
-              tasksPriotityList?.indexOf(a.priority) >
-              tasksPriotityList?.indexOf(b.priority)
-            ) {
-              return 1;
-            } else if (
-              tasksPriotityList?.indexOf(b.priority) >
-              tasksPriotityList?.indexOf(a.priority)
-            ) {
-              return -1;
-            }
-            return 0;
-          })
-        );
-        setTasksList(taskFilterList);
+        setTasksList([...tasksList.sort((a:any,b:any) =>  a.priority.trim().toLowerCase().localeCompare(b.priority.trim().toLowerCase()))])
         break;
       case "Dsc Priority":
-        setTaskFilterList(tasksList);
-        setTaskFilterList(
-          taskFilterList.sort((a, b) => {
-            if (
-              tasksPriotityList?.indexOf(a.priority) >
-              tasksPriotityList?.indexOf(b.priority)
-            ) {
-              return -1;
-            } else if (
-              tasksPriotityList?.indexOf(b.priority) >
-              tasksPriotityList?.indexOf(a.priority)
-            ) {
-              return 1;
-            }
-            return 0;
-          })
-        );
-        setTasksList(taskFilterList);
-        break;
-      case "status_desc":
-        setIssueFilterList(issuesList);
-        setTaskFilterList(
-          taskFilterList.sort((a, b) => {
-            if (
-              issueStatusList?.indexOf(a.status) >
-              issueStatusList?.indexOf(b.status)
-            ) {
-              return -1;
-            } else if (
-              issueStatusList?.indexOf(b.status) >
-              issueStatusList?.indexOf(a.status)
-            ) {
-              return 1;
-            }
-            return 0;
-          })
-        );
-        // setTaskFilterList(statusDescList);
-        setTasksList(taskFilterList);
+     
+     setTasksList([...tasksList.sort((a:any,b:any) =>  b.priority.trim().toLowerCase().localeCompare(a.priority.trim().toLowerCase()))])
         break;
       case "status_asc":
-        // setIssueFilterList(issuesList);
-        setTaskFilterList(
-          taskFilterList.sort((a, b) => {
-            if (
-              issueStatusList?.indexOf(a.status) >
-              issueStatusList?.indexOf(b.status)
-            ) {
-              return 1;
-            } else if (
-              issueStatusList?.indexOf(b.status) >
-              issueStatusList?.indexOf(a.status)
-            ) {
-              return -1;
-            }
-            return 0;
-          })
-        );
-        // setTaskFilterList(statusAscList);
-        setTasksList(taskFilterList);
+       
+        setTasksList([...tasksList.sort((a:any,b:any) =>  a.status.trim().toLowerCase().localeCompare(b.status.trim().toLowerCase()))])
+
+        break;
+      case "status_desc":
+        setTasksList([...tasksList.sort((a:any,b:any) =>  b.status.trim().toLowerCase().localeCompare(a.status.trim().toLowerCase()))])
+
         break;
       default:
         break;
@@ -1745,6 +1597,7 @@ const Index: React.FC<IProps> = () => {
               <ToolBarMenuWrapper
                 issuesList={issuesList}
                 tasksList={tasksList}
+                setTasksList={setTasksList}
                 toolClicked={toolClicked}
                 viewMode={currentViewMode}
                 handleOnFilter={handleOnIssueFilter}
@@ -1791,6 +1644,8 @@ const Index: React.FC<IProps> = () => {
                 layersUpdated={layersUpdated}
                 setViewType={setViewType}
                 projectUsers={projectUsers}
+                issueLoader={issueLoader}
+                setIssueLoader={setIssueLoader}
               />
 
               {/* </div> */}

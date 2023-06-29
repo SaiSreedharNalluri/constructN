@@ -43,7 +43,6 @@ const ProjectListFilter: React.FC<any> = ({
 }) => {
   const [formState, setFormState] = useState<any>({});
   const [formConfig, setFormConfig] = useState<any>(projectConfig);
-
   const handleClose = () => {
     onClose(true);
   };
@@ -85,7 +84,8 @@ const ProjectListFilter: React.FC<any> = ({
   };
 
   const onReset = () => {
-    setFormConfig(projectConfig);
+    setFormConfig([{...projectConfig[0], fields:[{...projectConfig[0].fields[0], key:2},{...projectConfig[0].fields[1], key:3}]},
+      {...projectConfig[1]}]);
     setTaskFilterState({ isFilterApplied: false });
   };
 

@@ -328,7 +328,6 @@ const SectionFilter: React.FC<any> = ({
       operator: progressDropdown[0]?.defaultValue,
       progressValue: progressPercent,
     };
-    //    alert("APPLY");
     handleOnTaskFilter(data);
   };
 

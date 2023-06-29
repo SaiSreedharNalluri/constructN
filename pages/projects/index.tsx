@@ -154,15 +154,15 @@ const Index: React.FC<any> = () => {
       icon: UpArrow,
       method: "updatedAsc",
       onClick: () => {
-        setSearchTableData(
-          []
-            .concat(projects)
-            .sort(
-              (a: any, b: any) =>
-                Number(new Date(a.lastUpdated)) -
-                Number(new Date(b.lastUpdated))
-            )
-        );
+        setSearchTableData(       
+          [...projects.sort((a: any, b: any) => {
+            return (
+              new Date(a.updatedAt).valueOf() - new Date(b.updatedAt).valueOf()
+            );
+          })]
+
+          );
+       
       },
     },
     {
@@ -171,13 +171,11 @@ const Index: React.FC<any> = () => {
       method: "updatedDesc",
       onClick: () => {
         setSearchTableData(
-          []
-            .concat(projects)
-            .sort(
-              (a: any, b: any) =>
-                Number(new Date(b.lastUpdated)) -
-                Number(new Date(a.lastUpdated))
-            )
+          [...projects.sort((a: any, b: any) => {
+            return (
+              new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf()
+            );
+          })]
         );
       },
     },

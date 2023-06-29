@@ -52,6 +52,7 @@ const SignInPage = () => {
   const [userEmail, setUserEmail] = useState<any>("");
   const [newProp, setNewProp] = useState<any>({});
   const [loading, setLoading] = useState(false); // Loading state for the button click
+  const [loginEnable, setLoginEnable] = useState(true)
   const submitButtonRef: any = useRef(null);
 
   const handleFormData = (data: any) => {
@@ -59,8 +60,6 @@ const SignInPage = () => {
   };
 
   const formHandler = (event: any) => {
-    // alert("TEST");
-    // console.log("TEST HERE");
     const email = formData[0].defaultValue;
     const password = formData[1].defaultValue;
 
@@ -71,7 +70,6 @@ const SignInPage = () => {
     }
     setLoading(true); // Set loading state to true
 
-    // handlerLogin(email, password, rememberMe);
     handlerLogin(email, password, rememberMe);
   };
 
@@ -80,12 +78,14 @@ const SignInPage = () => {
     password: string,
     rememberMe: boolean
   ) => {
-    login(email?.toLocaleLowerCase(), password)
+    if(loginEnable){
+      setLoginEnable(false)
+      login(email?.toLocaleLowerCase(), password)
       .then((response: any) => {
         if (response.success === true) {
           if (response?.result?.verified) {
             localStorage.setItem("userInfo", response.result?.fullName);
-           
+            
 
             let userProfileObj = {
               rememberMe: rememberMe,
@@ -97,9 +97,8 @@ const SignInPage = () => {
             setCookie("user", userProfileObj);
             CustomToast("User logged in successfully", "success");
             router.push("/projects");
+            setLoginEnable(true)
           } else {
-     
-
             router.push(
               {
                 pathname: "/verify_page",
@@ -107,6 +106,7 @@ const SignInPage = () => {
               },
               "/verify_page"
             );
+            setLoginEnable(true)
             // setToken(response.result.token);
             return;
           }
@@ -119,7 +119,7 @@ const SignInPage = () => {
             error.response.data.message) ||
           error.message ||
           error.toString();
-
+        setLoginEnable(true)
         // toast.error(error.response.data.message);
         CustomToast(error.response.data.message, "error");
 
@@ -132,6 +132,7 @@ const SignInPage = () => {
         // setLoading(false);
         // setMessage(resMessage);
       });
+    }
   };
 
   const handleKeyPress = (event: any) => {

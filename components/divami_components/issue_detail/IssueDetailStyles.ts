@@ -440,14 +440,20 @@ export const StyledLabel = styled(Typography)`
   margin-bottom: 8px;
 `;
 
-export const CustomTaskDrawerContainer = styled("div")({
+
+interface ICustomTaskDrawerContainer {
+  loader: boolean;
+}
+
+export const CustomTaskDrawerContainer = styled("div")((props: any) => ({
   width: "438px",
   height: "calc(100vh - 60px)",
   paddingLeft: "20px",
   paddingRight: "20px",
   // border: "2px solid blue",
-  overflow:"hidden"
-});
+  overflowY: !props.loader ? "scroll" : "clip",
+})) as any;
+
 
 export const ProgressEditStateButtonsContainer = styled("div")`
   display: flex;
@@ -509,7 +515,6 @@ interface ContainerProps {
 export const BodyContainer = styled(Box)<ContainerProps>`
   height: ${(props) =>
     props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
-  overflow-y: scroll;
 `;
 
 export const FourthBodyDiv = styled("div")((props: any) => ({

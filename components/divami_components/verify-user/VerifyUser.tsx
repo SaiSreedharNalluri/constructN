@@ -28,6 +28,7 @@ import { toast } from "react-toastify";
 const VerifyUser = ({ queryMail }: { queryMail: string }) => {
   // const maskedEmail = queryMail.replace(/.(?=.*?@)/g, "*");
   const [maskedMail, setMaskedMail] = useState("");
+  const [verifyEnable, setVerifyEnabled] = useState<boolean>(true)
   const router = useRouter();
 
   useEffect(() => {
@@ -56,17 +57,23 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
   }
 
   const handleEmailVerification = (email: string) => {
-    verifyResendEmail(email)
+    if(verifyEnable){
+      setVerifyEnabled(false)
+      verifyResendEmail(email)
       .then((response) => {
+        setVerifyEnabled(true)
         toast.success(response.message);
         return;
       })
       .catch((error) => {
+        setVerifyEnabled(true)
         toast.error(error.message);
         return;
         // resetForm();
         // setLoading(false);
       });
+    }
+   
   };
 
   return (

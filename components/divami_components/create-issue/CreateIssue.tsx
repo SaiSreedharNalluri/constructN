@@ -34,6 +34,7 @@ const CreateIssue = ({
   const [canBeDisabled, setCanBeDisabled] = useState(false);
 
   const formHandler = (event: any) => {
+  
     if (event === "Cancel") {
       setshowPopUp(true);
     } else {
