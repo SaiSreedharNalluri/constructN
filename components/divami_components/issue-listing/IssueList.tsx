@@ -1,116 +1,92 @@
 import {
-  Box,
   Drawer,
   InputAdornment,
   ListItemIcon,
   Menu,
-  setRef,
   styled,
   Tooltip,
   tooltipClasses,
-  TooltipProps,
+  TooltipProps
 } from "@mui/material";
-import Image from "next/image";
-
-import SearchIcon from "@mui/icons-material/Search";
 import Moment from "moment";
-import commission from "../../../public/divami_icons/commission.svg";
+import Image from "next/image";
+import { IProjectUsers } from "../../../models/IProjects";
+import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 import CrossIcon from "../../../public/divami_icons/crossIcon.svg";
-import designIcon from "../../../public/divami_icons/designIcon.svg";
 import DividerIconSVG from "../../../public/divami_icons/divider.svg";
-import downArrow from "../../../public/divami_icons/downArrow.svg";
+import DownArrow from "../../../public/divami_icons/downArrow.svg";
 import Download from "../../../public/divami_icons/download.svg";
 import FilterInActive from "../../../public/divami_icons/filterInactive.svg";
-import Search from "../../../public/divami_icons/search.svg";
-import UpArrow from "../../../public/divami_icons/upArrow.svg";
-import AppliedFilterIcon from "../../../public/divami_icons/appliedFilter.svg";
-import HourglassIcon from "../../../public/divami_icons/hourGlassIcon.svg";
-import RFIList from "../../../public/divami_icons/rfiList.svg";
-import SubmittalList from "../../../public/divami_icons/submittalList.svg";
-import TransmittalList from "../../../public/divami_icons/transmittalList.svg";
-import sort from "../../../public/divami_icons/sort.svg";
-import DownArrow from "../../../public/divami_icons/downArrow.svg";
 import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
-import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
-import filterElip from "../../../public/divami_icons/filterElip.svg";
-import progressHour from "../../../public/divami_icons/progressHour.svg";
-import todoIcon from "../../../public/divami_icons/todoIcon.svg";
-import blockedFrame from "../../../public/divami_icons/blockedFrame.svg";
+import Search from "../../../public/divami_icons/search.svg";
 import smallDivider from "../../../public/divami_icons/smallDivider.svg";
-import issue from "../../../public/divami_icons/issue.svg";
+import sort from "../../../public/divami_icons/sort.svg";
+import UpArrow from "../../../public/divami_icons/upArrow.svg";
+import {
+  getIssuesPriority,
+  getIssuesStatus,
+  getIssuesTypes,
+  getIssueTags,
+} from "../../../services/issue";
+
 
 import {
-  AppliedFilter,
-  ArrowDownIcon,
-  ArrowUpIcon,
   BodyContainer,
-  BodyContTitle,
   BodyInfo,
+  ContentError,
+  ContentErrorSpan,
+  CustomBox,
   DividerIcon,
   DownloadIcon,
-  DueDate,
-  DueDateDiv,
   ErrorImageDiv,
-  FilterIcon,
+  FilterIndication,
   FirstHeader,
   FunnelIcon,
   HeaderContainer,
   HorizontalLine,
   ImageErrorIcon,
-  MessageDiv,
+  LoadMoreText,
+  MenuOptionLabel,
+  MessageDivShowErr,
   MiniHeaderContainer,
   MiniSymbolsContainer,
+  NoMatchDiv,
+  RaiseButtonDiv,
+  SearchAreaContainer,
   SearchGlassIcon,
   SecondDividerIcon,
   SecondHeader,
   StyledMenu,
   TaskListContainer,
   ThirdHeader,
-  TitleContainer,
-  MessageDivShowErr,
-  RaiseButtonDiv,
-  ContentError,
-  ContentErrorSpan,
-  NoMatchDiv,
-  CustomBox,
-  LoadMoreText,
-  FilterIndication,
-  MenuOptionLabel,
-  SearchAreaContainer,
-  DueDateHeader,
   TicketName,
+  TitleContainer,
+  Watcher,
   ProgressChild,
   SmallDivider,
   PriorityChild,
   AssigneeList,
-  Watcher,
   TopButton,
 } from "./IssueListStyles";
 
-import _ from "lodash";
+import router from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { CSVLink } from "react-csv";
+import { toast } from "react-toastify";
 import { Issue } from "../../../models/Issue";
 import { ITools } from "../../../models/ITools";
+import SearchBoxIcon from "../../../public/divami_icons/search.svg";
+import { getProjectUsers } from "../../../services/project";
 import FilterCommon from "../issue-filter-common/IssueFilterCommon";
+import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import {
   CloseIcon,
   CustomSearchField,
   IconContainer,
 } from "../task_list/TaskListStyles";
-import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
-import { getProjectUsers } from "../../../services/project";
-import router from "next/router";
-import SearchBoxIcon from "../../../public/divami_icons/search.svg";
-import { toast } from "react-toastify";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
-import { getIssuesList } from "../../../services/issue";
 import { DownloadTable } from "../toolbar/DownloadTable";
 import { downloadMenuOptions, getDownladableList } from "./Constants";
-import CompletedIconTask from "../../../public/divami_icons/CompletedIconTask.svg";
-import sortUp from "../../../public/divami_icons/sortUp.svg";
 
 interface IProps {
   closeOverlay: () => void;
@@ -137,6 +113,21 @@ interface IProps {
   openIssueCreateFn?: any;
   issueMenuClicked?: any;
   projectUsers?: any;
+}
+
+
+export interface IFilterProps {
+    taskType: string[];
+    taskPriority: string[];
+    projectUsers: IProjectUsers[];
+    taskStatus:string[];
+    tagStatus:string[];
+    loading:boolean;
+}
+
+export interface ISortProps {
+  sortStatus: string[],
+  sortPriority: string[],
 }
 
 const CustomIssueListDrawer: React.FC<IProps> = ({
@@ -167,6 +158,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 }) => {
   const handleClose = () => {
     onClose(true);
+    setIssueList(
+      [...issuesList.sort((a: any, b: any) => {
+        return (
+          new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf()
+        );
+      })]
+    );
   };
   const [sortOrder, setSortOrder] = useState("asc");
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -190,35 +188,48 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [ref1, setRef1] = useState(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [downloadList, setDownloadList] = useState(issueList);
+  const [filterRsp, setFilterRsp] = useState<IFilterProps>({
+      taskType: [],
+      taskPriority:[],
+      projectUsers:[],
+      taskStatus:[],
+      tagStatus:[],
+      loading:true
+  })
+
+  const [sortRsp, setSortRsp] = useState<ISortProps>({
+    sortPriority: [],
+    sortStatus: [],
+  })
   const sortMenuOptions = [
     {
-      label: "Status ( To Do - Completed)",
+      label: "Status  (A - Z)",
       icon: null,
       method: "status_asc",
     },
     {
-      label: "Status ( Completed - To Do)",
+      label: "Status   (Z - A)",
       icon: null,
       method: "status_desc",
     },
 
     {
-      label: "Priotity ( High - Low)",
-      icon: null,
-      method: "Dsc Priority",
-    },
-    {
-      label: "Priotity ( Low - High)",
+      label: "Priority (A - Z)",
       icon: null,
       method: "Asc Priority",
     },
     {
-      label: "Due Date ",
+      label: "Priority (Z - A)",
+      icon: null,
+      method: "Dsc Priority",
+    },
+    {
+      label: "Due Date",
       icon: UpArrow,
       method: "Dsc DueDate",
     },
     {
-      label: "Due Date ",
+      label: "Due Date",
       icon: DownArrow,
       method: "Asc DueDate",
     },
@@ -233,13 +244,15 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     setAnchorEl(null);
   };
 
+
   const handleDownloadClose = () => {
     setIsDownloadMenuOpen(false);
     setAnchorEl(null);
   };
 
-  const handleSortMenuClick = (sortMethod: string) =>
+  const handleSortMenuClick = (sortMethod: string) => {
     handleOnIssueSort(sortMethod);
+  };
 
   const handleDownloadMenuClick = () => handleDownloadClose();
 
@@ -270,8 +283,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const handleViewTaskList = () => {
     setOpenDrawer(true);
   };
-
- 
 
   const handleSearchWindow = () => {
     if (searchTerm === "") {
@@ -361,7 +372,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       if (
         (issuePriorityData?.length === 0 &&
           issueStatusData?.length == 0 &&
-          issueTypeData?.length == 0 && 
+          issueTypeData?.length == 0 &&
           issueTagData?.length == 0 &&
           toDate === "" &&
           assigneesData === null) ||
@@ -386,21 +397,19 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   return (
     <>
       {errorShow.length > 0 ? (
-        <TaskListContainer
-          id="download-test"
-        >
+        <TaskListContainer id="download-test">
           <HeaderContainer>
             <TitleContainer>
               <span>Issue List</span>
               <div className="rounded-full p-1 hover:bg-[#EEEEEE]">
-              <CloseIcon
-                onClick={() => {
-                  handleClose();
-                }}
-                src={closeWithCircle}
-                alt={"close icon"}
-                data-testid="close-icon"
-              />
+                <CloseIcon
+                  onClick={() => {
+                    handleClose();
+                  }}
+                  src={closeWithCircle}
+                  alt={"close icon"}
+                  data-testid="close-icon"
+                />
               </div>
             </TitleContainer>
           </HeaderContainer>
@@ -431,7 +440,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     variant="outlined"
                     value={searchTerm}
                     autoFocus={true}
-                    onChange={(e) => {
+                    onChange={(e: any) => {
                       setSearchTerm(e.target.value);
                     }}
                     InputLabelProps={{ shrink: false }}
@@ -514,7 +523,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     }}
                     data-testid="filter"
                   />
-                  {issueFilterState.isFilterApplied ? (
+                  {issueFilterState.isFilterApplied && issueFilterState.numberOfFilters > 0 ? (
                     <FilterIndication />
                   ) : null}
                   {/* <Tooltip title="Download Menu">
@@ -560,7 +569,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                         }}
                       >
                         <FirstHeader>
-                         
                           <TicketName>
                             {" "}
                             {val?.type} (#{val?.sequenceNumber})
@@ -671,7 +679,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               <CustomIssueDetailsDrawer
                 issuesList={issueList}
                 issue={viewIssue}
-                onClose={() => setOpenIssueDetail((prev: any) => !prev)}
+                onClose={() =>{
+                  setOpenIssueDetail((prev: any) => !prev);
+                } }
                 issueType={issueTypesList}
                 issuePriority={issuePriorityList}
                 issueStatus={issueStatusList}
@@ -706,6 +716,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 issueFilterState={issueFilterState}
                 setIssueFilterState={setIssueFilterState}
                 checkIsFilter={checkIsFilter}
+                filterRsp = {filterRsp}
               />
             </Drawer>
           )}

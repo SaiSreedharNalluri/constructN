@@ -60,6 +60,8 @@ import {
 } from "../../../services/issue";
 import { getProjectUsers } from "../../../services/project";
 import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
+import CustomMiniLoader from "../custom_loader/CustomMiniLoader";
+import { IFilterProps } from "../issue-listing/IssueList";
 
 interface IProps {
   closeOverlay: () => void;
@@ -74,6 +76,7 @@ interface IProps {
   issueFilterState: any;
   setIssueFilterState: any;
   checkIsFilter: any;
+  filterRsp: IFilterProps;
 }
 
 const FilterCommon: React.FC<IProps> = ({
@@ -88,59 +91,36 @@ const FilterCommon: React.FC<IProps> = ({
   onClose,
   issueFilterState,
   setIssueFilterState,
+  filterRsp,
 }) => {
-  useEffect(() => {}, [
-    visibility,
-    closeOverlay,
-    issuesList,
-    handleOnFilter,
-    handleOnSort,
-    closeFilterOverlay,
-    deleteTheIssue,
-    clickIssueEditSubmit,
-    onClose,
-    issueFilterState,
-    setIssueFilterState,
-  ]);
+
 
   const Filters = [
     {
       title: "Type",
       selectAllStatus: "F",
       options: [
-        { optionTitle: "Safety", optionStatus: "F" },
-        { optionTitle: "BuildingCode", optionStatus: "F" },
-        { optionTitle: "Clash", optionStatus: "F" },
-        { optionTitle: "Commissioning", optionStatus: "F" },
-        { optionTitle: "Design", optionStatus: "F" },
+      
+
       ],
     },
     {
       title: "Priority",
       selectAllStatus: "F",
       options: [
-        { optionTitle: "Low", optionStatus: "F" },
-        { optionTitle: "Medium", optionStatus: "F" },
-        { optionTitle: "High", optionStatus: "F" },
+       
       ],
     },
     {
       title: "Status",
       selectAllStatus: "F",
       options: [
-        { optionTitle: "In Progress", optionStatus: "F" },
-        { optionTitle: "Blocked", optionStatus: "F" },
-        { optionTitle: "To-do", optionStatus: "F" },
-        { optionTitle: "Completed", optionStatus: "F" },
       ],
     },
     {
       title: "Tags",
       selectAllStatus: "F",
       options: [
-        { optionTitle: "civil engineering", optionStatus: "F" },
-        { optionTitle: "architecture", optionStatus: "F" },
-        { optionTitle: "structural", optionStatus: "F" },
       ],
     },
   ];
@@ -150,11 +130,11 @@ const FilterCommon: React.FC<IProps> = ({
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
   const [dueDate, setDueData] = useState(DATE_PICKER_DATA);
-  const [taskType, setTaskType] = useState<[string]>();
-  const [taskPriority, setTaskPriority] = useState<[string]>();
+  const [taskType, setTaskType] = useState<string[]>([]);
+  const [taskPriority, setTaskPriority] = useState<string[]>([]);
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
-  const [taskStatus, setTaskStatus] = useState<[string]>();
-  const [tagStatus, setTagStatus] = useState<[string]>();
+  const [taskStatus, setTaskStatus] = useState<string[]>([]);
+  const [tagStatus, setTagStatus] = useState<string[]>([]);
   const assignees = {
     id: "assignes",
     type: "search",
@@ -163,6 +143,7 @@ const FilterCommon: React.FC<IProps> = ({
     label: "Select Name or Team",
   };
   const [assignee, setAssignees] = useState([assignees]);
+  const [loader, setLoader] = useState(false);
   // const handleClose = () => {
   //   onClose(true);
   // };
@@ -198,7 +179,8 @@ const FilterCommon: React.FC<IProps> = ({
         y.forEach((element: any) => {
           data.issueStatusData.push(element.optionTitle);
         });
-      }else if (item.title == "Tags"){
+      }
+      else if (item.title == "Tags"){
         const k = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
@@ -219,24 +201,21 @@ const FilterCommon: React.FC<IProps> = ({
       issueTagData?.length === 0;
     const isEmpty = Object.values(restObj).every((x) => x === null || x === "");
 
-    if (isArrEmpty && isEmpty) {
-      onReset();
-      handleClose();
-    } else {
-      handleOnFilter(data);
-    }
+    handleOnFilter(data);
+    handleClose();
   };
   const formHandler = (event: any) => {
     if (event === "Cancel") {
       handleClose();
     } else {
       onFilterApply();
-      handleClose();
     }
   };
 
   useEffect(() => {
+    setLoader(true)
     if (router.isReady) {
+    try{
       getIssuesTypes(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskType(response.result);
@@ -257,21 +236,21 @@ const FilterCommon: React.FC<IProps> = ({
       getIssuesStatus(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           setTaskStatus(response.result);
-        
+  
         }
+      });
       getIssueTags(router.query.projectId as string).then((response) => {
         if (response.success === true) {
           let newArr = [...response.result[0].tagList]
           setTagStatus(response.result[0].tagList);
          
         }
+        setLoader(false)
       })
-
-
-      });
+    }catch(error){
+      setLoader(false)
     }
-    // const filterArray =
-    // SetFilterState(filterArray)
+    }
   }, []);
   useEffect(() => {
     SetFilterState((prev: any) => {
@@ -544,48 +523,52 @@ const FilterCommon: React.FC<IProps> = ({
 
   useEffect(() => {
     let flag = false;
-    for (const [i, outerObject] of FilterState.entries()) {
-      for (const innerObject of outerObject.options) {
-        if (innerObject.optionTitle === optionState) {
-          setSelectedCategoryIndex(i);
-          setOptionState(outerObject);
-          flag = true;
-          break;
-        }
-      }
-      if (flag) {
-        break;
-      }
-    }
-    let count;
-    let temp = FilterState.map((each: any, index: any) => {
-      if (selectedCategoryIndex === index || selectedCategoryIndex === null) {
-        count = each?.options?.filter((obj: any) => obj?.optionStatus === "T");
-        if (count?.length !== 0 && count?.length !== each?.options?.length) {
-          return {
-            ...each,
-            selectAllStatus: "I",
-          };
-        } else {
-          if (count.length === 0) {
-            return {
-              ...each,
-              selectAllStatus: "F",
-            };
-          } else if (count.length === each.options?.length) {
-            return {
-              ...each,
-              selectAllStatus: "T",
-            };
+    if(FilterState.length > 0){
+      for (const [i, outerObject] of FilterState.entries()) {
+        if(outerObject && outerObject.options){
+          for (const innerObject of outerObject.options) {
+            if (innerObject.optionTitle === optionState) {
+              setSelectedCategoryIndex(i);
+              setOptionState(outerObject);
+              flag = true;
+              break;
+            }
+          }
+          if (flag) {
+            break;
           }
         }
-      } else {
-        return {
-          ...each,
-        };
       }
-    });
-    SetFilterState(temp);
+      let count;
+      let temp = FilterState.map((each: any, index: any) => {
+        if (selectedCategoryIndex === index || selectedCategoryIndex === null) {
+          count = each?.options?.filter((obj: any) => obj?.optionStatus === "T");
+          if (count?.length !== 0 && count?.length !== each?.options?.length) {
+            return {
+              ...each,
+              selectAllStatus: "I",
+            };
+          } else {
+            if (count?.length === 0) {
+              return {
+                ...each,
+                selectAllStatus: "F",
+              };
+            } else if (count?.length === each.options?.length) {
+              return {
+                ...each,
+                selectAllStatus: "T",
+              };
+            }
+          }
+        } else {
+          return {
+            ...each,
+          };
+        }
+      });
+      SetFilterState(temp);
+    }
   }, [optionState]);
 
   const handleClose = () => {
@@ -594,7 +577,7 @@ const FilterCommon: React.FC<IProps> = ({
 
   const onReset = () => {
     let temp = FilterState?.map((each: any) => {
-      return { ...each };
+      return { ...each, selectAllStatus:"F" };
     });
     temp.forEach((element: any) => {
       element?.options?.forEach((obj: any) => {
@@ -608,272 +591,285 @@ const FilterCommon: React.FC<IProps> = ({
   };
 
   return (
+   <>
     <FilterCommonMain>
-      <FilterCommonHeader>
-        <HeaderContainer>
-          <TitleContainer>
-            <HeaderLeftSection>
-              <HeaderLeftSectionText data-testid="filter-title">
-                Filters
-              </HeaderLeftSectionText>
-            </HeaderLeftSection>
-            <HeaderRightSection>
-              <HeaderRightSectionResetIcon>
-                <RefreshIcon
-                  src={newRefreshIcon}
-                  alt="reset"
-                  onClick={() => {
-                    onReset();
-                  }}
-                  data-testid="filter-refresh"
-                />
-                {/* <Image
-                  src={ResetIcon}
-                  alt="reset"
-                  onClick={() => {
-                    onReset();
-                  }}
-                /> */}
-              </HeaderRightSectionResetIcon>
-              <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
-              {/* <Image src={closeIcon} alt="reset"   onClick={() => {
-              handleClose();
-              }} /> */}
-              <CloseIcon
-                onClick={() => {
-                  handleClose();
-                }}
-                src={closeWithCircle}
-                alt={"close icon"}
-                data-testid="filter-close"
-              />
-            </HeaderRightSection>
-          </TitleContainer>
-        </HeaderContainer>
-      </FilterCommonHeader>
-      <FilterCommonBody>
-        {FilterState?.map((each: any, index: any) => {
-          return each.title === "Issue Type" ? (
-            <FilterCardContainer key={index}>
-              <FilterCardTitle>
-                {/* <FilterCardTitleText>{each?.title}</FilterCardTitleText> */}
-              </FilterCardTitle>
-              <FilterCardSelectAll>
-                {each?.selectAllStatus === "T" ? (
-                  <FilterCardSelectAllSpan>
-                    <Image
-                      onClick={() => {
-                        handleAllSelection(each, index);
-                      }}
-                      src={Checked}
-                      alt="checked checkbox"
-                      data-testid="filter-select-all"
-                    />
-                    <FilterCardSelectAllTextHeader>
-                      {each.title}
-                    </FilterCardSelectAllTextHeader>
-                  </FilterCardSelectAllSpan>
-                ) : each?.selectAllStatus === "F" ? (
-                  <FilterCardSelectAllSpan>
-                    <Image
-                      onClick={() => {
-                        handleAllSelection(each, index);
-                      }}
-                      src={UnChecked}
-                      alt="unchecked checkbox"
-                      data-testid="filter-select-all"
-                    />
-                    <FilterCardSelectAllTextHeader>
-                      {each.title}
-                    </FilterCardSelectAllTextHeader>
-                  </FilterCardSelectAllSpan>
-                ) : each?.selectAllStatus === "I" ? (
-                  <FilterCardSelectAllSpan>
-                    <Image
-                      onClick={() => {
-                        handleAllSelection(each, index);
-                      }}
-                      src={Indeterminate}
-                      alt="reset"
-                      data-testid="filter-select-all"
-                    />
-                    <FilterCardSelectAllTextHeader>
-                      {each.title}
-                    </FilterCardSelectAllTextHeader>
-                  </FilterCardSelectAllSpan>
-                ) : (
-                  ""
-                )}
-              </FilterCardSelectAll>
-              <FilterCardOptions>
-                {each?.options?.map((item: any, i: number) => {
-                  return (
-                    <FilterCardOptionContainer key={i}>
-                      <FilterCardOptionSpan>
-                        {item?.optionStatus === "T" ? (
-                          <Image
-                            onClick={() => {
-                              handleOptionSelection(item, index);
-                            }}
-                            src={Checked}
-                            alt="checked checkbox"
-                            data-testid="filter-select-each"
-                          />
-                        ) : item?.optionStatus === "F" ? (
-                          <Image
-                            onClick={() => {
-                              handleOptionSelection(item, index);
-                            }}
-                            src={UnChecked}
-                            alt="unchecked checkbox"
-                            data-testid="filter-select-each"
-                          />
-                        ) : (
-                          ""
-                        )}
+    {
+    loader ?
+      <div className="mini-loader-parent">
+      <CustomMiniLoader></CustomMiniLoader>
+      </div>
+      
+    :
+    <>
+       <FilterCommonHeader>
+       <HeaderContainer>
+         <TitleContainer>
+           <HeaderLeftSection>
+             <HeaderLeftSectionText data-testid="filter-title">
+               Filters
+             </HeaderLeftSectionText>
+           </HeaderLeftSection>
+           <HeaderRightSection>
+             <HeaderRightSectionResetIcon>
+               <RefreshIcon
+                 src={newRefreshIcon}
+                 alt="reset"
+                 onClick={() => {
+                   onReset();
+                 }}
+                 data-testid="filter-refresh"
+               />
+               {/* <Image
+                 src={ResetIcon}
+                 alt="reset"
+                 onClick={() => {
+                   onReset();
+                 }}
+               /> */}
+             </HeaderRightSectionResetIcon>
+             <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
+             {/* <Image src={closeIcon} alt="reset"   onClick={() => {
+             handleClose();
+             }} /> */}
+             <CloseIcon
+               onClick={() => {
+                 handleClose();
+               }}
+               src={closeWithCircle}
+               alt={"close icon"}
+               data-testid="filter-close"
+             />
+           </HeaderRightSection>
+         </TitleContainer>
+       </HeaderContainer>
+     </FilterCommonHeader>
+     <FilterCommonBody>
+       {FilterState?.map((each: any, index: any) => {
+         return each.title === "Issue Type" ? (
+           <FilterCardContainer key={index}>
+             <FilterCardTitle>
+               {/* <FilterCardTitleText>{each?.title}</FilterCardTitleText> */}
+             </FilterCardTitle>
+             <FilterCardSelectAll>
+               {each?.selectAllStatus === "T" ? (
+                 <FilterCardSelectAllSpan>
+                   <Image
+                     onClick={() => {
+                       handleAllSelection(each, index);
+                     }}
+                     src={Checked}
+                     alt="checked checkbox"
+                     data-testid="filter-select-all"
+                   />
+                   <FilterCardSelectAllTextHeader>
+                     {each.title}
+                   </FilterCardSelectAllTextHeader>
+                 </FilterCardSelectAllSpan>
+               ) : each?.selectAllStatus === "F" ? (
+                 <FilterCardSelectAllSpan>
+                   <Image
+                     onClick={() => {
+                       handleAllSelection(each, index);
+                     }}
+                     src={UnChecked}
+                     alt="unchecked checkbox"
+                     data-testid="filter-select-all"
+                   />
+                   <FilterCardSelectAllTextHeader>
+                     {each.title}
+                   </FilterCardSelectAllTextHeader>
+                 </FilterCardSelectAllSpan>
+               ) : each?.selectAllStatus === "I" ? (
+                 <FilterCardSelectAllSpan>
+                   <Image
+                     onClick={() => {
+                       handleAllSelection(each, index);
+                     }}
+                     src={Indeterminate}
+                     alt="reset"
+                     data-testid="filter-select-all"
+                   />
+                   <FilterCardSelectAllTextHeader>
+                     {each.title}
+                   </FilterCardSelectAllTextHeader>
+                 </FilterCardSelectAllSpan>
+               ) : (
+                 ""
+               )}
+             </FilterCardSelectAll>
+             <FilterCardOptions>
+               {each?.options?.map((item: any, i: number) => {
+                 return (
+                   <FilterCardOptionContainer key={i}>
+                     <FilterCardOptionSpan>
+                       {item?.optionStatus === "T" ? (
+                         <Image
+                           onClick={() => {
+                             handleOptionSelection(item, index);
+                           }}
+                           src={Checked}
+                           alt="checked checkbox"
+                           data-testid="filter-select-each"
+                         />
+                       ) : item?.optionStatus === "F" ? (
+                         <Image
+                           onClick={() => {
+                             handleOptionSelection(item, index);
+                           }}
+                           src={UnChecked}
+                           alt="unchecked checkbox"
+                           data-testid="filter-select-each"
+                         />
+                       ) : (
+                         ""
+                       )}
 
-                        <FilterCardSelectAllText>
-                          {item?.optionTitle}
-                        </FilterCardSelectAllText>
-                      </FilterCardOptionSpan>
-                    </FilterCardOptionContainer>
-                  );
-                })}
-              </FilterCardOptions>
-            </FilterCardContainer>
-          ) : (
-            <FilterCardSecondContainer key={index}>
-              <FilterCardTitle>
-                {/* <FilterCardTitleText>{each?.title} hii</FilterCardTitleText> */}
-              </FilterCardTitle>
-              <FilterCardSelectAll>
-                {each?.selectAllStatus === "T" ? (
-                  <FilterCardSelectAllSpan>
-                    <Image
-                      onClick={() => {
-                        handleAllSelection(each, index);
-                      }}
-                      src={Checked}
-                      alt="reset"
-                    />
-                    <FilterCardSelectAllTextHeader>
-                      {each?.title}
-                    </FilterCardSelectAllTextHeader>
-                  </FilterCardSelectAllSpan>
-                ) : each?.selectAllStatus === "F" ? (
-                  <FilterCardSelectAllSpan>
-                    <Image
-                      onClick={() => {
-                        handleAllSelection(each, index);
-                      }}
-                      src={UnChecked}
-                      alt="reset"
-                    />
-                    <FilterCardSelectAllTextHeader>
-                      {each?.title}
-                    </FilterCardSelectAllTextHeader>
-                  </FilterCardSelectAllSpan>
-                ) : each?.selectAllStatus === "I" ? (
-                  <FilterCardSelectAllSpan>
-                    <Image
-                      onClick={() => {
-                        handleAllSelection(each, index);
-                      }}
-                      src={Indeterminate}
-                      alt="reset"
-                    />
-                    <FilterCardSelectAllTextHeader>
-                      {each?.title}
-                    </FilterCardSelectAllTextHeader>
-                  </FilterCardSelectAllSpan>
-                ) : (
-                  ""
-                )}
-              </FilterCardSelectAll>
-              <FilterCardOptions>
-                {each?.options?.map((item: any, i: number) => {
-                  return (
-                    <FilterCardOptionContainer key={i}>
-                      <FilterCardOptionSpan>
-                        {item?.optionStatus === "T" ? (
-                          <Image
-                            onClick={() => {
-                              handleOptionSelection(item, index);
-                            }}
-                            src={Checked}
-                            alt="reset"
-                          />
-                        ) : item?.optionStatus === "F" ? (
-                          <Image
-                            onClick={() => {
-                              handleOptionSelection(item, index);
-                            }}
-                            src={UnChecked}
-                            alt=""
-                          />
-                        ) : (
-                          ""
-                        )}
+                       <FilterCardSelectAllText>
+                         {item?.optionTitle}
+                       </FilterCardSelectAllText>
+                     </FilterCardOptionSpan>
+                   </FilterCardOptionContainer>
+                 );
+               })}
+             </FilterCardOptions>
+           </FilterCardContainer>
+         ) : (
+           <FilterCardSecondContainer key={index}>
+             <FilterCardTitle>
+               {/* <FilterCardTitleText>{each?.title} hii</FilterCardTitleText> */}
+             </FilterCardTitle>
+             <FilterCardSelectAll>
+               {each?.selectAllStatus === "T" ? (
+                 <FilterCardSelectAllSpan>
+                   <Image
+                     onClick={() => {
+                       handleAllSelection(each, index);
+                     }}
+                     src={Checked}
+                     alt="reset"
+                   />
+                   <FilterCardSelectAllTextHeader>
+                     {each?.title}
+                   </FilterCardSelectAllTextHeader>
+                 </FilterCardSelectAllSpan>
+               ) : each?.selectAllStatus === "F" ? (
+                 <FilterCardSelectAllSpan>
+                   <Image
+                     onClick={() => {
+                       handleAllSelection(each, index);
+                     }}
+                     src={UnChecked}
+                     alt="reset"
+                   />
+                   <FilterCardSelectAllTextHeader>
+                     {each?.title}
+                   </FilterCardSelectAllTextHeader>
+                 </FilterCardSelectAllSpan>
+               ) : each?.selectAllStatus === "I" ? (
+                 <FilterCardSelectAllSpan>
+                   <Image
+                     onClick={() => {
+                       handleAllSelection(each, index);
+                     }}
+                     src={Indeterminate}
+                     alt="reset"
+                   />
+                   <FilterCardSelectAllTextHeader>
+                     {each?.title}
+                   </FilterCardSelectAllTextHeader>
+                 </FilterCardSelectAllSpan>
+               ) : (
+                 ""
+               )}
+             </FilterCardSelectAll>
+             <FilterCardOptions>
+               {each?.options?.map((item: any, i: number) => {
+                 return (
+                   <FilterCardOptionContainer key={i}>
+                     <FilterCardOptionSpan>
+                       {item?.optionStatus === "T" ? (
+                         <Image
+                           onClick={() => {
+                             handleOptionSelection(item, index);
+                           }}
+                           src={Checked}
+                           alt="reset"
+                         />
+                       ) : item?.optionStatus === "F" ? (
+                         <Image
+                           onClick={() => {
+                             handleOptionSelection(item, index);
+                           }}
+                           src={UnChecked}
+                           alt=""
+                         />
+                       ) : (
+                         ""
+                       )}
 
-                        <FilterCardSelectAllText>
-                          {item?.optionTitle}
-                        </FilterCardSelectAllText>
-                      </FilterCardOptionSpan>
-                    </FilterCardOptionContainer>
-                  );
-                })}
-              </FilterCardOptions>
-            </FilterCardSecondContainer>
-          );
-        })}
+                       <FilterCardSelectAllText>
+                         {item?.optionTitle}
+                       </FilterCardSelectAllText>
+                     </FilterCardOptionSpan>
+                   </FilterCardOptionContainer>
+                 );
+               })}
+             </FilterCardOptions>
+           </FilterCardSecondContainer>
+         );
+       })}
 
-        <FormElementContainer>
-          <CustomLabel label={"Assigned To"} />
-          <IssueFilterFormWrapper
-            config={assignee}
-            setFormConfig={setAssignees}
-          />
-        </FormElementContainer>
+       <FormElementContainer>
+         <CustomLabel label={"Assigned To"} />
+         <IssueFilterFormWrapper
+           config={assignee}
+           setFormConfig={setAssignees}
+         />
+       </FormElementContainer>
 
-        <FormElementContainer>
-          <DatePickersContainer>
-            <DatePickerContainer>
-              <div>
-                <CustomLabel label={"Start date"} />
-                <IssueFilterFormWrapper
-                  config={startDate}
-                  setFormConfig={setStartData}
-                />
-              </div>
-            </DatePickerContainer>
-            <div>
-              <CustomLabel label={"Due date"} />
-              <IssueFilterFormWrapper
-                config={dueDate}
-                setFormConfig={setDueData}
-              />
-            </div>
-          </DatePickersContainer>
-        </FormElementContainer>
-      </FilterCommonBody>
+       <FormElementContainer>
+         <DatePickersContainer>
+           <DatePickerContainer>
+             <div>
+               <CustomLabel label={"Start date"} />
+               <IssueFilterFormWrapper
+                 config={startDate}
+                 setFormConfig={setStartData}
+               />
+             </div>
+           </DatePickerContainer>
+           <div>
+             <CustomLabel label={"Due date"} />
+             <IssueFilterFormWrapper
+               config={dueDate}
+               setFormConfig={setDueData}
+             />
+           </div>
+         </DatePickersContainer>
+       </FormElementContainer>
+     </FilterCommonBody>
 
-      <FilterFooter>
-        <ButtonsContainer>
-          <CustomButton
-            type="outlined"
-            label="Cancel"
-            formHandler={formHandler}
-            dataTestid="filter-cancel"
-          />
-          <CustomButton
-            type="contained"
-            label="Apply"
-            formHandler={formHandler}
-            dataTestid="filter-apply"
-          />
-        </ButtonsContainer>
-      </FilterFooter>
+     <FilterFooter>
+       <ButtonsContainer>
+         <CustomButton
+           type="outlined"
+           label="Cancel"
+           formHandler={formHandler}
+           dataTestid="filter-cancel"
+         />
+         <CustomButton
+           type="contained"
+           label="Apply"
+           formHandler={formHandler}
+           dataTestid="filter-apply"
+         />
+       </ButtonsContainer>
+     </FilterFooter>
+     </>
+   }
+     
     </FilterCommonMain>
+    </>
   );
 };
 

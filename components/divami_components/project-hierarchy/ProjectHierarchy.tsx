@@ -6,6 +6,7 @@ import { ChildrenEntity } from "../../../models/IStructure";
 import closeIcon from "../../../public/images/closeIcon.svg";
 import SearchImg from "../../../public/images/search.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
+import { useRouter } from 'next/router';
 import {
   CloseIcon,
   HeaderLabel,
@@ -48,7 +49,7 @@ const ProjectHierarchy = ({
   setHierarchy,
 }: ProjectHierarchyProps) => {
   const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>(treeData);
-
+  const router = useRouter();
   const [block, setBlock] = useState(treeData);
 
   const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
@@ -83,7 +84,13 @@ const ProjectHierarchy = ({
     {
       window.localStorage.setItem("nodeData", JSON.stringify(nodes));
       getStructureData ? getStructureData(nodes) : null;
-
+      const { pathname, query } = router
+      delete query.paramName;
+      const newQueryParamValue =  nodes._id // Specify the new value for the query parameter
+      router.push({
+        pathname: pathname,
+        query: { ...router.query, structId: newQueryParamValue },
+      });
       if (
         !(
           nodes.children &&

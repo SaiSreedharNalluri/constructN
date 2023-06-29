@@ -63,6 +63,7 @@ import router from "next/router";
 import TaskFilterFormWrapper from "./TaskFilterWrapper";
 import { IProjectUsers } from "../../../models/IProjects";
 import { getProjectUsers } from "../../../services/project";
+import CustomMiniLoader from "../custom_loader/CustomMiniLoader";
 interface IProps {
   closeOverlay?: () => void;
   visibility?: boolean;
@@ -108,7 +109,7 @@ const TaskFilterCommon: React.FC<any> = ({
   const [projectUserss, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [taskStatuss, setTaskStatus] = useState<[string]>();
   const [tagStatus, setTagStatus] = useState<[string]>();
-
+  const [loader, setLoader] = useState(false);
 
   const Filters = [
     {
@@ -176,36 +177,43 @@ const TaskFilterCommon: React.FC<any> = ({
   };
 
   useEffect(() => {
+    setLoader(true)
     if (router.isReady) {
-      getTasksTypes(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskType(response.result);
-        }
-      });
-      getTasksPriority(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskPriority(response.result);
-        }
-      });
-      getProjectUsers(router.query.projectId as string)
-        .then((response) => {
+      try{
+        getTasksTypes(router.query.projectId as string).then((response) => {
           if (response.success === true) {
-            setProjectUsers(response.result);
+            setTaskType(response.result);
           }
-        })
-        .catch();
-      getTaskStatus(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskStatus(response.result);
-        }
-      });
-      getTaskTags(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          let newArr = [...response.result[0].tagList]
-          setTagStatus(response.result[0].tagList);
-         
-        }
-      });
+        });
+        getTasksPriority(router.query.projectId as string).then((response) => {
+          if (response.success === true) {
+            setTaskPriority(response.result);
+          }
+        });
+        getProjectUsers(router.query.projectId as string)
+          .then((response) => {
+            if (response.success === true) {
+              setProjectUsers(response.result);
+            }
+          })
+          .catch();
+        getTaskStatus(router.query.projectId as string).then((response) => {
+          if (response.success === true) {
+            setTaskStatus(response.result);
+          }
+        });
+        getTaskTags(router.query.projectId as string).then((response) => {
+          if (response.success === true) {
+            let newArr = [...response.result[0].tagList]
+            setTagStatus(response.result[0].tagList);
+           
+          }
+          setLoader(false)
+        });
+       
+      }catch(error){
+        setLoader(false)
+      } 
     }
   }, []);
   useEffect(() => {
@@ -524,10 +532,13 @@ const TaskFilterCommon: React.FC<any> = ({
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
     handleOnFilter(data);
+    handleClose();
   };
   useEffect(() => {
     let flag = false;
+    if(FilterState.length > 0){
     for (const [i, outerObject] of FilterState.entries()) {
+      if(outerObject && outerObject.options){
       for (const innerObject of outerObject.options) {
         if (innerObject.optionTitle === optionState) {
           setSelectedCategoryIndex(i);
@@ -540,6 +551,7 @@ const TaskFilterCommon: React.FC<any> = ({
         break;
       }
     }
+  }
     let count;
     let temp = FilterState.map((each: any, index: any) => {
       if (selectedCategoryIndex === index || selectedCategoryIndex === null) {
@@ -569,11 +581,12 @@ const TaskFilterCommon: React.FC<any> = ({
       }
     });
     SetFilterState(temp);
+  }
   }, [optionState]);
 
   const onReset = () => {
     let temp = FilterState?.map((each: any, serial: number) => {
-      return { ...each };
+      return { ...each, selectAllStatus:"F" };
     });
     temp.forEach((element: any) => {
       element?.options?.forEach((obj: any) => {
@@ -590,13 +603,21 @@ const TaskFilterCommon: React.FC<any> = ({
     if (event === "Cancel") {
       handleClose();
     } else {
-      handleClose();
+    
       onFilterApply();
     }
   };
-  // console.log("tasksList",tasksList)
   return (
+    <>
     <FilterCommonMain>
+    
+      {
+    loader ?
+      <div className="mini-loader-parent">
+      <CustomMiniLoader></CustomMiniLoader>
+      </div>
+      :
+      <>
       <FilterCommonHeader>
         <HeaderContainer>
           <TitleContainer>
@@ -851,7 +872,9 @@ const TaskFilterCommon: React.FC<any> = ({
           />
         </ButtonsContainer>
       </FilterFooter>
+      </>}
     </FilterCommonMain>
+    </>
   );
 };
 

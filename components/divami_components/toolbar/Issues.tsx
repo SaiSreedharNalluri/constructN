@@ -72,6 +72,8 @@ const Issues = ({
   issueSubmit,
   deleteTheAttachment,
   projectUsers,
+  issueLoader,
+  setIssueLoader
 }: any) => {
   const [openIssueList, setOpenIssueList] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -89,6 +91,9 @@ const Issues = ({
   const [selectedIssue, setSelectedIssue] = useState({});
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
   const [enableSubmit, setEnableSubmit] = useState(true);
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
+//  const [issueLoader, setIssueLoader] = useState(false)
+
 
   useEffect(() => {
     setMyProject(currentProject);
@@ -120,6 +125,7 @@ const Issues = ({
   };
 
   const clickTaskSubmit = async (values: any) => {
+    setEnableSubmit(false);
     const userIdList = values
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
@@ -193,12 +199,11 @@ const Issues = ({
     formData.append("jreq", JSON.stringify(data));
     const projectId = values.filter((item: any) => item.projectId)[0].projectId;
     if (data.title && data.type && data.priority) {
-      setEnableSubmit(false);
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
           if (response.success === true) {
             toast.success(" Issue Created Successfully");
-            setEnableSubmit(false);
+            setEnableSubmit(true);
             issueSubmitFn(response.result);
           } else {
             toast.error(`Something went wrong`);
@@ -330,7 +335,15 @@ const Issues = ({
         <Drawer
           anchor={"right"}
           open={openDrawer}
-          onClose={() => setOpenDrawer((prev: any) => !prev)}
+          onClose={() => {
+            setIssueList(
+              [...issuesList.sort((a: any, b: any) => {
+                return (
+                  new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf()
+                );
+              })]
+            );
+            setOpenDrawer((prev: any) => !prev)}}
         >
           <CustomIssueListDrawer
             closeFilterOverlay={closeFilterOverlay}
@@ -398,6 +411,8 @@ const Issues = ({
             getIssues={getIssues}
             issuesList={issuesList}
             deleteTheIssue={deleteTheIssue}
+            issueLoader={issueLoader}
+            setIssueLoader={setIssueLoader}
           />
         </Drawer>
       )}

@@ -34,6 +34,7 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
 import router, { useRouter } from "next/router";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
+import CustomMiniLoader from "../custom_loader/CustomMiniLoader";
 
 import _ from "lodash";
 import {
@@ -121,6 +122,7 @@ import ActivityLog from "../task_detail/ActivityLog";
 import Chip from "@mui/material/Chip";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
+import { CustomToast } from "../custom-toaster/CustomToast";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -196,7 +198,6 @@ function BasicTabs(props: any) {
   const [comments, setComments] = useState("");
   const [backendComments, setBackendComments] = useState<any>([]);
   const [file, setFile] = useState<File>();
-
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -338,7 +339,7 @@ function BasicTabs(props: any) {
   ];
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", height:"100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
         <Tabs
           TabIndicatorProps={{
@@ -492,9 +493,7 @@ function BasicTabs(props: any) {
           </SecondBodyDiv>
           <SecondBodyDiv>
             <ThirdContRight>
-              <ThirdContProg data-testid="progres-label">
-              Status
-              </ThirdContProg>
+              <ThirdContProg data-testid="progres-label">Status</ThirdContProg>
 
               <ThirdContProgType
                 style={{ color: "#101F4B" }}
@@ -907,6 +906,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
     setIssueList,
     getIssues,
     deleteTheAttachment,
+    issueLoader,
+    setIssueLoader,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
@@ -926,34 +927,31 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const onDeleteCallback = () => {
-    onClose()
-     if (setIssueList) {
+    onClose();
+    if (setIssueList) {
       const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
 
       setIssueList(updatedIssuesList);
     }
-
-  }
+  };
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
     if (deleteTheIssue) deleteTheIssue(selectedIssue, onDeleteCallback);
 
-     const deleteTheAttachment = (attachmentId: string) => {
-    deleteAttachment(attachmentId)
-      .then((response) => {
-        if (response.success === true) {
-          toast(response.message);
-        }
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      });
+    const deleteTheAttachment = (attachmentId: string) => {
+      deleteAttachment(attachmentId)
+        .then((response) => {
+          if (response.success === true) {
+            toast(response.message);
+          }
+        })
+        .catch((error) => {
+          toast.error(error.message);
+        });
+    };
   };
 
-   
-  };
- 
   const DetailsObj = {
     TabOne: {
       options: [
@@ -1074,7 +1072,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         .then((response) => {
           if (response.success === true) {
             toast.success("Issue updated sucessfully");
-            getIssues(currentStructure._id);
+            getIssues(currentStructure._id)
           } else {
             toast.error("Error updating the issue");
           }
@@ -1186,14 +1184,15 @@ const CustomIssueDetailsDrawer = (props: any) => {
         .then((response) => {
           if (!response.success) {
             toast.error("Error uploading attachments");
+          
           }
           saveEditDetails(data, projectId);
         })
         .catch((error) => {
           if (error.success === false) {
-            toast.error(error?.message);
+            
+            CustomToast(error?.message, "error", 3000);
           }
-        
         });
     } else {
       saveEditDetails(data, projectId);
@@ -1236,21 +1235,21 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
   return (
     <>
-      <CustomTaskDrawerContainer>
+      <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
           <TitleContainer>
             <LeftTitleCont>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] ">
-              <ArrowIcon
-                onClick={() => {
-                  onClose(true);
-                }}
-                src={BackArrow}
-                alt={"close icon"}
-                data-testid="back-arrow"
-              />
+              <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] ">
+                <ArrowIcon
+                  onClick={() => {
+                    onClose(true);
+                  }}
+                  src={BackArrow}
+                  alt={"close icon"}
+                  data-testid="back-arrow"
+                />
               </div>
-            
+
               <DarkToolTip
                 title={
                   <SecondAssigneeList>
@@ -1259,55 +1258,62 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 }
               >
                 <SpanTile data-testid="issue-detail-header">
-                  {
-                    selectedIssue?.title ?
-                    ( selectedIssue?.title?.length >= 20 ?
-                      `${selectedIssue?.title.substring(0, 16)}...`
+                  {selectedIssue?.title
+                    ? selectedIssue?.title?.length >= 20
+                      ? `${selectedIssue?.title.substring(0, 16)}...`
                       : `${selectedIssue?.title}`
-                    ): ""
-                  }
+                    : ""}
                   (#{selectedIssue?.sequenceNumber})
                 </SpanTile>
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
-              <EditIcon
-                src={Edit}
-                alt={"close icon"}
-                onClick={() => {
-                  setOpenCreateTask(true);
-                }}
-                data-testid="edit-icon"
-              />
+              <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
+                <EditIcon
+                  src={Edit}
+                  alt={"close icon"}
+                  onClick={() => {
+                    setOpenCreateTask(true);
+                  }}
+                  data-testid="edit-icon"
+                />
               </div>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
-              <DeleteIcon
-                src={Delete}
-                alt={"close icon"}
-                data-testid="delete-icon"
-                onClick={() => {
-                  setshowPopUp(true);
-                }}
-              />
+              <div className="rounded-full p-[6px] hover:bg-[#EEEEEE] mr-[10px]">
+                <DeleteIcon
+                  src={Delete}
+                  alt={"close icon"}
+                  data-testid="delete-icon"
+                  onClick={() => {
+                    setshowPopUp(true);
+                  }}
+                />
               </div>
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-
-        <BodyContainer footerState={footerState}>
-          <BasicTabs
-            taskType={issueType}
-            taskPriority={issuePriority}
-            taskStatus={issueStatus}
-            projectUsers={projectUsers}
-            taskState={taskState}
-            issueUpdate={issueUpdate}
-            deleteTheAttachment={deleteTheAttachment}
-            handleFooter={SetFooterState}
-            setTaskState={setTaskState}
-          />
-        </BodyContainer>
+      {
+        issueLoader ?
+          <div className="mini-loader-parent">
+          <CustomMiniLoader></CustomMiniLoader>
+          </div>
+          
+        :
+        <>
+          <BodyContainer footerState={footerState}>
+            <BasicTabs
+              taskType={issueType}
+              taskPriority={issuePriority}
+              taskStatus={issueStatus}
+              projectUsers={projectUsers}
+              taskState={taskState}
+              issueUpdate={issueUpdate}
+              deleteTheAttachment={deleteTheAttachment}
+              handleFooter={SetFooterState}
+              setTaskState={setTaskState}
+            />
+          </BodyContainer>
+        </>
+      }   
       </CustomTaskDrawerContainer>
 
       {openCreateTask && (

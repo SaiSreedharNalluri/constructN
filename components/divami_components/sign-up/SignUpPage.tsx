@@ -51,6 +51,7 @@ const SignUpPage = () => {
   const [token, setToken] = useState("");
   const [showError, setShowError] = useState<boolean>(false);
   const [signUpMsg, setSignUpMsg] = useState<boolean>(false);
+  const [signUpEnable, setSignUpEnabled] = useState<boolean>(false);
   const handleFormData = (data: any) => {
     setFormData(data);
   };
@@ -63,6 +64,7 @@ const SignUpPage = () => {
   const [checked, setChecked] = React.useState(true);
   const [formInfo, setFormInfo] = useState<any>({});
   const [errorExist, setErrorExist] = useState<any>(true);
+  const [registerEnable, setRegisterEnable] = useState<boolean>(true)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
@@ -137,14 +139,14 @@ const SignUpPage = () => {
   //   handleRegister(formValues);
   // };
   const formHandler = (event: any) => {
- 
     const formValues = {
-      firstName: formData[0].defaultValue,
-      lastName: formData[1].defaultValue,
+      firstName: formData[0].defaultValue.trim(),
+      lastName: formData[1].defaultValue.trim(),
       email: formData[2].defaultValue.toLocaleLowerCase(),
       password: formData[3].defaultValue,
       confirm_password: formData[4].defaultValue,
     };
+
 
     let errorObjects = formData.filter(function (obj: any) {
       // return obj.isError === true;
@@ -189,7 +191,8 @@ const SignUpPage = () => {
 
   function checkPassword(str: any) {
     if (str.length > 0) {
-      let rePass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])(?!\s).{8,14}(?<!\s)$/;
+      let rePass =
+        /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])(?!\s).{8,14}(?<!\s)$/;
       let passwordTru = rePass.test(str);
       return !passwordTru;
     } else {
@@ -197,19 +200,14 @@ const SignUpPage = () => {
     }
   }
   const handleRegister = (formValue: any) => {
-    // console.log("aagya yha pe");
-    // return;
-    registerUser(formValue)
+    if(registerEnable){
+      setRegisterEnable(false)
+      registerUser(formValue)
       .then((response) => {
+        setRegisterEnable(true)
         if (response.success === true) {
           toast.success("User Registeration completed in sucessfully");
-          // toast.info("Redirecting ... ");
-
-          // setTimeout(() => {
-          //   toast.info("Please check your e-mail to verify the account");
-          // router.push("/login");
-          // router.push("/login");
-          // router.push("verify_page");
+      
           router.push(
             {
               pathname: "/verify_page",
@@ -217,18 +215,13 @@ const SignUpPage = () => {
             },
             "/verify_page"
           );
-          // }, 5000);
         }
       })
       .catch((error) => {
-        // if (error?.response?.status === 409) {
-        //   toast.error(error.response.data.message);
-        // }
+        setRegisterEnable(true)
         toast.error(error.response.data.message);
-
-        // resetForm();
-        // setLoading(false);
       });
+    }
   };
   // form wrapper code
 

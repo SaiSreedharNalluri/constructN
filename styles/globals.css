@@ -120,7 +120,7 @@
   }
 }
 
-.spinner > circle {
+.spinner>circle {
   fill: transparent;
 }
 
@@ -185,14 +185,12 @@ body {
 @font-face {
   font-family: "Open Sans";
   src: local("Lato"),
-    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf")
-      format("opentype");
+    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf") format("opentype");
 }
 
 @font-face {
   font-family: "Nunito Sans";
-  src: url("./fonts/Nunito_Sans/NunitoSans-VariableFont_YTLC\,opsz\,wdth\,wght.ttf")
-    format("truetype");
+  src: url("./fonts/Nunito_Sans/NunitoSans-VariableFont_YTLC\,opsz\,wdth\,wght.ttf") format("truetype");
 }
 
 .white-bg {
@@ -287,7 +285,7 @@ body {
   top: 6px;
 }
 
-.Toastify__toast-body > div:last-child {
+.Toastify__toast-body>div:last-child {
   position: relative;
   left: 8px;
 }
@@ -550,15 +548,14 @@ td {
   background-color: white !important;
 }
 
-::-webkit-scrollbar-track {
-}
+::-webkit-scrollbar-track {}
 
 ::-webkit-scrollbar-thumb {
   background-color: #d9d9d9 !important;
   border-radius: 60px !important;
 }
 
-.form-container-child > div:first-child {
+.form-container-child>div:first-child {
   margin-top: 20px;
 }
 
@@ -571,18 +568,23 @@ td {
 .calc-width-full {
   width: 100%;
 }
+
 .calc-height-full {
   height: 100vh;
 }
+
 .calc-h110 {
   height: calc(100vh - 112px);
 }
+
 .calc-h154 {
   height: calc(100vh - 154px);
 }
+
 .calc-h177 {
   height: calc(100vh - 147px);
 }
+
 .margin-right-55 {
   margin-right: 55px;
 }
@@ -590,9 +592,11 @@ td {
 .calc-h119 {
   height: calc(100vh - 119px);
 }
+
 .calc-h191 {
   height: calc(100vh - 191px);
 }
+
 .overflow-hidden {
   overflow: hidden;
 }
@@ -604,9 +608,11 @@ td {
 .calc-width-half {
   width: calc(50%);
 }
+
 .left-59 {
   left: 59px;
 }
+
 .calcLeft {
   width: calc(50% - 59px);
 }
@@ -621,6 +627,7 @@ td {
   /* margin: 0 auto;
   position: relative; */
 }
+
 /* 
 .activeProjectConfig {
   background-color: yellow;
@@ -642,4 +649,14 @@ td {
 
 .css-1ex1afd-MuiTableCell-root {
   /* border-bottom: none; */
+}
+
+.mini-loader-parent {
+  width: 100%;
+  /* //z height: 100%; */
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
 }

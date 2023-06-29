@@ -17,6 +17,7 @@ import {
   ChangeSignDiv,
   ResendMailDiv,
   SpanResend,
+  SignupContainer,
 } from "./VerifyUserStyles";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Logo from "../../../public/divami_icons/Logo.svg";
@@ -28,6 +29,7 @@ import { toast } from "react-toastify";
 const VerifyUser = ({ queryMail }: { queryMail: string }) => {
   // const maskedEmail = queryMail.replace(/.(?=.*?@)/g, "*");
   const [maskedMail, setMaskedMail] = useState("");
+  const [verifyEnable, setVerifyEnabled] = useState<boolean>(true)
   const router = useRouter();
 
   useEffect(() => {
@@ -56,17 +58,23 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
   }
 
   const handleEmailVerification = (email: string) => {
-    verifyResendEmail(email)
+    if(verifyEnable){
+      setVerifyEnabled(false)
+      verifyResendEmail(email)
       .then((response) => {
+        setVerifyEnabled(true)
         toast.success(response.message);
         return;
       })
       .catch((error) => {
+        setVerifyEnabled(true)
         toast.error(error.message);
         return;
         // resetForm();
         // setLoading(false);
       });
+    }
+   
   };
 
   return (
@@ -113,6 +121,18 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
                 Click to resend
               </SpanResend>{" "}
             </ResendMailDiv>
+
+            <SignupContainer>
+              Already a User?{" "}
+              <SpanResend
+                onClick={() => {
+                  router.push("/login");
+                }}
+              >
+                {" "}
+                Sign in
+              </SpanResend>{" "}
+            </SignupContainer>
           </VerifyUserDiv>
         </FormContainerSign>
       </FormDiv>

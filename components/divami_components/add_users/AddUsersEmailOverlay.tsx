@@ -51,12 +51,14 @@ export const AddUsersEmailOverlay = ({
   setOpenDrawer,
   roles,
   selectedProjectId,
+  appendToTable,
 }: any) => {
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
   const [addedUsers, setAddedUsers] = useState<any>([]);
   const [searchVal, setSearchVal] = useState("");
   const [hoveringOver, setHoveringOver] = useState("");
+  const [enableAddUser, setEnableAddUser] = useState(true);
   useEffect(() => {
     if (/\S+@\S+\.\S+/.test(form.email)) checkRegisterUser(form.email);
 
@@ -179,12 +181,16 @@ export const AddUsersEmailOverlay = ({
     setHoveringOver("");
 
   const onAddUser = () => {
+
+  if(enableAddUser){
+    setEnableAddUser(false);
     if (addedUsers?.length) {
       const projectInfo = {
         users: addedUsers.map((each: any) => {
           return { role: each.role, email: each.email };
         }),
       };
+
       const newUsers: number = addedUsers.filter(
         (each: any) => each.isNewUser
       )?.length;
@@ -197,11 +203,17 @@ export const AddUsersEmailOverlay = ({
             } have been added to the project successfully & ${newUsers} users have been sent invite to register`
           );
           setOpenDrawer(false);
+          appendToTable(true);
+          setEnableAddUser(true)
         })
         .catch((err) => {
-          toast.error(err.message);
+          // toast.error(err.message);
+           toast.error("You do not have access,Contact Admin");
+           setEnableAddUser(true)
         });
+      console.log("addeduser", addedUsers, projectInfo);
     }
+  }
   };
 
   const onClickBack = () => {
