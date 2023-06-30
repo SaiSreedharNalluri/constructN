@@ -6,8 +6,7 @@ import Image from 'next/image';
 import * as Yup from 'yup';
 import InputPassword from '../core/Input/inputPassword';
 import { changePassword } from '../../services/userAuth';
-import { toast } from 'react-toastify';
-
+import { CustomToast } from "../../components/divami_components/custom-toaster/CustomToast"
 const ChangePassword: React.FC = () => {
   const initialValues = {
     currentPassword: '',
@@ -56,15 +55,15 @@ const ChangePassword: React.FC = () => {
       .then((response) => {
         if (response.success === true) {
           setShow(false);
-          toast.success('user password changed successfully');
+          CustomToast('user password changed successfully',"success");
           resetForm();
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error.message);
+          CustomToast(error.message,"error");
         } else {
-          toast.error('failed to changed the password');
+          CustomToast('failed to changed the password',"error");
         }
       });
   };

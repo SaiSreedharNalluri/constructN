@@ -6,8 +6,8 @@ import Image from 'next/image';
 import * as Yup from 'yup';
 import InputPassword from '../../../components/core/Input/inputPassword';
 import { changePassword } from '../../../services/userAuth';
-import { toast } from 'react-toastify';
 import Header from "./header/Header";
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 const ChangePassword = ({closeDrawer}:any) => {
   const initialValues = {
     currentPassword: '',
@@ -58,15 +58,15 @@ const ChangePassword = ({closeDrawer}:any) => {
       .then((response) => {
         if (response.success === true) {
           setShow(true);
-          toast.success('user password changed successfully');
+          CustomToast('user password changed successfully',"success");
           resetForm();
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error.message);
+          CustomToast(error.message,"error");
         } else {
-          toast.error('failed to changed the password');
+          CustomToast('failed to changed the password',"error");
         }
       });
   };

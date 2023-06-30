@@ -14,13 +14,13 @@ import {
   PasswordPopupContainer,
 } from "./ResetPasswordStyles";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import Logo from "../../../public/divami_icons/Logo.svg";
 import backIcon from "../../../public/divami_icons/backIcon.svg";
 
 import FormBody from "./FormBody";
 import FooterSignIn from "./FooterSign";
 import { resetPasswordToken } from "../../../services/userAuth";
-import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import PasswordRequired from "../password-field/PasswordRequired";
 
@@ -99,13 +99,13 @@ const ResetPassword = ({ uniqueToken }: any) => {
     )
       .then((response) => {
         if (response.success === true) {
-          toast.success(response?.message);
+          CustomToast(response?.message,"success");
 
           router.push("/reset_completed");
         }
       })
       .catch((error) => {
-        toast.error(error.message);
+        CustomToast(error.message,"error");
 
         router.push("/reset_completed");
 

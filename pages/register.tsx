@@ -2,7 +2,8 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import RegisterPage from "../components/container/registerPage";
 import { registerUser } from "../services/userAuth";
-import { toast } from "react-toastify";
+import { CustomToast } from "../../constructn-web/components/divami_components/custom-toaster";
+
 
 const Register: React.FC = () => {
   const router = useRouter();
@@ -28,11 +29,11 @@ const Register: React.FC = () => {
     registerUser(formValue)
       .then((response) => {
         if (response.success === true) {
-          toast.success("User Registeration completed in sucessfully");
-          toast.info("Redirecting ... ");
+          CustomToast("User Registeration completed sucessfully","success");
+          CustomToast("Redirecting ... ","info");
 
           setTimeout(() => {
-            toast.info("Please check your e-mail to verify the account");
+            CustomToast("Please check your e-mail to verify the account","info");
             // router.push('/login');
             router.push("/login");
           }, 5000);
@@ -40,7 +41,7 @@ const Register: React.FC = () => {
       })
       .catch((error) => {
         if (error?.response?.status === 409) {
-          toast.error(error.response.data.message);
+          CustomToast(error.response.data.message,"error");
         }
         resetForm();
         setLoading(false);

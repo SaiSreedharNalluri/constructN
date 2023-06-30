@@ -12,6 +12,7 @@ import router from 'next/router';
 import { toast } from 'react-toastify';
 import { assignProjectUser } from '../../services/project';
 import { Type } from 'react-toastify/dist/utils';
+import { CustomToast } from "../divami_components/custom-toaster/CustomToast";
 interface IProps {
   projectUsers: IProjectUserList[];
   setProjectUsers: React.Dispatch<React.SetStateAction<IProjectUserList[]>>;
@@ -60,14 +61,14 @@ const ProjectUserAdd: React.FC<IProps> = ({
     assignProjectUser(userInfo, router.query.projectId as string)
       .then((response) => {
         if (response?.success === true) {
-          toast.success(response?.message);
+          CustomToast(response?.message,"success");
           resetForm();
           setProjectUsers(response?.result);
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+          CustomToast(error?.message,"error");
         }
       });
   };
