@@ -46,7 +46,6 @@ import searchIcon from "../../../public/divami_icons/search.svg";
 import UserFilterIcon from "../../../public/divami_icons/UserFilterIcon.svg";
 import { Paper } from "@material-ui/core";
 import CustomButton from "../custom-button/CustomButton";
-import { toast } from "react-toastify";
 import { MTableBodyRow, MTableEditRow } from "material-table";
 import {
   CloseIcon,
@@ -67,7 +66,6 @@ import LocalSearch from "../local_component/LocalSearch";
 import CustomLoader from "../custom_loader/CustomLoader";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import { CustomToast } from "../custom-toaster/CustomToast";
-
 export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [tableData, setTableData] = useState<any>([]);
   const router = useRouter();
@@ -266,7 +264,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     removeProjectUser(email, router.query.projectId as string)
       .then((response) => {
         if (response?.success === true) {
-          toast.success(response?.message);
+          CustomToast(response?.message,"success");
           setTableData(
             response.result.map((each: any) => {
               return {
@@ -281,8 +279,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       })
       .catch((error) => {
         if (error.success === false) {
-          // toast.error(error?.message);
-          toast.error("You  don't have permission. Contact Admin");
+          CustomToast("You  don't have permission. Contact Admin","error");
 
           setDataLoaded(true);
         }
@@ -340,7 +337,6 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     };
     updateProjectUserRole(projectInfo, router.query.projectId as string)
       .then((res: any) => {
-        toast.success("User role is updated");
         CustomToast("User role is updated", "success");
         setShowEdit(false);
         getUsersList();

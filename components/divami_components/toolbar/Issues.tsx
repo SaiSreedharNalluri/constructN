@@ -27,7 +27,6 @@ import {
   createIssue,
   createIssueWithAttachments,
 } from "../../../services/issue";
-import { toast } from "react-toastify";
 import TaskList from "../task_list/TaskList";
 import { ITools } from "../../../models/ITools";
 import CustomIssueListDrawer from "../issue-listing/IssueList";
@@ -36,7 +35,7 @@ import { IStructure } from "../../../models/IStructure";
 import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import html2canvas from "html2canvas";
 import moment from "moment";
-
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 const Issues = ({
   rightMenuClickHandler,
   issuesList,
@@ -168,7 +167,7 @@ const Issues = ({
 
     for (let i = 0; i < data.attachments?.length; i++) {
       if (data.attachments![i].size > 50 * 1024 * 1024) {
-        toast.error("file size is too large. failed to create issue");
+        CustomToast("file size is too large. failed to create issue","error");
         return;
       }
       formData.append("attachments", data.attachments![i]);
@@ -185,19 +184,19 @@ const Issues = ({
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
           if (response.success === true) {
-            toast.success(" Issue Created Successfully");
+            CustomToast(" Issue Created Successfully","success");
             setEnableSubmit(true);
             issueSubmitFn(response.result);
           } else {
-            toast.error(`Something went wrong`);
+            CustomToast(`Something went wrong`,"error");
             setEnableSubmit(true);
           }
         })
         .catch((error) => {
           if (error.message == "Forbidden Access") {
-            toast(`You can't create an issue. Ask the Project Admin for help`);
+            CustomToast(`You can't create an issue. Ask the Project Admin for help`,"error");
           } else {
-            toast.error(`Something went wrong`);
+            CustomToast(`Something went wrong`,"error");
           }
           setEnableSubmit(true);
         });

@@ -42,6 +42,7 @@ import {
   FilterCardSelectAllTextHeader,
   RefreshIcon,
   CloseIcon,
+  HeaderRightSectionCloseIcon,
 } from "./IssueStyledComponent";
 import { Issue } from "../../../models/Issue";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
@@ -634,6 +635,7 @@ const FilterCommon: React.FC<IProps> = ({
              {/* <Image src={closeIcon} alt="reset"   onClick={() => {
              handleClose();
              }} /> */}
+             <HeaderRightSectionCloseIcon>
              <CloseIcon
                onClick={() => {
                  handleClose();
@@ -642,6 +644,7 @@ const FilterCommon: React.FC<IProps> = ({
                alt={"close icon"}
                data-testid="filter-close"
              />
+             </HeaderRightSectionCloseIcon>
            </HeaderRightSection>
          </TitleContainer>
        </HeaderContainer>

@@ -514,7 +514,7 @@ const Index: React.FC = () => {
     //   currencySetting: { currencyCode: "INR", minimumFractionDigits: 0 },
     // },
   ];
-  const breadCrumbsData = [{ name: "Sections" }];
+  const breadCrumbsData = [{ name: "Views" }];
 
   const [isFullScreen, setIsFullScreen] = useState(false);
 

@@ -23,7 +23,7 @@ import Search from "../../../public/divami_icons/search.svg";
 import smallDivider from "../../../public/divami_icons/smallDivider.svg";
 import sort from "../../../public/divami_icons/sort.svg";
 import UpArrow from "../../../public/divami_icons/upArrow.svg";
-
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import {
   BodyContainer,
   BodyInfo,
@@ -807,9 +807,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               onClick={() => {
                 onClose();
                 openIssueCreateFn();
-                toast.success(
+                CustomToast(
                   "Click on the map where you want to create an issue"
-                );
+                ,"success");
               }}
             >
               Raise Issue

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { resetPasswordInit } from "../../services/userAuth";
-import { toast } from "react-toastify";
 import CheckingEmail from "../../components/container/checkingEmail";
+import { CustomToast } from "../../components/divami_components/custom-toaster/CustomToast"
 const Index: React.FC = () => {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
@@ -14,9 +14,9 @@ const Index: React.FC = () => {
     resetPasswordInit(formValue)
       .then((response) => {
         if (response.success === true) {
-          toast.info("Redirecting ... ");
+          CustomToast("Redirecting ... ","info");
           setTimeout(() => {
-            toast.info("Please check your e-mail to reset password");
+            CustomToast("Please check your e-mail to reset password","info");
             // router.push(`/reset-password/${response.token}`);
             // router.push('/login');
             router.push("/login");
@@ -25,7 +25,7 @@ const Index: React.FC = () => {
       })
       .catch((error) => {
         if (error?.response?.status === 409) {
-          toast.error(error.response.data.message);
+          CustomToast(error.response.data.message,"error");
         }
       });
   };

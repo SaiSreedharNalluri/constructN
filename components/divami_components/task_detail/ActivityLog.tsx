@@ -40,7 +40,7 @@ import {
   ImageErrorIcon,
   SendButton,
 } from "./TaskDetailStyles";
-import { toast } from "react-toastify";
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import {
   createCommentReply,
   editCommentReply,
@@ -170,7 +170,7 @@ const ActivityLog = (props: any) => {
         commentObj?.data?.commentId
       ).then((response) => {
         if (response.success === true) {
-          toast.success("Reply added sucessfully");
+          CustomToast("Reply added sucessfully","success");
           getComments(commentsData[0]?.entity);
           setReplyToText("");
         }
@@ -187,7 +187,7 @@ const ActivityLog = (props: any) => {
         commentObj.data?.replyId
       ).then((response) => {
         if (response.success === true) {
-          toast.success("Reply updated sucessfully");
+          CustomToast("Reply updated sucessfully","success");
           getComments(commentsData[0]?.entity);
           setReplyToText("");
         }
@@ -205,7 +205,7 @@ const ActivityLog = (props: any) => {
         }
       ).then((response) => {
         if (response.success === true) {
-          toast.success("Comment updated sucessfully");
+          CustomToast("Comment updated sucessfully","success");
           getComments(commentsData[0]?.entity);
         }
       });
@@ -219,7 +219,7 @@ const ActivityLog = (props: any) => {
         entity: commentsData[0]?.entity,
       }).then((response: any) => {
         if (response.success === true) {
-          toast.success("Comment added sucessfully");
+          CustomToast("Comment added sucessfully","success");
           getComments(commentsData[0]?.entity);
         }
       });
@@ -231,7 +231,7 @@ const ActivityLog = (props: any) => {
       deleteComment(router.query.projectId as string, commentId).then(
         (response: any) => {
           if (response.success === true) {
-            toast.success("Comment Deleted sucessfully");
+            CustomToast("Comment Deleted sucessfully","success");
             getComments(commentsData[0]?.entity);
 
             // setBackendComments([...backendComments, response.result]);
@@ -265,7 +265,7 @@ const ActivityLog = (props: any) => {
         replyId
       ).then((response: any) => {
         if (response.success === true) {
-          toast.success("Reply deleted sucessfully");
+          CustomToast("Reply deleted sucessfully","success");
           getComments(commentsData[0]?.entity);
 
           // setBackendComments([...backendComments, response.result]);

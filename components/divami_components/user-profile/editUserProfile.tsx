@@ -34,6 +34,7 @@ const EditUserProfile = ({
       .matches(/^[^0-9]+$/, "Number is not allowed")
       .min(3, 'Minimum 3 characters required')
       .max(30,'Maximum 30 characters Exceeded')
+      .matches(/^[a-zA-Z\s]+$/, "Special characters are not allowed")
       .matches(
         /^[^\s].*[^\s]$/,
         'Spaces are not allowed at the beginning, end of the firstname'
@@ -42,10 +43,11 @@ const EditUserProfile = ({
       .required("Last name is required")
       .matches(/[a-zA-Z]/, "Atleast one letter is reqired")
       .matches(/^[^0-9]+$/, "Number is not allowed")
+      .matches(/^[a-zA-Z\s]+$/, "Special characters are not allowed")
       .min(1, 'Minimum 1 characters required')
       .max(30,'Maximum 30 characters Exceeded')
       .matches(
-        /^[^\s].*[^\s]$/,
+        /^(?!\s)[^\s]+(?<!\s)$/,
         'Spaces are not allowed at the beginning, end of the lastname'
       ),
   });
@@ -114,6 +116,7 @@ const EditUserProfile = ({
                         type="text"
                         placeholder="First Name"
                         name="firstName"
+                        autocomplete="off"
                       />
                       <ErrorMessage
                         name="firstName"
@@ -130,6 +133,7 @@ const EditUserProfile = ({
                         placeholder="Last Name"
                         name="lastName"
                         className="border border-gray-600 focus:outline-none  text-sm  w-full rounded  p-2"
+                        autocomplete="off"
                       />
                       <ErrorMessage
                         name="lastName"

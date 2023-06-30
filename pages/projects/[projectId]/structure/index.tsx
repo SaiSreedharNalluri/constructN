@@ -6,7 +6,7 @@ import Moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { CustomToast } from "../../../../components/divami_components/custom-toaster/CustomToast"
 import GenericViewer from "../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../components/container/leftOverLay";
 import MapLoading from "../../../../components/container/mapLoading";
@@ -240,7 +240,7 @@ const Index: React.FC<IProps> = () => {
           }
         })
         .catch((error) => {
-          toast.error("failed to load data");
+          CustomToast("failed to load data","Error");
         });
 
       getTasksPriority(router.query.projectId as string)
@@ -250,7 +250,7 @@ const Index: React.FC<IProps> = () => {
           }
         })
         .catch((error) => {
-          toast.error("failed to load data");
+          CustomToast("failed to load data","error");
         });
 
       getIssuesStatus(router.query.projectId as string)
@@ -260,7 +260,7 @@ const Index: React.FC<IProps> = () => {
           }
         })
         .catch((error) => {
-          toast.error("failed to load data");
+          CustomToast("failed to load data","error");
         });
       getTaskStatus(router.query.projectId as string)
         .then((response) => {
@@ -269,7 +269,7 @@ const Index: React.FC<IProps> = () => {
           }
         })
         .catch((error) => {
-          toast.error("failed to load data");
+          CustomToast("failed to load data","error");
         });
       getIssuesTypes(router.query.projectId as string)
         .then((response) => {
@@ -278,7 +278,7 @@ const Index: React.FC<IProps> = () => {
           }
         })
         .catch((error) => {
-          toast.error("failed to load data");
+          CustomToast("failed to load data","error");
         });
       getProjectDetails(router.query.projectId as string)
         .then((response) => {
@@ -287,7 +287,7 @@ const Index: React.FC<IProps> = () => {
           setProject(response.data.result);
         })
         .catch((error) => {
-          toast.error("failed to load data");
+          CustomToast("failed to load data","error");
         });
       getStructureList(router.query.projectId as string)
         .then((response) => {
@@ -362,7 +362,7 @@ const Index: React.FC<IProps> = () => {
           }
         })
         .catch((error) => {
-          toast.error("failed to load data");
+          CustomToast("failed to load data","error");
         });
 
       getProjectUsers(router.query.projectId as string)
@@ -910,7 +910,7 @@ const Index: React.FC<IProps> = () => {
         })
         .catch((error) => {
           if (error.success === false) {
-            toast.error(error?.message);
+            CustomToast(error?.message,"error");
           }
         });
     }
@@ -923,7 +923,7 @@ const Index: React.FC<IProps> = () => {
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+          CustomToast(error?.message,"error");
         }
       });
   };
@@ -936,7 +936,7 @@ const Index: React.FC<IProps> = () => {
         })
         .catch((error) => {
           if (error.success === false) {
-            toast.error(error?.message);
+            CustomToast(error?.message,"error");
           }
         });
     }
@@ -1232,7 +1232,7 @@ const Index: React.FC<IProps> = () => {
     deleteIssue(router.query.projectId as string, issueObj._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success(response.message);
+          CustomToast(response.message,"success");
           _.remove(issueFilterList, { _id: issueObj._id });
           setIssueList(issueFilterList);
           if (callback && response.message !== "Failed to delete Issue") {
@@ -1248,9 +1248,9 @@ const Index: React.FC<IProps> = () => {
       })
       .catch((error) => {
         if (!error.success && error.message === "Forbidden Access") {
-          toast.error("You do not have access,Contact Admin");
+          CustomToast("You do not have access,Contact Admin","error");
         } else {
-          toast.error("Task could not be deleted");
+          CustomToast("Task could not be deleted","error");
         }
       });
   };
@@ -1259,7 +1259,7 @@ const Index: React.FC<IProps> = () => {
     deleteTask(router.query.projectId as string, taskObj._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success(response.message);
+          CustomToast(response.message,"success");
           _.remove(taskFilterList, { _id: taskObj._id });
           setTasksList(taskFilterList);
           if (callback && response.message !== "Failed to delete Issue") {
@@ -1275,9 +1275,9 @@ const Index: React.FC<IProps> = () => {
       })
       .catch((error) => {
         if (!error.success && error.message === "Forbidden Access") {
-          toast.error("You do not have access,Contact Admin");
+          CustomToast("You do not have access,Contact Admin","error");
         } else {
-          toast.error("Task could not be deleted");
+          CustomToast("Task could not be deleted","error");
         }
       });
   };
@@ -1290,7 +1290,7 @@ const Index: React.FC<IProps> = () => {
     )
       .then((response) => {
         if (response.success === true) {
-          toast("issue information updated successfully");
+          CustomToast("issue information updated successfully","success");
           const index = issueFilterList.findIndex(
             (obj: Issue) => obj._id === response.result._id
           );
@@ -1316,7 +1316,7 @@ const Index: React.FC<IProps> = () => {
     deleteAttachment(attachmentId)
       .then((response) => {
         if (response.success === true) {
-          toast(response.message);
+        CustomToast(response.message,"success");
           if (entity === "issue") {
             issueFilterList.map((issueObj) => {
               const index = issueObj.attachments.findIndex(
@@ -1337,7 +1337,7 @@ const Index: React.FC<IProps> = () => {
         }
       })
       .catch((error) => {
-        toast.error(error.message);
+        CustomToast(error.message,"error");
       });
   };
 

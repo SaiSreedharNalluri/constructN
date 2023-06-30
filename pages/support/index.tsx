@@ -8,6 +8,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
+import { CustomToast } from "../../components/divami_components/custom-toaster/CustomToast"
 interface IProps {}
 
 const Support: React.FC<IProps> = ({}) => {
@@ -34,7 +35,7 @@ const Support: React.FC<IProps> = ({}) => {
           setTicketList(response);
         })
         .catch((error) => {
-          toast.error("failed to load data");
+          CustomToast("failed to load data","error");
         });
   }, [eMail]);
 
@@ -112,7 +113,7 @@ const Support: React.FC<IProps> = ({}) => {
                   .then((response) => {
                     console.log("Ticket Response", response);
                     if (response.data)
-                      toast.success("Ticket Created sucessfully");
+                      CustomToast("Ticket Created sucessfully","succcess");
                     setEMail(eMail);
                     return response.data;
                   })

@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { IUser } from "../../models/IUser";
 import EditProject from "../divami_components/edit-project/EditProject";
 import CustomDrawer from "../divami_components/custom-drawer/custom-drawer";
+import { CustomToast } from "../divami_components/custom-toaster/CustomToast";
 import {
   getProjectDetails,
   updateProjectCover,
@@ -74,13 +75,13 @@ const ProjectDetails: React.FC = () => {
       .then((response) => {
         if (response.success === true) {
           handleEditClose();
-          toast.success("Project details updated sucessfully");
+          CustomToast("Project details updated sucessfully","success");
           setProjectData(response.result);
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+          CustomToast(error?.message,"error");
         }
       });
   };
@@ -90,7 +91,7 @@ const ProjectDetails: React.FC = () => {
     updateProjectCover(formData, router.query.projectId as string)
       .then((response) => {
         if (response?.success === true) {
-          toast.success("Project cover photo updated sucessfully");
+          CustomToast("Project cover photo updated sucessfully","success");
           const fileInput = document.getElementById(
             "file-upload"
           ) as HTMLInputElement;
@@ -103,7 +104,7 @@ const ProjectDetails: React.FC = () => {
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+          CustomToast(error?.message,"error");
         }
       });
   };

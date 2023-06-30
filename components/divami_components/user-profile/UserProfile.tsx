@@ -4,7 +4,7 @@ import Header from "./header/Header";
 import { styled } from "@mui/system";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import router from "next/router";
-import { toast } from "react-toastify";
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import {
   getUserProfile,
   updateProfileAvatar,
@@ -35,7 +35,7 @@ const UserProfile = ({ handleProfileClose, projectUsers }: any) => {
           }
         })
         .catch((error) => {
-          toast.error("unable to load the data");
+          CustomToast("unable to load the data","error");
         });
     }
   }, []);
@@ -51,12 +51,12 @@ const UserProfile = ({ handleProfileClose, projectUsers }: any) => {
         if (response?.success === true) {
           setUserDetails(response?.result);
           setIsUserProfileDrawerOpen(false);
-          toast.success("user profile updated successfully");
+          CustomToast("user profile updated successfully","success");
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+        CustomToast(error?.message,"error");
         }
       });
   };
@@ -65,7 +65,7 @@ const UserProfile = ({ handleProfileClose, projectUsers }: any) => {
     formData.append("file", e.file);
     updateProfileAvatar(formData).then((response) => {
       if (response.success === true) {
-        toast.success("user profile pic updated successfully");
+        CustomToast("user profile pic updated successfully","success");
         setUserDetails(response?.result);
         setIsUserProfileDrawerOpen(false);
         const fileInput = document.getElementById(

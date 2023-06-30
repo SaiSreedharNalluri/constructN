@@ -24,7 +24,7 @@ import Logo from "../../../public/divami_icons/Logo.svg";
 import Mail from "../../../public/divami_icons/Mail.svg";
 import lock from "../../../public/divami_icons/lock.svg";
 import { verifyResendEmail } from "../../../services/userAuth";
-import { toast } from "react-toastify";
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 
 const VerifyUser = ({ queryMail }: { queryMail: string }) => {
   // const maskedEmail = queryMail.replace(/.(?=.*?@)/g, "*");
@@ -63,12 +63,12 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
       verifyResendEmail(email)
       .then((response) => {
         setVerifyEnabled(true)
-        toast.success(response.message);
+        CustomToast(response.message,"success");
         return;
       })
       .catch((error) => {
         setVerifyEnabled(true)
-        toast.error(error.message);
+        CustomToast(error.message,"error");
         return;
         // resetForm();
         // setLoading(false);
