@@ -777,7 +777,7 @@ export const MinimapUtils = () => {
 
   const onMouseEnter = () => {
     // console.log("Inside mouse eneter event forge: ", _viewerId);
-    _eventHandler(_viewerId, { type: "mouse" });
+    // _eventHandler(_viewerId, { type: "mouse" });
   };
 
   const onCameraChangeEvent = (event) => {
