@@ -7,7 +7,7 @@ export class ForgeInstance {
   constructor(viewerId) {
     // console.log("Inside Potree Initializer: ")
     let viewerConfig = {
-      extensions: ["Autodesk.BimWalk", "Autodesk.DataVisualization"],
+      extensions: ["Autodesk.BimWalk"],
     };
     let htmlDiv = document.getElementById(viewerId);
     this.viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv, viewerConfig);
@@ -61,6 +61,7 @@ export const ForgeViewerUtils = function () {
 
   let _isPendingDataToLoad = false;
   let _isPendingLayersToLoad = false;
+  let _isRefreshing = false;
 
   let _documentURNs;
   let _selectedType;
@@ -79,6 +80,7 @@ export const ForgeViewerUtils = function () {
   let _context;
 
   let _dataVizExtn;
+  let _isDataVizExtnLoaded = false;
   let _bimWalkExtn;
   let _dataVizUtils;
   let _isAddTagActive = false;
@@ -250,6 +252,8 @@ export const ForgeViewerUtils = function () {
     _isPendingDataToLoad = true;
     _isPendingLayersToLoad = true;
     if (_isViewerInitialized) {
+      _viewer.waitForLoadDone();
+      _isRefreshing = true;
       loadData();
     }
   };
@@ -259,9 +263,11 @@ export const ForgeViewerUtils = function () {
       "ForgeInstanceTest Inside loadlayers On data load complete: ",
       _isPendingLayersToLoad,
       _isModelLoaded,
-      _dataVizUtils
+      _dataVizUtils,
+      !_isRefreshing
     );
-    if (_isPendingLayersToLoad) {
+
+    if (!_isRefreshing && _isPendingLayersToLoad) {
       if (_isModelLoaded && _dataVizUtils) {
         return true;
       }
@@ -273,6 +279,7 @@ export const ForgeViewerUtils = function () {
   const loadData = async () => {
     // console.log("Inside loadModel: ",documentURNs);
     // console.log("Loading new Model: ", documentURNs);
+    _viewer.waitForLoadDone();
     if (_isModelLoaded) {
       removeData();
     }
@@ -290,6 +297,7 @@ export const ForgeViewerUtils = function () {
             _manifestNode,
             generateModelOptions(document.tm, _manifestNode)
           );
+          loadExtension();
         },
         function () {
           console.error("Failed fetching Forge manifest");
@@ -691,7 +699,6 @@ export const ForgeViewerUtils = function () {
   const onViewerInitialized = () => {
     console.log("ForgeInstanceTest Viewer Initialized: Loading Model now");
     _isViewerInitialized = true;
-    loadExtension();
     if (_isPendingDataToLoad) {
       loadData();
     }
@@ -706,6 +713,7 @@ export const ForgeViewerUtils = function () {
     if (!_isModelLoaded && progress.percent == 100) {
       console.log("Inside model load progress: ", progress, state, model);
       _isModelLoaded = true;
+      _isRefreshing = false;
       if (loadLayersOnDataLoadCompletion()) {
         // loadLayers();
       }
@@ -725,6 +733,7 @@ export const ForgeViewerUtils = function () {
     // loadExtension();
     _isPendingDataToLoad = false;
     _isModelLoaded = true;
+    _isRefreshing = false;
     if (loadLayersOnDataLoadCompletion()) {
       loadLayers();
     }
@@ -733,6 +742,7 @@ export const ForgeViewerUtils = function () {
   const onGeometryLoadedEvent = (parameter) => {
     // console.log("Inside Geometry Loaded Event: model: ", parameter.model);
     _isModelLoaded = true;
+    _isRefreshing = false;
     if (loadLayersOnDataLoadCompletion()) {
       loadLayers();
     }
@@ -750,10 +760,18 @@ export const ForgeViewerUtils = function () {
         "ForgeInstanceTest Inside Extension Loaded Event: Data Visualization",
         parameter
       );
-      _dataVizExtn = _viewer.getExtension(parameter.extensionId);
+      _isDataVizExtnLoaded = true;
+      if(_dataVizUtils === undefined) {
+        _dataVizExtn = _viewer.getExtension(parameter.extensionId);
 
-      _dataVizUtils = new ForgeDataVisualization(_viewer, _dataVizExtn);
-      _dataVizUtils.setHandler(onDataVizHandler.bind(this));
+        _dataVizUtils = new ForgeDataVisualization(_viewer, _dataVizExtn);
+        _dataVizUtils.setHandler(onDataVizHandler.bind(this));
+
+        _dataVizUtils.setIs2D(_manifestNode.is2D());
+        _dataVizUtils.setTM(_tm);
+        _dataVizUtils.setOffset(_globalOffset);
+      }
+
       if (loadLayersOnDataLoadCompletion()) {
 
         loadLayers();
