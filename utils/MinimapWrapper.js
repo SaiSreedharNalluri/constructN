@@ -362,9 +362,11 @@ export const MinimapUtils = () => {
     console.log("Passing data to dataViz extension minimap: ", _dataVizUtils);
     
     if(_snapshot) {
-      const snapshotRealities = _snapshot.reality.map(r => {return r._id})
-      const realityMapRealities = _realityPositionMap[Object.keys(_realityPositionMap)[0]].map(r => {return r.id})
-      if(snapshotRealities.indexOf(realityMapRealities[0]) == -1) return
+      try{
+        const snapshotRealities = _snapshot.reality.map(r => { return r._id })
+        const realityMapRealities = _realityPositionMap[Object.keys(_realityPositionMap)[0]].map(r => { return r.id })
+        if (snapshotRealities.indexOf(realityMapRealities[0]) == -1) return
+      } catch(e) {}
     }
     // _dataVizUtils.removeExistingVisualizationData();
     // _dataVizUtils.setIs2D(_manifestNode.is2D());
@@ -686,7 +688,7 @@ export const MinimapUtils = () => {
         _viewer.navigation.setIsLocked(false);
         if (isCompareView() && (type === "360 Video" || type === "360 Image")) {
           _viewer.navigation.setLockSettings({
-            orbit: false,
+            orbit: true,
             pan: false,
             zoom: false,
             roll: false,
@@ -767,7 +769,7 @@ export const MinimapUtils = () => {
       );
       _dataVizExtn = _viewer.getExtension(parameter.extensionId);
 
-      _dataVizUtils = new ForgeDataVizUtils(_viewer, _dataVizExtn, onDataVizHandler);
+      if(!_dataVizUtils) _dataVizUtils = new ForgeDataVizUtils(_viewer, _dataVizExtn, onDataVizHandler);
       // _dataVizUtils.setHandler(onDataVizHandler.bind(this));
       if (loadLayersOnDataLoadCompletion()) {
         loadLayers();
