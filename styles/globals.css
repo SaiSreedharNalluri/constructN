@@ -120,7 +120,7 @@
   }
 }
 
-.spinner>circle {
+.spinner > circle {
   fill: transparent;
 }
 
@@ -185,12 +185,14 @@ body {
 @font-face {
   font-family: "Open Sans";
   src: local("Lato"),
-    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf") format("opentype");
+    url("./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf")
+      format("opentype");
 }
 
 @font-face {
   font-family: "Nunito Sans";
-  src: url("./fonts/Nunito_Sans/NunitoSans-VariableFont_YTLC\,opsz\,wdth\,wght.ttf") format("truetype");
+  src: url("./fonts/Nunito_Sans/NunitoSans-VariableFont_YTLC\,opsz\,wdth\,wght.ttf")
+    format("truetype");
 }
 
 .white-bg {
@@ -285,7 +287,7 @@ body {
   top: 6px;
 }
 
-.Toastify__toast-body>div:last-child {
+.Toastify__toast-body > div:last-child {
   position: relative;
   left: 8px;
 }
@@ -548,14 +550,15 @@ td {
   background-color: white !important;
 }
 
-::-webkit-scrollbar-track {}
+::-webkit-scrollbar-track {
+}
 
 ::-webkit-scrollbar-thumb {
   background-color: #d9d9d9 !important;
   border-radius: 60px !important;
 }
 
-.form-container-child>div:first-child {
+.form-container-child > div:first-child {
   margin-top: 20px;
 }
 
@@ -580,11 +583,15 @@ td {
 .calc-h154 {
   height: calc(100vh - 154px);
 }
-
+.calc-h319 {
+  height: calc(100vh - 319px);
+}
 .calc-h177 {
   height: calc(100vh - 147px);
 }
-
+.calc-h159 {
+  height: calc(100vh - 159px);
+}
 .margin-right-55 {
   margin-right: 55px;
 }
@@ -658,5 +665,4 @@ td {
   display: flex;
   justify-content: center;
   align-items: center;
-
 }

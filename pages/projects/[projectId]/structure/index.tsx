@@ -832,6 +832,8 @@ const Index: React.FC<IProps> = () => {
     }
     setShowIssueMarkups(true);
     setShowTaskMarkups(true);
+    toolClicked({ toolName: "issue", toolAction: "issueShow" });
+    toolClicked({ toolName: "task", toolAction: "taskShow" });
   }, [currentViewMode, designAndRealityMaps]);
 
   useEffect(() => {

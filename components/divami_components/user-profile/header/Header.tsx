@@ -29,18 +29,18 @@ const CloseIcon = styled(Image)({
 
 });
 
-const Header = ({ closeEditProject }: any) => {
-  const title =  "My Profile";
+const Header = ({ closeEditProject,id }: any) => {
+  const title = id==="ChangePassword"?"Change Password":"My Profile";
   return (
     <HeaderContainer>
       <TitleContiner>
         <span>{title}</span>
-        <div className="rounded-full p-[6px] hover:bg-[#EEEEEE]">
-        <CloseIcon
+        <div className="rounded-full p-[6px] hover:bg-[#E7E7E7]">
+       {id==="ChangePassword"?"":<CloseIcon
           onClick={closeEditProject}
-          src={closeIconCircle}
+         src={closeIconCircle}
           alt={"close icon"}
-        />
+        />}
         </div>
       </TitleContiner>
     </HeaderContainer>

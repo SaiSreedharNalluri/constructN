@@ -196,18 +196,38 @@ export const AddUsersEmailOverlay = ({
 
         addUserRoles(projectInfo, selectedProjectId)
           .then((res: any) => {
-            toast.success(
-              `${
-                addedUsers.length - newUsers
-              } have been added to the project successfully & ${newUsers} users have been sent invite to register`
-            );
+            if (newUsers === 0) {
+              toast.success(
+                `${
+                  addedUsers?.length - newUsers > 1
+                    ? `${addedUsers?.length - newUsers} Users`
+                    : `${addedUsers?.length - newUsers} User`
+                } have been added to the project successfully   `
+              );
+            } else if (addedUsers?.length - newUsers >= 1) {
+              toast.success(
+                `${
+                  addedUsers?.length - newUsers > 1
+                    ? `${addedUsers?.length - newUsers} Users`
+                    : `${addedUsers?.length - newUsers} User`
+                } have been added to the project successfully & ${
+                  newUsers > 1 ? ` ${newUsers} Users` : `${newUsers} User`
+                } have been sent invite to register `
+              );
+            } else {
+              toast.success(
+                ` ${
+                  newUsers > 1 ? ` ${newUsers} Users` : `${newUsers} User`
+                } have been sent invite to register `
+              );
+            }
             setOpenDrawer(false);
             appendToTable(true);
             setEnableAddUser(true);
           })
           .catch((err) => {
-            // toast.error(err.message);
-            toast.error("You do not have access,Contact Admin");
+            toast.error(err.message);
+
             setEnableAddUser(true);
           });
       }
@@ -292,98 +312,58 @@ export const AddUsersEmailOverlay = ({
               className={undefined}
               width={"100% !important"}
             />
-            {/* <CustomSearch
-              data={options}
-              handleSearchResult={(e: any, value: any, id: any) => {
-                if (value?.id) {
-                  const selectedObj = responseData.find(
-                    (each: any) =>
-                      each._id === value?.id &&
-                      !addedUsers.some((iter: any) => iter._id == value?.id)
-                  );
-
-                  if (selectedObj) {
-                    setAddedUsers([{ ...selectedObj }, ...addedUsers]);
-                  }
-                }
-              }}
-              placeholder="Search User By Email ID"
-              handleEnterResult={(val: any) => {
-                if (/\S+@\S+\.\S+/.test(val)) {
-                  const selectedObj = responseData.find(
-                    (each: any) =>
-                      each.email === val &&
-                      !addedUsers.some((iter: any) => iter.email == val)
-                  );
-                  if (selectedObj) {
-                    setAddedUsers([{ ...selectedObj }, ...addedUsers]);
-                  } else if (
-                    !addedUsers.some((iter: any) => iter.email == val)
-                  ) {
-                    setAddedUsers([
-                      {
-                        email: `${val}`,
-                        role: roles[0].value,
-                        isNewUser: true,
-                      },
-                      ...addedUsers,
-                    ]);
-                  }
-                }
-              }}
-            /> */}
           </AddUserEmailContainer>
 
           {/* </SearchAreaContainer> */}
         </HeaderActions>
       </TableHeader>
-
-      <ThemeProvider theme={defaultMaterialTheme}>
-        <TableWrapper hideHeader>
-          <StyledTable
-            components={{
-              Container: (props: any) => <Paper {...props} elevation={0} />,
-              Row: (props: any) => {
-                return (
-                  <MTableBodyRow
-                    {...props}
-                    onMouseEnter={(e: any) => handleRowHover(e, props)}
-                    onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
-                  />
-                );
-              },
-            }}
-            columns={columns}
-            data={addedUsers ? addedUsers : []}
-            title={""}
-            options={{
-              search: false,
-              paging: false,
-              exportButton: false,
-              exportFileName: "tableData",
-              selection: false,
-              showTitle: true,
-              toolbar: false,
-              maxBodyHeight: 700,
-              thirdSortClick: false,
-              rowStyle: (rowData: any) => ({
-                fontFamily: "Open Sans",
-                fontStyle: "normal",
-                fontWeight: "400",
-                fontSize: "14px",
-                color: "#101F4C",
-                backgroundColor:
-                  rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
-              }),
-              headerStyle: {
-                padding: "6px 16px",
-                fontFamily: "Open Sans",
-              },
-            }}
-          />
-        </TableWrapper>
-      </ThemeProvider>
-
+      <div className=" calc-h319 overflow-y-auto overflow-x-hidden  ">
+        <ThemeProvider theme={defaultMaterialTheme}>
+          <TableWrapper hideHeader id="addUserList">
+            <StyledTable
+              components={{
+                Container: (props: any) => <Paper {...props} elevation={0} />,
+                Row: (props: any) => {
+                  return (
+                    <MTableBodyRow
+                      {...props}
+                      onMouseEnter={(e: any) => handleRowHover(e, props)}
+                      onMouseLeave={(e: any) => handleRowHoverLeave(e, props)}
+                    />
+                  );
+                },
+              }}
+              columns={columns}
+              data={addedUsers ? addedUsers : []}
+              title={""}
+              options={{
+                search: false,
+                paging: false,
+                exportButton: false,
+                exportFileName: "tableData",
+                selection: false,
+                showTitle: true,
+                toolbar: false,
+                // maxBodyHeight: 700,
+                thirdSortClick: false,
+                rowStyle: (rowData: any) => ({
+                  fontFamily: "Open Sans",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  fontSize: "14px",
+                  color: "#101F4C",
+                  backgroundColor:
+                    rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
+                }),
+                headerStyle: {
+                  padding: "6px 16px",
+                  fontFamily: "Open Sans",
+                },
+              }}
+            />
+          </TableWrapper>
+        </ThemeProvider>
+      </div>
       <FooterWrapper>
         <UnregisteredContainer>
           <UnregisteredIcon src={infoicon} alt=""></UnregisteredIcon>
