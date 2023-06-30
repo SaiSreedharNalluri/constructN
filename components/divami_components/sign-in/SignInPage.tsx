@@ -145,6 +145,11 @@ const SignInPage = () => {
 
   // form wrapper code
 
+  useEffect(() => {
+    const userObj: any = getCookie("user");
+    if (userObj) router.push("/projects");
+  }, [])
+
   return (
     <>
       {loading && <CustomLoader />}

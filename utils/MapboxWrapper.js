@@ -470,10 +470,20 @@ export const MapboxViewerUtils = () => {
   const showLayers = (layersList) => {};
 
   const showTag = (tag, show) => {
-    if (tag === "Issue") {
-      _map.setLayoutProperty("issues", "visibility", show ? "visible" : "none");
-    } else if (tag === "Task") {
-      _map.setLayoutProperty("tasks", "visibility", show ? "visible" : "none");
+    if (_map.isStyleLoaded()) {
+      if (tag === "Issue") {
+        _map.setLayoutProperty("issues", "visibility", show ? "visible" : "none");
+      } else if (tag === "Task") {
+        _map.setLayoutProperty("tasks", "visibility", show ? "visible" : "none");
+      }
+    } else {
+      _map.on("styledata", () => {
+        if (tag === "Issue") {
+          _map.setLayoutProperty("issues", "visibility", show ? "visible" : "none");
+        } else if (tag === "Task") {
+          _map.setLayoutProperty("tasks", "visibility", show ? "visible" : "none");
+        }
+      });
     }
   };
 

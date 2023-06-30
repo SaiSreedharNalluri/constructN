@@ -24,7 +24,8 @@ instance.interceptors.response.use(
     console.log(error?.response)
     if (
       error?.response?.status === 401 &&
-      (error?.response?.data?.userVerificationToken || error?.response?.request.responseURL.contains('change-password'))
+      (error?.response?.data?.userVerificationToken || 
+      (error?.response?.request.responseURL && error?.response?.request.responseURL.indexOf('change-password') > -1))
     ) {
     } else if (
       error?.response?.status === 401 &&
