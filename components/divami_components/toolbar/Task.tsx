@@ -204,7 +204,7 @@ const Task = ({
           if (error.message == "Forbidden Access") {
             CustomToast(`You can't create a task. Ask the Project Admin for help`,"Forbidden Access");
           } else {
-            CustomToast(`Something went wrong`,"erro");
+            CustomToast(`Something went wrong`,"error");
           }
           setEnableSubmit(true);
         });

@@ -408,7 +408,7 @@ const Index: React.FC<any> = () => {
       } catch (error: any) {
         if (error && error?.success === false) {
           if (error.message === "Forbidden Access") {
-            CustomToast("Not authorized. Ask the Project Admin for help","Error");
+            CustomToast("Not authorized. Ask the Project Admin for help","error");
           } else {
             CustomToast("Project Config could not be updated","error");
           }
