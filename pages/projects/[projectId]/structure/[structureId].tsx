@@ -11,10 +11,10 @@ import { getDesignTM } from "../../../../services/design";
 import { getDesignPath } from "../../../../utils/S3Utils";
 import { IGenPayload } from "../../../../models/IGenPayload";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
 import { getGenViewerData } from "../../../../services/genviewer";
 import TimeLineComponent from "../../../../components/divami_components/timeline-container/TimeLineComponent";
 import { ISnapshot } from "../../../../models/ISnapshot";
+import { CustomToast } from "../../../../components/divami_components/custom-toaster/CustomToast"
 const StructPage: React.FC = () => {
     //const [initData,setInintData] = useState<IGenData>(sampleGenData);
     const router = useRouter();
@@ -41,7 +41,7 @@ const StructPage: React.FC = () => {
             }
           })
           .catch((error) => {
-            toast.error("failed to load data");
+            CustomToast("failed to load data","error");
           });
         }
         },[router.isReady,router.query.projectId,router.query.structureId]);
@@ -71,7 +71,7 @@ const StructPage: React.FC = () => {
             }
           })
           .catch((error) => {
-            toast.error("failed to load data");
+            CustomToast("failed to load data","error");
           });
 
             break;

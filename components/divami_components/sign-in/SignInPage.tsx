@@ -28,7 +28,6 @@ import UnChecked from "../../../public/divami_icons/unchecked.svg";
 
 import { getCookie, setCookie } from "cookies-next";
 import Image from "next/image";
-import { toast } from "react-toastify";
 import { login } from "../../../services/userAuth";
 import { Mixpanel } from "../../analytics/mixpanel";
 import FooterSignIn from "./FooterSignIn";
@@ -96,7 +95,7 @@ const SignInPage = () => {
               JSON.stringify(userProfileObj)
             );
             setCookie("user", userProfileObj);
-            CustomToast("User logged in successfully", "success",2000);
+            CustomToast("User logged in successfully", "success");
             router.push("/projects");
             setLoginEnable(true)
           } else {
@@ -121,7 +120,7 @@ const SignInPage = () => {
           error.message ||
           error.toString();
         setLoginEnable(true)
-        // toast.error(error.response.data.message);
+
         CustomToast(error.response.data.message, "error");
 
         setLoading(false);

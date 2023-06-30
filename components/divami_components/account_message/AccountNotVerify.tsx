@@ -22,14 +22,16 @@ import SuccessImg from "../../../public/divami_icons/SuccessImg.svg";
 import { useRouter } from "next/router";
 import { ResendEmailVerification } from "../../../services/userAuth";
 import { toast } from "react-toastify";
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
+
 const AccountNotVerify = (props: any) => {
   const router = useRouter();
   const resendEmail = () => {
     ResendEmailVerification(router.query.token as string)
       .then((response) => {
         if (response.success === true) {
-          toast.success(response.message);
-          toast.info("Redirecting ... ");
+          CustomToast(response.message,"success");
+          CustomToast("Redirecting ... ","info");
           setTimeout(() => {
             // router.push("/login");
             router.push("/login");
@@ -37,7 +39,7 @@ const AccountNotVerify = (props: any) => {
         }
       })
       .catch((error) => {
-        toast.error(error.message);
+        CustomToast(error.message,"error");
         // setCheckResponse(error);
       });
   };

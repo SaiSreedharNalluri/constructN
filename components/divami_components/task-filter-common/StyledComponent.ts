@@ -47,8 +47,21 @@ export const HeaderRightSection = styled.div({
 });
 export const HeaderRightSectionResetIcon = styled.div({
   marginRight: "7px",
+  borderRadius:"50%",
+  padding:"6px",
+  "&:hover": {
+    cursor: "pointer",
+    background:"#E7E7E7"
+  },
 });
-
+export const HeaderRightSectionCloseIcon = styled.div({
+  borderRadius:"50%",
+  padding:"4px",
+  "&:hover": {
+    cursor: "pointer",
+    background:"#E7E7E7"
+  },
+});
 export const HeaderRightSectionResetText = styled.div({
   marginRight: "10px",
   borderRight: "1px solid #d9d9d9",

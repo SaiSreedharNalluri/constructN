@@ -288,7 +288,7 @@ function BasicTabs(props: any) {
         }
       })
       .catch((error) => {
-        toast.error("failed to load the data");
+        CustomToast("failed to load the data","error");
       });
   };
 
@@ -305,7 +305,7 @@ function BasicTabs(props: any) {
         entity: entityId,
       }).then((response) => {
         if (response.success === true) {
-          toast.success("Comment is added sucessfully");
+          CustomToast("Comment is added sucessfully","success");
           setBackendComments([...backendComments, response.result]);
         }
       });
@@ -928,7 +928,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           }
         })
         .catch((error) => {
-          toast.error(error.message);
+          CustomToast(error.message,"error");
         });
     };
   };
@@ -1037,16 +1037,16 @@ const CustomIssueDetailsDrawer = (props: any) => {
       editIssue(projectId, data, selectedIssue?._id)
         .then((response) => {
           if (response.success === true) {
-            toast.success("Issue updated sucessfully");
+            CustomToast("Issue updated sucessfully","success");
             getIssues(currentStructure._id);
           } else {
-            toast.error("Error updating the issue");
+            CustomToast("Error updating the issue","error");
           }
           setOpenCreateTask(false);
         })
         .catch((error) => {
           if (error.success === false) {
-            toast.error(error?.message);
+            CustomToast(error?.message,"error");
           }
           setOpenCreateTask(false);
         });
@@ -1126,7 +1126,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       createAttachment(issue._id, fileformdata)
         .then((response) => {
           if (!response.success) {
-            toast.error("Error uploading attachments");
+            CustomToast("Error uploading attachments","error");
           }
           saveEditDetails(data, projectId);
         })
@@ -1150,13 +1150,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
     editIssue(projectId as string, issueData, selectedIssue?._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Issue updated sucessfully");
+          CustomToast("Issue updated sucessfully","success");
           getIssues(currentStructure._id);
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+          CustomToast(error?.message,"error");
         }
       });
   };

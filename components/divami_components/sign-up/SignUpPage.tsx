@@ -33,11 +33,10 @@ import UnChecked from "../../../public/divami_icons/unchecked.svg";
 import Checked from "../../../public/divami_icons/checked.svg";
 import FooterSignIn from "../sign-in/FooterSignIn";
 import { registerUser } from "../../../services/userAuth";
-import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import FooterSignUp from "./FooterSignUp";
 import PasswordRequired from "../password-field/PasswordRequired";
-
+import { CustomToast } from "../custom-toaster/CustomToast";
 const SignUpPage = () => {
   const router = useRouter();
 
@@ -206,7 +205,8 @@ const SignUpPage = () => {
       .then((response) => {
         setRegisterEnable(true)
         if (response.success === true) {
-          toast.success("User Registeration completed in sucessfully");
+          // toast.success("User ");
+          CustomToast("User Registration completed successfully", "success");
       
           router.push(
             {
@@ -219,7 +219,7 @@ const SignUpPage = () => {
       })
       .catch((error) => {
         setRegisterEnable(true)
-        toast.error(error.response.data.message);
+        CustomToast(error.response.data.message,"error");
       });
     }
   };

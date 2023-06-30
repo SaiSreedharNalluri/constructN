@@ -13,6 +13,7 @@ import {
 } from '../../../../services/comments';
 import CommentForm from './commentForm';
 import CommentsListing from './commentsListing';
+import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 interface IProps {
   entityId: string;
 }
@@ -33,7 +34,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
             }
           })
           .catch((error) => {
-            toast.error('failed to load the data');
+            CustomToast('failed to load the data',"error");
           });
     }
   }, [entityId, router.isReady, router.query.projectId]);
@@ -43,7 +44,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
       entity: entityId,
     }).then((response) => {
       if (response.success === true) {
-        toast.success('Comment is added sucessfully');
+        CustomToast('Comment is added sucessfully',"success");
         setBackendComments([...backendComments, response.result]);
       }
     });
@@ -57,7 +58,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
         comment._id
       ).then((response) => {
         if (response.success === true) {
-          toast.success('Comment reply is updated sucessfully');
+          CustomToast('Comment reply is updated sucessfully',"success");
           const indexOfUserToReplace = backendComments.findIndex(
             (comment) => comment._id === comment._id
           );
@@ -73,7 +74,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
         comment: text,
       }).then((response) => {
         if (response.success === true) {
-          toast.success('Comment is updated sucessfully');
+          CustomToast('Comment is updated sucessfully',"success");
           const updatedBackendComments = backendComments.map(
             (backendComment) => {
               if (backendComment._id === comment._id) {
@@ -95,7 +96,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
       commentId
     ).then((response) => {
       if (response.success === true) {
-        toast.success(response.message);
+        CustomToast(response.message,"success");
         const indexOfUserToReplace = backendComments.findIndex(
           (comment) => comment._id === commentId
         );
@@ -116,7 +117,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
       )
         .then((response) => {
           if (response.success === true) {
-            toast.success(response.message);
+            CustomToast(response.message,"success");
             const indexOfUserToReplace = backendComments.findIndex(
               (commentobj) => commentobj._id === comment?.commentId
             );
@@ -133,7 +134,7 @@ const Comments: React.FC<IProps> = ({ entityId }) => {
       deleteComment(router.query.projectId as string, comment._id).then(
         (response) => {
           if (response.success === true) {
-            toast.success(response.message);
+            CustomToast(response.message,"success");
             const updatedBackendComments = backendComments.filter(
               (backendComment) => backendComment._id !== comment._id
             );

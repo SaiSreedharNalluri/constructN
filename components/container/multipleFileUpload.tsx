@@ -3,6 +3,7 @@ import React from 'react';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { createAttachment } from '../../services/attachments';
+import { CustomToast } from "../divami_components/custom-toaster/CustomToast";
 interface IProps {
   issueId: string;
   responseData: (formData: any) => void;
@@ -25,7 +26,7 @@ const MultipleFileUpload: React.FC<IProps> = ({ issueId, responseData }) => {
     }
     createAttachment(issueId, formData).then((response) => {
       if (response.success === true) {
-        toast.success('Attachments are added sucessfully');
+        CustomToast('Attachments are added sucessfully',"success");
         responseData(response.result);
         formikHelpers.resetForm({});
       }
