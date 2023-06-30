@@ -354,6 +354,7 @@ const Index: React.FC<any> = () => {
 
       if (containsEmptyString) {
         toast.error("Fields cannot be empty");
+        setConfigEnabled(true);
         return;
       }
 
@@ -361,6 +362,7 @@ const Index: React.FC<any> = () => {
         containsRepeated(formValues.priority.map((item: string) => item.trim()))
       ) {
         toast.error("Duplicate Name(s) not allowed");
+        setConfigEnabled(true);
         return;
       }
 

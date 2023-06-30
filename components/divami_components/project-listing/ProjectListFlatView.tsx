@@ -58,7 +58,7 @@ export const ProjectListFlatView = ({
     setProjectsState([...projects]);
   }, [projects]);
 
-  const sortBy = (a: any, b: any, field: string) => {
+  const sortBy = (field: string) => {
     if (sortObj) {
       setProjectsState(
         [].concat(projectsState).sort((a, b) => a[field] - b[field])
@@ -67,6 +67,28 @@ export const ProjectListFlatView = ({
       setProjectsState(
         [].concat(projectsState).sort((a, b) => b[field] - a[field])
       );
+    }
+    setSortObj(!sortObj);
+    // return a.numberOfUsers - b.numberOfUsers;
+  };
+
+  const sortByLastUpdated = () => {
+    if (sortObj) {
+      setProjectsState([
+        ...projects.sort((a: any, b: any) => {
+          return (
+            new Date(a.updatedAt).valueOf() - new Date(b.updatedAt).valueOf()
+          );
+        }),
+      ]);
+    } else {
+      setProjectsState([
+        ...projectsState.sort((a: any, b: any) => {
+          return (
+            new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf()
+          );
+        }),
+      ]);
     }
     setSortObj(!sortObj);
     // return a.numberOfUsers - b.numberOfUsers;
@@ -207,7 +229,7 @@ export const ProjectListFlatView = ({
       },
       cellStyle: { width: "10%" },
 
-      customSort: (a: any, b: any) => sortBy(a, b, "numberOfUsers"),
+      customSort: () => sortBy("numberOfUsers"),
       render: (rowData: any) => {
         return (
           <UsersInfo>
@@ -293,7 +315,7 @@ export const ProjectListFlatView = ({
       },
       cellStyle: { width: "28%" },
 
-      customSort: (a: any, b: any) => sortBy(a, b, "lastUpdated"),
+      customSort: () => sortByLastUpdated(),
       render: (rowData: any) => {
         return <>{moment(rowData.updatedAt).format("DD MMM YYYY")}</>;
       },
