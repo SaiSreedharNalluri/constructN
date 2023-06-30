@@ -1670,7 +1670,8 @@ function GenericViewer(props) {
       onResize={(e, direction, ref, delta, position) => {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
       }}
-      className={`${'rounded-lg bg-white'}`}>
+      className={`${'rounded-lg bg-white'}`} 
+      cancel={`#minimap-${count}`}>
       <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
         <div className='h-8 rounded-lg bg-white flex'>
           <IconButton className='cursor-move' size="small">
