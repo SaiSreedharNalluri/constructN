@@ -240,7 +240,7 @@ const Index: React.FC<IProps> = () => {
           }
         })
         .catch((error) => {
-          CustomToast("failed to load data","Error");
+          CustomToast("failed to load data","error");
         });
 
       getTasksPriority(router.query.projectId as string)
