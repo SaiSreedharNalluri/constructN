@@ -20,6 +20,7 @@ import ReactSelect from "react-select";
 import { getTagsList } from "../../../../services/tags";
 import { Issue } from "../../../../models/Issue";
 import html2canvas from "html2canvas";
+import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 interface IProps {
   issueToolClicked: (a: ITools) => void;
   closeOverlay: () => void;
@@ -167,7 +168,7 @@ const IssueCreate: React.FC<IProps> = ({
     let jreq: any = values;
     for (let i = 0; i < jreq.attachments?.length; i++) {
       if (jreq.attachments![i].size > 50 * 1024 * 1024) {
-        toast.error("file size is to large. failed to create issue");
+        CustomToast("file size is to large. failed to create issue","error");
         values.assignees = assignees;
         values.tags = tags;
         values.attachments = attachment;
@@ -183,7 +184,7 @@ const IssueCreate: React.FC<IProps> = ({
     createIssueWithAttachments(router.query.projectId as string, formData)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Issue is added sucessfully");
+          CustomToast("Issue is added sucessfully","success");
           handleIssueSubmit(response.result);
           toolInstance.toolAction = "issueCreateSuccess";
           issueToolClicked(toolInstance);
@@ -206,9 +207,9 @@ const IssueCreate: React.FC<IProps> = ({
         toolInstance.toolAction = "issueCreateFail";
         issueToolClicked(toolInstance);
         if (error.success === false) {
-          toast.error(error?.message);
+          CustomToast(error?.message,"error");
         } else {
-          toast.error("some thing went to worng, failed to create the issue");
+        CustomToast("some thing went to worng, failed to create the issue","error");
         }
       });
   };

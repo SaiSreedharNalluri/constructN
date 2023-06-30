@@ -43,6 +43,7 @@ import {
   FilterCardSecondContainer,
   FilterFooter,
   FilterCardSelectAllTextHeader,
+  HeaderRightSectionCloseIcon,
 } from "./StyledComponent";
 import {
   getTaskTags,
@@ -645,6 +646,7 @@ const TaskFilterCommon: React.FC<any> = ({
               {/* <Image src={closeIcon} alt="reset"   onClick={() => {
               handleClose();
               }} /> */}
+             <HeaderRightSectionCloseIcon >
               <CloseIcon
                 onClick={() => {
                   handleClose();
@@ -653,6 +655,7 @@ const TaskFilterCommon: React.FC<any> = ({
                 src={closeWithCircle}
                 alt={"close icon"}
               />
+              </HeaderRightSectionCloseIcon>
             </HeaderRightSection>
           </TitleContainer>
         </HeaderContainer>

@@ -16,6 +16,7 @@ import {
   TitleContainer,
   ButtonsContainer,
   FilterFooter,
+  HeaderRightSectionCloseIcon,
 } from "../../divami_components/task-filter-common/StyledComponent";
 import CustomButton from "../custom-button/CustomButton";
 import FormWrapper from "../form-wrapper/FormWrapper";
@@ -163,8 +164,8 @@ const ProjectListFilter: React.FC<any> = ({
               >
                 Reset
               </HeaderRightSectionResetText>
-
-              <CloseIcon
+                <HeaderRightSectionCloseIcon>
+                <CloseIcon
                 onClick={() => {
                   handleClose();
                 }}
@@ -172,6 +173,8 @@ const ProjectListFilter: React.FC<any> = ({
                 src={closeWithCircle}
                 alt={"close icon"}
               />
+                </HeaderRightSectionCloseIcon>
+             
             </HeaderRightSection>
           </TitleContainer>
         </HeaderContainer>

@@ -13,12 +13,12 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Chip from "@mui/material/Chip";
 import { styled } from "@mui/system";
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import _ from "lodash";
 import Moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import BackArrow from "../../../public/divami_icons/backArrow.svg";
 import Clip from "../../../public/divami_icons/clip.svg";
 import Delete from "../../../public/divami_icons/delete.svg";
@@ -272,7 +272,7 @@ function BasicTabs(props: any) {
         entity: entityId,
       }).then((response) => {
         if (response.success === true) {
-          toast.success("Comment is added sucessfully");
+          CustomToast("Comment is added sucessfully","success");
           setBackendComments([...backendComments, response.result]);
         }
       });
@@ -288,7 +288,7 @@ function BasicTabs(props: any) {
         }
       })
       .catch((error) => {
-        toast.error("failed to load the data");
+        CustomToast("failed to load the data","error");
       });
   };
   useEffect(() => {
@@ -992,16 +992,16 @@ const CustomTaskDetailsDrawer = (props: any) => {
       updateTask(projectId, data, selectedTask?._id)
         .then((response) => {
           if (response.success === true) {
-            toast.success("Task updated sucessfully");
+            CustomToast("Task updated sucessfully","success");
             getTasks(currentStructure._id);
           } else {
-            toast.error("Error updating the task");
+            CustomToast("Error updating the task","error");
           }
           setOpenCreateTask(false);
         })
         .catch((error) => {
           if (error.success === false) {
-            toast.error(error?.message);
+            CustomToast(error?.message,"error");
           }
           setOpenCreateTask(false);
         });
@@ -1098,13 +1098,13 @@ const CustomTaskDetailsDrawer = (props: any) => {
       createAttachment(task._id, fileformdata)
         .then((response) => {
           if (!response.success) {
-            toast.error("Error uploading attachments");
+            CustomToast("Error uploading attachments","error");
           }
           saveEditDetails(data, projectId);
         })
         .catch((error) => {
           if (error.success === false) {
-            toast.error(error?.message);
+          CustomToast(error?.message,"error");
           }
         });
     } else {
@@ -1126,14 +1126,14 @@ const CustomTaskDetailsDrawer = (props: any) => {
     updateTask(projectId as string, issueData, selectedTask?._id)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Task updated sucessfully");
+          CustomToast("Task updated sucessfully","success");
           getTasks(currentStructure._id);
         } else {
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+          CustomToast(error?.message,"error");
         }
       });
   };

@@ -134,7 +134,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
               case "pointCloud":
                 return "Reality";
               case "orthoPhoto":
-                return "Orthophoto";
+                return "Map";
               default:
                 return typeData;
             }
@@ -149,7 +149,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         setSelectedTypeVal("Reality");
         break;
       case "orthoPhoto":
-        setSelectedTypeVal("Orthophoto");
+        setSelectedTypeVal("Map");
         break;
       default:
         setSelectedTypeVal(selectedType);
@@ -165,7 +165,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         case "Reality":
           setViewType("pointCloud");
           break;
-        case "Orthophoto":
+        case "Map":
           setViewType("orthoPhoto");
           break;
         default:

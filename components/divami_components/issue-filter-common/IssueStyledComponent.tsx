@@ -46,6 +46,12 @@ export const HeaderRightSection = styled.div({
 });
 export const HeaderRightSectionResetIcon = styled.div({
   marginRight: "7px",
+  borderRadius:"50%",
+  padding:"6px",
+  "&:hover": {
+    cursor: "pointer",
+    background:"#E7E7E7"
+  },
 });
 
 export const HeaderRightSectionResetText = styled.div({
@@ -58,6 +64,14 @@ export const HeaderRightSectionResetText = styled.div({
   color: " #F1742E",
 });
 
+export const HeaderRightSectionCloseIcon = styled.div({
+  borderRadius:"50%",
+  padding:"4px",
+  "&:hover": {
+    cursor: "pointer",
+    background:"#E7E7E7"
+  },
+});
 export const HeaderRightSectionCancel = styled.div({});
 
 export const FilterCardContainer = styled.div({

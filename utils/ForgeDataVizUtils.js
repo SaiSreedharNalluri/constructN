@@ -34,9 +34,39 @@ export class ForgeDataVizUtils {
 
         this._lastUpdated = Date.now()
 
-        // this._createNavigator()
+        this._createNavigator()
 
-        // this._createModelBuilder()
+        this._viewer.impl.overlayScenes.pivot.needSeparateDepth = true
+
+        this._viewer.impl.overlayScenes.DataVizDots.needSeparateDepth = false
+
+        this._viewer.impl.invalidate(false, false, true)
+
+        this._scaleFactor = 1
+
+        this._viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (e) => {
+
+            const zoom = e.camera.position.z
+
+            if(Math.abs(zoom - this._scaleFactor) > 0.1) {
+
+                this._scaleFactor = zoom
+
+                this._viewer.impl.invalidate(false, false, true)
+
+                const scale = this._scaleFactor / 17
+
+                if(this._navigatorMesh) {
+                    
+                    this._navigatorMesh.scale.x = scale
+
+                    this._navigatorMesh.scale.y = scale
+
+                }
+
+            }
+
+        })
     }
 
     setTransform(tm, offset) {
@@ -341,83 +371,92 @@ export class ForgeDataVizUtils {
 
         const localPos = this._toLocalPosition(position)
 
-        localPos.z += 10
+        // localPos.z += 10
 
-        if (!this._dbMap[1] && yaw != 0) {
+        if(this._navigatorMesh) {
 
-            await this._createNavigator(localPos, yaw)
+            this._navigatorMesh.rotation.z = yaw
 
-        }
-
-        this._invalidateViewables(1, this._dataVizExtn.pointMeshes, this._viewableDataMap[ForgeDataVizUtils.NAVIGATOR], () => {
-
-            let deg = MathUtils.radToDeg(yaw) % 360
-
-            if (deg > 0) deg = 360 - deg
-
-            else deg = deg * -1
-
-            deg = (Math.floor(deg / 5) * 5) % 360
-
-            const mUrl = `/icons/navigator/loc-${deg}.png`
-
-            return {
-
-                position: localPos,
-
-                url: mUrl
-            }
-        })
-
-        if (Date.now() - this._lastUpdated < 100) {
-
-            this._navTimer && clearTimeout(this._navTimer)
-
-            this._lastUpdated = Date.now()
-
-            this._navTimer = setTimeout(() => {
-
-                for (let k = this._dataVizExtn.pointMeshes.length - 1; k > -1; k--) {
-
-                    const mesh = this._dataVizExtn.pointMeshes[k]
-
-                    if (mesh.geometry.dbIds.indexOf(1) > -1) {
-
-                        this._viewer.overlays.removeMesh(mesh, 'DataVizDots')
-
-                        this._dataVizExtn.pointMeshes.splice(k, 1)
-
-                        this._dbMap[1] = undefined
-                    }
-                }
-
-                this._lastUpdated = Date.now()
-
-                this._navTimer = undefined
-
-                this._createNavigator(localPos, yaw).then(() => this._viewer.resize)
-
-            }, 100)
-
-        } else {
-
-            this._lastUpdated = Date.now()
+            this._navigatorMesh.position.set(localPos.x, localPos.y, localPos.z)
 
         }
+
+        this._viewer.impl.invalidate(false, false, true)
+
     }
 
-    _createNavigator = async (pos, yaw) => {
+    _createNavigator = () => {
 
-        if (!this._dbMap[1]) {
+        if(!this._navigatorMesh) {
 
-            const _viewableData = await this._createViewableData(
-                [{ position: pos, type: ForgeDataVizUtils.NAVIGATOR }],
-                ForgeDataVizUtils.NAVIGATOR, yaw)
+            const group = new THREE.Group()
 
-            this._viewableDataMap[ForgeDataVizUtils.NAVIGATOR] = _viewableData
+            group.add(this._createBaseCircle())
 
-            this._dataVizExtn.addViewables(_viewableData)
+            group.add(this._createArrow())
+
+            group.add(this._createBorder())
+
+            group.position.set(0, 0, 0)
+
+            group.rotation.z = 0
+
+            this._navigatorMesh = group
+
+            this._viewer.overlays.addMesh(this._navigatorMesh, 'pivot')
+
+            this._viewer.impl.overlayScenes['pivot'].scene.position.z = 1
+
         }
+
+    }
+
+    _createArrow = () => {
+
+        const shape = new THREE.Shape()
+
+        shape.moveTo(0, 0.6)
+
+        shape.moveTo(-0.5, -0.5)
+
+        shape.moveTo(0, -0.15)
+
+        shape.moveTo(0.5, -0.4)
+
+        shape.moveTo(0, 0.6)
+
+        const geom = new THREE.ShapeGeometry(shape)
+
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff })
+
+        const mesh = new THREE.Mesh(geom, material)
+
+        return mesh
+
+    }
+
+    _createBaseCircle = () => {
+
+        const geom = new THREE.RingGeometry(0, 0.75, 360)
+
+        const material = new THREE.MeshBasicMaterial({ color: 0x797ef6 })
+
+        const mesh = new THREE.Mesh(geom, material)
+
+        return mesh
+
+    }
+
+    _createBorder = () => {
+
+        const geom = new THREE.RingGeometry(0.8, 0.9, 360)
+
+        const material = new THREE.MeshBasicMaterial({ color: 0x797ef6 })
+
+        const mesh = new THREE.Mesh(geom, material)
+
+        return mesh
+
     }
 
     _createViewableData = async (data, type, yaw) => {

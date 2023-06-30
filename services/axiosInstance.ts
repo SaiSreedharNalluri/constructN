@@ -21,19 +21,20 @@ instance.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.log(error?.response)
     if (
       error?.response?.status === 401 &&
-      error?.response?.data?.userVerificationToken
+      (error?.response?.data?.userVerificationToken || error?.response?.request.responseURL.contains('change-password'))
     ) {
     } else if (
       error?.response?.status === 401 &&
       urlExclude.includes(error?.response?.config?.url?.split("/")?.pop()) ===
         false
     ) {
-      if (typeof window !== "undefined") {
-        removeCookies("user");
-        window.location.href = "/login";
-      }
+      // if (typeof window !== "undefined") {
+      //   removeCookies("user");
+      //   window.location.href = "/login";
+      // }
     }
     // Do something with response error
     return Promise.reject(error);
