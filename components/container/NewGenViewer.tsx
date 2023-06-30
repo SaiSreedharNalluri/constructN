@@ -1126,6 +1126,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
       maxHeight={'99%'}
       bounds={count == 1 ? '#TheView' : '#CompareView'}
       default={{ x: count == 1 ? 84 : 24, y: 75, width: 320, height: 320 }}
+      onDragStop={(e, data)=>{ minimapUtils.current?.resize(); }}
       onResize={(e, direction, ref, delta, position) => {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
       }}
