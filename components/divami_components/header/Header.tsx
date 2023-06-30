@@ -528,7 +528,7 @@ const Header: React.FC<any> = ({
 
         {supportMenu && (
           <div className="absolute top-[64px]  shadow-md right-[97px] bg-gray-50   z-[1500]  border mx-0.5">
-            <Link href="https://constructnai.freshdesk.com/support/home">
+            <Link href="https://constructnai.freshdesk.com/support/home" passHref target="_blank">
               <div
                 className="flex items-center  cursor-pointer p-2  w-[175px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
                 onClick={() => {
@@ -541,7 +541,7 @@ const Header: React.FC<any> = ({
               </div>
             </Link>
 
-            <Link href="https://constructnai.freshdesk.com/support/solutions">
+            <Link href="https://constructnai.freshdesk.com/support/solutions" passHref target="_blank">
               <div
                 className="flex items-center  cursor-pointer p-2  w-[175px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
                 onClick={() => {
@@ -553,7 +553,7 @@ const Header: React.FC<any> = ({
               </div>
             </Link>
 
-            <Link href="https://constructnai.freshdesk.com/support/tickets">
+            <Link href="https://constructnai.freshdesk.com/support/tickets" passHref target="_blank">
               <div
                 className="flex items-center  cursor-pointer p-2  w-[175px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
                 onClick={() => {
@@ -565,7 +565,8 @@ const Header: React.FC<any> = ({
               </div>
             </Link>
 
-            <Link href="https://constructnai.freshdesk.com/support/tickets/new">
+            <Link href="https://constructnai.freshdesk.com/support/tickets/new" passHref target="_blank">
+              
               <div
                 className="flex items-center  cursor-pointer p-2  w-[175px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
                 onClick={() => {
@@ -575,6 +576,7 @@ const Header: React.FC<any> = ({
                 <FontAwesomeIcon icon={faTicket}></FontAwesomeIcon>
                 <p className="logout-button px-4 py-1">Raise Ticket</p>
               </div>
+              
             </Link>
 
             {/* {showPopUp && (
