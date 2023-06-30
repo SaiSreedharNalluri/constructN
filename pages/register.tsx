@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import RegisterPage from "../components/container/registerPage";
 import { registerUser } from "../services/userAuth";
-import { CustomToast } from "../../constructn-web/components/divami_components/custom-toaster";
+import { CustomToast } from "../components/divami_components/custom-toaster/CustomToast";
 
 
 const Register: React.FC = () => {

@@ -34,7 +34,7 @@ export class ForgeDataVizUtils {
 
         this._lastUpdated = Date.now()
 
-        this._createNavigator()
+        this._viewer.impl.overlayScenes.pivot.scene.children = []
 
         this._viewer.impl.overlayScenes.pivot.needSeparateDepth = true
 
@@ -42,7 +42,7 @@ export class ForgeDataVizUtils {
 
         this._viewer.impl.invalidate(false, false, true)
 
-        this._scaleFactor = 1
+        this._createNavigator()
 
         this._viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (e) => {
 
@@ -161,8 +161,6 @@ export class ForgeDataVizUtils {
     loadMediaData = async (mediaData) => {
 
         for (const [type, realities] of Object.entries(mediaData)) {
-
-            this._removeViewableData(type)
 
             const data = []
 
@@ -388,6 +386,8 @@ export class ForgeDataVizUtils {
     _createNavigator = () => {
 
         if(!this._navigatorMesh) {
+
+            this._scaleFactor = 1
 
             const group = new THREE.Group()
 
