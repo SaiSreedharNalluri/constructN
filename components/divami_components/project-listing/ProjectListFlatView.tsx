@@ -124,7 +124,11 @@ export const ProjectListFlatView = ({
       },
       cellStyle: { width: "32%" },
       render: (rowData: any) => {
-        return <>{truncateString(rowData.projectName, 50)}</>;
+        return <><div className="hover:cursor-pointer" onClick={()=>{
+          router.push(`/projects/${rowData._id}/sections`);
+        }}>
+          {truncateString(rowData.projectName, 50)}
+          </div></>;
       },
     },
     {
