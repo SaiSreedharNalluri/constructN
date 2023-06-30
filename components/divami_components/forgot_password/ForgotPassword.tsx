@@ -24,7 +24,7 @@ import FooterSignIn from "./FooterSign";
 import { resetPasswordInit } from "../../../services/userAuth";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 const ForgotPassword = () => {
   // form wrapper code
   const [formData, setFormData] = useState<any>(null);
@@ -54,7 +54,7 @@ const ForgotPassword = () => {
       resetPasswordInit(email?.toLocaleLowerCase())
       .then((response: any) => {
         if (response?.success) {
-          toast.success(response?.message);
+          CustomToast(response?.message,"success");
           setResetPasswordEnable(true)
           router.push(
             {
@@ -74,7 +74,7 @@ const ForgotPassword = () => {
           error.message ||
           error.toString();
 
-        toast.error("Invalid Credentials");
+        CustomToast("Invalid Credentials","error");
       });
     }
    

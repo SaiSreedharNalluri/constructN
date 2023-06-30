@@ -16,6 +16,7 @@ import { ISnapshot } from "../../../../models/ISnapshot";
 import { getCookie } from "cookies-next";
 import { toast } from "react-toastify";
 import { IContext, IToolResponse } from "../../../../models/ITools";
+import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 interface IProps {
   closeOverlay: () => void;
   visibility: boolean;
@@ -105,14 +106,14 @@ const TaskCreate: React.FC<IProps> = ({
     createTask(router.query.projectId as string, formData)
       .then((response) => {
         if (response.success === true) {
-          toast.success("Task added sucessfully");
+          CustomToast("Task added sucessfully","success");
           handleTaskSubmit(formData);
           console.log(formData);
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+          CustomToast(error?.message,"error");
         }
       });
   };

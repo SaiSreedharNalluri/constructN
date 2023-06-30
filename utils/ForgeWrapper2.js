@@ -659,7 +659,7 @@ export const ForgeViewerUtils = function () {
     if (_bimWalkExtn && !_manifestNode.is2D()) {
       if (type !== "3d") {
         _viewer.navigation.setIsLocked(false);
-        if (isCompareView() && (type === "360 Video" || type === "360 Image")) {
+        if (isCompareView() && (type === "360 Video" || type === "360 Image" || type === "Drone Image")) {
           _viewer.navigation.setLockSettings({
             orbit: false,
             pan: false,

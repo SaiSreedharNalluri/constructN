@@ -45,7 +45,7 @@ import { CustomTextField } from "../custom-textfield/CustomTextField";
 import ProjectInfo from "../../container/projectInfo";
 import { MTableBodyRow } from "material-table";
 import { role } from "../../../utils/constants";
-
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 export const AddUsersEmailOverlay = ({
   form,
   setOpenDrawer,
@@ -197,28 +197,28 @@ export const AddUsersEmailOverlay = ({
         addUserRoles(projectInfo, selectedProjectId)
           .then((res: any) => {
             if (newUsers === 0) {
-              toast.success(
+              CustomToast(
                 `${
                   addedUsers?.length - newUsers > 1
                     ? `${addedUsers?.length - newUsers} Users`
                     : `${addedUsers?.length - newUsers} User`
-                } have been added to the project successfully   `
+                } have been added to the project successfully   `,"success"
               );
             } else if (addedUsers?.length - newUsers >= 1) {
-              toast.success(
+              CustomToast(
                 `${
                   addedUsers?.length - newUsers > 1
                     ? `${addedUsers?.length - newUsers} Users`
                     : `${addedUsers?.length - newUsers} User`
                 } have been added to the project successfully & ${
                   newUsers > 1 ? ` ${newUsers} Users` : `${newUsers} User`
-                } have been sent invite to register `
+                } have been sent invite to register `,"success"
               );
             } else {
-              toast.success(
+              CustomToast(
                 ` ${
                   newUsers > 1 ? ` ${newUsers} Users` : `${newUsers} User`
-                } have been sent invite to register `
+                } have been sent invite to register `,"success"
               );
             }
             setOpenDrawer(false);
@@ -226,8 +226,7 @@ export const AddUsersEmailOverlay = ({
             setEnableAddUser(true);
           })
           .catch((err) => {
-            toast.error(err.message);
-
+            CustomToast("You do not have access,Contact Admin","error");
             setEnableAddUser(true);
           });
       }
@@ -264,7 +263,7 @@ export const AddUsersEmailOverlay = ({
         setSearchVal("");
       })
       .catch((err) => {
-        toast.error(err.message);
+        CustomToast(err.message,"error");
       });
   };
 
@@ -317,7 +316,6 @@ export const AddUsersEmailOverlay = ({
           {/* </SearchAreaContainer> */}
         </HeaderActions>
       </TableHeader>
-      <div className=" calc-h319 overflow-y-auto overflow-x-hidden  ">
         <ThemeProvider theme={defaultMaterialTheme}>
           <TableWrapper hideHeader id="addUserList">
             <StyledTable
@@ -363,7 +361,7 @@ export const AddUsersEmailOverlay = ({
             />
           </TableWrapper>
         </ThemeProvider>
-      </div>
+     
       <FooterWrapper>
         <UnregisteredContainer>
           <UnregisteredIcon src={infoicon} alt=""></UnregisteredIcon>

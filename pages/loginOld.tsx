@@ -6,6 +6,7 @@ import { deleteCookie, getCookie } from "cookies-next";
 import { toast } from "react-toastify";
 import { Mixpanel } from "../components/analytics/mixpanel";
 import Modal from "react-responsive-modal";
+import { CustomToast } from "../../constructn-web/components/divami_components/custom-toaster/CustomToast";
 const LoginOld: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
@@ -37,7 +38,7 @@ const LoginOld: React.FC = () => {
         if (response.success === true) {
           if (response?.result?.verified === true) {
             localStorage.setItem("userInfo", response.result?.fullName);
-            toast.success("user logged in sucessfully");
+            CustomToast("user logged in sucessfully","success");
             Mixpanel.identify(email);
             Mixpanel.track("login_success", {
               email: email,
@@ -72,14 +73,14 @@ const LoginOld: React.FC = () => {
       .then((response) => {
         if (response.success === true) {
           setOpen(false);
-          toast.success(response.message);
+          CustomToast(response.message,"success");
           setTimeout(() => {
             router.reload();
           }, 3000);
         }
       })
       .catch((error) => {
-        toast.error(error.message);
+        CustomToast(error.message,"error");
       });
   };
   return (

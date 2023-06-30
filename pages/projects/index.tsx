@@ -67,7 +67,7 @@ import {
   updateTaskPriorityList,
   updateTaskStatusList,
 } from "../../services/projectConfigApi";
-import { toast } from "react-toastify";
+import { CustomToast } from "../../components/divami_components/custom-toaster/CustomToast";
 import Moment from "moment";
 import CustomLoader from "../../components/divami_components/custom_loader/CustomLoader";
 import React from "react";
@@ -353,7 +353,7 @@ const Index: React.FC<any> = () => {
       );
 
       if (containsEmptyString) {
-        toast.error("Fields cannot be empty");
+        CustomToast("Fields cannot be empty","error");
         setConfigEnabled(true);
         return;
       }
@@ -361,7 +361,7 @@ const Index: React.FC<any> = () => {
       if (
         containsRepeated(formValues.priority.map((item: string) => item.trim()))
       ) {
-        toast.error("Duplicate Name(s) not allowed");
+        CustomToast("Duplicate Name(s) not allowed","error");
         setConfigEnabled(true);
         return;
       }
@@ -375,42 +375,42 @@ const Index: React.FC<any> = () => {
               ...formValues.priority.map((ele: string) => ele.trim()),
             ],
           });
-          toast.success("Issue priority list updated successfully");
+          CustomToast("Issue priority list updated successfully","success");
         } else if (selectedOption === "taskPriority") {
           await updateTaskPriorityList(projectId, {
             taskPriorityList: [
               ...formValues.priority.map((ele: string) => ele.trim()),
             ],
           });
-          toast.success("Task priority list updated successfully");
+          CustomToast("Task priority list updated successfully","success");
         } else if (selectedOption === "issueStatus") {
           await updateIssueStatusList(projectId, {
             issueStatusList: [
               ...formValues.priority.map((ele: string) => ele.trim()),
             ],
           });
-          toast.success("Issue status list updated successfully");
+          CustomToast("Issue status list updated successfully","success");
         } else if (selectedOption === "taskStatus") {
           await updateTaskStatusList(projectId, {
             taskStatusList: [
               ...formValues.priority.map((ele: string) => ele.trim()),
             ],
           });
-          toast.success("Task status list updated successfully");
+          CustomToast("Task status list updated successfully","success");
         } else if (selectedOption === "tag") {
           await updateTagList(projectId, {
             tagList: [...formValues.priority.map((ele: string) => ele.trim())],
           });
-          toast.success("Tag list updated successfully");
+          CustomToast("Tag list updated successfully","success");
         }
         setConfigEnabled(true);
         setShowbutton(false);
       } catch (error: any) {
         if (error && error?.success === false) {
           if (error.message === "Forbidden Access") {
-            toast.error("Not authorized. Ask the Project Admin for help");
+            CustomToast("Not authorized. Ask the Project Admin for help","Error");
           } else {
-            toast.error("Project Config could not be updated");
+            CustomToast("Project Config could not be updated","error");
           }
           setConfigEnabled(true);
         }
@@ -432,7 +432,7 @@ const Index: React.FC<any> = () => {
     removeProjectUser(email, rowData.projectId as string)
       .then((response) => {
         if (response?.success === true) {
-          toast.success(response?.message);
+          CustomToast(response?.message,"success");
           //update current proj list
 
           projects.splice(
@@ -448,7 +448,7 @@ const Index: React.FC<any> = () => {
       .catch((error) => {
         if (error.success === false) {
           // toast.error(error?.message);
-          toast.error("You  don't have permission. Contact Admin");
+          CustomToast("You  don't have permission. Contact Admin","error");
         }
       });
   };

@@ -97,7 +97,6 @@ import {
 } from "@mui/material";
 import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
-import { toast } from "react-toastify";
 import { ITools } from "../../../models/ITools";
 import {
   downloadMenuOptions,
@@ -113,6 +112,7 @@ import blockedFrame from "../../../public/divami_icons/blockedFrame.svg";
 import CompletedIconTask from "../../../public/divami_icons/CompletedIconTask.svg";
 import smallDivider from "../../../public/divami_icons/smallDivider.svg";
 import Task from "../../../public/divami_icons/Task.svg";
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 
 interface IProps {
   closeOverlay: () => void;
@@ -832,9 +832,9 @@ const CustomTaskListDrawer = (props: any) => {
               onClick={() => {
                 onClose();
                 openTaskCreateFn();
-                toast.success(
+                CustomToast(
                   "Click on the map where you want to create a task"
-                );
+                ,"success");
               }}
             >
               Raise Task

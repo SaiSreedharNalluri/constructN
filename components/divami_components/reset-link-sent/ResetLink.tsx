@@ -24,7 +24,7 @@ import Illustration from "../../../public/divami_icons/Illustration.svg";
 import backIcon from "../../../public/divami_icons/backIcon.svg";
 import resentSuccess from "../../../public/divami_icons/resentSuccess.svg";
 import { resetPasswordInit } from "../../../services/userAuth";
-import { toast } from "react-toastify";
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 
 const ResetLink = ({ queryMail }: any) => {
   // const maskedEmail = queryMail.replace(/.(?=.*?@)/g, "*");
@@ -41,7 +41,7 @@ const ResetLink = ({ queryMail }: any) => {
     resetPasswordInit(email?.toLocaleLowerCase())
       .then((response: any) => {
         if (response?.success) {
-          toast.success(response?.message);
+          CustomToast(response?.message,"success");
 
           // router.push(
           //   {
@@ -61,7 +61,7 @@ const ResetLink = ({ queryMail }: any) => {
           error.message ||
           error.toString();
 
-        toast.error("Invalid Credentials");
+        CustomToast("Invalid Credentials","error");
       });
   };
 

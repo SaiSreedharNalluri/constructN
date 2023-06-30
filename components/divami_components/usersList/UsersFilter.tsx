@@ -32,6 +32,7 @@ import {
   FilterCardSecondContainer,
   FilterFooter,
   FilterCardSelectAllTextHeader,
+  HeaderRightSectionCloseIcon,
 } from "../../divami_components/task-filter-common/StyledComponent";
 import CustomLabel from "../custom-label/CustomLabel";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
@@ -352,7 +353,7 @@ const UsersFilter: React.FC<any> = ({
               >
                 Reset
               </HeaderRightSectionResetText>
-
+              <HeaderRightSectionCloseIcon>
               <CloseIcon
                 onClick={() => {
                   handleClose();
@@ -361,6 +362,7 @@ const UsersFilter: React.FC<any> = ({
                 src={closeWithCircle}
                 alt={"close icon"}
               />
+              </HeaderRightSectionCloseIcon>
             </HeaderRightSection>
           </TitleContainer>
         </HeaderContainer>
