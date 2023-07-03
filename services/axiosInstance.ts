@@ -32,10 +32,10 @@ instance.interceptors.response.use(
       urlExclude.includes(error?.response?.config?.url?.split("/")?.pop()) ===
         false
     ) {
-      // if (typeof window !== "undefined") {
-      //   removeCookies("user");
-      //   window.location.href = "/login";
-      // }
+      if (typeof window !== "undefined") {
+        removeCookies("user");
+        window.location.href = "/login";
+      }
     }
     // Do something with response error
     return Promise.reject(error);

@@ -217,9 +217,10 @@ export const ProjectBottomRightBg = styled("div")((props: any) => ({
   // width: props.active ? "318px" : "314px",
 })) as any;
 
-export const ProjectLogo = styled(Image)({
+export const ProjectLogo = styled("img")({
   height: "45px !important",
   width: "unset !important",
+  margin: "auto",
   maxWidth: "240px",
   marginTop: "10px",
 });
