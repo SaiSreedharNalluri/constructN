@@ -12,6 +12,7 @@
     "docker-image-dev": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:beta .",
     "docker-image-delta": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:delta .",
     "docker-image-prod-us": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:prod-us .",
+    "docker-image-prod": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web:prod .",
     "docker-image-qa-us": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:qa-us ."
   },
   "dependencies": {

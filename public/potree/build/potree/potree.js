@@ -77608,6 +77608,7 @@ ENDSEC
 			};
 
 			this.viewer.setControls(this.viewer.orbitControls);
+			this.viewer.orbitControls.isInterior = true;
 			this.viewer.orbitControls.doubleClockZoomEnabled = false;
 
 			for(let image of this.images){
@@ -77738,6 +77739,7 @@ ENDSEC
 			let newCamPos = target.clone().sub(move);
 
 			this.viewer.orbitControls.doubleClockZoomEnabled = true;
+			this.viewer.orbitControls.isInterior = false;
 			this.viewer.setControls(this.previousView.controls);
 
 			// this.viewer.scene.view.setView(
@@ -81903,6 +81905,7 @@ ENDSEC
 			this.pitchDelta = 0;
 			this.panDelta = new Vector2(0, 0);
 			this.radiusDelta = 0;
+			this.isInterior = false;
 
 			this.doubleClockZoomEnabled = true;
 
@@ -82118,10 +82121,12 @@ ENDSEC
 				yaw -= progression * this.yawDelta;
 				pitch -= progression * this.pitchDelta;
 
-				if(pitch < -1 * 0.3) {
-					pitch= -1 * 0.3;
-				} else if(pitch > 1.3) {
-					pitch = 1.3;
+				if (this.isInterior) {
+					if(pitch < -1 * 0.3) {
+						pitch= -1 * 0.3;
+					} else if(pitch > 1.3) {
+						pitch = 1.3;
+					}
 				}
 
 				view.yaw = yaw;

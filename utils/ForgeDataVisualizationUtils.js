@@ -527,6 +527,7 @@ export class ForgeDataVisualization {
             this.viewableLength = 0;
             console.log("Inside remove layers in dataviz layer: ", this.viewableDataMap, this.dbIdArray, this.viewableLength);
         }
+        this.removeViewableData();
         // this.removeListeners(); 
     }
 

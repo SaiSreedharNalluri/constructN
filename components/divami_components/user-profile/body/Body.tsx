@@ -21,14 +21,13 @@ const Body = ({
 
   useEffect(() => {
     if (router.isReady) {
-      getProjectsList().then((response) => {
-        if (response.status === 200) {
-          setProjectDetails(response.data.result);
-        }
-      });
+      // getProjectsList().then((response) => {
+      //   if (response.status === 200) {
+      //     setProjectDetails(response.data.result);
+      //   }
+      // });
     }
   }, []);
-  console.log(projectDetails,"pr");
   
   const handlePasswordChange = () => {
     setIsDrawerOpen(true);

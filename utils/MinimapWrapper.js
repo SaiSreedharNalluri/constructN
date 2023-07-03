@@ -364,21 +364,12 @@ export const MinimapUtils = () => {
     if(_snapshot) {
       try{
         const snapshotRealities = _snapshot.reality.map(r => { return r._id })
+        if (Object.keys(_realityPositionMap).length == 0) return
         const realityMapRealities = _realityPositionMap[Object.keys(_realityPositionMap)[0]].map(r => { return r.id })
-        if (snapshotRealities.indexOf(realityMapRealities[0]) == -1) return
-      } catch(e) {}
+        if (snapshotRealities.indexOf(realityMapRealities[0]) == -1)  return
+      } catch(e) {
+      }
     }
-    // _dataVizUtils.removeExistingVisualizationData();
-    // _dataVizUtils.setIs2D(_manifestNode.is2D());
-    // _dataVizUtils.setTM(_tm);
-    // _dataVizUtils.setOffset(_globalOffset);
-    // _dataVizUtils.addMediaData(_realityPositionMap);
-    // _dataVizUtils.addIssuesData(_issuesList);
-    // _dataVizUtils.addTasksData(_tasksList);
-    // _dataVizUtils.setTagState(_showTag);
-    // _dataVizUtils.setViewableState(_showLayersList);
-    // _dataVizUtils.updateData();
-    // _edit2DUtils.addMediaData(_realityPositionMap);
 
     _dataVizUtils.setTransform(_tm, _globalOffset)
     _dataVizUtils.removeLoadedData()
@@ -497,7 +488,7 @@ export const MinimapUtils = () => {
         //     tag: tagObject,
         //   };
         // } else {
-        console.log(`Inside Rag Click click: ${targetObject.position.x}`, _viewerId);
+        console.log(`Inside Rag Click click: ${JSON.stringify(targetObject)}`, _viewerId);
         if(!targetObject.id) return
         if (targetObject.id.includes("Temp")) {
           _isAddTagActive = deactivateTool();
@@ -746,7 +737,11 @@ export const MinimapUtils = () => {
     _isPendingDataToLoad = false;
     _isModelLoaded = true;
     if (loadLayersOnDataLoadCompletion()) {
-      loadLayers();
+      let url = window.location.href
+      let split = url.split('structId=')
+      if(split.length == 2 && split[1] == _structure._id){
+        loadLayers();
+      }
     }
   };
 
@@ -913,7 +908,8 @@ export const MinimapUtils = () => {
       // _viewer.finish();
       // _viewer = null;
       _dataVizExtn = undefined;
-      _dataVizUtils = undefined;
+      _dataVizUtils.removeLoadedData()
+      // _dataVizUtils = undefined;
       // Autodesk.Viewing.shutdown();
     }
     _isViewerInitialized = false;

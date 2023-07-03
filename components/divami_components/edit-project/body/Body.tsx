@@ -42,6 +42,7 @@ const Body = ({ setCanBeDisabled, editData, handleFormData }: any) => {
           if (item.id === "title") {
             return {
               ...item,
+              isDisabled: true,
               defaultValue: editData?.name || "",
             };
           }
@@ -60,12 +61,14 @@ const Body = ({ setCanBeDisabled, editData, handleFormData }: any) => {
           if (item.id === "latitude") {
             return {
               ...item,
+              isDisabled: true,
               defaultValue: editData?.location[0] || " ",
             };
           }
           if (item.id === "longitude") {
             return {
               ...item,
+              isDisabled: true,
               defaultValue: editData?.location[1] || " ",
             };
           }

@@ -270,10 +270,16 @@ function GenericViewer(props) {
             if (v.isSelected) return v.name
           }));
         }
+
         break;
       case 'Potree':
         // loadViewerData();
         // loadLayerData();
+        if (forgeCompareUtils.current) {
+          viewLayers && forgeCompareUtils.current.showLayers(Object.values(viewLayers).map(v => {
+            if (v.isSelected) return v.name
+          }));
+        }
         break;
       case 'Mapbox':
         break;
