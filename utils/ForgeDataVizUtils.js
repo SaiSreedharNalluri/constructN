@@ -34,11 +34,13 @@ export class ForgeDataVizUtils {
 
         this._lastUpdated = Date.now()
 
+        this._windowScale = 1
+
         this._viewer.impl.overlayScenes.pivot.scene.children = []
 
         this._viewer.impl.overlayScenes.pivot.needSeparateDepth = true
 
-        this._viewer.impl.overlayScenes.DataVizDots.needSeparateDepth = false
+        this._viewer.impl.overlayScenes.DataVizDots.needSeparateDepth = true
 
         this._viewer.impl.invalidate(false, false, true)
 
@@ -58,15 +60,30 @@ export class ForgeDataVizUtils {
 
                 if(this._navigatorMesh) {
                     
-                    this._navigatorMesh.scale.x = scale
+                    this._navigatorMesh.scale.x = scale * this._windowScale
 
-                    this._navigatorMesh.scale.y = scale
+                    this._navigatorMesh.scale.y = scale * this._windowScale
 
                 }
 
             }
 
         })
+    }
+
+    setWindowScale(mScale) {
+
+        const scale = this._scaleFactor / 17
+
+        this._windowScale = mScale
+
+        if (this._navigatorMesh) {
+
+            this._navigatorMesh.scale.x = scale * this._windowScale
+
+            this._navigatorMesh.scale.y = scale * this._windowScale
+
+        }
     }
 
     setTransform(tm, offset) {
