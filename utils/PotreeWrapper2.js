@@ -514,6 +514,21 @@ export const PotreeViewerUtils = () => {
         // }
     }
 
+    const onRingClick = (event) => {
+        if(event.detail.viewer !== _viewerId) {
+            return;
+        }
+
+        console.log('potree onRingClick ', event);
+
+        let imageName = event.detail.image.file.split('/').pop()
+        let reality = getRealityByImageName(imageName);
+
+        _sendContext = true;
+        loadImage(reality, event.detail.image);
+        
+    }
+
     const imageEventListeners = (remove = false) => {
         if (!remove) {
             console.log('potree adding imageEventListeners ');
@@ -521,12 +536,14 @@ export const PotreeViewerUtils = () => {
             document.addEventListener('imageUnload', onImageUnLoad);
             document.addEventListener('panoLoad', onPanoLoad);
             document.addEventListener('panoUnload', onPanoUnLoad);
+            document.addEventListener('onRingClick', onRingClick);
         } else {
             console.log('potree removing imageEventListeners ');
             document.removeEventListener('imageLoad', onImageLoad);
             document.removeEventListener('imageUnload', onImageUnLoad);
             document.removeEventListener('panoLoad', onPanoLoad);
             document.removeEventListener('panoUnload', onPanoUnLoad);
+            document.removeEventListener('onRingClick', onRingClick);
         }
     }
 
