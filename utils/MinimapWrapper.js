@@ -354,6 +354,9 @@ export const MinimapUtils = () => {
 
   const resize = () => {
     _viewer && _viewer.resize()
+    const doc = document.getElementById(_viewerId)
+    const scale = 320 / doc.offsetHeight
+    _dataVizUtils && _dataVizUtils.setWindowScale(scale)
   }
 
   const loadLayers = () => {
