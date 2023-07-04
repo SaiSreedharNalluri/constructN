@@ -77552,13 +77552,27 @@ ENDSEC
 
 			this.addEventListener("mousedown", () => {
 				if(this.currentlyHovered && this.currentlyHovered.image360){
-					this.focus(this.currentlyHovered.image360);
+					// this.focus(this.currentlyHovered.image360);
+					const event = new CustomEvent("onRingClick", {
+						detail: {
+							viewer: this.viewer.canvasId,
+							image: this.currentlyHovered.image360
+						}
+					});
+					document.dispatchEvent(event);
 				}
 			});
 
 			this.addEventListener("touchend", () => {
 				if(this.currentlyHovered && this.currentlyHovered.image360){
-					this.focus(this.currentlyHovered.image360);
+					// this.focus(this.currentlyHovered.image360);
+					const event = new CustomEvent("onRingClick", {
+						detail: {
+							viewer: this.viewer.canvasId,
+							image: this.currentlyHovered.image360
+						}
+					});
+					document.dispatchEvent(event);
 				}
 			});
 			
