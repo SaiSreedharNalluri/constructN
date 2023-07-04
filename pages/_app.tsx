@@ -2,7 +2,6 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import "mapbox-gl/dist/mapbox-gl.css";
 import React, { useEffect } from "react";
-import { ToastContainer } from "react-toastify";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css";
 import "react-responsive-modal/styles.css";
@@ -19,6 +18,7 @@ import "../styles/ganttView.css";
 import mixpanel from "mixpanel-browser";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
+import MyErrorBoundary from "../components/container/errorBoundary";
 import { firebaseapp } from "../components/analytics/firebase";
 import { getAnalytics, isSupported, logEvent } from "firebase/analytics";
 import toastClose from "../public/divami_icons/toastClose.svg";
@@ -96,8 +96,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      <Component {...pageProps} />
-      {/* <ToastContainer
+      <MyErrorBoundary>
+        <Component {...pageProps} />
+        {/* <ToastContainer
         position="bottom-center"
         autoClose={false}
         pauseOnHover={true}
@@ -120,6 +121,7 @@ export default function App({ Component, pageProps }: AppProps) {
         hideProgressBar={true}
         closeButton={toastClose}
       />
-    </>
+      </MyErrorBoundary>
+  </>
   );
 }

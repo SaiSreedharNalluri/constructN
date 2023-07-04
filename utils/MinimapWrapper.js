@@ -1,5 +1,3 @@
-import { MinimapDataVisualization } from "./MinimapDataVisualizationUtils";
-import { ForgeLayerUtils } from "./ForgeLayerUtils";
 import { ForgeDataVizUtils } from "./ForgeDataVizUtils";
 import {
   applyOffset,

@@ -1,5 +1,4 @@
 import React, { useEffect, useState, memo, useRef } from 'react';
-import { ForgeViewerUtils } from '../../utils/ForgeWrapper';
 
 function ForgeViewer(props) {
     const [viewerCount, setViewerCount] = useState(props.viewerCount);
