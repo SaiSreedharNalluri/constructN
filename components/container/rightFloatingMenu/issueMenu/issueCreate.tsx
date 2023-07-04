@@ -209,7 +209,7 @@ const IssueCreate: React.FC<IProps> = ({
         if (error.success === false) {
           CustomToast(error?.message,"error");
         } else {
-        CustomToast("some thing went to worng, failed to create the issue","error");
+        CustomToast("some thing went to wrong, failed to create the issue","error");
         }
       });
   };

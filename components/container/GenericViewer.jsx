@@ -1683,14 +1683,8 @@ function GenericViewer(props) {
             <DragIndicatorIcon fontSize="inherit" />
           </IconButton>
           <div className='flex items-center text-[#F1742E] pl-2 flex-1'>Minimap</div>
-          <IconButton size="small" onClick={() => { resizeMinimap('minimize', count) } } onTouchEnd={() => { resizeMinimap('minimize', count) } }>
-            <RemoveIcon fontSize="inherit" />
-          </IconButton>
-          <IconButton size="small" onClick={() => { resizeMinimap('default', count) }} onTouchEnd={() => { resizeMinimap('default', count) }}>
-            <PictureInPictureIcon fontSize="inherit" />
-          </IconButton>
-          <IconButton size="small" onClick={() => { resizeMinimap('fullscreen', count) }} onTouchEnd={() => { resizeMinimap('fullscreen', count) }}>
-            <FullscreenIcon fontSize="inherit" />
+          <IconButton size="small" onClick={() => { _minimize(count) } } onTouchEnd={() => {  _minimize(count) } }>
+            {minimize ? <KeyboardDoubleArrowDownIcon fontSize="inherit" /> : <KeyboardDoubleArrowUpIcon fontSize="inherit" />}
           </IconButton>
         </div>
         <MiniMap 
@@ -1703,6 +1697,34 @@ function GenericViewer(props) {
       </div>
     </Rnd>)
   }
+
+  const [minimize, setMinimize] = useState(false)
+
+  const _isMinimized = useRef(false)
+
+  const _minimize = (count) => {
+
+    const minimap = count == 1 ? _minimap : _minimapCompare
+
+    const utils = count == 1 ? minimapUtils.current : minimapCompareUtils.current
+
+    if (_isMinimized.current) {
+
+        minimap?.updateSize({ width: 320, height: 320 })
+
+    } else {
+
+        minimap?.updateSize({ width: 320, height: 28 })
+
+    }
+
+    _isMinimized.current = !_isMinimized.current
+
+    setMinimize(_isMinimized.current)
+
+    setTimeout(() => utils?.resize(), 50)
+
+}
 
   const resizeMinimap = (mode, count) => {
     const minimap = count == 1 ? _minimap : _minimapCompare
