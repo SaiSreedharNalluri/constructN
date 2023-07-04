@@ -122,7 +122,6 @@ export default function App({ Component, pageProps }: AppProps) {
         closeButton={toastClose}
       />
       </MyErrorBoundary>
-      <Component {...pageProps} />
-    </>
+  </>
   );
 }
