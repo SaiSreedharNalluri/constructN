@@ -76,7 +76,7 @@ const Notifications = ({
           setShowPopUp={setshowPopUp}
           modalTitle={"Cancel"}
           modalmessage={
-             `Are you sure you want to cancel notifications? `}
+             `Are you sure you want to cancel Notifications? `}
           primaryButtonLabel={"Yes"}
           SecondaryButtonlabel={"No"}
           callBackvalue={handleNotificationClose}

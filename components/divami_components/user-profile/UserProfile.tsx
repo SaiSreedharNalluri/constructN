@@ -35,7 +35,7 @@ const UserProfile = ({ handleProfileClose, projectUsers }: any) => {
           }
         })
         .catch((error) => {
-          CustomToast("unable to load the data","error");
+          CustomToast("Unable to load data","error");
         });
     }
   }, []);
@@ -51,7 +51,7 @@ const UserProfile = ({ handleProfileClose, projectUsers }: any) => {
         if (response?.success === true) {
           setUserDetails(response?.result);
           setIsUserProfileDrawerOpen(false);
-          CustomToast("user profile updated successfully","success");
+          CustomToast("Your Profile has been updated successfully","success");
         }
       })
       .catch((error) => {
@@ -65,7 +65,7 @@ const UserProfile = ({ handleProfileClose, projectUsers }: any) => {
     formData.append("file", e.file);
     updateProfileAvatar(formData).then((response) => {
       if (response.success === true) {
-        CustomToast("user profile pic updated successfully","success");
+        CustomToast("Your Profile image has been updated","success");
         setUserDetails(response?.result);
         setIsUserProfileDrawerOpen(false);
         const fileInput = document.getElementById(

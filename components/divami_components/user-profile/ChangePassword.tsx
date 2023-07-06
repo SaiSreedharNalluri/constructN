@@ -58,7 +58,7 @@ const ChangePassword = ({closeDrawer}:any) => {
       .then((response) => {
         if (response.success === true) {
           setShow(true);
-          CustomToast('user password changed successfully',"success");
+          CustomToast('Password change successful',"success");
           resetForm();
         }
       })
@@ -66,7 +66,7 @@ const ChangePassword = ({closeDrawer}:any) => {
         if (error.success === false) {
           CustomToast(error.message,"error");
         } else {
-          CustomToast('failed to changed the password',"error");
+          CustomToast('Unable to update your Password. Please Try Again.',"error");
         }
       });
   };

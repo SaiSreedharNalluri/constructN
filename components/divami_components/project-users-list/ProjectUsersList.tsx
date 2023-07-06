@@ -264,7 +264,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     removeProjectUser(email, router.query.projectId as string)
       .then((response) => {
         if (response?.success === true) {
-          CustomToast(response?.message,"success");
+          CustomToast("Deassign User","success");
           setTableData(
             response.result.map((each: any) => {
               return {
@@ -279,7 +279,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       })
       .catch((error) => {
         if (error.success === false) {
-          CustomToast("You  don't have permission. Contact Admin","error");
+          CustomToast("You don't have permission. Contact Admin.","error");
 
           setDataLoaded(true);
         }
@@ -337,12 +337,12 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     };
     updateProjectUserRole(projectInfo, router.query.projectId as string)
       .then((res: any) => {
-        CustomToast("User role is updated", "success");
+        CustomToast("User Role updated", "success");
         setShowEdit(false);
         getUsersList();
       })
       .catch((err) => {
-        CustomToast(err.message, "error");
+        CustomToast("You don't have permission. Contact Admin.","error");
       });
   };
 
@@ -531,7 +531,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           hideButtons
           setShowPopUp={showAddUser ? setShowAddUser : setshowPopUp}
           modalTitle={
-            showAddUser ? "Add users to the project" : "Deassign user"
+            showAddUser ? "Add User(s) to the Project" : "Deassign User"
           }
           modalContent={
             showAddUser ? (
