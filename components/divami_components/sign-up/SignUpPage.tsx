@@ -206,7 +206,7 @@ const SignUpPage = () => {
         setRegisterEnable(true)
         if (response.success === true) {
           // toast.success("User ");
-          CustomToast("User Registration completed successfully", "success");
+          CustomToast("You have Successfully Registered", "success");
       
           router.push(
             {

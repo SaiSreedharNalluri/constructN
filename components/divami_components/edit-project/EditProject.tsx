@@ -26,7 +26,6 @@ const EditProject = ({
       handleUpdateProject(formData);
     }
 
-    
   };
   const handleFormData = (data: any) => {
     setFormData(data);
@@ -47,7 +46,7 @@ const EditProject = ({
           open={showPopUp}
           setShowPopUp={setshowPopUp}
           modalTitle={"Cancel"}
-          modalmessage={`Are you sure you want to cancel edit project? `}
+          modalmessage={`Are you sure you want to cancel 'Edit project'?`}
           primaryButtonLabel={"Yes"}
           SecondaryButtonlabel={"No"}
           callBackvalue={handleEditClose}

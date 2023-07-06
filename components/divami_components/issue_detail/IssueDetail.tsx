@@ -288,7 +288,7 @@ function BasicTabs(props: any) {
         }
       })
       .catch((error) => {
-        CustomToast("failed to load the data","error");
+        CustomToast("Failed to load data. Please refresh the page.","error");
       });
   };
 
@@ -305,7 +305,7 @@ function BasicTabs(props: any) {
         entity: entityId,
       }).then((response) => {
         if (response.success === true) {
-          CustomToast("Comment is added sucessfully","success");
+          CustomToast("Comment added successfully","success");
           setBackendComments([...backendComments, response.result]);
         }
       });
@@ -1037,10 +1037,10 @@ const CustomIssueDetailsDrawer = (props: any) => {
       editIssue(projectId, data, selectedIssue?._id)
         .then((response) => {
           if (response.success === true) {
-            CustomToast("Issue updated sucessfully","success");
+            CustomToast("Issue updated successfully","success");
             getIssues(currentStructure._id);
           } else {
-            CustomToast("Error updating the issue","error");
+            CustomToast("Error updating the Issue","error");
           }
           setOpenCreateTask(false);
         })
@@ -1150,7 +1150,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     editIssue(projectId as string, issueData, selectedIssue?._id)
       .then((response) => {
         if (response.success === true) {
-          CustomToast("Issue updated sucessfully","success");
+          CustomToast("Issue updated successfully","success");
           getIssues(currentStructure._id);
         }
       })

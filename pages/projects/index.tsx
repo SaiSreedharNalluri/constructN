@@ -353,7 +353,7 @@ const Index: React.FC<any> = () => {
       );
 
       if (containsEmptyString) {
-        CustomToast("Fields cannot be empty","error");
+        CustomToast("Field(s) cannot be empty","error");
         setConfigEnabled(true);
         return;
       }
@@ -375,40 +375,40 @@ const Index: React.FC<any> = () => {
               ...formValues.priority.map((ele: string) => ele.trim()),
             ],
           });
-          CustomToast("Issue priority list updated successfully","success");
+          CustomToast("Options updated successfully","success");
         } else if (selectedOption === "taskPriority") {
           await updateTaskPriorityList(projectId, {
             taskPriorityList: [
               ...formValues.priority.map((ele: string) => ele.trim()),
             ],
           });
-          CustomToast("Task priority list updated successfully","success");
+          CustomToast("Options updated successfully","success");
         } else if (selectedOption === "issueStatus") {
           await updateIssueStatusList(projectId, {
             issueStatusList: [
               ...formValues.priority.map((ele: string) => ele.trim()),
             ],
           });
-          CustomToast("Issue status list updated successfully","success");
+          CustomToast("Options updated successfully","success");
         } else if (selectedOption === "taskStatus") {
           await updateTaskStatusList(projectId, {
             taskStatusList: [
               ...formValues.priority.map((ele: string) => ele.trim()),
             ],
           });
-          CustomToast("Task status list updated successfully","success");
+          CustomToast("Options updated successfully","success");
         } else if (selectedOption === "tag") {
           await updateTagList(projectId, {
             tagList: [...formValues.priority.map((ele: string) => ele.trim())],
           });
-          CustomToast("Tag list updated successfully","success");
+          CustomToast("Options updated successfully","success");
         }
         setConfigEnabled(true);
         setShowbutton(false);
       } catch (error: any) {
         if (error && error?.success === false) {
           if (error.message === "Forbidden Access") {
-            CustomToast("Not authorized. Ask the Project Admin for help","error");
+            CustomToast("You don't have access. Contact Admin.","error");
           } else {
             CustomToast("Project Config could not be updated","error");
           }
@@ -448,7 +448,7 @@ const Index: React.FC<any> = () => {
       .catch((error) => {
         if (error.success === false) {
           // toast.error(error?.message);
-          CustomToast("You  don't have permission. Contact Admin","error");
+          CustomToast("You don't have access. Contact Admin.","error");
         }
       });
   };
@@ -673,7 +673,7 @@ const Index: React.FC<any> = () => {
           hideButtons
           setShowPopUp={showAddUser ? setShowAddUser : setShowArchiveProject}
           modalTitle={
-            showAddUser ? "Add users to the project" : "Deassign Project"
+            showAddUser ? "Add User(s) to the Project" : "Deassign Project"
           }
           modalContent={
             showAddUser ? (

@@ -272,7 +272,7 @@ function BasicTabs(props: any) {
         entity: entityId,
       }).then((response) => {
         if (response.success === true) {
-          CustomToast("Comment is added sucessfully","success");
+          CustomToast("Comment added successfully","success");
           setBackendComments([...backendComments, response.result]);
         }
       });
@@ -288,7 +288,7 @@ function BasicTabs(props: any) {
         }
       })
       .catch((error) => {
-        CustomToast("failed to load the data","error");
+        CustomToast("Failed to load the data","error");
       });
   };
   useEffect(() => {
@@ -992,7 +992,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
       updateTask(projectId, data, selectedTask?._id)
         .then((response) => {
           if (response.success === true) {
-            CustomToast("Task updated sucessfully","success");
+            CustomToast("Task updated successfully","success");
             getTasks(currentStructure._id);
           } else {
             CustomToast("Error updating the task","error");
@@ -1126,7 +1126,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     updateTask(projectId as string, issueData, selectedTask?._id)
       .then((response) => {
         if (response.success === true) {
-          CustomToast("Task updated sucessfully","success");
+          CustomToast("Task updated successfully","success");
           getTasks(currentStructure._id);
         } else {
         }

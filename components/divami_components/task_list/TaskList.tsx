@@ -833,7 +833,7 @@ const CustomTaskListDrawer = (props: any) => {
                 onClose();
                 openTaskCreateFn();
                 CustomToast(
-                  "Click on the map where you want to create a task"
+                  "Click on the map where you want to 'Create Task'"
                 ,"success");
               }}
             >

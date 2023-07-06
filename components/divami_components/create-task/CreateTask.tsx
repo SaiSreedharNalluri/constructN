@@ -108,8 +108,8 @@ const CreateTask = ({
           modalTitle={"Cancel"}
           modalmessage={
             editData
-              ? `Are you sure you want to cancel edit task?`
-              : `Are you sure you want to cancel create task?`
+              ? `Are you sure you want to cancel 'Edit Task'?`
+              : `Are you sure you want to cancel 'Create Task'?`
           }
           primaryButtonLabel={"Yes"}
           SecondaryButtonlabel={"No"}

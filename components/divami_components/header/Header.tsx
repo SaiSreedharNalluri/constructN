@@ -516,8 +516,8 @@ const Header: React.FC<any> = ({
               <PopupComponent
                 open={showPopUp}
                 setShowPopUp={setshowPopUp}
-                modalTitle={"Cancel"}
-                modalmessage={`Are you sure you want to Sign out? `}
+                modalTitle={"Sign Out"}
+                modalmessage={`Are you sure you want to Sign Out? `}
                 primaryButtonLabel={"Yes"}
                 SecondaryButtonlabel={"No"}
                 callBackvalue={userLogOut}

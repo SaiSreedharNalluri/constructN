@@ -167,7 +167,7 @@ const Issues = ({
 
     for (let i = 0; i < data.attachments?.length; i++) {
       if (data.attachments![i].size > 50 * 1024 * 1024) {
-        CustomToast("file size is too large. failed to create issue","error");
+        CustomToast("Please upload file(s) <50 MB","error");
         return;
       }
       formData.append("attachments", data.attachments![i]);
@@ -184,7 +184,7 @@ const Issues = ({
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
           if (response.success === true) {
-            CustomToast(" Issue Created Successfully","success");
+            CustomToast(" Issue created successfully","success");
             setEnableSubmit(true);
             issueSubmitFn(response.result);
           } else {
@@ -194,7 +194,7 @@ const Issues = ({
         })
         .catch((error) => {
           if (error.message == "Forbidden Access") {
-            CustomToast(`You can't create an issue. Ask the Project Admin for help`,"error");
+            CustomToast(`You don't have permission. Contact Admin.`,"error");
           } else {
             CustomToast(`Something went wrong`,"error");
           }

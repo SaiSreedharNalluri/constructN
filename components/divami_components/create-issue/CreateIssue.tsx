@@ -110,8 +110,8 @@ const CreateIssue = ({
           modalTitle={"Cancel"}
           modalmessage={
             editData
-              ? `Are you sure you want to cancel edit issue?`
-              : `Are you sure you want to cancel create issue?`
+              ? `Are you sure you want to cancel 'Edit Issue'?`
+              : `Are you sure you want to cancel 'Create Issue'?`
           }
           primaryButtonLabel={"Yes"}
           SecondaryButtonlabel={"No"}

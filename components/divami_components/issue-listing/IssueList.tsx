@@ -808,7 +808,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 onClose();
                 openIssueCreateFn();
                 CustomToast(
-                  "Click on the map where you want to create an issue"
+                  "Click on the map where you want to 'Create Issue'"
                 ,"success");
               }}
             >

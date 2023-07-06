@@ -111,7 +111,7 @@ export const EmptyUsersList = () => {
           open={showAddUser}
           hideButtons
           setShowPopUp={setShowAddUser}
-          modalTitle={"Add users to the project"}
+          modalTitle={"Add User(s) to the Project"}
           modalContent={
             <AddUsersEmailPopup
               showEmailOverlay={showEmailOverlay}

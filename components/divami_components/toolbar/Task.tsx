@@ -173,7 +173,7 @@ const Task = ({
 
     for (let i = 0; i < data.attachments?.length; i++) {
       if (data.attachments![i].size > 50 * 1024 * 1024) {
-        CustomToast("file size is too large. failed to create issue","error");
+        CustomToast("Please upload file(s) <50 MB","error");
         return;
       }
       formDataObj.append("attachments", data.attachments![i]);
@@ -191,7 +191,7 @@ const Task = ({
       createTaskWithAttachments(projectId as string, formDataObj)
         .then((response) => {
           if (response.success === true) {
-            CustomToast("Task Created sucessfully","success");
+            CustomToast("Task created sucessfully","success");
 
             setEnableSubmit(true);
             taskSubmitFn(response.result);
@@ -202,7 +202,7 @@ const Task = ({
         })
         .catch((error) => {
           if (error.message == "Forbidden Access") {
-            CustomToast(`You can't create a task. Ask the Project Admin for help`,"Forbidden Access");
+            CustomToast(`You don't have permission. Contact Admin.`,"Forbidden Access");
           } else {
             CustomToast(`Something went wrong`,"error");
           }

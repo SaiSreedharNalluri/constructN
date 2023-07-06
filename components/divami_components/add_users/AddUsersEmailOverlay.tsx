@@ -202,7 +202,7 @@ export const AddUsersEmailOverlay = ({
                   addedUsers?.length - newUsers > 1
                     ? `${addedUsers?.length - newUsers} Users`
                     : `${addedUsers?.length - newUsers} User`
-                } have been added to the project successfully   `,"success"
+                } added to the Project successfully`,"success"
               );
             } else if (addedUsers?.length - newUsers >= 1) {
               CustomToast(
@@ -210,15 +210,15 @@ export const AddUsersEmailOverlay = ({
                   addedUsers?.length - newUsers > 1
                     ? `${addedUsers?.length - newUsers} Users`
                     : `${addedUsers?.length - newUsers} User`
-                } have been added to the project successfully & ${
-                  newUsers > 1 ? ` ${newUsers} Users` : `${newUsers} User`
-                } have been sent invite to register `,"success"
+                } added to the Project successfully and ${
+                  newUsers > 1 ? ` ${newUsers} Users have` : `${newUsers} User has`
+                } been sent invite to Register `,"success"
               );
             } else {
               CustomToast(
                 ` ${
-                  newUsers > 1 ? ` ${newUsers} Users` : `${newUsers} User`
-                } have been sent invite to register `,"success"
+                  newUsers > 1 ? ` ${newUsers} Users have` : `${newUsers} User has`
+                } been sent invite to Register `,"success"
               );
             }
             setOpenDrawer(false);
@@ -226,7 +226,7 @@ export const AddUsersEmailOverlay = ({
             setEnableAddUser(true);
           })
           .catch((err) => {
-            CustomToast("You do not have access,Contact Admin","error");
+            CustomToast("You don't have access. Contact Admin.","error");
             setEnableAddUser(true);
           });
       }
