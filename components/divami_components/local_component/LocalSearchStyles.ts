@@ -9,13 +9,13 @@ export const ShowErrorContainer = styled("div")({
     alignItems: "center",
     justifyContent: "center",
     textAlign: "center",
-   height:"100%"
-    
+    height:"calc(100vh - 165px)",
 });
 
 
 export const CenteredErrorImage = styled(Image)({
-    marginTop:"70px"
+    // marginTop:"70px"
+  
 
 });
 

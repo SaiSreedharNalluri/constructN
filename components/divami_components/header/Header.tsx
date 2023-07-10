@@ -417,7 +417,7 @@ const Header: React.FC<any> = ({
               ""
             )}
           </HeaderProfileImageContainer>
-          <HeaderSupportImageContainer>
+          {/* <HeaderSupportImageContainer>
             <TooltipText title="Support">
               <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
                 <Image
@@ -437,7 +437,7 @@ const Header: React.FC<any> = ({
                 />
               </div>
             </TooltipText>
-          </HeaderSupportImageContainer>
+          </HeaderSupportImageContainer> */}
 
           <HeaderNotificationImageContainer>
             <TooltipText title="Notifications">
@@ -526,7 +526,7 @@ const Header: React.FC<any> = ({
           </div>
         )}
 
-        {supportMenu && (
+        {/* {supportMenu && (
           <div className="absolute top-[64px]  shadow-md right-[97px] bg-gray-50   z-[1500]  border mx-0.5">
             <Link href="https://constructnai.freshdesk.com/support/home" passHref target="_blank">
               <div
@@ -590,9 +590,8 @@ const Header: React.FC<any> = ({
                 callBackvalue={userLogOut}
               />
             )} */}
-          </div>
-        )}
-
+          {/* </div> */}
+        {/* )} } */}
         {/* //! This is Open Profile Options */}
         {/* {loading && (
           <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
