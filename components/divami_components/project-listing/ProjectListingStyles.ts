@@ -153,10 +153,14 @@ export const ProjectCardsContainer = styled("div")({
   display: "flex",
   flexWrap: "wrap",
   justifyContent: "flex-start",
-  overflow: "auto",
-  height: "calc(100vh - 70px)",
+  overflowY: "auto",
+  overflowX:"hidden",
+  height: "calc(100vh - 128px)",
+  // height: "calc(100vh - 70px)",
+
   padding: "0 20px",
-  paddingBottom: "70px",
+  // paddingBottom: "70px",
+
   paddingTop: "18px",
   position: "relative",
 });
@@ -418,24 +422,33 @@ export const ShowMore = styled("div")({
   textAlign: "end",
 });
 
-export const ShowErrorContainer = styled("div")({});
+export const ShowErrorContainer = styled("div")({
+  display:"flex",
+  flexDirection:"column"
+});
 
 export const CenteredErrorImage = styled(Image)({
-  position: "absolute",
-  top: "30%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  // position: "absolute",
+  // top: "30%",
+  // left: "50%",
+  // transform: "translate(-50%, -50%)",
+  // position: "absolute",
+  // top: "30%",
+  // left: "50%",
+  // transform: "translate(-50%, -50%)",
+
 });
 
 export const NoResultText = styled("div")({
-  fontStyle: "normal",
-  fontWeight: "400",
-  fontSize: "14px",
-  lineHeight: "19px",
+  // fontStyle: "normal",
+  // fontWeight: "400",
+  // fontSize: "14px",
+  // lineHeight: "19px",
   textAlign: "center",
-  color: "#101F4C",
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  // color: "#101F4C",
+  // position: "absolute",
+  // top: "50%",
+  // left: "50%",
+  // transform: "translate(-50%, -50%)",
+  
 });

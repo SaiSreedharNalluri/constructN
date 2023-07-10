@@ -596,15 +596,16 @@ const Index: React.FC<any> = () => {
             {showLoading ? (
               <CustomLoader />
             ) : showWelcomMessage ? (
-              <ProjectCardsContainer>
+            <ProjectCardsContainer>
+              <div className="flex justify-center items-center calc-h146 mx-auto">
                 <ShowErrorContainer>
                   <CenteredErrorImage src={projectHierIcon} alt="" />
-
                   <NoResultText>
                     No Project Has Been Assigned To You
                   </NoResultText>
                 </ShowErrorContainer>
-              </ProjectCardsContainer>
+              </div>
+             </ProjectCardsContainer>
             ) : isGridView ? (
               <ProjectListCardView
                 projects={searchTableData}

@@ -328,7 +328,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   }, [router.isReady, router.query.projectId]);
 
   const formHandler = (event: any) => {
-    setShowAddUser(true);
+    setOpenDrawer(true);
   };
   const updateRole = (selectedRole: string, rowData: any) => {
     const projectInfo = {
@@ -461,6 +461,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
         <TableWrapper>
           {dataLoaded ? (
             <StyledTable
+            localization={{ body:{ emptyDataSourceMessage:<h1 className=" text-center">No User found</h1>}}}
               components={{
                 Container: (props: any) => <Paper {...props} elevation={0} />,
               }}
@@ -525,7 +526,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           />
         </CustomDrawer>
       )}
-      {showAddUser || showPopUp ? (
+      {/* {showAddUser || showPopUp ? (
         <PopupComponent
           open={showAddUser ? showAddUser : showPopUp}
           hideButtons
@@ -559,7 +560,33 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
         />
       ) : (
         <></>
-      )}
+      )} */}
+      {
+ showPopUp?   <PopupComponent
+        open={showPopUp}
+        hideButtons
+        setShowPopUp={setshowPopUp}
+        modalTitle={
+         "Deassign User"
+        }
+
+        modalmessage={ "Are you sure you want to Deassign user? "
+        }
+        primaryButtonLabel={ "Yes"}
+        SecondaryButtonlabel={ "No"}
+        callBackvalue={
+        
+             () => {
+                setDataLoaded(false);
+                deleteUser(emailId), setshowPopUp(false);
+              }
+        }
+        width={"458px"}
+        backdropWidth={true}
+        showButton={true}
+      />:""
+      }
+       {openDrawer ?
       <Drawer
         anchor={"right"}
         open={openDrawer}
@@ -574,7 +601,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           selectedProjectId={router.query.projectId}
           appendToTable={appendToTable}
         />
-      </Drawer>
+      </Drawer>:<></>}
 
       <Drawer
         anchor={"right"}

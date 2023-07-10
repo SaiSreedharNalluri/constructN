@@ -250,11 +250,13 @@ export const ProjectListCardView = ({
           );
         })
       ) : (
+        <div className="flex justify-center items-center calc-h146 overflow-y-hidden mx-auto ">
         <ShowErrorContainer>
           <CenteredErrorImage src={projectHierIcon} alt="" />
 
           <NoResultText>No Results Found</NoResultText>
         </ShowErrorContainer>
+         </div>
       )}
     </ProjectCardsContainer>
   );
