@@ -1,4 +1,4 @@
-import { createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, InputAdornment, ThemeProvider } from "@mui/material";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -32,7 +32,7 @@ import {
 } from "../project-users-list/ProjectUsersListStyles";
 import infoicon from "../../../public/divami_icons/infoicon.svg";
 import { toast } from "react-toastify";
-import { AddUserEmailContainer } from "../empty-users-list/EmptyUsersListStyles";
+import { AddUserEmailContainer, EnterIcon } from "../empty-users-list/EmptyUsersListStyles";
 import {
   CloseIcon,
   HeaderContainer,
@@ -46,6 +46,7 @@ import ProjectInfo from "../../container/projectInfo";
 import { MTableBodyRow } from "material-table";
 import { role } from "../../../utils/constants";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
+import BackArrow from "../../../public/divami_icons/backArrow.svg";
 export const AddUsersEmailOverlay = ({
   form,
   setOpenDrawer,
@@ -272,7 +273,7 @@ export const AddUsersEmailOverlay = ({
       <HeaderContainer>
         <TitleContainer>
           <span>Add Users To The Platform</span>
-
+          <div className=" rounded-full p-[6px] hover:bg-[#E7E7E7]">
           <CloseIcon
             onClick={() => {
               onClickBack();
@@ -281,6 +282,7 @@ export const AddUsersEmailOverlay = ({
             alt={"close icon"}
             data-testid="close-icon"
           />
+          </div>
         </TitleContainer>
       </HeaderContainer>
       <TableHeader>
@@ -310,6 +312,23 @@ export const AddUsersEmailOverlay = ({
               }}
               className={undefined}
               width={"100% !important"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment
+                    position="end"
+                    onClick={() => {
+                      if (searchVal) {
+                        if (/\S+@\S+\.\S+/.test(searchVal) 
+                        && !addedUsers.some((iter: any) => iter.email === searchVal)) {
+                          checkRegisterUser(searchVal);
+                        }
+                      }
+                    }}
+                  >
+                    <EnterIcon width={18} height={18} src={BackArrow} alt="" />
+                  </InputAdornment>
+                ),
+              }}
             />
           </AddUserEmailContainer>
 
