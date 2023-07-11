@@ -585,6 +585,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
                 viewerData.current.currentLayersList= viewerData.current.currentLayersList?.filter((layer)=>{
                   if(layer.name==='Stages')
                   {
+                    storedStagesLayer.current=layer;
                     return false;
                   }
                   else
@@ -593,7 +594,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
               }
               else{
                 if(storedStagesLayer.current!==undefined){
-                  viewerData.current.currentLayersList?.push(storedStagesLayer.current);
+                  viewerData.current.currentLayersList?.push(storedStagesLayer.current as ILayer);
                 }
               }
 
@@ -658,7 +659,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           //loadViewerData(viewerData.current);
           viewerData.current.currentLayersList= Object.values(getRealityMap(viewerData.current.currentSnapshotBase)) as ILayer[];
           if((viewerData.current.currentViewType==='orthoPhoto')&&(storedStagesLayer.current!==undefined)){
-            viewerData.current.currentLayersList.push(storedStagesLayer.current);
+            viewerData.current.currentLayersList.push(storedStagesLayer.current as ILayer);
           }
           //console.log("TESTING LAYERS",viewerData.current.currentLayersList);
          loadLayerData(viewerData.current);
@@ -1363,42 +1364,44 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           let data:IMapboxLayer[] = await getMapboxLayers(myViewerData.structure, myViewerData.currentSnapshotBase);
           const reality :IReality| undefined= myViewerData?.currentSnapshotBase?.reality?.find((reality) => { return reality })
           let hotspots = await getMapboxHotspots(myViewerData.project, myViewerData.structure._id, myViewerData.currentSnapshotBase._id, reality?._id)
-          if(data) {
-            
-            const stages : ILayer = {
-              name: 'Stages',
-              children: [],
-              isSelected: true
-            }
-            data.forEach((layer) => {
-              if(layer.categories) {
-                layer.categories.forEach((category) => {
-                  category.filters.forEach((stage) => {
-                    const subLayer:ILayer = {
-                      name: stage.name,
-                      children: [],
-                      isSelected: true,
-                      filters: stage.filter
-                    }
-                    stages.children?.push(subLayer)
-                  })
-                })
-              }
-            })
-            //if(viewerData.current!==undefined){viewerData.current?.currentLayersList?.push(stages);}
-            //var map:IActiveRealityMap  =  getRealityMap(currentViewerData.currentSnapshotBase)
-            //if(map!==undefined && map['Stages'] !==undefined) {map['Stages']= stages}
-            //setRealityMap(map)
-            //updateRealityMap(map)
-          }
-          setTimeout(() => {
-            if (mapboxUtils.current !== undefined) {
 
-                mapboxUtils.current.updateData(data, currentContext.current);
-                hotspots && hotspots.data && setHotspots(hotspots.data.features);
-                mapboxUtils.current.updateIssuesData(myViewerData.currentIssueList);
-                mapboxUtils.current.updateTasksData(myViewerData.currentTaskList);
-            }
+          if (mapboxUtils.current !== undefined) {
+
+            mapboxUtils.current.updateData(data, currentContext.current);
+            hotspots && hotspots.data && setHotspots(hotspots.data.features);
+            mapboxUtils.current.updateIssuesData(myViewerData.currentIssueList);
+            mapboxUtils.current.updateTasksData(myViewerData.currentTaskList);
+        }
+          // if(data) {
+            
+          //   const stages : ILayer = {
+          //     name: 'Stages',
+          //     children: [],
+          //     isSelected: true
+          //   }
+          //   data.forEach((layer) => {
+          //     if(layer.categories) {
+          //       layer.categories.forEach((category) => {
+          //         category.filters.forEach((stage) => {
+          //           const subLayer:ILayer = {
+          //             name: stage.name,
+          //             children: [],
+          //             isSelected: true,
+          //             filters: stage.filter
+          //           }
+          //           stages.children?.push(subLayer)
+          //         })
+          //       })
+          //     }
+          //   })
+          //   //if(viewerData.current!==undefined){viewerData.current?.currentLayersList?.push(stages);}
+          //   //var map:IActiveRealityMap  =  getRealityMap(currentViewerData.currentSnapshotBase)
+          //   //if(map!==undefined && map['Stages'] !==undefined) {map['Stages']= stages}
+          //   //setRealityMap(map)
+          //   //updateRealityMap(map)
+          // }
+          setTimeout(() => {
+            //
           }, 700);
         }
         break;
