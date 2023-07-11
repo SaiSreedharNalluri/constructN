@@ -234,6 +234,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
 
   var [currentViewerData,dispatchChangeViewerData] = useReducer(changeViewerData,data);
 
+  var storedStagesLayer = useRef<ILayer>();
   const [bottomNav, setBottomNav] = useState(false);
   const toggleTimeline = () => {
     setBottomNav(!bottomNav);
@@ -543,6 +544,20 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
     switch(incomingPayload.current.action.type){
       case 'loadGenViewer':
         animationRequestId = requestAnimationFrame(animationNow);
+        if(viewerData.current!==undefined){
+          if(viewerData.current.currentViewType!=='orthoPhoto'){
+            viewerData.current.currentLayersList= viewerData.current.currentLayersList?.filter((layer)=>{
+              if(layer.name==='Stages')
+              {
+                storedStagesLayer.current=layer;
+                return false;
+              }
+              else
+                return true;
+            });
+           }
+          }
+        
         break;
       case 'closeGenViewer':
         cancelAnimationFrame(animationRequestId);
@@ -566,8 +581,25 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
             break;
           case 'changeViewerAndType':
             if(viewerData.current!==undefined){
+              if(viewerData.current.currentViewType!=='orthoPhoto'){
+                viewerData.current.currentLayersList= viewerData.current.currentLayersList?.filter((layer)=>{
+                  if(layer.name==='Stages')
+                  {
+                    return false;
+                  }
+                  else
+                    return true;
+                });
+              }
+              else{
+                if(storedStagesLayer.current!==undefined){
+                  viewerData.current.currentLayersList?.push(storedStagesLayer.current);
+                }
+              }
+
               loadViewerData(viewerData.current);
-             loadLayerData(viewerData.current);
+              loadLayerData(viewerData.current);
+             
              }
             console.log('Viewer Type Updated');
             break;
@@ -624,6 +656,11 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         console.log('asdf',currentViewerData);
         if(viewerData.current!==undefined){
           //loadViewerData(viewerData.current);
+          viewerData.current.currentLayersList= Object.values(getRealityMap(viewerData.current.currentSnapshotBase)) as ILayer[];
+          if((viewerData.current.currentViewType==='orthoPhoto')&&(storedStagesLayer.current!==undefined)){
+            viewerData.current.currentLayersList.push(storedStagesLayer.current);
+          }
+          //console.log("TESTING LAYERS",viewerData.current.currentLayersList);
          loadLayerData(viewerData.current);
          loadMinimapLayerData(viewerData.current)
          }
@@ -1275,7 +1312,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         break;
         case 'Mapbox':
           if (mapboxUtils.current !== undefined) {
-            mapboxUtils.current.setProject(myViewerData.project);
+            mapboxUtils.current.setProject({_id:myViewerData.project});
             mapboxUtils.current.setStructure(myViewerData.structure);
           }
           break;
@@ -1283,7 +1320,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
   }
 
   async function loadLayerData(myViewerData:IGenData) {
-    //console.log('Load layer data: ', issuesList, tasksList);
+    //console.log('Load layer data: ', myViewerData.currentLayersList);
     switch (getViewerTypefromViewType(myViewerData.currentViewType)) {
       case 'Forge':
         if (forgeUtils.current != undefined) {
@@ -1348,7 +1385,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
                 })
               }
             })
-            
+            //if(viewerData.current!==undefined){viewerData.current?.currentLayersList?.push(stages);}
             //var map:IActiveRealityMap  =  getRealityMap(currentViewerData.currentSnapshotBase)
             //if(map!==undefined && map['Stages'] !==undefined) {map['Stages']= stages}
             //setRealityMap(map)
