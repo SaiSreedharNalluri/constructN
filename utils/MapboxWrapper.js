@@ -84,6 +84,7 @@ export const MapboxViewerUtils = () => {
       center: center ? center : [77.5657485841588, 15.061798588445253], // starting position [lng, lat]
       bearing: bearing ? bearing : 0,
       zoom: 16, // starting zoom
+      maxZoom:22,
     });
     _map.on("load", () => {
       _isViewerInitialized = true;
