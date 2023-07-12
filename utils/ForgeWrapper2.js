@@ -547,7 +547,7 @@ export const ForgeViewerUtils = function () {
 
   const getContext = () => {
     // console.log("Inside forge get context: ", globalOffset);
-    let contextObject ={};
+    let contextObject;
     if (_isViewerInitialized && _isModelLoaded) {
       contextObject = {
         id: new Date().getTime().toString(),
