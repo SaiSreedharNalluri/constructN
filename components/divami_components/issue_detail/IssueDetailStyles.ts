@@ -447,7 +447,8 @@ export const CustomTaskDrawerContainer = styled("div")((props: any) => ({
   paddingLeft: "20px",
   paddingRight: "20px",
   // border: "2px solid blue",
-  overflowY: !props.loader ? "scroll" : "hidden",
+  // overflowY: !props.loader ? "scroll" : "hidden",
+  overflowY:"hidden"
 })) as any;
 
 
@@ -511,6 +512,7 @@ interface ContainerProps {
 export const BodyContainer = styled(Box)<ContainerProps>`
   height: ${(props) =>
     props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
+    overflow-y: scroll;
 `;
 
 export const FourthBodyDiv = styled("div")((props: any) => ({
