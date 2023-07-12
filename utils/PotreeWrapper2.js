@@ -861,7 +861,7 @@ export const PotreeViewerUtils = () => {
                 }
             }
         }
-        if (selectedPointcloud) {
+        if (selectedPointcloud && (_currentMode == 'Drone Image' || _currentMode == 'Phone Image')) {
             return {
                 location: closestIntersection,
                 distance: closestDistance,
@@ -1344,6 +1344,7 @@ export const PotreeViewerUtils = () => {
             _context = getContextLocalFromGlobal(context);
         } else {
             _context = null;
+            return;
         }
         handleContext(_context);
     }
