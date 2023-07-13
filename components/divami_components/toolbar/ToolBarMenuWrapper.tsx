@@ -101,6 +101,10 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   showIssueMarkups,
   setShowTaskMarkups,
   showTaskMarkups,
+  setHighlightCreateIcon,
+  highlightCreateIcon,
+  setHighlightCreateTaskIcon,
+  highlightCreateTaskIcon
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -121,6 +125,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   const [myTypesList, setMyTypesList] = useState<string[]>(currentTypesList);
   const [myLayersList, setMyLayersList] =
     useState<IActiveRealityMap>(currentLayersList);
+    const [isCameraIconClicked, setCameraIconClicked] = useState(false);
+    const [isClipboardIconClicked, setClipboardIconClicked] = useState(false);
   let toolInstance: ITools = { toolName: "", toolAction: "" };
   useEffect(() => {
     setIViewMode(viewMode);
@@ -349,6 +355,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           onListClick={() => {
             setOpenSelectLayer(false);
             setOpenSelectTypes(!openSelectTypes);
+            setHighlightCreateIcon(false);
+            setHighlightCreateTaskIcon(false)
           }}
         />
         <Layers
@@ -361,12 +369,18 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           onListClick={() => {
             setOpenSelectTypes(false);
             setOpenSelectLayer(!openSelectLayer);
+            setHighlightCreateIcon(false);
+            setHighlightCreateTaskIcon(false)
           }}
           selectedLayersList={selectedLayersList}
           setActiveRealityMap={setActiveRealityMap}
           layersUpdated={layersUpdated}
         />
         <Issues
+          isCameraIconClicked={isCameraIconClicked} 
+          setCameraIconClicked={setCameraIconClicked}
+          isClipboardIconClicked={isClipboardIconClicked} 
+          setClipboardIconClicked={setClipboardIconClicked}
           issuesList={issuesList}
           issueMenuClicked={issueMenuClicked}
           handleOnFilter={handleOnFilter}
@@ -396,6 +410,9 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           setIssueLoader={setIssueLoader}
           setShowIssueMarkups={setShowIssueMarkups}
           showIssueMarkups={showIssueMarkups}
+          setHighlightCreateIcon={setHighlightCreateIcon}
+          highlightCreateIcon={highlightCreateIcon}
+          setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
         />
 
         <Task
@@ -424,6 +441,13 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           taskStatusList={taskStatusList}
           setShowTaskMarkups={setShowTaskMarkups}
           showTaskMarkups={showTaskMarkups}
+          highlightCreateTaskIcon={highlightCreateTaskIcon}
+          setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
+          setHighlightCreateIcon={setHighlightCreateIcon}
+          isCameraIconClicked={isCameraIconClicked} 
+          setCameraIconClicked={setCameraIconClicked}
+          isClipboardIconClicked={isClipboardIconClicked} 
+          setClipboardIconClicked={setClipboardIconClicked}
         />
 
         {viewMode === "Reality" ? (

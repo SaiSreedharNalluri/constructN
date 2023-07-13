@@ -171,6 +171,8 @@ const Index: React.FC<IProps> = () => {
   const [breadCrumbsData, setBreadCrumbsData] = useState<any>([]);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [issueLoader, setIssueLoader] = useState(false);
+  const [highlightCreateIcon, setHighlightCreateIcon] = useState(false);
+  const [highlightCreateTaskIcon, setHighlightCreateTaskIcon] = useState(false);
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
@@ -191,8 +193,10 @@ const Index: React.FC<IProps> = () => {
     filterData: {},
     numberOfFilters: 0,
   });
+ 
   const closeIssueCreate = () => {
     setOpenCreateIssue(false);
+    setHighlightCreateIcon(false);
   };
   const issueSubmit = (formdata: Issue) => {
     issuesList.push(formdata);
@@ -208,6 +212,7 @@ const Index: React.FC<IProps> = () => {
 
   const closeTaskCreate = () => {
     setOpenCreateTask(false);
+    setHighlightCreateTaskIcon(false)
   };
   const closeIssueList = () => {
     setOpenIssueView(false);
@@ -1637,6 +1642,10 @@ const Index: React.FC<IProps> = () => {
                 handleOnTaskFilter={handleOnTaskFilter}
                 contextInfo={currentContext}
                 openCreateIssue={openCreateIssue}
+                setHighlightCreateIcon={setHighlightCreateIcon}
+                highlightCreateIcon={highlightCreateIcon}
+                highlightCreateTaskIcon={highlightCreateTaskIcon}
+                setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
                 openCreateTask={openCreateTask}
                 selectedLayersList={currentViewLayers}
                 deleteTheTask={deleteTheTask}
