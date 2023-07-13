@@ -32,6 +32,7 @@ import Tooltip from "@mui/material/Tooltip";
 import html2canvas from "html2canvas";
 import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
+import plusCircleIconHighlighted from "../../../public/divami_icons/plusCircleIconHighlighted.svg";
 const Task = ({
   rightMenuClickHandler,
   tasksList,
@@ -53,6 +54,7 @@ const Task = ({
   openTaskDetails,
   closeTaskDetails,
   getTasks,
+  setHighlightCreateIcon,
   handleOnTasksSort,
   taskSubmit,
   deleteTheAttachment,
@@ -61,6 +63,9 @@ const Task = ({
   taskPriorityList,
   setShowTaskMarkups,
   showTaskMarkups,
+  setHighlightCreateTaskIcon,
+  highlightCreateTaskIcon,
+  
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -93,6 +98,8 @@ const Task = ({
   }, [currentProject, currentSnapshot, currentStructure, taskOpenDrawer]);
   const handleViewTaskList = () => {
     setOpenDrawer(true);
+    setHighlightCreateTaskIcon(false);
+    setHighlightCreateIcon(false)
   };
   const handleCreateTask = (formData: any) => {
     if (enableSubmit) {
@@ -242,6 +249,8 @@ const Task = ({
     //setCreateOverlay(true);
     taskMenuInstance.toolAction = "taskCreate";
     taskMenuClicked(taskMenuInstance);
+    setHighlightCreateTaskIcon(true)
+    setHighlightCreateIcon(false)
   };
   const closeTaskCreateFn = () => {
     taskMenuInstance.toolAction = "taskCreateClose";
@@ -263,6 +272,9 @@ const Task = ({
     if (showTaskMarkups) taskMenuInstance.toolAction = "taskHide";
     else taskMenuInstance.toolAction = "taskShow";
     taskMenuClicked(taskMenuInstance);
+    setHighlightCreateTaskIcon(false)
+    setHighlightCreateIcon(false)
+
   };
 
   const handleToggle = () => {
@@ -277,14 +289,14 @@ const Task = ({
       <TaskTitle>Task: </TaskTitle>
 
       <Tooltip title="Create Task">
-        <IssuesSectionPlusImg>
+        <IssuesSectionPlusImg className={highlightCreateTaskIcon?"bg-[#F1742E] hover:bg-[#F1742E]":""}>
           <CameraIcon
             onClick={() => {
               openTaskCreateFn();
 
               // setOpenCreateTask(true);
             }}
-            src={plusCircleIcon}
+            src= {highlightCreateTaskIcon?plusCircleIconHighlighted:plusCircleIcon}
             // onClick={props.rightMenuClickHandler}
             width={12}
             height={12}
