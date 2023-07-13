@@ -77494,6 +77494,7 @@ ENDSEC
 			this.pitch = pitch;
 			this.roll = roll;
 			this.mesh = null;
+			this.group = null;
 		}
 	};
 
@@ -77518,6 +77519,7 @@ ENDSEC
 			this.node.add(this.sphere);
 			this._visible = true;
 			// this.node.add(label);
+			this._visibleRings = [];
 
 			this.focusedImage = null;
 			this.currentlyHovered = null;
@@ -77585,7 +77587,7 @@ ENDSEC
 
 
 			for(const image of this.images){
-				image.mesh.visible = visible && (this.focusedImage == null);
+				image.group.visible = visible && (this.focusedImage == null);
 			}
 
 			this.sphere.visible = visible && (this.focusedImage != null);
@@ -77626,39 +77628,48 @@ ENDSEC
 			this.viewer.orbitControls.doubleClockZoomEnabled = false;
 
 			for(let image of this.images){
-				image.mesh.visible = false;
+				image.group.visible = false;
 			}
 
 			// if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth <= 768)){
+				this._visibleRings = [];
 				let index = this.images.findIndex( element => {
 				if (element.file === image360.file) {
 					return true;
 				}
 				});
 
+				console.log("Test ring position: ", index);
 				if(index != 0) {
 					let i = index - 1;
 					let current = new Vector3(this.images[index].position[0], this.images[index].position[1], this.images[index].position[2]);
 					let next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
 					let dist = current.distanceTo(next);
-					console.log("Distance between cicles: ", dist);
-					while(dist < 3 && i > -1) {
+					// console.log("Distance between cicles: ", dist);
+					while(dist < 3 && i > 0) {
+						console.log("Test ring position: ", i);
 						i--;
 						next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
 						dist = current.distanceTo(next);
 					}
-					if(i > -1) this.images[i].mesh.visible = true;
+					if(i > -1) {
+						this.images[i].group.visible = true;
+						this._visibleRings.push(this.images[i]);
+					}
 				}
 				let i = index + 1;
 				let current = new Vector3(this.images[index].position[0], this.images[index].position[1], this.images[index].position[2]);
 				let next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
 				let dist = current.distanceTo(next);
-				while(dist < 3 && i < this.images.length) {
+				while(dist < 3 && i < this.images.length - 1) {
 					i++;
 					next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
 					dist = current.distanceTo(next);
 				}
-				if(i < this.images.length) this.images[i].mesh.visible = true;
+				if(i < this.images.length) {
+					this.images[i].group.visible = true;
+					this._visibleRings.push(this.images[i]);
+				}
 
 				this.selectingEnabled = true;
 			// } else {
@@ -77731,7 +77742,7 @@ ENDSEC
 			this.selectingEnabled = true;
 			this.viewer.setEDLOpacity(1);
 			for(let image of this.images){
-				image.mesh.visible = false;
+				image.group.visible = false;
 			}
 
 			let image = this.focusedImage;
@@ -77845,14 +77856,14 @@ ENDSEC
 
 			// let tStart = performance.now();
 			this.raycaster.ray.copy(ray);
-			let newArray = this.images !== undefined ? this.images.filter(image =>{
-				if (image.mesh.visible === true) {
-					return image.mesh
-				}
-			}) : [];
+			// let newArray = this.images !== undefined ? this.images.filter(image =>{
+			// 	if (image.group.visible === true) {
+			// 		return image.group
+			// 	}
+			// }) : [];
 			// console.log("testing selected meshes: ", newArray);
-			let intersections = this.raycaster.intersectObjects(newArray.map(image =>{
-					return image.mesh
+			let intersections = this.raycaster.intersectObjects(this._visibleRings.map(image =>{
+					return image.group.children[1]
 			}));
 
 			if(intersections.length === 0){
@@ -77862,8 +77873,8 @@ ENDSEC
 			}
 
 			let intersection = intersections[0];
-			if(intersection.object.image360.mesh.visible === true) {
-				this.currentlyHovered = intersection.object;
+			if(intersection.object.parent.visible === true) {
+				this.currentlyHovered = intersection.object.parent.children[0];
 				this.currentlyHovered.material = this.hoverMaterial;
 			}
 
@@ -77999,22 +78010,45 @@ ENDSEC
 
 		static createSceneNodes(images360, transform){
 
+			// for(let image360 of images360.images){
+			// 	let {longitude, latitude, altitude} = image360;
+			// 	// let xy = transform.forward([longitude, latitude]);
+
+			// 	let mesh = new THREE.Mesh(new THREE.RingGeometry( 0.35, .5, 32 ), new THREE.MeshBasicMaterial({side: THREE.DoubleSide, color:'#FF843F'}));
+			// 	mesh.position.set(longitude, latitude, altitude - 2.0);
+			// 	mesh.scale.set(1, 1, 1);
+			// 	mesh.material.transparent = true;
+			// 	// mesh.visible = false;
+			// 	mesh.material.opacity = 0.75;
+
+			// 	mesh.image360 = image360;
+
+			// 	images360.node.add(mesh);
+
+			// 	image360.mesh = mesh;
+			// }
+
 			for(let image360 of images360.images){
 				let {longitude, latitude, altitude} = image360;
-				// let xy = transform.forward([longitude, latitude]);
-
-				let mesh = new Mesh(new RingGeometry( 0.35, .5, 32 ), new MeshBasicMaterial({side: DoubleSide, color:'#FF843F'}));
-				mesh.position.set(longitude, latitude, altitude - 2.0);
-				mesh.scale.set(1, 1, 1);
-				mesh.material.transparent = true;
-				// mesh.visible = false;
-				mesh.material.opacity = 0.75;
-
-				mesh.image360 = image360;
-
-				images360.node.add(mesh);
-
-				image360.mesh = mesh;
+				let ringMesh = new Mesh(new RingGeometry( 0.35, .5, 32 ), new MeshBasicMaterial({side: DoubleSide, color:'#FF843F'}));
+				ringMesh.position.set(longitude, latitude, altitude - 2.0);
+				ringMesh.scale.set(1, 1, 1);
+				ringMesh.material.transparent = true;
+				ringMesh.material.opacity = 0.75;
+				ringMesh.image360 = image360;
+				let circleMesh = new Mesh(new CircleGeometry( .5, 32 ), new MeshBasicMaterial({side:DoubleSide}));
+				circleMesh.position.set(longitude, latitude, altitude - 2.0);
+				circleMesh.scale.set(1, 1, 1);
+				circleMesh.material.transparent = true;
+				circleMesh.material.opacity = 0;
+				// circleMesh.image360 = image360;
+				const group = new Group();
+				group.add( ringMesh );
+				group.add( circleMesh );
+				images360.node.add(group);
+				image360.group = group;
+				// image360.circleMesh = circleMesh;
+				// image360.ringMesh = ringMesh;
 			}
 		}
 	};
