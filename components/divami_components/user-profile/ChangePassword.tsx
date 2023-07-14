@@ -58,7 +58,7 @@ const ChangePassword = ({closeDrawer}:any) => {
       .then((response) => {
         if (response.success === true) {
           setShow(true);
-          CustomToast('Password change successful',"success");
+          CustomToast('Password changed successful',"success");
           resetForm();
         }
       })

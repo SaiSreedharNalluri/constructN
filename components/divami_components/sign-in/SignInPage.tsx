@@ -95,7 +95,7 @@ const SignInPage = () => {
               JSON.stringify(userProfileObj)
             );
             setCookie("user", userProfileObj);
-            CustomToast("User logged in successfully", "success");
+            CustomToast("User signed in successfully", "success");
             router.push("/projects");
             setLoginEnable(true)
           } else {

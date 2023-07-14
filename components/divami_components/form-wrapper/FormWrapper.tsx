@@ -328,7 +328,7 @@ const FormWrapper = (props: any) => {
     for(let i = 0; i < e.target.files.length; i++){
       const file = e.target.files[i];
       if (file.size > maxSize) {
-        CustomToast("Please upload a file under 50 MB in size.", "error", 2000);
+        CustomToast("Please upload file(s) <50 MB", "error", 2000);
       } else {
         sizeCheckArr.push(file)
       }
