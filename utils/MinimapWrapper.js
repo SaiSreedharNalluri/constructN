@@ -417,9 +417,19 @@ export const MinimapUtils = () => {
       if(_dataVizUtils) _dataVizUtils.updateNavigator(position, yaw);
       _navPosition = position
       _navRotation = yaw
+      let localPos = _toLocalPosition(position)
+      let z = _viewer.navigation.getPosition().z
+      _viewer.navigation.setPosition(localPos.x, localPos.y, z)
     }, 10)
   }
+   const _toLocalPosition = (position) => {
 
+      let _position = applyTMInverse(position, this._tm)
+
+      _position = applyOffset(_position, this._offset)
+
+      return _position
+  }
   const showTag = (tag, show) => {
     _isPendingLayersToLoad = true;
     _showTag[tag] = show;
