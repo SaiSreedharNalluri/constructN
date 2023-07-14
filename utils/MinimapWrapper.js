@@ -3,7 +3,8 @@ import {
   applyOffset,
   removeOffset,
   applyTMInverse,
-  applyTM
+  applyTM,
+  isMobile
 
 } from './ViewerDataUtils';
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
@@ -408,26 +409,35 @@ export const MinimapUtils = () => {
     }
   };
 
-  const createMarker = (position, yaw) => {
-    if(!position) return
+  const createMarker = (position, target,yaw) => {
+    if(!target) return
     if(!_isModelLoaded) return
-    if(_navPosition && _navPosition[0] == position[0] && _navPosition[1] == position[1] && _navPosition[2] == position[2] && _navRotation == yaw) return;
+    if(_navPosition && _navPosition[0] == target[0] && _navPosition[1] == target[1] && _navPosition[2] == target[2] && _navRotation == yaw) return;
+    
     setTimeout(() => {
-      // _dataVizUtils.createMarker(position, yaw);
-      if(_dataVizUtils) _dataVizUtils.updateNavigator(position, yaw);
-      _navPosition = position
+      if(_dataVizUtils) _dataVizUtils.updateNavigator(target, yaw);
+      _navPosition = target
       _navRotation = yaw
-      let localPos = _toLocalPosition(position)
-      let z = _viewer.navigation.getPosition().z
-      _viewer.navigation.setPosition(localPos.x, localPos.y, z)
+      if (isMobile()) {
+        let z = _viewer.getState({ viewport: true }).viewport.eye[2]
+        let localPos = _toLocalPosition(position);
+        _viewer.navigation.setPosition({
+          x: localPos.x,
+          y: localPos.y,
+          z: z > 6 ? 3 : z,
+        });
+        _viewer.navigation.setTarget({ x: localPos.x, y: localPos.y, z: 0 });
+        _viewer.navigation.setPivotPoint({
+          x: localPos.x,
+          y: localPos.y,
+          z: 0,
+        });
+      }
     }, 10)
   }
    const _toLocalPosition = (position) => {
-
-      let _position = applyTMInverse(position, this._tm)
-
-      _position = applyOffset(_position, this._offset)
-
+      let _position = applyTMInverse(position,_tm)
+      _position = applyOffset(_position, _globalOffset)
       return _position
   }
   const showTag = (tag, show) => {
@@ -654,7 +664,7 @@ export const MinimapUtils = () => {
         _viewer.navigation.setVerticalFov(viewerState.fov, false);
       }
     }
-    _isModelLoaded && viewerState && viewerState.cameraObject && createMarker(viewerState.cameraObject.cameraTarget, viewerState.cameraObject.yaw)
+    _isModelLoaded && viewerState && viewerState.cameraObject && createMarker(viewerState.cameraObject.cameraPosition, viewerState.cameraObject.cameraTarget, viewerState.cameraObject.yaw)
   };
 
   const setNavigation = (context) => {
