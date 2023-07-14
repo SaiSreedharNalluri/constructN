@@ -7,7 +7,7 @@ import {
 
 } from './ViewerDataUtils';
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
-
+import PointTool from './Tools';
 export class ForgeMinimapInstance {
 
   constructor(viewerId) {
@@ -293,7 +293,10 @@ export const MinimapUtils = () => {
             _manifestNode,
             generateModelOptions(document.tm, _manifestNode)
           );
-        },
+        let tool =  new PointTool(_viewer,_viewer.getState({ viewport: true }).viewport.eye[2])
+       _viewer.toolController.registerTool(tool);
+       _viewer.toolController.activateTool(tool.names)
+      },
         function () {
           console.error("Failed fetching Forge manifest");
         }
@@ -791,8 +794,7 @@ export const MinimapUtils = () => {
   //   }
   //   return false;
   // }
-
-  const setUpEventListeners = () => {
+const setUpEventListeners = () => {
     _viewer.addEventListener(
       Autodesk.Viewing.VIEWER_INITIALIZED,
       onViewerInitialized
@@ -833,12 +835,11 @@ export const MinimapUtils = () => {
     let viewerElement = document.getElementById(_viewerId);
     if (viewerElement) {
       viewerElement.addEventListener("mouseenter", onMouseEnter);
-    }
-
-    // _viewer.container.addEventListener(
-    //   "click",
-    //   onClickEventOnContainer
-    // );
+    }     
+      // _viewer.container.addEventListener(
+      //   "click",
+      //   onClickEventOnContainer
+      // );
   };
 
   const removeEventListeners = () => {
@@ -878,7 +879,6 @@ export const MinimapUtils = () => {
       Autodesk.Viewing.VIEWER_UNINITIALIZED,
       onViewerUnInitialized
     );
-
     let viewerElement = document.getElementById(_viewerId);
     if (viewerElement) {
       viewerElement.removeEventListener("mouseenter", onMouseEnter);
