@@ -272,7 +272,7 @@ export const AddUsersEmailOverlay = ({
     <ProjectAddUsersListContainer>
       <HeaderContainer>
         <TitleContainer>
-          <span>Add Users To The Platform</span>
+          <span>Add User(s) to the Project</span>
           <div className=" rounded-full p-[6px] hover:bg-[#E7E7E7]">
           <CloseIcon
             onClick={() => {
