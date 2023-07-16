@@ -55,7 +55,8 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import PictureInPictureIcon from '@mui/icons-material/PictureInPicture';
 import { IconButton } from '@mui/material';
-
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 type TMCIProps ={
   currentSnapshot: ISnapshot;
   snapshotList: ISnapshot[];
@@ -1168,21 +1169,16 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
       onResize={(e, direction, ref, delta, position) => {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
       }}
-      className={`${'z-10 rounded-lg bg-white'} ${showMinimap && ((count == 1 && (getViewerTypefromViewType(viewerData.current?.currentViewType||'') === "Potree")) || (count == 2 &&  (getViewerTypefromViewType(viewerData.current?.currentCompareMode||'') === "Potree"))) ? 'opacity-100' : 'opacity-0'}`}>
+      className={`${'rounded-lg bg-white'}`} 
+      cancel={`#minimap-${count}`}>
       <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
         <div className='h-8 rounded-lg bg-white flex'>
           <IconButton className='cursor-move' size="small">
             <DragIndicatorIcon fontSize="inherit" />
           </IconButton>
           <div className='flex items-center text-[#F1742E] pl-2 flex-1'>Minimap</div>
-          <IconButton size="small" onClick={() => { resizeMinimap('minimize', count) }} onTouchEnd={() => { resizeMinimap('minimize', count) }}>
-            <RemoveIcon fontSize="inherit" />
-          </IconButton>
-          <IconButton size="small" onClick={() => { resizeMinimap('default', count) }} onTouchEnd={() => { resizeMinimap('default', count) }}>
-            <PictureInPictureIcon fontSize="inherit" />
-          </IconButton>
-          <IconButton size="small" onClick={() => { resizeMinimap('fullscreen', count) }} onTouchEnd={() => { resizeMinimap('fullscreen', count) }}>
-            <FullscreenIcon fontSize="inherit" />
+          <IconButton size="small" onClick={() => { _minimize(count) } } onTouchEnd={() => {  _minimize(count) } }>
+            {minimize ? <KeyboardDoubleArrowDownIcon fontSize="inherit" /> : <KeyboardDoubleArrowUpIcon fontSize="inherit" />}
           </IconButton>
         </div>
         <MiniMap 
@@ -1195,7 +1191,33 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
       </div>
     </Rnd>)
   }
+  const [minimize, setMinimize] = useState(false)
 
+  const _isMinimized = useRef(false)
+
+  const _minimize = (count:any) => {
+
+    const minimap = count == 1 ? _minimap : _minimapCompare
+
+    const utils = count == 1 ? minimapUtils.current : minimapCompareUtils.current
+
+    if (_isMinimized.current) {
+
+        minimap?.updateSize({ width: 320, height: 320 })
+
+    } else {
+
+        minimap?.updateSize({ width: 320, height: 28 })
+
+    }
+
+    _isMinimized.current = !_isMinimized.current
+
+    setMinimize(_isMinimized.current)
+
+    setTimeout(() => utils?.resize(), 50)
+
+}
   function resizeMinimap  (mode:string, count:number)  {
     const minimap = count == 1 ? _minimap : _minimapCompare
     const utils = count == 1 ? minimapUtils.current : minimapCompareUtils.current

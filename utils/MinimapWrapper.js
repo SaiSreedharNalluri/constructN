@@ -3,11 +3,12 @@ import {
   applyOffset,
   removeOffset,
   applyTMInverse,
-  applyTM
+  applyTM,
+  isMobile
 
 } from './ViewerDataUtils';
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
-
+import PointTool from './Tools';
 export class ForgeMinimapInstance {
 
   constructor(viewerId) {
@@ -293,7 +294,10 @@ export const MinimapUtils = () => {
             _manifestNode,
             generateModelOptions(document.tm, _manifestNode)
           );
-        },
+        let tool =  new PointTool(_viewer,_viewer.getState({ viewport: true }).viewport.eye[2])
+       _viewer.toolController.registerTool(tool);
+       _viewer.toolController.activateTool(tool.names)
+      },
         function () {
           console.error("Failed fetching Forge manifest");
         }
@@ -405,18 +409,37 @@ export const MinimapUtils = () => {
     }
   };
 
-  const createMarker = (position, yaw) => {
-    if(!position) return
+  const createMarker = (position, target,yaw) => {
+    if(!target) return
     if(!_isModelLoaded) return
-    if(_navPosition && _navPosition[0] == position[0] && _navPosition[1] == position[1] && _navPosition[2] == position[2] && _navRotation == yaw) return;
+    if(_navPosition && _navPosition[0] == target[0] && _navPosition[1] == target[1] && _navPosition[2] == target[2] && _navRotation == yaw) return;
+    
     setTimeout(() => {
-      // _dataVizUtils.createMarker(position, yaw);
-      if(_dataVizUtils) _dataVizUtils.updateNavigator(position, yaw);
-      _navPosition = position
+      if(_dataVizUtils) _dataVizUtils.updateNavigator(target, yaw);
+      _navPosition = target
       _navRotation = yaw
+      if (isMobile()) {
+        let z = _viewer.getState({ viewport: true }).viewport.eye[2]
+        let localPos = _toLocalPosition(position);
+        _viewer.navigation.setPosition({
+          x: localPos.x,
+          y: localPos.y,
+          z: z > 6 ? 3 : z,
+        });
+        _viewer.navigation.setTarget({ x: localPos.x, y: localPos.y, z: 0 });
+        _viewer.navigation.setPivotPoint({
+          x: localPos.x,
+          y: localPos.y,
+          z: 0,
+        });
+      }
     }, 10)
   }
-
+   const _toLocalPosition = (position) => {
+      let _position = applyTMInverse(position,_tm)
+      _position = applyOffset(_position, _globalOffset)
+      return _position
+  }
   const showTag = (tag, show) => {
     _isPendingLayersToLoad = true;
     _showTag[tag] = show;
@@ -641,7 +664,7 @@ export const MinimapUtils = () => {
         _viewer.navigation.setVerticalFov(viewerState.fov, false);
       }
     }
-    _isModelLoaded && viewerState && viewerState.cameraObject && createMarker(viewerState.cameraObject.cameraTarget, viewerState.cameraObject.yaw)
+    _isModelLoaded && viewerState && viewerState.cameraObject && createMarker(viewerState.cameraObject.cameraPosition, viewerState.cameraObject.cameraTarget, viewerState.cameraObject.yaw)
   };
 
   const setNavigation = (context) => {
@@ -791,8 +814,7 @@ export const MinimapUtils = () => {
   //   }
   //   return false;
   // }
-
-  const setUpEventListeners = () => {
+const setUpEventListeners = () => {
     _viewer.addEventListener(
       Autodesk.Viewing.VIEWER_INITIALIZED,
       onViewerInitialized
@@ -833,12 +855,11 @@ export const MinimapUtils = () => {
     let viewerElement = document.getElementById(_viewerId);
     if (viewerElement) {
       viewerElement.addEventListener("mouseenter", onMouseEnter);
-    }
-
-    // _viewer.container.addEventListener(
-    //   "click",
-    //   onClickEventOnContainer
-    // );
+    }     
+      // _viewer.container.addEventListener(
+      //   "click",
+      //   onClickEventOnContainer
+      // );
   };
 
   const removeEventListeners = () => {
@@ -878,7 +899,6 @@ export const MinimapUtils = () => {
       Autodesk.Viewing.VIEWER_UNINITIALIZED,
       onViewerUnInitialized
     );
-
     let viewerElement = document.getElementById(_viewerId);
     if (viewerElement) {
       viewerElement.removeEventListener("mouseenter", onMouseEnter);

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 import plusCircleIcon from "../../../public/divami_icons/plusCircleIcon.svg";
+import plusCircleIconHighlighted from "../../../public/divami_icons/plusCircleIconHighlighted.svg";
 import fileTextIcon from "../../../public/divami_icons/fileTextIcon.svg";
 import triWarnIcon from "../../../public/divami_icons/triWarnIcon.svg";
 import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIcon.svg";
@@ -67,6 +68,9 @@ const Issues = ({
   setIssueLoader,
   setShowIssueMarkups,
   showIssueMarkups,
+  setHighlightCreateIcon,
+  highlightCreateIcon,
+  setHighlightCreateTaskIcon,
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
@@ -230,11 +234,14 @@ const Issues = ({
   const openIssueCreateFn = () => {
     issueMenuInstance.toolAction = "issueCreate";
     issueMenuClicked(issueMenuInstance);
+      setHighlightCreateIcon(true) 
+      setHighlightCreateTaskIcon(false)
   };
-
   const openIssueListFn = () => {
     issueMenuInstance.toolAction = "issueView";
     issueMenuClicked(issueMenuInstance);
+    setHighlightCreateIcon(false)
+    setHighlightCreateTaskIcon(false)
   };
 
   const toggleIssueVisibility = () => {
@@ -242,6 +249,9 @@ const Issues = ({
     else issueMenuInstance.toolAction = "issueShow";
     issueMenuClicked(issueMenuInstance);
     setShowIssueMarkups(!showIssueMarkups);
+    setHighlightCreateIcon(false)
+    setHighlightCreateTaskIcon(false)
+
   };
 
   useEffect(() => {
@@ -256,12 +266,12 @@ const Issues = ({
         <IssueTitle>Issues:</IssueTitle>
 
         <Tooltip title="Create Issue">
-          <IssuesSectionPlusImg>
+          <IssuesSectionPlusImg className={highlightCreateIcon?"  bg-[#F1742E] hover:bg-[#F1742E] ":""}>
             <CameraIcon
-              src={plusCircleIcon}
+              src={highlightCreateIcon?plusCircleIconHighlighted:plusCircleIcon}
               alt="Arrow"
               onClick={() => {
-                openIssueCreateFn();
+                openIssueCreateFn(); 
               }}
               width={12}
               height={12}
