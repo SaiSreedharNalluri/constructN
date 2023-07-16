@@ -765,7 +765,12 @@ function GenericViewer(props) {
       case 'Mapbox':
         if (mapboxUtils.current == undefined) {
           mapboxUtils.current = MapboxViewerUtils();
-          mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, { utm: project.utm, context: currentContext.current.cameraObject });
+          const options = {
+            utm: project.utm,
+            location: project.location
+          }
+          if(currentContext.current) options['context'] = currentContext.current.cameraObject
+          mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, options);
           mapboxUtils.current.setType(viewType);
         }
         break;

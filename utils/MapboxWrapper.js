@@ -75,7 +75,8 @@ export const MapboxViewerUtils = () => {
       utm = 43
     }
     console.log(utm, options)
-    const center = context ? utmToLatLng(context.cameraTarget, utm ? utm : 43) : undefined;
+    let center = context ? utmToLatLng(context.cameraTarget, utm ? utm : 43) : undefined;
+    center = center ? center : options.location
     console.log(center)
     const bearing = context ? -radianToDegee(context.yaw) : 0;
     _map = new mapboxgl.Map({
@@ -84,7 +85,7 @@ export const MapboxViewerUtils = () => {
       center: center ? center : [77.5657485841588, 15.061798588445253], // starting position [lng, lat]
       bearing: bearing ? bearing : 0,
       zoom: 16, // starting zoom
-      maxZoom:22,
+      maxZoom:21,
     });
     _map.on("load", () => {
       _isViewerInitialized = true;
