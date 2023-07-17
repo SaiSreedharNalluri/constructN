@@ -37,6 +37,7 @@ import { useRouter } from "next/router";
 import FooterSignUp from "./FooterSignUp";
 import PasswordRequired from "../password-field/PasswordRequired";
 import { CustomToast } from "../custom-toaster/CustomToast";
+import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 const SignUpPage = () => {
   const router = useRouter();
 
@@ -228,7 +229,7 @@ const SignUpPage = () => {
   return (
     <SectionShowcase>
       <HeaderContainer>
-        <HeaderImageLogo src={Logo} alt="logo" />
+        <HeaderImageLogo src={constructnLogo} alt="logo" />
       </HeaderContainer>
       <IllustrationBackground src={Illustration} alt="construct" />
 
