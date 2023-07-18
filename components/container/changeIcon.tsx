@@ -1,7 +1,18 @@
 import React from "react";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
+
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
+const UNSUPPORTED_FORMATS = [
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
+  "application/msword","application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "video/*",
+  "application/vnd.ms-excel",
+  "application/msword", 
+  "text/plain"
+];
+
 interface IProps {
   handleImageUPload: (e: object) => void;
 }
@@ -14,7 +25,9 @@ const ChangeIcon: React.FC<IProps> = ({ handleImageUPload }) => {
       .test(
         "format",
         "upload file",
-        (value) => !value || (value && SUPPORTED_FORMATS.includes(value.type))
+        (value) =>
+          !value ||
+          (value && (SUPPORTED_FORMATS.includes(value.type) || UNSUPPORTED_FORMATS.includes(value.type)))
       ),
   });
 

@@ -75,7 +75,14 @@ const UserProfile = ({ handleProfileClose, projectUsers }: any) => {
           fileInput.value = "";
         }
       }
-    });
+    })
+    .catch((error) => 
+    {
+      if (error.success === false) {
+        CustomToast("File format not supported","error");
+      }
+    }
+    )
   };
   return (
     <StyledDiv>
