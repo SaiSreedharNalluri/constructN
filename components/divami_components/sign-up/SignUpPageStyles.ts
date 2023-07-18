@@ -54,7 +54,7 @@ export const FormDiv = styled("div")({
   height: "100%",
   zIndex: "10",
   background: "white",
-
+  overflowY:"auto",
   filter: "drop-shadow(0px -4px 4px rgba(0, 0, 0, 0.25))",
 });
 
