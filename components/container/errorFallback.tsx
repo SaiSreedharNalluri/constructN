@@ -1,12 +1,10 @@
 import { FallbackProps } from "react-error-boundary";
 import NextImage from "../core/Image";
-import { useRouter } from "next/router";
 import ErrorNotFound from "../../public/divami_icons/ErrorNotFound.svg";
 import Header from "../divami_components/header/Header";
 import { getCookie } from "cookies-next";
 import { useEffect, useState } from "react";
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
-  const router = useRouter();
   const[isAuth,setIsAuth]=useState(false)
   useEffect(()=>{
     const userObj: any = getCookie('user');
