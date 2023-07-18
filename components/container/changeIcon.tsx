@@ -1,18 +1,7 @@
 import React from "react";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
-
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
-const UNSUPPORTED_FORMATS = [
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
-  "application/msword","application/pdf",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "video/*",
-  "application/vnd.ms-excel",
-  "application/msword", 
-  "text/plain"
-];
-
 interface IProps {
   handleImageUPload: (e: object) => void;
 }
@@ -22,13 +11,9 @@ const ChangeIcon: React.FC<IProps> = ({ handleImageUPload }) => {
     file: Yup.mixed()
       .nullable()
       .required("A file is required")
-      .test(
-        "format",
-        "upload file",
-        (value) =>
-          !value ||
-          (value && (SUPPORTED_FORMATS.includes(value.type) || UNSUPPORTED_FORMATS.includes(value.type)))
-      ),
+     .test("format", "File format not supported", (value) => {
+        return SUPPORTED_FORMATS.includes(value?.type);
+      }),
   });
 
   return (
@@ -38,7 +23,7 @@ const ChangeIcon: React.FC<IProps> = ({ handleImageUPload }) => {
         validationSchema={validationSchema}
         onSubmit={handleImageUPload}
       >
-        {({ values, setFieldValue }) => (
+        {({ values, setFieldValue, errors, touched}) => (
           <Form>
             <div className="flex w-full mt-2">
               <div className="w-full">
@@ -56,6 +41,9 @@ const ChangeIcon: React.FC<IProps> = ({ handleImageUPload }) => {
                 >
                   Upload
                 </button>
+                {errors.file && touched.file && (
+                  <div className="text-red-500">{errors.file}</div>
+                )}
               </div>
             </div>
           </Form>
