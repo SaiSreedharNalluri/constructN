@@ -763,9 +763,10 @@ export const MinimapUtils = () => {
     if (loadLayersOnDataLoadCompletion()) {
       let url = window.location.href
       let split = url.split('structId=')
-      if(split.length == 2 && split[1] == _structure._id){
+      if((split.length == 2 && split[1] == _structure._id)|| isMobile()){
         loadLayers();
       }
+
     }
   };
 
