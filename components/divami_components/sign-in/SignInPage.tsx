@@ -21,7 +21,7 @@ import {
 
 import { useRouter } from "next/router";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
-import Logo from "../../../public/divami_icons/Logo.svg";
+// import Logo from "../../../public/divami_icons/Logo.svg";
 
 import Checked from "../../../public/divami_icons/checked.svg";
 import UnChecked from "../../../public/divami_icons/unchecked.svg";
@@ -34,7 +34,7 @@ import FooterSignIn from "./FooterSignIn";
 import FormBody from "./FormBody";
 import CustomLoader from "../custom_loader/CustomLoader";
 import { CustomToast } from "../custom-toaster/CustomToast";
-
+import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 const SignInPage = () => {
   const router = useRouter();
 
@@ -155,7 +155,7 @@ const SignInPage = () => {
 
       <SectionShowcase style={{ visibility: loading ? "hidden" : undefined }}>
         <HeaderContainer>
-          <HeaderImageLogo src={Logo} alt="logo" />
+          <HeaderImageLogo src={constructnLogo} alt="logo" />
         </HeaderContainer>
 
         <IllustrationBackground src={Illustration} alt="construct" />
