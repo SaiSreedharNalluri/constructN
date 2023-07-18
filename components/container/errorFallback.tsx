@@ -43,10 +43,10 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
             onClick={() => {
               if(isAuth)
               {
-                router.push("/projects");
+                window.location.href = '/projects'
               }
               else{
-                router.push("/login");
+                window.location.href = "/login"
               }
             }}
           >
