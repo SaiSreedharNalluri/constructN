@@ -275,6 +275,18 @@ function GenericViewer(props) {
       case 'Potree':
         // loadViewerData();
         // loadLayerData();
+        if(potreeUtils.current) {
+          viewLayers && potreeUtils.current.showLayers(Object.values(viewLayers).map(v => {
+            if (v.isSelected) return v.name
+          }));
+        }
+
+        if(potreeCompareUtils.current) {
+          viewLayers && potreeCompareUtils.current.showLayers(Object.values(viewLayers).map(v => {
+            if (v.isSelected) return v.name
+          }));
+        }
+
         if (forgeCompareUtils.current) {
           viewLayers && forgeCompareUtils.current.showLayers(Object.values(viewLayers).map(v => {
             if (v.isSelected) return v.name

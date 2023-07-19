@@ -77639,7 +77639,7 @@ ENDSEC
 				}
 				});
 
-				console.log("Test ring position: ", index);
+				// console.log("Test ring position: ", index);
 				if(index != 0) {
 					let i = index - 1;
 					let current = new Vector3(this.images[index].position[0], this.images[index].position[1], this.images[index].position[2]);
@@ -77647,7 +77647,7 @@ ENDSEC
 					let dist = current.distanceTo(next);
 					// console.log("Distance between cicles: ", dist);
 					while(dist < 3 && i > 0) {
-						console.log("Test ring position: ", i);
+						// console.log("Test ring position: ", i);
 						i--;
 						next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
 						dist = current.distanceTo(next);
@@ -77657,18 +77657,20 @@ ENDSEC
 						this._visibleRings.push(this.images[i]);
 					}
 				}
-				let i = index + 1;
-				let current = new Vector3(this.images[index].position[0], this.images[index].position[1], this.images[index].position[2]);
-				let next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
-				let dist = current.distanceTo(next);
-				while(dist < 3 && i < this.images.length - 1) {
-					i++;
-					next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
-					dist = current.distanceTo(next);
-				}
-				if(i < this.images.length) {
-					this.images[i].group.visible = true;
-					this._visibleRings.push(this.images[i]);
+				if (index != this.images.length - 1) {
+					let i = index + 1;
+					let current = new Vector3(this.images[index].position[0], this.images[index].position[1], this.images[index].position[2]);
+					let next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
+					let dist = current.distanceTo(next);
+					while(dist < 3 && i < this.images.length - 1) {
+						i++;
+						next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
+						dist = current.distanceTo(next);
+					}
+					if(i < this.images.length) {
+						this.images[i].group.visible = true;
+						this._visibleRings.push(this.images[i]);
+					}
 				}
 
 				this.selectingEnabled = true;
@@ -77817,7 +77819,7 @@ ENDSEC
 						},
 						undefined,
 						err => {
-							console.log("potree error loading thumbnail:", texture);
+							console.log("potree error loading thumbnail:", err);
 							loadOrgImage.bind(this)();
 						});
 					let loadOrgImage = function () {
