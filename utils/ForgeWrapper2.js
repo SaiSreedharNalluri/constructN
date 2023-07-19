@@ -297,6 +297,9 @@ export const ForgeViewerUtils = function () {
             _manifestNode,
             generateModelOptions(document.tm, _manifestNode)
           );
+          if(_manifestNode.is2D()) {
+            _viewer.setActiveNavigationTool("pan");
+          }
           loadExtension();
         },
         function () {
@@ -511,7 +514,7 @@ export const ForgeViewerUtils = function () {
   };
 
   const updateContext = (context, sendContext) => {
-    // console.log("Updating context for forge: ", context);
+    // console.log("TestOrbitLock Updating context for forge: ", context);
     if (context) {
       _context = getContextLocalFromGlobal(context, _globalOffset);
     } else {
@@ -524,6 +527,9 @@ export const ForgeViewerUtils = function () {
 
   const handleContext = (context) => {
     switch (context.type) {
+      case "2d":
+        setForgeControls(context.type);
+        break;
       case "3d":
         setNavigation(context);
         setForgeControls(context.type);
@@ -645,7 +651,7 @@ export const ForgeViewerUtils = function () {
   };
 
   const setForgeControls = (type) => {
-    console.log("2DTest inside setForgeControls: ", type, _manifestNode.is2D(),)
+    // console.log("TestOrbitLock inside setForgeControls: ", _viewer.getActiveNavigationTool(), type, _manifestNode.is2D(),)
     if (_manifestNode.is2D()) {
       _viewer.navigation.setLockSettings({
         orbit: false,
@@ -665,7 +671,8 @@ export const ForgeViewerUtils = function () {
     }
     
     if (_bimWalkExtn && !_manifestNode.is2D()) {
-      if (type !== "3d") {
+      // console.log("TestOrbitLock inside setForgeControls: inside not 2d", type, _manifestNode.is2D(),)
+      if (type !== "3d" && type !== "2d") {
         _viewer.navigation.setIsLocked(false);
         if (isCompareView() && (type === "360 Video" || type === "360 Image" || type === "Drone Image")) {
           _viewer.navigation.setLockSettings({

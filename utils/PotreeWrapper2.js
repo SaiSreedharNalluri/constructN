@@ -19,6 +19,13 @@ export const PotreeViewerUtils = () => {
     let _progressList = [];
 
     let _realityPositionMap = {};
+    let _realityState = {
+        "360 Video": true,
+        "360 Image": true,
+        "Phone Image": true,
+        "Drone Image": true,
+
+    };
     let _pointCloudPath = {};
     let _pointCloudMap = {};
     let _floormapPath;
@@ -529,6 +536,10 @@ export const PotreeViewerUtils = () => {
         
     }
 
+    const onVisibityChange = (event) => {
+        // console.log('testShowLayers: ', event)
+    }
+
     const imageEventListeners = (remove = false) => {
         if (!remove) {
             console.log('potree adding imageEventListeners ');
@@ -537,6 +548,7 @@ export const PotreeViewerUtils = () => {
             document.addEventListener('panoLoad', onPanoLoad);
             document.addEventListener('panoUnload', onPanoUnLoad);
             document.addEventListener('onRingClick', onRingClick);
+            document.addEventListener('onVisibityChange', onVisibityChange);
         } else {
             console.log('potree removing imageEventListeners ');
             document.removeEventListener('imageLoad', onImageLoad);
@@ -544,6 +556,7 @@ export const PotreeViewerUtils = () => {
             document.removeEventListener('panoLoad', onPanoLoad);
             document.removeEventListener('panoUnload', onPanoUnLoad);
             document.removeEventListener('onRingClick', onRingClick);
+            document.removeEventListener('onVisibityChange', onVisibityChange);
         }
     }
 
@@ -783,6 +796,40 @@ export const PotreeViewerUtils = () => {
             // currentTag.dispose();
             currentTag = undefined;
             currentTagType = undefined;
+        }
+    }
+
+    const showLayers = (layersList) => {
+        // console.log("testShowLayers: ", layersList);
+        if (!layersList) {
+            return;
+        }
+
+        for(const realityType in _realityState) {
+            let show = layersList.find((e) => e === realityType);
+            if (show) {
+                _realityState[realityType] = true;
+            } else {
+                _realityState[realityType] = false;
+            }
+        }
+
+        for (const realityKey in _realityLayers ) {
+            let reality = _realityLayers[realityKey];
+            // let show = layersList.find((e) => e === reality.type);
+            // console.log("testShowLayers: in for", reality, _realityState[reality.type]);
+            switch (reality.type) {
+                case "Drone Image":
+                    // console.log("testShowLayers: in switch", reality, _realityState[reality.type]);
+                    if (_currentMode === "3d") {
+                        _viewer.scene.orientedImages[reality.index].visible = _realityState[reality.type];
+                    }
+                    break;
+                case "Phone Image":
+                case "360 Video":
+                case "360 Image":
+                    break;
+            }
         }
     }
 
@@ -1652,6 +1699,17 @@ export const PotreeViewerUtils = () => {
             case "Escape":
                 if (_currentMode == "Drone Image" || _currentMode == "Phone Image") {
                     // _viewer.controls.elExit.click();
+                    for (const realityKey in _realityLayers ) {
+                        let reality = _realityLayers[realityKey];
+                        // let show = layersList.find((e) => e === reality.type);
+                        // console.log("testShowLayers: in for", reality, _realityState[reality.type]);
+                        switch (reality.type) {
+                            case "Drone Image":
+                                // console.log("testShowLayers: in switch", reality, _realityState[reality.type]);
+                                _viewer.scene.orientedImages[reality.index].visible = _realityState[reality.type];
+                                break;
+                        }
+                    }
                     unloadOrientedImage();
                     _sendContext = true;
                 } else {
@@ -2036,6 +2094,7 @@ export const PotreeViewerUtils = () => {
         cancelAddTag: cancelAddTag,
         finishAddTag: finishAddTag,
         selectTag: selectTag,
+        showLayers: showLayers,
         showTag: showTag,
         getContext: getContext,
         updateContext: updateContext,
