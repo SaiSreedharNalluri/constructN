@@ -599,8 +599,8 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
                 }
               }
 
-              loadViewerData(viewerData.current);
-              loadLayerData(viewerData.current);
+              //loadViewerData(viewerData.current);
+              //loadLayerData(viewerData.current);
              
              }
             console.log('Viewer Type Updated');
@@ -999,9 +999,47 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
     //console.log("Inside generic viewer: ",viewerId, event, );
     if (event) {
       switch (event.type) {
+        case 'Drone Image':
+        case 'Phone Image':
+        case '360 Image':
         case '360 Video':
           currentContext.current = event;
-          if (currentViewerData.currentViewType==='Plan Drawings' || currentViewerData.currentViewType==='BIM')
+          
+          const isMinimap = viewerId.indexOf('minimap') > -1;
+          if(isMinimap) {
+            if (isMinimapCompareViewer(viewerId)) {
+              if (viewerData.current?.currentViewType === 'pointCloud') {
+                potreeCompareUtils.current?.updateContext(event, true);
+              } else {
+                potreeUtils.current?.updateContext(event, true);
+                // forgeCompareUtils.current.updateContext(event, true);
+              }
+              currentContext.current = undefined;
+            } else {
+              if (viewerData.current?.currentViewType==='Plan Drawings' || viewerData.current?.currentViewType==='BIM')
+              {
+                dispatchChangeViewerData({type:'setViewType',data:'pointCloud'});
+              }
+              else {
+                potreeUtils.current?.updateContext(event, true);
+                currentContext.current = undefined;
+              }
+            }
+            return;
+          }
+
+          if (viewerData.current?.currentCompareMode!='noCompare') {
+            if (isCompareViewer(viewerId)) {
+              potreeUtils.current?.updateContext(event, false);
+            } else {
+              if (viewerData.current?.currentViewType=== 'pointCloud') {
+                potreeCompareUtils.current?.updateContext(event, false);
+              } else {
+                forgeCompareUtils.current?.updateContext(event, false);
+              }
+            }
+            currentContext.current = undefined;
+          } else if (viewerData.current?.currentViewType==='Plan Drawings' || viewerData.current?.currentViewType==='BIM')
           {
             dispatchChangeViewerData({type:'setViewType',data:'pointCloud'});
           }
@@ -1279,6 +1317,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           }
           break;
     }
+    if(viewerData.current!==undefined){
+      loadViewerData(viewerData.current);
+     loadLayerData(viewerData.current);
+     }
   };
 
   const initCompareViewer = (viewerId:string) => {
@@ -1556,10 +1598,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
   const setForgeViewerUtils = function (viewerId:string) {
     if (!isCompareViewer(viewerId)) {
       initViewer(viewerId);
-      if(viewerData.current!==undefined){
-      loadViewerData(viewerData.current);
-      loadLayerData(viewerData.current);
-      }
+      // if(viewerData.current!==undefined){
+      // loadViewerData(viewerData.current);
+      // loadLayerData(viewerData.current);
+      // }
       //forgeUtils.current?.refreshData();
       //console.log('trying to reload....forge');
       
@@ -1574,10 +1616,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
     if (!isCompareViewer(viewerId)) {
       initViewer(viewerId);
       //console.log('trying to reload....potree');
-      if(viewerData.current!==undefined){
-        loadViewerData(viewerData.current);
-       loadLayerData(viewerData.current);
-       }
+      // if(viewerData.current!==undefined){
+      //   loadViewerData(viewerData.current);
+      //  loadLayerData(viewerData.current);
+      //  }
     } else {
       initCompareViewer(viewerId);
     }
@@ -1586,10 +1628,10 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
   const setMapboxViewerUtils = function (viewerId:string) {
     if (!isCompareViewer(viewerId)) {
       initViewer(viewerId);
-      if(viewerData.current!==undefined){
-        loadViewerData(viewerData.current);
-       loadLayerData(viewerData.current);
-       }
+      // if(viewerData.current!==undefined){
+      //   loadViewerData(viewerData.current);
+      //  loadLayerData(viewerData.current);
+      //  }
     } else {
       initCompareViewer(viewerId);
     }
@@ -1670,6 +1712,13 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
 
   const isRealityViewer = (viewerId:string) => {
     if (viewerId.split('_')[0] === 'forgeViewer') {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  const isMinimapCompareViewer = (viewerId:string) => {
+    if (viewerId.split('-')[1] === '1') {
       return false;
     } else {
       return true;
