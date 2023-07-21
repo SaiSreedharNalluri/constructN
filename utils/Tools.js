@@ -1,4 +1,4 @@
-export default function PointTool(viewer,_zoomOutLimit) {
+export default function PointTool(viewer) {
 
     const av = Autodesk.Viewing;
     av.ToolInterface.call(this);
@@ -7,7 +7,7 @@ export default function PointTool(viewer,_zoomOutLimit) {
     this.handleSingleTap = function(ev) {
         const doc = document.getElementById(viewer.canvasId)
         const rect = doc.getBoundingClientRect();
-        const result = this.viewer.clientToWorld(ev.clientX - rect.left, ev.clientY - rect.top);
+        const result = this.viewer.clientToWorld(ev.pointers[0].clientX - rect.left, ev.pointers[0].clientY - rect.top);
         if (result) {
           const state = this.viewer.getState({ viewport: true }).viewport;
           if ( 3 < state.eye[2] && state.eye[2] > 6)
