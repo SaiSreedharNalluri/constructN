@@ -37,7 +37,7 @@ const ErrorPage: NextPage<ErrorPageProps> = ({ statusCode, message }) => {
         className="h-3/4 w-3/4"
       />
       </div>
-     <div className="absolute w-1/4 h-1/4 top-3/4 left-1/3 rounded p-2 text-center">
+     <div className="absolute w-1/4 h-1/4 top-3/4 left-1/3 rounded p-2 text-center font-sans">
         <div className="mt-10 ml-20">
           <h1 className="text-base">{statusCode}</h1>
           <p className="text-sm">{message}</p>
@@ -54,7 +54,7 @@ const ErrorPage: NextPage<ErrorPageProps> = ({ statusCode, message }) => {
              
             }}
           >
-           {isAuth ? 'Back To Home':'Back To LogIn'}
+           {isAuth ? 'Go Home':'SignIn Again'}
           </button>
         </div>
       </div>

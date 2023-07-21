@@ -14,6 +14,7 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
       setIsAuth(true);
     }
   })
+  console.log('application error',error.message)
   return (
     <div>
        <div>
@@ -27,14 +28,13 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
         />
       </div>
       <div className="absolute w-1/4 h-1/4 top-3/4 left-1/3 rounded p-2 text-center text-base">
-        <div>
-          <h1 className="text-sm">Something went wrong</h1>
-          <p className="text-sm">{error.message}</p>
+        <div className="font-sans">
+          <h1 className="text-xl  font-thin">Something Went Wrong</h1>
           <button
             className="mt-2 p-2 px-2 py-1 ml-1  focus:outline-none bg-orange-400 hover:bg-gray-800 rounded text-white text-sm"
             onClick={resetErrorBoundary}
           >
-            Try again
+            Try Again
           </button>
           <button
             className="mt-2 p-2 px-2 py-1 ml-1  focus:outline-none bg-orange-400 hover:bg-gray-800 rounded text-white text-sm"
@@ -48,7 +48,7 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
               }
             }}
           >
-             {isAuth ? 'Back To Home':'Back To LogIn'}
+             {isAuth ? 'Go Home':'SignIn Again'}
           </button>
         </div>
       </div>
