@@ -687,6 +687,9 @@ export const ForgeViewerUtils = function () {
 
         if (_viewer.getExtension("Autodesk.BimWalk")) {
           _viewer.getExtension("Autodesk.BimWalk").activate();
+          if(isMobile()) {
+            _viewer.getExtension("Autodesk.BimWalk").tool.deactivateJoystick();
+          }
         }
       } else {
         _viewer.navigation.setIsLocked(false);
