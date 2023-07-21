@@ -1946,7 +1946,7 @@ export const PotreeViewerUtils = () => {
         }
 
         let orientedImagesLength = _viewer.scene.orientedImages.length;
-        for (let i = 0; i < orientedImagesLength; i++) {
+        for (let i = orientedImagesLength - 1; i >= 0; i--) {
             _viewer.scene.scene.remove(_viewer.scene.orientedImages[i].node);
             _viewer.scene.removeOrientedImages(_viewer.scene.orientedImages[i]);
             delete _viewer.scene.orientedImages[i];
@@ -1954,7 +1954,7 @@ export const PotreeViewerUtils = () => {
         _viewer.scene.orientedImages = [];
 
         let image360Length = _viewer.scene.images360.length;
-        for (let i = 0; i < image360Length; i++) {
+        for (let i = image360Length - 1; i >= 0; i--) {
             _viewer.scene.scene.remove(_viewer.scene.images360[i].node);
             _viewer.scene.remove360Images(_viewer.scene.images360[i]);
             delete _viewer.scene.images360[i]
