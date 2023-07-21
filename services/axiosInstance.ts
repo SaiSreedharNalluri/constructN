@@ -33,6 +33,7 @@ instance.interceptors.response.use(
         false
     ) {
       if (typeof window !== "undefined") {
+        localStorage.setItem("previousPage", window.location.href);
         removeCookies("user");
         window.location.href = "/login";
       }

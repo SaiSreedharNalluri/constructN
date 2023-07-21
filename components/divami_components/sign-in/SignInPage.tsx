@@ -26,7 +26,7 @@ import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Checked from "../../../public/divami_icons/checked.svg";
 import UnChecked from "../../../public/divami_icons/unchecked.svg";
 
-import { getCookie, setCookie } from "cookies-next";
+import { getCookie,setCookie } from "cookies-next";
 import Image from "next/image";
 import { login } from "../../../services/userAuth";
 import { Mixpanel } from "../../analytics/mixpanel";
@@ -96,8 +96,14 @@ const SignInPage = () => {
             );
             setCookie("user", userProfileObj);
             CustomToast("User signed in successfully", "success");
+            const previousPage = localStorage.getItem("previousPage");
+            setLoginEnable(true);
+           localStorage.removeItem("previousPage")          
+          if (previousPage) {
+            router.push(previousPage);
+          } else {
             router.push("/projects");
-            setLoginEnable(true)
+          }
           } else {
             router.push(
               {
