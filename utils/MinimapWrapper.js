@@ -294,7 +294,7 @@ export const MinimapUtils = () => {
             _manifestNode,
             generateModelOptions(document.tm, _manifestNode)
           );
-        let tool =  new PointTool(_viewer,_viewer.getState({ viewport: true }).viewport.eye[2])
+        let tool =  new PointTool(_viewer)
        _viewer.toolController.registerTool(tool);
        _viewer.toolController.activateTool(tool.names)
       },
