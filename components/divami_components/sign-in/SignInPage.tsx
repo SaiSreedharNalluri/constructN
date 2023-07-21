@@ -97,6 +97,7 @@ const SignInPage = () => {
             setCookie("user", userProfileObj);
             CustomToast("User signed in successfully", "success");
             const previousPage = localStorage.getItem("previousPage");
+            setLoginEnable(true);
            localStorage.removeItem("previousPage")          
           if (previousPage) {
             router.push(previousPage);
