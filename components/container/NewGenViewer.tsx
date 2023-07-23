@@ -1916,7 +1916,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         <div id="TheView" className="relative basis-1/2 flex grow shrink">
           {isInitReady && renderViewer(1)}
           {isInitReady && renderMinimap(1)}
-          {tmcBase}
+          {isInitReady && tmcBase}
           {/* <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
         setNextList={setNextList}
         totalPages={totalPages}
@@ -1925,7 +1925,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         <div className={`relative ${currentViewerData.currentCompareMode!=='noCompare' ? "basis-1/2": "hidden" }`}>
           {isInitReady && isCompareMode && renderViewer(2)}
           {(currentViewerData.currentCompareMode==='compareReality')?renderMinimap(2):<></>}
-          {tmcCompare}
+          {isInitReady && tmcCompare}
           {/* <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotCompare||currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode}></TimeLineComponent> */}
         </div>
         {

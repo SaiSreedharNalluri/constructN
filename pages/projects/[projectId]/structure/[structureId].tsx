@@ -22,7 +22,8 @@ const StructPage: React.FC = () => {
     //sampleGenData.structure.designs&& (temp_list= sampleGenData.structure.designs);
     let incomingPayload = useRef<IGenPayload>()
     let myProject = useRef<string>();
-
+    let [selectedBaseSnapshot,setBaseSnapshot] =useState<ISnapshot>();
+    let [selectedCompareSnapshot,setCompareSnapshot] =useState<ISnapshot>();
     const [offset, setOffset] = useState(1);
     const pageSize = 10;
     const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0);
@@ -38,6 +39,8 @@ const StructPage: React.FC = () => {
             if (response.success === true) {
               console.log('IGendata API Response',response.result);
               setInintData(response.result);
+              setBaseSnapshot(response.result.currentSnapshotBase);
+              setCompareSnapshot(response.result.currentSnapshotCompare);
             }
           })
           .catch((error) => {
@@ -68,6 +71,8 @@ const StructPage: React.FC = () => {
             if (response.success === true) {
               console.log('IGendata API Response',response.result);
               setInintData(response.result);
+              setBaseSnapshot(response.result.currentSnapshotBase);
+              setCompareSnapshot(response.result.currentSnapshotCompare);
             }
           })
           .catch((error) => {
@@ -88,6 +93,8 @@ const StructPage: React.FC = () => {
   const updateData= (newData:IGenData):void=>{
     console.log('My comp updated',newData);
     setInintData(newData);
+    setBaseSnapshot(newData.currentSnapshotBase);
+    setCompareSnapshot(newData.currentSnapshotCompare);
   }
   //console.log("OVERHERE",sampleGenData.structure.designs);
   const [initData,setInintData] = useState<IGenData>();
@@ -121,6 +128,7 @@ const setCurrentSnapshot = (snapshot:ISnapshot) => {
   if(snapshot){
     incomingPayload.current= {action:{type:'setBaseSnapshot',data:snapshot as ISnapshot}}
     window.dispatchEvent(new CustomEvent('notifyViewer',{detail:incomingPayload.current}));
+    setBaseSnapshot(snapshot);
 
 }
 
@@ -130,7 +138,7 @@ const setCurrentCompareSnapshot = (snapshot:ISnapshot) => {
   if(snapshot){
     incomingPayload.current= {action:{type:'setCompareSnapshot',data:snapshot as ISnapshot}}
     window.dispatchEvent(new CustomEvent('notifyViewer',{detail:incomingPayload.current}));
-
+    setCompareSnapshot(snapshot);
   }
 };
 
@@ -164,14 +172,14 @@ const getSnapshotList = async (projectId:string, structurId:string,offset:Number
          
           {
             initData&& <div><NewGenViewer 
-            tmcBase={<TimeLineComponent currentSnapshot={initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
-            setNextList={setNextList}
-            totalPages={totalPages}
-            offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
-            tmcCompare={<TimeLineComponent currentSnapshot={initData.currentSnapshotCompare||initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
-            setNextList={setNextList}
-            totalPages={totalPages}
-            offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
+            tmcBase={<TimeLineComponent currentSnapshot={selectedBaseSnapshot|| initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
+                    setNextList={setNextList}
+                    totalPages={totalPages}
+                    offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
+            tmcCompare={<TimeLineComponent currentSnapshot={selectedCompareSnapshot||initData.currentSnapshotCompare||initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
+                        setNextList={setNextList}
+                        totalPages={totalPages}
+                        offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
             data={initData} updateData={updateData}></NewGenViewer> </div>
             
           }
