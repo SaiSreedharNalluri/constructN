@@ -388,7 +388,7 @@ const ActivityLog = (props: any) => {
                           setShowPopUp={setCommentPopup}
                           modalTitle={"Delete Comment"}
                           // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
-                          modalmessage={`Are you sure you want to delete this comment "${each._id} "?`}
+                          modalmessage={`Are you sure you want to delete this comment?`}
                           primaryButtonLabel={"Delete"}
                           SecondaryButtonlabel={"Cancel"}
                           callBackvalue={() => {
@@ -649,9 +649,9 @@ const ActivityLog = (props: any) => {
                                         <PopupComponent
                                           open={commentReplyPopUp}
                                           setShowPopUp={setcommentReplyPopup}
-                                          modalTitle={"Delete Comment"}
+                                          modalTitle={"Delete Reply"}
                                           // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
-                                          modalmessage={`Are you sure you want to delete this comment "${replyObj?._id} "?`}
+                                          modalmessage={`Are you sure you want to delete this reply?`}
                                           primaryButtonLabel={"Delete"}
                                           SecondaryButtonlabel={"Cancel"}
                                           callBackvalue={() => {
