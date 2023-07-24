@@ -35,7 +35,7 @@ instance.interceptors.response.use(
       if (typeof window !== "undefined") {
         localStorage.setItem("previousPage", window.location.href);
         removeCookies("user");
-        window.location.href = "/login";
+        window.location.href = `/login?history=${window.location.href}`;
       }
     }
     // Do something with response error
