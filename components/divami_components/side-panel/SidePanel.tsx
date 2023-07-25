@@ -240,7 +240,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           </SideMenuOption>
         </SideMenuOptionContainer>
       ))}
-      {supportItemsConfig.map((item, index) => (
+      {/* {supportItemsConfig.map((item, index) => (
         <SideMenuOptionContainer className="fixed bottom-0" key={index}>
           <SideMenuOption
           // onClick={() =>
@@ -255,7 +255,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
                     id={item.id}
                     onClick={leftClickHandler}
                   /></SideMenuOptionSupportImageContainer> */}
-              <SideMenuOptionImageContainer id="custom_fc_button">
+              {/* <SideMenuOptionImageContainer id="custom_fc_button">
                 {isChatActive ? (
                   <StyledImage
                     // src={item.activeIcon}
@@ -276,11 +276,11 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
                     onClick={leftClickHandler}
                   />
                 )}
-              </SideMenuOptionImageContainer>
-            </TooltipText>
+              </SideMenuOptionImageContainer> */}
+            {/* </TooltipText>
           </SideMenuOption>
-        </SideMenuOptionContainer>
-      ))}
+        </SideMenuOptionContainer> */}
+      {/* ))} */} 
     </SideMenuContainer>
   );
 };
