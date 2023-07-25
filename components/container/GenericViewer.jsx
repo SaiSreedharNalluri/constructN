@@ -1126,6 +1126,9 @@ function GenericViewer(props) {
 
   function renderViewer(count) {
     // console.log("Generic Viewer Inside render View: ", currentViewerType.current, viewerType, compareViewMode, currentCompareViewMode.current);
+    if (designList.length <= 0 && realityList.length <= 0) {
+      return;
+    }
     if (count != 1 && !isCompare) {
       return;
     }
@@ -1190,17 +1193,26 @@ function GenericViewer(props) {
       } else {
         setCurrentCompareSnapshot(list[list.length - 1]);
       }
+    } else {
+      setSnapshotList([]);
+      setCurrentSnapshot({});
+      setCurrentCompareSnapshot({});
     }
   };
 
   const setCurrentSnapshot = (snapshot) => {
-    if (snapshot) {
-
+    if (Object.keys(snapshot).length > 0) {
       setSnapshot(snapshot);
       updateSnapshot(snapshot);
       setRealityList(snapshot.reality);
       setRealityMap(getRealityMap(snapshot));
       updateRealityMap(getRealityMap(snapshot));
+    } else {
+      setSnapshot({});
+      updateSnapshot({});
+      setRealityList([]);
+      setRealityMap(getRealityMap({}));
+      updateRealityMap(getRealityMap({}));
     }
 
   };
@@ -1443,6 +1455,10 @@ function GenericViewer(props) {
       currentStructure.current = structure;
       if (structure.designs.length > 0) {
         modifyDesignList(structure.designs);
+      } else {
+        setDesignList([]);
+        setDesignMap(getDesignMap([]));
+        updateDesignMap(getDesignMap([]));
       }
       getSnapshotList(structure.project, structure._id);
       // console.log("Generic Viewer load: Structure Changed", structure);
@@ -1670,6 +1686,9 @@ function GenericViewer(props) {
   }
 
   const renderMinimap = (count) => {
+    if (designList.length <= 0 && realityList.length <= 0) {
+      return;
+    }
     if (count != 1 && !isCompare) {
       return;
     }
@@ -1788,26 +1807,32 @@ function GenericViewer(props) {
     <div id="TheView" className={`calc-width-half  relative flex grow shrink`}>
           {renderViewer(1)}
           {renderMinimap(1)}
+         { snapshotList.length > 0 ?
           <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
-            setPrevList={setPrevList}   
-            setNextList={setNextList}
-            totalPages={totalPages}
-           offset={offset}
+              setPrevList={setPrevList}   
+              setNextList={setNextList}
+              totalPages={totalPages}
+            offset={offset}
 
-          ></TimeLineComponent>
+            ></TimeLineComponent>
+            : <></>
+          }
         </div>
       <div className={isCompare?'w-0.5':''} color='gray'></div>
     <div id="CompareView" className={`relative basis-1/2  flex grow shrink  ${isCompare ? "calc-whalf ": "hidden " }`}>
           {renderViewer(2)}
           {compareViewMode === 'Potree' ? renderMinimap(2) : <></>}
-          <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
-           setPrevList={setPrevList}
-           setNextList={setNextList}
-           totalPages={totalPages}
-           offset={offset}
-           tools={props?.tools}
+          { snapshotList.length > 0 ?     
+            <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+            setPrevList={setPrevList}
+            setNextList={setNextList}
+            totalPages={totalPages}
+            offset={offset}
+            tools={props?.tools}
 
-          ></TimeLineComponent>
+            ></TimeLineComponent>
+            : <></>
+          }
         </div>
         {
           viewerType === "Mapbox"  && viewMode === "Reality" && hotspots && hotspots.length > 0 ?
