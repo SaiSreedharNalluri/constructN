@@ -1,29 +1,31 @@
-// export default function webgl_experiments(){
+export default function webgl_experiments(){
 
-// }
-// export function getGLCanvas(ViewerId){
-//     let viewer_element=document.getElementById(ViewerId);
-// switch(ViewerId){
-//     case 'potreeViewer':
-//         console.log("Found Canvas in Potree",viewer_element.childNodes.length);
-//         return viewer_element.children[2]//.getContext("webgl");
-        
-//         break;
-//     case 'forgeViewer':
-//         canvas_element=document.getElementById(ViewerId).children[2]
-//         console.log("Found Canvas in Forge");
-//         break;
-//     case 'mapboxViewer':
-//         canvas_element=document.getElementById(ViewerId).children[2]
-//         console.log("Found Canvas in Mapbox");
-//         break;
-//     case 'minimapViewer':
-//         canvas_element=document.getElementById(ViewerId).children[2]
-//         console.log("Found Canvas in Minimap");
-//         break;
-//     default:
-//         console.log("Base Viewer Not Found");
+}
+export function getGLCanvas(ViewerId){
+    let viewer_element=document.getElementById(ViewerId);
+    console.log(viewer_element,"Here is the WEBGL viewer")
+    if(viewer_element!==null)
+switch(ViewerId){
+    case 'potreeViewer_1':
+    case 'potreeViewer_2':
+        console.log("Found Canvas in Potree");
+        return viewer_element.getElementsByTagName('canvas')[0];//.getContext("webgl");
 
-// }
-// return canvas_element;
-// }
+    case 'forgeViewer_1':
+    case 'forgeViewer_2':
+        console.log("Found Canvas in Forge");
+        return viewer_element.getElementsByTagName('canvas')[0]||HTMLCanvasElement;
+    case 'mapboxViewer_1':
+    case 'mapboxViewer_2':
+        console.log("Found Canvas in Mapbox");
+        return viewer_element.getElementsByTagName('canvas')[0]||HTMLCanvasElement;
+    case 'minimapViewer':
+        console.log("Found Canvas in Minimap");
+        return viewer_element.getElementsByTagName('canvas')[0]||HTMLCanvasElement;
+    default:
+        console.log("Base Viewer Not Found");
+        return viewer_element.getElementsByTagName('canvas')[0]||HTMLCanvasElement;
+
+}
+
+}

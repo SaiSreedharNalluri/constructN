@@ -16,7 +16,7 @@ export const SideMenuContainer = styled("div")({
   boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.3)",
 });
 
-export const SideMenuOptionContainer = styled("div")();
+export const SideMenuOptionContainer = styled("div")({});
 
 export const SideMenuOption = styled("div")({
   display: "flex",

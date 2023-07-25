@@ -15,6 +15,7 @@ import {
   getRealityPositions,
   getRealityPositionsPath,
 } from '../../services/reality';
+import {getGLCanvas} from '../../utils/webgl-experiments'
 import { getSnapshotsList } from '../../services/snapshot';
 import { getRealityPath, getDesignPath } from '../../utils/S3Utils';
 import { getStructureDesigns, getDesignTM } from '../../services/design';
@@ -292,7 +293,20 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         if(!forgeAvailable) event.stopPropagation()
       }, false
     );
-    
+      let canvas:HTMLCanvasElement|undefined= getGLCanvas('potreeViewer_1');
+      if(canvas!==null && canvas!==undefined){
+        console.log("May Be Adding WEBGL Event Listener");
+    canvas.addEventListener(
+      "webglcontextlost",(event)=>{
+        console.log("webGLContextLost",event);
+      }, false
+    );
+    canvas.addEventListener(
+      "webglcontextrestored",(event)=>{
+        console.log("webGLContextRestored",event);
+      }, false
+    );
+      }
     return()=>{
       window.removeEventListener('notifyViewer', notifyViewerEvent);
       document.removeEventListener(
@@ -301,6 +315,19 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           if(!forgeAvailable) event.stopPropagation()
         }, false
       );
+      let canvas:HTMLCanvasElement|undefined= getGLCanvas('potreeViewer_1');
+      if(canvas!==null&&canvas!==undefined){
+      canvas.removeEventListener(
+        "webglcontextlost",(event)=>{
+          console.log("webGLContextLost",event);
+        }, false
+      );
+      canvas.removeEventListener(
+        "webglcontextrestored",(event)=>{
+          console.log("webGLContextRestored",event);
+        }, false
+      );
+      }
 
     }
   },[]);

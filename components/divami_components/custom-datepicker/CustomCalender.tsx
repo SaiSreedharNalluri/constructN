@@ -24,25 +24,25 @@ const CalenderICon = (props: any) => {
         <path
           d="M14.6861 14.5396V4.55469C14.6861 3.45012 13.7907 2.55469 12.6861 2.55469H2.70117C1.5966 2.55469 0.701172 3.45012 0.701172 4.55469V14.5396C0.701172 15.6442 1.5966 16.5396 2.70117 16.5396H12.6861C13.7907 16.5396 14.6861 15.6442 14.6861 14.5396Z"
           stroke="#36415D"
-          stroke-linecap="round"
+          strokeLinecap="round"
         />
         <path
           d="M10.8027 1V4.10776"
           stroke="#36415D"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M4.58398 1V4.10776"
           stroke="#36415D"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M0.701172 7.2168H14.6861"
           stroke="#36415D"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
     </>
