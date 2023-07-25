@@ -2,6 +2,8 @@ import Script from 'next/script';
 import Moment from 'moment';
 import {Rnd } from 'react-rnd';
 import { Mixpanel } from '../analytics/mixpanel';
+import ErrorNotFound from "../../public/divami_icons/ErrorNotFound.svg";
+import Image from "next/image";
 import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
 import Draggable, { DraggableCore } from "react-draggable";
 import Head from 'next/head';
@@ -1127,10 +1129,30 @@ function GenericViewer(props) {
   function renderViewer(count) {
     // console.log("Generic Viewer Inside render View: ", currentViewerType.current, viewerType, compareViewMode, currentCompareViewMode.current);
     if (designList.length <= 0 && realityList.length <= 0) {
-      return;
+      return(
+        <div className="flex justify-center items-center calc-h overflow-y-hidden mx-auto">
+        <div className="flex flex-col">
+          <Image src={ErrorNotFound} alt=""></Image>
+          <div className="text-center">
+          <h1 className="text-3xl  font-sans font-thin">Oops!, No Data Found.</h1>
+          <p className="text-lg  font-sans font-thin">Try choosing a different Structure to view data</p>
+          </div>
+          
+        </div></div>
+      );
     }
     if (count != 1 && !isCompare) {
-      return;
+      return(
+        <div className="flex justify-center items-center calc-h overflow-y-hidden mx-auto">
+        <div className="flex flex-col">
+          <Image src={ErrorNotFound} alt=""></Image>
+          <div className="text-center">
+          <h1 className="text-3xl  font-sans font-thin">Oops!, No Data Found.</h1>
+          <p className="text-lg  font-sans font-thin">Try choosing a different Structure to view data</p>
+          </div>
+          
+        </div></div>
+      );
     }
     let mode = count == 1 ? viewerType : compareViewMode;
     // console.log("Generic Viewer Checking render mode", mode);
