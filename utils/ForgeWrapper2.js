@@ -1,6 +1,6 @@
 import { autodeskAuth } from "../services/forgeService";
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
-import { applyTM } from "./ViewerDataUtils";
+import { applyTM, isMobile } from "./ViewerDataUtils";
 
 export class ForgeInstance {
 
