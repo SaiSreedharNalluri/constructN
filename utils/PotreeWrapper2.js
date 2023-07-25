@@ -908,7 +908,7 @@ export const PotreeViewerUtils = () => {
                 }
             }
         }
-        if (selectedPointcloud && (_currentMode == 'Drone Image' || _currentMode == 'Phone Image')) {
+        if (selectedPointcloud && (_currentMode == 'Drone Image' || _currentMode == 'Phone Image' || _currentMode == '3d')) {
             return {
                 location: closestIntersection,
                 distance: closestDistance,
