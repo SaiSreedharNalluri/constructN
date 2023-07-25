@@ -123,6 +123,8 @@ const Index: React.FC<IProps> = () => {
   const [projectUsers, setProjectUsers] = useState<IProjects>();
   const [showIssueMarkups, setShowIssueMarkups] = useState(true);
   const [showTaskMarkups, setShowTaskMarkups] = useState(true);
+  const [isRealityAvailable,setRealityAvailable] =useState(false);
+  const [isDesignAvailable,setDesignAvailable] = useState(false);
 
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
@@ -176,6 +178,14 @@ const Index: React.FC<IProps> = () => {
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
+
+  const isObjectEmpty = (objectName:any) => {
+    return (
+      objectName &&
+      Object.keys(objectName).length === 0 &&
+      objectName.constructor === Object
+    );
+  };
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
   };
@@ -524,6 +534,25 @@ const Index: React.FC<IProps> = () => {
       types.push(key);
     });
     setDesignAndRealityMaps(types);
+
+    if(isObjectEmpty(activeRealityMap))
+    {
+      setRealityAvailable(false);
+    }
+    else
+    {
+      setRealityAvailable(true);
+    }
+
+    if(isObjectEmpty(designMap))
+    {
+      setDesignAvailable(false);
+    }
+    else
+    {
+      setDesignAvailable(true);
+    }
+
   }, [activeRealityMap, designMap]);
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
@@ -763,6 +792,7 @@ const Index: React.FC<IProps> = () => {
             setSelectedDesign(val);
           } else {
             setViewMode("Reality");
+            CustomToast("No Design Found, Contact Support","error");
           }
         }
       }
@@ -800,6 +830,7 @@ const Index: React.FC<IProps> = () => {
               setSelectedReality(arr[0]);
             } else {
               setViewMode("Design");
+              CustomToast("Reality Not Found, Contact Support","error");
             }
           }
         }
@@ -1622,8 +1653,9 @@ const Index: React.FC<IProps> = () => {
             <div
               ref={rightOverlayRef}
               id="bg-color"
-              className={`fixed drop-shadow  toolbarWidth  ${"visible"} `}
+              className={`fixed drop-shadow toolbarWidth  ${"visible"} `}
             >
+              {isDesignAvailable||isRealityAvailable?
               <ToolBarMenuWrapper
                 issuesList={issuesList}
                 tasksList={tasksList}
@@ -1684,7 +1716,7 @@ const Index: React.FC<IProps> = () => {
                 setShowTaskMarkups={setShowTaskMarkups}
                 showIssueMarkups={showIssueMarkups}
                 showTaskMarkups={showTaskMarkups}
-              />
+              />:<></>}
 
               {/* </div> */}
               {/* <RightFloatingMenu
