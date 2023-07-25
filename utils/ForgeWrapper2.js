@@ -1,6 +1,6 @@
 import { autodeskAuth } from "../services/forgeService";
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
-import { applyTM } from "./ViewerDataUtils";
+import { applyTM, isMobile } from "./ViewerDataUtils";
 
 export class ForgeInstance {
 
@@ -687,6 +687,9 @@ export const ForgeViewerUtils = function () {
 
         if (_viewer.getExtension("Autodesk.BimWalk")) {
           _viewer.getExtension("Autodesk.BimWalk").activate();
+          if(isMobile()) {
+            _viewer.getExtension("Autodesk.BimWalk").tool.deactivateJoystick();
+          }
         }
       } else {
         _viewer.navigation.setIsLocked(false);
