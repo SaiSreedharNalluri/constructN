@@ -574,7 +574,7 @@ const Index: React.FC<any> = () => {
                 </ToggleButtonContainer>
               </HeaderActions>
             </ProjectsHeader>
-            <div className="fixed bottom-0 left-2 z-10 cursor-pointer">
+            {/* <div className="fixed bottom-0 left-2 z-10 cursor-pointer">
               {isChatActive ? (
                 <Image
                   src={chatOpen}
@@ -592,7 +592,7 @@ const Index: React.FC<any> = () => {
                   onClick={handleOpenChat}
                 />
               )}
-            </div>
+            </div> */}
             {showLoading ? (
               <CustomLoader />
             ) : showWelcomMessage ? (
