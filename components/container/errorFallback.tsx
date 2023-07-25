@@ -1,5 +1,5 @@
 import { FallbackProps } from "react-error-boundary";
-import NextImage from "../core/Image";
+import Image from "next/image";
 import ErrorNotFound from "../../public/divami_icons/ErrorNotFound.svg";
 import Header from "../divami_components/header/Header";
 import { getCookie } from "cookies-next";
@@ -21,24 +21,20 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
           {isAuth &&
           <Header hideSidePanel />}
         </div>
-      <div className="flex justify-center mt-2">
-        <NextImage
-          src={ErrorNotFound}
-          className="h-3/4 w-3/4"
-        />
-      </div>
-      <div className="absolute w-1/4 h-1/4 top-3/4 left-1/3 rounded p-2 text-center text-base">
-        <div className="font-sans">
-          <h1 className="text-xl  font-thin">Something Went Wrong</h1>
+        <div className="flex justify-center items-center calc-h overflow-y-hidden mx-auto">
+<div className="flex flex-col">
+<Image src={ErrorNotFound} alt=""></Image>
+<div className="text-center">
+<h1 className="text-xl  font-thin">Something Went Wrong</h1>
           <button
-            className="mt-2 p-2 px-2 py-1 ml-1  focus:outline-none bg-orange-400 hover:bg-gray-800 rounded text-white text-sm"
+            className="my-2 mx-4 py-2 px-[40px] bg-[#f1742e] font-normal text-base leading-4 text-[#ffffff] hover:bg-[#f1742e]  rounded-md" 
             onClick={resetErrorBoundary}
           >
             Try Again
           </button>
           <button
-            className="mt-2 p-2 px-2 py-1 ml-1  focus:outline-none bg-orange-400 hover:bg-gray-800 rounded text-white text-sm"
-            onClick={() => {
+            className="my-2 mx-4 py-2 px-[40px] bg-[#f1742e] font-normal text-base leading-4 text-[#ffffff] hover:bg-[#f1742e]  rounded-md" 
+                        onClick={() => {
               if(isAuth)
               {
                 window.location.href = '/projects'
@@ -50,8 +46,10 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
           >
              {isAuth ? 'Go Home':'SignIn Again'}
           </button>
-        </div>
-      </div>
+</div>
+  </div>
+  </div>
+    
     </div>
   );
 }
