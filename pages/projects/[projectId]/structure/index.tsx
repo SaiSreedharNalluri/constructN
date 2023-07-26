@@ -210,11 +210,12 @@ const Index: React.FC<IProps> = () => {
   };
   const issueSubmit = (formdata: Issue) => {
     issuesList.push(formdata);
-    if (structure) {
-      getIssues(structure._id);
-    }
+    // if (structure) {
+    //   getIssues(structure._id);
+    // }
 
-    // setIssueList(structuredClone(issuesList));
+    setIssueList(structuredClone(issuesList));
+    setIssueFilterList(structuredClone(issuesList));
     // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
     // toolClicked(myTool);
     closeIssueCreate();
@@ -238,10 +239,11 @@ const Index: React.FC<IProps> = () => {
   const taskSubmit = (formdata: any) => {
     tasksList.push(formdata);
     let myTool: ITools = { toolName: "task", toolAction: "taskCreated" };
-    // setTasksList(structuredClone(tasksList));
-    if (structure) {
-      getTasks(structure._id);
-    }
+    setTasksList(structuredClone(tasksList));
+    setTaskFilterList(structuredClone(tasksList));
+    // if (structure) {
+    //   getTasks(structure._id);
+    // }
     // toolClicked(myTool);
     closeTaskCreate();
   };
