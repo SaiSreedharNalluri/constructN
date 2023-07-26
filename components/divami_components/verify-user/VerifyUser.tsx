@@ -100,7 +100,7 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
               The link in the email will expire in 24 hours.
             </LinkExpireDiv>
 
-            <ChangeSignDiv
+            {/* <ChangeSignDiv
               onClick={() => {
                 // router.push("/signup");
                 router.push("/signup");
@@ -108,7 +108,7 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
               }}
             >
               Change Signed Up Email
-            </ChangeSignDiv>
+            </ChangeSignDiv> */}
 
             <ResendMailDiv>
               Didn’t recieve the email?
