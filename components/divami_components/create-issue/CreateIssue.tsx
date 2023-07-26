@@ -7,6 +7,7 @@ import { createTask } from "../../../services/task";
 import { getTagsList } from "../../../services/tags";
 import { useRouter } from "next/router";
 import PopupComponent from "../../popupComponent/PopupComponent";
+import CustomLoader from "../custom_loader/CustomLoader";
 
 const StyledDiv = styled("span")({
   fontFamily: '"Open Sans"',
@@ -32,15 +33,16 @@ const CreateIssue = ({
   const [tagList, setTagList] = useState<[string]>([""]);
   const [showPopUp, setshowPopUp] = useState(false);
   const [canBeDisabled, setCanBeDisabled] = useState(false);
-
+  const [isLoading, setLoading] = useState(false);
   const formHandler = (event: any) => {
   
     if (event === "Cancel") {
       setshowPopUp(true);
-    } else {
+    } 
+    else {
       setValidate(true);
       let isError = 0;
-
+      setLoading(true)
       const dateIndex = formData?.findIndex((ele: any) => ele.id === "dates");
       if (dateIndex !== -1) {
         if (formData[dateIndex].fields[0].isError && formData[dateIndex].fields[0].isError){
@@ -82,6 +84,7 @@ const CreateIssue = ({
 
   return (
     <StyledDiv>
+      {isLoading&&<CustomLoader></CustomLoader>}
       <Header
         closeIssueCreate={() => {
           setshowPopUp(true);
