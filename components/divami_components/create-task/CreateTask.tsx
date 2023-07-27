@@ -6,6 +6,7 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 import Body from "./body/Body";
 import Footer from "./footer/Footer";
 import Header from "./header/Header";
+import CustomLoader from "../custom_loader/CustomLoader";
 
 const StyledDiv = styled("span")({
   fontFamily: '"Open Sans"',
@@ -34,14 +35,15 @@ const CreateTask = ({
   const [tagList, setTagList] = useState<[string]>([""]);
   const [showPopUp, setshowPopUp] = useState(false);
   const [canBeDisabled, setCanBeDisabled] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const formHandler = (event: any) => {
     if (event === "Cancel") {
       setshowPopUp(true);
-    } else {
+    } 
+    else {
       setValidate(true);
       let isError = 0;
-
       const dateIndex = formData?.findIndex((ele: any) => ele.id === "dates");
       if (dateIndex !== -1) {
         if (formData[dateIndex].fields[0].isError && formData[dateIndex].fields[0].isError){
@@ -56,6 +58,7 @@ const CreateTask = ({
       if(isError == 0){
         setValidate(true);
         handleCreateTask(formData);
+        setLoading(true)
       }
     }
   };
@@ -80,6 +83,7 @@ const CreateTask = ({
 
   return (
     <StyledDiv>
+      {isLoading && <CustomLoader />}
       <Header
         closeTaskCreate={() => {
           setshowPopUp(true);

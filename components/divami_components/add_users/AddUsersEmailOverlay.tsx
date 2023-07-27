@@ -59,7 +59,7 @@ export const AddUsersEmailOverlay = ({
   const [addedUsers, setAddedUsers] = useState<any>([]);
   const [searchVal, setSearchVal] = useState("");
   const [hoveringOver, setHoveringOver] = useState("");
-  const [enableAddUser, setEnableAddUser] = useState(true);
+  const [enableAddUser, setEnableAddUser] = useState(false);
   useEffect(() => {
     if (/\S+@\S+\.\S+/.test(form.email)) checkRegisterUser(form.email);
 
@@ -182,7 +182,7 @@ export const AddUsersEmailOverlay = ({
     setHoveringOver("");
 
   const onAddUser = () => {
-    if (enableAddUser) {
+    if (!enableAddUser) {
       setEnableAddUser(false);
       if (addedUsers?.length) {
         const projectInfo = {
@@ -228,7 +228,7 @@ export const AddUsersEmailOverlay = ({
           })
           .catch((err) => {
             CustomToast("You don't have access. Contact Admin.","error");
-            setEnableAddUser(true);
+    
           });
       }
     }
