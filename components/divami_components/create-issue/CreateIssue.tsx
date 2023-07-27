@@ -42,7 +42,6 @@ const CreateIssue = ({
     else {
       setValidate(true);
       let isError = 0;
-      setLoading(true)
       const dateIndex = formData?.findIndex((ele: any) => ele.id === "dates");
       if (dateIndex !== -1) {
         if (formData[dateIndex].fields[0].isError && formData[dateIndex].fields[0].isError){
@@ -58,6 +57,7 @@ const CreateIssue = ({
       if(isError == 0){
         setValidate(true);
         handleCreateTask(formData);
+        setLoading(true)
       }
     }
   };
