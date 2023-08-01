@@ -18,7 +18,6 @@ import "../styles/ganttView.css";
 import mixpanel from "mixpanel-browser";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
-import MyErrorBoundary from "../components/container/errorBoundary";
 import { firebaseapp } from "../components/analytics/firebase";
 import { getAnalytics, isSupported, logEvent } from "firebase/analytics";
 import toastClose from "../public/divami_icons/toastClose.svg";
@@ -96,32 +95,13 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      <MyErrorBoundary>
         <Component {...pageProps} />
-        {/* <ToastContainer
-        position="bottom-center"
-        autoClose={false}
-        pauseOnHover={true}
-        hideProgressBar={true}
-      /> */}
-
-      {/* <ToastContainer
-        position="bottom-center"
-        autoClose={false}
-        hideProgressBar={true}
-        closeOnClick
-        rtl={false}
-        pauseOnHover={true}
-        theme="light"
-      /> */}
-
-      <StyledToastContainer
+        <StyledToastContainer
         position="bottom-right"
         autoClose={false}
         hideProgressBar={true}
         closeButton={toastClose}
       />
-      </MyErrorBoundary>
-  </>
+    </>
   );
 }
