@@ -202,21 +202,29 @@ const SignUpPage = () => {
   const handleRegister = (formValue: any) => {
     if(registerEnable){
       setRegisterEnable(false)
+      if(router?.query?.token)
+      {
+        formValue.inviteToken = router?.query?.token
+      }
       registerUser(formValue)
       .then((response) => {
         setRegisterEnable(true)
         if (response.success === true) {
-          // toast.success("User ");
           CustomToast("You have Successfully Registered", "success");
-      
-          router.push(
-            {
-              pathname: "/verify_page",
-              query: { email: formValue.email }, // Pass the email as a query parameter
-            },
-            "/verify_page"
-          );
-        }
+      if( response.result.verified===true)
+      {
+
+        router.push('/login')
+      }else{
+        router.push(
+          {
+            pathname: "/verify_page",
+            query: { email: formValue.email }, // Pass the email as a query parameter
+          },
+          "/verify_page"
+        );
+      }
+       }
       })
       .catch((error) => {
         setRegisterEnable(true)
