@@ -150,7 +150,7 @@ export default function Document() {
         var g = document.getElementById("google_play");
         var a = document.getElementById("app_store");
 
-        if (userAgent.includes("iPhone")) {
+        if (userAgent.includes("iPhone")) 
             window.location.replace("https://apps.apple.com/us/app/constructn/id6449701613");
         }`}
         </Script>
