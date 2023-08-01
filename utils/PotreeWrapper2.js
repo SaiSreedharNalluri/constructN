@@ -1713,12 +1713,10 @@ export const PotreeViewerUtils = () => {
                     unloadOrientedImage();
                     _sendContext = true;
                 } else {
-                    // for(let i = 0; i < _viewer.scene.images360.length; i++) {
-                    //     _viewer.scene.images360[i].unfocus();
-                    //     pointCloudView(false);
-                    // }
-                    
-                    
+                    if (_structure._id === "STR418477") {
+                        unloadAllImages();
+                        _viewer.fitToScreen();
+                    }
                 }
                 break;
             case "ArrowUp":
