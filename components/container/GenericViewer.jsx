@@ -64,6 +64,7 @@ function GenericViewer(props) {
   let currentStructure = useRef();
 
   let [designList, setDesignList] = useState([]);
+  let [designCount,setDesignCOunt]=useState(-1);
   let [designMap, setDesignMap] = useState({});
   let updateDesignMap = props.updateDesignMap;
 
@@ -74,6 +75,7 @@ function GenericViewer(props) {
   let project = props.project;
 
   let [realityList, setRealityList] = useState([]);
+  let[realityCount,setReailtyCount]=useState(-1)
   let [realityMap, setRealityMap] = useState({});
   let updateRealityMap = props.updateRealityMap;
 
@@ -1128,7 +1130,7 @@ function GenericViewer(props) {
 
   function renderViewer(count) {
     // console.log("Generic Viewer Inside render View: ", currentViewerType.current, viewerType, compareViewMode, currentCompareViewMode.current);
-    if (designList.length <= 0 && realityList.length <= 0) {
+    if (designCount === 0 && realityCount === 0) {
       return(
         <div className="flex justify-center items-center calc-h overflow-y-hidden mx-auto">
         <div className="flex flex-col">
@@ -1193,6 +1195,7 @@ function GenericViewer(props) {
     }
     console.log('Generic Viewer design modified: ', designList);
     setDesignList(designList);
+    setDesignCOunt(designList.length)
     //Set current design type and pass it to structure page.
     setDesignMap(getDesignMap(designList));
     updateDesignMap(getDesignMap(designList));
@@ -1227,12 +1230,14 @@ function GenericViewer(props) {
       setSnapshot(snapshot);
       updateSnapshot(snapshot);
       setRealityList(snapshot.reality);
+      setReailtyCount(snapshot?.reality?.length)
       setRealityMap(getRealityMap(snapshot));
       updateRealityMap(getRealityMap(snapshot));
     } else {
       setSnapshot({});
       updateSnapshot({});
       setRealityList([]);
+      setReailtyCount(0)
       setRealityMap(getRealityMap({}));
       updateRealityMap(getRealityMap({}));
     }
@@ -1479,6 +1484,7 @@ function GenericViewer(props) {
         modifyDesignList(structure.designs);
       } else {
         setDesignList([]);
+        setDesignCOunt(0);
         setDesignMap(getDesignMap([]));
         updateDesignMap(getDesignMap([]));
       }
