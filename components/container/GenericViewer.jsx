@@ -944,7 +944,7 @@ function GenericViewer(props) {
           const reality = snapshot.reality.find((reality) => { return reality })
           let hotspots = await getMapboxHotspots(project._id, structure._id, snapshot._id, reality._id)
           if (data) {
-            const map = getRealityMap(snapshot)
+            const map = await getRealityMap(snapshot)
             const stages = {
               name: 'Stages',
               children: [],
@@ -1222,24 +1222,24 @@ function GenericViewer(props) {
     }
   };
 
-  const setCurrentSnapshot = (snapshot) => {
+  const setCurrentSnapshot = async (snapshot) => {
     if (Object.keys(snapshot).length > 0) {
       setSnapshot(snapshot);
       updateSnapshot(snapshot);
       setRealityList(snapshot.reality);
-      setRealityMap(getRealityMap(snapshot));
-      updateRealityMap(getRealityMap(snapshot));
+      setRealityMap(map);
+      updateRealityMap(map);
     } else {
       setSnapshot({});
       updateSnapshot({});
       setRealityList([]);
-      setRealityMap(getRealityMap({}));
-      updateRealityMap(getRealityMap({}));
+      setRealityMap(map);
+      updateRealityMap(map);
     }
 
   };
 
-  const setCurrentCompareSnapshot = (snapshot) => {
+  const setCurrentCompareSnapshot = async (snapshot) => {
     if (snapshot) {
 
       setCompareSnapshot(snapshot);
@@ -1247,6 +1247,7 @@ function GenericViewer(props) {
       setCompareRealityList(snapshot.reality);
       setCompareRealityMap(getRealityMap(snapshot));
       // updateRealityMap(getRealityMap(snapshot));
+      return map;
     }
   };
 
