@@ -170,7 +170,7 @@ export const ProjectListCardView = ({
           <CapturesText>Captures so far</CapturesText>
           <CaptureImageContainer>
             <CaptureImageIcon src={Capture360photo} alt=""></CaptureImageIcon>
-            <CaptureName>360 photo - </CaptureName>
+            <CaptureName>360 Image - </CaptureName>
             <CaptureCount>
               {each.capture360Count?.length > 1
                 ? each.capture360Count
