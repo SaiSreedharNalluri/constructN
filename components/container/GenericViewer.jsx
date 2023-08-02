@@ -51,6 +51,7 @@ import TimeLineComponent from '../divami_components/timeline-container/TimeLineC
 import Hotspots from './hotspots';
 import HotspotsCompare from './hotspotsCompare';
 import styles from "../../styles/GenericViewer.module.css"
+import CustomLoader from '../divami_components/custom_loader/CustomLoader';
 function GenericViewer(props) {
   const genericViewer = 'genericViewer';
   const genericViewerRef = useRef();
@@ -64,7 +65,7 @@ function GenericViewer(props) {
   let currentStructure = useRef();
 
   let [designList, setDesignList] = useState([]);
-  let [designCount,setDesignCOunt]=useState(-1);
+  let [isLoading,setIsLoading]=useState(false)
   let [designMap, setDesignMap] = useState({});
   let updateDesignMap = props.updateDesignMap;
 
@@ -75,7 +76,6 @@ function GenericViewer(props) {
   let project = props.project;
 
   let [realityList, setRealityList] = useState([]);
-  let[realityCount,setReailtyCount]=useState(-1)
   let [realityMap, setRealityMap] = useState({});
   let updateRealityMap = props.updateRealityMap;
 
@@ -1130,17 +1130,18 @@ function GenericViewer(props) {
 
   function renderViewer(count) {
     // console.log("Generic Viewer Inside render View: ", currentViewerType.current, viewerType, compareViewMode, currentCompareViewMode.current);
-    if (designCount === 0 && realityCount === 0) {
-      return(
-        <div className="flex justify-center items-center calc-h overflow-y-hidden mx-auto">
+    if (designList.length === 0 && realityList.length === 0) {
+      return (
+        isLoading &&
+       (<div className="flex justify-center items-center calc-h overflow-y-hidden mx-auto">
         <div className="flex flex-col">
           <Image src={ErrorNotFound} alt=""></Image>
           <div className="text-center">
           <h1 className="text-3xl  font-sans font-thin">Oops!, No Data Found.</h1>
           <p className="text-lg  font-sans font-thin">Try choosing a different Structure to view data</p>
           </div>
-          
-        </div></div>
+          </div>
+          </div>)
       );
     }
     if (count != 1 && !isCompare) {
@@ -1195,7 +1196,11 @@ function GenericViewer(props) {
     }
     console.log('Generic Viewer design modified: ', designList);
     setDesignList(designList);
-    setDesignCOunt(designList.length)
+    if(designList.length===0)
+    {
+      setIsLoading(true)
+    }
+    
     //Set current design type and pass it to structure page.
     setDesignMap(getDesignMap(designList));
     updateDesignMap(getDesignMap(designList));
@@ -1230,14 +1235,12 @@ function GenericViewer(props) {
       setSnapshot(snapshot);
       updateSnapshot(snapshot);
       setRealityList(snapshot.reality);
-      setReailtyCount(snapshot?.reality?.length)
       setRealityMap(getRealityMap(snapshot));
       updateRealityMap(getRealityMap(snapshot));
     } else {
       setSnapshot({});
       updateSnapshot({});
       setRealityList([]);
-      setReailtyCount(0)
       setRealityMap(getRealityMap({}));
       updateRealityMap(getRealityMap({}));
     }
@@ -1484,7 +1487,7 @@ function GenericViewer(props) {
         modifyDesignList(structure.designs);
       } else {
         setDesignList([]);
-        setDesignCOunt(0);
+        setIsLoading(true)
         setDesignMap(getDesignMap([]));
         updateDesignMap(getDesignMap([]));
       }
