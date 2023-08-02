@@ -42,6 +42,18 @@ export const getRealityPositions = async (
   }
 }
 
+export const realityFileExists = async (
+  path: string
+  ) => {
+  try {
+    return await instance.get(path);
+    // return file ? true : false;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
 export const getRealityPositionsPath = (
   path: string
   ) => {
@@ -58,6 +70,12 @@ export const getRealityPointCloudPath = (
   path: string
   ) => {
     return `${path}/pointcloud/cloud.json`
+}
+
+export const getRealityPointCloudPathV2 = (
+  path: string
+  ) => {
+    return `${path}/pointcloud/metadata.json`
 }
 
 export const getOrthoPhotoLayers = async (
