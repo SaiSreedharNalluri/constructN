@@ -1226,12 +1226,14 @@ function GenericViewer(props) {
     if (Object.keys(snapshot).length > 0) {
       setSnapshot(snapshot);
       updateSnapshot(snapshot);
+      const map = await getRealityMap(snapshot);
       setRealityList(snapshot.reality);
       setRealityMap(map);
       updateRealityMap(map);
     } else {
       setSnapshot({});
       updateSnapshot({});
+      const map = await getRealityMap({});
       setRealityList([]);
       setRealityMap(map);
       updateRealityMap(map);
@@ -1245,7 +1247,8 @@ function GenericViewer(props) {
       setCompareSnapshot(snapshot);
       // updateSnapshot(snapshot);
       setCompareRealityList(snapshot.reality);
-      setCompareRealityMap(getRealityMap(snapshot));
+      const map = await getRealityMap(snapshot);
+      setCompareRealityMap(map);
       // updateRealityMap(getRealityMap(snapshot));
       return map;
     }
