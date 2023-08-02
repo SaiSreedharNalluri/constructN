@@ -420,13 +420,13 @@ const Header: React.FC<any> = ({
           <HeaderSupportImageContainer>
             <TooltipText title="Support">
               <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
-                <Image
+              <Link href="https://constructnai.freshdesk.com/support/home" target="_blank" passHref>
+             <Image
                   height="30"
                   src={helpIcon}
                   alt="Support"
                   onClick={() => {
-                    router.push("https://constructnai.freshdesk.com/support/home")
-                    if (!supportMenu) {
+                  if (!supportMenu) {
                       setSupportMenu(true);
                       setMenuLoading(false);
                       setOpenNotication(false);
@@ -436,6 +436,8 @@ const Header: React.FC<any> = ({
                     }
                   }}
                 />
+                
+                </Link>
               </div>
             </TooltipText>
           </HeaderSupportImageContainer>

@@ -30,11 +30,19 @@ const ErrorPage: NextPage<ErrorPageProps> = ({ statusCode, message }) => {
           <Header hideSidePanel />}  
         </div>
     <div className="flex justify-center items-center calc-h overflow-y-hidden mx-auto">
-<div className="flex flex-col">
-<Image src={ErrorNotFound} alt=""></Image>
-<div className="text-center">
+      <div className="flex flex-col">
+      <Image src={ErrorNotFound} alt=""></Image>
+      <div className="text-center">
           <h1 className="text-base">{statusCode}</h1>
-          <p className="text-sm">{message}</p>
+          <p className="text-xl  font-thin">{message}</p>
+          <button
+            className="my-2 mx-4 py-2 px-[40px] bg-[#f1742e] font-normal text-base leading-4 text-[#ffffff] hover:bg-[#f1742e]  rounded-md" 
+            onClick={()=>{
+              router.reload()
+            }}
+          >
+            Try Again
+          </button>
           <button
             className="my-2 mx-4 py-2 px-[40px] bg-[#f1742e] font-normal text-base leading-4 text-[#ffffff] hover:bg-[#f1742e]  rounded-md" 
             onClick={() => {
@@ -59,11 +67,16 @@ const ErrorPage: NextPage<ErrorPageProps> = ({ statusCode, message }) => {
 };
 
 ErrorPage.getInitialProps = ({ res, err }: NextPageContext) => {
+  console.log('error',res)
   const statusCode = res ? res.statusCode : err ? err.statusCode : 404;
   let message = err ? err.message : "An error occurred";
-  if(statusCode=== 404)
+  if(statusCode === 404)
   {
     message ='Page Not Found'
+  }
+  else if(statusCode=== undefined)
+  {
+    message='Something Went Wrong'
   }
   return { statusCode, message };
 };
