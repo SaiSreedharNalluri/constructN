@@ -143,19 +143,40 @@ export const ShowHideDiv = styled("div")({
   cursor: "pointer",
 });
 
+export const TermsAndConditionDiv = styled("div")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "13px",
+  color: "#36415D",
+  marginLeft:"10px"
+});
+export const SpanDiv = styled("span")({
+  // fontFamily: "Open Sans",
+  // fontStyle: "normal",
+  // fontWeight: "400",
+  // fontSize: "12px",
+  color: "#36415D",
+  textDecoration:"underline",
+  ":hover":{
+    color:"#F1742E"
+  }
+});
 export const ExtraTickDiv = styled("div")({
   marginTop: "18px",
   display: "flex",
   alignItems: "center",
-  justifyContent: "space-between",
+  // justifyContent: "space-between",
 });
 
 export const ParentTickDiv = styled("div")({
-  display: "flex",
-  alignItems: "center",
+  // display: "flex",
+  // alignItems: "center",
 });
 
-export const CheckTickDiv = styled("div")({});
+export const CheckTickDiv = styled("div")({
+  
+});
 
 export const CheckTickBox = styled(Checkbox)({
   "& .MuiIconButton-root": {
