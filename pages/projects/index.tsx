@@ -71,7 +71,7 @@ import { CustomToast } from "../../components/divami_components/custom-toaster/C
 import Moment from "moment";
 import CustomLoader from "../../components/divami_components/custom_loader/CustomLoader";
 import React from "react";
-import chatOpen from "../../public/divami_icons/chat_open.svg";
+import chatOpen from "../../public/divami_icons/newChatIcon.svg";
 import chatClose from "../../public/divami_icons/chat_close.svg";
 
 import { getCookie } from "cookies-next";
@@ -247,10 +247,9 @@ const Index: React.FC<any> = () => {
       )
     );
   };
-
   const handleOpenChat = (e: any) => {
+    e.stopPropagation()
     openChat();
-    setChatStatus(!isChatActive);
   };
   function openChat(): void {
     {
@@ -417,16 +416,6 @@ const Index: React.FC<any> = () => {
       }
     }
   };
-  const [isChatActive, setChatStatus] = React.useState(false);
-  const [supportItemsConfig, setSupportItemsConfig] = React.useState([
-    {
-      id: "chatSupport",
-      icon: chatOpen,
-      isActive: false,
-      activeIcon: chatClose,
-      toolTipMsg: "Chat Support",
-    },
-  ]);
   const deleteUser = (rowData: any) => {
     const email = rowData?.email?.toLocaleLowerCase();
     removeProjectUser(email, rowData.projectId as string)
@@ -574,26 +563,7 @@ const Index: React.FC<any> = () => {
                 </ToggleButtonContainer>
               </HeaderActions>
             </ProjectsHeader>
-            {/* <div className="fixed bottom-0 left-2 z-10 cursor-pointer">
-              {isChatActive ? (
-                <Image
-                  src={chatOpen}
-                  width={60}
-                  height={60}
-                  alt=""
-                  onClick={handleOpenChat}
-                />
-              ) : (
-                <Image
-                  src={chatOpen}
-                  width={60}
-                  height={60}
-                  alt=""
-                  onClick={handleOpenChat}
-                />
-              )}
-            </div> */}
-            {showLoading ? (
+           {showLoading ? (
               <CustomLoader />
             ) : showWelcomMessage ? (
             <ProjectCardsContainer>
@@ -719,7 +689,17 @@ const Index: React.FC<any> = () => {
           selectedProjectId={selectedProjectId}
         />
       </Drawer>
+      <div className="fixed bottom-0 left-2 z-10 cursor-pointer">
+      <Image
+      src={chatOpen}
+      width={40}
+      height={40}
+      alt=""
+      onClick={handleOpenChat}
+      />          
+      </div>
     </div>
+    
   );
 };
 export default Index;
