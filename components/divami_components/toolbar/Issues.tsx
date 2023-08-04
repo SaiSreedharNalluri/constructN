@@ -82,7 +82,7 @@ const Issues = ({
   const [selectedIssue, setSelectedIssue] = useState({});
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
   const [enableSubmit, setEnableSubmit] = useState(true);
-
+  const[isLoading,setLoading]=useState(false)
   useEffect(() => {
     setMyProject(currentProject);
     html2canvas(
@@ -195,13 +195,16 @@ const Issues = ({
             CustomToast(`Something went wrong`,"error");
             setEnableSubmit(true);
           }
+          setLoading(false)
         })
-        .catch((error) => {
+        .catch((error) => 
+        {
           if (error.message == "Forbidden Access") {
             CustomToast(`You don't have permission. Contact Admin.`,"error");
           } else {
-            CustomToast(`Something went wrong`,"error");
+            CustomToast(`Something went wrong`,"error");   
           }
+          setLoading(false)
           setEnableSubmit(true);
         });
     } else {
@@ -237,6 +240,8 @@ const Issues = ({
       setHighlightCreateIcon(true) 
       setHighlightCreateTaskIcon(false)
   };
+  console.log(isLoading,"issue");
+  
   const openIssueListFn = () => {
     issueMenuInstance.toolAction = "issueView";
     issueMenuClicked(issueMenuInstance);
@@ -379,6 +384,8 @@ const Issues = ({
             issueStatusList={issueStatusList}
             onCancelCreate={onCancelCreate}
             deleteTheAttachment={deleteTheAttachment}
+            setLoading={setLoading}
+            isLoading={isLoading}
           />
         </CustomDrawer>
       )}

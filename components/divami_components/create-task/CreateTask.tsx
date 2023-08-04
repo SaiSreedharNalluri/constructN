@@ -28,6 +28,8 @@ const CreateTask = ({
   closeTaskCreate,
   onCancelCreate,
   deleteTheAttachment,
+  setLoading,
+  isLoading
 }: any) => {
   const router = useRouter();
   const [formData, setFormData] = useState<any>(null);
@@ -35,8 +37,6 @@ const CreateTask = ({
   const [tagList, setTagList] = useState<[string]>([""]);
   const [showPopUp, setshowPopUp] = useState(false);
   const [canBeDisabled, setCanBeDisabled] = useState(false);
-  const [isLoading, setLoading] = useState(false);
-
   const formHandler = (event: any) => {
     if (event === "Cancel") {
       setshowPopUp(true);
@@ -58,7 +58,9 @@ const CreateTask = ({
       if(isError == 0){
         setValidate(true);
         handleCreateTask(formData);
-        setLoading(true)
+        if(isLoading===false){
+          setLoading(true)
+        }
       }
     }
   };
