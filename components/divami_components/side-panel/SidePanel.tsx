@@ -15,7 +15,7 @@ import branchHighlighted from "../../../public/divami_icons/branchHighlightedIco
 import userIcon from "../../../public/divami_icons/userIcon.svg";
 import userHighlighted from "../../../public/divami_icons/userHighlighted.svg";
 
-import chatOpen from "../../../public/divami_icons/chat_open.svg";
+import chatOpen from "../../../public/divami_icons/newChatIcon.svg";
 import chatClose from "../../../public/divami_icons/chat_close.svg";
 
 // tasksHighlighted
@@ -50,7 +50,6 @@ interface IProps {
 }
 const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   let [eMail, setEMail] = useState<string>("");
-  const [isChatActive, setChatStatus] = React.useState(false);
   const router = useRouter();
   const [config, setConfig] = React.useState([
     {
@@ -183,9 +182,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         break;
       case "chatSupport":
         //add open Chat code
-        //isChatActive?closeChat():openChat();
         openChat();
-        setChatStatus(!isChatActive);
         break;
       default:
         router.push(`/projects/${router.query.projectId as string}/structure`);
@@ -240,7 +237,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           </SideMenuOption>
         </SideMenuOptionContainer>
       ))}
-      {/* {supportItemsConfig.map((item, index) => (
+      {supportItemsConfig.map((item, index) => (
         <SideMenuOptionContainer className="fixed bottom-0" key={index}>
           <SideMenuOption
           // onClick={() =>
@@ -255,10 +252,8 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
                     id={item.id}
                     onClick={leftClickHandler}
                   /></SideMenuOptionSupportImageContainer> */}
-              {/* <SideMenuOptionImageContainer id="custom_fc_button">
-                {isChatActive ? (
-                  <StyledImage
-                    // src={item.activeIcon}
+              <SideMenuOptionImageContainer id="custom_fc_button">
+              <StyledImage
                     src={item.icon}
                     width={40}
                     height={40}
@@ -266,21 +261,11 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
                     id={item.id}
                     onClick={leftClickHandler}
                   />
-                ) : (
-                  <StyledImage
-                    src={item.icon}
-                    width={40}
-                    height={40}
-                    alt={item.id}
-                    id={item.id}
-                    onClick={leftClickHandler}
-                  />
-                )}
-              </SideMenuOptionImageContainer> */}
-            {/* </TooltipText>
+              </SideMenuOptionImageContainer>
+            </TooltipText>
           </SideMenuOption>
-        </SideMenuOptionContainer> */}
-      {/* ))} */} 
+        </SideMenuOptionContainer>
+      ))}
     </SideMenuContainer>
   );
 };
