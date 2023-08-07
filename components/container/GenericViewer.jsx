@@ -70,6 +70,7 @@ function GenericViewer(props) {
   let updateDesignMap = props.updateDesignMap;
 
   let [snapshotList, setSnapshotList] = useState([]);
+  let [snapshotListCal, setSnapshotListCal] = useState([]);
   let [snapshot, setSnapshot] = useState({});
   let updateSnapshot = props.updateSnapshot;
 
@@ -1212,6 +1213,7 @@ function GenericViewer(props) {
   const getSnapshotList = async (projectId, structurId,offset,limit) => {
     let list = await getSnapshotsList(projectId, structurId,offset||1,limit||10);
     setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
+    setSnapshotListCal(list.data?.result?.calendarSnapshots)
     list = list.data.result.mSnapshots.sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
@@ -1839,7 +1841,7 @@ function GenericViewer(props) {
           {renderViewer(1)}
           {renderMinimap(1)}
          { snapshotList.length > 0 ?
-          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+          <TimeLineComponent currentSnapshot={snapshot}snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
               setPrevList={setPrevList}   
               setNextList={setNextList}
               totalPages={totalPages}
@@ -1854,7 +1856,7 @@ function GenericViewer(props) {
           {renderViewer(2)}
           {compareViewMode === 'Potree' ? renderMinimap(2) : <></>}
           { snapshotList.length > 0 ?     
-            <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+            <TimeLineComponent currentSnapshot={compareSnapshot} snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
             setPrevList={setPrevList}
             setNextList={setNextList}
             totalPages={totalPages}
