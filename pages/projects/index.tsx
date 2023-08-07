@@ -76,7 +76,7 @@ import chatClose from "../../public/divami_icons/chat_close.svg";
 
 import { getCookie } from "cookies-next";
 import { ShowErrorContainer } from "../../components/divami_components/project-listing/ProjectListingStyles";
-
+import chatOpenHightlighted from "../../public/divami_icons/chatOpenHightlighted.svg"
 export const truncateString = (text: string, maxLength: number) => {
   let truncatedText = text;
 
@@ -127,6 +127,7 @@ const Index: React.FC<any> = () => {
   const [configEnabled, setConfigEnabled] = useState(true);
   const [showWelcomMessage, setShowWelcomeMessage] = useState(false);
   let [eMail, setEMail] = useState<string>("");
+  const [isChatHovered, setChatHovered] = useState(false);
 
   const sortMenuOptions = [
     {
@@ -441,6 +442,14 @@ const Index: React.FC<any> = () => {
         }
       });
   };
+
+  const handleChatHover = () => {
+    setChatHovered(true);
+  };
+
+  const handleChatHoverEnd = () => {
+    setChatHovered(false);
+  };
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -689,14 +698,28 @@ const Index: React.FC<any> = () => {
           selectedProjectId={selectedProjectId}
         />
       </Drawer>
-      <div className="fixed bottom-0 left-2 z-10 cursor-pointer">
-      <Image
-      src={chatOpen}
-      width={40}
-      height={40}
-      alt=""
-      onClick={handleOpenChat}
-      />          
+      <div className="fixed bottom-[20px] left-2 z-10 cursor-pointer rounded-full bg-[#FF843F] p-2">
+        <div onMouseEnter={handleChatHover}
+                onMouseLeave={handleChatHoverEnd} className=" fill-[#515151] hover:fill-white">
+ 
+                 {isChatHovered ? (
+                  <Image
+                    src={chatOpenHightlighted }
+                    width={30}
+                    height={30}
+                alt=""
+                    onClick={handleOpenChat}
+                  />
+                ) : (
+                  <Image
+                    src={chatOpen}
+                    width={30}
+                    height={30}
+             alt=""
+                    onClick={handleOpenChat}
+                  />
+                )}
+      </div>
       </div>
     </div>
     
