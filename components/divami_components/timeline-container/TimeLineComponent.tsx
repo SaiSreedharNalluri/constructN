@@ -35,7 +35,7 @@ import { getSnapshotDetails } from "../../../services/snapshot";
 interface IProps {
   currentSnapshot: ISnapshot;
   snapshotList: ISnapshot[];
-  snapshotListCal:ISnapshot[];
+  snapshotListCal?:ISnapshot[];
   snapshotHandler: (snapshotData: ISnapshot) => void;
   isFullScreen?: boolean;
   getSnapshotList: any;
@@ -92,7 +92,7 @@ const TimeLineComponent: React.FC<IProps> = ({
     if (value > -1) {
       setPage(value);
     }
-    else
+    else if(snapshotListCal)
     {
       const value = snapshotListCal.findIndex(
         (item) =>
@@ -154,7 +154,7 @@ const TimeLineComponent: React.FC<IProps> = ({
 
   const disableWeekends = (date: any) => {
     const timelineDates: any[] = [];
-    if (snapshotListCal.length) {
+    if (snapshotListCal?.length) {
       snapshotListCal.forEach((element, i) => {
         timelineDates.push(dayjs(element.date).format("YYYY-MM-DD"));
       });
