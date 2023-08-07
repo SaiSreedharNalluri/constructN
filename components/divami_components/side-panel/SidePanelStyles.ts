@@ -55,6 +55,20 @@ export const SideMenuOptionImageContainer = styled("div")({
   },
 });
 
+export const SideMenuChatImageContainer = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  width: "59px",
+  height: "59px",
+  borderRadius:'50%',
+  fill:"#515151",
+  '&:hover': {
+    background: '#FF843F',
+    border: "7px solid  #ffffff",
+    fill:"white"
+  },
+});
 export const TooltipText = styled(Tooltip)({});
 
 export const StyledImage = styled(Image)`

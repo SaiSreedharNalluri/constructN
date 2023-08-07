@@ -15,7 +15,8 @@ import branchHighlighted from "../../../public/divami_icons/branchHighlightedIco
 import userIcon from "../../../public/divami_icons/userIcon.svg";
 import userHighlighted from "../../../public/divami_icons/userHighlighted.svg";
 
-import chatOpen from "../../../public/divami_icons/newChatIcon.svg";
+import chatOpen from "../../../public/divami_icons/newChatIconSidePanel.svg";
+import chatOpenHightlighted from "../../../public/divami_icons/chatOpenHightlighted.svg";
 import chatClose from "../../../public/divami_icons/chat_close.svg";
 
 // tasksHighlighted
@@ -36,6 +37,7 @@ import projectDetailsHighlighted from "../../../public/divami_icons/projectDetai
 import {
   HighlightedSytledImage,
   OvershowImg,
+  SideMenuChatImageContainer,
   SideMenuContainer,
   SideMenuOption,
   SideMenuOptionContainer,
@@ -123,6 +125,8 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       toolTipMsg: "Chat Support",
     },
   ]);
+  const [isChatHovered, setChatHovered] = useState(false);
+
   // const handleClick = (id: any) => {
   //   setConfig((prevConfig) =>
   //     prevConfig.map((item) =>
@@ -203,6 +207,13 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     }
   }
 
+  const handleChatHover = () => {
+    setChatHovered(true);
+  };
+
+  const handleChatHoverEnd = () => {
+    setChatHovered(false);
+  };
   return (
     <SideMenuContainer data-testid="const-custom-sidepanel">
       {config.map((item, index) => (
@@ -245,23 +256,30 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           // }
           // onClick={() => handleClick(item.id)}
           >
-            <TooltipText title={item.toolTipMsg} placement="right">
-              {/* <SideMenuOptionSupportImageContainer> <StyledImage
-                    src={item.icon}
-                    alt={item.id}
-                    id={item.id}
-                    onClick={leftClickHandler}
-                  /></SideMenuOptionSupportImageContainer> */}
-              <SideMenuOptionImageContainer id="custom_fc_button">
-              <StyledImage
-                    src={item.icon}
-                    width={40}
-                    height={40}
+            <TooltipText title={item.toolTipMsg} placement="right">        
+                <SideMenuChatImageContainer  id="custom_fc_button" onMouseEnter={handleChatHover}
+                onMouseLeave={handleChatHoverEnd}>
+                 {isChatHovered ? (
+                  <StyledImage
+                    src={chatOpenHightlighted}
+                    width={25}
+                    height={25}
                     alt={item.id}
                     id={item.id}
                     onClick={leftClickHandler}
                   />
-              </SideMenuOptionImageContainer>
+                ) : (
+                  <StyledImage
+                    src={item.icon}
+                    width={25}
+                    height={25}
+                    alt={item.id}
+                    id={item.id}
+                    onClick={leftClickHandler}
+                  />
+                )}
+                </SideMenuChatImageContainer>
+      
             </TooltipText>
           </SideMenuOption>
         </SideMenuOptionContainer>
