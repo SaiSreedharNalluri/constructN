@@ -114,29 +114,32 @@ export default function Document() {
         <Script id="freshdeskChatWidget" strategy="beforeInteractive">
           {`
           function initFreshChat() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            if (!userAgent.includes("iPhone")){
             window.fcWidget.init({
               token: "5893aa59-0a4c-4454-b628-0c8fe1ec5485",
-        host: "https://constructncorp.freshchat.com",
-        config: {
-          headerProperty: {
-            hideChatButton: true
-          },
-          cssNames:{
-            widget:'fcWidget-chat'
-          }
-        }
+              host: "https://constructncorp.freshchat.com",
+              config: {
+                headerProperty: {
+                  hideChatButton: true
+                },
+                cssNames:{
+                widget:'fcWidget-chat'
+                }
+              }
             });
+            }
           }
           function initialize(i,t){var e;i.getElementById(t)?
           initFreshChat():((e=i.createElement("script")).id=t,e.async=!0,
           e.src="https://constructncorp.freshchat.com/js/widget.js",e.onload=initFreshChat,i.head.appendChild(e))
           }
           function initiateCall(){initialize(document,"Freshchat-js-sdk")}
-
-
-
-          window.addEventListener?window.addEventListener("load",initiateCall,!1):
-          window.attachEvent("load",initiateCall,!1);
+          var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+          if (!userAgent.includes("iPhone")){
+            window.addEventListener?window.addEventListener("load",initiateCall,!1):
+            window.attachEvent("load",initiateCall,!1);
+          }
           `}
         </Script>
         <Script
