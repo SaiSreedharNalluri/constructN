@@ -463,6 +463,9 @@ export const PotreeViewerUtils = () => {
         // pointCloudView(true);
         _currentImageName = event.detail.image.id;
         let reality = getRealityByImageName(_currentImageName);
+        if(reality === undefined ) {
+            return;
+        }
 
         _currentMode = reality.type;
         _currentReality = reality;
@@ -531,6 +534,10 @@ export const PotreeViewerUtils = () => {
         let imageName = event.detail.image.file.split('/').pop()
         let reality = getRealityByImageName(imageName);
 
+        if(reality === undefined ) {
+            return;
+        }
+        
         _sendContext = true;
         loadImage(reality, event.detail.image);
         
