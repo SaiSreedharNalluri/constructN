@@ -42,8 +42,9 @@ import {
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
-import RemoveIcon from '@mui/icons-material/Remove';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import RemoveIcon from '@mui/icons-material/Remove';
 import PictureInPictureIcon from '@mui/icons-material/PictureInPicture';
 import { IconButton } from '@mui/material';
 import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
@@ -1715,11 +1716,7 @@ function GenericViewer(props) {
       return;
     }
 
-    if(count == 2) {
-      setTimeout(() => {
-        resizeMinimap('minimize', count)
-      }, 3000)
-    }
+    // if(count == 2) _isMinimapRightMinimized.current = true
     
     return (<Rnd
       ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
@@ -1729,7 +1726,7 @@ function GenericViewer(props) {
       maxWidth={'99%'}
       maxHeight={'99%'}
       bounds={count == 1 ? '#TheView' : '#CompareView'}
-      default={{ x: count == 1 ? 84 : 24, y: 75, width: 320, height: 320 }}
+      default={{ x: count == 1 ? 84 : 24, y: 75, width: 320, height: count == 1 ? 320 : 28.5 }}
       onDragStop={(e,data)=>{minimapUtils.current.resize();}}
       onResize={(e, direction, ref, delta, position) => {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
@@ -1742,8 +1739,25 @@ function GenericViewer(props) {
             <DragIndicatorIcon fontSize="inherit" />
           </IconButton>
           <div className='flex items-center text-[#F1742E] pl-2 flex-1'>Minimap</div>
-          <IconButton size="small" onClick={() => { _minimize(count) } } onTouchEnd={() => {  _minimize(count) } }>
-            {minimize ? <KeyboardDoubleArrowDownIcon fontSize="inherit" /> : <KeyboardDoubleArrowUpIcon fontSize="inherit" />}
+          <IconButton size="small" onClick={() => { 
+            
+            count == 1 ? _minimizeMinimapLeft() : _minimizeMinimapRight() 
+            
+            } } onTouchEnd={() => {  count == 1 ? _minimizeMinimapLeft() : _minimizeMinimapRight() } }>
+            {
+              count == 1 ? (minimizeMinimapLeft ? <KeyboardDoubleArrowDownIcon fontSize="inherit" /> : <KeyboardDoubleArrowUpIcon fontSize="inherit" />)
+
+                : minimizeMinimapRight ? <KeyboardDoubleArrowDownIcon fontSize="inherit" /> : <KeyboardDoubleArrowUpIcon fontSize="inherit" />
+
+            }
+          </IconButton>
+          <IconButton size="small" onClick={() => { count == 1 ? _toggleMinimapLeftFullscreen() : _toggleMinimapRightFullscreen() } } onTouchEnd={() => { count == 1 ? _toggleMinimapLeftFullscreen() : _toggleMinimapRightFullscreen() } }>
+            {
+
+              count == 1 ? (fullscreenMinimapLeft ? <FullscreenExitIcon fontSize="inherit" /> : <FullscreenIcon fontSize="inherit" />)
+
+                : fullscreenMinimapRight ? <FullscreenExitIcon fontSize="inherit" /> : <FullscreenIcon fontSize="inherit" />
+            }
           </IconButton>
         </div>
         <MiniMap 
@@ -1757,33 +1771,141 @@ function GenericViewer(props) {
     </Rnd>)
   }
 
-  const [minimize, setMinimize] = useState(false)
+  const [minimizeMinimapLeft, setMinimizeMinimapLeft] = useState(false)
 
-  const _isMinimized = useRef(false)
+  const _isMinimapLeftMinimized = useRef(false)
 
-  const _minimize = (count) => {
+  const [fullscreenMinimapLeft, setFullscreenMinimapLeft] = useState(false)
 
-    const minimap = count == 1 ? _minimap : _minimapCompare
+  const _isFullscreenMinimapLeft = useRef(false)
 
-    const utils = count == 1 ? minimapUtils.current : minimapCompareUtils.current
+  const _minimizeMinimapLeft = () => {
 
-    if (_isMinimized.current) {
+    const minimap = _minimap
 
-        minimap?.updateSize({ width: 320, height: 320 })
+    const utils = minimapUtils.current
+
+    setFullscreenMinimapLeft(false)
+
+    _isFullscreenMinimapLeft.current = false
+
+    if (_isMinimapLeftMinimized.current) {
+
+      minimap?.updateSize({ width: 320, height: 320 })
 
     } else {
 
-        minimap?.updateSize({ width: 320, height: 28 })
+      minimap?.updateSize({ width: 320, height: 28 })
 
     }
 
-    _isMinimized.current = !_isMinimized.current
+    _isMinimapLeftMinimized.current = !_isMinimapLeftMinimized.current
 
-    setMinimize(_isMinimized.current)
+    setMinimizeMinimapLeft(_isMinimapLeftMinimized.current)
 
     setTimeout(() => utils?.resize(), 50)
 
-}
+  }
+
+  const _toggleMinimapLeftFullscreen = () => {
+
+    const minimap = _minimap
+
+    const utils = minimapUtils.current
+
+    if (_isFullscreenMinimapLeft.current) {
+
+      minimap?.updatePosition({ x: 24, y: 84 })
+
+      minimap?.updateSize({ width: 320, height: 320 })
+
+    } else {
+
+      _isMinimapLeftMinimized.current = false
+
+      setMinimizeMinimapLeft(_isMinimapLeftMinimized.current)
+
+      minimap?.updatePosition({ x: 10, y: 84 })
+
+      minimap?.updateSize({ width: '99%', height: '90%' })
+
+    }
+
+    _isFullscreenMinimapLeft.current = !_isFullscreenMinimapLeft.current
+
+    setFullscreenMinimapLeft(_isFullscreenMinimapLeft.current)
+
+    setTimeout(() => utils?.resize(), 50)
+
+  }
+
+  const [minimizeMinimapRight, setMinimizeMinimapRight] = useState(true)
+
+  const _isMinimapRightMinimized = useRef(true)
+
+  const [fullscreenMinimapRight, setFullscreenMinimapRight] = useState(false)
+
+  const _isFullscreenMinimapRight = useRef(false)
+
+  const _minimizeMinimapRight = () => {
+
+    const minimap = _minimapCompare
+
+    const utils = minimapCompareUtils.current
+
+    setFullscreenMinimapRight(false)
+
+    _isFullscreenMinimapRight.current = false
+
+    if (_isMinimapRightMinimized.current) {
+
+      minimap?.updateSize({ width: 320, height: 320 })
+
+    } else {
+
+      minimap?.updateSize({ width: 320, height: 28 })
+
+    }
+
+    _isMinimapRightMinimized.current = !_isMinimapRightMinimized.current
+
+    setMinimizeMinimapRight(_isMinimapRightMinimized.current)
+
+    setTimeout(() => utils?.resize(), 50)
+
+  }
+
+  const _toggleMinimapRightFullscreen = () => {
+
+    const minimap = _minimapCompare
+
+    const utils = minimapCompareUtils.current
+
+    if (_isFullscreenMinimapRight.current) {
+
+      minimap?.updatePosition({ x: 24, y: 84 })
+
+      minimap?.updateSize({ width: 320, height: 320 })
+
+    } else {
+
+      _isMinimapRightMinimized.current = false
+
+      setMinimizeMinimapRight(_isMinimapRightMinimized.current)
+
+      minimap?.updatePosition({ x: 10, y: 84 })
+
+      minimap?.updateSize({ width: '99%', height: '90%' })
+
+    }
+
+    _isFullscreenMinimapRight.current = !_isFullscreenMinimapRight.current
+
+    setFullscreenMinimapRight(_isFullscreenMinimapRight.current)
+
+    setTimeout(() => utils?.resize(), 50)
+
+  }
 
   const resizeMinimap = (mode, count) => {
     const minimap = count == 1 ? _minimap : _minimapCompare
