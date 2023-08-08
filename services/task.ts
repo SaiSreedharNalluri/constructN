@@ -373,6 +373,6 @@ export const createTaskWithAttachments = (
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      throw error.response;
     });
 };
