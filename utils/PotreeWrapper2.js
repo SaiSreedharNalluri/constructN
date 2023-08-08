@@ -1963,13 +1963,20 @@ export const PotreeViewerUtils = () => {
 
     const removeAssets = () => {
         // console.log("removeTest Potree inside remove assets2: ", _realityLayers, _viewer.scene.scene.children);
-
+        // console.log("Testing scenePointCloud: ", _viewer.scene.scenePointCloud , _viewer.scene.pointclouds) 
         let childIndex = -1;
 
         unloadAllImages();
-        for(let pointCloud of _viewer.scene.pointclouds) {
-            _viewer.scene.scenePointCloud.remove(pointCloud);
+        pointCloudView(false);
+        for (let i = _viewer.scene.pointclouds.length - 1; i >= 0; i--) {
+            _viewer.scene.scenePointCloud.remove(_viewer.scene.pointclouds[i]);
+            delete _viewer.scene.pointclouds[i].pcoGeometry;
+            _viewer.scene.pointclouds[i] = undefined;
         }
+        
+        // for(let pointCloud of _viewer.scene.pointclouds) {
+        //     _viewer.scene.scenePointCloud.remove(pointCloud);
+        // }
         _viewer.scene.pointclouds = [];
 
         for (const realityKey in _realityLayers ) {
@@ -1995,15 +2002,18 @@ export const PotreeViewerUtils = () => {
                     console.log("removeTest inside remove assets2 swicth case : ", reality,  _viewer.scene.scene.children.indexOf(_viewer.scene.images360[reality.index].node));
                     childIndex = _viewer.scene.scene.children.indexOf(_viewer.scene.images360[reality.index].node);
                     if (_viewer.scene.images360[reality.index]) {
+                        _viewer.scene.images360[reality.index].selectingEnabled = false;
                         _viewer.scene.images360[reality.index].images.forEach(image => {
                             // _viewer.scene.scene.children[childIndex].remove(image.mesh);
                             _viewer.scene.scene.children[childIndex].remove(image.group.children[0]);
                             _viewer.scene.scene.children[childIndex].remove(image.group.children[1]);
+                            delete image.group.children[1];
+                            delete image.group.children[0];
+                            delete image.group;
                          });
                         _viewer.scene.scene.children[childIndex].remove(_viewer.scene.images360[reality.index].sphere);
-
                         delete _viewer.scene.images360[reality.index].images;
-                        // delete _viewer.scene.images360[reality.index].sphere;
+                        delete _viewer.scene.images360[reality.index].sphere;
                         // _viewer.scene.scene.remove(_viewer.scene.scene.children[childIndex]);
                         // _viewer.scene.remove360Images(_viewer.scene.images360[reality.index]);
                      }
