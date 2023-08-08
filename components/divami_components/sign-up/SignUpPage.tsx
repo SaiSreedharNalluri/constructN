@@ -73,8 +73,7 @@ const SignUpPage = () => {
     setChecked(event.target.checked);
   };
  const handleCheckboxChange=(event:any)=>{
-  if(!canBeDisabled){
-  setCheckBoxSelected(event.target.checked)}
+  setCheckBoxSelected(event.target.checked)
  }
   // const formHandler = (event: any) => {
   //   const firstName = formData[0].defaultValue;
@@ -332,10 +331,10 @@ const SignUpPage = () => {
 
             <FooterSignUp
               formHandler={formHandler}
-              canBeDisabled={true}
+              canBeDisabled={!canBeDisabled && isCheckBoxSelected}
               loginField={true}
               customLabel={true}
-              isCheckBoxSelected={isCheckBoxSelected}
+              // isCheckBoxSelected={isCheckBoxSelected}
             />
           </ButtonSection>
 
