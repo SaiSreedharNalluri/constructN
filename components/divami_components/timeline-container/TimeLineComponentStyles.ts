@@ -10,11 +10,13 @@ export const TimeLineStyleContainer = styled("div")(
     //   width: "400px",
     //   height: "50px",
     position: "absolute",
-    maxWidth: "420px",
-    margin: "0 auto",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "flex-end",
+    // margin: "0 auto",
     left: "0",
     right: "0",
-    bottom: "30px",
+    bottom: "0px",
     height: 0,
     // bottom: "40px",
     // height: "56px",
@@ -24,7 +26,6 @@ export const TimeLineStyleContainer = styled("div")(
 ) as any;
 
 export const TimelineDots = styled("div")({
-  maxWidth: "170px",
   display: "flex",
   overflow: "hidden",
 });
@@ -45,19 +46,20 @@ export const TimelineNavigation = styled("div")({
 });
 export const SelectedTimeLine = styled("div")({
   boxSizing: "border-box",
-  width: "158px",
+  // width: "158px",
   background: "#FFFFFF",
   border: "1px solid #B5B5B5",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
-  textAlign: "center",
+
   borderRadius: "4px",
   position: "absolute",
-  left: "120px",
+
   borderBottomLeftRadius: 0,
   borderBottomRightRadius: 0,
+ 
   fontSize: "12px",
   color: "#101F4C",
-  padding: "6px 0",
+  padding: "6px 10px",
 });
 
 export const CircleIcon = styled("div")(({ active }: any) => ({
