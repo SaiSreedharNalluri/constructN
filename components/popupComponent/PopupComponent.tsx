@@ -199,7 +199,7 @@ const PopupComponent = (props: PopupComponentProps) => {
         >
           {showButton ? (
             <ButtonDiv>
-              <Button
+             {SecondaryButtonlabel!=="" ?(   <Button
                 variant={paddingStyle ? "outlined" : "text"}
                 // autoFocus
                 onClick={handleClose}
@@ -214,7 +214,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 }}
               >
                 {SecondaryButtonlabel}
-              </Button>
+              </Button>):""}
 
               <Button
                 variant="contained"

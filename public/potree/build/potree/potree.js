@@ -77681,9 +77681,11 @@ ENDSEC
 			this.sphere.visible = false;
 
 			this.load(image360).then( () => {
-				this.sphere.visible = true;
-				this.sphere.material.map = image360.texture;
-				this.sphere.material.needsUpdate = true;
+				if (this.sphere) {
+					this.sphere.visible = true;
+					this.sphere.material.map = image360.texture;
+					this.sphere.material.needsUpdate = true;
+				}
 			});
 
 			// { // orientation
@@ -77830,9 +77832,11 @@ ENDSEC
 									//var sphereMaterial = new MeshBasicMaterial({ map: texture, side: DoubleSide });
 	                            	//image360.texture = sphereMaterial;
 									image360.texture = texture;
-									this.sphere.visible = true;
-									this.sphere.material.map = image360.texture;
-									this.sphere.material.needsUpdate = true;
+									if(this.sphere) {
+										this.sphere.visible = true;
+										this.sphere.material.map = image360.texture;
+										this.sphere.material.needsUpdate = true;
+									}
 									if (!resolved) {
 										resolve(null);
 									}
