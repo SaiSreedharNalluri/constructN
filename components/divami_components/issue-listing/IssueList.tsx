@@ -798,6 +798,21 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
         </TaskListContainer>
       ) : (
         <TaskListContainer>
+                     <HeaderContainer>
+            <TitleContainer>
+              <span></span>
+              <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
+              <CloseIcon
+                onClick={() => {
+                  handleClose();
+                }}
+                src={closeWithCircle}
+                alt={"close icon"}
+                data-testid="close-icon"
+              />
+              </div>
+            </TitleContainer>
+          </HeaderContainer>
           <ErrorImageDiv>
             <ImageErrorIcon src={listingErrorIcon} alt="Error Image" />
             <MessageDivShowErr>

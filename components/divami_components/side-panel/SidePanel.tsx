@@ -15,7 +15,8 @@ import branchHighlighted from "../../../public/divami_icons/branchHighlightedIco
 import userIcon from "../../../public/divami_icons/userIcon.svg";
 import userHighlighted from "../../../public/divami_icons/userHighlighted.svg";
 
-import chatOpen from "../../../public/divami_icons/chat_open.svg";
+import chatOpen from "../../../public/divami_icons/newChatIconSidePanel.svg";
+import chatOpenHightlighted from "../../../public/divami_icons/chatOpenHightlighted.svg";
 import chatClose from "../../../public/divami_icons/chat_close.svg";
 
 // tasksHighlighted
@@ -36,6 +37,7 @@ import projectDetailsHighlighted from "../../../public/divami_icons/projectDetai
 import {
   HighlightedSytledImage,
   OvershowImg,
+  SideMenuChatImageContainer,
   SideMenuContainer,
   SideMenuOption,
   SideMenuOptionContainer,
@@ -50,7 +52,6 @@ interface IProps {
 }
 const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   let [eMail, setEMail] = useState<string>("");
-  const [isChatActive, setChatStatus] = React.useState(false);
   const router = useRouter();
   const [config, setConfig] = React.useState([
     {
@@ -124,6 +125,8 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       toolTipMsg: "Chat Support",
     },
   ]);
+  const [isChatHovered, setChatHovered] = useState(false);
+
   // const handleClick = (id: any) => {
   //   setConfig((prevConfig) =>
   //     prevConfig.map((item) =>
@@ -183,9 +186,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         break;
       case "chatSupport":
         //add open Chat code
-        //isChatActive?closeChat():openChat();
         openChat();
-        setChatStatus(!isChatActive);
         break;
       default:
         router.push(`/projects/${router.query.projectId as string}/structure`);
@@ -206,6 +207,13 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     }
   }
 
+  const handleChatHover = () => {
+    setChatHovered(true);
+  };
+
+  const handleChatHoverEnd = () => {
+    setChatHovered(false);
+  };
   return (
     <SideMenuContainer data-testid="const-custom-sidepanel">
       {config.map((item, index) => (
@@ -240,7 +248,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           </SideMenuOption>
         </SideMenuOptionContainer>
       ))}
-      {/* {supportItemsConfig.map((item, index) => (
+      {supportItemsConfig.map((item, index) => (
         <SideMenuOptionContainer className="fixed bottom-0" key={index}>
           <SideMenuOption
           // onClick={() =>
@@ -248,20 +256,14 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           // }
           // onClick={() => handleClick(item.id)}
           >
-            <TooltipText title={item.toolTipMsg} placement="right">
-              {/* <SideMenuOptionSupportImageContainer> <StyledImage
-                    src={item.icon}
-                    alt={item.id}
-                    id={item.id}
-                    onClick={leftClickHandler}
-                  /></SideMenuOptionSupportImageContainer> */}
-              {/* <SideMenuOptionImageContainer id="custom_fc_button">
-                {isChatActive ? (
+            <TooltipText title={item.toolTipMsg} placement="right">        
+                <SideMenuChatImageContainer  id="custom_fc_button" onMouseEnter={handleChatHover}
+                onMouseLeave={handleChatHoverEnd}>
+                 {isChatHovered ? (
                   <StyledImage
-                    // src={item.activeIcon}
-                    src={item.icon}
-                    width={40}
-                    height={40}
+                    src={chatOpenHightlighted}
+                    width={25}
+                    height={25}
                     alt={item.id}
                     id={item.id}
                     onClick={leftClickHandler}
@@ -269,18 +271,19 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
                 ) : (
                   <StyledImage
                     src={item.icon}
-                    width={40}
-                    height={40}
+                    width={25}
+                    height={25}
                     alt={item.id}
                     id={item.id}
                     onClick={leftClickHandler}
                   />
                 )}
-              </SideMenuOptionImageContainer> */}
-            {/* </TooltipText>
+                </SideMenuChatImageContainer>
+      
+            </TooltipText>
           </SideMenuOption>
-        </SideMenuOptionContainer> */}
-      {/* ))} */} 
+        </SideMenuOptionContainer>
+      ))}
     </SideMenuContainer>
   );
 };

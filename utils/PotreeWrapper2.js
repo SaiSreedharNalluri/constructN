@@ -463,6 +463,9 @@ export const PotreeViewerUtils = () => {
         // pointCloudView(true);
         _currentImageName = event.detail.image.id;
         let reality = getRealityByImageName(_currentImageName);
+        if(reality === undefined ) {
+            return;
+        }
 
         _currentMode = reality.type;
         _currentReality = reality;
@@ -531,6 +534,10 @@ export const PotreeViewerUtils = () => {
         let imageName = event.detail.image.file.split('/').pop()
         let reality = getRealityByImageName(imageName);
 
+        if(reality === undefined ) {
+            return;
+        }
+        
         _sendContext = true;
         loadImage(reality, event.detail.image);
         
@@ -1989,7 +1996,9 @@ export const PotreeViewerUtils = () => {
                     childIndex = _viewer.scene.scene.children.indexOf(_viewer.scene.images360[reality.index].node);
                     if (_viewer.scene.images360[reality.index]) {
                         _viewer.scene.images360[reality.index].images.forEach(image => {
-                            _viewer.scene.scene.children[childIndex].remove(image.mesh);
+                            // _viewer.scene.scene.children[childIndex].remove(image.mesh);
+                            _viewer.scene.scene.children[childIndex].remove(image.group.children[0]);
+                            _viewer.scene.scene.children[childIndex].remove(image.group.children[1]);
                          });
                         _viewer.scene.scene.children[childIndex].remove(_viewer.scene.images360[reality.index].sphere);
 

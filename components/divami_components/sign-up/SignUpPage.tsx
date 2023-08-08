@@ -20,6 +20,8 @@ import {
   SignInHeader,
   ErrorSectonDiv,
   PasswordPopupContainer,
+  TermsAndConditionDiv,
+  SpanDiv,
 } from "./SignUpPageStyles";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Logo from "../../../public/divami_icons/Logo.svg";
@@ -38,6 +40,7 @@ import FooterSignUp from "./FooterSignUp";
 import PasswordRequired from "../password-field/PasswordRequired";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
+import Link from "next/link";
 const SignUpPage = () => {
   const router = useRouter();
 
@@ -47,7 +50,7 @@ const SignUpPage = () => {
   const [validate, setValidate] = useState(false);
   const [tagList, setTagList] = useState<[string]>([""]);
   const [showPopUp, setshowPopUp] = useState(false);
-  const [canBeDisabled, setCanBeDisabled] = useState(true);
+  const [canBeDisabled, setCanBeDisabled] = useState(false);
   const [token, setToken] = useState("");
   const [showError, setShowError] = useState<boolean>(false);
   const [signUpMsg, setSignUpMsg] = useState<boolean>(false);
@@ -65,11 +68,14 @@ const SignUpPage = () => {
   const [formInfo, setFormInfo] = useState<any>({});
   const [errorExist, setErrorExist] = useState<any>(true);
   const [registerEnable, setRegisterEnable] = useState<boolean>(true)
-
+  const [isCheckBoxSelected,setCheckBoxSelected]=useState<boolean>(false)
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
-
+ const handleCheckboxChange=(event:any)=>{
+  if(!canBeDisabled){
+  setCheckBoxSelected(event.target.checked)}
+ }
   // const formHandler = (event: any) => {
   //   const firstName = formData[0].defaultValue;
   //   const lastName = formData[1].defaultValue;
@@ -269,6 +275,30 @@ const SignUpPage = () => {
             ) : null}
           </div>
 
+         <ExtraTickDiv>
+              <CheckTickDiv>
+                <CheckTickBox
+                  sx={{ padding: 0 }}
+                  icon={
+                    <Image
+                      width={18}
+                      height={18}
+                      src={UnChecked}
+                      alt="Search"
+                    />
+                  }
+                  checkedIcon={
+                    <Image width={18} height={18} src={Checked} alt="Search" />
+                  }
+                  onChange={handleCheckboxChange}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              </CheckTickDiv>
+
+              <TermsAndConditionDiv> I agree to the <Link  href="https://constructn.ai/termsandconditions.html" target="_blank" passHref>
+                <SpanDiv > Terms of Service</SpanDiv></Link> and  <Link  href="https://constructn.ai/privacy-policy.html" target="_blank" passHref><SpanDiv>Privacy Policy</SpanDiv> </Link></TermsAndConditionDiv> 
+          </ExtraTickDiv>
+     
           {/* <ExtraTickDiv>
             <ParentTickDiv>
               <CheckTickDiv>
@@ -302,9 +332,10 @@ const SignUpPage = () => {
 
             <FooterSignUp
               formHandler={formHandler}
-              canBeDisabled={canBeDisabled}
+              canBeDisabled={true}
               loginField={true}
               customLabel={true}
+              isCheckBoxSelected={isCheckBoxSelected}
             />
           </ButtonSection>
 

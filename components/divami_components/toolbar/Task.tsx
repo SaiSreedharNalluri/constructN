@@ -79,7 +79,7 @@ const Task = ({
   const [image, setImage] = useState<Blob>();
   const [showImage, setShowImage] = useState(false);
   const [enableSubmit, setEnableSubmit] = useState(true);
-
+  const[isLoading,setLoading]=useState(false)
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
 
   useEffect(() => {
@@ -206,13 +206,15 @@ const Task = ({
             CustomToast(`Something went wrong`,"error");
             setEnableSubmit(true);
           }
+          setLoading(false)
         })
         .catch((error) => {
           if (error.message == "Forbidden Access") {
-            CustomToast(`You don't have permission. Contact Admin.`,"Forbidden Access");
+            CustomToast(`You don't have permission. Contact Admin.`,"error");
           } else {
             CustomToast(`Something went wrong`,"error");
           }
+          setLoading(false)
           setEnableSubmit(true);
         });
     } else {
@@ -397,6 +399,8 @@ const Task = ({
             closeTaskCreate={closeTaskCreate}
             onCancelCreate={onCancelCreate}
             deleteTheAttachment={deleteTheAttachment}
+            setLoading={setLoading}
+            isLoading={isLoading}
           />
         </CustomDrawer>
       )}

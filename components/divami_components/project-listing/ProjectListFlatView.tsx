@@ -340,6 +340,8 @@ export const ProjectListFlatView = ({
       sorting: false,
       render: (rowData: any) => {
         return (
+          <TooltipText  title="Project Menu">
+            <div>
           <CustomMenu
             hoveringOver={hoveringOver}
             imageSrc={MoreActions}
@@ -347,6 +349,8 @@ export const ProjectListFlatView = ({
             data={rowData}
             id="rowMenu"
           />
+          </div>
+          </TooltipText>
         );
       },
     },

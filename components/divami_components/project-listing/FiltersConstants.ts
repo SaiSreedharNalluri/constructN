@@ -44,7 +44,7 @@ export const projectConfig = [
         isflex: false,
         isReadOnly: false,
         width: "199px !important",
-        formLabel: "Number of Members",
+        formLabel: "Number of Users",
 
         options: [
           {
@@ -75,7 +75,7 @@ export const projectConfig = [
         defaultValue: "",
         width: "199px !important",
         formLabel: "",
-        placeholder: "Enter number of member",
+        placeholder: "Enter number of users",
         isError: false,
         isReq: false,
         isReadOnly: false,

@@ -52,6 +52,7 @@ import TimeLineComponent from '../divami_components/timeline-container/TimeLineC
 import Hotspots from './hotspots';
 import HotspotsCompare from './hotspotsCompare';
 import styles from "../../styles/GenericViewer.module.css"
+import CustomLoader from '../divami_components/custom_loader/CustomLoader';
 function GenericViewer(props) {
   const genericViewer = 'genericViewer';
   const genericViewerRef = useRef();
@@ -65,10 +66,12 @@ function GenericViewer(props) {
   let currentStructure = useRef();
 
   let [designList, setDesignList] = useState([]);
+  let [isLoading,setIsLoading]=useState(false)
   let [designMap, setDesignMap] = useState({});
   let updateDesignMap = props.updateDesignMap;
 
   let [snapshotList, setSnapshotList] = useState([]);
+  let [snapshotListCal, setSnapshotListCal] = useState([]);
   let [snapshot, setSnapshot] = useState({});
   let updateSnapshot = props.updateSnapshot;
 
@@ -1129,17 +1132,18 @@ function GenericViewer(props) {
 
   function renderViewer(count) {
     // console.log("Generic Viewer Inside render View: ", currentViewerType.current, viewerType, compareViewMode, currentCompareViewMode.current);
-    if (designList.length <= 0 && realityList.length <= 0) {
-      return(
-        <div className="flex justify-center items-center calc-h overflow-y-hidden mx-auto">
+    if (designList.length === 0 && realityList.length === 0) {
+      return (
+        isLoading &&
+       (<div className="flex justify-center items-center calc-h overflow-y-hidden mx-auto">
         <div className="flex flex-col">
           <Image src={ErrorNotFound} alt=""></Image>
           <div className="text-center">
           <h1 className="text-3xl  font-sans font-thin">Oops!, No Data Found.</h1>
           <p className="text-lg  font-sans font-thin">Try choosing a different Structure to view data</p>
           </div>
-          
-        </div></div>
+          </div>
+          </div>)
       );
     }
     if (count != 1 && !isCompare) {
@@ -1194,6 +1198,11 @@ function GenericViewer(props) {
     }
     console.log('Generic Viewer design modified: ', designList);
     setDesignList(designList);
+    if(designList.length===0)
+    {
+      setIsLoading(true)
+    }
+    
     //Set current design type and pass it to structure page.
     setDesignMap(getDesignMap(designList));
     updateDesignMap(getDesignMap(designList));
@@ -1205,6 +1214,7 @@ function GenericViewer(props) {
   const getSnapshotList = async (projectId, structurId,offset,limit) => {
     let list = await getSnapshotsList(projectId, structurId,offset||1,limit||10);
     setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
+    setSnapshotListCal(list.data?.result?.calendarSnapshots)
     list = list.data.result.mSnapshots.sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
@@ -1480,6 +1490,7 @@ function GenericViewer(props) {
         modifyDesignList(structure.designs);
       } else {
         setDesignList([]);
+        setIsLoading(true)
         setDesignMap(getDesignMap([]));
         updateDesignMap(getDesignMap([]));
       }
@@ -1952,7 +1963,7 @@ function GenericViewer(props) {
           {renderViewer(1)}
           {renderMinimap(1)}
          { snapshotList.length > 0 ?
-          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+          <TimeLineComponent currentSnapshot={snapshot}snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
               setPrevList={setPrevList}   
               setNextList={setNextList}
               totalPages={totalPages}
@@ -1967,7 +1978,7 @@ function GenericViewer(props) {
           {renderViewer(2)}
           {compareViewMode === 'Potree' ? renderMinimap(2) : <></>}
           { snapshotList.length > 0 ?     
-            <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+            <TimeLineComponent currentSnapshot={compareSnapshot} snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
             setPrevList={setPrevList}
             setNextList={setNextList}
             totalPages={totalPages}
