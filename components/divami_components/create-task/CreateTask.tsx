@@ -101,6 +101,8 @@ const CreateTask = ({
         tagsList={tagList}
         setCanBeDisabled={setCanBeDisabled}
         deleteTheAttachment={deleteTheAttachment}
+        setFormData={setFormData}
+        formData={formData}
       />
       <Footer
         formHandler={formHandler}

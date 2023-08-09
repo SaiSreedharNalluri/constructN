@@ -57,23 +57,24 @@ export default function App({ Component, pageProps }: AppProps) {
     "/verify-account/[token]",
   ];
   useEffect(() => {
-    instance?.interceptors?.response.use(
-      (response) => {
-        return response;
-      },
-      (error) => {
-        if(error?.response?.status === 403)
-        {
+    // instance?.interceptors?.response.use(
+    //   (response) => {
+    //     return response;
+    //   },
+    //   (error) => {
+    //     if(error?.response?.status === 403)
+    //     {
           
-          if(openRoutes.includes(router.asPath) === false)
-          {
-            setshowPopUp(true)
-          }
-        }
-        // Do something with response error
-        return Promise.reject(error);
-      }
-    );
+    //       if(openRoutes.includes(router.asPath) === false)
+    //       {
+    //         setshowPopUp(true)
+            
+    //       }
+    //     }
+    //     // Do something with response error
+    //     return Promise.reject(error);
+    //   }
+    // );
     const userObj: any = getCookie("user");
     let user = null;
     if (userObj) user = JSON.parse(userObj);

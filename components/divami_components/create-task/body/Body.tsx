@@ -63,6 +63,8 @@ const Body = ({
   tagsList,
   setCanBeDisabled,
   deleteTheAttachment,
+  formData,
+  setFormData
 }: any) => {
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
@@ -72,7 +74,6 @@ const Body = ({
 
   const [projectUsers, setProjectUsers] = useState([]);
   const [loggedInUserId, SetLoggedInUserId] = useState(null);
-  const [formData, setFormData] = useState<any>([]);
   const router = useRouter();
 
   useEffect(() => {
