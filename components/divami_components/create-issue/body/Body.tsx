@@ -63,12 +63,13 @@ const Body = ({
   issueStatusList,
   setCanBeDisabled,
   deleteTheAttachment,
+  formData,
+  setFormData
 }: any) => {
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
   const [issueTypes, setIssueTypes] = useState([]);
   const [issuePriorities, setIssuePriorities] = useState([]);
-  const [formData, setFormData] = useState<any>([]);
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [loggedInUserId, SetLoggedInUserId] = useState("");
   const router = useRouter();
