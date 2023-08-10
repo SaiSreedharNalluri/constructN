@@ -1,4 +1,3 @@
-'use client'
 import { MenuItem, Select, ThemeProvider, createTheme } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { styled } from "@mui/system";
