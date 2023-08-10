@@ -44,6 +44,7 @@ const StructPage: React.FC = () => {
             }
           })
           .catch((error) => {
+            console.log("Error in loading data: 1 ", error);
             CustomToast("failed to load data","error");
           });
         }
@@ -76,6 +77,7 @@ const StructPage: React.FC = () => {
             }
           })
           .catch((error) => {
+            console.log("Error in loading data: 2 ", error);
             CustomToast("failed to load data","error");
           });
 

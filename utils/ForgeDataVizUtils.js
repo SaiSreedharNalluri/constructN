@@ -278,6 +278,8 @@ export class ForgeDataVizUtils {
             }
 
             this._dataVizExtn.addViewables(_viewableData)
+
+            // if(type == '360 Video') this._drawVideoPath(data)
         }
     }
 
@@ -380,6 +382,63 @@ export class ForgeDataVizUtils {
         this._existingImages = []
 
         this._existingTags = []
+    }
+
+    _drawVideoPath = (data) => {
+
+        data.sort((a, b) => {
+
+            let nameA = a.imageName.toUpperCase()
+
+            nameA = nameA.replace('.JPG', '')
+
+            nameA = nameA.split('_')
+
+            let seqA = nameA[nameA.length - 1]
+
+            let nameB = a.imageName.toUpperCase()
+
+            nameB = nameB.replace('.JPG', '')
+
+            nameB = nameB.split('_')
+
+            let seqB = nameB[nameB.length - 1]
+
+            return parseInt(seqA) - parseInt(seqB)
+
+        })
+
+        const path = new THREE.Path()
+
+        path.moveTo(data[0].position.x, data[0].position.y)
+
+        const points = []
+
+        data.forEach(point => {
+            
+            console.log(point.imageName)
+
+            path.lineTo( point.position.x, point.position.y )
+
+            path.moveTo( point.position.x, point.position.y )
+
+            points.push(new THREE.Vector3(point.position.x, point.position.y, 100))
+
+        })
+
+        console.log(points)
+
+        const geometry = new THREE.BufferGeometry().setFromPoints( path.getPoints() )
+
+        const material = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 20 } )
+
+        const line = new THREE.Line( geometry, material )
+
+        this._viewer.overlays.addMesh(line, 'selection')
+
+        this._viewer.impl.invalidate(false, false, true)
+
+
     }
 
     updateNavigator = async (position, yaw) => {
