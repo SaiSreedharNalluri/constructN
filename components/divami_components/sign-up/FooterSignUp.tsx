@@ -15,13 +15,13 @@ const FooterSignUp = ({
   canBeDisabled,
   loginField,
   customLabel,
-  isCheckBoxSelected
+  // isCheckBoxSelected
 }: any) => {
   const [buttonClicked, setButtonClicked] = useState(false);
   return (
     <CustomButton
       // type={canBeDisabled && buttonClicked ? "disabled" : "contained"}
-      type={canBeDisabled && isCheckBoxSelected ? "contained" : "disabled"}
+      type={canBeDisabled  ? "contained" : "disabled"}
       label={customLabel ? "Create Account" : "Sign In"}
       formHandler={formHandler}
       setButtonClicked={setButtonClicked}

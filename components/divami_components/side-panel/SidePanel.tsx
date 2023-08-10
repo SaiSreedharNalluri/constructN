@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import dashboardProgress from "../../../public/divami_icons/dashboardProgress.svg";
 import dashboardProgressHighlight from "../../../public/divami_icons/dashboardProgressHighlight.svg";
 
@@ -139,7 +139,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
 
 
   const [active, setActive] = useState(router.pathname.split("/").pop());
-
+  const chatIconRef:any = useRef(null);
   // const currentUrl = window.location.href;
   // const urlString = currentUrl.split("/")[5];
   // console.log(currentUrl);
@@ -214,6 +214,17 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   const handleChatHoverEnd = () => {
     setChatHovered(false);
   };
+  useEffect(() => {
+    const handleOutsideClick :any= (event:any) => {
+      if (chatIconRef.current && !chatIconRef.current.contains(event.target)) {
+        closeChat();
+      }
+    };
+      document.addEventListener('click', handleOutsideClick);
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, []);
   return (
     <SideMenuContainer data-testid="const-custom-sidepanel">
       {config.map((item, index) => (
@@ -249,7 +260,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         </SideMenuOptionContainer>
       ))}
       {supportItemsConfig.map((item, index) => (
-        <SideMenuOptionContainer className="fixed bottom-0" key={index}>
+        <SideMenuOptionContainer ref={chatIconRef}  className="fixed bottom-0" key={index}>
           <SideMenuOption
           // onClick={() =>
           //   item.label === "settings" ? handleClick(item) : null

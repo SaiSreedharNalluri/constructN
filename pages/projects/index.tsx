@@ -1,5 +1,5 @@
 import { ProjectListing } from "../../components/divami_components/project-listing/ProjectListing";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "../../components/divami_components/header/Header";
 import {
   Content,
@@ -128,7 +128,7 @@ const Index: React.FC<any> = () => {
   const [showWelcomMessage, setShowWelcomeMessage] = useState(false);
   let [eMail, setEMail] = useState<string>("");
   const [isChatHovered, setChatHovered] = useState(false);
-
+  const chatIconRef:any = useRef(null);
   const sortMenuOptions = [
     {
       label: "Sort by User",
@@ -271,7 +271,19 @@ const Index: React.FC<any> = () => {
     setOpenDrawer(true);
     setForm(formState);
   };
-
+  useEffect(() => {
+    const handleOutsideClick :any= (event:any) => {
+      if (chatIconRef.current && !chatIconRef.current.contains(event.target)) {
+        closeChat();
+      }
+    };
+  
+    document.addEventListener('click', handleOutsideClick);  
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, []);
+  
   useEffect(() => {
     if (router.isReady) {
       getProjectsList()
@@ -698,30 +710,32 @@ const Index: React.FC<any> = () => {
           selectedProjectId={selectedProjectId}
         />
       </Drawer>
-      <div className="fixed bottom-[20px] left-2 z-10 cursor-pointer rounded-full bg-[#FF843F] p-2">
-        <div onMouseEnter={handleChatHover}
-                onMouseLeave={handleChatHoverEnd} className=" fill-[#515151] hover:fill-white">
- 
+     
+        <div ref={chatIconRef}
+         className="fixed bottom-[20px] left-2 z-10 cursor-pointer rounded-full bg-[#FF843F] p-2"
+         onMouseEnter={handleChatHover}
+         onMouseLeave={handleChatHoverEnd}
+         > 
                  {isChatHovered ? (
                   <Image
                     src={chatOpenHightlighted }
-                    width={30}
-                    height={30}
+                    width={45}
+                    height={45}
                 alt=""
                     onClick={handleOpenChat}
                   />
                 ) : (
                   <Image
                     src={chatOpen}
-                    width={30}
-                    height={30}
+                    width={45}
+                    height={45}
              alt=""
                     onClick={handleOpenChat}
                   />
                 )}
       </div>
       </div>
-    </div>
+
     
   );
 };

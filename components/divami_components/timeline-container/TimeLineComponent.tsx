@@ -256,7 +256,7 @@ const TimeLineComponent: React.FC<IProps> = ({
       {tools?.toolName !== "compareDesign" ? (
         <TimeLineStyleContainer isFullScreen={isFullScreen}>
           <SelectedTimeLine
-            style={{ bottom: bottomNav ? (isFullScreen ? 0 : "0") : "unset" }}
+            style={{ bottom: bottomNav ? "36px" : "0px" }}
             onClick={toggleTimeline}
             data-testid={"selected-timeline"}
           >

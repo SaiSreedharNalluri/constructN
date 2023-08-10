@@ -199,9 +199,12 @@ const Issues = ({
         })
         .catch((error) => 
         {
-          if (error.message == "Forbidden Access") {
+          if (error.status ===  403) {
             CustomToast(`You don't have permission. Contact Admin.`,"error");
-          } else {
+          } else if(error.status === 415)
+          {
+            CustomToast(error?.data?.message,"error");
+          }else {
             CustomToast(`Something went wrong`,"error");   
           }
           setLoading(false)
