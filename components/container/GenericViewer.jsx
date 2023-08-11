@@ -42,8 +42,9 @@ import {
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
-import RemoveIcon from '@mui/icons-material/Remove';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import RemoveIcon from '@mui/icons-material/Remove';
 import PictureInPictureIcon from '@mui/icons-material/PictureInPicture';
 import { IconButton } from '@mui/material';
 import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
@@ -51,6 +52,7 @@ import TimeLineComponent from '../divami_components/timeline-container/TimeLineC
 import Hotspots from './hotspots';
 import HotspotsCompare from './hotspotsCompare';
 import styles from "../../styles/GenericViewer.module.css"
+import CustomLoader from '../divami_components/custom_loader/CustomLoader';
 function GenericViewer(props) {
   const genericViewer = 'genericViewer';
   const genericViewerRef = useRef();
@@ -64,10 +66,12 @@ function GenericViewer(props) {
   let currentStructure = useRef();
 
   let [designList, setDesignList] = useState([]);
+  let [isLoading,setIsLoading]=useState(false)
   let [designMap, setDesignMap] = useState({});
   let updateDesignMap = props.updateDesignMap;
 
   let [snapshotList, setSnapshotList] = useState([]);
+  let [snapshotListCal, setSnapshotListCal] = useState([]);
   let [snapshot, setSnapshot] = useState({});
   let updateSnapshot = props.updateSnapshot;
 
@@ -965,9 +969,11 @@ function GenericViewer(props) {
                 })
               }
             })
-            map['Stages'] = stages
-            setRealityMap(map)
-            updateRealityMap(map)
+            if(stages.children.length > 0) {
+              map['Stages'] = stages
+              setRealityMap(map)
+              updateRealityMap(map)
+            }
           }
           setTimeout(() => {
             if (mapboxUtils.current != undefined) {
@@ -1128,17 +1134,18 @@ function GenericViewer(props) {
 
   function renderViewer(count) {
     // console.log("Generic Viewer Inside render View: ", currentViewerType.current, viewerType, compareViewMode, currentCompareViewMode.current);
-    if (designList.length <= 0 && realityList.length <= 0) {
-      return(
-        <div className="flex justify-center items-center calc-h overflow-y-hidden mx-auto">
+    if (designList.length === 0 && realityList.length === 0) {
+      return (
+        isLoading &&
+       (<div className="flex justify-center items-center calc-h overflow-y-hidden mx-auto">
         <div className="flex flex-col">
           <Image src={ErrorNotFound} alt=""></Image>
           <div className="text-center">
           <h1 className="text-3xl  font-sans font-thin">Oops!, No Data Found.</h1>
           <p className="text-lg  font-sans font-thin">Try choosing a different Structure to view data</p>
           </div>
-          
-        </div></div>
+          </div>
+          </div>)
       );
     }
     if (count != 1 && !isCompare) {
@@ -1193,6 +1200,11 @@ function GenericViewer(props) {
     }
     console.log('Generic Viewer design modified: ', designList);
     setDesignList(designList);
+    if(designList.length===0)
+    {
+      setIsLoading(true)
+    }
+    
     //Set current design type and pass it to structure page.
     setDesignMap(getDesignMap(designList));
     updateDesignMap(getDesignMap(designList));
@@ -1204,6 +1216,7 @@ function GenericViewer(props) {
   const getSnapshotList = async (projectId, structurId,offset,limit) => {
     let list = await getSnapshotsList(projectId, structurId,offset||1,limit||10);
     setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
+    setSnapshotListCal(list.data?.result?.calendarSnapshots)
     list = list.data.result.mSnapshots.sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
@@ -1483,6 +1496,7 @@ function GenericViewer(props) {
         modifyDesignList(structure.designs);
       } else {
         setDesignList([]);
+        setIsLoading(true)
         setDesignMap(getDesignMap([]));
         updateDesignMap(getDesignMap([]));
       }
@@ -1719,11 +1733,7 @@ function GenericViewer(props) {
       return;
     }
 
-    if(count == 2) {
-      setTimeout(() => {
-        resizeMinimap('minimize', count)
-      }, 3000)
-    }
+    // if(count == 2) _isMinimapRightMinimized.current = true
     
     return (<Rnd
       ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
@@ -1733,7 +1743,7 @@ function GenericViewer(props) {
       maxWidth={'99%'}
       maxHeight={'99%'}
       bounds={count == 1 ? '#TheView' : '#CompareView'}
-      default={{ x: count == 1 ? 84 : 24, y: 75, width: 320, height: 320 }}
+      default={{ x: count == 1 ? 84 : 24, y: 75, width: 320, height: count == 1 ? 320 : 28.5 }}
       onDragStop={(e,data)=>{minimapUtils.current.resize();}}
       onResize={(e, direction, ref, delta, position) => {
         count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
@@ -1746,8 +1756,25 @@ function GenericViewer(props) {
             <DragIndicatorIcon fontSize="inherit" />
           </IconButton>
           <div className='flex items-center text-[#F1742E] pl-2 flex-1'>Minimap</div>
-          <IconButton size="small" onClick={() => { _minimize(count) } } onTouchEnd={() => {  _minimize(count) } }>
-            {minimize ? <KeyboardDoubleArrowDownIcon fontSize="inherit" /> : <KeyboardDoubleArrowUpIcon fontSize="inherit" />}
+          <IconButton size="small" onClick={() => { 
+            
+            count == 1 ? _minimizeMinimapLeft() : _minimizeMinimapRight() 
+            
+            } } onTouchEnd={() => {  count == 1 ? _minimizeMinimapLeft() : _minimizeMinimapRight() } }>
+            {
+              count == 1 ? (minimizeMinimapLeft ? <KeyboardDoubleArrowDownIcon fontSize="inherit" /> : <KeyboardDoubleArrowUpIcon fontSize="inherit" />)
+
+                : minimizeMinimapRight ? <KeyboardDoubleArrowDownIcon fontSize="inherit" /> : <KeyboardDoubleArrowUpIcon fontSize="inherit" />
+
+            }
+          </IconButton>
+          <IconButton size="small" onClick={() => { count == 1 ? _toggleMinimapLeftFullscreen() : _toggleMinimapRightFullscreen() } } onTouchEnd={() => { count == 1 ? _toggleMinimapLeftFullscreen() : _toggleMinimapRightFullscreen() } }>
+            {
+
+              count == 1 ? (fullscreenMinimapLeft ? <FullscreenExitIcon fontSize="inherit" /> : <FullscreenIcon fontSize="inherit" />)
+
+                : fullscreenMinimapRight ? <FullscreenExitIcon fontSize="inherit" /> : <FullscreenIcon fontSize="inherit" />
+            }
           </IconButton>
         </div>
         <MiniMap 
@@ -1761,33 +1788,141 @@ function GenericViewer(props) {
     </Rnd>)
   }
 
-  const [minimize, setMinimize] = useState(false)
+  const [minimizeMinimapLeft, setMinimizeMinimapLeft] = useState(false)
 
-  const _isMinimized = useRef(false)
+  const _isMinimapLeftMinimized = useRef(false)
 
-  const _minimize = (count) => {
+  const [fullscreenMinimapLeft, setFullscreenMinimapLeft] = useState(false)
 
-    const minimap = count == 1 ? _minimap : _minimapCompare
+  const _isFullscreenMinimapLeft = useRef(false)
 
-    const utils = count == 1 ? minimapUtils.current : minimapCompareUtils.current
+  const _minimizeMinimapLeft = () => {
 
-    if (_isMinimized.current) {
+    const minimap = _minimap
 
-        minimap?.updateSize({ width: 320, height: 320 })
+    const utils = minimapUtils.current
+
+    setFullscreenMinimapLeft(false)
+
+    _isFullscreenMinimapLeft.current = false
+
+    if (_isMinimapLeftMinimized.current) {
+
+      minimap?.updateSize({ width: 320, height: 320 })
 
     } else {
 
-        minimap?.updateSize({ width: 320, height: 28 })
+      minimap?.updateSize({ width: 320, height: 28 })
 
     }
 
-    _isMinimized.current = !_isMinimized.current
+    _isMinimapLeftMinimized.current = !_isMinimapLeftMinimized.current
 
-    setMinimize(_isMinimized.current)
+    setMinimizeMinimapLeft(_isMinimapLeftMinimized.current)
 
     setTimeout(() => utils?.resize(), 50)
 
-}
+  }
+
+  const _toggleMinimapLeftFullscreen = () => {
+
+    const minimap = _minimap
+
+    const utils = minimapUtils.current
+
+    if (_isFullscreenMinimapLeft.current) {
+
+      minimap?.updatePosition({ x: 24, y: 84 })
+
+      minimap?.updateSize({ width: 320, height: 320 })
+
+    } else {
+
+      _isMinimapLeftMinimized.current = false
+
+      setMinimizeMinimapLeft(_isMinimapLeftMinimized.current)
+
+      minimap?.updatePosition({ x: 10, y: 84 })
+
+      minimap?.updateSize({ width: '99%', height: '90%' })
+
+    }
+
+    _isFullscreenMinimapLeft.current = !_isFullscreenMinimapLeft.current
+
+    setFullscreenMinimapLeft(_isFullscreenMinimapLeft.current)
+
+    setTimeout(() => utils?.resize(), 50)
+
+  }
+
+  const [minimizeMinimapRight, setMinimizeMinimapRight] = useState(true)
+
+  const _isMinimapRightMinimized = useRef(true)
+
+  const [fullscreenMinimapRight, setFullscreenMinimapRight] = useState(false)
+
+  const _isFullscreenMinimapRight = useRef(false)
+
+  const _minimizeMinimapRight = () => {
+
+    const minimap = _minimapCompare
+
+    const utils = minimapCompareUtils.current
+
+    setFullscreenMinimapRight(false)
+
+    _isFullscreenMinimapRight.current = false
+
+    if (_isMinimapRightMinimized.current) {
+
+      minimap?.updateSize({ width: 320, height: 320 })
+
+    } else {
+
+      minimap?.updateSize({ width: 320, height: 28 })
+
+    }
+
+    _isMinimapRightMinimized.current = !_isMinimapRightMinimized.current
+
+    setMinimizeMinimapRight(_isMinimapRightMinimized.current)
+
+    setTimeout(() => utils?.resize(), 50)
+
+  }
+
+  const _toggleMinimapRightFullscreen = () => {
+
+    const minimap = _minimapCompare
+
+    const utils = minimapCompareUtils.current
+
+    if (_isFullscreenMinimapRight.current) {
+
+      minimap?.updatePosition({ x: 24, y: 84 })
+
+      minimap?.updateSize({ width: 320, height: 320 })
+
+    } else {
+
+      _isMinimapRightMinimized.current = false
+
+      setMinimizeMinimapRight(_isMinimapRightMinimized.current)
+
+      minimap?.updatePosition({ x: 10, y: 84 })
+
+      minimap?.updateSize({ width: '99%', height: '90%' })
+
+    }
+
+    _isFullscreenMinimapRight.current = !_isFullscreenMinimapRight.current
+
+    setFullscreenMinimapRight(_isFullscreenMinimapRight.current)
+
+    setTimeout(() => utils?.resize(), 50)
+
+  }
 
   const resizeMinimap = (mode, count) => {
     const minimap = count == 1 ? _minimap : _minimapCompare
@@ -1834,7 +1969,7 @@ function GenericViewer(props) {
           {renderViewer(1)}
           {renderMinimap(1)}
          { snapshotList.length > 0 ?
-          <TimeLineComponent currentSnapshot={snapshot} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+          <TimeLineComponent currentSnapshot={snapshot}snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
               setPrevList={setPrevList}   
               setNextList={setNextList}
               totalPages={totalPages}
@@ -1849,7 +1984,7 @@ function GenericViewer(props) {
           {renderViewer(2)}
           {compareViewMode === 'Potree' ? renderMinimap(2) : <></>}
           { snapshotList.length > 0 ?     
-            <TimeLineComponent currentSnapshot={compareSnapshot} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+            <TimeLineComponent currentSnapshot={compareSnapshot} snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
             setPrevList={setPrevList}
             setNextList={setNextList}
             totalPages={totalPages}

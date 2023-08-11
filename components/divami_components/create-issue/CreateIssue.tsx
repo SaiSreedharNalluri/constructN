@@ -26,6 +26,8 @@ const CreateIssue = ({
   issueStatusList,
   onCancelCreate,
   deleteTheAttachment,
+  setLoading,
+  isLoading
 }: any) => {
   const router = useRouter();
   const [formData, setFormData] = useState<any>(null);
@@ -33,7 +35,6 @@ const CreateIssue = ({
   const [tagList, setTagList] = useState<[string]>([""]);
   const [showPopUp, setshowPopUp] = useState(false);
   const [canBeDisabled, setCanBeDisabled] = useState(false);
-  const [isLoading, setLoading] = useState(false);
   const formHandler = (event: any) => {
   
     if (event === "Cancel") {
@@ -57,8 +58,9 @@ const CreateIssue = ({
       if(isError == 0){
         setValidate(true);
         handleCreateTask(formData);
-        setLoading(true)
-      }
+        if(isLoading===false){
+          setLoading(true)}
+        }
     }
   };
 
@@ -81,7 +83,9 @@ const CreateIssue = ({
       })
       .catch((e) => console.log(e));
   }, []);
-
+    const setFormDataInfo=(data:any)=>{
+      setFormData(data)
+    }
   return (
     <StyledDiv>
       {isLoading&&<CustomLoader></CustomLoader>}
@@ -100,6 +104,9 @@ const CreateIssue = ({
         issueStatusList={issueStatusList}
         setCanBeDisabled={setCanBeDisabled}
         deleteTheAttachment={deleteTheAttachment}
+        setFormDataInfo={setFormDataInfo}
+        setFormData={setFormData}
+        formData={formData}
       />
       <Footer
         formHandler={formHandler}

@@ -90,6 +90,8 @@ export const MinimapUtils = () => {
   let _dataVizExtn;
   let _dataVizUtils;
 
+  let _edit2dExtn;
+
   const isCompareView = () => {
     if (_viewerId.split("-")[1] === "1") {
       return false;
@@ -726,6 +728,7 @@ export const MinimapUtils = () => {
 
   const loadExtension = async () => {
     _dataVizExtn = await _viewer.loadExtension("Autodesk.DataVisualization");
+    _edit2dExtn = await _viewer.loadExtension("Autodesk.Edit2D");
   };
 
   const onViewerInitialized = () => {
@@ -789,11 +792,19 @@ export const MinimapUtils = () => {
       );
       _dataVizExtn = _viewer.getExtension(parameter.extensionId);
 
-      if(!_dataVizUtils) _dataVizUtils = new ForgeDataVizUtils(_viewer, _dataVizExtn, onDataVizHandler);
+      if(!_dataVizUtils) _dataVizUtils = new ForgeDataVizUtils(_viewer, _dataVizExtn, onDataVizHandler, _edit2dExtn);
       // _dataVizUtils.setHandler(onDataVizHandler.bind(this));
       if (loadLayersOnDataLoadCompletion()) {
         loadLayers();
       }
+    } else if (parameter.extensionId === 'Autodesk.Edit2D') {
+      console.log(
+        "Inside Extension Loaded Event: Edit2D",
+        parameter
+      );
+      _edit2dExtn = _viewer.getExtension(parameter.extensionId);
+
+      if(_dataVizUtils) _dataVizUtils.setEdit2DExtn(_edit2dExtn)
     }
   };
 

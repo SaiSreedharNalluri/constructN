@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import "mapbox-gl/dist/mapbox-gl.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css";
 import "react-responsive-modal/styles.css";
@@ -21,20 +21,13 @@ import { useRouter } from "next/router";
 import { firebaseapp } from "../components/analytics/firebase";
 import { getAnalytics, isSupported, logEvent } from "firebase/analytics";
 import toastClose from "../public/divami_icons/toastClose.svg";
-
+import PopupComponent from "../components/popupComponent/PopupComponent";
 config.autoAddCss = false;
-
+import instance from '../services/axiosInstance'
 export default function App({ Component, pageProps }: AppProps) {
   mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, { debug: true });
   const router = useRouter();
   const signInRoutes = ["/login"];
-  const openRoutes = [
-    // "/register",
-    "/signup",
-    "/reset-password",
-    "/verify-account/[token]",
-  ];
-
   const setupFirebase = async () => {
     const analytics = await isSupported().then((yes) =>
       yes ? getAnalytics(firebaseapp) : null
@@ -56,43 +49,43 @@ export default function App({ Component, pageProps }: AppProps) {
     return () => {
       router.events.off("routeChangeComplete", logScreenEvent);
     };
-    // }
   };
-
+  const openRoutes = [
+    "/signup",
+    "/login",
+    "/reset-password",
+    "/verify-account/[token]",
+  ];
   useEffect(() => {
+    // instance?.interceptors?.response.use(
+    //   (response) => {
+    //     return response;
+    //   },
+    //   (error) => {
+    //     if(error?.response?.status === 403)
+    //     {
+          
+    //       if(openRoutes.includes(router.asPath) === false)
+    //       {
+    //         setshowPopUp(true)
+            
+    //       }
+    //     }
+    //     // Do something with response error
+    //     return Promise.reject(error);
+    //   }
+    // );
     const userObj: any = getCookie("user");
-    // let convertUserObj = JSON.parse(userObj);
     let user = null;
     if (userObj) user = JSON.parse(userObj);
-    // console.log(
-    //   "convertUserObj",
-    //   typeof convertUserObj,
-    //   convertUserObj["rememberMe"]
-    // );
-
     if (!user?.rememberMe && signInRoutes.includes(router.asPath)) {
       router.push("/login");
     } else if (user?.rememberMe && signInRoutes.includes(router.asPath)) {
       router.push("/projects");
     }
-    // else if (router.asPath == "/login" && userObj.rememberMe) {
-    //   console.log("coming to projects");
-    //   router.push("/projects");
-    // }
-
     setupFirebase();
   }, []);
-
-  // useEffect(() => {
-  //   const userObj: any = getCookie("userProfile");
-  //   if (userObj === undefined && !openRoutes.includes(router.asPath)) {
-  //     // router.push("/login");
-  //     router.push("/login");
-  //   } else {
-  //     router.push("/projects");
-  //   }
-  // }, []);
-
+ const [showPopUp, setshowPopUp] = useState(false);
   return (
     <>
         <Component {...pageProps} />
@@ -102,6 +95,15 @@ export default function App({ Component, pageProps }: AppProps) {
         hideProgressBar={true}
         closeButton={toastClose}
       />
+      <PopupComponent  open={showPopUp}
+         setShowPopUp={setshowPopUp}
+                modalTitle={"Access  Denied"}
+                modalmessage={`You don't have permissions to complete this operation. Please contact your admin.`}
+                primaryButtonLabel={"OK"}
+                SecondaryButtonlabel={""}
+                callBackvalue={()=>{       
+                setshowPopUp(false)
+      }}></PopupComponent>
     </>
   );
 }

@@ -30,10 +30,12 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
 import LeftSingleArrow from "../../../public/divami_icons/LeftSingleArrow.png";
 import RightSingleArrow from "../../../public/divami_icons/RightSingleArrow.png";
+import { getSnapshotDetails } from "../../../services/snapshot";
 
 interface IProps {
   currentSnapshot: ISnapshot;
   snapshotList: ISnapshot[];
+  snapshotListCal?:ISnapshot[];
   snapshotHandler: (snapshotData: ISnapshot) => void;
   isFullScreen?: boolean;
   getSnapshotList: any;
@@ -49,6 +51,7 @@ interface IProps {
 const TimeLineComponent: React.FC<IProps> = ({
   currentSnapshot,
   snapshotList,
+  snapshotListCal,
   snapshotHandler,
   isFullScreen = false,
   getSnapshotList,
@@ -78,7 +81,7 @@ const TimeLineComponent: React.FC<IProps> = ({
     setPage(value);
   };
 
-  const handleDateChange = (event: any) => {
+  const handleDateChange = async(event: any) => {
     const dateFormatted = moment(new Date(event))
       .format("YYYY-MM-DD")
       .toString();
@@ -88,6 +91,15 @@ const TimeLineComponent: React.FC<IProps> = ({
     );
     if (value > -1) {
       setPage(value);
+    }
+    else if(snapshotListCal)
+    {
+      const value = snapshotListCal.findIndex(
+        (item) =>
+          moment(item?.date).format("YYYY-MM-DD").toString() == dateFormatted
+      );
+     const snp = await (await getSnapshotDetails(structure.project,structure._id,snapshotListCal[value]._id!))?.data?.result
+      setCurrentSnapshot(snp);
     }
   };
 
@@ -142,8 +154,8 @@ const TimeLineComponent: React.FC<IProps> = ({
 
   const disableWeekends = (date: any) => {
     const timelineDates: any[] = [];
-    if (snapshotList.length) {
-      snapshotList.forEach((element, i) => {
+    if (snapshotListCal?.length) {
+      snapshotListCal.forEach((element, i) => {
         timelineDates.push(dayjs(element.date).format("YYYY-MM-DD"));
       });
     }
@@ -244,7 +256,7 @@ const TimeLineComponent: React.FC<IProps> = ({
       {tools?.toolName !== "compareDesign" ? (
         <TimeLineStyleContainer isFullScreen={isFullScreen}>
           <SelectedTimeLine
-            style={{ bottom: bottomNav ? (isFullScreen ? 0 : "0") : "unset" }}
+            style={{ bottom: bottomNav ? "36px" : "0px" }}
             onClick={toggleTimeline}
             data-testid={"selected-timeline"}
           >

@@ -1,5 +1,5 @@
 import { ProjectListing } from "../../components/divami_components/project-listing/ProjectListing";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "../../components/divami_components/header/Header";
 import {
   Content,
@@ -71,12 +71,12 @@ import { CustomToast } from "../../components/divami_components/custom-toaster/C
 import Moment from "moment";
 import CustomLoader from "../../components/divami_components/custom_loader/CustomLoader";
 import React from "react";
-import chatOpen from "../../public/divami_icons/chat_open.svg";
+import chatOpen from "../../public/divami_icons/newChatIcon.svg";
 import chatClose from "../../public/divami_icons/chat_close.svg";
 
 import { getCookie } from "cookies-next";
 import { ShowErrorContainer } from "../../components/divami_components/project-listing/ProjectListingStyles";
-
+import chatOpenHightlighted from "../../public/divami_icons/chatOpenHightlighted.svg"
 export const truncateString = (text: string, maxLength: number) => {
   let truncatedText = text;
 
@@ -127,7 +127,8 @@ const Index: React.FC<any> = () => {
   const [configEnabled, setConfigEnabled] = useState(true);
   const [showWelcomMessage, setShowWelcomeMessage] = useState(false);
   let [eMail, setEMail] = useState<string>("");
-
+  const [isChatHovered, setChatHovered] = useState(false);
+  const chatIconRef:any = useRef(null);
   const sortMenuOptions = [
     {
       label: "Sort by User",
@@ -247,10 +248,9 @@ const Index: React.FC<any> = () => {
       )
     );
   };
-
   const handleOpenChat = (e: any) => {
+    e.stopPropagation()
     openChat();
-    setChatStatus(!isChatActive);
   };
   function openChat(): void {
     {
@@ -271,7 +271,19 @@ const Index: React.FC<any> = () => {
     setOpenDrawer(true);
     setForm(formState);
   };
-
+  useEffect(() => {
+    const handleOutsideClick :any= (event:any) => {
+      if (chatIconRef.current && !chatIconRef.current.contains(event.target)) {
+        closeChat();
+      }
+    };
+  
+    document.addEventListener('click', handleOutsideClick);  
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, []);
+  
   useEffect(() => {
     if (router.isReady) {
       getProjectsList()
@@ -417,16 +429,6 @@ const Index: React.FC<any> = () => {
       }
     }
   };
-  const [isChatActive, setChatStatus] = React.useState(false);
-  const [supportItemsConfig, setSupportItemsConfig] = React.useState([
-    {
-      id: "chatSupport",
-      icon: chatOpen,
-      isActive: false,
-      activeIcon: chatClose,
-      toolTipMsg: "Chat Support",
-    },
-  ]);
   const deleteUser = (rowData: any) => {
     const email = rowData?.email?.toLocaleLowerCase();
     removeProjectUser(email, rowData.projectId as string)
@@ -451,6 +453,14 @@ const Index: React.FC<any> = () => {
           CustomToast("You don't have access. Contact Admin.","error");
         }
       });
+  };
+
+  const handleChatHover = () => {
+    setChatHovered(true);
+  };
+
+  const handleChatHoverEnd = () => {
+    setChatHovered(false);
   };
   return (
     <div className=" w-full  h-full">
@@ -574,26 +584,7 @@ const Index: React.FC<any> = () => {
                 </ToggleButtonContainer>
               </HeaderActions>
             </ProjectsHeader>
-            {/* <div className="fixed bottom-0 left-2 z-10 cursor-pointer">
-              {isChatActive ? (
-                <Image
-                  src={chatOpen}
-                  width={60}
-                  height={60}
-                  alt=""
-                  onClick={handleOpenChat}
-                />
-              ) : (
-                <Image
-                  src={chatOpen}
-                  width={60}
-                  height={60}
-                  alt=""
-                  onClick={handleOpenChat}
-                />
-              )}
-            </div> */}
-            {showLoading ? (
+           {showLoading ? (
               <CustomLoader />
             ) : showWelcomMessage ? (
             <ProjectCardsContainer>
@@ -719,7 +710,33 @@ const Index: React.FC<any> = () => {
           selectedProjectId={selectedProjectId}
         />
       </Drawer>
-    </div>
+     
+        <div ref={chatIconRef}
+         className="fixed bottom-[20px] left-2 z-10 cursor-pointer rounded-full bg-[#FF843F] p-2"
+         onMouseEnter={handleChatHover}
+         onMouseLeave={handleChatHoverEnd}
+         > 
+                 {isChatHovered ? (
+                  <Image
+                    src={chatOpenHightlighted }
+                    width={45}
+                    height={45}
+                alt=""
+                    onClick={handleOpenChat}
+                  />
+                ) : (
+                  <Image
+                    src={chatOpen}
+                    width={45}
+                    height={45}
+             alt=""
+                    onClick={handleOpenChat}
+                  />
+                )}
+      </div>
+      </div>
+
+    
   );
 };
 export default Index;

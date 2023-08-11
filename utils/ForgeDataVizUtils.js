@@ -10,11 +10,13 @@ export class ForgeDataVizUtils {
 
     static TASK = "Task"
 
-    constructor(viewer, dataVisualizationExtension, dataVizHandler) {
+    constructor(viewer, dataVisualizationExtension, dataVizHandler, edit2dExtn) {
 
         this._viewer = viewer
 
         this._dataVizExtn = dataVisualizationExtension
+
+        this._edit2DExtn = edit2dExtn
 
         this._eventHandler = dataVizHandler
 
@@ -43,6 +45,8 @@ export class ForgeDataVizUtils {
         this._viewer.impl.overlayScenes.DataVizDots.needSeparateDepth = true
 
         this._viewer.impl.invalidate(false, false, true)
+
+        if(this._edit2DExtn) this._edit2DExtn.registerDefaultTools()
 
         this._createNavigator()
 
@@ -91,6 +95,14 @@ export class ForgeDataVizUtils {
         this._tm = tm
 
         this._offset = offset
+    }
+
+    setEdit2DExtn(extn) {
+
+        this._edit2DExtn = extn
+
+        this._edit2DExtn.registerDefaultTools()
+
     }
 
     loadTasks = async (tasks) => {
@@ -278,6 +290,8 @@ export class ForgeDataVizUtils {
             }
 
             this._dataVizExtn.addViewables(_viewableData)
+
+            if(type == '360 Video') this._drawVideoPath(data)
         }
     }
 
@@ -380,6 +394,56 @@ export class ForgeDataVizUtils {
         this._existingImages = []
 
         this._existingTags = []
+    }
+
+    _drawVideoPath = (data) => {
+
+        data.sort((a, b) => {
+
+            let nameA = a.imageName.toUpperCase()
+
+            nameA = nameA.replace('.JPG', '')
+
+            nameA = nameA.split('_')
+
+            let seqA = nameA[nameA.length - 1]
+
+            let nameB = b.imageName.toUpperCase()
+
+            nameB = nameB.replace('.JPG', '')
+
+            nameB = nameB.split('_')
+
+            let seqB = nameB[nameB.length - 1]
+
+            return parseInt(seqA) - parseInt(seqB)
+
+        })
+
+        const points = []
+
+        data.forEach(point => {
+
+            points.push({x: point.position.x, y: point.position.y})
+
+        })
+
+        const layer = this._edit2DExtn.defaultContext.layer
+
+        //Create polyline
+        var polyline = new Autodesk.Edit2D.Polyline(points)
+
+        var style = polyline.style
+
+        style.lineWidth = 2.5
+
+        style.lineColor = 'rgb(241, 116, 46)'
+
+        style.lineStyle = 8
+
+        // Show it
+        layer.addShape(polyline)
+
     }
 
     updateNavigator = async (position, yaw) => {

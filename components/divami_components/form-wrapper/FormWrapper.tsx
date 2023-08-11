@@ -54,7 +54,10 @@ const FormWrapper = (props: any) => {
   } = props;
 
   const [userPassword, setUserPassword] = useState("");
-  useEffect(() => {}, [userPassword]);
+//  useEffect(() => {}, [userPassword]);
+
+ const [userConfirmPassword, setUserConfirmPassword] = useState("");
+ useEffect(() => {}, [userPassword,userConfirmPassword]);
 
   useEffect(() => {
     checkDataisEmpty();
@@ -619,7 +622,23 @@ const FormWrapper = (props: any) => {
         })
       );
       setUserPassword(str);
-    } else {
+      if(userConfirmPassword!=="" && userConfirmPassword!==str){
+        setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (item.id === "confirm_password") {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+            };
+          }
+
+          return item;
+        })
+        );
+      }
+    }
+     else {
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
           if (id === item.id) {
@@ -637,6 +656,7 @@ const FormWrapper = (props: any) => {
   }
 
   function matchpassword(str: any, id: any) {
+    setUserConfirmPassword(str)
     if (str !== userPassword) {
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
