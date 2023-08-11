@@ -127,9 +127,14 @@ const CustomSelect = (props: any) => {
   useEffect(() => {
     setVal(config?.defaultValue);
   }, [config?.defaultValue]);
-
+  const handleKeyDown = (event:React.KeyboardEvent) => {
+    const arrowKeys = ["ArrowUp", "ArrowDown",'ArrowRight','ArrowLeft'];
+     if (arrowKeys.includes(event.key)) {
+      event.stopPropagation();
+    }
+  };
   return (
-    <CustomSelectContainer>
+    <CustomSelectContainer  onKeyDown={handleKeyDown}>
       <StyledSelect
         value={val}
         onChange={props.onChangeHandler ? props.onChangeHandler : handlechange}
