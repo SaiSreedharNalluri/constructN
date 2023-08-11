@@ -83,7 +83,9 @@ const CreateIssue = ({
       })
       .catch((e) => console.log(e));
   }, []);
-
+    const setFormDataInfo=(data:any)=>{
+      setFormData(data)
+    }
   return (
     <StyledDiv>
       {isLoading&&<CustomLoader></CustomLoader>}
@@ -102,6 +104,9 @@ const CreateIssue = ({
         issueStatusList={issueStatusList}
         setCanBeDisabled={setCanBeDisabled}
         deleteTheAttachment={deleteTheAttachment}
+        setFormDataInfo={setFormDataInfo}
+        setFormData={setFormData}
+        formData={formData}
       />
       <Footer
         formHandler={formHandler}
