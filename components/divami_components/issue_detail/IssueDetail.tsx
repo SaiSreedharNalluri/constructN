@@ -200,7 +200,7 @@ function BasicTabs(props: any) {
   const [file, setFile] = useState<File>();
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
+  const[isAdding,setIsAdding]=useState(false)
   const router = useRouter();
 
   useEffect(() => {
@@ -285,6 +285,18 @@ function BasicTabs(props: any) {
       .then((response) => {
         if (response.success === true) {
           setBackendComments(response.result);
+          if(isAdding)
+          {
+            const fileInput = document.getElementById(
+              "issueDetailsScroll"
+            ) as HTMLInputElement;
+            if (fileInput) {
+              setTimeout(()=>{
+                fileInput.scrollTo (0,fileInput.scrollHeight);
+              },100)
+              
+            }
+          }
         }
       })
       .catch((error) => {
@@ -786,6 +798,7 @@ function BasicTabs(props: any) {
                 ActivityLog={taskState.TabTwo}
                 comments={backendComments}
                 getComments={getComments}
+                setIsAdding={setIsAdding}
               />
               {backendComments?.length ? (
                 <></>
@@ -838,6 +851,7 @@ function BasicTabs(props: any) {
           ActivityLog={taskState.TabTwo}
           comments={backendComments}
           getComments={getComments}
+          setIsAdding={setIsAdding}
         />
       </CustomTabPanel>
       {/* <>
@@ -1225,7 +1239,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           </div>
         ) : (
           <>
-            <BodyContainer footerState={footerState}>
+            <BodyContainer footerState={footerState} id="issueDetailsScroll">
               <BasicTabs
                 taskType={issueType}
                 taskPriority={issuePriority}

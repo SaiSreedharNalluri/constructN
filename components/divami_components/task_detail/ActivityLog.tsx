@@ -52,7 +52,7 @@ import {
 import PopupComponent from "../../popupComponent/PopupComponent";
 
 const ActivityLog = (props: any) => {
-  const { ActivityLog, comments, getComments } = props;
+  const { ActivityLog, comments, getComments,setIsAdding } = props;
   const [commentsData, setCommentsData] = useState(comments);
   const [autofocusState, setAutoFocusState] = useState(false);
   const [replyToText, setReplyToText] = useState("");
@@ -219,6 +219,7 @@ const ActivityLog = (props: any) => {
         entity: commentsData[0]?.entity,
       }).then((response: any) => {
         if (response.success === true) {
+          setIsAdding(true)
           CustomToast("Comment added successfully","success");
           getComments(commentsData[0]?.entity);
         }
