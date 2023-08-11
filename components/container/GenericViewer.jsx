@@ -969,9 +969,11 @@ function GenericViewer(props) {
                 })
               }
             })
-            map['Stages'] = stages
-            setRealityMap(map)
-            updateRealityMap(map)
+            if(stages.children.length > 0) {
+              map['Stages'] = stages
+              setRealityMap(map)
+              updateRealityMap(map)
+            }
           }
           setTimeout(() => {
             if (mapboxUtils.current != undefined) {
