@@ -10,11 +10,13 @@ export class ForgeDataVizUtils {
 
     static TASK = "Task"
 
-    constructor(viewer, dataVisualizationExtension, dataVizHandler) {
+    constructor(viewer, dataVisualizationExtension, dataVizHandler, edit2dExtn) {
 
         this._viewer = viewer
 
         this._dataVizExtn = dataVisualizationExtension
+
+        this._edit2DExtn = edit2dExtn
 
         this._eventHandler = dataVizHandler
 
@@ -43,6 +45,8 @@ export class ForgeDataVizUtils {
         this._viewer.impl.overlayScenes.DataVizDots.needSeparateDepth = true
 
         this._viewer.impl.invalidate(false, false, true)
+
+        if(this._edit2DExtn) this._edit2DExtn.registerDefaultTools()
 
         this._createNavigator()
 
@@ -91,6 +95,14 @@ export class ForgeDataVizUtils {
         this._tm = tm
 
         this._offset = offset
+    }
+
+    setEdit2DExtn(extn) {
+
+        this._edit2DExtn = extn
+
+        this._edit2DExtn.registerDefaultTools()
+
     }
 
     loadTasks = async (tasks) => {
@@ -279,7 +291,7 @@ export class ForgeDataVizUtils {
 
             this._dataVizExtn.addViewables(_viewableData)
 
-            // if(type == '360 Video') this._drawVideoPath(data)
+            if(type == '360 Video') this._drawVideoPath(data)
         }
     }
 
@@ -396,7 +408,7 @@ export class ForgeDataVizUtils {
 
             let seqA = nameA[nameA.length - 1]
 
-            let nameB = a.imageName.toUpperCase()
+            let nameB = b.imageName.toUpperCase()
 
             nameB = nameB.replace('.JPG', '')
 
@@ -408,36 +420,29 @@ export class ForgeDataVizUtils {
 
         })
 
-        const path = new THREE.Path()
-
-        path.moveTo(data[0].position.x, data[0].position.y)
-
         const points = []
 
         data.forEach(point => {
-            
-            console.log(point.imageName)
 
-            path.lineTo( point.position.x, point.position.y )
-
-            path.moveTo( point.position.x, point.position.y )
-
-            points.push(new THREE.Vector3(point.position.x, point.position.y, 100))
+            points.push({x: point.position.x, y: point.position.y})
 
         })
 
-        console.log(points)
+        const layer = this._edit2DExtn.defaultContext.layer
 
-        const geometry = new THREE.BufferGeometry().setFromPoints( path.getPoints() )
+        //Create polyline
+        var polyline = new Autodesk.Edit2D.Polyline(points)
 
-        const material = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 20 } )
+        var style = polyline.style
 
-        const line = new THREE.Line( geometry, material )
+        style.lineWidth = 2.5
 
-        this._viewer.overlays.addMesh(line, 'selection')
+        style.lineColor = 'rgb(241, 116, 46)'
 
-        this._viewer.impl.invalidate(false, false, true)
+        style.lineStyle = 8
 
+        // Show it
+        layer.addShape(polyline)
 
     }
 
