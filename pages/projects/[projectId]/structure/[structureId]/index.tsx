@@ -73,7 +73,8 @@ const StructPage: React.FC = () => {
           .then((response) => {
             if (response.success === true) {
               console.log('IGendata API Response',response.result);
-              setInintData(response.result);
+              //setInintData(response.result);
+              window.dispatchEvent(new CustomEvent('notifyViewer',{detail:{action:{type:'setStructure',data:response.result}}}));
               setBaseSnapshot(response.result.currentSnapshotBase);
               setCompareSnapshot(response.result.currentSnapshotCompare);
             }
