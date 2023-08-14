@@ -11,7 +11,8 @@ export interface IGenNotifyViewerAction {
     "viewIssue" | "createIssue" | "createSuccessIssue" | "createFailIssue" | "selectIssue" | "showIssue" | "hideIssue" | "removedIssue" | 'setFilteredIssueList' |
     "viewTask" | "createTask" | "createSuccessTask" | "createFailTask" | "selectTask" | "showTask" | "hideTask" | "removedTask" | 'setFilteredTaskList' |
     "viewHotspot" | "createHotspot" | "createSuccessHotspot" | "createFailHotspot" | "selectHotspot" | "showHotspot" | "hideHotspot" | "removedHotspot" |
-    "setFullScreenMode"
+    "setFullScreenMode" |
+    "getGenData"
     ,
     
     data? :string |[string] | [ITasks] | [Issue] | [IHotspot] | IViewerContext | IGenData | ISnapshot | IContext
