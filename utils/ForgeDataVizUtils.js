@@ -289,7 +289,7 @@ export class ForgeDataVizUtils {
                             }
                         }
 
-                        if(type == '360 Video') this._drawVideoPath(pathData)
+                        // if(type == '360 Video') this._drawVideoPath(pathData)
 
                     }
                 }
