@@ -639,7 +639,7 @@ const SectionsListing = () => {
                   : "-"}
               </CaptureCount>
             </CapturesField>
-            <CapturesField>
+            {/* <CapturesField>
               <TooltipText title="Phone Video Walk">
                 <div>
                   <CaptureImageIcon src={captureLidarIcon} alt={""} />
@@ -647,7 +647,7 @@ const SectionsListing = () => {
               </TooltipText>
 
               <CaptureCount>-</CaptureCount>
-            </CapturesField>
+            </CapturesField> */}
             <CapturesField>
               <TooltipText title="Drone Image">
                 <div>
