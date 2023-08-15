@@ -428,7 +428,7 @@ const Index: React.FC = () => {
                   : 0}
               </CaptureCount>
             </CapturesField>
-            <CapturesField>
+            {/* <CapturesField>
               <CaptureImageIcon
                 src={captureLidarIcon}
                 alt={""}
@@ -436,7 +436,7 @@ const Index: React.FC = () => {
                 // height={14}
               />
               <CaptureCount>0</CaptureCount>
-            </CapturesField>
+            </CapturesField> */}
             <CapturesField>
               <CaptureImageIcon
                 src={DroneImage}
