@@ -420,7 +420,7 @@ const Header: React.FC<any> = ({
           <HeaderSupportImageContainer>
             <TooltipText title="Support">
               <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
-              <Link href="https://constructnai.freshdesk.com/support/home" target="_blank" passHref>
+              <Link href="https://help.constructn.ai/en/" target="_blank" passHref>
              <Image
                   height="30"
                   src={helpIcon}
