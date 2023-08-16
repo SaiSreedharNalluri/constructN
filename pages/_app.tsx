@@ -22,6 +22,7 @@ import { firebaseapp } from "../components/analytics/firebase";
 import { getAnalytics, isSupported, logEvent } from "firebase/analytics";
 import toastClose from "../public/divami_icons/toastClose.svg";
 import PopupComponent from "../components/popupComponent/PopupComponent";
+import { IntercomProvider } from 'react-use-intercom'
 config.autoAddCss = false;
 import instance from '../services/axiosInstance'
 export default function App({ Component, pageProps }: AppProps) {
@@ -88,7 +89,9 @@ export default function App({ Component, pageProps }: AppProps) {
  const [showPopUp, setshowPopUp] = useState(false);
   return (
     <>
+    <IntercomProvider appId={process.env.INTERCOM_APP_ID||"e3sowuh7"}>
         <Component {...pageProps} />
+        </IntercomProvider>
         <StyledToastContainer
         position="bottom-right"
         autoClose={false}

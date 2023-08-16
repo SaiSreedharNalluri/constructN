@@ -111,7 +111,7 @@ export default function Document() {
           src="/potree/libs/plasio/js/laslaz.js"
           strategy="beforeInteractive"
         />
-        <Script id="freshdeskChatWidget" strategy="beforeInteractive">
+        {/* <Script id="freshdeskChatWidget" strategy="beforeInteractive">
           {`
           function initFreshChat() {
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -145,7 +145,7 @@ export default function Document() {
         <Script
           src="https://wchat.freshchat.com/js/widget.js"
           strategy="beforeInteractive"
-        />
+        /> */}
         <Script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"/>
         <Script id="deeplink_ios" strategy="beforeInteractive">
           {`window.onload = function() {
