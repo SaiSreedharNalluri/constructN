@@ -124,7 +124,7 @@ const Task = ({
       }
     });
     data.title = formData.filter(
-      (item: any) => item.id == "title"
+      (item: any) => item.id == "create_title"
     )[0]?.defaultValue;
 
     data.tags = formData.filter(
