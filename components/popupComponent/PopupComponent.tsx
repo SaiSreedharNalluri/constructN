@@ -17,7 +17,7 @@ export const CloseIcon = styled(Image)({
   cursor: "pointer",
 });
 
-const BootstrapDialog = styled(Dialog)(
+export const BootstrapDialog = styled(Dialog)(
   ({ theme, width, height, paddingStyle, backdropWidth, showButton }: any) => ({
     fontWeight: "900",
     fontFamily: "Open Sans",
@@ -79,7 +79,7 @@ export interface PopupComponentProps {
   projectId?: string;
 }
 
-function BootstrapDialogTitle(props: DialogTitleProps) {
+export function BootstrapDialogTitle(props: DialogTitleProps) {
   const { children, onClose, ...other } = props;
 
   return (
