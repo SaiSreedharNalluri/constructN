@@ -103,8 +103,15 @@ const ProjectDetails: React.FC = () => {
         }
       })
       .catch((error) => {
+        console.log('error',error)
         if (error.success === false) {
-          CustomToast(error?.message,"error");
+          if(error.message==='Forbidden Access')
+          {
+            CustomToast("You don't have access. Contact Admin.","error"); 
+          }
+          else{
+            CustomToast(error?.message,"error");
+          }
         }
       });
   };
