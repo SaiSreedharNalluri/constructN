@@ -121,8 +121,8 @@ import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
 import Chip from "@mui/material/Chip";
 import moment from "moment";
-import { showImagePreview } from "../../../utils/IssueTaskUtils";
 import { CustomToast } from "../custom-toaster/CustomToast";
+import AttachmentPreview from "../attachmentPreview";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -181,7 +181,6 @@ function BasicTabs(props: any) {
   } = props;
 
   const [value, setValue] = React.useState(0);
-  const [issueTypeConfig, setIssueTypeConfig] = useState("");
   const [formState, setFormState] = useState({
     selectedValue: "",
     selectedProgress: null,
@@ -202,7 +201,13 @@ function BasicTabs(props: any) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const[isAdding,setIsAdding]=useState(false)
   const router = useRouter();
-
+  const [showPreview,setShowPreview]=useState(false)
+  const[attachment,setAttachment]=useState<{
+    name: string;
+    url: string;
+    entity: string;
+    _id: string;
+}>()
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
       return {
@@ -288,7 +293,7 @@ function BasicTabs(props: any) {
           if(isAdding)
           {
             const fileInput = document.getElementById(
-              "issueDetailsScroll"
+              "issueDetailsWindow"
             ) as HTMLInputElement;
             if (fileInput) {
               setTimeout(()=>{
@@ -713,12 +718,12 @@ function BasicTabs(props: any) {
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
                       return (
-                        <>
+                        <div key={a._id}>
                           <AttachedImageDiv className={`detailsImageDiv`}>
-                            {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
                             <AttachedImageTitle
                               onClick={() => {
-                                showImagePreview(a);
+                              setShowPreview(true)
+                               setAttachment(a)
                               }}
                             >
                               {a?.name}
@@ -748,7 +753,15 @@ function BasicTabs(props: any) {
                             />
                           </AttachedImageDiv>
                           <AttachHorizontal></AttachHorizontal>
-                        </>
+                          {
+                            showPreview&&(
+                            <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 z-10">
+                              <AttachmentPreview attachment={attachment} setShowPreview={setShowPreview}></AttachmentPreview>
+                            </div>)
+                            
+                          }
+                          
+                        </div>
                       );
                     }
                   )}
@@ -1239,7 +1252,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           </div>
         ) : (
           <>
-            <BodyContainer footerState={footerState} id="issueDetailsScroll">
+            <BodyContainer footerState={footerState} id="issueDetailsWindow">
               <BasicTabs
                 taskType={issueType}
                 taskPriority={issuePriority}

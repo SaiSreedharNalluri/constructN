@@ -116,6 +116,7 @@ import ActivityLog from "./ActivityLog";
 import { ActivityLogContainer } from "../issue_detail/IssueDetailStyles";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
+import AttachmentPreview from "../attachmentPreview";
 
 interface ContainerProps {
   footerState: boolean;
@@ -197,6 +198,13 @@ function BasicTabs(props: any) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [attachmentPopup, setAttachmentPopup] = useState(false);
   const[isAdding,setIsAdding]=useState(false)
+  const [showPreview,setShowPreview]=useState(false)
+  const[attachment,setAttachment]=useState<{
+    name: string;
+    url: string;
+    entity: string;
+    _id: string;
+}>()
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
       return {
@@ -288,7 +296,7 @@ function BasicTabs(props: any) {
           if(isAdding)
           {
             const fileInput = document.getElementById(
-              "taskDetailsScroll"
+              "taskDetailsWindow"
             ) as HTMLInputElement;
             if (fileInput) {
               setTimeout(()=>{
@@ -667,16 +675,15 @@ function BasicTabs(props: any) {
               <AttachmentDiv className={`attachmentsSection`}>
                 <AttachmentTitle>Attachments</AttachmentTitle>
                 <AttachmentDescription>
-                  {/* {console.log(taskState?.TabOne.attachments)} */}
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
                       return (
-                        <>
+                        <div key={a._id}>
                           <AttachedImageDiv className={`detailsImageDiv`}>
-                            {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
                             <AttachedImageTitle
                               onClick={() => {
-                                showImagePreview(a);
+                                setShowPreview(true)
+                                setAttachment(a)
                               }}
                             >
                               {a?.name}
@@ -690,21 +697,7 @@ function BasicTabs(props: any) {
                               alt={"delete icon"}
                               onClick={() => {
                                 setAttachmentPopup(true);
-                                // deleteTheAttachment(a?._id, "task");
-                                // setTaskState((prev: any) => {
-                                //   const updatedTabOne = {
-                                //     ...prev.TabOne,
-                                //     attachments: prev.TabOne.attachments.filter(
-                                //       (attachment: any) =>
-                                //         attachment._id !== a?._id
-                                //     ),
-                                //   };
-                                //   return {
-                                //     ...prev,
-                                //     TabOne: updatedTabOne,
-                                //   };
-                                // });
-                              }}
+                               }}
                               className={`deleteIcon`}
                             />
 
@@ -739,7 +732,14 @@ function BasicTabs(props: any) {
                             )}
                           </AttachedImageDiv>
                           <AttachHorizontal></AttachHorizontal>
-                        </>
+                          {
+                            showPreview&&(
+                            <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 z-10">
+                              <AttachmentPreview attachment={attachment} setShowPreview={setShowPreview}></AttachmentPreview>
+                            </div>)
+                            
+                          }
+                        </div>
                       );
                     }
                   )}
@@ -1222,7 +1222,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-        <BodyContainer footerState={footerState} id="taskDetailsScroll">
+        <BodyContainer footerState={footerState} id="taskDetailsWindow">
           <BasicTabs
             taskType={taskType}
             taskPriority={taskPriority}
