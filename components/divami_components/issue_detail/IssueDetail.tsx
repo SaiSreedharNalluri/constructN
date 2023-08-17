@@ -1067,7 +1067,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     )[0]?.defaultValue;
 
     data.title = formData.filter(
-      (item: any) => item.id == "title"
+      (item: any) => item.id == "create_title"
     )[0]?.defaultValue;
 
     data.type = formData.filter(

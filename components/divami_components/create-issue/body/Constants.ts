@@ -2,11 +2,11 @@ import Moment from "moment";
 
 export const ISSUE_FORM_CONFIG = [
   {
-    id: "title",
+    id: "create_title",
     type: "textfield",
     defaultValue: "",
-    formLabel: "What shall we call this issue?",
-    placeholder: "What shall we call this issue?",
+    formLabel: "Provide a brief title for the issue",
+    placeholder: "Title in 30 characters",
     isError: false,
     isReq: true,
     isReadOnly: false,

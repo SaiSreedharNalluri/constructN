@@ -137,7 +137,7 @@ const Issues = ({
     )[0]?.chipString;
 
     data.title = values.filter(
-      (item: any) => item.id == "title"
+      (item: any) => item.id == "create_title"
     )[0]?.defaultValue;
 
     data.type = values.filter(

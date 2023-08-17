@@ -120,7 +120,7 @@ const Body = ({
       if (editData) {
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {
-            if (item.id === "title") {
+            if (item.id === "create_title") {
               return {
                 ...item,
                 defaultValue: editData.title || "",
