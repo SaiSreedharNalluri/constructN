@@ -103,7 +103,6 @@ const ProjectDetails: React.FC = () => {
         }
       })
       .catch((error) => {
-        console.log('error',error)
         if (error.success === false) {
           if(error.message==='Forbidden Access')
           {
