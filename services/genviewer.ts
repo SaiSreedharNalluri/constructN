@@ -12,6 +12,7 @@ export const getGenViewerData = async (projectId: string, structureId: string) =
         return response.data;
       })
       .catch((error) => {
-        throw error.response.data;
+        console.log("Error in loading data:3",error)
+        throw error
       });
   };

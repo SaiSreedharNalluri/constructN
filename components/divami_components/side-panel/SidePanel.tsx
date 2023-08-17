@@ -2,10 +2,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import dashboardProgress from "../../../public/divami_icons/dashboardProgress.svg";
 import dashboardProgressHighlight from "../../../public/divami_icons/dashboardProgressHighlight.svg";
-
-import issuesIcon from "../../../public/divami_icons/issuesIcon.svg";
-import drawingInactive from "../../../public/divami_icons/drawingInactive.svg";
-import IssuesHighlightedIcon from "../../../public/divami_icons/IssuesHighlightedIcon.svg";
+import {useIntercom} from "react-use-intercom"
 
 import drawing from "../../../public/divami_icons/drawing.svg";
 // import task from "../../../public/divami_icons/task.svg";
@@ -144,6 +141,24 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   // const urlString = currentUrl.split("/")[5];
   // console.log(currentUrl);
 
+  const {
+    boot,
+    shutdown,
+    hardShutdown,
+    update,
+    hide,
+    show,
+    isOpen,
+    showMessages,
+    showNewMessage,
+    getVisitorId,
+    startTour,
+    trackEvent,
+    showArticle,
+    startSurvey,
+    showSpace
+  } = useIntercom();
+
   useEffect(() => {
     const userObj: any = getCookie("user");
     let user = null;
@@ -194,17 +209,28 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     setActive(router.pathname.split("/").pop());
   };
   function openChat(): void {
+    // {
+    //   eval(`globalThis.fcWidget.user.setEmail("${eMail}");`);
+    // }
+    // {
+    //   eval(`globalThis.fcWidget.open()`);
+    // }
+    //console.log(isOpen,"isOpen");
+    
+    if(isOpen)
     {
-      eval(`globalThis.fcWidget.user.setEmail("${eMail}");`);
+      hide();
     }
-    {
-      eval(`globalThis.fcWidget.open()`);
+    else{
+      show();
     }
+    
   }
   function closeChat(): void {
-    {
-      eval(`globalThis.fcWidget.close()`);
-    }
+    // {
+    //   eval(`globalThis.fcWidget.close()`);
+    // }
+    hide();
   }
 
   const handleChatHover = () => {
@@ -215,14 +241,17 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     setChatHovered(false);
   };
   useEffect(() => {
+    boot({alignment:"left",hideDefaultLauncher:true,horizontalPadding:60});//boot intercom
     const handleOutsideClick :any= (event:any) => {
       if (chatIconRef.current && !chatIconRef.current.contains(event.target)) {
         closeChat();
+        hide();
       }
     };
       document.addEventListener('click', handleOutsideClick);
     return () => {
       document.removeEventListener('click', handleOutsideClick);
+      shutdown();//shutdown intercom
     };
   }, []);
   return (
