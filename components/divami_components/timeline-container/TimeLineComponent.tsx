@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Moment from "moment";
 import Pagination from "@mui/material/Pagination";
 import PaginationItem from "@mui/material/PaginationItem";
@@ -254,7 +254,10 @@ const TimeLineComponent: React.FC<IProps> = ({
   return (
     <>
       {tools?.toolName !== "compareDesign" ? (
-        <TimeLineStyleContainer isFullScreen={isFullScreen}>
+        <TimeLineStyleContainer   
+        onMouseLeave={()=>{setBottomNav(false)}}
+        onMouseEnter={()=>{setBottomNav(true)}}  
+        isFullScreen={isFullScreen}>
           <SelectedTimeLine
             style={{ bottom: bottomNav ? "36px" : "0px" }}
             onClick={toggleTimeline}

@@ -48,8 +48,8 @@ export const SelectedTimeLine = styled("div")({
   boxSizing: "border-box",
   // width: "158px",
   background: "#FFFFFF",
-  border: "1px solid #B5B5B5",
-  boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
+  border: "1px solid #888888",
+  boxShadow: "5px 4px 8px  inset rgba(200, 200, 200, 0.3)",
 
   borderRadius: "4px",
   position: "absolute",
@@ -66,9 +66,9 @@ export const CircleIcon = styled("div")(({ active }: any) => ({
   display: "block",
   width: "7px",
   height: "7px",
-  border: "1px solid #101F4C",
+  border:active?"1px double #FF843F": "1px solid #101F4C",
   borderRadius: "50%",
-  background: active ? "#101F4C" : "white",
+  background: active ? "#FF843F" : "white",
   marginRight: "10px",
   color: "transparent",
 })) as any;
@@ -90,7 +90,7 @@ export const RightIconImage = styled(Image)({
 export const TimeLinePagination = styled("div")({
   background: "#FFFFFF",
   border: "1px solid #B5B5B5",
-  boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
+  boxShadow: "5px 4px 5px rgba(200, 200, 200, 0.1)",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
