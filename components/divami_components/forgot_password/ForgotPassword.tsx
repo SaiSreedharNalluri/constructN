@@ -74,7 +74,7 @@ const ForgotPassword = () => {
           error.message ||
           error.toString();
 
-        CustomToast("Unregistered User email","error");
+         CustomToast("Unregistered User email", "error");
       });
     }
    
