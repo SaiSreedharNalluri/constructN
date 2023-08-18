@@ -513,6 +513,7 @@ const SectionsListing = () => {
         return (
           <FloorName
             onClick={() => {
+              if(rowData.capture?.totalCount > 0)
               router.push({
                 pathname: `/projects/${router?.query?.projectId as string}/structure`,
                 query: { structId: rowData._id },
@@ -765,6 +766,24 @@ const SectionsListing = () => {
                 tableRef={myTableRef}
                 components={{
                   Container: (props) => <Paper {...props} elevation={0} />,
+                  Row:(props)=>{
+                    const rowData = props.data;
+                    console.log(rowData);
+                    
+                    const isZeroCapture = rowData.capture?.totalCount === 0;  
+                    console.log(isZeroCapture);
+                    
+                      return (
+                        
+        <MTableBodyRow
+          {...props}
+         className={isZeroCapture?"bg-[#E7E7E7] cursor-not-allowed":""}
+
+        />
+       
+      );
+    
+                  }
                 }}
                 localization={localizationOptions}
                 columns={columns}
