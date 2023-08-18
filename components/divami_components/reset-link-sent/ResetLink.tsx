@@ -95,7 +95,7 @@ const ResetLink = ({ queryMail }: any) => {
               Please check your Inbox {maskedMail}
             </CheckInboxText>
             <LinkEmailText>
-              The link in the email will expire in 24 hours.
+              The link in the email will expire in 2 hours.
             </LinkEmailText>
 
             <ChangeMailText

@@ -93,6 +93,7 @@ export const MessageContainer = styled("div")({
   justifyContent: "center",
   alignItems: "center",
   marginTop: "87px",
+  textAlign:'center'
   // justifyContent:"center"
 });
 
