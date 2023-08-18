@@ -74,7 +74,8 @@ export interface PopupComponentProps {
   backdropWidth?: boolean;
   showButton?: boolean;
   setSelectedOption?: any;
-
+  isImageThere?:boolean;
+  imageSrc?:any;
   setShowbutton?: any;
   projectId?: string;
 }
@@ -147,6 +148,8 @@ const PopupComponent = (props: PopupComponentProps) => {
     setShowbutton,
     projectId,
     setSelectedOption,
+    imageSrc,
+    isImageThere
   } = props;
 
   const handleClose = () => {
@@ -189,7 +192,7 @@ const PopupComponent = (props: PopupComponentProps) => {
           {modalContent ? (
             modalContent
           ) : (
-            <TextComponent>{modalmessage}</TextComponent>
+            <TextComponent>{isImageThere? <div className="flex"><Image src={imageSrc} alt="" width={20} height={20}></Image><p className="ml-[10px]">{ modalmessage}</p> </div>: <div>{modalmessage}</div> }</TextComponent>
           )}
         </DialogContent>
         <DialogActions
