@@ -753,18 +753,19 @@ function BasicTabs(props: any) {
                             />
                           </AttachedImageDiv>
                           <AttachHorizontal></AttachHorizontal>
-                          {
-                            showPreview&&(
-                            <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 z-10">
-                              <AttachmentPreview attachment={attachment} setShowPreview={setShowPreview}></AttachmentPreview>
-                            </div>)
-                            
-                          }
+                         
                           
                         </div>
                       );
                     }
                   )}
+                   { 
+                    showPreview&&(
+                            <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 z-10">
+                              <AttachmentPreview attachment={attachment} setShowPreview={setShowPreview}></AttachmentPreview>
+                            </div>)
+                           
+                    }
                 </AttachmentDescription>
               </AttachmentDiv>
             </>
