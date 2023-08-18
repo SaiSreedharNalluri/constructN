@@ -71,7 +71,9 @@
     "react-tabs": "^6.0.0",
     "react-tagsinput": "^3.20.0",
     "react-toastify": "^9.1.1",
+    "react-use-intercom": "^5.1.4",
     "three": "^0.151.3",
+    "three-fatline": "^0.6.1",
     "yup": "^0.32.11"
   },
   "devDependencies": {

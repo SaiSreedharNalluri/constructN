@@ -1,20 +1,20 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import Header from "../../../../components/divami_components/header/Header";
-import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
-import NewGenViewer from "../../../../components/container/NewGenViewer";
-import { getSnapshotsList } from '../../../../services/snapshot';
-import { IGenData } from "../../../../models/IGenData";
+import Header from "../../../../../components/divami_components/header/Header";
+import SidePanelMenu from "../../../../../components/divami_components/side-panel/SidePanel";
+import NewGenViewer from "../../../../../components/container/NewGenViewer";
+import { getSnapshotsList } from '../../../../../services/snapshot';
+import { IGenData } from "../../../../../models/IGenData";
 //import * as AAA from "multiverse-viewer";
 //import {NewGenViewer, IGenData} from "multiverse-viewer/lib/cjs";
-import { IDesign } from "../../../../models/IDesign";
-import { getDesignTM } from "../../../../services/design";
-import { getDesignPath } from "../../../../utils/S3Utils";
-import { IGenPayload } from "../../../../models/IGenPayload";
+import { IDesign } from "../../../../../models/IDesign";
+import { getDesignTM } from "../../../../../services/design";
+import { getDesignPath } from "../../../../../utils/S3Utils";
+import { IGenPayload } from "../../../../../models/IGenPayload";
 import { useRouter } from "next/router";
-import { getGenViewerData } from "../../../../services/genviewer";
-import TimeLineComponent from "../../../../components/divami_components/timeline-container/TimeLineComponent";
-import { ISnapshot } from "../../../../models/ISnapshot";
-import { CustomToast } from "../../../../components/divami_components/custom-toaster/CustomToast"
+import { getGenViewerData } from "../../../../../services/genviewer";
+import TimeLineComponent from "../../../../../components/divami_components/timeline-container/TimeLineComponent";
+import { ISnapshot } from "../../../../../models/ISnapshot";
+import { CustomToast } from "../../../../../components/divami_components/custom-toaster/CustomToast"
 const StructPage: React.FC = () => {
     //const [initData,setInintData] = useState<IGenData>(sampleGenData);
     const router = useRouter();
@@ -22,6 +22,7 @@ const StructPage: React.FC = () => {
     //sampleGenData.structure.designs&& (temp_list= sampleGenData.structure.designs);
     let incomingPayload = useRef<IGenPayload>()
     let myProject = useRef<string>();
+    let myStructure = useRef<string>();
     let [selectedBaseSnapshot,setBaseSnapshot] =useState<ISnapshot>();
     let [selectedCompareSnapshot,setCompareSnapshot] =useState<ISnapshot>();
     const [offset, setOffset] = useState(1);
@@ -34,18 +35,20 @@ const StructPage: React.FC = () => {
     useEffect(() => {
       if (router.isReady && router.query?.projectId) {
         myProject.current=router.query.projectId as string;
-        getGenViewerData(router.query.projectId as string,router.query.structureId as string)
-          .then((response) => {
-            if (response.success === true) {
-              console.log('IGendata API Response',response.result);
-              setInintData(response.result);
-              setBaseSnapshot(response.result.currentSnapshotBase);
-              setCompareSnapshot(response.result.currentSnapshotCompare);
-            }
-          })
-          .catch((error) => {
-            CustomToast("failed to load data","error");
-          });
+        myStructure.current = router.query.structureId as string;
+        // getGenViewerData(router.query.projectId as string,router.query.structureId as string)
+        //   .then((response) => {
+        //     if (response.success === true) {
+        //       console.log('IGendata API Response',response.result);
+        //       setInintData(response.result);
+        //       setBaseSnapshot(response.result.currentSnapshotBase);
+        //       setCompareSnapshot(response.result.currentSnapshotCompare);
+        //     }
+        //   })
+        //   .catch((error) => {
+        //     console.log("Error in loading data: 1 ", error);
+        //     CustomToast("failed to load data","error");
+        //   });
         }
         },[router.isReady,router.query.projectId,router.query.structureId]);
 
@@ -70,18 +73,37 @@ const StructPage: React.FC = () => {
           .then((response) => {
             if (response.success === true) {
               console.log('IGendata API Response',response.result);
-              setInintData(response.result);
+              //setInintData(response.result);
+              window.dispatchEvent(new CustomEvent('notifyViewer',{detail:{action:{type:'setStructure',data:response.result}}}));
               setBaseSnapshot(response.result.currentSnapshotBase);
               setCompareSnapshot(response.result.currentSnapshotCompare);
             }
           })
           .catch((error) => {
+            console.log("Error in loading data: 2 ", error);
             CustomToast("failed to load data","error");
           });
 
             break;
           case 'syncGenViewer':
             //if(incomingPayload.current?.action?.data){ setInintData(incomingPayload.current?.action?.data as IGenData)}
+            break;
+          case 'getGenData':
+           
+            getGenViewerData(myProject.current as string,myStructure.current as string)
+            .then((response) => {
+              if (response.success === true) {
+                console.log('IGendata API Response',response.result);
+                setInintData(response.result);
+                setBaseSnapshot(response.result.currentSnapshotBase);
+                setCompareSnapshot(response.result.currentSnapshotCompare);
+              }
+            })
+            .catch((error) => {
+              console.log("Error in loading data: 1 ", error);
+              CustomToast("failed to load data","error");
+            });
+         
             break;
 
 
@@ -102,6 +124,15 @@ const StructPage: React.FC = () => {
 //     console.log('My comp useEffect');
 // setInintData(sampleGenData);
 //   },[sampleGenData]);
+
+useEffect(()=>{
+  if(initData){
+    console.log("InitData Loading..");
+    window.dispatchEvent(new CustomEvent('notifyViewer',{detail:{action:{type:'loadGenViewer',data:'Plan Drawings'}}}));
+  }
+   
+
+},[initData]);
 
 useEffect(() => {
   setTotalPages(Math.ceil(totalSnaphotsCount / 10));
