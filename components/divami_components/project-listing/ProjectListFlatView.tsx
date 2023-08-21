@@ -154,9 +154,9 @@ export const ProjectListFlatView = ({
               </TooltipText>
               <CaptureCount>
                 {" "}
-                {rowData.captures && rowData.captures["360 Video"]
-                  ? rowData.captures["360 Video"]
-                  : "-"}
+                {rowData.captures && rowData.captures["360 Image"]
+                  ? rowData.captures["360 Image"]
+                  : " -"}
               </CaptureCount>
             </CapturesField>
 
@@ -167,9 +167,9 @@ export const ProjectListFlatView = ({
                 </div>
               </TooltipText>
               <CaptureCount>
-                {rowData.captures && rowData.captures["360 Image"]
-                  ? rowData.captures["360 Image"]
-                  : "-"}
+                {rowData.captures && rowData.captures["360 Video"]
+                  ? rowData.captures["360 Video"]
+                  : " -"}
               </CaptureCount>
             </CapturesField>
 
@@ -183,11 +183,11 @@ export const ProjectListFlatView = ({
               <CaptureCount>
                 {rowData.captures && rowData.captures["Phone Image"]
                   ? rowData.captures["Phone Image"]
-                  : "-"}
+                  : " -"}
               </CaptureCount>
             </CapturesField>
 
-            <CapturesField>
+            {/* <CapturesField>
               <TooltipText title="Phone Video Walk">
                 <div>
                   <CaptureImageIcon src={captureLidarIcon} alt={""} />
@@ -196,9 +196,9 @@ export const ProjectListFlatView = ({
               <CaptureCount>
                 {rowData.captures && rowData.captures["LiDAR Scan"]
                   ? rowData.captures["LiDAR Scan"]
-                  : "-"}
+                  : " -"}
               </CaptureCount>
-            </CapturesField>
+            </CapturesField> */}
 
             <CapturesField>
               <TooltipText title="Drone Image">
@@ -212,7 +212,7 @@ export const ProjectListFlatView = ({
               <CaptureCount>
                 {rowData.captures && rowData.captures["Drone Image"]
                   ? rowData.captures["Drone Image"]
-                  : "-"}
+                  : " -"}
               </CaptureCount>
             </CapturesField>
           </CapturesFieldContainer>
