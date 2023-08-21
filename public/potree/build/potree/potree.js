@@ -77746,7 +77746,7 @@ ENDSEC
 			this.selectingEnabled = true;
 			this.viewer.setEDLOpacity(1);
 			for(let image of this.images){
-				image.group.visible = true;
+				image.group.visible = false;
 			}
 
 			let image = this.focusedImage;
