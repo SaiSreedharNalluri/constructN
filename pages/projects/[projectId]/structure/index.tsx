@@ -51,6 +51,9 @@ import {
 import enterfullscreenIcon from "../../../../public/divami_icons/enterfullscreen.svg";
 import exitfullscreenIcon from "../../../../public/divami_icons/exitfullscreen.svg";
 import { IUser } from "../../../../models/IUser";
+import {
+  useSearchParams,
+} from 'react-router-dom';
 
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -175,6 +178,7 @@ const Index: React.FC<IProps> = () => {
   const [issueLoader, setIssueLoader] = useState(false);
   const [highlightCreateIcon, setHighlightCreateIcon] = useState(false);
   const [highlightCreateTaskIcon, setHighlightCreateTaskIcon] = useState(false);
+  //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
@@ -654,6 +658,7 @@ const Index: React.FC<IProps> = () => {
           case "issueCreateSuccess":
           case "issueCreateFail":
           case "issueSelect":
+            //setSearchParams({iss:toolInstance.response?.id as string});
           case "issueShow":
           case "issueHide":
           case "issueRemoved":
@@ -684,6 +689,7 @@ const Index: React.FC<IProps> = () => {
           case "taskShow":
           case "taskHide":
           case "taskSelect":
+            //setSearchParams({tsk:toolInstance.response?.id as string});
           case "taskRemoved":
             setClickedTool(toolInstance);
             break;
@@ -1483,6 +1489,31 @@ const Index: React.FC<IProps> = () => {
       }
     });
   }, []);
+  useEffect(() => {
+    if(router.query.iss!=null){
+      let sel_iss :Issue|undefined= issuesList.find((t)=>t._id===router.query.iss) 
+      if(sel_iss){
+      setClickedTool({toolAction:'issueSelect',toolName:'issue',response:sel_iss});
+      setCurrentContext({...sel_iss?.context,id:router.query.iss as string});
+      setOpenIssueDetails(true);
+    }
+
+    }
+    
+  }, [issuesList]);
+
+  useEffect(() => {
+    if(router.query.tsk!=null){
+      let sel_tsk :ITasks|undefined= tasksList.find((t)=>t._id===router.query.tsk) 
+      if(sel_tsk){
+      setClickedTool({toolAction:'taskSelect',toolName:'task',response:sel_tsk});
+      setCurrentContext({...sel_tsk?.context,id:router.query.tsk as string});
+      setOpenTaskDetails(true);
+    }
+
+    }
+    
+  }, [tasksList]);
 
   return (
     <div className=" w-full  h-full">
