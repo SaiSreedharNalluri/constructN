@@ -1731,57 +1731,62 @@ function GenericViewer(props) {
 
     // if(count == 2) _isMinimapRightMinimized.current = true
     
-    return (<Rnd
-      ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
-      style={{ top:count == 1 ? '0px' : '0px', zIndex: showMinimap && ((count == 1 && viewerType === "Potree") || (count == 2 &&  compareViewMode === "Potree")) ? 10 : -1}}
-      minWidth={320}
-      minHeight={28}
-      maxWidth={'99%'}
-      maxHeight={'99%'}
-      bounds={count == 1 ? '#TheView' : '#CompareView'}
-      default={{ x: count == 1 ? 84 : 24, y: 75, width: 320, height: count == 1 ? 320 : 28.5 }}
-      onDragStop={(e,data)=>{minimapUtils.current.resize();}}
-      onResize={(e, direction, ref, delta, position) => {
-        count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
-      }}
-      className={`${'rounded-lg bg-white'}`} 
-      cancel={`#minimap-${count}`}>
-      <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
-        <div className='h-8 rounded-lg bg-white flex'>
-          <IconButton className='cursor-move' size="small">
-            <DragIndicatorIcon fontSize="inherit" />
-          </IconButton>
-          <div className='flex items-center text-[#F1742E] pl-2 flex-1'>Minimap</div>
-          <IconButton size="small" onClick={() => { 
-            
-            count == 1 ? _minimizeMinimapLeft() : _minimizeMinimapRight() 
-            
-            } } onTouchEnd={() => {  count == 1 ? _minimizeMinimapLeft() : _minimizeMinimapRight() } }>
-            {
-              count == 1 ? (minimizeMinimapLeft ? <KeyboardDoubleArrowDownIcon fontSize="inherit" /> : <KeyboardDoubleArrowUpIcon fontSize="inherit" />)
+    return (<div
+      id={`minimap-container-${count}`}
+      className='absolute' 
+      style={{ width: '100%', height: 'calc(100% - 64px)', top: '64px', zIndex: showMinimap && ((count == 1 && viewerType === "Potree") || (count == 2 && compareViewMode === "Potree")) ? 10 : -1, pointerEvents: 'none' }}>
+      <Rnd
+        ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
+        style={{pointerEvents: 'all'}}
+        minWidth={320}
+        minHeight={28}
+        maxWidth={'99%'}
+        maxHeight={'99%'}
+        bounds={`#minimap-container-${count}`}
+        default={{ x: 24, y: 0, width: 320, height: count == 1 ? 320 : 28.5 }}
+        onDragStop={(e, data) => { minimapUtils.current.resize(); }}
+        onResize={(e, direction, ref, delta, position) => {
+          count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
+        }}
+        className={`${'rounded-lg bg-white opacity-30 hover:opacity-100'}`}
+        cancel={`#minimap-${count}`}>
+        <div className='flex flex-col h-full' onKeyDown={(e) => e.nativeEvent.preventDefault()}>
+          <div className='h-8 rounded-lg bg-white flex'>
+            <IconButton className='cursor-move' size="small">
+              <DragIndicatorIcon fontSize="inherit" />
+            </IconButton>
+            <div className='flex items-center text-[#F1742E] pl-2 flex-1'>Minimap</div>
+            <IconButton size="small" onClick={() => {
 
-                : minimizeMinimapRight ? <KeyboardDoubleArrowDownIcon fontSize="inherit" /> : <KeyboardDoubleArrowUpIcon fontSize="inherit" />
+              count == 1 ? _minimizeMinimapLeft() : _minimizeMinimapRight()
 
-            }
-          </IconButton>
-          <IconButton size="small" onClick={() => { count == 1 ? _toggleMinimapLeftFullscreen() : _toggleMinimapRightFullscreen() } } onTouchEnd={() => { count == 1 ? _toggleMinimapLeftFullscreen() : _toggleMinimapRightFullscreen() } }>
-            {
+            }} onTouchEnd={() => { count == 1 ? _minimizeMinimapLeft() : _minimizeMinimapRight() }}>
+              {
+                count == 1 ? (minimizeMinimapLeft ? <KeyboardDoubleArrowDownIcon fontSize="inherit" /> : <KeyboardDoubleArrowUpIcon fontSize="inherit" />)
 
-              count == 1 ? (fullscreenMinimapLeft ? <FullscreenExitIcon fontSize="inherit" /> : <FullscreenIcon fontSize="inherit" />)
+                  : minimizeMinimapRight ? <KeyboardDoubleArrowDownIcon fontSize="inherit" /> : <KeyboardDoubleArrowUpIcon fontSize="inherit" />
 
-                : fullscreenMinimapRight ? <FullscreenExitIcon fontSize="inherit" /> : <FullscreenIcon fontSize="inherit" />
-            }
-          </IconButton>
-        </div>
-        <MiniMap 
-          count={count} 
-          style={{ height: 'calc(100%)' }} 
-          compareViewMode={compareViewMode} 
-          setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}>
-            
+              }
+            </IconButton>
+            <IconButton size="small" onClick={() => { count == 1 ? _toggleMinimapLeftFullscreen() : _toggleMinimapRightFullscreen() }} onTouchEnd={() => { count == 1 ? _toggleMinimapLeftFullscreen() : _toggleMinimapRightFullscreen() }}>
+              {
+
+                count == 1 ? (fullscreenMinimapLeft ? <FullscreenExitIcon fontSize="inherit" /> : <FullscreenIcon fontSize="inherit" />)
+
+                  : fullscreenMinimapRight ? <FullscreenExitIcon fontSize="inherit" /> : <FullscreenIcon fontSize="inherit" />
+              }
+            </IconButton>
+          </div>
+          <MiniMap
+            count={count}
+            style={{ height: 'calc(100%)' }}
+            compareViewMode={compareViewMode}
+            setMinimap={count == 1 ? setMinimapUtils : setMinimapCompareUtils}>
+
           </MiniMap>
-      </div>
-    </Rnd>)
+        </div>
+      </Rnd>
+    </div>)
   }
 
   const [minimizeMinimapLeft, setMinimizeMinimapLeft] = useState(false)
