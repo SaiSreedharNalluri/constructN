@@ -271,12 +271,12 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
 
   useEffect(() => {
     if (forgeInitialised) {
-      // if(minimapUtils.current) {
-      //   minimapUtils.current.initializeViewer();
-      // }
-      // if(minimapCompareUtils.current) {
-      //   minimapCompareUtils.current.initializeViewer();
-      // }
+      if(minimapUtils.current) {
+        minimapUtils.current.initializeViewer();
+      }
+      if(minimapCompareUtils.current) {
+        minimapCompareUtils.current.initializeViewer();
+      }
       if(forgeUtils.current) {
         forgeUtils.current.initializeViewer();
       }

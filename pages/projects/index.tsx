@@ -74,6 +74,8 @@ import React from "react";
 import chatOpen from "../../public/divami_icons/newChatIcon.svg";
 import chatClose from "../../public/divami_icons/chat_close.svg";
 
+import { IntercomProvider, useIntercom } from 'react-use-intercom'
+
 import { getCookie } from "cookies-next";
 import { ShowErrorContainer } from "../../components/divami_components/project-listing/ProjectListingStyles";
 import chatOpenHightlighted from "../../public/divami_icons/chatOpenHightlighted.svg"
@@ -116,6 +118,24 @@ const Index: React.FC<any> = () => {
     ],
   });
   const [selectedOption, setSelectedOption] = useState("issuePriority");
+
+  const {
+    boot,
+    shutdown,
+    hardShutdown,
+    update,
+    hide,
+    show,
+    isOpen,
+    showMessages,
+    showNewMessage,
+    getVisitorId,
+    startTour,
+    trackEvent,
+    showArticle,
+    startSurvey,
+    showSpace
+  } = useIntercom();
 
   const [formValues, setFormValues]: any = useState({ priority: [] });
   const [showPopUp, setshowPopUp] = useState(false);
@@ -250,20 +270,25 @@ const Index: React.FC<any> = () => {
   };
   const handleOpenChat = (e: any) => {
     e.stopPropagation()
+    if(!isOpen)
     openChat();
+    else
+    closeChat();
   };
   function openChat(): void {
-    {
-      eval(`globalThis.fcWidget.user.setEmail("${eMail}");`);
-    }
-    {
-      eval(`globalThis.fcWidget.open()`);
-    }
+    // {
+    //   eval(`globalThis.fcWidget.user.setEmail("${eMail}");`);
+    // }
+    // {
+    //   eval(`globalThis.fcWidget.open()`);
+    // }
+    show();
   }
   function closeChat(): void {
-    {
-      eval(`globalThis.fcWidget.close()`);
-    }
+    // {
+    //   eval(`globalThis.fcWidget.close()`);
+    // }
+    hide();
   }
 
   const showEmailOverlay = (formState: any) => {
@@ -340,7 +365,17 @@ const Index: React.FC<any> = () => {
       let user = null;
       if (userObj) user = JSON.parse(userObj);
       if (user?.email) setEMail(user.email);
+
+
+    //boot({alignment:"left",name:user?.fullName,email:user.email}); //boot intercom
     }
+    boot({alignment:"left",customLauncherSelector:"chatSupport",hideDefaultLauncher:true, horizontalPadding:60}); //boot intercom
+    
+
+    return () => {
+      // shutdown intercom
+      shutdown();
+  }
   }, [router.isReady]);
 
   useEffect(() => {
@@ -711,28 +746,17 @@ const Index: React.FC<any> = () => {
         />
       </Drawer>
      
-        <div ref={chatIconRef}
-         className="fixed bottom-[20px] left-2 z-10 cursor-pointer rounded-full bg-[#FF843F] p-2"
-         onMouseEnter={handleChatHover}
-         onMouseLeave={handleChatHoverEnd}
+        <div ref={chatIconRef} id="chatSupport"
+         className="group fixed bottom-[20px] left-2 z-10 cursor-pointer rounded-full bg-[#FF843F] p-2 "
          > 
-                 {isChatHovered ? (
-                  <Image
+         <Image
                     src={chatOpenHightlighted }
-                    width={45}
-                    height={45}
-                alt=""
+                    className="group-hover:opacity-100 opacity-70"
+                    width={36}
+                    height={36}
+                    alt=""
                     onClick={handleOpenChat}
                   />
-                ) : (
-                  <Image
-                    src={chatOpen}
-                    width={45}
-                    height={45}
-             alt=""
-                    onClick={handleOpenChat}
-                  />
-                )}
       </div>
       </div>
 

@@ -516,7 +516,7 @@ const CustomTaskListDrawer = (props: any) => {
                     />
                   </Tooltip> */}
                   <CSVLink
-                    data={getDownladableList(filteredTaskList)}
+                    data={getDownladableList(taskList)}
                     filename={"my-tasks.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
                     target="_blank"

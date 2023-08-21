@@ -138,7 +138,21 @@ const FormWrapper = (props: any) => {
             }
           }
 
+          else if (item.isValidField == false && item.id === "create_title"  && item.maxLength){
          
+            if(!textMaxLengthCreateTitle(item.defaultValue, item.id)){
+              if(setCanBeDisabled) setCanBeDisabled(false);
+              return{
+                ...item,
+                isError: true,
+                showErrorMsg: true,
+              }
+            }else{
+              return {
+                ...item, isError: false
+              }
+            }
+          }
           else if (item.isValidField === false && item.id === "email") {
             if (!isValidEmail(item.defaultValue, item.id)) {
               if (setCanBeDisabled) setCanBeDisabled(false);
@@ -565,10 +579,63 @@ const FormWrapper = (props: any) => {
     }
     return isValid
   }
-
+  function textMaxLengthCreateTitle(textLength:string, id:string){
+    console.log(textLength,id);
+    
+    let isValid = false    
+    const maxLimit = 30;
+    if(textLength.length > maxLimit){
+      setFormConfig((prev: any) =>
+      prev.map((item: any) => {
+        if (id === item.id) {
+          let fieldName;
+        if (id === "create_title") {
+            fieldName = "Title" || "title";
+          }
+          return {
+            ...item,
+            isValidField: false,
+            isError: true,
+            errorMsg: `${fieldName} should not be greater than ${maxLimit} characters`,
+          };
+        }
+        return item;
+      })
+    );
+    } else if (!calculateEmptySpaces(textLength)){
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+              errorMsg: "No leading or trailing spaces are allowed",
+            };
+          }
+          return item;  
+        })
+      );
+    }
+    else {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: true,
+              isError: false,
+            };
+          }
+          return item;
+        })
+      );
+    }
+    return isValid
+  }
   function isValidEmail(email: any, id: any) {
     let isValid = false;
-    if (/\S+@\S+\.\S+/.test(email)) {
+    if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
       isValid = true;
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
@@ -793,7 +860,12 @@ const FormWrapper = (props: any) => {
                 } else if (data.id === "confirm_password") {
                   matchpassword(data?.defaultValue, data.id);
                   return;
-                } else if (data.maxLength === 30){
+                } 
+                else if (data.id === "create_title"){
+                  textMaxLengthCreateTitle(data?.defaultValue, data.id)
+                  return
+                }
+                else if (data.maxLength === 30){
                   textMaxLength(data?.defaultValue, data.id)
                   return
                 }

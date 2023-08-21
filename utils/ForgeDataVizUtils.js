@@ -195,6 +195,8 @@ export class ForgeDataVizUtils {
 
             realities.forEach(reality => {
 
+                const pathData = []
+
                 if (reality['position']) {
 
                     let images
@@ -271,8 +273,23 @@ export class ForgeDataVizUtils {
 
                                     type: type
                                 })
+
+                                pathData.push({
+
+                                    id: reality.id,
+
+                                    imageName: images[i],
+
+                                    position: this._toLocalPosition({ x: mPosition[0], y: mPosition[1], z: mPosition[2] }),
+
+                                    rotation: mRotation,
+
+                                    type: type
+                                })
                             }
                         }
+
+                        // if(type == '360 Video') this._drawVideoPath(pathData)
 
                     }
                 }
@@ -290,8 +307,6 @@ export class ForgeDataVizUtils {
             }
 
             this._dataVizExtn.addViewables(_viewableData)
-
-            if(type == '360 Video') this._drawVideoPath(data)
         }
     }
 
