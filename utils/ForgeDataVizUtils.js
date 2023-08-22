@@ -2,6 +2,8 @@ import { applyOffset, applyTM, applyTMInverse, isMobile, removeOffset } from './
 
 import { MathUtils } from "../public/potree/libs/three.js/build/three.module"
 
+const colors = ['#FF1744', '#AA00FF', '#00E5FF', '#DD2C00', '#64DD17', '#651FFF']
+
 export class ForgeDataVizUtils {
 
     static NAVIGATOR = "NAVIGATOR"
@@ -47,6 +49,8 @@ export class ForgeDataVizUtils {
         this._viewer.impl.invalidate(false, false, true)
 
         if(this._edit2DExtn) this._edit2DExtn.registerDefaultTools()
+
+        this._polylineStyles = []
 
         this._createNavigator()
 
@@ -195,6 +199,8 @@ export class ForgeDataVizUtils {
 
             realities.forEach(reality => {
 
+                const pathData = []
+
                 if (reality['position']) {
 
                     let images
@@ -271,8 +277,23 @@ export class ForgeDataVizUtils {
 
                                     type: type
                                 })
+
+                                pathData.push({
+
+                                    id: reality.id,
+
+                                    imageName: images[i],
+
+                                    position: this._toLocalPosition({ x: mPosition[0], y: mPosition[1], z: mPosition[2] }),
+
+                                    rotation: mRotation,
+
+                                    type: type
+                                })
                             }
                         }
+
+                        if(type == '360 Video') this._drawVideoPath(pathData)
 
                     }
                 }
@@ -290,8 +311,6 @@ export class ForgeDataVizUtils {
             }
 
             this._dataVizExtn.addViewables(_viewableData)
-
-            if(type == '360 Video') this._drawVideoPath(data)
         }
     }
 
@@ -316,8 +335,11 @@ export class ForgeDataVizUtils {
                             scale: show ? 1 : 0
                         }
                     })
+
                 }
             }
+
+            if(type == '360 Video') this._showPath(show)
         }
     }
 
@@ -394,6 +416,10 @@ export class ForgeDataVizUtils {
         this._existingImages = []
 
         this._existingTags = []
+
+        this._polylineStyles = []
+
+        this._edit2DExtn.defaultContext.layer.clear()
     }
 
     _drawVideoPath = (data) => {
@@ -433,16 +459,30 @@ export class ForgeDataVizUtils {
         //Create polyline
         var polyline = new Autodesk.Edit2D.Polyline(points)
 
-        var style = polyline.style
+        const style = polyline.style
 
         style.lineWidth = 2.5
 
         style.lineColor = 'rgb(241, 116, 46)'
 
-        style.lineStyle = 8
+        style.lineStyle = 1
+
+        this._polylineStyles.push(style)
 
         // Show it
         layer.addShape(polyline)
+
+    }
+
+    _showPath = (show) => {
+
+        this._polylineStyles.forEach(style => {
+
+            style.lineAlpha = show ? 1 : 0
+
+        })
+
+        this._edit2DExtn.defaultContext.layer.update()
 
     }
 

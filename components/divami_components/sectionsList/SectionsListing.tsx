@@ -59,6 +59,7 @@ import FilterInActive from "../../../public/divami_icons/FilterInActive.svg";
 import SearchMag from "../../../public/divami_icons/search.svg";
 import UserFilterIcon from "../../../public/divami_icons/UserFilterIcon.svg";
 import filterActive from "../../../public/divami_icons/filterActive.svg";
+import info from "../../../public/divami_icons/infoIcon.svg"
 
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 
@@ -91,6 +92,7 @@ import { SvgIconProps } from "@material-ui/core";
 import CustomLoader from "../custom_loader/CustomLoader";
 import LocalSearch from "../local_component/LocalSearch";
 import { TooltipText } from "../side-panel/SidePanelStyles";
+import PopupComponent from "../../popupComponent/PopupComponent";
 
 interface RowData {
   tableData: { id: number };
@@ -147,6 +149,7 @@ const SectionsListing = () => {
   const formHandler = (event: any) => {
     // setShowEmptyState(true);
   };
+const[isCaptureAvailable,setCaptureAvailable]=useState(false);
 
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
@@ -491,7 +494,7 @@ const SectionsListing = () => {
       }));
     }
   };
-
+const[id,setId]=useState("");
   const columns = [
     {
       title: "View Name",
@@ -513,10 +516,18 @@ const SectionsListing = () => {
         return (
           <FloorName
             onClick={() => {
+              if(rowData.capture?.totalCount > 0)
+              {
               router.push({
                 pathname: `/projects/${router?.query?.projectId as string}/structure`,
                 query: { structId: rowData._id },
-              });
+              })
+             setCaptureAvailable(false)
+            }
+              else{
+               setId(rowData._id)
+                setCaptureAvailable(true)
+              }
             }}
           >
             {rowData?.name}
@@ -639,7 +650,7 @@ const SectionsListing = () => {
                   : "-"}
               </CaptureCount>
             </CapturesField>
-            <CapturesField>
+            {/* <CapturesField>
               <TooltipText title="Phone Video Walk">
                 <div>
                   <CaptureImageIcon src={captureLidarIcon} alt={""} />
@@ -647,7 +658,7 @@ const SectionsListing = () => {
               </TooltipText>
 
               <CaptureCount>-</CaptureCount>
-            </CapturesField>
+            </CapturesField> */}
             <CapturesField>
               <TooltipText title="Drone Image">
                 <div>
@@ -765,6 +776,22 @@ const SectionsListing = () => {
                 tableRef={myTableRef}
                 components={{
                   Container: (props) => <Paper {...props} elevation={0} />,
+                  Row:(props)=>{
+                    const rowData = props.data;
+                    
+                    const isZeroCapture = rowData.capture?.totalCount === 0;  
+                    
+                      return (
+                        
+        <MTableBodyRow
+          {...props}
+          title={isZeroCapture?"No Capture available":""}
+          className={isZeroCapture?"bg-[#E7E7E7] cursor-not-allowed":""}
+        />
+       
+      );
+    
+                  }
                 }}
                 localization={localizationOptions}
                 columns={columns}
@@ -823,6 +850,24 @@ const SectionsListing = () => {
           />
         </CustomDrawer>
       )}
+      {
+        isCaptureAvailable&& (
+          <PopupComponent
+          open={isCaptureAvailable}
+          setShowPopUp={setCaptureAvailable}
+          modalTitle={"No Capture Available"}
+          modalmessage={`Do you want to view the design?`}
+          primaryButtonLabel={"View Design"}
+          imageSrc={info}
+          isImageThere={true}
+          SecondaryButtonlabel={"No"}
+          callBackvalue={()=> router.push({
+            pathname: `/projects/${router?.query?.projectId as string}/structure`,
+            query: { structId: id },
+          })}
+        />
+        )
+      }
     </div>
   );
 };

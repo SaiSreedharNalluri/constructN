@@ -2,11 +2,11 @@ import Moment from "moment";
 
 export const TASK_FORM_CONFIG = [
   {
-    id: "title",
+    id: "create_title",
     type: "textfield",
     defaultValue: "",
-    formLabel: "What shall we call this Task?",
-    placeholder: "Title",
+    formLabel: "Provide a brief title for the task",
+    placeholder: "Title in 30 characters",
     isReadOnly: false,
     isError: false,
     isReq: true,

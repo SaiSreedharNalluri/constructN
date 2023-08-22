@@ -490,7 +490,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   ) : null}
 
                   <CSVLink
-                    data={getDownladableList(filteredIssuesList)}
+                    data={getDownladableList(issueList)}
                     filename={"my-issues.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
                     target="_blank"

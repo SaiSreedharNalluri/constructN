@@ -752,6 +752,7 @@ export const PotreeViewerUtils = () => {
 
     const cancelAddTag = () => {
         _viewer.scene.annotations.remove(_tempTag);
+        deactivateCreateTagTool()
     }
 
     const finishAddTag = (tag) => {

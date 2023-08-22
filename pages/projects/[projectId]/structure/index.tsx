@@ -51,6 +51,9 @@ import {
 import enterfullscreenIcon from "../../../../public/divami_icons/enterfullscreen.svg";
 import exitfullscreenIcon from "../../../../public/divami_icons/exitfullscreen.svg";
 import { IUser } from "../../../../models/IUser";
+import {
+  useSearchParams,
+} from 'react-router-dom';
 
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -175,6 +178,7 @@ const Index: React.FC<IProps> = () => {
   const [issueLoader, setIssueLoader] = useState(false);
   const [highlightCreateIcon, setHighlightCreateIcon] = useState(false);
   const [highlightCreateTaskIcon, setHighlightCreateTaskIcon] = useState(false);
+  //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
@@ -398,6 +402,16 @@ const Index: React.FC<IProps> = () => {
           SetLoggedInUserId(user._id);
         }
       }
+      if(router.query.type!==null){
+        switch(router.query.type){
+          case 'Plan Drawings':
+          case 'BIM':
+          case 'pointCloud':
+          case 'orthoPhoto':
+            setViewType(router.query.type as string);
+        }
+        
+      }
 
       return () => {
         document.removeEventListener("click", closeStructurePage);
@@ -500,6 +514,11 @@ const Index: React.FC<IProps> = () => {
   };
   const updatedSnapshot = (snapshot: ISnapshot) => {
     setSnapshot(snapshot);
+    if(router.isReady)
+    {
+      router.query.snap=snapshot._id;
+      router.push(router);
+    }
   };
 
   const updateDesignMap = (designMap: IDesignMap) => {
@@ -654,6 +673,10 @@ const Index: React.FC<IProps> = () => {
           case "issueCreateSuccess":
           case "issueCreateFail":
           case "issueSelect":
+            //setSearchParams({iss:toolInstance.response?.id as string});
+            // console.log("Helll");
+            // router.query.iss=toolInstance.response?.id;
+            // router.push(router)
           case "issueShow":
           case "issueHide":
           case "issueRemoved":
@@ -684,6 +707,9 @@ const Index: React.FC<IProps> = () => {
           case "taskShow":
           case "taskHide":
           case "taskSelect":
+            //setSearchParams({tsk:toolInstance.response?.id as string});
+            // router.query.tsk=toolInstance.response?.id;
+            // router.push(router)
           case "taskRemoved":
             setClickedTool(toolInstance);
             break;
@@ -732,6 +758,8 @@ const Index: React.FC<IProps> = () => {
           if (data.response != undefined) {
             setCurrentContext(data.response);
             setOpenIssueDetails(true);
+            router.query.iss=data.response?.id;
+            router.push(router);
           }
         }
         break;
@@ -744,6 +772,8 @@ const Index: React.FC<IProps> = () => {
           if (data.response != undefined) {
             setCurrentContext(data.response);
             setOpenTaskDetails(true);
+            router.query.tsk=data.response?.id;
+            router.push(router)
           }
         }
         break;
@@ -875,6 +905,7 @@ const Index: React.FC<IProps> = () => {
   }, [currentViewMode, designAndRealityMaps]);
 
   useEffect(() => {
+    
     if (
       designMap &&
       Object.keys(designMap)?.length &&
@@ -889,6 +920,12 @@ const Index: React.FC<IProps> = () => {
         setSelectedReality(currentViewType);
       toolClicked({ toolName: "viewType", toolAction: currentViewType });
     }
+    if(router.isReady)
+    {
+      router.query.type=currentViewType;
+      router.push(router);
+    }
+    
   }, [currentViewType]);
 
   useEffect(() => {
@@ -1483,10 +1520,54 @@ const Index: React.FC<IProps> = () => {
       }
     });
   }, []);
+  
+  const createCancel = () =>{
+    if(highlightCreateIcon)
+       {
+        setHighlightCreateIcon(false)
+        toolClicked({
+          toolName: "issue",
+            toolAction: "issueCreateFail"
+           })
+       }
+        if(highlightCreateTaskIcon)
+        { setHighlightCreateTaskIcon(false)
+          toolClicked({
+            toolName: "task",
+              toolAction: "taskCreateFail"
+             })
+        } 
+  }
+
+  useEffect(() => {
+    if(router.query.iss!=null){
+      let sel_iss :Issue|undefined= issuesList.find((t)=>t._id===router.query.iss) 
+      if(sel_iss){
+      setClickedTool({toolAction:'issueSelect',toolName:'issue',response:sel_iss});
+      setCurrentContext({...sel_iss?.context,id:router.query.iss as string});
+      setOpenIssueDetails(true);
+    }
+
+    }
+    
+  }, [issuesList]);
+
+  useEffect(() => {
+    if(router.query.tsk!=null){
+      let sel_tsk :ITasks|undefined= tasksList.find((t)=>t._id===router.query.tsk) 
+      if(sel_tsk){
+      setClickedTool({toolAction:'taskSelect',toolName:'task',response:sel_tsk});
+      setCurrentContext({...sel_tsk?.context,id:router.query.tsk as string});
+      setOpenTaskDetails(true);
+    }
+
+    }
+    
+  }, [tasksList]);
 
   return (
     <div className=" w-full  h-full">
-      <div className="w-full">
+      <div className="w-full" onClick={createCancel}>
         {!isFullScreen && (
           <Header
             toolClicked={toolClicked}
@@ -1500,9 +1581,9 @@ const Index: React.FC<IProps> = () => {
         {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
 
-      <div className="flex ">
+      <div className="flex " >
         {!isFullScreen && (
-          <SidePanelContainer ref={leftOverlayRef}>
+          <SidePanelContainer ref={leftOverlayRef} onClick={createCancel} >
             {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
             <SidePanelMenu onChangeData={onChangeData} />
           </SidePanelContainer>
@@ -1544,7 +1625,7 @@ const Index: React.FC<IProps> = () => {
                       hierarchy ? "visible" : "hidden"
                     }  absolute z-10 border  white-bg projHier `}
                   >
-                    <div>
+                    <div onClick={createCancel}>
                       <LeftOverLay
                         handleNodeSelection={handleNodeSelection}
                         selectedNodes={structure?._id}
@@ -1569,7 +1650,7 @@ const Index: React.FC<IProps> = () => {
               </div>
             </div>
           ) : (
-            <div>
+            <div onClick={ createCancel}>
               <OpenMenuButton
                 onClick={() => {
                   setHierarchy(!hierarchy);

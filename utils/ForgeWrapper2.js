@@ -433,6 +433,7 @@ export const ForgeViewerUtils = function () {
     if (_dataVizUtils) {
       _dataVizUtils.refreshViewableData();
     }
+    deactivateTool()
   };
 
   const selectTag = (tag) => {
