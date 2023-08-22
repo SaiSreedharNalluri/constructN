@@ -201,8 +201,9 @@ const PopupComponent = (props: PopupComponentProps) => {
           }
         >
           {showButton ? (
-            <ButtonDiv>
-             {SecondaryButtonlabel!=="" ?(   <Button
+            <ButtonDiv className="flex justify-evenly w-full">
+             {SecondaryButtonlabel!=="" ?(   
+              <Button
                 variant={paddingStyle ? "outlined" : "text"}
                 // autoFocus
                 onClick={handleClose}
@@ -213,7 +214,8 @@ const PopupComponent = (props: PopupComponentProps) => {
                   textTransform: "none",
                   marginBottom: "22px",
                   fontFamily: "Open Sans",
-                  border: paddingStyle ? "1px solid #F1742E" : "0px",
+                  fontSize: "16px",
+                  border: "1px solid #FF843F" 
                 }}
               >
                 {SecondaryButtonlabel}
@@ -223,7 +225,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 variant="contained"
                 onClick={() => callBackvalue("Delete")}
                 style={{
-                  backgroundColor: "#F1742E",
+                  backgroundColor: "#FF843F",
                   width: "180px",
                   height: "40px",
                   marginBottom: "22px",
