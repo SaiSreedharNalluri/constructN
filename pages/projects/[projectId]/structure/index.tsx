@@ -1520,6 +1520,25 @@ const Index: React.FC<IProps> = () => {
       }
     });
   }, []);
+  
+  const createCancel = () =>{
+    if(highlightCreateIcon)
+       {
+        setHighlightCreateIcon(false)
+        toolClicked({
+          toolName: "issue",
+            toolAction: "issueCreateFail"
+           })
+       }
+        if(highlightCreateTaskIcon)
+        { setHighlightCreateTaskIcon(false)
+          toolClicked({
+            toolName: "task",
+              toolAction: "taskCreateFail"
+             })
+        } 
+  }
+
   useEffect(() => {
     if(router.query.iss!=null){
       let sel_iss :Issue|undefined= issuesList.find((t)=>t._id===router.query.iss) 
@@ -1548,7 +1567,7 @@ const Index: React.FC<IProps> = () => {
 
   return (
     <div className=" w-full  h-full">
-      <div className="w-full">
+      <div className="w-full" onClick={createCancel}>
         {!isFullScreen && (
           <Header
             toolClicked={toolClicked}
@@ -1562,9 +1581,9 @@ const Index: React.FC<IProps> = () => {
         {/* <Header breadCrumb={getBreadCrumbs()}></Header> */}
       </div>
 
-      <div className="flex ">
+      <div className="flex " >
         {!isFullScreen && (
-          <SidePanelContainer ref={leftOverlayRef}>
+          <SidePanelContainer ref={leftOverlayRef} onClick={createCancel} >
             {/* <CollapsableMenu onChangeData={onChangeData}></CollapsableMenu> */}
             <SidePanelMenu onChangeData={onChangeData} />
           </SidePanelContainer>
@@ -1606,7 +1625,7 @@ const Index: React.FC<IProps> = () => {
                       hierarchy ? "visible" : "hidden"
                     }  absolute z-10 border  white-bg projHier `}
                   >
-                    <div>
+                    <div onClick={createCancel}>
                       <LeftOverLay
                         handleNodeSelection={handleNodeSelection}
                         selectedNodes={structure?._id}
@@ -1631,7 +1650,7 @@ const Index: React.FC<IProps> = () => {
               </div>
             </div>
           ) : (
-            <div>
+            <div onClick={ createCancel}>
               <OpenMenuButton
                 onClick={() => {
                   setHierarchy(!hierarchy);
