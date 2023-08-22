@@ -785,8 +785,8 @@ const[id,setId]=useState("");
                         
         <MTableBodyRow
           {...props}
-         className={isZeroCapture?"bg-[#E7E7E7] cursor-not-allowed":""}
-
+          title={isZeroCapture?"No Capture available":""}
+          className={isZeroCapture?"bg-[#E7E7E7] cursor-not-allowed":""}
         />
        
       );
@@ -856,11 +856,11 @@ const[id,setId]=useState("");
           open={isCaptureAvailable}
           setShowPopUp={setCaptureAvailable}
           modalTitle={"No Capture Available"}
-          modalmessage={`Are you sure you want to view the design?`}
+          modalmessage={`Do you want to view the design?`}
           primaryButtonLabel={"View Design"}
           imageSrc={info}
           isImageThere={true}
-          SecondaryButtonlabel={"Cancel"}
+          SecondaryButtonlabel={"No"}
           callBackvalue={()=> router.push({
             pathname: `/projects/${router?.query?.projectId as string}/structure`,
             query: { structId: id },
