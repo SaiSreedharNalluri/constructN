@@ -198,7 +198,7 @@ export const ProjectListCardView = ({
                 : `0${each.capturePhoneCount}`}
             </CaptureCount>
           </CaptureImageContainer>
-          <CaptureImageContainer>
+          {/* <CaptureImageContainer>
             <CaptureImageIcon src={LidarWalk} alt=""></CaptureImageIcon>
             <CaptureName>Phone Video Walk - </CaptureName>
             <CaptureCount>
@@ -206,7 +206,7 @@ export const ProjectListCardView = ({
                 ? each.captureLidarCount
                 : `0${each.captureLidarCount}`}
             </CaptureCount>
-          </CaptureImageContainer>
+          </CaptureImageContainer> */}
           <CaptureImageContainer>
             <CaptureImageIcon src={DroneImageNew} alt=""></CaptureImageIcon>
             <CaptureName>Drone - </CaptureName>
