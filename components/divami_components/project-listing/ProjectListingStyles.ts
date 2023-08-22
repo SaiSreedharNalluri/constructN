@@ -3,7 +3,7 @@ import Image from "next/image";
 export const ProjectsContainer = styled("div")({
   display: "flex",
   flexDirection: "column",
-
+  
 });
 
 export const StyledFilterText = styled("div")({
@@ -168,12 +168,12 @@ export const ProjectCardsContainer = styled("div")({
 export const ProjectCard = styled("div")((props: any) => ({
   width: props.active ? "300px" : "300px",
   // height: props.active ? "458px" : "438px",
-  height: props.active ? "438px" : "438px",
+  height: props.active ? "408px" : "408px",
   background: "#FFFFFF",
   border: "1px solid #888888",
-  padding: "20px",
+  padding: "11px",
   paddingTop: "11px",
-  paddingRight: "12px",
+  paddingRight: "11px",
   boxShadow: props.active ? "0px 4px 15px rgba(0, 0, 0, 0.25)" : "",
   color: "#101F4C",
   fontSize: "14px",
@@ -196,7 +196,7 @@ export const ProjectTopRightBg = styled("div")((props: any) => ({
   borderRight: props.active ? "1px solid #F1742E" : "1px solid #888888",
   bottom: "-8px",
   right: "-1px",
-  height: "454px",
+  height: "424px",
 
   // height: props.active ? "454px" : "434px",
 })) as any;
@@ -206,7 +206,7 @@ export const ProjectBottomLeftBg = styled("div")((props: any) => ({
   borderLeft: props.active ? "1px solid #F1742E" : "1px solid #888888",
   bottom: "-8px",
   left: "-1px",
-  height: "454px",
+  height: "424px",
 
   // height: props.active ? "454px" : "434px",
 })) as any;

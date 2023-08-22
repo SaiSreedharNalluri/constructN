@@ -1,6 +1,5 @@
 import Script from 'next/script';
 import Moment from 'moment';
-import {useRouter} from 'next/router';
 import {Rnd } from 'react-rnd';
 import { Mixpanel } from '../analytics/mixpanel';
 import ErrorNotFound from "../../public/divami_icons/ErrorNotFound.svg";
@@ -150,8 +149,6 @@ function GenericViewer(props) {
   const [offset, setOffset] = useState(1);
   const pageSize = 10;
   const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0)
-
-  const router = useRouter();
 
   const [totalPages, setTotalPages] = useState(
     Math.ceil(totalSnaphotsCount / 10)
@@ -1223,20 +1220,7 @@ function GenericViewer(props) {
     list = list.data.result.mSnapshots.sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
-    if(list.length>0 && router.query.snap!=null){
-      let mySnap=list.find((s)=>{if(s._id==router.query.snap)return s;})
-      setSnapshotList(list);
-      if (mySnap)
-      setCurrentSnapshot(mySnap);
-      else 
-      setCurrentSnapshot(list[list.length - 1]);
-      if (list.length > 1) {
-        setCurrentCompareSnapshot(list[list.length - 2]);
-      } else {
-        setCurrentCompareSnapshot(list[list.length - 1]);
-      }
-    }
-    else if (list.length > 0) {
+    if (list.length > 0) {
       setSnapshotList(list);
       setCurrentSnapshot(list[list.length - 1]);
       if (list.length > 1) {
@@ -1750,16 +1734,16 @@ function GenericViewer(props) {
     return (<div
       id={`minimap-container-${count}`}
       className='absolute' 
-      style={{ width: '100%', height: 'calc(100% - 64px)', top: '64px', zIndex: showMinimap && ((count == 1 && viewerType === "Potree") || (count == 2 && compareViewMode === "Potree")) ? 10 : -1, pointerEvents: 'none' }}>
+      style={{ width: '100%', height: 'calc(100% - 96px)', top: '64px', zIndex: showMinimap && ((count == 1 && viewerType === "Potree") || (count == 2 && compareViewMode === "Potree")) ? 10 : -1, pointerEvents: 'none' }}>
       <Rnd
         ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
         style={{pointerEvents: 'all'}}
         minWidth={320}
         minHeight={28}
-        maxWidth={'99%'}
-        maxHeight={'99%'}
+        maxWidth={'100%'}
+        maxHeight={'100%'}
         bounds={`#minimap-container-${count}`}
-        default={{ x: 24, y: 0, width: 320, height: count == 1 ? 320 : 28.5 }}
+        default={{ x: 0, y: 0, width: 320, height: count == 1 ? 320 : 28.5 }}
         onDragStop={(e, data) => { minimapUtils.current.resize(); }}
         onResize={(e, direction, ref, delta, position) => {
           count == 1 ? minimapUtils.current?.resize() : minimapCompareUtils.current?.resize()
@@ -1849,7 +1833,7 @@ function GenericViewer(props) {
 
     if (_isFullscreenMinimapLeft.current) {
 
-      minimap?.updatePosition({ x: 24, y: 84 })
+      minimap?.updatePosition({ x: 0, y: 0 })
 
       minimap?.updateSize({ width: 320, height: 320 })
 
@@ -1859,9 +1843,9 @@ function GenericViewer(props) {
 
       setMinimizeMinimapLeft(_isMinimapLeftMinimized.current)
 
-      minimap?.updatePosition({ x: 10, y: 84 })
+      minimap?.updatePosition({ x: 0, y: 0 })
 
-      minimap?.updateSize({ width: '99%', height: '90%' })
+      minimap?.updateSize({ width: '100%', height: '100%' })
 
     }
 
@@ -1917,7 +1901,7 @@ function GenericViewer(props) {
 
     if (_isFullscreenMinimapRight.current) {
 
-      minimap?.updatePosition({ x: 24, y: 84 })
+      minimap?.updatePosition({ x: 0, y: 0 })
 
       minimap?.updateSize({ width: 320, height: 320 })
 
@@ -1927,9 +1911,9 @@ function GenericViewer(props) {
 
       setMinimizeMinimapRight(_isMinimapRightMinimized.current)
 
-      minimap?.updatePosition({ x: 10, y: 84 })
+      minimap?.updatePosition({ x: 0, y: 0 })
 
-      minimap?.updateSize({ width: '99%', height: '90%' })
+      minimap?.updateSize({ width: '100%', height: '100%' })
 
     }
 
@@ -1949,8 +1933,8 @@ function GenericViewer(props) {
         minimap?.updateSize({ width: 320, height: 28 });
         break;
       case 'fullscreen':
-        minimap?.updateSize({ width: '95%', height: '90%' });
-        minimap?.updatePosition({ x: count == 1 ? 24 : 24, y: 84 });
+        minimap?.updateSize({ width: '95%', height: '100%' });
+        minimap?.updatePosition({ x: count == 1 ? 0 : 0, y: 0 });
         break;
       default:
         minimap?.updateSize({ width: 320, height: 320 });
