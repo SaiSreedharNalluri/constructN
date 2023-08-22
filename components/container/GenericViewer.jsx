@@ -1,5 +1,6 @@
 import Script from 'next/script';
 import Moment from 'moment';
+import {useRouter} from 'next/router';
 import {Rnd } from 'react-rnd';
 import { Mixpanel } from '../analytics/mixpanel';
 import ErrorNotFound from "../../public/divami_icons/ErrorNotFound.svg";
@@ -149,6 +150,8 @@ function GenericViewer(props) {
   const [offset, setOffset] = useState(1);
   const pageSize = 10;
   const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0)
+
+  const router = useRouter();
 
   const [totalPages, setTotalPages] = useState(
     Math.ceil(totalSnaphotsCount / 10)
