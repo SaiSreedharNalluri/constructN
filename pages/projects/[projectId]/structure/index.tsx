@@ -402,6 +402,16 @@ const Index: React.FC<IProps> = () => {
           SetLoggedInUserId(user._id);
         }
       }
+      if(router.query.type!==null){
+        switch(router.query.type){
+          case 'Plan Drawings':
+          case 'BIM':
+          case 'pointCloud':
+          case 'orthoPhoto':
+            setViewType(router.query.type as string);
+        }
+        
+      }
 
       return () => {
         document.removeEventListener("click", closeStructurePage);
@@ -504,6 +514,11 @@ const Index: React.FC<IProps> = () => {
   };
   const updatedSnapshot = (snapshot: ISnapshot) => {
     setSnapshot(snapshot);
+    if(router.isReady)
+    {
+      router.query.snap=snapshot._id;
+      router.push(router);
+    }
   };
 
   const updateDesignMap = (designMap: IDesignMap) => {
@@ -659,6 +674,9 @@ const Index: React.FC<IProps> = () => {
           case "issueCreateFail":
           case "issueSelect":
             //setSearchParams({iss:toolInstance.response?.id as string});
+            // console.log("Helll");
+            // router.query.iss=toolInstance.response?.id;
+            // router.push(router)
           case "issueShow":
           case "issueHide":
           case "issueRemoved":
@@ -690,6 +708,8 @@ const Index: React.FC<IProps> = () => {
           case "taskHide":
           case "taskSelect":
             //setSearchParams({tsk:toolInstance.response?.id as string});
+            // router.query.tsk=toolInstance.response?.id;
+            // router.push(router)
           case "taskRemoved":
             setClickedTool(toolInstance);
             break;
@@ -738,6 +758,8 @@ const Index: React.FC<IProps> = () => {
           if (data.response != undefined) {
             setCurrentContext(data.response);
             setOpenIssueDetails(true);
+            router.query.iss=data.response?.id;
+            router.push(router);
           }
         }
         break;
@@ -750,6 +772,8 @@ const Index: React.FC<IProps> = () => {
           if (data.response != undefined) {
             setCurrentContext(data.response);
             setOpenTaskDetails(true);
+            router.query.tsk=data.response?.id;
+            router.push(router)
           }
         }
         break;
@@ -881,6 +905,7 @@ const Index: React.FC<IProps> = () => {
   }, [currentViewMode, designAndRealityMaps]);
 
   useEffect(() => {
+    
     if (
       designMap &&
       Object.keys(designMap)?.length &&
@@ -895,6 +920,12 @@ const Index: React.FC<IProps> = () => {
         setSelectedReality(currentViewType);
       toolClicked({ toolName: "viewType", toolAction: currentViewType });
     }
+    if(router.isReady)
+    {
+      router.query.type=currentViewType;
+      router.push(router);
+    }
+    
   }, [currentViewType]);
 
   useEffect(() => {

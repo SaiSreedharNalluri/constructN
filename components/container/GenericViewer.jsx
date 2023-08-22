@@ -1220,7 +1220,20 @@ function GenericViewer(props) {
     list = list.data.result.mSnapshots.sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
-    if (list.length > 0) {
+    if(list.length>0 && router.query.snap!=null){
+      let mySnap=list.find((s)=>{if(s._id==router.query.snap)return s;})
+      setSnapshotList(list);
+      if (mySnap)
+      setCurrentSnapshot(mySnap);
+      else 
+      setCurrentSnapshot(list[list.length - 1]);
+      if (list.length > 1) {
+        setCurrentCompareSnapshot(list[list.length - 2]);
+      } else {
+        setCurrentCompareSnapshot(list[list.length - 1]);
+      }
+    }
+    else if (list.length > 0) {
       setSnapshotList(list);
       setCurrentSnapshot(list[list.length - 1]);
       if (list.length > 1) {
