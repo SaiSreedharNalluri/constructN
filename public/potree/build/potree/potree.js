@@ -71144,6 +71144,8 @@ void main() {
 
 		setView(position, target, duration = 0, callback = null){
 
+			let changeEvent = new CustomEvent("camerachange");
+
 			let endPosition = null;
 			if(position instanceof Array){
 				endPosition = new Vector3(...position);
@@ -71194,6 +71196,7 @@ void main() {
 
 					this.position.copy(pos);
 					this.lookAt(target);
+					document.dispatchEvent(changeEvent);
 
 				});
 
@@ -71203,6 +71206,7 @@ void main() {
 					if(callback){
 						callback();
 					}
+					document.dispatchEvent(changeEvent);
 				});
 			}
 
@@ -77446,24 +77450,31 @@ ENDSEC
 	      }
 		  
 	      function loadImageTexture(path) {
-	        return new Promise((resolve, reject) => {
-	          new TextureLoader().load(path, (texture) => {
+		return new Promise((resolve, reject) => {
+			new TextureLoader().load(
+			path,
+			(texture) => {
+				resolve(texture);
+			},
+			undefined,
+			(error) => {
+			new TextureLoader().load(`${Potree.resourcePath}/images/loading.jpg`, (texture) => {
 	            resolve(texture);
 	          });
-	        });
-	      }
-
-	      function updateTexture(texture) {
+			}
+			);
+		});
+		}
+		function updateTexture(texture) {
 	        target.texture = texture;
 	        target.mesh.material.uniforms.tColor.value = texture;
 	        mesh.material.needsUpdate = true;
 	      }
 
 	      viewer.scene.orientedImages[0].focused = image;
-	    	const tmpImagePath = `${Potree.resourcePath}/images/loading.jpg`;
-	      //const tmpImagePath = `${imagesPath}/thumbnails/${target.id}`;
-	      let texture = await loadImageTexture(tmpImagePath);
-	      updateTexture(texture);
+	     const tmpImagePath = `${imagesPath}/thumbnails/${target.id}`;
+		 let texture = await loadImageTexture(tmpImagePath);
+		  updateTexture(texture);
 	      setTimeout(() => {
 	        orientedImageControls.capture(image);
 	      }, 100);
@@ -77577,7 +77588,7 @@ ENDSEC
 
 			this.addEventListener("mousedown", () => {
 				if(this.currentlyHovered && this.currentlyHovered.image360){
-					this.focus(this.currentlyHovered.image360);
+					// this.focus(this.currentlyHovered.image360);
 					const event = new CustomEvent("onRingClick", {
 	                    detail: {
 	                        viewer: this.viewer.canvasId,
@@ -77589,7 +77600,7 @@ ENDSEC
 			});
 			this.addEventListener("touchend", () => {
 				if(this.currentlyHovered && this.currentlyHovered.image360){
-					this.focus(this.currentlyHovered.image360);
+					// this.focus(this.currentlyHovered.image360);
 					const event = new CustomEvent("onRingClick", {
 	                    detail: {
 	                        viewer: this.viewer.canvasId,
@@ -77696,9 +77707,11 @@ ENDSEC
 			
 			this.sphere.visible = false;
 			this.load(image360).then( () => {
-				this.sphere.visible = true;
-				this.sphere.material.map = image360.texture;
-				this.sphere.material.needsUpdate = true;
+				if (this.sphere) {
+					this.sphere.visible = true;
+					this.sphere.material.map = image360.texture;
+					this.sphere.material.needsUpdate = true;
+				}
 			});
 				let {course, pitch, roll} = image360;
 				this.sphere.rotation.set(
@@ -77788,9 +77801,11 @@ ENDSEC
 									//var sphereMaterial = new MeshBasicMaterial({ map: texture, side: DoubleSide });
 	                            	//image360.texture = sphereMaterial;
 									image360.texture = texture;
-									this.sphere.visible = true;
-									this.sphere.material.map = image360.texture;
-									this.sphere.material.needsUpdate = true;
+									if (this.sphere) {
+										this.sphere.visible = true;
+										this.sphere.material.map = image360.texture;
+										this.sphere.material.needsUpdate = true;
+									}
 									if (!resolved) {
 										resolve(null);
 									}
