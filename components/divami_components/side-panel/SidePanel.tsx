@@ -164,6 +164,13 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     let user = null;
     if (userObj) user = JSON.parse(userObj);
     if (user?.email) setEMail(user.email);
+
+    boot({alignment:"left",hideDefaultLauncher:true,horizontalPadding:60,email:user.email,name:user.firstName});//boot intercom
+
+    return () => {
+      shutdown();// shutdown intercom
+    };
+    
   }, [router.isReady]);
 
   const leftClickHandler = (e: any) => {
@@ -241,7 +248,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     setChatHovered(false);
   };
   useEffect(() => {
-    boot({alignment:"left",hideDefaultLauncher:true,horizontalPadding:60});//boot intercom
     const handleOutsideClick :any= (event:any) => {
       if (chatIconRef.current && !chatIconRef.current.contains(event.target)) {
         closeChat();
@@ -251,7 +257,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       document.addEventListener('click', handleOutsideClick);
     return () => {
       document.removeEventListener('click', handleOutsideClick);
-      shutdown();//shutdown intercom
     };
   }, []);
   return (

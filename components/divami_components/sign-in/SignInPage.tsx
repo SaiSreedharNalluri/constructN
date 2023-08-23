@@ -88,7 +88,7 @@ const SignInPage = () => {
               rememberMe: rememberMe,
               ...response?.result,
               password: rememberMe ? password : "",
-              email: rememberMe ? email : "",
+              email: rememberMe ? email : email,
             };
             localStorage.setItem(
               "userCredentials",
