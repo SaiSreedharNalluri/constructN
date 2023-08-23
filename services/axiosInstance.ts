@@ -1,7 +1,7 @@
 import axios from "axios";
 import { removeCookies } from "cookies-next";
 // eslint-disable-next-line react-hooks/rules-of-hooks
-let urlExclude = ["signin"];
+let urlExclude = ["signin","reset-password-link-validate"];
 const instance = axios.create();
 
 instance.interceptors.request.use(
@@ -29,7 +29,7 @@ instance.interceptors.response.use(
     ) {
     } else if (
       error?.response?.status === 401 &&
-      urlExclude.includes(error?.response?.config?.url?.split("/")?.pop()) ===
+      hasCommonElement(urlExclude,error?.response?.config?.url?.split("/")) ===
         false
     ) {
       if (typeof window !== "undefined") {
@@ -43,3 +43,11 @@ instance.interceptors.response.use(
   }
 );
 export default instance;
+export const hasCommonElement=(array1:any, array2:any)=>{
+  for (let i = 0; i < array1.length; i++) {
+    if (array2.includes(array1[i])) {
+        return true;
+    }
+}
+return false;
+}

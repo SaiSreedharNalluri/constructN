@@ -24,7 +24,7 @@ import { resetPasswordToken } from "../../../services/userAuth";
 import { useRouter } from "next/router";
 import PasswordRequired from "../password-field/PasswordRequired";
 
-const ResetPassword = ({ uniqueToken }: any) => {
+const ResetPassword = () => {
   const router = useRouter();
 
   // form wrapper code
@@ -32,15 +32,9 @@ const ResetPassword = ({ uniqueToken }: any) => {
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);
   const [tagList, setTagList] = useState<[string]>([""]);
-  const [showPopUp, setshowPopUp] = useState(false);
   const [canBeDisabled, setCanBeDisabled] = useState(false);
-  const [token, setToken] = useState("");
   const [showError, setShowError] = useState<boolean>(false);
   const [childData, setChildData] = useState<string>("");
-  const [dummyToken, setDummyToken] = useState<string>(
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiVVNSMzI1MzA5IiwiaWF0IjoxNjg0NzQ0NDQwLCJleHAiOjE2ODQ3NDUwNDB9.gB7nESNWljQp5l2lHytUWlnclMB6hnhIpyPV9sVKbyE"
-  );
-
   const handleFormData = (data: any) => {
     setFormData(data);
   };
@@ -92,9 +86,10 @@ const ResetPassword = ({ uniqueToken }: any) => {
   };
 
   const handleResetPassword = (formPassword: any) => {
+   if(router.isReady)
+   {
     resetPasswordToken(
-      // router.query.token as string,
-      uniqueToken,
+      router.query.token as string,
       formPassword.password as string
     )
       .then((response) => {
@@ -106,12 +101,10 @@ const ResetPassword = ({ uniqueToken }: any) => {
       })
       .catch((error) => {
         CustomToast(error.message,"error");
-
         router.push("/reset_completed");
-
         return;
-        // setCheckResponse(error.success);
       });
+   }
   };
   // form wrapper code
 
@@ -162,7 +155,6 @@ const ResetPassword = ({ uniqueToken }: any) => {
               formHandler={formHandler}
               canBeDisabled={canBeDisabled}
               loginField={true}
-              // customLabel={true}
             />
           </ButtonSection>
         </FormContainerSign>

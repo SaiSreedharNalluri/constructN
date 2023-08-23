@@ -67,11 +67,16 @@ export const resetPasswordToken = (token: string, password: string) => {
     });
 };
 
-export const resetPasswordInit = (email: string) => {
+export const resetPasswordInit = (email: string | null,token:string | null) => {
+  let requestData={};
+  console.log('vdsuyigdvsugidvs',email)
+  if(email!=null){
+    requestData={email:email}
+  }else{
+    requestData={token:token};
+  }
   return instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/users/reset-password-init`, {
-      email,
-    })
+    .put(`${process.env.NEXT_PUBLIC_HOST}/users/reset-password-init`,requestData)
     .then((response) => {
       return response.data;
     })
@@ -171,6 +176,16 @@ export const ResendEmailVerification = (token: string) => {
       throw error.response.data;
     });
 };
-
+export const validatePasswordToken = (token: string) => {
+  return instance
+    .get(`${process.env.NEXT_PUBLIC_HOST}/users/reset-password-link-validate/${token}`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error',error)
+      throw error.response.data;
+    });
+};
 
 
