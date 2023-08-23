@@ -1202,8 +1202,13 @@ const Index: React.FC<IProps> = () => {
   };
 
   const handleOnIssueFilter = (formData: any) => {
-    const result = issueFilterList.filter(
-      (item: Issue) =>
+     const result = issueFilterList.filter(
+      (item: Issue) => {
+      const dueDate = Moment(item.dueDate).format("YYYY-MM-DD");
+      const startDate = Moment(item.startDate).format("YYYY-MM-DD");
+      const fromDate = Moment(formData.fromDate).format("YYYY-MM-DD");
+      const toDate = Moment(formData.toDate).format("YYYY-MM-DD");
+      return (
         (formData.issueTypeData.includes(item.type) ||
           formData.issueTypeData.length == 0) &&
         (formData?.issuePriorityData?.includes(item.priority) ||
@@ -1218,12 +1223,13 @@ const Index: React.FC<IProps> = () => {
           (userInfo) => userInfo._id === formData.assigneesData?.user?._id
         ).length ||
           formData?.assigneesData?.length == 0 ||
-          !formData?.assigneesData) &&
-        (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
-          !formData.fromDate) &&
-        (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
-          !formData.toDate)
-    );
+          !formData?.assigneesData)
+          &&
+        ((!formData.fromDate && !formData.toDate) ||
+          (Moment(dueDate).isSameOrAfter(fromDate) && Moment(startDate).isSameOrAfter(fromDate)) &&
+          (Moment(dueDate).isSameOrBefore(toDate) && Moment(startDate).isSameOrBefore(toDate)))
+      );
+    });
     let count =
       formData?.issueTypeData?.length +
       formData?.issuePriorityData?.length +
@@ -1256,7 +1262,12 @@ const Index: React.FC<IProps> = () => {
 
   const handleOnTaskFilter = (formData: any) => {
     const result = taskFilterList.filter(
-      (item) =>
+      (item) => {        
+      const dueDate = Moment(item.dueDate).format("YYYY-MM-DD");
+      const startDate = Moment(item.startDate).format("YYYY-MM-DD");
+      const fromDate = Moment(formData.fromDate).format("YYYY-MM-DD");
+      const toDate = Moment(formData.toDate).format("YYYY-MM-DD");
+      return (
         (formData.taskType.includes(item.type) ||
           formData.taskType.length == 0) &&
         (formData?.taskPriority?.includes(item.priority) ||
@@ -1271,12 +1282,12 @@ const Index: React.FC<IProps> = () => {
         ) ||
           formData?.assigneesData?.length == 0 ||
           !formData?.assigneesData)
-      // &&
-      // (Moment(item.dueDate).format("YYYY-MM-DD") >= formData.fromDate ||
-      //   !formData.fromDate) &&
-      // (Moment(item.dueDate).format("YYYY-MM-DD") <= formData.toDate ||
-      //   !formData.toDate)
-    );
+          &&
+        ((!formData.fromDate && !formData.toDate) ||
+          (Moment(dueDate).isSameOrAfter(fromDate) && Moment(startDate).isSameOrAfter(fromDate)) &&
+          (Moment(dueDate).isSameOrBefore(toDate) && Moment(startDate).isSameOrBefore(toDate)))
+      );
+    });
     let count =
       formData?.taskType?.length +
       formData?.taskPriority?.length +

@@ -53,6 +53,7 @@ export const AddUsersEmailOverlay = ({
   roles,
   selectedProjectId,
   appendToTable,
+  tableData
 }: any) => {
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
@@ -60,6 +61,8 @@ export const AddUsersEmailOverlay = ({
   const [searchVal, setSearchVal] = useState("");
   const [hoveringOver, setHoveringOver] = useState("");
   const [enableAddUser, setEnableAddUser] = useState(false);
+  const [emailExistsError, setEmailExistsError] = useState("");
+  const [isDisabled, setDisabled] = useState(false);
   useEffect(() => {
     if (/\S+@\S+\.\S+/.test(form.email)) checkRegisterUser(form.email);
 
@@ -267,7 +270,14 @@ export const AddUsersEmailOverlay = ({
         CustomToast(err.message,"error");
       });
   };
-
+ const handleValideEmail=() => {
+  if ( /\S+@\S+\.\S+/.test(searchVal) 
+  ) if (tableData.some((user: any) => user.email === searchVal)) {
+    setEmailExistsError("User already exists in this Project"); 
+  } else {
+    checkRegisterUser(searchVal); 
+  }
+}
   return (
     <ProjectAddUsersListContainer>
       <HeaderContainer>
@@ -296,42 +306,39 @@ export const AddUsersEmailOverlay = ({
               placeholder={"Search User By Email ID"}
               onChange={(e: any) => {
                 setSearchVal(e.target?.value);
+                setDisabled(e.target.value.length >=1); 
+                setEmailExistsError("")
               }}
               onBlur={(e: any) => {
                 setSearchVal(e.target?.value);
               }}
               defaultValue={searchVal}
               type={"email"}
-              callback={() => {
-                if (
-                  /\S+@\S+\.\S+/.test(searchVal) &&
-                  !addedUsers.some((iter: any) => iter.email == searchVal)
-                ) {
-                  checkRegisterUser(searchVal);
-                }
-              }}
+              callback={handleValideEmail}
               className={undefined}
               width={"100% !important"}
               InputProps={{
                 endAdornment: (
                   <InputAdornment
                     position="end"
-                    onClick={() => {
-                      if (searchVal) {
-                        if (/\S+@\S+\.\S+/.test(searchVal) 
-                        && !addedUsers.some((iter: any) => iter.email === searchVal)) {
-                          checkRegisterUser(searchVal);
-                        }
-                      }
-                    }}
+                    onClick={handleValideEmail
+                    }
                   >
                     <EnterIcon width={18} height={18} src={BackArrow} alt="" />
                   </InputAdornment>
                 ),
               }}
             />
-          </AddUserEmailContainer>
+          {emailExistsError && 
+  <div style={{ color: "rgba(236, 52, 52, 1)",marginLeft: "4px",
+  fontFamily: "Open Sans",
+  fontWeight: 400,
+  fontSize: "14px",marginTop:"4px" }}>
+    {emailExistsError}
+  </div>
+    }
 
+          </AddUserEmailContainer>
           {/* </SearchAreaContainer> */}
         </HeaderActions>
       </TableHeader>
@@ -398,7 +405,7 @@ export const AddUsersEmailOverlay = ({
           </BackButton>
 
           <CustomButton
-            type={"contained"}
+            type={isDisabled ?"contained" :"disabled"}
             label={"Add User"}
             formHandler={onAddUser}
           />
