@@ -600,6 +600,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           roles={rolesArr}
           selectedProjectId={router.query.projectId}
           appendToTable={appendToTable}
+          tableData={tableData}
         />
       </Drawer>:<></>}
 
