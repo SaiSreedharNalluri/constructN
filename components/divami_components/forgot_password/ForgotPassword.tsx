@@ -51,7 +51,7 @@ const ForgotPassword = () => {
   const handleForgotPassword = (email: string) => {
     if(resetPasswordEnable){
       setResetPasswordEnable(false)
-      resetPasswordInit(email?.toLocaleLowerCase())
+      resetPasswordInit(email?.toLocaleLowerCase(),null)
       .then((response: any) => {
         if (response?.success) {
           CustomToast(response?.message,"success");
