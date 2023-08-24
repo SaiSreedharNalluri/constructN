@@ -919,8 +919,9 @@ const Index: React.FC<IProps> = () => {
         setSelectedDesign(currentViewType);
 
       toolClicked({ toolName: "viewType", toolAction: currentViewType });
-    } else {
-      if (selectedReality !== currentViewType)
+    } else if(currentViewType) {
+      //console.log(currentViewType, "Here ...",selectedReality)
+      if (selectedReality && selectedReality !== currentViewType)
         setSelectedReality(currentViewType);
       toolClicked({ toolName: "viewType", toolAction: currentViewType });
     }
