@@ -38,7 +38,7 @@ const ResetLink = ({ queryMail }: any) => {
   }, [queryMail]);
 
   const handleForgotPassword = (email: string) => {
-    resetPasswordInit(email?.toLocaleLowerCase())
+    resetPasswordInit(email?.toLocaleLowerCase(),null)
       .then((response: any) => {
         if (response?.success) {
           CustomToast(response?.message,"success");

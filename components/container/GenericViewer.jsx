@@ -1,5 +1,6 @@
 import Script from 'next/script';
 import Moment from 'moment';
+import {useRouter} from 'next/router';
 import {Rnd } from 'react-rnd';
 import { Mixpanel } from '../analytics/mixpanel';
 import ErrorNotFound from "../../public/divami_icons/ErrorNotFound.svg";
@@ -154,6 +155,8 @@ function GenericViewer(props) {
     Math.ceil(totalSnaphotsCount / 10)
   );
 
+  const router = useRouter();
+
   const initializeOptions = {
     env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
     api: "streamingV2", // for models uploaded to EMEA change this option to 'derivativeV2_EU'
@@ -187,8 +190,8 @@ function GenericViewer(props) {
     }
   }
 
-  const getViewerTypeFromViewType = () => {
-    switch (viewType) {
+  const getViewerTypeFromViewType = (myViewType=viewType) => {
+    switch (myViewType) {
       case 'pointCloud':
         if (currentViewMode.current == 'Design') {
           currentViewMode.current = 'Reality'
@@ -858,14 +861,32 @@ function GenericViewer(props) {
 
   async function loadViewerData() {
     console.log("Generic Viewer Load Viewer Data", viewerType, currentViewType.current, mapboxUtils, potreeUtils, designMap, designMap)
+    //setViewerType(getViewerTypeFromViewType(router.query.type));
     switch (currentViewerType.current) {
       case 'Forge':
-        if (forgeUtils.current != undefined) {
+        if(router.query.type=='pointCloud')
+          {
+            pushToolResponse({
+              toolName: 'viewMode',
+              toolAction: 'Reality',
+            });
+            setViewerType('Potree');
+          }
+        else if(router.query.type=='orthoPhoto')
+          {
+            pushToolResponse({
+              toolName: 'viewMode',
+              toolAction: 'Reality',
+            });
+            setViewerType('Mapbox');
+          }
+        else if (forgeUtils.current != undefined) {
           forgeUtils.current.setStructure(structure);
           if (designList.length > 0) {
             forgeUtils.current.setType(currentViewType.current);
             forgeUtils.current.updateData(getForgeModels(designMap));
-          } else {
+          } 
+          else {
             pushToolResponse({
               toolName: 'viewMode',
               toolAction: 'Reality',
@@ -877,12 +898,28 @@ function GenericViewer(props) {
 
         break;
       case 'Potree':
-        if (potreeUtils.current != undefined) {
+        if(router.query.type=='orthoPhoto')
+        {
+          // pushToolResponse({
+          //   toolName: 'viewMode',
+          //   toolAction: 'Reality',
+          // });
+          setViewerType('Mapbox');
+        }
+        else if (potreeUtils.current != undefined) {
           potreeUtils.current.setStructure(structure);
         }
         break;
       case 'Mapbox':
-        if (mapboxUtils.current != undefined) {
+        if(router.query.type=='pointCloud')
+          {
+            // pushToolResponse({
+            //   toolName: 'viewMode',
+            //   toolAction: 'Reality',
+            // });
+            setViewerType('Potree');
+          }
+        else if (mapboxUtils.current != undefined) {
           mapboxUtils.current.setProject(project);
           mapboxUtils.current.setStructure(structure);
         }
@@ -1220,7 +1257,20 @@ function GenericViewer(props) {
     list = list.data.result.mSnapshots.sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
-    if (list.length > 0) {
+    if(list.length>0 && router.query.snap!=null){
+      let mySnap=list.find((s)=>{if(s._id==router.query.snap)return s;})
+      setSnapshotList(list);
+      if (mySnap)
+      setCurrentSnapshot(mySnap);
+      else 
+      setCurrentSnapshot(list[list.length - 1]);
+      if (list.length > 1) {
+        setCurrentCompareSnapshot(list[list.length - 2]);
+      } else {
+        setCurrentCompareSnapshot(list[list.length - 1]);
+      }
+    }
+    else if (list.length > 0) {
       setSnapshotList(list);
       setCurrentSnapshot(list[list.length - 1]);
       if (list.length > 1) {
