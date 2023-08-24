@@ -145,7 +145,14 @@ const setPrevList = () => {
     // setPage(0);
   }
 };
-
+const setNewList = (newOffset:number,snap:string) => {
+  if (offset < totalPages) {
+    initData&&getSnapshotList(initData.project, initData?.structure._id, newOffset, pageSize,snap);
+    setOffset(newOffset);
+    
+    //setPage(newPage);
+  }
+};
 const setNextList = () => {
   if (offset > 1) {
     initData&&getSnapshotList(initData.project, initData?.structure._id, offset - 1, pageSize);
@@ -173,14 +180,45 @@ const setCurrentCompareSnapshot = (snapshot:ISnapshot) => {
   }
 };
 
-const getSnapshotList = async (projectId:string, structurId:string,offset:Number,limit:Number) => {
+const getSnapshotList = async (projectId:string, structurId:string,offset:Number,limit:Number,setSnap:string="") => {
   let list= await getSnapshotsList(projectId, structurId,offset||1,limit||10);
   setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
   //let list:ISnapshot[];
   let snapList:ISnapshot[] = list.data.result.mSnapshots.sort(
     (a:ISnapshot, b:ISnapshot) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
-  if (snapList.length > 0) {
+  if (snapList.length>0 && setSnap!==""){
+    let mySnap=snapList.find((s)=>{if(s._id==setSnap)return s;})
+    //setSnapshotList(snapList);
+    if (mySnap){
+      setCurrentSnapshot(mySnap);
+      setCurrentCompareSnapshot(snapList[snapList.length - 1]); 
+    }
+    else {
+    setCurrentSnapshot(snapList[snapList.length - 1]);
+    if (snapList.length > 1) {
+      setCurrentCompareSnapshot(snapList[snapList.length - 2]);
+    } 
+    else {
+      setCurrentCompareSnapshot(snapList[snapList.length - 1]);
+    }
+  }
+  }
+  else if(snapList.length>0 && router.query.snap!=null){
+    let mySnap=snapList.find((s)=>{if(s._id==router.query.snap)return s;})
+    //setSnapshotList(list);
+    if (mySnap)
+    setCurrentSnapshot(mySnap);
+    else 
+    setCurrentSnapshot(snapList[snapList.length - 1]);
+    if (snapList.length > 1) {
+      setCurrentCompareSnapshot(snapList[snapList.length - 2]);
+    } 
+    else {
+      setCurrentCompareSnapshot(snapList[snapList.length - 1]);
+    }
+  }
+  else if (snapList.length > 0) {
     //setSnapshotList(list);
     //dispatchChangeViewerData();
     setCurrentSnapshot(snapList[snapList.length - 1]);
@@ -205,10 +243,12 @@ const getSnapshotList = async (projectId:string, structurId:string,offset:Number
             initData&& <div><NewGenViewer 
             tmcBase={<TimeLineComponent currentSnapshot={selectedBaseSnapshot|| initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
                     setNextList={setNextList}
+                    setNewList={setNewList}
                     totalPages={totalPages}
                     offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
             tmcCompare={<TimeLineComponent currentSnapshot={selectedCompareSnapshot||initData.currentSnapshotCompare||initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
                         setNextList={setNextList}
+                        setNewList={setNewList}
                         totalPages={totalPages}
                         offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
             data={initData} updateData={updateData}></NewGenViewer> </div>
