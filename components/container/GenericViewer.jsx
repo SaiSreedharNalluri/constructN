@@ -1250,14 +1250,31 @@ function GenericViewer(props) {
   };
 
 
-  const getSnapshotList = async (projectId, structurId,offset,limit) => {
+  const getSnapshotList = async (projectId, structurId,offset,limit,snap="") => {
     let list = await getSnapshotsList(projectId, structurId,offset||1,limit||10);
     setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
     setSnapshotListCal(list.data?.result?.calendarSnapshots)
     list = list.data.result.mSnapshots.sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
-    if(list.length>0 && router.query.snap!=null){
+    if (list.length>0 && snap!==""){
+      let mySnap=list.find((s)=>{if(s._id==snap)return s;})
+      setSnapshotList(list);
+      if (mySnap){
+        setCurrentSnapshot(mySnap);
+        setCurrentCompareSnapshot(list[list.length - 1]); 
+      }
+      else {
+      setCurrentSnapshot(list[list.length - 1]);
+      if (list.length > 1) {
+        setCurrentCompareSnapshot(list[list.length - 2]);
+      } 
+      else {
+        setCurrentCompareSnapshot(list[list.length - 1]);
+      }
+    }
+    }
+    else if(list.length>0 && router.query.snap!=null){
       let mySnap=list.find((s)=>{if(s._id==router.query.snap)return s;})
       setSnapshotList(list);
       if (mySnap)
@@ -1266,7 +1283,8 @@ function GenericViewer(props) {
       setCurrentSnapshot(list[list.length - 1]);
       if (list.length > 1) {
         setCurrentCompareSnapshot(list[list.length - 2]);
-      } else {
+      } 
+      else {
         setCurrentCompareSnapshot(list[list.length - 1]);
       }
     }
@@ -2004,6 +2022,14 @@ function GenericViewer(props) {
       // setPage(0);
     }
   };
+  const setNewList = (newOffset,snap) => {
+    if (offset <= totalPages) {
+      getSnapshotList(structure.project, structure._id, newOffset, pageSize,snap);
+      setOffset(newOffset);
+      
+      //setPage(newPage);
+    }
+  };
 
   const setNextList = () => {
     if (offset > 1) {
@@ -2022,9 +2048,10 @@ function GenericViewer(props) {
          { snapshotList.length > 0 ?
           <TimeLineComponent currentSnapshot={snapshot}snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
               setPrevList={setPrevList}   
+              setNewList={setNewList}
               setNextList={setNextList}
               totalPages={totalPages}
-            offset={offset}
+              offset={offset}
 
             ></TimeLineComponent>
             : <></>
@@ -2037,6 +2064,7 @@ function GenericViewer(props) {
           { snapshotList.length > 0 ?     
             <TimeLineComponent currentSnapshot={compareSnapshot} snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
             setPrevList={setPrevList}
+            setNewList={setNewList}
             setNextList={setNextList}
             totalPages={totalPages}
             offset={offset}
