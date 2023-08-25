@@ -42,6 +42,7 @@ interface IProps {
   totalSnaphotsCount: any;
   structure: any;
   setPrevList: any;
+  setNewList?:any
   setNextList: any;
   totalPages: any;
   offset: any;
@@ -58,6 +59,7 @@ const TimeLineComponent: React.FC<IProps> = ({
   totalSnaphotsCount = 0,
   structure,
   setPrevList,
+  setNewList,
   setNextList,
   totalPages,
   offset,
@@ -87,19 +89,30 @@ const TimeLineComponent: React.FC<IProps> = ({
       .toString();
     const value = snapshotList.findIndex(
       (item) =>
-        moment(item?.date).format("YYYY-MM-DD").toString() == dateFormatted
+        moment(item?.date).format("YYYY-MM-DD").toString() === dateFormatted
     );
     if (value > -1) {
       setPage(value);
     }
     else if(snapshotListCal)
     {
+      console.log(snapshotListCal,"Array Order")
+    
       const value = snapshotListCal.findIndex(
         (item) =>
-          moment(item?.date).format("YYYY-MM-DD").toString() == dateFormatted
+          moment(item?.date).format("YYYY-MM-DD").toString() === dateFormatted
       );
-     const snp = await (await getSnapshotDetails(structure.project,structure._id,snapshotListCal[value]._id!))?.data?.result
-      setCurrentSnapshot(snp);
+      console.log(snapshotListCal,"Array Order", value, snapshotListCal[value]._id);
+      
+      if (value>1)
+      setNewList(Math.ceil((value-1) / 10),snapshotListCal[value]._id)
+      else
+      setNewList(0,snapshotListCal[0]._id)
+      
+      
+
+    //  const snp = await (await getSnapshotDetails(structure.project,structure._id,snapshotListCal[value]._id!))?.data?.result
+    //   setCurrentSnapshot(snp);
     }
   };
 
