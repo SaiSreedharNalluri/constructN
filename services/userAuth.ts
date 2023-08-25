@@ -69,7 +69,6 @@ export const resetPasswordToken = (token: string, password: string) => {
 
 export const resetPasswordInit = (email: string | null,token:string | null) => {
   let requestData={};
-  console.log('vdsuyigdvsugidvs',email)
   if(email!=null){
     requestData={email:email}
   }else{

@@ -11,7 +11,7 @@ const Index: React.FC = () => {
     setMessage("");
     setLoading(true);
     formValue.email = formValue.email.toLocaleLowerCase();
-    resetPasswordInit(formValue)
+    resetPasswordInit(formValue,null)
       .then((response) => {
         if (response.success === true) {
           CustomToast("Redirecting ... ","info");
