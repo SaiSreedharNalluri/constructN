@@ -277,7 +277,15 @@ export const AddUsersEmailOverlay = ({
   } else {
     checkRegisterUser(searchVal); 
   }
+  else{
+    setEmailExistsError("Please enter valid email")
+  }
 }
+useEffect(()=>{
+if(addedUsers.length>0){
+  setDisabled(true)
+}
+},[addedUsers])
   return (
     <ProjectAddUsersListContainer>
       <HeaderContainer>
@@ -306,7 +314,6 @@ export const AddUsersEmailOverlay = ({
               placeholder={"Search User By Email ID"}
               onChange={(e: any) => {
                 setSearchVal(e.target?.value);
-                setDisabled(e.target.value.length >=1); 
                 setEmailExistsError("")
               }}
               onBlur={(e: any) => {
@@ -405,7 +412,7 @@ export const AddUsersEmailOverlay = ({
           </BackButton>
 
           <CustomButton
-            type={isDisabled ?"contained" :"disabled"}
+            type={addedUsers.length >= 1 && isDisabled ? "contained":"disabled"}
             label={"Add User"}
             formHandler={onAddUser}
           />
