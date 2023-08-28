@@ -58,7 +58,7 @@ export const SelectedTimeLine = styled("div")({
   borderBottomRightRadius: 0,
  
   fontSize: "12px",
-  color: "#101F4C",
+  // color: "#101F4C",
   padding: "6px 10px",
 });
 

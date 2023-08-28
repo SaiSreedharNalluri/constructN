@@ -272,7 +272,10 @@ const TimeLineComponent: React.FC<IProps> = ({
         onMouseEnter={()=>{setBottomNav(true)}}  
         isFullScreen={isFullScreen}>
           <SelectedTimeLine
-            style={{ bottom: bottomNav ? "36px" : "0px" }}
+            style={{ bottom: bottomNav ? "36px": "0px",
+            backgroundColor:bottomNav?"#FF843F ":"",
+            color:bottomNav?"white":"#101F4C" 
+          }}
             onClick={toggleTimeline}
             data-testid={"selected-timeline"}
           >
