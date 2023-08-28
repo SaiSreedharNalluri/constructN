@@ -16,7 +16,7 @@ import {
 import { toast } from "react-toastify";
 import ChangeIcon from "./changeIcon";
 import { TooltipText } from "../divami_components/side-panel/SidePanelStyles";
-
+import moment from 'moment-timezone';
 const ProjectDetails: React.FC = () => {
   let [projectData, setProjectData] = useState<IProjects>();
   const router = useRouter();
@@ -191,9 +191,13 @@ const ProjectDetails: React.FC = () => {
                       Created On
                     </label>
                   </div>
-                  <div className="w-2/3 mr-[24px] ">
+                  <div className="w-1/3 ">
                     <p className="text-[#101F4C]">{projectData?.email}</p>
                     <label className=" text-sm text-[#787878]">Email ID</label>
+                  </div>
+                  <div className="w-1/3 ">
+                    <p className="text-[#101F4C]">{projectData?.timeZone?projectData?.timeZone +" " +`(GMT ${moment.tz(projectData?.updatedAt, projectData?.timeZone|| "").format(`Z`)})`:"N/A" }  </p>
+                    <label className=" text-sm text-[#787878]">Time Zone</label>
                   </div>
                 </div>
           </div>
