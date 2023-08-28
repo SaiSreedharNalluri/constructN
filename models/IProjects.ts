@@ -14,6 +14,7 @@ export interface IProjects {
   LastUpdatedOn?: string;
   coverPhoto: string;
   utm: string;
+  timeZone:string
 }
 export interface Contact {
   code: string;
