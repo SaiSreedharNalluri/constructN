@@ -30,3 +30,23 @@ export const getDesignTM = async (
 
   }
 };
+
+export const getDesignPointCloudTM = async (
+  path: string
+) => {
+try {
+    return await instance.get(
+    `${path}/pointcloud/tm.json`
+  ); 
+} catch (error) {
+  console.log("Error TmJson:", error);
+  return {}
+
+}
+};
+
+export const getDesignPointCloudPath = (
+  path: string
+  ) => {
+    return `${path}/pointcloud/cloud.json`
+}

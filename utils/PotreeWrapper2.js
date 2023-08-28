@@ -2,6 +2,8 @@
 import * as THREE from "three"
 import { PotreeInstance } from "./PotreeWrapper";
 import { isMobile } from "./ViewerDataUtils";
+import { getDesignPointCloudPath, getDesignPointCloudTM } from "../services/design";
+import { getStructurePath } from "./S3Utils";
 
 export const PotreeViewerUtils = () => {
 
@@ -280,6 +282,25 @@ export const PotreeViewerUtils = () => {
                     break;
             }
         }
+        if(pointClouds.length == 0) {
+            let tmResponse = await getDesignPointCloudTM(getStructurePath(_structure.project, _structure._id));
+            console.log("No pointcloud: ", pointClouds.length, tmResponse);
+            // let tmResponse = await getDesignPointCloudTM(getStructurePath(_structure.project, _structure._id));
+            if (tmResponse.data) {
+                let tmMatrix =  tmResponse.data.tm ? new THREE.Matrix4().fromArray(tmResponse.data.tm).transpose() : [];
+                let pointCloudData = {
+                    id: _structure._id,
+                    pointCloud: getDesignPointCloudPath(getStructurePath(_structure.project, _structure._id)),
+                    tm: tmMatrix,
+                    offset: tmResponse.data ? tmResponse.data.offset: [],
+                }
+                pointClouds.push(pointCloudData);
+                // console.log("tmResponse: ", tmResponse, pointCloudData);
+            } else {
+                console.log("No Structure Level Pointcloud Available: ");
+            }
+
+        }
         // isLoadFloormap && await loadFloormap();
         loadPointCloud(pointClouds);
         
@@ -324,7 +345,7 @@ export const PotreeViewerUtils = () => {
 
         _currentMode = "3d";
         _isPointCloudLoaded = pointCloudLoaded;
-        if (loadLayersOnDataLoadCompletion()) {
+        if (pointCloudDataArray.length == 0 || loadLayersOnDataLoadCompletion()) {
             loadLayers();
             loadIssues();
             loadTasks();
