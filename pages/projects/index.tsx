@@ -366,15 +366,12 @@ const Index: React.FC<any> = () => {
       if (userObj) user = JSON.parse(userObj);
       if (user?.email) setEMail(user.email);
 
-
-    //boot({alignment:"left",name:user?.fullName,email:user.email}); //boot intercom
-    }
-    boot({alignment:"left",customLauncherSelector:"chatSupport",hideDefaultLauncher:true, horizontalPadding:60}); //boot intercom
+      boot({alignment:"left",customLauncherSelector:"chatSupport",hideDefaultLauncher:true, horizontalPadding:60,name:user.firstName,email:user.email}); //boot intercom
     
+    }
 
     return () => {
-      // shutdown intercom
-      shutdown();
+      shutdown();// shutdown intercom
   }
   }, [router.isReady]);
 
