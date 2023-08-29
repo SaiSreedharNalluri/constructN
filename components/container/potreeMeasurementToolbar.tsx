@@ -35,7 +35,7 @@ style={{ width: 32, height: 32 }}
  </div>
  </Tooltip>
  <Tooltip title="Height" placement="left">
- <div className='heightMeasure'>
+ <div id='heightMeasure'>
  <HeightIcon
 className={`my-1 mx-2 text-[#36415D] hover:text-[#FF843F]`}
 style={{ width: 32, height: 32 }}
