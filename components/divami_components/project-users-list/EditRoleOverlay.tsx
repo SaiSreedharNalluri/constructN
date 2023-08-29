@@ -28,6 +28,7 @@ import moment from "moment";
 import CustomSelect from "../custom-select/CustomSelect";
 import { useState } from "react";
 import { UserDefaultIcon } from "./ProjectUsersListStyles";
+import { setTheFormatedTime } from "../../../utils/ViewerDataUtils";
 
 export const EditRoleOverlay = ({
   onClose,
@@ -91,7 +92,7 @@ export const EditRoleOverlay = ({
 
         <AssignedLabel>Assigned On</AssignedLabel>
         <AssignedValue>
-          {moment(userData.updatedAt).format("DD MMM YYYY")}
+          {setTheFormatedTime(userData.updatedAt)}
         </AssignedValue>
         <AssignedLabel bottom>Role</AssignedLabel>
         <CustomSelect

@@ -117,6 +117,7 @@ import { ActivityLogContainer } from "../issue_detail/IssueDetailStyles";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
 import AttachmentPreview from "../attachmentPreview";
+import { setTheFormatedTime } from "../../../utils/ViewerDataUtils";
 
 interface ContainerProps {
   footerState: boolean;
@@ -433,7 +434,7 @@ function BasicTabs(props: any) {
                 data-testid="task-captured"
               >
                 {" "}
-                {Moment(taskState?.TabOne?.capturedOn).format("DD MMM YYYY")}
+                {setTheFormatedTime(taskState?.TabOne?.capturedOn)}
               </CaptureStatus>
             </SecondContCapt>
           </SecondBodyDiv>
@@ -451,7 +452,7 @@ function BasicTabs(props: any) {
             <SecondContDueDate>
               <DueDateTitle>Due date</DueDateTitle>
               <ThirdContDueDate style={{ color: "#101F4B" }}>
-                {Moment(taskState?.TabOne?.dueDate).format("DD MMM 'YY")}
+                {setTheFormatedTime(taskState?.TabOne?.dueDate)}
               </ThirdContDueDate>
             </SecondContDueDate>
           </SecondBodyDiv>
@@ -1072,7 +1073,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     // data.startDate = data.startDate
     //   ? moment(data.startDate).format("YYYY-MM-DD")
     //   : "";
-    data.startDate = `${moment(data.startDate).toISOString()}`;
+    data.startDate = `${setTheFormatedTime(data.startDate).toString()}`;
 
     data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
@@ -1080,7 +1081,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     // data.dueDate = data.dueDate
     //   ? moment(data.dueDate).format("YYYY-MM-DD")
     //   : "";
-    data.dueDate = `${moment(data.dueDate).toISOString()}`;
+    data.dueDate = `${setTheFormatedTime(data.dueDate).toString()}`;
 
     if (!data.startDate) {
       data = _.omit(data, "startDate");

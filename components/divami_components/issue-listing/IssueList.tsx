@@ -79,6 +79,7 @@ import {
 } from "../task_list/TaskListStyles";
 import { DownloadTable } from "../toolbar/DownloadTable";
 import { downloadMenuOptions, getDownladableList } from "./Constants";
+import { setTheFormatedTime } from "../../../utils/ViewerDataUtils";
 
 interface IProps {
   closeOverlay: () => void;
@@ -539,7 +540,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
                         <ThirdHeader>
                           <ProgressChild>
-                            Due by {Moment(val.dueDate).format("DD MMM 'YY")}
+                            Due by {setTheFormatedTime(val.dueDate)}
                           </ProgressChild>
                           <SmallDivider src={smallDivider} alt="progress" />
 

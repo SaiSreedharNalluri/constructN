@@ -33,6 +33,7 @@ import html2canvas from "html2canvas";
 import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import plusCircleIconHighlighted from "../../../public/divami_icons/plusCircleIconHighlighted.svg";
+import { setTheFormatedTime } from "../../../utils/ViewerDataUtils";
 const Task = ({
   rightMenuClickHandler,
   tasksList,
@@ -148,13 +149,13 @@ const Task = ({
         )[0]?.defaultValue);
 
     // data.startDate = moment(data.startDate).format("YYYY-MM-DD");
-    data.startDate = `${moment(data.startDate).toISOString()}`;
+    data.startDate = `${setTheFormatedTime(data.startDate).toString()}`;
 
-    data.dueDate = formData
+     data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
     // data.dueDate = moment(data.dueDate).format("YYYY-MM-DD");
-    data.dueDate = `${moment(data.dueDate).toISOString()}`;
+    data.dueDate = `${setTheFormatedTime(data.dueDate).toString()}`;
 
     data.attachments = formData.filter(
       (item: any) => item.id === "file-upload"

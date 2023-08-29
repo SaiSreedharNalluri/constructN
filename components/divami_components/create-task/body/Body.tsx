@@ -24,6 +24,7 @@ import {
 } from "../../../../services/task";
 import { getProjectUsers } from "../../../../services/project";
 import UploadedImagesList from "../../uploaded-images-list/UploadedImagesList";
+import { setTheFormatedTime } from "../../../../utils/ViewerDataUtils";
 
 const BodyContainer = styled(Box)({
   paddingLeft: "20px",
@@ -302,12 +303,12 @@ const Body = ({
                   if (each.id == "start-date") {
                     return {
                       ...each,
-                      defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
+                      defaultValue: setTheFormatedTime(new Date()),
                     };
                   } else {
                     return {
                       ...each,
-                      defaultValue: Moment(new Date()).format("MM/DD/YYYY"),
+                      defaultValue: setTheFormatedTime(new Date()),
                     };
                   }
                 }),

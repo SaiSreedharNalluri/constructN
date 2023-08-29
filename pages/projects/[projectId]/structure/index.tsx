@@ -54,6 +54,7 @@ import { IUser } from "../../../../models/IUser";
 import {
   useSearchParams,
 } from 'react-router-dom';
+import { setTheFormatedTime } from "../../../../utils/ViewerDataUtils";
 
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -1205,10 +1206,10 @@ const Index: React.FC<IProps> = () => {
   const handleOnIssueFilter = (formData: any) => {
      const result = issueFilterList.filter(
       (item: Issue) => {
-      const dueDate = Moment(item.dueDate).format("YYYY-MM-DD");
-      const startDate = Moment(item.startDate).format("YYYY-MM-DD");
-      const fromDate = Moment(formData.fromDate).format("YYYY-MM-DD");
-      const toDate = Moment(formData.toDate).format("YYYY-MM-DD");
+      const dueDate = setTheFormatedTime(item.dueDate);
+      const startDate = setTheFormatedTime(item.startDate);
+      const fromDate = setTheFormatedTime(formData.fromDate);
+      const toDate = setTheFormatedTime(formData.toDate);
       return (
         (formData.issueTypeData.includes(item.type) ||
           formData.issueTypeData.length == 0) &&
@@ -1264,10 +1265,10 @@ const Index: React.FC<IProps> = () => {
   const handleOnTaskFilter = (formData: any) => {
     const result = taskFilterList.filter(
       (item) => {        
-      const dueDate = Moment(item.dueDate).format("YYYY-MM-DD");
-      const startDate = Moment(item.startDate).format("YYYY-MM-DD");
-      const fromDate = Moment(formData.fromDate).format("YYYY-MM-DD");
-      const toDate = Moment(formData.toDate).format("YYYY-MM-DD");
+      const dueDate = setTheFormatedTime(item.dueDate);
+      const startDate = setTheFormatedTime(item.startDate);
+      const fromDate = setTheFormatedTime(formData.fromDate);
+      const toDate = setTheFormatedTime(formData.toDate);
       return (
         (formData.taskType.includes(item.type) ||
           formData.taskType.length == 0) &&
