@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo, useRef } from 'react';
 import { PotreeViewerUtils } from "../../utils/PotreeWrapper";
-
+import PotreeMeasurementToolbar from './potreeMeasurementToolbar';
 function PotreeViewer(props) {
     const [viewerCount, setViewerCount] = useState(props.viewerCount);
     const viewerId = `potreeViewer_${viewerCount}`;
@@ -37,7 +37,7 @@ function PotreeViewer(props) {
 			        {/* <i title='fullscreen' id="fp_fullscreen_1" data='{"id": "viewer_1", "type": "fp_fullscreen"}' className="material-icons absolute top-1 right-1">fullscreen</i>
 			        <i title='minimise' id="fp_minimise_1" data='{"id": "viewer_1", "type": "fp_fullscreen"}' className="material-icons absolute top-1 right-1 hidden" >fullscreen_exit</i> */}
 			    <canvas id={canvasId}></canvas>
-		    </div>
+              </div>
         </div>
         </React.Fragment>
     );

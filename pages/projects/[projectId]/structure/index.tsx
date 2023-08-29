@@ -482,7 +482,7 @@ const Index: React.FC<IProps> = () => {
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
-    if(router.isReady){
+    if(router.isReady && structure){
     router.query.structId=structure?._id;
     router.push(router);
     }
