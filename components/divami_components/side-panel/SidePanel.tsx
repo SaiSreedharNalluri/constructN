@@ -44,6 +44,8 @@ import {
 } from "./SidePanelStyles";
 import { Tooltip } from "@mui/material";
 import { getCookie } from "cookies-next";
+import { format } from 'date-fns';
+import moment from 'moment-timezone';
 interface IProps {
   onChangeData: () => void;
 }
@@ -136,6 +138,9 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
 
 
   const [active, setActive] = useState(router.pathname.split("/").pop());
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [timeZone, setTimeZone] = useState('');
   const chatIconRef:any = useRef(null);
   // const currentUrl = window.location.href;
   // const urlString = currentUrl.split("/")[5];
@@ -210,6 +215,9 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         //add open Chat code
         openChat();
         break;
+      case "timeZone":
+        router.push(`/projects/${router.query.projectId as string}/settings`);
+        break;
       default:
         router.push(`/projects/${router.query.projectId as string}/structure`);
     }
@@ -259,6 +267,36 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       document.removeEventListener('click', handleOutsideClick);
     };
   }, []);
+  
+ 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+      setCurrentDate(new Date())
+    }, 1000); 
+
+    return () => clearInterval(interval); 
+  }, []);
+
+  const formattedTime = format(currentTime, 'h:mm a');
+  // const formattedYear = format(currentDate, 'yyyy');
+  // const formattedMonth = format(currentDate, 'MM');
+  // const formattedDay = format(currentDate, 'dd');
+  // const formateDate=`${formattedYear}-${formattedMonth}-${formattedDay}`
+  // console.log(formateDate);
+  
+//  console.log(Intl.DateTimeFormat().resolvedOptions());
+ 
+  useEffect(() => {
+    const timeZoneName = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    setTimeZone(timeZoneName);
+  }, []);
+  // console.log(timeZone);
+  const timezone=moment.tz(timeZone).format("z");
+  // console.log(timezone);
+  // console.log(moment.tz(timeZone).format('z'));
+  
   return (
     <SideMenuContainer data-testid="const-custom-sidepanel">
       {config.map((item, index) => (
@@ -294,7 +332,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         </SideMenuOptionContainer>
       ))}
       {supportItemsConfig.map((item, index) => (
-        <SideMenuOptionContainer ref={chatIconRef}  className="fixed bottom-0" key={index}>
+        <SideMenuOptionContainer ref={chatIconRef}  className="fixed bottom-[50px]" key={index}>
           <SideMenuOption
           // onClick={() =>
           //   item.label === "settings" ? handleClick(item) : null
@@ -329,6 +367,15 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           </SideMenuOption>
         </SideMenuOptionContainer>
       ))}
+         <div  className=" text-[12px] fixed bottom-1 text-center text-[#787878]">
+            <TooltipText title="Change time zone" placement="right">
+            {/* <div id="timeZone" className="py-1 px-[2px] hover:border border-[#FF843F] border-solid rounded-sm cursor-pointer" onClick={leftClickHandler}>{formattedTime}</div> */}
+              <div id="timeZone" className="py-[6px]  px-[2px] hover:bg-[#FF843F] rounded-sm  cursor-pointer hover:text-white " onClick={leftClickHandler}>
+              <div >{formattedTime}</div>
+            <div className="">({timezone})</div>
+              </div>
+            </TooltipText>
+          </div>
     </SideMenuContainer>
   );
 };
