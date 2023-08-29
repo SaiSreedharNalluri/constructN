@@ -355,7 +355,7 @@ export const isMobile=()=>{
         }
         
 }
-    export const setTheFormatedTime=(utcTime)=>{
+    export const setTheFormatedDate=(utcTime)=>{
         
         let timeZone= 'America/New_York'
         let formatedTime

@@ -123,7 +123,7 @@ import Chip from "@mui/material/Chip";
 import moment from "moment";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import AttachmentPreview from "../attachmentPreview";
-import { setTheFormatedTime } from "../../../utils/ViewerDataUtils";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -468,7 +468,7 @@ function BasicTabs(props: any) {
                 data-testid="issue-captured"
               >
                 {" "}
-                {setTheFormatedTime(taskState?.TabOne?.capturedOn)}
+                {setTheFormatedDate(taskState?.TabOne?.capturedOn)}
               </CaptureStatus>
             </SecondContCapt>
           </SecondBodyDiv>
@@ -493,7 +493,7 @@ function BasicTabs(props: any) {
                 data-testid="issue-duedate"
               >
                 {" "}
-                {setTheFormatedTime(taskState?.TabOne?.dueDate)}
+                {setTheFormatedDate(taskState?.TabOne?.dueDate)}
               </ThirdContDueDate>
             </SecondContDueDate>
           </SecondBodyDiv>
@@ -1120,12 +1120,12 @@ const CustomIssueDetailsDrawer = (props: any) => {
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
-    data.startDate = `${setTheFormatedTime(data.startDate).toString()}`;
+    data.startDate = `${setTheFormatedDate(data.startDate).toString()}`;
 
     data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-    data.dueDate = `${setTheFormatedTime(data.dueDate).toString()}`;
+    data.dueDate = `${setTheFormatedDate(data.dueDate).toString()}`;
 
     if (!data.startDate) {
       data = _.omit(data, "startDate");

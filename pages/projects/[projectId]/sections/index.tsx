@@ -44,7 +44,7 @@ import {
 import { Content } from "../../../../components/divami_components/project-listing/SectionsStyles";
 import SectionsListing from "../../../../components/divami_components/sectionsList/SectionsListing";
 import { getSectionsList } from "../../../../services/sections";
-import { setTheFormatedTime } from "../../../../utils/ViewerDataUtils";
+import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 
 const backupData: any = [
   {
@@ -488,7 +488,7 @@ const Index: React.FC = () => {
         color: "#101F4C",
       },
       render: (rowData: any) => {
-        return <>{setTheFormatedTime(rowData.updatedAt)}</>;
+        return <>{setTheFormatedDate(rowData.updatedAt)}</>;
       },
     },
 

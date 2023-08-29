@@ -30,7 +30,7 @@ import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
 import LeftSingleArrow from "../../../public/divami_icons/LeftSingleArrow.png";
 import RightSingleArrow from "../../../public/divami_icons/RightSingleArrow.png";
 import { getSnapshotDetails } from "../../../services/snapshot";
-import { setTheFormatedTime } from "../../../utils/ViewerDataUtils";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 
 interface IProps {
   currentSnapshot: ISnapshot;
@@ -279,7 +279,7 @@ const TimeLineComponent: React.FC<IProps> = ({
             onClick={toggleTimeline}
             data-testid={"selected-timeline"}
           >
-            {setTheFormatedTime(currentSnapshot?.date)}
+            {setTheFormatedDate(currentSnapshot?.date)}
           </SelectedTimeLine>
           {bottomNav ? (
             <TimelineNavigation>
@@ -307,7 +307,7 @@ const TimeLineComponent: React.FC<IProps> = ({
                     setPage(0);
                   }}
                 >
-                  {oldDate && setTheFormatedTime(oldDate)}
+                  {oldDate && setTheFormatedDate(oldDate)}
                 </p>
               </DateText>
 
@@ -315,8 +315,8 @@ const TimeLineComponent: React.FC<IProps> = ({
                 {snapshotList.map((item: any, index: number) => {
                   return (
                     <Tooltip
-                      title={setTheFormatedTime(item.date)}
-                      key={setTheFormatedTime(item.date)}
+                      title={setTheFormatedDate(item.date)}
+                      key={setTheFormatedDate(item.date)}
                     >
                       <CircleIcon
                         key={index}
@@ -336,7 +336,7 @@ const TimeLineComponent: React.FC<IProps> = ({
                     setPage(snapshotList.length - 1);
                   }}
                 >
-                  {newDate && setTheFormatedTime(newDate)}{" "}
+                  {newDate && setTheFormatedDate(newDate)}{" "}
                 </p>
               </DateText>
               <RightIconImage

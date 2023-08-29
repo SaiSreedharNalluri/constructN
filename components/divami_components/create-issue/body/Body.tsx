@@ -24,7 +24,7 @@ import { IToolResponse } from "../../../../models/ITools";
 import UploadedImagesList from "../../uploaded-images-list/UploadedImagesList";
 
 import Moment from "moment";
-import { setTheFormatedTime } from "../../../../utils/ViewerDataUtils";
+import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 
 const BodyContainer = styled(Box)({
   paddingLeft: "20px",
@@ -305,12 +305,12 @@ const Body = ({
                   if (each.id == "start-date") {
                     return {
                       ...each,
-                      defaultValue: setTheFormatedTime(new Date()),
+                      defaultValue: setTheFormatedDate(new Date()),
                     };
                   } else {
                     return {
                       ...each,
-                      defaultValue: setTheFormatedTime(new Date()),
+                      defaultValue: setTheFormatedDate(new Date()),
                     };
                   }
                 }),

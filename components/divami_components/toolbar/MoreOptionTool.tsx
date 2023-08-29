@@ -43,7 +43,7 @@ import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
 import Tooltip from "@mui/material/Tooltip";
 import html2canvas from "html2canvas";
 import moment from "moment";
-import { setTheFormatedTime } from "../../../utils/ViewerDataUtils";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 // Task List Imports
 const MoreOptionTool = ({
   rightMenuClickHandler,
@@ -150,11 +150,11 @@ const MoreOptionTool = ({
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
-    data.startDate = setTheFormatedTime(data.startDate);
+    data.startDate = setTheFormatedDate(data.startDate);
     data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-    data.dueDate = setTheFormatedTime(data.dueDate);
+    data.dueDate = setTheFormatedDate(data.dueDate);
     data.attachments = formData.filter(
       (item: any) => item.id === "file-upload"
     )[0].selectedFile;

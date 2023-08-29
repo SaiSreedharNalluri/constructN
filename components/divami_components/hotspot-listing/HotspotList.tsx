@@ -69,7 +69,7 @@ import { useEffect, useState } from "react";
 import hotspotObj from "./config";
 import HotspotFilterCommon from "../hotspot-filter-common/HotspotFilterCommon";
 import CustomHotspotDetailsDrawer from "../hotspot_detail/HotspotDetail";
-import { setTheFormatedTime } from "../../../utils/ViewerDataUtils";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 
 interface IProps {
   onClose: any;
@@ -338,7 +338,7 @@ const CustomHotspotListDrawer: React.FC<IProps> = ({ onClose }) => {
                     <ThirdHeader>
                       <div>Progress Rate: {val.progress_rate}%</div>
                       <DueDateDiv>
-                        Took on {setTheFormatedTime(val.dueDate)}
+                        Took on {setTheFormatedDate(val.dueDate)}
                       </DueDateDiv>
                     </ThirdHeader>
                   </BodyInfo>

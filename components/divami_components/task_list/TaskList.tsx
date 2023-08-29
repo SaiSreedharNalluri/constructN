@@ -113,7 +113,7 @@ import CompletedIconTask from "../../../public/divami_icons/CompletedIconTask.sv
 import smallDivider from "../../../public/divami_icons/smallDivider.svg";
 import Task from "../../../public/divami_icons/Task.svg";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
-import { setTheFormatedTime } from "../../../utils/ViewerDataUtils";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 
 interface IProps {
   closeOverlay: () => void;
@@ -560,7 +560,7 @@ const CustomTaskListDrawer = (props: any) => {
                         <ThirdHeader>
                           <ProgressChild>
                             {" "}
-                            Due by {setTheFormatedTime(val.dueDate)}
+                            Due by {setTheFormatedDate(val.dueDate)}
                           </ProgressChild>
 
                           <SmallDivider src={smallDivider} alt="progress" />
