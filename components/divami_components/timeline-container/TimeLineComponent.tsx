@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Moment from "moment";
 import Pagination from "@mui/material/Pagination";
 import PaginationItem from "@mui/material/PaginationItem";
 import { KeyboardArrowDown } from "@mui/icons-material";
@@ -31,6 +30,7 @@ import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
 import LeftSingleArrow from "../../../public/divami_icons/LeftSingleArrow.png";
 import RightSingleArrow from "../../../public/divami_icons/RightSingleArrow.png";
 import { getSnapshotDetails } from "../../../services/snapshot";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 
 interface IProps {
   currentSnapshot: ISnapshot;
@@ -279,7 +279,7 @@ const TimeLineComponent: React.FC<IProps> = ({
             onClick={toggleTimeline}
             data-testid={"selected-timeline"}
           >
-            {Moment(currentSnapshot?.date).format("DD MMM YYYY")}
+            {setTheFormatedDate(currentSnapshot?.date)}
           </SelectedTimeLine>
           {bottomNav ? (
             <TimelineNavigation>
@@ -307,7 +307,7 @@ const TimeLineComponent: React.FC<IProps> = ({
                     setPage(0);
                   }}
                 >
-                  {oldDate && Moment(oldDate).format("DD MMM YY")}
+                  {oldDate && setTheFormatedDate(oldDate)}
                 </p>
               </DateText>
 
@@ -315,8 +315,8 @@ const TimeLineComponent: React.FC<IProps> = ({
                 {snapshotList.map((item: any, index: number) => {
                   return (
                     <Tooltip
-                      title={Moment(item.date).format("DD MMM YYYY")}
-                      key={Moment(item.date).format("DD MMM YYYY")}
+                      title={setTheFormatedDate(item.date)}
+                      key={setTheFormatedDate(item.date)}
                     >
                       <CircleIcon
                         key={index}
@@ -336,7 +336,7 @@ const TimeLineComponent: React.FC<IProps> = ({
                     setPage(snapshotList.length - 1);
                   }}
                 >
-                  {newDate && Moment(newDate).format("DD MMM YY")}{" "}
+                  {newDate && setTheFormatedDate(newDate)}{" "}
                 </p>
               </DateText>
               <RightIconImage

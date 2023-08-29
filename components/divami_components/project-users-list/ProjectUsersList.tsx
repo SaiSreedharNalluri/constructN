@@ -66,6 +66,7 @@ import LocalSearch from "../local_component/LocalSearch";
 import CustomLoader from "../custom_loader/CustomLoader";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import { CustomToast } from "../custom-toaster/CustomToast";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   const [tableData, setTableData] = useState<any>([]);
   const router = useRouter();
@@ -189,7 +190,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       customSort: (a: any, b: any) => sortBy(a, b, "updatedAt"),
 
       render: (rowData: any) => {
-        return <>{moment(rowData.updatedAt).format("DD MMM YYYY")}</>;
+        return <>{setTheFormatedDate(rowData.updatedAt)}</>;
       },
     },
     {
