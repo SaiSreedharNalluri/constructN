@@ -38,7 +38,6 @@ function PotreeViewer(props) {
 			        <i title='minimise' id="fp_minimise_1" data='{"id": "viewer_1", "type": "fp_fullscreen"}' className="material-icons absolute top-1 right-1 hidden" >fullscreen_exit</i> */}
 			    <canvas id={canvasId}></canvas>
               </div>
-                    <PotreeMeasurementToolbar></PotreeMeasurementToolbar>
         </div>
         </React.Fragment>
     );
