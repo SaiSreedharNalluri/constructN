@@ -94,7 +94,7 @@ const SignInPage = () => {
               "userCredentials",
               JSON.stringify(userProfileObj)
             );
-            setCookie("user", userProfileObj);
+            setCookie("user", userProfileObj,{secure:true,sameSite:"none",httpOnly:false,path:"/"});
             CustomToast("User signed in successfully", "success");
             const previousPage:any = router.query["history"] || "";
             setLoginEnable(true);
