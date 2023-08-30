@@ -87,6 +87,10 @@ export const MapboxViewerUtils = () => {
       zoom: 16, // starting zoom
       maxZoom:21,
     });
+    const nav = new mapboxgl.NavigationControl({
+      visualizePitch: true
+    });
+    _map.addControl(nav);
     _map.on("load", () => {
       _isViewerInitialized = true;
       console.log("Map loading is DONE");
