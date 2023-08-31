@@ -366,6 +366,7 @@ const Index: React.FC<any> = () => {
       if (userObj) user = JSON.parse(userObj);
       if (user?.email) setEMail(user.email);
 
+      if(user)
       boot({alignment:"left",customLauncherSelector:"chatSupport",hideDefaultLauncher:true, horizontalPadding:60,name:user.firstName,email:user.email}); //boot intercom
     
     }

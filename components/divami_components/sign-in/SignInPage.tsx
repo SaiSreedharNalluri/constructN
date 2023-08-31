@@ -87,7 +87,7 @@ const SignInPage = () => {
             let userProfileObj = {
               rememberMe: rememberMe,
               ...response?.result,
-              password: rememberMe ? password : "",
+              password: rememberMe ? "" : "",
               email: rememberMe ? email : email,
             };
             localStorage.setItem(
