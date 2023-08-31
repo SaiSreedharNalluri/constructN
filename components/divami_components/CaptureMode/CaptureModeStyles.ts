@@ -325,6 +325,7 @@ export const CapturesField = styled("div")({
 
 export const CapturesFieldContainer = styled("div")({
   display: "flex",
+  justifyContent:"space-between"
 });
 
 export const ProjectActionsContainer = styled("div")({

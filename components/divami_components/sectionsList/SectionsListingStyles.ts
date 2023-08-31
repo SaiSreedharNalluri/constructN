@@ -109,6 +109,8 @@ export const HeaderImage = styled(Image)({
 export const TableWrapper = styled("div")({
   marginBottom: "50px",
   // border:"8px solid blue"
+  overflow:"auto",
+  height:"calc(100vh - 117px)",
    "& .MuiTableRow-root": {
     borderBottom: "none",
    
