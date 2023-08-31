@@ -548,7 +548,7 @@ const[id,setId]=useState("");
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "10%" },
+      cellStyle: { width: "10%", cursor: 'default' },
       render: (rowData: any) => {
         return <>{rowData?.issueCount ? rowData.issueCount : "-"}</>;
       },
@@ -567,7 +567,7 @@ const[id,setId]=useState("");
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "10%" },
+      cellStyle: { width: "10%", cursor: 'default' },
 
       render: (rowData: any) => {
         return <>{rowData?.taskCount ? rowData.taskCount : "-"}</>;
@@ -696,11 +696,11 @@ const[id,setId]=useState("");
         color: "#101F4C",
       },
       render: (rowData: any) => {
-        return <>{
+        return <div className="cursor-default">{
           rowData?.lastUpdated ?
           moment(rowData.lastUpdated).format("DD MMM YYYY")
           : "-"
-          }</>;
+          }</div>;
       },
     },
   ];
