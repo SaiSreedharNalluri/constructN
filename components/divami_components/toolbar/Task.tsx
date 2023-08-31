@@ -149,13 +149,13 @@ const Task = ({
         )[0]?.defaultValue);
 
     // data.startDate = moment(data.startDate).format("YYYY-MM-DD");
-    data.startDate = `${setTheFormatedDate(data.startDate).toString()}`;
+    data.startDate = `${moment(data.startDate).toISOString()}`;
 
      data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
     // data.dueDate = moment(data.dueDate).format("YYYY-MM-DD");
-    data.dueDate = `${setTheFormatedDate(data.dueDate).toString()}`;
+    data.dueDate = `${moment(data.dueDate).toISOString()}`;
 
     data.attachments = formData.filter(
       (item: any) => item.id === "file-upload"
