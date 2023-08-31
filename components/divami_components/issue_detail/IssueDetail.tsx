@@ -1120,12 +1120,12 @@ const CustomIssueDetailsDrawer = (props: any) => {
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
-    data.startDate = `${setTheFormatedDate(data.startDate).toString()}`;
+    data.startDate = `${moment(data.startDate).toISOString()}`;
 
     data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-    data.dueDate = `${setTheFormatedDate(data.dueDate).toString()}`;
+    data.dueDate = `${moment(data.dueDate).toISOString()}`;
 
     if (!data.startDate) {
       data = _.omit(data, "startDate");

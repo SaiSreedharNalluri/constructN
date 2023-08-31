@@ -37,7 +37,6 @@ import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import html2canvas from "html2canvas";
 import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
-import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 const Issues = ({
   rightMenuClickHandler,
   issuesList,
@@ -158,13 +157,13 @@ const Issues = ({
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "start-date")[0]?.defaultValue;
     // data.startDate = moment(data.startDate).format("YYYY-MM-DD");
-    data.startDate = `${setTheFormatedDate(data.startDate).toString()}`;
+    data.startDate = `${moment(data.startDate).toISOString()}`;
 
     data.dueDate = values
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
     // data.dueDate = moment(data.dueDate).format("YYYY-MM-DD");
-    data.dueDate = `${setTheFormatedDate(data.dueDate).toString()}`;
+    data.dueDate = `${moment(data.dueDate).toISOString()}`;
 
     data.attachments = values.filter(
       (item: any) => item.id === "file-upload"
