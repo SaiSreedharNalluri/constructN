@@ -304,7 +304,7 @@ export const PotreeViewerUtils = () => {
         // isLoadFloormap && await loadFloormap();
         loadPointCloud(pointClouds);
         
-        
+        loadMeasurementModule();
         
     }
 
@@ -893,6 +893,68 @@ export const PotreeViewerUtils = () => {
         //     let annotation = _taskSpriteMap[taskId].tag;
         //     annotation._visible = show;
         // }
+    }
+
+    const loadMeasurementModule = () => {
+        const measurementTool = document.querySelector("#rahmanMeasurement");
+        // console.log("Testing measurement: ", measurementTool);
+        const measurementList = measurementTool.querySelectorAll('[id^=rahmanMeasure_]');
+        console.log("Testing measurement: ", measurementList);
+
+        measurementList.forEach((e) => {
+            // console.log("Testing measurement: ", e);
+            e.addEventListener("click", measurementClickListener);
+        });
+
+    }
+
+    const measurementClickListener = (event) => {
+        // console.log("Testing measurement: onclick listener: ", event.target.id)
+
+        let measurement;
+        switch((event.target.id).split('_')[1]) {
+            case "point":
+                measurement = _viewer.measuringTool.startInsertion({
+                    showDistances: false,
+                    showAngles: false,
+                    showCoordinates: true,
+                    showArea: false,
+                    closed: true,
+                    maxMarkers: 1,
+                    name: 'Point'
+                });
+            break;
+            case "area":
+                measurement = _viewer.measuringTool.startInsertion({
+					showDistances: true,
+					showArea: true,
+					closed: true,
+					name: 'Area'
+				});
+            break;
+            case "height":
+                measurement = _viewer.measuringTool.startInsertion({
+					showDistances: false,
+					showHeight: true,
+					showArea: false,
+					closed: false,
+					maxMarkers: 2,
+					name: 'Height'
+				});
+            break;
+            case "distance":
+                measurement = _viewer.measuringTool.startInsertion({
+					showDistances: true,
+					showArea: false,
+					closed: false,
+					name: 'Distance'
+				});
+            break;
+            case "clear":
+                _viewer.scene.removeAllMeasurements();
+            break;
+
+        }
     }
 
     const getMousePointCloudIntersection = (mouse, camera, viewer, pointclouds, params = {}) => {
