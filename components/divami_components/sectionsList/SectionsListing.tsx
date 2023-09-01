@@ -93,11 +93,8 @@ import CustomLoader from "../custom_loader/CustomLoader";
 import LocalSearch from "../local_component/LocalSearch";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import PopupComponent from "../../popupComponent/PopupComponent";
-<<<<<<< HEAD
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
-=======
 import Chips from "./Chip";
->>>>>>> e90eff9dd8fa0c6380f986151472bcd2de1c1815
 
 interface RowData {
   tableData: { id: number };
