@@ -356,12 +356,10 @@ export const isMobile=()=>{
         
 }
     export const setTheFormatedDate=(utcTime)=>{
-        
-        let timeZone= 'America/New_York'
         let formatedTime
-        if(JSON.parse(localStorage.getItem('isProjectTimeZone')))
+        if(JSON.parse(localStorage.getItem('isProjectTimeZone'))&&JSON.parse(localStorage.getItem('currentProjectTimeZone'))!=null)
         {
-            formatedTime = moment(utcTime).tz(timeZone)
+            formatedTime = moment(utcTime).tz(JSON.parse(localStorage.getItem('currentProjectTimeZone')).timeZone)
         }
         else
         {

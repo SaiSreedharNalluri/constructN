@@ -25,6 +25,8 @@ import PopupComponent from "../components/popupComponent/PopupComponent";
 import { IntercomProvider } from 'react-use-intercom'
 config.autoAddCss = false;
 import instance from '../services/axiosInstance'
+import { getProjectDetails } from "../services/project";
+import { CustomToast } from "../components/divami_components/custom-toaster/CustomToast";
 export default function App({ Component, pageProps }: AppProps) {
   mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, { debug: true });
   const router = useRouter();
@@ -86,6 +88,25 @@ export default function App({ Component, pageProps }: AppProps) {
     }
     setupFirebase();
   }, []);
+  useEffect(()=>{
+    if(router.isReady && router?.query?.projectId)
+    {
+     if(JSON.parse(localStorage.getItem('currentProjectTimeZone')!)?._id!=router?.query?.projectId)
+     {
+      getProjectDetails(router?.query?.projectId as string).then((response)=>{
+        if(response?.data?.result?.timeZone)
+        {
+         localStorage.setItem('currentProjectTimeZone',JSON.stringify({_id:router?.query?.projectId,timeZone:response.data.result.timeZone}))
+        } 
+       else{
+         localStorage.removeItem('currentProjectTimeZone')
+       }
+       })  .catch((error) => {
+         CustomToast("failed to load data","error");
+       });
+     }
+    }
+  },[router.isReady,router?.query?.projectId])
  const [showPopUp, setshowPopUp] = useState(false);
   return (
     <>
