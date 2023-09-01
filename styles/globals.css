@@ -72,7 +72,9 @@
 .calc-h112 {
   height: calc(100vh - 112px);
 }
-
+.group:hover .text-hover-color {
+  color: #FF843F;
+}
 .panoIcon {
   background: #f1742e;
   border-radius: 100%;
