@@ -538,7 +538,7 @@ const[id,setId]=useState("");
            <div>
             <div>{rowData?.designs.length===0?<Chips title="No Designs" bgColor="#FFD600"></Chips>:null}</div>
             <div>{rowData.capture?.totalCount === 0 && rowData?.designs.length!==0?<Chips title="No Captures" bgColor="#F67C74"></Chips>:null}</div>
-            <div>{rowData.capture?.totalCount > 0 && (new Date().getTime() - new Date(rowData.lastUpdated).getTime())/86400000 < 7 ?<Chips title="New" bgColor="#8BD97F"></Chips>:null}</div>
+            {/* <div>{rowData.capture?.totalCount > 0 && (new Date().getTime() - new Date(rowData.lastUpdated).getTime())/86400000 < 7 ?<Chips title="New" bgColor="#8BD97F"></Chips>:null}</div> */}
             </div>
 
           </div>
