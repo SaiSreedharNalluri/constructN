@@ -912,7 +912,7 @@ export const PotreeViewerUtils = () => {
         // console.log("Testing measurement: onclick listener: ", event.target.id)
 
         let measurement;
-        switch((event.target.id).split('_')[1]) {
+        switch((event.currentTarget.id).split('_')[1]) {
             case "point":
                 measurement = _viewer.measuringTool.startInsertion({
                     showDistances: false,
