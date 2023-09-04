@@ -107,7 +107,7 @@ export const BodyContainer = styled(Box)`
   margin-top: -5px;
   color: #101f4c;
   padding-bottom: 20px;
-  // overflow: scroll;
+  overflow-x: hidden;
 `;
 
 export const FirstHeader = styled("div")({
