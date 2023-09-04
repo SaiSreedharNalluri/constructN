@@ -70,12 +70,15 @@ export const PotreeViewerUtils = () => {
     let _context;
     let _sendContext = false;
 
-    const initializeViewer = (viewerId, eventHandler) => {
+    let _isSupportUser = false;
+
+    const initializeViewer = (viewerId, eventHandler, isSupportUser) => {
         console.log("potree inisde initializeViewer: ")
         _viewerId = viewerId;
         _eventHandler = eventHandler;
         _fpContainerId = `fpContainer_${_viewerId.split("_")[1]}`;
         _fpCanvasId = `floormap_${_viewerId.split("_")[1]}`;
+        _isSupportUser = isSupportUser;
 
         const loadGUICallback = () => {
             console.log("potree inisde initializeViewer callback : ")
@@ -304,6 +307,7 @@ export const PotreeViewerUtils = () => {
         // isLoadFloormap && await loadFloormap();
         loadPointCloud(pointClouds);
         
+        // loadSupportTools();
         loadMeasurementModule();
         
     }
@@ -895,17 +899,34 @@ export const PotreeViewerUtils = () => {
         // }
     }
 
+    const loadSupportTools = () => {
+        const realityViewToggle = document.querySelector("#rahmanRealityViewToggle");
+        realityViewToggle?.addEventListener("click", realityViewToggleListener);
+        console.log("Testing realityViewToggle: ", realityViewToggle);
+    }
+
     const loadMeasurementModule = () => {
         const measurementTool = document.querySelector("#rahmanMeasurement");
         // console.log("Testing measurement: ", measurementTool);
-        const measurementList = measurementTool.querySelectorAll('[id^=rahmanMeasure_]');
-        console.log("Testing measurement: ", measurementList);
+        const measurementList = measurementTool?.querySelectorAll('[id^=rahmanMeasure_]');
+        // console.log("Testing measurement: ", measurementList);
 
-        measurementList.forEach((e) => {
+        measurementList?.forEach((e) => {
             // console.log("Testing measurement: ", e);
             e.addEventListener("click", measurementClickListener);
         });
 
+    }
+
+    const realityViewToggleListener = (event) => {
+         console.log("Testing realityViewToggle: onclick listener: ", event.currentTarget)
+         const isImageDisabled = JSON.parse(event.currentTarget.getAttribute('data-isEnabled'))
+         console.log("Testing realityViewToggle: onclick listener: ", isImageDisabled.isEnabled)
+         if(isImageDisabled.isEnabled) {
+
+         } else {
+
+         }
     }
 
     const measurementClickListener = (event) => {
@@ -1804,7 +1825,8 @@ export const PotreeViewerUtils = () => {
                     unloadOrientedImage();
                     _sendContext = true;
                 } else {
-                    if (_structure._id === "STR418477") {
+                    // console.log("Testing realityViewToggle: ", _isSupportUser);
+                    if (_structure._id === "STR418477" || _isSupportUser) {
                         unloadAllImages();
                         _viewer.fitToScreen();
                     }

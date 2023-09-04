@@ -9,30 +9,30 @@ const toggleCamera=()=>{
   }
   return (
     <div
-    className=" bg-white  text-center rounded-[4px] absolute top-1/2 right-[10px] -mt-[32px] z-1 cursor-pointer"
-    style={{ boxShadow: "-2px 0px 1px rgba(0, 0, 0, 0.25)" }}
-  >
-    <div  className='hover:text-[#FF843F]  group'>
-        {isEnabled?
-         <Tooltip title="3D" placement="left">
-        <NoPhotographyIcon 
-          className={` mx-2  text-[#36415D]  text-hover-color `}
-          style={{ width: 32, height: 32 }}
-          onClick={toggleCamera}
-        />
-        </Tooltip>
-        :
-        <Tooltip title="Photo" placement="left">
-        <CameraAltIcon 
-        className={` mx-2  text-[#36415D]  text-hover-color `}
-        style={{ width: 32, height: 32 }} onClick={toggleCamera}/>
-         </Tooltip>
-        }
-     
-
+      className=" bg-white  text-center rounded-[4px] absolute top-1/2 right-[10px] -mt-[32px] z-1 cursor-pointer"
+      style={{ boxShadow: "-2px 0px 1px rgba(0, 0, 0, 0.25)" }}
+    >
+      <div id="rahmanRealityViewToggle" className="hover:text-[#FF843F]  group" onClick={toggleCamera} data-isEnabled={`{"isEnabled":"${isEnabled}"}`}>
+        {isEnabled ? (
+          <Tooltip title="3D" placement="left">
+            <NoPhotographyIcon
+              className={` mx-2  text-[#36415D]  text-hover-color `}
+              style={{ width: 32, height: 32 }}
+              // onClick={toggleCamera}
+            />
+          </Tooltip>
+        ) : (
+          <Tooltip title="Photo" placement="left">
+            <CameraAltIcon
+              className={` mx-2  text-[#36415D]  text-hover-color `}
+              style={{ width: 32, height: 32 }}
+              // onClick={toggleCamera}
+            />
+          </Tooltip>
+        )}
+      </div>
     </div>
-    </div>
-  )
+  );
 }
 
 export default CameraButtons
