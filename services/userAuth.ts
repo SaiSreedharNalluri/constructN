@@ -1,5 +1,5 @@
 import instance from "./axiosInstance";
-import { setCookie, getCookie } from "cookies-next";
+import { setCookie, getCookie,deleteCookie } from "cookies-next";
 import authHeader from "./auth-header";
 export const login = (email: string, password: string) => {
   return instance
@@ -183,6 +183,35 @@ export const validatePasswordToken = (token: string) => {
     })
     .catch((error) => {
       console.log('error',error)
+      throw error.response.data;
+    });
+};
+export const refreshToken = (token: string) => {
+  return instance
+    .put(`${process.env.NEXT_PUBLIC_HOST}/users/get-access-token`,{refreshToken:token},{
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      const userObj: any = getCookie("user");
+      let user = null;
+      if (userObj) {
+        user = JSON.parse(userObj);
+        user.refreshToken = response.data.refreshToken;
+        user.token = response.data.token;
+        
+        setCookie("user", JSON.stringify(user));
+      }
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('refreshTokenerror',error)
+      deleteCookie("user");
+          if (typeof window !== "undefined") {
+            //localStorage.setItem("previousPage", window.location.href);
+            console.log("Moving Out....",error.config);
+            window.location.href = `/login?history=${window.location.href}&reason=rTokenExpired`;
+            return Promise.reject(error);
+          }
       throw error.response.data;
     });
 };
