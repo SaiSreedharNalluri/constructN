@@ -515,23 +515,19 @@ const[id,setId]=useState("");
         // router.push(`/projects/${id}/sections`);
         return (
           <FloorName
-            onClick={() => {
-              if(rowData.capture?.totalCount > 0 || rowData.designs.length!==0)
-              {
+          onClick={() => {
+            if(rowData.capture?.totalCount === 0 && rowData?.designs.length!==0) {
+              setId(rowData._id);
+              setCaptureAvailable(true)
+             }
+           else if (rowData.capture?.totalCount > 0 || rowData.designs.length !== 0) {
               router.push({
                 pathname: `/projects/${router?.query?.projectId as string}/structure`,
                 query: { structId: rowData._id },
-              })
-             setCaptureAvailable(false)
-            }
-            else if(rowData.designs.length===0){
+              });
               setCaptureAvailable(false)
             }
-              else{
-               setId(rowData._id)
-              setCaptureAvailable(true)
-              }
-            }}
+          }}
           >
           <div className="flex items-center justify-between">  
         <div> {rowData?.name} </div>     
