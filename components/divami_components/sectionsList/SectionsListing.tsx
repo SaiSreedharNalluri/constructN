@@ -516,7 +516,7 @@ const[id,setId]=useState("");
         return (
           <FloorName
             onClick={() => {
-              if(rowData.capture?.totalCount > 0 && rowData.designs.length!==0)
+              if(rowData.capture?.totalCount > 0 || rowData.designs.length!==0)
               {
               router.push({
                 pathname: `/projects/${router?.query?.projectId as string}/structure`,
@@ -794,7 +794,7 @@ const[id,setId]=useState("");
                     const rowData = props.data;
                     
                     const isZeroCapture = rowData.capture?.totalCount === 0;  
-                    const isZeroDesign=rowData.designs?.length===0;
+                    const isZeroDesign=rowData.designs?.length===0 && rowData.capture?.totalCount === 0;
                       return (
                         
         <MTableBodyRow
