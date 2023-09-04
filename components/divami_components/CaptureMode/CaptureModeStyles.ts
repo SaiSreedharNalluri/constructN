@@ -280,6 +280,7 @@ export const CaptureName = styled("div")({
   marginRight: "5px",
 });
 export const CaptureCount = styled("div")({
+  cursor: "pointer",
   width: "48px",
   marginLeft:"7px"
 });
@@ -324,7 +325,7 @@ export const CapturesField = styled("div")({
 
 export const CapturesFieldContainer = styled("div")({
   display: "flex",
-  cursor: "default"
+  justifyContent:"space-between"
 });
 
 export const ProjectActionsContainer = styled("div")({

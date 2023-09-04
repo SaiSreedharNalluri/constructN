@@ -93,6 +93,7 @@ import CustomLoader from "../custom_loader/CustomLoader";
 import LocalSearch from "../local_component/LocalSearch";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import PopupComponent from "../../popupComponent/PopupComponent";
+import Chips from "./Chip";
 
 interface RowData {
   tableData: { id: number };
@@ -150,7 +151,6 @@ const SectionsListing = () => {
     // setShowEmptyState(true);
   };
 const[isCaptureAvailable,setCaptureAvailable]=useState(false);
-
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
     filterData: {
@@ -510,13 +510,13 @@ const[id,setId]=useState("");
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "15%" },
+      cellStyle: { width: "37%" },
       render: (rowData: any) => {
         // router.push(`/projects/${id}/sections`);
         return (
           <FloorName
             onClick={() => {
-              if(rowData.capture?.totalCount > 0)
+              if(rowData.capture?.totalCount > 0 && rowData.designs.length!==0)
               {
               router.push({
                 pathname: `/projects/${router?.query?.projectId as string}/structure`,
@@ -524,13 +524,25 @@ const[id,setId]=useState("");
               })
              setCaptureAvailable(false)
             }
+            else if(rowData.designs.length===0){
+              setCaptureAvailable(false)
+            }
               else{
                setId(rowData._id)
-                setCaptureAvailable(true)
+              setCaptureAvailable(true)
               }
             }}
           >
-            {rowData?.name}
+          <div className="flex items-center justify-between">  
+        <div> {rowData?.name} </div>     
+           <div>
+            <div>{rowData?.designs.length===0?<Chips title="No Designs" bgColor="#FFD600"></Chips>:null}</div>
+            <div>{rowData.capture?.totalCount === 0 && rowData?.designs.length!==0?<Chips title="No Captures" bgColor="#F67C74"></Chips>:null}</div>
+            {/* <div>{rowData.capture?.totalCount > 0 && (new Date().getTime() - new Date(rowData.lastUpdated).getTime())/86400000 < 7 ?<Chips title="New" bgColor="#8BD97F"></Chips>:null}</div> */}
+            </div>
+
+          </div>
+    
           </FloorName>
         );
       },
@@ -548,7 +560,7 @@ const[id,setId]=useState("");
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "10%", cursor: 'default' },
+      cellStyle: { width: "8%" },
       render: (rowData: any) => {
         return <>{rowData?.issueCount ? rowData.issueCount : "-"}</>;
       },
@@ -567,7 +579,7 @@ const[id,setId]=useState("");
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "10%", cursor: 'default' },
+      cellStyle: { width: "8%" },
 
       render: (rowData: any) => {
         return <>{rowData?.taskCount ? rowData.taskCount : "-"}</>;
@@ -585,7 +597,7 @@ const[id,setId]=useState("");
         lineHeight: "8px",
         color: "#101F4C",
       },
-      cellStyle: { width: "30%" },
+      cellStyle: { width: "32%" },
       render: (rowData: any) => {
         return (
           <CapturesFieldContainer>
@@ -695,12 +707,14 @@ const[id,setId]=useState("");
         lineHeight: "20px",
         color: "#101F4C",
       },
+      cellStyle: { width: "15%" },
+   
       render: (rowData: any) => {
-        return <div className="cursor-default">{
+        return <>{
           rowData?.lastUpdated ?
           moment(rowData.lastUpdated).format("DD MMM YYYY")
           : "-"
-          }</div>;
+          }</>;
       },
     },
   ];
@@ -780,13 +794,12 @@ const[id,setId]=useState("");
                     const rowData = props.data;
                     
                     const isZeroCapture = rowData.capture?.totalCount === 0;  
-                    
+                    const isZeroDesign=rowData.designs?.length===0;
                       return (
                         
         <MTableBodyRow
           {...props}
-          title={isZeroCapture?"No Capture available":""}
-          className={isZeroCapture?"bg-[#E7E7E7] cursor-not-allowed":""}
+          className={isZeroCapture || isZeroDesign?"bg-[#E7E7E7] ":""}
         />
        
       );
@@ -806,7 +819,7 @@ const[id,setId]=useState("");
                   selection: false,
                   showTitle: true,
                   toolbar: false,
-                  maxBodyHeight: "75vh",
+                  // maxBodyHeight: "75vh",
                   thirdSortClick: false,
                   rowStyle: {
                     fontFamily: "Open Sans",
