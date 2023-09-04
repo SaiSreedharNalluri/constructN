@@ -178,6 +178,8 @@ const Index: React.FC<IProps> = () => {
   const [issueLoader, setIssueLoader] = useState(false);
   const [highlightCreateIcon, setHighlightCreateIcon] = useState(false);
   const [highlightCreateTaskIcon, setHighlightCreateTaskIcon] = useState(false);
+
+  let isSupportUser = useRef(false);
   //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
@@ -399,6 +401,7 @@ const Index: React.FC<IProps> = () => {
       if (userObj) {
         user = JSON.parse(userObj);
         if (user?._id) {
+          isSupportUser.current = user?.isSupportUser;
           SetLoggedInUserId(user._id);
         }
       }
@@ -606,6 +609,7 @@ const Index: React.FC<IProps> = () => {
               viewLayers={activeRealityMap}
               isFullScreenActive={isFullScreenActive}
               layersUpdated={layersUpdated}
+              isSupportUser={isSupportUser.current}
               isFullScreen={isFullScreen}
             ></GenericViewer>
           )

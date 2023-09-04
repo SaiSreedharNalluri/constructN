@@ -63,8 +63,10 @@ function GenericViewer(props) {
   let structure = props.structure;
   let isFullScreenActive=props.isFullScreenActive;
   let isFullScreens=props.isFullScreen;
+  let isSupportUser = useRef(props.isSupportUser ? props.isSupportUser : false);
   
   let currentStructure = useRef();
+
 
   let [designList, setDesignList] = useState([]);
   let [isLoading,setIsLoading]=useState(false)
@@ -779,7 +781,7 @@ function GenericViewer(props) {
         if (potreeUtils.current == undefined) {
           potreeUtils.current = PotreeViewerUtils();
           if (!potreeUtils.current.isViewerLoaded()) {
-            potreeUtils.current.initializeViewer(viewerId, viewerEventHandler);
+            potreeUtils.current.initializeViewer(viewerId, viewerEventHandler, isSupportUser.current);
           }
         }
         break;
@@ -814,7 +816,7 @@ function GenericViewer(props) {
         if (potreeCompareUtils.current == undefined) {
           potreeCompareUtils.current = PotreeViewerUtils();
           if (!potreeCompareUtils.current.isViewerLoaded()) {
-            potreeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler);
+            potreeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, isSupportUser.current);
           }
         }
         break;
@@ -1212,6 +1214,7 @@ function GenericViewer(props) {
         return (
           <PotreeViewer
             viewerCount={count}
+            isSupportUser={isSupportUser.current}
             setPotreeViewer={setpotreeViewerUtils}
           ></PotreeViewer>
         );

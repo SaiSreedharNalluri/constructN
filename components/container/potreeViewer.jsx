@@ -5,20 +5,12 @@ import { getCookie } from "cookies-next";
 import { IUser } from "../../models/IUser";
 import CameraButtons from './cameraButtons';
 function PotreeViewer(props) {
-    let [user, setUser] = useState("");
     const [viewerCount, setViewerCount] = useState(props.viewerCount);
+    const isSupportUser = useRef(props.isSupportUser ? props.isSupportUser : false);
     const viewerId = `potreeViewer_${viewerCount}`;
     const containerId = `fpContainer_${viewerCount}`;
     const canvasId = `floormap_${viewerCount}`
     const setPotreeViewerUtils = props.setPotreeViewer;
-    useEffect(() => {
-      const userObj = getCookie("user");
-      let user = null;
-      if (userObj) user = JSON.parse(userObj);
-      if (user?.fullName) {
-        setUser(user);
-      }
-    }, []);
     const initViewer = function() {
         // let potree = new PotreeViewerUtils(viewerId);
         // if(!potree.isViewerLoaded()) {
@@ -49,10 +41,14 @@ function PotreeViewer(props) {
 			        <i title='minimise' id="fp_minimise_1" data='{"id": "viewer_1", "type": "fp_fullscreen"}' className="material-icons absolute top-1 right-1 hidden" >fullscreen_exit</i> */}
             <canvas id={canvasId}></canvas>
           </div>
-          {user?.isSupportUser? <div>
-            <CameraButtons></CameraButtons>
-          <PotreeMeasurementToolbar></PotreeMeasurementToolbar>
-          </div>:""}
+          {isSupportUser.current ? (
+            <div>
+              {/* <CameraButtons></CameraButtons> */}
+              <PotreeMeasurementToolbar></PotreeMeasurementToolbar>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </React.Fragment>
     );
