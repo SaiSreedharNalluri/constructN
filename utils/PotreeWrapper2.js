@@ -2068,12 +2068,15 @@ export const PotreeViewerUtils = () => {
     }
 
     const removeAssets = () => {
-        // console.log("removeTest Potree inside remove assets2: ", _realityLayers, _viewer.scene.scene.children);
+        console.log("removeTest Potree inside remove assets2: ", _realityLayers, _viewer.scene.scene.children);
         // console.log("Testing scenePointCloud: ", _viewer.scene.scenePointCloud , _viewer.scene.pointclouds) 
         let childIndex = -1;
 
         unloadAllImages();
         pointCloudView(false);
+
+        _viewer.scene.removeAllMeasurements();
+
         for (let i = _viewer.scene.pointclouds.length - 1; i >= 0; i--) {
             _viewer.scene.scenePointCloud.remove(_viewer.scene.pointclouds[i]);
             delete _viewer.scene.pointclouds[i].pcoGeometry;
@@ -2111,11 +2114,11 @@ export const PotreeViewerUtils = () => {
                         _viewer.scene.images360[reality.index].selectingEnabled = false;
                         _viewer.scene.images360[reality.index].images.forEach(image => {
                             // _viewer.scene.scene.children[childIndex].remove(image.mesh);
-                            _viewer.scene.scene.children[childIndex].remove(image.group.children[0]);
-                            _viewer.scene.scene.children[childIndex].remove(image.group.children[1]);
-                            delete image.group.children[1];
-                            delete image.group.children[0];
-                            delete image.group;
+                            _viewer.scene.scene.children[childIndex].remove(image.ringGroup.children[0]);
+                            _viewer.scene.scene.children[childIndex].remove(image.ringGroup.children[1]);
+                            delete image.ringGroup.children[1];
+                            delete image.ringGroup.children[0];
+                            delete image.ringGroup;
                          });
                         _viewer.scene.scene.children[childIndex].remove(_viewer.scene.images360[reality.index].sphere);
                         delete _viewer.scene.images360[reality.index].images;
