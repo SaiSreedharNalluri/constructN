@@ -308,22 +308,18 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           // onClick={() => handleClick(item.id)}
           >
             <TooltipText title={item.toolTipMsg} placement="right">
-              <SideMenuOptionImageContainer>
+              <SideMenuOptionImageContainer id={item.id} onClick={leftClickHandler} >
                 {router.pathname.includes(item.id) || item.isActive ? (
                   <OvershowImg>
                     <HighlightedSytledImage
                       src={item.activeIcon}
                       alt={item.id}
-                      id={item.id}
-                      onClick={leftClickHandler}
                     />
                   </OvershowImg>
                 ) : (
                   <StyledImage
                     src={item.icon}
-                    alt={item.id}
-                    id={item.id}
-                    onClick={leftClickHandler}
+                    alt={item.id}          
                   />
                 )}
               </SideMenuOptionImageContainer>
@@ -340,7 +336,8 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           // onClick={() => handleClick(item.id)}
           >
             <TooltipText title={item.toolTipMsg} placement="right">        
-                <SideMenuChatImageContainer  id="custom_fc_button" onMouseEnter={handleChatHover}
+                <SideMenuChatImageContainer  id={item.id}
+                    onClick={leftClickHandler} onMouseEnter={handleChatHover}
                 onMouseLeave={handleChatHoverEnd}>
                  {isChatHovered ? (
                   <StyledImage
@@ -348,8 +345,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
                     width={25}
                     height={25}
                     alt={item.id}
-                    id={item.id}
-                    onClick={leftClickHandler}
+                                    
                   />
                 ) : (
                   <StyledImage
@@ -357,8 +353,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
                     width={25}
                     height={25}
                     alt={item.id}
-                    id={item.id}
-                    onClick={leftClickHandler}
                   />
                 )}
                 </SideMenuChatImageContainer>
