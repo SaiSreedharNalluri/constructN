@@ -189,7 +189,15 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       customSort: (a: any, b: any) => sortBy(a, b, "updatedAt"),
 
       render: (rowData: any) => {
-        return <>{moment(rowData.updatedAt).format("DD MMM YYYY")}</>;
+        if(rowData?.assignedOn)
+        {
+          return <>{moment(rowData.assignedOn).format("DD MMM YYYY")}</>;
+        }
+        else 
+        {
+          return '-'
+        }
+       
       },
     },
     {

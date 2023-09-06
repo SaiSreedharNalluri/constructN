@@ -8,6 +8,7 @@ import Search from "../../../public/divami_icons/search.svg";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import Image from "next/image";
 import Chip from "@mui/material/Chip";
+import { UserDefaultIcon } from "../project-users-list/ProjectUsersListStyles";
 
 const CustomAutoComplete = styled(Autocomplete)({
   border: "1px solid #36415d",
@@ -124,6 +125,19 @@ const CustomSearch = (props: any) => {
             value={val}
             multiple={isMultiSelect}
             renderTags={() => null}
+            renderOption={(props, option:any) => (
+              <li {...props}>
+                {option?.user?.avatar ? (
+              <img src={option?.user?.avatar} alt={""} height={30} width={30} />
+            ) : (
+              <UserDefaultIcon>
+                {option?.user?.firstName?.charAt(0)?.toUpperCase()}
+                {option?.user?.lastName?.charAt(0)?.toUpperCase()}
+              </UserDefaultIcon>
+            )}
+               {option.label}
+              </li>
+            )}
             renderInput={(params) => (
               <TextField
                 sx={{
