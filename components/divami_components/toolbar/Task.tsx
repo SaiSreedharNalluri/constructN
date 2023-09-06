@@ -290,7 +290,12 @@ const Task = ({
     setOpenCreateTask(taskOpenDrawer);
   }, [taskOpenDrawer]);
   return (
-    <TaskBox>
+    <TaskBox  onKeyDown={(e: any) => {
+      const arrowKeys = ["ArrowUp", "ArrowDown",'ArrowRight','ArrowLeft'];
+      if (arrowKeys.includes(e.key)) {
+       e.stopPropagation();
+     }
+    }}>
       <TaskTitle>Task: </TaskTitle>
 
       <Tooltip title="Create Task">

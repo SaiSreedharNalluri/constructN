@@ -892,7 +892,12 @@ const FormWrapper = (props: any) => {
 
       case "datePicker":
         return (
-          <ElementContainer>
+          <ElementContainer  onKeyDown={(e: any) => {
+            const arrowKeys = ["ArrowUp", "ArrowDown",'ArrowRight','ArrowLeft'];
+            if (arrowKeys.includes(e.key)) {
+             e.stopPropagation();
+           }
+          }}>
             {" "}
             <CustomCalender
               data={data}
@@ -907,7 +912,12 @@ const FormWrapper = (props: any) => {
         );
       case "search":
         return (
-          <ElementContainer>
+          <ElementContainer onKeyDown={(e: any) => {
+            const arrowKeys = ["ArrowUp", "ArrowDown",'ArrowRight','ArrowLeft'];
+            if (arrowKeys.includes(e.key)) {
+             e.stopPropagation();
+           }
+          }}>
             <CustomSearch
               data={data}
               handleSearchResult={(e: any, value: string) => {
@@ -932,7 +942,12 @@ const FormWrapper = (props: any) => {
         );
       case "chip":
         return (
-          <ElementContainer>
+          <ElementContainer onKeyDown={(e: any) => {
+            const arrowKeys = ["ArrowUp", "ArrowDown",'ArrowRight','ArrowLeft'];
+            if (arrowKeys.includes(e.key)) {
+             e.stopPropagation();
+           }
+          }}>
             {" "}
             <CustomTagSuggestion
               handleChipMaking={(chipsString: any) =>
