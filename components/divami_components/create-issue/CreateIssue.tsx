@@ -87,7 +87,7 @@ const CreateIssue = ({
       setFormData(data)
     }
   return (
-    <StyledDiv>
+    <StyledDiv >
       {isLoading&&<CustomLoader></CustomLoader>}
       <Header
         closeIssueCreate={() => {
