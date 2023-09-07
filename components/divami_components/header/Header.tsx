@@ -474,7 +474,7 @@ const Header: React.FC<any> = ({
               </div>
             </TooltipText>
           </HeaderSupportImageContainer>
-{/* 
+
           <HeaderNotificationImageContainer>
             <TooltipText title="Notifications">
               <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full">
@@ -513,7 +513,7 @@ const Header: React.FC<any> = ({
                 </CustomDrawer>
               </div>
             )}
-          </HeaderNotificationImageContainer> */}
+          </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
             <TooltipText title="Menu">
               <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
