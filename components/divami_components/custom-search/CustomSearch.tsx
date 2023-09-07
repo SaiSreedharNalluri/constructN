@@ -163,7 +163,7 @@ const CustomSearch = (props: any) => {
                     },
                   },
                 }}
-                placeholder="Enter Name or Teams here ..."
+                placeholder="Enter Name"
                 {...params}
                 // label={data.label}
                 InputProps={
