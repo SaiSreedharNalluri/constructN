@@ -31,10 +31,10 @@ export interface ChildrenEntity{
 }
 
 export interface Capture{
-    "360 Video":number,
-    "LiDar Scan":number,
-    "Phone Image":number,
-    "360 Image":number,
+    Video360:number
+    LiDarScan:number
+    PhoneImage:number
+    Image360: number
     totalCount:number
 }
 export interface Snapshot{
