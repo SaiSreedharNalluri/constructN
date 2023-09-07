@@ -4,7 +4,7 @@ import { type } from "os";
 
 import { getRealityPath, getDesignPath, getFloormapPath, getFloormapTmPath,  getMapboxLayersPath, getStructurePath } from "./S3Utils";
 import moment from "moment-timezone";
-
+import { getCookie } from "cookies-next";
 export const getPointCloudReality = (snapshot) => {
     return snapshot.reality.find((reality) => {
         console.log("Generic Viewer Inside find reality function:");
@@ -356,10 +356,11 @@ export const isMobile=()=>{
         
 }
     export const setTheFormatedDate=(utcTime)=>{
+        const projectInfo =  getCookie('projectData')
         let formatedTime
-        if(JSON.parse(localStorage.getItem('isProjectTimeZone'))&&JSON.parse(localStorage.getItem('currentProjectTimeZone'))!=null)
+        if(getCookie('isProjectTimeZone')&& (projectInfo !== undefined && projectInfo!==null))
         {
-            formatedTime = moment(utcTime).tz(JSON.parse(localStorage.getItem('currentProjectTimeZone')).timeZone)
+            formatedTime = moment(utcTime).tz(JSON.parse(projectInfo).timeZone)
         }
         else
         {
