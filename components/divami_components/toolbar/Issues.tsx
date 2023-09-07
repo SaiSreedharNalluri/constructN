@@ -267,25 +267,23 @@ const Issues = ({
   }, [issueOpenDrawer]);
 
   return (
-    <div  onKeyDown={(e: any) => {
-      const arrowKeys = ["ArrowUp", "ArrowDown",'ArrowRight','ArrowLeft'];
-      if (arrowKeys.includes(e.key)) {
-       e.stopPropagation();
-     }
-    }}>
-      {/* <DownloadTable /> */}
-      {/* <PrintPage /> */}
-      <IssueBox>
+  
+      <IssueBox onKeyDown={(e: any) => {
+        const arrowKeys = ["ArrowUp", "ArrowDown",'ArrowRight','ArrowLeft'];
+        if (arrowKeys.includes(e.key)) {
+         e.stopPropagation();
+       }
+      }}>
         <IssueTitle>Issues:</IssueTitle>
 
         <Tooltip title="Create Issue">
-          <IssuesSectionPlusImg className={highlightCreateIcon?"  bg-[#F1742E] hover:bg-[#F1742E] ":""}>
+          <IssuesSectionPlusImg 
+           onClick={() => {
+                openIssueCreateFn(); 
+              }} className={highlightCreateIcon?"  bg-[#F1742E] hover:bg-[#F1742E] ":""}>
             <CameraIcon
               src={highlightCreateIcon?plusCircleIconHighlighted:plusCircleIcon}
               alt="Arrow"
-              onClick={() => {
-                openIssueCreateFn(); 
-              }}
               width={12}
               height={12}
             />
@@ -293,31 +291,30 @@ const Issues = ({
         </Tooltip>
 
         <Tooltip title="Issue List">
-          <IssuesSectionFileImg>
+          <IssuesSectionFileImg 
+           onClick={() => {
+                openIssueListFn();
+                handleViewTaskList();
+              }}>
             <CameraIcon
               src={fileTextIcon}
               width={12}
               height={12}
               alt="Arrow"
-              onClick={() => {
-                openIssueListFn();
-                handleViewTaskList();
-              }}
             />
           </IssuesSectionFileImg>
         </Tooltip>
 
         <Tooltip title={showIssueMarkups ? "Show Issues" : "Hide Issues"}>
-          <IssuesSectionClipImg>
+          <IssuesSectionClipImg  onClick={() => {
+                  toggleIssueVisibility();
+                }}>
             {showIssueMarkups && (
               <CameraIcon
                 width={12}
                 height={12}
                 src={fileTextIssue}
                 alt="Arrow"
-                onClick={() => {
-                  toggleIssueVisibility();
-                }}
               />
             )}
 
@@ -327,16 +324,11 @@ const Issues = ({
                 height={12}
                 src={clipboardSecondIcon}
                 alt="Arrow"
-                onClick={() => {
-                  toggleIssueVisibility();
-                }}
               />
             )}
           </IssuesSectionClipImg>
         </Tooltip>
-      </IssueBox>
-
-      {openDrawer && (
+        {openDrawer && (
         <Drawer
           anchor={"right"}
           open={openDrawer}
@@ -425,7 +417,10 @@ const Issues = ({
           />
         </Drawer>
       )}
-    </div>
+      </IssueBox>
+
+   
+   
   );
 };
 
