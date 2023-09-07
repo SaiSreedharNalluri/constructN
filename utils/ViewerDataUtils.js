@@ -366,5 +366,5 @@ export const isMobile=()=>{
         {
             formatedTime =  moment(utcTime).local()
         }
-        return formatedTime.format("DD MMM YYYY")
+        return formatedTime?.format("DD MMM YYYY")
     }
