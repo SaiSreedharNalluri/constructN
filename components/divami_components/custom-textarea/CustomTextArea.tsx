@@ -70,6 +70,12 @@ export const CustomTextArea = (props: PropTypes) => {
         }}
         readOnly={isReadOnly}
         style={{ resize: "none" }}
+        onKeyDown={(e: any) => {
+          const arrowKeys = ["ArrowUp", "ArrowDown",'ArrowRight','ArrowLeft'];
+          if (arrowKeys.includes(e.key)) {
+           e.stopPropagation();
+         }
+        }}
       />
       {/* {isError && (
                 <div className={classes.error_message}>This is required</div>

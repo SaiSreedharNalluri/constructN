@@ -313,7 +313,7 @@ function BasicTabs(props: any) {
     if (taskState?.TabOne?.id) {
       getComments(taskState?.TabOne?.id);
     }
-  }, [taskState]);
+  }, [taskState,isAdding]);
 
   const addComment = (text: string, entityId: string) => {
     if (text !== "") {
@@ -322,8 +322,9 @@ function BasicTabs(props: any) {
         entity: entityId,
       }).then((response) => {
         if (response.success === true) {
+          setIsAdding(true)
+          getComments(entityId);
           CustomToast("Comment added successfully","success");
-          setBackendComments([...backendComments, response.result]);
         }
       });
       setComments("");

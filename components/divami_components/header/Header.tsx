@@ -13,7 +13,7 @@ import clip from "../../../public/divami_icons/clip.svg";
 import defaultAvatar from "../../../public/divami_icons/defaultAvatar.svg";
 
 import { useRouter } from "next/router";
-import { getCookie, removeCookies } from "cookies-next";
+import { getCookie, removeCookies, setCookie } from "cookies-next";
 import DesignRealitySwitch from "../../container/designRealitySwitch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -56,11 +56,13 @@ import CustomDrawer from "../custom-drawer/custom-drawer";
 import Notifications from "../notifications/Notifications";
 import UserProfile from "../user-profile/UserProfile";
 import CustomSelect from "../custom-select/CustomSelect";
-import { getProjectsList } from "../../../services/project";
+import { getProjectDetails, getProjectsList } from "../../../services/project";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import Link from "next/link";
 import { Circle, Rectangle } from "@mui/icons-material";
+import { json } from "stream/consumers";
+import { CustomToast } from "../custom-toaster/CustomToast";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -102,14 +104,45 @@ const Header: React.FC<any> = ({
   const [supportMenu, setSupportMenu] = useState<boolean>(false);
   const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
   const [openProfile, setOpenProfile] = useState(false);
-
+  const [projectName,setProjectName]=useState('')
   // const [config, setConfig] = useState<any>([]);
   // const [projects, setProjects] = useState<any>([]);
   // const [currentProject, setCurrentProject] = useState("");
   // const [projectId, setProjectId] = useState<any>("");
-
+  useEffect(()=>{
+    if(router.isReady && router?.query?.projectId)
+    {
+      const projectInfo = getCookie('projectData')as string;
+     if(projectInfo === undefined || projectInfo===null)
+     {
+      ProjectInfo()
+     }
+     else
+     {
+     if(JSON.parse(projectInfo)?._id!=router?.query?.projectId)
+     {
+      ProjectInfo()
+     }else{
+      const projectData:any=  getCookie('projectData')
+      let projectInfo=null;
+      if (projectData) projectInfo = JSON.parse(projectData);
+      setProjectName(projectInfo?.name)
+     }
+     }
+    }
+  },[router.isReady,router?.query?.projectId])
+  const ProjectInfo=()=>{
+    getProjectDetails(router?.query?.projectId as string).then((response)=>{
+      if(response?.data?.result?.name)
+      {
+        setCookie('projectData',JSON.stringify({_id:router?.query?.projectId,name:response?.data?.result?.name}))
+        setProjectName(response?.data?.result?.name)
+      } 
+     })  .catch((error) => {
+       CustomToast("failed to load data","error");
+     });
+  }
   useEffect(() => {
-    const userObj: any = getCookie("user");
     let user = null;
     if (userObjState) user = JSON.parse(userObjState);
 
@@ -139,6 +172,7 @@ const Header: React.FC<any> = ({
 
   const userLogOut = () => {
     removeCookies("user");
+    removeCookies('projectData');
     // router.push("/login");
     router.push("/login");
   };
@@ -272,7 +306,6 @@ const Header: React.FC<any> = ({
   const handleProfileClose = () => {
     setOpenProfile(false);
   };
-
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -311,7 +344,7 @@ const Header: React.FC<any> = ({
           {showBreadcrumbs && <DividerIcon src={headerLogSeparator} alt="" />}
           {showBreadcrumbs && (
             <CustomBreadcrumbs
-              breadCrumbData={breadCrumbData}
+              breadCrumbData={ [{ name:projectName}]}
               handleBreadCrumbClick={
                 handleBreadCrumbClick ? handleBreadCrumbClick : () => {}
               }
@@ -441,7 +474,7 @@ const Header: React.FC<any> = ({
               </div>
             </TooltipText>
           </HeaderSupportImageContainer>
-{/* 
+
           <HeaderNotificationImageContainer>
             <TooltipText title="Notifications">
               <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full">
@@ -480,7 +513,7 @@ const Header: React.FC<any> = ({
                 </CustomDrawer>
               </div>
             )}
-          </HeaderNotificationImageContainer> */}
+          </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
             <TooltipText title="Menu">
               <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
