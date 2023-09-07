@@ -1,5 +1,5 @@
 import { IUserNotification } from "../../../../models/IUserNotification";
-import Moment from "moment";
+import Moment from "moment-timezone";
 import { userNotificationTypes } from "../../../../utils/constants";
 import Image from "next/image";
 import all from "../../../../public/divami_icons/todoIcon.svg"
