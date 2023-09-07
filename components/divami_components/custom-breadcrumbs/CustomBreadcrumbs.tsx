@@ -7,6 +7,8 @@ import {
   ArrowIcon,
   BreadcrumbsLabel,
 } from "./CustomBreadcrumbsStyles";
+import { truncateString } from "../../../pages/projects";
+import { ToolTipText } from "../ProgressBarMode/ProgressBarStyles";
 
 const CustomBreadcrumbs: React.FC<any> = ({
   breadCrumbData,
@@ -35,23 +37,27 @@ const CustomBreadcrumbs: React.FC<any> = ({
           </Link> */}
           {showFirstElement && breadcrumbsConfig.length ? (
             breadcrumbsConfig.map((breadcrumb: any, index: number) => (
+              <ToolTipText title={breadcrumb?.name?.length > 50 ? breadcrumb?.name : ""}>
               <BreadcrumbsLabel
                 key={breadcrumb + index}
                 color="text.primary"
                 onClick={() => handleBreadCrumbClick(breadcrumb, index)}
               >
-                {breadcrumb?.name}
+                {truncateString(breadcrumb?.name,50)}
               </BreadcrumbsLabel>
+              </ToolTipText>
             ))
           ) : !showFirstElement && breadcrumbsConfig.length ? (
             breadcrumbsConfig.slice(1).map((breadcrumb: any, index: number) => (
+              <ToolTipText title={breadcrumb?.name?.length > 50 ? breadcrumb?.name : ""}>
               <BreadcrumbsLabel
                 key={breadcrumb + index}
                 color="text.primary"
                 onClick={() => handleBreadCrumbClick(breadcrumb, index)}
               >
-                {breadcrumb?.name}
+                {truncateString(breadcrumb?.name,50)}
               </BreadcrumbsLabel>
+              </ToolTipText>
             ))
           ) : (
             <></>

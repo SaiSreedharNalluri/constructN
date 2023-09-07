@@ -382,26 +382,26 @@ const ActivityLog = (props: any) => {
                           // deletePopup(each?._id);
                           setCommentPopup(true);
                         }}
-                      />
-                      {commentPopUp && (
-                        <PopupComponent
-                          open={commentPopUp}
-                          setShowPopUp={setCommentPopup}
-                          modalTitle={"Delete Comment"}
-                          // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
-                          modalmessage={`Are you sure you want to delete this comment?`}
-                          primaryButtonLabel={"Delete"}
-                          SecondaryButtonlabel={"Cancel"}
-                          callBackvalue={() => {
-                            setCommentPopup(false);
-                            deleteComments(each?._id);
-                          }}
-                        />
-                      )}
+                      />   
                     </CommentEditActions>
                   ) : (
                     <></>
                   )}
+                   {commentPopUp && (
+                       <PopupComponent
+                       open={commentPopUp}
+                       setShowPopUp={setCommentPopup}
+                       modalTitle={"Delete Comment"}
+                       // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
+                       modalmessage={`Are you sure you want to delete this comment?`}
+                       primaryButtonLabel={"Delete"}
+                       SecondaryButtonlabel={"Cancel"}
+                       callBackvalue={() => {
+                         setCommentPopup(false);
+                         deleteComments(each?._id);
+                       }}
+                     /> 
+                      )} 
                 </CommentTitleWrapper>
               </ActivityHeader>
 
@@ -646,28 +646,29 @@ const ActivityLog = (props: any) => {
                                         }}
                                       />
 
-                                      {commentReplyPopUp && (
-                                        <PopupComponent
-                                          open={commentReplyPopUp}
-                                          setShowPopUp={setcommentReplyPopup}
-                                          modalTitle={"Delete Reply"}
-                                          // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
-                                          modalmessage={`Are you sure you want to delete this reply?`}
-                                          primaryButtonLabel={"Delete"}
-                                          SecondaryButtonlabel={"Cancel"}
-                                          callBackvalue={() => {
-                                            setcommentReplyPopup(false);
-                                            deleteReplyComments(
-                                              replyObj?.commentId,
-                                              replyObj?._id
-                                            );
-                                          }}
-                                        />
-                                      )}
+                                    
                                     </CommentEditActions>
                                   ) : (
                                     <></>
                                   )}
+                              {commentReplyPopUp && (
+                                      <PopupComponent
+                                        open={commentReplyPopUp}
+                                        setShowPopUp={setcommentReplyPopup}
+                                        modalTitle={"Delete Reply"}
+                                        // modalmessage={`Are you sure you want to delete this Task "${selectedTask.type}(#${selectedTask._id})"?`}
+                                        modalmessage={`Are you sure you want to delete this reply?`}
+                                        primaryButtonLabel={"Delete"}
+                                        SecondaryButtonlabel={"Cancel"}
+                                        callBackvalue={() => {
+                                          setcommentReplyPopup(false);
+                                          deleteReplyComments(
+                                            replyObj?.commentId,
+                                            replyObj?._id
+                                          );
+                                        }}
+                                      />
+                                      )}      
                                 </ActivityHeader>
 
                                 <ActivityBodyChild>

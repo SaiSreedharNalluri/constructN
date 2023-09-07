@@ -5,7 +5,7 @@ export const ISSUE_FORM_CONFIG = [
     id: "create_title",
     type: "textfield",
     defaultValue: "",
-    formLabel: "Provide a brief title for the issue",
+    formLabel: `* Provide a brief title for the issue`,
     placeholder: "Title in 30 characters",
     isError: false,
     isReq: true,
@@ -26,7 +26,7 @@ export const ISSUE_FORM_CONFIG = [
     isReq: true,
     isflex: false,
     isReadOnly: false,
-    formLabel: "Select the type of issue",
+    formLabel: "* Select the type of issue",
     options: [],
   },
   {
@@ -52,7 +52,7 @@ export const ISSUE_FORM_CONFIG = [
     isflex: false,
     isReadOnly: false,
 
-    formLabel: "Select issue priority",
+    formLabel: "* Select issue priority",
     options: [],
   },
   {

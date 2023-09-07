@@ -200,6 +200,10 @@ export const CustomTextField = (props: any) => {
         onMouseLeave={onMouseLeave}
         loginField={loginField}
         onKeyDown={(e: any) => {
+          const arrowKeys = ["ArrowUp", "ArrowDown",'ArrowRight','ArrowLeft'];
+          if (arrowKeys.includes(e.key)) {
+           e.stopPropagation();
+         }
           if (e.keyCode === 13 && props.callback) props.callback(e);
         }}
         // variant="outlined"

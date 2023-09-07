@@ -190,7 +190,15 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       customSort: (a: any, b: any) => sortBy(a, b, "updatedAt"),
 
       render: (rowData: any) => {
-        return <>{setTheFormatedDate(rowData.updatedAt)}</>;
+        if(rowData?.assignedOn)
+        {
+          return <>{setTheFormatedDate(rowData.assignedOn)}</>;
+        }
+        else 
+        {
+          return '-'
+        }
+       
       },
     },
     {

@@ -45,6 +45,7 @@ export const SideMenuOptionImageContainer = styled("div")({
   alignItems: "center",
   width: "59px",
   height: "59px",
+  cursor:"pointer",
   // borderBottomRightRadius:'50%',
   // borderTopRightRadius:'50%',
   borderRadius:'50%',
@@ -63,6 +64,7 @@ export const SideMenuChatImageContainer = styled("div")({
   height: "59px",
   borderRadius:'50%',
   fill:"#515151",
+  cursor:"pointer",
   '&:hover': {
     background: '#FF843F',
     border: "7px solid  #ffffff",

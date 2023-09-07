@@ -87,7 +87,7 @@ const CustomTagSuggestion = (props: any) => {
             {...params}
             variant="outlined"
             // label="filterSelectedOptions"
-            placeholder="Add tags separated by commas"
+            placeholder="Add tags"
             sx={{
               "& .MuiInputBase-input": {
                 fontSize: "14px",

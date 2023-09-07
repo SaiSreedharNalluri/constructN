@@ -267,7 +267,12 @@ const Issues = ({
   }, [issueOpenDrawer]);
 
   return (
-    <>
+    <div  onKeyDown={(e: any) => {
+      const arrowKeys = ["ArrowUp", "ArrowDown",'ArrowRight','ArrowLeft'];
+      if (arrowKeys.includes(e.key)) {
+       e.stopPropagation();
+     }
+    }}>
       {/* <DownloadTable /> */}
       {/* <PrintPage /> */}
       <IssueBox>
@@ -420,7 +425,7 @@ const Issues = ({
           />
         </Drawer>
       )}
-    </>
+    </div>
   );
 };
 

@@ -294,22 +294,18 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           // onClick={() => handleClick(item.id)}
           >
             <TooltipText title={item.toolTipMsg} placement="right">
-              <SideMenuOptionImageContainer>
+              <SideMenuOptionImageContainer id={item.id} onClick={leftClickHandler} >
                 {router.pathname.includes(item.id) || item.isActive ? (
                   <OvershowImg>
                     <HighlightedSytledImage
                       src={item.activeIcon}
                       alt={item.id}
-                      id={item.id}
-                      onClick={leftClickHandler}
                     />
                   </OvershowImg>
                 ) : (
                   <StyledImage
                     src={item.icon}
-                    alt={item.id}
-                    id={item.id}
-                    onClick={leftClickHandler}
+                    alt={item.id}          
                   />
                 )}
               </SideMenuOptionImageContainer>
@@ -318,7 +314,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         </SideMenuOptionContainer>
       ))}
       {supportItemsConfig.map((item, index) => (
-        <SideMenuOptionContainer ref={chatIconRef}  className="fixed bottom-[50px]" key={index}>
+        <SideMenuOptionContainer ref={chatIconRef}  className="fixed bottom-0" key={index}>
           <SideMenuOption
           // onClick={() =>
           //   item.label === "settings" ? handleClick(item) : null
@@ -326,7 +322,8 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           // onClick={() => handleClick(item.id)}
           >
             <TooltipText title={item.toolTipMsg} placement="right">        
-                <SideMenuChatImageContainer  id="custom_fc_button" onMouseEnter={handleChatHover}
+                <SideMenuChatImageContainer  id={item.id}
+                    onClick={leftClickHandler} onMouseEnter={handleChatHover}
                 onMouseLeave={handleChatHoverEnd}>
                  {isChatHovered ? (
                   <StyledImage
@@ -334,8 +331,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
                     width={25}
                     height={25}
                     alt={item.id}
-                    id={item.id}
-                    onClick={leftClickHandler}
+                                    
                   />
                 ) : (
                   <StyledImage
@@ -343,8 +339,6 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
                     width={25}
                     height={25}
                     alt={item.id}
-                    id={item.id}
-                    onClick={leftClickHandler}
                   />
                 )}
                 </SideMenuChatImageContainer>
@@ -353,15 +347,15 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           </SideMenuOption>
         </SideMenuOptionContainer>
       ))}
-         <div  className=" text-[12px] fixed bottom-1 text-center text-[#787878]">
+         {/* <div  className=" text-[12px] fixed bottom-1 text-center text-[#787878]">
             <TooltipText title="Change time zone" placement="right">
-            {/* <div id="timeZone" className="py-1 px-[2px] hover:border border-[#FF843F] border-solid rounded-sm cursor-pointer" onClick={leftClickHandler}>{formattedTime}</div> */}
+            //  <div id="timeZone" className="py-1 px-[2px] hover:border border-[#FF843F] border-solid rounded-sm cursor-pointer" onClick={leftClickHandler}>{formattedTime}</div> 
               <div id="timeZone" className="py-[6px]  px-[2px] hover:bg-[#FF843F] rounded-sm  cursor-pointer hover:text-white " onClick={leftClickHandler}>
               <div >{currentTime}</div>
             <div className="">({timeZoneName})</div>
               </div>
             </TooltipText>
-          </div>
+          </div> */}
     </SideMenuContainer>
   );
 };
