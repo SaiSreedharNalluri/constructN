@@ -93,6 +93,7 @@ import CustomLoader from "../custom_loader/CustomLoader";
 import LocalSearch from "../local_component/LocalSearch";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import PopupComponent from "../../popupComponent/PopupComponent";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import Chips from "./Chip";
 
 interface RowData {
@@ -708,7 +709,7 @@ const[id,setId]=useState("");
       render: (rowData: any) => {
         return <>{
           rowData?.lastUpdated ?
-          moment(rowData.lastUpdated).format("DD MMM YYYY")
+          setTheFormatedDate(rowData.lastUpdated)
           : "-"
           }</>;
       },

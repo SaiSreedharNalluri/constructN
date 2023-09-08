@@ -3,7 +3,7 @@ import { getRealityPointCloudPath, getPointCloudTM, getRealityImagesPath, getRea
 import { type } from "os";
 
 import { getRealityPath, getDesignPath, getFloormapPath, getFloormapTmPath,  getMapboxLayersPath, getStructurePath } from "./S3Utils";
-
+import moment from "moment-timezone";
 
 export const getPointCloudReality = (snapshot) => {
     return snapshot.reality.find((reality) => {
@@ -355,3 +355,15 @@ export const isMobile=()=>{
         }
         
 }
+    export const setTheFormatedDate=(utcTime)=>{
+        let formatedTime
+        if(JSON.parse(localStorage.getItem('isProjectTimeZone'))&&JSON.parse(localStorage.getItem('currentProjectTimeZone'))!=null)
+        {
+            formatedTime = moment(utcTime).tz(JSON.parse(localStorage.getItem('currentProjectTimeZone')).timeZone)
+        }
+        else
+        {
+            formatedTime =  moment(utcTime).local()
+        }
+        return formatedTime.format("DD MMM YYYY")
+    }

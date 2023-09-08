@@ -123,6 +123,7 @@ import Chip from "@mui/material/Chip";
 import moment from "moment";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import AttachmentPreview from "../attachmentPreview";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -468,7 +469,7 @@ function BasicTabs(props: any) {
                 data-testid="issue-captured"
               >
                 {" "}
-                {Moment(taskState?.TabOne?.capturedOn).format("DD MMM YYYY")}
+                {setTheFormatedDate(taskState?.TabOne?.capturedOn)}
               </CaptureStatus>
             </SecondContCapt>
           </SecondBodyDiv>
@@ -493,7 +494,7 @@ function BasicTabs(props: any) {
                 data-testid="issue-duedate"
               >
                 {" "}
-                {Moment(taskState?.TabOne?.dueDate).format("DD MMM 'YY")}
+                {setTheFormatedDate(taskState?.TabOne?.dueDate)}
               </ThirdContDueDate>
             </SecondContDueDate>
           </SecondBodyDiv>
