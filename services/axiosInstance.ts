@@ -4,8 +4,16 @@ import { refreshToken } from "./userAuth";
 // eslint-disable-next-line react-hooks/rules-of-hooks
 let urlExclude = ["signin","reset-password-link-validate"];
 let isRefreshing = false;
-let refreshSubscribers = [];
+let refreshSubscribers:any = [];
 const instance = axios.create();
+
+function onRefreshed(authorisationToken :string) {
+  refreshSubscribers.map((cb:any) => cb(authorisationToken));
+}
+
+function subscribeTokenRefresh(cb:any) {
+  refreshSubscribers.push(cb);
+}
 
 instance.interceptors.request.use(
   (config) => {
@@ -28,14 +36,27 @@ const interceptor=instance.interceptors.response.use(
     const originalConfig = error.config;
     console.log("Axios Caught Error",error);
     console.log("config error, retry ", originalConfig);
+    
     if (error?.response?.status===401 && 
       hasCommonElement(urlExclude,error?.response?.config?.url?.split("/")) ===false){
       instance.interceptors.response.eject(interceptor);
       console.log("401 My Old Refresh token is",getLocalRefreshToken());
+      if(isRefreshing){
+        return new Promise(resolve => {
+          subscribeTokenRefresh((token:string) => {
+            error.response.config.headers.Authorization = `Bearer ${token}`;
+            console.log("...",token)
+            resolve(instance(error.response.config));
+          });
+        });
+      }
+      isRefreshing=true;
       return refreshToken(getLocalRefreshToken()).then((response)=>{
         console.log("401 My New Refresh token is",getLocalRefreshToken());
         error.response.config.headers["Authorization"]="Bearer "+ response.token;
-
+        isRefreshing = false;
+        onRefreshed(response.token);
+        refreshSubscribers=[];
       // const userObj: any = getCookie("user");
       // let user = null;
       // if (userObj) {
