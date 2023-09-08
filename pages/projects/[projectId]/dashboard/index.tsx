@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 import { getdashBoardUrls } from "../../../../services/s3Service";
+import { getCookie } from "cookies-next";
 const Index: React.FC = () => {
   const router = useRouter();
   const [tabIndex, setTabIndex] = useState(0);
@@ -15,13 +16,16 @@ const Index: React.FC = () => {
   }>();
   useEffect(() => {
     if (router.isReady) {
-      getdashBoardUrls(router.query.projectId as string)
-        .then((response) => {
-          setUrlObj(response);
-        })
-        .catch((error) => {
-          setLoadData(true);
-        });
+      // getdashBoardUrls(router.query.projectId as string)
+      //   .then((response) => {
+      //     setUrlObj(response);
+      //   })
+      //   .catch((error) => {
+      //     setLoadData(true);
+      //   });
+      const pData= getCookie('projectData') as string;
+      if(router.query.projectId=== JSON.parse(pData)?._id)
+      setUrlObj({dashboard_url:JSON.parse(pData)?.dashboardURL,report_url:JSON.parse(pData)?.reportURL});
     }
   }, [router.isReady, router.query.projectId]);
 
