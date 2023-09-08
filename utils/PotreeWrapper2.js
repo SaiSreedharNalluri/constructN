@@ -510,7 +510,7 @@ export const PotreeViewerUtils = () => {
         _currentImageName = null;
     
         if (_currentMode == "Drone Image") {
-            _viewer.fitToScreen();
+            // _viewer.fitToScreen();
             pointCloudView(false);
         }
         _currentMode = "3d"
@@ -1828,7 +1828,7 @@ export const PotreeViewerUtils = () => {
                     // console.log("Testing realityViewToggle: ", _isSupportUser);
                     if (_structure._id === "STR418477" || _isSupportUser) {
                         unloadAllImages();
-                        _viewer.fitToScreen();
+                        // _viewer.fitToScreen();
                     }
                 }
                 break;
