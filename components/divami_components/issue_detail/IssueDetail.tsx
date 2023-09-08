@@ -123,6 +123,7 @@ import Chip from "@mui/material/Chip";
 import moment from "moment";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import AttachmentPreview from "../attachmentPreview";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -313,7 +314,7 @@ function BasicTabs(props: any) {
     if (taskState?.TabOne?.id) {
       getComments(taskState?.TabOne?.id);
     }
-  }, [taskState]);
+  }, [taskState,isAdding]);
 
   const addComment = (text: string, entityId: string) => {
     if (text !== "") {
@@ -322,8 +323,9 @@ function BasicTabs(props: any) {
         entity: entityId,
       }).then((response) => {
         if (response.success === true) {
+          setIsAdding(true)
+          getComments(entityId);
           CustomToast("Comment added successfully","success");
-          setBackendComments([...backendComments, response.result]);
         }
       });
       setComments("");
@@ -467,7 +469,7 @@ function BasicTabs(props: any) {
                 data-testid="issue-captured"
               >
                 {" "}
-                {Moment(taskState?.TabOne?.capturedOn).format("DD MMM YYYY")}
+                {setTheFormatedDate(taskState?.TabOne?.capturedOn)}
               </CaptureStatus>
             </SecondContCapt>
           </SecondBodyDiv>
@@ -492,7 +494,7 @@ function BasicTabs(props: any) {
                 data-testid="issue-duedate"
               >
                 {" "}
-                {Moment(taskState?.TabOne?.dueDate).format("DD MMM 'YY")}
+                {setTheFormatedDate(taskState?.TabOne?.dueDate)}
               </ThirdContDueDate>
             </SecondContDueDate>
           </SecondBodyDiv>

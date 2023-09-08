@@ -5,7 +5,7 @@ export const TASK_FORM_CONFIG = [
     id: "create_title",
     type: "textfield",
     defaultValue: "",
-    formLabel: "Provide a brief title for the task",
+    formLabel: "* Provide a brief title for the task",
     placeholder: "Title in 30 characters",
     isReadOnly: false,
     isError: false,
@@ -23,7 +23,7 @@ export const TASK_FORM_CONFIG = [
     isError: false,
     isReq: true,
     isflex: false,
-    formLabel: "Select the type of task",
+    formLabel: "* Select the type of task",
     options: [],
   },
   {
@@ -48,7 +48,7 @@ export const TASK_FORM_CONFIG = [
     isReq: true,
     isflex: false,
     isReadOnly: false,
-    formLabel: "Select task priority",
+    formLabel: "* Select task priority",
     options: [],
   },
   {

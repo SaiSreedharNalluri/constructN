@@ -24,7 +24,6 @@ import toastClose from "../public/divami_icons/toastClose.svg";
 import PopupComponent from "../components/popupComponent/PopupComponent";
 import { IntercomProvider } from 'react-use-intercom'
 config.autoAddCss = false;
-import instance from '../services/axiosInstance'
 export default function App({ Component, pageProps }: AppProps) {
   mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, { debug: true });
   const router = useRouter();

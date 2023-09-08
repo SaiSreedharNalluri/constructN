@@ -112,7 +112,7 @@ const CustomSearch = (props: any) => {
   }, [data.selectedName?.length]);
 
   return (
-    <>
+    <div>
       {isMultiSelect ? (
         <AssignEditSearchContainer>
           <CustomAutoComplete
@@ -163,7 +163,7 @@ const CustomSearch = (props: any) => {
                     },
                   },
                 }}
-                placeholder="Enter Name or Teams here ..."
+                placeholder="Enter Name"
                 {...params}
                 // label={data.label}
                 InputProps={
@@ -272,7 +272,7 @@ const CustomSearch = (props: any) => {
           onChange={(e, value) => handleSearchResult(e, value, data.id)}
         />
       )}
-    </>
+    </div>
   );
 };
 

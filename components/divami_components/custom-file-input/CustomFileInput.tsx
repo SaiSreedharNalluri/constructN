@@ -58,6 +58,9 @@ const RedLabel = styled.span`
 const GreyLabel = styled.span`
   color: grey;
 `;
+export const ToolTipText = styled("div")({
+
+})
 const CustomFileInput = ({ handleFileUpload, data }: any) => {
   const inputRef = useRef<any>(null);
   const handleFileChange = (event: any) => {
@@ -72,12 +75,13 @@ const CustomFileInput = ({ handleFileUpload, data }: any) => {
 
   return (
     <>
-      <FileUploadContainer onClick={handleClick}>
+      <ToolTipText title="supported files jpeg,jpg,png,pdf,doc,docs,xls,xlsx,mp3,mp4" >
+      <FileUploadContainer onClick={handleClick} >
         <UploadImage />
         <UploadLabelContainer>
           <LabelArea>
             <RedLabel>Click Here &nbsp;</RedLabel>
-            <GreyLabel>to browse from local system.</GreyLabel>
+            <GreyLabel>to add files</GreyLabel>
           </LabelArea>
           <HiddenInputField
             type="file"
@@ -89,7 +93,8 @@ const CustomFileInput = ({ handleFileUpload, data }: any) => {
           />
         </UploadLabelContainer>
       </FileUploadContainer>
-    </>
+     </ToolTipText>
+     </>   
   );
 };
 

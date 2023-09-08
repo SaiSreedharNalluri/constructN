@@ -98,7 +98,7 @@ const ResetLink = ({ queryMail }: any) => {
               The link in the email will expire in 2 hours.
             </LinkEmailText>
 
-            <ChangeMailText
+            {/* <ChangeMailText
               onClick={() => {
                 // router.push("/signup");
                 // router.push("/signup");
@@ -107,7 +107,7 @@ const ResetLink = ({ queryMail }: any) => {
               }}
             >
               Change Email
-            </ChangeMailText>
+            </ChangeMailText> */}
 
             <RecieveMailText>
               Didn’t recieve the email?

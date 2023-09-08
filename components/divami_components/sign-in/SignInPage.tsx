@@ -94,7 +94,8 @@ const SignInPage = () => {
               "userCredentials",
               JSON.stringify(userProfileObj)
             );
-            setCookie("user", userProfileObj,{secure:true,sameSite:"none",httpOnly:false,path:"/"});
+            setCookie("isProjectTimeZone", true);
+            setCookie("user", userProfileObj);
             CustomToast("User signed in successfully", "success");
             const previousPage:any = router.query["history"] || "";
             setLoginEnable(true);

@@ -33,6 +33,7 @@ import html2canvas from "html2canvas";
 import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import plusCircleIconHighlighted from "../../../public/divami_icons/plusCircleIconHighlighted.svg";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 const Task = ({
   rightMenuClickHandler,
   tasksList,
@@ -150,7 +151,7 @@ const Task = ({
     // data.startDate = moment(data.startDate).format("YYYY-MM-DD");
     data.startDate = `${moment(data.startDate).toISOString()}`;
 
-    data.dueDate = formData
+     data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
     // data.dueDate = moment(data.dueDate).format("YYYY-MM-DD");
@@ -290,17 +291,21 @@ const Task = ({
     setOpenCreateTask(taskOpenDrawer);
   }, [taskOpenDrawer]);
   return (
-    <TaskBox>
+    <TaskBox  onKeyDown={(e: any) => {
+      const arrowKeys = ["ArrowUp", "ArrowDown",'ArrowRight','ArrowLeft'];
+      if (arrowKeys.includes(e.key)) {
+       e.stopPropagation();
+     }
+    }}>
       <TaskTitle>Task: </TaskTitle>
 
       <Tooltip title="Create Task">
-        <IssuesSectionPlusImg className={highlightCreateTaskIcon?"bg-[#F1742E] hover:bg-[#F1742E]":""}>
-          <CameraIcon
+        <IssuesSectionPlusImg 
             onClick={() => {
               openTaskCreateFn();
-
               // setOpenCreateTask(true);
-            }}
+            }} className={highlightCreateTaskIcon?"bg-[#F1742E] hover:bg-[#F1742E]":""}>
+          <CameraIcon
             src= {highlightCreateTaskIcon?plusCircleIconHighlighted:plusCircleIcon}
             // onClick={props.rightMenuClickHandler}
             width={12}
@@ -311,11 +316,11 @@ const Task = ({
       </Tooltip>
 
       <Tooltip title="Task List">
-        <IssuesSectionFileImg>
-          <CameraIcon
-            onClick={() => {
+        <IssuesSectionFileImg
+          onClick={() => {
               handleViewTaskList();
-            }}
+            }}>
+          <CameraIcon
             src={fileTextIcon}
             width={12}
             height={12}
@@ -325,16 +330,16 @@ const Task = ({
       </Tooltip>
 
       <Tooltip title={showTaskMarkups ? "Show Tasks" : "Hide Tasks"}>
-        <IssuesSectionClipImg>
+        <IssuesSectionClipImg  
+        onClick={() => {
+                toggleTaskVisibility();
+              }}>
           {showTaskMarkups && (
             <CameraIcon
               width={12}
               height={12}
               src={taskToogleIcon}
               alt="Arrow"
-              onClick={() => {
-                toggleTaskVisibility();
-              }}
             />
           )}
 
@@ -344,9 +349,6 @@ const Task = ({
               height={12}
               src={clipboardTask}
               alt="Arrow"
-              onClick={() => {
-                toggleTaskVisibility();
-              }}
             />
           )}
         </IssuesSectionClipImg>

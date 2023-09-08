@@ -117,6 +117,7 @@ import { ActivityLogContainer } from "../issue_detail/IssueDetailStyles";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
 import AttachmentPreview from "../attachmentPreview";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 
 interface ContainerProps {
   footerState: boolean;
@@ -280,8 +281,9 @@ function BasicTabs(props: any) {
         entity: entityId,
       }).then((response) => {
         if (response.success === true) {
+          setIsAdding(true)
+          getComments(entityId);
           CustomToast("Comment added successfully","success");
-          setBackendComments([...backendComments, response.result]);
         }
       });
       setComments("");
@@ -315,7 +317,7 @@ function BasicTabs(props: any) {
     if (taskState?.TabOne?.id) {
       getComments(taskState?.TabOne?.id);
     }
-  }, [taskState]);
+  }, [taskState,isAdding]);
 
   const handleSortMenuClose = () => {
     setIsSortMenuOpen(false);
@@ -433,7 +435,7 @@ function BasicTabs(props: any) {
                 data-testid="task-captured"
               >
                 {" "}
-                {Moment(taskState?.TabOne?.capturedOn).format("DD MMM YYYY")}
+                {setTheFormatedDate(taskState?.TabOne?.capturedOn)}
               </CaptureStatus>
             </SecondContCapt>
           </SecondBodyDiv>
@@ -451,7 +453,7 @@ function BasicTabs(props: any) {
             <SecondContDueDate>
               <DueDateTitle>Due date</DueDateTitle>
               <ThirdContDueDate style={{ color: "#101F4B" }}>
-                {Moment(taskState?.TabOne?.dueDate).format("DD MMM 'YY")}
+                {setTheFormatedDate(taskState?.TabOne?.dueDate)}
               </ThirdContDueDate>
             </SecondContDueDate>
           </SecondBodyDiv>
