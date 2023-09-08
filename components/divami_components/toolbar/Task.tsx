@@ -300,13 +300,12 @@ const Task = ({
       <TaskTitle>Task: </TaskTitle>
 
       <Tooltip title="Create Task">
-        <IssuesSectionPlusImg className={highlightCreateTaskIcon?"bg-[#F1742E] hover:bg-[#F1742E]":""}>
-          <CameraIcon
+        <IssuesSectionPlusImg 
             onClick={() => {
               openTaskCreateFn();
-
               // setOpenCreateTask(true);
-            }}
+            }} className={highlightCreateTaskIcon?"bg-[#F1742E] hover:bg-[#F1742E]":""}>
+          <CameraIcon
             src= {highlightCreateTaskIcon?plusCircleIconHighlighted:plusCircleIcon}
             // onClick={props.rightMenuClickHandler}
             width={12}
@@ -317,11 +316,11 @@ const Task = ({
       </Tooltip>
 
       <Tooltip title="Task List">
-        <IssuesSectionFileImg>
-          <CameraIcon
-            onClick={() => {
+        <IssuesSectionFileImg
+          onClick={() => {
               handleViewTaskList();
-            }}
+            }}>
+          <CameraIcon
             src={fileTextIcon}
             width={12}
             height={12}
@@ -331,16 +330,16 @@ const Task = ({
       </Tooltip>
 
       <Tooltip title={showTaskMarkups ? "Show Tasks" : "Hide Tasks"}>
-        <IssuesSectionClipImg>
+        <IssuesSectionClipImg  
+        onClick={() => {
+                toggleTaskVisibility();
+              }}>
           {showTaskMarkups && (
             <CameraIcon
               width={12}
               height={12}
               src={taskToogleIcon}
               alt="Arrow"
-              onClick={() => {
-                toggleTaskVisibility();
-              }}
             />
           )}
 
@@ -350,9 +349,6 @@ const Task = ({
               height={12}
               src={clipboardTask}
               alt="Arrow"
-              onClick={() => {
-                toggleTaskVisibility();
-              }}
             />
           )}
         </IssuesSectionClipImg>

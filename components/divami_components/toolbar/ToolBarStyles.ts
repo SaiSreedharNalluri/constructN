@@ -63,6 +63,7 @@ export const IssuesSectionPlusImg = styled("div")({
   // marginLeft: '8px',
   // margin: '0 6px'
   borderRadius: "50%",
+  cursor:"pointer",
   "&:hover": {
     background: "#E7E7E7",
   },
@@ -73,6 +74,7 @@ export const IssuesSectionFileImg = styled("div")({
   // height: '12px',
   // margin: '0 6px',
   borderRadius: "50%",
+  cursor:"pointer",
   "&:hover": {
     background: "#E7E7E7",
   },
@@ -83,6 +85,7 @@ export const IssuesSectionClipImg = styled("div")({
   // height: '12px',
   // margin: '0 6px',
   borderRadius: "50%",
+  cursor:"pointer",
   "&:hover": {
     background: "#E7E7E7",
   },
