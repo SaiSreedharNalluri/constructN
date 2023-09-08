@@ -163,7 +163,7 @@ function GenericViewer(props) {
     env: "AutodeskProduction2", //Local, AutodeskProduction, AutodeskProduction2
     api: "streamingV2", // for models uploaded to EMEA change this option to 'derivativeV2_EU'
     getAccessToken: async function (onSuccess) {
-      const response = await cachedAutodeskAuth();
+      const response = await autodeskAuth();
       // console.log("Autodesk auth token:", response.data.result);
       const res = response?.data?.result;
 
