@@ -1193,7 +1193,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
       minimapUtils.current.setSnapshot(myViewerData.currentSnapshotBase);
       minimapUtils.current.updateIssuesData(myViewerData.currentIssueList);
       minimapUtils.current.updateTasksData(myViewerData.currentTaskList);
-      let data = await getRealityLayersPath(myViewerData.structure, getRealityMap(myViewerData.currentSnapshotBase));
+      let data = await getRealityLayersPath(myViewerData.structure, await getRealityMap(myViewerData.currentSnapshotBase));
       minimapUtils.current?.updateLayersData(data);
     }
     // currentContext.current = undefined;
@@ -1204,7 +1204,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
       minimapCompareUtils.current.setSnapshot(myViewerData.currentSnapshotCompare);
       minimapCompareUtils.current.updateIssuesData(myViewerData.currentIssueList);
       minimapCompareUtils.current.updateTasksData(myViewerData.currentTaskList);
-      let data = await getRealityLayersPath(structure, getRealityMap(myViewerData.currentSnapshotCompare));
+      let data = await getRealityLayersPath(structure, await getRealityMap(myViewerData.currentSnapshotCompare));
       minimapCompareUtils.current?.updateLayersData(data);
     }
     // currentContext.current = undefined;
@@ -1539,7 +1539,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           forgeUtils.current.setSnapshot(myViewerData.currentSnapshotBase);
           forgeUtils.current.updateIssuesData(myViewerData.currentIssueList);
           forgeUtils.current.updateTasksData(myViewerData.currentTaskList);
-          let Rdata = await getRealityLayersPath(myViewerData.structure, getRealityMap(myViewerData.currentSnapshotBase));
+          let Rdata = await getRealityLayersPath(myViewerData.structure, await getRealityMap(myViewerData.currentSnapshotBase));
           console.log('Reality Layers',Rdata);
           forgeUtils.current.updateLayersData(Rdata,currentContext.current);
           forgeUtils.current.showLayers(myViewerData.currentLayersList?.map(
@@ -1563,7 +1563,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           //console.log("ContextVariable",currentContext.current);
           //getContext(myViewerData);
           potreeUtils.current.updateLayersData(
-            await getRealityLayersPath(myViewerData.structure, getRealityMap(myViewerData.currentSnapshotBase)),
+            await getRealityLayersPath(myViewerData.structure, await getRealityMap(myViewerData.currentSnapshotBase)),
             currentContext.current//currentViewerData.viewerContext// was here
           );
         }
@@ -1650,7 +1650,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
       case 'compareDesign':
         if (forgeCompareUtils.current) {
           forgeCompareUtils.current.setSnapshot(compareSnapshot);
-          let data = await getRealityLayersPath(structure, getRealityMap(compareSnapshot));
+          let data = await getRealityLayersPath(structure, await getRealityMap(compareSnapshot));
           forgeCompareUtils.current.updateLayersData(
             data,
             currentContext.current
@@ -1667,7 +1667,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
             getFloorPlanData(getDesignMap(structure.designs))
           );
           potreeCompareUtils.current.updateLayersData(
-            await getRealityLayersPath(structure, getRealityMap(compareSnapshot)),
+            await getRealityLayersPath(structure, await getRealityMap(compareSnapshot)),
             currentContext.current
           );
         }
