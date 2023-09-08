@@ -130,7 +130,7 @@ const Header: React.FC<any> = ({
      }
      }
     }
-  },[router.isReady,router?.query?.projectId])
+  },[router.isReady,router?.query?.projectId,projectName])
   const ProjectInfo=()=>{
     getProjectDetails(router?.query?.projectId as string).then((response)=>{
       if(response?.data?.result?.name)
