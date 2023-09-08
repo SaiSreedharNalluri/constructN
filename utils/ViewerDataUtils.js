@@ -1,5 +1,5 @@
 
-import { getRealityPointCloudPath, getPointCloudTM, getRealityImagesPath, getRealityPositions, getRealityPositionsPath, getOrthoPhotoLayers, getMapboxHotspotLayers } from "../services/reality";
+import { getRealityPointCloudPath, getRealityPointCloudPathV2, getPointCloudTM, getRealityImagesPath, getRealityPositions, getRealityPositionsPath, getOrthoPhotoLayers, getMapboxHotspotLayers, realityFileExists } from "../services/reality";
 import { type } from "os";
 
 import { getRealityPath, getDesignPath, getFloormapPath, getFloormapTmPath,  getMapboxLayersPath, getStructurePath } from "./S3Utils";
@@ -96,6 +96,9 @@ export const getFloorPlanData = (designMap) => {
     return floormapDataMap;
 }
 
+/**
+ * @deprecated
+ */
 export const getPointCloud = async(structure, snapshot) =>{
     const tmResponse = await getPointCloudTM(getRealityPath(snapshot.project, structure._id, snapshot._id, getPointCloudReality(snapshot)._id));
     const pointCloudData = {
@@ -106,6 +109,9 @@ export const getPointCloud = async(structure, snapshot) =>{
     return pointCloudData;
 }
 
+/**
+ * @deprecated
+ */
 export const getPointClouds = async(structure, realityMap) => {
     let pointCloudMap = {};
     for (const mode in realityMap) {
@@ -154,6 +160,9 @@ export const getMapboxHotspots = async(projectId, structureId, snapshotId, reali
     return hotspotsList;
 }
 
+/**
+ * @deprecated
+ */
 export const getRealityLayers = async (structure, realityMap) => {
     console.log("Generic Viewer Inside get Reality layers: ", realityMap)
     let realityPositionMap = {}
@@ -213,7 +222,8 @@ export const getRealityLayersPath = async (structure, realityMap) => {
                 let realityResponse = await getRealityPositions(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
                 let paths = {
                     id: reality._id,
-                    pointCloud: getRealityPointCloudPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
+                    pointCloud: reality.isV2 ? getRealityPointCloudPathV2(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)) :
+                    getRealityPointCloudPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
                     tm: tmResponse ? tmResponse.data.tm : [],
                     offset: tmResponse ? tmResponse.data.offset: [],
                     position: realityResponse.data,
@@ -260,7 +270,8 @@ export const getRealityLayersPath = async (structure, realityMap) => {
                 let realityResponse = await getRealityPositions(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id));
                 let paths = {
                     id: reality._id,
-                    pointCloud: getRealityPointCloudPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
+                    pointCloud: reality.isV2 ? getRealityPointCloudPathV2(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)) :
+                        getRealityPointCloudPath(getRealityPath(structure.project, structure._id, reality.snapshot, reality._id)),
                     tm: tmResponse ? tmResponse.data.tm : [],
                     offset: tmResponse ? tmResponse.data.offset: [],
                     position: realityResponse.data,
@@ -276,9 +287,14 @@ export const getRealityLayersPath = async (structure, realityMap) => {
     return realityPositionMap
 }
 
-export const getRealityMap = (snapshot) => {
+export const getRealityMap = async (snapshot) => {
     let map ={};
-    snapshot?.reality?.forEach((reality, i, array) => {
+    for(let i = 0; i < snapshot?.reality?.length; i++) {
+        let reality = snapshot?.reality[i]
+        if (reality.mode === "360 Video" || reality.mode === "Drone Image") {
+            let isV2 = await realityFileExists(getRealityPointCloudPathV2(getRealityPath(snapshot.project, snapshot.structure, snapshot._id, reality._id))) ? true : false;
+            reality.isV2 = isV2;
+        }
         if (map[reality.mode]) {
             map[reality.mode].realities.push(reality);
         } else {
@@ -290,7 +306,7 @@ export const getRealityMap = (snapshot) => {
             }
             map[reality.mode] = layer
         }
-    })
+    }
     console.log("Generic Viewer Reality map: ", map);
     return map;
 }

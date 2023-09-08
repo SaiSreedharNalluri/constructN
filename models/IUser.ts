@@ -5,6 +5,7 @@ export interface IUser {
   email: string;
   contact: Contact;
   dob: string;
+  isSupportUser: boolean;
   verified: boolean;
   createdAt: string;
   updatedAt: string;

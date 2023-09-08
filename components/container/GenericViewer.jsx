@@ -63,8 +63,10 @@ function GenericViewer(props) {
   let structure = props.structure;
   let isFullScreenActive=props.isFullScreenActive;
   let isFullScreens=props.isFullScreen;
+  let isSupportUser = useRef(props.isSupportUser ? props.isSupportUser : false);
   
   let currentStructure = useRef();
+
 
   let [designList, setDesignList] = useState([]);
   let [isLoading,setIsLoading]=useState(false)
@@ -779,7 +781,7 @@ function GenericViewer(props) {
         if (potreeUtils.current == undefined) {
           potreeUtils.current = PotreeViewerUtils();
           if (!potreeUtils.current.isViewerLoaded()) {
-            potreeUtils.current.initializeViewer(viewerId, viewerEventHandler);
+            potreeUtils.current.initializeViewer(viewerId, viewerEventHandler, isSupportUser.current);
           }
         }
         break;
@@ -814,7 +816,7 @@ function GenericViewer(props) {
         if (potreeCompareUtils.current == undefined) {
           potreeCompareUtils.current = PotreeViewerUtils();
           if (!potreeCompareUtils.current.isViewerLoaded()) {
-            potreeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler);
+            potreeCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, isSupportUser.current);
           }
         }
         break;
@@ -985,7 +987,7 @@ function GenericViewer(props) {
           const reality = snapshot.reality.find((reality) => { return reality })
           let hotspots = await getMapboxHotspots(project._id, structure._id, snapshot._id, reality._id)
           if (data) {
-            const map = getRealityMap(snapshot)
+            const map = await getRealityMap(snapshot)
             const stages = {
               name: 'Stages',
               children: [],
@@ -1212,6 +1214,7 @@ function GenericViewer(props) {
         return (
           <PotreeViewer
             viewerCount={count}
+            isSupportUser={isSupportUser.current}
             setPotreeViewer={setpotreeViewerUtils}
           ></PotreeViewer>
         );
@@ -1303,31 +1306,35 @@ function GenericViewer(props) {
     }
   };
 
-  const setCurrentSnapshot = (snapshot) => {
+  const setCurrentSnapshot = async (snapshot) => {
     if (Object.keys(snapshot).length > 0) {
       setSnapshot(snapshot);
       updateSnapshot(snapshot);
+      const map = await getRealityMap(snapshot);
       setRealityList(snapshot.reality);
-      setRealityMap(getRealityMap(snapshot));
-      updateRealityMap(getRealityMap(snapshot));
+      setRealityMap(map);
+      updateRealityMap(map);
     } else {
       setSnapshot({});
       updateSnapshot({});
+      const map = await getRealityMap({});
       setRealityList([]);
-      setRealityMap(getRealityMap({}));
-      updateRealityMap(getRealityMap({}));
+      setRealityMap(map);
+      updateRealityMap(map);
     }
 
   };
 
-  const setCurrentCompareSnapshot = (snapshot) => {
+  const setCurrentCompareSnapshot = async (snapshot) => {
     if (snapshot) {
 
       setCompareSnapshot(snapshot);
       // updateSnapshot(snapshot);
       setCompareRealityList(snapshot.reality);
-      setCompareRealityMap(getRealityMap(snapshot));
+      const map = await getRealityMap(snapshot);
+      setCompareRealityMap(map);
       // updateRealityMap(getRealityMap(snapshot));
+      return map;
     }
   };
 

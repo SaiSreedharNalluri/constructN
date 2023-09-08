@@ -70,12 +70,15 @@ export const PotreeViewerUtils = () => {
     let _context;
     let _sendContext = false;
 
-    const initializeViewer = (viewerId, eventHandler) => {
+    let _isSupportUser = false;
+
+    const initializeViewer = (viewerId, eventHandler, isSupportUser) => {
         console.log("potree inisde initializeViewer: ")
         _viewerId = viewerId;
         _eventHandler = eventHandler;
         _fpContainerId = `fpContainer_${_viewerId.split("_")[1]}`;
         _fpCanvasId = `floormap_${_viewerId.split("_")[1]}`;
+        _isSupportUser = isSupportUser;
 
         const loadGUICallback = () => {
             console.log("potree inisde initializeViewer callback : ")
@@ -304,7 +307,8 @@ export const PotreeViewerUtils = () => {
         // isLoadFloormap && await loadFloormap();
         loadPointCloud(pointClouds);
         
-        
+        // loadSupportTools();
+        loadMeasurementModule();
         
     }
 
@@ -893,6 +897,85 @@ export const PotreeViewerUtils = () => {
         //     let annotation = _taskSpriteMap[taskId].tag;
         //     annotation._visible = show;
         // }
+    }
+
+    const loadSupportTools = () => {
+        const realityViewToggle = document.querySelector("#rahmanRealityViewToggle");
+        realityViewToggle?.addEventListener("click", realityViewToggleListener);
+        console.log("Testing realityViewToggle: ", realityViewToggle);
+    }
+
+    const loadMeasurementModule = () => {
+        const measurementTool = document.querySelector("#rahmanMeasurement");
+        // console.log("Testing measurement: ", measurementTool);
+        const measurementList = measurementTool?.querySelectorAll('[id^=rahmanMeasure_]');
+        // console.log("Testing measurement: ", measurementList);
+
+        measurementList?.forEach((e) => {
+            // console.log("Testing measurement: ", e);
+            e.addEventListener("click", measurementClickListener);
+        });
+
+    }
+
+    const realityViewToggleListener = (event) => {
+         console.log("Testing realityViewToggle: onclick listener: ", event.currentTarget)
+         const isImageDisabled = JSON.parse(event.currentTarget.getAttribute('data-isEnabled'))
+         console.log("Testing realityViewToggle: onclick listener: ", isImageDisabled.isEnabled)
+         if(isImageDisabled.isEnabled) {
+
+         } else {
+
+         }
+    }
+
+    const measurementClickListener = (event) => {
+        // console.log("Testing measurement: onclick listener: ", event.target.id)
+
+        let measurement;
+        switch((event.currentTarget.id).split('_')[1]) {
+            case "point":
+                measurement = _viewer.measuringTool.startInsertion({
+                    showDistances: false,
+                    showAngles: false,
+                    showCoordinates: true,
+                    showArea: false,
+                    closed: true,
+                    maxMarkers: 1,
+                    name: 'Point'
+                });
+            break;
+            case "area":
+                measurement = _viewer.measuringTool.startInsertion({
+					showDistances: true,
+					showArea: true,
+					closed: true,
+					name: 'Area'
+				});
+            break;
+            case "height":
+                measurement = _viewer.measuringTool.startInsertion({
+					showDistances: false,
+					showHeight: true,
+					showArea: false,
+					closed: false,
+					maxMarkers: 2,
+					name: 'Height'
+				});
+            break;
+            case "distance":
+                measurement = _viewer.measuringTool.startInsertion({
+					showDistances: true,
+					showArea: false,
+					closed: false,
+					name: 'Distance'
+				});
+            break;
+            case "clear":
+                _viewer.scene.removeAllMeasurements();
+            break;
+
+        }
     }
 
     const getMousePointCloudIntersection = (mouse, camera, viewer, pointclouds, params = {}) => {
@@ -1742,7 +1825,8 @@ export const PotreeViewerUtils = () => {
                     unloadOrientedImage();
                     _sendContext = true;
                 } else {
-                    if (_structure._id === "STR418477") {
+                    // console.log("Testing realityViewToggle: ", _isSupportUser);
+                    if (_structure._id === "STR418477" || _isSupportUser) {
                         unloadAllImages();
                         _viewer.fitToScreen();
                     }
@@ -1984,12 +2068,15 @@ export const PotreeViewerUtils = () => {
     }
 
     const removeAssets = () => {
-        // console.log("removeTest Potree inside remove assets2: ", _realityLayers, _viewer.scene.scene.children);
+        console.log("removeTest Potree inside remove assets2: ", _realityLayers, _viewer.scene.scene.children);
         // console.log("Testing scenePointCloud: ", _viewer.scene.scenePointCloud , _viewer.scene.pointclouds) 
         let childIndex = -1;
 
         unloadAllImages();
         pointCloudView(false);
+
+        _viewer.scene.removeAllMeasurements();
+
         for (let i = _viewer.scene.pointclouds.length - 1; i >= 0; i--) {
             _viewer.scene.scenePointCloud.remove(_viewer.scene.pointclouds[i]);
             delete _viewer.scene.pointclouds[i].pcoGeometry;
@@ -2027,11 +2114,11 @@ export const PotreeViewerUtils = () => {
                         _viewer.scene.images360[reality.index].selectingEnabled = false;
                         _viewer.scene.images360[reality.index].images.forEach(image => {
                             // _viewer.scene.scene.children[childIndex].remove(image.mesh);
-                            _viewer.scene.scene.children[childIndex].remove(image.group.children[0]);
-                            _viewer.scene.scene.children[childIndex].remove(image.group.children[1]);
-                            delete image.group.children[1];
-                            delete image.group.children[0];
-                            delete image.group;
+                            _viewer.scene.scene.children[childIndex].remove(image.ringGroup.children[0]);
+                            _viewer.scene.scene.children[childIndex].remove(image.ringGroup.children[1]);
+                            delete image.ringGroup.children[1];
+                            delete image.ringGroup.children[0];
+                            delete image.ringGroup;
                          });
                         _viewer.scene.scene.children[childIndex].remove(_viewer.scene.images360[reality.index].sphere);
                         delete _viewer.scene.images360[reality.index].images;
