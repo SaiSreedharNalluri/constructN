@@ -269,20 +269,20 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   
  
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-     // localStorage.setItem('isProjectTimeZone',JSON.stringify(true))
-    if(JSON.parse(localStorage.getItem('isProjectTimeZone') as string)){
-      let timeZone= 'America/New_York'
-      setCurrentTime(moment().tz(timeZone).format('h:mm a'));
-      setTimeZoneName(moment.tz(timeZone).format("z"))
-    }else{
-      setCurrentTime(moment().format('h:mm a'));
-      setTimeZoneName(moment.tz(moment.tz.guess()).format("z"))
-    }
-    }, 1000); 
-    return () => clearInterval(interval); 
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //    // localStorage.setItem('isProjectTimeZone',JSON.stringify(true))
+  //   if(JSON.parse(localStorage.getItem('isProjectTimeZone') as string)){
+  //     let timeZone= 'America/New_York'
+  //     setCurrentTime(moment().tz(timeZone).format('h:mm a'));
+  //     setTimeZoneName(moment.tz(timeZone).format("z"))
+  //   }else{
+  //     setCurrentTime(moment().format('h:mm a'));
+  //     setTimeZoneName(moment.tz(moment.tz.guess()).format("z"))
+  //   }
+  //   }, 1000); 
+  //   return () => clearInterval(interval); 
+  // }, []);
  return (
     <SideMenuContainer data-testid="const-custom-sidepanel">
       {config.map((item, index) => (

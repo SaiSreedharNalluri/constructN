@@ -52,6 +52,7 @@ const interceptor=instance.interceptors.response.use(
       .catch((error2)=>{
         deleteCookie("user");
         deleteCookie('projectData')
+        deleteCookie('isProjectTimeZone')
         if (typeof window !== "undefined") {
             console.log("Moving Out....",error2.config);
             window.location.href = `/login?history=${window.location.href}&reason=SessionExpiry`;
