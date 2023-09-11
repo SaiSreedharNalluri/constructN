@@ -14,9 +14,7 @@ const Index: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const [treeData, setTreeData] = useState<any>();
   const [ganttData, setGanttData] = useState<any>();
-
-  const breadCrumbsData = [{ name: "Schedule" }];
-  useEffect(() => {
+   useEffect(() => {
     if (router.isReady) {
       getScheduleViewData(router.query.projectId as string)
         .then((response) => {
@@ -49,7 +47,7 @@ const Index: React.FC = () => {
         <div>
           <Header
             showBreadcrumbs
-            breadCrumbData={breadCrumbsData}
+            breadCrumbData={[]}
             fromUsersList
             showFirstElement={true}
           />

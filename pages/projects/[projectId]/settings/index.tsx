@@ -8,12 +8,11 @@ interface IProps {
   projectData: IProjects;
 }
 const Index: React.FC<IProps> = () => {
-  const breadCrumbsData = [{ name: "Project Details" }];
   return (
     <div>
       <div>
         <Header  showBreadcrumbs
-            breadCrumbData={breadCrumbsData}
+            breadCrumbData={[]}
             showFirstElement={true}>
         </Header>
       </div>

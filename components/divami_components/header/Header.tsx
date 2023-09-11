@@ -345,7 +345,7 @@ const Header: React.FC<any> = ({
           {showBreadcrumbs && <DividerIcon src={headerLogSeparator} alt="" />}
           {showBreadcrumbs && (
             <CustomBreadcrumbs
-              breadCrumbData={ [{ name:projectName}]}
+              breadCrumbData={ breadCrumbData.length > 0 ?  breadCrumbData :[{name:projectName} ]}
               handleBreadCrumbClick={
                 handleBreadCrumbClick ? handleBreadCrumbClick : () => {}
               }

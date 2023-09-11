@@ -8,7 +8,6 @@ const Index: React.FC = () => {
   const router = useRouter();
   const [tabIndex, setTabIndex] = useState(0);
   const [loadData, setLoadData] = useState(false);
-  const breadCrumbsData = [{ name: "Dashboards & Reports" }];
   const [urlObj, setUrlObj] = useState<{
     dashboard_url: string;
     report_url: string;
@@ -31,7 +30,7 @@ const Index: React.FC = () => {
         <div>
           <Header
             showBreadcrumbs
-            breadCrumbData={breadCrumbsData}
+            breadCrumbData={[]}
             fromUsersList
             showFirstElement={true}
           />
