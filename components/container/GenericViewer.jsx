@@ -9,7 +9,7 @@ import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
 import Draggable, { DraggableCore } from "react-draggable";
 import Head from 'next/head';
 import Header from './header';
-import { autodeskAuth } from "../../services/forgeService";
+import { autodeskAuth, cachedAutodeskAuth} from "../../services/forgeService";
 import { MinimapUtils } from '../../utils/MinimapWrapper';
 import { ForgeViewerUtils } from '../../utils/ForgeWrapper2';
 import { PotreeViewerUtils } from '../../utils/PotreeWrapper2';
@@ -165,9 +165,9 @@ function GenericViewer(props) {
     getAccessToken: async function (onSuccess) {
       const response = await autodeskAuth();
       // console.log("Autodesk auth token:", response.data.result);
-      const res = response.data.result;
+      const res = response?.data?.result;
 
-      onSuccess(res.access_token, res.expires_in);
+      onSuccess(res?.access_token, res?.expires_in);
     },
   };
 
