@@ -176,7 +176,8 @@ function GenericViewer(props) {
     setForgeInitialised(true)
   };
 
-  Autodesk.Viewing.Initializer(initializeOptions, initializerCallBack);
+  // console.log("AutodeskToken auth token: firstCall ");
+  // Autodesk.Viewing.Initializer(initializeOptions, initializerCallBack);
 
   useEffect(()=>{
     setFullScreenMode(props.isFullScreen)
@@ -1546,6 +1547,8 @@ function GenericViewer(props) {
 
   useEffect(() => {
     // To stop Minimap from accepting keyboard events
+    console.log("AutodeskToken auth token: firstCall ");
+    Autodesk.Viewing.Initializer(initializeOptions, initializerCallBack);
     document.addEventListener(
       "keydown", (event) => {
         const forgeAvailable = document.getElementById('forgeViewer_1')
