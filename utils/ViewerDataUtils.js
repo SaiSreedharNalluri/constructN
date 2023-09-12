@@ -374,13 +374,18 @@ export const isMobile=()=>{
     export const setTheFormatedDate=(utcTime)=>{
         const projectInfo =  getCookie('projectData')
         let formatedTime
-        if(getCookie('isProjectTimeZone')&& (projectInfo !== undefined && projectInfo!==null))
+        let projectObj={}
+        if(projectInfo !== undefined && projectInfo!==null)
         {
-            formatedTime = moment(utcTime).tz(JSON.parse(projectInfo).timeZone)
+         projectObj = JSON.parse(projectInfo)?.find((each)=>each?._id === new URL(window?.location?.href)?.pathname?.split("/")[2])
+        }
+        if(getCookie('isProjectTimeZone')&& Object?.keys(projectObj)?.length>0 && projectObj?.timeZone !== undefined && projectObj?.timeZone !== null)
+        {
+           formatedTime = moment(utcTime).tz(projectObj?.timeZone)
         }
         else
         {
-            formatedTime =  moment(utcTime).local()
+            formatedTime = moment(utcTime).local()
         }
         return formatedTime?.format("DD MMM YYYY")
     }

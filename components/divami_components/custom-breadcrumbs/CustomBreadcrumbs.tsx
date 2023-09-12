@@ -15,7 +15,6 @@ const CustomBreadcrumbs: React.FC<any> = ({
   handleBreadCrumbClick,
   showFirstElement = false,
 }) => {
-  console.log('breadcrumbData',breadCrumbData)
   const [breadcrumbsConfig, setBreadcrumbsConfig] = useState<any>([
     breadCrumbData,
   ]);
