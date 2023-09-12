@@ -515,7 +515,7 @@ const Index: React.FC = () => {
     //   currencySetting: { currencyCode: "INR", minimumFractionDigits: 0 },
     // },
   ];
-  const breadCrumbsData = [{ name: "Views" }];
+  
 
   const [isFullScreen, setIsFullScreen] = useState(false);
 
@@ -525,7 +525,7 @@ const Index: React.FC = () => {
         {!isFullScreen && (
           <Header
             showBreadcrumbs
-            breadCrumbData={breadCrumbsData}
+            breadCrumbData={[]}
             fromUsersList
             showFirstElement={true}
           />

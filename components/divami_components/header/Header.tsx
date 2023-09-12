@@ -105,37 +105,31 @@ const Header: React.FC<any> = ({
   const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
   const [openProfile, setOpenProfile] = useState(false);
   const [projectName,setProjectName]=useState('')
-  // const [config, setConfig] = useState<any>([]);
-  // const [projects, setProjects] = useState<any>([]);
-  // const [currentProject, setCurrentProject] = useState("");
-  // const [projectId, setProjectId] = useState<any>("");
   useEffect(()=>{
     if(router.isReady && router?.query?.projectId)
     {
-      const projectInfo = getCookie('projectData')as string;
-     if(projectInfo === undefined || projectInfo===null)
+      const projectInfo:any = getCookie('projectData')as string;
+     if(projectInfo === undefined || projectInfo === null || projectInfo === 1)
      {
-      ProjectInfo()
+        ProjectInfo([])
      }
      else
      {
-     if(JSON.parse(projectInfo)?._id!=router?.query?.projectId)
+      if(JSON.parse(projectInfo)?.find((each:any)=>each._id === router?.query?.projectId)?._id != router?.query?.projectId)
      {
-      ProjectInfo()
+        ProjectInfo(JSON.parse(projectInfo))
      }else{
-      const projectData:any=  getCookie('projectData')
-      let projectInfo=null;
-      if (projectData) projectInfo = JSON.parse(projectData);
-      setProjectName(projectInfo?.name)
+      setProjectName(JSON.parse(projectInfo)?.find((each:any)=>each._id===router?.query?.projectId)?.name)
      }
      }
     }
   },[router.isReady,router?.query?.projectId,projectName])
-  const ProjectInfo=()=>{
+  const ProjectInfo=(projectInfo:any)=>{
     getProjectDetails(router?.query?.projectId as string).then((response)=>{
-      if(response?.data?.result?.name)
-      {
-        setCookie('projectData',JSON.stringify({_id:router?.query?.projectId,name:response?.data?.result?.name,timeZone:response.data.result.timeZone,dashboardURL:response.data.result.reportId,reportURL:response.data.result.reportId}))
+      if(response?.data?.result)
+      { 
+        projectInfo.push({_id:router?.query?.projectId,name:response?.data?.result?.name,timeZone:response?.data?.result?.timeZone,dashboardURL:response?.data?.result?.reportId,reportURL:response?.data?.result?.reportId})
+        setCookie('projectData', JSON.stringify(projectInfo));
         setProjectName(response?.data?.result?.name)
       } 
      })  .catch((error) => {
@@ -345,7 +339,7 @@ const Header: React.FC<any> = ({
           {showBreadcrumbs && <DividerIcon src={headerLogSeparator} alt="" />}
           {showBreadcrumbs && (
             <CustomBreadcrumbs
-              breadCrumbData={ [{ name:projectName}]}
+              breadCrumbData={ breadCrumbData.length > 0 ?  breadCrumbData :[{name:projectName} ]}
               handleBreadCrumbClick={
                 handleBreadCrumbClick ? handleBreadCrumbClick : () => {}
               }
