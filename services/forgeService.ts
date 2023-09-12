@@ -3,35 +3,44 @@ import instance from "./axiosInstance";
 import { getCookie, setCookie } from "cookies-next";
 
 
-export const cachedAutodeskAuth = () => {
+export const cachedAutodeskAuth = async () => {
+  console.log(`Inside AutodeskToken cached auth`)
   var expiryH1 = new Date();
   expiryH1.setTime(expiryH1.getTime() + 1 * 3598 * 1000);
   
   try {
-    let cookie_res_ = getCookie("APSToken");
-    let cookie_res = null
-    if(cookie_res_)
-    cookie_res= JSON.parse(cookie_res_ as string) 
-    if(cookie_res){
-      console.log(`Inside expiry autodesk auth`,cookie_res)
-      return cookie_res
+    let apsCookie = getCookie("APSToken");
+    // console.log(`Inside AutodeskToken cached auth: getCookie`, cookie_res_);
+    let apsCookieJSON = null;
+    if (apsCookie) {
+      apsCookieJSON = JSON.parse(apsCookie as string);
     }
-       instance.get(
-      `${process.env.NEXT_PUBLIC_HOST}/aps/getAPSToken`,
-      {
+    if (apsCookieJSON) {
+      console.log(`Inside expiry AutodeskToken auth: cookie json`, apsCookieJSON);
+      return apsCookieJSON;
+    }
+    let response = await instance
+      .get(`${process.env.NEXT_PUBLIC_HOST}/aps/getAPSToken`, {
         headers: authHeader.authHeader(),
-      }
-    ).then((response)=>{
-      setCookie("APSToken",JSON.stringify(response),{expires:expiryH1});
-      return response;
+      });
       
-    }); 
+      // .then((response) => {
+        let result = response?.data?.result;
+        console.log(`Inside AutodeskToken cached auth: api`, result);
+        // setCookie("APSToken", JSON.stringify(response), { expires: expiryH1 });
+        
+        setCookie("APSToken", JSON.stringify(result), {
+          maxAge: result?.expires_in,
+        });
+        return response;
+      // });
   } catch (error) {
     throw error;
   }
 };
+
 export const autodeskAuth = () => {
-  console.log(`Inside autodesk auth`)
+  console.log(`Inside AutodeskToken auth`)
   try {
       return instance.get(
       `${process.env.NEXT_PUBLIC_HOST}/aps/getAPSToken`,
