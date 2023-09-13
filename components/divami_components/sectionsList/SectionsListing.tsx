@@ -524,11 +524,11 @@ const[id,setId]=useState("");
         <div className="flex items-center justify-between">  
         <div className="cursor-pointer"     
           onClick={() => {
-            if(rowData?.designs.length!==0&& Object.keys(rowData.snapshots?.latestSnapshot).length === 0) {
+            if(rowData?.designs.length!==0&& Object.keys(rowData.snapshots?.latestSnapshot).length <= 0) {
               setId(rowData._id);
               setCaptureAvailable(true)
              }
-             else if(rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length !== 0 && rowData.snapshots?.snapshotActiveCount<1) {
+             else if(rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length >0 && rowData.snapshots?.snapshotActiveCount<1) {
               setId(rowData._id);
               setProcessing(true)
              }
@@ -544,9 +544,9 @@ const[id,setId]=useState("");
              
      {rowData?.designs.length===0
     ? <Chips title="No Designs" bgColor="#F67C74"></Chips>
-    :rowData.snapshots && rowData?.designs.length!==0 && Object.keys(rowData.snapshots?.latestSnapshot).length === 0
+    :rowData.snapshots && rowData?.designs.length>0 && Object.keys(rowData.snapshots?.latestSnapshot).length < 1
     ? <Chips title="No Captures" bgColor="#C24200" ></Chips>  
-    :  rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length !== 0 && rowData.snapshots?.latestSnapshot?rowData.snapshots?.latestSnapshot?.state !== "Active"
+    :  rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length > 0 && rowData.snapshots?.latestSnapshot?rowData.snapshots?.latestSnapshot?.state !== "Active"
     ? <Chips title="Processing" bgColor="#006CD0" captureTime={true} date={rowData.snapshots.latestSnapshot.captureDateTime}></Chips>  
     : "":""}
           </div>
@@ -802,7 +802,7 @@ console.log(isCaptureAvailable,"isCaptureAvailable");
                   Row:(props)=>{
                     const rowData = props.data;
                     
-                    const isZeroCapture =  rowData.snapshots && rowData?.designs.length!==0 && Object.keys(rowData.snapshots?.latestSnapshot).length === 0;
+                    const isZeroCapture =  rowData.snapshots && rowData?.designs.length>0 && Object.keys(rowData.snapshots?.latestSnapshot).length <= 0;
                     const isZeroDesign= Object.keys(rowData.snapshots?.latestSnapshot).length > 0 && rowData.snapshots?.snapshotActiveCount <1;
                     console.log(isZeroDesign,"isZeroDesign");
                     
