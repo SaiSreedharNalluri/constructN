@@ -280,13 +280,15 @@ export const CaptureName = styled("div")({
   marginRight: "5px",
 });
 export const CaptureCount = styled("div")({
-  cursor: "pointer",
+  cursor: "default",
   width: "48px",
-  marginLeft:"7px"
+  marginLeft:"7px",
+  userSelect: "none",
+  
 });
 
 export const FloorName = styled("div")({
-  cursor:"pointer"
+  // cursor:"pointer"
 });
 export const OtherUsersCount = styled("div")({
   color: "#FF843F",

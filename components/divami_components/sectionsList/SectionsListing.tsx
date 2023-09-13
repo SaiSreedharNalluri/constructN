@@ -95,6 +95,7 @@ import { TooltipText } from "../side-panel/SidePanelStyles";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import Chips from "./Chip";
+// import { ISections } from "../../../models/ISections";
 
 interface RowData {
   tableData: { id: number };
@@ -152,6 +153,7 @@ const SectionsListing = () => {
     // setShowEmptyState(true);
   };
 const[isCaptureAvailable,setCaptureAvailable]=useState(false);
+const[isProcessing,setProcessing]=useState(false);
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
     filterData: {
@@ -510,37 +512,46 @@ const[id,setId]=useState("");
         fontSize: "14px",
         lineHeight: "20px",
         color: "#101F4C",
+        cursor:"default"
       },
-      cellStyle: { width: "37%" },
+      cellStyle: { width: "28%" },
       render: (rowData: any) => {
         // router.push(`/projects/${id}/sections`);
+        console.log(rowData);
+        
         return (
-          <FloorName
+<div>
+        <div className="flex items-center justify-between">  
+        <div className="cursor-pointer"     
           onClick={() => {
-            if(rowData.capture?.totalCount === 0 && rowData?.designs.length!==0) {
+            if(rowData?.designs.length!==0&& Object.keys(rowData.snapshots?.latestSnapshot).length === 0) {
               setId(rowData._id);
               setCaptureAvailable(true)
              }
-           else if (rowData.capture?.totalCount > 0 || rowData.designs.length !== 0) {
+             else if(rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length !== 0 && rowData.snapshots?.snapshotActiveCount<1) {
+              setId(rowData._id);
+              setProcessing(true)
+             }
+           else if (Object.keys(rowData.snapshots?.latestSnapshot).length >= 0 && rowData.snapshots?.snapshotActiveCount>0 ) {
               router.push({
                 pathname: `/projects/${router?.query?.projectId as string}/structure`,
                 query: { structId: rowData._id },
               });
               setCaptureAvailable(false)
+              setProcessing(false)
             }
-          }}
-          >
-          <div className="flex items-center justify-between">  
-        <div> {rowData?.name} </div>     
-           <div>
-            <div>{rowData?.designs.length===0?<Chips title="No Designs" bgColor="#FFD600"></Chips>:null}</div>
-            <div>{rowData.capture?.totalCount === 0 && rowData?.designs.length!==0?<Chips title="No Captures" bgColor="#F67C74"></Chips>:null}</div>
-            {/* <div>{rowData.capture?.totalCount > 0 && (new Date().getTime() - new Date(rowData.lastUpdated).getTime())/86400000 < 7 ?<Chips title="New" bgColor="#8BD97F"></Chips>:null}</div> */}
-            </div>
-
+          }}> {rowData?.name} </div>  
+             
+     {rowData?.designs.length===0
+    ? <Chips title="No Designs" bgColor="#F67C74"></Chips>
+    :rowData.snapshots && rowData?.designs.length!==0 && Object.keys(rowData.snapshots?.latestSnapshot).length === 0
+    ? <Chips title="No Captures" bgColor="#C24200" ></Chips>  
+    :  rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length !== 0 && rowData.snapshots?.latestSnapshot?rowData.snapshots?.latestSnapshot?.state !== "Active"
+    ? <Chips title="Processing" bgColor="#006CD0" captureTime={true} date={rowData.snapshots.latestSnapshot.captureDateTime}></Chips>  
+    : "":""}
           </div>
     
-          </FloorName>
+          </div>
         );
       },
     },
@@ -559,7 +570,7 @@ const[id,setId]=useState("");
       },
       cellStyle: { width: "8%" },
       render: (rowData: any) => {
-        return <>{rowData?.issueCount ? rowData.issueCount : "-"}</>;
+        return <div className="cursor-default">{rowData?.issueCount ? rowData.issueCount : "-"}</div>;
       },
     },
     {
@@ -579,7 +590,7 @@ const[id,setId]=useState("");
       cellStyle: { width: "8%" },
 
       render: (rowData: any) => {
-        return <>{rowData?.taskCount ? rowData.taskCount : "-"}</>;
+        return <div className="cursor-default">{rowData?.taskCount ? rowData.taskCount : "-"}</div>;
       },
     },
     {
@@ -594,7 +605,7 @@ const[id,setId]=useState("");
         lineHeight: "8px",
         color: "#101F4C",
       },
-      cellStyle: { width: "32%" },
+      cellStyle: { width: "24%" },
       render: (rowData: any) => {
         return (
           <CapturesFieldContainer>
@@ -704,17 +715,18 @@ const[id,setId]=useState("");
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "15%" },
+      cellStyle: { width: "24%" },
    
       render: (rowData: any) => {
-        return <>{
+        return <div className="cursor-default">{
           rowData?.lastUpdated ?
           setTheFormatedDate(rowData.lastUpdated)
           : "-"
-          }</>;
+          }</div>;
       },
     },
   ];
+console.log(isCaptureAvailable,"isCaptureAvailable");
 
   return (
     <div style={{ overflow: "scroll" }} className="sections_table">
@@ -790,9 +802,12 @@ const[id,setId]=useState("");
                   Row:(props)=>{
                     const rowData = props.data;
                     
-                    const isZeroCapture = rowData.capture?.totalCount === 0;  
-                    const isZeroDesign=rowData.designs?.length===0 && rowData.capture?.totalCount === 0;
-                      return (
+                    const isZeroCapture =  rowData.snapshots && rowData?.designs.length!==0 && Object.keys(rowData.snapshots?.latestSnapshot).length === 0;
+                    const isZeroDesign= Object.keys(rowData.snapshots?.latestSnapshot).length > 0 && rowData.snapshots?.snapshotActiveCount <1;
+                    console.log(isZeroDesign,"isZeroDesign");
+                    
+                    // const isProcessing=rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length !== 0 && rowData.snapshots?.latestSnapshot?.state !== "Active" 
+                    return (
                         
         <MTableBodyRow
           {...props}
@@ -861,23 +876,26 @@ const[id,setId]=useState("");
         </CustomDrawer>
       )}
       {
-        isCaptureAvailable&& (
+        isCaptureAvailable || isProcessing ?(
           <PopupComponent
-          open={isCaptureAvailable}
-          setShowPopUp={setCaptureAvailable}
-          modalTitle={"No Capture Available"}
-          modalmessage={`Do you want to view the design?`}
-          primaryButtonLabel={"View Design"}
+          open={isCaptureAvailable?isCaptureAvailable:isProcessing}
+          setShowPopUp={isCaptureAvailable?setCaptureAvailable:setProcessing}
+          modalTitle={isCaptureAvailable?"No Capture Available":"Processing"}
+          modalmessage={isCaptureAvailable?`Do you want to view the design?`: `Do you want to view the design?`}
+          primaryButtonLabel={isCaptureAvailable?"View Design":"View Design"}
           imageSrc={info}
           isImageThere={true}
           SecondaryButtonlabel={"No"}
-          callBackvalue={()=> router.push({
+          callBackvalue={isCaptureAvailable? ()=> router.push({
             pathname: `/projects/${router?.query?.projectId as string}/structure`,
             query: { structId: id },
-          })}
+          }):()=> router.push({
+            pathname: `/projects/${router?.query?.projectId as string}/structure`,
+            query: { structId: id },
+          }) }
         />
         )
-      }
+      :""}
     </div>
   );
 };
