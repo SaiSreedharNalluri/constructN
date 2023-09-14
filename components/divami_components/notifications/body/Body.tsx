@@ -8,23 +8,140 @@ import task from "../../../../public/divami_icons/fileTextIcon.svg"
 import issueIcon from "../../../../public/divami_icons/issuesIcon.svg"
 import cameraIcon from "../../../../public/divami_icons/cameraIcon.svg"
 import { useRef} from "react";
+import { useRouter } from "next/router";
 
 const Body = ({
   notifications,
   loadMoreData,
   updateNotifications,getNotifiCationTime,filterNotificationData,filterValue
-}: any) => {  
+}: any) => { 
+  const router = useRouter(); 
   const notificationsContRef = useRef<any>(null);
   const scrollTop = () => {
     if (notificationsContRef.current) {
       notificationsContRef.current.scrollTop = 0;
     }
   };
+  const performNotificationAction = (notificationObj:IUserNotification) => {
+    if(notificationObj.actionType==='redirect')
+    {
+      generateRedirectUrl(notificationObj);
+    }
+
+  }
+  const generateRedirectUrl=(notificationObj:IUserNotification)=>{
+      switch(notificationObj.category)
+      {
+        case 'Project':
+          generateProjectRedirectUrl(notificationObj)
+          break;
+        case 'Task':
+          generateTaskRedirectUrl(notificationObj)
+          break;  
+        case 'Issue':
+          generateIssueRedirectUrl(notificationObj)
+          break;  
+        case 'Snapshot':
+          generateSnapshotRedirectUrl(notificationObj)
+          break;
+        case 'Struct':
+          generateStructureRedirectUrl(notificationObj)
+          break; 
+      }
+    
+  }
+  const generateProjectRedirectUrl=(notificationObj:IUserNotification)=>{
+    switch (notificationObj.title)
+    {
+      case 'Project Updated': 
+          router.push(`/projects/${notificationObj?.configuration?.project}/settings`);
+        break;
+      case 'Project User Assigned':
+          router.push(`/projects/${notificationObj?.configuration?.project}/usersList`); 
+        break; 
+        case 'Project User Deassigned':
+          //router.push(`/projects/${notificationObj?.configuration?.project}/usersList`); 
+        break; 
+        case 'Project User Role Changed':
+          router.push(`/projects/${notificationObj?.configuration?.project}/usersList`); 
+        break;    
+    }
+  }
+  const generateIssueRedirectUrl=(notificationObj:IUserNotification)=>{
+    switch (notificationObj.title)
+    {
+        case 'Issue Modified':
+          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+          break;
+        case 'Issue User Assigned': 
+            router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+        break;
+        case 'Issue User Deasigned':
+          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+        break; 
+        case 'Issue Deleted':
+          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+        break; 
+        case 'Issue Comment Added':
+          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+        break; 
+        case 'Issue Comment Updated':
+          router.push(`/projects/${notificationObj?.configuration?.project}structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+        break; 
+      }
+  }
+  const generateTaskRedirectUrl=(notificationObj:IUserNotification)=>{
+    switch (notificationObj.title)
+    {
+       case 'Task Modified':
+        router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`)
+          break;
+        case 'Task User Assigned': 
+        router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
+        break;
+        case 'Task User Deasigned':
+          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`); 
+        break; 
+        case 'Task Deleted':
+          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
+        break; 
+        case 'Task Comment Added':
+          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
+        break;
+        case 'Task Comment Updated':
+          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
+        break;
+      }
+  }
+  const generateStructureRedirectUrl=(notificationObj:IUserNotification)=>{
+    switch (notificationObj.title)
+    {
+       case 'Project Struct Added':
+          router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
+          break;
+        case 'Project Struct Modified': 
+        router.push(`/projects/${notificationObj?.configuration?.project}/sections`);
+        break;
+      }
+  }
+  const generateSnapshotRedirectUrl=(notificationObj:IUserNotification)=>{
+    switch (notificationObj.title)
+    {
+       case 'Snapshot Added':
+          router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
+          break;
+        case 'Snapshot Updated': 
+          router.push(`/projects/${notificationObj?.configuration?.project}/sections`);
+          break;
+        case 'Snapshot Disabled':
+          router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
+          break;
+    }
+  }
   return (
     <div > 
       {userNotificationTypes.map((notificationObj: any) => {
            let icon = null;
-
            if (filterValue ) {
              if (notificationObj.id === "All") {
                icon = (
@@ -108,24 +225,64 @@ const Body = ({
                   (notificationObj: IUserNotification,index:any) => {
                      const lastChild = index === notifications[date].length - 1;
                     return (
-                      <div key={notificationObj.id}>
+                      <div key={notificationObj._id as string}>
                         <div className={`${lastChild ? '' : 'border-gray-400  border-b '} `}>
-                          {notificationObj?.readAt ? (
-                          
-                          <div className="px-4 py-4">
+                        <div
+                                onClick={() => {
+                                updateNotifications(notificationObj._id as string);
+                                performNotificationAction(notificationObj)
+                              }}
+                              className={`${lastChild ? '' : 'border-gray-400  border-b '}  `}
+                           >
+                              <div className="grid grid-cols-8 gap-4 py-4 px-4 bg-gray-100">
+                                <div className="col-span-1">
+                                {notificationObj.category=== "Project" ? (
+                                      <Image src={project} className="h-8 w-8 mt-2" alt="" />
+                                    ) : notificationObj.category==="Issue"   ? <Image src={issueIcon} className="h-8 w-8 mt-2" alt="" />:notificationObj.category=== "Task" ? <Image src={task} className="h-8 w-8 mt-2" alt="" />:notificationObj.category=== "Snapshot" ? <Image src={cameraIcon} className="h-8 w-8 mt-2" alt="" />:""}  
+                                </div>
+                            
+                              <div className="col-span-7 ">
+                               <div className="ml-2">
+                              <p className="text-sm overflow-hidden" style={{
+                                        wordWrap: 'break-word',
+                                        display: '-webkit-box',
+                                        WebkitLineClamp: 4,
+                                        WebkitBoxOrient: 'vertical',
+                                      }}>{notificationObj.message}</p> </div> 
+                               <div>     {date === "TODAY" ? (
+                                <div className="ml-2 mt-2">
+                                  {getNotifiCationTime(
+                                    notificationObj?.createdAt
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="ml-2 mt-2" >
+                                  {Moment(notificationObj?.createdAt).format(
+                                    "hh:mm A"
+                                  )}
+                                </div>
+                              )}</div>
+                              </div>
+                         
+                              </div>
+                           
+                            </div>
+                          {/* {notificationObj?.readAt ? (
+                            <div className="px-4 py-4">
                             <div className="grid grid-cols-8 gap-4">
                               <div className="col-span-1 "> 
-                              {notificationObj.notificationType === "Project" ? (
+                              {notificationObj. === "Project" ? (
                                       <Image src={project} className="h-8 w-8 mt-2" alt="" />
                                     ) : notificationObj.notificationType==="Issue"   ? <Image src={issueIcon} className="h-8 w-8 mt-2" alt="" />:notificationObj.notificationType=== "Task" ? <Image src={task} className="h-8 w-8 mt-2" alt="" />:notificationObj.notificationType=== "Snapshot" ? <Image src={cameraIcon} className="h-8 w-8 mt-2" alt="" />:""}
                                </div> 
                               <div className="col-span-7">
-                              <div className="ml-2"><p className="text-sm overflow-hidden" style={{
-    wordWrap: 'break-word',
-    display: '-webkit-box',
-    WebkitLineClamp: 4,
-    WebkitBoxOrient: 'vertical',
-  }} >{notificationObj?.message}</p>  </div>
+                              <div className="ml-2">
+                                <p className="text-sm overflow-hidden" style={{
+                                      wordWrap: 'break-word',
+                                      display: '-webkit-box',
+                                      WebkitLineClamp: 4,
+                                      WebkitBoxOrient: 'vertical',
+                                    }} >{notificationObj?.message}</p>  </div>
                               <div>   {date === "TODAY" ? (
                             <div className="ml-2 mt-2">
                               {getNotifiCationTime(
@@ -147,26 +304,28 @@ const Body = ({
                        
                           ) : (
                             <div
-                              
-                              onClick={() => {
+                                onClick={() => {
                                 updateNotifications(notificationObj.id);
+                                performNotificationAction(notificationObj)
                               }}
                               className={`${lastChild ? '' : 'border-gray-400  border-b '}  `}
                            >
                               <div className="grid grid-cols-8 gap-4 py-4 px-4 bg-gray-100">
                                 <div className="col-span-1">
-                                {notificationObj.notificationType === "Project" ? (
+                                {notificationObj.+
+                                   === "Project" ? (
                                       <Image src={project} className="h-8 w-8 mt-2" alt="" />
                                     ) : notificationObj.notificationType==="Issue"   ? <Image src={issueIcon} className="h-8 w-8 mt-2" alt="" />:notificationObj.notificationType=== "Task" ? <Image src={task} className="h-8 w-8 mt-2" alt="" />:notificationObj.notificationType=== "Snapshot" ? <Image src={cameraIcon} className="h-8 w-8 mt-2" alt="" />:""}  
                                 </div>
                             
                               <div className="col-span-7 ">
-                               <div className="ml-2"><p className="text-sm overflow-hidden" style={{
-    wordWrap: 'break-word',
-    display: '-webkit-box',
-    WebkitLineClamp: 4,
-    WebkitBoxOrient: 'vertical',
-  }}>{notificationObj.message}</p> </div> 
+                               <div className="ml-2">
+                              <p className="text-sm overflow-hidden" style={{
+                                        wordWrap: 'break-word',
+                                        display: '-webkit-box',
+                                        WebkitLineClamp: 4,
+                                        WebkitBoxOrient: 'vertical',
+                                      }}>{notificationObj.message}</p> </div> 
                                <div>     {date === "TODAY" ? (
                                 <div className="ml-2 mt-2">
                                   {getNotifiCationTime(
@@ -185,7 +344,7 @@ const Body = ({
                               </div>
                            
                             </div>
-                          )}
+                          )} */}
                         </div>
                       </div>
                     );
