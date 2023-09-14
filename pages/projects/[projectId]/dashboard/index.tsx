@@ -22,9 +22,15 @@ const Index: React.FC = () => {
       //   .catch((error) => {
       //     setLoadData(true);
       //   });
-      const pData= getCookie('projectData') as string;
-      if(router.query.projectId=== JSON.parse(pData)?._id)
-      setUrlObj({dashboard_url:JSON.parse(pData)?.dashboardURL,report_url:JSON.parse(pData)?.reportURL});
+      const pDataList= getCookie('projectData') as string;
+      let pData :string| null= null;
+      if(pDataList)
+      pData = JSON.parse(pDataList)?.find(((e:any)=>e._id===router.query.projectId)) as string;
+      if(pData){
+        //console.log(pData, JSON.parse(pDataList)?.find(((e:any)=>e._id===router.query.projectId)).dashboardURL);
+        setUrlObj({dashboard_url: JSON.parse(pDataList)?.find(((e:any)=>e._id===router.query.projectId)).dashboardURL,report_url:JSON.parse(pDataList)?.find(((e:any)=>e._id===router.query.projectId)).reportURL});
+      }
+      
     }
   }, [router.isReady, router.query.projectId]);
 

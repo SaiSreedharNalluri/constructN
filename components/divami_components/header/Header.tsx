@@ -132,7 +132,7 @@ const Header: React.FC<any> = ({
     getProjectDetails(router?.query?.projectId as string).then((response)=>{
       if(response?.data?.result)
       { 
-        projectInfo.push({_id:router?.query?.projectId,name:response?.data?.result?.name,timeZone:response?.data?.result?.timeZone,dashboardURL:response?.data?.result?.reportId,reportURL:response?.data?.result?.reportId})
+        projectInfo.push({_id:router?.query?.projectId,name:response?.data?.result?.name,timeZone:response?.data?.result?.timeZone,dashboardURL:response?.data?.result?.metaDetails.dashboardURL,reportURL:response?.data?.result?.metaDetails.reportURL})
         setCookie('projectData', JSON.stringify(projectInfo));
         setProjectName(response?.data?.result?.name)
       } 
