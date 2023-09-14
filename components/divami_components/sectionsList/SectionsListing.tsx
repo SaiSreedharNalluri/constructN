@@ -498,6 +498,17 @@ const[isProcessing,setProcessing]=useState(false);
     }
   };
 const[id,setId]=useState("");
+const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
+  let truncatedText = text;
+
+  if (text.length > maxLength) {
+    const prefix = text.substring(0, maxLength - suffixLength);
+    const suffix = text.substring(text.length - suffixLength);
+    truncatedText = prefix + "..." + suffix;
+  }
+
+  return truncatedText;
+};
   const columns = [
     {
       title: "View Name",
@@ -517,7 +528,6 @@ const[id,setId]=useState("");
       cellStyle: { width: "28%" },
       render: (rowData: any) => {
         // router.push(`/projects/${id}/sections`);
-        console.log(rowData);
         
         return (
 <div>
@@ -540,14 +550,21 @@ const[id,setId]=useState("");
               setCaptureAvailable(false)
               setProcessing(false)
             }
-          }}> {rowData?.name} </div>  
+          }}> 
+                <TooltipText title={rowData?.name?.length > 40 ? rowData?.name : ""} placement="right">
+      <div>
+      <TruncatedString text={rowData?.name} maxLength={40}
+              suffixLength={0} ></TruncatedString> 
+        </div> 
+        </TooltipText>
+          </div>  
              
      {rowData?.designs.length===0
-    ? <Chips title="No Designs" bgColor="#F67C74"></Chips>
+    ? <Chips isChip={true} title="No Designs" bgColor="#F67C74"></Chips>
     :rowData.snapshots && rowData?.designs.length>0 && Object.keys(rowData.snapshots?.latestSnapshot).length < 1
-    ? <Chips title="No Captures" bgColor="#C24200" ></Chips>  
+    ? <Chips isChip={true}  title="No Captures" bgColor="#C24200" ></Chips>  
     :  rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length > 0 && rowData.snapshots?.latestSnapshot?rowData.snapshots?.latestSnapshot?.state !== "Active"
-    ? <Chips title="Processing" bgColor="#006CD0" captureTime={true} date={rowData.snapshots.latestSnapshot.captureDateTime}></Chips>  
+    ? <Chips isChip={true}  title="Processing" bgColor="#006CD0" captureTime={true}></Chips>  
     : "":""}
           </div>
     
@@ -802,8 +819,8 @@ console.log(isCaptureAvailable,"isCaptureAvailable");
                   Row:(props)=>{
                     const rowData = props.data;
                     
-                    const isZeroCapture =  rowData.snapshots && rowData?.designs.length>0 && Object.keys(rowData.snapshots?.latestSnapshot).length <= 0;
-                    const isZeroDesign= Object.keys(rowData.snapshots?.latestSnapshot).length > 0 && rowData.snapshots?.snapshotActiveCount <1;
+                    const isZeroCapture =  rowData?.snapshots && rowData?.designs?.length>0 && Object.keys(rowData?.snapshots?.latestSnapshot).length <= 0;
+                    const isZeroDesign= Object.keys(rowData?.snapshots?.latestSnapshot).length >=0 && rowData?.snapshots?.snapshotActiveCount <1;
                     console.log(isZeroDesign,"isZeroDesign");
                     
                     // const isProcessing=rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length !== 0 && rowData.snapshots?.latestSnapshot?.state !== "Active" 
