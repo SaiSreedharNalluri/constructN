@@ -7,6 +7,7 @@ import closeIcon from "../../../public/images/closeIcon.svg";
 import SearchImg from "../../../public/images/search.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import { useRouter } from 'next/router';
+import info from "../../../public/divami_icons/infoIcon.svg"
 import {
   CloseIcon,
   HeaderLabel,
@@ -34,7 +35,9 @@ import type {
 } from "./Type";
 import { getAllIds, getSelectedLayers } from "./Utils";
 import Image from "next/image";
-
+import PopupComponent from "../../popupComponent/PopupComponent";
+import Chips from "../sectionsList/Chip";
+import { TooltipText } from "../side-panel/SidePanelStyles";
 const ProjectHierarchy = ({
   title,
   openSelectLayer,
@@ -48,12 +51,14 @@ const ProjectHierarchy = ({
   expandedNodes,
   setHierarchy,
 }: ProjectHierarchyProps) => {
-  const [treeViewData, setTreeViewData] = useState<ChildrenEntity[]>(treeData);
+  const [treeViewData, setTreeViewData] = useState<any>(treeData);
   const router = useRouter();
   const [block, setBlock] = useState(treeData);
 
   const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
-
+  const[id,setId]=useState("");
+  const[isCaptureAvailable,setCaptureAvailable]=useState(false);
+  const[isProcessing,setProcessing]=useState(false);
   const handleExpand = () => {
     handleNodeExpand(getAllIds(treeViewData));
   };
@@ -104,12 +109,21 @@ const ProjectHierarchy = ({
     }
   };
 
-  const renderTreeNode = (node: ChildrenEntity, onLabelClick: any) => (
-    <LabelContainer data-testid="label">
-      <LabelText onClick={(e: any) => onLabelClick(e, node)}>
-        {node.name}
-      </LabelText>
-      {node.children?.length ? (
+  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
+    let truncatedText = text;
+
+    if (text.length > maxLength) {
+      const prefix = text.substring(0, maxLength - suffixLength);
+      const suffix = text.substring(text.length - suffixLength);
+      truncatedText = prefix + "..." + suffix;
+    }
+
+    return truncatedText;
+  };
+  const renderTreeNode = (node: any, onLabelClick: any) => (
+  <LabelContainer data-testid="label"  >
+    <div className="flex items-center">
+    {node.children?.length ? (
         expandedNodes.includes(node._id) ? (
           <LabelIcon
             onClick={(e: any) => {
@@ -132,6 +146,61 @@ const ProjectHierarchy = ({
       ) : (
         <></>
       )}
+      <LabelText onClick={(e: any) =>{ 
+          if( Object.keys(node.snapshots?.latestSnapshot).length <= 0) {
+            setCaptureAvailable(true)
+            setId(node)
+           }
+           else if(node?.designs.length!==0&&Object.keys(node.snapshots?.latestSnapshot).length >0 && node.snapshots?.snapshotActiveCount<1) {
+            setProcessing(true)
+            setId(node)
+           }
+         else if (Object.keys(node.snapshots?.latestSnapshot).length >= 0 && node.snapshots?.snapshotActiveCount>0 ) {
+            onLabelClick(e, node)
+            setCaptureAvailable(false)
+            setProcessing(false)
+          }
+
+      }} >
+         <TooltipText title={node?.name?.length > 20 ? node?.name : ""} placement="right">
+      <div className={node?.snapshots && node?.designs?.length>0 && Object.keys(node?.snapshots?.latestSnapshot).length <= 0 || node?.snapshots && node?.designs?.length<1 ?"text-gray-400":""} >
+      <TruncatedString text={node?.name} maxLength={20}
+              suffixLength={0} ></TruncatedString> 
+        </div> 
+        </TooltipText>
+
+      </LabelText>
+    </div>
+  
+
+<div>
+{node?.designs.length<1
+    ? 
+    <TooltipText title="No Design" placement="right">
+      <div>
+      <Chips title="ND" bgColor="#F67C74" isChip={false}></Chips>
+      </div>
+  
+    </TooltipText>
+    :node.snapshots && node?.designs.length>0 && Object.keys(node.snapshots?.latestSnapshot).length < 1
+    ? 
+    <TooltipText title="No Capture" placement="right">
+    <div>
+    <Chips title="NC" bgColor="#C24200" isChip={false}></Chips>  
+    </div>
+    </TooltipText>
+    :  node?.designs.length>0&&Object.keys(node.snapshots?.latestSnapshot).length > 0 && node.snapshots?.latestSnapshot?node.snapshots?.latestSnapshot?.state !== "Active"
+    ? 
+    // title={ moment(node.snapshots.latestSnapshot.captureDateTime).format("DD MMM")}
+    <TooltipText title="Processing" placement="right">
+    <div>
+    <Chips title="P" bgColor="#006CD0" isChip={false} captureTime={true} ></Chips>
+    </div>
+    </TooltipText>  
+    : "":""}
+</div>
+     
+
     </LabelContainer>
   );
 
@@ -146,7 +215,7 @@ const ProjectHierarchy = ({
     setTreeViewData(returnedTree);
   };
 
-  const renderTree = (nodes: ChildrenEntity, onLabelClick: any) => (
+  const renderTree = (nodes: any, onLabelClick: any) => (
     <>
       <StyledTreeItem
         // needClick={nodes?.children && nodes?.children?.length > 0 ? false : true}
@@ -157,7 +226,7 @@ const ProjectHierarchy = ({
         style={{ borderBottom: "1px solid #D9D9D9" }}
       >
         {Array.isArray(nodes.children) && nodes.children.length
-          ? nodes.children.map((node) => renderTree(node, onLabelClick))
+          ? nodes.children.map((node:any) => renderTree(node, onLabelClick))
           : null}
       </StyledTreeItem>
     </>
@@ -284,9 +353,24 @@ const ProjectHierarchy = ({
             onNodeToggle={handleToggle}
             onNodeSelect={handleSelect}
           >
-            {treeViewData.map((eachNode) => renderTree(eachNode, onLabelClick))}
+            {treeViewData.map((eachNode:any) => renderTree(eachNode, onLabelClick))}
           </StyledTreeView>
         )}
+              {
+isCaptureAvailable || isProcessing ?(
+          <PopupComponent
+          open={isCaptureAvailable?isCaptureAvailable:isProcessing}
+          setShowPopUp={isCaptureAvailable?setCaptureAvailable:setProcessing}
+          modalTitle={isCaptureAvailable?"No Capture Available":"Processing"}
+          modalmessage={isCaptureAvailable?`Do you want to view the design?`: `Do you want to view the design?`}
+          primaryButtonLabel={isCaptureAvailable?"View Design":"View Design"}
+          imageSrc={info}
+          isImageThere={true}
+          SecondaryButtonlabel={"No"}
+          callBackvalue={isCaptureAvailable?(e:any) => {onLabelClick(e, id);setCaptureAvailable(false)}:(e:any) => {onLabelClick(e, id)}}
+        />
+        )
+      :""}
       </TreeViewContainer>
     </ProjectHierarchyContainer>
   );

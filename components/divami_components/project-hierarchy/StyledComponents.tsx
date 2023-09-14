@@ -185,34 +185,30 @@ export const StyledTreeItem = styled(TreeItem)<StyledTreeItemProps>(
 
 export const LabelContainer = styled("div")({
   // pointerEvents: props.needClick ? "auto" : "none",
-  // display: 'flex',
-  // justifyContent: 'space-between'
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
   width: "100%",
   position: "relative",
 });
 export const LabelText = styled("div")({
   height: "40px",
   display: "block",
-  paddingTop: "13px",
+  paddingTop: "12px",
   paddingLeft: "10px",
   fontFamily: "Open Sans",
   fontSize: "14px",
   fontStyle: "normal",
   fontWeight: "400",
+  marginLeft: "10px"
 });
 
 export const LabelIcon = styled("div")({
-  position: "absolute",
-  right: 0,
-  top: "13px",
+
 });
 
 export const StyledSpan = styled("span")({
-  cursor: "pointer",
-  fontSize: "14px",
-  position: "absolute",
-  right: 0,
-  top: "13px",
+
 });
 
 export const HeaderLabelContainer = styled("div")({

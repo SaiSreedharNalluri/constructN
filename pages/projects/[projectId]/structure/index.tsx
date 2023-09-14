@@ -55,6 +55,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
+import { getSectionsList } from "../../../../services/sections";
 
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -1458,9 +1459,11 @@ const Index: React.FC<IProps> = () => {
     if (router.isReady) {
       // if (router.query.structId !== undefined)
       // setSelector(router.query.structId.toString());
-      getStructureHierarchy(router.query.projectId as string)
+      getSectionsList(router.query.projectId as string)
         .then((response: AxiosResponse<any>) => {
-          setState([...response.data.result]);
+          const result = response.data.result;
+          const resultArray :any= Array.isArray(result) ? result : [result];
+          setState([...resultArray]);
           setStateFilter([...response.data.result]);
           // if (selector.length < 1) setSelector(response.data.result[0]._id);
         })
