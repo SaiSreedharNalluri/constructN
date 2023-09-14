@@ -235,7 +235,7 @@ function BasicTabs(props: any) {
     let tempUsers = projectUsers.map((each: any) => {
       return {
         ...each,
-        label: each.user.fullName,
+        label: each?.user?.fullName,
       };
     });
     setAssigneeOptionsState(tempUsers);

@@ -385,7 +385,7 @@ export const isMobile=()=>{
         }
         else
         {
-            formatedTime = moment(utcTime).local()
+            formatedTime = moment(utcTime)?.local()
         }
-        return formatedTime?.format("DD MMM YYYY")
+        return (formatedTime !=undefined && formatedTime !=null) ? formatedTime?.format("DD MMM YYYY"):''
     }

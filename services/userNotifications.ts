@@ -37,3 +37,21 @@ export const updateUserNotifications = async (
       throw error.response.data;
     });
 };
+export const clearUserNotificationsCount = async (
+  
+) => {
+  return await instance
+    .put(
+      `${process.env.NEXT_PUBLIC_HOST}/user-notifications/delete-records`,
+      {},
+      {
+        headers: authHeader.authHeader(),
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};

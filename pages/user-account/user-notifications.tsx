@@ -34,10 +34,10 @@ const UserNotification: React.FC = () => {
     getAllUserNotifications(condition, currentPage, eventEmitter)
       .then((response) => {
         if (notifications.length > 0 && currentPage > 1) {
-          setNotifications(notifications.concat(response.result));
+          setNotifications(notifications.concat(response.notifications));
           setTotalNotifications(response.totalUserNotifications);
         } else {
-          setNotifications(response.result);
+          setNotifications(response.notifications);
           setTotalNotifications(response.totalUserNotifications);
         }
       })

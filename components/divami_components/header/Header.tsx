@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { Badge } from "@mui/material";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 //import constructnLogo from "../../../public/divami_icons/constructnLogo.svg";
@@ -49,6 +50,7 @@ import { styled } from "@mui/system";
 import UserNotification from "../../container/userNotification";
 import { IUserNotification } from "../../../models/IUserNotification";
 import {
+  clearUserNotificationsCount,
   getAllUserNotifications,
   updateUserNotifications,
 } from "../../../services/userNotifications";
@@ -63,6 +65,7 @@ import Link from "next/link";
 import { Circle, Rectangle } from "@mui/icons-material";
 import { json } from "stream/consumers";
 import { CustomToast } from "../custom-toaster/CustomToast";
+import { getUserProfile } from "../../../services/userAuth";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -105,6 +108,7 @@ const Header: React.FC<any> = ({
   const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
   const [openProfile, setOpenProfile] = useState(false);
   const [projectName,setProjectName]=useState('')
+  const [notificationCount, setNotificationCount] = useState(0);
   useEffect(()=>{
     if(router.isReady && router?.query?.projectId)
     {
@@ -153,8 +157,16 @@ const Header: React.FC<any> = ({
     //   setProjectId(router.query.projectId);
     // }
     //getUserNotifications();
+   
   }, [router.isReady]);
-
+  useEffect(() => {
+    getUserProfile().then((response)=>{
+      if(response?.success === true)
+      {
+       setNotificationCount(response?.result?.unReadNotifications?.length)
+      }
+     })
+  }, [router.isReady]);
   useEffect(() => {
     setIViewMode(viewMode);
     setIsDesignSelected(viewMode === "Reality" ? false : true);
@@ -254,10 +266,10 @@ const Header: React.FC<any> = ({
     getAllUserNotifications(condition, currentPage, eventEmitter)
       .then((response) => {
         if (notifications.length > 0 && currentPage > 1) {
-          setNotifications(notifications.concat(response.result));
+          setNotifications(notifications.concat(response.notifications));
           setTotalNotifications(response.totalUserNotifications);
         } else {
-          setNotifications(response.result);
+          setNotifications(response.notifications);
           setTotalNotifications(response.totalUserNotifications);
         }
       })
@@ -301,6 +313,15 @@ const Header: React.FC<any> = ({
   const handleProfileClose = () => {
     setOpenProfile(false);
   };
+  const clearNotificationsCount = () => {
+    clearUserNotificationsCount().then((response) => {
+      if(response?.success === true)
+      {
+        setNotificationCount(0)
+      }
+      console.log(response);
+    }).catch((error) => {});
+  }
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -473,20 +494,23 @@ const Header: React.FC<any> = ({
           <HeaderNotificationImageContainer>
             <TooltipText title="Notifications">
               <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full">
+              <Badge badgeContent={notificationCount} color="warning">
                 <Image
                   src={Notification}
                   alt="Profile Image"
                   onClick={() => {
-                    if (openNotification) {
+                   if (openNotification) {
                       setOpenNotication(false);
                     } else {
                       setOpenNotication(true);
                       setMenuLoading(false);
                       setSupportMenu(false);
                       setOpenProfile(false);
+                      clearNotificationsCount();
                     }
                   }}
                 />
+                </Badge>
               </div>
             </TooltipText>
 

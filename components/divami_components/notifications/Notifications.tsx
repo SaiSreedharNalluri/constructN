@@ -27,7 +27,7 @@ const Notifications = ({
   
   let result: any = {};
   let today = Moment(new Date().toISOString().slice(0, 10)).format("DD MMM'YY");
-  for (let i = 0; i < notifications.length; i++) {
+  for (let i = 0; i < notifications?.length; i++) {
     let date = Moment(notifications[i].createdAt).format("DD MMM'YY");
     if (date === today) {
       date = "TODAY";
