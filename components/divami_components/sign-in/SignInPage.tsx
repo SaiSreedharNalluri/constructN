@@ -127,7 +127,7 @@ const SignInPage = () => {
           error.toString();
         setLoginEnable(true)
 
-        CustomToast(error.response.data.message, "error");
+        CustomToast(error?.response?.data?.message, "error");
 
         setLoading(false);
 

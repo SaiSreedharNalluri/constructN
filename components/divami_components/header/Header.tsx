@@ -230,7 +230,7 @@ const Header: React.FC<any> = ({
     toolClicked(toolInstance);
   };
 
-  const [defaultValue, setDefaultValue] = useState(2);
+  //const [defaultValue, setDefaultValue] = useState(2);
   const [filterValue, setFilterValue] = useState("All");
   const [showPopUp, setshowPopUp] = useState(false);
   // useEffect(() => {
@@ -257,13 +257,13 @@ const Header: React.FC<any> = ({
   //     .catch((error) => {});
   // }, []);
   const getUserNotifications = (
-    condition = defaultValue,
+   // condition = defaultValue,
     eventEmitter = filterValue
   ) => {
     if (eventEmitter === "All") {
       eventEmitter = "";
     }
-    getAllUserNotifications(condition, currentPage, eventEmitter)
+    getAllUserNotifications(currentPage, eventEmitter)
       .then((response) => {
         if (notifications.length > 0 && currentPage > 1) {
           setNotifications(notifications.concat(response.notifications));
@@ -279,7 +279,7 @@ const Header: React.FC<any> = ({
   const handleOptionChange = (event: any) => {
     setNotifications(notifications.splice(0, notifications.length));
     getUserNotifications(event.target.value);
-    setDefaultValue(event.target.value);
+    //setDefaultValue(event.target.value);
     setCurrentPage(1);
     setFilterValue("All");
   };
@@ -295,7 +295,7 @@ const Header: React.FC<any> = ({
     updateUserNotifications([notificationId]).then((response) => {
       if (response.success === true) {
         setNotifications(notifications.splice(0, notifications.length));
-        getUserNotifications(defaultValue);
+        getUserNotifications();
         setCurrentPage(1);
       }
     });
@@ -305,8 +305,8 @@ const Header: React.FC<any> = ({
     setCurrentPage(1);
   };
   useEffect(() => {
-    getUserNotifications(defaultValue, filterValue);
-  }, [filterValue, currentPage, defaultValue]);
+    getUserNotifications(filterValue);
+  }, [filterValue, currentPage]);
   const handleNotificationClose = () => {
     setOpenNotication(false);
   };

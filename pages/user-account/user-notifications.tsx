@@ -17,7 +17,7 @@ const UserNotification: React.FC = () => {
   const [notifications, setNotifications] = useState<IUserNotification[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalNotifications, setTotalNotifications] = useState<number>(0);
-  const [defaultValue, setDefaultValue] = useState(2);
+ // const [defaultValue, setDefaultValue] = useState(2);
   const [filterValue, setFilterValue] = useState("All");
   useEffect(() => {
     if (router.isReady) {
@@ -25,13 +25,13 @@ const UserNotification: React.FC = () => {
     }
   }, []);
   const getUserNotifications = (
-    condition = defaultValue,
+   // condition = defaultValue,
     eventEmitter = filterValue
   ) => {
     if (eventEmitter === "All") {
-      eventEmitter = "";
+      eventEmitter = " ";
     }
-    getAllUserNotifications(condition, currentPage, eventEmitter)
+    getAllUserNotifications(currentPage, eventEmitter)
       .then((response) => {
         if (notifications.length > 0 && currentPage > 1) {
           setNotifications(notifications.concat(response.notifications));
@@ -47,7 +47,7 @@ const UserNotification: React.FC = () => {
   const handleOptionChange = (event: any) => {
     setNotifications(notifications.splice(0, notifications.length));
     getUserNotifications(event.target.value);
-    setDefaultValue(event.target.value);
+   // setDefaultValue(event.target.value);
     setCurrentPage(1);
     setFilterValue("All");
   };
@@ -57,13 +57,13 @@ const UserNotification: React.FC = () => {
     }
   };
   useEffect(() => {
-    getUserNotifications(defaultValue);
-  }, [currentPage, defaultValue]);
+    getUserNotifications();
+  }, [currentPage]);
   const updateNotifications = (notificationId: string) => {
     updateUserNotifications([notificationId]).then((response) => {
       if (response.success === true) {
         setNotifications(notifications.splice(0, notifications.length));
-        getUserNotifications(defaultValue);
+        getUserNotifications();
         setCurrentPage(1);
       }
     });
@@ -73,7 +73,7 @@ const UserNotification: React.FC = () => {
     setCurrentPage(1);
   };
   useEffect(() => {
-    getUserNotifications(defaultValue, filterValue);
+    getUserNotifications(filterValue);
   }, [filterValue]);
   return (
     <React.Fragment>
