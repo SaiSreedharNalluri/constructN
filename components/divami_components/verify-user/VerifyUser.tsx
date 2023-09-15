@@ -20,7 +20,7 @@ import {
   SignupContainer,
 } from "./VerifyUserStyles";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
-import Logo from "../../../public/divami_icons/Logo.svg";
+import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 import Mail from "../../../public/divami_icons/Mail.svg";
 import lock from "../../../public/divami_icons/lock.svg";
 import { verifyResendEmail } from "../../../services/userAuth";
@@ -80,7 +80,7 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
   return (
     <SectionShowcase>
       <HeaderContainer>
-        <HeaderImageLogo src={Logo} alt="logo" />
+        <HeaderImageLogo src={constructnLogo} alt="logo" />
       </HeaderContainer>
       <IllustrationBackground src={Illustration} alt="construct" />
 
