@@ -743,7 +743,7 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
       },
     },
   ];
-console.log(isCaptureAvailable,"isCaptureAvailable");
+
 
   return (
     <div style={{ overflow: "scroll" }} className="sections_table">
@@ -821,7 +821,7 @@ console.log(isCaptureAvailable,"isCaptureAvailable");
                     
                     const isZeroCapture =  rowData?.snapshots && rowData?.designs?.length>0 && Object.keys(rowData?.snapshots?.latestSnapshot).length <= 0;
                     const isZeroDesign= Object.keys(rowData?.snapshots?.latestSnapshot).length >=0 && rowData?.snapshots?.snapshotActiveCount <1;
-                    console.log(isZeroDesign,"isZeroDesign");
+
                     
                     // const isProcessing=rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length !== 0 && rowData.snapshots?.latestSnapshot?.state !== "Active" 
                     return (

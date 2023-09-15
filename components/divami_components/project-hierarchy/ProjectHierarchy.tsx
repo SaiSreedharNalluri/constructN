@@ -147,7 +147,7 @@ const ProjectHierarchy = ({
         <></>
       )}
       <LabelText onClick={(e: any) =>{ 
-          if( Object.keys(node.snapshots?.latestSnapshot).length <= 0) {
+          if(node?.designs.length>0 && Object.keys(node.snapshots?.latestSnapshot).length <= 0) {
             setCaptureAvailable(true)
             setId(node)
            }
@@ -163,7 +163,7 @@ const ProjectHierarchy = ({
 
       }} >
          <TooltipText title={node?.name?.length > 20 ? node?.name : ""} placement="right">
-      <div className={node?.snapshots && node?.designs?.length>0 && Object.keys(node?.snapshots?.latestSnapshot).length <= 0 || node?.snapshots && node?.designs?.length<1 ?"text-gray-400":""} >
+      <div className={node?.designs.length<=0 && node.snapshots?.snapshotActiveCount<1 ?"text-gray-400":""} >
       <TruncatedString text={node?.name} maxLength={20}
               suffixLength={0} ></TruncatedString> 
         </div> 
