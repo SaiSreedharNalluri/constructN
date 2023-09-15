@@ -19,7 +19,7 @@ const BodyContainer = styled(Box)({
 const FormElementContainer = styled(Box)({
   marginTop: "20px",
 });
-const Body = ({ setCanBeDisabled, editData, handleFormData }: any) => {
+const Body = ({ setCanBeDisabled, editData, handleFormData,setIsValidate,validate }: any) => {
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(EDIT_PROJECT_FORM_CONFIG);
   const [projectTypes, setProjectTypes] = useState([]);
@@ -52,7 +52,7 @@ const Body = ({ setCanBeDisabled, editData, handleFormData }: any) => {
               defaultValue: editData?.description || "",
             };
           }
-          if (item.id === "utm") {
+          if (item.id === "utm_value") {
             return {
               ...item,
               defaultValue: editData?.utm || " ",
@@ -114,6 +114,8 @@ const Body = ({ setCanBeDisabled, editData, handleFormData }: any) => {
           formState={formState}
           setFormState={setFormState}
           setCanBeDisabled={setCanBeDisabled}
+          validate={validate}
+          setIsValidate={setIsValidate}
         />
       </FormElementContainer>
     </BodyContainer>

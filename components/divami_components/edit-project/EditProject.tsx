@@ -23,7 +23,18 @@ const EditProject = ({
       setshowPopUp(true);
     } else {
       setValidate(true);
-      handleUpdateProject(formData);
+      let isError = 0;
+      for(let i = 0; i < formData.length; i++){
+        console.log(i,formData.length,formData[i]);
+        
+        if(formData[i].isReq === true && formData[i].isError === true){
+          isError++;
+        }
+      }
+      if(isError == 0){
+        setValidate(true);
+        handleUpdateProject(formData);
+        }
     }
 
   };

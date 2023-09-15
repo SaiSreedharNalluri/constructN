@@ -64,7 +64,7 @@ const ProjectDetails: React.FC = () => {
       (item: any) => item.id == "projectType"
     )[0]?.defaultValue;
     projectInfo.utm = formData.filter(
-      (item: any) => item.id == "utm"
+      (item: any) => item.id == "utm_value"
     )[0]?.defaultValue;
     projectInfo.location = [
       formData.filter((item: any) => item.id == "latitude")[0]?.defaultValue,
