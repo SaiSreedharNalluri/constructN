@@ -5,6 +5,7 @@ export interface IUserNotification {
         message: string,
         type: string,
         actionType: string,
+        readAt:string,
         configuration: NotificationConfiguration,
         category: string  // "User", "Project" , "Struct", "Task" , "Snapshot" , "Job" , "Issue", "Comment, "Tag"
         users: [NotifiersSchema],

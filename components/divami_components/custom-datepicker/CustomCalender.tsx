@@ -117,7 +117,7 @@ const CustomCalender = (props: any) => {
 
   return (
     <div data-testid={`custom-calender-parent-${dataTestId}`}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterDayjs as any}>
         <CustomDatePicker
           data-testid={dataTestId}
           className={` ${data?.isError ? "formErrorField" : ""} formField`}
