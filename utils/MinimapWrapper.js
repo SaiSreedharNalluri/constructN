@@ -764,12 +764,12 @@ export const MinimapUtils = () => {
     _isPendingDataToLoad = false;
     _isModelLoaded = true;
     if (loadLayersOnDataLoadCompletion()) {
-      let url = window.location.href
-      let split = url.split('structId=')
-      if((split.length == 2 && split[1] == _structure._id)|| isMobile()){
+      let urlObject = new URL(window.location.href);
+      let params = urlObject.searchParams;
+      var structId = params.get('structId');
+      if((structId && structId == _structure._id)|| isMobile()){
         loadLayers();
       }
-
     }
   };
 

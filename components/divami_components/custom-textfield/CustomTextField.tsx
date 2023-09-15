@@ -204,7 +204,7 @@ export const CustomTextField = (props: any) => {
           if (arrowKeys.includes(e.key)) {
            e.stopPropagation();
          }
-          if (e.keyCode === 13 && props.callback) props.callback(e);
+          if ((e.keyCode === 13 || e.keyCode === 9 || e.keyCode === 32) && props.callback) props.callback(e); //13 for Enter, 9 for Tab, 32 for space 
         }}
         // variant="outlined"
         // {...rest}

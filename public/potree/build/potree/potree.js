@@ -77744,6 +77744,9 @@ ENDSEC
 		unfocus(sendEvent = true){
 			this.selectingEnabled = true;
 			this.viewer.setEDLOpacity(1);
+			for(let image of this.images){
+				image.ringGroup.visible = false;
+			}
 			let image = this.focusedImage;
 			if(image === null){
 				return;

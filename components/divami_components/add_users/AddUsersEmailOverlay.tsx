@@ -63,11 +63,6 @@ export const AddUsersEmailOverlay = ({
   const [enableAddUser, setEnableAddUser] = useState(false);
   const [emailExistsError, setEmailExistsError] = useState("");
   const [isDisabled, setDisabled] = useState(false);
-  useEffect(() => {
-    if (/\S+@\S+\.\S+/.test(form.email)) checkRegisterUser(form.email);
-
-    // setAddedUsers([...addedUsers, form]);
-  }, form);
   const columns = [
     {
       title: "",
@@ -241,46 +236,72 @@ export const AddUsersEmailOverlay = ({
     setOpenDrawer(false);
   };
 
-  const checkRegisterUser = (val: string) => {
+
+  const addUsersByEmail = async (emails: string[]) => {
     const isViewer = roles.some((each: any) => each.value === "viewer");
-    checkUserRegistered({ email: val })
-      .then((res: any) => {
-        if (!res.result?.isRegistered) {
-          setAddedUsers([
+    let usersToAdd: any[] = []; 
+    const isRegisteredUsers = await Promise.all(emails.map((e)=> checkUserRegistered({email: e.trim()})))
+
+    isRegisteredUsers.forEach((response) => {
+      if(response.success) {
+        if (!response.result?.isRegistered) {
+          usersToAdd.push(
             {
-              email: val,
+              email: response.result?.email,
               role: isViewer ? "viewer" : roles[0].value,
               isNewUser: true,
-            },
-            ...addedUsers,
-          ]);
+            }
+          );
         } else {
-          setAddedUsers([
+          usersToAdd.push(
             {
-              email: val,
+              email: response.result?.email,
               role: isViewer ? "viewer" : roles[0].value,
               isNewUser: false,
-            },
-            ...addedUsers,
-          ]);
+            }
+          );
         }
-        setSearchVal("");
-      })
-      .catch((err) => {
-        CustomToast(err.message,"error");
-      });
-  };
- const handleValideEmail=() => {
-  if ( /\S+@\S+\.\S+/.test(searchVal) 
-  ) if (tableData.some((user: any) => user.email === searchVal)) {
-    setEmailExistsError("User already exists in this Project"); 
-  } else {
-    checkRegisterUser(searchVal); 
+      }
+    });
+  
+    setAddedUsers([...usersToAdd, ...addedUsers]);
+
   }
-  else{
-    setEmailExistsError("Please enter valid email")
+  
+  const handleValideEmail=() => {
+    let alertString = "";
+    let emails = searchVal.split(',');
+    let inValidEmails = emails.filter((e) => {
+      return !(/^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/.test(e.trim()))
+    });
+    
+    let existingEmails = emails.filter((e) => {
+      return (tableData.some((user: any) => user.email === e.trim()))
+    })
+
+    let validEmails = emails.filter((e) => {
+      return !inValidEmails.includes(e) && !existingEmails.includes(e)
+    })
+
+    if (validEmails.length > 0) addUsersByEmail(validEmails);
+
+    if(inValidEmails.length > 0) {
+      setSearchVal(inValidEmails.join(','))
+      alertString = `${inValidEmails.length} invalid email(s).`
+    } else {
+      setSearchVal("");
+    }
+    
+    if(existingEmails.length > 0) {
+      if(existingEmails.length == 1) {
+        alertString = alertString.concat(` ${existingEmails[0]} already exists in this Project`)
+      } else {
+        alertString = alertString.concat(` ${existingEmails.length} users already exist in this Project`)
+      }
+    }
+
+    setEmailExistsError(alertString);
   }
-}
 useEffect(()=>{
 if(addedUsers.length>0){
   setDisabled(true)
