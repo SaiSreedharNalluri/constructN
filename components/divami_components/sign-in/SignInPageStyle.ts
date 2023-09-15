@@ -252,7 +252,7 @@ export const ButtonSection = styled("div")({
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  marginTop: "40px",
+  marginTop: "20px",
 
   // margin:"auto"
 });
