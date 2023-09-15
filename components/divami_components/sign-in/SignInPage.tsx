@@ -181,40 +181,6 @@ const SignInPage = () => {
               handleKeyPress={handleKeyPress}
             />
             <ExtraTickDiv>
-              <ParentTickDiv>
-                <CheckTickDiv>
-                  <CheckTickBox
-                    sx={{ padding: 0 }}
-                    icon={
-                      <Image
-                        style={{
-                          width: "20px",
-                          height: "20px",
-                        }}
-                        src={UnChecked}
-                        alt="Search"
-                      />
-                    }
-                    checkedIcon={
-                      <Image
-                        style={{
-                          width: "20px",
-                          height: "20px",
-                        }}
-                        src={Checked}
-                        alt="Search"
-                      />
-                    }
-                    checked={rememberMe}
-                    // onChange={handleChange}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    inputProps={{ "aria-label": "controlled" }}
-                    data-testid="rememeberClick"
-                  />
-                </CheckTickDiv>
-
-                <RememberDiv>Remember me</RememberDiv>
-              </ParentTickDiv>
 
               <ForgotDiv
                 onClick={() => {
