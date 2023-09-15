@@ -34,9 +34,10 @@ export const EDIT_PROJECT_FORM_CONFIG = [
     isError: false,
     isReq: false,
     isReadOnly: false,
+    maxLength:200,
   },
   {
-    id: "utm",
+    id: "utm_value",
     type: "textfield",
     defaultValue: "",
     formLabel: "UTM",
@@ -44,6 +45,8 @@ export const EDIT_PROJECT_FORM_CONFIG = [
     isError: false,
     isReq: true,
     isReadOnly: false,
+    isValidField: true,
+    maxLength:30,
   },
   {
     id: "latitude",

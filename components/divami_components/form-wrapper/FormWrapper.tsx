@@ -137,7 +137,21 @@ const FormWrapper = (props: any) => {
               }
             }
           }
-
+          else if (item.isValidField == false && item.id === "utm_value" && item.maxLength){
+         
+            if(!textMaxLength(item.defaultValue, item.id)){
+              if(setCanBeDisabled) setCanBeDisabled(false);
+              return{
+                ...item,
+                isError: true,
+                showErrorMsg: true,
+              }
+            }else{
+              return {
+                ...item, isError: false
+              }
+            }
+          }
           else if (item.isValidField == false && item.id === "create_title"  && item.maxLength){
          
             if(!textMaxLengthCreateTitle(item.defaultValue, item.id)){
@@ -505,6 +519,83 @@ const FormWrapper = (props: any) => {
     return leftSpaces + rightSpaces == 0
   }
 
+    function textMaxLengthUtm(textLength: string, id: string) {
+    let isValid = false;
+    const minLimit = 3; 
+    const maxLimit = 30; 
+  
+    if (textLength.length < minLimit) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            let fieldName;
+  
+            if (id === "utm_value") {
+              fieldName = "UTM" || "utm";
+            }
+  
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+              errorMsg: `${fieldName} should be at least ${minLimit} characters`,
+            };
+          }
+          return item;
+        })
+      );
+    } else if (textLength.length > maxLimit) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            let fieldName;
+  
+            if (id === "utm_value") {
+              fieldName = "UTM" || "utm";
+            }
+  
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+              errorMsg: `${fieldName} should not be greater than ${maxLimit} characters`,
+            };
+          }
+          return item;
+        })
+      );
+    } else if (!calculateEmptySpaces(textLength)) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+              errorMsg: "No leading or trailing spaces are allowed",
+            };
+          }
+          return item;
+        })
+      );
+    } else {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: true,
+              isError: false,
+            };
+          }
+          return item;
+        })
+      );
+      isValid = true;
+    }
+    return isValid;
+  }
+  
 
   function textMaxLength(textLength:string, id:string){
     let isValid = false    
@@ -865,8 +956,12 @@ const FormWrapper = (props: any) => {
                   textMaxLengthCreateTitle(data?.defaultValue, data.id)
                   return
                 }
+                else if (data.id === "utm_value"){
+                  textMaxLengthUtm(data?.defaultValue, data.id)
+                  return
+                }
                 else if (data.maxLength === 30){
-                  textMaxLength(data?.defaultValue, data.id)
+                  textMaxLengthUtm(data?.defaultValue, data.id)
                   return
                 }
                 handleTextChange(e, data.id, parentType, parentId);
