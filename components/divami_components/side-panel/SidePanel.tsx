@@ -44,7 +44,6 @@ import {
 } from "./SidePanelStyles";
 import { Tooltip } from "@mui/material";
 import { getCookie } from "cookies-next";
-import { format } from 'date-fns';
 import moment from 'moment-timezone';
 interface IProps {
   onChangeData: () => void;

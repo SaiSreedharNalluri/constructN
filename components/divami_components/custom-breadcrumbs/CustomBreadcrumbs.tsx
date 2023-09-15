@@ -37,9 +37,9 @@ const CustomBreadcrumbs: React.FC<any> = ({
           </Link> */}
           {showFirstElement && breadcrumbsConfig.length ? (
             breadcrumbsConfig.map((breadcrumb: any, index: number) => (
-              <ToolTipText title={breadcrumb?.name?.length > 50 ? breadcrumb?.name : ""}>
+              <ToolTipText key={index} title={breadcrumb?.name?.length > 50 ? breadcrumb?.name : ""}>
               <BreadcrumbsLabel
-                key={breadcrumb + index}
+               key={index}
                 color="text.primary"
                 onClick={() => handleBreadCrumbClick(breadcrumb, index)}
               >
@@ -49,9 +49,9 @@ const CustomBreadcrumbs: React.FC<any> = ({
             ))
           ) : !showFirstElement && breadcrumbsConfig.length ? (
             breadcrumbsConfig.slice(1).map((breadcrumb: any, index: number) => (
-              <ToolTipText title={breadcrumb?.name?.length > 50 ? breadcrumb?.name : ""}>
+              <ToolTipText key={index} title={breadcrumb?.name?.length > 50 ? breadcrumb?.name : ""}>
               <BreadcrumbsLabel
-                key={breadcrumb + index}
+               key={index}
                 color="text.primary"
                 onClick={() => handleBreadCrumbClick(breadcrumb, index)}
               >

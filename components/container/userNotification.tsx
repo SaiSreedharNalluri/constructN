@@ -46,9 +46,9 @@ const UserNotification: React.FC<IProps> = ({
                 {notifications[date].map(
                   (notificationObj: IUserNotification) => {
                     return (
-                      <div key={notificationObj.id}>
+                      <div key={notificationObj._id}>
                         <div>
-                          {notificationObj?.readAt ? (
+                          {notificationObj?.readAt? (
                             <div className="m-0 border-b flex justify-between border-gray-100 h-11/12 text-center text-base">
                               <div className="ml-2 p-2">
                                 {notificationObj.message}
@@ -71,7 +71,7 @@ const UserNotification: React.FC<IProps> = ({
                             <div
                               className="border-b flex justify-between border-gray-500  h-11/12 w-full text-center  bg-gray-100 text-base"
                               onClick={() => {
-                                updateNotifications(notificationObj.id);
+                                updateNotifications(notificationObj._id);
                               }}
                             >
                               <div className="ml-3 p-2">
