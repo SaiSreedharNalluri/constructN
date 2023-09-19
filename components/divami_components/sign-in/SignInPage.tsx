@@ -94,6 +94,8 @@ const SignInPage = () => {
               "userCredentials",
               JSON.stringify(userProfileObj)
             );
+            if(userProfileObj.unReadNotifications)
+              delete userProfileObj.unReadNotifications
             setCookie("isProjectTimeZone", true);
             setCookie("user", userProfileObj);
             CustomToast("User signed in successfully", "success");
