@@ -10,7 +10,12 @@ export class ForgeInstance {
       extensions: ["Autodesk.BimWalk"],
     };
     let htmlDiv = document.getElementById(viewerId);
-    this.viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv, viewerConfig);
+    if (isMobile()) {
+      this.viewer = new Autodesk.Viewing.Viewer3D(htmlDiv, viewerConfig);
+    } else {
+      this.viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv, viewerConfig);
+    }
+    
     this.newInstance = true;
   }
 
