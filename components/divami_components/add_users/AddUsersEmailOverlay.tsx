@@ -30,7 +30,7 @@ import {
   UnregisteredIcon,
   UserEmailText,
 } from "../project-users-list/ProjectUsersListStyles";
-import infoicon from "../../../public/divami_icons/infoicon.svg";
+import infoicon from "../../../public/divami_icons/infoIcon.svg";
 import { toast } from "react-toastify";
 import { AddUserEmailContainer, EnterIcon } from "../empty-users-list/EmptyUsersListStyles";
 import {
