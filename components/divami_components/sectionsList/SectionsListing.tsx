@@ -558,13 +558,12 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
         </div> 
         </TooltipText>
           </div>  
-             
-     {rowData?.designs.length===0
+       {rowData?.designs.length===0 
     ? <Chips isChip={true} title="No Designs" bgColor="#F67C74"></Chips>
     :rowData.snapshots && rowData?.designs.length>0 && Object.keys(rowData.snapshots?.latestSnapshot).length < 1
-    ? <Chips isChip={true}  title="No Captures" bgColor="#C24200" ></Chips>  
+    ? <Chips isChip={true}  title="No Reality" bgColor="#C24200" ></Chips>  
     :  rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length > 0 && rowData.snapshots?.latestSnapshot?rowData.snapshots?.latestSnapshot?.state !== "Active"
-    ? <Chips isChip={true}  title="Processing" bgColor="#006CD0" captureTime={true}></Chips>  
+    ? <Chips isChip={true}  title="Processing" bgColor="#006CD0" captureTime={true}></Chips> 
     : "":""}
           </div>
     
@@ -897,7 +896,7 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
           <PopupComponent
           open={isCaptureAvailable?isCaptureAvailable:isProcessing}
           setShowPopUp={isCaptureAvailable?setCaptureAvailable:setProcessing}
-          modalTitle={isCaptureAvailable?"No Capture Available":"Processing"}
+          modalTitle={isCaptureAvailable?"No Reality Available":"Processing"}
           modalmessage={isCaptureAvailable?`Do you want to view the design?`: `Do you want to view the design?`}
           primaryButtonLabel={isCaptureAvailable?"View Design":"View Design"}
           imageSrc={info}
