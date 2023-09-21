@@ -113,6 +113,9 @@ export function BootstrapDialogTitle(props: DialogTitleProps) {
             top: 6,
             color: (theme) => theme.palette.grey[500],
             marginRight: "4px",
+            '&.MuiIconButton-root':{
+              padding:0,
+            },
           }}
         >
           {/* <CloseIcon src={CrossIcon} alt={"close icon"} /> */}
