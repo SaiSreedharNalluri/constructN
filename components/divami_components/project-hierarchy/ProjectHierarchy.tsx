@@ -192,9 +192,9 @@ Object.keys(node.snapshots?.latestSnapshot).length > 0 && node.snapshots?.latest
     </TooltipText>
     :node.snapshots && node?.designs.length>0 && Object.keys(node.snapshots?.latestSnapshot).length < 1
     ? 
-    <TooltipText title="No Capture" placement="right">
+    <TooltipText title="No Reality" placement="right">
     <div>
-    <Chips title="NC" bgColor="#C24200" isChip={false}></Chips>  
+    <Chips title="NR" bgColor="#C24200" isChip={false}></Chips>  
     </div>
     </TooltipText>
     :  node?.designs.length>0&&Object.keys(node.snapshots?.latestSnapshot).length > 0 && node.snapshots?.latestSnapshot?node.snapshots?.latestSnapshot?.state !== "Active"
@@ -369,7 +369,7 @@ isCaptureAvailable || isProcessing ?(
           <PopupComponent
           open={isCaptureAvailable?isCaptureAvailable:isProcessing}
           setShowPopUp={isCaptureAvailable?setCaptureAvailable:setProcessing}
-          modalTitle={isCaptureAvailable?"No Capture Available":"Processing"}
+          modalTitle={isCaptureAvailable?"No Reality Available":"Processing"}
           modalmessage={isCaptureAvailable?`Do you want to view the design?`: `Do you want to view the design?`}
           primaryButtonLabel={isCaptureAvailable?"View Design":"View Design"}
           imageSrc={info}
