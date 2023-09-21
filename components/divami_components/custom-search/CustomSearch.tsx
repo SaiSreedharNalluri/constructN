@@ -163,7 +163,7 @@ const CustomSearch = (props: any) => {
                     },
                   },
                 }}
-                placeholder="Enter Name"
+                placeholder="Enter Name(s)"
                 {...params}
                 // label={data.label}
                 InputProps={
