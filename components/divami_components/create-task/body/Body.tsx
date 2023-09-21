@@ -360,6 +360,7 @@ const Body = ({
           setFormData={setFormData}
           formConfig={formConfig}
         />
+        <div className="my-[10px]">*Mandatory fields</div>
       </FormElementContainer>
       {/* <Box sx={{ marginTop: '15px' }}>
         <CustomLabel label={'Select the Type of Task'} />
