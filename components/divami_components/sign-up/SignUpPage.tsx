@@ -294,8 +294,8 @@ const SignUpPage = () => {
                 />
               </CheckTickDiv>
 
-              <TermsAndConditionDiv> I agree to the <Link  href="https://constructn.ai/termsandconditions.html" target="_blank" passHref>
-                <SpanDiv > Terms of Service</SpanDiv></Link> and  <Link  href="https://constructn.ai/privacy-policy.html" target="_blank" passHref><SpanDiv>Privacy Policy</SpanDiv> </Link></TermsAndConditionDiv> 
+              <TermsAndConditionDiv> I agree to the <Link  href="https://constructn.ai/terms-conditions/" target="_blank" passHref>
+                <SpanDiv > Terms of Service</SpanDiv></Link> and  <Link  href="https://constructn.ai/privacy-policy/" target="_blank" passHref><SpanDiv>Privacy Policy</SpanDiv> </Link></TermsAndConditionDiv> 
           </ExtraTickDiv>
      
           {/* <ExtraTickDiv>
