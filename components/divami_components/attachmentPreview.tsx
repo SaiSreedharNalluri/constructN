@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import NextImage from "../core/Image";
 import { BootstrapDialog, BootstrapDialogTitle } from "../popupComponent/PopupComponent";
-import { DialogContent } from "@mui/material";
+import { DialogContent, Tooltip } from "@mui/material";
+import { truncateString } from "../../pages/projects";
 interface IProps{
     attachment: any,
     setShowPreview:React.Dispatch<React.SetStateAction<boolean>
@@ -89,7 +90,8 @@ const AttachmentPreview:React.FC<IProps>=({attachment,setShowPreview})=>{
             setShowPreview(false)
             setOpenPreview(false);
           }}
-        >{attachment.name}
+        >
+          <Tooltip title={attachment?.name?.length > 50 ? attachment?.name : ""}><div>{truncateString(attachment.name,20)}</div></Tooltip>
        </BootstrapDialogTitle>
         <DialogContent dividers style={{padding:'30px',height:'100%',width:"100%"}}>
             <div>{loadPreviewData(url)}</div> </DialogContent>
