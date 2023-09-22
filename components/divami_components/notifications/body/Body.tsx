@@ -41,6 +41,12 @@ const Body = ({
         case 'Issue':
           generateIssueRedirectUrl(notificationObj)
           break;  
+        case 'Issue Comment':
+          generateIssueCommentRedirectUrl(notificationObj)
+          break;
+        case 'Task Comment':
+          generateTaskCommentRedirectUrl(notificationObj)
+          break;
         case 'Snapshot':
           generateSnapshotRedirectUrl(notificationObj)
           break;
@@ -82,12 +88,6 @@ const Body = ({
         case 'Issue Deleted':
           router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
         break; 
-        case 'Issue Comment Added':
-          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
-        break; 
-        case 'Issue Comment Updated':
-          router.push(`/projects/${notificationObj?.configuration?.project}structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
-        break; 
       }
   }
   const generateTaskRedirectUrl=(notificationObj:IUserNotification)=>{
@@ -105,12 +105,6 @@ const Body = ({
         case 'Task Deleted':
           router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
         break; 
-        case 'Task Comment Added':
-          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
-        break;
-        case 'Task Comment Updated':
-          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
-        break;
       }
   }
   const generateStructureRedirectUrl=(notificationObj:IUserNotification)=>{
@@ -136,6 +130,28 @@ const Body = ({
         case 'Snapshot Disabled':
           router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
           break;
+    }
+  }
+  const generateTaskCommentRedirectUrl=(notificationObj:IUserNotification)=>{
+    switch (notificationObj.title)
+    {
+      case 'Task Comment Added':
+        router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
+      break;
+      case 'Task Comment Updated':
+        router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
+      break;
+    }
+  }
+  const generateIssueCommentRedirectUrl=(notificationObj:IUserNotification)=>{
+    switch (notificationObj.title)
+    {
+      case 'Issue Comment Added':
+          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+        break; 
+        case 'Issue Comment Updated':
+          router.push(`/projects/${notificationObj?.configuration?.project}structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+        break; 
     }
   }
   return (
