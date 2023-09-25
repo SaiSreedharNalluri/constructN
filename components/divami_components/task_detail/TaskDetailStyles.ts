@@ -47,11 +47,9 @@ export const EditIcon = styled(Image)`
 
 export const DeleteIcon = styled(Image)`
   cursor: pointer;
-  // width:24px;
-  // height:24px;
-  // margin-right: 25px;
+  width: 24px;
+  height: 24px;
 `;
-
 export const ValueContainer = styled("div")(({ theme }) => ({
   "& > :not(:last-child)": {
     marginRight: theme.spacing(1),
@@ -376,11 +374,11 @@ export const AttachmentDescription = styled("div")`
 
 export const AttachedImageDiv = styled("div")`
   display: flex;
-  justify-content: space-between;
+   justify-content:  space-around;
   align-items: center;
   padding-top: 15px;
   padding-bottom: 15px;
-`;
+  `;
 
 export const AttachedImageTitle = styled("div")`
   margin-left: 21px;

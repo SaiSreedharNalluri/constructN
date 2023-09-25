@@ -124,7 +124,8 @@ import moment from "moment";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import AttachmentPreview from "../attachmentPreview";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
-
+import Download from "../../../public/divami_icons/download.svg";
+import { truncateString } from "../../../pages/projects";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -209,6 +210,7 @@ function BasicTabs(props: any) {
     entity: string;
     _id: string;
 }>()
+const [attachmentPopup, setAttachmentPopup] = useState(false);
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
       return {
@@ -720,44 +722,63 @@ function BasicTabs(props: any) {
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
                       return (
-                        <div key={a._id}>
-                          <AttachedImageDiv className={`detailsImageDiv`}>
-                            <AttachedImageTitle
-                              onClick={() => {
+                        <AttachedImageDiv key={a._id}className={`detailsImageDiv`}>
+                          <div className="w-[50%]">
+                          <Tooltip title={a?.name?.length > 20 ? a?.name : ""}>
+                          <AttachedImageTitle onClick={() => {
                               setShowPreview(true)
                                setAttachment(a)
                               }}
                             >
-                              {a?.name}
+                              {truncateString(a?.name,20)}
+                              
                             </AttachedImageTitle>
-
-                            <DeleteIcon
+                         </Tooltip>
+                        </div>
+                        <div>
+                        <Image src={Download} 
+                        className={`cursor-pointer`}
+                        alt="Arrow" 
+                         onClick={()=>{
+                         window.open(a.url, "_blank");
+                        }}/>
+                        </div>
+                        <DeleteIcon
                               src={Delete}
                               alt={"delete icon"}
                               onClick={() => {
-                                deleteTheAttachment(a?._id, "issue");
-                                setTaskState((prev: any) => {
-                                  const updatedTabOne = {
-                                    ...prev.TabOne,
-                                    attachments: prev.TabOne.attachments.filter(
-                                      (attachment: any) =>
-                                        attachment._id !== a?._id
-                                    ),
-                                  };
-                                  return {
-                                    ...prev,
-                                    TabOne: updatedTabOne,
-                                  };
-                                });
-                              }}
-                              className={`deleteIcon`}
-                              data-testid="delete-attachment"
-                            />
-                          </AttachedImageDiv>
-                          <AttachHorizontal></AttachHorizontal>
-                         
-                          
-                        </div>
+                                setAttachmentPopup(true);
+                               }}
+                        /> {attachmentPopup && (
+                              <PopupComponent
+                                open={attachmentPopup}
+                                setShowPopUp={setAttachmentPopup}
+                                modalTitle={"Delete Attachment"}
+                                modalmessage={`Are you sure you want to delete this attachment "${a?._id} "?`}
+                                primaryButtonLabel={"Delete"}
+                                SecondaryButtonlabel={"Cancel"}
+                                callBackvalue={() => {
+                                  setAttachmentPopup(false);
+                                  deleteTheAttachment(a?._id, "issue");
+                                  setTaskState((prev: any) => {
+                                    const updatedTabOne = {
+                                      ...prev.TabOne,
+                                      attachments:
+                                        prev.TabOne.attachments.filter(
+                                          (attachment: any) =>
+                                            attachment._id !== a?._id
+                                        ),
+                                    };
+                                    return {
+                                      ...prev,
+                                      TabOne: updatedTabOne,
+                                    };
+                                  });
+                                }}
+                              />
+                            )}
+                                    
+                       </AttachedImageDiv>
                       );
                     }
                   )}

@@ -118,7 +118,8 @@ import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
 import AttachmentPreview from "../attachmentPreview";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
-
+import { truncateString } from "../../../pages/projects";
+import Download from "../../../public/divami_icons/download.svg";
 interface ContainerProps {
   footerState: boolean;
 }
@@ -681,26 +682,34 @@ function BasicTabs(props: any) {
                     (a: any, index: number) => {
                       return (
                         <div key={a._id}>
-                          <AttachedImageDiv className={`detailsImageDiv`}>
-                            <AttachedImageTitle
-                              onClick={() => {
-                                setShowPreview(true)
-                                setAttachment(a)
+                          <AttachedImageDiv key={a._id}className={`detailsImageDiv`}>
+                          <div className="w-[50%]">
+                          <Tooltip title={a?.name?.length > 20 ? a?.name : ""}>
+                          <AttachedImageTitle onClick={() => {
+                              setShowPreview(true)
+                               setAttachment(a)
                               }}
                             >
-                              {a?.name}
+                              {truncateString(a?.name,20)}
+                              
                             </AttachedImageTitle>
-
-                            <AttachedImageIcon>
-                              <Image src={""} alt="" />
-                            </AttachedImageIcon>
-                            <DeleteIcon
+                         </Tooltip>
+                        </div>
+                        <div>
+                        <Image src={Download} 
+                        className={`cursor-pointer`}
+                        alt="Arrow" 
+                         onClick={()=>{
+                         window.open(a.url, "_blank");
+                        }}/>
+                        </div>
+                        <DeleteIcon
                               src={Delete}
                               alt={"delete icon"}
                               onClick={() => {
                                 setAttachmentPopup(true);
                                }}
-                              className={`deleteIcon`}
+                              //className={`deleteIcon`}
                             />
 
                             {attachmentPopup && (
@@ -708,7 +717,6 @@ function BasicTabs(props: any) {
                                 open={attachmentPopup}
                                 setShowPopUp={setAttachmentPopup}
                                 modalTitle={"Delete Attachment"}
-                                // modalmessage={`Are you sure you want to delete this Task "${selectedTask?.type}(#${selectedTask?._id})"?`}
                                 modalmessage={`Are you sure you want to delete this attachment "${a?._id} "?`}
                                 primaryButtonLabel={"Delete"}
                                 SecondaryButtonlabel={"Cancel"}
@@ -733,7 +741,6 @@ function BasicTabs(props: any) {
                               />
                             )}
                           </AttachedImageDiv>
-                          <AttachHorizontal></AttachHorizontal>
                         </div>
                       );
                     }

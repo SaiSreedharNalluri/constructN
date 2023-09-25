@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { styled } from "@mui/system";
 import { Box } from "@mui/material";
 import Image from "next/image";
 import Delete from "../../../public/divami_icons/delete.svg";
+import { truncateString } from "../../../pages/projects";
+import Tooltip from "@material-ui/core/Tooltip";
+import PopupComponent from "../../popupComponent/PopupComponent";
 
 const ImageItem = styled(Box)({
   fontFamily: "Open Sans",
@@ -15,23 +18,23 @@ const ImageItem = styled(Box)({
 
 const AttachedImageDiv = styled("div")`
   display: flex;
-  justify-content: space-between;
+ // justify-content:  space-around;
   align-items: center;
   padding-top: 15px;
   padding-bottom: 15px;
 `;
 
 export const AttachedImageTitle = styled("div")`
-  margin-left: 21px;
+margin-left: 21px;
+cursor: pointer;
 `;
 
 export const AttachedImageIcon = styled("div")``;
 
 export const DeleteIcon = styled(Image)`
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  margin-right: 10px;
+cursor: pointer;
+width: 24px;
+height: 24px;
 `;
 
 const UploadedImagesList = ({
@@ -40,6 +43,8 @@ const UploadedImagesList = ({
   formConfig,
   setFormData,
 }: any) => {
+  const [attachmentPopup, setAttachmentPopup] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<any>();
   const handleDeleteAttachment = (eachSelectedFile: any) => {
     if (eachSelectedFile?._id) {
       deleteTheAttachment(eachSelectedFile?._id, "issue");
@@ -72,30 +77,46 @@ const UploadedImagesList = ({
       );
     }
   };
-  return formData && formData.length
+  return (<React.Fragment>
+{formData && formData.length
     ? formData
         .filter((item: any) => item.id === "file-upload")[0]
         ?.selectedFile?.map((eachSelectedFile: any, index: number) => {
           return (
             <AttachedImageDiv className={`detailsImageDiv`} key={index}>
-              {/* <AttachedImageTitle>{a?.name}</AttachedImageTitle> */}
-              <AttachedImageTitle>{eachSelectedFile?.name}</AttachedImageTitle>
-
-              {/* <AttachedImageIcon>
-                <Image src={""} alt="" />
-              </AttachedImageIcon> */}
+              <div className="w-[50%]">
+              <Tooltip title={eachSelectedFile?.name?.length > 20 ? eachSelectedFile?.name : ""}>
+              <AttachedImageTitle>{truncateString(eachSelectedFile?.name,20)}</AttachedImageTitle>
+              </Tooltip>
+              </div>
               <DeleteIcon
                 src={Delete}
                 alt={"delete icon"}
                 onClick={() => {
-                  handleDeleteAttachment(eachSelectedFile);
-                }}
-                className={`deleteIcon`}
+                setAttachmentPopup(true);
+                setSelectedFile(eachSelectedFile);
+                  }}
               />
             </AttachedImageDiv>
           );
         })
-    : null;
+    : null}
+      {attachmentPopup && (
+                <PopupComponent
+                open={attachmentPopup}
+                setShowPopUp={setAttachmentPopup}
+                modalTitle={"Delete Attachment"}
+                modalmessage={`Are you sure you want to delete this attachment "${truncateString(selectedFile?.name,20)}" ?`}
+                primaryButtonLabel={"Delete"}
+                SecondaryButtonlabel={"Cancel"}
+                callBackvalue={() => {
+                  setAttachmentPopup(false);
+                  handleDeleteAttachment(selectedFile);
+                 
+                }}
+              />
+              )}
+  </React.Fragment>) 
 };
 
 export default UploadedImagesList;
