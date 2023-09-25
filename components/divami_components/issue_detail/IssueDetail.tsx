@@ -724,7 +724,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                       return (
                         <AttachedImageDiv key={a._id}className={`detailsImageDiv`}>
                           <div className="w-[50%]">
-                          <Tooltip title={a?.name?.length > 50 ? a?.name : ""}>
+                          <Tooltip title={a?.name?.length > 20 ? a?.name : ""}>
                           <AttachedImageTitle onClick={() => {
                               setShowPreview(true)
                                setAttachment(a)

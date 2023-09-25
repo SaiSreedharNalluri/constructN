@@ -91,7 +91,7 @@ const AttachmentPreview:React.FC<IProps>=({attachment,setShowPreview})=>{
             setOpenPreview(false);
           }}
         >
-          <Tooltip title={attachment?.name?.length > 50 ? attachment?.name : ""}><div>{truncateString(attachment.name,20)}</div></Tooltip>
+          <Tooltip title={attachment?.name?.length > 20 ? attachment?.name : ""}><div>{truncateString(attachment.name,20)}</div></Tooltip>
        </BootstrapDialogTitle>
         <DialogContent dividers style={{padding:'30px',height:'100%',width:"100%"}}>
             <div>{loadPreviewData(url)}</div> </DialogContent>
