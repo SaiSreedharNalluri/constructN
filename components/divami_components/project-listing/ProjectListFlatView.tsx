@@ -321,7 +321,11 @@ export const ProjectListFlatView = ({
 
       customSort: () => sortByLastUpdated(),
       render: (rowData: any) => {
-        return <>{moment(rowData.updatedAt).format("DD MMM YYYY")}</>;
+        return <> 
+        {isNaN(Date.parse(rowData.lastUpdated))
+          ? "N/A"
+          : moment(rowData.lastUpdated).format('DD MMM YYYY')}
+        </>;
       },
     },
     {
