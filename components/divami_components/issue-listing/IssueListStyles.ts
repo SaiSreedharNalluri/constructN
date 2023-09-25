@@ -194,19 +194,19 @@ export const AppliedFilter = styled("div")({
 });
 
 export const StyledMenu = styled(MenuItem)({
-  borderBottom: "1px solid #D9D9D9",
+  borderBottom: "1px solid #D9D9D9 !important",
   width: "190px",
-  margin: "0px 20px",
-  "&:hover": {
-    cursor: "pointer",
-  },
-  padding: 0,
+  margin: "0px 20px  !important",
   height: "38px",
-  fontSize: "14px",
-  lineHeight: "20px",
+  lineHeight: "38px",
   color: "#101F4C",
   fontFamily: "Open Sans",
   fontWeight: "400",
+  fontSize: "14px",
+  "&: last-child": {
+    borderBottom: "none !important",
+  },
+  display: "block !important",
 });
 
 export const MenuOptionLabel = styled(MenuItem)({

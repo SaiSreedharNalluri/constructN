@@ -32,11 +32,15 @@ const StyledSelect = styled(Select)((props: any) => ({
 })) as any;
 
 const StyledMenuItem = styled(MenuItem)({
+  height: "38px",
+  lineHeight: "38px",
+  color: "#101F4C",
   fontFamily: "Open Sans",
-  fontStyle: "normal",
-  fontWeight: 400,
-  fontSize: 14,
-  color: "#101F4B",
+  fontWeight: "400",
+  fontSize: "14px",
+  display: "block !important",
+  cursor: "pointer",
+  margin: "0px 20px",
 });
 
 const CustomSelectContainer = styled("div")({
@@ -167,7 +171,7 @@ const CustomSelect = (props: any) => {
               value={`${item.value}`}
               id={`select-dropdown${index}`}
             >
-              {item.label}
+             <p className="ml-[8px]">{item.label}</p> 
             </StyledMenuItem>
           ))
         ) : (
