@@ -107,12 +107,12 @@ export function BootstrapDialogTitle(props: DialogTitleProps) {
           aria-label="close"
           onClick={onClose}
           sx={{
-            position: "absolute",
-            right: 8,
+            position: "relative",
+            right: 12,
             // top: 15,
-            top: 6,
+            // top: 6,
             color: (theme) => theme.palette.grey[500],
-            marginRight: "4px",
+            // marginRight: "12px",
             '&.MuiIconButton-root':{
               padding:0,
             },
