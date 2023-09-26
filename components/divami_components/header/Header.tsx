@@ -137,7 +137,11 @@ const Header: React.FC<any> = ({
         setProjectName(response?.data?.result?.name)
       } 
      })  .catch((error) => {
-       CustomToast("failed to load data","error");
+      if (error.response.status===403)
+      {
+        CustomToast("Permisson Denied, Contact Admin","error");
+        router.push("/projects?reason=AccessDenied");
+      }
      });
   }
   useEffect(() => {
