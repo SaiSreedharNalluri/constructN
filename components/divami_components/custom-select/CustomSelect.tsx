@@ -40,7 +40,9 @@ const StyledMenuItem = styled(MenuItem)({
   fontSize: "14px",
   display: "block !important",
   cursor: "pointer",
-  margin: "0px 20px",
+  paddingTop: "0px !important",
+  paddingBottom: "0px !important",
+  // margin: "0px 20px",
 });
 
 const CustomSelectContainer = styled("div")({
