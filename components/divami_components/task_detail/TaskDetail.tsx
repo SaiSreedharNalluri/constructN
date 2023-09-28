@@ -882,6 +882,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const [selectedTask, setSelectedTask] = useState(task);
   const router = useRouter();
   const [backendComments, setBackendComments] = useState<any>([]);
+  const[isLoading,setLoading]=useState(false);
   const [file, setFile] = useState<File>();
 
   useEffect(() => {
@@ -1017,15 +1018,18 @@ const CustomTaskDetailsDrawer = (props: any) => {
           if (response.success === true) {
             CustomToast("Task updated successfully","success");
             getTasks(currentStructure._id);
+            setLoading(true);
           } else {
             CustomToast("Error updating the task","error");
           }
+          setLoading(false)
           setOpenCreateTask(false);
         })
         .catch((error) => {
           if (error.success === false) {
             CustomToast(error?.message,"error");
           }
+          setLoading(false)
           setOpenCreateTask(false);
         });
     }
@@ -1271,6 +1275,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
             closeTaskCreate={() => {
               setOpenCreateTask(false);
             }}
+            setLoading={setLoading}
+            isLoading={isLoading}
           />
         </CustomDrawer>
       )}
