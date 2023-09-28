@@ -495,7 +495,8 @@ const Header: React.FC<any> = ({
             </TooltipText>
           </HeaderSupportImageContainer>
 
-          <HeaderNotificationImageContainer  onClick={() => {
+          <HeaderNotificationImageContainer>
+            <TooltipText title="Notifications" onClick={() => {
                    if (openNotification) {
                       setOpenNotication(false);
                     } else {
@@ -506,7 +507,6 @@ const Header: React.FC<any> = ({
                       clearNotificationsCount();
                     }
                   }}>
-            <TooltipText title="Notifications">
               <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full" >
               <Badge badgeContent={notificationCount} color="warning">
                 <Image
