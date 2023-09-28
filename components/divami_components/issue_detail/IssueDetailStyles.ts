@@ -67,7 +67,7 @@ export const LeftTitleCont = styled("div")`
 
 export const RightTitleCont = styled("div")`
   display: flex;
-
+  align-items: center;
   //   margin-top: 10px;
 `;
 
