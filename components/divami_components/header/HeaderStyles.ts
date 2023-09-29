@@ -30,17 +30,18 @@ export const HeaderRightPart = styled('div')({
 
 export const HeaderToggle = styled('div')({
   display: 'flex',
-  boxShadow: '0px 3px 8px rgba(0, 0, 0, 0.2)',
+  //boxShadow: '0px 3px 8px rgba(0, 0, 0, 0.2)',
   marginRight: '15px',
-  borderRadius: '4px',
-  border: '1px solid #F1742E',
+  //borderRadius: '4px',
+  //border: '1px solid #F1742E',
 });
 
 export const HeaderToggleButtonOne = styled('button')((props: any) => ({
-  background: !props?.toggleStatus ? 'none' : '#F1742E',
-  // border: !props?.toggleStatus ? `1px solid #FFFFFF` : "none",
+  background: !props?.toggleStatus ? props.isAvailable?'none':'#E7E7E7' : '#F1742E',
+  border: !props?.toggleStatus ? `1px solid #F1742E` : "none",
+  borderRadius: (props?.dataTestid==="design-button")?"4px 0px 0px 4px":"0px 4px 4px 0px",
   cursor: 'pointer',
-  color: !props?.toggleStatus ? '#36415D' : '#FFFFFF',
+  color: !props?.toggleStatus ? props.isAvailable?'#36415D':'#D3D3D3' :'#FFFFFF',
   padding: '6px 10px',
   height: '30px',
   display: 'flex',

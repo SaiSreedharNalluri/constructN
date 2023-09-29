@@ -1602,6 +1602,8 @@ const Index: React.FC<IProps> = () => {
             showBreadcrumbs
             breadCrumbData={breadCrumbsData}
             handleBreadCrumbClick={handleBreadCrumbClick}
+            isDesignAvailable={isDesignAvailable}
+            isRealityAvailable={isRealityAvailable}
           />
         )}
 
