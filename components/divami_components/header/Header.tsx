@@ -168,7 +168,7 @@ const Header: React.FC<any> = ({
     getUserProfile().then((response)=>{
       if(response?.success === true)
       {
-       setNotificationCount(response?.result?.unReadNotifications?.length)
+       setNotificationCount(response?.result?.unReadNotifications)
       }
      })
   }, [router.isReady]);
