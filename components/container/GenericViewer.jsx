@@ -74,6 +74,7 @@ function GenericViewer(props) {
   let updateDesignMap = props.updateDesignMap;
 
   let [snapshotList, setSnapshotList] = useState([]);
+  let [snapshotCompareList, setSnapshotCompareList] = useState([]);
   let [snapshotListCal, setSnapshotListCal] = useState([]);
   let [snapshot, setSnapshot] = useState({});
   let updateSnapshot = props.updateSnapshot;
@@ -150,6 +151,7 @@ function GenericViewer(props) {
 
   let [isMarkerMode, setMarkerMode] = useState(false);
   const [offset, setOffset] = useState(1);
+  const [compareOffset, setCompareOffset] = useState(1)
   const pageSize = 10;
   const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0)
 
@@ -1253,8 +1255,17 @@ function GenericViewer(props) {
     return designList;
   };
 
-
-  const getSnapshotList = async (projectId, structurId,offset,limit,snap="") => {
+  const getListOfSnapshots = async (projectId, structurId,offset,limit) => {
+    let list = await getSnapshotsList(projectId, structurId,offset||1,limit||10);
+    setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
+    setSnapshotListCal(list.data?.result?.calendarSnapshots)
+    list = list.data.result.mSnapshots.sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+    //console.log("MyNewList ...", list);
+    return list;
+  };
+  const getSnapshotList = async (projectId, structurId,offset,limit,snap="",compare=false) => {
     let list = await getSnapshotsList(projectId, structurId,offset||1,limit||10);
     setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
     setSnapshotListCal(list.data?.result?.calendarSnapshots)
@@ -1263,7 +1274,10 @@ function GenericViewer(props) {
     );
     if (list.length>0 && snap!==""){
       let mySnap=list.find((s)=>{if(s._id==snap)return s;})
-      setSnapshotList(list);
+      if(compare)
+        setSnapshotCompareList(list);
+      else
+        setSnapshotList(list);
       if (mySnap){
         setCurrentSnapshot(mySnap);
         setCurrentCompareSnapshot(list[list.length - 1]); 
@@ -1280,7 +1294,10 @@ function GenericViewer(props) {
     }
     else if(list.length>0 && router.query.snap!=null){
       let mySnap=list.find((s)=>{if(s._id==router.query.snap)return s;})
-      setSnapshotList(list);
+      if(compare)
+        setSnapshotCompareList(list);
+      else
+        setSnapshotList(list);
       if (mySnap)
       setCurrentSnapshot(mySnap);
       else 
@@ -1293,7 +1310,10 @@ function GenericViewer(props) {
       }
     }
     else if (list.length > 0) {
-      setSnapshotList(list);
+      if(compare)
+        setSnapshotCompareList(list);
+      else
+        setSnapshotList(list);
       setCurrentSnapshot(list[list.length - 1]);
       if (list.length > 1) {
         setCurrentCompareSnapshot(list[list.length - 2]);
@@ -1301,14 +1321,23 @@ function GenericViewer(props) {
         setCurrentCompareSnapshot(list[list.length - 1]);
       }
     } else {
-      setSnapshotList([]);
+      if(compare)
+        setSnapshotCompareList([]);
+      else
+        setSnapshotList([]);
+
       setCurrentSnapshot({});
       setCurrentCompareSnapshot({});
+    }
+    //initial compare setting
+    if(snapshotCompareList.length<1 && list.length>0){
+      setSnapshotCompareList(list);
+
     }
   };
 
   const setCurrentSnapshot = async (snapshot) => {
-    if (Object.keys(snapshot).length > 0) {
+    if (snapshot && Object.keys(snapshot).length > 0) {
       setSnapshot(snapshot);
       updateSnapshot(snapshot);
       const map = await getRealityMap(snapshot);
@@ -2025,30 +2054,177 @@ function GenericViewer(props) {
     setTotalPages(Math.ceil(totalSnaphotsCount / 10));
   }, [totalSnaphotsCount]);
 
-  const setPrevList = () => {
-    if (offset < totalPages) {
-      getSnapshotList(structure.project, structure._id, offset + 1, pageSize);
-      setOffset(offset + 1);
-      // setPage(0);
+  const setPrevList = async (key) => {
+    // if (offset < totalPages) {
+    //   getSnapshotList(structure.project, structure._id, offset + 1, pageSize);
+    //   setOffset(offset + 1);
+
+    //   // setPage(0);
+    // }
+    let myList;
+    switch (key){
+      case "1":
+        if(offset<totalPages){
+          myList = await getListOfSnapshots(structure.project, structure._id, offset + 1, pageSize);
+          //console.log("myList returned ...", myList)
+          if (myList.length>0){
+            
+            setSnapshotList(myList);
+            if(router.query.snap!==null)
+            {
+              let mySnap=myList.find((s)=>{if(s._id==router.query.snap)return s;})
+              if (mySnap) setCurrentSnapshot(mySnap);
+              else setCurrentSnapshot(myList[myList.length - 1]);
+            }
+            else{
+              setCurrentSnapshot(myList[myList.length - 1]);
+            }
+          }
+          else{
+            setSnapshotList([{}]);
+
+          }
+          setOffset(offset + 1)
+        }
+        break;
+      case "2":
+        if(compareOffset<totalPages){
+          myList = await getListOfSnapshots(structure.project, structure._id, compareOffset + 1, pageSize);
+          if (myList.length>0){
+            setSnapshotCompareList(myList);
+            if(router.query.snap!==null)
+            {
+              let mySnap=myList.find((s)=>{if(s._id==router.query.snap)return s;})
+              if (mySnap) setCurrentCompareSnapshot(mySnap);
+              else setCurrentCompareSnapshot(myList[myList.length - 1]);
+            }
+            else{
+              setCurrentCompareSnapshot(myList[myList.length - 1]);
+            }
+          }
+          else{
+            setSnapshotCompareList([{}]);
+
+          }
+          setCompareOffset(compareOffset + 1)
+        }
+        break;
     }
   };
-  const setNewList = (newOffset,snap) => {
-    if (offset <= totalPages) {
-      getSnapshotList(structure.project, structure._id, newOffset, pageSize,snap);
-      setOffset(newOffset);
+  const setNewList = async(newOffset,snap,key) => {
+    // if (offset <= totalPages) {
+    //   getSnapshotList(structure.project, structure._id, newOffset, pageSize,snap);
+    //   setOffset(newOffset);
       
-      //setPage(newPage);
+    //   //setPage(newPage);
+    // }
+
+    let myList;
+    switch (key){
+      case "1":
+        if(newOffset<=totalPages){
+          myList = await getListOfSnapshots(structure.project, structure._id, newOffset, pageSize);
+          if (myList.length>0){
+            setSnapshotList(myList);
+            if(snap && router.query.snap!==null)
+            {
+              let mySnap=myList.find((s)=>{if(s._id==snap)return s;})
+              if (mySnap) setCurrentSnapshot(mySnap);
+              else setCurrentSnapshot(myList[myList.length - 1]);
+            }
+            else{
+              setCurrentSnapshot(myList[myList.length - 1]);
+            }
+          }
+          else{
+            setSnapshotList([{}]);
+
+          }
+          setOffset(newOffset)
+        }
+        break;
+      case "2":
+        if(newOffset<=totalPages){
+          myList = await getListOfSnapshots(structure.project, structure._id, newOffset, pageSize);
+          if (myList.length>0){
+            setSnapshotCompareList(myList);
+            if(snap && router.query.snap!==null)
+            {
+              let mySnap=myList.find((s)=>{if(s._id==snap)return s;})
+              if (mySnap) setCurrentCompareSnapshot(mySnap);
+              else setCurrentCompareSnapshot(myList[myList.length - 1]);
+            }
+            else{
+              setCurrentCompareSnapshot(myList[myList.length - 1]);
+            }
+          }
+          else{
+            setSnapshotCompareList([{}]);
+
+          }
+          setCompareOffset(newOffset)
+        }
+        break;
     }
   };
 
-  const setNextList = () => {
-    if (offset > 1) {
-      getSnapshotList(structure.project, structure._id, offset - 1, pageSize);
+  const setNextList = async (key) => {
+    // if (offset > 1) {
+    //   getSnapshotList(structure.project, structure._id, offset - 1, pageSize);
 
-      setOffset(offset - 1);
-      // setPage(0);
+    //   setOffset(offset - 1);
+    //   // setPage(0);
+    // }
+
+    let myList;
+    switch (key){
+      case "1":
+        if(offset>1){
+          myList = await getListOfSnapshots(structure.project, structure._id, offset - 1, pageSize);
+          if (myList.length>0){
+            setSnapshotList(myList);
+            if(router.query.snap!==null)
+            {
+              let mySnap=myList.find((s)=>{if(s._id==router.query.snap)return s;})
+              if (mySnap) setCurrentSnapshot(mySnap);
+              else setCurrentSnapshot(myList[myList.length - 1]);
+            }
+            else{
+              setCurrentSnapshot(myList[myList.length - 1]);
+            }
+          }
+          else{
+            setSnapshotList([{}]);
+
+          }
+          setOffset(offset - 1)
+        }
+        break;
+      case "2":
+        if(compareOffset>1){
+          myList = await getListOfSnapshots(structure.project, structure._id, compareOffset - 1, pageSize);
+          if (myList.length>0){
+            setSnapshotCompareList(myList);
+            if(router.query.snap!==null)
+            {
+              let mySnap=myList.find((s)=>{if(s._id==router.query.snap)return s;})
+              if (mySnap) setCurrentCompareSnapshot(mySnap);
+              else setCurrentCompareSnapshot(myList[myList.length - 1]);
+            }
+            else{
+              setCurrentCompareSnapshot(myList[myList.length - 1]);
+            }
+          }
+          else{
+            setSnapshotCompareList([{}]);
+
+          }
+          setCompareOffset(compareOffset - 1)
+        }
+        break;
     }
   };
+
   return (
     <div className={` ${fullScreenMode?"w-full h-full":`${styles.calcWidth} ${styles.calcHeight}`} fixed flex flex-row overflow-hidden`}>
        <div className={`flex relative ${fullScreenMode?"left-0 w-full":"left-59 calc-width"}  `}>
@@ -2056,13 +2232,13 @@ function GenericViewer(props) {
           {renderViewer(1)}
           {renderMinimap(1)}
          { snapshotList.length > 0 ?
-          <TimeLineComponent currentSnapshot={snapshot}snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+          <TimeLineComponent  currentSnapshot={snapshot}snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
               setPrevList={setPrevList}   
               setNewList={setNewList}
               setNextList={setNextList}
               totalPages={totalPages}
               offset={offset}
-
+              _id={"1"}
             ></TimeLineComponent>
             : <></>
           }
@@ -2071,15 +2247,15 @@ function GenericViewer(props) {
     <div id="CompareView" className={`relative basis-1/2  flex grow shrink  ${isCompare ? "calc-whalf ": "hidden " }`}>
           {renderViewer(2)}
           {compareViewMode === 'Potree' ? renderMinimap(2) : <></>}
-          { snapshotList.length > 0 ?     
-            <TimeLineComponent currentSnapshot={compareSnapshot} snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
-            setPrevList={setPrevList}
+          { snapshotCompareList.length > 0 ?     
+            <TimeLineComponent  currentSnapshot={compareSnapshot} snapshotListCal={snapshotListCal} snapshotList={snapshotCompareList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+            setPrevList={setPrevList}   
             setNewList={setNewList}
             setNextList={setNextList}
             totalPages={totalPages}
-            offset={offset}
+            offset={compareOffset}
             tools={props?.tools}
-
+            _id={"2"}
             ></TimeLineComponent>
             : <></>
           }
