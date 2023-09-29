@@ -47,6 +47,7 @@ interface IProps {
   totalPages: any;
   offset: any;
   tools?: any;
+  _id?:string;
 }
 
 const TimeLineComponent: React.FC<IProps> = ({
@@ -64,6 +65,7 @@ const TimeLineComponent: React.FC<IProps> = ({
   totalPages,
   offset,
   tools,
+  _id,
 }) => {
   const [bottomNav, setBottomNav] = useState(false);
   const [page, setPage] = useState<any>();
@@ -103,12 +105,19 @@ const TimeLineComponent: React.FC<IProps> = ({
           moment(item?.date).format("YYYY-MM-DD").toString() === dateFormatted
       );
       console.log(snapshotListCal,"Array Order", value, snapshotListCal[value]._id);
-      
-      if (value>1)
-      setNewList(Math.ceil((value-1) / 10),snapshotListCal[value]._id)
-      else
-      setNewList(0,snapshotListCal[0]._id)
-      
+      if(_id){
+        if (value>-1)
+        setNewList(Math.ceil((value+1) / 10),snapshotListCal[value]._id,_id)
+        else
+        setNewList(0,snapshotListCal[0]._id,_id)
+
+      }
+      else{
+        if (value>-1)
+        setNewList(Math.ceil((value+1) / 10),snapshotListCal[value]._id)
+        else
+        setNewList(0,snapshotListCal[0]._id)
+      } 
       
 
     //  const snp = await (await getSnapshotDetails(structure.project,structure._id,snapshotListCal[value]._id!))?.data?.result
@@ -288,6 +297,10 @@ const TimeLineComponent: React.FC<IProps> = ({
                   src={LeftIcon}
                   alt=""
                   onClick={() => {
+                    //console.log("OnClick of Key ...",_id);
+                    if(_id)
+                    setPrevList(_id);
+                    else
                     setPrevList();
                   }}
                 />
@@ -351,7 +364,8 @@ const TimeLineComponent: React.FC<IProps> = ({
                   src={RightIcon}
                   alt=""
                   onClick={() => {
-                    setNextList();
+                    if(_id) setNextList(_id)
+                    else setNextList();
                   }}
                 />
               ) : (

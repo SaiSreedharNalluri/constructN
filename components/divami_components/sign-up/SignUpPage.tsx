@@ -249,7 +249,7 @@ const SignUpPage = () => {
       <Overlay></Overlay>
       <FormDiv>
         <FormContainerSign>
-          <SignInHeader>Signup</SignInHeader>
+          <SignInHeader>Sign Up</SignInHeader>
           {/* {showError ? (
             <ErrorSectonDiv>All fields are required*</ErrorSectonDiv>
           ) : (
