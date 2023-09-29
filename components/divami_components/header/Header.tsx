@@ -66,6 +66,7 @@ import { Circle, Rectangle } from "@mui/icons-material";
 import { json } from "stream/consumers";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import { getUserProfile } from "../../../services/userAuth";
+import NotificationDrawer from "../custom-drawer/notification-drawer";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -519,7 +520,7 @@ const Header: React.FC<any> = ({
 
             {openNotification && (
               <div>
-                <CustomDrawer variant="persistent">
+                <NotificationDrawer variant="persistent">
                   <div>
                     <Notifications
                       notifications={notifications}
@@ -532,7 +533,7 @@ const Header: React.FC<any> = ({
                   </div>
 
                   <div></div>
-                </CustomDrawer>
+                </NotificationDrawer>
               </div>
             )}
           </HeaderNotificationImageContainer>

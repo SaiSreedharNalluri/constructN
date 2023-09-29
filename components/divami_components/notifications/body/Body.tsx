@@ -228,7 +228,7 @@ const Body = ({
         </button>
       );
     })}
-    <div className="calc-h154  overflow-y-auto" ref={notificationsContRef}>
+    <div className="calc-h184  overflow-y-auto" ref={notificationsContRef}>
         {Object.keys(notifications).length > 0 &&
           Object.keys(notifications).map((date: any) => (
             <div key={date} className="  ">

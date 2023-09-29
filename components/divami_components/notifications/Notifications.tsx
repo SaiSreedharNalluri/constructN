@@ -7,7 +7,7 @@ import { IUserNotification } from "../../../models/IUserNotification";
 const StyledDiv = styled("span")({
   fontFamily: '"Open Sans"',
   display: "block",
-  height: "calc(100vh - 60px)",
+  height: "calc(100vh - 90px)",
 });
 import Moment from "moment";
 
