@@ -92,7 +92,7 @@ export const EditRoleOverlay = ({
 
         <AssignedLabel>Assigned On</AssignedLabel>
         <AssignedValue>
-          {setTheFormatedDate(userData.updatedAt)}
+          {userData.assignedOn ? (setTheFormatedDate(userData.assignedOn)):'-'}
         </AssignedValue>
         <AssignedLabel bottom>Role</AssignedLabel>
         <CustomSelect

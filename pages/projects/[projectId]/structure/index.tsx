@@ -239,9 +239,11 @@ const Index: React.FC<IProps> = () => {
 
   const closeTaskDetails = () => {
     setOpenTaskDetails(false);
+    router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)   
   };
   const closeIssueDetails = () => {
     setOpenIssueDetails(false);
+    router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)
   };
 
   const taskSubmit = (formdata: any) => {
@@ -1575,7 +1577,7 @@ const Index: React.FC<IProps> = () => {
 
     }
     
-  }, [issuesList]);
+  }, [issuesList,router.query.iss]);
 
   useEffect(() => {
     if(router.query.tsk!=null){
@@ -1588,7 +1590,7 @@ const Index: React.FC<IProps> = () => {
 
     }
     
-  }, [tasksList]);
+  }, [tasksList,router.query.tsk]);
 
   return (
     <div className=" w-full  h-full">
