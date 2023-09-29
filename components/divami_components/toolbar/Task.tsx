@@ -34,6 +34,7 @@ import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import plusCircleIconHighlighted from "../../../public/divami_icons/plusCircleIconHighlighted.svg";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
+import { getTimeInProjectTimezone } from "../../../utils/utils";
 const Task = ({
   rightMenuClickHandler,
   tasksList,
@@ -149,13 +150,17 @@ const Task = ({
         )[0]?.defaultValue);
 
     // data.startDate = moment(data.startDate).format("YYYY-MM-DD");
-    data.startDate = `${moment(data.startDate).toISOString()}`;
+    let startDate = new Date(data.startDate)
+    startDate.setHours(0,0,0,0);
+    data.startDate = `${getTimeInProjectTimezone(startDate).utc().format()}`;
 
      data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
     // data.dueDate = moment(data.dueDate).format("YYYY-MM-DD");
-    data.dueDate = `${moment(data.dueDate).toISOString()}`;
+    let dueDate: Date = new Date(data.dueDate);
+    dueDate.setHours(23,59,0,0);
+    data.dueDate = `${getTimeInProjectTimezone(dueDate).utc().format()}`;
 
     data.attachments = formData.filter(
       (item: any) => item.id === "file-upload"

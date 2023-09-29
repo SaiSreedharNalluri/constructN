@@ -37,6 +37,7 @@ import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import html2canvas from "html2canvas";
 import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
+import { getTimeInProjectTimezone } from "../../../utils/utils";
 const Issues = ({
   rightMenuClickHandler,
   issuesList,
@@ -156,14 +157,19 @@ const Issues = ({
     data.startDate = values
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "start-date")[0]?.defaultValue;
-    // data.startDate = moment(data.startDate).format("YYYY-MM-DD");
-    data.startDate = `${moment(data.startDate).toISOString()}`;
+  
+    let startDate = new Date(data.startDate)
+    startDate.setHours(0,0,0,0);
+    // console.log("TimezoneTest: startDate ", moment(startDate).format("yyyy-MM-DD HH:mm"), moment.tz(moment(startDate).format("yyyy-MM-DD HH:mm"), "America/Chicago").utc().format());
+    data.startDate = `${getTimeInProjectTimezone(startDate).utc().format()}`;
 
     data.dueDate = values
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
-    // data.dueDate = moment(data.dueDate).format("YYYY-MM-DD");
-    data.dueDate = `${moment(data.dueDate).toISOString()}`;
+    let dueDate: Date = new Date(data.dueDate);
+    dueDate.setHours(23,59,0,0);
+    // console.log("TimezoneTest: dueDate ", moment(dueDate).format("yyyy-MM-DD HH:mm"), moment.tz(moment(dueDate).format("yyyy-MM-DD HH:mm"), "America/Chicago").utc().format());
+    data.dueDate = `${getTimeInProjectTimezone(dueDate).utc().format()}`;
 
     data.attachments = values.filter(
       (item: any) => item.id === "file-upload"
