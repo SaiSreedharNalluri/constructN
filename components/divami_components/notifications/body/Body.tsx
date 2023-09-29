@@ -76,15 +76,18 @@ const Body = ({
   const generateIssueRedirectUrl=(notificationObj:IUserNotification)=>{
     switch (notificationObj.title)
     {
+        case 'Issue Created':
+          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+          break;
         case 'Issue Modified':
           router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
           break;
         case 'Issue User Assigned': 
-            router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
-        break;
+          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+          break;
         case 'Issue User Deasigned':
           router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
-        break; 
+          break; 
         case 'Issue Deleted':
           router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
         break; 
@@ -93,9 +96,12 @@ const Body = ({
   const generateTaskRedirectUrl=(notificationObj:IUserNotification)=>{
     switch (notificationObj.title)
     {
-       case 'Task Modified':
+      case 'Task Created':
         router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`)
-          break;
+        break;
+      case 'Task Modified':
+        router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`)
+        break;
         case 'Task User Assigned': 
         router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
         break;

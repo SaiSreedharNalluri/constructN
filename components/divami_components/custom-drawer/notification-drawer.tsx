@@ -7,8 +7,7 @@ const StyledDrawer = styled(Drawer)`
     width: 438px;
     border-bottom : 2px solid #e7e7e7;
     border-top : 1px solid #e7e7e7;
-    overflow:hidden
-    
+    overflow:hidden;
   }
 `;
 
