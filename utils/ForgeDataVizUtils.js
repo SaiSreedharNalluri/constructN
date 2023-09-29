@@ -419,7 +419,7 @@ export class ForgeDataVizUtils {
 
         this._polylineStyles = []
 
-        this._edit2DExtn.defaultContext.layer.clear()
+        this._edit2DExtn?.defaultContext.layer.clear()
     }
 
     _drawVideoPath = (data) => {
