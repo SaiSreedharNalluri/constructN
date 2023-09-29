@@ -945,6 +945,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [showPopUp, setshowPopUp] = useState(false);
   const [footerState, SetFooterState] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(issue);
+  const[isLoading,setLoading]=useState(false);
   const router = useRouter();
   useEffect(() => {
     setSelectedIssue(issue);
@@ -1090,15 +1091,18 @@ const CustomIssueDetailsDrawer = (props: any) => {
           if (response.success === true) {
             CustomToast("Issue updated successfully","success");
             getIssues(currentStructure._id);
+            setLoading(true)
           } else {
             CustomToast("Error updating the Issue","error");
           }
+          setLoading(false)
           setOpenCreateTask(false);
         })
         .catch((error) => {
           if (error.success === false) {
             CustomToast(error?.message,"error");
           }
+          setLoading(false)
           setOpenCreateTask(false);
         });
     }
@@ -1308,6 +1312,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
             }}
             issueStatusList={issueStatus}
             deleteTheAttachment={deleteTheAttachment}
+            setLoading={setLoading}
+            isLoading={isLoading}
           />
         </CustomDrawer>
       )}
