@@ -1828,6 +1828,8 @@ const Index: React.FC<IProps> = () => {
                 setShowTaskMarkups={setShowTaskMarkups}
                 showIssueMarkups={showIssueMarkups}
                 showTaskMarkups={showTaskMarkups}
+                isDesignAvailable={isDesignAvailable}
+                isRealityAvailable={isRealityAvailable}
               />:<></>}
 
               {/* </div> */}

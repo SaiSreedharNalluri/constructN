@@ -33,6 +33,7 @@ const CompareView = ({
   designMap,
   selectedType = "",
   setActive,
+  isDesignAvailable,
 }: any) => {
   useEffect(() => {
     setActive("hideCompare");
@@ -56,12 +57,14 @@ const CompareView = ({
           </CompareIcon>
         </Tooltip>
         {designMap && selectedType !== "orthoPhoto" ? (
-          <Tooltip title="Compare Design">
+          <Tooltip title= {isDesignAvailable?"Compare Design":"No Design"}>
             <DesignCompareViewIcon
               id="compareDesign"
               onClick={(e: any) => {
+                if(isDesignAvailable)
                 rightMenuClickHandler(e);
               }}
+              isDesignAvailable={isDesignAvailable}
               active={active}
             >
               <Image
