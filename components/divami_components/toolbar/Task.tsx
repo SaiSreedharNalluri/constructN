@@ -67,6 +67,7 @@ const Task = ({
   showTaskMarkups,
   setHighlightCreateTaskIcon,
   highlightCreateTaskIcon,
+  isReality,
   
 }: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -296,7 +297,9 @@ const Task = ({
     setOpenCreateTask(taskOpenDrawer);
   }, [taskOpenDrawer]);
   return (
-    <TaskBox  onKeyDown={(e: any) => {
+    <TaskBox  
+    isCompareAvailable = {isReality}
+    onKeyDown={(e: any) => {
       const arrowKeys = ["ArrowUp", "ArrowDown",'ArrowRight','ArrowLeft'];
       if (arrowKeys.includes(e.key)) {
        e.stopPropagation();

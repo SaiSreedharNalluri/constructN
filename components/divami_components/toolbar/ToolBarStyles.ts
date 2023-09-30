@@ -39,21 +39,21 @@ export const HotspotGroupIcon = styled("div")({
   // marginLeft: "54px",
 });
 
-export const TaskBox = styled("div")({
+export const TaskBox = styled("div")((props:any)=>({
   border: "1px solid #d9d9d9",
   // borderRight: 'none',
   display: "flex",
   alignItems: "center",
   width: "164px",
   justifyContent: "center",
-  borderTopRightRadius: "4px",
-  borderBottomRightRadius: "4px",
+  borderTopRightRadius: !props.isCompareAvailable? "4px":"0px",
+  borderBottomRightRadius: !props.isCompareAvailable?"4px":"0px",
   // padding: '15px 20px 14px 20px',
   padding: "0px 7px 0px 7px",
   "& .MuiDrawer-paper": {
     height: "calc(100% - 60px)",
   },
-});
+})) as any;
 
 export const TaskTitleDiv = styled("div")({});
 
@@ -263,7 +263,7 @@ export const CompareIcon = styled("div")((props: any) => ({
 export const DesignCompareViewIcon = styled("div")((props: any) => ({
   borderRight: "1px solid #F1742E",
   padding: "6px",
-  background: props.active === "compareDesign" ? "#F1742E" : "white",
+  background: props.active === "compareDesign" ? "#F1742E" : ((props.isDesignAvailable===true)? "white":"#e7e7e7"),
   cursor: "pointer",
 })) as any;
 export const RealityCompareViewIcon = styled("div")((props: any) => ({
