@@ -241,12 +241,12 @@ const getSnapshotList = async (projectId:string, structurId:string,offset:Number
          
           {
             initData&& <div><NewGenViewer 
-            tmcBase={<TimeLineComponent currentSnapshot={selectedBaseSnapshot|| initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
+            tmcBase={<TimeLineComponent currentSnapshot={selectedBaseSnapshot|| initData.currentSnapshotBase} snapshotList={initData.snapshotList.slice(-10)} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
                     setNextList={setNextList}
                     setNewList={setNewList}
                     totalPages={totalPages}
                     offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
-            tmcCompare={<TimeLineComponent currentSnapshot={selectedCompareSnapshot||initData.currentSnapshotCompare||initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
+            tmcCompare={<TimeLineComponent currentSnapshot={selectedCompareSnapshot||initData.currentSnapshotCompare||initData.currentSnapshotBase} snapshotList={initData.snapshotList.slice(-10)} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
                         setNextList={setNextList}
                         setNewList={setNewList}
                         totalPages={totalPages}
