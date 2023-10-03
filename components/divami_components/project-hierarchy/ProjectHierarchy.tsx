@@ -121,7 +121,7 @@ const ProjectHierarchy = ({
     return truncatedText;
   };
   const renderTreeNode = (node: any, onLabelClick: any) => (
-  <LabelContainer data-testid="label"  >
+  <LabelContainer data-testid="label" className={node?.snapshots && node?.designs?.length>0 && Object.keys(node?.snapshots?.latestSnapshot).length <= 0 || Object.keys(node?.snapshots?.latestSnapshot).length >=0 && node?.snapshots?.snapshotActiveCount <1 ?"bg-[#E7E7E7] ":""} >
     <div className="flex items-center">
     {node.children?.length ? (
         expandedNodes.includes(node._id) ? (
@@ -131,14 +131,14 @@ const ProjectHierarchy = ({
             }}
           >
             <RemoveIcon
-              style={{ cursor: "pointer", fontSize: "14px" }}
+              style={{ cursor: "pointer", fontSize: "14px",marginLeft:"7px" }}
               data-testid={"addIcon"}
             />
           </LabelIcon>
         ) : (
           <StyledSpan onClick={(e) => handleNodeExpand(getAllIds(node))}>
             <AddIcon
-              style={{ cursor: "pointer", fontSize: "14px" }}
+              style={{ cursor: "pointer", fontSize: "14px",marginLeft:"7px" }}
               data-testid={"addIcon"}
             />
           </StyledSpan>
@@ -163,7 +163,7 @@ const ProjectHierarchy = ({
 
       }} >
          <TooltipText title={node?.name?.length > 20 ? node?.name : ""} placement="right">
-      <div className={node?.designs.length<=0 && node.snapshots?.snapshotActiveCount<1 ?"text-gray-400":""} >
+      <div>
       <TruncatedString text={node?.name} maxLength={20}
               suffixLength={0} ></TruncatedString> 
         </div> 
@@ -174,15 +174,7 @@ const ProjectHierarchy = ({
   
 
 <div>
-{
-Object.keys(node.snapshots?.latestSnapshot).length > 0 && node.snapshots?.latestSnapshot?.state === "Active" &&    (new Date().getTime() - new Date(node.snapshots?.latestSnapshot?.captureDateTime).getTime())/86400000 < 3 && node.snapshots?.snapshotActiveCount >0
-?
-<TooltipText title="New" placement="right">
-<div>
-<Chips isChip={false}  title="N" bgColor="#8BD97F"></Chips>
-</div>
-</TooltipText>
-:node?.designs.length<1
+{node?.designs.length<1
     ? 
     <TooltipText title="No Design" placement="right">
       <div>
