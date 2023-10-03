@@ -39,7 +39,7 @@ export const HeaderToggle = styled('div')({
 export const HeaderToggleButtonOne = styled('button')((props: any) => ({
   background: !props?.toggleStatus ? props.isAvailable?'none':'#E7E7E7' : '#F1742E',
   border: !props?.toggleStatus ? `1px solid #F1742E` : "none",
-  borderRadius: (props?.dataTestid==="design-button")?"24px 0px 0px 24px":"0px 24px 24px 0px",
+  borderRadius: (props?.dataTestid==="design-button")?"4px 0px 0px 4px":"0px 4px 4px 0px",
   cursor: 'pointer',
   color: !props?.toggleStatus ? props.isAvailable?'#36415D':'#D3D3D3' :'#FFFFFF',
   padding: '6px 10px',
