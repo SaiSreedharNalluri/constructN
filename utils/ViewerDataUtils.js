@@ -311,6 +311,30 @@ export const getRealityMap = async (snapshot) => {
     return map;
 }
 
+export const getRealityLayersList =  (snapshot) => {
+    let map ={};
+    for(let i = 0; i < snapshot?.reality?.length; i++) {
+        let reality = snapshot?.reality[i]
+        if (reality.mode === "360 Video" || reality.mode === "Drone Image") {
+            let isV2 =  realityFileExists(getRealityPointCloudPathV2(getRealityPath(snapshot.project, snapshot.structure, snapshot._id, reality._id))) ? true : false;
+            reality.isV2 = isV2;
+        }
+        if (map[reality.mode]) {
+            map[reality.mode].realities.push(reality);
+        } else {
+            const layer = {
+                name: reality.mode,
+                children: [],
+                isSelected: true,
+                realities: [reality]
+            }
+            map[reality.mode] = layer
+        }
+    }
+    console.log("Generic Viewer Reality map: ", map);
+    return map;
+}
+
 export const getDesignMap = (designs) => {
     let map = {
 
