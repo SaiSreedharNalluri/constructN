@@ -67,6 +67,7 @@ import { json } from "stream/consumers";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import { getUserProfile } from "../../../services/userAuth";
 import NotificationDrawer from "../custom-drawer/notification-drawer";
+import { truncate } from "fs/promises";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -83,6 +84,8 @@ const Header: React.FC<any> = ({
   hideSidePanel,
   fromUsersList,
   showFirstElement,
+  isDesignAvailable=false,
+  isRealityAvailable=false,
 }) => {
   const router = useRouter();
   const headerRef: any = React.useRef();
@@ -207,11 +210,11 @@ const Header: React.FC<any> = ({
   const rightMenuClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
     setRighttNav(!rightNav);
-    if (e.currentTarget.id === "Design") {
+    if (e.currentTarget.id === "Design" && isDesignAvailable) {
       toolInstance.toolName = "viewMode";
       toolInstance.toolAction = "Design";
       setIsDesignSelected(true);
-    } else if (e.currentTarget.id === "Reality") {
+    } else if (e.currentTarget.id === "Reality" && isRealityAvailable) {
       toolInstance.toolName = "viewMode";
       toolInstance.toolAction = "Reality";
       setIsDesignSelected(false);
@@ -411,25 +414,31 @@ const Header: React.FC<any> = ({
             ""
           )} */}
 
-          {toolClicked ? (
+          {(toolClicked &&(isDesignAvailable||isRealityAvailable))? (
+            <TooltipText title={!isDesignAvailable? "No Design":!isRealityAvailable?"No Reality":"Switch Mode"}>
             <HeaderToggle>
               <HeaderToggleButtonOne
                 onClick={rightMenuClickHandler}
                 toggleStatus={isDesignSelected}
+                isAvailable={isDesignAvailable}
                 id="Design"
-                data-testid="design-button"
+                dataTestid="design-button"
+                isLeftCorner={true}
               >
                 Design
               </HeaderToggleButtonOne>
               <HeaderToggleButtonOne
                 onClick={rightMenuClickHandler}
                 toggleStatus={!isDesignSelected}
+                isAvailable = {isRealityAvailable}
                 id="Reality"
-                data-testid="reality-button"
+                dataTestid="reality-button"
+
               >
                 Reality
               </HeaderToggleButtonOne>
             </HeaderToggle>
+            </TooltipText>
           ) : (
             <></>
           )}

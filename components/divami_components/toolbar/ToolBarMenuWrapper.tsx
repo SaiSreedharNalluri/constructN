@@ -41,6 +41,8 @@ interface IProps {
   setIssueFilterState?: any;
   deleteTheIssue?: any;
   deleteTheAttachment?: any;
+  isDesignAvailable?:boolean;
+  isRealityAvailable?:boolean;
 }
 
 const ToolBarMenuWrapper: React.FC<any> = ({
@@ -104,7 +106,9 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   setHighlightCreateIcon,
   highlightCreateIcon,
   setHighlightCreateTaskIcon,
-  highlightCreateTaskIcon
+  highlightCreateTaskIcon,
+  isDesignAvailable,
+  isRealityAvailable,
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -448,6 +452,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           setCameraIconClicked={setCameraIconClicked}
           isClipboardIconClicked={isClipboardIconClicked} 
           setClipboardIconClicked={setClipboardIconClicked}
+          isReality={iViewMode==='Reality'? true : false}
         />
 
         {viewMode === "Reality" ? (
@@ -457,6 +462,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
             designMap={designMap}
             selectedType={selectedType}
             setActive={setActive}
+            isDesignAvailable={isDesignAvailable}
           />
         ) : (
           <></>
