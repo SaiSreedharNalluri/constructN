@@ -124,12 +124,14 @@ export const StyledTreeView = styled(TreeView)({
     flexDirection: "row-reverse",
     width: "unset",
     padding: "0",
+    display:"block !important",
     // paddingRight: "20px",
     // paddingLeft: "20px",
     "& .MuiTreeItem-label": {
       // padding: "10px 0px 10px 0px",
       fontSize: "14px",
       lineHeight: "18px",
+      padding:"0px !important"
       // borderBottom: "1px solid #E7E7E7",
     },
   },
@@ -143,7 +145,7 @@ export const StyledTreeView = styled(TreeView)({
     },
   },
   "& ul": {
-    backgroundColor: "#F4F4F4",
+    backgroundColor:"white",
     "& .MuiTreeItem-label": {
       borderBottom: "0",
     },
