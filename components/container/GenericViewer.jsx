@@ -1265,7 +1265,7 @@ function GenericViewer(props) {
     //console.log("MyNewList ...", list);
     return list;
   };
-  const getSnapshotList = async (projectId, structurId,offset,limit,snap="",compare=false) => {
+  const getSnapshotList = async (projectId, structurId,offset,limit,snap="") => {
     let list = await getSnapshotsList(projectId, structurId,offset||1,limit||10);
     setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
     setSnapshotListCal(list.data?.result?.calendarSnapshots)
@@ -1274,10 +1274,9 @@ function GenericViewer(props) {
     );
     if (list.length>0 && snap!==""){
       let mySnap=list.find((s)=>{if(s._id==snap)return s;})
-      if(compare)
-        setSnapshotCompareList(list);
-      else
-        setSnapshotList(list);
+
+      setSnapshotCompareList(list);
+      setSnapshotList(list);
       if (mySnap){
         setCurrentSnapshot(mySnap);
         setCurrentCompareSnapshot(list[list.length - 1]); 
@@ -1294,10 +1293,9 @@ function GenericViewer(props) {
     }
     else if(list.length>0 && router.query.snap!=null){
       let mySnap=list.find((s)=>{if(s._id==router.query.snap)return s;})
-      if(compare)
-        setSnapshotCompareList(list);
-      else
-        setSnapshotList(list);
+      
+      setSnapshotCompareList(list);
+      setSnapshotList(list);
       if (mySnap)
       setCurrentSnapshot(mySnap);
       else 
@@ -1310,10 +1308,9 @@ function GenericViewer(props) {
       }
     }
     else if (list.length > 0) {
-      if(compare)
-        setSnapshotCompareList(list);
-      else
-        setSnapshotList(list);
+      
+      setSnapshotCompareList(list);
+      setSnapshotList(list);
       setCurrentSnapshot(list[list.length - 1]);
       if (list.length > 1) {
         setCurrentCompareSnapshot(list[list.length - 2]);
@@ -1321,10 +1318,9 @@ function GenericViewer(props) {
         setCurrentCompareSnapshot(list[list.length - 1]);
       }
     } else {
-      if(compare)
-        setSnapshotCompareList([]);
-      else
-        setSnapshotList([]);
+      
+      setSnapshotCompareList([]);
+      setSnapshotList([]);
 
       setCurrentSnapshot({});
       setCurrentCompareSnapshot({});
@@ -1360,9 +1356,10 @@ function GenericViewer(props) {
 
       setCompareSnapshot(snapshot);
       // updateSnapshot(snapshot);
-      setCompareRealityList(snapshot.reality);
+      
       const map = await getRealityMap(snapshot);
       setCompareRealityMap(map);
+      setCompareRealityList(snapshot.reality);
       // updateRealityMap(getRealityMap(snapshot));
       return map;
     }
@@ -2232,7 +2229,7 @@ function GenericViewer(props) {
           {renderViewer(1)}
           {renderMinimap(1)}
          { snapshotList.length > 0 ?
-          <TimeLineComponent  currentSnapshot={snapshot}snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+          <TimeLineComponent  currentSnapshot={snapshot}snapshotListCal={snapshotListCal} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getListOfSnapshots} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
               setPrevList={setPrevList}   
               setNewList={setNewList}
               setNextList={setNextList}
@@ -2248,7 +2245,7 @@ function GenericViewer(props) {
           {renderViewer(2)}
           {compareViewMode === 'Potree' ? renderMinimap(2) : <></>}
           { snapshotCompareList.length > 0 ?     
-            <TimeLineComponent  currentSnapshot={compareSnapshot} snapshotListCal={snapshotListCal} snapshotList={snapshotCompareList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getSnapshotList} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
+            <TimeLineComponent  currentSnapshot={compareSnapshot} snapshotListCal={snapshotListCal} snapshotList={snapshotCompareList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={fullScreenMode} getSnapshotList={getListOfSnapshots} totalSnaphotsCount={totalSnaphotsCount} structure={structure}
             setPrevList={setPrevList}   
             setNewList={setNewList}
             setNextList={setNextList}
