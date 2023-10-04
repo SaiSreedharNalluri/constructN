@@ -345,7 +345,7 @@ const SignUpPage = () => {
                 router.push("/login");
               }}
             >
-              Sign in
+              Sign In
             </NewUserSpan>
           </NewUserDiv>
         </FormContainerSign>

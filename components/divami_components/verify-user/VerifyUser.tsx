@@ -130,7 +130,7 @@ const VerifyUser = ({ queryMail }: { queryMail: string }) => {
                 }}
               >
                 {" "}
-                Sign in
+                Sign In
               </SpanResend>{" "}
             </SignupContainer>
           </VerifyUserDiv>
