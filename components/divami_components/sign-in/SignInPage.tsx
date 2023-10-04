@@ -216,7 +216,7 @@ const SignInPage = () => {
                 }}
                 data-testid="signUpRoute"
               >
-                Signup
+                Sign Up
               </NewUserSpan>
             </NewUserDiv>
           </FormContainerSign>
