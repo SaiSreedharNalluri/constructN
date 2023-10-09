@@ -4,6 +4,7 @@ import ErrorNotFound from "../public/divami_icons/ErrorNotFound.svg";
 import React, { useEffect, useState } from "react";
 import Header from "../components/divami_components/header/Header";
 import { getCookie } from "cookies-next";
+import * as Sentry from "@sentry/react";
 export default function Custom500() {
     const[isAuth,setIsAuth]=useState(false)
   useEffect(()=>{
@@ -12,6 +13,9 @@ export default function Custom500() {
     if (userObj) user = JSON.parse(userObj);
     if (user?.token) {
       setIsAuth(true);
+    }
+    if (router.pathname === "/500") {
+      Sentry.captureException(new Error("Internal Server Error"));
     }
   })
   const router = useRouter();
