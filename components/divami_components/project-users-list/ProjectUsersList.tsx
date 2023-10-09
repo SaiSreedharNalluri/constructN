@@ -187,7 +187,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
         color: "#101F4C",
       },
       cellStyle: { width: "30%" },
-      customSort: (a: any, b: any) => sortBy(a, b, "updatedAt"),
+      customSort: () => sortBy(),
 
       render: (rowData: any) => {
         if(rowData?.assignedOn)
@@ -254,16 +254,23 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     },
   ];
 
-  const sortBy = (a: any, b: any, field: string) => {
-    if (sortObj) {
-      setSearchTableData(
-        [].concat(tableData).sort((a, b) => a[field] - b[field])
-      );
-    } else {
-      setSearchTableData(
-        [].concat(tableData).sort((a, b) => b[field] - a[field])
-      );
-    }
+  const sortBy = () => {
+    setTableData((tableData:any) => {
+      const sortedData = [...tableData].sort((a, b) => {
+        if (!a.assignedOn && !b.assignedOn) {
+          return 0;
+        } else if (!a.assignedOn) {
+          return 1; 
+        } else if (!b.assignedOn) {
+          return -1;
+        } else {
+          return sortObj
+            ? new Date(a.assignedOn).valueOf() - new Date(b.assignedOn).valueOf()
+            : new Date(b.assignedOn).valueOf() - new Date(a.assignedOn).valueOf();
+        }
+      });
+      return sortedData;
+    });
     setSortObj(!sortObj);
     // return a.numberOfUsers - b.numberOfUsers;
   };
