@@ -15,9 +15,7 @@ export default function Custom404() {
       setIsAuth(true);
     }
       
-      if (router.pathname === "/404") {
-        Sentry.captureException(new Error("Page not found 404 error"));
-      }
+        Sentry.captureException(new Error("Page not found 404 "));
   })
   const router = useRouter();
   return (

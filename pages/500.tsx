@@ -14,9 +14,9 @@ export default function Custom500() {
     if (user?.token) {
       setIsAuth(true);
     }
-    if (router.pathname === "/500") {
+  
       Sentry.captureException(new Error("Internal Server Error"));
-    }
+ 
   })
   const router = useRouter();
   return (
