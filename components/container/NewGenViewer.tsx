@@ -32,7 +32,7 @@ import {
   getRealityLayersPath,
   getDesignMap,
   getMapboxLayers, getMapboxHotspots,
-  getRealityMap, getFloorPlanData,
+  getRealityMap, getFloorPlanData, getRealityLayersList,
 } from "../../utils/ViewerDataUtils";
 import { faToggleOff } from "@fortawesome/free-solid-svg-icons";
 import TimeLineComponent from '../divami_components/timeline-container/TimeLineComponent'
@@ -567,7 +567,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
   useEffect(()=>{
   //console.log("my Changed Use Effect",incomingPayload.current,isInitReady)
   //console.log("currentViewerData Use Effect",currentViewerData);
-  
+  // const a= async()=>{
+  //   return await getRealityMap(viewerData.current?.currentSnapshotBase);
+  // }
   //updateData(currentViewerData);
   if(incomingPayload.current){
     switch(incomingPayload.current.action.type){
@@ -686,7 +688,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         console.log('asdf',currentViewerData);
         if(viewerData.current!==undefined){
           //loadViewerData(viewerData.current);
-          viewerData.current.currentLayersList= Object.values(getRealityMap(viewerData.current.currentSnapshotBase)) as ILayer[];
+          viewerData.current.currentLayersList= Object.values(getRealityLayersList(viewerData.current?.currentSnapshotBase)) as ILayer[];
           if((viewerData.current.currentViewType==='orthoPhoto')&&(storedStagesLayer.current!==undefined)){
             viewerData.current.currentLayersList.push(storedStagesLayer.current as ILayer);
           }

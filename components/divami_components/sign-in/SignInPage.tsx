@@ -35,6 +35,7 @@ import FormBody from "./FormBody";
 import CustomLoader from "../custom_loader/CustomLoader";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
+import * as Sentry from "@sentry/nextjs";
 const SignInPage = () => {
   const router = useRouter();
 
@@ -61,7 +62,22 @@ const SignInPage = () => {
   const formHandler = (event: any) => {
     const email = formData[0].defaultValue;
     const password = formData[1].defaultValue;
-
+    // Sentry.captureMessage("User clicked the 'Login' button", {
+    //   level: "info",
+    // });
+    // Sentry.configureScope(function (scope) {
+    //   scope.setUser(null);
+    // });
+    // Sentry.configureScope(function (scope) {
+    //   scope.setUser({ email });
+    // });
+    // Sentry.configureScope(function (scope)  {
+    //   scope.setTag('page', 'signin page');
+    // });
+    // Sentry.configureScope(function (scope) {
+    //   scope.setLevel("info");
+    // });
+    Sentry.captureMessage("Click on the login button");
     setValidate(true);
 
     if (email === "" || password === "" || formData[0].isError) {
@@ -128,7 +144,19 @@ const SignInPage = () => {
           error.message ||
           error.toString();
         setLoginEnable(true)
+        const customErrorMessage = "Invalid credentials"; 
+        // setLoginEnable(true);
 
+        // Create a custom error object with the desired message
+        const customError = new Error(customErrorMessage);
+        
+        // Capture the custom error with Sentry
+        Sentry.captureException(customError);
+        // Sentry.configureScope(function (scope) {
+        //   scope.setLevel("warning");
+        // });
+        // Sentry.captureMessage("This is a warning message.");
+        // // Sentry.captureException(error?.response?.data?.message)
         CustomToast(error?.response?.data?.message, "error");
 
         setLoading(false);
@@ -216,7 +244,7 @@ const SignInPage = () => {
                 }}
                 data-testid="signUpRoute"
               >
-                Signup
+                Sign Up
               </NewUserSpan>
             </NewUserDiv>
           </FormContainerSign>

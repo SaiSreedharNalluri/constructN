@@ -1602,6 +1602,8 @@ const Index: React.FC<IProps> = () => {
             showBreadcrumbs
             breadCrumbData={breadCrumbsData}
             handleBreadCrumbClick={handleBreadCrumbClick}
+            isDesignAvailable={isDesignAvailable}
+            isRealityAvailable={isRealityAvailable}
           />
         )}
 
@@ -1826,6 +1828,8 @@ const Index: React.FC<IProps> = () => {
                 setShowTaskMarkups={setShowTaskMarkups}
                 showIssueMarkups={showIssueMarkups}
                 showTaskMarkups={showTaskMarkups}
+                isDesignAvailable={isDesignAvailable}
+                isRealityAvailable={isRealityAvailable}
               />:<></>}
 
               {/* </div> */}

@@ -332,7 +332,7 @@ if(addedUsers.length>0){
             <CustomTextField
               id={"search"}
               variant="outlined"
-              placeholder={"Enter the Email ID you want to add"}
+              placeholder={"Enter a comma separated list of Email IDs you want to add"}
               onChange={(e: any) => {
                 setSearchVal(e.target?.value);
                 setEmailExistsError("")

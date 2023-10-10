@@ -559,7 +559,7 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
         </TooltipText>
           </div>  
        {rowData?.designs.length===0 
-    ? <Chips isChip={true} title="No Designs" bgColor="#F67C74"></Chips>
+    ? <Chips isChip={true} title="No Design" bgColor="#F67C74"></Chips>
     :rowData.snapshots && rowData?.designs.length>0 && Object.keys(rowData.snapshots?.latestSnapshot).length < 1
     ? <Chips isChip={true}  title="No Reality" bgColor="#C24200" ></Chips>  
     :  rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length > 0 && rowData.snapshots?.latestSnapshot?rowData.snapshots?.latestSnapshot?.state !== "Active"

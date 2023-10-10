@@ -14,7 +14,8 @@ import { useRouter } from "next/router";
 import { getGenViewerData } from "../../../../../services/genviewer";
 import TimeLineComponent from "../../../../../components/divami_components/timeline-container/TimeLineComponent";
 import { ISnapshot } from "../../../../../models/ISnapshot";
-import { CustomToast } from "../../../../../components/divami_components/custom-toaster/CustomToast"
+import { CustomToast } from "../../../../../components/divami_components/custom-toaster/CustomToast";
+
 const StructPage: React.FC = () => {
     //const [initData,setInintData] = useState<IGenData>(sampleGenData);
     const router = useRouter();
@@ -23,9 +24,13 @@ const StructPage: React.FC = () => {
     let incomingPayload = useRef<IGenPayload>()
     let myProject = useRef<string>();
     let myStructure = useRef<string>();
+    let [snapshotListCal, setSnapshotListCal] = useState([]);
     let [selectedBaseSnapshot,setBaseSnapshot] =useState<ISnapshot>();
     let [selectedCompareSnapshot,setCompareSnapshot] =useState<ISnapshot>();
+    let [snapshotList, setSnapshotList] = useState<ISnapshot[]>([]);
+    let [snapshotCompareList, setSnapshotCompareList] = useState<ISnapshot[]>([]);
     const [offset, setOffset] = useState(1);
+    const [compareOffset, setCompareOffset] = useState(1);
     const pageSize = 10;
     const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0);
     let [isFullScreenMode, setFullScreenMode] = useState(false);
@@ -59,6 +64,16 @@ const StructPage: React.FC = () => {
         window.removeEventListener('notifyApp', notifyAppEvent);
       }
     },[]);
+    const getListOfSnapshots = async (projectId:string, structurId:string,offset:number=1,limit:number=10) => {
+      let list : any = await getSnapshotsList(projectId, structurId,offset,limit);
+      setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
+      setSnapshotListCal(list.data?.result?.calendarSnapshots)
+      list = list.data.result.mSnapshots.sort(
+        (a:ISnapshot, b:ISnapshot) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      );
+      //console.log("MyNewList ...", list);
+      return list;
+    };
     const notifyAppEvent =(e:any)=>{
       let cusEve: CustomEvent =e
       incomingPayload.current =  cusEve.detail;
@@ -97,6 +112,14 @@ const StructPage: React.FC = () => {
                 setInintData(response.result);
                 setBaseSnapshot(response.result.currentSnapshotBase);
                 setCompareSnapshot(response.result.currentSnapshotCompare);
+                setSnapshotList(response.result.snapshotList.slice(0,9).sort(
+                  (a:ISnapshot, b:ISnapshot) => new Date(a.date).getTime() - new Date(b.date).getTime()
+                ));
+                setSnapshotCompareList(response.result.snapshotList.slice(0,9).sort(
+                  (a:ISnapshot, b:ISnapshot) => new Date(a.date).getTime() - new Date(b.date).getTime()
+                ));
+                setSnapshotListCal(response.result.snapshotList);
+                setTotalSnaphotsCount(response.result.snapshotList.length);
               }
             })
             .catch((error) => {
@@ -138,27 +161,180 @@ useEffect(() => {
   setTotalPages(Math.ceil(totalSnaphotsCount / 10));
 }, [totalSnaphotsCount]);
 
-const setPrevList = () => {
-  if (offset < totalPages) {
-    initData&&getSnapshotList(initData.project, initData?.structure._id, offset + 1, pageSize);
-    setOffset(offset + 1);
-    // setPage(0);
-  }
-};
-const setNewList = (newOffset:number,snap:string) => {
-  if (offset < totalPages) {
-    initData&&getSnapshotList(initData.project, initData?.structure._id, newOffset, pageSize,snap);
-    setOffset(newOffset);
+// const setPrevList = () => {
+//   if (offset < totalPages) {
+//     initData&&getSnapshotList(initData.project, initData?.structure._id, offset + 1, pageSize);
+//     setOffset(offset + 1);
+//     // setPage(0);
+//   }
+// };
+// const setNewList = (newOffset:number,snap:string) => {
+//   if (offset < totalPages) {
+//     initData&&getSnapshotList(initData.project, initData?.structure._id, newOffset, pageSize,snap);
+//     setOffset(newOffset);
     
-    //setPage(newPage);
+//     //setPage(newPage);
+//   }
+// };
+// const setNextList = () => {
+//   if (offset > 1) {
+//     initData&&getSnapshotList(initData.project, initData.project, offset - 1, pageSize);
+
+//     setOffset(offset - 1);
+//     // setPage(0);
+//   }
+// };
+
+const setPrevList = async (key:string) => {
+ 
+  let myList :ISnapshot[];
+  switch (key){
+    case "1":
+      console.log("... Clicked Prev List")
+      if((offset<totalPages) && initData){
+        myList = await getListOfSnapshots(initData.project, initData.structure._id, offset + 1, pageSize);
+        console.log("myList returned ...", myList)
+        if (myList.length>0){
+          
+          setSnapshotList(myList);
+          if(router.query.snap!==null)
+          {
+            let mySnap=myList.find((s:ISnapshot)=>{if(s._id==router.query.snap)return s;})
+            if (mySnap) setCurrentSnapshot(mySnap);
+            else setCurrentSnapshot(myList[myList.length - 1]);
+          }
+          else{
+            setCurrentSnapshot(myList[myList.length - 1]);
+          }
+        }
+        else{
+          setSnapshotList([]);
+
+        }
+        setOffset(offset + 1)
+      }
+      break;
+    case "2":
+      if((compareOffset<totalPages) && initData){
+        myList = await getListOfSnapshots(initData.project, initData.structure._id, compareOffset + 1, pageSize);
+        if (myList.length>0){
+          setSnapshotCompareList(myList);
+          if(router.query.snap!==null)
+          {
+            let mySnap=myList.find((s:ISnapshot)=>{if(s._id==router.query.snap)return s;})
+            if (mySnap) setCurrentCompareSnapshot(mySnap);
+            else setCurrentCompareSnapshot(myList[myList.length - 1]);
+          }
+          else{
+            setCurrentCompareSnapshot(myList[myList.length - 1]);
+          }
+        }
+        else{
+          setSnapshotCompareList([]);
+
+        }
+        setCompareOffset(compareOffset + 1)
+      }
+      break;
   }
 };
-const setNextList = () => {
-  if (offset > 1) {
-    initData&&getSnapshotList(initData.project, initData?.structure._id, offset - 1, pageSize);
+const setNewList = async(newOffset:number,snap:string,key:string) => {
+  let myList:ISnapshot[];
+  switch (key){
+    case "1":
+      if((newOffset<=totalPages)&&initData){
+        myList = await getListOfSnapshots(initData.project, initData.structure._id, newOffset, pageSize);
+        if (myList.length>0){
+          setSnapshotList(myList);
+          if(snap && router.query.snap!==null)
+          {
+            let mySnap=myList.find((s:ISnapshot)=>{if(s._id==snap)return s;})
+            if (mySnap) setCurrentSnapshot(mySnap);
+            else setCurrentSnapshot(myList[myList.length - 1]);
+          }
+          else{
+            setCurrentSnapshot(myList[myList.length - 1]);
+          }
+        }
+        else{
+          setSnapshotList([]);
 
-    setOffset(offset - 1);
-    // setPage(0);
+        }
+        setOffset(newOffset)
+      }
+      break;
+    case "2":
+      if((newOffset<=totalPages)&&initData){
+        myList = await getListOfSnapshots(initData.project, initData.structure._id, newOffset, pageSize);
+        if (myList.length>0){
+          setSnapshotCompareList(myList);
+          if(snap && router.query.snap!==null)
+          {
+            let mySnap=myList.find((s:ISnapshot)=>{if(s._id==snap)return s;})
+            if (mySnap) setCurrentCompareSnapshot(mySnap);
+            else setCurrentCompareSnapshot(myList[myList.length - 1]);
+          }
+          else{
+            setCurrentCompareSnapshot(myList[myList.length - 1]);
+          }
+        }
+        else{
+          setSnapshotCompareList([]);
+
+        }
+        setCompareOffset(newOffset)
+      }
+      break;
+  }
+};
+
+const setNextList = async (key:string) => {
+  let myList:ISnapshot[];
+  switch (key){
+    case "1":
+      if((offset>1)&&initData){
+        myList = await getListOfSnapshots(initData.project, initData.structure._id, offset - 1, pageSize);
+        if (myList.length>0){
+          setSnapshotList(myList);
+          if(router.query.snap!==null)
+          {
+            let mySnap=myList.find((s:ISnapshot)=>{if(s._id==router.query.snap)return s;})
+            if (mySnap) setCurrentSnapshot(mySnap);
+            else setCurrentSnapshot(myList[myList.length - 1]);
+          }
+          else{
+            setCurrentSnapshot(myList[myList.length - 1]);
+          }
+        }
+        else{
+          setSnapshotList([]);
+
+        }
+        setOffset(offset - 1)
+      }
+      break;
+    case "2":
+      if((compareOffset>1)&&initData){
+        myList = await getListOfSnapshots(initData.project, initData.structure._id, compareOffset - 1, pageSize);
+        if (myList.length>0){
+          setSnapshotCompareList(myList);
+          if(router.query.snap!==null)
+          {
+            let mySnap=myList.find((s:ISnapshot)=>{if(s._id==router.query.snap)return s;})
+            if (mySnap) setCurrentCompareSnapshot(mySnap);
+            else setCurrentCompareSnapshot(myList[myList.length - 1]);
+          }
+          else{
+            setCurrentCompareSnapshot(myList[myList.length - 1]);
+          }
+        }
+        else{
+          setSnapshotCompareList([]);
+
+        }
+        setCompareOffset(compareOffset - 1)
+      }
+      break;
   }
 };
 
@@ -180,55 +356,57 @@ const setCurrentCompareSnapshot = (snapshot:ISnapshot) => {
   }
 };
 
-const getSnapshotList = async (projectId:string, structurId:string,offset:Number,limit:Number,setSnap:string="") => {
-  let list= await getSnapshotsList(projectId, structurId,offset||1,limit||10);
-  setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
-  //let list:ISnapshot[];
-  let snapList:ISnapshot[] = list.data.result.mSnapshots.sort(
-    (a:ISnapshot, b:ISnapshot) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
-  if (snapList.length>0 && setSnap!==""){
-    let mySnap=snapList.find((s)=>{if(s._id==setSnap)return s;})
-    //setSnapshotList(snapList);
-    if (mySnap){
-      setCurrentSnapshot(mySnap);
-      setCurrentCompareSnapshot(snapList[snapList.length - 1]); 
-    }
-    else {
-    setCurrentSnapshot(snapList[snapList.length - 1]);
-    if (snapList.length > 1) {
-      setCurrentCompareSnapshot(snapList[snapList.length - 2]);
-    } 
-    else {
-      setCurrentCompareSnapshot(snapList[snapList.length - 1]);
-    }
-  }
-  }
-  else if(snapList.length>0 && router.query.snap!=null){
-    let mySnap=snapList.find((s)=>{if(s._id==router.query.snap)return s;})
-    //setSnapshotList(list);
-    if (mySnap)
-    setCurrentSnapshot(mySnap);
-    else 
-    setCurrentSnapshot(snapList[snapList.length - 1]);
-    if (snapList.length > 1) {
-      setCurrentCompareSnapshot(snapList[snapList.length - 2]);
-    } 
-    else {
-      setCurrentCompareSnapshot(snapList[snapList.length - 1]);
-    }
-  }
-  else if (snapList.length > 0) {
-    //setSnapshotList(list);
-    //dispatchChangeViewerData();
-    setCurrentSnapshot(snapList[snapList.length - 1]);
-    if (snapList.length > 1) {
-      setCurrentCompareSnapshot(snapList[snapList.length - 2]);
-    } else {
-      setCurrentCompareSnapshot(snapList[snapList.length - 1]);
-    }
-  }
-};
+// const getSnapshotList = async (projectId:string, structurId:string,offset:Number,limit:Number,setSnap:string="") => {
+//   let list= await getSnapshotsList(projectId, structurId,offset||1,limit||10);
+//   setTotalSnaphotsCount(list.data?.result?.totalSnapshots)
+//   //let list:ISnapshot[];
+//   //setSnapshotList()
+//   let snapList:ISnapshot[] = list.data.result.mSnapshots.sort(
+//     (a:ISnapshot, b:ISnapshot) => new Date(b.date).getTime() - new Date(a.date).getTime()
+//   );
+//   setSnapshotList(snapList);
+//   if (snapList.length>0 && setSnap!==""){
+//     let mySnap=snapList.find((s)=>{if(s._id==setSnap)return s;})
+//     //setSnapshotList(snapList);
+//     if (mySnap){
+//       setCurrentSnapshot(mySnap);
+//       setCurrentCompareSnapshot(snapList[snapList.length - 1]); 
+//     }
+//     else {
+//     setCurrentSnapshot(snapList[snapList.length - 1]);
+//     if (snapList.length > 1) {
+//       setCurrentCompareSnapshot(snapList[snapList.length - 2]);
+//     } 
+//     else {
+//       setCurrentCompareSnapshot(snapList[snapList.length - 1]);
+//     }
+//   }
+//   }
+//   else if(snapList.length>0 && router.query.snap!=null){
+//     let mySnap=snapList.find((s)=>{if(s._id==router.query.snap)return s;})
+//     //setSnapshotList(snapList);
+//     if (mySnap)
+//     setCurrentSnapshot(mySnap);
+//     else 
+//     setCurrentSnapshot(snapList[snapList.length - 1]);
+//     if (snapList.length > 1) {
+//       setCurrentCompareSnapshot(snapList[snapList.length - 2]);
+//     } 
+//     else {
+//       setCurrentCompareSnapshot(snapList[snapList.length - 1]);
+//     }
+//   }
+//   else if (snapList.length > 0) {
+//     //setSnapshotList(snapList);
+//     //dispatchChangeViewerData();
+//     setCurrentSnapshot(snapList[snapList.length - 1]);
+//     if (snapList.length > 1) {
+//       setCurrentCompareSnapshot(snapList[snapList.length - 2]);
+//     } else {
+//       setCurrentCompareSnapshot(snapList[snapList.length - 1]);
+//     }
+//   }
+// };
   return (
     <React.Fragment>
       <div className="h-screen flex flex-col">
@@ -241,16 +419,19 @@ const getSnapshotList = async (projectId:string, structurId:string,offset:Number
          
           {
             initData&& <div><NewGenViewer 
-            tmcBase={<TimeLineComponent currentSnapshot={selectedBaseSnapshot|| initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
+            tmcBase={<TimeLineComponent currentSnapshot={selectedBaseSnapshot|| initData.currentSnapshotBase} snapshotList={snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getListOfSnapshots} 
+                    setPrevList={setPrevList}
                     setNextList={setNextList}
                     setNewList={setNewList}
                     totalPages={totalPages}
-                    offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
-            tmcCompare={<TimeLineComponent currentSnapshot={selectedCompareSnapshot||initData.currentSnapshotCompare||initData.currentSnapshotBase} snapshotList={initData.snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
+                    snapshotListCal={snapshotListCal} 
+                    offset={offset} _id={"1"} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
+            tmcCompare={<TimeLineComponent currentSnapshot={selectedCompareSnapshot||initData.currentSnapshotCompare||initData.currentSnapshotBase} snapshotList={snapshotCompareList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getListOfSnapshots} setPrevList={setPrevList}
                         setNextList={setNextList}
                         setNewList={setNewList}
                         totalPages={totalPages}
-                        offset={offset} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
+                        snapshotListCal={snapshotListCal} 
+                        offset={compareOffset} _id={"2"} totalSnaphotsCount={totalSnaphotsCount} structure={initData.structure}></TimeLineComponent>}
             data={initData} updateData={updateData}></NewGenViewer> </div>
             
           }
