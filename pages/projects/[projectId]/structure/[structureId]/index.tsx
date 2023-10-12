@@ -151,7 +151,7 @@ const StructPage: React.FC = () => {
 useEffect(()=>{
   if(initData){
     console.log("InitData Loading..");
-    window.dispatchEvent(new CustomEvent('notifyViewer',{detail:{action:{type:'loadGenViewer',data:'Plan Drawings'}}}));
+    window.dispatchEvent(new CustomEvent('notifyViewer',{detail:{action:{type:'loadGenViewer',data:(initData.currentViewType==='PlanDrawings')?'Plan Drawings':initData.currentViewType}}}));
   }
    
 
