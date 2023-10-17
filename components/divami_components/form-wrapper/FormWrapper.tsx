@@ -521,7 +521,7 @@ const FormWrapper = (props: any) => {
 
     function textMaxLengthUtm(textLength: string, id: string) {
     let isValid = false;
-    const minLimit = 3; 
+    const minLimit = 2; 
     const maxLimit = 30; 
   
     if (textLength.length < minLimit) {
