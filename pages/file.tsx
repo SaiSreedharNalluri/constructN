@@ -5,7 +5,8 @@ import { WebWorkerManager } from '../utils/webWorkerManager';
 interface fileData{ status: string, fileName: string; }
 const MyComponent = () => {
   const router = useRouter();
-  const [selectedFile, setSelectedFile] = useState<any>();
+  const [isAppend,setIsAppend]=useState(false)
+  const [selectedFile, setSelectedFile] = useState<File[]>([]);
   const [fileProgressList, setFileProgressList] = useState<fileData[]>([]);
  
  const manager = WebWorkerManager.getInstance() 
@@ -23,10 +24,23 @@ const MyComponent = () => {
       }
     };
   }
-   
-   
+   const handleFileChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+    if (event?.target?.files) {
+      if(isAppend)
+      {
+        const files: File[] = Array.from(event.target.files);
+        setSelectedFile([...selectedFile, ...files]);
+      }
+      else{
+        const files: File[] = Array.from(event.target.files);
+        setSelectedFile(files)
+      }
+     
+    }
+  }
   const startUpload = () => {
     if (selectedFile) {
+      setSelectedFile([])
       const worker = new Worker(new URL('../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url));
       let authToken =authHeader.getAuthToken()
       worker.postMessage({selectedFile,authToken});
@@ -45,9 +59,7 @@ const MyComponent = () => {
   return (
     <div>
       <input type="file"  name="file" multiple 
-      onChange={(event:React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedFile(event.target.files!);
-      }}/>
+      onChange={handleFileChange}/>
       <br/>
       <button onClick={startUpload}>Upload</button>
       <br/>
@@ -67,9 +79,7 @@ const MyComponent = () => {
         )
         
       })}</div>
-     
-      {/* <div>Progress: {progress}%</div> */}
-    </div>
+     </div>
   );
 };
 
