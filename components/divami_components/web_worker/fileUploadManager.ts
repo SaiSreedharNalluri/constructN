@@ -1,8 +1,9 @@
 import _ from "lodash";
 import { getPutSignedUrl } from "../../../services/s3Service";
-
+interface fileInfo{ status: string; fileName: string; }
 self.onmessage = async (event) => {
-    let userFileList: { status: string; fileName: string; }[]=[]
+    let userFileList: fileInfo[]=[]
+    let uploadedFileList:fileInfo[]=[]
     const filesLsit = event.data.selectedFile
     if(filesLsit?.length===0)
     {
@@ -10,7 +11,7 @@ self.onmessage = async (event) => {
     }
     for (let i = 0; i < filesLsit?.length; i++) {
         userFileList.push({status: 'progress',fileName:filesLsit[i]?.name})
-        self.postMessage(userFileList)
+        self.postMessage({userFileList,uploadedFileList})
        getPutSignedUrl(`uploader/${filesLsit[i]?.name}`,event.data.authToken).then((response)=>{
             if(response.success===true)
             {
@@ -20,8 +21,9 @@ self.onmessage = async (event) => {
                     const { status, fileName } = event.data;
                     var index = _.findIndex(userFileList, {fileName:fileName});
                     userFileList.splice(index, 1, {fileName: fileName, status:status});
-                    self.postMessage(userFileList)
-                   // self.postMessage({ status: 'done',fileName:fileName});
+                    uploadedFileList.push({fileName: fileName, status:status})
+                    self.postMessage({userFileList,uploadedFileList})
+                    self.postMessage({ status: 'done',fileName:fileName});
                       // Handle completion
                       worker.terminate();
                     

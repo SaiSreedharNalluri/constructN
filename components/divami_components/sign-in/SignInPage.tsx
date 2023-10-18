@@ -114,6 +114,7 @@ const SignInPage = () => {
               delete userProfileObj.unReadNotifications
             setCookie("isProjectTimeZone", true);
             setCookie("user", userProfileObj);
+            localStorage.setItem('uploaededData',JSON.stringify({}))
             CustomToast("User signed in successfully", "success");
             const previousPage:any = router.query["history"] || "";
             setLoginEnable(true);
