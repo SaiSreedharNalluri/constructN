@@ -17,6 +17,8 @@ const MyComponent = () => {
       if(event?.data?.userFileList?.length != undefined && event?.data?.uploadedFileList?.length !=undefined && (event?.data?.userFileList?.length === event?.data?.uploadedFileList?.length))
       {
         localStorage.setItem('uploaededData',JSON.stringify(event.data.uploadedFileList))
+        const evt = new CustomEvent("fileUploader", {detail:event.data.uploadedFileList });
+        window.dispatchEvent(evt);
         manager.getWorker()['sathya1'].terminate()
       }
     };
@@ -33,6 +35,8 @@ const MyComponent = () => {
         if(event?.data?.userFileList?.length != undefined && event?.data?.uploadedFileList?.length !=undefined && (event?.data?.userFileList?.length === event?.data?.uploadedFileList?.length))
         {
           localStorage.setItem('uploaededData',JSON.stringify(event.data.uploadedFileList))
+          const evt = new CustomEvent("fileUploader", {detail:event.data.uploadedFileList });
+          window.dispatchEvent(evt);
           worker.terminate()
         }
       };
