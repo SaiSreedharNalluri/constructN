@@ -181,13 +181,19 @@ const Index: React.FC<any> = () => {
       icon: UpArrow,
       method: "updatedAsc",
       onClick: () => {
-        setSearchTableData([
-          ...projects.sort((a: any, b: any) => {
+        const sortedProjects = projects
+          .filter((project:any) => !isNaN(new Date(project.lastUpdated).valueOf()))
+          .sort((a: any, b: any) => {
             return (
-              new Date(a.updatedAt).valueOf() - new Date(b.updatedAt).valueOf()
+              new Date(a.lastUpdated).valueOf() - new Date(b.lastUpdated).valueOf()
             );
-          }),
-        ]);
+          });
+
+        const invalidDateProjects = projects.filter((project:any) =>
+          isNaN(new Date(project.lastUpdated).valueOf())
+        );
+
+        setSearchTableData([...sortedProjects, ...invalidDateProjects]);
       },
     },
     {
@@ -195,13 +201,19 @@ const Index: React.FC<any> = () => {
       icon: DownArrow,
       method: "updatedDesc",
       onClick: () => {
-        setSearchTableData([
-          ...projects.sort((a: any, b: any) => {
+        const sortedProjects = projects
+          .filter((project:any) => !isNaN(new Date(project.lastUpdated).valueOf()))
+          .sort((a: any, b: any) => {
             return (
-              new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf()
+              new Date(b.lastUpdated).valueOf() - new Date(a.lastUpdated).valueOf()
             );
-          }),
-        ]);
+          });
+
+        const invalidDateProjects = projects.filter((project:any) =>
+          isNaN(new Date(project.lastUpdated).valueOf())
+        );
+
+        setSearchTableData([...sortedProjects, ...invalidDateProjects]);
       },
     },
   ];
