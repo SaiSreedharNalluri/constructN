@@ -524,6 +524,7 @@ const FormWrapper = (props: any) => {
     const minLimit = 2; 
     const maxLimit = 30; 
   
+  const regex=/^(\d{2}[A-Z]|\d{2})$/
     if (textLength.length < minLimit) {
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
@@ -573,6 +574,35 @@ const FormWrapper = (props: any) => {
               isValidField: false,
               isError: true,
               errorMsg: "No leading or trailing spaces are allowed",
+            };
+          }
+          return item;
+        })
+      );
+   }else if(textLength.match(/^(\d{2} [A-Z])$/)) {
+    setFormConfig((prev: any) =>
+      prev.map((item: any) => {
+        if (id === item.id) {
+          return {
+            ...item,
+            isValidField: true,
+            isError: false,
+          };
+        }
+        return item;
+      })
+    );
+    isValid = true;
+  }
+   else  if (!regex.test(textLength)) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+              errorMsg: "UTM should start with 2 digits and be followed by 1 uppercase letter.",
             };
           }
           return item;
