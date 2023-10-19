@@ -73,23 +73,23 @@ export const ProjectListFlatView = ({
   };
 
   const sortByLastUpdated = () => {
-    if (sortObj) {
-      setProjectsState([
-        ...projects.sort((a: any, b: any) => {
-          return (
-            new Date(a.updatedAt).valueOf() - new Date(b.updatedAt).valueOf()
-          );
-        }),
-      ]);
-    } else {
-      setProjectsState([
-        ...projectsState.sort((a: any, b: any) => {
-          return (
-            new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf()
-          );
-        }),
-      ]);
-    }
+    setProjectsState((prevState:any) => {
+      const sortedProjects = [...prevState].sort((a, b) => {
+        const dateA = Date.parse(a.lastUpdated);
+        const dateB = Date.parse(b.lastUpdated);
+  
+        if (isNaN(dateA) && isNaN(dateB)) {
+          return 0; 
+        } else if (isNaN(dateA)) {
+          return 1; 
+        } else if (isNaN(dateB)) {
+          return -1; 
+        } else {
+          return sortObj ?dateA - dateB:dateB-dateA 
+        }
+      });
+      return sortedProjects;
+    });
     setSortObj(!sortObj);
     // return a.numberOfUsers - b.numberOfUsers;
   };
