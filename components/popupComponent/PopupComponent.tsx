@@ -229,6 +229,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 onClick={() => callBackvalue("Delete")}
                 style={{
                   backgroundColor: "#FF843F",
+                  color:"white",
                   width: "180px",
                   height: "40px",
                   marginBottom: "22px",
