@@ -265,8 +265,8 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
           return -1;
         } else {
           return sortObj
-            ? new Date(a.assignedOn).valueOf() - new Date(b.assignedOn).valueOf()
-            : new Date(b.assignedOn).valueOf() - new Date(a.assignedOn).valueOf();
+            ? new Date(b.assignedOn).valueOf() - new Date(a.assignedOn).valueOf()
+            :new Date(a.assignedOn).valueOf() - new Date(b.assignedOn).valueOf() ;
         }
       });
       return sortedData;

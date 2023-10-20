@@ -225,7 +225,7 @@ export const ProjectListCardView = ({
             <ListDivider />
             <CaptureImageContainer>
               <Image src={updatedAtIcon} alt="" width={14} height={15} />
-              <UsersCountText>Updated on - {isNaN(Date.parse(each.lastUpdated))
+              <UsersCountText>Last Captured - {isNaN(Date.parse(each.lastUpdated))
       ? "N/A"
       : moment(each.lastUpdated).format('DD MMM YYYY')}</UsersCountText>
             </CaptureImageContainer>

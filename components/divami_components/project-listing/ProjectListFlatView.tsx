@@ -61,11 +61,11 @@ export const ProjectListFlatView = ({
   const sortBy = (field: string) => {
     if (sortObj) {
       setProjectsState(
-        [].concat(projectsState).sort((a, b) => a[field] - b[field])
+        [].concat(projectsState).sort((a, b) => b[field] - a[field])
       );
     } else {
       setProjectsState(
-        [].concat(projectsState).sort((a, b) => b[field] - a[field])
+        [].concat(projectsState).sort((a, b) => a[field] - b[field])
       );
     }
     setSortObj(!sortObj);
@@ -85,7 +85,7 @@ export const ProjectListFlatView = ({
         } else if (isNaN(dateB)) {
           return -1; 
         } else {
-          return sortObj ?dateA - dateB:dateB-dateA 
+          return sortObj ?dateB-dateA:dateA - dateB 
         }
       });
       return sortedProjects;
@@ -306,7 +306,7 @@ export const ProjectListFlatView = ({
       },
     },
     {
-      title: <CustomColumnTitle>Last Updated</CustomColumnTitle>,
+      title: <CustomColumnTitle>Last Captured</CustomColumnTitle>,
       field: "updatedAt",
       headerStyle: {
         borderBottom: "1px solid #FF843F",
