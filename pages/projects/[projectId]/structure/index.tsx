@@ -56,7 +56,7 @@ import {
 } from 'react-router-dom';
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 import { getSectionsList } from "../../../../services/sections";
-import CustomLoggerClass from "../../../../components/divami_components/custom_logger/CustomLoggerClass";
+// import CustomLoggerClass from "../../../../components/divami_components/custom_logger/CustomLoggerClass";
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -120,7 +120,7 @@ const LeftOverLayContainer = styled("div")(({ isFullScreen }: any) => ({
 }));
 
 const Index: React.FC<IProps> = () => {
-  const customLogger = new CustomLoggerClass();
+  // const customLogger = new CustomLoggerClass();
   const router = useRouter();
   let [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
   const [currentProjectId, setActiveProjectId] = useState("");
@@ -1684,7 +1684,7 @@ const Index: React.FC<IProps> = () => {
               <OpenMenuButton
                 onClick={() => {
                   setHierarchy(!hierarchy);
-                  customLogger.logInfo("Hierarchy Menu - Open");
+                  // customLogger.logInfo("Hierarchy Menu - Open");
                 }}
                 isFullScreen={isFullScreen}
               >
