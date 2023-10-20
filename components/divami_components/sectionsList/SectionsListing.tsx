@@ -719,7 +719,7 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
     },
 
     {
-      title: "Last Updated",
+      title: "Last Captured",
       field: "lastupdated",
       sorting: false,
       headerStyle: {
