@@ -294,7 +294,7 @@ export const ProjectListFlatView = ({
                 <OtherUsersCount>
                   +
                   {rowData.numberOfUsers - 2 > 9
-                    ? rowData.numberOfUsers
+                    ? rowData.numberOfUsers-2
                     : `0${rowData.numberOfUsers - 2}`}
                 </OtherUsersCount>
               </LightTooltip>
