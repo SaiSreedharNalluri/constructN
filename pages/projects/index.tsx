@@ -355,8 +355,21 @@ const Index: React.FC<any> = () => {
                   : "0",
               };
             });
-
-            setProjects(projectsData);
+            const sortedProjects = projectsData.sort((a:any, b:any) => {
+              const dateA = Date.parse(a.lastUpdated);
+              const dateB = Date.parse(b.lastUpdated);
+        
+              if (isNaN(dateA) && isNaN(dateB)) {
+                return 0; 
+              } else if (isNaN(dateA)) {
+                return 1; 
+              } else if (isNaN(dateB)) {
+                return -1; 
+              } else {
+                return dateB-dateA
+              }
+            })
+            setProjects(sortedProjects);
           }
           setShowLoading(false);
         })
