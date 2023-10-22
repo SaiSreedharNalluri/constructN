@@ -212,7 +212,7 @@ const CustomCalender = (props: any) => {
           }
           label={"MM/DD/YYYY"}
           value={value}
-          shouldDisableDate={data.disableDays}
+          //shouldDisableDate={data.disableDays}
           disablePast={disablePast}
           minDate={
             config && config[0] && data.id === "due-date"
