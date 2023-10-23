@@ -378,9 +378,6 @@ const Header: React.FC<any> = ({
           )}
         </HeaderLeftPart>
         <HeaderRightPart>
-        <div><button onClick={()=>{
-            router.push('/file')
-          }}>filePage</button></div>
           {/* {projectId ? (
             <ProjectSelectorContainer>
               <CustomSelect
