@@ -4,7 +4,7 @@ interface fileInfo{ status: string; fileName: string; }
 self.onmessage = async (event) => {
     let userFileList: fileInfo[]=[]
     let uploadedFileList:fileInfo[]=[]
-    const filesLsit = event.data.selectedFile
+    const filesLsit = event.data.acceptedFiles
     if(filesLsit?.length===0)
     {
         return

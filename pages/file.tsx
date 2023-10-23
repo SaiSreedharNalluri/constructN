@@ -1,7 +1,10 @@
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, {useState } from 'react';
 import authHeader from '../services/auth-header';
 import { WebWorkerManager } from '../utils/webWorkerManager';
+import Header from '../components/divami_components/header/Header';
+import SidePanelMenu from '../components/divami_components/side-panel/SidePanel';
+import FileUploader from '../components/divami_components/fileUploader/fileUploader';
 interface fileData{ status: string, fileName: string; }
 const MyComponent = () => {
   const router = useRouter();
@@ -38,13 +41,15 @@ const MyComponent = () => {
      
     }
   }
-  const startUpload = () => {
+  const startUpload = (acceptedFiles:any) => {
     if (selectedFile) {
-      setSelectedFile([])
+      console.log('dcvsgds',acceptedFiles)
+     // setSelectedFile([])
       const worker = new Worker(new URL('../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url));
       let authToken =authHeader.getAuthToken()
-      worker.postMessage({selectedFile,authToken});
+      worker.postMessage({acceptedFiles,authToken});
       worker.onmessage = (event) => {
+        console.log('event',event.data)
         setFileProgressList(event.data.userFileList);
         if(event?.data?.userFileList?.length != undefined && event?.data?.uploadedFileList?.length !=undefined && (event?.data?.userFileList?.length === event?.data?.uploadedFileList?.length))
         {
@@ -56,30 +61,21 @@ const MyComponent = () => {
       };
     }
   };
+  console.log('selectedFile',selectedFile)
   return (
+  <div>
+    <Header/>
+    <div className="flex w-screen fixed">
     <div>
-      <input type="file"  name="file" multiple 
-      onChange={handleFileChange}/>
-      <br/>
-      <button onClick={startUpload}>Upload</button>
-      <br/>
-      <button onClick={()=>{router.push('/projects')}}>Back</button>
-      <br/>
-      <h1>Uploading Status</h1>
-      <div> {fileProgressList?.length>0 && fileProgressList.map((fileObj:fileData)=>{
-        return(
-          <div key={fileObj.fileName} className='flex w-[40%] justify-between'>
-            <span>
-              {fileObj.fileName}
-            </span>
-            <span>
-              {fileObj.status}
-            </span>
-          </div>
-        )
-        
-      })}</div>
-     </div>
+    <SidePanelMenu onChangeData={() => {}} />
+    </div> 
+    <FileUploader isAppend={isAppend}selectedFile={selectedFile}setSelectedFile={setSelectedFile}/>
+    </div>        
+
+</div>
+
+
+    
   );
 };
 
