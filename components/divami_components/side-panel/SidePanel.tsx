@@ -29,6 +29,8 @@ import peopleHighlighted from "../../../public/divami_icons/peopleHighlighted.sv
 import ScheduleIcon from "../../../public/divami_icons/ScheduleIcon.svg";
 import ScheduleHighlight from "../../../public/divami_icons/ScheduleHighlight.svg";
 import projectDetails from "../../../public/divami_icons/projectDetails.svg";
+import uploadHighlight from "../../../public/divami_icons/uploadHighlight.svg";
+import  uploadIcon from "../../../public/divami_icons/uploadIcon.svg";
 import projectDetailsHighlighted from "../../../public/divami_icons/projectDetailsHighlighted.svg";
 
 import {
@@ -113,6 +115,13 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     //   activeIcon:chatClose,
     //   toolTipMsg:"Chat Support",
     // },
+    {
+      id: "uploader",
+      icon: uploadIcon,
+      isActive: false,
+      activeIcon: uploadHighlight,
+      toolTipMsg: "UpLoader",
+    },
   ]);
   const [supportItemsConfig, setSupportItemsConfig] = React.useState([
     {
@@ -209,6 +218,9 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       case "usersList":
         router.push(`/projects/${router.query.projectId as string}/usersList`);
         break;
+        case "uploader":
+          router.push(`/projects/${router.query.projectId as string}/uploader`);
+          break;
       case "chatSupport":
         //add open Chat code
         openChat();
