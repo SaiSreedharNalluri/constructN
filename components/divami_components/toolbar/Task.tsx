@@ -35,6 +35,7 @@ import { CustomToast } from "../../divami_components/custom-toaster/CustomToast"
 import plusCircleIconHighlighted from "../../../public/divami_icons/plusCircleIconHighlighted.svg";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import { getTimeInProjectTimezone } from "../../../utils/utils";
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 const Task = ({
   rightMenuClickHandler,
   tasksList,
@@ -70,6 +71,7 @@ const Task = ({
   isReality,
   
 }: any) => {
+  const customLogger = new CustomLoggerClass();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
   const [myProject, setMyProject] = useState(currentProject);
@@ -100,6 +102,7 @@ const Task = ({
     });
   }, [currentProject, currentSnapshot, currentStructure, taskOpenDrawer]);
   const handleViewTaskList = () => {
+    customLogger.logInfo("ToolBar - View Task")
     setOpenDrawer(true);
     setHighlightCreateTaskIcon(false);
     setHighlightCreateIcon(false)
@@ -260,6 +263,7 @@ const Task = ({
   const openTaskCreateFn = () => {
     //setCreateOverlay(true);
     taskMenuInstance.toolAction = "taskCreate";
+    customLogger.logInfo("ToolBar - Create Task")
     taskMenuClicked(taskMenuInstance);
     setHighlightCreateTaskIcon(true)
     setHighlightCreateIcon(false)
@@ -281,8 +285,9 @@ const Task = ({
   };
   const toggleTaskVisibility = () => {
     setShowTaskMarkups(!showTaskMarkups);
-    if (showTaskMarkups) taskMenuInstance.toolAction = "taskHide";
+    if (showTaskMarkups) {taskMenuInstance.toolAction = "taskHide"; customLogger.logInfo("ToolBar - Hide Task")}
     else taskMenuInstance.toolAction = "taskShow";
+    customLogger.logInfo("ToolBar - Show Task")
     taskMenuClicked(taskMenuInstance);
     setHighlightCreateTaskIcon(false)
     setHighlightCreateIcon(false)

@@ -13,6 +13,7 @@ import SelectTypesList from "../select-types/SelectTypesList";
 import ClickAwayListener from "@mui/base/ClickAwayListener";
 
 // import styles from '../toolbar/toolbar.module.css'
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 
 const Typebar = ({
   rightMenuClickHandler,
@@ -23,6 +24,7 @@ const Typebar = ({
   openList,
   setOpenList,
 }: any) => {
+  const customLogger = new CustomLoggerClass();
   return (
     <ClickAwayListener
       onClickAway={() => {
@@ -30,7 +32,7 @@ const Typebar = ({
       }}
     >
       <ContainerDiv>
-        <TypeParentCont onClick={onListClick}>
+      <TypeParentCont onClick={()=>{ customLogger.logInfo("ToolBar - Change View Type");onListClick()}}>
           <TypesTitle>
             {selectedValue ? "Type: " + selectedValue : "Select Type"}
           </TypesTitle>

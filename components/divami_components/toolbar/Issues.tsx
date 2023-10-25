@@ -38,6 +38,7 @@ import html2canvas from "html2canvas";
 import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import { getTimeInProjectTimezone } from "../../../utils/utils";
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 const Issues = ({
   rightMenuClickHandler,
   issuesList,
@@ -73,6 +74,7 @@ const Issues = ({
   highlightCreateIcon,
   setHighlightCreateTaskIcon,
 }: any) => {
+  const customLogger = new CustomLoggerClass();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
   const [image, setImage] = useState<Blob>();
@@ -245,6 +247,7 @@ const Issues = ({
   };
   const openIssueCreateFn = () => {
     issueMenuInstance.toolAction = "issueCreate";
+    customLogger.logInfo("ToolBar - Create Issue")
     issueMenuClicked(issueMenuInstance);
       setHighlightCreateIcon(true) 
       setHighlightCreateTaskIcon(false)
@@ -253,14 +256,20 @@ const Issues = ({
   
   const openIssueListFn = () => {
     issueMenuInstance.toolAction = "issueView";
+    customLogger.logInfo("ToolBar - View Issue")
     issueMenuClicked(issueMenuInstance);
     setHighlightCreateIcon(false)
     setHighlightCreateTaskIcon(false)
   };
 
   const toggleIssueVisibility = () => {
+    if (showIssueMarkups) {
+      issueMenuInstance.toolAction = "issueHide";
+      customLogger.logInfo("ToolBar - Hide Issue")
+    }
     if (showIssueMarkups) issueMenuInstance.toolAction = "issueHide";
     else issueMenuInstance.toolAction = "issueShow";
+    customLogger.logInfo("ToolBar - Show Issue")
     issueMenuClicked(issueMenuInstance);
     setShowIssueMarkups(!showIssueMarkups);
     setHighlightCreateIcon(false)
