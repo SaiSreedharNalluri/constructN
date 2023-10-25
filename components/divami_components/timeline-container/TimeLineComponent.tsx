@@ -31,7 +31,7 @@ import LeftSingleArrow from "../../../public/divami_icons/LeftSingleArrow.png";
 import RightSingleArrow from "../../../public/divami_icons/RightSingleArrow.png";
 import { getSnapshotDetails } from "../../../services/snapshot";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
-
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 interface IProps {
   currentSnapshot: ISnapshot;
   snapshotList: ISnapshot[];
@@ -74,6 +74,7 @@ const TimeLineComponent: React.FC<IProps> = ({
   const [oldDate, setOldDate] = useState("");
   const [newDate, setNewDate] = useState("");
   const [activeCircleIndex, setActiveCircleIndex] = useState<any>();
+  const customLogger = new CustomLoggerClass();
   // const [totalPages, setTotalPages] = useState(
   //   Math.ceil(totalSnaphotsCount / 10)
   // );
@@ -278,7 +279,7 @@ const TimeLineComponent: React.FC<IProps> = ({
       {tools?.toolName !== "compareDesign" ? (
         <TimeLineStyleContainer   
         onMouseLeave={()=>{setBottomNav(false)}}
-        onMouseEnter={()=>{setBottomNav(true)}}  
+        onMouseEnter={()=>{customLogger.logInfo("Time Line Component - Open");setBottomNav(true)}} 
         isFullScreen={isFullScreen}>
           <SelectedTimeLine
             style={{ bottom: bottomNav ? "36px": "0px",

@@ -79,6 +79,7 @@ import { IntercomProvider, useIntercom } from 'react-use-intercom'
 import { getCookie } from "cookies-next";
 import { ShowErrorContainer } from "../../components/divami_components/project-listing/ProjectListingStyles";
 import chatOpenHightlighted from "../../public/divami_icons/chatOpenHightlighted.svg"
+import CustomLoggerClass from "../../components/divami_components/custom_logger/CustomLoggerClass";
 export const truncateString = (text: string, maxLength: number) => {
   let truncatedText = text;
 
@@ -149,6 +150,7 @@ const Index: React.FC<any> = () => {
   let [eMail, setEMail] = useState<string>("");
   const [isChatHovered, setChatHovered] = useState(false);
   const chatIconRef:any = useRef(null);
+  const customLogger = new CustomLoggerClass();
   const sortMenuOptions = [
     {
       label: "Sort by User",
@@ -421,6 +423,7 @@ const Index: React.FC<any> = () => {
             ],
           });
           CustomToast("Options updated successfully","success");
+          customLogger.logInfo("Issue Priority - Modify")
         } else if (selectedOption === "taskPriority") {
           await updateTaskPriorityList(projectId, {
             taskPriorityList: [
@@ -428,6 +431,7 @@ const Index: React.FC<any> = () => {
             ],
           });
           CustomToast("Options updated successfully","success");
+          customLogger.logInfo("Task Priority - Modify")
         } else if (selectedOption === "issueStatus") {
           await updateIssueStatusList(projectId, {
             issueStatusList: [
@@ -435,6 +439,7 @@ const Index: React.FC<any> = () => {
             ],
           });
           CustomToast("Options updated successfully","success");
+          customLogger.logInfo("Issue Status - Modify")
         } else if (selectedOption === "taskStatus") {
           await updateTaskStatusList(projectId, {
             taskStatusList: [
@@ -442,11 +447,13 @@ const Index: React.FC<any> = () => {
             ],
           });
           CustomToast("Options updated successfully","success");
+          customLogger.logInfo("Task Status - Modify")
         } else if (selectedOption === "tag") {
           await updateTagList(projectId, {
             tagList: [...formValues.priority.map((ele: string) => ele.trim())],
           });
           CustomToast("Options updated successfully","success");
+          customLogger.logInfo("Tags - Modify")
         }
         setConfigEnabled(true);
         setShowbutton(false);

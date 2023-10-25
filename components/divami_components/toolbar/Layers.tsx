@@ -17,7 +17,7 @@ import {
   SelectLayersWrapper,
   ContainerDiv,
 } from "./ToolBarStyles";
-
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 export interface ShowImageDisplay {
   item1: boolean;
   item2: boolean;
@@ -76,7 +76,7 @@ const Layers = ({
     item2: true,
     item3: true,
   });
-
+  const customLogger = new CustomLoggerClass();
   useEffect(() => {
     let newLayersArr = [];
     if (myLayersList != undefined) {
@@ -143,7 +143,7 @@ const Layers = ({
     >
       <ContainerDiv>
         <LayersWrapper
-          onClick={onListClick}
+          onClick={()=>{customLogger.logInfo("ToolBar - Change Layer Filter");onListClick();}}
           // style={{ border: "2px solid blue" }}
         >
           <IconsContainer>

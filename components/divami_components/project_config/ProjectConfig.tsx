@@ -24,7 +24,7 @@ import {
   SideMenuConfig,
   TextFieldContainer
 } from "./ProjectConfigStyles";
-
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 const ProjectConfig = ({
   projectId,
   selectedOption,
@@ -33,6 +33,7 @@ const ProjectConfig = ({
   setFormValues,
   setShowbutton,
 }: any) => {
+  const customLogger = new CustomLoggerClass();
   const [config, setConfig]: any = React.useState([
     {
       id: "issuePriority",
@@ -230,7 +231,7 @@ const ProjectConfig = ({
                   //     item.isActive ? "activeProjectConfig" : ""
                   //   }`}
                   className={"project_config_active"}
-                  onClick={() => handleOptionClick(item.id)}
+                  onClick={() =>{ customLogger.logInfo(`${item.title} - View`); handleOptionClick(item.id)}}
                 >
                   <MenuOptionSelected isActive={item.isActive}>
                     {item.title}
