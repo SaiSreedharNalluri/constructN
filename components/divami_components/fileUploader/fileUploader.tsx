@@ -36,21 +36,23 @@ let FileUploader:React.FC<IProps>=({isAppend,setSelectedFile,selectedFile})=>{
         onDrop,
       });
       
-return( 
-<div className={`border-[1px] text-center rounded-[8px] gap-[112px] w-[869px] h-[324px] border-dashed relative top-[28px] left-[248px] border-black py-[24px] px-[8px] cursor-pointer ${isDragActive ? 'border-blue-500' : ''}`} {...getRootProps()}>
-<div className="flex flex-col items-center justify-center h-full gap-6 ">
-    <div className='w-[109.78px] h-[104px]'>
-            <UploaderIcon src={uploaderIcon} alt={"uploader icon"} className='h-[96.94px] w-[96.94px]' />
-        </div>
-    
-    <div className='font-sans'>
-        <input {...getInputProps()} />
-        <p className="m-0 text-gray-700 font-medium text-2xl">Drag and Drop the files / folders you want to upload or browse</p>
-        <p className='font-thin'>
-        Supported file types: jpeg, jpg with GPS metadata
-        </p>
+return(
+<React.Fragment> 
+<div className={`border-[1px] text-center rounded-[8px] md:gap-[112px] w-[90%] md:w-[50vw] h-[30vh] border-dashed relative md:top-[28px] md:left-[305px] border-black py-[6vh] px-[2%] cursor-pointer ${isDragActive ? 'border-blue-500' : ''}`} {...getRootProps()}>
+  <div className="flex flex-col items-center justify-center h-full gap-6">
+    <div className='w-[10%] h-[5%] md:w-[109.78px] md:h-[104px]'>
+      <UploaderIcon src={uploaderIcon} alt={"uploader icon"} className='h-[70%] w-[70%] md:h-[66.94px] md:w-[66.94px]' />
     </div>
+
+    <div className='font-sans'>
+      <input {...getInputProps()} />
+      <p className="m-0 text-gray-700 font-medium text-xl">Drag and Drop the files / folders you want to upload or browse</p>
+      <p className='font-thin'>
+        Supported file types: jpeg, jpg with GPS metadata
+      </p>
+    </div>
+  </div>
 </div>
-</div>)
+</React.Fragment>)
 }
 export default FileUploader

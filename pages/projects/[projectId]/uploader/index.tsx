@@ -9,8 +9,7 @@ import UploaderFooter from "../../../../components/divami_components/uploader_de
 interface IProps {}
 
 const Index: React.FC<IProps> = () => {
-  const [activeStep, setActiveStep] = useState(0);
-
+  const [activeStep, setActiveStep] = useState(1);
   const steps = [
     "Details",
     "Choose Files",
