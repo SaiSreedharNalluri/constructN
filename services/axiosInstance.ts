@@ -77,6 +77,7 @@ const interceptor=instance.interceptors.response.use(
         if (typeof window !== "undefined") {
             console.log("Moving Out....",error2.config);
             window.location.href = `/login?history=${window.location.href}&reason=SessionExpiry`;
+            localStorage.removeItem('uploaededData')
         }
         return Promise.reject(error2);
       })

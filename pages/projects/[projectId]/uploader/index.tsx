@@ -9,8 +9,7 @@ import UploaderFooter from "../../../../components/divami_components/uploader_de
 interface IProps {}
 
 const Index: React.FC<IProps> = () => {
-  const [activeStep, setActiveStep] = useState(0);
-
+  const [activeStep, setActiveStep] = useState(1);
   const steps = [
     "Details",
     "Choose Files",
@@ -53,12 +52,11 @@ const Index: React.FC<IProps> = () => {
         <div>
           <SidePanelMenu onChangeData={() => {}}></SidePanelMenu>
         </div>
-        <div className="calc-w calc-h mx-2 p-4 overflow-y-auto flex-1">
+        <div className="calc-w calc-h mx-2 p-1 overflow-y-auto flex-1">
           <UploaderStepper activeStep={activeStep} steps={steps} /> 
          
           <div className="flex-1">{renderCenterContent()}</div>
         </div>
-
         <UploaderFooter
           activeStep={activeStep}
           steps={steps}
