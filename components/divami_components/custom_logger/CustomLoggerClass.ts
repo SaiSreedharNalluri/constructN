@@ -1,22 +1,23 @@
 import * as Sentry from "@sentry/nextjs";
 import { AxiosError } from "axios";
+const islogInfo=process.env.NEXT_PUBLIC_LOG_INFO?process.env.NEXT_PUBLIC_LOG_INFO==="true"?true:false:false;
 export default class CustomLoggerClass {
-     Sentry_Log_Info=true;
     logInfo=(message:string)=>{
-        // console.log(message);
+        if(islogInfo){
         Sentry.captureMessage(message)
+        }
     }
-    Sentry_Log_Activity=true;
-
     logActivity=(userDetails:any,user?:any,)=>{
+        if(islogInfo){
         if(user){
         Sentry.setUser({[user]:userDetails})
         }
         else{
             Sentry.setUser(userDetails)
-        }
+        }}
     }
     logError=(error:AxiosError|any)=>{
+        if(islogInfo){
         if(typeof error==="object"){
         const errors=error.message+error.code;
             Sentry.captureException(new Error(errors))
@@ -26,4 +27,6 @@ export default class CustomLoggerClass {
         }
 
     }
+    }
+
 }
