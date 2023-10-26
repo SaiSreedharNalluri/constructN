@@ -35,8 +35,9 @@ import FormBody from "./FormBody";
 import CustomLoader from "../custom_loader/CustomLoader";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
-import * as Sentry from "@sentry/nextjs";
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 const SignInPage = () => {
+  const customLogger = new CustomLoggerClass();
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -77,7 +78,8 @@ const SignInPage = () => {
     // Sentry.configureScope(function (scope) {
     //   scope.setLevel("info");
     // });
-    Sentry.captureMessage("Click on the login button");
+    // Sentry.captureMessage("Click on the login button");
+    customLogger.logInfo("Signin");
     setValidate(true);
 
     if (email === "" || password === "" || formData[0].isError) {
@@ -110,7 +112,11 @@ const SignInPage = () => {
               "userCredentials",
               JSON.stringify(userProfileObj)
             );
-            if(userProfileObj.unReadNotifications)
+          //  Sentry.setUser({email:userProfileObj.email})
+              //  CustomLogger("set user", userProfileObj.email,"email")
+              customLogger.logActivity(userProfileObj.email, "email")
+              customLogger.logInfo(`user successfully logged`);
+              // CustomLogger("capture message", `user successfully logged ${userProfileObj.email}`)           if(userProfileObj.unReadNotifications)
               delete userProfileObj.unReadNotifications
             setCookie("isProjectTimeZone", true);
             setCookie("user", userProfileObj);
@@ -145,14 +151,17 @@ const SignInPage = () => {
           error.message ||
           error.toString();
         setLoginEnable(true)
-        const customErrorMessage = "Invalid credentials"; 
+          // CustomLogger("capture exception",`failed to login ${email}`)
+        const customErrorMessage = `failed to login ${email}`;
+         customLogger.logError(customErrorMessage)
+ 
         // setLoginEnable(true);
 
         // Create a custom error object with the desired message
-        const customError = new Error(customErrorMessage);
-        
+          // const customError = new Error(customErrorMessage);
+
         // Capture the custom error with Sentry
-        Sentry.captureException(customError);
+        // Sentry.captureException(customError);
         // Sentry.configureScope(function (scope) {
         //   scope.setLevel("warning");
         // });

@@ -29,13 +29,14 @@ import CustomSelect from "../custom-select/CustomSelect";
 import { useState } from "react";
 import { UserDefaultIcon } from "./ProjectUsersListStyles";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
-
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 export const EditRoleOverlay = ({
   onClose,
   userData,
   roles,
   updateRole,
 }: any) => {
+  const customLogger = new CustomLoggerClass();
   const handleClose = () => {
     onClose();
   };
@@ -45,6 +46,7 @@ export const EditRoleOverlay = ({
 
   const applyCallback = () => {
     updateRole(selectedRole, userData);
+    customLogger.logInfo(`Change User Role`)
   };
 
   const [selectedRole, setSelectedRole] = useState(userData?.role || "");

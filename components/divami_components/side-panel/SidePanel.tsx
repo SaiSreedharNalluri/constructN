@@ -47,10 +47,12 @@ import {
 import { Tooltip } from "@mui/material";
 import { getCookie } from "cookies-next";
 import moment from 'moment-timezone';
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 interface IProps {
   onChangeData: () => void;
 }
 const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
+  const customLogger = new CustomLoggerClass();
   let [eMail, setEMail] = useState<string>("");
   const router = useRouter();
   const [config, setConfig] = React.useState([
@@ -305,7 +307,8 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           // onClick={() => handleClick(item.id)}
           >
             <TooltipText title={item.toolTipMsg} placement="right">
-              <SideMenuOptionImageContainer id={item.id} onClick={leftClickHandler} >
+            <SideMenuOptionImageContainer id={item.id} onClick={(e)=>{customLogger.logInfo(` ${item?.toolTipMsg} Page`)
+              leftClickHandler(e)}} >
                 {router.pathname.includes(item.id) || item.isActive ? (
                   <OvershowImg>
                     <HighlightedSytledImage
@@ -334,7 +337,8 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           >
             <TooltipText title={item.toolTipMsg} placement="right">        
                 <SideMenuChatImageContainer  id={item.id}
-                    onClick={leftClickHandler} onMouseEnter={handleChatHover}
+                    onClick={(e)=>{customLogger.logInfo(` ${item?.toolTipMsg} Open`); leftClickHandler(e)}} 
+                    onMouseEnter={handleChatHover}
                 onMouseLeave={handleChatHoverEnd}>
                  {isChatHovered ? (
                   <StyledImage

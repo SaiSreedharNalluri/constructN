@@ -38,6 +38,7 @@ import Image from "next/image";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import Chips from "../sectionsList/Chip";
 import { TooltipText } from "../side-panel/SidePanelStyles";
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 const ProjectHierarchy = ({
   title,
   openSelectLayer,
@@ -59,6 +60,7 @@ const ProjectHierarchy = ({
   const[id,setId]=useState("");
   const[isCaptureAvailable,setCaptureAvailable]=useState(false);
   const[isProcessing,setProcessing]=useState(false);
+  const customLogger = new CustomLoggerClass();
   const handleExpand = () => {
     handleNodeExpand(getAllIds(treeViewData));
   };
@@ -160,7 +162,7 @@ const ProjectHierarchy = ({
             setCaptureAvailable(false)
             setProcessing(false)
           }
-
+          customLogger.logInfo("Hierarchy Menu - Change Structure");
       }} >
          <TooltipText title={node?.name?.length > 20 ? node?.name : ""} placement="right">
       <div>

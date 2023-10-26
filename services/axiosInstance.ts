@@ -1,6 +1,7 @@
 import axios from "axios";
 import { deleteCookie, getCookie, removeCookies, setCookie } from "cookies-next";
 import { refreshToken } from "./userAuth";
+import CustomLoggerClass from "../components/divami_components/custom_logger/CustomLoggerClass";
 // eslint-disable-next-line react-hooks/rules-of-hooks
 let urlExclude = ["signin","reset-password-link-validate"];
 let isRefreshing = false;
@@ -28,11 +29,16 @@ instance.interceptors.request.use(
 );
 createAxiosResponseInterceptor();
 function createAxiosResponseInterceptor(){
+  const customLogger= new CustomLoggerClass();
 const interceptor=instance.interceptors.response.use(
   (response) => {
+    if(response.data.success===false){
+      // Sentry.captureException(response.data.message)
+  }
     return response;
   },
     (error) => {
+    customLogger.logError(error)
     const originalConfig = error.config;
     console.log("Axios Caught Error",error);
     console.log("config error, retry ", originalConfig);

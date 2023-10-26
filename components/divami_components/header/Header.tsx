@@ -68,6 +68,8 @@ import { CustomToast } from "../custom-toaster/CustomToast";
 import { getUserProfile } from "../../../services/userAuth";
 import NotificationDrawer from "../custom-drawer/notification-drawer";
 import { truncate } from "fs/promises";
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import * as Sentry from "@sentry/nextjs";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -87,6 +89,7 @@ const Header: React.FC<any> = ({
   isDesignAvailable=false,
   isRealityAvailable=false,
 }) => {
+  const customLogger = new CustomLoggerClass();
   const router = useRouter();
   const headerRef: any = React.useRef();
   let [name, setName] = useState<string>("");
@@ -113,6 +116,7 @@ const Header: React.FC<any> = ({
   const [openProfile, setOpenProfile] = useState(false);
   const [projectName,setProjectName]=useState('')
   const [notificationCount, setNotificationCount] = useState(0);
+
   useEffect(()=>{
     if(router.isReady && router?.query?.projectId)
     {
@@ -134,9 +138,13 @@ const Header: React.FC<any> = ({
   },[router.isReady,router?.query?.projectId,projectName])
   const ProjectInfo=(projectInfo:any)=>{
     getProjectDetails(router?.query?.projectId as string).then((response)=>{
+      console.log(response?.data?.result?.company?.name,"res");
       if(response?.data?.result)
       { 
         projectInfo.push({_id:router?.query?.projectId,name:response?.data?.result?.name,timeZone:response?.data?.result?.timeZone,dashboardURL:response?.data?.result?.metaDetails?.dashboardURL ,reportURL:response?.data?.result?.metaDetails?.reportURL})
+        Sentry.setTag("ProjectName", response?.data?.result?.name);
+        Sentry.setTag("ProjectId",  response?.data?.result?._id);
+        Sentry.setTag("CompanyName",  response?.data?.result?.company?.name);
         setCookie('projectData', JSON.stringify(projectInfo));
         setProjectName(response?.data?.result?.name)
       } 
@@ -185,6 +193,10 @@ const Header: React.FC<any> = ({
   }, [viewMode]);
 
   const userLogOut = () => {
+    customLogger.logActivity("null") ;
+    Sentry.setTag("ProjectName", null);
+    Sentry.setTag("CompanyName", null);
+  Sentry.setTag("ProjectId", null);
     removeCookies("user");
     removeCookies('projectData');
     removeCookies('isProjectTimeZone');
@@ -194,6 +206,7 @@ const Header: React.FC<any> = ({
   };
 
   const goToProjectsList = () => {
+    customLogger.logInfo("Projects Page") ;
     router.push("/projects");
   };
 
@@ -203,6 +216,7 @@ const Header: React.FC<any> = ({
       setMenuLoading(false);
       setSupportMenu(false);
       setOpenNotication(false);
+      customLogger.logInfo("Header - User Profile")
     } else {
       setOpenProfile(false);
     }
@@ -215,10 +229,14 @@ const Header: React.FC<any> = ({
       toolInstance.toolName = "viewMode";
       toolInstance.toolAction = "Design";
       setIsDesignSelected(true);
+      customLogger.logInfo("Design Toggle")
+      // customLogger.logActivity(eMail,"email")
     } else if (e.currentTarget.id === "Reality" && isRealityAvailable) {
       toolInstance.toolName = "viewMode";
       toolInstance.toolAction = "Reality";
       setIsDesignSelected(false);
+      customLogger.logInfo("Reality Toggle")
+      // customLogger.logActivity(eMail,"email")
     }
     // else if (e.currentTarget.id === "compareDesign") {
     //   toolInstance.toolName = "compareDesign";
@@ -491,6 +509,7 @@ const Header: React.FC<any> = ({
                   alt="Support"
                   onClick={() => {
                   if (!supportMenu) {
+                    customLogger.logInfo("Header - Support")
                       setSupportMenu(true);
                       setMenuLoading(false);
                       setOpenNotication(false);
@@ -510,7 +529,9 @@ const Header: React.FC<any> = ({
             <TooltipText title="Notifications" onClick={() => {
                    if (openNotification) {
                       setOpenNotication(false);
+                      customLogger.logInfo("Notifications Hide")
                     } else {
+                      customLogger.logInfo("Notifications Show")
                       setOpenNotication(true);
                       setMenuLoading(false);
                       setSupportMenu(false);
@@ -555,6 +576,7 @@ const Header: React.FC<any> = ({
                   alt="Menu"
                   onClick={() => {
                     if (!menuloading) {
+                      customLogger.logInfo("Signout")
                       setMenuLoading(true);
                       setOpenNotication(false);
                       setSupportMenu(false);

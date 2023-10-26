@@ -95,6 +95,7 @@ import { TooltipText } from "../side-panel/SidePanelStyles";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import Chips from "./Chip";
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 // import { ISections } from "../../../models/ISections";
 
 interface RowData {
@@ -166,7 +167,7 @@ const[isProcessing,setProcessing]=useState(false);
     },
     numberOfFilters: 0,
   });
-
+  const customLogger = new CustomLoggerClass();
   useEffect(() => {
     if (taskFilterState.numberOfFilters > 0) {
       applySectionFilter(taskFilterState);
@@ -548,6 +549,7 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
                 query: { structId: rowData._id },
               });
               setCaptureAvailable(false)
+              customLogger.logInfo("View Strucuture");
               setProcessing(false)
             }
           }}> 
@@ -719,7 +721,7 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
     },
 
     {
-      title: "Last Updated",
+      title: "Last Captured",
       field: "lastupdated",
       sorting: false,
       headerStyle: {
