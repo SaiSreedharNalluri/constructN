@@ -183,13 +183,19 @@ const Index: React.FC<any> = () => {
       icon: UpArrow,
       method: "updatedAsc",
       onClick: () => {
-        setSearchTableData([
-          ...projects.sort((a: any, b: any) => {
+        const sortedProjects = projects
+          .filter((project:any) => !isNaN(new Date(project.lastUpdated).valueOf()))
+          .sort((a: any, b: any) => {
             return (
-              new Date(a.updatedAt).valueOf() - new Date(b.updatedAt).valueOf()
+              new Date(a.lastUpdated).valueOf() - new Date(b.lastUpdated).valueOf()
             );
-          }),
-        ]);
+          });
+
+        const invalidDateProjects = projects.filter((project:any) =>
+          isNaN(new Date(project.lastUpdated).valueOf())
+        );
+
+        setSearchTableData([...sortedProjects, ...invalidDateProjects]);
       },
     },
     {
@@ -197,13 +203,19 @@ const Index: React.FC<any> = () => {
       icon: DownArrow,
       method: "updatedDesc",
       onClick: () => {
-        setSearchTableData([
-          ...projects.sort((a: any, b: any) => {
+        const sortedProjects = projects
+          .filter((project:any) => !isNaN(new Date(project.lastUpdated).valueOf()))
+          .sort((a: any, b: any) => {
             return (
-              new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf()
+              new Date(b.lastUpdated).valueOf() - new Date(a.lastUpdated).valueOf()
             );
-          }),
-        ]);
+          });
+
+        const invalidDateProjects = projects.filter((project:any) =>
+          isNaN(new Date(project.lastUpdated).valueOf())
+        );
+
+        setSearchTableData([...sortedProjects, ...invalidDateProjects]);
       },
     },
   ];
@@ -257,9 +269,9 @@ const Index: React.FC<any> = () => {
     setSearchTableData(
       projects.filter(
         (each: any) =>
-          (Moment(each.updatedAt).isSameOrAfter(formState.startDate) || //.format("YYYY-MM-DD") >= formState.startDate ||
+          (Moment(each.lastUpdated).isSameOrAfter(formState.startDate) || //.format("YYYY-MM-DD") >= formState.startDate ||
             !formState.startDate) &&
-          (Moment(each.updatedAt).isSameOrBefore(formState.dueDate) || //.format("YYYY-MM-DD") <= formState.dueDate ||
+          (Moment(each.lastUpdated).isSameOrBefore(formState.dueDate) || //.format("YYYY-MM-DD") <= formState.dueDate ||
             !formState.dueDate) &&
           (!formState.compareText ||
             (formState.compareText === "greaterThan"
@@ -345,8 +357,21 @@ const Index: React.FC<any> = () => {
                   : "0",
               };
             });
-
-            setProjects(projectsData);
+            const sortedProjects = projectsData.sort((a:any, b:any) => {
+              const dateA = Date.parse(a.lastUpdated);
+              const dateB = Date.parse(b.lastUpdated);
+        
+              if (isNaN(dateA) && isNaN(dateB)) {
+                return 0; 
+              } else if (isNaN(dateA)) {
+                return 1; 
+              } else if (isNaN(dateB)) {
+                return -1; 
+              } else {
+                return dateB-dateA
+              }
+            })
+            setProjects(sortedProjects);
           }
           setShowLoading(false);
         })
