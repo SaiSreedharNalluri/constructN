@@ -47,6 +47,7 @@ import { MTableBodyRow } from "material-table";
 import { role } from "../../../utils/constants";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import BackArrow from "../../../public/divami_icons/backArrow.svg";
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 export const AddUsersEmailOverlay = ({
   form,
   setOpenDrawer,
@@ -55,6 +56,7 @@ export const AddUsersEmailOverlay = ({
   appendToTable,
   tableData
 }: any) => {
+  const customLogger = new CustomLoggerClass();
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
   const [addedUsers, setAddedUsers] = useState<any>([]);
@@ -188,6 +190,7 @@ export const AddUsersEmailOverlay = ({
             return { role: each.role, email: each.email };
           }),
         };
+        customLogger.logInfo(`Add New User`)
 
         const newUsers: number = addedUsers.filter(
           (each: any) => each.isNewUser

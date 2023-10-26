@@ -11,7 +11,7 @@ import hideCompareLight from "../../../public/divami_icons/hideCompareLight.svg"
 import designCompareLight from "../../../public/divami_icons/designCompareLight.svg";
 import realityCompareLight from "../../../public/divami_icons/realityCompareLight.svg";
 import Tooltip from "@mui/material/Tooltip";
-
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import {
   HotspotBox,
   HotspotTitleDiv,
@@ -35,6 +35,7 @@ const CompareView = ({
   setActive,
   isDesignAvailable,
 }: any) => {
+  const customLogger = new CustomLoggerClass();
   useEffect(() => {
     setActive("hideCompare");
   }, [selectedType]);
@@ -45,7 +46,7 @@ const CompareView = ({
         <Tooltip title="Hide Compare">
           <CompareIcon
             id="hideCompare"
-            onClick={rightMenuClickHandler}
+            onClick={(e:any)=>{customLogger.logInfo("ToolBar - No Compare");rightMenuClickHandler(e)}}
             active={active}
           >
             <Image
@@ -62,6 +63,7 @@ const CompareView = ({
               id="compareDesign"
               onClick={(e: any) => {
                 if(isDesignAvailable)
+                customLogger.logInfo("ToolBar - Compare Design");
                 rightMenuClickHandler(e);
               }}
               isDesignAvailable={isDesignAvailable}
@@ -85,7 +87,7 @@ const CompareView = ({
         <Tooltip title="Compare Reality">
           <RealityCompareViewIcon
             id="compareReality"
-            onClick={rightMenuClickHandler}
+            onClick={(e:any)=>{ customLogger.logInfo("ToolBar - Compare Reality");rightMenuClickHandler(e)}}
             active={active}
           >
             <Image

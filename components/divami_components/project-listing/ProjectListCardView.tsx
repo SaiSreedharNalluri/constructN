@@ -53,14 +53,14 @@ import cardMenu from "../../../public/divami_icons/cardMenu.svg";
 import moment from "moment";
 import CustomLoader from "../custom_loader/CustomLoader";
 import { Tooltip } from "@material-ui/core";
-
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 export const ProjectListCardView = ({
   projects,
   projectActions,
   truncateString,
 }: any) => {
   const router = useRouter();
-
+  const customLogger = new CustomLoggerClass();
   const [projectsData, setProjectsData] = useState(
     projects?.length
       ? projects.map((each: any, index: number) => {
@@ -133,6 +133,7 @@ export const ProjectListCardView = ({
           onClick={(e: any) => {
             e.stopPropagation();
             router.push(`/projects/${each._id}/sections`);
+            customLogger.logInfo("Project Card - Sections");
           }}
         >
           <ProjectTopLeftBg />

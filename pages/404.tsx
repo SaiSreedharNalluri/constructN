@@ -4,16 +4,23 @@ import ErrorNotFound from "../public/divami_icons/ErrorNotFound.svg";
 import React, { useEffect, useState } from "react";
 import Header from "../components/divami_components/header/Header";
 import { getCookie } from "cookies-next";
+import * as Sentry from "@sentry/react";
+import CustomLoggerClass from "../components/divami_components/custom_logger/CustomLoggerClass";
 export default function Custom404() {
+  const customLogger = new CustomLoggerClass();
     const[isAuth,setIsAuth]=useState(false)
+    const[email,setEmail]=useState("");
   useEffect(()=>{
     const userObj: any = getCookie('user');
     let user = null;
     if (userObj) user = JSON.parse(userObj);
     if (user?.token) {
       setIsAuth(true);
+      setEmail(user.email)
     }
-  })
+    customLogger.logActivity(email,"email")
+  },[email])  
+  customLogger.logError ("Page not found");
   const router = useRouter();
   return (
     <React.Fragment>

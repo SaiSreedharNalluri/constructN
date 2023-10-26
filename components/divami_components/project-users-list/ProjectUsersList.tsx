@@ -67,7 +67,9 @@ import CustomLoader from "../custom_loader/CustomLoader";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
+import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 export const ProjectUsersList = ({ setShowEmptyState }: any) => {
+  const customLogger = new CustomLoggerClass();
   const [tableData, setTableData] = useState<any>([]);
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
@@ -243,6 +245,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
                   onClick={() => {
                     setShowEdit(true);
                     setSelectedRowData(rowData);
+                  customLogger.logInfo("Edit User Role")  
                   }}
                   className="cursor-pointer"
                 />
@@ -345,6 +348,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
 
   const formHandler = (event: any) => {
     setOpenDrawer(true);
+    customLogger.logInfo(`Add New User Menu`)
   };
   const updateRole = (selectedRole: string, rowData: any) => {
     const projectInfo = {

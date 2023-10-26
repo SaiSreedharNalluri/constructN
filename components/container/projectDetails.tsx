@@ -17,7 +17,9 @@ import { toast } from "react-toastify";
 import ChangeIcon from "./changeIcon";
 import { TooltipText } from "../divami_components/side-panel/SidePanelStyles";
 import moment from 'moment-timezone';
+import CustomLoggerClass from "../divami_components/custom_logger/CustomLoggerClass";
 const ProjectDetails: React.FC = () => {
+  const customLogger = new CustomLoggerClass();
   let [projectData, setProjectData] = useState<IProjects>();
   const router = useRouter();
   useEffect(() => {
@@ -82,6 +84,7 @@ const ProjectDetails: React.FC = () => {
       .catch((error) => {
         if (error.success === false) {
           CustomToast("You don't have access. Contact Admin.","error");
+        customLogger.logError(error)
         }
       });
   };

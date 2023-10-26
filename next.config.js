@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 //
+const { withSentryConfig } = require("@sentry/nextjs");
+
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
@@ -54,6 +56,35 @@ const nextConfig = {
       },
     ];
   },
+  sentry: {
+    disableServerWebpackPlugin: true,
+    disableClientWebpackPlugin: true,
+    hideSourceMaps: true,
+    widenClientFileUpload: true,
+    transpileClientSDK: true,
+    tunnelRoute: "/monitoring-tunnel",
+    autoInstrumentServerFunctions: false,
+    excludeServerRoutes: [
+      "/some/excluded/route",
+      "/excluded/route/with/[parameter]",
+      /^\/route\/beginning\/with\/some\/prefix/,
+      /\/routeContainingASpecificPathSegment\/?/,
+    ],
+    autoInstrumentMiddleware: false,
+    automaticVercelMonitors: false,
+    // See the sections below for information on the following options:
+    //   'Configure Source Maps':
+    //     - disableServerWebpackPlugin
+    //     - disableClientWebpackPlugin
+    //     - hideSourceMaps
+    //     - widenClientFileUpload
+    //   'Configure Legacy Browser Support':
+    //     - transpileClientSDK
+    //   'Configure Serverside Auto-instrumentation':
+    //     - autoInstrumentServerFunctions
+    //     - excludeServerRoutes
+    //   'Configure Tunneling to avoid Ad-Blockers':
+    //     - tunnelRoute
+  },
 };
-
-module.exports = nextConfig;
+module.exports =withSentryConfig( nextConfig);
