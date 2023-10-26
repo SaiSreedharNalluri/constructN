@@ -19,13 +19,13 @@ const Buttons : React.FC<IProps> =({ activeStep, steps, handleNext, handleBack }
   };
 
   return (
-    <div className=" calc-w  fixed bottom-0 mx-40 bg-gray p-4 flex justify-center">
-        <div className="border-t border-red-300 my-4"></div>
-          <div>
+    <div className=" calc-w  fixed bottom-0 mx-40 bg-gray p-3 flex justify-center mt-3">
+      <div>
        <Button
         disabled={activeStep === 0}
         onClick={handleBack}
         style={backButtonStyle}
+        size="small"
         className="mr-2"
       >
         Go Back
@@ -34,6 +34,7 @@ const Buttons : React.FC<IProps> =({ activeStep, steps, handleNext, handleBack }
         disabled={activeStep === steps.length - 1}
         onClick={handleNext}
         style={nextButtonStyle}
+        size="small"
       >
         Next
       </Button>

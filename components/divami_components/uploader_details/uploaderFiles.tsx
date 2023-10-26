@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import FileUploader from "../fileUploader/fileUploader";
+import FileListing from "../fileListing/fileListing";
 const UploaderFiles = () => {
-  const [isAppend,setIsAppend]=useState(false)
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
-  return (
+    return (
     <React.Fragment>
-      <div>
-        <FileUploader  isAppend={isAppend}selectedFile={selectedFile}setSelectedFile={setSelectedFile}></FileUploader>
+      <div className="flex flex-col">
+        <div>
+        <FileUploader  isAppend={true}selectedFile={selectedFile}setSelectedFile={setSelectedFile}/>
+        </div>
+       <div className="mt-5 mb-5">
+        <FileListing selectedFile={selectedFile} isSizeRequired={true}/>
+       </div>
       </div>
     </React.Fragment>
   );

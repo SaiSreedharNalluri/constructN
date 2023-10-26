@@ -1,5 +1,4 @@
 import React, { useCallback } from "react"
-
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import uploaderIcon from '../../../public/divami_icons/Upload_graphics.svg'
@@ -14,20 +13,17 @@ interface IProps{
 }
 let FileUploader:React.FC<IProps>=({isAppend,setSelectedFile,selectedFile})=>{
     
-    const onDrop = useCallback((acceptedFiles:any) => {
+    const onDrop = useCallback((acceptedFiles:File[]) => {
         // Do something with the accepted files, like uploading them
         if(acceptedFiles)
         {
           if(isAppend)
           {
-            const files: File[] = Array.from(acceptedFiles);
-            setSelectedFile([...selectedFile, ...files]);
-           
+            setSelectedFile((prevFiles) => [...prevFiles, ...acceptedFiles]);
           }
           else{
             const files: File[] = Array.from(acceptedFiles);
             setSelectedFile(files)
-            
           }
         }
       }, []);
