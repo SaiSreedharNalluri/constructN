@@ -20,6 +20,6 @@ export const userNotificationTypes = [
   { id: "Project", name: "Project" },
   { id: "Issue", name: "Issue" },
   { id: "Task", name: "Task" },
-  { id: "Snapshot", name: "Snapshot" },
+  { id: "Snapshot", name: "Capture" },
   // { id: "Tag", name: "Tag" },
 ];
