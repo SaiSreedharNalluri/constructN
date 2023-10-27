@@ -72,6 +72,8 @@ export const PotreeViewerUtils = () => {
 
     let _isSupportUser = false;
 
+    let _orientedImagesHidden = false;
+
     const initializeViewer = (viewerId, eventHandler, isSupportUser) => {
         console.log("potree inisde initializeViewer: ")
         _viewerId = viewerId;
@@ -656,7 +658,7 @@ export const PotreeViewerUtils = () => {
     }
 
     const loadOrientedImages = (image, index = 0) => {
-
+        showOrientedImages();
         setTimeout(() => {
             _viewer.scene.orientedImages[index].moveToImage(image);
         }, 1000);
@@ -672,8 +674,37 @@ export const PotreeViewerUtils = () => {
     const unloadOrientedImage = () => {
         if(_viewer.controls.elExit) {
             _viewer.controls.elExit.click();
+            // showOrientedImages();
         }
         // this.onOrientedImageUnload(this.viewer);
+    }
+
+    const hideOrientedImages = () => {
+        for (const realityKey in _realityLayers ) {
+            let reality = _realityLayers[realityKey];
+            switch (reality.type) {
+                case "Phone Image":
+                case "Drone Image":
+                    // console.log("testShowLayers: in switch", reality, _realityState[reality.type]);
+                    // _realityState[reality.type] = false;
+                    _viewer.scene.orientedImages[reality.index].visible = false;
+                    break;
+            }
+        }
+    }
+
+    const showOrientedImages = () => {
+        for (const realityKey in _realityLayers ) {
+            let reality = _realityLayers[realityKey];
+            switch (reality.type) {
+                case "Phone Image":
+                case "Drone Image":
+                    // console.log("testShowLayers: in switch", reality, _realityState[reality.type]);
+                    // _realityState[reality.type] = true;
+                    _viewer.scene.orientedImages[reality.index].visible = _realityState[reality.type];
+                    break;
+            }
+        }
     }
 
     const loadPanoImages = (image, index = 0, cameraInfo = null) => {
@@ -688,6 +719,8 @@ export const PotreeViewerUtils = () => {
         } else {
             _viewer.scene.images360[index].focus(image, true, cameraInfo);
         }
+
+        hideOrientedImages();
 
         // this.onPanoImageLoad(image, index, this.viewer);
 
@@ -852,13 +885,13 @@ export const PotreeViewerUtils = () => {
             // let show = layersList.find((e) => e === reality.type);
             // console.log("testShowLayers: in for", reality, _realityState[reality.type]);
             switch (reality.type) {
+                case "Phone Image":
                 case "Drone Image":
-                    // console.log("testShowLayers: in switch", reality, _realityState[reality.type]);
+                    // console.log("testShowLayers: in switch", _currentMode, reality, _realityState[reality.type]);
                     if (_currentMode === "3d") {
                         _viewer.scene.orientedImages[reality.index].visible = _realityState[reality.type];
                     }
                     break;
-                case "Phone Image":
                 case "360 Video":
                 case "360 Image":
                     break;
@@ -1809,13 +1842,14 @@ export const PotreeViewerUtils = () => {
         // console.log("Inside Key down listener: ", event);
         switch (event.key) {
             case "Escape":
-                if (_currentMode == "Drone Image" || _currentMode == "Phone Image") {
+                if (_currentMode == "Drone Image") {
                     // _viewer.controls.elExit.click();
                     for (const realityKey in _realityLayers ) {
                         let reality = _realityLayers[realityKey];
                         // let show = layersList.find((e) => e === reality.type);
                         // console.log("testShowLayers: in for", reality, _realityState[reality.type]);
                         switch (reality.type) {
+                            case "Phone Image":
                             case "Drone Image":
                                 // console.log("testShowLayers: in switch", reality, _realityState[reality.type]);
                                 _viewer.scene.orientedImages[reality.index].visible = _realityState[reality.type];
