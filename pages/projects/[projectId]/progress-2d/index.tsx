@@ -15,8 +15,12 @@ import SidePanelMenu from '../../../../components/divami_components/side-panel/S
 import Progress2DComponent from '../../../../components/viewer/progress-2d.component'
 
 import { LightBoxInstance, publish } from '../../../../services/light-box-service'
+
 import AssetCategoryPicker from '../../../../components/core/asset-category-picker'
-import { Button } from '@mui/material'
+
+import ClickTypesPicker from '../../../../components/viewer/segment-class-filters'
+
+import { Paper } from '@mui/material'
 
 
 const fetchViewerData = (projectId: string, structureId: string) => {
@@ -116,17 +120,17 @@ const Progress2DPage: React.FC<any> = () => {
                     for (const Key of Object.keys(baseSnapshot.layers)) {
 
                         for (let i = 0; i < baseSnapshot.layers[Key].length; i++) {
-        
+
                             if (!baseSnapshot.layers[Key][i].position) {
-        
+
                                 const path = baseSnapshot.layers[Key][i].path
-        
+
                                 try {
-        
+
                                     const response = await fetchImagesData(path)
-        
+
                                     baseSnapshot.layers[Key][i].position = response.data
-        
+
                                 } catch (e) { }
                             }
                         }
@@ -197,11 +201,11 @@ const Progress2DPage: React.FC<any> = () => {
                     <>
 
                         <div className='flex flex-col'>
-                            
+
                             <div>
-                                
+
                                 <Header showBreadcrumbs breadCrumbData={[]} showFirstElement={true} />
-                                
+
                             </div>
 
                             <div id='compare-container' className='flex w-full'>
@@ -212,18 +216,21 @@ const Progress2DPage: React.FC<any> = () => {
 
                                 </div>
 
-                                <div id='left-container' className={`w-2/3 flex ml-[2px] mt-[4px]`} style={{height: 'calc(100vh - 64px)'}}>
+                                <div id='left-container' className={`w-2/3 flex my-4 mx-2`} style={{ height: 'calc(100vh - 64px)' }}>
 
-                                    <Progress2DComponent id={'left-container'} viewType={'Plan Drawings'} snapshot={snapshotBase} />
+                                    {snapshotBase && <Progress2DComponent id={'left-container'} viewType={'Plan Drawings'} snapshot={snapshotBase} />}
 
                                 </div>
 
-                                <div id='right-container' className={'w-1/3'}>
+                                <div id='right-container' className={'w-1/3 my-4 mr-4 p-4'} style={{ height: 'calc(100vh - 88px)', border: '1px solid #e2e3e5', borderRadius: '6px' }}>
 
                                     <AssetCategoryPicker categories={assetCategories} />
 
-                                    <Button onClick={() => {publish('startTool', 'polygonTool')}} >Start Tool</Button>
+                                    <div className='w-fit mt-4'>
 
+                                        <ClickTypesPicker />
+
+                                    </div>
                                 </div>
 
                             </div>

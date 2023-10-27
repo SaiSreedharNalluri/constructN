@@ -1,5 +1,5 @@
 
-import { Autocomplete, Box, TextField } from '@mui/material'
+import { Autocomplete, Box, InputAdornment, TextField } from '@mui/material'
 
 import { IAssetCategory } from '../../models/IAssetCategory'
 
@@ -37,7 +37,7 @@ export default function AssetCategoryPicker({ categories }: { categories: IAsset
 
             id="asset-category-picker"
 
-            sx={{ width: 300 }}
+            sx={{ minWidth: 300 }}
 
             options={categories}
 
@@ -66,6 +66,8 @@ export default function AssetCategoryPicker({ categories }: { categories: IAsset
                     className='text-[#4a4a4a]'
 
                     label="Choose a category"
+
+                    size='small'
 
                     inputProps={{
 

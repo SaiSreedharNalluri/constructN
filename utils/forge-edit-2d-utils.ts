@@ -10,7 +10,11 @@ export class ForgeEdit2DUtils {
 
     private _offset: number[]
 
-    constructor(viewer: Autodesk.Viewing.GuiViewer3D, _edit2DExtn: Autodesk.Extensions.Edit2D) {
+    private _editable: boolean
+
+    private _shapeMap: {[key: number]: Autodesk.Edit2D.Shape} = {}
+
+    constructor(viewer: Autodesk.Viewing.GuiViewer3D, _edit2DExtn: Autodesk.Extensions.Edit2D, editable: boolean = false) {
 
         this._viewer = viewer
 
@@ -22,44 +26,36 @@ export class ForgeEdit2DUtils {
 
         this._addListeners()
 
+        this._editable = editable
+
         this._tm = new THREE.Matrix4().identity()
 
         this._offset = [0, 0, 0]
 
-        // Create simple triangle
-        var poly = new Autodesk.Edit2D.Polyline([
+         // Create simple triangle
+         var poly = new Autodesk.Edit2D.Polyline([
             { x: 10, y: 15 },
             { x: 20, y: 10 },
             { x: 15, y: 15 }
-        ]);
+        ], new Autodesk.Edit2D.Style({
+            lineColor: '#ff0000',
+            lineWidth: 8
+        }));
+
+        // (poly as any).visible = false
 
         // Show it
-        this._edit2DExtn.defaultContext.layer.addShape(poly);
+        this._edit2DExtn.defaultContext.layer.addShape(poly)
 
-        
-        // this._viewer.setNavigationLockSettings({
-
-        //     orbit: true,
-
-        //     pan: false,
-
-        //     zoom: true,
-
-        //     roll: true,
-
-        //     fov: true,
-
-        // })
-
-        // this._viewer.setNavigationLock(true)
-
-        subscribe('startTool', (event: any) => {
+        subscribe('progress-2d-tool', (event: any) => {
 
             const tool = event.detail
 
             console.log(event, tool)
 
-            this.startTool(this._edit2DExtn.defaultTools.polygonEditTool)
+            if(tool) this._startTool(this._getTool(tool))
+
+            else this._stopTool()
 
         })
 
@@ -67,11 +63,21 @@ export class ForgeEdit2DUtils {
 
             console.log(event)
 
-            // this.stopTool()
+            if(this._editable) {
 
-            console.log(this._edit2DExtn.defaultTools)
+                event.action.undo()
 
-            // this.startTool(this._edit2DExtn.defaultTools.polylineTool)
+                (this._edit2DExtn.defaultContext as any).selection.clear()
+
+            }
+
+            switch(event.action.constructor.name) {
+
+                case 'MoveVertex': 
+
+                    this._shapeMap[event.action.shape.id] = event.action.poly
+
+            }
 
         });
 
@@ -79,20 +85,37 @@ export class ForgeEdit2DUtils {
 
             console.log(event)
 
-            // this.stopTool()
-
-            // this.startTool(this._edit2DExtn.defaultTools.PolygonEditTool)
-
         })
+
     }
 
-    startTool(tool: Autodesk.Viewing.ToolInterface) {
+    setShapes(shapes: any[]) {
+
+
+    }
+
+    _getTool(type: string) {
+
+        switch(type) {
+
+            case 'Select': return this._edit2DExtn.defaultTools.polygonEditTool
+
+            case 'Move': return this._edit2DExtn.defaultTools.moveTool
+
+            case 'Polygon': return this._edit2DExtn.defaultTools.polygonTool
+
+            case 'Line': return this._edit2DExtn.defaultTools.polylineTool
+
+            case 'Circle': return this._edit2DExtn.defaultTools.insertSymbolTool
+
+        }
+    }
+
+    _startTool(tool: Autodesk.Viewing.ToolInterface) {
 
         const controller = this._viewer.toolController
 
         let activeTool: any = controller.getActiveTool()
-
-        console.log(activeTool.getName())
 
         const isEdit2D = activeTool && activeTool.getName().startsWith("Edit2")
 
@@ -111,18 +134,13 @@ export class ForgeEdit2DUtils {
 
         controller.activateTool(tool.getName())
 
-        console.log(controller.getActiveTool().getName())
-
     }
 
-    stopTool() {
+    _stopTool() {
 
         const controller = this._viewer.toolController
 
         let activeTool: any = controller.getActiveTool()
-
-        console.log(activeTool.getName())
-
         const isEdit2D = activeTool && activeTool.getName().startsWith("Edit2")
 
         // deactivate any previous edit2d tool
