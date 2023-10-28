@@ -71,6 +71,7 @@
     "react-rnd": "^10.4.1",
     "react-router-dom": "^6.8.1",
     "react-select": "^5.7.0",
+    "react-stepper": "^1.0.15",
     "react-tabs": "^6.0.0",
     "react-tagsinput": "^3.20.0",
     "react-toastify": "^9.1.1",

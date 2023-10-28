@@ -49,6 +49,7 @@ module.exports = {
         "botton-color": "#F0F0F0",
         "bg-projectPage": "#e3e3e34d",
         "bg-table-row": " #e0cbcb",
+        'border-yellow': '#F1742E'
       },
       fontSize: {
         xs: ["0.65rem", "0.65rem"],
