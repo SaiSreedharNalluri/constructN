@@ -9,12 +9,15 @@ import { AxiosResponse } from "axios";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import SectionList from "../../container/sectionList";
+import { useUploaderContext } from "../../../state/uploaderState/context";
 
 
 interface UploaderDateDetailsProps {
   onDateSelected: () => void;
 }
 const UploaderDateDetails : React.FC<UploaderDateDetailsProps> = ({ onDateSelected }) => {
+  const { state: uploaderState, uploaderContextAction } = useUploaderContext();
+  const { uploaderAction } = uploaderContextAction;
     const router = useRouter();
     const [structure, setStructure] = useState<IStructure>();
   const [selectedDate, setSelectedDate] = useState<any|null>(null);
@@ -27,6 +30,7 @@ const UploaderDateDetails : React.FC<UploaderDateDetailsProps> = ({ onDateSelect
     if (date !== null) {
     setSelectedDate(date);
     setShowMessage(false);
+    uploaderAction.updateDate(date)
     onDateSelected(); 
   } else {
     setSelectedDate(null);
