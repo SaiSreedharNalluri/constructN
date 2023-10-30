@@ -5,49 +5,34 @@ import UploaderDateDetails from "../../../../components/divami_components/upload
 import UploaderFiles from "../../../../components/divami_components/uploader_details/uploaderFiles";
 import UploaderStepper from "../../../../components/divami_components/uploader_details/uploaderStepper";
 import UploaderFooter from "../../../../components/divami_components/uploader_details/uploaderFooter"; 
+import { UploaderContextProvider, useUploaderContext } from "../../../../state/uploaderState/context";
+import { UploaderStep } from "../../../../state/uploaderState/state";
 
 interface IProps {}
 
 const Index: React.FC<IProps> = () => {
-  const [activeStep, setActiveStep] = useState(0);
+  const { state } = useUploaderContext();
   const [isDateSelected, setIsDateSelected] = useState(false);
 
-
-
-  const steps = [
-    "Details",
-    "Choose Files",
-    "Choose GCPs",
-    "Review",
-    "Upload",
-  ];
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
   const onDateSelected = () => {
     setIsDateSelected(true);
   };
 
   const renderCenterContent = () => {
-    switch (activeStep) {
-        case 0:
+    switch (state.step) {
+        case UploaderStep.Details:
           return  (
             <UploaderDateDetails
               onDateSelected={onDateSelected} // Pass the callback
             />
           );
-        case 1:
+        case UploaderStep.ChooseFiles:
           return <UploaderFiles/>;
-        case 2:
+        case UploaderStep.ChooseGCPs:
           return ;
-        case 3:
+        case UploaderStep.Review:
           return ;
-        case 4:
+        case UploaderStep.Upload:
           return ;
         default:
           return null;
@@ -64,26 +49,21 @@ const Index: React.FC<IProps> = () => {
           <SidePanelMenu onChangeData={() => {}}></SidePanelMenu>
         </div>
         <div className="calc-w calc-h mx-2 p-1 overflow-y-auto flex-1">
-          <UploaderStepper activeStep={activeStep} steps={steps} /> 
+          <UploaderStepper /> 
          
           <div className="flex-1 content-container max-h-[400px]">{renderCenterContent()}</div>
         </div>
         </div>
-        {isDateSelected && (
+        {state.date && (
             <div className="fixed m-4px  bg-transparent left-6 bottom-0 right-4  p-4 ">
 
 
           <UploaderFooter
-           activeStep={activeStep}
-           steps={steps}
-           handleNext={handleNext}
-           handleBack={handleBack}
            isDateSelected={isDateSelected}
         />
         </div>
         )} 
       </div>
-  
   );
 };
 

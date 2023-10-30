@@ -1,14 +1,15 @@
 import React from "react";
-import { Button } from "@mui/material";
+import { Button, Step } from "@mui/material";
+import { useUploaderContext } from "../../../state/uploaderState/context";
+import { UploaderStep } from "../../../state/uploaderState/state";
 
 interface IProps{
-    activeStep:any,
-    steps:any,
-    handleNext:any,
-    handleBack:any,
     isDateSelected: boolean;
 }
-const UploaderFooter : React.FC<IProps> =({ activeStep, steps, handleNext, handleBack,isDateSelected,}) => {
+const UploaderFooter : React.FC<IProps> =({isDateSelected}) => {
+  const { state, uploaderContextAction } = useUploaderContext();
+  const { uploaderAction } = uploaderContextAction;
+
 
   const containerStyle: React.CSSProperties = {
     
@@ -94,16 +95,16 @@ const UploaderFooter : React.FC<IProps> =({ activeStep, steps, handleNext, handl
         </div>
         <div style={buttonContainerStyle}>    
        <Button
-        disabled={activeStep === 0}
-        onClick={handleBack}
+        disabled={state.step === UploaderStep.Details}
+        onClick={() => uploaderAction.goBack()}
         className={`${backbuttonStyle} text-orange-500 border border-solid rounded-md`}
         
       >
         Go Back
       </Button>
       <Button
-        disabled={activeStep === steps.length - 1}
-        onClick={handleNext}
+        disabled={state.step === UploaderStep.Upload}
+        onClick={() => uploaderAction.next()}
         className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md`} 
       >
       Continue
