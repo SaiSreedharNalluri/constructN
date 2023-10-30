@@ -12,6 +12,8 @@ import SwipeRightOutlinedIcon from '@mui/icons-material/SwipeRightOutlined'
 
 import TouchAppOutlinedIcon from '@mui/icons-material/TouchAppOutlined'
 
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+
 import React, { FC } from 'react'
 
 import { publish } from '../../services/light-box-service'
@@ -134,6 +136,8 @@ const ClickTypesPicker: FC<any> = (props) => {
 
       case 'Move': return <SwipeRightOutlinedIcon />
 
+      case 'Delete': return <DeleteOutlineOutlinedIcon />
+
     }
 
   }
@@ -162,7 +166,7 @@ const ClickTypesPicker: FC<any> = (props) => {
 
   })
 
-  const iconButtons = ['Undo', 'Clear', 'Save'].map((type: string) => {
+  const iconButtons = ['Delete'].map((type: string) => {
 
     return (
 
@@ -176,7 +180,7 @@ const ClickTypesPicker: FC<any> = (props) => {
 
             setClickType(type)
 
-            publish('clickType', { clickType: type })
+            publish('progress-2d-tool', type)
 
           }}
 
@@ -248,11 +252,46 @@ const ClickTypesPicker: FC<any> = (props) => {
 
         </Tooltip>
 
-        <Divider orientation="vertical" variant="middle" className='w-[1.5px] bg-[#e5e5e5]' flexItem />
+      </SegmentToggleButtonGroup>
+
+      <Divider orientation="vertical" variant="middle" className='w-[1.5px] bg-[#e5e5e5]' flexItem />
+
+
+      <SegmentToggleButtonGroup
+
+        size='small'
+
+        exclusive
+
+        value={clickType}
+
+        onChange={(event: React.MouseEvent<HTMLElement>, newValue: string) => {
+
+          event.stopPropagation()
+
+          setClickType(newValue)
+
+          publish('progress-2d-tool', newValue)
+
+        }}
+
+        aria-label='text alignment'>
 
         {toggleButtons}
 
       </SegmentToggleButtonGroup>
+
+      <Divider orientation="vertical" variant="middle" flexItem />
+
+      <SegmentButtonGroup
+
+        variant="outlined"
+
+        aria-label='text alignment'>
+
+        {iconButtons}
+
+      </SegmentButtonGroup>
 
     </div>
 

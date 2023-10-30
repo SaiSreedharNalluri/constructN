@@ -9,7 +9,15 @@ import PolylineIcon from '@mui/icons-material/Polyline'
 
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 
-export default function AssetCategoryPicker({ categories }: { categories: IAssetCategory[] }) {
+export interface IProps {
+
+    categories: IAssetCategory[]
+    
+    onSelect: (category: IAssetCategory | null) => void
+
+}
+
+export default function AssetCategoryPicker({ categories, onSelect }: IProps) {
 
     const getIconForShape = (shape: string) => {
 
@@ -17,15 +25,15 @@ export default function AssetCategoryPicker({ categories }: { categories: IAsset
 
             case 'Polygon':
 
-                return <FormatShapesIcon sx={{fontSize: '0.9rem', color: '#7a7a7a'}} />
+                return <FormatShapesIcon sx={{ fontSize: '0.9rem', color: '#7a7a7a' }} />
 
             case 'Line':
 
-                return <PolylineIcon sx={{fontSize: '0.9rem', color: '#7a7a7a'}} />
+                return <PolylineIcon sx={{ fontSize: '0.9rem', color: '#7a7a7a' }} />
 
             case 'Circle':
 
-                return <RadioButtonUncheckedIcon sx={{fontSize: '0.9rem', color: '#7a7a7a'}} />
+                return <RadioButtonUncheckedIcon sx={{ fontSize: '0.9rem', color: '#7a7a7a' }} />
 
         }
 
@@ -37,11 +45,11 @@ export default function AssetCategoryPicker({ categories }: { categories: IAsset
 
             id="asset-category-picker"
 
-            sx={{ minWidth: 300 }}
-
             options={categories}
 
             autoHighlight
+
+            onChange={(event: React.SyntheticEvent, value: IAssetCategory | null, reason: string) => onSelect(value)}
 
             getOptionLabel={(option: IAssetCategory) => option.name}
 
@@ -49,9 +57,9 @@ export default function AssetCategoryPicker({ categories }: { categories: IAsset
 
                 <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
 
-                    { getIconForShape(option.shape) }
+                    {getIconForShape(option.shape)}
 
-                    <div className='ml-2 text-[14px] text-[#4a4a4a] font-light'>{ option.name }</div>
+                    <div className='ml-2 text-[14px] text-[#4a4a4a] font-light'>{option.name}</div>
 
                 </Box>
 

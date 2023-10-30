@@ -10,13 +10,17 @@ import { ForgeDataVizUtils } from '../../utils/forge-utils'
 
 import { ForgeEdit2DUtils } from '../../utils/forge-edit-2d-utils'
 
+import { IAsset } from '../../models/IAssetCategory'
+
 interface _ViewerProps {
 
     id: string,
 
     viewType: string,
 
-    snapshot: any
+    snapshot: any,
+
+    assets: IAsset[]
 }
 
 
@@ -56,6 +60,8 @@ function Progress2DComponent(props: _ViewerProps) {
     }
 
     useEffect(() => { setViewType(props.viewType) }, [props.viewType])
+
+    useEffect(() => { _edit2dUtils.current?.loadAssets(props.assets) }, [props.assets])
 
     useEffect(() => {
 

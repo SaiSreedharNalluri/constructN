@@ -14,13 +14,13 @@ import SidePanelMenu from '../../../../components/divami_components/side-panel/S
 
 import Progress2DComponent from '../../../../components/viewer/progress-2d.component'
 
-import { LightBoxInstance, publish } from '../../../../services/light-box-service'
+import { LightBoxInstance, publish, subscribe, unsubscribe } from '../../../../services/light-box-service'
 
 import AssetCategoryPicker from '../../../../components/core/asset-category-picker'
 
 import ClickTypesPicker from '../../../../components/viewer/segment-class-filters'
 
-import { Paper } from '@mui/material'
+import { IAsset, IAssetCategory } from '../../../../models/IAssetCategory'
 
 
 const fetchViewerData = (projectId: string, structureId: string) => {
@@ -38,6 +38,26 @@ const fetchAssetCategories = (projectId: string) => {
     try {
 
         return instance.get(`http://localhost:3001/api/asset-categories?project=${projectId}`)
+
+    } catch (error) { throw error }
+
+}
+
+const fetchAssets = (structureId: string, category: string) => {
+
+    try {
+
+        return instance.get(`http://localhost:3001/api/assets?structure=${structureId}&category=${category}`)
+
+    } catch (error) { throw error }
+
+}
+
+const createAsset = (asset: Partial<IAsset>) => {
+
+    try {
+
+        return instance.post(`http://localhost:3001/api/assets`, asset)
 
     } catch (error) { throw error }
 
@@ -67,21 +87,29 @@ const Progress2DPage: React.FC<any> = () => {
 
     const searchParamsRef = useRef<ReadonlyURLSearchParams>()
 
-    const projectId = searchParams.get('projectId')
-
-    const structureId = searchParams.get('structId')
-
-    const snapshotId = searchParams.get('snapshotId')
-
     const [snapshotBase, setSnapshotBase] = useState()
 
-    const [assetCategories, setAssetCategories] = useState([])
+    const [assetCategories, setAssetCategories] = useState<IAssetCategory[]>([])
+
+    const [assets, setAssets] = useState<IAsset[]>([])
+
+    const currentCategory = useRef<IAssetCategory>()
+
+    const structureId = useRef<string>()
 
     useEffect(() => {
 
-        if (structureId) {
+        const structId = searchParams.get('structId')
 
-            fetchViewerData(projectId!, structureId!).then(async data => {
+        const projId = searchParams.get('projectId')
+
+        const snapshotId = searchParams.get('snapshotId')
+
+        if (structId) {
+
+            structureId.current = structId
+
+            fetchViewerData(projId!, structId!).then(async data => {
 
                 LightBoxInstance.save(data.data.result)
 
@@ -145,7 +173,7 @@ const Progress2DPage: React.FC<any> = () => {
 
             }).catch(e => console.log(e))
 
-            fetchAssetCategories(projectId!).then(async data => {
+            fetchAssetCategories(projId!).then(async data => {
 
                 console.log(data.data.result)
 
@@ -186,6 +214,70 @@ const Progress2DPage: React.FC<any> = () => {
 
     }, [isScriptsLoaded])
 
+    useEffect(() => {
+
+        subscribe('add-2d-shape', _onAddShape)
+
+        return () => {
+
+            unsubscribe('add-2d-shape', _onAddShape)
+
+        }
+
+    }, [])
+
+    const _onAddShape = (event: Event) => {
+
+        const shapeDetails = (event as CustomEvent).detail
+
+        if (currentCategory.current !== undefined) {
+
+            const dbId = shapeDetails.id
+
+            const assetBody: Partial<IAsset> = {
+
+                name: `${currentCategory.current.name}`,
+
+                structure: structureId.current!,
+
+                category: currentCategory.current._id,
+
+                shape: shapeDetails.type,
+
+                points: shapeDetails.points
+
+            }
+
+            console.log(dbId, assetBody)
+
+            createAsset(assetBody).then(res => {
+
+                console.log(res)
+
+            }).catch(err => console.log(err))
+
+        }
+
+    }
+
+    const _onCategorySelected = (category: IAssetCategory | null) => {
+
+        if (category !== null) {
+
+            currentCategory.current = category
+
+            if (structureId.current!) fetchAssets(structureId.current!, currentCategory.current._id).then(res => {
+
+                if (res.data.success) setAssets(res.data.result)
+
+            }).catch(e => console.log(e))
+
+        }
+
+        console.log(currentCategory)
+
+    }
+
     return (
 
         <>
@@ -218,13 +310,13 @@ const Progress2DPage: React.FC<any> = () => {
 
                                 <div id='left-container' className={`w-2/3 flex my-4 mx-2`} style={{ height: 'calc(100vh - 64px)' }}>
 
-                                    {snapshotBase && <Progress2DComponent id={'left-container'} viewType={'Plan Drawings'} snapshot={snapshotBase} />}
+                                    {snapshotBase && <Progress2DComponent id={'left-container'} viewType={'Plan Drawings'} snapshot={snapshotBase} assets={assets} />}
 
                                 </div>
 
                                 <div id='right-container' className={'w-1/3 my-4 mr-4 p-4'} style={{ height: 'calc(100vh - 88px)', border: '1px solid #e2e3e5', borderRadius: '6px' }}>
 
-                                    <AssetCategoryPicker categories={assetCategories} />
+                                    <AssetCategoryPicker categories={assetCategories} onSelect={_onCategorySelected} />
 
                                     <div className='w-fit mt-4'>
 
