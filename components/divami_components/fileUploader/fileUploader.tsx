@@ -2,24 +2,41 @@ import React, { useCallback } from "react"
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import uploaderIcon from '../../../public/divami_icons/Upload_graphics.svg'
-import { useDropzone } from "react-dropzone";
+import { Accept, useDropzone } from "react-dropzone";
+import ExifReader from 'exifreader';
 export const UploaderIcon = styled(Image)({
     cursor: "pointer",
   });
 interface IProps{
     isAppend:boolean,
     setSelectedFile:React.Dispatch<React.SetStateAction<File[]>>,
-    selectedFile:File[]
-}
-let FileUploader:React.FC<IProps>=({isAppend,setSelectedFile,selectedFile})=>{
+    isExifRead:boolean,
+  }
+let FileUploader:React.FC<IProps>=({isAppend,setSelectedFile,isExifRead})=>{
     
     const onDrop = useCallback((acceptedFiles:File[]) => {
         // Do something with the accepted files, like uploading them
         if(acceptedFiles)
         {
+          if(isExifRead)
+          {
+            acceptedFiles.map((file:any)=>{
+              const reader = new FileReader();
+              reader.onload = (event) => {
+            const arrayBuffer:any = event?.target?.result;
+            const tags = ExifReader.load(arrayBuffer);
+            file.deviceId=tags?.BodySerialNumber?.description
+            file.timestamp=tags?.DateTimeOriginal?.description
+            file.altitude=tags?.GPSAltitude?.description
+            file.latitude=tags?.GPSLatitude?.description
+            file.longitude=tags?.GPSLongitude?.description
+          };
+            reader.readAsArrayBuffer(file);
+            })
+          }
           if(isAppend)
           {
-            setSelectedFile((prevFiles) => [...prevFiles, ...acceptedFiles]);
+             setSelectedFile((prevFiles) => [...prevFiles, ...acceptedFiles]);
           }
           else{
             const files: File[] = Array.from(acceptedFiles);

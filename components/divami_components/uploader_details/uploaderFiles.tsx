@@ -7,7 +7,7 @@ const UploaderFiles = () => {
     <React.Fragment>
       <div className="flex flex-col">
         <div>
-        <FileUploader  isAppend={true}selectedFile={selectedFile}setSelectedFile={setSelectedFile}/>
+        <FileUploader  isAppend={true} setSelectedFile={setSelectedFile} isExifRead={true}/>
         </div>
        <div className="mt-5 mb-5">
         <FileListing selectedFile={selectedFile} isSizeRequired={true}/>
