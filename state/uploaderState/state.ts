@@ -1,10 +1,13 @@
-import { IStructure } from "../../models/IStructure";
+import { ChildrenEntity, IStructure } from "../../models/IStructure";
 
 export interface UploaderState {
-    step: number
-    structure?: IStructure
-    date?: Date
-    stepNames: string[]
+    step: number;
+    date?: Date | null;
+    stepNames: string[];
+    showMessage: boolean;
+    structureList: IStructure[] | null;
+    sectionDetails: ChildrenEntity[];
+    
 }
 
 export enum UploaderStep {
@@ -23,5 +26,9 @@ export const initialUploaderState: UploaderState = {
         "Choose GCPs",
         "Review",
         "Upload",
-      ]
-}
+    ],
+    showMessage: true,
+    structureList: [],
+    sectionDetails:[],
+    
+};

@@ -18,6 +18,21 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 date: action.payload.date
             }
+        case UploaderActionType.setshowMessage:
+            return{
+                ...state,
+                showMessage:action.payload.showMessage
+            }
+        case UploaderActionType.setStructureList:
+            return{
+                ...state,
+                structureList:action.payload.structureList
+            }
+        case UploaderActionType.setSectionDetails:
+            return{
+                ...state,
+                sectionDetails:action.payload.sectionDetails
+            }
         default:
             return state
     }
