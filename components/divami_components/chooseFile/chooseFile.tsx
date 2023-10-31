@@ -12,7 +12,7 @@ interface IProps{
     setSelectedFile:React.Dispatch<React.SetStateAction<File[]>>,
     isExifRead:boolean,
   }
-let FileUploader:React.FC<IProps>=({isAppend,setSelectedFile,isExifRead})=>{
+let ChooseFile:React.FC<IProps>=({isAppend,setSelectedFile,isExifRead})=>{
     
     const onDrop = useCallback((acceptedFiles:File[]) => {
         // Do something with the accepted files, like uploading them
@@ -68,4 +68,4 @@ return(
 </div>
 </React.Fragment>)
 }
-export default FileUploader
+export default ChooseFile
