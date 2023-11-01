@@ -1,5 +1,4 @@
-import React, { useCallback } from "react"
-import ExifReader from 'exifreader';
+import React from "react"
 import ChooseFiles from "../chooseFile/chooseFiles"; 
 import UploadingStatus from './uploadingStatus'
 
