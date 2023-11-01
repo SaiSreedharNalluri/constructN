@@ -5,7 +5,9 @@ Sentry.init({
   dsn:`${process.env.NEXT_PUBLIC_SENTRY_DSN}`,
   
   // Replay may only be enabled for the client-side
-  integrations: [new Sentry.Replay()],
+  integrations: [new Sentry.Integrations.Breadcrumbs({
+    console: false
+  })],
 
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
