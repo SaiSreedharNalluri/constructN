@@ -88,7 +88,7 @@ export default function App({ Component, pageProps }: AppProps) {
  const [showPopUp, setshowPopUp] = useState(false);
   return (
     <>
-    <IntercomProvider appId={process.env.INTERCOM_APP_ID||"e3sowuh7"}>
+    <IntercomProvider appId={process.env.NEXT_PUBLIC_INTERCOM_APP_ID||""}>
         <Component {...pageProps} />
         </IntercomProvider>
         <StyledToastContainer
