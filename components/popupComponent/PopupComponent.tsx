@@ -78,6 +78,7 @@ export interface PopupComponentProps {
   imageSrc?:any;
   setShowbutton?: any;
   projectId?: string;
+  isUploader?:boolean
 }
 
 export function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -152,9 +153,9 @@ const PopupComponent = (props: PopupComponentProps) => {
     projectId,
     setSelectedOption,
     imageSrc,
-    isImageThere
+    isImageThere,
+    isUploader
   } = props;
-
   const handleClose = () => {
     setShowPopUp(false);
     if (setSelectedOption) {
@@ -164,7 +165,6 @@ const PopupComponent = (props: PopupComponentProps) => {
       setShowbutton(false);
     }
   };
-
   return (
     <div>
       <BootstrapDialog
@@ -183,7 +183,6 @@ const PopupComponent = (props: PopupComponentProps) => {
         >
           {modalTitle}
         </BootstrapDialogTitle>
-
         <DialogContent
           dividers
           style={
@@ -195,7 +194,8 @@ const PopupComponent = (props: PopupComponentProps) => {
           {modalContent ? (
             modalContent
           ) : (
-            <TextComponent>{isImageThere? <div className="flex"><Image src={imageSrc} alt="" width={20} height={20}></Image><p className="ml-[10px]">{ modalmessage}</p> </div>: <div>{modalmessage}</div> }</TextComponent>
+            <TextComponent>{isImageThere? <div className="flex">
+              <Image src={imageSrc} alt="" width={30} height={30}></Image><p className="ml-[10px]">{ modalmessage}</p> </div>: <div>{modalmessage}</div> }</TextComponent>
           )}
         </DialogContent>
         <DialogActions
@@ -230,7 +230,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 style={{
                   backgroundColor: "#FF843F",
                   color:"white",
-                  width: "180px",
+                  width: isUploader === undefined ? "180px":"250px",
                   height: "40px",
                   marginBottom: "22px",
                   marginRight: "22px",
