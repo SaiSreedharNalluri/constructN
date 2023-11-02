@@ -4,7 +4,7 @@ import authHeader from '../services/auth-header';
 import { WebWorkerManager } from '../utils/webWorkerManager';
 import Header from '../components/divami_components/header/Header';
 import SidePanelMenu from '../components/divami_components/side-panel/SidePanel';
-import FileUploader from '../components/divami_components/fileUploader/fileUploader';
+import FileUploader from '../components/divami_components/uploaderFIle/chooseUploaderFile';
 interface fileData{ status: string, fileName: string; }
 const MyComponent = () => {
   const router = useRouter();

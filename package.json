@@ -41,6 +41,7 @@
     "dayjs": "^1.11.7",
     "eslint": "8.27.0",
     "eslint-config-next": "13.0.2",
+    "exifreader": "^4.15.0",
     "firebase": "^9.22.2",
     "formik": "^2.2.9",
     "html2canvas": "^1.4.1",
