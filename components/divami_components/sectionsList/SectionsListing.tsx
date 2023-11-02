@@ -68,7 +68,7 @@ import { useRouter } from "next/router";
 import { getStructureHierarchy } from "../../../services/structure";
 import { AxiosResponse } from "axios";
 import { ChildrenEntity } from "../../../models/IStructure";
-import { getSectionsList } from "../../../services/sections";
+import { getSectionsList, getNewChipData, removeChip } from "../../../services/sections";
 import {
   CaptureModeParent,
   CountElem,
@@ -167,6 +167,7 @@ const[isProcessing,setProcessing]=useState(false);
     },
     numberOfFilters: 0,
   });
+  const[newchipData,setNewchipData]:any=useState([]);
   const customLogger = new CustomLoggerClass();
   useEffect(() => {
     if (taskFilterState.numberOfFilters > 0) {
@@ -243,7 +244,9 @@ const[isProcessing,setProcessing]=useState(false);
 
   useEffect(() => {
     if (router.isReady &&(!dataLoaded)) {
-      getSectionsList(router?.query?.projectId as string)
+      const type = "newSnapshot";
+      const projectId = router?.query?.projectId as string
+      getSectionsList(projectId)
         .then((response: AxiosResponse<any>) => {
           setGridData([response?.data?.result]);
           let removeGrandParent = response?.data?.result?.children?.map(
@@ -267,6 +270,14 @@ const[isProcessing,setProcessing]=useState(false);
         .catch((error) => {
           setDataLoaded(true)
         });
+        getNewChipData(projectId, type)
+            .then((response: any) => {
+              setNewchipData([...response.data.result]);
+            })
+            .catch((error) => {
+              console.error("Error fetching data:", error);
+            });
+        
     }
   }, [router.query.projectId]);
 
@@ -509,6 +520,15 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
   }
 
   return truncatedText;
+};  
+const handleDeleteNewChip = (chipIds:any,structureId:any) => {
+  const projectId = router?.query?.projectId as string;
+  removeChip(projectId,chipIds,structureId).then((res:any)=>{    
+    if(res.data.success===true){
+      const newData = newchipData.filter((chip:any) => chip._id !== chipIds);
+    setNewchipData([...newData])   
+    }
+  })
 };
   const columns = [
     {
@@ -535,6 +555,11 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
         <div className="flex items-center justify-between">  
         <div className="cursor-pointer"     
           onClick={() => {
+            newchipData.map((chipData:any)=>{
+              if(rowData._id===chipData.structure){
+                handleDeleteNewChip(chipData._id,chipData.structure)
+                }
+            })
             if(rowData?.designs.length!==0&& Object.keys(rowData.snapshots?.latestSnapshot).length <= 0) {
               setId(rowData._id);
               setCaptureAvailable(true)
@@ -566,7 +591,15 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
     ? <Chips isChip={true}  title="No Reality" bgColor="#C24200" ></Chips>  
     :  rowData?.designs.length!==0&&Object.keys(rowData.snapshots?.latestSnapshot).length > 0 && rowData.snapshots?.latestSnapshot?rowData.snapshots?.latestSnapshot?.state !== "Active"
     ? <Chips isChip={true}  title="Processing" bgColor="#006CD0" captureTime={true}></Chips> 
-    : "":""}
+    : newchipData.map((structureId:any) => {
+      if (rowData._id === structureId.structure) {
+        return <div key={rowData._id}>
+          <Chips isChip={true} title="New" bgColor="#8BD97F" />
+        </div> ;
+      }
+      return null;
+    })
+  :""}
           </div>
     
           </div>

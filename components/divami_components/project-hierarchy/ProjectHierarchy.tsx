@@ -39,6 +39,7 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 import Chips from "../sectionsList/Chip";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { getNewChipData, removeChip } from "../../../services/sections";
 const ProjectHierarchy = ({
   title,
   openSelectLayer,
@@ -60,6 +61,7 @@ const ProjectHierarchy = ({
   const[id,setId]=useState("");
   const[isCaptureAvailable,setCaptureAvailable]=useState(false);
   const[isProcessing,setProcessing]=useState(false);
+  const[newchipData,setNewchipData]:any=useState([]);
   const customLogger = new CustomLoggerClass();
   const handleExpand = () => {
     handleNodeExpand(getAllIds(treeViewData));
@@ -86,7 +88,29 @@ const ProjectHierarchy = ({
   //     }
   //   }
   // }, [treeViewData]);
-
+  useEffect(() => {
+    if (router.isReady) {
+      const type = "newSnapshot";
+      const projectId = router?.query?.projectId as string;
+        getNewChipData(projectId, type)
+            .then((response: any) => {
+              setNewchipData([...response.data.result]);
+            })
+            .catch((error) => {
+              console.error("Error fetching data:", error);
+            });
+        
+    }
+  }, [router.query.projectId]);
+  const handleDeleteNewChip = (chipIds:any,structureId:any) => {
+    const projectId = router?.query?.projectId as string;
+    removeChip(projectId,chipIds,structureId).then((res:any)=>{    
+      if(res.data.success===true){
+        const newData = newchipData.filter((chip:any) => chip._id !== chipIds);
+      setNewchipData([...newData])   
+      }
+    })
+  };
   const onLabelClick = (event: any, nodes: any) => {
     {
       window.localStorage.setItem("nodeData", JSON.stringify(nodes));
@@ -122,6 +146,7 @@ const ProjectHierarchy = ({
 
     return truncatedText;
   };
+
   const renderTreeNode = (node: any, onLabelClick: any) => (
   <LabelContainer data-testid="label" className={node?.snapshots && node?.designs?.length>0 && Object.keys(node?.snapshots?.latestSnapshot).length <= 0 || Object.keys(node?.snapshots?.latestSnapshot).length >=0 && node?.snapshots?.snapshotActiveCount <1 ?"bg-[#E7E7E7] ":""} >
     <div className="flex items-center">
@@ -149,6 +174,12 @@ const ProjectHierarchy = ({
         <></>
       )}
       <LabelText onClick={(e: any) =>{ 
+              newchipData.map((chipData:any)=>{
+                      if(node._id===chipData.structure){
+
+                        handleDeleteNewChip(chipData._id,chipData.structure)
+                        }
+                    })
           if(node?.designs.length>0 && Object.keys(node.snapshots?.latestSnapshot).length <= 0) {
             setCaptureAvailable(true)
             setId(node)
@@ -199,7 +230,19 @@ const ProjectHierarchy = ({
     <Chips title="P" bgColor="#006CD0" isChip={false} captureTime={true} ></Chips>
     </div>
     </TooltipText>  
-    : "":""}
+   : newchipData.map((structureId:any) => {
+    if (node._id === structureId.structure) {
+      return <div key={node._id}>
+    <TooltipText title="New" placement="right">
+<div>
+        <Chips isChip={false} title="N" bgColor="#8BD97F" />
+        </div>
+        </TooltipText>
+      </div> ;
+    }
+    return null;
+  })
+:""}
 </div>
      
 
