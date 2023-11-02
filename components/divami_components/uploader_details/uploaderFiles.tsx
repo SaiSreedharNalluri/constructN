@@ -17,7 +17,7 @@ const UploaderFiles = () => {
         reader.onload = (event) => {
         const arrayBuffer:any = event?.target?.result;
         const exifData = ExifReader.load(arrayBuffer);
-        if(exifData?.GPSLatitude?.description && exifData?.GPSLatitude?.description && exifData?.DateTimeOriginal?.description && exifData?.DateTimeOriginal?.description)
+        if(exifData?.DateTimeOriginal?.description && exifData?.DateTimeOriginal?.description)
         {
           file.deviceId=exifData?.BodySerialNumber?.description
           file.timestamp=exifData?.DateTimeOriginal?.description
