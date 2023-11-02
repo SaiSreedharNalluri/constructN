@@ -1,8 +1,14 @@
+import { ChildrenEntity, IStructure } from "../../models/IStructure"
+
 export enum UploaderActionType {
     GoBack,
     Next,
     Upload,
     UpdateDate,
+    setshowMessage,
+    setStructureList,
+    setSectionDetails,
+   
 }
 
 export interface GoBack {
@@ -22,6 +28,23 @@ export interface UpdateDate {
     payload:{ date: Date }
 }
 
+export interface setshowMessage {
+  type: UploaderActionType.setshowMessage
+  payload:{ showMessage: boolean }
+}
+
+export interface setStructureList {
+  type: UploaderActionType.setStructureList
+  payload:{structureList:IStructure[]|null}
+}
+
+export interface setSectionDetails {
+  type: UploaderActionType.setSectionDetails
+  payload:{sectionDetails:ChildrenEntity[]}
+}
+
+
+
 export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
     return {
       uploaderAction: {
@@ -35,10 +58,20 @@ export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
           dispatch({ type: UploaderActionType.Upload });
         },
         updateDate: (date: Date) => {
-            dispatch({ type: UploaderActionType.UpdateDate,  payload: {date: date}});
-          },
+          dispatch({ type: UploaderActionType.UpdateDate,  payload: {date: date}});
+        },
+        setshowMessage: (showMessage:boolean) => {
+          dispatch({ type: UploaderActionType.setshowMessage, payload:{showMessage: showMessage}});
+        },
+        setStructureList: (structureList:IStructure[]|null) => {
+          dispatch({ type: UploaderActionType.setStructureList, payload:{structureList:structureList}});
+        },
+        setSectionDetails: (sectionDetails:ChildrenEntity[]) => {
+          dispatch({ type: UploaderActionType.setSectionDetails, payload:{sectionDetails:sectionDetails}});
+        },
+
       },
     };
   };
 
-export type UploaderActions = GoBack | Next | Upload | UpdateDate
+export type UploaderActions = GoBack | Next | Upload | UpdateDate | setshowMessage | setStructureList | setSectionDetails

@@ -5,41 +5,31 @@ import { getAllIds, getSelectedLayers } from "../divami_components/project-hiera
 import { LabelIcon, StyledSpan, StyledTreeItem} from "../divami_components/project-hierarchy/StyledComponents";
 import { TooltipText } from "../divami_components/side-panel/SidePanelStyles";
 import { UploaderStyledTreeView,TreeViewContainer,LabelText,LabelContainer } from "../divami_components/uploader_details/uploaderStyles";
+import { useUploaderContext } from "../../state/uploaderState/context";
 
 interface IProps{
-  handleNodeSelection: any;
-  selectedNodes: any;
   handleNodeExpand: any;
   expandedNodes: any;
-  treeData: any;
+ 
   getStructureData:any;
 
 }
 const SectionList: React.FC<IProps>=({
-    treeData,
+    
     getStructureData,
-  handleNodeSelection,
-  selectedNodes,
   handleNodeExpand,
   expandedNodes,
 })=>{
-    const [treeViewData, setTreeViewData] = useState<any>(treeData);
+  const { state: uploaderState, uploaderContextAction } = useUploaderContext();
+    const [treeViewData, setTreeViewData] = useState<any>(uploaderState.sectionDetails);
     const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
     useEffect(() => {
-        setTreeViewData(treeData);
-      }, [treeData.length]);
-      const handleExpand = () => {
-        handleNodeExpand(getAllIds(treeViewData));
-      };
+        setTreeViewData(uploaderState.sectionDetails);
+      }, [uploaderState.sectionDetails.length]);
       useEffect(() => {
         const layersSelected = getSelectedLayers(treeViewData);
         setSelectedLayers(layersSelected);
-        handleExpand();
-    
-      }, [treeViewData]);
-      const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
-        handleNodeSelection(nodeIds);
-      };
+       }, [treeViewData]);
       const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
         handleNodeExpand(nodeIds);
       };
@@ -56,7 +46,6 @@ const SectionList: React.FC<IProps>=({
       };
       const onLabelClick = (event: any, nodes: any) => {
         {
-            window.localStorage.setItem("nodeData", JSON.stringify(nodes));
             getStructureData ? getStructureData(nodes) : null;
           if (
             !(
@@ -147,9 +136,7 @@ const SectionList: React.FC<IProps>=({
             defaultCollapseIcon={<></>}
             defaultExpandIcon={<></>}
             expanded={expandedNodes}
-            selected={selectedNodes}
             onNodeToggle={handleToggle}
-            onNodeSelect={handleSelect}
           >
             {treeViewData.map((eachNode:any) => renderTree(eachNode, onLabelClick))}
           </UploaderStyledTreeView>
