@@ -4,11 +4,13 @@ import FileListing from "../fileListing/fileListing";
 import ExifReader from "exifreader";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import  Warning  from "../../../public/divami_icons/Warning_Icon.svg";
+import { IExifFile } from "../../../models/IExifFile";
 const UploaderFiles = () => {
   const [unExifFiles,setUnExifFiles]=useState<File[]>([])
-  const [exifFiles,setExifFiles] =useState<File[]>([])
+  const [exifFiles,setExifFiles] =useState<IExifFile[]>([])
   const [showPopUp, setshowPopUp] = useState(false);
   const [message,setMessage]=useState<string>('')
+  const [duplicateFiles,setDuplicateFiles] =useState<any[]>([])
   const onDrop = useCallback((acceptedFiles:File[]) => {
     if(acceptedFiles)
     {
@@ -17,7 +19,7 @@ const UploaderFiles = () => {
         reader.onload = (event) => {
         const arrayBuffer:any = event?.target?.result;
         const exifData = ExifReader.load(arrayBuffer);
-        if(exifData?.DateTimeOriginal?.description && exifData?.DateTimeOriginal?.description)
+        if(exifData?.BodySerialNumber?.description && exifData?.DateTimeOriginal?.description)
         {
           file.deviceId=exifData?.BodySerialNumber?.description
           file.timestamp=exifData?.DateTimeOriginal?.description
@@ -26,7 +28,14 @@ const UploaderFiles = () => {
           file.longitude=exifData?.GPSLongitude?.description
           setExifFiles((prevFiles) =>
           {
-           return [...prevFiles, file]
+             if(prevFiles.some((prevFile:any) => prevFile?.deviceId === file.deviceId && prevFile?.timestamp === file.timestamp))
+            {
+            setDuplicateFiles((prevFiles) => [...prevFiles, file]);
+            return[...prevFiles]
+            }
+            else{
+              return [...prevFiles, file]
+            }
           });
         }
         else{
@@ -38,12 +47,22 @@ const UploaderFiles = () => {
       }
       }, []);
       useEffect(()=>{
-        if(unExifFiles.length>0)
+        if(unExifFiles.length> 0&& duplicateFiles.length>0)
+      {
+        setshowPopUp(true)
+        setMessage(`${unExifFiles.length} files donot have exif data. these files will not be uploaded and ${duplicateFiles.length} duplicate files will not be uploaded `)
+      }
+      else if(unExifFiles.length>0)
       {
         setshowPopUp(true)
         setMessage(`${unExifFiles.length} files donot have exif data. these files will not be uploaded`)
       }
-      },[unExifFiles])
+      else if(duplicateFiles.length>0)
+      {
+        setshowPopUp(true)
+        setMessage(`${duplicateFiles.length} duplicate files will not be uploaded`)
+      }
+      },[unExifFiles,duplicateFiles])
     return (
     <React.Fragment>
       <div className="flex flex-col">

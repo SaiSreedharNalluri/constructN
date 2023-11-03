@@ -7,10 +7,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Typography from "@mui/material/Typography";
 import { IconButton } from "@mui/material";
-import { fontSize } from "@mui/system";
-import CrossIcon from "../../public/divami_icons/crossIcon.svg";
 import Image from "next/image";
-import ProjectConfig from "../divami_components/project_config/ProjectConfig";
 import closeWithCircle from "../../public/divami_icons/closeWithCircle.svg";
 
 export const CloseIcon = styled(Image)({
@@ -56,6 +53,7 @@ const ButtonDiv = styled("div")({});
 export interface DialogTitleProps {
   id: string;
   children?: React.ReactNode;
+  isUploader:boolean,
   onClose: () => void;
 }
 export interface PopupComponentProps {
@@ -82,7 +80,7 @@ export interface PopupComponentProps {
 }
 
 export function BootstrapDialogTitle(props: DialogTitleProps) {
-  const { children, onClose, ...other } = props;
+  const { children,isUploader, onClose, ...other } = props;
 
   return (
     <DialogTitle
@@ -120,7 +118,10 @@ export function BootstrapDialogTitle(props: DialogTitleProps) {
           }}
         >
           {/* <CloseIcon src={CrossIcon} alt={"close icon"} /> */}
-          <CloseIcon src={closeWithCircle} alt={"close icon"} />
+          {
+            isUploader && <CloseIcon src={closeWithCircle} alt={"close icon"} />
+          }
+          
         </IconButton>
       ) : null}
     </DialogTitle>
@@ -154,8 +155,17 @@ const PopupComponent = (props: PopupComponentProps) => {
     setSelectedOption,
     imageSrc,
     isImageThere,
-    isUploader
+    isUploader =true,
   } = props;
+  const handleClosePopup=()=>{
+    if(isUploader === false)
+    {
+      return
+    }
+    else{
+      handleClose()
+    }
+  }
   const handleClose = () => {
     setShowPopUp(false);
     if (setSelectedOption) {
@@ -168,7 +178,7 @@ const PopupComponent = (props: PopupComponentProps) => {
   return (
     <div>
       <BootstrapDialog
-        onClose={handleClose}
+        onClose={handleClosePopup}
         aria-labelledby="customized-dialog-title"
         open={open}
         width={props.width}
@@ -180,6 +190,7 @@ const PopupComponent = (props: PopupComponentProps) => {
         <BootstrapDialogTitle
           id="customized-dialog-title"
           onClose={handleClose}
+          isUploader={isUploader}
         >
           {modalTitle}
         </BootstrapDialogTitle>
@@ -230,7 +241,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 style={{
                   backgroundColor: "#FF843F",
                   color:"white",
-                  width: isUploader === undefined ? "180px":"250px",
+                  width: isUploader  ? "180px":"250px",
                   height: "40px",
                   marginBottom: "22px",
                   marginRight: "22px",
