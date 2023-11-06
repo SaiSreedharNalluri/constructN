@@ -4,13 +4,17 @@ import { MutableRefObject, useEffect, useRef, useState } from 'react'
 
 import Forge from './forge'
 
-import { LightBoxInstance } from '../../services/light-box-service'
+import { LightBoxInstance, publish } from '../../services/light-box-service'
 
 import { ForgeDataVizUtils } from '../../utils/forge-utils'
 
 import { ForgeEdit2DUtils } from '../../utils/forge-edit-2d-utils'
 
-import { IAsset } from '../../models/IAssetCategory'
+import { IAsset, IAssetStage } from '../../models/IAssetCategory'
+
+import ClickTypesPicker from './segment-class-filters'
+
+import { Paper } from '@mui/material'
 
 interface _ViewerProps {
 
@@ -18,7 +22,7 @@ interface _ViewerProps {
 
     viewType: string,
 
-    snapshot: any,
+    snapshot: any
 
     assets: IAsset[]
 }
@@ -44,6 +48,8 @@ function Progress2DComponent(props: _ViewerProps) {
 
     const [modelsData, setModelsData] = useState<any[]>([])
 
+    const _assetMap = useRef<{ [key: string]: { assets: string[] } & Partial<IAssetStage> }>({})
+
 
     const onInit = async (forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D>) => {
 
@@ -61,7 +67,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
     useEffect(() => { setViewType(props.viewType) }, [props.viewType])
 
-    useEffect(() => { _edit2dUtils.current?.loadAssets(props.assets) }, [props.assets])
+    useEffect(() => _edit2dUtils.current?.loadAssets(props.assets), [props.assets])
 
     useEffect(() => {
 
@@ -84,35 +90,37 @@ function Progress2DComponent(props: _ViewerProps) {
 
         _offset.current = offset
 
-        if(_edit2dUtils.current) _edit2dUtils.current.setTransform(_tm.current, _offset.current)
+        if (_edit2dUtils.current) _edit2dUtils.current.setTransform(_tm.current, _offset.current)
 
         loadLayers(_layers.current)
+
+        publish('progress-2d-tool', 'Select')
 
     }
 
     const loadLayers = (layers?: any[], onLayersLoad?: Function) => {
 
-        if(_tm.current && _offset.current && _dataVizUtils.current) {
+        if (_tm.current && _offset.current && _dataVizUtils.current) {
 
             _dataVizUtils.current?.removeLoadedData()
 
             _dataVizUtils.current?.setTransform(_tm.current!, _offset.current!)
 
-            if(layers) _dataVizUtils.current.loadMediaData(layers)
+            // if (layers) _dataVizUtils.current.loadMediaData(layers)
         }
     }
 
     const onExtnLoaded = (_extn: Autodesk.Viewing.Extension, extensionId: string) => {
 
-        if(extensionId === 'Autodesk.DataVisualization') {
+        if (extensionId === 'Autodesk.DataVisualization') {
 
             _dataVizUtils.current = new ForgeDataVizUtils(_forge.current!, _extn as Autodesk.Extensions.DataVisualization)
 
-        } else if(extensionId === 'Autodesk.Edit2D') {
+        } else if (extensionId === 'Autodesk.Edit2D') {
 
             _edit2dUtils.current = new ForgeEdit2DUtils(_forge.current!, _extn as Autodesk.Extensions.Edit2D)
 
-            if(_tm.current && _offset.current) _edit2dUtils.current.setTransform(_tm.current, _offset.current)
+            if (_tm.current && _offset.current) _edit2dUtils.current.setTransform(_tm.current, _offset.current)
 
         }
 
@@ -157,6 +165,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
     return (
         <>
+
             <Forge
 
                 viewType={viewType}
@@ -170,6 +179,13 @@ function Progress2DComponent(props: _ViewerProps) {
                 onModelLoaded={onModelLoaded}
 
                 onExtnLoaded={onExtnLoaded} />
+
+            <Paper className='absolute w-fit h-fit' style={{ zIndex: 1 }} elevation={1}>
+
+                <ClickTypesPicker />
+
+            </Paper>
+
         </>
     )
 }

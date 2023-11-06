@@ -70,14 +70,14 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       toolTipMsg: "Views",
     },
 
-    // {
-    //   id: "structure",
-    //   icon: drawing,
-    //   activeIcon: drawingInactive,
-    //   isActive: false,
-    //   nextPage: "",
-    //   toolTipMsg: "Drawings",
-    // },
+    {
+      id: "progress-2d",
+      icon: tasks,
+      activeIcon: tasksHighlighted,
+      isActive: router.pathname.includes("progress-2d"),
+      nextPage: "",
+      toolTipMsg: "2D Progress",
+    },
 
     {
       id: "schedule",
@@ -182,6 +182,10 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     switch (e.currentTarget.id) {
       case "dashboard":
         router.push(`/projects/${router.query.projectId as string}/dashboard`);
+
+        break;
+      case "progress-2d":
+        router.push(`/projects/${router.query.projectId as string}/progress-2d`);
 
         break;
       case "views":

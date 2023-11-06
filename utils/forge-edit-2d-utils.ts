@@ -1,5 +1,5 @@
 
-import { IAsset, IAssetPoint } from '../models/IAssetCategory'
+import { IAsset, IAssetCategory, IAssetPoint, IAssetStage } from '../models/IAssetCategory'
 
 import { publish, subscribe } from '../services/light-box-service'
 
@@ -23,7 +23,7 @@ export class ForgeEdit2DUtils {
 
 
 
-    constructor(viewer: Autodesk.Viewing.GuiViewer3D, _edit2DExtn: Autodesk.Extensions.Edit2D, editable: boolean = false) {
+    constructor(viewer: Autodesk.Viewing.GuiViewer3D, _edit2DExtn: Autodesk.Extensions.Edit2D, editable: boolean = true) {
 
         this._viewer = viewer
 
@@ -57,13 +57,21 @@ export class ForgeEdit2DUtils {
 
         })
 
-        this._edit2DExtn.defaultContext.undoStack.addEventListener(Autodesk.Edit2D.UndoStack.AFTER_ACTION, (event: any) => {
+        subscribe('clear-shape-selection', (event: any) => {
+
+            (this._edit2DContext as any).selection.selectOnly(undefined)
+
+        })
+
+        this._edit2DContext.undoStack.addEventListener(Autodesk.Edit2D.UndoStack.AFTER_ACTION, (event: any) => {
 
             console.log(event)
 
             switch (event.action.constructor.name) {
 
                 case 'MoveVertex':
+
+                case 'Re':
 
                 case 'MoveLoop':
 
@@ -89,9 +97,15 @@ export class ForgeEdit2DUtils {
 
         });
 
-        (this._edit2DExtn.defaultContext as any).selection.addEventListener(Autodesk.Edit2D.Selection.Events.SELECTION_CHANGED, (event: any) => {
+        (this._edit2DContext as any).selection.addEventListener(Autodesk.Edit2D.Selection.Events.SELECTION_CHANGED, (event: any) => {
 
-            console.log(event)
+            // console.log(event)
+
+            const selected: any[] = Object.values(event.target.isSelected)
+
+            const selectedId = selected.length == 0 ? undefined : selected[0].name
+
+            publish('select-2d-shape', selectedId)
 
         })
 
@@ -103,34 +117,38 @@ export class ForgeEdit2DUtils {
 
         assets.forEach(asset => {
 
-            const color = asset.stage === undefined ? '#000077' : asset.stage.color
+            const color = asset.progress.stage == 'NOT_STARTED' ? '#000080' : (asset.progress.stage as IAssetStage).color
 
-            if(asset.shape == 'Polygon') this._createPolygon(asset.points, color)
+            if(asset.shape == 'Polygon') this._createPolygon(asset._id, asset.points, color)
 
-            else if(asset.shape == 'Polyline') this._createPolyline(asset.points, color)
+            else if(asset.shape == 'Polyline') this._createPolyline(asset._id, asset.points, color)
 
         })
 
     }
 
-    _createPolygon(points: IAssetPoint[], color: string) {
+    _createPolygon(assetId: string, points: IAssetPoint[], color: string) {
 
         var poly = new Autodesk.Edit2D.Polygon(points, new Autodesk.Edit2D.Style({
 
-            lineColor: color, lineWidth: 3
+            lineColor: color, lineWidth: 6, fillColor: color, fillAlpha: 0.25
 
-        }))
+        }));
+
+        (poly as any).name = assetId
 
         this._edit2DLayer.addShape(poly)
     }
 
-    _createPolyline(points: IAssetPoint[], color: string) {
+    _createPolyline(assetId: string, points: IAssetPoint[], color: string) {
 
         var poly = new Autodesk.Edit2D.Polyline(points, new Autodesk.Edit2D.Style({
 
-            lineColor: color, lineWidth: 3
+            lineColor: color, lineWidth: 6
 
-        }))
+        }));
+
+        (poly as any).name = assetId
 
         this._edit2DLayer.addShape(poly)
     }

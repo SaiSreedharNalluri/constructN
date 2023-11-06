@@ -22,6 +22,6 @@
     "pages/forge/index.jsx",
     "components/container/GenericViewer.jsx",
     "pages/projects/[projectId]/sections/SectionsStyles",
-    "utils/GenericViewerTransportLayer.js", "components/container/mapboxViewer.jsx", "pages/error-boundary.jsx"  ],
+    "utils/GenericViewerTransportLayer.js", "components/container/mapboxViewer.jsx", "pages/error-boundary.jsx", "pages/projects/[projectId]/progress-2d/asset-timeline"  ],
   "exclude": ["node_modules"]
 }

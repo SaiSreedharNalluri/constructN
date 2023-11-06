@@ -232,6 +232,10 @@ body {
   z-index: 15;
 }
 
+.adsk-viewing-viewer > .canvas-wrap > canvas {
+  cursor: pointer !important;
+}
+
 /* .Toastify {
   width: 334px;
   content: none;

@@ -360,7 +360,7 @@ function Forge(props: _ViewerProps) {
 
     return (
         <>
-            <div id={viewerId} className='relative w-full' ></div>
+            <div id={viewerId} className='relative h-full w-full' ></div>
         </>
     )
 }

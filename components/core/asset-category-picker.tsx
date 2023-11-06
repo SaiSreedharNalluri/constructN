@@ -12,12 +12,14 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 export interface IProps {
 
     categories: IAssetCategory[]
-    
-    onSelect: (category: IAssetCategory | null) => void
+
+    selected: IAssetCategory | undefined
+
+    onSelect: (category: IAssetCategory | undefined) => void
 
 }
 
-export default function AssetCategoryPicker({ categories, onSelect }: IProps) {
+export default function AssetCategoryPicker({ categories, selected, onSelect }: IProps) {
 
     const getIconForShape = (shape: string) => {
 
@@ -43,21 +45,19 @@ export default function AssetCategoryPicker({ categories, onSelect }: IProps) {
 
         <Autocomplete
 
-            id="asset-category-picker"
+            id='asset-category-picker' options={categories} autoHighlight value={selected}
 
-            options={categories}
+            isOptionEqualToValue={(option: IAssetCategory, value: IAssetCategory) => option._id === value._id}
 
-            autoHighlight
-
-            onChange={(event: React.SyntheticEvent, value: IAssetCategory | null, reason: string) => onSelect(value)}
+            onChange={(event: React.SyntheticEvent, value: IAssetCategory | null, reason: string) => onSelect(value == null ? undefined : value)}
 
             getOptionLabel={(option: IAssetCategory) => option.name}
 
             renderOption={(props, option: IAssetCategory) => (
 
-                <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                <Box component='li' sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
 
-                    {getIconForShape(option.shape)}
+                    {/* {getIconForShape(option.shape)} */}
 
                     <div className='ml-2 text-[14px] text-[#4a4a4a] font-light'>{option.name}</div>
 
@@ -71,17 +71,13 @@ export default function AssetCategoryPicker({ categories, onSelect }: IProps) {
 
                     {...params}
 
-                    className='text-[#4a4a4a]'
+                    className='text-[#4a4a4a]' label='Choose a category'
 
-                    label="Choose a category"
-
-                    size='small'
-
-                    inputProps={{
+                    size='small' inputProps={{
 
                         ...params.inputProps,
 
-                        autoComplete: 'new-password', // disable autocomplete and autofill
+                        autoComplete: 'off', // disable autocomplete and autofill
 
                     }}
                 />

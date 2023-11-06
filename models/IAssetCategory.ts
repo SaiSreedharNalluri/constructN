@@ -34,11 +34,15 @@ export interface IAssetStage {
 
 export interface IAsset {
 
+    _id: string
+
     name: string
 
-    category: string
+    category: string | IAssetCategory
 
-    stage?: IAssetStage
+    progress: IAssetProgress
+
+    progressSnapshot: IAssetProgress[]
 
     structure: string
 
@@ -52,8 +56,26 @@ export interface IAsset {
 
     description?: string
 
+    createdBy: any
+
     properties: any
     
+}
+
+export interface IAssetProgress {
+
+    stage: string | IAssetStage
+
+    measurement: number
+
+    uom: string
+
+    date: Date,
+
+    updatedBy: any
+
+    updatedAt: Date
+
 }
 
 export interface IAssetPoint {
@@ -63,5 +85,19 @@ export interface IAssetPoint {
     y: number
 
     r?: number
+
+}
+
+export const NOT_STARTED_STAGE: IAssetStage = { 
+    
+    name: 'NOT STARTED', 
+    
+    sequence: 0, 
+    
+    color: '#000080', 
+    
+    _id: 'NOT_STARTED', 
+    
+    uom: 'NA' 
 
 }

@@ -743,6 +743,29 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
           }</div>;
       },
     },
+
+
+    {
+      title: "Progress 2D",
+      field: "has2dProgress",
+      sorting: false,
+      headerStyle: {
+        borderBottom: "1px solid #FF843F",
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "500",
+        fontSize: "14px",
+        lineHeight: "20px",
+        color: "#101F4C",
+      },
+      cellStyle: { width: "24%" },
+   
+      render: (rowData: any) => {
+        return <div className="cursor-default">{
+          rowData?.has2dProgress ? "Yes" : "-"
+          }</div>;
+      },
+    },
   ];
 
 

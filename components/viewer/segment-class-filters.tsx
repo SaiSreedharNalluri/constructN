@@ -14,7 +14,7 @@ import TouchAppOutlinedIcon from '@mui/icons-material/TouchAppOutlined'
 
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 
 import { publish } from '../../services/light-box-service'
 
@@ -121,7 +121,6 @@ const ClickTypesPicker: FC<any> = (props) => {
 
   const [clickType, setClickType] = React.useState<string>('Select')
 
-
   const getIconForType = (type: string) => {
 
     switch (type) {
@@ -178,9 +177,9 @@ const ClickTypesPicker: FC<any> = (props) => {
 
             event.stopPropagation()
 
-            setClickType(type)
+            // setClickType(type)
 
-            publish('progress-2d-tool', type)
+            // publish('progress-2d-tool', type)
 
           }}
 
@@ -198,7 +197,7 @@ const ClickTypesPicker: FC<any> = (props) => {
 
   return (
 
-    <div className='flex' style={{ border: '1px solid #e2e3e5', borderRadius: '6px' }}>
+    <div className='flex'>
 
       <SegmentToggleButtonGroup
 
@@ -236,22 +235,6 @@ const ClickTypesPicker: FC<any> = (props) => {
 
         </Tooltip>
 
-        <Tooltip key={'Move'} title={`${'Move'} Shape`} arrow >
-
-          <ToggleButton
-
-            selected={clickType == 'Move'}
-
-            value={'Move'}
-
-            aria-label={'Move'} >
-
-            {getIconForType('Move')}
-
-          </ToggleButton>
-
-        </Tooltip>
-
       </SegmentToggleButtonGroup>
 
       <Divider orientation="vertical" variant="middle" className='w-[1.5px] bg-[#e5e5e5]' flexItem />
@@ -281,7 +264,7 @@ const ClickTypesPicker: FC<any> = (props) => {
 
       </SegmentToggleButtonGroup>
 
-      <Divider orientation="vertical" variant="middle" flexItem />
+      {/* <Divider orientation="vertical" variant="middle" flexItem />
 
       <SegmentButtonGroup
 
@@ -291,7 +274,7 @@ const ClickTypesPicker: FC<any> = (props) => {
 
         {iconButtons}
 
-      </SegmentButtonGroup>
+      </SegmentButtonGroup> */}
 
     </div>
 

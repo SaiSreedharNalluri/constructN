@@ -86,6 +86,9 @@ export const MapboxViewerUtils = () => {
       bearing: bearing ? bearing : 0,
       zoom: 16, // starting zoom
       maxZoom:21,
+      locale: {
+        'NavigationControl.ResetBearing': 'Click to align the map to True North.\nClick and drag in any direction for free orbit.'
+      }
     });
     const nav = new mapboxgl.NavigationControl({
       visualizePitch: true
