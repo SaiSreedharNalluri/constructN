@@ -10,7 +10,8 @@ export enum UploaderActionType {
     setStructureList,
     setSectionDetails,
     setStepperSideFilesList,
-    appendFiles setExtractedFileValue,
+    appendFiles ,
+    setExtractedFileValue,
     setIsNextEnabled,
 }
 
@@ -87,7 +88,7 @@ export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
         setStructureList: (structureList:IStructure[]|null) => {
           dispatch({ type: UploaderActionType.setStructureList, payload:{structureList:structureList}});
         },
-        setSectionDetails: (sectionDetails:ChildrenEntity[]) => {
+        setSectionDetails: (sectionDetails:IStructure) => {
           dispatch({ type: UploaderActionType.setSectionDetails, payload:{sectionDetails:sectionDetails}});
         },
         setStepperSideFilesList:(stepperSideFileList:boolean)=>{
@@ -99,9 +100,15 @@ export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
               payload: {files: files}
           })
         },
+        setExtractedFileValue: (extractedFileValue:any) => {
+          dispatch({ type: UploaderActionType.setExtractedFileValue, payload:{extractedFileValue:extractedFileValue}});
+        },
+        setIsNextEnabled:(IsNextEnabled:boolean)=>{
+          dispatch({type: UploaderActionType.setIsNextEnabled,payload:{IsNextEnabled:IsNextEnabled}})
+        },
       }
     }
 
   }
-export type UploaderActions = GoBack | Next | Upload | UpdateDate | setshowMessage | setStructureList | setSectionDetails |setStepperSideFilesList | appendFiles
+export type UploaderActions = GoBack | Next | Upload | UpdateDate | setshowMessage | setStructureList | setSectionDetails |setStepperSideFilesList | appendFiles |setExtractedFileValue | setIsNextEnabled
 
