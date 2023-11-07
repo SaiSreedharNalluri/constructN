@@ -7,6 +7,7 @@ export interface UploaderState {
     showMessage: boolean;
     structureList: IStructure[] | null;
     sectionDetails: ChildrenEntity[];
+    stepperSideFileList:boolean,
     
 }
 
@@ -19,7 +20,7 @@ export enum UploaderStep {
 }
 
 export const initialUploaderState: UploaderState = {
-    step: UploaderStep.Details,
+    step: UploaderStep.Upload,
     stepNames: [
         "Details",
         "Choose Files",
@@ -30,5 +31,6 @@ export const initialUploaderState: UploaderState = {
     showMessage: true,
     structureList: [],
     sectionDetails:[],
+    stepperSideFileList:true
     
 };

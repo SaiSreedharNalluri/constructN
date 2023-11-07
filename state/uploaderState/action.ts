@@ -8,7 +8,7 @@ export enum UploaderActionType {
     setshowMessage,
     setStructureList,
     setSectionDetails,
-   
+    setStepperSideFilesList
 }
 
 export interface GoBack {
@@ -43,6 +43,10 @@ export interface setSectionDetails {
   payload:{sectionDetails:ChildrenEntity[]}
 }
 
+export interface setStepperSideFilesList {
+  type: UploaderActionType.setStepperSideFilesList
+  payload:{ stepperSideFileList: boolean }
+}
 
 
 export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
@@ -69,9 +73,12 @@ export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
         setSectionDetails: (sectionDetails:ChildrenEntity[]) => {
           dispatch({ type: UploaderActionType.setSectionDetails, payload:{sectionDetails:sectionDetails}});
         },
+        setStepperSideFilesList:(stepperSideFileList:boolean)=>{
+          dispatch({type:UploaderActionType.setStepperSideFilesList,payload:{stepperSideFileList:stepperSideFileList}});
+        }
 
       },
     };
   };
 
-export type UploaderActions = GoBack | Next | Upload | UpdateDate | setshowMessage | setStructureList | setSectionDetails
+export type UploaderActions = GoBack | Next | Upload | UpdateDate | setshowMessage | setStructureList | setSectionDetails |setStepperSideFilesList

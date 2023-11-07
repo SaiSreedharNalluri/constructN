@@ -7,11 +7,13 @@ import UploaderStepper from "../../../../components/divami_components/uploader_d
 import UploaderFooter from "../../../../components/divami_components/uploader_details/uploaderFooter"; 
 import { UploaderContextProvider, useUploaderContext } from "../../../../state/uploaderState/context";
 import { UploaderStep } from "../../../../state/uploaderState/state";
+import UploaderFinal from "../../../../components/divami_components/uploader_details/uploaderFinal/uploaderFinal";
 
 interface IProps {}
 
 const Index: React.FC<IProps> = () => {
-  const { state } = useUploaderContext();
+  const { state: uploaderState, uploaderContextAction } = useUploaderContext();
+  const { uploaderAction } = uploaderContextAction;
   const [isDateSelected, setIsDateSelected] = useState(false);
 
   const onDateSelected = () => {
@@ -19,7 +21,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const renderCenterContent = () => {
-    switch (state.step) {
+    switch (uploaderState.step) {
         case UploaderStep.Details:
           return  (
             <UploaderDateDetails
@@ -33,7 +35,8 @@ const Index: React.FC<IProps> = () => {
         case UploaderStep.Review:
           return ;
         case UploaderStep.Upload:
-          return ;
+          uploaderAction.setStepperSideFilesList(false)
+          return (<UploaderFinal/>) ;
         default:
           return null;
       }
@@ -49,12 +52,13 @@ const Index: React.FC<IProps> = () => {
           <SidePanelMenu onChangeData={() => {}}></SidePanelMenu>
         </div>
         <div className="calc-w calc-h mx-2 p-1 overflow-y-auto flex-1">
-          <UploaderStepper /> 
-         
+          {
+            uploaderState.stepperSideFileList &&(<UploaderStepper />)
+          }
           <div className="flex-1 content-container max-h-[400px]">{renderCenterContent()}</div>
         </div>
         </div>
-        {state.date && (
+        {uploaderState.date && (
             <div className="fixed m-4px  bg-transparent left-6 bottom-0 right-4  p-4 ">
 
 
