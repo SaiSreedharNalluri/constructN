@@ -1,9 +1,11 @@
+import { AWS } from "../config/config";
+
 export const getStructurePath = (
     projectId: string,
     structureId: string
 ) => {
-    console.log(`${process.env.NEXT_PUBLIC_CONSTRUCTN_PROJECTS_S3}`)
-    return `${process.env.NEXT_PUBLIC_CONSTRUCTN_PROJECTS_S3}/${projectId}/structures/${structureId}`;
+    console.log(`${AWS.CDN_PROJECTS}`)
+    return `${AWS.CDN_PROJECTS}/${projectId}/structures/${structureId}`;
 }
 
 export const getSnapshotPath = (

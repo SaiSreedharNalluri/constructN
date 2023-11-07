@@ -1,10 +1,11 @@
 import axios from 'axios';
 import authHeader from './auth-header';
+import { API } from '../config/config';
 
 export const getjobsInfo = async (projectId: string) => {
   try {
     return await axios.get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs`,
+      `${API.BASE_URL}/projects/${projectId}/jobs`,
       {
         headers: authHeader.authHeader(),
       }
@@ -20,7 +21,7 @@ export const updateTheJobStatus = async (
 ) => {
   try {
     return await axios.put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs/${jobId}/updateStatus`,
+      `${API.BASE_URL}/projects/${projectId}/jobs/${jobId}/updateStatus`,
       { status: status },
       {
         headers: authHeader.authHeader(),
@@ -37,7 +38,7 @@ export const updateSelectedCapturesInJob = async (
 ) => {
   try {
     return await axios.put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs/${jobId}/update-selected-captures`,
+      `${API.BASE_URL}/projects/${projectId}/jobs/${jobId}/update-selected-captures`,
       { captureIds: captureIds },
       {
         headers: authHeader.authHeader(),

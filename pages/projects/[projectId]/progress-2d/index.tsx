@@ -34,12 +34,14 @@ import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDo
 
 import StructureHierarchy from '../../../../components/viewer/structure-hierarchy'
 
+import { API } from '../../../../config/config'
+
 
 const fetchViewerData = (projectId: string, structureId: string) => {
 
     try {
 
-        return instance.get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/structures/${structureId}/viewer-data`)
+        return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/${structureId}/viewer-data`)
 
     } catch (error) { throw error }
 
@@ -47,7 +49,7 @@ const fetchViewerData = (projectId: string, structureId: string) => {
 
 const fetchStructureHierarchy = (projectId: string) => {
 
-    try { return instance.get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/structures/hierarchy`) } catch (error) { throw error }
+    try { return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/hierarchy`) } catch (error) { throw error }
 
 }
 
@@ -55,7 +57,7 @@ const fetchAssetCategories = (projectId: string) => {
 
     try {
 
-        return instance.get(`http://localhost:3001/api/asset-categories?project=${projectId}`)
+        return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`)
 
     } catch (error) { throw error }
 
@@ -65,7 +67,7 @@ const fetchAssets = (structureId: string, category: string) => {
 
     try {
 
-        return instance.get(`http://localhost:3001/api/assets?structure=${structureId}&category=${category}`)
+        return instance.get(`${API.PROGRESS_2D_URL}/assets?structure=${structureId}&category=${category}`)
 
     } catch (error) { throw error }
 
@@ -75,7 +77,7 @@ const createAsset = (asset: Partial<IAsset>) => {
 
     try {
 
-        return instance.post(`http://localhost:3001/api/assets`, asset)
+        return instance.post(`${API.PROGRESS_2D_URL}/assets`, asset)
 
     } catch (error) { throw error }
 
@@ -85,7 +87,7 @@ const updateAsset = (assetId: string, asset: Partial<IAsset>) => {
 
     try {
 
-        return instance.put(`http://localhost:3001/api/assets/${assetId}`, asset)
+        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, asset)
 
     } catch (error) { throw error }
 
@@ -93,7 +95,7 @@ const updateAsset = (assetId: string, asset: Partial<IAsset>) => {
 
 const autodeskAuth = () => {
 
-    try { return instance.get(`${process.env.NEXT_PUBLIC_HOST}/aps/getAPSToken`) } catch (error) { throw error }
+    try { return instance.get(`${API.BASE_URL}/aps/getAPSToken`) } catch (error) { throw error }
 
 }
 

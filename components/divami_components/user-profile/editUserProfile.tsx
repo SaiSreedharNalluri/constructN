@@ -9,6 +9,7 @@ import { useState } from "react";
 import Footer from "./footer/Footer";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import ChangeIcon from "../../container/changeIcon";
+import { AWS } from "../../../config/config";
 const CloseIcon = styled(Image)({
   cursor: "pointer",
   width: "12px",
@@ -77,7 +78,7 @@ const EditUserProfile = ({
                 src={
                   userDetails?.avatar
                     ? userDetails?.avatar
-                    : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/user_icon_def_01.png`
+                    : `${AWS.CDN_ATTACHMENTS}/defaults/user_icon_def_01.png`
                 }
                 alt=""
                 width={75}
@@ -163,7 +164,7 @@ const EditUserProfile = ({
                   src={
                     userDetails?.avatar
                       ? userDetails?.avatar
-                      : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/user_icon_def_01.png`
+                      : `${AWS.CDN_ATTACHMENTS}/defaults/user_icon_def_01.png`
                   }
                   alt=""
                   width={75}

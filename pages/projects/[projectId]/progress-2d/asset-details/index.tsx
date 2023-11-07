@@ -10,12 +10,14 @@ import { Tab, Tabs } from '@mui/material'
 
 import AssetTimeline from '../asset-timeline'
 
+import { API } from '../../../../../config/config'
+
 
 const fetchAssetDetails = (assetId: string) => {
 
     try {
 
-        return instance.get(`http://localhost:3001/api/assets/${assetId}`)
+        return instance.get(`${API.PROGRESS_2D_URL}/assets/${assetId}`)
 
     } catch (error) { throw error }
 
@@ -25,7 +27,7 @@ const updateAssetDetails = (assetId: string, data: Partial<IAsset>) => {
 
     try {
 
-        return instance.put(`http://localhost:3001/api/assets/${assetId}`, data)
+        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, data)
 
     } catch (error) { throw error }
 
@@ -35,7 +37,7 @@ const changeAssetStage = (assetId: string, stage: string, date: Date) => {
 
     try {
 
-        return instance.put(`http://localhost:3001/api/assets/${assetId}/change-stage`, { stage, date })
+        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}/change-stage`, { stage, date })
 
     } catch (error) { throw error }
 

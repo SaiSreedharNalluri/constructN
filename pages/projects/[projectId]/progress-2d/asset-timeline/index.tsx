@@ -25,7 +25,7 @@ const AssetTimeline: React.FC<{ asset: IAsset }> = ({ asset }) => {
                 },
             }} >
 
-            {asset.progressSnapshot.map((item: IAssetProgress, index: number) => {
+            {asset?.progressSnapshot.map((item: IAssetProgress, index: number) => {
 
                 return <TimelineItem key={index}>
 

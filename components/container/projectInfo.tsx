@@ -7,6 +7,7 @@ import ChangeIcon from './changeIcon';
 import { Map, Marker } from 'react-map-gl';
 import { useRouter } from 'next/router';
 import { getProjectTypes } from '../../services/project';
+import { AWS } from '../../config/config';
 interface IProps {
   projectData: IProjects;
   updateProjectData: (updateInfo: object) => void;
@@ -67,7 +68,7 @@ const ProjectInfo: React.FC<IProps> = ({
           src={
             projectData.coverPhoto
               ? projectData.coverPhoto
-              : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/projectCoverPhoto.webp`
+              : `${AWS.CDN_ATTACHMENTS}/defaults/projectCoverPhoto.webp`
           }
         />
       </div>

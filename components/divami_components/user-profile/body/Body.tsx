@@ -8,6 +8,7 @@ import task from "../../../../public/divami_icons/fileTextIcon.svg";
 import CustomDrawer from "../../custom-drawer/custom-drawer";
 import ChangePassword from "../ChangePassword";
 import EditUserProfile from "../editUserProfile";
+import { AWS } from "../../../../config/config";
 
 const Body = ({
   userDetails,
@@ -50,7 +51,7 @@ const Body = ({
                 src={
                   userDetails?.avatar
                     ? userDetails?.avatar
-                    : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/user_icon_def_01.png`
+                    : `${AWS.CDN_ATTACHMENTS}/defaults/user_icon_def_01.png`
                 }
                 alt=""
                 width={75}
@@ -104,7 +105,7 @@ const Body = ({
                     src={
                       pData.coverPhoto
                         ? pData.coverPhoto
-                        : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/projectCoverPhoto.webp`
+                        : `${AWS.CDN_ATTACHMENTS}/defaults/projectCoverPhoto.webp`
                     }
                     alt=""
                   />

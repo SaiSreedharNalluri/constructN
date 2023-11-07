@@ -57,6 +57,7 @@
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
     "next": "13.4.9",
+    "mqtt": "^5.1.4",
     "react": "^18.2.0",
     "react-card-flip": "^1.2.0",
     "react-datepicker": "^4.8.0",

@@ -18,7 +18,7 @@ COPY next.config.js /my-project/
 
 FROM node:14-alpine as runner
 WORKDIR /my-project
-COPY .env.production ./.env
+#COPY .env.production ./.env
 # If you are using a custom next.config.js file, uncomment this line.
 COPY --from=builder /my-project/next.config.js ./
 COPY --from=builder /my-project/public ./public

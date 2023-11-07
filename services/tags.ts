@@ -1,9 +1,10 @@
 import instance from './axiosInstance';
 import authHeader from './auth-header';
+import { API } from '../config/config';
 export const updateTags = async (tagObj: Object, projectId: string) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tags/update`,
+      `${API.BASE_URL}/projects/${projectId}/tags/update`,
       tagObj,
       {
         headers: authHeader.authHeader(),
@@ -19,7 +20,7 @@ export const updateTags = async (tagObj: Object, projectId: string) => {
 };
 export const getTagsList = async (projectId: string) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tags`, {
+    .get(`${API.BASE_URL}/projects/${projectId}/tags`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -33,7 +34,7 @@ export const getTagsList = async (projectId: string) => {
 
 export const updateTagsListApi = async (projectId: string,tagList:any) => {
   return await instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tags/update`,
+    .put(`${API.BASE_URL}/projects/${projectId}/tags/update`,
     {tagList}, {
       headers: authHeader.authHeader(),
     })
@@ -48,7 +49,7 @@ export const updateTagsListApi = async (projectId: string,tagList:any) => {
 
 export const addTagsListApi = async (projectId: string,tagList:any) => {
   return await instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tags/push`,
+    .put(`${API.BASE_URL}/projects/${projectId}/tags/push`,
     {tagList}, {
       headers: authHeader.authHeader(),
     })
@@ -63,7 +64,7 @@ export const addTagsListApi = async (projectId: string,tagList:any) => {
 
 export const deleteTagsListApi = async (projectId: string,tagList:any) => {
   return await instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tags/pop`,
+    .put(`${API.BASE_URL}/projects/${projectId}/tags/pop`,
     {tagList}, {
       headers: authHeader.authHeader(),
     })

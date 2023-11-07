@@ -4,6 +4,7 @@ import Moment from "moment";
 import { useRouter } from "next/router";
 import NextImage from "../core/Image";
 import { Mixpanel } from "../analytics/mixpanel";
+import { AWS } from "../../config/config";
 interface IProps {
   projects: IProjects[];
   loading: boolean;
@@ -32,7 +33,7 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
                       src={
                         pData.coverPhoto
                           ? pData.coverPhoto
-                          : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/projectCoverPhoto.webp`
+                          : `${AWS.CDN_ATTACHMENTS}/defaults/projectCoverPhoto.webp`
                       }
                     />
                   </div>

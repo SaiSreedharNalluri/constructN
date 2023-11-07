@@ -1,10 +1,11 @@
 import instance from "./axiosInstance";
 import authHeader from "./auth-header";
+import { API } from "../config/config";
 export const getAllUserNotifications = async (
   pageNo: number,
   eventEmitter: string
 ) => {
-  let url = `${process.env.NEXT_PUBLIC_HOST}/user-notifications?offset=${pageNo}`
+  let url = `${API.BASE_URL}/user-notifications?offset=${pageNo}`
   if(eventEmitter){
     url = `${url}&category=${eventEmitter}`
   }
@@ -27,7 +28,7 @@ export const updateUserNotifications = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/user-notifications`,
+      `${API.BASE_URL}/user-notifications`,
       { userNotifications },
       {
         headers: authHeader.authHeader(),
@@ -45,7 +46,7 @@ export const clearUserNotificationsCount = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/user-notifications/delete-records`,
+      `${API.BASE_URL}/user-notifications/delete-records`,
       {},
       {
         headers: authHeader.authHeader(),

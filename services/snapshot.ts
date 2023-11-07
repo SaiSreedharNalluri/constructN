@@ -1,5 +1,6 @@
 import instance from "./axiosInstance";
 import authHeader from "./auth-header";
+import { API } from "../config/config";
 export const getSnapshotsList = async (
   projectId: string,
   structureId: string,
@@ -8,11 +9,11 @@ export const getSnapshotsList = async (
 ) => {
   return await instance.get(
     `${
-      process.env.NEXT_PUBLIC_HOST
+      API.BASE_URL
     }/projects/${projectId}/structures/${structureId}/snapshots?limit=${
       limit || 10
     }&offset=${offset || 1}`,
-    // `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/structures/${structureId}/snapshots`,
+    // `${API.BASE_URL}/projects/${projectId}/structures/${structureId}/snapshots`,
     {
       headers: authHeader.authHeader(),
     }
@@ -24,7 +25,7 @@ export const getSnapshotDetails = async (
   snapshotId: string
 ) => {
   return await instance.get(
-    `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/structures/${structureId}/snapshots/${snapshotId}`,
+    `${API.BASE_URL}/projects/${projectId}/structures/${structureId}/snapshots/${snapshotId}`,
     {
       headers: authHeader.authHeader(),
     }
