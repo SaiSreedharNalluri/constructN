@@ -8,7 +8,8 @@ phases:
         - echo Build started on `date`
         - aws --version
         - docker -v
-        - npm i --legacy-peer-deps
+        - npm i --legacy-peer-deps --production
+        - npm prune --production
         - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_NUMBER.dkr.ecr.$REGION.amazonaws.com/$IMAGE_REPO_NAME
         - envsubst < ecs/task-definition.json > ecs/task-definition1.json
         - cat ecs/task-definition1.json
