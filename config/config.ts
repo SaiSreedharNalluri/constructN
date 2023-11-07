@@ -9,7 +9,7 @@ export const API = {
 
     LOCAL_URL: 'http://localhost:3001/api/v1',
 
-    PROGRESS_2D_URL: 'https://api.qa.progress-2d.constructn.ai/api'
+    PROGRESS_2D_URL: 'https://api-progress-2d.qa-devops.constructn.ai/api'
 
 }
 
