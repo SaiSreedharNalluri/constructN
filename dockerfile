@@ -2,7 +2,7 @@ FROM 249540902715.dkr.ecr.us-west-2.amazonaws.com/baseimages:node-16-alpine as B
 WORKDIR /my-project
 COPY package*.json ./
 RUN npm install --legacy-peer-deps --omit=dev
-RUN npm prune --production
+RUN npm prune --legacy-peer-deps --production
 # RUN npm install -g pm2
 
 FROM 249540902715.dkr.ecr.us-west-2.amazonaws.com/baseimages:node-16-alpine as builder
