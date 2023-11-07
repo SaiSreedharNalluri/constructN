@@ -1,3 +1,4 @@
+import { IGCP } from "../../models/IGCP";
 import { RawImage } from "../../models/IRawImages";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
 
@@ -10,14 +11,19 @@ export interface choosenFileObject {
     duplicateFiles: uploadImage[]
 }
 
+
 export interface UploaderState {
     step: number;
     date?: Date | null;
     stepNames: string[];
     showMessage: boolean;
     structureList: IStructure[] | null;
-    sectionDetails: ChildrenEntity[];
+    sectionDetails:IStructure;
+    extractedFileValue:any;
+    isNextEnabled:boolean;
     choosenFiles: choosenFileObject;
+    gcpList?: IGCP;
+
 }
 
 export enum UploaderStep {
@@ -26,6 +32,16 @@ export enum UploaderStep {
     ChooseGCPs,
     Review,
     Upload
+}
+
+export enum UploaderButtonValues{
+    GoBack,
+    Continue,
+    ConfirmImages,
+    SkipGCPs,
+    ConfrimGCPs,
+    Upload
+
 }
 
 export const initialUploaderState: UploaderState = {
@@ -39,10 +55,14 @@ export const initialUploaderState: UploaderState = {
     ],
     showMessage: true,
     structureList: [],
-    sectionDetails:[],
+    sectionDetails: {} as IStructure,
+    extractedFileValue:[],
+    isNextEnabled: true,
     choosenFiles: {
         validFiles: [],
         invalidEXIFFiles: [],
         duplicateFiles: []
-    }
+    },
+    
 };
+
