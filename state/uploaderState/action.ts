@@ -2,14 +2,15 @@ import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import { fileWithExif } from "./state";
 
 export enum UploaderActionType {
-  GoBack,
-  Next,
-  Upload,
-  UpdateDate,
-  setshowMessage,
-  setStructureList,
-  setSectionDetails,
-  appendFiles,
+    GoBack,
+    Next,
+    Upload,
+    UpdateDate,
+    setshowMessage,
+    setStructureList,
+    setSectionDetails,
+    setStepperSideFilesList,
+    appendFiles
 }
 
 export interface GoBack {
@@ -44,63 +45,51 @@ export interface setSectionDetails {
   payload: { sectionDetails: ChildrenEntity[] };
 }
 
+export interface setStepperSideFilesList {
+  type: UploaderActionType.setStepperSideFilesList
+  payload:{ stepperSideFileList: boolean }
+}
 export interface appendFiles {
   type: UploaderActionType.appendFiles;
   payload: { files: fileWithExif[] };
 }
 
 export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
-  return {
-    uploaderAction: {
-      goBack: () => {
-        dispatch({ type: UploaderActionType.GoBack });
-      },
-      next: () => {
-        dispatch({ type: UploaderActionType.Next });
-      },
-      upload: () => {
-        dispatch({ type: UploaderActionType.Upload });
-      },
-      updateDate: (date: Date) => {
-        dispatch({
-          type: UploaderActionType.UpdateDate,
-          payload: { date: date },
-        });
-      },
-      setshowMessage: (showMessage: boolean) => {
-        dispatch({
-          type: UploaderActionType.setshowMessage,
-          payload: { showMessage: showMessage },
-        });
-      },
-      setStructureList: (structureList: IStructure[] | null) => {
-        dispatch({
-          type: UploaderActionType.setStructureList,
-          payload: { structureList: structureList },
-        });
-      },
-      setSectionDetails: (sectionDetails: ChildrenEntity[]) => {
-        dispatch({
-          type: UploaderActionType.setSectionDetails,
-          payload: { sectionDetails: sectionDetails },
-        });
-      },
-      appendFiles: (files: fileWithExif[]) => {
-        dispatch({
-            type: UploaderActionType.appendFiles,
-            payload: {files: files}
-        })
-      },
-    },
-  };
-};
+    return {
+      uploaderAction: {
+        goBack: () => {
+          dispatch({ type: UploaderActionType.GoBack });
+        },
+        next: () => {
+          dispatch({ type: UploaderActionType.Next });
+        },
+        upload: () => {
+          dispatch({ type: UploaderActionType.Upload });
+        },
+        updateDate: (date: Date) => {
+          dispatch({ type: UploaderActionType.UpdateDate,  payload: {date: date}});
+        },
+        setshowMessage: (showMessage:boolean) => {
+          dispatch({ type: UploaderActionType.setshowMessage, payload:{showMessage: showMessage}});
+        },
+        setStructureList: (structureList:IStructure[]|null) => {
+          dispatch({ type: UploaderActionType.setStructureList, payload:{structureList:structureList}});
+        },
+        setSectionDetails: (sectionDetails:ChildrenEntity[]) => {
+          dispatch({ type: UploaderActionType.setSectionDetails, payload:{sectionDetails:sectionDetails}});
+        },
+        setStepperSideFilesList:(stepperSideFileList:boolean)=>{
+          dispatch({type:UploaderActionType.setStepperSideFilesList,payload:{stepperSideFileList:stepperSideFileList}});
+        },
+        appendFiles: (files: fileWithExif[]) => {
+          dispatch({
+              type: UploaderActionType.appendFiles,
+              payload: {files: files}
+          })
+        },
+      }
+    }
 
-export type UploaderActions =
-  | GoBack
-  | Next
-  | Upload
-  | UpdateDate
-  | setshowMessage
-  | setStructureList
-  | setSectionDetails
-  | appendFiles
+  }
+export type UploaderActions = GoBack | Next | Upload | UpdateDate | setshowMessage | setStructureList | setSectionDetails |setStepperSideFilesList | appendFiles
+

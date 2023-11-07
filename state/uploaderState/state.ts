@@ -17,6 +17,7 @@ export interface UploaderState {
     showMessage: boolean;
     structureList: IStructure[] | null;
     sectionDetails: ChildrenEntity[];
+    stepperSideFileList:boolean,
     choosenFiles: choosenFileObject;
 }
 
@@ -40,6 +41,7 @@ export const initialUploaderState: UploaderState = {
     showMessage: true,
     structureList: [],
     sectionDetails:[],
+    stepperSideFileList:true,
     choosenFiles: {
         validFiles: [],
         invalidEXIFFiles: [],

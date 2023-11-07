@@ -34,6 +34,11 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 sectionDetails:action.payload.sectionDetails
             }
+            case UploaderActionType.setStepperSideFilesList:
+            return{
+                ...state,
+                stepperSideFileList:action.payload.stepperSideFileList
+            }
         case UploaderActionType.appendFiles:
             // console.log("ChooseFiles appendFilesReducer: ", action.payload.files)
             let updatedList =  getUpdatedFileList(state, action.payload.files);
