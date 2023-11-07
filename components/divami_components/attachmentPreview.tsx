@@ -86,6 +86,7 @@ const AttachmentPreview:React.FC<IProps>=({attachment,setShowPreview})=>{
         >
         <BootstrapDialogTitle
           id="customized-dialog-title"
+          isUploader={true}
           onClose={() => {
             setShowPreview(false)
             setOpenPreview(false);

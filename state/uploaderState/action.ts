@@ -2,14 +2,15 @@ import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import { fileWithExif } from "./state";
 
 export enum UploaderActionType {
-  GoBack,
-  Next,
-  Upload,
-  UpdateDate,
-  setshowMessage,
-  setStructureList,
-  setSectionDetails,
-  appendFiles, setExtractedFileValue,
+    GoBack,
+    Next,
+    Upload,
+    UpdateDate,
+    setshowMessage,
+    setStructureList,
+    setSectionDetails,
+    setStepperSideFilesList,
+    appendFiles setExtractedFileValue,
     setIsNextEnabled,
 }
 
@@ -56,16 +57,20 @@ export interface setIsNextEnabled{
   payload:{IsNextEnabled:boolean};
 }
 
+export interface setStepperSideFilesList {
+  type: UploaderActionType.setStepperSideFilesList
+  payload:{ stepperSideFileList: boolean }
+}
 export interface appendFiles {
   type: UploaderActionType.appendFiles;
   payload: { files: fileWithExif[] };
 }
 
 export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
-  return {
-    uploaderAction: {
-      goBack: () => {
-        dispatch({ type: UploaderActionType.GoBack });
+    return {
+      uploaderAction: {
+        goBack: () => {
+          dispatch({ type: UploaderActionType.GoBack });
         },
         next: () => {
           dispatch({ type: UploaderActionType.Next });
@@ -73,7 +78,7 @@ export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
         upload: () => {
           dispatch({ type: UploaderActionType.Upload });
         },
-        updateDate: (date: Date|null) => {
+        updateDate: (date: Date) => {
           dispatch({ type: UploaderActionType.UpdateDate,  payload: {date: date}});
         },
         setshowMessage: (showMessage:boolean) => {
@@ -82,33 +87,21 @@ export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
         setStructureList: (structureList:IStructure[]|null) => {
           dispatch({ type: UploaderActionType.setStructureList, payload:{structureList:structureList}});
         },
-        setSectionDetails: (sectionDetails:any) => {
+        setSectionDetails: (sectionDetails:ChildrenEntity[]) => {
           dispatch({ type: UploaderActionType.setSectionDetails, payload:{sectionDetails:sectionDetails}});
         },
-        setExtractedFileValue: (extractedFileValue:any) => {
-          dispatch({ type: UploaderActionType.setExtractedFileValue, payload:{extractedFileValue:extractedFileValue}});
+        setStepperSideFilesList:(stepperSideFileList:boolean)=>{
+          dispatch({type:UploaderActionType.setStepperSideFilesList,payload:{stepperSideFileList:stepperSideFileList}});
         },
-        setIsNextEnabled:(IsNextEnabled:boolean)=>{
-          dispatch({type: UploaderActionType.setIsNextEnabled,payload:{IsNextEnabled:IsNextEnabled}})
+        appendFiles: (files: fileWithExif[]) => {
+          dispatch({
+              type: UploaderActionType.appendFiles,
+              payload: {files: files}
+          })
         },
-      appendFiles: (files: fileWithExif[]) => {
-        dispatch({
-            type: UploaderActionType.appendFiles,
-            payload: {files: files}
-        })
-      },
-    },
-  };
-}
+      }
+    }
 
-export type UploaderActions =
-  | GoBack
-  | Next
-  | Upload
-  | UpdateDate
-  | setshowMessage
-  | setStructureList
-  | setSectionDetails
-  | appendFiles
-  | setExtractedFileValue | setIsNextEnabled
+  }
+export type UploaderActions = GoBack | Next | Upload | UpdateDate | setshowMessage | setStructureList | setSectionDetails |setStepperSideFilesList | appendFiles
 

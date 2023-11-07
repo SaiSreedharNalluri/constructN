@@ -36,6 +36,11 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 sectionDetails:action.payload.sectionDetails
             }
+            case UploaderActionType.setStepperSideFilesList:
+            return{
+                ...state,
+                stepperSideFileList:action.payload.stepperSideFileList
+            }
         case UploaderActionType.setExtractedFileValue:
             return{
                 ...state,

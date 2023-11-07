@@ -21,6 +21,7 @@ export interface UploaderState {
     sectionDetails:IStructure;
     extractedFileValue:any;
     isNextEnabled:boolean;
+    stepperSideFileList:boolean,
     choosenFiles: choosenFileObject;
     gcpList?: IGCP;
 
@@ -57,6 +58,7 @@ export const initialUploaderState: UploaderState = {
     structureList: [],
     sectionDetails: {} as IStructure,
     extractedFileValue:[],
+    stepperSideFileList:true,
     isNextEnabled: true,
     choosenFiles: {
         validFiles: [],

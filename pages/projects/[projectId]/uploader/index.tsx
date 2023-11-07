@@ -7,16 +7,18 @@ import UploaderStepper from "../../../../components/divami_components/uploader_d
 import UploaderFooter from "../../../../components/divami_components/uploader_details/uploaderFooter"; 
 import { UploaderContextProvider, useUploaderContext } from "../../../../state/uploaderState/context";
 import { UploaderStep } from "../../../../state/uploaderState/state";
+import UploaderFinal from "../../../../components/divami_components/uploader_details/uploaderFinal/uploaderFinal";
 import UploaderGCP from "../../../../components/divami_components/uploader_details/uploaderGCP";
 import UploaderReview from "../../../../components/divami_components/uploader_details/uploaderReview";
 
 interface IProps {}
 
 const Index: React.FC<IProps> = () => {
-  const { state } = useUploaderContext();
+  const { state: uploaderState, uploaderContextAction } = useUploaderContext();
+  const { uploaderAction } = uploaderContextAction;
  
   const renderCenterContent = () => {
-    switch (state.step) {
+    switch (uploaderState.step) {
         case UploaderStep.Details:
           return  (
             <UploaderDateDetails/>
@@ -28,7 +30,8 @@ const Index: React.FC<IProps> = () => {
         case UploaderStep.Review:
           return  <UploaderReview/>;
         case UploaderStep.Upload:
-          return ;
+          uploaderAction.setStepperSideFilesList(false)
+          return (<UploaderFinal/>) ;
         default:
           return null;
       }
@@ -44,8 +47,9 @@ const Index: React.FC<IProps> = () => {
           <SidePanelMenu onChangeData={() => {}}></SidePanelMenu>
         </div>
         <div className="calc-w calc-h mx-2 p-1 overflow-y-auto flex-1">
-          <UploaderStepper /> 
-         
+          {
+            uploaderState.stepperSideFileList &&(<UploaderStepper />)
+          }
           <div className="flex-1 content-container max-h-[400px]">{renderCenterContent()}</div>
         </div>
         </div>
