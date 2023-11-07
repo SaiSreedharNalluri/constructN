@@ -1,5 +1,6 @@
 import moment from "moment-timezone";
 import { getCookie } from "cookies-next";
+import ExifReader from "exifreader";
 
 
 /**
@@ -23,4 +24,10 @@ export const getTimeInProjectTimezone = (date: Date): moment.Moment => {
     }
 
     return formatedTime;
+}
+
+
+export const getEXIFDataFromImageFile = async (file: File): Promise<ExifReader.Tags> => {
+    let exifData: ExifReader.Tags = await ExifReader.load(file)
+    return exifData
 }
