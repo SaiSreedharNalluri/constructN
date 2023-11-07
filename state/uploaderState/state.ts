@@ -30,7 +30,7 @@ export enum UploaderStep {
 }
 
 export const initialUploaderState: UploaderState = {
-    step: UploaderStep.Upload,
+    step: UploaderStep.Details,
     stepNames: [
         "Details",
         "Choose Files",
