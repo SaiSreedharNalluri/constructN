@@ -7,31 +7,26 @@ import UploaderStepper from "../../../../components/divami_components/uploader_d
 import UploaderFooter from "../../../../components/divami_components/uploader_details/uploaderFooter"; 
 import { UploaderContextProvider, useUploaderContext } from "../../../../state/uploaderState/context";
 import { UploaderStep } from "../../../../state/uploaderState/state";
+import UploaderGCP from "../../../../components/divami_components/uploader_details/uploaderGCP";
+import UploaderReview from "../../../../components/divami_components/uploader_details/uploaderReview";
 
 interface IProps {}
 
 const Index: React.FC<IProps> = () => {
   const { state } = useUploaderContext();
-  const [isDateSelected, setIsDateSelected] = useState(false);
-
-  const onDateSelected = () => {
-    setIsDateSelected(true);
-  };
-
+ 
   const renderCenterContent = () => {
     switch (state.step) {
         case UploaderStep.Details:
           return  (
-            <UploaderDateDetails
-              onDateSelected={onDateSelected} // Pass the callback
-            />
+            <UploaderDateDetails/>
           );
         case UploaderStep.ChooseFiles:
           return <UploaderFiles/>;
         case UploaderStep.ChooseGCPs:
-          return ;
+          return <UploaderGCP/>
         case UploaderStep.Review:
-          return ;
+          return  <UploaderReview/>;
         case UploaderStep.Upload:
           return ;
         default:
@@ -54,15 +49,13 @@ const Index: React.FC<IProps> = () => {
           <div className="flex-1 content-container max-h-[400px]">{renderCenterContent()}</div>
         </div>
         </div>
-        {state.date && (
+        
             <div className="fixed m-4px  bg-transparent left-6 bottom-0 right-4  p-4 ">
 
 
-          <UploaderFooter
-           isDateSelected={isDateSelected}
-        />
+          <UploaderFooter/>
         </div>
-        )} 
+        
       </div>
   );
 };
