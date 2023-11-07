@@ -1,11 +1,11 @@
-FROM node:14-alpine as BUILD_IMAGE
+FROM 249540902715.dkr.ecr.us-west-2.amazonaws.com/baseimages:node-16-alpine as BUILD_IMAGE
 WORKDIR /my-project
 COPY package*.json ./
 RUN npm install --production
 RUN npm prune --production
 # RUN npm install -g pm2
 
-FROM node:14-alpine as builder
+FROM 249540902715.dkr.ecr.us-west-2.amazonaws.com/baseimages:node-16-alpine as builder
 WORKDIR /my-project
 # COPY . .
 COPY --from=BUILD_IMAGE /my-project/node_modules ./node_modules
@@ -16,7 +16,7 @@ COPY next.config.js /my-project/
 # RUN npm run build
 
 
-FROM node:14-alpine as runner
+FROM 249540902715.dkr.ecr.us-west-2.amazonaws.com/baseimages:node-16-alpine as runner
 WORKDIR /my-project
 #COPY .env.production ./.env
 # If you are using a custom next.config.js file, uncomment this line.
