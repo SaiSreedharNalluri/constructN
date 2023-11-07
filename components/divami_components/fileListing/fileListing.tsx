@@ -3,7 +3,7 @@ import FileNameListing from "./fileNameListing"
 import FileSizeListing from "./fileSizeListing"
 import { IExifFile } from "../../../models/IExifFile"
 interface Iprops{
-    selectedFile:IExifFile[],
+    selectedFile:File[],
     isSizeRequired:boolean
 }
 const FileListing:React.FC<Iprops>=({selectedFile,isSizeRequired})=>{
@@ -20,9 +20,9 @@ const FileListing:React.FC<Iprops>=({selectedFile,isSizeRequired})=>{
         </tr>
         </thead> 
         <tbody> 
-    {selectedFile?.length>0&& selectedFile.map((fileInfo:any)=>{
+    {selectedFile?.length>0&& selectedFile.map((fileInfo, index)=>{
        return(
-        <tr key={fileInfo.timestamp} >
+        <tr key={index} >
             <td className="pl-2">
             <FileNameListing fileName={fileInfo.name}/>
             </td>
