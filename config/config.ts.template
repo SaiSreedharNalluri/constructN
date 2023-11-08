@@ -1,0 +1,26 @@
+
+export const MIX_PANEL_TOKEN = "${APP_MIX_PANEL_TOKEN}"
+
+export const MAPBOX_TOKEN = "${APP_MAPBOX_TOKEN}"
+
+export const API = {
+
+    BASE_URL: "${APP_BASE_URL}",
+
+    LOCAL_URL: "${APP_LOCAL_URL}",
+
+    PROGRESS_2D_URL: "${APP_PROGRESS_2D_URL}"
+
+}
+
+export const AWS = {
+
+    PROJECTS_BUCKET: "${APP_PROJECTS_BUCKET}",
+
+    ATTACHMENTS_BUCKET: "${APP_ATTACHMENTS_BUCKET}",
+
+    CDN_PROJECTS: "${APP_CDN_PROJECTS}",
+
+    CDN_ATTACHMENTS: "${APP_CDN_ATTACHMENTS}"
+
+}
