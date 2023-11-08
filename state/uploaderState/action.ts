@@ -1,3 +1,4 @@
+import { IProjectUserList, IProjects } from "../../models/IProjects";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import { fileWithExif } from "./state";
 
@@ -7,27 +8,34 @@ export enum UploaderActionType {
     Upload,
     UpdateDate,
     setshowMessage,
-    setStructureList,
-    setSectionDetails,
+    setProject,
+    setStructure,
     setStepperSideFilesList,
-    appendFiles
+    appendFiles,
+    skipGCP,
+    setExtractedFileValue,
+    setIsNextEnabled,
 }
 
-export interface GoBack {
+export interface goBack {
   type: UploaderActionType.GoBack;
 }
 
-export interface Next {
+export interface next {
   type: UploaderActionType.Next;
 }
 
-export interface Upload {
+export interface upload {
   type: UploaderActionType.Upload;
 }
 
+export interface skipGCP {
+    type: UploaderActionType.skipGCP;
+  }
+
 export interface UpdateDate {
-  type: UploaderActionType.UpdateDate;
-  payload: { date: Date };
+    type: UploaderActionType.UpdateDate,
+    payload:{ date: Date |null}
 }
 
 export interface setshowMessage {
@@ -35,14 +43,25 @@ export interface setshowMessage {
   payload: { showMessage: boolean };
 }
 
-export interface setStructureList {
-  type: UploaderActionType.setStructureList;
-  payload: { structureList: IStructure[] | null };
+export interface setProject {
+    type: UploaderActionType.setProject
+    payload:{project:IProjects}
+  }
+
+export interface setStructure {
+  
+  type: UploaderActionType.setStructure
+  payload:{structure:IStructure}
 }
 
-export interface setSectionDetails {
-  type: UploaderActionType.setSectionDetails;
-  payload: { sectionDetails: ChildrenEntity[] };
+export interface setExtractedFileValue {
+  type: UploaderActionType.setExtractedFileValue
+  payload:{extractedFileValue:any}
+}
+
+export interface setIsNextEnabled{
+  type:UploaderActionType.setIsNextEnabled
+  payload:{IsNextEnabled:boolean};
 }
 
 export interface setStepperSideFilesList {
@@ -54,7 +73,7 @@ export interface appendFiles {
   payload: { files: fileWithExif[] };
 }
 
-export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
+export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>) => {
     return {
       uploaderAction: {
         goBack: () => {
@@ -66,17 +85,23 @@ export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
         upload: () => {
           dispatch({ type: UploaderActionType.Upload });
         },
+        skipGCP: () => {
+            dispatch({ type: UploaderActionType.skipGCP });
+          },
         updateDate: (date: Date) => {
           dispatch({ type: UploaderActionType.UpdateDate,  payload: {date: date}});
         },
         setshowMessage: (showMessage:boolean) => {
           dispatch({ type: UploaderActionType.setshowMessage, payload:{showMessage: showMessage}});
         },
-        setStructureList: (structureList:IStructure[]|null) => {
-          dispatch({ type: UploaderActionType.setStructureList, payload:{structureList:structureList}});
+        setProject: (project: IProjects) => {
+            dispatch({
+              type: UploaderActionType.setProject,
+              payload: { project: project },
+            });
         },
-        setSectionDetails: (sectionDetails:ChildrenEntity[]) => {
-          dispatch({ type: UploaderActionType.setSectionDetails, payload:{sectionDetails:sectionDetails}});
+        setStructure: (structure:IStructure) => {
+          dispatch({ type: UploaderActionType.setStructure, payload:{structure: structure}});
         },
         setStepperSideFilesList:(stepperSideFileList:boolean)=>{
           dispatch({type:UploaderActionType.setStepperSideFilesList,payload:{stepperSideFileList:stepperSideFileList}});
@@ -87,9 +112,27 @@ export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
               payload: {files: files}
           })
         },
+        setExtractedFileValue: (extractedFileValue:any) => {
+          dispatch({ type: UploaderActionType.setExtractedFileValue, payload:{extractedFileValue:extractedFileValue}});
+        },
+        setIsNextEnabled:(IsNextEnabled:boolean)=>{
+          dispatch({type: UploaderActionType.setIsNextEnabled,payload:{IsNextEnabled:IsNextEnabled}})
+        },
       }
     }
 
   }
-export type UploaderActions = GoBack | Next | Upload | UpdateDate | setshowMessage | setStructureList | setSectionDetails |setStepperSideFilesList | appendFiles
+export type UploaderActions =
+  | goBack
+  | next
+  | upload
+  | UpdateDate
+  | setshowMessage
+  | setProject
+  | setStructure
+  | setStepperSideFilesList
+  | appendFiles
+  | setExtractedFileValue
+  | setIsNextEnabled
+  | skipGCP;
 

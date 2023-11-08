@@ -96,6 +96,7 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import Chips from "./Chip";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { useAppContext } from "../../../state/appState/context";
 // import { ISections } from "../../../models/ISections";
 
 interface RowData {
@@ -127,6 +128,8 @@ const customToolbarStyle = {
 
 const SectionsListing = () => {
   const router = useRouter();
+  const { appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
   const myTableRef = useRef<any>(null);
   const defaultMaterialTheme = createTheme();
   const [selectedRow, setSelectedRow] = useState(null);
@@ -246,6 +249,14 @@ const[isProcessing,setProcessing]=useState(false);
     if (router.isReady &&(!dataLoaded)) {
       const type = "newSnapshot";
       const projectId = router?.query?.projectId as string
+
+      // Using it for Appstate which will be used for future features
+      getStructureHierarchy(projectId)
+      .then((response) => {
+        let hierarchyList: ChildrenEntity[] = response.data.result
+        appAction.setHierarchy(hierarchyList)
+      })
+      
       getSectionsList(projectId)
         .then((response: AxiosResponse<any>) => {
           setGridData([response?.data?.result]);
