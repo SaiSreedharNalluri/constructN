@@ -10,7 +10,9 @@ export enum UploaderActionType {
     setStructureList,
     setSectionDetails,
     setStepperSideFilesList,
-    appendFiles
+    appendFiles ,
+    setExtractedFileValue,
+    setIsNextEnabled,
 }
 
 export interface GoBack {
@@ -26,8 +28,8 @@ export interface Upload {
 }
 
 export interface UpdateDate {
-  type: UploaderActionType.UpdateDate;
-  payload: { date: Date };
+    type: UploaderActionType.UpdateDate,
+    payload:{ date: Date |null}
 }
 
 export interface setshowMessage {
@@ -41,8 +43,19 @@ export interface setStructureList {
 }
 
 export interface setSectionDetails {
-  type: UploaderActionType.setSectionDetails;
-  payload: { sectionDetails: ChildrenEntity[] };
+  
+  type: UploaderActionType.setSectionDetails
+  payload:{sectionDetails:IStructure}
+}
+
+export interface setExtractedFileValue {
+  type: UploaderActionType.setExtractedFileValue
+  payload:{extractedFileValue:any}
+}
+
+export interface setIsNextEnabled{
+  type:UploaderActionType.setIsNextEnabled
+  payload:{IsNextEnabled:boolean};
 }
 
 export interface setStepperSideFilesList {
@@ -75,7 +88,7 @@ export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
         setStructureList: (structureList:IStructure[]|null) => {
           dispatch({ type: UploaderActionType.setStructureList, payload:{structureList:structureList}});
         },
-        setSectionDetails: (sectionDetails:ChildrenEntity[]) => {
+        setSectionDetails: (sectionDetails:IStructure) => {
           dispatch({ type: UploaderActionType.setSectionDetails, payload:{sectionDetails:sectionDetails}});
         },
         setStepperSideFilesList:(stepperSideFileList:boolean)=>{
@@ -87,9 +100,15 @@ export const contextActions = (dispatch: React.Dispatch<UploaderActions>) => {
               payload: {files: files}
           })
         },
+        setExtractedFileValue: (extractedFileValue:any) => {
+          dispatch({ type: UploaderActionType.setExtractedFileValue, payload:{extractedFileValue:extractedFileValue}});
+        },
+        setIsNextEnabled:(IsNextEnabled:boolean)=>{
+          dispatch({type: UploaderActionType.setIsNextEnabled,payload:{IsNextEnabled:IsNextEnabled}})
+        },
       }
     }
 
   }
-export type UploaderActions = GoBack | Next | Upload | UpdateDate | setshowMessage | setStructureList | setSectionDetails |setStepperSideFilesList | appendFiles
+export type UploaderActions = GoBack | Next | Upload | UpdateDate | setshowMessage | setStructureList | setSectionDetails |setStepperSideFilesList | appendFiles |setExtractedFileValue | setIsNextEnabled
 

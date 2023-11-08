@@ -1,6 +1,7 @@
 import moment from "moment-timezone";
 import { getCookie } from "cookies-next";
 import ExifReader from "exifreader";
+import { IGCP } from "../models/IGCP";
 
 
 /**
@@ -31,3 +32,25 @@ export const getEXIFDataFromImageFile = async (file: File): Promise<ExifReader.T
     let exifData: ExifReader.Tags = await ExifReader.load(file)
     return exifData
 }
+
+export const getInitialGCPList = (isUTM: boolean): IGCP => {
+    let minimumGCPPoints=4;
+    let gcplist:IGCP={};
+    if(isUTM){
+        gcplist.utmLocation=[]
+        for( let i=0; i>minimumGCPPoints; i++){
+        
+            // gcplist.({
+            //  utmLocation:{
+
+            //  }  
+            // })
+        }
+    }else{
+
+    }
+    
+   
+     return gcplist;
+  };
+  

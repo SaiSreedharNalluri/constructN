@@ -10,22 +10,22 @@ import { useUploaderContext } from "../../state/uploaderState/context";
 interface IProps{
   handleNodeExpand: any;
   expandedNodes: any;
- 
+ treeData:any;
   getStructureData:any;
 
 }
 const SectionList: React.FC<IProps>=({
-    
+    treeData,
     getStructureData,
   handleNodeExpand,
   expandedNodes,
 })=>{
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
-    const [treeViewData, setTreeViewData] = useState<any>(uploaderState.sectionDetails);
+    const [treeViewData, setTreeViewData] = useState<any>(treeData);
     const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
     useEffect(() => {
-        setTreeViewData(uploaderState.sectionDetails);
-      }, [uploaderState.sectionDetails.length]);
+        setTreeViewData(treeData);
+      }, [treeData.length]);
       useEffect(() => {
         const layersSelected = getSelectedLayers(treeViewData);
         setSelectedLayers(layersSelected);

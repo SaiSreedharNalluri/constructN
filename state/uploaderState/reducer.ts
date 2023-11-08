@@ -7,12 +7,14 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
         case UploaderActionType.GoBack: 
             return {
                 ...state,
-                step: state.step--
+                step: state.step--,
+                isNextEnabled: false
             }
         case UploaderActionType.Next: 
             return {
                 ...state,
-                step: state.step++
+                step: state.step++,
+                isNextEnabled: true,
             }
         case UploaderActionType.UpdateDate:
             return {
@@ -39,14 +41,16 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 stepperSideFileList:action.payload.stepperSideFileList
             }
-        case UploaderActionType.appendFiles:
-            // console.log("ChooseFiles appendFilesReducer: ", action.payload.files)
-            let updatedList =  getUpdatedFileList(state, action.payload.files);
-            // console.log("ChooseFiles appendFilesReducer after exifReader: ", updatedList)
-            return {
+        case UploaderActionType.setExtractedFileValue:
+            return{
                 ...state,
-                choosenFiles: updatedList
-            }
+                extractedFileValue:action.payload.extractedFileValue
+            } 
+        case UploaderActionType.setIsNextEnabled:
+            return{
+                ...state,
+                isNextEnabled:action.payload.IsNextEnabled
+            }   
         default:
             return state
     }
