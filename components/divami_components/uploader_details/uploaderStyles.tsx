@@ -89,4 +89,44 @@ export const UploaderStyledTreeView = styled(TreeView)({
     marginLeft: "10px"
   });
 
+ export const nextButtonStyle = {
+  display:"flex",
+  flexDirection:"row",
+  justifyContent:"center",
+  alignItems:"center",
+  padding:"8px 8px 8px 7px",
+  gap:"10px",
+  width:"77px",
+  height:"35px",
+  border: "1px solid #F1742E",
+  backgroundColor:"#F1742E",
+  boxSizing: "border-box",
+  borderRadius:"4px",
+  fontFamily:"Open Sans",
+  fontStyle:"normal",
+  fontWeight:"600",
+  fontSize:"14px",
+  lineHeight:"19px",
+  color:"#F1742E",
+  order:"1",
   
+};
+ export  const backbuttonStyle = {
+  fontFamily: "Open Sans",
+  fontWeight: "600",
+  fontSize: "14px",
+  lineHeight: "19px",
+  textAlign: "center",
+  color: "#F1742E",
+  boxSizing: "border-box",
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center",
+  padding: '8px',
+  gap: "4px",
+  width: "71px",
+  height: "35px",
+  order:"0",
+};
+

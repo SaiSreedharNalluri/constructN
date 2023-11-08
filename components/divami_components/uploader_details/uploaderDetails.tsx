@@ -10,27 +10,22 @@ import 'react-datepicker/dist/react-datepicker.css';
 import SectionList from "../../container/sectionList";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 
-
-interface UploaderDateDetailsProps {
-  onDateSelected: () => void;
-}
-const UploaderDateDetails : React.FC<UploaderDateDetailsProps> = ({ onDateSelected }) => {
+const UploaderDateDetails : React.FC<any> = () => {
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
- 
   const router = useRouter();
-  const [structure, setStructure] = useState<IStructure>();
-  const [selectedDate, setSelectedDate] = useState<any|null>(null);
+  let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   const [expanded, setExpanded] = useState<string[]>([]);
+  
   const handleDateChange = (date: any | null) => {
     if (date !== null) {
-    setSelectedDate(date);
     uploaderAction.setshowMessage(false)
     uploaderAction.updateDate(date)
-    onDateSelected(); 
+    uploaderAction.setIsNextEnabled(false);
   } else {
-    setSelectedDate(null);
+    uploaderAction.updateDate(null)
     uploaderAction.setshowMessage(true)
+    uploaderAction.setIsNextEnabled(true)
   }
    
   };
@@ -51,7 +46,7 @@ const UploaderDateDetails : React.FC<UploaderDateDetailsProps> = ({ onDateSelect
       }
     }, [router.isReady, router.query.projectId]);
   
-  const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
+  const getCurrentStructureFromStructureList = (structure:IStructure) => {
     let currentStructure = uploaderState.structureList?.find((e) => {
       if (e?._id === structure._id) {
         return e;
@@ -59,8 +54,8 @@ const UploaderDateDetails : React.FC<UploaderDateDetailsProps> = ({ onDateSelect
     });
     return currentStructure;
   };
-  const getStructureData = (structure: ChildrenEntity) => {
-    setStructure(getCurrentStructureFromStructureList(structure));
+  const getStructureData = (structure: IStructure) => {
+    uploaderAction.setSectionDetails(getCurrentStructureFromStructureList(structure))
   }
   useEffect(() => {
     if (router.isReady) {
@@ -68,7 +63,8 @@ const UploaderDateDetails : React.FC<UploaderDateDetailsProps> = ({ onDateSelect
         .then((response: AxiosResponse<any>) => {
           const result = response.data.result;
           const resultArray :any= Array.isArray(result) ? result : [result];
-          uploaderAction.setSectionDetails([...resultArray])
+          setState([...resultArray]);
+          
         })
         .catch((error) => {
           console.log("error", error);
@@ -95,6 +91,7 @@ const UploaderDateDetails : React.FC<UploaderDateDetailsProps> = ({ onDateSelect
                   getStructureData={getStructureData}
                   handleNodeExpand={handleNodeExpand}
                   expandedNodes={expanded}
+                  treeData={state} 
                   ></SectionList>
                    
                  
@@ -107,13 +104,13 @@ const UploaderDateDetails : React.FC<UploaderDateDetailsProps> = ({ onDateSelect
        
 <div className="flex-1/3 justify-end">
   
-    <h2 className="pt-2 pr-2 pl-2 pb-0 w-94px,h-20px,font-sans not-italic font-semibold text-sm">Enter Capture Date for {structure?.name}</h2>
+    <h2 className="pt-2 pr-2 pl-2 pb-0 w-94px,h-20px,font-sans not-italic font-semibold text-sm">Enter Capture Date for {uploaderState.sectionDetails?.name}</h2>
     <div className="w-full border-t border-solid border-border-yellow" style={{ height: "1px" }}></div>
     <div className="pt-2" style={{ display: 'flex', justifyContent: 'flex-end' }}>
       <DatePicker
         className="ml-2 border border-border-yellow border-solid focus:outline-yellow-500 w-22 p-1 rounded hover:border-yellow-500"
         placeholderText="MM/DD/YYYY"
-        selected={selectedDate}
+        selected={uploaderState.date}
         onChange={(date) => handleDateChange(date)}
       />
    
