@@ -30,7 +30,6 @@ const Index: React.FC<IProps> = () => {
         case UploaderStep.Review:
           return  <UploaderReview/>;
         case UploaderStep.Upload:
-          uploaderAction.setStepperSideFilesList(false)
           return (<UploaderFinal/>) ;
         default:
           return null;

@@ -61,7 +61,7 @@ const UploaderFooter: React.FC<any> = ({  }) => {
             Go Back
           </Button>
           <Button
-            disabled={state.isNextEnabled}
+            disabled={!state.isNextEnabled}
             onClick={() => uploaderAction.next()}
             className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md`}>
               
@@ -77,7 +77,8 @@ const UploaderFooter: React.FC<any> = ({  }) => {
             className={`${backbuttonStyle} text-orange-500 border border-solid rounded-md`}>
             Go Back
           </Button>
-          <Button   
+          <Button
+            disabled={!state.isNextEnabled}
             onClick={() => uploaderAction.next()}
             className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md`}>
             Confrim Images
@@ -93,12 +94,12 @@ const UploaderFooter: React.FC<any> = ({  }) => {
             Go Back
           </Button>
           <Button
-            onClick={() => uploaderAction.next()} 
+            onClick={() => uploaderAction.skipGCP()} 
             className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md`}>
             Skip Gcps
           </Button>
           <Button
-          disabled={state.isNextEnabled}
+          disabled={!state.isNextEnabled}
             onClick={() => uploaderAction.next()}
             className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md`}>
               Continue

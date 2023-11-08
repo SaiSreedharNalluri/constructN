@@ -1,6 +1,6 @@
 import React, { useMemo, useReducer, createContext, useContext } from 'react';
 import { UploaderState, initialUploaderState } from './state';
-import { UploaderActions, contextActions } from './action';
+import { UploaderActions, uploaderContextActions } from './action';
 import { uploaderReducer } from './reducer';
 
 export const UploaderContext = createContext<{
@@ -24,7 +24,7 @@ function useUploaderContext() {
     throw new Error('useUploaderContext must be used within a UploaderContextProvider');
   }
   const {state, dispatch} = context;
-  const uploaderContextAction = contextActions(dispatch);
+  const uploaderContextAction = uploaderContextActions(dispatch);
   // const appContextSelector = contextSelectors(state);
   return { state, uploaderContextAction};
 }
