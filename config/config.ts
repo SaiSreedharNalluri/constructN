@@ -1,26 +1,26 @@
 
-export const MIX_PANEL_TOKEN = 'a3b265c043e673c4188665fb1dce34fe'
+export const MIX_PANEL_TOKEN = "${APP_MIX_PANEL_TOKEN}"
 
-export const MAPBOX_TOKEN = 'pk.eyJ1Ijoia3QtY29uc3RydWN0biIsImEiOiJjbGR2enJsbmMwMmtrM25tcHAxYWt6Yzh6In0.QZZM6n7jaK44HQUfj-XZUQ'
+export const MAPBOX_TOKEN = "${APP_MAPBOX_TOKEN}"
 
 export const API = {
 
-    BASE_URL: 'https://api.qa-us.constructn.ai/api/v1',
+    BASE_URL: "${APP_BASE_URL}",
 
-    LOCAL_URL: 'http://localhost:3001/api/v1',
+    LOCAL_URL: "${APP_LOCAL_URL}",
 
-    PROGRESS_2D_URL: 'https://api-progress-2d.qa-devops.constructn.ai/api'
+    PROGRESS_2D_URL: "${APP_PROGRESS_2D_URL}"
 
 }
 
 export const AWS = {
 
-    PROJECTS_BUCKET: 'constructn-projects-us',
+    PROJECTS_BUCKET: "${APP_PROJECTS_BUCKET}",
 
-    ATTACHMENTS_BUCKET: 'constructn-attachments-us',
+    ATTACHMENTS_BUCKET: "${APP_ATTACHMENTS_BUCKET}",
 
-    CDN_PROJECTS: 'https://dypspyf3tih5l.cloudfront.net',
+    CDN_PROJECTS: "${APP_CDN_PROJECTS}",
 
-    CDN_ATTACHMENTS: 'https://d2sf0c7876ryty.cloudfront.net'
+    CDN_ATTACHMENTS: "${APP_CDN_ATTACHMENTS}"
 
 }
