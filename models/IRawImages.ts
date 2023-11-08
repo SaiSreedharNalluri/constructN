@@ -3,7 +3,7 @@ export interface RawImage {
     deviceId: string;
     externalId: string;
     dateTime: string;
-    location?: location;
+    longLatCoordinates?:  [number, number,number];
     utmLocation?: utmLocation;
     status: status;
     capture?: string;

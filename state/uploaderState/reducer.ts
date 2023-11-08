@@ -65,7 +65,12 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
             return{
                 ...state,
                 isNextEnabled:action.payload.IsNextEnabled
-            }   
+            }
+        case UploaderActionType.changeUploadinitiate:
+                return {
+                    ...state,
+                    uploadinitiate:action.payload.uploadinitiate
+                }       
         default:
             return state
     }
@@ -92,12 +97,8 @@ const getUpdatedFileList = (state: UploaderState, files: fileWithExif[]): choose
                 status: "Initiated",
             }
             if(latitude && longitude && altitude) {
-                let location: location = {
-                    type: "point",
-                    coordinates: [longitude, latitude],
-                    elevation: altitude
-                }
-                rawImage.location = location
+                
+                rawImage.longLatCoordinates = [longitude, latitude,altitude]
             }
             let newUploadImage: uploadImage = {file, ...rawImage}
             let duplicateFile = choosenFiles.validFiles.find((uploadImages) => {
