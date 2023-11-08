@@ -30,7 +30,7 @@ interface _ViewerProps {
 
 function Progress2DComponent(props: _ViewerProps) {
 
-    let _forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D>
+    let _forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D | undefined>
 
     const _model = useRef<Autodesk.Viewing.Model>()
 
@@ -51,17 +51,21 @@ function Progress2DComponent(props: _ViewerProps) {
     const _assetMap = useRef<{ [key: string]: { assets: string[] } & Partial<IAssetStage> }>({})
 
 
-    const onInit = async (forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D>) => {
+    const onInit = async (forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D | undefined>, alreadyInitialised: boolean) => {
 
         _forge = forge
 
-        _removeToolbar(_forge.current)
+        if(!alreadyInitialised) {
 
-        _changeBackground(_forge.current)
+            _removeToolbar(_forge.current!)
 
-        if (LightBoxInstance.getViewTypes().indexOf('Plan Drawings') > -1) {
+            _changeBackground(_forge.current!)
 
-            setModelsData(LightBoxInstance.viewerData()['modelData']['Plan Drawings'])
+            if (LightBoxInstance.getViewTypes().indexOf('Plan Drawings') > -1) {
+
+                setModelsData(LightBoxInstance.viewerData()['modelData']['Plan Drawings'])
+            }
+
         }
     }
 

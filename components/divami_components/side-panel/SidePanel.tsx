@@ -6,6 +6,8 @@ import {useIntercom} from "react-use-intercom"
 
 import drawing from "../../../public/divami_icons/drawing.svg";
 // import task from "../../../public/divami_icons/task.svg";
+import progress2d from "../../../public/divami_icons/progress2d.svg";
+import progress2dHighlighted from "../../../public/divami_icons/progress2dHighlighted.svg";
 import tasks from "../../../public/divami_icons/tasks.svg";
 import tasksHighlighted from "../../../public/divami_icons/tasksHighlighted.svg";
 import branchHighlighted from "../../../public/divami_icons/branchHighlightedIcon.svg";
@@ -72,8 +74,8 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
 
     {
       id: "progress-2d",
-      icon: tasks,
-      activeIcon: tasksHighlighted,
+      icon: progress2d,
+      activeIcon: progress2dHighlighted,
       isActive: router.pathname.includes("progress-2d"),
       nextPage: "",
       toolTipMsg: "2D Progress",

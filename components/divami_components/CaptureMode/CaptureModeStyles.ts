@@ -276,6 +276,11 @@ export const CaptureImageIcon = styled(Image)({
   width: "18px",
   height: "18px",
 });
+export const Progress2DImageIcon = styled(Image)({
+  marginLeft: "-3rem",
+  width: "24px",
+  height: "24px",
+});
 export const CaptureName = styled("div")({
   marginRight: "5px",
 });

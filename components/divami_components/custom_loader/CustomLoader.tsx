@@ -7,21 +7,21 @@ import SpreadLoader from "../../../public/SpreadLoader.json";
 import { useLottie } from "lottie-react";
 
 const CustomLoader = () => {
-  const animationContainerRef = React.useRef<any>(null);
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: SpreadLoader,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
-  const { View: lottie } = useLottie(defaultOptions);
+  // const animationContainerRef = React.useRef<any>(null);
+  // const defaultOptions = {
+  //   loop: true,
+  //   autoplay: true,
+  //   animationData: SpreadLoader,
+  //   rendererSettings: {
+  //     preserveAspectRatio: "xMidYMid slice",
+  //   },
+  // };
+  // const { View: lottie } = useLottie(defaultOptions);
   return (
     <>
-      <div>
+      {/* <div>
         <LoaderContainer> {lottie}</LoaderContainer>
-      </div>
+      </div> */}
     </>
   );
 };

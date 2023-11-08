@@ -49,12 +49,23 @@ export class ForgeEdit2DUtils {
 
             const tool = event.detail
 
-            console.log(event, tool)
+            // console.log(event, tool)
 
-            if (tool) this._startTool(this._getTool(tool))
+            if (tool && this._edit2DExtn) this._startTool(this._getTool(tool))
 
             else this._stopTool()
 
+        })
+
+        subscribe('asset-created', (event: any) => {
+
+            const {shapeId, assetId} = event.detail
+
+            // console.log(event, shapeId)
+
+            const shape = this._edit2DLayer.shapes.find((value: Autodesk.Edit2D.Shape, index: number, obj: Autodesk.Edit2D.Shape[]) => shapeId == value.id)
+
+            if(shape !== undefined) (shape as any).name = assetId
         })
 
         subscribe('clear-shape-selection', (event: any) => {
@@ -63,9 +74,19 @@ export class ForgeEdit2DUtils {
 
         })
 
+        subscribe('delete-shape', (event: any) => {
+
+            const assetId = event.detail
+
+            const shape = this._edit2DLayer.shapes.find((value: any, index: number, obj: Autodesk.Edit2D.Shape[]) => assetId == value.name)
+
+            if(shape !== undefined) this._edit2DLayer.removeShape(shape)
+
+        })
+
         this._edit2DContext.undoStack.addEventListener(Autodesk.Edit2D.UndoStack.AFTER_ACTION, (event: any) => {
 
-            console.log(event)
+            // console.log(event)
 
             switch (event.action.constructor.name) {
 
@@ -163,7 +184,7 @@ export class ForgeEdit2DUtils {
 
         } else {
 
-            console.log(event.action.poly)
+            // console.log(event.action.poly)
 
             publish('update-2d-shape', { _id: event.action.poly.name, points: event.action.poly._loops[0] })
 
@@ -179,7 +200,7 @@ export class ForgeEdit2DUtils {
 
         } else {
 
-            console.log(event.action.shapes[0])
+            // console.log(event.action.shapes[0])
 
             publish('update-2d-shape', { _id: event.action.shapes[0].name, points: event.action.shapes[0]._loops[0] })
 

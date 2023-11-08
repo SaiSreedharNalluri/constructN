@@ -53,6 +53,7 @@ import lidarScan from "../../../public/divami_icons/lidarScan.svg";
 import capture360Image from "../../../public/divami_icons/capture360Image.svg";
 import captureLidarIcon from "../../../public/divami_icons/captureLidarIcon.svg";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
+import Progress2DImage from "../../../public/divami_icons/progress2d.svg";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import crossIcon from "../../../public/divami_icons/crossIcon.svg";
 import FilterInActive from "../../../public/divami_icons/FilterInActive.svg";
@@ -82,6 +83,7 @@ import {
   CaptureImageIcon,
   CaptureCount,
   FloorName,
+  Progress2DImageIcon,
 } from "../CaptureMode/CaptureModeStyles";
 import { forwardRef } from "react";
 import SectionFilter from "./SectionFilter";
@@ -766,7 +768,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "24%" },
+      cellStyle: { width: "20%" },
    
       render: (rowData: any) => {
         return <div className="cursor-default">{
@@ -791,11 +793,22 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "24%" },
+      cellStyle: { width: "20%" },
    
       render: (rowData: any) => {
-        return <div className="cursor-default">{
-          rowData?.has2dProgress ? "Yes" : "-"
+        return <div className="cursor-pointer">{
+          <TooltipText title="2D Progress">
+                <div className="flex justify-center">
+                  <Progress2DImageIcon
+                    src={Progress2DImage}
+                    alt={""}
+                    onClick={() => {router.push({
+                      pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
+                      query: { structId: rowData._id },
+                    })}}
+                  ></Progress2DImageIcon>
+                </div>
+              </TooltipText>
           }</div>;
       },
     },

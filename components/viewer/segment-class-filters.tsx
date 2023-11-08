@@ -179,7 +179,7 @@ const ClickTypesPicker: FC<any> = (props) => {
 
             // setClickType(type)
 
-            // publish('progress-2d-tool', type)
+            publish('delete-2d-shape', type)
 
           }}
 
@@ -264,7 +264,7 @@ const ClickTypesPicker: FC<any> = (props) => {
 
       </SegmentToggleButtonGroup>
 
-      {/* <Divider orientation="vertical" variant="middle" flexItem />
+      <Divider orientation="vertical" variant="middle" flexItem />
 
       <SegmentButtonGroup
 
@@ -274,7 +274,7 @@ const ClickTypesPicker: FC<any> = (props) => {
 
         {iconButtons}
 
-      </SegmentButtonGroup> */}
+      </SegmentButtonGroup>
 
     </div>
 

@@ -12,6 +12,8 @@ import AssetTimeline from '../asset-timeline'
 
 import { API } from '../../../../../config/config'
 
+import { toast } from 'react-toastify'
+
 
 const fetchAssetDetails = (assetId: string) => {
 
@@ -49,13 +51,25 @@ const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => vo
 
     const [selectedTab, setSelectedTab] = useState<string>('asset-details')
 
+    const [loading, setLoading] = useState<boolean>(false)
+
     useEffect(() => {
+
+        setLoading(true)
 
         fetchAssetDetails(assetId).then(res => {
 
+            setLoading(false)
+
             setAsset(res.data.result)
 
-        }).catch(err => console.log(err))
+        }).catch(err => {
+
+            setLoading(false)
+            
+            console.log(err)
+
+        })
 
     }, [assetId])
 
@@ -63,24 +77,63 @@ const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => vo
 
         if (key === 'stage')
 
-            changeAssetStage(assetId, value, new Date()).then(res => onChange && onChange(res.data.result)).catch(err => console.log(err))
+            changeAssetStage(assetId, value, new Date()).then(res => {
+                
+                onChange && onChange(res.data.result)
+
+                toast.success('Updated asset stage successfully!')
+            
+            }).catch(err => toast.error('Failed to update asset stage!'))
 
         else
 
-            updateAssetDetails(assetId, { name: value }).then(res => onChange && onChange(res.data.result)).catch(err => console.log(err))
+            updateAssetDetails(assetId, { name: value }).then(res => {
+                
+                onChange && onChange(res.data.result)
 
+                toast.success('Updated asset details successfully!')
+                
+            }).catch(err => toast.error('Failed to update asset details!'))
+
+    }
+
+    const _renderAssetDetailsShimmer = () => {
+
+        return (
+
+            <div className='animate-pulse rounded-md'>
+
+                <div className='h-[3rem] bg-slate-200 rounded'></div>
+
+                <div className='h-[1rem] w-[3rem] mt-6 mx-4 bg-slate-200 rounded'></div>
+
+                <div className='h-[2.25rem] mt-2 mx-4 bg-slate-200 rounded'></div>
+
+                <div className='h-[1rem] w-[3rem] mt-6 mx-4 bg-slate-200 rounded'></div>
+
+                <div className='h-[5rem] mt-2 mx-4 bg-slate-200 rounded'></div>
+
+                <div className='h-[1rem] w-[3rem] mt-6 mx-4 bg-slate-200 rounded'></div>
+
+                <div className='h-[2.25rem] mt-2 mx-4 bg-slate-200 rounded'></div>
+
+            </div>
+        )
     }
 
 
     return (
 
         <>
+
+            { loading && _renderAssetDetailsShimmer() }
+            
             {
-                asset && <div className='h-full bg-white'>
+                asset && !loading && <div className='h-full bg-white'>
 
                     <Tabs
 
-                        centered value={selectedTab} className='text-[#4a4a4a] bg-[#f2f3f5]' textColor='inherit'
+                        centered value={selectedTab} className='text-black bg-[#fbece2]' textColor='inherit'
 
                         TabIndicatorProps={{ style: { backgroundColor: '#f1742e' } }} >
 
@@ -95,7 +148,6 @@ const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => vo
                     {selectedTab === 'asset-timeline' && <div className='px-4 '><AssetTimeline asset={asset} /> </div>}
 
                 </div>
-
             }
         </>
     )

@@ -47,7 +47,7 @@ export default function AssetCategoryPicker({ categories, selected, onSelect }: 
 
             id='asset-category-picker' options={categories} autoHighlight value={selected}
 
-            isOptionEqualToValue={(option: IAssetCategory, value: IAssetCategory) => option._id === value._id}
+            isOptionEqualToValue={(option: IAssetCategory, value: IAssetCategory) => value && option._id === value._id}
 
             onChange={(event: React.SyntheticEvent, value: IAssetCategory | null, reason: string) => onSelect(value == null ? undefined : value)}
 
@@ -69,8 +69,8 @@ export default function AssetCategoryPicker({ categories, selected, onSelect }: 
 
                 <TextField
 
-                    {...params}
-
+                    {...params} 
+                    
                     className='text-[#4a4a4a]' label='Choose a category'
 
                     size='small' inputProps={{

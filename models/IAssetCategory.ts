@@ -44,6 +44,8 @@ export interface IAsset {
 
     progressSnapshot: IAssetProgress[]
 
+    project: string
+
     structure: string
 
     measurement: number

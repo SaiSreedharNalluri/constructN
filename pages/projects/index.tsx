@@ -650,7 +650,8 @@ const Index: React.FC<any> = () => {
               </HeaderActions>
             </ProjectsHeader>
            {showLoading ? (
-              <CustomLoader />
+            <></>
+              // <CustomLoader />
             ) : showWelcomMessage ? (
             <ProjectCardsContainer>
               <div className="flex justify-center items-center calc-h146 mx-auto">

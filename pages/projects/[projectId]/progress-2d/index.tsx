@@ -24,6 +24,12 @@ import Progress2DStage from '../../../../components/viewer/progress-2d-stage'
 
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
 
+import KeyboardDoubleArrowDownOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowDownOutlined'
+
+import KeyboardDoubleArrowUpOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowUpOutlined'
+
+import FilterAltOffOutlinedIcon from '@mui/icons-material/FilterAltOffOutlined'
+
 import { updateQueryParam } from '../../../../utils/router-utils'
 
 import AssetDetails from './asset-details'
@@ -35,6 +41,8 @@ import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDo
 import StructureHierarchy from '../../../../components/viewer/structure-hierarchy'
 
 import { API } from '../../../../config/config'
+
+import moment from 'moment'
 
 
 const fetchViewerData = (projectId: string, structureId: string) => {
@@ -90,7 +98,15 @@ const updateAsset = (assetId: string, asset: Partial<IAsset>) => {
         return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, asset)
 
     } catch (error) { throw error }
+}
 
+const deleteAsset = (assetId: string) => {
+
+    try {
+
+        return instance.delete(`${API.PROGRESS_2D_URL}/assets/${assetId}`)
+
+    } catch (error) { throw error }
 }
 
 const autodeskAuth = () => {
@@ -125,6 +141,8 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [showHierarchy, setShowHierarchy] = useState<boolean>(false)
 
+    const [showCategoryFilters, setShowCategoryFilters] = useState<boolean>(true)
+
     const [assetCategories, setAssetCategories] = useState<IAssetCategory[]>([])
 
     const [assets, setAssets] = useState<IAsset[]>([])
@@ -133,9 +151,15 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [stages, setStages] = useState<({ assets: string[] } & Partial<IAssetStage>)[]>()
 
-    const [currentCategory, setCurrentCategory] = useState<IAssetCategory>()
+    const [selectedCategory, setSelectedCategory] = useState<IAssetCategory>()
+
+    const currentCategory = useRef<IAssetCategory>()
+
+    const currentAsset = useRef<string>()
 
     const structureId = useRef<string>()
+
+    const projectId = useRef<string>()
 
     const _assetMap = useRef<{ [key: string]: { assets: string[] } & Partial<IAssetStage> }>({})
 
@@ -147,19 +171,25 @@ const Progress2DPage: React.FC<any> = () => {
 
         const snapshotId = searchParams.get('snapshotId')
 
-        fetchStructureHierarchy(projId!).then(data => {
+        if (projId && !projectId.current) {
 
-            if (data.data.result) {
+            projectId.current = projId
 
-                LightBoxInstance.setStructureHierarchy(data.data.result)
+            fetchStructureHierarchy(projId!).then(data => {
 
-                setHierarchy(data.data.result)
+                if (data.data.result) {
 
-            }
+                    LightBoxInstance.setStructureHierarchy(data.data.result)
 
-        }).catch(err => { })
+                    setHierarchy(data.data.result)
 
-        if (structId) {
+                }
+
+            }).catch(err => { })
+
+        }
+
+        if (structId && structureId.current !== structId) {
 
             structureId.current = structId
 
@@ -171,7 +201,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                 if (!snapshots || snapshots.length == 0) {
 
-                    toast.warning('Snapshots are not available for this structure!')
+                    toast.warning('Snapshots are not available for this structure!', { autoClose: 5000 })
 
                 }
 
@@ -192,9 +222,7 @@ const Progress2DPage: React.FC<any> = () => {
                             break
 
                         }
-
                     }
-
                 }
 
                 if (baseSnapshot) {
@@ -229,14 +257,12 @@ const Progress2DPage: React.FC<any> = () => {
 
             fetchAssetCategories(projId!).then(async data => {
 
-                console.log(data.data.result)
-
                 setAssetCategories(data.data.result)
 
-                if (currentCategory) _loadAssetsForCategory(currentCategory)
+                if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
 
             }).catch(e => console.log(e))
-        
+
         }
 
     }, [searchParams])
@@ -279,13 +305,17 @@ const Progress2DPage: React.FC<any> = () => {
 
         subscribe('select-2d-shape', _onSelectShape)
 
+        subscribe('delete-2d-shape', _onDeleteShape)
+
         return () => {
 
             unsubscribe('add-2d-shape', _onAddShape)
 
             unsubscribe('update-2d-shape', _onUpdateShape)
 
-            subscribe('select-2d-shape', _onSelectShape)
+            unsubscribe('select-2d-shape', _onSelectShape)
+
+            unsubscribe('delete-2d-shape', _onDeleteShape)
 
         }
 
@@ -295,17 +325,19 @@ const Progress2DPage: React.FC<any> = () => {
 
         const shapeDetails = (event as CustomEvent).detail
 
-        if (currentCategory !== undefined) {
+        if (currentCategory.current !== undefined) {
 
-            const dbId = shapeDetails.id
+            const shapeId = shapeDetails.id
 
             const assetBody: Partial<IAsset> = {
 
-                name: `${currentCategory.name}`,
+                name: `${currentCategory.current.name}`,
 
                 structure: structureId.current!,
 
-                category: currentCategory._id,
+                project: projectId.current!,
+
+                category: currentCategory.current._id,
 
                 shape: shapeDetails.type,
 
@@ -315,9 +347,13 @@ const Progress2DPage: React.FC<any> = () => {
 
             createAsset(assetBody).then(res => {
 
-                console.log(res)
+                toast.success('Created asset successfully!', { autoClose: 5000 })
 
-            }).catch(err => console.log(err))
+                const assetId = res.data.result._id
+
+                publish('asset-created', { shapeId, assetId })
+
+            }).catch(err => toast.error('Failed to create asset!', { autoClose: 5000 }))
 
         }
 
@@ -335,15 +371,27 @@ const Progress2DPage: React.FC<any> = () => {
 
             const assetBody: Partial<IAsset> = { points }
 
-            console.log(assetId, assetBody)
-
             updateAsset(assetId, assetBody).then(res => {
 
-                console.log(res)
+                toast.success('Updated asset successfully!', { autoClose: 5000 })
 
-            }).catch(err => console.log(err))
+            }).catch(err => toast.error('Failed to update asset!', { autoClose: 5000 }))
 
         }
+
+    }
+
+    const _onDeleteShape = () => {
+
+        if (currentAsset.current !== undefined) deleteAsset(currentAsset.current).then(res => {
+
+            toast.success('Deleted asset successfully!', { autoClose: 5000 })
+
+            publish('delete-shape', currentAsset.current)
+
+        }).catch(err => toast.error('Failed to delete asset!', { autoClose: 5000 }))
+
+        else toast.warning('Please select an asset!', { autoClose: 5000 })
 
     }
 
@@ -351,7 +399,9 @@ const Progress2DPage: React.FC<any> = () => {
 
         const shapeDetails: string | undefined = (event as CustomEvent).detail
 
-        console.log(shapeDetails)
+        currentAsset.current = shapeDetails
+
+        setShowCategoryFilters(false)
 
         setSelectedAsset(shapeDetails)
 
@@ -363,7 +413,9 @@ const Progress2DPage: React.FC<any> = () => {
 
         setAssets([])
 
-        setCurrentCategory(category)
+        currentCategory.current = category
+
+        setSelectedCategory(category)
 
         if (category !== undefined) {
 
@@ -414,7 +466,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _onAssetDetailsChange = (asset: IAsset) => {
 
-        if (currentCategory !== undefined) _loadAssetsForCategory(currentCategory)
+        if (currentCategory.current !== undefined) _loadAssetsForCategory(currentCategory.current)
 
     }
 
@@ -432,16 +484,43 @@ const Progress2DPage: React.FC<any> = () => {
 
         setSelectedAsset(undefined)
 
+        setShowCategoryFilters(true)
+
         publish('clear-shape-selection', '')
     }
 
-    const _renderStageShimmer = () => {
+    const _renderTitle = () => {
+
+        if (currentCategory.current === undefined) return <Typography variant='h6'>Choose a category</Typography>
+
+        else {
+
+            if (LightBoxInstance.getSnapshotBase() === undefined)
+
+                return <Typography variant='h6'>Progress of {currentCategory.current.name}</Typography>
+
+            const date = moment(new Date(LightBoxInstance.getSnapshotBase().date)).format('DD MMM, yyyy')
+
+            const assetsMessage = assets && assets.length > 0 ? `${assets.length} asset(s)` : 'No assets'
+
+            return <>
+
+                <Typography variant='h6'>Progress of {currentCategory.current.name}</Typography>
+
+                <Typography className='text-[#aaa] ml-1' variant='caption'>as on {date} [ {assetsMessage} ]</Typography>
+
+            </>
+
+        }
+    }
+
+    const _renderStageShimmer = (index: number) => {
 
         if (assets.length === 0)
 
             return (
 
-                <div className='animate-pulse px-4 py-4 mt-6 rounded-md' style={{ border: '1px solid #e2e3e5' }}>
+                <div className='animate-pulse px-4 py-4 mt-6 rounded-md' key={index} style={{ border: '1px solid #e2e3e5' }}>
 
                     <div className='flex-1 flex mt-2'>
 
@@ -467,22 +546,6 @@ const Progress2DPage: React.FC<any> = () => {
         else return <></>
     }
 
-    const _renderAssetCountMessage = () => {
-
-        let message = ''
-
-        if (assets && assets.length > 0)
-
-            message = `Showing ${assets.length} assets of ${currentCategory!.name}`
-
-        else
-
-            message = `No assets available for ${currentCategory!.name}`
-
-        return (<Typography variant='caption' className='ml-2 text-[#9a9a9a]' > {message} </Typography>)
-
-    }
-
     return (
 
         <>
@@ -492,6 +555,7 @@ const Progress2DPage: React.FC<any> = () => {
                 src='https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js'
 
                 onReady={() => { setIsScriptsLoaded(true) }} />
+
             {
                 isScriptsLoaded && isAutodeskInitialised ?
 
@@ -549,7 +613,25 @@ const Progress2DPage: React.FC<any> = () => {
 
                                     <div className='flex px-4'>
 
-                                        <div className='text-[16px] text-[#4a4a4a] w-fit flex-grow'> {selectedAsset ? 'Asset Details' : 'Stage wise progress'} </div>
+                                        <div className='text-[16px] text-[#4a4a4a] w-fit flex-grow'>
+
+                                            {selectedAsset ? 'Asset Details' : _renderTitle()}
+
+                                        </div>
+
+                                        {!selectedAsset && <IconButton onClick={() => setShowCategoryFilters(!showCategoryFilters)}
+
+                                            className='mt-[-6px] mr-[-6px]'>
+
+                                            {showCategoryFilters ?
+
+                                                <KeyboardDoubleArrowUpOutlinedIcon fontSize='small' /> :
+
+                                                <KeyboardDoubleArrowDownOutlinedIcon fontSize='small' />
+
+                                            }
+
+                                        </IconButton>}
 
                                         {selectedAsset && <IconButton size='small' onClick={() => _closeDetails()}
 
@@ -561,19 +643,27 @@ const Progress2DPage: React.FC<any> = () => {
 
                                     </div>
 
-                                    <Divider className='my-4' orientation='horizontal' variant='fullWidth' flexItem />
+                                    {hierarchy && showCategoryFilters && <div className='mt-6 px-4'>
+
+                                        <AssetCategoryPicker selected={selectedCategory} categories={assetCategories} onSelect={_onCategorySelected} />
+
+                                    </div>}
+
+                                    {!selectedAsset && <div className='flex mt-6 px-6 justify-between'>
+
+                                        <Typography className='text-[11px] cursor-pointer' color='#F1742E'>SELECT ALL</Typography>
+
+                                        <Typography className='text-[11px] cursor-pointer' color='#F1742E'>CLEAR ALL</Typography>
+
+                                    </div>}
+
+                                    <Divider className='mt-2' orientation='horizontal' variant='fullWidth' flexItem />
 
                                     {!selectedAsset && <div className='px-4'>
 
-                                        {hierarchy && <AssetCategoryPicker selected={currentCategory} categories={assetCategories} onSelect={_onCategorySelected} />}
-
-                                        <div className='mt-4' ></div>
-
-                                        {currentCategory && _renderAssetCountMessage()}
-
                                         <div className='overflow-auto' style={{ height: 'calc(100vh - 254px)' }}>
 
-                                            {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer())}
+                                            {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
                                             {stages?.map(stage => <Progress2DStage key={stage._id} assetCount={assets.length} stage={stage} />)}
 
