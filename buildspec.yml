@@ -8,7 +8,7 @@ phases:
         - echo Build started on `date`
         - aws --version
         - docker -v
-        - envsubst < config/config.ts > config/config.ts
+        - envsubst < config/config.ts.template > config/config.ts
         - cat config/config.ts
         - npm i --legacy-peer-deps
         
