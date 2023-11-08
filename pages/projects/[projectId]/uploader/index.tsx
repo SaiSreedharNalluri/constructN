@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../../../components/divami_components/header/Header";
 import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 import UploaderDateDetails from "../../../../components/divami_components/uploader_details/uploaderDetails";
@@ -35,7 +35,13 @@ const Index: React.FC<IProps> = () => {
           return null;
       }
   };
-
+  if(uploaderState.uploadinitiate)
+  {
+    
+    useEffect(()=>{
+      console.log('sathya')
+    },[])
+  }
   return (
     <div>
       <div>

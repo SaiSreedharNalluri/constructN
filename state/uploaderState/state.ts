@@ -23,9 +23,10 @@ export interface UploaderState {
     extractedFileValue:any;
     isNextEnabled:boolean;
     stepperSideFileList:boolean,
-    choosenFiles: choosenFileObject;
-    skipGCP: boolean
-    gcpList?: IGCP;
+    choosenFiles: choosenFileObject,
+    skipGCP: boolean,
+    gcpList?: IGCP,
+    uploadinitiate:boolean,
 }
 
 export enum UploaderStep {
@@ -64,5 +65,6 @@ export const initialUploaderState: UploaderState = {
         duplicateFiles: []
     },
     skipGCP: false,
+    uploadinitiate:false
 };
 

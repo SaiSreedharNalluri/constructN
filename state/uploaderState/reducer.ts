@@ -65,7 +65,12 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
             return{
                 ...state,
                 isNextEnabled:action.payload.IsNextEnabled
-            }   
+            }
+        case UploaderActionType.changeUploadinitiate:
+                return {
+                    ...state,
+                    uploadinitiate:action.payload.uploadinitiate
+                }       
         default:
             return state
     }

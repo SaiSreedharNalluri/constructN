@@ -15,6 +15,7 @@ export enum UploaderActionType {
     skipGCP,
     setExtractedFileValue,
     setIsNextEnabled,
+    changeUploadinitiate
 }
 
 export interface goBack {
@@ -72,7 +73,10 @@ export interface appendFiles {
   type: UploaderActionType.appendFiles;
   payload: { files: fileWithExif[] };
 }
-
+export interface changeUploadinitiate {
+  type: UploaderActionType.changeUploadinitiate
+  payload:{ uploadinitiate: boolean }
+}
 export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>) => {
     return {
       uploaderAction: {
@@ -118,6 +122,9 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         setIsNextEnabled:(IsNextEnabled:boolean)=>{
           dispatch({type: UploaderActionType.setIsNextEnabled,payload:{IsNextEnabled:IsNextEnabled}})
         },
+        changeUploadinitiate:(uploadinitiate:boolean)=>{
+          dispatch({type:UploaderActionType.changeUploadinitiate,payload:{uploadinitiate:uploadinitiate}});
+        },
       }
     }
 
@@ -134,5 +141,6 @@ export type UploaderActions =
   | appendFiles
   | setExtractedFileValue
   | setIsNextEnabled
-  | skipGCP;
+  | skipGCP
+  |changeUploadinitiate
 
