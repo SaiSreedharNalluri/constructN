@@ -8,13 +8,21 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
             return {
                 ...state,
                 step: state.step--,
-                isNextEnabled: false
+                skipGCP: false,
+                isNextEnabled: true
             }
         case UploaderActionType.Next: 
             return {
                 ...state,
                 step: state.step++,
-                isNextEnabled: true,
+                isNextEnabled: false,
+            }
+        case UploaderActionType.skipGCP: 
+            return {
+                ...state,
+                step: state.step++,
+                skipGCP: true,
+                isNextEnabled: false,
             }
         case UploaderActionType.UpdateDate:
             return {
@@ -22,24 +30,31 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 date: action.payload.date
             }
         case UploaderActionType.setshowMessage:
-            return{
+            return {
                 ...state,
                 showMessage:action.payload.showMessage
             }
-        case UploaderActionType.setStructureList:
-            return{
+        case UploaderActionType.setProject:
+            return {
                 ...state,
-                structureList:action.payload.structureList
+                project:action.payload.project
             }
-        case UploaderActionType.setSectionDetails:
-            return{
+        case UploaderActionType.setStructure:
+            return {
                 ...state,
-                sectionDetails:action.payload.sectionDetails
+                structure:action.payload.structure
             }
-            case UploaderActionType.setStepperSideFilesList:
-            return{
+        case UploaderActionType.setStepperSideFilesList:
+            return {
                 ...state,
                 stepperSideFileList:action.payload.stepperSideFileList
+            }
+        case UploaderActionType.appendFiles:
+            let updatedList = getUpdatedFileList(state, action.payload.files);
+            return {
+                ...state,
+                choosenFiles: updatedList,
+                isNextEnabled: updatedList.validFiles.length > 1
             }
         case UploaderActionType.setExtractedFileValue:
             return{
@@ -57,15 +72,11 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
 }
 
 const getUpdatedFileList = (state: UploaderState, files: fileWithExif[]): choosenFileObject => {
-    // console.log("ChooseFiles ExistingFiles: ", state.choosenFiles)
-    // console.log("ChooseFiles NewFileToAppend: ", files)
-
     let choosenFiles = state.choosenFiles;
     let invalidEXIFFiles: File[] = [];
     let duplicateEXIFFiles: uploadImage[] = [];
     let validEXIFFiles: uploadImage[] = []
     files.forEach((fileWithExif) => {
-        // console.log("ChooseFiles exifData: ", fileWithExif)
         let file = fileWithExif.file
         let deviceId = fileWithExif.exifData?.BodySerialNumber?.description
         let dateTimeOriginal = fileWithExif.exifData?.DateTimeOriginal?.description

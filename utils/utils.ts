@@ -2,6 +2,8 @@ import moment from "moment-timezone";
 import { getCookie } from "cookies-next";
 import ExifReader from "exifreader";
 import { IGCP } from "../models/IGCP";
+import { ChildrenEntity, IStructure } from "../models/IStructure";
+import { delimiter } from "path";
 
 
 /**
@@ -39,18 +41,23 @@ export const getInitialGCPList = (isUTM: boolean): IGCP => {
     if(isUTM){
         gcplist.utmLocation=[]
         for( let i=0; i>minimumGCPPoints; i++){
-        
-            // gcplist.({
-            //  utmLocation:{
-
-            //  }  
-            // })
+            gcplist.utmLocation.push({
+                easting: 0,
+                northing: 0,
+                elevation: 0,
+                zone: ""
+            })
         }
     }else{
-
+        gcplist.location=[]
+        for( let i=0; i>minimumGCPPoints; i++){
+            gcplist.location.push({
+                coordinates: [0,0],
+                type: "point"
+            })
+        }
     }
-    
-   
-     return gcplist;
-  };
+    return gcplist;
+};
+
   

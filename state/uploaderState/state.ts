@@ -1,6 +1,8 @@
 import { IGCP } from "../../models/IGCP";
+import { IProjects } from "../../models/IProjects";
 import { RawImage } from "../../models/IRawImages";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
+import { getInitialGCPList } from "../../utils/utils";
 
 export type uploadImage = { file: File } & RawImage
 export type fileWithExif = { file: File } & { exifData: ExifReader.Tags }
@@ -11,20 +13,19 @@ export interface choosenFileObject {
     duplicateFiles: uploadImage[]
 }
 
-
 export interface UploaderState {
     step: number;
     date?: Date | null;
     stepNames: string[];
     showMessage: boolean;
-    structureList: IStructure[] | null;
-    sectionDetails:IStructure;
+    project?: IProjects;
+    structure?:IStructure;
     extractedFileValue:any;
     isNextEnabled:boolean;
     stepperSideFileList:boolean,
     choosenFiles: choosenFileObject;
+    skipGCP: boolean
     gcpList?: IGCP;
-
 }
 
 export enum UploaderStep {
@@ -42,7 +43,6 @@ export enum UploaderButtonValues{
     SkipGCPs,
     ConfrimGCPs,
     Upload
-
 }
 
 export const initialUploaderState: UploaderState = {
@@ -55,16 +55,14 @@ export const initialUploaderState: UploaderState = {
         "Upload",
     ],
     showMessage: true,
-    structureList: [],
-    sectionDetails: {} as IStructure,
     extractedFileValue:[],
     stepperSideFileList:true,
-    isNextEnabled: true,
+    isNextEnabled: false,
     choosenFiles: {
         validFiles: [],
         invalidEXIFFiles: [],
         duplicateFiles: []
     },
-    
+    skipGCP: false,
 };
 

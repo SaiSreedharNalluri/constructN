@@ -57,6 +57,7 @@ import {
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 import { getSectionsList } from "../../../../services/sections";
 import CustomLoggerClass from "../../../../components/divami_components/custom_logger/CustomLoggerClass";
+import { useAppContext } from "../../../../state/appState/context";
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -122,6 +123,8 @@ const LeftOverLayContainer = styled("div")(({ isFullScreen }: any) => ({
 const Index: React.FC<IProps> = () => {
   const customLogger = new CustomLoggerClass();
   const router = useRouter();
+  const { appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
   let [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
   const [currentProjectId, setActiveProjectId] = useState("");
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
@@ -320,6 +323,10 @@ const Index: React.FC<IProps> = () => {
       getStructureList(router.query.projectId as string)
         .then((response) => {
           const list = response.data.result;
+
+          // Using it for Appstate which will be used for future features
+          appAction.setStructureList(list as IStructure[])
+          
           setStructuresList(list);
           let nodeData = localStorage.getItem("nodeData")
             ? JSON.parse(window.localStorage.getItem("nodeData") || "")
@@ -1462,6 +1469,14 @@ const Index: React.FC<IProps> = () => {
     if (router.isReady) {
       // if (router.query.structId !== undefined)
       // setSelector(router.query.structId.toString());
+
+      // Using it for Appstate which will be used for future features
+      getStructureHierarchy(router.query.projectId as string)
+      .then((response) => {
+        let hierarchyList: ChildrenEntity[] = response.data.result
+        appAction.setHierarchy(hierarchyList)
+      })
+      
       getSectionsList(router.query.projectId as string)
         .then((response: AxiosResponse<any>) => {
           const result = response.data.result;

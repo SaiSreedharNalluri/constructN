@@ -1,4 +1,3 @@
-import { ProjectListing } from "../../components/divami_components/project-listing/ProjectListing";
 import { useEffect, useRef, useState } from "react";
 import Header from "../../components/divami_components/header/Header";
 import {
@@ -41,6 +40,7 @@ import { ProjectListCardView } from "../../components/divami_components/project-
 import { ProjectListFlatView } from "../../components/divami_components/project-listing/ProjectListFlatView";
 import moment from "moment";
 import {
+  getProjects,
   getProjectsList,
   getProjectUsers,
   getUserRoles,
@@ -80,6 +80,8 @@ import { getCookie } from "cookies-next";
 import { ShowErrorContainer } from "../../components/divami_components/project-listing/ProjectListingStyles";
 import chatOpenHightlighted from "../../public/divami_icons/chatOpenHightlighted.svg"
 import CustomLoggerClass from "../../components/divami_components/custom_logger/CustomLoggerClass";
+import { useAppContext } from "../../state/appState/context";
+import { IProjects } from "../../models/IProjects";
 export const truncateString = (text: string, maxLength: number) => {
   let truncatedText = text;
 
@@ -93,6 +95,8 @@ export const truncateString = (text: string, maxLength: number) => {
 };
 
 const Index: React.FC<any> = () => {
+  const { appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
   const breadCrumbsData = [{ label: "Manage Users" }];
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -325,6 +329,14 @@ const Index: React.FC<any> = () => {
   
   useEffect(() => {
     if (router.isReady) {
+
+      // Using it for Appstate which will be used for future features
+      getProjects()
+        .then((response) => {
+          let projectList: IProjects[] = response.data.result
+          appAction.setProjectList(projectList)
+        })
+
       getProjectsList()
         .then(async (response) => {
           if (response?.data?.success === true) {

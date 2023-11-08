@@ -1,12 +1,15 @@
 import { Router, useRouter } from "next/router";
 import React from "react";
 import { useUploaderContext } from "../../../state/uploaderState/context";
+import { useAppContext } from "../../../state/appState/context";
 
 const UploaderReview: React.FC<any> = () => {
   const router = useRouter();
+  const { state: appState, appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-  const sectionId = uploaderState.sectionDetails._id;
+  const sectionId = uploaderState.structure?._id;
 
   const date = uploaderState.date ? new Date(uploaderState.date) : null;
 
@@ -27,7 +30,7 @@ const UploaderReview: React.FC<any> = () => {
                 </div>
                 <div>
                   <p className="text-black-500 mb-0">
-                    : {router.query.projectId as string}
+                    : {uploaderState.project?.name}
                   </p>
                 </div>
               </div>
@@ -37,7 +40,7 @@ const UploaderReview: React.FC<any> = () => {
                   <p className="mb-0 font-semibold">Level Chosen</p>
                 </div>
                 <div>
-                  <p className="text-black-500 mb-0">: {sectionId}</p>
+                  <p className="text-black-500 mb-0">: { uploaderState.structure?.name}</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
@@ -54,7 +57,7 @@ const UploaderReview: React.FC<any> = () => {
                   <p className="mb-0 font-semibold">No. of files choosen</p>
                 </div>
                 <div>
-                  <p className="text-black-500 mb-0">: {}</p>
+                  <p className="text-black-500 mb-0">: {uploaderState.choosenFiles.validFiles.length}</p>
                 </div>
               </div>
 
@@ -63,7 +66,7 @@ const UploaderReview: React.FC<any> = () => {
                   <p className="mb-0 font-semibold">GCP Provided</p>
                 </div>
                 <div>
-                  <p className="text-black-500 mb-0">: {}</p>
+                  <p className="text-black-500 mb-0">: {uploaderState.skipGCP ? "No" : "Yes"}</p>
                 </div>
               </div>
 
@@ -72,7 +75,7 @@ const UploaderReview: React.FC<any> = () => {
                   <p className="mb-0 font-semibold">No. of GCPs(if Provided)</p>
                 </div>
                 <div>
-                  <p className="text-black-500 mb-0">: {}</p>
+                  <p className="text-black-500 mb-0">: {uploaderState.skipGCP ? 0 : uploaderState.gcpList?.location ? uploaderState.gcpList?.location.length : uploaderState.gcpList?.utmLocation?.length}</p>
                 </div>
               </div>
               <div className="p-4 border border-white-500 bg-box-white rounded-md shadow-md">
