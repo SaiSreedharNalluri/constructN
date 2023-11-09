@@ -261,7 +261,11 @@ export class ForgeEdit2DUtils {
 
         const shape = this._edit2DLayer.shapes.find((value: Autodesk.Edit2D.Shape, index: number, obj: Autodesk.Edit2D.Shape[]) => shapeId == value.id)
 
-        if(shape !== undefined) (shape as any).name = assetId
+        if(shape !== undefined) (shape as any).name = assetId;
+
+        (this._edit2DContext as any).selection.selectOnly(shape)
+
+        publish('select-2d-shape', assetId)
     }
 
     private _clearSelection = (event: any) => {

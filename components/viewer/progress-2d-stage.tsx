@@ -6,6 +6,12 @@ import { IAssetStage } from '../../models/IAssetCategory'
 
 export default function Progress2DStage({ stage, assetCount }: { stage: Partial<IAssetStage> & {assets: string[]}, assetCount: number }) {
 
+    const getProgress = () => {
+
+        return stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount)
+
+    }
+
     return (<>
 
         <div className='p-4 mt-3 select-none' style={{ border: '1px solid #e2e3e5', borderRadius: '6px' }}>
@@ -36,13 +42,13 @@ export default function Progress2DStage({ stage, assetCount }: { stage: Partial<
 
             <Stack sx={{ color: stage.color, marginTop: '0.5rem' }} direction="row">
 
-                <BorderLinearProgress className='w-full' color="inherit" variant="determinate" value={60} />
+                <BorderLinearProgress className='w-full' color="inherit" variant="determinate" value={getProgress()} />
 
             </Stack>
 
             <div className='w-full flex justify-between mt-2'>
 
-                <Typography className='text-sm text-[#727375]'>{stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount).toFixed(1)}%</Typography>
+                <Typography className='text-sm text-[#727375]'>{getProgress().toFixed(1)}%</Typography>
 
                 <Typography className='text-sm text-[#727375]'>123/560 {stage.uom}</Typography>
 

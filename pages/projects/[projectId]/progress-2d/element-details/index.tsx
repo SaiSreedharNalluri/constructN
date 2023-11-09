@@ -15,6 +15,16 @@ import moment from 'moment'
 
 const ElementDetails: React.FC<{ asset: IAsset, onChange?: (key: string, value: string) => void }> = ({ asset, onChange }) => {
 
+    const _getSequence = (stageId: string) => {
+
+        const stages = (asset.category as IAssetCategory).stages
+
+        const filtered = stages.filter((value: IAssetStage) => value._id === stageId)
+
+        return filtered.length == 0 ? 0 : filtered[0].sequence
+
+    }
+
     return (
         <>
             {
@@ -26,17 +36,17 @@ const ElementDetails: React.FC<{ asset: IAsset, onChange?: (key: string, value: 
 
                     <StageElement
 
-                        label={'Stage'} onChange={onChange}
+                        label={'Stage'} onChange={onChange} sequence={_getSequence(asset.progress.stage as string)}
 
                         value={(asset.progress.stage as string)}
 
                         stages={[...[NOT_STARTED_STAGE], ...(asset.category as IAssetCategory).stages]} />
 
-                    <div className='mt-3 ml-1'>
+                    <div className='mt-4 ml-1'>
 
-                        <Typography className='text-[#a2a3a5]' variant='body2' fontSize={'1rem'}>
+                        <Typography className='text-[#a2a3a5]' fontSize={'0.9rem'} fontWeight={300}>
 
-                            Updated at {moment(new Date(asset.updatedAt)).format('DD MMM, yyyy')}
+                            Updated at {moment(new Date(asset.updatedAt)).format('DD MMM, yyyy HH:mm')}
 
                         </Typography>
 
@@ -56,6 +66,8 @@ interface IElementProps {
     label: string
 
     value?: string
+
+    sequence?: number
 
     lines?: number
 
@@ -158,7 +170,7 @@ const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1, c
     )
 }
 
-const StageElement: React.FC<IElementProps> = ({ label, value, stages, onChange }) => {
+const StageElement: React.FC<IElementProps> = ({ label, value, sequence = 0, stages, onChange }) => {
 
     const [stage, setStage] = useState<string>()
 
@@ -192,7 +204,7 @@ const StageElement: React.FC<IElementProps> = ({ label, value, stages, onChange 
 
                 {stages && stages.map((stage: IAssetStage, index: number) => {
 
-                    return <MenuItem key={index} value={stage._id}>
+                    return <MenuItem key={index} disabled={stage.sequence < sequence} value={stage._id}>
                         
                         <div className='flex items-center'>
 

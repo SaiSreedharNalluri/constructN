@@ -28,8 +28,6 @@ import KeyboardDoubleArrowDownOutlinedIcon from '@mui/icons-material/KeyboardDou
 
 import KeyboardDoubleArrowUpOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowUpOutlined'
 
-import FilterAltOffOutlinedIcon from '@mui/icons-material/FilterAltOffOutlined'
-
 import { updateQueryParam } from '../../../../utils/router-utils'
 
 import AssetDetails from './asset-details'
@@ -135,6 +133,8 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [loading, setLoading] = useState<boolean>(false)
 
+    const [showProgress, setShowProgress] = useState<boolean>(false)
+
     const [snapshotBase, setSnapshotBase] = useState()
 
     const [hierarchy, setHierarchy] = useState<any>()
@@ -175,7 +175,11 @@ const Progress2DPage: React.FC<any> = () => {
 
             projectId.current = projId
 
+            setShowProgress(true)
+
             fetchStructureHierarchy(projId!).then(data => {
+
+                setShowProgress(false)
 
                 if (data.data.result) {
 
@@ -185,13 +189,15 @@ const Progress2DPage: React.FC<any> = () => {
 
                 }
 
-            }).catch(err => { })
+            }).catch(err => setShowProgress(false))
 
         }
 
         if (structId && structureId.current !== structId) {
 
             structureId.current = structId
+
+            setShowProgress(true)
 
             fetchViewerData(projId!, structId!).then(async data => {
 
@@ -257,11 +263,13 @@ const Progress2DPage: React.FC<any> = () => {
 
             fetchAssetCategories(projId!).then(async data => {
 
+                setShowProgress(false)
+
                 setAssetCategories(data.data.result)
 
                 if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
 
-            }).catch(e => console.log(e))
+            }).catch(e => setShowProgress(false))
 
         }
 
@@ -345,7 +353,15 @@ const Progress2DPage: React.FC<any> = () => {
 
             }
 
+            setShowProgress(true)
+
+            setLoading(true)
+
             createAsset(assetBody).then(res => {
+
+                setShowProgress(false)
+
+                setLoading(false)
 
                 toast.success('Created asset successfully!', { autoClose: 5000 })
 
@@ -353,7 +369,15 @@ const Progress2DPage: React.FC<any> = () => {
 
                 publish('asset-created', { shapeId, assetId })
 
-            }).catch(err => toast.error('Failed to create asset!', { autoClose: 5000 }))
+            }).catch(err => {
+
+                setShowProgress(false)
+
+                setLoading(false)
+                
+                toast.error('Failed to create asset!', { autoClose: 5000 })
+                
+            })
 
         }
 
@@ -371,11 +395,27 @@ const Progress2DPage: React.FC<any> = () => {
 
             const assetBody: Partial<IAsset> = { points }
 
+            setShowProgress(true)
+
+            setLoading(true)
+
             updateAsset(assetId, assetBody).then(res => {
+
+                setShowProgress(false)
+
+                setLoading(false)
 
                 toast.success('Updated asset successfully!', { autoClose: 5000 })
 
-            }).catch(err => toast.error('Failed to update asset!', { autoClose: 5000 }))
+            }).catch(err => {
+                
+                setShowProgress(false)
+
+                setLoading(false)
+
+                toast.error('Failed to update asset!', { autoClose: 5000 })
+                
+            })
 
         }
 
@@ -383,13 +423,29 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _onDeleteShape = () => {
 
+        setShowProgress(true)
+
+        setLoading(true)
+
         if (currentAsset.current !== undefined) deleteAsset(currentAsset.current).then(res => {
+
+            setShowProgress(false)
+
+            setLoading(false)
 
             toast.success('Deleted asset successfully!', { autoClose: 5000 })
 
             publish('delete-shape', currentAsset.current)
 
-        }).catch(err => toast.error('Failed to delete asset!', { autoClose: 5000 }))
+        }).catch(err => {
+
+            setShowProgress(false)
+
+            setLoading(false)
+            
+            toast.error('Failed to delete asset!', { autoClose: 5000 })
+            
+        })
 
         else toast.warning('Please select an asset!', { autoClose: 5000 })
 
@@ -445,14 +501,19 @@ const Progress2DPage: React.FC<any> = () => {
 
                 result.forEach((asset: IAsset) => {
 
-                    const stages = (asset.category as IAssetCategory).stages.filter(stage => stage._id === asset.progress.stage)
+                    const assetStages = (asset.category as IAssetCategory).stages.filter(stage => stage._id === asset.progress.stage)
 
-                    asset.progress.stage = stages.length == 0 ? NOT_STARTED_STAGE : stages[0]
+                    asset.progress.stage = assetStages.length == 0 ? NOT_STARTED_STAGE : assetStages[0]
 
-                    if (_assetMap.current[asset.progress.stage._id]) _assetMap.current[asset.progress.stage._id].assets.push(asset._id)
+                    const prevStages = stages.filter((value: IAssetStage) => value.sequence <= (asset.progress.stage as IAssetStage).sequence)
 
-                    else _assetMap.current[asset.progress.stage._id] = { assets: [asset._id] }
+                    for(let i = 0; i < prevStages.length; i++) {
 
+                        if (_assetMap.current[prevStages[i]._id]) _assetMap.current[prevStages[i]._id].assets.push(asset._id)
+
+                        else _assetMap.current[prevStages[i]._id] = { assets: [asset._id] }
+
+                    }
                 })
 
                 setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
@@ -605,6 +666,8 @@ const Progress2DPage: React.FC<any> = () => {
 
                                     </div>
 
+                                    { (showProgress || loading) && <div className='absolute z-20 w-full h-full bg-[#000000] opacity-30'></div>}
+
                                 </div>
 
                                 <div id='right-container' className={'flex flex-col w-1/4 my-4 mr-4 py-4'}
@@ -665,7 +728,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
-                                            {stages?.map(stage => <Progress2DStage key={stage._id} assetCount={assets.length} stage={stage} />)}
+                                            {stages?.map(stage => (stage as IAssetStage).sequence > 0 && <Progress2DStage key={stage._id} assetCount={assets.length} stage={stage} />)}
 
                                         </div>
 
