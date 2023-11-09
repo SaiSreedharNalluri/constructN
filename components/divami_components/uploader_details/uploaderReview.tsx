@@ -2,6 +2,7 @@ import { Router, useRouter } from "next/router";
 import React from "react";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 import { useAppContext } from "../../../state/appState/context";
+import { getPathToRoot } from "../../../utils/utils";
 
 const UploaderReview: React.FC<any> = () => {
   const router = useRouter();
@@ -12,6 +13,17 @@ const UploaderReview: React.FC<any> = () => {
   const sectionId = uploaderState.structure?._id;
 
   const date = uploaderState.date ? new Date(uploaderState.date) : null;
+
+  const gethierarchyPath = (): string => {
+    if(uploaderState.structure) {
+      if(appState.hierarchy) {
+        return getPathToRoot(uploaderState.structure?._id, appState.hierarchy[0])
+      } else {
+        return uploaderState.structure.name
+      }
+    }
+    return ""
+  }
 
   const formattedDate = date
     ? `${date.getFullYear()} ${date.toLocaleString("default", {
@@ -40,7 +52,8 @@ const UploaderReview: React.FC<any> = () => {
                   <p className="mb-0 font-semibold">Level Chosen</p>
                 </div>
                 <div>
-                  <p className="text-black-500 mb-0">: { uploaderState.structure?.name}</p>
+                  <p className="text-black-500 mb-0">: { gethierarchyPath() }
+                  </p>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">

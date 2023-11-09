@@ -64,4 +64,27 @@ export const getInitialGCPList = (isUTM: boolean): IGCP => {
     return gcplist;
 };
 
+export const getPathToRoot = (structureId: String, hierarchy: ChildrenEntity, delimiter:delimiterType = " > "): string => {
+    const getPath = (structureId: String, hierarchy: ChildrenEntity, delimiter:delimiterType = " > "): string => {
+        if(structureId === hierarchy._id) {
+            return delimiter + hierarchy.name
+        } else if (hierarchy.children && hierarchy.children?.length > 0) {
+            let val = hierarchy.children.reduce<string>((path, element): string => {
+                return path += getPath(structureId, element, delimiter)
+            }, "");
+            if (val.length > 0) {
+                val = delimiter + hierarchy.name + val
+            }
+            return val
+        } else {
+            return ""
+        }
+    }
+    let path = getPath(structureId, hierarchy, delimiter)
+    // console.log("TestingUploader: ", path.substring(1))
+    return path.substring(2)
+}
+
+export type delimiterType = " / " | " > "
+
   
