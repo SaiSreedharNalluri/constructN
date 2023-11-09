@@ -157,7 +157,7 @@ const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => vo
             { loading && _renderAssetDetailsShimmer() }
             
             {
-                asset && !loading && <div className='h-full bg-white'>
+                asset && !loading && <div className='flex flex-col h-full bg-white'>
 
                     <Tabs
 
@@ -173,7 +173,7 @@ const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => vo
 
                     {selectedTab === 'asset-details' && <div className='px-4 '><ElementDetails asset={asset} onChange={_onChange} /> </div>}
 
-                    {selectedTab === 'asset-timeline' && <div className='px-4 '><AssetTimeline asset={asset} /> </div>}
+                    {selectedTab === 'asset-timeline' && <div className='px-4 overflow-auto'><AssetTimeline asset={asset} /> </div>}
 
                 </div>
             }

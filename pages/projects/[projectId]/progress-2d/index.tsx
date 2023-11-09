@@ -646,6 +646,8 @@ const Progress2DPage: React.FC<any> = () => {
 
                                         viewType={'Plan Drawings'}
 
+                                        category={selectedCategory}
+
                                         snapshot={snapshotBase}
 
                                         assets={assets} />
@@ -665,8 +667,6 @@ const Progress2DPage: React.FC<any> = () => {
                                         <Typography variant='caption' fontSize={14} className='select-none'>Hierarchy</Typography>
 
                                     </div>
-
-                                    { (showProgress || loading) && <div className='absolute z-20 w-full h-full bg-[#000000] opacity-30'></div>}
 
                                 </div>
 
@@ -757,6 +757,8 @@ const Progress2DPage: React.FC<any> = () => {
                                 }
 
                             </div>
+
+                            { (showProgress || loading) && <div className='fixed z-20 w-screen h-screen bg-[#000000] opacity-0'></div>}
 
                         </div>
 

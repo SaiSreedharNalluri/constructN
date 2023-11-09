@@ -1,13 +1,13 @@
-import { radians2degrees } from "@turf/turf"
+import { radians2degrees } from '@turf/turf'
 
 
 export class ForgeDataVizUtils {
 
-    static NAVIGATOR = "NAVIGATOR"
+    static NAVIGATOR = 'NAVIGATOR'
 
-    static ISSUE = "Issue"
+    static ISSUE = 'Issue'
 
-    static TASK = "Task"
+    static TASK = 'Task'
 
     private _dataVizExtn: Autodesk.Extensions.DataVisualization
 
@@ -577,7 +577,7 @@ export class ForgeDataVizUtils {
 
     _invalidateViewables = (dbIds: number[], meshes: any[], viewableData: any, callback: Function) => {
         if (!dbIds || !meshes || !callback) {
-            throw new Error("Parameters of 'invalidateViewables' are mandatory");
+            throw new Error(`Parameters of 'invalidateViewables' are mandatory`);
         }
 
         if (!(dbIds instanceof Array)) {
@@ -596,7 +596,7 @@ export class ForgeDataVizUtils {
         for (let k = 0; k < meshes.length; k++) {
             const mesh = meshes[k];
             const geometry = mesh.geometry;
-            const ids = geometry.attributes["id"].array;
+            const ids = geometry.attributes['id'].array;
 
             for (let i = 0; i < ids.length; i += 3) {
                 const dbId = ids[i] + (ids[i + 1] << 8) + (ids[i + 2] << 16);
@@ -612,8 +612,8 @@ export class ForgeDataVizUtils {
 
                 const pointIndex = i / 3;
                 if (updates.position) {
-                    const positions = geometry.attributes["position"].array;
-                    geometry.attributes["position"].needsUpdate = true;
+                    const positions = geometry.attributes['position'].array;
+                    geometry.attributes['position'].needsUpdate = true;
                     positions[pointIndex * 3 + 0] = updates.position.x;
                     positions[pointIndex * 3 + 1] = updates.position.y;
                     positions[pointIndex * 3 + 2] = updates.position.z;
@@ -624,8 +624,8 @@ export class ForgeDataVizUtils {
                 if (updates.url) {
                     const uv = viewableData.getSpriteUV(updates.url);
                     if (uv) {
-                        const uvp = geometry.attributes["uvp"].array;
-                        geometry.attributes["uvp"].needsUpdate = true;
+                        const uvp = geometry.attributes['uvp'].array;
+                        geometry.attributes['uvp'].needsUpdate = true;
                         uvp[pointIndex * 4 + 0] = uv.x;
                         uvp[pointIndex * 4 + 1] = uv.y;
                         uvp[pointIndex * 4 + 2] = uv.w;
@@ -636,8 +636,8 @@ export class ForgeDataVizUtils {
                 }
 
                 if (updates.color) {
-                    const colors = geometry.attributes["color"].array;
-                    geometry.attributes["color"].needsUpdate = true;
+                    const colors = geometry.attributes['color'].array;
+                    geometry.attributes['color'].needsUpdate = true;
                     colors[pointIndex * 3 + 0] = updates.color.r * 255;
                     colors[pointIndex * 3 + 1] = updates.color.g * 255;
                     colors[pointIndex * 3 + 2] = updates.color.b * 255;
@@ -649,8 +649,8 @@ export class ForgeDataVizUtils {
                     if (updates.scale > 2.0 || updates.scale < 0) {
                         const msg = `invalidateViewables: 'scale' of '${updates.scale}' out of range [0, 2]`;
                     }
-                    const scale = geometry.attributes["pointScale"].array;
-                    geometry.attributes["pointScale"].needsUpdate = true;
+                    const scale = geometry.attributes['pointScale'].array;
+                    geometry.attributes['pointScale'].needsUpdate = true;
                     scale[pointIndex] = updates.scale;
 
                     sceneUpdated = true;

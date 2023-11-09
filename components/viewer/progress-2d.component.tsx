@@ -10,11 +10,13 @@ import { ForgeDataVizUtils } from '../../utils/forge-utils'
 
 import { ForgeEdit2DUtils } from '../../utils/forge-edit-2d-utils'
 
-import { IAsset, IAssetStage } from '../../models/IAssetCategory'
+import { IAsset, IAssetCategory, IAssetStage } from '../../models/IAssetCategory'
 
 import ClickTypesPicker from './segment-class-filters'
 
 import { Paper } from '@mui/material'
+
+import LayerSelect from './layer-select'
 
 interface _ViewerProps {
 
@@ -25,6 +27,8 @@ interface _ViewerProps {
     snapshot: any
 
     assets: IAsset[]
+
+    category: IAssetCategory | undefined
 }
 
 
@@ -57,7 +61,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
         _forge = forge
 
-        if(!alreadyInitialised) {
+        if (!alreadyInitialised) {
 
             _initialised.current = true
 
@@ -75,7 +79,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
     useEffect(() => {
 
-        return(() => {
+        return (() => {
 
             _edit2dUtils.current?.destroy()
 
@@ -123,7 +127,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
             _dataVizUtils.current?.setTransform(_tm.current!, _offset.current!)
 
-            // if (layers) _dataVizUtils.current.loadMediaData(layers)
+            if (layers) _dataVizUtils.current.loadMediaData(layers)
         }
     }
 
@@ -197,11 +201,33 @@ function Progress2DComponent(props: _ViewerProps) {
 
                 onExtnLoaded={onExtnLoaded} />
 
-            <Paper className='absolute w-fit h-fit' style={{ zIndex: 5 }} elevation={1}>
+            <div className='flex absolute w-fit h-fit' style={{ zIndex: 5 }}>
 
-                <ClickTypesPicker />
+                <Paper elevation={1}>
 
-            </Paper>
+                    <LayerSelect
+
+                        layers={Object.keys(LightBoxInstance.getSnapshotBase().layers)}
+
+                        onChange={(selected: string[]) => {
+
+                            _dataVizUtils.current?.showTag('360 Video', selected.includes('360 Video'))
+
+                            _dataVizUtils.current?.showTag('360 Image', selected.includes('360 Image'))
+
+                            _dataVizUtils.current?.showTag('Phone Image', selected.includes('Phone Image'))
+
+                        }} />
+
+                </Paper>
+
+                { props.category && <Paper className='ml-3' elevation={1}>
+
+                    <ClickTypesPicker />
+
+                </Paper> }
+
+            </div>
 
         </>
     )
