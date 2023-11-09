@@ -1,3 +1,4 @@
+import { IGCP, LONGLATType, UTMType } from "../../models/IGCP";
 import { IProjectUserList, IProjects } from "../../models/IProjects";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import { fileWithExif } from "./state";
@@ -13,9 +14,12 @@ export enum UploaderActionType {
     setStepperSideFilesList,
     appendFiles,
     skipGCP,
+    setGCPType,
+    setGCPList,
     setExtractedFileValue,
     setIsNextEnabled,
     changeUploadinitiate
+
 }
 
 export interface goBack {
@@ -69,14 +73,27 @@ export interface setStepperSideFilesList {
   type: UploaderActionType.setStepperSideFilesList
   payload:{ stepperSideFileList: boolean }
 }
+
 export interface appendFiles {
   type: UploaderActionType.appendFiles;
   payload: { files: fileWithExif[] };
 }
+
 export interface changeUploadinitiate {
   type: UploaderActionType.changeUploadinitiate
   payload:{ uploadinitiate: boolean }
 }
+
+export interface setGCPType{
+    type:UploaderActionType.setGCPType;
+    payload:{type: UTMType | LONGLATType};
+}
+
+export interface setGCPList{
+  type:UploaderActionType.setGCPList;
+  payload:{list: IGCP, type: UTMType | LONGLATType};
+}
+
 export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>) => {
     return {
       uploaderAction: {
@@ -125,6 +142,12 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         changeUploadinitiate:(uploadinitiate:boolean)=>{
           dispatch({type:UploaderActionType.changeUploadinitiate,payload:{uploadinitiate:uploadinitiate}});
         },
+        setGCPList:(list:IGCP, type: UTMType | LONGLATType)=>{
+          dispatch({type:UploaderActionType.setGCPList, payload:{list:list, type: type}})
+        },
+        setGCPType:(type: UTMType | LONGLATType)=>{
+            dispatch({type:UploaderActionType.setGCPType, payload:{ type: type}})
+        }
       }
     }
 
@@ -142,5 +165,7 @@ export type UploaderActions =
   | setExtractedFileValue
   | setIsNextEnabled
   | skipGCP
-  |changeUploadinitiate
+  | changeUploadinitiate
+  | setGCPList
+  | setGCPType
 
