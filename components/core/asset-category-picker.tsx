@@ -69,7 +69,7 @@ export default function AssetCategoryPicker({ categories, selected, onSelect }: 
 
                 <TextField
 
-                    {...params} 
+                    {...params} variant='filled'
                     
                     className='text-[#4a4a4a]' label='Choose a category'
 

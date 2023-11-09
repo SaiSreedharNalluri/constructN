@@ -143,6 +143,8 @@ const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => vo
 
                 <div className='h-[2.25rem] mt-2 mx-4 bg-slate-200 rounded'></div>
 
+                <div className='h-[1.1rem] w-[50%] mt-4 mx-4 bg-slate-200 rounded'></div>
+
             </div>
         )
     }

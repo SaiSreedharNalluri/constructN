@@ -1,7 +1,7 @@
 
 import { IAsset, IAssetCategory, IAssetPoint, IAssetStage } from '../models/IAssetCategory'
 
-import { publish, subscribe } from '../services/light-box-service'
+import { publish, subscribe, unsubscribe } from '../services/light-box-service'
 
 export class ForgeEdit2DUtils {
 
@@ -20,7 +20,6 @@ export class ForgeEdit2DUtils {
     private _editable: boolean
 
     private _shapeMap: { [key: number]: Autodesk.Edit2D.Shape } = {}
-
 
 
     constructor(viewer: Autodesk.Viewing.GuiViewer3D, _edit2DExtn: Autodesk.Extensions.Edit2D, editable: boolean = true) {
@@ -45,91 +44,7 @@ export class ForgeEdit2DUtils {
 
         this._offset = [0, 0, 0]
 
-        subscribe('progress-2d-tool', (event: any) => {
-
-            const tool = event.detail
-
-            // console.log(event, tool)
-
-            if (tool && this._edit2DExtn) this._startTool(this._getTool(tool))
-
-            else this._stopTool()
-
-        })
-
-        subscribe('asset-created', (event: any) => {
-
-            const {shapeId, assetId} = event.detail
-
-            // console.log(event, shapeId)
-
-            const shape = this._edit2DLayer.shapes.find((value: Autodesk.Edit2D.Shape, index: number, obj: Autodesk.Edit2D.Shape[]) => shapeId == value.id)
-
-            if(shape !== undefined) (shape as any).name = assetId
-        })
-
-        subscribe('clear-shape-selection', (event: any) => {
-
-            (this._edit2DContext as any).selection.selectOnly(undefined)
-
-        })
-
-        subscribe('delete-shape', (event: any) => {
-
-            const assetId = event.detail
-
-            const shape = this._edit2DLayer.shapes.find((value: any, index: number, obj: Autodesk.Edit2D.Shape[]) => assetId == value.name)
-
-            if(shape !== undefined) this._edit2DLayer.removeShape(shape)
-
-        })
-
-        this._edit2DContext.undoStack.addEventListener(Autodesk.Edit2D.UndoStack.AFTER_ACTION, (event: any) => {
-
-            // console.log(event)
-
-            switch (event.action.constructor.name) {
-
-                case 'MoveVertex':
-
-                case 'Re':
-
-                case 'MoveLoop':
-
-                    this._onMoveVertex(event)
-
-                    break
-
-                case 'MoveShapes':
-
-                    this._onMoveShapes(event)
-
-                    break
-
-                case 'AddShape':
-
-                    const matches = this._viewer.toolController.getActiveTool().getName().match(new RegExp('Edit2_' + '(.*)' + '_default'))
-
-                    publish('add-2d-shape', { id: event.action.shape.id, points: event.action.shape._loops[0], type: matches ? matches[1].replace('Tool', '') : '' })
-
-                    break
-
-            }
-
-        });
-
-        (this._edit2DContext as any).selection.addEventListener(Autodesk.Edit2D.Selection.Events.SELECTION_CHANGED, (event: any) => {
-
-            // console.log(event)
-
-            const selected: any[] = Object.values(event.target.isSelected)
-
-            const selectedId = selected.length == 0 ? undefined : selected[0].name
-
-            publish('select-2d-shape', selectedId)
-
-        })
-
+        
     }
 
     loadAssets(assets: IAsset[]) {
@@ -326,13 +241,130 @@ export class ForgeEdit2DUtils {
         return a
     }
 
+    private _progress2dTool = (event: any) => {
+
+        const tool = event.detail
+
+        // console.log(event, tool)
+
+        if (tool && this._edit2DExtn) this._startTool(this._getTool(tool))
+
+        else this._stopTool()
+
+    }
+
+    private _assetCreated = (event: any) => {
+
+        const {shapeId, assetId} = event.detail
+
+        // console.log(event, shapeId)
+
+        const shape = this._edit2DLayer.shapes.find((value: Autodesk.Edit2D.Shape, index: number, obj: Autodesk.Edit2D.Shape[]) => shapeId == value.id)
+
+        if(shape !== undefined) (shape as any).name = assetId
+    }
+
+    private _clearSelection = (event: any) => {
+
+        (this._edit2DContext as any).selection.selectOnly(undefined)
+
+    }
+
+    private _deleteShape = (event: any) => {
+
+        const assetId = event.detail
+
+        const shape = this._edit2DLayer.shapes.find((value: any, index: number, obj: Autodesk.Edit2D.Shape[]) => assetId == value.name)
+
+        if(shape !== undefined) this._edit2DLayer.removeShape(shape)
+
+    }
+
+    private _undoStackAction = (event: any) => {
+
+        // console.log(event)
+
+        switch (event.action.constructor.name) {
+
+            case 'MoveVertex':
+
+            case 'Re':
+
+            case 'MoveLoop':
+
+                this._onMoveVertex(event)
+
+                break
+
+            case 'MoveShapes':
+
+                this._onMoveShapes(event)
+
+                break
+
+            case 'AddShape':
+
+                const matches = this._viewer.toolController.getActiveTool().getName().match(new RegExp('Edit2_' + '(.*)' + '_default'))
+
+                publish('add-2d-shape', { id: event.action.shape.id, points: event.action.shape._loops[0], type: matches ? matches[1].replace('Tool', '') : '' })
+
+                break
+
+        }
+
+    }
+
+    private _selectionChanged = (event: any) => {
+
+        // console.log(event)
+
+        const selected: any[] = Object.values(event.target.isSelected)
+
+        const selectedId = selected.length == 0 ? undefined : selected[0].name
+
+        publish('select-2d-shape', selectedId)
+
+    }
+
     _addListeners = () => {
 
+        subscribe('progress-2d-tool', this._progress2dTool)
+
+        subscribe('asset-created', this._assetCreated)
+
+        subscribe('clear-shape-selection', this._clearSelection)
+
+        subscribe('delete-shape', this._deleteShape)
+
+        this._edit2DContext.undoStack.addEventListener(Autodesk.Edit2D.UndoStack.AFTER_ACTION, this._undoStackAction);
+
+        (this._edit2DContext as any).selection.addEventListener(Autodesk.Edit2D.Selection.Events.SELECTION_CHANGED, this._selectionChanged)
 
     }
 
     _removeListeners = () => {
 
+        unsubscribe('progress-2d-tool', this._progress2dTool)
+
+        unsubscribe('asset-created', this._assetCreated)
+
+        unsubscribe('clear-shape-selection', this._clearSelection)
+
+        unsubscribe('delete-shape', this._deleteShape)
+
+        this._edit2DContext.undoStack.removeEventListener(Autodesk.Edit2D.UndoStack.AFTER_ACTION, this._undoStackAction);
+
+        (this._edit2DContext as any).selection.removeEventListener(Autodesk.Edit2D.Selection.Events.SELECTION_CHANGED, this._selectionChanged)
+
+    }
+
+    destroy = () => {
+
+        this._removeListeners()
+
+        this._edit2DExtn.unregisterDefaultTools()
+
+        this._edit2DExtn.unload()
 
     }
 }

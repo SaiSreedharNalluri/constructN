@@ -32,6 +32,8 @@ function Progress2DComponent(props: _ViewerProps) {
 
     let _forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D | undefined>
 
+    const _initialised = useRef<boolean>(false)
+
     const _model = useRef<Autodesk.Viewing.Model>()
 
     const _layers = useRef<any>()
@@ -57,6 +59,8 @@ function Progress2DComponent(props: _ViewerProps) {
 
         if(!alreadyInitialised) {
 
+            _initialised.current = true
+
             _removeToolbar(_forge.current!)
 
             _changeBackground(_forge.current!)
@@ -68,6 +72,15 @@ function Progress2DComponent(props: _ViewerProps) {
 
         }
     }
+
+    useEffect(() => {
+
+        return(() => {
+
+            _edit2dUtils.current?.destroy()
+
+        })
+    }, [])
 
     useEffect(() => { setViewType(props.viewType) }, [props.viewType])
 
@@ -184,7 +197,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
                 onExtnLoaded={onExtnLoaded} />
 
-            <Paper className='absolute w-fit h-fit' style={{ zIndex: 1 }} elevation={1}>
+            <Paper className='absolute w-fit h-fit' style={{ zIndex: 5 }} elevation={1}>
 
                 <ClickTypesPicker />
 

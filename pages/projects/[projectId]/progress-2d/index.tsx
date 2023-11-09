@@ -661,7 +661,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                     {!selectedAsset && <div className='px-4'>
 
-                                        <div className='overflow-auto' style={{ height: 'calc(100vh - 254px)' }}>
+                                        <div className='overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
 
                                             {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 

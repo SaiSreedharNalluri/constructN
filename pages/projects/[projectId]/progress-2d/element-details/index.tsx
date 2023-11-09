@@ -1,4 +1,4 @@
-import { IconButton, InputAdornment, MenuItem, OutlinedInput, Select, SelectChangeEvent, Typography } from '@mui/material'
+import { IconButton, InputAdornment, MenuItem, OutlinedInput, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material'
 
 import { useEffect, useState } from 'react'
 
@@ -9,6 +9,8 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined'
 
 import CircleIcon from '@mui/icons-material/Circle'
+
+import moment from 'moment'
 
 
 const ElementDetails: React.FC<{ asset: IAsset, onChange?: (key: string, value: string) => void }> = ({ asset, onChange }) => {
@@ -29,6 +31,16 @@ const ElementDetails: React.FC<{ asset: IAsset, onChange?: (key: string, value: 
                         value={(asset.progress.stage as string)}
 
                         stages={[...[NOT_STARTED_STAGE], ...(asset.category as IAssetCategory).stages]} />
+
+                    <div className='mt-3 ml-1'>
+
+                        <Typography className='text-[#a2a3a5]' variant='body2' fontSize={'1rem'}>
+
+                            Updated at {moment(new Date(asset.updatedAt)).format('DD MMM, yyyy')}
+
+                        </Typography>
+
+                    </div>
 
                 </div>
             }
@@ -97,31 +109,34 @@ const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1, c
 
                     canEdit && <InputAdornment position='end'>
 
-                        <IconButton
+                        <Tooltip title={editable ? 'Save' : 'Edit'} arrow>
 
-                            aria-label='toggle password visibility'
+                            <IconButton
 
-                            onClick={() => {
-                                
-                                setEditable(!editable)
+                                aria-label='toggle password visibility'
 
-                                if(editable) onChange && name && onChange(label.toLowerCase(), name)
-                            
-                            }}
+                                onClick={() => {
 
-                            onMouseDown={() => {
-                                
-                                setEditable(!editable)
+                                    setEditable(!editable)
 
-                                if(editable) onChange && name && onChange(label.toLowerCase(), name)
-                            
-                            }}
+                                    if (editable) onChange && name && onChange(label.toLowerCase(), name)
 
-                            className='text-[#aaaaaa]' edge='end' >
+                                }}
 
-                            {editable ? <DoneOutlinedIcon fontSize='small' /> : <EditOutlinedIcon fontSize='small' />}
+                                onMouseDown={() => {
 
-                        </IconButton>
+                                    setEditable(!editable)
+
+                                    if (editable) onChange && name && onChange(label.toLowerCase(), name)
+
+                                }}
+
+                                className='text-[#aaaaaa]' edge='end' >
+
+                                {editable ? <DoneOutlinedIcon fontSize='small' /> : <EditOutlinedIcon fontSize='small' />}
+
+                            </IconButton>
+                        </Tooltip>
 
                     </InputAdornment>
 
