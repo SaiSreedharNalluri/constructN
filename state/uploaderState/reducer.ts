@@ -71,7 +71,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                     ...state,
                     uploadinitiate:action.payload.uploadinitiate
                 }       
-            } 
+            
         case UploaderActionType.setGCPList:
             let location = action.payload.list.utmLocation ? action.payload.list.utmLocation : action.payload.list.location ? action.payload.list.location : undefined
             let isNextEnabled=false

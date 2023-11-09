@@ -18,6 +18,7 @@ export enum UploaderActionType {
     setExtractedFileValue,
     setIsNextEnabled,
     changeUploadinitiate
+
 }
 
 export interface goBack {
@@ -78,7 +79,8 @@ export interface appendFiles {
 export interface changeUploadinitiate {
   type: UploaderActionType.changeUploadinitiate
   payload:{ uploadinitiate: boolean }
-}export interface setGCPList{
+}
+export interface setGCPList{
   type:UploaderActionType.setGCPList;
   payload:{list: IGCP};
 }
@@ -151,5 +153,6 @@ export type UploaderActions =
   | setExtractedFileValue
   | setIsNextEnabled
   | skipGCP
+  |changeUploadinitiate
   | setGCPList
 

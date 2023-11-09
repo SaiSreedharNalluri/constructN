@@ -5,30 +5,14 @@ import downloadFileIcon from "../../../public/divami_icons/downloadFileIcon.svg"
 import { useUploaderContext } from "../../../state/uploaderState/context";
 const UploaderGCP = () => {
   const [selectedOption, setSelectedOption] = useState("Upload File");
-  const [selectOption, setSelectOption] = useState("LatLng");
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [base64File, setBase64File] = useState<string | null>(null);
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-  console.log("check",uploaderState.gcpList)
-  
+
   const handleFirstOptionChange = (event: any) => {
     setSelectedOption(event.target.value);
   };
-
-  const handleSecondOptionsChange = (event: any) => {
-    setSelectOption(event.target.value);
-  };
-  useEffect(() => {
-    if (uploaderState.gcpList && uploaderState.gcpList.utmLocation) {
-      
-      setSelectedOption("Enter Manually");
-      setSelectOption("UTM");
-    } else {
-      setSelectedOption("Enter Manually");
-      setSelectOption("LatLng");
-    }
-  }, [uploaderState.gcpList]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileInput = event.target;
@@ -62,10 +46,7 @@ const UploaderGCP = () => {
             className="mt-3 w-full border-t border-solid border-border-yellow"
             style={{ height: "1px" }}
           ></div>
-          <p
-            className="p-2 w-997px h-24px font-sans font-normal not-italic text-base line-height-150%"
-            style={{ margin: "0 60px" }}
-          >
+          <p className="p-2 w-997px h-24px font-sans font-normal not-italic text-base line-height-150%" style={{ margin: "0 60px" }} >
             Choose how you want to provide Ground Control Points.
           </p>
           <div
@@ -100,65 +81,19 @@ const UploaderGCP = () => {
                 </label>
               </div>
             </div>
-            {selectedOption === "Enter Manually" ? (
-              <div className="w-full grid grid-cols-2 gap-4">
-                <div>
-                  <label>
-                    <input
-                      type="radio"
-                      name="secondOption"
-                      value="UTM"
-                      className="appearance-none h-2 w-2 border-8  rounded-full checked:bg-orange-500 checked:border-orange-500 focus:ring-2"
-                      checked={selectOption === "UTM"}
-                      onChange={handleSecondOptionsChange}
-                    />
-                    &nbsp; UTM
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    <input
-                      type="radio"
-                      name="secondOption"
-                      value="LatLng"
-                      className="appearance-none h-2 w-2 border-8  rounded-full checked:bg-orange-500 checked:border-orange-500 focus:ring-2"
-                      checked={selectOption === "LatLng"}
-                      onChange={handleSecondOptionsChange}
-                    />
-                    &nbsp; LatLng
-                  </label>
-                </div>
-              </div>
-            ) : (
-              <p></p>
-            )}
           </div>
         </div>
         {selectedOption == "Enter Manually" ? (
-          <GcpEnterManually selectOption={selectOption}></GcpEnterManually>
+          <GcpEnterManually></GcpEnterManually>
         ) : (
           <div style={{ margin: "0 60px" }}>
-            <p
-              onClick={() => {
-                window.open(
-                  `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/gcpTemplate/GCP-UTM.csv`,
-                  "_blank"
-                );
-              }}
-              className="text-border-yellow italic text-sm flex items-center"
-            >
+            <p onClick={() => {window.open(`${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/gcpTemplate/GCP-UTM.csv`,"_blank");}}
+              className="text-border-yellow italic text-sm flex items-center">
               <img src={downloadFileIcon} className="mr-2" />
               sample template UTM file
             </p>
-            <p
-              onClick={() => {
-                window.open(
-                  `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/gcpTemplate/GCP-LAT-LONG.csv`,
-                  "_blank"
-                );
-              }}
-              className="text-border-yellow italic text-sm flex items-center"
-            >
+            <p onClick={() => {window.open(`${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/gcpTemplate/GCP-LAT-LONG.csv`,"_blank");}}
+              className="text-border-yellow italic text-sm flex items-center" >
               <img src={downloadFileIcon} className="mr-2" />
               Sample template LatLng file
             </p>

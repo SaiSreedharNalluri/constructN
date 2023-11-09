@@ -11,7 +11,7 @@ export const UploaderIcon = styled(Image)({
   cursor: "pointer",
 });
 
-const GcpUploadFile: React.FC<any> = ({ handleUploadCompleted }) => {
+const GcpUploadFile: React.FC<any> = () => {
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -21,42 +21,38 @@ const GcpUploadFile: React.FC<any> = ({ handleUploadCompleted }) => {
     }
   };
   const csvToGcp = (data: any) => {
-    console.log('find')
     if (data.length > 0) {
       let isUTM = false;
       let keys = Object.keys(data[0]);
       let gcp: IGCP = {};
-     
+
       if (keys.find((e) => e === "EASTING")) {
         isUTM = true;
-        
+
         let utmLocations: utmLocation[] = data.map((e: any): utmLocation => {
           return {
             easting: e.EASTING,
             northing: e.NORTHING,
-            zone: e['UTM ZONE'],
+            zone: e["UTM ZONE"],
             elevation: e.ELEVATION,
           };
         });
-        gcp.utmLocation=utmLocations
-        
-      } else if (keys.find((e) => e === "LATITUDE" )) {
+        gcp.utmLocation = utmLocations;
+      } else if (keys.find((e) => e === "LATITUDE")) {
         isUTM = false;
-        let locations:location[] = data.map((e: any): location => {
+        let locations: location[] = data.map((e: any): location => {
           return {
-            type:"point",
-            coordinates:[e.LONGITUDE,e.LATITUDE],
+            type: "point",
+            coordinates: [e.LONGITUDE, e.LATITUDE],
             elevation: e.ALTITUDE,
           };
         });
-        gcp.location=locations
-        console.log(locations)
+        gcp.location = locations;
       } else {
         console.log("errorsssss");
-        return
+        return;
       }
       uploaderAction.setGCPList(gcp);
-      console.log(gcp)
     } else {
       console.log("Final error");
     }
@@ -74,11 +70,9 @@ const GcpUploadFile: React.FC<any> = ({ handleUploadCompleted }) => {
           Papa.parse(fileContent, {
             header: true,
             complete: function (results) {
-              console.log("original data", results.data);
               const data: any = results.data;
-              console.log('date',data)
               csvToGcp(data);
-              },
+            },
 
             error: function (error: any) {
               console.error("Error parsing the CSV file", error);

@@ -129,8 +129,6 @@ const UploaderFooter: React.FC<any> = ({  }) => {
               uploaderAction.changeUploadinitiate(true)
               uploaderAction.next()
             }}
-            className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md`}>
-            onClick={() => uploaderAction.next()}
             className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md hover:bg-orange-500 hover:text-white`}>
             Upload
           </Button>
