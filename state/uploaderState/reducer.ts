@@ -1,4 +1,6 @@
+import { GCPType } from "../../models/IGCP";
 import { RawImage, location } from "../../models/IRawImages";
+import { getInitialGCPList } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
 import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif } from "./state";
 
@@ -71,7 +73,12 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                     ...state,
                     uploadinitiate:action.payload.uploadinitiate
                 }       
-            
+        case UploaderActionType.setGCPType:
+            return {
+                ...state,
+                gcpType: action.payload.type,
+                gcpList: getInitialGCPList(action.payload.type == GCPType.UTM)
+            }
         case UploaderActionType.setGCPList:
             let location = action.payload.list.utmLocation ? action.payload.list.utmLocation : action.payload.list.location ? action.payload.list.location : undefined
             let isNextEnabled=false
@@ -81,6 +88,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
             return{
                 ...state,
                 gcpList:action.payload.list,
+                gcpType: action.payload.type,
                 isNextEnabled: isNextEnabled
             }  
         default:
