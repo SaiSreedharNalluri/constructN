@@ -84,6 +84,7 @@ const GcpEnterManually: React.FC<any> = () => {
                   className="mt-1 ml-1 border border-solid border-black"
                   value={
                     item[heading.toLowerCase()] ||
+                    (heading === "Zone Identifier" && item.zone)||
                     (heading === "Longitude" && item.coordinates[0]) ||
                     (heading === "Latitude" && item.coordinates[1]) ||
                     (heading === "Altitude" && item.elevation) ||
@@ -136,9 +137,9 @@ const GcpEnterManually: React.FC<any> = () => {
         >
           {utmLocation &&
             renderTable(utmLocation, [
+              "Zone Identifier",
               "Easting",
               "Northing",
-              "Zone",
               "Elevation",
             ])}
           {location &&

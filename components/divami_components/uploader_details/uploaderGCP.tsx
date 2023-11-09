@@ -13,6 +13,18 @@ const UploaderGCP = () => {
   const handleFirstOptionChange = (event: any) => {
     setSelectedOption(event.target.value);
   };
+  useEffect(() => {
+    if (uploaderState.gcpList) {
+      if (
+        uploaderState.gcpList.utmLocation &&
+        uploaderState.gcpList.utmLocation.length > 0
+      ) {
+        setSelectedOption("Enter Manually");
+      } else {
+        setSelectedOption("Enter Manually");
+      }
+    }
+  }, [uploaderState.gcpList]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileInput = event.target;
