@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
-import GcpManualFile from "./gcpManualFile";
 import uploaderIcon from "../../../public/divami_icons/Upload_graphics.svg";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 import Papa from "papaparse";
+import { object } from "yup";
+import { location, utmLocation } from "../../../models/IRawImages";
+import { IGCP } from "../../../models/IGCP";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
 });
@@ -18,7 +20,47 @@ const GcpUploadFile: React.FC<any> = ({ handleUploadCompleted }) => {
       fileInputRef.current.click();
     }
   };
-
+  const csvToGcp = (data: any) => {
+    console.log('find')
+    if (data.length > 0) {
+      let isUTM = false;
+      let keys = Object.keys(data[0]);
+      let gcp: IGCP = {};
+     
+      if (keys.find((e) => e === "EASTING")) {
+        isUTM = true;
+        
+        let utmLocations: utmLocation[] = data.map((e: any): utmLocation => {
+          return {
+            easting: e.EASTING,
+            northing: e.NORTHING,
+            zone: e['UTM ZONE'],
+            elevation: e.ELEVATION,
+          };
+        });
+        gcp.utmLocation=utmLocations
+        
+      } else if (keys.find((e) => e === "LATITUDE" )) {
+        isUTM = false;
+        let locations:location[] = data.map((e: any): location => {
+          return {
+            type:"point",
+            coordinates:[e.LONGITUDE,e.LATITUDE],
+            elevation: e.ALTITUDE,
+          };
+        });
+        gcp.location=locations
+        console.log(locations)
+      } else {
+        console.log("errorsssss");
+        return
+      }
+      uploaderAction.setGCPList(gcp);
+      console.log(gcp)
+    } else {
+      console.log("Final error");
+    }
+  };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
 
@@ -30,26 +72,13 @@ const GcpUploadFile: React.FC<any> = ({ handleUploadCompleted }) => {
         try {
           const fileContent = e.target?.result as string;
           Papa.parse(fileContent, {
-            header: false,
+            header: true,
             complete: function (results) {
-              const modifiedData = results.data.slice(1).map((row: any) => row.slice(1));
-
-             
-              const numberOfColumns = modifiedData[0].length;
-              const numberOfRows = modifiedData.length;
-              handleUploadCompleted(numberOfColumns);
-
-              if (numberOfColumns === 4 && numberOfRows >= 4) {
-                   uploaderAction.setIsNextEnabled(false);
-              } 
-              else if (numberOfColumns === 3 && numberOfRows >= 4) {
-                uploaderAction.setIsNextEnabled(false);
-              }
-               else {
-                console.log("The number of columns in the modified data is neither three nor four.");
-              }
-              uploaderAction.setExtractedFileValue(modifiedData);
-            },
+              console.log("original data", results.data);
+              const data: any = results.data;
+              console.log('date',data)
+              csvToGcp(data);
+              },
 
             error: function (error: any) {
               console.error("Error parsing the CSV file", error);
@@ -62,6 +91,7 @@ const GcpUploadFile: React.FC<any> = ({ handleUploadCompleted }) => {
       reader.readAsText(file);
     }
   };
+
   return (
     <React.Fragment>
       <div>
@@ -88,7 +118,6 @@ const GcpUploadFile: React.FC<any> = ({ handleUploadCompleted }) => {
         </div>
         <div className="mt-4" style={{ margin: "8px 60px" }}>
           <hr></hr>
-          <GcpManualFile></GcpManualFile>
         </div>
         <input
           type="file"

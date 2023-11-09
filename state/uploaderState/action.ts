@@ -1,3 +1,4 @@
+import { IGCP } from "../../models/IGCP";
 import { IProjectUserList, IProjects } from "../../models/IProjects";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import { fileWithExif } from "./state";
@@ -13,6 +14,7 @@ export enum UploaderActionType {
     setStepperSideFilesList,
     appendFiles,
     skipGCP,
+    setGCPList,
     setExtractedFileValue,
     setIsNextEnabled,
     changeUploadinitiate
@@ -76,7 +78,11 @@ export interface appendFiles {
 export interface changeUploadinitiate {
   type: UploaderActionType.changeUploadinitiate
   payload:{ uploadinitiate: boolean }
+}export interface setGCPList{
+  type:UploaderActionType.setGCPList;
+  payload:{list: IGCP};
 }
+
 export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>) => {
     return {
       uploaderAction: {
@@ -125,6 +131,9 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         changeUploadinitiate:(uploadinitiate:boolean)=>{
           dispatch({type:UploaderActionType.changeUploadinitiate,payload:{uploadinitiate:uploadinitiate}});
         },
+        setGCPList:(list:IGCP)=>{
+          dispatch({type:UploaderActionType.setGCPList, payload:{list:list}})
+        }
       }
     }
 
@@ -142,5 +151,5 @@ export type UploaderActions =
   | setExtractedFileValue
   | setIsNextEnabled
   | skipGCP
-  |changeUploadinitiate
+  | setGCPList
 
