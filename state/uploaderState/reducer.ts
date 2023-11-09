@@ -54,7 +54,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
             return {
                 ...state,
                 choosenFiles: updatedList,
-                isNextEnabled: updatedList.validFiles.length > 1
+                isNextEnabled: updatedList.validFiles.length > 0
             }
         case UploaderActionType.setExtractedFileValue:
             return{
@@ -71,6 +71,18 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                     ...state,
                     uploadinitiate:action.payload.uploadinitiate
                 }       
+            
+        case UploaderActionType.setGCPList:
+            let location = action.payload.list.utmLocation ? action.payload.list.utmLocation : action.payload.list.location ? action.payload.list.location : undefined
+            let isNextEnabled=false
+            if(location){
+                isNextEnabled = location.length >=4 
+            }
+            return{
+                ...state,
+                gcpList:action.payload.list,
+                isNextEnabled: isNextEnabled
+            }  
         default:
             return state
     }

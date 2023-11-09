@@ -21,7 +21,7 @@ const UploaderDateDetails : React.FC<any> = () => {
   const router = useRouter();
   let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   const [expanded, setExpanded] = useState<string[]>([]);
-  
+  const maxAllowedDate = new Date();
   const handleDateChange = (date: any | null) => {
     if (date !== null) {
     uploaderAction.setshowMessage(false)
@@ -136,27 +136,28 @@ const UploaderDateDetails : React.FC<any> = () => {
             </div>
           </div>
         </div>
+       
+<div className="flex-1/3 justify-end">
+  
+    <h2 className="pt-2 pr-2 pl-2 pb-0 w-94px,h-20px,font-sans not-italic font-semibold text-sm">Enter Capture Date for {uploaderState.structure?.name}</h2>
+    <div className="w-full border-t border-solid border-border-yellow" style={{ height: "1px" }}></div>
+    <div className="pt-2" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <DatePicker
+        className="ml-2 border border-border-yellow border-solid focus:outline-yellow-500 w-22 p-1 rounded hover:border-yellow-500"
+        placeholderText="MM/DD/YYYY"
+        selected={uploaderState.date}
+        onChange={(date) => handleDateChange(date)}
+        disabled={!uploaderState.structure?.name}
+        maxDate={maxAllowedDate} 
+      />
+   
+  </div>
+  {!uploaderState.structure?.name && (
+      <p className="text-red-500 text-sm">Please select a structure before setting the date.</p>
+    )}
+</div>
 
-        <div className="flex-1/3 justify-end">
-          <h2 className="pt-2 pr-2 pl-2 pb-0 w-94px,h-20px,font-sans not-italic font-semibold text-sm">
-            Enter Capture Date for {uploaderState.structure?.name}
-          </h2>
-          <div
-            className="w-full border-t border-solid border-border-yellow"
-            style={{ height: "1px" }}
-          ></div>
-          <div
-            className="pt-2"
-            style={{ display: "flex", justifyContent: "flex-end" }}
-          >
-            <DatePicker
-              className="ml-2 border border-border-yellow border-solid focus:outline-yellow-500 w-22 p-1 rounded hover:border-yellow-500"
-              placeholderText="MM/DD/YYYY"
-              selected={uploaderState.date}
-              onChange={(date) => handleDateChange(date)}
-            />
-          </div>
-        </div>
+
       </div>
     </div>
   );
