@@ -10,9 +10,9 @@ import { Tab, Tabs } from '@mui/material'
 
 import AssetTimeline from '../asset-timeline'
 
-import { API } from '../../../../../config/config'
-
 import { toast } from 'react-toastify'
+
+import { API } from '../../../../../config/config'
 
 
 const fetchAssetDetails = (assetId: string) => {
@@ -75,25 +75,51 @@ const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => vo
 
     const _onChange = (key: string, value: string) => {
 
-        if (key === 'stage')
+        if (key === 'stage') {
+
+            setLoading(true)
 
             changeAssetStage(assetId, value, new Date()).then(res => {
                 
                 onChange && onChange(res.data.result)
 
-                toast.success('Updated asset stage successfully!')
+                toast.success('Updated asset stage successfully!', {autoClose: 5000})
+
+                setLoading(false)
             
-            }).catch(err => toast.error('Failed to update asset stage!'))
+            }).catch(err => {
 
-        else
+                setLoading(false)
+                
+                toast.error('Failed to update asset stage!', {autoClose: 5000})
+                
+            })
 
-            updateAssetDetails(assetId, { name: value }).then(res => {
+        } else {
+
+            setLoading(true)
+
+            const data: any = {}
+
+            data[key] = value
+
+            updateAssetDetails(assetId, data).then(res => {
                 
                 onChange && onChange(res.data.result)
 
-                toast.success('Updated asset details successfully!')
+                toast.success('Updated asset details successfully!', {autoClose: 5000})
+
+                setLoading(false)
                 
-            }).catch(err => toast.error('Failed to update asset details!'))
+            }).catch(err => {
+
+                setLoading(false)
+                
+                toast.error('Failed to update asset details!', {autoClose: 5000})
+                
+            })
+
+        }
 
     }
 

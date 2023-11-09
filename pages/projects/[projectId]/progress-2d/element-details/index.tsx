@@ -8,6 +8,8 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined'
 
+import CircleIcon from '@mui/icons-material/Circle'
+
 
 const ElementDetails: React.FC<{ asset: IAsset, onChange?: (key: string, value: string) => void }> = ({ asset, onChange }) => {
 
@@ -18,7 +20,7 @@ const ElementDetails: React.FC<{ asset: IAsset, onChange?: (key: string, value: 
 
                     <Element label={'Name'} value={asset.name} onChange={onChange} canEdit={true} />
 
-                    <Element label={'Description'} value={asset.description} onChange={onChange} lines={3} />
+                    <Element label={'Description'} value={asset.description} onChange={onChange} canEdit={true} lines={3} />
 
                     <StageElement
 
@@ -145,11 +147,7 @@ const StageElement: React.FC<IElementProps> = ({ label, value, stages, onChange 
 
     const [stage, setStage] = useState<string>()
 
-    useEffect(() => {
-
-        setStage(value)
-
-    }, [value])
+    useEffect(() => setStage(value), [value])
 
     const handleChange = (event: SelectChangeEvent) => {
 
@@ -179,7 +177,17 @@ const StageElement: React.FC<IElementProps> = ({ label, value, stages, onChange 
 
                 {stages && stages.map((stage: IAssetStage, index: number) => {
 
-                    return <MenuItem key={index} className='text-[12px]' value={stage._id}>{stage.name}</MenuItem>
+                    return <MenuItem key={index} value={stage._id}>
+                        
+                        <div className='flex items-center'>
+
+                            <CircleIcon fontSize='small' htmlColor={stage.color} />
+
+                            <Typography variant='caption' className='ml-2 text-[#4a4a4a]' fontSize='0.9rem'>{stage.name}</Typography>
+                            
+                        </div>
+                        
+                </MenuItem>
 
                 })}
 

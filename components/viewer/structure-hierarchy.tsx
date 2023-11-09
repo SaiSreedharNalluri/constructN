@@ -19,9 +19,7 @@ const StructureHierarchy = ({ structure, hierarchy, onSelect, onClose }: any) =>
 
         <div className='p-4 min-w-[20vw]' >
 
-            <div
-
-                className='flex text-[#4a4a4a] mb-4' >
+            <div className='flex text-[#4a4a4a] mb-4' >
 
                 <Typography variant='body1' className='pl-4 flex-grow select-none'>Hierarchy</Typography>
 
@@ -62,17 +60,9 @@ const TreeNode = ({ node, onSelect }: any) => {
 
     const [showChildren, setShowChildren] = useState(true)
 
-    const _handleClick = () => {
+    const _handleClick = () => onSelect(node)
 
-        onSelect(node)
-
-    }
-
-    const _showChildren = () => {
-
-        setShowChildren(!showChildren)
-
-    }
+    const _showChildren = () => setShowChildren(!showChildren)
 
     return (
 
@@ -80,9 +70,7 @@ const TreeNode = ({ node, onSelect }: any) => {
 
             <div className='mb-2 border border-slate-50 text-sm'>
 
-                <div
-
-                    className='flex items-center flex-wrap cursor-pointer rounded'
+                <div className='flex items-center flex-wrap cursor-pointer rounded' onClick={_handleClick}
 
                     style={{ backgroundColor: mStructure == node._id ? '#f1742e' : 'white', color: mStructure == node._id ? 'white' : '#4a4a4a' }} >
 
@@ -97,7 +85,7 @@ const TreeNode = ({ node, onSelect }: any) => {
                         )
                     }
 
-                    <span onClick={_handleClick}>{name}</span>
+                    <span>{name}</span>
 
                 </div>
 
