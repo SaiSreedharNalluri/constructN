@@ -2,61 +2,36 @@ import React, { useEffect, useState } from "react";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 import { Label, TabelHeading } from "./GCPStyledComponents";
 import { getInitialGCPList } from "../../../utils/utils";
+import { GCPType, IGCP } from "../../../models/IGCP";
+import { location, utmLocation } from "../../../models/IRawImages";
 
 const GcpEnterManually: React.FC<any> = () => {
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
-  const [locationType, setlocationType] = useState("LatLng");
   const { uploaderAction } = uploaderContextAction;
-  const utmLocation = uploaderState?.gcpList?.utmLocation;
-  const location = uploaderState?.gcpList?.location;
-  const handleLocationTypeChange = (event: any) => {
-    setlocationType(event.target.value);
-  };
-  useEffect(() => {
-    if (uploaderState.gcpList) {
-      if (
-        uploaderState.gcpList.utmLocation &&
-        uploaderState.gcpList.utmLocation.length > 0
-      ) {
-        setlocationType("UTM");
-      } else {
-        setlocationType("LatLng");
-      }
-    }
-  }, [uploaderState.gcpList]);
-  useEffect(() => {
-    const getGcpData = () => {
-      if (!utmLocation && !location) {
-        console.log("checking gcp", locationType);
-        const initialGcp = getInitialGCPList(locationType === "UTM");
-
-        // uploaderAction.setGCPList(initialGcp)
-      }
-    };
-
-    getGcpData();
-  }, [utmLocation, location, locationType]);
+  
   const addRow = () => {
-    const newGcp: any = {
-      Easting: 0,
-      Northing: 0,
-      Zone: 0,
-      Elevation: 0,
+    const newGcp: utmLocation = {
+      easting: 0,
+      northing: 0,
+      elevation: 0,
+      zone: ""
     };
 
-    const newLatLngGcp: any = {
+    const newLatLngGcp: location = {
       coordinates: [0, 0],
       type: "point",
       elevation: 0,
     };
 
-    if (locationType === "UTM") {
-      const updatedUtmLocation = [...(utmLocation || []), newGcp] as any;
-      uploaderAction.setGCPList({ utmLocation: updatedUtmLocation });
+    let gcpList: IGCP = {};
+    if (uploaderState.gcpType === GCPType.UTM) {
+      let location = uploaderState.gcpList.utmLocation ? [...uploaderState.gcpList.utmLocation] : []
+      gcpList.utmLocation = [...location, newGcp]
     } else {
-      const updatedLocation = [...(location || []), newLatLngGcp] as any;
-      uploaderAction.setGCPList({ location: updatedLocation });
+      let location = uploaderState.gcpList.location ? [...uploaderState.gcpList.location] : []
+      gcpList.location = [...location, newLatLngGcp]
     }
+    uploaderAction.setGCPList(gcpList, uploaderState.gcpType);
   };
   const renderTable = (data: any, headings: any) => (
     <table>
@@ -107,12 +82,16 @@ const GcpEnterManually: React.FC<any> = () => {
               <input
                 type="radio"
                 name="secondOption"
-                value="UTM"
+                value={GCPType.UTM}
                 className="appearance-none h-2 w-2 border-8  rounded-full checked:bg-orange-500 checked:border-orange-500 focus:ring-2"
-                checked={locationType === "UTM"}
-                onChange={handleLocationTypeChange}
+                checked={uploaderState.gcpType === GCPType.UTM}
+                onChange={(e) => {
+                  if(e.currentTarget.checked) { 
+                    uploaderAction.setGCPType(GCPType.UTM)
+                  }
+                }}
               />
-              &nbsp; UTM
+              &nbsp; {GCPType.UTM}
             </label>
           </div>
           <div>
@@ -120,12 +99,16 @@ const GcpEnterManually: React.FC<any> = () => {
               <input
                 type="radio"
                 name="secondOption"
-                value="LatLng"
+                value={GCPType.LONGLAT}
                 className="appearance-none h-2 w-2 border-8  rounded-full checked:bg-orange-500 checked:border-orange-500 focus:ring-2"
-                checked={locationType === "LatLng"}
-                onChange={handleLocationTypeChange}
+                checked={uploaderState.gcpType === GCPType.LONGLAT}
+                onChange={(e) => {
+                  if(e.currentTarget.checked) { 
+                    uploaderAction.setGCPType(GCPType.LONGLAT)
+                  }
+                }}
               />
-              &nbsp; LatLng
+              &nbsp; {GCPType.LONGLAT}
             </label>
           </div>
         </div>
@@ -134,15 +117,13 @@ const GcpEnterManually: React.FC<any> = () => {
         <div
           style={{ maxHeight: "130px", maxWidth: "750px", overflowY: "auto" }}
         >
-          {utmLocation &&
-            renderTable(utmLocation, [
+          {uploaderState.gcpType === GCPType.UTM ?
+            renderTable(uploaderState.gcpList.utmLocation, [
               "Easting",
               "Northing",
               "Zone",
               "Elevation",
-            ])}
-          {location &&
-            renderTable(location, ["Longitude", "Latitude", "Altitude"])}
+            ]) : renderTable(uploaderState.gcpList.location, ["Longitude", "Latitude", "Altitude"])}
         </div>
 
         <div style={{ display: "flex", alignItems: "center" }}>

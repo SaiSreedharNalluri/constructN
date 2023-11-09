@@ -38,6 +38,18 @@ const UploaderGCP = () => {
   };
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  useEffect(()=> {
+    if (!uploaderState.gcpList) {
+      return;
+    }
+
+    if ((uploaderState.gcpList.utmLocation && uploaderState.gcpList.utmLocation?.length > 0) 
+    || (uploaderState.gcpList.location && uploaderState.gcpList.location?.length > 0)) {
+      setSelectedOption("Enter Manually")
+    }
+
+  }, [uploaderState.gcpList])
+
   return (
     <React.Fragment>
       <div className="flex flex-col">

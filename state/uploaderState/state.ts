@@ -1,4 +1,4 @@
-import { IGCP } from "../../models/IGCP";
+import { GCPType, IGCP, LONGLATType, UTMType } from "../../models/IGCP";
 import { IProjects } from "../../models/IProjects";
 import { RawImage } from "../../models/IRawImages";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
@@ -25,7 +25,8 @@ export interface UploaderState {
     stepperSideFileList:boolean,
     choosenFiles: choosenFileObject,
     skipGCP: boolean,
-    gcpList?: IGCP,
+    gcpType: UTMType | LONGLATType, 
+    gcpList: IGCP,
     uploadinitiate:boolean,
 }
 
@@ -64,6 +65,8 @@ export const initialUploaderState: UploaderState = {
         invalidEXIFFiles: [],
         duplicateFiles: []
     },
+    gcpType: GCPType.LONGLAT,
+    gcpList: getInitialGCPList(false), // default is LONGLAT
     skipGCP: false,
     uploadinitiate:false
 };

@@ -6,7 +6,7 @@ import { useUploaderContext } from "../../../state/uploaderState/context";
 import Papa from "papaparse";
 import { object } from "yup";
 import { location, utmLocation } from "../../../models/IRawImages";
-import { IGCP } from "../../../models/IGCP";
+import { GCPType, GCPUploadFile, IGCP, LONGLATType, UTMType, longLatGCP, utmGCP } from "../../../models/IGCP";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
 });
@@ -52,7 +52,7 @@ const GcpUploadFile: React.FC<any> = () => {
         console.log("errorsssss");
         return;
       }
-      uploaderAction.setGCPList(gcp);
+      uploaderAction.setGCPList(gcp, isUTM ? GCPType.UTM : GCPType.LONGLAT);
     } else {
       console.log("Final error");
     }
@@ -69,8 +69,9 @@ const GcpUploadFile: React.FC<any> = () => {
           const fileContent = e.target?.result as string;
           Papa.parse(fileContent, {
             header: true,
+            dynamicTyping: true,
             complete: function (results) {
-              const data: any = results.data;
+              const data = results.data;
               csvToGcp(data);
             },
 
