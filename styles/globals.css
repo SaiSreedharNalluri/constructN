@@ -225,11 +225,13 @@ body {
 }
 
 .adsk-viewing-viewer .adsk-toolbar .adsk-button .adsk-control-tooltip {
-  left: -60px;
-  position: absolute;
+  left: -40px !important; 
+  top: -25px;
+  position: relative;
   display: flex;
-
   z-index: 15;
+  height: 15px;
+  float: right;
 }
 
 /* .Toastify {
