@@ -8,7 +8,7 @@ export const addCapture = (projectId:string,formValue:{ user:string;
     mode:string;
     mediaPath:string;
     isMediaUploaded:boolean;
-    captureDateTime:string
+    captureDateTime:Date
 }) => {
     return instance
       .post(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/captures`, formValue, {
