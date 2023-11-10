@@ -118,7 +118,12 @@ const getUpdatedFileList = (state: UploaderState, files: fileWithExif[]): choose
             }
             if(latitude && longitude && altitude) {
                 
-                rawImage.longLatCoordinates = [longitude, latitude,altitude]
+                let location: location = {
+                    type: "point",
+                    coordinates: [longitude, latitude],
+                    elevation: altitude
+                }
+                rawImage.location = location
             }
             let newUploadImage: uploadImage = {file, ...rawImage}
             let duplicateFile = choosenFiles.validFiles.find((uploadImages) => {
