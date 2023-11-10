@@ -1,13 +1,10 @@
 import { RawImage } from "../models/IRawImages";
 import instance from "./axiosInstance";
 import authHeader from './auth-header';
-export const addCapture = (projectId:string,formValue:{ user:string;
+export const addCapture = (projectId:string,formValue:{ 
     type:string;
     structure:string;
-    project:string;
     mode:string;
-    mediaPath:string;
-    isMediaUploaded:boolean;
     captureDateTime:Date
 }) => {
     return instance
