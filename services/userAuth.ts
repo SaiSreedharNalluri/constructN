@@ -209,7 +209,7 @@ export const refreshToken = (token: string) => {
           if (typeof window !== "undefined") {
             //localStorage.setItem("previousPage", window.location.href);
             console.log("Moving Out....",error.config);
-            window.location.href = `/login?history=${window.location.href}&reason=rTokenExpired`;
+            window.location.href = `/login?history=${encodeURIComponent(window.location.href)}&reason=rTokenExpired`;
             return Promise.reject(error);
           }
       throw error.response.data;

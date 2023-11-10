@@ -240,11 +240,15 @@ const Index: React.FC<IProps> = () => {
 
   const closeTaskDetails = () => {
     setOpenTaskDetails(false);
-    router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)   
+    delete router.query.tsk
+    //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)   
+    router.push(router);
   };
   const closeIssueDetails = () => {
     setOpenIssueDetails(false);
-    router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)
+    delete router.query.iss
+    //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)
+    router.push(router);
   };
 
   const taskSubmit = (formdata: any) => {
@@ -533,6 +537,28 @@ const Index: React.FC<IProps> = () => {
       router.push(router);
     }
   };
+  useEffect(()=>{
+    console.log("Snapshot Set")
+    if(router.query.iss!==null){
+      
+      let sel_iss :Issue|undefined= issuesList.find((t)=>t._id===router.query.iss) 
+      if(sel_iss){
+      setClickedTool({toolAction:'issueSelect',toolName:'issue',response:sel_iss});
+      setCurrentContext({...sel_iss?.context,id:router.query.iss as string});
+      setOpenIssueDetails(true);
+      }
+    }
+    else if(router.query.tsk!==null){
+      let sel_tsk :ITasks|undefined= tasksList.find((t)=>t._id===router.query.tsk) 
+      if(sel_tsk){
+      setClickedTool({toolAction:'taskSelect',toolName:'task',response:sel_tsk});
+      setCurrentContext({...sel_tsk?.context,id:router.query.tsk as string});
+      setOpenTaskDetails(true);
+    }
+    }
+    
+
+  },[snapshot]);
 
   const updateDesignMap = (designMap: IDesignMap) => {
     setDesignMap(designMap);
@@ -771,8 +797,10 @@ const Index: React.FC<IProps> = () => {
           // issue detail view open logic comes here
           if (data.response != undefined) {
             setCurrentContext(data.response);
-            setOpenIssueDetails(true);
+            //setOpenIssueDetails(true);
+            // console.log(router,"Router Obj")
             router.query.iss=data.response?.id;
+            delete router.query.tsk;
             router.push(router);
           }
         }
@@ -785,8 +813,10 @@ const Index: React.FC<IProps> = () => {
           // task detail view open logic comes here
           if (data.response != undefined) {
             setCurrentContext(data.response);
-            setOpenTaskDetails(true);
+            //setOpenTaskDetails(true);
+            // console.log(router,"Router Obj")
             router.query.tsk=data.response?.id;
+            delete router.query.iss;
             router.push(router)
           }
         }
@@ -1578,7 +1608,7 @@ const Index: React.FC<IProps> = () => {
 
     }
     
-  }, [issuesList,router.query.iss]);
+  }, [issuesList,router.query.iss,router.query.snap]);
 
   useEffect(() => {
     if(router.query.tsk!=null){
@@ -1591,7 +1621,7 @@ const Index: React.FC<IProps> = () => {
 
     }
     
-  }, [tasksList,router.query.tsk]);
+  }, [tasksList,router.query.tsk,router.query.snap]);
 
   return (
     <div className=" w-full  h-full">
