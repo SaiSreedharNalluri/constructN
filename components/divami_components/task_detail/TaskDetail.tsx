@@ -1131,7 +1131,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
         })
         .catch((error) => {
           if (error.success === false) {
-          CustomToast(error?.message,"error");
+            setLoading(false)
+            CustomToast(error?.message,"error");
           }
         });
     } else {
