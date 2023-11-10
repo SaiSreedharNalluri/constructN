@@ -12,7 +12,7 @@ import UploaderGCP from "../../../../components/divami_components/uploader_detai
 import UploaderReview from "../../../../components/divami_components/uploader_details/uploaderReview";
 import { addCapture, addRawImages } from "../../../../services/captureManagement";
 import { uploaderContextActions } from "../../../../state/uploaderState/action";
-import { RawImageAPIResponse } from "../../../../models/IRawImages";
+import { RawImage, RawImageCreateResp } from "../../../../models/IRawImages";
 import { WebWorkerManager } from "../../../../utils/webWorkerManager";
 
 interface IProps {}
@@ -46,10 +46,6 @@ const Index: React.FC<IProps> = () => {
       addCapture(uploaderState.project?._id as string,{
         mode:'Drone Image',
         type: "exterior",
-        isMediaUploaded: true,
-        mediaPath:" ",
-        user: "USR744836",
-        project: uploaderState.project?._id as string,
         structure: uploaderState.structure?._id as string,
         captureDateTime: uploaderState.date as Date
       }).then((response)=>{
@@ -78,10 +74,11 @@ const Index: React.FC<IProps> = () => {
         if(response.success===true)
         {
             sendingFilesToworker(response.result,captureId)
+            uploaderAction.changeUploadinitiate(false)
         }
       })
     }
-    const sendingFilesToworker=(FileList:RawImageAPIResponse[],captureId:string)=>{
+    const sendingFilesToworker=(FileList:RawImageCreateResp[],captureId:string)=>{
       uploaderAction.next()
       const fileListWithUrl:Array<{ file: File, putSignedURL: string }> | null= uploaderState?.choosenFiles?.validFiles?.map(item => {
         const matchingItem:any = new Map(FileList&& FileList.map(item => [item.externalId, item])).get(item.externalId);

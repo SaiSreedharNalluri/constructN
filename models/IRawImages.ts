@@ -1,3 +1,5 @@
+import { type } from "os";
+
 export interface RawImage {
     filename: string;
     deviceId: string;
@@ -9,11 +11,12 @@ export interface RawImage {
     metaData?: Object;
     createdAt?: string;
     location?: location;
-    putSignedURL?: string;
     updatedAt?: string;
     __v?: number;
     _id?: string;
 }
+
+export type RawImageCreateResp = { putSignedURL:string } & RawImage
 
 export interface utmLocation {
     northing: number;
