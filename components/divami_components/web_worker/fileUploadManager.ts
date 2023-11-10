@@ -20,8 +20,6 @@ self.onmessage = async (event) => {
             userFileList.splice(index, 1, {fileName: fileName, status:status});
             uploadedFileList.push({fileName: fileName, status:status})
             self.postMessage({userFileList,uploadedFileList})
-            self.postMessage({ status: 'done',fileName:fileName});
-              // Handle completion
               worker.terminate();
         };    
       }
