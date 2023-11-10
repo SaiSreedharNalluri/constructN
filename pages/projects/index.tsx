@@ -159,7 +159,7 @@ const Index: React.FC<any> = () => {
       onClick: () => {
         setSearchTableData(
           []
-            .concat(projects)
+            .concat(searchTableData)
             .sort((a: any, b: any) => a.usersCount - b.usersCount)
         );
       },
@@ -172,7 +172,7 @@ const Index: React.FC<any> = () => {
       onClick: () => {
         setSearchTableData(
           []
-            .concat(projects)
+            .concat(searchTableData)
             .sort((a: any, b: any) => b.usersCount - a.usersCount)
         );
       },
@@ -183,7 +183,7 @@ const Index: React.FC<any> = () => {
       icon: UpArrow,
       method: "updatedAsc",
       onClick: () => {
-        const sortedProjects = projects
+        const sortedProjects = searchTableData
           .filter((project:any) => !isNaN(new Date(project.lastUpdated).valueOf()))
           .sort((a: any, b: any) => {
             return (
@@ -191,7 +191,7 @@ const Index: React.FC<any> = () => {
             );
           });
 
-        const invalidDateProjects = projects.filter((project:any) =>
+        const invalidDateProjects =searchTableData .filter((project:any) =>
           isNaN(new Date(project.lastUpdated).valueOf())
         );
 
@@ -203,7 +203,7 @@ const Index: React.FC<any> = () => {
       icon: DownArrow,
       method: "updatedDesc",
       onClick: () => {
-        const sortedProjects = projects
+        const sortedProjects = searchTableData
           .filter((project:any) => !isNaN(new Date(project.lastUpdated).valueOf()))
           .sort((a: any, b: any) => {
             return (
@@ -211,7 +211,7 @@ const Index: React.FC<any> = () => {
             );
           });
 
-        const invalidDateProjects = projects.filter((project:any) =>
+        const invalidDateProjects = searchTableData.filter((project:any) =>
           isNaN(new Date(project.lastUpdated).valueOf())
         );
 
@@ -268,10 +268,10 @@ const Index: React.FC<any> = () => {
     setTaskFilterState({ ...formState, isFilterApplied: true });
     setSearchTableData(
       projects.filter(
-        (each: any) =>
-          (Moment(each.lastUpdated).isSameOrAfter(formState.startDate) || //.format("YYYY-MM-DD") >= formState.startDate ||
+        (each: any) =>{
+     return (Moment(each.lastUpdated).isSameOrAfter(formState.startDate, 'day') ||
             !formState.startDate) &&
-          (Moment(each.lastUpdated).isSameOrBefore(formState.dueDate) || //.format("YYYY-MM-DD") <= formState.dueDate ||
+            (Moment(each.lastUpdated).isSameOrBefore(formState.dueDate, 'day') || 
             !formState.dueDate) &&
           (!formState.compareText ||
             (formState.compareText === "greaterThan"
@@ -279,7 +279,7 @@ const Index: React.FC<any> = () => {
               : formState.compareText === "lessThan"
               ? each.numberOfUsers < formState.numOfMem
               : each.numberOfUsers == formState.numOfMem))
-      )
+          })
     );
   };
   const handleOpenChat = (e: any) => {
