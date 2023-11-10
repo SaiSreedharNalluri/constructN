@@ -47,3 +47,17 @@ export const updateSelectedCapturesInJob = async (
     throw error;
   }
 };
+export const getjobs = async (projectId: string) => {
+  try {
+    return await axios.get(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs?withCaptureStatus=true`,
+      {
+        headers: authHeader.authHeader(),
+      }
+    ).then((response) => {
+      return response.data;
+    });
+  } catch (error) {
+    throw error;
+  }
+};

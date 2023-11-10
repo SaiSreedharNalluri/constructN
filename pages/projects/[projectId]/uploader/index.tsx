@@ -14,9 +14,16 @@ import { addCapture, addRawImages } from "../../../../services/captureManagement
 import { uploaderContextActions } from "../../../../state/uploaderState/action";
 import { RawImage, RawImageCreateResp } from "../../../../models/IRawImages";
 import { WebWorkerManager } from "../../../../utils/webWorkerManager";
+import { useRouter } from "next/router";
+import { ChildrenEntity } from "../../../../models/IStructure";
+import { getStructureHierarchy } from "../../../../services/structure";
+import { useAppContext } from "../../../../state/appState/context";
 
 interface IProps {}
 const Index: React.FC<IProps> = () => {
+  const router = useRouter();
+  const { state: appState, appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
 
@@ -60,7 +67,21 @@ const Index: React.FC<IProps> = () => {
       
     }
   },[uploaderState.uploadinitiate])
- 
+  useEffect(() => {
+    if (router.isReady) {
+      let hierarchy = appState.hierarchy
+      if(hierarchy) {
+       // setState(hierarchy)
+      } else {
+        getStructureHierarchy(router.query.projectId as string)
+        .then((response) => {
+          let hierarchyList: ChildrenEntity[] = response.data.result
+          appAction.setHierarchy(hierarchyList)
+        //  setState(hierarchyList);
+        })
+      }
+    }
+  }, [router.isReady, router.query.projectId, router.query.structId]);
    const addGcpToCapture=(captureId:string)=>{
        if(uploaderState.skipGCP===false)
        {
@@ -79,7 +100,6 @@ const Index: React.FC<IProps> = () => {
       })
     }
     const sendingFilesToworker=(FileList:RawImageCreateResp[],captureId:string)=>{
-      uploaderAction.next()
       const fileListWithUrl:Array<{ file: File, putSignedURL: string }> | null= uploaderState?.choosenFiles?.validFiles?.map(item => {
         const matchingItem:any = new Map(FileList&& FileList.map(item => [item.externalId, item])).get(item.externalId);
         if (matchingItem) {
@@ -90,13 +110,10 @@ const Index: React.FC<IProps> = () => {
         }
         return null; // If no matching item found in input2
       }).filter((item): item is { file: File; putSignedURL: string } => item !== null);
-      let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url));
+     let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url));
       WorkerManager.createWorker(captureId,worker)
       worker.postMessage({fileListWithUrl});
-      worker.onmessage = (event) => {
-        console.log('event',event.data)
-      }
-    
+      uploaderAction.next()
     }
     
   return (
