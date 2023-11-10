@@ -42,6 +42,9 @@ import { API } from '../../../../config/config'
 
 import moment from 'moment'
 
+import PotreeViewer from '../../../../components/container/potreeViewer'
+import { PotreeViewerUtils } from '../../../../utils/PotreeWrapper2'
+
 
 const fetchViewerData = (projectId: string, structureId: string) => {
 
@@ -131,11 +134,13 @@ const Progress2DPage: React.FC<any> = () => {
 
     const searchParamsRef = useRef<URLSearchParams>()
 
+    const [isCompare, setIsCompare] = useState<boolean>(true)
+
     const [loading, setLoading] = useState<boolean>(false)
 
     const [showProgress, setShowProgress] = useState<boolean>(false)
 
-    const [snapshotBase, setSnapshotBase] = useState()
+    const [snapshotBase, setSnapshotBase] = useState<any>()
 
     const [hierarchy, setHierarchy] = useState<any>()
 
@@ -154,6 +159,8 @@ const Progress2DPage: React.FC<any> = () => {
     const [selectedCategory, setSelectedCategory] = useState<IAssetCategory>()
 
     const currentCategory = useRef<IAssetCategory>()
+
+    const potreeUtils = useRef<any>()
 
     const currentAsset = useRef<string>()
 
@@ -550,6 +557,27 @@ const Progress2DPage: React.FC<any> = () => {
         publish('clear-shape-selection', '')
     }
 
+    const _setPotreeUtils = (viewerId: string) => {
+
+        if (potreeUtils.current == undefined) {
+
+            potreeUtils.current = PotreeViewerUtils()
+
+            if (!potreeUtils.current.isViewerLoaded()) {
+
+                potreeUtils.current.initializeViewer(viewerId, (viewerId: string, event: any) => console.log(viewerId, event), false)
+
+            }
+
+            potreeUtils.current.setStructure(structureId.current)
+
+            potreeUtils.current.setSnapshot(snapshotBase!._id)
+
+            potreeUtils.current.updateLayersData(snapshotBase.layers, undefined)
+
+        }
+    }
+
     const _renderTitle = () => {
 
         if (currentCategory.current === undefined) return <Typography variant='h6'>Choose a category</Typography>
@@ -630,7 +658,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                             </div>
 
-                            <div id='compare-container' className='flex w-full'>
+                            <div className='flex w-full'>
 
                                 <div>
 
@@ -638,20 +666,38 @@ const Progress2DPage: React.FC<any> = () => {
 
                                 </div>
 
-                                <div id='left-container' className={`w-3/4 relative flex flex-col items-center py-4 px-2`} style={{ height: 'calc(100vh - 64px)' }}>
+                                {snapshotBase && <div className={`w-3/4 relative flex items-center py-4 px-2`} style={{ height: 'calc(100vh - 64px)' }}>
 
-                                    {snapshotBase && <Progress2DComponent
+                                    <div id='left-container' className={`relative h-full w-1/2 flex justify-center ${isCompare ? '' : 'grow shrink'}`}>
 
-                                        id={'left-container'}
+                                        <Progress2DComponent
 
-                                        viewType={'Plan Drawings'}
+                                            id={'left-container'}
 
-                                        category={selectedCategory}
+                                            viewType={'Plan Drawings'}
 
-                                        snapshot={snapshotBase}
+                                            category={selectedCategory}
 
-                                        assets={assets} />
+                                            snapshot={snapshotBase}
 
+                                            assets={assets} />
+
+                                    </div>
+
+                                    {
+                                        isCompare ? (<>
+
+                                            <div className='flex h-full w-1 bg-white items-center' style={{ zIndex: 2 }}>
+
+                                            </div>
+
+                                            <div id='right-container' className={'relative h-full w-1/2'}>
+
+                                                <PotreeViewer viewerCount={1} isSupportUser={'false'} setPotreeViewer={_setPotreeUtils} />
+
+                                            </div>
+
+                                        </>) : ''
                                     }
 
                                     <div
@@ -668,9 +714,9 @@ const Progress2DPage: React.FC<any> = () => {
 
                                     </div>
 
-                                </div>
+                                </div> }
 
-                                <div id='right-container' className={'flex flex-col w-1/4 my-4 mr-4 py-4'}
+                                <div className={'flex flex-col w-1/4 my-4 mr-4 py-4'}
 
                                     style={{ height: 'calc(100vh - 88px)', border: '1px solid #e2e3e5', borderRadius: '6px' }} >
 
