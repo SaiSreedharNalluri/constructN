@@ -1,12 +1,7 @@
-import instance from "../../../services/axiosInstance";
+import axios from "axios";
 
 self.onmessage = async (event) => {
-      const formData = new FormData();
-      formData.append('file',event.data.file);
-      await instance.put(event.data.url,formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          }}).then((response)=>{
+  await axios.put(event.data.url,event.data.file).then((response)=>{
             if(response.status===200)
             {
               self.postMessage({ status: 'done',fileName:event.data.file.name});
