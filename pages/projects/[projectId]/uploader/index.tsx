@@ -10,12 +10,17 @@ import { UploaderStep } from "../../../../state/uploaderState/state";
 import UploaderFinal from "../../../../components/divami_components/uploader_details/uploaderFinal/uploaderFinal";
 import UploaderGCP from "../../../../components/divami_components/uploader_details/uploaderGCP";
 import UploaderReview from "../../../../components/divami_components/uploader_details/uploaderReview";
+import { addCapture, addRawImages } from "../../../../services/captureManagement";
+import { uploaderContextActions } from "../../../../state/uploaderState/action";
+import { RawImage, RawImageCreateResp } from "../../../../models/IRawImages";
+import { WebWorkerManager } from "../../../../utils/webWorkerManager";
 
 interface IProps {}
-
 const Index: React.FC<IProps> = () => {
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
+
+  let WorkerManager = WebWorkerManager.getInstance()
  
   const renderCenterContent = () => {
     switch (uploaderState.step) {
@@ -35,13 +40,65 @@ const Index: React.FC<IProps> = () => {
           return null;
       }
   };
-  if(uploaderState.uploadinitiate)
-  {
+  useEffect(()=>{
+    if(uploaderState.uploadinitiate)
+    {
+      addCapture(uploaderState.project?._id as string,{
+        mode:'Drone Image',
+        type: "exterior",
+        structure: uploaderState.structure?._id as string,
+        captureDateTime: uploaderState.date as Date
+      }).then((response)=>{
+        if(response.success===true)
+        {
+          addGcpToCapture(response?.result?._id)
+        }
+        
+      }).catch((error)=>{
+        console.log('error',error)
+      })
+      
+    }
+  },[uploaderState.uploadinitiate])
+ 
+   const addGcpToCapture=(captureId:string)=>{
+       if(uploaderState.skipGCP===false)
+       {
+
+       }else{
+        addRawImagesTOCapture(captureId)
+       }
+    }
+    const addRawImagesTOCapture=(captureId:string)=>{
+      addRawImages(uploaderState.project?._id as string,captureId,uploaderState?.choosenFiles?.validFiles?.map(({file,...rawImage})=>rawImage)).then((response)=>{
+        if(response.success===true)
+        {
+            sendingFilesToworker(response.result,captureId)
+            uploaderAction.changeUploadinitiate(false)
+        }
+      })
+    }
+    const sendingFilesToworker=(FileList:RawImageCreateResp[],captureId:string)=>{
+      uploaderAction.next()
+      const fileListWithUrl:Array<{ file: File, putSignedURL: string }> | null= uploaderState?.choosenFiles?.validFiles?.map(item => {
+        const matchingItem:any = new Map(FileList&& FileList.map(item => [item.externalId, item])).get(item.externalId);
+        if (matchingItem) {
+          return {
+            file: item.file,
+            putSignedURL: matchingItem.putSignedURL,
+          };
+        }
+        return null; // If no matching item found in input2
+      }).filter((item): item is { file: File; putSignedURL: string } => item !== null);
+      let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url));
+      WorkerManager.createWorker(captureId,worker)
+      worker.postMessage({fileListWithUrl});
+      worker.onmessage = (event) => {
+        console.log('event',event.data)
+      }
     
-    useEffect(()=>{
-      console.log('sathya')
-    },[])
-  }
+    }
+    
   return (
     <div>
       <div>

@@ -1,14 +1,22 @@
+import { type } from "os";
+
 export interface RawImage {
     filename: string;
     deviceId: string;
     externalId: string;
     dateTime: string;
-    longLatCoordinates?:  [number, number,number];
     utmLocation?: utmLocation;
     status: status;
     capture?: string;
     metaData?: Object;
+    createdAt?: string;
+    location?: location;
+    updatedAt?: string;
+    __v?: number;
+    _id?: string;
 }
+
+export type RawImageCreateResp = { putSignedURL:string } & RawImage
 
 export interface utmLocation {
     northing: number;
@@ -20,9 +28,18 @@ export interface utmLocation {
 type type = "point";
 type status = "Initiated" | "Uploaded";
 
-export interface location {
-    type: type,
-    coordinates: [number, number] //long lat
-    elevation?: number,
-}
 
+
+export interface location {
+  type: type,
+  coordinates: [number, number] //long lat
+  elevation?: number,
+}
+  
+export interface utmLocation {
+  northing: number;
+  easting: number;
+  zone: string
+  elevation?: number,
+}
+  
