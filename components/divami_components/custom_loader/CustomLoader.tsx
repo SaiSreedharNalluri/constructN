@@ -8,6 +8,7 @@ import { useLottie } from "lottie-react";
 
 const CustomLoader = () => {
   const animationContainerRef = React.useRef<any>(null);
+  const [isLoading,setLoading]=React.useState(true);
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -17,11 +18,17 @@ const CustomLoader = () => {
     },
   };
   const { View: lottie } = useLottie(defaultOptions);
+
+  React.useEffect(()=>{
+    const timeO = setTimeout(()=>{
+      setLoading(false)
+    },15000);
+  },[]);
   return (
     <>
-      <div>
+      {isLoading&&<div>
         <LoaderContainer> {lottie}</LoaderContainer>
-      </div>
+      </div>}
     </>
   );
 };
