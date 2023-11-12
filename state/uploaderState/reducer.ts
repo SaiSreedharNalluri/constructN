@@ -1,4 +1,5 @@
 import { GCPType } from "../../models/IGCP";
+import { IJobs, JobStatus } from "../../models/IJobs";
 import { RawImage, location } from "../../models/IRawImages";
 import { getInitialGCPList } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
@@ -6,6 +7,23 @@ import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithEx
 
 export const uploaderReducer = (state: UploaderState, action: UploaderActions): UploaderState => {
     switch (action.type) {
+        case UploaderActionType.startNewUpload: 
+            return {
+                ...state,
+                step: UploaderStep.Details,
+                structure: undefined,
+                date: undefined,
+                isNextEnabled: false,
+                choosenFiles: {
+                    validFiles: [],
+                    invalidEXIFFiles: [],
+                    duplicateFiles: []
+                },
+                gcpType: GCPType.LONGLAT,
+                gcpList: getInitialGCPList(false), // default is LONGLAT
+                skipGCP: false,
+                uploadinitiate:false,
+            }
         case UploaderActionType.GoBack: 
             return {
                 ...state,
@@ -90,7 +108,23 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 gcpList:action.payload.list,
                 gcpType: action.payload.type,
                 isNextEnabled: isNextEnabled
-            }  
+            }
+        case UploaderActionType.setCaptureJobs:
+            let pendingUploadJobs: IJobs[] = action.payload.jobs.filter((e) => e.status === JobStatus.pendingUpload);
+            let pendingProcessJobs: IJobs[] = action.payload.jobs.filter((e) => e.status === JobStatus.uploaded);
+            let isUploadStep = pendingUploadJobs.length > 0 || pendingProcessJobs.length>0
+
+            return {
+                ...state,
+                pendingUploadJobs: pendingUploadJobs,
+                pendingProcessJobs: pendingProcessJobs,
+                step: isUploadStep ? UploaderStep.Upload : UploaderStep.Details
+            }
+        case UploaderActionType.setRawImagesMap:
+            return {
+                ...state,
+                rawImagesMap: action.payload.rawImages
+            }
         default:
             return state
     }

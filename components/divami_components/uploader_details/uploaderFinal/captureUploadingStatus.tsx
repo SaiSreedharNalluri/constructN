@@ -8,6 +8,16 @@ interface Iprops{
 const CaptureUploadingStatus:React.FC<Iprops>=({isUploading,isUploadedOn,buttonName})=>{
     const { state: uploaderState, uploaderContextAction } = useUploaderContext();
     const { uploaderAction } = uploaderContextAction;
+
+    
+    /**
+     * If isUploading true case, get data from uploaderState.pendingUploadJobs
+     * If isUploading false case, get data from uploaderState.pendingProcessJobs
+     * populate this data in table tr
+     */
+    const data = isUploading ? uploaderState.pendingUploadJobs : uploaderState.pendingProcessJobs
+
+
 return(
 <React.Fragment>
 <div className="overflow-y-scroll shadow">
@@ -48,7 +58,16 @@ return(
     </tbody>
    </table>
    <div className='text-center my-[20px]'>
-    <button className='bg-[#F1742E] py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white'>
+    <button className='bg-[#F1742E] py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white'
+    onClick={()=> {
+        if(isUploading) {
+            uploaderAction.startNewUpload();
+        } else {
+            // call process api once available based on check box
+        }
+        
+    }}
+    >
     {buttonName}
     </button>
    </div>

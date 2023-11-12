@@ -1,9 +1,12 @@
 import axios from 'axios';
 import authHeader from './auth-header';
+import instance from './axiosInstance';
+import { IJobs } from '../models/IJobs';
+import { IBaseResponse } from '../models/IBaseResponse';
 
 export const getjobsInfo = async (projectId: string) => {
   try {
-    return await axios.get(
+    return await instance.get(
       `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs`,
       {
         headers: authHeader.authHeader(),
@@ -19,7 +22,7 @@ export const updateTheJobStatus = async (
   status: string
 ) => {
   try {
-    return await axios.put(
+    return await instance.put(
       `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs/${jobId}/updateStatus`,
       { status: status },
       {
@@ -36,7 +39,7 @@ export const updateSelectedCapturesInJob = async (
   captureIds: string[]
 ) => {
   try {
-    return await axios.put(
+    return await instance.put(
       `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs/${jobId}/update-selected-captures`,
       { captureIds: captureIds },
       {
@@ -48,16 +51,10 @@ export const updateSelectedCapturesInJob = async (
   }
 };
 export const getjobs = async (projectId: string) => {
-  try {
-    return await axios.get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs?withCaptureStatus=true`,
-      {
-        headers: authHeader.authHeader(),
-      }
-    ).then((response) => {
-      return response.data;
-    });
-  } catch (error) {
-    throw error;
-  }
+  return await instance.get<IBaseResponse<IJobs[]>>(
+    `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs?withCaptureStatus=true`,
+    {
+      headers: authHeader.authHeader(),
+    }
+  )
 };

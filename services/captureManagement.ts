@@ -1,6 +1,7 @@
 import { RawImage } from "../models/IRawImages";
 import instance from "./axiosInstance";
 import authHeader from './auth-header';
+import { IBaseResponse } from "../models/IBaseResponse";
 export const addCapture = (projectId:string,formValue:{ 
     type:string;
     structure:string;
@@ -31,6 +32,13 @@ export const addCapture = (projectId:string,formValue:{
         throw error;
       });
   };
+
+  export const getRawImages = (projectId:string,captureID:string) => {
+    return instance
+      .get<IBaseResponse<RawImage[]>>(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/captures/${captureID}/add-raw-image`, {
+        headers: authHeader.authHeader(),
+      })
+  }
 
   export const addGcp = (projectId:string,captureID:string,formValue:any) => {
     return instance

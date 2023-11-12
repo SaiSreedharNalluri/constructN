@@ -1,9 +1,11 @@
 import { IGCP, LONGLATType, UTMType } from "../../models/IGCP";
+import { IJobs } from "../../models/IJobs";
 import { IProjectUserList, IProjects } from "../../models/IProjects";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
-import { fileWithExif } from "./state";
+import { captureRawImageMap, fileWithExif } from "./state";
 
 export enum UploaderActionType {
+    startNewUpload,
     GoBack,
     Next,
     Upload,
@@ -18,9 +20,15 @@ export enum UploaderActionType {
     setGCPList,
     setExtractedFileValue,
     setIsNextEnabled,
-    changeUploadinitiate
+    changeUploadinitiate,
+    setCaptureJobs,
+    setRawImagesMap
 
 }
+
+export interface startNewUpload {
+    type: UploaderActionType.startNewUpload;
+  }
 
 export interface goBack {
   type: UploaderActionType.GoBack;
@@ -51,10 +59,9 @@ export interface setshowMessage {
 export interface setProject {
     type: UploaderActionType.setProject
     payload:{project:IProjects}
-  }
+}
 
 export interface setStructure {
-  
   type: UploaderActionType.setStructure
   payload:{structure:IStructure}
 }
@@ -94,9 +101,22 @@ export interface setGCPList{
   payload:{list: IGCP, type: UTMType | LONGLATType};
 }
 
+export interface setCaptureJobs {
+    type: UploaderActionType.setCaptureJobs
+    payload: {jobs: IJobs[]}
+}
+
+export interface setRawImagesMap {
+    type: UploaderActionType.setRawImagesMap
+    payload: {rawImages: captureRawImageMap}
+}
+
 export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>) => {
     return {
       uploaderAction: {
+        startNewUpload: () => {
+            dispatch({ type: UploaderActionType.startNewUpload });
+          },
         goBack: () => {
           dispatch({ type: UploaderActionType.GoBack });
         },
@@ -147,12 +167,19 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         },
         setGCPType:(type: UTMType | LONGLATType)=>{
             dispatch({type:UploaderActionType.setGCPType, payload:{ type: type}})
+        },
+        setCaptureJobs:(jobs: IJobs[])=>{
+            dispatch({type:UploaderActionType.setCaptureJobs, payload:{ jobs: jobs}})
+        },
+        setRawImagesMap:(rawImages: captureRawImageMap)=>{
+            dispatch({type:UploaderActionType.setRawImagesMap, payload:{ rawImages: rawImages}})
         }
       }
     }
+}
 
-  }
 export type UploaderActions =
+  | startNewUpload
   | goBack
   | next
   | upload
@@ -168,4 +195,6 @@ export type UploaderActions =
   | changeUploadinitiate
   | setGCPList
   | setGCPType
+  | setCaptureJobs
+  | setRawImagesMap
 
