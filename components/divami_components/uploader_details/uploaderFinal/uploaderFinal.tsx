@@ -10,19 +10,9 @@ interface fileData{ status: string, fileName: string; }
 const UploaderFinal:React.FC =()=>{
 const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-  const[captureList,setCaptureList]=useState<any>()
-  useEffect(()=>{
-    getjobs(uploaderState.project?._id as string).then((response)=>{
-    setCaptureList(response.result)
-    }).catch(()=>{
-
-    })
-  },[])
   const [fileProgressList, setFileProgressList] = useState<fileData[]>([]);
   const workerManager = WebWorkerManager.getInstance()
   useEffect(()=>{
-    
-    
     if (workerManager && workerManager.getWorker() && Object.keys(workerManager.getWorker())?.length > 0)
     {
       for(let key of Object.keys(workerManager.getWorker()))
