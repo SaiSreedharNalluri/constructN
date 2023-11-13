@@ -4,13 +4,25 @@ import { FormControlLabel, Checkbox, LinearProgress, Divider, FormGroup, Stack, 
 
 import { IAssetStage } from '../../models/IAssetCategory'
 
-export default function Progress2DStage({ stage, assetCount }: { stage: Partial<IAssetStage> & {assets: string[]}, assetCount: number }) {
+export default function Progress2DStage(
+    
+    { stage, assetCount, onToggleVisibility }: { stage: Partial<IAssetStage> & { assets: string[] }, 
+    
+    assetCount: number, onToggleVisibility: (stage: string, visible: boolean) => void }) {
 
     const getProgress = () => {
 
         return stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount)
 
     }
+
+    const onVisibilityChange = (event: any) => {
+
+        const value = event.target.checked
+
+        onToggleVisibility(stage!._id!, value)
+
+    } 
 
     return (<>
 
@@ -20,7 +32,7 @@ export default function Progress2DStage({ stage, assetCount }: { stage: Partial<
 
                 <FormControlLabel
 
-                    className='text-[#4a4a4a]'
+                    className='text-[#4a4a4a]' onChange={onVisibilityChange}
 
                     control={<Checkbox size='small' defaultChecked
 
@@ -31,7 +43,7 @@ export default function Progress2DStage({ stage, assetCount }: { stage: Partial<
                             '&.Mui-checked': {
 
                                 color: stage.color,
-                                
+
                             }
 
                         }} />}
@@ -53,8 +65,6 @@ export default function Progress2DStage({ stage, assetCount }: { stage: Partial<
                 <Typography className='text-sm text-[#727375]'>123/560 {stage.uom}</Typography>
 
             </div>
-
-            {/* <Divider orientation="horizontal" className='m-2' variant="middle" flexItem /> */}
 
         </div>
 

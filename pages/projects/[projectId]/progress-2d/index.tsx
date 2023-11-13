@@ -607,13 +607,13 @@ const Progress2DPage: React.FC<any> = () => {
 
             const date = moment(new Date(LightBoxInstance.getSnapshotBase().date)).format('DD MMM, yyyy')
 
-            const assetsMessage = assets && assets.length > 0 ? `${assets.length} asset(s)` : 'No assets'
+            const assetsMessage = assets && assets.length > 0 ? `${assets.length} assets` : 'No assets'
 
             return <>
 
-                <Typography variant='h6'>Progress of {currentCategory.current.name}</Typography>
+                <Typography variant='subtitle1' className='text-[18px]'>Progress of {currentCategory.current.name}</Typography>
 
-                <Typography className='text-[#aaa] ml-1' variant='caption'>as on {date} [ {assetsMessage} ]</Typography>
+                <Typography className='text-[#aaa] text-[12px]' variant='caption'>as on {date}</Typography>
 
             </>
 
@@ -771,20 +771,6 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 </div>
 
-                                                {!selectedAsset && <IconButton onClick={() => setShowCategoryFilters(!showCategoryFilters)}
-
-                                                    className='mt-[-6px] mr-[-6px]'>
-
-                                                    {showCategoryFilters ?
-
-                                                        <KeyboardDoubleArrowUpOutlinedIcon fontSize='small' /> :
-
-                                                        <KeyboardDoubleArrowDownOutlinedIcon fontSize='small' />
-
-                                                    }
-
-                                                </IconButton>}
-
                                                 {selectedAsset && <IconButton size='small' onClick={() => _closeDetails()}
 
                                                     className='mt-[-6px] mr-[-6px]'>
@@ -805,15 +791,19 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             <Divider className='mt-2' orientation='horizontal' variant='fullWidth' flexItem />
 
-                                            {snapshotBase && !selectedAsset && <div className='px-4'>
+                                            {snapshotBase && !selectedAsset && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
 
-                                                <div className='overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
+                                                {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
-                                                    {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
+                                                {stages?.map(stage => (stage as IAssetStage).sequence > 0 && 
+                                                
+                                                    <Progress2DStage key={stage._id} assetCount={assets.length} stage={stage} onToggleVisibility={(stage: string, visible: boolean) => {
 
-                                                    {stages?.map(stage => (stage as IAssetStage).sequence > 0 && <Progress2DStage key={stage._id} assetCount={assets.length} stage={stage} />)}
+                                                        console.log(stage, visible)
 
-                                                </div>
+                                                    }} />)
+                                                    
+                                                }
 
                                             </div>}
 
