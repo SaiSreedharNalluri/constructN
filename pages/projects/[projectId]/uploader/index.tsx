@@ -6,17 +6,28 @@ import UploaderFiles from "../../../../components/divami_components/uploader_det
 import UploaderStepper from "../../../../components/divami_components/uploader_details/uploaderStepper";
 import UploaderFooter from "../../../../components/divami_components/uploader_details/uploaderFooter"; 
 import { UploaderContextProvider, useUploaderContext } from "../../../../state/uploaderState/context";
-import { UploaderStep } from "../../../../state/uploaderState/state";
+import { UploaderStep, captureRawImageMap } from "../../../../state/uploaderState/state";
 import UploaderFinal from "../../../../components/divami_components/uploader_details/uploaderFinal/uploaderFinal";
 import UploaderGCP from "../../../../components/divami_components/uploader_details/uploaderGCP";
 import UploaderReview from "../../../../components/divami_components/uploader_details/uploaderReview";
-import { addCapture, addRawImages } from "../../../../services/captureManagement";
+import { addCapture, addRawImages, getRawImages } from "../../../../services/captureManagement";
 import { uploaderContextActions } from "../../../../state/uploaderState/action";
 import { RawImage, RawImageCreateResp } from "../../../../models/IRawImages";
 import { WebWorkerManager } from "../../../../utils/webWorkerManager";
+import { useRouter } from "next/router";
+import { ChildrenEntity } from "../../../../models/IStructure";
+import { getStructureHierarchy } from "../../../../services/structure";
+import { useAppContext } from "../../../../state/appState/context";
+import { getjobs } from "../../../../services/jobs";
+import { IJobs } from "../../../../models/IJobs";
+import { string } from "yup";
+import { CaptureMode, CaptureType, ICapture } from "../../../../models/ICapture";
 
 interface IProps {}
 const Index: React.FC<IProps> = () => {
+  const router = useRouter();
+  const { state: appState, appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
 
@@ -44,13 +55,14 @@ const Index: React.FC<IProps> = () => {
     if(uploaderState.uploadinitiate)
     {
       addCapture(uploaderState.project?._id as string,{
-        mode:'Drone Image',
-        type: "exterior",
+        mode: CaptureMode.droneImage,
+        type: CaptureType.exterior,
         structure: uploaderState.structure?._id as string,
         captureDateTime: uploaderState.date as Date
       }).then((response)=>{
         if(response.success===true)
         {
+          console.log("TestingUploader: add capture success ", response?.result?._id);
           addGcpToCapture(response?.result?._id)
         }
         
@@ -60,7 +72,68 @@ const Index: React.FC<IProps> = () => {
       
     }
   },[uploaderState.uploadinitiate])
- 
+  useEffect(() => {
+    if (router.isReady) {
+      let hierarchy = appState.hierarchy
+      if(hierarchy) {
+       // setState(hierarchy)
+      } else {
+        getStructureHierarchy(router.query.projectId as string)
+        .then((response) => {
+          let hierarchyList: ChildrenEntity[] = response.data.result
+          appAction.setHierarchy(hierarchyList)
+        //  setState(hierarchyList);
+        })
+      }
+    }
+  }, [router.isReady, router.query.projectId, router.query.structId]);
+
+  useEffect(()=>{
+    if (router.isReady && uploaderState.step === UploaderStep.Upload ){
+      getjobs(router.query.projectId as string).then((response)=>{
+        console.log("TestingUploader: getJobs", response.data)
+        let jobs: IJobs[] = response.data.result;
+        uploaderAction.setCaptureJobs(jobs)
+      }).catch((error)=>{
+        console.log("Error: ", error)
+      })
+    }
+  },[router.isReady, router.query.projectId, uploaderState.step])
+
+  useEffect(() => {
+    if(uploaderState.pendingUploadJobs.length > 0) {
+      Promise.all(uploaderState.pendingUploadJobs.map((job) => {
+        let captureId = ""
+        if((job.captures[0] as ICapture)._id) {
+          captureId = (job.captures[0] as ICapture)._id
+        } else {
+          captureId = job.captures[0] as string
+        }
+        return getRawImages(router.query.projectId as string, captureId)
+      })).then((response) =>{
+        let rawImagesMap = response.reduce<captureRawImageMap>((prev, current):captureRawImageMap => {
+          if (current.data.success) {
+            let rawImages = current.data.result
+            if (rawImages[0].capture) {
+              let captureId: string = rawImages[0].capture
+              return {
+                ...prev,
+                [captureId]: rawImages
+              }
+            } else {
+              return prev
+            }
+          } else {
+            return prev
+          }
+        }, {})
+        console.log("TestingUploader: rawImagesMap ", rawImagesMap)
+        uploaderAction.setRawImagesMap(rawImagesMap);
+      })
+    } else {
+
+    }
+  }, [uploaderState.pendingUploadJobs.length])
    const addGcpToCapture=(captureId:string)=>{
        if(uploaderState.skipGCP===false)
        {
@@ -79,7 +152,6 @@ const Index: React.FC<IProps> = () => {
       })
     }
     const sendingFilesToworker=(FileList:RawImageCreateResp[],captureId:string)=>{
-      uploaderAction.next()
       const fileListWithUrl:Array<{ file: File, putSignedURL: string }> | null= uploaderState?.choosenFiles?.validFiles?.map(item => {
         const matchingItem:any = new Map(FileList&& FileList.map(item => [item.externalId, item])).get(item.externalId);
         if (matchingItem) {
@@ -90,13 +162,10 @@ const Index: React.FC<IProps> = () => {
         }
         return null; // If no matching item found in input2
       }).filter((item): item is { file: File; putSignedURL: string } => item !== null);
-      let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url));
+     let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url));
       WorkerManager.createWorker(captureId,worker)
       worker.postMessage({fileListWithUrl});
-      worker.onmessage = (event) => {
-        console.log('event',event.data)
-      }
-    
+      uploaderAction.next()
     }
     
   return (

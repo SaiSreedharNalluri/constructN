@@ -1,4 +1,5 @@
 import { GCPType, IGCP, LONGLATType, UTMType } from "../../models/IGCP";
+import { IJobs } from "../../models/IJobs";
 import { IProjects } from "../../models/IProjects";
 import { RawImage } from "../../models/IRawImages";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
@@ -11,6 +12,10 @@ export interface choosenFileObject {
     validFiles: uploadImage[]
     invalidEXIFFiles: File[]
     duplicateFiles: uploadImage[]
+}
+
+export interface captureRawImageMap {
+    [key:string]: RawImage[],
 }
 
 export interface UploaderState {
@@ -28,6 +33,10 @@ export interface UploaderState {
     gcpType: UTMType | LONGLATType, 
     gcpList: IGCP,
     uploadinitiate:boolean,
+    pendingUploadJobs: IJobs[],
+    pendingProcessJobs: IJobs[],
+    processCompleteJobs: IJobs[],
+    rawImagesMap: captureRawImageMap
 }
 
 export enum UploaderStep {
@@ -68,6 +77,10 @@ export const initialUploaderState: UploaderState = {
     gcpType: GCPType.LONGLAT,
     gcpList: getInitialGCPList(false), // default is LONGLAT
     skipGCP: false,
-    uploadinitiate:false
+    uploadinitiate:false,
+    pendingProcessJobs: [],
+    pendingUploadJobs: [],
+    processCompleteJobs: [],
+    rawImagesMap: {}
 };
 
