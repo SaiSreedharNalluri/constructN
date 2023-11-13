@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 
-import { IAsset } from '../../../../../models/IAssetCategory'
+import { IAsset } from '../../models/IAssetCategory'
 
-import instance from '../../../../../services/axiosInstance'
+import instance from '../../services/axiosInstance'
 
 import ElementDetails from './element-details'
 
@@ -12,7 +12,7 @@ import AssetTimeline from './asset-timeline'
 
 import { toast } from 'react-toastify'
 
-import { API } from '../../../../../config/config'
+import { API } from '../../config/config'
 
 
 const fetchAssetDetails = (assetId: string) => {

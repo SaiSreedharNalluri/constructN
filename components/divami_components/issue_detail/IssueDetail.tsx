@@ -1187,6 +1187,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         })
         .catch((error) => {
           if (error.success === false) {
+            setLoading(false)
             CustomToast(error?.message, "error", 3000);
           }
         });

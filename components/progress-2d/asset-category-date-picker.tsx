@@ -5,9 +5,9 @@ import dayjs from 'dayjs'
 
 import moment from 'moment'
 
-import { LightBoxInstance } from '../../../../../services/light-box-service'
+import { LightBoxInstance } from '../../services/light-box-service'
 
-import CustomCalender from '../../../../../components/divami_components/custom-datepicker/CustomCalender'
+import CustomCalender from '../divami_components/custom-datepicker/CustomCalender'
 
 export interface IProps {
 

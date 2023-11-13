@@ -7,11 +7,11 @@ import LayerFilter from './layer-filter'
 
 import AssetCategoryPicker from '../asset-category-picker'
 
-import { IAssetCategory } from '../../../../../../models/IAssetCategory'
+import { IAssetCategory } from '../../../models/IAssetCategory'
 
 import { useEffect, useState } from 'react'
 
-import { LightBoxInstance } from '../../../../../../services/light-box-service'
+import { LightBoxInstance } from '../../../services/light-box-service'
 
 import AssetCategoryDatePicker from '../asset-category-date-picker'
 

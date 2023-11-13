@@ -1,7 +1,7 @@
 
 import { Box, MenuItem, MenuProps, OutlinedInput, Select, Typography } from '@mui/material'
 
-import StructureHierarchy from '../../../../../../components/viewer/structure-hierarchy'
+import StructureHierarchy from '../../viewer/structure-hierarchy'
 
 const ITEM_HEIGHT = 48
 

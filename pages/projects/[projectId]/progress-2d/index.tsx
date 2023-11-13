@@ -16,7 +16,7 @@ import Progress2DComponent from '../../../../components/viewer/progress-2d.compo
 
 import { LightBoxInstance, publish, subscribe, unsubscribe } from '../../../../services/light-box-service'
 
-import AssetCategoryPicker from './components/asset-category-picker'
+import AssetCategoryPicker from '../../../../components/progress-2d/asset-category-picker'
 
 import { IAsset, IAssetCategory, IAssetStage, NOT_STARTED_STAGE } from '../../../../models/IAssetCategory'
 
@@ -30,7 +30,7 @@ import KeyboardDoubleArrowUpOutlinedIcon from '@mui/icons-material/KeyboardDoubl
 
 import { updateQueryParam } from '../../../../utils/router-utils'
 
-import AssetDetails from './components/asset-details'
+import AssetDetails from '../../../../components/progress-2d/asset-details'
 
 import { Button, Divider, IconButton, Paper, Typography } from '@mui/material'
 
@@ -47,8 +47,8 @@ import RealityPage from '../../../../components/viewer/reality'
 import dayjs from 'dayjs'
 
 import CustomCalender from '../../../../components/divami_components/custom-datepicker/CustomCalender'
-import AssetCategoryDatePicker from './components/asset-category-date-picker'
-import Progress2DToolbar from './components/toolbar/progress-2d-toolbar'
+import AssetCategoryDatePicker from '../../../../components/progress-2d/asset-category-date-picker'
+import Progress2DToolbar from '../../../../components/progress-2d/toolbar/progress-2d-toolbar'
 
 
 const fetchViewerData = (projectId: string, structureId: string) => {

@@ -2,7 +2,7 @@ import { SelectChangeEvent, Box, Checkbox, ListItemText, MenuItem, OutlinedInput
 
 import React, { FC, useEffect, useState } from 'react'
 
-import { IAssetCategory } from '../../../../../models/IAssetCategory'
+import { IAssetCategory } from '../../models/IAssetCategory'
 
 const ITEM_HEIGHT = 48
 

@@ -40,25 +40,25 @@ const interceptor=instance.interceptors.response.use(
     (error) => {
     customLogger.logError(error)
     const originalConfig = error.config;
-    // console.log("Axios Caught Error",error);
-    // console.log("config error, retry ", originalConfig);
+    console.log("Axios Caught Error",error);
+    console.log("config error, retry ", originalConfig);
     
     if (error?.response?.status===401 && 
       hasCommonElement(urlExclude,error?.response?.config?.url?.split("/")) ===false){
       instance.interceptors.response.eject(interceptor);
-      // console.log("401 My Old Refresh token is",getLocalRefreshToken());
+      console.log("401 My Old Refresh token is",getLocalRefreshToken());
       if(isRefreshing){
         return new Promise(resolve => {
           subscribeTokenRefresh((token:string) => {
             error.response.config.headers.Authorization = `Bearer ${token}`;
-            // console.log("...",token)
+            console.log("...",token)
             resolve(instance(error.response.config));
           });
         });
       }
       isRefreshing=true;
       return refreshToken(getLocalRefreshToken()).then((response)=>{
-        // console.log("401 My New Refresh token is",getLocalRefreshToken());
+        console.log("401 My New Refresh token is",getLocalRefreshToken());
         error.response.config.headers["Authorization"]="Bearer "+ response.token;
         isRefreshing = false;
         onRefreshed(response.token);
@@ -81,8 +81,8 @@ const interceptor=instance.interceptors.response.use(
         deleteCookie('projectData')
         deleteCookie('isProjectTimeZone')
         if (typeof window !== "undefined") {
-            // console.log("Moving Out....",error2.config);
-            // window.location.href = `/login?history=${window.location.href}&reason=SessionExpiry`;
+            console.log("Moving Out....",error2.config);
+            window.location.href = `/login?history=${encodeURIComponent(window.location.href)}&reason=SessionExpiry`;
         }
         return Promise.reject(error2);
       })
@@ -98,7 +98,7 @@ return ;
 }
 export default instance;
 export const hasCommonElement=(array1:any, array2:any)=>{
-  // console.log(array1,array2," 401 error arrays 1 2")
+  console.log(array1,array2," 401 error arrays 1 2")
   for (let i = 0; i < array1.length; i++) {
     if (array2.includes(array1[i])) {
         return true;

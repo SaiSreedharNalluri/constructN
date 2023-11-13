@@ -2,7 +2,7 @@ import { IconButton, InputAdornment, MenuItem, OutlinedInput, Select, SelectChan
 
 import { useEffect, useState } from 'react'
 
-import { IAsset, IAssetCategory, IAssetStage, NOT_STARTED_STAGE } from '../../../../../models/IAssetCategory'
+import { IAsset, IAssetCategory, IAssetStage, NOT_STARTED_STAGE } from '../../models/IAssetCategory'
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 

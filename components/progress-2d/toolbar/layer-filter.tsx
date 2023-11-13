@@ -2,15 +2,15 @@ import { SelectChangeEvent, Box, Checkbox, ListItemText, MenuItem, OutlinedInput
 
 import React, { FC, useState } from 'react'
 
-import cameraIcon from '../../../../../../public/divami_icons/cameraIcon.svg'
+import cameraIcon from '../../../public/divami_icons/cameraIcon.svg'
 
-import hexagonIcon from '../../../../../../public/divami_icons/hexagonIcon.svg'
+import hexagonIcon from '../../../public/divami_icons/hexagonIcon.svg'
 
-import videoRecorderIcon from '../../../../../../public/divami_icons/videoRecorderIcon.svg'
+import videoRecorderIcon from '../../../public/divami_icons/videoRecorderIcon.svg'
 
-import DroneImage from '../../../../../../public/divami_icons/DroneImage.svg'
+import DroneImage from '../../../public/divami_icons/DroneImage.svg'
 
-import { LayerSecondSectionCamImg, CameraIcon } from '../../../../../../components/divami_components/toolbar/ToolBarStyles'
+import { LayerSecondSectionCamImg, CameraIcon } from '../../divami_components/toolbar/ToolBarStyles'
 
 const ITEM_HEIGHT = 48
 

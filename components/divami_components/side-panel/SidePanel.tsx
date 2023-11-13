@@ -172,7 +172,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     if (userObj) user = JSON.parse(userObj);
     if (user?.email) setEMail(user.email);
 
-    boot({alignment:"left",hideDefaultLauncher:true,horizontalPadding:60,email:user.email,name:user.firstName});//boot intercom
+    boot({alignment:"left",hideDefaultLauncher:true,horizontalPadding:60,email:user?.email,name:user?.firstName});//boot intercom
 
     return () => {
       shutdown();// shutdown intercom
