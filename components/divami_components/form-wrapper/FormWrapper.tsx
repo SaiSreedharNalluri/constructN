@@ -756,7 +756,7 @@ const FormWrapper = (props: any) => {
   }
   function isValidEmail(email: any, id: any) {
     let isValid = false;
-    if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+    if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/.test(email)) {
       isValid = true;
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
