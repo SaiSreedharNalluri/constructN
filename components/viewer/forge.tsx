@@ -8,7 +8,7 @@ interface _ViewerProps {
 
     viewType: string,
 
-    onInit: (forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D | undefined>, alreadyInitialised: boolean) => void,
+    onInit: (forge: Autodesk.Viewing.GuiViewer3D | undefined, alreadyInitialised: boolean) => void,
 
     models?: any[],
 
@@ -62,7 +62,7 @@ function Forge(props: _ViewerProps) {
     
     }, [props.models])
 
-    const initViewer = (onInit?: (forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D | undefined>, alreadyInitialised: boolean) => void) => {
+    const initViewer = (onInit?: (forge: Autodesk.Viewing.GuiViewer3D | undefined, alreadyInitialised: boolean) => void) => {
 
         if (!_forge.current) {
 
@@ -90,7 +90,7 @@ function Forge(props: _ViewerProps) {
 
                     Autodesk.Viewing.VIEWER_INITIALIZED,
 
-                    () => { if (onInit) onInit(_forge, false) }
+                    () => { if (onInit) onInit(_forge.current, false) }
                     
                 )
 
@@ -134,7 +134,7 @@ function Forge(props: _ViewerProps) {
                 
                 } else {
 
-                    if (onInit) onInit(_forge, false) 
+                    if (onInit) onInit(_forge.current, false) 
 
                 }
 
@@ -155,7 +155,7 @@ function Forge(props: _ViewerProps) {
 
             console.log('CNI.AI', 'Forge viewer already Initialised', viewerId)
 
-            if (onInit) onInit(_forge, true)
+            if (onInit) onInit(_forge.current, true)
         }
     }
 

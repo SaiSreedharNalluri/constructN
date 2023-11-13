@@ -1,4 +1,5 @@
 import { radians2degrees } from '@turf/turf'
+import { publish } from '../services/light-box-service'
 
 
 export class ForgeDataVizUtils {
@@ -566,6 +567,8 @@ export class ForgeDataVizUtils {
         if (dbObject) {
 
             dbObject.position = dbObject.originalPosition
+
+            publish('reality-click', dbObject)
 
         }
     }

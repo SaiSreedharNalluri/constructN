@@ -16,7 +16,7 @@ import Progress2DComponent from '../../../../components/viewer/progress-2d.compo
 
 import { LightBoxInstance, publish, subscribe, unsubscribe } from '../../../../services/light-box-service'
 
-import AssetCategoryPicker from '../../../../components/core/asset-category-picker'
+import AssetCategoryPicker from './components/asset-category-picker'
 
 import { IAsset, IAssetCategory, IAssetStage, NOT_STARTED_STAGE } from '../../../../models/IAssetCategory'
 
@@ -30,7 +30,7 @@ import KeyboardDoubleArrowUpOutlinedIcon from '@mui/icons-material/KeyboardDoubl
 
 import { updateQueryParam } from '../../../../utils/router-utils'
 
-import AssetDetails from './asset-details'
+import AssetDetails from './components/asset-details'
 
 import { Button, Divider, IconButton, Paper, Typography } from '@mui/material'
 
@@ -42,8 +42,13 @@ import { API } from '../../../../config/config'
 
 import moment from 'moment'
 
-import PotreeViewer from '../../../../components/container/potreeViewer'
-import { PotreeViewerUtils } from '../../../../utils/PotreeWrapper2'
+import RealityPage from '../../../../components/viewer/reality'
+
+import dayjs from 'dayjs'
+
+import CustomCalender from '../../../../components/divami_components/custom-datepicker/CustomCalender'
+import AssetCategoryDatePicker from './components/asset-category-date-picker'
+import Progress2DToolbar from './components/toolbar/progress-2d-toolbar'
 
 
 const fetchViewerData = (projectId: string, structureId: string) => {
@@ -134,7 +139,9 @@ const Progress2DPage: React.FC<any> = () => {
 
     const searchParamsRef = useRef<URLSearchParams>()
 
-    const [isCompare, setIsCompare] = useState<boolean>(true)
+    const [isCompare, setIsCompare] = useState<boolean>(false)
+
+    const compare = useRef<boolean>(false)
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -158,9 +165,9 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [selectedCategory, setSelectedCategory] = useState<IAssetCategory>()
 
-    const currentCategory = useRef<IAssetCategory>()
+    const [selectedLayers, setSelectedLayers] = useState<string[]>()
 
-    const potreeUtils = useRef<any>()
+    const currentCategory = useRef<IAssetCategory>()
 
     const currentAsset = useRef<string>()
 
@@ -238,33 +245,7 @@ const Progress2DPage: React.FC<any> = () => {
                     }
                 }
 
-                if (baseSnapshot) {
-
-                    for (const Key of Object.keys(baseSnapshot.layers)) {
-
-                        for (let i = 0; i < baseSnapshot.layers[Key].length; i++) {
-
-                            if (!baseSnapshot.layers[Key][i].position) {
-
-                                const path = baseSnapshot.layers[Key][i].path
-
-                                try {
-
-                                    const response = await fetchImagesData(path)
-
-                                    baseSnapshot.layers[Key][i].position = response.data
-
-                                } catch (e) { }
-                            }
-                        }
-                    }
-
-                    LightBoxInstance.setSnapshotBase(baseSnapshot)
-
-                    setSnapshotBase(baseSnapshot)
-
-                }
-
+                await _extractBaseSnapshot(baseSnapshot)
 
             }).catch(e => console.log(e))
 
@@ -322,6 +303,8 @@ const Progress2DPage: React.FC<any> = () => {
 
         subscribe('delete-2d-shape', _onDeleteShape)
 
+        subscribe('reality-click', _onRealityItemClick)
+
         return () => {
 
             unsubscribe('add-2d-shape', _onAddShape)
@@ -332,9 +315,42 @@ const Progress2DPage: React.FC<any> = () => {
 
             unsubscribe('delete-2d-shape', _onDeleteShape)
 
+            unsubscribe('reality-click', _onRealityItemClick)
+
         }
 
     }, [])
+
+    const _extractBaseSnapshot = async (snapshot: any) => {
+
+        if (snapshot) {
+
+            for (const Key of Object.keys(snapshot.layers)) {
+
+                for (let i = 0; i < snapshot.layers[Key].length; i++) {
+
+                    if (!snapshot.layers[Key][i].position) {
+
+                        const path = snapshot.layers[Key][i].path
+
+                        try {
+
+                            const response = await fetchImagesData(path)
+
+                            snapshot.layers[Key][i].position = response.data
+
+                        } catch (e) { }
+                    }
+                }
+            }
+
+            LightBoxInstance.setSnapshotBase(snapshot)
+
+            setSnapshotBase(snapshot)
+
+        }
+
+    }
 
     const _onAddShape = (event: Event) => {
 
@@ -381,9 +397,9 @@ const Progress2DPage: React.FC<any> = () => {
                 setShowProgress(false)
 
                 setLoading(false)
-                
+
                 toast.error('Failed to create asset!', { autoClose: 5000 })
-                
+
             })
 
         }
@@ -415,13 +431,13 @@ const Progress2DPage: React.FC<any> = () => {
                 toast.success('Updated asset successfully!', { autoClose: 5000 })
 
             }).catch(err => {
-                
+
                 setShowProgress(false)
 
                 setLoading(false)
 
                 toast.error('Failed to update asset!', { autoClose: 5000 })
-                
+
             })
 
         }
@@ -449,9 +465,9 @@ const Progress2DPage: React.FC<any> = () => {
             setShowProgress(false)
 
             setLoading(false)
-            
+
             toast.error('Failed to delete asset!', { autoClose: 5000 })
-            
+
         })
 
         else toast.warning('Please select an asset!', { autoClose: 5000 })
@@ -471,6 +487,8 @@ const Progress2DPage: React.FC<any> = () => {
     }
 
     const _onCategorySelected = (category: IAssetCategory | undefined) => {
+
+        console.log(category, selectedCategory, currentCategory.current)
 
         setStages([])
 
@@ -514,11 +532,13 @@ const Progress2DPage: React.FC<any> = () => {
 
                     const prevStages = stages.filter((value: IAssetStage) => value.sequence <= (asset.progress.stage as IAssetStage).sequence)
 
-                    for(let i = 0; i < prevStages.length; i++) {
+                    for (let i = 0; i < asset.progressSnapshot.length; i++) {
 
-                        if (_assetMap.current[prevStages[i]._id]) _assetMap.current[prevStages[i]._id].assets.push(asset._id)
+                        const mProgress = asset.progressSnapshot[i]
 
-                        else _assetMap.current[prevStages[i]._id] = { assets: [asset._id] }
+                        if (_assetMap.current[mProgress.stage as string]) _assetMap.current[mProgress.stage as string].assets.push(asset._id)
+
+                        else _assetMap.current[mProgress.stage as string] = { assets: [asset._id] }
 
                     }
                 })
@@ -557,26 +577,23 @@ const Progress2DPage: React.FC<any> = () => {
         publish('clear-shape-selection', '')
     }
 
-    const _setPotreeUtils = (viewerId: string) => {
+    const _onRealityItemClick = (event: Event) => {
 
-        if (potreeUtils.current == undefined) {
+        if (!compare.current) {
 
-            potreeUtils.current = PotreeViewerUtils()
+            const reality = (event as CustomEvent).detail
 
-            if (!potreeUtils.current.isViewerLoaded()) {
+            setIsCompare(true)
 
-                potreeUtils.current.initializeViewer(viewerId, (viewerId: string, event: any) => console.log(viewerId, event), false)
+            compare.current = true
 
-            }
-
-            potreeUtils.current.setStructure(structureId.current)
-
-            potreeUtils.current.setSnapshot(snapshotBase!._id)
-
-            potreeUtils.current.updateLayersData(snapshotBase.layers, undefined)
+            setTimeout(() => publish('reality-click', reality), 1000)
 
         }
+
     }
+
+    const _onSnapshotBaseChange = (date: Date, snapshot: any) => _extractBaseSnapshot(snapshot)
 
     const _renderTitle = () => {
 
@@ -666,145 +683,151 @@ const Progress2DPage: React.FC<any> = () => {
 
                                 </div>
 
-                                {snapshotBase && <div className={`w-3/4 relative flex items-center py-4 px-2`} style={{ height: 'calc(100vh - 64px)' }}>
+                                <div className='flex flex-col w-full' style={{ height: 'calc(100vh - 64px)' }}>
 
-                                    <div id='left-container' className={`relative h-full w-1/2 flex justify-center ${isCompare ? '' : 'grow shrink'}`}>
+                                    {hierarchy && snapshotBase && <Progress2DToolbar
 
-                                        <Progress2DComponent
+                                        hierarchy={hierarchy}
 
-                                            id={'left-container'}
+                                        onSelectHierarchy={_changeStructure}
 
-                                            viewType={'Plan Drawings'}
+                                        snapshotBase={snapshotBase}
 
-                                            category={selectedCategory}
+                                        onSnapshotBaseChange={_onSnapshotBaseChange}
 
-                                            snapshot={snapshotBase}
+                                        onLayersSelected={(selected: string[]) => setSelectedLayers(selected)}
+                                        
+                                        selectedCategory={selectedCategory} assetCategories={assetCategories}
+                                        
+                                        onCategorySelected={_onCategorySelected} />}
 
-                                            assets={assets} />
+                                    <div className='flex w-full' style={{ height: 'calc(100vh - 144px)' }}>
 
-                                    </div>
+                                        {snapshotBase && <div className={`w-3/4 relative flex items-center mx-2`}>
 
-                                    {
-                                        isCompare ? (<>
+                                            <div id='left-container' className={`relative h-full w-1/2 border border-[#e2e3e5] rounded-lg p-[2px] flex justify-center ${isCompare ? '' : 'grow shrink'}`}>
 
-                                            <div className='flex h-full w-1 bg-white items-center' style={{ zIndex: 2 }}>
+                                                <Progress2DComponent
+
+                                                    id={'left-container'}
+
+                                                    viewType={'Plan Drawings'}
+
+                                                    category={selectedCategory}
+
+                                                    snapshot={snapshotBase}
+
+                                                    compare={isCompare}
+
+                                                    assets={assets}
+
+                                                    selectedLayers={selectedLayers} />
 
                                             </div>
 
-                                            <div id='right-container' className={'relative h-full w-1/2'}>
+                                            {
+                                                isCompare ? (<>
 
-                                                <PotreeViewer viewerCount={1} isSupportUser={'false'} setPotreeViewer={_setPotreeUtils} />
+                                                    <div className='flex h-full w-[3px] rounded bg-white items-center' style={{ zIndex: 2 }}>
 
-                                            </div>
+                                                    </div>
 
-                                        </>) : ''
-                                    }
+                                                    <div id='right-container' className={'relative h-full w-1/2'}>
 
-                                    <div
+                                                        <RealityPage snapshot={snapshotBase} id={'right'} />
 
-                                        className='fixed cursor-pointer bg-white rotate-[270deg] z-10 bottom-[2.5rem] left-[1.5rem] text-[#4a4a4a] py-1 pr-3 pl-1'
+                                                        <IconButton
 
-                                        onClick={() => setShowHierarchy(!showHierarchy)}
+                                                            size='large' onClick={() => {
 
-                                        style={{ border: '1px solid #e2e3e5', borderRadius: '4px' }}>
+                                                                compare.current = false
 
-                                        <KeyboardDoubleArrowRightOutlinedIcon fontSize={'small'} className='mr-1' />
+                                                                setIsCompare(false)
 
-                                        <Typography variant='caption' fontSize={14} className='select-none'>Hierarchy</Typography>
+                                                            }}
 
-                                    </div>
+                                                            className='absolute top-2 right-2 bg-black bg-opacity-30'>
 
-                                </div> }
+                                                            <CloseOutlinedIcon htmlColor='#ffffff' />
 
-                                <div className={'flex flex-col w-1/4 my-4 mr-4 py-4'}
+                                                        </IconButton>
 
-                                    style={{ height: 'calc(100vh - 88px)', border: '1px solid #e2e3e5', borderRadius: '6px' }} >
+                                                    </div>
 
-                                    <div className='flex px-4'>
-
-                                        <div className='text-[16px] text-[#4a4a4a] w-fit flex-grow'>
-
-                                            {selectedAsset ? 'Asset Details' : _renderTitle()}
-
-                                        </div>
-
-                                        {!selectedAsset && <IconButton onClick={() => setShowCategoryFilters(!showCategoryFilters)}
-
-                                            className='mt-[-6px] mr-[-6px]'>
-
-                                            {showCategoryFilters ?
-
-                                                <KeyboardDoubleArrowUpOutlinedIcon fontSize='small' /> :
-
-                                                <KeyboardDoubleArrowDownOutlinedIcon fontSize='small' />
-
+                                                </>) : ''
                                             }
 
-                                        </IconButton>}
+                                        </div>}
 
-                                        {selectedAsset && <IconButton size='small' onClick={() => _closeDetails()}
+                                        <div className={'flex flex-col w-1/4 mr-4 py-4'}
 
-                                            className='mt-[-6px] mr-[-6px]'>
+                                            style={{ height: 'calc(100vh - 144px)', border: '1px solid #e2e3e5', borderRadius: '6px' }} >
 
-                                            <CloseOutlinedIcon fontSize='small' />
+                                            <div className='flex px-4'>
 
-                                        </IconButton>}
+                                                <div className='text-[16px] text-[#4a4a4a] w-fit flex-grow'>
 
-                                    </div>
+                                                    {selectedAsset ? 'Asset Details' : _renderTitle()}
 
-                                    {hierarchy && showCategoryFilters && <div className='mt-6 px-4'>
+                                                </div>
 
-                                        <AssetCategoryPicker selected={selectedCategory} categories={assetCategories} onSelect={_onCategorySelected} />
+                                                {!selectedAsset && <IconButton onClick={() => setShowCategoryFilters(!showCategoryFilters)}
 
-                                    </div>}
+                                                    className='mt-[-6px] mr-[-6px]'>
 
-                                    {!selectedAsset && <div className='flex mt-6 px-6 justify-between'>
+                                                    {showCategoryFilters ?
 
-                                        <Typography className='text-[11px] cursor-pointer' color='#F1742E'>SELECT ALL</Typography>
+                                                        <KeyboardDoubleArrowUpOutlinedIcon fontSize='small' /> :
 
-                                        <Typography className='text-[11px] cursor-pointer' color='#F1742E'>CLEAR ALL</Typography>
+                                                        <KeyboardDoubleArrowDownOutlinedIcon fontSize='small' />
 
-                                    </div>}
+                                                    }
 
-                                    <Divider className='mt-2' orientation='horizontal' variant='fullWidth' flexItem />
+                                                </IconButton>}
 
-                                    {!selectedAsset && <div className='px-4'>
+                                                {selectedAsset && <IconButton size='small' onClick={() => _closeDetails()}
 
-                                        <div className='overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
+                                                    className='mt-[-6px] mr-[-6px]'>
 
-                                            {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
+                                                    <CloseOutlinedIcon fontSize='small' />
 
-                                            {stages?.map(stage => (stage as IAssetStage).sequence > 0 && <Progress2DStage key={stage._id} assetCount={assets.length} stage={stage} />)}
+                                                </IconButton>}
+
+                                            </div>
+
+                                            {!selectedAsset && <div className='flex mt-6 px-6 justify-between'>
+
+                                                <Typography className='text-[11px] cursor-pointer' color='#F1742E'>SELECT ALL</Typography>
+
+                                                <Typography className='text-[11px] cursor-pointer' color='#F1742E'>CLEAR ALL</Typography>
+
+                                            </div>}
+
+                                            <Divider className='mt-2' orientation='horizontal' variant='fullWidth' flexItem />
+
+                                            {snapshotBase && !selectedAsset && <div className='px-4'>
+
+                                                <div className='overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
+
+                                                    {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
+
+                                                    {stages?.map(stage => (stage as IAssetStage).sequence > 0 && <Progress2DStage key={stage._id} assetCount={assets.length} stage={stage} />)}
+
+                                                </div>
+
+                                            </div>}
+
+                                            {selectedAsset && <AssetDetails assetId={selectedAsset} onChange={_onAssetDetailsChange} />}
 
                                         </div>
 
-                                    </div>}
-
-                                    {selectedAsset && <AssetDetails assetId={selectedAsset} onChange={_onAssetDetailsChange} />}
+                                    </div>
 
                                 </div>
 
-                                {hierarchy && showHierarchy &&
-
-                                    <Paper elevation={4} className='absolute h-4/5 bottom-0 bg-white overflow-auto' style={{ zIndex: 11, left: '62px' }} >
-
-                                        <StructureHierarchy
-
-                                            structure={structureId.current}
-
-                                            hierarchy={hierarchy}
-
-                                            onClose={() => setShowHierarchy(false)}
-
-                                            onSelect={_changeStructure} />
-
-                                    </Paper>
-
-                                }
-
                             </div>
 
-                            { (showProgress || loading) && <div className='fixed z-20 w-screen h-screen bg-[#000000] opacity-0'></div>}
+                            {(showProgress || loading) && <div className='fixed z-20 w-screen h-screen bg-[#000000] opacity-0'></div>}
 
                         </div>
 

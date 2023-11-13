@@ -17,9 +17,9 @@ const StructureHierarchy = ({ structure, hierarchy, onSelect, onClose }: any) =>
 
     return (
 
-        <div className='p-4 min-w-[20vw]' >
+        <div className='p-4 min-w-[20vw] bg-white' >
 
-            <div className='flex text-[#4a4a4a] mb-4' >
+            {/* <div className='flex text-[#4a4a4a] mb-4' >
 
                 <Typography variant='body1' className='pl-4 flex-grow select-none'>Hierarchy</Typography>
 
@@ -27,7 +27,7 @@ const StructureHierarchy = ({ structure, hierarchy, onSelect, onClose }: any) =>
 
             </div>
 
-            <Divider className='mb-4' />
+            <Divider className='mb-4' /> */}
 
             <Tree treeData={hierarchy} onSelect={onSelect} />
 

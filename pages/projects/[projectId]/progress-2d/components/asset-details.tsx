@@ -4,11 +4,11 @@ import { IAsset } from '../../../../../models/IAssetCategory'
 
 import instance from '../../../../../services/axiosInstance'
 
-import ElementDetails from '../element-details'
+import ElementDetails from './element-details'
 
 import { Tab, Tabs } from '@mui/material'
 
-import AssetTimeline from '../asset-timeline'
+import AssetTimeline from './asset-timeline'
 
 import { toast } from 'react-toastify'
 

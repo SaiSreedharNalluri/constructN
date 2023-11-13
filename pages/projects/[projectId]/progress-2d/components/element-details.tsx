@@ -204,7 +204,7 @@ const StageElement: React.FC<IElementProps> = ({ label, value, sequence = 0, sta
 
                 {stages && stages.map((stage: IAssetStage, index: number) => {
 
-                    return <MenuItem key={index} disabled={stage.sequence < sequence} value={stage._id}>
+                    return <MenuItem key={index} value={stage._id}>
                         
                         <div className='flex items-center'>
 

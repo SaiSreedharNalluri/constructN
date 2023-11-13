@@ -145,7 +145,7 @@ const ClickTypesPicker: FC<any> = (props) => {
 
     return (
 
-      <Tooltip key={type} title={`${type} Shape`} arrow >
+      <Tooltip key={type} placement='left' title={`${type} Shape`} arrow >
 
         <ToggleButton
 
@@ -169,7 +169,7 @@ const ClickTypesPicker: FC<any> = (props) => {
 
     return (
 
-      <Tooltip key={type} title={type} arrow >
+      <Tooltip key={type} placement='left' title={type} arrow >
 
         <IconButton
 
@@ -197,9 +197,11 @@ const ClickTypesPicker: FC<any> = (props) => {
 
   return (
 
-    <div className='flex'>
+    <div className='flex flex-col'>
 
       <SegmentToggleButtonGroup
+
+        orientation='vertical'
 
         size='small'
 
@@ -219,7 +221,7 @@ const ClickTypesPicker: FC<any> = (props) => {
 
         aria-label='text alignment'>
 
-        <Tooltip key={'Select'} title={`${'Select'} Shape`} arrow >
+        <Tooltip key={'Select'} placement='left' title={`${'Select'} Shape`} arrow >
 
           <ToggleButton
 
@@ -237,9 +239,11 @@ const ClickTypesPicker: FC<any> = (props) => {
 
       </SegmentToggleButtonGroup>
 
-      <Divider orientation="vertical" variant="middle" className='w-[1.5px] bg-[#e5e5e5]' flexItem />
+      <Divider orientation="horizontal" variant="fullWidth" className='w-full h-[1px] bg-[#e5e5e5]' flexItem />
 
       <SegmentToggleButtonGroup
+
+        orientation='vertical'
 
         size='small'
 

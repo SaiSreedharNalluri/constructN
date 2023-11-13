@@ -16,8 +16,6 @@ import ClickTypesPicker from './segment-class-filters'
 
 import { Paper } from '@mui/material'
 
-import LayerSelect from './layer-select'
-
 interface _ViewerProps {
 
     id: string,
@@ -26,15 +24,19 @@ interface _ViewerProps {
 
     snapshot: any
 
+    compare: boolean
+
     assets: IAsset[]
 
     category: IAssetCategory | undefined
+
+    selectedLayers: string[] | undefined
 }
 
 
 function Progress2DComponent(props: _ViewerProps) {
 
-    let _forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D | undefined>
+    const _forge = useRef<Autodesk.Viewing.GuiViewer3D>()
 
     const _initialised = useRef<boolean>(false)
 
@@ -57,9 +59,9 @@ function Progress2DComponent(props: _ViewerProps) {
     const _assetMap = useRef<{ [key: string]: { assets: string[] } & Partial<IAssetStage> }>({})
 
 
-    const onInit = async (forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D | undefined>, alreadyInitialised: boolean) => {
+    const onInit = async (forge: Autodesk.Viewing.GuiViewer3D | undefined, alreadyInitialised: boolean) => {
 
-        _forge = forge
+        _forge.current = forge
 
         if (!alreadyInitialised) {
 
@@ -84,9 +86,12 @@ function Progress2DComponent(props: _ViewerProps) {
             _edit2dUtils.current?.destroy()
 
         })
+
     }, [])
 
     useEffect(() => { setViewType(props.viewType) }, [props.viewType])
+
+    useEffect(() => { _resize() }, [props.compare])
 
     useEffect(() => _edit2dUtils.current?.loadAssets(props.assets), [props.assets])
 
@@ -96,11 +101,27 @@ function Progress2DComponent(props: _ViewerProps) {
 
             _layers.current = props.snapshot.layers
 
+            console.log(_model.current, _layers.current, props.snapshot)
+
             if (_model.current) loadLayers(props.snapshot.layers)
 
         }
 
     }, [props.snapshot])
+
+    useEffect(() => {
+
+        if (props.selectedLayers) {
+
+            _dataVizUtils.current?.showTag('360 Video', props.selectedLayers.includes('360 Video'))
+
+            _dataVizUtils.current?.showTag('360 Image', props.selectedLayers.includes('360 Image'))
+
+            _dataVizUtils.current?.showTag('Phone Image', props.selectedLayers.includes('Phone Image'))
+
+        }
+
+    }, [props.selectedLayers])
 
 
     const onModelLoaded = (model: Autodesk.Viewing.Model, tm: THREE.Matrix4, offset: number[]) => {
@@ -201,25 +222,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
                 onExtnLoaded={onExtnLoaded} />
 
-            <div className='flex absolute w-fit h-fit' style={{ zIndex: 5 }}>
-
-                <Paper elevation={1}>
-
-                    <LayerSelect
-
-                        layers={Object.keys(LightBoxInstance.getSnapshotBase().layers)}
-
-                        onChange={(selected: string[]) => {
-
-                            _dataVizUtils.current?.showTag('360 Video', selected.includes('360 Video'))
-
-                            _dataVizUtils.current?.showTag('360 Image', selected.includes('360 Image'))
-
-                            _dataVizUtils.current?.showTag('Phone Image', selected.includes('Phone Image'))
-
-                        }} />
-
-                </Paper>
+            <div className='flex absolute right-2 w-fit h-fit mt-1' style={{ zIndex: 5 }}>
 
                 { props.category && <Paper className='ml-3' elevation={1}>
 
