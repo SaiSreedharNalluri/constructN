@@ -19,7 +19,26 @@ const UploaderStepper : React.FC<IProps> =() => {
       },
     },
   });
-
+  const CustomStepIcon= ({ active, completed, icon }:any) => { 
+    const iconStyle= {
+      width: "32px",
+      height: "32px",
+      fontSize: "14px",
+      color: active ? "#32353A" : completed ? "#fff" : "#D9D9D9", 
+      backgroundColor: active ? "white" : completed ? "#FF843F" : "white", 
+      borderRadius: "50%", 
+      border: active ? "1px solid #32353A" : completed ? "1px solid #FF843F" : "1px solid #D9D9D9",  
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontWeight:"400",
+      lineHeight:"19.07px",
+      fontFamily:"Open Sans"
+    };
+    return (
+      <div style={iconStyle}>{icon}</div>
+    );
+  };
   return (
     <div>
        
@@ -29,8 +48,8 @@ const UploaderStepper : React.FC<IProps> =() => {
     <ThemeProvider theme={theme}>
       <Stepper activeStep={state.step} alternativeLabel style={{ maxWidth: "800px",margin: "0 auto", }}>
         {state.stepNames?.map((label:any, index:any) => (
-          <Step key={label}>
-            <StepLabel style={{fontFamily:"Open Sans",fontStyle:"normal",fontWeight:"400",fontSize:"18px", lineHeight:"20px"}}>{label}</StepLabel>
+          <Step key={label} >
+            <StepLabel  StepIconComponent={CustomStepIcon}>{label}</StepLabel>
           </Step>
         ))}
       </Stepper>
