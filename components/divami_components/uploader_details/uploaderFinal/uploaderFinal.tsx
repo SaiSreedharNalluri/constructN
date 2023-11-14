@@ -32,61 +32,28 @@ const UploaderFinal: React.FC = () => {
 
   return (
     <React.Fragment>
-      <div style={{ display: "flex", marginLeft: "6px", marginTop: "15px" }}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            width: "60%",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-              marginBottom: "5px",
-              backgroundColor: "#ffedd5",
-              borderRadius: "1rem",
-              overflowY: "hidden",
-              boxShadow:
-                "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-            }}
-          >
-            <div className="mt-[8px] mb-[3px] rounded-2xl overflow-y-scroll shadow-md mb-4">
-              <div className="rounded-2xl">
+      <div className="flex ml-[6px] mt-[15px] calc-w">
+        <div className="flex flex-col w-[70%]">
+              <div>
                 <CaptureUploadingStatus
                   isUploadedOn={false}
                   isUploading={true}
                   buttonName="+ Start a new upload"
                 />
-              </div>
-            </div>
-          </div>
-          <div
-            style={{
-              display: "flex-1",
-              flexDirection: "column",
-              width: "100%",
-              padding: "1px",
-            }}
-          >
-            <div className="mt-[8px] mb-[3px] rounded-2xl overflow-y-scroll drop-shadow-lg mb-4">
-              <div className="rounded-2xl">
+              </div> 
+
+              <div>
                 <CaptureUploadingStatus
                   isUploadedOn={true}
                   isUploading={false}
                   buttonName="Process"
                 />
               </div>
-            </div>
-          </div>
+         
         </div>
 
-        <div className="w-[30%]  ml-[30px] mb-[30px] mt-[10px] bg-orange-100 rounded-2xl overflow-y-auto " style={{ maxHeight: '300px' }}>
-          <div className="w-full mt-[20px]">
-          <div className="ml-[10px] mt-2 w-full font-open-sans italic font-normal text-base leading-5 text-black">
+        <div className="w-[30%] h-[280px]   ml-[30px] mt-2  overflow-x-hidden bg-[#FFECE2] rounded-3xl overflow-y-auto">
+          <div className=" mt-2 w-[60%] ml-[30px] font-open-sans italic font-normal text-base leading-5 text-black">
                       Uploading progress for{" "}
                       <span className="font-bold not-italic">
                         structure name
@@ -97,21 +64,18 @@ const UploaderFinal: React.FC = () => {
               fileProgressList.length > 0 &&
               fileProgressList.map((fileProgressObj: fileData) => {
                 return (
-                  <div className=" ">
-                   
-                    <div className="flex" >
-                      <div className="  ml-[20px] mt-2 w-40">
+                    <div key={fileProgressObj.fileName} className="flex w-full" >
+                      <div className="  ml-[30px] mt-[20px] w-[25%] ">
                         <FileNameListing fileName={fileProgressObj.fileName} />
                       </div>
-                      <div className="w-40 mt-3">
+                      <div className="mt-[20px]">
                         <FileStatus status={fileProgressObj.status} />
                       </div>
                     </div>
-                  </div>
+                 
                 );
               })}
           </div>
-        </div>
       </div>
     </React.Fragment>
   );

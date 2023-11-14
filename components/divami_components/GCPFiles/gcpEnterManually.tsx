@@ -211,7 +211,7 @@ const GcpEnterManually: React.FC<any> = () => {
       </div>
       <div style={{ margin: "0 0 0 60px", marginTop: "8px" }}>
         <div
-          style={{ maxHeight: "150px", maxWidth: "750px", overflowY: "auto",
+          style={{ maxHeight: "150px", maxWidth: "800px",overflowY: "auto",
         }}
          className="isScroll"
         >
@@ -229,7 +229,7 @@ const GcpEnterManually: React.FC<any> = () => {
             At least 4 GCPs needed
           </p>
           <button onClick={addRow}>
-            <span className="plus-symbol" style={{ margin: "0 0 0 170px",color: "#F1742E",fontStyle: "italic",}}>
+            <span className="plus-symbol" style={{ margin: "0 0 0 170px",color: "#F1742E"}}>
               + Add
             </span>
           </button>
