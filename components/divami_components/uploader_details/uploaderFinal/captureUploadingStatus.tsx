@@ -97,23 +97,19 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   };
   return (
     <React.Fragment>
-      <div
-        className={`w-full mt-2 ${
-          isUploadedOn ? "bg-white" : ""
-        } rounded-2xl h-30`}
-      >
-        <div
-          className=""
-          style={{ overflow: "auto", height: `calc(80vh - 350px)` }}
-        >
-          <table className="w-full">
+<div className={`w-full mt-2 ${ isUploadedOn ? "bg-white" : "bg-[#FFECE2] "} rounded-3xl h-[280px]  `} style={{boxShadow:" 0px 4px 4px 0px #00000040"}}>
+    
+                <div className="relative top-[20px]  w-[90%] mx-auto  h-[195px] ">
+          
+                  <div className="overflow-x-hidden h-full">
+                  <table className="w-full">
             <thead
               className={`text-jusitfy sticky top-0 ${
-                isUploadedOn ? "bg-white" : "bg-orange-100"
+                isUploadedOn ? "bg-white" : "bg-[#FFECE2]"
               }`}
             >
               <tr className="border-b border-b-[#F1742E]">
-                <th className="pl-2 py-2">
+                <th className="pl-2 py-2  text-left">
                   {isUploadedOn && (
                     <input
                       type="checkbox"
@@ -123,15 +119,15 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                   )}
                   <span className="ml-0 text-jusitfy">Level</span>
                 </th>
-                <th className="pl-2">Capture Date</th>
-                {isUploading && <th>Uploading</th>}
-                {isUploadedOn && <th>Uploaded On</th>}
+                <th className="pl-2 text-left">Capture Date</th>
+                {isUploading && <th className="text-left">Uploading</th>}
+                {isUploadedOn && <th className="text-left">Uploaded On</th>}
               </tr>
             </thead>
             <tbody className="text-justify">
               {data.map((job, index) => (
                 <tr key={index}>
-                  <td className="pl-2">
+                  <td className="pl-2 w-[40%]">
                     {isUploadedOn && (
                       <input
                         type="checkbox"
@@ -139,8 +135,12 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                         onChange={() => handleCheckboxChange(index)}
                       />
                     )}
-                    &nbsp;
-                    {gethierarchyPath(job.structure)}
+                                   <TooltipText title={gethierarchyPath(job.structure).length > 40 ? gethierarchyPath(job.structure) : ""} placement="right">
+      <span>
+      <TruncatedString text={gethierarchyPath(job.structure)} maxLength={40}
+              suffixLength={40} ></TruncatedString> 
+        </span> 
+        </TooltipText>
                   </td>
                   <td className="pl-2">
                     {formatDate(
@@ -154,9 +154,9 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
               ))}
             </tbody>
           </table>
-        </div>
-        <div className="text-center my-[10px]">
-          <button
+                  </div>
+     <div className="text-center mt-[10px] w-[90%]">
+     <button
             className="bg-[#F1742E] py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white"
             onClick={() => {
               if (isUploading) {
@@ -168,8 +168,13 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
           >
             {buttonName}
           </button>
-        </div>
+     </div>
+  
+                </div>
+     
       </div>
+       
+        
     </React.Fragment>
   );
 };

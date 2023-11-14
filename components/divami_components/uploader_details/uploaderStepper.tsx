@@ -1,5 +1,6 @@
 import React from "react";
-import { Stepper, Step, StepLabel, createTheme, ThemeProvider } from "@mui/material";
+import { Stepper, Step, StepLabel, createTheme, ThemeProvider,StepConnector } from "@mui/material";
+import { withStyles } from "@mui/styles";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 
 interface IProps{
@@ -39,6 +40,24 @@ const UploaderStepper : React.FC<IProps> =() => {
       <div style={iconStyle}>{icon}</div>
     );
   };
+  const ColoredStepConnector = withStyles({
+
+    active: {
+      "& $line": {
+        borderColor: "#32353A",
+      },
+    },
+    completed: {
+      "& $line": {
+        borderColor: "#FF843F", 
+      },
+    },
+    line: {
+      borderColor: "#D9D9D9", 
+      borderTopWidth: 2 ,
+      borderRadius: 1,
+    },
+  })(StepConnector);
   return (
     <div>
        
@@ -46,10 +65,14 @@ const UploaderStepper : React.FC<IProps> =() => {
 
         <div style={{ margin: "4px 0", fontWeight: "600", fontSize: "22px",fontFamily:"Open Sans",fontStyle:"normal" }}>Upload</div>
     <ThemeProvider theme={theme}>
-      <Stepper activeStep={state.step} alternativeLabel style={{ maxWidth: "800px",margin: "0 auto", }}>
+      <Stepper activeStep={state.step} alternativeLabel style={{ maxWidth: "800px",margin: "0 auto", }} connector={<ColoredStepConnector />}>
         {state.stepNames?.map((label:any, index:any) => (
           <Step key={label} >
-            <StepLabel  StepIconComponent={CustomStepIcon}>{label}</StepLabel>
+            <StepLabel  StepIconComponent={CustomStepIcon}>
+              <p style={{fontFamily:"Open Sans",fontSize:"18px",lineHeight:"20px",fontWeight:"400"}}  className={`${
+                    state.step === index ? "text-[#000000]" : state.step > index ? "text-[#000000]" : "text-[#D9D9D9]"
+                  }`}>{label}</p> 
+              </StepLabel>
           </Step>
         ))}
       </Stepper>
