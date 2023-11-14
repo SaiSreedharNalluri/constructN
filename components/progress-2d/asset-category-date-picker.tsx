@@ -66,7 +66,7 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, compa
 
                 sx={{
 
-                    width: '23ch', border: '1px solid #e2e3e5', borderRadius: '6px',
+                    width: '23ch', border: '1px solid #e2e3e5', borderRadius: '6px', fontFamily: 'Open Sans',
 
                     '&.MuiOutlinedInput-root': { paddingLeft: '4px' },
 
@@ -88,7 +88,7 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, compa
 
                 startAdornment={<InputAdornment position='start'>
 
-                    <Typography className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3'>
+                    <Typography fontFamily='Open Sans' className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3'>
 
                         From:
 
@@ -130,7 +130,7 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, compa
 
                 sx={{
 
-                    width: '23ch', border: '1px solid #e2e3e5', borderRadius: '6px',
+                    width: '23ch', border: '1px solid #e2e3e5', borderRadius: '6px', fontFamily: 'Open Sans',
 
                     '&.MuiInputBase-root': { paddingLeft: '4px' },
 
@@ -154,7 +154,7 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, compa
 
                 startAdornment={<InputAdornment position='start'>
 
-                    <Typography className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-1'>
+                    <Typography fontFamily='Open Sans' className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-1'>
 
                         {compare ? 'To' : 'Date'}:
 

@@ -132,7 +132,7 @@ const LayerFilter: FC<any> = (props) => {
 
           <OutlinedInput size='small' className='min-w-[200px]'
 
-            startAdornment={<Typography className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-1'>
+            startAdornment={<Typography fontFamily='Open Sans' className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-1'>
               
               Layers: 
               

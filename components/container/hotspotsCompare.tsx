@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import { ISnapshot } from '../../models/ISnapshot';
 import moment from 'moment';
+import { Typography } from '@mui/material';
 
 interface IProps {
   hotspotDetails: any|undefined,
@@ -39,50 +40,50 @@ const HotspotsCompare: React.FC<IProps> = ({ hotspotDetails, hotspotCompareDetai
     const left = getCompareDetails(hotspotDetails.properties);
     const right = getCompareDetails(hotspotCompareDetails.properties);
     progressHotspots.push(
-      <table className="table-fixed">
+      <table className='table-fixed border border-[#e2e3e5]'>
         <thead>
-          <tr>
-            <th>Dates</th>
-            <th>{moment(snapshot.date).format('MMM DD, YYYY')}</th>
-            <th>{moment(compareSnapshot.date).format('MMM DD, YYYY')}</th>
+          <tr className='border border-[#e2e3e5]'>
+            <th className='border border-[#e2e3e5] px-2 py-1'>Dates</th>
+            <th className='border border-[#e2e3e5] px-2 py-1'>{moment(snapshot.date).format('MMM DD, YYYY')}</th>
+            <th className='border border-[#e2e3e5] px-2 py-1'>{moment(compareSnapshot.date).format('MMM DD, YYYY')}</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Row Clearing</td>
-            <td>{left.row_clearing}%</td>
-            <td>{right.row_clearing}%</td>
-          </tr>
-          <tr>
-            <td>Stringing</td>
-            <td>{left.stringing}%</td>
-            <td>{right.stringing}%</td>
-          </tr>
-          <tr>
-            <td>Excavation</td>
-            <td>{left.excavation}%</td>
-            <td>{right.excavation}%</td>
-          </tr>
-          <tr>
-            <td>Pipe Laying</td>
-            <td>{left.pipe_laying}%</td>
-            <td>{right.pipe_laying}%</td>
-          </tr>
-          <tr>
-            <td>OFC Cabling</td>
-            <td>{left.ofc_cabling}%</td>
-            <td>{right.ofc_cabling}%</td>
-          </tr>
-          <tr>
-            <td>Mat Laying</td>
-            <td>{left.mat_laying}%</td>
-            <td>{right.mat_laying}%</td>
-          </tr>
-          <tr>
-            <td>Back Filling</td>
-            <td>{left.back_filling}%</td>
-            <td>{right.back_filling}%</td>
-          </tr>
+          {left.row_clearing != right.row_clearing && <tr className='border border-[#e2e3e5]'>
+            <td className='border border-[#e2e3e5] px-2 py-1'>Row Clearing</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{left.row_clearing}%</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{right.row_clearing}%</td>
+          </tr> }
+          {left.stringing != right.stringing && <tr className='border border-[#e2e3e5]'>
+            <td className='border border-[#e2e3e5] px-2 py-1'>Stringing</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{left.stringing}%</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{right.stringing}%</td>
+          </tr>}
+          {left.excavation != right.excavation && <tr className='border border-[#e2e3e5]'>
+            <td className='border border-[#e2e3e5] px-2 py-1'>Excavation</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{left.excavation}%</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{right.excavation}%</td>
+          </tr>}
+          {left.pipe_laying != right.pipe_laying && <tr className='border border-[#e2e3e5]'>
+            <td className='border border-[#e2e3e5] px-2 py-1'>Pipe Laying</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{left.pipe_laying}%</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{right.pipe_laying}%</td>
+          </tr>}
+          {left.ofc_cabling != right.ofc_cabling && <tr className='border border-[#e2e3e5]'>
+            <td className='border border-[#e2e3e5] px-2 py-1'>OFC Cabling</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{left.ofc_cabling}%</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{right.ofc_cabling}%</td>
+          </tr>}
+          {left.mat_laying != right.mat_laying && <tr className='border border-[#e2e3e5]'>
+            <td className='border border-[#e2e3e5] px-2 py-1'>Mat Laying</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{left.mat_laying}%</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{right.mat_laying}%</td>
+          </tr>}
+          {left.back_filling != right.back_filling && <tr className='border border-[#e2e3e5]'>
+            <td className='border border-[#e2e3e5] px-2 py-1'>Back Filling</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{left.back_filling}%</td>
+            <td className='border border-[#e2e3e5] px-2 py-1'>{right.back_filling}%</td>
+          </tr>}
         </tbody>
       </table>
     )
@@ -90,10 +91,10 @@ const HotspotsCompare: React.FC<IProps> = ({ hotspotDetails, hotspotCompareDetai
     return (
       <>
         {
-          show ? <div id="mapbox-hotspot-compare" className='compare-details'>
+          show ? <div id='mapbox-hotspot-compare' className='compare-details'>
             <div className='flex'>
-              <h4 className='mb-2 flex-1'>{left.name} ({left.length.toFixed(0)} mts.)</h4>
-              <IconButton size="small" className='w-3 h-3 mt-1 text-xs' aria-label="delete" onClick={() => setShow(false)} onTouchEnd={() => {
+              <Typography variant='h6' className='mb-2 ml-4 flex-1'>{left.name} ({left.length.toFixed(0)} mts.)</Typography>
+              <IconButton size='large' className='w-3 h-3 mt-1 text-lg' aria-label='delete' onClick={() => setShow(false)} onTouchEnd={() => {
                   setShow(false);
                 }}>
                 X

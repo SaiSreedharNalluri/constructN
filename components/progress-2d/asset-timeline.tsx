@@ -67,9 +67,9 @@ const AssetTimelineContent: React.FC<{ progress: IAssetProgress, stages: IAssetS
 
         <div className='mt-[-1.5px]'>
 
-            <Typography variant='caption' color={'#7a7a7a'}>{ moment(new Date(progress.updatedAt)).format('DD MMM, yyyy HH:mm')}</Typography>
+            <Typography fontFamily='Open Sans' variant='caption' color={'#7a7a7a'}>{ moment(new Date(progress.updatedAt)).format('DD MMM, yyyy HH:mm')}</Typography>
 
-            <Typography fontSize={13} className='mt-1 mb-4' color={'#4a4a4a'}>{ `The stage of this asset has been updated to ${_getStageFromId(progress.stage as string).name} by `}<i>{progress.updatedBy.firstName}</i></Typography>
+            <Typography fontFamily='Open Sans' fontSize={13} className='mt-1 mb-4' color={'#4a4a4a'}>{ `The stage of this asset has been updated to ${_getStageFromId(progress.stage as string).name} by `}<i>{progress.updatedBy.firstName}</i></Typography>
 
         </div>
     )

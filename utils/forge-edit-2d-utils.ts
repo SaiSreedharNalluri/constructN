@@ -1,4 +1,5 @@
 
+import { toast } from 'react-toastify'
 import { IAsset, IAssetCategory, IAssetPoint, IAssetStage } from '../models/IAssetCategory'
 
 import { publish, subscribe, unsubscribe } from '../services/light-box-service'
@@ -172,6 +173,7 @@ export class ForgeEdit2DUtils {
         const controller = this._viewer.toolController
 
         let activeTool: any = controller.getActiveTool()
+
         const isEdit2D = activeTool && activeTool.getName().startsWith('Edit2')
 
         // deactivate any previous edit2d tool
@@ -284,6 +286,44 @@ export class ForgeEdit2DUtils {
 
     }
 
+    private _visibilityChange = (event: any) => {
+
+        const visibilityMap: any = {}
+
+        const {assets, stageMap} = event.detail
+
+        assets.forEach((asset: IAsset) => {
+
+            const progressSnapshot = asset.progressSnapshot
+
+            for(let i = progressSnapshot.length - 1; i >= 0; i--) {
+
+                const snapshotStage = stageMap[progressSnapshot[i].stage as string]
+
+                console.log(asset, asset.progressSnapshot[i], snapshotStage.visible, snapshotStage.visible == true)
+
+                if(snapshotStage.visble == true) {
+
+                    console.log('Breaking for Loop')
+
+                    visibilityMap[asset._id] = snapshotStage.color
+
+                    console.log('Breaking for Loop', visibilityMap[asset._id])
+
+                    break
+
+                }
+
+            }
+
+            if(!visibilityMap[asset._id]) visibilityMap[asset._id] = '#000080'
+
+        })
+
+        console.log(visibilityMap)
+
+    }
+
     private _undoStackAction = (event: any) => {
 
         // console.log(event)
@@ -314,6 +354,20 @@ export class ForgeEdit2DUtils {
 
                 break
 
+            case 'RemoveShape':
+
+                if(this._editable) publish('remove-2d-shape', { id: event.action.shape.id, assetId: event.action.shape.name })
+
+                else {
+                    
+                    toast.warning('You are not authorised to remove an asset!', { autoClose: 5000 })
+
+                    publish('remove-2d-shape', undefined)
+
+                }
+
+                break
+
         }
 
     }
@@ -340,6 +394,8 @@ export class ForgeEdit2DUtils {
 
         subscribe('delete-shape', this._deleteShape)
 
+        subscribe('visibility-change', this._visibilityChange)
+
         this._edit2DContext.undoStack.addEventListener(Autodesk.Edit2D.UndoStack.AFTER_ACTION, this._undoStackAction);
 
         (this._edit2DContext as any).selection.addEventListener(Autodesk.Edit2D.Selection.Events.SELECTION_CHANGED, this._selectionChanged)
@@ -355,6 +411,8 @@ export class ForgeEdit2DUtils {
         unsubscribe('clear-shape-selection', this._clearSelection)
 
         unsubscribe('delete-shape', this._deleteShape)
+
+        unsubscribe('visibility-change', this._visibilityChange)
 
         this._edit2DContext.undoStack.removeEventListener(Autodesk.Edit2D.UndoStack.AFTER_ACTION, this._undoStackAction);
 

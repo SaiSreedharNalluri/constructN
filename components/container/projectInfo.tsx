@@ -7,7 +7,7 @@ import ChangeIcon from './changeIcon';
 import { Map, Marker } from 'react-map-gl';
 import { useRouter } from 'next/router';
 import { getProjectTypes } from '../../services/project';
-import { AWS } from '../../config/config';
+import { AWS, MAPBOX } from '../../config/config';
 interface IProps {
   projectData: IProjects;
   updateProjectData: (updateInfo: object) => void;
@@ -156,7 +156,7 @@ const ProjectInfo: React.FC<IProps> = ({
                     height: '100%',
                   }}
                   mapStyle="mapbox://styles/mapbox/streets-v9"
-                  mapboxAccessToken={process.env.NEXT_PUBLIC_Map_Token}
+                  mapboxAccessToken={MAPBOX.token}
                 >
                   <Marker
                     longitude={initialValues.longitude}

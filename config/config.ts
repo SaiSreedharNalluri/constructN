@@ -1,10 +1,14 @@
 export const MIX_PANEL_TOKEN = 'a3b265c043e673c4188665fb1dce34fe'
 
-export const MAPBOX_TOKEN = 'pk.eyJ1Ijoia3QtY29uc3RydWN0biIsImEiOiJjbGR2enJsbmMwMmtrM25tcHAxYWt6Yzh6In0.QZZM6n7jaK44HQUfj-XZUQ'
+export const MAPBOX = {
+    
+    token: 'pk.eyJ1Ijoia3QtY29uc3RydWN0biIsImEiOiJjbGR2enJsbmMwMmtrM25tcHAxYWt6Yzh6In0.QZZM6n7jaK44HQUfj-XZUQ'
+
+}
 
 export const API = {
 
-    BASE_URL: 'https://api.qa-us.constructn.ai/api/v1',
+    BASE_URL: 'https://api.constructn.ai/api/v1',
 
     LOCAL_URL: 'http://localhost:3001/api/v1',
 

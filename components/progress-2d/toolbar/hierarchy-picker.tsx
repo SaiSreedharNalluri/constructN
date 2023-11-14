@@ -69,7 +69,7 @@ export default function HierarchyPicker({ hierarchy, selected, onSelect, onClose
 
                     <OutlinedInput size='small' className='min-w-[200px]'
 
-                        startAdornment={<Typography className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3'>
+                        startAdornment={<Typography fontFamily='Open Sans' className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3'>
 
                             Structure:
 
@@ -79,7 +79,7 @@ export default function HierarchyPicker({ hierarchy, selected, onSelect, onClose
 
                 renderValue={(selected) => (
 
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, fontFamily: 'Open Sans' }}>
 
                         <div className='text-black text-sm mt-[2px]'>{ (selected as any).name }</div>
 

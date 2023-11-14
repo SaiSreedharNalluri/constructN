@@ -101,7 +101,7 @@ const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1, c
 
         <div className='mt-4'>
 
-            <Typography color={'#777777'} className='ml-2 font-[500]' fontSize={13}>
+            <Typography fontFamily='Open Sans' color={'#777777'} className='ml-2 font-[500]' fontSize={13}>
 
                 {label}
 
@@ -156,6 +156,8 @@ const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1, c
 
                 sx={{
 
+                    fontFamily: 'Open Sans',
+
                     "& .MuiOutlinedInput-root": {
 
                         "& > fieldset": { border: 'none !important' },
@@ -188,7 +190,7 @@ const StageElement: React.FC<IElementProps> = ({ label, value, sequence = 0, sta
 
         <div className='mt-4'>
 
-            <Typography color={'#777777'} className='ml-2 font-[500]' fontSize={13}>
+            <Typography fontFamily='Open Sans' color={'#777777'} className='ml-2 font-[500]' fontSize={13}>
 
                 {label}
 
@@ -210,7 +212,7 @@ const StageElement: React.FC<IElementProps> = ({ label, value, sequence = 0, sta
 
                             <CircleIcon fontSize='small' htmlColor={stage.color} />
 
-                            <Typography variant='caption' className='ml-2 text-[#4a4a4a]' fontSize='0.9rem'>{stage.name}</Typography>
+                            <Typography fontFamily='Open Sans' variant='caption' className='ml-2 text-[#4a4a4a]' fontSize='0.9rem'>{stage.name}</Typography>
                             
                         </div>
                         

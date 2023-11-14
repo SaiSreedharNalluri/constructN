@@ -28,6 +28,8 @@ interface _ViewerProps {
 
     assets: IAsset[]
 
+    isSupportUser: boolean
+
     category: IAssetCategory | undefined
 
     selectedLayers: string[] | undefined
@@ -160,7 +162,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
         } else if (extensionId === 'Autodesk.Edit2D') {
 
-            _edit2dUtils.current = new ForgeEdit2DUtils(_forge.current!, _extn as Autodesk.Extensions.Edit2D)
+            _edit2dUtils.current = new ForgeEdit2DUtils(_forge.current!, _extn as Autodesk.Extensions.Edit2D, props.isSupportUser)
 
             if (_tm.current && _offset.current) _edit2dUtils.current.setTransform(_tm.current, _offset.current)
 
@@ -224,7 +226,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
             <div className='flex absolute right-2 w-fit h-fit mt-1' style={{ zIndex: 5 }}>
 
-                { props.category && <Paper className='ml-3' elevation={1}>
+                { props.category && props.isSupportUser && <Paper className='ml-3' elevation={1}>
 
                     <ClickTypesPicker />
 

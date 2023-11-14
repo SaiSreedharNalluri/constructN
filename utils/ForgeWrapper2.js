@@ -795,6 +795,8 @@ export const ForgeViewerUtils = function () {
     } else if (parameter.extensionId === "Autodesk.BimWalk") {
       console.log("ForgeInstanceTest Inside Forge Viewer, Bim Walk loaded:");
       _bimWalkExtn = _viewer.getExtension(parameter.extensionId);
+      // disable the same post load
+      _bimWalkExtn.tool.navigator.enableGravity(false)
     }
   };
 

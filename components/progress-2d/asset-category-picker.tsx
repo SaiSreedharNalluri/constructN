@@ -40,13 +40,9 @@ const AssetCategoryPicker: FC<IProps> = ({categories, selected, onSelect}) => {
 
     const { target: { value } } = event
 
-    console.log(categories.find((category: IAssetCategory) => category._id === value), '')
-
     onSelect(categories.find((category: IAssetCategory) => category._id === value))
 
   }
-
-  useEffect(() => console.log(selected), [])
 
   return (
 
@@ -78,7 +74,7 @@ const AssetCategoryPicker: FC<IProps> = ({categories, selected, onSelect}) => {
 
           <OutlinedInput size='small' className='min-w-[200px]'
 
-            startAdornment={<Typography className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3'>
+            startAdornment={<Typography fontFamily='Open Sans' className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3'>
                 
                 Category: 
                 
@@ -88,7 +84,7 @@ const AssetCategoryPicker: FC<IProps> = ({categories, selected, onSelect}) => {
 
         renderValue={(selected) => (
 
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', fontFamily: 'Open Sans', gap: 0.5 }}>
 
             <div className='text-black text-sm mt-[2px]'>{ (selected as IAssetCategory).name }</div>
 
@@ -112,7 +108,7 @@ const AssetCategoryPicker: FC<IProps> = ({categories, selected, onSelect}) => {
 
             <Checkbox color='warning' size='small' checked={selected && selected._id === category._id} />
 
-            <ListItemText color='warning' secondary={category.name} />
+            <ListItemText sx={{fontFamily: 'Open Sans'}} color='warning' secondary={category.name} />
 
           </MenuItem>
 

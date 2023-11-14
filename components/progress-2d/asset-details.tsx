@@ -6,7 +6,7 @@ import instance from '../../services/axiosInstance'
 
 import ElementDetails from './element-details'
 
-import { Tab, Tabs } from '@mui/material'
+import { Tab, Tabs, Typography } from '@mui/material'
 
 import AssetTimeline from './asset-timeline'
 
@@ -165,9 +165,9 @@ const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => vo
 
                         TabIndicatorProps={{ style: { backgroundColor: '#f1742e' } }} >
 
-                        <Tab value='asset-details' label='Details' onClick={() => setSelectedTab('asset-details')} />
+                        <Tab value='asset-details' label={<Typography fontFamily='Open Sans' fontSize={14} variant='caption'>Details</Typography>} onClick={() => setSelectedTab('asset-details')} />
 
-                        <Tab value='asset-timeline' label='Timeline' onClick={() => setSelectedTab('asset-timeline')} />
+                        <Tab value='asset-timeline' label={<Typography fontFamily='Open Sans' fontSize={14} variant='caption'>Timeline</Typography>} onClick={() => setSelectedTab('asset-timeline')} />
 
                     </Tabs>
 

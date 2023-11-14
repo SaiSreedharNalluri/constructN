@@ -2,13 +2,13 @@
 
 import { FormControlLabel, Checkbox, LinearProgress, Divider, FormGroup, Stack, styled, linearProgressClasses, Typography } from '@mui/material'
 
-import { IAssetStage } from '../../models/IAssetCategory'
+import { IAsset, IAssetStage } from '../../models/IAssetCategory'
 
 export default function Progress2DStage(
     
-    { stage, assetCount, onToggleVisibility }: { stage: Partial<IAssetStage> & { assets: string[] }, 
+    { stage, assetCount, onToggleVisibility }: { stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }, 
     
-    assetCount: number, onToggleVisibility: (stage: string, visible: boolean) => void }) {
+    assetCount: number, onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] }, visible: boolean) => void }) {
 
     const getProgress = () => {
 
@@ -20,7 +20,9 @@ export default function Progress2DStage(
 
         const value = event.target.checked
 
-        onToggleVisibility(stage!._id!, value)
+        stage.visible = value
+
+        onToggleVisibility(stage!, value)
 
     } 
 
@@ -48,7 +50,7 @@ export default function Progress2DStage(
 
                         }} />}
 
-                    color={stage.color} label={<Typography fontSize={15} variant='caption'>{stage.name}</Typography>} />
+                    color={stage.color} label={<Typography className='mt-[-2px]' fontFamily='Open Sans' fontSize={15} variant='caption'>{stage.name}</Typography>} />
 
             </FormGroup>
 
@@ -60,9 +62,9 @@ export default function Progress2DStage(
 
             <div className='w-full flex justify-between mt-2'>
 
-                <Typography className='text-sm text-[#727375]'>{getProgress().toFixed(1)}%</Typography>
+                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{getProgress().toFixed(1)}%</Typography>
 
-                <Typography className='text-sm text-[#727375]'>123/560 {stage.uom}</Typography>
+                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>123/560 {stage.uom}</Typography>
 
             </div>
 

@@ -73,11 +73,9 @@ export default function Progress2DToolbar({
 
     }
 
-    useEffect(() => console.log(selectedCategory), [])
-
     return (
 
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', border: '1px solid #e2e3e5', borderRadius: '6px', margin: '0.5rem', padding: '0.5rem' }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', borderRadius: '6px', margin: '0.5rem', padding: '0.5rem' }}>
 
             <HierarchyPicker hierarchy={hierarchy} selected={currentStructure} onSelect={_onStructureChange} onClose={() => {}} />
 
@@ -99,13 +97,17 @@ export default function Progress2DToolbar({
                 
                 onChangeToDate={onSnapshotBaseChange}/>
 
-            <div className='ml-2'></div>
+            <div className='ml-2 flex-1'></div>
 
             <div className='ml-2'>
 
                 <FormControlLabel className='border border-[#e2e3e5] rounded [&>.MuiFormControlLabel-label]:select-none [&>.MuiFormControlLabel-label]:text-[#4a4a4a] [&>.MuiFormControlLabel-label]:text-sm [&>.MuiFormControlLabel-label]:mr-2' 
                 
-                control={<Checkbox color='warning' checked={isCompare} size='small' />} onChange={_onCompareChange} label='Enable Compare' />
+                control={<Checkbox color='warning' checked={isCompare} size='small' />} 
+                
+                onChange={_onCompareChange} label='Compare'
+                
+                sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Open Sans' } }}  />
 
             </div>
 
