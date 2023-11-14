@@ -3,13 +3,16 @@ import GcpEnterManually from "../GCPFiles/gcpEnterManually";
 import GcpUploadFile from "../GCPFiles/gcpUploadFile";
 import downloadFileIcon from "../../../public/divami_icons/downloadFileIcon.svg";
 import { useUploaderContext } from "../../../state/uploaderState/context";
+import { GCPType } from "../../../models/IGCP";
 const UploaderGCP = () => {
   const [selectedOption, setSelectedOption] = useState("Upload File");
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [base64File, setBase64File] = useState<string | null>(null);
+  const [textareaValue, setTextareaValue] = useState<string>(""); 
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-
+  
+ console.log('final data for gcplist',uploaderState.gcpList)
   const handleFirstOptionChange = (event: any) => {
     setSelectedOption(event.target.value);
   };
@@ -25,7 +28,10 @@ const UploaderGCP = () => {
       }
     }
   }, [uploaderState.gcpList]);
-
+  const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setTextareaValue(event.target.value);
+    uploaderAction.setGCPList({...uploaderState.gcpList,description:textareaValue as string},uploaderState.gcpType)
+  };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileInput = event.target;
     if (fileInput.files && fileInput.files[0]) {
@@ -40,8 +46,11 @@ const UploaderGCP = () => {
         reader.onload = (e) => {
           const base64Data = e.target?.result;
           setBase64File(base64Data as string);
+          console.log('image',base64File)
+         
         };
-
+        uploaderAction.setGCPList({...uploaderState.gcpList, base64Code: base64File as string},uploaderState.gcpType)
+        //console.log(uploaderAction.setGCPList({base64Code: base64File as string}))
         reader.readAsDataURL(selectedFile);
       } else {
         console.log("Please select a valid JPG or PNG file.");
@@ -108,6 +117,7 @@ const UploaderGCP = () => {
           </div>
         </div>
         {selectedOption == "Enter Manually" ? (
+       
           <GcpEnterManually></GcpEnterManually>
         ) : (
           <div style={{ margin: "0 60px" }}>
@@ -133,6 +143,7 @@ const UploaderGCP = () => {
             className="border border-gray-300 p-1"
             style={{ width: "500px" }}
             placeholder="Enter text up to 120 characters"
+            onChange={handleTextareaChange} 
           ></textarea>
           <div>
             <label
