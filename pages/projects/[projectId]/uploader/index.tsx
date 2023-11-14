@@ -91,7 +91,7 @@ const Index: React.FC<IProps> = () => {
   useEffect(()=>{
     if (router.isReady && uploaderState.step === UploaderStep.Upload ){
       getjobs(router.query.projectId as string).then((response)=>{
-        console.log("TestingUploader: getJobs", response.data)
+        console.log("TestingUploader: getJobs", response.data.result)
         let jobs: IJobs[] = response.data.result;
         uploaderAction.setCaptureJobs(jobs)
       }).catch((error)=>{
@@ -111,10 +111,12 @@ const Index: React.FC<IProps> = () => {
         }
         return getRawImages(router.query.projectId as string, captureId)
       })).then((response) =>{
+        console.log('enter getraw iamges')
         let rawImagesMap = response.reduce<captureRawImageMap>((prev, current):captureRawImageMap => {
           if (current.data.success) {
             let rawImages = current.data.result
-            if (rawImages[0].capture) {
+            if (rawImages[0]?.capture) {
+              console.log('raw images')
               let captureId: string = rawImages[0].capture
               return {
                 ...prev,
@@ -143,6 +145,8 @@ const Index: React.FC<IProps> = () => {
        }
     }
     const addRawImagesTOCapture=(captureId:string)=>{
+
+      console.log("addRaw image console",uploaderState?.choosenFiles?.validFiles?.map(({file,...rawImage})=>rawImage))
       addRawImages(uploaderState.project?._id as string,captureId,uploaderState?.choosenFiles?.validFiles?.map(({file,...rawImage})=>rawImage)).then((response)=>{
         if(response.success===true)
         {
@@ -185,7 +189,7 @@ const Index: React.FC<IProps> = () => {
         </div>
         </div>
         
-            <div className="fixed m-4px  bg-transparent left-6 bottom-0 right-4  p-4 ">
+            <div className="fixed m-4px  bg-transparent left-6 bottom-0 right-4  p-2 ">
 
 
           <UploaderFooter/>

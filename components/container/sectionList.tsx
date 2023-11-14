@@ -127,7 +127,7 @@ const SectionList: React.FC<IProps>=({
             <TreeViewContainer
         style={{
           overflow: "auto",
-          height: `calc(100vh - 350px)`,
+          height: `calc(80vh - 300px)`,
         }}
       >
               

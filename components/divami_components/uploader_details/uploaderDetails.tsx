@@ -123,7 +123,7 @@ const UploaderDateDetails : React.FC<any> = () => {
             className="w-full border-t border-solid border-border-yellow"
             style={{ height: "1px" }}
           ></div>
-          <div className=" pt-4 flex items-center justify-left h-[calc(100vh-350px)]">
+          <div className=" pt-0 flex items-center justify-left h-[calc(60vh - 250px)]">
             <div>
               {
                 <SectionList
@@ -135,6 +135,62 @@ const UploaderDateDetails : React.FC<any> = () => {
               }
             </div>
           </div>
+          <div>
+  {uploaderState.structure?.name && uploaderState.date && (
+    <div className="flex flex-col justify-center items-start mt-0 mb-2 p-2 gap-2 w-871 h-200 bg-box-orange shadow-md rounded-2xl">
+      <h3>we already have captures for this date {uploaderState.date.toLocaleDateString()}. select one from below or create a New Capture</h3>
+      <div style={{ maxHeight: "80px", maxWidth: "800px", overflowY: "auto" }}>
+        <table className="w-full" >
+          <thead className="sticky top-0 bg-box-orange">
+            <tr>
+              <th className="p-1 border-b border-solid border-border-yellow">Capture Date</th>
+              <th className="p-1 border-b border-solid border-border-yellow">Uploaded on</th>
+              <th className="p-1 border-b border-solid border-border-yellow">Status</th>
+            </tr>
+          </thead>
+          <tbody >
+            <tr>
+              <td className="p-1">dateeeeeeeeeee</td>
+              <td className="p-1">uploaded on dateeeeeeeeeeeee</td>
+              <td className="p-1">statusssssssssssssssss</td>
+            </tr>
+            <tr>
+              <td className="p-1">date</td>
+              <td className="p-1">uploaded on date</td>
+              <td className="p-1">status</td>
+            </tr>
+            <tr>
+              <td className="p-1">date</td>
+              <td className="p-1">uploaded on date</td>
+              <td className="p-1">status</td>
+            </tr>
+            <tr>
+              <td className="p-1">date</td>
+              <td className="p-1">uploaded on date</td>
+              <td className="p-1">status</td>
+            </tr>
+            <tr>
+              <td className="p-1">date</td>
+              <td className="p-1">uploaded on date</td>
+              <td className="p-1">status</td>
+            </tr>
+            <tr>
+              <td className="p-1">date</td>
+              <td className="p-1">uploaded on date</td>
+              <td className="p-1">status</td>
+            </tr>
+            <tr>
+              <td className="p-1">date</td>
+              <td className="p-1">uploaded on date</td>
+              <td className="p-1">status</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 style={{margin: "0 0 0 60px",fontSize: "small",fontStyle: "italic" }}>* we will reprocess the combined dataset as a new capture</h3>
+    </div>
+  )}
+</div>
         </div>
        
 <div className="flex-1/3 justify-end">

@@ -3,12 +3,15 @@ import { useUploaderContext } from "../../../state/uploaderState/context";
 import { Label, TabelHeading } from "./GCPStyledComponents";
 import { getInitialGCPList } from "../../../utils/utils";
 import { GCPType, IGCP } from "../../../models/IGCP";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { location, utmLocation } from "../../../models/IRawImages";
 
 const GcpEnterManually: React.FC<any> = () => {
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-  
+  const [isVaild, setIsVaild]=useState<boolean>(false)
+  var isValid = true;
   const addRow = () => {
     const newGcp: utmLocation = {
       easting: 0,
@@ -33,6 +36,87 @@ const GcpEnterManually: React.FC<any> = () => {
     }
     uploaderAction.setGCPList(gcpList, uploaderState.gcpType);
   };
+  const handleDeleteRow = (index: number) => {
+    const updatedGCPList = uploaderState.gcpType === GCPType.UTM
+      ? [...uploaderState.gcpList.utmLocation as utmLocation[]]
+      : [...uploaderState.gcpList.location as location[]];
+  
+    updatedGCPList.splice(index, 1);
+  
+    uploaderAction.setGCPList({
+      utmLocation: uploaderState.gcpType === GCPType.UTM ? updatedGCPList as utmLocation[] : undefined,
+      location: uploaderState.gcpType === GCPType.LONGLAT ? updatedGCPList as location[] : undefined,
+    }, uploaderState.gcpType);
+  };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number, heading: string) => {
+    const value = e.target.value;
+    
+    const updatedGCPList = uploaderState.gcpType === GCPType.UTM
+      ? [...uploaderState.gcpList.utmLocation as utmLocation[]]
+      : [...uploaderState.gcpList.location as location[]];
+  
+    const selectedItem: any = updatedGCPList[index];
+ 
+   
+    if (!/^\d*\.?\d*$/.test(value)) {
+    
+      setIsVaild(true);
+    } else {
+      if (uploaderState.gcpType === GCPType.UTM) {
+        if (heading === "Zone Identifier") {
+          (selectedItem as utmLocation).zone = value;
+        } else {
+         
+          (selectedItem as any)[heading.toLowerCase() as keyof utmLocation] = value;
+        }
+      } else {
+        if (heading === "Longitude") {
+          const parsedValue = value;
+         
+          if ( Number(parsedValue) >= -180 && Number(parsedValue) <= 180) {
+            
+            (selectedItem as location).coordinates[0] = Number(parsedValue);
+          } else {
+            
+            setIsVaild(false);
+          }
+        } else if (heading === "Latitude") {
+          const parsedValue = value;
+          if (Number(parsedValue) >= -90 && Number(parsedValue) <= 90) {
+            (selectedItem as location).coordinates[1] = Number(parsedValue);
+          } else {
+            setIsVaild(false);
+          }
+        } else if (heading === "Altitude") {
+          (selectedItem as any).elevation = value;
+        } else {
+          
+          setIsVaild(false),
+          (selectedItem as any)[heading.toLowerCase() as keyof location] = value;
+        }
+      }
+      setIsVaild(false);
+    }
+
+    const inputElement = document.getElementById(`${heading}-${index}`);
+    if (inputElement) {
+      
+      inputElement.style.borderColor = isValid ? 'initial' : 'box-orange';
+    }
+  
+    uploaderAction.setGCPList({
+      utmLocation: uploaderState.gcpType === GCPType.UTM ? updatedGCPList as utmLocation[] : undefined,
+      location: uploaderState.gcpType === GCPType.LONGLAT ? updatedGCPList as location[] : undefined,
+    }, uploaderState.gcpType);
+  
+   
+    
+  };
+  
+  
+
+  
+
   const renderTable = (data: any, headings: any) => (
     <div >
     <table >
@@ -43,7 +127,9 @@ const GcpEnterManually: React.FC<any> = () => {
             <th key={index}>
               <TabelHeading>{heading}</TabelHeading>
             </th>
+            
           ))}
+           <th><TabelHeading>Action</TabelHeading></th> 
         </tr>
       </thead>
       <tbody>
@@ -53,11 +139,13 @@ const GcpEnterManually: React.FC<any> = () => {
               <Label>{`Point ${index + 1}`}</Label>
             </td>
             {headings.map((heading: any, subIndex: any) => (
-              <td key={subIndex}>
+              <td key={subIndex} >
+                <div >
                 <input
+                id={`${subIndex}`}
                   type="text"
                   placeholder={heading.toLowerCase()}
-                  className="mt-1 ml-1 border border-solid border-black"
+                  className={`mt-1 ml-2 border`}
                   value={
                     item[heading.toLowerCase()] ||
                     (heading === "Longitude" && item.coordinates[0]) ||
@@ -65,9 +153,15 @@ const GcpEnterManually: React.FC<any> = () => {
                     (heading === "Altitude" && item.elevation) ||
                     ""
                   }
+                  onChange={(e) => handleInputChange(e, index, heading)}
+                
                 />
+                </div>
               </td>
             ))}
+             <td>
+            <button onClick={() => handleDeleteRow(index)}><FontAwesomeIcon icon={faTimes} /></button>
+          </td>
           </tr>
         ))}
       </tbody>

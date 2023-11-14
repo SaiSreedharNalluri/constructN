@@ -24,7 +24,7 @@ export interface longLatGCP {
     LATITUDE: number,
     LONGITUDE: number,
     ALTITUDE: number,
-    Label: string
+    Label: number,
 }
 
 export enum GCPType {

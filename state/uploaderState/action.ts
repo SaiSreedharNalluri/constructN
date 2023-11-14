@@ -129,7 +129,7 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         skipGCP: () => {
             dispatch({ type: UploaderActionType.skipGCP });
           },
-        updateDate: (date: Date) => {
+        updateDate: (date: Date|null) => {
           dispatch({ type: UploaderActionType.UpdateDate,  payload: {date: date}});
         },
         setshowMessage: (showMessage:boolean) => {

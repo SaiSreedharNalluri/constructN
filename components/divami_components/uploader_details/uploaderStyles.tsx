@@ -2,7 +2,8 @@ import { TreeItem, TreeView } from "@mui/lab";
 import { styled } from "@mui/system";
 export const TreeViewContainer = styled("div")({
     width: "250px",
-    margin: "0 0 0 0",
+    margin: "10px 0 0 0",
+    paddingTop:'0px',
     "&::-webkit-scrollbar": {
       background: "#D9D9D9",
       borderRadius: "60px",
@@ -26,6 +27,7 @@ export const UploaderStyledTreeView = styled(TreeView)({
       "& .MuiTreeItem-label": {
         fontSize: "12px",
         lineHeight: "12px",
+        marginTop:"2px",
         padding:"0px",
       },
     },
@@ -65,7 +67,7 @@ export const UploaderStyledTreeView = styled(TreeView)({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: "80%",
-    height: "20px",
+    height: "18px",
     position: "relative",
   });
 
