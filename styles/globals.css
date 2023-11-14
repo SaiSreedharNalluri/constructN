@@ -670,3 +670,8 @@ td {
   justify-content: center;
   align-items: center;
 }
+
+.isScroll::-webkit-scrollbar-thumb {
+  background-color: #FF843F !important;
+  border-radius: 60px !important;
+}

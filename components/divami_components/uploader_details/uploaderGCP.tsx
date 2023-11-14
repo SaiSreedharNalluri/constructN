@@ -84,11 +84,11 @@ const UploaderGCP = () => {
                     type="radio"
                     name="firstOption"
                     value="Upload File"
-                    className="appearance-none h-2 w-2 border-8  rounded-full checked:bg-orange-500 checked:border-orange-500 focus:ring-2"
+                    className="h-[20px] relative top-[2px] w-[20px] my-[4px] accent-orange-600"
                     checked={selectedOption === "Upload File"}
                     onChange={handleFirstOptionChange}
                   />
-                  &nbsp; Upload File
+                 &nbsp; Upload File
                 </label>
               </div>
               <div>
@@ -97,7 +97,7 @@ const UploaderGCP = () => {
                     type="radio"
                     name="firstOption"
                     value="Enter Manually"
-                    className="appearance-none h-2 w-2 border-8  rounded-full checked:bg-orange-500 checked:border-orange-500 focus:ring-2"
+                    className="h-[20px] relative top-[2px] w-[20px] my-[4px] accent-orange-600"
                     checked={selectedOption === "Enter Manually"}
                     onChange={handleFirstOptionChange}
                   />

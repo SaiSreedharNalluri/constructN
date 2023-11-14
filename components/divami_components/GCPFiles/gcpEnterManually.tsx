@@ -69,10 +69,11 @@ const GcpEnterManually: React.FC<any> = () => {
   
 
   const renderTable = (data: any, headings: any) => (
-    <table>
-      <thead>
-        <tr>
-          <th></th>
+    <div >
+    <table >
+       <thead className=" sticky top-0 bg-white ">
+       <tr className=" text-justify">
+     <th></th>
           {headings.map((heading: any, index: any) => (
             <th key={index}>
               <TabelHeading>{heading}</TabelHeading>
@@ -107,6 +108,7 @@ const GcpEnterManually: React.FC<any> = () => {
         ))}
       </tbody>
     </table>
+    </div>
   );
 
   return (
@@ -119,7 +121,7 @@ const GcpEnterManually: React.FC<any> = () => {
                 type="radio"
                 name="secondOption"
                 value={GCPType.UTM}
-                className="appearance-none h-2 w-2 border-8  rounded-full checked:bg-orange-500 checked:border-orange-500 focus:ring-2"
+                className="h-[20px] relative top-[2px] w-[20px] my-[4px] accent-orange-600"
                 checked={uploaderState.gcpType === GCPType.UTM}
                 onChange={(e) => {
                   if(e.currentTarget.checked) { 
@@ -136,7 +138,7 @@ const GcpEnterManually: React.FC<any> = () => {
                 type="radio"
                 name="secondOption"
                 value={GCPType.LONGLAT}
-                className="appearance-none h-2 w-2 border-8  rounded-full checked:bg-orange-500 checked:border-orange-500 focus:ring-2"
+                className="h-[20px] relative top-[2px] w-[20px] my-[4px] accent-orange-600"
                 checked={uploaderState.gcpType === GCPType.LONGLAT}
                 onChange={(e) => {
                   if(e.currentTarget.checked) { 
@@ -151,7 +153,9 @@ const GcpEnterManually: React.FC<any> = () => {
       </div>
       <div style={{ margin: "0 0 0 60px", marginTop: "8px" }}>
         <div
-          style={{ maxHeight: "130px", maxWidth: "750px", overflowY: "auto" }}
+          style={{ maxHeight: "150px", maxWidth: "750px", overflowY: "auto",
+        }}
+         className="isScroll"
         >
           {uploaderState.gcpType === GCPType.UTM ?
             renderTable(uploaderState.gcpList.utmLocation, [
