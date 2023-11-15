@@ -64,7 +64,7 @@ const GcpEnterManually: React.FC<any> = () => {
     } else {
       if (uploaderState.gcpType === GCPType.UTM) {
         if (heading === "Zone Identifier") {
-          (selectedItem as utmLocation).zone = value;
+          (selectedItem as utmLocation).zone = value as string;
         } else {
          
           (selectedItem as any)[heading.toLowerCase() as keyof utmLocation] = value;

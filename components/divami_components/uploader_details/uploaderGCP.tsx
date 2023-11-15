@@ -7,7 +7,6 @@ import { GCPType } from "../../../models/IGCP";
 const UploaderGCP = () => {
   const [selectedOption, setSelectedOption] = useState("Upload File");
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
-  const [base64File, setBase64File] = useState<string | null>(null);
   const [textareaValue, setTextareaValue] = useState<string>(""); 
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
@@ -45,13 +44,10 @@ const UploaderGCP = () => {
 
         reader.onload = (e) => {
           const base64Data = e.target?.result;
-          setBase64File(base64Data as string);
-          console.log('image',base64File)
-         
-        };
-        uploaderAction.setGCPList({...uploaderState.gcpList, base64Code: base64File as string},uploaderState.gcpType)
-        //console.log(uploaderAction.setGCPList({base64Code: base64File as string}))
-        reader.readAsDataURL(selectedFile);
+            uploaderAction.setGCPList({...uploaderState.gcpList, base64Code: base64Data as string},uploaderState.gcpType)
+            //console.log(uploaderAction.setGCPList({...uploaderState.gcpList, base64Code: base64Data as string},uploaderState.gcpType))
+         };
+          reader.readAsDataURL(selectedFile);
       } else {
         console.log("Please select a valid JPG or PNG file.");
       }
