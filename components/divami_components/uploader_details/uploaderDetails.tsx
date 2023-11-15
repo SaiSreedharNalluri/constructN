@@ -167,7 +167,7 @@ const UploaderDateDetails: React.FC<any> = () => {
             className="w-full border-t border-solid border-border-yellow"
             style={{ height: "1px" }}
           ></div>
-          <div className=" pt-0 flex items-center justify-left h-[calc(60vh - 250px)]">
+          <div className="h-[200px]  overflow-y-auto">
             <div>
               {
                 <SectionList
@@ -184,29 +184,25 @@ const UploaderDateDetails: React.FC<any> = () => {
               uploaderState.date &&
               filteredJob &&
               filteredJob.length > 0 && (
-                <div className="flex flex-col justify-center items-start mt-0 mb-2 p-2 gap-2 w-871 h-200 bg-box-orange shadow-md rounded-2xl">
-                  <h3>
-                    we already have captures for this date{" "}
-                    {uploaderState.date.toLocaleDateString()}. select one from
-                    below or create a New Capture
+                <div className="mt-[40px]  w-fit bg-[#FFECE2] rounded-3xl flex justify-center" style={{boxShadow:"0px 4px 4px 0px rgba(0, 0, 0, 0.25)"}}>
+                  <div className="pl-[60px] pr-[60px] pt-[24px] pb-[24px]">
+                  <h3 style={{fontSize:"16px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans",lineHeight:"20px",color:"#101f4c"}}>
+                    We already have captures for this date{" "}
+                    {uploaderState.date.toLocaleDateString()}. Select one from
+                    below or create a <button style={{fontSize:"16px",fontWeight:"700",fontStyle:"normal",fontFamily:"Open sans",lineHeight:"20px",color:"#f1742e"}} onClick={() => uploaderAction.next()
+                            }>New Capture</button> 
                   </h3>
-                  <div
-                    style={{
-                      maxHeight: "80px",
-                      maxWidth: "800px",
-                      overflowY: "auto",
-                    }}
-                  >
-                    <table className="w-full">
-                      <thead className="sticky top-0 bg-box-orange">
+                  <div>
+                    <table className="w-full mt-[18px]">
+                      <thead className="sticky top-0 bg-box-orange border-b border-solid border-[#f1742e]">
                         <tr>
-                          <th className="p-1 border-b border-solid border-border-yellow">
+                          <th className="p-1 text-left">
                             Capture Date
                           </th>
-                          <th className="p-1 border-b border-solid border-border-yellow">
+                          <th className="p-1 text-left">
                             Uploaded on
                           </th>
-                          <th className="p-1 border-b border-solid border-border-yellow">
+                          <th className="p-1 text-left">
                             Status
                           </th>
                         </tr>
@@ -214,7 +210,8 @@ const UploaderDateDetails: React.FC<any> = () => {
                       <tbody>
                         {filteredJob && filteredJob.length > 0 ? (
                           filteredJob.map((job: IJobs) => (
-                            <tr key={job._id} className="m-2">
+                            <tr key={job._id} className="m-2 cursor-pointer" onClick={() => uploaderAction.next()
+                            }>
                               <td className="p-1 ">
                                 {formatDate(
                                   job.captures && job.captures.length > 0
@@ -250,14 +247,12 @@ const UploaderDateDetails: React.FC<any> = () => {
                     </table>
                   </div>
                   <h3
-                    style={{
-                      margin: "0 0 0 60px",
-                      fontSize: "small",
-                      fontStyle: "italic",
-                    }}
+                    style={{fontSize:"14px", textAlign:"left",marginTop:"18px", fontWeight:"400",fontStyle:"italic",fontFamily:"Open sans",lineHeight:"18px",color:"#000"}}
                   >
                     * we will reprocess the combined dataset as a new capture
                   </h3>
+                  </div>
+        
                 </div>
               )}
           </div>

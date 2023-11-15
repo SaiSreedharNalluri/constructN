@@ -91,7 +91,7 @@ const GcpUploadFile: React.FC<any> = () => {
     <React.Fragment>
       <div>
         <div
-          className={`border-[1px] text-center rounded-[8px] md:gap-[100px] w-[90%] md:w-[40vw] h-[20vh] border-dashed relative md:top-[5px] md:left-[250px] border-black py-[6vh] px-[2%] cursor-pointer`}
+          className={`border-[1px] text-center rounded-[8px] w-[40vw] h-[20vh] border-dashed  mt-[16px]  border-black py-[6vh] px-[2%] cursor-pointer`}
         >
           <div className="flex flex-col items-center justify-center h-full gap-6">
             <div className="w-[10%] h-[5%] md:w-[109.78px] md:h-[104px]">
@@ -111,7 +111,7 @@ const GcpUploadFile: React.FC<any> = () => {
             </div>
           </div>
         </div>
-        <div className="mt-4" style={{ margin: "8px 60px" }}>
+        <div className="mt-4">
           <hr></hr>
         </div>
         <input

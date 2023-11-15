@@ -106,16 +106,16 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
 <div className={`w-full mt-2 ${ isUploadedOn ? "bg-white" : "bg-[#FFECE2] "} rounded-3xl h-[280px]  `} style={{boxShadow:" 0px 4px 4px 0px #00000040"}}>
     
                 <div className="relative top-[20px]  w-[90%] mx-auto  h-[195px] ">
-          
-                  <div className="overflow-x-hidden h-full">
+         
+                  <div className="overflow-x-hidden h-full mt-[8px]">
                   <table className="w-full">
             <thead
               className={`text-jusitfy sticky top-0 ${
                 isUploadedOn ? "bg-white" : "bg-[#FFECE2]"
-              }`}
+              } w-full`}
             >
-              <tr className="border-b border-b-[#F1742E]">
-                <th className="pl-2 py-2  text-left">
+              <tr className="w-full flex justify-evenly border-b border-b-[#F1742E] mx-auto">
+                <th className="pl-2 text-left w-[35%]">
                   {isUploadedOn && (
                     <input
                       type="checkbox"
@@ -126,14 +126,14 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
                       onChange={handleHeaderCheckboxChange}
                     />
                   )}
-                  <span className="ml-0 text-jusitfy">Level</span>
+                  <span className="ml-[8px] text-jusitfy" style={{fontSize:"14px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans",marginLeft:"8px", lineHeight:"20px",color:"#101f4c"}}>Level</span>
                 </th>
-                <th className="pl-2 text-left">Capture Date</th>
-                {isUploading && <th className="text-left">Uploading</th>}
-                {isUploadedOn && <th className="text-left">Uploaded On</th>}
+                <th className="pl-2 text-left w-[18%]" style={{fontSize:"14px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans",marginLeft:"8px", lineHeight:"20px",color:"#101f4c"}}>Capture Date</th>
+                {isUploading && <th className="pl-2 text-left w-[18%]" style={{fontSize:"14px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans",marginLeft:"8px", lineHeight:"20px",color:"#101f4c"}}>Uploading</th>}
+                {isUploadedOn && <th className="pl-2 text-left w-[18%]" style={{fontSize:"14px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans",marginLeft:"8px", lineHeight:"20px",color:"#101f4c"}}>Uploaded On</th>}
               </tr>
             </thead>
-            <tbody className="text-justify">
+            <tbody className="bg-grey-light flex flex-col items-center  overflow-y-scroll w-full" style={{height: "150px"}}>
               {data.map((job, index) => (
                 <tr key={index}  onClick={() => {
                     if (isUploading && onRowClick) {
@@ -142,10 +142,10 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
                   }}
                   className={`cursor-${isUploading ? "pointer" : "default"} ${
                     index === hoveredRowIndex ? "bg-gray-200" : ""
-                  }`}
+                  } flex justify-evenly w-full mb-4 mx-auto`}
                   onMouseEnter={() => setHoveredRowIndex(index)}
                   onMouseLeave={() => setHoveredRowIndex(null)}>
-                  <td className="pl-2 w-[40%]">
+                   <td className="pl-2 w-[35%]">
                     {isUploadedOn && (
                       <input
                         type="checkbox"
@@ -154,20 +154,20 @@ const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
                       />
                     )}
                                    <TooltipText title={gethierarchyPath(job.structure).length > 40 ? gethierarchyPath(job.structure) : ""} placement="right">
-      <span>
+      <span  style={{fontSize:"14px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans",marginLeft:"8px", lineHeight:"20px",color:"#101f4c"}}>
       <TruncatedString text={gethierarchyPath(job.structure)} maxLength={40}
               suffixLength={40} ></TruncatedString> 
         </span> 
         </TooltipText>
                   </td>
-                  <td className="pl-2">
+                  <td className="pl-2 w-[18%]" style={{fontSize:"14px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans", lineHeight:"20px",color:"#101f4c"}}>
                     {formatDate(
                       job.captures && job.captures.length > 0
                         ? (job.captures[0] as any)?.captureDateTime
                         : ""
                     )}
                   </td>
-                  <td>{formatDate(job.updatedAt, true)}</td>
+                  <td className="pl-2 w-[18%]" style={{fontSize:"14px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans", lineHeight:"20px",color:"#101f4c"}}>{formatDate(job.updatedAt, true)}</td>
                 </tr>
               ))}
             </tbody>

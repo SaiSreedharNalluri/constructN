@@ -675,3 +675,8 @@ td {
   background-color: #FF843F !important;
   border-radius: 60px !important;
 }
+.isScroll::-webkit-scrollbar {
+  width: 16px;
+  background-color: #E7E7E7 !important;
+  border-radius: 60px !important;
+}
