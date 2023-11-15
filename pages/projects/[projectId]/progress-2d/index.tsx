@@ -829,10 +829,6 @@ const Progress2DPage: React.FC<any> = () => {
                                                     
                                                     onToggleVisibility={(stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] }, visible: boolean) => {
 
-                                                        // _assetMap.current![stage._id!].visible = visible
-
-                                                        console.log(stage, visible)
-
                                                         publish('visibility-change', { assets: stage.assets, stageMap: _assetMap.current })
 
                                                     }} />)
@@ -841,7 +837,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             </div>}
 
-                                            {selectedAsset && <AssetDetails assetId={selectedAsset} onChange={_onAssetDetailsChange} />}
+                                            {selectedAsset && <AssetDetails assetId={selectedAsset} supportUser={isSupportUser} onChange={_onAssetDetailsChange} />}
 
                                         </div>
 

@@ -45,140 +45,173 @@ const changeAssetStage = (assetId: string, stage: string, date: Date) => {
 
 }
 
-const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => void }> = ({ assetId, onChange }) => {
+const removeAssetStage = (assetId: string, stage: string) => {
 
-    const [asset, setAsset] = useState<IAsset>()
+    try {
 
-    const [selectedTab, setSelectedTab] = useState<string>('asset-details')
+        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}/remove-stage`, { stage })
 
-    const [loading, setLoading] = useState<boolean>(false)
+    } catch (error) { throw error }
 
-    useEffect(() => {
+}
 
-        setLoading(true)
+const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => void, supportUser: boolean }> =
 
-        fetchAssetDetails(assetId).then(res => {
+    ({ assetId, onChange, supportUser }) => {
 
-            setLoading(false)
+        const [asset, setAsset] = useState<IAsset>()
 
-            setAsset(res.data.result)
+        const [selectedTab, setSelectedTab] = useState<string>('asset-details')
 
-        }).catch(err => {
+        const [loading, setLoading] = useState<boolean>(false)
 
-            setLoading(false)
-            
-            console.log(err)
-
-        })
-
-    }, [assetId])
-
-    const _onChange = (key: string, value: string) => {
-
-        if (key === 'stage') {
+        useEffect(() => {
 
             setLoading(true)
 
-            changeAssetStage(assetId, value, new Date()).then(res => {
-                
-                onChange && onChange(res.data.result)
-
-                toast.success('Updated asset stage successfully!', {autoClose: 5000})
+            fetchAssetDetails(assetId).then(res => {
 
                 setLoading(false)
-            
+
+                setAsset(res.data.result)
+
             }).catch(err => {
 
                 setLoading(false)
-                
-                toast.error('Failed to update asset stage!', {autoClose: 5000})
-                
+
+                console.log(err)
+
             })
 
-        } else {
+        }, [assetId])
 
-            setLoading(true)
+        const _onChange = (key: string, value: string) => {
 
-            const data: any = {}
+            if (key === 'stage') {
 
-            data[key] = value
+                setLoading(true)
 
-            updateAssetDetails(assetId, data).then(res => {
-                
-                onChange && onChange(res.data.result)
+                changeAssetStage(assetId, value, new Date()).then(res => {
 
-                toast.success('Updated asset details successfully!', {autoClose: 5000})
+                    onChange && onChange(res.data.result)
 
-                setLoading(false)
-                
-            }).catch(err => {
+                    toast.success('Updated asset stage successfully!', { autoClose: 5000 })
 
-                setLoading(false)
-                
-                toast.error('Failed to update asset details!', {autoClose: 5000})
-                
-            })
+                    setLoading(false)
+
+                }).catch(err => {
+
+                    setLoading(false)
+
+                    toast.error('Failed to update asset stage!', { autoClose: 5000 })
+
+                })
+
+            } else {
+
+                setLoading(true)
+
+                const data: any = {}
+
+                data[key] = value
+
+                updateAssetDetails(assetId, data).then(res => {
+
+                    onChange && onChange(res.data.result)
+
+                    toast.success('Updated asset details successfully!', { autoClose: 5000 })
+
+                    setLoading(false)
+
+                }).catch(err => {
+
+                    setLoading(false)
+
+                    toast.error('Failed to update asset details!', { autoClose: 5000 })
+
+                })
+
+            }
 
         }
 
-    }
+        const _onDeleteStage = (stage: string) => {
 
-    const _renderAssetDetailsShimmer = () => {
+            setLoading(true)
+
+            removeAssetStage(assetId, stage).then(res => {
+
+                onChange && onChange(res.data.result)
+
+                toast.success('Removed asset stage successfully!', { autoClose: 5000 })
+
+                setLoading(false)
+
+            }).catch(err => {
+
+                setLoading(false)
+
+                toast.error('Failed to remove asset stage!', { autoClose: 5000 })
+
+            })
+        }
+
+        const _renderAssetDetailsShimmer = () => {
+
+            return (
+
+                <div className='animate-pulse rounded-md'>
+
+                    <div className='h-[3rem] bg-slate-200 rounded'></div>
+
+                    <div className='h-[1rem] w-[3rem] mt-6 mx-4 bg-slate-200 rounded'></div>
+
+                    <div className='h-[2.25rem] mt-2 mx-4 bg-slate-200 rounded'></div>
+
+                    <div className='h-[1rem] w-[3rem] mt-6 mx-4 bg-slate-200 rounded'></div>
+
+                    <div className='h-[5rem] mt-2 mx-4 bg-slate-200 rounded'></div>
+
+                    <div className='h-[1rem] w-[3rem] mt-6 mx-4 bg-slate-200 rounded'></div>
+
+                    <div className='h-[2.25rem] mt-2 mx-4 bg-slate-200 rounded'></div>
+
+                    <div className='h-[1.1rem] w-[60%] mt-4 mx-4 bg-slate-200 rounded'></div>
+
+                </div>
+            )
+        }
+
 
         return (
 
-            <div className='animate-pulse rounded-md'>
+            <>
 
-                <div className='h-[3rem] bg-slate-200 rounded'></div>
+                {loading && _renderAssetDetailsShimmer()}
 
-                <div className='h-[1rem] w-[3rem] mt-6 mx-4 bg-slate-200 rounded'></div>
+                {
+                    asset && !loading && <div className='flex flex-col h-full bg-white'>
 
-                <div className='h-[2.25rem] mt-2 mx-4 bg-slate-200 rounded'></div>
+                        <Tabs
 
-                <div className='h-[1rem] w-[3rem] mt-6 mx-4 bg-slate-200 rounded'></div>
+                            centered value={selectedTab} className='text-black bg-[#fbece2]' textColor='inherit'
 
-                <div className='h-[5rem] mt-2 mx-4 bg-slate-200 rounded'></div>
+                            TabIndicatorProps={{ style: { backgroundColor: '#f1742e' } }} >
 
-                <div className='h-[1rem] w-[3rem] mt-6 mx-4 bg-slate-200 rounded'></div>
+                            <Tab value='asset-details' label={<Typography fontFamily='Open Sans' fontSize={14} variant='caption'>Details</Typography>} onClick={() => setSelectedTab('asset-details')} />
 
-                <div className='h-[2.25rem] mt-2 mx-4 bg-slate-200 rounded'></div>
+                            <Tab value='asset-timeline' label={<Typography fontFamily='Open Sans' fontSize={14} variant='caption'>Timeline</Typography>} onClick={() => setSelectedTab('asset-timeline')} />
 
-                <div className='h-[1.1rem] w-[60%] mt-4 mx-4 bg-slate-200 rounded'></div>
+                        </Tabs>
 
-            </div>
+                        {selectedTab === 'asset-details' && <div className='px-4 '><ElementDetails asset={asset} onChange={_onChange} supportUser={supportUser} onDeleteStage={_onDeleteStage} /> </div>}
+
+                        {selectedTab === 'asset-timeline' && <div className='px-4 overflow-auto'><AssetTimeline asset={asset} /> </div>}
+
+                    </div>
+                }
+            </>
         )
     }
-
-
-    return (
-
-        <>
-
-            { loading && _renderAssetDetailsShimmer() }
-            
-            {
-                asset && !loading && <div className='flex flex-col h-full bg-white'>
-
-                    <Tabs
-
-                        centered value={selectedTab} className='text-black bg-[#fbece2]' textColor='inherit'
-
-                        TabIndicatorProps={{ style: { backgroundColor: '#f1742e' } }} >
-
-                        <Tab value='asset-details' label={<Typography fontFamily='Open Sans' fontSize={14} variant='caption'>Details</Typography>} onClick={() => setSelectedTab('asset-details')} />
-
-                        <Tab value='asset-timeline' label={<Typography fontFamily='Open Sans' fontSize={14} variant='caption'>Timeline</Typography>} onClick={() => setSelectedTab('asset-timeline')} />
-
-                    </Tabs>
-
-                    {selectedTab === 'asset-details' && <div className='px-4 '><ElementDetails asset={asset} onChange={_onChange} /> </div>}
-
-                    {selectedTab === 'asset-timeline' && <div className='px-4 overflow-auto'><AssetTimeline asset={asset} /> </div>}
-
-                </div>
-            }
-        </>
-    )
-}
 
 export default AssetDetails

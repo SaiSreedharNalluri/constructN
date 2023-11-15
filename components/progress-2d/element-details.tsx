@@ -2,7 +2,7 @@ import { IconButton, InputAdornment, MenuItem, OutlinedInput, Select, SelectChan
 
 import { useEffect, useState } from 'react'
 
-import { IAsset, IAssetCategory, IAssetStage, NOT_STARTED_STAGE } from '../../models/IAssetCategory'
+import { IAsset, IAssetCategory, IAssetProgress, IAssetStage, NOT_STARTED_STAGE } from '../../models/IAssetCategory'
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 
@@ -10,20 +10,20 @@ import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined'
 
 import CircleIcon from '@mui/icons-material/Circle'
 
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+
 import moment from 'moment'
 
+import { toast } from 'react-toastify'
 
-const ElementDetails: React.FC<{ asset: IAsset, onChange?: (key: string, value: string) => void }> = ({ asset, onChange }) => {
 
-    const _getSequence = (stageId: string) => {
-
-        const stages = (asset.category as IAssetCategory).stages
-
-        const filtered = stages.filter((value: IAssetStage) => value._id === stageId)
-
-        return filtered.length == 0 ? 0 : filtered[0].sequence
-
-    }
+const ElementDetails: React.FC<{ 
+    
+    asset: IAsset, supportUser: boolean,
+    
+    onChange?: (key: string, value: string) => void,
+    
+    onDeleteStage?: (stage: string) => void }> = ({ asset, onChange, onDeleteStage }) => {
 
     return (
         <>
@@ -36,7 +36,7 @@ const ElementDetails: React.FC<{ asset: IAsset, onChange?: (key: string, value: 
 
                     <StageElement
 
-                        label={'Stage'} onChange={onChange} sequence={_getSequence(asset.progress.stage as string)}
+                        label={'Stage'} onChange={onChange} onDeleteStage={onDeleteStage} progressSnapshot={asset.progressSnapshot}
 
                         value={(asset.progress.stage as string)}
 
@@ -67,7 +67,7 @@ interface IElementProps {
 
     value?: string
 
-    sequence?: number
+    progressSnapshot?: IAssetProgress[]
 
     lines?: number
 
@@ -76,6 +76,8 @@ interface IElementProps {
     stages?: IAssetStage[]
 
     onChange?: (key: string, value: string) => void
+
+    onDeleteStage?: (stage: string) => void
 
 }
 
@@ -172,7 +174,7 @@ const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1, c
     )
 }
 
-const StageElement: React.FC<IElementProps> = ({ label, value, sequence = 0, stages, onChange }) => {
+const StageElement: React.FC<IElementProps> = ({ label, value, progressSnapshot = [], stages, onChange, onDeleteStage }) => {
 
     const [stage, setStage] = useState<string>()
 
@@ -182,7 +184,21 @@ const StageElement: React.FC<IElementProps> = ({ label, value, sequence = 0, sta
 
         setStage(event.target.value)
 
-        onChange && onChange(label.toLowerCase(), event.target.value)
+        if(!shouldDisable(event.target.value)) onChange && onChange(label.toLowerCase(), event.target.value)
+
+        else toast.warn(`You have already completed this stage (${event.target.value}`, {autoClose: 5000})
+
+    }
+
+    const shouldDisable = (stageId: string) => {
+
+        for(let i = 0; i < progressSnapshot.length; i++) {
+
+            if(progressSnapshot[i].stage == stageId) return true
+
+        }
+
+        return false
 
     }
 
@@ -206,13 +222,21 @@ const StageElement: React.FC<IElementProps> = ({ label, value, sequence = 0, sta
 
                 {stages && stages.map((stage: IAssetStage, index: number) => {
 
-                    return <MenuItem key={index} value={stage._id}>
+                    return <MenuItem key={index} value={stage._id} disabled={!suppo} >
                         
-                        <div className='flex items-center'>
+                        <div className='flex relative items-center w-full'>
 
                             <CircleIcon fontSize='small' htmlColor={stage.color} />
 
-                            <Typography fontFamily='Open Sans' variant='caption' className='ml-2 text-[#4a4a4a]' fontSize='0.9rem'>{stage.name}</Typography>
+                            <Typography fontFamily='Open Sans' variant='caption' className='ml-2 flex-1 text-[#4a4a4a]' fontSize='0.9rem'>{stage.name}</Typography>
+
+                            { shouldDisable(stage._id) && <IconButton className='absolute right-1' onClick={(event) => {
+
+                                event?.preventDefault()
+                                
+                                onDeleteStage && onDeleteStage(stage._id)
+                            
+                            }}><DeleteForeverIcon fontSize='small' color='error' /></IconButton> }
                             
                         </div>
                         

@@ -290,7 +290,7 @@ export class ForgeEdit2DUtils {
 
         const visibilityMap: any = {}
 
-        const {assets, stageMap} = event.detail
+        const {assets, stageMap} = structuredClone(event.detail)
 
         assets.forEach((asset: IAsset) => {
 
@@ -300,15 +300,9 @@ export class ForgeEdit2DUtils {
 
                 const snapshotStage = stageMap[progressSnapshot[i].stage as string]
 
-                console.log(asset, asset.progressSnapshot[i], snapshotStage.visible, snapshotStage.visible == true)
-
-                if(snapshotStage.visble == true) {
-
-                    console.log('Breaking for Loop')
+                if(snapshotStage.visible) {
 
                     visibilityMap[asset._id] = snapshotStage.color
-
-                    console.log('Breaking for Loop', visibilityMap[asset._id])
 
                     break
 
@@ -320,7 +314,21 @@ export class ForgeEdit2DUtils {
 
         })
 
-        console.log(visibilityMap)
+        this._edit2DLayer.shapes.forEach((shape: any) => {
+
+            if(visibilityMap[shape.name]) {
+
+                const style = shape.style
+
+                style.lineColor = visibilityMap[shape.name]
+
+                style.fillColor = visibilityMap[shape.name]
+
+            }
+
+        })
+
+        this._edit2DLayer.update()
 
     }
 
