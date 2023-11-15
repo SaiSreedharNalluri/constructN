@@ -33,7 +33,7 @@ const GcpUploadFile: React.FC<any> = () => {
           return {
             easting: e.EASTING,
             northing: e.NORTHING,
-            zone: e["UTM ZONE"],
+            zone: String(e["UTM ZONE"]),
             elevation: e.ELEVATION,
           };
         });
