@@ -10,8 +10,9 @@ import { UploaderStep, captureRawImageMap } from "../../../../state/uploaderStat
 import UploaderFinal from "../../../../components/divami_components/uploader_details/uploaderFinal/uploaderFinal";
 import UploaderGCP from "../../../../components/divami_components/uploader_details/uploaderGCP";
 import UploaderReview from "../../../../components/divami_components/uploader_details/uploaderReview";
-import { addCapture, addRawImages, getRawImages } from "../../../../services/captureManagement";
-import { RawImageCreateResp } from "../../../../models/IRawImages";
+import { addCapture, addGcp, addRawImages, getRawImages } from "../../../../services/captureManagement";
+import { uploaderContextActions } from "../../../../state/uploaderState/action";
+import { RawImage, RawImageCreateResp } from "../../../../models/IRawImages";
 import { WebWorkerManager } from "../../../../utils/webWorkerManager";
 import { useRouter } from "next/router";
 import { ChildrenEntity } from "../../../../models/IStructure";
@@ -109,12 +110,12 @@ const Index: React.FC<IProps> = () => {
         }
         return getRawImages(router.query.projectId as string, captureId)
       })).then((response) =>{
-        console.log('enter getraw iamges')
+       
         let rawImagesMap = response.reduce<captureRawImageMap>((prev, current):captureRawImageMap => {
           if (current.data.success) {
             let rawImages = current.data.result
             if (rawImages[0]?.capture) {
-              console.log('raw images')
+            
               let captureId: string = rawImages[0].capture
               return {
                 ...prev,
@@ -127,7 +128,6 @@ const Index: React.FC<IProps> = () => {
             return prev
           }
         }, {})
-        console.log("TestingUploader: rawImagesMap ", rawImagesMap)
         uploaderAction.setRawImagesMap(rawImagesMap);
       })
     } else {
@@ -136,15 +136,21 @@ const Index: React.FC<IProps> = () => {
   }, [uploaderState.pendingUploadJobs.length])
    const addGcpToCapture=(captureId:string)=>{
        if(uploaderState.skipGCP===false)
-       {
+       {     
 
+            addGcp(uploaderState.project?._id as string,captureId,uploaderState.gcpList).then((response)=>{
+              if(response.success===true){
+
+              }
+             
+            })
+            addRawImagesTOCapture(captureId)
        }else{
         addRawImagesTOCapture(captureId)
        }
     }
     const addRawImagesTOCapture=(captureId:string)=>{
-
-      console.log("addRaw image console",uploaderState?.choosenFiles?.validFiles?.map(({file,...rawImage})=>rawImage))
+       
       addRawImages(uploaderState.project?._id as string,captureId,uploaderState?.choosenFiles?.validFiles?.map(({file,...rawImage})=>rawImage)).then((response)=>{
         if(response.success===true)
         {
@@ -162,7 +168,7 @@ const Index: React.FC<IProps> = () => {
             putSignedURL: matchingItem.putSignedURL,
           };
         }
-        return null; // If no matching item found in input2
+        return null; 
       }).filter((item): item is { file: File; putSignedURL: string } => item !== null);
      let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url));
       WorkerManager.createWorker(captureId,worker)

@@ -4,8 +4,11 @@ import { useUploaderContext } from "../../../../state/uploaderState/context";
 import { WebWorkerManager } from "../../../../utils/webWorkerManager";
 import FileNameListing from "../../fileListing/fileNameListing";
 import FileStatus from "../../fileListing/fileStatus";
-import { getjobs, updateJobStatus } from "../../../../services/jobs";
+import { getjobs } from "../../../../services/jobs";
 import { IJobs } from "../../../../models/IJobs";
+import { IStructure } from "../../../../models/IStructure";
+import { getPathToRoot } from "../../../../utils/utils";
+import { useAppContext } from "../../../../state/appState/context";
 
 interface fileData {
   status: string;
@@ -15,6 +18,9 @@ const UploaderFinal: React.FC = () => {
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const [fileProgressList, setFileProgressList] = useState<fileData[]>([]);
+  const [structureId, setStructureId] = useState<string>();
+  const [selectedRow, setSelectedRow] = useState<number | null>(null);
+  const { state: appState, appContextAction } = useAppContext();
   const workerManager = WebWorkerManager.getInstance();
    const updateTheJobStatus=(captureId:string)=>{
     console.log('fvdbjkvdfkkl',captureId,uploaderState.pendingUploadJobs)
@@ -39,7 +45,31 @@ console.log('fdhjkfdiklfdm',captureObj)
       }
     }
   }, [Object.keys(workerManager.getWorker())?.length]);
-console.log('uploadStata',uploaderState)
+
+  const handleRowClick = (job: IJobs, index: number) => {
+     setSelectedRow(index);
+    if (job.structure && typeof job.structure === "object") {
+      const structureId: string = job.structure._id || "";
+      setStructureId(structureId);
+    } else {
+      console.error("Structure is not available or not an object");
+    }
+  };
+  const gethierarchyPath = (structure: string | IStructure | any): string => {
+    let structureId = "";
+    if ((structure as IStructure)._id) {
+      structureId = (structure as IStructure)._id;
+    } else {
+      structureId = structure as string;
+    }
+
+    if (appState.hierarchy) {
+      return getPathToRoot(structureId, appState.hierarchy[0]);
+    } else {
+      return "";
+    }
+  };
+
   return (
     <React.Fragment>
       <div className="flex ml-[6px] mt-[15px] calc-w">
@@ -49,6 +79,8 @@ console.log('uploadStata',uploaderState)
                   isUploadedOn={false}
                   isUploading={true}
                   buttonName="+ Start a new upload"
+                  button="Start Upload"
+                  onRowClick={handleRowClick}
                 />
               </div> 
 
@@ -57,16 +89,18 @@ console.log('uploadStata',uploaderState)
                   isUploadedOn={true}
                   isUploading={false}
                   buttonName="Process"
+                  button=""
+                  onRowClick={handleRowClick}
                 />
               </div>
          
         </div>
-
+        {selectedRow !== null && (
         <div className="w-[30%] h-[280px]   ml-[30px] mt-2  overflow-x-hidden bg-[#FFECE2] rounded-3xl overflow-y-auto">
           <div className=" mt-2 w-[60%] ml-[30px] font-open-sans italic font-normal text-base leading-5 text-black">
                       Uploading progress for{" "}
                       <span className="font-bold not-italic">
-                        structure name
+                      {gethierarchyPath(structureId)}
                       </span>{" "}
                       Expected to complete in 10 mins
                     </div>
@@ -86,6 +120,7 @@ console.log('uploadStata',uploaderState)
                 );
               })}
           </div>
+        )}
       </div>
     </React.Fragment>
   );
