@@ -1,19 +1,19 @@
 import axios from "axios";
+import { IUploadFile, UploadStatus, UploadType } from "../../../models/IUploader";
 
-self.onmessage = async (event) => {
-  await axios.put(event.data.url,event.data.file).then((response)=>{
-            if(response.status===200)
-            {
-              self.postMessage({ status: 'done',fileName:event.data.file.name});
-            }
-            else{
-              self.postMessage({ status: 'failed',fileName:event.data.file.name});
-            }
-          }).catch((error)=>{
-            self.postMessage({ status: 'error', fileName: event.data.file.name, errorMessage: error.message });
-            return;
-          })
-  }
+self.onmessage = async (event: MessageEvent<IUploadFile<UploadType>>) => {
+  console.log("Testing Uploader: inside single worker ", event.data)
+  await axios.put(event.data.destination, event.data.file).then((response)=>{
+    if(response.status===200) {
+      self.postMessage({ status: UploadStatus.success, id: event.data.uploadObject._id, fileName:event.data.file.name});
+    } else{
+      self.postMessage({ status: UploadStatus.failed, id: event.data.uploadObject._id, fileName:event.data.file.name});
+    }
+  }).catch((error)=>{
+    self.postMessage({ status: UploadStatus.failed, id: event.data.uploadObject._id, fileName: event.data.file.name, errorMessage: error.message });
+    return;
+  })
+}
 
 
 

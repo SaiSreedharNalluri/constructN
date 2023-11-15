@@ -6,7 +6,7 @@ export interface RawImage {
     externalId: string;
     dateTime: string;
     utmLocation?: utmLocation;
-    status: status;
+    status: RawImageStatus;
     capture?: string;
     metaData?: Object;
     createdAt?: string;
@@ -26,7 +26,10 @@ export interface utmLocation {
 }
 
 type type = "point";
-type status = "Initiated" | "Uploaded";
+export enum RawImageStatus {
+  initiated = "Initiated",
+  uploaded = "Uploaded"
+}
 
 
 

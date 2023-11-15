@@ -4,6 +4,8 @@ import ExifReader from "exifreader";
 import { IGCP } from "../models/IGCP";
 import { ChildrenEntity, IStructure } from "../models/IStructure";
 import { delimiter } from "path";
+import { IJobs } from "../models/IJobs";
+import { ICapture } from "../models/ICapture";
 
 
 /**
@@ -63,6 +65,26 @@ export const getInitialGCPList = (isUTM: boolean): IGCP => {
     }
     return gcplist;
 };
+
+export const getJobIdFromModelOrString = (job: IJobs | string): string => {
+    let jobId;
+    if ((job as IJobs)._id) {
+        jobId = (job as IJobs)._id;
+    } else {
+        jobId = job as string;
+    }
+    return jobId
+}
+
+export const getCaptureIdFromModelOrString = (capture: ICapture | string): string => {
+    let captureId;
+    if ((capture as ICapture)._id) {
+        captureId = (capture as ICapture)._id;
+    } else {
+        captureId = capture as string;
+    }
+    return captureId
+}
 
 export const getPathToRoot = (structureId: String, hierarchy: ChildrenEntity, delimiter:delimiterType = " > "): string => {
     const getPath = (structureId: String, hierarchy: ChildrenEntity, delimiter:delimiterType = " > "): string => {
