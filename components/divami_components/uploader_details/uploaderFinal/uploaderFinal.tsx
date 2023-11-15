@@ -22,6 +22,11 @@ const UploaderFinal: React.FC = () => {
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
   const { state: appState, appContextAction } = useAppContext();
   const workerManager = WebWorkerManager.getInstance();
+   const updateTheJobStatus=(captureId:string)=>{
+    console.log('fvdbjkvdfkkl',captureId,uploaderState.pendingUploadJobs)
+  let captureObj = uploaderState.pendingUploadJobs.find((jobObj:any)=> jobObj.captures[0]._id as string === captureId)
+console.log('fdhjkfdiklfdm',captureObj)
+  }
   useEffect(() => {
     if (
       workerManager &&
@@ -30,8 +35,12 @@ const UploaderFinal: React.FC = () => {
     ) {
       for (let key of Object.keys(workerManager.getWorker())) {
         workerManager.getWorker()[key].onmessage = (event) => {
-          console.log("event.data", event.data);
-          setFileProgressList(event.data.userFileList);
+        setFileProgressList(event.data.userFileList);
+        if(event?.data?.userFileList?.length != undefined && event?.data?.uploadedFileList?.length !=undefined && (event?.data?.userFileList?.length === event?.data?.uploadedFileList?.length))
+        {
+          //console.log('keys',key)
+          updateTheJobStatus(key,)
+        }
         };
       }
     }
@@ -99,11 +108,11 @@ const UploaderFinal: React.FC = () => {
               fileProgressList.length > 0 &&
               fileProgressList.map((fileProgressObj: fileData) => {
                 return (
-                    <div key={fileProgressObj.fileName} className="flex w-full" >
+                    <div key={fileProgressObj.fileName} className="flex w-full justify-between items-center" >
                       <div className="  ml-[30px] mt-[20px] w-[25%] ">
                         <FileNameListing fileName={fileProgressObj.fileName} />
                       </div>
-                      <div className="mt-[20px]">
+                      <div className="mt-[20px] w-[100px]">
                         <FileStatus status={fileProgressObj.status} />
                       </div>
                     </div>

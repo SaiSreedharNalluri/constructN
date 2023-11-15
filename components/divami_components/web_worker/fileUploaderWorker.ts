@@ -10,7 +10,7 @@ self.onmessage = async (event) => {
               self.postMessage({ status: 'failed',fileName:event.data.file.name});
             }
           }).catch((error)=>{
-            console.log('error',error)
+            self.postMessage({ status: 'error', fileName: event.data.file.name, errorMessage: error.message });
             return;
           })
   }

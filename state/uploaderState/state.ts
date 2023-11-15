@@ -57,7 +57,7 @@ export enum UploaderButtonValues{
 }
 
 export const initialUploaderState: UploaderState = {
-    step: UploaderStep.Details,
+    step: UploaderStep.Upload,
     stepNames: [
         "Details",
         "Choose Files",

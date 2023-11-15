@@ -1,5 +1,5 @@
 import _ from "lodash";
-interface fileInfo{ status: string; fileName: string; }
+interface fileInfo{ status: string; fileName: string;errorMessage?:string }
 self.onmessage = async (event) => {
     let userFileList: fileInfo[]=[]
     let uploadedFileList:fileInfo[]=[]
@@ -15,10 +15,17 @@ self.onmessage = async (event) => {
         
         worker.postMessage({file:filesLsit[i].file,url:filesLsit[i].putSignedURL});
         worker.onmessage = (event) => {
-            const { status, fileName } = event.data;
+            const { status, fileName,errorMessage } = event.data;
             var index = _.findIndex(userFileList, {fileName:fileName});
-            userFileList.splice(index, 1, {fileName: fileName, status:status});
-            uploadedFileList.push({fileName: fileName, status:status})
+            userFileList.splice(index, 1, {fileName: fileName, status:status})
+            if(errorMessage!='')
+            {
+                uploadedFileList.push({fileName: fileName, status:status,errorMessage:errorMessage})
+            }
+            else{
+                uploadedFileList.push({fileName: fileName, status:status})
+            };
+            
             self.postMessage({userFileList,uploadedFileList})
               worker.terminate();
         };    

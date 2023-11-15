@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Header from "../../../../components/divami_components/header/Header";
 import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 import UploaderDateDetails from "../../../../components/divami_components/uploader_details/uploaderDetails";
 import UploaderFiles from "../../../../components/divami_components/uploader_details/uploaderFiles";
 import UploaderStepper from "../../../../components/divami_components/uploader_details/uploaderStepper";
 import UploaderFooter from "../../../../components/divami_components/uploader_details/uploaderFooter"; 
-import { UploaderContextProvider, useUploaderContext } from "../../../../state/uploaderState/context";
+import { useUploaderContext } from "../../../../state/uploaderState/context";
 import { UploaderStep, captureRawImageMap } from "../../../../state/uploaderState/state";
 import UploaderFinal from "../../../../components/divami_components/uploader_details/uploaderFinal/uploaderFinal";
 import UploaderGCP from "../../../../components/divami_components/uploader_details/uploaderGCP";
@@ -20,7 +20,6 @@ import { getStructureHierarchy } from "../../../../services/structure";
 import { useAppContext } from "../../../../state/appState/context";
 import { getjobs } from "../../../../services/jobs";
 import { IJobs } from "../../../../models/IJobs";
-import { string } from "yup";
 import { CaptureMode, CaptureType, ICapture } from "../../../../models/ICapture";
 
 interface IProps {}
