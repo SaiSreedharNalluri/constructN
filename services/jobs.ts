@@ -1,4 +1,3 @@
-import axios from 'axios';
 import authHeader from './auth-header';
 import instance from './axiosInstance';
 import { IJobs } from '../models/IJobs';
@@ -57,4 +56,41 @@ export const getjobs = async (projectId: string) => {
       headers: authHeader.authHeader(),
     }
   )
+};
+interface Job {
+  status: string;
+  jobId: string;
+}
+export const updateMultipleJobStatus = async (
+  projectId: string,
+  jobs:Job[]
+) => {
+  try {
+    return await instance.put(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs/updateMultipleStatus`,
+      {jobs},
+      {
+        headers: authHeader.authHeader(),
+      }
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+export const updateJobStatus = async (
+  projectId: string,
+  jobId:string,
+  status: string
+) => {
+  try {
+    return await instance.put(
+      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs/${jobId}/updateStatus`,
+      {status},
+      {
+        headers: authHeader.authHeader(),
+      }
+    );
+  } catch (error) {
+    throw error;
+  }
 };
