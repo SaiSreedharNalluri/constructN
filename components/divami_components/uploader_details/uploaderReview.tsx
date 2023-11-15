@@ -93,7 +93,7 @@ const UploaderReview: React.FC<any> = () => {
               </div>
               <div className="p-4 border border-white-500 bg-box-white rounded-md shadow-md">
                 <p className=" h-20px font-sans font-medium not-italic text-base line-height-150%">
-                  Click the 'Go Back' button to reach the particular step you
+                  Click the &apos; Go Back &apos; button to reach the particular step you
                   want to modify.
                 </p>
               </div>
