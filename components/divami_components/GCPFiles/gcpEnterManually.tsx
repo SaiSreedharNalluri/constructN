@@ -6,6 +6,8 @@ import { GCPType, IGCP } from "../../../models/IGCP";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { location, utmLocation } from "../../../models/IRawImages";
+import Delete from "../../../public/divami_icons/delete.svg";
+import Image from "next/image";
 
 const GcpEnterManually: React.FC<any> = () => {
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
@@ -129,7 +131,7 @@ const GcpEnterManually: React.FC<any> = () => {
             </th>
             
           ))}
-           <th><TabelHeading>Action</TabelHeading></th> 
+           <th><TabelHeading>Delete</TabelHeading></th> 
         </tr>
       </thead>
       <tbody>
@@ -160,7 +162,7 @@ const GcpEnterManually: React.FC<any> = () => {
               </td>
             ))}
              <td>
-            <button onClick={() => handleDeleteRow(index)}><FontAwesomeIcon icon={faTimes} /></button>
+            <button onClick={() => handleDeleteRow(index)}><Image src={Delete} alt="" className="mt-[3px] ml-[10px]"/></button>
           </td>
           </tr>
         ))}
@@ -171,15 +173,14 @@ const GcpEnterManually: React.FC<any> = () => {
 
   return (
     <div>
-      <div style={{ margin: "0 60px", width: "997px" }}>
-        <div className="w-full grid grid-cols-2 gap-4">
+    <div className="flex w-1/3 justify-between">
           <div>
             <label>
               <input
                 type="radio"
                 name="secondOption"
                 value={GCPType.UTM}
-                className="h-[20px] relative top-[2px] w-[20px] my-[4px] accent-orange-600"
+                className="h-[20px] w-[20px] mt-[20px] accent-orange-600"
                 checked={uploaderState.gcpType === GCPType.UTM}
                 onChange={(e) => {
                   if(e.currentTarget.checked) { 
@@ -190,13 +191,13 @@ const GcpEnterManually: React.FC<any> = () => {
               &nbsp; {GCPType.UTM}
             </label>
           </div>
-          <div>
+          <div className="mr-[32px]">
             <label>
               <input
                 type="radio"
                 name="secondOption"
                 value={GCPType.LONGLAT}
-                className="h-[20px] relative top-[2px] w-[20px] my-[4px] accent-orange-600"
+                className="h-[20px] relative top-[2px] w-[20px] mt-[20px] accent-orange-600"
                 checked={uploaderState.gcpType === GCPType.LONGLAT}
                 onChange={(e) => {
                   if(e.currentTarget.checked) { 
@@ -208,10 +209,9 @@ const GcpEnterManually: React.FC<any> = () => {
             </label>
           </div>
         </div>
-      </div>
-      <div style={{ margin: "0 0 0 60px", marginTop: "8px" }}>
+      <div style={{ marginTop: "8px" }}>
         <div
-          style={{ maxHeight: "150px", maxWidth: "800px",overflowY: "auto",
+          style={{ maxHeight: "150px",  width:"fit-content",overflowY: "auto",
         }}
          className="isScroll"
         >
@@ -224,8 +224,8 @@ const GcpEnterManually: React.FC<any> = () => {
             ]) : renderTable(uploaderState.gcpList.location, ["Longitude", "Latitude", "Altitude"])}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <p style={{margin: "0 0 0 60px",fontSize: "small",fontStyle: "italic" }} >
+        <div style={{ display: "flex", justifyContent:"space-between",width:"33.3%" }}>
+          <p style={{fontSize: "small",fontStyle: "italic" }} >
             At least 4 GCPs needed
           </p>
           <button onClick={addRow}>
@@ -234,7 +234,7 @@ const GcpEnterManually: React.FC<any> = () => {
             </span>
           </button>
         </div>
-        <hr />
+        <hr className="mt-[10px]"/>
       </div>
     </div>
   );
