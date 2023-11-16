@@ -19,6 +19,7 @@ const UploaderFiles = () => {
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles) {
       // console.log("ChooseFiles onDrop: ", acceptedFiles);
+      uploaderAction.chageIsReading(true)
       let acceptedFilesWithExif: fileWithExif[] = await Promise.all(
         acceptedFiles.map(async (file) => {
           return {
@@ -36,12 +37,13 @@ const UploaderFiles = () => {
     if (invalidEXIFFiles.length > 0 && duplicateFiles.length > 0) {
       setshowPopUp(true);
       setMessage(
-        `${invalidEXIFFiles.length} files donot have exif data. these files will not be uploaded and ${duplicateFiles.length} duplicate files will not be uploaded `
+        `${invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.
+        ${duplicateFiles.length} duplicate files found. They will be skipped.`
       );
     } else if (invalidEXIFFiles.length > 0) {
       setshowPopUp(true);
       setMessage(
-        `${invalidEXIFFiles.length} files donot have exif data. these files will not be uploaded`
+        `${invalidEXIFFiles.length} files donot have exif data.These files will not be uploaded`
       );
     } else if (duplicateFiles.length > 0) {
       setshowPopUp(true);

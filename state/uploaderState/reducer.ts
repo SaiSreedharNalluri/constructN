@@ -84,6 +84,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
             let updatedList = getUpdatedFileList(state, action.payload.files);
             return {
                 ...state,
+                isReading: false,
                 choosenFiles: updatedList,
                 isNextEnabled: updatedList.validFiles.length > 0
             }
@@ -136,6 +137,11 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 rawImagesMap: action.payload.rawImages
             }
+        case UploaderActionType.chageIsReading:
+                return {
+                    ...state,
+                    isReading:action.payload.isReading
+                }       
         case UploaderActionType.setSelectedJob:
             return {
                 ...state,
@@ -159,7 +165,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
     }
 }
 
-const getUpdatedFileList = (state: UploaderState, files: fileWithExif[]): choosenFileObject => {
+const getUpdatedFileList = (state: UploaderState, files: fileWithExif[],): choosenFileObject => {
     let choosenFiles = state.choosenFiles;
     let invalidEXIFFiles: File[] = [];
     let duplicateEXIFFiles: uploadImage[] = [];

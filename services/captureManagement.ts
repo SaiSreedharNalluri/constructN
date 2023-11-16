@@ -34,10 +34,17 @@ export const addCapture = (projectId:string,formValue:{
   };
 
   export const getRawImages = (projectId:string,captureID:string) => {
-    return instance
+    if(captureID===undefined)
+    {
+      return
+    }
+    else{
+      return instance
       .get<IBaseResponse<RawImage[]>>(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/captures/${captureID}/raw-images`, {
         headers: authHeader.authHeader(),
       })
+    }
+  
   }
 
   export const addGcp = (projectId:string,captureID:string,formValue:any) => {

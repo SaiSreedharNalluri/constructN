@@ -27,6 +27,7 @@ export enum UploaderActionType {
     changeUploadinitiate,
     setCaptureJobs,
     setRawImagesMap,
+    chageIsReading,
     setSelectedJob,
     updateWorkerStatus
 
@@ -126,6 +127,10 @@ export interface setRawImagesMap {
     type: UploaderActionType.setRawImagesMap
     payload: {rawImages: captureRawImageMap}
 }
+export interface chageIsReading {
+  type: UploaderActionType.chageIsReading
+  payload:{ isReading: boolean }
+}
 
 export interface setSelectedJob {
     type: UploaderActionType.setSelectedJob
@@ -206,6 +211,9 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         setRawImagesMap:(rawImages: captureRawImageMap)=>{
             dispatch({type:UploaderActionType.setRawImagesMap, payload:{ rawImages: rawImages}})
         },
+        chageIsReading:(isReading:boolean)=>{
+          dispatch({type:UploaderActionType.chageIsReading,payload:{isReading:isReading}});
+        },
         setSelectedJob:(job: IJobs)=>{
             dispatch({type:UploaderActionType.setSelectedJob, payload:{ job: job}})
         },
@@ -237,6 +245,7 @@ export type UploaderActions =
   | setGCPType
   | setCaptureJobs
   | setRawImagesMap
+  | chageIsReading
   | setSelectedJob
   | updateWorkerStatus
 

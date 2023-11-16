@@ -51,7 +51,7 @@ export const updateSelectedCapturesInJob = async (
 };
 export const getjobs = async (projectId: string) => {
   return await instance.get<IBaseResponse<IJobs[]>>(
-    `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs?withCaptureStatus=true`,
+    `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs?status=pendingUpload,uploaded&mode=Drone Image`,
     {
       headers: authHeader.authHeader(),
     }

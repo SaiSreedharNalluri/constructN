@@ -48,6 +48,7 @@ export interface UploaderState {
     pendingProcessJobs: IJobs[],
     processCompleteJobs: IJobs[],
     rawImagesMap: captureRawImageMap,
+    isReading:boolean,
     selectedJob?: IJobs,
     inProgressWorkers?: workerFileMap
 }
@@ -98,6 +99,7 @@ export const initialUploaderState: UploaderState = {
     pendingProcessJobs: [],
     pendingUploadJobs: [],
     processCompleteJobs: [],
-    rawImagesMap: {}
+    rawImagesMap: {},
+    isReading:false
 };
 
