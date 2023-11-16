@@ -22,7 +22,8 @@ export enum UploaderActionType {
     setIsNextEnabled,
     changeUploadinitiate,
     setCaptureJobs,
-    setRawImagesMap
+    setRawImagesMap,
+    chageIsReading,
 
 }
 
@@ -110,7 +111,10 @@ export interface setRawImagesMap {
     type: UploaderActionType.setRawImagesMap
     payload: {rawImages: captureRawImageMap}
 }
-
+export interface chageIsReading {
+  type: UploaderActionType.chageIsReading
+  payload:{ isReading: boolean }
+}
 export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>) => {
     return {
       uploaderAction: {
@@ -173,7 +177,10 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         },
         setRawImagesMap:(rawImages: captureRawImageMap)=>{
             dispatch({type:UploaderActionType.setRawImagesMap, payload:{ rawImages: rawImages}})
-        }
+        },
+        chageIsReading:(isReading:boolean)=>{
+          dispatch({type:UploaderActionType.chageIsReading,payload:{isReading:isReading}});
+        },
       }
     }
 }
@@ -197,4 +204,4 @@ export type UploaderActions =
   | setGCPType
   | setCaptureJobs
   | setRawImagesMap
-
+  | chageIsReading

@@ -31,7 +31,6 @@ const Index: React.FC<IProps> = () => {
   const { uploaderAction } = uploaderContextAction;
 
   let WorkerManager = WebWorkerManager.getInstance()
- 
   const renderCenterContent = () => {
     switch (uploaderState.step) {
         case UploaderStep.Details:
@@ -103,8 +102,8 @@ const Index: React.FC<IProps> = () => {
     if(uploaderState.pendingUploadJobs.length > 0) {
       Promise.all(uploaderState.pendingUploadJobs.map((job) => {
         let captureId = ""
-        if((job.captures[0] as ICapture)._id) {
-          captureId = (job.captures[0] as ICapture)._id
+        if((job.captures[0] as ICapture)?._id) {
+          captureId = (job.captures[0] as ICapture)?._id
         } else {
           captureId = job.captures[0] as string
         }
@@ -137,15 +136,13 @@ const Index: React.FC<IProps> = () => {
    const addGcpToCapture=(captureId:string)=>{
        if(uploaderState.skipGCP===false)
        {     
-
             addGcp(uploaderState.project?._id as string,captureId,uploaderState.gcpList).then((response)=>{
               if(response.success===true){
-
+                addRawImagesTOCapture(captureId)
               }
-             
             })
-            addRawImagesTOCapture(captureId)
-       }else{
+          }
+        else{
         addRawImagesTOCapture(captureId)
        }
     }

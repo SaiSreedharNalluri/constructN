@@ -36,7 +36,8 @@ export interface UploaderState {
     pendingUploadJobs: IJobs[],
     pendingProcessJobs: IJobs[],
     processCompleteJobs: IJobs[],
-    rawImagesMap: captureRawImageMap
+    rawImagesMap: captureRawImageMap,
+    isReading:boolean,
 }
 
 export enum UploaderStep {
@@ -81,6 +82,7 @@ export const initialUploaderState: UploaderState = {
     pendingProcessJobs: [],
     pendingUploadJobs: [],
     processCompleteJobs: [],
-    rawImagesMap: {}
+    rawImagesMap: {},
+    isReading:false
 };
 
