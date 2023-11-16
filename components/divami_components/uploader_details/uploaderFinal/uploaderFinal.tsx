@@ -75,7 +75,7 @@ console.log('fdhjkfdiklfdm',captureObj)
         setFileProgressList(fileList)
       } else {
         let rawImages = uploaderState.rawImagesMap[selectedCaptureId]
-        let fileList: fileData[] = rawImages.map((e) => {
+        let fileList: fileData[] = rawImages?.map((e) => {
           return {
             fileName: e.filename,
             status: e.status === RawImageStatus.uploaded ? UploadStatus.success : UploadStatus.inProgress

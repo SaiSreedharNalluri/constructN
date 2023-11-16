@@ -18,7 +18,7 @@ import { useRouter } from "next/router";
 import { ChildrenEntity } from "../../../../models/IStructure";
 import { getStructureHierarchy } from "../../../../services/structure";
 import { useAppContext } from "../../../../state/appState/context";
-import { getJobsByStatus, getjobs } from "../../../../services/jobs";
+import { getJobsByStatus, getjobs, updateJobStatus } from "../../../../services/jobs";
 import { IJobs, JobStatus } from "../../../../models/IJobs";
 import { string } from "yup";
 import { CaptureMode, CaptureType, ICapture } from "../../../../models/ICapture";
@@ -199,12 +199,25 @@ const Index: React.FC<IProps> = () => {
     worker.postMessage(uploadFiles);
     uploaderAction.next()
   }
-
-  const onMessageFromWorker = function (this: Worker, event: MessageEvent<{filesList: IUploadFile<RawImage>[], completedFileList: IUploadFile<RawImage>[]}>) {
-    console.log("TestingUploader: worker mesaage ", event, this);
-    uploaderAction.updateWorkerStatus(event.data.filesList)
+  const updateTheJobStatus=(captureId:string)=>{
+  let captureObj = uploaderState.pendingUploadJobs.find((jobObj:any)=> jobObj.captures[0]._id as string === captureId)
+  updateJobStatus(uploaderState?.project?._id as string,captureObj?._id as string,'uploaded').then((response)=>{
+  if(response.data.success===true)
+  {
+    console.log('dfuykfdghjdf',uploaderState.inProgressWorkers)
   }
-    
+  }).catch((error)=>{
+    console.log('errror',error)
+  })
+  }
+  const onMessageFromWorker =  (event: MessageEvent<{filesList: IUploadFile<RawImage>[], completedFileList: IUploadFile<RawImage>[]}>)=> {
+    uploaderAction.updateWorkerStatus(event.data.filesList)
+    if(event?.data?.filesList?.length != undefined && event?.data?.completedFileList?.length !=undefined && (event?.data?.filesList?.length === event?.data?.completedFileList?.length))
+    {
+      updateTheJobStatus(event?.data?.filesList[0]?.uploadObject?.capture as string)
+      
+    }
+  }
   return (
     
     <div className=" w-full  h-full">
