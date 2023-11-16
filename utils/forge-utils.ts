@@ -1,5 +1,6 @@
-import { radians2degrees } from '@turf/turf'
-import { publish } from '../services/light-box-service'
+import { degrees2radians, radians2degrees } from '@turf/turf'
+
+import { publish, subscribe, unsubscribe } from '../services/light-box-service'
 
 
 export class ForgeDataVizUtils {
@@ -28,6 +29,28 @@ export class ForgeDataVizUtils {
 
     private _offset: number[]
 
+    private _windowScale: number
+
+    private _scaleFactor: number = 1
+
+    private _navigatorMesh?: THREE.Group
+
+    private _navPosition = new THREE.Vector3(0, 0, 0)
+
+    private tagVisibility = {
+
+        '360 Video': true,
+
+        '360 Image': true,
+
+        'Phone Image': true,
+
+        'Task': true,
+
+        'Issue': true
+
+    }
+
     constructor(viewer: Autodesk.Viewing.GuiViewer3D, dataVizExtn: Autodesk.Extensions.DataVisualization) {
 
         this._viewer = viewer
@@ -49,6 +72,57 @@ export class ForgeDataVizUtils {
         this._tm = new THREE.Matrix4().identity()
 
         this._offset = [0, 0, 0]
+
+        this._windowScale = 1
+
+        this._viewer.impl.overlayScenes.pivot.scene.children = []
+
+        this._viewer.impl.overlayScenes.pivot.needSeparateDepth = true
+
+        this._viewer.impl.overlayScenes.DataVizDots.needSeparateDepth = true
+
+        this._viewer.impl.invalidate(false, false, true)
+
+        this._createNavigator()
+
+        this._viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (e) => {
+
+            const zoom = e.camera.position.z
+
+            if(Math.abs(zoom - this._scaleFactor) > 0.1) {
+
+                this._scaleFactor = zoom
+
+                this._viewer.impl.invalidate(false, false, true)
+
+                const scale = this._scaleFactor / 17
+
+                if(this._navigatorMesh) {
+                    
+                    this._navigatorMesh.scale.x = scale * this._windowScale
+
+                    this._navigatorMesh.scale.y = scale * this._windowScale
+
+                }
+
+            }
+
+        })
+    }
+
+    setWindowScale(mScale: number) {
+
+        const scale = this._scaleFactor / 17
+
+        this._windowScale = mScale
+
+        if (this._navigatorMesh) {
+
+            this._navigatorMesh.scale.x = scale * this._windowScale
+
+            this._navigatorMesh.scale.y = scale * this._windowScale
+
+        }
     }
 
     setTransform(tm: THREE.Matrix4, offset: number[]) {
@@ -232,6 +306,10 @@ export class ForgeDataVizUtils {
             
             this._dataVizExtn.addViewables(_viewableData)
 
+            let mType = type as '360 Video' | '360 Image' | 'Phone Image' | 'Task' | 'Issue'
+
+            if(this.tagVisibility[mType] === false) this.showTag(mType, this.tagVisibility[mType])
+
             if(type === '360 Video' && !dbObject) {
 
                 dbObject = data[0]
@@ -240,7 +318,9 @@ export class ForgeDataVizUtils {
         }
     }
 
-    showTag = (type: string, show: boolean) => {
+    showTag = (type: '360 Video' | '360 Image' | 'Phone Image' | 'Task' | 'Issue', show: boolean) => {
+
+        this.tagVisibility[type] = show
 
         const viewableDatas = this._viewableDataMap[type]
 
@@ -270,6 +350,8 @@ export class ForgeDataVizUtils {
 
         this._dataVizExtn.removeAllViewables()
 
+        // this._viewer.overlays.removeMesh(this._navigatorMesh as any, 'pivot')
+
         this._viewableDataMap = {}
 
         this._dbMap = {}
@@ -279,85 +361,98 @@ export class ForgeDataVizUtils {
         this._existingTags = []
     }
 
-    updateNavigator = (position: THREE.Vector3, yaw: number) => {
+    updateNavigator = async (position: THREE.Vector3 | undefined, yaw: number) => {
 
-        this._lastUpdated = Date.now()
+        if(position) this._navPosition = this._toLocalPosition(position)
 
-        const localPos = this._toLocalPosition(position)
+        // localPos.z += 10
 
-        localPos.z += 10
+        if(this._navigatorMesh) {
 
-        if (!this._dbMap[1]) {
+            this._navigatorMesh.rotation.z = yaw
 
-            this._createNavigator(localPos, yaw)
+            this._navigatorMesh.position.set(this._navPosition.x, this._navPosition.y, this._navPosition.z)
+
         }
 
-        setTimeout(() => {
+        this._viewer.impl.invalidate(false, false, true)
 
-            if (Date.now() - this._lastUpdated! > 100) {
-
-                if (this._dbMap[1]) {
-
-                    for (let k = 0; k < (this._dataVizExtn as any).pointMeshes.length; k++) {
-
-                        const mesh = (this._dataVizExtn as any).pointMeshes[k]
-
-                        if (mesh.geometry.dbIds.indexOf(1) > -1) {
-
-                            this._dbMap[1] = undefined
-
-                            this._viewer.overlays.removeMesh(mesh, 'DataVizDots')
-
-                            break;
-                        }
-                    }
-
-                    this._createNavigator(localPos, yaw)
-
-                    this._lastUpdated = undefined
-
-                } else {
-
-                    // this._createNavigator(localPos, yaw)
-                }
-            } else {
-
-                this._invalidateViewables([1], (this._dataVizExtn as any).pointMeshes, this._viewableDataMap[ForgeDataVizUtils.NAVIGATOR], (viewable: any) => {
-
-                    let deg = radians2degrees(yaw) % 360
-
-                    if (deg > 0) deg = 360 - deg
-
-                    else deg = deg * -1
-
-                    deg = (Math.floor(deg / 5) * 5) % 360
-
-                    const mUrl = `/icons/navigator/loc-${deg}.png`
-
-                    return {
-
-                        position: localPos,
-
-                        url: mUrl
-                    }
-                })
-            }
-            
-        }, 200)
     }
 
-    _createNavigator = async (pos: THREE.Vector3, yaw: number) => {
+    _createNavigator = () => {
 
-        if (!this._dbMap[1]) {
+        if(!this._navigatorMesh) {
 
-            const _viewableData = await this._createViewableData(
-                [{ position: pos, type: ForgeDataVizUtils.NAVIGATOR }],
-                ForgeDataVizUtils.NAVIGATOR, yaw)
+            this._scaleFactor = 1
 
-            this._viewableDataMap[ForgeDataVizUtils.NAVIGATOR] = [_viewableData]
+            const group = new THREE.Group()
 
-            this._dataVizExtn.addViewables(_viewableData)
+            group.add(this._createBaseCircle())
+
+            group.add(this._createArrow())
+
+            group.add(this._createBorder())
+
+            group.position.set(0, -10, 0)
+
+            group.rotation.z = 0
+
+            this._navigatorMesh = group
+
+            this._viewer.overlays.addMesh(this._navigatorMesh as any, 'pivot')
+
+            this._viewer.impl.overlayScenes['pivot'].scene.position.z = 1
+
         }
+
+    }
+
+    _createArrow = () => {
+
+        const shape = new THREE.Shape()
+
+        shape.moveTo(0, 0.3)
+
+        shape.moveTo(-0.25, -0.25)
+
+        shape.moveTo(0, -0.075)
+
+        shape.moveTo(0.25, -0.2)
+
+        shape.moveTo(0, 0.3)
+
+        const geom = new THREE.ShapeGeometry(shape as any)
+
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff })
+
+        const mesh = new THREE.Mesh(geom as any, material)
+
+        return mesh
+
+    }
+
+    _createBaseCircle = () => {
+
+        const geom = new THREE.RingGeometry(0, 0.375, 360)
+
+        const material = new THREE.MeshBasicMaterial({ color: 0x797ef6 })
+
+        const mesh = new THREE.Mesh(geom as any, material)
+
+        return mesh
+
+    }
+
+    _createBorder = () => {
+
+        const geom = new THREE.RingGeometry(0.4, 0.45, 360)
+
+        const material = new THREE.MeshBasicMaterial({ color: 0x797ef6 })
+
+        const mesh = new THREE.Mesh(geom as any, material)
+
+        return mesh
+
     }
 
     _createViewableData = async (data: any[], type: string , yaw?: number) => {
@@ -555,6 +650,8 @@ export class ForgeDataVizUtils {
 
     _addListeners = () => {
 
+        subscribe('viewerState', this._onViewerStateChange)
+
         this._viewer.addEventListener(Autodesk.DataVisualization.Core.MOUSE_CLICK, this._onSpriteClick)
     }
 
@@ -568,6 +665,8 @@ export class ForgeDataVizUtils {
 
             dbObject.position = dbObject.originalPosition
 
+            this.updateNavigator(dbObject.position, 0)
+
             publish('reality-click', dbObject)
 
         }
@@ -576,6 +675,8 @@ export class ForgeDataVizUtils {
     _removeListeners = () => {
 
         this._viewer.addEventListener(Autodesk.DataVisualization.Core.MOUSE_CLICK, this._onSpriteClick)
+
+        unsubscribe('viewerState', this._onViewerStateChange)
     }
 
     _invalidateViewables = (dbIds: number[], meshes: any[], viewableData: any, callback: Function) => {
@@ -664,6 +765,20 @@ export class ForgeDataVizUtils {
         if (sceneUpdated) {
             this._viewer.impl.invalidate(false, false, true);
         }
+    }
+
+    _onViewerStateChange = (event: Event) => {
+
+        const viewerState = (event as CustomEvent).detail
+
+        let rotation = viewerState.rotation
+
+        rotation = rotation - Math.PI / 2
+
+        // console.log(rotation)
+
+        this.updateNavigator(undefined, rotation)
+
     }
 }
 

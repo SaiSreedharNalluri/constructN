@@ -1,6 +1,7 @@
 
 import { toast } from 'react-toastify'
-import { IAsset, IAssetCategory, IAssetPoint, IAssetStage } from '../models/IAssetCategory'
+
+import { IAsset, IAssetPoint, IAssetStage } from '../models/IAssetCategory'
 
 import { publish, subscribe, unsubscribe } from '../services/light-box-service'
 
@@ -55,8 +56,6 @@ export class ForgeEdit2DUtils {
         assets.forEach(asset => {
 
             const color = asset.progress.stage == 'NOT_STARTED' ? '#000080' : (asset.progress.stage as IAssetStage).color
-
-            console.log(asset.name, asset.progress)
 
             if(asset.shape == 'Polygon') this._createPolygon(asset._id, asset.points, color)
 
@@ -297,8 +296,6 @@ export class ForgeEdit2DUtils {
         assets.forEach((asset: IAsset) => {
 
             const progressSnapshot = asset.progressSnapshot
-
-            console.log(asset)
 
             for(let i = progressSnapshot.length - 1; i >= 0; i--) {
 

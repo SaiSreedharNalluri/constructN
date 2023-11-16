@@ -15,6 +15,7 @@ import { IAsset, IAssetCategory, IAssetStage } from '../../models/IAssetCategory
 import ClickTypesPicker from './segment-class-filters'
 
 import { Paper } from '@mui/material'
+import { toast } from 'react-toastify'
 
 interface _ViewerProps {
 
@@ -85,7 +86,19 @@ function Progress2DComponent(props: _ViewerProps) {
 
         return (() => {
 
-            _edit2dUtils.current?.destroy()
+            if(_dataVizUtils.current && _edit2dUtils.current) {
+
+                _dataVizUtils.current?.removeLoadedData()
+
+                _dataVizUtils.current?._removeListeners()
+
+                _edit2dUtils.current?.destroy()
+                
+                _forge.current?.tearDown(true)
+
+                _forge.current?.finish()
+
+            }
 
         })
 
@@ -102,8 +115,6 @@ function Progress2DComponent(props: _ViewerProps) {
         if (props.snapshot) {
 
             _layers.current = props.snapshot.layers
-
-            console.log(_model.current, _layers.current, props.snapshot)
 
             if (_model.current) loadLayers(props.snapshot.layers)
 
@@ -202,7 +213,11 @@ function Progress2DComponent(props: _ViewerProps) {
 
         if (_forge && _forge.current) {
 
-            _forge.current.resize()
+           try {
+
+             _forge.current?.resize()
+
+           } catch(e) { console.log(e) }
 
         }
     }

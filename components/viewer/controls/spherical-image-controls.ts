@@ -69,7 +69,7 @@ export class SphericalImageControls extends IControls {
 
         this.phi = degrees2radians(90 - this.lat)
 
-        this.theta = -1 * degrees2radians(this.lon)
+        this.theta = 1 * degrees2radians(this.lon)
 
         const x = Math.sin(this.phi) * Math.cos(this.theta)
 
@@ -97,7 +97,7 @@ export class SphericalImageControls extends IControls {
 
             position: this._camera.position as THREE.Vector3,
 
-            rotation: this._camera.rotation as THREE.Euler,
+            rotation: this.theta,
 
             target: target,
 

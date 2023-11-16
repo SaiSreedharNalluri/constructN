@@ -110,8 +110,6 @@ function PotreeViewer(props: IProps) {
 
     LightBoxInstance.setViewerState(viewerState)
 
-    // _resizeCanvasToDisplaySize()
-
     _renderer.current?.render(_scene.current, _camera.current!)
 
   }
@@ -121,28 +119,6 @@ function PotreeViewer(props: IProps) {
     _render()
 
     _reqAnimationFrameHandle = requestAnimationFrame(_loop)
-
-  }
-
-  const _resizeCanvasToDisplaySize = () => {
-
-    const canvas = _renderer.current!.domElement
-    
-    const width = canvas.clientWidth
-
-    const height = canvas.clientHeight
-
-    console.log(canvas.width, canvas.height, width, height)
-  
-    if (canvas.width !== width || canvas.height !== height) {
-      
-      _renderer.current?.setSize(width, height, false)
-
-      _camera.current!.aspect = width / height
-
-      _camera.current!.updateProjectionMatrix()
-
-    }
 
   }
   
@@ -225,12 +201,6 @@ function PotreeViewer(props: IProps) {
     <>
 
       <div id={viewerId} className='w-full h-full [&>canvas]:!w-full [&>canvas]:!h-full [&>canvas]:rounded-lg'></div>
-
-      {/* <SegmentClassFilters labels={classLabels} onSelectionChange={onSelectionChange} ></SegmentClassFilters> */}
-
-      {/* <Measurements3DView /> */}
-
-      {/* {viewerId == 'left' && <CustomMaskDialog open={showCustomMaskDialog} onSave={_CustomLabelMarker.current?.saveCustomPrompts} ></CustomMaskDialog>} */}
 
     </>
   )

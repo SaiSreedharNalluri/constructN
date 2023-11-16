@@ -71,7 +71,7 @@ const fetchAssets = (structureId: string, category: string, date: string) => {
 
     try {
 
-        return instance.get(`${API.PROGRESS_2D_URL}/assets?structure=${structureId}&category=${category}`)
+        return instance.get(`${API.PROGRESS_2D_URL}/assets?structure=${structureId}&category=${category}&date=${date}`)
 
     } catch (error) { throw error }
 
@@ -172,8 +172,6 @@ const Progress2DPage: React.FC<any> = () => {
         const projId = searchParams.get('projectId')
 
         const snapshotId = searchParams.get('snapshotId')
-
-        console.log(structId, projId, snapshotId)
 
         if (projId && !projectId.current) {
 
@@ -510,8 +508,6 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _onCategorySelected = (category: IAssetCategory | undefined) => {
 
-        console.log(category, selectedCategory, currentCategory.current)
-
         setStages([])
 
         setAssets([])
@@ -538,7 +534,7 @@ const Progress2DPage: React.FC<any> = () => {
 
         stages.forEach((stage: IAssetStage) => _assetMap.current[stage._id] = { assets: [], ...stage, visible: true })
 
-        if (structureId.current!) fetchAssets(structureId.current!, category!._id, snapshotBase.date).then(res => {
+        if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotBase().date).then(res => {
 
             if (res.data.success) {
 
@@ -546,41 +542,25 @@ const Progress2DPage: React.FC<any> = () => {
 
                 const result = res.data.result
 
-                const filteredAssets: IAsset[] = []
-
-                const snapshotDate = new Date(LightBoxInstance.getSnapshotBase().date)
-
                 result.forEach((asset: IAsset) => {
 
-                    if (new Date(asset.createdAt).getTime() < snapshotDate.getTime()) {
+                    const mStage: any = structuredClone(_assetMap.current[asset.progress.stage as string])
 
-                        filteredAssets.push(asset)
+                    delete mStage.assets
 
-                        const filteredProgressSnapshot: IAssetProgress[] = []
+                    delete mStage.visible
 
-                        for (let i = 0; i < asset.progressSnapshot.length; i++) {
+                    asset.progress.stage = mStage
 
-                            const mProgress = asset.progressSnapshot[i]
+                    for (let i = 0; i < asset.progressSnapshot.length; i++) {
 
-                            if (new Date(mProgress.date).getTime() > snapshotDate.getTime()) continue
+                        const mProgress = asset.progressSnapshot[i]
 
-                            filteredProgressSnapshot.push(asset.progressSnapshot[i])
-
-                            if (_assetMap.current[mProgress.stage as string]) _assetMap.current[mProgress.stage as string].assets.push(asset)
-
-                            else _assetMap.current[mProgress.stage as string] = { assets: [asset], visible: true }
-
-                        }
-
-                        asset.progressSnapshot = filteredProgressSnapshot
-
-                        console.log(filteredProgressSnapshot)
+                        _assetMap.current[mProgress.stage as string].assets.push(asset)
 
                     }
 
                 })
-
-                console.log(_assetMap.current)
 
                 setStages([])
 
@@ -590,7 +570,13 @@ const Progress2DPage: React.FC<any> = () => {
 
             }
 
-        }).catch(e => setLoading(false))
+        }).catch(e => {
+
+            console.log(e)
+            
+            setLoading(false)
+            
+        })
     }
 
     const _onAssetDetailsChange = (asset: IAsset) => {
