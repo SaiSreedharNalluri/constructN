@@ -22,7 +22,7 @@ self.onmessage = async (event: MessageEvent<IUploadFile<UploadType>[]>) => {
                 file.progress.value = status === UploadStatus.success ? 100 : 0
                 completedFileList.push(file)
                 self.postMessage({filesList, completedFileList})
-
+            
             }
             worker.terminate();
         };    
