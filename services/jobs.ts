@@ -2,6 +2,7 @@ import authHeader from './auth-header';
 import instance from './axiosInstance';
 import { IJobs, JobStatus } from '../models/IJobs';
 import { IBaseResponse } from '../models/IBaseResponse';
+import { CaptureMode } from '../models/ICapture';
 
 export const getjobsInfo = async (projectId: string) => {
   try {
@@ -15,6 +16,7 @@ export const getjobsInfo = async (projectId: string) => {
     throw error;
   }
 };
+
 export const updateTheJobStatus = async (
   projectId: string,
   jobId: string,
@@ -68,7 +70,7 @@ export const updateMultipleJobStatus = async (
   try {
     return await instance.put(
       `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs/updateMultipleStatus`,
-      {jobs},
+      jobs,
       {
         headers: authHeader.authHeader(),
       }
@@ -79,7 +81,7 @@ export const updateMultipleJobStatus = async (
 };
 export const updateJobStatus = async (
   projectId: string,
-  jobId:string,
+  jobId: string,
   status: string
 ) => {
   try {
@@ -98,6 +100,15 @@ export const updateJobStatus = async (
 export const getJobsByStatus = async (projectId: string, status: JobStatus[]) => {
   return await instance.get<IBaseResponse<IJobs[]>>(
     `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs?status=${status.join(",")}`,
+    {
+      headers: authHeader.authHeader(),
+    }
+  )
+};
+
+export const getJobsByStatusMode = async (projectId: string, status: JobStatus[], mode: CaptureMode) => {
+  return await instance.get<IBaseResponse<IJobs[]>>(
+    `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs?status=${status.join(",")}&mode=${mode}`,
     {
       headers: authHeader.authHeader(),
     }

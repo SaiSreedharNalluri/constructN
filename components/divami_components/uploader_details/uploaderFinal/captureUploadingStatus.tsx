@@ -4,7 +4,7 @@ import { getPathToRoot } from "../../../../utils/utils";
 import { useAppContext } from "../../../../state/appState/context";
 import { TooltipText } from "../../side-panel/SidePanelStyles";
 import { IStructure } from "../../../../models/IStructure";
-import { IJobs } from "../../../../models/IJobs";
+import { IJobs, JobStatus } from "../../../../models/IJobs";
 import { updateMultipleJobStatus } from "../../../../services/jobs";
 import router from "next/router";
 interface Iprops {
@@ -106,12 +106,28 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
     return truncatedText;
   };
 
+  const stubToUpdateStatus = () => {
+    let pendingUploadJobs = uploaderState.pendingUploadJobs
+    const jobDetails = pendingUploadJobs.map((job) => ({
+        status: JobStatus.uploaded,
+        jobId: job._id,
+      }));
+
+      updateMultipleJobStatus(router.query.projectId as string, jobDetails).then(
+        (response) => {
+          if (response.data.success === true) {
+            console.log("console check sucess", response.data.result);
+          }
+        }
+      );
+  }
+
   const getSelectedStructures = () => {
     const selectedPendingProcess = data.filter(
       (_, index) => selectedCheckboxes[index]
     );
     const jobDetails = selectedPendingProcess.map((job) => ({
-      status: job.status,
+      status: JobStatus.readyForProcessing,
       jobId: job._id,
     }));
     updateMultipleJobStatus(router.query.projectId as string, jobDetails).then(
@@ -308,6 +324,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
               }`}
               onClick={() => {
                 if (isUploading) {
+                    stubToUpdateStatus();
                   uploaderAction.startNewUpload();
                 } else {
                   getSelectedStructures();
