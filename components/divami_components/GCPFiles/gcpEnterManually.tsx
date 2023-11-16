@@ -212,7 +212,7 @@ const GcpEnterManually: React.FC<any> = () => {
               &nbsp; {GCPType.UTM}
             </label>
           </div>
-          <div className="mr-[32px]">
+          <div className="mr-[42px]">
             <label>
               <input
                 type="radio"
