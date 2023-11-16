@@ -91,7 +91,7 @@ const UploaderFooter: React.FC<any> = ({  }) => {
             disabled={!state.isNextEnabled}
             onClick={() => uploaderAction.next()}
             className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md hover:bg-orange-500 hover:text-white`}>
-            Confrim Images
+            Confirm Images
           </Button>
           </>
         );
@@ -152,10 +152,9 @@ const UploaderFooter: React.FC<any> = ({  }) => {
             </p>
           </div>
         )}
-        {state.step === UploaderStep.ChooseFiles && (
+        {state.step === UploaderStep.ChooseFiles && state.choosenFiles.validFiles.length>0 && (
               
-            <div className=" flex-row items-center p-1 gap-16 w-2/3 h-12 bg-box-orange shadow-md rounded-2xl">
-            <div style={progressContainerStyle}>
+            <div style={progressContainerStyle} className="flex  rounded-[10px] items-center bg-[#FFECE2] p-2 w-[40%]">
               <LinearProgress
                 variant="determinate"
                 style={linearProgressStyle}
@@ -168,7 +167,7 @@ const UploaderFooter: React.FC<any> = ({  }) => {
                 {state.choosenFiles.duplicateFiles.length} duplicates have been skipped
               </div>
               </div>
-               </div>
+             
               )}
         <div style={textContainerStyle}></div>
        <div style={buttonContainerStyle}>

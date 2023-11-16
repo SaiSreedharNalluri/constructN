@@ -9,34 +9,43 @@ interface Iprops{
 const FileListing:React.FC<Iprops>=({selectedFile,isSizeRequired})=>{
     return(
     <React.Fragment>
-    <div className="overflow-y-scroll" style={{ height: "160px" }}>
-     <table className="table-auto border-[1px] rounded-[8px] md:gap-[112px] w-[90%] md:w-[50vw] h-auto border-dashed relative md:top-[28px] md:left-[305px]">
-        <thead className="sticky top-0 bg-white border-[1px]">
-        <tr className="border-[1px] border-b-[#F1742E] text-justify">
-        <th className="pl-2">File Name</th>
-        {
-        isSizeRequired&&<th>Size</th>
-        }
-        </tr>
-        </thead> 
-        <tbody> 
-    {selectedFile?.length>0&& selectedFile.map((fileInfo, index)=>{
+        {selectedFile.length>0?  <div className=" mx-auto  h-[195px] "> 
+     <div className=" h-full mt-[30px]">
+    <table className="w-[50vw]">
+     <thead
+     className={`text-jusitfy sticky top-0  w-full`}
+   >
+     <tr className="w-full flex justify-between border-b border-b-[#F1742E] mx-auto">
+       
+       <th className=" text-left " style={{fontSize:"14px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans", lineHeight:"20px",color:"#101f4c"}}>File Name</th>
+       {isSizeRequired && <th className="text-left w-[18%]" style={{fontSize:"14px",fontWeight:"600",fontFamily:"Open sans", lineHeight:"20px",color:"#101f4c"}}>Size</th>}
+      
+     </tr>
+     </thead>
+   <tbody className="flex flex-col items-center  overflow-y-scroll w-full" style={{height: "160px"}}>
+   {selectedFile?.length>0&& selectedFile.map((fileInfo, index)=>{
        return(
-        <tr key={index} >
-            <td className="pl-2">
-            <FileNameListing fileName={fileInfo.name}/>
-            </td>
-           {isSizeRequired&&
-             <td>
+       <tr key={index}
+         className={`flex justify-between w-full mb-[2px] mt-[4px] mx-auto`}
+      >
+          <td className="w-[35%]" style={{fontSize:"14px",fontWeight:"600",fontFamily:"Open sans", lineHeight:"20px",color:"#101f4c"}}>
+          <FileNameListing fileName={fileInfo.name}/>            
+         </td>  
+         {isSizeRequired&&
+             <td className=" w-[18%]" style={{fontSize:"14px",fontWeight:"600",fontFamily:"Open sans", lineHeight:"20px",color:"#101f4c"}}>
             <FileSizeListing fileSize={fileInfo.size}/>
             </td>
-            }
-        </tr>
-       ) 
-    })} 
-    </tbody>
-   </table>
-   </div>     
+            }     
+
+       </tr>
+     
+     ) 
+    })}    
+   </tbody>
+ </table>
+</div>
+   </div> :""}
+      
     </React.Fragment>)
 }
 export default FileListing
