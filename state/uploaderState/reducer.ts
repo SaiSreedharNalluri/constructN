@@ -1,7 +1,8 @@
+import { act } from "react-dom/test-utils";
 import { GCPType } from "../../models/IGCP";
 import { IJobs, JobStatus } from "../../models/IJobs";
-import { RawImage, location } from "../../models/IRawImages";
-import { getInitialGCPList } from "../../utils/utils";
+import { RawImage, RawImageStatus, location } from "../../models/IRawImages";
+import { getCaptureIdFromModelOrString, getInitialGCPList, getJobIdFromModelOrString } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
 import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif } from "./state";
 
@@ -49,6 +50,11 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 date: action.payload.date
             }
+        case UploaderActionType.setIsLoading:
+            return {
+                ...state,
+                isLoading:action.payload.isLoading
+            }
         case UploaderActionType.setshowMessage:
             return {
                 ...state,
@@ -68,6 +74,11 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
             return {
                 ...state,
                 stepperSideFileList:action.payload.stepperSideFileList
+            }
+        case UploaderActionType.setIsAppendingCapture:
+            return {
+                ...state,
+                isAppendingCapture:action.payload.isAppendingCapture
             }
         case UploaderActionType.appendFiles:
             let updatedList = getUpdatedFileList(state, action.payload.files);
@@ -119,7 +130,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 pendingUploadJobs: pendingUploadJobs,
                 pendingProcessJobs: pendingProcessJobs,
-                step: isUploadStep ? UploaderStep.Upload : UploaderStep.Details
+                // step: isUploadStep ? UploaderStep.Upload : UploaderStep.Details
             }
         case UploaderActionType.setRawImagesMap:
             return {
@@ -131,6 +142,24 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                     ...state,
                     isReading:action.payload.isReading
                 }       
+        case UploaderActionType.setSelectedJob:
+            return {
+                ...state,
+                selectedJob: action.payload.job
+            }
+        case UploaderActionType.updateWorkerStatus:
+            console.log("TestingUploader inside reducer: ", state.inProgressWorkers);
+            let workers = state.inProgressWorkers
+            let captureId = action.payload.workerFileList[0].uploadObject.capture
+            let newWorkerStatus = { 
+                ...workers,
+                [captureId as string]: action.payload.workerFileList
+            }
+            console.log("TestingUploader inside reducer: ", newWorkerStatus);
+            return {
+                ...state,
+                inProgressWorkers: newWorkerStatus
+            }
         default:
             return state
     }
@@ -154,7 +183,7 @@ const getUpdatedFileList = (state: UploaderState, files: fileWithExif[],): choos
                 deviceId: deviceId,
                 externalId: deviceId + dateTimeOriginal,
                 dateTime: dateTimeOriginal,
-                status: "Initiated",
+                status: RawImageStatus.initiated,
             }
             if(latitude && longitude && altitude) {
                 
@@ -166,10 +195,16 @@ const getUpdatedFileList = (state: UploaderState, files: fileWithExif[],): choos
                 rawImage.location = location
             }
             let newUploadImage: uploadImage = {file, ...rawImage}
+            let alreadyUploadedFile;
+            if(state.isAppendingCapture && state.selectedJob) {
+                alreadyUploadedFile = state.rawImagesMap[getCaptureIdFromModelOrString(state.selectedJob.captures[0])].find((image) => {
+                    return image.deviceId == deviceId && image.dateTime == dateTimeOriginal
+                })
+            }
             let duplicateFile = choosenFiles.validFiles.find((uploadImages) => {
                 return uploadImages.deviceId == deviceId && uploadImages.dateTime == dateTimeOriginal
             })
-            if (duplicateFile) {
+            if (duplicateFile || alreadyUploadedFile) {
                 duplicateEXIFFiles.push(newUploadImage)
             } else {
                 validEXIFFiles.push(newUploadImage)

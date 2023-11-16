@@ -1,6 +1,6 @@
 import authHeader from './auth-header';
 import instance from './axiosInstance';
-import { IJobs } from '../models/IJobs';
+import { IJobs, JobStatus } from '../models/IJobs';
 import { IBaseResponse } from '../models/IBaseResponse';
 
 export const getjobsInfo = async (projectId: string) => {
@@ -93,4 +93,13 @@ export const updateJobStatus = async (
   } catch (error) {
     throw error;
   }
+};
+
+export const getJobsByStatus = async (projectId: string, status: JobStatus[]) => {
+  return await instance.get<IBaseResponse<IJobs[]>>(
+    `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs?status=${status.join(",")}`,
+    {
+      headers: authHeader.authHeader(),
+    }
+  )
 };

@@ -99,11 +99,21 @@ const UploaderDateDetails: React.FC<any> = () => {
 
   useEffect(() => {
     if (
+      uploaderState.pendingUploadJobs &&
       uploaderState.pendingProcessJobs &&
       uploaderState.structure &&
       uploaderState.date
     ) {
-      const filteredJobs = uploaderState.pendingProcessJobs.filter((job) => {
+      
+      // const filteredPendingUploadJobs = uploaderState.pendingUploadJobs.filter((job) => {
+      //   return (
+      //     (job.structure as IStructure)?._id === uploaderState.structure?._id &&
+      //     new Date(job.date).toLocaleDateString() ===
+      //       uploaderState?.date?.toLocaleDateString()
+      //   );
+      // });
+
+      const filteredPendingProcessJobs = uploaderState.pendingProcessJobs.filter((job) => {
         return (
           (job.structure as IStructure)?._id === uploaderState.structure?._id &&
           new Date(job.date).toLocaleDateString() ===
@@ -111,11 +121,12 @@ const UploaderDateDetails: React.FC<any> = () => {
         );
       });
 
-      setFilteredJobs(filteredJobs);
-      console.log("filtered", filteredJobs);
+      setFilteredJobs(filteredPendingProcessJobs);
+      console.log("filtered", filteredPendingProcessJobs);
     }
   }, [
     uploaderState.pendingProcessJobs,
+    uploaderState.pendingUploadJobs,
     uploaderState.structure,
     uploaderState.date,
   ]);
@@ -210,7 +221,10 @@ const UploaderDateDetails: React.FC<any> = () => {
                       <tbody>
                         {filteredJob && filteredJob.length > 0 ? (
                           filteredJob.map((job: IJobs) => (
-                            <tr key={job._id} className="m-2 cursor-pointer" onClick={() => uploaderAction.next()
+                            <tr key={job._id} className="m-2 cursor-pointer" onClick={() => {
+                                uploaderAction.setSelectedJob(job)
+                                uploaderAction.next()
+                              }
                             }>
                               <td className="p-1 ">
                                 {formatDate(

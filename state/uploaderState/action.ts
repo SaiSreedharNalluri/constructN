@@ -1,7 +1,9 @@
 import { IGCP, LONGLATType, UTMType } from "../../models/IGCP";
 import { IJobs } from "../../models/IJobs";
 import { IProjectUserList, IProjects } from "../../models/IProjects";
+import { RawImage } from "../../models/IRawImages";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
+import { IUploadFile } from "../../models/IUploader";
 import { captureRawImageMap, fileWithExif } from "./state";
 
 export enum UploaderActionType {
@@ -10,7 +12,9 @@ export enum UploaderActionType {
     Next,
     Upload,
     UpdateDate,
+    setIsLoading,
     setshowMessage,
+    setIsAppendingCapture,
     setProject,
     setStructure,
     setStepperSideFilesList,
@@ -24,6 +28,8 @@ export enum UploaderActionType {
     setCaptureJobs,
     setRawImagesMap,
     chageIsReading,
+    setSelectedJob,
+    updateWorkerStatus
 
 }
 
@@ -43,6 +49,11 @@ export interface upload {
   type: UploaderActionType.Upload;
 }
 
+export interface setIsAppendingCapture {
+    type: UploaderActionType.setIsAppendingCapture,
+    payload:{ isAppendingCapture: boolean}
+}
+
 export interface skipGCP {
     type: UploaderActionType.skipGCP;
   }
@@ -50,6 +61,11 @@ export interface skipGCP {
 export interface UpdateDate {
     type: UploaderActionType.UpdateDate,
     payload:{ date: Date |null}
+}
+
+export interface setIsLoading {
+    type: UploaderActionType.setIsLoading;
+    payload: { isLoading: boolean };
 }
 
 export interface setshowMessage {
@@ -115,6 +131,17 @@ export interface chageIsReading {
   type: UploaderActionType.chageIsReading
   payload:{ isReading: boolean }
 }
+
+export interface setSelectedJob {
+    type: UploaderActionType.setSelectedJob
+    payload: {job: IJobs}
+}
+
+export interface updateWorkerStatus {
+    type: UploaderActionType.updateWorkerStatus
+    payload: {workerFileList: IUploadFile<RawImage>[]}
+}
+
 export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>) => {
     return {
       uploaderAction: {
@@ -130,11 +157,17 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         upload: () => {
           dispatch({ type: UploaderActionType.Upload });
         },
+        setIsAppendingCapture: (isAppendingCapture:boolean) => {
+            dispatch({ type: UploaderActionType.setIsAppendingCapture, payload:{isAppendingCapture: isAppendingCapture}});
+        },
         skipGCP: () => {
             dispatch({ type: UploaderActionType.skipGCP });
-          },
+        },
         updateDate: (date: Date|null) => {
           dispatch({ type: UploaderActionType.UpdateDate,  payload: {date: date}});
+        },
+        setIsLoading: (isLoading:boolean) => {
+            dispatch({ type: UploaderActionType.setIsLoading, payload:{isLoading: isLoading}});
         },
         setshowMessage: (showMessage:boolean) => {
           dispatch({ type: UploaderActionType.setshowMessage, payload:{showMessage: showMessage}});
@@ -181,6 +214,12 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         chageIsReading:(isReading:boolean)=>{
           dispatch({type:UploaderActionType.chageIsReading,payload:{isReading:isReading}});
         },
+        setSelectedJob:(job: IJobs)=>{
+            dispatch({type:UploaderActionType.setSelectedJob, payload:{ job: job}})
+        },
+        updateWorkerStatus:(workerFileList: IUploadFile<RawImage>[]) => {
+            dispatch({type:UploaderActionType.updateWorkerStatus, payload:{ workerFileList: workerFileList}})
+        }
       }
     }
 }
@@ -191,7 +230,9 @@ export type UploaderActions =
   | next
   | upload
   | UpdateDate
+  | setIsLoading
   | setshowMessage
+  | setIsAppendingCapture
   | setProject
   | setStructure
   | setStepperSideFilesList
@@ -205,3 +246,6 @@ export type UploaderActions =
   | setCaptureJobs
   | setRawImagesMap
   | chageIsReading
+  | setSelectedJob
+  | updateWorkerStatus
+

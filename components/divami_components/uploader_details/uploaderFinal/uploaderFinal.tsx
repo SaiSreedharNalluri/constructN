@@ -7,19 +7,20 @@ import FileStatus from "../../fileListing/fileStatus";
 import { getjobs } from "../../../../services/jobs";
 import { IJobs } from "../../../../models/IJobs";
 import { IStructure } from "../../../../models/IStructure";
-import { getPathToRoot } from "../../../../utils/utils";
+import { getCaptureIdFromModelOrString, getPathToRoot } from "../../../../utils/utils";
 import { useAppContext } from "../../../../state/appState/context";
+import { UploadStatus } from "../../../../models/IUploader";
+import { RawImageStatus } from "../../../../models/IRawImages";
 
 interface fileData {
-  status: string;
+  status: UploadStatus;
   fileName: string;
 }
 const UploaderFinal: React.FC = () => {
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const [fileProgressList, setFileProgressList] = useState<fileData[]>([]);
-  const [structureId, setStructureId] = useState<string>();
-  const [selectedRow, setSelectedRow] = useState<number | null>(null);
+  // const [selectedRow, setSelectedRow] = useState<number | null>(null);
   const { state: appState, appContextAction } = useAppContext();
   const workerManager = WebWorkerManager.getInstance();
    const updateTheJobStatus=(captureId:string)=>{
@@ -27,35 +28,69 @@ const UploaderFinal: React.FC = () => {
   let captureObj = uploaderState.pendingUploadJobs.find((jobObj:any)=> jobObj.captures[0]._id as string === captureId)
 console.log('fdhjkfdiklfdm',captureObj)
   }
+  // useEffect(() => {
+  //   if (
+  //     workerManager &&
+  //     workerManager.getWorker() &&
+  //     Object.keys(workerManager.getWorker())?.length > 0
+  //   ) {
+  //     for (let key of Object.keys(workerManager.getWorker())) {
+  //       workerManager.getWorker()[key].onmessage = (event) => {
+  //       setFileProgressList(event.data.userFileList);
+  //       // if(event?.data?.userFileList?.length != undefined && event?.data?.uploadedFileList?.length !=undefined && (event?.data?.userFileList?.length === event?.data?.uploadedFileList?.length))
+  //       // {
+  //       //   //console.log('keys',key)
+  //       //   updateTheJobStatus(key,)
+  //       // }
+  //       // };
+  //     }
+  //   }
+  // }, [Object.keys(workerManager.getWorker())?.length]);
+
   useEffect(() => {
-    if (
-      workerManager &&
-      workerManager.getWorker() &&
-      Object.keys(workerManager.getWorker())?.length > 0
-    ) {
-      for (let key of Object.keys(workerManager.getWorker())) {
-        workerManager.getWorker()[key].onmessage = (event) => {
-        setFileProgressList(event.data.userFileList);
-        if(event?.data?.userFileList?.length != undefined && event?.data?.uploadedFileList?.length !=undefined && (event?.data?.userFileList?.length === event?.data?.uploadedFileList?.length))
-        {
-          //console.log('keys',key)
-          updateTheJobStatus(key,)
-        }
-        };
+    if(uploaderState.selectedJob) {
+      let selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])
+      if ( uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId]) {
+        let fileList: fileData[] = uploaderState.inProgressWorkers[selectedCaptureId].map((e) => {
+          return {
+            fileName: e.uploadObject.filename,
+            status: e.status
+          }
+        })
+        setFileProgressList(fileList)
       }
     }
-  }, [Object.keys(workerManager.getWorker())?.length]);
+  }, [uploaderState.inProgressWorkers])
+
+  useEffect(() => {
+    if(uploaderState.selectedJob) {
+      let selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])
+      if ( uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId]) {
+        let fileList: fileData[] = uploaderState.inProgressWorkers[selectedCaptureId].map((e) => {
+          return {
+            fileName: e.uploadObject.filename,
+            status: e.status
+          }
+        })
+        setFileProgressList(fileList)
+      } else {
+        let rawImages = uploaderState.rawImagesMap[selectedCaptureId]
+        let fileList: fileData[] = rawImages.map((e) => {
+          return {
+            fileName: e.filename,
+            status: e.status === RawImageStatus.uploaded ? UploadStatus.success : UploadStatus.inProgress
+          }
+        })
+        setFileProgressList(fileList)
+      }
+    }
+  }, [uploaderState.selectedJob])
 
   const handleRowClick = (job: IJobs, index: number) => {
-     setSelectedRow(index);
-    if (job.structure && typeof job.structure === "object") {
-      const structureId: string = job.structure._id || "";
-      setStructureId(structureId);
-    } else {
-      console.error("Structure is not available or not an object");
-    }
+    //  setSelectedRow(index);
+     uploaderAction.setSelectedJob(job);
   };
-  const gethierarchyPath = (structure: string | IStructure | any): string => {
+  const gethierarchyPath = (structure: string | IStructure): string => {
     let structureId = "";
     if ((structure as IStructure)._id) {
       structureId = (structure as IStructure)._id;
@@ -95,12 +130,12 @@ console.log('fdhjkfdiklfdm',captureObj)
               </div>
          
         </div>
-        {selectedRow !== null && (
+        { uploaderState.selectedJob && (
         <div className="w-[30%] h-[280px]   ml-[30px] mt-2  overflow-x-hidden bg-[#FFECE2] rounded-3xl overflow-y-auto">
           <div className=" mt-2 w-[60%] ml-[30px] font-open-sans italic font-normal text-base leading-5 text-black">
                       Uploading progress for{" "}
                       <span className="font-bold not-italic">
-                      {gethierarchyPath(structureId)}
+                      { gethierarchyPath(uploaderState.selectedJob?.structure)}
                       </span>{" "}
                       Expected to complete in 10 mins
                     </div>

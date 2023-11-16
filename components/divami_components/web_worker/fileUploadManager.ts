@@ -1,34 +1,32 @@
 import _ from "lodash";
+import { IUploadFile, UploadStatus, UploadType } from "../../../models/IUploader";
 interface fileInfo{ status: string; fileName: string;errorMessage?:string }
-self.onmessage = async (event) => {
-    let userFileList: fileInfo[]=[]
-    let uploadedFileList:fileInfo[]=[]
-    const filesLsit:Array<{ file: File, putSignedURL: string }> = event.data.fileListWithUrl
-    if(filesLsit?.length===0)
-    {
-        return
+self.onmessage = async (event: MessageEvent<IUploadFile<UploadType>[]>) => {
+    console.log("TestingUploader: inside worker manager ", event, event.data);
+    const filesList = event.data
+    const completedFileList: IUploadFile<UploadType>[] = []
+    if(filesList?.length===0) {
+        return;
     }
-    for (let i = 0; i < filesLsit?.length; i++) {
-        userFileList.push({status: 'progress',fileName:filesLsit[i]?.file.name})
-        self.postMessage({userFileList,uploadedFileList})
+    
+    for (let i = 0; i < filesList?.length; i++) {
         const worker = new Worker(new URL('./fileUploaderWorker.ts',import.meta.url));
-        
-        worker.postMessage({file:filesLsit[i].file,url:filesLsit[i].putSignedURL});
+        worker.postMessage(filesList[i]);
         worker.onmessage = (event) => {
-            const { status, fileName,errorMessage } = event.data;
-            var index = _.findIndex(userFileList, {fileName:fileName});
-            userFileList.splice(index, 1, {fileName: fileName, status:status})
-            if(errorMessage!='')
-            {
-                uploadedFileList.push({fileName: fileName, status:status,errorMessage:errorMessage})
+            console.log("TestingUploader: inside worker manager on message", event);
+            const { status, id, fileName,errorMessage } = event.data;
+            let file = filesList.find((e) => { return e.uploadObject._id === id})
+            if (file) {
+                file.status = status
+                file.error = errorMessage
+                file.progress.value = status === UploadStatus.success ? 100 : 0
+                completedFileList.push(file)
+                self.postMessage({filesList, completedFileList})
+
             }
-            else{
-                uploadedFileList.push({fileName: fileName, status:status})
-            };
-            
-            self.postMessage({userFileList,uploadedFileList})
-              worker.terminate();
+            worker.terminate();
         };    
-      }
+    }
+    self.postMessage({filesList,completedFileList})
      
 }
