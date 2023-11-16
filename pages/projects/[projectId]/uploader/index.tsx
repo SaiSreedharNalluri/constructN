@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../../../components/divami_components/header/Header";
 import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 import UploaderDateDetails from "../../../../components/divami_components/uploader_details/uploaderDetails";
@@ -23,7 +23,8 @@ import { IJobs, JobStatus } from "../../../../models/IJobs";
 import { string } from "yup";
 import { CaptureMode, CaptureType, ICapture } from "../../../../models/ICapture";
 import { IUploadFile, UploadStatus, UploadType } from "../../../../models/IUploader";
-
+import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader';
+import { Content } from "../../../../components/divami_components/project-users-list/usersListStyles";
 interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const Index: React.FC<IProps> = () => {
   const { appAction } = appContextAction;
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-
+  const[isLoaderLoading,setLoaderLoading]=useState(false)
   let WorkerManager = WebWorkerManager.getInstance()
   const renderCenterContent = () => {
     switch (uploaderState.step) {
@@ -77,11 +78,13 @@ const Index: React.FC<IProps> = () => {
   useEffect(()=>{
     if (router.isReady && uploaderState.step === UploaderStep.Upload ){
       uploaderAction.setIsLoading(true)
+      setLoaderLoading(true)
       getJobsByStatus(router.query.projectId as string, [JobStatus.pendingUpload, JobStatus.uploaded]).then((response)=>{
         console.log("TestingUploader: getJobs", response.data.result)
         let jobs: IJobs[] = response.data.result;
         uploaderAction.setCaptureJobs(jobs)
         uploaderAction.setIsLoading(false)
+        setLoaderLoading(false)
       }).catch((error)=>{
         console.log("Error: ", error)
       })
@@ -216,29 +219,40 @@ const Index: React.FC<IProps> = () => {
     }
   }
   return (
-    <div>
+    
+    <div className=" w-full  h-full">
+    <div className="w-full">
+        <Header
+          showBreadcrumbs
+          breadCrumbData={[]}
+          fromUsersList
+          showFirstElement={true}
+        />
+    </div>
+    <Content>
+      <SidePanelMenu onChangeData={() => {}} />
+      <div className="calc-w calc-h mx-2 p-1 overflow-y-auto flex-1">
       <div>
-        <Header showBreadcrumbs breadCrumbData={[]} showFirstElement={true}></Header>
-      </div>
-      <div className="flex w-full fixed">
-        <div>
-          <SidePanelMenu onChangeData={() => {}}></SidePanelMenu>
-        </div>
-        <div className="calc-w calc-h mx-2 p-1 overflow-y-auto flex-1">
-          {
+            {
             uploaderState.stepperSideFileList &&(<UploaderStepper />)
           }
+           </div>
+          {!isLoaderLoading?
+          <>
+         
           <div className="flex-1 content-container max-h-[400px]">{renderCenterContent()}</div>
-        </div>
-        </div>
-        
-            <div className="fixed m-4px  bg-transparent left-6 bottom-0 right-4  p-2 ">
+       
+         
+        <div className="fixed m-4px  bg-transparent left-6 bottom-0 right-4  p-2 ">
 
 
-          <UploaderFooter/>
+<UploaderFooter/>
+</div>
+          </>:<CustomLoader></CustomLoader>}
+
         </div>
-        
-      </div>
+    </Content>
+  </div>
   );
 };
 

@@ -54,11 +54,11 @@ const UploaderFiles = () => {
   }, [invalidEXIFFiles.length,duplicateFiles.length]);
   return (
     <React.Fragment>
-      <div className="flex flex-col">
+      <div className="flex flex-col justify-center items-center">
         <div>
           <ChooseUploaderFile onDrop={onDrop} />
         </div>
-        <div className="mt-5 mb-5">
+        <div>
           <FileListing selectedFile={validEXIFFiles.map((e) => e.file)} isSizeRequired={true} />
         </div>
       </div>
