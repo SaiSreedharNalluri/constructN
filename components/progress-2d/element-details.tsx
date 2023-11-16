@@ -232,7 +232,7 @@ const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = fal
 
                 {stages && stages.map((stage: IAssetStage, index: number) => {
 
-                    return <MenuItem key={index} value={stage._id} disabled={!supportUser && shouldDisable(stage._id)} >
+                    return <MenuItem key={index} value={stage._id} disabled={stage._id === 'NOT_STARTED' || !supportUser && shouldDisable(stage._id)} >
                         
                         <div className='flex relative items-center w-full'>
 
@@ -240,7 +240,7 @@ const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = fal
 
                             <Typography fontFamily='Open Sans' variant='caption' className='ml-2 flex-1 text-[#4a4a4a]' fontSize='0.9rem'>{stage.name}</Typography>
 
-                            { supportUser && shouldDisable(stage._id) && <IconButton className='absolute right-1' onClick={(event) => {
+                            { supportUser && shouldDisable(stage._id) && stage._id !== 'NOT_STARTED' && <IconButton className='absolute right-1' onClick={(event) => {
 
                                 event?.stopPropagation()
                                 
