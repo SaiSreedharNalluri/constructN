@@ -29,13 +29,18 @@ export enum UploaderActionType {
     setRawImagesMap,
     chageIsReading,
     setSelectedJob,
-    updateWorkerStatus
+    updateWorkerStatus,
+    refreshJobs,
 
+}
+
+export interface refreshJobs {
+    type: UploaderActionType.refreshJobs;
 }
 
 export interface startNewUpload {
     type: UploaderActionType.startNewUpload;
-  }
+}
 
 export interface goBack {
   type: UploaderActionType.GoBack;
@@ -151,6 +156,9 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         goBack: () => {
           dispatch({ type: UploaderActionType.GoBack });
         },
+        refreshJobs: () => {
+            dispatch({ type: UploaderActionType.refreshJobs });
+          },
         next: () => {
           dispatch({ type: UploaderActionType.Next });
         },
@@ -248,4 +256,5 @@ export type UploaderActions =
   | chageIsReading
   | setSelectedJob
   | updateWorkerStatus
+  | refreshJobs
 

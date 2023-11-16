@@ -2,6 +2,7 @@ import { RawImage } from "../models/IRawImages";
 import instance from "./axiosInstance";
 import authHeader from './auth-header';
 import { IBaseResponse } from "../models/IBaseResponse";
+import { ICapture } from "../models/ICapture";
 export const addCapture = (projectId:string,formValue:{ 
     type:string;
     structure:string;
@@ -59,3 +60,10 @@ export const addCapture = (projectId:string,formValue:{
         throw error;
       });
   };
+
+  export const getCaptureDetails = async (projectId: string, captureId: string) => {
+    return await instance
+    .get<IBaseResponse<ICapture>>(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/captures/${captureId}`, {
+      headers: authHeader.authHeader(),
+    })
+  }

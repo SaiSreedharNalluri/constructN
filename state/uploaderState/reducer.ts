@@ -25,25 +25,33 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 skipGCP: false,
                 uploadinitiate:false,
             }
-        case UploaderActionType.GoBack: 
+        case UploaderActionType.refreshJobs:
             return {
                 ...state,
-                step: state.step--,
+                updateJobs: true
+            }
+        case UploaderActionType.GoBack: 
+            let previousStep = state.step - 1
+            return {
+                ...state,
+                step: previousStep,
                 skipGCP: false,
-                isNextEnabled: true
+                isNextEnabled: isNext(state, previousStep)
             }
         case UploaderActionType.Next: 
+        console.log("TestingUploader: in reducer next");
+            let nextStep = state.step + 1
             return {
                 ...state,
-                step: state.step++,
-                isNextEnabled: false,
+                step: nextStep,
+                isNextEnabled: isNext(state, nextStep),
             }
         case UploaderActionType.skipGCP: 
             return {
                 ...state,
-                step: state.step++,
+                step: state.step + 1,
                 skipGCP: true,
-                isNextEnabled: false,
+                isNextEnabled: isNext(state, state.step + 1),
             }
         case UploaderActionType.UpdateDate:
             return {
@@ -122,6 +130,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 isNextEnabled: isNextEnabled
             }
         case UploaderActionType.setCaptureJobs:
+            
             let pendingUploadJobs: IJobs[] = action.payload.jobs.filter((e) => e.status === JobStatus.pendingUpload);
             let pendingProcessJobs: IJobs[] = action.payload.jobs.filter((e) => e.status === JobStatus.uploaded);
             let isUploadStep = pendingUploadJobs.length > 0 || pendingProcessJobs.length>0
@@ -130,6 +139,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 pendingUploadJobs: pendingUploadJobs,
                 pendingProcessJobs: pendingProcessJobs,
+                updateJobs: false
                 // step: isUploadStep ? UploaderStep.Upload : UploaderStep.Details
             }
         case UploaderActionType.setRawImagesMap:
@@ -162,6 +172,24 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
             }
         default:
             return state
+    }
+}
+
+const isNext = (state: UploaderState, step: UploaderStep): boolean => {
+    switch (step) {
+        case UploaderStep.Details:
+            return state.date ? state.structure ? true : false : false
+        case UploaderStep.ChooseFiles:
+            return state.choosenFiles.validFiles.length > 0;
+        case UploaderStep.ChooseGCPs:
+            let location = state.gcpList.utmLocation ? state.gcpList.utmLocation : state.gcpList.location ? state.gcpList.location : undefined
+            return location ? location?.length >= 4 : false
+        case UploaderStep.Review:
+            return true;
+        case UploaderStep.Upload:
+            return false;
+        default:
+            return false;
     }
 }
 

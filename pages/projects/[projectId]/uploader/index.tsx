@@ -10,7 +10,7 @@ import { UploaderStep, captureRawImageMap } from "../../../../state/uploaderStat
 import UploaderFinal from "../../../../components/divami_components/uploader_details/uploaderFinal/uploaderFinal";
 import UploaderGCP from "../../../../components/divami_components/uploader_details/uploaderGCP";
 import UploaderReview from "../../../../components/divami_components/uploader_details/uploaderReview";
-import { addCapture, addGcp, addRawImages, getRawImages } from "../../../../services/captureManagement";
+import { addCapture, addGcp, addRawImages, getCaptureDetails, getRawImages } from "../../../../services/captureManagement";
 import { uploaderContextActions } from "../../../../state/uploaderState/action";
 import { RawImage, RawImageCreateResp } from "../../../../models/IRawImages";
 import { WebWorkerManager } from "../../../../utils/webWorkerManager";
@@ -18,13 +18,14 @@ import { useRouter } from "next/router";
 import { ChildrenEntity } from "../../../../models/IStructure";
 import { getStructureHierarchy } from "../../../../services/structure";
 import { useAppContext } from "../../../../state/appState/context";
-import { getJobsByStatus, getjobs, updateJobStatus } from "../../../../services/jobs";
+import { getJobsByStatus, getJobsByStatusMode, getjobs, updateJobStatus } from "../../../../services/jobs";
 import { IJobs, JobStatus } from "../../../../models/IJobs";
 import { string } from "yup";
 import { CaptureMode, CaptureType, ICapture } from "../../../../models/ICapture";
 import { IUploadFile, UploadStatus, UploadType } from "../../../../models/IUploader";
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader';
 import { Content } from "../../../../components/divami_components/project-users-list/usersListStyles";
+import { getCaptureIdFromModelOrString, getJobIdFromModelOrString } from "../../../../utils/utils";
 interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
@@ -52,6 +53,20 @@ const Index: React.FC<IProps> = () => {
           return null;
       }
   };
+
+  const refreshJobs = (projectId: string) =>{
+    uploaderAction.setIsLoading(true)
+    setLoaderLoading(true)
+    getJobsByStatusMode(projectId, [JobStatus.pendingUpload, JobStatus.uploaded], uploaderState.captureMode).then((response)=>{
+      console.log("TestingUploader: getJobs", response.data.result)
+      let jobs: IJobs[] = response.data.result;
+      uploaderAction.setCaptureJobs(jobs)
+      uploaderAction.setIsLoading(false)
+      setLoaderLoading(false)
+    }).catch((error)=>{
+      console.log("Error: ", error)
+    })
+  }
   
   /**
    * UseEffect to get Structure Hierarchy of the project if it is not already present in AppState
@@ -72,24 +87,32 @@ const Index: React.FC<IProps> = () => {
     }
   }, [router.isReady, router.query.projectId, router.query.structId]);
 
+  useEffect(() => {
+    console.log("TestingUploader updateJobs UseEffect: ", uploaderState.updateJobs, router.query.projectId as string)
+    if(uploaderState.updateJobs && router.query.projectId as string) {
+      refreshJobs(router.query.projectId as string)
+    }
+  }, [uploaderState.updateJobs])
+
   /**
    * UseEffect to 
    */
   useEffect(()=>{
-    if (router.isReady && uploaderState.step === UploaderStep.Upload ){
-      uploaderAction.setIsLoading(true)
-      setLoaderLoading(true)
-      getJobsByStatus(router.query.projectId as string, [JobStatus.pendingUpload, JobStatus.uploaded]).then((response)=>{
-        console.log("TestingUploader: getJobs", response.data.result)
-        let jobs: IJobs[] = response.data.result;
-        uploaderAction.setCaptureJobs(jobs)
-        uploaderAction.setIsLoading(false)
-        setLoaderLoading(false)
-      }).catch((error)=>{
-        console.log("Error: ", error)
-      })
+    if (router.isReady){
+      refreshJobs(router.query.projectId as string)
+      // uploaderAction.setIsLoading(true)
+      // setLoaderLoading(true)
+      // getJobsByStatusMode(router.query.projectId as string, [JobStatus.pendingUpload, JobStatus.uploaded], uploaderState.captureMode).then((response)=>{
+      //   console.log("TestingUploader: getJobs", response.data.result)
+      //   let jobs: IJobs[] = response.data.result;
+      //   uploaderAction.setCaptureJobs(jobs)
+      //   uploaderAction.setIsLoading(false)
+      //   setLoaderLoading(false)
+      // }).catch((error)=>{
+      //   console.log("Error: ", error)
+      // })
     }
-  },[router.isReady, router.query.projectId, uploaderState.step])
+  },[router.isReady, router.query.projectId])
 
   /**
    * useEffect to show loading animation
@@ -145,8 +168,8 @@ const Index: React.FC<IProps> = () => {
       }).then((response)=>{
         if(response.success===true)
         {
-          console.log("TestingUploader: add capture success ", response?.result?._id);
-          addGcpToCapture(response?.result?._id)
+          console.log("TestingUploader: add capture success ", response?.result);
+          addGcpToCapture(response?.result)
         }
         
       }).catch((error)=>{
@@ -156,30 +179,33 @@ const Index: React.FC<IProps> = () => {
     }
   },[uploaderState.uploadinitiate])
 
-  const addGcpToCapture=(captureId:string)=>{
+  const addGcpToCapture=(capture: ICapture)=>{
       if(uploaderState.skipGCP===false)
       {     
 
-          addGcp(uploaderState.project?._id as string,captureId,uploaderState.gcpList).then((response)=>{
+          addGcp(uploaderState.project?._id as string,capture._id,uploaderState.gcpList).then((response)=>{
             if(response.success===true){
-              addRawImagesTOCapture(captureId)
+              addRawImagesTOCapture(capture)
             }
            })
         }else{
-      addRawImagesTOCapture(captureId)
+      addRawImagesTOCapture(capture)
       }
   }
-  const addRawImagesTOCapture=(captureId:string)=>{
+  const addRawImagesTOCapture=(capture: ICapture)=>{
       
-    addRawImages(uploaderState.project?._id as string,captureId,uploaderState?.choosenFiles?.validFiles?.map(({file,...rawImage})=>rawImage)).then((response)=>{
+    addRawImages(uploaderState.project?._id as string,capture._id,uploaderState?.choosenFiles?.validFiles?.map(({file,...rawImage})=>rawImage)).then((response)=>{
       if(response.success===true)
       {
-          sendingFilesToworker(response.result,captureId)
-          uploaderAction.changeUploadinitiate(false)
+        uploaderAction.changeUploadinitiate(false)
+        uploaderAction.next()
+        uploaderAction.refreshJobs();
+        sendingFilesToworker(response.result,capture)
       }
     })
   }
-  const sendingFilesToworker=(fileList:RawImageCreateResp[],captureId:string)=>{
+
+  const sendingFilesToworker=(fileList:RawImageCreateResp[], capture: ICapture)=>{
     const uploadFiles: IUploadFile<RawImage>[] = fileList.reduce<IUploadFile<RawImage>[]>((array, currentfile): IUploadFile<RawImage>[] => {
       let fileObject = uploaderState.choosenFiles.validFiles.find((e) => { return e.externalId === currentfile.externalId })
       if (fileObject) {
@@ -193,24 +219,41 @@ const Index: React.FC<IProps> = () => {
       }
       return array
     }, [])
-    let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url), {name: captureId});
-    WorkerManager.createWorker(captureId,worker)
+    let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url), {name: capture._id});
+    WorkerManager.createWorker(capture._id,worker)
     worker.onmessage = onMessageFromWorker;
     worker.postMessage(uploadFiles);
-    uploaderAction.next()
+    // uploaderAction.next()
   }
   const updateTheJobStatus=(captureId:string)=>{
-  let captureObj = uploaderState.pendingUploadJobs.find((jobObj:any)=> jobObj.captures[0]._id as string === captureId)
-  updateJobStatus(uploaderState?.project?._id as string,captureObj?._id as string,'uploaded').then((response)=>{
-  if(response.data.success===true)
-  {
-    console.log('dfuykfdghjdf',uploaderState.inProgressWorkers)
+    console.log("TestingUploader updateJobStatus ", captureId, uploaderState.pendingUploadJobs)
+    let captureObj = uploaderState.pendingUploadJobs.find((jobObj)=> getCaptureIdFromModelOrString(jobObj.captures[0]) === captureId)
+    console.log("TestingUploader updateJobStatus ", captureObj)
+    if (captureObj) {
+      updateJobStatus(uploaderState?.project?._id as string, captureObj._id,'uploaded').then((response)=>{
+        if(response.data.success===true) {
+          console.log('dfuykfdghjdf',uploaderState.inProgressWorkers)
+        }
+      }).catch((error)=>{
+        console.log('errror',error)
+      })
+      } else {
+        getCaptureDetails(uploaderState?.project?._id as string, captureId).then((response) => {
+          if(response.data.success===true) {
+            let capture = response.data.result
+            updateJobStatus(uploaderState?.project?._id as string, getJobIdFromModelOrString(capture.jobId), JobStatus.uploaded).then((response)=>{
+              if(response.data.success===true) {
+                console.log('dfuykfdghjdf',uploaderState.inProgressWorkers)
+                uploaderAction.refreshJobs();
+              }
+            }).catch((error)=>{
+              console.log('errror',error)
+            })
+          }
+        })
+      }
   }
-  }).catch((error)=>{
-    console.log('errror',error)
-  })
-  }
-  const onMessageFromWorker =  (event: MessageEvent<{filesList: IUploadFile<RawImage>[], completedFileList: IUploadFile<RawImage>[]}>)=> {
+  const onMessageFromWorker = (event: MessageEvent<{filesList: IUploadFile<RawImage>[], completedFileList: IUploadFile<RawImage>[]}>) => {
     uploaderAction.updateWorkerStatus(event.data.filesList)
     if(event?.data?.filesList?.length != undefined && event?.data?.completedFileList?.length !=undefined && (event?.data?.filesList?.length === event?.data?.completedFileList?.length))
     {

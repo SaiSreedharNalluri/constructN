@@ -33,6 +33,7 @@ export interface UploaderState {
     isLoading: boolean,
     project?: IProjects;
     structure?:IStructure;
+    updateJobs: boolean;
     extractedFileValue:any;
     isNextEnabled:boolean;
     stepperSideFileList:boolean,
@@ -50,7 +51,7 @@ export interface UploaderState {
     rawImagesMap: captureRawImageMap,
     isReading:boolean,
     selectedJob?: IJobs,
-    inProgressWorkers?: workerFileMap
+    inProgressWorkers?: workerFileMap,
 }
 
 export enum UploaderStep {
@@ -83,6 +84,7 @@ export const initialUploaderState: UploaderState = {
     isLoading: false,
     extractedFileValue:[],
     stepperSideFileList:true,
+    updateJobs: false,
     isNextEnabled: false,
     isAppendingCapture: false,
     choosenFiles: {

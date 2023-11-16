@@ -64,8 +64,10 @@ console.log('fdhjkfdiklfdm',captureObj)
 
   useEffect(() => {
     if(uploaderState.selectedJob) {
+      console.log("TestingUploader inside uploader final ", uploaderState.selectedJob)
       let selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])
       if ( uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId]) {
+        console.log("TestingUploader inside uploader final inside if", uploaderState.inProgressWorkers)
         let fileList: fileData[] = uploaderState.inProgressWorkers[selectedCaptureId].map((e) => {
           return {
             fileName: e.uploadObject.filename,
@@ -74,6 +76,7 @@ console.log('fdhjkfdiklfdm',captureObj)
         })
         setFileProgressList(fileList)
       } else {
+        console.log("TestingUploader inside uploader final inside else", uploaderState.rawImagesMap[selectedCaptureId])
         let rawImages = uploaderState.rawImagesMap[selectedCaptureId]
         let fileList: fileData[] = rawImages?.map((e) => {
           return {
