@@ -1,7 +1,11 @@
 
 export const MIX_PANEL_TOKEN = "${APP_MIX_PANEL_TOKEN}"
 
-export const MAPBOX_TOKEN = "${APP_MAPBOX_TOKEN}"
+export const MAPBOX = {
+    
+    token: "${APP_MAPBOX_TOKEN}"
+
+}
 
 export const API = {
 
