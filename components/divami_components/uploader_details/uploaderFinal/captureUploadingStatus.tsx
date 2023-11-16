@@ -324,7 +324,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
               }`}
               onClick={() => {
                 if (isUploading) {
-                    stubToUpdateStatus();
+                    // stubToUpdateStatus(); Only for clearing testing and  debug data
                   uploaderAction.startNewUpload();
                 } else {
                   getSelectedStructures();
