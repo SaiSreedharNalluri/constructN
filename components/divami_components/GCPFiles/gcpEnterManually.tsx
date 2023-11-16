@@ -65,21 +65,17 @@ const GcpEnterManually: React.FC<any> = () => {
     );
   };
   const validateLatitude = (latitude: number, index: any) => {
-  
-    return latitude >= -90 && latitude <= 90 && latitude !== 0;
+       return latitude >= -90 && latitude <= 90 && latitude !== 0;
   };
-  
-  const validateLongitude = (longitude: number, Index: any) => {
-
-    return  longitude >= -180 && longitude <= 180 && longitude !== 0;
-    
-    } 
-  
-    
-    const validateInput = (value: number | undefined, heading: string) => {
-      if (heading === "Easting" || heading === "Northing" || heading === "Zone" || heading === "Elevation") {
-        
-        return value !== undefined && value !== 0;
+ const validateLongitude = (longitude: number, Index: any) => {
+      return  longitude >= -180 && longitude <= 180 && longitude !== 0;
+  }; 
+  const validateAltitude =(altitude:number, Index:any)=>{
+    return altitude !== 0
+  } 
+  const validateInput = (value: number |any , heading: string) => {
+      if (heading === "Easting" || heading === "Northing" || heading === "Zone" || heading === "Elevation"|| heading ==="Altitude")  {
+           return value!=="" && value !== 0;
       } 
     
       return true;
@@ -98,7 +94,7 @@ const GcpEnterManually: React.FC<any> = () => {
             (selectedItem as utmLocation).zone = value as string;
           } else {
             (selectedItem as any)[heading.toLowerCase() as keyof utmLocation] =
-              value;
+             Number(value);
           }
         } else {
           if (heading === "Longitude") {
@@ -108,7 +104,8 @@ const GcpEnterManually: React.FC<any> = () => {
             const parsedValue = value;
             (selectedItem as location).coordinates[1] = Number(parsedValue);
           } else if (heading === "Altitude") {
-            (selectedItem as any).elevation = value;
+            const parsedValue = value;
+            (selectedItem as location).elevation = Number(parsedValue);
           } else {
             (selectedItem as any)[heading.toLowerCase() as keyof location] =
               value;
@@ -165,7 +162,9 @@ const GcpEnterManually: React.FC<any> = () => {
                       !validateLongitude(item.coordinates[0], index)) ||
                     (heading === "Latitude" &&
                       !validateLatitude(item.coordinates[1], index)) ||
-                      !validateInput(item[heading.toLowerCase()], heading)
+                      (heading === "Altitude" && 
+                      !validateAltitude(item.elevation,index)) ||
+                      !validateInput(item[heading.toLowerCase()],heading)
                       ? "border-red-500"
                       : ""
                   }`}
