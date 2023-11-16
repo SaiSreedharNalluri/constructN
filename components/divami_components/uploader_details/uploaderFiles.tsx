@@ -37,7 +37,8 @@ const UploaderFiles = () => {
     if (invalidEXIFFiles.length > 0 && duplicateFiles.length > 0) {
       setshowPopUp(true);
       setMessage(
-        `${invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.${duplicateFiles.length} duplicate files found. They will be skipped.`
+        `${invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.
+        ${duplicateFiles.length} duplicate files found. They will be skipped.`
       );
     } else if (invalidEXIFFiles.length > 0) {
       setshowPopUp(true);

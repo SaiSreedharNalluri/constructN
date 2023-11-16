@@ -108,7 +108,7 @@ const Index: React.FC<IProps> = () => {
       })).then((response) =>{
        
         let rawImagesMap = response.reduce<captureRawImageMap>((prev, current):captureRawImageMap => {
-          if (current.data.success) {
+          if (current?.data?.success) {
             let rawImages = current.data.result
             if (rawImages[0]?.capture) {
             
