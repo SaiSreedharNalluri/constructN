@@ -232,7 +232,7 @@ const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = fal
 
                 {stages && stages.map((stage: IAssetStage, index: number) => {
 
-                    return <MenuItem key={index} value={stage._id} disabled={stage._id === 'NOT_STARTED' || !supportUser && shouldDisable(stage._id)} >
+                    return <MenuItem key={index} value={stage._id} disabled={!supportUser && shouldDisable(stage._id)} >
                         
                         <div className='flex relative items-center w-full'>
 
