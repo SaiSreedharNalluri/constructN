@@ -31,10 +31,10 @@ const GcpUploadFile: React.FC<any> = () => {
 
         let utmLocations: utmLocation[] = data.map((e: any): utmLocation => {
           return {
-            easting: e.EASTING,
-            northing: e.NORTHING,
-            zone: String(e["UTM ZONE"]),
-            elevation: e.ELEVATION,
+            easting: e.EASTING||0,
+            northing: e.NORTHING||0,
+            zone: String(e["UTM ZONE"])||"",
+            elevation: e.ELEVATION||0,
           };
         });
         gcp.utmLocation = utmLocations;
@@ -43,8 +43,8 @@ const GcpUploadFile: React.FC<any> = () => {
         let locations: location[] = data.map((e: any): location => {
           return {
             type: "point",
-            coordinates: [e.LONGITUDE, e.LATITUDE],
-            elevation: e.ALTITUDE,
+            coordinates: [e.LONGITUDE ||0, e.LATITUDE||0],
+            elevation: e.ALTITUDE||0,
           };
         });
         gcp.location = locations;
