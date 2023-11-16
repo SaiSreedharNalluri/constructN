@@ -187,7 +187,9 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
 
         break;
       case "progress-2d":
-        router.push(`/projects/${router.query.projectId as string}/progress-2d`);
+        let queryParams = ''
+        if(router.query.structId) queryParams = `?structId=${router.query.structId}`
+        router.push(`/projects/${router.query.projectId as string}/progress-2d${queryParams}`);
 
         break;
       case "views":

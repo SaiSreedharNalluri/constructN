@@ -16,9 +16,9 @@ import Progress2DComponent from '../../../../components/viewer/progress-2d.compo
 
 import { LightBoxInstance, publish, subscribe, unsubscribe } from '../../../../services/light-box-service'
 
-import { IAsset, IAssetCategory, IAssetStage, NOT_STARTED_STAGE } from '../../../../models/IAssetCategory'
+import { IAsset, IAssetCategory, IAssetProgress, IAssetStage, NOT_STARTED_STAGE } from '../../../../models/IAssetCategory'
 
-import Progress2DStage from '../../../../components/viewer/progress-2d-stage'
+import Progress2DStages from '../../../../components/viewer/progress-2d-stage'
 
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
 
@@ -26,7 +26,7 @@ import { updateQueryParam } from '../../../../utils/router-utils'
 
 import AssetDetails from '../../../../components/progress-2d/asset-details'
 
-import { Divider, IconButton, Typography } from '@mui/material'
+import { Button, Divider, IconButton, Typography } from '@mui/material'
 
 import { API } from '../../../../config/config'
 
@@ -67,7 +67,7 @@ const fetchAssetCategories = (projectId: string) => {
 
 }
 
-const fetchAssets = (structureId: string, category: string) => {
+const fetchAssets = (structureId: string, category: string, date: string) => {
 
     try {
 
@@ -163,7 +163,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [isSupportUser, setIsSupportUser] = useState<boolean>(false)
 
-    const _assetMap = useRef<{ [key: string]: { assets: Partial<IAsset>[] } & Partial<IAssetStage> & {visible: boolean} }>({})
+    const _assetMap = useRef<{ [key: string]: { assets: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean } }>({})
 
     useEffect(() => {
 
@@ -172,6 +172,8 @@ const Progress2DPage: React.FC<any> = () => {
         const projId = searchParams.get('projectId')
 
         const snapshotId = searchParams.get('snapshotId')
+
+        console.log(structId, projId, snapshotId)
 
         if (projId && !projectId.current) {
 
@@ -188,6 +190,8 @@ const Progress2DPage: React.FC<any> = () => {
                     LightBoxInstance.setStructureHierarchy(data.data.result)
 
                     setHierarchy(data.data.result)
+
+                    if(!structId) _changeStructure(data.data.result[0])
 
                 }
 
@@ -249,7 +253,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                 setAssetCategories(data.data.result)
 
-                if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
+                if (currentCategory.current) if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
 
             }).catch(e => setShowProgress(false))
 
@@ -357,6 +361,8 @@ const Progress2DPage: React.FC<any> = () => {
             LightBoxInstance.setSnapshotBase(snapshot)
 
             setSnapshotBase(snapshot)
+
+            if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
 
         }
 
@@ -485,8 +491,8 @@ const Progress2DPage: React.FC<any> = () => {
         else {
 
             setShowProgress(false)
-            
-            if(currentCategory.current) _loadAssetsForCategory(currentCategory.current)
+
+            if (currentCategory.current) if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
 
         }
 
@@ -532,7 +538,7 @@ const Progress2DPage: React.FC<any> = () => {
 
         stages.forEach((stage: IAssetStage) => _assetMap.current[stage._id] = { assets: [], ...stage, visible: true })
 
-        if (structureId.current!) fetchAssets(structureId.current!, category!._id).then(res => {
+        if (structureId.current!) fetchAssets(structureId.current!, category!._id, snapshotBase.date).then(res => {
 
             if (res.data.success) {
 
@@ -540,24 +546,43 @@ const Progress2DPage: React.FC<any> = () => {
 
                 const result = res.data.result
 
+                const filteredAssets: IAsset[] = []
+
+                const snapshotDate = new Date(LightBoxInstance.getSnapshotBase().date)
+
                 result.forEach((asset: IAsset) => {
 
-                    const assetStages = (asset.category as IAssetCategory).stages.filter(stage => stage._id === asset.progress.stage)
+                    if (new Date(asset.createdAt).getTime() < snapshotDate.getTime()) {
 
-                    asset.progress.stage = assetStages.length == 0 ? NOT_STARTED_STAGE : assetStages[0]
+                        filteredAssets.push(asset)
 
-                    const prevStages = stages.filter((value: IAssetStage) => value.sequence <= (asset.progress.stage as IAssetStage).sequence)
+                        const filteredProgressSnapshot: IAssetProgress[] = []
 
-                    for (let i = 0; i < asset.progressSnapshot.length; i++) {
+                        for (let i = 0; i < asset.progressSnapshot.length; i++) {
 
-                        const mProgress = asset.progressSnapshot[i]
+                            const mProgress = asset.progressSnapshot[i]
 
-                        if (_assetMap.current[mProgress.stage as string]) _assetMap.current[mProgress.stage as string].assets.push(asset)
+                            if (new Date(mProgress.date).getTime() > snapshotDate.getTime()) continue
 
-                        else _assetMap.current[mProgress.stage as string] = { assets: [asset], visible: true }
+                            filteredProgressSnapshot.push(asset.progressSnapshot[i])
+
+                            if (_assetMap.current[mProgress.stage as string]) _assetMap.current[mProgress.stage as string].assets.push(asset)
+
+                            else _assetMap.current[mProgress.stage as string] = { assets: [asset], visible: true }
+
+                        }
+
+                        asset.progressSnapshot = filteredProgressSnapshot
+
+                        console.log(filteredProgressSnapshot)
 
                     }
+
                 })
+
+                console.log(_assetMap.current)
+
+                setStages([])
 
                 setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
 
@@ -570,7 +595,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _onAssetDetailsChange = (asset: IAsset) => {
 
-        if (currentCategory.current !== undefined) _loadAssetsForCategory(currentCategory.current)
+        if (currentCategory.current !== undefined) if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
 
     }
 
@@ -589,6 +614,18 @@ const Progress2DPage: React.FC<any> = () => {
         setSelectedAsset(undefined)
 
         publish('clear-shape-selection', '')
+    }
+
+    const _toggleStageSelection = (checked: boolean) => {
+
+        setStages([])
+
+        Object.values(_assetMap.current).forEach(entry => entry.visible = checked)
+
+        publish('visibility-change', { assets: assets, stageMap: _assetMap.current })
+
+        setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
+
     }
 
     const _onRealityItemClick = (event: Event) => {
@@ -611,8 +648,8 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _renderTitle = () => {
 
-        if (currentCategory.current === undefined) 
-        
+        if (currentCategory.current === undefined)
+
             return <Typography fontFamily='Open Sans' variant='subtitle1' className='select-none text-[18px]'>Choose a category</Typography>
 
         else {
@@ -701,7 +738,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                 <div className='flex flex-col w-full' style={{ height: 'calc(100vh - 64px)' }}>
 
-                                    {hierarchy && snapshotBase && <Progress2DToolbar
+                                    {hierarchy && <Progress2DToolbar
 
                                         hierarchy={hierarchy}
 
@@ -717,9 +754,9 @@ const Progress2DPage: React.FC<any> = () => {
 
                                         onCategorySelected={_onCategorySelected} />}
 
-                                    <div className='flex w-full' style={{ height: 'calc(100vh - 144px)' }}>
+                                    {snapshotBase && <div className='flex w-full' style={{ height: 'calc(100vh - 144px)' }}>
 
-                                        {snapshotBase && <div className={`w-3/4 relative flex items-center mx-2`}>
+                                        <div className={`w-3/4 relative flex items-center mx-2`}>
 
                                             <div id='left-container' className={`relative h-full w-1/2 border border-[#e2e3e5] rounded-lg p-[2px] flex justify-center ${isCompare ? '' : 'grow shrink'}`}>
 
@@ -775,7 +812,7 @@ const Progress2DPage: React.FC<any> = () => {
                                                 </>) : ''
                                             }
 
-                                        </div>}
+                                        </div>
 
                                         <div className={'flex flex-col w-1/4 mr-4 py-4'}
 
@@ -785,11 +822,19 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 <div className='text-[16px] text-[#4a4a4a] w-fit flex-grow'>
 
-                                                    {selectedAsset ?
+                                                    { selectedAsset ?
 
-                                                        <Typography fontFamily='Open Sans' variant='subtitle1' className='select-none text-[18px]'>Asset Details</Typography>
-
-                                                        : _renderTitle()}
+                                                        <Typography 
+                                                        
+                                                            fontFamily='Open Sans' 
+                                                            
+                                                            variant='subtitle1'
+                                                            
+                                                            className='select-none text-[18px]'>
+                                                                
+                                                                Asset Details
+                                                                
+                                                        </Typography> : _renderTitle() }
 
                                                 </div>
 
@@ -803,11 +848,27 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             </div>
 
-                                            {!selectedAsset && selectedCategory && <div className='flex mt-6 px-6 justify-between'>
+                                            {!selectedAsset && selectedCategory && <div className='flex mt-6 px-3 justify-between'>
 
-                                                <Typography fontFamily='Open Sans' className='select-none text-[11px] cursor-pointer' color='#F1742E'>SELECT ALL</Typography>
+                                                <Button 
+                                                
+                                                    size='small' onClick={() => _toggleStageSelection(true)} variant='text'
+                                                    
+                                                    className='select-none text-[11px] text-[#F1742E] cursor-pointer'>
+                                                        
+                                                        SELECT ALL
+                                                
+                                                </Button>
 
-                                                <Typography fontFamily='Open Sans' className='select-none text-[11px] cursor-pointer' color='#F1742E'>CLEAR ALL</Typography>
+                                                <Button 
+                                                
+                                                    size='small' onClick={() => _toggleStageSelection(false)} variant='text'
+                                                    
+                                                    className='select-none text-[11px] text-[#F1742E] cursor-pointer'>
+                                                        
+                                                        CLEAR ALL
+                                                
+                                                </Button>
 
                                             </div>}
 
@@ -817,31 +878,35 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
-                                                {stages?.map(stage => (stage as IAssetStage).sequence > 0 &&
+                                                <Progress2DStages stages={stages} assetCount={assets.length}
 
-                                                    <Progress2DStage 
-                                                    
-                                                    key={stage._id}
-                                                    
-                                                    assetCount={assets.length} 
-                                                    
-                                                    stage={stage}
-                                                    
-                                                    onToggleVisibility={(stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] }, visible: boolean) => {
+                                                    onToggleVisibility={(stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => {
 
-                                                        publish('visibility-change', { assets: stage.assets, stageMap: _assetMap.current })
+                                                        _assetMap.current[stage._id!].visible = stage.visible
 
-                                                    }} />)
+                                                        setStages([])
+                                                
+                                                        publish('visibility-change', { assets: assets, stageMap: _assetMap.current })
+                                                
+                                                        setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
 
-                                                }
+                                                    }} />
 
                                             </div>}
 
-                                            {selectedAsset && <AssetDetails assetId={selectedAsset} supportUser={isSupportUser} onChange={_onAssetDetailsChange} />}
+                                            {selectedAsset && <AssetDetails
+
+                                                assetId={selectedAsset}
+
+                                                snapshotBase={snapshotBase}
+
+                                                supportUser={isSupportUser}
+
+                                                onChange={_onAssetDetailsChange} />}
 
                                         </div>
 
-                                    </div>
+                                    </div>}
 
                                 </div>
 

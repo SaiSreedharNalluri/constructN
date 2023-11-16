@@ -56,6 +56,8 @@ export class ForgeEdit2DUtils {
 
             const color = asset.progress.stage == 'NOT_STARTED' ? '#000080' : (asset.progress.stage as IAssetStage).color
 
+            console.log(asset.name, asset.progress)
+
             if(asset.shape == 'Polygon') this._createPolygon(asset._id, asset.points, color)
 
             else if(asset.shape == 'Polyline') this._createPolyline(asset._id, asset.points, color)
@@ -296,6 +298,8 @@ export class ForgeEdit2DUtils {
 
             const progressSnapshot = asset.progressSnapshot
 
+            console.log(asset)
+
             for(let i = progressSnapshot.length - 1; i >= 0; i--) {
 
                 const snapshotStage = stageMap[progressSnapshot[i].stage as string]
@@ -323,6 +327,8 @@ export class ForgeEdit2DUtils {
                 style.lineColor = visibilityMap[shape.name]
 
                 style.fillColor = visibilityMap[shape.name]
+
+                // style.lineAlpha = visibilityMap[shape.name] === '#000080' ? 0 : 1
 
             }
 

@@ -60,6 +60,8 @@ export interface IAsset {
 
     createdBy: any
 
+    createdAt: Date
+
     updatedAt: Date
 
     properties: any

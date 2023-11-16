@@ -23,22 +23,26 @@ const ElementDetails: React.FC<{
     
     onChange?: (key: string, value: string) => void,
     
-    onDeleteStage?: (stage: string) => void }> = ({ asset, onChange, onDeleteStage }) => {
+    onDeleteStage?: (stage: string) => void }> = ({ asset, supportUser, onChange, onDeleteStage }) => {
 
     return (
         <>
             {
                 asset && <div>
 
-                    <Element label={'Name'} value={asset.name} onChange={onChange} canEdit={true} />
+                    <Element label={'Name'} value={asset.name} supportUser={supportUser} onChange={onChange} canEdit={true} />
 
-                    <Element label={'Description'} value={asset.description} onChange={onChange} canEdit={true} lines={3} />
+                    <Element 
+                    
+                        label={'Description'} value={asset.description} 
+                        
+                        supportUser={supportUser} onChange={onChange} canEdit={true} lines={3} />
 
                     <StageElement
 
                         label={'Stage'} onChange={onChange} onDeleteStage={onDeleteStage} progressSnapshot={asset.progressSnapshot}
 
-                        value={(asset.progress.stage as string)}
+                        value={(asset.progress.stage as string)} supportUser={supportUser}
 
                         stages={[...[NOT_STARTED_STAGE], ...(asset.category as IAssetCategory).stages]} />
 
@@ -69,6 +73,8 @@ interface IElementProps {
 
     progressSnapshot?: IAssetProgress[]
 
+    supportUser: boolean
+
     lines?: number
 
     canEdit?: boolean
@@ -81,7 +87,7 @@ interface IElementProps {
 
 }
 
-const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1, canEdit = false }) => {
+const Element: React.FC<IElementProps> = ({ label, value, supportUser = false, onChange, lines = 1, canEdit = false }) => {
 
     const [name, setName] = useState(value)
 
@@ -174,7 +180,7 @@ const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1, c
     )
 }
 
-const StageElement: React.FC<IElementProps> = ({ label, value, progressSnapshot = [], stages, onChange, onDeleteStage }) => {
+const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = false, progressSnapshot = [], stages, onChange, onDeleteStage }) => {
 
     const [stage, setStage] = useState<string>()
 
@@ -182,11 +188,15 @@ const StageElement: React.FC<IElementProps> = ({ label, value, progressSnapshot 
 
     const handleChange = (event: SelectChangeEvent) => {
 
-        setStage(event.target.value)
+        if(!shouldDisable(event.target.value)) {
 
-        if(!shouldDisable(event.target.value)) onChange && onChange(label.toLowerCase(), event.target.value)
+            setStage(event.target.value)
+            
+            onChange && onChange(label.toLowerCase(), event.target.value)
 
-        else toast.warn(`You have already completed this stage (${event.target.value}`, {autoClose: 5000})
+        }
+
+        else toast.warn(`You have already completed this stage (${event.target.value})`, {autoClose: 5000})
 
     }
 
@@ -222,7 +232,7 @@ const StageElement: React.FC<IElementProps> = ({ label, value, progressSnapshot 
 
                 {stages && stages.map((stage: IAssetStage, index: number) => {
 
-                    return <MenuItem key={index} value={stage._id} disabled={!suppo} >
+                    return <MenuItem key={index} value={stage._id} disabled={!supportUser && shouldDisable(stage._id)} >
                         
                         <div className='flex relative items-center w-full'>
 
@@ -230,9 +240,9 @@ const StageElement: React.FC<IElementProps> = ({ label, value, progressSnapshot 
 
                             <Typography fontFamily='Open Sans' variant='caption' className='ml-2 flex-1 text-[#4a4a4a]' fontSize='0.9rem'>{stage.name}</Typography>
 
-                            { shouldDisable(stage._id) && <IconButton className='absolute right-1' onClick={(event) => {
+                            { supportUser && shouldDisable(stage._id) && <IconButton className='absolute right-1' onClick={(event) => {
 
-                                event?.preventDefault()
+                                event?.stopPropagation()
                                 
                                 onDeleteStage && onDeleteStage(stage._id)
                             

@@ -55,9 +55,9 @@ const removeAssetStage = (assetId: string, stage: string) => {
 
 }
 
-const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => void, supportUser: boolean }> =
+const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (asset: IAsset) => void, supportUser: boolean }> =
 
-    ({ assetId, onChange, supportUser }) => {
+    ({ assetId, snapshotBase, onChange, supportUser }) => {
 
         const [asset, setAsset] = useState<IAsset>()
 
@@ -91,13 +91,13 @@ const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => vo
 
                 setLoading(true)
 
-                changeAssetStage(assetId, value, new Date()).then(res => {
+                changeAssetStage(assetId, value, snapshotBase.date).then(res => {
 
                     onChange && onChange(res.data.result)
 
                     toast.success('Updated asset stage successfully!', { autoClose: 5000 })
 
-                    setLoading(false)
+                    // setLoading(false)
 
                 }).catch(err => {
 
@@ -121,7 +121,7 @@ const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => vo
 
                     toast.success('Updated asset details successfully!', { autoClose: 5000 })
 
-                    setLoading(false)
+                    // setLoading(false)
 
                 }).catch(err => {
 
@@ -145,7 +145,7 @@ const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => vo
 
                 toast.success('Removed asset stage successfully!', { autoClose: 5000 })
 
-                setLoading(false)
+                // setLoading(false)
 
             }).catch(err => {
 
@@ -198,9 +198,17 @@ const AssetDetails: React.FC<{ assetId: string, onChange?: (asset: IAsset) => vo
 
                             TabIndicatorProps={{ style: { backgroundColor: '#f1742e' } }} >
 
-                            <Tab value='asset-details' label={<Typography fontFamily='Open Sans' fontSize={14} variant='caption'>Details</Typography>} onClick={() => setSelectedTab('asset-details')} />
+                            <Tab
 
-                            <Tab value='asset-timeline' label={<Typography fontFamily='Open Sans' fontSize={14} variant='caption'>Timeline</Typography>} onClick={() => setSelectedTab('asset-timeline')} />
+                                value='asset-details' label={<Typography fontFamily='Open Sans' fontSize={14}
+
+                                    variant='caption'>Details</Typography>} onClick={() => setSelectedTab('asset-details')} />
+
+                            <Tab
+
+                                value='asset-timeline' label={<Typography fontFamily='Open Sans' fontSize={14}
+
+                                    variant='caption'>Timeline</Typography>} onClick={() => setSelectedTab('asset-timeline')} />
 
                         </Tabs>
 

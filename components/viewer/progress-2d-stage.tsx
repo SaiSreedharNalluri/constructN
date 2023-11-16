@@ -1,14 +1,48 @@
 
 
-import { FormControlLabel, Checkbox, LinearProgress, Divider, FormGroup, Stack, styled, linearProgressClasses, Typography } from '@mui/material'
+import { FormControlLabel, Checkbox, LinearProgress, FormGroup, Stack, styled, linearProgressClasses, Typography } from '@mui/material'
 
 import { IAsset, IAssetStage } from '../../models/IAssetCategory'
 
-export default function Progress2DStage(
-    
-    { stage, assetCount, onToggleVisibility }: { stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }, 
-    
-    assetCount: number, onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] }, visible: boolean) => void }) {
+export default function Progress2DStages(
+
+    { stages, assetCount, onToggleVisibility }:
+
+        {
+            stages: ({ assets: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[] | undefined, assetCount: number,
+
+            onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void
+
+        }) {
+
+    return (
+
+        <>
+
+            {stages?.map(stage => (stage as IAssetStage).sequence > 0 &&
+
+                <Progress2DStage
+
+                    key={stage._id} assetCount={assetCount} stage={stage}
+
+                    onToggleVisibility={onToggleVisibility} />)
+
+            }
+
+        </>
+    )
+
+}
+
+function Progress2DStage(
+
+    { stage, assetCount, onToggleVisibility }: {
+
+        stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }, assetCount: number, 
+        
+        onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void
+
+    }) {
 
     const getProgress = () => {
 
@@ -22,9 +56,9 @@ export default function Progress2DStage(
 
         stage.visible = value
 
-        onToggleVisibility(stage!, value)
+        onToggleVisibility(stage!)
 
-    } 
+    }
 
     return (<>
 
@@ -36,7 +70,7 @@ export default function Progress2DStage(
 
                     className='text-[#4a4a4a]' onChange={onVisibilityChange}
 
-                    control={<Checkbox size='small' defaultChecked
+                    control={<Checkbox size='small' checked={stage.visible}
 
                         sx={{
 
@@ -50,7 +84,9 @@ export default function Progress2DStage(
 
                         }} />}
 
-                    color={stage.color} label={<Typography className='mt-[-2px]' fontFamily='Open Sans' fontSize={15} variant='caption'>{stage.name}</Typography>} />
+                    color={stage.color} label={<Typography className='mt-[-2px]' 
+                    
+                    fontFamily='Open Sans' fontSize={15} variant='caption'>{stage.name}</Typography>} />
 
             </FormGroup>
 

@@ -51,7 +51,7 @@ export default function Progress2DToolbar({
 
     const _getLayers = () => {
 
-        if(snapshotBase.layers) return Object.keys(snapshotBase.layers)
+        if(snapshotBase && snapshotBase.layers) return Object.keys(snapshotBase.layers)
 
         else return []
 
@@ -81,25 +81,25 @@ export default function Progress2DToolbar({
 
             <div className='ml-2'></div>
 
-            <LayerFilter layers={_getLayers()} onChange={onLayersSelected} />
+            {snapshotBase && <LayerFilter layers={_getLayers()} onChange={onLayersSelected} /> }
 
             <div className='ml-2'></div>
 
-            <AssetCategoryPicker selected={selectedCategory} categories={assetCategories} onSelect={onCategorySelected} />
+            {snapshotBase && <AssetCategoryPicker selected={selectedCategory} categories={assetCategories} onSelect={onCategorySelected} />}
 
             <div className='ml-2'></div>
 
-            <AssetCategoryDatePicker 
+            {snapshotBase && <AssetCategoryDatePicker 
             
                 snapshots={LightBoxInstance.viewerData().snapshots} 
                 
                 snapshotBase={snapshotBase} compare={isCompare}
                 
-                onChangeToDate={onSnapshotBaseChange}/>
+                onChangeToDate={onSnapshotBaseChange}/> }
 
             <div className='ml-2 flex-1'></div>
 
-            <div className='ml-2'>
+            {/* {snapshotBase && <div className='ml-2'>
 
                 <FormControlLabel className='border border-[#e2e3e5] rounded [&>.MuiFormControlLabel-label]:select-none [&>.MuiFormControlLabel-label]:text-[#4a4a4a] [&>.MuiFormControlLabel-label]:text-sm [&>.MuiFormControlLabel-label]:mr-2' 
                 
@@ -109,7 +109,7 @@ export default function Progress2DToolbar({
                 
                 sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Open Sans' } }}  />
 
-            </div>
+            </div>} */}
 
         </Box>
         
