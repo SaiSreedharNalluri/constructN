@@ -122,7 +122,7 @@ const UploaderGCP = () => {
             <p onClick={() => {window.open(`${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/gcpTemplate/GCP-LAT-LONG.csv`,"_blank");}}
               className="text-border-yellow italic text-sm flex items-center" >
               <Image className="w-[13.24] h-[12.68px]" src={downloadFileIcon} alt=""/>
-              <span className="ml-[8px]">  Sample template LatLng file</span>
+              <span className="ml-[8px]">  Sample template LngLat file</span>
             </p>
             <GcpUploadFile></GcpUploadFile>
            
