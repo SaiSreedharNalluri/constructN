@@ -29,7 +29,7 @@ export interface longLatGCP {
 
 export enum GCPType {
     UTM = "UTM",
-    LONGLAT = "LNGLAT"
+    LONGLAT = "LngLat"
 }
 
 export type UTMType = GCPType.UTM

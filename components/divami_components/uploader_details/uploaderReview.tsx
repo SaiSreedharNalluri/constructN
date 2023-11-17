@@ -32,8 +32,8 @@ const UploaderReview: React.FC<any> = () => {
     : "Date not available";
   return (
     <React.Fragment>
-      <div>
-        <div className=" ml-6 mt-4 w-1/2">
+      <div className="flex justify-center items-center mt-[16px]">
+        <div >
           <div className="col-span-4">
             <div className="bg-white shadow-md rounded-md p-4 mb-4 bg-box-orange">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
@@ -91,8 +91,8 @@ const UploaderReview: React.FC<any> = () => {
                   <p className="text-black-500 mb-0">: {uploaderState.skipGCP ? 0 : uploaderState.gcpList?.location ? uploaderState.gcpList?.location.length : uploaderState.gcpList?.utmLocation?.length}</p>
                 </div>
               </div>
-              <div className="p-4 border border-white-500 bg-box-white rounded-md shadow-md">
-                <p className=" h-20px font-sans font-medium not-italic text-base line-height-150%">
+              <div style={{ borderRadius:"0px 8px 8px 0px"}} className=" bg-box-white mt-[10px] shadow-md border-l-4 border-l-[#FF843F]">
+                <p  className=" py-[16px] px-[24px] font-sans font-medium not-italic text-base w-fit">
                   Click the &apos; Go Back &apos; button to reach the particular step you
                   want to modify.
                 </p>

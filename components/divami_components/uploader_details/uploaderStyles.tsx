@@ -64,11 +64,11 @@ export const UploaderStyledTreeView = styled(TreeView)({
 
   export const LabelContainer = styled("div")({
     display: 'flex',
-    justifyContent: 'space-between',
+    // justifyContent: 'center',
     alignItems: 'center',
     width: "80%",
-    height: "18px",
-    position: "relative",
+    height: "34px",
+    // position: "relative",
   });
 
   export const LabelIcon = styled("div")({
@@ -80,15 +80,19 @@ export const UploaderStyledTreeView = styled(TreeView)({
   });
 
   export const LabelText = styled("div")({
-    height: "40px",
-    display: "block",
-    paddingTop: "12px",
-    paddingLeft: "8px",
-    fontFamily: "Open Sans",
-    fontSize: "12px",
-    fontStyle: "normal",
-    fontWeight: "400",
-    marginLeft: "10px"
+    // height: "40px",
+    // display: "block",
+    // paddingTop: "10px",
+    // paddingBottom: "10px",
+    // paddingLeft: "8px",
+    // fontFamily: "Open Sans",
+    // fontSize: "12px",
+    // fontStyle: "normal",
+    // fontWeight: "400",
+    marginLeft: "12px",
+    marginTop:"2px",
+    color:"#101f4c"
+    // margin:"0px 20px"
   });
 
  export const nextButtonStyle = {

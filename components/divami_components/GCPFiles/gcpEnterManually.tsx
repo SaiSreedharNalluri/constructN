@@ -133,8 +133,8 @@ const GcpEnterManually: React.FC<any> = () => {
     <div >
     <table >
        <thead className=" sticky top-0 bg-white ">
-       <tr className=" text-justify">
-     <th></th>
+       <tr>
+         <th></th>
           {headings.map((heading: any, index: any) => (
             <th key={index}>
               <TabelHeading>{heading}</TabelHeading>
@@ -211,7 +211,7 @@ const GcpEnterManually: React.FC<any> = () => {
               &nbsp; {GCPType.UTM}
             </label>
           </div>
-          <div className="mr-[42px]">
+          <div className="mr-[50px]">
             <label>
               <input
                 type="radio"

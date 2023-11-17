@@ -63,16 +63,16 @@ const UploaderFooter: React.FC<any> = ({  }) => {
         return (
           <>
           
-          <Button 
+          {/* <Button 
             disabled={state.step === UploaderStep.Details}
             onClick={() => uploaderAction.goBack()} 
-            className={`${backbuttonStyle} text-orange-500 border border-solid rounded-md`}>
+            className={`${backbuttonStyle} text-[#F1742E] border border-solid rounded-[4px]`}>
             Go Back
-          </Button>
+          </Button> */}
           <Button
             disabled={!state.isNextEnabled}
             onClick={() => uploaderAction.next()}
-            className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md hover:bg-orange-500 hover:text-white`}>
+            className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E]  hover:text-white`}>
               
             Continue
           </Button>
@@ -84,13 +84,13 @@ const UploaderFooter: React.FC<any> = ({  }) => {
 
           <Button   
             onClick={() => uploaderAction.goBack()}
-            className={`${backbuttonStyle} text-orange-500 border border-solid rounded-md`}>
+            className={`${backbuttonStyle} text-[#F1742E] border border-solid rounded-[4px]`}>
             Go Back
           </Button>
           <Button
             disabled={!state.isNextEnabled}
             onClick={() => uploaderAction.next()}
-            className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md hover:bg-orange-500 hover:text-white`}>
+            className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white`}>
             Confirm Images
           </Button>
           </>
@@ -100,18 +100,18 @@ const UploaderFooter: React.FC<any> = ({  }) => {
           <>
           <Button 
             onClick={() => uploaderAction.goBack()} 
-            className={`${backbuttonStyle} text-orange-500 border border-solid rounded-md `}>
+            className={`${backbuttonStyle} text-[#F1742E] border border-solid rounded-[4px] `}>
             Go Back
           </Button>
           <Button
             onClick={() => uploaderAction.skipGCP()} 
-            className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md hover:bg-orange-500 hover:text-white`}>
+            className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white`}>
             Skip Gcps
           </Button>
           <Button
           disabled={!state.isNextEnabled}
             onClick={() => uploaderAction.next()}
-            className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md hover:bg-orange-500 hover:text-white`}>
+            className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white`}>
               Continue
           </Button>
           </>
@@ -121,7 +121,7 @@ const UploaderFooter: React.FC<any> = ({  }) => {
           <>
           <Button 
             onClick={() => uploaderAction.goBack()} 
-            className={`${backbuttonStyle} text-orange-500 border border-solid rounded-md`}>
+            className={`${backbuttonStyle} text-[#F1742E] border border-solid rounded-[4px]`}>
           Go Back
           </Button>
           <Button
@@ -129,7 +129,7 @@ const UploaderFooter: React.FC<any> = ({  }) => {
               uploaderAction.changeUploadinitiate(true)
               // uploaderAction.next()
             }}
-            className={`${nextButtonStyle} bg-orange-500 text-white border border-solid rounded-md hover:bg-orange-500 hover:text-white`}>
+            className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white`}>
             Upload
           </Button>
           </>
@@ -154,7 +154,7 @@ const UploaderFooter: React.FC<any> = ({  }) => {
         )}
         {state.step === UploaderStep.ChooseFiles && state.choosenFiles.validFiles.length>0 && (
               
-            <div style={progressContainerStyle} className="flex  rounded-[10px] items-center bg-[#FFECE2] p-2 w-[40%]">
+            <div style={progressContainerStyle} className="flex  rounded-[10px] items-center bg-[#FFECE2] p-2 w-[60%]">
               <LinearProgress
                 variant="determinate"
                 style={linearProgressStyle}
