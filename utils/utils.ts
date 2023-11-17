@@ -6,6 +6,7 @@ import { ChildrenEntity, IStructure } from "../models/IStructure";
 import { delimiter } from "path";
 import { IJobs } from "../models/IJobs";
 import { ICapture } from "../models/ICapture";
+import { uploadImage } from "../state/uploaderState/state";
 
 
 /**
@@ -109,4 +110,24 @@ export const getPathToRoot = (structureId: String, hierarchy: ChildrenEntity, de
 
 export type delimiterType = " / " | " > "
 
-  
+  export const calculateTotalFileSize = (fileArray:uploadImage[])=>{
+    let totalSize = 0;
+
+    for (let i = 0; i < fileArray.length; i++) {
+        totalSize += fileArray[i].file.size;
+    }
+
+    return convertFileSize(totalSize);
+  }
+
+ export const  convertFileSize = (fileSizeInBytes:number) => {
+    if (fileSizeInBytes < 1024) {
+      return fileSizeInBytes + ' B';
+    } else if (fileSizeInBytes < 1024 * 1024) {
+      return (fileSizeInBytes / 1024).toFixed(2) + ' KB';
+    } else if (fileSizeInBytes < 1024 * 1024 * 1024) {
+      return (fileSizeInBytes / (1024 * 1024)).toFixed(2) + ' MB';
+    } else {
+      return (fileSizeInBytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+    }
+  }
