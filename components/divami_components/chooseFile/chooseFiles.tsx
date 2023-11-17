@@ -14,7 +14,7 @@ const ChooseFiles:React.FC<IProps>=({onDrop,dragDropText,supportFileText,Uploadi
         disabled:isDisabled
       });
     return (<React.Fragment>
-        <div className={`border-[1px] text-center rounded-[8px] mt-[16px] w-[50vw] h-[30vh] border-dashed   border-black py-[6vh] px-[2%] cursor-pointer ${isDragActive ? 'border-blue-500' : ''}`} {...getRootProps()}>
+        <div className={`border-[3px] text-center rounded-[8px] mt-[16px] w-[50vw] h-[30vh] border-dashed hover:border-[#F1742E]  border-black py-[6vh] px-[2%] cursor-pointer ${isDragActive ? 'border-blue-500' : ''}`} {...getRootProps()}>
   <div className="flex flex-col items-center justify-center h-full gap-6">
     {UploadingStatus}
    <div className='font-sans'>
