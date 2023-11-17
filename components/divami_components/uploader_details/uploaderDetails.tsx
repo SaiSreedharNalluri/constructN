@@ -145,40 +145,40 @@ const UploaderDateDetails: React.FC<any> = () => {
     }
   };
   return (
-    <div className="">
+    <div className="ml-[60px]">
       {uploaderState.showMessage && (
         <div
           className="p-4 border border-white-500 bg-white-100 rounded-md shadow-md"
           style={{
-            borderLeft: "none",
+            borderLeft: "4px solid #FF843F",
             borderTop: "none",
             boxShadow: "0px 5px 5px rgba(0, 0, 0.1, 0.1)",
-            maxWidth: "700px",
-            margin: "0 60px",
+            width:"fit-content",
+            margin: "16px 0px",
+            borderRadius:"0px 8px 8px 0px"
           }}
         >
-          <p className="w-997px h-24px font-sans font-semibold not-italic text-base line-height-150%">
+          <p  style={{fontFamily:"Open Sans"}} className="font-semibold text-base">
             Only images in .jpg, .jpeg with metadata info of GPS co-ordinates
             are accepted at the moment.
           </p>
         </div>
       )}
       <p
-        className="p-2 w-997px h-24px font-sans font-normal  not-italic text-lg line-height-150%"
-        style={{ margin: "0 60px" }}
+    style={{fontSize:"18px",lineHeight:"20px"}}    className=" font-sans font-normal mt-[24px]  not-italic"
       >
-        Choose the level for which you want to upload Drone capture data.
+        Choose the level for which you want to upload Drone capture data
       </p>
       <div style={{ display: "flex" }}>
-        <div className="flex-1 pr-2" style={{ margin: "0 60px" }}>
-          <p className="pt-2 pr-2 pl-2 pb-0 w-94px,h-20px,font-sans not-italic font-semibold text-sm">
+        <div className="flex-1 pr-[14px] mt-[18px]" >
+          <p style={{fontFamily:"Open Sans"}} className="pr-2 font-sans text-[#101F4C]  font-semibold text-sm">
             Section Name
           </p>
           <div
             className="w-full border-t border-solid border-border-yellow"
             style={{ height: "1px" }}
           ></div>
-          <div className="h-[200px]  overflow-y-auto">
+          <div>
             <div>
               {
                 <SectionList
@@ -273,7 +273,7 @@ const UploaderDateDetails: React.FC<any> = () => {
         </div>
 
         <div className="flex-1/3 justify-end">
-          <h2 className="pt-2 pr-2 pl-2 pb-0 w-94px,h-20px,font-sans not-italic font-semibold text-sm">
+          <h2 className="mt-[18px] font-sans not-italic font-semibold text-sm">
             Enter Capture Date for {uploaderState.structure?.name}
           </h2>
           <div

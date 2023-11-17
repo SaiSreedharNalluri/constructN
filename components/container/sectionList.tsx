@@ -60,8 +60,9 @@ const SectionList: React.FC<IProps>=({
       };
       const renderTreeNode = (node: any, onLabelClick: any) => (
         <LabelContainer data-testid="label" className="">
-          <div className="flex items-center">
-          {node.children?.length ? (
+        
+            <div>
+            {node.children?.length ? (
               expandedNodes.includes(node._id) ? (
                 <LabelIcon
                   onClick={(e: any) => {
@@ -69,14 +70,14 @@ const SectionList: React.FC<IProps>=({
                   }}
                 >
                   <RemoveIcon
-                    style={{ cursor: "pointer", fontSize: "14px",marginLeft:"7px" }}
+                    style={{ cursor: "pointer",color:"#101F4C", fontSize: "14px",marginLeft:"7px" }}
                     data-testid={"addIcon"}
                   />
                 </LabelIcon>
               ) : (
                 <StyledSpan onClick={(e) => handleNodeExpand(getAllIds(node))}>
                   <AddIcon
-                    style={{ cursor: "pointer", fontSize: "14px",marginLeft:"7px" }}
+                    style={{ cursor: "pointer",color:"#101F4C", fontSize: "14px",marginLeft:"7px" }}
                     data-testid={"addIcon"}
                   />
                 </StyledSpan>
@@ -84,7 +85,10 @@ const SectionList: React.FC<IProps>=({
             ) : (
               <></>
             )}
-            <LabelText onClick={(e: any) =>{
+            </div> 
+       
+         <div>
+          <LabelText onClick={(e: any) =>{
                   onLabelClick(e, node)
                 }}>
                <TooltipText title={node?.name?.length > 20 ? node?.name : ""} placement="right">
@@ -94,10 +98,13 @@ const SectionList: React.FC<IProps>=({
               </div> 
               </TooltipText>
       
-            </LabelText>
-          </div>
+            </LabelText> 
+           
+         </div>
+          
+         
         
-      
+                
         <div>
         
       </div>
@@ -127,7 +134,7 @@ const SectionList: React.FC<IProps>=({
             <TreeViewContainer
         style={{
           overflow: "auto",
-          height: `calc(80vh - 300px)`,
+          height: "200px"
         }}
       >
               
