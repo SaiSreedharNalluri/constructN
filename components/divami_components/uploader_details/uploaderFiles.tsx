@@ -38,17 +38,17 @@ const UploaderFiles = () => {
       setshowPopUp(true);
       setMessage(
         `${invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.
-        ${duplicateFiles.length} duplicate files found. They will be skipped.`
+        ${duplicateFiles.length} duplicate file(s) found. They will be skipped.`
       );
     } else if (invalidEXIFFiles.length > 0) {
       setshowPopUp(true);
       setMessage(
-        `${invalidEXIFFiles.length} files donot have exif data.These files will not be uploaded`
+        `${invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.`
       );
     } else if (duplicateFiles.length > 0) {
       setshowPopUp(true);
       setMessage(
-        `${duplicateFiles.length} duplicate files will not be uploaded`
+        `${duplicateFiles.length} duplicate file(s) found. They will be skipped.`
       );
     }
   }, [invalidEXIFFiles.length,duplicateFiles.length]);
@@ -69,7 +69,7 @@ const UploaderFiles = () => {
         imageSrc={Warning}
         modalTitle={"Warning"}
         modalmessage={message}
-        primaryButtonLabel={"Skip Files and Complete"}
+        primaryButtonLabel={"Skip Files and Continue"}
         isUploader={false}
         SecondaryButtonlabel={""}
         callBackvalue={() => {
