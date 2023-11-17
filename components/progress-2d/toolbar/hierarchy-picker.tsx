@@ -71,7 +71,7 @@ export default function HierarchyPicker({ hierarchy, selected, onSelect, onClose
 
                         startAdornment={<Typography fontFamily='Open Sans' className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3'>
 
-                            Structure:
+                            Hierarchy:
 
                         </Typography>} />
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { MutableRefObject, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import Forge from './forge'
 
@@ -10,12 +10,11 @@ import { ForgeDataVizUtils } from '../../utils/forge-utils'
 
 import { ForgeEdit2DUtils } from '../../utils/forge-edit-2d-utils'
 
-import { IAsset, IAssetCategory, IAssetStage } from '../../models/IAssetCategory'
+import { IAsset, IAssetCategory } from '../../models/IAssetCategory'
 
 import ClickTypesPicker from './segment-class-filters'
 
 import { Paper } from '@mui/material'
-import { toast } from 'react-toastify'
 
 interface _ViewerProps {
 
@@ -59,7 +58,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
     const [modelsData, setModelsData] = useState<any[]>([])
 
-    const _assetMap = useRef<{ [key: string]: { assets: string[] } & Partial<IAssetStage> }>({})
+    const _currentSnapshot = useRef<string>()
 
 
     const onInit = async (forge: Autodesk.Viewing.GuiViewer3D | undefined, alreadyInitialised: boolean) => {
@@ -114,9 +113,22 @@ function Progress2DComponent(props: _ViewerProps) {
 
         if (props.snapshot) {
 
-            _layers.current = props.snapshot.layers
+            if(_currentSnapshot.current !== props.snapshot._id) {
 
-            if (_model.current) loadLayers(props.snapshot.layers)
+                if (LightBoxInstance.getViewTypes().indexOf('Plan Drawings') > -1) {
+    
+                    setModelsData(LightBoxInstance.viewerData()['modelData']['Plan Drawings'])
+                }
+    
+                _currentSnapshot.current = props.snapshot._id
+    
+            } else {
+
+                _layers.current = props.snapshot.layers
+
+                if (_model.current) loadLayers(props.snapshot.layers)
+
+            }
 
         }
 

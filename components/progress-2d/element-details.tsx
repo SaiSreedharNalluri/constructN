@@ -17,13 +17,15 @@ import moment from 'moment'
 import { toast } from 'react-toastify'
 
 
-const ElementDetails: React.FC<{ 
-    
+const ElementDetails: React.FC<{
+
     asset: IAsset, supportUser: boolean,
-    
+
     onChange?: (key: string, value: string) => void,
+
+    onDeleteStage?: (stage: string) => void
     
-    onDeleteStage?: (stage: string) => void }> = ({ asset, supportUser, onChange, onDeleteStage }) => {
+}> = ({ asset, supportUser, onChange, onDeleteStage }) => {
 
     return (
         <>
@@ -32,10 +34,10 @@ const ElementDetails: React.FC<{
 
                     <Element label={'Name'} value={asset.name} supportUser={supportUser} onChange={onChange} canEdit={true} />
 
-                    <Element 
-                    
-                        label={'Description'} value={asset.description} 
-                        
+                    <Element
+
+                        label={'Description'} value={asset.description}
+
                         supportUser={supportUser} onChange={onChange} canEdit={true} lines={3} />
 
                     <StageElement
@@ -188,23 +190,23 @@ const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = fal
 
     const handleChange = (event: SelectChangeEvent) => {
 
-        if(!shouldDisable(event.target.value)) {
+        if (!shouldDisable(event.target.value)) {
 
             setStage(event.target.value)
-            
+
             onChange && onChange(label.toLowerCase(), event.target.value)
 
         }
 
-        else toast.warn(`You have already completed this stage (${event.target.value})`, {autoClose: 5000})
+        else toast.warn(`You have already completed this stage (${event.target.value})`, { autoClose: 5000 })
 
     }
 
     const shouldDisable = (stageId: string) => {
 
-        for(let i = 0; i < progressSnapshot.length; i++) {
+        for (let i = 0; i < progressSnapshot.length; i++) {
 
-            if(progressSnapshot[i].stage == stageId) return true
+            if (progressSnapshot[i].stage == stageId) return true
 
         }
 
@@ -233,24 +235,26 @@ const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = fal
                 {stages && stages.map((stage: IAssetStage, index: number) => {
 
                     return <MenuItem key={index} value={stage._id} disabled={!supportUser && shouldDisable(stage._id)} >
-                        
+
                         <div className='flex relative items-center w-full'>
 
                             <CircleIcon fontSize='small' htmlColor={stage.color} />
 
                             <Typography fontFamily='Open Sans' variant='caption' className='ml-2 flex-1 text-[#4a4a4a]' fontSize='0.9rem'>{stage.name}</Typography>
 
-                            { supportUser && shouldDisable(stage._id) && stage._id !== 'NOT_STARTED' && <IconButton className='absolute right-1' onClick={(event) => {
+                            {supportUser && shouldDisable(stage._id) && stage._id !== 'NOT_STARTED' &&
 
-                                event?.stopPropagation()
-                                
-                                onDeleteStage && onDeleteStage(stage._id)
-                            
-                            }}><DeleteForeverIcon fontSize='small' color='error' /></IconButton> }
-                            
+                                <IconButton className='absolute right-1' onClick={(event) => {
+
+                                    event?.stopPropagation()
+
+                                    onDeleteStage && onDeleteStage(stage._id)
+
+                                }}><DeleteForeverIcon fontSize='small' color='error' /></IconButton>}
+
                         </div>
-                        
-                </MenuItem>
+
+                    </MenuItem>
 
                 })}
 

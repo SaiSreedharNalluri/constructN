@@ -1,6 +1,6 @@
 
 
-import { FormControlLabel, Checkbox, LinearProgress, FormGroup, Stack, styled, linearProgressClasses, Typography } from '@mui/material'
+import { FormControlLabel, Checkbox, LinearProgress, FormGroup, Stack, styled, linearProgressClasses, Typography, Slider } from '@mui/material'
 
 import { IAsset, IAssetStage } from '../../models/IAssetCategory'
 
@@ -44,11 +44,7 @@ function Progress2DStage(
 
     }) {
 
-    const getProgress = () => {
-
-        return stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount)
-
-    }
+    const getProgress = () => stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount)
 
     const onVisibilityChange = (event: any) => {
 
@@ -90,9 +86,11 @@ function Progress2DStage(
 
             </FormGroup>
 
-            <Stack sx={{ color: stage.color, marginTop: '0.5rem' }} direction="row">
+            <Stack sx={{ color: stage.color, marginTop: '0.5rem' }} direction='row'>
 
-                <BorderLinearProgress className='w-full' color="inherit" variant="determinate" value={getProgress()} />
+                <BorderLinearProgress className='w-full' color='inherit' variant='determinate' value={getProgress()} />
+
+                {/* <RangeLinearProgress customColor={stage.color!} className='w-full' valueLabelDisplay='on' value={getProgress()} /> */}
 
             </Stack>
 
@@ -127,3 +125,79 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     },
 
 }))
+
+const RangeLinearProgress = styled(Slider)<{ customColor: string }>({
+
+    color: 'inherit',
+    
+    height: 8,
+    
+    '& .MuiSlider-track': {
+    
+        border: 'none'
+    
+    },
+    
+    '& .MuiSlider-thumb': {
+    
+        height: 8,
+    
+        width: 8,
+    
+        backgroundColor: '#fff',
+    
+        border: '2px solid currentColor',
+    
+        '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
+    
+            boxShadow: 'inherit'
+    
+        },
+    
+        '&:before': {
+    
+            display: 'none'
+    
+        }
+    
+    },
+    
+    '& .MuiSlider-valueLabel': {
+    
+        lineHeight: 1.2,
+    
+        fontSize: 12,
+    
+        background: 'unset',
+    
+        padding: 0,
+    
+        width: 32,
+    
+        height: 32,
+    
+        borderRadius: '50% 50% 50% 0',
+    
+        backgroundColor: 'inherit',
+    
+        transformOrigin: 'bottom left',
+    
+        transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
+    
+        '&:before': { display: 'none' },
+    
+        '&.MuiSlider-valueLabelOpen': {
+    
+            transform: 'translate(50%, -100%) rotate(-45deg) scale(1)'
+    
+        },
+    
+        '& > *': {
+    
+            transform: 'rotate(45deg)'
+    
+        }
+    
+    }
+  
+})

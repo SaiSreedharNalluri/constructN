@@ -785,6 +785,8 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                                 setIsCompare(false)
 
+                                                                publish('viewerState', undefined)
+
                                                             }}
 
                                                             className='absolute top-2 right-2 bg-black bg-opacity-30'>

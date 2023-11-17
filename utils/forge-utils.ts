@@ -771,13 +771,21 @@ export class ForgeDataVizUtils {
 
         const viewerState = (event as CustomEvent).detail
 
-        let rotation = viewerState.rotation
+        if (viewerState) {
 
-        rotation = rotation - Math.PI / 2
+            let rotation = viewerState.rotation
 
-        // console.log(rotation)
+            rotation = rotation - Math.PI / 2
 
-        this.updateNavigator(undefined, rotation)
+            // console.log(rotation)
+
+            this.updateNavigator(undefined, rotation)
+
+        } else {
+
+            this.updateNavigator(new THREE.Vector3(0, -10, 0), 0)
+
+        }
 
     }
 }

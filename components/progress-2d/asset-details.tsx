@@ -15,11 +15,11 @@ import { toast } from 'react-toastify'
 import { API } from '../../config/config'
 
 
-const fetchAssetDetails = (assetId: string) => {
+const fetchAssetDetails = (assetId: string, date: string) => {
 
     try {
 
-        return instance.get(`${API.PROGRESS_2D_URL}/assets/${assetId}`)
+        return instance.get(`${API.PROGRESS_2D_URL}/assets/${assetId}?date=${date}`)
 
     } catch (error) { throw error }
 
@@ -69,7 +69,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
             setLoading(true)
 
-            fetchAssetDetails(assetId).then(res => {
+            fetchAssetDetails(assetId, snapshotBase.date).then(res => {
 
                 setLoading(false)
 

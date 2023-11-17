@@ -129,18 +129,21 @@ export class ForgeEdit2DUtils {
 
     _getTool(type: string) {
 
-        switch (type) {
+        if (this._edit2DExtn.defaultTools) {
 
-            case 'Select': return this._edit2DExtn.defaultTools.polygonEditTool
+            switch (type) {
 
-            case 'Move': return this._edit2DExtn.defaultTools.moveTool
+                case 'Select': return this._edit2DExtn.defaultTools.polygonEditTool
 
-            case 'Polygon': return this._edit2DExtn.defaultTools.polygonTool
+                case 'Move': return this._edit2DExtn.defaultTools.moveTool
 
-            case 'Line': return this._edit2DExtn.defaultTools.polylineTool
+                case 'Polygon': return this._edit2DExtn.defaultTools.polygonTool
 
-            case 'Circle': return this._edit2DExtn.defaultTools.insertSymbolTool
+                case 'Line': return this._edit2DExtn.defaultTools.polylineTool
 
+                case 'Circle': return this._edit2DExtn.defaultTools.insertSymbolTool
+
+            }
         }
     }
 
