@@ -24,6 +24,7 @@ import { IUploadFile, UploadStatus } from "../../../../models/IUploader";
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader';
 import { Content } from "../../../../components/divami_components/project-users-list/usersListStyles";
 import { getCaptureIdFromModelOrString, getJobIdFromModelOrString } from "../../../../utils/utils";
+import { CustomToast } from "../../../../components/divami_components/custom-toaster/CustomToast";
 interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
@@ -31,7 +32,6 @@ const Index: React.FC<IProps> = () => {
   const { appAction } = appContextAction;
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-  const[isLoaderLoading,setLoaderLoading]=useState(false)
   let WorkerManager = WebWorkerManager.getInstance()
   const renderCenterContent = () => {
     switch (uploaderState.step) {
@@ -54,13 +54,12 @@ const Index: React.FC<IProps> = () => {
 
   const refreshJobs = (projectId: string) =>{
     uploaderAction.setIsLoading(true)
-    setLoaderLoading(true)
     getJobsByStatusMode(projectId, [JobStatus.pendingUpload, JobStatus.uploaded], uploaderState.captureMode).then((response)=>{
       console.log("TestingUploader: getJobs", response.data.result)
       let jobs: IJobs[] = response.data.result;
       uploaderAction.setCaptureJobs(jobs)
       uploaderAction.setIsLoading(false)
-      setLoaderLoading(false)
+      uploaderAction.setIsLoading(false)
     }).catch((error)=>{
       console.log("Error: ", error)
     })
@@ -158,6 +157,8 @@ const Index: React.FC<IProps> = () => {
   useEffect(()=>{
     if(uploaderState.uploadinitiate)
     {
+      CustomToast('Initialing upload...','success')
+      uploaderAction.setIsLoading(true)
       addCapture(uploaderState.project?._id as string,{
         mode: uploaderState.captureMode,
         type: uploaderState.captureType,
@@ -166,12 +167,11 @@ const Index: React.FC<IProps> = () => {
       }).then((response)=>{
         if(response.success===true)
         {
-          console.log("TestingUploader: add capture success ", response?.result);
           addGcpToCapture(response?.result)
         }
         
       }).catch((error)=>{
-        console.log('error',error)
+        CustomToast('Something went wrong. Please try again after some time.','error')
       })
       
     }
@@ -185,7 +185,10 @@ const Index: React.FC<IProps> = () => {
             if(response.success===true){
               addRawImagesTOCapture(capture)
             }
-           })
+           }).catch((error)=>{
+            uploaderAction.setIsLoading(false)
+            CustomToast('Something went wrong. Please try again after some time.','error')
+          })
         }else{
       addRawImagesTOCapture(capture)
       }
@@ -198,8 +201,13 @@ const Index: React.FC<IProps> = () => {
         uploaderAction.changeUploadinitiate(false)
         uploaderAction.next()
         uploaderAction.refreshJobs();
+        uploaderAction.setIsLoading(false)
         sendingFilesToworker(response.result,capture)
+        CustomToast(`Started uploading ${uploaderState?.choosenFiles?.validFiles?.length} file(s)`,'success')
       }
+    }).catch((error)=>{
+      uploaderAction.setIsLoading(false)
+      CustomToast('Something went wrong. Please try again after some time.','error')
     })
   }
 
@@ -274,7 +282,7 @@ const Index: React.FC<IProps> = () => {
             uploaderState.stepperSideFileList &&(<UploaderStepper />)
           }
            </div>
-          {!isLoaderLoading?
+          {!uploaderState.isLoading?
           <>
          
           <div className="flex-1 content-container max-h-[400px]">{renderCenterContent()}</div>
