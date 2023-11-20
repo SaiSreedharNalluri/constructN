@@ -11,7 +11,6 @@ import UploaderFinal from "../../../../components/divami_components/uploader_det
 import UploaderGCP from "../../../../components/divami_components/uploader_details/uploaderGCP";
 import UploaderReview from "../../../../components/divami_components/uploader_details/uploaderReview";
 import { addCapture, addGcp, addRawImages, getCaptureDetails, getRawImages } from "../../../../services/captureManagement";
-import { uploaderContextActions } from "../../../../state/uploaderState/action";
 import { RawImage, RawImageCreateResp } from "../../../../models/IRawImages";
 import { WebWorkerManager } from "../../../../utils/webWorkerManager";
 import { useRouter } from "next/router";
@@ -20,9 +19,8 @@ import { getStructureHierarchy } from "../../../../services/structure";
 import { useAppContext } from "../../../../state/appState/context";
 import { getJobsByStatus, getJobsByStatusMode, getjobs, updateJobStatus } from "../../../../services/jobs";
 import { IJobs, JobStatus } from "../../../../models/IJobs";
-import { string } from "yup";
 import { CaptureMode, CaptureType, ICapture } from "../../../../models/ICapture";
-import { IUploadFile, UploadStatus, UploadType } from "../../../../models/IUploader";
+import { IUploadFile, UploadStatus } from "../../../../models/IUploader";
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader';
 import { Content } from "../../../../components/divami_components/project-users-list/usersListStyles";
 import { getCaptureIdFromModelOrString, getJobIdFromModelOrString } from "../../../../utils/utils";
@@ -226,9 +224,7 @@ const Index: React.FC<IProps> = () => {
     // uploaderAction.next()
   }
   const updateTheJobStatus=(captureId:string)=>{
-    console.log("TestingUploader updateJobStatus ", captureId, uploaderState.pendingUploadJobs)
     let captureObj = uploaderState.pendingUploadJobs.find((jobObj)=> getCaptureIdFromModelOrString(jobObj.captures[0]) === captureId)
-    console.log("TestingUploader updateJobStatus ", captureObj)
     if (captureObj) {
       updateJobStatus(uploaderState?.project?._id as string, captureObj._id,'uploaded').then((response)=>{
         if(response.data.success===true) {
@@ -243,7 +239,6 @@ const Index: React.FC<IProps> = () => {
             let capture = response.data.result
             updateJobStatus(uploaderState?.project?._id as string, getJobIdFromModelOrString(capture.jobId), JobStatus.uploaded).then((response)=>{
               if(response.data.success===true) {
-                console.log('dfuykfdghjdf',uploaderState.inProgressWorkers)
                 uploaderAction.refreshJobs();
               }
             }).catch((error)=>{
@@ -258,7 +253,6 @@ const Index: React.FC<IProps> = () => {
     if(event?.data?.filesList?.length != undefined && event?.data?.completedFileList?.length !=undefined && (event?.data?.filesList?.length === event?.data?.completedFileList?.length))
     {
       updateTheJobStatus(event?.data?.filesList[0]?.uploadObject?.capture as string)
-      
     }
   }
   return (
