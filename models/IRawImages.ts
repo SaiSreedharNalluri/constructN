@@ -8,7 +8,7 @@ export interface RawImage {
     utmLocation?: utmLocation;
     status: RawImageStatus;
     capture?: string;
-    metaData?: Object;
+    metaData?: metaData;
     createdAt?: string;
     location?: location;
     updatedAt?: string;
@@ -46,3 +46,7 @@ export interface utmLocation {
   elevation?: number,
 }
   
+export interface metaData{
+  fileSize:number,
+  uploadExpireTime?:string
+}

@@ -69,7 +69,6 @@ const MyComponent = () => {
     <div>
     <SidePanelMenu onChangeData={() => {}} />
     </div> 
-    <FileUploader isAppend={isAppend}selectedFile={selectedFile}setSelectedFile={setSelectedFile}/>
     </div>        
 
 </div>

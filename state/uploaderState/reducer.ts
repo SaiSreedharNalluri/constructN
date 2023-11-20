@@ -1,7 +1,7 @@
 import { act } from "react-dom/test-utils";
 import { GCPType } from "../../models/IGCP";
 import { IJobs, JobStatus } from "../../models/IJobs";
-import { RawImage, RawImageStatus, location } from "../../models/IRawImages";
+import { RawImage, RawImageStatus, location, metaData } from "../../models/IRawImages";
 import { getCaptureIdFromModelOrString, getInitialGCPList, getJobIdFromModelOrString } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
 import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif } from "./state";
@@ -222,6 +222,10 @@ const getUpdatedFileList = (state: UploaderState, files: fileWithExif[],): choos
                 }
                 rawImage.location = location
             }
+            let metaData:metaData={
+                fileSize:file.size
+            }
+            rawImage.metaData = metaData
             let newUploadImage: uploadImage = {file, ...rawImage}
             let alreadyUploadedFile;
             if(state.isAppendingCapture && state.selectedJob) {
