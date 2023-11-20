@@ -1,5 +1,5 @@
 
-import { Box, MenuItem, MenuProps, OutlinedInput, Select, Typography } from '@mui/material'
+import { Box, MenuItem, MenuProps, OutlinedInput, Select, Theme, Typography, makeStyles } from '@mui/material'
 
 import StructureHierarchy from '../../viewer/structure-hierarchy'
 
@@ -13,15 +13,11 @@ const MenuProps: Partial<MenuProps> = {
 
         style: {
 
-            backgroundColor: 'white !important',
-
-            opacity: 1,
-
             maxHeight: ITEM_HEIGHT * 10 + ITEM_PADDING_TOP,
 
-            marginTop: 2
+            marginTop: 2,
 
-        }
+        },
     }
 }
 
@@ -89,19 +85,7 @@ export default function HierarchyPicker({ hierarchy, selected, onSelect, onClose
 
                 MenuProps={MenuProps}>
 
-                <MenuItem sx={{
-
-                    '&.MuiPaper-root': {
-
-                        backgroundColor: 'white !important'
-                    },
-
-                    '&.MuiPaper-root MuiList-root ': {
-
-                        backgroundColor: 'white !important'
-                    },
-
-                }} color='warning' value={selected || ''} >
+                <MenuItem className='!bg-white' color='warning' value={selected || ''} >
 
                     <StructureHierarchy
 

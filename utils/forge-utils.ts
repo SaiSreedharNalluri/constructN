@@ -679,6 +679,18 @@ export class ForgeDataVizUtils {
         unsubscribe('viewerState', this._onViewerStateChange)
     }
 
+    destroy = () => {
+
+        this.removeLoadedData()
+
+        this._removeListeners()
+
+        this._dataVizExtn.deactivate()
+
+        this._dataVizExtn.unload()
+
+    }
+
     _invalidateViewables = (dbIds: number[], meshes: any[], viewableData: any, callback: Function) => {
         if (!dbIds || !meshes || !callback) {
             throw new Error(`Parameters of 'invalidateViewables' are mandatory`);

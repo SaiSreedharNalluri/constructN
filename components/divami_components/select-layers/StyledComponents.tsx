@@ -1,4 +1,4 @@
-import { TreeItem, TreeView } from "@mui/lab";
+import { TreeItem, TreeView } from "@mui/x-tree-view";
 import { Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import Image from "next/image";

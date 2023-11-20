@@ -1,5 +1,5 @@
 
-import { Box, Checkbox, FormControlLabel } from '@mui/material'
+import { Box } from '@mui/material'
 
 import HierarchyPicker from './hierarchy-picker'
 
@@ -47,13 +47,17 @@ export default function Progress2DToolbar({
 
     const [currentStructure, setCurrentStructure] = useState<any>(LightBoxInstance.viewerData().structure)
 
+    const [layers, setLayers] = useState<any>([])
+
     const [isCompare, setIsCompare] = useState<boolean>(false)
+
+    useEffect(() => _getLayers, [snapshotBase])
 
     const _getLayers = () => {
 
-        if(snapshotBase && snapshotBase.layers) return Object.keys(snapshotBase.layers)
+        if(snapshotBase && snapshotBase.layers) setLayers(Object.keys(snapshotBase.layers))
 
-        else return []
+        else setLayers([])
 
     }
 
@@ -81,7 +85,7 @@ export default function Progress2DToolbar({
 
             <div className='ml-2'></div>
 
-            {snapshotBase && <LayerFilter layers={_getLayers()} onChange={onLayersSelected} /> }
+            {snapshotBase && <LayerFilter layers={layers} onChange={onLayersSelected} /> }
 
             <div className='ml-2'></div>
 

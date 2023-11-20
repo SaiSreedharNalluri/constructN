@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
-import TextareaAutosize from "@mui/base/TextareaAutosize";
-import { styled } from "@mui/system";
 import { ErrorField } from "../custom-select/CustomSelect";
+import styled from "@emotion/styled";
+import { TextareaAutosize } from "@mui/material";
 
 interface PropTypes {
   id: any;

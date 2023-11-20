@@ -392,10 +392,10 @@ class ForgeInstance {
 
     public static get Instance() {
 
-        if (!this._instance) {
+        // if (!this._instance) {
 
             this._instance = new ForgeInstance()
-        }
+        // }
 
         return this._instance
     }

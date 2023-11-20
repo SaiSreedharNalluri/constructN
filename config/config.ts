@@ -8,7 +8,7 @@ export const MAPBOX = {
 
 export const API = {
 
-    BASE_URL: 'https://api.constructn.ai/api/v1',
+    BASE_URL: 'https://api.qa-us.constructn.ai/api/v1',
 
     LOCAL_URL: 'http://localhost:3001/api/v1',
 

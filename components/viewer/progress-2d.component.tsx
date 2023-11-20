@@ -85,20 +85,28 @@ function Progress2DComponent(props: _ViewerProps) {
 
         return (() => {
 
-            if(_dataVizUtils.current && _edit2dUtils.current) {
+            if (_dataVizUtils.current && _edit2dUtils.current) {
 
-                _dataVizUtils.current?.removeLoadedData()
+                try {
 
-                _dataVizUtils.current?._removeListeners()
+                    _dataVizUtils.current?.destroy()
 
-                _edit2dUtils.current?.destroy()
-                
-                _forge.current?.tearDown(true)
+                    _edit2dUtils.current?.destroy()
 
-                _forge.current?.finish()
+                    _forge.current?.forEachExtension(extn => {
 
+                        extn.deactivate()
+
+                        extn.unload()
+
+                    })
+
+                    _forge.current?.tearDown(true)
+
+                    _forge.current?.finish()
+
+                } catch (err) { console.log(err) }
             }
-
         })
 
     }, [])
@@ -113,18 +121,30 @@ function Progress2DComponent(props: _ViewerProps) {
 
         if (props.snapshot) {
 
+            _layers.current = props.snapshot.layers
+
             if(_currentSnapshot.current !== props.snapshot._id) {
 
+                setModelsData([])
+
                 if (LightBoxInstance.getViewTypes().indexOf('Plan Drawings') > -1) {
+
+                    const planDrawings = LightBoxInstance.viewerData()['modelData']['Plan Drawings']
     
-                    setModelsData(LightBoxInstance.viewerData()['modelData']['Plan Drawings'])
+                    if(planDrawings.length > 0 && modelsData && modelsData[0] && planDrawings[0].urn === modelsData[0].urn) {
+
+                        if (_model.current) loadLayers(props.snapshot.layers)
+
+                    } else {
+
+                        setModelsData(LightBoxInstance.viewerData()['modelData']['Plan Drawings'])
+
+                    }
                 }
     
                 _currentSnapshot.current = props.snapshot._id
     
             } else {
-
-                _layers.current = props.snapshot.layers
 
                 if (_model.current) loadLayers(props.snapshot.layers)
 

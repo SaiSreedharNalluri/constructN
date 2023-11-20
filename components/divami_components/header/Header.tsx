@@ -200,6 +200,7 @@ const Header: React.FC<any> = ({
     removeCookies("user");
     removeCookies('projectData');
     removeCookies('isProjectTimeZone');
+    localStorage.removeItem('uploaededData')
     // router.push("/login");
     router.push("/login");
   };

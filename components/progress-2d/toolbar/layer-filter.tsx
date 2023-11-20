@@ -1,6 +1,6 @@
 import { SelectChangeEvent, Box, Checkbox, ListItemText, MenuItem, OutlinedInput, Select, Typography } from '@mui/material'
 
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 
 import cameraIcon from '../../../public/divami_icons/cameraIcon.svg'
 
@@ -37,6 +37,8 @@ const LayerFilter: FC<any> = (props) => {
   const [selected, setSelected] = useState<string[]>(props.layers)
 
   const layers = props.layers
+
+  useEffect(() => setSelected(props.layers), [props.layers])
 
   const handleChange = (event: SelectChangeEvent<typeof selected>) => {
 

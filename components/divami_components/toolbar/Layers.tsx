@@ -6,7 +6,6 @@ import videoRecorderIcon from "../../../public/divami_icons/videoRecorderIcon.sv
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 
 import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
-import ClickAwayListener from "@mui/base/ClickAwayListener";
 import SelectLayer from "../select-layers/SelectLayer";
 import {
   CameraIcon,
@@ -18,6 +17,7 @@ import {
   ContainerDiv,
 } from "./ToolBarStyles";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { ClickAwayListener } from "@mui/material";
 export interface ShowImageDisplay {
   item1: boolean;
   item2: boolean;

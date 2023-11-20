@@ -1,8 +1,10 @@
+'use client'
+
 import { useEffect, useRef, useState } from 'react'
 
 import Script from 'next/script'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { toast } from 'react-toastify'
 
@@ -125,6 +127,8 @@ const Progress2DPage: React.FC<any> = () => {
 
     const router = useRouter()
 
+    const path = usePathname()
+
     const searchParams = useSearchParams()
 
     const searchParamsRef = useRef<URLSearchParams>()
@@ -165,11 +169,13 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _assetMap = useRef<{ [key: string]: { assets: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean } }>({})
 
+    const params = useParams()
+
     useEffect(() => {
 
         const structId = searchParams.get('structId')
 
-        const projId = searchParams.get('projectId')
+        const projId = params && params['projectId'] as string
 
         const snapshotId = searchParams.get('snapshotId')
 
@@ -189,7 +195,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                     setHierarchy(data.data.result)
 
-                    if(!structId) _changeStructure(data.data.result[0])
+                    if (!structId) _changeStructure(data.data.result[0])
 
                 }
 
@@ -351,7 +357,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                             snapshot.layers[Key][i].position = response.data
 
-                        } catch (e) { }
+                        } catch (e) { console.log(e) }
                     }
                 }
             }
@@ -526,6 +532,8 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _loadAssetsForCategory = (category: IAssetCategory) => {
 
+        console.log('Loading assets')
+
         setLoading(true)
 
         _assetMap.current = { 'NOT_STARTED': { ...NOT_STARTED_STAGE, assets: [], visible: true } }
@@ -573,9 +581,9 @@ const Progress2DPage: React.FC<any> = () => {
         }).catch(e => {
 
             console.log(e)
-            
+
             setLoading(false)
-            
+
         })
     }
 
@@ -810,19 +818,19 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 <div className='text-[16px] text-[#4a4a4a] w-fit flex-grow'>
 
-                                                    { selectedAsset ?
+                                                    {selectedAsset ?
 
-                                                        <Typography 
-                                                        
-                                                            fontFamily='Open Sans' 
-                                                            
+                                                        <Typography
+
+                                                            fontFamily='Open Sans'
+
                                                             variant='subtitle1'
-                                                            
+
                                                             className='select-none text-[18px]'>
-                                                                
-                                                                Asset Details
-                                                                
-                                                        </Typography> : _renderTitle() }
+
+                                                            Asset Details
+
+                                                        </Typography> : _renderTitle()}
 
                                                 </div>
 
@@ -838,24 +846,24 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             {!selectedAsset && selectedCategory && <div className='flex mt-6 px-3 justify-between'>
 
-                                                <Button 
-                                                
+                                                <Button
+
                                                     size='small' onClick={() => _toggleStageSelection(true)} variant='text'
-                                                    
+
                                                     className='select-none text-[11px] text-[#F1742E] cursor-pointer'>
-                                                        
-                                                        SELECT ALL
-                                                
+
+                                                    SELECT ALL
+
                                                 </Button>
 
-                                                <Button 
-                                                
+                                                <Button
+
                                                     size='small' onClick={() => _toggleStageSelection(false)} variant='text'
-                                                    
+
                                                     className='select-none text-[11px] text-[#F1742E] cursor-pointer'>
-                                                        
-                                                        CLEAR ALL
-                                                
+
+                                                    CLEAR ALL
+
                                                 </Button>
 
                                             </div>}
@@ -873,9 +881,9 @@ const Progress2DPage: React.FC<any> = () => {
                                                         _assetMap.current[stage._id!].visible = stage.visible
 
                                                         setStages([])
-                                                
+
                                                         publish('visibility-change', { assets: assets, stageMap: _assetMap.current })
-                                                
+
                                                         setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
 
                                                     }} />

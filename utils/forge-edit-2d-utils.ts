@@ -436,9 +436,13 @@ export class ForgeEdit2DUtils {
 
     destroy = () => {
 
+        this._edit2DLayer.clear()
+
         this._removeListeners()
 
         this._edit2DExtn.unregisterDefaultTools()
+
+        this._edit2DExtn.deactivate()
 
         this._edit2DExtn.unload()
 
