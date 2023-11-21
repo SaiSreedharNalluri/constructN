@@ -172,6 +172,8 @@ const Index: React.FC<IProps> = () => {
         
       }).catch((error)=>{
         CustomToast('Something went wrong. Please try again after some time.','error')
+        uploaderAction.setIsLoading(false)
+        uploaderAction.changeUploadinitiate(false)
       })
       
     }
@@ -187,6 +189,7 @@ const Index: React.FC<IProps> = () => {
             }
            }).catch((error)=>{
             uploaderAction.setIsLoading(false)
+            uploaderAction.changeUploadinitiate(false)
             CustomToast('Something went wrong. Please try again after some time.','error')
           })
         }else{
@@ -207,6 +210,7 @@ const Index: React.FC<IProps> = () => {
       }
     }).catch((error)=>{
       uploaderAction.setIsLoading(false)
+      uploaderAction.changeUploadinitiate(false)
       CustomToast('Something went wrong. Please try again after some time.','error')
     })
   }
