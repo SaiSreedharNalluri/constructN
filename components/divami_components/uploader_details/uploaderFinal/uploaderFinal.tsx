@@ -90,7 +90,7 @@ const UploaderFinal: React.FC = () => {
 
   return (
     <React.Fragment>
-      <div className="flex ml-[6px] mt-[15px] calc-w">
+      <div className="flex ml-[30px] mt-[15px] calc-w">
         <div className="flex flex-col w-[70%]">
               <div>
                 <CaptureUploadingStatus
@@ -115,19 +115,18 @@ const UploaderFinal: React.FC = () => {
         </div>
         { uploaderState.selectedJob && uploaderState.stepperSideFileList && (
         <div className="w-[30%] h-[280px]   ml-[30px] mt-2  overflow-x-hidden bg-[#FFECE2] rounded-3xl overflow-y-auto">
-          <div className=" mt-2 w-[60%] ml-[30px] font-open-sans italic font-normal text-base leading-5 text-black">
+          <div className=" mt-2 ml-[30px] font-open-sans italic font-normal text-base leading-5 text-black">
                       Uploading progress for{" "}
                       <span className="font-bold not-italic">
                       { gethierarchyPath(uploaderState.selectedJob?.structure)}
                       </span>{" "}
-                      Expected to complete in 10 mins
                     </div>
             {fileProgressList &&
               fileProgressList.length > 0 &&
               fileProgressList.map((fileProgressObj: fileData) => {
                 return (
                     <div key={fileProgressObj.fileName} className="flex w-full justify-between items-center" >
-                      <div className="  ml-[30px] mt-[20px] w-[25%] ">
+                      <div className="  ml-[30px] my-[20px] ">
                         <FileNameListing fileName={fileProgressObj.fileName} />
                       </div>
                       <div className="mt-[20px] w-[100px]">

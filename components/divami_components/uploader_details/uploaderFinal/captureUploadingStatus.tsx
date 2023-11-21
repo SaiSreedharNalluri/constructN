@@ -7,6 +7,9 @@ import { IStructure } from "../../../../models/IStructure";
 import { IJobs, JobStatus } from "../../../../models/IJobs";
 import { updateMultipleJobStatus } from "../../../../services/jobs";
 import router from "next/router";
+ import Image from "next/image";
+ import UnChecked from "../../../../public/divami_icons/unchecked.svg";
+ import Checked from "../../../../public/divami_icons/checked.svg";
 interface Iprops {
   isUploading: boolean;
   isUploadedOn: boolean;
@@ -14,6 +17,21 @@ interface Iprops {
   button: string;
   onRowClick?: (job: IJobs, index: any) => void;
 }
+const CustomCheckbox = ({ checked, onChange }:any) => {
+  return (
+    <div
+      className="custom-checkbox"
+      onClick={()=>onChange()}
+      style={{ cursor: 'pointer' }}
+    >
+      {checked ? (
+        <Image src={Checked} alt="Checked" />
+      ) : (
+        <Image src={UnChecked} alt="Unchecked" />
+      )}
+    </div>
+  );
+};
 const CaptureUploadingStatus: React.FC<Iprops> = ({
   isUploading,
   isUploadedOn,
@@ -39,7 +57,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
 
   const handleHeaderCheckboxChange = () => {
-    setValue(true);
+    // setValue(true);
     const allSelected = selectedCheckboxes.every((checkbox) => checkbox);
     const newSelection = Array(data.length).fill(!allSelected);
     const anySelected = newSelection.some((checkbox) => checkbox);
@@ -113,7 +131,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   return (
     <React.Fragment>
       <div
-        className={`w-full mt-2 ${
+        className={`w-full my-2 ${
           isUploadedOn ? "bg-white" : "bg-[#FFECE2] "
         } rounded-3xl h-[280px]  `}
         style={{ boxShadow: " 0px 4px 4px 0px #00000040" }}
@@ -127,19 +145,19 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                 } w-full`}
               >
                 <tr className="w-full flex justify-evenly border-b border-b-[#F1742E] mx-auto">
-                  <th className="pl-2 text-left w-[35%]">
+                  <th className="pl-[12px] py-[2px] text-left w-[35%]  flex items-center">
                     {isUploadedOn && (
-                      <input
-                        type="checkbox"
-                        checked={
-                          selectedCheckboxes.every((checkbox) => checkbox) &&
-                          value
-                        }
-                        onChange={handleHeaderCheckboxChange}
-                      />
+                <CustomCheckbox
+                checked={
+                  selectedCheckboxes.every((checkbox) => checkbox) &&
+                  value
+                }
+                onChange={handleHeaderCheckboxChange}
+               
+              />
                     )}
                     <span
-                      className="ml-[8px] text-jusitfy"
+
                       style={{
                         fontSize: "14px",
                         fontWeight: "600",
@@ -202,7 +220,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                 </tr>
               </thead>
               <tbody
-                className="bg-grey-light flex flex-col items-center  overflow-y-scroll w-full"
+                className="bg-grey-light flex flex-col items-center  overflow-y-auto w-full"
                 style={{ height: "150px" }}
               >
                 {data.map((job, index) => (
@@ -223,13 +241,12 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     onMouseEnter={() => setHoveredRowIndex(index)}
                     onMouseLeave={() => setHoveredRowIndex(null)}
                   >
-                    <td className="pl-2 w-[35%]">
+                    <td className="pl-2 w-[35%]  flex items-center">
                       {isUploadedOn && (
-                        <input
-                          type="checkbox"
-                          checked={selectedCheckboxes[index]}
-                          onChange={() => handleCheckboxChange(index)}
-                        />
+                             <CustomCheckbox
+                             checked={selectedCheckboxes[index]}
+                             onChange={() => handleCheckboxChange(index)}
+                           />
                       )}
                       <TooltipText
                         title={
@@ -248,6 +265,8 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                             marginLeft: "8px",
                             lineHeight: "20px",
                             color: "#101f4c",
+                            marginTop:"4px"
+
                           }}
                         >
                           <TruncatedString
@@ -259,7 +278,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                       </TooltipText>
                     </td>
                     <td
-                      className="pl-2 w-[18%]"
+                      className="pl-2 w-[18%] flex items-center"
                       style={{
                         fontSize: "14px",
                         fontWeight: "600",
@@ -267,6 +286,9 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                         fontFamily: "Open sans",
                         lineHeight: "20px",
                         color: "#101f4c",
+                        marginTop:"4px"
+                        
+
                       }}
                     >
                       {formatDate(
@@ -276,7 +298,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                       )}
                     </td>
                     <td
-                      className="pl-2 w-[18%]"
+                      className="pl-2 w-[18%] flex items-center"
                       style={{
                         fontSize: "14px",
                         fontWeight: "600",
@@ -284,6 +306,8 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                         fontFamily: "Open sans",
                         lineHeight: "20px",
                         color: "#101f4c",
+                        marginTop:"4px"
+
                       }}
                     >
                       {formatDate(job.updatedAt, true)}

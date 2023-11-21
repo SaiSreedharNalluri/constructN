@@ -132,10 +132,7 @@ const SectionList: React.FC<IProps>=({
         
         <div className="">
             <TreeViewContainer
-        style={{
-          overflow: "auto",
-          height: "200px"
-        }}
+     className="calc-h440 overflow-y-auto"
       >
               
           <UploaderStyledTreeView

@@ -14,11 +14,11 @@ const UploaderFooter: React.FC<any> = ({ }) => {
   const { state, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const containerStyle: React.CSSProperties = {
-   bottom: 0,
-    left: -16,
-    width: "100%",
-    backgroundColor: "transparent",
-    padding: "1rem",
+  //  bottom: 0,
+    // left: -16,
+    // width: "100%",
+    // backgroundColor: "transparent",
+    // padding: "1rem",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -39,8 +39,8 @@ const UploaderFooter: React.FC<any> = ({ }) => {
     justifyContent: "space-between",
   };
   const progressContainerStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
+    // display: "flex",
+    // alignItems: "center",
   };
   const linearProgressStyle: React.CSSProperties = {
     width: "50%", // Adjust the width as needed
@@ -70,7 +70,7 @@ const UploaderFooter: React.FC<any> = ({ }) => {
             <Button
               disabled={!state.isNextEnabled}
               onClick={() => uploaderAction.next()}
-              className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E]  hover:text-white`}>
+              className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E]  hover:text-white mr-[20px]`}>
 
               Continue
             </Button>
@@ -83,13 +83,13 @@ const UploaderFooter: React.FC<any> = ({ }) => {
             <Button
              disabled={ state.isReading}
               onClick={() => uploaderAction.goBack()}
-              className={`${backbuttonStyle} text-[#F1742E] border border-solid rounded-[4px]`}>
+              className={`${backbuttonStyle} text-[#F1742E] border border-solid rounded-[4px] `}>
               Go Back
             </Button>
             <Button
               disabled={!state.isNextEnabled || state.isReading}
               onClick={() => uploaderAction.next()}
-              className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white`}>
+              className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white mr-[20px]`}>
               Confirm Images
             </Button>
           </>
@@ -110,7 +110,7 @@ const UploaderFooter: React.FC<any> = ({ }) => {
             <Button
               disabled={!state.isNextEnabled}
               onClick={() => uploaderAction.next()}
-              className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white`}>
+              className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white mr-[20px]`}>
               Continue
             </Button>
           </>
@@ -128,7 +128,7 @@ const UploaderFooter: React.FC<any> = ({ }) => {
                 uploaderAction.changeUploadinitiate(true)
                 // uploaderAction.next()
               }}
-              className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white`}>
+              className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white mr-[20px]`}>
               Upload
             </Button>
           </>
@@ -144,7 +144,7 @@ const UploaderFooter: React.FC<any> = ({ }) => {
       <div>
       {state.step === UploaderStep.Details && (
         <div style={textContainerStyle}>
-          <p className="font-sans non-italic font-normal text-lg">
+          <p className="font-sans non-italic font-normal text-lg ml-[60px]">
             Contact us at{" "}
             <a href="mailto:support@constructn.ai" style={{ color: "#F1742E" }}>
               support@constructn.ai
@@ -154,7 +154,7 @@ const UploaderFooter: React.FC<any> = ({ }) => {
         </div>
       )}
       {state.step === UploaderStep.ChooseFiles && (
-    <div style={progressContainerStyle} className="flex justify-evenly  rounded-[10px] items-center bg-[#FFECE2] p-2  text-base">
+    <div style={progressContainerStyle} className="flex justify-evenly  rounded-[10px] items-center ml-[20px] bg-[#FFECE2] p-2  text-base">
           {
             state.isReading === true &&
             <div className="w-[300px] ">
