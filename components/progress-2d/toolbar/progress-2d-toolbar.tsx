@@ -81,7 +81,7 @@ export default function Progress2DToolbar({
 
         <Box sx={{ display: 'flex', flexWrap: 'wrap', borderRadius: '6px', margin: '0.5rem', padding: '0.5rem' }}>
 
-            <HierarchyPicker hierarchy={hierarchy} selected={currentStructure} onSelect={_onStructureChange} onClose={() => {}} />
+            { hierarchy && <HierarchyPicker hierarchy={hierarchy} selected={currentStructure} onSelect={_onStructureChange} onClose={() => {}} /> }
 
             <div className='ml-2'></div>
 

@@ -79,11 +79,11 @@ const fetchAssets = (structureId: string, category: string, date: string) => {
 
 }
 
-const createAsset = (asset: Partial<IAsset>) => {
+const createAsset = (asset: Partial<IAsset>, date: string) => {
 
     try {
 
-        return instance.post(`${API.PROGRESS_2D_URL}/assets`, asset)
+        return instance.post(`${API.PROGRESS_2D_URL}/assets?date=${date}`, asset)
 
     } catch (error) { throw error }
 
@@ -400,7 +400,7 @@ const Progress2DPage: React.FC<any> = () => {
 
             setLoading(true)
 
-            createAsset(assetBody).then(res => {
+            createAsset(assetBody, LightBoxInstance.getSnapshotBase().date).then(res => {
 
                 setShowProgress(false)
 
