@@ -265,38 +265,43 @@ const Index: React.FC<IProps> = () => {
   }
   return (
     
-    <div className=" w-full  h-full">
+    <div className="w-full h-full">
     <div className="w-full">
-        <Header
-          showBreadcrumbs
-          breadCrumbData={[]}
-          fromUsersList
-          showFirstElement={true}
-        />
+    <Header
+            showBreadcrumbs
+            breadCrumbData={[]}
+            fromUsersList
+            showFirstElement={true}
+          />
+     
     </div>
-    <Content>
+    <div className="flex  ">
       <SidePanelMenu onChangeData={() => {}} />
-      <div className="calc-w calc-h mx-2 p-1 overflow-y-auto flex-1">
-      <div>
-            {
-            uploaderState.stepperSideFileList &&(<UploaderStepper />)
-          }
-           </div>
-          {!uploaderState.isLoading?
-          <>
-         
-          <div className="flex-1 content-container max-h-[400px]">{renderCenterContent()}</div>
-       
-         
-        <div className="fixed m-4px  bg-transparent left-6 bottom-0 right-4  p-2 ">
-
-
-<UploaderFooter/>
-</div>
-          </>:<CustomLoader></CustomLoader>}
-
-        </div>
-    </Content>
+      <div className="flex flex-col calc-w  calc-h">
+        <header className="py-4 ">
+        <div>
+              {
+              uploaderState.stepperSideFileList &&(<UploaderStepper />)
+            }
+             </div>
+        </header>
+     {!uploaderState.isLoading?  
+  <div>
+        <main className=" overflow-y-auto calc-h253">
+          <div>
+          {renderCenterContent()}
+           
+          </div>
+        </main>
+  
+        <footer className="py-[4px] text-center">
+        <UploaderFooter/>
+        </footer></div>:<CustomLoader/>}
+      </div>
+    </div>
+    <div >
+            
+            </div>
   </div>
   );
 };

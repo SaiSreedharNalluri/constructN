@@ -200,7 +200,7 @@ const UploaderDateDetails: React.FC<any> = () => {
               uploaderState.date &&
               filteredJob &&
               filteredJob.length > 0 && (
-                <div className="mt-[40px]  w-fit bg-[#FFECE2] rounded-3xl flex justify-center" style={{boxShadow:"0px 4px 4px 0px rgba(0, 0, 0, 0.25)"}}>
+                <div className="my-[10px]  w-fit bg-[#FFECE2] rounded-3xl flex justify-center" style={{boxShadow:"0px 4px 4px 0px rgba(0, 0, 0, 0.25)"}}>
                   <div className="pl-[60px] pr-[60px] pt-[24px] pb-[24px]">
                   <h3 style={{fontSize:"16px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans",lineHeight:"20px",color:"#101f4c"}}>
                     We already have captures for this date{" "}

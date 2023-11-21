@@ -3,6 +3,7 @@ import React from "react";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 import { useAppContext } from "../../../state/appState/context";
 import { getPathToRoot } from "../../../utils/utils";
+import { TooltipText } from "../side-panel/SidePanelStyles";
 
 const UploaderReview: React.FC<any> = () => {
   const router = useRouter();
@@ -30,6 +31,17 @@ const UploaderReview: React.FC<any> = () => {
         month: "short",
       })} ${date.getDate()}`
     : "Date not available";
+    const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
+      let truncatedText = text;
+  
+      if (text.length > maxLength) {
+        const prefix = text.substring(0, maxLength - suffixLength);
+        const suffix = text.substring(text.length - suffixLength);
+        truncatedText = prefix + "..." + suffix;
+      }
+  
+      return truncatedText;
+    };
   return (
     <React.Fragment>
       <div className="flex justify-center items-center mt-[16px]">
@@ -42,7 +54,9 @@ const UploaderReview: React.FC<any> = () => {
                 </div>
                 <div>
                   <p className="text-black-500 mb-0">
-                    : {uploaderState.project?.name}
+                    :        <TooltipText title={uploaderState.project?.name && uploaderState.project?.name.length > 20 ?uploaderState.project?.name:""} placement="right">
+          <span className="text-[#101F4C]"><TruncatedString text={uploaderState.project?.name} maxLength={20} suffixLength={0}></TruncatedString></span> 
+          </TooltipText>
                   </p>
                 </div>
               </div>
@@ -52,8 +66,14 @@ const UploaderReview: React.FC<any> = () => {
                   <p className="mb-0 font-semibold">Level Chosen</p>
                 </div>
                 <div>
-                  <p className="text-black-500 mb-0">: { gethierarchyPath() }
-                  </p>
+                  <p className="text-black-500 mb-0">: {uploaderState.project?.name && uploaderState.project?.name.length > 20 ?uploaderState.project?.name:""} 
+                  <TooltipText title={gethierarchyPath() && gethierarchyPath().length > 20 ?gethierarchyPath():""} placement="right">      
+          <span className="text-[#101F4C]">
+            <TruncatedString text={gethierarchyPath()} maxLength={20} suffixLength={0}></TruncatedString></span> 
+        
+          </TooltipText>
+          </p>
+
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
