@@ -348,7 +348,10 @@ export const PotreeViewerUtils = () => {
             pointCloudLoaded = true;
             // console.log('Point Cloud Loaded');
         }
-
+        if(!loadEvents?.length){
+            pointCloudLoaded = true;
+        }
+        
         _currentMode = "3d";
         _isPointCloudLoaded = pointCloudLoaded;
         if (pointCloudDataArray.length == 0 || loadLayersOnDataLoadCompletion()) {
@@ -1828,6 +1831,11 @@ export const PotreeViewerUtils = () => {
         }
     }
 
+    const getSelectedLayers = (layers) => {
+        return Object.keys(layers).filter((key)=>(layers[key]))
+    }
+    
+
     const onKeyDown = (event) => {
         console.log("Potree Inside event listener: ", _currentMode, event, _viewer);
         // if (!this.isActive) {
@@ -1839,6 +1847,8 @@ export const PotreeViewerUtils = () => {
         if(_viewer && !_viewer.controls) {
             return;
         }
+        const selectedLayers = getSelectedLayers(_realityState)
+
         // console.log("Inside Key down listener: ", event);
         switch (event.key) {
             case "Escape":
@@ -1879,7 +1889,7 @@ export const PotreeViewerUtils = () => {
                         //     setPitch(viewer_2, 0.5);
                         // }
                     } else {
-                        if(!isCompareView()) {
+                        if(!isCompareView() && selectedLayers.some((it)=>(["360 Video"].includes(it)))) {
                             _sendContext = true;
                             nextPanoImage(_viewer);
                         }
