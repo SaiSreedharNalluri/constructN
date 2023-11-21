@@ -7,6 +7,24 @@ export const MAPBOX = {
 
 }
 
+export const SENTRY = {
+
+    DSN: '${SENTRY_DSN}',
+
+    LOG_INFO: '${SENTRY_LOG_INFO}',
+
+    LOG_ACTIVITY: '${SENTRY_LOG_ACTIVITY}',
+
+    LOG_ERROR: '${SENTRY_LOG_ERROR}',
+
+}
+
+export const INTERCOM = {
+
+    APP_ID: '${INTERCOM_APP_ID}',
+
+}
+
 export const API = {
 
     BASE_URL: "${APP_BASE_URL}",

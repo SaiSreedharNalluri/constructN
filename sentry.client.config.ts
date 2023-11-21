@@ -1,8 +1,9 @@
 import * as Sentry from "@sentry/nextjs";
+import { SENTRY } from "./config/config";
 
 
 Sentry.init({
-  dsn:`${process.env.NEXT_PUBLIC_SENTRY_DSN}`,
+  dsn:`${SENTRY.DSN}`,
   
   // Replay may only be enabled for the client-side
   integrations: [new Sentry.Integrations.Breadcrumbs({
