@@ -131,3 +131,15 @@ export type delimiterType = " / " | " > "
       return (fileSizeInBytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
     }
   }
+
+  export const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
+    let truncatedText = text;
+
+    if (text.length > maxLength) {
+      const prefix = text.substring(0, maxLength - suffixLength);
+      const suffix = text.substring(text.length - suffixLength);
+      truncatedText = prefix + "..." + suffix;
+    }
+
+    return truncatedText;
+  };

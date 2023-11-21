@@ -28,7 +28,8 @@ export interface utmLocation {
 type type = "point";
 export enum RawImageStatus {
   initiated = "Initiated",
-  uploaded = "Uploaded"
+  uploaded = "Uploaded",
+  failedTimedOut ='FailedTimedOut'
 }
 
 

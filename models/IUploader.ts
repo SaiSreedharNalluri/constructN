@@ -13,8 +13,6 @@ export enum UploadStatus {
     inProgress,
     success,
     failed
-
-    
 }
 
 export interface UploadProgress {

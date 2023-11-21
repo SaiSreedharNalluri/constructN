@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUploaderContext } from "../../../../state/uploaderState/context";
-import { getPathToRoot } from "../../../../utils/utils";
+import { TruncatedString, getPathToRoot } from "../../../../utils/utils";
 import { useAppContext } from "../../../../state/appState/context";
 import { TooltipText } from "../../side-panel/SidePanelStyles";
 import { IStructure } from "../../../../models/IStructure";
@@ -93,35 +93,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
 
     return "";
   };
-
-  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
-    let truncatedText = text;
-
-    if (text.length > maxLength) {
-      const prefix = text.substring(0, maxLength - suffixLength);
-      const suffix = text.substring(text.length - suffixLength);
-      truncatedText = prefix + "..." + suffix;
-    }
-
-    return truncatedText;
-  };
-
-  const stubToUpdateStatus = () => {
-    let pendingUploadJobs = uploaderState.pendingUploadJobs
-    const jobDetails = pendingUploadJobs.map((job) => ({
-        status: JobStatus.uploaded,
-        jobId: job._id,
-      }));
-
-      updateMultipleJobStatus(router.query.projectId as string, jobDetails).then(
-        (response) => {
-          if (response.data.success === true) {
-            console.log("console check sucess", response.data.result);
-          }
-        }
-      );
-  }
-
+  
   const getSelectedStructures = () => {
     const selectedPendingProcess = data.filter(
       (_, index) => selectedCheckboxes[index]
@@ -239,6 +211,10 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     onClick={() => {
                       if (isUploading && onRowClick) {
                         onRowClick(job as IJobs, index);
+                        if(!uploaderState.stepperSideFileList)
+                        {
+                          uploaderAction.setStepperSideFilesList(true)
+                        }
                       }
                     }}
                     className={`cursor-${isUploading ? "pointer" : "default"} ${
@@ -278,7 +254,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                             text={gethierarchyPath(job.structure)}
                             maxLength={40}
                             suffixLength={40}
-                          ></TruncatedString>
+                          />
                         </span>
                       </TooltipText>
                     </td>
@@ -325,6 +301,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
               onClick={() => {
                 if (isUploading) {
                     // stubToUpdateStatus(); Only for clearing testing and  debug data
+                  uploaderAction.setStepperSideFilesList(true)
                   uploaderAction.startNewUpload();
                 } else {
                   getSelectedStructures();
