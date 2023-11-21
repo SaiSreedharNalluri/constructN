@@ -72,6 +72,13 @@
 .calc-h112 {
   height: calc(100vh - 112px);
 }
+
+.calc-h440 {
+  height: calc(100vh - 440px);
+}
+.calc-h253 {
+  height: calc(100vh - 253px);
+}
 .group:hover .text-hover-color {
   color: #FF843F;
 }
