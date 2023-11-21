@@ -283,7 +283,7 @@ const Index: React.FC<IProps> = () => {
       <SidePanelMenu onChangeData={() => {}} />
       <div className="calc-w calc-h mx-2 p-1 overflow-y-auto flex-1">
       <div>
-            {
+          {
             uploaderState.stepperSideFileList &&(<UploaderStepper />)
           }
            </div>

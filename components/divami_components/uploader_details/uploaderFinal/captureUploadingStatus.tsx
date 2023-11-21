@@ -211,6 +211,10 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     onClick={() => {
                       if (isUploading && onRowClick) {
                         onRowClick(job as IJobs, index);
+                        if(!uploaderState.stepperSideFileList)
+                        {
+                          uploaderAction.setStepperSideFilesList(true)
+                        }
                       }
                     }}
                     className={`cursor-${isUploading ? "pointer" : "default"} ${
@@ -297,6 +301,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
               onClick={() => {
                 if (isUploading) {
                     // stubToUpdateStatus(); Only for clearing testing and  debug data
+                  uploaderAction.setStepperSideFilesList(true)
                   uploaderAction.startNewUpload();
                 } else {
                   getSelectedStructures();
