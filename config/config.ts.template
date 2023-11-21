@@ -9,19 +9,19 @@ export const MAPBOX = {
 
 export const SENTRY = {
 
-    DSN: '${SENTRY_DSN}',
+    DSN: '${APP_SENTRY_DSN}',
 
-    LOG_INFO: '${SENTRY_LOG_INFO}',
+    LOG_INFO: '${APP_SENTRY_LOG_INFO}',
 
-    LOG_ACTIVITY: '${SENTRY_LOG_ACTIVITY}',
+    LOG_ACTIVITY: '${APP_SENTRY_LOG_ACTIVITY}',
 
-    LOG_ERROR: '${SENTRY_LOG_ERROR}',
+    LOG_ERROR: '${APP_SENTRY_LOG_ERROR}',
 
 }
 
 export const INTERCOM = {
 
-    APP_ID: '${INTERCOM_APP_ID}',
+    APP_ID: '${APP_INTERCOM_ID}',
 
 }
 
