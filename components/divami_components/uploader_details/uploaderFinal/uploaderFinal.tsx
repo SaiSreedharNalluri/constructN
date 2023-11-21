@@ -8,8 +8,6 @@ import { IStructure } from "../../../../models/IStructure";
 import { getCaptureIdFromModelOrString, getPathToRoot } from "../../../../utils/utils";
 import { useAppContext } from "../../../../state/appState/context";
 import { UploadStatus } from "../../../../models/IUploader";
-import { RawImageStatus } from "../../../../models/IRawImages";
-
 interface fileData {
   status: UploadStatus;
   fileName: string;
@@ -33,7 +31,20 @@ const UploaderFinal: React.FC = () => {
       }
     }
   }, [uploaderState.inProgressWorkers])
+    const getFileStatus=(rawImageStatus:string)=>{
 
+      switch(rawImageStatus)
+      {
+        case 'Uploaded':
+        return UploadStatus.success
+        case 'Initiated':
+          return UploadStatus.inProgress
+        case 'FailedTimedOut':
+          return UploadStatus.failed 
+        default:
+            return UploadStatus.inProgress; 
+      }
+    }
   useEffect(() => {
     if(uploaderState.selectedJob) {
       let selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])
@@ -50,7 +61,7 @@ const UploaderFinal: React.FC = () => {
         let fileList: fileData[] = rawImages?.map((e) => {
           return {
             fileName: e.filename,
-            status: e.status === RawImageStatus.uploaded ? UploadStatus.success : UploadStatus.inProgress
+            status: getFileStatus(e?.status)
           }
         })
         setFileProgressList(fileList)
@@ -102,7 +113,7 @@ const UploaderFinal: React.FC = () => {
               </div>
          
         </div>
-        { uploaderState.selectedJob && (
+        { uploaderState.selectedJob && uploaderState.stepperSideFileList && (
         <div className="w-[30%] h-[280px]   ml-[30px] mt-2  overflow-x-hidden bg-[#FFECE2] rounded-3xl overflow-y-auto">
           <div className=" mt-2 ml-[30px] font-open-sans italic font-normal text-base leading-5 text-black">
                       Uploading progress for{" "}

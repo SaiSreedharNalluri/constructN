@@ -83,7 +83,7 @@ export const initialUploaderState: UploaderState = {
     showMessage: true,
     isLoading: false,
     extractedFileValue:[],
-    stepperSideFileList:true,
+    stepperSideFileList:false,
     updateJobs: false,
     isNextEnabled: false,
     isAppendingCapture: false,

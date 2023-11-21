@@ -172,6 +172,8 @@ const Index: React.FC<IProps> = () => {
         
       }).catch((error)=>{
         CustomToast('Something went wrong. Please try again after some time.','error')
+        uploaderAction.setIsLoading(false)
+        uploaderAction.changeUploadinitiate(false)
       })
       
     }
@@ -187,6 +189,7 @@ const Index: React.FC<IProps> = () => {
             }
            }).catch((error)=>{
             uploaderAction.setIsLoading(false)
+            uploaderAction.changeUploadinitiate(false)
             CustomToast('Something went wrong. Please try again after some time.','error')
           })
         }else{
@@ -207,6 +210,7 @@ const Index: React.FC<IProps> = () => {
       }
     }).catch((error)=>{
       uploaderAction.setIsLoading(false)
+      uploaderAction.changeUploadinitiate(false)
       CustomToast('Something went wrong. Please try again after some time.','error')
     })
   }
@@ -256,11 +260,12 @@ const Index: React.FC<IProps> = () => {
         })
       }
   }
-  const onMessageFromWorker = (event: MessageEvent<{filesList: IUploadFile<RawImage>[], completedFileList: IUploadFile<RawImage>[]}>) => {
+  const onMessageFromWorker = function(this:Worker,event: MessageEvent<{filesList: IUploadFile<RawImage>[], completedFileList: IUploadFile<RawImage>[]}>){
     uploaderAction.updateWorkerStatus(event.data.filesList)
     if(event?.data?.filesList?.length != undefined && event?.data?.completedFileList?.length !=undefined && (event?.data?.filesList?.length === event?.data?.completedFileList?.length))
     {
       updateTheJobStatus(event?.data?.filesList[0]?.uploadObject?.capture as string)
+      this.terminate()
     }
   }
   return (
