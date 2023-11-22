@@ -283,7 +283,7 @@ const Index: React.FC<IProps> = () => {
     <div className="flex  ">
       <SidePanelMenu onChangeData={() => {}} />
       <div className="flex flex-col calc-w  calc-h">
-        <header className="py-4 ">
+        <header>
         <div>
               {
               uploaderState.stepperSideFileList &&(<UploaderStepper />)
@@ -292,7 +292,7 @@ const Index: React.FC<IProps> = () => {
         </header>
      {!uploaderState.isLoading?  
   <div>
-        <main className=" overflow-y-auto calc-h253">
+        <main className={`overflow-y-auto  ${ uploaderState.stepperSideFileList?`calc-h253`:`calc-h`} `}>
           <div>
           {renderCenterContent()}
            
