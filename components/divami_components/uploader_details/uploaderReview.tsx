@@ -4,6 +4,7 @@ import { useUploaderContext } from "../../../state/uploaderState/context";
 import { useAppContext } from "../../../state/appState/context";
 import { TruncatedString,getPathToRoot } from "../../../utils/utils";
 import { TooltipText } from "../side-panel/SidePanelStyles";
+import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 const UploaderReview: React.FC<any> = () => {
   const router = useRouter();
   const { state: appState, appContextAction } = useAppContext();
@@ -25,11 +26,7 @@ const UploaderReview: React.FC<any> = () => {
     return ""
   }
 
-  const formattedDate = date
-    ? `${date.getFullYear()} ${date.toLocaleString("default", {
-        month: "short",
-      })} ${date.getDate()}`
-    : "Date not available";
+ 
   return (
     <React.Fragment>
       <div className="flex justify-center items-center mt-[16px]">
@@ -69,7 +66,7 @@ const UploaderReview: React.FC<any> = () => {
                   <p className="mb-0 font-semibold">Date</p>
                 </div>
                 <div>
-                  <p className="text-black-500 mb-0">: {formattedDate}</p>
+                  <p className="text-black-500 mb-0">: {setTheFormatedDate(date)}</p>
                 </div>
               </div>
 
