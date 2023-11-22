@@ -101,18 +101,18 @@ const UploaderFinal: React.FC = () => {
                   onRowClick={handleRowClick}
                 />
               </div> 
-
               <div>
-                <CaptureUploadingStatus
+                {
+                  uploaderState?.pendingProcessJobs?.length> 0 && <CaptureUploadingStatus
                   isUploadedOn={true}
                   isUploading={false}
                   buttonName="Process"
                   button=""
                   onRowClick={handleRowClick}
                 />
-              </div>
-         
-        </div>
+                }
+               </div>
+         </div>
         { uploaderState.selectedJob && uploaderState.stepperSideFileList && (
         <div className="w-[30%] h-[280px]   ml-[30px] mt-2  overflow-x-hidden bg-[#FFECE2] rounded-3xl overflow-y-auto">
           <div className=" mt-2 ml-[30px] font-open-sans italic font-normal text-base leading-5 text-black">
