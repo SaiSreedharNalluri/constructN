@@ -22,8 +22,8 @@ const UploaderStepper : React.FC<IProps> =() => {
   });
   const CustomStepIcon= ({ active, completed, icon }:any) => { 
     const iconStyle= {
-      width: "32px",
-      height: "32px",
+      width: "9px",
+      height: "19px",
       fontSize: "14px",
       color: active ? "#32353A" : completed ? "#fff" : "#D9D9D9", 
       backgroundColor: active ? "white" : completed ? "#FF843F" : "white", 
@@ -34,7 +34,9 @@ const UploaderStepper : React.FC<IProps> =() => {
       justifyContent: "center",
       fontWeight:"400",
       lineHeight:"19.07px",
-      fontFamily:"Open Sans"
+      fontFamily:"Open Sans",
+      boxShadow:"0px 3px 8px 0px #00000033",
+      padding:"10px"
     };
     return (
       <div style={iconStyle}>{icon}</div>
@@ -45,16 +47,23 @@ const UploaderStepper : React.FC<IProps> =() => {
     active: {
       "& $line": {
         borderColor: "#32353A",
+        position:"relative",
+        top:"4px"
       },
     },
     completed: {
       "& $line": {
         borderColor: "#FF843F", 
+        position:"relative",
+        top:"4px"
       },
     },
     line: {
       borderColor: "#D9D9D9", 
-      borderTopWidth: 2 ,
+      width:"80px",
+      position:"relative",
+      top:"4px",
+      borderBottomWidth: 1.5 ,
       borderRadius: 1,
     },
   })(StepConnector);
@@ -65,7 +74,7 @@ const UploaderStepper : React.FC<IProps> =() => {
 
         <div style={{ margin: "4px 0", fontWeight: "600", fontSize: "22px",fontFamily:"Open Sans",fontStyle:"normal" }}>Upload</div>
     <ThemeProvider theme={theme}>
-      <Stepper activeStep={state.step} alternativeLabel style={{ maxWidth: "800px",margin: "0 auto", }} connector={<ColoredStepConnector />}>
+      <Stepper activeStep={state.step} alternativeLabel style={{ width: "650px",margin: "0 auto", }} connector={<ColoredStepConnector />}>
         {state.stepNames?.map((label:any, index:any) => (
           <Step key={label} >
             <StepLabel  StepIconComponent={CustomStepIcon}>
