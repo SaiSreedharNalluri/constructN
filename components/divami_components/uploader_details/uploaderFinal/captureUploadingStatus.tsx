@@ -10,6 +10,8 @@ import router from "next/router";
  import Image from "next/image";
  import UnChecked from "../../../../public/divami_icons/unchecked.svg";
  import Checked from "../../../../public/divami_icons/checked.svg";
+import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
+import { ICapture } from "../../../../models/ICapture";
 interface Iprops {
   isUploading: boolean;
   isUploadedOn: boolean;
@@ -88,29 +90,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
       return "";
     }
   };
-
-  const formatDate = (dateString: any, includeTime?: boolean) => {
-    if (typeof dateString === "string") {
-      const date = new Date(dateString);
-
-      const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      };
-
-      if (includeTime) {
-        options.hour = "numeric";
-        options.minute = "numeric";
-      }
-
-      const formattedDate = date.toLocaleDateString("en-US", options);
-
-      return includeTime ? formattedDate.replace(",", "") : formattedDate;
-    }
-
-    return "";
-  };
   
   const getSelectedStructures = () => {
     const selectedPendingProcess = data.filter(
@@ -137,15 +116,24 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
         style={{ boxShadow: " 0px 4px 4px 0px #00000040" }}
       >
         <div className="relative top-[20px]  w-[90%] mx-auto  h-[195px] ">
-          <div className="overflow-x-hidden h-full mt-[8px]">
-            <table className="w-full">
+          <div className="overflow-x-hidden h-full mt-[8px]" style={{
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        fontStyle: "normal",
+                        fontFamily: "Open sans",
+                        marginLeft: "8px",
+                        lineHeight: "20px",
+                        color: "#101f4c",
+          }}>
+            {
+              data.length > 0 ?(<table className="w-full">
               <thead
                 className={`text-jusitfy sticky top-0 ${
                   isUploadedOn ? "bg-white" : "bg-[#FFECE2]"
                 } w-full`}
               >
                 <tr className="w-full flex justify-evenly border-b border-b-[#F1742E] mx-auto">
-                  <th className="pl-[12px] py-[2px] text-left w-[35%]  flex items-center">
+                  <th className="ml-[8px] py-[2px] text-left w-[35%]  flex items-center">
                     {isUploadedOn && (
                 <CustomCheckbox
                 checked={
@@ -153,50 +141,19 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                   value
                 }
                 onChange={handleHeaderCheckboxChange}
-               
-              />
+               />
                     )}
-                    <span
-
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        fontStyle: "normal",
-                        fontFamily: "Open sans",
-                        marginLeft: "8px",
-                        lineHeight: "20px",
-                        color: "#101f4c",
-                      }}
-                    >
+                    <span className="ml-[8px]">
                       Level
                     </span>
                   </th>
                   <th
-                    className="pl-2 text-left w-[18%]"
-                    style={{
-                      fontSize: "14px",
-                      fontWeight: "600",
-                      fontStyle: "normal",
-                      fontFamily: "Open sans",
-                      marginLeft: "8px",
-                      lineHeight: "20px",
-                      color: "#101f4c",
-                    }}
-                  >
+                    className="pl-2 text-left w-[18%]">
                     Capture Date
                   </th>
                   {isUploading && (
                     <th
                       className="pl-2 text-left w-[18%]"
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        fontStyle: "normal",
-                        fontFamily: "Open sans",
-                        marginLeft: "8px",
-                        lineHeight: "20px",
-                        color: "#101f4c",
-                      }}
                     >
                       Uploading
                     </th>
@@ -204,15 +161,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                   {isUploadedOn && (
                     <th
                       className="pl-2 text-left w-[18%]"
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        fontStyle: "normal",
-                        fontFamily: "Open sans",
-                        marginLeft: "8px",
-                        lineHeight: "20px",
-                        color: "#101f4c",
-                      }}
                     >
                       Uploaded On
                     </th>
@@ -237,7 +185,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     }}
                     className={`cursor-${isUploading ? "pointer" : "default"} ${
                       index === hoveredRowIndex ? "bg-gray-200" : ""
-                    } flex justify-evenly w-full mb-4 mx-auto`}
+                    } flex justify-evenly w-full my-[4px] mx-auto`}
                     onMouseEnter={() => setHoveredRowIndex(index)}
                     onMouseLeave={() => setHoveredRowIndex(null)}
                   >
@@ -257,17 +205,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                         placement="right"
                       >
                         <span
-                          style={{
-                            fontSize: "14px",
-                            fontWeight: "600",
-                            fontStyle: "normal",
-                            fontFamily: "Open sans",
-                            marginLeft: "8px",
-                            lineHeight: "20px",
-                            color: "#101f4c",
-                            marginTop:"4px"
-
-                          }}
+                        className="ml-[8px]"
                         >
                           <TruncatedString
                             text={gethierarchyPath(job.structure)}
@@ -279,44 +217,27 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     </td>
                     <td
                       className="pl-2 w-[18%] flex items-center"
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        fontStyle: "normal",
-                        fontFamily: "Open sans",
-                        lineHeight: "20px",
-                        color: "#101f4c",
-                        marginTop:"4px"
-                        
-
-                      }}
                     >
-                      {formatDate(
-                        job.captures && job.captures.length > 0
-                          ? (job.captures[0] as any)?.captureDateTime
-                          : ""
-                      )}
+                     {
+                      job.captures && job.captures.length > 0 && typeof job.captures[0] != 'string' ? (
+                        <div>
+                          {setTheFormatedDate((job.captures[0] as ICapture).captureDateTime)}
+                        </div>
+                      ) : ('-')
+                    }
                     </td>
                     <td
                       className="pl-2 w-[18%] flex items-center"
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        fontStyle: "normal",
-                        fontFamily: "Open sans",
-                        lineHeight: "20px",
-                        color: "#101f4c",
-                        marginTop:"4px"
-
-                      }}
                     >
-                      {formatDate(job.updatedAt, true)}
+                      {getTheProjectDateAndTime(job.updatedAt)}
                     </td>
                   </tr>
                 ))}
               </tbody>
-            </table>
-          </div>
+            </table>):(<p className="h-full flex justify-center items-center">No jobs in progress! 
+                Ready to begin a new upload ? Click the button below to get started.</p>)
+            }
+            </div>
           <div className="text-center mt-[10px] w-[90%]">
             <button
               className={`py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white ${

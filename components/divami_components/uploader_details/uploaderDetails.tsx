@@ -16,6 +16,8 @@ import { useAppContext } from "../../../state/appState/context";
 import { getProjectDetails } from "../../../services/project";
 import { IProjects } from "../../../models/IProjects";
 import { IJobs } from "../../../models/IJobs";
+import { ICapture } from "../../../models/ICapture";
+import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 
 const UploaderDateDetails: React.FC<any> = () => {
   const { state: appState, appContextAction } = useAppContext();
@@ -135,20 +137,6 @@ const UploaderDateDetails: React.FC<any> = () => {
     uploaderState.structure,
     uploaderState.date,
   ]);
-
-  const formatDate = (dateString: any) => {
-    if (typeof dateString === "string") {
-      const date = new Date(dateString);
-
-      const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      };
-      const formattedDate = date.toLocaleDateString("en-US", options);
-      return formattedDate;
-    }
-  };
   return (
     <div className="ml-[60px]">
       {uploaderState.showMessage && (
@@ -232,14 +220,16 @@ const UploaderDateDetails: React.FC<any> = () => {
                               }
                             }>
                               <td className="p-1 ">
-                                {formatDate(
-                                  job.captures && job.captures.length > 0
-                                    ? (job.captures[0] as any)?.captureDateTime
-                                    : ""
-                                )}
+                              {
+                                job.captures && job.captures.length > 0 && typeof job.captures[0] != 'string' ? (
+                                  <div>
+                                    {setTheFormatedDate((job.captures[0] as ICapture).captureDateTime)}
+                                  </div>
+                                ) : ('-')
+                              }
                               </td>
                               <td className="p-1 ">
-                                {new Date(job.updatedAt).toLocaleString()}
+                              {getTheProjectDateAndTime(job.updatedAt)}
                               </td>
                               <td
                                 className="p-1"
