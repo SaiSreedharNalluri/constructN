@@ -416,5 +416,28 @@ export const setTheFormatedDate = (utcTime) => {
     } else {
         formatedTime = moment(utcTime)?.local();
     }
-    return formatedTime?.format("DD MMM YYYY");
+    return formatedTime?.format("MMM DD YYYY");
+};
+
+export const getTheProjectDateAndTime = (utcTime) => {
+    const projectInfo = getCookie("projectData");
+    let formatedTime;
+    let projectObj = {};
+    if (projectInfo !== undefined && projectInfo !== null) {
+        projectObj = JSON.parse(projectInfo)?.find(
+        (each) =>
+            each?._id === new URL(window?.location?.href)?.pathname?.split("/")[2]
+        );
+    }
+    if (
+        getCookie("isProjectTimeZone") &&
+        projectObj !== undefined &&
+        projectObj !== null &&
+        projectObj?.timeZone
+    ) {
+        formatedTime = moment(utcTime).tz(projectObj?.timeZone);
+    } else {
+        formatedTime = moment(utcTime)?.local();
+    }
+    return formatedTime?.format("MMM DD YYYY ,hh:mm A");
 };

@@ -16,6 +16,8 @@ import { useAppContext } from "../../../state/appState/context";
 import { getProjectDetails } from "../../../services/project";
 import { IProjects } from "../../../models/IProjects";
 import { IJobs } from "../../../models/IJobs";
+import { ICapture } from "../../../models/ICapture";
+import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 
 const UploaderDateDetails: React.FC<any> = () => {
   const { state: appState, appContextAction } = useAppContext();
@@ -135,20 +137,6 @@ const UploaderDateDetails: React.FC<any> = () => {
     uploaderState.structure,
     uploaderState.date,
   ]);
-
-  const formatDate = (dateString: any) => {
-    if (typeof dateString === "string") {
-      const date = new Date(dateString);
-
-      const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      };
-      const formattedDate = date.toLocaleDateString("en-US", options);
-      return formattedDate;
-    }
-  };
   return (
     <div className="ml-[60px]">
       {uploaderState.showMessage && (
@@ -230,15 +218,17 @@ const UploaderDateDetails: React.FC<any> = () => {
                                 uploaderAction.next()
                               }
                             }>
-                              <td>
-                                {formatDate(
-                                  job.captures && job.captures.length > 0
-                                    ? (job.captures[0] as any)?.captureDateTime
-                                    : ""
-                                )}
+                              <td className="p-1 ">
+                              {
+                                job.captures && job.captures.length > 0 && typeof job.captures[0] != 'string' ? (
+                                  <div>
+                                    {setTheFormatedDate((job.captures[0] as ICapture).captureDateTime)}
+                                  </div>
+                                ) : ('-')
+                              }
                               </td>
-                              <td>
-                                {new Date(job.updatedAt).toLocaleString()}
+                              <td className="p-1 ">
+                              {getTheProjectDateAndTime(job.updatedAt)}
                               </td>
                               <td
                                 style={{
