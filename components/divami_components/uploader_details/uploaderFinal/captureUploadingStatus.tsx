@@ -10,6 +10,8 @@ import router from "next/router";
  import Image from "next/image";
  import UnChecked from "../../../../public/divami_icons/unchecked.svg";
  import Checked from "../../../../public/divami_icons/checked.svg";
+import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
+import { ICapture } from "../../../../models/ICapture";
 interface Iprops {
   isUploading: boolean;
   isUploadedOn: boolean;
@@ -87,29 +89,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
     } else {
       return "";
     }
-  };
-
-  const formatDate = (dateString: any, includeTime?: boolean) => {
-    if (typeof dateString === "string") {
-      const date = new Date(dateString);
-
-      const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      };
-
-      if (includeTime) {
-        options.hour = "numeric";
-        options.minute = "numeric";
-      }
-
-      const formattedDate = date.toLocaleDateString("en-US", options);
-
-      return includeTime ? formattedDate.replace(",", "") : formattedDate;
-    }
-
-    return "";
   };
   
   const getSelectedStructures = () => {
@@ -239,22 +218,25 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     <td
                       className="pl-2 w-[18%] flex items-center"
                     >
-                      {formatDate(
-                        job.captures && job.captures.length > 0
-                          ? (job.captures[0] as any)?.captureDateTime
-                          : ""
-                      )}
+                     {
+                      job.captures && job.captures.length > 0 && typeof job.captures[0] != 'string' ? (
+                        <div>
+                          {setTheFormatedDate((job.captures[0] as ICapture).captureDateTime)}
+                        </div>
+                      ) : ('-')
+                    }
                     </td>
                     <td
                       className="pl-2 w-[18%] flex items-center"
                     >
-                      {formatDate(job.updatedAt, true)}
+                      {getTheProjectDateAndTime(job.updatedAt)}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>):(<p className="h-full flex justify-center items-center">No jobs in progress! 
-                Ready to begin a new upload ? Click the button below to get started.</p>)}
+                Ready to begin a new upload ? Click the button below to get started.</p>)
+            }
             </div>
           <div className="text-center mt-[10px] w-[90%]">
             <button
