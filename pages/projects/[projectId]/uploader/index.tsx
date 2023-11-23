@@ -273,11 +273,16 @@ const Index: React.FC<IProps> = () => {
     event.preventDefault();
      event.returnValue = true;
   };
-  
+  const popStateHandler =()=>{
+    history.pushState(null, '', document.URL); 
+  }
   useEffect(()=>{
     window.addEventListener("beforeunload", beforeUnloadHandler);
+    history.pushState(null, '', document.URL); 
+    window.addEventListener('popstate',popStateHandler)
     return () => { 
     window.removeEventListener('beforeunload',beforeUnloadHandler)
+    window.removeEventListener('popstate',popStateHandler)
     };
   },[typeof window !== "undefined"])
  return (
