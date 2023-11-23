@@ -1889,7 +1889,7 @@ export const PotreeViewerUtils = () => {
                         //     setPitch(viewer_2, 0.5);
                         // }
                     } else {
-                        if(!isCompareView() && selectedLayers.some((it)=>(["360 Video"].includes(it)))) {
+                        if(!isCompareView() && selectedLayers.includes("360 Video")) {
                             _sendContext = true;
                             nextPanoImage(_viewer);
                         }
