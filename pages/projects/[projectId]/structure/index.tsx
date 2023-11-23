@@ -1396,7 +1396,7 @@ const Index: React.FC<IProps> = () => {
       editObj,
       issueObj?._id as string
     )
-      .then((response) => {
+      .then((response:any) => {
         if (response.success === true) {
           CustomToast("issue information updated successfully","success");
           const index = issueFilterList.findIndex(
@@ -1406,7 +1406,7 @@ const Index: React.FC<IProps> = () => {
           setIssueList(issueFilterList);
         }
       })
-      .catch((error) => {
+      .catch((error:any) => {
         console.log("error", error);
       });
   };
