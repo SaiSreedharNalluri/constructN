@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-
-import cameraIcon from "../../../public/divami_icons/cameraIcon.svg";
-import hexagonIcon from "../../../public/divami_icons/hexagonIcon.svg";
-import videoRecorderIcon from "../../../public/divami_icons/videoRecorderIcon.svg";
-import DroneImage from "../../../public/divami_icons/DroneImage.svg";
+import capture360Image from "../../../public/divami_icons/capture360Image.svg";
+import PhoneImageNewCapture from "../../../public/divami_icons/PhoneImageNewCapture.svg";
+import CaptureVideoWalk from "../../../public/divami_icons/CaptureVideoWalk.svg";
+import DroneImageNew from "../../../public/divami_icons/DroneImageNew.svg";
 
 import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
 import ClickAwayListener from "@mui/base/ClickAwayListener";
@@ -31,25 +30,25 @@ const LayerIcons = ({iconsList}:any)=>{
           if (label === "Phone Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={hexagonIcon} alt="Arrow" />
+                <CameraIcon src={PhoneImageNewCapture} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           } else if (label === "360 Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={cameraIcon} alt="Arrow" />
+                <CameraIcon src={capture360Image} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           } else if (label === "360 Video") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={videoRecorderIcon} alt="Arrow" />
+                <CameraIcon src={CaptureVideoWalk} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           } else if (label === "Drone Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={DroneImage} alt="Arrow" />
+                <CameraIcon src={DroneImageNew} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           }
