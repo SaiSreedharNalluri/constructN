@@ -279,7 +279,28 @@ const Index: React.FC<IProps> = () => {
       this.terminate()
     }
   }
-  return (
+
+  const beforeUnloadHandler = (event:BeforeUnloadEvent) => {
+    event.preventDefault();
+     event.returnValue = true;
+  };
+  const popStateHandler =()=>{
+    alert('You have unsaved changes.you may lose your data')
+    history.pushState(null, '', document.URL); 
+  }
+  useEffect(()=>{
+    if(uploaderState.step != UploaderStep.Upload)
+    {
+      window.addEventListener("beforeunload", beforeUnloadHandler);
+      history.pushState(null, '', document.URL); 
+      window.addEventListener('popstate',popStateHandler)
+    }
+   return () => { 
+    window.removeEventListener('beforeunload',beforeUnloadHandler)
+    window.removeEventListener('popstate',popStateHandler)
+    };
+  },[typeof window !== "undefined",uploaderState.step])
+ return (
     
     <div className="w-full h-full">
     <div className="w-full">
