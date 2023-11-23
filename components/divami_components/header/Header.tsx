@@ -70,6 +70,9 @@ import NotificationDrawer from "../custom-drawer/notification-drawer";
 import { truncate } from "fs/promises";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import * as Sentry from "@sentry/nextjs";
+import { hasCommonElement } from "../../../services/axiosInstance";
+import { useUploaderContext } from "../../../state/uploaderState/context";
+import { UploaderStep } from "../../../state/uploaderState/state";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -116,7 +119,7 @@ const Header: React.FC<any> = ({
   const [openProfile, setOpenProfile] = useState(false);
   const [projectName,setProjectName]=useState('')
   const [notificationCount, setNotificationCount] = useState(0);
-
+  const { state: uploaderState } = useUploaderContext();
   useEffect(()=>{
     if(router.isReady && router?.query?.projectId)
     {
@@ -206,8 +209,14 @@ const Header: React.FC<any> = ({
   };
 
   const goToProjectsList = () => {
+    if(hasCommonElement(['uploader'],router.asPath?.split("/")) === true && uploaderState.step != UploaderStep.Upload){
+      console.log('vfduihkdshkn')
+      setIsShowPopUp(true)
+    }
+    else{
+      router.push("/projects");
+    }
     customLogger.logInfo("Projects Page") ;
-    router.push("/projects");
   };
 
   const onProfilePicClick = () => {
@@ -260,6 +269,7 @@ const Header: React.FC<any> = ({
   //const [defaultValue, setDefaultValue] = useState(2);
   const [filterValue, setFilterValue] = useState("All");
   const [showPopUp, setshowPopUp] = useState(false);
+  const [isShowPopUp, setIsShowPopUp] = useState(false);
   // useEffect(() => {
   //   getUserNotifications();
   //   getProjectsList()
@@ -616,6 +626,7 @@ const Header: React.FC<any> = ({
             )}
           </div>
         )}
+        
 
         {/* {supportMenu && (
           <div className="absolute top-[64px]  shadow-md right-[97px] bg-gray-50   z-[1500]  border mx-0.5">
@@ -720,7 +731,20 @@ const Header: React.FC<any> = ({
             </ul>
           </div>
         )} */}
-      </HeaderContainer>
+        </HeaderContainer>
+        {
+             isShowPopUp && (<PopupComponent
+              open={isShowPopUp}
+              setShowPopUp={setIsShowPopUp}
+              modalTitle={"Alert"}
+              modalmessage={`You have unsaved changes. Navigating away from this page will result in the loss of your current edits. Are you sure you want to proceed and lose your changes?`}
+              primaryButtonLabel={"Confirm"}
+              SecondaryButtonlabel={"Cancel"}
+              callBackvalue={()=>{
+                router.push("/projects"); 
+              }}
+            />) 
+            }
     </>
   );
 };
