@@ -52,6 +52,7 @@ export interface UploaderState {
     isReading:boolean,
     selectedJob?: IJobs,
     inProgressWorkers?: workerFileMap,
+    errorCount:number;
 }
 
 export enum UploaderStep {
@@ -102,6 +103,7 @@ export const initialUploaderState: UploaderState = {
     pendingUploadJobs: [],
     processCompleteJobs: [],
     rawImagesMap: {},
-    isReading:false
+    isReading:false,
+    errorCount:0,
 };
 
