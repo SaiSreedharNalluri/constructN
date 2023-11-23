@@ -1623,16 +1623,16 @@ const Index: React.FC<IProps> = () => {
     
   }, [tasksList,router.query.tsk,router.query.snap]);
 
-  const onClickChange=()=>{
-    router.push(`/projects/${router?.query?.projectId as string}/structure/${router.query.structId}/MultiverseView `,
-    )
+  // const onClickChange=()=>{
+  //   router.push(`/projects/${router?.query?.projectId as string}/structure/${router.query.structId}/MultiverseView `,
+  //   )
     
-  }
+  // }
 
   return (
     <div className=" w-full  h-full">
       <div className="w-full" onClick={createCancel}>
-      <button onClick={onClickChange}>Click</button>
+      {/* <button onClick={onClickChange}>Click</button> */}
         {!isFullScreen && (
           
           <Header
