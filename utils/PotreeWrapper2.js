@@ -348,9 +348,6 @@ export const PotreeViewerUtils = () => {
             pointCloudLoaded = true;
             // console.log('Point Cloud Loaded');
         }
-        if(!loadEvents?.length){
-            pointCloudLoaded = true;
-        }
         
         _currentMode = "3d";
         _isPointCloudLoaded = pointCloudLoaded;
@@ -1278,7 +1275,6 @@ export const PotreeViewerUtils = () => {
     const getContext = (justLoadedImage = null) => {
         let context = undefined;
         // console.log("Inside potree getcamera: ", _viewerId, _currentMode, _currentReality, justLoadedImage, _currentImageName);
-        if (_isPointCloudLoaded) {
             let camObject = undefined;
             let imageObject = undefined;
             let pos = _viewer.scene.view.position;
@@ -1343,7 +1339,6 @@ export const PotreeViewerUtils = () => {
             }
 
             // console.log("Inside potree getcamera: ", context);
-        }
         return context;
     }
 
@@ -1847,7 +1842,6 @@ export const PotreeViewerUtils = () => {
         if(_viewer && !_viewer.controls) {
             return;
         }
-        const selectedLayers = getSelectedLayers(_realityState)
 
         // console.log("Inside Key down listener: ", event);
         switch (event.key) {
@@ -1889,7 +1883,7 @@ export const PotreeViewerUtils = () => {
                         //     setPitch(viewer_2, 0.5);
                         // }
                     } else {
-                        if(!isCompareView() && selectedLayers.includes("360 Video")) {
+                        if(!isCompareView()) {
                             _sendContext = true;
                             nextPanoImage(_viewer);
                         }
@@ -1995,9 +1989,13 @@ export const PotreeViewerUtils = () => {
         let frustum;
         const camToImgDir = new THREE.Vector3();
         const maxDist = 10;
+        const selectedLayers = getSelectedLayers(_realityState)
 
         for (const realityKey in _realityLayers ) {
             let reality = _realityLayers[realityKey];
+
+            if(!selectedLayers.includes(reality.type)) continue;
+
             if (reality.type === "Phone Image" || reality.type === "Drone Image") {
                 continue;
             }
