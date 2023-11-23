@@ -16,6 +16,8 @@ import { useAppContext } from "../../../state/appState/context";
 import { getProjectDetails } from "../../../services/project";
 import { IProjects } from "../../../models/IProjects";
 import { IJobs } from "../../../models/IJobs";
+import { ICapture } from "../../../models/ICapture";
+import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 
 const UploaderDateDetails: React.FC<any> = () => {
   const { state: appState, appContextAction } = useAppContext();
@@ -135,20 +137,6 @@ const UploaderDateDetails: React.FC<any> = () => {
     uploaderState.structure,
     uploaderState.date,
   ]);
-
-  const formatDate = (dateString: any) => {
-    if (typeof dateString === "string") {
-      const date = new Date(dateString);
-
-      const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      };
-      const formattedDate = date.toLocaleDateString("en-US", options);
-      return formattedDate;
-    }
-  };
   return (
     <div className="ml-[60px]">
       {uploaderState.showMessage && (
@@ -160,10 +148,11 @@ const UploaderDateDetails: React.FC<any> = () => {
             boxShadow: "0px 5px 5px rgba(0, 0, 0.1, 0.1)",
             width:"fit-content",
             margin: "16px 0px",
-            borderRadius:"0px 8px 8px 0px"
+            borderRadius:"0px 8px 8px 0px",
+            fontFamily:"Open Sans"
           }}
         >
-          <p  style={{fontFamily:"Open Sans"}} className="font-semibold text-base">
+          <p  className="font-semibold text-base">
             Only images in .jpg, .jpeg with metadata info of GPS co-ordinates
             are accepted at the moment.
           </p>
@@ -174,16 +163,15 @@ const UploaderDateDetails: React.FC<any> = () => {
       >
         Choose the level for which you want to upload Drone capture data
       </p>
-      <div style={{ display: "flex" }}>
-        <div className="flex-1 pr-[14px] mt-[18px]" >
-          <p style={{fontFamily:"Open Sans"}} className="pr-2 font-sans text-[#101F4C]  font-semibold text-sm">
+      <div className="flex">
+        <div className="pr-[14px] mt-[18px] w-[75%]" >
+          <p className="pr-2 font-sans text-[#101F4C]  font-semibold text-sm my-[4px]">
             Section Name
           </p>
           <div
-            className="w-full border-t border-solid border-border-yellow"
-            style={{ height: "1px" }}
+            className="w-full border-t border-solid border-[#F1742E] h-[1px]"
           ></div>
-          <div>
+          <div className="flex  justify-between w-full">
             <div>
               {
                 <SectionList
@@ -194,13 +182,12 @@ const UploaderDateDetails: React.FC<any> = () => {
                 ></SectionList>
               }
             </div>
-          </div>
-          <div>
+            <div>
             {uploaderState.structure?.name &&
               uploaderState.date &&
               filteredJob &&
               filteredJob.length > 0 && (
-                <div className="my-[10px]  w-fit bg-[#FFECE2] rounded-3xl flex justify-center" style={{boxShadow:"0px 4px 4px 0px rgba(0, 0, 0, 0.25)"}}>
+                <div className="my-[10px]  w-[90%] bg-[#FFECE2] rounded-3xl float-right" style={{boxShadow:"0px 4px 4px 0px rgba(0, 0, 0, 0.25)"}}>
                   <div className="pl-[60px] pr-[60px] pt-[24px] pb-[24px]">
                   <h3 style={{fontSize:"16px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans",lineHeight:"20px",color:"#101f4c"}}>
                     We already have captures for this date{" "}
@@ -211,14 +198,14 @@ const UploaderDateDetails: React.FC<any> = () => {
                   <div>
                     <table className="w-full mt-[18px]">
                       <thead className="sticky top-0 bg-box-orange border-b border-solid border-[#f1742e]">
-                        <tr>
-                          <th className="p-1 text-left">
+                        <tr className="p-1 text-left">
+                          <th>
                             Capture Date
                           </th>
-                          <th className="p-1 text-left">
+                          <th>
                             Uploaded on
                           </th>
-                          <th className="p-1 text-left">
+                          <th>
                             Status
                           </th>
                         </tr>
@@ -226,23 +213,24 @@ const UploaderDateDetails: React.FC<any> = () => {
                       <tbody>
                         {filteredJob && filteredJob.length > 0 ? (
                           filteredJob.map((job: IJobs) => (
-                            <tr key={job._id} className="m-2 cursor-pointer" onClick={() => {
+                            <tr key={job._id} className="m-2 p-1 cursor-pointer" onClick={() => {
                                 uploaderAction.setSelectedJob(job)
                                 uploaderAction.next()
                               }
                             }>
                               <td className="p-1 ">
-                                {formatDate(
-                                  job.captures && job.captures.length > 0
-                                    ? (job.captures[0] as any)?.captureDateTime
-                                    : ""
-                                )}
+                              {
+                                job.captures && job.captures.length > 0 && typeof job.captures[0] != 'string' ? (
+                                  <div>
+                                    {setTheFormatedDate((job.captures[0] as ICapture).captureDateTime)}
+                                  </div>
+                                ) : ('-')
+                              }
                               </td>
                               <td className="p-1 ">
-                                {new Date(job.updatedAt).toLocaleString()}
+                              {getTheProjectDateAndTime(job.updatedAt)}
                               </td>
                               <td
-                                className="p-1"
                                 style={{
                                   fontSize: "medium",
                                   fontStyle: "italic",
@@ -275,19 +263,19 @@ const UploaderDateDetails: React.FC<any> = () => {
                 </div>
               )}
           </div>
+          </div>
+         
         </div>
 
-        <div className="flex-1/3 justify-end">
-          <h2 className="mt-[18px] font-sans not-italic font-semibold text-sm">
+        <div className="w-[25%] mt-[18px]">
+          <h2 className="font-sans not-italic font-semibold text-sm my-[4px]">
             Enter Capture Date for {uploaderState.structure?.name}
           </h2>
           <div
-            className="w-full border-t border-solid border-border-yellow"
-            style={{ height: "1px" }}
+            className="w-full border-t border-solid border-[#F1742E] h-[1px]"
           ></div>
           <div
             className="pt-2"
-            style={{ display: "flex", justifyContent: "flex-end" }}
           >
             <DatePicker
               className="ml-2 border border-border-yellow border-solid focus:outline-yellow-500 w-22 p-1 rounded hover:border-yellow-500"
