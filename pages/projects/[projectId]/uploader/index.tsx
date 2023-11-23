@@ -268,7 +268,19 @@ const Index: React.FC<IProps> = () => {
       this.terminate()
     }
   }
-  return (
+
+  const beforeUnloadHandler = (event:BeforeUnloadEvent) => {
+    event.preventDefault();
+     event.returnValue = true;
+  };
+  
+  useEffect(()=>{
+    window.addEventListener("beforeunload", beforeUnloadHandler);
+    return () => { 
+    window.removeEventListener('beforeunload',beforeUnloadHandler)
+    };
+  },[typeof window !== "undefined"])
+ return (
     
     <div className="w-full h-full">
     <div className="w-full">
