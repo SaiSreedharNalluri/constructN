@@ -67,12 +67,28 @@ const Index: React.FC<IProps> = () => {
   /**
    * UseEffect to get Structure Hierarchy of the project if it is not already present in AppState
    */
+  // useEffect(() => {
+  //   if (router.isReady) {
+  //     let hierarchy = appState.hierarchy
+  //     if(hierarchy) {
+  //      // setState(hierarchy)
+  //     } else {
+  //       getStructureHierarchy(router.query.projectId as string)
+  //       .then((response) => {
+  //         let hierarchyList: ChildrenEntity[] = response.data.result
+  //         appAction.setHierarchy(hierarchyList)
+  //       //  setState(hierarchyList);
+  //       })
+  //     }
+  //   }
+  // }, [router.isReady, router.query.projectId, router.query.structId]);
   useEffect(() => {
     let hierarchy = appState.hierarchy
     if (router.isReady) {
       if(hierarchy) {
          if(hierarchy[0]?.project===localStorage.getItem("projectId")){
-          console.log('enter correct project id same',hierarchy)
+          uploaderAction.setResetUploaderState();
+          console.log(' project id same')
           getStructureHierarchy(router.query.projectId as string)
           .then((response) => {
             let hierarchyList: ChildrenEntity[] = response.data.result
@@ -88,12 +104,23 @@ const Index: React.FC<IProps> = () => {
        
       } else {
         console.log('come out of the function');
+<<<<<<< HEAD
         getStructureHierarchy(router.query.projectId as string).then((response) => {
           let hierarchyList: ChildrenEntity[] = response.data.result
           appAction.setHierarchy(hierarchyList)
         //  setState(hierarchyList);
         
         })
+=======
+        getStructureHierarchy(router.query.projectId as string)
+          .then((response) => {
+            let hierarchyList: ChildrenEntity[] = response.data.result
+            appAction.setHierarchy(hierarchyList)
+          //  setState(hierarchyList);
+          
+          })
+       
+>>>>>>> 35355b9770abe2bfbef4aa70af1be521393ae781
       }
     }
   }, [router.isReady, router.query.projectId, router.query.structId]);
