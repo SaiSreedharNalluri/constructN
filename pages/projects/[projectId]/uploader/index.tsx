@@ -22,17 +22,20 @@ import { IJobs, JobStatus } from "../../../../models/IJobs";
 import { CaptureMode, CaptureType, ICapture } from "../../../../models/ICapture";
 import { IUploadFile, UploadStatus } from "../../../../models/IUploader";
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader';
-import { Content } from "../../../../components/divami_components/project-users-list/usersListStyles";
 import { getCaptureIdFromModelOrString, getJobIdFromModelOrString } from "../../../../utils/utils";
 import { CustomToast } from "../../../../components/divami_components/custom-toaster/CustomToast";
+import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const { state: appState, appContextAction } = useAppContext();
+  const [isShowPopUp, setIsShowPopUp] = useState(false);
   const { appAction } = appContextAction;
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-  const [prjId,setprojId] =useState()
+  const [popUpHeading,setPopUPHeading] =useState('')
+  const [popUpClose,setPopUPClose] =useState('')
+  const [popUpConform,setPopUPConform] =useState('')
   let WorkerManager = WebWorkerManager.getInstance()
   const renderCenterContent = () => {
     switch (uploaderState.step) {
@@ -164,10 +167,16 @@ const Index: React.FC<IProps> = () => {
     if(uploaderState.completionState !== undefined) {
       switch(uploaderState.completionState) {
         case UploaderFinishState.withError:
-
+          setIsShowPopUp(true)
+          setPopUPHeading('Upload complete with errors')
+          setPopUPConform('Skip Files and Complete')
+          setPopUPClose('Re-upload error files')
           return
         case UploaderFinishState.withoutError:
-
+          setIsShowPopUp(true)
+          setPopUPHeading('All files and GCPs uploaded successfully')
+          setPopUPConform('Process')
+          setPopUPClose('Don’t Process Add images Later')
           return
         default:
           return
@@ -285,9 +294,9 @@ const Index: React.FC<IProps> = () => {
             let capture = response.data.result
             updateJobStatus(uploaderState?.project?._id as string, getJobIdFromModelOrString(capture.jobId), JobStatus.uploaded).then((response)=>{
               if(response.data.success===true) {
-                // uploaderAction.refreshJobs();
                 uploaderAction.setUploadCompletionState(UploaderFinishState.withoutError)
-              } else {
+              }
+              else{
                 uploaderAction.setUploadCompletionState(UploaderFinishState.withError)
               }
             }).catch((error)=>{
@@ -302,32 +311,11 @@ const Index: React.FC<IProps> = () => {
     if(event?.data?.filesList?.length != undefined && event?.data?.completedFileList?.length !=undefined && (event?.data?.filesList?.length === event?.data?.completedFileList?.length))
     {
       updateTheJobStatus(event?.data?.filesList[0]?.uploadObject?.capture as string)
+      WorkerManager.removeWorker(event?.data?.filesList[0]?.uploadObject?.capture as string)
       this.terminate()
     }
   }
-
-  const beforeUnloadHandler = (event:BeforeUnloadEvent) => {
-    event.preventDefault();
-     event.returnValue = true;
-  };
-  const popStateHandler =()=>{
-    alert('You have unsaved changes.you may lose your data')
-    history.pushState(null, '', document.URL); 
-  }
-  useEffect(()=>{
-    if(uploaderState.step != UploaderStep.Upload)
-    {
-      window.addEventListener("beforeunload", beforeUnloadHandler);
-      history.pushState(null, '', document.URL); 
-      window.addEventListener('popstate',popStateHandler)
-    }
-   return () => { 
-    window.removeEventListener('beforeunload',beforeUnloadHandler)
-    window.removeEventListener('popstate',popStateHandler)
-    };
-  },[typeof window !== "undefined",uploaderState.step])
- return (
-    
+  return (
     <div className="w-full h-full">
     <div className="w-full">
     <Header
@@ -356,16 +344,29 @@ const Index: React.FC<IProps> = () => {
            
           </div>
         </main>
-  
         <footer className="py-[4px] text-center">
         <UploaderFooter/>
         </footer></div>:<CustomLoader/>}
       </div>
     </div>
     <div >
-            
-            </div>
-  </div>
+    </div>
+    <PopupComponent
+      open={isShowPopUp}
+      setShowPopUp={setIsShowPopUp}
+      modalTitle={popUpHeading}
+      modalmessage={''}
+      primaryButtonLabel={popUpConform}
+      SecondaryButtonlabel={popUpClose}
+      isUploader={false}
+      callBackvalue={() => {
+        if(popUpConform === 'All files and GCPs uploaded successfully')
+        {
+          uploaderAction.refreshJobs();
+        }
+      }}
+    />
+    </div>
   );
 };
 
