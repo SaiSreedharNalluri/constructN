@@ -281,12 +281,14 @@ const Index: React.FC<IProps> = () => {
     // uploaderAction.next()
   }
   const updateTheJobStatus=(captureId:string)=>{
-    let captureObj = uploaderState.pendingUploadJobs.find((jobObj)=> getCaptureIdFromModelOrString(jobObj.captures[0]) === captureId)
-    if (captureObj) {
-      updateJobStatus(uploaderState?.project?._id as string, captureObj._id, JobStatus.uploaded).then((response:any)=>{
+    let jobObj = uploaderState.pendingUploadJobs.find((jobObj)=> getCaptureIdFromModelOrString(jobObj.captures[0]) === captureId)
+    if (jobObj) {
+      uploaderAction.setIsLoading(true)
+      updateJobStatus(uploaderState?.project?._id as string, jobObj._id, JobStatus.uploaded).then((response:any)=>{
+        uploaderAction.setIsLoading(false)
         if(response.data.success===true) {
+          moveJobFromPendingUploadToUpload(response.data.result?._id);
           if (appState.hierarchy) {
-
             CustomToast(`upload completed sucessfully for ${getPathToRoot(response.data.result.structure, appState.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
           } else {
             CustomToast(`upload completed sucessfully`,'success')
@@ -306,13 +308,15 @@ const Index: React.FC<IProps> = () => {
       })
     } else {
       console.log("TestingUploader: jobstatus without capture object: ")
+      uploaderAction.setIsLoading(true)
       getCaptureDetails(uploaderState?.project?._id as string, captureId).then((response) => {
         if(response.data.success===true) {
           let capture = response.data.result
           updateJobStatus(uploaderState?.project?._id as string, getJobIdFromModelOrString(capture.jobId), JobStatus.uploaded).then((response:any)=>{
+            uploaderAction.setIsLoading(false)
             if(response&&response?.data&&response?.data?.success===true) {
+              moveJobFromPendingUploadToUpload(response.data.result?._id);
               if (appState.hierarchy) {
-
                 CustomToast(`upload completed sucessfully for ${getPathToRoot(response.data.result.structure, appState.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
               } else {
                 CustomToast(`upload completed sucessfully`,'success')
@@ -326,6 +330,7 @@ const Index: React.FC<IProps> = () => {
             // setPopUPClose('Ok')
             }
           }).catch((error)=>{
+            uploaderAction.setIsLoading(false)
             setIsShowPopUp(true)
             setPopUPHeading('Upload complete with errors')
             setPopUPConform('ok')
@@ -341,6 +346,16 @@ const Index: React.FC<IProps> = () => {
       
       }
     })
+  }
+
+  const moveJobFromPendingUploadToUpload = (jobId: string) => {
+    let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
+    captureJobs.forEach((job) => {
+      if (job._id === jobId) {
+        job.status = JobStatus.uploaded
+      }
+    })
+    uploaderAction.setCaptureJobs(captureJobs)
   }
   const onMessageFromWorker = function(this:Worker,event: MessageEvent<{filesList: IUploadFile<RawImage>[], completedFileList: IUploadFile<RawImage>[]}>){
     uploaderAction.updateWorkerStatus(event.data.filesList)
