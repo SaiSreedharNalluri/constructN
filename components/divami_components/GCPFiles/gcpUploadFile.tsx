@@ -33,7 +33,7 @@ const GcpUploadFile: React.FC<any> = () => {
           return {
             easting: e.EASTING||0,
             northing: e.NORTHING||0,
-            zone: String(e["UTM ZONE"])||"",
+            zone: e["UTM ZONE"] !== undefined ? String(e["UTM ZONE"]) : "",
             elevation: e.ELEVATION||0,
           };
         });
@@ -74,7 +74,7 @@ const GcpUploadFile: React.FC<any> = () => {
               const data = results.data;
               csvToGcp(data);
             },
-
+ 
             error: function (error: any) {
               console.error("Error parsing the CSV file", error);
             },
