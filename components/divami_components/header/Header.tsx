@@ -203,7 +203,7 @@ const Header: React.FC<any> = ({
   };
 
   const goToProjectsList = () => {
-    if (hasCommonElement(['uploader'], router.asPath?.split("/")) === true) {
+    if (hasCommonElement(['uploader'], router.asPath?.split("/")) === true && uploaderState.step !== UploaderStep.Upload) {
       setIsShowPopUp(true)
     }
     else {

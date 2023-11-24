@@ -15,7 +15,7 @@ import { useUploaderContext } from "../../../state/uploaderState/context";
 import { useAppContext } from "../../../state/appState/context";
 import { getProjectDetails } from "../../../services/project";
 import { IProjects } from "../../../models/IProjects";
-import { IJobs } from "../../../models/IJobs";
+import { IJobs, JobStatus } from "../../../models/IJobs";
 import { ICapture } from "../../../models/ICapture";
 import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import { getStructureIdFromModelOrString } from "../../../utils/utils";
@@ -123,7 +123,8 @@ const UploaderDateDetails: React.FC<any> = () => {
       //   );
       // });
 
-      const filteredPendingProcessJobs = uploaderState.pendingProcessJobs.filter((job) => {
+      const combinedJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
+      const filteredPendingProcessJobs = combinedJobs.filter((job) => {
         return (
           getStructureIdFromModelOrString(job.structure) === uploaderState.structure?._id &&
           new Date(job.date).toLocaleDateString() ===
@@ -244,7 +245,9 @@ const UploaderDateDetails: React.FC<any> = () => {
                                       fontStyle: "italic",
                                     }}
                                   >
-                                    pending processing
+                                    {
+                                      job.status === JobStatus.pendingUpload ? "pending upload" : "pending processing"
+                                    }
                                   </td>
                                 </tr>
                               ))
