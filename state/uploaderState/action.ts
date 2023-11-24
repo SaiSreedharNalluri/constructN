@@ -4,7 +4,7 @@ import { IProjectUserList, IProjects } from "../../models/IProjects";
 import { RawImage } from "../../models/IRawImages";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import { IUploadFile } from "../../models/IUploader";
-import { captureRawImageMap, fileWithExif } from "./state";
+import { UploaderFinishState, captureRawImageMap, fileWithExif } from "./state";
 
 export enum UploaderActionType {
     startNewUpload,
@@ -27,12 +27,14 @@ export enum UploaderActionType {
     changeUploadinitiate,
     setCaptureJobs,
     setRawImagesMap,
+    appendToRawImagesMap,
     chageIsReading,
     setSelectedJob,
     updateWorkerStatus,
     refreshJobs,
     setErrorCount,
     setResetUploaderState,
+    setUploadCompletionState
 }
 
 export interface refreshJobs {
@@ -53,6 +55,11 @@ export interface next {
 
 export interface upload {
   type: UploaderActionType.Upload;
+}
+
+export interface setUploadCompletionState {
+    type: UploaderActionType.setUploadCompletionState,
+    payload:{ status: UploaderFinishState}
 }
 
 export interface setIsAppendingCapture {
@@ -133,6 +140,12 @@ export interface setRawImagesMap {
     type: UploaderActionType.setRawImagesMap
     payload: {rawImages: captureRawImageMap}
 }
+
+export interface appendToRawImagesMap {
+    type: UploaderActionType.appendToRawImagesMap
+    payload: {rawImages: captureRawImageMap}
+}
+
 export interface chageIsReading {
   type: UploaderActionType.chageIsReading
   payload:{ isReading: boolean }
@@ -140,7 +153,7 @@ export interface chageIsReading {
 
 export interface setSelectedJob {
     type: UploaderActionType.setSelectedJob
-    payload: {job: IJobs}
+    payload: {job: IJobs | undefined}
 }
 
 export interface updateWorkerStatus {
@@ -233,7 +246,7 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         chageIsReading:(isReading:boolean)=>{
           dispatch({type:UploaderActionType.chageIsReading,payload:{isReading:isReading}});
         },
-        setSelectedJob:(job: IJobs)=>{
+        setSelectedJob:(job: IJobs | undefined)=>{
             dispatch({type:UploaderActionType.setSelectedJob, payload:{ job: job}})
         },
         updateWorkerStatus:(workerFileList: IUploadFile<RawImage>[]) => {
@@ -245,6 +258,9 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         setResetUploaderState:()=>{
           dispatch({type:UploaderActionType.setResetUploaderState})
         },
+        setUploadCompletionState:(status: UploaderFinishState)=>{
+            dispatch({type:UploaderActionType.setUploadCompletionState, payload: {status: status}})
+          },
 
       }
     }
@@ -277,3 +293,4 @@ export type UploaderActions =
   | refreshJobs
   | setErrorCount
   | setResetUploaderState
+  | setUploadCompletionState
