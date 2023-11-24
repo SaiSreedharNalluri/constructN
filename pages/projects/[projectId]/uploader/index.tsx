@@ -281,30 +281,42 @@ const Index: React.FC<IProps> = () => {
   const updateTheJobStatus=(captureId:string)=>{
     let captureObj = uploaderState.pendingUploadJobs.find((jobObj)=> getCaptureIdFromModelOrString(jobObj.captures[0]) === captureId)
     if (captureObj) {
-      updateJobStatus(uploaderState?.project?._id as string, captureObj._id,'uploaded').then((response)=>{
+      updateJobStatus(uploaderState?.project?._id as string, captureObj._id, JobStatus.uploaded).then((response)=>{
+        console.log("TestingUploader: jobstatus with capture object: ")
         if(response.data.success===true) {
-          console.log('dfuykfdghjdf',uploaderState.inProgressWorkers)
+          // uploaderAction.setUploadCompletionState(UploaderFinishState.withoutError)
+        }
+        else{
+          // uploaderAction.setUploadCompletionState(UploaderFinishState.withError)
         }
       }).catch((error)=>{
         console.log('errror',error)
       })
-      } else {
-        getCaptureDetails(uploaderState?.project?._id as string, captureId).then((response) => {
-          if(response.data.success===true) {
-            let capture = response.data.result
-            updateJobStatus(uploaderState?.project?._id as string, getJobIdFromModelOrString(capture.jobId), JobStatus.uploaded).then((response)=>{
-              if(response.data.success===true) {
-                uploaderAction.setUploadCompletionState(UploaderFinishState.withoutError)
-              }
-              else{
-                uploaderAction.setUploadCompletionState(UploaderFinishState.withError)
-              }
-            }).catch((error)=>{
-              console.log('errror',error)
-            })
-          }
-        })
+    } else {
+      console.log("TestingUploader: jobstatus without capture object: ")
+      getCaptureDetails(uploaderState?.project?._id as string, captureId).then((response) => {
+        if(response.data.success===true) {
+          let capture = response.data.result
+          updateJobStatus(uploaderState?.project?._id as string, getJobIdFromModelOrString(capture.jobId), JobStatus.uploaded).then((response)=>{
+            if(response.data.success===true) {
+              // uploaderAction.setUploadCompletionState(UploaderFinishState.withoutError)
+            }
+            else{
+              // uploaderAction.setUploadCompletionState(UploaderFinishState.withError)
+            }
+          }).catch((error)=>{
+            console.log('errror',error)
+          })
+        }
+      })
+    }
+  }
+  const updateJobStatusTo = (job: IJobs | string, status: JobStatus) => {
+    updateJobStatus(uploaderState?.project?._id as string, getJobIdFromModelOrString(job), JobStatus.readyForProcessing).then((response) => {
+      if(response.data.success===true) {
+      
       }
+    })
   }
   const onMessageFromWorker = function(this:Worker,event: MessageEvent<{filesList: IUploadFile<RawImage>[], completedFileList: IUploadFile<RawImage>[]}>){
     uploaderAction.updateWorkerStatus(event.data.filesList)
@@ -360,7 +372,7 @@ const Index: React.FC<IProps> = () => {
       SecondaryButtonlabel={popUpClose}
       isUploader={false}
       callBackvalue={() => {
-        if(popUpConform === 'All files and GCPs uploaded successfully')
+        if(popUpConform === 'Process')
         {
           uploaderAction.refreshJobs();
         }
