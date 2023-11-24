@@ -121,6 +121,7 @@ const SectionList: React.FC<IProps>=({
             label={renderTreeNode(nodes, onLabelClick)}
             data-testid={"treeItem"}
             style={{ borderBottom: "1px solid #D9D9D9" }}
+            className="border-l border-dotted border-[#D9D9D9]"
           >
             {Array.isArray(nodes.children) && nodes.children.length
               ? nodes.children.map((node:any) => renderTree(node, onLabelClick))
@@ -132,7 +133,7 @@ const SectionList: React.FC<IProps>=({
         
         <div className="">
             <TreeViewContainer
-     className="calc-h440 overflow-y-auto"
+     className="calc-h400 overflow-y-auto"
       >
               
           <UploaderStyledTreeView

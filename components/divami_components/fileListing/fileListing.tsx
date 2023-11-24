@@ -22,7 +22,8 @@ const FileListing:React.FC<Iprops>=({selectedFile,isSizeRequired})=>{
       
      </tr>
      </thead>
-   <tbody className="flex flex-col items-center  overflow-y-scroll w-full  h-[80px]" >
+
+   <tbody className="flex flex-col items-center  overflow-y-auto w-full h-[80px]" >
    {selectedFile?.length>0&& selectedFile.map((fileInfo, index)=>{
        return(
        <tr key={index}

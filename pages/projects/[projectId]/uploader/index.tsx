@@ -337,8 +337,8 @@ const Index: React.FC<IProps> = () => {
              </div>
         </header>
      {!uploaderState.isLoading?  
-      <div>
-        <main className={`overflow-y-auto  ${ uploaderState.stepperSideFileList?`calc-h253`:`calc-h`} `}>
+  <div>
+        <main className={`overflow-y-auto  ${ uploaderState.stepperSideFileList?`calc-h223`:`calc-h`} `}>
           <div>
           {renderCenterContent()}
            
