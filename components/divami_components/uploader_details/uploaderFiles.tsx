@@ -7,6 +7,8 @@ import Warning from "../../../public/divami_icons/Warning_Icon.svg";
 import { IExifFile } from "../../../models/IExifFile";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 import { fileWithExif } from "../../../state/uploaderState/state";
+import { getCaptureIdFromModelOrString } from "../../../utils/utils";
+import { getRawImages } from "../../../services/captureManagement";
 const UploaderFiles = () => {
   const { state, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
@@ -52,6 +54,25 @@ const UploaderFiles = () => {
       );
     }
   }, [invalidEXIFFiles.length,duplicateFiles.length]);
+
+  useEffect(() => {
+    if (state.isAppendingCapture && state.selectedJob) {
+      let captureId = getCaptureIdFromModelOrString(state.selectedJob.captures[0])
+      if(!state.rawImagesMap[captureId]) {
+        console.log("TestingUploader: inside useEffect isAppendingCapture ", state.selectedJob, state.rawImagesMap[getCaptureIdFromModelOrString(state.selectedJob.captures[0])])
+        uploaderAction.setIsLoading(true);
+        getRawImages(state.selectedJob.project as string, captureId)?.then((response) => {
+          uploaderAction.setIsLoading(false);
+          console.log("TestingUploader: getRawImages of selected job ", response.data.result)
+          uploaderAction.setRawImagesMap({
+            ...state.rawImagesMap,
+            [captureId as string]: response.data.result
+          })
+        })
+      }
+    }
+  }, [state.isAppendingCapture, state.selectedJob])
+
   return (
     <React.Fragment>
       <div className="flex flex-col justify-center items-center">
