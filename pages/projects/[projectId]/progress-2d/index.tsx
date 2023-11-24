@@ -732,7 +732,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                 <div className='flex flex-col w-full' style={{ height: 'calc(100vh - 64px)' }}>
 
-                                    {hierarchy && <Progress2DToolbar
+                                    {hierarchy && snapshotBase && <Progress2DToolbar
 
                                         hierarchy={hierarchy}
 
@@ -748,7 +748,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                         onCategorySelected={_onCategorySelected} />}
 
-                                    {snapshotBase && <div className='flex w-full' style={{ height: 'calc(100vh - 144px)' }}>
+                                    <div className='flex w-full' style={{ height: 'calc(100vh - 144px)' }}>
 
                                         <div className={`w-3/4 relative flex items-center mx-2`}>
 
@@ -810,7 +810,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                         </div>
 
-                                        <div className={'flex flex-col w-1/4 mr-4 py-4'}
+                                        {snapshotBase && <div className={'flex flex-col w-1/4 mr-4 py-4'}
 
                                             style={{ height: 'calc(100vh - 144px)', border: '1px solid #e2e3e5', borderRadius: '6px' }} >
 
@@ -900,15 +900,15 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 onChange={_onAssetDetailsChange} />}
 
-                                        </div>
+                                        </div>}
 
-                                    </div>}
+                                    </div>
 
                                 </div>
 
                             </div>
 
-                            {(showProgress || loading) && <div className='fixed z-20 w-screen h-screen bg-[#000000] opacity-0'></div>}
+                            {(showProgress || loading) && <div className='fixed z-20 w-screen h-screen bg-[#000000] opacity-20'></div>}
 
                         </div>
 

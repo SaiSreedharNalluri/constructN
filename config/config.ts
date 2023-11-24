@@ -8,7 +8,9 @@ export const MAPBOX = {
 
 export const SENTRY = {
 
-    DSN: 'https://ba02ce1638852c54d5e4ca0dd2d7edc5@o4506114783313920.ingest.sentry.io/4506116504944640',
+    // DSN: 'https://ba02ce1638852c54d5e4ca0dd2d7edc5@o4506114783313920.ingest.sentry.io/4506116504944640',
+
+    DSN: '',
 
     LOG_INFO: 'false',
 

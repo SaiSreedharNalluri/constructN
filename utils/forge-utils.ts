@@ -393,7 +393,7 @@ export class ForgeDataVizUtils {
 
             group.add(this._createBorder())
 
-            group.position.set(0, -10, 0)
+            group.position.set(-1000, -1000, 0)
 
             group.rotation.z = 0
 
@@ -795,7 +795,7 @@ export class ForgeDataVizUtils {
 
         } else {
 
-            this.updateNavigator(new THREE.Vector3(0, -10, 0), 0)
+            this.updateNavigator(new THREE.Vector3(-1000, -1000, 0), 0)
 
         }
 

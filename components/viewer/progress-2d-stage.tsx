@@ -44,7 +44,12 @@ function Progress2DStage(
 
     }) {
 
-    const getProgress = () => stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount)
+    const getProgress = () => {
+
+        console.log(stage.assets, assetCount, '++++', stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount))
+
+        return stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount)
+    }
 
     const onVisibilityChange = (event: any) => {
 

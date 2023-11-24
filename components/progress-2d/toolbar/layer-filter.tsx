@@ -56,7 +56,7 @@ const LayerFilter: FC<any> = (props) => {
 
       return (
 
-        <LayerSecondSectionCamImg className='w-[1.1rem] h-[1.1rem] mt-[-4px]'>
+        <LayerSecondSectionCamImg key={label} className='w-[1.1rem] h-[1.1rem] mt-[-4px]'>
 
           <CameraIcon src={hexagonIcon} alt='Arrow' />
 
@@ -68,7 +68,7 @@ const LayerFilter: FC<any> = (props) => {
 
       return (
 
-        <LayerSecondSectionCamImg className='w-[1.1rem] h-[1.1rem] mt-[-4px]'>
+        <LayerSecondSectionCamImg key={label} className='w-[1.1rem] h-[1.1rem] mt-[-4px]'>
 
           <CameraIcon src={cameraIcon} alt='Arrow' />
 
@@ -80,7 +80,7 @@ const LayerFilter: FC<any> = (props) => {
 
       return (
 
-        <LayerSecondSectionCamImg className='w-[1.1rem] h-[1.1rem] mt-[-4px]'>
+        <LayerSecondSectionCamImg key={label} className='w-[1.1rem] h-[1.1rem] mt-[-4px]'>
 
           <CameraIcon src={videoRecorderIcon} alt='Arrow' />
 
@@ -92,7 +92,7 @@ const LayerFilter: FC<any> = (props) => {
 
       return (
 
-        <LayerSecondSectionCamImg className='w-[1.1rem] h-[1.1rem] mt-[-4px]'>
+        <LayerSecondSectionCamImg key={label} className='w-[1.1rem] h-[1.1rem] mt-[-4px]'>
 
           <CameraIcon src={DroneImage} alt='Arrow' />
 

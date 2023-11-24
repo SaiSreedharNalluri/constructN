@@ -55,6 +55,8 @@ export default function Progress2DToolbar({
 
     const _getLayers = () => {
 
+        setCurrentStructure(LightBoxInstance.viewerData().structure)
+
         if(snapshotBase && snapshotBase.layers) setLayers(Object.keys(snapshotBase.layers))
 
         else setLayers([])
@@ -81,29 +83,29 @@ export default function Progress2DToolbar({
 
         <Box sx={{ display: 'flex', flexWrap: 'wrap', borderRadius: '6px', margin: '0.5rem', padding: '0.5rem' }}>
 
-            { hierarchy && <HierarchyPicker hierarchy={hierarchy} selected={currentStructure} onSelect={_onStructureChange} onClose={() => {}} /> }
+            <HierarchyPicker hierarchy={hierarchy} selected={currentStructure} onSelect={_onStructureChange} onClose={() => {}} />
 
             <div className='ml-2'></div>
 
-            {snapshotBase && <LayerFilter layers={layers} onChange={onLayersSelected} /> }
+            <LayerFilter layers={layers} onChange={onLayersSelected} />
 
             <div className='ml-2'></div>
 
-            {snapshotBase && <AssetCategoryPicker selected={selectedCategory} categories={assetCategories} onSelect={onCategorySelected} />}
+            <AssetCategoryPicker selected={selectedCategory} categories={assetCategories} onSelect={onCategorySelected} />
 
             <div className='ml-2'></div>
 
-            {snapshotBase && <AssetCategoryDatePicker 
+            <AssetCategoryDatePicker 
             
                 snapshots={LightBoxInstance.viewerData().snapshots} 
                 
                 snapshotBase={snapshotBase} compare={isCompare}
                 
-                onChangeToDate={onSnapshotBaseChange}/> }
+                onChangeToDate={onSnapshotBaseChange}/>
 
             <div className='ml-2 flex-1'></div>
 
-            {/* {snapshotBase && <div className='ml-2'>
+            {/* <div className='ml-2'>
 
                 <FormControlLabel className='border border-[#e2e3e5] rounded [&>.MuiFormControlLabel-label]:select-none [&>.MuiFormControlLabel-label]:text-[#4a4a4a] [&>.MuiFormControlLabel-label]:text-sm [&>.MuiFormControlLabel-label]:mr-2' 
                 

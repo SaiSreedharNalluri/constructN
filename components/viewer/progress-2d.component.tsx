@@ -58,7 +58,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
     const [modelsData, setModelsData] = useState<any[]>([])
 
-    const _currentSnapshot = useRef<string>()
+    const _currentStructure = useRef<string>()
 
 
     const onInit = async (forge: Autodesk.Viewing.GuiViewer3D | undefined, alreadyInitialised: boolean) => {
@@ -123,26 +123,19 @@ function Progress2DComponent(props: _ViewerProps) {
 
             _layers.current = props.snapshot.layers
 
-            if(_currentSnapshot.current !== props.snapshot._id) {
+            const newStructure = LightBoxInstance.viewerData().structure._id
 
-                setModelsData([])
+            console.log(_currentStructure.current, newStructure)
+
+            if(_currentStructure.current !== newStructure) {
 
                 if (LightBoxInstance.getViewTypes().indexOf('Plan Drawings') > -1) {
 
-                    const planDrawings = LightBoxInstance.viewerData()['modelData']['Plan Drawings']
-    
-                    if(planDrawings.length > 0 && modelsData && modelsData[0] && planDrawings[0].urn === modelsData[0].urn) {
-
-                        if (_model.current) loadLayers(props.snapshot.layers)
-
-                    } else {
-
-                        setModelsData(LightBoxInstance.viewerData()['modelData']['Plan Drawings'])
-
-                    }
+                    setModelsData(LightBoxInstance.viewerData()['modelData']['Plan Drawings'])
+                    
                 }
     
-                _currentSnapshot.current = props.snapshot._id
+                _currentStructure.current = newStructure
     
             } else {
 
@@ -257,7 +250,7 @@ function Progress2DComponent(props: _ViewerProps) {
     return (
         <>
 
-            <Forge
+            {props.snapshot && <Forge
 
                 viewType={viewType}
 
@@ -269,7 +262,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
                 onModelLoaded={onModelLoaded}
 
-                onExtnLoaded={onExtnLoaded} />
+                onExtnLoaded={onExtnLoaded} /> }
 
             <div className='flex absolute right-2 w-fit h-fit mt-1' style={{ zIndex: 5 }}>
 
