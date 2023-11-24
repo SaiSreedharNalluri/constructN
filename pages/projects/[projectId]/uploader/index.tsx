@@ -90,7 +90,7 @@ const Index: React.FC<IProps> = () => {
       if(hierarchy) {
          if(hierarchy[0]?.project===localStorage.getItem("projectId")){
           uploaderAction.setResetUploaderState();
-          console.log('enter correct project id same',hierarchy)
+          console.log(' project id same')
           getStructureHierarchy(router.query.projectId as string)
           .then((response) => {
             let hierarchyList: ChildrenEntity[] = response.data.result

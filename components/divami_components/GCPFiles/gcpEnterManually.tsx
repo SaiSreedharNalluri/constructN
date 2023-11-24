@@ -48,7 +48,7 @@ const GcpEnterManually: React.FC<any> = () => {
       };
       gcpList?.utmLocation.forEach(
         (item: utmLocation, index: number) => {
-          console.log("checking initial item", item);
+        
           Object.keys(item).forEach((rawHeading: string) => {
             const heading: any = headingMappings[rawHeading] || rawHeading;
             const value: any =
@@ -61,7 +61,7 @@ const GcpEnterManually: React.FC<any> = () => {
                 : heading === "Elevation"
                 ? item.elevation
                 : undefined;
-            console.log("Extracted value:", value, heading);
+           
             const isValid = validateInput(value, heading, index);
             const identifier = `${index}-${heading}`;
             
@@ -100,7 +100,7 @@ const GcpEnterManually: React.FC<any> = () => {
           (key) => key.startsWith(`${index}-`)
         );
       let errorsToReduce = 0;
-      console.log('deletedItemErrors',deletedItemErrors)
+    
       deletedItemErrors.forEach((key) => {
           if (errorMessages[key]) {
             errorsToReduce += 1;
@@ -137,7 +137,7 @@ const GcpEnterManually: React.FC<any> = () => {
 
       // Update error count
       const newErrorCount = Object.values(newErrors).filter((error) => error !== "").length;
-      console.log("gcp error",newErrorCount);
+     
       uploaderAction.setErrorCount(newErrorCount);
 
       return newErrors;
@@ -241,11 +241,11 @@ const GcpEnterManually: React.FC<any> = () => {
     );
   };
   useEffect(() => {
-    console.log('checking useeffect');
+    
     validateInitialValues();
   }, []);
   const validateInitialValues = () => {
-    console.log("checking validateinitialvalues");
+   
     if (uploaderState.gcpType === GCPType.UTM && uploaderState.gcpList.utmLocation)
      {
       const headingMappings: { [key: string]: string } = {
@@ -256,7 +256,7 @@ const GcpEnterManually: React.FC<any> = () => {
       };
       uploaderState?.gcpList?.utmLocation.forEach(
         (item: utmLocation, index: number) => {
-          console.log("checking initial item", item);
+          
           Object.keys(item).forEach((rawHeading: string) => {
             const heading: any = headingMappings[rawHeading] || rawHeading;
             const value: any =
@@ -269,7 +269,7 @@ const GcpEnterManually: React.FC<any> = () => {
                 : heading === "Elevation"
                 ? item.elevation
                 : undefined;
-            console.log("Extracted value:", value, heading);
+           
             const isValid = validateInput(value, heading, index);
             const identifier = `${index}-${heading}`;
             
