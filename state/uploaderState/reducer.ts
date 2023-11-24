@@ -166,14 +166,12 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 selectedJob: action.payload.job
             }
         case UploaderActionType.updateWorkerStatus:
-            console.log("TestingUploader inside reducer: ", state.inProgressWorkers);
             let workers = state.inProgressWorkers
             let captureId = action.payload.workerFileList[0].uploadObject.capture
             let newWorkerStatus = { 
                 ...workers,
                 [captureId as string]: action.payload.workerFileList
             }
-            console.log("TestingUploader inside reducer: ", newWorkerStatus);
             return {
                 ...state,
                 inProgressWorkers: newWorkerStatus

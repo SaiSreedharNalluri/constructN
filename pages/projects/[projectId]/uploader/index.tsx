@@ -22,7 +22,6 @@ import { IJobs, JobStatus } from "../../../../models/IJobs";
 import { CaptureMode, CaptureType, ICapture } from "../../../../models/ICapture";
 import { IUploadFile, UploadStatus } from "../../../../models/IUploader";
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader';
-import { Content } from "../../../../components/divami_components/project-users-list/usersListStyles";
 import { getCaptureIdFromModelOrString, getJobIdFromModelOrString } from "../../../../utils/utils";
 import { CustomToast } from "../../../../components/divami_components/custom-toaster/CustomToast";
 interface IProps {}
@@ -32,7 +31,6 @@ const Index: React.FC<IProps> = () => {
   const { appAction } = appContextAction;
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-  const [prjId,setprojId] =useState()
   let WorkerManager = WebWorkerManager.getInstance()
   const renderCenterContent = () => {
     switch (uploaderState.step) {
@@ -90,7 +88,12 @@ const Index: React.FC<IProps> = () => {
        
       } else {
         console.log('come out of the function');
-       
+        getStructureHierarchy(router.query.projectId as string).then((response) => {
+          let hierarchyList: ChildrenEntity[] = response.data.result
+          appAction.setHierarchy(hierarchyList)
+        //  setState(hierarchyList);
+        
+        })
       }
     }
   }, [router.isReady, router.query.projectId, router.query.structId]);
@@ -276,32 +279,11 @@ const Index: React.FC<IProps> = () => {
     if(event?.data?.filesList?.length != undefined && event?.data?.completedFileList?.length !=undefined && (event?.data?.filesList?.length === event?.data?.completedFileList?.length))
     {
       updateTheJobStatus(event?.data?.filesList[0]?.uploadObject?.capture as string)
+      WorkerManager.removeWorker(event?.data?.filesList[0]?.uploadObject?.capture as string)
       this.terminate()
     }
   }
-
-  const beforeUnloadHandler = (event:BeforeUnloadEvent) => {
-    event.preventDefault();
-     event.returnValue = true;
-  };
-  const popStateHandler =()=>{
-    alert('You have unsaved changes.you may lose your data')
-    history.pushState(null, '', document.URL); 
-  }
-  useEffect(()=>{
-    if(uploaderState.step != UploaderStep.Upload)
-    {
-      window.addEventListener("beforeunload", beforeUnloadHandler);
-      history.pushState(null, '', document.URL); 
-      window.addEventListener('popstate',popStateHandler)
-    }
-   return () => { 
-    window.removeEventListener('beforeunload',beforeUnloadHandler)
-    window.removeEventListener('popstate',popStateHandler)
-    };
-  },[typeof window !== "undefined",uploaderState.step])
- return (
-    
+  return (
     <div className="w-full h-full">
     <div className="w-full">
     <Header
@@ -323,23 +305,21 @@ const Index: React.FC<IProps> = () => {
              </div>
         </header>
      {!uploaderState.isLoading?  
-  <div>
+      <div>
         <main className={`overflow-y-auto  ${ uploaderState.stepperSideFileList?`calc-h253`:`calc-h`} `}>
           <div>
           {renderCenterContent()}
            
           </div>
         </main>
-  
         <footer className="py-[4px] text-center">
         <UploaderFooter/>
         </footer></div>:<CustomLoader/>}
       </div>
     </div>
     <div >
-            
-            </div>
-  </div>
+    </div>
+    </div>
   );
 };
 
