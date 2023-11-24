@@ -72,7 +72,7 @@ const UploaderStepper : React.FC<IProps> =() => {
        
 
 
-        <div style={{ margin: "4px 0", fontWeight: "600", fontSize: "22px",fontFamily:"Open Sans",fontStyle:"normal" }}>Upload</div>
+        <div style={{ margin: "4px 20px", fontWeight: "600", fontSize: "22px",fontFamily:"Open Sans",fontStyle:"normal" }}>Upload</div>
     <ThemeProvider theme={theme}>
       <Stepper activeStep={state.step} alternativeLabel style={{ width: "650px",margin: "0 auto", }} connector={<ColoredStepConnector />}>
         {state.stepNames?.map((label:any, index:any) => (

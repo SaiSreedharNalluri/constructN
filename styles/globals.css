@@ -73,11 +73,11 @@
   height: calc(100vh - 112px);
 }
 
-.calc-h440 {
-  height: calc(100vh - 330px);
+.calc-h400 {
+  height: calc(100vh - 400px);
 }
-.calc-h253 {
-  height: calc(100vh - 205px);
+.calc-h223 {
+  height: calc(100vh - 223px);
 }
 .css-n7tliy-MuiStep-root {
   padding-left: 0px !important;

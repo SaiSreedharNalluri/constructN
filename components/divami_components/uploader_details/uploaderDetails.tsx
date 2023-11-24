@@ -18,7 +18,8 @@ import { IProjects } from "../../../models/IProjects";
 import { IJobs } from "../../../models/IJobs";
 import { ICapture } from "../../../models/ICapture";
 import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../utils/ViewerDataUtils";
-
+import { TruncatedString } from "../../../utils/utils";
+import { TooltipText } from "../side-panel/SidePanelStyles";
 const UploaderDateDetails: React.FC<any> = () => {
   const { state: appState, appContextAction } = useAppContext();
   const { appAction } = appContextAction;
@@ -269,7 +270,13 @@ const UploaderDateDetails: React.FC<any> = () => {
 
         <div className="w-[25%] mt-[18px]">
           <h2 className="font-sans not-italic font-semibold text-sm my-[4px]">
-            Enter Capture Date for {uploaderState.structure?.name}
+            Enter Capture Date for
+            <TooltipText title={uploaderState.structure?.name && uploaderState.structure?.name.length > 18 ?uploaderState.structure?.name:""} placement="top">      
+          <span className="text-[#101F4C]">
+            <TruncatedString text={uploaderState.structure?.name} maxLength={18} suffixLength={0}></TruncatedString></span> 
+        
+          </TooltipText>
+             
           </h2>
           <div
             className="w-full border-t border-solid border-[#F1742E] h-[1px]"

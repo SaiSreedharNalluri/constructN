@@ -125,11 +125,11 @@ const UploaderFinal: React.FC = () => {
               fileProgressList.length > 0 &&
               fileProgressList.map((fileProgressObj: fileData) => {
                 return (
-                    <div key={fileProgressObj.fileName} className="flex w-full justify-between items-center" >
-                      <div className="  ml-[30px] my-[20px] ">
+                    <div key={fileProgressObj.fileName} className="flex w-full justify-between items-center my-[8px]" >
+                      <div className="  ml-[30px]  ">
                         <FileNameListing fileName={fileProgressObj.fileName} />
                       </div>
-                      <div className="mt-[20px] w-[100px]">
+                      <div className=" w-[100px]">
                         <FileStatus status={fileProgressObj.status} />
                       </div>
                     </div>
