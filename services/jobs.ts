@@ -93,7 +93,7 @@ export const updateJobStatus = async (
       }
     );
   } catch (error) {
-    throw error;
+    return error;
   }
 };
 
