@@ -11,7 +11,7 @@ export const addCapture = (projectId:string,formValue:{
     captureDateTime:Date
 }) => {
     return instance
-      .post(`${API.BASE_URL}/projects/${projectId}/captures`, formValue, {
+      .post(`${API.BASE_URL}/projects/${projectId}/captures?populate=jobId`, formValue, {
         headers: authHeader.authHeader(),
       })
       .then((response) => {

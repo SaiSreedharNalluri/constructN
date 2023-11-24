@@ -5,7 +5,7 @@ import FileNameListing from "../../fileListing/fileNameListing";
 import FileStatus from "../../fileListing/fileStatus";
 import { IJobs } from "../../../../models/IJobs";
 import { IStructure } from "../../../../models/IStructure";
-import { getCaptureIdFromModelOrString, getPathToRoot } from "../../../../utils/utils";
+import { getCaptureIdFromModelOrString, getPathToRoot, getStructureIdFromModelOrString } from "../../../../utils/utils";
 import { useAppContext } from "../../../../state/appState/context";
 import { UploadStatus } from "../../../../models/IUploader";
 interface fileData {
@@ -74,12 +74,7 @@ const UploaderFinal: React.FC = () => {
      uploaderAction.setSelectedJob(job);
   };
   const gethierarchyPath = (structure: string | IStructure): string => {
-    let structureId = "";
-    if ((structure as IStructure)._id) {
-      structureId = (structure as IStructure)._id;
-    } else {
-      structureId = structure as string;
-    }
+    let structureId = getStructureIdFromModelOrString(structure)
 
     if (appState.hierarchy) {
       return getPathToRoot(structureId, appState.hierarchy[0]);
@@ -125,11 +120,11 @@ const UploaderFinal: React.FC = () => {
               fileProgressList.length > 0 &&
               fileProgressList.map((fileProgressObj: fileData) => {
                 return (
-                    <div key={fileProgressObj.fileName} className="flex w-full justify-between items-center" >
-                      <div className="  ml-[30px] my-[20px] ">
+                    <div key={fileProgressObj.fileName} className="flex w-full justify-between items-center my-[8px]" >
+                      <div className="  ml-[30px]  ">
                         <FileNameListing fileName={fileProgressObj.fileName} />
                       </div>
-                      <div className="mt-[20px] w-[100px]">
+                      <div className=" w-[100px]">
                         <FileStatus status={fileProgressObj.status} />
                       </div>
                     </div>

@@ -13,7 +13,7 @@ const UploaderGCP = () => {
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   
- console.log('final data for gcplist',uploaderState.gcpList)
+
   const handleFirstOptionChange = (event: any) => {
     setSelectedOption(event.target.value);
   };

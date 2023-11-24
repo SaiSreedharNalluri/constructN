@@ -94,7 +94,7 @@ export const updateJobStatus = async (
       }
     );
   } catch (error) {
-    throw error;
+    return error;
   }
 };
 
@@ -109,7 +109,7 @@ export const getJobsByStatus = async (projectId: string, status: JobStatus[]) =>
 
 export const getJobsByStatusMode = async (projectId: string, status: JobStatus[], mode: CaptureMode) => {
   return await instance.get<IBaseResponse<IJobs[]>>(
-    `${API.BASE_URL}/projects/${projectId}/jobs?status=${status.join(",")}&mode=${mode}`,
+    `${API.BASE_URL}/projects/${projectId}/jobs?status=${status.join(",")}&mode=${mode}&populate=captures`,
     {
       headers: authHeader.authHeader(),
     }

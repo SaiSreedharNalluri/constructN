@@ -5,6 +5,7 @@ import { RawImage, RawImageStatus, location, metaData } from "../../models/IRawI
 import { getCaptureIdFromModelOrString, getInitialGCPList, getJobIdFromModelOrString } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
 import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState } from "./state";
+import { UploadFile } from "@mui/icons-material";
 
 
 export const resetUploaderState = (): UploaderState => {
@@ -29,7 +30,14 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 gcpType: GCPType.LONGLAT,
                 gcpList: getInitialGCPList(false), // default is LONGLAT
                 skipGCP: false,
+                selectedJob: undefined,
+                isAppendingCapture: false,
                 uploadinitiate:false,
+            }
+        case UploaderActionType.setUploadCompletionState:
+            return {
+                ...state,
+                completionState: action.payload.status
             }
         case UploaderActionType.refreshJobs:
             return {
@@ -166,14 +174,12 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 selectedJob: action.payload.job
             }
         case UploaderActionType.updateWorkerStatus:
-            console.log("TestingUploader inside reducer: ", state.inProgressWorkers);
             let workers = state.inProgressWorkers
             let captureId = action.payload.workerFileList[0].uploadObject.capture
             let newWorkerStatus = { 
                 ...workers,
                 [captureId as string]: action.payload.workerFileList
             }
-            console.log("TestingUploader inside reducer: ", newWorkerStatus);
             return {
                 ...state,
                 inProgressWorkers: newWorkerStatus
@@ -246,14 +252,18 @@ const getUpdatedFileList = (state: UploaderState, files: fileWithExif[],): choos
             let newUploadImage: uploadImage = {file, ...rawImage}
             let alreadyUploadedFile;
             if(state.isAppendingCapture && state.selectedJob) {
+                console.log("TestingUploader in append files reducer: ", state.rawImagesMap, state.selectedJob)
                 alreadyUploadedFile = state.rawImagesMap[getCaptureIdFromModelOrString(state.selectedJob.captures[0])].find((image) => {
-                    return image.deviceId == deviceId && image.dateTime == dateTimeOriginal
+                    return image.deviceId == deviceId && image.dateTime == dateTimeOriginal && image.status !== RawImageStatus.failedTimedOut
                 })
             }
+            let duplicateFileInCurrent = validEXIFFiles.find((uploadImages) => {
+                return uploadImages.deviceId == deviceId && uploadImages.dateTime == dateTimeOriginal
+            })
             let duplicateFile = choosenFiles.validFiles.find((uploadImages) => {
                 return uploadImages.deviceId == deviceId && uploadImages.dateTime == dateTimeOriginal
             })
-            if (duplicateFile || alreadyUploadedFile) {
+            if (duplicateFile || alreadyUploadedFile || duplicateFileInCurrent) {
                 duplicateEXIFFiles.push(newUploadImage)
             } else {
                 validEXIFFiles.push(newUploadImage)

@@ -10,6 +10,11 @@ import { getInitialGCPList } from "../../utils/utils";
 export type uploadImage = { file: File } & RawImage
 export type fileWithExif = { file: File } & { exifData: ExifReader.Tags }
 
+export enum UploaderFinishState {
+    withError,
+    withoutError
+}
+
 export interface choosenFileObject {
     validFiles: uploadImage[]
     invalidEXIFFiles: File[]
@@ -52,6 +57,7 @@ export interface UploaderState {
     isReading:boolean,
     selectedJob?: IJobs,
     inProgressWorkers?: workerFileMap,
+    completionState?: UploaderFinishState,
     errorCount:number;
 }
 

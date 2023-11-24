@@ -87,6 +87,16 @@ export const getCaptureIdFromModelOrString = (capture: ICapture | string): strin
     return captureId
 }
 
+export const getStructureIdFromModelOrString = (structure: IStructure | string): string => {
+    let structureId = "";
+    if ((structure as IStructure)._id) {
+      structureId = (structure as IStructure)._id;
+    } else {
+      structureId = structure as string;
+    }
+    return structureId
+}
+
 export const getPathToRoot = (structureId: String, hierarchy: ChildrenEntity, delimiter:delimiterType = " > "): string => {
     const getPath = (structureId: String, hierarchy: ChildrenEntity, delimiter:delimiterType = " > "): string => {
         if(structureId === hierarchy._id) {

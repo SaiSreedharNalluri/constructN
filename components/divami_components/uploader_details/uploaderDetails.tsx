@@ -15,10 +15,13 @@ import { useUploaderContext } from "../../../state/uploaderState/context";
 import { useAppContext } from "../../../state/appState/context";
 import { getProjectDetails } from "../../../services/project";
 import { IProjects } from "../../../models/IProjects";
-import { IJobs } from "../../../models/IJobs";
+import { IJobs, JobStatus } from "../../../models/IJobs";
 import { ICapture } from "../../../models/ICapture";
 import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../utils/ViewerDataUtils";
+import { getStructureIdFromModelOrString } from "../../../utils/utils";
 
+import { TruncatedString } from "../../../utils/utils";
+import { TooltipText } from "../side-panel/SidePanelStyles";
 const UploaderDateDetails: React.FC<any> = () => {
   const { state: appState, appContextAction } = useAppContext();
   const { appAction } = appContextAction;
@@ -30,7 +33,7 @@ const UploaderDateDetails: React.FC<any> = () => {
   const maxAllowedDate = new Date();
   const [filteredJob, setFilteredJobs] = useState<any>();
 
-  
+
   const handleDateChange = (date: any | null) => {
     if (date !== null) {
       uploaderAction.setshowMessage(false);
@@ -47,7 +50,7 @@ const UploaderDateDetails: React.FC<any> = () => {
   };
   useEffect(() => {
     if (router.isReady && router.query?.projectId && uploaderState.project === undefined) {
-       uploaderAction.setIsLoading(true)
+      uploaderAction.setIsLoading(true)
       getProjectDetails(router?.query?.projectId as string).then((response) => {
         let projectDetails: IProjects = response.data.result;
         // console.log("TestingUploader: project details ", projectDetails)
@@ -65,7 +68,7 @@ const UploaderDateDetails: React.FC<any> = () => {
             CustomToast("failed to load data", "error");
           });
       }
-      else{
+      else {
         uploaderAction.setIsLoading(false)
       }
     }
@@ -111,7 +114,7 @@ const UploaderDateDetails: React.FC<any> = () => {
       uploaderState.structure &&
       uploaderState.date
     ) {
-      
+
       // const filteredPendingUploadJobs = uploaderState.pendingUploadJobs.filter((job) => {
       //   return (
       //     (job.structure as IStructure)?._id === uploaderState.structure?._id &&
@@ -120,11 +123,12 @@ const UploaderDateDetails: React.FC<any> = () => {
       //   );
       // });
 
-      const filteredPendingProcessJobs = uploaderState.pendingProcessJobs.filter((job) => {
+      const combinedJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
+      const filteredPendingProcessJobs = combinedJobs.filter((job) => {
         return (
-          (job.structure as IStructure)?._id === uploaderState.structure?._id &&
+          getStructureIdFromModelOrString(job.structure) === uploaderState.structure?._id &&
           new Date(job.date).toLocaleDateString() ===
-            uploaderState?.date?.toLocaleDateString()
+          uploaderState?.date?.toLocaleDateString()
         );
       });
 
@@ -146,20 +150,20 @@ const UploaderDateDetails: React.FC<any> = () => {
             borderLeft: "4px solid #FF843F",
             borderTop: "none",
             boxShadow: "0px 5px 5px rgba(0, 0, 0.1, 0.1)",
-            width:"fit-content",
+            width: "fit-content",
             margin: "16px 0px",
-            borderRadius:"0px 8px 8px 0px",
-            fontFamily:"Open Sans"
+            borderRadius: "0px 8px 8px 0px",
+            fontFamily: "Open Sans"
           }}
         >
-          <p  className="font-semibold text-base">
+          <p className="font-semibold text-base">
             Only images in .jpg, .jpeg with metadata info of GPS co-ordinates
             are accepted at the moment.
           </p>
         </div>
       )}
       <p
-    style={{fontSize:"18px",lineHeight:"20px"}}    className=" font-sans font-normal mt-[24px]  not-italic"
+        style={{ fontSize: "18px", lineHeight: "20px" }} className=" font-sans font-normal mt-[24px]  not-italic"
       >
         Choose the level for which you want to upload Drone capture data
       </p>
@@ -183,93 +187,106 @@ const UploaderDateDetails: React.FC<any> = () => {
               }
             </div>
             <div>
-            {uploaderState.structure?.name &&
-              uploaderState.date &&
-              filteredJob &&
-              filteredJob.length > 0 && (
-                <div className="my-[10px]  w-[90%] bg-[#FFECE2] rounded-3xl float-right" style={{boxShadow:"0px 4px 4px 0px rgba(0, 0, 0, 0.25)"}}>
-                  <div className="pl-[60px] pr-[60px] pt-[24px] pb-[24px]">
-                  <h3 style={{fontSize:"16px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans",lineHeight:"20px",color:"#101f4c"}}>
-                    We already have captures for this date{" "}
-                    {uploaderState.date.toLocaleDateString()}. Select one from
-                    below or create a <button style={{fontSize:"16px",fontWeight:"700",fontStyle:"normal",fontFamily:"Open sans",lineHeight:"20px",color:"#f1742e"}} onClick={() => uploaderAction.next()
-                            }>New Capture</button> 
-                  </h3>
-                  <div>
-                    <table className="w-full mt-[18px]">
-                      <thead className="sticky top-0 bg-box-orange border-b border-solid border-[#f1742e]">
-                        <tr className="p-1 text-left">
-                          <th>
-                            Capture Date
-                          </th>
-                          <th>
-                            Uploaded on
-                          </th>
-                          <th>
-                            Status
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredJob && filteredJob.length > 0 ? (
-                          filteredJob.map((job: IJobs) => (
-                            <tr key={job._id} className="m-2 p-1 cursor-pointer" onClick={() => {
-                                uploaderAction.setSelectedJob(job)
-                                uploaderAction.next()
-                              }
-                            }>
-                              <td className="p-1 ">
-                              {
-                                job.captures && job.captures.length > 0 && typeof job.captures[0] != 'string' ? (
-                                  <div>
-                                    {setTheFormatedDate((job.captures[0] as ICapture).captureDateTime)}
-                                  </div>
-                                ) : ('-')
-                              }
-                              </td>
-                              <td className="p-1 ">
-                              {getTheProjectDateAndTime(job.updatedAt)}
-                              </td>
-                              <td
-                                style={{
-                                  fontSize: "medium",
-                                  fontStyle: "italic",
-                                }}
-                              >
-                                pending processing
-                              </td>
+              {uploaderState.structure?.name &&
+                uploaderState.date &&
+                filteredJob &&
+                filteredJob.length > 0 && (
+                  <div className="my-[10px]  w-[90%] bg-[#FFECE2] rounded-3xl float-right" style={{ boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)" }}>
+                    <div className="pl-[60px] pr-[60px] pt-[24px] pb-[24px]">
+                      <h3 style={{ fontSize: "16px", fontWeight: "600", fontStyle: "normal", fontFamily: "Open sans", lineHeight: "20px", color: "#101f4c" }}>
+                        We already have captures for this date{" "}
+                        {uploaderState.date.toLocaleDateString()}. Select one from
+                        below or create a <button style={{ fontSize: "16px", fontWeight: "700", fontStyle: "normal", fontFamily: "Open sans", lineHeight: "20px", color: "#f1742e" }} onClick={() => {
+                          // uploaderAction.setSelectedJob(undefined);
+                          // uploaderAction.setIsAppendingCapture(false);
+                          uploaderAction.next()
+                        }
+                        }>New Capture</button>
+                      </h3>
+                      <div>
+                        <table className="w-full mt-[18px]">
+                          <thead className="sticky top-0 bg-box-orange border-b border-solid border-[#f1742e]">
+                            <tr className="p-1 text-left">
+                              <th>
+                                Capture Date
+                              </th>
+                              <th>
+                                Uploaded on
+                              </th>
+                              <th>
+                                Status
+                              </th>
                             </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td
-                              colSpan={3}
-                              className="p-1 border-b border-solid border-border-yellow"
-                            >
-                              No captures found for the selected date.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
+                          </thead>
+                          <tbody>
+                            {filteredJob && filteredJob.length > 0 ? (
+                              filteredJob.map((job: IJobs) => (
+                                <tr key={job._id} className="m-2 p-1 cursor-pointer" onClick={() => {
+                                  uploaderAction.setSelectedJob(job)
+                                  uploaderAction.setIsAppendingCapture(true)
+                                  uploaderAction.next()
+                                }
+                                }>
+                                  <td className="p-1 ">
+                                    {
+                                      job.captures && job.captures.length > 0 && typeof job.captures[0] != 'string' ? (
+                                        <div>
+                                          {setTheFormatedDate((job.captures[0] as ICapture).captureDateTime)}
+                                        </div>
+                                      ) : ('-')
+                                    }
+                                  </td>
+                                  <td className="p-1 ">
+                                    {getTheProjectDateAndTime(job.updatedAt)}
+                                  </td>
+                                  <td
+                                    style={{
+                                      fontSize: "medium",
+                                      fontStyle: "italic",
+                                    }}
+                                  >
+                                    {
+                                      job.status === JobStatus.pendingUpload ? "pending upload" : "pending processing"
+                                    }
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td
+                                  colSpan={3}
+                                  className="p-1 border-b border-solid border-border-yellow"
+                                >
+                                  No captures found for the selected date.
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                      <h3
+                        style={{ fontSize: "14px", textAlign: "left", marginTop: "18px", fontWeight: "400", fontStyle: "italic", fontFamily: "Open sans", lineHeight: "18px", color: "#000" }}
+                      >
+                        * we will reprocess the combined dataset as a new capture
+                      </h3>
+                    </div>
+
                   </div>
-                  <h3
-                    style={{fontSize:"14px", textAlign:"left",marginTop:"18px", fontWeight:"400",fontStyle:"italic",fontFamily:"Open sans",lineHeight:"18px",color:"#000"}}
-                  >
-                    * we will reprocess the combined dataset as a new capture
-                  </h3>
-                  </div>
-        
-                </div>
-              )}
+                )}
+            </div>
           </div>
-          </div>
-         
+
         </div>
 
         <div className="w-[25%] mt-[18px]">
           <h2 className="font-sans not-italic font-semibold text-sm my-[4px]">
-            Enter Capture Date for {uploaderState.structure?.name}
+            Enter Capture Date for
+            <TooltipText title={uploaderState.structure?.name && uploaderState.structure?.name.length > 18 ? uploaderState.structure?.name : ""} placement="top">
+              <span className="text-[#101F4C]">
+                <TruncatedString text={uploaderState.structure?.name} maxLength={18} suffixLength={0}></TruncatedString></span>
+
+            </TooltipText>
+
           </h2>
           <div
             className="w-full border-t border-solid border-[#F1742E] h-[1px]"

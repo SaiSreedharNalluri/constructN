@@ -98,8 +98,7 @@ function createAxiosResponseInterceptor() {
   return;
 }
 export default instance;
-export const hasCommonElement = (array1: any, array2: any) => {
-  console.log(array1, array2, " 401 error arrays 1 2")
+export const hasCommonElement=(array1:any, array2:any)=>{
   for (let i = 0; i < array1.length; i++) {
     if (array2.includes(array1[i])) {
       return true;
