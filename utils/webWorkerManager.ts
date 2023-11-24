@@ -27,5 +27,11 @@
     public getWorker(){
       return this.workers;
     }
+    public removeWorker(captureId:string)
+    {
+          delete this.workers[captureId]
+          console.log('this',this.workers)
+          return this.workers
+    }
   }
   

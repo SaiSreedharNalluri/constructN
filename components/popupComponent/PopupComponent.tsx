@@ -223,7 +223,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 onClick={handleClose}
                 style={{
                   color: "#F1742E",
-                  width: "180px",
+                  width: isUploader  ? "180px":"fit-content",
                   height: "40px",
                   textTransform: "none",
                   marginBottom: "22px",
@@ -241,7 +241,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 style={{
                   backgroundColor: "#FF843F",
                   color:"white",
-                  width: isUploader  ? "180px":"250px",
+                  width: isUploader  ? "180px":"fit-content",
                   height: "40px",
                   marginBottom: "22px",
                   marginRight: "22px",

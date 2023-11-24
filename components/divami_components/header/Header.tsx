@@ -73,6 +73,7 @@ import * as Sentry from "@sentry/nextjs";
 import { hasCommonElement } from "../../../services/axiosInstance";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 import { UploaderStep } from "../../../state/uploaderState/state";
+import { WebWorkerManager } from "../../../utils/webWorkerManager";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -89,8 +90,8 @@ const Header: React.FC<any> = ({
   hideSidePanel,
   fromUsersList,
   showFirstElement,
-  isDesignAvailable=false,
-  isRealityAvailable=false,
+  isDesignAvailable = false,
+  isRealityAvailable = false,
 }) => {
   const customLogger = new CustomLoggerClass();
   const router = useRouter();
@@ -117,47 +118,41 @@ const Header: React.FC<any> = ({
   const [supportMenu, setSupportMenu] = useState<boolean>(false);
   const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
   const [openProfile, setOpenProfile] = useState(false);
-  const [projectName,setProjectName]=useState('')
+  const [projectName, setProjectName] = useState('')
   const [notificationCount, setNotificationCount] = useState(0);
   const { state: uploaderState } = useUploaderContext();
-  useEffect(()=>{
-    if(router.isReady && router?.query?.projectId)
-    {
-      const projectInfo:any = getCookie('projectData')as string;
-     if(projectInfo === undefined || projectInfo === null || projectInfo === 1)
-     {
+  useEffect(() => {
+    if (router.isReady && router?.query?.projectId) {
+      const projectInfo: any = getCookie('projectData') as string;
+      if (projectInfo === undefined || projectInfo === null || projectInfo === 1) {
         ProjectInfo([])
-     }
-     else
-     {
-      if(JSON.parse(projectInfo)?.find((each:any)=>each._id === router?.query?.projectId)?._id != router?.query?.projectId)
-     {
-        ProjectInfo(JSON.parse(projectInfo))
-     }else{
-      setProjectName(JSON.parse(projectInfo)?.find((each:any)=>each._id===router?.query?.projectId)?.name)
-     }
-     }
+      }
+      else {
+        if (JSON.parse(projectInfo)?.find((each: any) => each._id === router?.query?.projectId)?._id != router?.query?.projectId) {
+          ProjectInfo(JSON.parse(projectInfo))
+        } else {
+          setProjectName(JSON.parse(projectInfo)?.find((each: any) => each._id === router?.query?.projectId)?.name)
+        }
+      }
     }
-  },[router.isReady,router?.query?.projectId,projectName])
-  const ProjectInfo=(projectInfo:any)=>{
-    getProjectDetails(router?.query?.projectId as string).then((response)=>{
-      console.log(response?.data?.result?.company?.name,"res");
-      if(response?.data?.result)
-      { 
-        projectInfo.push({_id:router?.query?.projectId,name:response?.data?.result?.name,timeZone:response?.data?.result?.timeZone,dashboardURL:response?.data?.result?.metaDetails?.dashboardURL ,reportURL:response?.data?.result?.metaDetails?.reportURL})
+  }, [router.isReady, router?.query?.projectId, projectName])
+  const ProjectInfo = (projectInfo: any) => {
+    getProjectDetails(router?.query?.projectId as string).then((response) => {
+      console.log(response?.data?.result?.company?.name, "res");
+      if (response?.data?.result) {
+        projectInfo.push({ _id: router?.query?.projectId, name: response?.data?.result?.name, timeZone: response?.data?.result?.timeZone, dashboardURL: response?.data?.result?.metaDetails?.dashboardURL, reportURL: response?.data?.result?.metaDetails?.reportURL })
         Sentry.setTag("ProjectName", response?.data?.result?.name);
-        Sentry.setTag("ProjectId",  response?.data?.result?._id);
-        Sentry.setTag("CompanyName",  response?.data?.result?.company?.name);
+        Sentry.setTag("ProjectId", response?.data?.result?._id);
+        Sentry.setTag("CompanyName", response?.data?.result?.company?.name);
         setCookie('projectData', JSON.stringify(projectInfo));
         setProjectName(response?.data?.result?.name)
-      } 
-     })  .catch((error) => {
-      if (error.response.status===403)
-      {
-        CustomToast("Permisson Denied, Contact Admin","error");
+      }
+    }).catch((error) => {
+      if (error.response.status === 403) {
+        CustomToast("Permisson Denied, Contact Admin", "error");
         router.push("/projects?reason=AccessDenied");
       }
-     });
+    });
   }
   useEffect(() => {
     let user = null;
@@ -176,15 +171,14 @@ const Header: React.FC<any> = ({
     //   setProjectId(router.query.projectId);
     // }
     //getUserNotifications();
-   
+
   }, [router.isReady]);
   useEffect(() => {
-    getUserProfile().then((response)=>{
-      if(response?.success === true)
-      {
-       setNotificationCount(response?.result?.unReadNotifications)
+    getUserProfile().then((response) => {
+      if (response?.success === true) {
+        setNotificationCount(response?.result?.unReadNotifications)
       }
-     })
+    })
   }, [router.isReady]);
   useEffect(() => {
     setIViewMode(viewMode);
@@ -196,10 +190,10 @@ const Header: React.FC<any> = ({
   }, [viewMode]);
 
   const userLogOut = () => {
-    customLogger.logActivity("null") ;
+    customLogger.logActivity("null");
     Sentry.setTag("ProjectName", null);
     Sentry.setTag("CompanyName", null);
-  Sentry.setTag("ProjectId", null);
+    Sentry.setTag("ProjectId", null);
     removeCookies("user");
     removeCookies('projectData');
     removeCookies('isProjectTimeZone');
@@ -209,14 +203,13 @@ const Header: React.FC<any> = ({
   };
 
   const goToProjectsList = () => {
-    if(hasCommonElement(['uploader'],router.asPath?.split("/")) === true && uploaderState.step != UploaderStep.Upload){
-      console.log('vfduihkdshkn')
+    if (hasCommonElement(['uploader'], router.asPath?.split("/")) === true) {
       setIsShowPopUp(true)
     }
-    else{
+    else {
       router.push("/projects");
     }
-    customLogger.logInfo("Projects Page") ;
+    customLogger.logInfo("Projects Page");
   };
 
   const onProfilePicClick = () => {
@@ -230,7 +223,6 @@ const Header: React.FC<any> = ({
       setOpenProfile(false);
     }
   };
-
   const rightMenuClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
     setRighttNav(!rightNav);
@@ -294,7 +286,7 @@ const Header: React.FC<any> = ({
   //     .catch((error) => {});
   // }, []);
   const getUserNotifications = (
-   // condition = defaultValue,
+    // condition = defaultValue,
     eventEmitter = filterValue
   ) => {
     if (eventEmitter === "All") {
@@ -310,7 +302,7 @@ const Header: React.FC<any> = ({
           setTotalNotifications(response.totalUserNotifications);
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const handleOptionChange = (event: any) => {
@@ -352,12 +344,11 @@ const Header: React.FC<any> = ({
   };
   const clearNotificationsCount = () => {
     clearUserNotificationsCount().then((response) => {
-      if(response?.success === true)
-      {
+      if (response?.success === true) {
         setNotificationCount(0)
       }
       console.log(response);
-    }).catch((error) => {});
+    }).catch((error) => { });
   }
   return (
     <>
@@ -397,9 +388,9 @@ const Header: React.FC<any> = ({
           {showBreadcrumbs && <DividerIcon src={headerLogSeparator} alt="" />}
           {showBreadcrumbs && (
             <CustomBreadcrumbs
-              breadCrumbData={ breadCrumbData.length > 0 ?  breadCrumbData :[{name:projectName} ]}
+              breadCrumbData={breadCrumbData.length > 0 ? breadCrumbData : [{ name: projectName }]}
               handleBreadCrumbClick={
-                handleBreadCrumbClick ? handleBreadCrumbClick : () => {}
+                handleBreadCrumbClick ? handleBreadCrumbClick : () => { }
               }
               showFirstElement={showFirstElement}
             />
@@ -443,30 +434,30 @@ const Header: React.FC<any> = ({
             ""
           )} */}
 
-          {(toolClicked &&(isDesignAvailable||isRealityAvailable))? (
-            <TooltipText title={!isDesignAvailable? "No Design":!isRealityAvailable?"No Reality":"Switch Mode"}>
-            <HeaderToggle>
-              <HeaderToggleButtonOne
-                onClick={rightMenuClickHandler}
-                toggleStatus={isDesignSelected}
-                isAvailable={isDesignAvailable}
-                id="Design"
-                dataTestid="design-button"
-                isLeftCorner={true}
-              >
-                Design
-              </HeaderToggleButtonOne>
-              <HeaderToggleButtonOne
-                onClick={rightMenuClickHandler}
-                toggleStatus={!isDesignSelected}
-                isAvailable = {isRealityAvailable}
-                id="Reality"
-                dataTestid="reality-button"
+          {(toolClicked && (isDesignAvailable || isRealityAvailable)) ? (
+            <TooltipText title={!isDesignAvailable ? "No Design" : !isRealityAvailable ? "No Reality" : "Switch Mode"}>
+              <HeaderToggle>
+                <HeaderToggleButtonOne
+                  onClick={rightMenuClickHandler}
+                  toggleStatus={isDesignSelected}
+                  isAvailable={isDesignAvailable}
+                  id="Design"
+                  dataTestid="design-button"
+                  isLeftCorner={true}
+                >
+                  Design
+                </HeaderToggleButtonOne>
+                <HeaderToggleButtonOne
+                  onClick={rightMenuClickHandler}
+                  toggleStatus={!isDesignSelected}
+                  isAvailable={isRealityAvailable}
+                  id="Reality"
+                  dataTestid="reality-button"
 
-              >
-                Reality
-              </HeaderToggleButtonOne>
-            </HeaderToggle>
+                >
+                  Reality
+                </HeaderToggleButtonOne>
+              </HeaderToggle>
             </TooltipText>
           ) : (
             <></>
@@ -512,24 +503,24 @@ const Header: React.FC<any> = ({
           <HeaderSupportImageContainer>
             <TooltipText title="Support">
               <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
-              <Link href="https://help.constructn.ai/en/" target="_blank" passHref>
-             <Image
-                  height="30"
-                  src={helpIcon}
-                  alt="Support"
-                  onClick={() => {
-                  if (!supportMenu) {
-                    customLogger.logInfo("Header - Support")
-                      setSupportMenu(true);
-                      setMenuLoading(false);
-                      setOpenNotication(false);
-                      setOpenProfile(false);
-                    } else {
-                      setSupportMenu(false);
-                    }
-                  }}
-                />
-                
+                <Link href="https://help.constructn.ai/en/" target="_blank" passHref>
+                  <Image
+                    height="30"
+                    src={helpIcon}
+                    alt="Support"
+                    onClick={() => {
+                      if (!supportMenu) {
+                        customLogger.logInfo("Header - Support")
+                        setSupportMenu(true);
+                        setMenuLoading(false);
+                        setOpenNotication(false);
+                        setOpenProfile(false);
+                      } else {
+                        setSupportMenu(false);
+                      }
+                    }}
+                  />
+
                 </Link>
               </div>
             </TooltipText>
@@ -537,24 +528,24 @@ const Header: React.FC<any> = ({
 
           <HeaderNotificationImageContainer>
             <TooltipText title="Notifications" onClick={() => {
-                   if (openNotification) {
-                      setOpenNotication(false);
-                      customLogger.logInfo("Notifications Hide")
-                    } else {
-                      customLogger.logInfo("Notifications Show")
-                      setOpenNotication(true);
-                      setMenuLoading(false);
-                      setSupportMenu(false);
-                      setOpenProfile(false);
-                      clearNotificationsCount();
-                    }
-                  }}>
+              if (openNotification) {
+                setOpenNotication(false);
+                customLogger.logInfo("Notifications Hide")
+              } else {
+                customLogger.logInfo("Notifications Show")
+                setOpenNotication(true);
+                setMenuLoading(false);
+                setSupportMenu(false);
+                setOpenProfile(false);
+                clearNotificationsCount();
+              }
+            }}>
               <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full" >
-              <Badge badgeContent={notificationCount} color="warning">
-                <Image
-                  src={Notification}
-                  alt="Profile Image"
-                />
+                <Badge badgeContent={notificationCount} color="warning">
+                  <Image
+                    src={Notification}
+                    alt="Profile Image"
+                  />
                 </Badge>
               </div>
             </TooltipText>
@@ -626,7 +617,7 @@ const Header: React.FC<any> = ({
             )}
           </div>
         )}
-        
+
 
         {/* {supportMenu && (
           <div className="absolute top-[64px]  shadow-md right-[97px] bg-gray-50   z-[1500]  border mx-0.5">
@@ -692,7 +683,7 @@ const Header: React.FC<any> = ({
                 callBackvalue={userLogOut}
               />
             )} */}
-          {/* </div> */}
+        {/* </div> */}
         {/* )} } */}
         {/* //! This is Open Profile Options */}
         {/* {loading && (
@@ -731,20 +722,20 @@ const Header: React.FC<any> = ({
             </ul>
           </div>
         )} */}
-        </HeaderContainer>
-        {
-             isShowPopUp && (<PopupComponent
-              open={isShowPopUp}
-              setShowPopUp={setIsShowPopUp}
-              modalTitle={"Alert"}
-              modalmessage={`You have unsaved changes. Navigating away from this page will result in the loss of your current edits. Are you sure you want to proceed and lose your changes?`}
-              primaryButtonLabel={"Confirm"}
-              SecondaryButtonlabel={"Cancel"}
-              callBackvalue={()=>{
-                router.push("/projects"); 
-              }}
-            />) 
-            }
+      </HeaderContainer>
+      {
+        isShowPopUp && (<PopupComponent
+          open={isShowPopUp}
+          setShowPopUp={setIsShowPopUp}
+          modalTitle={"Alert"}
+          modalmessage={`You have unsaved changes. Navigating away from this page will result in the loss of your current edits. Are you sure you want to proceed and lose your changes?`}
+          primaryButtonLabel={"Confirm"}
+          SecondaryButtonlabel={"Cancel"}
+          callBackvalue={() => {
+            router.push("/projects");
+          }}
+        />)
+      }
     </>
   );
 };
