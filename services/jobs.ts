@@ -108,7 +108,7 @@ export const getJobsByStatus = async (projectId: string, status: JobStatus[]) =>
 
 export const getJobsByStatusMode = async (projectId: string, status: JobStatus[], mode: CaptureMode) => {
   return await instance.get<IBaseResponse<IJobs[]>>(
-    `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs?status=${status.join(",")}&mode=${mode}`,
+    `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/jobs?status=${status.join(",")}&mode=${mode}&populate=captures`,
     {
       headers: authHeader.authHeader(),
     }

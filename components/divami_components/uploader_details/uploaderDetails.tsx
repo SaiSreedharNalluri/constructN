@@ -18,6 +18,7 @@ import { IProjects } from "../../../models/IProjects";
 import { IJobs } from "../../../models/IJobs";
 import { ICapture } from "../../../models/ICapture";
 import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../utils/ViewerDataUtils";
+import { getStructureIdFromModelOrString } from "../../../utils/utils";
 
 const UploaderDateDetails: React.FC<any> = () => {
   const { state: appState, appContextAction } = useAppContext();
@@ -122,7 +123,7 @@ const UploaderDateDetails: React.FC<any> = () => {
 
       const filteredPendingProcessJobs = uploaderState.pendingProcessJobs.filter((job) => {
         return (
-          (job.structure as IStructure)?._id === uploaderState.structure?._id &&
+          getStructureIdFromModelOrString(job.structure) === uploaderState.structure?._id &&
           new Date(job.date).toLocaleDateString() ===
             uploaderState?.date?.toLocaleDateString()
         );
@@ -192,7 +193,11 @@ const UploaderDateDetails: React.FC<any> = () => {
                   <h3 style={{fontSize:"16px",fontWeight:"600",fontStyle:"normal",fontFamily:"Open sans",lineHeight:"20px",color:"#101f4c"}}>
                     We already have captures for this date{" "}
                     {uploaderState.date.toLocaleDateString()}. Select one from
-                    below or create a <button style={{fontSize:"16px",fontWeight:"700",fontStyle:"normal",fontFamily:"Open sans",lineHeight:"20px",color:"#f1742e"}} onClick={() => uploaderAction.next()
+                    below or create a <button style={{fontSize:"16px",fontWeight:"700",fontStyle:"normal",fontFamily:"Open sans",lineHeight:"20px",color:"#f1742e"}} onClick={() => {
+                      // uploaderAction.setSelectedJob(undefined);
+                      // uploaderAction.setIsAppendingCapture(false);
+                      uploaderAction.next()
+                    }
                             }>New Capture</button> 
                   </h3>
                   <div>
@@ -215,6 +220,7 @@ const UploaderDateDetails: React.FC<any> = () => {
                           filteredJob.map((job: IJobs) => (
                             <tr key={job._id} className="m-2 p-1 cursor-pointer" onClick={() => {
                                 uploaderAction.setSelectedJob(job)
+                                uploaderAction.setIsAppendingCapture(true)
                                 uploaderAction.next()
                               }
                             }>
