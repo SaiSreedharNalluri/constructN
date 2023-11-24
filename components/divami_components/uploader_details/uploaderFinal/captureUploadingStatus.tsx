@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUploaderContext } from "../../../../state/uploaderState/context";
-import { TruncatedString, getPathToRoot } from "../../../../utils/utils";
+import { TruncatedString, getPathToRoot, getStructureIdFromModelOrString } from "../../../../utils/utils";
 import { useAppContext } from "../../../../state/appState/context";
 import { TooltipText } from "../../side-panel/SidePanelStyles";
 import { IStructure } from "../../../../models/IStructure";
@@ -77,12 +77,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
     });
   };
   const gethierarchyPath = (structure: string | IStructure): string => {
-    let structureId = "";
-    if ((structure as IStructure)._id) {
-      structureId = (structure as IStructure)._id;
-    } else {
-      structureId = structure as string;
-    }
+    let structureId = getStructureIdFromModelOrString(structure)
 
     if (appState.hierarchy) {
       return getPathToRoot(structureId, appState.hierarchy[0]);
@@ -99,8 +94,10 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
       status: JobStatus.readyForProcessing,
       jobId: job._id,
     }));
+    uploaderAction.setIsLoading(true)
     updateMultipleJobStatus(router.query.projectId as string, jobDetails).then(
       (response) => {
+        uploaderAction.refreshJobs();
         if (response.data.success === true) {
           console.log("console check sucess", response.data.result);
         }

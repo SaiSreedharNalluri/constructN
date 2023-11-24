@@ -10,7 +10,7 @@ export const addCapture = (projectId:string,formValue:{
     captureDateTime:Date
 }) => {
     return instance
-      .post(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/captures`, formValue, {
+      .post<IBaseResponse<ICapture>>(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/captures?populate=jobId`, formValue, {
         headers: authHeader.authHeader(),
       })
       .then((response) => {
