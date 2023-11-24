@@ -24,13 +24,18 @@ import { IUploadFile, UploadStatus } from "../../../../models/IUploader";
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader';
 import { getCaptureIdFromModelOrString, getJobIdFromModelOrString } from "../../../../utils/utils";
 import { CustomToast } from "../../../../components/divami_components/custom-toaster/CustomToast";
+import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const { state: appState, appContextAction } = useAppContext();
+  const [isShowPopUp, setIsShowPopUp] = useState(false);
   const { appAction } = appContextAction;
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
+  const [popUpHeading,setPopUPHeading] =useState('')
+  const [popUpClose,setPopUPClose] =useState('')
+  const [popUpConform,setPopUPConform] =useState('')
   let WorkerManager = WebWorkerManager.getInstance()
   const renderCenterContent = () => {
     switch (uploaderState.step) {
@@ -104,14 +109,6 @@ const Index: React.FC<IProps> = () => {
        
       } else {
         console.log('come out of the function');
-<<<<<<< HEAD
-        getStructureHierarchy(router.query.projectId as string).then((response) => {
-          let hierarchyList: ChildrenEntity[] = response.data.result
-          appAction.setHierarchy(hierarchyList)
-        //  setState(hierarchyList);
-        
-        })
-=======
         getStructureHierarchy(router.query.projectId as string)
           .then((response) => {
             let hierarchyList: ChildrenEntity[] = response.data.result
@@ -120,7 +117,6 @@ const Index: React.FC<IProps> = () => {
           
           })
        
->>>>>>> 35355b9770abe2bfbef4aa70af1be521393ae781
       }
     }
   }, [router.isReady, router.query.projectId, router.query.structId]);
@@ -292,7 +288,16 @@ const Index: React.FC<IProps> = () => {
             let capture = response.data.result
             updateJobStatus(uploaderState?.project?._id as string, getJobIdFromModelOrString(capture.jobId), JobStatus.uploaded).then((response)=>{
               if(response.data.success===true) {
-                uploaderAction.refreshJobs();
+                setIsShowPopUp(true)
+                setPopUPHeading('All files and GCPs uploaded successfully')
+                setPopUPConform('Process')
+                setPopUPClose('Don’t Process Add images Later')
+              }
+              else{
+                setIsShowPopUp(true)
+                setPopUPHeading('Upload complete with errors')
+                setPopUPConform('Skip Files and Complete')
+                setPopUPClose('Re-upload error files')
               }
             }).catch((error)=>{
               console.log('errror',error)
@@ -346,6 +351,21 @@ const Index: React.FC<IProps> = () => {
     </div>
     <div >
     </div>
+    <PopupComponent
+      open={isShowPopUp}
+      setShowPopUp={setIsShowPopUp}
+      modalTitle={popUpHeading}
+      modalmessage={''}
+      primaryButtonLabel={popUpConform}
+      SecondaryButtonlabel={popUpClose}
+      isUploader={false}
+      callBackvalue={() => {
+        if(popUpConform === 'All files and GCPs uploaded successfully')
+        {
+          uploaderAction.refreshJobs();
+        }
+      }}
+    />
     </div>
   );
 };
