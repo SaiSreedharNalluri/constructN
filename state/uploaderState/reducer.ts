@@ -4,8 +4,14 @@ import { IJobs, JobStatus } from "../../models/IJobs";
 import { RawImage, RawImageStatus, location, metaData } from "../../models/IRawImages";
 import { getCaptureIdFromModelOrString, getInitialGCPList, getJobIdFromModelOrString } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
-import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif } from "./state";
+import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState } from "./state";
 
+
+export const resetUploaderState = (): UploaderState => {
+    return {
+      ...initialUploaderState,
+    };
+  };
 export const uploaderReducer = (state: UploaderState, action: UploaderActions): UploaderState => {
     switch (action.type) {
         case UploaderActionType.startNewUpload: 
@@ -120,8 +126,10 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
         case UploaderActionType.setGCPList:
             let location = action.payload.list.utmLocation ? action.payload.list.utmLocation : action.payload.list.location ? action.payload.list.location : undefined
             let isNextEnabled=false
-            if(location){
+            if(location ){
+                if(state.errorCount === 0){
                 isNextEnabled = location.length >=4 
+                }
             }
             return{
                 ...state,
@@ -170,6 +178,15 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 inProgressWorkers: newWorkerStatus
             }
+
+        case UploaderActionType.setErrorCount:
+            return{
+                ...state,
+                errorCount:action.payload.errorCount
+            } 
+        case UploaderActionType.setResetUploaderState:
+            return resetUploaderState();
+       
         default:
             return state
     }

@@ -31,7 +31,8 @@ export enum UploaderActionType {
     setSelectedJob,
     updateWorkerStatus,
     refreshJobs,
-
+    setErrorCount,
+    setResetUploaderState,
 }
 
 export interface refreshJobs {
@@ -147,6 +148,16 @@ export interface updateWorkerStatus {
     payload: {workerFileList: IUploadFile<RawImage>[]}
 }
 
+export interface setErrorCount{
+  type:UploaderActionType.setErrorCount,
+  payload:{errorCount:number}
+}
+
+export interface setResetUploaderState{
+  type: UploaderActionType.setResetUploaderState
+ 
+}
+
 export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>) => {
     return {
       uploaderAction: {
@@ -227,7 +238,14 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         },
         updateWorkerStatus:(workerFileList: IUploadFile<RawImage>[]) => {
             dispatch({type:UploaderActionType.updateWorkerStatus, payload:{ workerFileList: workerFileList}})
-        }
+        },
+        setErrorCount:(errorCount:number)=>{
+          dispatch({type:UploaderActionType.setErrorCount,payload:{errorCount:errorCount}})
+        },
+        setResetUploaderState:()=>{
+          dispatch({type:UploaderActionType.setResetUploaderState})
+        },
+
       }
     }
 }
@@ -257,4 +275,5 @@ export type UploaderActions =
   | setSelectedJob
   | updateWorkerStatus
   | refreshJobs
-
+  | setErrorCount
+  | setResetUploaderState

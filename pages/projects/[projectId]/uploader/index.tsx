@@ -32,6 +32,7 @@ const Index: React.FC<IProps> = () => {
   const { appAction } = appContextAction;
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
+  const [prjId,setprojId] =useState()
   let WorkerManager = WebWorkerManager.getInstance()
   const renderCenterContent = () => {
     switch (uploaderState.step) {
@@ -69,17 +70,27 @@ const Index: React.FC<IProps> = () => {
    * UseEffect to get Structure Hierarchy of the project if it is not already present in AppState
    */
   useEffect(() => {
+    let hierarchy = appState.hierarchy
     if (router.isReady) {
-      let hierarchy = appState.hierarchy
       if(hierarchy) {
-       // setState(hierarchy)
+         if(hierarchy[0]?.project===localStorage.getItem("projectId")){
+          console.log('enter correct project id same',hierarchy)
+          getStructureHierarchy(router.query.projectId as string)
+          .then((response) => {
+            let hierarchyList: ChildrenEntity[] = response.data.result
+            appAction.setHierarchy(hierarchyList)
+          //  setState(hierarchyList);
+          
+          })
+        }else{
+          console.log('project id not same')
+         uploaderAction.setResetUploaderState();
+          localStorage.setItem("projectId",hierarchy[0]?.project)
+        }
+       
       } else {
-        getStructureHierarchy(router.query.projectId as string)
-        .then((response) => {
-          let hierarchyList: ChildrenEntity[] = response.data.result
-          appAction.setHierarchy(hierarchyList)
-        //  setState(hierarchyList);
-        })
+        console.log('come out of the function');
+       
       }
     }
   }, [router.isReady, router.query.projectId, router.query.structId]);
@@ -164,13 +175,13 @@ const Index: React.FC<IProps> = () => {
         type: uploaderState.captureType,
         structure: uploaderState.structure?._id as string,
         captureDateTime: uploaderState.date as Date
-      }).then((response)=>{
+      }).then((response:any)=>{
         if(response.success===true)
         {
           addGcpToCapture(response?.result)
         }
         
-      }).catch((error)=>{
+      }).catch((error:any)=>{
         CustomToast('Something went wrong. Please try again after some time.','error')
         uploaderAction.setIsLoading(false)
         uploaderAction.changeUploadinitiate(false)
@@ -183,11 +194,11 @@ const Index: React.FC<IProps> = () => {
       if(uploaderState.skipGCP===false)
       {     
 
-          addGcp(uploaderState.project?._id as string,capture._id,uploaderState.gcpList).then((response)=>{
+          addGcp(uploaderState.project?._id as string,capture._id,uploaderState.gcpList).then((response:any)=>{
             if(response.success===true){
               addRawImagesTOCapture(capture)
             }
-           }).catch((error)=>{
+           }).catch((error:any)=>{
             uploaderAction.setIsLoading(false)
             uploaderAction.changeUploadinitiate(false)
             CustomToast('Something went wrong. Please try again after some time.','error')
@@ -198,7 +209,7 @@ const Index: React.FC<IProps> = () => {
   }
   const addRawImagesTOCapture=(capture: ICapture)=>{
       
-    addRawImages(uploaderState.project?._id as string,capture._id,uploaderState?.choosenFiles?.validFiles?.map(({file,...rawImage})=>rawImage)).then((response)=>{
+    addRawImages(uploaderState.project?._id as string,capture._id,uploaderState?.choosenFiles?.validFiles?.map(({file,...rawImage})=>rawImage)).then((response:any)=>{
       if(response.success===true)
       {
         uploaderAction.changeUploadinitiate(false)
@@ -208,7 +219,7 @@ const Index: React.FC<IProps> = () => {
         sendingFilesToworker(response.result,capture)
         CustomToast(`Started uploading ${uploaderState?.choosenFiles?.validFiles?.length} file(s)`,'success')
       }
-    }).catch((error)=>{
+    }).catch((error:any)=>{
       uploaderAction.setIsLoading(false)
       uploaderAction.changeUploadinitiate(false)
       CustomToast('Something went wrong. Please try again after some time.','error')
@@ -268,7 +279,28 @@ const Index: React.FC<IProps> = () => {
       this.terminate()
     }
   }
-  return (
+
+  const beforeUnloadHandler = (event:BeforeUnloadEvent) => {
+    event.preventDefault();
+     event.returnValue = true;
+  };
+  const popStateHandler =()=>{
+    alert('You have unsaved changes.you may lose your data')
+    history.pushState(null, '', document.URL); 
+  }
+  useEffect(()=>{
+    if(uploaderState.step != UploaderStep.Upload)
+    {
+      window.addEventListener("beforeunload", beforeUnloadHandler);
+      history.pushState(null, '', document.URL); 
+      window.addEventListener('popstate',popStateHandler)
+    }
+   return () => { 
+    window.removeEventListener('beforeunload',beforeUnloadHandler)
+    window.removeEventListener('popstate',popStateHandler)
+    };
+  },[typeof window !== "undefined",uploaderState.step])
+ return (
     
     <div className="w-full h-full">
     <div className="w-full">
@@ -283,7 +315,7 @@ const Index: React.FC<IProps> = () => {
     <div className="flex  ">
       <SidePanelMenu onChangeData={() => {}} />
       <div className="flex flex-col calc-w  calc-h">
-        <header className="py-4 ">
+        <header>
         <div>
               {
               uploaderState.stepperSideFileList &&(<UploaderStepper />)
@@ -292,7 +324,7 @@ const Index: React.FC<IProps> = () => {
         </header>
      {!uploaderState.isLoading?  
   <div>
-        <main className=" overflow-y-auto calc-h253">
+        <main className={`overflow-y-auto  ${ uploaderState.stepperSideFileList?`calc-h253`:`calc-h`} `}>
           <div>
           {renderCenterContent()}
            
