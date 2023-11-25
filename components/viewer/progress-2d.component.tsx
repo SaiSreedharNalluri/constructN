@@ -46,6 +46,8 @@ function Progress2DComponent(props: _ViewerProps) {
 
     const _layers = useRef<any>()
 
+    const _assets = useRef<any>()
+
     const _tm = useRef<THREE.Matrix4>()
 
     const _offset = useRef<number[]>()
@@ -115,7 +117,13 @@ function Progress2DComponent(props: _ViewerProps) {
 
     useEffect(() => { _resize() }, [props.compare])
 
-    useEffect(() => _edit2dUtils.current?.loadAssets(props.assets), [props.assets])
+    useEffect(() => {
+
+        _assets.current = props.assets
+
+        // _edit2dUtils.current?.loadAssets(props.assets)
+
+    }, [props.assets])
 
     useEffect(() => {
 
@@ -170,7 +178,13 @@ function Progress2DComponent(props: _ViewerProps) {
 
         _offset.current = offset
 
-        if (_edit2dUtils.current) _edit2dUtils.current.setTransform(_tm.current, _offset.current)
+        if (_edit2dUtils.current) {
+            
+            _edit2dUtils.current.setTransform(_tm.current, _offset.current)
+
+            _edit2dUtils.current?.loadAssets(props.assets)
+
+        }
 
         loadLayers(_layers.current)
 
