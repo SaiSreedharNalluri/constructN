@@ -201,6 +201,16 @@ const Progress2DPage: React.FC<any> = () => {
 
             }).catch(err => setShowProgress(false))
 
+            fetchAssetCategories(projId!).then(async data => {
+
+                setShowProgress(false)
+
+                setAssetCategories(data.data.result)
+
+                // if (currentCategory.current) if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
+
+            }).catch(e => setShowProgress(false))
+
         }
 
         if (structId && structureId.current !== structId) {
@@ -216,6 +226,8 @@ const Progress2DPage: React.FC<any> = () => {
             _assetMap.current = {}
 
             fetchViewerData(projId!, structId!).then(async data => {
+
+                setShowProgress(false)
 
                 LightBoxInstance.save(data.data.result)
 
@@ -248,16 +260,6 @@ const Progress2DPage: React.FC<any> = () => {
                 }
 
                 await _extractBaseSnapshot(baseSnapshot)
-
-            }).catch(e => console.log(e))
-
-            fetchAssetCategories(projId!).then(async data => {
-
-                setShowProgress(false)
-
-                setAssetCategories(data.data.result)
-
-                if (currentCategory.current) if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
 
             }).catch(e => setShowProgress(false))
 
@@ -532,8 +534,6 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _loadAssetsForCategory = (category: IAssetCategory) => {
 
-        console.log('Loading assets')
-
         setLoading(true)
 
         _assetMap.current = { 'NOT_STARTED': { ...NOT_STARTED_STAGE, assets: [], visible: true } }
@@ -585,6 +585,16 @@ const Progress2DPage: React.FC<any> = () => {
             setLoading(false)
 
         })
+    }
+
+    const isAssetAlreadyMapped = (stage: string, asset: string) => {
+
+        for(let i = 0; i < _assetMap.current[stage].assets.length; i++) {
+
+
+
+        }
+
     }
 
     const _onAssetDetailsChange = (asset: IAsset) => {

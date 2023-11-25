@@ -46,8 +46,6 @@ function Progress2DStage(
 
     const getProgress = () => {
 
-        console.log(stage.assets, assetCount, '++++', stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount))
-
         return stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount)
     }
 
@@ -60,6 +58,8 @@ function Progress2DStage(
         onToggleVisibility(stage!)
 
     }
+
+    const _progressLabelFormatter = (value: number) => `${value.toFixed(1)}%`
 
     return (<>
 
@@ -91,15 +91,19 @@ function Progress2DStage(
 
             </FormGroup>
 
-            <Stack sx={{ color: stage.color, marginTop: '0.5rem' }} direction='row'>
+            <Stack sx={{ color: stage.color }} direction='row'>
 
-                <BorderLinearProgress className='w-full' color='inherit' variant='determinate' value={getProgress()} />
+                <BorderLinearProgress className='w-full mt-4 mb-2' color='inherit' variant='determinate' value={getProgress()} />
 
-                {/* <RangeLinearProgress customColor={stage.color!} className='w-full' valueLabelDisplay='on' value={getProgress()} /> */}
+                {/* <RangeLinearProgress 
+                
+                    customColor={stage.color!} className='w-full mt-4' valueLabelDisplay='on'
+                    
+                    valueLabelFormat={value => _progressLabelFormatter(value)} value={[0, getProgress()]} /> */}
 
             </Stack>
 
-            <div className='w-full flex justify-between mt-2'>
+            <div className='w-full flex justify-between mt-1'>
 
                 <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{getProgress().toFixed(1)}%</Typography>
 
@@ -145,9 +149,9 @@ const RangeLinearProgress = styled(Slider)<{ customColor: string }>({
     
     '& .MuiSlider-thumb': {
     
-        height: 8,
+        height: 12,
     
-        width: 8,
+        width: 12,
     
         backgroundColor: '#fff',
     
@@ -177,29 +181,19 @@ const RangeLinearProgress = styled(Slider)<{ customColor: string }>({
     
         padding: 0,
     
-        width: 32,
+        width: 1,
     
-        height: 32,
-    
-        borderRadius: '50% 50% 50% 0',
-    
-        backgroundColor: 'inherit',
-    
-        transformOrigin: 'bottom left',
-    
-        transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
+        height: 16,
+
+        color: 'currentColor',
+
+        margin: '0 0 0 0.5rem',
     
         '&:before': { display: 'none' },
     
         '&.MuiSlider-valueLabelOpen': {
     
-            transform: 'translate(50%, -100%) rotate(-45deg) scale(1)'
-    
-        },
-    
-        '& > *': {
-    
-            transform: 'rotate(45deg)'
+            transform: 'translate(50%, -75%) scale(1)'
     
         }
     

@@ -121,7 +121,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
         _assets.current = props.assets
 
-        // _edit2dUtils.current?.loadAssets(props.assets)
+        _edit2dUtils.current?.loadAssets(props.assets)
 
     }, [props.assets])
 
@@ -132,8 +132,6 @@ function Progress2DComponent(props: _ViewerProps) {
             _layers.current = props.snapshot.layers
 
             const newStructure = LightBoxInstance.viewerData().structure._id
-
-            console.log(_currentStructure.current, newStructure)
 
             if(_currentStructure.current !== newStructure) {
 
@@ -182,7 +180,7 @@ function Progress2DComponent(props: _ViewerProps) {
             
             _edit2dUtils.current.setTransform(_tm.current, _offset.current)
 
-            _edit2dUtils.current?.loadAssets(props.assets)
+            _edit2dUtils.current?.loadAssets(_assets.current)
 
         }
 
