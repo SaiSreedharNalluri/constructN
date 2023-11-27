@@ -15,6 +15,8 @@ export interface IProps {
 
     snapshotBase: any
 
+    snapshotCompare: any
+
     compare: boolean
 
     onChangeFromDate?: (date: Date, snapshot: any) => void
@@ -23,18 +25,20 @@ export interface IProps {
 
 }
 
-export default function AssetCategoryDatePicker({ snapshots, snapshotBase, compare, onChangeFromDate, onChangeToDate }: IProps) {
+export default function AssetCategoryDatePicker({ snapshots, snapshotBase, snapshotCompare, compare, onChangeFromDate, onChangeToDate }: IProps) {
 
-    const _handleDateChange = async (event: any) => {
+    const _handleDateChange = async (event: any, isCompare: boolean = false) => {
 
         const dateFormatted = moment(new Date(event)).format('YYYY-MM-DD').toString()
 
         const value = snapshots.find((item: any) => moment(item?.date).format('YYYY-MM-DD').toString() === dateFormatted)
 
-        onChangeToDate(new Date(event), value)
+        if(isCompare && onChangeFromDate) onChangeFromDate(new Date(event), value)
+
+        else onChangeToDate(new Date(event), value)
     }
 
-    const _formattedDate = (date: any) => moment(new Date(date)).format('DD MMM, yyyy')
+    const _formattedDate = (date: any) => date ? moment(new Date(date)).format('DD MMM, yyyy') : ''
 
     const _disableWeekends = (date: any) => {
 
@@ -62,13 +66,13 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, compa
 
             { compare && <OutlinedInput
 
-                size='small' disabled
+                size='small' disabled value={snapshotCompare ? _formattedDate(snapshotCompare.date) : ''}
 
                 sx={{
 
                     width: '23ch', border: '1px solid #e2e3e5', borderRadius: '6px', fontFamily: 'Open Sans',
 
-                    '&.MuiOutlinedInput-root': { paddingLeft: '4px' },
+                    '&.MuiInputBase-root': { paddingLeft: '4px' },
 
                     '.MuiOutlinedInput-notchedOutline': { border: 0 },
 
@@ -86,6 +90,8 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, compa
 
                 }}
 
+                inputProps={{ style: {fontSize: 14, WebkitTextFillColor: '#4a4a4a' }}}
+
                 startAdornment={<InputAdornment position='start'>
 
                     <Typography fontFamily='Open Sans' className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3'>
@@ -100,7 +106,7 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, compa
 
                     <CustomCalender
 
-                        onChange={_handleDateChange}
+                        onChange={(event: any) => _handleDateChange(event, true)}
 
                         data-testid='calender'
 

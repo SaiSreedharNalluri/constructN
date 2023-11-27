@@ -68,7 +68,7 @@ const AssetCategoryPicker: FC<IProps> = ({categories, selected, onSelect}) => {
 
         }
 
-      }} value={selected || ''} onChange={handleChange}
+      }} value={selected ? selected : '' || ''} onChange={handleChange}
 
         input={
 

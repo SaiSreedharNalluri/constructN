@@ -26,6 +26,8 @@ interface _ViewerProps {
 
     compare: boolean
 
+    reality: boolean
+
     assets: IAsset[]
 
     isSupportUser: boolean
@@ -115,7 +117,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
     useEffect(() => { setViewType(props.viewType) }, [props.viewType])
 
-    useEffect(() => { _resize() }, [props.compare])
+    useEffect(() => { _resize() }, [props.reality])
 
     useEffect(() => {
 

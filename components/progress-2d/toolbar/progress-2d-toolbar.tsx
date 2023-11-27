@@ -1,5 +1,5 @@
 
-import { Box } from '@mui/material'
+import { Box, Checkbox, FormControlLabel } from '@mui/material'
 
 import HierarchyPicker from './hierarchy-picker'
 
@@ -23,7 +23,11 @@ export interface IProps {
 
     snapshotBase: any
 
+    snapshotCompare: any
+
     onSnapshotBaseChange: (value: Date, snapshot: any) => void
+
+    onSnapshotCompareChange?: (value: Date, snapshot: any) => void
 
     onLayersSelected: (selected: string[]) => void
 
@@ -33,15 +37,17 @@ export interface IProps {
 
     onCategorySelected: (category: IAssetCategory | undefined) => void
 
+    onCompareChange: (compare: boolean) => void
+
 }
 
 export default function Progress2DToolbar({ 
     
-    hierarchy, onSelectHierarchy,
+    hierarchy, onSelectHierarchy, snapshotBase, snapshotCompare, 
+    
+    onSnapshotBaseChange, onSnapshotCompareChange, onLayersSelected,
 
-    snapshotBase, onSnapshotBaseChange, onLayersSelected,
-
-    assetCategories, selectedCategory, onCategorySelected
+    assetCategories, selectedCategory, onCategorySelected, onCompareChange
 
 }: IProps) {
 
@@ -77,6 +83,8 @@ export default function Progress2DToolbar({
 
         setIsCompare(value)
 
+        onCompareChange(value)
+
     }
 
     return (
@@ -99,23 +107,23 @@ export default function Progress2DToolbar({
             
                 snapshots={LightBoxInstance.viewerData().snapshots} 
                 
-                snapshotBase={snapshotBase} compare={isCompare}
+                snapshotBase={snapshotBase} snapshotCompare={snapshotCompare} compare={isCompare}
+
+                onChangeToDate={onSnapshotBaseChange}
                 
-                onChangeToDate={onSnapshotBaseChange}/>
+                onChangeFromDate={onSnapshotCompareChange}/>
 
             <div className='ml-2 flex-1'></div>
 
-            {/* <div className='ml-2'>
+            <div className='ml-2'>
 
-                <FormControlLabel className='border border-[#e2e3e5] rounded [&>.MuiFormControlLabel-label]:select-none [&>.MuiFormControlLabel-label]:text-[#4a4a4a] [&>.MuiFormControlLabel-label]:text-sm [&>.MuiFormControlLabel-label]:mr-2' 
+                <FormControlLabel control={<Checkbox color='warning' checked={isCompare} size='small' />} onChange={_onCompareChange} label='Compare'
                 
-                control={<Checkbox color='warning' checked={isCompare} size='small' />} 
-                
-                onChange={_onCompareChange} label='Compare'
+                className='border border-[#e2e3e5] rounded [&>.MuiFormControlLabel-label]:select-none [&>.MuiFormControlLabel-label]:text-[#4a4a4a] [&>.MuiFormControlLabel-label]:text-sm [&>.MuiFormControlLabel-label]:mr-2' 
                 
                 sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Open Sans' } }}  />
 
-            </div>} */}
+            </div>
 
         </Box>
         

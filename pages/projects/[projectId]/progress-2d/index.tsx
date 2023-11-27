@@ -135,6 +135,8 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [isCompare, setIsCompare] = useState<boolean>(false)
 
+    const [showReality, setShowReality] = useState<boolean>(false)
+
     const compare = useRef<boolean>(false)
 
     const [loading, setLoading] = useState<boolean>(false)
@@ -142,6 +144,8 @@ const Progress2DPage: React.FC<any> = () => {
     const [showProgress, setShowProgress] = useState<boolean>(false)
 
     const [snapshotBase, setSnapshotBase] = useState<any>()
+
+    const [snapshotCompare, setSnapshotCompare] = useState<any>()
 
     const [hierarchy, setHierarchy] = useState<any>()
 
@@ -151,7 +155,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [selectedAsset, setSelectedAsset] = useState<string | undefined>()
 
-    const [stages, setStages] = useState<({ assets: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[]>()
+    const [stages, setStages] = useState<({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[]>()
 
     const [selectedCategory, setSelectedCategory] = useState<IAssetCategory>()
 
@@ -167,7 +171,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [isSupportUser, setIsSupportUser] = useState<boolean>(false)
 
-    const _assetMap = useRef<{ [key: string]: { assets: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean } }>({})
+    const _assetMap = useRef<{ [key: string]: { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean } }>({})
 
     const params = useParams()
 
@@ -241,9 +245,13 @@ const Progress2DPage: React.FC<any> = () => {
 
                 let baseSnapshot: any
 
+                let compareSnapshot: any
+
                 if (!snapshotId) {
 
                     baseSnapshot = snapshots[0]
+
+                    if(snapshots.length > 1) compareSnapshot = snapshots[1]
 
                 } else {
 
@@ -253,6 +261,8 @@ const Progress2DPage: React.FC<any> = () => {
 
                             baseSnapshot = snapshots[i]
 
+                            if(i + 1 < snapshots.length) compareSnapshot = snapshots[i + 1]
+
                             break
 
                         }
@@ -260,6 +270,8 @@ const Progress2DPage: React.FC<any> = () => {
                 }
 
                 await _extractBaseSnapshot(baseSnapshot)
+
+                await _extractCompareSnapshot(compareSnapshot)
 
             }).catch(e => setShowProgress(false))
 
@@ -345,6 +357,40 @@ const Progress2DPage: React.FC<any> = () => {
 
         if (snapshot) {
 
+            await _extractSnapshotPaths(snapshot)
+
+            LightBoxInstance.setSnapshotBase(snapshot)
+
+            setSnapshotBase(snapshot)
+
+            if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
+
+        }
+
+    }
+
+    const _extractCompareSnapshot = async (snapshot: any) => {
+
+        if (snapshot) {
+
+            await _extractSnapshotPaths(snapshot)
+
+            LightBoxInstance.setSnapshotCompare(snapshot)
+
+            setSnapshotCompare(snapshot)
+
+            console.log('Extract compare snapshot ===', currentCategory.current)
+
+            if (currentCategory.current) _loadCompareAssets(currentCategory.current)
+
+        } else setSnapshotCompare(undefined)
+
+    }
+
+    const _extractSnapshotPaths = async (snapshot: any) => {
+
+        if (snapshot) {
+
             for (const Key of Object.keys(snapshot.layers)) {
 
                 for (let i = 0; i < snapshot.layers[Key].length; i++) {
@@ -363,15 +409,7 @@ const Progress2DPage: React.FC<any> = () => {
                     }
                 }
             }
-
-            LightBoxInstance.setSnapshotBase(snapshot)
-
-            setSnapshotBase(snapshot)
-
-            if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
-
         }
-
     }
 
     const _onAddShape = (event: Event) => {
@@ -532,15 +570,17 @@ const Progress2DPage: React.FC<any> = () => {
 
     }
 
+    const _onCompareChange = (compare: boolean) => setIsCompare(compare)
+
     const _loadAssetsForCategory = (category: IAssetCategory) => {
 
         setLoading(true)
 
-        _assetMap.current = { 'NOT_STARTED': { ...NOT_STARTED_STAGE, assets: [], visible: true } }
+        _assetMap.current = { 'NOT_STARTED': { ...NOT_STARTED_STAGE, assets: [], assetsCompare: [], visible: true } }
 
         const stages = category.stages.sort((a: IAssetStage, b: IAssetStage) => a.sequence - b.sequence)
 
-        stages.forEach((stage: IAssetStage) => _assetMap.current[stage._id] = { assets: [], ...stage, visible: true })
+        stages.forEach((stage: IAssetStage) => _assetMap.current[stage._id] = { assets: [], assetsCompare: [], ...stage, visible: true })
 
         if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotBase().date).then(res => {
 
@@ -587,14 +627,59 @@ const Progress2DPage: React.FC<any> = () => {
         })
     }
 
-    const isAssetAlreadyMapped = (stage: string, asset: string) => {
+    const _loadCompareAssets = (category: IAssetCategory) => {
 
-        for(let i = 0; i < _assetMap.current[stage].assets.length; i++) {
+        setLoading(true)
 
+        const stages = category.stages.sort((a: IAssetStage, b: IAssetStage) => a.sequence - b.sequence)
 
+        stages.forEach((stage: IAssetStage) => _assetMap.current[stage._id].assetsCompare = [])
 
-        }
+        if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotCompare().date).then(res => {
 
+            if (res.data.success) {
+
+                setLoading(false)
+
+                const result = res.data.result
+
+                result.forEach((asset: IAsset) => {
+
+                    const mStage: any = structuredClone(_assetMap.current[asset.progress.stage as string])
+
+                    delete mStage.assets
+
+                    delete mStage.visible
+
+                    asset.progress.stage = mStage
+
+                    for (let i = 0; i < asset.progressSnapshot.length; i++) {
+
+                        const mProgress = asset.progressSnapshot[i]
+
+                        _assetMap.current[mProgress.stage as string].assetsCompare.push(asset)
+
+                    }
+
+                })
+
+                setStages([])
+
+                console.log(_assetMap.current)
+
+                setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
+
+                // setAssets(result)
+
+            }
+
+        }).catch(e => {
+
+            console.log(e)
+
+            setLoading(false)
+
+        })
     }
 
     const _onAssetDetailsChange = (asset: IAsset) => {
@@ -605,7 +690,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _changeStructure = (structure: any) => {
 
-        setIsCompare(false)
+        setShowReality(false)
 
         const queryParams = updateQueryParam(searchParamsRef.current!, 'structId', structure._id)
 
@@ -638,7 +723,7 @@ const Progress2DPage: React.FC<any> = () => {
 
             const reality = (event as CustomEvent).detail
 
-            setIsCompare(true)
+            setShowReality(true)
 
             compare.current = true
 
@@ -649,6 +734,8 @@ const Progress2DPage: React.FC<any> = () => {
     }
 
     const _onSnapshotBaseChange = (date: Date, snapshot: any) => _extractBaseSnapshot(snapshot)
+
+    const _onSnapshotCompareChange = (date: Date, snapshot: any) => _extractCompareSnapshot(snapshot)
 
     const _renderTitle = () => {
 
@@ -750,19 +837,25 @@ const Progress2DPage: React.FC<any> = () => {
 
                                         snapshotBase={snapshotBase}
 
+                                        snapshotCompare={snapshotCompare}
+
                                         onSnapshotBaseChange={_onSnapshotBaseChange}
+
+                                        onSnapshotCompareChange={_onSnapshotCompareChange}
 
                                         onLayersSelected={(selected: string[]) => setSelectedLayers(selected)}
 
                                         selectedCategory={selectedCategory} assetCategories={assetCategories}
 
-                                        onCategorySelected={_onCategorySelected} />}
+                                        onCategorySelected={_onCategorySelected}
+                                        
+                                        onCompareChange={_onCompareChange} />}
 
                                     <div className='flex w-full' style={{ height: 'calc(100vh - 144px)' }}>
 
                                         <div className={`w-3/4 relative flex items-center mx-2`}>
 
-                                            <div id='left-container' className={`relative h-full w-1/2 border border-[#e2e3e5] rounded-lg p-[2px] flex justify-center ${isCompare ? '' : 'grow shrink'}`}>
+                                            <div id='left-container' className={`relative h-full w-1/2 border border-[#e2e3e5] rounded-lg p-[2px] flex justify-center ${showReality ? '' : 'grow shrink'}`}>
 
                                                 <Progress2DComponent
 
@@ -776,6 +869,8 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                     compare={isCompare}
 
+                                                    reality={showReality}
+
                                                     assets={assets}
 
                                                     isSupportUser={isSupportUser}
@@ -785,7 +880,7 @@ const Progress2DPage: React.FC<any> = () => {
                                             </div>
 
                                             {
-                                                isCompare ? (<>
+                                                showReality ? (<>
 
                                                     <div className='flex h-full w-[3px] rounded bg-white items-center' style={{ zIndex: 2 }}>
 
@@ -801,7 +896,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                                 compare.current = false
 
-                                                                setIsCompare(false)
+                                                                setShowReality(false)
 
                                                                 publish('viewerState', undefined)
 
@@ -884,7 +979,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
-                                                <Progress2DStages stages={stages} assetCount={assets.length}
+                                                <Progress2DStages stages={stages} assetCount={assets.length} compare={isCompare}
 
                                                     onToggleVisibility={(stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => {
 

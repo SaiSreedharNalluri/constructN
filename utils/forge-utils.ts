@@ -657,8 +657,6 @@ export class ForgeDataVizUtils {
 
     _onSpriteClick = (event: any) => {
 
-        this._dataVizExtn.clearHighlightedViewables()
-
         let dbObject = structuredClone(this._dbMap[event.dbId])
 
         if (dbObject) {
@@ -670,6 +668,8 @@ export class ForgeDataVizUtils {
             publish('reality-click', dbObject)
 
         }
+
+        setTimeout(() => this._dataVizExtn.clearHighlightedViewables(), 500)
     }
 
     _removeListeners = () => {

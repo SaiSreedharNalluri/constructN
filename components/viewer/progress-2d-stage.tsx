@@ -6,12 +6,12 @@ import { IAsset, IAssetStage } from '../../models/IAssetCategory'
 
 export default function Progress2DStages(
 
-    { stages, assetCount, onToggleVisibility }:
+    { stages, assetCount, compare, onToggleVisibility }:
 
         {
-            stages: ({ assets: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[] | undefined, assetCount: number,
+            stages: ({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[] | undefined, assetCount: number,
 
-            onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void
+            onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void, compare: boolean
 
         }) {
 
@@ -25,7 +25,7 @@ export default function Progress2DStages(
 
                     key={stage._id} assetCount={assetCount} stage={stage}
 
-                    onToggleVisibility={onToggleVisibility} />)
+                    onToggleVisibility={onToggleVisibility} compare={compare} />)
 
             }
 
@@ -36,17 +36,23 @@ export default function Progress2DStages(
 
 function Progress2DStage(
 
-    { stage, assetCount, onToggleVisibility }: {
+    { stage, assetCount, compare, onToggleVisibility }: {
 
-        stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }, assetCount: number, 
+        stage: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }, assetCount: number, 
         
-        onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void
+        onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void, compare: boolean
 
     }) {
 
-    const getProgress = () => {
+    const getProgress = (): number | number[] => {
 
-        return stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount)
+        const baseProgress = stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount)
+
+        const compareProgress = stage.assetsCompare.length == 0 ? 0 : (stage.assetsCompare.length * 100 / assetCount)
+
+        if(!compare) return baseProgress
+
+        else return [compareProgress, baseProgress]
     }
 
     const onVisibilityChange = (event: any) => {
@@ -67,7 +73,7 @@ function Progress2DStage(
 
             <FormGroup>
 
-                <FormControlLabel
+                <FormControlLabel key={stage._id}
 
                     className='text-[#4a4a4a]' onChange={onVisibilityChange}
 
@@ -93,19 +99,19 @@ function Progress2DStage(
 
             <Stack sx={{ color: stage.color }} direction='row'>
 
-                <BorderLinearProgress className='w-full mt-4 mb-2' color='inherit' variant='determinate' value={getProgress()} />
+                {/* <BorderLinearProgress className='w-full mt-4 mb-2' color='inherit' variant='determinate' value={getProgress() as number} /> */}
 
-                {/* <RangeLinearProgress 
+                <RangeLinearProgress 
                 
                     customColor={stage.color!} className='w-full mt-4' valueLabelDisplay='on'
                     
-                    valueLabelFormat={value => _progressLabelFormatter(value)} value={[0, getProgress()]} /> */}
+                    valueLabelFormat={value => _progressLabelFormatter(value)} value={getProgress()} />
 
             </Stack>
 
             <div className='w-full flex justify-between mt-1'>
 
-                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{getProgress().toFixed(1)}%</Typography>
+                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{25}%</Typography>
 
                 <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>123/560 {stage.uom}</Typography>
 
