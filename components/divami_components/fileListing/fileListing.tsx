@@ -9,7 +9,7 @@ interface Iprops{
 const FileListing:React.FC<Iprops>=({selectedFile,isSizeRequired})=>{
     return(
     <React.Fragment>
-        {selectedFile.length>0?  <div className=" mx-auto  h-[195px] "> 
+        {selectedFile.length>0?  <div className=" mx-auto   "> 
      <div className=" h-full mt-[30px]">
     <table className="w-[50vw]">
      <thead
@@ -23,7 +23,7 @@ const FileListing:React.FC<Iprops>=({selectedFile,isSizeRequired})=>{
      </tr>
      </thead>
 
-   <tbody className="flex flex-col items-center  overflow-y-auto w-full h-[80px]" >
+   <tbody className={`flex flex-col items-center calc-h295   overflow-y-auto w-full`} >
    {selectedFile?.length>0&& selectedFile.map((fileInfo, index)=>{
        return(
        <tr key={index}

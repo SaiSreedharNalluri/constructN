@@ -70,9 +70,9 @@ const UploaderFooter: React.FC<any> = ({ }) => {
             <Button
               disabled={!state.isNextEnabled}
               onClick={() => uploaderAction.next()}
-              className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E]  hover:text-white mr-[20px]`}>
+              className={`   ${state.isNextEnabled?"bg-[#F1742E]":" bg-gray-400"} text-white hover:bg-[#F1742E]  rounded-[4px] mr-[20px]`}>
 
-              Continue
+            <p className="text-white"> Continue</p> 
             </Button>
           </>
         );
@@ -89,8 +89,8 @@ const UploaderFooter: React.FC<any> = ({ }) => {
             <Button
               disabled={!state.isNextEnabled || state.isReading}
               onClick={() => uploaderAction.next()}
-              className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white mr-[20px]`}>
-              Confirm Images
+              className={` ${state.isNextEnabled?"bg-[#F1742E]":" bg-gray-400"}  text-white rounded-[4px] hover:bg-[#F1742E] hover:text-white mr-[20px]`}>
+             <p className="text-white">   Confirm Images</p>
             </Button>
           </>
         );
