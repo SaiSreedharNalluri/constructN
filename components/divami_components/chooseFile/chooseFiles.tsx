@@ -1,17 +1,19 @@
 import React, { ReactNode } from 'react'
-import { useDropzone } from "react-dropzone";
+import { Accept, useDropzone } from "react-dropzone";
 
 interface IProps {
     onDrop: (acceptedFiles: File[]) => void;
     dragDropText?:string,
     supportFileText?:string,
     UploadingStatus:ReactNode
-    isDisabled:boolean
+    isDisabled:boolean,
+    acceptFiles:Accept
   }
-const ChooseFiles:React.FC<IProps>=({onDrop,dragDropText,supportFileText,UploadingStatus,isDisabled})=>{
+const ChooseFiles:React.FC<IProps>=({onDrop,dragDropText,supportFileText,UploadingStatus,isDisabled,acceptFiles})=>{
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop:onDrop,
-        disabled:isDisabled
+        disabled:isDisabled,
+        accept:acceptFiles
       });
     return (<React.Fragment>
   <div className={`border-[2px] text-center rounded-[8px] mt-[16px] w-[50vw] h-[30vh] border-dashed hover:border-[#F1742E]  border-black py-[6vh] px-[2%] cursor-pointer ${isDragActive ? 'border-blue-500' : ''}`} {...getRootProps()}>
