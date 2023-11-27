@@ -62,9 +62,10 @@ const CompareView = ({
             <DesignCompareViewIcon
               id="compareDesign"
               onClick={(e: any) => {
-                if(isDesignAvailable)
+                if(isDesignAvailable){
                 customLogger.logInfo("ToolBar - Compare Design");
                 rightMenuClickHandler(e);
+                }
               }}
               isDesignAvailable={isDesignAvailable}
               active={active}
