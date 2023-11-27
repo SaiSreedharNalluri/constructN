@@ -13,7 +13,7 @@ let ChooseUploaderFile:React.FC<IProps>=({onDrop})=>{
   const supportFileText=`Supported file types: jpeg, jpg with GPS metadata`
 return(
 <React.Fragment> 
-<ChooseFiles onDrop={onDrop} dragDropText={dragDropText} supportFileText={supportFileText} UploadingStatus={<UploadingStatus/>} isDisabled={state.isReading}/>
+<ChooseFiles onDrop={onDrop} dragDropText={dragDropText} supportFileText={supportFileText} UploadingStatus={<UploadingStatus/>} isDisabled={state.isReading} acceptFiles={{['image/*']:['.jpeg', '.jpg', '.png',]}}/>
 </React.Fragment>)
 }
 export default ChooseUploaderFile
