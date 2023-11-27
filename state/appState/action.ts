@@ -1,62 +1,50 @@
 import { IProjects } from "../../models/IProjects";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
+import { ProjectData } from "./state";
 
 export enum AppActionType {
-    setProjectList,
-    setProject,
-    setHierarchy,
-    setStructureList
+    appendProjectData,
+    setCurrentProjectData,
+    setIsLoading
 }
 
-export interface setProjectList {
-    type: AppActionType.setProjectList;
-    payload: { projectList: IProjects[] };
+export interface appendProjectData {
+  type: AppActionType.appendProjectData;
+  payload: { projectData: ProjectData}
 }
 
-export interface setProject {
-    type: AppActionType.setProject;
-    payload: { project: IProjects };
+export interface setCurrentProjectData {
+  type: AppActionType.setCurrentProjectData;
+  payload: { projectData: ProjectData}
 }
 
-export interface setHierarchy {
-    type: AppActionType.setHierarchy;
-    payload: { hierarchy: ChildrenEntity[] };
-}
-
-export interface setStructureList {
-    type: AppActionType.setStructureList;
-    payload: { structureList: IStructure[] };
+export interface setIsLoading {
+  type: AppActionType.setIsLoading;
+  payload: { isLoading: boolean };
 }
 
 export const appContextActions = (dispatch: React.Dispatch<AppActions>) => {
   return {
     appAction: {
-      setProjectList: (project: IProjects[]) => {
+      appendProjectData: (projectData: ProjectData) => {
         dispatch({
-            type: AppActionType.setProjectList,
-            payload: { projectList: project },
-        });
-        },
-      setProject: (project: IProjects) => {
-        dispatch({
-          type: AppActionType.setProject,
-          payload: { project: project },
+          type: AppActionType.appendProjectData,
+          payload: { projectData: projectData },
         });
       },
-      setHierarchy: (sectionList: ChildrenEntity[]) => {
+      setCurrentProjectData: (projectData: ProjectData) => {
         dispatch({
-          type: AppActionType.setHierarchy,
-          payload: { hierarchy: sectionList },
+          type: AppActionType.setCurrentProjectData,
+          payload: { projectData: projectData },
         });
       },
-      setStructureList: (structureList: IStructure[]) => {
-        dispatch({
-          type: AppActionType.setStructureList,
-          payload: { structureList: structureList },
-        });
-      },
+      setIsLoading: (isLoading:boolean) => {
+        dispatch({ type: AppActionType.setIsLoading, payload:{isLoading: isLoading}});
+    },
     },
   };
 }
 
-export type AppActions = setProjectList | setProject | setHierarchy | setStructureList
+export type AppActions = appendProjectData
+ | setCurrentProjectData
+ | setIsLoading

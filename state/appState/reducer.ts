@@ -3,25 +3,23 @@ import { AppState } from "./state";
 
 export const appReducer = (state: AppState, action: AppActions): AppState => {
     switch (action.type) {
-        case AppActionType.setProjectList:
+        case AppActionType.appendProjectData:
+            let projectData = action.payload.projectData
+            let projectDataList = state.projectDataList.concat([projectData])
             return {
                 ...state,
-                projectList: action.payload.projectList
+                projectDataList: projectDataList,
+                currentProjectData: projectData
             }
-        case AppActionType.setProject:
+        case AppActionType.setCurrentProjectData:
             return {
                 ...state,
-                currentProject: action.payload.project
+                currentProjectData: action.payload.projectData
             }
-        case AppActionType.setHierarchy:
+        case AppActionType.setIsLoading:
             return {
                 ...state,
-                hierarchy : action.payload.hierarchy
-            }
-        case AppActionType.setStructureList:
-            return {
-                ...state,
-                structureList : action.payload.structureList
+                isLoading:action.payload.isLoading
             }
         default:
             return state

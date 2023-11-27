@@ -16,7 +16,7 @@ export interface IStructure {
   location?: [number];
   utm?: string;
   designs?: [IDesign];
-  children?: ChildrenEntity[] | null;
+  children?: string[]
 }
 export interface ChildrenEntity {
   _id: string;
