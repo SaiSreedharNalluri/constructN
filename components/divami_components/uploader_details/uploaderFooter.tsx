@@ -14,7 +14,7 @@ const UploaderFooter: React.FC<any> = ({ }) => {
   const { state, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const containerStyle: React.CSSProperties = {
-  //  bottom: 0,
+    //  bottom: 0,
     // left: -16,
     // width: "100%",
     // backgroundColor: "transparent",
@@ -70,9 +70,9 @@ const UploaderFooter: React.FC<any> = ({ }) => {
             <Button
               disabled={!state.isNextEnabled}
               onClick={() => uploaderAction.next()}
-              className={`   ${state.isNextEnabled?"bg-[#F1742E]":" bg-gray-400"} text-white hover:bg-[#F1742E]  rounded-[4px] mr-[20px]`}>
+              className={`   ${state.isNextEnabled ? "bg-[#F1742E]" : " bg-gray-400"} text-white hover:bg-[#F1742E]  rounded-[4px] mr-[20px]`}>
 
-            <p className="text-white"> Continue</p> 
+              <p className="text-white"> Continue</p>
             </Button>
           </>
         );
@@ -81,16 +81,20 @@ const UploaderFooter: React.FC<any> = ({ }) => {
           <>
 
             <Button
-             disabled={ state.isReading}
+              disabled={state.isReading}
               onClick={() => uploaderAction.goBack()}
               className={`${backbuttonStyle} text-[#F1742E] border border-solid rounded-[4px] `}>
               Go Back
             </Button>
             <Button
               disabled={!state.isNextEnabled || state.isReading}
-              onClick={() => uploaderAction.next()}
-              className={` ${state.isNextEnabled?"bg-[#F1742E]":" bg-gray-400"}  text-white rounded-[4px] hover:bg-[#F1742E] hover:text-white mr-[20px]`}>
-             <p className="text-white">   Confirm Images</p>
+              onClick={() => {
+                uploaderAction.next()
+                state.choosenFiles.duplicateFiles.length = 0
+                state.choosenFiles.invalidEXIFFiles.length = 0
+              }}
+              className={` ${state.isNextEnabled ? "bg-[#F1742E]" : " bg-gray-400"}  text-white rounded-[4px] hover:bg-[#F1742E] hover:text-white mr-[20px]`}>
+              <p className="text-white">   Confirm Images</p>
             </Button>
           </>
         );
@@ -139,57 +143,57 @@ const UploaderFooter: React.FC<any> = ({ }) => {
   };
 
   return (
-  <React.Fragment>
-    <div style={containerStyle}>
-      <div>
-      {state.step === UploaderStep.Details && (
-        <div style={textContainerStyle}>
-          <p className="font-sans non-italic font-normal text-lg ml-[60px]">
-            Contact us at{" "}
-            <a href="mailto:support@constructn.ai" style={{ color: "#F1742E" }}>
-              support@constructn.ai
-            </a>{" "}
-            if you need to add a new level
-          </p>
+    <React.Fragment>
+      <div style={containerStyle}>
+        <div>
+          {state.step === UploaderStep.Details && (
+            <div style={textContainerStyle}>
+              <p className="font-sans non-italic font-normal text-lg ml-[60px]">
+                Contact us at{" "}
+                <a href="mailto:support@constructn.ai" style={{ color: "#F1742E" }}>
+                  support@constructn.ai
+                </a>{" "}
+                if you need to add a new level
+              </p>
+            </div>
+          )}
+          {state.step === UploaderStep.ChooseFiles && state.choosenFiles.validFiles.length > 0 && (
+            <div style={progressContainerStyle} className="flex justify-evenly  rounded-[10px] items-center ml-[20px] bg-[#FFECE2] p-2  text-base">
+              {
+                state.isReading === true &&
+                <div className="w-[300px] ">
+                  <LinearProgress
+                    color="warning"
+                    variant="indeterminate"
+                  />
+                </div>
+              }
+              {
+                state.choosenFiles.validFiles.length > 0 && (<div className="flex justify-evenly ml-[10px]">
+                  <div style={imageCountStyle}>
+                    <span className="text-[#F1742E]">{state.choosenFiles.validFiles.length}</span> images
+                  </div>
+                  <div style={imageCountStyle}>
+                    Total size is <span className="text-[#F1742E]">{calculateTotalFileSize(state.choosenFiles.validFiles)} </span>
+                  </div>
+                  <div>
+                    {
+                      state.choosenFiles.duplicateFiles.length > 0 && <div style={duplicateCountStyle}>
+                        <span className="text-[#F1742E]">{state.choosenFiles.duplicateFiles.length}</span> duplicates have been skipped
+                      </div>
+                    }
+                  </div>
+                </div>)
+              }
+
+            </div>
+          )}
         </div>
-      )}
-      {state.step === UploaderStep.ChooseFiles && (
-    <div style={progressContainerStyle} className="flex justify-evenly  rounded-[10px] items-center ml-[20px] bg-[#FFECE2] p-2  text-base">
-          {
-            state.isReading === true &&
-            <div className="w-[300px] ">
-            <LinearProgress
-              color="warning"
-              variant="indeterminate"
-            />
-            </div>
-          }
-         {
-            state.choosenFiles.validFiles.length > 0 && (<div className="flex justify-evenly ml-[10px]">
-               <div style={imageCountStyle}>
-            <span className="text-[#F1742E]">{state.choosenFiles.validFiles.length}</span> images
-          </div>
-          <div style={imageCountStyle}>
-            Total size is <span className="text-[#F1742E]">{calculateTotalFileSize(state.choosenFiles.validFiles)} </span>
-          </div>
-          <div>
-          {
-            state.choosenFiles.duplicateFiles.length > 0 && <div style={duplicateCountStyle}>
-              <span className="text-[#F1742E]">{state.choosenFiles.duplicateFiles.length}</span> duplicates have been skipped
-            </div>
-          }
-          </div>
-            </div>)
-          }
-         
+        <div style={buttonContainerStyle}>
+          {renderButtons()}
+        </div>
       </div>
-      )}
-       </div>
-      <div style={buttonContainerStyle}>
-        {renderButtons()}
-      </div>
-    </div>
-  </React.Fragment>)
+    </React.Fragment>)
 };
 
 export default UploaderFooter;
