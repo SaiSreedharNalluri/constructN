@@ -155,7 +155,7 @@ const UploaderFooter: React.FC<any> = ({ }) => {
           </p>
         </div>
       )}
-      {state.step === UploaderStep.ChooseFiles && (
+      {state.step === UploaderStep.ChooseFiles && state.choosenFiles.validFiles.length > 0 && (
     <div style={progressContainerStyle} className="flex justify-evenly  rounded-[10px] items-center ml-[20px] bg-[#FFECE2] p-2  text-base">
           {
             state.isReading === true &&
