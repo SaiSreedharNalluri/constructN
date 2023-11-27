@@ -3,6 +3,7 @@
 import { FormControlLabel, Checkbox, LinearProgress, FormGroup, Stack, styled, linearProgressClasses, Typography, Slider } from '@mui/material'
 
 import { IAsset, IAssetStage } from '../../models/IAssetCategory'
+import { number } from 'yup'
 
 export default function Progress2DStages(
 
@@ -53,6 +54,15 @@ function Progress2DStage(
         if(!compare) return baseProgress
 
         else return [compareProgress, baseProgress]
+    }
+
+    const getProgressValue = (): string => {
+
+        const progress = getProgress()
+
+        if(typeof(progress) === 'number') return `${(progress as number).toFixed(1)}`
+
+        else return `${(progress as number[])[progress.length - 1].toFixed(1)}`
     }
 
     const onVisibilityChange = (event: any) => {
@@ -111,7 +121,7 @@ function Progress2DStage(
 
             <div className='w-full flex justify-between mt-1'>
 
-                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{25}%</Typography>
+                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{getProgressValue()}%</Typography>
 
                 <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>123/560 {stage.uom}</Typography>
 
