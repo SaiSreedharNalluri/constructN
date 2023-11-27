@@ -245,12 +245,12 @@ export class ForgeDataVisualization {
                 highlightUrl = "/icons/360VideoWalkInViewer.svg";
             break;
             case '360 Image':
-                iconUrl = "/icons/360ImageInViewer.svg";
-                highlightUrl = "/icons/360ImageInViewer.svg";
+                iconUrl = '/customicons/360ImageWithoutBorderAndShadow.svg';
+                highlightUrl = '/customicons/360ImageWithoutBorderAndShadow.svg';
                 break;
             case 'Phone Image':
-                iconUrl = "/icons/phoneImageInViewer.svg";
-                highlightUrl = "/icons/phoneImageInViewer.svg";
+                iconUrl = "/customicons/PhoneImageIconWoBorder.svg";
+                highlightUrl = "/customicons/PhoneImageIconWoBorder.svg";
                 break;
             case 'Issue':
                 iconUrl = "/icons/issuesInViewer.svg";

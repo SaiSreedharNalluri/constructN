@@ -348,7 +348,7 @@ export const PotreeViewerUtils = () => {
             pointCloudLoaded = true;
             // console.log('Point Cloud Loaded');
         }
-
+        
         _currentMode = "3d";
         _isPointCloudLoaded = pointCloudLoaded;
         if (pointCloudDataArray.length == 0 || loadLayersOnDataLoadCompletion()) {
@@ -1275,7 +1275,6 @@ export const PotreeViewerUtils = () => {
     const getContext = (justLoadedImage = null) => {
         let context = undefined;
         // console.log("Inside potree getcamera: ", _viewerId, _currentMode, _currentReality, justLoadedImage, _currentImageName);
-        if (_isPointCloudLoaded) {
             let camObject = undefined;
             let imageObject = undefined;
             let pos = _viewer.scene.view.position;
@@ -1340,7 +1339,6 @@ export const PotreeViewerUtils = () => {
             }
 
             // console.log("Inside potree getcamera: ", context);
-        }
         return context;
     }
 
@@ -1544,9 +1542,11 @@ export const PotreeViewerUtils = () => {
     const getViewerState = () => {
         let viewerState;
         let pos = _viewer.scene.view.position.toArray();
+        let offset = _globalOffset
+        const tar = _viewer.scene.view.getPivot()
         viewerState =  {
-            position: [pos[0], pos[1], pos[2]],
-            target: _viewer.scene.view.getPivot(),
+            position: [pos[0]+offset[0], pos[1]+offset[1], pos[2]+offset[2]],
+            target: new THREE.Vector3(tar.x+offset[0],tar.y+offset[1],tar.z+offset[2]),
             fov: _viewer.fov,
         }
         if (_currentMode === "360 Video" || _currentMode === "360 Image") {
@@ -1561,11 +1561,12 @@ export const PotreeViewerUtils = () => {
 
     const updateViewerState = (viewerState) => {
          // console.log("Inside update viewer state: ", this.viewerId, viewerState);
+         let offset = _globalOffset
          if (_currentMode === "3d") {
             // console.log("Inside set viewer state for 3D: ", this.viewerId)
             
-            _viewer.scene.view.position.set(viewerState.position[0],viewerState.position[1],viewerState.position[2]);
-            _viewer.scene.view.lookAt(viewerState.target);
+            _viewer.scene.view.position.set(viewerState.position[0]-offset[0],viewerState.position[1]-offset[1],viewerState.position[2]-offset[2]);
+            _viewer.scene.view.lookAt(new THREE.Vector3(viewerState.target.x-offset[0],viewerState.target.y-offset[1],viewerState.target.z-offset[2]));
             if(viewerState.fov) {
                 // this.viewer.setFOV(viewerState.fov);
             }
@@ -1828,6 +1829,11 @@ export const PotreeViewerUtils = () => {
         }
     }
 
+    const getSelectedLayers = (layers) => {
+        return Object.keys(layers).filter((key)=>(layers[key]))
+    }
+    
+
     const onKeyDown = (event) => {
         console.log("Potree Inside event listener: ", _currentMode, event, _viewer);
         // if (!this.isActive) {
@@ -1839,6 +1845,7 @@ export const PotreeViewerUtils = () => {
         if(_viewer && !_viewer.controls) {
             return;
         }
+
         // console.log("Inside Key down listener: ", event);
         switch (event.key) {
             case "Escape":
@@ -1985,9 +1992,13 @@ export const PotreeViewerUtils = () => {
         let frustum;
         const camToImgDir = new THREE.Vector3();
         const maxDist = 10;
+        const selectedLayers = getSelectedLayers(_realityState)
 
         for (const realityKey in _realityLayers ) {
             let reality = _realityLayers[realityKey];
+
+            if(!selectedLayers.includes(reality.type)) continue;
+
             if (reality.type === "Phone Image" || reality.type === "Drone Image") {
                 continue;
             }

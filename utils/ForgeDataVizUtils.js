@@ -671,7 +671,7 @@ export class ForgeDataVizUtils {
 
             case '360 Image': return {
 
-                icon: '/icons/forge360Image.png',
+                icon: '/customicons/360ImageWithoutBorderAndShadow.svg',
 
                 size: 24,
 
@@ -680,7 +680,7 @@ export class ForgeDataVizUtils {
 
             case 'Phone Image': return {
 
-                icon: '/icons/phoneImageInViewer.svg',
+                icon: '/customicons/PhoneImageIconWoBorder.svg',
 
                 size: 24,
 

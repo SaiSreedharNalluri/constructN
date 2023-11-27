@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import capture360Image from "../../../public/divami_icons/capture360Image.svg";
-import PhoneImageNewCapture from "../../../public/divami_icons/PhoneImageNewCapture.svg";
-import CaptureVideoWalk from "../../../public/divami_icons/CaptureVideoWalk.svg";
-import DroneImageNew from "../../../public/divami_icons/DroneImageNew.svg";
+
+import cameraIcon from "../../../public/divami_icons/cameraIcon.svg";
+import hexagonIcon from "../../../public/divami_icons/hexagonIcon.svg";
+import videoRecorderIcon from "../../../public/divami_icons/videoRecorderIcon.svg";
+import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 
 import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
-import SelectLayer from "../select-layers/SelectLayer";
+import { ClickAwayListener } from "@mui/material";
+import SelectLayer from "../../container/selectLayer/SelectLayer";
 import {
   CameraIcon,
   DownIcon,
@@ -16,7 +18,6 @@ import {
   ContainerDiv,
 } from "./ToolBarStyles";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
-import { ClickAwayListener } from "@mui/material";
 export interface ShowImageDisplay {
   item1: boolean;
   item2: boolean;
@@ -30,25 +31,25 @@ const LayerIcons = ({iconsList}:any)=>{
           if (label === "Phone Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={PhoneImageNewCapture} alt="Arrow" />
+                <CameraIcon src={hexagonIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           } else if (label === "360 Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={capture360Image} alt="Arrow" />
+                <CameraIcon src={cameraIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           } else if (label === "360 Video") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={CaptureVideoWalk} alt="Arrow" />
+                <CameraIcon src={videoRecorderIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           } else if (label === "Drone Image") {
             return (
               <LayerSecondSectionCamImg key={label + index}>
-                <CameraIcon src={DroneImageNew} alt="Arrow" />
+                <CameraIcon src={DroneImage} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           }
@@ -67,6 +68,7 @@ const Layers = ({
   selectedLayersList,
   setActiveRealityMap,
   layersUpdated,
+  initData
 }: any) => {
   const [selectedArr, setSelectedArr] = useState<any>([]);
   const [layersLabels, setLayersLabels] = useState<any>([]);
@@ -75,6 +77,7 @@ const Layers = ({
     item2: true,
     item3: true,
   });
+  console.log("my layer",myLayersList)
   const customLogger = new CustomLoggerClass();
   useEffect(() => {
     let newLayersArr = [];
@@ -98,43 +101,44 @@ const Layers = ({
     }
     setLayersLabels(arr);
   }, [layersUpdated,selectedArr]);
- // useEffect(() => {}, [layersLabels]);
+ useEffect(() => {}, [layersLabels]);
 
-  // const getLayersIcons = (layersLabels: any) => {
-  //   return (
-  //     <>
-  //       {layersLabels.map((label: any, index: number) => {
-  //         if (label === "Phone Image") {
-  //           return (
-  //             <LayerSecondSectionCamImg key={label + index}>
-  //               <CameraIcon src={hexagonIcon} alt="Arrow" />
-  //             </LayerSecondSectionCamImg>
-  //           );
-  //         } else if (label === "360 Image") {
-  //           return (
-  //             <LayerSecondSectionCamImg key={label + index}>
-  //               <CameraIcon src={cameraIcon} alt="Arrow" />
-  //             </LayerSecondSectionCamImg>
-  //           );
-  //         } else if (label === "360 Video") {
-  //           return (
-  //             <LayerSecondSectionCamImg key={label + index}>
-  //               <CameraIcon src={videoRecorderIcon} alt="Arrow" />
-  //             </LayerSecondSectionCamImg>
-  //           );
-  //         } else if (label === "Drone Image") {
-  //           return (
-  //             <LayerSecondSectionCamImg key={label + index}>
-  //               <CameraIcon src={DroneImage} alt="Arrow" />
-  //             </LayerSecondSectionCamImg>
-  //           );
-  //         }
-  //       })}
-  //     </>
-  //   );
-  // };
+  const getLayersIcons = (layersLabels: any) => {
+    return (
+      <>
+        {layersLabels.map((label: any, index: number) => {
+          if (label === "Phone Image") {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={hexagonIcon} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          } else if (label === "360 Image") {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={cameraIcon} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          } else if (label === "360 Video") {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={videoRecorderIcon} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          } else if (label === "Drone Image") {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={DroneImage} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          }
+        })}
+      </>
+    );
+  };
 
   return (
+    <div>
     <ClickAwayListener
       onClickAway={() => {
         setOpenList(false);
@@ -169,10 +173,12 @@ const Layers = ({
             selectedLayersList={selectedLayersList}
             setActiveRealityMap={setActiveRealityMap}
             layersUpdated={layersUpdated}
+            initData={initData}
           />
         </SelectLayersWrapper>
       </ContainerDiv>
     </ClickAwayListener>
+    </div>
   );
 };
 

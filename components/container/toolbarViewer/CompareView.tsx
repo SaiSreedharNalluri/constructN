@@ -36,9 +36,9 @@ const CompareView = ({
   isDesignAvailable,
 }: any) => {
   const customLogger = new CustomLoggerClass();
-  useEffect(() => {
-    setActive("hideCompare");
-  }, [selectedType]);
+  // useEffect(() => {
+  //   setActive("hideCompare");
+  // }, [selectedType]);
   return (
     <CompareViewBox>
       <CompareViewTitleDiv>Compare Views:</CompareViewTitleDiv>
@@ -62,10 +62,9 @@ const CompareView = ({
             <DesignCompareViewIcon
               id="compareDesign"
               onClick={(e: any) => {
-                if(isDesignAvailable){
+                if(isDesignAvailable)
                 customLogger.logInfo("ToolBar - Compare Design");
                 rightMenuClickHandler(e);
-                }
               }}
               isDesignAvailable={isDesignAvailable}
               active={active}
