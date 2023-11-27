@@ -88,7 +88,9 @@ const UploaderFooter: React.FC<any> = ({ }) => {
             </Button>
             <Button
               disabled={!state.isNextEnabled || state.isReading}
-              onClick={() => uploaderAction.next()}
+              onClick={() => {uploaderAction.next()
+              state.choosenFiles.duplicateFiles.length = 0
+              state.choosenFiles.invalidEXIFFiles.length = 0}}
               className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white mr-[20px]`}>
               Confirm Images
             </Button>
