@@ -88,7 +88,9 @@ const UploaderFooter: React.FC<any> = ({ }) => {
             </Button>
             <Button
               disabled={!state.isNextEnabled || state.isReading}
-              onClick={() => uploaderAction.next()}
+              onClick={() => {uploaderAction.next()
+              state.choosenFiles.duplicateFiles.length = 0
+              state.choosenFiles.invalidEXIFFiles.length = 0}}
               className={`${nextButtonStyle} bg-[#F1742E] text-white border border-solid rounded-[4px] hover:bg-[#F1742E] hover:text-white mr-[20px]`}>
               Confirm Images
             </Button>
@@ -153,7 +155,7 @@ const UploaderFooter: React.FC<any> = ({ }) => {
           </p>
         </div>
       )}
-      {state.step === UploaderStep.ChooseFiles && (
+      {state.step === UploaderStep.ChooseFiles && state.choosenFiles.validFiles.length > 0 && (
     <div style={progressContainerStyle} className="flex justify-evenly  rounded-[10px] items-center ml-[20px] bg-[#FFECE2] p-2  text-base">
           {
             state.isReading === true &&
