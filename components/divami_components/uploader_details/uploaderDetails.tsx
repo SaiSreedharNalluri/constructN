@@ -280,7 +280,7 @@ const UploaderDateDetails: React.FC<any> = () => {
 
         <div className="w-[25%] mt-[18px]">
           <h2 className="font-sans not-italic font-semibold text-sm my-[4px]">
-            Enter Capture Date for
+            Enter Capture Date for&nbsp;
             <TooltipText title={uploaderState.structure?.name && uploaderState.structure?.name.length > 18 ? uploaderState.structure?.name : ""} placement="top">
               <span className="text-[#101F4C]">
                 <TruncatedString text={uploaderState.structure?.name} maxLength={18} suffixLength={0}></TruncatedString></span>

@@ -54,7 +54,7 @@ const UploaderReview: React.FC<any> = () => {
                   <p className="text-black-500 mb-0">: {uploaderState.project?.name && uploaderState.project?.name.length > 20 ?uploaderState.project?.name:""} 
                   <TooltipText title={gethierarchyPath() && gethierarchyPath().length > 20 ?gethierarchyPath():""} placement="right">      
           <span className="text-[#101F4C]">
-            <TruncatedString text={gethierarchyPath()} maxLength={20} suffixLength={0}></TruncatedString></span> 
+            <TruncatedString text={gethierarchyPath()} maxLength={20} suffixLength={20}></TruncatedString></span> 
         
           </TooltipText>
           </p>
