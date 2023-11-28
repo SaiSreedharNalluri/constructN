@@ -171,7 +171,11 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [isSupportUser, setIsSupportUser] = useState<boolean>(false)
 
-    const _assetMap = useRef<{ [key: string]: { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean } }>({})
+    const _assetMap = useRef<{ 
+        
+        [key: string]: { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean } 
+    
+    }>({})
 
     const params = useParams()
 

@@ -1,8 +1,8 @@
 FROM node:18-alpine as BUILD_IMAGE
 WORKDIR /my-project
 COPY package*.json ./
-RUN npm install --omit=dev
-RUN npm prune --omit=dev
+RUN npm install --omit=dev --legacy-peer-deps
+RUN npm prune --omit=dev --legacy-peer-deps
 # RUN npm install -g pm2
 
 FROM node:18-alpine as builder

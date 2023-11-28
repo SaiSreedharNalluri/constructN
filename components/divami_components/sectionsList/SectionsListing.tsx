@@ -82,6 +82,8 @@ import Chips from "./Chip";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { useAppContext } from "../../../state/appState/context";
 import { Add, AddBox, ArrowDownward, Check, ChevronLeft, ChevronRight, Clear, DeleteOutline, Edit, FilterList, FirstPage, LastPage, Remove, SaveAlt, Search } from "@mui/icons-material";
+import instance from "../../../services/axiosInstance";
+import { API } from "../../../config/config";
 // import { ISections } from "../../../models/ISections";
 
 interface RowData {
@@ -90,6 +92,16 @@ interface RowData {
 
 interface ExpandedRows {
   [id: number]: boolean;
+}
+
+const fetchAssetCategories = (projectId: string) => {
+
+  try {
+
+      return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`)
+
+  } catch (error) { throw error }
+
 }
 
 const MyNewTitle = (props: any) => {
@@ -123,6 +135,7 @@ const SectionsListing = () => {
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [roles, setRoles] = useState<string[] | []>([]);
+  const [hasProgress2D, setHasProgress2D]: any = useState(false);
   // const [showLoader, setShowLoader]: any = useState(true);
 
   // let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
@@ -234,6 +247,10 @@ const[isProcessing,setProcessing]=useState(false);
     if (router.isReady &&(!dataLoaded)) {
       const type = "newSnapshot";
       const projectId = router?.query?.projectId as string
+
+      fetchAssetCategories(projectId).then(res => {
+        if(res.data.success) setHasProgress2D(res.data.result.length > 0)
+      }).catch(e => console.log(e))
       
       getSectionsList(projectId)
         .then((response: AxiosResponse<any>) => {
@@ -784,18 +801,18 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
    
       render: (rowData: any) => {
         return <div className="cursor-pointer">{
-          <TooltipText title="2D Progress">
-                <div className="flex justify-center">
-                  <Progress2DImageIcon
-                    src={Progress2DImage}
-                    alt={""}
-                    onClick={() => {router.push({
-                      pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
-                      query: { structId: rowData._id },
-                    })}}
-                  ></Progress2DImageIcon>
-                </div>
-              </TooltipText>
+          hasProgress2D ? <TooltipText title="2D Progress">
+          <div className="flex justify-center">
+            <Progress2DImageIcon
+              src={Progress2DImage}
+              alt={""}
+              onClick={() => {router.push({
+                pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
+                query: { structId: rowData._id },
+              })}}
+            ></Progress2DImageIcon>
+          </div>
+        </TooltipText> : '-'
           }</div>;
       },
     },
