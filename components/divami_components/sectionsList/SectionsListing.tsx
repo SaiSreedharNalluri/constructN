@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { IconButton } from "@material-ui/core";
-import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import {
   ArrowIcon,
   CloseIcon,
@@ -21,30 +19,15 @@ import {
 import {
   InputAdornment,
   Paper,
+  SvgIconProps,
   ThemeProvider,
   Typography,
   createTheme,
 } from "@mui/material";
 import moment from "moment";
-import AddBox from "@material-ui/icons/AddBox";
-import ArrowDownward from "@material-ui/icons/ArrowDownward";
-import Add from "@material-ui/icons/Add";
-import Check from "@material-ui/icons/Check";
-import ChevronLeft from "@material-ui/icons/ChevronLeft";
-import ChevronRight from "@material-ui/icons/ChevronRight";
 import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 import searchIcon from "../../../public/divami_icons/search.svg";
 import CustomDrawer from "../custom-drawer/custom-drawer";
-import Clear from "@material-ui/icons/Clear";
-import DeleteOutline from "@material-ui/icons/DeleteOutline";
-import Edit from "@material-ui/icons/Edit";
-import FilterList from "@material-ui/icons/FilterList";
-import FirstPage from "@material-ui/icons/FirstPage";
-import LastPage from "@material-ui/icons/LastPage";
-import Remove from "@material-ui/icons/Remove";
-import SaveAlt from "@material-ui/icons/SaveAlt";
-import Search from "@material-ui/icons/Search";
-import ViewColumn from "@material-ui/icons/ViewColumn";
 
 import phoneImage from "../../../public/divami_icons/phoneImage.svg";
 import hotspotImg from "../../../public/divami_icons/hotspotImg.svg";
@@ -90,7 +73,6 @@ import SectionFilter from "./SectionFilter";
 
 import MaterialTable, { MTableToolbar, MTableBodyRow } from "material-table";
 import CustomButton from "../custom-button/CustomButton";
-import { SvgIconProps } from "@material-ui/core";
 import CustomLoader from "../custom_loader/CustomLoader";
 import LocalSearch from "../local_component/LocalSearch";
 import { TooltipText } from "../side-panel/SidePanelStyles";
@@ -99,6 +81,7 @@ import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import Chips from "./Chip";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { useAppContext } from "../../../state/appState/context";
+import { Add, AddBox, ArrowDownward, Check, ChevronLeft, ChevronRight, Clear, DeleteOutline, Edit, FilterList, FirstPage, LastPage, Remove, SaveAlt, Search } from "@mui/icons-material";
 // import { ISections } from "../../../models/ISections";
 
 interface RowData {

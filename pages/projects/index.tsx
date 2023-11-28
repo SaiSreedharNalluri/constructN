@@ -4,7 +4,7 @@ import {
   Content,
   ProjectsListContainer,
 } from "../../components/divami_components/project-users-list/usersListStyles";
-import { Drawer, InputAdornment, Menu } from "@mui/material";
+import { Drawer, InputAdornment, Menu, Tooltip } from "@mui/material";
 import {
   HeaderActions,
   HeaderImage,
@@ -58,8 +58,6 @@ import { AddUsersEmailPopup } from "../../components/divami_components/add_users
 import PopupComponent from "../../components/popupComponent/PopupComponent";
 import ProjectConfig from "../../components/divami_components/project_config/ProjectConfig";
 import projectHierIcon from "../../public/divami_icons/projectHierIcon.svg";
-import { Tooltip } from "@material-ui/core";
-
 import {
   updateIssuePriorityList,
   updateIssueStatusList,

@@ -1,4 +1,4 @@
-import { createTheme, InputAdornment, ThemeProvider } from "@mui/material";
+import { createTheme, InputAdornment, Paper, ThemeProvider } from "@mui/material";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -11,7 +11,6 @@ import {
   getUserRoles,
 } from "../../../services/project";
 
-import { Paper } from "@material-ui/core";
 import CustomButton from "../custom-button/CustomButton";
 import CustomSearch from "../custom-search/CustomSearch";
 import {

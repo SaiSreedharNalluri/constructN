@@ -1,7 +1,7 @@
 import LinearProgress from '@mui/material/LinearProgress';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import React from 'react'
+import { CheckCircleOutlined } from '@mui/icons-material';
 import { UploadStatus } from '../../../models/IUploader';
 interface Iprops{
 status: UploadStatus
@@ -18,7 +18,7 @@ const showUploadingStatus=(status: UploadStatus)=>{
           </div>
         );
       case 1:
-        return <CheckCircleIcon style={{ color: "green" }} />;
+        return <CheckCircleOutlined style={{ color: "green" }} />;
       case 2:
         return <ErrorIcon color="error" />;
       default:

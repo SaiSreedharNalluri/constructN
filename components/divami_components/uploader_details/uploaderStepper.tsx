@@ -1,6 +1,5 @@
 import React from "react";
-import { Stepper, Step, StepLabel, createTheme, ThemeProvider,StepConnector } from "@mui/material";
-import { withStyles } from "@mui/styles";
+import { Stepper, Step, StepLabel, createTheme, ThemeProvider,StepConnector, styled } from "@mui/material";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 
 interface IProps{
@@ -42,7 +41,7 @@ const UploaderStepper : React.FC<IProps> =() => {
       <div style={iconStyle}>{icon}</div>
     );
   };
-  const ColoredStepConnector = withStyles({
+  const ColoredStepConnector = styled(StepConnector)({
 
     active: {
       "& $line": {
@@ -66,7 +65,7 @@ const UploaderStepper : React.FC<IProps> =() => {
       borderBottomWidth: 1.5 ,
       borderRadius: 1,
     },
-  })(StepConnector);
+  });
   return (
     <div>
        

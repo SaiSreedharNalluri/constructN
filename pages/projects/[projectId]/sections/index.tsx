@@ -10,21 +10,7 @@ import {
 // import BasicTreeData from "./components/Tree";
 // import ProgressBar from "./components/progressBar/ProgressBar";
 // import CaptureMode from "./components/CaptureMode/CaptureMode";
-import Add from "@material-ui/icons/Add";
-import AddBox from "@material-ui/icons/AddBox";
-import ArrowDownward from "@material-ui/icons/ArrowDownward";
-import Check from "@material-ui/icons/Check";
-import ChevronLeft from "@material-ui/icons/ChevronLeft";
 
-import Clear from "@material-ui/icons/Clear";
-import DeleteOutline from "@material-ui/icons/DeleteOutline";
-import Edit from "@material-ui/icons/Edit";
-import FilterList from "@material-ui/icons/FilterList";
-import FirstPage from "@material-ui/icons/FirstPage";
-import LastPage from "@material-ui/icons/LastPage";
-import Remove from "@material-ui/icons/Remove";
-import SaveAlt from "@material-ui/icons/SaveAlt";
-import Search from "@material-ui/icons/Search";
 import { forwardRef } from "react";
 import DroneImage from "../../../../public/divami_icons/DroneImage.svg";
 import capture360Image from "../../../../public/divami_icons/capture360Image.svg";
@@ -45,6 +31,7 @@ import { Content } from "../../../../components/divami_components/project-listin
 import SectionsListing from "../../../../components/divami_components/sectionsList/SectionsListing";
 import { getSectionsList } from "../../../../services/sections";
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
+import { AddBox, Check, Clear, DeleteOutline, Add, Edit, SaveAlt, Search, FilterList, FirstPage, LastPage, ChevronLeft, ArrowDownward, Remove } from "@mui/icons-material";
 
 const backupData: any = [
   {
