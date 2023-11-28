@@ -15,6 +15,7 @@ import { ICapture } from "../../../../models/ICapture";
 import ErrorIcon from '@mui/icons-material/Error';
 import CircularProgress from '@mui/material/CircularProgress';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import PopupComponent from "../../../popupComponent/PopupComponent";
 interface Iprops {
   isUploading: boolean;
   isUploadedOn: boolean;
@@ -47,6 +48,9 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const { state: appState, appContextAction } = useAppContext();
+  const [isShowPopUp, setIsShowPopUp] = useState(false);
+  const [popUpHeading,setPopUPHeading] =useState('')
+  const [popUpConfirm,setPopUPConfirm] =useState('')
   /**
    * If isUploading true case, get data from uploaderState.pendingUploadJobs
    * If isUploading false case, get data from uploaderState.pendingProcessJobs
@@ -119,6 +123,9 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
       default:
           return (<CircularProgress color="warning" size={"28px"} thickness={5}/>) 
     }
+
+  }
+  const handleUploadError =()=>{
 
   }
   return (
@@ -200,6 +207,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     onClick={() => {
                       if (isUploading && onRowClick) {
                         onRowClick(job as IJobs, index);
+                        setIsShowPopUp(true)
                         if(!uploaderState.stepperSideFileList)
                         {
                           uploaderAction.setStepperSideFilesList(true)
@@ -290,6 +298,19 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
           </div>
         </div>
       </div>
+      <PopupComponent
+      open={isShowPopUp}
+      setShowPopUp={setIsShowPopUp}
+      modalTitle={'Upload complete with errors'}
+      modalmessage={''}
+      primaryButtonLabel={'Skip Files and Complete'}
+      SecondaryButtonlabel={''}
+      isUploaderFinal={false}
+      callBackvalue={() => {
+        setIsShowPopUp(false)
+        handleUploadError
+      }}
+    />
     </React.Fragment>
   );
 };
