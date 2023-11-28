@@ -398,6 +398,7 @@ const Index: React.FC<IProps> = () => {
       callBackvalue={() => {
         setIsShowPopUp(false)
       }}
+      
     />
     </div>
   );
