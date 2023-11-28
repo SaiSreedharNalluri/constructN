@@ -84,6 +84,7 @@ import { useAppContext } from "../../../state/appState/context";
 import { Add, AddBox, ArrowDownward, Check, ChevronLeft, ChevronRight, Clear, DeleteOutline, Edit, FilterList, FirstPage, LastPage, Remove, SaveAlt, Search } from "@mui/icons-material";
 import instance from "../../../services/axiosInstance";
 import { API } from "../../../config/config";
+import { toast } from "react-toastify";
 // import { ISections } from "../../../models/ISections";
 
 interface RowData {
@@ -801,18 +802,23 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
    
       render: (rowData: any) => {
         return <div className="cursor-pointer">{
-          hasProgress2D ? <TooltipText title="2D Progress">
-          <div className="flex justify-center">
-            <Progress2DImageIcon
-              src={Progress2DImage}
-              alt={""}
-              onClick={() => {router.push({
-                pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
-                query: { structId: rowData._id },
-              })}}
-            ></Progress2DImageIcon>
-          </div>
-        </TooltipText> : '-'
+          <TooltipText title="2D Progress">
+            <div className="flex justify-center">
+              <Progress2DImageIcon
+                src={Progress2DImage}
+                alt={""}
+                onClick={() => {
+                  if(hasProgress2D) {
+                    router.push({
+                      pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
+                      query: { structId: rowData._id },
+                    })} else {
+                      toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
+                    }
+                }}
+              ></Progress2DImageIcon>
+            </div>
+          </TooltipText>
           }</div>;
       },
     },

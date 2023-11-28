@@ -198,7 +198,7 @@ const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = fal
 
         }
 
-        else toast.warn(`You have already completed this stage (${event.target.value})`, { autoClose: 5000 })
+        else toast.warn(`You have already completed this stage`, { autoClose: 5000 })
 
     }
 

@@ -688,7 +688,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _onAssetDetailsChange = (asset: IAsset) => {
 
-        if (currentCategory.current !== undefined) if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
+        if (currentCategory.current !== undefined) _loadAssetsForCategory(currentCategory.current)
 
     }
 

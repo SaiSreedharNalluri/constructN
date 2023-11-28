@@ -113,7 +113,7 @@ function Progress2DStage(
 
                 <RangeLinearProgress 
                 
-                    customColor={stage.color!} className='w-full mt-4' valueLabelDisplay='on'
+                    className='w-full mt-4' valueLabelDisplay='on'
                     
                     valueLabelFormat={value => _progressLabelFormatter(value)} value={getProgress()} />
 
@@ -151,7 +151,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 
 }))
 
-const RangeLinearProgress = styled(Slider)<{ customColor: string }>({
+const RangeLinearProgress = styled(Slider)({
 
     color: 'inherit',
     
