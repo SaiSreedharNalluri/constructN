@@ -79,8 +79,8 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   const gethierarchyPath = (structure: string | IStructure): string => {
     let structureId = getStructureIdFromModelOrString(structure)
 
-    if (appState.hierarchy) {
-      return getPathToRoot(structureId, appState.hierarchy[0]);
+    if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
+      return getPathToRoot(structureId, appState.currentProjectData.hierarchy[0]);
     } else {
       return "";
     }

@@ -17,8 +17,8 @@ const UploaderReview: React.FC<any> = () => {
 
   const gethierarchyPath = (): string => {
     if(uploaderState.structure) {
-      if(appState.hierarchy) {
-        return getPathToRoot(uploaderState.structure?._id, appState.hierarchy[0])
+      if(appState.currentProjectData && appState.currentProjectData.hierarchy) {
+        return getPathToRoot(uploaderState.structure?._id, appState.currentProjectData.hierarchy[0])
       } else {
         return uploaderState.structure.name
       }

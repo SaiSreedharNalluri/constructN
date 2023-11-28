@@ -74,6 +74,13 @@ import { hasCommonElement } from "../../../services/axiosInstance";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 import { UploaderStep } from "../../../state/uploaderState/state";
 import { WebWorkerManager } from "../../../utils/webWorkerManager";
+import { getStructureHierarchy, getStructureList } from "../../../services/structure";
+import { boolean } from "yup";
+import { IBaseResponse } from "../../../models/IBaseResponse";
+import { IProjects } from "../../../models/IProjects";
+import { ChildrenEntity, IStructure } from "../../../models/IStructure";
+import { ProjectData, ProjectLocalStorageKey } from "../../../state/appState/state";
+import { useAppContext } from "../../../state/appState/context";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -121,6 +128,47 @@ const Header: React.FC<any> = ({
   const [projectName, setProjectName] = useState('')
   const [notificationCount, setNotificationCount] = useState(0);
   const { state: uploaderState } = useUploaderContext();
+  const { state: appState, appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
+
+  useEffect(() => {
+    if (router.isReady && router?.query?.projectId) {
+      let projectId = router?.query?.projectId as string
+      var projectDataListString = localStorage.getItem(ProjectLocalStorageKey.ProjectDataListKey)
+      var projectDataList: ProjectData[] | undefined = projectDataListString ? JSON.parse(projectDataListString) as ProjectData[] : undefined
+      if(appState.currentProjectData && appState.currentProjectData.project._id === projectId) {
+        //no need to update
+        return
+      }
+
+      let projectDataInAppState = appState.projectDataList.find((projectData) => { return projectData.project._id === projectId})
+      let projectDataInLocalStorage = projectDataList && projectDataList.find((projectData) => { return projectData.project._id === projectId})
+      if(projectDataInAppState) {
+        appAction.setCurrentProjectData(projectDataInAppState)
+      } else if(projectDataInLocalStorage) {
+        appAction.appendProjectData(projectDataInLocalStorage)
+      } else {
+        let response = getProjectData(projectId);
+        response.then((projectData) => {
+          if(projectData) {
+            if (!projectDataList) {
+              projectDataList = [projectData]
+            } else {
+              projectDataList.push(projectData)
+            }
+            localStorage.setItem(ProjectLocalStorageKey.ProjectDataListKey, JSON.stringify(projectDataList))
+            appAction.appendProjectData(projectData)
+          }
+        }).catch((error) => {
+          if (error.response.status === 403) {
+            CustomToast("Permisson Denied, Contact Admin", "error");
+            router.push("/projects?reason=AccessDenied");
+          }
+        })
+      }
+    }
+  }, [router.isReady, router?.query?.projectId])
+
   useEffect(() => {
     if (router.isReady && router?.query?.projectId) {
       const projectInfo: any = getCookie('projectData') as string;
@@ -149,8 +197,8 @@ const Header: React.FC<any> = ({
       }
     }).catch((error) => {
       if (error.response.status === 403) {
-        CustomToast("Permisson Denied, Contact Admin", "error");
-        router.push("/projects?reason=AccessDenied");
+        // CustomToast("Permisson Denied, Contact Admin", "error");
+        // router.push("/projects?reason=AccessDenied");
       }
     });
   }
@@ -188,6 +236,34 @@ const Header: React.FC<any> = ({
     //     document.removeEventListener('click', closeStructurePages);
     //   };
   }, [viewMode]);
+
+  const getProjectData = async (projectId: string): Promise<ProjectData | undefined> => {
+    let responseArr = await Promise.all([
+      getProjectDetails(projectId),
+      getStructureList(projectId),
+      getStructureHierarchy(projectId)
+    ])
+
+    let isSuccess = responseArr.reduce<boolean>((isSuccess, response): boolean => {
+      let data = response.data as IBaseResponse<any>
+      return isSuccess && data.success
+    }, true)
+
+    if (isSuccess) {
+      let project = (responseArr[0].data as IBaseResponse<IProjects>).result
+      let structureList = (responseArr[1].data as IBaseResponse<IStructure[]>).result
+      let structureHierarchy = (responseArr[2].data as IBaseResponse<ChildrenEntity[]>).result
+
+      let projectData: ProjectData = {
+        project: project,
+        structureList: structureList,
+        hierarchy: structureHierarchy
+      }
+      return projectData
+    } else {
+      return undefined
+    }
+  }
 
   const userLogOut = () => {
     customLogger.logActivity("null");
