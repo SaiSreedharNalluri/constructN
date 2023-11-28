@@ -327,9 +327,6 @@ const Index: React.FC<IProps> = () => {
       getStructureList(router.query.projectId as string)
         .then((response) => {
           const list = response.data.result;
-
-          // Using it for Appstate which will be used for future features
-          appAction.setStructureList(list as IStructure[])
           
           setStructuresList(list);
           let nodeData = localStorage.getItem("nodeData")
@@ -1499,13 +1496,6 @@ const Index: React.FC<IProps> = () => {
     if (router.isReady) {
       // if (router.query.structId !== undefined)
       // setSelector(router.query.structId.toString());
-
-      // Using it for Appstate which will be used for future features
-      getStructureHierarchy(router.query.projectId as string)
-      .then((response) => {
-        let hierarchyList: ChildrenEntity[] = response.data.result
-        appAction.setHierarchy(hierarchyList)
-      })
       
       getSectionsList(router.query.projectId as string)
         .then((response: AxiosResponse<any>) => {

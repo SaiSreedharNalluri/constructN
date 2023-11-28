@@ -234,13 +234,6 @@ const[isProcessing,setProcessing]=useState(false);
     if (router.isReady &&(!dataLoaded)) {
       const type = "newSnapshot";
       const projectId = router?.query?.projectId as string
-
-      // Using it for Appstate which will be used for future features
-      getStructureHierarchy(projectId)
-      .then((response) => {
-        let hierarchyList: ChildrenEntity[] = response.data.result
-        appAction.setHierarchy(hierarchyList)
-      })
       
       getSectionsList(projectId)
         .then((response: AxiosResponse<any>) => {

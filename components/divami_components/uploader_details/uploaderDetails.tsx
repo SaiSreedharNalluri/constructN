@@ -48,34 +48,9 @@ const UploaderDateDetails: React.FC<any> = () => {
   const handleNodeExpand = (data: any) => {
     setExpanded(data);
   };
-  useEffect(() => {
-    if (router.isReady && router.query?.projectId && uploaderState.project === undefined) {
-      uploaderAction.setIsLoading(true)
-      getProjectDetails(router?.query?.projectId as string).then((response) => {
-        let projectDetails: IProjects = response.data.result;
-        // console.log("TestingUploader: project details ", projectDetails)
-        uploaderAction.setProject(projectDetails);
-      });
-      let structureList = appState.structureList;
-      if (!structureList) {
-        getStructureList(router.query.projectId as string)
-          .then((response) => {
-            const list = response.data.result;
-            appAction.setStructureList(list as IStructure[]);
-            uploaderAction.setIsLoading(false)
-          })
-          .catch((error) => {
-            CustomToast("failed to load data", "error");
-          });
-      }
-      else {
-        uploaderAction.setIsLoading(false)
-      }
-    }
-  }, [router.isReady, router.query.projectId]);
 
   const getCurrentStructureFromStructureList = (structure: IStructure) => {
-    let currentStructure = appState.structureList?.find((e) => {
+    let currentStructure = appState.currentProjectData?.structureList.find((e) => {
       if (e?._id === structure._id) {
         return e;
       }
@@ -90,22 +65,13 @@ const UploaderDateDetails: React.FC<any> = () => {
     }
   };
   useEffect(() => {
-    if (router.isReady) {
-      let hierarchy = appState.hierarchy;
+    if (appState.currentProjectData) {
+      let hierarchy = appState.currentProjectData.hierarchy;
       if (hierarchy) {
         setState(hierarchy);
-      } else {
-        getStructureHierarchy(router.query.projectId as string).then(
-          (response) => {
-            let hierarchyList: ChildrenEntity[] = response.data.result;
-            appAction.setHierarchy(hierarchyList);
-            setState(hierarchyList);
-          }
-        );
       }
     }
-  }, [router.isReady, router.query.projectId, router.query.structId]);
-
+  }, [appState.currentProjectData]);
 
   useEffect(() => {
     if (

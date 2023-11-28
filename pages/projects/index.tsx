@@ -328,13 +328,6 @@ const Index: React.FC<any> = () => {
   useEffect(() => {
     if (router.isReady) {
 
-      // Using it for Appstate which will be used for future features
-      getProjects()
-        .then((response) => {
-          let projectList: IProjects[] = response.data.result
-          appAction.setProjectList(projectList)
-        })
-
       getProjectsList()
         .then(async (response) => {
           if (response?.data?.success === true) {
