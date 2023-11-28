@@ -90,6 +90,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
  const [showPopUp, setshowPopUp] = useState(false);
  const [isShowPopUp, setIsShowPopUp] = useState(false);
+ const [url,setUrl]=useState('')
  let WorkerManager = WebWorkerManager.getInstance()
   const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
     if (window.location.href.includes('uploader') || Object.keys(WorkerManager.getWorker()).length > 0) {
@@ -99,20 +100,24 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   };
   const popStateHandler = () => {
-    if ((window.location.href.includes('uploader') || Object.keys(WorkerManager.getWorker()).length > 0)) {
-      //setIsShowPopUp(true)
-      history.pushState(null, '', document.URL);
+    if ((url.split('/').includes('uploader') || Object.keys(WorkerManager.getWorker()).length > 0)) {
+      setIsShowPopUp(true)
+      history.pushState(null, '', url);
     }
   }
+  useEffect(()=>{
+  setUrl(window.location.href)
+  },[typeof window != undefined,router,router.isReady])
+
   useEffect(() => {
     window.addEventListener("beforeunload", beforeUnloadHandler);
+    history.pushState(null, '', document.URL);
     window.addEventListener('popstate', popStateHandler)
-    
     return (() => {
       window.removeEventListener("beforeunload", beforeUnloadHandler);
       window.removeEventListener('popstate', popStateHandler)
     })
-  }, [])
+  }, [url])
   return (
     <AppContextProvider>
       <UploaderContextProvider>
@@ -146,7 +151,7 @@ export default function App({ Component, pageProps }: AppProps) {
           SecondaryButtonlabel={"Cancel"}
           callBackvalue={() => {
             setIsShowPopUp(false)
-           
+           router.push('/projects')
            }}
         />
         </>

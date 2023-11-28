@@ -12,6 +12,9 @@ import router from "next/router";
  import Checked from "../../../../public/divami_icons/checked.svg";
 import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 import { ICapture } from "../../../../models/ICapture";
+import ErrorIcon from '@mui/icons-material/Error';
+import CircularProgress from '@mui/material/CircularProgress';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 interface Iprops {
   isUploading: boolean;
   isUploadedOn: boolean;
@@ -104,6 +107,20 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
       }
     );
   };
+  const getCaptureStatus =(jobStatus:JobStatus)=>{
+    switch(jobStatus)
+    {
+      case JobStatus.uploaded:
+      return(<CheckCircleIcon style={{ color: "green" }} />)
+      case JobStatus.pendingUpload:
+        return (<CircularProgress color="warning" size={"28px"} thickness={5}/>)
+      case JobStatus.uploadFailed:
+        return (<ErrorIcon color="error" />)
+      default:
+          return (<CircularProgress color="warning" size={"28px"} thickness={5}/>) 
+    }
+
+  }
   return (
     <React.Fragment>
       <div
@@ -162,6 +179,15 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                       Uploaded On
                     </th>
                   )}
+                  {
+                    isUploading && (
+                      <th
+                        className="pl-2 text-left w-[18%]"
+                      >
+                        
+                      </th>
+                    )
+                  }
                 </tr>
               </thead>
               <tbody
@@ -228,6 +254,14 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     >
                       {getTheProjectDateAndTime(job.updatedAt)}
                     </td>
+                    {
+                      isUploading &&<td
+                      className="pl-2 w-[18%] flex items-center"
+                    >
+                      {getCaptureStatus(job.status)}
+                    </td>
+                    }
+                    
                   </tr>
                 ))}
               </tbody>
