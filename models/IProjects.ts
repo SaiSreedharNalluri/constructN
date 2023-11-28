@@ -14,8 +14,15 @@ export interface IProjects {
   LastUpdatedOn?: string;
   coverPhoto: string;
   utm: string;
-  timeZone?:string
+  timeZone?:string;
+  metaDetails?: MetaDetails
 }
+
+export interface MetaDetails {
+  dashboardURL?: string
+  reportURL?: string
+}
+
 export interface Contact {
   code: string;
   number: number;

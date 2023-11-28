@@ -31,8 +31,8 @@ interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const { state: appState, appContextAction } = useAppContext();
-  const [isShowPopUp, setIsShowPopUp] = useState(false);
   const { appAction } = appContextAction;
+  const [isShowPopUp, setIsShowPopUp] = useState(false);
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const [popUpHeading,setPopUPHeading] =useState('')
@@ -69,43 +69,26 @@ const Index: React.FC<IProps> = () => {
       console.log("Error: ", error)
     })
   }
-  
+
   /**
-   * UseEffect to get Structure Hierarchy of the project if it is not already present in AppState
+   * UseEffect to reset and initialize uploaderState
    */
   useEffect(() => {
-    let hierarchy = appState.hierarchy
-    if (router.isReady) {
-      if(hierarchy) {
-         if(hierarchy[0]?.project===localStorage.getItem("projectId")){
-          uploaderAction.setResetUploaderState();
-          console.log(' project id same')
-          getStructureHierarchy(router.query.projectId as string)
-          .then((response) => {
-            let hierarchyList: ChildrenEntity[] = response.data.result
-            appAction.setHierarchy(hierarchyList)
-          //  setState(hierarchyList);
-          
-          })
-        }else{
-          uploaderAction.setResetUploaderState();
-          localStorage.setItem("projectId",hierarchy[0]?.project)
-        }
-       
-      } else {
-        console.log('come out of the function');
-        getStructureHierarchy(router.query.projectId as string)
-          .then((response) => {
-            let hierarchyList: ChildrenEntity[] = response.data.result
-            appAction.setHierarchy(hierarchyList)
-          //  setState(hierarchyList);
-          
-          })
-       
-      }
+    console.log("TestingUploader: newUseEffect: ", appState.currentProjectData)
+    if (appState.currentProjectData) {
+      uploaderAction.setProject(appState.currentProjectData.project);
     }
-  }, [router.isReady, router.query.projectId, router.query.structId]);
 
+    return () => {
+      console.log("TestingUploader: newUseEffect cleanup: ", appState.currentProjectData)
+      uploaderAction.setResetUploaderState();
+    }
+  }, [appState.currentProjectData])
+
+
+  /**
+   * UseEffect to update jobs when update job status is true
+   */
   useEffect(() => {
     console.log("TestingUploader updateJobs UseEffect: ", uploaderState.updateJobs, router.query.projectId as string)
     if(uploaderState.updateJobs && router.query.projectId as string) {
@@ -114,7 +97,7 @@ const Index: React.FC<IProps> = () => {
   }, [uploaderState.updateJobs])
 
   /**
-   * UseEffect to 
+   * UseEffect to update jobs when route is ready
    */
   useEffect(()=>{
     if (router.isReady){
@@ -288,8 +271,8 @@ const Index: React.FC<IProps> = () => {
         uploaderAction.setIsLoading(false)
         if(response.data.success===true) {
           moveJobFromPendingUploadToUpload(response.data.result?._id);
-          if (appState.hierarchy) {
-            CustomToast(`upload completed sucessfully for ${getPathToRoot(response.data.result.structure, appState.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
+          if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
+            CustomToast(`upload completed sucessfully for ${getPathToRoot(response.data.result.structure,appState.currentProjectData.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
           } else {
             CustomToast(`upload completed sucessfully`,'success')
           }
@@ -316,8 +299,8 @@ const Index: React.FC<IProps> = () => {
             uploaderAction.setIsLoading(false)
             if(response&&response?.data&&response?.data?.success===true) {
               moveJobFromPendingUploadToUpload(response.data.result?._id);
-              if (appState.hierarchy) {
-                CustomToast(`upload completed sucessfully for ${getPathToRoot(response.data.result.structure, appState.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
+              if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
+                CustomToast(`upload completed sucessfully for ${getPathToRoot(response.data.result.structure, appState.currentProjectData.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
               } else {
                 CustomToast(`upload completed sucessfully`,'success')
               }
