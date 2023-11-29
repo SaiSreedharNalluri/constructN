@@ -10,7 +10,7 @@ import { UploaderFinishState, UploaderStep, captureRawImageMap } from "../../../
 import UploaderFinal from "../../../../components/divami_components/uploader_details/uploaderFinal/uploaderFinal";
 import UploaderGCP from "../../../../components/divami_components/uploader_details/uploaderGCP";
 import UploaderReview from "../../../../components/divami_components/uploader_details/uploaderReview";
-import { addCapture, addGcp, addRawImages, getCaptureDetails, getRawImages } from "../../../../services/captureManagement";
+import { addCapture, addGcp, addNewCaptureOnly, addRawImages, getCaptureDetails, getRawImages } from "../../../../services/captureManagement";
 import { RawImage, RawImageCreateResp } from "../../../../models/IRawImages";
 import { WebWorkerManager } from "../../../../utils/webWorkerManager";
 import { useRouter } from "next/router";
@@ -60,7 +60,7 @@ const Index: React.FC<IProps> = () => {
 
   const refreshJobs = (projectId: string) =>{
     uploaderAction.setIsLoading(true)
-    getJobsByStatusMode(projectId, [JobStatus.pendingUpload, JobStatus.uploaded,JobStatus.uploadFailed], uploaderState.captureMode).then((response)=>{
+    getJobsByStatusMode(projectId, [JobStatus.uploadFailed, JobStatus.pendingUpload, JobStatus.uploaded], uploaderState.captureMode).then((response)=>{
       console.log("TestingUploader: getJobs", response.data.result)
       let jobs: IJobs[] = response.data.result;
       uploaderAction.setCaptureJobs(jobs)
@@ -177,7 +177,7 @@ const Index: React.FC<IProps> = () => {
       if (uploaderState.isAppendingCapture && uploaderState.selectedJob) {
         addGcpToCapture(uploaderState.selectedJob)
       } else {
-      addCapture(uploaderState.project?._id as string,{
+        addNewCaptureOnly(uploaderState.project?._id as string,{
         mode: uploaderState.captureMode,
         type: uploaderState.captureType,
         structure: uploaderState.structure?._id as string,
