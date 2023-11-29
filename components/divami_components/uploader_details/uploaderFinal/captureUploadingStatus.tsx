@@ -207,7 +207,10 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     onClick={() => {
                       if (isUploading && onRowClick) {
                         onRowClick(job as IJobs, index);
-                        setIsShowPopUp(true)
+                        if(job.status === JobStatus.uploadFailed)
+                        {
+                          setIsShowPopUp(true)
+                        }
                         if(!uploaderState.stepperSideFileList)
                         {
                           uploaderAction.setStepperSideFilesList(true)
