@@ -147,7 +147,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
             }
         case UploaderActionType.setCaptureJobs:
             
-            let pendingUploadJobs: IJobs[] = action.payload.jobs.filter((e) => e.status === JobStatus.pendingUpload);
+            let pendingUploadJobs: IJobs[] = action.payload.jobs.filter((e) => (e.status === JobStatus.pendingUpload || e.status === JobStatus.uploadFailed));
             let pendingProcessJobs: IJobs[] = action.payload.jobs.filter((e) => e.status === JobStatus.uploaded);
             let isUploadStep = pendingUploadJobs.length > 0 || pendingProcessJobs.length>0
 
