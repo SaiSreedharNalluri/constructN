@@ -5,7 +5,7 @@ import { useAppContext } from "../../../../state/appState/context";
 import { TooltipText } from "../../side-panel/SidePanelStyles";
 import { IStructure } from "../../../../models/IStructure";
 import { IJobs, JobStatus } from "../../../../models/IJobs";
-import { updateMultipleJobStatus } from "../../../../services/jobs";
+import { updateJobStatus, updateMultipleJobStatus } from "../../../../services/jobs";
 import router from "next/router";
  import Image from "next/image";
  import UnChecked from "../../../../public/divami_icons/unchecked.svg";
@@ -48,7 +48,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const { state: appState, appContextAction } = useAppContext();
-  const [isShowPopUp, setIsShowPopUp] = useState(false);
   const [popUpHeading,setPopUPHeading] =useState('')
   const [popUpConfirm,setPopUPConfirm] =useState('')
   /**
@@ -122,11 +121,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
         return (<ErrorIcon color="error" />)
       default:
           return (<CircularProgress color="warning" size={"28px"} thickness={5}/>) 
-    }
-
-  }
-  const handleUploadError =()=>{
-
+    } 
   }
   return (
     <React.Fragment>
@@ -207,11 +202,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     onClick={() => {
                       if (isUploading && onRowClick) {
                         onRowClick(job as IJobs, index);
-                        if(job.status === JobStatus.uploadFailed)
-                        {
-                          setIsShowPopUp(true)
-                        }
-                        if(!uploaderState.stepperSideFileList)
+                       if(!uploaderState.stepperSideFileList)
                         {
                           uploaderAction.setStepperSideFilesList(true)
                         }
@@ -301,19 +292,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
           </div>
         </div>
       </div>
-      <PopupComponent
-      open={isShowPopUp}
-      setShowPopUp={setIsShowPopUp}
-      modalTitle={'Upload complete with errors'}
-      modalmessage={''}
-      primaryButtonLabel={'Skip Files and Complete'}
-      SecondaryButtonlabel={''}
-      isUploaderFinal={false}
-      callBackvalue={() => {
-        setIsShowPopUp(false)
-        handleUploadError
-      }}
-    />
     </React.Fragment>
   );
 };
