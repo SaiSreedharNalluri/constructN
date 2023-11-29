@@ -8,6 +8,7 @@ import { IStructure } from "../../../../models/IStructure";
 import { getCaptureIdFromModelOrString, getPathToRoot, getStructureIdFromModelOrString } from "../../../../utils/utils";
 import { useAppContext } from "../../../../state/appState/context";
 import { UploadStatus } from "../../../../models/IUploader";
+import CircularProgress from '@mui/material/CircularProgress';
 interface fileData {
   status: UploadStatus;
   fileName: string;
@@ -17,6 +18,7 @@ const UploaderFinal: React.FC = () => {
   const { uploaderAction } = uploaderContextAction;
   const [fileProgressList, setFileProgressList] = useState<fileData[]>([]);
   const { state: appState, appContextAction } = useAppContext();
+  const[isCustomLoader,setCustomLoader]=useState<boolean>(false);
   useEffect(() => {
     if(uploaderState.selectedJob) {
       let selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])
@@ -49,6 +51,7 @@ const UploaderFinal: React.FC = () => {
     if(uploaderState.selectedJob) {
       let selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])
       if ( uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId]) {
+       setCustomLoader(false) 
         let fileList: fileData[] = uploaderState.inProgressWorkers[selectedCaptureId].map((e) => {
           return {
             fileName: e.uploadObject.filename,
@@ -56,9 +59,11 @@ const UploaderFinal: React.FC = () => {
           }
         })
         setFileProgressList(fileList)
-      } else {
+      } 
+      else if(uploaderState.rawImagesMap[selectedCaptureId]) {
+       setCustomLoader(false) 
         let rawImages = uploaderState.rawImagesMap[selectedCaptureId]
-        let fileList: fileData[] = rawImages?.map((e) => {
+        let fileList: fileData[] = rawImages?.map((e) => {   
           return {
             fileName: e.filename,
             status: getFileStatus(e?.status)
@@ -66,8 +71,12 @@ const UploaderFinal: React.FC = () => {
         })
         setFileProgressList(fileList)
       }
+      else{
+       setCustomLoader(true) 
+       return
+      }
     }
-  }, [uploaderState.selectedJob])
+  }, [uploaderState.selectedJob,uploaderState.inProgressWorkers,uploaderState.rawImagesMap])
 
   const handleRowClick = (job: IJobs, index: number) => {
     //  setSelectedRow(index);
@@ -116,7 +125,7 @@ const UploaderFinal: React.FC = () => {
                       { gethierarchyPath(uploaderState.selectedJob?.structure)}
                       </span>{" "}
                     </div>
-            {fileProgressList &&
+            {isCustomLoader?<div className="flex justify-center items-center h-1/2"><CircularProgress  color="warning" size={"28px"} thickness={5}></CircularProgress></div> :fileProgressList &&
               fileProgressList.length > 0 &&
               fileProgressList.map((fileProgressObj: fileData) => {
                 return (

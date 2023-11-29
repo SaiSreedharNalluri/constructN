@@ -219,7 +219,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     }}
                     className={`cursor-${isUploading ? "pointer" : "default"} ${
                       index === hoveredRowIndex ? "bg-gray-200" : ""
-                    } flex justify-evenly w-full my-[4px] mx-auto`}
+                    }  ${uploaderState.selectedJob?._id===job._id?"bg-[#D9D9D9] text-[#F1742E]":""} flex justify-evenly w-full my-[4px] mx-auto`}
                     onMouseEnter={() => setHoveredRowIndex(index)}
                     onMouseLeave={() => setHoveredRowIndex(null)}
                   >
@@ -280,7 +280,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                 Ready to begin a new upload ? Click the button below to get started.</p>)
             }
             </div>
-          <div className="text-center mt-[10px] w-[90%]">
+          <div className="text-center mt-[10px]">
             <button
               className={`py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white ${
                 isUploadedOn && !value ? "bg-gray-400" : "bg-[#F1742E]"
