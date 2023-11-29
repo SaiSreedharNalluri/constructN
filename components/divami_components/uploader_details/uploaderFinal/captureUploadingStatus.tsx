@@ -48,7 +48,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const { state: appState, appContextAction } = useAppContext();
-  const [isShowPopUp, setIsShowPopUp] = useState(false);
   const [popUpHeading,setPopUPHeading] =useState('')
   const [popUpConfirm,setPopUPConfirm] =useState('')
   /**
@@ -122,26 +121,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
         return (<ErrorIcon color="error" />)
       default:
           return (<CircularProgress color="warning" size={"28px"} thickness={5}/>) 
-    }
-
-  }
-  const updateJobStatusUploadCompleteWithErrors =()=>{
-     let ignoreImagesCheck = true
-      updateJobStatus(uploaderState.selectedJob?.project as string,uploaderState.selectedJob?._id as string,JobStatus.uploaded,ignoreImagesCheck).then((response:any)=>{
-        if(response.data.success===true)
-        {
-          let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
-          captureJobs.forEach((job) => {
-            if (job._id === response.data.result?._id) {
-              job.status = JobStatus.uploaded
-            }
-          })
-          uploaderAction.setCaptureJobs(captureJobs)
-        }
-
-      }).catch((error)=>{
-
-      })
+    } 
   }
   return (
     <React.Fragment>
@@ -312,19 +292,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
           </div>
         </div>
       </div>
-      <PopupComponent
-      open={isShowPopUp}
-      setShowPopUp={setIsShowPopUp}
-      modalTitle={'Upload complete with errors'}
-      modalmessage={''}
-      primaryButtonLabel={'Skip Files and Complete'}
-      SecondaryButtonlabel={''}
-      isUploaderFinal={false}
-      callBackvalue={() => {
-        setIsShowPopUp(false)
-        updateJobStatusUploadCompleteWithErrors()
-      }}
-    />
     </React.Fragment>
   );
 };
