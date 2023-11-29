@@ -60,7 +60,7 @@ const Index: React.FC<IProps> = () => {
 
   const refreshJobs = (projectId: string) =>{
     uploaderAction.setIsLoading(true)
-    getJobsByStatusMode(projectId, [JobStatus.pendingUpload, JobStatus.uploaded], uploaderState.captureMode).then((response)=>{
+    getJobsByStatusMode(projectId, [JobStatus.pendingUpload, JobStatus.uploaded,JobStatus.uploadFailed], uploaderState.captureMode).then((response)=>{
       console.log("TestingUploader: getJobs", response.data.result)
       let jobs: IJobs[] = response.data.result;
       uploaderAction.setCaptureJobs(jobs)

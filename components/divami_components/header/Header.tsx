@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { getCookie, removeCookies, setCookie } from "cookies-next";
 import DesignRealitySwitch from "../../container/designRealitySwitch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import  uploadIcon from '../../../public/divami_icons/uploadIcon.svg'
 import {
   faQuestion,
   faRightFromBracket,
@@ -42,6 +43,7 @@ import {
   ProfileImgIconDefault,
   ProjectSelectorContainer,
   HeaderSupportImageContainer,
+  HeaderUploaderImageContainer,
 } from "./HeaderStyles";
 import { ITools } from "../../../models/ITools";
 import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
@@ -118,6 +120,7 @@ const Header: React.FC<any> = ({
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
   const [openNotification, setOpenNotication] = useState(false);
+  const [openUploader, setOpenUploader] = useState(false);
   const [notifications, setNotifications] = useState<IUserNotification[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalNotifications, setTotalNotifications] = useState<number>(0);
@@ -538,6 +541,39 @@ const Header: React.FC<any> = ({
           ) : (
             <></>
           )}
+         {/* <HeaderUploaderImageContainer>
+            <TooltipText title="Uploader" onClick={() => {
+              if (openUploader) {
+                setOpenUploader(false);
+                customLogger.logInfo("Notifications Hide")
+              } else {
+                customLogger.logInfo("Notifications Show")
+                setOpenUploader(true);
+                setOpenNotication(false);
+                setMenuLoading(false);
+                setSupportMenu(false);
+                setOpenProfile(false);
+                clearNotificationsCount();
+              }
+            }}>
+              <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full" >
+                <Badge badgeContent={notificationCount} color="warning">
+                  <Image
+                    src={uploadIcon}
+                    alt="Uploader Icon"
+                  />
+                </Badge>
+              </div>
+            </TooltipText>
+
+            {openUploader && (
+              <div>
+                 <CustomDrawer paddingStyle={true} variant="persistent">
+                 <div></div>
+                </CustomDrawer>
+              </div>
+            )}
+          </HeaderUploaderImageContainer> */}
           <HeaderProfileImageContainer>
             {avatar ? (
               <TooltipText title="My Profile">
@@ -610,6 +646,7 @@ const Header: React.FC<any> = ({
               } else {
                 customLogger.logInfo("Notifications Show")
                 setOpenNotication(true);
+                setOpenUploader(false);
                 setMenuLoading(false);
                 setSupportMenu(false);
                 setOpenProfile(false);

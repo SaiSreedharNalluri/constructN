@@ -5,7 +5,7 @@ import { useAppContext } from "../../../../state/appState/context";
 import { TooltipText } from "../../side-panel/SidePanelStyles";
 import { IStructure } from "../../../../models/IStructure";
 import { IJobs, JobStatus } from "../../../../models/IJobs";
-import { updateMultipleJobStatus } from "../../../../services/jobs";
+import { updateJobStatus, updateMultipleJobStatus } from "../../../../services/jobs";
 import router from "next/router";
  import Image from "next/image";
  import UnChecked from "../../../../public/divami_icons/unchecked.svg";
@@ -125,8 +125,23 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
     }
 
   }
-  const handleUploadError =()=>{
+  const updateJobStatusUploadCompleteWithErrors =()=>{
+     let ignoreImagesCheck = true
+      updateJobStatus(uploaderState.selectedJob?.project as string,uploaderState.selectedJob?._id as string,JobStatus.uploaded,ignoreImagesCheck).then((response:any)=>{
+        if(response.data.success===true)
+        {
+          let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
+          captureJobs.forEach((job) => {
+            if (job._id === response.data.result?._id) {
+              job.status = JobStatus.uploaded
+            }
+          })
+          uploaderAction.setCaptureJobs(captureJobs)
+        }
 
+      }).catch((error)=>{
+
+      })
   }
   return (
     <React.Fragment>
@@ -207,11 +222,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     onClick={() => {
                       if (isUploading && onRowClick) {
                         onRowClick(job as IJobs, index);
-                        if(job.status === JobStatus.uploadFailed)
-                        {
-                          setIsShowPopUp(true)
-                        }
-                        if(!uploaderState.stepperSideFileList)
+                       if(!uploaderState.stepperSideFileList)
                         {
                           uploaderAction.setStepperSideFilesList(true)
                         }
@@ -311,7 +322,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
       isUploaderFinal={false}
       callBackvalue={() => {
         setIsShowPopUp(false)
-        handleUploadError
+        updateJobStatusUploadCompleteWithErrors()
       }}
     />
     </React.Fragment>
