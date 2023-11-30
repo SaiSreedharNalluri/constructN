@@ -20,7 +20,7 @@ export const CustomizedBreadcrumbs = styled(Breadcrumbs)({
   "& li:last-child p": {
     color: "#F1742E",
   },
-  "& li:first-child p": {
+  "& li:first-of-type p": {
     color: "#36415D",
   },
 });

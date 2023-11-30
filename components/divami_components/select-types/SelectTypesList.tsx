@@ -22,7 +22,7 @@ const SelectTypesList = ({
   title,
   openselectlayer,
   onCloseHandler,
-  optionsList = {},
+  optionsList = [],
   onSelect,
 }: SelectLayerProps) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -74,7 +74,7 @@ const SelectTypesList = ({
   // );
 
   return (
-    <SelectLayerContainer openSelectLayer={openselectlayer}>
+    <SelectLayerContainer openselectlayer={openselectlayer}>
       <DrawerBox>
         <DrawerHeader>
           <DrawerHeaderTitle>{title} </DrawerHeaderTitle>
@@ -107,7 +107,8 @@ const SelectTypesList = ({
         <ListStyled>
           {list?.length > 0 &&
             list.map((item: any, index: number) => (
-              <>
+              <div
+              key={item}>
                 <ListItemStyled
                   className="custom-list-styled"
                   key={item}
@@ -119,7 +120,7 @@ const SelectTypesList = ({
                   <ListItemText primary={item} />
                 </ListItemStyled>
                 {index !== list.length - 1 && <Divider></Divider>}
-              </>
+              </div>
             ))}
         </ListStyled>
       </DrawerBox>

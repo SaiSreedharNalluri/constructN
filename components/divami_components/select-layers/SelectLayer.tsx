@@ -179,7 +179,7 @@ const SelectLayer = ({
   };
 
   return (
-    <SelectLayerContainer openSelectLayer={openselectlayer}>
+    <SelectLayerContainer openselectlayer={openselectlayer}>
       <HeaderLabelContainer>
         <HeaderLabel>{title}</HeaderLabel>
         <CloseIcon
