@@ -22,12 +22,12 @@ import {
   TaskTitle,
   CameraIcon,
 } from "./ToolBarStyles";
-import TaskList from "../rightFloatingMenu/taskMenu/taskList";
+import TaskList from "../taskMenu/TaskList"
 import CreateTask from "../../divami_components/create-task/CreateTask";
 import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
 import { createTask, createTaskWithAttachments } from "../../../services/task";
 import { ITools } from "../../../models/ITools";
-import CustomTaskDetailsDrawer from "../../divami_components/task_detail/TaskDetail";
+import CustomTaskDetailsDrawer from "../taskDetails/TaskDetail";
 import Tooltip from "@mui/material/Tooltip";
 import html2canvas from "html2canvas";
 import moment from "moment";
@@ -287,20 +287,18 @@ const Task = ({
     taskMenuClicked(taskMenuInstance);
   };
   const toggleTaskVisibility = () => {
-    // setshowHideTask(!showHideTask);
+    setshowHideTask(!showHideTask);
     if (showHideTask) {
       taskMenuInstance.toolAction = "taskHide";
+      taskMenuClicked(taskMenuInstance);
       customLogger.logInfo("ToolBar - Hide Task")
-      conn?.publishMessage("abc", '{"type":"showTask","data":" "}')
     }
     else{ taskMenuInstance.toolAction = "taskShow";
-    conn?.publishMessage("abc", '{"type":"hideTask","data":" "}')
     customLogger.logInfo("ToolBar - Show Task")
-    setshowHideTask(!showHideTask)
-  
-    // taskMenuClicked(taskMenuInstance);
-    // setHighlightCreateTaskIcon(false)
-    // setHighlightCreateIcon(false)
+    // setshowHideTask(!showHideTask)
+    taskMenuClicked(taskMenuInstance);
+    setHighlightCreateTaskIcon(false)
+    setHighlightCreateIcon(false)
   }
   };
 
@@ -394,7 +392,7 @@ const Task = ({
             setOpenDrawer((prev: any) => !prev);
           }}
         >
-          {/* <TaskList
+          <TaskList
             tasksList={tasksList}
             taskMenuClicked={taskMenuClicked}
             currentProject={myProject}
@@ -414,7 +412,7 @@ const Task = ({
             taskType={currentTypesList}
             taskPriority={taskPriorityList}
             taskStatus={taskStatusList}
-          /> */}
+          />
         </Drawer>
       )}
       {openCreateTask && (

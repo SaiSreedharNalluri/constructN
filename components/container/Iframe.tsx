@@ -5,6 +5,7 @@ import { getDesignPath } from "../../utils/S3Utils";
 import structure from "../../pages/projects/[projectId]/structure";
 import { getSnapshotsList } from '../../services/snapshot';
 import TimeLineComponent from "../divami_components/timeline-container/TimeLineComponent";
+import { MqttConnector } from "../../utils/MqttConnector";
 function Iframe(props:any) {
     let [designList, setDesignList] = useState([]);
     let [designMap, setDesignMap] = useState({});
@@ -38,9 +39,6 @@ function Iframe(props:any) {
     // setDesignMap(getDesignMap(designList));
     // updateDesignMap(getDesignMap(designList));
     const modifyDesignList = async (designList:any) => {
-        console.log('Generic Viewer Inside Modified design List: ', designList);
-       
-        console.log('Generic Viewer design modified: ', designList);
         setDesignList(designList);
         // if(designList.length===0)
         // {
@@ -49,8 +47,7 @@ function Iframe(props:any) {
         
         //Set current design type and pass it to structure page.
         setDesignMap(getDesignMap(designList));
-        updateDesignMap(getDesignMap(designList));
-        console.log(getDesignMap(designList));
+        updateDesignMap(getDesignMap(designList));  
         return designList;
       };
 
@@ -216,7 +213,8 @@ function Iframe(props:any) {
     return(
         <div>
         <iframe className=""
-            src={`https://localhost:3001/projects/${props.structure?.project}/structure/${props.structure?._id}`}
+            src={`http://localhost:3001/projects/${props.projectId}/structure/${props.structureId}/web?topicKey=${MqttConnector.topicHash}`}
+            // src={"http://localhost:3001/projects/PRJ201897/structure/STR996375"}
               width={1120}
               height={470}
               title="Snapshot iframe"

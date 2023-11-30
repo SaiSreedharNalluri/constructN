@@ -26,7 +26,6 @@ const Typebar = ({
   initData
 }: any) => {
   const customLogger = new CustomLoggerClass();
-  console.log("ini",initData)
   return (
     <ClickAwayListener
       onClickAway={() => {

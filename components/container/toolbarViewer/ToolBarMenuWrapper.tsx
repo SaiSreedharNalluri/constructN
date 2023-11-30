@@ -21,23 +21,23 @@ initData:any;
 }
 
 const ToolBarMenuWrapper: React.FC<any> = ({
-  // toolClicked,
-  // viewLayers,
-  // viewMode,
-  // viewTypes,
-  // issuesList,
-  // tasksList,
-  // setTasksList,
-  // handleOnFilter,
-  // currentProject,
-  // currentSnapshot,
-  // currentStructure,
+  toolClicked,
+  viewLayers,
+  viewMode,
+  viewTypes,
+  issuesList,
+  tasksList,
+  setTasksList,
+  handleOnFilter,
+  currentProject,
+  currentSnapshot,
+  currentStructure,
   currentLayersList,
   currentTypesList,
   // closeFilterOverlay,
   // closeTaskFilterOverlay,
-  // handleOnTaskFilter,
-  // contextInfo,
+  handleOnTaskFilter,
+  contextInfo,
   // openCreateIssue,
   // openCreateTask,
   selectedLayersList,
@@ -45,20 +45,20 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   // issuePriorityList,
   // issueStatusList,
   // issueTypesList,
-  // taskFilterState,
+  taskFilterState,
   // issueFilterState,
   // closeIssueCreate,
   // closeTaskCreate,
   // deleteTheIssue,
   // openIssueDetails,
-  // openTaskDetails,
-  // closeTaskDetails,
+  openTaskDetails,
+  closeTaskDetails,
   // closeIssueDetails,
   // setIssueList,
   // getIssues,
   // getTasks,
-  // handleOnIssueSort,
-  // handleOnTasksSort,
+  handleOnIssueSort,
+  handleOnTasksSort,
   // issueSubmit,
   // taskSubmit,
   selectedType,
@@ -74,20 +74,19 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   // setIssueFilterState,
   // issueLoader,
   // setIssueLoader,
-  // setShowIssueMarkups,
-  // showIssueMarkups,
-  // setShowTaskMarkups,
-  // showTaskMarkups,
-  // setHighlightCreateIcon,
-  // highlightCreateIcon,
-  // setHighlightCreateTaskIcon,
-  // highlightCreateTaskIcon,
+  setShowIssueMarkups,
+  showIssueMarkups,
+  setShowTaskMarkups,
+  showTaskMarkups,
+  setHighlightCreateIcon,
+  highlightCreateIcon,
+  setHighlightCreateTaskIcon,
+  highlightCreateTaskIcon,
   // isDesignAvailable,
   // isRealityAvailable,
   // updateDesignMap,
   initData
 }) => {
-  console.log("init",initData)
   const [rightNav, setRighttNav] = useState(false);
   // const [isCompareDesign, setIsCompareDesign] = useState(false);
   // const [isCompareReality, setIsCompareReality] = useState(false);
@@ -106,8 +105,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
 
   const [myTypesList, setMyTypesList] = useState<string[]>(currentTypesList);
   const [myLayersList, setMyLayersList] = useState<IActiveRealityMap>(currentLayersList);
-  //   const [isCameraIconClicked, setCameraIconClicked] = useState(false);
-  //   const [isClipboardIconClicked, setClipboardIconClicked] = useState(false);
+    const [isCameraIconClicked, setCameraIconClicked] = useState(false);
+    const [isClipboardIconClicked, setClipboardIconClicked] = useState(false);
   let toolInstance: ITools = { toolName: "", toolAction: "" };
   // useEffect(() => {
   //   setIViewMode(viewMode);
@@ -144,9 +143,9 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   }, [selectedType]);
   const typeChange = (changeOb: any) => {
     setRighttNav(false);
-    // toolInstance.toolName = "viewType";
-    // toolInstance.toolAction = changeOb.target.value;
-    // toolClicked(toolInstance);
+    toolInstance.toolName = "viewType";
+    toolInstance.toolAction = changeOb.target.value;
+    toolClicked(toolInstance);
     if (setViewType) {
       switch (changeOb.target.value as string) {
         case "Reality":
@@ -162,7 +161,6 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   };
   const LayerChange = (changeOb: any, layerLabel: string, node: any) => {
     let obj: any = myLayersList;
-
     for (const key in obj) {
       if (obj[key]?.name == node.name) {
         obj[key] = {
@@ -264,32 +262,32 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   //   }
   // }, [iViewMode, currentStructure]);
 
-  // const issueMenuClicked = (localTool: ITools) => {
-  //   toolClicked(localTool);
-  //   if (
-  //     localTool.toolAction === "issueCreateClose" ||
-  //     localTool.toolAction === "issueViewClose" ||
-  //     localTool.toolAction === "issueView"
-  //   )
-  //     setRighttNav(!rightNav);
-  // };
-  // const taskMenuClicked = (localTool: ITools) => {
-  //   toolClicked(localTool);
-  //   if (
-  //     localTool.toolAction === "taskCreateClose" ||
-  //     localTool.toolAction === "taskViewClose"
-  //   )
-  //     setRighttNav(!rightNav);
-  // };
-  // const hotspotMenuClicked = (localTool: ITools) => {
-  //   toolClicked(localTool);
-  //   if (
-  //     localTool.toolAction === "hotspotCreateClose" ||
-  //     localTool.toolAction === "hotspotViewClose" ||
-  //     localTool.toolAction === "hotspotView"
-  //   )
-  //     setRighttNav(!rightNav);
-  // };
+  const issueMenuClicked = (localTool: ITools) => {
+    toolClicked(localTool);
+    if (
+      localTool.toolAction === "issueCreateClose" ||
+      localTool.toolAction === "issueViewClose" ||
+      localTool.toolAction === "issueView"
+    )
+      setRighttNav(!rightNav);
+  };
+  const taskMenuClicked = (localTool: ITools) => {
+    toolClicked(localTool);
+    if (
+      localTool.toolAction === "taskCreateClose" ||
+      localTool.toolAction === "taskViewClose"
+    )
+      setRighttNav(!rightNav);
+  };
+  const hotspotMenuClicked = (localTool: ITools) => {
+    toolClicked(localTool);
+    if (
+      localTool.toolAction === "hotspotCreateClose" ||
+      localTool.toolAction === "hotspotViewClose" ||
+      localTool.toolAction === "hotspotView"
+    )
+      setRighttNav(!rightNav);
+  };
   return (
     <SectionToolBar>
       <ToolbarContainer>
@@ -335,9 +333,34 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         /> */}
         <Issues
          initData={initData}
+         isCameraIconClicked={isCameraIconClicked} 
+          setCameraIconClicked={setCameraIconClicked}
+          isClipboardIconClicked={isClipboardIconClicked} 
+          setClipboardIconClicked={setClipboardIconClicked}
+          setHighlightCreateIcon={setHighlightCreateIcon}
+          highlightCreateIcon={highlightCreateIcon}
+          setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
+          handleOnIssueSort={handleOnIssueSort}
+          issueMenuClicked={issueMenuClicked}
         />
 
         <Task
+         tasksList={initData?.currentTaskList}
+         setTasksList={setTasksList}
+         taskMenuClicked={taskMenuClicked}
+         setShowTaskMarkups={setShowTaskMarkups}
+          showTaskMarkups={showTaskMarkups}
+          highlightCreateTaskIcon={highlightCreateTaskIcon}
+          setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
+          setHighlightCreateIcon={setHighlightCreateIcon}
+          isCameraIconClicked={isCameraIconClicked} 
+          setCameraIconClicked={setCameraIconClicked}
+          isClipboardIconClicked={isClipboardIconClicked} 
+          setClipboardIconClicked={setClipboardIconClicked}
+          openTaskDetails={openTaskDetails}
+          closeTaskDetails={closeTaskDetails}
+          taskFilterState={taskFilterState}
+          handleOnTasksSort={handleOnTasksSort}
          
         />
 
