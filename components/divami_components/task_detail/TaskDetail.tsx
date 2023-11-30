@@ -1075,7 +1075,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
         (formData.length
           ? formData
               .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+              ?.chipString?.join(";").split(";")
           : []) || []),
       (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]
