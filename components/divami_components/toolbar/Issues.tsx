@@ -254,7 +254,7 @@ const Issues = ({
       setHighlightCreateIcon(true) 
       setHighlightCreateTaskIcon(false)
   };
-  console.log(isLoading,"issue");
+  //console.log(isLoading,"issue");
   
   const openIssueListFn = () => {
     issueMenuInstance.toolAction = "issueView";

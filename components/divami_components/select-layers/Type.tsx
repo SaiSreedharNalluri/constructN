@@ -6,7 +6,7 @@ export interface RenderTree {
 }
 
 export interface SelectLayerContainerProps {
-  openSelectLayer: boolean;
+  openselectlayer: boolean;
 }
 
 export interface SelectLayerProps {

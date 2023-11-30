@@ -1139,7 +1139,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         (formData.length
           ? formData
               .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";").split(";")
+              ?.chipString
           : []) || []),
       (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]

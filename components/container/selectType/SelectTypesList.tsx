@@ -80,7 +80,7 @@ const SelectTypesList = ({
   // );
 
   return (
-    <SelectLayerContainer openSelectLayer={openselectlayer}>
+    <SelectLayerContainer openselectlayer={openselectlayer}>
       <DrawerBox>
         <DrawerHeader>
           <DrawerHeaderTitle>{title} </DrawerHeaderTitle>

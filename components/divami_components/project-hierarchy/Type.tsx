@@ -13,7 +13,7 @@ export interface SelectLayerContainerProps {
 
 export interface SelectLayerProps {
   title: string;
-  openSelectLayer?: boolean;
+  openselectlayer?: boolean;
   onCloseHandler: () => void;
   treeData: any[];
   getStructureData?: (structure: ChildrenEntity) => void;
