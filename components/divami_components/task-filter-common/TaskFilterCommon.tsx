@@ -101,6 +101,7 @@ const TaskFilterCommon: React.FC<any> = ({
   closeTaskFilterOverlay,
   handleOnFilter,
   taskFilterState,
+  setTaskFilterState,
 }) => {
   // console.log("tasksListapi", tasksList);
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
@@ -532,6 +533,16 @@ const TaskFilterCommon: React.FC<any> = ({
     });
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
+
+    
+    // if(data.taskType.length===0&&data.taskPriority.length===0&&data.taskStatus.length===0&&data.taskTag.length===0){
+    //   closeTaskFilterOverlay();
+    //   console.log("YEAA",data.taskType.length,data.taskPriority.length,data.taskStatus.length,data.taskTag.length)
+
+
+    // }
+      
+
     handleOnFilter(data);
     handleClose();
   };
@@ -583,6 +594,9 @@ const TaskFilterCommon: React.FC<any> = ({
     });
     SetFilterState(temp);
   }
+  else{
+    closeTaskFilterOverlay();
+  }
   }, [optionState]);
 
   const onReset = () => {
@@ -598,6 +612,8 @@ const TaskFilterCommon: React.FC<any> = ({
     setDueData(DATE_PICKER_DATA);
     setAssignees([assignees]);
     SetFilterState(temp);
+
+    closeTaskFilterOverlay();
   };
 
   const formHandler = (event: any) => {

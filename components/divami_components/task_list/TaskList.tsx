@@ -142,6 +142,7 @@ const CustomTaskListDrawer = (props: any) => {
     handleOnTaskFilter,
     deleteTheTask,
     taskFilterState,
+    setTaskFilterState,
     getTasks,
     handleOnTasksSort,
     deleteTheAttachment,
@@ -355,7 +356,7 @@ const CustomTaskListDrawer = (props: any) => {
 
   return (
     <>
-      {errorShow.length > 0 ? (
+      {errorShow.length > 0  || taskFilterState.isFilterApplied? (
         <TaskListContainer>
           <HeaderContainer>
             <TitleContainer>
@@ -687,6 +688,7 @@ const CustomTaskListDrawer = (props: any) => {
                 handleOnFilter={handleOnTaskFilter}
                 onClose={() => setOpenDrawer((prev: any) => !prev)}
                 taskFilterState={taskFilterState}
+                setTaskFilterState={setTaskFilterState}
               />
             </Drawer>
           )}
