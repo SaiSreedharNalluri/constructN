@@ -59,8 +59,9 @@ import { getSectionsList } from "../../../../../services/sections";
 import CustomLoggerClass from "../../../../../components/divami_components/custom_logger/CustomLoggerClass";
 import { getGenViewerData } from "../../../../../services/genviewer";
 import { IGenData } from "../../../../../models/IGenData";
-import { MqttConnector } from "../../../../../utils/MqttConnector";
+import { MqttConnector, OnMessageCallbak } from "../../../../../utils/MqttConnector";
 import Iframe from "../../../../../components/container/Iframe"
+import IssueList from "../../../../../components/container/rightFloatingMenu/issueMenu/issueList";
 interface IProps { }
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -188,8 +189,6 @@ const Index: React.FC<IProps> = () => {
 
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
   const [initData, setInintData] = useState<IGenData>();
-
-  console.log("view types", initData)
   let isSupportUser = useRef(false);
   //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
@@ -502,11 +501,11 @@ const Index: React.FC<IProps> = () => {
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
-
+    console.log("changed structree",structure)
     if (router.isReady && structure) {
-      console.log("routerrrrrrrrr3", router)
       router.query.structId = structure?._id;
-      console.log("routerrrrrrrrr4", router)
+      router.query.structId = structure?._id;
+              router.replace({query:{...router.query,structId:structure?._id}});
       router.push(router);
     }
   }, [structure, project]);
@@ -521,7 +520,6 @@ const Index: React.FC<IProps> = () => {
   };
 
   const updateRealityMap = (realityMap: IActiveRealityMap) => {
-    console.log("realitymap",realityMap)
     setActiveRealityMap(realityMap);
     if (currentViewLayers.length > 0) {
       currentViewLayers.length = 0;
@@ -549,12 +547,11 @@ const Index: React.FC<IProps> = () => {
     }
   };
   useEffect(() => {
-    console.log("Snapshot Set")
     if (router.query.iss !== null) {
 
       let sel_iss: Issue | undefined = issuesList.find((t) => t._id === router.query.iss)
       if (sel_iss) {
-        setClickedTool({ toolAction: 'issueSelect', toolName: 'issue', response: sel_iss });
+      // setClickedTool({ toolAction: 'issueSelect', toolName: 'issue', response: sel_iss });
         setCurrentContext({ ...sel_iss?.context, id: router.query.iss as string });
         setOpenIssueDetails(true);
       }
@@ -562,7 +559,7 @@ const Index: React.FC<IProps> = () => {
     else if (router.query.tsk !== null) {
       let sel_tsk: ITasks | undefined = tasksList.find((t) => t._id === router.query.tsk)
       if (sel_tsk) {
-        setClickedTool({ toolAction: 'taskSelect', toolName: 'task', response: sel_tsk });
+        // setClickedTool({ toolAction: 'taskSelect', toolName: 'task', response: sel_tsk });
         setCurrentContext({ ...sel_tsk?.context, id: router.query.tsk as string });
         setOpenTaskDetails(true);
       }
@@ -682,10 +679,21 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: ITools) => {
+    console.log("toolInstrance",toolInstance)
     let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.toolName) {
       case "viewType":
-        setViewType(toolInstance.toolAction);
+        switch(toolInstance.toolAction){
+          case "Plan Drawings":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "Plan Drawings"}`);
+            break;
+          case "BIM":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "BIM"}`);
+            break;
+          case "pointCloud":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "pointCloud"}`);
+            break;
+        }
         //setClickedTool(toolInstance);
         break;
       case "viewMode":
@@ -695,22 +703,24 @@ const Index: React.FC<IProps> = () => {
       case "issue":
         switch (toolInstance.toolAction) {
           case "issueView":
-            //console.log('trying to open issue View');
             setOpenIssueView(true);
             break;
           case "issueCreate":
-          //setOpenCreateIssue(true);
+          console.log("toolInstance.Action",toolInstance.toolAction)
+          conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createIssue","data":" "}');
+
           case "issueCreateSuccess":
           case "issueCreateFail":
           case "issueSelect":
-          //setSearchParams({iss:toolInstance.response?.id as string});
-          // console.log("Helll");
-          // router.query.iss=toolInstance.response?.id;
-          // router.push(router)
           case "issueShow":
+            // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"'+toolInstance.toolAction+'","data":" "}');
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createIssue","data":" "}');
+            break;
           case "issueHide":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideIssue","data":" "}')
+            break;
           case "issueRemoved":
-            setClickedTool(toolInstance);
+            // setClickedTool(toolInstance);
             break;
         }
         break;
@@ -722,7 +732,7 @@ const Index: React.FC<IProps> = () => {
           case "progressCreate":
           case "progressShow":
           case "progressHide":
-            setClickedTool(toolInstance);
+            // setClickedTool(toolInstance);
             break;
         }
         break;
@@ -735,13 +745,16 @@ const Index: React.FC<IProps> = () => {
           case "taskCreateSuccess":
           case "taskCreateFail":
           case "taskShow":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showTask","data":" "}')
+            break;
           case "taskHide":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideTask","data":" "}')
           case "taskSelect":
           //setSearchParams({tsk:toolInstance.response?.id as string});
           // router.query.tsk=toolInstance.response?.id;
           // router.push(router)
           case "taskRemoved":
-            setClickedTool(toolInstance);
+            // setClickedTool(toolInstance);
             break;
         }
 
@@ -757,7 +770,7 @@ const Index: React.FC<IProps> = () => {
         break;
       case "compareReality":
       case "compareDesign":
-        setClickedTool(toolInstance);
+        // setClickedTool(toolInstance);
         break;
       case "fullScreen":
         if (toolInstance.toolAction === "true") {
@@ -768,6 +781,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolResponse = (data: ITools) => {
+    console.log("toolDataaa",data)
     switch (data.toolName) {
       case "viewMode":
         setViewMode(data.toolAction);
@@ -776,13 +790,14 @@ const Index: React.FC<IProps> = () => {
         setViewType(data.toolAction);
       case "Issue":
         if (data.toolAction === "createIssue") {
+          
           //   html2canvas(document.getElementById('TheView')||document.body).then(function(canvas) {
           //     //window.open('','_blank')?.document.body.appendChild(canvas);
           //     //canvas.toDataURL('image/png');
 
           // });
-          if (data.response != undefined) setCurrentContext(data.response);
-          setOpenCreateIssue(true);
+          // if (data.response != undefined) setCurrentContext(data.response);
+          // setOpenCreateIssue(true);
         } else if (data.toolAction === "selectIssue") {
           // issue detail view open logic comes here
           if (data.response != undefined) {
@@ -815,7 +830,6 @@ const Index: React.FC<IProps> = () => {
         break;
     }
   };
-console.log("designreal",designMap)
   useEffect(() => {
     if (currentViewMode === "Design" && designAndRealityMaps.length) {
       if (currentViewType != "Plan Drawings" && currentViewType != "BIM") {
@@ -932,9 +946,9 @@ console.log("designreal",designMap)
     }
     setShowIssueMarkups(true);
     setShowTaskMarkups(true);
-    toolClicked({ toolName: "issue", toolAction: "issueShow" });
-    toolClicked({ toolName: "task", toolAction: "taskShow" });
-  }, [currentViewMode, designAndRealityMaps]);
+    // toolClicked({ toolName: "issue", toolAction: "issueShow" });
+    // toolClicked({ toolName: "task", toolAction: "taskShow" });
+  }, []);
 
   useEffect(() => {
 
@@ -1050,13 +1064,14 @@ console.log("designreal",designMap)
   };
 
   const handleOnIssueSort = (sortMethod: string) => {
+  
     switch (sortMethod) {
       case "Last Updated":
         setIssueList(
           issuesList.sort((a, b) => {
-            if (a.updatedAt > b.updatedAt) {
+            if (a.dueDate > b.dueDate) {
               return 1;
-            } else if (b.updatedAt > a.updatedAt) {
+            } else if (b.dueDate > a.dueDate) {
               return -1;
             }
             return 0;
@@ -1140,6 +1155,7 @@ console.log("designreal",designMap)
   };
 
   const handleOnTasksSort = (sortMethod: string) => {
+    
     switch (sortMethod) {
       case "Last Updated":
         setIssueList(
@@ -1587,7 +1603,7 @@ console.log("designreal",designMap)
     if (router.query.iss != null) {
       let sel_iss: Issue | undefined = issuesList.find((t) => t._id === router.query.iss)
       if (sel_iss) {
-        setClickedTool({ toolAction: 'issueSelect', toolName: 'issue', response: sel_iss });
+        // setClickedTool({ toolAction: 'issueSelect', toolName: 'issue', response: sel_iss });
         setCurrentContext({ ...sel_iss?.context, id: router.query.iss as string });
         setOpenIssueDetails(true);
       }
@@ -1600,7 +1616,7 @@ console.log("designreal",designMap)
     if (router.query.tsk != null) {
       let sel_tsk: ITasks | undefined = tasksList.find((t) => t._id === router.query.tsk)
       if (sel_tsk) {
-        setClickedTool({ toolAction: 'taskSelect', toolName: 'task', response: sel_tsk });
+        // setClickedTool({ toolAction: 'taskSelect', toolName: 'task', response: sel_tsk });
         setCurrentContext({ ...sel_tsk?.context, id: router.query.tsk as string });
         setOpenTaskDetails(true);
       }
@@ -1614,9 +1630,7 @@ console.log("designreal",designMap)
     getGenViewerData(router.query.projectId as string, router.query.structureId as string)
       .then((response) => {
         if (response.success === true) {
-          console.log('IGendata API Response', response.result);
           setInintData(response.result);
-          console.log("resp",response.result)
 
         }
       })
@@ -1625,12 +1639,27 @@ console.log("designreal",designMap)
         // CustomToast("failed to load data","error");
       });
 
-  }, [structure])
+  }, [structure,router.isReady])
   
-  console.log("function is working outside",currentViewType)
-  const setGenData = (currentViewType:string) => {
-    console.log("function is working",currentViewType)
+  // const setGenData = (currentViewType:string) => {
+   
     
+   
+  // }
+  
+  const appEventsCB:OnMessageCallbak = (msg:Buffer,packet:any):void=>{
+  
+    console.log("callback data",JSON.parse(msg.toString()))
+  }
+  
+  useEffect(()=>{
+    conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(),appEventsCB)
+    return()=>{
+      conn.unSubscribeTopic(MqttConnector.getMultiverseRecTopicString());
+    }
+  },[])
+
+  useEffect(()=>{
     if (initData) {
       let pdata: IGenData = initData
       if (pdata) {
@@ -1638,19 +1667,21 @@ console.log("designreal",designMap)
           pdata.currentViewType = "Plan Drawings"
         
       }
-      console.log("current data pdata", pdata)
-      const timeoutId = setTimeout(() => {
-        console.log("string dataaa",JSON.stringify(pdata))
-      conn?.publishMessage("abc", `{"type":"setGenData","data":${JSON.stringify(pdata)}}`)
-    },3000)
+     if(router.isReady){
+      setTimeout(()=>{
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type":"setGenData","data":${JSON.stringify(pdata)}}`)
+      },8000)
+      
+      
+     }
+    
 
     }
-  }
-
-  useEffect(()=>{
-    console.log("vvviwejjnsj",currentViewType)
-    setGenData(currentViewType)
-  },[router.query.structureId,structure,router.isReady])
+   
+    // setGenData(currentViewType)
+   
+    
+  },[conn,structure,initData])
 
   return (
     <div className=" w-full  h-full">
@@ -1786,6 +1817,12 @@ console.log("designreal",designMap)
                 updateDesignMap={updateDesignMap}
                 toolClicked={toolClicked}
                 designMap={designMap}
+                handleOnIssueSort={handleOnIssueSort}
+                setHighlightCreateIcon={setHighlightCreateIcon}
+                highlightCreateIcon={highlightCreateIcon}
+                highlightCreateTaskIcon={highlightCreateTaskIcon}
+                setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
+                contextInfo={currentContext}
                 
                 ></ToolBarMenuWrapper>
                 // <ToolBarMenuWrapper
@@ -1861,7 +1898,8 @@ console.log("designreal",designMap)
             toolRes={toolResponse}
             updateSnapshot={updatedSnapshot}
             updateRealityMap={updateRealityMap}
-            structure={structure}
+            structureId={router.query.structId}
+            projectId={router.query.projectId}
             updateDesignMap={updateDesignMap}>
 
           </Iframe>

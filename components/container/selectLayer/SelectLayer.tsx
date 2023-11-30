@@ -49,13 +49,13 @@ const SelectLayer = ({
   const [selectedLayers, setSelectedLayers] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
-  const LayerUpdate=(currentLayersList:any)=>{
+  // const LayerUpdate=(currentLayersList:any)=>{
     
-      console.log("node_name",JSON.stringify(initData.currentLayersList))
-      const timeoutId = setTimeout(() => {
-      conn?.publishMessage("abc", `{"type": "setViewLayers", "data": ${JSON.stringify(initData.currentLayersList)}}`);
-      },4000)
-  }
+  //     console.log("node_name",JSON.stringify(initData.currentLayersList))
+  //     const timeoutId = setTimeout(() => {
+  //     conn?.publishMessage("abc", `{"type": "setViewLayers", "data": ${JSON.stringify(initData.currentLayersList)}}`);
+  //     },4000)
+  // }
   useEffect(() => {
     setFilteredTreeViewData(treeViewData);
   }, [treeViewData]);
@@ -68,13 +68,6 @@ const SelectLayer = ({
         icon={<Image src={UnCheckedIcon} alt="" />}
         checkedIcon={<Image src={CheckedIcon} alt="" />}
         size="small"
-        checked={
-          checked
- 
-           // selectedLayersList?.length && selectedLayersList.includes(node.name)
-           //   ? true
-           //   : false
-         }
         onChange={(e) => {
           // const arr = handleSelection(treeViewData, node.id);
           // setTreeViewData([...arr]);
@@ -151,14 +144,16 @@ const SelectLayer = ({
           //   console.log(newTreeViewData, "newtrrreeview");
           //   return newTreeViewData;
           // });
-          // onSelect(e, node.name, node);
+        onSelect(e, node.name, node);
          
-          LayerUpdate(initData.currentLayersList)
+          // LayerUpdate(initData.currentLayersList)
          
-        setChecked(!checked)
+        // setChecked(!checked)
          
         }}
-        
+        checked={
+          node.isSelected
+        }
         
         
       />

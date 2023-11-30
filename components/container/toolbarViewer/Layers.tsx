@@ -77,7 +77,6 @@ const Layers = ({
     item2: true,
     item3: true,
   });
-  console.log("my layer",myLayersList)
   const customLogger = new CustomLoggerClass();
   useEffect(() => {
     let newLayersArr = [];

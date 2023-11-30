@@ -9,9 +9,9 @@ import triWarnIcon from "../../../public/divami_icons/triWarnIcon.svg";
 import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIcon.svg";
 import fileTextIssue from "../../../public/divami_icons/fileTextIssue.svg";
 
-// import  IssueListing  from "../../divami_components/issue_listing/IssueList";
+import  IssueListing  from "../issueListing/IssueList";
 import { styled } from "@mui/system";
-// import IssueList from "../issue_listing/IssueList";
+import IssueList from "../issueListing/IssueList";
 
 import {
   IssueBox,
@@ -22,24 +22,23 @@ import {
   CameraIcon,
 } from "./ToolBarStyles";
 import { Drawer, Tooltip } from "@mui/material";
-import CreateIssue from "../../divami_components/create-issue/CreateIssue";
-import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
+// import CreateIssue from "../create-issue/CreateIssue";
+import CustomDrawer from "../custom-drawer/custom-drawer";
 import {
   createIssue,
   createIssueWithAttachments,
 } from "../../../services/issue";
 import TaskList from "../rightFloatingMenu/taskMenu/taskList";
 import { ITools } from "../../../models/ITools";
-import CustomIssueListDrawer from "../../divami_components/issue-listing/IssueList";
+import CustomIssueListDrawer from "../issueListing/IssueList";
 import { ISnapshot } from "../../../models/ISnapshot";
 import { IStructure } from "../../../models/IStructure";
-import CustomIssueDetailsDrawer from "../../divami_components/issue_detail/IssueDetail";
+import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
 import html2canvas from "html2canvas";
 import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import { getTimeInProjectTimezone } from "../../../utils/utils";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
-import { MqttConnector } from "../../../utils/MqttConnector";
 const Issues = ({
   rightMenuClickHandler,
   issuesList,
@@ -89,7 +88,6 @@ const Issues = ({
   let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
   const [enableSubmit, setEnableSubmit] = useState(true);
   const[isLoading,setLoading]=useState(false)
-  const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
   useEffect(() => {
     setMyProject(currentProject);
     html2canvas(
@@ -253,33 +251,30 @@ const Issues = ({
     issueMenuInstance.toolAction = "issueCreate";
     customLogger.logInfo("ToolBar - Create Issue")
     issueMenuClicked(issueMenuInstance);
-      setHighlightCreateIcon(true) 
-      setHighlightCreateTaskIcon(false)
+      // setHighlightCreateIcon(true) 
+      // setHighlightCreateTaskIcon(false)
   };
-  console.log(isLoading,"issue");
   
-  // const openIssueListFn = () => {
-  //   issueMenuInstance.toolAction = "issueView";
-  //   customLogger.logInfo("ToolBar - View Issue")
-  //   issueMenuClicked(issueMenuInstance);
-  //   setHighlightCreateIcon(false)
-  //   setHighlightCreateTaskIcon(false)
-  // };
+  const openIssueListFn = () => {
+    issueMenuInstance.toolAction = "issueView";
+    customLogger.logInfo("ToolBar - View Issue")
+    issueMenuClicked(issueMenuInstance);
+    // setHighlightCreateIcon(false)
+    // setHighlightCreateTaskIcon(false)
+  };
 
   const toggleIssueVisibility = () => {
     if (showHideIssue) {
       issueMenuInstance.toolAction = "issueHide";
+      issueMenuInstance.toolAction = "issueShow";
       customLogger.logInfo("ToolBar - Hide Issue")
     }
-    if (showHideIssue) {issueMenuInstance.toolAction = "issueHide";
-    conn?.publishMessage("abc", '{"type":"showIssue","data":" "}')}
-    
-    else {issueMenuInstance.toolAction = "issueShow";
-    conn?.publishMessage("abc", '{"type":"hideIssue","data":" "}')}
+    if (showHideIssue) issueMenuInstance.toolAction = "issueHide";
+    else issueMenuInstance.toolAction = "issueShow";
     customLogger.logInfo("ToolBar - Show Issue")
-    // issueMenuClicked(issueMenuInstance);
+    issueMenuClicked(issueMenuInstance);
      setShowHideIssue(!showHideIssue);
-    // setHighlightCreateIcon(false)
+    //  setHighlightCreateIcon(false)
     // setHighlightCreateTaskIcon(false)
 
   };
@@ -315,9 +310,9 @@ const Issues = ({
         <Tooltip title="Issue List">
           <IssuesSectionFileImg 
            onClick={() => {
-                // openIssueListFn();
-                // handleViewTaskList();
-                // conn?.publishMessage("abc", '{"type":"showIssue","data":" "}')
+                openIssueListFn();
+                handleViewTaskList();
+                
               }}>
             <CameraIcon
               src={fileTextIcon}
@@ -357,20 +352,20 @@ const Issues = ({
           anchor={"right"}
           open={openDrawer}
           onClose={() => {
-            setIssueList([
-              ...issuesList.sort((a: any, b: any) => {
-                return (
-                  new Date(b.createdAt).valueOf() -
-                  new Date(a.createdAt).valueOf()
-                );
-              }),
-            ]);
+            // setIssueList([
+            //   ...issuesList.sort((a: any, b: any) => {
+            //     return (
+            //       new Date(b.createdAt).valueOf() -
+            //       new Date(a.createdAt).valueOf()
+            //     );
+            //   }),
+            // ]);
             setOpenDrawer((prev: any) => !prev);
           }}
         >
           <CustomIssueListDrawer
             closeFilterOverlay={closeFilterOverlay}
-            issuesList={issuesList}
+            issuesList={initData}
             visibility={listOverlay}
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
@@ -398,7 +393,7 @@ const Issues = ({
       )}
       {openCreateIssue && (
         <CustomDrawer>
-          <CreateIssue
+          {/* <CreateIssue
             handleCreateTask={handleCreateTask}
             currentProject={myProject}
             currentSnapshot={currentSnapshot}
@@ -410,7 +405,7 @@ const Issues = ({
             deleteTheAttachment={deleteTheAttachment}
             setLoading={setLoading}
             isLoading={isLoading}
-          />
+          /> */}
         </CustomDrawer>
       )}
 
@@ -438,6 +433,7 @@ const Issues = ({
             deleteTheIssue={deleteTheIssue}
             issueLoader={issueLoader}
             setIssueLoader={setIssueLoader}
+            initData={initData}
           />
         </Drawer>
       )}
