@@ -156,6 +156,7 @@ const FormWrapper = (props: any) => {
          
             if(!textMaxLengthCreateTitle(item.defaultValue, item.id)){
               if(setCanBeDisabled) setCanBeDisabled(false);
+              
               return{
                 ...item,
                 isError: true,
@@ -705,6 +706,7 @@ const FormWrapper = (props: any) => {
     
     let isValid = false    
     const maxLimit = 30;
+    const regex = /^[A-Za-z0-9]/;
     if(textLength.length > maxLimit){
       setFormConfig((prev: any) =>
       prev.map((item: any) => {
@@ -723,7 +725,22 @@ const FormWrapper = (props: any) => {
         return item;
       })
     );
-    } else if (!calculateEmptySpaces(textLength)){
+    }else if (!regex.test(textLength)) {
+      setFormConfig((prev: any) =>
+        prev.map((item: any) => {
+          if (id === item.id) {
+            return {
+              ...item,
+              isValidField: false,
+              isError: true,
+              errorMsg: "Cannot start with Special Characters ",
+            };
+          }
+          return item;  
+        })
+      );
+    } 
+    else if (!calculateEmptySpaces(textLength)){
       setFormConfig((prev: any) =>
         prev.map((item: any) => {
           if (id === item.id) {
