@@ -1509,43 +1509,6 @@ const Index: React.FC<IProps> = () => {
     }
   }, [router.isReady, router.query.projectId, router.query.structId]);
 
-  //To Be used by Shivram
-
-  // const searchParams = useSearchParams();
-  // useEffect(()=>{
-  //   //const currentParams = Object.fromEntries([...searchParams]);
-  //   //console.log(currentParams);
-  //   console.log("structure=",searchParams.get('structure'),"task=",searchParams.get('task'),"type=",searchParams.get('type'));
-  //   if(searchParams.get('type')!==null&&searchParams.get('type')!==currentViewType)
-  //   {
-  //     console.log('Must Change ViewType',searchParams.get('type'));
-  //     //setClickedTool({toolAction:searchParams.get('type')||'',toolName:'viewType'});
-  //     setViewType(searchParams.get('type')||'');
-  //     //setClickedTool({toolAction:'issueHide',toolName:'issue'});
-  //   }
-  //   if(searchParams.get('structure')!==null&&searchParams.get('structure')!==structure?._id)
-  //   {
-  //     console.log('Must Change Structure',searchParams.get('structure'));
-
-  //     const temp_str=structuresList.find((str)=> searchParams.get('structure')===str._id)
-  //     temp_str&&setStructure(temp_str);
-
-  //   }
-  //   if(searchParams.get('task')!==null)
-  //   {
-  //     console.log('Must Load Task',searchParams.get('task'));
-  //     setClickedTool({toolAction:'taskSelect',toolName:'task',response:tasksList.find((t)=>t._id===searchParams.get('task'))});
-  //     setCurrentContext(tasksList.find((t)=>t._id===searchParams.get('task'))?.context||{type:'Task'});
-  //     setOpenTaskDetails(true);
-  //   }
-  //   else if(searchParams.get('issue')!==null)
-  //   {
-  //     console.log('Must Load Issue',searchParams.get('issue'));
-  //     setClickedTool({toolAction:'issueSelect',toolName:'issue',response:tasksList.find((t)=>t._id===searchParams.get('issue'))});
-  //     setCurrentContext(issuesList.find((t)=>t._id===searchParams.get('issue'))?.context||{type:'Issue'});
-  //     setOpenIssueDetails(true);
-  //   }
-  // },[searchParams,structure,currentViewType]);
 
   const getBreadCrumbs = () => {
     //let structTemp :IStructure = structure;
@@ -1585,17 +1548,17 @@ const Index: React.FC<IProps> = () => {
   const createCancel = () => {
     if (highlightCreateIcon) {
       setHighlightCreateIcon(false)
-      toolClicked({
-        toolName: "issue",
-        toolAction: "issueCreateFail"
-      })
+      // toolClicked({
+      //   toolName: "issue",
+      //   toolAction: "issueCreateFail"
+      // })
     }
     if (highlightCreateTaskIcon) {
       setHighlightCreateTaskIcon(false)
-      toolClicked({
-        toolName: "task",
-        toolAction: "taskCreateFail"
-      })
+      // toolClicked({
+      //   toolName: "task",
+      //   toolAction: "taskCreateFail"
+      // })
     }
   }
 
@@ -1639,13 +1602,7 @@ const Index: React.FC<IProps> = () => {
         // CustomToast("failed to load data","error");
       });
 
-  }, [structure,router.isReady])
-  
-  // const setGenData = (currentViewType:string) => {
-   
-    
-   
-  // }
+  }, [router.query.structId])
   
   const appEventsCB:OnMessageCallbak = (msg:Buffer,packet:any):void=>{
   
@@ -1825,84 +1782,14 @@ const Index: React.FC<IProps> = () => {
                 contextInfo={currentContext}
                 
                 ></ToolBarMenuWrapper>
-                // <ToolBarMenuWrapper
-                // initData={initData}
-                //   updateDesignMap={updateDesignMap}
-                //   issuesList={issuesList}
-                //   tasksList={tasksList}
-                //   setTasksList={setTasksList}
-                //   toolClicked={toolClicked}
-                //   viewMode={currentViewMode}
-                //   handleOnFilter={handleOnIssueFilter}
-                //   currentProject={currentProjectId}
-                //   currentStructure={structure}
-                //   currentSnapshot={snapshot}
-                //   currentTypesList={designAndRealityMaps}
-                //   designMap={designMap}
-                //   currentLayersList={activeRealityMap}
-                //   closeFilterOverlay={closeFilterOverlay}
-                //   closeTaskFilterOverlay={closeTaskFilterOverlay}
-                //   handleOnTaskFilter={handleOnTaskFilter}
-                //   contextInfo={currentContext}
-                //   openCreateIssue={openCreateIssue}
-                //   setHighlightCreateIcon={setHighlightCreateIcon}
-                //   highlightCreateIcon={highlightCreateIcon}
-                //   highlightCreateTaskIcon={highlightCreateTaskIcon}
-                //   setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
-                //   openCreateTask={openCreateTask}
-                //   selectedLayersList={currentViewLayers}
-                //   deleteTheTask={deleteTheTask}
-                //   issuePriorityList={issuePriorityList}
-                //   issueStatusList={issueStatusList}
-                //   issueTypesList={issueTypesList}
-                //   taskPriorityList={tasksPriotityList}
-                //   taskStatusList={tasksStatusList}
-                //   taskFilterState={taskFilterState}
-                //   issueFilterState={issueFilterState}
-                //   setIssueFilterState={setIssueFilterState}
-                //   closeIssueCreate={closeIssueCreate}
-                //   closeTaskCreate={closeTaskCreate}
-                //   deleteTheIssue={deleteTheIssue}
-                //   openIssueDetails={openIssueDetails}
-                //   openTaskDetails={openTaskDetails}
-                //   closeTaskDetails={closeTaskDetails}
-                //   closeIssueDetails={closeIssueDetails}
-                //   setIssueList={setIssueList}
-                //   getIssues={getIssues}
-                //   getTasks={getTasks}
-                //   handleOnIssueSort={handleOnIssueSort}
-                //   handleOnTasksSort={handleOnTasksSort}
-                //   issueSubmit={issueSubmit}
-                //   taskSubmit={taskSubmit}
-                //   selectedType={currentViewType}
-                //   deleteTheAttachment={deleteTheAttachment}
-                //   setActiveRealityMap={setActiveRealityMap}
-                //   setLayersUpdated={setLayersUpdated}
-                //   layersUpdated={layersUpdated}
-                //   setViewType={setViewType}
-                //   projectUsers={projectUsers}
-                //   issueLoader={issueLoader}
-                //   setIssueLoader={setIssueLoader}
-                //   setShowIssueMarkups={setShowIssueMarkups}
-                //   setShowTaskMarkups={setShowTaskMarkups}
-                //   showIssueMarkups={showIssueMarkups}
-                //   showTaskMarkups={showTaskMarkups}
-                //   isDesignAvailable={isDesignAvailable}
-                //   isRealityAvailable={isRealityAvailable}
-                // /> : <></>
+                
               :<></>}
             </div></div></div>
 
         <div className="ml-10 mt-9">
-          <Iframe
-            toolRes={toolResponse}
-            updateSnapshot={updatedSnapshot}
-            updateRealityMap={updateRealityMap}
-            structureId={router.query.structId}
-            projectId={router.query.projectId}
-            updateDesignMap={updateDesignMap}>
-
-          </Iframe>
+          {structure&&<Iframe
+            structureData={structure}
+            ></Iframe>}
         </div>
 
       </div>
