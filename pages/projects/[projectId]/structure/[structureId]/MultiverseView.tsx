@@ -504,8 +504,8 @@ const Index: React.FC<IProps> = () => {
     console.log("changed structree",structure)
     if (router.isReady && structure) {
       router.query.structId = structure?._id;
-      router.query.structId = structure?._id;
-              router.replace({query:{...router.query,structId:structure?._id}});
+      router.query.structureId = structure?._id;
+             
       router.push(router);
     }
   }, [structure, project]);

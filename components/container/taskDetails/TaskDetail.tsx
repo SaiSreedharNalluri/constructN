@@ -38,7 +38,7 @@ import CustomButton from "../../divami_components/custom-button/CustomButton";
 import PopupComponent from "../../popupComponent/PopupComponent";
 // import { TASK_FORM_CONFIG } from "../create-task/body/Constants";
 // import CreateTask from "../create-task/CreateTask";
-import CustomDrawer from "../custom-drawer/custom-drawer";
+import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
 // import CustomSelect from "../custom-select/CustomSelect";
 import {
   AddCommentButtonContainer,

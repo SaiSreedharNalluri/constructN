@@ -27,7 +27,7 @@ import vectorTool from "../../../public/divami_icons/vectorTool.svg";
 import CustomButton from "../../divami_components/custom-button/CustomButton";
 import CustomSelect from "../../divami_components/custom-select/CustomSelect";
 import { toast } from "react-toastify";
-import CustomDrawer from "../custom-drawer/custom-drawer";
+import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
 // import CreateIssue from "../create-issue/CreateIssue";
 import { ISSUE_FORM_CONFIG } from "../../divami_components/create-issue/body/Constants";
 import PopupComponent from "../../popupComponent/PopupComponent";
