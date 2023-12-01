@@ -25,7 +25,6 @@ import PopupComponent from "../components/popupComponent/PopupComponent";
 import { IntercomProvider } from 'react-use-intercom'
 import { UploaderContextProvider } from "../state/uploaderState/context";
 import { AppContextProvider } from "../state/appState/context";
-import { WebWorkerManager } from "../utils/webWorkerManager";
 config.autoAddCss = false;
 export default function App({ Component, pageProps }: AppProps) {
   mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, { debug: true });
@@ -89,35 +88,6 @@ export default function App({ Component, pageProps }: AppProps) {
     setupFirebase();
   }, []);
  const [showPopUp, setshowPopUp] = useState(false);
- const [isShowPopUp, setIsShowPopUp] = useState(false);
- const [url,setUrl]=useState('')
- let WorkerManager = WebWorkerManager.getInstance()
-  const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
-    if (window.location.href.includes('uploader') || Object.keys(WorkerManager.getWorker()).length > 0) {
-
-      event.preventDefault();
-      event.returnValue = true;
-    }
-  };
-  const popStateHandler = () => {
-    if ((url.split('/').includes('uploader') || Object.keys(WorkerManager.getWorker()).length > 0)) {
-      setIsShowPopUp(true)
-      history.pushState(null, '', url);
-    }
-  }
-  useEffect(()=>{
-  setUrl(window.location.href)
-  },[typeof window != undefined,router,router.isReady])
-
-  useEffect(() => {
-    window.addEventListener("beforeunload", beforeUnloadHandler);
-    history.pushState(null, '', document.URL);
-    window.addEventListener('popstate', popStateHandler)
-    return (() => {
-      window.removeEventListener("beforeunload", beforeUnloadHandler);
-      window.removeEventListener('popstate', popStateHandler)
-    })
-  }, [url])
   return (
     <AppContextProvider>
       <UploaderContextProvider>
@@ -142,19 +112,7 @@ export default function App({ Component, pageProps }: AppProps) {
               setshowPopUp(false);
             }}
           ></PopupComponent>
-          <PopupComponent
-          open={isShowPopUp}
-          setShowPopUp={setIsShowPopUp}
-          modalTitle={"Alert"}
-          modalmessage={`You have unsaved changes. Navigating away from this page will result in the loss of your current edits. Are you sure you want to proceed and lose your changes?`}
-          primaryButtonLabel={"Confirm"}
-          SecondaryButtonlabel={"Cancel"}
-          callBackvalue={() => {
-            setIsShowPopUp(false)
-           router.push('/projects')
-           }}
-        />
-        </>
+          </>
       </UploaderContextProvider>
     </AppContextProvider>
   );

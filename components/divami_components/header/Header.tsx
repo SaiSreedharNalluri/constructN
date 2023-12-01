@@ -429,6 +429,44 @@ const Header: React.FC<any> = ({
       console.log(response);
     }).catch((error) => { });
   }
+  const [url,setUrl]=useState('')
+  let WorkerManager = WebWorkerManager.getInstance()
+  const workerExists = Object.keys(WorkerManager.getWorker()).length > 0;
+   const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
+    
+    if (
+      (workerExists && [UploaderStep.Upload, UploaderStep.Details].includes(uploaderState.step)) ||
+      workerExists ||
+      [UploaderStep.ChooseFiles, UploaderStep.Review, UploaderStep.ChooseGCPs].includes(uploaderState.step)
+    ) {
+ 
+       event.preventDefault();
+       event.returnValue = true;
+     }
+   };
+   const popStateHandler = () => {
+    if (
+      (workerExists && [UploaderStep.Upload, UploaderStep.Details].includes(uploaderState.step)) ||
+      workerExists ||
+      [UploaderStep.ChooseFiles, UploaderStep.Review, UploaderStep.ChooseGCPs].includes(uploaderState.step)
+    )  {
+       setIsShowPopUp(true)
+       history.pushState(null, '', url);
+     }
+   }
+   useEffect(()=>{
+   setUrl(window.location.href)
+   },[typeof window != undefined,router,router.isReady])
+ 
+   useEffect(() => {
+     window.addEventListener("beforeunload", beforeUnloadHandler);
+     history.pushState(null, '', document.URL);
+     window.addEventListener('popstate', popStateHandler)
+     return (() => {
+       window.removeEventListener("beforeunload", beforeUnloadHandler);
+       window.removeEventListener('popstate', popStateHandler)
+     })
+   }, [url,uploaderState.step])
   return (
     <>
       <HeaderContainer ref={headerRef}>
