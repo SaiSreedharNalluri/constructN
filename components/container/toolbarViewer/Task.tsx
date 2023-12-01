@@ -22,7 +22,7 @@ import {
   TaskTitle,
   CameraIcon,
 } from "./ToolBarStyles";
-import TaskList from "../taskMenu/TaskList"
+import TaskList from "../taskListing/TaskList"
 import CreateTask from "../../divami_components/create-task/CreateTask";
 import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
 import { createTask, createTaskWithAttachments } from "../../../services/task";

@@ -113,7 +113,7 @@ import {
 } from "./TaskDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "./ActivityLog";
-import { ActivityLogContainer } from "../issue_detail/IssueDetailStyles";
+import { ActivityLogContainer } from "../issueDetails/IssueDetailStyles";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
 import AttachmentPreview from "../../divami_components/attachmentPreview";

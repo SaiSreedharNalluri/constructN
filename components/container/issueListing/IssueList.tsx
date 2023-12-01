@@ -71,7 +71,7 @@ import { ITools } from "../../../models/ITools";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import { getProjectUsers } from "../../../services/project";
 import FilterCommon from "../../divami_components/issue-filter-common/IssueFilterCommon";
-import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
+import CustomIssueDetailsDrawer from "../issueDetails/IssueDetail";
 // import {
 //   CloseIcon,
 //   CustomSearchField,

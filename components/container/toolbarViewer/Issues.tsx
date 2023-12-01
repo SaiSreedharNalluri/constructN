@@ -23,7 +23,7 @@ import {
 } from "./ToolBarStyles";
 import { Drawer, Tooltip } from "@mui/material";
 // import CreateIssue from "../create-issue/CreateIssue";
-import CustomDrawer from "../custom-drawer/custom-drawer";
+import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
 import {
   createIssue,
   createIssueWithAttachments,
@@ -33,7 +33,7 @@ import { ITools } from "../../../models/ITools";
 import CustomIssueListDrawer from "../issueListing/IssueList";
 import { ISnapshot } from "../../../models/ISnapshot";
 import { IStructure } from "../../../models/IStructure";
-import CustomIssueDetailsDrawer from "../issue_detail/IssueDetail";
+import CustomIssueDetailsDrawer from "../issueDetails/IssueDetail";
 import html2canvas from "html2canvas";
 import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
