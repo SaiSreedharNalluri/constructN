@@ -117,13 +117,15 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                 updateAssetDetails(assetId, data).then(res => {
 
-                    onChange && onChange(res.data.result)
+                    if(onChange) onChange(res.data.result)
 
                     toast.success('Updated asset details successfully!', { autoClose: 5000 })
 
                     // setLoading(false)
 
                 }).catch(err => {
+
+                    console.log(err)
 
                     setLoading(false)
 

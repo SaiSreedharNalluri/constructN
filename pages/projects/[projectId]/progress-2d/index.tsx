@@ -193,30 +193,28 @@ const Progress2DPage: React.FC<any> = () => {
 
             setShowProgress(true)
 
-            fetchStructureHierarchy(projId!).then(data => {
+            Promise.all([fetchStructureHierarchy(projId!), fetchAssetCategories(projId!)]).then(response => {
 
                 setShowProgress(false)
 
-                if (data.data.result) {
+                if (response[0].data.result) {
 
-                    LightBoxInstance.setStructureHierarchy(data.data.result)
+                    LightBoxInstance.setStructureHierarchy(response[0].data.result)
 
-                    setHierarchy(data.data.result)
+                    setHierarchy(response[0].data.result)
 
-                    if (!structId) _changeStructure(data.data.result[0])
+                    if (!structId) _changeStructure(response[0].data.result[0])
 
                 }
 
-            }).catch(err => setShowProgress(false))
+                if (response[1].data.result) {
 
-            fetchAssetCategories(projId!).then(async data => {
+                    setAssetCategories(response[1].data.result)
 
-                setShowProgress(false)
+                    if(response[1].data.result.length > 0) _onCategorySelected(response[1].data.result[1])
 
-                setAssetCategories(data.data.result)
-
-                // if (currentCategory.current) if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
-
+                }
+                
             }).catch(e => setShowProgress(false))
 
         }
@@ -382,8 +380,6 @@ const Progress2DPage: React.FC<any> = () => {
             LightBoxInstance.setSnapshotCompare(snapshot)
 
             setSnapshotCompare(snapshot)
-
-            console.log('Extract compare snapshot ===', currentCategory.current)
 
             if (currentCategory.current) _loadCompareAssets(currentCategory.current)
 
@@ -576,7 +572,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _onCompareChange = (compare: boolean) => setIsCompare(compare)
 
-    const _loadAssetsForCategory = (category: IAssetCategory) => {
+    const _loadAssetsForCategory = (category: IAssetCategory, currentAsset?: string) => {
 
         setLoading(true)
 
@@ -594,31 +590,15 @@ const Progress2DPage: React.FC<any> = () => {
 
                 const result = res.data.result
 
-                result.forEach((asset: IAsset) => {
+                _setupAssetMap(result)
 
-                    const mStage: any = structuredClone(_assetMap.current[asset.progress.stage as string])
+                if(currentAsset) setTimeout(() => {
+                    
+                    setSelectedAsset(currentAsset)
 
-                    delete mStage.assets
-
-                    delete mStage.visible
-
-                    asset.progress.stage = mStage
-
-                    for (let i = 0; i < asset.progressSnapshot.length; i++) {
-
-                        const mProgress = asset.progressSnapshot[i]
-
-                        _assetMap.current[mProgress.stage as string].assets.push(asset)
-
-                    }
-
-                })
-
-                setStages([])
-
-                setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
-
-                setAssets(result)
+                    publish('select-shape', currentAsset)
+                    
+                }, 500)
 
             }
 
@@ -629,6 +609,36 @@ const Progress2DPage: React.FC<any> = () => {
             setLoading(false)
 
         })
+    }
+
+    const _setupAssetMap = (assets: IAsset[]) => {
+
+        assets.forEach((asset: IAsset) => {
+
+            const mStage: any = typeof(asset.progress.stage) === 'string' ? structuredClone(_assetMap.current[asset.progress.stage]) : (asset.progress.stage as IAssetStage)
+
+            delete mStage.assets
+
+            delete mStage.visible
+
+            asset.progress.stage = mStage
+
+            for (let i = 0; i < asset.progressSnapshot.length; i++) {
+
+                const mProgress = asset.progressSnapshot[i]
+
+                _assetMap.current[mProgress.stage as string].assets.push(asset)
+
+            }
+
+        })
+
+        setStages([])
+
+        setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
+
+        setAssets(assets)
+
     }
 
     const _loadCompareAssets = (category: IAssetCategory) => {
@@ -688,7 +698,9 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _onAssetDetailsChange = (asset: IAsset) => {
 
-        if (currentCategory.current !== undefined) _loadAssetsForCategory(currentCategory.current)
+        currentAsset.current = asset._id
+
+        if (currentCategory.current !== undefined) _loadAssetsForCategory(currentCategory.current, asset._id)
 
     }
 
@@ -979,7 +991,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             <Divider className='mt-2' orientation='horizontal' variant='fullWidth' flexItem />
 
-                                            {snapshotBase && !selectedAsset && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
+                                            {!selectedAsset && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
 
                                                 {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 

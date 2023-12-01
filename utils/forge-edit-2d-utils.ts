@@ -274,6 +274,16 @@ export class ForgeEdit2DUtils {
         publish('select-2d-shape', assetId)
     }
 
+    private _selectShape = (event: any) => {
+
+        const assetId = event.detail
+
+        const shape = this._edit2DLayer.shapes.find((value: Autodesk.Edit2D.Shape, index: number, obj: Autodesk.Edit2D.Shape[]) => assetId == (value as any).name);
+
+        (this._edit2DContext as any).selection.selectOnly(shape)
+
+    }
+
     private _clearSelection = (event: any) => {
 
         (this._edit2DContext as any).selection.selectOnly(undefined)
@@ -408,6 +418,8 @@ export class ForgeEdit2DUtils {
 
         subscribe('delete-shape', this._deleteShape)
 
+        subscribe('select-shape', this._selectShape)
+
         subscribe('visibility-change', this._visibilityChange)
 
         this._edit2DContext.undoStack.addEventListener(Autodesk.Edit2D.UndoStack.AFTER_ACTION, this._undoStackAction);
@@ -425,6 +437,8 @@ export class ForgeEdit2DUtils {
         unsubscribe('clear-shape-selection', this._clearSelection)
 
         unsubscribe('delete-shape', this._deleteShape)
+
+        unsubscribe('select-shape', this._selectShape)
 
         unsubscribe('visibility-change', this._visibilityChange)
 

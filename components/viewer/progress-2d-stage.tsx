@@ -3,7 +3,6 @@
 import { FormControlLabel, Checkbox, LinearProgress, FormGroup, Stack, styled, linearProgressClasses, Typography, Slider } from '@mui/material'
 
 import { IAsset, IAssetStage } from '../../models/IAssetCategory'
-import { number } from 'yup'
 
 export default function Progress2DStages(
 
@@ -123,7 +122,7 @@ function Progress2DStage(
 
                 <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{getProgressValue()}%</Typography>
 
-                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>123/560 {stage.uom}</Typography>
+                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{stage.assets.length} / {assetCount} assets</Typography>
 
             </div>
 
