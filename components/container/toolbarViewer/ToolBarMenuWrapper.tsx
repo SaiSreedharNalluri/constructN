@@ -38,8 +38,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   // closeTaskFilterOverlay,
   handleOnTaskFilter,
   contextInfo,
-  // openCreateIssue,
-  // openCreateTask,
+  openCreateIssue,
+  openCreateTask,
   selectedLayersList,
   // deleteTheTask,
   // issuePriorityList,
@@ -47,13 +47,13 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   // issueTypesList,
   taskFilterState,
   // issueFilterState,
-  // closeIssueCreate,
-  // closeTaskCreate,
+  closeIssueCreate,
+  closeTaskCreate,
   // deleteTheIssue,
-  // openIssueDetails,
+  openIssueDetails,
   openTaskDetails,
   closeTaskDetails,
-  // closeIssueDetails,
+  closeIssueDetails,
   // setIssueList,
   // getIssues,
   // getTasks,
@@ -82,10 +82,12 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   highlightCreateIcon,
   setHighlightCreateTaskIcon,
   highlightCreateTaskIcon,
-  // isDesignAvailable,
-  // isRealityAvailable,
+  isDesignAvailable,
+  isRealityAvailable,
   // updateDesignMap,
-  initData
+  issueContext,
+  initData,
+  taskContext
 }) => {
   const [rightNav, setRighttNav] = useState(false);
   // const [isCompareDesign, setIsCompareDesign] = useState(false);
@@ -342,6 +344,12 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
           handleOnIssueSort={handleOnIssueSort}
           issueMenuClicked={issueMenuClicked}
+          contextInfo={contextInfo}
+          openIssueDetails={openIssueDetails}
+          closeIssueDetails={closeIssueDetails}
+          issueOpenDrawer={openCreateIssue}
+          closeIssueCreate={closeIssueCreate}
+          issueContext={issueContext}
         />
 
         <Task
@@ -361,6 +369,12 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           closeTaskDetails={closeTaskDetails}
           taskFilterState={taskFilterState}
           handleOnTasksSort={handleOnTasksSort}
+          contextInfo={contextInfo}
+          initData={initData}
+          closeTaskCreate={closeTaskCreate}
+          taskOpenDrawer={openCreateTask}
+          taskContext={taskContext} // task context
+          
          
         />
 

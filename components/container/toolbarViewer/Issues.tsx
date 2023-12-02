@@ -22,7 +22,7 @@ import {
   CameraIcon,
 } from "./ToolBarStyles";
 import { Drawer, Tooltip } from "@mui/material";
-// import CreateIssue from "../create-issue/CreateIssue";
+import CreateIssue from "../createIssue/CreateIssue";
 import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
 import {
   createIssue,
@@ -73,7 +73,8 @@ const Issues = ({
   setHighlightCreateIcon,
   highlightCreateIcon,
   setHighlightCreateTaskIcon,
-  initData
+  initData,
+  issueContext
 }: any) => {
   const customLogger = new CustomLoggerClass();
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -231,9 +232,10 @@ const Issues = ({
   };
 
   useEffect(() => {
-    if (openIssueDetails && contextInfo?.id) {
-      const selectedObj = issuesList.find(
-        (each: any) => each._id === contextInfo.id
+    if (openIssueDetails && contextInfo?.data.id) {
+      console.log(contextInfo.data.id)
+      const selectedObj = initData?.currentIssueList?.find(
+        (each: any) => each._id === contextInfo.data.id
       );
       setSelectedIssue(selectedObj);
     }
@@ -388,12 +390,13 @@ const Issues = ({
             openIssueCreateFn={openIssueCreateFn}
             issueMenuClicked={issueMenuClicked}
             projectUsers={projectUsers}
+            issueContext={issueContext}
           />
         </Drawer>
       )}
       {openCreateIssue && (
         <CustomDrawer>
-          {/* <CreateIssue
+          <CreateIssue
             handleCreateTask={handleCreateTask}
             currentProject={myProject}
             currentSnapshot={currentSnapshot}
@@ -405,7 +408,7 @@ const Issues = ({
             deleteTheAttachment={deleteTheAttachment}
             setLoading={setLoading}
             isLoading={isLoading}
-          /> */}
+          />
         </CustomDrawer>
       )}
 

@@ -126,6 +126,7 @@ interface IProps {
   onClose: any;
   taskFilterState: any;
   deleteTheAttachment?: any;
+  taskContext:any;
 }
 
 const CustomTaskListDrawer = (props: any) => {
@@ -148,6 +149,7 @@ const CustomTaskListDrawer = (props: any) => {
     projectUsers,
     taskPriority,
     taskStatus,
+    taskContext
   } = props;
   const [taskType, setTaskType] = useState<[string]>();
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -166,8 +168,6 @@ const CustomTaskListDrawer = (props: any) => {
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
   const [downloadList, setDownloadList] = useState(taskList);
-
-  console.log("taskListttt",taskList)
   const sortMenuOptions = [
     {
       label: "Status  (A - Z)",
@@ -278,6 +278,7 @@ const CustomTaskListDrawer = (props: any) => {
     filteredTaskList.forEach((item: any) => {
       if (task._id === item._id) {
         setViewTask(item);
+        taskContext(task)
       }
     });
     setOpenTaskDetail(true);

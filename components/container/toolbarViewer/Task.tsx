@@ -71,6 +71,8 @@ const Task = ({
   setHighlightCreateTaskIcon,
   highlightCreateTaskIcon,
   isReality,
+  initData,
+  taskContext
 
 }: any) => {
   const customLogger = new CustomLoggerClass();
@@ -240,15 +242,17 @@ const Task = ({
 
   const onCancelCreate = () => {
     taskMenuInstance.toolAction = "taskCreateFail";
-    // setOpenCreateTask(false);
+    setOpenCreateTask(false);
     taskMenuClicked(taskMenuInstance);
     closeTaskCreate();
   };
 
   useEffect(() => {
-    if (openTaskDetails && contextInfo?.id) {
-      const selectedObj = tasksList.find(
-        (each: any) => each._id === contextInfo.id
+    if (openTaskDetails && contextInfo?.data?.id) {
+      console.log("ots",openTaskDetails)
+      console.log("Task Id ",contextInfo?.data?.id)
+      const selectedObj = initData?.currentTaskList?.find(
+        (each: any) => each._id === contextInfo?.data?.id
       );
       setSelectedTask(selectedObj);
     }
@@ -411,7 +415,8 @@ const Task = ({
             projectUsers={projectUsers}
             taskType={currentTypesList}
             taskPriority={taskPriorityList}
-            taskStatus={taskStatusList}
+            taskStatus={taskStatusList} 
+            taskContext={taskContext} // taskContext
           />
         </Drawer>
       )}

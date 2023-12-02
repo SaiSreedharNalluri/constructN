@@ -109,6 +109,7 @@ interface IProps {
   openIssueCreateFn?: any;
   issueMenuClicked?: any;
   projectUsers?: any;
+  issueContext:any;
 }
 
 export interface IFilterProps {
@@ -150,7 +151,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   openIssueCreateFn,
   issueMenuClicked,
   projectUsers,
+  issueContext
 }) => {
+ 
   const handleClose = () => {
     onClose(true);
     // setIssueList([
@@ -351,6 +354,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     filteredIssuesList.forEach((item: any) => {
       if (issue._id === item._id) {
         setViewIssue(item);
+        issueContext(issue)
+        
       }
     });
     setOpenIssueDetail(true);

@@ -20,7 +20,7 @@ import { ISnapshot } from "../../../../../models/ISnapshot";
 import { Issue } from "../../../../../models/Issue";
 import { ChildrenEntity, IStructure } from "../../../../../models/IStructure";
 import { ITasks } from "../../../../../models/Itask";
-import { IToolResponse, ITools } from "../../../../../models/ITools";
+import { IContext, IToolResponse, ITools } from "../../../../../models/ITools";
 import ChevronLeftIcon from "../../../../../public/divami_icons/chevronLeft.svg";
 import ChevronRightIcon from "../../../../../public/divami_icons/chevronRight.svg";
 import { deleteAttachment } from "../../../../../services/attachments";
@@ -189,6 +189,7 @@ const Index: React.FC<IProps> = () => {
 
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
   const [initData, setInintData] = useState<IGenData>();
+  const [ViewCallBackRes,setViewCallBackRes] = useState({})
   let isSupportUser = useRef(false);
   //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
@@ -223,6 +224,8 @@ const Index: React.FC<IProps> = () => {
   const closeIssueCreate = () => {
     setOpenCreateIssue(false);
     setHighlightCreateIcon(false);
+    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailIssue","data":" "}');
+
   };
   const issueSubmit = (formdata: Issue) => {
     issuesList.push(formdata);
@@ -247,15 +250,15 @@ const Index: React.FC<IProps> = () => {
 
   const closeTaskDetails = () => {
     setOpenTaskDetails(false);
-    delete router.query.tsk
+   
     //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)   
-    router.push(router);
+   
   };
   const closeIssueDetails = () => {
     setOpenIssueDetails(false);
-    delete router.query.iss
+    // delete router.query.iss
     //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)
-    router.push(router);
+    // router.push(router);
   };
 
   const taskSubmit = (formdata: any) => {
@@ -552,7 +555,7 @@ const Index: React.FC<IProps> = () => {
       let sel_iss: Issue | undefined = issuesList.find((t) => t._id === router.query.iss)
       if (sel_iss) {
       // setClickedTool({ toolAction: 'issueSelect', toolName: 'issue', response: sel_iss });
-        setCurrentContext({ ...sel_iss?.context, id: router.query.iss as string });
+        // setCurrentContext({ ...sel_iss?.context, id: router.query.iss as string });
         setOpenIssueDetails(true);
       }
     }
@@ -560,7 +563,7 @@ const Index: React.FC<IProps> = () => {
       let sel_tsk: ITasks | undefined = tasksList.find((t) => t._id === router.query.tsk)
       if (sel_tsk) {
         // setClickedTool({ toolAction: 'taskSelect', toolName: 'task', response: sel_tsk });
-        setCurrentContext({ ...sel_tsk?.context, id: router.query.tsk as string });
+        // setCurrentContext({ ...sel_tsk?.context, id: router.query.tsk as string });
         setOpenTaskDetails(true);
       }
     }
@@ -679,7 +682,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: ITools) => {
-    console.log("toolInstrance",toolInstance)
+    console.log(" ",toolInstance)
     let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.toolName) {
       case "viewType":
@@ -706,15 +709,15 @@ const Index: React.FC<IProps> = () => {
             setOpenIssueView(true);
             break;
           case "issueCreate":
-          console.log("toolInstance.Action",toolInstance.toolAction)
           conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createIssue","data":" "}');
-
+          // conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(),appEventsCB)
           case "issueCreateSuccess":
           case "issueCreateFail":
           case "issueSelect":
           case "issueShow":
             // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"'+toolInstance.toolAction+'","data":" "}');
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createIssue","data":" "}');
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showIssue","data":" "}');
+            
             break;
           case "issueHide":
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideIssue","data":" "}')
@@ -742,6 +745,7 @@ const Index: React.FC<IProps> = () => {
             //todo
             break;
           case "taskCreate":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createTask","data":" "}');
           case "taskCreateSuccess":
           case "taskCreateFail":
           case "taskShow":
@@ -801,7 +805,7 @@ const Index: React.FC<IProps> = () => {
         } else if (data.toolAction === "selectIssue") {
           // issue detail view open logic comes here
           if (data.response != undefined) {
-            setCurrentContext(data.response);
+            // setCurrentContext(data.response);
             //setOpenIssueDetails(true);
             // console.log(router,"Router Obj")
             router.query.iss = data.response?.id;
@@ -812,12 +816,12 @@ const Index: React.FC<IProps> = () => {
         break;
       case "Task":
         if (data.toolAction === "createTask") {
-          if (data.response != undefined) setCurrentContext(data.response);
-          setOpenCreateTask(true);
+          // if (data.response != undefined) setCurrentContext(data.response);
+          // setOpenCreateTask(true);
         } else if (data.toolAction === "selectTask") {
           // task detail view open logic comes here
           if (data.response != undefined) {
-            setCurrentContext(data.response);
+            // setCurrentContext(data.response);
             //setOpenTaskDetails(true);
             // console.log(router,"Router Obj")
             router.query.tsk = data.response?.id;
@@ -1567,7 +1571,7 @@ const Index: React.FC<IProps> = () => {
       let sel_iss: Issue | undefined = issuesList.find((t) => t._id === router.query.iss)
       if (sel_iss) {
         // setClickedTool({ toolAction: 'issueSelect', toolName: 'issue', response: sel_iss });
-        setCurrentContext({ ...sel_iss?.context, id: router.query.iss as string });
+        // setCurrentContext({ ...sel_iss?.context, id: router.query.iss as string });
         setOpenIssueDetails(true);
       }
 
@@ -1580,7 +1584,7 @@ const Index: React.FC<IProps> = () => {
       let sel_tsk: ITasks | undefined = tasksList.find((t) => t._id === router.query.tsk)
       if (sel_tsk) {
         // setClickedTool({ toolAction: 'taskSelect', toolName: 'task', response: sel_tsk });
-        setCurrentContext({ ...sel_tsk?.context, id: router.query.tsk as string });
+        // setCurrentContext({ ...sel_tsk?.context, id: router.query.tsk as string });
         setOpenTaskDetails(true);
       }
 
@@ -1590,23 +1594,55 @@ const Index: React.FC<IProps> = () => {
   useEffect(() => {
 
 
-    getGenViewerData(router.query.projectId as string, router.query.structureId as string)
-      .then((response) => {
-        if (response.success === true) {
-          setInintData(response.result);
+  getGenViewerData(router.query.projectId as string, router.query.structureId as string)
+    .then((response) => {
+      if (response.success === true) {
+        setInintData(response.result);
 
-        }
-      })
-      .catch((error) => {
-        console.log("Error in loading data: 1 ", error);
-        // CustomToast("failed to load data","error");
-      });
+      }
+    })
+    .catch((error) => {
+      console.log("Error in loading data: 1 ", error);
+    });
 
   }, [router.query.structId])
+
+
+
+  
+  const issueContext = (issue:any) =>{  // selected Issue context pusblish
+    let iContext:IContext=issue.context
+    iContext.id=issue._id
+    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"selectIssue","data":'+JSON.stringify(iContext)+'}');
+  } 
+
+  const taskContext = (task:any) =>{  // selected Task context publish
+    console.log("selected context task",task)
+    let tContext:IContext=task.context
+    tContext.id=task._id
+    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"selectTask","data":'+JSON.stringify(tContext)+'}');
+  }
   
   const appEventsCB:OnMessageCallbak = (msg:Buffer,packet:any):void=>{
-  
+    const message = JSON.parse(msg.toString())
     console.log("callback data",JSON.parse(msg.toString()))
+    if(message.type==="selectIssue")
+    {
+      setOpenIssueDetails(true)
+      setCurrentContext(message)
+    }
+    else if(message.type === "selectTask"){
+      setOpenTaskDetails(true)
+      setCurrentContext(message)
+    }
+    else if(message.type === "createIssue")
+    {
+      setOpenCreateIssue(true);
+    }
+    else if(message.type === "createTask")
+    {
+      setOpenCreateTask(true)
+    }
   }
   
   useEffect(()=>{
@@ -1620,24 +1656,14 @@ const Index: React.FC<IProps> = () => {
     if (initData) {
       let pdata: IGenData = initData
       if (pdata) {
-    
-          pdata.currentViewType = "Plan Drawings"
-        
+        pdata.currentViewType = "Plan Drawings" 
       }
      if(router.isReady){
       setTimeout(()=>{
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type":"setGenData","data":${JSON.stringify(pdata)}}`)
-      },8000)
-      
-      
+      },8000)     
      }
-    
-
-    }
-   
-    // setGenData(currentViewType)
-   
-    
+    }  
   },[conn,structure,initData])
 
   return (
@@ -1780,6 +1806,16 @@ const Index: React.FC<IProps> = () => {
                 highlightCreateTaskIcon={highlightCreateTaskIcon}
                 setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
                 contextInfo={currentContext}
+                openIssueDetails={openIssueDetails}
+                closeIssueDetails={closeIssueDetails}
+                openTaskDetails={openTaskDetails}
+                closeTaskDetails={closeTaskDetails}
+                openCreateIssue={openCreateIssue}
+                closeIssueCreate={closeIssueCreate}
+                closeTaskCreate={closeTaskCreate}
+                openCreateTask={openCreateTask}
+                issueContext={issueContext} // selected issue Context
+                taskContext={taskContext} //  selected task Context
                 
                 ></ToolBarMenuWrapper>
                 
