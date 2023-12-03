@@ -1,8 +1,8 @@
 import { act } from "react-dom/test-utils";
-import { GCPType } from "../../models/IGCP";
+import { GCPType, IGCP } from "../../models/IGCP";
 import { IJobs, JobStatus } from "../../models/IJobs";
 import { RawImage, RawImageStatus, location, metaData } from "../../models/IRawImages";
-import { getCaptureIdFromModelOrString, getInitialGCPList, getJobIdFromModelOrString } from "../../utils/utils";
+import { getCaptureIdFromModelOrString, getInitialGCPList, getJobIdFromModelOrString, validateAltitudeOrElevation, validateEasting, validateLatitude, validateLongitude, validateUTMZone, validatingNorthing } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
 import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState } from "./state";
 import { UploadFile } from "@mui/icons-material";
@@ -92,11 +92,6 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 structure:action.payload.structure
             }
-        case UploaderActionType.setStepperSideFilesList:
-            return {
-                ...state,
-                stepperSideFileList:action.payload.stepperSideFileList
-            }
         case UploaderActionType.setIsAppendingCapture:
             return {
                 ...state,
@@ -132,16 +127,11 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 gcpList: getInitialGCPList(action.payload.type == GCPType.UTM)
             }
         case UploaderActionType.setGCPList:
-            let location = action.payload.list.utmLocation ? action.payload.list.utmLocation : action.payload.list.location ? action.payload.list.location : undefined
-            let isNextEnabled=false
-            if(location ){
-                if(state.errorCount === 0){
-                isNextEnabled = location.length >=4 
-                }
-            }
+            let isNextEnabled = validateGCPList(action.payload.list)
             return{
                 ...state,
-                gcpList:action.payload.list,
+                isGCPInit: false,
+                gcpList: action.payload.list,
                 gcpType: action.payload.type,
                 isNextEnabled: isNextEnabled
             }
@@ -155,6 +145,8 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 pendingUploadJobs: pendingUploadJobs,
                 pendingProcessJobs: pendingProcessJobs,
+                selectedJob: undefined,
+                rawImagesMap: {},
                 updateJobs: false
                 // step: isUploadStep ? UploaderStep.Upload : UploaderStep.Details
             }
@@ -198,6 +190,19 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
     }
 }
 
+const validateGCPList = (list: IGCP): boolean => {
+    if(list.location && list.location.length >= 4 ) {
+        return list.location.reduce((isValid, latLng):boolean => {
+            return isValid && validateLongitude(latLng.coordinates[0]) && validateLatitude(latLng.coordinates[1]) && latLng.elevation? validateAltitudeOrElevation(latLng.elevation) : false
+        }, true)
+    } else if (list.utmLocation && list.utmLocation.length >= 4) {
+        return list.utmLocation.reduce((isValid, utm):boolean => {
+            return isValid && validateEasting(utm.easting) && validatingNorthing(utm.northing) && validateUTMZone(utm.zone) && utm.elevation? validateAltitudeOrElevation(utm.elevation) : false
+        }, true)
+    }
+    return false;
+}
+
 const isNext = (state: UploaderState, step: UploaderStep): boolean => {
     switch (step) {
         case UploaderStep.Details:
@@ -205,8 +210,7 @@ const isNext = (state: UploaderState, step: UploaderStep): boolean => {
         case UploaderStep.ChooseFiles:
             return state.choosenFiles.validFiles.length > 0;
         case UploaderStep.ChooseGCPs:
-            let location = state.gcpList.utmLocation ? state.gcpList.utmLocation : state.gcpList.location ? state.gcpList.location : undefined
-            return location ? location?.length >= 4 : false
+            return validateGCPList(state.gcpList)
         case UploaderStep.Review:
             return true;
         case UploaderStep.Upload:

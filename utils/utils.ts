@@ -38,6 +38,30 @@ export const getEXIFDataFromImageFile = async (file: File): Promise<ExifReader.T
     return exifData
 }
 
+export const validateLatitude = (latitude: number): boolean => {
+    return latitude >= -90 && latitude <= 90 && latitude !== 0;
+};
+
+export const validateLongitude = (longitude: number): boolean => {
+    return longitude >= -180 && longitude <= 180 && longitude !== 0;
+};
+
+export const validateAltitudeOrElevation = (altitude: number): boolean => {
+    return altitude !== 0 && Number(altitude) > 0;
+};
+
+export const validateEasting = (easting: number): boolean => {
+    return easting >= 100000 && easting <= 1000000 && Number(easting) > 0;
+};
+
+export const validatingNorthing = (northing: number): boolean => {
+    return northing >= 0 && northing <= 10000000 && Number(northing) > 0;
+};
+
+export const validateUTMZone = (zone: string): boolean => {
+    return (/^([1-9]|[1-5][0-9]|60)([CDEFGHJKLMNPQRSTUVWX])?$/).test(zone);
+}
+
 export const getInitialGCPList = (isUTM: boolean): IGCP => {
     let minimumGCPPoints=4;
     let gcplist:IGCP={};

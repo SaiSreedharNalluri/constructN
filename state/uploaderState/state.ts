@@ -41,7 +41,6 @@ export interface UploaderState {
     updateJobs: boolean;
     extractedFileValue:any;
     isNextEnabled:boolean;
-    stepperSideFileList:boolean,
     isAppendingCapture: boolean,
     captureMode: CaptureMode,
     captureType: CaptureType,
@@ -49,6 +48,7 @@ export interface UploaderState {
     skipGCP: boolean,
     gcpType: UTMType | LONGLATType, 
     gcpList: IGCP,
+    isGCPInit: boolean,
     uploadinitiate:boolean,
     pendingUploadJobs: IJobs[],
     pendingProcessJobs: IJobs[],
@@ -90,7 +90,6 @@ export const initialUploaderState: UploaderState = {
     showMessage: true,
     isLoading: false,
     extractedFileValue:[],
-    stepperSideFileList:false,
     updateJobs: false,
     isNextEnabled: false,
     isAppendingCapture: false,
@@ -101,6 +100,7 @@ export const initialUploaderState: UploaderState = {
     },
     gcpType: GCPType.LONGLAT,
     gcpList: getInitialGCPList(false), // default is LONGLAT
+    isGCPInit: true,
     skipGCP: false,
     captureType: CaptureType.exterior,
     captureMode: CaptureMode.droneImage,
