@@ -345,7 +345,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     issueMenuClicked(issueMenuInstance);
   };
 
-  useEffect(() => {}, [issueFilterState]);
   const [abc, setAbc] = useState(false);
   const checkIsFilter = () => {
     if (issueFilterState?.filterData) {
@@ -368,10 +367,12 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
         undefined
       ) {
         setAbc(true);
+        console.log("YEAA");
         setIssueFilterState({
           ...issueFilterState,
           isFilterApplied: false,
         });
+
       }
     }
   };
@@ -384,7 +385,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   return (
     <>
-      {errorShow.length > 0 ? (
+      {errorShow.length > 0 || issueFilterState.isFilterApplied ? (
         <TaskListContainer id="download-test">
           <HeaderContainer>
             <TitleContainer>

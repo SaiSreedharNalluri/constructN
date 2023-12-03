@@ -41,7 +41,7 @@ import CustomLoggerClass from "../../divami_components/custom_logger/CustomLogge
 import { getNewChipData, removeChip } from "../../../services/sections";
 const ProjectHierarchy = ({
   title,
-  openSelectLayer,
+  openselectlayer,
   onCloseHandler,
   treeData,
   getStructureData,

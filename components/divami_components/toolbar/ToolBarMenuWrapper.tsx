@@ -39,6 +39,7 @@ interface IProps {
   taskFilterState?: any;
   issueFilterState?: any;
   setIssueFilterState?: any;
+  setTaskFilterState?:any;
   deleteTheIssue?: any;
   deleteTheAttachment?: any;
   isDesignAvailable?:boolean;
@@ -97,6 +98,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   taskPriorityList,
   taskStatusList,
   setIssueFilterState,
+  setTaskFilterState,
   issueLoader,
   setIssueLoader,
   setShowIssueMarkups,

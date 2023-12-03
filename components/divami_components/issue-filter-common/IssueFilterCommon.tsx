@@ -152,6 +152,7 @@ const FilterCommon: React.FC<IProps> = ({
   // };
 
   const onFilterApply = () => {
+    let filterCount=0;
     let data: any = {};
     data.issueTypeData = [];
     data.issuePriorityData = [];
@@ -165,6 +166,7 @@ const FilterCommon: React.FC<IProps> = ({
         const x = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
+        filterCount+=x.length
         x.forEach((element: any) => {
           data.issueTypeData.push(element.optionTitle);
         });
@@ -172,6 +174,7 @@ const FilterCommon: React.FC<IProps> = ({
         const z = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
+        filterCount+=z.length;
         z.forEach((element: any) => {
           data.issuePriorityData.push(element.optionTitle);
         });
@@ -179,6 +182,7 @@ const FilterCommon: React.FC<IProps> = ({
         const y = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
+        filterCount+=y.length;
         y.forEach((element: any) => {
           data.issueStatusData.push(element.optionTitle);
         });
@@ -187,6 +191,7 @@ const FilterCommon: React.FC<IProps> = ({
         const k = item.options.filter(
           (option: any) => option.optionStatus == "T"
         );
+        filterCount+=k.length;
         k.forEach((element: any) => {
           data.issueTagData.push(element.optionTitle);
         });
@@ -207,6 +212,10 @@ const FilterCommon: React.FC<IProps> = ({
     handleOnFilter(data);
     handleClose();
   
+    // if(isArrEmpty){ 
+    //   console.log(isArrEmpty,"YEAAA");
+    //   closeFilterOverlay();
+    // }
   };
   const formHandler = (event: any) => {
     if (event === "Cancel") {
@@ -573,6 +582,9 @@ const FilterCommon: React.FC<IProps> = ({
       });
       SetFilterState(temp);
     }
+    else{
+      closeFilterOverlay();
+    }
   }, [optionState]);
 
   const handleClose = () => {
@@ -592,6 +604,8 @@ const FilterCommon: React.FC<IProps> = ({
     setDueData(DATE_PICKER_DATA);
     setAssignees([assignees]);
     SetFilterState(temp);
+
+    closeFilterOverlay();
   };
 
   return (

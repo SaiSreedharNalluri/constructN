@@ -5,6 +5,7 @@ import Image from "next/image";
 import plusCircleIcon from "../../../public/divami_icons/plusCircleIcon.svg";
 import plusCircleIconHighlighted from "../../../public/divami_icons/plusCircleIconHighlighted.svg";
 import fileTextIcon from "../../../public/divami_icons/fileTextIcon.svg";
+import filterdListIcon from "../../../public/divami_icons/FilteredList.svg"
 import triWarnIcon from "../../../public/divami_icons/triWarnIcon.svg";
 import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIcon.svg";
 import fileTextIssue from "../../../public/divami_icons/fileTextIssue.svg";
@@ -39,6 +40,7 @@ import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import { getTimeInProjectTimezone } from "../../../utils/utils";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { FilterIndication } from "../issue-listing/IssueListStyles";
 const Issues = ({
   rightMenuClickHandler,
   issuesList,
@@ -252,7 +254,7 @@ const Issues = ({
       setHighlightCreateIcon(true) 
       setHighlightCreateTaskIcon(false)
   };
-  console.log(isLoading,"issue");
+  //console.log(isLoading,"issue");
   
   const openIssueListFn = () => {
     issueMenuInstance.toolAction = "issueView";
@@ -311,12 +313,19 @@ const Issues = ({
                 openIssueListFn();
                 handleViewTaskList();
               }}>
+            {issueFilterState.isFilterApplied?(
             <CameraIcon
+              src={ filterdListIcon}
+              width={12}
+              height={12}
+              alt="Arrow"
+            />):(<CameraIcon
               src={fileTextIcon}
               width={12}
               height={12}
               alt="Arrow"
-            />
+            />)}
+            {/* <FilterIndication/> */}
           </IssuesSectionFileImg>
         </Tooltip>
 
