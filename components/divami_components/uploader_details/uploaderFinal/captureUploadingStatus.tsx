@@ -14,7 +14,7 @@ import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../../utils/
 import { ICapture } from "../../../../models/ICapture";
 import ErrorIcon from '@mui/icons-material/Error';
 import CircularProgress from '@mui/material/CircularProgress';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PopupComponent from "../../../popupComponent/PopupComponent";
 interface Iprops {
   isUploading: boolean;
