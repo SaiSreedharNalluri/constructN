@@ -48,6 +48,7 @@ export interface UploaderState {
     skipGCP: boolean,
     gcpType: UTMType | LONGLATType, 
     gcpList: IGCP,
+    isGCPInit: boolean,
     uploadinitiate:boolean,
     pendingUploadJobs: IJobs[],
     pendingProcessJobs: IJobs[],
@@ -99,6 +100,7 @@ export const initialUploaderState: UploaderState = {
     },
     gcpType: GCPType.LONGLAT,
     gcpList: getInitialGCPList(false), // default is LONGLAT
+    isGCPInit: true,
     skipGCP: false,
     captureType: CaptureType.exterior,
     captureMode: CaptureMode.droneImage,
