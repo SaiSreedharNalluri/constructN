@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 import { Label, TabelHeading } from "./GCPStyledComponents";
-import { getInitialGCPList } from "../../../utils/utils";
+import { getInitialGCPList, validateAltitudeOrElevation, validateEasting, validateLatitude, validateLongitude, validateUTMZone, validatingNorthing,  } from "../../../utils/utils";
 import { GCPType, IGCP } from "../../../models/IGCP";
 import { location, utmLocation } from "../../../models/IRawImages";
 import Delete from "../../../public/divami_icons/delete.svg";
@@ -143,21 +143,7 @@ const GcpEnterManually: React.FC<any> = () => {
       return newErrors;
     });
   };
-  const validateLatitude = (latitude: number, index: any) => {
-    return latitude >= -90 && latitude <= 90 && latitude !== 0;
-  };
-  const validateLongitude = (longitude: number, Index: any) => {
-    return longitude >= -180 && longitude <= 180 && longitude !== 0;
-  };
-  const validateAltitude = (altitude: number, Index: any) => {
-    return altitude !== 0 && Number(altitude) > 0;
-  };
-  const validateEasting = (easting: number, Index: any) => {
-    return easting >= 100000 && easting <= 1000000 && Number(easting) > 0;
-  };
-  const validatingNorthing = (northing: number, Index: any) => {
-    return northing >= 0 && northing <= 10000000 && Number(northing) > 0;
-  };
+
   const validateInput = (
     value: number | string,
     heading: string,
@@ -165,19 +151,19 @@ const GcpEnterManually: React.FC<any> = () => {
   ) => {
     switch (heading) {
       case "Latitude":
-        return validateLatitude(Number(value), index);
+        return validateLatitude(Number(value));
       case "Longitude":
-        return validateLongitude(Number(value), index);
+        return validateLongitude(Number(value));
       case "Altitude":
-        return validateAltitude(Number(value), index);
+        return validateAltitudeOrElevation(Number(value));
       case "Easting":
-        return validateEasting(Number(value), index);
+        return validateEasting(Number(value));
       case "Northing":
-        return validatingNorthing(Number(value), index);
+        return validatingNorthing(Number(value));
       case "Zone":
-        return typeof value === "string" && value.trim() !== "";
+        return typeof value === "string" && validateUTMZone(value);
       case "Elevation":
-        return Number(value) > 0;
+        return validateAltitudeOrElevation(Number(value));;
       default:
        const isValid = true; // Modify this line based on your validation logic
         if (!isValid) {

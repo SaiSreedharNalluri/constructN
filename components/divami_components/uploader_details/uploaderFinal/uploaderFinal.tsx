@@ -139,7 +139,7 @@ const UploaderFinal: React.FC = () => {
                 }
                </div>
          </div>
-        { uploaderState.selectedJob && uploaderState.stepperSideFileList && (
+        { uploaderState.selectedJob && (
         <div className="w-[30%] h-[280px]   ml-[30px] mt-2  overflow-x-hidden bg-[#FFECE2] rounded-3xl overflow-y-auto"         style={{ boxShadow: " 0px 4px 4px 0px #00000040" }}>
           <div className=" mt-2 ml-[30px] font-open-sans italic font-normal text-base leading-5 text-black">
                       Uploading progress for{" "}

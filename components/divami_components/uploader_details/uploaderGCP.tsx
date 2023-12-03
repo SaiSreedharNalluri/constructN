@@ -17,18 +17,7 @@ const UploaderGCP = () => {
   const handleFirstOptionChange = (event: any) => {
     setSelectedOption(event.target.value);
   };
-  useEffect(() => {
-    if (uploaderState.gcpList) {
-      if (
-        uploaderState.gcpList.utmLocation &&
-        uploaderState.gcpList.utmLocation.length > 0
-      ) {
-        setSelectedOption("Enter Manually");
-      } else {
-        setSelectedOption("Enter Manually");
-      }
-    }
-  }, [uploaderState.gcpList]);
+
   const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(event.target.value);
     uploaderAction.setGCPList({...uploaderState.gcpList,description:textareaValue as string},uploaderState.gcpType)
@@ -58,7 +47,7 @@ const UploaderGCP = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(()=> {
-    if (!uploaderState.gcpList) {
+    if (!uploaderState.gcpList || uploaderState.isGCPInit) {
       return;
     }
 

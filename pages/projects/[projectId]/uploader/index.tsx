@@ -272,22 +272,22 @@ const Index: React.FC<IProps> = () => {
         if(response.data.success===true) {
           moveJobFromPendingUploadToUpload(response.data.result?._id);
           if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
-            CustomToast(`upload completed sucessfully for ${getPathToRoot(response.data.result.structure,appState.currentProjectData.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
+            CustomToast(`Upload Completed Sucessfully For ${getPathToRoot(response.data.result.structure,appState.currentProjectData.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
           } else {
-            CustomToast(`upload completed sucessfully`,'success')
+            CustomToast(`Upload Completed Sucessfully`,'success')
           }
           // uploaderAction.setUploadCompletionState(UploaderFinishState.withoutError)
         }
         else{
           setIsShowPopUp(true)
-          setPopUPHeading('Upload complete with errors')
-          setPopUPConform('ok')
+          setPopUPHeading('Upload Completed With Errors')
+          setPopUPConform('Ok')
          // setPopUPClose('Ok')
         }
       }).catch((error)=>{
         setIsShowPopUp(true)
-        setPopUPHeading('Upload complete with errors')
-        setPopUPConform('ok')
+        setPopUPHeading('Upload Completed With Errors')
+        setPopUPConform('Ok')
       })
     } else {
       console.log("TestingUploader: jobstatus without capture object: ")
@@ -300,23 +300,23 @@ const Index: React.FC<IProps> = () => {
             if(response&&response?.data&&response?.data?.success===true) {
               moveJobFromPendingUploadToUpload(response.data.result?._id);
               if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
-                CustomToast(`upload completed sucessfully for ${getPathToRoot(response.data.result.structure, appState.currentProjectData.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
+                CustomToast(`Upload Completed Sucessfully for ${getPathToRoot(response.data.result.structure, appState.currentProjectData.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
               } else {
-                CustomToast(`upload completed sucessfully`,'success')
+                CustomToast(`Upload Completed Sucessfully`,'success')
               }
               // uploaderAction.setUploadCompletionState(UploaderFinishState.withoutError)
             }
             else{
               setIsShowPopUp(true)
-              setPopUPHeading('Upload complete with errors')
-              setPopUPConform('ok')
+              setPopUPHeading('Upload Completed With Errors')
+              setPopUPConform('Ok')
             // setPopUPClose('Ok')
             }
           }).catch((error)=>{
             uploaderAction.setIsLoading(false)
             setIsShowPopUp(true)
-            setPopUPHeading('Upload complete with errors')
-            setPopUPConform('ok')
+            setPopUPHeading('Upload Completed With Errors')
+            setPopUPConform('Ok')
             console.log('errror',error)
           })
         }
@@ -366,13 +366,13 @@ const Index: React.FC<IProps> = () => {
         <header>
         <div>
               {
-              uploaderState.stepperSideFileList &&(<UploaderStepper />)
+              (uploaderState.selectedJob || uploaderState.step !== UploaderStep.Upload) &&(<UploaderStepper />)
             }
              </div>
         </header>
      {!uploaderState.isLoading?  
   <div>
-        <main className={`overflow-y-auto  ${ uploaderState.stepperSideFileList?`calc-h223`:`calc-h`} `}>
+        <main className={`overflow-y-auto  ${ (uploaderState.selectedJob || uploaderState.step !== UploaderStep.Upload)?`calc-h223`:`calc-h`} `}>
           <div>
           {renderCenterContent()}
            
