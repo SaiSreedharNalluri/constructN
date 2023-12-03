@@ -83,11 +83,17 @@ export const updateMultipleJobStatus = async (
 export const updateJobStatus = async (
   projectId: string,
   jobId: string,
-  status: string
+  status: string,
+  ignoreImagesCheck?:boolean
 ) => {
   try {
+    let url = `${API.BASE_URL}/projects/${projectId}/jobs/${jobId}/updateStatus`
+    if(ignoreImagesCheck)
+    {
+     url = `${url}?ignoreImagesCheck=true`
+    }
     return await instance.put(
-      `${API.BASE_URL}/projects/${projectId}/jobs/${jobId}/updateStatus`,
+     url,
       {status},
       {
         headers: authHeader.authHeader(),

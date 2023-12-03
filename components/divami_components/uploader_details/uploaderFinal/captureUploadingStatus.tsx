@@ -5,13 +5,17 @@ import { useAppContext } from "../../../../state/appState/context";
 import { TooltipText } from "../../side-panel/SidePanelStyles";
 import { IStructure } from "../../../../models/IStructure";
 import { IJobs, JobStatus } from "../../../../models/IJobs";
-import { updateMultipleJobStatus } from "../../../../services/jobs";
+import { updateJobStatus, updateMultipleJobStatus } from "../../../../services/jobs";
 import router from "next/router";
  import Image from "next/image";
  import UnChecked from "../../../../public/divami_icons/unchecked.svg";
  import Checked from "../../../../public/divami_icons/checked.svg";
 import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 import { ICapture } from "../../../../models/ICapture";
+import ErrorIcon from '@mui/icons-material/Error';
+import CircularProgress from '@mui/material/CircularProgress';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import PopupComponent from "../../../popupComponent/PopupComponent";
 interface Iprops {
   isUploading: boolean;
   isUploadedOn: boolean;
@@ -44,6 +48,8 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const { state: appState, appContextAction } = useAppContext();
+  const [popUpHeading,setPopUPHeading] =useState('')
+  const [popUpConfirm,setPopUPConfirm] =useState('')
   /**
    * If isUploading true case, get data from uploaderState.pendingUploadJobs
    * If isUploading false case, get data from uploaderState.pendingProcessJobs
@@ -104,6 +110,19 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
       }
     );
   };
+  const getCaptureStatus =(jobStatus:JobStatus)=>{
+    switch(jobStatus)
+    {
+      case JobStatus.uploaded:
+      return(<CheckCircleIcon style={{ color: "green" }} />)
+      case JobStatus.pendingUpload:
+        return (<CircularProgress color="warning" size={"28px"} thickness={5}/>)
+      case JobStatus.uploadFailed:
+        return (<ErrorIcon color="error" />)
+      default:
+          return (<CircularProgress color="warning" size={"28px"} thickness={5}/>) 
+    } 
+  }
   return (
     <React.Fragment>
       <div
@@ -162,6 +181,15 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                       Uploaded On
                     </th>
                   )}
+                  {
+                    isUploading && (
+                      <th
+                        className="pl-2 text-left w-[18%]"
+                      >
+                        
+                      </th>
+                    )
+                  }
                 </tr>
               </thead>
               <tbody
@@ -174,7 +202,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     onClick={() => {
                       if (isUploading && onRowClick) {
                         onRowClick(job as IJobs, index);
-                        if(!uploaderState.stepperSideFileList)
+                       if(!uploaderState.stepperSideFileList)
                         {
                           uploaderAction.setStepperSideFilesList(true)
                         }
@@ -182,7 +210,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     }}
                     className={`cursor-${isUploading ? "pointer" : "default"} ${
                       index === hoveredRowIndex ? "bg-gray-200" : ""
-                    } flex justify-evenly w-full my-[4px] mx-auto`}
+                    }  ${uploaderState.selectedJob?._id===job._id?"bg-[#D9D9D9] text-[#F1742E]":""} flex justify-evenly w-full my-[4px] mx-auto`}
                     onMouseEnter={() => setHoveredRowIndex(index)}
                     onMouseLeave={() => setHoveredRowIndex(null)}
                   >
@@ -228,6 +256,14 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     >
                       {getTheProjectDateAndTime(job.updatedAt)}
                     </td>
+                    {
+                      isUploading &&<td
+                      className="pl-2 w-[18%] flex items-center"
+                    >
+                      {getCaptureStatus(job.status)}
+                    </td>
+                    }
+                    
                   </tr>
                 ))}
               </tbody>
@@ -235,7 +271,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                 Ready to begin a new upload ? Click the button below to get started.</p>)
             }
             </div>
-          <div className="text-center mt-[10px] w-[90%]">
+          <div className="text-center mt-[10px]">
             <button
               className={`py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white ${
                 isUploadedOn && !value ? "bg-gray-400" : "bg-[#F1742E]"

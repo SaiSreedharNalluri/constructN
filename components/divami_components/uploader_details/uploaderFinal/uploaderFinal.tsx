@@ -3,11 +3,14 @@ import CaptureUploadingStatus from "./captureUploadingStatus";
 import { useUploaderContext } from "../../../../state/uploaderState/context";
 import FileNameListing from "../../fileListing/fileNameListing";
 import FileStatus from "../../fileListing/fileStatus";
-import { IJobs } from "../../../../models/IJobs";
+import { IJobs, JobStatus } from "../../../../models/IJobs";
 import { IStructure } from "../../../../models/IStructure";
 import { getCaptureIdFromModelOrString, getPathToRoot, getStructureIdFromModelOrString } from "../../../../utils/utils";
 import { useAppContext } from "../../../../state/appState/context";
 import { UploadStatus } from "../../../../models/IUploader";
+import CircularProgress from '@mui/material/CircularProgress';
+import { updateJobStatus } from "../../../../services/jobs";
+import PopupComponent from "../../../popupComponent/PopupComponent";
 interface fileData {
   status: UploadStatus;
   fileName: string;
@@ -15,8 +18,10 @@ interface fileData {
 const UploaderFinal: React.FC = () => {
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
+  const [isShowPopUp, setIsShowPopUp] = useState(false);
   const [fileProgressList, setFileProgressList] = useState<fileData[]>([]);
   const { state: appState, appContextAction } = useAppContext();
+  const[isCustomLoader,setCustomLoader]=useState<boolean>(false);
   useEffect(() => {
     if(uploaderState.selectedJob) {
       let selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])
@@ -49,6 +54,7 @@ const UploaderFinal: React.FC = () => {
     if(uploaderState.selectedJob) {
       let selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])
       if ( uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId]) {
+       setCustomLoader(false) 
         let fileList: fileData[] = uploaderState.inProgressWorkers[selectedCaptureId].map((e) => {
           return {
             fileName: e.uploadObject.filename,
@@ -56,9 +62,11 @@ const UploaderFinal: React.FC = () => {
           }
         })
         setFileProgressList(fileList)
-      } else {
+      } 
+      else if(uploaderState.rawImagesMap[selectedCaptureId]) {
+       setCustomLoader(false) 
         let rawImages = uploaderState.rawImagesMap[selectedCaptureId]
-        let fileList: fileData[] = rawImages?.map((e) => {
+        let fileList: fileData[] = rawImages?.map((e) => {   
           return {
             fileName: e.filename,
             status: getFileStatus(e?.status)
@@ -66,8 +74,16 @@ const UploaderFinal: React.FC = () => {
         })
         setFileProgressList(fileList)
       }
+      else{
+       setCustomLoader(true) 
+       return
+      }
+      if(uploaderState.selectedJob.status === JobStatus.uploadFailed)
+      {
+        setIsShowPopUp(true)
+      }
     }
-  }, [uploaderState.selectedJob])
+  }, [uploaderState.selectedJob,uploaderState.inProgressWorkers,uploaderState.rawImagesMap])
 
   const handleRowClick = (job: IJobs, index: number) => {
     //  setSelectedRow(index);
@@ -82,7 +98,22 @@ const UploaderFinal: React.FC = () => {
       return "";
     }
   };
-
+  const updateJobStatusUploadCompleteWithErrors =()=>{
+    let ignoreImagesCheck = true
+     updateJobStatus(uploaderState.selectedJob?.project as string,uploaderState.selectedJob?._id as string,JobStatus.uploaded,ignoreImagesCheck).then((response:any)=>{
+       if(response.data.success===true)
+       {
+         let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
+         captureJobs.forEach((job) => {
+           if (job._id === response.data.result?._id) {
+             job.status = JobStatus.uploaded
+           }
+         })
+         uploaderAction.setCaptureJobs(captureJobs)
+       }
+      }).catch((error)=>{
+    })
+ }
   return (
     <React.Fragment>
       <div className="flex ml-[30px] mt-[15px] calc-w">
@@ -116,7 +147,7 @@ const UploaderFinal: React.FC = () => {
                       { gethierarchyPath(uploaderState.selectedJob?.structure)}
                       </span>{" "}
                     </div>
-            {fileProgressList &&
+            {isCustomLoader?<div className="flex justify-center items-center h-1/2"><CircularProgress  color="warning" size={"28px"} thickness={5}></CircularProgress></div> :fileProgressList &&
               fileProgressList.length > 0 &&
               fileProgressList.map((fileProgressObj: fileData) => {
                 return (
@@ -133,6 +164,19 @@ const UploaderFinal: React.FC = () => {
               })}
           </div>
         )}
+        <PopupComponent
+      open={isShowPopUp}
+      setShowPopUp={setIsShowPopUp}
+      modalTitle={'Upload complete with errors'}
+      modalmessage={''}
+      primaryButtonLabel={'Skip Files and Complete'}
+      SecondaryButtonlabel={''}
+      isUploaderFinal={false}
+      callBackvalue={() => {
+        setIsShowPopUp(false)
+        updateJobStatusUploadCompleteWithErrors()
+      }}
+    />
       </div>
     </React.Fragment>
   );

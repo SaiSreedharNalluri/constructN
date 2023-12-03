@@ -104,6 +104,13 @@ export const HeaderNotificationImageContainer = styled('div')({
  
 
 });
+export const HeaderUploaderImageContainer = styled('div')({
+  marginRight: '10px',
+  cursor: 'pointer',
+  borderRadius: '50%' ,
+ 
+
+});
 
 
 export const ProjectSelectorContainer= styled('div')({

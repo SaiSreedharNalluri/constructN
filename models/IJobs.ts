@@ -7,6 +7,7 @@ import { IUser } from "./IUser";
 export enum JobStatus {
   captured = "captured",
   pendingUpload = "pendingUpload",
+  uploadFailed = "uploadFailed",
   uploaded = "uploaded",
   readyForProcessing = "readyForProcessing",
   geoSpatialMapping = "geoSpatialMapping",

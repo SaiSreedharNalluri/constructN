@@ -76,7 +76,8 @@ export interface PopupComponentProps {
   imageSrc?:any;
   setShowbutton?: any;
   projectId?: string;
-  isUploader?:boolean
+  isUploader?:boolean,
+  isUploaderFinal?:boolean
 }
 
 export function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -155,7 +156,8 @@ const PopupComponent = (props: PopupComponentProps) => {
     setSelectedOption,
     imageSrc,
     isImageThere,
-    isUploader =true,
+    isUploader = true,
+    isUploaderFinal = true
   } = props;
   const handleClosePopup=()=>{
     if(isUploader === false)
@@ -241,7 +243,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 style={{
                   backgroundColor: "#FF843F",
                   color:"white",
-                  width: isUploader  ? "180px":"fit-content",
+                  width: isUploader && isUploaderFinal ? "180px":"fit-content",
                   height: "40px",
                   marginBottom: "22px",
                   marginRight: "22px",
@@ -258,6 +260,7 @@ const PopupComponent = (props: PopupComponentProps) => {
             <></>
           )}
         </DialogActions>
+        {!isUploaderFinal &&<p className="text-sm font-extralight italic p-2">* You can upload later by selecting the same date from the uploader tab</p>}
       </BootstrapDialog>
     </div>
   );
