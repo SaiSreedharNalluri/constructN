@@ -13,11 +13,11 @@ const CustomMiniLoader = () => {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
-  // const { View: lottie } = useLottie(defaultOptions);
+  const { View: lottie } = useLottie(defaultOptions);
   return (
     <MiniLoaderContainer> 
     <div style={{width:"100px", height:"100px", display:"flex", justifyContent:"center", alignItems:"center"}}>
-    {}
+    {lottie}
     </div>
 </MiniLoaderContainer>
 

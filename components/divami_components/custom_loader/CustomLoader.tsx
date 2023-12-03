@@ -17,7 +17,7 @@ const CustomLoader = () => {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
-  // const { View: lottie } = useLottie(defaultOptions);
+  const { View: lottie } = useLottie(defaultOptions);
 
   React.useEffect(()=>{
     const timeO = setTimeout(()=>{
@@ -27,7 +27,7 @@ const CustomLoader = () => {
   return (
     <>
       {isLoading&&<div>
-        <LoaderContainer> {}</LoaderContainer>
+        <LoaderContainer> {lottie} </LoaderContainer>
       </div>}
     </>
   );
