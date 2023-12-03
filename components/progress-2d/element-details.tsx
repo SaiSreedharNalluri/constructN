@@ -1,8 +1,12 @@
-import { Button, IconButton, MenuItem, OutlinedInput, Select, SelectChangeEvent, Typography } from '@mui/material'
+import { IconButton, InputAdornment, MenuItem, OutlinedInput, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material'
 
 import { useEffect, useState } from 'react'
 
 import { IAsset, IAssetCategory, IAssetProgress, IAssetStage, NOT_STARTED_STAGE } from '../../models/IAssetCategory'
+
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
+
+import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined'
 
 import CircleIcon from '@mui/icons-material/Circle'
 
@@ -54,8 +58,6 @@ const ElementDetails: React.FC<{
 
                     </div>
 
-                    <Button variant='contained' size='medium' className='w-full mt-8 bg-[#F1742E] hover:bg-[#F1742E] text-white' >Save</Button>
-
                 </div>
             }
         </>
@@ -90,7 +92,9 @@ interface IElementProps {
 const Element: React.FC<IElementProps> = ({ label, value, supportUser = false, onChange, lines = 1, canEdit = false }) => {
 
     const [name, setName] = useState(value)
-    
+
+    const [editable, setEditable] = useState(false)
+
     useEffect(() => {
 
         setName(value)
@@ -113,9 +117,54 @@ const Element: React.FC<IElementProps> = ({ label, value, supportUser = false, o
 
             </Typography>
 
-            <OutlinedInput fullWidth className='mt-1' multiline={true}
+            <OutlinedInput
 
-                rows={lines} size='small' value={name} sx={{
+                autoFocus fullWidth
+
+                multiline={lines > 1 ? true : false}
+
+                rows={lines} size='small'
+
+                className='mt-1' disabled={!editable}
+
+                endAdornment={
+
+                    canEdit && <InputAdornment position='end'>
+
+                        <Tooltip title={editable ? 'Save' : 'Edit'} arrow>
+
+                            <IconButton
+
+                                aria-label='toggle password visibility'
+
+                                onClick={() => {
+
+                                    setEditable(!editable)
+
+                                    if (editable) onChange && name && onChange(label.toLowerCase(), name)
+
+                                }}
+
+                                onMouseDown={() => {
+
+                                    setEditable(!editable)
+
+                                    if (editable) onChange && name && onChange(label.toLowerCase(), name)
+
+                                }}
+
+                                className='text-[#aaaaaa]' edge='end' >
+
+                                {editable ? <DoneOutlinedIcon fontSize='small' /> : <EditOutlinedIcon fontSize='small' />}
+
+                            </IconButton>
+                        </Tooltip>
+
+                    </InputAdornment>
+
+                }
+
+                sx={{
 
                     fontFamily: 'Open Sans',
 
@@ -125,7 +174,9 @@ const Element: React.FC<IElementProps> = ({ label, value, supportUser = false, o
 
                     },
 
-                }} />
+                }}
+
+                value={name} onChange={event => handleChange(event.target.value)} onBlur={event => setEditable(false)} />
 
         </div>
     )
