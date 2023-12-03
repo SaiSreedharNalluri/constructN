@@ -17,7 +17,6 @@ export enum UploaderActionType {
     setIsAppendingCapture,
     setProject,
     setStructure,
-    setStepperSideFilesList,
     appendFiles,
     skipGCP,
     setGCPType,
@@ -104,11 +103,6 @@ export interface setExtractedFileValue {
 export interface setIsNextEnabled{
   type:UploaderActionType.setIsNextEnabled
   payload:{IsNextEnabled:boolean};
-}
-
-export interface setStepperSideFilesList {
-  type: UploaderActionType.setStepperSideFilesList
-  payload:{ stepperSideFileList: boolean }
 }
 
 export interface appendFiles {
@@ -213,9 +207,6 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         setStructure: (structure:IStructure) => {
           dispatch({ type: UploaderActionType.setStructure, payload:{structure: structure}});
         },
-        setStepperSideFilesList:(stepperSideFileList:boolean)=>{
-          dispatch({type:UploaderActionType.setStepperSideFilesList,payload:{stepperSideFileList:stepperSideFileList}});
-        },
         appendFiles: (files: fileWithExif[]) => {
           dispatch({
               type: UploaderActionType.appendFiles,
@@ -277,7 +268,6 @@ export type UploaderActions =
   | setIsAppendingCapture
   | setProject
   | setStructure
-  | setStepperSideFilesList
   | appendFiles
   | setExtractedFileValue
   | setIsNextEnabled

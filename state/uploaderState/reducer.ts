@@ -92,11 +92,6 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 structure:action.payload.structure
             }
-        case UploaderActionType.setStepperSideFilesList:
-            return {
-                ...state,
-                stepperSideFileList:action.payload.stepperSideFileList
-            }
         case UploaderActionType.setIsAppendingCapture:
             return {
                 ...state,
@@ -155,6 +150,8 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 pendingUploadJobs: pendingUploadJobs,
                 pendingProcessJobs: pendingProcessJobs,
+                selectedJob: undefined,
+                rawImagesMap: {},
                 updateJobs: false
                 // step: isUploadStep ? UploaderStep.Upload : UploaderStep.Details
             }

@@ -41,7 +41,6 @@ export interface UploaderState {
     updateJobs: boolean;
     extractedFileValue:any;
     isNextEnabled:boolean;
-    stepperSideFileList:boolean,
     isAppendingCapture: boolean,
     captureMode: CaptureMode,
     captureType: CaptureType,
@@ -90,7 +89,6 @@ export const initialUploaderState: UploaderState = {
     showMessage: true,
     isLoading: false,
     extractedFileValue:[],
-    stepperSideFileList:false,
     updateJobs: false,
     isNextEnabled: false,
     isAppendingCapture: false,
