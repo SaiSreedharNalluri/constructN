@@ -20,7 +20,7 @@ import { ISnapshot } from "../../../../../models/ISnapshot";
 import { Issue } from "../../../../../models/Issue";
 import { ChildrenEntity, IStructure } from "../../../../../models/IStructure";
 import { ITasks } from "../../../../../models/Itask";
-import { IToolResponse, ITools } from "../../../../../models/ITools";
+import { IToolResponse, IToolbarAction, ITools } from "../../../../../models/ITools";
 import ChevronLeftIcon from "../../../../../public/divami_icons/chevronLeft.svg";
 import ChevronRightIcon from "../../../../../public/divami_icons/chevronRight.svg";
 import { deleteAttachment } from "../../../../../services/attachments";
@@ -155,6 +155,7 @@ const Index: React.FC<IProps> = () => {
   const [currentViewType, setViewType] = useState(""); //plan,elevational,xsectional,bim
   const [currentViewLayers, setViewLayers] = useState<string[]>([]); //360Image, 360Video, phoneImage, droneImage
   const [clickedTool, setClickedTool] = useState<ITools>();
+  const [toolUpdate, setToolUpdate] = useState<IToolbarAction>();
   const [loggedInUserId, SetLoggedInUserId] = useState("");
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
@@ -486,8 +487,8 @@ const Index: React.FC<IProps> = () => {
 
   const getStructureData = (structure: ChildrenEntity) => {
     setStructure(getCurrentStructureFromStructureList(structure));
-    getIssues(structure._id);
-    getTasks(structure._id);
+    // getIssues(structure._id);
+    // getTasks(structure._id);
   };
 
   useEffect(() => {
@@ -496,8 +497,8 @@ const Index: React.FC<IProps> = () => {
         project,
         ...getBreadCrumbsData(structure),
       ]);
-      getIssues(structure._id);
-      getTasks(structure._id);
+      // getIssues(structure._id);
+      // getTasks(structure._id);
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
@@ -678,12 +679,12 @@ const Index: React.FC<IProps> = () => {
     }
   };
 
-  const toolClicked = (toolInstance: ITools) => {
+  const toolClicked = (toolInstance: IToolbarAction) => {
     console.log("toolInstrance",toolInstance)
-    let newLayers = _.cloneDeep(currentViewLayers);
-    switch (toolInstance.toolName) {
-      case "viewType":
-        switch(toolInstance.toolAction){
+    // let newLayers = _.cloneDeep(currentViewLayers);
+    switch (toolInstance.type) {
+      case "setViewType":
+        switch(toolInstance.data){
           case "Plan Drawings":
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "Plan Drawings"}`);
             break;
@@ -694,71 +695,59 @@ const Index: React.FC<IProps> = () => {
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "pointCloud"}`);
             break;
         }
-        //setClickedTool(toolInstance);
         break;
-      case "viewMode":
-        currentViewMode = toolInstance.toolAction;
-        setViewMode(toolInstance.toolAction);
+      case "setViewMode":
+        
         break;
-      case "issue":
-        switch (toolInstance.toolAction) {
-          case "issueView":
-            setOpenIssueView(true);
-            break;
-          case "issueCreate":
-          console.log("toolInstance.Action",toolInstance.toolAction)
+      case "viewIssueList":
+        
+        setOpenIssueView(true);
+        break;
+      case "createIssue":
+          
           conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createIssue","data":" "}');
 
-          case "issueCreateSuccess":
-          case "issueCreateFail":
-          case "issueSelect":
-          case "issueShow":
+      case "createSuccessIssue":
+        break;
+      case "createFailIssue":
+        break;
+      case "selectIssue":
+        break;
+      case "showIssue":
             // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"'+toolInstance.toolAction+'","data":" "}');
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createIssue","data":" "}');
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showIssue","data":" "}');
             break;
-          case "issueHide":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideIssue","data":" "}')
-            break;
-          case "issueRemoved":
-            // setClickedTool(toolInstance);
-            break;
-        }
+      case "hideIssue":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideIssue","data":" "}')
         break;
-      case "progress":
-        switch (toolInstance.toolAction) {
-          case "progressView":
-            //todo
-            break;
-          case "progressCreate":
-          case "progressShow":
-          case "progressHide":
+      case "removedIssue":
             // setClickedTool(toolInstance);
             break;
-        }
-        break;
-      case "task":
-        switch (toolInstance.toolAction) {
-          case "taskView":
-            //todo
-            break;
-          case "taskCreate":
-          case "taskCreateSuccess":
-          case "taskCreateFail":
-          case "taskShow":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showTask","data":" "}')
-            break;
-          case "taskHide":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideTask","data":" "}')
-          case "taskSelect":
-          //setSearchParams({tsk:toolInstance.response?.id as string});
-          // router.query.tsk=toolInstance.response?.id;
-          // router.push(router)
-          case "taskRemoved":
-            // setClickedTool(toolInstance);
-            break;
-        }
 
+      
+      case "viewTaskList":
+        
+        //setOpenIssueView(true);
         break;
+      case "createTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createTask","data":" "}');
+    
+      case "createSuccessTask":
+        break;
+      case "createFailTask":
+        break;
+      case "selectTask":
+        break;
+      case "showTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showTask","data":" "}');
+        break;
+      case "hideTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideTask","data":" "}')
+        break;
+      case "removedTask":
+        // setClickedTool(toolInstance);
+        break;
+      case "setViewLayers":
       case "addViewLayer":
         // newLayers.push(toolInstance.toolAction);
         // console.log(newLayers, "newLayesrs");
@@ -768,274 +757,272 @@ const Index: React.FC<IProps> = () => {
         // newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
         // setViewLayers(newLayers);
         break;
-      case "compareReality":
-      case "compareDesign":
+      case "setCompareMode":
         // setClickedTool(toolInstance);
         break;
-      case "fullScreen":
-        if (toolInstance.toolAction === "true") {
-        }
+      case "setFullScreenMode":
+        break;
       default:
         break;
     }
   };
 
-  const toolResponse = (data: ITools) => {
-    console.log("toolDataaa",data)
-    switch (data.toolName) {
-      case "viewMode":
-        setViewMode(data.toolAction);
-        break;
-      case "viewType":
-        setViewType(data.toolAction);
-      case "Issue":
-        if (data.toolAction === "createIssue") {
+  // const toolResponse = (data: ITools) => {
+  //   console.log("toolDataaa",data)
+  //   switch (data.toolName) {
+  //     case "viewMode":
+  //       setViewMode(data.toolAction);
+  //       break;
+  //     case "viewType":
+  //       setViewType(data.toolAction);
+  //     case "Issue":
+  //       if (data.toolAction === "createIssue") {
           
-          //   html2canvas(document.getElementById('TheView')||document.body).then(function(canvas) {
-          //     //window.open('','_blank')?.document.body.appendChild(canvas);
-          //     //canvas.toDataURL('image/png');
+  //         //   html2canvas(document.getElementById('TheView')||document.body).then(function(canvas) {
+  //         //     //window.open('','_blank')?.document.body.appendChild(canvas);
+  //         //     //canvas.toDataURL('image/png');
 
-          // });
-          // if (data.response != undefined) setCurrentContext(data.response);
-          // setOpenCreateIssue(true);
-        } else if (data.toolAction === "selectIssue") {
-          // issue detail view open logic comes here
-          if (data.response != undefined) {
-            setCurrentContext(data.response);
-            //setOpenIssueDetails(true);
-            // console.log(router,"Router Obj")
-            router.query.iss = data.response?.id;
-            delete router.query.tsk;
-            router.push(router);
-          }
-        }
-        break;
-      case "Task":
-        if (data.toolAction === "createTask") {
-          if (data.response != undefined) setCurrentContext(data.response);
-          setOpenCreateTask(true);
-        } else if (data.toolAction === "selectTask") {
-          // task detail view open logic comes here
-          if (data.response != undefined) {
-            setCurrentContext(data.response);
-            //setOpenTaskDetails(true);
-            // console.log(router,"Router Obj")
-            router.query.tsk = data.response?.id;
-            delete router.query.iss;
-            router.push(router)
-          }
-        }
-        break;
-      default:
-        break;
-    }
-  };
-  useEffect(() => {
-    if (currentViewMode === "Design" && designAndRealityMaps.length) {
-      if (currentViewType != "Plan Drawings" && currentViewType != "BIM") {
-        if (designAndRealityMaps.includes(selectedDesign)) {
-          setViewType(selectedDesign);
-        } else {
-          if (designAndRealityMaps.includes("Plan Drawings")) {
-            setViewType("Plan Drawings");
-            setSelectedDesign("Plan Drawings");
-          } else if (designAndRealityMaps.includes("BIM")) {
-            setViewType("BIM");
-            setSelectedDesign("BIM");
-          } else {
-            const val =
-              designMap && Object.keys(designMap)?.length
-                ? Object.keys(designMap)[0]
-                : "";
-            if (val) {
-              setViewType(val);
-              setSelectedDesign(val);
-            } else {
-              setViewMode("Reality");
-            }
-          }
-        }
-      } else if (!designAndRealityMaps.includes(currentViewType)) {
-        if (designAndRealityMaps.includes("Plan Drawings")) {
-          setViewType("Plan Drawings");
-          setSelectedDesign("Plan Drawings");
-        } else if (designAndRealityMaps.includes("BIM")) {
-          setViewType("BIM");
-          setSelectedDesign("BIM");
-        } else {
-          const val =
-            designMap && Object.keys(designMap)?.length
-              ? Object.keys(designMap)[0]
-              : "";
-          if (val) {
-            setViewType(val);
-            setSelectedDesign(val);
-          } else {
-            setViewMode("Reality");
-            CustomToast("No Design Found, Contact Support", "error");
-          }
-        }
-      }
-    } else if (currentViewMode === "Reality" && designAndRealityMaps.length) {
-      if (currentViewType != "pointCloud" && currentViewType != "orthoPhoto") {
-        if (designAndRealityMaps.includes(selectedReality)) {
-          setViewType(selectedReality);
-        } else {
-          if (designAndRealityMaps.includes("pointCloud")) {
-            setViewType("pointCloud");
-            setSelectedReality("pointCloud");
-          } else if (designAndRealityMaps.includes("orthoPhoto")) {
-            setViewType("orthoPhoto");
-            setSelectedReality("orthoPhoto");
-          } else {
-            // setViewType(designAndRealityMaps[0]);
-            const arr =
-              activeRealityMap &&
-                activeRealityMap[
-                  `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-                ]?.realities?.length &&
-                activeRealityMap[
-                  `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-                ].realities![0].realityType?.length
-                ? activeRealityMap[
-                  `${Object.keys(
-                    activeRealityMap
-                  )[0] as keyof IActiveRealityMap
-                  }`
-                ].realities![0].realityType
-                : [];
-            if (arr && arr.length) {
-              setViewType(arr[0]);
-              setSelectedReality(arr[0]);
-            } else {
-              setViewMode("Design");
-              CustomToast("Reality Not Found, Contact Support", "error");
-            }
-          }
-        }
-      } else if (!designAndRealityMaps.includes(currentViewType)) {
-        if (designAndRealityMaps.includes("pointCloud")) {
-          setViewType("pointCloud");
-          setSelectedReality("pointCloud");
-        } else if (designAndRealityMaps.includes("orthoPhoto")) {
-          setViewType("orthoPhoto");
-          setSelectedReality("orthoPhoto");
-        } else {
-          // setViewType(designAndRealityMaps[0]);
-          const arr =
-            activeRealityMap &&
-              activeRealityMap[
-                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-              ]?.realities?.length &&
-              activeRealityMap[
-                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-              ].realities![0].realityType?.length
-              ? activeRealityMap[
-                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap
-                }`
-              ].realities![0].realityType
-              : [];
-          if (arr && arr.length) {
-            setViewType(arr[0]);
-            setSelectedReality(arr[0]);
-          } else {
-            setViewMode("Design");
-          }
-        }
-      }
-    }
-    setShowIssueMarkups(true);
-    setShowTaskMarkups(true);
-    // toolClicked({ toolName: "issue", toolAction: "issueShow" });
-    // toolClicked({ toolName: "task", toolAction: "taskShow" });
-  }, []);
+  //         // });
+  //         // if (data.response != undefined) setCurrentContext(data.response);
+  //         // setOpenCreateIssue(true);
+  //       } else if (data.toolAction === "selectIssue") {
+  //         // issue detail view open logic comes here
+  //         if (data.response != undefined) {
+  //           setCurrentContext(data.response);
+  //           //setOpenIssueDetails(true);
+  //           // console.log(router,"Router Obj")
+  //           router.query.iss = data.response?.id;
+  //           delete router.query.tsk;
+  //           router.push(router);
+  //         }
+  //       }
+  //       break;
+  //     case "Task":
+  //       if (data.toolAction === "createTask") {
+  //         if (data.response != undefined) setCurrentContext(data.response);
+  //         setOpenCreateTask(true);
+  //       } else if (data.toolAction === "selectTask") {
+  //         // task detail view open logic comes here
+  //         if (data.response != undefined) {
+  //           setCurrentContext(data.response);
+  //           //setOpenTaskDetails(true);
+  //           // console.log(router,"Router Obj")
+  //           router.query.tsk = data.response?.id;
+  //           delete router.query.iss;
+  //           router.push(router)
+  //         }
+  //       }
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
+  // useEffect(() => {
+  //   if (currentViewMode === "Design" && designAndRealityMaps.length) {
+  //     if (currentViewType != "Plan Drawings" && currentViewType != "BIM") {
+  //       if (designAndRealityMaps.includes(selectedDesign)) {
+  //         setViewType(selectedDesign);
+  //       } else {
+  //         if (designAndRealityMaps.includes("Plan Drawings")) {
+  //           setViewType("Plan Drawings");
+  //           setSelectedDesign("Plan Drawings");
+  //         } else if (designAndRealityMaps.includes("BIM")) {
+  //           setViewType("BIM");
+  //           setSelectedDesign("BIM");
+  //         } else {
+  //           const val =
+  //             designMap && Object.keys(designMap)?.length
+  //               ? Object.keys(designMap)[0]
+  //               : "";
+  //           if (val) {
+  //             setViewType(val);
+  //             setSelectedDesign(val);
+  //           } else {
+  //             setViewMode("Reality");
+  //           }
+  //         }
+  //       }
+  //     } else if (!designAndRealityMaps.includes(currentViewType)) {
+  //       if (designAndRealityMaps.includes("Plan Drawings")) {
+  //         setViewType("Plan Drawings");
+  //         setSelectedDesign("Plan Drawings");
+  //       } else if (designAndRealityMaps.includes("BIM")) {
+  //         setViewType("BIM");
+  //         setSelectedDesign("BIM");
+  //       } else {
+  //         const val =
+  //           designMap && Object.keys(designMap)?.length
+  //             ? Object.keys(designMap)[0]
+  //             : "";
+  //         if (val) {
+  //           setViewType(val);
+  //           setSelectedDesign(val);
+  //         } else {
+  //           setViewMode("Reality");
+  //           CustomToast("No Design Found, Contact Support", "error");
+  //         }
+  //       }
+  //     }
+  //   } else if (currentViewMode === "Reality" && designAndRealityMaps.length) {
+  //     if (currentViewType != "pointCloud" && currentViewType != "orthoPhoto") {
+  //       if (designAndRealityMaps.includes(selectedReality)) {
+  //         setViewType(selectedReality);
+  //       } else {
+  //         if (designAndRealityMaps.includes("pointCloud")) {
+  //           setViewType("pointCloud");
+  //           setSelectedReality("pointCloud");
+  //         } else if (designAndRealityMaps.includes("orthoPhoto")) {
+  //           setViewType("orthoPhoto");
+  //           setSelectedReality("orthoPhoto");
+  //         } else {
+  //           // setViewType(designAndRealityMaps[0]);
+  //           const arr =
+  //             activeRealityMap &&
+  //               activeRealityMap[
+  //                 `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+  //               ]?.realities?.length &&
+  //               activeRealityMap[
+  //                 `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+  //               ].realities![0].realityType?.length
+  //               ? activeRealityMap[
+  //                 `${Object.keys(
+  //                   activeRealityMap
+  //                 )[0] as keyof IActiveRealityMap
+  //                 }`
+  //               ].realities![0].realityType
+  //               : [];
+  //           if (arr && arr.length) {
+  //             setViewType(arr[0]);
+  //             setSelectedReality(arr[0]);
+  //           } else {
+  //             setViewMode("Design");
+  //             CustomToast("Reality Not Found, Contact Support", "error");
+  //           }
+  //         }
+  //       }
+  //     } else if (!designAndRealityMaps.includes(currentViewType)) {
+  //       if (designAndRealityMaps.includes("pointCloud")) {
+  //         setViewType("pointCloud");
+  //         setSelectedReality("pointCloud");
+  //       } else if (designAndRealityMaps.includes("orthoPhoto")) {
+  //         setViewType("orthoPhoto");
+  //         setSelectedReality("orthoPhoto");
+  //       } else {
+  //         // setViewType(designAndRealityMaps[0]);
+  //         const arr =
+  //           activeRealityMap &&
+  //             activeRealityMap[
+  //               `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+  //             ]?.realities?.length &&
+  //             activeRealityMap[
+  //               `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
+  //             ].realities![0].realityType?.length
+  //             ? activeRealityMap[
+  //               `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap
+  //               }`
+  //             ].realities![0].realityType
+  //             : [];
+  //         if (arr && arr.length) {
+  //           setViewType(arr[0]);
+  //           setSelectedReality(arr[0]);
+  //         } else {
+  //           setViewMode("Design");
+  //         }
+  //       }
+  //     }
+  //   }
+  //   setShowIssueMarkups(true);
+  //   setShowTaskMarkups(true);
+  //   // toolClicked({ toolName: "issue", toolAction: "issueShow" });
+  //   // toolClicked({ toolName: "task", toolAction: "taskShow" });
+  // }, []);
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    if (
-      designMap &&
-      Object.keys(designMap)?.length &&
-      Object.keys(designMap).includes(currentViewType)
-    ) {
-      if (selectedDesign !== currentViewType)
-        setSelectedDesign(currentViewType);
+  //   if (
+  //     designMap &&
+  //     Object.keys(designMap)?.length &&
+  //     Object.keys(designMap).includes(currentViewType)
+  //   ) {
+  //     if (selectedDesign !== currentViewType)
+  //       setSelectedDesign(currentViewType);
 
-      toolClicked({ toolName: "viewType", toolAction: currentViewType });
-    } else if (currentViewType) {
-      //console.log(currentViewType, "Here ...",selectedReality)
-      if (selectedReality && selectedReality !== currentViewType)
-        setSelectedReality(currentViewType);
-      toolClicked({ toolName: "viewType", toolAction: currentViewType });
-    }
-    if (router.isReady) {
-      router.query.type = currentViewType;
-      router.push(router);
-    }
+  //     toolClicked({ toolName: "viewType", toolAction: currentViewType });
+  //   } else if (currentViewType) {
+  //     //console.log(currentViewType, "Here ...",selectedReality)
+  //     if (selectedReality && selectedReality !== currentViewType)
+  //       setSelectedReality(currentViewType);
+  //     toolClicked({ toolName: "viewType", toolAction: currentViewType });
+  //   }
+  //   if (router.isReady) {
+  //     router.query.type = currentViewType;
+  //     router.push(router);
+  //   }
 
-  }, [currentViewType]);
+  // }, [currentViewType]);
 
-  useEffect(() => {
-    let obj: any = activeRealityMap;
+  // useEffect(() => {
+  //   let obj: any = activeRealityMap;
 
-    for (const key in obj) {
-      if (obj[key].children?.length) {
-        obj[key] = {
-          ...obj[key],
-          children: obj[key]?.children.map((each: any) => {
-            return {
-              ...each,
-              isSelected: true,
-            };
-          }),
-        };
-      } else {
-        obj[key] = {
-          ...obj[key],
-          isSelected: true,
-          children: obj[key].children?.length
-            ? obj[key]?.children.map((each: any) => {
-              return {
-                ...each,
-                isSelected: true,
-              };
-            })
-            : [],
-        };
-      }
-    }
+  //   for (const key in obj) {
+  //     if (obj[key].children?.length) {
+  //       obj[key] = {
+  //         ...obj[key],
+  //         children: obj[key]?.children.map((each: any) => {
+  //           return {
+  //             ...each,
+  //             isSelected: true,
+  //           };
+  //         }),
+  //       };
+  //     } else {
+  //       obj[key] = {
+  //         ...obj[key],
+  //         isSelected: true,
+  //         children: obj[key].children?.length
+  //           ? obj[key]?.children.map((each: any) => {
+  //             return {
+  //               ...each,
+  //               isSelected: true,
+  //             };
+  //           })
+  //           : [],
+  //       };
+  //     }
+  //   }
 
-    setActiveRealityMap(obj);
-    setLayersUpdated(!layersUpdated);
-  }, [currentViewMode, currentViewType]);
+  //   setActiveRealityMap(obj);
+  //   setLayersUpdated(!layersUpdated);
+  // }, [currentViewMode, currentViewType]);
 
-  const getIssues = (structureId: string, isDownload?: boolean) => {
-    // setIssueLoader(true)
-    if (structureId && router.query.projectId) {
-      getIssuesList(router.query.projectId as string, structureId)
-        .then((response: any) => {
-          if (isDownload) {
-            // response.blob().then((blob: any) => {
-            // Creating new object of PDF file
-            const data = response.result;
-            const fileURL = window.URL.createObjectURL(new Blob(data));
-            // Setting various property values
-            let alink = document.createElement("a");
-            alink.href = fileURL;
-            alink.download = "SamplePDF.pdf";
-            alink.click();
-            // });
-          } else {
-            setIssueList(response.result);
-            setIssueFilterList(response.result);
-          }
-        })
-        .catch((error: any) => {
-          if (error.success === false) {
-            CustomToast(error?.message, "error");
-          }
-        });
-    }
-  };
+  // const getIssues = (structureId: string, isDownload?: boolean) => {
+  //   // setIssueLoader(true)
+  //   if (structureId && router.query.projectId) {
+  //     getIssuesList(router.query.projectId as string, structureId)
+  //       .then((response: any) => {
+  //         if (isDownload) {
+  //           // response.blob().then((blob: any) => {
+  //           // Creating new object of PDF file
+  //           const data = response.result;
+  //           const fileURL = window.URL.createObjectURL(new Blob(data));
+  //           // Setting various property values
+  //           let alink = document.createElement("a");
+  //           alink.href = fileURL;
+  //           alink.download = "SamplePDF.pdf";
+  //           alink.click();
+  //           // });
+  //         } else {
+  //           setIssueList(response.result);
+  //           setIssueFilterList(response.result);
+  //         }
+  //       })
+  //       .catch((error: any) => {
+  //         if (error.success === false) {
+  //           CustomToast(error?.message, "error");
+  //         }
+  //       });
+  //   }
+  // };
 
   const getIssuesPriorityList = (projId: string) => {
     return getIssuesPriority(router.query.projectId as string)
@@ -1048,20 +1035,20 @@ const Index: React.FC<IProps> = () => {
         }
       });
   };
-  const getTasks = (structureId: string) => {
-    if (structureId && router.query.projectId) {
-      getTasksList(router.query.projectId as string, structureId)
-        .then((response: any) => {
-          setTasksList(response.result);
-          setTaskFilterList(response.result);
-        })
-        .catch((error: any) => {
-          if (error.success === false) {
-            CustomToast(error?.message, "error");
-          }
-        });
-    }
-  };
+  // const getTasks = (structureId: string) => {
+  //   if (structureId && router.query.projectId) {
+  //     getTasksList(router.query.projectId as string, structureId)
+  //       .then((response: any) => {
+  //         setTasksList(response.result);
+  //         setTaskFilterList(response.result);
+  //       })
+  //       .catch((error: any) => {
+  //         if (error.success === false) {
+  //           CustomToast(error?.message, "error");
+  //         }
+  //       });
+  //   }
+  // };
 
   const handleOnIssueSort = (sortMethod: string) => {
   
@@ -1377,7 +1364,7 @@ const Index: React.FC<IProps> = () => {
             toolAction: "issueRemoved",
           };
 
-          toolClicked(issueMenuInstance);
+          //toolClicked(issueMenuInstance);
         }
       })
       .catch((error: any) => {
@@ -1404,7 +1391,7 @@ const Index: React.FC<IProps> = () => {
             toolAction: "taskRemoved",
           };
 
-          toolClicked(taskMenuInstance);
+          //toolClicked(taskMenuInstance);
         }
       })
       .catch((error: any) => {
@@ -1768,19 +1755,8 @@ const Index: React.FC<IProps> = () => {
               {isDesignAvailable || isRealityAvailable ?
                 <ToolBarMenuWrapper 
                 initData={initData}
-                setViewType={setViewType}
-                currentLayersList={activeRealityMap}
-                currentTypesList={designAndRealityMaps}
-                updateDesignMap={updateDesignMap}
                 toolClicked={toolClicked}
-                designMap={designMap}
-                handleOnIssueSort={handleOnIssueSort}
-                setHighlightCreateIcon={setHighlightCreateIcon}
-                highlightCreateIcon={highlightCreateIcon}
-                highlightCreateTaskIcon={highlightCreateTaskIcon}
-                setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
-                contextInfo={currentContext}
-                
+                toolUpdate= {toolUpdate}
                 ></ToolBarMenuWrapper>
                 
               :<></>}

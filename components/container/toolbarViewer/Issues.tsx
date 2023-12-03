@@ -72,7 +72,6 @@ const Issues = ({
   showIssueMarkups,
   setHighlightCreateIcon,
   highlightCreateIcon,
-  setHighlightCreateTaskIcon,
   initData
 }: any) => {
   const customLogger = new CustomLoggerClass();

@@ -7,7 +7,7 @@ import { IDesignMap } from "../../../models/IDesign";
 import { IActiveRealityMap } from "../../../models/IReality";
 import { ISnapshot } from "../../../models/ISnapshot";
 import { IStructure } from "../../../models/IStructure";
-import { IToolResponse, ITools } from "../../../models/ITools";
+import { IToolResponse, IToolbarAction, ITools } from "../../../models/ITools";
 import { SectionToolBar, ToolbarContainer } from "./ToolBarStyles";
 import { Issue } from "../../../models/Issue";
 import { ITasks } from "../../../models/Itask";
@@ -17,74 +17,14 @@ import { IGenData } from "../../../models/IGenData";
 
 interface IProps {
  
-initData:any;
+initData:IGenData;
+toolClicked:(toolAction:IToolbarAction)=>{};
+toolUpdate:IToolbarAction;
 }
 
 const ToolBarMenuWrapper: React.FC<any> = ({
   toolClicked,
-  viewLayers,
-  viewMode,
-  viewTypes,
-  issuesList,
-  tasksList,
-  setTasksList,
-  handleOnFilter,
-  currentProject,
-  currentSnapshot,
-  currentStructure,
-  currentLayersList,
-  currentTypesList,
-  // closeFilterOverlay,
-  // closeTaskFilterOverlay,
-  handleOnTaskFilter,
-  contextInfo,
-  // openCreateIssue,
-  // openCreateTask,
-  selectedLayersList,
-  // deleteTheTask,
-  // issuePriorityList,
-  // issueStatusList,
-  // issueTypesList,
-  taskFilterState,
-  // issueFilterState,
-  // closeIssueCreate,
-  // closeTaskCreate,
-  // deleteTheIssue,
-  // openIssueDetails,
-  openTaskDetails,
-  closeTaskDetails,
-  // closeIssueDetails,
-  // setIssueList,
-  // getIssues,
-  // getTasks,
-  handleOnIssueSort,
-  handleOnTasksSort,
-  // issueSubmit,
-  // taskSubmit,
-  selectedType,
-  // deleteTheAttachment,
-  // designMap,
-  setActiveRealityMap,
-  setLayersUpdated,
-  layersUpdated,
-  setViewType,
-  // projectUsers,
-  // taskPriorityList,
-  // taskStatusList,
-  // setIssueFilterState,
-  // issueLoader,
-  // setIssueLoader,
-  setShowIssueMarkups,
-  showIssueMarkups,
-  setShowTaskMarkups,
-  showTaskMarkups,
-  setHighlightCreateIcon,
-  highlightCreateIcon,
-  setHighlightCreateTaskIcon,
-  highlightCreateTaskIcon,
-  // isDesignAvailable,
-  // isRealityAvailable,
-  // updateDesignMap,
+  toolUpdate,
   initData
 }) => {
   const [rightNav, setRighttNav] = useState(false);
@@ -95,27 +35,30 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   // const rightOverlayRefs: any = useRef();
   // const [active, setActive] = useState("hideCompare");
   // const [myProject, setMyProject] = useState(currentProject);
-  const [selectedTypeVal, setSelectedTypeVal] = useState(selectedType);
-  const [selectedLayer, setSelectedLayer] = useState("");
+  const [selectedTypeVal, setSelectedTypeVal] = useState<string>();
   const [openSelectTypes, setOpenSelectTypes] = useState(false);
-  const [openSelectLayer, setOpenSelectLayer] = useState(false);
-  // const [myStructure, setMyStructure] = useState<IStructure>(currentStructure);
-  // const [mySnapshot, setMySnapshot] = useState<ISnapshot>(currentSnapshot);
-  var typesL:string[] = currentTypesList as string[];
+  const [myTypesList, setMyTypesList] = useState<string[]>();
 
-  const [myTypesList, setMyTypesList] = useState<string[]>(currentTypesList);
-  const [myLayersList, setMyLayersList] = useState<IActiveRealityMap>(currentLayersList);
+
+  const [selectedLayer, setSelectedLayer] = useState("");
+  
+  const [openSelectLayer, setOpenSelectLayer] = useState(false);
+
+ 
+  const [highlightCreateIcon, setHighlightCreateIcon] = useState(false);
+  const [highlightCreateTaskIcon, setHighlightCreateTaskIcon] = useState(false);
+
+  const [myLayersList, setMyLayersList] = useState<IActiveRealityMap>();
     const [isCameraIconClicked, setCameraIconClicked] = useState(false);
     const [isClipboardIconClicked, setClipboardIconClicked] = useState(false);
   let toolInstance: ITools = { toolName: "", toolAction: "" };
-  // useEffect(() => {
-  //   setIViewMode(viewMode);
-  // }, [viewMode]);
+
   useEffect(() => {
-    switch (currentTypesList?.constructor.name) {
+    if(initData?.currentTypesList)
+    switch (initData.currentTypesList?.constructor.name) {
       case "Array":
         setMyTypesList(
-          currentTypesList.map((typeData: string) => {
+          initData.currentTypesList.map((typeData: string) => {
             switch (typeData) {
               case "pointCloud":
                 return "Reality";
@@ -128,9 +71,12 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         );
         break;
     }
-  }, [currentTypesList]);
-  useEffect(() => {
-    switch (selectedType) {
+
+    if(initData?.currentLayersList)
+    setMyLayersList(initData.currentLayersList);
+
+    if(initData?.currentViewType)
+    switch (initData.currentViewType) {
       case "pointCloud":
         setSelectedTypeVal("Reality");
         break;
@@ -138,26 +84,19 @@ const ToolBarMenuWrapper: React.FC<any> = ({
         setSelectedTypeVal("Map");
         break;
       default:
-        setSelectedTypeVal(selectedType);
+        setSelectedTypeVal(initData.currentViewType);
     }
-  }, [selectedType]);
+
+  }, [initData]);
+ 
   const typeChange = (changeOb: any) => {
     setRighttNav(false);
-    toolInstance.toolName = "viewType";
-    toolInstance.toolAction = changeOb.target.value;
-    toolClicked(toolInstance);
-    if (setViewType) {
-      switch (changeOb.target.value as string) {
-        case "Reality":
-          setViewType("pointCloud");
-          break;
-        case "Map":
-          setViewType("orthoPhoto");
-          break;
-        default:
-          setViewType(changeOb.target.value);
-      }
-    }
+    // toolInstance.toolName = "viewType";
+    // toolInstance.toolAction = changeOb.target.value;
+    let typeChangeToolAction: IToolbarAction = {type:"setViewType", data:changeOb.target.value};
+
+    toolClicked(typeChangeToolAction);
+    
   };
   const LayerChange = (changeOb: any, layerLabel: string, node: any) => {
     let obj: any = myLayersList;
@@ -195,72 +134,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     // setActiveRealityMap(obj);
     // setLayersUpdated(!layersUpdated);
   };
-  useEffect(() => {
-    // setMyProject(currentProject);
-    // setMyStructure(currentStructure);
-    // setMySnapshot(currentSnapshot);
-    setMyTypesList(currentTypesList);
-    setMyLayersList(currentLayersList);
-  }, [
-    // currentProject,
-    // currentSnapshot,
-    // currentStructure,
-    currentLayersList,
-    currentTypesList,
-  ]);
 
-  // const rightMenuClickHandler = (e: any) => {
-  //   setActive(e.currentTarget.id);
-  //   setRighttNav(!rightNav);
-  //   if (e.currentTarget.id === "Reality") {
-  //     toolInstance.toolName = "viewMode";
-  //     toolInstance.toolAction = "Design";
-  //   } else if (e.currentTarget.id === "Design") {
-  //     toolInstance.toolName = "viewMode";
-  //     toolInstance.toolAction = "Reality";
-  //   } else if (e.currentTarget.id === "compareDesign") {
-  //     //console.log("CAptured....");
-  //     toolInstance.toolName = "compareDesign";
-  //     toolInstance.toolAction = "showCompare";
-  //     setIsCompareDesign(true);
-  //     setIsCompareReality(false);
-  //   } else if (e.currentTarget.id === "compareReality") {
-  //     //console.log("CAptured....");
-  //     toolInstance.toolName = "compareReality";
-  //     toolInstance.toolAction = "showCompare";
-  //     setIsCompareReality(true);
-  //     setIsCompareDesign(false);
-  //   } else if (e.currentTarget.id === "hideCompare") {
-  //     //console.log("CAptured....");
-  //     toolInstance.toolName = isCompareReality
-  //       ? "compareReality"
-  //       : "compareDesign";
-  //     // toolInstance.toolAction = isCompareReality
-  //     //   ? "closeCompare"
-  //     //   : "showCompare";
-  //     toolInstance.toolAction = "closeCompare";
-  //     setIsCompareDesign(false);
-  //     setIsCompareReality(false);
-  //   }
-  //   toolClicked(toolInstance);
-  // };
-
-  // const realitySwitch = () => {
-  //   setActive("hideCompare");
-
-  //   // toolInstance.toolAction = isCompareReality
-  //   //   ? "closeCompare"
-  //   //   : "showCompare";
-  //   toolInstance.toolAction = "closeCompare";
-  //   setIsCompareDesign(false);
-  //   setIsCompareReality(false);
-  // };
-
-  // useEffect(() => {
-  //   if (iViewMode === "Reality") {
-  //     realitySwitch();
-  //   }
-  // }, [iViewMode, currentStructure]);
 
   const issueMenuClicked = (localTool: ITools) => {
     toolClicked(localTool);
@@ -279,24 +153,30 @@ const ToolBarMenuWrapper: React.FC<any> = ({
     )
       setRighttNav(!rightNav);
   };
-  const hotspotMenuClicked = (localTool: ITools) => {
-    toolClicked(localTool);
-    if (
-      localTool.toolAction === "hotspotCreateClose" ||
-      localTool.toolAction === "hotspotViewClose" ||
-      localTool.toolAction === "hotspotView"
-    )
-      setRighttNav(!rightNav);
-  };
-  return (
-    <SectionToolBar>
+  // const hotspotMenuClicked = (localTool: ITools) => {
+  //   toolClicked(localTool);
+  //   if (
+  //     localTool.toolAction === "hotspotCreateClose" ||
+  //     localTool.toolAction === "hotspotViewClose" ||
+  //     localTool.toolAction === "hotspotView"
+  //   )
+  //     setRighttNav(!rightNav);
+  // };
+  const handleOnIssueSort = (sortMethod: string) => {
+
+  }
+  const handleOnTasksSort = (sortMethod: string) => {
+
+  }
+  return initData?(
+     <SectionToolBar>
       <ToolbarContainer>
          
           <Typebar
             // rightMenuClickHandler={rightMenuClickHandler}
-            myTypesList={myTypesList}
+            myTypesList={initData.currentTypesList}
             typeChange={typeChange}
-            selectedValue={selectedType}
+            selectedValue={initData.currentViewType}
             openList={openSelectTypes}
             setOpenList={setOpenSelectTypes}
             initData={initData}
@@ -321,7 +201,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
               setOpenSelectTypes(false);
               setOpenSelectLayer(!openSelectLayer);
             }}
-            selectedLayersList={selectedLayersList}
+            selectedLayersList={initData.currentLayersList}
           />
         {/* ) : (
           <></>
@@ -339,17 +219,13 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           setClipboardIconClicked={setClipboardIconClicked}
           setHighlightCreateIcon={setHighlightCreateIcon}
           highlightCreateIcon={highlightCreateIcon}
-          setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
           handleOnIssueSort={handleOnIssueSort}
           issueMenuClicked={issueMenuClicked}
         />
 
         <Task
          tasksList={initData?.currentTaskList}
-         setTasksList={setTasksList}
          taskMenuClicked={taskMenuClicked}
-         setShowTaskMarkups={setShowTaskMarkups}
-          showTaskMarkups={showTaskMarkups}
           highlightCreateTaskIcon={highlightCreateTaskIcon}
           setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
           setHighlightCreateIcon={setHighlightCreateIcon}
@@ -357,23 +233,25 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           setCameraIconClicked={setCameraIconClicked}
           isClipboardIconClicked={isClipboardIconClicked} 
           setClipboardIconClicked={setClipboardIconClicked}
-          openTaskDetails={openTaskDetails}
-          closeTaskDetails={closeTaskDetails}
-          taskFilterState={taskFilterState}
+          // openTaskDetails={openTaskDetails}
+          // closeTaskDetails={closeTaskDetails}
+          // taskFilterState={taskFilterState}
           handleOnTasksSort={handleOnTasksSort}
          
         />
 
         
+          {(initData.currentViewType==="pointCloud"|| initData.currentViewType==="orthoPhoto")?
           <CompareView
   
-          />
+          />:<></>}
        
 
         {/* <Hotspot /> */}
       </ToolbarContainer>
     </SectionToolBar>
-  );
+  
+  ):<></>;
 };
 
 export default ToolBarMenuWrapper;
