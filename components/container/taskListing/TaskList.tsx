@@ -97,7 +97,7 @@ import {
 } from "@mui/material";
 import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
-import { ITools } from "../../../models/ITools";
+import { IToolbarAction, ITools } from "../../../models/ITools";
 import {
   downloadMenuOptions
 } from "../issueListing/Constants";
@@ -165,7 +165,7 @@ const CustomTaskListDrawer = (props: any) => {
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [remainingTasks, setRemainingtasks] = useState(taskList?.length);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
+  let taskMenuInstance: IToolbarAction = { data: "", type: "selectTask" };
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
   const [downloadList, setDownloadList] = useState(taskList);
   const sortMenuOptions = [
@@ -278,12 +278,12 @@ const CustomTaskListDrawer = (props: any) => {
     filteredTaskList.forEach((item: any) => {
       if (task._id === item._id) {
         setViewTask(item);
-        taskContext(task)
+        // taskContext(task)
       }
     });
     setOpenTaskDetail(true);
-    taskMenuInstance.toolAction = "taskSelect";
-    taskMenuInstance.response = { ...task.context, id: task._id };
+    taskMenuInstance.type = "selectTask";
+    taskMenuInstance.data = task;
     taskMenuClicked(taskMenuInstance);
   };
 

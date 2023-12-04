@@ -29,7 +29,7 @@ import {
   createIssueWithAttachments,
 } from "../../../services/issue";
 import TaskList from "../rightFloatingMenu/taskMenu/taskList";
-import { ITools } from "../../../models/ITools";
+import { IToolbarAction, ITools } from "../../../models/ITools";
 import CustomIssueListDrawer from "../issueListing/IssueList";
 import { ISnapshot } from "../../../models/ISnapshot";
 import { IStructure } from "../../../models/IStructure";
@@ -72,7 +72,6 @@ const Issues = ({
   showIssueMarkups,
   setHighlightCreateIcon,
   highlightCreateIcon,
-  setHighlightCreateTaskIcon,
   initData,
   issueContext
 }: any) => {
@@ -86,7 +85,7 @@ const Issues = ({
   // const [issueVisbility, setIssueVisibility] = useState(showIssueMarkups);
   const [myProject, setMyProject] = useState(currentProject);
   const [selectedIssue, setSelectedIssue] = useState({});
-  let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
+  let issueMenuInstance: IToolbarAction = { data: "issue",type:"showIssue"};
   const [enableSubmit, setEnableSubmit] = useState(true);
   const[isLoading,setLoading]=useState(false)
   useEffect(() => {
@@ -103,7 +102,7 @@ const Issues = ({
   }, [currentProject, currentSnapshot, currentStructure, issueOpenDrawer]);
 
   const closeIssueList = () => {
-    issueMenuInstance.toolAction = "issueViewClose";
+    // issueMenuInstance.type = "issueViewClose";
     issueMenuClicked(issueMenuInstance);
   };
   const handleViewTaskList = () => {
@@ -198,6 +197,7 @@ const Issues = ({
     if (data.title && data.type && data.priority) {
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
+          console.log("issue comp res",response)
           if (response.success === true) {
             CustomToast(" Issue created successfully","success");
             setEnableSubmit(true);
@@ -226,7 +226,7 @@ const Issues = ({
     }
   };
   const onCancelCreate = () => {
-    issueMenuInstance.toolAction = "issueCreateFail";
+    // issueMenuInstance.toolAction = "issueCreateFail";
     issueMenuClicked(issueMenuInstance);
     closeIssueCreate();
   };
@@ -237,20 +237,23 @@ const Issues = ({
       const selectedObj = initData?.currentIssueList?.find(
         (each: any) => each._id === contextInfo.data.id
       );
-      setSelectedIssue(selectedObj);
+      issueMenuInstance.type= "selectIssue"
+      issueMenuInstance.data= selectedObj
+      issueMenuClicked(issueMenuInstance)
+      
     }
   }, [openIssueDetails, contextInfo?.id, issuesList]);
 
   const issueSubmitFn = (formdata: any) => {
-    issueMenuInstance.toolAction = "issueCreateSuccess";
-    issueMenuInstance.response = { ...formdata.context, id: formdata._id };
+    // issueMenuInstance.toolAction = "issueCreateSuccess";
+    // issueMenuInstance.response = { ...formdata.context, id: formdata._id };
     issueMenuClicked(issueMenuInstance);
     closeIssueCreate();
     issueSubmit(formdata);
     setEnableSubmit(true);
   };
   const openIssueCreateFn = () => {
-    issueMenuInstance.toolAction = "issueCreate";
+    // issueMenuInstance.toolAction = "issueCreate";
     customLogger.logInfo("ToolBar - Create Issue")
     issueMenuClicked(issueMenuInstance);
       // setHighlightCreateIcon(true) 
@@ -258,7 +261,7 @@ const Issues = ({
   };
   
   const openIssueListFn = () => {
-    issueMenuInstance.toolAction = "issueView";
+    // issueMenuInstance.toolAction = "issueView";
     customLogger.logInfo("ToolBar - View Issue")
     issueMenuClicked(issueMenuInstance);
     // setHighlightCreateIcon(false)
@@ -267,12 +270,12 @@ const Issues = ({
 
   const toggleIssueVisibility = () => {
     if (showHideIssue) {
-      issueMenuInstance.toolAction = "issueHide";
-      issueMenuInstance.toolAction = "issueShow";
+      issueMenuInstance.type = "hideIssue";
+      issueMenuInstance.type = "showIssue";
       customLogger.logInfo("ToolBar - Hide Issue")
     }
-    if (showHideIssue) issueMenuInstance.toolAction = "issueHide";
-    else issueMenuInstance.toolAction = "issueShow";
+    if (showHideIssue) issueMenuInstance.type = "hideIssue";
+    else issueMenuInstance.type = "showIssue";
     customLogger.logInfo("ToolBar - Show Issue")
     issueMenuClicked(issueMenuInstance);
      setShowHideIssue(!showHideIssue);

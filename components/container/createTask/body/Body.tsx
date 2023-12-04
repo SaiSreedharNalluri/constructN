@@ -14,7 +14,7 @@ import {
   TASK_FORM_CONFIG,
   TYPES_OF_ISSUES,
 } from "./Constants";
-import FormWrapper from "../../form-wrapper/FormWrapper";
+import FormWrapper from "../../../divami_components/form-wrapper/FormWrapper";
 import { useRouter } from "next/router";
 import { getCookie } from "cookies-next";
 import {
@@ -23,7 +23,7 @@ import {
   getTaskStatus,
 } from "../../../../services/task";
 import { getProjectUsers } from "../../../../services/project";
-import UploadedImagesList from "../../uploaded-images-list/UploadedImagesList";
+import UploadedImagesList from "../../../divami_components/uploaded-images-list/UploadedImagesList";
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 
 const BodyContainer = styled(Box)({

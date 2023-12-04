@@ -67,7 +67,7 @@ import { useEffect, useRef, useState } from "react";
 import { CSVLink } from "react-csv";
 import { toast } from "react-toastify";
 import { Issue } from "../../../models/Issue";
-import { ITools } from "../../../models/ITools";
+import { IToolbarAction, ITools } from "../../../models/ITools";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import { getProjectUsers } from "../../../services/project";
 import FilterCommon from "../../divami_components/issue-filter-common/IssueFilterCommon";
@@ -164,13 +164,14 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     //   }),
     // ]);
   };
+  let issueMenuInstance: IToolbarAction = { data: "",type:"selectIssue"};
   const [sortOrder, setSortOrder] = useState("asc");
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
   const [searchingOn, setSearchingOn] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
-  let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
+  // let issueMenuInstance: ITools = { toolName: "issue", toolAction: "" };
   const [openIssueDetail, setOpenIssueDetail] = useState(false);
   const [issueType, setIssueType] = useState<[string]>();
   const [issuePriority, setIssuePriority] = useState<[string]>();
@@ -186,9 +187,11 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [ref1, setRef1] = useState(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [downloadList, setDownloadList] = useState(issueList);
+  
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(
     issueList?.currentIssueList.slice(0, 10)
   );
+  //
   const [filterRsp, setFilterRsp] = useState<IFilterProps>({
     taskType: [],
     taskPriority: [],
@@ -283,7 +286,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   }, [issueList]);
 
   const closeIssueList = () => {
-    issueMenuInstance.toolAction = "issueViewClose";
+    // issueMenuInstance.toolAction = "issueViewClose";
   };
 
   const handleViewTaskList = () => {
@@ -354,13 +357,14 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     filteredIssuesList.forEach((item: any) => {
       if (issue._id === item._id) {
         setViewIssue(item);
-        issueContext(issue)
+       
+
         
       }
     });
     setOpenIssueDetail(true);
-    issueMenuInstance.toolAction = "issueSelect";
-    issueMenuInstance.response = { ...issue.context, id: issue._id };
+    issueMenuInstance.type = "selectIssue";
+    issueMenuInstance.data = issue
     issueMenuClicked(issueMenuInstance);
   };
 
