@@ -183,6 +183,8 @@ const IssueCreate: React.FC<IProps> = ({
     formData.append("jreq", JSON.stringify(jreq));
     createIssueWithAttachments(router.query.projectId as string, formData)
       .then((response) => {
+
+        console.log("createIssue Response",response)
         if (response.success === true) {
           CustomToast("Issue is added sucessfully","success");
           handleIssueSubmit(response.result);

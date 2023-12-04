@@ -26,7 +26,7 @@ import TaskList from "../taskListing/TaskList"
 import CreateTask from "../../divami_components/create-task/CreateTask";
 import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
 import { createTask, createTaskWithAttachments } from "../../../services/task";
-import { ITools } from "../../../models/ITools";
+import { IToolbarAction, ITools } from "../../../models/ITools";
 import CustomTaskDetailsDrawer from "../taskDetails/TaskDetail";
 import Tooltip from "@mui/material/Tooltip";
 import html2canvas from "html2canvas";
@@ -71,6 +71,8 @@ const Task = ({
   setHighlightCreateTaskIcon,
   highlightCreateTaskIcon,
   isReality,
+  initData,
+  taskContext
 
 }: any) => {
   const customLogger = new CustomLoggerClass();
@@ -88,7 +90,7 @@ const Task = ({
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [isLoading, setLoading] = useState(false)
   const [showHideTask, setshowHideTask] = useState(false)
-  let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
+  let taskMenuInstance: IToolbarAction = { data: "task",type:"showTask"};
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
 
   useEffect(() => {
@@ -239,24 +241,26 @@ const Task = ({
   };
 
   const onCancelCreate = () => {
-    taskMenuInstance.toolAction = "taskCreateFail";
-    // setOpenCreateTask(false);
+    // taskMenuInstance.toolAction = "taskCreateFail";
+    setOpenCreateTask(false);
     taskMenuClicked(taskMenuInstance);
     closeTaskCreate();
   };
 
   useEffect(() => {
-    if (openTaskDetails && contextInfo?.id) {
-      const selectedObj = tasksList.find(
-        (each: any) => each._id === contextInfo.id
+    if (openTaskDetails && contextInfo?.data?.id) {
+      console.log("ots",openTaskDetails)
+      console.log("Task Id ",contextInfo?.data?.id)
+      const selectedObj = initData?.currentTaskList?.find(
+        (each: any) => each._id === contextInfo?.data?.id
       );
       setSelectedTask(selectedObj);
     }
   }, [openTaskDetails, contextInfo?.id, tasksList]);
   const taskSubmitFn = (formdata: any) => {
     // tasksList.push(formdata);
-    taskMenuInstance.toolAction = "taskCreateSuccess";
-    taskMenuInstance.response = { ...formdata.context, id: formdata._id };
+    // taskMenuInstance.toolAction = "taskCreateSuccess";
+    // taskMenuInstance.response = { ...formdata.context, id: formdata._id };
     // setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);
     closeTaskCreate();
@@ -265,35 +269,35 @@ const Task = ({
   };
   const openTaskCreateFn = () => {
     //setCreateOverlay(true);
-    taskMenuInstance.toolAction = "taskCreate";
+    // taskMenuInstance.toolAction = "taskCreate";
     customLogger.logInfo("ToolBar - Create Task")
     taskMenuClicked(taskMenuInstance);
     setHighlightCreateTaskIcon(true)
     setHighlightCreateIcon(false)
   };
   const closeTaskCreateFn = () => {
-    taskMenuInstance.toolAction = "taskCreateClose";
+    // taskMenuInstance.toolAction = "taskCreateClose";
     // setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);
   };
   const openTaskListFn = () => {
     // setListOverlay(true);
-    taskMenuInstance.toolAction = "taskView";
+    // taskMenuInstance.toolAction = "taskView";
     taskMenuClicked(taskMenuInstance);
   };
   const closeTaskListFn = () => {
     // setListOverlay(false);
-    taskMenuInstance.toolAction = "taskViewClose";
+    // taskMenuInstance.toolAction = "taskViewClose";
     taskMenuClicked(taskMenuInstance);
   };
   const toggleTaskVisibility = () => {
     setshowHideTask(!showHideTask);
     if (showHideTask) {
-      taskMenuInstance.toolAction = "taskHide";
+      taskMenuInstance.type = "hideTask";
       taskMenuClicked(taskMenuInstance);
       customLogger.logInfo("ToolBar - Hide Task")
     }
-    else{ taskMenuInstance.toolAction = "taskShow";
+    else{ taskMenuInstance.type = "showTask";
     customLogger.logInfo("ToolBar - Show Task")
     // setshowHideTask(!showHideTask)
     taskMenuClicked(taskMenuInstance);
@@ -411,7 +415,8 @@ const Task = ({
             projectUsers={projectUsers}
             taskType={currentTypesList}
             taskPriority={taskPriorityList}
-            taskStatus={taskStatusList}
+            taskStatus={taskStatusList} 
+            taskContext={taskContext} // taskContext
           />
         </Drawer>
       )}
