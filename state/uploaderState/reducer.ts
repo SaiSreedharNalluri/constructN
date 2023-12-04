@@ -27,8 +27,10 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                     invalidEXIFFiles: [],
                     duplicateFiles: []
                 },
+                filesDropped: false,
                 gcpType: GCPType.LONGLAT,
                 gcpList: getInitialGCPList(false), // default is LONGLAT
+                isGCPInit: true,
                 skipGCP: false,
                 selectedJob: undefined,
                 isAppendingCapture: false,
@@ -50,6 +52,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 step: previousStep,
                 skipGCP: false,
+                filesDropped: false,
                 isNextEnabled: isNext(state, previousStep)
             }
         case UploaderActionType.Next: 
@@ -103,6 +106,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 isReading: false,
                 choosenFiles: updatedList,
+                filesDropped: true,
                 isNextEnabled: updatedList.validFiles.length > 0
             }
         case UploaderActionType.setExtractedFileValue:
