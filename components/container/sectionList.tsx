@@ -12,26 +12,39 @@ interface IProps{
   expandedNodes: any;
  treeData:any;
   getStructureData:any;
-
+  selectedNodes:any;
+  handleNodeSelection:any
 }
 const SectionList: React.FC<IProps>=({
     treeData,
     getStructureData,
   handleNodeExpand,
   expandedNodes,
+  selectedNodes,
+  handleNodeSelection,
 })=>{
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
     const [treeViewData, setTreeViewData] = useState<any>(treeData);
     const [selectedLayers, setSelectedLayers] = useState<string[] | null>(null);
+    const handleExpand = () => {
+      handleNodeExpand(getAllIds(treeViewData));
+    };
     useEffect(() => {
         setTreeViewData(treeData);
       }, [treeData.length]);
       useEffect(() => {
         const layersSelected = getSelectedLayers(treeViewData);
         setSelectedLayers(layersSelected);
+        if(uploaderState.structure){
+          handleExpand();
+        }
+        
        }, [treeViewData]);
       const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
         handleNodeExpand(nodeIds);
+      };
+      const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
+        handleNodeSelection(nodeIds);
       };
       const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
         let truncatedText = text;
@@ -59,7 +72,7 @@ const SectionList: React.FC<IProps>=({
         }
       };
       const renderTreeNode = (node: any, onLabelClick: any) => (
-        <LabelContainer data-testid="label" className="">
+        <LabelContainer data-testid="label" onClick={(e:any)=>{onLabelClick(e, node)}}>
         
             <div>
             {node.children?.length ? (
@@ -141,7 +154,9 @@ const SectionList: React.FC<IProps>=({
             defaultCollapseIcon={<></>}
             defaultExpandIcon={<></>}
             expanded={expandedNodes}
+            selected={selectedNodes}
             onNodeToggle={handleToggle}
+           onNodeSelect={handleSelect}
           >
             {treeViewData.map((eachNode:any) => renderTree(eachNode, onLabelClick))}
           </UploaderStyledTreeView>
