@@ -4,7 +4,6 @@ import FileListing from "../fileListing/fileListing";
 import ExifReader from "exifreader";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import Warning from "../../../public/divami_icons/Warning_Icon.svg";
-import { IExifFile } from "../../../models/IExifFile";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 import { fileWithExif } from "../../../state/uploaderState/state";
 import { getCaptureIdFromModelOrString } from "../../../utils/utils";
@@ -18,36 +17,53 @@ const UploaderFiles = () => {
   const duplicateFiles = state.choosenFiles.duplicateFiles;
   const [showPopUp, setshowPopUp] = useState(false);
   const [message, setMessage] = useState<string>("");
+ 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles) {
-      // console.log("ChooseFiles onDrop: ", acceptedFiles);
-      uploaderAction.chageIsReading(true)
-      let acceptedFilesWithExif: fileWithExif[] = await Promise.all(
-        acceptedFiles.map(async (file) => {
-          return {
-            file: file,
-            exifData: await ExifReader.load(file),
-          };
-        })
-      );
-      uploaderAction.appendFiles(acceptedFilesWithExif);
-      // console.log("ChooseFiles onDrop: withExif", acceptedFilesWithExif);
+      uploaderAction.chageIsReading(true);
+      const batchSize = 100;
+      for (let i = 0; i < acceptedFiles.length; i += batchSize) {
+        const fileBatch = acceptedFiles.slice(i, i + batchSize);
+        await processFileBatch(fileBatch);
+      }
+      uploaderAction.chageIsReading(false)
     }
   }, []);
+  async function processFileBatch(fileBatch:File[]) {
+    try {
+      const acceptedFilesWithExif: (fileWithExif | null)[] = await Promise.all(
+        fileBatch.map(async (file) => {
+          try {
+           
+            const exifData = await ExifReader.load(file);
+            return {
+              file: file,
+              exifData: exifData,
+            };
+          } catch (exifError) {
+            return null;
+          }
+        })
+      );
+      let filteredFilesWithExif:(fileWithExif | null)[] = acceptedFilesWithExif.filter((item) => item !== null);
+      uploaderAction.appendFiles(filteredFilesWithExif as fileWithExif[]);
+    } catch (error) {
+      console.log('Error processing files:', error);
+    }
+  }
   useEffect(() => {
-    // console.log("ChooseFiles inavlidDialog useeffect: ", invalidEXIFFiles, duplicateFiles);
-    if (invalidEXIFFiles.length > 0 && duplicateFiles.length > 0) {
+    if (invalidEXIFFiles.length > 0 && duplicateFiles.length > 0 && !state.isReading) {
       setshowPopUp(true);
       setMessage(
         `${invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.
         ${duplicateFiles.length} duplicate file(s) found. They will be skipped.`
       );
-    } else if (invalidEXIFFiles.length > 0) {
+    } else if (invalidEXIFFiles.length > 0 && !state.isReading) {
       setshowPopUp(true);
       setMessage(
         `${invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.`
       );
-    } else if (duplicateFiles.length > 0) {
+    } else if (duplicateFiles.length > 0 && !state.isReading) {
       setshowPopUp(true);
       setMessage(
         `${duplicateFiles.length} duplicate file(s) found. They will be skipped.`
