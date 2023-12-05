@@ -57,7 +57,7 @@ export default function Progress2DToolbar({
 
     const [isCompare, setIsCompare] = useState<boolean>(false)
 
-    useEffect(() => _getLayers, [snapshotBase])
+    useEffect(() => _getLayers(), [snapshotBase])
 
     const _getLayers = () => {
 
