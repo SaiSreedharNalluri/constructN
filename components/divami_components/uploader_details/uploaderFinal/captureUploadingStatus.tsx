@@ -131,8 +131,19 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
         } rounded-3xl h-[280px]  `}
         style={{ boxShadow: " 0px 4px 4px 0px #00000040" }}
       >
-        <div className="relative top-[20px]  w-[90%] mx-auto  h-[195px] ">
-          <div className="overflow-x-hidden h-full mt-[8px]" style={{
+        <div className="relative top-[20px]  w-[90%] mx-auto  h-[175px] ">
+                 <div style={{
+                        fontSize: "16px",
+                        fontWeight: "700",
+                        fontStyle: "normal",
+                        fontFamily: "Open sans",
+                        lineHeight: "20px",
+                        color: "#101f4c",
+                        marginLeft:"14px"
+          }}>
+          {isUploading?<p>Uploads In Progress</p>: <p >Past Uploads Pending Processing </p> }  
+          </div>
+          <div className="overflow-x-hidden h-full mt-[12px]" style={{
                         fontSize: "14px",
                         fontWeight: "600",
                         fontStyle: "normal",
@@ -148,7 +159,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                   isUploadedOn ? "bg-white" : "bg-[#FFECE2]"
                 } w-full`}
               >
-                <tr className="w-full flex justify-evenly border-b border-b-[#F1742E] mx-auto">
+                <tr className="w-full flex justify-between border-b border-b-[#F1742E] mx-auto">
                   <th className="ml-[8px] py-[2px] text-left w-[35%]  flex items-center">
                     {isUploadedOn && (
                 <CustomCheckbox
@@ -164,12 +175,12 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     </span>
                   </th>
                   <th
-                    className="pl-2 text-left w-[18%]">
+                    className=" text-left w-[18%]">
                     Capture Date
                   </th>
                   {isUploading && (
                     <th
-                      className="pl-2 text-left w-[18%]"
+                      className="text-left w-[18%]"
                     >
                       Uploading
                     </th>
@@ -206,7 +217,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     }}
                     className={`cursor-${isUploading ? "pointer" : "default"} ${
                       index === hoveredRowIndex ? "bg-gray-200" : ""
-                    }  ${uploaderState.selectedJob?._id===job._id?"bg-[#D9D9D9] text-[#F1742E]":""} flex justify-evenly w-full my-[4px] mx-auto`}
+                    }  ${uploaderState.selectedJob?._id===job._id?"bg-[#D9D9D9] text-[#F1742E]":""} flex justify-between w-full my-[4px] mx-auto`}
                     onMouseEnter={() => setHoveredRowIndex(index)}
                     onMouseLeave={() => setHoveredRowIndex(null)}
                   >
