@@ -12,9 +12,6 @@ const UploaderFiles = () => {
   const { state, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
 
-  const validEXIFFiles = state.choosenFiles.validFiles;
-  const invalidEXIFFiles = state.choosenFiles.invalidEXIFFiles;
-  const duplicateFiles = state.choosenFiles.duplicateFiles;
   const [showPopUp, setshowPopUp] = useState(false);
   const [message, setMessage] = useState<string>("");
  
@@ -52,24 +49,27 @@ const UploaderFiles = () => {
     }
   }
   useEffect(() => {
-    if (invalidEXIFFiles.length > 0 && duplicateFiles.length > 0 && !state.isReading) {
-      setshowPopUp(true);
-      setMessage(
-        `${invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.
-        ${duplicateFiles.length} duplicate file(s) found. They will be skipped.`
-      );
-    } else if (invalidEXIFFiles.length > 0 && !state.isReading) {
-      setshowPopUp(true);
-      setMessage(
-        `${invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.`
-      );
-    } else if (duplicateFiles.length > 0 && !state.isReading) {
-      setshowPopUp(true);
-      setMessage(
-        `${duplicateFiles.length} duplicate file(s) found. They will be skipped.`
-      );
+    // console.log("TestingUploader useeffect choose files: ", state.filesDropped);
+    if(state.filesDropped) {
+      if (state.choosenFiles.invalidEXIFFiles.length > 0 && state.choosenFiles.invalidEXIFFiles.length > 0 && !state.isReading) {
+        setshowPopUp(true);
+        setMessage(
+          `${state.choosenFiles.invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.
+          ${state.choosenFiles.duplicateFiles.length} duplicate file(s) found. They will be skipped.`
+        );
+      } else if (state.choosenFiles.invalidEXIFFiles.length > 0 && !state.isReading) {
+        setshowPopUp(true);
+        setMessage(
+          `${state.choosenFiles.invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.`
+        );
+      } else if (state.choosenFiles.duplicateFiles.length > 0 && !state.isReading) {
+        setshowPopUp(true);
+        setMessage(
+          `${state.choosenFiles.duplicateFiles.length} duplicate file(s) found. They will be skipped.`
+        );
+      }
     }
-  }, [invalidEXIFFiles.length,duplicateFiles.length]);
+  }, [state.choosenFiles.invalidEXIFFiles.length, state.choosenFiles.duplicateFiles.length]);
 
   useEffect(() => {
     if (state.isAppendingCapture && state.selectedJob) {
@@ -96,7 +96,7 @@ const UploaderFiles = () => {
           <ChooseUploaderFile onDrop={onDrop} />
         </div>
         <div>
-          <FileListing selectedFile={validEXIFFiles.map((e) => e.file)} isSizeRequired={true} />
+          <FileListing selectedFile={state.choosenFiles.validFiles.map((e) => e.file)} isSizeRequired={true} />
         </div>
       </div>
       <PopupComponent

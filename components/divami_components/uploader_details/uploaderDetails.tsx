@@ -30,6 +30,7 @@ const UploaderDateDetails: React.FC<any> = () => {
   const router = useRouter();
   let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
   const [expanded, setExpanded] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
   const maxAllowedDate = new Date();
   const [filteredJob, setFilteredJobs] = useState<any>();
 
@@ -60,9 +61,12 @@ const UploaderDateDetails: React.FC<any> = () => {
   const getStructureData = (structure: IStructure) => {
     let structureDetails = getCurrentStructureFromStructureList(structure);
     if (structureDetails) {
-      // console.log("TestingUploader: structureDetails", structureDetails)
+       //console.log("TestingUploader: structureDetails", structureDetails)
       uploaderAction.setStructure(structureDetails);
     }
+  };
+  const handleNodeSelection = (nodeIds: any) => {
+    setSelected(nodeIds);
   };
   useEffect(() => {
     if (appState.currentProjectData) {
@@ -148,6 +152,9 @@ const UploaderDateDetails: React.FC<any> = () => {
                   getStructureData={getStructureData}
                   handleNodeExpand={handleNodeExpand}
                   expandedNodes={expanded}
+                  handleNodeSelection={handleNodeSelection}
+                  selectedNodes={uploaderState.structure?._id}
+
                   treeData={state}
                 ></SectionList>
               }
