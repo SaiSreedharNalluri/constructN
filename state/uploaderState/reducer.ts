@@ -104,7 +104,6 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
             let updatedList = getUpdatedFileList(state, action.payload.files);
             return {
                 ...state,
-                isReading: false,
                 choosenFiles: updatedList,
                 filesDropped: true,
                 isNextEnabled: updatedList.validFiles.length > 0
