@@ -61,7 +61,7 @@ const UploaderDateDetails: React.FC<any> = () => {
   const getStructureData = (structure: IStructure) => {
     let structureDetails = getCurrentStructureFromStructureList(structure);
     if (structureDetails) {
-       console.log("TestingUploader: structureDetails", structureDetails)
+       //console.log("TestingUploader: structureDetails", structureDetails)
       uploaderAction.setStructure(structureDetails);
     }
   };

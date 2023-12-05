@@ -31,12 +31,10 @@ const SectionList: React.FC<IProps>=({
     };
     useEffect(() => {
         setTreeViewData(treeData);
-        //handleExpand();
       }, [treeData.length]);
       useEffect(() => {
         const layersSelected = getSelectedLayers(treeViewData);
         setSelectedLayers(layersSelected);
-        console.log('checking finds',layersSelected)
         if(uploaderState.structure){
           handleExpand();
         }
