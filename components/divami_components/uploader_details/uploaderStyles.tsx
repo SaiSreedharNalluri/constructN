@@ -12,7 +12,7 @@ export const TreeViewContainer = styled("div")({
   });
 export const UploaderStyledTreeView = styled(TreeView)({
     "& .Mui-expanded": {
-      backgroundColor: "#F4F4F4",
+     // backgroundColor: "#F4F4F4",
       borderColor: "blue",
     },
     "& .MuiCollapse-root": {
@@ -32,12 +32,12 @@ export const UploaderStyledTreeView = styled(TreeView)({
       },
     },
     "& .MuiTreeItem-content.MuiTreeItem-content.Mui-selected": {
-      backgroundColor: "#FFF2EB",
+     backgroundColor: "#FFF2EB",
       color: "#F1742E",
     },
     " & .MuiTreeView-root": {
       "& .MuiTreeItem-content": {
-        backgroundColor: "#ff0000",
+      backgroundColor: "#ff0000",
       },
     },
     "& ul": {
@@ -66,7 +66,7 @@ export const UploaderStyledTreeView = styled(TreeView)({
     display: 'flex',
     // justifyContent: 'center',
     alignItems: 'center',
-    width: "80%",
+    width: "100%",
     height: "34px",
     // position: "relative",
   });

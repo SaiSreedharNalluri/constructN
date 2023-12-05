@@ -45,6 +45,7 @@ export interface UploaderState {
     captureMode: CaptureMode,
     captureType: CaptureType,
     choosenFiles: choosenFileObject,
+    filesDropped: boolean,
     skipGCP: boolean,
     gcpType: UTMType | LONGLATType, 
     gcpList: IGCP,
@@ -98,6 +99,7 @@ export const initialUploaderState: UploaderState = {
         invalidEXIFFiles: [],
         duplicateFiles: []
     },
+    filesDropped: false,
     gcpType: GCPType.LONGLAT,
     gcpList: getInitialGCPList(false), // default is LONGLAT
     isGCPInit: true,
