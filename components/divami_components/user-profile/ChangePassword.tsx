@@ -8,6 +8,7 @@ import InputPassword from '../../../components/core/Input/inputPassword';
 import { changePassword } from '../../../services/userAuth';
 import Header from "./header/Header";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
+import { customHeaderState } from '../../../models/IUtils';
 const ChangePassword = ({closeDrawer}:any) => {
   const initialValues = {
     currentPassword: '',
@@ -75,12 +76,10 @@ const ChangePassword = ({closeDrawer}:any) => {
     <div className=''>
       {show && (
         <div>
-          
-            <div className="px-4">
-      <Header id="ChangePassword" closeEditProject={closeDrawer} />
-      </div>
-          
-            <div className='calc-h159 overflow-y-auto'>
+          <div className="px-4">
+            <Header id={customHeaderState.ChangePassword} closeEditProject={closeDrawer} />
+            </div>
+          <div className='calc-h159 overflow-y-auto'>
             <div>
                 <p className='text-[#101F4C]  px-4 py-1'>Use the instructions to make your password strong </p>
             </div>
