@@ -68,6 +68,20 @@ const UploaderDateDetails: React.FC<any> = () => {
   const handleNodeSelection = (nodeIds: any) => {
     setSelected(nodeIds);
   };
+
+  const getExistingJobStatusLabel = (job: IJobs): string => {
+    switch(job.status) {
+      case JobStatus.pendingUpload:
+        return "pending upload"
+      case JobStatus.uploaded:
+        return "pending processing"
+      case JobStatus.uploadFailed:
+        return "upload failed"
+      default:
+        return "pending upload"
+    }
+  }
+
   useEffect(() => {
     if (appState.currentProjectData) {
       let hierarchy = appState.currentProjectData.hierarchy;
@@ -93,7 +107,10 @@ const UploaderDateDetails: React.FC<any> = () => {
       //   );
       // });
 
-      const combinedJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
+      const errorJobs = uploaderState.pendingUploadJobs.filter((job, index) => {
+        return job.status === JobStatus.uploadFailed
+      })
+      const combinedJobs = uploaderState.pendingProcessJobs.concat(errorJobs)
       const filteredPendingProcessJobs = combinedJobs.filter((job) => {
         return (
           getStructureIdFromModelOrString(job.structure) === uploaderState.structure?._id &&
@@ -219,7 +236,7 @@ const UploaderDateDetails: React.FC<any> = () => {
                                     }}
                                   >
                                     {
-                                      job.status === JobStatus.pendingUpload ? "pending upload" : "pending processing"
+                                      getExistingJobStatusLabel(job)
                                     }
                                   </td>
                                 </tr>
