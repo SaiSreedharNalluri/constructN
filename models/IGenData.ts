@@ -25,4 +25,5 @@ export interface IGenData {
         selectedIssue?: Issue,
         selectedHotspot?: IHotspot,
         projectUTM?:string,
+        currentTypesList:string[]
       }
