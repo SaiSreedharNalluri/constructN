@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Ref,forwardRef, useImperativeHandle } from "react";
 // import { styled } from '@mui/material/styles'
 import Image from "next/image";
 
@@ -39,55 +39,89 @@ import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import { getTimeInProjectTimezone } from "../../../utils/utils";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
-const Issues = ({
-  rightMenuClickHandler,
-  issuesList,
-  issueMenuClicked,
-  handleOnFilter,
-  currentStructure,
-  currentSnapshot,
-  closeFilterOverlay,
-  contextInfo,
-  issueLayer,
-  currentProject,
-  issueOpenDrawer,
-  issuePriorityList,
-  issueStatusList,
-  issueTypesList,
-  issueFilterState,
-  setIssueFilterState,
-  closeIssueCreate,
-  deleteTheIssue,
-  openIssueDetails,
-  closeIssueDetails,
-  setIssueList,
-  getIssues,
-  handleOnIssueSort,
-  issueSubmit,
-  deleteTheAttachment,
-  projectUsers,
-  issueLoader,
-  setIssueLoader,
-  setShowIssueMarkups,
-  showIssueMarkups,
-  setHighlightCreateIcon,
-  highlightCreateIcon,
-  initData,
-  issueContext
-}: any) => {
+import { useRouter } from "next/router";
+
+
+export type IssueToolHandle = {
+  handleIssueInstance: (IssuetoolInstance: any) => void;
+  
+  
+};
+
+function Issues({
+    rightMenuClickHandler,
+    issuesList,
+    issueMenuClicked,
+    handleOnFilter,
+    currentStructure,
+    currentSnapshot,
+    closeFilterOverlay,
+    issueLayer,
+    currentProject,
+    issueOpenDrawer,
+    issuePriorityList,
+    issueStatusList,
+    issueTypesList,
+    issueFilterState,
+    setIssueFilterState,
+    closeIssueCreate,
+    deleteTheIssue,
+    closeIssueDetails,
+    setIssueList,
+    getIssues,
+    handleOnIssueSort,
+    issueSubmit,
+    deleteTheAttachment,
+    projectUsers,
+    issueLoader,
+    setIssueLoader,
+    setShowIssueMarkups,
+    showIssueMarkups,
+    setHighlightCreateIcon,
+    highlightCreateIcon,
+    initData,
+    issueContext,
+  }:any,ref:Ref<IssueToolHandle>) {
+    const router = useRouter();
   const customLogger = new CustomLoggerClass();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
   const [image, setImage] = useState<Blob>();
 
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
+  const [openIssueDetails, setOpenIssueDetails] = useState(false);
   const [showHideIssue,setShowHideIssue] = useState(false)
   // const [issueVisbility, setIssueVisibility] = useState(showIssueMarkups);
   const [myProject, setMyProject] = useState(currentProject);
   const [selectedIssue, setSelectedIssue] = useState({});
   let issueMenuInstance: IToolbarAction = { data: "issue",type:"showIssue"};
   const [enableSubmit, setEnableSubmit] = useState(true);
+  const [contextInfo,setContextInfo] = useState<any>()
   const[isLoading,setLoading]=useState(false)
+
+  useImperativeHandle(ref, () => {
+    return{
+      handleIssueInstance(IssuetoolInstance:any){
+          if (IssuetoolInstance.type === "selectIssue" && IssuetoolInstance.data?.data?.id) {
+            const selectedObj = initData?.currentIssueList?.find(
+              (each: any) => each._id === IssuetoolInstance?.data?.data?.id
+            );
+           
+            issueMenuInstance.type= IssuetoolInstance.type
+            issueMenuInstance.data= selectedObj.context
+            issueMenuClicked(issueMenuInstance)
+            setSelectedIssue(selectedObj)
+            setOpenIssueDetails(true)
+          }
+
+          if(IssuetoolInstance.type === "createIssue"){
+            setOpenCreateIssue(true)
+            setContextInfo(IssuetoolInstance?.data?.data)
+          }
+    }
+    }
+  },[]);
+  
   useEffect(() => {
     setMyProject(currentProject);
     html2canvas(
@@ -126,7 +160,7 @@ const Issues = ({
     const formData = new FormData();
     let data: any = {};
 
-    data.structure = currentStructure?._id;
+    data.structure = router.query.structId;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
     data.owner = values?.owner;
@@ -226,34 +260,26 @@ const Issues = ({
     }
   };
   const onCancelCreate = () => {
-    // issueMenuInstance.toolAction = "issueCreateFail";
+    issueMenuInstance.type = "createFailIssue";
     issueMenuClicked(issueMenuInstance);
-    closeIssueCreate();
+    setOpenCreateIssue(false);
   };
-
-  useEffect(() => {
-    if (openIssueDetails && contextInfo?.data.id) {
-      console.log(contextInfo.data.id)
-      const selectedObj = initData?.currentIssueList?.find(
-        (each: any) => each._id === contextInfo.data.id
-      );
-      issueMenuInstance.type= "selectIssue"
-      issueMenuInstance.data= selectedObj
-      issueMenuClicked(issueMenuInstance)
+  // useEffect(() => {
+    
       
-    }
-  }, [openIssueDetails, contextInfo?.id, issuesList]);
+  //   }
+  // }, [openIssueDetails, contextInfo?.id, issuesList]);
 
   const issueSubmitFn = (formdata: any) => {
-    // issueMenuInstance.toolAction = "issueCreateSuccess";
-    // issueMenuInstance.response = { ...formdata.context, id: formdata._id };
+    setOpenCreateIssue(false)
+    let issueMenuInstance: IToolbarAction = { data: formdata,type:"createSuccessIssue"};
     issueMenuClicked(issueMenuInstance);
     closeIssueCreate();
     issueSubmit(formdata);
     setEnableSubmit(true);
   };
   const openIssueCreateFn = () => {
-    // issueMenuInstance.toolAction = "issueCreate";
+    issueMenuInstance.type = "createIssue";
     customLogger.logInfo("ToolBar - Create Issue")
     issueMenuClicked(issueMenuInstance);
       // setHighlightCreateIcon(true) 
@@ -284,9 +310,9 @@ const Issues = ({
 
   };
 
-  useEffect(() => {
-    setOpenCreateIssue(issueOpenDrawer);
-  }, [issueOpenDrawer]);
+  // useEffect(() => {
+  //   setOpenCreateIssue(issueOpenDrawer);
+  // }, [issueOpenDrawer]);
 
   return (
   
@@ -423,7 +449,7 @@ const Issues = ({
         >
           <CustomIssueDetailsDrawer
             issue={selectedIssue}
-            onClose={() => closeIssueDetails()}
+            onClose={() => setOpenIssueDetails(false)}
             issueType={issueTypesList}
             issuePriority={issuePriorityList}
             issueStatus={issueStatusList}
@@ -450,4 +476,4 @@ const Issues = ({
   );
 };
 
-export default Issues;
+export default forwardRef(Issues);

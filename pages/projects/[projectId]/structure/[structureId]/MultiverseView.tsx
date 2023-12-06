@@ -62,6 +62,7 @@ import { IGenData } from "../../../../../models/IGenData";
 import { MqttConnector, OnMessageCallbak } from "../../../../../utils/MqttConnector";
 import Iframe from "../../../../../components/container/Iframe"
 import IssueList from "../../../../../components/container/rightFloatingMenu/issueMenu/issueList";
+import { responsiveFontSizes } from "@mui/material";
 interface IProps { }
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -123,9 +124,13 @@ const LeftOverLayContainer = styled("div")(({ isFullScreen }: any) => ({
   marginLeft: "58px",
   zIndex: 0,
 }));
+export type toolBarHandle = {
+  selectToolRef: (handleMenuInstance: any) => void;
+};
 
 const Index: React.FC<IProps> = () => {
   const customLogger = new CustomLoggerClass();
+  const ref = React.useRef<toolBarHandle>(null);
   const router = useRouter();
   let [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
   const [currentProjectId, setActiveProjectId] = useState("");
@@ -190,8 +195,9 @@ const Index: React.FC<IProps> = () => {
 
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
   const [initData, setInintData] = useState<IGenData>();
-  let issueMenuInstance: IToolbarAction = { data: "",type:"selectIssue"};
+  let handleMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   let isSupportUser = useRef(false);
+ 
   //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
@@ -251,9 +257,9 @@ const Index: React.FC<IProps> = () => {
 
   const closeTaskDetails = () => {
     setOpenTaskDetails(false);
-   
+
     //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)   
-   
+
   };
   const closeIssueDetails = () => {
     setOpenIssueDetails(false);
@@ -505,11 +511,11 @@ const Index: React.FC<IProps> = () => {
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
-    console.log("changed structree",structure)
+    console.log("changed structree", structure)
     if (router.isReady && structure) {
       router.query.structId = structure?._id;
       router.query.structureId = structure?._id;
-             
+
       router.push(router);
     }
   }, [structure, project]);
@@ -555,7 +561,7 @@ const Index: React.FC<IProps> = () => {
 
       let sel_iss: Issue | undefined = issuesList.find((t) => t._id === router.query.iss)
       if (sel_iss) {
-      // setClickedTool({ toolAction: 'issueSelect', toolName: 'issue', response: sel_iss });
+        // setClickedTool({ toolAction: 'issueSelect', toolName: 'issue', response: sel_iss });
         // setCurrentContext({ ...sel_iss?.context, id: router.query.iss as string });
         setOpenIssueDetails(true);
       }
@@ -683,11 +689,11 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: IToolbarAction) => {
-    console.log("toolInstrance",toolInstance)
+    console.log("toolInstrance", toolInstance)
     // let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.type) {
       case "setViewType":
-        switch(toolInstance.data){
+        switch (toolInstance.data) {
           case "Plan Drawings":
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "Plan Drawings"}`);
             break;
@@ -699,43 +705,66 @@ const Index: React.FC<IProps> = () => {
             break;
         }
         break;
+
+      case "setCompareMode":
+        switch(toolInstance.data){
+          case "noCompare":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"'+toolInstance.data+'"}');
+            break;
+          case "compareDesign":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"'+toolInstance.data+'"}');
+            break;
+          case "compareReality":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"'+toolInstance.data+'"}');
+            break;
+
+        }
+        break;
       case "setViewMode":
-        
+
         break;
       case "viewIssueList":
-        
+
         setOpenIssueView(true);
         break;
       case "createIssue":
-          
-          conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createIssue","data":" "}');
-          // conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(),appEventsCB)
-          break;
-        
-          case "showIssue":
-            // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"'+toolInstance.toolAction+'","data":" "}');
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showIssue","data":" "}');
-            break;
+
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createIssue","data":" "}');
+        // conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(),appEventsCB)
+        break;
+
+      case "showIssue":
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"'+toolInstance.toolAction+'","data":" "}');
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showIssue","data":" "}');
+        break;
       case "hideIssue":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideIssue","data":" "}')
         break;
+      case "selectIssue":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + JSON.stringify(toolInstance.data) + '"}');
+        break;
       case "removedIssue":
-            // setClickedTool(toolInstance);
-            break;
-
-      
+        // setClickedTool(toolInstance);
+        break;
       case "viewTaskList":
-        
         //setOpenIssueView(true);
         break;
       case "createTask":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createTask","data":" "}');
-    
-      case "createSuccessTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":" "}');
+        break;
+      case "createFailIssue":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailIssue","data":" "}');
+        break;
+      case "createSuccessIssue":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
         break;
       case "createFailTask":
         break;
+      case "createSuccessTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
+        break;
       case "selectTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + JSON.stringify(toolInstance.data) + '"}');
         break;
       case "showTask":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showTask","data":" "}');
@@ -776,7 +805,7 @@ const Index: React.FC<IProps> = () => {
   //       setViewType(data.toolAction);
   //     case "Issue":
   //       if (data.toolAction === "createIssue") {
-          
+
   //         //   html2canvas(document.getElementById('TheView')||document.body).then(function(canvas) {
   //         //     //window.open('','_blank')?.document.body.appendChild(canvas);
   //         //     //canvas.toDataURL('image/png');
@@ -1050,7 +1079,7 @@ const Index: React.FC<IProps> = () => {
   // };
 
   const handleOnIssueSort = (sortMethod: string) => {
-  
+
     switch (sortMethod) {
       case "Last Updated":
         setIssueList(
@@ -1141,7 +1170,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const handleOnTasksSort = (sortMethod: string) => {
-    
+
     switch (sortMethod) {
       case "Last Updated":
         setIssueList(
@@ -1361,7 +1390,7 @@ const Index: React.FC<IProps> = () => {
           const issueMenuInstance: ITools = {
             toolName: "issue",
             toolAction: "issueRemoved",
-            response:issueObj
+            response: issueObj
           };
 
           //toolClicked(issueMenuInstance);
@@ -1578,77 +1607,75 @@ const Index: React.FC<IProps> = () => {
   useEffect(() => {
 
 
-  getGenViewerData(router.query.projectId as string, router.query.structureId as string)
-    .then((response) => {
-      if (response.success === true) {
-        setInintData(response.result);
+    getGenViewerData(router.query.projectId as string, router.query.structureId as string)
+      .then((response) => {
+        if (response.success === true) {
+          setInintData(response.result);
 
-      }
-    })
-    .catch((error) => {
-      console.log("Error in loading data: 1 ", error);
-    });
+        }
+      })
+      .catch((error) => {
+        console.log("Error in loading data: 1 ", error);
+      });
 
   }, [router.query.structId])
 
 
 
-  
-  const issueContext = (issue:any) =>{  // selected Issue context pusblish
-    let iContext:IContext=issue.context
-    iContext.id=issue._id
-    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"selectIssue","data":'+JSON.stringify(iContext)+'}');
-  } 
 
-  const taskContext = (task:any) =>{  // selected Task context publish
-    console.log("selected context task",task)
-    let tContext:IContext=task.context
-    tContext.id=task._id
-    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"selectTask","data":'+JSON.stringify(tContext)+'}');
+  const issueContext = (issue: any) => {  // selected Issue context pusblish
+    let iContext: IContext = issue.context
+    iContext.id = issue._id
+    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"selectIssue","data":' + JSON.stringify(iContext) + '}');
   }
-  
-  const appEventsCB:OnMessageCallbak = (msg:Buffer,packet:any):void=>{
+
+  const taskContext = (task: any) => {  // selected Task context publish
+    console.log("selected context task", task)
+    let tContext: IContext = task.context
+    tContext.id = task._id
+    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"selectTask","data":' + JSON.stringify(tContext) + '}');
+  }
+
+
+
+  const appEventsCB: OnMessageCallbak = (msg: Buffer, packet: any): void => {
     const message = JSON.parse(msg.toString())
-    console.log("callback data",JSON.parse(msg.toString()))
-    if(message.type==="selectIssue")
-    {
-      setOpenIssueDetails(true)
+    console.log("callback data", JSON.parse(msg.toString()))
+    if (message.type === "selectIssue" || message.type === "selectTask" || message.type === "createIssue" || message.type === "createTask") {
+      console.log("check msg type",message.type)
+      handleMenuInstance.data = message;
+      handleMenuInstance.type = message.type
+      if (ref && ref.current) {
+        console.log("2nd msg type",message.type)
+        ref.current?.selectToolRef(handleMenuInstance)
+        console.log("3nd msg type",message.type)
+        
+      }
+
       setCurrentContext(message)
-    }
-    else if(message.type === "selectTask"){
-      setOpenTaskDetails(true)
-      setCurrentContext(message)
-    }
-    else if(message.type === "createIssue")
-    {
-      setOpenCreateIssue(true);
-    }
-    else if(message.type === "createTask")
-    {
-      setOpenCreateTask(true)
     }
   }
-  
-  useEffect(()=>{
-    conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(),appEventsCB)
-    return()=>{
+
+  useEffect(() => {
+    conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(), appEventsCB)
+    return () => {
       conn.unSubscribeTopic(MqttConnector.getMultiverseRecTopicString());
     }
-  },[])
+  }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     if (initData) {
       let pdata: IGenData = initData
       if (pdata) {
-        pdata.currentViewType = "Plan Drawings" 
+        pdata.currentViewType = "Plan Drawings"
       }
-     if(router.isReady){
-      setTimeout(()=>{
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type":"setGenData","data":${JSON.stringify(pdata)}}`)
-      },8000)     
-     }
-    }  
-  },[conn,structure,initData])
+      if (router.isReady) {
+        setTimeout(() => {
+          conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type":"setGenData","data":${JSON.stringify(pdata)}}`)
+        }, 8000)
+      }
+    }
+  }, [conn, structure, initData])
 
   return (
     <div className=" w-full  h-full">
@@ -1776,19 +1803,20 @@ const Index: React.FC<IProps> = () => {
               className={`fixed drop-shadow toolbarWidth  ${"visible"} `}
             >
               {isDesignAvailable || isRealityAvailable ?
-                <ToolBarMenuWrapper 
-                initData={initData}
-                toolClicked={toolClicked}
-                toolUpdate= {toolUpdate}
+                <ToolBarMenuWrapper
+                  initData={initData}
+                  toolClicked={toolClicked}
+                  toolUpdate={toolUpdate}
+                  ref={ref}
                 ></ToolBarMenuWrapper>
-                
-              :<></>}
+
+                : <></>}
             </div></div></div>
 
         <div className="ml-10 mt-9">
-          {structure&&<Iframe
+          {structure && <Iframe
             structureData={structure}
-            ></Iframe>}
+          ></Iframe>}
         </div>
 
       </div>
