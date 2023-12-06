@@ -16,6 +16,28 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                 ...state,
                 currentProjectData: action.payload.projectData
             }
+        case AppActionType.addCaptureUpload:
+            let jobs = state.inProgressPendingUploads.concat([action.payload.job])
+            return {
+                ...state,
+                inProgressPendingUploads: jobs
+            }
+        case AppActionType.updateCaptureUploadStatus:
+            let restOfTheJobs = state.inProgressPendingUploads.filter((job, index) => {
+                return job._id !== action.payload.job._id
+            })
+            return {
+                ...state,
+                inProgressPendingUploads: restOfTheJobs.concat([action.payload.job])
+            }
+        case AppActionType.removeCaptureUpload: 
+        let pendingJobs = state.inProgressPendingUploads.filter((job, index) => {
+            return job._id !== action.payload.job._id
+        })
+        return {
+            ...state,
+            inProgressPendingUploads: pendingJobs
+        }
         case AppActionType.setIsLoading:
             return {
                 ...state,

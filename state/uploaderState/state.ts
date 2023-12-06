@@ -58,6 +58,7 @@ export interface UploaderState {
     isReading:boolean,
     selectedJob?: IJobs,
     inProgressWorkers?: workerFileMap,
+    currentUploadFiles?: IUploadFile<RawImage>[]
     completionState?: UploaderFinishState,
     errorCount:number;
 }
