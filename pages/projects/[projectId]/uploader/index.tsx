@@ -10,23 +10,23 @@ import { UploaderFinishState, UploaderStep, captureRawImageMap } from "../../../
 import UploaderFinal from "../../../../components/divami_components/uploader_details/uploaderFinal/uploaderFinal";
 import UploaderGCP from "../../../../components/divami_components/uploader_details/uploaderGCP";
 import UploaderReview from "../../../../components/divami_components/uploader_details/uploaderReview";
-import { addCapture, addGcp, addNewCaptureOnly, addRawImages, getCaptureDetails, getRawImages } from "../../../../services/captureManagement";
+import { addGcp, addNewCaptureOnly, addRawImages, getCaptureDetails, getRawImages } from "../../../../services/captureManagement";
 import { RawImage, RawImageCreateResp } from "../../../../models/IRawImages";
 import { WebWorkerManager } from "../../../../utils/webWorkerManager";
 import { useRouter } from "next/router";
-import { ChildrenEntity } from "../../../../models/IStructure";
-import { getStructureHierarchy } from "../../../../services/structure";
 import { useAppContext } from "../../../../state/appState/context";
-import { getJobsByStatus, getJobsByStatusMode, getjobs, updateJobStatus } from "../../../../services/jobs";
+import { getJobsByStatusMode, updateJobStatus } from "../../../../services/jobs";
 import { IJobs, JobStatus } from "../../../../models/IJobs";
-import { CaptureMode, CaptureType, ICapture } from "../../../../models/ICapture";
+import { ICapture } from "../../../../models/ICapture";
 import { IUploadFile, UploadStatus } from "../../../../models/IUploader";
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader';
-import { getCaptureIdFromModelOrString, getJobIdFromModelOrString, getPathToRoot } from "../../../../utils/utils";
+import { getCaptureIdFromModelOrString, getJobIdFromModelOrString, getPathToRoot, getProjectIdFromModelOrString, getStructureIdFromModelOrString } from "../../../../utils/utils";
 import { CustomToast } from "../../../../components/divami_components/custom-toaster/CustomToast";
 import PopupComponent from "../../../../components/popupComponent/PopupComponent";
 import Warning from '../../../../public/divami_icons/Warning_Icon.svg'
 import moment from "moment";
+import { AxiosError } from "axios";
+import { IBaseResponse } from "../../../../models/IBaseResponse";
 interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
@@ -231,7 +231,8 @@ const Index: React.FC<IProps> = () => {
         uploaderAction.changeUploadinitiate(false)
         uploaderAction.next()
         // uploaderAction.refreshJobs();
-        sendingFilesToworker(response.result, job)
+        uploaderAction.setCurrentUploadFiles(getUploadFiles(response.result, job))
+        appAction.addCaptureUpload(job)
         uploaderAction.setIsLoading(false)
         CustomToast(`Started uploading ${uploaderState?.choosenFiles?.validFiles?.length} file(s)`,'success')
       }
@@ -242,8 +243,7 @@ const Index: React.FC<IProps> = () => {
     })
   }
 
-  const sendingFilesToworker=(fileList:RawImageCreateResp[], job: IJobs)=>{
-    let captureId = getCaptureIdFromModelOrString(job.captures[0])  
+  const getUploadFiles = (fileList:RawImageCreateResp[], job: IJobs): IUploadFile<RawImage>[] => {
     const uploadFiles: IUploadFile<RawImage>[] = fileList.reduce<IUploadFile<RawImage>[]>((array, currentfile): IUploadFile<RawImage>[] => {
       let fileObject = uploaderState.choosenFiles.validFiles.find((e) => { return e.externalId === currentfile.externalId })
       if (fileObject) {
@@ -257,77 +257,77 @@ const Index: React.FC<IProps> = () => {
       }
       return array
     }, [])
-    let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url), {name: captureId});
-    WorkerManager.createWorker(captureId,worker)
-    worker.onmessage = onMessageFromWorker;
-    worker.postMessage(uploadFiles);
-    // uploaderAction.next()
+    return uploadFiles
   }
-  const updateTheJobStatus=(captureId:string)=>{
-    let jobObj = uploaderState.pendingUploadJobs.find((jobObj)=> getCaptureIdFromModelOrString(jobObj.captures[0]) === captureId)
+
+  useEffect(() => {
+    if(uploaderState.currentUploadFiles && uploaderState.currentUploadFiles.length > 0) {
+      sendingFilesToworker(uploaderState.currentUploadFiles)
+    }
+  }, [uploaderState.currentUploadFiles])
+
+  const sendingFilesToworker=(uploadFiles: IUploadFile<RawImage>[])=>{
+    let captureId = uploadFiles[0].uploadObject.capture
+    if(captureId) {
+      let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url), {name: captureId});
+      WorkerManager.createWorker(captureId,worker)
+      worker.onmessage = onMessageFromWorker;
+      worker.postMessage(uploadFiles);
+    }
+  }
+
+  const onMessageFromWorker = function(this:Worker,event: MessageEvent<{filesList: IUploadFile<RawImage>[], completedFileList: IUploadFile<RawImage>[]}>){
+    uploaderAction.updateWorkerStatus(event.data.filesList)
+    if(event?.data?.filesList?.length != undefined && event?.data?.completedFileList?.length !=undefined && (event?.data?.filesList?.length === event?.data?.completedFileList?.length))
+    {
+      handleOnWorkerCompletion(event?.data?.filesList[0]?.uploadObject?.capture as string)
+      WorkerManager.removeWorker(event?.data?.filesList[0]?.uploadObject?.capture as string)
+      this.terminate()
+    }
+  }
+
+  const handleOnWorkerCompletion = (captureId:string) => {
+    let jobObj = uploaderState.pendingUploadJobs.find((jobObj)=> { return getCaptureIdFromModelOrString(jobObj.captures[0]) === captureId})
     if (jobObj) {
-      uploaderAction.setIsLoading(true)
-      updateJobStatus(uploaderState?.project?._id as string, jobObj._id, JobStatus.uploaded).then((response:any)=>{
-        uploaderAction.setIsLoading(false)
-        if(response.data.success===true) {
-          moveJobFromPendingUploadToUpload(response.data.result?._id);
-          if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
-            CustomToast(`Upload Completed Sucessfully For ${getPathToRoot(response.data.result.structure,appState.currentProjectData.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
-          } else {
-            CustomToast(`Upload Completed Sucessfully`,'success')
-          }
-          // uploaderAction.setUploadCompletionState(UploaderFinishState.withoutError)
-        }
-        else{
-          setIsShowPopUp(true)
-          setPopUPHeading('Upload Completed With Errors')
-          setPopUPConform('Ok')
-         // setPopUPClose('Ok')
-        }
-      }).catch((error)=>{
-        setIsShowPopUp(true)
-        setPopUPHeading('Upload Completed With Errors')
-        setPopUPConform('Ok')
-      })
+      updateUploadCompletionStatus(getProjectIdFromModelOrString(jobObj.project), jobObj._id, captureId)
     } else {
-      console.log("TestingUploader: jobstatus without capture object: ")
       uploaderAction.setIsLoading(true)
       getCaptureDetails(uploaderState?.project?._id as string, captureId).then((response) => {
         if(response.data.success===true) {
           let capture = response.data.result
-          updateJobStatus(uploaderState?.project?._id as string, getJobIdFromModelOrString(capture.jobId), JobStatus.uploaded).then((response:any)=>{
-            uploaderAction.setIsLoading(false)
-            if(response&&response?.data&&response?.data?.success===true) {
-              moveJobFromPendingUploadToUpload(response.data.result?._id);
-              if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
-                CustomToast(`Upload Completed Sucessfully for ${getPathToRoot(response.data.result.structure, appState.currentProjectData.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
-              } else {
-                CustomToast(`Upload Completed Sucessfully`,'success')
-              }
-              // uploaderAction.setUploadCompletionState(UploaderFinishState.withoutError)
-            }
-            else{
-              setIsShowPopUp(true)
-              setPopUPHeading('Upload Completed With Errors')
-              setPopUPConform('Ok')
-            // setPopUPClose('Ok')
-            }
-          }).catch((error)=>{
-            uploaderAction.setIsLoading(false)
-            setIsShowPopUp(true)
-            setPopUPHeading('Upload Completed With Errors')
-            setPopUPConform('Ok')
-            console.log('errror',error)
-          })
+          updateUploadCompletionStatus(uploaderState?.project?._id as string, getJobIdFromModelOrString(capture.jobId), capture._id)
         }
       })
     }
   }
-  const updateJobStatusTo = (job: IJobs | string, status: JobStatus) => {
-    updateJobStatus(uploaderState?.project?._id as string, getJobIdFromModelOrString(job), JobStatus.readyForProcessing).then((response:any) => {
+
+  const updateUploadCompletionStatus = (projectId: string, jobId: string, captureId: string) => {
+    uploaderAction.setIsLoading(true)
+    updateJobStatus(projectId, jobId, JobStatus.uploaded).then((response)=>{
+      uploaderAction.setIsLoading(false)
       if(response.data.success===true) {
-      
+        let job = response.data.result
+        moveJobFromPendingUploadToUpload(job._id);
+        uploaderAction.removeWorker(captureId);
+        appAction.removeCaptureUpload(job)
+        if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
+          CustomToast(`Upload Completed Sucessfully For ${getPathToRoot(getStructureIdFromModelOrString(response.data.result.structure),appState.currentProjectData.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
+        } else {
+          CustomToast(`Upload Completed Sucessfully`,'success')
+        }
       }
+    }).catch((axiosError: AxiosError<IBaseResponse<IJobs>>)=>{
+      uploaderAction.setIsLoading(false)
+      if(axiosError && axiosError.response?.status === 422) {
+        let job = axiosError.response.data.result
+        appAction.updateCaptureUploadStatus(job)
+      }
+      setIsShowPopUp(true)
+      setPopUPHeading('Upload Completed With Errors')
+      setPopUPConform('Ok')
+    }).catch((error) => {
+      uploaderAction.setIsLoading(false)
+      console.log("TestingUploader uploadCompletionStatus: catch error ", error)
     })
   }
 
@@ -340,15 +340,7 @@ const Index: React.FC<IProps> = () => {
     })
     uploaderAction.setCaptureJobs(captureJobs)
   }
-  const onMessageFromWorker = function(this:Worker,event: MessageEvent<{filesList: IUploadFile<RawImage>[], completedFileList: IUploadFile<RawImage>[]}>){
-    uploaderAction.updateWorkerStatus(event.data.filesList)
-    if(event?.data?.filesList?.length != undefined && event?.data?.completedFileList?.length !=undefined && (event?.data?.filesList?.length === event?.data?.completedFileList?.length))
-    {
-      updateTheJobStatus(event?.data?.filesList[0]?.uploadObject?.capture as string)
-      WorkerManager.removeWorker(event?.data?.filesList[0]?.uploadObject?.capture as string)
-      this.terminate()
-    }
-  }
+
   return (
     <div className="w-full h-full">
     <div className="w-full">

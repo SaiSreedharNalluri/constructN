@@ -86,22 +86,15 @@ export const updateJobStatus = async (
   status: string,
   ignoreImagesCheck?:boolean
 ) => {
-  try {
     let url = `${API.BASE_URL}/projects/${projectId}/jobs/${jobId}/updateStatus`
-    if(ignoreImagesCheck)
-    {
+    if(ignoreImagesCheck){
      url = `${url}?ignoreImagesCheck=true`
     }
-    return await instance.put(
-     url,
-      {status},
+    return await instance.put<IBaseResponse<IJobs>>(url, {status}, 
       {
         headers: authHeader.authHeader(),
       }
     );
-  } catch (error) {
-    return error;
-  }
 };
 
 export const getJobsByStatus = async (projectId: string, status: JobStatus[]) => {

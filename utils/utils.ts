@@ -7,6 +7,7 @@ import { delimiter } from "path";
 import { IJobs } from "../models/IJobs";
 import { ICapture } from "../models/ICapture";
 import { uploadImage } from "../state/uploaderState/state";
+import { IProjects } from "../models/IProjects";
 
 
 /**
@@ -119,6 +120,16 @@ export const getStructureIdFromModelOrString = (structure: IStructure | string):
       structureId = structure as string;
     }
     return structureId
+}
+
+export const getProjectIdFromModelOrString = (project: IProjects | string): string => {
+    let projectId = "";
+    if ((project as IProjects)._id) {
+        projectId = (project as IProjects)._id;
+    } else {
+        projectId = project as string;
+    }
+    return projectId
 }
 
 export const getPathToRoot = (structureId: String, hierarchy: ChildrenEntity, delimiter:delimiterType = " > "): string => {

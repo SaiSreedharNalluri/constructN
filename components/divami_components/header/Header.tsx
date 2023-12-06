@@ -579,7 +579,7 @@ const Header: React.FC<any> = ({
           ) : (
             <></>
           )}
-         {/* <HeaderUploaderImageContainer>
+         <HeaderUploaderImageContainer>
             <TooltipText title="Uploader" onClick={() => {
               if (openUploader) {
                 setOpenUploader(false);
@@ -611,7 +611,7 @@ const Header: React.FC<any> = ({
                 </CustomDrawer>
               </div>
             )}
-          </HeaderUploaderImageContainer> */}
+          </HeaderUploaderImageContainer>
           <HeaderProfileImageContainer>
             {avatar ? (
               <TooltipText title="My Profile">

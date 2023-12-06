@@ -93,7 +93,7 @@ export const truncateString = (text: string, maxLength: number) => {
 };
 
 const Index: React.FC<any> = () => {
-  const { appContextAction } = useAppContext();
+  const { state:appState, appContextAction } = useAppContext();
   const { appAction } = appContextAction;
   const breadCrumbsData = [{ label: "Manage Users" }];
   const [isFullScreen, setIsFullScreen] = useState(false);
