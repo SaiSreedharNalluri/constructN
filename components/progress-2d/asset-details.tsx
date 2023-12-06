@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import { IAsset } from '../../models/IAssetCategory'
+import { IAsset, IAssetCategory, IAssetProgress } from '../../models/IAssetCategory'
 
 import instance from '../../services/axiosInstance'
 
@@ -65,6 +65,8 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
         const [loading, setLoading] = useState<boolean>(false)
 
+        const [values, setValues] = useState({ name : '', description: '', stage: '' })
+
         useEffect(() => {
 
             setLoading(true)
@@ -85,13 +87,25 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
         }, [assetId])
 
-        const _onChange = (key: string, value: string) => {
+        useEffect(()=>{
+            setValues({ name: actualName , description: actualDecription, stage: actualStage as string })
+        },[asset])
 
-            if (key === 'stage') {
+        const { category ='' , description: actualDecription = '', progress = {} } = asset || {}
+        
+        const { name: actualName , stages} = category as IAssetCategory || {}
+        
+        const { stage: actualStage } = progress  as IAssetProgress || {}
+
+        const { name , description, stage } = values || {}
+
+        const onSave = () => {
+
+                if (stage !== actualStage ) {
 
                 setLoading(true)
 
-                changeAssetStage(assetId, value, snapshotBase.date).then(res => {
+                changeAssetStage(assetId, values.stage, snapshotBase.date).then(res => {
 
                     onChange && onChange(res.data.result)
 
@@ -107,35 +121,36 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                 })
 
-            } else {
+            }  
+            if(name !== actualName || description !== actualDecription) {
 
-                setLoading(true)
-
-                const data: any = {}
-
-                data[key] = value
-
-                updateAssetDetails(assetId, data).then(res => {
-
-                    if(onChange) onChange(res.data.result)
-
-                    toast.success('Updated asset details successfully!', { autoClose: 5000 })
-
-                    // setLoading(false)
-
-                }).catch(err => {
-
-                    console.log(err)
-
-                    setLoading(false)
-
-                    toast.error('Failed to update asset details!', { autoClose: 5000 })
-
-                })
-
-            }
+                        setLoading(true)
+        
+                        const data: any = {}
+        
+                        updateAssetDetails(assetId, { name, description}).then(res => {
+        
+                            if(onChange) onChange(res.data.result)
+        
+                            toast.success('Updated asset details successfully!', { autoClose: 5000 })
+        
+                            // setLoading(false)
+        
+                        }).catch(err => {
+        
+                            console.log(err)
+        
+                            setLoading(false)
+        
+                            toast.error('Failed to update asset details!', { autoClose: 5000 })
+        
+                        })
+        
+                    }
 
         }
+
+        const _onChange = (key: string, value: string) => setValues({ ...values, [key]: value})
 
         const _onDeleteStage = (stage: string) => {
 
@@ -214,7 +229,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                         </Tabs>
 
-                        {selectedTab === 'asset-details' && <div className='px-4 '><ElementDetails asset={asset} onChange={_onChange} supportUser={supportUser} onDeleteStage={_onDeleteStage} /> </div>}
+                        {selectedTab === 'asset-details' && <div className='px-4 '><ElementDetails asset={asset} onChange={_onChange} values={values} supportUser={supportUser} onDeleteStage={_onDeleteStage} onSave={onSave}/> </div>}
 
                         {selectedTab === 'asset-timeline' && <div className='px-4 overflow-auto'><AssetTimeline asset={asset} /> </div>}
 
