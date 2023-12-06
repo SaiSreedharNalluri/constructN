@@ -3,3 +3,6 @@ export enum customHeaderState {
     MyProfile = "My Profile",
     UploadsInProgress ='Uploads In Progress'
 }
+export interface ProjectCounts {
+    [projectId: string]: number;
+  }
