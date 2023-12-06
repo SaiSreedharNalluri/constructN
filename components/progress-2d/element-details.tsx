@@ -1,4 +1,4 @@
-import { IconButton, InputAdornment, MenuItem, OutlinedInput, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material'
+import { IconButton, InputAdornment, MenuItem, OutlinedInput, Select, SelectChangeEvent, Tooltip, Typography , Button} from '@mui/material'
 
 import { useEffect, useState } from 'react'
 
@@ -23,9 +23,21 @@ const ElementDetails: React.FC<{
 
     onChange?: (key: string, value: string) => void,
 
-    onDeleteStage?: (stage: string) => void
+    onDeleteStage?: (stage: string) => void,
+
+    values?: { [key: string]: string },
+
+    onSave?: ()=> void,
     
-}> = ({ asset, supportUser, onChange, onDeleteStage }) => {
+}> = ({ asset, supportUser, onChange, onDeleteStage, values , onSave = () => {} }) => {
+
+    const { category ='' , description: actualDecription = '', progress = {} } = asset || {}
+
+    const { name: actualName } = category as IAssetCategory || {}
+
+    const { stage: actualStage } = progress  as IAssetProgress || {}
+
+    const { name , description, stage} = values || {}
 
     return (
         <>
@@ -56,6 +68,17 @@ const ElementDetails: React.FC<{
 
                         </Typography>
 
+                    </div>
+
+                    <div className='mt-4 flex justify-end'>
+                    <Button 
+                    size='small'  
+                    className='py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E]'
+                    disabled={ !( actualName !== name || description !== actualDecription ||  stage !== actualStage )}
+                    onClick={onSave}
+                    >
+                        Save
+                    </Button>
                     </div>
 
                 </div>
