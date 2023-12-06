@@ -5,11 +5,18 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
     switch (action.type) {
         case AppActionType.appendProjectData:
             let projectData = action.payload.projectData
-            let projectDataList = state.projectDataList.concat([projectData])
-            return {
-                ...state,
-                projectDataList: projectDataList,
-                currentProjectData: projectData
+            if(state.projectDataList.find((e)=>{ return e.project._id === projectData.project._id})) {
+                return {
+                    ...state,
+                    currentProjectData: projectData
+                }
+            } else {
+                let projectDataList = state.projectDataList.concat([projectData])
+                return {
+                    ...state,
+                    projectDataList: projectDataList,
+                    currentProjectData: projectData
+                }
             }
         case AppActionType.setCurrentProjectData:
             return {
@@ -17,11 +24,20 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                 currentProjectData: action.payload.projectData
             }
         case AppActionType.addCaptureUpload:
-            let jobs = state.inProgressPendingUploads.concat([action.payload.job])
-            return {
-                ...state,
-                inProgressPendingUploads: jobs
+           
+            if (state.inProgressPendingUploads.length > 0) {
+                let jobs = state.inProgressPendingUploads.concat([action.payload.job])
+                return {
+                    ...state,
+                    inProgressPendingUploads: jobs
+                }
+            } else {
+                return {
+                    ...state,
+                    inProgressPendingUploads: [action.payload.job]
+                }
             }
+
         case AppActionType.updateCaptureUploadStatus:
             let restOfTheJobs = state.inProgressPendingUploads.filter((job, index) => {
                 return job._id !== action.payload.job._id
