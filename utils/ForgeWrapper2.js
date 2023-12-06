@@ -604,14 +604,15 @@ export const ForgeViewerUtils = function () {
   };
 
   const getViewerState = () => {
+    let offset = _globalOffset;
     if (_isModelLoaded) {
       _viewer.navigation.setCameraUpVector(
         new THREE.Vector3().fromArray([0, 0, 1])
       );
       const state = _viewer.getState({ viewport: true }).viewport;
       let viewerState = {
-        position: [state.eye[0], state.eye[1], state.eye[1]],
-        target: new THREE.Vector3().fromArray(state.target),
+        position: [state.eye[0] + offset[0], state.eye[1]+ offset[1], state.eye[2]+ offset[2]],
+        target: new THREE.Vector3(state.target[0] + offset[0],state.target[1] + offset[1],state.target[2] + offset[2]),
         fov: state.fieldOfView,
       };
       // console.log("Inside Forge get ViewerState: ", viewerState, state)
@@ -621,11 +622,12 @@ export const ForgeViewerUtils = function () {
 
   const updateViewerState = (viewerState) => {
     // if (_isModelLoaded && viewerState) {
+      let offset = _globalOffset;
       if (viewerState) {
       // console.log("Inside update viewer state: ", viewerId, viewerState);
-      let position = new THREE.Vector3().fromArray(viewerState.position);
+      let position = new THREE.Vector3(viewerState.position[0]-offset[0],viewerState.position[1]-offset[1],viewerState.position[2]-offset[2]);
       _viewer.navigation.setPosition(position);
-      _viewer.navigation.setTarget(viewerState.target);
+      _viewer.navigation.setTarget(new THREE.Vector3(viewerState.target.x-offset[0],viewerState.target.y-offset[1],viewerState.target.z-offset[2]));
       if (viewerState.fov) {
         _viewer.navigation.setVerticalFov(viewerState.fov, false);
       }
@@ -795,6 +797,8 @@ export const ForgeViewerUtils = function () {
     } else if (parameter.extensionId === "Autodesk.BimWalk") {
       console.log("ForgeInstanceTest Inside Forge Viewer, Bim Walk loaded:");
       _bimWalkExtn = _viewer.getExtension(parameter.extensionId);
+      // disable the same post load
+      _bimWalkExtn.tool.navigator.enableGravity(false)
     }
   };
 

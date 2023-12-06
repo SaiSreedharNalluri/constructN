@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { styled } from "@mui/system";
-import { Box } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import Image from "next/image";
 import Delete from "../../../public/divami_icons/delete.svg";
 import { truncateString } from "../../../pages/projects";
-import Tooltip from "@material-ui/core/Tooltip";
 import PopupComponent from "../../popupComponent/PopupComponent";
 
 const ImageItem = styled(Box)({

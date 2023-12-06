@@ -5,6 +5,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import ChangeIcon from '../../components/container/changeIcon';
 import React from 'react';
 import * as Yup from 'yup';
+import { AWS } from '../../config/config';
 interface IProps {
   userDetails: IUser;
   handleImageUPload: (e: any) => void;
@@ -54,7 +55,7 @@ const UserProfile: React.FC<IProps> = ({
                       src={
                         userDetails?.avatar
                           ? userDetails?.avatar
-                          : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/user_icon_def_01.png`
+                          : `${AWS.CDN_ATTACHMENTS}/defaults/user_icon_def_01.png`
                       }
                       alt=""
                       width={720}

@@ -11,6 +11,7 @@ import {
   updateUserProfile,
 } from "../../../services/userAuth";
 import { IUser } from "../../../models/IUser";
+import { customHeaderState } from "../../../models/IUtils";
 const StyledDiv = styled("span")({
   fontFamily: '"Open Sans"',
   display: "block",
@@ -87,7 +88,7 @@ const UserProfile = ({ handleProfileClose, projectUsers }: any) => {
   return (
     <StyledDiv>
       <div className="px-4">
-      <Header closeEditProject={handleProfileClose} />
+      <Header closeEditProject={handleProfileClose} id ={customHeaderState.MyProfile} />
       </div>
       <Body
         handleFormData={handleFormData}

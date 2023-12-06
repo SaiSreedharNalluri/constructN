@@ -1,9 +1,10 @@
 import instance from "./axiosInstance";
 import { setCookie, getCookie,deleteCookie } from "cookies-next";
 import authHeader from "./auth-header";
+import { API } from "../config/config";
 export const login = (email: string, password: string) => {
   return instance
-    .post(`${process.env.NEXT_PUBLIC_HOST}/users/signin`, {
+    .post(`${API.BASE_URL}/users/signin`, {
       email,
       password,
     })
@@ -22,7 +23,7 @@ export const login = (email: string, password: string) => {
 };
 export const registerUser = (registerUserObj: Object) => {
   return instance
-    .post(`${process.env.NEXT_PUBLIC_HOST}/users/register`, registerUserObj)
+    .post(`${API.BASE_URL}/users/register`, registerUserObj)
     .then((response) => {
       return response.data;
     })
@@ -32,7 +33,7 @@ export const registerUser = (registerUserObj: Object) => {
 };
 export const verifyEmail = (token: string) => {
   return instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/users/verify/${token}`)
+    .get(`${API.BASE_URL}/users/verify/${token}`)
     .then((response) => {
       return response.data;
     })
@@ -43,7 +44,7 @@ export const verifyEmail = (token: string) => {
 
 export const verifyResendEmail = (email:string) => {
  return instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/users/resend-verification-link`, {
+    .put(`${API.BASE_URL}/users/resend-verification-link`, {
       email,
     })
     .then((response) => {
@@ -56,7 +57,7 @@ export const verifyResendEmail = (email:string) => {
 
 export const resetPasswordToken = (token: string, password: string) => {
   return instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/users/reset-password/${token}`, {
+    .put(`${API.BASE_URL}/users/reset-password/${token}`, {
       password,
     })
     .then((response) => {
@@ -75,7 +76,7 @@ export const resetPasswordInit = (email: string | null,token:string | null) => {
     requestData={token:token};
   }
   return instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/users/reset-password-init`,requestData)
+    .put(`${API.BASE_URL}/users/reset-password-init`,requestData)
     .then((response) => {
       return response.data;
     })
@@ -85,7 +86,7 @@ export const resetPasswordInit = (email: string | null,token:string | null) => {
 };
 export const getUserProfile = async () => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/users/profile`, {
+    .get(`${API.BASE_URL}/users/profile`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -98,7 +99,7 @@ export const getUserProfile = async () => {
 
 export const updateUserProfile = async (updateInfo: object) => {
   return await instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/users/profile`, updateInfo, {
+    .put(`${API.BASE_URL}/users/profile`, updateInfo, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -123,7 +124,7 @@ export const updateUserProfile = async (updateInfo: object) => {
 
 export const updateProfileAvatar = async (file: any) => {
   return await instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/users/profile/avatar`, file, {
+    .put(`${API.BASE_URL}/users/profile/avatar`, file, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -143,7 +144,7 @@ export const updateProfileAvatar = async (file: any) => {
 };
 export const changePassword = async (updateInfo: object) => {
   return await instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/users/change-password`, updateInfo, {
+    .put(`${API.BASE_URL}/users/change-password`, updateInfo, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -155,7 +156,7 @@ export const changePassword = async (updateInfo: object) => {
 };
 export const ResendEmailVerificationLink = async (token: string) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/users/resend-verification-link`, {
+    .get(`${API.BASE_URL}/users/resend-verification-link`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
@@ -167,7 +168,7 @@ export const ResendEmailVerificationLink = async (token: string) => {
 };
 export const ResendEmailVerification = (token: string) => {
   return instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/users/resend-verification/${token}`)
+    .get(`${API.BASE_URL}/users/resend-verification/${token}`)
     .then((response) => {
       return response.data;
     })
@@ -177,7 +178,7 @@ export const ResendEmailVerification = (token: string) => {
 };
 export const validatePasswordToken = (token: string) => {
   return instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/users/reset-password-link-validate/${token}`)
+    .get(`${API.BASE_URL}/users/reset-password-link-validate/${token}`)
     .then((response) => {
       return response.data;
     })
@@ -188,7 +189,7 @@ export const validatePasswordToken = (token: string) => {
 };
 export const refreshToken = (token: string) => {
   return instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/users/get-access-token`,{refreshToken:token},{
+    .put(`${API.BASE_URL}/users/get-access-token`,{refreshToken:token},{
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -209,7 +210,7 @@ export const refreshToken = (token: string) => {
           if (typeof window !== "undefined") {
             //localStorage.setItem("previousPage", window.location.href);
             console.log("Moving Out....",error.config);
-            window.location.href = `/login?history=${encodeURIComponent(window.location.href)}&reason=rTokenExpired`;
+            window.location.href = `/login?history=${encodeURIComponent(window.location.pathname+window.location.search)}&reason=rTokenExpired`;
             return Promise.reject(error);
           }
       throw error.response.data;

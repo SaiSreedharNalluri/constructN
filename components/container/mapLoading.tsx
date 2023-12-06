@@ -1,5 +1,6 @@
 import React from 'react';
 import Map from 'react-map-gl';
+import { MAPBOX } from '../../config/config';
 const MapLoading: React.FC = () => {
   return (
     <div>
@@ -11,7 +12,7 @@ const MapLoading: React.FC = () => {
         }}
         style={{ width: '95.9vw', height: '93vh' }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
-        mapboxAccessToken={`${process.env.NEXT_PUBLIC_Map_Token}`}
+        mapboxAccessToken={`${MAPBOX.token}`}
       ></Map>
     </div>
   );

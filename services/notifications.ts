@@ -1,8 +1,9 @@
 import instance from './axiosInstance';
 import authHeader from './auth-header';
+import { API } from '../config/config';
 export const getAllUserNotifications = async () => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/user-notifications`, {
+    .get(`${API.BASE_URL}/user-notifications`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {

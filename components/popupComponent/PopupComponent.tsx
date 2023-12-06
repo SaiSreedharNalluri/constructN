@@ -7,10 +7,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Typography from "@mui/material/Typography";
 import { IconButton } from "@mui/material";
-import { fontSize } from "@mui/system";
-import CrossIcon from "../../public/divami_icons/crossIcon.svg";
 import Image from "next/image";
-import ProjectConfig from "../divami_components/project_config/ProjectConfig";
 import closeWithCircle from "../../public/divami_icons/closeWithCircle.svg";
 
 export const CloseIcon = styled(Image)({
@@ -56,6 +53,7 @@ const ButtonDiv = styled("div")({});
 export interface DialogTitleProps {
   id: string;
   children?: React.ReactNode;
+  isUploader:boolean,
   onClose: () => void;
 }
 export interface PopupComponentProps {
@@ -78,10 +76,12 @@ export interface PopupComponentProps {
   imageSrc?:any;
   setShowbutton?: any;
   projectId?: string;
+  isUploader?:boolean,
+  isUploaderFinal?:boolean
 }
 
 export function BootstrapDialogTitle(props: DialogTitleProps) {
-  const { children, onClose, ...other } = props;
+  const { children,isUploader, onClose, ...other } = props;
 
   return (
     <DialogTitle
@@ -119,7 +119,10 @@ export function BootstrapDialogTitle(props: DialogTitleProps) {
           }}
         >
           {/* <CloseIcon src={CrossIcon} alt={"close icon"} /> */}
-          <CloseIcon src={closeWithCircle} alt={"close icon"} />
+          {
+            isUploader && <CloseIcon src={closeWithCircle} alt={"close icon"} />
+          }
+          
         </IconButton>
       ) : null}
     </DialogTitle>
@@ -152,9 +155,19 @@ const PopupComponent = (props: PopupComponentProps) => {
     projectId,
     setSelectedOption,
     imageSrc,
-    isImageThere
+    isImageThere,
+    isUploader = true,
+    isUploaderFinal = true
   } = props;
-
+  const handleClosePopup=()=>{
+    if(isUploader === false)
+    {
+      return
+    }
+    else{
+      handleClose()
+    }
+  }
   const handleClose = () => {
     setShowPopUp(false);
     if (setSelectedOption) {
@@ -164,11 +177,10 @@ const PopupComponent = (props: PopupComponentProps) => {
       setShowbutton(false);
     }
   };
-
   return (
     <div>
       <BootstrapDialog
-        onClose={handleClose}
+        onClose={handleClosePopup}
         aria-labelledby="customized-dialog-title"
         open={open}
         width={props.width}
@@ -180,10 +192,10 @@ const PopupComponent = (props: PopupComponentProps) => {
         <BootstrapDialogTitle
           id="customized-dialog-title"
           onClose={handleClose}
+          isUploader={isUploader}
         >
           {modalTitle}
         </BootstrapDialogTitle>
-
         <DialogContent
           dividers
           style={
@@ -195,7 +207,8 @@ const PopupComponent = (props: PopupComponentProps) => {
           {modalContent ? (
             modalContent
           ) : (
-            <TextComponent>{isImageThere? <div className="flex"><Image src={imageSrc} alt="" width={20} height={20}></Image><p className="ml-[10px]">{ modalmessage}</p> </div>: <div>{modalmessage}</div> }</TextComponent>
+            <TextComponent>{isImageThere? <div className="flex">
+              <Image src={imageSrc} alt="" width={30} height={30}></Image><p className="ml-[10px]">{ modalmessage}</p> </div>: <div>{modalmessage}</div> }</TextComponent>
           )}
         </DialogContent>
         <DialogActions
@@ -212,7 +225,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 onClick={handleClose}
                 style={{
                   color: "#F1742E",
-                  width: "180px",
+                  width: isUploader  ? "180px":"fit-content",
                   height: "40px",
                   textTransform: "none",
                   marginBottom: "22px",
@@ -230,7 +243,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 style={{
                   backgroundColor: "#FF843F",
                   color:"white",
-                  width: "180px",
+                  width: isUploader && isUploaderFinal ? "180px":"fit-content",
                   height: "40px",
                   marginBottom: "22px",
                   marginRight: "22px",
@@ -247,6 +260,7 @@ const PopupComponent = (props: PopupComponentProps) => {
             <></>
           )}
         </DialogActions>
+        {!isUploaderFinal &&<p className="text-sm font-extralight italic p-2">* You can upload later by selecting the same date from the uploader tab</p>}
       </BootstrapDialog>
     </div>
   );

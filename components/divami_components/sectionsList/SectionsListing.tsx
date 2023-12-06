@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { IconButton } from "@material-ui/core";
-import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import {
   ArrowIcon,
   CloseIcon,
@@ -21,30 +19,15 @@ import {
 import {
   InputAdornment,
   Paper,
+  SvgIconProps,
   ThemeProvider,
   Typography,
   createTheme,
 } from "@mui/material";
 import moment from "moment";
-import AddBox from "@material-ui/icons/AddBox";
-import ArrowDownward from "@material-ui/icons/ArrowDownward";
-import Add from "@material-ui/icons/Add";
-import Check from "@material-ui/icons/Check";
-import ChevronLeft from "@material-ui/icons/ChevronLeft";
-import ChevronRight from "@material-ui/icons/ChevronRight";
 import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 import searchIcon from "../../../public/divami_icons/search.svg";
 import CustomDrawer from "../custom-drawer/custom-drawer";
-import Clear from "@material-ui/icons/Clear";
-import DeleteOutline from "@material-ui/icons/DeleteOutline";
-import Edit from "@material-ui/icons/Edit";
-import FilterList from "@material-ui/icons/FilterList";
-import FirstPage from "@material-ui/icons/FirstPage";
-import LastPage from "@material-ui/icons/LastPage";
-import Remove from "@material-ui/icons/Remove";
-import SaveAlt from "@material-ui/icons/SaveAlt";
-import Search from "@material-ui/icons/Search";
-import ViewColumn from "@material-ui/icons/ViewColumn";
 
 import phoneImage from "../../../public/divami_icons/phoneImage.svg";
 import hotspotImg from "../../../public/divami_icons/hotspotImg.svg";
@@ -53,6 +36,7 @@ import lidarScan from "../../../public/divami_icons/lidarScan.svg";
 import capture360Image from "../../../public/divami_icons/capture360Image.svg";
 import captureLidarIcon from "../../../public/divami_icons/captureLidarIcon.svg";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
+import Progress2DImage from "../../../public/divami_icons/progress2d.svg";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import crossIcon from "../../../public/divami_icons/crossIcon.svg";
 import FilterInActive from "../../../public/divami_icons/FilterInActive.svg";
@@ -82,13 +66,13 @@ import {
   CaptureImageIcon,
   CaptureCount,
   FloorName,
+  Progress2DImageIcon,
 } from "../CaptureMode/CaptureModeStyles";
 import { forwardRef } from "react";
 import SectionFilter from "./SectionFilter";
 
 import MaterialTable, { MTableToolbar, MTableBodyRow } from "material-table";
 import CustomButton from "../custom-button/CustomButton";
-import { SvgIconProps } from "@material-ui/core";
 import CustomLoader from "../custom_loader/CustomLoader";
 import LocalSearch from "../local_component/LocalSearch";
 import { TooltipText } from "../side-panel/SidePanelStyles";
@@ -96,6 +80,11 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import Chips from "./Chip";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { useAppContext } from "../../../state/appState/context";
+import { Add, AddBox, ArrowDownward, Check, ChevronLeft, ChevronRight, Clear, DeleteOutline, Edit, FilterList, FirstPage, LastPage, Remove, SaveAlt, Search } from "@mui/icons-material";
+import instance from "../../../services/axiosInstance";
+import { API } from "../../../config/config";
+import { toast } from "react-toastify";
 // import { ISections } from "../../../models/ISections";
 
 interface RowData {
@@ -104,6 +93,16 @@ interface RowData {
 
 interface ExpandedRows {
   [id: number]: boolean;
+}
+
+const fetchAssetCategories = (projectId: string) => {
+
+  try {
+
+      return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`)
+
+  } catch (error) { throw error }
+
 }
 
 const MyNewTitle = (props: any) => {
@@ -127,6 +126,8 @@ const customToolbarStyle = {
 
 const SectionsListing = () => {
   const router = useRouter();
+  const { appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
   const myTableRef = useRef<any>(null);
   const defaultMaterialTheme = createTheme();
   const [selectedRow, setSelectedRow] = useState(null);
@@ -135,6 +136,7 @@ const SectionsListing = () => {
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [roles, setRoles] = useState<string[] | []>([]);
+  const [hasProgress2D, setHasProgress2D]: any = useState(false);
   // const [showLoader, setShowLoader]: any = useState(true);
 
   // let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
@@ -246,6 +248,11 @@ const[isProcessing,setProcessing]=useState(false);
     if (router.isReady &&(!dataLoaded)) {
       const type = "newSnapshot";
       const projectId = router?.query?.projectId as string
+
+      fetchAssetCategories(projectId).then(res => {
+        if(res.data.success) setHasProgress2D(res.data.result.length > 0)
+      }).catch(e => console.log(e))
+      
       getSectionsList(projectId)
         .then((response: AxiosResponse<any>) => {
           setGridData([response?.data?.result]);
@@ -766,13 +773,52 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "24%" },
+      cellStyle: { width: "20%" },
    
       render: (rowData: any) => {
         return <div className="cursor-default">{
           rowData?.lastUpdated ?
           setTheFormatedDate(rowData.lastUpdated)
           : "-"
+          }</div>;
+      },
+    },
+
+
+    {
+      title: "Progress 2D",
+      field: "has2dProgress",
+      sorting: false,
+      headerStyle: {
+        borderBottom: "1px solid #FF843F",
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "500",
+        fontSize: "14px",
+        lineHeight: "20px",
+        color: "#101F4C",
+      },
+      cellStyle: { width: "20%" },
+   
+      render: (rowData: any) => {
+        return <div className="cursor-pointer">{
+          <TooltipText title="2D Progress">
+            <div className="flex justify-center">
+              <Progress2DImageIcon
+                src={Progress2DImage}
+                alt={""}
+                onClick={() => {
+                  if(hasProgress2D) {
+                    router.push({
+                      pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
+                      query: { structId: rowData._id },
+                    })} else {
+                      toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
+                    }
+                }}
+              ></Progress2DImageIcon>
+            </div>
+          </TooltipText>
           }</div>;
       },
     },

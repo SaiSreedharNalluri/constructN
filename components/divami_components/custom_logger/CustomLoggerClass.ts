@@ -1,8 +1,9 @@
 import * as Sentry from "@sentry/nextjs";
 import { AxiosError } from "axios";
-const islogInfo=process.env.NEXT_PUBLIC_LOG_INFO?process.env.NEXT_PUBLIC_LOG_INFO==="true"?true:false:false;
-const islogActivity=process.env.NEXT_PUBLIC_LOG_ACTIVITY?process.env.NEXT_PUBLIC_LOG_ACTIVITY==="true"?true:false:false;
-const islogError=process.env.NEXT_PUBLIC_LOG_ERROR?process.env.NEXT_PUBLIC_LOG_ERROR==="true"?true:false:false;
+import { SENTRY } from "../../../config/config";
+const islogInfo=SENTRY.LOG_INFO?SENTRY.LOG_INFO==="true"?true:false:false;
+const islogActivity=SENTRY.LOG_ACTIVITY?SENTRY.LOG_ACTIVITY==="true"?true:false:false;
+const islogError=SENTRY.LOG_ERROR?SENTRY.LOG_ERROR==="true"?true:false:false;
 
 export default class CustomLoggerClass {
     logInfo=(message:string)=>{

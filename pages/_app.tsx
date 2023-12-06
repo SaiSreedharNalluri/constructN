@@ -23,6 +23,8 @@ import { getAnalytics, isSupported, logEvent } from "firebase/analytics";
 import toastClose from "../public/divami_icons/toastClose.svg";
 import PopupComponent from "../components/popupComponent/PopupComponent";
 import { IntercomProvider } from 'react-use-intercom'
+import { UploaderContextProvider } from "../state/uploaderState/context";
+import { AppContextProvider } from "../state/appState/context";
 config.autoAddCss = false;
 export default function App({ Component, pageProps }: AppProps) {
   mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, { debug: true });
@@ -87,25 +89,31 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
  const [showPopUp, setshowPopUp] = useState(false);
   return (
-    <>
-    <IntercomProvider appId={process.env.NEXT_PUBLIC_INTERCOM_APP_ID||""}>
-        <Component {...pageProps} />
-        </IntercomProvider>
-        <StyledToastContainer
-        position="bottom-right"
-        autoClose={false}
-        hideProgressBar={true}
-        closeButton={toastClose}
-      />
-      <PopupComponent  open={showPopUp}
-         setShowPopUp={setshowPopUp}
-                modalTitle={"Access  Denied"}
-                modalmessage={`You don't have permissions to complete this operation. Please contact your admin.`}
-                primaryButtonLabel={"OK"}
-                SecondaryButtonlabel={""}
-                callBackvalue={()=>{       
-                setshowPopUp(false)
-      }}></PopupComponent>
-    </>
+    <AppContextProvider>
+      <UploaderContextProvider>
+        <>
+          <IntercomProvider appId={process.env.INTERCOM_APP_ID || "e3sowuh7"}>
+            <Component {...pageProps} />
+          </IntercomProvider>
+          <StyledToastContainer
+            position="bottom-right"
+            autoClose={false}
+            hideProgressBar={true}
+            closeButton={toastClose}
+          />
+          <PopupComponent
+            open={showPopUp}
+            setShowPopUp={setshowPopUp}
+            modalTitle={"Access  Denied"}
+            modalmessage={`You don't have permissions to complete this operation. Please contact your admin.`}
+            primaryButtonLabel={"OK"}
+            SecondaryButtonlabel={""}
+            callBackvalue={() => {
+              setshowPopUp(false);
+            }}
+          ></PopupComponent>
+          </>
+      </UploaderContextProvider>
+    </AppContextProvider>
   );
 }

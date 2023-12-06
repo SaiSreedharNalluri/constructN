@@ -2,6 +2,7 @@ import {
   createTheme,
   Drawer,
   InputAdornment,
+  Paper,
   ThemeProvider,
   Tooltip,
 } from "@mui/material";
@@ -44,7 +45,6 @@ import {
 } from "./ProjectUsersListStyles";
 import searchIcon from "../../../public/divami_icons/search.svg";
 import UserFilterIcon from "../../../public/divami_icons/UserFilterIcon.svg";
-import { Paper } from "@material-ui/core";
 import CustomButton from "../custom-button/CustomButton";
 import { MTableBodyRow, MTableEditRow } from "material-table";
 import {

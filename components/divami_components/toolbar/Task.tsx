@@ -7,6 +7,7 @@ import styles from "../toolbar/toolbar.module.css";
 
 import plusCircleIcon from "../../../public/divami_icons/plusCircleIcon.svg";
 import fileTextIcon from "../../../public/divami_icons/fileTextIcon.svg";
+import filterdListIcon from "../../../public/divami_icons/FilteredList.svg";
 import triWarnIcon from "../../../public/divami_icons/triWarnIcon.svg";
 import clipboardIcon from "../../../public/divami_icons/clipboardIcon.svg";
 import clipboardSecondIcon from "../../../public/divami_icons/clipboardSecondIcon.svg";
@@ -53,6 +54,7 @@ const Task = ({
   taskMenuClicked,
   deleteTheTask,
   taskFilterState,
+  setTaskFilterState,
   closeTaskCreate,
   openTaskDetails,
   closeTaskDetails,
@@ -84,9 +86,13 @@ const Task = ({
   const [image, setImage] = useState<Blob>();
   const [showImage, setShowImage] = useState(false);
   const [enableSubmit, setEnableSubmit] = useState(true);
+  const [isFilterApplied,setFilterApplied] = useState (taskFilterState.isFilterApplied)
   const[isLoading,setLoading]=useState(false)
   let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
 
+  useEffect(()=>{
+    setFilterApplied(taskFilterState.isFilterApplied)
+  },[taskFilterState]);
   useEffect(() => {
     setMyProject(currentProject);
     setMyStructure(currentStructure);
@@ -334,7 +340,7 @@ const Task = ({
               handleViewTaskList();
             }}>
           <CameraIcon
-            src={fileTextIcon}
+            src={isFilterApplied?filterdListIcon:fileTextIcon}
             width={12}
             height={12}
             alt="Arrow"
@@ -395,6 +401,7 @@ const Task = ({
             onClose={() => setOpenDrawer((prev: any) => !prev)}
             deleteTheTask={deleteTheTask}
             taskFilterState={taskFilterState}
+            setTaskFilterState={setTaskFilterState}
             getTasks={getTasks}
             handleOnTasksSort={handleOnTasksSort}
             deleteTheAttachment={deleteTheAttachment}

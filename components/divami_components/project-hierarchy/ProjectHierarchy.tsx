@@ -1,6 +1,5 @@
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { TreeItem, TreeView } from "@mui/lab";
 import { useEffect, useState } from "react";
 import { ChildrenEntity } from "../../../models/IStructure";
 import closeIcon from "../../../public/images/closeIcon.svg";
@@ -42,7 +41,7 @@ import CustomLoggerClass from "../../divami_components/custom_logger/CustomLogge
 import { getNewChipData, removeChip } from "../../../services/sections";
 const ProjectHierarchy = ({
   title,
-  openSelectLayer,
+  openselectlayer,
   onCloseHandler,
   treeData,
   getStructureData,
@@ -147,107 +146,110 @@ const ProjectHierarchy = ({
     return truncatedText;
   };
 
-  const renderTreeNode = (node: any, onLabelClick: any) => (
-  <LabelContainer data-testid="label" className={node?.snapshots && node?.designs?.length>0 && Object.keys(node?.snapshots?.latestSnapshot).length <= 0 || Object.keys(node?.snapshots?.latestSnapshot).length >=0 && node?.snapshots?.snapshotActiveCount <1 ?"bg-[#E7E7E7] ":""} >
-    <div className="flex items-center">
-    {node.children?.length ? (
-        expandedNodes.includes(node._id) ? (
-          <LabelIcon
-            onClick={(e: any) => {
-              handleNodeExpand(getAllIds(node));
-            }}
-          >
-            <RemoveIcon
-              style={{ cursor: "pointer", fontSize: "14px",marginLeft:"7px" }}
-              data-testid={"addIcon"}
-            />
-          </LabelIcon>
-        ) : (
-          <StyledSpan onClick={(e) => handleNodeExpand(getAllIds(node))}>
-            <AddIcon
-              style={{ cursor: "pointer", fontSize: "14px",marginLeft:"7px" }}
-              data-testid={"addIcon"}
-            />
-          </StyledSpan>
-        )
-      ) : (
-        <></>
-      )}
-      <LabelText onClick={(e: any) =>{ 
-              newchipData.map((chipData:any)=>{
-                      if(node._id===chipData.structure){
-
-                        handleDeleteNewChip(chipData._id,chipData.structure)
-                        }
-                    })
-          if(node?.designs.length>0 && Object.keys(node.snapshots?.latestSnapshot).length <= 0) {
-            setCaptureAvailable(true)
-            setId(node)
-           }
-           else if(node?.designs.length!==0&&Object.keys(node.snapshots?.latestSnapshot).length >0 && node.snapshots?.snapshotActiveCount<1) {
-            setProcessing(true)
-            setId(node)
-           }
-         else if (Object.keys(node.snapshots?.latestSnapshot).length >= 0 && node.snapshots?.snapshotActiveCount>0 ) {
-            onLabelClick(e, node)
-            setCaptureAvailable(false)
-            setProcessing(false)
-          }
-          customLogger.logInfo("Hierarchy Menu - Change Structure");
-      }} >
-         <TooltipText title={node?.name?.length > 20 ? node?.name : ""} placement="right">
-      <div>
-      <TruncatedString text={node?.name} maxLength={20}
-              suffixLength={0} ></TruncatedString> 
-        </div> 
+  const renderTreeNode = (node: any, onLabelClick: any) => {
+    console.log(node, '========')
+    return (
+      <LabelContainer data-testid="label" className={node?.snapshots && node?.designs?.length>0 && Object.keys(node?.snapshots?.latestSnapshot).length <= 0 || Object.keys(node?.snapshots?.latestSnapshot).length >=0 && node?.snapshots?.snapshotActiveCount <1 ?"bg-[#E7E7E7] ":""} >
+        <div className="flex items-center">
+        {node.children?.length ? (
+            expandedNodes.includes(node._id) ? (
+              <LabelIcon
+                onClick={(e: any) => {
+                  handleNodeExpand(getAllIds(node));
+                }}
+              >
+                <RemoveIcon
+                  style={{ cursor: "pointer", fontSize: "14px",marginLeft:"7px" }}
+                  data-testid={"addIcon"}
+                />
+              </LabelIcon>
+            ) : (
+              <StyledSpan onClick={(e) => handleNodeExpand(getAllIds(node))}>
+                <AddIcon
+                  style={{ cursor: "pointer", fontSize: "14px",marginLeft:"7px" }}
+                  data-testid={"addIcon"}
+                />
+              </StyledSpan>
+            )
+          ) : (
+            <></>
+          )}
+          <LabelText onClick={(e: any) =>{ 
+                  newchipData.map((chipData:any)=>{
+                          if(node._id===chipData.structure){
+    
+                            handleDeleteNewChip(chipData._id,chipData.structure)
+                            }
+                        })
+              if(node?.designs.length>0 && Object.keys(node.snapshots?.latestSnapshot).length <= 0) {
+                setCaptureAvailable(true)
+                setId(node)
+               }
+               else if(node?.designs.length!==0&&Object.keys(node.snapshots?.latestSnapshot).length >0 && node.snapshots?.snapshotActiveCount<1) {
+                setProcessing(true)
+                setId(node)
+               }
+             else if (Object.keys(node.snapshots?.latestSnapshot).length >= 0 && node.snapshots?.snapshotActiveCount>0 ) {
+                onLabelClick(e, node)
+                setCaptureAvailable(false)
+                setProcessing(false)
+              }
+              customLogger.logInfo("Hierarchy Menu - Change Structure");
+          }} >
+             <TooltipText title={node?.name?.length > 20 ? node?.name : ""} placement="right">
+          <div>
+          <TruncatedString text={node?.name} maxLength={20}
+                  suffixLength={0} ></TruncatedString> 
+            </div> 
+            </TooltipText>
+    
+          </LabelText>
+        </div>
+      
+    
+    <div>
+    {node?.designs.length<1
+        ? 
+        <TooltipText title="No Design" placement="right">
+          <div>
+          <Chips title="ND" bgColor="#F67C74" isChip={false}></Chips>
+          </div>
+      
         </TooltipText>
-
-      </LabelText>
-    </div>
-  
-
-<div>
-{node?.designs.length<1
-    ? 
-    <TooltipText title="No Design" placement="right">
-      <div>
-      <Chips title="ND" bgColor="#F67C74" isChip={false}></Chips>
-      </div>
-  
-    </TooltipText>
-    :node.snapshots && node?.designs.length>0 && Object.keys(node.snapshots?.latestSnapshot).length < 1
-    ? 
-    <TooltipText title="No Reality" placement="right">
-    <div>
-    <Chips title="NR" bgColor="#C24200" isChip={false}></Chips>  
-    </div>
-    </TooltipText>
-    :  node?.designs.length>0&&Object.keys(node.snapshots?.latestSnapshot).length > 0 && node.snapshots?.latestSnapshot?node.snapshots?.latestSnapshot?.state !== "Active"
-    ? 
-    // title={ moment(node.snapshots.latestSnapshot.captureDateTime).format("DD MMM")}
-    <TooltipText title="Processing" placement="right">
-    <div>
-    <Chips title="P" bgColor="#006CD0" isChip={false} captureTime={true} ></Chips>
-    </div>
-    </TooltipText>  
-   : newchipData.map((structureId:any) => {
-    if (node._id === structureId.structure) {
-      return <div key={node._id}>
-    <TooltipText title="New" placement="right">
-<div>
-        <Chips isChip={false} title="N" bgColor="#8BD97F" />
+        :node.snapshots && node?.designs.length>0 && Object.keys(node.snapshots?.latestSnapshot).length < 1
+        ? 
+        <TooltipText title="No Reality" placement="right">
+        <div>
+        <Chips title="NR" bgColor="#C24200" isChip={false}></Chips>  
         </div>
         </TooltipText>
-      </div> ;
-    }
-    return null;
-  })
-:""}
-</div>
-     
-
-    </LabelContainer>
-  );
+        :  node?.designs.length>0&&Object.keys(node.snapshots?.latestSnapshot).length > 0 && node.snapshots?.latestSnapshot?node.snapshots?.latestSnapshot?.state !== "Active"
+        ? 
+        // title={ moment(node.snapshots.latestSnapshot.captureDateTime).format("DD MMM")}
+        <TooltipText title="Processing" placement="right">
+        <div>
+        <Chips title="P" bgColor="#006CD0" isChip={false} captureTime={true} ></Chips>
+        </div>
+        </TooltipText>  
+       : newchipData.map((structureId:any) => {
+        if (node._id === structureId.structure) {
+          return <div key={node._id}>
+        <TooltipText title="New" placement="right">
+    <div>
+            <Chips isChip={false} title="N" bgColor="#8BD97F" />
+            </div>
+            </TooltipText>
+          </div> ;
+        }
+        return null;
+      })
+    :""}
+    </div>
+         
+    
+        </LabelContainer>
+      );
+  }
 
   const [search, setSearch] = useState(false);
   const [searchField, setSearchField] = useState("");
@@ -299,7 +301,7 @@ const ProjectHierarchy = ({
     handleNodeExpand(nodeIds);
   };
 
-  const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
+  const handleSelect = (event: React.SyntheticEvent, nodeIds: string | string[]) => {
     handleNodeSelection(nodeIds);
   };
 

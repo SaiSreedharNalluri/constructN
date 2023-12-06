@@ -1,5 +1,6 @@
 import mapboxgl from "mapbox-gl";
 import * as turf from "@turf/turf";
+import { MAPBOX } from "../config/config";
 const syncMaps = require("mapbox-gl-sync-move");
 
 const utmCode = "+proj=utm +ellps=GRS80 +datum=nad83 +units=m +no_defs +zone=";
@@ -66,7 +67,7 @@ export const MapboxViewerUtils = () => {
     _viewerId = viewerId;
     _eventHandler = eventHandler;
     console.log("Inside Initializer callback", _eventHandler);
-    mapboxgl.accessToken = `${process.env.NEXT_PUBLIC_Map_Token}`;
+    mapboxgl.accessToken = `${MAPBOX.token}`;
     const context = options?.context;
     let utm = options?.utm
     try {
@@ -86,6 +87,9 @@ export const MapboxViewerUtils = () => {
       bearing: bearing ? bearing : 0,
       zoom: 16, // starting zoom
       maxZoom:21,
+      locale: {
+        'NavigationControl.ResetBearing': 'Click to align the map to True North.\nClick and drag in any direction for free orbit.'
+      }
     });
     const nav = new mapboxgl.NavigationControl({
       visualizePitch: true

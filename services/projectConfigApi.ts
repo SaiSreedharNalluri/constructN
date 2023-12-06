@@ -1,6 +1,7 @@
 import instance from "./axiosInstance";
 import { setCookie, getCookie } from "cookies-next";
 import authHeader from "./auth-header";
+import { API } from "../config/config";
 
 
 
@@ -10,7 +11,7 @@ import authHeader from "./auth-header";
 
 export const getIssuePriorityList = async (projectId:any) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/priority-list/get`, {
+    .get(`${API.BASE_URL}/projects/${projectId}/typeLists/issue/priority-list/get`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -24,7 +25,7 @@ export const getIssuePriorityList = async (projectId:any) => {
 
 export const updateIssuePriorityList = async(projectId:any, issuePriorityList:Object) => {
   return await instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/priority-list/update`, issuePriorityList, {
+    .put(`${API.BASE_URL}/projects/${projectId}/typeLists/issue/priority-list/update`, issuePriorityList, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -38,7 +39,7 @@ export const updateIssuePriorityList = async(projectId:any, issuePriorityList:Ob
 
 export const getTaskPriorityList = async (projectId:any) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/task/priority-list/get`, {
+    .get(`${API.BASE_URL}/projects/${projectId}/typeLists/task/priority-list/get`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -52,7 +53,7 @@ export const getTaskPriorityList = async (projectId:any) => {
 
 export const updateTaskPriorityList = async(projectId:any, taskPriorityList:Object) => {
   return await instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/task/priority-list/update`, taskPriorityList, {
+    .put(`${API.BASE_URL}/projects/${projectId}/typeLists/task/priority-list/update`, taskPriorityList, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -67,7 +68,7 @@ export const updateTaskPriorityList = async(projectId:any, taskPriorityList:Obje
 
 export const getIssueStatusList = async (projectId:any) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/status-list/get`, {
+    .get(`${API.BASE_URL}/projects/${projectId}/typeLists/issue/status-list/get`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -81,7 +82,7 @@ export const getIssueStatusList = async (projectId:any) => {
 
 export const updateIssueStatusList = async(projectId:any, issueStatusList:Object) => {
   return await instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/status-list/update`, issueStatusList, {
+    .put(`${API.BASE_URL}/projects/${projectId}/typeLists/issue/status-list/update`, issueStatusList, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -96,7 +97,7 @@ export const updateIssueStatusList = async(projectId:any, issueStatusList:Object
 
 export const getTaskStatusList = async (projectId:any) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/task/status-list/get`, {
+    .get(`${API.BASE_URL}/projects/${projectId}/typeLists/task/status-list/get`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -110,7 +111,7 @@ export const getTaskStatusList = async (projectId:any) => {
 
 export const updateTaskStatusList = async(projectId:any, taskStatusList:Object) => {
   return await instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/task/status-list/update`, taskStatusList, {
+    .put(`${API.BASE_URL}/projects/${projectId}/typeLists/task/status-list/update`, taskStatusList, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -126,7 +127,7 @@ export const updateTaskStatusList = async(projectId:any, taskStatusList:Object) 
 
 export const getTagsList = async (projectId:any) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tags`, {
+    .get(`${API.BASE_URL}/projects/${projectId}/tags`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -140,7 +141,7 @@ export const getTagsList = async (projectId:any) => {
 
 export const updateTagList = async(projectId:any, tagList:Object) => {
   return await instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/tags/update`, tagList, {
+    .put(`${API.BASE_URL}/projects/${projectId}/tags/update`, tagList, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {

@@ -1,5 +1,4 @@
 import React, { useRef, useState } from "react";
-import TextareaAutosize from "@mui/base/TextareaAutosize";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/system";
 import { ErrorField } from "../custom-select/CustomSelect";

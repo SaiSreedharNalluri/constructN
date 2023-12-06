@@ -1,8 +1,9 @@
 import instance from "./axiosInstance";
 import authHeader from "./auth-header";
+import { API } from "../config/config";
 export const getProjects = async () => {
   try {
-    return await instance.get(`${process.env.NEXT_PUBLIC_HOST}/projects`, {
+    return await instance.get(`${API.BASE_URL}/projects`, {
       headers: authHeader.authHeader(),
     });
   } catch (error) {
@@ -13,7 +14,7 @@ export const getProjects = async () => {
 export const getProjectsList = async () => {
   try {
     return await instance.get(
-      `${process.env.NEXT_PUBLIC_HOST}/views/web/projectlist`,
+      `${API.BASE_URL}/views/web/projectlist`,
       {
         headers: authHeader.authHeader(),
       }
@@ -26,7 +27,7 @@ export const getProjectsList = async () => {
 export const getProjectDetails = async (projectId: string) => {
   try {
     return await instance.get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}`,
+      `${API.BASE_URL}/projects/${projectId}`,
       {
         headers: authHeader.authHeader(),
       }
@@ -38,7 +39,7 @@ export const getProjectDetails = async (projectId: string) => {
 };
 export const getProjectUsers = async (projectId: string) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/users`, {
+    .get(`${API.BASE_URL}/projects/${projectId}/users`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -52,7 +53,7 @@ export const getProjectUsers = async (projectId: string) => {
 
 export const getUserRoles = async () => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/get-project-roles`, {
+    .get(`${API.BASE_URL}/projects/get-project-roles`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -67,7 +68,7 @@ export const getUserRoles = async () => {
 export const addUserRoles = async (projectInfo: Object, projectId: string) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/multiple-user-assign`,
+      `${API.BASE_URL}/projects/${projectId}/multiple-user-assign`,
       projectInfo,
       {
         headers: authHeader.authHeader(),
@@ -85,7 +86,7 @@ export const addUserRoles = async (projectInfo: Object, projectId: string) => {
 export const checkUserRegistered = async (projectInfo: Object) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/users/is-user-registered`,
+      `${API.BASE_URL}/users/is-user-registered`,
       projectInfo,
       {
         headers: authHeader.authHeader(),
@@ -105,7 +106,7 @@ export const updateProjectInfo = async (
   projectId: string
 ) => {
   return await instance
-    .put(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}`, projectInfo, {
+    .put(`${API.BASE_URL}/projects/${projectId}`, projectInfo, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -122,7 +123,7 @@ export const assignProjectUser = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/assign-user`,
+      `${API.BASE_URL}/projects/${projectId}/assign-user`,
       newProjectUser,
       {
         headers: authHeader.authHeader(),
@@ -138,7 +139,7 @@ export const assignProjectUser = async (
 export const removeProjectUser = async (email: string, projectId: string) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/deassign-user`,
+      `${API.BASE_URL}/projects/${projectId}/deassign-user`,
       { email },
       {
         headers: authHeader.authHeader(),
@@ -157,7 +158,7 @@ export const updateProjectUserRole = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/change-user-role`,
+      `${API.BASE_URL}/projects/${projectId}/change-user-role`,
       ProjectUser,
       {
         headers: authHeader.authHeader(),
@@ -173,7 +174,7 @@ export const updateProjectUserRole = async (
 export const updateProjectCover = async (file: any, projectId: string) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/cover-photo`,
+      `${API.BASE_URL}/projects/${projectId}/cover-photo`,
       file,
       {
         headers: authHeader.authHeader(),
@@ -188,7 +189,7 @@ export const updateProjectCover = async (file: any, projectId: string) => {
 };
 export const getProjectTypes = async () => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/types`, {
+    .get(`${API.BASE_URL}/projects/types`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -202,7 +203,7 @@ export const getProjectTypes = async () => {
 export const getScheduleViewData = async (projectId: string) => {
   return await instance
     .get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/activities/project-plan`,
+      `${API.BASE_URL}/projects/${projectId}/activities/project-plan`,
       {
         headers: authHeader.authHeader(),
       }
@@ -218,7 +219,7 @@ export const getScheduleViewData = async (projectId: string) => {
 export const getGanttViewData = async (projectId: string) => {
   return await instance
     .get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/activities/gantt`,
+      `${API.BASE_URL}/projects/${projectId}/activities/gantt`,
       {
         headers: authHeader.authHeader(),
       }

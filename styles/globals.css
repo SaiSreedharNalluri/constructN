@@ -72,6 +72,21 @@
 .calc-h112 {
   height: calc(100vh - 112px);
 }
+
+.calc-h400 {
+  height: calc(100vh - 400px);
+}
+.calc-h223 {
+  height: calc(100vh - 223px);
+}
+
+.calc-h295 {
+  height: calc(70vh - 295px);
+}
+.css-n7tliy-MuiStep-root {
+  padding-left: 0px !important;
+  padding-right: 12px !important;
+}
 .group:hover .text-hover-color {
   color: #FF843F;
 }
@@ -232,6 +247,10 @@ body {
   z-index: 15;
   height: 15px;
   float: right;
+}
+
+.adsk-viewing-viewer > .canvas-wrap > canvas {
+  cursor: pointer !important;
 }
 
 /* .Toastify {
@@ -671,4 +690,14 @@ td {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.isScroll::-webkit-scrollbar-thumb {
+  background-color: #FF843F !important;
+  border-radius: 60px !important;
+}
+.isScroll::-webkit-scrollbar {
+  width: 16px;
+  background-color: #E7E7E7 !important;
+  border-radius: 60px !important;
 }

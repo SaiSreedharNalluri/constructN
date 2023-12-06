@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import { assignProjectUser } from '../../services/project';
 import { Type } from 'react-toastify/dist/utils';
 import { CustomToast } from "../divami_components/custom-toaster/CustomToast";
+import { AWS } from '../../config/config';
 interface IProps {
   projectUsers: IProjectUserList[];
   setProjectUsers: React.Dispatch<React.SetStateAction<IProjectUserList[]>>;
@@ -151,7 +152,7 @@ const ProjectUserAdd: React.FC<IProps> = ({
                                     src={
                                       pUserData.user.avatar
                                         ? pUserData.user.avatar
-                                        : `${process.env.NEXT_PUBLIC_CONSTRUCTN_ATTACHMENTS_S3}/defaults/user_icon_def_01.png`
+                                        : `${AWS.CDN_ATTACHMENTS}/defaults/user_icon_def_01.png`
                                     }
                                     alt=""
                                     className={`w-full h-full cursor-pointer object-cover `}

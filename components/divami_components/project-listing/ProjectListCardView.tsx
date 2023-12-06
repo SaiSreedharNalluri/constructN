@@ -52,8 +52,8 @@ import cardMenu from "../../../public/divami_icons/cardMenu.svg";
 
 import moment from "moment";
 import CustomLoader from "../custom_loader/CustomLoader";
-import { Tooltip } from "@material-ui/core";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { Tooltip } from "@mui/material";
 export const ProjectListCardView = ({
   projects,
   projectActions,

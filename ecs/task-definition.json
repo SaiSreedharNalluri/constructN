@@ -1,0 +1,47 @@
+{
+    "family": "${CONTAINER_NAME}",
+    "containerDefinitions": [
+        {
+            "name": "${CONTAINER_NAME}",
+            "image": "${ACCOUNT_NUMBER}.dkr.ecr.${REGION}.amazonaws.com/${IMAGE_REPO_NAME}:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "${CONTAINER_NAME}-3000-tcp",
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "secrets": [],
+            "essential": true,
+            "entryPoint": [],
+            "command": [],
+            "environment": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/${CONTAINER_NAME}",
+                    "awslogs-region": "${REGION}",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            }
+        }        
+    ],
+    "taskRoleArn": "${TASKROLEARN}",
+    "executionRoleArn": "${EXECUTIONROLEARN}",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "${CPU}",
+    "memory": "${MEMORY}",
+    "runtimePlatform": {
+        "operatingSystemFamily": "LINUX"
+    }
+}

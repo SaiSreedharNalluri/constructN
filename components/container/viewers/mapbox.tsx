@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import mapboxgl, { LngLat, Map, Popup } from 'mapbox-gl';
 import { Feature, center } from '@turf/turf';
+import { MAPBOX } from '../../../config/config';
 
 interface IProps {
 
@@ -52,7 +53,7 @@ function MapboxViewer(props: IProps) {
 
     const initViewer = function () {
 
-        mapboxgl.accessToken = `${process.env.NEXT_PUBLIC_Map_Token}`;
+        mapboxgl.accessToken = `${MAPBOX.token}`;
 
         let center: LngLat = new LngLat(
             context?.center ? context?.center[0] : 0,

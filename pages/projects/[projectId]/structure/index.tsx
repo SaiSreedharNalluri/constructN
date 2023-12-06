@@ -57,6 +57,7 @@ import {
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 import { getSectionsList } from "../../../../services/sections";
 import CustomLoggerClass from "../../../../components/divami_components/custom_logger/CustomLoggerClass";
+import { useAppContext } from "../../../../state/appState/context";
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -122,6 +123,8 @@ const LeftOverLayContainer = styled("div")(({ isFullScreen }: any) => ({
 const Index: React.FC<IProps> = () => {
   const customLogger = new CustomLoggerClass();
   const router = useRouter();
+  const { appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
   let [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
   const [currentProjectId, setActiveProjectId] = useState("");
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
@@ -324,6 +327,7 @@ const Index: React.FC<IProps> = () => {
       getStructureList(router.query.projectId as string)
         .then((response) => {
           const list = response.data.result;
+          
           setStructuresList(list);
           let nodeData = localStorage.getItem("nodeData")
             ? JSON.parse(window.localStorage.getItem("nodeData") || "")
@@ -1419,7 +1423,7 @@ const Index: React.FC<IProps> = () => {
       editObj,
       issueObj?._id as string
     )
-      .then((response) => {
+      .then((response:any) => {
         if (response.success === true) {
           CustomToast("issue information updated successfully","success");
           const index = issueFilterList.findIndex(
@@ -1429,7 +1433,7 @@ const Index: React.FC<IProps> = () => {
           setIssueList(issueFilterList);
         }
       })
-      .catch((error) => {
+      .catch((error:any) => {
         console.log("error", error);
       });
   };
@@ -1492,12 +1496,13 @@ const Index: React.FC<IProps> = () => {
     if (router.isReady) {
       // if (router.query.structId !== undefined)
       // setSelector(router.query.structId.toString());
+      
       getSectionsList(router.query.projectId as string)
         .then((response: AxiosResponse<any>) => {
           const result = response.data.result;
           const resultArray :any= Array.isArray(result) ? result : [result];
           setState([...resultArray]);
-          setStateFilter([...response.data.result]);
+          setStateFilter([...resultArray]);
           // if (selector.length < 1) setSelector(response.data.result[0]._id);
         })
         .catch((error) => {
@@ -1840,6 +1845,7 @@ const Index: React.FC<IProps> = () => {
                 taskPriorityList={tasksPriotityList}
                 taskStatusList={tasksStatusList}
                 taskFilterState={taskFilterState}
+                setTaskFilterState = {setTaskFilterState}
                 issueFilterState={issueFilterState}
                 setIssueFilterState={setIssueFilterState}
                 closeIssueCreate={closeIssueCreate}

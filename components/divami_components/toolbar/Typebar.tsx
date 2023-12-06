@@ -10,10 +10,10 @@ import {
   ContainerDiv,
 } from "./ToolBarStyles";
 import SelectTypesList from "../select-types/SelectTypesList";
-import ClickAwayListener from "@mui/base/ClickAwayListener";
 
 // import styles from '../toolbar/toolbar.module.css'
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { ClickAwayListener } from "@mui/material";
 
 const Typebar = ({
   rightMenuClickHandler,

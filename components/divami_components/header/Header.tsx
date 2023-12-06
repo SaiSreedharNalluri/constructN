@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { getCookie, removeCookies, setCookie } from "cookies-next";
 import DesignRealitySwitch from "../../container/designRealitySwitch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import  uploadIcon from '../../../public/divami_icons/uploadIcon.svg'
 import {
   faQuestion,
   faRightFromBracket,
@@ -42,6 +43,7 @@ import {
   ProfileImgIconDefault,
   ProjectSelectorContainer,
   HeaderSupportImageContainer,
+  HeaderUploaderImageContainer,
 } from "./HeaderStyles";
 import { ITools } from "../../../models/ITools";
 import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
@@ -70,6 +72,20 @@ import NotificationDrawer from "../custom-drawer/notification-drawer";
 import { truncate } from "fs/promises";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import * as Sentry from "@sentry/nextjs";
+import { hasCommonElement } from "../../../services/axiosInstance";
+import { useUploaderContext } from "../../../state/uploaderState/context";
+import { UploaderStep } from "../../../state/uploaderState/state";
+import { WebWorkerManager } from "../../../utils/webWorkerManager";
+import { getStructureHierarchy, getStructureList } from "../../../services/structure";
+import { boolean } from "yup";
+import { IBaseResponse } from "../../../models/IBaseResponse";
+import { IProjects } from "../../../models/IProjects";
+import { ChildrenEntity, IStructure } from "../../../models/IStructure";
+import { ProjectData, ProjectLocalStorageKey } from "../../../state/appState/state";
+import { useAppContext } from "../../../state/appState/context";
+import UploaderProjects from "../uploader_details/uploaderProjects";
+import { IJobs } from "../../../models/IJobs";
+import { ProjectCounts } from "../../../models/IUtils";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -86,8 +102,8 @@ const Header: React.FC<any> = ({
   hideSidePanel,
   fromUsersList,
   showFirstElement,
-  isDesignAvailable=false,
-  isRealityAvailable=false,
+  isDesignAvailable = false,
+  isRealityAvailable = false,
 }) => {
   const customLogger = new CustomLoggerClass();
   const router = useRouter();
@@ -107,6 +123,7 @@ const Header: React.FC<any> = ({
   const rightOverlayRefs: any = useRef();
   const [active, setActive] = useState();
   const [openNotification, setOpenNotication] = useState(false);
+  const [openUploader, setOpenUploader] = useState(false);
   const [notifications, setNotifications] = useState<IUserNotification[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalNotifications, setTotalNotifications] = useState<number>(0);
@@ -114,47 +131,83 @@ const Header: React.FC<any> = ({
   const [supportMenu, setSupportMenu] = useState<boolean>(false);
   const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
   const [openProfile, setOpenProfile] = useState(false);
-  const [projectName,setProjectName]=useState('')
+  const [projectName, setProjectName] = useState('')
   const [notificationCount, setNotificationCount] = useState(0);
+  const [uploaderCount, setUploaderCount] = useState(0);
+  const { state: uploaderState } = useUploaderContext();
+  const { state: appState, appContextAction } = useAppContext();
+  const [projectUplObj,setProjectUplObj] = useState<ProjectCounts>({})
+  const { appAction } = appContextAction;
+  useEffect(() => {
+    if (router.isReady && router?.query?.projectId) {
+      let projectId = router?.query?.projectId as string
+      var projectDataListString = localStorage.getItem(ProjectLocalStorageKey.ProjectDataListKey)
+      var projectDataList: ProjectData[] | undefined = projectDataListString ? JSON.parse(projectDataListString) as ProjectData[] : undefined
+      if(appState.currentProjectData && appState.currentProjectData.project._id === projectId) {
+        //no need to update
+        return
+      }
 
-  useEffect(()=>{
-    if(router.isReady && router?.query?.projectId)
-    {
-      const projectInfo:any = getCookie('projectData')as string;
-     if(projectInfo === undefined || projectInfo === null || projectInfo === 1)
-     {
-        ProjectInfo([])
-     }
-     else
-     {
-      if(JSON.parse(projectInfo)?.find((each:any)=>each._id === router?.query?.projectId)?._id != router?.query?.projectId)
-     {
-        ProjectInfo(JSON.parse(projectInfo))
-     }else{
-      setProjectName(JSON.parse(projectInfo)?.find((each:any)=>each._id===router?.query?.projectId)?.name)
-     }
-     }
+      let projectDataInAppState = appState.projectDataList.find((projectData) => { return projectData.project._id === projectId})
+      let projectDataInLocalStorage = projectDataList && projectDataList.find((projectData) => { return projectData.project._id === projectId})
+      if(projectDataInAppState) {
+        appAction.setCurrentProjectData(projectDataInAppState)
+      } else if(projectDataInLocalStorage) {
+        appAction.appendProjectData(projectDataInLocalStorage)
+      } else {
+        let response = getProjectData(projectId);
+        response.then((projectData) => {
+          if(projectData) {
+            if (!projectDataList) {
+              projectDataList = [projectData]
+            } else {
+              projectDataList.push(projectData)
+            }
+            localStorage.setItem(ProjectLocalStorageKey.ProjectDataListKey, JSON.stringify(projectDataList))
+            appAction.appendProjectData(projectData)
+          }
+        }).catch((error) => {
+          if (error.response.status === 403) {
+            CustomToast("Permisson Denied, Contact Admin", "error");
+            router.push("/projects?reason=AccessDenied");
+          }
+        })
+      }
     }
-  },[router.isReady,router?.query?.projectId,projectName])
-  const ProjectInfo=(projectInfo:any)=>{
-    getProjectDetails(router?.query?.projectId as string).then((response)=>{
-      console.log(response?.data?.result?.company?.name,"res");
-      if(response?.data?.result)
-      { 
-        projectInfo.push({_id:router?.query?.projectId,name:response?.data?.result?.name,timeZone:response?.data?.result?.timeZone,dashboardURL:response?.data?.result?.metaDetails?.dashboardURL ,reportURL:response?.data?.result?.metaDetails?.reportURL})
+  }, [router.isReady, router?.query?.projectId])
+
+  useEffect(() => {
+    if (router.isReady && router?.query?.projectId) {
+      const projectInfo: any = getCookie('projectData') as string;
+      if (projectInfo === undefined || projectInfo === null || projectInfo === 1) {
+        ProjectInfo([])
+      }
+      else {
+        if (JSON.parse(projectInfo)?.find((each: any) => each._id === router?.query?.projectId)?._id != router?.query?.projectId) {
+          ProjectInfo(JSON.parse(projectInfo))
+        } else {
+          setProjectName(JSON.parse(projectInfo)?.find((each: any) => each._id === router?.query?.projectId)?.name)
+        }
+      }
+    }
+  }, [router.isReady, router?.query?.projectId, projectName])
+  const ProjectInfo = (projectInfo: any) => {
+    getProjectDetails(router?.query?.projectId as string).then((response) => {
+      console.log(response?.data?.result?.company?.name, "res");
+      if (response?.data?.result) {
+        projectInfo.push({ _id: router?.query?.projectId, name: response?.data?.result?.name, timeZone: response?.data?.result?.timeZone, dashboardURL: response?.data?.result?.metaDetails?.dashboardURL, reportURL: response?.data?.result?.metaDetails?.reportURL })
         Sentry.setTag("ProjectName", response?.data?.result?.name);
-        Sentry.setTag("ProjectId",  response?.data?.result?._id);
-        Sentry.setTag("CompanyName",  response?.data?.result?.company?.name);
+        Sentry.setTag("ProjectId", response?.data?.result?._id);
+        Sentry.setTag("CompanyName", response?.data?.result?.company?.name);
         setCookie('projectData', JSON.stringify(projectInfo));
         setProjectName(response?.data?.result?.name)
-      } 
-     })  .catch((error) => {
-      if (error.response.status===403)
-      {
-        CustomToast("Permisson Denied, Contact Admin","error");
-        router.push("/projects?reason=AccessDenied");
       }
-     });
+    }).catch((error) => {
+      if (error.response.status === 403) {
+        // CustomToast("Permisson Denied, Contact Admin", "error");
+        // router.push("/projects?reason=AccessDenied");
+      }
+    });
   }
   useEffect(() => {
     let user = null;
@@ -173,15 +226,14 @@ const Header: React.FC<any> = ({
     //   setProjectId(router.query.projectId);
     // }
     //getUserNotifications();
-   
+
   }, [router.isReady]);
   useEffect(() => {
-    getUserProfile().then((response)=>{
-      if(response?.success === true)
-      {
-       setNotificationCount(response?.result?.unReadNotifications)
+    getUserProfile().then((response) => {
+      if (response?.success === true) {
+        setNotificationCount(response?.result?.unReadNotifications)
       }
-     })
+    })
   }, [router.isReady]);
   useEffect(() => {
     setIViewMode(viewMode);
@@ -192,21 +244,55 @@ const Header: React.FC<any> = ({
     //   };
   }, [viewMode]);
 
+  const getProjectData = async (projectId: string): Promise<ProjectData | undefined> => {
+    let responseArr = await Promise.all([
+      getProjectDetails(projectId),
+      getStructureList(projectId),
+      getStructureHierarchy(projectId)
+    ])
+
+    let isSuccess = responseArr.reduce<boolean>((isSuccess, response): boolean => {
+      let data = response.data as IBaseResponse<any>
+      return isSuccess && data.success
+    }, true)
+
+    if (isSuccess) {
+      let project = (responseArr[0].data as IBaseResponse<IProjects>).result
+      let structureList = (responseArr[1].data as IBaseResponse<IStructure[]>).result
+      let structureHierarchy = (responseArr[2].data as IBaseResponse<ChildrenEntity[]>).result
+
+      let projectData: ProjectData = {
+        project: project,
+        structureList: structureList,
+        hierarchy: structureHierarchy
+      }
+      return projectData
+    } else {
+      return undefined
+    }
+  }
+
   const userLogOut = () => {
-    customLogger.logActivity("null") ;
+    customLogger.logActivity("null");
     Sentry.setTag("ProjectName", null);
     Sentry.setTag("CompanyName", null);
-  Sentry.setTag("ProjectId", null);
+    Sentry.setTag("ProjectId", null);
     removeCookies("user");
     removeCookies('projectData');
     removeCookies('isProjectTimeZone');
+    localStorage.removeItem('uploaededData')
     // router.push("/login");
     router.push("/login");
   };
 
   const goToProjectsList = () => {
-    customLogger.logInfo("Projects Page") ;
-    router.push("/projects");
+    if (hasCommonElement(['uploader'], router.asPath?.split("/")) === true && uploaderState.step !== UploaderStep.Upload) {
+      setIsShowPopUp(true)
+    }
+    else {
+      router.push("/projects");
+    }
+    customLogger.logInfo("Projects Page");
   };
 
   const onProfilePicClick = () => {
@@ -220,7 +306,6 @@ const Header: React.FC<any> = ({
       setOpenProfile(false);
     }
   };
-
   const rightMenuClickHandler = (e: any) => {
     setActive(e.currentTarget.id);
     setRighttNav(!rightNav);
@@ -259,6 +344,7 @@ const Header: React.FC<any> = ({
   //const [defaultValue, setDefaultValue] = useState(2);
   const [filterValue, setFilterValue] = useState("All");
   const [showPopUp, setshowPopUp] = useState(false);
+  const [isShowPopUp, setIsShowPopUp] = useState(false);
   // useEffect(() => {
   //   getUserNotifications();
   //   getProjectsList()
@@ -283,7 +369,7 @@ const Header: React.FC<any> = ({
   //     .catch((error) => {});
   // }, []);
   const getUserNotifications = (
-   // condition = defaultValue,
+    // condition = defaultValue,
     eventEmitter = filterValue
   ) => {
     if (eventEmitter === "All") {
@@ -299,7 +385,7 @@ const Header: React.FC<any> = ({
           setTotalNotifications(response.totalUserNotifications);
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const handleOptionChange = (event: any) => {
@@ -339,15 +425,83 @@ const Header: React.FC<any> = ({
   const handleProfileClose = () => {
     setOpenProfile(false);
   };
+  const handleUploaderClose =()=>{
+    setOpenUploader(false)
+  }
   const clearNotificationsCount = () => {
     clearUserNotificationsCount().then((response) => {
-      if(response?.success === true)
-      {
+      if (response?.success === true) {
         setNotificationCount(0)
       }
       console.log(response);
-    }).catch((error) => {});
+    }).catch((error) => { });
   }
+  const [url,setUrl]=useState('')
+  let WorkerManager = WebWorkerManager.getInstance()
+  const workerExists = Object.keys(WorkerManager.getWorker()).length > 0;
+   const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
+    
+    if (
+      (workerExists && [UploaderStep.Upload, UploaderStep.Details].includes(uploaderState.step)) ||
+      workerExists ||
+      [UploaderStep.ChooseFiles, UploaderStep.Review, UploaderStep.ChooseGCPs].includes(uploaderState.step)
+    ) {
+ 
+       event.preventDefault();
+       event.returnValue = true;
+     }
+   };
+   const popStateHandler = () => {
+    if (
+      (workerExists && [UploaderStep.Upload, UploaderStep.Details].includes(uploaderState.step)) ||
+      workerExists ||
+      [UploaderStep.ChooseFiles, UploaderStep.Review, UploaderStep.ChooseGCPs].includes(uploaderState.step)
+    )  {
+       setIsShowPopUp(true)
+       history.pushState(null, '', url);
+     }
+   }
+   useEffect(()=>{
+   setUrl(window.location.href)
+   },[typeof window != undefined,router,router.isReady])
+ 
+   useEffect(() => {
+     window.addEventListener("beforeunload", beforeUnloadHandler);
+     history.pushState(null, '', document.URL);
+     window.addEventListener('popstate', popStateHandler)
+     return (() => {
+       window.removeEventListener("beforeunload", beforeUnloadHandler);
+       window.removeEventListener('popstate', popStateHandler)
+     })
+   }, [url,uploaderState.step])
+
+  useEffect(() => {
+    // Calculate project counts when the component mounts or when the originalArray changes
+    const calculateProjectCounts = () => {
+      const counts:any = {};
+      appState.inProgressPendingUploads.forEach(jobInfo => {
+        const projectId = jobInfo.project as string;
+
+        if (!counts[projectId]) {
+          counts[projectId] = 1;
+        } else {
+          counts[projectId]++;
+        }
+      });
+
+      setProjectUplObj(counts);
+    };
+    calculateProjectCounts();
+    }, [appState.inProgressPendingUploads]);
+  useEffect(()=>{
+    if(Object?.keys(projectUplObj).length>0)
+    {
+      setUploaderCount(Object.keys(projectUplObj).length)
+    }
+    else{
+      setUploaderCount(0)
+    }
+  },[projectUplObj])
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -386,9 +540,9 @@ const Header: React.FC<any> = ({
           {showBreadcrumbs && <DividerIcon src={headerLogSeparator} alt="" />}
           {showBreadcrumbs && (
             <CustomBreadcrumbs
-              breadCrumbData={ breadCrumbData.length > 0 ?  breadCrumbData :[{name:projectName} ]}
+              breadCrumbData={breadCrumbData.length > 0 ? breadCrumbData : [{ name: projectName }]}
               handleBreadCrumbClick={
-                handleBreadCrumbClick ? handleBreadCrumbClick : () => {}
+                handleBreadCrumbClick ? handleBreadCrumbClick : () => { }
               }
               showFirstElement={showFirstElement}
             />
@@ -432,34 +586,69 @@ const Header: React.FC<any> = ({
             ""
           )} */}
 
-          {(toolClicked &&(isDesignAvailable||isRealityAvailable))? (
-            <TooltipText title={!isDesignAvailable? "No Design":!isRealityAvailable?"No Reality":"Switch Mode"}>
-            <HeaderToggle>
-              <HeaderToggleButtonOne
-                onClick={rightMenuClickHandler}
-                toggleStatus={isDesignSelected}
-                isAvailable={isDesignAvailable}
-                id="Design"
-                dataTestid="design-button"
-                isLeftCorner={true}
-              >
-                Design
-              </HeaderToggleButtonOne>
-              <HeaderToggleButtonOne
-                onClick={rightMenuClickHandler}
-                toggleStatus={!isDesignSelected}
-                isAvailable = {isRealityAvailable}
-                id="Reality"
-                dataTestid="reality-button"
+          {(toolClicked && (isDesignAvailable || isRealityAvailable)) ? (
+            <TooltipText title={!isDesignAvailable ? "No Design" : !isRealityAvailable ? "No Reality" : "Switch Mode"}>
+              <HeaderToggle>
+                <HeaderToggleButtonOne
+                  onClick={rightMenuClickHandler}
+                  toggleStatus={isDesignSelected}
+                  isAvailable={isDesignAvailable}
+                  id="Design"
+                  dataTestid="design-button"
+                  isLeftCorner={true}
+                >
+                  Design
+                </HeaderToggleButtonOne>
+                <HeaderToggleButtonOne
+                  onClick={rightMenuClickHandler}
+                  toggleStatus={!isDesignSelected}
+                  isAvailable={isRealityAvailable}
+                  id="Reality"
+                  dataTestid="reality-button"
 
-              >
-                Reality
-              </HeaderToggleButtonOne>
-            </HeaderToggle>
+                >
+                  Reality
+                </HeaderToggleButtonOne>
+              </HeaderToggle>
             </TooltipText>
           ) : (
             <></>
           )}
+         <HeaderUploaderImageContainer>
+            <TooltipText title="Uploader" onClick={() => {
+              if (openUploader) {
+                setOpenUploader(false);
+                customLogger.logInfo("Notifications Hide")
+              } else {
+                customLogger.logInfo("Notifications Show")
+                setOpenUploader(true);
+                setOpenNotication(false);
+                setMenuLoading(false);
+                setSupportMenu(false);
+                setOpenProfile(false);
+                clearNotificationsCount();
+              }
+            }}>
+              <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full" >
+                <Badge badgeContent={uploaderCount} color="warning">
+                  <Image
+                    src={uploadIcon}
+                    alt="Uploader Icon"
+                    width={30}
+                    height={30}
+                  />
+                </Badge>
+              </div>
+            </TooltipText>
+
+            {openUploader && (
+              <div>
+                 <CustomDrawer paddingStyle={true} variant="persistent">
+                 <div><UploaderProjects handleUploaderClose={handleUploaderClose} projectUplObj={projectUplObj}/></div>
+                </CustomDrawer>
+              </div>
+            )}
+          </HeaderUploaderImageContainer>
           <HeaderProfileImageContainer>
             {avatar ? (
               <TooltipText title="My Profile">
@@ -501,24 +690,24 @@ const Header: React.FC<any> = ({
           <HeaderSupportImageContainer>
             <TooltipText title="Support">
               <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
-              <Link href="https://help.constructn.ai/en/" target="_blank" passHref>
-             <Image
-                  height="30"
-                  src={helpIcon}
-                  alt="Support"
-                  onClick={() => {
-                  if (!supportMenu) {
-                    customLogger.logInfo("Header - Support")
-                      setSupportMenu(true);
-                      setMenuLoading(false);
-                      setOpenNotication(false);
-                      setOpenProfile(false);
-                    } else {
-                      setSupportMenu(false);
-                    }
-                  }}
-                />
-                
+                <Link href="https://help.constructn.ai/en/" target="_blank" passHref>
+                  <Image
+                    height="30"
+                    src={helpIcon}
+                    alt="Support"
+                    onClick={() => {
+                      if (!supportMenu) {
+                        customLogger.logInfo("Header - Support")
+                        setSupportMenu(true);
+                        setMenuLoading(false);
+                        setOpenNotication(false);
+                        setOpenProfile(false);
+                      } else {
+                        setSupportMenu(false);
+                      }
+                    }}
+                  />
+
                 </Link>
               </div>
             </TooltipText>
@@ -526,24 +715,25 @@ const Header: React.FC<any> = ({
 
           <HeaderNotificationImageContainer>
             <TooltipText title="Notifications" onClick={() => {
-                   if (openNotification) {
-                      setOpenNotication(false);
-                      customLogger.logInfo("Notifications Hide")
-                    } else {
-                      customLogger.logInfo("Notifications Show")
-                      setOpenNotication(true);
-                      setMenuLoading(false);
-                      setSupportMenu(false);
-                      setOpenProfile(false);
-                      clearNotificationsCount();
-                    }
-                  }}>
+              if (openNotification) {
+                setOpenNotication(false);
+                customLogger.logInfo("Notifications Hide")
+              } else {
+                customLogger.logInfo("Notifications Show")
+                setOpenNotication(true);
+                setOpenUploader(false);
+                setMenuLoading(false);
+                setSupportMenu(false);
+                setOpenProfile(false);
+                clearNotificationsCount();
+              }
+            }}>
               <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full" >
-              <Badge badgeContent={notificationCount} color="warning">
-                <Image
-                  src={Notification}
-                  alt="Profile Image"
-                />
+                <Badge badgeContent={notificationCount} color="warning">
+                  <Image
+                    src={Notification}
+                    alt="Profile Image"
+                  />
                 </Badge>
               </div>
             </TooltipText>
@@ -616,6 +806,7 @@ const Header: React.FC<any> = ({
           </div>
         )}
 
+
         {/* {supportMenu && (
           <div className="absolute top-[64px]  shadow-md right-[97px] bg-gray-50   z-[1500]  border mx-0.5">
             <Link href="https://constructnai.freshdesk.com/support/home" passHref target="_blank">
@@ -680,7 +871,7 @@ const Header: React.FC<any> = ({
                 callBackvalue={userLogOut}
               />
             )} */}
-          {/* </div> */}
+        {/* </div> */}
         {/* )} } */}
         {/* //! This is Open Profile Options */}
         {/* {loading && (
@@ -720,6 +911,19 @@ const Header: React.FC<any> = ({
           </div>
         )} */}
       </HeaderContainer>
+      {
+        isShowPopUp && (<PopupComponent
+          open={isShowPopUp}
+          setShowPopUp={setIsShowPopUp}
+          modalTitle={"Alert"}
+          modalmessage={`You have unsaved changes. Navigating away from this page will result in the loss of your current edits. Are you sure you want to proceed and lose your changes?`}
+          primaryButtonLabel={"Confirm"}
+          SecondaryButtonlabel={"Cancel"}
+          callBackvalue={() => {
+            router.push("/projects");
+          }}
+        />)
+      }
     </>
   );
 };

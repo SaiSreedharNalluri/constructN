@@ -1,11 +1,10 @@
-import { ProjectListing } from "../../components/divami_components/project-listing/ProjectListing";
 import { useEffect, useRef, useState } from "react";
 import Header from "../../components/divami_components/header/Header";
 import {
   Content,
   ProjectsListContainer,
 } from "../../components/divami_components/project-users-list/usersListStyles";
-import { Drawer, InputAdornment, Menu } from "@mui/material";
+import { Drawer, InputAdornment, Menu, Tooltip } from "@mui/material";
 import {
   HeaderActions,
   HeaderImage,
@@ -41,6 +40,7 @@ import { ProjectListCardView } from "../../components/divami_components/project-
 import { ProjectListFlatView } from "../../components/divami_components/project-listing/ProjectListFlatView";
 import moment from "moment";
 import {
+  getProjects,
   getProjectsList,
   getProjectUsers,
   getUserRoles,
@@ -58,8 +58,6 @@ import { AddUsersEmailPopup } from "../../components/divami_components/add_users
 import PopupComponent from "../../components/popupComponent/PopupComponent";
 import ProjectConfig from "../../components/divami_components/project_config/ProjectConfig";
 import projectHierIcon from "../../public/divami_icons/projectHierIcon.svg";
-import { Tooltip } from "@material-ui/core";
-
 import {
   updateIssuePriorityList,
   updateIssueStatusList,
@@ -80,6 +78,8 @@ import { getCookie } from "cookies-next";
 import { ShowErrorContainer } from "../../components/divami_components/project-listing/ProjectListingStyles";
 import chatOpenHightlighted from "../../public/divami_icons/chatOpenHightlighted.svg"
 import CustomLoggerClass from "../../components/divami_components/custom_logger/CustomLoggerClass";
+import { useAppContext } from "../../state/appState/context";
+import { IProjects } from "../../models/IProjects";
 export const truncateString = (text: string, maxLength: number) => {
   let truncatedText = text;
 
@@ -93,6 +93,8 @@ export const truncateString = (text: string, maxLength: number) => {
 };
 
 const Index: React.FC<any> = () => {
+  const { state:appState, appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
   const breadCrumbsData = [{ label: "Manage Users" }];
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -325,6 +327,7 @@ const Index: React.FC<any> = () => {
   
   useEffect(() => {
     if (router.isReady) {
+
       getProjectsList()
         .then(async (response) => {
           if (response?.data?.success === true) {
@@ -650,7 +653,8 @@ const Index: React.FC<any> = () => {
               </HeaderActions>
             </ProjectsHeader>
            {showLoading ? (
-              <CustomLoader />
+            <></>
+              // <CustomLoader />
             ) : showWelcomMessage ? (
             <ProjectCardsContainer>
               <div className="flex justify-center items-center calc-h146 mx-auto">

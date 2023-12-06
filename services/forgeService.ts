@@ -1,3 +1,4 @@
+import { API } from "../config/config";
 import authHeader from "./auth-header";
 import instance from "./axiosInstance";
 import { getCookie, setCookie } from "cookies-next";
@@ -20,7 +21,7 @@ export const cachedAutodeskAuth = async () => {
       return apsCookieJSON;
     }
     let response = await instance
-      .get(`${process.env.NEXT_PUBLIC_HOST}/aps/getAPSToken`, {
+      .get(`${API.BASE_URL}/aps/getAPSToken`, {
         headers: authHeader.authHeader(),
       });
       
@@ -43,7 +44,7 @@ export const autodeskAuth = () => {
   console.log(`Inside AutodeskToken auth`)
   try {
       return instance.get(
-      `${process.env.NEXT_PUBLIC_HOST}/aps/getAPSToken`,
+      `${API.BASE_URL}/aps/getAPSToken`,
       {
         headers: authHeader.authHeader(),
       }

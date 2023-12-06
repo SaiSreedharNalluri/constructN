@@ -6,6 +6,8 @@ import {useIntercom} from "react-use-intercom"
 
 import drawing from "../../../public/divami_icons/drawing.svg";
 // import task from "../../../public/divami_icons/task.svg";
+import progress2d from "../../../public/divami_icons/progress2d.svg";
+import progress2dHighlighted from "../../../public/divami_icons/progress2dHighlighted.svg";
 import tasks from "../../../public/divami_icons/tasks.svg";
 import tasksHighlighted from "../../../public/divami_icons/tasksHighlighted.svg";
 import branchHighlighted from "../../../public/divami_icons/branchHighlightedIcon.svg";
@@ -29,6 +31,8 @@ import peopleHighlighted from "../../../public/divami_icons/peopleHighlighted.sv
 import ScheduleIcon from "../../../public/divami_icons/ScheduleIcon.svg";
 import ScheduleHighlight from "../../../public/divami_icons/ScheduleHighlight.svg";
 import projectDetails from "../../../public/divami_icons/projectDetails.svg";
+import uploadHighlight from "../../../public/divami_icons/uploadHighlight.svg";
+import  uploadIcon from "../../../public/divami_icons/uploadIcon.svg";
 import projectDetailsHighlighted from "../../../public/divami_icons/projectDetailsHighlighted.svg";
 
 import {
@@ -70,14 +74,14 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       toolTipMsg: "Views",
     },
 
-    // {
-    //   id: "structure",
-    //   icon: drawing,
-    //   activeIcon: drawingInactive,
-    //   isActive: false,
-    //   nextPage: "",
-    //   toolTipMsg: "Drawings",
-    // },
+    {
+      id: "progress-2d",
+      icon: progress2d,
+      activeIcon: progress2dHighlighted,
+      isActive: router.pathname.includes("progress-2d"),
+      nextPage: "",
+      toolTipMsg: "2D Progress",
+    },
 
     {
       id: "schedule",
@@ -115,6 +119,13 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     //   activeIcon:chatClose,
     //   toolTipMsg:"Chat Support",
     // },
+    {
+      id: "uploader",
+      icon: uploadIcon,
+      isActive: false,
+      activeIcon: uploadHighlight,
+      toolTipMsg: "UpLoader",
+    },
   ]);
   const [supportItemsConfig, setSupportItemsConfig] = React.useState([
     {
@@ -184,6 +195,12 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         router.push(`/projects/${router.query.projectId as string}/dashboard`);
 
         break;
+      case "progress-2d":
+        let queryParams = ''
+        if(router.query.structId) queryParams = `?structId=${router.query.structId}`
+        router.push(`/projects/${router.query.projectId as string}/progress-2d${queryParams}`);
+
+        break;
       case "views":
 
       // case "structure":
@@ -211,6 +228,9 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       case "usersList":
         router.push(`/projects/${router.query.projectId as string}/usersList`);
         break;
+        case "uploader":
+          router.push(`/projects/${router.query.projectId as string}/uploader`);
+          break;
       case "chatSupport":
         //add open Chat code
         openChat();

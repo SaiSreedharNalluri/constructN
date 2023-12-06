@@ -1,11 +1,11 @@
-FROM node:14-alpine as BUILD_IMAGE
+FROM node:18-alpine as BUILD_IMAGE
 WORKDIR /my-project
 COPY package*.json ./
-RUN npm install --production
-RUN npm prune --production
+RUN npm install --omit=dev --legacy-peer-deps
+RUN npm prune --omit=dev --legacy-peer-deps
 # RUN npm install -g pm2
 
-FROM node:14-alpine as builder
+FROM node:18-alpine as builder
 WORKDIR /my-project
 # COPY . .
 COPY --from=BUILD_IMAGE /my-project/node_modules ./node_modules
@@ -16,9 +16,9 @@ COPY next.config.js /my-project/
 # RUN npm run build
 
 
-FROM node:14-alpine as runner
+FROM node:18-alpine as runner
 WORKDIR /my-project
-COPY .env.production ./.env
+# COPY .env.production ./.env
 # If you are using a custom next.config.js file, uncomment this line.
 COPY --from=builder /my-project/next.config.js ./
 COPY --from=builder /my-project/public ./public

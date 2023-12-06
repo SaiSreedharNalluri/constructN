@@ -18,6 +18,7 @@ import ChangeIcon from "./changeIcon";
 import { TooltipText } from "../divami_components/side-panel/SidePanelStyles";
 import moment from 'moment-timezone';
 import CustomLoggerClass from "../divami_components/custom_logger/CustomLoggerClass";
+import { MAPBOX } from "../../config/config";
 const ProjectDetails: React.FC = () => {
   const customLogger = new CustomLoggerClass();
   let [projectData, setProjectData] = useState<IProjects>();
@@ -255,7 +256,7 @@ const ProjectDetails: React.FC = () => {
                   longitude={longitude}
                   zoom={10}
                   mapStyle="mapbox://styles/mapbox/streets-v9"
-                  mapboxAccessToken={process.env.NEXT_PUBLIC_Map_Token}
+                  mapboxAccessToken={MAPBOX.token}
                 >
                   <Marker latitude={latitude} longitude={longitude}></Marker>
                 </Map>
