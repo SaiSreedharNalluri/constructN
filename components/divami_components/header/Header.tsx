@@ -83,6 +83,7 @@ import { IProjects } from "../../../models/IProjects";
 import { ChildrenEntity, IStructure } from "../../../models/IStructure";
 import { ProjectData, ProjectLocalStorageKey } from "../../../state/appState/state";
 import { useAppContext } from "../../../state/appState/context";
+import UploaderProjects from "../uploader_details/uploaderProjects";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -133,7 +134,6 @@ const Header: React.FC<any> = ({
   const { state: uploaderState } = useUploaderContext();
   const { state: appState, appContextAction } = useAppContext();
   const { appAction } = appContextAction;
-
   useEffect(() => {
     if (router.isReady && router?.query?.projectId) {
       let projectId = router?.query?.projectId as string
@@ -421,6 +421,9 @@ const Header: React.FC<any> = ({
   const handleProfileClose = () => {
     setOpenProfile(false);
   };
+  const handleUploaderClose =()=>{
+    setOpenUploader(false)
+  }
   const clearNotificationsCount = () => {
     clearUserNotificationsCount().then((response) => {
       if (response?.success === true) {
@@ -607,7 +610,7 @@ const Header: React.FC<any> = ({
             {openUploader && (
               <div>
                  <CustomDrawer paddingStyle={true} variant="persistent">
-                 <div></div>
+                 <div><UploaderProjects handleUploaderClose={handleUploaderClose}/></div>
                 </CustomDrawer>
               </div>
             )}

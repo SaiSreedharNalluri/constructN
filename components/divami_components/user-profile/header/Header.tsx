@@ -3,6 +3,7 @@ import { styled } from "@mui/system";
 import { Box } from "@mui/material";
 import Image from "next/image";
 import closeIconCircle from "../../../../public/divami_icons/closeWithCircle.svg"
+import { customHeaderState } from "../../../../models/IUtils";
 const HeaderContainer = styled(Box)({
   backgroundColor: "white",
   height: "51px",
@@ -30,11 +31,24 @@ const CloseIcon = styled(Image)({
 });
 
 const Header = ({ closeEditProject,id }: any) => {
-  const title = id==="ChangePassword"?"Change Password":"My Profile";
+  const getTitle=(headerTitle:string)=>{
+    switch(headerTitle)
+    {
+      case customHeaderState.ChangePassword:
+        return customHeaderState.ChangePassword
+      case customHeaderState.MyProfile:
+        return customHeaderState.MyProfile
+      case customHeaderState.UploadsInProgress:
+        return customHeaderState.UploadsInProgress
+        default:
+        return ''
+    }
+
+  }
   return (
     <HeaderContainer>
       <TitleContiner>
-        <span>{title}</span>
+        <span>{getTitle(id)}</span>
         <div className="rounded-full p-[6px] hover:bg-[#E7E7E7]">
        {id==="ChangePassword"?"":<CloseIcon
           onClick={closeEditProject}
