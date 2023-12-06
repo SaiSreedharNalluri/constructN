@@ -306,6 +306,16 @@ export class ForgeEdit2DUtils {
 
         const {assets, stageMap} = structuredClone(event.detail)
 
+        let checkedCount = 0
+
+        Object.values(stageMap).forEach((stage: any) => {
+
+            if(stage.visible) checkedCount++
+
+        })
+
+        if(checkedCount == 1) stageMap['NOT_STARTED'].visible = false
+
         assets.forEach((asset: IAsset) => {
 
             const progressSnapshot = asset.progressSnapshot
@@ -314,7 +324,7 @@ export class ForgeEdit2DUtils {
 
                 const snapshotStage = stageMap[progressSnapshot[i].stage as string]
 
-                if(snapshotStage.visible) {
+                if(snapshotStage.visible === true && (snapshotStage._id !== 'NOT_STARTED' || progressSnapshot.length == 1)) {
 
                     visibilityMap[asset._id] = snapshotStage.color
 
@@ -324,7 +334,7 @@ export class ForgeEdit2DUtils {
 
             }
 
-            if(!visibilityMap[asset._id]) visibilityMap[asset._id] = '#000080'
+            if(!visibilityMap[asset._id]) visibilityMap[asset._id] = '#NA'
 
         })
 
@@ -338,7 +348,7 @@ export class ForgeEdit2DUtils {
 
                 style.fillColor = visibilityMap[shape.name]
 
-                // style.lineAlpha = visibilityMap[shape.name] === '#000080' ? 0 : 1
+                style.lineAlpha = visibilityMap[shape.name] === '#NA' ? 0 : 1
 
             }
 
