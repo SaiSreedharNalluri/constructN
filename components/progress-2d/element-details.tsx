@@ -31,9 +31,7 @@ const ElementDetails: React.FC<{
     
 }> = ({ asset, supportUser, onChange, onDeleteStage, values , onSave = () => {} }) => {
 
-    const { category ='' , description: actualDecription = '', progress = {} } = asset || {}
-
-    const { name: actualName } = category as IAssetCategory || {}
+    const { description: actualDecription = '', progress = {}, name: actualName } = asset || {}
 
     const { stage: actualStage } = progress  as IAssetProgress || {}
 
@@ -44,11 +42,11 @@ const ElementDetails: React.FC<{
             {
                 asset && <div>
 
-                    <Element label={'Name'} value={asset.name} supportUser={supportUser} onChange={onChange} canEdit={true} />
+                    <Element label={'Name'} value={values?.name} supportUser={supportUser} onChange={onChange} canEdit={true} />
 
                     <Element
 
-                        label={'Description'} value={asset.description}
+                        label={'Description'} value={values?.description}
 
                         supportUser={supportUser} onChange={onChange} canEdit={true} lines={3} />
 
@@ -57,6 +55,8 @@ const ElementDetails: React.FC<{
                         label={'Stage'} onChange={onChange} onDeleteStage={onDeleteStage} progressSnapshot={asset.progressSnapshot}
 
                         value={(asset.progress.stage as string)} supportUser={supportUser}
+
+                        actualValue={(asset.progress.stage as string)}
 
                         stages={[...[NOT_STARTED_STAGE], ...(asset.category as IAssetCategory).stages]} />
 
@@ -73,7 +73,7 @@ const ElementDetails: React.FC<{
                     <div className='mt-4 flex justify-end'>
                     <Button 
                     size='small'  
-                    className='py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E]'
+                    className='py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E] disabled:bg-gray-300'
                     disabled={ !( actualName !== name || description !== actualDecription ||  stage !== actualStage )}
                     onClick={onSave}
                     >
@@ -110,25 +110,11 @@ interface IElementProps {
 
     onDeleteStage?: (stage: string) => void
 
+    actualValue?: string
+
 }
 
-const Element: React.FC<IElementProps> = ({ label, value, supportUser = false, onChange, lines = 1, canEdit = false }) => {
-
-    const [name, setName] = useState(value)
-
-    const [editable, setEditable] = useState(false)
-
-    useEffect(() => {
-
-        setName(value)
-
-    }, [value])
-
-    const handleChange = (data: string) => {
-
-        setName(data)
-
-    }
+const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1 }) => {
 
     return (
 
@@ -142,50 +128,13 @@ const Element: React.FC<IElementProps> = ({ label, value, supportUser = false, o
 
             <OutlinedInput
 
-                autoFocus fullWidth
+                fullWidth
 
                 multiline={lines > 1 ? true : false}
 
                 rows={lines} size='small'
 
-                className='mt-1' disabled={!editable}
-
-                endAdornment={
-
-                    canEdit && <InputAdornment position='end'>
-
-                        <Tooltip title={editable ? 'Save' : 'Edit'} arrow>
-
-                            <IconButton
-
-                                aria-label='toggle password visibility'
-
-                                onClick={() => {
-
-                                    setEditable(!editable)
-
-                                    if (editable) onChange && name && onChange(label.toLowerCase(), name)
-
-                                }}
-
-                                onMouseDown={() => {
-
-                                    setEditable(!editable)
-
-                                    if (editable) onChange && name && onChange(label.toLowerCase(), name)
-
-                                }}
-
-                                className='text-[#aaaaaa]' edge='end' >
-
-                                {editable ? <DoneOutlinedIcon fontSize='small' /> : <EditOutlinedIcon fontSize='small' />}
-
-                            </IconButton>
-                        </Tooltip>
-
-                    </InputAdornment>
-
-                }
+                className='mt-1'
 
                 sx={{
 
@@ -199,13 +148,15 @@ const Element: React.FC<IElementProps> = ({ label, value, supportUser = false, o
 
                 }}
 
-                value={name} onChange={event => handleChange(event.target.value)} onBlur={event => setEditable(false)} />
+                value={value} onChange={event => onChange && onChange(label.toLowerCase(), event.target.value)}  />
 
         </div>
     )
 }
 
-const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = false, progressSnapshot = [], stages, onChange, onDeleteStage }) => {
+const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = false, progressSnapshot = [], stages, onChange, onDeleteStage , actualValue}) => {
+
+    console.log(stages,'stagesstages')
 
     const [stage, setStage] = useState<string>()
 
@@ -226,6 +177,8 @@ const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = fal
     }
 
     const shouldDisable = (stageId: string) => {
+
+        if(actualValue === stageId) return false
 
         for (let i = 0; i < progressSnapshot.length; i++) {
 

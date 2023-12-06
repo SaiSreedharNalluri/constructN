@@ -13,6 +13,7 @@ import AssetTimeline from './asset-timeline'
 import { toast } from 'react-toastify'
 
 import { API } from '../../config/config'
+import Metrics from './Metrics'
 
 
 const fetchAssetDetails = (assetId: string, date: string) => {
@@ -91,9 +92,9 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
             setValues({ name: actualName , description: actualDecription, stage: actualStage as string })
         },[asset])
 
-        const { category ='' , description: actualDecription = '', progress = {} } = asset || {}
+        const { category ='' , description: actualDecription = '', progress = {} , name: actualName = ''} = asset || {}
         
-        const { name: actualName , stages} = category as IAssetCategory || {}
+        const { stages} = category as IAssetCategory || {}
         
         const { stage: actualStage } = progress  as IAssetProgress || {}
 
@@ -226,12 +227,17 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                                 value='asset-timeline' label={<Typography fontFamily='Open Sans' fontSize={14}
 
                                     variant='caption'>Timeline</Typography>} onClick={() => setSelectedTab('asset-timeline')} />
+                            {supportUser && <Tab
+                                    value='metrics' label={<Typography fontFamily='Open Sans' fontSize={14}
+                                    variant='caption'>Metrics</Typography>} onClick={() => setSelectedTab('metrics')} />}
 
                         </Tabs>
 
                         {selectedTab === 'asset-details' && <div className='px-4 '><ElementDetails asset={asset} onChange={_onChange} values={values} supportUser={supportUser} onDeleteStage={_onDeleteStage} onSave={onSave}/> </div>}
 
                         {selectedTab === 'asset-timeline' && <div className='px-4 overflow-auto'><AssetTimeline asset={asset} /> </div>}
+
+                        {selectedTab === 'metrics' && supportUser && <div className='px-4'><Metrics stages={stages} /></div>}
 
                     </div>
                 }
