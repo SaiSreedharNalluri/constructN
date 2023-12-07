@@ -4,7 +4,7 @@ import {
   Content,
   ProjectsListContainer,
 } from "../../components/divami_components/project-users-list/usersListStyles";
-import { Drawer, InputAdornment, Menu, Tooltip } from "@mui/material";
+import { Drawer, InputAdornment, Menu, Tooltip,Button } from "@mui/material";
 import {
   HeaderActions,
   HeaderImage,
@@ -80,6 +80,7 @@ import chatOpenHightlighted from "../../public/divami_icons/chatOpenHightlighted
 import CustomLoggerClass from "../../components/divami_components/custom_logger/CustomLoggerClass";
 import { useAppContext } from "../../state/appState/context";
 import { IProjects } from "../../models/IProjects";
+// import { Button} from "@material-ui/core";
 export const truncateString = (text: string, maxLength: number) => {
   let truncatedText = text;
 
@@ -543,6 +544,7 @@ const Index: React.FC<any> = () => {
             <ProjectsHeader>
               <HeaderLabel>Project(s) </HeaderLabel>
               <HeaderActions>
+              <Button onClick={()=>router.push("project-onboarding")} style={{backgroundColor:"#FF853E",marginRight:"22px",color:"white"}}>+ Create New Project</Button>
                 {isSearching ? (
                   <SearchAreaContainer marginRight>
                     <CustomSearchField
