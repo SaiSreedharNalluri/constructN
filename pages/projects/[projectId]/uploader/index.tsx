@@ -323,9 +323,9 @@ const Index: React.FC<IProps> = () => {
         updateJobStatusOnView(job);
         appAction.updateCaptureUploadStatus(job)
       }
-      setIsShowPopUp(true)
-      setPopUPHeading('Upload Completed With Errors')
-      setPopUPConform('Ok')
+      // setIsShowPopUp(true)
+      // setPopUPHeading('Upload Completed With Errors')
+      // setPopUPConform('Ok')
     }).catch((error) => {
       uploaderAction.setIsLoading(false)
       console.log("TestingUploader uploadCompletionStatus: catch error ", error)
@@ -340,6 +340,7 @@ const Index: React.FC<IProps> = () => {
       }
     })
     uploaderAction.setCaptureJobs(captureJobs)
+    uploaderAction.setSelectedJob(updatedJob)
   }
 
   return (

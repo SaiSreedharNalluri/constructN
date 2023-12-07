@@ -101,6 +101,7 @@ const UploaderFinal: React.FC = () => {
   };
   const updateJobStatusUploadCompleteWithErrors = () => {
     let ignoreImagesCheck = true;
+    uploaderAction.setIsLoading(true);
     updateJobStatus(
       uploaderState.selectedJob?.project as string,
       uploaderState.selectedJob?._id as string,
@@ -108,6 +109,7 @@ const UploaderFinal: React.FC = () => {
       ignoreImagesCheck
     )
       .then((response) => {
+        uploaderAction.setIsLoading(false);
         if (response.data.success === true) {
           let updatedJob = response.data.result
           let captureJobs = uploaderState.pendingProcessJobs.concat(
@@ -123,7 +125,9 @@ const UploaderFinal: React.FC = () => {
           uploaderAction.removeWorker(getCaptureIdFromModelOrString(updatedJob.captures[0]));
         }
       })
-      .catch((error) => {});
+      .catch((error) => {
+        uploaderAction.setIsLoading(false);
+      });
   };
   return (
     <React.Fragment>
