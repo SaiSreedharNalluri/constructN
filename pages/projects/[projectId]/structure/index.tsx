@@ -26,6 +26,7 @@ import ChevronRightIcon from "../../../../public/divami_icons/chevronRight.svg";
 import { deleteAttachment } from "../../../../services/attachments";
 import authHeader from "../../../../services/auth-header";
 import CollapsableMenu from "../../../../components/layout/collapsableMenu";
+import ErrorNotFound from "../../../../public/divami_icons/ErrorNotFound.svg";
 import {
   getProjectDetails,
   getProjectUsers,
@@ -58,6 +59,7 @@ import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 import { getSectionsList } from "../../../../services/sections";
 import CustomLoggerClass from "../../../../components/divami_components/custom_logger/CustomLoggerClass";
 import { useAppContext } from "../../../../state/appState/context";
+import Custom404 from "../../../404";
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -184,6 +186,8 @@ const Index: React.FC<IProps> = () => {
   const [issueLoader, setIssueLoader] = useState(false);
   const [highlightCreateIcon, setHighlightCreateIcon] = useState(false);
   const [highlightCreateTaskIcon, setHighlightCreateTaskIcon] = useState(false);
+
+  const [isLoadErr,setLoadErr] = useState(false);
 
   let isSupportUser = useRef(false);
   //const [searchParams,setSearchParams] = useSearchParams();
@@ -337,13 +341,17 @@ const Index: React.FC<IProps> = () => {
             let structs: IStructure[] = list;
 
             if (router.query.structId !== undefined) {
-              setStructure(
-                structs.find((e) => {
-                  if (e._id === router.query.structId) {
-                    return e;
-                  }
-                })
-              );
+              let myStruct = structs.find((e) => {
+                if (e._id === router.query.structId) {
+                  return e;
+                }
+              })
+              if(myStruct){
+                setStructure(myStruct);
+                setLoadErr(false)
+              }
+              else
+                setLoadErr(true)
 
               // setDefaultBreadcrumb()
             } else if (nodeData.project === router.query.projectId) {
@@ -399,6 +407,7 @@ const Index: React.FC<IProps> = () => {
         })
         .catch((error) => {
           CustomToast("failed to load data","error");
+          setLoadErr(true);
         });
 
       getProjectUsers(router.query.projectId as string)
@@ -628,7 +637,7 @@ const Index: React.FC<IProps> = () => {
 
       case "forge":
         return (
-          structure && (
+          structure? (
             <GenericViewer
               toolRes={toolResponse}
               tools={clickedTool}
@@ -647,7 +656,24 @@ const Index: React.FC<IProps> = () => {
               isSupportUser={isSupportUser.current}
               isFullScreen={isFullScreen}
             ></GenericViewer>
-          )
+          ):isLoadErr&&(<div className="flex justify-center items-center place-self-center calc-h overflow-y-hidden mx-50">
+          <div className="flex flex-col">
+          <Image src={ErrorNotFound} alt=""></Image>
+          <div className="text-center">
+              <h1 className="text-4xl font-sans font-extralight ">404</h1>
+              <p className="text-xl  font-sans">Sorry, Page Not Found</p>
+              <p className="font-thin">The link you followed is broken or the page has been removed</p>
+              <button
+                className="my-2 mx-4 py-2 px-[40px] bg-[#f1742e] font-normal text-base leading-4 text-[#ffffff] hover:bg-[#f1742e]  rounded-md" 
+                onClick={()=>{
+                  router.reload()
+                }}
+              >
+                Try Again
+              </button>
+            </div>
+    </div>
+        </div>)
         );
       case "map":
         return (

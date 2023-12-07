@@ -115,7 +115,7 @@ const UploaderFinal: React.FC = () => {
           );
           captureJobs.forEach((job) => {
             if (job._id === updatedJob._id) {
-              job.status = JobStatus.uploaded;
+              job.status = updatedJob.status;
             }
           });
           uploaderAction.setCaptureJobs(captureJobs);

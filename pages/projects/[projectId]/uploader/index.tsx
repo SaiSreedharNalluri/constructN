@@ -307,7 +307,7 @@ const Index: React.FC<IProps> = () => {
       uploaderAction.setIsLoading(false)
       if(response.data.success===true) {
         let job = response.data.result
-        moveJobFromPendingUploadToUpload(job._id);
+        updateJobStatusOnView(job);
         uploaderAction.removeWorker(captureId);
         appAction.removeCaptureUpload(job)
         if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
@@ -320,6 +320,7 @@ const Index: React.FC<IProps> = () => {
       uploaderAction.setIsLoading(false)
       if(axiosError && axiosError.response?.status === 422) {
         let job = axiosError.response.data.result
+        updateJobStatusOnView(job);
         appAction.updateCaptureUploadStatus(job)
       }
       setIsShowPopUp(true)
@@ -331,11 +332,11 @@ const Index: React.FC<IProps> = () => {
     })
   }
 
-  const moveJobFromPendingUploadToUpload = (jobId: string) => {
+  const updateJobStatusOnView = (updatedJob:IJobs) => {
     let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
     captureJobs.forEach((job) => {
-      if (job._id === jobId) {
-        job.status = JobStatus.uploaded
+      if (job._id === updatedJob._id) {
+        job.status = updatedJob.status
       }
     })
     uploaderAction.setCaptureJobs(captureJobs)
