@@ -358,6 +358,7 @@ const Index: React.FC<IProps> = () => {
       <SidePanelMenu onChangeData={() => {}} />
       <div className="flex flex-col calc-w  calc-h">
         <header>
+        <div style={{ margin: "4px 20px", fontWeight: "600", fontSize: "22px",fontFamily:"Open Sans",fontStyle:"normal" }}>Upload</div>
         <div>
               {
               (uploaderState.selectedJob || uploaderState.step !== UploaderStep.Upload) &&(<UploaderStepper />)
@@ -366,7 +367,7 @@ const Index: React.FC<IProps> = () => {
         </header>
      {!uploaderState.isLoading?  
   <div>
-        <main className={`overflow-y-auto  ${ (uploaderState.selectedJob || uploaderState.step !== UploaderStep.Upload)?`calc-h223`:`calc-h`} `}>
+        <main className={`overflow-y-auto  ${ (uploaderState.selectedJob || uploaderState.step !== UploaderStep.Upload)?`calc-h223`:`calc-h100 `} `}>
           <div>
           {renderCenterContent()}
            
