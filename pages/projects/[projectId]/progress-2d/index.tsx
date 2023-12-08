@@ -28,7 +28,7 @@ import { updateQueryParam } from '../../../../utils/router-utils'
 
 import AssetDetails from '../../../../components/progress-2d/asset-details'
 
-import { Button, Divider, IconButton, Typography } from '@mui/material'
+import { Button, Divider, IconButton, Typography, Tab, Tabs } from '@mui/material'
 
 import { API } from '../../../../config/config'
 
@@ -42,6 +42,7 @@ import { getCookie } from 'cookies-next'
 
 import { IUser } from '../../../../models/IUser'
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader'
+import Progress2dAssets from '../../../../components/viewer/progress-2d-assets'
 
 
 const fetchViewerData = (projectId: string, structureId: string) => {
@@ -171,6 +172,8 @@ const Progress2DPage: React.FC<any> = () => {
     const projectId = useRef<string>()
 
     const [isSupportUser, setIsSupportUser] = useState<boolean>(false)
+
+    const [selectedTab , setSelectedTab] = useState('stages') 
 
     const _assetMap = useRef<{ 
         
@@ -991,8 +994,26 @@ const Progress2DPage: React.FC<any> = () => {
                                             </div>}
 
                                             <Divider className='mt-2' orientation='horizontal' variant='fullWidth' flexItem />
+                                            {!selectedAsset && <Tabs
 
-                                            {!selectedAsset && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
+                                            centered value={selectedTab} className='text-black bg-[#fbece2]' textColor='inherit'
+
+                                            TabIndicatorProps={{ style: { backgroundColor: '#f1742e' } }} >
+
+                                                <Tab
+
+                                                value='stages' label={<Typography fontFamily='Open Sans' fontSize={14}
+
+                                                variant='caption'>Stages</Typography>} onClick={() => setSelectedTab('stages')} />
+
+                                                <Tab
+
+                                                value='assets' label={<Typography fontFamily='Open Sans' fontSize={14}
+
+                                                variant='caption'>Assets</Typography>} onClick={() => setSelectedTab('assets')} />
+                                                </Tabs>}
+
+                                            {!selectedAsset && selectedTab === 'stages' && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
 
                                                 {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
@@ -1011,6 +1032,7 @@ const Progress2DPage: React.FC<any> = () => {
                                                     }} />
 
                                             </div>}
+                                            {selectedTab === 'assets' && !selectedAsset && <Progress2dAssets assets={assets} stages={stages} stageMap={_assetMap.current} /> }
 
                                             {selectedAsset && <AssetDetails
 
