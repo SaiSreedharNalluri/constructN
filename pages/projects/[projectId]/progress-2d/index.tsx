@@ -41,6 +41,7 @@ import Progress2DToolbar from '../../../../components/progress-2d/toolbar/progre
 import { getCookie } from 'cookies-next'
 
 import { IUser } from '../../../../models/IUser'
+import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader'
 
 
 const fetchViewerData = (projectId: string, structureId: string) => {
@@ -1029,7 +1030,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                             </div>
 
-                            {(showProgress || loading) && <div className='fixed z-20 w-screen h-screen bg-[#000000] opacity-20'></div>}
+                            {(showProgress || loading) && <CustomLoader/>}
 
                         </div>
 
