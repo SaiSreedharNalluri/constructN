@@ -13,7 +13,7 @@ import AssetTimeline from './asset-timeline'
 import { toast } from 'react-toastify'
 
 import { API } from '../../config/config'
-import Metrics from './Metrics'
+import Metrics from './metrics-details'
 
 
 const fetchAssetDetails = (assetId: string, date: string) => {
