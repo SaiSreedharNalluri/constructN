@@ -68,7 +68,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
         const [values, setValues] = useState({ name : '', description: '', stage: '' })
 
-        useEffect(() => {
+        const refetchAssets = () => {
 
             setLoading(true)
 
@@ -86,13 +86,17 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
             })
 
+        }
+
+        useEffect(() => {
+            refetchAssets()
         }, [assetId])
 
         useEffect(()=>{
             setValues({ name: actualName , description: actualDecription, stage: actualStage as string })
         },[asset])
 
-        const { category ='' , description: actualDecription = '', progress = {} , name: actualName = ''} = asset || {}
+        const { category ='' , description: actualDecription = '', progress = {} , name: actualName = '', metrics = {} } = asset || {}
         
         const { stages} = category as IAssetCategory || {}
         
@@ -126,8 +130,6 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
             if(name !== actualName || description !== actualDecription) {
 
                         setLoading(true)
-        
-                        const data: any = {}
         
                         updateAssetDetails(assetId, { name, description}).then(res => {
         
@@ -237,7 +239,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                         {selectedTab === 'asset-timeline' && <div className='px-4 overflow-auto'><AssetTimeline asset={asset} /> </div>}
 
-                        {selectedTab === 'metrics' && supportUser && <div className='px-4'><Metrics stages={stages} /></div>}
+                        {selectedTab === 'metrics' && supportUser && <div className='px-4'><Metrics stages={stages} assetId={assetId} metrics={metrics} refetchAssets={refetchAssets} /></div>}
 
                     </div>
                 }
