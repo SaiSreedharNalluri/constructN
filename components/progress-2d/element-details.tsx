@@ -156,8 +156,6 @@ const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1 })
 
 const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = false, progressSnapshot = [], stages, onChange, onDeleteStage , actualValue}) => {
 
-    console.log(stages,'stagesstages')
-
     const [stage, setStage] = useState<string>()
 
     useEffect(() => setStage(value), [value])

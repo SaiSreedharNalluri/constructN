@@ -116,7 +116,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                     toast.success('Updated asset stage successfully!', { autoClose: 5000 })
 
-                    // setLoading(false)
+                    setLoading(false)
 
                 }).catch(err => {
 
@@ -137,7 +137,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
         
                             toast.success('Updated asset details successfully!', { autoClose: 5000 })
         
-                            // setLoading(false)
+                            setLoading(false)
         
                         }).catch(err => {
         
@@ -165,7 +165,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                 toast.success('Removed asset stage successfully!', { autoClose: 5000 })
 
-                // setLoading(false)
+                setLoading(false)
 
             }).catch(err => {
 
