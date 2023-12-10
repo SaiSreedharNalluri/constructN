@@ -70,6 +70,7 @@ const GcpUploadFile: React.FC<any> = () => {
           Papa.parse(fileContent, {
             header: true,
             dynamicTyping: true,
+            skipEmptyLines: true,
             complete: function (results) {
               const data = results.data;
               csvToGcp(data);
