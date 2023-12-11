@@ -6,24 +6,10 @@ import { IAsset, IAssetStage } from "../../models/IAssetCategory";
 
 interface Props {
 	assets: IAsset[];
-	stages?: ({
-		assets: Partial<IAsset>[];
-		assetsCompare: Partial<IAsset>[];
-	} & Partial<IAssetStage> & { visible: boolean })[];
-	stageMap?:
-		| {
-				[key: string]: {
-					assets: Partial<IAsset>[];
-					assetsCompare: Partial<IAsset>[];
-				} & Partial<IAssetStage> & { visible: boolean };
-		  }
-		| [];
 }
 
 const Progress2dAssets = ({
 	assets = [],
-	stages = [],
-	stageMap = [],
 }: Props) => {
 	const [search, setSearch] = useState("");
 
@@ -40,22 +26,7 @@ const Progress2dAssets = ({
 			<div
 				className="p-[8px] border border-[#E2E3E5] rounded-[6px] mt-2 hover:bg-[#f2f2f2] cursor-pointer"
 				onClick={() => {
-					stages.forEach((stage) => {
-						if (
-							stage._id ===
-							(row?.progress?.stage as IAssetStage)?._id
-						) {
-							stage.visible = true;
-						} else {
-							stage.visible = false;
-						}
-					});
-					publish("select-2d-shape", row._id);
-					publish("visibility-change", {
-						assets: assets,
-						stageMap,
-						assetId: row._id,
-					});
+					publish('select-shape', row?._id)
 				}}
 			>
 				<div className="text-[12px]"> {row.name || "-"}</div>

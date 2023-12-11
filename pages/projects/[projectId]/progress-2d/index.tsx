@@ -1032,7 +1032,7 @@ const Progress2DPage: React.FC<any> = () => {
                                                     }} />
 
                                             </div>}
-                                            {selectedTab === 'assets' && !selectedAsset && <Progress2dAssets assets={assets} stages={stages} stageMap={_assetMap.current} /> }
+                                            {selectedTab === 'assets' && !selectedAsset && <Progress2dAssets assets={assets} /> }
 
                                             {selectedAsset && <div key={loading?.toString()}><AssetDetails
 
