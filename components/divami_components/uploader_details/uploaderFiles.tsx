@@ -93,9 +93,7 @@ const UploaderFiles = () => {
     <React.Fragment>
       <div className="flex flex-col justify-center items-center">
         <div>
-          <ChooseUploaderFile onDrop={onDrop}
-           acceptFiles={{ 'image/jpeg': ['.jpeg', '.jpg', '.png'] }}
-           supportFileText={"Supported file types: jpeg, jpg with GPS metadata"} />
+          <ChooseUploaderFile onDrop={onDrop} />
         </div>
         <div>
           <FileListing selectedFile={state.choosenFiles.validFiles.map((e) => e.file)} isSizeRequired={true} />

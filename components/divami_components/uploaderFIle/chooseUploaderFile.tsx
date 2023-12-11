@@ -5,17 +5,15 @@ import { useUploaderContext } from "../../../state/uploaderState/context";
 
 interface IProps{
   onDrop: (acceptedFiles: File[]) => void;
-  acceptFiles: { [key: string]: string[] };
-  supportFileText:string;
   }
-let ChooseUploaderFile:React.FC<IProps>=({onDrop,acceptFiles,supportFileText})=>{
+let ChooseUploaderFile:React.FC<IProps>=({onDrop})=>{
   const { state } = useUploaderContext();
   
   const dragDropText = "Drag and Drop the files / folders you want to upload or browse"
-  //const supportFileText=`Supported file types: jpeg, jpg with GPS metadata`
+  const supportFileText=`Supported file types: jpeg, jpg with GPS metadata`
 return(
 <React.Fragment> 
-<ChooseFiles onDrop={onDrop} dragDropText={dragDropText} supportFileText={supportFileText} UploadingStatus={<UploadingStatus/>} isDisabled={state.isReading} acceptFiles={acceptFiles}/>
+<ChooseFiles onDrop={onDrop} dragDropText={dragDropText} supportFileText={supportFileText} UploadingStatus={<UploadingStatus/>} isDisabled={state.isReading} acceptFiles={{['image/jpeg']:['.jpeg', '.jpg', '.png',]}}/>
 </React.Fragment>)
 }
 export default ChooseUploaderFile

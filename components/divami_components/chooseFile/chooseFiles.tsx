@@ -6,7 +6,7 @@ interface IProps {
     dragDropText?:string,
     supportFileText?:string,
     UploadingStatus:ReactNode
-    isDisabled?:boolean,
+    isDisabled:boolean,
     acceptFiles:Accept
   }
 const ChooseFiles:React.FC<IProps>=({onDrop,dragDropText,supportFileText,UploadingStatus,isDisabled,acceptFiles})=>{
@@ -16,7 +16,7 @@ const ChooseFiles:React.FC<IProps>=({onDrop,dragDropText,supportFileText,Uploadi
         accept:acceptFiles
       });
     return (<React.Fragment>
-  <div className={`border-[2px] text-center rounded-[8px] mt-[16px] w-[50vw] h-[25vh] border-dashed hover:border-[#F1742E]  border-black py-[6vh] px-[2%] cursor-pointer ${isDragActive ? 'border-blue-500' : ''}`} {...getRootProps()}>
+  <div className={`border-[2px] text-center rounded-[8px] mt-[16px] w-[50vw] h-[30vh] border-dashed hover:border-[#F1742E]  border-black py-[6vh] px-[2%] cursor-pointer ${isDragActive ? 'border-blue-500' : ''}`} {...getRootProps()}>
   <div className="flex flex-col items-center justify-center h-full gap-6">
     {UploadingStatus}
    <div className='font-sans'>

@@ -8,6 +8,8 @@ import { object } from "yup";
 import { location, utmLocation } from "../../../models/IRawImages";
 import { GCPType, GCPUploadFile, IGCP, LONGLATType, UTMType, longLatGCP, utmGCP } from "../../../models/IGCP";
 import ChooseUploaderFile from "../uploaderFIle/chooseUploaderFile";
+import ChooseFiles from "../chooseFile/chooseFiles";
+import UploadingStatus from "../uploaderFIle/uploadingStatus";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
 });
@@ -86,13 +88,12 @@ const GcpUploadFile: React.FC<any> = () => {
       reader.readAsText(file);
     }
   },[]);
-
+  const dragDropText = "Drag and Drop the files / folders you want to upload or browse";
+  const supportFileText="Supported file types:csv types"
   return (
     <React.Fragment>
       <div>
-      <ChooseUploaderFile onDrop={onDrop}
-           acceptFiles={{ 'text/*': ['.csv'] }}
-           supportFileText={"Supported file types: csv types"} />
+      <ChooseFiles onDrop={onDrop} dragDropText={dragDropText} supportFileText={supportFileText} UploadingStatus={<UploadingStatus/>} isDisabled={false} acceptFiles={{['text/*']:['.csv']}}/>
       
       </div>
     </React.Fragment>
