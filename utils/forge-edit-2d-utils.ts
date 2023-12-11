@@ -304,7 +304,7 @@ export class ForgeEdit2DUtils {
 
         const visibilityMap: any = {}
 
-        const {assets, stageMap, assetId } = structuredClone(event.detail)
+        const {assets, stageMap} = structuredClone(event.detail)
 
         let checkedCount = 0
 
@@ -313,32 +313,6 @@ export class ForgeEdit2DUtils {
             if(stage.visible) checkedCount++
 
         })
-        
-        if(assetId){
-
-            assets.forEach((asset: IAsset) => {
-
-                const progressSnapshot = asset.progressSnapshot
-
-                for(let i = progressSnapshot.length - 1; i >= 0; i--) {
-    
-                    const snapshotStage = stageMap[progressSnapshot[i].stage as string]
-    
-                    if(snapshotStage.visible === true && assetId === asset._id ) {
-    
-                        visibilityMap[asset._id] = snapshotStage.color
-    
-                        break
-    
-                    }
-    
-                }
-    
-                if(!visibilityMap[asset._id]) visibilityMap[asset._id] = '#NA'
-    
-            })
-
-        } else {
         
         if(checkedCount == 1) stageMap['NOT_STARTED'].visible = false
 
@@ -363,7 +337,6 @@ export class ForgeEdit2DUtils {
             if(!visibilityMap[asset._id]) visibilityMap[asset._id] = '#NA'
 
         })
-    }
 
         this._edit2DLayer.shapes.forEach((shape: any) => {
 
