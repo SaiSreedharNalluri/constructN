@@ -60,7 +60,7 @@ const GcpUploadFile: React.FC<any> = () => {
       console.log("Final error");
     }
   };
-  const onDrop = useCallback((acceptedFiles:any) => {
+  const onDrop = useCallback((acceptedFiles:File[]) => {
     if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
 
