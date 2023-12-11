@@ -340,7 +340,9 @@ const Index: React.FC<IProps> = () => {
       }
     })
     uploaderAction.setCaptureJobs(captureJobs)
-    uploaderAction.setSelectedJob(updatedJob)
+    if(updatedJob.status === JobStatus.uploadFailed) {
+      uploaderAction.setSelectedJob(updatedJob)
+    }
   }
 
   return (
