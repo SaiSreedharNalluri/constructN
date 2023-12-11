@@ -2,7 +2,6 @@ import axios from "axios";
 import { IUploadFile, UploadStatus, UploadType } from "../../../models/IUploader";
 
 self.onmessage = async (event: MessageEvent<IUploadFile<UploadType>>) => {
-  console.log("Testing Uploader: inside single worker ", event.data)
   await axios.put(event.data.destination, event.data.file).then((response)=>{
     if(response.status===200) {
       self.postMessage({ status: UploadStatus.success, id: event.data.uploadObject._id, fileName:event.data.file.name});

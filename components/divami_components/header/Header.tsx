@@ -439,8 +439,7 @@ const Header: React.FC<any> = ({
   const [url,setUrl]=useState('')
   let WorkerManager = WebWorkerManager.getInstance()
   const workerExists = Object.keys(WorkerManager.getWorker()).length > 0;
-   const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
-    
+  const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
     if (
       (workerExists && [UploaderStep.Upload, UploaderStep.Details].includes(uploaderState.step)) ||
       workerExists ||
@@ -473,7 +472,7 @@ const Header: React.FC<any> = ({
        window.removeEventListener("beforeunload", beforeUnloadHandler);
        window.removeEventListener('popstate', popStateHandler)
      })
-   }, [url,uploaderState.step])
+   }, [url,uploaderState.step,workerExists])
 
   useEffect(() => {
     // Calculate project counts when the component mounts or when the originalArray changes
