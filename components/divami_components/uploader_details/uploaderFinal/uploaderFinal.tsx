@@ -84,7 +84,7 @@ const UploaderFinal: React.FC = () => {
         setIsShowPopUp(true)
       }
     }
-  }, [uploaderState.selectedJob,uploaderState.inProgressWorkers,uploaderState.rawImagesMap])
+  }, [uploaderState.selectedJob,uploaderState.rawImagesMap])
 
   const handleRowClick = (job: IJobs, index: number) => {
     //  setSelectedRow(index);
