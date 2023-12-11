@@ -1034,7 +1034,7 @@ const Progress2DPage: React.FC<any> = () => {
                                             </div>}
                                             {selectedTab === 'assets' && !selectedAsset && <Progress2dAssets assets={assets} stages={stages} stageMap={_assetMap.current} /> }
 
-                                            {selectedAsset && <AssetDetails
+                                            {selectedAsset && <div key={loading?.toString()}><AssetDetails
 
                                                 assetId={selectedAsset}
 
@@ -1042,7 +1042,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 supportUser={isSupportUser}
 
-                                                onChange={_onAssetDetailsChange} />}
+                                                onChange={_onAssetDetailsChange} /> </div>}
 
                                         </div>}
 
