@@ -477,31 +477,26 @@ const Header: React.FC<any> = ({
   useEffect(() => {
     // Calculate project counts when the component mounts or when the originalArray changes
     const calculateProjectCounts = () => {
-      const counts:any = {};
+      const counts:ProjectCounts = {};
+      let uploadingcount:number = 0;
       appState.inProgressPendingUploads.forEach(jobInfo => {
         const projectId = jobInfo.project as string;
 
         if (!counts[projectId]) {
           counts[projectId] = 1;
+          uploadingcount++
         } else {
           counts[projectId]++;
+          uploadingcount++
         }
       });
 
       setProjectUplObj(counts);
+      setUploaderCount(uploadingcount)
     };
     calculateProjectCounts();
     }, [appState.inProgressPendingUploads]);
-  useEffect(()=>{
-    if(Object?.keys(projectUplObj).length>0)
-    {
-      setUploaderCount(Object.keys(projectUplObj).length)
-    }
-    else{
-      setUploaderCount(0)
-    }
-  },[projectUplObj])
-  return (
+    return (
     <>
       <HeaderContainer ref={headerRef}>
         {!hideSidePanel && (
