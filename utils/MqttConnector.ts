@@ -3,8 +3,7 @@
 // import { IUser } from "@/models/IUser";
 import { getCookie } from "cookies-next";
 import  { MqttClient } from "mqtt"
-import * as mqtt from "mqtt";
-import path from "path";
+import mqtt from "mqtt";
 export type OnMessageCallbak = (msg:Buffer,packet:any)=>void;
 interface TopicCB{
   topic:string;
@@ -33,10 +32,10 @@ export class MqttConnector{
     this.options = opt;
     this._connection= mqtt.connect(url);
     this._connection.on("connect", () => {
-      console.log("Successfully Connected to MQTT");
+      console.log("App Successfully Connected to MQTT");
     });
     this._connection.on("error",(err)=>{
-      console.log("MQTT Conn Error ", err)
+      console.log("App MQTT Conn Error ", err)
       this._connection?.end();
     });
     this._connection?.on("message",this.onMessageReceive);
@@ -71,11 +70,11 @@ export class MqttConnector{
 
       this._connection.subscribe(topic, (err:any)=>{
         if(!err){
-          console.log("Subscribed to", topic);
+          console.log("App Subscribed to", topic);
           this.subscriptionList?.push({topic,onMessageCB});
         }
         else{
-          console.log("Did not Subscribe to", topic);
+          console.log("App Did not Subscribe to", topic);
         }
         //console.log("Subs List",this.subscriptionList)
       });
@@ -86,7 +85,7 @@ export class MqttConnector{
     if(this._connection)
     {
       this._connection.unsubscribe(topic)
-      console.log("UnSubscribed from", topic);
+      console.log("App UnSubscribed from", topic);
       this.subscriptionList= this.subscriptionList?.filter((top:TopicCB)=>top.topic!==topic);
     }
   }

@@ -593,44 +593,6 @@ const Index: React.FC<IProps> = () => {
     });
   };
 
-  useEffect(() => {
-    const list: any = [];
-    const types: any = [];
-    if (activeRealityMap) {
-      for (const key in activeRealityMap) {
-        activeRealityMap[key as keyof IActiveRealityMap].realities?.forEach(
-          (item: any) => {
-            item.realityType?.forEach((each: any) => {
-              if (!list.includes(each)) {
-                list.push(each);
-              }
-            });
-          }
-        );
-      }
-    }
-    let realityKeys = list.reduce((a: any, v: any) => ({ ...a, [v]: v }), {});
-
-    Object.keys({ ...designMap, ...realityKeys }).map((key) => {
-      types.push(key);
-    });
-    setDesignAndRealityMaps(types);
-
-    if (isObjectEmpty(activeRealityMap)) {
-      setRealityAvailable(false);
-    }
-    else {
-      setRealityAvailable(true);
-    }
-
-    if (isObjectEmpty(designMap)) {
-      setDesignAvailable(false);
-    }
-    else {
-      setDesignAvailable(true);
-    }
-
-  }, [activeRealityMap, designMap]);
   const activeClass = (e: any) => {
     setViewerType(e.currentTarget.id);
   };
@@ -741,7 +703,7 @@ const Index: React.FC<IProps> = () => {
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideIssue","data":" "}')
         break;
       case "selectIssue":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + JSON.stringify(toolInstance.data) + '"}');
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "removedIssue":
         // setClickedTool(toolInstance);
@@ -764,7 +726,7 @@ const Index: React.FC<IProps> = () => {
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
         break;
       case "selectTask":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + JSON.stringify(toolInstance.data) + '"}');
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "showTask":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showTask","data":" "}');
@@ -776,6 +738,8 @@ const Index: React.FC<IProps> = () => {
         // setClickedTool(toolInstance);
         break;
       case "setViewLayers":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break;
       case "addViewLayer":
         // newLayers.push(toolInstance.toolAction);
         // console.log(newLayers, "newLayesrs");
@@ -785,9 +749,6 @@ const Index: React.FC<IProps> = () => {
         // newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
         // setViewLayers(newLayers);
         break;
-      case "setCompareMode":
-        // setClickedTool(toolInstance);
-        break;
       case "setFullScreenMode":
         break;
       default:
@@ -795,262 +756,6 @@ const Index: React.FC<IProps> = () => {
     }
   };
 
-  // const toolResponse = (data: ITools) => {
-  //   console.log("toolDataaa",data)
-  //   switch (data.toolName) {
-  //     case "viewMode":
-  //       setViewMode(data.toolAction);
-  //       break;
-  //     case "viewType":
-  //       setViewType(data.toolAction);
-  //     case "Issue":
-  //       if (data.toolAction === "createIssue") {
-
-  //         //   html2canvas(document.getElementById('TheView')||document.body).then(function(canvas) {
-  //         //     //window.open('','_blank')?.document.body.appendChild(canvas);
-  //         //     //canvas.toDataURL('image/png');
-
-  //         // });
-  //         // if (data.response != undefined) setCurrentContext(data.response);
-  //         // setOpenCreateIssue(true);
-  //       } else if (data.toolAction === "selectIssue") {
-  //         // issue detail view open logic comes here
-  //         if (data.response != undefined) {
-  //           setCurrentContext(data.response);
-  //           //setOpenIssueDetails(true);
-  //           // console.log(router,"Router Obj")
-  //           router.query.iss = data.response?.id;
-  //           delete router.query.tsk;
-  //           router.push(router);
-  //         }
-  //       }
-  //       break;
-  //     case "Task":
-  //       if (data.toolAction === "createTask") {
-  //         if (data.response != undefined) setCurrentContext(data.response);
-  //         setOpenCreateTask(true);
-  //       } else if (data.toolAction === "selectTask") {
-  //         // task detail view open logic comes here
-  //         if (data.response != undefined) {
-  //           setCurrentContext(data.response);
-  //           //setOpenTaskDetails(true);
-  //           // console.log(router,"Router Obj")
-  //           router.query.tsk = data.response?.id;
-  //           delete router.query.iss;
-  //           router.push(router)
-  //         }
-  //       }
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // };
-  // useEffect(() => {
-  //   if (currentViewMode === "Design" && designAndRealityMaps.length) {
-  //     if (currentViewType != "Plan Drawings" && currentViewType != "BIM") {
-  //       if (designAndRealityMaps.includes(selectedDesign)) {
-  //         setViewType(selectedDesign);
-  //       } else {
-  //         if (designAndRealityMaps.includes("Plan Drawings")) {
-  //           setViewType("Plan Drawings");
-  //           setSelectedDesign("Plan Drawings");
-  //         } else if (designAndRealityMaps.includes("BIM")) {
-  //           setViewType("BIM");
-  //           setSelectedDesign("BIM");
-  //         } else {
-  //           const val =
-  //             designMap && Object.keys(designMap)?.length
-  //               ? Object.keys(designMap)[0]
-  //               : "";
-  //           if (val) {
-  //             setViewType(val);
-  //             setSelectedDesign(val);
-  //           } else {
-  //             setViewMode("Reality");
-  //           }
-  //         }
-  //       }
-  //     } else if (!designAndRealityMaps.includes(currentViewType)) {
-  //       if (designAndRealityMaps.includes("Plan Drawings")) {
-  //         setViewType("Plan Drawings");
-  //         setSelectedDesign("Plan Drawings");
-  //       } else if (designAndRealityMaps.includes("BIM")) {
-  //         setViewType("BIM");
-  //         setSelectedDesign("BIM");
-  //       } else {
-  //         const val =
-  //           designMap && Object.keys(designMap)?.length
-  //             ? Object.keys(designMap)[0]
-  //             : "";
-  //         if (val) {
-  //           setViewType(val);
-  //           setSelectedDesign(val);
-  //         } else {
-  //           setViewMode("Reality");
-  //           CustomToast("No Design Found, Contact Support", "error");
-  //         }
-  //       }
-  //     }
-  //   } else if (currentViewMode === "Reality" && designAndRealityMaps.length) {
-  //     if (currentViewType != "pointCloud" && currentViewType != "orthoPhoto") {
-  //       if (designAndRealityMaps.includes(selectedReality)) {
-  //         setViewType(selectedReality);
-  //       } else {
-  //         if (designAndRealityMaps.includes("pointCloud")) {
-  //           setViewType("pointCloud");
-  //           setSelectedReality("pointCloud");
-  //         } else if (designAndRealityMaps.includes("orthoPhoto")) {
-  //           setViewType("orthoPhoto");
-  //           setSelectedReality("orthoPhoto");
-  //         } else {
-  //           // setViewType(designAndRealityMaps[0]);
-  //           const arr =
-  //             activeRealityMap &&
-  //               activeRealityMap[
-  //                 `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-  //               ]?.realities?.length &&
-  //               activeRealityMap[
-  //                 `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-  //               ].realities![0].realityType?.length
-  //               ? activeRealityMap[
-  //                 `${Object.keys(
-  //                   activeRealityMap
-  //                 )[0] as keyof IActiveRealityMap
-  //                 }`
-  //               ].realities![0].realityType
-  //               : [];
-  //           if (arr && arr.length) {
-  //             setViewType(arr[0]);
-  //             setSelectedReality(arr[0]);
-  //           } else {
-  //             setViewMode("Design");
-  //             CustomToast("Reality Not Found, Contact Support", "error");
-  //           }
-  //         }
-  //       }
-  //     } else if (!designAndRealityMaps.includes(currentViewType)) {
-  //       if (designAndRealityMaps.includes("pointCloud")) {
-  //         setViewType("pointCloud");
-  //         setSelectedReality("pointCloud");
-  //       } else if (designAndRealityMaps.includes("orthoPhoto")) {
-  //         setViewType("orthoPhoto");
-  //         setSelectedReality("orthoPhoto");
-  //       } else {
-  //         // setViewType(designAndRealityMaps[0]);
-  //         const arr =
-  //           activeRealityMap &&
-  //             activeRealityMap[
-  //               `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-  //             ]?.realities?.length &&
-  //             activeRealityMap[
-  //               `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-  //             ].realities![0].realityType?.length
-  //             ? activeRealityMap[
-  //               `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap
-  //               }`
-  //             ].realities![0].realityType
-  //             : [];
-  //         if (arr && arr.length) {
-  //           setViewType(arr[0]);
-  //           setSelectedReality(arr[0]);
-  //         } else {
-  //           setViewMode("Design");
-  //         }
-  //       }
-  //     }
-  //   }
-  //   setShowIssueMarkups(true);
-  //   setShowTaskMarkups(true);
-  //   // toolClicked({ toolName: "issue", toolAction: "issueShow" });
-  //   // toolClicked({ toolName: "task", toolAction: "taskShow" });
-  // }, []);
-
-  // useEffect(() => {
-
-  //   if (
-  //     designMap &&
-  //     Object.keys(designMap)?.length &&
-  //     Object.keys(designMap).includes(currentViewType)
-  //   ) {
-  //     if (selectedDesign !== currentViewType)
-  //       setSelectedDesign(currentViewType);
-
-  //     toolClicked({ toolName: "viewType", toolAction: currentViewType });
-  //   } else if (currentViewType) {
-  //     //console.log(currentViewType, "Here ...",selectedReality)
-  //     if (selectedReality && selectedReality !== currentViewType)
-  //       setSelectedReality(currentViewType);
-  //     toolClicked({ toolName: "viewType", toolAction: currentViewType });
-  //   }
-  //   if (router.isReady) {
-  //     router.query.type = currentViewType;
-  //     router.push(router);
-  //   }
-
-  // }, [currentViewType]);
-
-  // useEffect(() => {
-  //   let obj: any = activeRealityMap;
-
-  //   for (const key in obj) {
-  //     if (obj[key].children?.length) {
-  //       obj[key] = {
-  //         ...obj[key],
-  //         children: obj[key]?.children.map((each: any) => {
-  //           return {
-  //             ...each,
-  //             isSelected: true,
-  //           };
-  //         }),
-  //       };
-  //     } else {
-  //       obj[key] = {
-  //         ...obj[key],
-  //         isSelected: true,
-  //         children: obj[key].children?.length
-  //           ? obj[key]?.children.map((each: any) => {
-  //             return {
-  //               ...each,
-  //               isSelected: true,
-  //             };
-  //           })
-  //           : [],
-  //       };
-  //     }
-  //   }
-
-  //   setActiveRealityMap(obj);
-  //   setLayersUpdated(!layersUpdated);
-  // }, [currentViewMode, currentViewType]);
-
-  // const getIssues = (structureId: string, isDownload?: boolean) => {
-  //   // setIssueLoader(true)
-  //   if (structureId && router.query.projectId) {
-  //     getIssuesList(router.query.projectId as string, structureId)
-  //       .then((response: any) => {
-  //         if (isDownload) {
-  //           // response.blob().then((blob: any) => {
-  //           // Creating new object of PDF file
-  //           const data = response.result;
-  //           const fileURL = window.URL.createObjectURL(new Blob(data));
-  //           // Setting various property values
-  //           let alink = document.createElement("a");
-  //           alink.href = fileURL;
-  //           alink.download = "SamplePDF.pdf";
-  //           alink.click();
-  //           // });
-  //         } else {
-  //           setIssueList(response.result);
-  //           setIssueFilterList(response.result);
-  //         }
-  //       })
-  //       .catch((error: any) => {
-  //         if (error.success === false) {
-  //           CustomToast(error?.message, "error");
-  //         }
-  //       });
-  //   }
-  // };
 
   const getIssuesPriorityList = (projId: string) => {
     return getIssuesPriority(router.query.projectId as string)
@@ -1517,7 +1222,7 @@ const Index: React.FC<IProps> = () => {
           const result = response.data.result;
           const resultArray: any = Array.isArray(result) ? result : [result];
           setState([...resultArray]);
-          setStateFilter([...response.data.result]);
+          //setStateFilter([...response.data.result]);
           // if (selector.length < 1) setSelector(response.data.result[0]._id);
         })
         .catch((error) => {
@@ -1621,7 +1326,29 @@ const Index: React.FC<IProps> = () => {
   }, [router.query.structId])
 
 
+  useEffect(() => {
 
+  if(initData)
+  {
+    if(initData.structure.designs?.length)
+    {
+      setDesignAvailable(true)
+    }
+    else
+    {
+      setDesignAvailable(false)
+    }
+    if(initData.currentSnapshotBase.reality?.length)
+    {
+      setRealityAvailable(true)
+    }
+    else
+    {
+      setRealityAvailable(false)
+    }
+  }
+
+  }, [initData])
 
   const issueContext = (issue: any) => {  // selected Issue context pusblish
     let iContext: IContext = issue.context
@@ -1675,7 +1402,7 @@ const Index: React.FC<IProps> = () => {
         }, 8000)
       }
     }
-  }, [conn, structure, initData])
+  }, [conn,initData])
 
   return (
     <div className=" w-full  h-full">

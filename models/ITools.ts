@@ -1,5 +1,6 @@
 import { IGenData } from "./IGenData";
 import { IHotspot } from "./IHotspot";
+import { ILayer } from "./IReality";
 import { ISnapshot } from "./ISnapshot";
 import { IViewerContext } from "./IViewerContext";
 import { Issue } from "./Issue";
@@ -55,6 +56,6 @@ export interface IToolbarAction {
   "setFullScreenMode" 
   ,
   
-  data? :string |[string] | [ITasks] | [Issue] | [IHotspot] | IViewerContext | IGenData | ISnapshot | IContext
+  data? :string |[string] | [ITasks] | [Issue] | [IHotspot] | IViewerContext | IGenData | ISnapshot | IContext | ILayer[]
 
 }

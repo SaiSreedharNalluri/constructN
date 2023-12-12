@@ -79,28 +79,28 @@ const Layers = ({
   });
   const customLogger = new CustomLoggerClass();
   useEffect(() => {
-    let newLayersArr = [];
-    if (myLayersList != undefined) {
-      for (const key in myLayersList) {
-        newLayersArr.push(myLayersList[key].name);
-      }
-    }
-    setSelectedArr(newLayersArr);
+    // let newLayersArr = [];
+    // if (myLayersList != undefined) {
+    //   for (const key in myLayersList) {
+    //     newLayersArr.push(myLayersList[key].name);
+    //   }
+    // }
+    // setSelectedArr(newLayersArr);
   }, [myLayersList]);
 
-  useEffect(() => {
-    let arr: any = [];
-    let obj: any = { ...myLayersList };
+//   useEffect(() => {
+//     let arr: any = [];
+//     let obj: any = { ...myLayersList };
 
-    for (const key in obj) {
-      if (obj[key]?.isSelected) {
-        // console.log("objkeey", obj[key]);
-        arr.push(obj[key].name);
-      }
-    }
-    setLayersLabels(arr);
-  }, [layersUpdated,selectedArr]);
- useEffect(() => {}, [layersLabels]);
+//     for (const key in obj) {
+//       if (obj[key]?.isSelected) {
+//         // console.log("objkeey", obj[key]);
+//         arr.push(obj[key].name);
+//       }
+//     }
+//     setLayersLabels(arr);
+//   }, [layersUpdated,selectedArr]);
+//  useEffect(() => {}, [layersLabels]);
 
   const getLayersIcons = (layersLabels: any) => {
     return (
@@ -169,9 +169,9 @@ const Layers = ({
             }}
             optionsList={myLayersList}
             onSelect={LayerChange}
-            selectedLayersList={selectedLayersList}
-            setActiveRealityMap={setActiveRealityMap}
-            layersUpdated={layersUpdated}
+            // selectedLayersList={selectedLayersList}
+            // setActiveRealityMap={setActiveRealityMap}
+            // layersUpdated={layersUpdated}
             initData={initData}
           />
         </SelectLayersWrapper>

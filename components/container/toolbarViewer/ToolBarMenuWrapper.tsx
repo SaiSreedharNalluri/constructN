@@ -3,17 +3,14 @@ import Typebar from "./Typebar";
 import Layers from "./Layers";
 import Issues from "./Issues";
 import Task from "./Task";
-import { IDesignMap } from "../../../models/IDesign";
-import { IActiveRealityMap } from "../../../models/IReality";
-import { ISnapshot } from "../../../models/ISnapshot";
-import { IStructure } from "../../../models/IStructure";
+
 import { IToolResponse, IToolbarAction, ITools } from "../../../models/ITools";
 import { SectionToolBar, ToolbarContainer } from "./ToolBarStyles";
-import { Issue } from "../../../models/Issue";
-import { ITasks } from "../../../models/Itask";
+
 import CompareView from "./CompareView";
 import { IGenData } from "../../../models/IGenData";
-import { init } from "@sentry/nextjs";
+import { ILayer } from "../../../models/IReality";
+import { RenderTree } from "../selectLayer/Type";
 
 
 interface toolProps {
@@ -58,7 +55,7 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
   const [openSelectLayer, setOpenSelectLayer] = useState(false);
   const [highlightCreateIcon, setHighlightCreateIcon] = useState(false);
   const [highlightCreateTaskIcon, setHighlightCreateTaskIcon] = useState(false);
-  const [myLayersList, setMyLayersList] = useState<IActiveRealityMap>();
+  const [myLayersList, setMyLayersList] = useState<ILayer[]>();
   const [isCameraIconClicked, setCameraIconClicked] = useState(false);
   const [isClipboardIconClicked, setClipboardIconClicked] = useState(false);
   let IssuetoolInstance: IToolbarAction = { type: "showIssue", data: "" };
@@ -115,6 +112,10 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
         console.log("passing str")
         designRef.current.handleDesignRef(initData?.structure)
       }
+
+      if(initData?.currentLayersList){
+        setMyLayersList(initData.currentLayersList);
+      }
   }, [initData]);
 
   const typeChange = (changeOb: any) => {
@@ -126,15 +127,16 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
     toolClicked(typeChangeToolAction);
 
   };
-  const LayerChange = (changeOb: any, layerLabel: string, node: any) => {
-    let obj: any = myLayersList;
+  const LayerChange = (changeOb: any, layerLabel: string, node: RenderTree) => {
+    if (myLayersList){
+    let obj: ILayer[] = myLayersList;
     for (const key in obj) {
       if (obj[key]?.name == node.name) {
         obj[key] = {
           ...obj[key],
           isSelected: !obj[key].isSelected,
           children: obj[key].children?.length
-            ? obj[key]?.children.map((each: any) => {
+            ? obj[key]?.children?.map((each: any) => {
               return {
                 ...each,
                 isSelected: !obj[key].isSelected,
@@ -145,7 +147,7 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
       } else if (obj[key].children?.length) {
         obj[key] = {
           ...obj[key],
-          children: obj[key]?.children.map((each: any) => {
+          children: obj[key]?.children?.map((each: any) => {
             if (each.name === node.name) {
               return {
                 ...each,
@@ -158,6 +160,9 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
         };
       }
     }
+    let typeChangeToolAction: IToolbarAction = { type: "setViewLayers", data: obj };
+    toolClicked(typeChangeToolAction);
+  }
 
     // setActiveRealityMap(obj);
     // setLayersUpdated(!layersUpdated);
