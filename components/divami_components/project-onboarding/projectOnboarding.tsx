@@ -3,11 +3,30 @@ import Header from '../header/Header'
 import ProjectOnboardingStepper from './onboarding-details/projectOnboardingStepper'
 import ProjectOnboardingFooter from './onboarding-details/projectOnboardingFooter'
 import ProjectOnboardingForm from './onboarding-details/projectOnboardingForm'
+import { useProjectContext } from '../../../state/projectState/context'
+import { OnBoardingStep } from '../../../state/projectState/state'
+import ProjectOnboardingUsers from './onboarding-users/projectOnboardingUsers'
 const ProjectOnboarding=()=> {
+  const { state:onboardingState} = useProjectContext();
+  const renderMainContent = () => {
+    switch (onboardingState.step) {
+        case OnBoardingStep.ProjectDetails:
+          return  (
+            <ProjectOnboardingForm/>
+          );
+          case OnBoardingStep.AddUsers:
+            return  (
+              <ProjectOnboardingUsers/>
+            );
+        
+        default:
+          return null;
+      }
+  };
   return (
     <div className="w-full h-full">
     <Header hideSidePanel  />
-    <div className="flex mx-[60px] ">
+    <div className="flex">
       <div className="flex flex-col w-full  calc-h">
         <header className=''>
         <div className='mt-[20px]'>
@@ -15,10 +34,10 @@ const ProjectOnboarding=()=> {
        </div>
         </header>
    
-        <div>
-        <main className='overflow-y-auto calc-h180 pt-[10px] '>
+        <div className='pt-[25px]'>
+        <main className='overflow-y-auto calc-h235  '>
           <div>
-<ProjectOnboardingForm></ProjectOnboardingForm>
+          {renderMainContent()}
           </div>
         </main>
         <footer className=" pb-[20px]">
