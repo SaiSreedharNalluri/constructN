@@ -311,6 +311,11 @@ const Index: React.FC<IProps> = () => {
         let job = response.data.result
         appAction.removeCaptureUpload(job)
         updateJobStatusOnView(job, jobProject);
+        if (jobProject) {
+          CustomToast(`Upload Completed SUCCESSFULLY for ${getPathToRoot(getStructureIdFromModelOrString(job.structure),jobProject.hierarchy[0])} on ${moment(job.date).format("MMM DD YYYY")}`,'success', false) 
+        } else {
+          CustomToast(`Upload Completed SUCCESSFULLY`,'success')
+        }
       }
     }).catch((axiosError: AxiosError<IBaseResponse<IJobs>>)=>{
       uploaderAction.setIsLoading(false)
@@ -318,6 +323,11 @@ const Index: React.FC<IProps> = () => {
         let job = axiosError.response.data.result
         appAction.updateCaptureUploadStatus(job)
         updateJobStatusOnView(job, jobProject);
+        if (jobProject) {
+          CustomToast(`Upload Completed with ERRORS for ${getPathToRoot(getStructureIdFromModelOrString(job.structure),jobProject.hierarchy[0])} on ${moment(job.date).format("MMM DD YYYY")}`,'success', false) 
+        } else {
+          CustomToast(`Upload Completed with ERRORS`,'success')
+        }
       }
     }).catch((error) => {
       uploaderAction.setIsLoading(false)
@@ -337,12 +347,10 @@ const Index: React.FC<IProps> = () => {
         uploaderAction.setCaptureJobs(captureJobs)
         if(updatedJob.status === JobStatus.uploadFailed) {
           uploaderAction.setSelectedJob(updatedJob)
+        } else {
+          uploaderAction.removeWorker(getCaptureIdFromModelOrString(updatedJob.captures[0]));
         }
-        uploaderAction.removeWorker(getCaptureIdFromModelOrString(updatedJob.captures[0]));
       }
-      CustomToast(`Upload Completed Sucessfully For ${getPathToRoot(getStructureIdFromModelOrString(updatedJob.structure),jobProject.hierarchy[0])} on ${moment(updatedJob.date).format("MMM DD YYYY")}`,'success') 
-    } else {
-      CustomToast(`Upload Completed Sucessfully`,'success')
     }
   }
 
