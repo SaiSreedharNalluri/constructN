@@ -1,32 +1,16 @@
-import Box from "@mui/material/Box";
 import { Badge } from "@mui/material";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-//import constructnLogo from "../../../public/divami_icons/constructnLogo.svg";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 import hamburgerMenu from "../../../public/divami_icons/hamburgerMenu.svg";
 import helpIcon from "../../../public/divami_icons/Help.svg";
-import profileImageHeader from "../../../public/divami_icons/profileImageHeader.svg";
-import ImgProfile from "../../../public/divami_icons/ImgProfile.svg";
-
 import Notification from "../../../public/divami_icons/Notification.svg";
-import clip from "../../../public/divami_icons/clip.svg";
 import defaultAvatar from "../../../public/divami_icons/defaultAvatar.svg";
-
 import { useRouter } from "next/router";
 import { getCookie, removeCookies, setCookie } from "cookies-next";
-import DesignRealitySwitch from "../../container/designRealitySwitch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import  uploadIcon from '../../../public/divami_icons/uploadIcon.svg'
-import {
-  faQuestion,
-  faRightFromBracket,
-  faSignOut,
-  faLifeRing,
-  faTicket,
-  faInfoCircle,
-  faClone,
-} from "@fortawesome/free-solid-svg-icons";
+import {faSignOut} from "@fortawesome/free-solid-svg-icons";
 
 import {
   HeaderContainer,
@@ -41,7 +25,6 @@ import {
   ProfileImgIcon,
   ProfileImgSecIcon,
   ProfileImgIconDefault,
-  ProjectSelectorContainer,
   HeaderSupportImageContainer,
   HeaderUploaderImageContainer,
 } from "./HeaderStyles";
@@ -59,17 +42,12 @@ import {
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import Notifications from "../notifications/Notifications";
 import UserProfile from "../user-profile/UserProfile";
-import CustomSelect from "../custom-select/CustomSelect";
 import { getProjectDetails, getProjectsList } from "../../../services/project";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import Link from "next/link";
-import { Circle, Rectangle } from "@mui/icons-material";
-import { json } from "stream/consumers";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import { getUserProfile } from "../../../services/userAuth";
-import NotificationDrawer from "../custom-drawer/notification-drawer";
-import { truncate } from "fs/promises";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import * as Sentry from "@sentry/nextjs";
 import { hasCommonElement } from "../../../services/axiosInstance";
@@ -84,7 +62,6 @@ import { ChildrenEntity, IStructure } from "../../../models/IStructure";
 import { ProjectData, ProjectLocalStorageKey } from "../../../state/appState/state";
 import { useAppContext } from "../../../state/appState/context";
 import UploaderProjects from "../uploader_details/uploaderProjects";
-import { IJobs } from "../../../models/IJobs";
 import { ProjectCounts } from "../../../models/IUtils";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
@@ -637,7 +614,7 @@ const Header: React.FC<any> = ({
 
             {openUploader && (
               <div>
-                 <CustomDrawer paddingStyle={true} variant="persistent">
+                 <CustomDrawer onClose={handleUploaderClose}>
                  <div><UploaderProjects handleUploaderClose={handleUploaderClose} projectUplObj={projectUplObj}/></div>
                 </CustomDrawer>
               </div>
@@ -670,7 +647,7 @@ const Header: React.FC<any> = ({
               </TooltipText>
             )}
             {openProfile ? (
-              <CustomDrawer paddingStyle={true} variant="persistent">
+              <CustomDrawer onClose={handleProfileClose}>
                 <div>
                   <UserProfile
                     handleProfileClose={handleProfileClose}
@@ -734,7 +711,7 @@ const Header: React.FC<any> = ({
 
             {openNotification && (
               <div>
-                <NotificationDrawer variant="persistent">
+                <CustomDrawer onClose={handleNotificationClose}>
                   <div>
                     <Notifications
                       notifications={notifications}
@@ -747,7 +724,7 @@ const Header: React.FC<any> = ({
                   </div>
 
                   <div></div>
-                </NotificationDrawer>
+                </CustomDrawer>
               </div>
             )}
           </HeaderNotificationImageContainer>
