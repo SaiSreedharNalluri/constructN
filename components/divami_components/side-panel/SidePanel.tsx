@@ -124,7 +124,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       icon: uploadIcon,
       isActive: false,
       activeIcon: uploadHighlight,
-      toolTipMsg: "UpLoader",
+      toolTipMsg: "Uploader",
     },
   ]);
   const [supportItemsConfig, setSupportItemsConfig] = React.useState([
