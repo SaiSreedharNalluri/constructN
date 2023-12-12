@@ -5,8 +5,8 @@ export interface IProjects {
   description?: string;
   company?: any;
   email: string;
-  contact: Contact;
-  address: Address;
+  contact?: Contact;
+  address?: Address;
   location?: number[] | null;
   createdAt: string;
   updatedAt: string;
