@@ -27,6 +27,7 @@ import Warning from '../../../../public/divami_icons/Warning_Icon.svg'
 import moment from "moment";
 import { AxiosError } from "axios";
 import { IBaseResponse } from "../../../../models/IBaseResponse";
+import { ProjectData } from "../../../../state/appState/state";
 interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
@@ -228,11 +229,11 @@ const Index: React.FC<IProps> = () => {
       
       if(response.success===true)
       {
+        uploaderAction.setCurrentUploadFiles(getUploadFiles(response.result, job))
+        appAction.addCaptureUpload(job)
         uploaderAction.changeUploadinitiate(false)
         uploaderAction.next()
         // uploaderAction.refreshJobs();
-        uploaderAction.setCurrentUploadFiles(getUploadFiles(response.result, job))
-        appAction.addCaptureUpload(job)
         uploaderAction.setIsLoading(false)
         CustomToast(`Started uploading ${uploaderState?.choosenFiles?.validFiles?.length} file(s)`,'success')
       }
@@ -287,61 +288,61 @@ const Index: React.FC<IProps> = () => {
   }
 
   const handleOnWorkerCompletion = (captureId:string) => {
-    let jobObj = uploaderState.pendingUploadJobs.find((jobObj)=> { return getCaptureIdFromModelOrString(jobObj.captures[0]) === captureId})
-    if (jobObj) {
-      updateUploadCompletionStatus(getProjectIdFromModelOrString(jobObj.project), jobObj._id, captureId)
+    let job = appState.inProgressPendingUploads.find((job) => {
+      return getCaptureIdFromModelOrString(job.captures[0]) === captureId
+    })
+    if(job) {
+      updateUploadCompletionStatus(getProjectIdFromModelOrString(job.project), job._id, captureId)
     } else {
-      uploaderAction.setIsLoading(true)
-      getCaptureDetails(uploaderState?.project?._id as string, captureId).then((response) => {
-        if(response.data.success===true) {
-          let capture = response.data.result
-          updateUploadCompletionStatus(uploaderState?.project?._id as string, getJobIdFromModelOrString(capture.jobId), capture._id)
-        }
-      })
+      console.log("TestingUploader handlWorkerCompletionStatus no job in appState: ")
     }
   }
 
   const updateUploadCompletionStatus = (projectId: string, jobId: string, captureId: string) => {
-    uploaderAction.setIsLoading(true)
+    let jobProject = appState.projectDataList.find((projectData) => {
+      return projectData.project._id === projectId
+    })
+    if (appState.currentProjectData && jobProject && appState.currentProjectData.project._id === jobProject.project._id) {
+      uploaderAction.setIsLoading(true)
+    }
     updateJobStatus(projectId, jobId, JobStatus.uploaded).then((response)=>{
       uploaderAction.setIsLoading(false)
       if(response.data.success===true) {
         let job = response.data.result
-        updateJobStatusOnView(job);
-        uploaderAction.removeWorker(captureId);
         appAction.removeCaptureUpload(job)
-        if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
-          CustomToast(`Upload Completed Sucessfully For ${getPathToRoot(getStructureIdFromModelOrString(response.data.result.structure),appState.currentProjectData.hierarchy[0])} on ${moment(response.data.result.date).format("MMM DD YYYY")}`,'success') 
-        } else {
-          CustomToast(`Upload Completed Sucessfully`,'success')
-        }
+        updateJobStatusOnView(job, jobProject);
       }
     }).catch((axiosError: AxiosError<IBaseResponse<IJobs>>)=>{
       uploaderAction.setIsLoading(false)
       if(axiosError && axiosError.response?.status === 422) {
         let job = axiosError.response.data.result
-        updateJobStatusOnView(job);
         appAction.updateCaptureUploadStatus(job)
+        updateJobStatusOnView(job, jobProject);
       }
-      // setIsShowPopUp(true)
-      // setPopUPHeading('Upload Completed With Errors')
-      // setPopUPConform('Ok')
     }).catch((error) => {
       uploaderAction.setIsLoading(false)
       console.log("TestingUploader uploadCompletionStatus: catch error ", error)
     })
   }
 
-  const updateJobStatusOnView = (updatedJob:IJobs) => {
-    let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
-    captureJobs.forEach((job) => {
-      if (job._id === updatedJob._id) {
-        job.status = updatedJob.status
+  const updateJobStatusOnView = (updatedJob:IJobs, jobProject: ProjectData | undefined) => {
+    if (jobProject) {
+      if (appState.currentProjectData && appState.currentProjectData.project._id === jobProject.project._id) {
+        let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
+        captureJobs.forEach((job) => {
+          if (job._id === updatedJob._id) {
+            job.status = updatedJob.status
+          }
+        })
+        uploaderAction.setCaptureJobs(captureJobs)
+        if(updatedJob.status === JobStatus.uploadFailed) {
+          uploaderAction.setSelectedJob(updatedJob)
+        }
+        uploaderAction.removeWorker(getCaptureIdFromModelOrString(updatedJob.captures[0]));
       }
-    })
-    uploaderAction.setCaptureJobs(captureJobs)
-    if(updatedJob.status === JobStatus.uploadFailed) {
-      uploaderAction.setSelectedJob(updatedJob)
+      CustomToast(`Upload Completed Sucessfully For ${getPathToRoot(getStructureIdFromModelOrString(updatedJob.structure),jobProject.hierarchy[0])} on ${moment(updatedJob.date).format("MMM DD YYYY")}`,'success') 
+    } else {
+      CustomToast(`Upload Completed Sucessfully`,'success')
     }
   }
 
