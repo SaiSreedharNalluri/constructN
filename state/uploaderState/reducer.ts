@@ -1,7 +1,7 @@
 import { act } from "react-dom/test-utils";
 import { GCPType, IGCP } from "../../models/IGCP";
 import { IJobs, JobStatus } from "../../models/IJobs";
-import { RawImage, RawImageStatus, location, metaData } from "../../models/IRawImages";
+import { RawImage, RawImageStatus, location, metaData, utmLocation } from "../../models/IRawImages";
 import { getCaptureIdFromModelOrString, getInitialGCPList, getJobIdFromModelOrString, validateAltitudeOrElevation, validateEasting, validateLatitude, validateLongitude, validateUTMZone, validatingNorthing } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
 import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState } from "./state";
@@ -125,19 +125,24 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                     uploadinitiate:action.payload.uploadinitiate
                 }       
         case UploaderActionType.setGCPType:
+            let gcpList = getInitialGCPList(action.payload.type == GCPType.UTM)
+            let newErrorCount = validateGCPList(gcpList)
             return {
                 ...state,
                 gcpType: action.payload.type,
-                gcpList: getInitialGCPList(action.payload.type == GCPType.UTM)
+                gcpList: gcpList,
+                errorCount: newErrorCount,
+                isNextEnabled: newErrorCount === 0
             }
         case UploaderActionType.setGCPList:
-            let isNextEnabled = validateGCPList(action.payload.list)
+            let errorCount = validateGCPList(action.payload.list)
             return{
                 ...state,
                 isGCPInit: false,
                 gcpList: action.payload.list,
                 gcpType: action.payload.type,
-                isNextEnabled: isNextEnabled
+                errorCount: errorCount,
+                isNextEnabled: errorCount === 0
             }
         case UploaderActionType.setCaptureJobs:
             
@@ -207,17 +212,32 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
     }
 }
 
-const validateGCPList = (list: IGCP): boolean => {
+const validateGCPList = (list: IGCP): number => {
     if(list.location && list.location.length >= 4 ) {
-        return list.location.reduce((isValid, latLng):boolean => {
-            return isValid && validateLongitude(latLng.coordinates[0]) && validateLatitude(latLng.coordinates[1]) && latLng.elevation? validateAltitudeOrElevation(latLng.elevation) : false
-        }, true)
+        return list.location.reduce((errorCount, latLng): number => {
+            return errorCount += getLongLatValidationErrorCount(latLng) // && validateLongitude(latLng.coordinates[0]) && validateLatitude(latLng.coordinates[1]) && latLng.elevation? validateAltitudeOrElevation(latLng.elevation) : false
+        }, 0)
     } else if (list.utmLocation && list.utmLocation.length >= 4) {
-        return list.utmLocation.reduce((isValid, utm):boolean => {
-            return isValid && validateEasting(utm.easting) && validatingNorthing(utm.northing) && validateUTMZone(utm.zone) && utm.elevation? validateAltitudeOrElevation(utm.elevation) : false
-        }, true)
+        return list.utmLocation.reduce((errorCount, utm): number => {
+            return errorCount += getUTMValidationErrorCount(utm) // && validateEasting(utm.easting) && validatingNorthing(utm.northing) && validateUTMZone(utm.zone) && utm.elevation? validateAltitudeOrElevation(utm.elevation) : false
+        }, 0)
     }
-    return false;
+    return 0;
+}
+
+const getUTMValidationErrorCount = (utm: utmLocation): number => {
+    let errorCount = validateEasting(utm.easting) ? 0 : 1;
+    errorCount += validatingNorthing(utm.northing) ? 0 : 1;
+    errorCount += validateUTMZone(utm.zone) ? 0 : 1;
+    errorCount += utm.elevation ? validateAltitudeOrElevation(utm.elevation) ?  0 : 1 : 1;
+    return errorCount
+}
+
+const getLongLatValidationErrorCount = (latLng: location): number => {
+    let errorCount = validateLongitude(latLng.coordinates[0]) ? 0 : 1;
+    errorCount += validateLatitude(latLng.coordinates[1]) ? 0 : 1;
+    errorCount += latLng.elevation ? validateAltitudeOrElevation(latLng.elevation) ?  0 : 1 : 1;
+    return errorCount
 }
 
 const isNext = (state: UploaderState, step: UploaderStep): boolean => {
@@ -227,7 +247,7 @@ const isNext = (state: UploaderState, step: UploaderStep): boolean => {
         case UploaderStep.ChooseFiles:
             return state.choosenFiles.validFiles.length > 0;
         case UploaderStep.ChooseGCPs:
-            return validateGCPList(state.gcpList)
+            return validateGCPList(state.gcpList) === 0
         case UploaderStep.Review:
             return true;
         case UploaderStep.Upload:
