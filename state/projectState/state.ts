@@ -50,7 +50,7 @@ export const initialOnBoardingProjectState: OnBoardingProjectState={
     },
     step: OnBoardingStep.ProjectDetails ,
     stepNames:[
-        "project Details",
+        "Project Details",
         "Project Hierachy",
         "BIM",
         "Sheets",

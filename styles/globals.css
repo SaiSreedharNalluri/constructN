@@ -26,8 +26,8 @@
   height: calc(100vh - 60px);
   /* height: calc(100vh - 116px); */
 }
-.calc-h180 {
-  height: calc(100vh - 180px);
+.calc-h235 {
+  height: calc(100vh - 235px);
 }
 .calc-h146 {
   height: calc(100vh - 146px);
@@ -703,4 +703,8 @@ td {
   width: 16px;
   background-color: #E7E7E7 !important;
   border-radius: 60px !important;
+}
+
+.css-vqmohf-MuiButtonBase-root-MuiRadio-root.Mui-checked {
+  color: #FF843F;
 }
