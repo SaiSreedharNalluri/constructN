@@ -1,6 +1,7 @@
 'use client'
 
 import { MutableRefObject, useEffect, useRef } from 'react'
+import { publish } from '../../services/light-box-service'
 
 interface _ViewerProps {
 
@@ -21,6 +22,7 @@ interface _ViewerProps {
     viewerState?: any,
 
     onExtnLoaded?: Function
+
 }
 
 
@@ -98,7 +100,11 @@ function Forge(props: _ViewerProps) {
 
                     Autodesk.Viewing.CAMERA_CHANGE_EVENT,
 
-                    (camera: any) => { 
+                    (camera: any) => {
+                        
+                        if(_forge.current?.navigation.getPosition().x || _forge.current?.navigation.getPosition().y || _forge.current?.navigation.getPosition().z){
+                            publish('sync-viewer',{ position: _forge.current?.navigation.getPosition() , target: _forge.current?.navigation.getTarget()})
+                        }
 
                         if(viewerId != 'minimap') {
 

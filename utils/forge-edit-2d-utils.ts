@@ -357,6 +357,17 @@ export class ForgeEdit2DUtils {
 
     }
 
+
+    private _syncViewer =(event: any) =>{
+
+        const details = event.detail
+
+        this._viewer.navigation.setPosition(details.position)
+
+        this._viewer.navigation.setTarget(details.target)
+
+    }
+
     private _undoStackAction = (event: any) => {
 
         // console.log(event)
@@ -431,6 +442,8 @@ export class ForgeEdit2DUtils {
 
         subscribe('visibility-change', this._visibilityChange)
 
+        subscribe('sync-viewer', this._syncViewer)
+
         this._edit2DContext.undoStack.addEventListener(Autodesk.Edit2D.UndoStack.AFTER_ACTION, this._undoStackAction);
 
         (this._edit2DContext as any).selection.addEventListener(Autodesk.Edit2D.Selection.Events.SELECTION_CHANGED, this._selectionChanged)
@@ -450,6 +463,8 @@ export class ForgeEdit2DUtils {
         unsubscribe('select-shape', this._selectShape)
 
         unsubscribe('visibility-change', this._visibilityChange)
+
+        unsubscribe('sync-viewer', this._syncViewer)
 
         this._edit2DContext.undoStack.removeEventListener(Autodesk.Edit2D.UndoStack.AFTER_ACTION, this._undoStackAction);
 

@@ -1,17 +1,27 @@
 
 
-import { FormControlLabel, Checkbox, LinearProgress, FormGroup, Stack, styled, linearProgressClasses, Typography, Slider } from '@mui/material'
+import { FormControlLabel, Checkbox, LinearProgress, FormGroup, Stack, styled, linearProgressClasses, Typography, Slider, OutlinedInput } from '@mui/material'
 
 import { IAsset, IAssetStage } from '../../models/IAssetCategory'
 
+import DoneIcon from '@mui/icons-material/Done';
+
+import EditIcon from '../../public/divami_icons/edit.svg'
+
+import Image from 'next/image'
+import { Dispatch, SetStateAction, useState } from 'react';
+import PopupComponent from '../popupComponent/PopupComponent';
+
 export default function Progress2DStages(
 
-    { stages, assetCount, compare, onToggleVisibility }:
+    { stages, assetCount, compare, onToggleVisibility, setTotalAssets }:
 
         {
             stages: ({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[] | undefined, assetCount: number,
 
-            onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void, compare: boolean
+            onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void, compare: boolean;
+
+            setTotalAssets: Dispatch<SetStateAction<number>>
 
         }) {
 
@@ -25,7 +35,7 @@ export default function Progress2DStages(
 
                     key={stage._id} assetCount={assetCount} stage={stage}
 
-                    onToggleVisibility={onToggleVisibility} compare={compare} />)
+                    onToggleVisibility={onToggleVisibility} compare={compare}  setTotalAssets={setTotalAssets}/>)
 
             }
 
@@ -34,15 +44,28 @@ export default function Progress2DStages(
 
 }
 
+
+const ModalMessage =({ quantity, units }: { quantity: number, units: string})=>(<div className='ml-3'>
+        <Typography fontFamily='Open Sans' className='text-[16px]'>This Will Make This Stage as Completed</Typography>
+        <Typography fontFamily='Open Sans' className='text-sm font-[700] mt-2'>Total quantity : {quantity} {units}</Typography>
+        <Typography fontFamily='Open Sans' className='text-[10px] font-[400] mt-1'>ConstructN will reach out to you to understand more about this change</Typography>
+    </div>) 
+
 function Progress2DStage(
 
-    { stage, assetCount, compare, onToggleVisibility }: {
+    { stage, assetCount, compare, onToggleVisibility, setTotalAssets }: {
 
         stage: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }, assetCount: number, 
         
-        onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void, compare: boolean
+        onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void, compare: boolean;
+
+        setTotalAssets: Dispatch<SetStateAction<number>>
 
     }) {
+
+    const [edit , setEdit]= useState(false)
+
+    const [completed, setCompleted] = useState<{checked: boolean, details?: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }}>({ checked: false})
 
     const getProgress = (): number | number[] => {
 
@@ -115,16 +138,40 @@ function Progress2DStage(
                     className='w-full mt-4' valueLabelDisplay='on'
                     
                     valueLabelFormat={value => _progressLabelFormatter(value)} value={getProgress()} />
+                
+                {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: null}
 
             </Stack>
 
-            <div className='w-full flex justify-between mt-1'>
+            <div className='w-full flex justify-between align-middle mt-1'>
 
-                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{getProgressValue()}%</Typography>
+                <div className='flex'>
 
-                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{stage.assets.length} / {assetCount} assets</Typography>
+                    <Typography fontFamily='Open Sans' className='text-sm text-[#727375] font-[600]'>{getProgressValue()}%</Typography>
+                    <div className='flex ml-2'>
+                        <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{stage.assets.length} / {edit? <OutlinedInput type='number' size='small' value={assetCount} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> setTotalAssets(parseInt(e.target.value)) } /> : assetCount} {edit? null: 'assets'}</Typography>
+                        {edit?<DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={()=>setEdit(false)} />: null}
+                    </div>
+
+                </div>
+
+                <div className='flex'>
+                    <Typography fontFamily='Open Sans' onClick={(e)=> setCompleted({checked: true, details: stage})} className='ml-2 text-[12px] text-[#0000FF] underline cursor-pointer'>Mark as Complete</Typography>
+                </div>
 
             </div>
+
+            {completed?.checked && (
+                    <PopupComponent
+                        open={completed?.checked}
+                        setShowPopUp={setCompleted}
+                        modalTitle={"Mark as complete?"}
+                        modalmessage={<ModalMessage units={completed?.details?.uom || ''} quantity={assetCount}/>}
+                        primaryButtonLabel={"Confirm"}
+                        SecondaryButtonlabel={"Cancel"}
+                        callBackvalue={()=>{console.log('callBack')}}
+                    />
+                )}
 
         </div>
 
