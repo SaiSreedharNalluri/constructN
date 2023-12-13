@@ -18,17 +18,16 @@ const UploaderFiles = () => {
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles) {
       uploaderAction.chageIsReading(true);
-      let filesWithExif: fileWithExif[] = []
       const batchSize = 100;
       for (let i = 0; i < acceptedFiles.length; i += batchSize) {
-        const fileBatch = acceptedFiles.slice(i, i + batchSize);
-        filesWithExif = [...filesWithExif, ...(await processFileBatch(fileBatch))]
+          
+          const fileBatch = acceptedFiles.slice(i, i + batchSize);
+          uploaderAction.appendFiles(await processFileBatch(fileBatch));
       }
       uploaderAction.chageIsReading(false)
-      uploaderAction.appendFiles(filesWithExif);
     }
   }, []);
-
+   
   const processFileBatch = async (fileBatch:File[]):Promise<fileWithExif[]> => {
       const acceptedFilesWithExif: fileWithExif[] = await Promise.all(
         fileBatch.map(async (file) => {
