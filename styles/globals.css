@@ -704,3 +704,10 @@ td {
   background-color: #E7E7E7 !important;
   border-radius: 60px !important;
 }
+
+.input-no-arrows input::-webkit-inner-spin-button,
+.input-no-arrows input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+

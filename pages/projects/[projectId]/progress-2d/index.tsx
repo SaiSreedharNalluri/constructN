@@ -40,6 +40,8 @@ import Progress2DToolbar from '../../../../components/progress-2d/toolbar/progre
 
 import { getCookie } from 'cookies-next'
 
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+
 import { IUser } from '../../../../models/IUser'
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader'
 import Progress2dAssets from '../../../../components/viewer/progress-2d-assets'
@@ -155,6 +157,8 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [assets, setAssets] = useState<IAsset[]>([])
 
+    const [comparisionAssets, setComparisionAssets] = useState<IAsset[]>([])
+
     const [selectedAsset, setSelectedAsset] = useState<string | undefined>()
 
     const [stages, setStages] = useState<({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[]>()
@@ -174,6 +178,37 @@ const Progress2DPage: React.FC<any> = () => {
     const [isSupportUser, setIsSupportUser] = useState<boolean>(false)
 
     const [selectedTab , setSelectedTab] = useState('stages') 
+
+    const [totalAssets, setTotalAssets] =  useState<number>(assets.length)
+
+    const [clipValue, setClipValue] = useState(50);
+
+    const handleMouseMove = (e: { buttons: number; clientX: number }) => {
+    if (e.buttons === 1) {
+      // Left mouse button is clicked
+        const container = document.getElementById("container-right-full");
+        const containerRect = container!.getBoundingClientRect();
+        const mouseX = e.clientX - containerRect.left;
+
+      // Ensure clipValue doesn't go out of bounds (0 to 100)
+        const newClipValue = Math.min(
+        100,
+        Math.max(0, (mouseX / containerRect.width) * 100),
+        );
+
+        setClipValue(newClipValue);
+        }
+    };
+
+    const handleMouseUp = () => {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    const handleMouseDown = () => {
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+    };
 
     const _assetMap = useRef<{ 
         
@@ -284,6 +319,11 @@ const Progress2DPage: React.FC<any> = () => {
         }
 
     }, [searchParams])
+
+
+    useEffect(()=>{
+        setTotalAssets(assets?.length)
+    },[assets?.length])
 
     useEffect(() => {
 
@@ -687,7 +727,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                 setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
 
-                // setAssets(result)
+                setComparisionAssets(result)
 
             }
 
@@ -771,7 +811,7 @@ const Progress2DPage: React.FC<any> = () => {
 
             const date = moment(new Date(LightBoxInstance.getSnapshotBase().date)).format('DD MMM, yyyy')
 
-            const assetsMessage = assets && assets.length > 0 ? `${assets.length} assets` : 'No assets'
+            const assetsMessage = assets && totalAssets > 0 ? `${totalAssets} assets` : 'No assets'
 
             return <>
 
@@ -786,7 +826,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _renderStageShimmer = (index: number) => {
 
-        if (assets.length === 0)
+        if (totalAssets === 0)
 
             return (
 
@@ -875,7 +915,10 @@ const Progress2DPage: React.FC<any> = () => {
 
                                         <div className={`w-3/4 relative flex items-center mx-2`}>
 
-                                            <div id='left-container' className={`relative h-full w-1/2 border border-[#e2e3e5] rounded-lg p-[2px] flex justify-center ${showReality ? '' : 'grow shrink'}`}>
+                                            <div id='left-container' className={`relative h-full w-full border border-[#e2e3e5] z-20 rounded-lg p-[2px] flex justify-center ${showReality ? '' : 'grow shrink'}`}  
+                                                    style={isCompare ? {
+                                                    clipPath: `polygon(0% 0%, ${clipValue}% 0%, ${clipValue}% 100%, 0% 100%)`,
+                                                    } : {} }>
 
                                                 <Progress2DComponent
 
@@ -900,13 +943,13 @@ const Progress2DPage: React.FC<any> = () => {
                                             </div>
 
                                             {
-                                                showReality ? (<>
+                                            !isCompare && showReality ? (<>
 
-                                                    <div className='flex h-full w-[3px] rounded bg-white items-center' style={{ zIndex: 2 }}>
+                                                    <div className='flex h-full w-[3px] rounded bg-white items-center' style={{ zIndex: 20 }}>
 
                                                     </div>
 
-                                                    <div id='right-container' className={'relative h-full w-1/2'}>
+                                                    <div id='right-container' className={'relative h-full w-1/2 z-20'}>
 
                                                         <RealityPage snapshot={snapshotBase} id={'right'} />
 
@@ -932,6 +975,42 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 </>) : ''
                                             }
+
+                                            {isCompare  ? <div id='container-right-full' className={`absolute h-full w-full border z-10 border-[#e2e3e5] rounded-lg p-[2px] flex justify-center ${showReality ? '' : 'grow shrink'}`}>
+
+                                            <Progress2DComponent
+
+                                                id={'container-right'}
+                                                
+                                                viewType={'Plan Drawings'}
+
+                                                category={selectedCategory}
+
+                                                snapshot={snapshotBase}
+
+                                                compare={isCompare}
+
+                                                reality={false}
+
+                                                assets={comparisionAssets}
+
+                                                isSupportUser={isSupportUser}
+
+                                                selectedLayers={selectedLayers} />
+
+                                            </div>:null}
+
+                                            {isCompare ? <div
+                                                className='absolute left-50 h-full w-[4px] z-20 bg-[#808080]'
+                                                
+                                                style={{ left: `calc(${clipValue}%)` }}
+                                                >
+                                                    <CompareArrowsIcon 
+                                                        className='relative top-40 right-[26px] text-white rounded-[50%] w-[60px] h-[60px] bg-[#3887be] cursor-ew-resize' 
+                                                        style={{ boxShadow: 'inset 0 0 0 2px #fff'}}
+                                                        onMouseDown={handleMouseDown} 
+                                                    />
+                                            </div>: null}
 
                                         </div>
 
@@ -1017,7 +1096,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
-                                                <Progress2DStages stages={stages} assetCount={assets.length} compare={isCompare}
+                                                <Progress2DStages stages={stages} assetCount={totalAssets} compare={isCompare} setTotalAssets={setTotalAssets}
 
                                                     onToggleVisibility={(stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => {
 

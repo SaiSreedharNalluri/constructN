@@ -58,11 +58,11 @@ export interface DialogTitleProps {
 }
 export interface PopupComponentProps {
   modalTitle: string;
-  modalmessage: string;
+  modalmessage: string | JSX.Element;
   primaryButtonLabel: string;
   SecondaryButtonlabel: string;
   callBackvalue?: any;
-  setShowPopUp: (value: boolean) => void;
+  setShowPopUp: (value: any) => void;
   open: boolean;
   modalContent?: any;
   hideButtons?: boolean;
