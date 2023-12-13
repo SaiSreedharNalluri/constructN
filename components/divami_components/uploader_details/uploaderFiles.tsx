@@ -18,17 +18,19 @@ const UploaderFiles = () => {
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles) {
       uploaderAction.chageIsReading(true);
+      let filesWithExif: fileWithExif[] = []
       const batchSize = 100;
       for (let i = 0; i < acceptedFiles.length; i += batchSize) {
         const fileBatch = acceptedFiles.slice(i, i + batchSize);
-        await processFileBatch(fileBatch);
+        filesWithExif = [...filesWithExif, ...(await processFileBatch(fileBatch))]
       }
       uploaderAction.chageIsReading(false)
+      uploaderAction.appendFiles(filesWithExif);
     }
   }, []);
-  async function processFileBatch(fileBatch:File[]) {
-    try {
-      const acceptedFilesWithExif: (fileWithExif | null)[] = await Promise.all(
+
+  const processFileBatch = async (fileBatch:File[]):Promise<fileWithExif[]> => {
+      const acceptedFilesWithExif: fileWithExif[] = await Promise.all(
         fileBatch.map(async (file) => {
           try {
            
@@ -38,15 +40,14 @@ const UploaderFiles = () => {
               exifData: exifData,
             };
           } catch (exifError) {
-            return null;
+            return {
+              file: file,
+              exifData: undefined,
+            }
           }
         })
       );
-      let filteredFilesWithExif:(fileWithExif | null)[] = acceptedFilesWithExif.filter((item) => item !== null);
-      uploaderAction.appendFiles(filteredFilesWithExif as fileWithExif[]);
-    } catch (error) {
-      console.log('Error processing files:', error);
-    }
+      return acceptedFilesWithExif;
   }
   useEffect(() => {
     // console.log("TestingUploader useeffect choose files: ", state.filesDropped);

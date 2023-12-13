@@ -8,7 +8,7 @@ import { IUploadFile } from "../../models/IUploader";
 import { getInitialGCPList } from "../../utils/utils";
 
 export type uploadImage = { file: File } & RawImage
-export type fileWithExif = { file: File } & { exifData: ExifReader.Tags }
+export type fileWithExif = { file: File } & { exifData: ExifReader.Tags | undefined }
 
 export enum UploaderFinishState {
     withError,

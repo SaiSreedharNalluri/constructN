@@ -264,54 +264,59 @@ const getUpdatedFileList = (state: UploaderState, files: fileWithExif[],): choos
     let validEXIFFiles: uploadImage[] = []
     files.forEach((fileWithExif) => {
         let file = fileWithExif.file
-        let deviceId = fileWithExif.exifData?.BodySerialNumber?.description
-        let dateTimeOriginal = fileWithExif.exifData?.DateTimeOriginal?.description
-        let altitude = fileWithExif.exifData?.GPSAltitude?.description ? parseInt(fileWithExif.exifData?.GPSAltitude?.description) : undefined
-        let latitude = fileWithExif.exifData?.GPSLatitude?.description ? parseInt(fileWithExif.exifData?.GPSLatitude?.description) : undefined
-        let longitude = fileWithExif.exifData?.GPSLongitude?.description ? parseInt(fileWithExif.exifData?.GPSLongitude?.description) : undefined
-        if (deviceId && dateTimeOriginal) {
-            let rawImage: RawImage = {
-                filename: file.name,
-                deviceId: deviceId,
-                externalId: deviceId + dateTimeOriginal,
-                dateTime: dateTimeOriginal,
-                status: RawImageStatus.initiated,
-            }
-            if(latitude && longitude && altitude) {
-                
-                let location: location = {
-                    type: "point",
-                    coordinates: [longitude, latitude],
-                    elevation: altitude
+        if (fileWithExif.exifData) {
+            let deviceId = fileWithExif.exifData?.BodySerialNumber?.description
+            let dateTimeOriginal = fileWithExif.exifData?.DateTimeOriginal?.description
+            let altitude = fileWithExif.exifData?.GPSAltitude?.description ? parseInt(fileWithExif.exifData?.GPSAltitude?.description) : undefined
+            let latitude = fileWithExif.exifData?.GPSLatitude?.description ? parseInt(fileWithExif.exifData?.GPSLatitude?.description) : undefined
+            let longitude = fileWithExif.exifData?.GPSLongitude?.description ? parseInt(fileWithExif.exifData?.GPSLongitude?.description) : undefined
+            if (deviceId && dateTimeOriginal) {
+                let rawImage: RawImage = {
+                    filename: file.name,
+                    deviceId: deviceId,
+                    externalId: deviceId + dateTimeOriginal,
+                    dateTime: dateTimeOriginal,
+                    status: RawImageStatus.initiated,
                 }
-                rawImage.location = location
-            }
-            let metaData:metaData={
-                fileSize:file.size
-            }
-            rawImage.metaData = metaData
-            let newUploadImage: uploadImage = {file, ...rawImage}
-            let alreadyUploadedFile;
-            if(state.isAppendingCapture && state.selectedJob) {
-                console.log("TestingUploader in append files reducer: ", state.rawImagesMap, state.selectedJob)
-                alreadyUploadedFile = state.rawImagesMap[getCaptureIdFromModelOrString(state.selectedJob.captures[0])].find((image) => {
-                    return image.deviceId == deviceId && image.dateTime == dateTimeOriginal && image.status !== RawImageStatus.failedTimedOut
+                if(latitude && longitude && altitude) {
+                    
+                    let location: location = {
+                        type: "point",
+                        coordinates: [longitude, latitude],
+                        elevation: altitude
+                    }
+                    rawImage.location = location
+                }
+                let metaData:metaData={
+                    fileSize:file.size
+                }
+                rawImage.metaData = metaData
+                let newUploadImage: uploadImage = {file, ...rawImage}
+                let alreadyUploadedFile;
+                if(state.isAppendingCapture && state.selectedJob) {
+                    console.log("TestingUploader in append files reducer: ", state.rawImagesMap, state.selectedJob)
+                    alreadyUploadedFile = state.rawImagesMap[getCaptureIdFromModelOrString(state.selectedJob.captures[0])].find((image) => {
+                        return image.deviceId == deviceId && image.dateTime == dateTimeOriginal && image.status !== RawImageStatus.failedTimedOut
+                    })
+                }
+                let duplicateFileInCurrent = validEXIFFiles.find((uploadImages) => {
+                    return uploadImages.deviceId == deviceId && uploadImages.dateTime == dateTimeOriginal
                 })
-            }
-            let duplicateFileInCurrent = validEXIFFiles.find((uploadImages) => {
-                return uploadImages.deviceId == deviceId && uploadImages.dateTime == dateTimeOriginal
-            })
-            let duplicateFile = choosenFiles.validFiles.find((uploadImages) => {
-                return uploadImages.deviceId == deviceId && uploadImages.dateTime == dateTimeOriginal
-            })
-            if (duplicateFile || alreadyUploadedFile || duplicateFileInCurrent) {
-                duplicateEXIFFiles.push(newUploadImage)
+                let duplicateFile = choosenFiles.validFiles.find((uploadImages) => {
+                    return uploadImages.deviceId == deviceId && uploadImages.dateTime == dateTimeOriginal
+                })
+                if (duplicateFile || alreadyUploadedFile || duplicateFileInCurrent) {
+                    duplicateEXIFFiles.push(newUploadImage)
+                } else {
+                    validEXIFFiles.push(newUploadImage)
+                }
             } else {
-                validEXIFFiles.push(newUploadImage)
+                invalidEXIFFiles.push(fileWithExif.file)
             }
         } else {
             invalidEXIFFiles.push(fileWithExif.file)
         }
+        
     })
     return {
         validFiles: validEXIFFiles.concat(...choosenFiles.validFiles),
