@@ -141,7 +141,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                         color: "#101f4c",
                         marginLeft:"14px"
           }}>
-          {isUploading?<p>Uploads In Progress</p>: <p >Past Uploads Pending Processing </p> }  
+          {isUploading?<p>Uploads In Progress</p>: <p >Pending Processing </p> }  
           </div>
           <div className="overflow-x-hidden h-full mt-[12px]" style={{
                         fontSize: "14px",
@@ -178,20 +178,11 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     className=" text-left w-[18%]">
                     Capture Date
                   </th>
-                  {isUploading && (
-                    <th
-                      className="text-left w-[18%]"
-                    >
-                      Uploading
-                    </th>
-                  )}
-                  {isUploadedOn && (
-                    <th
+                  <th
                       className="pl-2 text-left w-[18%]"
                     >
-                      Uploaded On
+                      Uploaded Date
                     </th>
-                  )}
                   {
                     isUploading && (
                       <th
