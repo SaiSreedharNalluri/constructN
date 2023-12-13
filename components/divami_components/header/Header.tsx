@@ -589,15 +589,14 @@ const Header: React.FC<any> = ({
             <TooltipText title="Uploader" onClick={() => {
               if (openUploader) {
                 setOpenUploader(false);
-                customLogger.logInfo("Notifications Hide")
+                customLogger.logInfo("Uploader Hide")
               } else {
-                customLogger.logInfo("Notifications Show")
+                customLogger.logInfo("Uploader Show")
                 setOpenUploader(true);
                 setOpenNotication(false);
                 setMenuLoading(false);
                 setSupportMenu(false);
                 setOpenProfile(false);
-                clearNotificationsCount();
               }
             }}>
               <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full" >

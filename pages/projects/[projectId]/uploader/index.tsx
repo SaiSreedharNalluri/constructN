@@ -76,6 +76,14 @@ const Index: React.FC<IProps> = () => {
    */
   useEffect(() => {
     console.log("TestingUploader: newUseEffect: ", appState.currentProjectData)
+    let allWorkers = WorkerManager.getWorker();
+   
+   if(Object.keys(allWorkers).length>0)
+    {
+      for(let key of Object.keys(allWorkers)) {
+        allWorkers[key].onmessage = onMessageFromWorker;
+      }
+    }
     if (appState.currentProjectData) {
       uploaderAction.setProject(appState.currentProjectData.project);
     }
@@ -176,6 +184,14 @@ const Index: React.FC<IProps> = () => {
       CustomToast('Initializing upload...','success')
       uploaderAction.setIsLoading(true)
       if (uploaderState.isAppendingCapture && uploaderState.selectedJob) {
+        let selectedJob = uploaderState.selectedJob
+        let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
+        captureJobs.forEach((job) => {
+          if (job._id === selectedJob._id) {
+            job.status = JobStatus.pendingUpload
+          }
+        })
+        uploaderAction.setCaptureJobs(captureJobs)
         addGcpToCapture(uploaderState.selectedJob)
       } else {
         addNewCaptureOnly(uploaderState.project?._id as string,{
