@@ -19,7 +19,7 @@ const UploaderFiles = () => {
     uploaderAction.chageIsReading(true)
       const batchSize = 100;
       for (let i = 0; i < acceptedFiles.length; i += batchSize) {
-        if (!refProcessing.current) {
+        if (refProcessing.current !== true) {
           break;
         }
         const fileBatch = acceptedFiles.slice(i, i + batchSize);
