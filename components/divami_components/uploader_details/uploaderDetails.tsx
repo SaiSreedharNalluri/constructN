@@ -201,7 +201,7 @@ const UploaderDateDetails: React.FC<any> = () => {
                                 Capture Date
                               </th>
                               <th>
-                                Uploaded on
+                                Upload Date
                               </th>
                               <th>
                                 Status
@@ -221,13 +221,13 @@ const UploaderDateDetails: React.FC<any> = () => {
                                     {
                                       job.captures && job.captures.length > 0 && typeof job.captures[0] != 'string' ? (
                                         <div>
-                                          {setTheFormatedDate((job.captures[0] as ICapture).captureDateTime)}
+                                          {getTheProjectDateAndTime(setTheFormatedDate((job.captures[0] as ICapture).captureDateTime))}
                                         </div>
                                       ) : ('-')
                                     }
                                   </td>
                                   <td className="p-1 ">
-                                    {getTheProjectDateAndTime(job.updatedAt)}
+                                    {getTheProjectDateAndTime(job.createdAt)}
                                   </td>
                                   <td
                                     style={{
