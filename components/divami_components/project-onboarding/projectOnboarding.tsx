@@ -35,7 +35,7 @@ const ProjectOnboarding=()=> {
         </header>
    
         <div className='pt-[25px]'>
-        <main className='overflow-y-auto calc-h235  '>
+        <main className='overflow-y-auto calc-h235 mx-[60px]  '>
           <div>
           {renderMainContent()}
           </div>

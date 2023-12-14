@@ -3,6 +3,12 @@ import {
   Drawer,
   InputAdornment,
   Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   ThemeProvider,
   Tooltip,
 } from "@mui/material";
@@ -68,7 +74,7 @@ import { TooltipText } from "../side-panel/SidePanelStyles";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
-export const ProjectUsersList = ({ setShowEmptyState }: any) => {
+export const ProjectUsersList = ( {projectId,onBoardScreen}: any) => {
   const customLogger = new CustomLoggerClass();
   const [tableData, setTableData] = useState<any>([]);
   const router = useRouter();
@@ -258,6 +264,9 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   ];
 
   const sortBy = () => {
+    if (searchTableData.length === 0) {
+      return; 
+    }
     setTableData((tableData:any) => {
       const sortedData = [...tableData].sort((a, b) => {
         if (!a.assignedOn && !b.assignedOn) {
@@ -280,7 +289,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
 
   const deleteUser = (rowData: any) => {
     const email = rowData?.email?.toLocaleLowerCase();
-    removeProjectUser(email, router.query.projectId as string)
+    removeProjectUser(email, router.query.projectId as string || projectId)
       .then((response) => {
         if (response?.success === true) {
           CustomToast("Deassign User","success");
@@ -306,7 +315,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
   };
 
   const getUsersList = () => {
-    getProjectUsers(router.query.projectId as string)
+    getProjectUsers(router.query.projectId as string || projectId)
       .then((response: any) => {
         if (response.success) {
           setTableData(
@@ -331,7 +340,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
     }
   };
   useEffect(() => {
-    if (router.isReady && router.query.projectId) {
+    if (router.isReady && router.query.projectId || projectId) {
       getUsersList();
       getUserRoles().then((res: any) => {
         const rolesData = res.result.map((each: any) => {
@@ -355,7 +364,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       role: selectedRole,
       email: rowData.email,
     };
-    updateProjectUserRole(projectInfo, router.query.projectId as string)
+    updateProjectUserRole(projectInfo, router.query.projectId as string || projectId)
       .then((res: any) => {
         CustomToast("User Role updated", "success");
         setShowEdit(false);
@@ -393,11 +402,17 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
       emptyDataSourceMessage: <LocalSearch />,
     },
   };
-
+  const[isHover,setIsHover]=useState(null)
+  const handleMouseEnter= (id:any) => {
+    setIsHover(id);
+  }; 
+  const handleMouseLeave = () => {
+    setIsHover(null);
+  };  
   return (
     <ProjectUsersListContainer>
       <TableHeader>
-        <Header>Manage Users</Header>
+        <Header>{`${onBoardScreen !==undefined && onBoardScreen==="onBoarding"?"":"Manage Users"}`}</Header>  
         <HeaderActions>
           {isSearching ? (
             <SearchAreaContainer marginRight>
@@ -458,7 +473,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
               }}
             />
           )}
-          <HeaderImage
+           {onBoardScreen!==undefined && onBoardScreen==="onBoarding"?"" :<HeaderImage
             src={UserFilterIcon}
             alt=""
             width={24}
@@ -466,7 +481,7 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
             onClick={() => {
               setOpenFilter(true);
             }}
-          />
+          />}       
           {taskFilterState.numberOfFilters ? <FilterIndicator /> : <></>}
 
           <CustomButton
@@ -475,62 +490,118 @@ export const ProjectUsersList = ({ setShowEmptyState }: any) => {
             formHandler={formHandler}
           />
         </HeaderActions>
-      </TableHeader>
+      </TableHeader>   
+      {dataLoaded ?<TableContainer className={`${onBoardScreen !==undefined && onBoardScreen==="onBoarding"?`calc-h326 `:`calc-h130` } overflow-y-auto`} >
+  <Table>
+    <TableHead className="sticky top-0  z-10 bg-white">
+      <TableRow>
+        <TableCell>User Name</TableCell>
+        <TableCell>User Email</TableCell>
+        <TableCell>Role</TableCell>
+        <TableCell >
+          <div  className="flex items-center">
+            <p> Assigned On </p>
+            <div className="ml-[4px]">
+            {sortObj ? 
+             <div onClick={sortBy} className=" cursor-pointer">
+               <SortIconStyled />
+             </div>
+       
+        
+      : 
+      <div onClick={sortBy} className=" cursor-pointer">
+         <SortDescIcon />
+      </div>
+       
+      }
+            </div>
+          </div>
+            <span>
+         
+            </span>  </TableCell>
+        <TableCell></TableCell>
 
-      <ThemeProvider theme={defaultMaterialTheme}>
-        <TableWrapper>
-          {dataLoaded ? (
-            <StyledTable
-            localization={{ body:{ emptyDataSourceMessage:<h1 className=" text-center">No User found</h1>}}}
-              components={{
-                Container: (props: any) => <Paper {...props} elevation={0} />,
-              }}
-              columns={columns}
-              data={searchTableData ? searchTableData : []}
-              title={""}
-              icons={{
-                SortArrow: forwardRef((props, ref) => {
-                  return sortObj ? (
-                    <SortIconStyled {...props} ref={ref} />
-                  ) : (
-                    <SortDescIcon
-                      {...props}
-                      ref={ref}
-                      // onClick={() => {
-                      //   setSortObj(!sortObj);
-                      // }}
-                    />
-                  );
-                }),
-              }}
-              options={{
-                search: false,
-                paging: false,
-                exportButton: false,
-                exportFileName: "tableData",
-                selection: false,
-                showTitle: true,
-                toolbar: false,
-                // maxBodyHeight: "80vh",
-                thirdSortClick: false,
-                rowStyle: (rowData: any) => ({
-                  fontFamily: "Open Sans",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  fontSize: "14px",
-                  color: "#101F4C",
-                }),
-                headerStyle: {
-                  padding: "6px 16px",
-                  fontFamily: "Open Sans",
-                },
-              }}
-            />
-          ) : (
-            <CustomLoader />
-          )}
-        </TableWrapper>
-      </ThemeProvider>
+      </TableRow>
+    </TableHead>
+ <TableBody className=" ">
+      {searchTableData.length>0 ? 
+      searchTableData.map((rowData:any, index) => (
+        <TableRow className={`h-[56.8px]  ${isHover===rowData._id?`hover:bg-[#fbece2]`:""} `} key={index} onMouseMove={()=>handleMouseEnter(rowData._id)}  onMouseLeave={()=>handleMouseLeave()}>
+          <TableCell width="20%">
+          <UserName>
+            {rowData.avatar ? (
+              <UserImage src={rowData.avatar} alt={""} width={24} height={24} />
+            ) : (
+              <UserDefaultIcon>
+                {rowData.firstName?.charAt(0)?.toUpperCase()}
+                {rowData.lastName?.charAt(0)?.toUpperCase()}
+              </UserDefaultIcon>
+            )}
+
+            <TooltipText title={rowData.fullName}>
+              <UserNameText>
+                {rowData?.fullName?.length > 40
+                  ? `${rowData?.fullName
+                      .substring(0, 7)
+                      .charAt(0)
+                      .toUpperCase()}${rowData?.fullName?.substring(1, 7)}...`
+                  : rowData?.fullName?.charAt(0)?.toUpperCase() +
+                    rowData?.fullName?.slice(1)}
+              </UserNameText>
+            </TooltipText>
+          </UserName>
+          </TableCell>
+          <TableCell  width="25%">
+            {rowData.email}
+          </TableCell>
+          <TableCell  width="15%">
+            {rowData.role}
+          </TableCell>
+          <TableCell  width="30%">
+        {rowData.updatedAt ? moment(rowData.assignedOn).format('MMM DD YYYY') : '-'}
+      </TableCell>
+     
+      <TableCell  width="10%">
+     {isHover===rowData._id? <div className="flex items-center">
+            {/* <TooltipText title="chat" > 
+             <div className="flex" >
+             <ChatIconImage src={ChatIcon} alt="" />
+             </div>
+            </TooltipText> */}
+            <TooltipText title="Deassign">
+              <div className="flex ">
+                <RemoveIconImage
+                  src={RemoveIcon}
+                  alt=""
+                  onClick={() => {
+                    setshowPopUp(true);
+                    setEmailId(rowData);
+                  }}
+                />
+              </div>
+            </TooltipText>
+            <TooltipText title="Edit">
+              <div className="flex ">
+                <EditIconImage
+                  src={Edit}
+                  alt=""
+                  onClick={() => {
+                    setShowEdit(true);
+                    setSelectedRowData(rowData);
+                  customLogger.logInfo("Edit User Role")  
+                  }}
+                  className="cursor-pointer"
+                />
+              </div>
+            </TooltipText>
+          </div>:""}
+      </TableCell>
+    
+        </TableRow>
+      )): <div className="flex justify-center p-2"> <p> No User found</p></div>}
+    </TableBody>
+  </Table>
+</TableContainer>:<CustomLoader />}
       {openFilter && (
         <CustomDrawer open>
           <UsersFilter

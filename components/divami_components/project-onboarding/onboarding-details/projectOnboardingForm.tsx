@@ -5,7 +5,7 @@ import ProjectNameDetails from './inputs/projectNameDetails';
 import ProjectTypeDetails from './inputs/projectTypeDetails';
 const ProjectOnboardingForm = () => {
   return (
-    <div className='mx-[60px]'>
+    <div className='mx-[10px]'>
       <ProjectNameDetails></ProjectNameDetails>
       <ProjectTypeDetails></ProjectTypeDetails>
       <ProjectLatLngDetails></ProjectLatLngDetails>

@@ -32,6 +32,12 @@
 .calc-h146 {
   height: calc(100vh - 146px);
 }
+.calc-h130 {
+  height: calc(100vh - 130px);
+}
+.calc-h326{
+  height: calc(100vh - 326px);
+}
 .calc-h64 {
   height: calc(100vh - 64px);
 }
