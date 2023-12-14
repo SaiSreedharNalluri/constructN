@@ -157,7 +157,7 @@ const UploaderDateDetails: React.FC<any> = () => {
       <div className="flex">
         <div className="pr-[14px] mt-[18px] w-[75%]" >
           <p className="pr-2 font-sans text-[#101F4C]  font-semibold text-sm my-[4px]">
-            Section Name
+            View Name
           </p>
           <div
             className="w-full border-t border-solid border-[#F1742E] h-[1px]"
