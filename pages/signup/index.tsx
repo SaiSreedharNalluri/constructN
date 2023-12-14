@@ -1,11 +1,10 @@
 import React from "react";
-import SignUpPage from "../../components/divami_components/sign-up/SignUpPage";
-import SignUp from "../../components/divami_components/sign-up/signUp"
+import SignUpPage from "../../components/divami_components/sign-up/SignUpPage"
 const Index = () => {
   return (
     <div>
       {/* <SignUpPage /> */}
-      <SignUp/>
+      <SignUpPage/>
     </div>
   );
 };
