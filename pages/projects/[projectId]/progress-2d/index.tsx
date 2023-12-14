@@ -126,7 +126,7 @@ const autodeskAuth = () => {
 
 const fetchImagesData = (path: string) => {
 
-    try { return instance.get(path, headers) } catch (error) { throw error }
+    try { return instance.get(path) } catch (error) { throw error }
 
 }
 
