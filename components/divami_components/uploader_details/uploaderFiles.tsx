@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ChooseUploaderFile from "../uploaderFIle/chooseUploaderFile";
 import FileListing from "../fileListing/fileListing";
 import ExifReader from "exifreader";
@@ -11,23 +11,29 @@ import { getRawImages } from "../../../services/captureManagement";
 const UploaderFiles = () => {
   const { state, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-
   const [showPopUp, setshowPopUp] = useState(false);
   const [message, setMessage] = useState<string>("");
- 
+  let refProcessing = useRef(false);
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (acceptedFiles) {
-      uploaderAction.chageIsReading(true);
+   if (acceptedFiles) {
+    uploaderAction.chageIsReading(true)
       const batchSize = 100;
       for (let i = 0; i < acceptedFiles.length; i += batchSize) {
-          
-          const fileBatch = acceptedFiles.slice(i, i + batchSize);
-          uploaderAction.appendFiles(await processFileBatch(fileBatch));
+        if (!refProcessing.current) {
+          break;
+        }
+        const fileBatch = acceptedFiles.slice(i, i + batchSize);
+        uploaderAction.appendFiles(await processFileBatch(fileBatch));
       }
       uploaderAction.chageIsReading(false)
+     }
+  }, [refProcessing.current]);
+   useEffect(()=>{
+    refProcessing.current = true
+    return()=>{
+      refProcessing.current = false
     }
-  }, []);
-   
+   },[])
   const processFileBatch = async (fileBatch:File[]):Promise<fileWithExif[]> => {
       const acceptedFilesWithExif: fileWithExif[] = await Promise.all(
         fileBatch.map(async (file) => {
@@ -49,7 +55,6 @@ const UploaderFiles = () => {
       return acceptedFilesWithExif;
   }
   useEffect(() => {
-    // console.log("TestingUploader useeffect choose files: ", state.filesDropped);
     if(state.filesDropped) {
       if (state.choosenFiles.invalidEXIFFiles.length > 0 && state.choosenFiles.invalidEXIFFiles.length > 0 && !state.isReading) {
         setshowPopUp(true);
