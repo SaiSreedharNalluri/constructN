@@ -701,7 +701,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                 result.forEach((asset: IAsset) => {
 
-                    const mStage: any = structuredClone(_assetMap.current[asset.progress.stage as string])
+                    const mStage: any = {...(_assetMap.current[asset.progress.stage as string] || {})}
 
                     delete mStage.assets
 
