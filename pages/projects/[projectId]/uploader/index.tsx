@@ -337,7 +337,7 @@ const Index: React.FC<IProps> = () => {
       uploaderAction.setIsLoading(false)
       if(axiosError && axiosError.response?.status === 422) {
         let job = axiosError.response.data.result
-        appAction.updateCaptureUploadStatus(job)
+        appAction.removeCaptureUpload(job)
         updateJobStatusOnView(job, jobProject);
         if (jobProject) {
           CustomToast(`Upload Completed with ERRORS for ${getPathToRoot(getStructureIdFromModelOrString(job.structure),jobProject.hierarchy[0])} on ${moment(job.date).format("MMM DD YYYY")}`,'success', false) 
