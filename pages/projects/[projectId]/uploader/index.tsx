@@ -402,7 +402,7 @@ const Index: React.FC<IProps> = () => {
         </main>
         <footer className="py-[4px] text-center">
         <UploaderFooter/>
-        </footer></div>:<CustomLoader/>}
+        </footer></div>:<CustomLoader isLoadingClose={true}/>}
       </div>
     </div>
     <div >
