@@ -9,6 +9,7 @@ export interface IGCP {
     metaData?: Object;
     capture?: string;
     s3Path?: string;
+    base64ImageName?: string;
     base64Code?: string;
 }
 
