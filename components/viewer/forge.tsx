@@ -23,6 +23,8 @@ interface _ViewerProps {
 
     onExtnLoaded?: Function
 
+    compare?: boolean
+
 }
 
 
@@ -103,7 +105,7 @@ function Forge(props: _ViewerProps) {
                     (camera: any) => {
                         
                         if(_forge.current?.navigation.getPosition().x || _forge.current?.navigation.getPosition().y || _forge.current?.navigation.getPosition().z){
-                            publish('sync-viewer',{ position: _forge.current?.navigation.getPosition() , target: _forge.current?.navigation.getTarget()})
+                            publish('sync-viewer',{ compare: props.compare,  position: _forge.current?.navigation.getPosition() , target: _forge.current?.navigation.getTarget()})
                         }
 
                         if(viewerId != 'minimap') {
