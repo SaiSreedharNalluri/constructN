@@ -47,13 +47,18 @@ import CustomLoader from '../../../../components/divami_components/custom_loader
 import Progress2dAssets from '../../../../components/viewer/progress-2d-assets'
 
 import PopupComponent from '../../../../components/popupComponent/PopupComponent'
+import authHeader from '../../../../services/auth-header'
+
+const headers = {
+    headers: authHeader.authHeader(),
+}
 
 
 const fetchViewerData = (projectId: string, structureId: string) => {
 
     try {
 
-        return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/${structureId}/viewer-data`)
+        return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/${structureId}/viewer-data`, headers)
 
     } catch (error) { throw error }
 
@@ -61,7 +66,7 @@ const fetchViewerData = (projectId: string, structureId: string) => {
 
 const fetchStructureHierarchy = (projectId: string) => {
 
-    try { return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/hierarchy`) } catch (error) { throw error }
+    try { return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/hierarchy`, headers) } catch (error) { throw error }
 
 }
 
@@ -69,7 +74,7 @@ const fetchAssetCategories = (projectId: string) => {
 
     try {
 
-        return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`)
+        return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`, headers)
 
     } catch (error) { throw error }
 
@@ -79,7 +84,7 @@ const fetchAssets = (structureId: string, category: string, date: string) => {
 
     try {
 
-        return instance.get(`${API.PROGRESS_2D_URL}/assets?structure=${structureId}&category=${category}&date=${date}`)
+        return instance.get(`${API.PROGRESS_2D_URL}/assets?structure=${structureId}&category=${category}&date=${date}`, headers)
 
     } catch (error) { throw error }
 
@@ -89,7 +94,7 @@ const createAsset = (asset: Partial<IAsset>, date: string) => {
 
     try {
 
-        return instance.post(`${API.PROGRESS_2D_URL}/assets?date=${date}`, asset)
+        return instance.post(`${API.PROGRESS_2D_URL}/assets?date=${date}`, asset, headers)
 
     } catch (error) { throw error }
 
@@ -99,7 +104,7 @@ const updateAsset = (assetId: string, asset: Partial<IAsset>) => {
 
     try {
 
-        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, asset)
+        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, asset, headers)
 
     } catch (error) { throw error }
 }
@@ -108,20 +113,20 @@ const deleteAsset = (assetId: string) => {
 
     try {
 
-        return instance.delete(`${API.PROGRESS_2D_URL}/assets/${assetId}`)
+        return instance.delete(`${API.PROGRESS_2D_URL}/assets/${assetId}`, headers)
 
     } catch (error) { throw error }
 }
 
 const autodeskAuth = () => {
 
-    try { return instance.get(`${API.BASE_URL}/aps/getAPSToken`) } catch (error) { throw error }
+    try { return instance.get(`${API.BASE_URL}/aps/getAPSToken`, headers) } catch (error) { throw error }
 
 }
 
 const fetchImagesData = (path: string) => {
 
-    try { return instance.get(path) } catch (error) { throw error }
+    try { return instance.get(path, headers) } catch (error) { throw error }
 
 }
 
@@ -177,7 +182,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [isSupportUser, setIsSupportUser] = useState<boolean>(false)
 
-    const [selectedTab, setSelectedTab] = useState('stages')
+    // const [selectedTab, setSelectedTab] = useState('stages')
 
     const [showPopup, setShowPopup] = useState<boolean>(false)
 
@@ -1051,7 +1056,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             <Divider className='mt-2' orientation='horizontal' variant='fullWidth' flexItem />
                                             
-                                            {!selectedAsset && <Tabs
+                                            {/* {!selectedAsset && <Tabs
 
                                                 centered value={selectedTab} className='text-black bg-[#fbece2]' textColor='inherit'
 
@@ -1068,9 +1073,9 @@ const Progress2DPage: React.FC<any> = () => {
                                                     value='assets' label={<Typography fontFamily='Open Sans' fontSize={14}
 
                                                         variant='caption'>Assets</Typography>} onClick={() => setSelectedTab('assets')} />
-                                            </Tabs>}
+                                            </Tabs>} */}
 
-                                            {!selectedAsset && selectedTab === 'stages' && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
+                                            {!selectedAsset && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
 
                                                 {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
@@ -1090,7 +1095,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             </div>}
 
-                                            {selectedTab === 'assets' && !selectedAsset && <Progress2dAssets assets={assets} stages={stages} stageMap={_assetMap.current} />}
+                                            {/* {selectedTab === 'assets' && !selectedAsset && <Progress2dAssets assets={assets} />} */}
 
                                             {selectedAsset && <AssetDetails
 
