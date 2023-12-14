@@ -31,6 +31,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 filesDropped: false,
                 gcpType: GCPType.LONGLAT,
                 gcpList: getInitialGCPList(false), // default is LONGLAT
+                errorCount: validateGCPList(getInitialGCPList(false)).error,
                 isGCPInit: true,
                 skipGCP: false,
                 selectedJob: undefined,
@@ -126,23 +127,24 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 }       
         case UploaderActionType.setGCPType:
             let gcpList = getInitialGCPList(action.payload.type == GCPType.UTM)
-            let newErrorCount = validateGCPList(gcpList)
+            let {error: newError, length: newLength} = validateGCPList(gcpList)
             return {
                 ...state,
                 gcpType: action.payload.type,
                 gcpList: gcpList,
-                errorCount: newErrorCount,
-                isNextEnabled: newErrorCount === 0
+                errorCount: newError,
+                isNextEnabled: newError === 0 && newLength >= 4
             }
         case UploaderActionType.setGCPList:
-            let errorCount = validateGCPList(action.payload.list)
+            let {error, length} = validateGCPList(action.payload.list)
+            
             return{
                 ...state,
                 isGCPInit: false,
                 gcpList: action.payload.list,
                 gcpType: action.payload.type,
-                errorCount: errorCount,
-                isNextEnabled: errorCount === 0
+                errorCount: error,
+                isNextEnabled: error === 0 && length >= 4
             }
         case UploaderActionType.setCaptureJobs:
             
@@ -212,17 +214,26 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
     }
 }
 
-const validateGCPList = (list: IGCP): number => {
-    if(list.location && list.location.length >= 4 ) {
-        return list.location.reduce((errorCount, latLng): number => {
-            return errorCount += getLongLatValidationErrorCount(latLng) // && validateLongitude(latLng.coordinates[0]) && validateLatitude(latLng.coordinates[1]) && latLng.elevation? validateAltitudeOrElevation(latLng.elevation) : false
-        }, 0)
-    } else if (list.utmLocation && list.utmLocation.length >= 4) {
-        return list.utmLocation.reduce((errorCount, utm): number => {
-            return errorCount += getUTMValidationErrorCount(utm) // && validateEasting(utm.easting) && validatingNorthing(utm.northing) && validateUTMZone(utm.zone) && utm.elevation? validateAltitudeOrElevation(utm.elevation) : false
-        }, 0)
+const validateGCPList = (list: IGCP): {error: number, length: number} => {
+    if(list.location && list.location.length > 0 ) {
+        return {
+            error: list.location.reduce((errorCount, latLng): number => {
+                return errorCount += getLongLatValidationErrorCount(latLng) // && validateLongitude(latLng.coordinates[0]) && validateLatitude(latLng.coordinates[1]) && latLng.elevation? validateAltitudeOrElevation(latLng.elevation) : false
+            }, 0), 
+            length: list.location.length
+        }
+    } else if (list.utmLocation && list.utmLocation.length > 0) {
+        return {
+            error: list.utmLocation.reduce((errorCount, utm): number => {
+                return errorCount += getUTMValidationErrorCount(utm) // && validateEasting(utm.easting) && validatingNorthing(utm.northing) && validateUTMZone(utm.zone) && utm.elevation? validateAltitudeOrElevation(utm.elevation) : false
+            }, 0),
+            length: list.utmLocation.length
+        }
     }
-    return 0;
+    return {
+        error: 0,
+        length: 0
+    };
 }
 
 const getUTMValidationErrorCount = (utm: utmLocation): number => {
@@ -247,7 +258,8 @@ const isNext = (state: UploaderState, step: UploaderStep): boolean => {
         case UploaderStep.ChooseFiles:
             return state.choosenFiles.validFiles.length > 0;
         case UploaderStep.ChooseGCPs:
-            return validateGCPList(state.gcpList) === 0
+            let {error, length} = validateGCPList(state.gcpList);
+            return error === 0 && length >= 4
         case UploaderStep.Review:
             return true;
         case UploaderStep.Upload:
