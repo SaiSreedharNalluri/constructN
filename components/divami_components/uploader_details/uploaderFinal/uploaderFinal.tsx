@@ -27,6 +27,7 @@ const UploaderFinal: React.FC = () => {
     if(uploaderState.selectedJob) {
       let selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])
       if ( uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId]) {
+        setCustomLoader(false) 
         let fileList: fileData[] = uploaderState.inProgressWorkers[selectedCaptureId].map((e) => {
           return {
             fileName: e.uploadObject.filename,
@@ -55,7 +56,7 @@ const UploaderFinal: React.FC = () => {
     if(uploaderState.selectedJob) {
       let selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])
       if ( uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId]) {
-       setCustomLoader(false) 
+        setCustomLoader(false) 
         let fileList: fileData[] = uploaderState.inProgressWorkers[selectedCaptureId].map((e) => {
           return {
             fileName: e.uploadObject.filename,
@@ -65,7 +66,7 @@ const UploaderFinal: React.FC = () => {
         setFileProgressList(fileList)
       } 
       else if(uploaderState.rawImagesMap[selectedCaptureId]) {
-       setCustomLoader(false) 
+        setCustomLoader(false) 
         let rawImages = uploaderState.rawImagesMap[selectedCaptureId]
         let fileList: fileData[] = rawImages?.map((e) => {   
           return {
