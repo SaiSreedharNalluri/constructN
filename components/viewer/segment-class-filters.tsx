@@ -16,7 +16,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 
 import React, { FC, useEffect } from 'react'
 
-import { publish } from '../../services/light-box-service'
+import { publish, subscribe, unsubscribe } from '../../services/light-box-service'
 
 const SegmentToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 
@@ -120,6 +120,22 @@ const SegmentButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 const ClickTypesPicker: FC<any> = (props) => {
 
   const [clickType, setClickType] = React.useState<string>('Select')
+
+  useEffect(() => {
+    
+    subscribe('progress-2d-tool-type', _setClickType)
+
+    return (() => unsubscribe('progress-2d-tool-type', _setClickType))
+
+  })
+  
+  const _setClickType = (event: any) => {
+
+    const type = event.detail
+
+    setClickType(type)
+
+}
 
   const getIconForType = (type: string) => {
 

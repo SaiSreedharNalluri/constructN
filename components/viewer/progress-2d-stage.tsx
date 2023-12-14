@@ -59,9 +59,15 @@ function Progress2DStage(
 
         const progress = getProgress()
 
-        if(typeof(progress) === 'number') return `${(progress as number).toFixed(1)}`
+        if(typeof(progress) === 'number') return `${(progress as number).toFixed(1)}%`
 
-        else return `${(progress as number[])[progress.length - 1].toFixed(1)}`
+        else {
+
+            const prog = progress as number[]
+
+            return `% Change - ${(prog[prog.length - 1] - prog[prog.length - 2]).toFixed(1)}%`
+
+        }
     }
 
     const onVisibilityChange = (event: any) => {
@@ -112,7 +118,7 @@ function Progress2DStage(
 
                 <RangeLinearProgress 
                 
-                    className='w-full mt-4' valueLabelDisplay='on'
+                    className='w-full mt-4' valueLabelDisplay='auto'
                     
                     valueLabelFormat={value => _progressLabelFormatter(value)} value={getProgress()} />
 
@@ -120,7 +126,7 @@ function Progress2DStage(
 
             <div className='w-full flex justify-between mt-1'>
 
-                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{getProgressValue()}%</Typography>
+                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{getProgressValue()}</Typography>
 
                 <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{stage.assets.length} / {assetCount} assets</Typography>
 

@@ -103,7 +103,7 @@ export default function Progress2DToolbar({
 
             <div className='ml-2'></div>
 
-            <AssetCategoryDatePicker 
+            { snapshotBase && <AssetCategoryDatePicker 
             
                 snapshots={LightBoxInstance.viewerData().snapshots} 
                 
@@ -111,7 +111,7 @@ export default function Progress2DToolbar({
 
                 onChangeToDate={onSnapshotBaseChange}
                 
-                onChangeFromDate={onSnapshotCompareChange}/>
+                onChangeFromDate={onSnapshotCompareChange}/> }
 
             <div className='ml-2 flex-1'></div>
 
