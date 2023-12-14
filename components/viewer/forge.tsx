@@ -86,6 +86,10 @@ function Forge(props: _ViewerProps) {
 
                     _forge.current = ForgeInstance.Instance.getMinimapBaseViewer(viewerId)!
 
+                else if (viewerId == 'minimap-container-right')
+
+                    _forge.current = ForgeInstance.Instance.getMinimapBaseViewer(viewerId)!
+
                 else
 
                     _forge.current = ForgeInstance.Instance.getMinimapCompareViewer(viewerId)!
