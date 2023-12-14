@@ -190,6 +190,8 @@ function Progress2DComponent(props: _ViewerProps) {
 
         publish('progress-2d-tool', 'Select')
 
+        publish('progress-2d-tool-type', 'Select')
+
     }
 
     const loadLayers = (layers?: any[], onLayersLoad?: Function) => {
