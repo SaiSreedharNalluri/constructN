@@ -5,9 +5,6 @@ import { RawImage, RawImageStatus, location, metaData, utmLocation } from "../..
 import { getCaptureIdFromModelOrString, getInitialGCPList, getJobIdFromModelOrString, validateAltitudeOrElevation, validateEasting, validateLatitude, validateLongitude, validateUTMZone, validatingNorthing } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
 import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState } from "./state";
-import { UploadFile } from "@mui/icons-material";
-import { stat } from "fs";
-
 
 export const resetUploaderState = (): UploaderState => {
     return {
@@ -126,25 +123,55 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                     uploadinitiate:action.payload.uploadinitiate
                 }       
         case UploaderActionType.setGCPType:
-            let gcpList = getInitialGCPList(action.payload.type == GCPType.UTM)
-            let {error: newError, length: newLength} = validateGCPList(gcpList)
+            let newGCPList: IGCP = {
+                ...getInitialGCPList(action.payload.type == GCPType.UTM),
+                base64ImageName: state.gcpList.base64ImageName,
+                base64Code: state.gcpList.base64Code,
+                description: state.gcpList.description
+            }
+            let {error: newError, length: newLength} = validateGCPList(newGCPList)
             return {
                 ...state,
                 gcpType: action.payload.type,
-                gcpList: gcpList,
+                gcpList: newGCPList,
                 errorCount: newError,
                 isNextEnabled: newError === 0 && newLength >= 4
             }
         case UploaderActionType.setGCPList:
-            let {error, length} = validateGCPList(action.payload.list)
+            let gcpList: IGCP = { 
+                ...action.payload.list,
+                base64ImageName: state.gcpList.base64ImageName,
+                base64Code: state.gcpList.base64Code,
+                description: state.gcpList.description
+            }
+            let {error, length} = validateGCPList(gcpList)
             
             return{
                 ...state,
                 isGCPInit: false,
-                gcpList: action.payload.list,
+                gcpList: gcpList,
                 gcpType: action.payload.type,
                 errorCount: error,
                 isNextEnabled: error === 0 && length >= 4
+            }
+        case UploaderActionType.setGCPBase64:
+            let updatedBase64GCP: IGCP = {
+                ...state.gcpList, 
+                base64Code: action.payload.base64, 
+                base64ImageName: action.payload.imageName
+            }
+            return {
+                ...state,
+                gcpList: updatedBase64GCP
+            }
+        case UploaderActionType.setGCPDescription:
+            let updatedDescriptionGCP: IGCP = {
+                ...state.gcpList, 
+                description: action.payload.description
+            }
+            return {
+                ...state,
+                gcpList: updatedDescriptionGCP
             }
         case UploaderActionType.setCaptureJobs:
             

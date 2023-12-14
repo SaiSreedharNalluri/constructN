@@ -5,6 +5,7 @@ import { IAsset, IAssetStage } from "../../models/IAssetCategory";
 import instance from "../../services/axiosInstance";
 import { API } from "../../config/config";
 import { toast } from "react-toastify";
+import authHeader from "../../services/auth-header";
 
 interface Stage extends IAssetStage {
 	id?: string;
@@ -18,9 +19,13 @@ interface SetProgressProps {
 	setStageValues?: Dispatch<SetStateAction<Stage[]>>;
 }
 
+const headers = {
+    headers: authHeader.authHeader(),
+}
+
 const updateAssetDetails = (assetId: string, data: Partial<IAsset>) => {
 	try {
-		return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, data);
+		return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, data, headers);
 	} catch (error) {
 		throw error;
 	}

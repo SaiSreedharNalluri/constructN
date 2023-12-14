@@ -21,6 +21,8 @@ export enum UploaderActionType {
     skipGCP,
     setGCPType,
     setGCPList,
+    setGCPDescription,
+    setGCPBase64,
     setExtractedFileValue,
     setIsNextEnabled,
     changeUploadinitiate,
@@ -125,6 +127,16 @@ export interface setGCPType{
 export interface setGCPList{
   type:UploaderActionType.setGCPList;
   payload:{list: IGCP, type: UTMType | LONGLATType};
+}
+
+export interface setGCPDescription{
+    type:UploaderActionType.setGCPDescription;
+    payload:{description: string};
+}
+
+export interface setGCPBase64{
+    type:UploaderActionType.setGCPBase64;
+    payload:{base64: string, imageName: string};
 }
 
 export interface setCaptureJobs {
@@ -237,6 +249,12 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         setGCPList:(list:IGCP, type: UTMType | LONGLATType)=>{
           dispatch({type:UploaderActionType.setGCPList, payload:{list:list, type: type}})
         },
+        setGCPDescription:(description: string)=>{
+            dispatch({type:UploaderActionType.setGCPDescription, payload:{description: description}})
+        },
+        setGCPBase64:(base64: string, imageName: string)=>{
+            dispatch({type:UploaderActionType.setGCPBase64, payload:{base64: base64, imageName: imageName}})
+        },
         setGCPType:(type: UTMType | LONGLATType)=>{
             dispatch({type:UploaderActionType.setGCPType, payload:{ type: type}})
         },
@@ -293,6 +311,8 @@ export type UploaderActions =
   | changeUploadinitiate
   | setGCPList
   | setGCPType
+  | setGCPBase64
+  | setGCPDescription
   | setCaptureJobs
   | setRawImagesMap
   | chageIsReading
