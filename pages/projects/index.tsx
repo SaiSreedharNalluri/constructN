@@ -550,7 +550,7 @@ const Index: React.FC<any> = () => {
                       variant="outlined"
                       value={searchTerm}
                       autoFocus={true}
-                      onChange={(e) => {
+                      onChange={(e:any) => {
                         setSearchTerm(e.target.value);
                         setSearchTableData(
                           projects.filter((each: any) =>
