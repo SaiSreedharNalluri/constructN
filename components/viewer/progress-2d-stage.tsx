@@ -2,7 +2,7 @@
 
 import { FormControlLabel, Checkbox, LinearProgress, FormGroup, Stack, styled, linearProgressClasses, Typography, Slider, OutlinedInput } from '@mui/material'
 
-import { IAsset, IAssetStage } from '../../models/IAssetCategory'
+import { IAsset, IAssetCategory, IAssetStage } from '../../models/IAssetCategory'
 
 import DoneIcon from '@mui/icons-material/Done';
 
@@ -11,10 +11,30 @@ import EditIcon from '../../public/divami_icons/edit.svg'
 import Image from 'next/image'
 import { Dispatch, SetStateAction, useState } from 'react';
 import PopupComponent from '../popupComponent/PopupComponent';
+import { API } from '../../config/config';
+import instance from '../../services/axiosInstance';
+import authHeader from '../../services/auth-header';
+
+
+const markAsComplete = async (details: { category?: string, date?: Date, stage?: string, setCompleted?: Function, refetch: () => void }) => {
+
+    try {
+        await instance.put(`${API.PROGRESS_2D_URL}/assets/mark-as-complete`, null,{
+            headers: authHeader.authHeader(),
+            params: details
+        })
+        details?.refetch!()
+        details?.setCompleted!(false)
+
+    } catch (error) { throw error }
+
+}
+
+
 
 export default function Progress2DStages(
 
-    { stages, assetCount, compare, onToggleVisibility, setTotalAssets }:
+    { stages, assetCount, compare, onToggleVisibility, setTotalAssets , snapShotDate, selectedCategory, refetch }:
 
         {
             stages: ({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[] | undefined, assetCount: number,
@@ -22,6 +42,12 @@ export default function Progress2DStages(
             onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void, compare: boolean;
 
             setTotalAssets: Dispatch<SetStateAction<number>>
+
+            snapShotDate?: Date
+
+            selectedCategory?: IAssetCategory | undefined
+
+            refetch?: ()=> void
 
         }) {
 
@@ -34,6 +60,12 @@ export default function Progress2DStages(
                 <Progress2DStage
 
                     key={stage._id} assetCount={assetCount} stage={stage}
+
+                    snapShotDate={snapShotDate}
+
+                    selectedCategory={selectedCategory}
+
+                    refetch={refetch}
 
                     onToggleVisibility={onToggleVisibility} compare={compare}  setTotalAssets={setTotalAssets}/>)
 
@@ -53,13 +85,19 @@ const ModalMessage =({ quantity, units }: { quantity: number, units: string})=>(
 
 function Progress2DStage(
 
-    { stage, assetCount, compare, onToggleVisibility, setTotalAssets }: {
+    { stage, assetCount, compare, onToggleVisibility, setTotalAssets , snapShotDate, selectedCategory, refetch =()=>{} }: {
 
         stage: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }, assetCount: number, 
         
         onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void, compare: boolean;
 
         setTotalAssets: Dispatch<SetStateAction<number>>
+
+        snapShotDate?: Date
+
+        selectedCategory?: IAssetCategory | undefined
+
+        refetch?: ()=> void
 
     }) {
 
@@ -169,7 +207,7 @@ function Progress2DStage(
                         modalmessage={<ModalMessage units={completed?.details?.uom || ''} quantity={assetCount}/>}
                         primaryButtonLabel={"Confirm"}
                         SecondaryButtonlabel={"Cancel"}
-                        callBackvalue={()=>{console.log('callBack')}}
+                        callBackvalue={()=>{ markAsComplete({ stage: completed.details?._id , date: snapShotDate, category: selectedCategory?._id, setCompleted, refetch})}}
                     />
                 )}
 
