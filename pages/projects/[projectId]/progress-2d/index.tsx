@@ -880,7 +880,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _renderStageShimmer = (index: number) => {
 
-        if (totalAssets === 0)
+        if (totalAssets === 0 || loading)
 
             return (
 
@@ -1164,7 +1164,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 selectedCategory={selectedCategory}
 
-                                                refetch={refetch}
+                                                refetch={()=>{ _loadAssetsForCategory(selectedCategory as IAssetCategory, selectedAsset) }}
 
                                                     onToggleVisibility={(stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => {
 

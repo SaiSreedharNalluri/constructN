@@ -16,17 +16,24 @@ import instance from '../../services/axiosInstance';
 import authHeader from '../../services/auth-header';
 
 
-const markAsComplete = async (details: { category?: string, date?: Date, stage?: string, setCompleted?: Function, refetch: () => void }) => {
+const markAsComplete = async (details: { category?: string, date?: Date, stage?: string, setCompleted: Function, refetch: () => void , setLoading: Dispatch<SetStateAction<boolean>>}) => {
+
+    const { refetch, setCompleted , setLoading} = details;
 
     try {
+        setLoading(true)
         await instance.put(`${API.PROGRESS_2D_URL}/assets/mark-as-complete`, null,{
             headers: authHeader.authHeader(),
-            params: details
+            params: {category: details.category, date: details.date, stage: details.stage}
         })
-        details?.refetch!()
-        details?.setCompleted!(false)
+        refetch()
+        setCompleted(false)
 
-    } catch (error) { throw error }
+    } catch (error) { 
+        throw error 
+    } finally{
+        setLoading(false)
+    }
 
 }
 
@@ -104,6 +111,8 @@ function Progress2DStage(
     const [edit , setEdit]= useState(false)
 
     const [completed, setCompleted] = useState<{checked: boolean, details?: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }}>({ checked: false})
+
+    const [loading, setLoading] = useState(false)
 
     const getProgress = (): number | number[] => {
 
@@ -207,7 +216,9 @@ function Progress2DStage(
                         modalmessage={<ModalMessage units={completed?.details?.uom || ''} quantity={assetCount}/>}
                         primaryButtonLabel={"Confirm"}
                         SecondaryButtonlabel={"Cancel"}
-                        callBackvalue={()=>{ markAsComplete({ stage: completed.details?._id , date: snapShotDate, category: selectedCategory?._id, setCompleted, refetch})}}
+                        disableSecondaryButton={loading}
+                        disablePrimaryButton={loading}
+                        callBackvalue={()=>{ markAsComplete({ stage: completed.details?._id , date: snapShotDate, category: selectedCategory?._id, setCompleted, refetch, setLoading })}}
                     />
                 )}
 
