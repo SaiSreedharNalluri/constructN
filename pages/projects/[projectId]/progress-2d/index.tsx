@@ -125,6 +125,10 @@ const fetchImagesData = (path: string) => {
 
 const Progress2DPage: React.FC<any> = () => {
 
+    const _forge = useRef<Autodesk.Viewing.GuiViewer3D>()
+
+    const _compareForge = useRef<Autodesk.Viewing.GuiViewer3D>()
+
     const [isScriptsLoaded, setIsScriptsLoaded] = useState(false)
 
     const [isAutodeskInitialised, setAutodeskInitialised] = useState(false)
@@ -375,6 +379,8 @@ const Progress2DPage: React.FC<any> = () => {
 
         subscribe('select-2d-shape', _onSelectShape)
 
+        subscribe('sync-viewer', _syncViewer)
+
         // subscribe('delete-2d-shape', _onDeleteShape)
 
         subscribe('remove-2d-shape', _onDeleteShape)
@@ -388,6 +394,8 @@ const Progress2DPage: React.FC<any> = () => {
             unsubscribe('update-2d-shape', _onUpdateShape)
 
             unsubscribe('select-2d-shape', _onSelectShape)
+
+            unsubscribe('sync-viewer', _syncViewer)
 
             // unsubscribe('delete-2d-shape', _onDeleteShape)
 
@@ -593,6 +601,18 @@ const Progress2DPage: React.FC<any> = () => {
         currentAsset.current = shapeDetails
 
         setSelectedAsset(shapeDetails)
+
+    }
+
+    const _syncViewer = (event: any) =>{
+
+        const details = event.detail;
+
+        const _viewer = details.compare ? _forge: _compareForge;
+
+        _viewer?.current?.navigation?.setPosition(details.position)
+
+        _viewer?.current?.navigation?.setTarget(details.target)
 
     }
 
@@ -938,6 +958,8 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                     isSupportUser={isSupportUser}
 
+                                                    _forge={_forge}
+
                                                     selectedLayers={selectedLayers} />
 
                                             </div>
@@ -993,6 +1015,10 @@ const Progress2DPage: React.FC<any> = () => {
                                                 reality={false}
 
                                                 assets={comparisionAssets}
+
+                                                _forge={_compareForge}
+
+                                                right
 
                                                 isSupportUser={isSupportUser}
 
