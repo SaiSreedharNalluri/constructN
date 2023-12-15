@@ -1,8 +1,9 @@
 import React from 'react'
+import { ProjectUsersList } from '../../project-users-list/ProjectUsersList'
 
 const ProjectOnboardingUsers = () => {
   return (
-    <div>ProjectOnboarding Users</div>
+    <div> <ProjectUsersList projectId="PRJ201897" onBoardScreen="onBoarding"></ProjectUsersList></div>
   )
 }
 
