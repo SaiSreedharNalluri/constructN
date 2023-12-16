@@ -77,14 +77,17 @@ import CustomIssueDetailsDrawer from "../issueDetails/IssueDetail";
 //   CustomSearchField,
 //   IconContainer,
 // } from "../task_list/TaskListStyles";
-import { DownloadTable} from "../toolbarViewer/DownloadTable"
+import { DownloadTable } from "../toolbarViewer/DownloadTable"
 import { downloadMenuOptions } from "./Constants";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
-import { CloseIcon,CustomSearchField,
-  IconContainer, } from "../../divami_components/task_list/TaskListStyles";
+import {
+  CloseIcon, CustomSearchField,
+  IconContainer,
+} from "../../divami_components/task_list/TaskListStyles";
 
 
 interface IProps {
+  toolClicked: (toolAction: IToolbarAction) => void;
   closeOverlay: () => void;
   issuesList: any;
   visibility: boolean;
@@ -109,7 +112,7 @@ interface IProps {
   openIssueCreateFn?: any;
   issueMenuClicked?: any;
   projectUsers?: any;
-  issueContext:any;
+  issueContext: any;
 }
 
 export interface IFilterProps {
@@ -151,9 +154,10 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   openIssueCreateFn,
   issueMenuClicked,
   projectUsers,
-  issueContext
+  issueContext,
+  toolClicked,
 }) => {
- 
+
   const handleClose = () => {
     onClose(true);
     // setIssueList([
@@ -164,7 +168,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     //   }),
     // ]);
   };
-  let issueMenuInstance: IToolbarAction = { data: "",type:"selectIssue"};
+  let issueMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   const [sortOrder, setSortOrder] = useState("asc");
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
@@ -187,7 +191,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [ref1, setRef1] = useState(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [downloadList, setDownloadList] = useState(issueList);
-  
+
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(
     issueList?.currentIssueList.slice(0, 10)
   );
@@ -256,7 +260,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const handleSortMenuClick = (sortMethod: string) => {
     handleOnIssueSort(sortMethod);
     setFilteredIssuesList(
-      filteredIssuesList.sort((a:any, b:any) => {
+      filteredIssuesList.sort((a: any, b: any) => {
         if (a.dueDate > b.dueDate) {
           return 1;
         } else if (b.dueDate > a.dueDate) {
@@ -269,7 +273,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   const handleDownloadMenuClick = () => handleDownloadClose();
 
-  
+
   const [errorShow, setErrorShow] = useState<any>(issueList.currentIssueList);
 
   useEffect(() => {
@@ -278,7 +282,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   }, [issuesList]);
 
   useEffect(() => {
-     setFilteredIssuesList(issueList?.currentIssueList.slice(0, 10));
+    setFilteredIssuesList(issueList?.currentIssueList.slice(0, 10));
   }, [issueList]);
 
   useEffect(() => {
@@ -357,9 +361,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     filteredIssuesList.forEach((item: any) => {
       if (issue._id === item._id) {
         setViewIssue(item);
-       
 
-        
+
+
       }
     });
     setOpenIssueDetail(true);
@@ -368,7 +372,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     issueMenuClicked(issueMenuInstance);
   };
 
-  useEffect(() => {}, [issueFilterState]);
+  useEffect(() => { }, [issueFilterState]);
   const [abc, setAbc] = useState(false);
   const checkIsFilter = () => {
     if (issueFilterState?.filterData) {
@@ -408,12 +412,12 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   return (
     <>
       {errorShow.length > 0 ? (
-     <TaskListContainer id="download-test">
-     <HeaderContainer>
-     <TitleContainer>
-     <span>Issue List</span>
-     <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
-     <CloseIcon
+        <TaskListContainer id="download-test">
+          <HeaderContainer>
+            <TitleContainer>
+              <span>Issue List</span>
+              <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
+                <CloseIcon
                   onClick={() => {
                     handleClose();
                   }}
@@ -422,14 +426,14 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   data-testid="close-icon"
                 />
 
-     </div>
-     </TitleContainer>
-     </HeaderContainer>
-     <MiniHeaderContainer searchingOn={searchingOn}>
-     <MiniSymbolsContainer>
-     {searchingOn ? (
-     <SearchAreaContainer>
-     <CustomSearchField
+              </div>
+            </TitleContainer>
+          </HeaderContainer>
+          <MiniHeaderContainer searchingOn={searchingOn}>
+            <MiniSymbolsContainer>
+              {searchingOn ? (
+                <SearchAreaContainer>
+                  <CustomSearchField
                     sx={{
                       "& .MuiInputBase-input": {
                         fontSize: "14px",
@@ -476,10 +480,10 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                       ),
                     }}
                   />
-     </SearchAreaContainer>
-     ) : (
-      <>
-      <SearchGlassIcon
+                </SearchAreaContainer>
+              ) : (
+                <>
+                  <SearchGlassIcon
                     src={Search}
                     data-testid="search-icon"
                     alt={"close icon"}
@@ -490,7 +494,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     <IconContainer
                       src={sort}
                       alt="Arrow"
-                      onClick={(e) => {
+                      onClick={(e: any) => {
                         setIsSortMenuOpen((prev) => !prev);
                         handleSortClick(e);
                       }}
@@ -507,10 +511,10 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     data-testid="filter"
                   />
                   {issueFilterState?.isFilterApplied &&
-                  issueFilterState?.numberOfFilters > 0 ? (
+                    issueFilterState?.numberOfFilters > 0 ? (
                     <FilterIndication />
                   ) : null}
-                   {/* <CSVLink
+                  {/* <CSVLink
                     data={getDownladableList(issueList)}
                     filename={"my-issues.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
@@ -519,12 +523,12 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   >
                     <DownloadIcon src={Download} alt="Arrow" />
                   </CSVLink> */}
-      </>
-       )}
-     </MiniSymbolsContainer>
-     </MiniHeaderContainer>
-     <BodyContainer ref={issueContRef}>
-     <CustomBox
+                </>
+              )}
+            </MiniSymbolsContainer>
+          </MiniHeaderContainer>
+          <BodyContainer ref={issueContRef}>
+            <CustomBox
               searchingOn={searchingOn}
               ref={(el: any) => {
                 setRef1(el);
@@ -585,12 +589,12 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                                         <>
                                           {index !== val?.assignees?.length - 1
                                             ? assignName?.firstName +
-                                              " " +
-                                              assignName.lastName +
-                                              " | "
+                                            " " +
+                                            assignName.lastName +
+                                            " | "
                                             : assignName?.firstName +
-                                              " " +
-                                              assignName.lastName}
+                                            " " +
+                                            assignName.lastName}
                                         </>
                                       );
                                     }
@@ -632,21 +636,30 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   <TopButton onClick={scrollTop}>Top</TopButton>
                 )}
 
-                </div>
+              </div>
 
             </CustomBox>
-     </BodyContainer>
-     {openIssueDetail && (
-       <Drawer
-       anchor={"right"}
-       open={openIssueDetail}
-       onClose={() => setOpenIssueDetail((prev: any) => !prev)}
-     >
-       <CustomIssueDetailsDrawer
+          </BodyContainer>
+          {openIssueDetail && (
+            <Drawer
+              anchor={"right"}
+              open={openIssueDetail}
+              onClose={() => {
+                setOpenIssueDetail((prev: any) => !prev)
+                let typeChangeToolAction: IToolbarAction = { type: "closeIssueDrawer", data: "" };
+                toolClicked(typeChangeToolAction);
+
+              }
+              }
+            >
+              <CustomIssueDetailsDrawer
                 issuesList={issueList.currentIssueList}
                 issue={viewIssue}
                 onClose={() => {
-                  setOpenIssueDetail((prev: any) => !prev);
+                  setOpenIssueDetail((prev: any) => !prev)
+                  let typeChangeToolAction: IToolbarAction = { type: "closeIssueDrawer", data: "" };
+                  toolClicked(typeChangeToolAction);
+  
                 }}
                 issueType={issueTypesList}
                 issuePriority={issuePriorityList}
@@ -662,33 +675,33 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 setIssueList={setIssueList}
               />
 
-     </Drawer>
-     )}
-      {openDrawer && (
-        <Drawer
-        anchor={"right"}
-        open={openDrawer}
-        onClose={() => setOpenDrawer((prev: any) => !prev)}
-      >
-        <FilterCommon
+            </Drawer>
+          )}
+          {openDrawer && (
+            <Drawer
+              anchor={"right"}
+              open={openDrawer}
+              onClose={() => setOpenDrawer((prev: any) => !prev)}
+            >
+              <FilterCommon
                 closeFilterOverlay={closeFilterOverlay}
                 issuesList={issuesList}
                 visibility={listOverlay}
                 closeOverlay={closeIssueList}
                 handleOnFilter={handleOnFilter}
                 onClose={() => setOpenDrawer((prev: any) => !prev)}
-                handleOnSort={() => {}}
-                deleteTheIssue={() => {}}
-                clickIssueEditSubmit={() => {}}
+                handleOnSort={() => { }}
+                deleteTheIssue={() => { }}
+                clickIssueEditSubmit={() => { }}
                 issueFilterState={issueFilterState}
                 setIssueFilterState={setIssueFilterState}
                 checkIsFilter={checkIsFilter}
                 filterRsp={filterRsp}
               />
 
-      </Drawer>
-      )}
-       <Menu
+            </Drawer>
+          )}
+          <Menu
             anchorEl={anchorEl}
             id="account-menu"
             open={isSortMenuOpen}
@@ -725,15 +738,15 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
             transformOrigin={{ horizontal: "right", vertical: "top" }}
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
-             {sortMenuOptions.map((option) => (
+            {sortMenuOptions.map((option) => (
               <>
-              <StyledMenu
+                <StyledMenu
                   className="custom-styled-menu"
                   key={option.label}
                   onClick={() => handleSortMenuClick(option.method)}
                   data-testid="sort-menu-item"
                 >
-                   {option.label}
+                  {option.label}
                   {option.icon && (
                     <ListItemIcon>
                       <IconContainer src={option.icon} alt={option.label} />
@@ -741,45 +754,45 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                   )}
                 </StyledMenu>
               </>
-             ))}
+            ))}
           </Menu>
           {isDownloadMenuOpen ? (
-             <Menu
-             anchorEl={anchorEl}
-             id="account-menu"
-             open={isDownloadMenuOpen}
-             onClose={handleDownloadClose}
-             onClick={handleDownloadClose}
-             PaperProps={{
-               elevation: 0,
-               sx: {
-                 overflow: "visible",
-                 filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                 mt: 1.5,
-                 "& .MuiAvatar-root": {
-                   width: 32,
-                   height: 32,
-                   ml: -0.5,
-                   mr: 1,
-                 },
-                 "&:before": {
-                   content: '""',
-                   display: "block",
-                   position: "absolute",
-                   top: 0,
-                   right: 14,
-                   width: 10,
-                   height: 10,
-                   bgcolor: "background.paper",
-                   transform: "translateY(-50%) rotate(45deg)",
-                   zIndex: 0,
-                 },
-               },
-             }}
-             transformOrigin={{ horizontal: "right", vertical: "top" }}
-             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-           >
-            {/* {downloadMenuOptions.map((option) => (
+            <Menu
+              anchorEl={anchorEl}
+              id="account-menu"
+              open={isDownloadMenuOpen}
+              onClose={handleDownloadClose}
+              onClick={handleDownloadClose}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: "right", vertical: "top" }}
+              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+              {/* {downloadMenuOptions.map((option) => (
               <>
               <StyledMenu
               key={option.label}
@@ -809,30 +822,30 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               </>
             ))} */}
             </Menu>
-          ):(
+          ) : (
             <></>
           )}
-     </TaskListContainer>
-     ) : (
-      <TaskListContainer>
-<HeaderContainer>
-  <TitleContainer>
-  <span></span>
+        </TaskListContainer>
+      ) : (
+        <TaskListContainer>
+          <HeaderContainer>
+            <TitleContainer>
+              <span></span>
               <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
-              <CloseIcon
-                onClick={() => {
-                  handleClose();
-                }}
-                src={closeWithCircle}
-                alt={"close icon"}
-                data-testid="close-icon"
-              />
+                <CloseIcon
+                  onClick={() => {
+                    handleClose();
+                  }}
+                  src={closeWithCircle}
+                  alt={"close icon"}
+                  data-testid="close-icon"
+                />
               </div>
-  </TitleContainer>
-</HeaderContainer>
-<ErrorImageDiv>
-<ImageErrorIcon src={listingErrorIcon} alt="Error Image" />
-<MessageDivShowErr>
+            </TitleContainer>
+          </HeaderContainer>
+          <ErrorImageDiv>
+            <ImageErrorIcon src={listingErrorIcon} alt="Error Image" />
+            <MessageDivShowErr>
               No Issue has been raised yet. Get a headstart by raising one.
             </MessageDivShowErr>
             <RaiseButtonDiv
@@ -841,7 +854,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 openIssueCreateFn();
                 CustomToast(
                   "Click on the map where you want to 'Create Issue'"
-                ,"success");
+                  , "success");
               }}
             >
               Raise Issue
@@ -851,9 +864,9 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               Check out
               <ContentErrorSpan> How to raise an Issue?</ContentErrorSpan>
             </ContentError>
-</ErrorImageDiv>
-      </TaskListContainer>
-     )}
+          </ErrorImageDiv>
+        </TaskListContainer>
+      )}
       {/* {errorShow.length > 0 ? (
         <TaskListContainer id="download-test">
           <HeaderContainer>
@@ -1259,7 +1272,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                       <IconContainer src={option.icon} alt={option.label} />
                     </ListItemIcon>
                   )} */}
-                  {/* </StyledMenu>
+      {/* </StyledMenu>
                 </>
               ))}
             </Menu>
@@ -1268,7 +1281,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
           )}
         </TaskListContainer>
       ) : ( */}
-        {/* <TaskListContainer>
+      {/* <TaskListContainer>
                      <HeaderContainer>
             <TitleContainer>
               <span></span>

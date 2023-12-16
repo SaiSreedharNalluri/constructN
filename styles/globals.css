@@ -52,6 +52,9 @@
 .calc-w {
   width: calc(100% - 44px);
 }
+.calc-w60 {
+  width: calc(100vw - 59px);
+}
 
 .calc-w-compare {
   width: calc(50% - 44px);

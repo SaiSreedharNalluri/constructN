@@ -42,6 +42,7 @@ import CustomLoggerClass from "../../divami_components/custom_logger/CustomLogge
 import { useRouter } from "next/router";
 
 
+
 export type IssueToolHandle = {
   handleIssueInstance: (IssuetoolInstance: any) => void;
   
@@ -81,6 +82,8 @@ function Issues({
     highlightCreateIcon,
     initData,
     issueContext,
+    toolClicked
+  
   }:any,ref:Ref<IssueToolHandle>) {
     const router = useRouter();
   const customLogger = new CustomLoggerClass();
@@ -118,6 +121,18 @@ function Issues({
             setOpenCreateIssue(true)
             setContextInfo(IssuetoolInstance?.data?.data)
           }
+    },
+    handleRouterIssueRef(handleIssue:any){
+      if(handleIssue.type === "selectIssue"){
+        const selectedObj = initData?.currentIssueList?.find(
+          (each: any) => each._id === handleIssue.data
+        );
+        issueMenuInstance.type= handleIssue.type
+        issueMenuInstance.data= selectedObj.context
+        issueMenuClicked(issueMenuInstance)
+        setSelectedIssue(selectedObj)
+        setOpenIssueDetails(true)
+      }
     }
     }
   },[]);
@@ -420,6 +435,8 @@ function Issues({
             issueMenuClicked={issueMenuClicked}
             projectUsers={projectUsers}
             issueContext={issueContext}
+            toolClicked={toolClicked}
+
           />
         </Drawer>
       )}
@@ -445,11 +462,17 @@ function Issues({
         <Drawer
           anchor={"right"}
           open={openIssueDetails}
-          onClose={() => closeIssueDetails()}
+          onClose={() =>{ closeIssueDetails()
+            let typeChangeToolAction: IToolbarAction = { type: "closeIssueDrawer", data: "" }; 
+            toolClicked(typeChangeToolAction);
+            }}
         >
           <CustomIssueDetailsDrawer
             issue={selectedIssue}
-            onClose={() => setOpenIssueDetails(false)}
+            onClose={() =>{ setOpenIssueDetails(false)
+            let typeChangeToolAction: IToolbarAction = { type: "closeIssueDrawer", data: "" }; 
+            toolClicked(typeChangeToolAction);
+            }}
             issueType={issueTypesList}
             issuePriority={issuePriorityList}
             issueStatus={issueStatusList}
@@ -466,6 +489,7 @@ function Issues({
             issueLoader={issueLoader}
             setIssueLoader={setIssueLoader}
             initData={initData}
+           
           />
         </Drawer>
       )}

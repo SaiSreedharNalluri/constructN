@@ -83,7 +83,7 @@ import {
   AssigneeList,
   Watcher,
   TopButton,
-} from "./TaskListStyles";
+} from "./TaskListStyles"
 import {
   Box,
   Divider,
@@ -354,7 +354,7 @@ const CustomTaskListDrawer = (props: any) => {
       taskContRef.current.scrollTop = 0;
     }
   };
-
+  console.log("routerrrrrrre",router)
   return (
     <>
       {errorShow?.length > 0 ? (
@@ -401,7 +401,7 @@ const CustomTaskListDrawer = (props: any) => {
                     variant="outlined"
                     autoFocus={true}
                     value={searchTerm}
-                    onChange={(e) => {
+                    onChange={(e:any) => {
                       setSearchTerm(e.target.value);
                     }}
                     InputLabelProps={{ shrink: false }}
@@ -452,7 +452,7 @@ const CustomTaskListDrawer = (props: any) => {
                     <IconContainer
                       src={sort}
                       alt="Arrow"
-                      onClick={(e) => {
+                      onClick={(e:any) => {
                         setIsSortMenuOpen((prev) => !prev);
                         handleSortClick(e);
                       }}
@@ -512,7 +512,7 @@ const CustomTaskListDrawer = (props: any) => {
                     <DownloadIcon
                       src={Download}
                       alt="Arrow"
-                      onClick={(e) => {
+                      onClick={(e:any) => {
                         setIsDownloadMenuOpen((prev) => !prev);
                         handleSortClick(e);
                       }}
@@ -649,12 +649,19 @@ const CustomTaskListDrawer = (props: any) => {
             <Drawer
               anchor={"right"}
               open={openTaskDetail}
-              onClose={() => setOpenTaskDetail((prev: any) => !prev)}
+              onClose={() => {setOpenTaskDetail((prev: any) => !prev)
+                delete router.query.iss
+                router.push(router)
+              }
+              }
             >
               <CustomTaskDetailsDrawer
                 taskList={tasksList}
                 task={viewTask}
-                onClose={() => setOpenTaskDetail((prev: any) => !prev)}
+                onClose={() => {setOpenTaskDetail((prev: any) => !prev)
+                  console.log("routerrrrrrrrrr",router.query.iss)
+                }
+                }
                 taskType={taskType}
                 taskPriority={taskPriority}
                 taskStatus={taskStatus}
@@ -782,7 +789,7 @@ const CustomTaskListDrawer = (props: any) => {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              {downloadMenuOptions.map((option) => (
+              {downloadMenuOptions.map((option:any) => (
                 <>
                   <StyledMenu
                     key={option.label}
